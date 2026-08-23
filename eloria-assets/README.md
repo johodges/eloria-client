@@ -23,10 +23,11 @@ The character generator produces an original low-poly humanoid, fourteen-bone
 skeleton, four actor definitions, and idle, walk, run, attack, pain, death,
 harvest, and sitting animations in Cal3D XML source formats.
 
-The creature generator produces four animals and four monsters with original
+The creature generator produces ten animals and ten monsters with original
 silhouettes, textures, a thirteen-bone quadruped rig, and shared idle, walk,
 run, attack, pain, and death animation clips. Actor IDs 200-207 are reserved
-for this independent creature set.
+for the first independent creature set; the expanded roster continues through
+actor ID 219. Familiar real-world names describe only newly generated assets.
 
 The scenery generator produces 43 native E3D assets: general scenery, nine
 modular architecture pieces, ten biome-specific objects, and seventeen
