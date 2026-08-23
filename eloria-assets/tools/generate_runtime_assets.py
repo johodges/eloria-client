@@ -4,7 +4,7 @@ from __future__ import annotations
 import argparse,struct
 from pathlib import Path
 from generate_bootstrap_pack import png,panel,make_map
-from generate_item_atlas import bmp
+from generate_item_atlas import bmp,dds
 
 def font_pixel(x,y):
  cell=x//16+(y//16)*16;lx=x%16;ly=y%16
@@ -24,10 +24,15 @@ def main():
  p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output)
  for name in ("font","fontv"):
   png(root/f"textures/{name}.png",256,256,font_pixel);bmp(root/f"textures/{name}.bmp",256,256,font_pixel)
+  dds(root/f"textures/{name}.dds",256,256,font_pixel)
  for name in ("cursors","cursors2"):
   png(root/f"textures/{name}.png",256,256,cursor);bmp(root/f"textures/{name}.bmp",256,256,cursor)
+  dds(root/f"textures/{name}.dds",256,256,cursor)
  for name in ("buttons","book1","paper1","alphaborder","eye_candy","eye_candy_burn"):
   png(root/f"textures/{name}.png",512,512,panel);bmp(root/f"textures/{name}.bmp",512,512,panel)
+  dds(root/f"textures/{name}.dds",512,512,panel)
+ for name in ("gamebuttons","gamebuttons2","console","login_menu","login_back","ground_detail","sigils"):
+  dds(root/f"textures/{name}.dds",512,512,panel)
  e3d_fallback(root/"3dobjects/badobject.e3d");e3d_fallback(root/"3dobjects/bag1.e3d");e3d_fallback(root/"3dobjects/portal1.e3d")
  make_map(root/"maps/nomap.elm",placements=[]);make_map(root/"maps/newcharactermap.elm",placements=[])
  stubs={"named_colours.xml":"<named_colours/>\n","emotes.xml":"<emotes/>\n","spells.xml":"<spells/>\n","weather.xml":"<weather/>\n","knowledge.xml":"<knowledge/>\n","commands.lst":"# Eloria commands\n","knowledge.lst":"# Eloria knowledge\n","mapinfo.lst":"emberhaven|Emberhaven|maps/emberhaven.elm\n","continfo.lst":"Eloria|maps/legend.png\n"}
