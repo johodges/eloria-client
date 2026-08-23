@@ -842,6 +842,7 @@ typedef enum
 // reserved for future expansion 220-229, not being used in the server yet
 #define MAP_SET_OBJECTS 220
 #define MAP_STATE_OBJECTS 221
+#define ELORIA_MARKETPLACE_STATE 222
 
 #define UPGRADE_NEW_VERSION 240	// TODO: Consider combining all this into one packet followed by one byte (plus optional text)
 #define UPGRADE_TOO_OLD 241
