@@ -173,6 +173,22 @@ def generate_maps(root):
  interior=[p for p in (nymara3d/"interiors").rglob("*.e3d")]
  exterior=[p for p in nymara3d.glob("*.e3d")]
  harvest_manifest=[]
+ harvestables=sorted({resource for resources in REGION_HARVESTS.values() for resource in resources})
+ for resource_index,resource in enumerate(harvestables):
+  path=root/f"3dobjects/nymara/{resource}.e3d"
+  color=((55+resource_index*23)%150+55,(79+resource_index*31)%130+65,(91+resource_index*17)%120+70)
+  accent=tuple(min(255,c+65) for c in color)
+  texture(path.with_suffix('.png'),(color,accent))
+  def harvest_shape(vertices,indices,name=resource):
+   if any(word in name for word in ("reed","orchid","lotus","moss","bulb","silverleaf")):
+    crossed_leaves(vertices,indices,0,1.15,.72,4)
+   elif any(word in name for word in ("crystal","shard","geode","salt","pearl")):
+    tapered(vertices,indices,0,1.05,.42,.08,7)
+    tapered(vertices,indices,0,.72,.28,.04,6,center=(.35,.08))
+   else:
+    box(vertices,indices,(0,0,.25),(.72,.62,.50))
+    tapered(vertices,indices,.42,.88,.25,.06,7)
+  e3d(path,path.with_suffix('.png').name,harvest_shape)
  for idx,name in enumerate(allmaps):
   pool=interior if name in DUNGEONS else exterior; picks=[pool[(idx*5+j)%len(pool)] for j in range(min(8,len(pool)))]
   placements=[(str(p.relative_to(root)).replace('\\','/'),24+(j%4)*22,26+(j//4)*22,0,(j*37)%360) for j,p in enumerate(picks)]
