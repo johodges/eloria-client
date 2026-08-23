@@ -41,7 +41,7 @@
       "source": "tools/generate_creatures.py",
       "author": "Eloria project",
       "license": "CC-BY-4.0",
-      "description": "Twenty procedural animal and monster models with an original quadruped rig"
+      "description": "Thirty-two procedural animal and monster models with an original quadruped rig"
     },
     {
       "path": "animations/creatures/*.xaf",
