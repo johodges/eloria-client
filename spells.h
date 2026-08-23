@@ -59,6 +59,7 @@ void check_castability(void);
  *
  */
 void repeat_spell(void);
+void change_spell_power(int delta);
 
 /*!
  * \ingroup other
