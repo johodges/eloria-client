@@ -9,10 +9,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Generate original bootstrap data
-        run: python3 eloria-assets/tools/generate_bootstrap_pack.py build/eloria-data
+      - name: Generate complete independent data
+        run: |
+          python3 eloria-assets/tools/generate_bootstrap_pack.py build/eloria-data
           python3 eloria-assets/tools/generate_characters.py build/eloria-data
+          python3 eloria-assets/tools/generate_humanoid_enemies.py build/eloria-data
+          python3 eloria-assets/tools/generate_fantasy_archetypes.py build/eloria-data
+          python3 eloria-assets/tools/generate_npcs.py build/eloria-data
+          python3 eloria-assets/tools/generate_creatures.py build/eloria-data
           python3 eloria-assets/tools/generate_scenery.py build/eloria-data
+          python3 eloria-assets/tools/generate_interactives.py build/eloria-data
+          python3 eloria-assets/tools/generate_regions.py build/eloria-data
+          python3 eloria-assets/tools/generate_item_atlas.py build/eloria-data
+          python3 eloria-assets/tools/generate_runtime_assets.py build/eloria-data
+          python3 eloria-assets/tools/generate_effects.py build/eloria-data
+          python3 eloria-assets/tools/generate_nymara_complete.py build/eloria-data
       - name: Verify provenance policy
         run: python3 eloria-assets/tools/check_provenance.py
       - name: Verify original map
@@ -62,6 +73,12 @@ jobs:
               assert lines[0].startswith("<HEADER MAGIC=")
               ET.fromstring("\n".join(lines[1:]))
           actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
-          assert len(actors.findall("actor")) == 6
+          player_actors = [actor for actor in actors.findall("actor")
+                           if 0 <= int(actor.attrib["id"]) <= 5]
+          assert len(player_actors) == 6
+          assert {actor.attrib.get("race") for actor in player_actors} == {
+              "luminous", "votary", "glasswarden", "orun", "greyhaven", "ssarathi"}
           assert len(list(root.glob("animations/eloria/*.xaf"))) == 8
+          assert len(list(root.glob("maps/**/*.elm"))) == 27
+          assert len(list(root.glob("textures/items*.png"))) == 5
           PY
