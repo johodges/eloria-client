@@ -846,6 +846,7 @@ typedef enum
 #define ELORIA_MERCHANT_STATE 223
 #define ELORIA_QUEST_JOURNAL_STATE 224
 #define ELORIA_ITEM_DETAIL 225
+#define ELORIA_INVENTORY_STATE 226
 
 #define UPGRADE_NEW_VERSION 240	// TODO: Consider combining all this into one packet followed by one byte (plus optional text)
 #define UPGRADE_TOO_OLD 241
