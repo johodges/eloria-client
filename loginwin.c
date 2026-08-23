@@ -416,6 +416,21 @@ static int display_login_handler (window_info *win)
 
 	glEnd();
 
+	// The original login texture included baked-in English captions.  Eloria's
+	// generated skin deliberately keeps the button sprites language-neutral, so
+	// draw crisp captions with the active UI font instead.
+	glColor3f(0.96f, 0.91f, 0.78f);
+	draw_string_zoomed_centered(log_in_x + log_in_x_len / 2,
+		log_in_y + (log_in_y_len - win->default_font_len_y) / 2,
+		(const unsigned char *)"Log In", 1, win->current_scale);
+	draw_string_zoomed_centered(new_char_x + new_char_x_len / 2,
+		new_char_y + (new_char_y_len - win->default_font_len_y) / 2,
+		(const unsigned char *)"New Character", 1, win->current_scale);
+	draw_string_zoomed_centered(settings_x + settings_x_len / 2,
+		settings_y + (settings_y_len - win->default_font_len_y) / 2,
+		(const unsigned char *)"Settings", 1, win->current_scale);
+	glColor3f(1.0f, 1.0f, 1.0f);
+
 	// print the current error, if any
 	if (strlen (log_in_error_str))
 	{
