@@ -140,6 +140,16 @@ def main():
   write_text(root/f"languages/en/strings/{name}.xml","<root/>\n")
  write_text(root/"languages/en/strings/channels.xml",'''<CHANNELS>
  <label index="0" name="Channel %d">Joined channel %d</label>
+ <label index="1" name="Guild">Your guild's chat channel.</label>
+ <label index="2" name="All">Display chat from all active channels.</label>
+ <label index="3" name="None">Messages not associated with a channel.</label>
+ <label index="4" name="Options">Select and configure chat channels.</label>
+ <label index="5" name="History">Review earlier chat messages.</label>
+ <label index="6" name="Local">Chat with players in your local area.</label>
+ <label index="7" name="PMs">Private messages.</label>
+ <label index="8" name="Guild Messages">Guild-wide messages.</label>
+ <label index="9" name="Server">Messages from the Nymara server.</label>
+ <label index="10" name="Moderation">Moderator chat.</label>
  <channel number="1" name="Noob">New-player questions, guidance, and introductions.</channel>
  <channel number="2" name="General">Nymara-wide conversation and community discussion.</channel>
  <channel number="3" name="Market">Trading, services, price checks, and crafting requests.</channel>
