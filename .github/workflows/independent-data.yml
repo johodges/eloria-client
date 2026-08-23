@@ -11,20 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Generate complete independent data
         run: |
-          python3 eloria-assets/tools/generate_bootstrap_pack.py build/eloria-data
-          python3 eloria-assets/tools/generate_characters.py build/eloria-data
-          python3 eloria-assets/tools/generate_humanoid_enemies.py build/eloria-data
-          python3 eloria-assets/tools/generate_fantasy_archetypes.py build/eloria-data
-          python3 eloria-assets/tools/generate_npcs.py build/eloria-data
-          python3 eloria-assets/tools/generate_creatures.py build/eloria-data
-          python3 eloria-assets/tools/generate_scenery.py build/eloria-data
-          python3 eloria-assets/tools/generate_interactives.py build/eloria-data
-          python3 eloria-assets/tools/generate_regions.py build/eloria-data
-          python3 eloria-assets/tools/generate_item_atlas.py build/eloria-data
-          python3 eloria-assets/tools/generate_runtime_assets.py build/eloria-data
-          python3 eloria-assets/tools/generate_effects.py build/eloria-data
-          python3 eloria-assets/tools/generate_special_event_assets.py build/eloria-data
-          python3 eloria-assets/tools/generate_nymara_complete.py build/eloria-data
+          python3 eloria-assets/tools/generate_all_assets.py build/eloria-data
       - name: Verify provenance policy
         run: python3 eloria-assets/tools/check_provenance.py
       - name: Verify original map

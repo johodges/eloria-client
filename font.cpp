@@ -1704,9 +1704,10 @@ bool FontManager::initialize()
 		return false;
 #ifdef TTF
 	initialize_ttf();
-	// Upgrade installations that still use the stock bitmap defaults to the
-	// bundled Eloria face. Explicit user font choices are left untouched.
-	if (use_ttf && font_idxs == _default_font_idxs)
+	// Upgrade every remaining bitmap selection to the bundled Eloria face.
+	// Explicit TrueType choices are preserved, while old per-category bitmap
+	// indices no longer keep upgraded installations on the pixel font.
+	if (use_ttf)
 	{
 		auto bundled = std::find_if(_options.begin(), _options.end(),
 			[](const FontOption& option) {
@@ -1718,7 +1719,11 @@ bool FontManager::initialize()
 			const size_t bundled_idx = std::distance(_options.begin(), bundled);
 			for (font_cat category: { UI_FONT, CHAT_FONT, NAME_FONT, BOOK_FONT,
 				NOTE_FONT, RULES_FONT, CONFIG_FONT })
-				font_idxs[category] = bundled_idx;
+			{
+				const size_t selected = font_idxs[category];
+				if (selected >= _options.size() || !_options[selected].is_ttf())
+					font_idxs[category] = bundled_idx;
+			}
 		}
 	}
 #endif
