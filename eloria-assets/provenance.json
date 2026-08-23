@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "assets": [
+    {
+      "path": "maps/emberhaven.elm",
+      "source": "tools/generate_bootstrap_pack.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedurally generated flat bootstrap island map"
+    },
+    {
+      "path": "3dobjects/tile0.png",
+      "source": "tools/generate_bootstrap_pack.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedurally generated moss-and-stone ground tile"
+    },
+    {
+      "path": "textures/*.png",
+      "source": "tools/generate_bootstrap_pack.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedurally generated bootstrap UI textures"
+    }
+  ]
+}
