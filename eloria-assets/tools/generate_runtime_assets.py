@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate original startup-safe fonts, cursors, fallbacks, and data stubs."""
 from __future__ import annotations
-import argparse,struct
+import argparse,shutil,struct
 from pathlib import Path
 from generate_bootstrap_pack import png,panel,make_map
 from generate_item_atlas import bmp,dds
@@ -12,9 +12,38 @@ def font_pixel(x,y):
  bit=((cell*1103515245+(lx//2)*97+(ly//2)*193)>>((lx+ly)%17))&1
  on=2<=lx<=13 and 2<=ly<=13 and (bit or lx in (2,13) or ly in (2,13))
  return (238,231,205,255 if on else 0)
-def cursor(x,y):
- lx=x%32;ly=y%32;on=(lx<4 and ly<23) or (ly<4 and lx<16) or abs(lx-ly)<2
- return (240,188,72,255) if on else (0,0,0,0)
+CURSOR_COUNT, CURSOR_SIZE = 13, 16
+
+def cursor_index(x,y):
+ lx=x%CURSOR_SIZE;ly=y%CURSOR_SIZE
+ outline=(lx<=ly+1 and lx<7 and ly<13) or (ly in (1,2) and lx<10)
+ fill=(lx<=ly and lx<5 and 2<=ly<11) or (ly==3 and 2<=lx<8)
+ return 2 if outline and not fill else 1 if fill else 0
+
+def cursor_pixel(x,y):
+ return ((255,255,255,255),(255,255,255,255),(0,0,0,255),(128,128,128,255))[cursor_index(x,y)]
+
+def indexed_cursor_bmp(path):
+ w,h=CURSOR_COUNT*CURSOR_SIZE,CURSOR_SIZE
+ row=(w+3)&~3
+ palette=b"\\x00\\x00\\x00\\x00"+b"\\xff\\xff\\xff\\x00"+b"\\x00\\x00\\x00\\x00"+b"\\x80\\x80\\x80\\x00"
+ pixels=bytearray()
+ for y in range(h-1,-1,-1):
+  line=bytearray(cursor_index(x,y) for x in range(w))
+  line.extend(b"\\0"*(row-w));pixels.extend(line)
+ offset=14+40+len(palette)
+ header=b"BM"+struct.pack("<IHHI",offset+len(pixels),0,0,offset)
+ dib=struct.pack("<IIIHHIIIIII",40,w,h,1,8,0,len(pixels),2835,2835,4,4)
+ path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(header+dib+palette+pixels)
+
+def validate_cursor_bmp(path):
+ data=path.read_bytes()
+ if len(data)<70 or data[:2]!=b"BM":
+  raise ValueError(f"{path}: invalid BMP")
+ w,h,planes,bpp=struct.unpack_from("<iiHH",data,18)
+ colours=struct.unpack_from("<I",data,46)[0]
+ if (w,h,planes,bpp,colours)!=(CURSOR_COUNT*CURSOR_SIZE,CURSOR_SIZE,1,8,4):
+  raise ValueError(f"{path}: cursor sheet must be 208x16, 8-bit, four-colour indexed BMP")
 def sky(x,y):
  grain=(x*13+y*29+(x^y)*3)%29
  return (72+grain//3,95+grain//2,126+grain,255)
@@ -43,8 +72,10 @@ def main():
   png(root/f"textures/{name}.png",256,256,font_pixel);bmp(root/f"textures/{name}.bmp",256,256,font_pixel)
   dds(root/f"textures/{name}.dds",256,256,font_pixel)
  for name in ("cursors","cursors2"):
-  png(root/f"textures/{name}.png",256,256,cursor);bmp(root/f"textures/{name}.bmp",256,256,cursor)
-  dds(root/f"textures/{name}.dds",256,256,cursor)
+  png(root/f"textures/{name}.png",CURSOR_COUNT*CURSOR_SIZE,CURSOR_SIZE,cursor_pixel)
+  indexed_cursor_bmp(root/f"textures/{name}.bmp")
+  validate_cursor_bmp(root/f"textures/{name}.bmp")
+  dds(root/f"textures/{name}.dds",CURSOR_COUNT*CURSOR_SIZE,CURSOR_SIZE,cursor_pixel)
  for name in ("buttons","book1","paper1","alphaborder","eye_candy","eye_candy_burn"):
   png(root/f"textures/{name}.png",512,512,panel);bmp(root/f"textures/{name}.bmp",512,512,panel)
   dds(root/f"textures/{name}.dds",512,512,panel)
@@ -68,7 +99,13 @@ def main():
  modern_vertex="in vec4 el_vertex;\nvoid main(){ gl_Position=el_vertex; }\n"
  modern_fragment="out vec4 eloria_colour;\nvoid main(){ eloria_colour=vec4(0.18,0.42,0.58,0.82); }\n"
  for name in ("water_fs.glsl","reflectiv_water_fs.glsl"):write_text(shader_dir/name,legacy_fragment)
- for name in ("anim.vert","anim_depth.vert","anim_shadow.vert","anim_ghost.vert","anim_ghost_shadow.vert"):write_text(shader_dir/name,compat_vertex)
+ template_dir=Path(__file__).resolve().parents[2]/"shaders"
+ for name in ("anim.vert","anim_depth.vert","anim_shadow.vert","anim_ghost.vert","anim_ghost_shadow.vert"):
+  source=template_dir/name
+  shader=source.read_text(encoding="utf-8")
+  if shader.count("%d")!=2:
+   raise ValueError(f"{source}: animation template must contain exactly two %d placeholders")
+  shutil.copy2(source,shader_dir/name)
  write_text(shader_dir/"new_water.vert",modern_vertex);write_text(shader_dir/"new_water.frag",modern_fragment)
  write_text(root/"languages/en/rules.xml",'''<rules>
  <title>Eloria Community Rules</title>
