@@ -14,6 +14,7 @@ Lands Binary Data is included in the Eloria data pack.
 - Disabled the official Eternal Lands web-update endpoint.
 - Added a reproducible generator for an original bootstrap data pack and map.
 - Added asset provenance and compliance checks.
+- Added original procedural humanoid models, skeleton, texture, actor definitions, and eight core animation clips.
 - Added a single Eloria server profile targeting TCP port 2000.
 
 Every later modification to an upstream source file must carry a prominent
