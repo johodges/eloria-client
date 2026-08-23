@@ -815,6 +815,7 @@ void process_message_from_server (const Uint8 *in_data, int data_length)
 			}
 			break;
 
+		/* Eloria modification 2026-08-22: accept 16-bit actor type packets. */
 		case ADD_NEW_ACTOR:
 			{
 #ifdef EXTRA_DEBUG
@@ -826,6 +827,17 @@ void process_message_from_server (const Uint8 *in_data, int data_length)
 				  break;
 				}
 				add_actor_from_server((char*)&in_data[3], data_length-3);
+			}
+			break;
+
+		case ADD_NEW_ACTOR_EXTENDED:
+			{
+				if (data_length <= 18)
+				{
+					LOG_WARNING("CAUTION: Possibly forged ADD_NEW_ACTOR_EXTENDED packet received.\n");
+					break;
+				}
+				add_actor_from_server_extended((char*)&in_data[3], data_length-3);
 			}
 			break;
 
