@@ -86,7 +86,15 @@ jobs:
           for path in paths:
               lines = path.read_text().splitlines()
               assert lines[0].startswith("<HEADER MAGIC=")
-              ET.fromstring("\n".join(lines[1:]))
+              document = ET.fromstring("\n".join(lines[1:]))
+              if path.suffix == ".xsf":
+                  bones = document.findall("BONE")
+                  assert bones
+                  for bone in bones:
+                      assert "NUMCHILD" in bone.attrib
+                      assert "NUMCHILDS" not in bone.attrib
+                      assert int(bone.attrib["NUMCHILD"]) == len(
+                          bone.findall("CHILDID"))
           actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
           player_ids = {0,1,2,3,4,5,37,38,39,40,41,42}
           player_actors = [actor for actor in actors.findall("actor")

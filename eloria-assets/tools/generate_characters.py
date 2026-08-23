@@ -37,7 +37,7 @@ def skeleton(path):
         absolute.append(tuple(base[j]+pos[j] for j in range(3)))
     root=ET.Element("SKELETON",NUMBONES=str(len(BONES)))
     for i,(name,parent,pos) in enumerate(BONES):
-        b=ET.SubElement(root,"BONE",ID=str(i),NAME=name,NUMCHILDS=str(len(children[i])))
+        b=ET.SubElement(root,"BONE",ID=str(i),NAME=name,NUMCHILD=str(len(children[i])))
         ET.SubElement(b,"TRANSLATION").text="%g %g %g"%pos
         ET.SubElement(b,"ROTATION").text="0 0 0 1"
         ET.SubElement(b,"LOCALTRANSLATION").text="%g %g %g"%tuple(-v for v in absolute[i])

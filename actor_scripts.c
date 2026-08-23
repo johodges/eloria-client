@@ -4510,6 +4510,8 @@ int parse_actor_nodes(actor_types *act, const xmlNode *cfg, const xmlNode *defau
 				act->coremodel= CalCoreModel_New("Model");
 				if(!CalCoreModel_ELLoadCoreSkeleton(act->coremodel, skeleton_name)) {
 					LOG_ERROR("Cal3d error: %s: %s\n", skeleton_name, CalError_GetLastErrorDescription());
+					CalCoreModel_Delete(act->coremodel);
+					act->coremodel = NULL;
 					act->skeleton_type = -1;
 				}
 				else {
