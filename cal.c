@@ -8,7 +8,6 @@
 #include "load_gl_extensions.h"
 #include "main.h"
 #include "missiles.h"
-#include "new_character.h"
 #include "shadows.h"
 #include "translate.h"
 #ifdef NEW_SOUND
@@ -535,7 +534,7 @@ CHECK_GL_ERRORS();
 }
 
 
-static __inline__ void render_submesh(int meshId, int submeshCount, struct CalRenderer * pCalRenderer, float meshVertices[30000][3], float meshNormals[30000][3], float meshTextureCoordinates[30000][2], CalIndex meshFaces[50000][3], Uint32 use_lightning, Uint32 use_textures, int immediate_mode)
+static __inline__ void render_submesh(int meshId, int submeshCount, struct CalRenderer * pCalRenderer, float meshVertices[30000][3], float meshNormals[30000][3], float meshTextureCoordinates[30000][2], CalIndex meshFaces[50000][3], Uint32 use_lightning, Uint32 use_textures)
 {
 	int submeshId;
 	int faceCount=0;
@@ -584,28 +583,7 @@ static __inline__ void render_submesh(int meshId, int submeshCount, struct CalRe
 				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 			}
 
-			if (immediate_mode)
-			{
-				int face, corner;
-				/* The new-character map contains one small preview actor.  Submit its
-				 * CPU-deformed geometry directly so this diagnostic path is independent
-				 * of driver-specific legacy client-array behaviour. */
-				glBegin(GL_TRIANGLES);
-				for (face = 0; face < faceCount; ++face)
-				{
-					for (corner = 0; corner < 3; ++corner)
-					{
-						const CalIndex vertex = meshFaces[face][corner];
-						if (use_lightning)
-							glNormal3fv(meshNormals[vertex]);
-						if (use_textures)
-							glTexCoord2fv(meshTextureCoordinates[vertex]);
-						glVertex3fv(meshVertices[vertex]);
-					}
-				}
-				glEnd();
-			}
-			else if(sizeof(CalIndex)==2)
+			if(sizeof(CalIndex)==2)
 				glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_SHORT, &meshFaces[0][0]);
 			else
 				glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_INT, &meshFaces[0][0]);
@@ -633,65 +611,12 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 	struct CalCoreMesh *_shieldmesh;
 	//int boneid=-1;
 	float reverse_scale;
-	GLboolean restore_cull_face = GL_FALSE;
-	GLboolean preview_state_pushed = GL_FALSE;
-	GLboolean preview_client_state_pushed = GL_FALSE;
-	GLint saved_array_buffer = 0;
-	GLint saved_element_buffer = 0;
-	int preview_render = 0;
-	static unsigned char preview_type_logged[MAX_ACTOR_DEFS] = { 0 };
 	//int glow=-1;
 
 	if(act->calmodel==NULL) {
 		return;//Wtf!?
 	}
 	skel=CalModel_GetSkeleton(act->calmodel);
-	preview_render = (newchar_root_win >= 0) && (act->actor_id == 0);
-	if (preview_render)
-	{
-		GLfloat incoming_color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		GLint active_texture = GL_TEXTURE0;
-		GLint bound_texture = 0;
-		GLboolean vertex_program_enabled = GL_FALSE;
-		glGetFloatv(GL_CURRENT_COLOR, incoming_color);
-		glGetIntegerv(GL_ACTIVE_TEXTURE_ARB, &active_texture);
-		glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound_texture);
-#ifndef ANDROID
-		vertex_program_enabled = glIsEnabled(GL_VERTEX_PROGRAM_ARB);
-#endif
-		if ((act->actor_type >= 0) && (act->actor_type < MAX_ACTOR_DEFS) &&
-			!preview_type_logged[act->actor_type])
-		{
-			LOG_INFO("Character preview type %d incoming fixed-function state: color=(%g,%g,%g,%g) active_texture=0x%x bound_texture=%d vertex_program=%d texture_2d=%d alpha_test=%d blend=%d",
-				act->actor_type, incoming_color[0], incoming_color[1],
-				incoming_color[2], incoming_color[3], (unsigned)active_texture,
-				bound_texture, (int)vertex_program_enabled,
-				glIsEnabled(GL_TEXTURE_2D), glIsEnabled(GL_ALPHA_TEST),
-				glIsEnabled(GL_BLEND));
-		}
-		glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_TEXTURE_BIT);
-		preview_state_pushed = GL_TRUE;
-#ifndef ANDROID
-		glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
-		preview_client_state_pushed = GL_TRUE;
-#endif
-		if (ELglActiveTextureARB != NULL)
-			ELglActiveTextureARB(GL_TEXTURE0);
-#ifndef ANDROID
-		if (ELglClientActiveTextureARB != NULL)
-			ELglClientActiveTextureARB(GL_TEXTURE0);
-		glDisable(GL_VERTEX_PROGRAM_ARB);
-#endif
-		glEnable(GL_TEXTURE_2D);
-		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		/* Character creation draws a single actor.  Disable culling around it
-		 * while recording the runtime triangle orientation.  Cal3D loaders on
-		 * different platforms can reorder XMF indices, so generated-file
-		 * winding validation alone is not sufficient. */
-		restore_cull_face = glIsEnabled(GL_CULL_FACE);
-		glDisable(GL_CULL_FACE);
-	}
 
 	glPushMatrix();
 	// actor model rescaling
@@ -723,27 +648,8 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 		pCalRenderer = CalModel_GetRenderer(act->calmodel);
 		// begin the rendering loop
 		if(CalRenderer_BeginRendering(pCalRenderer)){
-			/* render_submesh() supplies CPU addresses to the legacy client-array
-			 * API.  When a VBO remains bound from an earlier world draw, OpenGL
-			 * interprets those addresses as byte offsets into that buffer instead.
-			 * Isolate this path from the caller's buffer state and restore it when
-			 * the Cal3D draw is complete. */
-			if (ELglBindBufferARB != NULL)
-			{
-				glGetIntegerv(GL_ARRAY_BUFFER_BINDING_ARB, &saved_array_buffer);
-				glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB, &saved_element_buffer);
-				ELglBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-				ELglBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-				if (preview_render && (act->actor_type >= 0) &&
-					(act->actor_type < MAX_ACTOR_DEFS) &&
-					!preview_type_logged[act->actor_type])
-				{
-					LOG_INFO("Character preview type %d CPU client arrays: previous array_buffer=%d element_buffer=%d, both unbound for draw",
-						act->actor_type, saved_array_buffer, saved_element_buffer);
-				}
-			}
 			// set global OpenGL states
-			if(use_textures && !act->ghost && act->has_alpha){
+			if(!act->ghost && act->has_alpha){
 				glEnable(GL_ALPHA_TEST);
 				glAlphaFunc(GL_GREATER,0.06f);
 				glEnable(GL_BLEND);
@@ -756,95 +662,6 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 
 			// get the number of meshes
 			meshCount = CalRenderer_GetMeshCount(pCalRenderer);
-			if (preview_render && (act->actor_type >= 0) &&
-				(act->actor_type < MAX_ACTOR_DEFS) &&
-				!preview_type_logged[act->actor_type])
-			{
-				GLint front_face = 0, cull_mode = 0;
-				int diagnostic_mesh, total_vertices = 0, total_faces = 0;
-				int aligned_faces = 0, reversed_faces = 0, degenerate_faces = 0;
-				float min_x = 1.0e30f, min_y = 1.0e30f, min_z = 1.0e30f;
-				float max_x = -1.0e30f, max_y = -1.0e30f, max_z = -1.0e30f;
-				glGetIntegerv(GL_FRONT_FACE, &front_face);
-				glGetIntegerv(GL_CULL_FACE_MODE, &cull_mode);
-				for (diagnostic_mesh = 0; diagnostic_mesh < meshCount; ++diagnostic_mesh)
-				{
-					int diagnostic_submesh;
-					int diagnostic_submeshes = CalRenderer_GetSubmeshCount(
-						pCalRenderer, diagnostic_mesh);
-					for (diagnostic_submesh = 0; diagnostic_submesh < diagnostic_submeshes;
-						++diagnostic_submesh)
-					{
-						int vertex_count, face_count, vertex, face;
-						if (!CalRenderer_SelectMeshSubmesh(pCalRenderer,
-							diagnostic_mesh, diagnostic_submesh))
-						{
-							LOG_ERROR("Character preview type %d cannot select mesh %d submesh %d",
-								act->actor_type, diagnostic_mesh, diagnostic_submesh);
-							continue;
-						}
-						vertex_count = CalRenderer_GetVertexCount(pCalRenderer);
-						face_count = CalRenderer_GetFaceCount(pCalRenderer);
-						if ((vertex_count > 30000) || (face_count > 50000))
-						{
-							LOG_ERROR("Character preview type %d mesh %d submesh %d exceeds CPU buffers: vertices=%d faces=%d",
-								act->actor_type, diagnostic_mesh, diagnostic_submesh,
-								vertex_count, face_count);
-							continue;
-						}
-						CalRenderer_GetVertices(pCalRenderer, &meshVertices[0][0]);
-						CalRenderer_GetNormals(pCalRenderer, &meshNormals[0][0]);
-						face_count = CalRenderer_GetFaces(pCalRenderer, &meshFaces[0][0]);
-						total_vertices += vertex_count;
-						total_faces += face_count;
-						for (vertex = 0; vertex < vertex_count; ++vertex)
-						{
-							min_x = min2f(min_x, meshVertices[vertex][0]);
-							min_y = min2f(min_y, meshVertices[vertex][1]);
-							min_z = min2f(min_z, meshVertices[vertex][2]);
-							max_x = max2f(max_x, meshVertices[vertex][0]);
-							max_y = max2f(max_y, meshVertices[vertex][1]);
-							max_z = max2f(max_z, meshVertices[vertex][2]);
-						}
-						for (face = 0; face < face_count; ++face)
-						{
-							const int a = meshFaces[face][0];
-							const int b = meshFaces[face][1];
-							const int c = meshFaces[face][2];
-							if ((a < 0) || (a >= vertex_count) ||
-								(b < 0) || (b >= vertex_count) ||
-								(c < 0) || (c >= vertex_count))
-							{
-								++degenerate_faces;
-								continue;
-							}
-							const float ab_x = meshVertices[b][0] - meshVertices[a][0];
-							const float ab_y = meshVertices[b][1] - meshVertices[a][1];
-							const float ab_z = meshVertices[b][2] - meshVertices[a][2];
-							const float ac_x = meshVertices[c][0] - meshVertices[a][0];
-							const float ac_y = meshVertices[c][1] - meshVertices[a][1];
-							const float ac_z = meshVertices[c][2] - meshVertices[a][2];
-							const float cross_x = ab_y * ac_z - ab_z * ac_y;
-							const float cross_y = ab_z * ac_x - ab_x * ac_z;
-							const float cross_z = ab_x * ac_y - ab_y * ac_x;
-							const float dot = cross_x * meshNormals[a][0] +
-								cross_y * meshNormals[a][1] + cross_z * meshNormals[a][2];
-							if (dot > 1.0e-8f) ++aligned_faces;
-							else if (dot < -1.0e-8f) ++reversed_faces;
-							else ++degenerate_faces;
-						}
-						LOG_INFO("Character preview type %d runtime mesh %d/%d: vertices=%d faces=%d",
-							act->actor_type, diagnostic_mesh, diagnostic_submesh,
-							vertex_count, face_count);
-					}
-				}
-				LOG_INFO("Character preview type %d CPU render: meshes=%d vertices=%d faces=%d bounds=(%g,%g,%g)-(%g,%g,%g) winding aligned=%d reversed=%d degenerate=%d front_face=0x%x cull_mode=0x%x culling_temporarily_disabled=1",
-					act->actor_type, meshCount, total_vertices, total_faces,
-					min_x, min_y, min_z, max_x, max_y, max_z,
-					aligned_faces, reversed_faces, degenerate_faces,
-					(unsigned)front_face, (unsigned)cull_mode);
-				preview_type_logged[act->actor_type] = 1;
-			}
 
 			// check for weapons or shields being worn
 			if (act->is_enhanced_model) {
@@ -920,15 +737,15 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 						glColor4f(glow_colors[glow].r, glow_colors[glow].g, glow_colors[glow].b, 0.5f);
 						glPushMatrix();
 						glScalef(0.99f, 0.99f, 0.99f);
-						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures, preview_render);
+						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures);
 						glPopMatrix();
 
 						glColor4f(glow_colors[glow].r, glow_colors[glow].g, glow_colors[glow].b, 0.85f);
-						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures, preview_render);
+						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures);
 						glColor4f(glow_colors[glow].r, glow_colors[glow].g, glow_colors[glow].b, 0.99f);
 						glPushMatrix();
 						glScalef(1.01f, 1.01f, 1.01f);
-						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures, preview_render);
+						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures);
 						glPopMatrix();
 
 						if(use_shadow_mapping){
@@ -947,7 +764,7 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 						}
 					} else {
 						// enhanced actors without glowing items
-						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, use_lightning, use_textures, preview_render);
+						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, use_lightning, use_textures);
 					}
 					if(boneid >= 0){
 						//if this was a weapon or shield, restore the transformation matrix
@@ -955,7 +772,7 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 					}
 				} else {
 					// non-enhanced actors, or enhanced without attached meshes
-					render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, use_lightning, use_textures, preview_render);
+					render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, use_lightning, use_textures);
 				}
 			}
 
@@ -963,7 +780,7 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_VERTEX_ARRAY);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-			if(use_textures && !act->ghost && act->has_alpha){
+			if(!act->ghost && act->has_alpha){
 				glDisable(GL_ALPHA_TEST);
 				//glEnable(GL_CULL_FACE);
 				glDisable(GL_BLEND);
@@ -971,28 +788,12 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 
 			// end the rendering
 			CalRenderer_EndRendering(pCalRenderer);
-			if (ELglBindBufferARB != NULL)
-			{
-				ELglBindBufferARB(GL_ARRAY_BUFFER_ARB, saved_array_buffer);
-				ELglBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, saved_element_buffer);
-			}
-		}
-		else if (preview_render)
-		{
-			LOG_ERROR("CalRenderer_BeginRendering failed for character preview type %d",
-				act->actor_type);
 		}
 #ifdef DEBUG
 	}
 #endif
 
 	glColor3f(1,1,1);
-	if (preview_render && restore_cull_face)
-		glEnable(GL_CULL_FACE);
-	if (preview_state_pushed)
-		glPopAttrib();
-	if (preview_client_state_pushed)
-		glPopClientAttrib();
 
 #ifdef DEBUG
 	if(render_skeleton)
