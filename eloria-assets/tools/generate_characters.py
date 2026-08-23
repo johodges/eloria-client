@@ -189,6 +189,11 @@ def actor_defs(path):
         none_ids={"neck":0,"helmet":20,"cape":30,"shield":11}
         for tag,none_id in none_ids.items():
             part=ET.SubElement(a,tag,id=str(none_id));ET.SubElement(part,"mesh").text="actors/eloria_none.xmf";ET.SubElement(part,"skin").text="actors/eloria_humanoid.png"
+        # The renderer always inspects WEAPON_NONE even when no weapon mesh is
+        # attached.  A skin child makes the parser allocate the weapon table;
+        # omitting mesh intentionally leaves its mesh index at -1.
+        weapon=ET.SubElement(a,"weapon",id="0")
+        ET.SubElement(weapon,"skin").text="actors/eloria_humanoid.png"
         frames=ET.SubElement(a,"frames")
         for tag,name in files.items():
             kind=0 if tag in ("CAL_walk","CAL_run","CAL_idle","CAL_idle2","CAL_idle_sit","CAL_combat_idle") else 1
@@ -197,6 +202,8 @@ def actor_defs(path):
         for tag,none_id in none_ids.items():
             if actor.find(f"{tag}[@id='{none_id}']") is None:
                 raise ValueError(f"actor {actor.attrib['id']} lacks canonical {tag} none slot {none_id}")
+        if actor.find("weapon[@id='0']") is None:
+            raise ValueError(f"actor {actor.attrib['id']} lacks canonical unarmed slot 0")
     path.parent.mkdir(parents=True,exist_ok=True); path.write_text('<?xml version="1.0"?>\n'+ET.tostring(root,encoding="unicode")+'\n')
 
 def main():

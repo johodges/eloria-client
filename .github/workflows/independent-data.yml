@@ -124,6 +124,7 @@ jobs:
               for tag, none_id in none_ids.items():
                   assert actor.find(f"{tag}[@id='{none_id}']") is not None, (
                       actor.attrib["id"], tag, none_id)
+              assert actor.find("weapon[@id='0']") is not None, actor.attrib["id"]
           assert len(list(root.glob("animations/eloria/*.xaf"))) == 8
           assert len(list(root.glob("maps/**/*.elm"))) == 27
           assert len(list(root.glob("textures/items*.png"))) == 5
