@@ -421,6 +421,9 @@ extern "C" void cal_render_actor_shader(actor *act, Uint32 use_lightning, Uint32
 	IntMap* im;
 	float s;
 	static bool preview_render_logged[MAX_ACTOR_DEFS] = { false };
+	static bool preview_samples_logged[MAX_ACTOR_DEFS] = { false };
+	GLuint sample_query = 0;
+	bool measure_preview_samples = false;
 
 	assert(act->calmodel);
 
@@ -493,9 +496,35 @@ extern "C" void cal_render_actor_shader(actor *act, Uint32 use_lightning, Uint32
 		}
 	}
 
+	measure_preview_samples = (act->actor_id == 0) && act->is_enhanced_model &&
+		(use_textures != 0) && !preview_samples_logged[act->actor_type] &&
+		have_extension(arb_occlusion_query) && (ELglGenQueriesARB != NULL) &&
+		(ELglBeginQueryARB != NULL) && (ELglEndQueryARB != NULL) &&
+		(ELglGetQueryObjectuivARB != NULL) && (ELglDeleteQueriesARB != NULL);
+	if (measure_preview_samples)
+	{
+		ELglGenQueriesARB(1, &sample_query);
+		if (sample_query != 0)
+			ELglBeginQueryARB(GL_SAMPLES_PASSED_ARB, sample_query);
+		else
+			measure_preview_samples = false;
+	}
+
 	for (const auto& it: *im)
 	{
 		render_mesh_shader(a, act, it.first, it.second, use_glow);
+	}
+
+	if (measure_preview_samples)
+	{
+		GLuint samples = 0;
+		ELglEndQueryARB(GL_SAMPLES_PASSED_ARB);
+		ELglGetQueryObjectuivARB(sample_query, GL_QUERY_RESULT_ARB, &samples);
+		ELglDeleteQueriesARB(1, &sample_query);
+		preview_samples_logged[act->actor_type] = true;
+		LOG_INFO("Character preview textured draw samples: type=%d samples=%u drawables=%u texture=%u",
+			act->actor_type, (unsigned)samples, (unsigned)im->size(),
+			(unsigned)act->texture_id);
 	}
 }
 
