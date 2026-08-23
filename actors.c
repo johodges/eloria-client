@@ -1085,6 +1085,7 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 {
 	double x_pos,y_pos,z_pos;
 	float x_rot,y_rot,z_rot;
+	static unsigned char preview_texture_logged[MAX_ACTOR_DEFS] = { 0 };
 	//if first person, dont draw actor
 	if (actor_id->actor_id == yourself && first_person) return;
 	if (use_textures)
@@ -1094,6 +1095,15 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 			if (bind_actor_texture(actor_id->texture_id, &actor_id->has_alpha) == 0)
 			{
 				return;
+			}
+			if ((newchar_root_win >= 0) && (actor_id->actor_id == 0) &&
+				(actor_id->actor_type >= 0) && (actor_id->actor_type < MAX_ACTOR_DEFS) &&
+				!preview_texture_logged[actor_id->actor_type])
+			{
+				LOG_INFO("Character preview type %d texture handle %u bound; alpha=%d renderer=%s",
+					actor_id->actor_type, actor_id->texture_id, actor_id->has_alpha,
+					use_animation_program ? "GPU" : "CPU");
+				preview_texture_logged[actor_id->actor_type] = 1;
 			}
 		}
 		else
