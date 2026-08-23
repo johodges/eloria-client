@@ -65,6 +65,13 @@
       "description": "Original humanoid-enemy locomotion, combat, casting, reaction, and death clips"
     },
     {
+      "path": "actors/fantasy/*",
+      "source": "tools/generate_fantasy_archetypes.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Twelve independently modeled public-domain fantasy archetypes"
+    },
+    {
       "path": "3dobjects/scenery/*",
       "source": "tools/generate_scenery.py",
       "author": "Eloria project",
