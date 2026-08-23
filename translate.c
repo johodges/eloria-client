@@ -1707,12 +1707,12 @@ void init_help()
 	add_xml_identifier(new,"male",male_str,"Male",sizeof(male_str));
 	add_xml_identifier(new,"female",female_str,"Female",sizeof(female_str));
 	add_xml_identifier(new,"race",race_str,"Race",sizeof(race_str));
-	add_xml_identifier(new,"human",human_str,"Human",sizeof(human_str));
-	add_xml_identifier(new,"elf",elf_str,"Elf",sizeof(elf_str));
-	add_xml_identifier(new,"dwarf",dwarf_str,"Dwarf",sizeof(dwarf_str));
-	add_xml_identifier(new,"gnome",gnome_str,"Gnome",sizeof(gnome_str));
-	add_xml_identifier(new,"orchan",orchan_str,"Orchan",sizeof(orchan_str));
-	add_xml_identifier(new,"draegoni",draegoni_str,"Draegoni",sizeof(draegoni_str));
+	add_xml_identifier(new,"human",human_str,"Luminari",sizeof(human_str));
+	add_xml_identifier(new,"elf",elf_str,"Votari",sizeof(elf_str));
+	add_xml_identifier(new,"dwarf",dwarf_str,"Glasswardens",sizeof(dwarf_str));
+	add_xml_identifier(new,"gnome",gnome_str,"Orun",sizeof(gnome_str));
+	add_xml_identifier(new,"orchan",orchan_str,"Greyhaven",sizeof(orchan_str));
+	add_xml_identifier(new,"draegoni",draegoni_str,"Ssarathi",sizeof(draegoni_str));
 	add_xml_identifier(new,"confirm",confirm_password,"Confirm:",sizeof(confirm_password));
 	add_xml_identifier(new,"userlen",error_username_length,"Username MUST be at least 3 characters long!",sizeof(error_username_length));
 	add_xml_identifier(new,"passlen",error_password_length,"The password MUST be at least 4 characters long!",sizeof(error_password_length));
