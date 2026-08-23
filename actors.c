@@ -1,4 +1,5 @@
 #include <stdlib.h>
+/* Eloria modification 2026-08-22: 16-bit actor packets and sparse attachments. */
 #include <math.h>
 #include <string.h>
 #include <SDL.h>
@@ -55,6 +56,49 @@ typedef struct {
 actor_types actors_defs[MAX_ACTOR_DEFS];
 
 attached_actors_types attached_actors_defs[MAX_ACTOR_DEFS];
+
+attachment_props *get_attachment_props(int actor_type, int other_type, int create)
+{
+	attachment_entry *entry;
+	int i;
+	if (actor_type < 0 || actor_type >= MAX_ACTOR_DEFS || other_type < 0 || other_type >= MAX_ACTOR_DEFS)
+		return NULL;
+	for (entry = attached_actors_defs[actor_type].entries; entry; entry = entry->next)
+		if (entry->actor_type == other_type)
+			return &entry->props;
+	if (!create)
+		return NULL;
+	entry = calloc(1, sizeof(*entry));
+	if (!entry)
+		return NULL;
+	entry->actor_type = other_type;
+	for (i = 0; i < NUM_ATTACHED_ACTOR_FRAMES; ++i)
+	{
+		entry->props.cal_frames[i].anim_index = -1;
+#ifdef NEW_SOUND
+		entry->props.cal_frames[i].sound = -1;
+#endif
+	}
+	entry->next = attached_actors_defs[actor_type].entries;
+	attached_actors_defs[actor_type].entries = entry;
+	return &entry->props;
+}
+
+void free_attachment_defs(void)
+{
+	int i;
+	for (i = 0; i < MAX_ACTOR_DEFS; ++i)
+	{
+		attachment_entry *entry = attached_actors_defs[i].entries;
+		while (entry)
+		{
+			attachment_entry *next = entry->next;
+			free(entry);
+			entry = next;
+		}
+		attached_actors_defs[i].entries = NULL;
+	}
+}
 
 static void draw_actor_overtext(actor* actor_ptr, const actor *me, double x, double y, double z); /* forward declaration */
 
@@ -246,10 +290,13 @@ actor* create_actor_attachment(actor* parent, int attachment_type)
 	attached->stop_animation=1;//helps when the actor is dead...
 	attached->kind_of_actor=0;
 
-	if (attached_actors_defs[attachment_type].actor_type[parent->actor_type].is_holder)
+	{
+		attachment_props *props = get_attachment_props(attachment_type, parent->actor_type, 0);
+		if (props && props->is_holder)
 		attached->step_duration = actors_defs[attachment_type].step_duration;
-	else
+		else
 		attached->step_duration = parent->step_duration;
+	}
 
 	if (attached->buffs & BUFF_DOUBLE_SPEED)
 		attached->step_duration /= 2;
@@ -1206,8 +1253,8 @@ static void check_actor_in_range(actor *act, actor *attached, void* data,
 		float att_scale = get_actor_scale(attached);
 		if (is_horse(act)) // we are on a attached actor
 		{
-			att_props = &attached_actors_defs[act->actor_type].actor_type[attached->actor_type];
-			if (!att_props->is_holder) // the attachment is not a holder so we have to move it
+			att_props = get_attachment_props(act->actor_type, attached->actor_type, 0);
+			if (att_props && !att_props->is_holder) // the attachment is not a holder so we have to move it
 			{
 				cal_get_actor_bone_local_position(attached, att_props->parent_bone_id, NULL, att_pos);
 				cal_get_actor_bone_local_position(act, att_props->local_bone_id, NULL, loc_pos);
@@ -1218,8 +1265,8 @@ static void check_actor_in_range(actor *act, actor *attached, void* data,
 		}
 		else // we are on a standard actor
 		{
-			att_props = &attached_actors_defs[attached->actor_type].actor_type[act->actor_type];
-			if (att_props->is_holder) // the attachment is an holder, we have to move the current actor
+			att_props = get_attachment_props(attached->actor_type, act->actor_type, 0);
+			if (att_props && att_props->is_holder) // the attachment is an holder, we have to move the current actor
 			{
 				cal_get_actor_bone_local_position(attached, att_props->local_bone_id, NULL, att_pos);
 				cal_get_actor_bone_local_position(act, att_props->parent_bone_id, NULL, loc_pos);
@@ -1591,7 +1638,7 @@ CHECK_GL_ERRORS();
 }
 
 
-void add_actor_from_server (const char *in_data, int len)
+static void add_actor_from_server_internal (const char *in_data, int len, int extended_type)
 {
 	short actor_id;
 	Uint32 buffs = 0;
@@ -1609,6 +1656,7 @@ void add_actor_from_server (const char *in_data, int len)
 	float scale= 1.0f;
 	emote_data *pose=NULL;
 	int attachment_type = -1;
+	int name_offset = extended_type ? 18 : 17;
 
 	actor* actor, *attached;
 
@@ -1624,17 +1672,17 @@ void add_actor_from_server (const char *in_data, int len)
 #endif //EL_BIG_ENDIAN
 	buffs |= (SDL_SwapLE16(*((short *)(in_data+6))) & 0xFF80) << 3; // we get the 9 MSB for the buffs and leave the 7 LSB for a further use
 	z_rot=SDL_SwapLE16(*((short *)(in_data+8)));
-	actor_type=*(in_data+10);
+	actor_type = extended_type ? SDL_SwapLE16(*((Uint16 *)(in_data+10))) : (Uint8)in_data[10];
 
-	frame=*(in_data+11);
-	max_health=SDL_SwapLE16(*((short *)(in_data+12)));
-	cur_health=SDL_SwapLE16(*((short *)(in_data+14)));
-	kind_of_actor=*(in_data+16);
-	if(len > 17+(int)strlen(in_data+17)+2){
-		scale=((float)SDL_SwapLE16(*((short *)(in_data+17+strlen(in_data+17)+1)))/((float)ACTOR_SCALE_BASE));
+	frame=(Uint8)in_data[extended_type ? 12 : 11];
+	max_health=SDL_SwapLE16(*((short *)(in_data+(extended_type ? 13 : 12))));
+	cur_health=SDL_SwapLE16(*((short *)(in_data+(extended_type ? 15 : 14))));
+	kind_of_actor=(Uint8)in_data[extended_type ? 17 : 16];
+	if(len > name_offset+(int)strlen(in_data+name_offset)+2){
+		scale=((float)SDL_SwapLE16(*((short *)(in_data+name_offset+strlen(in_data+name_offset)+1)))/((float)ACTOR_SCALE_BASE));
 
-		if(len > 17+(int)strlen(in_data+17)+3)
-			attachment_type = (unsigned char)in_data[17+strlen(in_data+17)+3];
+		if(len > name_offset+(int)strlen(in_data+name_offset)+3)
+			attachment_type = (unsigned char)in_data[name_offset+strlen(in_data+name_offset)+3];
 	}
 
 	if(actor_type < 0 || actor_type >= MAX_ACTOR_DEFS || (actor_type > 0 && actors_defs[actor_type].actor_type != actor_type) ){
@@ -1696,7 +1744,7 @@ void add_actor_from_server (const char *in_data, int len)
 			break;
 		}
 
-			LOG_ERROR("%s %d - %s\n", unknown_frame, frame, &in_data[17]);
+			LOG_ERROR("%s %d - %s\n", unknown_frame, frame, &in_data[name_offset]);
 		}
 	}
 
@@ -1762,11 +1810,11 @@ void add_actor_from_server (const char *in_data, int len)
 	actor->dead=dead;
 	actor->stop_animation=1;//helps when the actor is dead...
 	actor->kind_of_actor=kind_of_actor;
-	if(strlen(&in_data[17]) >= 30)
+	if(strlen(&in_data[name_offset]) >= 30)
 		{
-			LOG_ERROR("%s (%d): %s/%d\n", bad_actor_name_length, actor->actor_type,&in_data[17], (int)strlen(&in_data[17]));
+			LOG_ERROR("%s (%d): %s/%d\n", bad_actor_name_length, actor->actor_type,&in_data[name_offset], (int)strlen(&in_data[name_offset]));
 		}
-	safe_strncpy(actor->actor_name, &in_data[17], 30);
+	safe_strncpy(actor->actor_name, &in_data[name_offset], 30);
 
 	if (attachment_type >= 0)
 		attached = create_actor_attachment(actor, attachment_type);
@@ -1817,6 +1865,16 @@ void add_actor_from_server (const char *in_data, int len)
 	ERR();
 #endif
 
+}
+
+void add_actor_from_server (const char *in_data, int len)
+{
+	add_actor_from_server_internal(in_data, len, 0);
+}
+
+void add_actor_from_server_extended (const char *in_data, int len)
+{
+	add_actor_from_server_internal(in_data, len, 1);
 }
 
 //--- LoganDugenoux [5/25/2004]
