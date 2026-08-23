@@ -63,6 +63,8 @@ extern el_key_def K_LOOK;               /*!< key used to switch to look cursor *
 extern el_key_def K_USE;                /*!< key used to switch to use cursor */
 extern el_key_def K_OPTIONS;            /*!< key used to toggle display of \ref options_window */
 extern el_key_def K_REPEATSPELL;        /*!< key used to repeat the last spell used */
+extern el_key_def K_SPELLPOWERUP;       /*!< key used to increase selected spell power */
+extern el_key_def K_SPELLPOWERDOWN;     /*!< key used to decrease selected spell power */
 extern el_key_def K_SIGILS;             /*!< key used to toggle display of \ref spells_window */
 extern el_key_def K_MANUFACTURE;        /*!< key used to toggle display of \ref manufacture_window */
 extern el_key_def K_ITEMS;              /*!< key used to toggle display of \ref items_window */
