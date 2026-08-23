@@ -1,3 +1,4 @@
+/* Eloria modification, 2026-08-23: spell-power hotkey handling. */
 #include <stdlib.h>
 #include <string.h>
 #include <SDL_keycode.h>
