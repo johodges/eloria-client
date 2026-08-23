@@ -39,7 +39,7 @@ def e3d_fallback(path):
  e3d(path,"badobject.png",cube);png(path.with_suffix('.png'),32,32,lambda x,y:(210,55,55,255))
 def main():
  p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output)
- for name in ("font","fontv"):
+ for name in ("font","fontv","font2","font3","font5","font6","font7"):
   png(root/f"textures/{name}.png",256,256,font_pixel);bmp(root/f"textures/{name}.bmp",256,256,font_pixel)
   dds(root/f"textures/{name}.dds",256,256,font_pixel)
  for name in ("cursors","cursors2"):
@@ -54,12 +54,22 @@ def main():
   dds(root/f"textures/{name}.dds",512,512,sky)
  dds(root/"textures/moonmap.dds",512,512,moon);dds(root/"textures/BrightSun.dds",512,512,sun)
  dds(root/"textures/portraits1.dds",512,512,portrait)
+ bmp(root/"icon.bmp",32,32,cursor)
  dds(root/"maps/legend.dds",512,512,panel)
  e3d_fallback(root/"3dobjects/badobject.e3d");e3d_fallback(root/"3dobjects/bag1.e3d");e3d_fallback(root/"3dobjects/portal1.e3d")
  make_map(root/"maps/nomap.elm",placements=[]);make_map(root/"maps/newcharactermap.elm",placements=[])
- stubs={"el.ini":"# Eloria client settings; defaults are used until changed in the client.\n","named_colours.xml":"<named_colours/>\n","mines.xml":"<mines/>\n","emotes.xml":"<emotes/>\n","spells.xml":"<spells/>\n","weather.xml":"<weather/>\n","knowledge.xml":"<knowledge/>\n","commands.lst":"# Eloria commands\n","knowledge.lst":"# Eloria knowledge\n","servers.lst":"main main 127.0.0.1 2000\n","mapinfo.lst":"emberhaven|Emberhaven|maps/emberhaven.elm\n","continfo.lst":"Nymara|maps/legend.dds\n"}
+ stubs={"el.ini":"","named_colours.xml":"<named_colours/>\n","mines.xml":"<mines/>\n","emotes.xml":"<emotes/>\n","spells.xml":"<spells/>\n","weather.xml":"<weather/>\n","knowledge.xml":"<knowledge/>\n","commands.lst":"# Eloria commands\n","knowledge.lst":"# Eloria knowledge\n","servers.lst":"main main 127.0.0.1 2000\n","mapinfo.lst":"emberhaven|Emberhaven|maps/emberhaven.elm\n","continfo.lst":"Nymara|maps/legend.dds\n"}
  for name,text in stubs.items():(root/name).write_text(text)
  write_text(root/"languages/langsel.xml",'<LANGUAGE_LIST><LANG CODE="en" TEXT="English" SAVE="1" DEFAULT="1"/></LANGUAGE_LIST>\n')
+ write_text(root/"languages/en/knowledge.lst","")
+ shader_dir=root/"shaders";shader_dir.mkdir(parents=True,exist_ok=True)
+ legacy_fragment="void main(){ gl_FragColor=gl_Color; }\n"
+ compat_vertex="#version 120\nvoid main(){ gl_Position=ftransform(); gl_FrontColor=gl_Color; gl_TexCoord[0]=gl_MultiTexCoord0; }\n"
+ modern_vertex="in vec4 el_vertex;\nvoid main(){ gl_Position=el_vertex; }\n"
+ modern_fragment="out vec4 eloria_colour;\nvoid main(){ eloria_colour=vec4(0.18,0.42,0.58,0.82); }\n"
+ for name in ("water_fs.glsl","reflectiv_water_fs.glsl"):write_text(shader_dir/name,legacy_fragment)
+ for name in ("anim.vert","anim_depth.vert","anim_shadow.vert","anim_ghost.vert","anim_ghost_shadow.vert"):write_text(shader_dir/name,compat_vertex)
+ write_text(shader_dir/"new_water.vert",modern_vertex);write_text(shader_dir/"new_water.frag",modern_fragment)
  write_text(root/"languages/en/rules.xml",'''<rules>
  <title>Eloria Community Rules</title>
  <rule><short>Respect other players.</short><long>Harassment, threats, impersonation, and targeted abuse are not permitted.</long></rule>
