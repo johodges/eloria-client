@@ -87,6 +87,7 @@ int cal_load_weapon_mesh (actor_types *act, const char *fn, const char *kind);
 int cal_load_mesh(actor_types *act, const char *fn, const char *kind);
 static void unqueue_cmd(actor *act);
 #ifdef NEW_SOUND
+/* Eloria modification 2026-08-22: sparse actor attachment definitions. */
 int parse_actor_sounds(actor_types *act, const xmlNode *cfg);
 #endif	//NEW_SOUND
 
@@ -101,13 +102,16 @@ static int thecount=0;
 
 static inline int is_actor_held(const actor *act, const actor *attached)
 {
+	attachment_props *props;
 	if (!attached)
 		return 0;
-    return ((act->actor_id >= HORSE_ID_OFFSET // the actor is the attachment
-				&& !attached_actors_defs[act->actor_type].actor_type[attached->actor_type].is_holder)
-			|| (act->actor_id < HORSE_ID_OFFSET // the actor is the parent of the attachment
-				&& attached_actors_defs[attached->actor_type].actor_type[act->actor_type].is_holder)
-			);
+	if (act->actor_id >= HORSE_ID_OFFSET)
+	{
+		props = get_attachment_props(act->actor_type, attached->actor_type, 0);
+		return props && !props->is_holder;
+	}
+	props = get_attachment_props(attached->actor_type, act->actor_type, 0);
+	return props && props->is_holder;
 }
 
 static inline int is_actor_barehanded(actor *act, int hand){
@@ -4147,18 +4151,18 @@ int parse_actor_attachment (actor_types *act, const xmlNode *cfg, int actor_type
 {
 	const xmlNode *item;
 	int ok = 1;
-	attached_actors_types *att = &attached_actors_defs[act->actor_type];
+	attachment_props *props = get_attachment_props(act->actor_type, actor_type, 1);
 	actor_types *held_act = NULL;
 	char str[256];
 	struct CalCoreSkeleton *skel;
 
-	if (cfg == NULL || cfg->children == NULL) return 0;
+	if (cfg == NULL || cfg->children == NULL || props == NULL) return 0;
 
 	for (item = cfg->children; item; item = item->next) {
 		if (item->type == XML_ELEMENT_NODE) {
 			if (xmlStrcasecmp (item->name, (xmlChar*)"holder") == 0) {
-				att->actor_type[actor_type].is_holder = get_bool_value(item);
-				if (att->actor_type[actor_type].is_holder)
+				props->is_holder = get_bool_value(item);
+				if (props->is_holder)
 					held_act = &actors_defs[actor_type];
 				else
 					held_act = act;
@@ -4166,8 +4170,8 @@ int parse_actor_attachment (actor_types *act, const xmlNode *cfg, int actor_type
 				get_string_value (str, sizeof (str), item);
 				skel = CalCoreModel_GetCoreSkeleton(actors_defs[actor_type].coremodel);
 				if (skel) {
-					att->actor_type[actor_type].parent_bone_id = find_core_bone_id(skel, str);
-					if (att->actor_type[actor_type].parent_bone_id < 0) {
+					props->parent_bone_id = find_core_bone_id(skel, str);
+					if (props->parent_bone_id < 0) {
 						LOG_ERROR("bone %s was not found in skeleton of actor type %d", str, actor_type);
 						ok = 0;
 					}
@@ -4180,8 +4184,8 @@ int parse_actor_attachment (actor_types *act, const xmlNode *cfg, int actor_type
 				get_string_value (str, sizeof (str), item);
 				skel = CalCoreModel_GetCoreSkeleton(act->coremodel);
 				if (skel) {
-					att->actor_type[actor_type].local_bone_id = find_core_bone_id(skel, str);
-					if (att->actor_type[actor_type].local_bone_id < 0) {
+					props->local_bone_id = find_core_bone_id(skel, str);
+					if (props->local_bone_id < 0) {
 						LOG_ERROR("bone %s was not found in skeleton of actor type %d", str, act->actor_type);
 						ok = 0;
 					}
@@ -4196,11 +4200,11 @@ int parse_actor_attachment (actor_types *act, const xmlNode *cfg, int actor_type
 					if (attr->type == XML_ATTRIBUTE_NODE)
 					{
 						if (xmlStrcasecmp (attr->name, (xmlChar*)"x") == 0)
-							att->actor_type[actor_type].shift[0] = atof((char*)attr->children->content);
+							props->shift[0] = atof((char*)attr->children->content);
 						else if (xmlStrcasecmp (attr->name, (xmlChar*)"y") == 0)
-							att->actor_type[actor_type].shift[1] = atof((char*)attr->children->content);
+							props->shift[1] = atof((char*)attr->children->content);
 						else if (xmlStrcasecmp (attr->name, (xmlChar*)"z") == 0)
-							att->actor_type[actor_type].shift[2] = atof((char*)attr->children->content);
+							props->shift[2] = atof((char*)attr->children->content);
 						else {
 							LOG_ERROR("unknown attachment shift attribute \"%s\"", attr->name);
 							ok = 0;
@@ -4208,7 +4212,7 @@ int parse_actor_attachment (actor_types *act, const xmlNode *cfg, int actor_type
 					}
 			} else if (xmlStrcasecmp (item->name, (xmlChar*)"CAL_held_walk") == 0) {
 				get_string_value (str, sizeof(str), item);
-     			att->actor_type[actor_type].cal_frames[cal_attached_walk_frame] = cal_load_anim(held_act, str
+				props->cal_frames[cal_attached_walk_frame] = cal_load_anim(held_act, str
 #ifdef NEW_SOUND
 					, get_string_property(item, "sound")
 					, get_string_property(item, "sound_scale")
@@ -4217,7 +4221,7 @@ int parse_actor_attachment (actor_types *act, const xmlNode *cfg, int actor_type
 					);
 			} else if (xmlStrcasecmp (item->name, (xmlChar*)"CAL_held_run") == 0) {
 				get_string_value (str, sizeof(str), item);
-     			att->actor_type[actor_type].cal_frames[cal_attached_run_frame] = cal_load_anim(held_act, str
+				props->cal_frames[cal_attached_run_frame] = cal_load_anim(held_act, str
 #ifdef NEW_SOUND
 					, get_string_property(item, "sound")
 					, get_string_property(item, "sound_scale")
@@ -4226,7 +4230,7 @@ int parse_actor_attachment (actor_types *act, const xmlNode *cfg, int actor_type
 					);
 			} else if (xmlStrcasecmp (item->name, (xmlChar*)"CAL_held_idle") == 0) {
 				get_string_value (str,sizeof(str),item);
-     			att->actor_type[actor_type].cal_frames[cal_attached_idle_frame] = cal_load_anim(held_act, str
+				props->cal_frames[cal_attached_idle_frame] = cal_load_anim(held_act, str
 #ifdef NEW_SOUND
 					, get_string_property(item, "sound")
 					, get_string_property(item, "sound_scale")
@@ -4235,7 +4239,7 @@ int parse_actor_attachment (actor_types *act, const xmlNode *cfg, int actor_type
 					);
 			} else if (xmlStrcasecmp (item->name, (xmlChar*)"CAL_held_pain") == 0) {
 				get_string_value (str,sizeof(str),item);
-     			att->actor_type[actor_type].cal_frames[cal_attached_pain_frame] = cal_load_anim(held_act, str
+				props->cal_frames[cal_attached_pain_frame] = cal_load_anim(held_act, str
 #ifdef NEW_SOUND
 					, get_string_property(item, "sound")
 					, get_string_property(item, "sound_scale")
@@ -4244,7 +4248,7 @@ int parse_actor_attachment (actor_types *act, const xmlNode *cfg, int actor_type
 					);
 			} else if (xmlStrcasecmp (item->name, (xmlChar*)"CAL_held_armed_pain") == 0) {
 				get_string_value (str,sizeof(str),item);
-     			att->actor_type[actor_type].cal_frames[cal_attached_pain_armed_frame] = cal_load_anim(held_act, str
+				props->cal_frames[cal_attached_pain_armed_frame] = cal_load_anim(held_act, str
 #ifdef NEW_SOUND
 					, get_string_property(item, "sound")
 					, get_string_property(item, "sound_scale")
@@ -4620,16 +4624,6 @@ int parse_actor_script(const xmlNode *cfg)
 	act->battlecry.sound = -1;
 #endif // NEW_SOUND
 
-	for (i = 0; i < MAX_ACTOR_DEFS; ++i)
-	{
-		for (j = 0; j < NUM_ATTACHED_ACTOR_FRAMES; j++) {
-			attached_actors_defs[act_idx].actor_type[i].cal_frames[j].anim_index = -1;
-#ifdef NEW_SOUND
-			attached_actors_defs[act_idx].actor_type[i].cal_frames[j].sound = -1;
-#endif // NEW_SOUND
-		}
-	}
-
 	act->step_duration = DEFAULT_STEP_DURATION; // default value
 
 	ok= parse_actor_nodes(act, cfg, NULL);
@@ -4948,6 +4942,7 @@ void init_actor_defs()
 void free_actor_defs()
 {
 	int i;
+	free_attachment_defs();
 	for (i=0; i<MAX_ACTOR_DEFS; i++)
 	{
 		if (actors_defs[i].head)
