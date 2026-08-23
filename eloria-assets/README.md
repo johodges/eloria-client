@@ -9,6 +9,7 @@ Generate the bootstrap pack with:
 ```bash
 python3 eloria-assets/tools/generate_bootstrap_pack.py
 python3 eloria-assets/tools/generate_characters.py
+python3 eloria-assets/tools/generate_creatures.py
 python3 eloria-assets/tools/generate_scenery.py
 python3 eloria-assets/tools/generate_regions.py
 python3 eloria-assets/tools/check_provenance.py
@@ -21,6 +22,11 @@ to bind harvesting rules to exactly the models placed in each generated map.
 The character generator produces an original low-poly humanoid, fourteen-bone
 skeleton, four actor definitions, and idle, walk, run, attack, pain, death,
 harvest, and sitting animations in Cal3D XML source formats.
+
+The creature generator produces four animals and four monsters with original
+silhouettes, textures, a thirteen-bone quadruped rig, and shared idle, walk,
+run, attack, pain, and death animation clips. Actor IDs 200-207 are reserved
+for this independent creature set.
 
 The scenery generator produces 43 native E3D assets: general scenery, nine
 modular architecture pieces, ten biome-specific objects, and seventeen
