@@ -38,12 +38,13 @@ def ground(x: int, y: int) -> tuple[int, int, int, int]:
 
 def panel(x: int, y: int) -> tuple[int, int, int, int]:
     border = x < 5 or y < 5 or x >= 507 or y >= 507
-    grid = x % 64 < 2 or y % 64 < 2
     if border:
         return 202, 125, 54, 255
-    if grid:
-        return 77, 60, 47, 255
-    return 35, 43, 42, 255
+    # Keep missing-artwork fallbacks unobtrusive.  The old 64-pixel grid was
+    # useful while bootstrapping the data pack, but leaked into rules and
+    # character-creation screens whenever these generic textures were used.
+    grain = ((x * 11 + y * 17 + (x ^ y) * 3) % 7) - 3
+    return 35 + grain, 43 + grain, 42 + grain, 255
 
 
 def make_map(path: Path, width: int = 32, height: int = 32, *,

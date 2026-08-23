@@ -199,7 +199,8 @@ def append_actor_defs(path):
         ET.SubElement(actor, "step_duration").text = "240"
         frame_root = ET.SubElement(actor, "frames")
         for tag, filename in frames.items():
-            ET.SubElement(frame_root, tag).text = f"animations/creatures/{filename}"
+            kind = 0 if tag in ("CAL_walk", "CAL_run", "CAL_idle", "CAL_idle2", "CAL_combat_idle") else 1
+            ET.SubElement(frame_root, tag).text = f"animations/creatures/{filename} {kind}"
     path.write_text('<?xml version="1.0"?>\n' + ET.tostring(root, encoding="unicode") + "\n",
                     encoding="utf-8")
 

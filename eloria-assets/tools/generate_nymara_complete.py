@@ -95,7 +95,9 @@ def append_actor(root, aid, label, family, skel, mesh, skin, anim_dir, radius, s
  frames=ET.SubElement(a,"frames")
  mapping={"CAL_idle":"idle.xaf","CAL_idle2":"idle2.xaf","CAL_walk":"walk.xaf","CAL_run":"run.xaf","CAL_idle_sit":"sit.xaf","CAL_sit_down":"sit_down.xaf","CAL_stand_up":"stand_up.xaf","CAL_combat_idle":"combat_idle.xaf","CAL_attack_up_1":"attack.xaf","CAL_attack_down_1":"attack.xaf","CAL_attack_cast":"cast.xaf","CAL_pain1":"pain.xaf","CAL_pain2":"pain.xaf","CAL_die1":"die.xaf","CAL_die2":"die.xaf","CAL_harvest":"harvest.xaf","CAL_pick":"pick.xaf","CAL_drop":"drop.xaf"}
  if special: mapping["CAL_attack_up_2"]="special.xaf"
- for tag,f in mapping.items(): ET.SubElement(frames,tag).text=f"{anim_dir}/{f}"
+ for tag,f in mapping.items():
+  kind=0 if tag in ("CAL_idle","CAL_idle2","CAL_walk","CAL_run","CAL_idle_sit","CAL_combat_idle") else 1
+  ET.SubElement(frames,tag).text=f"{anim_dir}/{f} {kind}"
 
 def copy_aliases(root, srcdir, names):
  for name,src in names.items():

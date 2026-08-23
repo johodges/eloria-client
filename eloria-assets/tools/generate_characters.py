@@ -155,7 +155,9 @@ def actor_defs(path):
         for tag in ("neck","helmet","cape","shield"):
             part=ET.SubElement(a,tag,id="0");ET.SubElement(part,"mesh").text="actors/eloria_none.xmf";ET.SubElement(part,"skin").text="actors/eloria_humanoid.png"
         frames=ET.SubElement(a,"frames")
-        for tag,name in files.items(): ET.SubElement(frames,tag).text=f"animations/eloria/{name}"
+        for tag,name in files.items():
+            kind=0 if tag in ("CAL_walk","CAL_run","CAL_idle","CAL_idle2","CAL_idle_sit","CAL_combat_idle") else 1
+            ET.SubElement(frames,tag).text=f"animations/eloria/{name} {kind}"
     path.parent.mkdir(parents=True,exist_ok=True); path.write_text('<?xml version="1.0"?>\n'+ET.tostring(root,encoding="unicode")+'\n')
 
 def main():

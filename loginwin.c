@@ -561,7 +561,8 @@ static int click_login_handler (window_info *win, int mx, int my, Uint32 flags)
 		passmngr_destroy_window();
 		if (last_display == -1)
 		{
-			create_rules_root_window (win->len_x, win->len_y, newchar_root_win, 15);
+			/* Short delay while the independent character pipeline is being debugged. */
+			create_rules_root_window (win->len_x, win->len_y, newchar_root_win, 1);
 			show_window (rules_root_win);
 		}
 		else

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -27,6 +28,14 @@ def validate_cal3d(root: Path) -> None:
     if stale:
         raise RuntimeError("stale Cal3D skeleton metadata: " +
                            ", ".join(str(path) for path in stale))
+    bad_magic = [path for path in skeletons if b'MAGIC="XSF"' not in path.read_bytes()]
+    if bad_magic:
+        raise RuntimeError("invalid Cal3D skeleton magic: " +
+                           ", ".join(str(path) for path in bad_magic))
+    actor_defs = root / "actor_defs/actor_defs.xml"
+    for value in re.findall(r"<CAL_[^>]+>([^<]+)</CAL_", actor_defs.read_text(encoding="utf-8")):
+        if not re.search(r" [01]$", value):
+            raise RuntimeError(f"animation entry lacks cycle/action mode: {value}")
 
 
 def main() -> None:
