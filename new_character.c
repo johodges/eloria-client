@@ -16,6 +16,7 @@
 #include "cursors.h"
 #include "draw_scene.h"
 #include "elconfig.h"
+#include "errors.h"
 #include "events.h"
 #include "gamewin.h"
 #include "gl_init.h"
