@@ -850,6 +850,7 @@ typedef enum
 #define ELORIA_COMBAT_STATE 227
 #define ELORIA_NAVIGATION_STATE 230
 #define ELORIA_MAIL_STATE 229
+#define ELORIA_SPECIAL_EVENT_STATE 232
 
 #define UPGRADE_NEW_VERSION 240	// TODO: Consider combining all this into one packet followed by one byte (plus optional text)
 #define UPGRADE_TOO_OLD 241
