@@ -62,6 +62,6 @@ jobs:
               assert lines[0].startswith("<HEADER MAGIC=")
               ET.fromstring("\n".join(lines[1:]))
           actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
-          assert len(actors.findall("actor")) == 4
+          assert len(actors.findall("actor")) == 6
           assert len(list(root.glob("animations/eloria/*.xaf"))) == 8
           PY
