@@ -46,6 +46,7 @@
 #include "ext_protocol_shared.h"
 #endif // PACKET_COMPRESSION
 #include "questlog.h"
+#include "marketplace.h"
 #include "queue.h"
 #include "rules.h"
 #include "serverpopup.h"
@@ -986,7 +987,7 @@ void process_message_from_server (const Uint8 *in_data, int data_length)
 				// server keeps legacy packet/dialogue fallbacks for clients that do
 				// not send this private capability message.
 				safe_snprintf(str, sizeof(str),
-					"%c#clientcaps actor16_v1,magic_power_v1,market_dialog_v1,offline_notifications_v1",
+					"%c#clientcaps actor16_v1,magic_power_v1,market_window_v1,offline_notifications_v1",
 					RAW_TEXT);
 				my_tcp_send((Uint8*)str, strlen(str+1)+1);
 				break;
@@ -2345,6 +2346,12 @@ void process_message_from_server (const Uint8 *in_data, int data_length)
 			load_map_marks();//load again, so the new marker is removed correctly.
 			break;
 			}
+		case ELORIA_MARKETPLACE_STATE:
+			if (data_length >= 14)
+				marketplace_update(in_data + 3, data_length - 3);
+			else
+				LOG_WARNING("Invalid Eloria marketplace packet.\n");
+			break;
 		case NEXT_NPC_MESSAGE_IS_QUEST:
 			{
 				if (data_length <= 4)
