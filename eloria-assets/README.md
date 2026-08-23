@@ -10,13 +10,13 @@ Generate the bootstrap pack with:
 python3 eloria-assets/tools/generate_bootstrap_pack.py
 python3 eloria-assets/tools/generate_characters.py
 python3 eloria-assets/tools/generate_scenery.py
+python3 eloria-assets/tools/generate_regions.py
 python3 eloria-assets/tools/check_provenance.py
 ```
 
-The first milestone intentionally generates a small, object-free island named
-Emberhaven and placeholder UI sheets. It establishes a legally independent,
-reproducible baseline; character models, production UI sheets, sounds, and
-scenery still require original implementations before a public binary release.
+The bootstrap includes Emberhaven plus five original biome regions. Region maps
+carry native ELM object IDs and emit `regions_eloria.json`, allowing the server
+to bind harvesting rules to exactly the models placed in each generated map.
 
 The character generator produces an original low-poly humanoid, fourteen-bone
 skeleton, four actor definitions, and idle, walk, run, attack, pain, death,
@@ -26,3 +26,6 @@ The scenery generator produces 43 native E3D assets: general scenery, nine
 modular architecture pieces, ten biome-specific objects, and seventeen
 original harvestables. Real-world resource names are used only with original
 geometry, textures, placement, descriptions, and future balance data.
+
+The region generator adds desert, snow, swamp, tropical, and volcanic maps,
+each with a small modular landmark and four biome-appropriate resource nodes.
