@@ -45,13 +45,17 @@ def cuboid(center,size,bone,vertices,faces):
         for uv,corner in zip(((0,0),(1,0),(1,1),(0,1)),quad): vertices.append((corners[corner],normal,uv,bone))
         faces.extend(((base,base+1,base+2),(base,base+2,base+3)))
 
-def mesh(path):
+def mesh(path, section="all"):
     vertices=[]; faces=[]
     parts=(((0,0,1.25),(.52,.30,.66),2),((0,0,1.78),(.34,.32,.38),3),
       ((-.48,0,1.42),(.42,.20,.20),4),((-.78,0,1.42),(.34,.17,.17),5),((.48,0,1.42),(.42,.20,.20),6),((.78,0,1.42),(.34,.17,.17),7),
       ((-.15,0,.68),(.22,.26,.54),8),((-.15,0,.22),(.20,.23,.48),9),((-.15,.09,-.03),(.22,.42,.14),10),
       ((.15,0,.68),(.22,.26,.54),11),((.15,0,.22),(.20,.23,.48),12),((.15,.09,-.03),(.22,.42,.14),13))
-    for p in parts: cuboid(*p,vertices,faces)
+    sections={"head":(1,),"shirt":(0,2,3,4,5),"legs":(6,7,9,10),"boots":(8,11),"none":()}
+    chosen=range(len(parts)) if section=="all" else sections[section]
+    for i in chosen: cuboid(*parts[i],vertices,faces)
+    if not vertices:
+        cuboid((0,0,-100),(.001,.001,.001),0,vertices,faces)
     root=ET.Element("MESH",NUMSUBMESH="1"); sub=ET.SubElement(root,"SUBMESH",NUMVERTICES=str(len(vertices)),NUMFACES=str(len(faces)),MATERIAL="0",NUMLODSTEPS="0",NUMSPRINGS="0",NUMTEXCOORDS="1")
     for i,(pos,norm,uv,bone) in enumerate(vertices):
         v=ET.SubElement(sub,"VERTEX",ID=str(i),NUMINFLUENCES="1")
@@ -71,9 +75,22 @@ def animation(path,duration,poses):
 def actor_defs(path):
     files={"CAL_walk":"walk.xaf","CAL_run":"run.xaf","CAL_idle":"idle.xaf","CAL_idle2":"idle.xaf","CAL_combat_idle":"idle.xaf","CAL_attack_up_1":"attack.xaf","CAL_attack_down_1":"attack.xaf","CAL_pain1":"pain.xaf","CAL_pain2":"pain.xaf","CAL_die1":"die.xaf","CAL_die2":"die.xaf","CAL_harvest":"harvest.xaf","CAL_pick":"harvest.xaf","CAL_drop":"harvest.xaf","CAL_idle_sit":"sit.xaf","CAL_sit_down":"sit.xaf","CAL_stand_up":"idle.xaf"}
     root=ET.Element("actors")
-    for aid,label in ((0,"Wanderer"),(1,"Wayfarer"),(2,"Sylvan"),(3,"Stonekin")):
+    player_types=((0,"Luminari Woman"),(1,"Luminari Man"),(2,"Votari Woman"),(3,"Votari Man"),
+      (4,"Glasswarden Woman"),(5,"Glasswarden Man"),(37,"Orun Woman"),(38,"Orun Man"),
+      (39,"Greyhaven Woman"),(40,"Greyhaven Man"),(41,"Ssarathi Woman"),(42,"Ssarathi Man"))
+    for aid,label in player_types:
         a=ET.SubElement(root,"actor",id=str(aid),type=f"Eloria {label}")
-        ET.SubElement(a,"skeleton").text="actors/eloria_humanoid.xsf"; ET.SubElement(a,"mesh").text="actors/eloria_humanoid.xmf"; ET.SubElement(a,"skin").text="actors/eloria_humanoid.png"; ET.SubElement(a,"step_duration").text="250"
+        ET.SubElement(a,"skeleton").text="actors/eloria_humanoid.xsf"; ET.SubElement(a,"step_duration").text="250"
+        shirt=ET.SubElement(a,"shirt",id="0")
+        for tag,value in (("arms","actors/eloria_humanoid.png"),("torso","actors/eloria_humanoid.png"),("mesh","actors/eloria_shirt.xmf")):ET.SubElement(shirt,tag).text=value
+        skin=ET.SubElement(a,"hskin",id="0")
+        for tag in ("hands","head","torso","arms","legs","feet"):ET.SubElement(skin,tag).text="actors/eloria_humanoid.png"
+        ET.SubElement(a,"hair",id="0").text="actors/eloria_humanoid.png";ET.SubElement(a,"eyes",id="0").text="actors/eloria_humanoid.png"
+        legs=ET.SubElement(a,"legs",id="0");ET.SubElement(legs,"skin").text="actors/eloria_humanoid.png";ET.SubElement(legs,"mesh").text="actors/eloria_legs.xmf"
+        boots=ET.SubElement(a,"boots",id="0");ET.SubElement(boots,"skin").text="actors/eloria_humanoid.png";ET.SubElement(boots,"mesh").text="actors/eloria_boots.xmf"
+        head=ET.SubElement(a,"head",id="0");ET.SubElement(head,"mesh").text="actors/eloria_head.xmf"
+        for tag in ("neck","helmet","cape","shield"):
+            part=ET.SubElement(a,tag,id="0");ET.SubElement(part,"mesh").text="actors/eloria_none.xmf";ET.SubElement(part,"skin").text="actors/eloria_humanoid.png"
         frames=ET.SubElement(a,"frames")
         for tag,name in files.items(): ET.SubElement(frames,tag).text=f"animations/eloria/{name}"
     path.parent.mkdir(parents=True,exist_ok=True); path.write_text('<?xml version="1.0"?>\n'+ET.tostring(root,encoding="unicode")+'\n')
@@ -81,6 +98,7 @@ def actor_defs(path):
 def main():
     p=argparse.ArgumentParser(); p.add_argument("output",nargs="?",default="build/eloria-data"); root=Path(p.parse_args().output)
     skeleton(root/"actors/eloria_humanoid.xsf"); mesh(root/"actors/eloria_humanoid.xmf")
+    for section in ("head","shirt","legs","boots","none"):mesh(root/f"actors/eloria_{section}.xmf",section)
     png(root/"actors/eloria_humanoid.png",256,256,lambda x,y:(82+(x//32%2)*18,105+(y//32%2)*12,96,255))
     anims={"idle":(2.,[(0,{2:-.03}),(1,{2:.03}),(2,{2:-.03})]),"walk":(1.,[(0,{4:.5,6:-.5,8:-.55,11:.55}),(.5,{4:-.5,6:.5,8:.55,11:-.55}),(1,{4:.5,6:-.5,8:-.55,11:.55})]),"run":(.7,[(0,{4:.8,6:-.8,8:-.85,11:.85}),(.35,{4:-.8,6:.8,8:.85,11:-.85}),(.7,{4:.8,6:-.8,8:-.85,11:.85})]),"attack":(.65,[(0,{2:-.15,6:-.5}),(.3,{2:.55,6:1.5,7:.7}),(.65,{2:-.15,6:-.5})]),"pain":(.45,[(0,{}),(.2,{2:-.35,4:-.25,6:-.25}),(.45,{})]),"die":(1.2,[(0,{}),(.6,{1:-.8,2:-.8}),(1.2,{1:-1.45,2:-1.45})]),"harvest":(1.1,[(0,{}),(.55,{2:.45,4:1.,6:1.}),(1.1,{})]),"sit":(.8,[(0,{}),(.8,{8:1.35,9:-1.35,11:1.35,12:-1.35})])}
     for name,(duration,poses) in anims.items(): animation(root/f"animations/eloria/{name}.xaf",duration,poses)

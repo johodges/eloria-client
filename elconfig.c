@@ -368,16 +368,9 @@ static size_t local_encyclopedia_font = 0;
 static float chat_font_local_scale = 1.0;
 static float name_font_local_scale = 1.0;
 
-// Default to a smooth, humanist sans face available on each supported desktop.
-// Segoe UI is bundled with Windows and has proportions close to Ubuntu Regular;
-// DejaVu Sans is the broadly available Linux counterpart.
-#ifdef WINDOWS
-#define ELORIA_UI_TTF "segoeui.ttf"
-#define ELORIA_BOOK_TTF "seguisb.ttf"
-#else
-#define ELORIA_UI_TTF "DejaVuSans.ttf"
-#define ELORIA_BOOK_TTF "DejaVuSerif.ttf"
-#endif
+// Shipped in the generated data pack so selection is deterministic everywhere.
+#define ELORIA_UI_TTF "EloriaSans-Regular.ttf"
+#define ELORIA_BOOK_TTF "EloriaSans-Regular.ttf"
 static char def_ui_font_str[80] = "20(" ELORIA_UI_TTF ")";
 static char def_name_font_str[80] = "20(" ELORIA_UI_TTF ")";
 static char def_chat_font_str[80] = "20(" ELORIA_UI_TTF ")";

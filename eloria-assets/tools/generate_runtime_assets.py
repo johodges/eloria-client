@@ -95,6 +95,9 @@ def main():
  for name in ("font","fontv","font2","font3","font5","font6","font7"):
   png(root/f"textures/{name}.png",256,256,font_pixel);bmp(root/f"textures/{name}.bmp",256,256,font_pixel)
   dds(root/f"textures/{name}.dds",256,256,font_pixel)
+ bundled_font=Path(__file__).resolve().parents[1]/"fonts/EloriaSans-Regular.ttf"
+ if not bundled_font.is_file():raise FileNotFoundError(f"Missing bundled font: {bundled_font}")
+ (root/"fonts").mkdir(parents=True,exist_ok=True);shutil.copy2(bundled_font,root/"fonts/EloriaSans-Regular.ttf")
  for name in ("cursors","cursors2"):
   png(root/f"textures/{name}.png",CURSOR_COUNT*CURSOR_SIZE,CURSOR_SIZE,cursor_pixel)
   indexed_cursor_bmp(root/f"textures/{name}.bmp")
@@ -115,10 +118,24 @@ def main():
  dds(root/"maps/legend.dds",512,512,panel)
  e3d_fallback(root/"3dobjects/badobject.e3d");e3d_fallback(root/"3dobjects/bag1.e3d");e3d_fallback(root/"3dobjects/portal1.e3d")
  make_map(root/"maps/nomap.elm",placements=[]);make_map(root/"maps/newcharactermap.elm",placements=[])
- stubs={"el.ini":"#language = en\n#use_ttf = 1\n#ui_font = segoeui.ttf\n#name_font = segoeui.ttf\n#chat_font = segoeui.ttf\n#note_font = segoeui.ttf\n#book_font = seguisb.ttf\n#rules_font = segoeui.ttf\n#encyclopedia_font = segoeui.ttf\n#def_ui_font = 20(segoeui.ttf)\n#def_name_font = 20(segoeui.ttf)\n#def_chat_font = 20(segoeui.ttf)\n#def_note_font = 20(segoeui.ttf)\n#def_book_font = 20(seguisb.ttf)\n#def_rules_font = 20(segoeui.ttf)\n#def_encyclopedia_font = 20(segoeui.ttf)\n","named_colours.xml":"<named_colours/>\n","mines.xml":"<mines/>\n","emotes.xml":"<emotes/>\n","spells.xml":"<spells/>\n","weather.xml":"<weather/>\n","knowledge.xml":"<knowledge/>\n","commands.lst":"# Eloria commands\n","knowledge.lst":"# Eloria knowledge\n","servers.lst":"main main 127.0.0.1 2000\n","mapinfo.lst":"emberhaven|Emberhaven|maps/emberhaven.elm\n","continfo.lst":"Nymara|maps/legend.dds\n"}
+ stubs={"el.ini":"#language = en\n#use_ttf = 1\n#ui_font = EloriaSans-Regular.ttf\n#name_font = EloriaSans-Regular.ttf\n#chat_font = EloriaSans-Regular.ttf\n#note_font = EloriaSans-Regular.ttf\n#book_font = EloriaSans-Regular.ttf\n#rules_font = EloriaSans-Regular.ttf\n#encyclopedia_font = EloriaSans-Regular.ttf\n#def_ui_font = 20(EloriaSans-Regular.ttf)\n#def_name_font = 20(EloriaSans-Regular.ttf)\n#def_chat_font = 20(EloriaSans-Regular.ttf)\n#def_note_font = 20(EloriaSans-Regular.ttf)\n#def_book_font = 20(EloriaSans-Regular.ttf)\n#def_rules_font = 20(EloriaSans-Regular.ttf)\n#def_encyclopedia_font = 20(EloriaSans-Regular.ttf)\n","named_colours.xml":"<named_colours/>\n","mines.xml":"<mines/>\n","emotes.xml":"<emotes/>\n","spells.xml":"<spells/>\n","weather.xml":"<weather/>\n","knowledge.xml":"<knowledge/>\n","commands.lst":"# Eloria commands\n","knowledge.lst":"# Eloria knowledge\n","servers.lst":"main main 127.0.0.1 2000\n","mapinfo.lst":"emberhaven|Emberhaven|maps/emberhaven.elm\n","continfo.lst":"Nymara|maps/legend.dds\n"}
  for name,text in stubs.items():(root/name).write_text(text)
  write_text(root/"languages/langsel.xml",'<LANGUAGE_LIST><LANG CODE="en" TEXT="English" SAVE="1" DEFAULT="1"/></LANGUAGE_LIST>\n')
  write_text(root/"languages/en/knowledge.lst","")
+ write_text(root/"skybox/skybox_defs.xml",'''<?xml version="1.0"?>
+<skybox>
+ <properties><clouds show="false"/><sun show="true"/><moons show="false"/><stars show="true"/></properties>
+ <sky1 reset="true"><color t="0" r="0.04" g="0.07" b="0.16"/><color t="180" r="0.20" g="0.38" b="0.55"/></sky1>
+ <sky2 reset="true"><color t="0" r="0.08" g="0.10" b="0.22"/><color t="180" r="0.34" g="0.27" b="0.42"/></sky2>
+ <sky3 reset="true"><color t="0" r="0.10" g="0.13" b="0.25"/><color t="180" r="0.46" g="0.34" b="0.42"/></sky3>
+ <sky4 reset="true"><color t="0" r="0.06" g="0.09" b="0.18"/><color t="180" r="0.24" g="0.34" b="0.44"/></sky4>
+ <sky5 reset="true"><color t="0" r="0.03" g="0.05" b="0.12"/><color t="180" r="0.15" g="0.25" b="0.36"/></sky5>
+ <sun reset="true"><color t="0" r="0.95" g="0.68" b="0.35"/><color t="180" r="1.0" g="0.88" b="0.62"/></sun>
+ <fog reset="true"><color t="0" r="0.04" g="0.07" b="0.12"/><color t="180" r="0.20" g="0.28" b="0.34"/></fog>
+ <light_ambient reset="true"><color t="0" r="0.16" g="0.18" b="0.28"/><color t="180" r="0.54" g="0.55" b="0.62"/></light_ambient>
+ <light_diffuse reset="true"><color t="0" r="0.22" g="0.24" b="0.35"/><color t="180" r="0.85" g="0.78" b="0.68"/></light_diffuse>
+</skybox>
+''')
  shader_dir=root/"shaders";shader_dir.mkdir(parents=True,exist_ok=True)
  legacy_fragment="void main(){ gl_FragColor=gl_Color; }\n"
  compat_vertex="#version 120\nvoid main(){ gl_Position=ftransform(); gl_FrontColor=gl_Color; gl_TexCoord[0]=gl_MultiTexCoord0; }\n"

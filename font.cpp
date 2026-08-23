@@ -1727,6 +1727,16 @@ void FontManager::initialize_ttf()
 		return;
 	}
 
+	// Register the supplied UI face independently of system font discovery.
+	// open_font() resolves this path relative to the active data directory.
+	{
+		FontOption supplied("fonts/EloriaSans-Regular.ttf");
+		if (!supplied.failed())
+			_options.push_back(std::move(supplied));
+		else
+			LOG_ERROR("Unable to register bundled Eloria TrueType font");
+	}
+
 #ifdef ANDROID
 	{
 		// The list of supplied TTF fonts and their path is detailed in the ttf_list.txt file.
