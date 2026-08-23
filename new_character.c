@@ -814,6 +814,8 @@ void create_newchar_root_window (void)
 		if (saved_use_animation_program < 0)
 			saved_use_animation_program = use_animation_program;
 		use_animation_program = 0;
+		LOG_INFO("Character preview renderer forced to CPU (saved renderer=%s)",
+			saved_use_animation_program ? "GPU" : "CPU");
 
 		our_actor.race_id=RAND(0, 5);
 		our_actor.def=&races[our_actor.race_id];//6 "races" - counting women as their own race, of course ;-) We cannot include the new races in the random function since they are p2p
