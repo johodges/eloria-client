@@ -2058,7 +2058,7 @@ using namespace eternal_lands;
 size_t *font_idxs = FontManager::font_idxs.data();
 float *font_scales = FontManager::font_scales.data();
 #ifdef TTF
-int use_ttf = 0;
+int use_ttf = 1;
 #ifdef LINUX
 char ttf_directory[TTF_DIR_SIZE] = "/usr/share/fonts/TTF";
 #elif defined WINDOWS
