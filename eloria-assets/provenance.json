@@ -63,6 +63,20 @@
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Procedural desert, snow, swamp, tropical, and volcanic scenery"
+    },
+    {
+      "path": "maps/{glasswind,frostmere,mirefen,verdant_reach,cinder_wastes}.elm",
+      "source": "tools/generate_regions.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedurally generated biome regions with original layouts"
+    },
+    {
+      "path": "regions_eloria.json",
+      "source": "tools/generate_regions.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Machine-readable region and harvesting-node catalog"
     }
   ]
 }
