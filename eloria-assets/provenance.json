@@ -72,6 +72,27 @@
       "description": "Twelve independently modeled public-domain fantasy archetypes"
     },
     {
+      "path": "actors/npcs/*",
+      "source": "tools/generate_npcs.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Eight original NPC role models"
+    },
+    {
+      "path": "textures/items1.*",
+      "source": "tools/generate_item_atlas.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original 64-slot independent item icon atlas"
+    },
+    {
+      "path": "textures/{font,fontv,cursors,cursors2,buttons,book1,paper1}.*",
+      "source": "tools/generate_runtime_assets.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural startup and testing interface resources"
+    },
+    {
       "path": "3dobjects/scenery/*",
       "source": "tools/generate_scenery.py",
       "author": "Eloria project",
