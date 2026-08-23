@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate an original low-poly Cal3D humanoid and core animation set."""
 from __future__ import annotations
-import argparse, json, math
+import argparse, json, math, struct
 from pathlib import Path
 import xml.etree.ElementTree as ET
 from generate_bootstrap_pack import png
@@ -117,18 +117,41 @@ def texture(path, base, accent, style=0):
         return tuple(max(0,min(255,c+weave+seam)) for c in sigil)+(255,)
     png(path,256,256,pixel)
 
+def actor_texture(path, width, height, base, accent, style=0, levels=3):
+    """Write an uncompressed BGRA DDS with the mip levels EL's actor atlas requires."""
+    header=[124,0x0002100F,height,width,width*4,0,levels]+[0]*11
+    header += [32,0x41,0,32,0x00FF0000,0x0000FF00,0x000000FF,0xFF000000]
+    header += [0x401008,0,0,0,0]
+    data=bytearray()
+    for level in range(levels):
+        w=max(1,width>>level); h=max(1,height>>level)
+        for y in range(h):
+            for x in range(w):
+                weave=((x//max(1,8>>level)+y//max(1,8>>level)+style)%2)*8
+                seam=18 if x%max(1,64>>level) in (0,1) or y%max(1,64>>level) in (0,1) else 0
+                radius=max(1,(20+style%4*3)>>level)
+                color=accent if (x-w//2)**2+(y-h//2)**2 < radius*radius else base
+                r,g,b=(max(0,min(255,c+weave+seam)) for c in color)
+                data.extend((b,g,r,255))
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_bytes(b'DDS '+struct.pack('<31I',*header)+data)
+
 def generate_customization(root):
     for culture,skins in CULTURES.items():
         directory=root/f"actors/custom/{culture}"
         dark_blue=(55,79,105) if culture=="votary" else tuple(max(35,c-35) for c in skins[0])
         white=(222,224,216) if culture!="ssarathi" else (169,207,178)
         skin_palette=(skins[0],skins[1],skins[2],skins[1],dark_blue,white)
-        for i,color in enumerate(skin_palette):texture(directory/f"skin_{i}.png",color,(220,188,150),i)
-        for i,color in enumerate(HAIR):texture(directory/f"hair_{i}.png",color,tuple(min(255,c+35) for c in color),i)
-        for i,color in enumerate(EYES):texture(directory/f"eyes_{i}.png",color,(235,235,220),i)
-        for i,color in enumerate(CLOTH):texture(directory/f"shirt_{i}.png",color,(207,151,70),i)
-        for i,color in enumerate(PANTS):texture(directory/f"pants_{i}.png",color,(126,104,78),i)
-        for i,color in enumerate(BOOTS):texture(directory/f"boots_{i}.png",color,(176,137,87),i)
+        for i,color in enumerate(skin_palette):
+            actor_texture(directory/f"skin_{i}_hands.dds",64,64,color,(220,188,150),i)
+            actor_texture(directory/f"skin_{i}_head.dds",128,128,color,(220,188,150),i)
+        for i,color in enumerate(HAIR):actor_texture(directory/f"hair_{i}.dds",136,192,color,tuple(min(255,c+35) for c in color),i)
+        for i,color in enumerate(EYES):actor_texture(directory/f"eyes_{i}.dds",24,24,color,(235,235,220),i)
+        for i,color in enumerate(CLOTH):
+            actor_texture(directory/f"shirt_{i}_torso.dds",196,216,color,(207,151,70),i)
+            actor_texture(directory/f"shirt_{i}_arms.dds",160,160,color,(207,151,70),i)
+        for i,color in enumerate(PANTS):actor_texture(directory/f"pants_{i}.dds",160,160,color,(126,104,78),i)
+        for i,color in enumerate(BOOTS):actor_texture(directory/f"boots_{i}.dds",156,160,color,(176,137,87),i)
 
 def actor_defs(path):
     files={"CAL_walk":"walk.xaf","CAL_run":"run.xaf","CAL_idle":"idle.xaf","CAL_idle2":"idle.xaf","CAL_combat_idle":"idle.xaf","CAL_attack_up_1":"attack.xaf","CAL_attack_down_1":"attack.xaf","CAL_pain1":"pain.xaf","CAL_pain2":"pain.xaf","CAL_die1":"die.xaf","CAL_die2":"die.xaf","CAL_harvest":"harvest.xaf","CAL_pick":"harvest.xaf","CAL_drop":"harvest.xaf","CAL_idle_sit":"sit.xaf","CAL_sit_down":"sit.xaf","CAL_stand_up":"idle.xaf"}
@@ -140,16 +163,17 @@ def actor_defs(path):
         prefix=f"actors/custom/{culture}"
         for i in range(len(CLOTH)):
             shirt=ET.SubElement(a,"shirt",id=str(i))
-            for tag,value in (("arms",f"{prefix}/shirt_{i}.png"),("torso",f"{prefix}/shirt_{i}.png"),("mesh","actors/eloria_shirt.xmf")):ET.SubElement(shirt,tag).text=value
+            for tag,value in (("arms",f"{prefix}/shirt_{i}_arms.dds"),("torso",f"{prefix}/shirt_{i}_torso.dds"),("mesh","actors/eloria_shirt.xmf")):ET.SubElement(shirt,tag).text=value
         for i in range(6):
             skin=ET.SubElement(a,"hskin",id=str(i))
-            for tag in ("hands","head","torso","arms","legs","feet"):ET.SubElement(skin,tag).text=f"{prefix}/skin_{i}.png"
-        for i in range(len(HAIR)):ET.SubElement(a,"hair",id=str(i)).text=f"{prefix}/hair_{i}.png"
-        for i in range(len(EYES)):ET.SubElement(a,"eyes",id=str(i)).text=f"{prefix}/eyes_{i}.png"
+            ET.SubElement(skin,"hands").text=f"{prefix}/skin_{i}_hands.dds"
+            ET.SubElement(skin,"head").text=f"{prefix}/skin_{i}_head.dds"
+        for i in range(len(HAIR)):ET.SubElement(a,"hair",id=str(i)).text=f"{prefix}/hair_{i}.dds"
+        for i in range(len(EYES)):ET.SubElement(a,"eyes",id=str(i)).text=f"{prefix}/eyes_{i}.dds"
         for i in range(len(PANTS)):
-            legs=ET.SubElement(a,"legs",id=str(i));ET.SubElement(legs,"skin").text=f"{prefix}/pants_{i}.png";ET.SubElement(legs,"mesh").text="actors/eloria_legs.xmf"
+            legs=ET.SubElement(a,"legs",id=str(i));ET.SubElement(legs,"skin").text=f"{prefix}/pants_{i}.dds";ET.SubElement(legs,"mesh").text="actors/eloria_legs.xmf"
         for i in range(len(BOOTS)):
-            boots=ET.SubElement(a,"boots",id=str(i));ET.SubElement(boots,"skin").text=f"{prefix}/boots_{i}.png";ET.SubElement(boots,"mesh").text="actors/eloria_boots.xmf"
+            boots=ET.SubElement(a,"boots",id=str(i));ET.SubElement(boots,"skin").text=f"{prefix}/boots_{i}.dds";ET.SubElement(boots,"mesh").text="actors/eloria_boots.xmf"
         for i in range(5):
             head=ET.SubElement(a,"head",id=str(i));ET.SubElement(head,"mesh").text=f"actors/eloria_head_{i}.xmf"
         for tag in ("neck","helmet","cape","shield"):
