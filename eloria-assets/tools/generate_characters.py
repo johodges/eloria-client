@@ -98,35 +98,41 @@ def skeleton(path):
     write_cal(path,"XSF",root)
     binary_skeleton(path.with_suffix(".csf"))
 
-def cuboid(center,size,bone,vertices,faces):
+def cuboid(center,size,bone,vertices,faces,uv_rect=(0.,0.,1.,1.)):
     cx,cy,cz=center; sx,sy,sz=(v/2 for v in size)
+    u0,v0,u1,v1=uv_rect
     corners=[(cx+x*sx,cy+y*sy,cz+z*sz) for x,y,z in ((-1,-1,-1),(1,-1,-1),(1,1,-1),(-1,1,-1),(-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1))]
     quads=((0,1,2,3),(4,7,6,5),(0,4,5,1),(1,5,6,2),(2,6,7,3),(4,0,3,7)); normals=((0,0,-1),(0,0,1),(0,-1,0),(1,0,0),(0,1,0),(-1,0,0))
     for quad,normal in zip(quads,normals):
         base=len(vertices)
-        for uv,corner in zip(((0,0),(1,0),(1,1),(0,1)),quad): vertices.append((corners[corner],normal,uv,bone))
+        for uv,corner in zip(((u0,v0),(u1,v0),(u1,v1),(u0,v1)),quad): vertices.append((corners[corner],normal,uv,bone))
         # EL treats counter-clockwise triangles as front-facing.
         faces.extend(((base,base+2,base+1),(base,base+3,base+2)))
 
 def mesh(path, section="all", variant=0):
     vertices=[]; faces=[]
-    parts=(((0,0,1.25),(.52,.30,.66),2),((0,0,1.78),(.34,.32,.38),3),
-      ((-.48,0,1.42),(.42,.20,.20),4),((-.78,0,1.42),(.34,.17,.17),5),((.48,0,1.42),(.42,.20,.20),6),((.78,0,1.42),(.34,.17,.17),7),
-      ((-.15,0,.68),(.22,.26,.54),8),((-.15,0,.22),(.20,.23,.48),9),((-.15,.09,-.03),(.22,.42,.14),10),
-      ((.15,0,.68),(.22,.26,.54),11),((.15,0,.22),(.20,.23,.48),12),((.15,.09,-.03),(.22,.42,.14),13))
+    # UV rectangles address the fixed regions used by EL's 128x128 enhanced
+    # actor atlas.  V is expressed in OpenGL coordinates (bottom to top).
+    torso_uv=(79/128,0,1,54/128); arms_uv=(0,40/128,40/128,80/128)
+    hands_uv=(34/128,80/128,50/128,96/128)
+    head_uv=(34/128,96/128,66/128,1)
+    legs_uv=(39/128,0,79/128,40/128); boots_uv=(0,0,39/128,40/128)
+    # Match the proven EL player coordinate envelope.  In particular, arms are
+    # down beside the torso rather than extending almost two units in a T pose.
+    parts=(((0,0,1.12),(.50,.24,.60),2,torso_uv),((0,-.01,1.51),(.18,.23,.27),3,head_uv),
+      ((-.27,0,1.10),(.14,.18,.42),4,arms_uv),((-.27,0,.75),(.13,.17,.34),5,hands_uv),((.27,0,1.10),(.14,.18,.42),6,arms_uv),((.27,0,.75),(.13,.17,.34),7,hands_uv),
+      ((-.12,0,.70),(.18,.22,.52),8,legs_uv),((-.12,0,.28),(.17,.21,.42),9,legs_uv),((-.12,.02,.08),(.18,.30,.18),10,boots_uv),
+      ((.12,0,.70),(.18,.22,.52),11,legs_uv),((.12,0,.28),(.17,.21,.42),12,legs_uv),((.12,.02,.08),(.18,.30,.18),13,boots_uv))
     if section=="head":
-        head_sizes=((.34,.32,.38),(.36,.30,.36),(.32,.34,.40),(.38,.33,.35),(.33,.29,.42))
-        parts=list(parts);parts[1]=((0,0,1.78),head_sizes[variant%len(head_sizes)],3)
+        head_sizes=((.18,.23,.27),(.19,.22,.26),(.17,.24,.28),(.20,.23,.25),(.18,.21,.29))
+        parts=list(parts);parts[1]=((0,-.01,1.51),head_sizes[variant%len(head_sizes)],3,head_uv)
     sections={"head":(1,),"shirt":(0,2,3,4,5),"legs":(6,7,9,10),"boots":(8,11),"none":()}
     chosen=range(len(parts)) if section=="all" else sections[section]
-    for i in chosen: cuboid(*parts[i],vertices,faces)
+    for i in chosen:
+        center,size,bone,uv_rect=parts[i]
+        cuboid(center,size,bone,vertices,faces,uv_rect)
     if not vertices:
         cuboid((0,0,-100),(.001,.001,.001),0,vertices,faces)
-    # Keep the generated player control rigidly attached to the root bone.  This
-    # deliberately removes inverse-bind-pose and per-bone skinning from the
-    # character-preview investigation while preserving identical geometry,
-    # materials, texture coordinates, actor definitions, and render paths.
-    vertices=[(pos,norm,uv,0) for pos,norm,uv,_bone in vertices]
     root=ET.Element("MESH",NUMSUBMESH="1"); sub=ET.SubElement(root,"SUBMESH",NUMVERTICES=str(len(vertices)),NUMFACES=str(len(faces)),MATERIAL="0",NUMLODSTEPS="0",NUMSPRINGS="0",NUMTEXCOORDS="1")
     for i,(pos,norm,uv,bone) in enumerate(vertices):
         v=ET.SubElement(sub,"VERTEX",ID=str(i),NUMINFLUENCES="1")
