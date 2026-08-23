@@ -9,6 +9,7 @@ Generate the bootstrap pack with:
 ```bash
 python3 eloria-assets/tools/generate_bootstrap_pack.py
 python3 eloria-assets/tools/generate_characters.py
+python3 eloria-assets/tools/generate_scenery.py
 python3 eloria-assets/tools/check_provenance.py
 ```
 
@@ -20,3 +21,6 @@ scenery still require original implementations before a public binary release.
 The character generator produces an original low-poly humanoid, fourteen-bone
 skeleton, four actor definitions, and idle, walk, run, attack, pain, death,
 harvest, and sitting animations in Cal3D XML source formats.
+
+The scenery generator produces twelve native E3D assets: alder and pine trees,
+boulders, cottages, signs, lanterns, docks, and five original harvestables.
