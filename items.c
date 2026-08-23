@@ -1388,7 +1388,11 @@ static int click_items_handler(window_info *win, int mx, int my, Uint32 flags)
 		}
 #endif
 		else if(item_list[pos].quantity){
-			if (ctrl_on && (items_mod_click_any_cursor || (item_action_mode==ACTION_WALK))) {
+			if (right_click) {
+				str[0]=LOOK_AT_INVENTORY_ITEM;
+				str[1]=item_list[pos].pos;
+				my_tcp_send(str,2);
+			} else if (ctrl_on && (items_mod_click_any_cursor || (item_action_mode==ACTION_WALK))) {
 				str[0]=DROP_ITEM;
 				str[1]=item_list[pos].pos;
 				if(item_list[pos].is_stackable)
@@ -1515,7 +1519,7 @@ static int click_items_handler(window_info *win, int mx, int my, Uint32 flags)
 
 		if(pos < ITEM_WEAR_START) {
 		} else if(item_list[pos].quantity){
-			if(item_action_mode == ACTION_LOOK) {
+			if(right_click || item_action_mode == ACTION_LOOK) {
 				str[0]=LOOK_AT_INVENTORY_ITEM;
 				str[1]=item_list[pos].pos;
 				my_tcp_send(str, 2);
