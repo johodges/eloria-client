@@ -1,0 +1,26 @@
+name: independent-data
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  provenance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate original bootstrap data
+        run: python3 eloria-assets/tools/generate_bootstrap_pack.py build/eloria-data
+      - name: Verify provenance policy
+        run: python3 eloria-assets/tools/check_provenance.py
+      - name: Verify original map
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          path = Path("build/eloria-data/maps/emberhaven.elm")
+          data = path.read_bytes()
+          assert data[:4] == b"elmf"
+          assert struct.unpack_from("<ii", data, 4) == (32, 32)
+          assert len(data) == 38008
+          PY
