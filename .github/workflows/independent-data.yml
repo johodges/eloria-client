@@ -45,7 +45,7 @@ jobs:
           import struct
           root = Path("build/eloria-data")
           models = list(root.glob("3dobjects/**/*.e3d"))
-          assert len(models) == 43
+          assert len(models) >= 223
           for path in models:
               data = path.read_bytes()
               magic, version, digest, offset = struct.unpack_from("<4s4s16si", data)
