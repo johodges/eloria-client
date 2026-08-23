@@ -176,6 +176,7 @@ struct input_text {
 static int clear_player_name = 1;
 
 static int creating_char = 1;
+static int saved_use_animation_program = -1;
 
 void set_create_char_error (const char *msg, int len)
 {
@@ -255,6 +256,14 @@ static void change_actor (void)
 		our_actor.our_model->x_pos = our_actor.def->x*0.5f;
 		our_actor.our_model->y_pos = our_actor.def->y*0.5f;
 		our_actor.our_model->z_rot = our_actor.def->z_rot;
+
+		/* A new CalModel has its own skeleton pose and hardware transform map.
+		 * Refresh both after changing race; retaining the previous race's values
+		 * can leave an otherwise valid preview outside the view or fully collapsed. */
+		CalModel_Update(our_actor.our_model->calmodel, 0.0f);
+		build_actor_bounding_box(our_actor.our_model);
+		if (use_animation_program)
+			set_transformation_buffers(our_actor.our_model);
 	}
 }
 
@@ -797,6 +806,15 @@ void create_newchar_root_window (void)
 {
 	if (newchar_root_win < 0)
 	{
+		/* The generated customization rigs are valid Cal3D models, but the
+		 * legacy ARB vertex-program skinning path is not reliable for them on
+		 * all Windows drivers. Character creation contains only one actor, so
+		 * use Cal3D's CPU-deformed renderer here and restore the user's normal
+		 * rendering path when leaving the screen. */
+		if (saved_use_animation_program < 0)
+			saved_use_animation_program = use_animation_program;
+		use_animation_program = 0;
+
 		our_actor.race_id=RAND(0, 5);
 		our_actor.def=&races[our_actor.race_id];//6 "races" - counting women as their own race, of course ;-) We cannot include the new races in the random function since they are p2p
 		our_actor.skin = inc(our_actor.def->skin, SKIN_BROWN, RAND (SKIN_BROWN, SKIN_TAN));//Increment a random # of times.
@@ -1942,4 +1960,9 @@ void destroy_new_character_interface(void)
 	destroy_window(tooltip_win);
 	destroy_window(newchar_root_win);
 	color_race_win = newchar_advice_win = namepass_win = newchar_hud_win = tooltip_win = newchar_root_win = -1;
+	if (saved_use_animation_program >= 0)
+	{
+		use_animation_program = saved_use_animation_program;
+		saved_use_animation_program = -1;
+	}
 }
