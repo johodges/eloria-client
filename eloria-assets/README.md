@@ -8,6 +8,7 @@ Generate the bootstrap pack with:
 
 ```bash
 python3 eloria-assets/tools/generate_bootstrap_pack.py
+python3 eloria-assets/tools/generate_characters.py
 python3 eloria-assets/tools/check_provenance.py
 ```
 
@@ -15,3 +16,7 @@ The first milestone intentionally generates a small, object-free island named
 Emberhaven and placeholder UI sheets. It establishes a legally independent,
 reproducible baseline; character models, production UI sheets, sounds, and
 scenery still require original implementations before a public binary release.
+
+The character generator produces an original low-poly humanoid, fourteen-bone
+skeleton, four actor definitions, and idle, walk, run, attack, pain, death,
+harvest, and sitting animations in Cal3D XML source formats.
