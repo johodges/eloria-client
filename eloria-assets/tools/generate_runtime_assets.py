@@ -11,10 +11,14 @@ GLYPHS={
 "0":("01110","10001","10011","10101","11001","10001","01110"),"1":("00100","01100","00100","00100","00100","00100","01110"),"2":("01110","10001","00001","00010","00100","01000","11111"),"3":("11110","00001","00001","01110","00001","00001","11110"),"4":("00010","00110","01010","10010","11111","00010","00010"),"5":("11111","10000","10000","11110","00001","00001","11110"),"6":("01110","10000","10000","11110","10001","10001","01110"),"7":("11111","00001","00010","00100","01000","01000","01000"),"8":("01110","10001","10001","01110","10001","10001","01110"),"9":("01110","10001","10001","01111","00001","00001","01110"),
 ".":("00000","00000","00000","00000","00000","00110","00110"),",":("00000","00000","00000","00000","00110","00110","00100"),":":("00000","00110","00110","00000","00110","00110","00000"),"-":("00000","00000","00000","11111","00000","00000","00000"),"_":("00000","00000","00000","00000","00000","00000","11111"),"/":("00001","00010","00100","01000","10000","00000","00000"),"!":("00100","00100","00100","00100","00100","00000","00100"),"?":("01110","10001","00001","00010","00100","00000","00100"),"'":("00100","00100","00000","00000","00000","00000","00000"),"(":("00010","00100","01000","01000","01000","00100","00010"),")":("01000","00100","00010","00010","00010","00100","01000"),"+":("00000","00100","00100","11111","00100","00100","00000"),"=":("00000","00000","11111","00000","11111","00000","00000"),"<":("00010","00100","01000","10000","01000","00100","00010"),">":("01000","00100","00010","00001","00010","00100","01000"),"@":("01110","10001","10111","10101","10111","10000","01110")}
 def font_pixel(x,y):
- cell=x//16+(y//16)*16;lx=x%16;ly=y%16
- ch=chr(cell);g=GLYPHS.get(ch) or GLYPHS.get(ch.upper())
+ # Bundled fonts use 14 glyphs per row in 18x21 cells; positions 0..94
+ # correspond to ASCII 32..126 (see Font::get_position).
+ pos=(x//18)+(y//21)*14
+ lx=x%18;ly=y%21
+ if not 0<=pos<=94:return (0,0,0,0)
+ ch=chr(pos+32);g=GLYPHS.get(ch) or GLYPHS.get(ch.upper())
  if not g:return (0,0,0,0)
- gx=(lx-3)//2;gy=(ly-1)//2
+ gx=(lx-3)//2;gy=(ly-2)//2
  return (244,238,216,255) if 0<=gx<5 and 0<=gy<7 and g[gy][gx]=="1" else (0,0,0,0)
 CURSOR_COUNT, CURSOR_SIZE = 13, 16
 
@@ -111,7 +115,7 @@ def main():
  dds(root/"maps/legend.dds",512,512,panel)
  e3d_fallback(root/"3dobjects/badobject.e3d");e3d_fallback(root/"3dobjects/bag1.e3d");e3d_fallback(root/"3dobjects/portal1.e3d")
  make_map(root/"maps/nomap.elm",placements=[]);make_map(root/"maps/newcharactermap.elm",placements=[])
- stubs={"el.ini":"","named_colours.xml":"<named_colours/>\n","mines.xml":"<mines/>\n","emotes.xml":"<emotes/>\n","spells.xml":"<spells/>\n","weather.xml":"<weather/>\n","knowledge.xml":"<knowledge/>\n","commands.lst":"# Eloria commands\n","knowledge.lst":"# Eloria knowledge\n","servers.lst":"main main 127.0.0.1 2000\n","mapinfo.lst":"emberhaven|Emberhaven|maps/emberhaven.elm\n","continfo.lst":"Nymara|maps/legend.dds\n"}
+ stubs={"el.ini":"#language = en\n","named_colours.xml":"<named_colours/>\n","mines.xml":"<mines/>\n","emotes.xml":"<emotes/>\n","spells.xml":"<spells/>\n","weather.xml":"<weather/>\n","knowledge.xml":"<knowledge/>\n","commands.lst":"# Eloria commands\n","knowledge.lst":"# Eloria knowledge\n","servers.lst":"main main 127.0.0.1 2000\n","mapinfo.lst":"emberhaven|Emberhaven|maps/emberhaven.elm\n","continfo.lst":"Nymara|maps/legend.dds\n"}
  for name,text in stubs.items():(root/name).write_text(text)
  write_text(root/"languages/langsel.xml",'<LANGUAGE_LIST><LANG CODE="en" TEXT="English" SAVE="1" DEFAULT="1"/></LANGUAGE_LIST>\n')
  write_text(root/"languages/en/knowledge.lst","")
