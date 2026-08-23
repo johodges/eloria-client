@@ -50,6 +50,7 @@
 #include "merchant.h"
 #include "quest_journal.h"
 #include "item_detail.h"
+#include "inventory_organizer.h"
 #include "queue.h"
 #include "rules.h"
 #include "serverpopup.h"
@@ -990,7 +991,7 @@ void process_message_from_server (const Uint8 *in_data, int data_length)
 				// server keeps legacy packet/dialogue fallbacks for clients that do
 				// not send this private capability message.
 				safe_snprintf(str, sizeof(str),
-					"%c#clientcaps actor16_v1,magic_power_v1,market_window_v1,merchant_window_v1,quest_journal_v1,item_detail_v1,offline_notifications_v1",
+					"%c#clientcaps actor16_v1,magic_power_v1,market_window_v1,merchant_window_v1,quest_journal_v1,item_detail_v1,inventory_window_v1,offline_notifications_v1",
 					RAW_TEXT);
 				my_tcp_send((Uint8*)str, strlen(str+1)+1);
 				break;
@@ -2372,6 +2373,12 @@ void process_message_from_server (const Uint8 *in_data, int data_length)
 				item_detail_update(in_data + 3, data_length - 3);
 			else
 				LOG_WARNING("Invalid Eloria item detail packet.\n");
+			break;
+		case ELORIA_INVENTORY_STATE:
+			if (data_length >= 17)
+				inventory_organizer_update(in_data + 3, data_length - 3);
+			else
+				LOG_WARNING("Invalid Eloria inventory organizer packet.\n");
 			break;
 		case NEXT_NPC_MESSAGE_IS_QUEST:
 			{
