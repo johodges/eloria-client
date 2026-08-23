@@ -1,0 +1,3 @@
+newmtl whitehorn_glacier_altar
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/whitehorn_glacier_altar.png

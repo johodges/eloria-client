@@ -1,0 +1,3 @@
+newmtl glasswarden_field_station
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/glasswarden_field_station.png

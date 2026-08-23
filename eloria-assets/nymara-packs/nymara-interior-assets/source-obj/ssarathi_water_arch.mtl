@@ -1,0 +1,3 @@
+newmtl ssarathi_water_arch
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/ssarathi_water_arch.png

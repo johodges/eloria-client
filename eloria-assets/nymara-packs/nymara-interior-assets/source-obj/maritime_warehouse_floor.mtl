@@ -1,0 +1,3 @@
+newmtl maritime_warehouse_floor
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/maritime_warehouse_floor.png

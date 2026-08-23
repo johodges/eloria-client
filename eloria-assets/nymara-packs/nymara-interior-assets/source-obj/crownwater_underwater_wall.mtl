@@ -1,0 +1,3 @@
+newmtl crownwater_underwater_wall
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/crownwater_underwater_wall.png

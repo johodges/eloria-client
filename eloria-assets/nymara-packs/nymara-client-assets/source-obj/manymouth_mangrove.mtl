@@ -1,0 +1,3 @@
+newmtl manymouth_mangrove
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/manymouth_mangrove.png

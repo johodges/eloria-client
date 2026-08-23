@@ -1,0 +1,504 @@
+{
+  "schema": 1,
+  "modules": [
+    {
+      "id": "mirrorhold_pale_floor",
+      "kit": "mirrorhold",
+      "model": "3dobjects/nymara/interiors/mirrorhold_pale_floor.e3d",
+      "texture": "3dobjects/nymara/interiors/mirrorhold_pale_floor.png",
+      "source": "source-obj/mirrorhold_pale_floor.obj"
+    },
+    {
+      "id": "mirrorhold_canal_wall",
+      "kit": "mirrorhold",
+      "model": "3dobjects/nymara/interiors/mirrorhold_canal_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/mirrorhold_canal_wall.png",
+      "source": "source-obj/mirrorhold_canal_wall.obj"
+    },
+    {
+      "id": "mirrorhold_arched_wall",
+      "kit": "mirrorhold",
+      "model": "3dobjects/nymara/interiors/mirrorhold_arched_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/mirrorhold_arched_wall.png",
+      "source": "source-obj/mirrorhold_arched_wall.obj"
+    },
+    {
+      "id": "mirrorhold_window_wall",
+      "kit": "mirrorhold",
+      "model": "3dobjects/nymara/interiors/mirrorhold_window_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/mirrorhold_window_wall.png",
+      "source": "source-obj/mirrorhold_window_wall.obj"
+    },
+    {
+      "id": "mirrorhold_civic_column",
+      "kit": "mirrorhold",
+      "model": "3dobjects/nymara/interiors/mirrorhold_civic_column.e3d",
+      "texture": "3dobjects/nymara/interiors/mirrorhold_civic_column.png",
+      "source": "source-obj/mirrorhold_civic_column.obj"
+    },
+    {
+      "id": "mirrorhold_turquoise_door",
+      "kit": "mirrorhold",
+      "model": "3dobjects/nymara/interiors/mirrorhold_turquoise_door.e3d",
+      "texture": "3dobjects/nymara/interiors/mirrorhold_turquoise_door.png",
+      "source": "source-obj/mirrorhold_turquoise_door.obj"
+    },
+    {
+      "id": "mirrorhold_council_table",
+      "kit": "mirrorhold",
+      "model": "3dobjects/nymara/interiors/mirrorhold_council_table.e3d",
+      "texture": "3dobjects/nymara/interiors/mirrorhold_council_table.png",
+      "source": "source-obj/mirrorhold_council_table.obj"
+    },
+    {
+      "id": "mirrorhold_civic_chair",
+      "kit": "mirrorhold",
+      "model": "3dobjects/nymara/interiors/mirrorhold_civic_chair.e3d",
+      "texture": "3dobjects/nymara/interiors/mirrorhold_civic_chair.png",
+      "source": "source-obj/mirrorhold_civic_chair.obj"
+    },
+    {
+      "id": "crownwater_drowned_floor",
+      "kit": "crownwater",
+      "model": "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d",
+      "texture": "3dobjects/nymara/interiors/crownwater_drowned_floor.png",
+      "source": "source-obj/crownwater_drowned_floor.obj"
+    },
+    {
+      "id": "crownwater_underwater_wall",
+      "kit": "crownwater",
+      "model": "3dobjects/nymara/interiors/crownwater_underwater_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/crownwater_underwater_wall.png",
+      "source": "source-obj/crownwater_underwater_wall.obj"
+    },
+    {
+      "id": "crownwater_submerged_arch",
+      "kit": "crownwater",
+      "model": "3dobjects/nymara/interiors/crownwater_submerged_arch.e3d",
+      "texture": "3dobjects/nymara/interiors/crownwater_submerged_arch.png",
+      "source": "source-obj/crownwater_submerged_arch.obj"
+    },
+    {
+      "id": "crownwater_water_channel",
+      "kit": "crownwater",
+      "model": "3dobjects/nymara/interiors/crownwater_water_channel.e3d",
+      "texture": "3dobjects/nymara/interiors/crownwater_water_channel.png",
+      "source": "source-obj/crownwater_water_channel.obj"
+    },
+    {
+      "id": "crownwater_drowned_statue",
+      "kit": "crownwater",
+      "model": "3dobjects/nymara/interiors/crownwater_drowned_statue.e3d",
+      "texture": "3dobjects/nymara/interiors/crownwater_drowned_statue.png",
+      "source": "source-obj/crownwater_drowned_statue.obj"
+    },
+    {
+      "id": "crownwater_shell_altar",
+      "kit": "crownwater",
+      "model": "3dobjects/nymara/interiors/crownwater_shell_altar.e3d",
+      "texture": "3dobjects/nymara/interiors/crownwater_shell_altar.png",
+      "source": "source-obj/crownwater_shell_altar.obj"
+    },
+    {
+      "id": "maritime_warehouse_floor",
+      "kit": "maritime",
+      "model": "3dobjects/nymara/interiors/maritime_warehouse_floor.e3d",
+      "texture": "3dobjects/nymara/interiors/maritime_warehouse_floor.png",
+      "source": "source-obj/maritime_warehouse_floor.obj"
+    },
+    {
+      "id": "maritime_warehouse_wall",
+      "kit": "maritime",
+      "model": "3dobjects/nymara/interiors/maritime_warehouse_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/maritime_warehouse_wall.png",
+      "source": "source-obj/maritime_warehouse_wall.obj"
+    },
+    {
+      "id": "maritime_cargo_shelf",
+      "kit": "maritime",
+      "model": "3dobjects/nymara/interiors/maritime_cargo_shelf.e3d",
+      "texture": "3dobjects/nymara/interiors/maritime_cargo_shelf.png",
+      "source": "source-obj/maritime_cargo_shelf.obj"
+    },
+    {
+      "id": "maritime_merchant_counter",
+      "kit": "maritime",
+      "model": "3dobjects/nymara/interiors/maritime_merchant_counter.e3d",
+      "texture": "3dobjects/nymara/interiors/maritime_merchant_counter.png",
+      "source": "source-obj/maritime_merchant_counter.obj"
+    },
+    {
+      "id": "maritime_barrel_stack",
+      "kit": "maritime",
+      "model": "3dobjects/nymara/interiors/maritime_barrel_stack.e3d",
+      "texture": "3dobjects/nymara/interiors/maritime_barrel_stack.png",
+      "source": "source-obj/maritime_barrel_stack.obj"
+    },
+    {
+      "id": "maritime_cargo_crates",
+      "kit": "maritime",
+      "model": "3dobjects/nymara/interiors/maritime_cargo_crates.e3d",
+      "texture": "3dobjects/nymara/interiors/maritime_cargo_crates.png",
+      "source": "source-obj/maritime_cargo_crates.obj"
+    },
+    {
+      "id": "orun_felt_floor",
+      "kit": "orun",
+      "model": "3dobjects/nymara/interiors/orun_felt_floor.e3d",
+      "texture": "3dobjects/nymara/interiors/orun_felt_floor.png",
+      "source": "source-obj/orun_felt_floor.obj"
+    },
+    {
+      "id": "orun_tent_shell",
+      "kit": "orun",
+      "model": "3dobjects/nymara/interiors/orun_tent_shell.e3d",
+      "texture": "3dobjects/nymara/interiors/orun_tent_shell.png",
+      "source": "source-obj/orun_tent_shell.obj"
+    },
+    {
+      "id": "orun_low_table",
+      "kit": "orun",
+      "model": "3dobjects/nymara/interiors/orun_low_table.e3d",
+      "texture": "3dobjects/nymara/interiors/orun_low_table.png",
+      "source": "source-obj/orun_low_table.obj"
+    },
+    {
+      "id": "orun_camp_chair",
+      "kit": "orun",
+      "model": "3dobjects/nymara/interiors/orun_camp_chair.e3d",
+      "texture": "3dobjects/nymara/interiors/orun_camp_chair.png",
+      "source": "source-obj/orun_camp_chair.obj"
+    },
+    {
+      "id": "orun_portable_altar",
+      "kit": "orun",
+      "model": "3dobjects/nymara/interiors/orun_portable_altar.e3d",
+      "texture": "3dobjects/nymara/interiors/orun_portable_altar.png",
+      "source": "source-obj/orun_portable_altar.obj"
+    },
+    {
+      "id": "orun_supply_crates",
+      "kit": "orun",
+      "model": "3dobjects/nymara/interiors/orun_supply_crates.e3d",
+      "texture": "3dobjects/nymara/interiors/orun_supply_crates.png",
+      "source": "source-obj/orun_supply_crates.obj"
+    },
+    {
+      "id": "whitehorn_monastery_floor",
+      "kit": "whitehorn",
+      "model": "3dobjects/nymara/interiors/whitehorn_monastery_floor.e3d",
+      "texture": "3dobjects/nymara/interiors/whitehorn_monastery_floor.png",
+      "source": "source-obj/whitehorn_monastery_floor.obj"
+    },
+    {
+      "id": "whitehorn_monastery_wall",
+      "kit": "whitehorn",
+      "model": "3dobjects/nymara/interiors/whitehorn_monastery_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/whitehorn_monastery_wall.png",
+      "source": "source-obj/whitehorn_monastery_wall.obj"
+    },
+    {
+      "id": "whitehorn_ice_arch",
+      "kit": "whitehorn",
+      "model": "3dobjects/nymara/interiors/whitehorn_ice_arch.e3d",
+      "texture": "3dobjects/nymara/interiors/whitehorn_ice_arch.png",
+      "source": "source-obj/whitehorn_ice_arch.obj"
+    },
+    {
+      "id": "whitehorn_prayer_column",
+      "kit": "whitehorn",
+      "model": "3dobjects/nymara/interiors/whitehorn_prayer_column.e3d",
+      "texture": "3dobjects/nymara/interiors/whitehorn_prayer_column.png",
+      "source": "source-obj/whitehorn_prayer_column.obj"
+    },
+    {
+      "id": "whitehorn_mine_support",
+      "kit": "whitehorn",
+      "model": "3dobjects/nymara/interiors/whitehorn_mine_support.e3d",
+      "texture": "3dobjects/nymara/interiors/whitehorn_mine_support.png",
+      "source": "source-obj/whitehorn_mine_support.obj"
+    },
+    {
+      "id": "whitehorn_glacier_altar",
+      "kit": "whitehorn",
+      "model": "3dobjects/nymara/interiors/whitehorn_glacier_altar.e3d",
+      "texture": "3dobjects/nymara/interiors/whitehorn_glacier_altar.png",
+      "source": "source-obj/whitehorn_glacier_altar.obj"
+    },
+    {
+      "id": "glasswarden_laboratory_floor",
+      "kit": "glasswarden",
+      "model": "3dobjects/nymara/interiors/glasswarden_laboratory_floor.e3d",
+      "texture": "3dobjects/nymara/interiors/glasswarden_laboratory_floor.png",
+      "source": "source-obj/glasswarden_laboratory_floor.obj"
+    },
+    {
+      "id": "glasswarden_brass_wall",
+      "kit": "glasswarden",
+      "model": "3dobjects/nymara/interiors/glasswarden_brass_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/glasswarden_brass_wall.png",
+      "source": "source-obj/glasswarden_brass_wall.obj"
+    },
+    {
+      "id": "glasswarden_experiment_table",
+      "kit": "glasswarden",
+      "model": "3dobjects/nymara/interiors/glasswarden_experiment_table.e3d",
+      "texture": "3dobjects/nymara/interiors/glasswarden_experiment_table.png",
+      "source": "source-obj/glasswarden_experiment_table.obj"
+    },
+    {
+      "id": "glasswarden_observatory_lens",
+      "kit": "glasswarden",
+      "model": "3dobjects/nymara/interiors/glasswarden_observatory_lens.e3d",
+      "texture": "3dobjects/nymara/interiors/glasswarden_observatory_lens.png",
+      "source": "source-obj/glasswarden_observatory_lens.obj"
+    },
+    {
+      "id": "glasswarden_crystal_brazier",
+      "kit": "glasswarden",
+      "model": "3dobjects/nymara/interiors/glasswarden_crystal_brazier.e3d",
+      "texture": "3dobjects/nymara/interiors/glasswarden_crystal_brazier.png",
+      "source": "source-obj/glasswarden_crystal_brazier.obj"
+    },
+    {
+      "id": "glasswarden_archive_shelf",
+      "kit": "glasswarden",
+      "model": "3dobjects/nymara/interiors/glasswarden_archive_shelf.e3d",
+      "texture": "3dobjects/nymara/interiors/glasswarden_archive_shelf.png",
+      "source": "source-obj/glasswarden_archive_shelf.obj"
+    },
+    {
+      "id": "amberwood_manor_floor",
+      "kit": "amberwood",
+      "model": "3dobjects/nymara/interiors/amberwood_manor_floor.e3d",
+      "texture": "3dobjects/nymara/interiors/amberwood_manor_floor.png",
+      "source": "source-obj/amberwood_manor_floor.obj"
+    },
+    {
+      "id": "amberwood_manor_wall",
+      "kit": "amberwood",
+      "model": "3dobjects/nymara/interiors/amberwood_manor_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/amberwood_manor_wall.png",
+      "source": "source-obj/amberwood_manor_wall.obj"
+    },
+    {
+      "id": "amberwood_estate_door",
+      "kit": "amberwood",
+      "model": "3dobjects/nymara/interiors/amberwood_estate_door.e3d",
+      "texture": "3dobjects/nymara/interiors/amberwood_estate_door.png",
+      "source": "source-obj/amberwood_estate_door.obj"
+    },
+    {
+      "id": "amberwood_estate_bed",
+      "kit": "amberwood",
+      "model": "3dobjects/nymara/interiors/amberwood_estate_bed.e3d",
+      "texture": "3dobjects/nymara/interiors/amberwood_estate_bed.png",
+      "source": "source-obj/amberwood_estate_bed.obj"
+    },
+    {
+      "id": "amberwood_banquet_table",
+      "kit": "amberwood",
+      "model": "3dobjects/nymara/interiors/amberwood_banquet_table.e3d",
+      "texture": "3dobjects/nymara/interiors/amberwood_banquet_table.png",
+      "source": "source-obj/amberwood_banquet_table.obj"
+    },
+    {
+      "id": "amberwood_overgrown_statue",
+      "kit": "amberwood",
+      "model": "3dobjects/nymara/interiors/amberwood_overgrown_statue.e3d",
+      "texture": "3dobjects/nymara/interiors/amberwood_overgrown_statue.png",
+      "source": "source-obj/amberwood_overgrown_statue.obj"
+    },
+    {
+      "id": "grey_moor_crypt_floor",
+      "kit": "grey_moor",
+      "model": "3dobjects/nymara/interiors/grey_moor_crypt_floor.e3d",
+      "texture": "3dobjects/nymara/interiors/grey_moor_crypt_floor.png",
+      "source": "source-obj/grey_moor_crypt_floor.obj"
+    },
+    {
+      "id": "grey_moor_crypt_wall",
+      "kit": "grey_moor",
+      "model": "3dobjects/nymara/interiors/grey_moor_crypt_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/grey_moor_crypt_wall.png",
+      "source": "source-obj/grey_moor_crypt_wall.obj"
+    },
+    {
+      "id": "grey_moor_barrow_arch",
+      "kit": "grey_moor",
+      "model": "3dobjects/nymara/interiors/grey_moor_barrow_arch.e3d",
+      "texture": "3dobjects/nymara/interiors/grey_moor_barrow_arch.png",
+      "source": "source-obj/grey_moor_barrow_arch.obj"
+    },
+    {
+      "id": "grey_moor_sarcophagus",
+      "kit": "grey_moor",
+      "model": "3dobjects/nymara/interiors/grey_moor_sarcophagus.e3d",
+      "texture": "3dobjects/nymara/interiors/grey_moor_sarcophagus.png",
+      "source": "source-obj/grey_moor_sarcophagus.obj"
+    },
+    {
+      "id": "grey_moor_ritual_altar",
+      "kit": "grey_moor",
+      "model": "3dobjects/nymara/interiors/grey_moor_ritual_altar.e3d",
+      "texture": "3dobjects/nymara/interiors/grey_moor_ritual_altar.png",
+      "source": "source-obj/grey_moor_ritual_altar.obj"
+    },
+    {
+      "id": "grey_moor_spike_trap",
+      "kit": "grey_moor",
+      "model": "3dobjects/nymara/interiors/grey_moor_spike_trap.e3d",
+      "texture": "3dobjects/nymara/interiors/grey_moor_spike_trap.png",
+      "source": "source-obj/grey_moor_spike_trap.obj"
+    },
+    {
+      "id": "verdant_cenote_floor",
+      "kit": "verdant",
+      "model": "3dobjects/nymara/interiors/verdant_cenote_floor.e3d",
+      "texture": "3dobjects/nymara/interiors/verdant_cenote_floor.png",
+      "source": "source-obj/verdant_cenote_floor.obj"
+    },
+    {
+      "id": "verdant_root_wall",
+      "kit": "verdant",
+      "model": "3dobjects/nymara/interiors/verdant_root_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/verdant_root_wall.png",
+      "source": "source-obj/verdant_root_wall.obj"
+    },
+    {
+      "id": "verdant_jungle_arch",
+      "kit": "verdant",
+      "model": "3dobjects/nymara/interiors/verdant_jungle_arch.e3d",
+      "texture": "3dobjects/nymara/interiors/verdant_jungle_arch.png",
+      "source": "source-obj/verdant_jungle_arch.obj"
+    },
+    {
+      "id": "verdant_ritual_pool",
+      "kit": "verdant",
+      "model": "3dobjects/nymara/interiors/verdant_ritual_pool.e3d",
+      "texture": "3dobjects/nymara/interiors/verdant_ritual_pool.png",
+      "source": "source-obj/verdant_ritual_pool.obj"
+    },
+    {
+      "id": "verdant_vine_altar",
+      "kit": "verdant",
+      "model": "3dobjects/nymara/interiors/verdant_vine_altar.e3d",
+      "texture": "3dobjects/nymara/interiors/verdant_vine_altar.png",
+      "source": "source-obj/verdant_vine_altar.obj"
+    },
+    {
+      "id": "verdant_root_statue",
+      "kit": "verdant",
+      "model": "3dobjects/nymara/interiors/verdant_root_statue.e3d",
+      "texture": "3dobjects/nymara/interiors/verdant_root_statue.png",
+      "source": "source-obj/verdant_root_statue.obj"
+    },
+    {
+      "id": "ssarathi_scaled_floor",
+      "kit": "ssarathi",
+      "model": "3dobjects/nymara/interiors/ssarathi_scaled_floor.e3d",
+      "texture": "3dobjects/nymara/interiors/ssarathi_scaled_floor.png",
+      "source": "source-obj/ssarathi_scaled_floor.obj"
+    },
+    {
+      "id": "ssarathi_curved_wall",
+      "kit": "ssarathi",
+      "model": "3dobjects/nymara/interiors/ssarathi_curved_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/ssarathi_curved_wall.png",
+      "source": "source-obj/ssarathi_curved_wall.obj"
+    },
+    {
+      "id": "ssarathi_water_arch",
+      "kit": "ssarathi",
+      "model": "3dobjects/nymara/interiors/ssarathi_water_arch.e3d",
+      "texture": "3dobjects/nymara/interiors/ssarathi_water_arch.png",
+      "source": "source-obj/ssarathi_water_arch.obj"
+    },
+    {
+      "id": "ssarathi_hatchery_pool",
+      "kit": "ssarathi",
+      "model": "3dobjects/nymara/interiors/ssarathi_hatchery_pool.e3d",
+      "texture": "3dobjects/nymara/interiors/ssarathi_hatchery_pool.png",
+      "source": "source-obj/ssarathi_hatchery_pool.obj"
+    },
+    {
+      "id": "ssarathi_archive_shelf",
+      "kit": "ssarathi",
+      "model": "3dobjects/nymara/interiors/ssarathi_archive_shelf.e3d",
+      "texture": "3dobjects/nymara/interiors/ssarathi_archive_shelf.png",
+      "source": "source-obj/ssarathi_archive_shelf.obj"
+    },
+    {
+      "id": "ssarathi_royal_statue",
+      "kit": "ssarathi",
+      "model": "3dobjects/nymara/interiors/ssarathi_royal_statue.e3d",
+      "texture": "3dobjects/nymara/interiors/ssarathi_royal_statue.png",
+      "source": "source-obj/ssarathi_royal_statue.obj"
+    },
+    {
+      "id": "ssarathi_water_door",
+      "kit": "ssarathi",
+      "model": "3dobjects/nymara/interiors/ssarathi_water_door.e3d",
+      "texture": "3dobjects/nymara/interiors/ssarathi_water_door.png",
+      "source": "source-obj/ssarathi_water_door.obj"
+    },
+    {
+      "id": "ssarathi_vault_trap",
+      "kit": "ssarathi",
+      "model": "3dobjects/nymara/interiors/ssarathi_vault_trap.e3d",
+      "texture": "3dobjects/nymara/interiors/ssarathi_vault_trap.png",
+      "source": "source-obj/ssarathi_vault_trap.obj"
+    },
+    {
+      "id": "manymouth_flooded_floor",
+      "kit": "manymouth",
+      "model": "3dobjects/nymara/interiors/manymouth_flooded_floor.e3d",
+      "texture": "3dobjects/nymara/interiors/manymouth_flooded_floor.png",
+      "source": "source-obj/manymouth_flooded_floor.obj"
+    },
+    {
+      "id": "manymouth_stilt_wall",
+      "kit": "manymouth",
+      "model": "3dobjects/nymara/interiors/manymouth_stilt_wall.e3d",
+      "texture": "3dobjects/nymara/interiors/manymouth_stilt_wall.png",
+      "source": "source-obj/manymouth_stilt_wall.obj"
+    },
+    {
+      "id": "manymouth_boardwalk_section",
+      "kit": "manymouth",
+      "model": "3dobjects/nymara/interiors/manymouth_boardwalk_section.e3d",
+      "texture": "3dobjects/nymara/interiors/manymouth_boardwalk_section.png",
+      "source": "source-obj/manymouth_boardwalk_section.obj"
+    },
+    {
+      "id": "manymouth_smuggler_shelf",
+      "kit": "manymouth",
+      "model": "3dobjects/nymara/interiors/manymouth_smuggler_shelf.e3d",
+      "texture": "3dobjects/nymara/interiors/manymouth_smuggler_shelf.png",
+      "source": "source-obj/manymouth_smuggler_shelf.obj"
+    },
+    {
+      "id": "manymouth_fishing_crates",
+      "kit": "manymouth",
+      "model": "3dobjects/nymara/interiors/manymouth_fishing_crates.e3d",
+      "texture": "3dobjects/nymara/interiors/manymouth_fishing_crates.png",
+      "source": "source-obj/manymouth_fishing_crates.obj"
+    },
+    {
+      "id": "manymouth_flood_channel",
+      "kit": "manymouth",
+      "model": "3dobjects/nymara/interiors/manymouth_flood_channel.e3d",
+      "texture": "3dobjects/nymara/interiors/manymouth_flood_channel.png",
+      "source": "source-obj/manymouth_flood_channel.obj"
+    }
+  ],
+  "landmark_dungeons": [
+    "drowned_crown",
+    "whitehorn_glacier_temple",
+    "resonant_vault",
+    "amberwood_estate",
+    "grey_moor_barrows",
+    "ssarathi_royal_archive",
+    "manymouth_flooded_labyrinth"
+  ]
+}

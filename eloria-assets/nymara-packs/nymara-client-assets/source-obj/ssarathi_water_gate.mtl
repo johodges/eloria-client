@@ -1,0 +1,3 @@
+newmtl ssarathi_water_gate
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/ssarathi_water_gate.png

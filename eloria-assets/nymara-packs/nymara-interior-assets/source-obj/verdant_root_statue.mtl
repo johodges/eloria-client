@@ -1,0 +1,3 @@
+newmtl verdant_root_statue
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/verdant_root_statue.png

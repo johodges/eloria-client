@@ -1,0 +1,3 @@
+newmtl manymouth_market_stall
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/manymouth_market_stall.png

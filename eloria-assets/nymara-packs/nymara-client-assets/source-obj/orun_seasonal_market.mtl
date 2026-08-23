@@ -1,0 +1,3 @@
+newmtl orun_seasonal_market
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/orun_seasonal_market.png

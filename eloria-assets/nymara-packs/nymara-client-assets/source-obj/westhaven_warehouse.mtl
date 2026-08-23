@@ -1,0 +1,3 @@
+newmtl westhaven_warehouse
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/westhaven_warehouse.png

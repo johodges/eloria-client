@@ -1,0 +1,11 @@
+file_x_len: 256
+file_y_len: 256
+u_start: 64
+u_end: 128
+v_start: 128
+v_end: 192
+x_size: 0.9
+y_size: 1.25
+alpha_test: 0.18
+texture: nymara_harvestables.png
+type: plant

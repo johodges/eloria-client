@@ -1,0 +1,3 @@
+newmtl orun_supply_crates
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/orun_supply_crates.png

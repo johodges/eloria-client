@@ -1,0 +1,829 @@
+{
+  "schema": 1,
+  "objects": [
+    {
+      "id": "mirrorhold_lake_house",
+      "model": "3dobjects/nymara/mirrorhold_lake_house.e3d",
+      "texture": "3dobjects/nymara/mirrorhold_lake_house.png",
+      "source": "source-obj/mirrorhold_lake_house.obj"
+    },
+    {
+      "id": "mirrorhold_civic_tower",
+      "model": "3dobjects/nymara/mirrorhold_civic_tower.e3d",
+      "texture": "3dobjects/nymara/mirrorhold_civic_tower.png",
+      "source": "source-obj/mirrorhold_civic_tower.obj"
+    },
+    {
+      "id": "mirrorhold_radial_bridge",
+      "model": "3dobjects/nymara/mirrorhold_radial_bridge.e3d",
+      "texture": "3dobjects/nymara/mirrorhold_radial_bridge.png",
+      "source": "source-obj/mirrorhold_radial_bridge.obj"
+    },
+    {
+      "id": "four_gates_gatehouse",
+      "model": "3dobjects/nymara/four_gates_gatehouse.e3d",
+      "texture": "3dobjects/nymara/four_gates_gatehouse.png",
+      "source": "source-obj/four_gates_gatehouse.obj"
+    },
+    {
+      "id": "crownwater_ferry_dock",
+      "model": "3dobjects/nymara/crownwater_ferry_dock.e3d",
+      "texture": "3dobjects/nymara/crownwater_ferry_dock.png",
+      "source": "source-obj/crownwater_ferry_dock.obj"
+    },
+    {
+      "id": "crownwater_ferry",
+      "model": "3dobjects/nymara/crownwater_ferry.e3d",
+      "texture": "3dobjects/nymara/crownwater_ferry.png",
+      "source": "source-obj/crownwater_ferry.obj"
+    },
+    {
+      "id": "glasswarden_observatory",
+      "model": "3dobjects/nymara/glasswarden_observatory.e3d",
+      "texture": "3dobjects/nymara/glasswarden_observatory.png",
+      "source": "source-obj/glasswarden_observatory.obj"
+    },
+    {
+      "id": "resonant_crystal_cluster",
+      "model": "3dobjects/nymara/resonant_crystal_cluster.e3d",
+      "texture": "3dobjects/nymara/resonant_crystal_cluster.png",
+      "source": "source-obj/resonant_crystal_cluster.obj"
+    },
+    {
+      "id": "orun_round_tent",
+      "model": "3dobjects/nymara/orun_round_tent.e3d",
+      "texture": "3dobjects/nymara/orun_round_tent.png",
+      "source": "source-obj/orun_round_tent.obj"
+    },
+    {
+      "id": "amberwood_estate",
+      "model": "3dobjects/nymara/amberwood_estate.e3d",
+      "texture": "3dobjects/nymara/amberwood_estate.png",
+      "source": "source-obj/amberwood_estate.obj"
+    },
+    {
+      "id": "four_gates_waystone",
+      "model": "3dobjects/nymara/four_gates_waystone.e3d",
+      "texture": "3dobjects/nymara/four_gates_waystone.png",
+      "source": "source-obj/four_gates_waystone.obj"
+    },
+    {
+      "id": "amberwood_tree",
+      "model": "3dobjects/nymara/amberwood_tree.e3d",
+      "texture": "3dobjects/nymara/amberwood_tree.png",
+      "source": "source-obj/amberwood_tree.obj"
+    },
+    {
+      "id": "mirror_reed",
+      "model": "3dobjects/nymara/mirror_reed.e3d",
+      "texture": "3dobjects/nymara/mirror_reed.png",
+      "source": "source-obj/mirror_reed.obj"
+    },
+    {
+      "id": "crownwater_pearl",
+      "model": "3dobjects/nymara/crownwater_pearl.e3d",
+      "texture": "3dobjects/nymara/crownwater_pearl.png",
+      "source": "source-obj/crownwater_pearl.obj"
+    },
+    {
+      "id": "whitehorn_silverleaf",
+      "model": "3dobjects/nymara/whitehorn_silverleaf.e3d",
+      "texture": "3dobjects/nymara/whitehorn_silverleaf.png",
+      "source": "source-obj/whitehorn_silverleaf.obj"
+    },
+    {
+      "id": "ghost_orchid",
+      "model": "3dobjects/nymara/ghost_orchid.e3d",
+      "texture": "3dobjects/nymara/ghost_orchid.png",
+      "source": "source-obj/ghost_orchid.obj"
+    },
+    {
+      "id": "delta_lotus",
+      "model": "3dobjects/nymara/delta_lotus.e3d",
+      "texture": "3dobjects/nymara/delta_lotus.png",
+      "source": "source-obj/delta_lotus.obj"
+    },
+    {
+      "id": "stormglass_shard",
+      "model": "3dobjects/nymara/stormglass_shard.e3d",
+      "texture": "3dobjects/nymara/stormglass_shard.png",
+      "source": "source-obj/stormglass_shard.obj"
+    },
+    {
+      "id": "deep_lake_clay",
+      "model": "3dobjects/nymara/deep_lake_clay.e3d",
+      "texture": "3dobjects/nymara/deep_lake_clay.png",
+      "source": "source-obj/deep_lake_clay.obj"
+    },
+    {
+      "id": "mirrorhold_market_crate",
+      "model": "3dobjects/nymara/mirrorhold_market_crate.e3d",
+      "texture": "3dobjects/nymara/mirrorhold_market_crate.png",
+      "source": "source-obj/mirrorhold_market_crate.obj"
+    },
+    {
+      "id": "whitehorn_glacier",
+      "model": "3dobjects/nymara/whitehorn_glacier.e3d",
+      "texture": "3dobjects/nymara/whitehorn_glacier.png",
+      "source": "source-obj/whitehorn_glacier.obj"
+    },
+    {
+      "id": "whitehorn_monastery",
+      "model": "3dobjects/nymara/whitehorn_monastery.e3d",
+      "texture": "3dobjects/nymara/whitehorn_monastery.png",
+      "source": "source-obj/whitehorn_monastery.obj"
+    },
+    {
+      "id": "whitehorn_mine_entrance",
+      "model": "3dobjects/nymara/whitehorn_mine_entrance.e3d",
+      "texture": "3dobjects/nymara/whitehorn_mine_entrance.png",
+      "source": "source-obj/whitehorn_mine_entrance.obj"
+    },
+    {
+      "id": "whitehorn_cairn",
+      "model": "3dobjects/nymara/whitehorn_cairn.e3d",
+      "texture": "3dobjects/nymara/whitehorn_cairn.png",
+      "source": "source-obj/whitehorn_cairn.obj"
+    },
+    {
+      "id": "sunmane_windmill",
+      "model": "3dobjects/nymara/sunmane_windmill.e3d",
+      "texture": "3dobjects/nymara/sunmane_windmill.png",
+      "source": "source-obj/sunmane_windmill.obj"
+    },
+    {
+      "id": "sunmane_caravanserai",
+      "model": "3dobjects/nymara/sunmane_caravanserai.e3d",
+      "texture": "3dobjects/nymara/sunmane_caravanserai.png",
+      "source": "source-obj/sunmane_caravanserai.obj"
+    },
+    {
+      "id": "orun_portable_shrine",
+      "model": "3dobjects/nymara/orun_portable_shrine.e3d",
+      "texture": "3dobjects/nymara/orun_portable_shrine.png",
+      "source": "source-obj/orun_portable_shrine.obj"
+    },
+    {
+      "id": "orun_seasonal_market",
+      "model": "3dobjects/nymara/orun_seasonal_market.e3d",
+      "texture": "3dobjects/nymara/orun_seasonal_market.png",
+      "source": "source-obj/orun_seasonal_market.obj"
+    },
+    {
+      "id": "amberwood_ruin_arch",
+      "model": "3dobjects/nymara/amberwood_ruin_arch.e3d",
+      "texture": "3dobjects/nymara/amberwood_ruin_arch.png",
+      "source": "source-obj/amberwood_ruin_arch.obj"
+    },
+    {
+      "id": "grey_moor_standing_stones",
+      "model": "3dobjects/nymara/grey_moor_standing_stones.e3d",
+      "texture": "3dobjects/nymara/grey_moor_standing_stones.png",
+      "source": "source-obj/grey_moor_standing_stones.obj"
+    },
+    {
+      "id": "grey_moor_barrow",
+      "model": "3dobjects/nymara/grey_moor_barrow.e3d",
+      "texture": "3dobjects/nymara/grey_moor_barrow.png",
+      "source": "source-obj/grey_moor_barrow.obj"
+    },
+    {
+      "id": "grey_moor_boardwalk",
+      "model": "3dobjects/nymara/grey_moor_boardwalk.e3d",
+      "texture": "3dobjects/nymara/grey_moor_boardwalk.png",
+      "source": "source-obj/grey_moor_boardwalk.obj"
+    },
+    {
+      "id": "westhaven_lighthouse",
+      "model": "3dobjects/nymara/westhaven_lighthouse.e3d",
+      "texture": "3dobjects/nymara/westhaven_lighthouse.png",
+      "source": "source-obj/westhaven_lighthouse.obj"
+    },
+    {
+      "id": "westhaven_warehouse",
+      "model": "3dobjects/nymara/westhaven_warehouse.e3d",
+      "texture": "3dobjects/nymara/westhaven_warehouse.png",
+      "source": "source-obj/westhaven_warehouse.obj"
+    },
+    {
+      "id": "westhaven_harbor_crane",
+      "model": "3dobjects/nymara/westhaven_harbor_crane.e3d",
+      "texture": "3dobjects/nymara/westhaven_harbor_crane.png",
+      "source": "source-obj/westhaven_harbor_crane.obj"
+    },
+    {
+      "id": "westhaven_fish_market",
+      "model": "3dobjects/nymara/westhaven_fish_market.e3d",
+      "texture": "3dobjects/nymara/westhaven_fish_market.png",
+      "source": "source-obj/westhaven_fish_market.obj"
+    },
+    {
+      "id": "verdant_giant_fern",
+      "model": "3dobjects/nymara/verdant_giant_fern.e3d",
+      "texture": "3dobjects/nymara/verdant_giant_fern.png",
+      "source": "source-obj/verdant_giant_fern.obj"
+    },
+    {
+      "id": "verdant_root_bridge",
+      "model": "3dobjects/nymara/verdant_root_bridge.e3d",
+      "texture": "3dobjects/nymara/verdant_root_bridge.png",
+      "source": "source-obj/verdant_root_bridge.obj"
+    },
+    {
+      "id": "ssarathi_ruin_arch",
+      "model": "3dobjects/nymara/ssarathi_ruin_arch.e3d",
+      "texture": "3dobjects/nymara/ssarathi_ruin_arch.png",
+      "source": "source-obj/ssarathi_ruin_arch.obj"
+    },
+    {
+      "id": "ssarathi_temple",
+      "model": "3dobjects/nymara/ssarathi_temple.e3d",
+      "texture": "3dobjects/nymara/ssarathi_temple.png",
+      "source": "source-obj/ssarathi_temple.obj"
+    },
+    {
+      "id": "ssarathi_ritual_pool",
+      "model": "3dobjects/nymara/ssarathi_ritual_pool.e3d",
+      "texture": "3dobjects/nymara/ssarathi_ritual_pool.png",
+      "source": "source-obj/ssarathi_ritual_pool.obj"
+    },
+    {
+      "id": "ssarathi_archive_waystone",
+      "model": "3dobjects/nymara/ssarathi_archive_waystone.e3d",
+      "texture": "3dobjects/nymara/ssarathi_archive_waystone.png",
+      "source": "source-obj/ssarathi_archive_waystone.obj"
+    },
+    {
+      "id": "manymouth_stilt_house",
+      "model": "3dobjects/nymara/manymouth_stilt_house.e3d",
+      "texture": "3dobjects/nymara/manymouth_stilt_house.png",
+      "source": "source-obj/manymouth_stilt_house.obj"
+    },
+    {
+      "id": "manymouth_boardwalk",
+      "model": "3dobjects/nymara/manymouth_boardwalk.e3d",
+      "texture": "3dobjects/nymara/manymouth_boardwalk.png",
+      "source": "source-obj/manymouth_boardwalk.obj"
+    },
+    {
+      "id": "manymouth_canoe",
+      "model": "3dobjects/nymara/manymouth_canoe.e3d",
+      "texture": "3dobjects/nymara/manymouth_canoe.png",
+      "source": "source-obj/manymouth_canoe.obj"
+    },
+    {
+      "id": "manymouth_mangrove",
+      "model": "3dobjects/nymara/manymouth_mangrove.e3d",
+      "texture": "3dobjects/nymara/manymouth_mangrove.png",
+      "source": "source-obj/manymouth_mangrove.obj"
+    },
+    {
+      "id": "manymouth_ferry_dock",
+      "model": "3dobjects/nymara/manymouth_ferry_dock.e3d",
+      "texture": "3dobjects/nymara/manymouth_ferry_dock.png",
+      "source": "source-obj/manymouth_ferry_dock.obj"
+    },
+    {
+      "id": "manymouth_smuggler_crate",
+      "model": "3dobjects/nymara/manymouth_smuggler_crate.e3d",
+      "texture": "3dobjects/nymara/manymouth_smuggler_crate.png",
+      "source": "source-obj/manymouth_smuggler_crate.obj"
+    },
+    {
+      "id": "mirrorhold_canal_wall",
+      "model": "3dobjects/nymara/mirrorhold_canal_wall.e3d",
+      "texture": "3dobjects/nymara/mirrorhold_canal_wall.png",
+      "source": "source-obj/mirrorhold_canal_wall.obj"
+    },
+    {
+      "id": "mirrorhold_canal_stairs",
+      "model": "3dobjects/nymara/mirrorhold_canal_stairs.e3d",
+      "texture": "3dobjects/nymara/mirrorhold_canal_stairs.png",
+      "source": "source-obj/mirrorhold_canal_stairs.obj"
+    },
+    {
+      "id": "mirrorhold_public_fountain",
+      "model": "3dobjects/nymara/mirrorhold_public_fountain.e3d",
+      "texture": "3dobjects/nymara/mirrorhold_public_fountain.png",
+      "source": "source-obj/mirrorhold_public_fountain.obj"
+    },
+    {
+      "id": "mirrorhold_canal_lock",
+      "model": "3dobjects/nymara/mirrorhold_canal_lock.e3d",
+      "texture": "3dobjects/nymara/mirrorhold_canal_lock.png",
+      "source": "source-obj/mirrorhold_canal_lock.obj"
+    },
+    {
+      "id": "mirrorhold_floating_market",
+      "model": "3dobjects/nymara/mirrorhold_floating_market.e3d",
+      "texture": "3dobjects/nymara/mirrorhold_floating_market.png",
+      "source": "source-obj/mirrorhold_floating_market.obj"
+    },
+    {
+      "id": "crownwater_fishing_boat",
+      "model": "3dobjects/nymara/crownwater_fishing_boat.e3d",
+      "texture": "3dobjects/nymara/crownwater_fishing_boat.png",
+      "source": "source-obj/crownwater_fishing_boat.obj"
+    },
+    {
+      "id": "crownwater_patrol_boat",
+      "model": "3dobjects/nymara/crownwater_patrol_boat.e3d",
+      "texture": "3dobjects/nymara/crownwater_patrol_boat.png",
+      "source": "source-obj/crownwater_patrol_boat.obj"
+    },
+    {
+      "id": "crownwater_submerged_waystone",
+      "model": "3dobjects/nymara/crownwater_submerged_waystone.e3d",
+      "texture": "3dobjects/nymara/crownwater_submerged_waystone.png",
+      "source": "source-obj/crownwater_submerged_waystone.obj"
+    },
+    {
+      "id": "whitehorn_rope_bridge",
+      "model": "3dobjects/nymara/whitehorn_rope_bridge.e3d",
+      "texture": "3dobjects/nymara/whitehorn_rope_bridge.png",
+      "source": "source-obj/whitehorn_rope_bridge.obj"
+    },
+    {
+      "id": "whitehorn_carved_stairs",
+      "model": "3dobjects/nymara/whitehorn_carved_stairs.e3d",
+      "texture": "3dobjects/nymara/whitehorn_carved_stairs.png",
+      "source": "source-obj/whitehorn_carved_stairs.obj"
+    },
+    {
+      "id": "whitehorn_shrine",
+      "model": "3dobjects/nymara/whitehorn_shrine.e3d",
+      "texture": "3dobjects/nymara/whitehorn_shrine.png",
+      "source": "source-obj/whitehorn_shrine.obj"
+    },
+    {
+      "id": "whitehorn_mine_lift",
+      "model": "3dobjects/nymara/whitehorn_mine_lift.e3d",
+      "texture": "3dobjects/nymara/whitehorn_mine_lift.png",
+      "source": "source-obj/whitehorn_mine_lift.obj"
+    },
+    {
+      "id": "whitehorn_ice_cave",
+      "model": "3dobjects/nymara/whitehorn_ice_cave.e3d",
+      "texture": "3dobjects/nymara/whitehorn_ice_cave.png",
+      "source": "source-obj/whitehorn_ice_cave.obj"
+    },
+    {
+      "id": "whitehorn_frozen_waystone",
+      "model": "3dobjects/nymara/whitehorn_frozen_waystone.e3d",
+      "texture": "3dobjects/nymara/whitehorn_frozen_waystone.png",
+      "source": "source-obj/whitehorn_frozen_waystone.obj"
+    },
+    {
+      "id": "amethyst_crystal_bridge",
+      "model": "3dobjects/nymara/amethyst_crystal_bridge.e3d",
+      "texture": "3dobjects/nymara/amethyst_crystal_bridge.png",
+      "source": "source-obj/amethyst_crystal_bridge.obj"
+    },
+    {
+      "id": "amethyst_storm_ruin",
+      "model": "3dobjects/nymara/amethyst_storm_ruin.e3d",
+      "texture": "3dobjects/nymara/amethyst_storm_ruin.png",
+      "source": "source-obj/amethyst_storm_ruin.obj"
+    },
+    {
+      "id": "glasswarden_lens_tower",
+      "model": "3dobjects/nymara/glasswarden_lens_tower.e3d",
+      "texture": "3dobjects/nymara/glasswarden_lens_tower.png",
+      "source": "source-obj/glasswarden_lens_tower.obj"
+    },
+    {
+      "id": "glasswarden_field_station",
+      "model": "3dobjects/nymara/glasswarden_field_station.e3d",
+      "texture": "3dobjects/nymara/glasswarden_field_station.png",
+      "source": "source-obj/glasswarden_field_station.obj"
+    },
+    {
+      "id": "amethyst_geode_cave",
+      "model": "3dobjects/nymara/amethyst_geode_cave.e3d",
+      "texture": "3dobjects/nymara/amethyst_geode_cave.png",
+      "source": "source-obj/amethyst_geode_cave.obj"
+    },
+    {
+      "id": "amethyst_levitating_shards",
+      "model": "3dobjects/nymara/amethyst_levitating_shards.e3d",
+      "texture": "3dobjects/nymara/amethyst_levitating_shards.png",
+      "source": "source-obj/amethyst_levitating_shards.obj"
+    },
+    {
+      "id": "sunmane_well",
+      "model": "3dobjects/nymara/sunmane_well.e3d",
+      "texture": "3dobjects/nymara/sunmane_well.png",
+      "source": "source-obj/sunmane_well.obj"
+    },
+    {
+      "id": "sunmane_animal_pen",
+      "model": "3dobjects/nymara/sunmane_animal_pen.e3d",
+      "texture": "3dobjects/nymara/sunmane_animal_pen.png",
+      "source": "source-obj/sunmane_animal_pen.obj"
+    },
+    {
+      "id": "sunmane_burial_mound",
+      "model": "3dobjects/nymara/sunmane_burial_mound.e3d",
+      "texture": "3dobjects/nymara/sunmane_burial_mound.png",
+      "source": "source-obj/sunmane_burial_mound.obj"
+    },
+    {
+      "id": "sunmane_caravan_camp",
+      "model": "3dobjects/nymara/sunmane_caravan_camp.e3d",
+      "texture": "3dobjects/nymara/sunmane_caravan_camp.png",
+      "source": "source-obj/sunmane_caravan_camp.obj"
+    },
+    {
+      "id": "orun_banner_shrine",
+      "model": "3dobjects/nymara/orun_banner_shrine.e3d",
+      "texture": "3dobjects/nymara/orun_banner_shrine.png",
+      "source": "source-obj/orun_banner_shrine.obj"
+    },
+    {
+      "id": "sunmane_dry_cave",
+      "model": "3dobjects/nymara/sunmane_dry_cave.e3d",
+      "texture": "3dobjects/nymara/sunmane_dry_cave.png",
+      "source": "source-obj/sunmane_dry_cave.obj"
+    },
+    {
+      "id": "amberwood_old_bridge",
+      "model": "3dobjects/nymara/amberwood_old_bridge.e3d",
+      "texture": "3dobjects/nymara/amberwood_old_bridge.png",
+      "source": "source-obj/amberwood_old_bridge.obj"
+    },
+    {
+      "id": "amberwood_hunting_lodge",
+      "model": "3dobjects/nymara/amberwood_hunting_lodge.e3d",
+      "texture": "3dobjects/nymara/amberwood_hunting_lodge.png",
+      "source": "source-obj/amberwood_hunting_lodge.obj"
+    },
+    {
+      "id": "amberwood_hollow_tree",
+      "model": "3dobjects/nymara/amberwood_hollow_tree.e3d",
+      "texture": "3dobjects/nymara/amberwood_hollow_tree.png",
+      "source": "source-obj/amberwood_hollow_tree.obj"
+    },
+    {
+      "id": "amberwood_orchard_fence",
+      "model": "3dobjects/nymara/amberwood_orchard_fence.e3d",
+      "texture": "3dobjects/nymara/amberwood_orchard_fence.png",
+      "source": "source-obj/amberwood_orchard_fence.obj"
+    },
+    {
+      "id": "amberwood_garden_fountain",
+      "model": "3dobjects/nymara/amberwood_garden_fountain.e3d",
+      "texture": "3dobjects/nymara/amberwood_garden_fountain.png",
+      "source": "source-obj/amberwood_garden_fountain.obj"
+    },
+    {
+      "id": "amberwood_root_cave",
+      "model": "3dobjects/nymara/amberwood_root_cave.e3d",
+      "texture": "3dobjects/nymara/amberwood_root_cave.png",
+      "source": "source-obj/amberwood_root_cave.obj"
+    },
+    {
+      "id": "grey_moor_cairn",
+      "model": "3dobjects/nymara/grey_moor_cairn.e3d",
+      "texture": "3dobjects/nymara/grey_moor_cairn.png",
+      "source": "source-obj/grey_moor_cairn.obj"
+    },
+    {
+      "id": "grey_moor_dead_tree",
+      "model": "3dobjects/nymara/grey_moor_dead_tree.e3d",
+      "texture": "3dobjects/nymara/grey_moor_dead_tree.png",
+      "source": "source-obj/grey_moor_dead_tree.obj"
+    },
+    {
+      "id": "grey_moor_abandoned_cottage",
+      "model": "3dobjects/nymara/grey_moor_abandoned_cottage.e3d",
+      "texture": "3dobjects/nymara/grey_moor_abandoned_cottage.png",
+      "source": "source-obj/grey_moor_abandoned_cottage.obj"
+    },
+    {
+      "id": "grey_moor_crypt_entrance",
+      "model": "3dobjects/nymara/grey_moor_crypt_entrance.e3d",
+      "texture": "3dobjects/nymara/grey_moor_crypt_entrance.png",
+      "source": "source-obj/grey_moor_crypt_entrance.obj"
+    },
+    {
+      "id": "grey_moor_peat_fence",
+      "model": "3dobjects/nymara/grey_moor_peat_fence.e3d",
+      "texture": "3dobjects/nymara/grey_moor_peat_fence.png",
+      "source": "source-obj/grey_moor_peat_fence.obj"
+    },
+    {
+      "id": "grey_moor_ritual_shrine",
+      "model": "3dobjects/nymara/grey_moor_ritual_shrine.e3d",
+      "texture": "3dobjects/nymara/grey_moor_ritual_shrine.png",
+      "source": "source-obj/grey_moor_ritual_shrine.obj"
+    },
+    {
+      "id": "westhaven_seawall",
+      "model": "3dobjects/nymara/westhaven_seawall.e3d",
+      "texture": "3dobjects/nymara/westhaven_seawall.png",
+      "source": "source-obj/westhaven_seawall.obj"
+    },
+    {
+      "id": "westhaven_quay_stairs",
+      "model": "3dobjects/nymara/westhaven_quay_stairs.e3d",
+      "texture": "3dobjects/nymara/westhaven_quay_stairs.png",
+      "source": "source-obj/westhaven_quay_stairs.obj"
+    },
+    {
+      "id": "westhaven_dry_dock",
+      "model": "3dobjects/nymara/westhaven_dry_dock.e3d",
+      "texture": "3dobjects/nymara/westhaven_dry_dock.png",
+      "source": "source-obj/westhaven_dry_dock.obj"
+    },
+    {
+      "id": "westhaven_shipyard_frame",
+      "model": "3dobjects/nymara/westhaven_shipyard_frame.e3d",
+      "texture": "3dobjects/nymara/westhaven_shipyard_frame.png",
+      "source": "source-obj/westhaven_shipyard_frame.obj"
+    },
+    {
+      "id": "westhaven_lantern_tower",
+      "model": "3dobjects/nymara/westhaven_lantern_tower.e3d",
+      "texture": "3dobjects/nymara/westhaven_lantern_tower.png",
+      "source": "source-obj/westhaven_lantern_tower.obj"
+    },
+    {
+      "id": "westhaven_sea_cave",
+      "model": "3dobjects/nymara/westhaven_sea_cave.e3d",
+      "texture": "3dobjects/nymara/westhaven_sea_cave.png",
+      "source": "source-obj/westhaven_sea_cave.obj"
+    },
+    {
+      "id": "verdant_tree_platform",
+      "model": "3dobjects/nymara/verdant_tree_platform.e3d",
+      "texture": "3dobjects/nymara/verdant_tree_platform.png",
+      "source": "source-obj/verdant_tree_platform.obj"
+    },
+    {
+      "id": "verdant_jungle_cave",
+      "model": "3dobjects/nymara/verdant_jungle_cave.e3d",
+      "texture": "3dobjects/nymara/verdant_jungle_cave.png",
+      "source": "source-obj/verdant_jungle_cave.obj"
+    },
+    {
+      "id": "verdant_vine_bridge",
+      "model": "3dobjects/nymara/verdant_vine_bridge.e3d",
+      "texture": "3dobjects/nymara/verdant_vine_bridge.png",
+      "source": "source-obj/verdant_vine_bridge.obj"
+    },
+    {
+      "id": "verdant_cenote_stairs",
+      "model": "3dobjects/nymara/verdant_cenote_stairs.e3d",
+      "texture": "3dobjects/nymara/verdant_cenote_stairs.png",
+      "source": "source-obj/verdant_cenote_stairs.obj"
+    },
+    {
+      "id": "verdant_water_shrine",
+      "model": "3dobjects/nymara/verdant_water_shrine.e3d",
+      "texture": "3dobjects/nymara/verdant_water_shrine.png",
+      "source": "source-obj/verdant_water_shrine.obj"
+    },
+    {
+      "id": "verdant_basalt_steps",
+      "model": "3dobjects/nymara/verdant_basalt_steps.e3d",
+      "texture": "3dobjects/nymara/verdant_basalt_steps.png",
+      "source": "source-obj/verdant_basalt_steps.obj"
+    },
+    {
+      "id": "ssarathi_sunken_court",
+      "model": "3dobjects/nymara/ssarathi_sunken_court.e3d",
+      "texture": "3dobjects/nymara/ssarathi_sunken_court.png",
+      "source": "source-obj/ssarathi_sunken_court.obj"
+    },
+    {
+      "id": "ssarathi_water_gate",
+      "model": "3dobjects/nymara/ssarathi_water_gate.e3d",
+      "texture": "3dobjects/nymara/ssarathi_water_gate.png",
+      "source": "source-obj/ssarathi_water_gate.obj"
+    },
+    {
+      "id": "ssarathi_curved_wall",
+      "model": "3dobjects/nymara/ssarathi_curved_wall.e3d",
+      "texture": "3dobjects/nymara/ssarathi_curved_wall.png",
+      "source": "source-obj/ssarathi_curved_wall.obj"
+    },
+    {
+      "id": "ssarathi_hatchery_pool",
+      "model": "3dobjects/nymara/ssarathi_hatchery_pool.e3d",
+      "texture": "3dobjects/nymara/ssarathi_hatchery_pool.png",
+      "source": "source-obj/ssarathi_hatchery_pool.obj"
+    },
+    {
+      "id": "ssarathi_sun_stela",
+      "model": "3dobjects/nymara/ssarathi_sun_stela.e3d",
+      "texture": "3dobjects/nymara/ssarathi_sun_stela.png",
+      "source": "source-obj/ssarathi_sun_stela.obj"
+    },
+    {
+      "id": "ssarathi_vault_entrance",
+      "model": "3dobjects/nymara/ssarathi_vault_entrance.e3d",
+      "texture": "3dobjects/nymara/ssarathi_vault_entrance.png",
+      "source": "source-obj/ssarathi_vault_entrance.obj"
+    },
+    {
+      "id": "manymouth_fishing_trap",
+      "model": "3dobjects/nymara/manymouth_fishing_trap.e3d",
+      "texture": "3dobjects/nymara/manymouth_fishing_trap.png",
+      "source": "source-obj/manymouth_fishing_trap.obj"
+    },
+    {
+      "id": "manymouth_reed_fence",
+      "model": "3dobjects/nymara/manymouth_reed_fence.e3d",
+      "texture": "3dobjects/nymara/manymouth_reed_fence.png",
+      "source": "source-obj/manymouth_reed_fence.obj"
+    },
+    {
+      "id": "manymouth_flooded_cave",
+      "model": "3dobjects/nymara/manymouth_flooded_cave.e3d",
+      "texture": "3dobjects/nymara/manymouth_flooded_cave.png",
+      "source": "source-obj/manymouth_flooded_cave.obj"
+    },
+    {
+      "id": "manymouth_hidden_dock",
+      "model": "3dobjects/nymara/manymouth_hidden_dock.e3d",
+      "texture": "3dobjects/nymara/manymouth_hidden_dock.png",
+      "source": "source-obj/manymouth_hidden_dock.obj"
+    },
+    {
+      "id": "manymouth_tidal_waystone",
+      "model": "3dobjects/nymara/manymouth_tidal_waystone.e3d",
+      "texture": "3dobjects/nymara/manymouth_tidal_waystone.png",
+      "source": "source-obj/manymouth_tidal_waystone.obj"
+    },
+    {
+      "id": "manymouth_market_stall",
+      "model": "3dobjects/nymara/manymouth_market_stall.e3d",
+      "texture": "3dobjects/nymara/manymouth_market_stall.png",
+      "source": "source-obj/manymouth_market_stall.obj"
+    }
+  ],
+  "objects_2d": [
+    {
+      "id": "crownwater_pearl",
+      "definition": "2dobjects/nymara/crownwater_pearl.2d"
+    },
+    {
+      "id": "mirror_reed",
+      "definition": "2dobjects/nymara/mirror_reed.2d"
+    },
+    {
+      "id": "glacier_salt",
+      "definition": "2dobjects/nymara/glacier_salt.2d"
+    },
+    {
+      "id": "whitehorn_silverleaf",
+      "definition": "2dobjects/nymara/whitehorn_silverleaf.2d"
+    },
+    {
+      "id": "resonant_crystal",
+      "definition": "2dobjects/nymara/resonant_crystal.2d"
+    },
+    {
+      "id": "stormglass_shard",
+      "definition": "2dobjects/nymara/stormglass_shard.2d"
+    },
+    {
+      "id": "sunmane_seed",
+      "definition": "2dobjects/nymara/sunmane_seed.2d"
+    },
+    {
+      "id": "amber_resin",
+      "definition": "2dobjects/nymara/amber_resin.2d"
+    },
+    {
+      "id": "moor_peat",
+      "definition": "2dobjects/nymara/moor_peat.2d"
+    },
+    {
+      "id": "ghost_orchid",
+      "definition": "2dobjects/nymara/ghost_orchid.2d"
+    },
+    {
+      "id": "mangrove_sap",
+      "definition": "2dobjects/nymara/mangrove_sap.2d"
+    },
+    {
+      "id": "ssarathi_scale_moss",
+      "definition": "2dobjects/nymara/ssarathi_scale_moss.2d"
+    },
+    {
+      "id": "verdant_venom_bulb",
+      "definition": "2dobjects/nymara/verdant_venom_bulb.2d"
+    },
+    {
+      "id": "delta_lotus",
+      "definition": "2dobjects/nymara/delta_lotus.2d"
+    },
+    {
+      "id": "deep_lake_clay",
+      "definition": "2dobjects/nymara/deep_lake_clay.2d"
+    },
+    {
+      "id": "voltaic_geode",
+      "definition": "2dobjects/nymara/voltaic_geode.2d"
+    }
+  ],
+  "items": [
+    {
+      "item_id": 1000,
+      "image_id": 0,
+      "name": "crownwater_pearl",
+      "icon": "textures/nymara/icons/crownwater_pearl.png"
+    },
+    {
+      "item_id": 1001,
+      "image_id": 1,
+      "name": "mirror_reed",
+      "icon": "textures/nymara/icons/mirror_reed.png"
+    },
+    {
+      "item_id": 1002,
+      "image_id": 2,
+      "name": "glacier_salt",
+      "icon": "textures/nymara/icons/glacier_salt.png"
+    },
+    {
+      "item_id": 1003,
+      "image_id": 3,
+      "name": "whitehorn_silverleaf",
+      "icon": "textures/nymara/icons/whitehorn_silverleaf.png"
+    },
+    {
+      "item_id": 1004,
+      "image_id": 4,
+      "name": "resonant_crystal",
+      "icon": "textures/nymara/icons/resonant_crystal.png"
+    },
+    {
+      "item_id": 1005,
+      "image_id": 5,
+      "name": "stormglass_shard",
+      "icon": "textures/nymara/icons/stormglass_shard.png"
+    },
+    {
+      "item_id": 1006,
+      "image_id": 6,
+      "name": "sunmane_seed",
+      "icon": "textures/nymara/icons/sunmane_seed.png"
+    },
+    {
+      "item_id": 1007,
+      "image_id": 7,
+      "name": "amber_resin",
+      "icon": "textures/nymara/icons/amber_resin.png"
+    },
+    {
+      "item_id": 1008,
+      "image_id": 8,
+      "name": "moor_peat",
+      "icon": "textures/nymara/icons/moor_peat.png"
+    },
+    {
+      "item_id": 1009,
+      "image_id": 9,
+      "name": "ghost_orchid",
+      "icon": "textures/nymara/icons/ghost_orchid.png"
+    },
+    {
+      "item_id": 1010,
+      "image_id": 10,
+      "name": "mangrove_sap",
+      "icon": "textures/nymara/icons/mangrove_sap.png"
+    },
+    {
+      "item_id": 1011,
+      "image_id": 11,
+      "name": "ssarathi_scale_moss",
+      "icon": "textures/nymara/icons/ssarathi_scale_moss.png"
+    },
+    {
+      "item_id": 1012,
+      "image_id": 12,
+      "name": "verdant_venom_bulb",
+      "icon": "textures/nymara/icons/verdant_venom_bulb.png"
+    },
+    {
+      "item_id": 1013,
+      "image_id": 13,
+      "name": "delta_lotus",
+      "icon": "textures/nymara/icons/delta_lotus.png"
+    },
+    {
+      "item_id": 1014,
+      "image_id": 14,
+      "name": "deep_lake_clay",
+      "icon": "textures/nymara/icons/deep_lake_clay.png"
+    },
+    {
+      "item_id": 1015,
+      "image_id": 15,
+      "name": "voltaic_geode",
+      "icon": "textures/nymara/icons/voltaic_geode.png"
+    }
+  ]
+}

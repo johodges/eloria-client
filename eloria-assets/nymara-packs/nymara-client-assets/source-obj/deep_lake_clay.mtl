@@ -1,0 +1,3 @@
+newmtl deep_lake_clay
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/deep_lake_clay.png

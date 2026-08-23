@@ -1,0 +1,3 @@
+newmtl amberwood_orchard_fence
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/amberwood_orchard_fence.png
