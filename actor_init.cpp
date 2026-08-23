@@ -420,6 +420,7 @@ extern "C" void cal_render_actor_shader(actor *act, Uint32 use_lightning, Uint32
 	actor_types* a;
 	IntMap* im;
 	float s;
+	static bool preview_render_logged[MAX_ACTOR_DEFS] = { false };
 
 	assert(act->calmodel);
 
@@ -468,6 +469,29 @@ extern "C" void cal_render_actor_shader(actor *act, Uint32 use_lightning, Uint32
 	im = reinterpret_cast<IntMap*>(act->calmodel->getUserData());
 
 	assert(im);
+
+	if ((act->actor_id == 0) && act->is_enhanced_model &&
+		!preview_render_logged[act->actor_type])
+	{
+		preview_render_logged[act->actor_type] = true;
+		LOG_INFO("Character preview hardware render: type=%d shader=%u drawable_meshes=%u hardware_meshes=%u total_vertices=%u total_faces=%u vertex_buffer=%u index_buffer=%u",
+			act->actor_type, use_animation_program, (unsigned)im->size(),
+			(unsigned)a->hardware_model->getHardwareMeshCount(),
+			(unsigned)a->hardware_model->getTotalVertexCount(),
+			(unsigned)a->hardware_model->getTotalFaceCount(),
+			(unsigned)a->vertex_buffer, (unsigned)a->index_buffer);
+		for (const auto& it: *im)
+		{
+			a->hardware_model->selectHardwareMesh(it.first);
+			LOG_INFO("Character preview drawable: type=%d hardware=%d core_mesh=%d base_vertex=%u start_index=%u vertices=%u faces=%u bones=%u",
+				act->actor_type, it.first, it.second.get_mesh_index(),
+				(unsigned)a->hardware_model->getBaseVertexIndex(),
+				(unsigned)a->hardware_model->getStartIndex(),
+				(unsigned)a->hardware_model->getVertexCount(),
+				(unsigned)a->hardware_model->getFaceCount(),
+				(unsigned)a->hardware_model->getBoneCount());
+		}
+	}
 
 	for (const auto& it: *im)
 	{
@@ -866,7 +890,7 @@ extern "C" void model_attach_mesh(actor *act, int mesh_id)
 
 	assert(act->calmodel);
 
-	act->calmodel->attachMesh(mesh_id);
+	const bool attached = act->calmodel->attachMesh(mesh_id);
 
 	im = reinterpret_cast<IntMap*>(act->calmodel->getUserData());
 
@@ -889,6 +913,14 @@ extern "C" void model_attach_mesh(actor *act, int mesh_id)
 				set_transformation_buffer(a, act, p.first, p.second);
 			}
 		}
+	}
+
+	if ((act->actor_id == 0) && act->is_enhanced_model)
+	{
+		LOG_INFO("Character preview mesh attachment: type=%d core_mesh=%d attached=%d hardware_meshes=%d drawable_meshes=%u",
+			act->actor_type, mesh_id, attached ? 1 : 0,
+			a->hardware_model ? a->hardware_model->getHardwareMeshCount() : 0,
+			(unsigned)im->size());
 	}
 }
 
@@ -923,4 +955,3 @@ extern "C" void model_detach_mesh(actor *act, int mesh_id)
 		}
 	}
 }
-
