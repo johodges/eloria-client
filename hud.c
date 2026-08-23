@@ -44,7 +44,8 @@ int show_help_text=1;
 int always_enlarge_text=1;
 Uint32 exp_lev[MAX_EXP_LEVEL];
 int logo_click_to_url = 1;
-char LOGO_URL_LINK[128] = "http://www.eternal-lands.com";
+/* Modified for Eloria on 2026-08-22: independent project link. */
+char LOGO_URL_LINK[128] = "https://github.com/johodges/eloria-client";
 
 static hud_interface last_interface = HUD_INTERFACE_NEW_CHAR; //Current interface (game or new character)
 
@@ -362,4 +363,3 @@ void build_levels_table()
 		exp_lev[i]=(Uint32)exp;
 	}
 }
-
