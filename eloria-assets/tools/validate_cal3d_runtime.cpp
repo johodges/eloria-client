@@ -91,8 +91,9 @@ int main(int argc, char **argv)
 			<< " faces=" << faces << '\n';
 		return 1;
 	}
-	if (minimum[0] > -0.8f || maximum[0] < 0.8f || minimum[2] > -0.05f
-		|| maximum[2] < 1.9f)
+	if (minimum[0] > -0.3f || maximum[0] < 0.3f || minimum[2] > -0.02f
+		|| maximum[2] < 1.6f || minimum[0] < -0.5f || maximum[0] > 0.5f
+		|| maximum[2] > 1.8f)
 	{
 		std::cerr << "unexpected transformed bounds: [" << minimum[0] << ','
 			<< minimum[1] << ',' << minimum[2] << "] - [" << maximum[0]
