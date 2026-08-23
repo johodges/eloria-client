@@ -105,6 +105,25 @@ jobs:
               lines = path.read_text().splitlines()
               return {bone.attrib["NAME"] for bone in
                   ET.fromstring("\n".join(lines[1:])).findall("BONE")}
+          def assert_outward_winding(path):
+              lines = path.read_text().splitlines()
+              mesh = ET.fromstring("\n".join(lines[1:])).find("SUBMESH")
+              vertices = {}
+              normals = {}
+              for vertex in mesh.findall("VERTEX"):
+                  ident = int(vertex.attrib["ID"])
+                  vertices[ident] = tuple(map(float, vertex.findtext("POS").split()))
+                  normals[ident] = tuple(map(float, vertex.findtext("NORM").split()))
+              for face in mesh.findall("FACE"):
+                  a,b,c = map(int, face.attrib["VERTEXID"].split())
+                  ab = tuple(vertices[b][i]-vertices[a][i] for i in range(3))
+                  ac = tuple(vertices[c][i]-vertices[a][i] for i in range(3))
+                  cross = (ab[1]*ac[2]-ab[2]*ac[1],
+                      ab[2]*ac[0]-ab[0]*ac[2], ab[0]*ac[1]-ab[1]*ac[0])
+                  assert sum(cross[i]*normals[a][i] for i in range(3)) > 0, path
+          assert_outward_winding(root / "actors/eloria_shirt.xmf")
+          creature_mesh = next((root / "actors/creatures").glob("*.xmf"))
+          assert_outward_winding(creature_mesh)
           assert required_humanoid_bones <= bone_names(root / "actors/eloria_humanoid.xsf")
           assert required_humanoid_bones <= bone_names(
               root / "actors/nymara/npcs/nymara_humanoid.xsf")

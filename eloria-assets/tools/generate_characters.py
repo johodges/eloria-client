@@ -59,7 +59,8 @@ def cuboid(center,size,bone,vertices,faces):
     for quad,normal in zip(quads,normals):
         base=len(vertices)
         for uv,corner in zip(((0,0),(1,0),(1,1),(0,1)),quad): vertices.append((corners[corner],normal,uv,bone))
-        faces.extend(((base,base+1,base+2),(base,base+2,base+3)))
+        # EL treats counter-clockwise triangles as front-facing.
+        faces.extend(((base,base+2,base+1),(base,base+3,base+2)))
 
 def mesh(path, section="all", variant=0):
     vertices=[]; faces=[]
