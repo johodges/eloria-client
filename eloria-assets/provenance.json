@@ -37,6 +37,20 @@
       "description": "Procedural humanoid animation keyframes"
     },
     {
+      "path": "actors/creatures/*",
+      "source": "tools/generate_creatures.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Eight procedural animal and monster models with an original quadruped rig"
+    },
+    {
+      "path": "animations/creatures/*.xaf",
+      "source": "tools/generate_creatures.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original creature locomotion, combat, reaction, and death animation clips"
+    },
+    {
       "path": "3dobjects/scenery/*",
       "source": "tools/generate_scenery.py",
       "author": "Eloria project",
