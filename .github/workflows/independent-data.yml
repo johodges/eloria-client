@@ -140,6 +140,11 @@ jobs:
               "luminous", "votary", "glasswarden", "orun", "greyhaven", "ssarathi"}
           none_ids = {"neck": 0, "helmet": 20, "cape": 30, "shield": 11}
           for actor in player_actors:
+              assert actor.findtext("skeleton").endswith(".csf")
+              assert all(mesh.text.endswith(".cmf") for mesh in
+                  actor.findall(".//mesh"))
+              assert all((frame.text or "").split()[0].endswith(".caf") for frame in
+                  actor.findall("frames/*"))
               for tag, none_id in none_ids.items():
                   assert actor.find(f"{tag}[@id='{none_id}']") is not None, (
                       actor.attrib["id"], tag, none_id)
@@ -148,3 +153,10 @@ jobs:
           assert len(list(root.glob("maps/**/*.elm"))) == 27
           assert len(list(root.glob("textures/items*.png"))) == 5
           PY
+      - name: Validate binary Cal3D player through runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libcal3d12-dev
+          g++ -std=c++11 eloria-assets/tools/validate_cal3d_runtime.cpp \
+            -o build/validate_cal3d_runtime -lcal3d
+          build/validate_cal3d_runtime build/eloria-data
