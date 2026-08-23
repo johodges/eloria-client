@@ -79,11 +79,11 @@
       "description": "Eight original NPC role models"
     },
     {
-      "path": "textures/items1.*",
+      "path": "textures/items{1,2,3,4}.*",
       "source": "tools/generate_item_atlas.py",
       "author": "Eloria project",
       "license": "CC-BY-4.0",
-      "description": "Original 64-slot independent item icon atlas"
+      "description": "Four original 25-slot item atlases covering the independent 85-item catalog"
     },
     {
       "path": "textures/{font,fontv,cursors,cursors2,buttons,book1,paper1}.*",
