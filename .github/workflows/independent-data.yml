@@ -12,6 +12,12 @@ jobs:
       - name: Generate complete independent data
         run: |
           python3 eloria-assets/tools/generate_all_assets.py build/eloria-data
+      - name: Validate assets with Cal3D runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libcal3d12-dev
+          g++ -std=c++17 eloria-assets/tools/validate_cal3d_runtime.cpp -lcal3d -o /tmp/validate-cal3d
+          /tmp/validate-cal3d build/eloria-data
       - name: Verify provenance policy
         run: python3 eloria-assets/tools/check_provenance.py
       - name: Verify original map

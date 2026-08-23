@@ -1603,6 +1603,8 @@ public:
 	}
 
 #ifdef TTF
+	//! Replace saved bitmap selections with the bundled Eloria TrueType face.
+	void upgrade_eloria_bitmap_fonts();
 	//! Disable TrueType fonts, allowing bundled fonts only.
 	void disable_ttf();
 	//! Enable TrueTyoe fonts, restoring previous font indices if possible
@@ -2494,6 +2496,8 @@ void set_config_font();
 int has_glyph(unsigned char c);
 
 #ifdef TTF
+//! Replace saved bitmap selections with the bundled Eloria TrueType face.
+void upgrade_eloria_bitmap_fonts(void);
 //! Disable TrueType fonts, allowing bundled fonts only.
 void disable_ttf(void);
 //! Enable TrueTyoe fonts, restoring previous font indices if possible

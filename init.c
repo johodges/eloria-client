@@ -1018,6 +1018,11 @@ void init_stuff(void)
 	clear_conn_log();
 	update_loading_win(read_config_str, 2);
 	read_bin_cfg();
+#ifdef TTF
+	// Saved per-category indices are loaded above. Upgrade any legacy bitmap
+	// choices only now, so the login and character screens keep EloriaSans.
+	upgrade_eloria_bitmap_fonts();
+#endif
  	update_loading_win(init_weather_str, 3);
 	weather_init();
 	build_levels_table();//for some HUD stuff
