@@ -815,6 +815,14 @@ void init_stuff(void)
 	char config_location[300];
 	const char * cfgdir;
 
+	/*
+	 * servers.lst is required before the normal configuration pass. Apply
+	 * command-line options now so --data_dir selects the directory used for
+	 * that initial lookup. Options are applied again after read_config() below
+	 * so command-line values continue to take precedence over configuration.
+	 */
+	read_command_line();
+
 #ifdef ANDROID
 	strcpy(datadir,SDL_AndroidGetInternalStoragePath());
 	strcat(datadir,"/");
@@ -855,7 +863,7 @@ void init_stuff(void)
 		glHint(GL_NODOWNSAMPLING_HINT_GL4ES, 1);
 #endif
 
-	// Parse command line options
+	// Reapply command line options after config so they retain precedence.
 	read_command_line();
 
 	// check language is set or default and select
