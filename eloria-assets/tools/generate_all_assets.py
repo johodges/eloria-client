@@ -32,6 +32,18 @@ def validate_cal3d(root: Path) -> None:
     if bad_magic:
         raise RuntimeError("invalid Cal3D skeleton magic: " +
                            ", ".join(str(path) for path in bad_magic))
+    required_binary = (
+        root / "actors/eloria_humanoid.csf",
+        root / "actors/eloria_shirt.cmf",
+        root / "actors/eloria_legs.cmf",
+        root / "actors/eloria_boots.cmf",
+        root / "actors/eloria_head_0.cmf",
+        root / "animations/eloria/idle.caf",
+    )
+    expected_magic = {".csf": b"CSF\0", ".cmf": b"CMF\0", ".caf": b"CAF\0"}
+    for path in required_binary:
+        if not path.is_file() or path.read_bytes()[:4] != expected_magic[path.suffix]:
+            raise RuntimeError(f"missing or invalid binary Cal3D asset: {path}")
     actor_defs = root / "actor_defs/actor_defs.xml"
     for value in re.findall(r"<CAL_[^>]+>([^<]+)</CAL_", actor_defs.read_text(encoding="utf-8")):
         if not re.search(r" [01]$", value):
