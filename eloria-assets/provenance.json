@@ -49,6 +49,20 @@
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Procedural native-E3D harvestable plants, crystal, and stone"
+    },
+    {
+      "path": "3dobjects/architecture/*",
+      "source": "tools/generate_scenery.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural modular house, castle, gate, bridge, and civic components"
+    },
+    {
+      "path": "3dobjects/biomes/*",
+      "source": "tools/generate_scenery.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural desert, snow, swamp, tropical, and volcanic scenery"
     }
   ]
 }
