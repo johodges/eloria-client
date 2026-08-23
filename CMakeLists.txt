@@ -1,4 +1,4 @@
-# CMAKE file for Eternal Lands
+# Modified for Eloria on 2026-08-22.
 #
 # Create a build sub-directory and move into it
 #
@@ -26,7 +26,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-project (Eternal-Lands)
+project (EloriaClient)
 
 # standard options, some that also set source files to build
 OPTION(CUSTOM_UPDATE "Allows autoupdating of custom look information" On)
