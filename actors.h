@@ -6,6 +6,8 @@
 #ifndef __ACTORS_H__
 #define __ACTORS_H__
 
+/* Eloria modification 2026-08-22: extended actor registry and sparse attachments. */
+
 #include "bbox_tree.h"
 #include "cal_types.h"
 #include "chat.h"
@@ -23,7 +25,7 @@ extern "C" {
 #define HORSE_ID_OFFSET 0x10000
 
 #define	MAX_FILE_PATH	128	// the max chars allowed int a path/filename for actor textures/masks
-#define MAX_ACTOR_DEFS  256
+#define MAX_ACTOR_DEFS  1024
 #define ACTOR_DEF_NAME_SIZE 256
 
 extern int yourself; 	/*!< This variable holds the actor_id (as the server sees it, not the position in the actors_list) of your character.*/
@@ -278,9 +280,16 @@ typedef struct
 /*!
  * Structure containing how an actor type is attached to all other actors types
  */
+typedef struct attachment_entry
+{
+	int actor_type;
+	attachment_props props;
+	struct attachment_entry *next;
+} attachment_entry;
+
 typedef struct
 {
-	attachment_props actor_type[MAX_ACTOR_DEFS]; /*!< Attachment properties for each kind of actor */
+	attachment_entry *entries; /*!< Sparse attachment properties keyed by the other actor type. */
 } attached_actors_types;
 
 typedef enum {
@@ -695,6 +704,9 @@ void add_actor_attachment(locked_list_ptr actors_list, actor *act, int attachmen
  * \callgraph
  */
 void add_actor_from_server (const char * in_data, int len);
+void add_actor_from_server_extended (const char * in_data, int len);
+attachment_props *get_attachment_props(int actor_type, int other_type, int create);
+void free_attachment_defs(void);
 
 /*!
  * \ingroup	network_text
@@ -790,14 +802,19 @@ void free_near_actors(void);
 
 static __inline__ attachment_props* get_attachment_props_if_held(actor *act, actor *attached)
 {
+	attachment_props *props;
 	if (!attached)
 		return NULL;
-	else if (act->actor_id < 0 && // the actor is the attachment
-			 !attached_actors_defs[act->actor_type].actor_type[attached->actor_type].is_holder)
-		return &attached_actors_defs[act->actor_type].actor_type[attached->actor_type];
-    else if (act->actor_id >= 0 && // the actor is the parent of the attachment
-			 attached_actors_defs[attached->actor_type].actor_type[act->actor_type].is_holder)
-		return &attached_actors_defs[attached->actor_type].actor_type[act->actor_type];
+	else if (act->actor_id < 0) // the actor is the attachment
+	{
+		props = get_attachment_props(act->actor_type, attached->actor_type, 0);
+		return (props && !props->is_holder) ? props : NULL;
+	}
+    else if (act->actor_id >= 0) // the actor is the parent of the attachment
+	{
+		props = get_attachment_props(attached->actor_type, act->actor_type, 0);
+		return (props && props->is_holder) ? props : NULL;
+	}
 	else
 		return NULL;
 }
