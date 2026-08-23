@@ -6,6 +6,7 @@
 #include <cal3d/cal3d.h>
 #include "cal3d/coretrack.h"
 #include <iostream>
+#include <vector>
 #include "elfilewrapper.h"
 
 //****************************************************************************//
@@ -119,6 +120,67 @@ class ElDataSource: public CalDataSource
 
 };
 
+/*
+ * CalLoader's CalDataSource overloads parse only the binary CSF/CAF/CMF/CRF
+ * formats.  The filename and memory-buffer overloads also detect Cal3D XML,
+ * but the filename overload cannot use EL's zip/custom-path filesystem.  Read
+ * XML through that filesystem, then give Cal3D a nul-terminated memory buffer.
+ */
+static std::vector<char> read_cal3d_xml(const std::string &file_name)
+{
+	el_file_ptr file = el_open(file_name.c_str());
+	std::vector<char> data;
+	if (!file)
+		return data;
+	const Sint64 size = el_get_size(file);
+	if (size > 0)
+	{
+		data.resize(static_cast<size_t>(size) + 1, '\0');
+		if (el_read(file, size, data.data()) != size)
+			data.clear();
+	}
+	el_close(file);
+	if (data.size() < 8 || memcmp(data.data(), "<HEADER", 7) != 0)
+		data.clear();
+	return data;
+}
+
+static CalCoreAnimationPtr load_core_animation(const std::string &file_name)
+{
+	std::vector<char> xml = read_cal3d_xml(file_name);
+	if (!xml.empty())
+		return CalLoader::loadCoreAnimation(xml.data(), 0);
+	ElDataSource file(file_name);
+	return CalLoader::loadCoreAnimation(file, 0);
+}
+
+static CalCoreMaterialPtr load_core_material(const std::string &file_name)
+{
+	std::vector<char> xml = read_cal3d_xml(file_name);
+	if (!xml.empty())
+		return CalLoader::loadCoreMaterial(xml.data());
+	ElDataSource file(file_name);
+	return CalLoader::loadCoreMaterial(file);
+}
+
+static CalCoreMeshPtr load_core_mesh(const std::string &file_name)
+{
+	std::vector<char> xml = read_cal3d_xml(file_name);
+	if (!xml.empty())
+		return CalLoader::loadCoreMesh(xml.data());
+	ElDataSource file(file_name);
+	return CalLoader::loadCoreMesh(file);
+}
+
+static CalCoreSkeletonPtr load_core_skeleton(const std::string &file_name)
+{
+	std::vector<char> xml = read_cal3d_xml(file_name);
+	if (!xml.empty())
+		return CalLoader::loadCoreSkeleton(xml.data());
+	ElDataSource file(file_name);
+	return CalLoader::loadCoreSkeleton(file);
+}
+
 class CalAnimationCache
 {
 	private:
@@ -181,9 +243,7 @@ class CalAnimationCache
 			}
 			else
 			{
-				ElDataSource file(fileName);
-				
-				CalCoreAnimationPtr anim_ptr = CalLoader::loadCoreAnimation(file, 0);
+				CalCoreAnimationPtr anim_ptr = load_core_animation(fileName);
 
 				if (anim_ptr)
 				{
@@ -204,9 +264,7 @@ extern "C" CalCoreAnimation *CalLoader_ELLoadCoreAnimation(CalLoader *self,
 {
 	assert(self);
 
-	ElDataSource file(strFilename);
-
-	CalCoreAnimation *core_animation = explicitIncRef(self->loadCoreAnimation(file).get());
+	CalCoreAnimation *core_animation = explicitIncRef(load_core_animation(strFilename).get());
 
 	if (core_animation)
 	{
@@ -220,9 +278,7 @@ extern "C" CalCoreMaterial *CalLoader_ELLoadCoreMaterial(CalLoader *self, const 
 {
 	assert(self);
 
-	ElDataSource file(strFilename);
-
-	CalCoreMaterial *core_material = explicitIncRef(self->loadCoreMaterial(file).get());
+	CalCoreMaterial *core_material = explicitIncRef(load_core_material(strFilename).get());
 
 	if (core_material)
 	{
@@ -236,9 +292,7 @@ extern "C" CalCoreMesh *CalLoader_ELLoadCoreMesh(CalLoader *self, const char *st
 {
 	assert(self);
 
-	ElDataSource file(strFilename);
-
-	CalCoreMesh *core_mesh = explicitIncRef(self->loadCoreMesh(file).get());
+	CalCoreMesh *core_mesh = explicitIncRef(load_core_mesh(strFilename).get());
 
 	if (core_mesh)
 	{
@@ -252,9 +306,7 @@ extern "C" CalCoreSkeleton *CalLoader_ELLoadCoreSkeleton(CalLoader *self, const 
 {
 	assert(self);
 
-	ElDataSource file(strFilename);
-
-	return explicitIncRef(self->loadCoreSkeleton(file).get());
+	return explicitIncRef(load_core_skeleton(strFilename).get());
 }
 
 extern "C" int CalCoreModel_ELLoadCoreAnimation(CalCoreModel *self, const char *strFilename, float scale)
@@ -275,9 +327,7 @@ extern "C" int CalCoreModel_ELLoadCoreMaterial(CalCoreModel *self, const char *s
 {
 	assert(self);
 
-	ElDataSource file(strFilename);
-
-	CalCoreMaterialPtr core_material = CalLoader::loadCoreMaterial(file);
+	CalCoreMaterialPtr core_material = load_core_material(strFilename);
 
 	if (!core_material)
 	{
@@ -295,9 +345,7 @@ extern "C" int CalCoreModel_ELLoadCoreMesh(CalCoreModel *self, const char *strFi
 {
 	assert(self);
 
-	ElDataSource file(strFilename);
-
-	CalCoreMeshPtr core_mesh = CalLoader::loadCoreMesh(file);
+	CalCoreMeshPtr core_mesh = load_core_mesh(strFilename);
 
 	if (!core_mesh)
 	{
@@ -315,9 +363,7 @@ extern "C" CalBoolean CalCoreModel_ELLoadCoreSkeleton(CalCoreModel *self, const 
 {
 	assert(self);
 
-	ElDataSource file(strFilename);
-
-	CalCoreSkeletonPtr core_skeleton = CalLoader::loadCoreSkeleton(file);
+	CalCoreSkeletonPtr core_skeleton = load_core_skeleton(strFilename);
 
 	if (!core_skeleton)
 	{
@@ -333,5 +379,4 @@ extern "C" void set_invert_v_coord()
 {
 	CalLoader::setLoadingMode(LOADER_INVERT_V_COORD);
 }
-
 
