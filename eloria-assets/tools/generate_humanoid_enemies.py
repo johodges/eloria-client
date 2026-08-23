@@ -63,6 +63,30 @@ def enemy_mesh(path, feature, scale):
         for z in (1.12,1.28,1.44): cuboid((0,-.18*scale,z*scale),(.56*scale,.08*scale,.06*scale),2,vertices,faces)
     if feature == "wraith":
         cuboid((0,0,.55*scale),(.72*scale,.66*scale,1.15*scale),1,vertices,faces)
+    if feature in ("minotaur", "satyr", "dragon"):
+        for x in (-.22,.22):
+            cuboid((x*scale,0,2.12*scale),(.11*scale,.10*scale,.48*scale),3,vertices,faces)
+    if feature in ("lizard", "snakeman", "gnoll", "werewolf", "dragon"):
+        cuboid((0,.25*scale,1.76*scale),(.30*scale,.48*scale,.22*scale),3,vertices,faces)
+    if feature in ("lizard", "snakeman", "naga", "dragon", "werewolf"):
+        cuboid((0,-.46*scale,.80*scale),(.20*scale,.96*scale,.18*scale),1,vertices,faces)
+    if feature == "naga":
+        cuboid((0,-.10*scale,.22*scale),(.64*scale,.92*scale,.34*scale),1,vertices,faces)
+        cuboid((0,-.62*scale,.16*scale),(.42*scale,.94*scale,.25*scale),1,vertices,faces)
+    if feature in ("harpy", "dragon"):
+        cuboid((-.70*scale,-.02,1.48*scale),(1.05*scale,.35*scale,.15*scale),2,vertices,faces)
+        cuboid((.70*scale,-.02,1.48*scale),(1.05*scale,.35*scale,.15*scale),2,vertices,faces)
+    if feature in ("gnoll", "werewolf", "harpy"):
+        for x,bone in ((-.98,5),(.98,7)):
+            cuboid((x*scale,.04,1.36*scale),(.28*scale,.14*scale,.11*scale),bone,vertices,faces)
+    if feature == "vampire":
+        cuboid((0,-.22*scale,1.25*scale),(1.28*scale,.12*scale,1.32*scale),2,vertices,faces)
+    if feature == "hobgoblin":
+        for x in (-.20,.20): cuboid((x*scale,0,2.02*scale),(.18*scale,.10*scale,.30*scale),3,vertices,faces)
+    if feature == "orc":
+        for x in (-.14,.14): cuboid((x*scale,.22*scale,1.72*scale),(.10*scale,.28*scale,.18*scale),3,vertices,faces)
+    if feature == "satyr":
+        for x in (-.15,.15): cuboid((x*scale,.13*scale,.02*scale),(.24*scale,.45*scale,.20*scale),10 if x<0 else 13,vertices,faces)
     root=ET.Element("MESH",NUMSUBMESH="1")
     sub=ET.SubElement(root,"SUBMESH",NUMVERTICES=str(len(vertices)),NUMFACES=str(len(faces)),MATERIAL="0",NUMLODSTEPS="0",NUMSPRINGS="0",NUMTEXCOORDS="1")
     for i,(pos,norm,uv,bone) in enumerate(vertices):
