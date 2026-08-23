@@ -20,7 +20,9 @@ def main():
   enemy_mesh(root/f"actors/npcs/{slug}.xmf",feature,1.0)
   png(root/f"actors/npcs/{slug}.png",256,256,lambda x,y,c=color:(*(max(0,min(255,q+(((x//20)^(y//26))&1)*16)) for q in c),255))
   a=ET.SubElement(actors,"actor",id=str(BASE+i),type=label,family="npc");ET.SubElement(a,"skeleton").text="actors/npcs/eloria_npc_humanoid.xsf";ET.SubElement(a,"mesh").text=f"actors/npcs/{slug}.xmf";ET.SubElement(a,"skin").text=f"actors/npcs/{slug}.png";ET.SubElement(a,"step_duration").text="270";fr=ET.SubElement(a,"frames")
-  for tag,name in frames.items():ET.SubElement(fr,tag).text=f"animations/enemies/{name}"
+  for tag,name in frames.items():
+   kind=0 if tag in ("CAL_walk","CAL_run","CAL_idle","CAL_idle2","CAL_combat_idle") else 1
+   ET.SubElement(fr,tag).text=f"animations/enemies/{name} {kind}"
  (root/"actor_defs/actor_defs.xml").write_text('<?xml version="1.0"?>\n'+ET.tostring(actors,encoding="unicode")+'\n')
  (root/"npcs_eloria.json").write_text(json.dumps({"schema":1,"npcs":[{"actor_type":BASE+i,"id":s,"name":n} for i,(s,n,*_) in enumerate(NPCS)]},indent=2)+"\n")
 if __name__=="__main__":main()

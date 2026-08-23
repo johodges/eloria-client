@@ -37,7 +37,9 @@ def append_defs(path):
   ET.SubElement(actor,"skin").text=f"actors/fantasy/{slug}.png"
   ET.SubElement(actor,"step_duration").text="255"
   fr=ET.SubElement(actor,"frames")
-  for tag,name in frames.items(): ET.SubElement(fr,tag).text=f"animations/enemies/{name}"
+  for tag,name in frames.items():
+   kind=0 if tag in ("CAL_walk","CAL_run","CAL_idle","CAL_idle2","CAL_combat_idle") else 1
+   ET.SubElement(fr,tag).text=f"animations/enemies/{name} {kind}"
  path.write_text('<?xml version="1.0"?>\n'+ET.tostring(root,encoding="unicode")+'\n',encoding="utf-8")
 
 def main():
