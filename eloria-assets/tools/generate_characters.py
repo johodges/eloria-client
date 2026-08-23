@@ -122,6 +122,11 @@ def mesh(path, section="all", variant=0):
     for i in chosen: cuboid(*parts[i],vertices,faces)
     if not vertices:
         cuboid((0,0,-100),(.001,.001,.001),0,vertices,faces)
+    # Keep the generated player control rigidly attached to the root bone.  This
+    # deliberately removes inverse-bind-pose and per-bone skinning from the
+    # character-preview investigation while preserving identical geometry,
+    # materials, texture coordinates, actor definitions, and render paths.
+    vertices=[(pos,norm,uv,0) for pos,norm,uv,_bone in vertices]
     root=ET.Element("MESH",NUMSUBMESH="1"); sub=ET.SubElement(root,"SUBMESH",NUMVERTICES=str(len(vertices)),NUMFACES=str(len(faces)),MATERIAL="0",NUMLODSTEPS="0",NUMSPRINGS="0",NUMTEXCOORDS="1")
     for i,(pos,norm,uv,bone) in enumerate(vertices):
         v=ET.SubElement(sub,"VERTEX",ID=str(i),NUMINFLUENCES="1")
