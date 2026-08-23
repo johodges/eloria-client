@@ -33,6 +33,51 @@ def write_cal(path, magic, root):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(f'<HEADER MAGIC="{magic}" VERSION="{VERSION}"/>\n'+ET.tostring(root,encoding="unicode")+'\n')
 
+def _binary_header(magic):
+    return bytearray(magic.encode("ascii") + b"\0" + struct.pack("<i", int(VERSION)))
+
+def _binary_string(value):
+    encoded=value.encode("utf-8")+b"\0"
+    return struct.pack("<i",len(encoded))+encoded
+
+def binary_skeleton(path):
+    children={i:[] for i in range(len(BONES))}
+    for i,(_,parent,_) in enumerate(BONES):
+        if parent>=0: children[parent].append(i)
+    absolute=[]
+    for _,parent,pos in BONES:
+        base=(0.,0.,0.) if parent < 0 else absolute[parent]
+        absolute.append(tuple(base[j]+pos[j] for j in range(3)))
+    data=_binary_header("CSF")
+    data.extend(struct.pack("<i",len(BONES)))
+    for i,(name,parent,pos) in enumerate(BONES):
+        data.extend(_binary_string(name))
+        data.extend(struct.pack("<3f4f3f4f",*pos,0.,0.,0.,1.,
+                                *(-v for v in absolute[i]),0.,0.,0.,1.))
+        data.extend(struct.pack("<ii",parent,len(children[i])))
+        if children[i]: data.extend(struct.pack(f"<{len(children[i])}i",*children[i]))
+    path.write_bytes(data)
+
+def binary_mesh(path, vertices, faces):
+    data=_binary_header("CMF")
+    data.extend(struct.pack("<i",1)) # submesh count
+    data.extend(struct.pack("<6i",0,len(vertices),len(faces),0,0,1))
+    for pos,norm,uv,bone in vertices:
+        data.extend(struct.pack("<3f3fii2fiif",*pos,*norm,-1,0,*uv,1,bone,1.0))
+    for tri in faces: data.extend(struct.pack("<3i",*tri))
+    path.write_bytes(data)
+
+def binary_animation(path,duration,poses,tracks):
+    data=_binary_header("CAF")
+    # EL uses the classic Cal3D 0.11 binary layout: duration follows version.
+    data.extend(struct.pack("<fi",duration,len(tracks)))
+    for bone in tracks:
+        data.extend(struct.pack("<ii",bone,len(poses)))
+        for time,frame in poses:
+            data.extend(struct.pack("<f3f4f",time,*BONES[bone][2],
+                                    *quat_x(frame.get(bone,0.))))
+    path.write_bytes(data)
+
 def skeleton(path):
     children={i:[] for i in range(len(BONES))}
     for i,(_,p,_) in enumerate(BONES):
@@ -51,6 +96,7 @@ def skeleton(path):
         ET.SubElement(b,"PARENTID").text=str(parent)
         for child in children[i]: ET.SubElement(b,"CHILDID").text=str(child)
     write_cal(path,"XSF",root)
+    binary_skeleton(path.with_suffix(".csf"))
 
 def cuboid(center,size,bone,vertices,faces):
     cx,cy,cz=center; sx,sy,sz=(v/2 for v in size)
@@ -82,6 +128,7 @@ def mesh(path, section="all", variant=0):
         ET.SubElement(v,"POS").text="%g %g %g"%pos; ET.SubElement(v,"NORM").text="%g %g %g"%norm; ET.SubElement(v,"TEXCOORD").text="%g %g"%uv; ET.SubElement(v,"INFLUENCE",ID=str(bone)).text="1"
     for tri in faces: ET.SubElement(sub,"FACE",VERTEXID="%d %d %d"%tri)
     write_cal(path,"XMF",root)
+    binary_mesh(path.with_suffix(".cmf"),vertices,faces)
 
 def quat_x(a): return math.sin(a/2),0.,0.,math.cos(a/2)
 def animation(path,duration,poses):
@@ -93,6 +140,7 @@ def animation(path,duration,poses):
             ET.SubElement(key,"TRANSLATION").text="%g %g %g"%BONES[bone][2]
             ET.SubElement(key,"ROTATION").text="%g %g %g %g"%quat_x(frame.get(bone,0.))
     write_cal(path,"XAF",root)
+    binary_animation(path.with_suffix(".caf"),duration,poses,tracks)
 
 CULTURES={
  "luminous":((190,139,104),(224,179,139),(238,207,174)),
@@ -166,11 +214,11 @@ def actor_defs(path):
     for race_index,(culture,label,_,_) in enumerate(RACES):
       for gender,aid in zip(("female","male"),PLAYER_ACTOR_TYPES[race_index]):
         a=ET.SubElement(root,"actor",id=str(aid),type=f"Eloria {label} {gender.title()}",race=culture,gender=gender)
-        ET.SubElement(a,"skeleton").text="actors/eloria_humanoid.xsf"; ET.SubElement(a,"step_duration").text="250"
+        ET.SubElement(a,"skeleton").text="actors/eloria_humanoid.csf"; ET.SubElement(a,"step_duration").text="250"
         prefix=f"actors/custom/{culture}"
         for i in range(len(CLOTH)):
             shirt=ET.SubElement(a,"shirt",id=str(i))
-            for tag,value in (("arms",f"{prefix}/shirt_{i}_arms.dds"),("torso",f"{prefix}/shirt_{i}_torso.dds"),("mesh","actors/eloria_shirt.xmf")):ET.SubElement(shirt,tag).text=value
+            for tag,value in (("arms",f"{prefix}/shirt_{i}_arms.dds"),("torso",f"{prefix}/shirt_{i}_torso.dds"),("mesh","actors/eloria_shirt.cmf")):ET.SubElement(shirt,tag).text=value
         for i in range(6):
             skin=ET.SubElement(a,"hskin",id=str(i))
             ET.SubElement(skin,"hands").text=f"{prefix}/skin_{i}_hands.dds"
@@ -178,18 +226,18 @@ def actor_defs(path):
         for i in range(len(HAIR)):ET.SubElement(a,"hair",id=str(i)).text=f"{prefix}/hair_{i}.dds"
         for i in range(len(EYES)):ET.SubElement(a,"eyes",id=str(i)).text=f"{prefix}/eyes_{i}.dds"
         for i in range(len(PANTS)):
-            legs=ET.SubElement(a,"legs",id=str(i));ET.SubElement(legs,"skin").text=f"{prefix}/pants_{i}.dds";ET.SubElement(legs,"mesh").text="actors/eloria_legs.xmf"
+            legs=ET.SubElement(a,"legs",id=str(i));ET.SubElement(legs,"skin").text=f"{prefix}/pants_{i}.dds";ET.SubElement(legs,"mesh").text="actors/eloria_legs.cmf"
         for i in range(len(BOOTS)):
-            boots=ET.SubElement(a,"boots",id=str(i));ET.SubElement(boots,"skin").text=f"{prefix}/boots_{i}.dds";ET.SubElement(boots,"mesh").text="actors/eloria_boots.xmf"
+            boots=ET.SubElement(a,"boots",id=str(i));ET.SubElement(boots,"skin").text=f"{prefix}/boots_{i}.dds";ET.SubElement(boots,"mesh").text="actors/eloria_boots.cmf"
         for i in range(5):
-            head=ET.SubElement(a,"head",id=str(i));ET.SubElement(head,"mesh").text=f"actors/eloria_head_{i}.xmf"
+            head=ET.SubElement(a,"head",id=str(i));ET.SubElement(head,"mesh").text=f"actors/eloria_head_{i}.cmf"
         # These IDs are protocol constants, not zero-based defaults.  The client
         # indexes these exact slots while constructing the character preview.
         # Leaving only slot zero populated makes helmet/cape/shield dereference
         # uninitialised entries and crash as soon as character creation opens.
         none_ids={"neck":0,"helmet":20,"cape":30,"shield":11}
         for tag,none_id in none_ids.items():
-            part=ET.SubElement(a,tag,id=str(none_id));ET.SubElement(part,"mesh").text="actors/eloria_none.xmf";ET.SubElement(part,"skin").text="actors/eloria_humanoid.png"
+            part=ET.SubElement(a,tag,id=str(none_id));ET.SubElement(part,"mesh").text="actors/eloria_none.cmf";ET.SubElement(part,"skin").text="actors/eloria_humanoid.png"
         # The renderer always inspects WEAPON_NONE even when no weapon mesh is
         # attached.  A skin child makes the parser allocate the weapon table;
         # omitting mesh intentionally leaves its mesh index at -1.
@@ -198,7 +246,7 @@ def actor_defs(path):
         frames=ET.SubElement(a,"frames")
         for tag,name in files.items():
             kind=0 if tag in ("CAL_walk","CAL_run","CAL_idle","CAL_idle2","CAL_idle_sit","CAL_combat_idle") else 1
-            ET.SubElement(frames,tag).text=f"animations/eloria/{name} {kind}"
+            ET.SubElement(frames,tag).text=f"animations/eloria/{Path(name).with_suffix('.caf').name} {kind}"
     for actor in root.findall("actor"):
         for tag,none_id in none_ids.items():
             if actor.find(f"{tag}[@id='{none_id}']") is None:

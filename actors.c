@@ -1085,24 +1085,8 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 {
 	double x_pos,y_pos,z_pos;
 	float x_rot,y_rot,z_rot;
-	int preview_projection = 0;
-	const int preview_render = (newchar_root_win >= 0) && (actor_id->actor_id == 0);
-	static unsigned char preview_texture_logged[MAX_ACTOR_DEFS] = { 0 };
-	static unsigned char preview_projection_logged[MAX_ACTOR_DEFS] = { 0 };
 	//if first person, dont draw actor
 	if (actor_id->actor_id == yourself && first_person) return;
-	/* Bind the enhanced atlas and provide texture coordinates on unit zero.
-	 * World effects are allowed to leave another server/client unit active. */
-	if (preview_render)
-	{
-		if (ELglActiveTextureARB != NULL)
-			ELglActiveTextureARB(GL_TEXTURE0);
-#ifndef ANDROID
-		if (ELglClientActiveTextureARB != NULL)
-			ELglClientActiveTextureARB(GL_TEXTURE0);
-#endif
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	}
 	if (use_textures)
 	{
 		if (actor_id->is_enhanced_model)
@@ -1110,15 +1094,6 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 			if (bind_actor_texture(actor_id->texture_id, &actor_id->has_alpha) == 0)
 			{
 				return;
-			}
-			if ((newchar_root_win >= 0) && (actor_id->actor_id == 0) &&
-				(actor_id->actor_type >= 0) && (actor_id->actor_type < MAX_ACTOR_DEFS) &&
-				!preview_texture_logged[actor_id->actor_type])
-			{
-				LOG_INFO("Character preview type %d texture handle %u bound; alpha=%d renderer=%s",
-					actor_id->actor_type, actor_id->texture_id, actor_id->has_alpha,
-					use_animation_program ? "GPU" : "CPU");
-				preview_texture_logged[actor_id->actor_type] = 1;
 			}
 		}
 		else
@@ -1162,51 +1137,6 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 	if (has_attachment(actor_id))
 		glTranslatef(actor_id->attachment_shift[0], actor_id->attachment_shift[1], actor_id->attachment_shift[2]);
 
-	preview_projection = (newchar_root_win >= 0) && (actor_id->actor_id == 0);
-#ifndef ANDROID
-	if (preview_projection)
-	{
-		GLint depth_func = 0;
-		GLboolean depth_mask = GL_FALSE;
-		GLboolean color_mask[4] = { GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE };
-		glPushAttrib(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_ENABLE_BIT);
-		if ((actor_id->actor_type >= 0) && (actor_id->actor_type < MAX_ACTOR_DEFS) &&
-			!preview_projection_logged[actor_id->actor_type])
-		{
-			GLdouble model[16], projection[16];
-			GLint viewport[4];
-			GLdouble base_x, base_y, base_z;
-			GLdouble center_x, center_y, center_z;
-			GLdouble head_x, head_y, head_z;
-			glGetDoublev(GL_MODELVIEW_MATRIX, model);
-			glGetDoublev(GL_PROJECTION_MATRIX, projection);
-			glGetIntegerv(GL_VIEWPORT, viewport);
-			glGetIntegerv(GL_DEPTH_FUNC, &depth_func);
-			glGetBooleanv(GL_DEPTH_WRITEMASK, &depth_mask);
-			glGetBooleanv(GL_COLOR_WRITEMASK, color_mask);
-			gluProject(0.0, 0.0, 0.0, model, projection, viewport,
-				&base_x, &base_y, &base_z);
-			gluProject(0.0, 0.0, 1.0, model, projection, viewport,
-				&center_x, &center_y, &center_z);
-			gluProject(0.0, 0.0, 2.0, model, projection, viewport,
-				&head_x, &head_y, &head_z);
-			LOG_INFO("Character preview type %d projection: world=(%g,%g,%g) viewport=(%d,%d %dx%d) base=(%g,%g depth=%g) center=(%g,%g depth=%g) head=(%g,%g depth=%g) depth_test=%d depth_func=0x%x depth_mask=%d color_mask=%d%d%d%d",
-				actor_id->actor_type, actor_id->x_pos + 0.25,
-				actor_id->y_pos + 0.25, z_pos,
-				viewport[0], viewport[1], viewport[2], viewport[3],
-				base_x, base_y, base_z, center_x, center_y, center_z,
-				head_x, head_y, head_z, glIsEnabled(GL_DEPTH_TEST),
-				(unsigned)depth_func, (int)depth_mask,
-				color_mask[0], color_mask[1], color_mask[2], color_mask[3]);
-			preview_projection_logged[actor_id->actor_type] = 1;
-		}
-		/* Bypass map-depth occlusion for the isolated presentation actor. */
-		glDisable(GL_DEPTH_TEST);
-		glDepthMask(GL_FALSE);
-		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	}
-#endif
-
 	if (use_animation_program)
 	{
 		cal_render_actor_shader(actor_id, use_lightning, use_textures, use_glow);
@@ -1215,11 +1145,6 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 	{
 		cal_render_actor(actor_id, use_lightning, use_textures, use_glow);
 	}
-
-#ifndef ANDROID
-	if (preview_projection)
-		glPopAttrib();
-#endif
 
 	//now, draw their damage & nametag
 	glPopMatrix();  // restore the matrix

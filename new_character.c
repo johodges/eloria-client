@@ -86,16 +86,16 @@ struct race_def {
 } races[12] = {
 	{human_female, 		normal_skin_enum, normal_hair_enum, 	eyes_enum,	normal_shirt_enum, 	normal_pants_enum, normal_boots_enum, human_head_enum, 43.0f,	156.0f,	140.0f},
 	{human_male, 		normal_skin_enum, normal_hair_enum, 	eyes_enum,	male_shirt_enum, 	normal_pants_enum, normal_boots_enum, human_head_enum, 43.0f,	156.0f,	140.0f},
-	{elf_female, 		elf_skin_enum,    normal_hair_enum,	eyes_enum,	normal_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 42.0f,	92.0f,	180.0f},
-	{elf_male,		elf_skin_enum,    normal_hair_enum,	eyes_enum,	male_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 42.0f,	92.0f,	180.0f},
-	{dwarf_female,		normal_skin_enum, normal_hair_enum, 	eyes_enum,	normal_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 100.0f,	149.0f,	180.0f},
-	{dwarf_male,		normal_skin_enum, normal_hair_enum, 	eyes_enum,	male_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 100.0f,	149.0f,	180.0f},
+	{elf_female, 		elf_skin_enum,    normal_hair_enum,	eyes_enum,	normal_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 43.0f,	156.0f,	180.0f},
+	{elf_male,		elf_skin_enum,    normal_hair_enum,	eyes_enum,	male_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 43.0f,	156.0f,	180.0f},
+	{dwarf_female,		normal_skin_enum, normal_hair_enum, 	eyes_enum,	normal_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 43.0f,	156.0f,	180.0f},
+	{dwarf_male,		normal_skin_enum, normal_hair_enum, 	eyes_enum,	male_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 43.0f,	156.0f,	180.0f},
 	{gnome_female,		normal_skin_enum, normal_hair_enum, 	eyes_enum,	normal_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 43.0f,	156.0f,	180.0f},
 	{gnome_male,		normal_skin_enum, normal_hair_enum, 	eyes_enum,	male_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 43.0f,	156.0f,	180.0f},
-	{orchan_female,		normal_skin_enum, normal_hair_enum, 	eyes_enum,	normal_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 42.0f,	92.0f,	180.0f},
-	{orchan_male,		normal_skin_enum, normal_hair_enum, 	eyes_enum,	male_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 42.0f,	92.0f,	180.0f},
-	{draegoni_female,	draegoni_skin_enum, draegoni_hair_enum, eyes_enum,	normal_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 100.0f,	149.0f,	180.0f},
-	{draegoni_male,		draegoni_skin_enum, draegoni_hair_enum, eyes_enum,	male_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 100.0f,	149.0f,	180.0f},
+	{orchan_female,		normal_skin_enum, normal_hair_enum, 	eyes_enum,	normal_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 43.0f,	156.0f,	180.0f},
+	{orchan_male,		normal_skin_enum, normal_hair_enum, 	eyes_enum,	male_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 43.0f,	156.0f,	180.0f},
+	{draegoni_female,	draegoni_skin_enum, draegoni_hair_enum, eyes_enum,	normal_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 43.0f,	156.0f,	180.0f},
+	{draegoni_male,		draegoni_skin_enum, draegoni_hair_enum, eyes_enum,	male_shirt_enum, 	normal_pants_enum, normal_boots_enum, normal_head_enum, 43.0f,	156.0f,	180.0f},
 };
 
 struct char_def {
@@ -176,7 +176,6 @@ struct input_text {
 static int clear_player_name = 1;
 
 static int creating_char = 1;
-static int saved_use_animation_program = -1;
 
 void set_create_char_error (const char *msg, int len)
 {
@@ -250,19 +249,12 @@ static void change_actor (void)
 		free_actor_texture(our_actor.our_model->texture_id);
 		our_actor.our_model->texture_id = load_enhanced_actor(our_actor.our_model->body_parts, 0);	// Rebuild the actor's textures.
 
-		/* Keep race replacements at the current presentation position.  The
-		 * legacy race table contains three distant map locations, but the Eloria
-		 * preview is a single-stage presentation and should not relocate between
-		 * selections. */
+		// Move the actor. Could be a little disorienting, though.
+		our_actor.our_model->x_tile_pos = our_actor.def->x;
+		our_actor.our_model->y_tile_pos = our_actor.def->y;
+		our_actor.our_model->x_pos = our_actor.def->x*0.5f;
+		our_actor.our_model->y_pos = our_actor.def->y*0.5f;
 		our_actor.our_model->z_rot = our_actor.def->z_rot;
-
-		/* A new CalModel has its own skeleton pose and hardware transform map.
-		 * Refresh both after changing race; retaining the previous race's values
-		 * can leave an otherwise valid preview outside the view or fully collapsed. */
-		CalModel_Update(our_actor.our_model->calmodel, 0.0f);
-		build_actor_bounding_box(our_actor.our_model);
-		if (use_animation_program)
-			set_transformation_buffers(our_actor.our_model);
 	}
 }
 
@@ -469,10 +461,10 @@ static int display_newchar_handler (window_info *win)
 	draw_lights();
 	CHECK_GL_ERRORS ();
 
-	/* Character creation uses an empty presentation map and a single actor.
-	 * Do not enter the world shadow renderer here: shadow mapping leaves a
-	 * depth-comparison texture active on a secondary texture unit while actors
-	 * are drawn, and stencil shadows add passes that have no value in this UI. */
+	if (shadows_on && is_day) {
+		render_light_view();
+		CHECK_GL_ERRORS ();
+	}
 
 	if (use_fog)
 		weather_render_fog();
@@ -484,7 +476,9 @@ static int display_newchar_handler (window_info *win)
 
 	CHECK_GL_ERRORS ();
 
-	{
+	if (shadows_on && is_day) {
+		draw_sun_shadowed_scene (any_reflection);
+	} else {
 		glNormal3f (0.0f,0.0f,1.0f);
 		if (any_reflection) draw_lake_tiles ();
 		draw_tile_map ();
@@ -803,18 +797,6 @@ void create_newchar_root_window (void)
 {
 	if (newchar_root_win < 0)
 	{
-		/* The generated customization rigs are valid Cal3D models, but the
-		 * legacy ARB vertex-program skinning path is not reliable for them on
-		 * all Windows drivers. Character creation contains only one actor, so
-		 * use Cal3D's CPU-deformed renderer here and restore the user's normal
-		 * rendering path when leaving the screen. */
-		if (saved_use_animation_program < 0)
-			saved_use_animation_program = use_animation_program;
-		use_animation_program = 0;
-		LOG_INFO("Character preview renderer forced to CPU (saved renderer=%s)",
-			saved_use_animation_program ? "GPU" : "CPU");
-		LOG_INFO("Character preview uses the default actor pass with world shadows disabled");
-
 		our_actor.race_id=RAND(0, 5);
 		our_actor.def=&races[our_actor.race_id];//6 "races" - counting women as their own race, of course ;-) We cannot include the new races in the random function since they are p2p
 		our_actor.skin = inc(our_actor.def->skin, SKIN_BROWN, RAND (SKIN_BROWN, SKIN_TAN));//Increment a random # of times.
@@ -1960,9 +1942,4 @@ void destroy_new_character_interface(void)
 	destroy_window(tooltip_win);
 	destroy_window(newchar_root_win);
 	color_race_win = newchar_advice_win = namepass_win = newchar_hud_win = tooltip_win = newchar_root_win = -1;
-	if (saved_use_animation_program >= 0)
-	{
-		use_animation_program = saved_use_animation_program;
-		saved_use_animation_program = -1;
-	}
 }
