@@ -401,8 +401,17 @@ static int display_newchar_handler (window_info *win)
 	if (creating_char && !our_actor.our_model){
 		move_camera();//Make sure we lag a little...
 		yourself = 0;
+		LOG_INFO("Creating character preview: actor=%d skin=%d hair=%d eyes=%d shirt=%d pants=%d boots=%d head=%d",
+			our_actor.race, our_actor.skin, our_actor.hair, our_actor.eyes,
+			our_actor.shirt, our_actor.pants, our_actor.boots, our_actor.head);
 		our_actor.our_model = add_actor_interface (our_actor.def->x, our_actor.def->y, our_actor.def->z_rot, 1.0f, our_actor.race,
 			inputs[0].str, our_actor.skin, our_actor.hair, our_actor.eyes, our_actor.shirt, our_actor.pants, our_actor.boots, our_actor.head);
+		if (our_actor.our_model == NULL)
+		{
+			LOG_ERROR("Unable to create character preview actor %d", our_actor.race);
+			return 1;
+		}
+		LOG_INFO("Character preview actor %d created", our_actor.race);
 	}
 
 	if (!(main_count%10))
