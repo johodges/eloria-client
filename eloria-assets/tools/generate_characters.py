@@ -69,9 +69,8 @@ def binary_mesh(path, vertices, faces):
 
 def binary_animation(path,duration,poses,tracks):
     data=_binary_header("CAF")
-    # Cal3D file version 919 includes the animation compression flag directly
-    # after the version.  These deliberately small assets remain uncompressed.
-    data.extend(struct.pack("<ifi",0,duration,len(tracks)))
+    # EL uses the classic Cal3D 0.11 binary layout: duration follows version.
+    data.extend(struct.pack("<fi",duration,len(tracks)))
     for bone in tracks:
         data.extend(struct.pack("<ii",bone,len(poses)))
         for time,frame in poses:
