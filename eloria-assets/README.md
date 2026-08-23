@@ -19,8 +19,13 @@ python3 eloria-assets/tools/generate_regions.py
 python3 eloria-assets/tools/generate_item_atlas.py
 python3 eloria-assets/tools/generate_runtime_assets.py
 python3 eloria-assets/tools/generate_effects.py
+python3 eloria-assets/tools/generate_nymara_complete.py build/eloria-data
 python3 eloria-assets/tools/check_provenance.py
 ```
+
+The complete sequence produces 25 playable ELM maps plus `nomap.elm` and
+`newcharactermap.elm`. If only eight ELM files exist, run the Nymara generator
+command above to add the twelve Nymara exteriors and seven interiors.
 
 The bootstrap includes Emberhaven plus five original biome regions. Region maps
 carry native ELM object IDs and emit `regions_eloria.json`, allowing the server
