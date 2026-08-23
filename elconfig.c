@@ -368,14 +368,23 @@ static size_t local_encyclopedia_font = 0;
 static float chat_font_local_scale = 1.0;
 static float name_font_local_scale = 1.0;
 
-// default fonts will be replaced if values present the ini file
-static char def_ui_font_str[80] = "20(Ubuntu-R.ttf)";
-static char def_name_font_str[80] = "20(Ubuntu-R.ttf)";
-static char def_chat_font_str[80] = "20(Ubuntu-R.ttf)";
-static char def_note_font_str[80] = "20(Ubuntu-R.ttf)";
-static char def_book_font_str[80] = "7(MarckScript-Regular.ttf)";
-static char def_rules_font_str[80] = "20(Ubuntu-R.ttf)";
-static char def_encyclopedia_font_str[80] = "8(UbuntuMono-R.ttf)";
+// Default to a smooth, humanist sans face available on each supported desktop.
+// Segoe UI is bundled with Windows and has proportions close to Ubuntu Regular;
+// DejaVu Sans is the broadly available Linux counterpart.
+#ifdef WINDOWS
+#define ELORIA_UI_TTF "segoeui.ttf"
+#define ELORIA_BOOK_TTF "seguisb.ttf"
+#else
+#define ELORIA_UI_TTF "DejaVuSans.ttf"
+#define ELORIA_BOOK_TTF "DejaVuSerif.ttf"
+#endif
+static char def_ui_font_str[80] = "20(" ELORIA_UI_TTF ")";
+static char def_name_font_str[80] = "20(" ELORIA_UI_TTF ")";
+static char def_chat_font_str[80] = "20(" ELORIA_UI_TTF ")";
+static char def_note_font_str[80] = "20(" ELORIA_UI_TTF ")";
+static char def_book_font_str[80] = "20(" ELORIA_BOOK_TTF ")";
+static char def_rules_font_str[80] = "20(" ELORIA_UI_TTF ")";
+static char def_encyclopedia_font_str[80] = "20(" ELORIA_UI_TTF ")";
 
 #ifdef JSON_FILES
 // Most of this code can be removed when json file use if the default of the only supported client
