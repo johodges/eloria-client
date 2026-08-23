@@ -731,97 +731,97 @@
   "items": [
     {
       "item_id": 1000,
-      "image_id": 0,
+      "image_id": 85,
       "name": "crownwater_pearl",
       "icon": "textures/nymara/icons/crownwater_pearl.png"
     },
     {
       "item_id": 1001,
-      "image_id": 1,
+      "image_id": 86,
       "name": "mirror_reed",
       "icon": "textures/nymara/icons/mirror_reed.png"
     },
     {
       "item_id": 1002,
-      "image_id": 2,
+      "image_id": 87,
       "name": "glacier_salt",
       "icon": "textures/nymara/icons/glacier_salt.png"
     },
     {
       "item_id": 1003,
-      "image_id": 3,
+      "image_id": 88,
       "name": "whitehorn_silverleaf",
       "icon": "textures/nymara/icons/whitehorn_silverleaf.png"
     },
     {
       "item_id": 1004,
-      "image_id": 4,
+      "image_id": 89,
       "name": "resonant_crystal",
       "icon": "textures/nymara/icons/resonant_crystal.png"
     },
     {
       "item_id": 1005,
-      "image_id": 5,
+      "image_id": 90,
       "name": "stormglass_shard",
       "icon": "textures/nymara/icons/stormglass_shard.png"
     },
     {
       "item_id": 1006,
-      "image_id": 6,
+      "image_id": 91,
       "name": "sunmane_seed",
       "icon": "textures/nymara/icons/sunmane_seed.png"
     },
     {
       "item_id": 1007,
-      "image_id": 7,
+      "image_id": 92,
       "name": "amber_resin",
       "icon": "textures/nymara/icons/amber_resin.png"
     },
     {
       "item_id": 1008,
-      "image_id": 8,
+      "image_id": 93,
       "name": "moor_peat",
       "icon": "textures/nymara/icons/moor_peat.png"
     },
     {
       "item_id": 1009,
-      "image_id": 9,
+      "image_id": 94,
       "name": "ghost_orchid",
       "icon": "textures/nymara/icons/ghost_orchid.png"
     },
     {
       "item_id": 1010,
-      "image_id": 10,
+      "image_id": 95,
       "name": "mangrove_sap",
       "icon": "textures/nymara/icons/mangrove_sap.png"
     },
     {
       "item_id": 1011,
-      "image_id": 11,
+      "image_id": 96,
       "name": "ssarathi_scale_moss",
       "icon": "textures/nymara/icons/ssarathi_scale_moss.png"
     },
     {
       "item_id": 1012,
-      "image_id": 12,
+      "image_id": 97,
       "name": "verdant_venom_bulb",
       "icon": "textures/nymara/icons/verdant_venom_bulb.png"
     },
     {
       "item_id": 1013,
-      "image_id": 13,
+      "image_id": 98,
       "name": "delta_lotus",
       "icon": "textures/nymara/icons/delta_lotus.png"
     },
     {
       "item_id": 1014,
-      "image_id": 14,
+      "image_id": 99,
       "name": "deep_lake_clay",
       "icon": "textures/nymara/icons/deep_lake_clay.png"
     },
     {
       "item_id": 1015,
-      "image_id": 15,
+      "image_id": 100,
       "name": "voltaic_geode",
       "icon": "textures/nymara/icons/voltaic_geode.png"
     }

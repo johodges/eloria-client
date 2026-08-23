@@ -71,6 +71,21 @@ for culture, names in {
 REGIONS = ["mirrorhold","crownwater","four_gates","whitehorn_range","amethyst_barrens","sunmane_steppe","amberwood","grey_moors","westhaven","verdant_stair","ssarathi_ruins","manymouth_delta"]
 DUNGEONS = ["drowned_crown","whitehorn_glacier_temple","resonant_vault","amberwood_estate","grey_moor_barrows","ssarathi_royal_archive","manymouth_flooded_labyrinth"]
 
+REGION_HARVESTS = {
+ "mirrorhold":["mirror_reed","crownwater_pearl","deep_lake_clay","delta_lotus"],
+ "crownwater":["crownwater_pearl","mirror_reed","deep_lake_clay","glacier_salt"],
+ "four_gates":["resonant_crystal","stormglass_shard","mirror_reed","sunmane_seed"],
+ "whitehorn_range":["glacier_salt","whitehorn_silverleaf","resonant_crystal","stormglass_shard"],
+ "amethyst_barrens":["resonant_crystal","stormglass_shard","voltaic_geode","deep_lake_clay"],
+ "sunmane_steppe":["sunmane_seed","amber_resin","voltaic_geode","stormglass_shard"],
+ "amberwood":["amber_resin","ghost_orchid","moor_peat","sunmane_seed"],
+ "grey_moors":["moor_peat","ghost_orchid","amber_resin","mangrove_sap"],
+ "westhaven":["mangrove_sap","moor_peat","deep_lake_clay","delta_lotus"],
+ "verdant_stair":["verdant_venom_bulb","ghost_orchid","ssarathi_scale_moss","delta_lotus"],
+ "ssarathi_ruins":["ssarathi_scale_moss","verdant_venom_bulb","delta_lotus","voltaic_geode"],
+ "manymouth_delta":["delta_lotus","mangrove_sap","deep_lake_clay","crownwater_pearl"],
+}
+
 def checker(c1,c2):
  return lambda x,y: (*((c1 if ((x//24)^(y//24))&1 else c2)),255)
 
@@ -155,16 +170,30 @@ def generate_maps(root):
  nymara3d=root/"3dobjects/nymara"
  interior=[p for p in (nymara3d/"interiors").rglob("*.e3d")]
  exterior=[p for p in nymara3d.glob("*.e3d")]
+ harvest_manifest=[]
  for idx,name in enumerate(allmaps):
-  pool=interior if name in DUNGEONS else exterior; picks=[pool[(idx*5+j)%len(pool)] for j in range(min(12,len(pool)))]
+  pool=interior if name in DUNGEONS else exterior; picks=[pool[(idx*5+j)%len(pool)] for j in range(min(8,len(pool)))]
   placements=[(str(p.relative_to(root)).replace('\\','/'),24+(j%4)*22,26+(j//4)*22,0,(j*37)%360) for j,p in enumerate(picks)]
-  placements += [("3dobjects/nymara/interactives/region_waygate.e3d",58,58,0,0)]
+  if name in REGION_HARVESTS:
+   for offset,resource in enumerate(REGION_HARVESTS[name]):
+    x,y=((26,82),(48,84),(78,82),(98,76))[offset]
+    placements.append((f"3dobjects/nymara/{resource}.e3d",x,y,0,(offset*41)%360))
+    harvest_manifest.append({"map_id":name,"object_id":8+offset,"x":x,"y":y,"resource":resource})
+  else:
+   placements += [(str(pool[(idx*5+8+j)%len(pool)].relative_to(root)).replace('\\','/'),26+j*22,82,0,j*41) for j in range(4)]
+  placements += [
+   ("3dobjects/nymara/interactives/region_waygate.e3d",58,58,0,0),
+   ("3dobjects/nymara/interactives/crystal_console.e3d",60,62,0,0),
+   ("3dobjects/nymara/interactives/archive_lift.e3d",64,62,0,0),
+   ("3dobjects/nymara/interactives/stormglass_rod.e3d",68,62,0,0)]
   make_map(root/f"maps/nymara/{name}.elm",width=32,height=32,tile_id=0,placements=placements,ambient=(.50,.58,.61))
   regions.append({"id":name,"title":name.replace('_',' ').title(),"map":f"maps/nymara/{name}.elm","arrival":[58,58],"npc_hook":f"npcs.nymara.{name}","spawn_hook":f"spawns.nymara.{name}","hazard_hook":f"hazards.nymara.{name}","harvest_hook":f"harvest.nymara.{name}"})
  for a,b in zip(REGIONS,REGIONS[1:]): connections.append({"from":a,"to":b,"from_xy":[110,58],"to_xy":[6,58],"type":"walk"})
  for d in DUNGEONS: connections.append({"from":REGIONS[DUNGEONS.index(d)%len(REGIONS)],"to":d,"from_xy":[58,100],"to_xy":[58,10],"type":"entrance"})
  data={"schema":1,"regions":regions,"connections":connections,"ferries":[{"from":"crownwater","to":"four_gates","service":"crownwater_ferry"},{"from":"manymouth_delta","to":"westhaven","service":"delta_ferry"}]}
- (root/"nymara_regions_connections.json").write_text(json.dumps(data,indent=2)+"\n"); return data
+ (root/"nymara_regions_connections.json").write_text(json.dumps(data,indent=2)+"\n")
+ (root/"nymara_harvesting.json").write_text(json.dumps({"schema":1,"nodes":harvest_manifest},indent=2)+"\n")
+ return data
 
 def merge_existing(root, source):
  # Preserve the handoff pack's registered runtime paths verbatim.

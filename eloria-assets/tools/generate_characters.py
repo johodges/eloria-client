@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
 """Generate an original low-poly Cal3D humanoid and core animation set."""
 from __future__ import annotations
-import argparse, math
+import argparse, json, math
 from pathlib import Path
 import xml.etree.ElementTree as ET
 from generate_bootstrap_pack import png
 
 VERSION = "919"
+PLAYER_ACTOR_TYPES = ((0,1),(2,3),(4,5),(37,38),(39,40),(41,42))
+RACES = (
+ ("luminous", "Luminous", (77,155,162), "Lake-city citizens shaped by civic duty, trade, and reflected light."),
+ ("votary", "Whitehorn Votary", (139,173,188), "Mountain ascetics adapted to cold, altitude, and patient discipline."),
+ ("glasswarden", "Glasswarden", (121,91,158), "Crystal engineers who study resonance, storms, and the old observatories."),
+ ("orun", "Orun", (172,99,47), "Steppe riders whose camps follow the sunmane herds and seasonal roads."),
+ ("greyhaven", "Greyhaven", (62,86,101), "Western sailors, shipwrights, and moorland wardens."),
+ ("ssarathi", "Ssarathi", (52,116,91), "Scaled riverfolk preserving the archives and water rites of the south."),
+)
+
 BONES = (("root",-1,(0.,0.,0.)),("pelvis",0,(0.,0.,.92)),("spine",1,(0.,0.,.34)),
  ("head",2,(0.,0.,.52)),("upper_arm_l",2,(-.32,0.,.38)),("lower_arm_l",4,(-.34,0.,0.)),
  ("upper_arm_r",2,(.32,0.,.38)),("lower_arm_r",6,(.34,0.,0.)),
@@ -76,8 +86,8 @@ def animation(path,duration,poses):
     write_cal(path,"XAF",root)
 
 CULTURES={
- "luminari":((190,139,104),(224,179,139),(238,207,174)),
- "votari":((107,104,82),(161,145,108),(202,184,142)),
+ "luminous":((190,139,104),(224,179,139),(238,207,174)),
+ "votary":((107,104,82),(161,145,108),(202,184,142)),
  "glasswarden":((116,83,69),(168,121,91),(211,167,128)),
  "orun":((126,91,74),(184,139,105),(224,188,148)),
  "greyhaven":((102,76,66),(153,111,89),(198,153,119)),
@@ -108,7 +118,7 @@ def texture(path, base, accent, style=0):
 def generate_customization(root):
     for culture,skins in CULTURES.items():
         directory=root/f"actors/custom/{culture}"
-        dark_blue=(55,79,105) if culture=="votari" else tuple(max(35,c-35) for c in skins[0])
+        dark_blue=(55,79,105) if culture=="votary" else tuple(max(35,c-35) for c in skins[0])
         white=(222,224,216) if culture!="ssarathi" else (169,207,178)
         skin_palette=(skins[0],skins[1],skins[2],skins[1],dark_blue,white)
         for i,color in enumerate(skin_palette):texture(directory/f"skin_{i}.png",color,(220,188,150),i)
@@ -121,14 +131,9 @@ def generate_customization(root):
 def actor_defs(path):
     files={"CAL_walk":"walk.xaf","CAL_run":"run.xaf","CAL_idle":"idle.xaf","CAL_idle2":"idle.xaf","CAL_combat_idle":"idle.xaf","CAL_attack_up_1":"attack.xaf","CAL_attack_down_1":"attack.xaf","CAL_pain1":"pain.xaf","CAL_pain2":"pain.xaf","CAL_die1":"die.xaf","CAL_die2":"die.xaf","CAL_harvest":"harvest.xaf","CAL_pick":"harvest.xaf","CAL_drop":"harvest.xaf","CAL_idle_sit":"sit.xaf","CAL_sit_down":"sit.xaf","CAL_stand_up":"idle.xaf"}
     root=ET.Element("actors")
-    player_types=((0,"Luminari Woman","luminari"),(1,"Luminari Man","luminari"),
-      (2,"Votari Woman","votari"),(3,"Votari Man","votari"),
-      (4,"Glasswarden Woman","glasswarden"),(5,"Glasswarden Man","glasswarden"),
-      (37,"Orun Woman","orun"),(38,"Orun Man","orun"),
-      (39,"Greyhaven Woman","greyhaven"),(40,"Greyhaven Man","greyhaven"),
-      (41,"Ssarathi Woman","ssarathi"),(42,"Ssarathi Man","ssarathi"))
-    for aid,label,culture in player_types:
-        a=ET.SubElement(root,"actor",id=str(aid),type=f"Eloria {label}")
+    for race_index,(culture,label,_,_) in enumerate(RACES):
+      for gender,aid in zip(("female","male"),PLAYER_ACTOR_TYPES[race_index]):
+        a=ET.SubElement(root,"actor",id=str(aid),type=f"Eloria {label} {gender.title()}",race=culture,gender=gender)
         ET.SubElement(a,"skeleton").text="actors/eloria_humanoid.xsf"; ET.SubElement(a,"step_duration").text="250"
         prefix=f"actors/custom/{culture}"
         for i in range(len(CLOTH)):
@@ -158,6 +163,14 @@ def main():
     for i in range(5):mesh(root/f"actors/eloria_head_{i}.xmf","head",i)
     png(root/"actors/eloria_humanoid.png",256,256,lambda x,y:(82+(x//32%2)*18,105+(y//32%2)*12,96,255))
     generate_customization(root)
+    for slug,_,color,_ in RACES:
+        png(root/f"actors/races/{slug}.png",256,256,
+            lambda x,y,color=color:(min(255,color[0]+(x//32%2)*18),min(255,color[1]+(y//32%2)*12),color[2],255))
+    race_catalog={"schema":1,"default":"luminous","races":[
+        {"actor_types":{"female":PLAYER_ACTOR_TYPES[aid][0],"male":PLAYER_ACTOR_TYPES[aid][1]},
+         "id":slug,"name":label,"description":description}
+        for aid,(slug,label,_,description) in enumerate(RACES)]}
+    (root/"races.json").write_text(json.dumps(race_catalog,indent=2)+"\n",encoding="utf-8")
     anims={"idle":(2.,[(0,{2:-.03}),(1,{2:.03}),(2,{2:-.03})]),"walk":(1.,[(0,{4:.5,6:-.5,8:-.55,11:.55}),(.5,{4:-.5,6:.5,8:.55,11:-.55}),(1,{4:.5,6:-.5,8:-.55,11:.55})]),"run":(.7,[(0,{4:.8,6:-.8,8:-.85,11:.85}),(.35,{4:-.8,6:.8,8:.85,11:-.85}),(.7,{4:.8,6:-.8,8:-.85,11:.85})]),"attack":(.65,[(0,{2:-.15,6:-.5}),(.3,{2:.55,6:1.5,7:.7}),(.65,{2:-.15,6:-.5})]),"pain":(.45,[(0,{}),(.2,{2:-.35,4:-.25,6:-.25}),(.45,{})]),"die":(1.2,[(0,{}),(.6,{1:-.8,2:-.8}),(1.2,{1:-1.45,2:-1.45})]),"harvest":(1.1,[(0,{}),(.55,{2:.45,4:1.,6:1.}),(1.1,{})]),"sit":(.8,[(0,{}),(.8,{8:1.35,9:-1.35,11:1.35,12:-1.35})])}
     for name,(duration,poses) in anims.items(): animation(root/f"animations/eloria/{name}.xaf",duration,poses)
     actor_defs(root/"actor_defs/actor_defs.xml")

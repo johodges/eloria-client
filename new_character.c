@@ -44,6 +44,19 @@
 
 static void add_text_to_buffer(int color, const char * text, int time_to_display);
 
+static const char nymara_luminous_str[] = "Luminous";
+static const char nymara_votary_str[] = "Whitehorn Votary";
+static const char nymara_glasswarden_str[] = "Glasswarden";
+static const char nymara_orun_str[] = "Orun";
+static const char nymara_greyhaven_str[] = "Greyhaven";
+static const char nymara_ssarathi_str[] = "Ssarathi";
+static const char nymara_about_luminous[] = "Lake-city citizens shaped by civic duty, trade, and reflected light.";
+static const char nymara_about_votary[] = "Mountain ascetics adapted to cold, altitude, and patient discipline.";
+static const char nymara_about_glasswarden[] = "Crystal engineers who study resonance, storms, and the old observatories.";
+static const char nymara_about_orun[] = "Steppe riders whose camps follow the sunmane herds and seasonal roads.";
+static const char nymara_about_greyhaven[] = "Western sailors, shipwrights, and moorland wardens.";
+static const char nymara_about_ssarathi[] = "Scaled riverfolk preserving the archives and water rites of the south.";
+
 typedef int my_enum;//This enumeration will decrease, then wrap to top, increase and then wrap to bottom, when using the inc() and dec() functions. Special purpose though, since you have to have between 2 and 255 values in the enumeration and you have to have the same value in enum[0] as in enum[max] - otherwise we'll probably segfault...
 
 static my_enum	normal_skin_enum[]	= { SKIN_BROWN, SKIN_NORMAL, SKIN_PALE, SKIN_TAN, SKIN_BROWN };
@@ -699,22 +712,22 @@ static void set_hud_width(window_info *win)
 	min_width = max2i(min_width, width);
 
 	width = 4*sep + button_height
-		+ calc_button_width((const unsigned char*)human_str, win->font_category, very_small);
+		+ calc_button_width((const unsigned char*)nymara_luminous_str, win->font_category, very_small);
 	min_width = max2i(min_width, 2*width);
 	width = 4*sep + button_height
-		+ calc_button_width((const unsigned char*)elf_str, win->font_category, very_small);
+		+ calc_button_width((const unsigned char*)nymara_votary_str, win->font_category, very_small);
 	min_width = max2i(min_width, 2*width);
 	width = 4*sep + button_height
-		+ calc_button_width((const unsigned char*)dwarf_str, win->font_category, very_small);
+		+ calc_button_width((const unsigned char*)nymara_glasswarden_str, win->font_category, very_small);
 	min_width = max2i(min_width, 2*width);
 	width = 4*sep + button_height
-		+ calc_button_width((const unsigned char*)gnome_str, win->font_category, very_small);
+		+ calc_button_width((const unsigned char*)nymara_orun_str, win->font_category, very_small);
 	min_width = max2i(min_width, 2*width);
 	width = 4*sep + button_height
-		+ calc_button_width((const unsigned char*)orchan_str, win->font_category, very_small);
+		+ calc_button_width((const unsigned char*)nymara_greyhaven_str, win->font_category, very_small);
 	min_width = max2i(min_width, 2*width);
 	width = 4*sep + button_height
-		+ calc_button_width((const unsigned char*)draegoni_str, win->font_category, very_small);
+		+ calc_button_width((const unsigned char*)nymara_ssarathi_str, win->font_category, very_small);
 	min_width = max2i(min_width, 2*width);
 
 	width = 3*sep + prev_width + next_width
@@ -1276,13 +1289,13 @@ static int mouseover_newchar_book_handler(widget_list *w, int mx, int my)
 {
 	image_set_uv(w->window_id, w->id, (float)32/256,1.0f-(float)64/256,(float)63/256,1.0f-(float)95/256);
 	newchar_mouseover = w->id;
-	if( newchar_mouseover == book_human) tooltip = about_human;
-	else if( newchar_mouseover == book_elf) tooltip = about_elves;
-	else if( newchar_mouseover == book_dwarf) tooltip = about_dwarfs;
-	else if( newchar_mouseover == book_gnome) tooltip = about_gnomes;
-	else if( newchar_mouseover == book_orchan) tooltip = about_orchans;
-	else if( newchar_mouseover == book_draegoni) tooltip = about_draegoni;
-	else if( newchar_mouseover == book_human) tooltip = about_human;
+	if( newchar_mouseover == book_human) tooltip = nymara_about_luminous;
+	else if( newchar_mouseover == book_elf) tooltip = nymara_about_votary;
+	else if( newchar_mouseover == book_dwarf) tooltip = nymara_about_glasswarden;
+	else if( newchar_mouseover == book_gnome) tooltip = nymara_about_orun;
+	else if( newchar_mouseover == book_orchan) tooltip = nymara_about_greyhaven;
+	else if( newchar_mouseover == book_draegoni) tooltip = nymara_about_ssarathi;
+	else if( newchar_mouseover == book_human) tooltip = nymara_about_luminous;
 	else return 1;
 	newchar_mouseover_time = cur_time; //we are currently over something
 	{
@@ -1755,12 +1768,12 @@ static int init_color_race_handler(window_info * win)
 		widget_set_OnMouseover(win->window_id, widget_id, &mouseover_p2p_race_handler);
 
 		widget_id = multiselect_add_extended(win->window_id, free_widget_id++, 0, 2 * sep, y + button_y_off , button_set_width, button_set_height, normal, r, g, b, rh, gh, bh, 6);
-		multiselect_button_add_extended(win->window_id, widget_id, 0, 0, button_width, human_str, very_small, our_actor.race==human_female||our_actor.race==human_male);
-		multiselect_button_add_extended(win->window_id, widget_id, 0, button_height + sep, button_width, elf_str, very_small, our_actor.race==elf_female||our_actor.race==elf_male);
-		multiselect_button_add_extended(win->window_id, widget_id, 0, 2 * (button_height + sep), button_width, dwarf_str, very_small, our_actor.race==dwarf_female||our_actor.race==dwarf_male);
-		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, 0, button_width, gnome_str, very_small, our_actor.race==gnome_female||our_actor.race==gnome_male);
-		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, button_height + sep, button_width, orchan_str, very_small, our_actor.race==orchan_female||our_actor.race==orchan_male);
-		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, 2 * (button_height + sep), button_width, draegoni_str, very_small, our_actor.race==draegoni_female||our_actor.race==draegoni_male);
+		multiselect_button_add_extended(win->window_id, widget_id, 0, 0, button_width, nymara_luminous_str, very_small, our_actor.race==human_female||our_actor.race==human_male);
+		multiselect_button_add_extended(win->window_id, widget_id, 0, button_height + sep, button_width, nymara_votary_str, very_small, our_actor.race==elf_female||our_actor.race==elf_male);
+		multiselect_button_add_extended(win->window_id, widget_id, 0, 2 * (button_height + sep), button_width, nymara_glasswarden_str, very_small, our_actor.race==dwarf_female||our_actor.race==dwarf_male);
+		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, 0, button_width, nymara_orun_str, very_small, our_actor.race==gnome_female||our_actor.race==gnome_male);
+		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, button_height + sep, button_width, nymara_greyhaven_str, very_small, our_actor.race==orchan_female||our_actor.race==orchan_male);
+		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, 2 * (button_height + sep), button_width, nymara_ssarathi_str, very_small, our_actor.race==draegoni_female||our_actor.race==draegoni_male);
 		widget_set_OnClick(win->window_id, widget_id, &click_newchar_race_handler);
 
 		for(i = 0; i < 3; i++)
