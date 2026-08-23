@@ -7,6 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE1000010000000000000001 /* combat_hud.c in Sources */ = {isa = PBXBuildFile; fileRef = EE2000010000000000000001 /* combat_hud.c */; };
+		EE1000020000000000000002 /* inventory_organizer.c in Sources */ = {isa = PBXBuildFile; fileRef = EE2000020000000000000002 /* inventory_organizer.c */; };
+		EE1000030000000000000003 /* item_detail.c in Sources */ = {isa = PBXBuildFile; fileRef = EE2000030000000000000003 /* item_detail.c */; };
+		EE1000040000000000000004 /* mail_window.c in Sources */ = {isa = PBXBuildFile; fileRef = EE2000040000000000000004 /* mail_window.c */; };
+		EE1000050000000000000005 /* marketplace.c in Sources */ = {isa = PBXBuildFile; fileRef = EE2000050000000000000005 /* marketplace.c */; };
+		EE1000060000000000000006 /* merchant.c in Sources */ = {isa = PBXBuildFile; fileRef = EE2000060000000000000006 /* merchant.c */; };
+		EE1000070000000000000007 /* navigation_hud.c in Sources */ = {isa = PBXBuildFile; fileRef = EE2000070000000000000007 /* navigation_hud.c */; };
+		EE1000080000000000000008 /* quest_journal.c in Sources */ = {isa = PBXBuildFile; fileRef = EE2000080000000000000008 /* quest_journal.c */; };
 		1F125FF60D91A4F0009099BE /* effect_glow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F125FF40D91A4EF009099BE /* effect_glow.cpp */; };
 		1F1CE869114F0B8200F30873 /* item_lists.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F1CE867114F0B8200F30873 /* item_lists.cpp */; };
 		1F22CC410DBAD57400411752 /* context_menu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1F22CC3A0DBAD57400411752 /* context_menu.cpp */; };
@@ -286,6 +294,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		EE2000010000000000000001 /* combat_hud.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = combat_hud.c; path = ../combat_hud.c; sourceTree = SOURCE_ROOT; };
+		EE2000020000000000000002 /* inventory_organizer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = inventory_organizer.c; path = ../inventory_organizer.c; sourceTree = SOURCE_ROOT; };
+		EE2000030000000000000003 /* item_detail.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = item_detail.c; path = ../item_detail.c; sourceTree = SOURCE_ROOT; };
+		EE2000040000000000000004 /* mail_window.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = mail_window.c; path = ../mail_window.c; sourceTree = SOURCE_ROOT; };
+		EE2000050000000000000005 /* marketplace.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = marketplace.c; path = ../marketplace.c; sourceTree = SOURCE_ROOT; };
+		EE2000060000000000000006 /* merchant.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = merchant.c; path = ../merchant.c; sourceTree = SOURCE_ROOT; };
+		EE2000070000000000000007 /* navigation_hud.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = navigation_hud.c; path = ../navigation_hud.c; sourceTree = SOURCE_ROOT; };
+		EE2000080000000000000008 /* quest_journal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = quest_journal.c; path = ../quest_journal.c; sourceTree = SOURCE_ROOT; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1F125FF40D91A4EF009099BE /* effect_glow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = effect_glow.cpp; sourceTree = "<group>"; };
 		1F125FF50D91A4EF009099BE /* effect_glow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = effect_glow.h; sourceTree = "<group>"; };
@@ -1497,6 +1513,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE1000010000000000000001 /* combat_hud.c in Sources */,
+				EE1000020000000000000002 /* inventory_organizer.c in Sources */,
+				EE1000030000000000000003 /* item_detail.c in Sources */,
+				EE1000040000000000000004 /* mail_window.c in Sources */,
+				EE1000050000000000000005 /* marketplace.c in Sources */,
+				EE1000060000000000000006 /* merchant.c in Sources */,
+				EE1000070000000000000007 /* navigation_hud.c in Sources */,
+				EE1000080000000000000008 /* quest_journal.c in Sources */,
 				1F812BE50D033551008792A7 /* fontdef.c in Sources */,
 				1F812BE70D033551008792A7 /* parser.c in Sources */,
 				1F812BE80D033551008792A7 /* symbols.c in Sources */,
