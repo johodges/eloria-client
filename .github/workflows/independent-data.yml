@@ -73,9 +73,10 @@ jobs:
               assert lines[0].startswith("<HEADER MAGIC=")
               ET.fromstring("\n".join(lines[1:]))
           actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
+          player_ids = {0,1,2,3,4,5,37,38,39,40,41,42}
           player_actors = [actor for actor in actors.findall("actor")
-                           if 0 <= int(actor.attrib["id"]) <= 5]
-          assert len(player_actors) == 6
+                           if int(actor.attrib["id"]) in player_ids]
+          assert len(player_actors) == 12
           assert {actor.attrib.get("race") for actor in player_actors} == {
               "luminous", "votary", "glasswarden", "orun", "greyhaven", "ssarathi"}
           assert len(list(root.glob("animations/eloria/*.xaf"))) == 8
