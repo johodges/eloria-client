@@ -80,9 +80,11 @@ def quat_x(a): return math.sin(a/2),0.,0.,math.cos(a/2)
 def animation(path,duration,poses):
     tracks=sorted({b for _,frame in poses for b in frame}); root=ET.Element("ANIMATION",DURATION=str(duration),NUMTRACKS=str(len(tracks)))
     for bone in tracks:
-        tr=ET.SubElement(root,"TRACK",BONEID=str(bone),NUMKEYFRAMES=str(len(poses)),TRANSLATIONREQUIRED="0",TRANSLATIONISDYNAMIC="0",HIGHRANGEREQUIRED="0")
+        tr=ET.SubElement(root,"TRACK",BONEID=str(bone),NUMKEYFRAMES=str(len(poses)))
         for time,frame in poses:
-            key=ET.SubElement(tr,"KEYFRAME",TIME=str(time)); ET.SubElement(key,"ROTATION").text="%g %g %g %g"%quat_x(frame.get(bone,0.))
+            key=ET.SubElement(tr,"KEYFRAME",TIME=str(time))
+            ET.SubElement(key,"TRANSLATION").text="%g %g %g"%BONES[bone][2]
+            ET.SubElement(key,"ROTATION").text="%g %g %g %g"%quat_x(frame.get(bone,0.))
     write_cal(path,"XAF",root)
 
 CULTURES={

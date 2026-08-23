@@ -173,11 +173,11 @@ def animation(path, duration, poses):
     tracks = sorted({bone for _, frame in poses for bone in frame})
     root = ET.Element("ANIMATION", DURATION=str(duration), NUMTRACKS=str(len(tracks)))
     for bone in tracks:
-        tr = ET.SubElement(root, "TRACK", BONEID=str(bone), NUMKEYFRAMES=str(len(poses)),
-                           TRANSLATIONREQUIRED="0", TRANSLATIONISDYNAMIC="0", HIGHRANGEREQUIRED="0")
+        tr = ET.SubElement(root, "TRACK", BONEID=str(bone), NUMKEYFRAMES=str(len(poses)))
         for time, frame in poses:
             axis, angle = frame.get(bone, (0, 0.))
             key = ET.SubElement(tr, "KEYFRAME", TIME=str(time))
+            ET.SubElement(key, "TRANSLATION").text = "%g %g %g" % BONES[bone][2]
             ET.SubElement(key, "ROTATION").text = "%g %g %g %g" % quat(axis, angle)
     write_cal(path, "XAF", root)
 
