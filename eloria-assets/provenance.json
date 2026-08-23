@@ -35,6 +35,20 @@
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Procedural humanoid animation keyframes"
+    },
+    {
+      "path": "3dobjects/scenery/*",
+      "source": "tools/generate_scenery.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural native-E3D environmental scenery"
+    },
+    {
+      "path": "3dobjects/harvestables/*",
+      "source": "tools/generate_scenery.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural native-E3D harvestable plants, crystal, and stone"
     }
   ]
 }
