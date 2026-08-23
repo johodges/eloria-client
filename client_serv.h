@@ -734,7 +734,9 @@ typedef enum
  * \name To client commands
  */
 /*! @{ */
+/* Eloria modification 2026-08-22: versioned extended actor spawn command. */
 #define ADD_NEW_ACTOR 1
+#define ADD_NEW_ACTOR_EXTENDED 247 /* Eloria: ADD_NEW_ACTOR with a Uint16 actor type. */
 #define ADD_ACTOR_COMMAND 2
 #define YOU_ARE 3
 #define SYNC_CLOCK 4
