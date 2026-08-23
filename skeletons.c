@@ -7,6 +7,14 @@
 skeleton_types skeletons_defs[MAX_SKELETONS];
 int skeletons_count = 0;
 
+static int skeleton_name_ends_with(const char *name, const char *suffix)
+{
+	size_t name_length = strlen(name);
+	size_t suffix_length = strlen(suffix);
+	return (name_length >= suffix_length) &&
+		(strcmp(name + name_length - suffix_length, suffix) == 0);
+}
+
 int find_core_bone_id(struct CalCoreSkeleton *skel, const char *name)
 {
 	int i = CalCoreSkeleton_GetCoreBonesNumber(skel);
@@ -41,7 +49,41 @@ int get_skeleton(struct CalCoreModel *cal_model, const char *skeleton_name)
 	for (i = MAX_MAIN_CAL_BONES; i--;)
 		skel->cal_bones_id[i] = -1;
 
-	if (!strcmp(&skeleton_name[length-8], "bear.csf")) {
+	if (skeleton_name_ends_with(skeleton_name, "eloria_humanoid.xsf") ||
+		skeleton_name_ends_with(skeleton_name, "nymara_humanoid.xsf")) {
+		skel->cal_bones_id[head_bone] = find_core_bone_id(cal_skel, "head");
+		skel->cal_bones_id[mouth_bone] = find_core_bone_id(cal_skel, "mouth");
+		skel->cal_bones_id[body_top_bone] = find_core_bone_id(cal_skel, "spine");
+		skel->cal_bones_id[body_bottom_bone] = find_core_bone_id(cal_skel, "pelvis");
+		skel->cal_bones_id[cape_top_bone] = find_core_bone_id(cal_skel, "cape1");
+		skel->cal_bones_id[cape_middle_bone] = find_core_bone_id(cal_skel, "cape2");
+		skel->cal_bones_id[cape_bottom_bone] = find_core_bone_id(cal_skel, "cape3");
+		skel->cal_bones_id[weapon_left_bone] = find_core_bone_id(cal_skel, "weaponL");
+		skel->cal_bones_id[weapon_right_bone] = find_core_bone_id(cal_skel, "weaponR");
+		skel->cal_bones_id[staff_right_bone] = find_core_bone_id(cal_skel, "staffR");
+		skel->cal_bones_id[arrow_bone] = find_core_bone_id(cal_skel, "arrow");
+		skel->cal_bones_id[hand_left_bone] = find_core_bone_id(cal_skel, "handL");
+		skel->cal_bones_id[hand_right_bone] = find_core_bone_id(cal_skel, "handR");
+		skel->cal_bones_id[highest_bone] = skel->cal_bones_id[head_bone];
+	}
+	else if (skeleton_name_ends_with(skeleton_name, "nymara_creature.xsf") ||
+		skeleton_name_ends_with(skeleton_name, "eloria_quadruped.xsf")) {
+		skel->cal_bones_id[head_bone] = find_core_bone_id(cal_skel, "head");
+		skel->cal_bones_id[mouth_bone] = find_core_bone_id(cal_skel, "mouth");
+		skel->cal_bones_id[body_top_bone] = find_core_bone_id(cal_skel, "body");
+		skel->cal_bones_id[body_bottom_bone] = find_core_bone_id(cal_skel, "root");
+		skel->cal_bones_id[cape_top_bone] = find_core_bone_id(cal_skel, "cape1");
+		skel->cal_bones_id[cape_middle_bone] = find_core_bone_id(cal_skel, "cape2");
+		skel->cal_bones_id[cape_bottom_bone] = find_core_bone_id(cal_skel, "cape3");
+		skel->cal_bones_id[weapon_left_bone] = find_core_bone_id(cal_skel, "weaponL");
+		skel->cal_bones_id[weapon_right_bone] = find_core_bone_id(cal_skel, "weaponR");
+		skel->cal_bones_id[staff_right_bone] = find_core_bone_id(cal_skel, "staffR");
+		skel->cal_bones_id[arrow_bone] = find_core_bone_id(cal_skel, "arrow");
+		skel->cal_bones_id[hand_left_bone] = find_core_bone_id(cal_skel, "handL");
+		skel->cal_bones_id[hand_right_bone] = find_core_bone_id(cal_skel, "handR");
+		skel->cal_bones_id[highest_bone] = skel->cal_bones_id[head_bone];
+	}
+	else if (!strcmp(&skeleton_name[length-8], "bear.csf")) {
 		skel->cal_bones_id[head_bone] = find_core_bone_id(cal_skel, "head");
 		skel->cal_bones_id[mouth_bone] = find_core_bone_id(cal_skel, "mouth");
 		skel->cal_bones_id[body_top_bone] = find_core_bone_id(cal_skel, "neck1");
