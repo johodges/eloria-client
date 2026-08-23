@@ -4,6 +4,8 @@
 #include "client_serv.h"
 #include "elwindows.h"
 #include "font.h"
+#include "asc.h"
+#define draw_string_small(x, y, text, max_lines) draw_string_small_zoomed((x), (y), (text), (max_lines), 1.0f)
 #include "gamewin.h"
 #include "merchant.h"
 #include "multiplayer.h"

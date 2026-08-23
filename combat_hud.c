@@ -3,6 +3,8 @@
 #include <SDL_endian.h>
 #include "elwindows.h"
 #include "font.h"
+#include "asc.h"
+#define draw_string_small(x, y, text, max_lines) draw_string_small_zoomed((x), (y), (text), (max_lines), 1.0f)
 #include "gamewin.h"
 #include "combat_hud.h"
 
