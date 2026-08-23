@@ -1546,7 +1546,8 @@ void init_help()
 	add_xml_identifier(misc,"password_format",password_format_str,"Passwords must be 4-15 characters and can include alpha, numeric or others characters but not space or ~.",sizeof(password_format_str));
 	add_xml_identifier(misc,"show_passwords",show_passwords_str,"Show Passwords",sizeof(show_passwords_str));
 	add_xml_identifier(misc,"login_select_window",login_select_window_str,"Select Login",sizeof(login_select_window_str));
-	add_xml_identifier(misc,"login_rules",login_rules_str,"If you log into this game, you accept the rules of Eternal Lands. Press F5 to read them in game.",sizeof(login_rules_str));
+	/* Modified for Eloria on 2026-08-22: independent service text. */
+	add_xml_identifier(misc,"login_rules",login_rules_str,"If you log into Eloria, you accept the server rules. Press F5 to read them in game.",sizeof(login_rules_str));
 	add_xml_identifier(misc,"stoall",sto_all_str,"Sto All",sizeof(sto_all_str));
 	add_xml_identifier(misc,"getall",get_all_str,"Get All",sizeof(get_all_str));
 	add_xml_identifier(misc,"drpall",drp_all_str,"Drp All",sizeof(drp_all_str));
@@ -1998,7 +1999,7 @@ void init_titles ()
 	add_xml_identifier (titles_str, "w_config", win_configuration, "Options", sizeof(win_configuration));
 	add_xml_identifier (titles_str, "w_manu", win_manufacture, "Manufacture", sizeof(win_manufacture));
 	add_xml_identifier (titles_str, "w_astro", win_astrology, "Astrology", sizeof(win_astrology));
-	add_xml_identifier (titles_str, "w_principal", win_principal, "Eternal Lands", sizeof(win_principal));
+	add_xml_identifier (titles_str, "w_principal", win_principal, "Eloria", sizeof(win_principal));
 	add_xml_identifier (titles_str, "w_storage", win_storage, "Storage", sizeof(win_storage));
 	add_xml_identifier (titles_str, "w_storage_vo", win_storage_vo, " (view only)", sizeof(win_storage_vo));
 	add_xml_identifier (titles_str, "w_trade", win_trade, "Trade", sizeof(win_trade));
@@ -2036,8 +2037,8 @@ void init_titles ()
 	add_xml_identifier (titles_str, "l_nname", label_note_name, "Note name", sizeof(label_note_name));
 	add_xml_identifier (titles_str, "l_cursor_coords", label_cursor_coords, "Cursor position", sizeof(label_cursor_coords));
 	add_xml_identifier (titles_str, "l_mark_filter", label_mark_filter, "Mark filter", sizeof(label_mark_filter));
-	add_xml_identifier (titles_str, "game_version", game_version_str, "Eternal Lands Version %d.%d.%d%s", sizeof(game_version_str));
-	add_xml_identifier (titles_str, "game_version_prefix", game_version_prefix_str, "Eternal Lands Version", sizeof(game_version_prefix_str));
+	add_xml_identifier (titles_str, "game_version", game_version_str, "Eloria Client %d.%d.%d%s", sizeof(game_version_str));
+	add_xml_identifier (titles_str, "game_version_prefix", game_version_prefix_str, "Eloria Client", sizeof(game_version_prefix_str));
 	add_xml_identifier (titles_str, "b_send", button_send, "Send", sizeof(button_send));
 	add_xml_identifier (titles_str, "item_list_name", item_list_name_str, "Enter list name", sizeof(item_list_name_str));
 	add_xml_identifier (titles_str, "item_list_rename", item_list_rename_str, "Enter new name", sizeof(item_list_rename_str));
