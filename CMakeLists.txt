@@ -170,6 +170,8 @@ set(SOURCES
 	${SD}session.c ${SD}shader/noise.c ${SD}shader/shader.c ${SD}shadows.c ${SD}skeletons.c ${SD}skills.c ${SD}sky.c
 	${SD}sound.c ${SD}special_effects.c ${SD}spells.c ${SD}stats.c ${SD}storage.c ${SD}tabs.c ${SD}text_aliases.c
 	${SD}text.c ${SD}textures.c ${SD}tile_map.c ${SD}timers.c ${SD}trade.c ${SD}translate.c ${SD}update.c ${SD}url.c
+	${SD}marketplace.c ${SD}merchant.c ${SD}quest_journal.c ${SD}item_detail.c
+	${SD}inventory_organizer.c ${SD}combat_hud.c ${SD}navigation_hud.c ${SD}mail_window.c
 	${SD}weather.c ${SD}widgets.c ${SD}io/e3d_io.c ${SD}io/elc_io.c ${SD}io/elfilewrapper.c ${SD}io/elpathwrapper.c
 	${SD}io/fileutil.c ${SD}io/half.c ${SD}io/ioapi.c ${SD}io/map_io.c ${SD}io/normal.c ${SD}io/unzip.c
 	${SD}io/xmlcallbacks.c ${SD}io/zip.c ${SD}io/ziputil.c ${SD}xz/7zCrc.c ${SD}xz/7zCrcOpt.c ${SD}xz/Alloc.c
