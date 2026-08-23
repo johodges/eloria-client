@@ -268,6 +268,7 @@ static void change_actor (void)
 		 * Snap the presentation camera to the replacement actor instead of
 		 * allowing the newly selected race to spend frames outside the viewport. */
 		reset_camera_at_next_update = 1;
+		move_camera();
 	}
 }
 
