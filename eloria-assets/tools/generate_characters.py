@@ -21,7 +21,13 @@ BONES = (("root",-1,(0.,0.,0.)),("pelvis",0,(0.,0.,.92)),("spine",1,(0.,0.,.34))
  ("head",2,(0.,0.,.52)),("upper_arm_l",2,(-.32,0.,.38)),("lower_arm_l",4,(-.34,0.,0.)),
  ("upper_arm_r",2,(.32,0.,.38)),("lower_arm_r",6,(.34,0.,0.)),
  ("upper_leg_l",1,(-.15,0.,-.08)),("lower_leg_l",8,(0.,0.,-.48)),("foot_l",9,(0.,.06,-.45)),
- ("upper_leg_r",1,(.15,0.,-.08)),("lower_leg_r",11,(0.,0.,-.48)),("foot_r",12,(0.,.06,-.45)))
+ ("upper_leg_r",1,(.15,0.,-.08)),("lower_leg_r",11,(0.,0.,-.48)),("foot_r",12,(0.,.06,-.45)),
+ # Stable semantic anchors used by effects, equipment, capes and ranged combat.
+ ("mouth",3,(0.,-.17,-.04)),("jaw",3,(0.,-.14,-.08)),
+ ("handL",5,(-.20,0.,0.)),("handR",7,(.20,0.,0.)),
+ ("weaponL",16,(0.,-.08,0.)),("weaponR",17,(0.,-.08,0.)),
+ ("staffR",17,(0.,-.12,.04)),("arrow",2,(0.,.12,.18)),
+ ("cape1",2,(0.,.13,.28)),("cape2",22,(0.,0.,-.30)),("cape3",23,(0.,0.,-.30)))
 
 def write_cal(path, magic, root):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -176,9 +182,10 @@ def actor_defs(path):
             boots=ET.SubElement(a,"boots",id=str(i));ET.SubElement(boots,"skin").text=f"{prefix}/boots_{i}.dds";ET.SubElement(boots,"mesh").text="actors/eloria_boots.xmf"
         for i in range(5):
             head=ET.SubElement(a,"head",id=str(i));ET.SubElement(head,"mesh").text=f"actors/eloria_head_{i}.xmf"
-        # These IDs are protocol constants, not zero-based defaults. The client
+        # These IDs are protocol constants, not zero-based defaults.  The client
         # indexes these exact slots while constructing the character preview.
-        # Slot zero alone makes helmet/cape/shield dereference empty entries.
+        # Leaving only slot zero populated makes helmet/cape/shield dereference
+        # uninitialised entries and crash as soon as character creation opens.
         none_ids={"neck":0,"helmet":20,"cape":30,"shield":11}
         for tag,none_id in none_ids.items():
             part=ET.SubElement(a,tag,id=str(none_id));ET.SubElement(part,"mesh").text="actors/eloria_none.xmf";ET.SubElement(part,"skin").text="actors/eloria_humanoid.png"

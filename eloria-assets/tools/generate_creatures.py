@@ -20,6 +20,14 @@ BONES = (
     ("front_leg_r", 1, (.28, .43, -.22)), ("front_paw_r", 7, (0., 0., -.55)),
     ("rear_leg_l", 1, (-.30, -.43, -.22)), ("rear_paw_l", 9, (0., 0., -.55)),
     ("rear_leg_r", 1, (.30, -.43, -.22)), ("rear_paw_r", 11, (0., 0., -.55)),
+    # Common semantic anchors keep effects and future equipment independent
+    # from the particular creature mesh topology.
+    ("mouth", 3, (0., .20, -.03)), ("jaw", 3, (0., .17, -.07)),
+    ("handL", 6, (0., 0., 0.)), ("handR", 8, (0., 0., 0.)),
+    ("weaponL", 15, (0., .08, 0.)), ("weaponR", 16, (0., .08, 0.)),
+    ("staffR", 16, (0., .10, .04)), ("arrow", 1, (0., .18, .18)),
+    ("cape1", 1, (0., -.16, .20)), ("cape2", 21, (0., -.22, -.08)),
+    ("cape3", 22, (0., -.22, -.08)),
 )
 
 CREATURES = (
