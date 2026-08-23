@@ -264,6 +264,10 @@ static void change_actor (void)
 		build_actor_bounding_box(our_actor.our_model);
 		if (use_animation_program)
 			set_transformation_buffers(our_actor.our_model);
+		/* The legacy race table uses several widely separated map positions.
+		 * Snap the presentation camera to the replacement actor instead of
+		 * allowing the newly selected race to spend frames outside the viewport. */
+		reset_camera_at_next_update = 1;
 	}
 }
 
