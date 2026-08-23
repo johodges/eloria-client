@@ -5,6 +5,15 @@ import argparse, json, struct, sys
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
+SUPPORTED_FRAMES = {
+ "CAL_walk","CAL_run","CAL_die1","CAL_die2","CAL_pain1","CAL_pain2",
+ "CAL_pick","CAL_drop","CAL_idle","CAL_idle2","CAL_idle_sit","CAL_harvest",
+ "CAL_attack_cast","CAL_sit_down","CAL_stand_up","CAL_in_combat",
+ "CAL_out_combat","CAL_combat_idle",
+ *{f"CAL_attack_up_{i}" for i in range(1,11)},
+ *{f"CAL_attack_down_{i}" for i in range(1,11)},
+}
+
 def main():
  p=argparse.ArgumentParser(); p.add_argument("root",nargs="?",default="build/eloria-data"); p.add_argument("--report",default=None); a=p.parse_args(); root=Path(a.root)
  errors=[]; checks={"xml":0,"json":0,"png":0,"e3d":0,"elm":0,"references":0,"ids":0}
@@ -39,6 +48,8 @@ def main():
     if not q.is_file(): err(q,f"missing actor {aid} {tag}")
     else: checks["references"]+=1
    for fr in ael.findall("./frames/*"):
+    if fr.tag not in SUPPORTED_FRAMES and not fr.tag.casefold().startswith("cal_emote"):
+     err(actor_file,f"unsupported frame tag {fr.tag} for actor {aid}")
     q=root/(fr.text or "")
     if not q.is_file(): err(q,f"missing animation for actor {aid}")
     else: checks["references"]+=1
