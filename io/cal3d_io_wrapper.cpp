@@ -122,9 +122,9 @@ class ElDataSource: public CalDataSource
 
 /*
  * CalLoader's CalDataSource overloads parse only the binary CSF/CAF/CMF/CRF
- * formats.  The filename and memory-buffer overloads also detect Cal3D XML,
- * but the filename overload cannot use EL's zip/custom-path filesystem.  Read
- * XML through that filesystem, then give Cal3D a nul-terminated memory buffer.
+ * formats.  Cal3D also has an XML-aware const-char-pointer overload, but a
+ * mutable vector's data() selects the binary void-pointer overload instead.
+ * Read XML through EL's filesystem and explicitly pass a const char pointer.
  */
 static std::vector<char> read_cal3d_xml(const std::string &file_name)
 {
@@ -149,7 +149,7 @@ static CalCoreAnimationPtr load_core_animation(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreAnimation(xml.data(), 0);
+		return CalLoader::loadCoreAnimation(static_cast<const char*>(xml.data()), 0);
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreAnimation(file, 0);
 }
@@ -158,7 +158,7 @@ static CalCoreMaterialPtr load_core_material(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreMaterial(xml.data());
+		return CalLoader::loadCoreMaterial(static_cast<const char*>(xml.data()));
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreMaterial(file);
 }
@@ -167,7 +167,7 @@ static CalCoreMeshPtr load_core_mesh(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreMesh(xml.data());
+		return CalLoader::loadCoreMesh(static_cast<const char*>(xml.data()));
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreMesh(file);
 }
@@ -176,7 +176,7 @@ static CalCoreSkeletonPtr load_core_skeleton(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreSkeleton(xml.data());
+		return CalLoader::loadCoreSkeleton(static_cast<const char*>(xml.data()));
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreSkeleton(file);
 }
@@ -379,4 +379,3 @@ extern "C" void set_invert_v_coord()
 {
 	CalLoader::setLoadingMode(LOADER_INVERT_V_COORD);
 }
-
