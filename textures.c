@@ -1800,6 +1800,7 @@ Uint32 load_enhanced_actor(const enhanced_actor* actor, const char* name)
 Uint32 bind_actor_texture(const Uint32 handle, char* alpha)
 {
 	Uint32 af, result;
+	static Uint32 not_ready_count[ACTOR_TEXTURE_CACHE_MAX] = { 0 };
 	GLuint id;
 	GLenum min_filter;
 	texture_format_type format;
@@ -1884,6 +1885,19 @@ Uint32 bind_actor_texture(const Uint32 handle, char* alpha)
 		{
 			actor_texture_handles[handle].id = id;
 			actor_texture_handles[handle].state = tst_texture_loaded;
+			/* The old code returned the value calculated before build_texture().
+			 * Consequently the actor was skipped for the frame in which its
+			 * composite texture became ready.  Bind the newly-created texture
+			 * immediately and report success for this call. */
+			if (id != 0)
+			{
+				bind_texture_id(id);
+				result = 1;
+			}
+			else
+			{
+				LOG_ERROR("Failed to upload actor texture handle %u", handle);
+			}
 		}
 		else
 		{
@@ -1897,6 +1911,39 @@ Uint32 bind_actor_texture(const Uint32 handle, char* alpha)
 
 			actor_texture_handles[handle].new_id = id;
 			actor_texture_handles[handle].state = tst_texture_loading;
+		}
+	}
+
+	if (result != 0)
+	{
+		not_ready_count[handle] = 0;
+	}
+	else
+	{
+		++not_ready_count[handle];
+		/* A few misses are expected while the worker composes the atlas.  A
+		 * persistent miss makes the actor body disappear while its separately
+		 * rendered name and health bar remain visible.  Log this in main.log;
+		 * worker-thread errors otherwise appear only in load_actors.log. */
+		if ((not_ready_count[handle] == 60) ||
+			(not_ready_count[handle] == 300))
+		{
+			LOG_ERROR("Actor texture handle %u still not ready after %u binds: state=%d id=%u new_id=%u image=%p size=%ux%u; pants='%s' boots='%s' torso='%s' arms='%s' hands='%s' head='%s' hair='%s' eyes='%s'",
+				handle, not_ready_count[handle],
+				(int)actor_texture_handles[handle].state,
+				(unsigned)actor_texture_handles[handle].id,
+				(unsigned)actor_texture_handles[handle].new_id,
+				(void*)actor_texture_handles[handle].image.image,
+				actor_texture_handles[handle].image.width,
+				actor_texture_handles[handle].image.height,
+				actor_texture_handles[handle].files.pants_tex,
+				actor_texture_handles[handle].files.boots_tex,
+				actor_texture_handles[handle].files.torso_tex,
+				actor_texture_handles[handle].files.arms_tex,
+				actor_texture_handles[handle].files.hands_tex,
+				actor_texture_handles[handle].files.head_tex,
+				actor_texture_handles[handle].files.hair_tex,
+				actor_texture_handles[handle].files.eyes_tex);
 		}
 	}
 
