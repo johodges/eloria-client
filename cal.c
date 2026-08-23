@@ -613,6 +613,8 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 	//int boneid=-1;
 	float reverse_scale;
 	GLboolean restore_cull_face = GL_FALSE;
+	GLboolean preview_state_pushed = GL_FALSE;
+	GLboolean preview_client_state_pushed = GL_FALSE;
 	GLint saved_array_buffer = 0;
 	GLint saved_element_buffer = 0;
 	int preview_render = 0;
@@ -626,6 +628,42 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 	preview_render = (newchar_root_win >= 0) && (act->actor_id == 0);
 	if (preview_render)
 	{
+		GLfloat incoming_color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		GLint active_texture = GL_TEXTURE0;
+		GLint bound_texture = 0;
+		GLboolean vertex_program_enabled = GL_FALSE;
+		glGetFloatv(GL_CURRENT_COLOR, incoming_color);
+		glGetIntegerv(GL_ACTIVE_TEXTURE_ARB, &active_texture);
+		glGetIntegerv(GL_TEXTURE_BINDING_2D, &bound_texture);
+#ifndef ANDROID
+		vertex_program_enabled = glIsEnabled(GL_VERTEX_PROGRAM_ARB);
+#endif
+		if ((act->actor_type >= 0) && (act->actor_type < MAX_ACTOR_DEFS) &&
+			!preview_type_logged[act->actor_type])
+		{
+			LOG_INFO("Character preview type %d incoming fixed-function state: color=(%g,%g,%g,%g) active_texture=0x%x bound_texture=%d vertex_program=%d texture_2d=%d alpha_test=%d blend=%d",
+				act->actor_type, incoming_color[0], incoming_color[1],
+				incoming_color[2], incoming_color[3], (unsigned)active_texture,
+				bound_texture, (int)vertex_program_enabled,
+				glIsEnabled(GL_TEXTURE_2D), glIsEnabled(GL_ALPHA_TEST),
+				glIsEnabled(GL_BLEND));
+		}
+		glPushAttrib(GL_CURRENT_BIT | GL_ENABLE_BIT | GL_TEXTURE_BIT);
+		preview_state_pushed = GL_TRUE;
+#ifndef ANDROID
+		glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);
+		preview_client_state_pushed = GL_TRUE;
+#endif
+		if (ELglActiveTextureARB != NULL)
+			ELglActiveTextureARB(GL_TEXTURE0);
+#ifndef ANDROID
+		if (ELglClientActiveTextureARB != NULL)
+			ELglClientActiveTextureARB(GL_TEXTURE0);
+		glDisable(GL_VERTEX_PROGRAM_ARB);
+#endif
+		glEnable(GL_TEXTURE_2D);
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		/* Character creation draws a single actor.  Disable culling around it
 		 * while recording the runtime triangle orientation.  Cal3D loaders on
 		 * different platforms can reorder XMF indices, so generated-file
@@ -930,6 +968,10 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 	glColor3f(1,1,1);
 	if (preview_render && restore_cull_face)
 		glEnable(GL_CULL_FACE);
+	if (preview_state_pushed)
+		glPopAttrib();
+	if (preview_client_state_pushed)
+		glPopClientAttrib();
 
 #ifdef DEBUG
 	if(render_skeleton)
