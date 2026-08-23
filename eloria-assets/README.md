@@ -1,0 +1,17 @@
+# Eloria independent data pack
+
+This directory contains source and tooling for an original Eloria client data
+pack. It must not contain files extracted from an Eternal Lands installation,
+release archive, website, or other Binary Data distribution.
+
+Generate the bootstrap pack with:
+
+```bash
+python3 eloria-assets/tools/generate_bootstrap_pack.py
+python3 eloria-assets/tools/check_provenance.py
+```
+
+The first milestone intentionally generates a small, object-free island named
+Emberhaven and placeholder UI sheets. It establishes a legally independent,
+reproducible baseline; character models, production UI sheets, sounds, and
+scenery still require original implementations before a public binary release.
