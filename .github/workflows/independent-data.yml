@@ -11,6 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Generate original bootstrap data
         run: python3 eloria-assets/tools/generate_bootstrap_pack.py build/eloria-data
+          python3 eloria-assets/tools/generate_characters.py build/eloria-data
       - name: Verify provenance policy
         run: python3 eloria-assets/tools/check_provenance.py
       - name: Verify original map
@@ -23,4 +24,19 @@ jobs:
           assert data[:4] == b"elmf"
           assert struct.unpack_from("<ii", data, 4) == (32, 32)
           assert len(data) == 38008
+          PY
+      - name: Validate generated Cal3D XML
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          root = Path("build/eloria-data")
+          paths = list(root.glob("actors/*.x?f")) + list(root.glob("animations/eloria/*.xaf"))
+          for path in paths:
+              lines = path.read_text().splitlines()
+              assert lines[0].startswith("<HEADER MAGIC=")
+              ET.fromstring("\n".join(lines[1:]))
+          actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
+          assert len(actors.findall("actor")) == 4
+          assert len(list(root.glob("animations/eloria/*.xaf"))) == 8
           PY
