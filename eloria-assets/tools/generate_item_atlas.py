@@ -20,6 +20,14 @@ def bmp(path,w,h,pixel):
   line.extend(b'\0'*(row-len(line)));data.extend(line)
  path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(b'BM'+struct.pack('<IHHI',54+len(data),0,0,54)+struct.pack('<IIIHHIIIIII',40,w,h,1,32,0,len(data),2835,2835,0,0)+data)
 
+def dds(path,w,h,pixel):
+ header=[124,0x0002100F,h,w,w*4,0,0]+[0]*11+[32,0x41,0,32,0x00FF0000,0x0000FF00,0x000000FF,0xFF000000]+[0x1000,0,0,0,0]
+ data=bytearray()
+ for y in range(h):
+  for x in range(w):
+   r,g,b,a=pixel(x,y);data.extend((b,g,r,a))
+ path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(b'DDS '+struct.pack('<31I',*header)+data)
+
 def main():
- p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output);png(root/"textures/items1.png",512,128,pixels);bmp(root/"textures/items1.bmp",512,128,pixels);(root/"items_eloria.json").write_text(json.dumps({"schema":1,"items":[{"item_id":i,"image_id":i,"name":n} for i,n in enumerate(ITEMS)]},indent=2)+"\n")
+ p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output);png(root/"textures/items1.png",512,128,pixels);bmp(root/"textures/items1.bmp",512,128,pixels);dds(root/"textures/items1.dds",512,128,pixels);(root/"items_eloria.json").write_text(json.dumps({"schema":1,"items":[{"item_id":i,"image_id":i,"name":n} for i,n in enumerate(ITEMS)]},indent=2)+"\n")
 if __name__=="__main__":main()
