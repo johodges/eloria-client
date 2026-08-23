@@ -176,12 +176,20 @@ def actor_defs(path):
             boots=ET.SubElement(a,"boots",id=str(i));ET.SubElement(boots,"skin").text=f"{prefix}/boots_{i}.dds";ET.SubElement(boots,"mesh").text="actors/eloria_boots.xmf"
         for i in range(5):
             head=ET.SubElement(a,"head",id=str(i));ET.SubElement(head,"mesh").text=f"actors/eloria_head_{i}.xmf"
-        for tag in ("neck","helmet","cape","shield"):
-            part=ET.SubElement(a,tag,id="0");ET.SubElement(part,"mesh").text="actors/eloria_none.xmf";ET.SubElement(part,"skin").text="actors/eloria_humanoid.png"
+        # These IDs are protocol constants, not zero-based defaults. The client
+        # indexes these exact slots while constructing the character preview.
+        # Slot zero alone makes helmet/cape/shield dereference empty entries.
+        none_ids={"neck":0,"helmet":20,"cape":30,"shield":11}
+        for tag,none_id in none_ids.items():
+            part=ET.SubElement(a,tag,id=str(none_id));ET.SubElement(part,"mesh").text="actors/eloria_none.xmf";ET.SubElement(part,"skin").text="actors/eloria_humanoid.png"
         frames=ET.SubElement(a,"frames")
         for tag,name in files.items():
             kind=0 if tag in ("CAL_walk","CAL_run","CAL_idle","CAL_idle2","CAL_idle_sit","CAL_combat_idle") else 1
             ET.SubElement(frames,tag).text=f"animations/eloria/{name} {kind}"
+    for actor in root.findall("actor"):
+        for tag,none_id in none_ids.items():
+            if actor.find(f"{tag}[@id='{none_id}']") is None:
+                raise ValueError(f"actor {actor.attrib['id']} lacks canonical {tag} none slot {none_id}")
     path.parent.mkdir(parents=True,exist_ok=True); path.write_text('<?xml version="1.0"?>\n'+ET.tostring(root,encoding="unicode")+'\n')
 
 def main():
