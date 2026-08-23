@@ -9,7 +9,7 @@
 #include "marketplace.h"
 #include "multiplayer.h"
 
-#define MARKET_MAX_LISTINGS 40
+#define MARKET_MAX_LISTINGS 20
 typedef struct { Uint32 id, quantity, unit_price, seconds_left; Uint16 image_id; char item[64], seller[24]; } marketplace_listing;
 static marketplace_listing listings[MARKET_MAX_LISTINGS];
 static int marketplace_win=-1, listing_count=0, selected_listing=-1, market_view=0;
