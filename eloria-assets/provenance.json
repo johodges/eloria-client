@@ -51,6 +51,20 @@
       "description": "Original creature locomotion, combat, reaction, and death animation clips"
     },
     {
+      "path": "actors/enemies/*",
+      "source": "tools/generate_humanoid_enemies.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Twelve original humanoid, undead, spirit, and construct enemy models"
+    },
+    {
+      "path": "animations/enemies/*.xaf",
+      "source": "tools/generate_humanoid_enemies.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original humanoid-enemy locomotion, combat, casting, reaction, and death clips"
+    },
+    {
       "path": "3dobjects/scenery/*",
       "source": "tools/generate_scenery.py",
       "author": "Eloria project",
