@@ -47,25 +47,49 @@ def panel(x: int, y: int) -> tuple[int, int, int, int]:
 
 
 def make_map(path: Path, width: int = 32, height: int = 32) -> None:
-    """Write an object-free ELM with a fully walkable height field."""
+    """Write an original ELM settlement with a fully walkable height field."""
     header_size = 120
     tiles = bytes([0]) * (width * height)
     heights = bytes([11]) * (width * height * 36)
     height_offset = header_size + len(tiles)
     object_offset = height_offset + len(heights)
+    placements = [
+        ("3dobjects/scenery/cottage.e3d", 42, 42, 0, 0),
+        ("3dobjects/scenery/cottage.e3d", 54, 45, 0, 90),
+        ("3dobjects/scenery/dock.e3d", 78, 42, 0, 90),
+        ("3dobjects/scenery/signpost.e3d", 61, 54, 0, 15),
+        ("3dobjects/scenery/lantern.e3d", 58, 51, 0, 0),
+        ("3dobjects/scenery/lantern.e3d", 66, 57, 0, 0),
+        ("3dobjects/scenery/alder_tree.e3d", 35, 55, 0, 0),
+        ("3dobjects/scenery/alder_tree.e3d", 72, 65, 0, 35),
+        ("3dobjects/scenery/highland_pine.e3d", 28, 68, 0, 0),
+        ("3dobjects/scenery/highland_pine.e3d", 84, 73, 0, 20),
+        ("3dobjects/scenery/boulder.e3d", 91, 61, 0, 0),
+        ("3dobjects/harvestables/sunleaf.e3d", 48, 66, 0, 0),
+        ("3dobjects/harvestables/frost_reed.e3d", 75, 48, 0, 0),
+        ("3dobjects/harvestables/copper_bloom.e3d", 55, 72, 0, 0),
+        ("3dobjects/harvestables/ember_crystal.e3d", 88, 82, 0, 0),
+        ("3dobjects/harvestables/slate_outcrop.e3d", 31, 82, 0, 0),
+    ]
+    records = bytearray()
+    for filename, x, y, z, rotation in placements:
+        encoded = filename.encode()[:79] + b"\0"
+        records.extend(struct.pack("<80s6fBB2x4f20s", encoded.ljust(80, b"\0"),
+            x, y, z, 0.0, 0.0, rotation, 0, 0, 1.0, 1.0, 1.0, 1.0, b""))
+    objects_end = object_offset + len(records)
     # ELM map_header: magic, 12 ints, four bytes, 3 floats, then 12 ints.
     ints_a = [width, height, header_size, height_offset,
-              144, 0, object_offset, 128, 0, object_offset,
-              40, 0, object_offset]
+              144, len(placements), object_offset, 128, 0, objects_end,
+              40, 0, objects_end]
     header = bytearray(b"elmf")
     header.extend(struct.pack("<13i", *ints_a))
     header.extend(bytes([0, 1, 0, 0]))
     header.extend(struct.pack("<3f", 0.55, 0.58, 0.62))
-    header.extend(struct.pack("<12i", 104, 0, object_offset, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+    header.extend(struct.pack("<12i", 104, 0, objects_end, 0, 0, 0, 0, 0, 0, 0, 0, 0))
     if len(header) != header_size:
         raise AssertionError(f"unexpected ELM header size: {len(header)}")
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(header + tiles + heights)
+    path.write_bytes(header + tiles + heights + records)
 
 
 def main() -> None:
