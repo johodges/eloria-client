@@ -1,0 +1,3 @@
+newmtl manymouth_stilt_wall
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/manymouth_stilt_wall.png

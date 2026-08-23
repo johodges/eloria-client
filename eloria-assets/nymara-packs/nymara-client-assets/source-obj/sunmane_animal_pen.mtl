@@ -1,0 +1,3 @@
+newmtl sunmane_animal_pen
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/sunmane_animal_pen.png

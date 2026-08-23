@@ -1,0 +1,3 @@
+newmtl mirrorhold_lake_house
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/mirrorhold_lake_house.png

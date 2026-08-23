@@ -1,0 +1,3 @@
+newmtl verdant_giant_fern
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/verdant_giant_fern.png

@@ -1,0 +1,3 @@
+newmtl grey_moor_spike_trap
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/grey_moor_spike_trap.png

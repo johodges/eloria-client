@@ -1,0 +1,3 @@
+newmtl crownwater_drowned_floor
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/crownwater_drowned_floor.png

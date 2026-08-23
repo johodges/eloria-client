@@ -154,6 +154,20 @@
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Machine-readable region and harvesting-node catalog"
+    },
+    {
+      "path": "{actors,animations,portraits,3dobjects,2dobjects,textures,maps}/nymara/*",
+      "source": "tools/generate_nymara_complete.py and original Nymara handoff generators",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original deterministic Nymara client assets, editable proxies, effects, and native ELM maps; contains no Eternal Lands binary data"
+    },
+    {
+      "path": "nymara_*.json",
+      "source": "tools/generate_nymara_complete.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Frozen Nymara actor, item, effect, region, connection, and server-facing integration catalogs"
     }
   ]
 }

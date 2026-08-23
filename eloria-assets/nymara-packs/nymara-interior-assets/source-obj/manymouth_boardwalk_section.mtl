@@ -1,0 +1,3 @@
+newmtl manymouth_boardwalk_section
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/manymouth_boardwalk_section.png

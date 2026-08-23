@@ -1,0 +1,3 @@
+newmtl maritime_barrel_stack
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/maritime_barrel_stack.png

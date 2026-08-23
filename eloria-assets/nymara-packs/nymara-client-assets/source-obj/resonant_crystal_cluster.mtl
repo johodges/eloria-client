@@ -1,0 +1,3 @@
+newmtl resonant_crystal_cluster
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/resonant_crystal_cluster.png

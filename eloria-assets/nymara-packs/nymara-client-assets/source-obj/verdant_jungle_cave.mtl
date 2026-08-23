@@ -1,0 +1,3 @@
+newmtl verdant_jungle_cave
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/verdant_jungle_cave.png

@@ -19,6 +19,8 @@ python3 eloria-assets/tools/generate_regions.py
 python3 eloria-assets/tools/generate_item_atlas.py
 python3 eloria-assets/tools/generate_runtime_assets.py
 python3 eloria-assets/tools/generate_effects.py
+python3 eloria-assets/tools/generate_nymara_complete.py build/eloria-data
+python3 eloria-assets/tools/validate_nymara.py build/eloria-data
 python3 eloria-assets/tools/check_provenance.py
 ```
 
@@ -60,3 +62,8 @@ geometry, textures, placement, descriptions, and future balance data.
 
 The region generator adds desert, snow, swamp, tropical, and volcanic maps,
 each with a small modular landmark and four biome-appropriate resource nodes.
+
+The Nymara generator merges the original exterior and interior packs without
+changing their paths, then adds cultural NPCs, regional creatures, equipment,
+interactives, effects, frozen ID catalogs, twelve regions, and seven landmark
+dungeons. Its output is structurally validated by `validate_nymara.py`.

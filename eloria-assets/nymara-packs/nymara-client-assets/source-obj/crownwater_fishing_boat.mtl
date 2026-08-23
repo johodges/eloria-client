@@ -1,0 +1,3 @@
+newmtl crownwater_fishing_boat
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/crownwater_fishing_boat.png

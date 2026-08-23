@@ -1,0 +1,3 @@
+newmtl crownwater_pearl
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/crownwater_pearl.png

@@ -1,0 +1,3 @@
+newmtl stormglass_shard
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/stormglass_shard.png

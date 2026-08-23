@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "assets": [
+    {
+      "path": "runtime/3dobjects/nymara/*",
+      "source": "generate_nymara_pack.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original procedural Nymara E3D models and textures"
+    },
+    {
+      "path": "runtime/textures/nymara/*",
+      "source": "generate_nymara_pack.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original procedural Nymara inventory icons and atlas"
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+newmtl grey_moor_barrow_arch
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/grey_moor_barrow_arch.png

@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "assets": [
+    {
+      "path": "runtime/3dobjects/nymara/interiors/*",
+      "source": "generate_nymara_interiors.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original procedural Nymara modular interiors"
+    }
+  ]
+}

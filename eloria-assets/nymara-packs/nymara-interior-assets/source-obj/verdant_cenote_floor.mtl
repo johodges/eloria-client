@@ -1,0 +1,3 @@
+newmtl verdant_cenote_floor
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/interiors/verdant_cenote_floor.png
