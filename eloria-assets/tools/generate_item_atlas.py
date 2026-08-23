@@ -5,11 +5,13 @@ import argparse,json,struct
 from pathlib import Path
 from generate_bootstrap_pack import png
 
-ITEMS=("Gold Coins","Bread","Berries","Cooked Meat","Healing Tonic","Focus Tonic","Pickaxe","Hatchet","Needle","Mortar and Pestle","Raw Meat","Bones","Thread","Fox Fur","Bear Fur","Deer Hide","Wolf Fur","Snake Hide","Bright Feather","Small Dragon Scale","Sunleaf","Frost Reed","Copper Bloom","Ember Crystal","Slate","Wheat","Cotton","Lavender","Flax","Sage","Rosemary","Mushroom","Blue Berries","Coal","Iron Ore","Quartz","Sulfur","Magic Essence","Iron Bar","Wood Plank","Cloth Roll","Leather","Wooden Club","Iron Sword","Hunting Bow","Wooden Shield","Cloth Tunic","Leather Armor","Iron Mail","Traveler Boots","Leather Gloves","Iron Helmet","Green Cloak","Silver Pendant","Simple Ring","Arrow","Torch","Storage Token","Portal Shard","Bandage","Antidote","Mana Draught","Summoning Charm","Book of Beginnings")
+ITEMS=("Gold Coins","Bread","Berries","Cooked Meat","Healing Tonic","Focus Tonic","Pickaxe","Hatchet","Needle","Mortar and Pestle","Raw Meat","Bones","Thread","Fox Fur","Bear Fur","Deer Hide","Wolf Fur","Snake Hide","Bright Feather","Small Dragon Scale","Sunleaf","Frost Reed","Copper Bloom","Ember Crystal","Slate","Wheat","Cotton","Lavender","Flax","Sage","Rosemary","Mushroom","Blue Berries","Deep Coal","Iron Ore","Quartz","Sulfur","Aether Salt","Iron Bar","Wood Plank","Cloth Roll","Leather","Wooden Club","Iron Sword","Hunting Bow","Wooden Shield","Cloth Tunic","Leather Armor","Iron Mail","Traveler Boots","Leather Gloves","Iron Helmet","Green Cloak","Silver Pendant","Simple Ring","Arrow","Torch","Storage Token","Portal Shard","Bandage","Antidote","Mana Draught","Summoning Charm","Book of Beginnings","Stormglass","Moon Salt","Grave Moss","Quartz Lens","Iron Rune","Woven Charm","Cinder Resin","Frost Distillate","Verdant Tincture","Gloam Wax","Hearthstone Focus","Riftglass Focus","Gloam Focus","Tempest Focus","Empty Echo Vessel","Echo of Battle","Memory of Rain","Hearth Echo","Wanderer's Trace","Cinder Echo","Attunement Charge")
 COLORS=((211,166,54),(190,139,74),(81,126,80),(149,78,61),(190,69,69),(75,112,181),(91,91,96),(121,82,47),(177,177,166),(130,119,91))
 
-def pixels(x,y):
- cell=x//32+(y//32)*16;lx=x%32;ly=y%32;c=COLORS[cell%len(COLORS)];inside=4<lx<27 and 4<ly<27;edge=inside and (lx<7 or lx>24 or ly<7 or ly>24);return (*(c if inside and not edge else ((235,205,112) if edge else (0,0,0))),255 if inside else 0)
+def atlas_pixels(offset):
+ def pixels(x,y):
+  cell=x//50+(y//50)*5;lx=x%50;ly=y%50;c=COLORS[(offset+cell)%len(COLORS)];inside=7<lx<43 and 7<ly<43;edge=inside and (lx<11 or lx>39 or ly<11 or ly>39);return (*(c if inside and not edge else ((235,205,112) if edge else (0,0,0))),255 if inside else 0)
+ return pixels
 
 def bmp(path,w,h,pixel):
  row=((w*4+3)//4)*4;data=bytearray()
@@ -29,5 +31,8 @@ def dds(path,w,h,pixel):
  path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(b'DDS '+struct.pack('<31I',*header)+data)
 
 def main():
- p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output);png(root/"textures/items1.png",512,128,pixels);bmp(root/"textures/items1.bmp",512,128,pixels);dds(root/"textures/items1.dds",512,128,pixels);(root/"items_eloria.json").write_text(json.dumps({"schema":1,"items":[{"item_id":i,"image_id":i,"name":n} for i,n in enumerate(ITEMS)]},indent=2)+"\n")
+ p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output)
+ for atlas in range(4):
+  pixel=atlas_pixels(atlas*25);name=f"items{atlas+1}";png(root/f"textures/{name}.png",256,256,pixel);bmp(root/f"textures/{name}.bmp",256,256,pixel);dds(root/f"textures/{name}.dds",256,256,pixel)
+ (root/"items_eloria.json").write_text(json.dumps({"schema":2,"items":[{"item_id":i,"image_id":i,"name":n} for i,n in enumerate(ITEMS)]},indent=2)+"\n")
 if __name__=="__main__":main()
