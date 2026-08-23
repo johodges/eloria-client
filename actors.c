@@ -1086,10 +1086,23 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 	double x_pos,y_pos,z_pos;
 	float x_rot,y_rot,z_rot;
 	int preview_projection = 0;
+	const int preview_render = (newchar_root_win >= 0) && (actor_id->actor_id == 0);
 	static unsigned char preview_texture_logged[MAX_ACTOR_DEFS] = { 0 };
 	static unsigned char preview_projection_logged[MAX_ACTOR_DEFS] = { 0 };
 	//if first person, dont draw actor
 	if (actor_id->actor_id == yourself && first_person) return;
+	/* Bind the enhanced atlas and provide texture coordinates on unit zero.
+	 * World effects are allowed to leave another server/client unit active. */
+	if (preview_render)
+	{
+		if (ELglActiveTextureARB != NULL)
+			ELglActiveTextureARB(GL_TEXTURE0);
+#ifndef ANDROID
+		if (ELglClientActiveTextureARB != NULL)
+			ELglClientActiveTextureARB(GL_TEXTURE0);
+#endif
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	}
 	if (use_textures)
 	{
 		if (actor_id->is_enhanced_model)
