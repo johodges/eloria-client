@@ -1236,6 +1236,9 @@ actor * add_actor_interface(float x, float y, float z_rot, float scale, int acto
 
 	a->stop_animation=1;//helps when the actor is dead...
 	a->kind_of_actor=HUMAN;
+	a->cur_weapon=WEAPON_NONE;
+	a->cur_shield=SHIELD_NONE;
+	a->body_parts->weapon_meshindex=-1;
 
 	safe_snprintf(a->actor_name, sizeof(a->actor_name), "%s", playername);
 
