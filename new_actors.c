@@ -1185,8 +1185,21 @@ void add_enhanced_actor_from_server (const char *in_data, int len)
 actor * add_actor_interface(float x, float y, float z_rot, float scale, int actor_type, const char *playername,
 		short skin, short hair, short eyes, short shirt, short pants, short boots, short head)
 {
-	enhanced_actor * this_actor=calloc(1,sizeof(enhanced_actor));
+	enhanced_actor * this_actor;
 	actor * a;
+
+	if ((actor_type < 0) || (actor_type >= MAX_ACTOR_DEFS) ||
+		(actors_defs[actor_type].coremodel == NULL) ||
+		(actors_defs[actor_type].skin == NULL) || (actors_defs[actor_type].hair == NULL) ||
+		(actors_defs[actor_type].shirt == NULL) || (actors_defs[actor_type].legs == NULL) ||
+		(actors_defs[actor_type].boots == NULL) || (actors_defs[actor_type].head == NULL))
+	{
+		LOG_ERROR("Incomplete actor definition for character preview type %d", actor_type);
+		return NULL;
+	}
+	this_actor=calloc(1,sizeof(enhanced_actor));
+	if (this_actor == NULL)
+		return NULL;
 
 	//get the torso
 	safe_strncpy(this_actor->arms_tex,actors_defs[actor_type].shirt[shirt].arms_name,sizeof(this_actor->arms_tex));
@@ -1204,7 +1217,15 @@ actor * add_actor_interface(float x, float y, float z_rot, float scale, int acto
 	safe_strncpy(this_actor->pants_tex,actors_defs[actor_type].legs[pants].legs_name,sizeof(this_actor->pants_tex));
 	safe_strncpy(this_actor->pants_mask,actors_defs[actor_type].legs[pants].legs_mask,sizeof(this_actor->pants_mask));
 
+	LOG_INFO("Loading enhanced texture for character preview type %d", actor_type);
 	a = create_enhanced_actor(this_actor, x*0.5f, y*0.5f, 0.00000001f, z_rot, scale, 0, NULL);
+	if (a == NULL)
+	{
+		free(this_actor);
+		LOG_ERROR("Unable to allocate character preview type %d", actor_type);
+		return NULL;
+	}
+	LOG_INFO("Enhanced texture loaded for character preview type %d", actor_type);
 
 	a->x_tile_pos=x;
 	a->y_tile_pos=y;
@@ -1222,6 +1243,7 @@ actor * add_actor_interface(float x, float y, float z_rot, float scale, int acto
 		a->calmodel=model_new(actors_defs[actor_type].coremodel);
 
 		if (a->calmodel!=NULL) {
+			LOG_INFO("Attaching meshes for character preview type %d", actor_type);
 			//Setup cal3d model
 			//a->calmodel=CalModel_New(actors_defs[actor_type].coremodel);
 			//Attach meshes
@@ -1246,6 +1268,7 @@ actor * add_actor_interface(float x, float y, float z_rot, float scale, int acto
 			a->last_anim_update= cur_time;
 			CalModel_Update(a->calmodel,0);
 			build_actor_bounding_box(a);
+			LOG_INFO("Character preview meshes and bounds ready for type %d", actor_type);
 			if (use_animation_program)
 			{
 				set_transformation_buffers(a);
@@ -1253,7 +1276,9 @@ actor * add_actor_interface(float x, float y, float z_rot, float scale, int acto
 		}
 	} else a->calmodel=NULL;
 
+	LOG_INFO("Adding character preview type %d to actor list", actor_type);
 	add_actor_to_list(a, NULL);
+	LOG_INFO("Character preview type %d added to actor list", actor_type);
 
 	return a;
 }
