@@ -43,6 +43,18 @@ CREATURES = (
     ("fire_salamander", "Fire Salamander", "monster", (178, 70, 38), (.88, 1.72, .42), (.52, .72, .36), "back_ridge"),
     ("thunder_ram", "Thunder Ram", "monster", (110, 104, 91), (1.02, 1.42, .88), (.64, .58, .58), "great_horns"),
     ("giant_rat", "Giant Rat", "monster", (104, 86, 72), (.76, 1.34, .58), (.46, .60, .40), "round_ears"),
+    ("raccoon", "Raccoon", "animal", (91, 91, 84), (.66, 1.08, .52), (.42, .46, .38), "round_ears"),
+    ("river_otter", "River Otter", "animal", (91, 70, 50), (.62, 1.38, .46), (.38, .52, .34), "whiskers"),
+    ("porcupine", "Porcupine", "animal", (104, 82, 57), (.78, 1.12, .60), (.42, .44, .36), "quills"),
+    ("moose", "Moose", "animal", (91, 72, 52), (1.00, 1.68, 1.02), (.58, .62, .56), "broad_antlers"),
+    ("lynx", "Lynx", "animal", (154, 127, 91), (.76, 1.24, .66), (.48, .50, .44), "tufted_ears"),
+    ("desert_tortoise", "Desert Tortoise", "animal", (121, 112, 73), (1.12, 1.42, .48), (.48, .50, .34), "shell"),
+    ("saber_tooth_cat", "Saber-Tooth Cat", "monster", (174, 139, 85), (1.02, 1.62, .82), (.62, .66, .54), "saber_fangs"),
+    ("armored_rhino", "Armored Rhino", "monster", (105, 105, 96), (1.34, 1.82, 1.00), (.72, .72, .62), "nose_horn"),
+    ("giant_komodo", "Giant Komodo", "monster", (91, 111, 66), (1.16, 2.00, .50), (.64, .84, .38), "back_ridge"),
+    ("ice_bear", "Ice Bear", "monster", (185, 207, 211), (1.30, 1.62, 1.02), (.72, .66, .66), "ice_spikes"),
+    ("lava_hound", "Lava Hound", "monster", (157, 57, 34), (.96, 1.56, .76), (.58, .64, .52), "fire_spikes"),
+    ("two_tailed_fox", "Two-Tailed Fox", "monster", (181, 101, 47), (.78, 1.32, .62), (.48, .54, .44), "twin_tail"),
 )
 
 
@@ -100,13 +112,13 @@ def creature_mesh(path, body_size, head_size, feature):
     for x, y, upper, lower in ((-.31,.34,5,6),(.31,.34,7,8),(-.32,-.34,9,10),(.32,-.34,11,12)):
         cuboid((x*bx, y*by, .57), (bx*.18, by*.16, bz*.72), upper, vertices, faces)
         cuboid((x*bx, y*by, .23), (bx*.20, by*.28, bz*.18), lower, vertices, faces)
-    if feature in ("ears", "horns", "long_ears", "round_ears", "antlers", "great_horns"):
+    if feature in ("ears", "horns", "long_ears", "round_ears", "antlers", "great_horns", "broad_antlers", "tufted_ears"):
         height = hz * (1.35 if feature == "long_ears" else .68)
         width = hx * (.28 if feature == "round_ears" else .18)
         for x in (-hx*.30, hx*.30):
             cuboid((x, by*.68, 1.03+hz*.62), (width, hy*.16, height), 3, vertices, faces)
-    if feature in ("antlers", "great_horns"):
-        spread = hx * (1.15 if feature == "antlers" else .85)
+    if feature in ("antlers", "great_horns", "broad_antlers"):
+        spread = hx * (1.55 if feature == "broad_antlers" else (1.15 if feature == "antlers" else .85))
         cuboid((-spread*.55, by*.66, 1.03+hz), (spread, hy*.14, hz*.16), 3, vertices, faces)
         cuboid((spread*.55, by*.66, 1.03+hz), (spread, hy*.14, hz*.16), 3, vertices, faces)
     if feature in ("tusks", "fangs"):
@@ -121,6 +133,23 @@ def creature_mesh(path, body_size, head_size, feature):
     if feature == "back_ridge":
         for n in (-.38, -.12, .14, .40):
             cuboid((0, n*by, 1.06+bz*.42), (bx*.18, by*.10, bz*.42), 1, vertices, faces)
+    if feature in ("quills", "ice_spikes", "fire_spikes"):
+        for n in (-.42, -.22, 0, .22, .42):
+            cuboid((0, n*by, 1.10+bz*.48), (bx*.12, by*.08, bz*.72), 1, vertices, faces)
+    if feature == "shell":
+        cuboid((0, -.04, 1.03), (bx*1.08, by*.82, bz*.74), 1, vertices, faces)
+    if feature in ("saber_fangs", "nose_horn"):
+        if feature == "saber_fangs":
+            for x in (-hx*.30, hx*.30):
+                cuboid((x, by*.84, .88), (hx*.11, hy*.28, hz*.72), 3, vertices, faces)
+        else:
+            cuboid((0, by*.89, 1.15), (hx*.18, hy*.68, hz*.28), 3, vertices, faces)
+    if feature == "whiskers":
+        for x in (-1, 1):
+            cuboid((x*hx*.55, by*.78, .99), (hx*.65, hy*.08, hz*.07), 3, vertices, faces)
+    if feature == "twin_tail":
+        cuboid((-bx*.18, -by*.64, .96), (bx*.18, by*.65, bz*.18), 4, vertices, faces)
+        cuboid((bx*.18, -by*.64, .96), (bx*.18, by*.65, bz*.18), 4, vertices, faces)
     root = ET.Element("MESH", NUMSUBMESH="1")
     sub = ET.SubElement(root, "SUBMESH", NUMVERTICES=str(len(vertices)), NUMFACES=str(len(faces)),
                         MATERIAL="0", NUMLODSTEPS="0", NUMSPRINGS="0", NUMTEXCOORDS="1")
