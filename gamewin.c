@@ -2302,6 +2302,14 @@ int keypress_root_common (SDL_Keycode key_code, Uint32 key_unicode, Uint16 key_m
 			repeat_spell();
 		}
 	}
+	else if (KEY_DEF_CMP(K_SPELLPOWERUP, key_code, key_mod))
+	{
+		change_spell_power(1);
+	}
+	else if (KEY_DEF_CMP(K_SPELLPOWERDOWN, key_code, key_mod))
+	{
+		change_spell_power(-1);
+	}
 	else
 	{
 		enum managed_window_enum i;
