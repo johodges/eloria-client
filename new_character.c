@@ -1758,7 +1758,7 @@ static int init_color_race_handler(window_info * win)
 		multiselect_button_add_extended(win->window_id, widget_id, 0, 0, button_width, human_str, very_small, our_actor.race==human_female||our_actor.race==human_male);
 		multiselect_button_add_extended(win->window_id, widget_id, 0, button_height + sep, button_width, elf_str, very_small, our_actor.race==elf_female||our_actor.race==elf_male);
 		multiselect_button_add_extended(win->window_id, widget_id, 0, 2 * (button_height + sep), button_width, dwarf_str, very_small, our_actor.race==dwarf_female||our_actor.race==dwarf_male);
-		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, 0, button_width, gnome_str, very_small, our_actor.race==dwarf_female||our_actor.race==dwarf_male);
+		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, 0, button_width, gnome_str, very_small, our_actor.race==gnome_female||our_actor.race==gnome_male);
 		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, button_height + sep, button_width, orchan_str, very_small, our_actor.race==orchan_female||our_actor.race==orchan_male);
 		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, 2 * (button_height + sep), button_width, draegoni_str, very_small, our_actor.race==draegoni_female||our_actor.race==draegoni_male);
 		widget_set_OnClick(win->window_id, widget_id, &click_newchar_race_handler);
