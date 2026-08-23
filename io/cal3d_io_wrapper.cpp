@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include "elfilewrapper.h"
+#include "../init.h"
 
 //****************************************************************************//
 // CalLoader wrapper functions definition                                     //
@@ -147,10 +148,7 @@ static std::vector<char> read_cal3d_xml(const std::string &file_name)
 
 static std::string resolve_cal3d_path(const std::string &file_name)
 {
-	char resolved[1024];
-	if (do_file_exists(file_name.c_str(), datadir, sizeof(resolved), resolved) == 1)
-		return resolved;
-	return std::string();
+	return std::string(datadir) + file_name;
 }
 
 static CalCoreAnimationPtr load_core_animation(const std::string &file_name)
