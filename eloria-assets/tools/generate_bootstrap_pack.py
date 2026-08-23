@@ -46,14 +46,16 @@ def panel(x: int, y: int) -> tuple[int, int, int, int]:
     return 35, 43, 42, 255
 
 
-def make_map(path: Path, width: int = 32, height: int = 32) -> None:
+def make_map(path: Path, width: int = 32, height: int = 32, *,
+             tile_id: int = 0, placements=None,
+             ambient=(0.55, 0.58, 0.62)) -> None:
     """Write an original ELM settlement with a fully walkable height field."""
     header_size = 120
-    tiles = bytes([0]) * (width * height)
+    tiles = bytes([tile_id]) * (width * height)
     heights = bytes([11]) * (width * height * 36)
     height_offset = header_size + len(tiles)
     object_offset = height_offset + len(heights)
-    placements = [
+    default_placements = [
         ("3dobjects/scenery/cottage.e3d", 42, 42, 0, 0),
         ("3dobjects/scenery/cottage.e3d", 54, 45, 0, 90),
         ("3dobjects/scenery/dock.e3d", 78, 42, 0, 90),
@@ -71,6 +73,7 @@ def make_map(path: Path, width: int = 32, height: int = 32) -> None:
         ("3dobjects/harvestables/ember_crystal.e3d", 88, 82, 0, 0),
         ("3dobjects/harvestables/slate_outcrop.e3d", 31, 82, 0, 0),
     ]
+    placements = default_placements if placements is None else placements
     records = bytearray()
     for filename, x, y, z, rotation in placements:
         encoded = filename.encode()[:79] + b"\0"
@@ -84,7 +87,7 @@ def make_map(path: Path, width: int = 32, height: int = 32) -> None:
     header = bytearray(b"elmf")
     header.extend(struct.pack("<13i", *ints_a))
     header.extend(bytes([0, 1, 0, 0]))
-    header.extend(struct.pack("<3f", 0.55, 0.58, 0.62))
+    header.extend(struct.pack("<3f", *ambient))
     header.extend(struct.pack("<12i", 104, 0, objects_end, 0, 0, 0, 0, 0, 0, 0, 0, 0))
     if len(header) != header_size:
         raise AssertionError(f"unexpected ELM header size: {len(header)}")
