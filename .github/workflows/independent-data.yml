@@ -23,7 +23,6 @@ jobs:
           python3 eloria-assets/tools/generate_item_atlas.py build/eloria-data
           python3 eloria-assets/tools/generate_runtime_assets.py build/eloria-data
           python3 eloria-assets/tools/generate_effects.py build/eloria-data
-          python3 eloria-assets/tools/generate_special_event_assets.py build/eloria-data
           python3 eloria-assets/tools/generate_nymara_complete.py build/eloria-data
       - name: Verify provenance policy
         run: python3 eloria-assets/tools/check_provenance.py
@@ -37,20 +36,6 @@ jobs:
           assert data[:4] == b"elmf"
           assert struct.unpack_from("<ii", data, 4) == (32, 32)
           assert len(data) == 41752
-          PY
-      - name: Validate specialty-event assets
-        run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          root = Path("build/eloria-data")
-          events = json.loads((root / "special_event_assets.json").read_text())["events"]
-          assert len(events) == 12
-          assert len({event["icon"] for event in events}) == 12
-          assert len({event["prop"] for event in events}) == 12
-          for event in events:
-              assert (root / event["icon"]).is_file()
-              assert (root / event["prop"]).read_bytes()[:4] == b"e3dx"
           PY
       - name: Validate generated native E3D scenery
         run: |
