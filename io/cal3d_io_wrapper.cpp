@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include "elfilewrapper.h"
+#include "../init.h"
 
 //****************************************************************************//
 // CalLoader wrapper functions definition                                     //
@@ -122,9 +123,9 @@ class ElDataSource: public CalDataSource
 
 /*
  * CalLoader's CalDataSource overloads parse only the binary CSF/CAF/CMF/CRF
- * formats.  Cal3D also has an XML-aware const-char-pointer overload, but a
- * mutable vector's data() selects the binary void-pointer overload instead.
- * Read XML through EL's filesystem and explicitly pass a const char pointer.
+ * formats.  Cal3D's public filename overload detects XML, but it needs the
+ * resolved filesystem path rather than EL's data-directory-relative name.
+ * Detect XML through EL's filesystem, then resolve the real path for Cal3D.
  */
 static std::vector<char> read_cal3d_xml(const std::string &file_name)
 {
@@ -145,11 +146,20 @@ static std::vector<char> read_cal3d_xml(const std::string &file_name)
 	return data;
 }
 
+static std::string resolve_cal3d_path(const std::string &file_name)
+{
+	return std::string(datadir) + file_name;
+}
+
 static CalCoreAnimationPtr load_core_animation(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreAnimation(static_cast<const char*>(xml.data()), 0);
+	{
+		const std::string resolved = resolve_cal3d_path(file_name);
+		if (!resolved.empty())
+			return CalLoader::loadCoreAnimation(resolved, 0);
+	}
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreAnimation(file, 0);
 }
@@ -158,7 +168,11 @@ static CalCoreMaterialPtr load_core_material(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreMaterial(static_cast<const char*>(xml.data()));
+	{
+		const std::string resolved = resolve_cal3d_path(file_name);
+		if (!resolved.empty())
+			return CalLoader::loadCoreMaterial(resolved);
+	}
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreMaterial(file);
 }
@@ -167,7 +181,11 @@ static CalCoreMeshPtr load_core_mesh(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreMesh(static_cast<const char*>(xml.data()));
+	{
+		const std::string resolved = resolve_cal3d_path(file_name);
+		if (!resolved.empty())
+			return CalLoader::loadCoreMesh(resolved);
+	}
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreMesh(file);
 }
@@ -176,7 +194,11 @@ static CalCoreSkeletonPtr load_core_skeleton(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreSkeleton(static_cast<const char*>(xml.data()));
+	{
+		const std::string resolved = resolve_cal3d_path(file_name);
+		if (!resolved.empty())
+			return CalLoader::loadCoreSkeleton(resolved);
+	}
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreSkeleton(file);
 }

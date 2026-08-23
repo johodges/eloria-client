@@ -993,7 +993,7 @@ static void toggle_book(int id)
 
 static int newchar_mouseover = 0; //book id if mouse is over a book 1 if mouse is over p2p race
 static int newchar_mouseover_time = 0;
-static char* tooltip = NULL;
+static const char* tooltip = NULL;
 static int tooltip_x = 0;
 static int tooltip_y = 0;
 
@@ -1295,7 +1295,6 @@ static int mouseover_newchar_book_handler(widget_list *w, int mx, int my)
 	else if( newchar_mouseover == book_gnome) tooltip = nymara_about_orun;
 	else if( newchar_mouseover == book_orchan) tooltip = nymara_about_greyhaven;
 	else if( newchar_mouseover == book_draegoni) tooltip = nymara_about_ssarathi;
-	else if( newchar_mouseover == book_human) tooltip = nymara_about_luminous;
 	else return 1;
 	newchar_mouseover_time = cur_time; //we are currently over something
 	{
