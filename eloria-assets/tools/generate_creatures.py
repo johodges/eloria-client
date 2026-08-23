@@ -31,6 +31,18 @@ CREATURES = (
     ("frost_maw", "Frost Maw", "monster", (135, 183, 194), (.92, 1.58, .80), (.62, .72, .62), "fangs"),
     ("bog_lurker", "Bog Lurker", "monster", (60, 87, 67), (1.18, 1.45, .88), (.72, .65, .64), "spikes"),
     ("sunscale_drake", "Sunscale Drake", "monster", (191, 126, 49), (1.00, 1.72, .76), (.58, .65, .50), "wings"),
+    ("red_fox", "Red Fox", "animal", (173, 72, 43), (.68, 1.18, .52), (.42, .48, .40), "ears"),
+    ("snow_hare", "Snow Hare", "animal", (207, 215, 211), (.58, .88, .50), (.40, .40, .38), "long_ears"),
+    ("mountain_goat", "Mountain Goat", "animal", (151, 143, 122), (.82, 1.32, .76), (.48, .50, .46), "horns"),
+    ("black_bear", "Black Bear", "animal", (47, 43, 39), (1.18, 1.48, .94), (.68, .58, .62), "round_ears"),
+    ("elk", "Elk", "animal", (125, 91, 57), (.90, 1.58, .92), (.50, .56, .50), "antlers"),
+    ("wild_boar", "Wild Boar", "animal", (91, 76, 61), (1.02, 1.46, .74), (.62, .58, .52), "tusks"),
+    ("dire_wolf", "Dire Wolf", "monster", (76, 82, 87), (.92, 1.52, .78), (.58, .64, .54), "fangs"),
+    ("frost_tiger", "Frost Tiger", "monster", (174, 197, 202), (.94, 1.62, .74), (.58, .64, .52), "fangs"),
+    ("giant_crocodile", "Giant Crocodile", "monster", (67, 103, 63), (1.30, 2.05, .48), (.72, .92, .38), "back_ridge"),
+    ("fire_salamander", "Fire Salamander", "monster", (178, 70, 38), (.88, 1.72, .42), (.52, .72, .36), "back_ridge"),
+    ("thunder_ram", "Thunder Ram", "monster", (110, 104, 91), (1.02, 1.42, .88), (.64, .58, .58), "great_horns"),
+    ("giant_rat", "Giant Rat", "monster", (104, 86, 72), (.76, 1.34, .58), (.46, .60, .40), "round_ears"),
 )
 
 
@@ -88,8 +100,15 @@ def creature_mesh(path, body_size, head_size, feature):
     for x, y, upper, lower in ((-.31,.34,5,6),(.31,.34,7,8),(-.32,-.34,9,10),(.32,-.34,11,12)):
         cuboid((x*bx, y*by, .57), (bx*.18, by*.16, bz*.72), upper, vertices, faces)
         cuboid((x*bx, y*by, .23), (bx*.20, by*.28, bz*.18), lower, vertices, faces)
-    if feature in ("ears", "horns"):
-        for x in (-hx*.30, hx*.30): cuboid((x, by*.68, 1.03+hz*.62), (hx*.18, hy*.16, hz*.68), 3, vertices, faces)
+    if feature in ("ears", "horns", "long_ears", "round_ears", "antlers", "great_horns"):
+        height = hz * (1.35 if feature == "long_ears" else .68)
+        width = hx * (.28 if feature == "round_ears" else .18)
+        for x in (-hx*.30, hx*.30):
+            cuboid((x, by*.68, 1.03+hz*.62), (width, hy*.16, height), 3, vertices, faces)
+    if feature in ("antlers", "great_horns"):
+        spread = hx * (1.15 if feature == "antlers" else .85)
+        cuboid((-spread*.55, by*.66, 1.03+hz), (spread, hy*.14, hz*.16), 3, vertices, faces)
+        cuboid((spread*.55, by*.66, 1.03+hz), (spread, hy*.14, hz*.16), 3, vertices, faces)
     if feature in ("tusks", "fangs"):
         for x in (-hx*.34, hx*.34): cuboid((x, by*.84, .91), (hx*.12, hy*.45, hz*.34), 3, vertices, faces)
     if feature == "eyes":
@@ -99,6 +118,9 @@ def creature_mesh(path, body_size, head_size, feature):
     if feature == "wings":
         cuboid((-bx*.70, -.05, 1.13), (bx, by*.54, bz*.12), 1, vertices, faces)
         cuboid((bx*.70, -.05, 1.13), (bx, by*.54, bz*.12), 1, vertices, faces)
+    if feature == "back_ridge":
+        for n in (-.38, -.12, .14, .40):
+            cuboid((0, n*by, 1.06+bz*.42), (bx*.18, by*.10, bz*.42), 1, vertices, faces)
     root = ET.Element("MESH", NUMSUBMESH="1")
     sub = ET.SubElement(root, "SUBMESH", NUMVERTICES=str(len(vertices)), NUMFACES=str(len(faces)),
                         MATERIAL="0", NUMLODSTEPS="0", NUMSPRINGS="0", NUMTEXCOORDS="1")
