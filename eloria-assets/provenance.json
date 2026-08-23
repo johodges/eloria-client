@@ -21,6 +21,20 @@
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Procedurally generated bootstrap UI textures"
+    },
+    {
+      "path": "actors/eloria_humanoid.*",
+      "source": "tools/generate_characters.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural low-poly humanoid mesh, texture, and skeleton"
+    },
+    {
+      "path": "animations/eloria/*.xaf",
+      "source": "tools/generate_characters.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural humanoid animation keyframes"
     }
   ]
 }
