@@ -1848,6 +1848,38 @@ Uint32 bind_actor_texture(const Uint32 handle, char* alpha)
 
 	if (actor_texture_handles[handle].state == tst_image_loaded)
 	{
+		if ((actor_texture_handles[handle].image.format == ift_rgba8) ||
+			(actor_texture_handles[handle].image.format == ift_bgra8))
+		{
+			Uint32 pixel, nonzero_alpha = 0, opaque_alpha = 0;
+			Uint8 min_alpha = 255, max_alpha = 0;
+			const Uint32 pixel_count = actor_texture_handles[handle].image.width *
+				actor_texture_handles[handle].image.height;
+			for (pixel = 0; pixel < pixel_count; ++pixel)
+			{
+				const Uint8 value = actor_texture_handles[handle].image.image[pixel * 4 + 3];
+				if (value < min_alpha) min_alpha = value;
+				if (value > max_alpha) max_alpha = value;
+				if (value != 0) ++nonzero_alpha;
+				if (value == 255) ++opaque_alpha;
+			}
+			LOG_INFO("Actor texture handle %u composite atlas: format=%d size=%ux%u mipmaps=%u alpha_min=%u alpha_max=%u nonzero=%u/%u opaque=%u/%u",
+				handle, (int)actor_texture_handles[handle].image.format,
+				actor_texture_handles[handle].image.width,
+				actor_texture_handles[handle].image.height,
+				actor_texture_handles[handle].image.mipmaps,
+				(unsigned)min_alpha, (unsigned)max_alpha,
+				nonzero_alpha, pixel_count, opaque_alpha, pixel_count);
+		}
+		else
+		{
+			LOG_INFO("Actor texture handle %u composite atlas: format=%d size=%ux%u mipmaps=%u alpha_flag=%u (compressed opacity scan unavailable)",
+				handle, (int)actor_texture_handles[handle].image.format,
+				actor_texture_handles[handle].image.width,
+				actor_texture_handles[handle].image.height,
+				actor_texture_handles[handle].image.mipmaps,
+				(unsigned)actor_texture_handles[handle].image.alpha);
+		}
 		if (poor_man != 0)
 		{
 			min_filter = GL_LINEAR_MIPMAP_NEAREST;

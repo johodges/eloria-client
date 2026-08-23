@@ -1085,6 +1085,7 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 {
 	double x_pos,y_pos,z_pos;
 	float x_rot,y_rot,z_rot;
+	int preview_fullbright = 0;
 	static unsigned char preview_texture_logged[MAX_ACTOR_DEFS] = { 0 };
 	//if first person, dont draw actor
 	if (actor_id->actor_id == yourself && first_person) return;
@@ -1147,6 +1148,25 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 	if (has_attachment(actor_id))
 		glTranslatef(actor_id->attachment_shift[0], actor_id->attachment_shift[1], actor_id->attachment_shift[2]);
 
+	preview_fullbright = (newchar_root_win >= 0) && (actor_id->actor_id == 0);
+#ifndef ANDROID
+	if (preview_fullbright)
+	{
+		/* Runtime geometry diagnostics prove that the preview has valid meshes,
+		 * transformed vertices and winding.  Draw it once without texture,
+		 * lighting, blending or alpha testing to isolate atlas transparency and
+		 * fixed-function texture state from camera/depth placement. */
+		glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_LIGHTING_BIT | GL_TEXTURE_BIT);
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_LIGHTING);
+		glDisable(GL_ALPHA_TEST);
+		glDisable(GL_BLEND);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		use_lightning = 0;
+		use_textures = 0;
+	}
+#endif
+
 	if (use_animation_program)
 	{
 		cal_render_actor_shader(actor_id, use_lightning, use_textures, use_glow);
@@ -1155,6 +1175,11 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 	{
 		cal_render_actor(actor_id, use_lightning, use_textures, use_glow);
 	}
+
+#ifndef ANDROID
+	if (preview_fullbright)
+		glPopAttrib();
+#endif
 
 	//now, draw their damage & nametag
 	glPopMatrix();  // restore the matrix
