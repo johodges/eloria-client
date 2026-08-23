@@ -982,6 +982,13 @@ void process_message_from_server (const Uint8 *in_data, int data_length)
 				// print the invading monster count
 				safe_snprintf(str, sizeof(str), "%c#il", RAW_TEXT);
 				my_tcp_send((Uint8*)str, strlen(str+1)+1);
+				// Advertise only Eloria extensions implemented by this client.  The
+				// server keeps legacy packet/dialogue fallbacks for clients that do
+				// not send this private capability message.
+				safe_snprintf(str, sizeof(str),
+					"%c#clientcaps actor16_v1,magic_power_v1,market_dialog_v1,offline_notifications_v1",
+					RAW_TEXT);
+				my_tcp_send((Uint8*)str, strlen(str+1)+1);
 				break;
 			}
 
