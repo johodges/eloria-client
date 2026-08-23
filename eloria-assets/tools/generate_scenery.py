@@ -67,13 +67,69 @@ def ember_crystal(v,i):
 def slate(v,i):
     box(v,i,(0,0,.35),(1.6,1.2,.7)); box(v,i,(.42,.18,.8),(.75,.62,.9))
 
+def timber_wall(v,i):
+    for x in (-1.5,-.75,0,.75,1.5): box(v,i,(x,0,1.35),(.18,.28,2.7))
+    for z in (.25,1.35,2.45): box(v,i,(0,0,z),(3.4,.22,.18))
+def stone_wall(v,i): box(v,i,(0,0,1.25),(4,.75,2.5))
+def tower(v,i): tapered(v,i,0,5,1.65,1.65,10); tapered(v,i,5,6.2,2.0,0,10)
+def gate(v,i):
+    box(v,i,(-1.55,0,1.8),(1.1,1.0,3.6)); box(v,i,(1.55,0,1.8),(1.1,1.0,3.6)); box(v,i,(0,0,3.45),(2.1,1.0,.55))
+def roof(v,i): tapered(v,i,0,1.55,2.8,0,4)
+def door(v,i): box(v,i,(0,0,1.15),(1.35,.18,2.3))
+def battlement(v,i):
+    box(v,i,(0,0,.55),(4,.85,1.1))
+    for x in (-1.6,-.8,0,.8,1.6): box(v,i,(x,0,1.25),(.42,.85,.65))
+def column(v,i): tapered(v,i,0,3,.34,.28,10); tapered(v,i,0,.25,.55,.48,10); tapered(v,i,2.75,3,.48,.55,10)
+def bridge(v,i):
+    for x in (-1.25,-.75,-.25,.25,.75,1.25): box(v,i,(x,0,.15),(.42,4,.28))
+    for x in (-1.55,1.55): box(v,i,(x,0,.55),(.16,4,.16))
+def palm(v,i): tapered(v,i,0,4,.28,.16,9); crossed_leaves(v,i,3.8,4.25,3.5,6)
+def cactus(v,i):
+    tapered(v,i,0,2.6,.28,.22,8); tapered(v,i,.7,1.8,.16,.12,7,(.42,0)); tapered(v,i,.9,2.1,.16,.12,7,(-.4,.08))
+def dead_tree(v,i):
+    tapered(v,i,0,3.6,.34,.12,8); tapered(v,i,2.2,3.8,.13,.05,7,(.45,0)); tapered(v,i,1.8,3.15,.12,.04,7,(-.5,.1))
+def snow_pine(v,i): tapered(v,i,0,3.2,.25,.14,9); tapered(v,i,1.0,4.7,1.8,0,10); tapered(v,i,2.2,5.3,1.35,0,10)
+def ice_boulder(v,i): tapered(v,i,0,1.5,1.35,.5,6)
+def cypress(v,i): tapered(v,i,0,3.4,.38,.18,9); tapered(v,i,1.7,5.2,1.25,.15,10)
+def fern(v,i): crossed_leaves(v,i,0,1.35,1.8,7)
+def basalt(v,i):
+    for x,y,h,r in ((0,0,3,.45),(.55,.18,2.1,.34),(-.48,.1,2.45,.38)): tapered(v,i,0,h,r,r*.72,6,(x,y))
+def lava_rock(v,i): tapered(v,i,0,1.0,1.3,.62,7)
+def dune_grass(v,i): crossed_leaves(v,i,0,.9,1.1,8)
+def wheat(v,i):
+    for x,y in ((0,0),(.18,.08),(-.17,.1),(.08,-.18),(-.12,-.16)): tapered(v,i,0,1.2,.025,.018,5,(x,y)); tapered(v,i,1.0,1.35,.11,0,6,(x,y))
+def cotton(v,i): tapered(v,i,0,1.0,.05,.035,6); box(v,i,(0,0,1.05),(.42,.42,.34))
+def herb(v,i): crossed_leaves(v,i,0,.72,.72,5); tapered(v,i,.48,.92,.16,0,7)
+def flax(v,i):
+    for x,y in ((0,0),(.14,.05),(-.14,.05)): tapered(v,i,0,1.0,.025,.015,5,(x,y)); tapered(v,i,.9,1.12,.13,0,7,(x,y))
+def mushroom(v,i): tapered(v,i,0,.45,.1,.08,7); tapered(v,i,.38,.72,.42,0,10)
+def berry(v,i): tapered(v,i,0,.9,.08,.04,7); crossed_leaves(v,i,.25,.95,.8,5); box(v,i,(.18,.05,.72),(.18,.18,.18))
+def ore(v,i):
+    box(v,i,(0,0,.3),(1.45,1.15,.6)); tapered(v,i,.35,1.0,.38,0,6,(.28,.08))
+
 ASSETS={
  'scenery/alder_tree':(tree,((83,74,48),(106,132,78))), 'scenery/highland_pine':(pine,((65,58,42),(54,91,67))),
  'scenery/boulder':(boulder,((91,92,88),(116,112,103))), 'scenery/cottage':(cottage,((118,83,53),(154,128,82))),
  'scenery/signpost':(signpost,((112,76,43),(146,106,65))), 'scenery/lantern':(lamp,((58,57,54),(224,146,62))),
  'scenery/dock':(dock,((100,71,44),(132,94,54))), 'harvestables/sunleaf':(sunleaf,((72,116,64),(222,160,61))),
  'harvestables/frost_reed':(frost_reed,((78,119,113),(171,214,201))), 'harvestables/copper_bloom':(copper_bloom,((66,105,62),(184,99,55))),
- 'harvestables/ember_crystal':(ember_crystal,((109,54,49),(235,106,53))), 'harvestables/slate_outcrop':(slate,((70,75,81),(112,119,126))) }
+ 'harvestables/ember_crystal':(ember_crystal,((109,54,49),(235,106,53))), 'harvestables/slate_outcrop':(slate,((70,75,81),(112,119,126))),
+ 'architecture/timber_wall':(timber_wall,((92,62,39),(143,99,57))), 'architecture/stone_wall':(stone_wall,((83,84,81),(119,116,108))),
+ 'architecture/stone_tower':(tower,((77,79,78),(112,109,103))), 'architecture/gate_arch':(gate,((82,83,80),(124,119,108))),
+ 'architecture/roof_section':(roof,((103,58,43),(151,86,55))), 'architecture/wooden_door':(door,((91,56,31),(136,88,48))),
+ 'architecture/castle_battlement':(battlement,((88,89,86),(128,125,117))), 'architecture/column':(column,((105,103,96),(148,143,132))),
+ 'architecture/bridge_segment':(bridge,((91,65,40),(133,95,55))),
+ 'biomes/desert/palm':(palm,((98,72,42),(69,117,70))), 'biomes/desert/cactus':(cactus,((62,119,72),(89,143,79))),
+ 'biomes/desert/dead_tree':(dead_tree,((85,60,39),(121,83,47))), 'biomes/snow/snow_pine':(snow_pine,((56,82,69),(187,207,198))),
+ 'biomes/snow/ice_boulder':(ice_boulder,((102,151,164),(188,224,229))), 'biomes/swamp/cypress':(cypress,((67,55,38),(50,87,61))),
+ 'biomes/tropical/giant_fern':(fern,((47,104,58),(83,142,70))), 'biomes/volcanic/basalt_spire':(basalt,((49,47,48),(79,72,69))),
+ 'biomes/volcanic/lava_rock':(lava_rock,((53,48,47),(151,58,35))), 'biomes/desert/dune_grass':(dune_grass,((145,126,73),(183,158,87))),
+ 'harvestables/wheat':(wheat,((117,105,48),(211,176,73))), 'harvestables/cotton':(cotton,((72,112,66),(226,222,202))),
+ 'harvestables/lavender':(herb,((72,106,65),(137,94,160))), 'harvestables/flax':(flax,((73,111,67),(104,143,184))),
+ 'harvestables/sage':(herb,((82,111,82),(139,155,117))), 'harvestables/rosemary':(herb,((48,91,60),(91,123,72))),
+ 'harvestables/mushroom':(mushroom,((213,198,157),(151,75,55))), 'harvestables/blueberries':(berry,((55,98,59),(54,63,139))),
+ 'harvestables/coal':(ore,((37,39,42),(62,63,65))), 'harvestables/iron_ore':(ore,((91,77,66),(145,105,76))),
+ 'harvestables/quartz':(ore,((151,147,142),(224,217,207))), 'harvestables/sulfur':(ore,((153,143,50),(224,206,68))) }
 
 def main():
     p=argparse.ArgumentParser(); p.add_argument('output',nargs='?',default='build/eloria-data'); root=Path(p.parse_args().output)
