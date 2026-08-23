@@ -4,6 +4,7 @@
 #include "../errors.h"
 #include <cal3d/global.h>
 #include <cal3d/cal3d.h>
+#include <cal3d/tinyxml.h>
 #include "cal3d/coretrack.h"
 #include <iostream>
 #include <vector>
@@ -122,9 +123,10 @@ class ElDataSource: public CalDataSource
 
 /*
  * CalLoader's CalDataSource overloads parse only the binary CSF/CAF/CMF/CRF
- * formats.  The filename and memory-buffer overloads also detect Cal3D XML,
- * but the filename overload cannot use EL's zip/custom-path filesystem.  Read
- * XML through that filesystem, then give Cal3D a nul-terminated memory buffer.
+ * formats.  The filename overload detects Cal3D XML, but cannot use EL's
+ * zip/custom-path filesystem.  The void-pointer overload is binary-only in
+ * the Cal3D 0.11 builds used by the Windows client too.  Read and parse XML
+ * through EL's filesystem, then call the explicit XML loaders.
  */
 static std::vector<char> read_cal3d_xml(const std::string &file_name)
 {
@@ -149,7 +151,14 @@ static CalCoreAnimationPtr load_core_animation(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreAnimation(xml.data(), 0);
+	{
+		cal3d::TiXmlDocument document;
+		document.Parse(xml.data());
+		if (!document.Error())
+			return CalLoader::loadXmlCoreAnimation(document, 0);
+		LOG_ERROR("Failed to parse Cal3D XML animation %s: %s", file_name.c_str(), document.ErrorDesc());
+		return CalCoreAnimationPtr();
+	}
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreAnimation(file, 0);
 }
@@ -158,7 +167,14 @@ static CalCoreMaterialPtr load_core_material(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreMaterial(xml.data());
+	{
+		cal3d::TiXmlDocument document;
+		document.Parse(xml.data());
+		if (!document.Error())
+			return CalLoader::loadXmlCoreMaterial(document);
+		LOG_ERROR("Failed to parse Cal3D XML material %s: %s", file_name.c_str(), document.ErrorDesc());
+		return CalCoreMaterialPtr();
+	}
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreMaterial(file);
 }
@@ -167,7 +183,14 @@ static CalCoreMeshPtr load_core_mesh(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreMesh(xml.data());
+	{
+		cal3d::TiXmlDocument document;
+		document.Parse(xml.data());
+		if (!document.Error())
+			return CalLoader::loadXmlCoreMesh(document);
+		LOG_ERROR("Failed to parse Cal3D XML mesh %s: %s", file_name.c_str(), document.ErrorDesc());
+		return CalCoreMeshPtr();
+	}
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreMesh(file);
 }
@@ -176,7 +199,14 @@ static CalCoreSkeletonPtr load_core_skeleton(const std::string &file_name)
 {
 	std::vector<char> xml = read_cal3d_xml(file_name);
 	if (!xml.empty())
-		return CalLoader::loadCoreSkeleton(xml.data());
+	{
+		cal3d::TiXmlDocument document;
+		document.Parse(xml.data());
+		if (!document.Error())
+			return CalLoader::loadXmlCoreSkeleton(document);
+		LOG_ERROR("Failed to parse Cal3D XML skeleton %s: %s", file_name.c_str(), document.ErrorDesc());
+		return CalCoreSkeletonPtr();
+	}
 	ElDataSource file(file_name);
 	return CalLoader::loadCoreSkeleton(file);
 }
@@ -379,4 +409,3 @@ extern "C" void set_invert_v_coord()
 {
 	CalLoader::setLoadingMode(LOADER_INVERT_V_COORD);
 }
-
