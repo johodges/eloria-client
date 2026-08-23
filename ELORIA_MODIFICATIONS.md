@@ -14,9 +14,9 @@ Lands Binary Data is included in the Eloria data pack.
 - Disabled the official Eternal Lands web-update endpoint.
 - Added a reproducible generator for an original bootstrap data pack and map.
 - Added asset provenance and compliance checks.
-- Added original procedural humanoid models, skeleton, texture, actor definitions, and eight core animation clips.
-- Added 43 original native-E3D models: general scenery, modular architecture, biome sets, and seventeen harvestables; sixteen representative instances are placed on Emberhaven.
 - Added a single Eloria server profile targeting TCP port 2000.
+- Added command 247 for 16-bit actor types while retaining legacy actor packets.
+- Expanded the actor registry to 1024 entries and made attachments sparse.
 
 Every later modification to an upstream source file must carry a prominent
 dated notice as required by section 3(c) of the client license.
