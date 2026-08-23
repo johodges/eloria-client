@@ -1704,28 +1704,6 @@ bool FontManager::initialize()
 		return false;
 #ifdef TTF
 	initialize_ttf();
-	// Upgrade every remaining bitmap selection to the bundled Eloria face.
-	// Explicit TrueType choices are preserved, while old per-category bitmap
-	// indices no longer keep upgraded installations on the pixel font.
-	if (use_ttf)
-	{
-		auto bundled = std::find_if(_options.begin(), _options.end(),
-			[](const FontOption& option) {
-				return option.is_ttf()
-					&& option.file_base_name() == "EloriaSans-Regular.ttf";
-			});
-		if (bundled != _options.end())
-		{
-			const size_t bundled_idx = std::distance(_options.begin(), bundled);
-			for (font_cat category: { UI_FONT, CHAT_FONT, NAME_FONT, BOOK_FONT,
-				NOTE_FONT, RULES_FONT, CONFIG_FONT })
-			{
-				const size_t selected = font_idxs[category];
-				if (selected >= _options.size() || !_options[selected].is_ttf())
-					font_idxs[category] = bundled_idx;
-			}
-		}
-	}
 #endif
 	add_select_options();
 
@@ -1735,6 +1713,27 @@ bool FontManager::initialize()
 }
 
 #ifdef TTF
+void FontManager::upgrade_eloria_bitmap_fonts()
+{
+	if (!use_ttf)
+		return;
+	auto bundled = std::find_if(_options.begin(), _options.end(),
+		[](const FontOption& option) {
+			return option.is_ttf()
+				&& option.file_base_name() == "EloriaSans-Regular.ttf";
+		});
+	if (bundled == _options.end())
+		return;
+	const size_t bundled_idx = std::distance(_options.begin(), bundled);
+	for (font_cat category: { UI_FONT, CHAT_FONT, NAME_FONT, BOOK_FONT,
+		NOTE_FONT, RULES_FONT, CONFIG_FONT })
+	{
+		const size_t selected = font_idxs[category];
+		if (selected >= _options.size() || !_options[selected].is_ttf())
+			font_idxs[category] = bundled_idx;
+	}
+}
+
 void FontManager::initialize_ttf()
 {
 	static const char* patterns[] = { "*.ttf", "*.ttc", "*.otf" };
@@ -2355,6 +2354,13 @@ void set_config_font(void)
 {
 	FontManager::get_instance().set_config_font();
 }
+
+#ifdef TTF
+void upgrade_eloria_bitmap_fonts(void)
+{
+	FontManager::get_instance().upgrade_eloria_bitmap_fonts();
+}
+#endif
 
 int has_glyph(unsigned char c)
 {
