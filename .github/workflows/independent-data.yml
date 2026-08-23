@@ -12,6 +12,7 @@ jobs:
       - name: Generate original bootstrap data
         run: python3 eloria-assets/tools/generate_bootstrap_pack.py build/eloria-data
           python3 eloria-assets/tools/generate_characters.py build/eloria-data
+          python3 eloria-assets/tools/generate_scenery.py build/eloria-data
       - name: Verify provenance policy
         run: python3 eloria-assets/tools/check_provenance.py
       - name: Verify original map
@@ -23,7 +24,31 @@ jobs:
           data = path.read_bytes()
           assert data[:4] == b"elmf"
           assert struct.unpack_from("<ii", data, 4) == (32, 32)
-          assert len(data) == 38008
+          assert len(data) == 40312
+          PY
+      - name: Validate generated native E3D scenery
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import struct
+          root = Path("build/eloria-data")
+          models = list(root.glob("3dobjects/**/*.e3d"))
+          assert len(models) == 12
+          for path in models:
+              data = path.read_bytes()
+              magic, version, digest, offset = struct.unpack_from("<4s4s16si", data)
+              assert magic == b"e3dx"
+              assert version == bytes((1, 1, 0, 0))
+              assert offset == 28
+              assert hashlib.md5(data[offset:]).digest() == digest
+              values = struct.unpack_from("<9i4B", data, offset)
+              vertices, vertex_size, vertex_offset, indices, index_size, _, materials, material_size, material_offset, *_ = values
+              assert vertices > 0 and indices > 0
+              assert vertex_size == 32 and vertex_offset == 68
+              assert index_size == 2
+              assert materials == 1 and material_size == 172
+              assert material_offset + 172 == len(data)
           PY
       - name: Validate generated Cal3D XML
         run: |
