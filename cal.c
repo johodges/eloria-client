@@ -8,6 +8,7 @@
 #include "load_gl_extensions.h"
 #include "main.h"
 #include "missiles.h"
+#include "new_character.h"
 #include "shadows.h"
 #include "translate.h"
 #ifdef NEW_SOUND
@@ -611,12 +612,25 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 	struct CalCoreMesh *_shieldmesh;
 	//int boneid=-1;
 	float reverse_scale;
+	GLboolean restore_cull_face = GL_FALSE;
+	int preview_render = 0;
+	static unsigned char preview_type_logged[MAX_ACTOR_DEFS] = { 0 };
 	//int glow=-1;
 
 	if(act->calmodel==NULL) {
 		return;//Wtf!?
 	}
 	skel=CalModel_GetSkeleton(act->calmodel);
+	preview_render = (newchar_root_win >= 0) && (act->actor_id == 0);
+	if (preview_render)
+	{
+		/* Character creation draws a single actor.  Disable culling around it
+		 * while recording the runtime triangle orientation.  Cal3D loaders on
+		 * different platforms can reorder XMF indices, so generated-file
+		 * winding validation alone is not sufficient. */
+		restore_cull_face = glIsEnabled(GL_CULL_FACE);
+		glDisable(GL_CULL_FACE);
+	}
 
 	glPushMatrix();
 	// actor model rescaling
@@ -662,6 +676,95 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 
 			// get the number of meshes
 			meshCount = CalRenderer_GetMeshCount(pCalRenderer);
+			if (preview_render && (act->actor_type >= 0) &&
+				(act->actor_type < MAX_ACTOR_DEFS) &&
+				!preview_type_logged[act->actor_type])
+			{
+				GLint front_face = 0, cull_mode = 0;
+				int diagnostic_mesh, total_vertices = 0, total_faces = 0;
+				int aligned_faces = 0, reversed_faces = 0, degenerate_faces = 0;
+				float min_x = 1.0e30f, min_y = 1.0e30f, min_z = 1.0e30f;
+				float max_x = -1.0e30f, max_y = -1.0e30f, max_z = -1.0e30f;
+				glGetIntegerv(GL_FRONT_FACE, &front_face);
+				glGetIntegerv(GL_CULL_FACE_MODE, &cull_mode);
+				for (diagnostic_mesh = 0; diagnostic_mesh < meshCount; ++diagnostic_mesh)
+				{
+					int diagnostic_submesh;
+					int diagnostic_submeshes = CalRenderer_GetSubmeshCount(
+						pCalRenderer, diagnostic_mesh);
+					for (diagnostic_submesh = 0; diagnostic_submesh < diagnostic_submeshes;
+						++diagnostic_submesh)
+					{
+						int vertex_count, face_count, vertex, face;
+						if (!CalRenderer_SelectMeshSubmesh(pCalRenderer,
+							diagnostic_mesh, diagnostic_submesh))
+						{
+							LOG_ERROR("Character preview type %d cannot select mesh %d submesh %d",
+								act->actor_type, diagnostic_mesh, diagnostic_submesh);
+							continue;
+						}
+						vertex_count = CalRenderer_GetVertexCount(pCalRenderer);
+						face_count = CalRenderer_GetFaceCount(pCalRenderer);
+						if ((vertex_count > 30000) || (face_count > 50000))
+						{
+							LOG_ERROR("Character preview type %d mesh %d submesh %d exceeds CPU buffers: vertices=%d faces=%d",
+								act->actor_type, diagnostic_mesh, diagnostic_submesh,
+								vertex_count, face_count);
+							continue;
+						}
+						CalRenderer_GetVertices(pCalRenderer, &meshVertices[0][0]);
+						CalRenderer_GetNormals(pCalRenderer, &meshNormals[0][0]);
+						face_count = CalRenderer_GetFaces(pCalRenderer, &meshFaces[0][0]);
+						total_vertices += vertex_count;
+						total_faces += face_count;
+						for (vertex = 0; vertex < vertex_count; ++vertex)
+						{
+							min_x = min2f(min_x, meshVertices[vertex][0]);
+							min_y = min2f(min_y, meshVertices[vertex][1]);
+							min_z = min2f(min_z, meshVertices[vertex][2]);
+							max_x = max2f(max_x, meshVertices[vertex][0]);
+							max_y = max2f(max_y, meshVertices[vertex][1]);
+							max_z = max2f(max_z, meshVertices[vertex][2]);
+						}
+						for (face = 0; face < face_count; ++face)
+						{
+							const int a = meshFaces[face][0];
+							const int b = meshFaces[face][1];
+							const int c = meshFaces[face][2];
+							if ((a < 0) || (a >= vertex_count) ||
+								(b < 0) || (b >= vertex_count) ||
+								(c < 0) || (c >= vertex_count))
+							{
+								++degenerate_faces;
+								continue;
+							}
+							const float ab_x = meshVertices[b][0] - meshVertices[a][0];
+							const float ab_y = meshVertices[b][1] - meshVertices[a][1];
+							const float ab_z = meshVertices[b][2] - meshVertices[a][2];
+							const float ac_x = meshVertices[c][0] - meshVertices[a][0];
+							const float ac_y = meshVertices[c][1] - meshVertices[a][1];
+							const float ac_z = meshVertices[c][2] - meshVertices[a][2];
+							const float cross_x = ab_y * ac_z - ab_z * ac_y;
+							const float cross_y = ab_z * ac_x - ab_x * ac_z;
+							const float cross_z = ab_x * ac_y - ab_y * ac_x;
+							const float dot = cross_x * meshNormals[a][0] +
+								cross_y * meshNormals[a][1] + cross_z * meshNormals[a][2];
+							if (dot > 1.0e-8f) ++aligned_faces;
+							else if (dot < -1.0e-8f) ++reversed_faces;
+							else ++degenerate_faces;
+						}
+						LOG_INFO("Character preview type %d runtime mesh %d/%d: vertices=%d faces=%d",
+							act->actor_type, diagnostic_mesh, diagnostic_submesh,
+							vertex_count, face_count);
+					}
+				}
+				LOG_INFO("Character preview type %d CPU render: meshes=%d vertices=%d faces=%d bounds=(%g,%g,%g)-(%g,%g,%g) winding aligned=%d reversed=%d degenerate=%d front_face=0x%x cull_mode=0x%x culling_temporarily_disabled=1",
+					act->actor_type, meshCount, total_vertices, total_faces,
+					min_x, min_y, min_z, max_x, max_y, max_z,
+					aligned_faces, reversed_faces, degenerate_faces,
+					(unsigned)front_face, (unsigned)cull_mode);
+				preview_type_logged[act->actor_type] = 1;
+			}
 
 			// check for weapons or shields being worn
 			if (act->is_enhanced_model) {
@@ -789,11 +892,18 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 			// end the rendering
 			CalRenderer_EndRendering(pCalRenderer);
 		}
+		else if (preview_render)
+		{
+			LOG_ERROR("CalRenderer_BeginRendering failed for character preview type %d",
+				act->actor_type);
+		}
 #ifdef DEBUG
 	}
 #endif
 
 	glColor3f(1,1,1);
+	if (preview_render && restore_cull_face)
+		glEnable(GL_CULL_FACE);
 
 #ifdef DEBUG
 	if(render_skeleton)
