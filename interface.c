@@ -479,7 +479,7 @@ static void read_cont_info(void)
 	if (fin == NULL)
 	{
 		size_t i;
-		cont_overview_maps_t tmp_cont_maps[] = { { "Seridia", "./maps/seridia" }, { "Irilion", "./maps/irilion" } };
+	cont_overview_maps_t tmp_cont_maps[] = { { "Nymara", "./maps/legend" } };
 		nr_continents = sizeof(tmp_cont_maps) / sizeof(cont_overview_maps_t);
 		cont_overview_maps = malloc(nr_continents * sizeof(cont_overview_maps_t));
 		for (i = 0; i < nr_continents; i++)
