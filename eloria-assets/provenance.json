@@ -1,10 +1,159 @@
-
-sed: can't read eloria-assets/tools/generate_interactives.pynprintf: No such file or directory
-sed: can't read __FILE_1__\n: No such file or directory
-sed: can't read eloria-assets/tools/generate_effects.pynprintf: No such file or directory
-sed: can't read __FILE_2__\n: No such file or directory
-sed: can't read eloria-assets/tools/generate_bootstrap_pack.pynprintf: No such file or directory
-sed: can't read __FILE_3__\n: No such file or directory
-sed: can't read eloria-assets/README.mdnprintf: No such file or directory
-sed: can't read __FILE_4__\n: No such file or directory
-sed: can't read eloria-assets/provenance.jsonn: No such file or directory
+{
+  "schema": 1,
+  "assets": [
+    {
+      "path": "maps/emberhaven.elm",
+      "source": "tools/generate_bootstrap_pack.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedurally generated flat bootstrap island map"
+    },
+    {
+      "path": "3dobjects/tile0.png",
+      "source": "tools/generate_bootstrap_pack.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedurally generated moss-and-stone ground tile"
+    },
+    {
+      "path": "textures/*.png",
+      "source": "tools/generate_bootstrap_pack.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedurally generated bootstrap UI textures"
+    },
+    {
+      "path": "actors/eloria_humanoid.*",
+      "source": "tools/generate_characters.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural low-poly humanoid mesh, texture, and skeleton"
+    },
+    {
+      "path": "animations/eloria/*.xaf",
+      "source": "tools/generate_characters.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural humanoid animation keyframes"
+    },
+    {
+      "path": "actors/creatures/*",
+      "source": "tools/generate_creatures.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Thirty-two procedural animal and monster models with an original quadruped rig"
+    },
+    {
+      "path": "animations/creatures/*.xaf",
+      "source": "tools/generate_creatures.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original creature locomotion, combat, reaction, and death animation clips"
+    },
+    {
+      "path": "actors/enemies/*",
+      "source": "tools/generate_humanoid_enemies.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Twelve original humanoid, undead, spirit, and construct enemy models"
+    },
+    {
+      "path": "animations/enemies/*.xaf",
+      "source": "tools/generate_humanoid_enemies.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original humanoid-enemy locomotion, combat, casting, reaction, and death clips"
+    },
+    {
+      "path": "actors/fantasy/*",
+      "source": "tools/generate_fantasy_archetypes.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Twelve independently modeled public-domain fantasy archetypes"
+    },
+    {
+      "path": "actors/npcs/*",
+      "source": "tools/generate_npcs.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Eight original NPC role models"
+    },
+    {
+      "path": "textures/items1.*",
+      "source": "tools/generate_item_atlas.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original 64-slot independent item icon atlas"
+    },
+    {
+      "path": "textures/{font,fontv,cursors,cursors2,buttons,book1,paper1}.*",
+      "source": "tools/generate_runtime_assets.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural startup and testing interface resources"
+    },
+    {
+      "path": "3dobjects/interactives/*",
+      "source": "tools/generate_interactives.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original portals, doors, storage, furniture, and crafting stations"
+    },
+    {
+      "path": "3dobjects/projectiles/*",
+      "source": "tools/generate_effects.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original physical and magical projectile models"
+    },
+    {
+      "path": "textures/{eye_candy,eye_candy_burn,combat_effects}.*",
+      "source": "tools/generate_effects.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original spell, impact, healing, poison, and portal particle atlases"
+    },
+    {
+      "path": "3dobjects/scenery/*",
+      "source": "tools/generate_scenery.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural native-E3D environmental scenery"
+    },
+    {
+      "path": "3dobjects/harvestables/*",
+      "source": "tools/generate_scenery.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural native-E3D harvestable plants, crystal, and stone"
+    },
+    {
+      "path": "3dobjects/architecture/*",
+      "source": "tools/generate_scenery.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural modular house, castle, gate, bridge, and civic components"
+    },
+    {
+      "path": "3dobjects/biomes/*",
+      "source": "tools/generate_scenery.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedural desert, snow, swamp, tropical, and volcanic scenery"
+    },
+    {
+      "path": "maps/{glasswind,frostmere,mirefen,verdant_reach,cinder_wastes}.elm",
+      "source": "tools/generate_regions.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Procedurally generated biome regions with original layouts"
+    },
+    {
+      "path": "regions_eloria.json",
+      "source": "tools/generate_regions.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Machine-readable region and harvesting-node catalog"
+    }
+  ]
+}
