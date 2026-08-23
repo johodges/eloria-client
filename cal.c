@@ -665,9 +665,11 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 
 			// check for weapons or shields being worn
 			if (act->is_enhanced_model) {
-				if(actors_defs[act->actor_type].weapon[act->cur_weapon].mesh_index!=-1) _weaponmesh=CalCoreModel_GetCoreMesh(actors_defs[act->actor_type].coremodel,actors_defs[act->actor_type].weapon[act->cur_weapon].mesh_index);
+				if(actors_defs[act->actor_type].weapon &&
+					actors_defs[act->actor_type].weapon[act->cur_weapon].mesh_index!=-1) _weaponmesh=CalCoreModel_GetCoreMesh(actors_defs[act->actor_type].coremodel,actors_defs[act->actor_type].weapon[act->cur_weapon].mesh_index);
 				else _weaponmesh=NULL;
-				if(act->body_parts->shield_meshindex!=-1) _shieldmesh=CalCoreModel_GetCoreMesh(actors_defs[act->actor_type].coremodel,act->body_parts->shield_meshindex);
+				if(actors_defs[act->actor_type].shield && act->body_parts &&
+					act->body_parts->shield_meshindex!=-1) _shieldmesh=CalCoreModel_GetCoreMesh(actors_defs[act->actor_type].coremodel,act->body_parts->shield_meshindex);
 				else _shieldmesh=NULL;
 			} else {
 				// non-enhanced never have weapon or shields
@@ -702,12 +704,12 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 						// find the proper place to bind this object to
 						switch(boneid){
 							case 26:
-								if(actors_defs[act->actor_type].weapon[act->cur_weapon].glow>0){
+								if(actors_defs[act->actor_type].weapon && actors_defs[act->actor_type].weapon[act->cur_weapon].glow>0){
 									glow=actors_defs[act->actor_type].weapon[act->cur_weapon].glow;
 								}
 								break;
 							case 21:
-								if(actors_defs[act->actor_type].shield[act->cur_shield].glow>0){
+								if(actors_defs[act->actor_type].shield && actors_defs[act->actor_type].shield[act->cur_shield].glow>0){
 									glow=actors_defs[act->actor_type].shield[act->cur_shield].glow;
 								}
 							default:
