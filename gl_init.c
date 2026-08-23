@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <SDL.h>
+/* Modified for Eloria on 2026-08-22: use independent product branding. */
 #include "gl_init.h"
+#include "eloria_brand.h"
 #include "asc.h"
 #include "elconfig.h"
 #include "errors.h"
@@ -280,7 +282,7 @@ void init_video(void)
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, fsaa);
 		glDisable(GL_MULTISAMPLE);
 
-		el_gl_window = SDL_CreateWindow("Eternal Lands", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, target_width, target_height, flags);
+		el_gl_window = SDL_CreateWindow(ELORIA_WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, target_width, target_height, flags);
 		if (el_gl_window == NULL)
 		{
 			safe_snprintf(str, sizeof(str), "Can't use fsaa mode x%d, disabling it.", fsaa);
@@ -300,7 +302,7 @@ void init_video(void)
 	//try to find a stencil buffer
 	if (el_gl_window == NULL)
 	{
-		el_gl_window = SDL_CreateWindow("Eternal Lands", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, target_width, target_height, flags);
+		el_gl_window = SDL_CreateWindow(ELORIA_WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, target_width, target_height, flags);
 		if (el_gl_window == NULL)
 		{
 			LOG_TO_CONSOLE(c_red1,no_hardware_stencil_str);
@@ -312,7 +314,7 @@ void init_video(void)
             }
 			SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,16);
 			SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,0);
-			el_gl_window = SDL_CreateWindow("Eternal Lands", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, target_width, target_height, flags);
+			el_gl_window = SDL_CreateWindow(ELORIA_WINDOW_TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, target_width, target_height, flags);
 			if (el_gl_window == NULL)
 			{
 				LOG_ERROR("%s: %s\n", fail_opengl_mode, SDL_GetError());
