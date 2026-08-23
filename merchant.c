@@ -8,7 +8,7 @@
 #include "merchant.h"
 #include "multiplayer.h"
 
-#define MERCHANT_MAX_ITEMS 40
+#define MERCHANT_MAX_ITEMS 20
 typedef struct { Uint16 index, image_id; Uint32 buy, sell, owned; char name[64]; } merchant_item;
 static merchant_item items[MERCHANT_MAX_ITEMS];
 static int merchant_win = -1, item_count = 0, selected = -1, sell_mode = 0;
