@@ -535,7 +535,7 @@ CHECK_GL_ERRORS();
 }
 
 
-static __inline__ void render_submesh(int meshId, int submeshCount, struct CalRenderer * pCalRenderer, float meshVertices[30000][3], float meshNormals[30000][3], float meshTextureCoordinates[30000][2], CalIndex meshFaces[50000][3], Uint32 use_lightning, Uint32 use_textures)
+static __inline__ void render_submesh(int meshId, int submeshCount, struct CalRenderer * pCalRenderer, float meshVertices[30000][3], float meshNormals[30000][3], float meshTextureCoordinates[30000][2], CalIndex meshFaces[50000][3], Uint32 use_lightning, Uint32 use_textures, int immediate_mode)
 {
 	int submeshId;
 	int faceCount=0;
@@ -584,7 +584,28 @@ static __inline__ void render_submesh(int meshId, int submeshCount, struct CalRe
 				glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 			}
 
-			if(sizeof(CalIndex)==2)
+			if (immediate_mode)
+			{
+				int face, corner;
+				/* The new-character map contains one small preview actor.  Submit its
+				 * CPU-deformed geometry directly so this diagnostic path is independent
+				 * of driver-specific legacy client-array behaviour. */
+				glBegin(GL_TRIANGLES);
+				for (face = 0; face < faceCount; ++face)
+				{
+					for (corner = 0; corner < 3; ++corner)
+					{
+						const CalIndex vertex = meshFaces[face][corner];
+						if (use_lightning)
+							glNormal3fv(meshNormals[vertex]);
+						if (use_textures)
+							glTexCoord2fv(meshTextureCoordinates[vertex]);
+						glVertex3fv(meshVertices[vertex]);
+					}
+				}
+				glEnd();
+			}
+			else if(sizeof(CalIndex)==2)
 				glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_SHORT, &meshFaces[0][0]);
 			else
 				glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_INT, &meshFaces[0][0]);
@@ -899,15 +920,15 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 						glColor4f(glow_colors[glow].r, glow_colors[glow].g, glow_colors[glow].b, 0.5f);
 						glPushMatrix();
 						glScalef(0.99f, 0.99f, 0.99f);
-						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures);
+						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures, preview_render);
 						glPopMatrix();
 
 						glColor4f(glow_colors[glow].r, glow_colors[glow].g, glow_colors[glow].b, 0.85f);
-						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures);
+						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures, preview_render);
 						glColor4f(glow_colors[glow].r, glow_colors[glow].g, glow_colors[glow].b, 0.99f);
 						glPushMatrix();
 						glScalef(1.01f, 1.01f, 1.01f);
-						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures);
+						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, 0, use_textures, preview_render);
 						glPopMatrix();
 
 						if(use_shadow_mapping){
@@ -926,7 +947,7 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 						}
 					} else {
 						// enhanced actors without glowing items
-						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, use_lightning, use_textures);
+						render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, use_lightning, use_textures, preview_render);
 					}
 					if(boneid >= 0){
 						//if this was a weapon or shield, restore the transformation matrix
@@ -934,7 +955,7 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 					}
 				} else {
 					// non-enhanced actors, or enhanced without attached meshes
-					render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, use_lightning, use_textures);
+					render_submesh(meshId, submeshCount, pCalRenderer, meshVertices, meshNormals, meshTextureCoordinates, meshFaces, use_lightning, use_textures, preview_render);
 				}
 			}
 
