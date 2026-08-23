@@ -470,10 +470,10 @@ static int display_newchar_handler (window_info *win)
 	draw_lights();
 	CHECK_GL_ERRORS ();
 
-	if (shadows_on && is_day) {
-		render_light_view();
-		CHECK_GL_ERRORS ();
-	}
+	/* Character creation uses an empty presentation map and a single actor.
+	 * Do not enter the world shadow renderer here: shadow mapping leaves a
+	 * depth-comparison texture active on a secondary texture unit while actors
+	 * are drawn, and stencil shadows add passes that have no value in this UI. */
 
 	if (use_fog)
 		weather_render_fog();
@@ -485,9 +485,7 @@ static int display_newchar_handler (window_info *win)
 
 	CHECK_GL_ERRORS ();
 
-	if (shadows_on && is_day) {
-		draw_sun_shadowed_scene (any_reflection);
-	} else {
+	{
 		glNormal3f (0.0f,0.0f,1.0f);
 		if (any_reflection) draw_lake_tiles ();
 		draw_tile_map ();
@@ -816,6 +814,7 @@ void create_newchar_root_window (void)
 		use_animation_program = 0;
 		LOG_INFO("Character preview renderer forced to CPU (saved renderer=%s)",
 			saved_use_animation_program ? "GPU" : "CPU");
+		LOG_INFO("Character preview uses the default actor pass with world shadows disabled");
 
 		our_actor.race_id=RAND(0, 5);
 		our_actor.def=&races[our_actor.race_id];//6 "races" - counting women as their own race, of course ;-) We cannot include the new races in the random function since they are p2p
