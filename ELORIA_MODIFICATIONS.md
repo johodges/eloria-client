@@ -18,5 +18,12 @@ Lands Binary Data is included in the Eloria data pack.
 - Added command 247 for 16-bit actor types while retaining legacy actor packets.
 - Expanded the actor registry to 1024 entries and made attachments sparse.
 
+## 2026-08-23
+
+- Extended spell-cast packets with an optional one-byte power selection.
+- Added power display and right-click adjustment to the spell window.
+- Added user-configurable `#K_SPELLPOWERUP` and `#K_SPELLPOWERDOWN` hotkeys.
+- Preserved server-side per-effect preferences whenever the client has no explicit override.
+
 Every later modification to an upstream source file must carry a prominent
 dated notice as required by section 3(c) of the client license.
