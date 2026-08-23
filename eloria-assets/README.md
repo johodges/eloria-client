@@ -9,6 +9,7 @@ Generate the bootstrap pack with:
 ```bash
 python3 eloria-assets/tools/generate_bootstrap_pack.py
 python3 eloria-assets/tools/generate_characters.py
+python3 eloria-assets/tools/generate_humanoid_enemies.py
 python3 eloria-assets/tools/generate_creatures.py
 python3 eloria-assets/tools/generate_scenery.py
 python3 eloria-assets/tools/generate_regions.py
@@ -28,6 +29,10 @@ silhouettes, textures, a thirteen-bone quadruped rig, and shared idle, walk,
 run, attack, pain, and death animation clips. Actor IDs 200-207 are reserved
 for the first independent creature set; the expanded roster continues through
 actor ID 231. Familiar real-world names describe only newly generated assets.
+
+The humanoid-enemy generator adds twelve original living, undead, spirit, and
+construct enemies using actor IDs 232-243. They share a dedicated humanoid rig
+and idle, combat-idle, walk, run, attack, cast, pain, and death animations.
 
 The scenery generator produces 43 native E3D assets: general scenery, nine
 modular architecture pieces, ten biome-specific objects, and seventeen
