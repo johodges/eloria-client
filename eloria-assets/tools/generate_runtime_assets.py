@@ -6,12 +6,16 @@ from pathlib import Path
 from generate_bootstrap_pack import png,panel,make_map
 from generate_item_atlas import bmp,dds
 
+GLYPHS={
+"A":("01110","10001","10001","11111","10001","10001","10001"),"B":("11110","10001","10001","11110","10001","10001","11110"),"C":("01111","10000","10000","10000","10000","10000","01111"),"D":("11110","10001","10001","10001","10001","10001","11110"),"E":("11111","10000","10000","11110","10000","10000","11111"),"F":("11111","10000","10000","11110","10000","10000","10000"),"G":("01111","10000","10000","10111","10001","10001","01110"),"H":("10001","10001","10001","11111","10001","10001","10001"),"I":("11111","00100","00100","00100","00100","00100","11111"),"J":("00111","00010","00010","00010","10010","10010","01100"),"K":("10001","10010","10100","11000","10100","10010","10001"),"L":("10000","10000","10000","10000","10000","10000","11111"),"M":("10001","11011","10101","10101","10001","10001","10001"),"N":("10001","11001","10101","10011","10001","10001","10001"),"O":("01110","10001","10001","10001","10001","10001","01110"),"P":("11110","10001","10001","11110","10000","10000","10000"),"Q":("01110","10001","10001","10001","10101","10010","01101"),"R":("11110","10001","10001","11110","10100","10010","10001"),"S":("01111","10000","10000","01110","00001","00001","11110"),"T":("11111","00100","00100","00100","00100","00100","00100"),"U":("10001","10001","10001","10001","10001","10001","01110"),"V":("10001","10001","10001","10001","10001","01010","00100"),"W":("10001","10001","10001","10101","10101","10101","01010"),"X":("10001","10001","01010","00100","01010","10001","10001"),"Y":("10001","10001","01010","00100","00100","00100","00100"),"Z":("11111","00001","00010","00100","01000","10000","11111"),
+"0":("01110","10001","10011","10101","11001","10001","01110"),"1":("00100","01100","00100","00100","00100","00100","01110"),"2":("01110","10001","00001","00010","00100","01000","11111"),"3":("11110","00001","00001","01110","00001","00001","11110"),"4":("00010","00110","01010","10010","11111","00010","00010"),"5":("11111","10000","10000","11110","00001","00001","11110"),"6":("01110","10000","10000","11110","10001","10001","01110"),"7":("11111","00001","00010","00100","01000","01000","01000"),"8":("01110","10001","10001","01110","10001","10001","01110"),"9":("01110","10001","10001","01111","00001","00001","01110"),
+".":("00000","00000","00000","00000","00000","00110","00110"),",":("00000","00000","00000","00000","00110","00110","00100"),":":("00000","00110","00110","00000","00110","00110","00000"),"-":("00000","00000","00000","11111","00000","00000","00000"),"_":("00000","00000","00000","00000","00000","00000","11111"),"/":("00001","00010","00100","01000","10000","00000","00000"),"!":("00100","00100","00100","00100","00100","00000","00100"),"?":("01110","10001","00001","00010","00100","00000","00100"),"'":("00100","00100","00000","00000","00000","00000","00000"),"(":("00010","00100","01000","01000","01000","00100","00010"),")":("01000","00100","00010","00010","00010","00100","01000"),"+":("00000","00100","00100","11111","00100","00100","00000"),"=":("00000","00000","11111","00000","11111","00000","00000"),"<":("00010","00100","01000","10000","01000","00100","00010"),">":("01000","00100","00010","00001","00010","00100","01000"),"@":("01110","10001","10111","10101","10111","10000","01110")}
 def font_pixel(x,y):
  cell=x//16+(y//16)*16;lx=x%16;ly=y%16
- if cell==32:return (0,0,0,0)
- bit=((cell*1103515245+(lx//2)*97+(ly//2)*193)>>((lx+ly)%17))&1
- on=2<=lx<=13 and 2<=ly<=13 and (bit or lx in (2,13) or ly in (2,13))
- return (238,231,205,255 if on else 0)
+ ch=chr(cell);g=GLYPHS.get(ch) or GLYPHS.get(ch.upper())
+ if not g:return (0,0,0,0)
+ gx=(lx-3)//2;gy=(ly-1)//2
+ return (244,238,216,255) if 0<=gx<5 and 0<=gy<7 and g[gy][gx]=="1" else (0,0,0,0)
 CURSOR_COUNT, CURSOR_SIZE = 13, 16
 
 def cursor_index(x,y):
@@ -53,6 +57,22 @@ def moon(x,y):
 def sun(x,y):
  dx=x-256;dy=y-256;d=dx*dx+dy*dy
  return (255,220,98,255) if d<95*95 else (255,166,53,max(0,180-d//400))
+def login_background(x,y):
+ t=y/511.0
+ if y<330:r,g,b=int(20+38*t),int(29+34*t),int(58+38*t)
+ else:r,g,b=int(13+12*(1-t)),int(31+20*(1-t)),int(43+24*(1-t))
+ ridge=270+((x*37)%131)//3
+ if 250<y<ridge:r,g,b=31,45,61
+ glow=max(0,1-(((x-390)**2+(y-205)**2)**0.5)/175)
+ r+=int(75*glow);g+=int(43*glow);b+=int(14*glow)
+ if 365<x<415 and 125+abs(x-390)*2<y<285-abs(x-390):return (72+int(90*glow),174+int(60*glow),190+int(55*glow),255)
+ if y>=330:
+  s=max(0,1-abs(x-390)/170)*max(0,1-(y-330)/210);r+=int(35*s);g+=int(85*s);b+=int(100*s)
+ return (min(255,r),min(255,g),min(255,b),255)
+def login_menu_pixel(x,y):
+ selected=(y<32) or (120<=y<155) or (200<=y<235)
+ border=(x<3 or y%40<3)
+ return (199,137,70,255) if border else (49,82,91,235) if selected else (18,29,34,225)
 def portrait(x,y):
  cell=(x//128)+(y//128)*4;lx=x%128;ly=y%128
  skin=((126+cell*17)%90+105,(83+cell*11)%65+80,(61+cell*7)%45+65,255)
@@ -79,8 +99,10 @@ def main():
  for name in ("buttons","book1","paper1","alphaborder","eye_candy","eye_candy_burn"):
   png(root/f"textures/{name}.png",512,512,panel);bmp(root/f"textures/{name}.bmp",512,512,panel)
   dds(root/f"textures/{name}.dds",512,512,panel)
- for name in ("gamebuttons","gamebuttons2","console","login_menu","login_back","ground_detail","sigils"):
+ for name in ("gamebuttons","gamebuttons2","console","ground_detail","sigils"):
   dds(root/f"textures/{name}.dds",512,512,panel)
+ dds(root/"textures/login_menu.dds",256,256,login_menu_pixel)
+ dds(root/"textures/login_back.dds",512,512,login_background)
  for name in ("compass","thick_clouds","thick_clouds_detail"):
   dds(root/f"textures/{name}.dds",512,512,sky)
  dds(root/"textures/moonmap.dds",512,512,moon);dds(root/"textures/BrightSun.dds",512,512,sun)
@@ -116,6 +138,16 @@ def main():
 </rules>\n''')
  for name in ("console","errors","help","options","spells","stats","titles"):
   write_text(root/f"languages/en/strings/{name}.xml","<root/>\n")
+ write_text(root/"languages/en/strings/channels.xml",'''<CHANNELS>
+ <label index="0" name="Channel %d">Joined channel %d</label>
+ <channel number="1" name="Noob">New-player questions, guidance, and introductions.</channel>
+ <channel number="2" name="General">Nymara-wide conversation and community discussion.</channel>
+ <channel number="3" name="Market">Trading, services, price checks, and crafting requests.</channel>
+ <channel number="4" name="Invasions">Invasion sightings, warnings, and defensive coordination.</channel>
+</CHANNELS>\n''')
+ races={"human":("Luminari","Lantern-city stewards who preserve memory in crystal and song."),"elf":("Votari","Mistwood wayfinders bound to living paths and ancient promises."),"dwarf":("Glasswardens","Forge-clans who shape star-glass beneath Nymara's ridges."),"gnome":("Orun","Ingenious tidefolk who build compact wonders from shell and brass."),"orchan":("Greyhaven","Storm-tested frontier clans known for endurance and mutual oath."),"draegoni":("Ssarathi","Scaled heirs of the ember marshes, attuned to heat and old magic.")}
+ for filename,(title,description) in races.items():
+  write_text(root/f"languages/en/books/races/{filename}.xml",f'<book title="{title}"><title>{title}</title><nl/><text>{description}</text><nl/><text>Choose this culture to begin your story in Nymara.</text></book>\n')
  write_text(root/"languages/en/Encyclopedia/index.xml","<Encyclopedia><Category>Basics</Category></Encyclopedia>\n")
  write_text(root/"languages/en/Encyclopedia/Basics.xml",'''<Encyclopedia>
  <Page name="index"><Size>Big</Size><Text>Welcome to Eloria</Text><nl/><Size>Small</Size><Text>An original world on the continent of Nymara.</Text></Page>
