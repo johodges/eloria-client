@@ -663,7 +663,7 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 		// begin the rendering loop
 		if(CalRenderer_BeginRendering(pCalRenderer)){
 			// set global OpenGL states
-			if(!act->ghost && act->has_alpha){
+			if(use_textures && !act->ghost && act->has_alpha){
 				glEnable(GL_ALPHA_TEST);
 				glAlphaFunc(GL_GREATER,0.06f);
 				glEnable(GL_BLEND);
@@ -883,7 +883,7 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 			glDisableClientState(GL_NORMAL_ARRAY);
 			glDisableClientState(GL_VERTEX_ARRAY);
 			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-			if(!act->ghost && act->has_alpha){
+			if(use_textures && !act->ghost && act->has_alpha){
 				glDisable(GL_ALPHA_TEST);
 				//glEnable(GL_CULL_FACE);
 				glDisable(GL_BLEND);
