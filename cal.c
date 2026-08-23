@@ -613,6 +613,8 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 	//int boneid=-1;
 	float reverse_scale;
 	GLboolean restore_cull_face = GL_FALSE;
+	GLint saved_array_buffer = 0;
+	GLint saved_element_buffer = 0;
 	int preview_render = 0;
 	static unsigned char preview_type_logged[MAX_ACTOR_DEFS] = { 0 };
 	//int glow=-1;
@@ -662,6 +664,25 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 		pCalRenderer = CalModel_GetRenderer(act->calmodel);
 		// begin the rendering loop
 		if(CalRenderer_BeginRendering(pCalRenderer)){
+			/* render_submesh() supplies CPU addresses to the legacy client-array
+			 * API.  When a VBO remains bound from an earlier world draw, OpenGL
+			 * interprets those addresses as byte offsets into that buffer instead.
+			 * Isolate this path from the caller's buffer state and restore it when
+			 * the Cal3D draw is complete. */
+			if (ELglBindBufferARB != NULL)
+			{
+				glGetIntegerv(GL_ARRAY_BUFFER_BINDING_ARB, &saved_array_buffer);
+				glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB, &saved_element_buffer);
+				ELglBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+				ELglBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+				if (preview_render && (act->actor_type >= 0) &&
+					(act->actor_type < MAX_ACTOR_DEFS) &&
+					!preview_type_logged[act->actor_type])
+				{
+					LOG_INFO("Character preview type %d CPU client arrays: previous array_buffer=%d element_buffer=%d, both unbound for draw",
+						act->actor_type, saved_array_buffer, saved_element_buffer);
+				}
+			}
 			// set global OpenGL states
 			if(use_textures && !act->ghost && act->has_alpha){
 				glEnable(GL_ALPHA_TEST);
@@ -891,6 +912,11 @@ void cal_render_actor(actor *act, Uint32 use_lightning, Uint32 use_textures, Uin
 
 			// end the rendering
 			CalRenderer_EndRendering(pCalRenderer);
+			if (ELglBindBufferARB != NULL)
+			{
+				ELglBindBufferARB(GL_ARRAY_BUFFER_ARB, saved_array_buffer);
+				ELglBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, saved_element_buffer);
+			}
 		}
 		else if (preview_render)
 		{
