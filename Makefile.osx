@@ -59,7 +59,7 @@ COBJS=2d_objects.o 3d_objects.o	\
 	hud.o hud_misc_window.o hud_quickbar_window.o hud_statsbar_window.o help.o highlight.o	\
 	ignore.o init.o interface.o items.o	\
 	keys.o knowledge.o langselwin.o lights.o lispsm.o list.o loginwin.o loading_win.o	\
-	main.o manufacture.o map_io.o mapwin.o marketplace.o merchant.o quest_journal.o item_detail.o inventory_organizer.o combat_hud.o navigation_hud.o mail_window.o	\
+	main.o manufacture.o map_io.o mapwin.o marketplace.o merchant.o quest_journal.o item_detail.o inventory_organizer.o combat_hud.o navigation_hud.o mail_window.o tutorial_window.o	\
 	md2loader.o md5.o misc.o missiles.o multiplayer.o	\
 	new_actors.o new_character.o normals.o notepad.o	\
 	openingwin.o	\
