@@ -91,6 +91,7 @@ static int have_error_message=0;
 static int we_have_spell=-1; //selected spell
 static int on_spell=-1;//mouse over this spell
 static int poison_drop_counter = 0;
+static Uint8 spell_power_overrides[SPELLS_NO]; /* zero means use server preference */
 
 typedef struct {
 	unsigned char desc[120];
@@ -1317,6 +1318,12 @@ static int click_spells_handler(window_info *win, int mx, int my, Uint32 flags){
 		//a spell has been clicked
 		int code_pos=(the_group*256+the_spell);
 		we_have_spell=groups_list[the_group].spells_id[the_spell];
+		if (flags & ELW_RIGHT_MOUSE) {
+			change_spell_power(1);
+			last_pos=code_pos;
+			last_clicked=SDL_GetTicks();
+			return 1;
+		}
 #ifdef ANDROID
 		set_spell_help_text(we_have_spell);
 #endif
@@ -1472,6 +1479,11 @@ static void set_spell_help_text(int spell){
 	clr[1]=0;
 	safe_strcat((char*)spell_help,(char*)clr,sizeof(spell_help));
 	safe_strcat((char*)spell_help,spells_list[spell].desc,sizeof(spell_help));
+	if (spell_power_overrides[spell]) {
+		char power_text[48];
+		safe_snprintf(power_text, sizeof(power_text), "\nPower: %u", spell_power_overrides[spell]);
+		safe_strcat((char*)spell_help,power_text,sizeof(spell_help));
+	} else safe_strcat((char*)spell_help,"\nPower: server preference",sizeof(spell_help));
 
 }
 
@@ -1759,9 +1771,45 @@ static int spell_clear_handler(void)
 
 void send_spell(Uint8 *str, int len)
 {
-	my_tcp_send(str, len);
-	memcpy(last_spell_str, str, len);
+	Uint8 powered[20];
+	int i, j, power = 0;
+	if (len > 1 && str[0] == CAST_SPELL && str[1] <= MAX_SIGILS)
+		for (i = 0; i < num_spells; i++)
+		{
+			for (j = 0; j < str[1] && spells_list[i].sigils[j] == str[j+2]; j++);
+			if (j == str[1] && spells_list[i].sigils[j] == -1)
+			{
+				power = spell_power_overrides[i];
+				break;
+			}
+		}
+	memcpy(powered, str, len);
+	if (power > 0 && len < (int)sizeof(powered))
+		powered[len++] = (Uint8)power;
+	my_tcp_send(powered, len);
+	memcpy(last_spell_str, powered, len);
 	last_spell_len = len;
+}
+
+void change_spell_power(int delta)
+{
+	char message[96];
+	int power;
+	if (we_have_spell < 0)
+	{
+		LOG_TO_CONSOLE(c_orange1, "Select a spell before changing its power.");
+		return;
+	}
+	power = spell_power_overrides[we_have_spell];
+	if (power == 0) power = 1;
+	power += delta;
+	if (power < 1) power = 1;
+	if (power > 10) power = 10;
+	spell_power_overrides[we_have_spell] = (Uint8)power;
+	safe_snprintf(message, sizeof(message), "%s power: %d (server validates maximum)",
+		spells_list[we_have_spell].name, power);
+	LOG_TO_CONSOLE(c_orange1, message);
+	set_spell_help_text(we_have_spell);
 }
 
 /* show the last spell name and message bytes */
