@@ -250,11 +250,10 @@ static void change_actor (void)
 		free_actor_texture(our_actor.our_model->texture_id);
 		our_actor.our_model->texture_id = load_enhanced_actor(our_actor.our_model->body_parts, 0);	// Rebuild the actor's textures.
 
-		// Move the actor. Could be a little disorienting, though.
-		our_actor.our_model->x_tile_pos = our_actor.def->x;
-		our_actor.our_model->y_tile_pos = our_actor.def->y;
-		our_actor.our_model->x_pos = our_actor.def->x*0.5f;
-		our_actor.our_model->y_pos = our_actor.def->y*0.5f;
+		/* Keep race replacements at the current presentation position.  The
+		 * legacy race table contains three distant map locations, but the Eloria
+		 * preview is a single-stage presentation and should not relocate between
+		 * selections. */
 		our_actor.our_model->z_rot = our_actor.def->z_rot;
 
 		/* A new CalModel has its own skeleton pose and hardware transform map.
@@ -264,11 +263,6 @@ static void change_actor (void)
 		build_actor_bounding_box(our_actor.our_model);
 		if (use_animation_program)
 			set_transformation_buffers(our_actor.our_model);
-		/* The legacy race table uses several widely separated map positions.
-		 * Snap the presentation camera to the replacement actor instead of
-		 * allowing the newly selected race to spend frames outside the viewport. */
-		reset_camera_at_next_update = 1;
-		move_camera();
 	}
 }
 
