@@ -1,3 +1,4 @@
+/* Eloria modification, 2026-08-23: configurable spell-power API. */
 /*!
  * \file
  * \ingroup spells_window
