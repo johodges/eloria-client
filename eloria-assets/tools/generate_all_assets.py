@@ -14,7 +14,8 @@ GENERATORS = (
     "generate_npcs.py", "generate_creatures.py", "generate_scenery.py",
     "generate_interactives.py", "generate_regions.py",
     "generate_item_atlas.py", "generate_runtime_assets.py",
-    "generate_effects.py", "generate_nymara_complete.py",
+    "generate_effects.py", "generate_special_event_assets.py",
+    "generate_nymara_complete.py",
 )
 
 
