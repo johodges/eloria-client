@@ -1,3 +1,4 @@
+/* Eloria modification, 2026-08-23: configurable spell-power UI and protocol. */
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
