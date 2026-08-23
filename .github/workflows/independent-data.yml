@@ -95,6 +95,11 @@ jobs:
           assert len(player_actors) == 12
           assert {actor.attrib.get("race") for actor in player_actors} == {
               "luminous", "votary", "glasswarden", "orun", "greyhaven", "ssarathi"}
+          none_ids = {"neck": 0, "helmet": 20, "cape": 30, "shield": 11}
+          for actor in player_actors:
+              for tag, none_id in none_ids.items():
+                  assert actor.find(f"{tag}[@id='{none_id}']") is not None, (
+                      actor.attrib["id"], tag, none_id)
           assert len(list(root.glob("animations/eloria/*.xaf"))) == 8
           assert len(list(root.glob("maps/**/*.elm"))) == 27
           assert len(list(root.glob("textures/items*.png"))) == 5
