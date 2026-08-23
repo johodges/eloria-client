@@ -51,11 +51,14 @@ need an art-direction pass before a production release.
 
 The interaction-and-effects stage adds twenty world props and crafting stations,
 eight projectile models, three particle atlases, a parser-compatible missile
-manifest, and ten original spells with independent sigil and reagent definitions.
+manifest, and ten original spells. Spell reagents use independently designed
+catalyst, resonant, and anchor roles; four rechargeable focuses substitute an
+Attunement Charge for the anchor. Four 25-icon atlases cover the 85-item catalog.
 
 The scenery generator produces 43 native E3D assets: general scenery, nine
 modular architecture pieces, ten biome-specific objects, and seventeen
-original harvestables. Real-world resource names are used only with original
+original harvestables, including Stormglass, Moon Salt, and Grave Moss nodes.
+Real-world resource names are used only with original
 geometry, textures, placement, descriptions, and future balance data.
 
 The region generator adds desert, snow, swamp, tropical, and volcanic maps,
