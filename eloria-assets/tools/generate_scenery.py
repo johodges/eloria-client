@@ -127,8 +127,9 @@ ASSETS={
  'harvestables/wheat':(wheat,((117,105,48),(211,176,73))), 'harvestables/cotton':(cotton,((72,112,66),(226,222,202))),
  'harvestables/lavender':(herb,((72,106,65),(137,94,160))), 'harvestables/flax':(flax,((73,111,67),(104,143,184))),
  'harvestables/sage':(herb,((82,111,82),(139,155,117))), 'harvestables/rosemary':(herb,((48,91,60),(91,123,72))),
- 'harvestables/mushroom':(mushroom,((213,198,157),(151,75,55))), 'harvestables/blueberries':(berry,((55,98,59),(54,63,139))),
+ 'harvestables/mushroom':(mushroom,((213,198,157),(151,75,55))), 'harvestables/grave_moss':(herb,((48,67,52),(89,104,74))), 'harvestables/blueberries':(berry,((55,98,59),(54,63,139))),
  'harvestables/coal':(ore,((37,39,42),(62,63,65))), 'harvestables/iron_ore':(ore,((91,77,66),(145,105,76))),
+ 'harvestables/stormglass':(ore,((79,111,139),(157,205,221))), 'harvestables/moon_salt':(ore,((168,174,186),(235,231,211))),
  'harvestables/quartz':(ore,((151,147,142),(224,217,207))), 'harvestables/sulfur':(ore,((153,143,50),(224,206,68))) }
 
 def main():
