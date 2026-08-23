@@ -85,7 +85,7 @@ def main():
   dds(root/f"textures/{name}.dds",512,512,sky)
  dds(root/"textures/moonmap.dds",512,512,moon);dds(root/"textures/BrightSun.dds",512,512,sun)
  dds(root/"textures/portraits1.dds",512,512,portrait)
- bmp(root/"icon.bmp",32,32,cursor)
+ bmp(root/"icon.bmp",32,32,cursor_pixel)
  dds(root/"maps/legend.dds",512,512,panel)
  e3d_fallback(root/"3dobjects/badobject.e3d");e3d_fallback(root/"3dobjects/bag1.e3d");e3d_fallback(root/"3dobjects/portal1.e3d")
  make_map(root/"maps/nomap.elm",placements=[]);make_map(root/"maps/newcharactermap.elm",placements=[])
