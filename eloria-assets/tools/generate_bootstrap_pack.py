@@ -118,8 +118,23 @@ def main() -> None:
     make_map(root / "maps/emberhaven.elm")
     (root / "servers.lst").write_text(
         "main eloria 127.0.0.1 2000 plain Eloria local server\n", encoding="utf-8")
-    (root / "harvestable.lst").write_text("", encoding="utf-8")
-    (root / "entrable.lst").write_text("", encoding="utf-8")
+    (root / "harvestable.lst").write_text("\n".join([
+        "3dobjects/harvestables/sunleaf.e3d",
+        "3dobjects/harvestables/frost_reed.e3d",
+        "3dobjects/harvestables/copper_bloom.e3d",
+        "3dobjects/harvestables/ember_crystal.e3d",
+        "3dobjects/harvestables/slate_outcrop.e3d",
+    ]) + "\n", encoding="utf-8")
+    (root / "entrable.lst").write_text("\n".join([
+        "3dobjects/interactives/portal_obelisk.e3d",
+        "3dobjects/interactives/storage_chest.e3d",
+        "3dobjects/interactives/forge.e3d",
+        "3dobjects/interactives/anvil.e3d",
+        "3dobjects/interactives/workbench.e3d",
+        "3dobjects/interactives/alchemy_table.e3d",
+        "3dobjects/interactives/notice_board.e3d",
+        "3dobjects/interactives/well.e3d",
+    ]) + "\n", encoding="utf-8")
     (root / "ASSET_MANIFEST.json").write_text(json.dumps({
         "name": "Eloria bootstrap data",
         "license": "CC-BY-4.0",
