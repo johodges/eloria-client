@@ -22,5 +22,7 @@ The character generator produces an original low-poly humanoid, fourteen-bone
 skeleton, four actor definitions, and idle, walk, run, attack, pain, death,
 harvest, and sitting animations in Cal3D XML source formats.
 
-The scenery generator produces twelve native E3D assets: alder and pine trees,
-boulders, cottages, signs, lanterns, docks, and five original harvestables.
+The scenery generator produces 43 native E3D assets: general scenery, nine
+modular architecture pieces, ten biome-specific objects, and seventeen
+original harvestables. Real-world resource names are used only with original
+geometry, textures, placement, descriptions, and future balance data.
