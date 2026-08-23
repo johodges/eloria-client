@@ -28,7 +28,7 @@ def validate_cal3d(root: Path) -> None:
     if stale:
         raise RuntimeError("stale Cal3D skeleton metadata: " +
                            ", ".join(str(path) for path in stale))
-    bad_magic = [path for path in skeletons if b'MAGIC="XFS"' not in path.read_bytes()]
+    bad_magic = [path for path in skeletons if b'MAGIC="XSF"' not in path.read_bytes()]
     if bad_magic:
         raise RuntimeError("invalid Cal3D skeleton magic: " +
                            ", ".join(str(path) for path in bad_magic))

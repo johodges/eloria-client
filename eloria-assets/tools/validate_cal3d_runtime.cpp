@@ -12,7 +12,7 @@ int main(int argc, char **argv)
 	}
 	const std::string root = argv[1];
 	CalCoreModel model("Eloria generated humanoid validation");
-	if (model.loadCoreSkeleton(root + "/actors/eloria_humanoid.xsf") < 0)
+	if (!model.loadCoreSkeleton(root + "/actors/eloria_humanoid.xsf"))
 	{
 		std::cerr << "skeleton: " << CalError::getLastErrorDescription() << '\n';
 		return 1;

@@ -44,8 +44,7 @@ def skeleton(path):
         ET.SubElement(b,"LOCALROTATION").text="0 0 0 1"
         ET.SubElement(b,"PARENTID").text=str(parent)
         for child in children[i]: ET.SubElement(b,"CHILDID").text=str(child)
-    # Cal3D's skeleton XML magic is XFS; XSF is the filename extension only.
-    write_cal(path,"XFS",root)
+    write_cal(path,"XSF",root)
 
 def cuboid(center,size,bone,vertices,faces):
     cx,cy,cz=center; sx,sy,sz=(v/2 for v in size)
