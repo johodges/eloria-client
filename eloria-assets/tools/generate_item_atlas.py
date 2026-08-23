@@ -5,6 +5,7 @@ import argparse,json,struct
 from pathlib import Path
 from generate_bootstrap_pack import png
 
+NYMARA_ITEMS=("Crownwater Pearl","Mirror Reed","Glacier Salt","Whitehorn Silverleaf","Resonant Crystal","Stormglass Shard","Sunmane Seed","Amber Resin","Moor Peat","Ghost Orchid","Mangrove Sap","Ssarathi Scale Moss","Verdant Venom Bulb","Delta Lotus","Deep Lake Clay","Voltaic Geode")
 ITEMS=("Gold Coins","Bread","Berries","Cooked Meat","Healing Tonic","Focus Tonic","Pickaxe","Hatchet","Needle","Mortar and Pestle","Raw Meat","Bones","Thread","Fox Fur","Bear Fur","Deer Hide","Wolf Fur","Snake Hide","Bright Feather","Small Dragon Scale","Sunleaf","Frost Reed","Copper Bloom","Ember Crystal","Slate","Wheat","Cotton","Lavender","Flax","Sage","Rosemary","Mushroom","Blue Berries","Deep Coal","Iron Ore","Quartz","Sulfur","Aether Salt","Iron Bar","Wood Plank","Cloth Roll","Leather","Wooden Club","Iron Sword","Hunting Bow","Wooden Shield","Cloth Tunic","Leather Armor","Iron Mail","Traveler Boots","Leather Gloves","Iron Helmet","Green Cloak","Silver Pendant","Simple Ring","Arrow","Torch","Storage Token","Portal Shard","Bandage","Antidote","Mana Draught","Summoning Charm","Book of Beginnings","Stormglass","Moon Salt","Grave Moss","Quartz Lens","Iron Rune","Woven Charm","Cinder Resin","Frost Distillate","Verdant Tincture","Gloam Wax","Hearthstone Focus","Riftglass Focus","Gloam Focus","Tempest Focus","Empty Echo Vessel","Echo of Battle","Memory of Rain","Hearth Echo","Wanderer's Trace","Cinder Echo","Attunement Charge")
 COLORS=((211,166,54),(190,139,74),(81,126,80),(149,78,61),(190,69,69),(75,112,181),(91,91,96),(121,82,47),(177,177,166),(130,119,91))
 
@@ -32,7 +33,9 @@ def dds(path,w,h,pixel):
 
 def main():
  p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output)
- for atlas in range(4):
+ for atlas in range((len(ITEMS)+len(NYMARA_ITEMS)+24)//25):
   pixel=atlas_pixels(atlas*25);name=f"items{atlas+1}";png(root/f"textures/{name}.png",256,256,pixel);bmp(root/f"textures/{name}.bmp",256,256,pixel);dds(root/f"textures/{name}.dds",256,256,pixel)
- (root/"items_eloria.json").write_text(json.dumps({"schema":2,"items":[{"item_id":i,"image_id":i,"name":n} for i,n in enumerate(ITEMS)]},indent=2)+"\n")
+ catalog=[{"item_id":i,"image_id":i,"name":n} for i,n in enumerate(ITEMS)]
+ catalog += [{"item_id":1000+i,"image_id":len(ITEMS)+i,"name":n} for i,n in enumerate(NYMARA_ITEMS)]
+ (root/"items_eloria.json").write_text(json.dumps({"schema":2,"items":catalog},indent=2)+"\n")
 if __name__=="__main__":main()
