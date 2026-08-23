@@ -1,7 +1,9 @@
 #include <string.h>
 #include <time.h>
 #include <SDL_net.h>
+/* Modified for Eloria on 2026-08-22: disable the official EL update endpoint. */
 #include "multiplayer.h"
+#include "eloria_brand.h"
 #include "2d_objects.h"
 #include "3d_objects.h"
 #include "actors_list.h"
@@ -89,7 +91,7 @@ static int version_first_digit=10;	//protocol/game version sent to server
 static int version_second_digit=31;
 #endif // !USE_SSL
 
-const char * web_update_address= "http://www.eternal-lands.com/index.php?content=update";
+const char * web_update_address= ELORIA_UPDATE_URL;
 int port= 2000;
 unsigned char server_address[60];
 #define MAX_TCP_BUFFER  8192
