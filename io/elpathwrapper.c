@@ -65,7 +65,8 @@ static const char* cfgdirname = CONFIGDIR;
 #elif defined(OSX)
 static const char* cfgdirname = "Library/Application Support/Eternal Lands";
 #elif defined(WINDOWS)
-static const char* cfgdirname = "Eternal Lands";
+/* Keep independent Eloria settings and user-supplied assets isolated from EL. */
+static const char* cfgdirname = "Eloria";
 #elif defined(ANDROID)
 static const char* cfgdirname = "user";
 #else /* *nix */
