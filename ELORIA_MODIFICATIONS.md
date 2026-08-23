@@ -15,7 +15,7 @@ Lands Binary Data is included in the Eloria data pack.
 - Added a reproducible generator for an original bootstrap data pack and map.
 - Added asset provenance and compliance checks.
 - Added original procedural humanoid models, skeleton, texture, actor definitions, and eight core animation clips.
-- Added twelve original native-E3D scenery and harvestable models and placed sixteen instances on Emberhaven.
+- Added 43 original native-E3D models: general scenery, modular architecture, biome sets, and seventeen harvestables; sixteen representative instances are placed on Emberhaven.
 - Added a single Eloria server profile targeting TCP port 2000.
 
 Every later modification to an upstream source file must carry a prominent
