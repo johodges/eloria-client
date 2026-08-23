@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
 """Generate an original low-poly Cal3D humanoid and core animation set."""
 from __future__ import annotations
-import argparse, math
+import argparse, json, math
 from pathlib import Path
 import xml.etree.ElementTree as ET
 from generate_bootstrap_pack import png
 
 VERSION = "919"
+RACES = (
+ ("luminous", "Luminous", (77,155,162), "Lake-city citizens shaped by civic duty, trade, and reflected light."),
+ ("votary", "Whitehorn Votary", (139,173,188), "Mountain ascetics adapted to cold, altitude, and patient discipline."),
+ ("glasswarden", "Glasswarden", (121,91,158), "Crystal engineers who study resonance, storms, and the old observatories."),
+ ("orun", "Orun", (172,99,47), "Steppe riders whose camps follow the sunmane herds and seasonal roads."),
+ ("greyhaven", "Greyhaven", (62,86,101), "Western sailors, shipwrights, and moorland wardens."),
+ ("ssarathi", "Ssarathi", (52,116,91), "Scaled riverfolk preserving the archives and water rites of the south."),
+)
+
 BONES = (("root",-1,(0.,0.,0.)),("pelvis",0,(0.,0.,.92)),("spine",1,(0.,0.,.34)),
  ("head",2,(0.,0.,.52)),("upper_arm_l",2,(-.32,0.,.38)),("lower_arm_l",4,(-.34,0.,0.)),
  ("upper_arm_r",2,(.32,0.,.38)),("lower_arm_r",6,(.34,0.,0.)),
@@ -71,9 +80,9 @@ def animation(path,duration,poses):
 def actor_defs(path):
     files={"CAL_walk":"walk.xaf","CAL_run":"run.xaf","CAL_idle":"idle.xaf","CAL_idle2":"idle.xaf","CAL_combat_idle":"idle.xaf","CAL_attack_up_1":"attack.xaf","CAL_attack_down_1":"attack.xaf","CAL_pain1":"pain.xaf","CAL_pain2":"pain.xaf","CAL_die1":"die.xaf","CAL_die2":"die.xaf","CAL_harvest":"harvest.xaf","CAL_pick":"harvest.xaf","CAL_drop":"harvest.xaf","CAL_idle_sit":"sit.xaf","CAL_sit_down":"sit.xaf","CAL_stand_up":"idle.xaf"}
     root=ET.Element("actors")
-    for aid,label in ((0,"Wanderer"),(1,"Wayfarer"),(2,"Sylvan"),(3,"Stonekin")):
-        a=ET.SubElement(root,"actor",id=str(aid),type=f"Eloria {label}")
-        ET.SubElement(a,"skeleton").text="actors/eloria_humanoid.xsf"; ET.SubElement(a,"mesh").text="actors/eloria_humanoid.xmf"; ET.SubElement(a,"skin").text="actors/eloria_humanoid.png"; ET.SubElement(a,"step_duration").text="250"
+    for aid,(slug,label,_,_) in enumerate(RACES):
+        a=ET.SubElement(root,"actor",id=str(aid),type=f"Eloria {label}",race=slug)
+        ET.SubElement(a,"skeleton").text="actors/eloria_humanoid.xsf"; ET.SubElement(a,"mesh").text="actors/eloria_humanoid.xmf"; ET.SubElement(a,"skin").text=f"actors/races/{slug}.png"; ET.SubElement(a,"step_duration").text="250"
         frames=ET.SubElement(a,"frames")
         for tag,name in files.items(): ET.SubElement(frames,tag).text=f"animations/eloria/{name}"
     path.parent.mkdir(parents=True,exist_ok=True); path.write_text('<?xml version="1.0"?>\n'+ET.tostring(root,encoding="unicode")+'\n')
@@ -82,6 +91,13 @@ def main():
     p=argparse.ArgumentParser(); p.add_argument("output",nargs="?",default="build/eloria-data"); root=Path(p.parse_args().output)
     skeleton(root/"actors/eloria_humanoid.xsf"); mesh(root/"actors/eloria_humanoid.xmf")
     png(root/"actors/eloria_humanoid.png",256,256,lambda x,y:(82+(x//32%2)*18,105+(y//32%2)*12,96,255))
+    for slug,_,color,_ in RACES:
+        png(root/f"actors/races/{slug}.png",256,256,
+            lambda x,y,color=color:(min(255,color[0]+(x//32%2)*18),min(255,color[1]+(y//32%2)*12),color[2],255))
+    race_catalog={"schema":1,"default":"luminous","races":[
+        {"actor_type":aid,"id":slug,"name":label,"description":description}
+        for aid,(slug,label,_,description) in enumerate(RACES)]}
+    (root/"races.json").write_text(json.dumps(race_catalog,indent=2)+"\n",encoding="utf-8")
     anims={"idle":(2.,[(0,{2:-.03}),(1,{2:.03}),(2,{2:-.03})]),"walk":(1.,[(0,{4:.5,6:-.5,8:-.55,11:.55}),(.5,{4:-.5,6:.5,8:.55,11:-.55}),(1,{4:.5,6:-.5,8:-.55,11:.55})]),"run":(.7,[(0,{4:.8,6:-.8,8:-.85,11:.85}),(.35,{4:-.8,6:.8,8:.85,11:-.85}),(.7,{4:.8,6:-.8,8:-.85,11:.85})]),"attack":(.65,[(0,{2:-.15,6:-.5}),(.3,{2:.55,6:1.5,7:.7}),(.65,{2:-.15,6:-.5})]),"pain":(.45,[(0,{}),(.2,{2:-.35,4:-.25,6:-.25}),(.45,{})]),"die":(1.2,[(0,{}),(.6,{1:-.8,2:-.8}),(1.2,{1:-1.45,2:-1.45})]),"harvest":(1.1,[(0,{}),(.55,{2:.45,4:1.,6:1.}),(1.1,{})]),"sit":(.8,[(0,{}),(.8,{8:1.35,9:-1.35,11:1.35,12:-1.35})])}
     for name,(duration,poses) in anims.items(): animation(root/f"animations/eloria/{name}.xaf",duration,poses)
     actor_defs(root/"actor_defs/actor_defs.xml")
