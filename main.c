@@ -455,7 +455,10 @@ const char * check_server_id_on_command_line()
 	if (gargc < 2)
 		return "";
 
-	// FIXME!! This should parse for -options rather than blindly returning the last option!
+	/* Options are never server profile IDs. A named server, when supplied, is
+	 * still accepted as the final non-option argument. */
+	if (gargv[gargc - 1][0] == '-')
+		return "";
 
 #ifdef WINDOWS
 	{
