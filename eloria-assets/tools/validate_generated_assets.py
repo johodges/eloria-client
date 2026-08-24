@@ -304,6 +304,27 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Verdant Stair lacks authored scenery or lighting")
             if set(verdant_tiles) != {0, 1, 2, 3} or len(set(verdant_heights)) < 10:
                 raise ValueError("Verdant Stair lacks jungle terraces, water, paths, or relief")
+        if path.as_posix().endswith("maps/nymara/ssarathi_ruins.elm"):
+            ssarathi_tiles = data[tile_offset:height_offset]
+            ssarathi_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/ssarathi_temple.e3d": 1,
+                "3dobjects/nymara/ssarathi_vault_entrance.e3d": 4,
+                "3dobjects/nymara/ssarathi_water_gate.e3d": 6,
+                "3dobjects/nymara/ssarathi_sunken_court.e3d": 6,
+                "3dobjects/nymara/ssarathi_ritual_pool.e3d": 5,
+                "3dobjects/nymara/ssarathi_sun_stela.e3d": 8,
+                "3dobjects/nymara/ssarathi_ruin_arch.e3d": 6,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Ssarthi Ruins is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Ssarthi Ruins arrival is obstructed")
+            if obj3_count < 46 or light_count < 12:
+                raise ValueError("Ssarthi Ruins lacks authored scenery or lighting")
+            if set(ssarathi_tiles) != {0, 1, 2, 3} or 7 not in set(ssarathi_heights):
+                raise ValueError("Ssarthi Ruins lacks temple, channels, pools, or water depth")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,
