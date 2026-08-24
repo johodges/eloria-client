@@ -1227,6 +1227,7 @@ void process_message_from_server (const Uint8 *in_data, int data_length)
 				{
 					safe_snprintf(mapname, sizeof(mapname), "./%s", (char*)in_data + 3);
 				}
+				LOG_INFO("Received CHANGE_MAP from server: '%s'", mapname);
 				change_map(mapname);
 			}
 			break;
