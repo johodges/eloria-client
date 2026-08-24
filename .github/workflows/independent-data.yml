@@ -27,6 +27,35 @@ jobs:
           python3 eloria-assets/tools/generate_nymara_complete.py build/eloria-data
       - name: Verify provenance policy
         run: python3 eloria-assets/tools/check_provenance.py
+      - name: Validate complete sky and safe fog density
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          root = ET.parse(Path("build/eloria-data/skybox/skybox_defs.xml")).getroot()
+          required = {
+              "clouds", "clouds_detail", "clouds_sunny",
+              "clouds_detail_sunny", "clouds_rainy",
+              "clouds_detail_rainy", "sky1", "sky2", "sky3", "sky4",
+              "sky5", "sky1_sunny", "sky2_sunny", "sky3_sunny",
+              "sky4_sunny", "sky5_sunny", "sun", "fog", "fog_sunny",
+              "fog_rainy", "light_ambient", "light_diffuse",
+              "light_ambient_rainy", "light_diffuse_rainy",
+          }
+          assert required <= {child.tag for child in root}
+          for tag in ("fog", "fog_sunny", "fog_rainy"):
+              colors = root.find(tag).findall("color")
+              assert colors and all("a" in color.attrib for color in colors)
+              assert all(0.0 < float(color.attrib["a"]) <= 0.05
+                         for color in colors)
+          for tag in ("light_ambient", "light_diffuse",
+                      "light_ambient_rainy", "light_diffuse_rainy"):
+              colors = root.find(tag).findall("color")
+              assert colors
+              assert all(sum(float(color.attrib[channel])
+                             for channel in ("r", "g", "b")) > 0.0
+                         for color in colors)
+          PY
       - name: Verify original map
         run: |
           python3 - <<'PY'
