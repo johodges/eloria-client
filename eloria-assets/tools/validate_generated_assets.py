@@ -325,6 +325,27 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Ssarthi Ruins lacks authored scenery or lighting")
             if set(ssarathi_tiles) != {0, 1, 2, 3} or 7 not in set(ssarathi_heights):
                 raise ValueError("Ssarthi Ruins lacks temple, channels, pools, or water depth")
+        if path.as_posix().endswith("maps/nymara/manymouth_delta.elm"):
+            delta_tiles = data[tile_offset:height_offset]
+            delta_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/manymouth_stilt_house.e3d": 11,
+                "3dobjects/nymara/manymouth_boardwalk.e3d": 10,
+                "3dobjects/nymara/manymouth_ferry_dock.e3d": 5,
+                "3dobjects/nymara/manymouth_hidden_dock.e3d": 4,
+                "3dobjects/nymara/manymouth_mangrove.e3d": 12,
+                "3dobjects/nymara/manymouth_market_stall.e3d": 6,
+                "3dobjects/nymara/manymouth_flooded_cave.e3d": 4,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Manymouth Delta is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Manymouth Delta arrival is obstructed")
+            if obj3_count < 58 or light_count < 12:
+                raise ValueError("Manymouth Delta lacks authored scenery or lighting")
+            if set(delta_tiles) != {0, 1, 2, 3} or 6 not in set(delta_heights):
+                raise ValueError("Manymouth Delta lacks islands, boardwalks, channels, or depth")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,

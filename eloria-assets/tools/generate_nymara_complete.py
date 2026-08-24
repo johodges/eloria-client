@@ -348,6 +348,21 @@ def ssarathi_height(x,y):
  return 7 if pool else max(9,min(26,11+temple+
               region_noise('ssarathi_ruins',x//7,y//7)//9))
 
+def manymouth_tile(x,y):
+ cx=58/6
+ main_channel=abs(x-cx-2.2*math.sin(y*.38))<1.45
+ distributary=abs((x-cx)+(y-13))<.75 or abs((x-cx)-(y-13))<.75
+ boardwalk=abs(y-cx)<.62 or abs(x-cx)<.58
+ return 2 if boardwalk else 3 if main_channel or distributary else 0 if y>17 else 1
+
+def manymouth_height(x,y):
+ if abs(x-58)<=4 or abs(y-58)<=3: return 11
+ channel=abs(x-58-13*math.sin(y*.065))<10 or \
+         abs((x-58)+(y-78))<7 or abs((x-58)-(y-78))<7
+ levee=max(0,(25-min(x,y,191-x,191-y))//7)
+ return 6 if channel else max(8,min(19,10+levee+
+              region_noise('manymouth_delta',x//9,y//9)//11))
+
 def four_gates_terrain_pixel(kind):
  def pixel(x,y):
   grain=((x*17+y*29+(x^y)*5)%23)-11
@@ -667,6 +682,29 @@ def ssarathi_placements():
  for j,(x,y,r) in enumerate(((46,38,45),(70,38,315),(34,68,90),(82,68,270),
                               (42,102,30),(74,102,330))):
   p.append(("3dobjects/nymara/ssarathi_ruin_arch.e3d",x,y,0,r))
+ return p
+
+def manymouth_placements():
+ p=[]
+ for j,(x,y) in enumerate(((38,34),(58,32),(78,36),(32,58),(54,56),(78,60),
+                            (38,82),(60,80),(82,86),(48,104),(72,106))):
+  p.append(("3dobjects/nymara/manymouth_stilt_house.e3d",x,y,0,j*33))
+ for j,(x,y,r) in enumerate(((58,42,90),(42,58,0),(70,58,0),(58,74,90),
+                              (34,46,45),(82,48,315),(38,72,315),(78,76,45),
+                              (50,94,20),(70,96,340))):
+  p.append(("3dobjects/nymara/manymouth_boardwalk.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((28,38,75),(88,40,285),(24,74,105),(92,78,255),
+                              (58,112,180))):
+  p.append(("3dobjects/nymara/manymouth_ferry_dock.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((30,92,110),(86,94,250),(42,112,160),(76,114,200))):
+  p.append(("3dobjects/nymara/manymouth_hidden_dock.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((22,28),(94,28),(18,54),(98,54),(20,88),(96,88),
+                            (28,108),(88,108),(42,44),(74,44),(34,68),(82,68))):
+  p.append(("3dobjects/nymara/manymouth_mangrove.e3d",x,y,0,j*31))
+ for j,(x,y) in enumerate(((46,48),(66,48),(46,68),(66,68),(56,86),(76,88))):
+  p.append(("3dobjects/nymara/manymouth_market_stall.e3d",x,y,0,j*60))
+ for j,(x,y,r) in enumerate(((26,60,90),(90,62,270),(34,100,120),(82,102,240))):
+  p.append(("3dobjects/nymara/manymouth_flooded_cave.e3d",x,y,0,r))
  return p
 
 def drowned_crown_placements():
@@ -996,6 +1034,8 @@ def generate_maps(root):
    placements=verdant_placements()
   elif name == 'ssarathi_ruins':
    placements=ssarathi_placements()
+  elif name == 'manymouth_delta':
+   placements=manymouth_placements()
   elif name in REGIONS:
    authored=profile['objects']
    rings=((30,30),(58,28),(86,30),(28,58),(88,58),(30,86),(58,88),(86,86),
@@ -1082,6 +1122,9 @@ def generate_maps(root):
   elif name=='ssarathi_ruins':
    lights += [(x,y,3.0,.25,.74,.62) for x,y in
               ((58,28),(48,48),(68,48),(42,72),(74,72),(58,92),(32,32),(84,32))]
+  elif name=='manymouth_delta':
+   lights += [(x,y,2.8,.32,.66,.45) for x,y in
+              ((38,34),(58,32),(78,36),(32,58),(54,56),(78,60),(38,82),(60,80))]
   elif name=='drowned_crown':
    lights += [(x,y,2.7,.24,.70,.78) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
@@ -1103,9 +1146,9 @@ def generate_maps(root):
   elif name=='manymouth_flooded_labyrinth':
    lights += [(x,y,2.6,.24,.58,.48) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
-  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold' else crownwater_tile if name=='crownwater' else whitehorn_tile if name=='whitehorn_range' else amethyst_tile if name=='amethyst_barrens' else sunmane_tile if name=='sunmane_steppe' else amberwood_tile if name=='amberwood' else grey_moors_tile if name=='grey_moors' else westhaven_tile if name=='westhaven' else verdant_tile if name=='verdant_stair' else ssarathi_tile if name=='ssarathi_ruins'
+  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold' else crownwater_tile if name=='crownwater' else whitehorn_tile if name=='whitehorn_range' else amethyst_tile if name=='amethyst_barrens' else sunmane_tile if name=='sunmane_steppe' else amberwood_tile if name=='amberwood' else grey_moors_tile if name=='grey_moors' else westhaven_tile if name=='westhaven' else verdant_tile if name=='verdant_stair' else ssarathi_tile if name=='ssarathi_ruins' else manymouth_tile if name=='manymouth_delta'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
-  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold' else crownwater_height if name=='crownwater' else whitehorn_height if name=='whitehorn_range' else amethyst_height if name=='amethyst_barrens' else sunmane_height if name=='sunmane_steppe' else amberwood_height if name=='amberwood' else grey_moors_height if name=='grey_moors' else westhaven_height if name=='westhaven' else verdant_height if name=='verdant_stair' else ssarathi_height if name=='ssarathi_ruins'
+  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold' else crownwater_height if name=='crownwater' else whitehorn_height if name=='whitehorn_range' else amethyst_height if name=='amethyst_barrens' else sunmane_height if name=='sunmane_steppe' else amberwood_height if name=='amberwood' else grey_moors_height if name=='grey_moors' else westhaven_height if name=='westhaven' else verdant_height if name=='verdant_stair' else ssarathi_height if name=='ssarathi_ruins' else manymouth_height if name=='manymouth_delta'
                    else lambda x,y,p=profile,n=name:region_height(p,n,x,y))
   make_map(root/f"maps/nymara/{name}.elm",width=32,height=32,placements=placements,
    ambient=profile['ambient'],lights=lights,
