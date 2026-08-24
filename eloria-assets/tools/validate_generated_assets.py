@@ -594,27 +594,27 @@ def validate_four_gates_scenery(root: Path) -> None:
 def validate_four_gates_npcs_equipment(root: Path) -> None:
     actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
     expected_actors = {
-        300: ("actors/nymara/npcs/luminous_official_f.xmf", 1050),
-        301: ("actors/nymara/npcs/luminous_guard_f.xmf", 1120),
-        302: ("actors/nymara/npcs/luminous_merchant_f.xmf", 980),
-        303: ("actors/nymara/npcs/luminous_ferryman_f.xmf", 1050),
-        304: ("actors/nymara/npcs/luminous_scholar_f.xmf", 1050),
-        305: ("actors/nymara/npcs/luminous_lake_priest_f.xmf", 1050),
-        306: ("actors/nymara/npcs/luminous_civilian_f.xmf", 980),
-        307: ("actors/nymara/npcs/luminous_official_m.xmf", 1050),
-        308: ("actors/nymara/npcs/luminous_guard_m.xmf", 1120),
-        309: ("actors/nymara/npcs/luminous_merchant_m.xmf", 980),
-        310: ("actors/nymara/npcs/luminous_ferryman_m.xmf", 1050),
-        311: ("actors/nymara/npcs/luminous_scholar_m.xmf", 1050),
-        312: ("actors/nymara/npcs/luminous_lake_priest_m.xmf", 1050),
-        313: ("actors/nymara/npcs/luminous_civilian_m.xmf", 980),
+        300: ("actors/nymara/npcs/luminous_official_f.cmf", 1050),
+        301: ("actors/nymara/npcs/luminous_guard_f.cmf", 1120),
+        302: ("actors/nymara/npcs/luminous_merchant_f.cmf", 980),
+        303: ("actors/nymara/npcs/luminous_ferryman_f.cmf", 1050),
+        304: ("actors/nymara/npcs/luminous_scholar_f.cmf", 1050),
+        305: ("actors/nymara/npcs/luminous_lake_priest_f.cmf", 1050),
+        306: ("actors/nymara/npcs/luminous_civilian_f.cmf", 980),
+        307: ("actors/nymara/npcs/luminous_official_m.cmf", 1050),
+        308: ("actors/nymara/npcs/luminous_guard_m.cmf", 1120),
+        309: ("actors/nymara/npcs/luminous_merchant_m.cmf", 980),
+        310: ("actors/nymara/npcs/luminous_ferryman_m.cmf", 1050),
+        311: ("actors/nymara/npcs/luminous_scholar_m.cmf", 1050),
+        312: ("actors/nymara/npcs/luminous_lake_priest_m.cmf", 1050),
+        313: ("actors/nymara/npcs/luminous_civilian_m.cmf", 980),
     }
     for actor_id, (mesh_name, minimum) in expected_actors.items():
         actor = actors.find(f"actor[@id='{actor_id}']")
         if actor is None or actor.findtext("mesh") != mesh_name:
             raise ValueError(f"Four Gates NPC actor mapping changed: {actor_id}")
         vertices = sum(int(sub.attrib["NUMVERTICES"])
-                       for sub in cal_xml(root / mesh_name).findall("SUBMESH"))
+                       for sub in cal_xml((root / mesh_name).with_suffix(".xmf")).findall("SUBMESH"))
         if vertices < minimum:
             raise ValueError(f"Four Gates NPC fell back to generic topology: {mesh_name}")
     expected_items = {
@@ -652,11 +652,12 @@ def validate_regional_npcs(root: Path) -> None:
     for record in records:
         actor_id=record["actor_type"]
         actor=actors.find(f"actor[@id='{actor_id}']")
-        expected=f"actors/nymara/npcs/{record['id']}.xmf"
+        expected=f"actors/nymara/npcs/{record['id']}.cmf"
         if actor is None or actor.findtext("mesh") != expected:
             raise ValueError(f"regional NPC actor mapping changed: {actor_id}")
         mesh=root/expected
-        vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(mesh).findall("SUBMESH"))
+        vertices=sum(int(sub.attrib["NUMVERTICES"])
+                     for sub in cal_xml(mesh.with_suffix(".xmf")).findall("SUBMESH"))
         if vertices < 950:
             raise ValueError(f"regional NPC fell back to proxy topology: {mesh}")
         cultures.add(record["culture"])
@@ -665,6 +666,45 @@ def validate_regional_npcs(root: Path) -> None:
         raise ValueError(f"incomplete regional NPC cultures: {sorted(cultures)}")
     if len(digests) != len(records):
         raise ValueError("regional NPC roster reuses identical silhouette meshes")
+
+
+def validate_nymara_actor_runtime_graph(root: Path) -> None:
+    """Follow production NPC definitions to the exact files Cal3D loads."""
+    actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
+    resolved = {}
+    for actor in actors.findall("actor"):
+        actor_id = int(actor.attrib["id"])
+        if not 300 <= actor_id < 400:
+            continue
+        references = {
+            "skeleton": actor.findtext("skeleton"),
+            "mesh": actor.findtext("mesh"),
+            "skin": actor.findtext("skin"),
+        }
+        expected_suffix = {"skeleton": ".csf", "mesh": ".cmf", "skin": ".png"}
+        for role, relative in references.items():
+            if not relative or Path(relative).suffix.casefold() != expected_suffix[role]:
+                raise ValueError(f"Nymara actor {actor_id} uses non-runtime {role}: {relative}")
+            target = root / relative
+            if not target.is_file():
+                raise ValueError(f"Nymara actor {actor_id} references missing {role}: {relative}")
+        if (root / references["skeleton"]).read_bytes()[:4] != b"CSF\0":
+            raise ValueError(f"Nymara actor {actor_id} has invalid binary skeleton")
+        if (root / references["mesh"]).read_bytes()[:4] != b"CMF\0":
+            raise ValueError(f"Nymara actor {actor_id} has invalid binary mesh")
+        for frame in actor.findall("frames/*"):
+            relative = (frame.text or "").split()[0]
+            if Path(relative).suffix.casefold() != ".caf":
+                raise ValueError(f"Nymara actor {actor_id} uses non-runtime animation: {relative}")
+            target = root / relative
+            if not target.is_file() or target.read_bytes()[:4] != b"CAF\0":
+                raise ValueError(f"Nymara actor {actor_id} has missing/invalid animation: {relative}")
+        resolved[actor_id] = tuple(hashlib.sha256((root / references[key]).read_bytes()).hexdigest()
+                                   for key in ("mesh", "skin"))
+    if {307, 309} - resolved.keys():
+        raise ValueError("Toran (307) or Nima Vey (309) is missing from the client actor registry")
+    if resolved[307][0] == resolved[309][0] or resolved[307][1] == resolved[309][1]:
+        raise ValueError("Toran and Nima Vey unexpectedly share a mesh or texture digest")
 
 
 def expected_dds_size(name: str) -> tuple[int, int]:
@@ -827,6 +867,7 @@ def main() -> None:
     validate_four_gates_scenery(root)
     validate_four_gates_npcs_equipment(root)
     validate_regional_npcs(root)
+    validate_nymara_actor_runtime_graph(root)
     validate_animations(root)
     validate_customization_dds(root)
     validate_playable_characters(root)
