@@ -85,6 +85,16 @@ concept-comparison, overhead, and representative topology QA under
 - Exact actor references, all six culture rosters, topology floors, and per-NPC mesh
   uniqueness are validated; representative comparisons live under `qa/regional-npcs/`.
 
+## Regional equipment
+
+- All 36 configured items retain frozen item IDs, canonical slots, attachment bones, icons,
+  and culture ownership.
+- Weapons now use tapered blades, hafts, heads, guards, grips, and points; shields use layered
+  rims and bosses; armor and capes use shaped panels and trim instead of single cuboids.
+- Deterministic culture-item maker details keep every runtime E3D payload distinct.
+- Complete roster, topology, material/icon resolution, attachment, and uniqueness checks are
+  enforced; representative topology is committed under `qa/regional-equipment/`.
+
 ## Four Gates vertical slice
 
 - The ELM composition is centred on the authoritative `(58,58)` arrival rather

@@ -666,6 +666,31 @@ def validate_regional_npcs(root: Path) -> None:
         raise ValueError("regional NPC roster reuses identical silhouette meshes")
 
 
+def validate_regional_equipment(root: Path) -> None:
+    items=json.loads((root / "nymara_equipment.json").read_text())["items"]
+    if len(items) != 36 or {item["culture"] for item in items} != {
+            "luminous","votary","glasswarden","orun","greyhaven","ssarathi"}:
+        raise ValueError("regional equipment roster is incomplete")
+    digests=set()
+    for item in items:
+        expected_bone=("lower_arm_r" if item["slot"] == "weapon" else
+                       "lower_arm_l" if item["slot"] == "shield" else "spine")
+        if item["attachment_bone"] != expected_bone:
+            raise ValueError(f"incorrect equipment attachment: {item['id']}")
+        model=root/item["model"]
+        data=model.read_bytes()
+        vertices=struct.unpack_from("<i",data,28)[0]
+        if vertices < 32:
+            raise ValueError(f"regional equipment fell back to proxy topology: {model}")
+        if png_dimensions(model.with_suffix(".png")) != (256,256):
+            raise ValueError(f"invalid regional equipment material: {model}")
+        if png_dimensions(root/item["icon"]) != (64,64):
+            raise ValueError(f"invalid regional equipment icon: {item['icon']}")
+        digests.add(hashlib.sha256(data).digest())
+    if len(digests) != len(items):
+        raise ValueError("regional equipment roster reuses identical geometry")
+
+
 def expected_dds_size(name: str) -> tuple[int, int]:
     if name.startswith("eyes_"):
         return 24, 24
@@ -803,6 +828,7 @@ def main() -> None:
     validate_four_gates_scenery(root)
     validate_four_gates_npcs_equipment(root)
     validate_regional_npcs(root)
+    validate_regional_equipment(root)
     validate_animations(root)
     validate_customization_dds(root)
     validate_playable_characters(root)

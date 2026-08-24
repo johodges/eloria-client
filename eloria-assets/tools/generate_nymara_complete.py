@@ -932,12 +932,28 @@ def equipment_shape(kind):
    box(v,i,(0,.13,1.26),(.86,.08,1.72)); tapered(v,i,.34,2.18,.51,.42,12); box(v,i,(-.39,.12,1.25),(.12,.10,1.55)); box(v,i,(.39,.12,1.25),(.12,.10,1.55))
   elif kind=='ferry_hook':
    tapered(v,i,0,2.55,.075,.06,10); tapered(v,i,2.45,2.88,.24,.10,10,center=(.10,0)); tapered(v,i,2.70,3.06,.18,.04,8,center=(.28,0)); box(v,i,(0,0,.28),(.28,.16,.16))
-  elif any(x in kind for x in ("blade","sabre","cutlass")): box(v,i,(0,0,1.1),(.13,.10,2.2)); tapered(v,i,2.1,2.65,.18,0,4)
-  elif any(x in kind for x in ("spear","pike","staff","focus")): box(v,i,(0,0,1.5),(.10,.10,3)); tapered(v,i,2.9,3.35,.28,0,6)
-  elif "shield" in kind: tapered(v,i,0,1.6,.72,.72,12); box(v,i,(0,.12,.8),(.12,.15,1.6))
-  elif any(x in kind for x in ("mail","armor","leathers")): box(v,i,(0,0,1.25),(.62,.32,.78)); box(v,i,(0,0,.78),(.54,.30,.34))
-  elif any(x in kind for x in ("cape","mantle")): box(v,i,(0,.16,1.15),(.72,.08,1.65))
-  else: box(v,i,(0,0,.65),(.35,.22,1.3)); tapered(v,i,1.25,1.65,.28,0,6)
+  elif any(x in kind for x in ("blade","sabre","cutlass")):
+   tapered(v,i,0,.38,.11,.09,10); box(v,i,(0,0,.44),(.62,.15,.12)); tapered(v,i,.50,2.38,.16,.07,8); tapered(v,i,2.38,2.72,.10,0,6)
+  elif any(x in kind for x in ("spear","pike","staff")):
+   tapered(v,i,0,2.82,.065,.05,10); tapered(v,i,2.78,3.34,.25,0,8); tapered(v,i,.12,.40,.14,.07,8)
+  elif "bow" in kind:
+   for z,w in ((.34,.36),(.86,.52),(1.38,.36)): box(v,i,(0,0,z),(w,.08,.46))
+   box(v,i,(0,.02,.86),(.05,.04,1.52)); tapered(v,i,.65,1.08,.12,.08,8)
+  elif any(x in kind for x in ("hammer","pick","adze")):
+   tapered(v,i,0,2.20,.075,.06,10); box(v,i,(0,0,2.24),(.72,.28,.25)); tapered(v,i,2.20,2.62,.22,.04,8,center=(.28,0))
+  elif "shield" in kind:
+   tapered(v,i,0,1.72,.76,.68,16); tapered(v,i,.10,1.62,.61,.54,16); box(v,i,(0,.12,.86),(.14,.16,1.45)); tapered(v,i,.55,1.20,.24,.15,10)
+  elif any(x in kind for x in ("mail","armor","leathers")):
+   box(v,i,(0,0,1.24),(.70,.36,.82)); tapered(v,i,.70,1.72,.46,.36,12)
+   for z in (.78,.98,1.18,1.38): box(v,i,(0,-.20,z),(.66,.055,.06))
+  elif any(x in kind for x in ("cape","mantle")):
+   tapered(v,i,.32,2.08,.49,.40,12,center=(0,.13)); box(v,i,(-.39,.13,1.18),(.11,.08,1.45)); box(v,i,(.39,.13,1.18),(.11,.08,1.45))
+  else:
+   tapered(v,i,0,1.30,.27,.20,10); tapered(v,i,1.20,1.74,.31,0,8); box(v,i,(0,.10,.62),(.20,.16,.86))
+  # A deterministic maker's gem prevents distinct configured items sharing geometry.
+  code=sum((n+1)*ord(ch) for n,ch in enumerate(kind))
+  tapered(v,i,.42+.0001*(code%701),.66+.0001*(code%701),.09+.0001*(code%89),0,8,
+          center=((-.18 if code%2 else .18),-.12))
  return build
 
 def generate_equipment(root):
