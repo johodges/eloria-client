@@ -902,6 +902,11 @@ def profession_idle(root, slug, feature):
   poses=[(0,{2:(0,-.035),4:(0,.12),6:(0,-.20),7:(0,.10)}),
          (1.7,{2:(0,.025),4:(0,.08),6:(0,-.17),7:(0,.08)}),
          (3.4,{2:(0,-.035),4:(0,.12),6:(0,-.20),7:(0,.10)})]
+ shoulder_angle={"civic_scholar":1.18,"civic_official":1.30,
+                 "civic_merchant":1.22,"civic_ferryman":1.26}.get(feature,1.24)
+ for _,frame in poses:
+  frame[4]=(1,-shoulder_angle)
+  frame[6]=(1,shoulder_angle)
  humanoid_animation(root/anim_dir/"idle.xaf",poses[-1][0],poses)
  shutil.copy2(root/anim_dir/"idle.caf",root/anim_dir/"idle2.caf")
  return anim_dir
@@ -925,8 +930,7 @@ def generate_npcs(root, actors):
     else: feature=f"nymara:{culture}:{role}"
     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
     png(base/f"{slug}.png",1024,1024,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",512,512,material_pixel(accent,feature))
-    anim_dir=(profession_idle(root,slug,feature) if feature in ("civic_scholar","civic_ferryman","civic_official","civic_merchant")
-              else "animations/nymara/humanoid")
+    anim_dir=profession_idle(root,slug,feature)
     append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.csf",f"actors/nymara/npcs/{slug}.cmf",f"actors/nymara/npcs/{slug}.png",anim_dir,.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.65 if feature=="civic_ferryman" else 2.2))
     out.append({"actor_type":aid,"id":slug,"culture":culture,"role":role,"variant":variant,"portrait":f"portraits/nymara/npcs/{slug}.png","collision_radius":.42,"scale":.96 if variant=='f' else 1.0}); aid+=1
  (root/"nymara_npcs.json").write_text(json.dumps({"schema":1,"npcs":out},indent=2)+"\n")
