@@ -58,6 +58,13 @@ def validate_maps(root: Path) -> None:
         for offset, size, label in sections:
             if offset < 124 or size < 0 or offset + size > len(data):
                 raise ValueError(f"invalid ELM {label} bounds: {path}")
+        for index in range(obj3_count):
+            record_offset = obj3_offset + index * obj3_size
+            raw_name = struct.unpack_from("<80s", data, record_offset)[0]
+            name = raw_name.split(b"\0", 1)[0].decode("utf-8")
+            asset = root / name.removeprefix("./")
+            if not asset.is_file():
+                raise ValueError(f"missing ELM object {name} referenced by {path}")
         if path.name == "newcharactermap.elm":
             preview_x, preview_y = 43, 156
             tiles = data[tile_offset:height_offset]
@@ -68,6 +75,22 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("character preview must stand on visible z=0 terrain")
             if obj3_count < 4 or light_count < 1:
                 raise ValueError("character preview scene lacks scenery or lighting")
+        if path.as_posix().endswith("maps/nymara/four_gates.elm"):
+            spawn_x, spawn_y = 58, 58
+            tiles = data[tile_offset:height_offset]
+            heights = data[height_offset:height_offset + width * height * 36]
+            tile = tiles[(spawn_y // 6) * width + spawn_x // 6]
+            raw_height = heights[spawn_y * width * 6 + spawn_x]
+            if tile == 255 or (raw_height & 0x3f) != 11:
+                raise ValueError("Four Gates start spawn must be on visible z=0 terrain")
+            if obj3_count < 1:
+                raise ValueError("Four Gates start map lacks scenery")
+
+
+def validate_runtime_xml(root: Path) -> None:
+    path = root / "extentions.xml"
+    if not path.is_file() or ET.parse(path).getroot().tag != "extentions":
+        raise ValueError("missing or invalid legacy extentions.xml")
 
 
 def validate_skeletons(root: Path) -> None:
@@ -170,6 +193,7 @@ def main() -> None:
     parser.add_argument("data_root", nargs="?", default="build/eloria-data")
     root = Path(parser.parse_args().data_root)
     validate_maps(root)
+    validate_runtime_xml(root)
     validate_skeletons(root)
     validate_meshes(root)
     validate_animations(root)
