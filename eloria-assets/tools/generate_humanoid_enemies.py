@@ -82,6 +82,15 @@ def enemy_mesh(path, feature, scale):
         ellipsoid(tuple(v*scale for v in center), tuple(v*scale for v in size), bone, vertices, faces)
     if feature in ("hood", "crown", "armor"):
         cuboid((0,0,1.82*scale),(.48*scale,.44*scale,.48*scale),3,vertices,faces)
+    if feature == "civic_official":
+        ellipsoid((0,0,1.42*scale),(.82*scale,.42*scale,.42*scale),2,vertices,faces,6,12)
+        ellipsoid((0,0,1.91*scale),(.43*scale,.38*scale,.25*scale),3,vertices,faces,5,10)
+        for x in (-.17,0,.17):
+            ellipsoid((x*scale,0,2.14*scale),(.09*scale,.09*scale,.34*scale),3,vertices,faces,5,8)
+    if feature == "civic_merchant":
+        ellipsoid((0,-.01*scale,1.84*scale),(.48*scale,.43*scale,.46*scale),3,vertices,faces,6,12)
+        ellipsoid((-.26*scale,-.18*scale,1.03*scale),(.28*scale,.20*scale,.36*scale),2,vertices,faces,5,8)
+        ellipsoid((.26*scale,-.18*scale,1.03*scale),(.28*scale,.20*scale,.36*scale),2,vertices,faces,5,8)
     if feature == "crown":
         for x in (-.16,0,.16): cuboid((x*scale,0,2.12*scale),(.08*scale,.08*scale,.34*scale),3,vertices,faces)
     if feature in ("claws", "ragged"):
