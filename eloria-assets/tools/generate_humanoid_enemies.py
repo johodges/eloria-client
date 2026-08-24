@@ -131,16 +131,55 @@ def enemy_mesh(path, feature, scale):
         ellipsoid((0,0,1.91*scale),(.43*scale,.39*scale,.34*scale),3,vertices,faces,6,12)
         ellipsoid((0,-.18*scale,2.02*scale),(.12*scale,.12*scale,.48*scale),3,vertices,faces,5,8)
     if feature == "civic_ferryman":
-        ellipsoid((0,0,1.25*scale),(.70*scale,.38*scale,.66*scale),2,vertices,faces,6,12)
-        cuboid((0,-.23*scale,1.07*scale),(.74*scale,.08*scale,.17*scale),2,vertices,faces)
-        ellipsoid((0,0,1.90*scale),(.48*scale,.42*scale,.22*scale),3,vertices,faces,5,12)
-        ellipsoid((0,0,2.04*scale),(.22*scale,.20*scale,.20*scale),3,vertices,faces,5,8)
+        # Travel-worn outer robe, shoulder wrap and deep hood are separate
+        # shells, not lines painted over the shared body.
+        profile_surface([(0,.015,.72*scale,.34*scale,.20*scale),(0,.01,1.02*scale,.39*scale,.21*scale),(0,0,1.36*scale,.37*scale,.20*scale),(0,0,1.58*scale,.29*scale,.17*scale)],
+                        [1,2,2,25],vertices,faces,sides=28)
+        ellipsoid((0,-.02*scale,1.52*scale),(.84*scale,.48*scale,.25*scale),25,vertices,faces,8,20)
+        ellipsoid((0,.02*scale,1.91*scale),(.55*scale,.48*scale,.50*scale),3,vertices,faces,10,24)
+        ellipsoid((0,-.20*scale,1.82*scale),(.39*scale,.20*scale,.34*scale),3,vertices,faces,8,18)
+        # Double belt, buckle and two asymmetric travel bags.
+        cuboid((0,-.225*scale,1.12*scale),(.78*scale,.08*scale,.10*scale),2,vertices,faces)
+        cuboid((0,-.275*scale,1.12*scale),(.13*scale,.05*scale,.15*scale),2,vertices,faces)
+        ellipsoid((-.34*scale,-.17*scale,.97*scale),(.31*scale,.19*scale,.42*scale),2,vertices,faces,7,16)
+        ellipsoid((.31*scale,-.18*scale,1.00*scale),(.24*scale,.17*scale,.31*scale),2,vertices,faces,7,14)
+        # Full-height lantern pole rigidly follows the right hand anchor.
+        cuboid((.91*scale,0,1.23*scale),(.075*scale,.075*scale,2.55*scale),17,vertices,faces)
+        cuboid((.91*scale,0,2.47*scale),(.40*scale,.34*scale,.08*scale),17,vertices,faces)
+        cuboid((.91*scale,0,2.12*scale),(.36*scale,.32*scale,.55*scale),17,vertices,faces)
+        for x in (.75,.91,1.07):
+            cuboid((x*scale,-.18*scale,2.12*scale),(.035*scale,.035*scale,.55*scale),17,vertices,faces)
+        ellipsoid((.91*scale,-.02*scale,2.13*scale),(.25*scale,.22*scale,.37*scale),17,vertices,faces,7,16)
+        ellipsoid((.91*scale,0,2.43*scale),(.22*scale,.20*scale,.16*scale),17,vertices,faces,6,14)
     if feature == "civic_scholar":
-        ellipsoid((0,0,1.31*scale),(.69*scale,.39*scale,.75*scale),2,vertices,faces,6,12)
-        cuboid((0,-.23*scale,1.12*scale),(.72*scale,.07*scale,.08*scale),2,vertices,faces)
-        for z in (.98,1.12,1.26):
-            cuboid((.27*scale,-.25*scale,z*scale),(.16*scale,.09*scale,.07*scale),2,vertices,faces)
-        ellipsoid((0,0,1.94*scale),(.47*scale,.42*scale,.17*scale),3,vertices,faces,5,12)
+        # Layered under-robe, split teal over-robe, mantle and embroidered
+        # front panel produce the long triangular concept silhouette.
+        profile_surface([(0,0,.46*scale,.39*scale,.20*scale),(0,0,.82*scale,.38*scale,.20*scale),(0,0,1.18*scale,.35*scale,.19*scale),(0,0,1.55*scale,.28*scale,.16*scale)],
+                        [1,1,2,25],vertices,faces,sides=30)
+        for side in (-1,1):
+            profile_surface([(side*.17*scale,-.205*scale,.52*scale,.17*scale,.055*scale),(side*.18*scale,-.215*scale,.91*scale,.18*scale,.06*scale),(side*.15*scale,-.22*scale,1.34*scale,.16*scale,.06*scale)],
+                            [1,2,2],vertices,faces,sides=16)
+        ellipsoid((0,0,1.53*scale),(.82*scale,.45*scale,.24*scale),25,vertices,faces,8,22)
+        cuboid((0,-.235*scale,1.12*scale),(.76*scale,.08*scale,.10*scale),2,vertices,faces)
+        cuboid((0,-.285*scale,1.12*scale),(.15*scale,.05*scale,.16*scale),2,vertices,faces)
+        # Pouches, scroll case and rolled charts.
+        for z in (.93,1.08,1.23):
+            ellipsoid((.30*scale,-.24*scale,z*scale),(.17*scale,.12*scale,.10*scale),2,vertices,faces,5,12)
+        cuboid((-.32*scale,-.20*scale,1.02*scale),(.16*scale,.15*scale,.48*scale),2,vertices,faces)
+        for x in (-.37,-.31,-.25):
+            ellipsoid((x*scale,-.22*scale,1.27*scale),(.07*scale,.07*scale,.35*scale),2,vertices,faces,5,10)
+        # Open book is modeled as covers, page blocks and raised spine and is
+        # weighted to both hands for a readable profession pose.
+        for x,bone,tilt in ((-.18,16,-1),(.18,17,1)):
+            cuboid((x*scale,-.48*scale,1.39*scale),(.34*scale,.045*scale,.43*scale),bone,vertices,faces)
+            cuboid((x*scale,-.515*scale,1.39*scale),(.30*scale,.035*scale,.38*scale),bone,vertices,faces)
+            for z in (1.24,1.31,1.38,1.45,1.52):
+                cuboid((x*scale,-.54*scale,z*scale),(.27*scale,.012*scale,.012*scale),bone,vertices,faces)
+        cuboid((0,-.50*scale,1.39*scale),(.055*scale,.08*scale,.46*scale),16,vertices,faces)
+        # Cyan focus crystal above the left palm.
+        ellipsoid((-.72*scale,-.10*scale,1.63*scale),(.18*scale,.18*scale,.32*scale),16,vertices,faces,7,12)
+        ellipsoid((-.72*scale,-.10*scale,1.88*scale),(.08*scale,.08*scale,.18*scale),16,vertices,faces,5,10)
+        ellipsoid((0,0,1.96*scale),(.51*scale,.45*scale,.22*scale),3,vertices,faces,7,18)
     if feature == "civic_priest":
         ellipsoid((0,0,1.33*scale),(.74*scale,.42*scale,.79*scale),2,vertices,faces,6,12)
         ellipsoid((0,-.22*scale,1.36*scale),(.34*scale,.10*scale,.46*scale),2,vertices,faces,5,10)

@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 
 from generate_bootstrap_pack import png, make_map
 from generate_characters import skeleton as humanoid_skeleton
-from generate_humanoid_enemies import enemy_mesh, material_pixel
+from generate_humanoid_enemies import animation as humanoid_animation, enemy_mesh, material_pixel
 from generate_creatures import skeleton as creature_skeleton, creature_mesh, creature_material
 from generate_scenery import e3d, texture, box, tapered, crossed_leaves
 
@@ -879,6 +879,25 @@ def copy_aliases(root, srcdir, names):
  for name,src in names.items():
   dst=root/srcdir/name; dst.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(root/srcdir/src,dst)
 
+def profession_idle(root, slug, feature):
+ anim_dir=f"animations/nymara/humanoid/{slug}"
+ aliases={name:f"../{name}" for name in (
+  "idle.caf","idle2.caf","walk.caf","run.caf","sit.caf","sit_down.caf",
+  "stand_up.caf","combat_idle.caf","attack.caf","cast.caf","pain.caf",
+  "die.caf","harvest.caf","pick.caf","drop.caf","wave.caf","bow.caf")}
+ copy_aliases(root,anim_dir,aliases)
+ if feature=="civic_scholar":
+  poses=[(0,{2:(0,-.05),4:(0,-.72),5:(0,-.76),6:(0,-.72),7:(0,-.76)}),
+         (1.4,{2:(0,.035),4:(0,-.68),5:(0,-.82),6:(0,-.70),7:(0,-.80)}),
+         (2.8,{2:(0,-.05),4:(0,-.72),5:(0,-.76),6:(0,-.72),7:(0,-.76)})]
+ else:
+  poses=[(0,{2:(0,-.035),4:(0,.12),6:(0,-.20),7:(0,.10)}),
+         (1.7,{2:(0,.025),4:(0,.08),6:(0,-.17),7:(0,.08)}),
+         (3.4,{2:(0,-.035),4:(0,.12),6:(0,-.20),7:(0,.10)})]
+ humanoid_animation(root/anim_dir/"idle.xaf",poses[-1][0],poses)
+ shutil.copy2(root/anim_dir/"idle.caf",root/anim_dir/"idle2.caf")
+ return anim_dir
+
 def generate_npcs(root, actors):
  base=root/"actors/nymara/npcs"; humanoid_skeleton(base/"nymara_humanoid.xsf")
  aliases={"idle.caf":"../../enemies/idle.caf","idle2.caf":"../../enemies/idle.caf","walk.caf":"../../enemies/walk.caf","run.caf":"../../enemies/run.caf","sit.caf":"../../eloria/sit.caf","sit_down.caf":"../../eloria/sit.caf","stand_up.caf":"../../eloria/idle.caf","combat_idle.caf":"../../enemies/combat_idle.caf","attack.caf":"../../enemies/attack.caf","cast.caf":"../../enemies/cast.caf","pain.caf":"../../enemies/pain.caf","die.caf":"../../enemies/die.caf","harvest.caf":"../../eloria/harvest.caf","pick.caf":"../../eloria/harvest.caf","drop.caf":"../../eloria/harvest.caf","wave.caf":"../../enemies/cast.caf","bow.caf":"../../eloria/harvest.caf"}
@@ -898,7 +917,9 @@ def generate_npcs(root, actors):
     else: feature=f"nymara:{culture}:{role}"
     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
     png(base/f"{slug}.png",1024,1024,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",512,512,material_pixel(accent,feature))
-    append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.csf",f"actors/nymara/npcs/{slug}.cmf",f"actors/nymara/npcs/{slug}.png","animations/nymara/humanoid",.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.05))
+    anim_dir=(profession_idle(root,slug,feature) if feature in ("civic_scholar","civic_ferryman")
+              else "animations/nymara/humanoid")
+    append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.csf",f"actors/nymara/npcs/{slug}.cmf",f"actors/nymara/npcs/{slug}.png",anim_dir,.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.65 if feature=="civic_ferryman" else 2.2))
     out.append({"actor_type":aid,"id":slug,"culture":culture,"role":role,"variant":variant,"portrait":f"portraits/nymara/npcs/{slug}.png","collision_radius":.42,"scale":.96 if variant=='f' else 1.0}); aid+=1
  (root/"nymara_npcs.json").write_text(json.dumps({"schema":1,"npcs":out},indent=2)+"\n")
  return out
