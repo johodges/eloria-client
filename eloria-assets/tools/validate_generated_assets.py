@@ -241,6 +241,27 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Amberwood lacks authored scenery or lighting")
             if set(amber_tiles) != {0, 1, 2, 3} or len(set(amber_heights)) < 8:
                 raise ValueError("Amberwood lacks estate, roads, old growth, or relief")
+        if path.as_posix().endswith("maps/nymara/grey_moors.elm"):
+            moor_tiles = data[tile_offset:height_offset]
+            moor_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/grey_moor_barrow.e3d": 6,
+                "3dobjects/nymara/grey_moor_standing_stones.e3d": 8,
+                "3dobjects/nymara/grey_moor_boardwalk.e3d": 8,
+                "3dobjects/nymara/grey_moor_crypt_entrance.e3d": 4,
+                "3dobjects/nymara/grey_moor_abandoned_cottage.e3d": 6,
+                "3dobjects/nymara/grey_moor_dead_tree.e3d": 10,
+                "3dobjects/nymara/grey_moor_ritual_shrine.e3d": 5,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Grey Moors is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Grey Moors arrival is obstructed")
+            if obj3_count < 53 or light_count < 12:
+                raise ValueError("Grey Moors lacks authored scenery or lighting")
+            if set(moor_tiles) != {0, 1, 2, 3} or len(set(moor_heights)) < 8:
+                raise ValueError("Grey Moors lacks barrows, causeways, bog, or relief")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,
