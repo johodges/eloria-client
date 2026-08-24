@@ -186,12 +186,18 @@ static int el_load_map(const char * file_name)
 {
 	int ret;
 
+	LOG_INFO("Loading map '%s'", file_name);
 	init_map_loading(file_name);
 	ret = load_map(file_name, &updat_func);
 	if (!ret)
+	{
+		LOG_ERROR("Map loader rejected '%s'; an empty-map fallback will be used", file_name);
 		// don't try to build pathfinder maps etc. when loading
 		// the map failed...
 		return ret;
+	}
+	LOG_INFO("Loaded map '%s': tile dimensions=%dx%d", file_name,
+		tile_map_size_x, tile_map_size_y);
 
 
 	if (strstr(file_name, "underworld") != NULL)
@@ -294,6 +300,7 @@ void change_map (const char *mapname)
 
 static int load_empty_map(void)
 {
+	LOG_WARNING("Activating empty-map fallback './maps/nomap.elm'");
 	if (!el_load_map("./maps/nomap.elm"))
 	{
 #ifndef MAP_EDITOR2
