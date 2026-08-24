@@ -36,7 +36,18 @@ jobs:
           data = path.read_bytes()
           assert data[:4] == b"elmf"
           assert struct.unpack_from("<ii", data, 4) == (32, 32)
-          assert len(data) == 41752
+          assert len(data) == 41756
+          preview = Path("build/eloria-data/maps/newcharactermap.elm").read_bytes()
+          width, height, tile_offset, height_offset = struct.unpack_from(
+              "<4i", preview, 4)
+          assert (width, height, tile_offset) == (32, 32, 124)
+          preview_x, preview_y = 43, 156
+          assert preview[tile_offset + (preview_y // 6) * width +
+                         preview_x // 6] == 255
+          assert preview[height_offset + preview_y * width * 6 +
+                         preview_x] & 0x3f == 11
+          assert struct.unpack_from("<3f", preview, 60) == (
+              1.0199999809265137,) * 3
           PY
       - name: Validate specialty-event assets
         run: |
