@@ -641,6 +641,31 @@ def validate_four_gates_npcs_equipment(root: Path) -> None:
             raise ValueError(f"invalid Four Gates equipment icon: {item['icon']}")
 
 
+def validate_regional_npcs(root: Path) -> None:
+    actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
+    records = json.loads((root / "nymara_npcs.json").read_text())["npcs"]
+    if len(records) < 60:
+        raise ValueError(f"incomplete regional NPC roster: {len(records)}")
+    cultures=set()
+    digests=set()
+    for record in records:
+        actor_id=record["actor_type"]
+        actor=actors.find(f"actor[@id='{actor_id}']")
+        expected=f"actors/nymara/npcs/{record['id']}.xmf"
+        if actor is None or actor.findtext("mesh") != expected:
+            raise ValueError(f"regional NPC actor mapping changed: {actor_id}")
+        mesh=root/expected
+        vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(mesh).findall("SUBMESH"))
+        if vertices < 950:
+            raise ValueError(f"regional NPC fell back to proxy topology: {mesh}")
+        cultures.add(record["culture"])
+        digests.add(hashlib.sha256(mesh.read_bytes()).digest())
+    if cultures != {"luminous","votary","glasswarden","orun","greyhaven","ssarathi"}:
+        raise ValueError(f"incomplete regional NPC cultures: {sorted(cultures)}")
+    if len(digests) != len(records):
+        raise ValueError("regional NPC roster reuses identical silhouette meshes")
+
+
 def expected_dds_size(name: str) -> tuple[int, int]:
     if name.startswith("eyes_"):
         return 24, 24
@@ -777,6 +802,7 @@ def main() -> None:
     validate_nymara_textures(root)
     validate_four_gates_scenery(root)
     validate_four_gates_npcs_equipment(root)
+    validate_regional_npcs(root)
     validate_animations(root)
     validate_customization_dds(root)
     validate_playable_characters(root)

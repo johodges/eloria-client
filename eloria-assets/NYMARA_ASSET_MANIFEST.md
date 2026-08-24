@@ -76,6 +76,15 @@ concept-comparison, overhead, and representative topology QA under
   treatment, woven fabric seams, trouser weave, and leather edging/grain while retaining
   the compositor's exact dimensions, opaque alpha, and three mip levels.
 
+## Regional NPC silhouettes
+
+- The full Nymara NPC roster keeps its frozen actor types and shared semantic humanoid rig.
+- Votary, Glasswarden, Orun, Greyhaven, and Ssarthi NPCs now receive culture-specific cold-
+  weather layers, crystal armor, rider kit, maritime clothing, or scaled/tail silhouettes.
+- Profession-derived asymmetric badges and tools keep individual roles visually distinct.
+- Exact actor references, all six culture rosters, topology floors, and per-NPC mesh
+  uniqueness are validated; representative comparisons live under `qa/regional-npcs/`.
+
 ## Four Gates vertical slice
 
 - The ELM composition is centred on the authoritative `(58,58)` arrival rather
