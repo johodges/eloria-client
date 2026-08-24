@@ -764,14 +764,20 @@ def validate_map_dds(root: Path) -> None:
                              for level in range(mipmaps))
         if len(data) != expected:
             raise ValueError(f"invalid map DDS payload: {path}")
-    entries = [line.split("|") for line in (root / "mapinfo.lst").read_text().splitlines()
+    entries = [line.split() for line in (root / "mapinfo.lst").read_text().splitlines()
                if line.strip() and not line.lstrip().startswith("#")]
-    if len(entries) != 27 or any(len(entry) != 4 for entry in entries):
-        raise ValueError("mapinfo.lst must contain exactly 27 complete map records")
-    for _, _, elm, image in entries:
-        if not (root / elm).is_file() or not (root / image).is_file():
-            raise ValueError(f"mapinfo.lst references missing runtime asset: {elm} / {image}")
-    continent = (root / "continfo.lst").read_text().strip().split("|")
+    if len(entries) != 19 or any(len(entry) < 6 for entry in entries):
+        raise ValueError("mapinfo.lst must contain 19 parser-compatible Nymara records")
+    for continent_name, x0, y0, x1, y1, elm, *_ in entries:
+        if continent_name != "Nymara" or not all(value.isdigit() for value in (x0,y0,x1,y1)):
+            raise ValueError(f"invalid mapinfo.lst record: {' '.join((continent_name,x0,y0,x1,y1,elm))}")
+        runtime_elm=elm[2:] if elm.startswith("./") else elm
+        if not (root / runtime_elm).is_file():
+            raise ValueError(f"mapinfo.lst references missing runtime map: {elm}")
+        map_image=(root/runtime_elm).with_suffix(".dds")
+        if not map_image.is_file():
+            raise ValueError(f"mapinfo.lst map has no tab-map image: {map_image}")
+    continent = (root / "continfo.lst").read_text().strip().split()
     if continent != ["Nymara", "maps/nymara_continent.dds"]:
         raise ValueError("continfo.lst does not reference the generated Nymara overview")
 
