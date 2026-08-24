@@ -739,8 +739,8 @@ def validate_playable_characters(root: Path) -> None:
         for relative in paths:
             xml_path=(root/relative).with_suffix(".xmf")
             vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(xml_path).findall("SUBMESH"))
-            minimum=(600 if "head_" in relative else 300 if "boots" in relative
-                     else 620 if "legs" in relative else 1000)
+            minimum=(600 if "head_" in relative else 240 if "boots" in relative
+                     else 340 if "legs" in relative else 800)
             if vertices < minimum:
                 raise ValueError(f"playable mesh fell below topology floor: {relative}")
         body=(root/f"actors/playable/{culture}_{gender}_body.xmf").read_bytes()

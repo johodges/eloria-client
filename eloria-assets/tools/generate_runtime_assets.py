@@ -181,14 +181,16 @@ def main():
  if not bundled_buttons.is_file():raise FileNotFoundError(f"Missing authored HUD atlas: {bundled_buttons}")
  (root/"textures").mkdir(parents=True,exist_ok=True)
  shutil.copy2(bundled_buttons,root/"textures/gamebuttons.dds")
- dds(root/"textures/gamebuttons2.dds",256,256,hud_pixel)
+ bundled_hud=Path(__file__).resolve().parents[1]/"ui/gamebuttons2.dds"
+ bundled_compass=Path(__file__).resolve().parents[1]/"ui/compass.dds"
+ for source,name in ((bundled_hud,"gamebuttons2.dds"),(bundled_compass,"compass.dds")):
+  if not source.is_file():raise FileNotFoundError(f"Missing authored HUD atlas: {source}")
+  shutil.copy2(source,root/"textures"/name)
  for name in ("console","ground_detail","sigils"):
   dds(root/f"textures/{name}.dds",512,512,panel)
  dds(root/"textures/login_menu.dds",256,256,login_menu_pixel)
  dds(root/"textures/login_back.dds",512,512,login_background)
- # Minimap compass is a separate texture; keep its cardinal design readable.
- dds(root/"textures/compass.dds",256,256,
-  lambda x,y: hud_pixel(32+x//4,193+y//4))
+ # The minimap compass was installed with the authored HUD assets above.
  for name in ("thick_clouds","thick_clouds_detail"):
   dds(root/f"textures/{name}.dds",512,512,sky)
  dds(root/"textures/moonmap.dds",512,512,moon);dds(root/"textures/BrightSun.dds",512,512,sun)

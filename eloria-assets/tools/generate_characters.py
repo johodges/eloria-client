@@ -139,7 +139,57 @@ def ellipsoid(center,size,bone,vertices,faces,uv_rect=(0.,0.,1.,1.),rings=7,side
     for lower,upper in zip(ring_ids,ring_ids[1:]):
         for side in range(sides):
             nxt=(side+1)%sides
-            faces.extend(((lower[side],upper[nxt],upper[side]),(lower[side],lower[nxt],upper[nxt])))
+            for triangle in ((lower[side],upper[nxt],upper[side]),(lower[side],lower[nxt],upper[nxt])):
+                a,b,c=triangle; pa,na=vertices[a][0],vertices[a][1]; pb,pc=vertices[b][0],vertices[c][0]
+                ab=tuple(pb[q]-pa[q] for q in range(3)); ac=tuple(pc[q]-pa[q] for q in range(3))
+                cross=(ab[1]*ac[2]-ab[2]*ac[1],ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0])
+                faces.append(triangle if sum(cross[q]*na[q] for q in range(3))>0 else (a,c,b))
+
+def profile_surface(rings,bones,vertices,faces,uv_rect=(0.,0.,1.,1.),sides=20):
+    """Build one connected anatomical/clothing surface through elliptical rings."""
+    # Interpolate control rings so shoulders, elbows, knees and garment tapers
+    # read as smooth anatomy rather than four-sided transitions.
+    controls=list(rings); control_bones=list(bones); rings=[]; bones=[]
+    for index in range(len(controls)-1):
+        for step in range(3):
+            t=step/3
+            rings.append(tuple(controls[index][q]*(1-t)+controls[index+1][q]*t for q in range(5)))
+            bones.append(control_bones[index] if t<.5 else control_bones[index+1])
+    rings.append(controls[-1]); bones.append(control_bones[-1])
+    u0,v0,u1,v1=uv_rect; ring_ids=[]
+    for index,(cx,cy,cz,rx,ry) in enumerate(rings):
+        previous=rings[max(0,index-1)]; following=rings[min(len(rings)-1,index+1)]
+        tangent=(following[0]-previous[0],following[1]-previous[1],following[2]-previous[2])
+        length=math.sqrt(sum(q*q for q in tangent)) or 1
+        tangent=tuple(q/length for q in tangent)
+        reference=(0.,1.,0.) if abs(tangent[1])<.92 else (1.,0.,0.)
+        e1=(reference[1]*tangent[2]-reference[2]*tangent[1],reference[2]*tangent[0]-reference[0]*tangent[2],reference[0]*tangent[1]-reference[1]*tangent[0])
+        length=math.sqrt(sum(q*q for q in e1)) or 1; e1=tuple(q/length for q in e1)
+        e2=(tangent[1]*e1[2]-tangent[2]*e1[1],tangent[2]*e1[0]-tangent[0]*e1[2],tangent[0]*e1[1]-tangent[1]*e1[0])
+        ids=[]
+        for side in range(sides):
+            angle=2*math.pi*side/sides; ca,sa=math.cos(angle),math.sin(angle)
+            normal=tuple(e1[q]*ca+e2[q]*sa for q in range(3))
+            uv=(u0+(u1-u0)*side/sides,v0+(v1-v0)*index/max(1,len(rings)-1))
+            position=tuple((cx,cy,cz)[q]+e1[q]*rx*ca+e2[q]*ry*sa for q in range(3))
+            ids.append(len(vertices)); vertices.append((position,normal,uv,bones[index]))
+        ring_ids.append(ids)
+    for lower,upper in zip(ring_ids,ring_ids[1:]):
+        for side in range(sides):
+            nxt=(side+1)%sides
+            for triangle in ((lower[side],upper[nxt],upper[side]),(lower[side],lower[nxt],upper[nxt])):
+                a,b,c=triangle; pa,na=vertices[a][0],vertices[a][1]; pb,pc=vertices[b][0],vertices[c][0]
+                ab=tuple(pb[q]-pa[q] for q in range(3)); ac=tuple(pc[q]-pa[q] for q in range(3))
+                cross=(ab[1]*ac[2]-ab[2]*ac[1],ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0])
+                faces.append(triangle if sum(cross[q]*na[q] for q in range(3))>0 else (a,c,b))
+    # Close both ends with correctly wound caps.
+    start_tangent=tuple(rings[1][q]-rings[0][q] for q in range(3)); end_tangent=tuple(rings[-1][q]-rings[-2][q] for q in range(3))
+    for ids,ring,bone,flip,v,tangent in ((ring_ids[0],rings[0],bones[0],False,v1,start_tangent),(ring_ids[-1],rings[-1],bones[-1],True,v0,end_tangent)):
+        length=math.sqrt(sum(q*q for q in tangent)) or 1; direction=tuple(q/length*(1 if flip else -1) for q in tangent)
+        center=len(vertices); vertices.append(((ring[0],ring[1],ring[2]),direction,((u0+u1)/2,v),bone))
+        for side in range(sides):
+            nxt=(side+1)%sides
+            faces.append((center,ids[nxt],ids[side]) if not flip else (center,ids[side],ids[nxt]))
 
 RACE_SHAPES={
  "luminous":(1.00,.96,.96,.92,"civic"),
@@ -172,7 +222,27 @@ def mesh(path, section="all", variant=0, culture=None, gender=None):
     if culture:
         height,shoulders,hips,head_scale,feature=RACE_SHAPES[culture]
         gender_width=.94 if gender=="female" else 1.04
-        for i in chosen:
+        # Connected garment/anatomical shells eliminate the bead-like gaps of
+        # the former one-ellipsoid-per-bone mannequin.
+        if section in ("all","shirt"):
+            profile_surface([(0,0,.84*height,.17*hips*gender_width,.12),(0,0,1.02*height,.255*shoulders*gender_width,.145),(0,0,1.30*height,.29*shoulders*gender_width,.16),(0,0,1.48*height,.205*shoulders*gender_width,.13)],
+                            [1,2,2,25],vertices,faces,torso_uv,22)
+            for side,bones in ((-1,[28,4,5,16]),(1,[29,6,7,17])):
+                profile_surface([(side*.20*shoulders*gender_width,0,1.39*height,.125,.13),(side*.285*shoulders*gender_width,0,1.18*height,.105,.115),(side*.285*shoulders*gender_width,-.005,.91*height,.09,.10),(side*.285*shoulders*gender_width,-.015,.72*height,.105,.12)],
+                                bones,vertices,faces,arms_uv,16)
+        if section in ("all","legs"):
+            for side,bones in ((-1,[8,8,9,9]),(1,[11,11,12,12])):
+                profile_surface([(side*.115*hips*gender_width,0,.91*height,.125,.135),(side*.12*hips*gender_width,0,.67*height,.118,.128),(side*.12*hips*gender_width,.005,.40*height,.095,.108),(side*.12*hips*gender_width,.01,.12*height,.085,.095)],
+                                bones,vertices,faces,legs_uv,18)
+        if section in ("all","boots"):
+            for side,bones in ((-1,[9,10,10]),(1,[12,13,13])):
+                profile_surface([(side*.12*hips*gender_width,.01,.34*height,.105,.115),(side*.12*hips*gender_width,.03,.10*height,.11,.13),(side*.12*hips*gender_width,.14,.025*height,.12,.24)],
+                                bones,vertices,faces,boots_uv,18)
+        if section in ("all","head"):
+            center,size,bone,uv_rect=parts[1]
+            cx,cy,cz=center; sx,sy,sz=size
+            ellipsoid((0,-.01,cz*height),(sx*head_scale*gender_width,sy,sz*height),bone,vertices,faces,uv_rect,12,22)
+        for i in (() if section in ("all","shirt","legs","boots","head") else chosen):
             center,size,bone,uv_rect=parts[i]
             cx,cy,cz=center; sx,sy,sz=size
             width=shoulders if i in (0,2,3,4,5) else hips if i in (6,7,8,9,10,11) else head_scale

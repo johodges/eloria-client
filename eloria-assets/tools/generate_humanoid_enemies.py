@@ -9,7 +9,7 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 from generate_bootstrap_pack import png
-from generate_characters import BONES, cuboid, skeleton, write_cal
+from generate_characters import BONES, cuboid, profile_surface, skeleton, write_cal
 
 ACTOR_BASE = 232
 ENEMIES = (
@@ -94,8 +94,15 @@ def enemy_mesh(path, feature, scale):
         ((.15,0,.68),(.22*heavy,.26*heavy,.54*thin),11), ((.15,0,.22),(.20*heavy,.23*heavy,.48*thin),12),
         ((.15,.09,-.03),(.22*heavy,.42*heavy,.14),13),
     )
-    for center, size, bone in parts:
-        ellipsoid(tuple(v*scale for v in center), tuple(v*scale for v in size), bone, vertices, faces)
+    # One connected torso, arm and leg shell replaces the disconnected
+    # ellipsoid mannequin while preserving the established T-pose rig.
+    profile_surface([(0,0,.88*scale,.20*heavy*scale,.15*heavy*scale),(0,0,1.12*scale,.30*heavy*scale,.18*heavy*scale),(0,0,1.42*scale,.31*heavy*scale,.18*heavy*scale),(0,0,1.62*scale,.22*heavy*scale,.15*heavy*scale)],
+                    [1,2,2,25],vertices,faces,sides=22)
+    for side,bones in ((-1,[28,4,5,16]),(1,[29,6,7,17])):
+        profile_surface([(side*.24*heavy*scale,0,1.50*scale,.14*heavy*scale,.14*scale),(side*.48*heavy*scale,0,1.42*scale,.12*heavy*scale,.12*thin*scale),(side*.76*heavy*scale,0,1.42*scale,.105*heavy*scale,.105*thin*scale),(side*.98*heavy*scale,0,1.42*scale,.11*heavy*scale,.12*scale)],bones,vertices,faces,sides=18)
+    for side,bones in ((-1,[8,8,9,10]),(1,[11,11,12,13])):
+        profile_surface([(side*.15*scale,0,.91*scale,.14*heavy*scale,.15*heavy*scale),(side*.15*scale,0,.65*scale,.13*heavy*scale,.14*thin*scale),(side*.15*scale,.02,.30*scale,.105*heavy*scale,.115*thin*scale),(side*.15*scale,.12,-.03*scale,.12*heavy*scale,.23*scale)],bones,vertices,faces,sides=18)
+    ellipsoid((0,0,1.78*scale),(.34*heavy*scale,.32*scale,.38*scale),3,vertices,faces,12,22)
     # Eyes, nose, jaw, ears, hands and boots carry the concept silhouettes at
     # conversational camera distance instead of collapsing into one capsule.
     ellipsoid((0,-.18*scale,1.72*scale),(.22*scale,.15*scale,.20*scale),3,vertices,faces,7,14)
