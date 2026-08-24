@@ -238,8 +238,8 @@ def texture(path, base, accent, style=0):
         return tuple(max(0,min(255,c+weave+seam)) for c in sigil)+(255,)
     png(path,256,256,pixel)
 
-def actor_texture(path, width, height, base, accent, style=0, levels=3):
-    """Write an uncompressed BGRA DDS with the mip levels EL's actor atlas requires."""
+def actor_texture(path, width, height, base, accent, style=0, levels=3, role="cloth"):
+    """Author a role-specific BGRA material while preserving EL's fixed atlas contract."""
     header=[124,0x0002100F,height,width,width*4,0,levels]+[0]*11
     header += [32,0x41,0,32,0x00FF0000,0x0000FF00,0x000000FF,0xFF000000]
     header += [0x401008,0,0,0,0]
@@ -248,11 +248,35 @@ def actor_texture(path, width, height, base, accent, style=0, levels=3):
         w=max(1,width>>level); h=max(1,height>>level)
         for y in range(h):
             for x in range(w):
-                weave=((x//max(1,8>>level)+y//max(1,8>>level)+style)%2)*8
-                seam=18 if x%max(1,64>>level) in (0,1) or y%max(1,64>>level) in (0,1) else 0
-                radius=max(1,(20+style%4*3)>>level)
-                color=accent if (x-w//2)**2+(y-h//2)**2 < radius*radius else base
-                r,g,b=(max(0,min(255,c+weave+seam)) for c in color)
+                u=(x+.5)/w; v=(y+.5)/h
+                grain=((x*13+y*7+style*19) % max(3,11>>level))-max(1,5>>level)
+                shade=int(18*(.5-v)+6*(1-abs(2*u-1)))
+                color=base; detail=grain+shade
+                if role == "skin":
+                    detail += int(7*(1-abs(2*u-1)))
+                    if abs(v-.58)<.012 or ((u-.36)**2+(v-.42)**2)<.0008 or ((u-.64)**2+(v-.42)**2)<.0008:
+                        color=accent; detail-=8
+                elif role == "hair":
+                    strand=max(1,6>>level)
+                    detail += 13 if (x+style*3)%strand==0 else -3
+                    if v>.82: detail-=int(25*(v-.82)/.18)
+                elif role == "eyes":
+                    dx=(u-.5)*2; dy=(v-.5)*2; rr=dx*dx+dy*dy
+                    color=accent if rr>.52 else base
+                    if rr<.10: color=(18,20,24)
+                    if (u-.38)**2+(v-.34)**2<.018: color=(250,250,242)
+                    detail=0
+                elif role in ("cloth","pants"):
+                    weave=((x//max(1,4>>level))+(y//max(1,4>>level)))%2
+                    detail += 7 if weave else -4
+                    seam_width=max(.006,1.5/w)
+                    if abs(u-.5)<seam_width or abs(v-.12)<seam_width: color=accent
+                    if role=="cloth" and abs(abs(u-.5)+abs(v-.52)-.28)<.015: color=accent
+                elif role == "leather":
+                    detail += ((x*5+y*11+style*23)%17)-8
+                    if abs(u-.12)<.012 or abs(u-.88)<.012 or abs(v-.18)<.012: color=accent
+                    if ((x+y+style*7)%max(5,23>>level))==0: detail-=12
+                r,g,b=(max(0,min(255,c+detail)) for c in color)
                 data.extend((b,g,r,255))
     path.parent.mkdir(parents=True,exist_ok=True)
     path.write_bytes(b'DDS '+struct.pack('<31I',*header)+data)
@@ -264,15 +288,15 @@ def generate_customization(root):
         white=(222,224,216) if culture!="ssarathi" else (169,207,178)
         skin_palette=(skins[0],skins[1],skins[2],skins[1],dark_blue,white)
         for i,color in enumerate(skin_palette):
-            actor_texture(directory/f"skin_{i}_hands.dds",64,64,color,(220,188,150),i)
-            actor_texture(directory/f"skin_{i}_head.dds",128,128,color,(220,188,150),i)
-        for i,color in enumerate(HAIR):actor_texture(directory/f"hair_{i}.dds",136,192,color,tuple(min(255,c+35) for c in color),i)
-        for i,color in enumerate(EYES):actor_texture(directory/f"eyes_{i}.dds",24,24,color,(235,235,220),i)
+            actor_texture(directory/f"skin_{i}_hands.dds",64,64,color,(220,188,150),i,role="skin")
+            actor_texture(directory/f"skin_{i}_head.dds",128,128,color,(220,188,150),i,role="skin")
+        for i,color in enumerate(HAIR):actor_texture(directory/f"hair_{i}.dds",136,192,color,tuple(min(255,c+35) for c in color),i,role="hair")
+        for i,color in enumerate(EYES):actor_texture(directory/f"eyes_{i}.dds",24,24,color,(235,235,220),i,role="eyes")
         for i,color in enumerate(CLOTH):
-            actor_texture(directory/f"shirt_{i}_torso.dds",196,216,color,(207,151,70),i)
-            actor_texture(directory/f"shirt_{i}_arms.dds",160,160,color,(207,151,70),i)
-        for i,color in enumerate(PANTS):actor_texture(directory/f"pants_{i}.dds",160,160,color,(126,104,78),i)
-        for i,color in enumerate(BOOTS):actor_texture(directory/f"boots_{i}.dds",156,160,color,(176,137,87),i)
+            actor_texture(directory/f"shirt_{i}_torso.dds",196,216,color,(207,151,70),i,role="cloth")
+            actor_texture(directory/f"shirt_{i}_arms.dds",160,160,color,(207,151,70),i,role="cloth")
+        for i,color in enumerate(PANTS):actor_texture(directory/f"pants_{i}.dds",160,160,color,(126,104,78),i,role="pants")
+        for i,color in enumerate(BOOTS):actor_texture(directory/f"boots_{i}.dds",156,160,color,(176,137,87),i,role="leather")
 
 def actor_defs(path):
     files={"CAL_walk":"walk.xaf","CAL_run":"run.xaf","CAL_idle":"idle.xaf","CAL_idle2":"idle.xaf","CAL_combat_idle":"idle.xaf","CAL_attack_up_1":"attack.xaf","CAL_attack_down_1":"attack.xaf","CAL_pain1":"pain.xaf","CAL_pain2":"pain.xaf","CAL_die1":"die.xaf","CAL_die2":"die.xaf","CAL_harvest":"harvest.xaf","CAL_pick":"harvest.xaf","CAL_drop":"harvest.xaf","CAL_idle_sit":"sit.xaf","CAL_sit_down":"sit.xaf","CAL_stand_up":"idle.xaf"}

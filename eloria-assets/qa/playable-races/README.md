@@ -26,3 +26,8 @@ Validation asserts the frozen actor IDs, race/gender metadata, complete section
 mesh references, topology floors, valid Cal3D geometry, normalized influences,
 and twelve unique body-mesh digests. Shaded character-creation and equipment
 switching captures remain pending a GPU-capable session.
+
+The customization sheet shows the authored top mip for representative skin,
+hair, eye, fabric, trouser, and boot materials. Every role now has intentional
+surface structure instead of the former shared checker/sigil treatment; validation
+also enforces opaque alpha and a minimum amount of color variation.

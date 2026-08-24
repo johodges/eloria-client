@@ -72,6 +72,9 @@ concept-comparison, overhead, and representative topology QA under
   atlas contract and its required three mip levels.
 - Mesh QA and representative customization sheets are committed under
   `qa/playable-races/`.
+- Customization materials use role-specific skin features, hair strands, iris/highlight
+  treatment, woven fabric seams, trouser weave, and leather edging/grain while retaining
+  the compositor's exact dimensions, opaque alpha, and three mip levels.
 
 ## Four Gates vertical slice
 

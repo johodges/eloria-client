@@ -677,6 +677,13 @@ def validate_customization_dds(root: Path) -> None:
                       for level in range(mipmaps))
         if len(data) != 128 + payload:
             raise ValueError(f"invalid DDS mip payload length: {path}")
+        top=data[128:128+width*height*4]
+        pixels=[tuple(top[i:i+4]) for i in range(0,len(top),4)]
+        if any(pixel[3] != 255 for pixel in pixels):
+            raise ValueError(f"customization DDS contains accidental transparency: {path}")
+        minimum_colors=4 if path.name.startswith("eyes_") else 12
+        if len(set(pixels)) < minimum_colors:
+            raise ValueError(f"customization DDS lacks authored surface variation: {path}")
 
 def validate_playable_characters(root: Path) -> None:
     actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
