@@ -350,6 +350,26 @@ def whitehorn_temple_placements():
  p.append(("3dobjects/nymara/interiors/whitehorn_glacier_altar.e3d",58,94,0,180))
  return p
 
+def resonant_vault_placements():
+ # Brass-walled research galleries surround a resonant lens chamber. Tables
+ # and shelves form readable work zones without blocking the central route.
+ p=[]
+ for x,y in ((34,22),(58,22),(82,22),(34,46),(58,46),(82,46),
+             (34,70),(58,70),(82,70),(34,94),(58,94),(82,94)):
+  p.append(("3dobjects/nymara/interiors/glasswarden_laboratory_floor.e3d",x,y,0,0))
+ for x,y,r in ((24,22,90),(24,40,90),(24,58,90),(24,76,90),(24,94,90),
+               (92,22,270),(92,40,270),(92,58,270),(92,76,270),(92,94,270),
+               (34,106,180),(50,106,180),(66,106,180),(82,106,180)):
+  p.append(("3dobjects/nymara/interiors/glasswarden_brass_wall.e3d",x,y,0,r))
+ for x,y,r in ((34,40,0),(82,40,180),(34,62,0),(82,62,180),(42,86,0),(74,86,180)):
+  p.append(("3dobjects/nymara/interiors/glasswarden_experiment_table.e3d",x,y,0,r))
+ for x,y,r in ((28,32,90),(88,32,270),(28,54,90),(88,54,270),(28,78,90),(88,78,270)):
+  p.append(("3dobjects/nymara/interiors/glasswarden_archive_shelf.e3d",x,y,0,r))
+ for x,y in ((42,32),(74,32),(42,56),(74,56),(42,80),(74,80),(48,96),(68,96)):
+  p.append(("3dobjects/nymara/interiors/glasswarden_crystal_brazier.e3d",x,y,0,0))
+ p.append(("3dobjects/nymara/interiors/glasswarden_observatory_lens.e3d",58,92,0,180))
+ return p
+
 def cartography_pixel(name, profile):
  a,b,accent=profile['palette']
  def pixel(x,y):
@@ -533,6 +553,8 @@ def generate_maps(root):
    placements=drowned_crown_placements()
   elif name == 'whitehorn_glacier_temple':
    placements=whitehorn_temple_placements()
+  elif name == 'resonant_vault':
+   placements=resonant_vault_placements()
   else:
    kit=INTERIOR_KITS[name]
    # Three connected chambers: arrival hall, cultural focal room, and deep
@@ -570,6 +592,9 @@ def generate_maps(root):
   elif name=='whitehorn_glacier_temple':
    lights += [(x,y,3.1,.56,.78,.92) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
+  elif name=='resonant_vault':
+   lights += [(x,y,3.0,.58,.34,.88) for x,y in
+              ((42,32),(74,32),(42,56),(74,56),(42,80),(74,80),(48,96),(68,96))]
   tile_function=(four_gates_tile if name=='four_gates'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
   height_function=(four_gates_height if name=='four_gates'
