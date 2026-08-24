@@ -220,6 +220,27 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Sunmane Steppe lacks authored scenery or lighting")
             if set(sunmane_tiles) != {0, 1, 2, 3} or len(set(sunmane_heights)) < 8:
                 raise ValueError("Sunmane Steppe lacks camps, roads, grassland, or relief")
+        if path.as_posix().endswith("maps/nymara/amberwood.elm"):
+            amber_tiles = data[tile_offset:height_offset]
+            amber_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/amberwood_estate.e3d": 1,
+                "3dobjects/nymara/amberwood_hunting_lodge.e3d": 6,
+                "3dobjects/nymara/amberwood_hollow_tree.e3d": 8,
+                "3dobjects/nymara/amberwood_old_bridge.e3d": 4,
+                "3dobjects/nymara/amberwood_tree.e3d": 16,
+                "3dobjects/nymara/amberwood_ruin_arch.e3d": 6,
+                "3dobjects/nymara/amberwood_garden_fountain.e3d": 4,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Amberwood is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Amberwood arrival is obstructed")
+            if obj3_count < 55 or light_count < 12:
+                raise ValueError("Amberwood lacks authored scenery or lighting")
+            if set(amber_tiles) != {0, 1, 2, 3} or len(set(amber_heights)) < 8:
+                raise ValueError("Amberwood lacks estate, roads, old growth, or relief")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,

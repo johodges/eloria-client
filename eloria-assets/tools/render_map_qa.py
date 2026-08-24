@@ -20,6 +20,21 @@ COLORS = {
     7: (38, 128, 149),
 }
 
+REGIONAL_COLORS = {
+    "amethyst_barrens": {
+        0: (103, 73, 126), 1: (114, 91, 65),
+        2: (182, 132, 194), 3: (139, 91, 164),
+    },
+    "sunmane_steppe": {
+        0: (193, 151, 72), 1: (150, 105, 48),
+        2: (211, 177, 99), 3: (120, 79, 38),
+    },
+    "amberwood": {
+        0: (151, 91, 39), 1: (115, 71, 34),
+        2: (184, 119, 55), 3: (65, 91, 55),
+    },
+}
+
 
 def main() -> None:
     parser = argparse.ArgumentParser()
@@ -38,11 +53,12 @@ def main() -> None:
         name = struct.unpack_from("<80s", data, offset)[0].split(b"\0", 1)[0].decode()
         x, y = struct.unpack_from("<2f", data, offset + 80)
         objects.append((name, x / (width * 6) * 512, y / (height * 6) * 512))
+    colors = REGIONAL_COLORS.get(args.map.stem, COLORS)
 
     def pixel(x: int, y: int):
         tile_x = min(width - 1, x * width // 512)
         tile_y = min(height - 1, y * height // 512)
-        base = COLORS.get(tiles[tile_y * width + tile_x], (125, 70, 125))
+        base = colors.get(tiles[tile_y * width + tile_x], (125, 70, 125))
         grain = ((x * 7 + y * 11) % 9) - 4
         color = tuple(max(0, min(255, channel + grain)) for channel in base)
         for name, object_x, object_y in objects:
