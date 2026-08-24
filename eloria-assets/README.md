@@ -7,6 +7,17 @@ release archive, website, or other Binary Data distribution.
 Generate the bootstrap pack with:
 
 ```bash
+python3 eloria-assets/tools/generate_all_assets.py build/eloria-data
+```
+
+The wrapper runs independent generator pipelines in parallel, waits for each
+dependency wave, then runs effects, the complete Nymara blocker, provenance,
+and validation. Control concurrency with `--jobs` (for example `--jobs 4`).
+Use `--dry-run` to inspect the schedule without writing files.
+
+The equivalent manual sequence is:
+
+```bash
 python3 eloria-assets/tools/generate_bootstrap_pack.py
 python3 eloria-assets/tools/generate_characters.py
 python3 eloria-assets/tools/generate_humanoid_enemies.py
