@@ -174,7 +174,13 @@ def main():
  for name in ("buttons","book1","paper1","alphaborder","eye_candy","eye_candy_burn"):
   png(root/f"textures/{name}.png",512,512,panel);bmp(root/f"textures/{name}.bmp",512,512,panel)
   dds(root/f"textures/{name}.dds",512,512,panel)
- dds(root/"textures/gamebuttons.dds",256,256,gamebuttons_pixel)
+ # Keep the authored action art byte-for-byte identical to the reviewed atlas.
+ # Reconstructing these cells procedurally produced readable but visibly
+ # different placeholder glyphs.
+ bundled_buttons=Path(__file__).resolve().parents[1]/"ui/gamebuttons.dds"
+ if not bundled_buttons.is_file():raise FileNotFoundError(f"Missing authored HUD atlas: {bundled_buttons}")
+ (root/"textures").mkdir(parents=True,exist_ok=True)
+ shutil.copy2(bundled_buttons,root/"textures/gamebuttons.dds")
  dds(root/"textures/gamebuttons2.dds",256,256,hud_pixel)
  for name in ("console","ground_detail","sigils"):
   dds(root/f"textures/{name}.dds",512,512,panel)
@@ -217,7 +223,7 @@ def main():
  preview_tile=preview_data[preview_tile_offset+(preview_y//6)*preview_width+preview_x//6]
  if preview_tile != 0:
   raise ValueError("new-character preview must use visible Eloria terrain")
- stubs={"el.ini":"#language = en\n#use_ttf = 1\n#ui_font = EloriaSans-Regular.ttf\n#name_font = EloriaSans-Regular.ttf\n#chat_font = EloriaSans-Regular.ttf\n#note_font = EloriaSans-Regular.ttf\n#book_font = EloriaSans-Regular.ttf\n#rules_font = EloriaSans-Regular.ttf\n#encyclopedia_font = EloriaSans-Regular.ttf\n#def_ui_font = 20(EloriaSans-Regular.ttf)\n#def_name_font = 20(EloriaSans-Regular.ttf)\n#def_chat_font = 20(EloriaSans-Regular.ttf)\n#def_note_font = 20(EloriaSans-Regular.ttf)\n#def_book_font = 20(EloriaSans-Regular.ttf)\n#def_rules_font = 20(EloriaSans-Regular.ttf)\n#def_encyclopedia_font = 20(EloriaSans-Regular.ttf)\n","named_colours.xml":"<named_colours/>\n","mines.xml":"<mines/>\n","emotes.xml":"<emotes/>\n","spells.xml":"<spells/>\n","weather.xml":"<weather/>\n","knowledge.xml":"<knowledge/>\n","extentions.xml":"<extentions/>\n","commands.lst":"# Eloria commands\n","knowledge.lst":"# Eloria knowledge\n","servers.lst":"main main 127.0.0.1 2000\n","mapinfo.lst":"emberhaven|Emberhaven|maps/emberhaven.elm\n","continfo.lst":"Nymara|maps/legend.dds\n"}
+ stubs={"el.ini":"#language = en\n#use_ttf = 1\n#ui_font = EloriaSans-Regular.ttf\n#name_font = EloriaSans-Regular.ttf\n#chat_font = EloriaSans-Regular.ttf\n#note_font = EloriaSans-Regular.ttf\n#book_font = EloriaSans-Regular.ttf\n#rules_font = EloriaSans-Regular.ttf\n#encyclopedia_font = EloriaSans-Regular.ttf\n#def_ui_font = 20(EloriaSans-Regular.ttf)\n#def_name_font = 20(EloriaSans-Regular.ttf)\n#def_chat_font = 20(EloriaSans-Regular.ttf)\n#def_note_font = 20(EloriaSans-Regular.ttf)\n#def_book_font = 20(EloriaSans-Regular.ttf)\n#def_rules_font = 20(EloriaSans-Regular.ttf)\n#def_encyclopedia_font = 20(EloriaSans-Regular.ttf)\n","named_colours.xml":"<named_colours/>\n","mines.xml":"<mines/>\n","emotes.xml":"<emotes/>\n","spells.xml":"<spells/>\n","weather.xml":"<weather/>\n","knowledge.xml":"<knowledge/>\n","extentions.xml":"<extentions/>\n","commands.lst":"# Eloria commands\n","knowledge.lst":"# Eloria knowledge\n","servers.lst":"main main 127.0.0.1 2000\n","mapinfo.lst":"Nymara 0 0 512 512 ./maps/emberhaven.elm\n","continfo.lst":"Nymara maps/legend.dds\n"}
  for name,text in stubs.items():(root/name).write_text(text)
  write_text(root/"languages/langsel.xml",'<LANGUAGE_LIST><LANG CODE="en" TEXT="English" SAVE="1" DEFAULT="1"/></LANGUAGE_LIST>\n')
  write_text(root/"languages/en/knowledge.lst","")

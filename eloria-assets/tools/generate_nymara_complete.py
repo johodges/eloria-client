@@ -897,7 +897,7 @@ def generate_npcs(root, actors):
     elif slug in ('luminous_civilian_f','luminous_civilian_m'): feature='civic_civilian'
     else: feature=f"nymara:{culture}:{role}"
     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
-    png(base/f"{slug}.png",512,512,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",256,256,material_pixel(accent,feature))
+    png(base/f"{slug}.png",1024,1024,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",512,512,material_pixel(accent,feature))
     append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.xsf",f"actors/nymara/npcs/{slug}.xmf",f"actors/nymara/npcs/{slug}.png","animations/nymara/humanoid",.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.05))
     out.append({"actor_type":aid,"id":slug,"culture":culture,"role":role,"variant":variant,"portrait":f"portraits/nymara/npcs/{slug}.png","collision_radius":.42,"scale":.96 if variant=='f' else 1.0}); aid+=1
  (root/"nymara_npcs.json").write_text(json.dumps({"schema":1,"npcs":out},indent=2)+"\n")
@@ -1152,18 +1152,23 @@ def generate_maps(root):
   if name == 'four_gates': dds_mipped(root/f"maps/nymara/{name}.dds",512,512,four_gates_cartography_pixel)
   elif concept.is_file(): concept_dds(concept,root/f"maps/nymara/{name}.dds")
   else: dds_mipped(root/f"maps/nymara/{name}.dds",512,512,cartography_pixel(name,profile))
-  mapinfo.append(f"{name}|{name.replace('_',' ').title()}|maps/nymara/{name}.elm|maps/nymara/{name}.dds")
+  # mapinfo.lst is parsed by sscanf, and its map key is compared verbatim
+  # with the filename passed to load_map().  It is not a display-title list.
+  index=len(mapinfo)
+  overview_index=index if index < len(REGIONS) else (index-len(REGIONS))%len(REGIONS)
+  col=overview_index%4; row=overview_index//4
+  x0=col*128; x1=(col+1)*128
+  y0=(row*512)//3; y1=((row+1)*512)//3
+  mapinfo.append(f"Nymara {x0} {y0} {x1} {y1} ./maps/nymara/{name}.elm")
   regions.append({"id":name,"title":name.replace('_',' ').title(),"map":f"maps/nymara/{name}.elm","arrival":[58,58],"npc_hook":f"npcs.nymara.{name}","spawn_hook":f"spawns.nymara.{name}","hazard_hook":f"hazards.nymara.{name}","harvest_hook":f"harvest.nymara.{name}"})
  for a,b in zip(REGIONS,REGIONS[1:]): connections.append({"from":a,"to":b,"from_xy":[110,58],"to_xy":[6,58],"type":"walk"})
  for d in DUNGEONS: connections.append({"from":REGIONS[DUNGEONS.index(d)%len(REGIONS)],"to":d,"from_xy":[58,100],"to_xy":[58,10],"type":"entrance"})
  data={"schema":1,"regions":regions,"connections":connections,"ferries":[{"from":"crownwater","to":"four_gates","service":"crownwater_ferry"},{"from":"manymouth_delta","to":"westhaven","service":"delta_ferry"}]}
  (root/"nymara_regions_connections.json").write_text(json.dumps(data,indent=2)+"\n")
  (root/"nymara_harvesting.json").write_text(json.dumps({"schema":1,"nodes":harvest_manifest},indent=2)+"\n")
- bootstrap=("emberhaven","glasswind","frostmere","mirefen","verdant_reach","cinder_wastes")
- configured=[f"{n}|{n.replace('_',' ').title()}|maps/{n}.elm|maps/legend.dds" for n in bootstrap]
- configured += mapinfo
- configured += ["nomap|No Map|maps/nomap.elm|maps/legend.dds",
-                "newcharactermap|Character Preview|maps/newcharactermap.elm|maps/legend.dds"]
+ # Every Nymara local map is already included above; interior maps use their
+ # parent region's overview rectangle.
+ configured=list(mapinfo)
  (root/"mapinfo.lst").write_text("\n".join(configured)+"\n")
  # The overview is deliberately generated from the same regional palettes so
  # it remains reproducible while matching every local map's visual language.
@@ -1174,7 +1179,7 @@ def generate_maps(root):
  master=concept_root/"nymara_continent_master_concept.png"
  if master.is_file(): concept_dds(master,root/"maps/nymara_continent.dds")
  else: dds_mipped(root/"maps/nymara_continent.dds",512,512,continent)
- (root/"continfo.lst").write_text("Nymara|maps/nymara_continent.dds\n")
+ (root/"continfo.lst").write_text("Nymara maps/nymara_continent.dds\n")
  return data
 
 def merge_existing(root, source):
