@@ -544,8 +544,9 @@ def validate_nymara_textures(root: Path) -> None:
     if not actor_textures:
         raise ValueError("no Nymara actor textures found")
     for path in actor_textures:
-        if png_dimensions(path) != (512, 512):
-            raise ValueError(f"Nymara actor texture is not 512x512: {path}")
+        expected=(1024,1024) if "/npcs/" in path.as_posix() else (512,512)
+        if png_dimensions(path) != expected:
+            raise ValueError(f"Nymara actor texture is not {expected[0]}x{expected[1]}: {path}")
     world_textures = sorted(root.glob("3dobjects/nymara/**/*.png"))
     for path in world_textures:
         if png_dimensions(path) != (256, 256):
@@ -738,8 +739,8 @@ def validate_playable_characters(root: Path) -> None:
         for relative in paths:
             xml_path=(root/relative).with_suffix(".xmf")
             vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(xml_path).findall("SUBMESH"))
-            minimum=(96 if "head_" in relative else 140 if "boots" in relative
-                     else 290 if "legs" in relative else 360)
+            minimum=(600 if "head_" in relative else 300 if "boots" in relative
+                     else 620 if "legs" in relative else 1000)
             if vertices < minimum:
                 raise ValueError(f"playable mesh fell below topology floor: {relative}")
         body=(root/f"actors/playable/{culture}_{gender}_body.xmf").read_bytes()
@@ -764,14 +765,20 @@ def validate_map_dds(root: Path) -> None:
                              for level in range(mipmaps))
         if len(data) != expected:
             raise ValueError(f"invalid map DDS payload: {path}")
-    entries = [line.split("|") for line in (root / "mapinfo.lst").read_text().splitlines()
+    entries = [line.split() for line in (root / "mapinfo.lst").read_text().splitlines()
                if line.strip() and not line.lstrip().startswith("#")]
-    if len(entries) != 27 or any(len(entry) != 4 for entry in entries):
-        raise ValueError("mapinfo.lst must contain exactly 27 complete map records")
-    for _, _, elm, image in entries:
-        if not (root / elm).is_file() or not (root / image).is_file():
-            raise ValueError(f"mapinfo.lst references missing runtime asset: {elm} / {image}")
-    continent = (root / "continfo.lst").read_text().strip().split("|")
+    if len(entries) != 19 or any(len(entry) < 6 for entry in entries):
+        raise ValueError("mapinfo.lst must contain 19 parser-compatible Nymara records")
+    for continent_name, x0, y0, x1, y1, elm, *_ in entries:
+        if continent_name != "Nymara" or not all(value.isdigit() for value in (x0,y0,x1,y1)):
+            raise ValueError(f"invalid mapinfo.lst record: {' '.join((continent_name,x0,y0,x1,y1,elm))}")
+        runtime_elm=elm[2:] if elm.startswith("./") else elm
+        if not (root / runtime_elm).is_file():
+            raise ValueError(f"mapinfo.lst references missing runtime map: {elm}")
+        map_image=(root/runtime_elm).with_suffix(".dds")
+        if not map_image.is_file():
+            raise ValueError(f"mapinfo.lst map has no tab-map image: {map_image}")
+    continent = (root / "continfo.lst").read_text().strip().split()
     if continent != ["Nymara", "maps/nymara_continent.dds"]:
         raise ValueError("continfo.lst does not reference the generated Nymara overview")
 
