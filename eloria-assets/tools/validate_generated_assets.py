@@ -241,12 +241,20 @@ def validate_four_gates_scenery(root: Path) -> None:
 def validate_four_gates_npcs_equipment(root: Path) -> None:
     actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
     expected_actors = {
+        300: ("actors/nymara/npcs/luminous_official_f.xmf", 1050),
         301: ("actors/nymara/npcs/luminous_guard_f.xmf", 1120),
+        302: ("actors/nymara/npcs/luminous_merchant_f.xmf", 980),
         303: ("actors/nymara/npcs/luminous_ferryman_f.xmf", 1050),
+        304: ("actors/nymara/npcs/luminous_scholar_f.xmf", 1050),
+        305: ("actors/nymara/npcs/luminous_lake_priest_f.xmf", 1050),
+        306: ("actors/nymara/npcs/luminous_civilian_f.xmf", 980),
         307: ("actors/nymara/npcs/luminous_official_m.xmf", 1050),
         308: ("actors/nymara/npcs/luminous_guard_m.xmf", 1120),
         309: ("actors/nymara/npcs/luminous_merchant_m.xmf", 980),
         310: ("actors/nymara/npcs/luminous_ferryman_m.xmf", 1050),
+        311: ("actors/nymara/npcs/luminous_scholar_m.xmf", 1050),
+        312: ("actors/nymara/npcs/luminous_lake_priest_m.xmf", 1050),
+        313: ("actors/nymara/npcs/luminous_civilian_m.xmf", 980),
     }
     for actor_id, (mesh_name, minimum) in expected_actors.items():
         actor = actors.find(f"actor[@id='{actor_id}']")

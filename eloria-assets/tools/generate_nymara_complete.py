@@ -351,10 +351,13 @@ def generate_npcs(root, actors):
   for variant in ("f","m"):
    for role in roles:
     slug=f"{culture}_{role}_{variant}"
-    if slug=='luminous_official_m': feature='civic_official'
-    elif slug=='luminous_merchant_m': feature='civic_merchant'
+    if slug in ('luminous_official_f','luminous_official_m'): feature='civic_official'
+    elif slug in ('luminous_merchant_f','luminous_merchant_m'): feature='civic_merchant'
     elif slug in ('luminous_guard_f','luminous_guard_m'): feature='civic_guard'
     elif slug in ('luminous_ferryman_f','luminous_ferryman_m'): feature='civic_ferryman'
+    elif slug in ('luminous_scholar_f','luminous_scholar_m'): feature='civic_scholar'
+    elif slug in ('luminous_lake_priest_f','luminous_lake_priest_m'): feature='civic_priest'
+    elif slug in ('luminous_civilian_f','luminous_civilian_m'): feature='civic_civilian'
     else: feature="armor" if any(x in role for x in ("guard","warrior","militia","guardian")) else "crown" if any(x in role for x in ("priest","official","council","elder")) else "hood"
     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
     png(base/f"{slug}.png",512,512,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",256,256,material_pixel(accent,feature))

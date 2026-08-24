@@ -102,6 +102,22 @@ def enemy_mesh(path, feature, scale):
         cuboid((0,-.23*scale,1.07*scale),(.74*scale,.08*scale,.17*scale),2,vertices,faces)
         ellipsoid((0,0,1.90*scale),(.48*scale,.42*scale,.22*scale),3,vertices,faces,5,12)
         ellipsoid((0,0,2.04*scale),(.22*scale,.20*scale,.20*scale),3,vertices,faces,5,8)
+    if feature == "civic_scholar":
+        ellipsoid((0,0,1.31*scale),(.69*scale,.39*scale,.75*scale),2,vertices,faces,6,12)
+        cuboid((0,-.23*scale,1.12*scale),(.72*scale,.07*scale,.08*scale),2,vertices,faces)
+        for z in (.98,1.12,1.26):
+            cuboid((.27*scale,-.25*scale,z*scale),(.16*scale,.09*scale,.07*scale),2,vertices,faces)
+        ellipsoid((0,0,1.94*scale),(.47*scale,.42*scale,.17*scale),3,vertices,faces,5,12)
+    if feature == "civic_priest":
+        ellipsoid((0,0,1.33*scale),(.74*scale,.42*scale,.79*scale),2,vertices,faces,6,12)
+        ellipsoid((0,-.22*scale,1.36*scale),(.34*scale,.10*scale,.46*scale),2,vertices,faces,5,10)
+        ellipsoid((0,0,1.93*scale),(.45*scale,.40*scale,.31*scale),3,vertices,faces,6,12)
+        for x in (-.18,.18):
+            ellipsoid((x*scale,0,2.12*scale),(.08*scale,.08*scale,.31*scale),3,vertices,faces,5,8)
+    if feature == "civic_civilian":
+        ellipsoid((0,0,1.28*scale),(.66*scale,.37*scale,.69*scale),2,vertices,faces,6,12)
+        cuboid((0,-.22*scale,.98*scale),(.68*scale,.08*scale,.12*scale),2,vertices,faces)
+        ellipsoid((-.28*scale,-.18*scale,1.04*scale),(.24*scale,.17*scale,.31*scale),2,vertices,faces,5,8)
     if feature == "crown":
         for x in (-.16,0,.16): cuboid((x*scale,0,2.12*scale),(.08*scale,.08*scale,.34*scale),3,vertices,faces)
     if feature in ("claws", "ragged"):
