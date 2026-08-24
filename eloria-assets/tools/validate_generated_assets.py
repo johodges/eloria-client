@@ -111,7 +111,7 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Four Gates start plaza is obstructed")
             if set(tiles) != {4, 5, 6, 7} or len(set(heights)) < 4:
                 raise ValueError("Four Gates terrain lacks roads, water, or elevation variation")
-            if light_count < 16:
+            if light_count < 20:
                 raise ValueError("Four Gates lacks its civic night-light network")
         if path.as_posix().endswith("maps/nymara/mirrorhold.elm"):
             mirror_tiles = data[tile_offset:height_offset]

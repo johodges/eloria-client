@@ -89,7 +89,7 @@ REGION_HARVESTS = {
 REGION_ART = {
  "mirrorhold":{"palette":((47,70,73),(92,111,104),(174,151,92)),"objects":["glasswarden_observatory","glasswarden_lens_tower","glasswarden_field_station","mirrorhold_civic_tower","mirrorhold_canal_wall","mirrorhold_radial_bridge","mirrorhold_public_fountain"],"water":True,"ambient":(.48,.55,.60)},
  "crownwater":{"palette":((36,125,145),(221,217,180),(42,87,91)),"objects":["crownwater_ferry_dock","crownwater_fishing_boat","crownwater_patrol_boat","crownwater_submerged_waystone","mirrorhold_radial_bridge","mirrorhold_public_fountain"],"water":True,"ambient":(.62,.68,.70)},
- "four_gates":{"palette":((75,104,78),(172,162,126),(53,112,119)),"objects":["four_gates_gatehouse","four_gates_waystone","mirrorhold_radial_bridge","mirrorhold_civic_tower","mirrorhold_public_fountain","glasswarden_field_station"],"water":True,"ambient":(.58,.61,.58)},
+ "four_gates":{"palette":((75,104,78),(172,162,126),(53,112,119)),"objects":["four_gates_gatehouse","four_gates_waystone","mirrorhold_radial_bridge","mirrorhold_civic_tower","mirrorhold_public_fountain","glasswarden_field_station"],"water":True,"ambient":(.78,.80,.74)},
  "whitehorn_range":{"palette":((183,211,219),(65,78,83),(222,229,221)),"objects":["whitehorn_glacier","whitehorn_monastery","whitehorn_rope_bridge","whitehorn_shrine","whitehorn_cairn","whitehorn_ice_cave","whitehorn_mine_entrance"],"water":False,"ambient":(.67,.72,.76)},
  "amethyst_barrens":{"palette":((110,72,139),(184,132,194),(122,99,65)),"objects":["glasswarden_observatory","amethyst_crystal_bridge","amethyst_geode_cave","amethyst_levitating_shards","amethyst_storm_ruin","resonant_crystal_cluster"],"water":False,"ambient":(.54,.49,.62)},
  "sunmane_steppe":{"palette":((171,126,56),(208,177,101),(130,70,38)),"objects":["orun_round_tent","orun_seasonal_market","orun_banner_shrine","sunmane_caravanserai","sunmane_windmill","sunmane_well","sunmane_animal_pen","sunmane_burial_mound"],"water":False,"ambient":(.68,.61,.48)},
@@ -1083,6 +1083,10 @@ def generate_maps(root):
    lights += [(x,y,3.5,1.08,.72,.31) for x,y in
               ((42,52),(42,64),(52,42),(64,42),(74,52),(74,64),
                (52,74),(64,74),(34,58),(82,58),(58,34),(58,82))]
+   # Soft plaza fills keep stone, brass, glass, NPCs, and player materials
+   # readable during the pre-dawn hours without flattening the outer city.
+   lights += [(x,y,5.0,.72,.82,.84) for x,y in
+              ((48,48),(68,48),(48,68),(68,68))]
   elif name=='mirrorhold':
    lights += [(x,y,4.2,.42,.68,.92) for x,y in
               ((58,34),(42,34),(74,34),(50,48),(66,48),(42,58),(74,58),(38,92),(78,92))]
