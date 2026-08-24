@@ -26,6 +26,36 @@
       "source": "source-obj/four_gates_gatehouse.obj"
     },
     {
+      "id": "four_gates_civic_wall",
+      "model": "3dobjects/nymara/four_gates_civic_wall.e3d",
+      "texture": "3dobjects/nymara/four_gates_civic_wall.png",
+      "source": "source-obj/four_gates_civic_wall.obj"
+    },
+    {
+      "id": "four_gates_civic_tower",
+      "model": "3dobjects/nymara/four_gates_civic_tower.e3d",
+      "texture": "3dobjects/nymara/four_gates_civic_tower.png",
+      "source": "source-obj/four_gates_civic_tower.obj"
+    },
+    {
+      "id": "four_gates_radial_bridge",
+      "model": "3dobjects/nymara/four_gates_radial_bridge.e3d",
+      "texture": "3dobjects/nymara/four_gates_radial_bridge.png",
+      "source": "source-obj/four_gates_radial_bridge.obj"
+    },
+    {
+      "id": "four_gates_civic_pavilion",
+      "model": "3dobjects/nymara/four_gates_civic_pavilion.e3d",
+      "texture": "3dobjects/nymara/four_gates_civic_pavilion.png",
+      "source": "source-obj/four_gates_civic_pavilion.obj"
+    },
+    {
+      "id": "four_gates_park_tree",
+      "model": "3dobjects/nymara/four_gates_park_tree.e3d",
+      "texture": "3dobjects/nymara/four_gates_park_tree.png",
+      "source": "source-obj/four_gates_park_tree.obj"
+    },
+    {
       "id": "crownwater_ferry_dock",
       "model": "3dobjects/nymara/crownwater_ferry_dock.e3d",
       "texture": "3dobjects/nymara/crownwater_ferry_dock.png",
