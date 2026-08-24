@@ -113,6 +113,27 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Four Gates terrain lacks roads, water, or elevation variation")
             if light_count < 16:
                 raise ValueError("Four Gates lacks its civic night-light network")
+        if path.as_posix().endswith("maps/nymara/mirrorhold.elm"):
+            mirror_tiles = data[tile_offset:height_offset]
+            mirror_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/glasswarden_observatory.e3d": 1,
+                "3dobjects/nymara/glasswarden_lens_tower.e3d": 4,
+                "3dobjects/nymara/mirrorhold_civic_tower.e3d": 8,
+                "3dobjects/nymara/mirrorhold_canal_wall.e3d": 9,
+                "3dobjects/nymara/mirrorhold_radial_bridge.e3d": 6,
+                "3dobjects/nymara/mirrorhold_public_fountain.e3d": 6,
+                "3dobjects/nymara/glasswarden_field_station.e3d": 8,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Mirrorhold is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Mirrorhold arrival plaza is obstructed")
+            if obj3_count < 48 or light_count < 13:
+                raise ValueError("Mirrorhold lacks authored scenery or lighting")
+            if set(mirror_tiles) != {0, 1, 2, 3} or len(set(mirror_heights)) < 8:
+                raise ValueError("Mirrorhold lacks lake, roads, and elevation variation")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,

@@ -195,6 +195,21 @@ def four_gates_height(x,y):
  if radius<=52 or abs(x-58)<=4 or abs(y-58)<=4: return 11
  return max(11,min(19,11+int((radius-52)//18)+region_noise('four_gates',x//8,y//8)//10))
 
+def mirrorhold_tile(x,y):
+ cx=58/6; lake_y=91/6
+ lake=math.hypot(x-cx,(y-lake_y)*1.18)<4.8 or (7<x<12 and 11<y<19)
+ road=abs(x-cx)<=.7 or abs(y-cx)<=.7 or abs(x-y-2.7)<=.7 or abs(x+y-22)<=.7
+ citadel=math.hypot(x-cx,y-6)<3.7
+ return 3 if lake else 2 if road else 0 if citadel else 1
+
+def mirrorhold_height(x,y):
+ if abs(x-58)<=3 or abs(y-58)<=3: return 11
+ lake=math.hypot(x-58,(y-91)*1.18)<28
+ if lake: return 6
+ citadel=max(0,24-int(math.hypot(x-58,y-36)))
+ ridge=max(0,(18-min(x,y,191-x,191-y))//4)
+ return max(8,min(29,11+citadel//3+ridge+region_noise('mirrorhold',x//7,y//7)//8))
+
 def four_gates_terrain_pixel(kind):
  def pixel(x,y):
   grain=((x*17+y*29+(x^y)*5)%23)-11
@@ -308,6 +323,27 @@ def four_gates_placements():
                            (52,74),(64,74),(34,58),(82,58),(58,34),(58,82))):
   placements.append(("3dobjects/nymara/four_gates_lantern.e3d",x,y,0,(j*30)%360))
  return placements
+
+def mirrorhold_placements():
+ p=[]
+ # High observatory-citadel and its four lens towers.
+ p.append(("3dobjects/nymara/glasswarden_observatory.e3d",58,34,0,180))
+ for j,(x,y) in enumerate(((42,34),(74,34),(50,48),(66,48))):
+  p.append(("3dobjects/nymara/glasswarden_lens_tower.e3d",x,y,0,j*90))
+ for j,(x,y) in enumerate(((34,44),(82,44),(34,68),(82,68),(46,76),(70,76),(42,98),(74,98))):
+  p.append(("3dobjects/nymara/mirrorhold_civic_tower.e3d",x,y,0,j*45))
+ # Terraced canal walls define the descent from citadel to lower lake.
+ for j,(x,y,r) in enumerate(((30,54,90),(86,54,270),(30,72,90),(86,72,270),
+                              (36,84,45),(80,84,315),(40,104,0),(56,108,0),(72,104,0))):
+  p.append(("3dobjects/nymara/mirrorhold_canal_wall.e3d",x,y,0,r))
+ # Bridges make the lower water district readable and traversable.
+ for j,(x,y,r) in enumerate(((58,74,0),(44,86,45),(72,86,315),(46,100,90),(70,100,90),(58,112,0))):
+  p.append(("3dobjects/nymara/mirrorhold_radial_bridge.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((42,58),(74,58),(58,46),(58,66),(38,92),(78,92))):
+  p.append(("3dobjects/nymara/mirrorhold_public_fountain.e3d",x,y,0,j*60))
+ for j,(x,y) in enumerate(((30,34),(86,34),(26,62),(90,62),(30,96),(86,96),(50,118),(66,118))):
+  p.append(("3dobjects/nymara/glasswarden_field_station.e3d",x,y,0,j*47))
+ return p
 
 def drowned_crown_placements():
  # A ceremonial submerged processional: the safe arrival vestibule at (58,10)
@@ -616,6 +652,8 @@ def generate_maps(root):
   placements=[]
   if name == 'four_gates':
    placements=four_gates_placements()
+  elif name == 'mirrorhold':
+   placements=mirrorhold_placements()
   elif name in REGIONS:
    authored=profile['objects']
    rings=((30,30),(58,28),(86,30),(28,58),(88,58),(30,86),(58,88),(86,86),
@@ -672,6 +710,9 @@ def generate_maps(root):
    lights += [(x,y,3.5,1.08,.72,.31) for x,y in
               ((42,52),(42,64),(52,42),(64,42),(74,52),(74,64),
                (52,74),(64,74),(34,58),(82,58),(58,34),(58,82))]
+  elif name=='mirrorhold':
+   lights += [(x,y,4.2,.42,.68,.92) for x,y in
+              ((58,34),(42,34),(74,34),(50,48),(66,48),(42,58),(74,58),(38,92),(78,92))]
   elif name=='drowned_crown':
    lights += [(x,y,2.7,.24,.70,.78) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
@@ -693,9 +734,9 @@ def generate_maps(root):
   elif name=='manymouth_flooded_labyrinth':
    lights += [(x,y,2.6,.24,.58,.48) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
-  tile_function=(four_gates_tile if name=='four_gates'
+  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
-  height_function=(four_gates_height if name=='four_gates'
+  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold'
                    else lambda x,y,p=profile,n=name:region_height(p,n,x,y))
   make_map(root/f"maps/nymara/{name}.elm",width=32,height=32,placements=placements,
    ambient=profile['ambient'],lights=lights,
