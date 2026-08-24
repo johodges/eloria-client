@@ -49,11 +49,13 @@ def panel(x: int, y: int) -> tuple[int, int, int, int]:
 
 def make_map(path: Path, width: int = 32, height: int = 32, *,
              tile_id: int = 0, placements=None,
-             ambient=(0.55, 0.58, 0.62)) -> None:
+             ambient=(0.55, 0.58, 0.62), height_value: int = 11) -> None:
     """Write an original ELM settlement with a fully walkable height field."""
     header_size = 120
     tiles = bytes([tile_id]) * (width * height)
-    heights = bytes([11]) * (width * height * 36)
+    if not 0 <= height_value <= 255:
+        raise ValueError("height_value must fit in one ELM height byte")
+    heights = bytes([height_value]) * (width * height * 36)
     height_offset = header_size + len(tiles)
     object_offset = height_offset + len(heights)
     default_placements = [
