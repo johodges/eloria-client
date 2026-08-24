@@ -350,7 +350,10 @@ def generate_npcs(root, actors):
  for culture,(primary,accent,roles) in CULTURES.items():
   for variant in ("f","m"):
    for role in roles:
-    slug=f"{culture}_{role}_{variant}"; feature="armor" if any(x in role for x in ("guard","warrior","militia","guardian")) else "crown" if any(x in role for x in ("priest","official","council","elder")) else "hood"
+    slug=f"{culture}_{role}_{variant}"
+    if slug=='luminous_official_m': feature='civic_official'
+    elif slug=='luminous_merchant_m': feature='civic_merchant'
+    else: feature="armor" if any(x in role for x in ("guard","warrior","militia","guardian")) else "crown" if any(x in role for x in ("priest","official","council","elder")) else "hood"
     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
     png(base/f"{slug}.png",512,512,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",256,256,material_pixel(accent,feature))
     append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.xsf",f"actors/nymara/npcs/{slug}.xmf",f"actors/nymara/npcs/{slug}.png","animations/nymara/humanoid",.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.05))
@@ -374,7 +377,20 @@ def generate_creatures(root, actors):
 
 def equipment_shape(kind):
  def build(v,i):
-  if any(x in kind for x in ("blade","sabre","cutlass")): box(v,i,(0,0,1.1),(.13,.10,2.2)); tapered(v,i,2.1,2.65,.18,0,4)
+  if kind=='civic_blade':
+   tapered(v,i,0,.42,.11,.09,10); box(v,i,(0,0,.48),(.72,.16,.13)); tapered(v,i,.52,2.55,.18,.08,8); tapered(v,i,2.55,2.92,.12,0,8)
+  elif kind=='lakeguard_spear':
+   tapered(v,i,0,2.85,.065,.055,10); tapered(v,i,2.82,3.45,.24,0,8); tapered(v,i,.15,.42,.16,.07,8)
+  elif kind=='mirror_shield':
+   tapered(v,i,0,1.75,.78,.74,16); tapered(v,i,.08,1.67,.64,.61,16); tapered(v,i,.55,1.2,.28,.18,12); box(v,i,(0,.10,.88),(.16,.18,1.42))
+  elif kind=='ceremonial_mail':
+   box(v,i,(0,0,1.25),(.76,.38,.82)); tapered(v,i,.72,1.72,.48,.39,12); box(v,i,(-.46,0,1.42),(.26,.42,.32)); box(v,i,(.46,0,1.42),(.26,.42,.32));
+   for z in (.76,.94,1.12,1.30,1.48): box(v,i,(0,-.21,z),(.72,.06,.065))
+  elif kind=='civic_mantle':
+   box(v,i,(0,.13,1.26),(.86,.08,1.72)); tapered(v,i,.34,2.18,.51,.42,12); box(v,i,(-.39,.12,1.25),(.12,.10,1.55)); box(v,i,(.39,.12,1.25),(.12,.10,1.55))
+  elif kind=='ferry_hook':
+   tapered(v,i,0,2.55,.075,.06,10); tapered(v,i,2.45,2.88,.24,.10,10,center=(.10,0)); tapered(v,i,2.70,3.06,.18,.04,8,center=(.28,0)); box(v,i,(0,0,.28),(.28,.16,.16))
+  elif any(x in kind for x in ("blade","sabre","cutlass")): box(v,i,(0,0,1.1),(.13,.10,2.2)); tapered(v,i,2.1,2.65,.18,0,4)
   elif any(x in kind for x in ("spear","pike","staff","focus")): box(v,i,(0,0,1.5),(.10,.10,3)); tapered(v,i,2.9,3.35,.28,0,6)
   elif "shield" in kind: tapered(v,i,0,1.6,.72,.72,12); box(v,i,(0,.12,.8),(.12,.15,1.6))
   elif any(x in kind for x in ("mail","armor","leathers")): box(v,i,(0,0,1.25),(.62,.32,.78)); box(v,i,(0,0,.78),(.54,.30,.34))
@@ -387,7 +403,7 @@ def generate_equipment(root):
  for i,(culture,name) in enumerate(EQUIPMENT):
   iid=ITEM_BASE+i; model=root/f"3dobjects/nymara/equipment/{culture}/{name}.e3d"; texture(model.with_suffix('.png'),colors[culture]); e3d(model,model.with_suffix('.png').name,equipment_shape(name))
   png(root/f"textures/nymara/items/{name}.png",64,64,lambda x,y,c=colors[culture]: (*c[0],max(0,255-int(math.hypot(x-32,y-32)*7))) if math.hypot(x-32,y-32)<30 else (0,0,0,0))
-  slot="weapon" if any(x in name for x in ("blade","sabre","cutlass","spear","pike","bow","hammer","pick","adze","staff")) else "shield" if "shield" in name else "body" if any(x in name for x in ("mail","armor","leathers")) else "cape" if any(x in name for x in ("cape","mantle")) else "neck"
+  slot="weapon" if any(x in name for x in ("blade","sabre","cutlass","spear","pike","bow","hammer","pick","adze","staff","hook")) else "shield" if "shield" in name else "body" if any(x in name for x in ("mail","armor","leathers")) else "cape" if any(x in name for x in ("cape","mantle")) else "neck"
   out.append({"item_id":iid,"id":name,"name":name.replace('_',' ').title(),"culture":culture,"slot":slot,"model":f"3dobjects/nymara/equipment/{culture}/{name}.e3d","icon":f"textures/nymara/items/{name}.png","attachment_bone":"lower_arm_r" if slot=='weapon' else "lower_arm_l" if slot=='shield' else "spine","compatible_actor_family":"nymara_npc","unique_instance":slot in ("weapon","shield","body","cape")})
  (root/"nymara_equipment.json").write_text(json.dumps({"schema":1,"items":out},indent=2)+"\n"); return out
 

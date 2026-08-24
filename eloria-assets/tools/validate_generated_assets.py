@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import math
 from pathlib import Path
 import struct
@@ -237,6 +238,45 @@ def validate_four_gates_scenery(root: Path) -> None:
             raise ValueError(f"invalid Four Gates terrain material: {path}")
 
 
+def validate_four_gates_npcs_equipment(root: Path) -> None:
+    actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
+    expected_actors = {
+        307: ("actors/nymara/npcs/luminous_official_m.xmf", 1050),
+        309: ("actors/nymara/npcs/luminous_merchant_m.xmf", 980),
+    }
+    for actor_id, (mesh_name, minimum) in expected_actors.items():
+        actor = actors.find(f"actor[@id='{actor_id}']")
+        if actor is None or actor.findtext("mesh") != mesh_name:
+            raise ValueError(f"Four Gates NPC actor mapping changed: {actor_id}")
+        vertices = sum(int(sub.attrib["NUMVERTICES"])
+                       for sub in cal_xml(root / mesh_name).findall("SUBMESH"))
+        if vertices < minimum:
+            raise ValueError(f"Four Gates NPC fell back to generic topology: {mesh_name}")
+    expected_items = {
+        1000: ("civic_blade", "weapon", 120),
+        1001: ("lakeguard_spear", "weapon", 100),
+        1002: ("mirror_shield", "shield", 190),
+        1003: ("ceremonial_mail", "body", 230),
+        1004: ("civic_mantle", "cape", 110),
+        1005: ("ferry_hook", "weapon", 130),
+    }
+    items = {item["item_id"]: item for item in
+             json.loads((root / "nymara_equipment.json").read_text())["items"]}
+    for item_id, (name, slot, minimum) in expected_items.items():
+        item = items.get(item_id)
+        if item is None or item["id"] != name or item["slot"] != slot:
+            raise ValueError(f"Four Gates equipment mapping changed: {item_id}")
+        path = root / item["model"]
+        data = path.read_bytes()
+        vertices = struct.unpack_from("<i", data, 28)[0]
+        if vertices < minimum:
+            raise ValueError(f"Four Gates equipment fell back to placeholder topology: {path}")
+        if png_dimensions(path.with_suffix(".png")) != (256, 256):
+            raise ValueError(f"invalid Four Gates equipment material: {path}")
+        if png_dimensions(root / item["icon"]) != (64, 64):
+            raise ValueError(f"invalid Four Gates equipment icon: {item['icon']}")
+
+
 def expected_dds_size(name: str) -> tuple[int, int]:
     if name.startswith("eyes_"):
         return 24, 24
@@ -328,6 +368,7 @@ def main() -> None:
     validate_meshes(root)
     validate_nymara_textures(root)
     validate_four_gates_scenery(root)
+    validate_four_gates_npcs_equipment(root)
     validate_animations(root)
     validate_customization_dds(root)
     validate_map_dds(root)
