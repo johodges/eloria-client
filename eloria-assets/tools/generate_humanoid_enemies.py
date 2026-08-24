@@ -9,7 +9,8 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 from generate_bootstrap_pack import png
-from generate_characters import BONES, cuboid, profile_surface, skeleton, write_cal
+from generate_characters import (BONES, binary_animation, binary_mesh, cuboid,
+                                 profile_surface, skeleton, write_cal)
 
 ACTOR_BASE = 232
 ENEMIES = (
@@ -61,13 +62,15 @@ def material_pixel(base, feature):
         seams=(x%128<seam_width or y%128<seam_width)
         culture=feature.split(':')[1] if feature.startswith('nymara:') else 'luminous' if feature.startswith('civic_') else ''
         role=feature.split(':')[2] if feature.startswith('nymara:') else feature.removeprefix('civic_')
+        role_code=sum((index+1)*ord(char) for index,char in enumerate(role))
         # Layered cloth/leather/metal zones with a culture-specific border and
         # profession sigil. These remain deterministic while reading as an
         # authored costume rather than a tiled placeholder.
         leather=(v>.72) or (u<.13) or (u>.87)
         metal=role in ('guard','warrior','mounted_warden','glacier_guardian') and (.20<u<.80 and .16<v<.46)
         border=abs(u-.5)<.012 or abs(v-.12)<.010 or abs(v-.68)<.010
-        sigil=((u-.5)**2+(v-.37)**2 < .0045) or (abs(u-.5)<.018 and .25<v<.49)
+        sigil=((u-(.43+(role_code%15)/100))**2+(v-(.32+(role_code%11)/100))**2 < .0032)
+        sigil=sigil or (abs(u-(.43+(role_code%15)/100))<.014 and .22<v<.51)
         if culture=='ssarathi': sigil=((int(u*18)+int(v*18))%7==0 and .22<v<.60)
         elif culture=='glasswarden': sigil=abs(abs(u-.5)+abs(v-.38)-.11)<.012
         elif culture=='orun': sigil=abs((u-.5)*1.6-(v-.38))<.012 and .25<v<.52
@@ -236,6 +239,7 @@ def enemy_mesh(path, feature, scale):
         ET.SubElement(v,"INFLUENCE",ID=str(bone)).text="1"
     for tri in faces: ET.SubElement(sub,"FACE",VERTEXID="%d %d %d"%tri)
     write_cal(path,"XMF",root)
+    binary_mesh(path.with_suffix(".cmf"), vertices, faces)
 
 
 def quat(axis, angle):
@@ -252,15 +256,18 @@ def animation(path,duration,poses):
             ET.SubElement(key,"TRANSLATION").text="%g %g %g"%BONES[bone][2]
             ET.SubElement(key,"ROTATION").text="%g %g %g %g"%quat(axis,angle)
     write_cal(path,"XAF",root)
+    binary_animation(path.with_suffix(".caf"), duration,
+                     [(time, {bone: angle for bone, (_, angle) in frame.items()})
+                      for time, frame in poses], tracks)
 
 
 def append_actor_defs(path):
     tree=ET.parse(path); root=tree.getroot()
-    frames={"CAL_walk":"walk.xaf","CAL_run":"run.xaf","CAL_idle":"idle.xaf","CAL_idle2":"idle.xaf","CAL_combat_idle":"combat_idle.xaf","CAL_attack_up_1":"attack.xaf","CAL_attack_down_1":"attack.xaf","CAL_pain1":"pain.xaf","CAL_pain2":"pain.xaf","CAL_die1":"die.xaf","CAL_die2":"die.xaf"}
+    frames={"CAL_walk":"walk.caf","CAL_run":"run.caf","CAL_idle":"idle.caf","CAL_idle2":"idle.caf","CAL_combat_idle":"combat_idle.caf","CAL_attack_up_1":"attack.caf","CAL_attack_down_1":"attack.caf","CAL_pain1":"pain.caf","CAL_pain2":"pain.caf","CAL_die1":"die.caf","CAL_die2":"die.caf"}
     for index,(slug,label,family,*_) in enumerate(ENEMIES):
         actor=ET.SubElement(root,"actor",id=str(ACTOR_BASE+index),type=label,family=family)
-        ET.SubElement(actor,"skeleton").text="actors/enemies/eloria_enemy_humanoid.xsf"
-        ET.SubElement(actor,"mesh").text=f"actors/enemies/{slug}.xmf"
+        ET.SubElement(actor,"skeleton").text="actors/enemies/eloria_enemy_humanoid.csf"
+        ET.SubElement(actor,"mesh").text=f"actors/enemies/{slug}.cmf"
         ET.SubElement(actor,"skin").text=f"actors/enemies/{slug}.png"
         ET.SubElement(actor,"step_duration").text="260"
         frame_root=ET.SubElement(actor,"frames")
