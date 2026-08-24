@@ -890,6 +890,14 @@ def profession_idle(root, slug, feature):
   poses=[(0,{2:(0,-.05),4:(0,-.72),5:(0,-.76),6:(0,-.72),7:(0,-.76)}),
          (1.4,{2:(0,.035),4:(0,-.68),5:(0,-.82),6:(0,-.70),7:(0,-.80)}),
          (2.8,{2:(0,-.05),4:(0,-.72),5:(0,-.76),6:(0,-.72),7:(0,-.76)})]
+ elif feature=="civic_official":
+  poses=[(0,{2:(0,-.04),4:(0,-.28),5:(0,-.52),6:(0,-.22),7:(0,-.45)}),
+         (1.6,{2:(0,.025),4:(0,-.25),5:(0,-.49),6:(0,-.25),7:(0,-.48)}),
+         (3.2,{2:(0,-.04),4:(0,-.28),5:(0,-.52),6:(0,-.22),7:(0,-.45)})]
+ elif feature=="civic_merchant":
+  poses=[(0,{2:(0,-.055),4:(0,-.58),5:(0,-.64),6:(0,-.14),7:(0,-.34)}),
+         (1.5,{2:(0,.03),4:(0,-.54),5:(0,-.69),6:(0,-.18),7:(0,-.31)}),
+         (3.0,{2:(0,-.055),4:(0,-.58),5:(0,-.64),6:(0,-.14),7:(0,-.34)})]
  else:
   poses=[(0,{2:(0,-.035),4:(0,.12),6:(0,-.20),7:(0,.10)}),
          (1.7,{2:(0,.025),4:(0,.08),6:(0,-.17),7:(0,.08)}),
@@ -917,7 +925,7 @@ def generate_npcs(root, actors):
     else: feature=f"nymara:{culture}:{role}"
     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
     png(base/f"{slug}.png",1024,1024,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",512,512,material_pixel(accent,feature))
-    anim_dir=(profession_idle(root,slug,feature) if feature in ("civic_scholar","civic_ferryman")
+    anim_dir=(profession_idle(root,slug,feature) if feature in ("civic_scholar","civic_ferryman","civic_official","civic_merchant")
               else "animations/nymara/humanoid")
     append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.csf",f"actors/nymara/npcs/{slug}.cmf",f"actors/nymara/npcs/{slug}.png",anim_dir,.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.65 if feature=="civic_ferryman" else 2.2))
     out.append({"actor_type":aid,"id":slug,"culture":culture,"role":role,"variant":variant,"portrait":f"portraits/nymara/npcs/{slug}.png","collision_radius":.42,"scale":.96 if variant=='f' else 1.0}); aid+=1
