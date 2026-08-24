@@ -109,27 +109,63 @@ def cuboid(center, size, bone, vertices, faces):
         # EL treats counter-clockwise triangles as front-facing.
         faces.extend(((base,base+2,base+1),(base,base+3,base+2)))
 
+def ellipsoid(center, size, bone, vertices, faces, rings=7, sides=12):
+    cx,cy,cz=center; sx,sy,sz=(q/2 for q in size)
+    bottom=len(vertices); vertices.append(((cx,cy,cz-sz),(0,0,-1),(.5,1),bone))
+    ring_ids=[]
+    for ring in range(1,rings):
+        theta=math.pi-math.pi*ring/rings; ids=[]
+        for side in range(sides):
+            phi=2*math.pi*side/sides; nx=math.sin(theta)*math.cos(phi); ny=math.sin(theta)*math.sin(phi); nz=math.cos(theta)
+            length=math.sqrt((nx/max(sx,.001))**2+(ny/max(sy,.001))**2+(nz/max(sz,.001))**2)
+            normal=(nx/max(sx,.001)/length,ny/max(sy,.001)/length,nz/max(sz,.001)/length)
+            ids.append(len(vertices)); vertices.append(((cx+sx*nx,cy+sy*ny,cz+sz*nz),normal,(side/sides,ring/rings),bone))
+        ring_ids.append(ids)
+    top=len(vertices); vertices.append(((cx,cy,cz+sz),(0,0,1),(.5,0),bone))
+    for side in range(sides):
+        nxt=(side+1)%sides
+        faces.append((bottom,ring_ids[0][nxt],ring_ids[0][side]))
+        faces.append((top,ring_ids[-1][side],ring_ids[-1][nxt]))
+    for lower,upper in zip(ring_ids,ring_ids[1:]):
+        for side in range(sides):
+            nxt=(side+1)%sides
+            faces.extend(((lower[side],upper[nxt],upper[side]),(lower[side],lower[nxt],upper[nxt])))
+
+def creature_material(base, feature):
+    light=tuple(min(255,c+50) for c in base); dark=tuple(max(0,c-38) for c in base)
+    def pixel(x,y):
+        grain=((x*17+y*29+(x*y)%31)%27)-13
+        stripe=((x+2*y)//38)%7==0
+        spots=((x-37)%91)**2+((y-51)%83)**2<115
+        color=dark if stripe else light if spots or feature in ('ice_spikes','fire_spikes') and (x+y)%53<8 else base
+        return (*(max(0,min(255,c+grain)) for c in color),255)
+    return pixel
+
 
 def creature_mesh(path, body_size, head_size, feature):
     vertices, faces = [], []
     bx, by, bz = body_size
     hx, hy, hz = head_size
-    cuboid((0, 0, .82), (bx, by, bz), 1, vertices, faces)
-    cuboid((0, by*.42, 1.0), (bx*.48, by*.36, bz*.55), 2, vertices, faces)
-    cuboid((0, by*.67, 1.03), (hx, hy, hz), 3, vertices, faces)
-    cuboid((0, -by*.60, .91), (bx*.24, by*.55, bz*.22), 4, vertices, faces)
+    ellipsoid((0, 0, .82), (bx, by, bz), 1, vertices, faces,8,14)
+    ellipsoid((0, by*.42, 1.0), (bx*.48, by*.36, bz*.55), 2, vertices, faces)
+    ellipsoid((0, by*.67, 1.03), (hx, hy, hz), 3, vertices, faces)
+    ellipsoid((0, -by*.60, .91), (bx*.24, by*.55, bz*.22), 4, vertices, faces,6,10)
     for x, y, upper, lower in ((-.31,.34,5,6),(.31,.34,7,8),(-.32,-.34,9,10),(.32,-.34,11,12)):
-        cuboid((x*bx, y*by, .57), (bx*.18, by*.16, bz*.72), upper, vertices, faces)
-        cuboid((x*bx, y*by, .23), (bx*.20, by*.28, bz*.18), lower, vertices, faces)
+        ellipsoid((x*bx, y*by, .57), (bx*.18, by*.16, bz*.72), upper, vertices, faces,5,8)
+        ellipsoid((x*bx, y*by, .23), (bx*.20, by*.28, bz*.18), lower, vertices, faces,5,8)
     if feature in ("ears", "horns", "long_ears", "round_ears", "antlers", "great_horns", "broad_antlers", "tufted_ears"):
         height = hz * (1.35 if feature == "long_ears" else .68)
         width = hx * (.28 if feature == "round_ears" else .18)
         for x in (-hx*.30, hx*.30):
-            cuboid((x, by*.68, 1.03+hz*.62), (width, hy*.16, height), 3, vertices, faces)
+            ellipsoid((x, by*.68, 1.03+hz*.62), (width, hy*.16, height), 3,
+                      vertices, faces, 5, 8)
     if feature in ("antlers", "great_horns", "broad_antlers"):
         spread = hx * (1.55 if feature == "broad_antlers" else (1.15 if feature == "antlers" else .85))
-        cuboid((-spread*.55, by*.66, 1.03+hz), (spread, hy*.14, hz*.16), 3, vertices, faces)
-        cuboid((spread*.55, by*.66, 1.03+hz), (spread, hy*.14, hz*.16), 3, vertices, faces)
+        for side in (-1,1):
+            ellipsoid((side*spread*.50,by*.66,1.03+hz),(spread,hy*.14,hz*.18),3,vertices,faces,5,10)
+            for branch in (.30,.58,.84):
+                ellipsoid((side*spread*branch,by*.66,1.03+hz*(1.15+branch*.28)),
+                          (hx*.13,hy*.12,hz*(.42+branch*.18)),3,vertices,faces,5,8)
     if feature in ("tusks", "fangs"):
         for x in (-hx*.34, hx*.34): cuboid((x, by*.84, .91), (hx*.12, hy*.45, hz*.34), 3, vertices, faces)
     if feature == "eyes":
@@ -137,8 +173,11 @@ def creature_mesh(path, body_size, head_size, feature):
     if feature == "spikes":
         for n in (-.35, 0, .35): cuboid((0, n*by, 1.20+bz*.38), (bx*.15, by*.12, bz*.65), 1, vertices, faces)
     if feature == "wings":
-        cuboid((-bx*.70, -.05, 1.13), (bx, by*.54, bz*.12), 1, vertices, faces)
-        cuboid((bx*.70, -.05, 1.13), (bx, by*.54, bz*.12), 1, vertices, faces)
+        for side in (-1,1):
+            ellipsoid((side*bx*.68,-.05,1.15),(bx*1.05,by*.62,bz*.14),1,
+                      vertices,faces,6,12)
+            ellipsoid((side*bx*1.02,-by*.12,1.10),(bx*.62,by*.48,bz*.10),1,
+                      vertices,faces,5,10)
     if feature == "back_ridge":
         for n in (-.38, -.12, .14, .40):
             cuboid((0, n*by, 1.06+bz*.42), (bx*.18, by*.10, bz*.42), 1, vertices, faces)
@@ -146,7 +185,8 @@ def creature_mesh(path, body_size, head_size, feature):
         for n in (-.42, -.22, 0, .22, .42):
             cuboid((0, n*by, 1.10+bz*.48), (bx*.12, by*.08, bz*.72), 1, vertices, faces)
     if feature == "shell":
-        cuboid((0, -.04, 1.03), (bx*1.08, by*.82, bz*.74), 1, vertices, faces)
+        ellipsoid((0,-.04,1.06),(bx*1.16,by*.88,bz*.92),1,vertices,faces,10,16)
+        ellipsoid((0,-.05,.98),(bx*.95,by*.72,bz*.34),1,vertices,faces,6,12)
     if feature in ("saber_fangs", "nose_horn"):
         if feature == "saber_fangs":
             for x in (-hx*.30, hx*.30):
@@ -155,7 +195,9 @@ def creature_mesh(path, body_size, head_size, feature):
             cuboid((0, by*.89, 1.15), (hx*.18, hy*.68, hz*.28), 3, vertices, faces)
     if feature == "whiskers":
         for x in (-1, 1):
-            cuboid((x*hx*.55, by*.78, .99), (hx*.65, hy*.08, hz*.07), 3, vertices, faces)
+            for height in (-.07,.02,.11):
+                ellipsoid((x*hx*.55,by*.78,.99+height),(hx*.72,hy*.055,hz*.045),3,
+                          vertices,faces,4,8)
     if feature == "twin_tail":
         cuboid((-bx*.18, -by*.64, .96), (bx*.18, by*.65, bz*.18), 4, vertices, faces)
         cuboid((bx*.18, -by*.64, .96), (bx*.18, by*.65, bz*.18), 4, vertices, faces)
@@ -221,8 +263,7 @@ def main():
     skeleton(root / "actors/creatures/eloria_quadruped.xsf")
     for slug, _, _, color, body, head, feature in CREATURES:
         creature_mesh(root / f"actors/creatures/{slug}.xmf", body, head, feature)
-        png(root / f"actors/creatures/{slug}.png", 256, 256,
-            lambda x, y, c=color: (*(max(0, min(255, q + (((x//24)^(y//24))&1)*18)) for q in c), 255))
+        png(root / f"actors/creatures/{slug}.png", 512, 512,creature_material(color,feature))
     poses = {
         "idle": (2., [(0,{2:(0,-.04),4:(2,-.10)}),(1,{2:(0,.04),4:(2,.10)}),(2,{2:(0,-.04),4:(2,-.10)})]),
         "walk": (1., [(0,{5:(0,.55),7:(0,-.55),9:(0,-.55),11:(0,.55)}),(.5,{5:(0,-.55),7:(0,.55),9:(0,.55),11:(0,-.55)}),(1,{5:(0,.55),7:(0,-.55),9:(0,-.55),11:(0,.55)})]),

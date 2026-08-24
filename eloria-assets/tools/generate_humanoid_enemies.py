@@ -27,6 +27,41 @@ ENEMIES = (
     ("fallen_knight", "Fallen Knight", "undead", (78, 75, 73), "armor", 1.10),
 )
 
+def ellipsoid(center, size, bone, vertices, faces, rings=7, sides=12):
+    """Add a closed, smoothly-normalled ellipsoid without degenerate pole faces."""
+    cx,cy,cz=center; sx,sy,sz=(q/2 for q in size)
+    bottom=len(vertices); vertices.append(((cx,cy,cz-sz),(0,0,-1),(.5,1),bone))
+    ring_ids=[]
+    for ring in range(1,rings):
+        theta=math.pi-math.pi*ring/rings; ids=[]
+        for side in range(sides):
+            phi=2*math.pi*side/sides; nx=math.sin(theta)*math.cos(phi); ny=math.sin(theta)*math.sin(phi); nz=math.cos(theta)
+            length=math.sqrt((nx/max(sx,.001))**2+(ny/max(sy,.001))**2+(nz/max(sz,.001))**2)
+            normal=(nx/max(sx,.001)/length,ny/max(sy,.001)/length,nz/max(sz,.001)/length)
+            ids.append(len(vertices)); vertices.append(((cx+sx*nx,cy+sy*ny,cz+sz*nz),normal,(side/sides,ring/rings),bone))
+        ring_ids.append(ids)
+    top=len(vertices); vertices.append(((cx,cy,cz+sz),(0,0,1),(.5,0),bone))
+    first=ring_ids[0]; last=ring_ids[-1]
+    for side in range(sides):
+        nxt=(side+1)%sides
+        faces.append((bottom,first[nxt],first[side]))
+        faces.append((top,last[side],last[nxt]))
+    for lower,upper in zip(ring_ids,ring_ids[1:]):
+        for side in range(sides):
+            nxt=(side+1)%sides
+            faces.extend(((lower[side],upper[nxt],upper[side]),(lower[side],lower[nxt],upper[nxt])))
+
+def material_pixel(base, feature):
+    accent=tuple(min(255,int(c*1.32)+12) for c in base)
+    dark=tuple(max(0,int(c*.52)) for c in base)
+    def pixel(x,y):
+        weave=((x*19+y*31+(x^y)*7)%23)-11
+        seams=(x%64 in (0,1) or y%64 in (0,1))
+        scale=(feature in ('bones','spikes','crown') and ((x//32+y//32)%5==0))
+        color=accent if scale else dark if seams else base
+        return (*(max(0,min(255,c+weave)) for c in color),255)
+    return pixel
+
 
 def enemy_mesh(path, feature, scale):
     vertices, faces = [], []
@@ -44,9 +79,45 @@ def enemy_mesh(path, feature, scale):
         ((.15,.09,-.03),(.22*heavy,.42*heavy,.14),13),
     )
     for center, size, bone in parts:
-        cuboid(tuple(v*scale for v in center), tuple(v*scale for v in size), bone, vertices, faces)
+        ellipsoid(tuple(v*scale for v in center), tuple(v*scale for v in size), bone, vertices, faces)
     if feature in ("hood", "crown", "armor"):
         cuboid((0,0,1.82*scale),(.48*scale,.44*scale,.48*scale),3,vertices,faces)
+    if feature == "civic_official":
+        ellipsoid((0,0,1.42*scale),(.82*scale,.42*scale,.42*scale),2,vertices,faces,6,12)
+        ellipsoid((0,0,1.91*scale),(.43*scale,.38*scale,.25*scale),3,vertices,faces,5,10)
+        for x in (-.17,0,.17):
+            ellipsoid((x*scale,0,2.14*scale),(.09*scale,.09*scale,.34*scale),3,vertices,faces,5,8)
+    if feature == "civic_merchant":
+        ellipsoid((0,-.01*scale,1.84*scale),(.48*scale,.43*scale,.46*scale),3,vertices,faces,6,12)
+        ellipsoid((-.26*scale,-.18*scale,1.03*scale),(.28*scale,.20*scale,.36*scale),2,vertices,faces,5,8)
+        ellipsoid((.26*scale,-.18*scale,1.03*scale),(.28*scale,.20*scale,.36*scale),2,vertices,faces,5,8)
+    if feature == "civic_guard":
+        ellipsoid((0,0,1.37*scale),(.78*scale,.43*scale,.72*scale),2,vertices,faces,6,12)
+        for x,bone in ((-.47,4),(.47,6)):
+            ellipsoid((x*scale,0,1.57*scale),(.38*scale,.43*scale,.28*scale),bone,vertices,faces,5,10)
+        ellipsoid((0,0,1.91*scale),(.43*scale,.39*scale,.34*scale),3,vertices,faces,6,12)
+        ellipsoid((0,-.18*scale,2.02*scale),(.12*scale,.12*scale,.48*scale),3,vertices,faces,5,8)
+    if feature == "civic_ferryman":
+        ellipsoid((0,0,1.25*scale),(.70*scale,.38*scale,.66*scale),2,vertices,faces,6,12)
+        cuboid((0,-.23*scale,1.07*scale),(.74*scale,.08*scale,.17*scale),2,vertices,faces)
+        ellipsoid((0,0,1.90*scale),(.48*scale,.42*scale,.22*scale),3,vertices,faces,5,12)
+        ellipsoid((0,0,2.04*scale),(.22*scale,.20*scale,.20*scale),3,vertices,faces,5,8)
+    if feature == "civic_scholar":
+        ellipsoid((0,0,1.31*scale),(.69*scale,.39*scale,.75*scale),2,vertices,faces,6,12)
+        cuboid((0,-.23*scale,1.12*scale),(.72*scale,.07*scale,.08*scale),2,vertices,faces)
+        for z in (.98,1.12,1.26):
+            cuboid((.27*scale,-.25*scale,z*scale),(.16*scale,.09*scale,.07*scale),2,vertices,faces)
+        ellipsoid((0,0,1.94*scale),(.47*scale,.42*scale,.17*scale),3,vertices,faces,5,12)
+    if feature == "civic_priest":
+        ellipsoid((0,0,1.33*scale),(.74*scale,.42*scale,.79*scale),2,vertices,faces,6,12)
+        ellipsoid((0,-.22*scale,1.36*scale),(.34*scale,.10*scale,.46*scale),2,vertices,faces,5,10)
+        ellipsoid((0,0,1.93*scale),(.45*scale,.40*scale,.31*scale),3,vertices,faces,6,12)
+        for x in (-.18,.18):
+            ellipsoid((x*scale,0,2.12*scale),(.08*scale,.08*scale,.31*scale),3,vertices,faces,5,8)
+    if feature == "civic_civilian":
+        ellipsoid((0,0,1.28*scale),(.66*scale,.37*scale,.69*scale),2,vertices,faces,6,12)
+        cuboid((0,-.22*scale,.98*scale),(.68*scale,.08*scale,.12*scale),2,vertices,faces)
+        ellipsoid((-.28*scale,-.18*scale,1.04*scale),(.24*scale,.17*scale,.31*scale),2,vertices,faces,5,8)
     if feature == "crown":
         for x in (-.16,0,.16): cuboid((x*scale,0,2.12*scale),(.08*scale,.08*scale,.34*scale),3,vertices,faces)
     if feature in ("claws", "ragged"):
@@ -87,6 +158,30 @@ def enemy_mesh(path, feature, scale):
         for x in (-.14,.14): cuboid((x*scale,.22*scale,1.72*scale),(.10*scale,.28*scale,.18*scale),3,vertices,faces)
     if feature == "satyr":
         for x in (-.15,.15): cuboid((x*scale,.13*scale,.02*scale),(.24*scale,.45*scale,.20*scale),10 if x<0 else 13,vertices,faces)
+    if feature.startswith("nymara:"):
+        _, culture, role = feature.split(":", 2)
+        if culture == "votary":
+            ellipsoid((0,-.20*scale,1.42*scale),(.76*scale,.10*scale,.82*scale),2,vertices,faces,6,12)
+            for x in (-.28,.28): ellipsoid((x*scale,0,2.04*scale),(.10*scale,.10*scale,.36*scale),3,vertices,faces,5,8)
+        elif culture == "glasswarden":
+            for x,bone in ((-.48,4),(.48,6)):
+                ellipsoid((x*scale,0,1.60*scale),(.40*scale,.36*scale,.38*scale),bone,vertices,faces,5,10)
+            for x in (-.20,0,.20): cuboid((x*scale,0,2.11*scale),(.10*scale,.10*scale,.44*scale),3,vertices,faces)
+        elif culture == "orun":
+            cuboid((0,-.22*scale,1.15*scale),(.78*scale,.08*scale,.28*scale),2,vertices,faces)
+            for x in (-.21,.21): ellipsoid((x*scale,.09*scale,.03*scale),(.28*scale,.48*scale,.22*scale),10 if x<0 else 13,vertices,faces,5,8)
+        elif culture == "greyhaven":
+            ellipsoid((0,0,1.92*scale),(.52*scale,.46*scale,.20*scale),3,vertices,faces,5,12)
+            cuboid((0,-.23*scale,1.28*scale),(.76*scale,.08*scale,.10*scale),2,vertices,faces)
+        elif culture == "ssarathi":
+            for z in (1.10,1.30,1.50): ellipsoid((0,-.19*scale,z*scale),(.62*scale,.08*scale,.09*scale),2,vertices,faces,4,10)
+            cuboid((0,-.43*scale,.82*scale),(.20*scale,.92*scale,.16*scale),1,vertices,faces)
+        # Every profession gets a readable asymmetric badge/tool silhouette.
+        code=sum((index+1)*ord(ch) for index,ch in enumerate(role))
+        side=-1 if code%2 else 1
+        ellipsoid((side*(.31+.004*(code%17))*scale,-.22*scale,(1.00+.003*(code%29))*scale),
+                  ((.16+.0001*(code%997))*scale,.10*scale,(.23+.006*len(role))*scale),2,
+                  vertices,faces,5,8)
     root=ET.Element("MESH",NUMSUBMESH="1")
     sub=ET.SubElement(root,"SUBMESH",NUMVERTICES=str(len(vertices)),NUMFACES=str(len(faces)),MATERIAL="0",NUMLODSTEPS="0",NUMSPRINGS="0",NUMTEXCOORDS="1")
     for i,(pos,norm,uv,bone) in enumerate(vertices):
@@ -137,7 +232,7 @@ def main():
     skeleton(root/"actors/enemies/eloria_enemy_humanoid.xsf")
     for slug,_,_,color,feature,scale in ENEMIES:
         enemy_mesh(root/f"actors/enemies/{slug}.xmf",feature,scale)
-        png(root/f"actors/enemies/{slug}.png",256,256,lambda x,y,c=color:(*(max(0,min(255,q+(((x//20)^(y//28))&1)*15)) for q in c),255))
+        png(root/f"actors/enemies/{slug}.png",512,512,material_pixel(color,feature))
     poses={
       "idle":(2.,[(0,{2:(0,-.04)}),(1,{2:(0,.04)}),(2,{2:(0,-.04)})]),
       "combat_idle":(1.4,[(0,{4:(0,.25),6:(0,-.25)}),(.7,{4:(0,.35),6:(0,-.35)}),(1.4,{4:(0,.25),6:(0,-.25)})]),
