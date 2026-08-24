@@ -11,8 +11,8 @@ import xml.etree.ElementTree as ET
 
 from generate_bootstrap_pack import png, make_map
 from generate_characters import skeleton as humanoid_skeleton
-from generate_humanoid_enemies import enemy_mesh
-from generate_creatures import skeleton as creature_skeleton, creature_mesh
+from generate_humanoid_enemies import enemy_mesh, material_pixel
+from generate_creatures import skeleton as creature_skeleton, creature_mesh, creature_material
 from generate_scenery import e3d, texture, box, tapered, crossed_leaves
 
 NPC_BASE, CREATURE_BASE, ITEM_BASE = 300, 400, 1000
@@ -99,6 +99,16 @@ REGION_ART = {
  "verdant_stair":{"palette":((42,105,66),(91,145,85),(44,92,101)),"objects":["verdant_basalt_steps","verdant_cenote_stairs","verdant_root_bridge","verdant_vine_bridge","verdant_tree_platform","verdant_water_shrine","verdant_giant_fern"],"water":True,"ambient":(.48,.60,.50)},
  "ssarathi_ruins":{"palette":((42,91,68),(151,126,57),(38,111,108)),"objects":["ssarathi_temple","ssarathi_vault_entrance","ssarathi_water_gate","ssarathi_sunken_court","ssarathi_ritual_pool","ssarathi_sun_stela","ssarathi_ruin_arch"],"water":True,"ambient":(.47,.57,.48)},
  "manymouth_delta":{"palette":((36,105,91),(117,112,56),(42,71,58)),"objects":["manymouth_stilt_house","manymouth_boardwalk","manymouth_ferry_dock","manymouth_hidden_dock","manymouth_mangrove","manymouth_market_stall","manymouth_flooded_cave"],"water":True,"ambient":(.48,.57,.52)},
+}
+
+INTERIOR_KITS = {
+ "drowned_crown":["crownwater_drowned_floor","crownwater_underwater_wall","crownwater_submerged_arch","crownwater_shell_altar","crownwater_drowned_statue","crownwater_water_channel"],
+ "whitehorn_glacier_temple":["whitehorn_monastery_floor","whitehorn_monastery_wall","whitehorn_ice_arch","whitehorn_glacier_altar","whitehorn_prayer_column","whitehorn_mine_support"],
+ "resonant_vault":["glasswarden_laboratory_floor","glasswarden_brass_wall","glasswarden_archive_shelf","glasswarden_crystal_brazier","glasswarden_experiment_table","glasswarden_observatory_lens"],
+ "amberwood_estate":["amberwood_manor_floor","amberwood_manor_wall","amberwood_estate_door","amberwood_banquet_table","amberwood_estate_bed","amberwood_overgrown_statue"],
+ "grey_moor_barrows":["grey_moor_crypt_floor","grey_moor_crypt_wall","grey_moor_barrow_arch","grey_moor_ritual_altar","grey_moor_sarcophagus","grey_moor_spike_trap"],
+ "ssarathi_royal_archive":["ssarathi_scaled_floor","ssarathi_curved_wall","ssarathi_water_arch","ssarathi_archive_shelf","ssarathi_royal_statue","ssarathi_vault_trap"],
+ "manymouth_flooded_labyrinth":["manymouth_flooded_floor","manymouth_stilt_wall","manymouth_boardwalk_section","manymouth_flood_channel","manymouth_smuggler_shelf","manymouth_fishing_crates"],
 }
 
 def dds_mipped(path, width, height, pixel, levels=4):
@@ -210,7 +220,7 @@ def generate_npcs(root, actors):
    for role in roles:
     slug=f"{culture}_{role}_{variant}"; feature="armor" if any(x in role for x in ("guard","warrior","militia","guardian")) else "crown" if any(x in role for x in ("priest","official","council","elder")) else "hood"
     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
-    png(base/f"{slug}.png",256,256,checker(primary,accent)); png(root/f"portraits/nymara/npcs/{slug}.png",128,128,checker(accent,primary))
+    png(base/f"{slug}.png",512,512,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",256,256,material_pixel(accent,feature))
     append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.xsf",f"actors/nymara/npcs/{slug}.xmf",f"actors/nymara/npcs/{slug}.png","animations/nymara/humanoid",.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.05))
     out.append({"actor_type":aid,"id":slug,"culture":culture,"role":role,"variant":variant,"portrait":f"portraits/nymara/npcs/{slug}.png","collision_radius":.42,"scale":.96 if variant=='f' else 1.0}); aid+=1
  (root/"nymara_npcs.json").write_text(json.dumps({"schema":1,"npcs":out},indent=2)+"\n")
@@ -224,7 +234,7 @@ def generate_creatures(root, actors):
  out=[]
  for i,(region,slug,label,body,head,feature) in enumerate(CREATURES):
   aid=CREATURE_BASE+i; creature_mesh(base/f"{slug}.xmf",body,head,feature); c=palette[i%len(palette)]; c2=tuple(min(255,x+55) for x in c)
-  png(base/f"{slug}.png",256,256,checker(c,c2)); png(root/f"portraits/nymara/creatures/{slug}.png",128,128,checker(c2,c))
+  png(base/f"{slug}.png",512,512,creature_material(c,feature)); png(root/f"portraits/nymara/creatures/{slug}.png",256,256,creature_material(c2,feature))
   radius=round(max(body[0],body[1])*.42,2); bounds=(-body[0]/2,-body[1]/2,0,body[0]/2,body[1]/2,1.6)
   append_actor(actors,aid,label,"nymara_creature","actors/nymara/creatures/nymara_creature.xsf",f"actors/nymara/creatures/{slug}.xmf",f"actors/nymara/creatures/{slug}.png","animations/nymara/creatures",radius,1.0,bounds,True)
   out.append({"actor_type":aid,"id":slug,"name":label,"region":region,"portrait":f"portraits/nymara/creatures/{slug}.png","collision_radius":radius,"bounds":bounds,"sound_events":{x:f"nymara.{slug}.{x}" for x in ("idle","attack","pain","death")},"drop_table_hook":f"drops.nymara.{slug}","summoning_hook":f"summon.nymara.{slug}"})
@@ -310,7 +320,17 @@ def generate_maps(root):
     asset=authored[(j+3)%len(authored)]
     placements.append((f"3dobjects/nymara/{asset}.e3d",x,y,0,(j*90)%360))
   else:
-   placements=[(str(p.relative_to(root)).replace('\\','/'),24+(j%4)*22,26+(j//4)*22,0,(j*37)%360) for j,p in enumerate(picks)]
+   kit=INTERIOR_KITS[name]
+   # Three connected chambers: arrival hall, cultural focal room, and deep
+   # objective room. Walls leave wide collision-safe door openings.
+   placements=[]
+   for j,(x,y,rot) in enumerate(((28,24,0),(44,24,0),(72,24,0),(88,24,0),(28,92,180),(44,92,180),(72,92,180),(88,92,180),
+                                  (22,40,90),(22,58,90),(22,78,90),(94,40,270),(94,58,270),(94,78,270),
+                                  (48,46,90),(48,70,90),(68,46,90),(68,70,90))):
+    placements.append((f"3dobjects/nymara/interiors/{kit[1]}.e3d",x,y,0,rot))
+   for j,(x,y) in enumerate(((34,34),(82,34),(34,82),(82,82),(58,40),(58,58),(58,78),(42,58),(74,58))):
+    asset=kit[2+j%(len(kit)-2)]
+    placements.append((f"3dobjects/nymara/interiors/{asset}.e3d",x,y,0,(j*45)%360))
   if name in REGION_HARVESTS:
    for offset,resource in enumerate(REGION_HARVESTS[name]):
     x,y=((26,82),(48,84),(78,82),(98,76))[offset]
@@ -365,6 +385,12 @@ def merge_existing(root, source):
   for child in runtime.iterdir():
    if child.is_dir(): shutil.copytree(child,root/child.name,dirs_exist_ok=True)
    else: shutil.copy2(child,root/child.name)
+ # Normalize legacy handoff materials to the production 256px contract.  The
+ # native source remains in the pack; this prevents mixed texel density at run time.
+ for path in (root/"3dobjects/nymara").rglob("*.png"):
+  width,height,sample=png_pixels(path)
+  if (width,height)!=(256,256):
+   png(path,256,256,lambda x,y,w=width,h=height,s=sample:s(min(w-1,x*w//256),min(h-1,y*h//256)))
 
 def main():
  p=argparse.ArgumentParser(); p.add_argument("output",nargs="?",default="build/eloria-data"); p.add_argument("--handoff-root",default=None); a=p.parse_args(); root=Path(a.output)

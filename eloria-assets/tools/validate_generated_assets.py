@@ -117,6 +117,7 @@ def validate_meshes(root: Path) -> None:
     if not meshes:
         raise ValueError("no generated Cal3D meshes found")
     for path in meshes:
+        vertex_total = 0
         for submesh in cal_xml(path).findall("SUBMESH"):
             vertices = {}
             normals = {}
@@ -124,6 +125,7 @@ def validate_meshes(root: Path) -> None:
                 ident = int(vertex.attrib["ID"])
                 vertices[ident] = tuple(map(float, vertex.findtext("POS").split()))
                 normals[ident] = tuple(map(float, vertex.findtext("NORM").split()))
+            vertex_total += len(vertices)
             for face in submesh.findall("FACE"):
                 a, b, c = map(int, face.attrib["VERTEXID"].split())
                 ab = tuple(vertices[b][i] - vertices[a][i] for i in range(3))
@@ -133,6 +135,26 @@ def validate_meshes(root: Path) -> None:
                          ab[0]*ac[1] - ab[1]*ac[0])
                 if sum(cross[i] * normals[a][i] for i in range(3)) <= 0.0:
                     raise ValueError(f"inward or degenerate face in {path}: {a} {b} {c}")
+        if "/nymara/" in path.as_posix() and vertex_total < 400:
+            raise ValueError(f"Nymara mesh fell back to placeholder topology: {path}")
+
+def png_dimensions(path: Path) -> tuple[int, int]:
+    data = path.read_bytes()
+    if data[:8] != b"\x89PNG\r\n\x1a\n" or data[12:16] != b"IHDR":
+        raise ValueError(f"invalid PNG: {path}")
+    return struct.unpack_from(">II", data, 16)
+
+def validate_nymara_textures(root: Path) -> None:
+    actor_textures = sorted(root.glob("actors/nymara/**/*.png"))
+    if not actor_textures:
+        raise ValueError("no Nymara actor textures found")
+    for path in actor_textures:
+        if png_dimensions(path) != (512, 512):
+            raise ValueError(f"Nymara actor texture is not 512x512: {path}")
+    world_textures = sorted(root.glob("3dobjects/nymara/**/*.png"))
+    for path in world_textures:
+        if png_dimensions(path) != (256, 256):
+            raise ValueError(f"Nymara world material is not 256x256: {path}")
 
 
 def expected_dds_size(name: str) -> tuple[int, int]:
@@ -224,6 +246,7 @@ def main() -> None:
     validate_runtime_xml(root)
     validate_skeletons(root)
     validate_meshes(root)
+    validate_nymara_textures(root)
     validate_animations(root)
     validate_customization_dds(root)
     validate_map_dds(root)

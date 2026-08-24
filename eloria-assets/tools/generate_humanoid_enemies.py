@@ -27,6 +27,41 @@ ENEMIES = (
     ("fallen_knight", "Fallen Knight", "undead", (78, 75, 73), "armor", 1.10),
 )
 
+def ellipsoid(center, size, bone, vertices, faces, rings=7, sides=12):
+    """Add a closed, smoothly-normalled ellipsoid without degenerate pole faces."""
+    cx,cy,cz=center; sx,sy,sz=(q/2 for q in size)
+    bottom=len(vertices); vertices.append(((cx,cy,cz-sz),(0,0,-1),(.5,1),bone))
+    ring_ids=[]
+    for ring in range(1,rings):
+        theta=math.pi-math.pi*ring/rings; ids=[]
+        for side in range(sides):
+            phi=2*math.pi*side/sides; nx=math.sin(theta)*math.cos(phi); ny=math.sin(theta)*math.sin(phi); nz=math.cos(theta)
+            length=math.sqrt((nx/max(sx,.001))**2+(ny/max(sy,.001))**2+(nz/max(sz,.001))**2)
+            normal=(nx/max(sx,.001)/length,ny/max(sy,.001)/length,nz/max(sz,.001)/length)
+            ids.append(len(vertices)); vertices.append(((cx+sx*nx,cy+sy*ny,cz+sz*nz),normal,(side/sides,ring/rings),bone))
+        ring_ids.append(ids)
+    top=len(vertices); vertices.append(((cx,cy,cz+sz),(0,0,1),(.5,0),bone))
+    first=ring_ids[0]; last=ring_ids[-1]
+    for side in range(sides):
+        nxt=(side+1)%sides
+        faces.append((bottom,first[nxt],first[side]))
+        faces.append((top,last[side],last[nxt]))
+    for lower,upper in zip(ring_ids,ring_ids[1:]):
+        for side in range(sides):
+            nxt=(side+1)%sides
+            faces.extend(((lower[side],upper[nxt],upper[side]),(lower[side],lower[nxt],upper[nxt])))
+
+def material_pixel(base, feature):
+    accent=tuple(min(255,int(c*1.32)+12) for c in base)
+    dark=tuple(max(0,int(c*.52)) for c in base)
+    def pixel(x,y):
+        weave=((x*19+y*31+(x^y)*7)%23)-11
+        seams=(x%64 in (0,1) or y%64 in (0,1))
+        scale=(feature in ('bones','spikes','crown') and ((x//32+y//32)%5==0))
+        color=accent if scale else dark if seams else base
+        return (*(max(0,min(255,c+weave)) for c in color),255)
+    return pixel
+
 
 def enemy_mesh(path, feature, scale):
     vertices, faces = [], []
@@ -44,7 +79,7 @@ def enemy_mesh(path, feature, scale):
         ((.15,.09,-.03),(.22*heavy,.42*heavy,.14),13),
     )
     for center, size, bone in parts:
-        cuboid(tuple(v*scale for v in center), tuple(v*scale for v in size), bone, vertices, faces)
+        ellipsoid(tuple(v*scale for v in center), tuple(v*scale for v in size), bone, vertices, faces)
     if feature in ("hood", "crown", "armor"):
         cuboid((0,0,1.82*scale),(.48*scale,.44*scale,.48*scale),3,vertices,faces)
     if feature == "crown":
@@ -137,7 +172,7 @@ def main():
     skeleton(root/"actors/enemies/eloria_enemy_humanoid.xsf")
     for slug,_,_,color,feature,scale in ENEMIES:
         enemy_mesh(root/f"actors/enemies/{slug}.xmf",feature,scale)
-        png(root/f"actors/enemies/{slug}.png",256,256,lambda x,y,c=color:(*(max(0,min(255,q+(((x//20)^(y//28))&1)*15)) for q in c),255))
+        png(root/f"actors/enemies/{slug}.png",512,512,material_pixel(color,feature))
     poses={
       "idle":(2.,[(0,{2:(0,-.04)}),(1,{2:(0,.04)}),(2,{2:(0,-.04)})]),
       "combat_idle":(1.4,[(0,{4:(0,.25),6:(0,-.25)}),(.7,{4:(0,.35),6:(0,-.35)}),(1.4,{4:(0,.25),6:(0,-.25)})]),

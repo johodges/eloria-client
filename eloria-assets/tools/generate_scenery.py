@@ -46,7 +46,14 @@ def e3d(path, texture, build):
 
 def texture(path,colors):
     a,b=colors
-    png(path,128,128,lambda x,y:(*(a if ((x//16+y//16)&1)==0 else b),255))
+    def material(x,y):
+        grain=((x*23+y*41+(x^y)*5)%31)-15
+        broad=(math.sin(x*.071)+math.sin((x+y)*.039)+math.cos(y*.053))/3
+        base=a if broad<.08 else b
+        seam=(x%64 in (0,1) or y%64 in (0,1))
+        color=tuple(int(c*.72) for c in base) if seam else base
+        return (*(max(0,min(255,c+grain//2)) for c in color),255)
+    png(path,256,256,material)
 
 def tree(v,i): tapered(v,i,0,2.5,.32,.20); tapered(v,i,1.6,4.6,1.7,0,10)
 def pine(v,i): tapered(v,i,0,3,.24,.16); tapered(v,i,1.2,4.8,1.55,0,10); tapered(v,i,2.4,5.4,1.15,0,10)
