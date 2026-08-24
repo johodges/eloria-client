@@ -262,6 +262,27 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Grey Moors lacks authored scenery or lighting")
             if set(moor_tiles) != {0, 1, 2, 3} or len(set(moor_heights)) < 8:
                 raise ValueError("Grey Moors lacks barrows, causeways, bog, or relief")
+        if path.as_posix().endswith("maps/nymara/westhaven.elm"):
+            westhaven_tiles = data[tile_offset:height_offset]
+            westhaven_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/westhaven_lighthouse.e3d": 1,
+                "3dobjects/nymara/westhaven_warehouse.e3d": 8,
+                "3dobjects/nymara/westhaven_dry_dock.e3d": 5,
+                "3dobjects/nymara/westhaven_harbor_crane.e3d": 7,
+                "3dobjects/nymara/westhaven_shipyard_frame.e3d": 5,
+                "3dobjects/nymara/westhaven_fish_market.e3d": 6,
+                "3dobjects/nymara/westhaven_seawall.e3d": 9,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Westhaven is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Westhaven arrival is obstructed")
+            if obj3_count < 51 or light_count < 12:
+                raise ValueError("Westhaven lacks authored harbor scenery or lighting")
+            if set(westhaven_tiles) != {0, 1, 2, 3} or 6 not in set(westhaven_heights):
+                raise ValueError("Westhaven lacks coast, harbor, quays, or water depth")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,
