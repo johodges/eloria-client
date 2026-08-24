@@ -195,6 +195,98 @@ def four_gates_height(x,y):
  if radius<=52 or abs(x-58)<=4 or abs(y-58)<=4: return 11
  return max(11,min(19,11+int((radius-52)//18)+region_noise('four_gates',x//8,y//8)//10))
 
+def mirrorhold_tile(x,y):
+ cx=58/6; lake_y=91/6
+ lake=math.hypot(x-cx,(y-lake_y)*1.18)<4.8 or (7<x<12 and 11<y<19)
+ road=abs(x-cx)<=.7 or abs(y-cx)<=.7 or abs(x-y-2.7)<=.7 or abs(x+y-22)<=.7
+ citadel=math.hypot(x-cx,y-6)<3.7
+ return 3 if lake else 2 if road else 0 if citadel else 1
+
+def mirrorhold_height(x,y):
+ if abs(x-58)<=3 or abs(y-58)<=3: return 11
+ lake=math.hypot(x-58,(y-91)*1.18)<28
+ if lake: return 6
+ citadel=max(0,24-int(math.hypot(x-58,y-36)))
+ ridge=max(0,(18-min(x,y,191-x,191-y))//4)
+ return max(8,min(29,11+citadel//3+ridge+region_noise('mirrorhold',x//7,y//7)//8))
+
+def crownwater_tile(x,y):
+ cx=cy=58/6; radius=math.hypot(x-cx,y-cy)
+ causeway=abs(x-cx)<=.65 or abs(y-cy)<=.65 or abs((x-cx)-(y-cy))<=.55
+ satellites=any(math.hypot(x-sx,y-sy)<1.7 for sx,sy in
+                ((4.8,5.0),(14.6,5.2),(4.6,14.4),(14.7,14.5),(9.7,17.5)))
+ if causeway and radius<10: return 2
+ if radius<4.6: return 0
+ if satellites: return 1
+ return 3
+
+def crownwater_height(x,y):
+ if abs(x-58)<=4 or abs(y-58)<=4: return 11
+ central=math.hypot(x-58,y-58)<29
+ satellites=any(math.hypot(x-sx,y-sy)<11 for sx,sy in
+                ((29,30),(88,31),(28,87),(88,87),(58,106)))
+ return 11 if central or satellites else 6
+
+def whitehorn_tile(x,y):
+ cx=58/6
+ glacier=abs(x-cx)<2.2 and 3<y<17
+ road=abs(x-cx)<.7 or abs(x+y-19.5)<.65
+ rock=min(x,y,31-x,31-y)<4 or ((x*5+y*7)%13)<3
+ return 3 if glacier else 2 if road else 1 if rock else 0
+
+def whitehorn_height(x,y):
+ if abs(x-58)<=4 or abs(y-58)<=3: return 11
+ glacier=abs(x-58)<14 and 24<y<112
+ edge=min(x,y,191-x,191-y)
+ peak=max(0,(48-edge)//5)+max(0,(y-100)//14)
+ return max(8,min(31,(8 if glacier else 11)+peak+region_noise('whitehorn_range',x//7,y//7)//7))
+
+def amethyst_tile(x,y):
+ cx=cy=58/6
+ basin=math.hypot((x-cx)*.90,(y-cy)*1.08)<6.2
+ storm_road=abs(x-cx)<.72 or abs(y-cy)<.72 or abs((x-cx)+(y-cy))<.62
+ crystal_field=((x*7+y*11)%19)<5 or math.hypot(x-24,y-8)<3.4
+ return 2 if storm_road else 0 if basin else 3 if crystal_field else 1
+
+def amethyst_height(x,y):
+ if abs(x-58)<=4 or abs(y-58)<=3: return 11
+ basin=max(0,28-int(math.hypot(x-58,y-58)))
+ rim=max(0,(34-min(x,y,191-x,191-y))//5)
+ storm_shelf=max(0,(x+y-214)//18)
+ return max(7,min(29,11-basin//7+rim+storm_shelf+
+                   region_noise('amethyst_barrens',x//7,y//7)//8))
+
+def sunmane_tile(x,y):
+ cx=cy=58/6
+ road=abs(x-cx)<.72 or abs(y-cy)<.72 or abs((x-cx)-(y-cy))<.62
+ camp=any(math.hypot(x-sx,y-sy)<2.25 for sx,sy in
+          ((6.0,6.0),(13.4,5.8),(5.8,13.5),(13.7,13.4)))
+ dry_grass=((x*5+y*9)%17)<7
+ return 2 if road else 0 if camp else 3 if dry_grass else 1
+
+def sunmane_height(x,y):
+ if abs(x-58)<=4 or abs(y-58)<=3: return 11
+ edge=min(x,y,191-x,191-y)
+ mesa=max(0,(31-edge)//7)
+ rolling=((x//22+y//18)%4)-1
+ return max(8,min(24,11+mesa+rolling+
+                   region_noise('sunmane_steppe',x//8,y//8)//9))
+
+def amberwood_tile(x,y):
+ cx=cy=58/6
+ estate=math.hypot((x-cx)*1.1,(y-cy)*.9)<3.7
+ road=abs(x-cx)<.65 or abs(y-cy)<.65 or abs((x-cx)+(y-cy))<.58
+ old_growth=((x*7+y*5)%13)<6 or min(x,y,31-x,31-y)<4
+ return 2 if road else 0 if estate else 3 if old_growth else 1
+
+def amberwood_height(x,y):
+ if abs(x-58)<=4 or abs(y-58)<=3: return 11
+ edge=min(x,y,191-x,191-y)
+ wooded_rise=max(0,(38-edge)//8)
+ ridge=max(0,(y-110)//20)
+ return max(8,min(25,11+wooded_rise+ridge+
+                   region_noise('amberwood',x//7,y//7)//9))
+
 def four_gates_terrain_pixel(kind):
  def pixel(x,y):
   grain=((x*17+y*29+(x^y)*5)%23)-11
@@ -309,6 +401,132 @@ def four_gates_placements():
   placements.append(("3dobjects/nymara/four_gates_lantern.e3d",x,y,0,(j*30)%360))
  return placements
 
+def mirrorhold_placements():
+ p=[]
+ # High observatory-citadel and its four lens towers.
+ p.append(("3dobjects/nymara/glasswarden_observatory.e3d",58,34,0,180))
+ for j,(x,y) in enumerate(((42,34),(74,34),(50,48),(66,48))):
+  p.append(("3dobjects/nymara/glasswarden_lens_tower.e3d",x,y,0,j*90))
+ for j,(x,y) in enumerate(((34,44),(82,44),(34,68),(82,68),(46,76),(70,76),(42,98),(74,98))):
+  p.append(("3dobjects/nymara/mirrorhold_civic_tower.e3d",x,y,0,j*45))
+ # Terraced canal walls define the descent from citadel to lower lake.
+ for j,(x,y,r) in enumerate(((30,54,90),(86,54,270),(30,72,90),(86,72,270),
+                              (36,84,45),(80,84,315),(40,104,0),(56,108,0),(72,104,0))):
+  p.append(("3dobjects/nymara/mirrorhold_canal_wall.e3d",x,y,0,r))
+ # Bridges make the lower water district readable and traversable.
+ for j,(x,y,r) in enumerate(((58,74,0),(44,86,45),(72,86,315),(46,100,90),(70,100,90),(58,112,0))):
+  p.append(("3dobjects/nymara/mirrorhold_radial_bridge.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((42,58),(74,58),(58,46),(58,66),(38,92),(78,92))):
+  p.append(("3dobjects/nymara/mirrorhold_public_fountain.e3d",x,y,0,j*60))
+ for j,(x,y) in enumerate(((30,34),(86,34),(26,62),(90,62),(30,96),(86,96),(50,118),(66,118))):
+  p.append(("3dobjects/nymara/glasswarden_field_station.e3d",x,y,0,j*47))
+ return p
+
+def crownwater_placements():
+ p=[]
+ # Pale central island capital, ringed by civic towers and fountains.
+ for j,(x,y) in enumerate(((42,42),(74,42),(42,74),(74,74),(58,36),(36,58),(80,58),(58,80))):
+  p.append(("3dobjects/nymara/mirrorhold_civic_tower.e3d",x,y,0,j*45))
+ for j,(x,y) in enumerate(((48,48),(68,48),(48,68),(68,68),(58,44),(44,58),(72,58),(58,72))):
+  p.append(("3dobjects/nymara/mirrorhold_public_fountain.e3d",x,y,0,j*45))
+ # Four ferry approaches and an outer southern island route.
+ for j,(x,y,r) in enumerate(((58,24,90),(24,58,0),(92,58,0),(58,92,90),(58,110,90),(36,36,45),(80,36,315),(36,80,315),(80,80,45))):
+  p.append(("3dobjects/nymara/mirrorhold_radial_bridge.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((30,30,45),(86,30,315),(28,86,315),(88,86,45),(58,106,0),(20,58,90),(98,58,270))):
+  p.append(("3dobjects/nymara/crownwater_ferry_dock.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((22,40,25),(96,40,335),(24,76,155),(94,78,205),(46,104,20),(72,106,340))):
+  p.append(("3dobjects/nymara/crownwater_fishing_boat.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((34,20,0),(82,22,180),(18,62,90),(100,64,270))):
+  p.append(("3dobjects/nymara/crownwater_patrol_boat.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((28,46),(88,46),(30,70),(86,70),(46,90),(70,90))):
+  p.append(("3dobjects/nymara/crownwater_submerged_waystone.e3d",x,y,0,j*60))
+ for j,(x,y) in enumerate(((32,26),(84,26),(26,84),(90,84),(48,108),(68,108))):
+  p.append(("3dobjects/nymara/mirrorhold_lake_house.e3d",x,y,0,j*60))
+ return p
+
+def whitehorn_placements():
+ p=[]
+ p.append(("3dobjects/nymara/whitehorn_monastery.e3d",58,28,0,180))
+ for j,(x,y,r) in enumerate(((58,42,0),(52,54,15),(64,66,345),(54,78,10),(62,90,350),(58,102,0))):
+  p.append(("3dobjects/nymara/whitehorn_glacier.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((58,50,90),(46,64,20),(70,72,160),(48,88,25),(68,98,155))):
+  p.append(("3dobjects/nymara/whitehorn_rope_bridge.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((42,38),(74,38),(38,62),(78,62),(42,92),(74,92))):
+  p.append(("3dobjects/nymara/whitehorn_shrine.e3d",x,y,0,j*60))
+ for j,(x,y) in enumerate(((30,32),(86,34),(26,54),(90,54),(30,78),(86,80),(36,104),(80,104),(48,116),(68,116))):
+  p.append(("3dobjects/nymara/whitehorn_cairn.e3d",x,y,0,j*37))
+ for j,(x,y,r) in enumerate(((24,74,90),(92,76,270),(34,112,45),(82,112,315))):
+  p.append(("3dobjects/nymara/whitehorn_ice_cave.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((26,42,90),(90,44,270),(58,118,180))):
+  p.append(("3dobjects/nymara/whitehorn_mine_entrance.e3d",x,y,0,r))
+ return p
+
+def amethyst_placements():
+ p=[]
+ # The observatory anchors the sheltered resonant basin from the concept.
+ p.append(("3dobjects/nymara/glasswarden_observatory.e3d",58,34,0,180))
+ for j,(x,y,r) in enumerate(((42,38,20),(74,38,340),(34,56,70),(82,56,290),
+                              (38,82,120),(78,82,240),(58,102,180))):
+  p.append(("3dobjects/nymara/amethyst_crystal_bridge.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((24,34,75),(92,34,285),(22,78,95),(94,78,265))):
+  p.append(("3dobjects/nymara/amethyst_geode_cave.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((32,24),(84,24),(26,52),(90,52),(30,94),(86,94),
+                            (46,112),(70,112))):
+  p.append(("3dobjects/nymara/amethyst_levitating_shards.e3d",x,y,0,j*43))
+ for j,(x,y) in enumerate(((40,54),(76,54),(34,72),(82,72),(48,92),(68,92))):
+  p.append(("3dobjects/nymara/amethyst_storm_ruin.e3d",x,y,0,j*60))
+ for j,(x,y) in enumerate(((48,42),(68,42),(42,64),(74,64),(50,78),(66,78),
+                            (30,106),(86,106),(22,62),(94,62))):
+  p.append(("3dobjects/nymara/resonant_crystal_cluster.e3d",x,y,0,j*37))
+ for j,(x,y) in enumerate(((46,30),(70,30),(32,64),(84,64),(40,100),(76,100))):
+  p.append(("3dobjects/nymara/glasswarden_field_station.e3d",x,y,0,j*60))
+ return p
+
+def sunmane_placements():
+ p=[]
+ # Four clan camps frame a shared market and caravan crossroads.
+ for j,(x,y) in enumerate(((36,36),(80,36),(36,80),(80,80),(48,30),(68,30),
+                            (30,48),(86,48),(30,68),(86,68),(48,86),(68,86))):
+  p.append(("3dobjects/nymara/orun_round_tent.e3d",x,y,0,j*31))
+ for j,(x,y) in enumerate(((48,48),(68,48),(48,68),(68,68))):
+  p.append(("3dobjects/nymara/orun_seasonal_market.e3d",x,y,0,j*90))
+ for j,(x,y) in enumerate(((58,34),(82,58),(58,82),(34,58),(42,42),(74,42),
+                            (42,74),(74,74))):
+  p.append(("3dobjects/nymara/orun_banner_shrine.e3d",x,y,0,j*45))
+ for j,(x,y,r) in enumerate(((58,24,180),(24,58,90),(92,58,270),(58,94,0))):
+  p.append(("3dobjects/nymara/sunmane_caravanserai.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((22,34),(94,34),(22,82),(94,82),(40,104),(76,104))):
+  p.append(("3dobjects/nymara/sunmane_windmill.e3d",x,y,0,j*60))
+ for j,(x,y) in enumerate(((58,44),(44,58),(72,58),(58,72))):
+  p.append(("3dobjects/nymara/sunmane_well.e3d",x,y,0,j*90))
+ for j,(x,y,r) in enumerate(((26,26,45),(90,26,315),(26,90,135),(90,90,225),
+                              (48,108,0),(68,108,0))):
+  p.append(("3dobjects/nymara/sunmane_animal_pen.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((18,48),(98,48),(18,72),(98,72),(34,108),(82,108))):
+  p.append(("3dobjects/nymara/sunmane_burial_mound.e3d",x,y,0,j*60))
+ return p
+
+def amberwood_placements():
+ p=[]
+ p.append(("3dobjects/nymara/amberwood_estate.e3d",58,42,0,180))
+ for j,(x,y) in enumerate(((34,34),(82,34),(28,64),(88,64),(38,94),(78,94))):
+  p.append(("3dobjects/nymara/amberwood_hunting_lodge.e3d",x,y,0,j*60))
+ for j,(x,y) in enumerate(((24,24),(92,24),(20,52),(96,52),(24,84),(92,84),
+                            (34,108),(82,108))):
+  p.append(("3dobjects/nymara/amberwood_hollow_tree.e3d",x,y,0,j*43))
+ for j,(x,y,r) in enumerate(((58,30,90),(30,58,0),(86,58,0),(58,88,90))):
+  p.append(("3dobjects/nymara/amberwood_old_bridge.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((30,30),(46,26),(70,26),(86,30),(22,42),(94,42),
+                            (22,74),(94,74),(30,98),(46,106),(70,106),(86,98),
+                            (38,50),(78,50),(38,78),(78,78))):
+  p.append(("3dobjects/nymara/amberwood_tree.e3d",x,y,0,j*29))
+ for j,(x,y,r) in enumerate(((42,38,45),(74,38,315),(34,72,90),(82,72,270),
+                              (46,96,30),(70,96,330))):
+  p.append(("3dobjects/nymara/amberwood_ruin_arch.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((48,48),(68,48),(48,68),(68,68))):
+  p.append(("3dobjects/nymara/amberwood_garden_fountain.e3d",x,y,0,j*90))
+ return p
+
 def drowned_crown_placements():
  # A ceremonial submerged processional: the safe arrival vestibule at (58,10)
  # opens into twin water galleries, a statue court, and the crown altar.
@@ -368,6 +586,84 @@ def resonant_vault_placements():
  for x,y in ((42,32),(74,32),(42,56),(74,56),(42,80),(74,80),(48,96),(68,96)):
   p.append(("3dobjects/nymara/interiors/glasswarden_crystal_brazier.e3d",x,y,0,0))
  p.append(("3dobjects/nymara/interiors/glasswarden_observatory_lens.e3d",58,92,0,180))
+ return p
+
+def amberwood_estate_placements():
+ # A formal entry and banquet hall branch into residential chambers before an
+ # overgrown memorial court, keeping the main north-south route legible.
+ p=[]
+ for x,y in ((34,22),(58,22),(82,22),(34,46),(58,46),(82,46),
+             (34,70),(58,70),(82,70),(34,94),(58,94),(82,94)):
+  p.append(("3dobjects/nymara/interiors/amberwood_manor_floor.e3d",x,y,0,0))
+ for x,y,r in ((24,22,90),(24,40,90),(24,58,90),(24,76,90),(24,94,90),
+               (92,22,270),(92,40,270),(92,58,270),(92,76,270),(92,94,270),
+               (34,106,180),(50,106,180),(66,106,180),(82,106,180)):
+  p.append(("3dobjects/nymara/interiors/amberwood_manor_wall.e3d",x,y,0,r))
+ for x,y,r in ((46,34,90),(70,34,90),(46,58,90),(70,58,90),(46,82,90),(70,82,90)):
+  p.append(("3dobjects/nymara/interiors/amberwood_estate_door.e3d",x,y,0,r))
+ for x,y,r in ((36,48,0),(80,48,180),(36,70,0),(80,70,180)):
+  p.append(("3dobjects/nymara/interiors/amberwood_banquet_table.e3d",x,y,0,r))
+ for x,y,r in ((32,30,90),(84,30,270),(32,84,90),(84,84,270),(44,94,0),(72,94,180)):
+  p.append(("3dobjects/nymara/interiors/amberwood_estate_bed.e3d",x,y,0,r))
+ for x,y,r in ((34,60,45),(82,60,315),(42,96,20),(74,96,340)):
+  p.append(("3dobjects/nymara/interiors/amberwood_overgrown_statue.e3d",x,y,0,r))
+ return p
+
+def grey_moor_barrows_placements():
+ p=[]
+ for x,y in ((34,22),(58,22),(82,22),(34,46),(58,46),(82,46),
+             (34,70),(58,70),(82,70),(34,94),(58,94),(82,94)):
+  p.append(("3dobjects/nymara/interiors/grey_moor_crypt_floor.e3d",x,y,0,0))
+ for x,y,r in ((24,22,90),(24,40,90),(24,58,90),(24,76,90),(24,94,90),
+               (92,22,270),(92,40,270),(92,58,270),(92,76,270),(92,94,270),
+               (34,106,180),(50,106,180),(66,106,180),(82,106,180)):
+  p.append(("3dobjects/nymara/interiors/grey_moor_crypt_wall.e3d",x,y,0,r))
+ for x,y,r in ((46,34,90),(70,34,90),(46,58,90),(70,58,90),(46,82,90),(70,82,90)):
+  p.append(("3dobjects/nymara/interiors/grey_moor_barrow_arch.e3d",x,y,0,r))
+ for x,y,r in ((32,40,0),(84,40,180),(32,62,0),(84,62,180),(40,88,0),(76,88,180),(40,98,0),(76,98,180)):
+  p.append(("3dobjects/nymara/interiors/grey_moor_sarcophagus.e3d",x,y,0,r))
+ for x,y,r in ((42,50,0),(74,50,180),(42,74,0),(74,74,180)):
+  p.append(("3dobjects/nymara/interiors/grey_moor_spike_trap.e3d",x,y,0,r))
+ p.append(("3dobjects/nymara/interiors/grey_moor_ritual_altar.e3d",58,94,0,180))
+ return p
+
+def ssarathi_archive_placements():
+ p=[]
+ for x,y in ((34,22),(58,22),(82,22),(34,46),(58,46),(82,46),
+             (34,70),(58,70),(82,70),(34,94),(58,94),(82,94)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_scaled_floor.e3d",x,y,0,0))
+ for x,y,r in ((24,22,90),(24,40,90),(24,58,90),(24,76,90),(24,94,90),
+               (92,22,270),(92,40,270),(92,58,270),(92,76,270),(92,94,270),
+               (34,106,180),(50,106,180),(66,106,180),(82,106,180)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_curved_wall.e3d",x,y,0,r))
+ for x,y,r in ((46,34,90),(70,34,90),(46,58,90),(70,58,90),(46,82,90),(70,82,90)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_water_arch.e3d",x,y,0,r))
+ for x,y,r in ((30,36,90),(86,36,270),(30,56,90),(86,56,270),(30,78,90),(86,78,270),(42,94,0),(74,94,180)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_archive_shelf.e3d",x,y,0,r))
+ for x,y,r in ((38,62,30),(78,62,330),(44,88,15),(72,88,345)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_royal_statue.e3d",x,y,0,r))
+ for x,y,r in ((42,46,0),(74,46,180),(42,72,0),(74,72,180)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_vault_trap.e3d",x,y,0,r))
+ return p
+
+def manymouth_labyrinth_placements():
+ p=[]
+ for x,y in ((34,22),(58,22),(82,22),(34,46),(58,46),(82,46),
+             (34,70),(58,70),(82,70),(34,94),(58,94),(82,94)):
+  p.append(("3dobjects/nymara/interiors/manymouth_flooded_floor.e3d",x,y,0,0))
+ for x,y,r in ((24,22,90),(24,40,90),(24,58,90),(24,76,90),(24,94,90),
+               (92,22,270),(92,40,270),(92,58,270),(92,76,270),(92,94,270),
+               (34,106,180),(50,106,180),(66,106,180),(82,106,180)):
+  p.append(("3dobjects/nymara/interiors/manymouth_stilt_wall.e3d",x,y,0,r))
+ for x,y,r in ((58,24,0),(46,36,90),(70,36,90),(34,50,0),(58,50,0),
+               (82,50,0),(46,66,90),(70,66,90),(46,86,0),(70,86,0)):
+  p.append(("3dobjects/nymara/interiors/manymouth_boardwalk_section.e3d",x,y,0,r))
+ for x,y,r in ((34,34,0),(82,34,0),(34,58,0),(82,58,0),(34,82,0),(58,82,0),(82,82,0),(58,96,0)):
+  p.append(("3dobjects/nymara/interiors/manymouth_flood_channel.e3d",x,y,0,r))
+ for x,y,r in ((28,38,90),(88,38,270),(28,64,90),(88,64,270),(36,94,0),(80,94,180)):
+  p.append(("3dobjects/nymara/interiors/manymouth_smuggler_shelf.e3d",x,y,0,r))
+ for x,y,r in ((38,44,0),(78,44,180),(38,72,0),(78,72,180),(46,98,0),(70,98,180)):
+  p.append(("3dobjects/nymara/interiors/manymouth_fishing_crates.e3d",x,y,0,r))
  return p
 
 def cartography_pixel(name, profile):
@@ -538,6 +834,18 @@ def generate_maps(root):
   placements=[]
   if name == 'four_gates':
    placements=four_gates_placements()
+  elif name == 'mirrorhold':
+   placements=mirrorhold_placements()
+  elif name == 'crownwater':
+   placements=crownwater_placements()
+  elif name == 'whitehorn_range':
+   placements=whitehorn_placements()
+  elif name == 'amethyst_barrens':
+   placements=amethyst_placements()
+  elif name == 'sunmane_steppe':
+   placements=sunmane_placements()
+  elif name == 'amberwood':
+   placements=amberwood_placements()
   elif name in REGIONS:
    authored=profile['objects']
    rings=((30,30),(58,28),(86,30),(28,58),(88,58),(30,86),(58,88),(86,86),
@@ -555,6 +863,14 @@ def generate_maps(root):
    placements=whitehorn_temple_placements()
   elif name == 'resonant_vault':
    placements=resonant_vault_placements()
+  elif name == 'amberwood_estate':
+   placements=amberwood_estate_placements()
+  elif name == 'grey_moor_barrows':
+   placements=grey_moor_barrows_placements()
+  elif name == 'ssarathi_royal_archive':
+   placements=ssarathi_archive_placements()
+  elif name == 'manymouth_flooded_labyrinth':
+   placements=manymouth_labyrinth_placements()
   else:
    kit=INTERIOR_KITS[name]
    # Three connected chambers: arrival hall, cultural focal room, and deep
@@ -586,6 +902,24 @@ def generate_maps(root):
    lights += [(x,y,3.5,1.08,.72,.31) for x,y in
               ((42,52),(42,64),(52,42),(64,42),(74,52),(74,64),
                (52,74),(64,74),(34,58),(82,58),(58,34),(58,82))]
+  elif name=='mirrorhold':
+   lights += [(x,y,4.2,.42,.68,.92) for x,y in
+              ((58,34),(42,34),(74,34),(50,48),(66,48),(42,58),(74,58),(38,92),(78,92))]
+  elif name=='crownwater':
+   lights += [(x,y,3.5,.88,.77,.38) for x,y in
+              ((42,42),(74,42),(42,74),(74,74),(58,36),(36,58),(80,58),(58,80))]
+  elif name=='whitehorn_range':
+   lights += [(x,y,3.2,.52,.72,.94) for x,y in
+              ((58,28),(42,38),(74,38),(38,62),(78,62),(42,92),(74,92),(58,102))]
+  elif name=='amethyst_barrens':
+   lights += [(x,y,3.8,.72,.36,.96) for x,y in
+              ((58,34),(42,38),(74,38),(34,56),(82,56),(38,82),(78,82),(58,102))]
+  elif name=='sunmane_steppe':
+   lights += [(x,y,3.2,1.00,.58,.24) for x,y in
+              ((48,48),(68,48),(48,68),(68,68),(58,34),(82,58),(58,82),(34,58))]
+  elif name=='amberwood':
+   lights += [(x,y,3.0,.96,.42,.16) for x,y in
+              ((58,42),(48,48),(68,48),(48,68),(68,68),(34,34),(82,34),(58,88))]
   elif name=='drowned_crown':
    lights += [(x,y,2.7,.24,.70,.78) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
@@ -595,9 +929,21 @@ def generate_maps(root):
   elif name=='resonant_vault':
    lights += [(x,y,3.0,.58,.34,.88) for x,y in
               ((42,32),(74,32),(42,56),(74,56),(42,80),(74,80),(48,96),(68,96))]
-  tile_function=(four_gates_tile if name=='four_gates'
+  elif name=='amberwood_estate':
+   lights += [(x,y,2.8,.92,.48,.20) for x,y in
+              ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
+  elif name=='grey_moor_barrows':
+   lights += [(x,y,2.5,.34,.46,.48) for x,y in
+              ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
+  elif name=='ssarathi_royal_archive':
+   lights += [(x,y,2.8,.28,.72,.58) for x,y in
+              ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
+  elif name=='manymouth_flooded_labyrinth':
+   lights += [(x,y,2.6,.24,.58,.48) for x,y in
+              ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
+  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold' else crownwater_tile if name=='crownwater' else whitehorn_tile if name=='whitehorn_range' else amethyst_tile if name=='amethyst_barrens' else sunmane_tile if name=='sunmane_steppe' else amberwood_tile if name=='amberwood'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
-  height_function=(four_gates_height if name=='four_gates'
+  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold' else crownwater_height if name=='crownwater' else whitehorn_height if name=='whitehorn_range' else amethyst_height if name=='amethyst_barrens' else sunmane_height if name=='sunmane_steppe' else amberwood_height if name=='amberwood'
                    else lambda x,y,p=profile,n=name:region_height(p,n,x,y))
   make_map(root/f"maps/nymara/{name}.elm",width=32,height=32,placements=placements,
    ambient=profile['ambient'],lights=lights,

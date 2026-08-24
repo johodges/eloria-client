@@ -113,6 +113,134 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Four Gates terrain lacks roads, water, or elevation variation")
             if light_count < 16:
                 raise ValueError("Four Gates lacks its civic night-light network")
+        if path.as_posix().endswith("maps/nymara/mirrorhold.elm"):
+            mirror_tiles = data[tile_offset:height_offset]
+            mirror_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/glasswarden_observatory.e3d": 1,
+                "3dobjects/nymara/glasswarden_lens_tower.e3d": 4,
+                "3dobjects/nymara/mirrorhold_civic_tower.e3d": 8,
+                "3dobjects/nymara/mirrorhold_canal_wall.e3d": 9,
+                "3dobjects/nymara/mirrorhold_radial_bridge.e3d": 6,
+                "3dobjects/nymara/mirrorhold_public_fountain.e3d": 6,
+                "3dobjects/nymara/glasswarden_field_station.e3d": 8,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Mirrorhold is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Mirrorhold arrival plaza is obstructed")
+            if obj3_count < 48 or light_count < 13:
+                raise ValueError("Mirrorhold lacks authored scenery or lighting")
+            if set(mirror_tiles) != {0, 1, 2, 3} or len(set(mirror_heights)) < 8:
+                raise ValueError("Mirrorhold lacks lake, roads, and elevation variation")
+        if path.as_posix().endswith("maps/nymara/crownwater.elm"):
+            crown_tiles = data[tile_offset:height_offset]
+            crown_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/mirrorhold_civic_tower.e3d": 8,
+                "3dobjects/nymara/mirrorhold_public_fountain.e3d": 8,
+                "3dobjects/nymara/mirrorhold_radial_bridge.e3d": 9,
+                "3dobjects/nymara/crownwater_ferry_dock.e3d": 7,
+                "3dobjects/nymara/crownwater_fishing_boat.e3d": 6,
+                "3dobjects/nymara/crownwater_patrol_boat.e3d": 4,
+                "3dobjects/nymara/crownwater_submerged_waystone.e3d": 6,
+                "3dobjects/nymara/mirrorhold_lake_house.e3d": 6,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Crownwater is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Crownwater arrival plaza is obstructed")
+            if obj3_count < 62 or light_count < 12:
+                raise ValueError("Crownwater lacks authored scenery or lighting")
+            if set(crown_tiles) != {0, 1, 2, 3} or set(crown_heights) != {6, 11}:
+                raise ValueError("Crownwater lacks islands, causeways, or water depth")
+        if path.as_posix().endswith("maps/nymara/whitehorn_range.elm"):
+            whitehorn_tiles = data[tile_offset:height_offset]
+            whitehorn_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/whitehorn_monastery.e3d": 1,
+                "3dobjects/nymara/whitehorn_glacier.e3d": 6,
+                "3dobjects/nymara/whitehorn_rope_bridge.e3d": 5,
+                "3dobjects/nymara/whitehorn_shrine.e3d": 6,
+                "3dobjects/nymara/whitehorn_cairn.e3d": 10,
+                "3dobjects/nymara/whitehorn_ice_cave.e3d": 4,
+                "3dobjects/nymara/whitehorn_mine_entrance.e3d": 3,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Whitehorn Range is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Whitehorn Range arrival is obstructed")
+            if obj3_count < 45 or light_count < 12:
+                raise ValueError("Whitehorn Range lacks authored scenery or lighting")
+            if set(whitehorn_tiles) != {0, 1, 2, 3} or len(set(whitehorn_heights)) < 12:
+                raise ValueError("Whitehorn Range lacks glacier and mountain relief")
+        if path.as_posix().endswith("maps/nymara/amethyst_barrens.elm"):
+            amethyst_tiles = data[tile_offset:height_offset]
+            amethyst_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/glasswarden_observatory.e3d": 1,
+                "3dobjects/nymara/amethyst_crystal_bridge.e3d": 7,
+                "3dobjects/nymara/amethyst_geode_cave.e3d": 4,
+                "3dobjects/nymara/amethyst_levitating_shards.e3d": 8,
+                "3dobjects/nymara/amethyst_storm_ruin.e3d": 6,
+                "3dobjects/nymara/resonant_crystal_cluster.e3d": 10,
+                "3dobjects/nymara/glasswarden_field_station.e3d": 6,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Amethyst Barrens is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Amethyst Barrens arrival is obstructed")
+            if obj3_count < 50 or light_count < 12:
+                raise ValueError("Amethyst Barrens lacks authored scenery or lighting")
+            if set(amethyst_tiles) != {0, 1, 2, 3} or len(set(amethyst_heights)) < 10:
+                raise ValueError("Amethyst Barrens lacks basin, roads, crystal fields, or relief")
+        if path.as_posix().endswith("maps/nymara/sunmane_steppe.elm"):
+            sunmane_tiles = data[tile_offset:height_offset]
+            sunmane_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/orun_round_tent.e3d": 12,
+                "3dobjects/nymara/orun_seasonal_market.e3d": 4,
+                "3dobjects/nymara/orun_banner_shrine.e3d": 8,
+                "3dobjects/nymara/sunmane_caravanserai.e3d": 4,
+                "3dobjects/nymara/sunmane_windmill.e3d": 6,
+                "3dobjects/nymara/sunmane_well.e3d": 4,
+                "3dobjects/nymara/sunmane_animal_pen.e3d": 6,
+                "3dobjects/nymara/sunmane_burial_mound.e3d": 6,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Sunmane Steppe is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Sunmane Steppe arrival is obstructed")
+            if obj3_count < 58 or light_count < 12:
+                raise ValueError("Sunmane Steppe lacks authored scenery or lighting")
+            if set(sunmane_tiles) != {0, 1, 2, 3} or len(set(sunmane_heights)) < 8:
+                raise ValueError("Sunmane Steppe lacks camps, roads, grassland, or relief")
+        if path.as_posix().endswith("maps/nymara/amberwood.elm"):
+            amber_tiles = data[tile_offset:height_offset]
+            amber_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/amberwood_estate.e3d": 1,
+                "3dobjects/nymara/amberwood_hunting_lodge.e3d": 6,
+                "3dobjects/nymara/amberwood_hollow_tree.e3d": 8,
+                "3dobjects/nymara/amberwood_old_bridge.e3d": 4,
+                "3dobjects/nymara/amberwood_tree.e3d": 16,
+                "3dobjects/nymara/amberwood_ruin_arch.e3d": 6,
+                "3dobjects/nymara/amberwood_garden_fountain.e3d": 4,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Amberwood is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Amberwood arrival is obstructed")
+            if obj3_count < 55 or light_count < 12:
+                raise ValueError("Amberwood lacks authored scenery or lighting")
+            if set(amber_tiles) != {0, 1, 2, 3} or len(set(amber_heights)) < 8:
+                raise ValueError("Amberwood lacks estate, roads, old growth, or relief")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,
@@ -164,6 +292,74 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Resonant Vault arrival is obstructed")
             if obj3_count < 53 or light_count < 12:
                 raise ValueError("Resonant Vault lacks authored scenery or lighting")
+        if path.as_posix().endswith("maps/nymara/amberwood_estate.elm"):
+            required = {
+                "3dobjects/nymara/interiors/amberwood_manor_floor.e3d": 12,
+                "3dobjects/nymara/interiors/amberwood_manor_wall.e3d": 14,
+                "3dobjects/nymara/interiors/amberwood_estate_door.e3d": 6,
+                "3dobjects/nymara/interiors/amberwood_banquet_table.e3d": 4,
+                "3dobjects/nymara/interiors/amberwood_estate_bed.e3d": 6,
+                "3dobjects/nymara/interiors/amberwood_overgrown_statue.e3d": 4,
+            }
+            for landmark, minimum in required.items():
+                count = sum(name == landmark for name, *_ in object_records)
+                if count < minimum:
+                    raise ValueError(f"Amberwood Estate is missing {landmark}")
+            if any(math.hypot(x-58, y-10) < 4.0 for _, x, y, _ in object_records):
+                raise ValueError("Amberwood Estate arrival is obstructed")
+            if obj3_count < 52 or light_count < 12:
+                raise ValueError("Amberwood Estate lacks authored scenery or lighting")
+        if path.as_posix().endswith("maps/nymara/grey_moor_barrows.elm"):
+            required = {
+                "3dobjects/nymara/interiors/grey_moor_crypt_floor.e3d": 12,
+                "3dobjects/nymara/interiors/grey_moor_crypt_wall.e3d": 14,
+                "3dobjects/nymara/interiors/grey_moor_barrow_arch.e3d": 6,
+                "3dobjects/nymara/interiors/grey_moor_sarcophagus.e3d": 8,
+                "3dobjects/nymara/interiors/grey_moor_spike_trap.e3d": 4,
+                "3dobjects/nymara/interiors/grey_moor_ritual_altar.e3d": 1,
+            }
+            for landmark, minimum in required.items():
+                count = sum(name == landmark for name, *_ in object_records)
+                if count < minimum:
+                    raise ValueError(f"Grey Moor Barrows is missing {landmark}")
+            if any(math.hypot(x-58, y-10) < 4.0 for _, x, y, _ in object_records):
+                raise ValueError("Grey Moor Barrows arrival is obstructed")
+            if obj3_count < 51 or light_count < 12:
+                raise ValueError("Grey Moor Barrows lacks authored scenery or lighting")
+        if path.as_posix().endswith("maps/nymara/ssarathi_royal_archive.elm"):
+            required = {
+                "3dobjects/nymara/interiors/ssarathi_scaled_floor.e3d": 12,
+                "3dobjects/nymara/interiors/ssarathi_curved_wall.e3d": 14,
+                "3dobjects/nymara/interiors/ssarathi_water_arch.e3d": 6,
+                "3dobjects/nymara/interiors/ssarathi_archive_shelf.e3d": 8,
+                "3dobjects/nymara/interiors/ssarathi_royal_statue.e3d": 4,
+                "3dobjects/nymara/interiors/ssarathi_vault_trap.e3d": 4,
+            }
+            for landmark, minimum in required.items():
+                count = sum(name == landmark for name, *_ in object_records)
+                if count < minimum:
+                    raise ValueError(f"Ssarthi Royal Archive is missing {landmark}")
+            if any(math.hypot(x-58, y-10) < 4.0 for _, x, y, _ in object_records):
+                raise ValueError("Ssarthi Royal Archive arrival is obstructed")
+            if obj3_count < 54 or light_count < 12:
+                raise ValueError("Ssarthi Royal Archive lacks authored scenery or lighting")
+        if path.as_posix().endswith("maps/nymara/manymouth_flooded_labyrinth.elm"):
+            required = {
+                "3dobjects/nymara/interiors/manymouth_flooded_floor.e3d": 12,
+                "3dobjects/nymara/interiors/manymouth_stilt_wall.e3d": 14,
+                "3dobjects/nymara/interiors/manymouth_boardwalk_section.e3d": 10,
+                "3dobjects/nymara/interiors/manymouth_flood_channel.e3d": 8,
+                "3dobjects/nymara/interiors/manymouth_smuggler_shelf.e3d": 6,
+                "3dobjects/nymara/interiors/manymouth_fishing_crates.e3d": 6,
+            }
+            for landmark, minimum in required.items():
+                count = sum(name == landmark for name, *_ in object_records)
+                if count < minimum:
+                    raise ValueError(f"Manymouth Labyrinth is missing {landmark}")
+            if any(math.hypot(x-58, y-10) < 4.0 for _, x, y, _ in object_records):
+                raise ValueError("Manymouth Labyrinth arrival is obstructed")
+            if obj3_count < 62 or light_count < 12:
+                raise ValueError("Manymouth Labyrinth lacks authored scenery or lighting")
 
 
 def validate_runtime_xml(root: Path) -> None:
