@@ -330,6 +330,26 @@ def drowned_crown_placements():
  p.append(("3dobjects/nymara/interiors/crownwater_shell_altar.e3d",58,94,0,180))
  return p
 
+def whitehorn_temple_placements():
+ # A sheltered monastery nave rises through prayer bays into the glacier
+ # sanctuary. The southern arrival remains broad enough for party entry.
+ p=[]
+ for x,y in ((34,22),(58,22),(82,22),(34,46),(58,46),(82,46),
+             (34,70),(58,70),(82,70),(34,94),(58,94),(82,94)):
+  p.append(("3dobjects/nymara/interiors/whitehorn_monastery_floor.e3d",x,y,0,0))
+ for x,y,r in ((24,22,90),(24,40,90),(24,58,90),(24,76,90),(24,94,90),
+               (92,22,270),(92,40,270),(92,58,270),(92,76,270),(92,94,270),
+               (34,106,180),(50,106,180),(66,106,180),(82,106,180)):
+  p.append(("3dobjects/nymara/interiors/whitehorn_monastery_wall.e3d",x,y,0,r))
+ for x,y,r in ((46,34,90),(70,34,90),(46,58,90),(70,58,90),(46,82,90),(70,82,90)):
+  p.append(("3dobjects/nymara/interiors/whitehorn_ice_arch.e3d",x,y,0,r))
+ for x,y in ((34,42),(82,42),(34,62),(82,62),(34,82),(82,82),(46,94),(70,94)):
+  p.append(("3dobjects/nymara/interiors/whitehorn_prayer_column.e3d",x,y,0,0))
+ for x,y,r in ((34,30,0),(82,30,0),(34,94,0),(82,94,0)):
+  p.append(("3dobjects/nymara/interiors/whitehorn_mine_support.e3d",x,y,0,r))
+ p.append(("3dobjects/nymara/interiors/whitehorn_glacier_altar.e3d",58,94,0,180))
+ return p
+
 def cartography_pixel(name, profile):
  a,b,accent=profile['palette']
  def pixel(x,y):
@@ -511,6 +531,8 @@ def generate_maps(root):
     placements.append((f"3dobjects/nymara/{asset}.e3d",x,y,0,(j*90)%360))
   elif name == 'drowned_crown':
    placements=drowned_crown_placements()
+  elif name == 'whitehorn_glacier_temple':
+   placements=whitehorn_temple_placements()
   else:
    kit=INTERIOR_KITS[name]
    # Three connected chambers: arrival hall, cultural focal room, and deep
@@ -544,6 +566,9 @@ def generate_maps(root):
                (52,74),(64,74),(34,58),(82,58),(58,34),(58,82))]
   elif name=='drowned_crown':
    lights += [(x,y,2.7,.24,.70,.78) for x,y in
+              ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
+  elif name=='whitehorn_glacier_temple':
+   lights += [(x,y,3.1,.56,.78,.92) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
   tile_function=(four_gates_tile if name=='four_gates'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
