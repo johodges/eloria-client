@@ -1,66 +1,141 @@
 #!/usr/bin/env python3
-"""Generate the complete independent Eloria data pack in dependency order."""
+"""Generate the complete independent Eloria data pack with safe parallel waves."""
 from __future__ import annotations
 
 import argparse
-import re
+import os
 import subprocess
 import sys
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
 from pathlib import Path
 
 
-GENERATORS = (
-    "generate_bootstrap_pack.py", "generate_characters.py",
-    "generate_humanoid_enemies.py", "generate_fantasy_archetypes.py",
-    "generate_npcs.py", "generate_creatures.py", "generate_scenery.py",
-    "generate_interactives.py", "generate_regions.py",
-    "generate_item_atlas.py", "generate_runtime_assets.py",
-    "generate_effects.py", "generate_special_event_assets.py",
-    "generate_nymara_complete.py",
+@dataclass(frozen=True)
+class Task:
+    name: str
+    scripts: tuple[str, ...]
+
+
+ACTOR_CHAIN = Task("actors", (
+    "generate_characters.py",
+    "generate_humanoid_enemies.py",
+    "generate_fantasy_archetypes.py",
+    "generate_npcs.py",
+    "generate_creatures.py",
+))
+
+PARALLEL_WAVE = (
+    ACTOR_CHAIN,
+    Task("scenery", ("generate_scenery.py",)),
+    Task("interactives", ("generate_interactives.py",)),
+    Task("regions", ("generate_regions.py",)),
+    Task("item-atlas", ("generate_item_atlas.py",)),
+    Task("runtime", ("generate_runtime_assets.py",)),
+    Task("special-events", ("generate_special_event_assets.py",)),
 )
 
 
-def validate_cal3d(root: Path) -> None:
-    skeletons = tuple(root.glob("actors/**/*.xsf"))
-    if not skeletons:
-        raise RuntimeError("complete generation produced no Cal3D skeletons")
-    stale = [path for path in skeletons if b"NUMCHILDS=" in path.read_bytes()]
-    if stale:
-        raise RuntimeError("stale Cal3D skeleton metadata: " +
-                           ", ".join(str(path) for path in stale))
-    bad_magic = [path for path in skeletons if b'MAGIC="XSF"' not in path.read_bytes()]
-    if bad_magic:
-        raise RuntimeError("invalid Cal3D skeleton magic: " +
-                           ", ".join(str(path) for path in bad_magic))
-    required_binary = (
-        root / "actors/eloria_humanoid.csf",
-        root / "actors/eloria_shirt.cmf",
-        root / "actors/eloria_legs.cmf",
-        root / "actors/eloria_boots.cmf",
-        root / "actors/eloria_head_0.cmf",
-        root / "animations/eloria/idle.caf",
-    )
-    expected_magic = {".csf": b"CSF\0", ".cmf": b"CMF\0", ".caf": b"CAF\0"}
-    for path in required_binary:
-        if not path.is_file() or path.read_bytes()[:4] != expected_magic[path.suffix]:
-            raise RuntimeError(f"missing or invalid binary Cal3D asset: {path}")
-    actor_defs = root / "actor_defs/actor_defs.xml"
-    for value in re.findall(r"<CAL_[^>]+>([^<]+)</CAL_", actor_defs.read_text(encoding="utf-8")):
-        if not re.search(r" [01]$", value):
-            raise RuntimeError(f"animation entry lacks cycle/action mode: {value}")
+def command(script: Path, output: Path) -> list[str]:
+    args = [sys.executable, str(script)]
+    if script.name != "check_provenance.py":
+        args.append(str(output))
+    return args
+
+
+def run_task(task: Task, tools_dir: Path, output: Path, repo_root: Path,
+             stop: threading.Event, dry_run: bool) -> tuple[str, str]:
+    logs: list[str] = []
+    for script_name in task.scripts:
+        if stop.is_set():
+            return task.name, "cancelled after another generator failed"
+        args = command(tools_dir / script_name, output)
+        print(f"[{task.name}] starting {script_name}", flush=True)
+        if dry_run:
+            logs.append("DRY RUN: " + " ".join(args))
+            continue
+        result = subprocess.run(args, cwd=repo_root, text=True,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT, check=False)
+        if result.stdout:
+            logs.append(f"$ {script_name}\n{result.stdout.rstrip()}")
+        if result.returncode:
+            stop.set()
+            raise RuntimeError(
+                f"{task.name}: {script_name} exited with {result.returncode}\n" +
+                "\n".join(logs))
+        print(f"[{task.name}] completed {script_name}", flush=True)
+    return task.name, "\n".join(logs)
+
+
+def run_wave(tasks: tuple[Task, ...], jobs: int, tools_dir: Path,
+             output: Path, repo_root: Path, dry_run: bool) -> None:
+    stop = threading.Event()
+    with ThreadPoolExecutor(max_workers=min(jobs, len(tasks))) as executor:
+        futures = {
+            executor.submit(run_task, task, tools_dir, output, repo_root,
+                            stop, dry_run): task
+            for task in tasks
+        }
+        try:
+            for future in as_completed(futures):
+                name, logs = future.result()
+                if logs:
+                    print(f"[{name}] output:\n{logs}", flush=True)
+        except Exception:
+            stop.set()
+            for future in futures:
+                future.cancel()
+            raise
+
+
+def run_blocker(task: Task, tools_dir: Path, output: Path,
+                repo_root: Path, dry_run: bool) -> None:
+    run_task(task, tools_dir, output, repo_root, threading.Event(), dry_run)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("output", nargs="?", default="build/eloria-data")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("output", nargs="?", default="build/eloria-data",
+                        help="generated data directory (default: build/eloria-data)")
+    parser.add_argument("--jobs", "-j", type=int,
+                        default=min(8, os.cpu_count() or 1),
+                        help="maximum concurrent generator pipelines")
+    parser.add_argument("--skip-validation", action="store_true",
+                        help="do not run provenance and generated-asset validation")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="print the dependency schedule without executing it")
     args = parser.parse_args()
-    output = Path(args.output).resolve()
-    tools = Path(__file__).resolve().parent
-    for generator in GENERATORS:
-        subprocess.run((sys.executable, str(tools / generator), str(output)),
-                       check=True)
-    validate_cal3d(output)
-    print(f"Generated complete Eloria data pack at {output}")
+    if args.jobs < 1:
+        parser.error("--jobs must be at least 1")
+
+    tools_dir = Path(__file__).resolve().parent
+    repo_root = tools_dir.parents[1]
+    output = Path(args.output)
+    if not output.is_absolute():
+        output = repo_root / output
+
+    run_blocker(Task("bootstrap", ("generate_bootstrap_pack.py",)),
+                tools_dir, output, repo_root, args.dry_run)
+
+    print(f"[parallel] starting {len(PARALLEL_WAVE)} pipelines with {args.jobs} workers",
+          flush=True)
+    run_wave(PARALLEL_WAVE, args.jobs, tools_dir, output, repo_root, args.dry_run)
+
+    # Runtime writes startup-safe stubs that effects intentionally replaces.
+    run_blocker(Task("effects", ("generate_effects.py",)), tools_dir,
+                output, repo_root, args.dry_run)
+
+    # This consumes the actor registry and all shared generated world assets.
+    run_blocker(Task("nymara", ("generate_nymara_complete.py",)), tools_dir,
+                output, repo_root, args.dry_run)
+
+    if not args.skip_validation:
+        run_blocker(Task("validation", ("check_provenance.py",
+                                         "validate_generated_assets.py")),
+                    tools_dir, output, repo_root, args.dry_run)
+    print(f"Complete independent data pack: {output}", flush=True)
 
 
 if __name__ == "__main__":
