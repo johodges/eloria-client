@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import math
 from pathlib import Path
 import struct
 import xml.etree.ElementTree as ET
@@ -58,10 +59,13 @@ def validate_maps(root: Path) -> None:
         for offset, size, label in sections:
             if offset < 124 or size < 0 or offset + size > len(data):
                 raise ValueError(f"invalid ELM {label} bounds: {path}")
+        object_records = []
         for index in range(obj3_count):
             record_offset = obj3_offset + index * obj3_size
             raw_name = struct.unpack_from("<80s", data, record_offset)[0]
             name = raw_name.split(b"\0", 1)[0].decode("utf-8")
+            x, y, z = struct.unpack_from("<3f", data, record_offset + 80)
+            object_records.append((name, x, y, z))
             asset = root / name.removeprefix("./")
             if not asset.is_file():
                 raise ValueError(f"missing ELM object {name} referenced by {path}")
@@ -83,8 +87,24 @@ def validate_maps(root: Path) -> None:
             raw_height = heights[spawn_y * width * 6 + spawn_x]
             if tile == 255 or (raw_height & 0x3f) != 11:
                 raise ValueError("Four Gates start spawn must be on visible z=0 terrain")
-            if obj3_count < 1:
-                raise ValueError("Four Gates start map lacks scenery")
+            if obj3_count < 65:
+                raise ValueError("Four Gates vertical slice lacks production scenery density")
+            required_landmarks = {
+                "3dobjects/nymara/four_gates_gatehouse.e3d": 4,
+                "3dobjects/nymara/mirrorhold_radial_bridge.e3d": 4,
+                "3dobjects/nymara/mirrorhold_civic_tower.e3d": 8,
+                "3dobjects/nymara/four_gates_waystone.e3d": 1,
+            }
+            for landmark, minimum in required_landmarks.items():
+                count = sum(name == landmark for name, *_ in object_records)
+                if count < minimum:
+                    raise ValueError(
+                        f"Four Gates is missing {landmark}: expected {minimum}, found {count}")
+            if any(math.hypot(x-spawn_x, y-spawn_y) < 3.0
+                   for _, x, y, _ in object_records):
+                raise ValueError("Four Gates start plaza is obstructed")
+            if len(set(tiles)) < 4 or len(set(heights)) < 4:
+                raise ValueError("Four Gates terrain lacks roads, water, or elevation variation")
 
 
 def validate_runtime_xml(root: Path) -> None:

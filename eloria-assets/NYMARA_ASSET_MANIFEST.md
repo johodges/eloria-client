@@ -17,7 +17,7 @@
 |---|---|---|---|
 | Mirrorhold | `mirrorhold_region_concept.png` | Glasswarden observatory and Mirrorhold canals | Alpine citadel, reflective pools, switchback roads |
 | Crownwater | `crownwater_region_concept.png` | Crownwater ferries and Mirrorhold bridges | Turquoise island capital and causeways |
-| Four Gates | `four_gates_region_concept.png` | Gatehouse, waystone, civic tower | Four monumental approaches and central arrival plaza |
+| Four Gates | `four_gates_region_concept.png` | Gatehouses, radial bridges, civic towers, segmented walls, fountains and park belt | Fortified circular civic island, four monumental approaches, concentric districts, turquoise waterways and unobstructed central arrival plaza |
 | Whitehorn Range | `whitehorn_range_region_concept.png` | Glacier, monastery, rope bridge | Glacial valley, caves, passes and temple approach |
 | Amethyst Barrens | `amethyst_barrens_region_concept.png` | Crystal bridges, geodes and observatory | Violet badlands and celestial instrument |
 | Sunmane Steppe | `sunmane_steppe_region_concept.png` | Orun tents and Sunmane camps | Rider roads, circular tent city and watering holes |
@@ -39,6 +39,19 @@
 - Fog is atmospheric rather than opaque.  Every configured fog key includes an
   alpha/density value.
 - All assets are original Eloria project work under CC-BY-4.0.
+
+## Four Gates vertical slice
+
+- The ELM composition is centred on the authoritative `(58,58)` arrival rather
+  than the geometric centre of the 192x192 collision field.
+- Four gatehouses and four radial bridges establish the cardinal approaches.
+- Twelve wall segments, eight civic towers, public fountains, ward pavilions
+  and a landscaped park belt reproduce the concept's fortified island skyline.
+- The terrain contains a complete river ring, dry causeways, ring roads and
+  gently terraced outer highlands while preserving portal corridors.
+- `maps/nymara/four_gates.dds` is purpose-built cartography with landmark
+  symbols, district labels, roads, water and four gates; it is not a resized
+  copy of the concept painting.
 
 ## Regeneration and validation
 
