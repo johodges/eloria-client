@@ -130,6 +130,23 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Drowned Crown arrival is obstructed")
             if obj3_count < 50 or light_count < 12:
                 raise ValueError("Drowned Crown lacks authored scenery or lighting")
+        if path.as_posix().endswith("maps/nymara/whitehorn_glacier_temple.elm"):
+            required = {
+                "3dobjects/nymara/interiors/whitehorn_monastery_floor.e3d": 12,
+                "3dobjects/nymara/interiors/whitehorn_monastery_wall.e3d": 14,
+                "3dobjects/nymara/interiors/whitehorn_ice_arch.e3d": 6,
+                "3dobjects/nymara/interiors/whitehorn_prayer_column.e3d": 8,
+                "3dobjects/nymara/interiors/whitehorn_mine_support.e3d": 4,
+                "3dobjects/nymara/interiors/whitehorn_glacier_altar.e3d": 1,
+            }
+            for landmark, minimum in required.items():
+                count = sum(name == landmark for name, *_ in object_records)
+                if count < minimum:
+                    raise ValueError(f"Whitehorn temple is missing {landmark}")
+            if any(math.hypot(x-58, y-10) < 4.0 for _, x, y, _ in object_records):
+                raise ValueError("Whitehorn temple arrival is obstructed")
+            if obj3_count < 50 or light_count < 12:
+                raise ValueError("Whitehorn temple lacks authored scenery or lighting")
 
 
 def validate_runtime_xml(root: Path) -> None:
