@@ -869,8 +869,8 @@ def append_actor(root, aid, label, family, skel, mesh, skin, anim_dir, radius, s
  a=ET.SubElement(root,"actor",id=str(aid),type=label,family=family,collision_radius=str(radius),scale=str(scale),bounds=" ".join(map(str,bounds)))
  ET.SubElement(a,"skeleton").text=skel; ET.SubElement(a,"mesh").text=mesh; ET.SubElement(a,"skin").text=skin; ET.SubElement(a,"step_duration").text="260"
  frames=ET.SubElement(a,"frames")
- mapping={"CAL_idle":"idle.xaf","CAL_idle2":"idle2.xaf","CAL_walk":"walk.xaf","CAL_run":"run.xaf","CAL_idle_sit":"sit.xaf","CAL_sit_down":"sit_down.xaf","CAL_stand_up":"stand_up.xaf","CAL_combat_idle":"combat_idle.xaf","CAL_attack_up_1":"attack.xaf","CAL_attack_down_1":"attack.xaf","CAL_attack_cast":"cast.xaf","CAL_pain1":"pain.xaf","CAL_pain2":"pain.xaf","CAL_die1":"die.xaf","CAL_die2":"die.xaf","CAL_harvest":"harvest.xaf","CAL_pick":"pick.xaf","CAL_drop":"drop.xaf"}
- if special: mapping["CAL_attack_up_2"]="special.xaf"
+ mapping={"CAL_idle":"idle.caf","CAL_idle2":"idle2.caf","CAL_walk":"walk.caf","CAL_run":"run.caf","CAL_idle_sit":"sit.caf","CAL_sit_down":"sit_down.caf","CAL_stand_up":"stand_up.caf","CAL_combat_idle":"combat_idle.caf","CAL_attack_up_1":"attack.caf","CAL_attack_down_1":"attack.caf","CAL_attack_cast":"cast.caf","CAL_pain1":"pain.caf","CAL_pain2":"pain.caf","CAL_die1":"die.caf","CAL_die2":"die.caf","CAL_harvest":"harvest.caf","CAL_pick":"pick.caf","CAL_drop":"drop.caf"}
+ if special: mapping["CAL_attack_up_2"]="special.caf"
  for tag,f in mapping.items():
   kind=0 if tag in ("CAL_idle","CAL_idle2","CAL_walk","CAL_run","CAL_idle_sit","CAL_combat_idle") else 1
   ET.SubElement(frames,tag).text=f"{anim_dir}/{f} {kind}"
@@ -881,7 +881,7 @@ def copy_aliases(root, srcdir, names):
 
 def generate_npcs(root, actors):
  base=root/"actors/nymara/npcs"; humanoid_skeleton(base/"nymara_humanoid.xsf")
- aliases={"idle.xaf":"../../enemies/idle.xaf","idle2.xaf":"../../enemies/idle.xaf","walk.xaf":"../../enemies/walk.xaf","run.xaf":"../../enemies/run.xaf","sit.xaf":"../../eloria/sit.xaf","sit_down.xaf":"../../eloria/sit.xaf","stand_up.xaf":"../../eloria/idle.xaf","combat_idle.xaf":"../../enemies/combat_idle.xaf","attack.xaf":"../../enemies/attack.xaf","cast.xaf":"../../enemies/cast.xaf","pain.xaf":"../../enemies/pain.xaf","die.xaf":"../../enemies/die.xaf","harvest.xaf":"../../eloria/harvest.xaf","pick.xaf":"../../eloria/harvest.xaf","drop.xaf":"../../eloria/harvest.xaf","wave.xaf":"../../enemies/cast.xaf","bow.xaf":"../../eloria/harvest.xaf"}
+ aliases={"idle.caf":"../../enemies/idle.caf","idle2.caf":"../../enemies/idle.caf","walk.caf":"../../enemies/walk.caf","run.caf":"../../enemies/run.caf","sit.caf":"../../eloria/sit.caf","sit_down.caf":"../../eloria/sit.caf","stand_up.caf":"../../eloria/idle.caf","combat_idle.caf":"../../enemies/combat_idle.caf","attack.caf":"../../enemies/attack.caf","cast.caf":"../../enemies/cast.caf","pain.caf":"../../enemies/pain.caf","die.caf":"../../enemies/die.caf","harvest.caf":"../../eloria/harvest.caf","pick.caf":"../../eloria/harvest.caf","drop.caf":"../../eloria/harvest.caf","wave.caf":"../../enemies/cast.caf","bow.caf":"../../eloria/harvest.caf"}
  copy_aliases(root,"animations/nymara/humanoid",aliases)
  out=[]; aid=NPC_BASE
  for culture,(primary,accent,roles) in CULTURES.items():
@@ -898,7 +898,7 @@ def generate_npcs(root, actors):
     else: feature=f"nymara:{culture}:{role}"
     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
     png(base/f"{slug}.png",1024,1024,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",512,512,material_pixel(accent,feature))
-    append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.xsf",f"actors/nymara/npcs/{slug}.xmf",f"actors/nymara/npcs/{slug}.png","animations/nymara/humanoid",.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.05))
+    append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.csf",f"actors/nymara/npcs/{slug}.cmf",f"actors/nymara/npcs/{slug}.png","animations/nymara/humanoid",.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.05))
     out.append({"actor_type":aid,"id":slug,"culture":culture,"role":role,"variant":variant,"portrait":f"portraits/nymara/npcs/{slug}.png","collision_radius":.42,"scale":.96 if variant=='f' else 1.0}); aid+=1
  (root/"nymara_npcs.json").write_text(json.dumps({"schema":1,"npcs":out},indent=2)+"\n")
  return out
