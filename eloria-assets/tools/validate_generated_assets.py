@@ -198,6 +198,28 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Amethyst Barrens lacks authored scenery or lighting")
             if set(amethyst_tiles) != {0, 1, 2, 3} or len(set(amethyst_heights)) < 10:
                 raise ValueError("Amethyst Barrens lacks basin, roads, crystal fields, or relief")
+        if path.as_posix().endswith("maps/nymara/sunmane_steppe.elm"):
+            sunmane_tiles = data[tile_offset:height_offset]
+            sunmane_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/orun_round_tent.e3d": 12,
+                "3dobjects/nymara/orun_seasonal_market.e3d": 4,
+                "3dobjects/nymara/orun_banner_shrine.e3d": 8,
+                "3dobjects/nymara/sunmane_caravanserai.e3d": 4,
+                "3dobjects/nymara/sunmane_windmill.e3d": 6,
+                "3dobjects/nymara/sunmane_well.e3d": 4,
+                "3dobjects/nymara/sunmane_animal_pen.e3d": 6,
+                "3dobjects/nymara/sunmane_burial_mound.e3d": 6,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Sunmane Steppe is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Sunmane Steppe arrival is obstructed")
+            if obj3_count < 58 or light_count < 12:
+                raise ValueError("Sunmane Steppe lacks authored scenery or lighting")
+            if set(sunmane_tiles) != {0, 1, 2, 3} or len(set(sunmane_heights)) < 8:
+                raise ValueError("Sunmane Steppe lacks camps, roads, grassland, or relief")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,
