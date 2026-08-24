@@ -50,15 +50,17 @@ def panel(x: int, y: int) -> tuple[int, int, int, int]:
 def make_map(path: Path, width: int = 32, height: int = 32, *,
              tile_id: int = 0, placements=None,
              ambient=(0.55, 0.58, 0.62), height_value: int = 11,
-             lights=None) -> None:
+             lights=None, tile_at=None, height_at=None) -> None:
     """Write an original ELM settlement with a fully walkable height field."""
     # map_header is 124 bytes in the current client.  The final reserved word
     # is still part of the on-disk structure even though it has no semantics.
     header_size = 124
-    tiles = bytes([tile_id]) * (width * height)
+    tiles = bytes((tile_at(x, y) if tile_at else tile_id)
+                  for y in range(height) for x in range(width))
     if not 0 <= height_value <= 255:
         raise ValueError("height_value must fit in one ELM height byte")
-    heights = bytes([height_value]) * (width * height * 36)
+    heights = bytes((height_at(x, y) if height_at else height_value)
+                    for y in range(height * 6) for x in range(width * 6))
     height_offset = header_size + len(tiles)
     object_offset = height_offset + len(heights)
     default_placements = [
