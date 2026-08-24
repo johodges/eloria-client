@@ -109,7 +109,40 @@ def cuboid(center,size,bone,vertices,faces,uv_rect=(0.,0.,1.,1.)):
         # EL treats counter-clockwise triangles as front-facing.
         faces.extend(((base,base+2,base+1),(base,base+3,base+2)))
 
-def mesh(path, section="all", variant=0):
+def ellipsoid(center,size,bone,vertices,faces,uv_rect=(0.,0.,1.,1.),rings=7,sides=12):
+    cx,cy,cz=center; sx,sy,sz=(q/2 for q in size); u0,v0,u1,v1=uv_rect
+    bottom=len(vertices); vertices.append(((cx,cy,cz-sz),(0,0,-1),((u0+u1)/2,v1),bone))
+    ring_ids=[]
+    for ring in range(1,rings):
+        theta=math.pi-math.pi*ring/rings; ids=[]
+        for side in range(sides):
+            phi=2*math.pi*side/sides
+            nx=math.sin(theta)*math.cos(phi); ny=math.sin(theta)*math.sin(phi); nz=math.cos(theta)
+            length=math.sqrt((nx/max(sx,.001))**2+(ny/max(sy,.001))**2+(nz/max(sz,.001))**2)
+            normal=(nx/max(sx,.001)/length,ny/max(sy,.001)/length,nz/max(sz,.001)/length)
+            uv=(u0+(u1-u0)*side/sides,v0+(v1-v0)*ring/rings)
+            ids.append(len(vertices)); vertices.append(((cx+sx*nx,cy+sy*ny,cz+sz*nz),normal,uv,bone))
+        ring_ids.append(ids)
+    top=len(vertices); vertices.append(((cx,cy,cz+sz),(0,0,1),((u0+u1)/2,v0),bone))
+    for side in range(sides):
+        nxt=(side+1)%sides
+        faces.append((bottom,ring_ids[0][nxt],ring_ids[0][side]))
+        faces.append((top,ring_ids[-1][side],ring_ids[-1][nxt]))
+    for lower,upper in zip(ring_ids,ring_ids[1:]):
+        for side in range(sides):
+            nxt=(side+1)%sides
+            faces.extend(((lower[side],upper[nxt],upper[side]),(lower[side],lower[nxt],upper[nxt])))
+
+RACE_SHAPES={
+ "luminous":(1.00,.96,.96,.92,"civic"),
+ "votary":(1.08,1.06,1.05,.96,"cold"),
+ "glasswarden":(.94,1.12,1.02,1.04,"crystal"),
+ "orun":(1.02,1.04,.97,.98,"rider"),
+ "greyhaven":(1.04,1.12,1.08,1.06,"maritime"),
+ "ssarathi":(1.08,.96,.94,1.08,"scaled"),
+}
+
+def mesh(path, section="all", variant=0, culture=None, gender=None):
     vertices=[]; faces=[]
     # UV rectangles address the fixed regions used by EL's 128x128 enhanced
     # actor atlas.  V is expressed in OpenGL coordinates (bottom to top).
@@ -128,9 +161,31 @@ def mesh(path, section="all", variant=0):
         parts=list(parts);parts[1]=((0,-.01,1.51),head_sizes[variant%len(head_sizes)],3,head_uv)
     sections={"head":(1,),"shirt":(0,2,3,4,5),"legs":(6,7,9,10),"boots":(8,11),"none":()}
     chosen=range(len(parts)) if section=="all" else sections[section]
-    for i in chosen:
-        center,size,bone,uv_rect=parts[i]
-        cuboid(center,size,bone,vertices,faces,uv_rect)
+    if culture:
+        height,shoulders,hips,head_scale,feature=RACE_SHAPES[culture]
+        gender_width=.94 if gender=="female" else 1.04
+        for i in chosen:
+            center,size,bone,uv_rect=parts[i]
+            cx,cy,cz=center; sx,sy,sz=size
+            width=shoulders if i in (0,2,3,4,5) else hips if i in (6,7,8,9,10,11) else head_scale
+            if i==0 and gender=="female": width*=.90
+            if i==1:
+                head_variation=(.94,.98,1.02,1.06,1.0)[variant%5]
+                sx*=head_variation; sy*=2-head_variation
+            scaled_center=(cx*width*gender_width,cy,cz*height)
+            scaled_size=(sx*width*gender_width,sy*(1.04 if feature in ("cold","maritime") else .96),sz*height)
+            ellipsoid(scaled_center,scaled_size,bone,vertices,faces,uv_rect,7 if i!=1 else 8,12 if i!=1 else 14)
+        if section in ("all","head") and feature=="scaled":
+            # A low swept crest gives Ssarathi a readable silhouette without
+            # changing the shared skeleton or enhanced-actor atlas contract.
+            ellipsoid((0,.02,1.68*height),(.12,.18,.32),3,vertices,faces,head_uv,5,8)
+        if section in ("all","shirt") and feature=="crystal":
+            for side in (-1,1):
+                ellipsoid((side*.32*gender_width,0,1.36*height),(.12,.17,.28),2,vertices,faces,torso_uv,5,8)
+    else:
+        for i in chosen:
+            center,size,bone,uv_rect=parts[i]
+            cuboid(center,size,bone,vertices,faces,uv_rect)
     if not vertices:
         cuboid((0,0,-100),(.001,.001,.001),0,vertices,faces)
     root=ET.Element("MESH",NUMSUBMESH="1"); sub=ET.SubElement(root,"SUBMESH",NUMVERTICES=str(len(vertices)),NUMFACES=str(len(faces)),MATERIAL="0",NUMLODSTEPS="0",NUMSPRINGS="0",NUMTEXCOORDS="1")
@@ -229,7 +284,7 @@ def actor_defs(path):
         prefix=f"actors/custom/{culture}"
         for i in range(len(CLOTH)):
             shirt=ET.SubElement(a,"shirt",id=str(i))
-            for tag,value in (("arms",f"{prefix}/shirt_{i}_arms.dds"),("torso",f"{prefix}/shirt_{i}_torso.dds"),("mesh","actors/eloria_shirt.cmf")):ET.SubElement(shirt,tag).text=value
+            for tag,value in (("arms",f"{prefix}/shirt_{i}_arms.dds"),("torso",f"{prefix}/shirt_{i}_torso.dds"),("mesh",f"actors/playable/{culture}_{gender}_shirt.cmf")):ET.SubElement(shirt,tag).text=value
         for i in range(6):
             skin=ET.SubElement(a,"hskin",id=str(i))
             ET.SubElement(skin,"hands").text=f"{prefix}/skin_{i}_hands.dds"
@@ -237,11 +292,11 @@ def actor_defs(path):
         for i in range(len(HAIR)):ET.SubElement(a,"hair",id=str(i)).text=f"{prefix}/hair_{i}.dds"
         for i in range(len(EYES)):ET.SubElement(a,"eyes",id=str(i)).text=f"{prefix}/eyes_{i}.dds"
         for i in range(len(PANTS)):
-            legs=ET.SubElement(a,"legs",id=str(i));ET.SubElement(legs,"skin").text=f"{prefix}/pants_{i}.dds";ET.SubElement(legs,"mesh").text="actors/eloria_legs.cmf"
+            legs=ET.SubElement(a,"legs",id=str(i));ET.SubElement(legs,"skin").text=f"{prefix}/pants_{i}.dds";ET.SubElement(legs,"mesh").text=f"actors/playable/{culture}_{gender}_legs.cmf"
         for i in range(len(BOOTS)):
-            boots=ET.SubElement(a,"boots",id=str(i));ET.SubElement(boots,"skin").text=f"{prefix}/boots_{i}.dds";ET.SubElement(boots,"mesh").text="actors/eloria_boots.cmf"
+            boots=ET.SubElement(a,"boots",id=str(i));ET.SubElement(boots,"skin").text=f"{prefix}/boots_{i}.dds";ET.SubElement(boots,"mesh").text=f"actors/playable/{culture}_{gender}_boots.cmf"
         for i in range(5):
-            head=ET.SubElement(a,"head",id=str(i));ET.SubElement(head,"mesh").text=f"actors/eloria_head_{i}.cmf"
+            head=ET.SubElement(a,"head",id=str(i));ET.SubElement(head,"mesh").text=f"actors/playable/{culture}_{gender}_head_{i}.cmf"
         # These IDs are protocol constants, not zero-based defaults.  The client
         # indexes these exact slots while constructing the character preview.
         # Leaving only slot zero populated makes helmet/cape/shield dereference
@@ -271,6 +326,13 @@ def main():
     skeleton(root/"actors/eloria_humanoid.xsf"); mesh(root/"actors/eloria_humanoid.xmf")
     for section in ("shirt","legs","boots","none"):mesh(root/f"actors/eloria_{section}.xmf",section)
     for i in range(5):mesh(root/f"actors/eloria_head_{i}.xmf","head",i)
+    for culture,_,_,_ in RACES:
+        for gender in ("female","male"):
+            mesh(root/f"actors/playable/{culture}_{gender}_body.xmf","all",0,culture,gender)
+            for section in ("shirt","legs","boots"):
+                mesh(root/f"actors/playable/{culture}_{gender}_{section}.xmf",section,0,culture,gender)
+            for i in range(5):
+                mesh(root/f"actors/playable/{culture}_{gender}_head_{i}.xmf","head",i,culture,gender)
     png(root/"actors/eloria_humanoid.png",256,256,lambda x,y:(82+(x//32%2)*18,105+(y//32%2)*12,96,255))
     generate_customization(root)
     for slug,_,color,_ in RACES:

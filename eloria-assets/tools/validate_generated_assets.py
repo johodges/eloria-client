@@ -678,6 +678,43 @@ def validate_customization_dds(root: Path) -> None:
         if len(data) != 128 + payload:
             raise ValueError(f"invalid DDS mip payload length: {path}")
 
+def validate_playable_characters(root: Path) -> None:
+    actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
+    expected = {
+        0:("luminous","female"),1:("luminous","male"),
+        2:("votary","female"),3:("votary","male"),
+        4:("glasswarden","female"),5:("glasswarden","male"),
+        37:("orun","female"),38:("orun","male"),
+        39:("greyhaven","female"),40:("greyhaven","male"),
+        41:("ssarathi","female"),42:("ssarathi","male"),
+    }
+    body_digests=set()
+    for actor_id,(culture,gender) in expected.items():
+        actor=actors.find(f"actor[@id='{actor_id}']")
+        if actor is None or actor.attrib.get("race") != culture or actor.attrib.get("gender") != gender:
+            raise ValueError(f"playable actor mapping changed: {actor_id}")
+        paths={
+            f"actors/playable/{culture}_{gender}_shirt.cmf",
+            f"actors/playable/{culture}_{gender}_legs.cmf",
+            f"actors/playable/{culture}_{gender}_boots.cmf",
+        }
+        paths.update(f"actors/playable/{culture}_{gender}_head_{i}.cmf" for i in range(5))
+        referenced={node.text for tag in ("shirt","legs","boots","head")
+                    for part in actor.findall(tag) for node in part.findall("mesh")}
+        if paths != referenced:
+            raise ValueError(f"playable actor {actor_id} does not use its complete authored mesh set")
+        for relative in paths:
+            xml_path=(root/relative).with_suffix(".xmf")
+            vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(xml_path).findall("SUBMESH"))
+            minimum=(96 if "head_" in relative else 140 if "boots" in relative
+                     else 290 if "legs" in relative else 360)
+            if vertices < minimum:
+                raise ValueError(f"playable mesh fell below topology floor: {relative}")
+        body=(root/f"actors/playable/{culture}_{gender}_body.xmf").read_bytes()
+        body_digests.add(hashlib.sha256(body).digest())
+    if len(body_digests) != len(expected):
+        raise ValueError("playable races or genders share duplicate body silhouettes")
+
 def validate_map_dds(root: Path) -> None:
     local_maps = sorted((root / "maps/nymara").glob("*.dds"))
     if len(local_maps) != 19:
@@ -735,6 +772,7 @@ def main() -> None:
     validate_four_gates_npcs_equipment(root)
     validate_animations(root)
     validate_customization_dds(root)
+    validate_playable_characters(root)
     validate_map_dds(root)
     print("Validated every generated ELM, Cal3D XML family, and customization DDS")
 

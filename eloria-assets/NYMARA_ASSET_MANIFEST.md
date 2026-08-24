@@ -63,6 +63,16 @@ concept-comparison, overhead, and representative topology QA under
   alpha/density value.
 - All assets are original Eloria project work under CC-BY-4.0.
 
+## Playable characters
+
+- All six playable cultures have distinct female and male Cal3D silhouettes.
+- Every playable actor uses race/gender-specific shirt, legs, boots, and five
+  head meshes while retaining protocol actor IDs and the shared semantic rig.
+- Enhanced-actor customization remains compatible with the fixed 654-file DDS
+  atlas contract and its required three mip levels.
+- Mesh QA and representative customization sheets are committed under
+  `qa/playable-races/`.
+
 ## Four Gates vertical slice
 
 - The ELM composition is centred on the authoritative `(58,58)` arrival rather
