@@ -8,7 +8,7 @@ from __future__ import annotations
 import hashlib, json, math, struct, zlib
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent / "nymara-client-assets"
+ROOT = Path(__file__).resolve().parent
 Vertex = tuple[float,float,float,float,float,float,float,float]
 
 def png(path,w,h,pixel):
@@ -61,6 +61,58 @@ def bridge(v,i):
     for x in (-1.5,-.9,-.3,.3,.9,1.5): box(v,i,(x,0,.18),(.52,5,.3))
     for x in (-1.85,1.85): box(v,i,(x,0,.65),(.16,5,.18))
 def gate(v,i): box(v,i,(-1.6,0,2),(1.15,1.2,4));box(v,i,(1.6,0,2),(1.15,1.2,4));box(v,i,(0,0,3.75),(2.1,1.2,.55))
+def four_gates_wall(v,i):
+    box(v,i,(0,0,.55),(5.6,1.15,1.1));box(v,i,(0,0,1.45),(5.15,.82,.72))
+    for x in (-2.35,-1.4,-.47,.47,1.4,2.35): box(v,i,(x,0,2.05),(.52,.9,.55))
+    for x in (-2.7,2.7): taper(v,i,0,2.25,.42,.3,8,(x,0))
+def four_gates_tower(v,i):
+    taper(v,i,0,.6,1.65,1.45,12);taper(v,i,.6,4.8,1.28,1.05,12)
+    for z in (1.0,2.6,4.25): taper(v,i,z,z+.22,1.42,1.42,12)
+    for angle in range(0,360,45):
+        a=math.radians(angle); box(v,i,(1.18*math.cos(a),1.18*math.sin(a),4.9),(.26,.26,1.15))
+    taper(v,i,5.35,5.72,1.62,1.62,12);taper(v,i,5.72,7.0,1.6,.18,12)
+    taper(v,i,7.0,7.65,.16,0,8)
+def four_gates_bridge(v,i):
+    for y in (-2.25,-1.35,-.45,.45,1.35,2.25): box(v,i,(0,y,.28),(3.8,.78,.32))
+    for x in (-2.0,2.0):
+        box(v,i,(x,0,.72),(.18,5.4,.18))
+        for y in (-2.45,0,2.45): taper(v,i,-.65,1.45,.22,.16,8,(x,y))
+    for x in (-1.2,1.2):
+        for y in (-2.45,2.45): taper(v,i,-.5,.4,.32,.24,8,(x,y))
+def four_gates_pavilion(v,i):
+    taper(v,i,0,.45,2.65,2.4,12);taper(v,i,.45,.7,2.25,2.25,12)
+    for angle in range(0,360,45):
+        a=math.radians(angle); taper(v,i,.7,3.35,.18,.14,8,(1.78*math.cos(a),1.78*math.sin(a)))
+    taper(v,i,3.25,3.5,2.25,2.25,12);taper(v,i,3.5,4.75,2.2,.2,12)
+    taper(v,i,4.7,5.35,.14,0,8)
+def four_gates_tree(v,i):
+    taper(v,i,0,3.4,.38,.2,10)
+    for angle,height in ((0,3.8),(72,3.5),(144,4.0),(216,3.6),(288,3.9)):
+        a=math.radians(angle); cx=.65*math.cos(a); cy=.65*math.sin(a)
+        taper(v,i,2.2,height,.18,.05,8,(cx,cy))
+        taper(v,i,2.6,height+1.35,1.05,.08,10,(cx*1.35,cy*1.35))
+    taper(v,i,2.8,5.6,1.25,.1,12)
+def four_gates_gatehouse(v,i):
+    # Monumental paired towers frame a broad unobstructed portal opening.
+    for x in (-2.15,2.15):
+        taper(v,i,0,.55,1.2,1.05,12,(x,0));taper(v,i,.55,4.9,.95,.82,12,(x,0))
+        for z in (1.0,3.0,4.55): taper(v,i,z,z+.2,1.08,1.08,12,(x,0))
+        taper(v,i,4.75,5.85,1.22,.12,12,(x,0));taper(v,i,5.8,6.35,.11,0,8,(x,0))
+    box(v,i,(0,0,4.25),(2.55,1.25,.62));box(v,i,(0,0,4.75),(3.2,1.0,.38))
+    for x in (-1.2,-.4,.4,1.2): box(v,i,(x,0,5.18),(.35,1.05,.55))
+    for x in (-3.05,3.05): taper(v,i,0,3.2,.38,.25,8,(x,0))
+def four_gates_waystone(v,i):
+    taper(v,i,0,.35,1.75,1.5,12);taper(v,i,.35,.7,1.35,1.2,12)
+    for angle in (0,120,240):
+        a=math.radians(angle); x=.72*math.cos(a); y=.72*math.sin(a)
+        taper(v,i,.65,3.15,.3,.18,8,(x,y));taper(v,i,3.15,3.85,.28,0,8,(x,y))
+    taper(v,i,.7,2.55,.42,.3,10);taper(v,i,2.55,4.5,.55,0,8)
+def four_gates_lantern(v,i):
+    taper(v,i,0,2.8,.12,.09,8);taper(v,i,2.75,3.0,.42,.34,8)
+    for x in (-.28,.28):
+        for y in (-.28,.28): box(v,i,(x,y,3.45),(.07,.07,.9))
+    box(v,i,(0,0,3.05),(.68,.68,.12));box(v,i,(0,0,3.85),(.72,.72,.12))
+    taper(v,i,3.9,4.35,.58,0,8)
 def dock(v,i):
     for x in (-1.2,-.4,.4,1.2): box(v,i,(x,0,.2),(.7,4,.28))
     for x in (-1.55,1.55):
@@ -138,11 +190,17 @@ def basalt_steps(v,i):
 
 ASSETS={
  'mirrorhold_lake_house':(building,(213,218,207),(40,123,130)),'mirrorhold_civic_tower':(tower,(207,215,207),(32,112,126)),
- 'mirrorhold_radial_bridge':(bridge,(204,208,196),(62,137,139)),'four_gates_gatehouse':(gate,(171,166,147),(43,107,110)),
+ 'mirrorhold_radial_bridge':(bridge,(204,208,196),(62,137,139)),'four_gates_gatehouse':(four_gates_gatehouse,(171,166,147),(43,107,110)),
+ 'four_gates_civic_wall':(four_gates_wall,(160,158,145),(72,111,105)),
+ 'four_gates_civic_tower':(four_gates_tower,(180,178,158),(53,120,119)),
+ 'four_gates_radial_bridge':(four_gates_bridge,(170,165,142),(52,126,132)),
+ 'four_gates_civic_pavilion':(four_gates_pavilion,(190,181,150),(47,116,116)),
+ 'four_gates_park_tree':(four_gates_tree,(79,76,51),(74,126,66)),
+ 'four_gates_lantern':(four_gates_lantern,(76,79,70),(213,169,72)),
  'crownwater_ferry_dock':(dock,(113,83,52),(43,120,128)),'crownwater_ferry':(boat,(104,73,42),(42,131,143)),
  'glasswarden_observatory':(observatory,(101,87,112),(154,92,181)),'resonant_crystal_cluster':(crystal,(101,72,125),(191,104,230)),
  'orun_round_tent':(tent,(171,111,54),(42,131,134)),'amberwood_estate':(manor,(116,77,48),(181,103,46)),
- 'four_gates_waystone':(stone,(103,105,103),(50,118,118)),'amberwood_tree':(tree,(101,69,40),(188,92,38)),
+ 'four_gates_waystone':(four_gates_waystone,(103,105,103),(50,118,118)),'amberwood_tree':(tree,(101,69,40),(188,92,38)),
  'mirror_reed':(reed,(44,116,101),(107,190,165)),'crownwater_pearl':(pearl,(185,198,188),(71,143,151)),
  'whitehorn_silverleaf':(flower,(102,137,118),(205,222,221)),'ghost_orchid':(flower,(94,91,113),(201,187,224)),
  'delta_lotus':(flower,(57,117,75),(210,112,150)),'stormglass_shard':(crystal,(78,83,119),(154,166,231)),
@@ -212,6 +270,15 @@ ASSETS={
 def tex(path,a,b):
     png(path,128,128,lambda x,y:(*(a if ((x//16+y//16)&1)==0 else b),255))
 
+def four_gates_tex(path,a,b):
+    def pixel(x,y):
+        mortar=x%32<2 or y%24<2
+        vein=abs(((x*7+y*11+(x*y)//17)%53)-26)<2
+        grain=((x*13+y*17+(x^y)*3)%17)-8
+        base=b if mortar else tuple((3*q+p)//4 for p,q in zip(a,b)) if vein else a
+        return (*(max(0,min(255,channel+grain)) for channel in base),255)
+    png(path,256,256,pixel)
+
 ICONS=[('crownwater_pearl',(207,221,211)),('mirror_reed',(60,151,123)),('glacier_salt',(202,227,231)),('whitehorn_silverleaf',(167,207,185)),('resonant_crystal',(185,104,218)),('stormglass_shard',(118,139,218)),('sunmane_seed',(194,157,72)),('amber_resin',(213,116,47)),('moor_peat',(91,72,62)),('ghost_orchid',(188,167,216)),('mangrove_sap',(104,143,72)),('ssarathi_scale_moss',(59,132,105)),('verdant_venom_bulb',(91,171,71)),('delta_lotus',(213,111,151)),('deep_lake_clay',(121,90,72)),('voltaic_geode',(132,115,198))]
 def icon_pixel(idx,x,y):
     name,c=ICONS[idx];dx=x-32;dy=y-32;r=(dx*dx+dy*dy)**.5;alpha=255 if r<22 else max(0,int((24-r)*128));
@@ -224,7 +291,8 @@ def icon_pixel(idx,x,y):
 def main():
     runtime=ROOT/'runtime';source=ROOT/'source-obj';manifest=[]
     for name,(build,a,b) in ASSETS.items():
-        texture=runtime/'3dobjects/nymara'/f'{name}.png';tex(texture,a,b)
+        texture=runtime/'3dobjects/nymara'/f'{name}.png'
+        (four_gates_tex if name.startswith('four_gates_') else tex)(texture,a,b)
         e3d(runtime/'3dobjects/nymara'/f'{name}.e3d',texture.name,build);obj(source/f'{name}.obj',build,name,texture.name)
         manifest.append({'id':name,'model':f'3dobjects/nymara/{name}.e3d','texture':f'3dobjects/nymara/{name}.png','source':f'source-obj/{name}.obj'})
     for idx,(name,c) in enumerate(ICONS): png(runtime/f'textures/nymara/icons/{name}.png',64,64,lambda x,y,j=idx:icon_pixel(j,x,y))
@@ -239,6 +307,15 @@ def main():
     (runtime/'nymara_assets.json').write_text(json.dumps({'schema':1,'objects':manifest,'objects_2d':defs,'items':[{'item_id':1000+i,'image_id':85+i,'name':n,'icon':f'textures/nymara/icons/{n}.png'} for i,(n,_) in enumerate(ICONS)]},indent=2)+'\n')
     (ROOT/'provenance.json').write_text(json.dumps({'schema':1,'assets':[{'path':'runtime/3dobjects/nymara/*','source':'generate_nymara_pack.py','author':'Eloria project','license':'CC-BY-4.0','description':'Original procedural Nymara E3D models and textures'},{'path':'runtime/textures/nymara/*','source':'generate_nymara_pack.py','author':'Eloria project','license':'CC-BY-4.0','description':'Original procedural Nymara inventory icons and atlas'}]},indent=2)+'\n')
     (ROOT/'README.md').write_text(f'''# Nymara native asset pack\n\nGenerated for `eloria-client` branch `feature/independent-eloria-client`.\n\n## Contents\n\n- `runtime/3dobjects/nymara/`: {len(ASSETS)} native E3D models and PNG textures.\n- `runtime/2dobjects/nymara/`: {len(ICONS)} native `.2d` definitions and shared RGBA atlas.\n- `runtime/textures/nymara/icons/`: {len(ICONS)} individual 64x64 RGBA item icons.\n- `runtime/textures/nymara/items_nymara.png`: 512x128 icon atlas.\n- `runtime/nymara_assets.json`: stable paths and item IDs.\n- `source-obj/`: editable OBJ/MTL source for every 3D object.\n- `generate_nymara_pack.py`: deterministic regeneration source.\n\nCopy the contents of `runtime/` into the generated Eloria data directory. E3D and `.2d` files can be placed directly by the bundled map editor. The JSON catalog is intended for client/server registration.\n\nThese are functional low-poly production proxies based on the approved Nymara art direction, not automatic 3D reconstructions of the painted concept sheets. They establish names, scale, pivots, native formats, texture paths, and provenance for later art refinement.\n''')
+    readme=ROOT/'README.md'
+    readme.write_text(readme.read_text().replace(
+        'These are functional low-poly production proxies based on the approved Nymara art direction, not automatic 3D reconstructions of the painted concept sheets. They establish names, scale, pivots, native formats, texture paths, and provenance for later art refinement.',
+        'The shared regional catalog contains functional low-poly production proxies.\n'
+        'The Four Gates civic wall, tower, bridge, pavilion and park tree are the first\n'
+        'refined regional kit: they use intentional silhouette topology, 256px authored\n'
+        'procedural materials, stable scale and pivots, native E3D output, and editable\n'
+        'OBJ/MTL source. They are original interpretations of the approved art direction,\n'
+        'not automatic reconstructions of the concept paintings.'))
     (ROOT/'generate_nymara_pack.py').write_text(Path(__file__).read_text())
     print(f'generated {len(ASSETS)} E3D models, {len(ICONS)} icons, OBJ sources and manifests in {ROOT}')
 if __name__=='__main__': main()

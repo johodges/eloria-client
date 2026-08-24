@@ -83,6 +83,74 @@ def portrait(x,y):
  if (lx-64)**2+(ly-56)**2<34**2:return skin
  if 42<lx<86 and 84<ly<126:return (42+cell*9,61+cell*7,70+cell*11,255)
  return (24,31,38,255)
+
+# Runtime HUD atlases.  The client addresses these textures with the original
+# 256-pixel UV contract; generating a generic 512-pixel panel here made every
+# action icon, the clock, and the compass sample empty filler.
+ICON_KINDS={
+ 0:"walk",18:"walk",7:"sit",25:"sit",8:"stand",26:"stand",
+ 2:"look",20:"look",15:"use",35:"use",47:"item",46:"item",
+ 4:"trade",22:"trade",5:"attack",23:"attack",11:"inventory",29:"inventory",
+ 9:"spell",27:"spell",12:"craft",32:"craft",45:"emote",44:"emote",
+ 19:"quest",21:"quest",36:"map",37:"map",3:"info",6:"info",
+ 10:"friends",24:"friends",13:"stats",33:"stats",1:"console",28:"console",
+ 39:"help",38:"help",14:"settings",34:"settings"}
+
+def _line(px,py,x1,y1,x2,y2,w=1):
+ dx=x2-x1;dy=y2-y1;n=max(abs(dx),abs(dy),1)
+ return min((px-(x1+dx*i/n))**2+(py-(y1+dy*i/n))**2 for i in range(n+1))<=w*w
+
+def _icon_mark(kind,x,y):
+ if kind=="walk": return ((x-13)**2+(y-18)**2<28 or (8<x<20 and 20<y<25))
+ if kind=="sit": return (9<x<14 and 7<y<20) or (12<x<23 and 17<y<21) or _line(x,y,13,20,9,26,2)
+ if kind=="stand": return (13<x<18 and 7<y<20) or _line(x,y,15,19,9,27,2) or _line(x,y,16,19,23,27,2)
+ if kind=="look": return ((x-16)**2/100+(y-16)**2/36<1 and (x-16)**2/64+(y-16)**2/18>.65) or (x-16)**2+(y-16)**2<10
+ if kind in ("use","item"): return (13<x<19 and 8<y<23) or (8<x<14 and 12<y<19) or (18<x<24 and 10<y<18)
+ if kind=="trade": return _line(x,y,7,13,15,20,3) or _line(x,y,25,13,16,20,3)
+ if kind=="attack": return _line(x,y,8,7,24,25,2) or _line(x,y,24,7,8,25,2)
+ if kind=="inventory": return 8<x<24 and 12<y<25 and not (11<x<21 and 15<y<22)
+ if kind=="spell": return 7<((x-16)**2+(y-16)**2)**.5<11 or _line(x,y,16,5,16,27,1) or _line(x,y,5,16,27,16,1)
+ if kind=="craft": return _line(x,y,8,24,23,8,3) or (7<x<24 and 22<y<27)
+ if kind=="emote": return (x-16)**2/90+(y-16)**2/110<1 and ((x-12)**2+(y-13)**2<2 or (x-20)**2+(y-13)**2<2 or (12<x<20 and 20<y<22))
+ if kind=="quest": return 9<x<23 and 6<y<26 and not (12<x<20 and 9<y<23)
+ if kind=="map": return _line(x,y,8,7,8,25,2) or _line(x,y,16,6,16,24,2) or _line(x,y,24,7,24,25,2) or _line(x,y,8,7,16,6,1) or _line(x,y,16,24,24,25,1)
+ if kind=="info": return (x-16)**2+(y-10)**2<7 or (14<x<18 and 14<y<25)
+ if kind=="friends": return (x-11)**2+(y-12)**2<20 or (x-21)**2+(y-12)**2<20 or (6<x<26 and 18<y<25)
+ if kind=="stats": return (7<x<11 and 18<y<26) or (13<x<18 and 13<y<26) or (20<x<25 and 7<y<26)
+ if kind=="console": return 6<x<26 and 7<y<23 and not (9<x<23 and 10<y<19) or _line(x,y,11,22,8,27,2)
+ if kind=="help": return (7<((x-16)**2+(y-16)**2)**.5<11) and (y<20) or (14<x<18 and 22<y<26)
+ if kind=="settings": return 7<((x-16)**2+(y-16)**2)**.5<11 or (x-16)**2+(y-16)**2<16
+ return False
+
+def gamebuttons_pixel(x,y):
+ cell=(x//32)+(y//32)*8;lx=x%32;ly=y%32;kind=ICON_KINDS.get(cell)
+ hi=cell in {18,25,26,20,35,46,22,23,29,27,32,44,21,37,6,24,33,28,38,34}
+ border=lx in (1,2,29,30) or ly in (1,2,29,30)
+ if border:return (198,132,55,255) if hi else (51,91,96,255)
+ if _icon_mark(kind,lx,ly):return (111,231,240,255) if hi else (208,178,103,255)
+ return (10,24,29,235) if 2<lx<29 and 2<ly<29 else (0,0,0,0)
+
+def hud_pixel(x,y):
+ # Compass and clock occupy exact legacy UV rectangles.
+ if 32<=x<=95 and 193<=y<=255:
+  dx=x-63.5;dy=y-224;d=(dx*dx+dy*dy)**.5
+  if 27<d<31:return (199,137,70,255)
+  if d<27 and (abs(dx)<1.3 or abs(dy)<1.3):return (91,181,185,255)
+  if d<27:return (13,31,37,235)
+ if 4<=x<=14 and 201<=y<=247:
+  return (116,235,240,255) if abs(x-9)<=2 and y<241 else (0,0,0,0)
+ if 0<=x<=63 and 128<=y<=191:
+  dx=x-31.5;dy=y-159.5;d=(dx*dx+dy*dy)**.5
+  if 27<d<31:return (199,137,70,255)
+  if d<27 and (int((__import__('math').atan2(dy,dx)+3.2)*12/6.4)%3==0 and d>21):return (111,220,225,255)
+  if d<27:return (13,31,37,235)
+ if 21<=x<=31 and 193<=y<=223:return (235,185,82,255) if abs(x-26)<=2 else (0,0,0,0)
+ if 64<=x<=127 and 128<=y<=191:
+  dx=x-95.5;dy=y-159.5
+  if dx*dx+dy*dy<720:return (101,211,218,255) if abs(dx)<6 or abs(dy)<6 else (18,46,53,245)
+ if x>=192:return (26,39,42,245) if x<252 else (199,137,70,255)
+ if 144<=x<=191:return (26,39,42,245) if y<252 else (199,137,70,255)
+ return (0,0,0,0)
 def write_text(path,text):
  path.parent.mkdir(parents=True,exist_ok=True);path.write_text(text,encoding="utf-8")
 def e3d_fallback(path):
@@ -106,11 +174,16 @@ def main():
  for name in ("buttons","book1","paper1","alphaborder","eye_candy","eye_candy_burn"):
   png(root/f"textures/{name}.png",512,512,panel);bmp(root/f"textures/{name}.bmp",512,512,panel)
   dds(root/f"textures/{name}.dds",512,512,panel)
- for name in ("gamebuttons","gamebuttons2","console","ground_detail","sigils"):
+ dds(root/"textures/gamebuttons.dds",256,256,gamebuttons_pixel)
+ dds(root/"textures/gamebuttons2.dds",256,256,hud_pixel)
+ for name in ("console","ground_detail","sigils"):
   dds(root/f"textures/{name}.dds",512,512,panel)
  dds(root/"textures/login_menu.dds",256,256,login_menu_pixel)
  dds(root/"textures/login_back.dds",512,512,login_background)
- for name in ("compass","thick_clouds","thick_clouds_detail"):
+ # Minimap compass is a separate texture; keep its cardinal design readable.
+ dds(root/"textures/compass.dds",256,256,
+  lambda x,y: hud_pixel(32+x//4,193+y//4))
+ for name in ("thick_clouds","thick_clouds_detail"):
   dds(root/f"textures/{name}.dds",512,512,sky)
  dds(root/"textures/moonmap.dds",512,512,moon);dds(root/"textures/BrightSun.dds",512,512,sun)
  dds(root/"textures/portraits1.dds",512,512,portrait)
