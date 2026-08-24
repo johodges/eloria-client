@@ -210,6 +210,23 @@ def mirrorhold_height(x,y):
  ridge=max(0,(18-min(x,y,191-x,191-y))//4)
  return max(8,min(29,11+citadel//3+ridge+region_noise('mirrorhold',x//7,y//7)//8))
 
+def crownwater_tile(x,y):
+ cx=cy=58/6; radius=math.hypot(x-cx,y-cy)
+ causeway=abs(x-cx)<=.65 or abs(y-cy)<=.65 or abs((x-cx)-(y-cy))<=.55
+ satellites=any(math.hypot(x-sx,y-sy)<1.7 for sx,sy in
+                ((4.8,5.0),(14.6,5.2),(4.6,14.4),(14.7,14.5),(9.7,17.5)))
+ if causeway and radius<10: return 2
+ if radius<4.6: return 0
+ if satellites: return 1
+ return 3
+
+def crownwater_height(x,y):
+ if abs(x-58)<=4 or abs(y-58)<=4: return 11
+ central=math.hypot(x-58,y-58)<29
+ satellites=any(math.hypot(x-sx,y-sy)<11 for sx,sy in
+                ((29,30),(88,31),(28,87),(88,87),(58,106)))
+ return 11 if central or satellites else 6
+
 def four_gates_terrain_pixel(kind):
  def pixel(x,y):
   grain=((x*17+y*29+(x^y)*5)%23)-11
@@ -343,6 +360,28 @@ def mirrorhold_placements():
   p.append(("3dobjects/nymara/mirrorhold_public_fountain.e3d",x,y,0,j*60))
  for j,(x,y) in enumerate(((30,34),(86,34),(26,62),(90,62),(30,96),(86,96),(50,118),(66,118))):
   p.append(("3dobjects/nymara/glasswarden_field_station.e3d",x,y,0,j*47))
+ return p
+
+def crownwater_placements():
+ p=[]
+ # Pale central island capital, ringed by civic towers and fountains.
+ for j,(x,y) in enumerate(((42,42),(74,42),(42,74),(74,74),(58,36),(36,58),(80,58),(58,80))):
+  p.append(("3dobjects/nymara/mirrorhold_civic_tower.e3d",x,y,0,j*45))
+ for j,(x,y) in enumerate(((48,48),(68,48),(48,68),(68,68),(58,44),(44,58),(72,58),(58,72))):
+  p.append(("3dobjects/nymara/mirrorhold_public_fountain.e3d",x,y,0,j*45))
+ # Four ferry approaches and an outer southern island route.
+ for j,(x,y,r) in enumerate(((58,24,90),(24,58,0),(92,58,0),(58,92,90),(58,110,90),(36,36,45),(80,36,315),(36,80,315),(80,80,45))):
+  p.append(("3dobjects/nymara/mirrorhold_radial_bridge.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((30,30,45),(86,30,315),(28,86,315),(88,86,45),(58,106,0),(20,58,90),(98,58,270))):
+  p.append(("3dobjects/nymara/crownwater_ferry_dock.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((22,40,25),(96,40,335),(24,76,155),(94,78,205),(46,104,20),(72,106,340))):
+  p.append(("3dobjects/nymara/crownwater_fishing_boat.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((34,20,0),(82,22,180),(18,62,90),(100,64,270))):
+  p.append(("3dobjects/nymara/crownwater_patrol_boat.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((28,46),(88,46),(30,70),(86,70),(46,90),(70,90))):
+  p.append(("3dobjects/nymara/crownwater_submerged_waystone.e3d",x,y,0,j*60))
+ for j,(x,y) in enumerate(((32,26),(84,26),(26,84),(90,84),(48,108),(68,108))):
+  p.append(("3dobjects/nymara/mirrorhold_lake_house.e3d",x,y,0,j*60))
  return p
 
 def drowned_crown_placements():
@@ -654,6 +693,8 @@ def generate_maps(root):
    placements=four_gates_placements()
   elif name == 'mirrorhold':
    placements=mirrorhold_placements()
+  elif name == 'crownwater':
+   placements=crownwater_placements()
   elif name in REGIONS:
    authored=profile['objects']
    rings=((30,30),(58,28),(86,30),(28,58),(88,58),(30,86),(58,88),(86,86),
@@ -713,6 +754,9 @@ def generate_maps(root):
   elif name=='mirrorhold':
    lights += [(x,y,4.2,.42,.68,.92) for x,y in
               ((58,34),(42,34),(74,34),(50,48),(66,48),(42,58),(74,58),(38,92),(78,92))]
+  elif name=='crownwater':
+   lights += [(x,y,3.5,.88,.77,.38) for x,y in
+              ((42,42),(74,42),(42,74),(74,74),(58,36),(36,58),(80,58),(58,80))]
   elif name=='drowned_crown':
    lights += [(x,y,2.7,.24,.70,.78) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
@@ -734,9 +778,9 @@ def generate_maps(root):
   elif name=='manymouth_flooded_labyrinth':
    lights += [(x,y,2.6,.24,.58,.48) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
-  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold'
+  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold' else crownwater_tile if name=='crownwater'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
-  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold'
+  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold' else crownwater_height if name=='crownwater'
                    else lambda x,y,p=profile,n=name:region_height(p,n,x,y))
   make_map(root/f"maps/nymara/{name}.elm",width=32,height=32,placements=placements,
    ambient=profile['ambient'],lights=lights,

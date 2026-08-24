@@ -134,6 +134,28 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Mirrorhold lacks authored scenery or lighting")
             if set(mirror_tiles) != {0, 1, 2, 3} or len(set(mirror_heights)) < 8:
                 raise ValueError("Mirrorhold lacks lake, roads, and elevation variation")
+        if path.as_posix().endswith("maps/nymara/crownwater.elm"):
+            crown_tiles = data[tile_offset:height_offset]
+            crown_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/mirrorhold_civic_tower.e3d": 8,
+                "3dobjects/nymara/mirrorhold_public_fountain.e3d": 8,
+                "3dobjects/nymara/mirrorhold_radial_bridge.e3d": 9,
+                "3dobjects/nymara/crownwater_ferry_dock.e3d": 7,
+                "3dobjects/nymara/crownwater_fishing_boat.e3d": 6,
+                "3dobjects/nymara/crownwater_patrol_boat.e3d": 4,
+                "3dobjects/nymara/crownwater_submerged_waystone.e3d": 6,
+                "3dobjects/nymara/mirrorhold_lake_house.e3d": 6,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Crownwater is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Crownwater arrival plaza is obstructed")
+            if obj3_count < 62 or light_count < 12:
+                raise ValueError("Crownwater lacks authored scenery or lighting")
+            if set(crown_tiles) != {0, 1, 2, 3} or set(crown_heights) != {6, 11}:
+                raise ValueError("Crownwater lacks islands, causeways, or water depth")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,
