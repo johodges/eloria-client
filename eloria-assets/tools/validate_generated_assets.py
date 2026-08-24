@@ -544,8 +544,9 @@ def validate_nymara_textures(root: Path) -> None:
     if not actor_textures:
         raise ValueError("no Nymara actor textures found")
     for path in actor_textures:
-        if png_dimensions(path) != (512, 512):
-            raise ValueError(f"Nymara actor texture is not 512x512: {path}")
+        expected=(1024,1024) if "/npcs/" in path.as_posix() else (512,512)
+        if png_dimensions(path) != expected:
+            raise ValueError(f"Nymara actor texture is not {expected[0]}x{expected[1]}: {path}")
     world_textures = sorted(root.glob("3dobjects/nymara/**/*.png"))
     for path in world_textures:
         if png_dimensions(path) != (256, 256):
@@ -738,8 +739,8 @@ def validate_playable_characters(root: Path) -> None:
         for relative in paths:
             xml_path=(root/relative).with_suffix(".xmf")
             vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(xml_path).findall("SUBMESH"))
-            minimum=(96 if "head_" in relative else 140 if "boots" in relative
-                     else 290 if "legs" in relative else 360)
+            minimum=(600 if "head_" in relative else 300 if "boots" in relative
+                     else 620 if "legs" in relative else 1000)
             if vertices < minimum:
                 raise ValueError(f"playable mesh fell below topology floor: {relative}")
         body=(root/f"actors/playable/{culture}_{gender}_body.xmf").read_bytes()

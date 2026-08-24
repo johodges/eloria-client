@@ -897,7 +897,7 @@ def generate_npcs(root, actors):
     elif slug in ('luminous_civilian_f','luminous_civilian_m'): feature='civic_civilian'
     else: feature=f"nymara:{culture}:{role}"
     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
-    png(base/f"{slug}.png",512,512,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",256,256,material_pixel(accent,feature))
+    png(base/f"{slug}.png",1024,1024,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",512,512,material_pixel(accent,feature))
     append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.xsf",f"actors/nymara/npcs/{slug}.xmf",f"actors/nymara/npcs/{slug}.png","animations/nymara/humanoid",.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.05))
     out.append({"actor_type":aid,"id":slug,"culture":culture,"role":role,"variant":variant,"portrait":f"portraits/nymara/npcs/{slug}.png","collision_radius":.42,"scale":.96 if variant=='f' else 1.0}); aid+=1
  (root/"nymara_npcs.json").write_text(json.dumps({"schema":1,"npcs":out},indent=2)+"\n")

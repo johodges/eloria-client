@@ -27,7 +27,15 @@ BONES = (("root",-1,(0.,0.,0.)),("pelvis",0,(0.,0.,.92)),("spine",1,(0.,0.,.34))
  ("handL",5,(-.20,0.,0.)),("handR",7,(.20,0.,0.)),
  ("weaponL",16,(0.,-.08,0.)),("weaponR",17,(0.,-.08,0.)),
  ("staffR",17,(0.,-.12,.04)),("arrow",2,(0.,.12,.18)),
- ("cape1",2,(0.,.13,.28)),("cape2",22,(0.,0.,-.30)),("cape3",23,(0.,0.,-.30)))
+ ("cape1",2,(0.,.13,.28)),("cape2",22,(0.,0.,-.30)),("cape3",23,(0.,0.,-.30)),
+ # Secondary deformation and attachment anchors.  Existing IDs stay stable;
+ # these extend the production rig without invalidating animation/equipment.
+ ("spine_upper",2,(0.,0.,.25)),("neck",25,(0.,0.,.20)),
+ ("clavicle_l",25,(-.19,0.,.12)),("clavicle_r",25,(.19,0.,.12)),
+ ("eye_l",3,(-.075,-.16,.035)),("eye_r",3,(.075,-.16,.035)),
+ ("thumb_l",16,(-.055,-.025,0.)),("index_l",16,(-.11,-.015,0.)),
+ ("thumb_r",17,(.055,-.025,0.)),("index_r",17,(.11,-.015,0.)),
+ ("toe_l",10,(0.,.17,-.01)),("toe_r",13,(0.,.17,-.01)))
 
 def write_cal(path, magic, root):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -174,7 +182,22 @@ def mesh(path, section="all", variant=0, culture=None, gender=None):
                 sx*=head_variation; sy*=2-head_variation
             scaled_center=(cx*width*gender_width,cy,cz*height)
             scaled_size=(sx*width*gender_width,sy*(1.04 if feature in ("cold","maritime") else .96),sz*height)
-            ellipsoid(scaled_center,scaled_size,bone,vertices,faces,uv_rect,7 if i!=1 else 8,12 if i!=1 else 14)
+            ellipsoid(scaled_center,scaled_size,bone,vertices,faces,uv_rect,10 if i!=1 else 12,18 if i!=1 else 22)
+        if section in ("all","head"):
+            # Profiled face geometry replaces the featureless head capsule.
+            z=1.51*height
+            ellipsoid((0,-.125,z-.055),(.22,.16,.20*height),3,vertices,faces,head_uv,7,14)
+            ellipsoid((0,-.245,z+.015),(.075,.15,.12*height),3,vertices,faces,head_uv,6,12)
+            for side in (-1,1):
+                ellipsoid((side*.105*head_scale*gender_width,-.205,z+.055),(.075,.045,.048),3,vertices,faces,head_uv,5,10)
+                ellipsoid((side*.105*head_scale*gender_width,-.205,z+.055),(.032,.018,.028),30 if side<0 else 31,vertices,faces,head_uv,4,8)
+                ellipsoid((side*.105*head_scale*gender_width,-.01,z+.005),(.055,.035,.12),3,vertices,faces,head_uv,5,10)
+        if section in ("all","shirt"):
+            # Hands and fingers give gestures a readable silhouette at close range.
+            for side,bone,thumb,index in ((-1,5,32,33),(1,7,34,35)):
+                ellipsoid((side*.285*shoulders*gender_width,-.02,.715*height),(.15,.19,.14),bone,vertices,faces,hands_uv,6,12)
+                ellipsoid((side*.335*shoulders*gender_width,-.055,.69*height),(.07,.08,.16),thumb,vertices,faces,hands_uv,5,9)
+                ellipsoid((side*.285*shoulders*gender_width,-.09,.655*height),(.055,.07,.18),index,vertices,faces,hands_uv,5,9)
         if section in ("all","head") and feature=="scaled":
             # A low swept crest gives Ssarathi a readable silhouette without
             # changing the shared skeleton or enhanced-actor atlas contract.
