@@ -481,6 +481,11 @@ static int display_newchar_handler (window_info *win)
 	} else {
 		glNormal3f (0.0f,0.0f,1.0f);
 		if (any_reflection) draw_lake_tiles ();
+		/* Match the normal game-window render path.  This resets the texture
+		 * units after the sky/light passes even when clouds are disabled by the
+		 * data pack; otherwise enhanced actors can rasterize with stale texture
+		 * state and produce no visible colour output. */
+		setup_cloud_texturing();
 		draw_tile_map ();
 		CHECK_GL_ERRORS ();
 		display_2d_objects ();
