@@ -152,6 +152,13 @@ def validate_meshes(root: Path) -> None:
                 ident = int(vertex.attrib["ID"])
                 vertices[ident] = tuple(map(float, vertex.findtext("POS").split()))
                 normals[ident] = tuple(map(float, vertex.findtext("NORM").split()))
+                influences = vertex.findall("INFLUENCE")
+                if not influences or int(vertex.attrib.get("NUMINFLUENCES", "-1")) != len(influences):
+                    raise ValueError(f"missing or incorrect bone influences in {path}: {ident}")
+                if any(int(influence.attrib["ID"]) < 0 for influence in influences):
+                    raise ValueError(f"negative bone influence in {path}: {ident}")
+                if abs(sum(float(influence.text) for influence in influences) - 1.0) > 1e-5:
+                    raise ValueError(f"unnormalized bone influences in {path}: {ident}")
             vertex_total += len(vertices)
             for face in submesh.findall("FACE"):
                 a, b, c = map(int, face.attrib["VERTEXID"].split())
@@ -164,6 +171,14 @@ def validate_meshes(root: Path) -> None:
                     raise ValueError(f"inward or degenerate face in {path}: {a} {b} {c}")
         if "/nymara/" in path.as_posix() and vertex_total < 400:
             raise ValueError(f"Nymara mesh fell back to placeholder topology: {path}")
+        four_gates_creatures = {
+            "mirrorfin_otter.xmf": 700,
+            "reedhorn_stag.xmf": 900,
+            "gate_turtle.xmf": 760,
+            "lakeglass_drake.xmf": 760,
+        }
+        if path.name in four_gates_creatures and vertex_total < four_gates_creatures[path.name]:
+            raise ValueError(f"Four Gates creature fell back to generic topology: {path}")
 
 def png_dimensions(path: Path) -> tuple[int, int]:
     data = path.read_bytes()
@@ -194,6 +209,10 @@ def validate_four_gates_scenery(root: Path) -> None:
         "four_gates_gatehouse.e3d": 800,
         "four_gates_waystone.e3d": 320,
         "four_gates_lantern.e3d": 220,
+        "resonant_crystal.e3d": 150,
+        "stormglass_shard.e3d": 150,
+        "mirror_reed.e3d": 150,
+        "sunmane_seed.e3d": 170,
     }
     scenery = root / "3dobjects/nymara"
     for filename, minimum in minimum_vertices.items():

@@ -426,7 +426,19 @@ def generate_maps(root):
   accent=tuple(min(255,c+65) for c in color)
   texture(path.with_suffix('.png'),(color,accent))
   def harvest_shape(vertices,indices,name=resource):
-   if any(word in name for word in ("reed","orchid","lotus","moss","bulb","silverleaf")):
+   if name=='mirror_reed':
+    for x,y,height in ((0,0,1.5),(.18,.08,1.2),(-.18,.06,1.35),(.10,-.16,1.05),(-.12,-.15,1.18)):
+     tapered(vertices,indices,0,height,.035,.018,7,center=(x,y))
+    crossed_leaves(vertices,indices,.18,1.12,.82,6)
+   elif name in ('resonant_crystal','stormglass_shard'):
+    for x,y,height,radius in ((0,0,1.5,.28),(.34,.12,1.0,.20),(-.31,.10,1.18,.22),(.12,-.30,.82,.18),(-.18,-.25,.72,.16)):
+     tapered(vertices,indices,0,height,radius,0,8,center=(x,y))
+   elif name=='sunmane_seed':
+    tapered(vertices,indices,0,1.25,.055,.025,8)
+    crossed_leaves(vertices,indices,.10,.95,.68,5)
+    for x,y,z in ((.20,0,.88),(-.18,.04,.98),(.12,-.16,1.10),(-.10,-.15,.78)):
+     tapered(vertices,indices,z-.15,z+.18,.14,.06,8,center=(x,y))
+   elif any(word in name for word in ("reed","orchid","lotus","moss","bulb","silverleaf")):
     crossed_leaves(vertices,indices,0,1.15,.72,4)
    elif any(word in name for word in ("crystal","shard","geode","salt","pearl")):
     tapered(vertices,indices,0,1.05,.42,.08,7)
