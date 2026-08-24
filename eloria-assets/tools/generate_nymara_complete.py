@@ -1183,12 +1183,16 @@ def generate_maps(root):
  return data
 
 def merge_existing(root, source):
- # Preserve the handoff pack's registered runtime paths verbatim.
+ # Seed paths supplied only by the handoff packs, but never replace assets
+ # generated earlier in the production pipeline.  Overwriting here silently
+ # restored the obsolete capsule humanoids because this generator runs last.
  for pack in ("nymara-client-assets", "nymara-interior-assets"):
   runtime=source/pack/"runtime"
-  for child in runtime.iterdir():
-   if child.is_dir(): shutil.copytree(child,root/child.name,dirs_exist_ok=True)
-   else: shutil.copy2(child,root/child.name)
+  for child in runtime.rglob("*"):
+   relative=child.relative_to(runtime); destination=root/relative
+   if child.is_dir(): destination.mkdir(parents=True,exist_ok=True)
+   elif not destination.exists():
+    destination.parent.mkdir(parents=True,exist_ok=True); shutil.copy2(child,destination)
  # Normalize legacy handoff materials to the production 256px contract.  The
  # native source remains in the pack; this prevents mixed texel density at run time.
  for path in (root/"3dobjects/nymara").rglob("*.png"):
