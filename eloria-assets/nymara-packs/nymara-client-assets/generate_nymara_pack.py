@@ -92,6 +92,27 @@ def four_gates_tree(v,i):
         taper(v,i,2.2,height,.18,.05,8,(cx,cy))
         taper(v,i,2.6,height+1.35,1.05,.08,10,(cx*1.35,cy*1.35))
     taper(v,i,2.8,5.6,1.25,.1,12)
+def four_gates_gatehouse(v,i):
+    # Monumental paired towers frame a broad unobstructed portal opening.
+    for x in (-2.15,2.15):
+        taper(v,i,0,.55,1.2,1.05,12,(x,0));taper(v,i,.55,4.9,.95,.82,12,(x,0))
+        for z in (1.0,3.0,4.55): taper(v,i,z,z+.2,1.08,1.08,12,(x,0))
+        taper(v,i,4.75,5.85,1.22,.12,12,(x,0));taper(v,i,5.8,6.35,.11,0,8,(x,0))
+    box(v,i,(0,0,4.25),(2.55,1.25,.62));box(v,i,(0,0,4.75),(3.2,1.0,.38))
+    for x in (-1.2,-.4,.4,1.2): box(v,i,(x,0,5.18),(.35,1.05,.55))
+    for x in (-3.05,3.05): taper(v,i,0,3.2,.38,.25,8,(x,0))
+def four_gates_waystone(v,i):
+    taper(v,i,0,.35,1.75,1.5,12);taper(v,i,.35,.7,1.35,1.2,12)
+    for angle in (0,120,240):
+        a=math.radians(angle); x=.72*math.cos(a); y=.72*math.sin(a)
+        taper(v,i,.65,3.15,.3,.18,8,(x,y));taper(v,i,3.15,3.85,.28,0,8,(x,y))
+    taper(v,i,.7,2.55,.42,.3,10);taper(v,i,2.55,4.5,.55,0,8)
+def four_gates_lantern(v,i):
+    taper(v,i,0,2.8,.12,.09,8);taper(v,i,2.75,3.0,.42,.34,8)
+    for x in (-.28,.28):
+        for y in (-.28,.28): box(v,i,(x,y,3.45),(.07,.07,.9))
+    box(v,i,(0,0,3.05),(.68,.68,.12));box(v,i,(0,0,3.85),(.72,.72,.12))
+    taper(v,i,3.9,4.35,.58,0,8)
 def dock(v,i):
     for x in (-1.2,-.4,.4,1.2): box(v,i,(x,0,.2),(.7,4,.28))
     for x in (-1.55,1.55):
@@ -169,16 +190,17 @@ def basalt_steps(v,i):
 
 ASSETS={
  'mirrorhold_lake_house':(building,(213,218,207),(40,123,130)),'mirrorhold_civic_tower':(tower,(207,215,207),(32,112,126)),
- 'mirrorhold_radial_bridge':(bridge,(204,208,196),(62,137,139)),'four_gates_gatehouse':(gate,(171,166,147),(43,107,110)),
+ 'mirrorhold_radial_bridge':(bridge,(204,208,196),(62,137,139)),'four_gates_gatehouse':(four_gates_gatehouse,(171,166,147),(43,107,110)),
  'four_gates_civic_wall':(four_gates_wall,(160,158,145),(72,111,105)),
  'four_gates_civic_tower':(four_gates_tower,(180,178,158),(53,120,119)),
  'four_gates_radial_bridge':(four_gates_bridge,(170,165,142),(52,126,132)),
  'four_gates_civic_pavilion':(four_gates_pavilion,(190,181,150),(47,116,116)),
  'four_gates_park_tree':(four_gates_tree,(79,76,51),(74,126,66)),
+ 'four_gates_lantern':(four_gates_lantern,(76,79,70),(213,169,72)),
  'crownwater_ferry_dock':(dock,(113,83,52),(43,120,128)),'crownwater_ferry':(boat,(104,73,42),(42,131,143)),
  'glasswarden_observatory':(observatory,(101,87,112),(154,92,181)),'resonant_crystal_cluster':(crystal,(101,72,125),(191,104,230)),
  'orun_round_tent':(tent,(171,111,54),(42,131,134)),'amberwood_estate':(manor,(116,77,48),(181,103,46)),
- 'four_gates_waystone':(stone,(103,105,103),(50,118,118)),'amberwood_tree':(tree,(101,69,40),(188,92,38)),
+ 'four_gates_waystone':(four_gates_waystone,(103,105,103),(50,118,118)),'amberwood_tree':(tree,(101,69,40),(188,92,38)),
  'mirror_reed':(reed,(44,116,101),(107,190,165)),'crownwater_pearl':(pearl,(185,198,188),(71,143,151)),
  'whitehorn_silverleaf':(flower,(102,137,118),(205,222,221)),'ghost_orchid':(flower,(94,91,113),(201,187,224)),
  'delta_lotus':(flower,(57,117,75),(210,112,150)),'stormglass_shard':(crystal,(78,83,119),(154,166,231)),
