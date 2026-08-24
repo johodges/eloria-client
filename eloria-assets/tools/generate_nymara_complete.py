@@ -391,6 +391,24 @@ def amberwood_estate_placements():
   p.append(("3dobjects/nymara/interiors/amberwood_overgrown_statue.e3d",x,y,0,r))
  return p
 
+def grey_moor_barrows_placements():
+ p=[]
+ for x,y in ((34,22),(58,22),(82,22),(34,46),(58,46),(82,46),
+             (34,70),(58,70),(82,70),(34,94),(58,94),(82,94)):
+  p.append(("3dobjects/nymara/interiors/grey_moor_crypt_floor.e3d",x,y,0,0))
+ for x,y,r in ((24,22,90),(24,40,90),(24,58,90),(24,76,90),(24,94,90),
+               (92,22,270),(92,40,270),(92,58,270),(92,76,270),(92,94,270),
+               (34,106,180),(50,106,180),(66,106,180),(82,106,180)):
+  p.append(("3dobjects/nymara/interiors/grey_moor_crypt_wall.e3d",x,y,0,r))
+ for x,y,r in ((46,34,90),(70,34,90),(46,58,90),(70,58,90),(46,82,90),(70,82,90)):
+  p.append(("3dobjects/nymara/interiors/grey_moor_barrow_arch.e3d",x,y,0,r))
+ for x,y,r in ((32,40,0),(84,40,180),(32,62,0),(84,62,180),(40,88,0),(76,88,180),(40,98,0),(76,98,180)):
+  p.append(("3dobjects/nymara/interiors/grey_moor_sarcophagus.e3d",x,y,0,r))
+ for x,y,r in ((42,50,0),(74,50,180),(42,74,0),(74,74,180)):
+  p.append(("3dobjects/nymara/interiors/grey_moor_spike_trap.e3d",x,y,0,r))
+ p.append(("3dobjects/nymara/interiors/grey_moor_ritual_altar.e3d",58,94,0,180))
+ return p
+
 def cartography_pixel(name, profile):
  a,b,accent=profile['palette']
  def pixel(x,y):
@@ -578,6 +596,8 @@ def generate_maps(root):
    placements=resonant_vault_placements()
   elif name == 'amberwood_estate':
    placements=amberwood_estate_placements()
+  elif name == 'grey_moor_barrows':
+   placements=grey_moor_barrows_placements()
   else:
    kit=INTERIOR_KITS[name]
    # Three connected chambers: arrival hall, cultural focal room, and deep
@@ -620,6 +640,9 @@ def generate_maps(root):
               ((42,32),(74,32),(42,56),(74,56),(42,80),(74,80),(48,96),(68,96))]
   elif name=='amberwood_estate':
    lights += [(x,y,2.8,.92,.48,.20) for x,y in
+              ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
+  elif name=='grey_moor_barrows':
+   lights += [(x,y,2.5,.34,.46,.48) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
   tile_function=(four_gates_tile if name=='four_gates'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
