@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import math
 from pathlib import Path
 import struct
@@ -91,8 +92,11 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Four Gates vertical slice lacks production scenery density")
             required_landmarks = {
                 "3dobjects/nymara/four_gates_gatehouse.e3d": 4,
-                "3dobjects/nymara/mirrorhold_radial_bridge.e3d": 4,
-                "3dobjects/nymara/mirrorhold_civic_tower.e3d": 8,
+                "3dobjects/nymara/four_gates_radial_bridge.e3d": 4,
+                "3dobjects/nymara/four_gates_civic_wall.e3d": 12,
+                "3dobjects/nymara/four_gates_civic_tower.e3d": 8,
+                "3dobjects/nymara/four_gates_civic_pavilion.e3d": 8,
+                "3dobjects/nymara/four_gates_park_tree.e3d": 16,
                 "3dobjects/nymara/four_gates_waystone.e3d": 1,
             }
             for landmark, minimum in required_landmarks.items():
@@ -175,6 +179,33 @@ def validate_nymara_textures(root: Path) -> None:
     for path in world_textures:
         if png_dimensions(path) != (256, 256):
             raise ValueError(f"Nymara world material is not 256x256: {path}")
+
+
+def validate_four_gates_scenery(root: Path) -> None:
+    minimum_vertices = {
+        "four_gates_civic_wall.e3d": 240,
+        "four_gates_civic_tower.e3d": 520,
+        "four_gates_radial_bridge.e3d": 480,
+        "four_gates_civic_pavilion.e3d": 440,
+        "four_gates_park_tree.e3d": 400,
+    }
+    scenery = root / "3dobjects/nymara"
+    for filename, minimum in minimum_vertices.items():
+        path = scenery / filename
+        data = path.read_bytes()
+        if len(data) < 68 or data[:4] != b"e3dx" or data[4:8] != bytes((1, 1, 0, 0)):
+            raise ValueError(f"invalid Four Gates E3D header: {path}")
+        digest, offset = struct.unpack_from("<16si", data, 8)
+        if offset != 28 or hashlib.md5(data[offset:]).digest() != digest:
+            raise ValueError(f"invalid Four Gates E3D payload digest: {path}")
+        vertices, vertex_size, vertex_offset, indices, index_size = \
+            struct.unpack_from("<5i", data, offset)
+        if vertices < minimum or indices < vertices or indices % 3:
+            raise ValueError(f"Four Gates scenery fell back to placeholder topology: {path}")
+        if vertex_size != 32 or vertex_offset != 68 or index_size != 2:
+            raise ValueError(f"invalid Four Gates E3D section layout: {path}")
+        if png_dimensions(path.with_suffix(".png")) != (256, 256):
+            raise ValueError(f"invalid Four Gates material resolution: {path}")
 
 
 def expected_dds_size(name: str) -> tuple[int, int]:
@@ -267,6 +298,7 @@ def main() -> None:
     validate_skeletons(root)
     validate_meshes(root)
     validate_nymara_textures(root)
+    validate_four_gates_scenery(root)
     validate_animations(root)
     validate_customization_dds(root)
     validate_map_dds(root)

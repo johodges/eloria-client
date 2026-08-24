@@ -265,29 +265,29 @@ def four_gates_placements():
  for x,y,rotation in ((58,16,0),(58,104,180),(16,58,90),(104,58,270)):
   placements.append(("3dobjects/nymara/four_gates_gatehouse.e3d",x,y,0,rotation))
  for x,y,rotation in ((58,27,0),(58,89,0),(27,58,90),(89,58,90)):
-  placements.append(("3dobjects/nymara/mirrorhold_radial_bridge.e3d",x,y,0,rotation))
+  placements.append(("3dobjects/nymara/four_gates_radial_bridge.e3d",x,y,0,rotation))
  # Segmented civic wall reads as an octagonal fortified island while leaving
  # wide openings at each travel axis.
  wall_segments=((34,34,45),(46,27,15),(70,27,345),(82,34,315),
                 (89,46,285),(89,70,255),(82,82,225),(70,89,195),
                 (46,89,165),(34,82,135),(27,70,105),(27,46,75))
  for x,y,rotation in wall_segments:
-  placements.append(("3dobjects/nymara/mirrorhold_canal_wall.e3d",x,y,0,rotation))
+  placements.append(("3dobjects/nymara/four_gates_civic_wall.e3d",x,y,0,rotation))
  # Eight civic towers establish the skyline and frame the cardinal districts.
  for j,(x,y) in enumerate(((40,40),(58,35),(76,40),(81,58),(76,76),(58,81),(40,76),(35,58))):
-  placements.append(("3dobjects/nymara/mirrorhold_civic_tower.e3d",x,y,0,j*45))
+  placements.append(("3dobjects/nymara/four_gates_civic_tower.e3d",x,y,0,j*45))
  # Concentric plazas, ward waystones, public fountains and service pavilions.
  placements.append(("3dobjects/nymara/four_gates_waystone.e3d",58,64,0,0))
  for j,(x,y) in enumerate(((58,48),(68,58),(58,68),(48,58))):
   placements.append(("3dobjects/nymara/mirrorhold_public_fountain.e3d",x,y,0,j*90))
  for j,(x,y) in enumerate(((45,48),(71,48),(45,68),(71,68),(50,42),(66,42),(50,74),(66,74))):
-  placements.append(("3dobjects/nymara/glasswarden_field_station.e3d",x,y,0,(j%4)*90))
+  placements.append(("3dobjects/nymara/four_gates_civic_pavilion.e3d",x,y,0,(j%4)*90))
  # Original vegetation softens the monumental stonework and marks the outer
  # park belt visible in the concept rendering.
  for j,(x,y) in enumerate(((32,22),(44,20),(72,20),(84,22),(94,32),(96,44),
                            (96,72),(94,84),(84,94),(72,96),(44,96),(32,94),
                            (22,84),(20,72),(20,44),(22,32))):
-  placements.append(("3dobjects/nymara/amberwood_tree.e3d",x,y,0,(j*29)%360))
+  placements.append(("3dobjects/nymara/four_gates_park_tree.e3d",x,y,0,(j*29)%360))
  return placements
 
 def cartography_pixel(name, profile):
