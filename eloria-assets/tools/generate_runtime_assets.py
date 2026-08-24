@@ -119,19 +119,25 @@ def main():
  e3d_fallback(root/"3dobjects/badobject.e3d");e3d_fallback(root/"3dobjects/bag1.e3d");e3d_fallback(root/"3dobjects/portal1.e3d")
  make_map(root/"maps/nomap.elm",placements=[])
  preview_map=root/"maps/newcharactermap.elm"
- # new_character.c places the preview at tile coordinate (43, 156) with a
- # deliberately nonzero z close to zero, so the normal terrain-height lookup
- # is skipped.  A raised floor buries the complete actor while its separately
- # rendered name and health bar remain visible.
- make_map(preview_map,placements=[],height_value=0)
+ # The stock preview scene uses an empty terrain tile beneath the actor.  A
+ # normal opaque ground tile is drawn over the z=0 preview model, even though
+ # its separately rendered name and health bar remain visible.  Keep the
+ # established height/camera datum, remove terrain occlusion, and light the
+ # model independently of the world sky configuration.
+ make_map(preview_map,placements=[],tile_id=255,height_value=11,
+  ambient=(1.02,1.02,1.02),lights=[(21.5,78.0,3.0,4.0,4.0,4.0)])
  preview_data=preview_map.read_bytes()
  preview_width,preview_height,_,preview_height_offset=struct.unpack_from("<4i",preview_data,4)
  preview_x,preview_y=43,156
  if not (preview_x < preview_width*6 and preview_y < preview_height*6):
   raise ValueError("new-character preview coordinate lies outside generated map")
  preview_height_byte=preview_data[preview_height_offset+preview_y*preview_width*6+preview_x]
- if preview_height_byte & 0x3F:
-  raise ValueError("new-character preview floor must be at height zero")
+ if (preview_height_byte & 0x3F) != 11:
+  raise ValueError("new-character preview camera datum must be height 11")
+ preview_tile_offset=struct.unpack_from("<i",preview_data,12)[0]
+ preview_tile=preview_data[preview_tile_offset+(preview_y//6)*preview_width+preview_x//6]
+ if preview_tile != 255:
+  raise ValueError("new-character preview terrain must not occlude the actor")
  stubs={"el.ini":"#language = en\n#use_ttf = 1\n#ui_font = EloriaSans-Regular.ttf\n#name_font = EloriaSans-Regular.ttf\n#chat_font = EloriaSans-Regular.ttf\n#note_font = EloriaSans-Regular.ttf\n#book_font = EloriaSans-Regular.ttf\n#rules_font = EloriaSans-Regular.ttf\n#encyclopedia_font = EloriaSans-Regular.ttf\n#def_ui_font = 20(EloriaSans-Regular.ttf)\n#def_name_font = 20(EloriaSans-Regular.ttf)\n#def_chat_font = 20(EloriaSans-Regular.ttf)\n#def_note_font = 20(EloriaSans-Regular.ttf)\n#def_book_font = 20(EloriaSans-Regular.ttf)\n#def_rules_font = 20(EloriaSans-Regular.ttf)\n#def_encyclopedia_font = 20(EloriaSans-Regular.ttf)\n","named_colours.xml":"<named_colours/>\n","mines.xml":"<mines/>\n","emotes.xml":"<emotes/>\n","spells.xml":"<spells/>\n","weather.xml":"<weather/>\n","knowledge.xml":"<knowledge/>\n","commands.lst":"# Eloria commands\n","knowledge.lst":"# Eloria knowledge\n","servers.lst":"main main 127.0.0.1 2000\n","mapinfo.lst":"emberhaven|Emberhaven|maps/emberhaven.elm\n","continfo.lst":"Nymara|maps/legend.dds\n"}
  for name,text in stubs.items():(root/name).write_text(text)
  write_text(root/"languages/langsel.xml",'<LANGUAGE_LIST><LANG CODE="en" TEXT="English" SAVE="1" DEFAULT="1"/></LANGUAGE_LIST>\n')
