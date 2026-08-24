@@ -409,6 +409,25 @@ def grey_moor_barrows_placements():
  p.append(("3dobjects/nymara/interiors/grey_moor_ritual_altar.e3d",58,94,0,180))
  return p
 
+def ssarathi_archive_placements():
+ p=[]
+ for x,y in ((34,22),(58,22),(82,22),(34,46),(58,46),(82,46),
+             (34,70),(58,70),(82,70),(34,94),(58,94),(82,94)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_scaled_floor.e3d",x,y,0,0))
+ for x,y,r in ((24,22,90),(24,40,90),(24,58,90),(24,76,90),(24,94,90),
+               (92,22,270),(92,40,270),(92,58,270),(92,76,270),(92,94,270),
+               (34,106,180),(50,106,180),(66,106,180),(82,106,180)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_curved_wall.e3d",x,y,0,r))
+ for x,y,r in ((46,34,90),(70,34,90),(46,58,90),(70,58,90),(46,82,90),(70,82,90)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_water_arch.e3d",x,y,0,r))
+ for x,y,r in ((30,36,90),(86,36,270),(30,56,90),(86,56,270),(30,78,90),(86,78,270),(42,94,0),(74,94,180)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_archive_shelf.e3d",x,y,0,r))
+ for x,y,r in ((38,62,30),(78,62,330),(44,88,15),(72,88,345)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_royal_statue.e3d",x,y,0,r))
+ for x,y,r in ((42,46,0),(74,46,180),(42,72,0),(74,72,180)):
+  p.append(("3dobjects/nymara/interiors/ssarathi_vault_trap.e3d",x,y,0,r))
+ return p
+
 def cartography_pixel(name, profile):
  a,b,accent=profile['palette']
  def pixel(x,y):
@@ -598,6 +617,8 @@ def generate_maps(root):
    placements=amberwood_estate_placements()
   elif name == 'grey_moor_barrows':
    placements=grey_moor_barrows_placements()
+  elif name == 'ssarathi_royal_archive':
+   placements=ssarathi_archive_placements()
   else:
    kit=INTERIOR_KITS[name]
    # Three connected chambers: arrival hall, cultural focal room, and deep
@@ -643,6 +664,9 @@ def generate_maps(root):
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
   elif name=='grey_moor_barrows':
    lights += [(x,y,2.5,.34,.46,.48) for x,y in
+              ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
+  elif name=='ssarathi_royal_archive':
+   lights += [(x,y,2.8,.28,.72,.58) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
   tile_function=(four_gates_tile if name=='four_gates'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))

@@ -198,6 +198,23 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Grey Moor Barrows arrival is obstructed")
             if obj3_count < 51 or light_count < 12:
                 raise ValueError("Grey Moor Barrows lacks authored scenery or lighting")
+        if path.as_posix().endswith("maps/nymara/ssarathi_royal_archive.elm"):
+            required = {
+                "3dobjects/nymara/interiors/ssarathi_scaled_floor.e3d": 12,
+                "3dobjects/nymara/interiors/ssarathi_curved_wall.e3d": 14,
+                "3dobjects/nymara/interiors/ssarathi_water_arch.e3d": 6,
+                "3dobjects/nymara/interiors/ssarathi_archive_shelf.e3d": 8,
+                "3dobjects/nymara/interiors/ssarathi_royal_statue.e3d": 4,
+                "3dobjects/nymara/interiors/ssarathi_vault_trap.e3d": 4,
+            }
+            for landmark, minimum in required.items():
+                count = sum(name == landmark for name, *_ in object_records)
+                if count < minimum:
+                    raise ValueError(f"Ssarthi Royal Archive is missing {landmark}")
+            if any(math.hypot(x-58, y-10) < 4.0 for _, x, y, _ in object_records):
+                raise ValueError("Ssarthi Royal Archive arrival is obstructed")
+            if obj3_count < 54 or light_count < 12:
+                raise ValueError("Ssarthi Royal Archive lacks authored scenery or lighting")
 
 
 def validate_runtime_xml(root: Path) -> None:
