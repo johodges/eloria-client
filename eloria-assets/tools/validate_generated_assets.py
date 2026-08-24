@@ -283,6 +283,27 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Westhaven lacks authored harbor scenery or lighting")
             if set(westhaven_tiles) != {0, 1, 2, 3} or 6 not in set(westhaven_heights):
                 raise ValueError("Westhaven lacks coast, harbor, quays, or water depth")
+        if path.as_posix().endswith("maps/nymara/verdant_stair.elm"):
+            verdant_tiles = data[tile_offset:height_offset]
+            verdant_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/verdant_basalt_steps.e3d": 7,
+                "3dobjects/nymara/verdant_cenote_stairs.e3d": 4,
+                "3dobjects/nymara/verdant_root_bridge.e3d": 6,
+                "3dobjects/nymara/verdant_vine_bridge.e3d": 5,
+                "3dobjects/nymara/verdant_tree_platform.e3d": 6,
+                "3dobjects/nymara/verdant_water_shrine.e3d": 5,
+                "3dobjects/nymara/verdant_giant_fern.e3d": 12,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Verdant Stair is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Verdant Stair arrival is obstructed")
+            if obj3_count < 51 or light_count < 12:
+                raise ValueError("Verdant Stair lacks authored scenery or lighting")
+            if set(verdant_tiles) != {0, 1, 2, 3} or len(set(verdant_heights)) < 10:
+                raise ValueError("Verdant Stair lacks jungle terraces, water, paths, or relief")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,
