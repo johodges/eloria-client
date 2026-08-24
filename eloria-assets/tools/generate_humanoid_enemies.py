@@ -158,6 +158,30 @@ def enemy_mesh(path, feature, scale):
         for x in (-.14,.14): cuboid((x*scale,.22*scale,1.72*scale),(.10*scale,.28*scale,.18*scale),3,vertices,faces)
     if feature == "satyr":
         for x in (-.15,.15): cuboid((x*scale,.13*scale,.02*scale),(.24*scale,.45*scale,.20*scale),10 if x<0 else 13,vertices,faces)
+    if feature.startswith("nymara:"):
+        _, culture, role = feature.split(":", 2)
+        if culture == "votary":
+            ellipsoid((0,-.20*scale,1.42*scale),(.76*scale,.10*scale,.82*scale),2,vertices,faces,6,12)
+            for x in (-.28,.28): ellipsoid((x*scale,0,2.04*scale),(.10*scale,.10*scale,.36*scale),3,vertices,faces,5,8)
+        elif culture == "glasswarden":
+            for x,bone in ((-.48,4),(.48,6)):
+                ellipsoid((x*scale,0,1.60*scale),(.40*scale,.36*scale,.38*scale),bone,vertices,faces,5,10)
+            for x in (-.20,0,.20): cuboid((x*scale,0,2.11*scale),(.10*scale,.10*scale,.44*scale),3,vertices,faces)
+        elif culture == "orun":
+            cuboid((0,-.22*scale,1.15*scale),(.78*scale,.08*scale,.28*scale),2,vertices,faces)
+            for x in (-.21,.21): ellipsoid((x*scale,.09*scale,.03*scale),(.28*scale,.48*scale,.22*scale),10 if x<0 else 13,vertices,faces,5,8)
+        elif culture == "greyhaven":
+            ellipsoid((0,0,1.92*scale),(.52*scale,.46*scale,.20*scale),3,vertices,faces,5,12)
+            cuboid((0,-.23*scale,1.28*scale),(.76*scale,.08*scale,.10*scale),2,vertices,faces)
+        elif culture == "ssarathi":
+            for z in (1.10,1.30,1.50): ellipsoid((0,-.19*scale,z*scale),(.62*scale,.08*scale,.09*scale),2,vertices,faces,4,10)
+            cuboid((0,-.43*scale,.82*scale),(.20*scale,.92*scale,.16*scale),1,vertices,faces)
+        # Every profession gets a readable asymmetric badge/tool silhouette.
+        code=sum((index+1)*ord(ch) for index,ch in enumerate(role))
+        side=-1 if code%2 else 1
+        ellipsoid((side*(.31+.004*(code%17))*scale,-.22*scale,(1.00+.003*(code%29))*scale),
+                  ((.16+.0001*(code%997))*scale,.10*scale,(.23+.006*len(role))*scale),2,
+                  vertices,faces,5,8)
     root=ET.Element("MESH",NUMSUBMESH="1")
     sub=ET.SubElement(root,"SUBMESH",NUMVERTICES=str(len(vertices)),NUMFACES=str(len(faces)),MATERIAL="0",NUMLODSTEPS="0",NUMSPRINGS="0",NUMTEXCOORDS="1")
     for i,(pos,norm,uv,bone) in enumerate(vertices):

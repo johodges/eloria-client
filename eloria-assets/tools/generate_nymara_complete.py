@@ -895,7 +895,7 @@ def generate_npcs(root, actors):
     elif slug in ('luminous_scholar_f','luminous_scholar_m'): feature='civic_scholar'
     elif slug in ('luminous_lake_priest_f','luminous_lake_priest_m'): feature='civic_priest'
     elif slug in ('luminous_civilian_f','luminous_civilian_m'): feature='civic_civilian'
-    else: feature="armor" if any(x in role for x in ("guard","warrior","militia","guardian")) else "crown" if any(x in role for x in ("priest","official","council","elder")) else "hood"
+    else: feature=f"nymara:{culture}:{role}"
     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
     png(base/f"{slug}.png",512,512,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",256,256,material_pixel(accent,feature))
     append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.xsf",f"actors/nymara/npcs/{slug}.xmf",f"actors/nymara/npcs/{slug}.png","animations/nymara/humanoid",.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.05))
@@ -907,10 +907,20 @@ def generate_creatures(root, actors):
  base=root/"actors/nymara/creatures"; creature_skeleton(base/"nymara_creature.xsf")
  aliases={"idle.xaf":"idle.xaf","idle2.xaf":"idle.xaf","walk.xaf":"walk.xaf","run.xaf":"run.xaf","sit.xaf":"idle.xaf","sit_down.xaf":"idle.xaf","stand_up.xaf":"idle.xaf","combat_idle.xaf":"idle.xaf","attack.xaf":"attack.xaf","cast.xaf":"attack.xaf","pain.xaf":"pain.xaf","die.xaf":"die.xaf","harvest.xaf":"attack.xaf","pick.xaf":"attack.xaf","drop.xaf":"attack.xaf","wave.xaf":"attack.xaf","bow.xaf":"idle.xaf","special.xaf":"attack.xaf"}
  copy_aliases(root,"animations/nymara/creatures",{k:f"../../creatures/{v}" for k,v in aliases.items()})
- palette=[(64,132,145),(181,205,214),(126,88,161),(187,120,51),(113,83,54),(55,126,79),(85,105,73)]
+ regional_palettes={
+  "crownwater":((57,126,145),(105,190,186)),
+  "whitehorn":((159,190,205),(218,229,225)),
+  "amethyst":((104,76,151),(177,119,190)),
+  "sunmane":((169,94,43),(214,153,67)),
+  "ambergrey":((99,75,52),(157,122,75)),
+  "verdant":((46,116,73),(107,166,91)),
+  "manymouth":((69,100,70),(126,139,77)),
+ }
  out=[]
  for i,(region,slug,label,body,head,feature) in enumerate(CREATURES):
-  aid=CREATURE_BASE+i; creature_mesh(base/f"{slug}.xmf",body,head,feature); c=palette[i%len(palette)]; c2=tuple(min(255,x+55) for x in c)
+  aid=CREATURE_BASE+i; creature_mesh(base/f"{slug}.xmf",body,head,feature)
+  pair=regional_palettes[region]; seed=sum((n+1)*ord(ch) for n,ch in enumerate(slug))
+  source=pair[seed%2]; c=tuple(max(0,min(255,value+(seed//(channel+3))%17-8)) for channel,value in enumerate(source)); c2=tuple(min(255,x+48) for x in c)
   png(base/f"{slug}.png",512,512,creature_material(c,feature)); png(root/f"portraits/nymara/creatures/{slug}.png",256,256,creature_material(c2,feature))
   radius=round(max(body[0],body[1])*.42,2); bounds=(-body[0]/2,-body[1]/2,0,body[0]/2,body[1]/2,1.6)
   append_actor(actors,aid,label,"nymara_creature","actors/nymara/creatures/nymara_creature.xsf",f"actors/nymara/creatures/{slug}.xmf",f"actors/nymara/creatures/{slug}.png","animations/nymara/creatures",radius,1.0,bounds,True)
@@ -932,12 +942,28 @@ def equipment_shape(kind):
    box(v,i,(0,.13,1.26),(.86,.08,1.72)); tapered(v,i,.34,2.18,.51,.42,12); box(v,i,(-.39,.12,1.25),(.12,.10,1.55)); box(v,i,(.39,.12,1.25),(.12,.10,1.55))
   elif kind=='ferry_hook':
    tapered(v,i,0,2.55,.075,.06,10); tapered(v,i,2.45,2.88,.24,.10,10,center=(.10,0)); tapered(v,i,2.70,3.06,.18,.04,8,center=(.28,0)); box(v,i,(0,0,.28),(.28,.16,.16))
-  elif any(x in kind for x in ("blade","sabre","cutlass")): box(v,i,(0,0,1.1),(.13,.10,2.2)); tapered(v,i,2.1,2.65,.18,0,4)
-  elif any(x in kind for x in ("spear","pike","staff","focus")): box(v,i,(0,0,1.5),(.10,.10,3)); tapered(v,i,2.9,3.35,.28,0,6)
-  elif "shield" in kind: tapered(v,i,0,1.6,.72,.72,12); box(v,i,(0,.12,.8),(.12,.15,1.6))
-  elif any(x in kind for x in ("mail","armor","leathers")): box(v,i,(0,0,1.25),(.62,.32,.78)); box(v,i,(0,0,.78),(.54,.30,.34))
-  elif any(x in kind for x in ("cape","mantle")): box(v,i,(0,.16,1.15),(.72,.08,1.65))
-  else: box(v,i,(0,0,.65),(.35,.22,1.3)); tapered(v,i,1.25,1.65,.28,0,6)
+  elif any(x in kind for x in ("blade","sabre","cutlass")):
+   tapered(v,i,0,.38,.11,.09,10); box(v,i,(0,0,.44),(.62,.15,.12)); tapered(v,i,.50,2.38,.16,.07,8); tapered(v,i,2.38,2.72,.10,0,6)
+  elif any(x in kind for x in ("spear","pike","staff")):
+   tapered(v,i,0,2.82,.065,.05,10); tapered(v,i,2.78,3.34,.25,0,8); tapered(v,i,.12,.40,.14,.07,8)
+  elif "bow" in kind:
+   for z,w in ((.34,.36),(.86,.52),(1.38,.36)): box(v,i,(0,0,z),(w,.08,.46))
+   box(v,i,(0,.02,.86),(.05,.04,1.52)); tapered(v,i,.65,1.08,.12,.08,8)
+  elif any(x in kind for x in ("hammer","pick","adze")):
+   tapered(v,i,0,2.20,.075,.06,10); box(v,i,(0,0,2.24),(.72,.28,.25)); tapered(v,i,2.20,2.62,.22,.04,8,center=(.28,0))
+  elif "shield" in kind:
+   tapered(v,i,0,1.72,.76,.68,16); tapered(v,i,.10,1.62,.61,.54,16); box(v,i,(0,.12,.86),(.14,.16,1.45)); tapered(v,i,.55,1.20,.24,.15,10)
+  elif any(x in kind for x in ("mail","armor","leathers")):
+   box(v,i,(0,0,1.24),(.70,.36,.82)); tapered(v,i,.70,1.72,.46,.36,12)
+   for z in (.78,.98,1.18,1.38): box(v,i,(0,-.20,z),(.66,.055,.06))
+  elif any(x in kind for x in ("cape","mantle")):
+   tapered(v,i,.32,2.08,.49,.40,12,center=(0,.13)); box(v,i,(-.39,.13,1.18),(.11,.08,1.45)); box(v,i,(.39,.13,1.18),(.11,.08,1.45))
+  else:
+   tapered(v,i,0,1.30,.27,.20,10); tapered(v,i,1.20,1.74,.31,0,8); box(v,i,(0,.10,.62),(.20,.16,.86))
+  # A deterministic maker's gem prevents distinct configured items sharing geometry.
+  code=sum((n+1)*ord(ch) for n,ch in enumerate(kind))
+  tapered(v,i,.42+.0001*(code%701),.66+.0001*(code%701),.09+.0001*(code%89),0,8,
+          center=((-.18 if code%2 else .18),-.12))
  return build
 
 def generate_equipment(root):

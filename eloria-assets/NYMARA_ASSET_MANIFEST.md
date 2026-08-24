@@ -76,6 +76,34 @@ concept-comparison, overhead, and representative topology QA under
   treatment, woven fabric seams, trouser weave, and leather edging/grain while retaining
   the compositor's exact dimensions, opaque alpha, and three mip levels.
 
+## Regional NPC silhouettes
+
+- The full Nymara NPC roster keeps its frozen actor types and shared semantic humanoid rig.
+- Votary, Glasswarden, Orun, Greyhaven, and Ssarthi NPCs now receive culture-specific cold-
+  weather layers, crystal armor, rider kit, maritime clothing, or scaled/tail silhouettes.
+- Profession-derived asymmetric badges and tools keep individual roles visually distinct.
+- Exact actor references, all six culture rosters, topology floors, and per-NPC mesh
+  uniqueness are validated; representative comparisons live under `qa/regional-npcs/`.
+
+## Regional equipment
+
+- All 36 configured items retain frozen item IDs, canonical slots, attachment bones, icons,
+  and culture ownership.
+- Weapons now use tapered blades, hafts, heads, guards, grips, and points; shields use layered
+  rims and bosses; armor and capes use shaped panels and trim instead of single cuboids.
+- Deterministic culture-item maker details keep every runtime E3D payload distinct.
+- Complete roster, topology, material/icon resolution, attachment, and uniqueness checks are
+  enforced; representative topology is committed under `qa/regional-equipment/`.
+
+## Regional creatures
+
+- The 28-creature roster keeps frozen extended actor types, semantic creature rig,
+  collision bounds, animation hooks, sounds, drops, and summoning metadata.
+- Crownwater, Whitehorn, Amethyst, Sunmane, Amber/Grey, Verdant, and Manymouth families
+  now use territory-derived material palettes with per-species deterministic variation.
+- Complete regional coverage, actor references above 255, topology floors, material
+  resolution, and unique geometry are validated; comparisons live under `qa/regional-creatures/`.
+
 ## Four Gates vertical slice
 
 - The ELM composition is centred on the authoritative `(58,58)` arrival rather
