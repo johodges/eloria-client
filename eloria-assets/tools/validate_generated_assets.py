@@ -304,6 +304,48 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Verdant Stair lacks authored scenery or lighting")
             if set(verdant_tiles) != {0, 1, 2, 3} or len(set(verdant_heights)) < 10:
                 raise ValueError("Verdant Stair lacks jungle terraces, water, paths, or relief")
+        if path.as_posix().endswith("maps/nymara/ssarathi_ruins.elm"):
+            ssarathi_tiles = data[tile_offset:height_offset]
+            ssarathi_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/ssarathi_temple.e3d": 1,
+                "3dobjects/nymara/ssarathi_vault_entrance.e3d": 4,
+                "3dobjects/nymara/ssarathi_water_gate.e3d": 6,
+                "3dobjects/nymara/ssarathi_sunken_court.e3d": 6,
+                "3dobjects/nymara/ssarathi_ritual_pool.e3d": 5,
+                "3dobjects/nymara/ssarathi_sun_stela.e3d": 8,
+                "3dobjects/nymara/ssarathi_ruin_arch.e3d": 6,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Ssarthi Ruins is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Ssarthi Ruins arrival is obstructed")
+            if obj3_count < 46 or light_count < 12:
+                raise ValueError("Ssarthi Ruins lacks authored scenery or lighting")
+            if set(ssarathi_tiles) != {0, 1, 2, 3} or 7 not in set(ssarathi_heights):
+                raise ValueError("Ssarthi Ruins lacks temple, channels, pools, or water depth")
+        if path.as_posix().endswith("maps/nymara/manymouth_delta.elm"):
+            delta_tiles = data[tile_offset:height_offset]
+            delta_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/manymouth_stilt_house.e3d": 11,
+                "3dobjects/nymara/manymouth_boardwalk.e3d": 10,
+                "3dobjects/nymara/manymouth_ferry_dock.e3d": 5,
+                "3dobjects/nymara/manymouth_hidden_dock.e3d": 4,
+                "3dobjects/nymara/manymouth_mangrove.e3d": 12,
+                "3dobjects/nymara/manymouth_market_stall.e3d": 6,
+                "3dobjects/nymara/manymouth_flooded_cave.e3d": 4,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Manymouth Delta is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Manymouth Delta arrival is obstructed")
+            if obj3_count < 58 or light_count < 12:
+                raise ValueError("Manymouth Delta lacks authored scenery or lighting")
+            if set(delta_tiles) != {0, 1, 2, 3} or 6 not in set(delta_heights):
+                raise ValueError("Manymouth Delta lacks islands, boardwalks, channels, or depth")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,
@@ -635,6 +677,50 @@ def validate_customization_dds(root: Path) -> None:
                       for level in range(mipmaps))
         if len(data) != 128 + payload:
             raise ValueError(f"invalid DDS mip payload length: {path}")
+        top=data[128:128+width*height*4]
+        pixels=[tuple(top[i:i+4]) for i in range(0,len(top),4)]
+        if any(pixel[3] != 255 for pixel in pixels):
+            raise ValueError(f"customization DDS contains accidental transparency: {path}")
+        minimum_colors=4 if path.name.startswith("eyes_") else 12
+        if len(set(pixels)) < minimum_colors:
+            raise ValueError(f"customization DDS lacks authored surface variation: {path}")
+
+def validate_playable_characters(root: Path) -> None:
+    actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
+    expected = {
+        0:("luminous","female"),1:("luminous","male"),
+        2:("votary","female"),3:("votary","male"),
+        4:("glasswarden","female"),5:("glasswarden","male"),
+        37:("orun","female"),38:("orun","male"),
+        39:("greyhaven","female"),40:("greyhaven","male"),
+        41:("ssarathi","female"),42:("ssarathi","male"),
+    }
+    body_digests=set()
+    for actor_id,(culture,gender) in expected.items():
+        actor=actors.find(f"actor[@id='{actor_id}']")
+        if actor is None or actor.attrib.get("race") != culture or actor.attrib.get("gender") != gender:
+            raise ValueError(f"playable actor mapping changed: {actor_id}")
+        paths={
+            f"actors/playable/{culture}_{gender}_shirt.cmf",
+            f"actors/playable/{culture}_{gender}_legs.cmf",
+            f"actors/playable/{culture}_{gender}_boots.cmf",
+        }
+        paths.update(f"actors/playable/{culture}_{gender}_head_{i}.cmf" for i in range(5))
+        referenced={node.text for tag in ("shirt","legs","boots","head")
+                    for part in actor.findall(tag) for node in part.findall("mesh")}
+        if paths != referenced:
+            raise ValueError(f"playable actor {actor_id} does not use its complete authored mesh set")
+        for relative in paths:
+            xml_path=(root/relative).with_suffix(".xmf")
+            vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(xml_path).findall("SUBMESH"))
+            minimum=(96 if "head_" in relative else 140 if "boots" in relative
+                     else 290 if "legs" in relative else 360)
+            if vertices < minimum:
+                raise ValueError(f"playable mesh fell below topology floor: {relative}")
+        body=(root/f"actors/playable/{culture}_{gender}_body.xmf").read_bytes()
+        body_digests.add(hashlib.sha256(body).digest())
+    if len(body_digests) != len(expected):
+        raise ValueError("playable races or genders share duplicate body silhouettes")
 
 def validate_map_dds(root: Path) -> None:
     local_maps = sorted((root / "maps/nymara").glob("*.dds"))
@@ -693,6 +779,7 @@ def main() -> None:
     validate_four_gates_npcs_equipment(root)
     validate_animations(root)
     validate_customization_dds(root)
+    validate_playable_characters(root)
     validate_map_dds(root)
     print("Validated every generated ELM, Cal3D XML family, and customization DDS")
 
