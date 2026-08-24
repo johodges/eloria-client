@@ -145,15 +145,30 @@ def main():
  write_text(root/"skybox/skybox_defs.xml",'''<?xml version="1.0"?>
 <skybox>
  <properties><clouds show="false"/><sun show="true"/><moons show="false"/><stars show="true"/></properties>
+ <clouds reset="true"><color t="0" r="0.30" g="0.34" b="0.42"/></clouds>
+ <clouds_detail reset="true"><color t="0" r="0.18" g="0.22" b="0.30"/></clouds_detail>
+ <clouds_sunny reset="true"><color t="0" r="0.48" g="0.48" b="0.50"/></clouds_sunny>
+ <clouds_detail_sunny reset="true"><color t="0" r="0.30" g="0.30" b="0.34"/></clouds_detail_sunny>
+ <clouds_rainy reset="true"><color t="0" r="0.22" g="0.25" b="0.28"/></clouds_rainy>
+ <clouds_detail_rainy reset="true"><color t="0" r="0.12" g="0.14" b="0.17"/></clouds_detail_rainy>
  <sky1 reset="true"><color t="0" r="0.04" g="0.07" b="0.16"/><color t="180" r="0.20" g="0.38" b="0.55"/></sky1>
  <sky2 reset="true"><color t="0" r="0.08" g="0.10" b="0.22"/><color t="180" r="0.34" g="0.27" b="0.42"/></sky2>
  <sky3 reset="true"><color t="0" r="0.10" g="0.13" b="0.25"/><color t="180" r="0.46" g="0.34" b="0.42"/></sky3>
  <sky4 reset="true"><color t="0" r="0.06" g="0.09" b="0.18"/><color t="180" r="0.24" g="0.34" b="0.44"/></sky4>
  <sky5 reset="true"><color t="0" r="0.03" g="0.05" b="0.12"/><color t="180" r="0.15" g="0.25" b="0.36"/></sky5>
+ <sky1_sunny reset="true"><color t="0" r="0.10" g="0.12" b="0.20"/><color t="180" r="0.48" g="0.50" b="0.58"/></sky1_sunny>
+ <sky2_sunny reset="true"><color t="0" r="0.12" g="0.15" b="0.25"/><color t="180" r="0.54" g="0.48" b="0.58"/></sky2_sunny>
+ <sky3_sunny reset="true"><color t="0" r="0.14" g="0.18" b="0.30"/><color t="180" r="0.62" g="0.52" b="0.56"/></sky3_sunny>
+ <sky4_sunny reset="true"><color t="0" r="0.10" g="0.14" b="0.24"/><color t="180" r="0.48" g="0.52" b="0.62"/></sky4_sunny>
+ <sky5_sunny reset="true"><color t="0" r="0.06" g="0.09" b="0.18"/><color t="180" r="0.36" g="0.44" b="0.56"/></sky5_sunny>
  <sun reset="true"><color t="0" r="0.95" g="0.68" b="0.35"/><color t="180" r="1.0" g="0.88" b="0.62"/></sun>
- <fog reset="true"><color t="0" r="0.04" g="0.07" b="0.12"/><color t="180" r="0.20" g="0.28" b="0.34"/></fog>
+ <fog reset="true"><color t="0" r="0.04" g="0.07" b="0.12" a="0.01"/><color t="180" r="0.20" g="0.28" b="0.34" a="0.005"/></fog>
+ <fog_sunny reset="true"><color t="0" r="0.08" g="0.10" b="0.16" a="0.01"/><color t="180" r="0.42" g="0.44" b="0.50" a="0.005"/></fog_sunny>
+ <fog_rainy reset="true"><color t="0" r="0.05" g="0.07" b="0.10" a="0.02"/><color t="180" r="0.22" g="0.25" b="0.28" a="0.015"/></fog_rainy>
  <light_ambient reset="true"><color t="0" r="0.16" g="0.18" b="0.28"/><color t="180" r="0.54" g="0.55" b="0.62"/></light_ambient>
  <light_diffuse reset="true"><color t="0" r="0.22" g="0.24" b="0.35"/><color t="180" r="0.85" g="0.78" b="0.68"/></light_diffuse>
+ <light_ambient_rainy reset="true"><color t="0" r="0.12" g="0.14" b="0.20"/><color t="180" r="0.38" g="0.40" b="0.46"/></light_ambient_rainy>
+ <light_diffuse_rainy reset="true"><color t="0" r="0.16" g="0.18" b="0.24"/><color t="180" r="0.58" g="0.56" b="0.52"/></light_diffuse_rainy>
 </skybox>
 ''')
  shader_dir=root/"shaders";shader_dir.mkdir(parents=True,exist_ok=True)
