@@ -227,6 +227,20 @@ def crownwater_height(x,y):
                 ((29,30),(88,31),(28,87),(88,87),(58,106)))
  return 11 if central or satellites else 6
 
+def whitehorn_tile(x,y):
+ cx=58/6
+ glacier=abs(x-cx)<2.2 and 3<y<17
+ road=abs(x-cx)<.7 or abs(x+y-19.5)<.65
+ rock=min(x,y,31-x,31-y)<4 or ((x*5+y*7)%13)<3
+ return 3 if glacier else 2 if road else 1 if rock else 0
+
+def whitehorn_height(x,y):
+ if abs(x-58)<=4 or abs(y-58)<=3: return 11
+ glacier=abs(x-58)<14 and 24<y<112
+ edge=min(x,y,191-x,191-y)
+ peak=max(0,(48-edge)//5)+max(0,(y-100)//14)
+ return max(8,min(31,(8 if glacier else 11)+peak+region_noise('whitehorn_range',x//7,y//7)//7))
+
 def four_gates_terrain_pixel(kind):
  def pixel(x,y):
   grain=((x*17+y*29+(x^y)*5)%23)-11
@@ -382,6 +396,23 @@ def crownwater_placements():
   p.append(("3dobjects/nymara/crownwater_submerged_waystone.e3d",x,y,0,j*60))
  for j,(x,y) in enumerate(((32,26),(84,26),(26,84),(90,84),(48,108),(68,108))):
   p.append(("3dobjects/nymara/mirrorhold_lake_house.e3d",x,y,0,j*60))
+ return p
+
+def whitehorn_placements():
+ p=[]
+ p.append(("3dobjects/nymara/whitehorn_monastery.e3d",58,28,0,180))
+ for j,(x,y,r) in enumerate(((58,42,0),(52,54,15),(64,66,345),(54,78,10),(62,90,350),(58,102,0))):
+  p.append(("3dobjects/nymara/whitehorn_glacier.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((58,50,90),(46,64,20),(70,72,160),(48,88,25),(68,98,155))):
+  p.append(("3dobjects/nymara/whitehorn_rope_bridge.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((42,38),(74,38),(38,62),(78,62),(42,92),(74,92))):
+  p.append(("3dobjects/nymara/whitehorn_shrine.e3d",x,y,0,j*60))
+ for j,(x,y) in enumerate(((30,32),(86,34),(26,54),(90,54),(30,78),(86,80),(36,104),(80,104),(48,116),(68,116))):
+  p.append(("3dobjects/nymara/whitehorn_cairn.e3d",x,y,0,j*37))
+ for j,(x,y,r) in enumerate(((24,74,90),(92,76,270),(34,112,45),(82,112,315))):
+  p.append(("3dobjects/nymara/whitehorn_ice_cave.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((26,42,90),(90,44,270),(58,118,180))):
+  p.append(("3dobjects/nymara/whitehorn_mine_entrance.e3d",x,y,0,r))
  return p
 
 def drowned_crown_placements():
@@ -695,6 +726,8 @@ def generate_maps(root):
    placements=mirrorhold_placements()
   elif name == 'crownwater':
    placements=crownwater_placements()
+  elif name == 'whitehorn_range':
+   placements=whitehorn_placements()
   elif name in REGIONS:
    authored=profile['objects']
    rings=((30,30),(58,28),(86,30),(28,58),(88,58),(30,86),(58,88),(86,86),
@@ -757,6 +790,9 @@ def generate_maps(root):
   elif name=='crownwater':
    lights += [(x,y,3.5,.88,.77,.38) for x,y in
               ((42,42),(74,42),(42,74),(74,74),(58,36),(36,58),(80,58),(58,80))]
+  elif name=='whitehorn_range':
+   lights += [(x,y,3.2,.52,.72,.94) for x,y in
+              ((58,28),(42,38),(74,38),(38,62),(78,62),(42,92),(74,92),(58,102))]
   elif name=='drowned_crown':
    lights += [(x,y,2.7,.24,.70,.78) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
@@ -778,9 +814,9 @@ def generate_maps(root):
   elif name=='manymouth_flooded_labyrinth':
    lights += [(x,y,2.6,.24,.58,.48) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
-  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold' else crownwater_tile if name=='crownwater'
+  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold' else crownwater_tile if name=='crownwater' else whitehorn_tile if name=='whitehorn_range'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
-  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold' else crownwater_height if name=='crownwater'
+  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold' else crownwater_height if name=='crownwater' else whitehorn_height if name=='whitehorn_range'
                    else lambda x,y,p=profile,n=name:region_height(p,n,x,y))
   make_map(root/f"maps/nymara/{name}.elm",width=32,height=32,placements=placements,
    ambient=profile['ambient'],lights=lights,

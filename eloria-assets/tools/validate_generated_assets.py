@@ -156,6 +156,27 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Crownwater lacks authored scenery or lighting")
             if set(crown_tiles) != {0, 1, 2, 3} or set(crown_heights) != {6, 11}:
                 raise ValueError("Crownwater lacks islands, causeways, or water depth")
+        if path.as_posix().endswith("maps/nymara/whitehorn_range.elm"):
+            whitehorn_tiles = data[tile_offset:height_offset]
+            whitehorn_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/whitehorn_monastery.e3d": 1,
+                "3dobjects/nymara/whitehorn_glacier.e3d": 6,
+                "3dobjects/nymara/whitehorn_rope_bridge.e3d": 5,
+                "3dobjects/nymara/whitehorn_shrine.e3d": 6,
+                "3dobjects/nymara/whitehorn_cairn.e3d": 10,
+                "3dobjects/nymara/whitehorn_ice_cave.e3d": 4,
+                "3dobjects/nymara/whitehorn_mine_entrance.e3d": 3,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Whitehorn Range is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Whitehorn Range arrival is obstructed")
+            if obj3_count < 45 or light_count < 12:
+                raise ValueError("Whitehorn Range lacks authored scenery or lighting")
+            if set(whitehorn_tiles) != {0, 1, 2, 3} or len(set(whitehorn_heights)) < 12:
+                raise ValueError("Whitehorn Range lacks glacier and mountain relief")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,
