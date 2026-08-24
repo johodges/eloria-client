@@ -215,6 +215,23 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Ssarthi Royal Archive arrival is obstructed")
             if obj3_count < 54 or light_count < 12:
                 raise ValueError("Ssarthi Royal Archive lacks authored scenery or lighting")
+        if path.as_posix().endswith("maps/nymara/manymouth_flooded_labyrinth.elm"):
+            required = {
+                "3dobjects/nymara/interiors/manymouth_flooded_floor.e3d": 12,
+                "3dobjects/nymara/interiors/manymouth_stilt_wall.e3d": 14,
+                "3dobjects/nymara/interiors/manymouth_boardwalk_section.e3d": 10,
+                "3dobjects/nymara/interiors/manymouth_flood_channel.e3d": 8,
+                "3dobjects/nymara/interiors/manymouth_smuggler_shelf.e3d": 6,
+                "3dobjects/nymara/interiors/manymouth_fishing_crates.e3d": 6,
+            }
+            for landmark, minimum in required.items():
+                count = sum(name == landmark for name, *_ in object_records)
+                if count < minimum:
+                    raise ValueError(f"Manymouth Labyrinth is missing {landmark}")
+            if any(math.hypot(x-58, y-10) < 4.0 for _, x, y, _ in object_records):
+                raise ValueError("Manymouth Labyrinth arrival is obstructed")
+            if obj3_count < 62 or light_count < 12:
+                raise ValueError("Manymouth Labyrinth lacks authored scenery or lighting")
 
 
 def validate_runtime_xml(root: Path) -> None:

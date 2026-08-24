@@ -428,6 +428,26 @@ def ssarathi_archive_placements():
   p.append(("3dobjects/nymara/interiors/ssarathi_vault_trap.e3d",x,y,0,r))
  return p
 
+def manymouth_labyrinth_placements():
+ p=[]
+ for x,y in ((34,22),(58,22),(82,22),(34,46),(58,46),(82,46),
+             (34,70),(58,70),(82,70),(34,94),(58,94),(82,94)):
+  p.append(("3dobjects/nymara/interiors/manymouth_flooded_floor.e3d",x,y,0,0))
+ for x,y,r in ((24,22,90),(24,40,90),(24,58,90),(24,76,90),(24,94,90),
+               (92,22,270),(92,40,270),(92,58,270),(92,76,270),(92,94,270),
+               (34,106,180),(50,106,180),(66,106,180),(82,106,180)):
+  p.append(("3dobjects/nymara/interiors/manymouth_stilt_wall.e3d",x,y,0,r))
+ for x,y,r in ((58,24,0),(46,36,90),(70,36,90),(34,50,0),(58,50,0),
+               (82,50,0),(46,66,90),(70,66,90),(46,86,0),(70,86,0)):
+  p.append(("3dobjects/nymara/interiors/manymouth_boardwalk_section.e3d",x,y,0,r))
+ for x,y,r in ((34,34,0),(82,34,0),(34,58,0),(82,58,0),(34,82,0),(58,82,0),(82,82,0),(58,96,0)):
+  p.append(("3dobjects/nymara/interiors/manymouth_flood_channel.e3d",x,y,0,r))
+ for x,y,r in ((28,38,90),(88,38,270),(28,64,90),(88,64,270),(36,94,0),(80,94,180)):
+  p.append(("3dobjects/nymara/interiors/manymouth_smuggler_shelf.e3d",x,y,0,r))
+ for x,y,r in ((38,44,0),(78,44,180),(38,72,0),(78,72,180),(46,98,0),(70,98,180)):
+  p.append(("3dobjects/nymara/interiors/manymouth_fishing_crates.e3d",x,y,0,r))
+ return p
+
 def cartography_pixel(name, profile):
  a,b,accent=profile['palette']
  def pixel(x,y):
@@ -619,6 +639,8 @@ def generate_maps(root):
    placements=grey_moor_barrows_placements()
   elif name == 'ssarathi_royal_archive':
    placements=ssarathi_archive_placements()
+  elif name == 'manymouth_flooded_labyrinth':
+   placements=manymouth_labyrinth_placements()
   else:
    kit=INTERIOR_KITS[name]
    # Three connected chambers: arrival hall, cultural focal room, and deep
@@ -667,6 +689,9 @@ def generate_maps(root):
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
   elif name=='ssarathi_royal_archive':
    lights += [(x,y,2.8,.28,.72,.58) for x,y in
+              ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
+  elif name=='manymouth_flooded_labyrinth':
+   lights += [(x,y,2.6,.24,.58,.48) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
   tile_function=(four_gates_tile if name=='four_gates'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
