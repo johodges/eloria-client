@@ -27,7 +27,7 @@ ENEMIES = (
     ("fallen_knight", "Fallen Knight", "undead", (78, 75, 73), "armor", 1.10),
 )
 
-def ellipsoid(center, size, bone, vertices, faces, rings=7, sides=12):
+def ellipsoid(center, size, bone, vertices, faces, rings=10, sides=18):
     """Add a closed, smoothly-normalled ellipsoid without degenerate pole faces."""
     cx,cy,cz=center; sx,sy,sz=(q/2 for q in size)
     bottom=len(vertices); vertices.append(((cx,cy,cz-sz),(0,0,-1),(.5,1),bone))
@@ -55,11 +55,27 @@ def material_pixel(base, feature):
     accent=tuple(min(255,int(c*1.32)+12) for c in base)
     dark=tuple(max(0,int(c*.52)) for c in base)
     def pixel(x,y):
-        weave=((x*19+y*31+(x^y)*7)%23)-11
-        seams=(x%64 in (0,1) or y%64 in (0,1))
-        scale=(feature in ('bones','spikes','crown') and ((x//32+y//32)%5==0))
-        color=accent if scale else dark if seams else base
-        return (*(max(0,min(255,c+weave)) for c in color),255)
+        u=x/1023; v=y/1023
+        weave=((x*19+y*31+(x^y)*7)%29)-14
+        seam_width=3
+        seams=(x%128<seam_width or y%128<seam_width)
+        culture=feature.split(':')[1] if feature.startswith('nymara:') else 'luminous' if feature.startswith('civic_') else ''
+        role=feature.split(':')[2] if feature.startswith('nymara:') else feature.removeprefix('civic_')
+        # Layered cloth/leather/metal zones with a culture-specific border and
+        # profession sigil. These remain deterministic while reading as an
+        # authored costume rather than a tiled placeholder.
+        leather=(v>.72) or (u<.13) or (u>.87)
+        metal=role in ('guard','warrior','mounted_warden','glacier_guardian') and (.20<u<.80 and .16<v<.46)
+        border=abs(u-.5)<.012 or abs(v-.12)<.010 or abs(v-.68)<.010
+        sigil=((u-.5)**2+(v-.37)**2 < .0045) or (abs(u-.5)<.018 and .25<v<.49)
+        if culture=='ssarathi': sigil=((int(u*18)+int(v*18))%7==0 and .22<v<.60)
+        elif culture=='glasswarden': sigil=abs(abs(u-.5)+abs(v-.38)-.11)<.012
+        elif culture=='orun': sigil=abs((u-.5)*1.6-(v-.38))<.012 and .25<v<.52
+        color=(tuple(min(255,c+42) for c in accent) if metal else dark if leather else accent if border or sigil else base)
+        detail=weave + (18 if metal and ((x//18+y//18)&1) else 0)
+        if seams: detail-=22
+        if leather: detail+=((x*5+y*11)%19)-9
+        return (*(max(0,min(255,c+detail)) for c in color),255)
     return pixel
 
 
@@ -80,6 +96,13 @@ def enemy_mesh(path, feature, scale):
     )
     for center, size, bone in parts:
         ellipsoid(tuple(v*scale for v in center), tuple(v*scale for v in size), bone, vertices, faces)
+    # Eyes, nose, jaw, ears, hands and boots carry the concept silhouettes at
+    # conversational camera distance instead of collapsing into one capsule.
+    ellipsoid((0,-.18*scale,1.72*scale),(.22*scale,.15*scale,.20*scale),3,vertices,faces,7,14)
+    ellipsoid((0,-.285*scale,1.81*scale),(.07*scale,.14*scale,.13*scale),3,vertices,faces,6,12)
+    for side,hand,eye in ((-1,5,30),(1,7,31)):
+        ellipsoid((side*.10*scale,-.255*scale,1.84*scale),(.045*scale,.025*scale,.038*scale),eye,vertices,faces,4,8)
+        ellipsoid((side*1.00*scale,-.02*scale,1.41*scale),(.20*scale,.18*scale,.20*scale),hand,vertices,faces,6,12)
     if feature in ("hood", "crown", "armor"):
         cuboid((0,0,1.82*scale),(.48*scale,.44*scale,.48*scale),3,vertices,faces)
     if feature == "civic_official":
@@ -182,6 +205,20 @@ def enemy_mesh(path, feature, scale):
         ellipsoid((side*(.31+.004*(code%17))*scale,-.22*scale,(1.00+.003*(code%29))*scale),
                   ((.16+.0001*(code%997))*scale,.10*scale,(.23+.006*len(role))*scale),2,
                   vertices,faces,5,8)
+        # Profession-specific garment layers: collars, belts, tabards, bracers
+        # and shoulder pieces break the shared mannequin outline.
+        ellipsoid((0,0,1.48*scale),(.76*scale,.40*scale,.18*scale),25,vertices,faces,6,14)
+        cuboid((0,-.22*scale,1.08*scale),(.72*scale,.075*scale,.10*scale),2,vertices,faces)
+        if role in ('guard','warrior','mounted_warden','glacier_guardian'):
+            for x,bone in ((-.47,28),(.47,29)):
+                ellipsoid((x*scale,0,1.57*scale),(.40*scale,.42*scale,.28*scale),bone,vertices,faces,7,14)
+            cuboid((0,-.23*scale,1.35*scale),(.48*scale,.08*scale,.62*scale),2,vertices,faces)
+        elif role in ('priest','lake_priest','monk','astronomer','archivist','scholar'):
+            ellipsoid((0,-.22*scale,1.35*scale),(.40*scale,.10*scale,.56*scale),2,vertices,faces,7,14)
+            for x in (-.14,.14): ellipsoid((x*scale,0,2.10*scale),(.075*scale,.075*scale,.28*scale),3,vertices,faces,5,10)
+        else:
+            for x,bone in ((-.76,4),(.76,6)):
+                cuboid((x*scale,-.11*scale,1.39*scale),(.09*scale,.10*scale,.34*scale),bone,vertices,faces)
     root=ET.Element("MESH",NUMSUBMESH="1")
     sub=ET.SubElement(root,"SUBMESH",NUMVERTICES=str(len(vertices)),NUMFACES=str(len(faces)),MATERIAL="0",NUMLODSTEPS="0",NUMSPRINGS="0",NUMTEXCOORDS="1")
     for i,(pos,norm,uv,bone) in enumerate(vertices):
