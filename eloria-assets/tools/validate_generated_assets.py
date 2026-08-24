@@ -601,9 +601,9 @@ def validate_four_gates_npcs_equipment(root: Path) -> None:
         304: ("actors/nymara/npcs/luminous_scholar_f.cmf", 3100),
         305: ("actors/nymara/npcs/luminous_lake_priest_f.cmf", 1050),
         306: ("actors/nymara/npcs/luminous_civilian_f.cmf", 980),
-        307: ("actors/nymara/npcs/luminous_official_m.cmf", 1050),
+        307: ("actors/nymara/npcs/luminous_official_m.cmf", 2900),
         308: ("actors/nymara/npcs/luminous_guard_m.cmf", 1120),
-        309: ("actors/nymara/npcs/luminous_merchant_m.cmf", 980),
+        309: ("actors/nymara/npcs/luminous_merchant_m.cmf", 2500),
         310: ("actors/nymara/npcs/luminous_ferryman_m.cmf", 2800),
         311: ("actors/nymara/npcs/luminous_scholar_m.cmf", 3100),
         312: ("actors/nymara/npcs/luminous_lake_priest_m.cmf", 1050),
@@ -641,6 +641,7 @@ def validate_four_gates_npcs_equipment(root: Path) -> None:
         if png_dimensions(root / item["icon"]) != (64, 64):
             raise ValueError(f"invalid Four Gates equipment icon: {item['icon']}")
     for actor_id, slug in ((303,"luminous_ferryman_f"),(304,"luminous_scholar_f"),
+                           (307,"luminous_official_m"),(309,"luminous_merchant_m"),
                            (310,"luminous_ferryman_m"),(311,"luminous_scholar_m")):
         actor=actors.find(f"actor[@id='{actor_id}']")
         idle=(actor.findtext("frames/CAL_idle") or "").split()[0]

@@ -75,6 +75,13 @@ def material_pixel(base, feature):
         elif culture=='glasswarden': sigil=abs(abs(u-.5)+abs(v-.38)-.11)<.012
         elif culture=='orun': sigil=abs((u-.5)*1.6-(v-.38))<.012 and .25<v<.52
         color=(tuple(min(255,c+42) for c in accent) if metal else dark if leather else accent if border or sigil else base)
+        if feature in ("civic_official","civic_merchant"):
+            ivory=(224,218,194); teal=(25,96,105); gold=(198,151,57); hide=(92,58,36)
+            if v < .18 or (.45 < u < .55): color=gold
+            elif v < .57 and .16 < u < .84: color=ivory
+            elif feature=="civic_merchant" and (u < .22 or u > .78): color=hide
+            else: color=teal
+            if border or sigil: color=gold
         detail=weave + (18 if metal and ((x//18+y//18)&1) else 0)
         if seams: detail-=22
         if leather: detail+=((x*5+y*11)%19)-9
@@ -116,14 +123,34 @@ def enemy_mesh(path, feature, scale):
     if feature in ("hood", "crown", "armor"):
         cuboid((0,0,1.82*scale),(.48*scale,.44*scale,.48*scale),3,vertices,faces)
     if feature == "civic_official":
-        ellipsoid((0,0,1.42*scale),(.82*scale,.42*scale,.42*scale),2,vertices,faces,6,12)
-        ellipsoid((0,0,1.91*scale),(.43*scale,.38*scale,.25*scale),3,vertices,faces,5,10)
-        for x in (-.17,0,.17):
-            ellipsoid((x*scale,0,2.14*scale),(.09*scale,.09*scale,.34*scale),3,vertices,faces,5,8)
+        profile_surface([(0,0,.42*scale,.40*scale,.20*scale),(0,0,.82*scale,.38*scale,.20*scale),(0,0,1.25*scale,.34*scale,.18*scale),(0,0,1.58*scale,.28*scale,.16*scale)],
+                        [1,1,2,25],vertices,faces,sides=30)
+        ellipsoid((0,.09*scale,1.34*scale),(.96*scale,.22*scale,1.18*scale),25,vertices,faces,10,26)
+        ellipsoid((0,0,1.56*scale),(.84*scale,.46*scale,.24*scale),25,vertices,faces,8,22)
+        cuboid((0,-.235*scale,1.10*scale),(.77*scale,.08*scale,.11*scale),2,vertices,faces)
+        cuboid((0,-.285*scale,1.10*scale),(.16*scale,.05*scale,.17*scale),2,vertices,faces)
+        for z,width in ((1.42,.28),(1.29,.23),(1.16,.18),(.99,.13)):
+            ellipsoid((0,-.25*scale,z*scale),(width*scale,.09*scale,.12*scale),2,vertices,faces,5,14)
+        ellipsoid((0,0,1.96*scale),(.51*scale,.44*scale,.23*scale),3,vertices,faces,8,20)
+        for x in (-.18,0,.18):
+            ellipsoid((x*scale,0,2.16*scale),(.075*scale,.075*scale,.34*scale),3,vertices,faces,6,10)
+        ellipsoid((0,-.27*scale,1.54*scale),(.16*scale,.08*scale,.20*scale),25,vertices,faces,6,14)
+        for x in (-.12,.12):
+            ellipsoid((x*scale,-.30*scale,1.48*scale),(.06*scale,.05*scale,.12*scale),25,vertices,faces,5,10)
     if feature == "civic_merchant":
-        ellipsoid((0,-.01*scale,1.84*scale),(.48*scale,.43*scale,.46*scale),3,vertices,faces,6,12)
-        ellipsoid((-.26*scale,-.18*scale,1.03*scale),(.28*scale,.20*scale,.36*scale),2,vertices,faces,5,8)
-        ellipsoid((.26*scale,-.18*scale,1.03*scale),(.28*scale,.20*scale,.36*scale),2,vertices,faces,5,8)
+        profile_surface([(0,0,.58*scale,.34*scale,.19*scale),(0,0,.91*scale,.36*scale,.20*scale),(0,0,1.28*scale,.35*scale,.19*scale),(0,0,1.58*scale,.27*scale,.16*scale)],
+                        [1,1,2,25],vertices,faces,sides=28)
+        ellipsoid((0,0,1.54*scale),(.79*scale,.44*scale,.22*scale),25,vertices,faces,8,20)
+        cuboid((0,-.235*scale,1.08*scale),(.78*scale,.08*scale,.12*scale),2,vertices,faces)
+        cuboid((0,-.29*scale,1.08*scale),(.17*scale,.06*scale,.18*scale),2,vertices,faces)
+        ellipsoid((-.36*scale,-.17*scale,.92*scale),(.32*scale,.20*scale,.46*scale),2,vertices,faces,8,18)
+        ellipsoid((.34*scale,-.18*scale,.96*scale),(.28*scale,.18*scale,.38*scale),2,vertices,faces,8,16)
+        cuboid((.28*scale,-.245*scale,1.27*scale),(.18*scale,.10*scale,.32*scale),2,vertices,faces)
+        for z in (1.17,1.25,1.33):
+            ellipsoid((-.29*scale,-.24*scale,z*scale),(.17*scale,.10*scale,.08*scale),2,vertices,faces,5,12)
+        cuboid((-.62*scale,-.20*scale,1.38*scale),(.38*scale,.07*scale,.48*scale),16,vertices,faces)
+        cuboid((-.62*scale,-.245*scale,1.38*scale),(.32*scale,.035*scale,.41*scale),16,vertices,faces)
+        ellipsoid((0,0,1.92*scale),(.50*scale,.44*scale,.20*scale),3,vertices,faces,7,18)
     if feature == "civic_guard":
         ellipsoid((0,0,1.37*scale),(.78*scale,.43*scale,.72*scale),2,vertices,faces,6,12)
         for x,bone in ((-.47,4),(.47,6)):
