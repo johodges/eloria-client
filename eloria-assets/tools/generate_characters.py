@@ -82,8 +82,14 @@ def binary_animation(path,duration,poses,tracks):
     for bone in tracks:
         data.extend(struct.pack("<ii",bone,len(poses)))
         for time,frame in poses:
+            value=frame.get(bone,0.)
+            if isinstance(value,tuple):
+                axis,angle=value
+                rotation=quat_axis(axis,angle)
+            else:
+                rotation=quat_x(value)
             data.extend(struct.pack("<f3f4f",time,*BONES[bone][2],
-                                    *quat_x(frame.get(bone,0.))))
+                                    *rotation))
     path.write_bytes(data)
 
 def skeleton(path):
@@ -226,22 +232,22 @@ def mesh(path, section="all", variant=0, culture=None, gender=None):
         # the former one-ellipsoid-per-bone mannequin.
         if section in ("all","shirt"):
             profile_surface([(0,0,.84*height,.17*hips*gender_width,.12),(0,0,1.02*height,.255*shoulders*gender_width,.145),(0,0,1.30*height,.29*shoulders*gender_width,.16),(0,0,1.48*height,.205*shoulders*gender_width,.13)],
-                            [1,2,2,25],vertices,faces,torso_uv,22)
+                            [1,2,2,25],vertices,faces,torso_uv,30)
             for side,bones in ((-1,[28,4,5,16]),(1,[29,6,7,17])):
                 profile_surface([(side*.20*shoulders*gender_width,0,1.39*height,.125,.13),(side*.285*shoulders*gender_width,0,1.18*height,.105,.115),(side*.285*shoulders*gender_width,-.005,.91*height,.09,.10),(side*.285*shoulders*gender_width,-.015,.72*height,.105,.12)],
-                                bones,vertices,faces,arms_uv,16)
+                                bones,vertices,faces,arms_uv,22)
         if section in ("all","legs"):
             for side,bones in ((-1,[8,8,9,9]),(1,[11,11,12,12])):
                 profile_surface([(side*.115*hips*gender_width,0,.91*height,.125,.135),(side*.12*hips*gender_width,0,.67*height,.118,.128),(side*.12*hips*gender_width,.005,.40*height,.095,.108),(side*.12*hips*gender_width,.01,.12*height,.085,.095)],
-                                bones,vertices,faces,legs_uv,18)
+                                bones,vertices,faces,legs_uv,22)
         if section in ("all","boots"):
             for side,bones in ((-1,[9,10,10]),(1,[12,13,13])):
                 profile_surface([(side*.12*hips*gender_width,.01,.34*height,.105,.115),(side*.12*hips*gender_width,.03,.10*height,.11,.13),(side*.12*hips*gender_width,.14,.025*height,.12,.24)],
-                                bones,vertices,faces,boots_uv,18)
+                                bones,vertices,faces,boots_uv,22)
         if section in ("all","head"):
             center,size,bone,uv_rect=parts[1]
             cx,cy,cz=center; sx,sy,sz=size
-            ellipsoid((0,-.01,cz*height),(sx*head_scale*gender_width,sy,sz*height),bone,vertices,faces,uv_rect,12,22)
+            ellipsoid((0,-.01,cz*height),(sx*head_scale*gender_width,sy,sz*height),bone,vertices,faces,uv_rect,16,28)
         for i in (() if section in ("all","shirt","legs","boots","head") else chosen):
             center,size,bone,uv_rect=parts[i]
             cx,cy,cz=center; sx,sy,sz=size
@@ -256,8 +262,8 @@ def mesh(path, section="all", variant=0, culture=None, gender=None):
         if section in ("all","head"):
             # Profiled face geometry replaces the featureless head capsule.
             z=1.51*height
-            ellipsoid((0,-.125,z-.055),(.22,.16,.20*height),3,vertices,faces,head_uv,7,14)
-            ellipsoid((0,-.245,z+.015),(.075,.15,.12*height),3,vertices,faces,head_uv,6,12)
+            ellipsoid((0,-.125,z-.055),(.22,.16,.20*height),3,vertices,faces,head_uv,10,20)
+            ellipsoid((0,-.245,z+.015),(.075,.15,.12*height),3,vertices,faces,head_uv,8,16)
             for side in (-1,1):
                 ellipsoid((side*.105*head_scale*gender_width,-.205,z+.055),(.075,.045,.048),3,vertices,faces,head_uv,5,10)
                 ellipsoid((side*.105*head_scale*gender_width,-.205,z+.055),(.032,.018,.028),30 if side<0 else 31,vertices,faces,head_uv,4,8)
@@ -289,7 +295,10 @@ def mesh(path, section="all", variant=0, culture=None, gender=None):
     write_cal(path,"XMF",root)
     binary_mesh(path.with_suffix(".cmf"),vertices,faces)
 
-def quat_x(a): return math.sin(a/2),0.,0.,math.cos(a/2)
+def quat_axis(axis,a):
+    value=[0.,0.,0.]; value[axis]=math.sin(a/2)
+    return *value,math.cos(a/2)
+def quat_x(a): return quat_axis(0,a)
 def animation(path,duration,poses):
     tracks=sorted({b for _,frame in poses for b in frame}); root=ET.Element("ANIMATION",DURATION=str(duration),NUMTRACKS=str(len(tracks)))
     for bone in tracks:
