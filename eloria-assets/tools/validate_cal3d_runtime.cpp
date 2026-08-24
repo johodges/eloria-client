@@ -91,9 +91,12 @@ int main(int argc, char **argv)
 			<< " faces=" << faces << '\n';
 		return 1;
 	}
-	if (minimum[0] > -0.3f || maximum[0] < 0.3f || minimum[2] > -0.02f
-		|| maximum[2] < 1.6f || minimum[0] < -0.5f || maximum[0] > 0.5f
-		|| maximum[2] > 1.8f)
+	const float width = maximum[0] - minimum[0];
+	const float depth = maximum[1] - minimum[1];
+	const float height = maximum[2] - minimum[2];
+	if (width < 0.6f || width > 0.9f || depth < 0.2f || depth > 0.6f
+		|| height < 1.5f || height > 1.9f || minimum[2] < -0.1f
+		|| maximum[2] > 1.9f)
 	{
 		std::cerr << "unexpected transformed bounds: [" << minimum[0] << ','
 			<< minimum[1] << ',' << minimum[2] << "] - [" << maximum[0]
