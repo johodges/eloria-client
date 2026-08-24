@@ -111,7 +111,7 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Four Gates start plaza is obstructed")
             if set(tiles) != {4, 5, 6, 7} or len(set(heights)) < 4:
                 raise ValueError("Four Gates terrain lacks roads, water, or elevation variation")
-            if light_count < 16:
+            if light_count < 20:
                 raise ValueError("Four Gates lacks its civic night-light network")
         if path.as_posix().endswith("maps/nymara/mirrorhold.elm"):
             mirror_tiles = data[tile_offset:height_offset]
@@ -776,6 +776,23 @@ def validate_map_dds(root: Path) -> None:
         raise ValueError("continfo.lst does not reference the generated Nymara overview")
 
 
+def validate_hud_dds(root: Path) -> None:
+    """Reject blank fallback atlases and UV-incompatible HUD dimensions."""
+    for name in ("gamebuttons.dds", "gamebuttons2.dds", "compass.dds"):
+        path = root / "textures" / name
+        data = path.read_bytes()
+        if data[:4] != b"DDS " or len(data) < 128:
+            raise ValueError(f"invalid HUD DDS: {path}")
+        height, width = struct.unpack_from("<II", data, 12)
+        if (width, height) != (256, 256):
+            raise ValueError(f"HUD atlas violates 256-pixel UV contract: {path}")
+        pixels = data[128:]
+        colours = {pixels[i:i+4] for i in range(0, len(pixels), 4)}
+        opaque = sum(pixels[i+3] > 32 for i in range(0, len(pixels), 4))
+        if len(colours) < 4 or opaque < 256:
+            raise ValueError(f"HUD atlas lacks authored icon content: {path}")
+
+
 def validate_animations(root: Path) -> None:
     animations = sorted(root.glob("animations/**/*.xaf"))
     if not animations:
@@ -807,6 +824,7 @@ def main() -> None:
     validate_customization_dds(root)
     validate_playable_characters(root)
     validate_map_dds(root)
+    validate_hud_dds(root)
     print("Validated every generated ELM, Cal3D XML family, and customization DDS")
 
 
