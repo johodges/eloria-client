@@ -287,6 +287,22 @@ def amberwood_height(x,y):
  return max(8,min(25,11+wooded_rise+ridge+
                    region_noise('amberwood',x//7,y//7)//9))
 
+def grey_moors_tile(x,y):
+ cx=cy=58/6
+ causeway=abs(x-cx)<.68 or abs(y-cy)<.68 or abs((x-cx)-(y-cy))<.55
+ bog=(math.sin(x*.78)+math.cos(y*.64)>0.45) and not causeway
+ barrow=any(math.hypot(x-sx,y-sy)<1.7 for sx,sy in
+            ((5.2,5.0),(14.1,5.2),(5.0,14.2),(14.3,14.0)))
+ return 2 if causeway else 0 if barrow else 3 if bog else 1
+
+def grey_moors_height(x,y):
+ if abs(x-58)<=4 or abs(y-58)<=3: return 11
+ bog=(math.sin(x*.13)+math.cos(y*.11)>0.5)
+ edge=min(x,y,191-x,191-y)
+ rise=max(0,(28-edge)//7)
+ return max(7,min(21,(8 if bog else 11)+rise+
+                   region_noise('grey_moors',x//8,y//8)//10))
+
 def four_gates_terrain_pixel(kind):
  def pixel(x,y):
   grain=((x*17+y*29+(x^y)*5)%23)-11
@@ -525,6 +541,27 @@ def amberwood_placements():
   p.append(("3dobjects/nymara/amberwood_ruin_arch.e3d",x,y,0,r))
  for j,(x,y) in enumerate(((48,48),(68,48),(48,68),(68,68))):
   p.append(("3dobjects/nymara/amberwood_garden_fountain.e3d",x,y,0,j*90))
+ return p
+
+def grey_moors_placements():
+ p=[]
+ for j,(x,y) in enumerate(((34,34),(82,34),(30,82),(86,82),(48,104),(68,104))):
+  p.append(("3dobjects/nymara/grey_moor_barrow.e3d",x,y,0,j*60))
+ for j,(x,y) in enumerate(((44,28),(72,28),(28,52),(88,52),(38,72),(78,72),
+                            (38,96),(78,96))):
+  p.append(("3dobjects/nymara/grey_moor_standing_stones.e3d",x,y,0,j*45))
+ for j,(x,y,r) in enumerate(((58,30,90),(30,58,0),(86,58,0),(58,86,90),
+                              (42,44,45),(74,44,315),(42,74,315),(74,74,45))):
+  p.append(("3dobjects/nymara/grey_moor_boardwalk.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((26,34,75),(90,34,285),(24,86,105),(92,86,255))):
+  p.append(("3dobjects/nymara/grey_moor_crypt_entrance.e3d",x,y,0,r))
+ for j,(x,y) in enumerate(((22,50),(94,50),(22,72),(94,72),(40,112),(76,112))):
+  p.append(("3dobjects/nymara/grey_moor_abandoned_cottage.e3d",x,y,0,j*60))
+ for j,(x,y) in enumerate(((24,24),(92,24),(18,62),(98,62),(28,100),(88,100),
+                            (46,92),(70,92),(34,66),(82,66))):
+  p.append(("3dobjects/nymara/grey_moor_dead_tree.e3d",x,y,0,j*37))
+ for j,(x,y) in enumerate(((48,48),(68,48),(48,68),(68,68),(58,98))):
+  p.append(("3dobjects/nymara/grey_moor_ritual_shrine.e3d",x,y,0,j*72))
  return p
 
 def drowned_crown_placements():
@@ -846,6 +883,8 @@ def generate_maps(root):
    placements=sunmane_placements()
   elif name == 'amberwood':
    placements=amberwood_placements()
+  elif name == 'grey_moors':
+   placements=grey_moors_placements()
   elif name in REGIONS:
    authored=profile['objects']
    rings=((30,30),(58,28),(86,30),(28,58),(88,58),(30,86),(58,88),(86,86),
@@ -920,6 +959,9 @@ def generate_maps(root):
   elif name=='amberwood':
    lights += [(x,y,3.0,.96,.42,.16) for x,y in
               ((58,42),(48,48),(68,48),(48,68),(68,68),(34,34),(82,34),(58,88))]
+  elif name=='grey_moors':
+   lights += [(x,y,2.6,.42,.46,.62) for x,y in
+              ((34,34),(82,34),(30,82),(86,82),(48,104),(68,104),(48,48),(68,68))]
   elif name=='drowned_crown':
    lights += [(x,y,2.7,.24,.70,.78) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
@@ -941,9 +983,9 @@ def generate_maps(root):
   elif name=='manymouth_flooded_labyrinth':
    lights += [(x,y,2.6,.24,.58,.48) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
-  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold' else crownwater_tile if name=='crownwater' else whitehorn_tile if name=='whitehorn_range' else amethyst_tile if name=='amethyst_barrens' else sunmane_tile if name=='sunmane_steppe' else amberwood_tile if name=='amberwood'
+  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold' else crownwater_tile if name=='crownwater' else whitehorn_tile if name=='whitehorn_range' else amethyst_tile if name=='amethyst_barrens' else sunmane_tile if name=='sunmane_steppe' else amberwood_tile if name=='amberwood' else grey_moors_tile if name=='grey_moors'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
-  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold' else crownwater_height if name=='crownwater' else whitehorn_height if name=='whitehorn_range' else amethyst_height if name=='amethyst_barrens' else sunmane_height if name=='sunmane_steppe' else amberwood_height if name=='amberwood'
+  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold' else crownwater_height if name=='crownwater' else whitehorn_height if name=='whitehorn_range' else amethyst_height if name=='amethyst_barrens' else sunmane_height if name=='sunmane_steppe' else amberwood_height if name=='amberwood' else grey_moors_height if name=='grey_moors'
                    else lambda x,y,p=profile,n=name:region_height(p,n,x,y))
   make_map(root/f"maps/nymara/{name}.elm",width=32,height=32,placements=placements,
    ambient=profile['ambient'],lights=lights,
