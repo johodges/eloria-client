@@ -4,7 +4,7 @@ Generated for `eloria-client` branch `feature/independent-eloria-client`.
 
 ## Contents
 
-- `runtime/3dobjects/nymara/`: 115 native E3D models and PNG textures.
+- `runtime/3dobjects/nymara/`: 116 native E3D models and PNG textures.
 - `runtime/2dobjects/nymara/`: 16 native `.2d` definitions and shared RGBA atlas.
 - `runtime/textures/nymara/icons/`: 16 individual 64x64 RGBA item icons.
 - `runtime/textures/nymara/items_nymara.png`: 512x128 icon atlas.

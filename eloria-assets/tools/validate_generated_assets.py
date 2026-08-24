@@ -97,6 +97,7 @@ def validate_maps(root: Path) -> None:
                 "3dobjects/nymara/four_gates_civic_tower.e3d": 8,
                 "3dobjects/nymara/four_gates_civic_pavilion.e3d": 8,
                 "3dobjects/nymara/four_gates_park_tree.e3d": 16,
+                "3dobjects/nymara/four_gates_lantern.e3d": 12,
                 "3dobjects/nymara/four_gates_waystone.e3d": 1,
             }
             for landmark, minimum in required_landmarks.items():
@@ -107,8 +108,10 @@ def validate_maps(root: Path) -> None:
             if any(math.hypot(x-spawn_x, y-spawn_y) < 3.0
                    for _, x, y, _ in object_records):
                 raise ValueError("Four Gates start plaza is obstructed")
-            if len(set(tiles)) < 4 or len(set(heights)) < 4:
+            if set(tiles) != {4, 5, 6, 7} or len(set(heights)) < 4:
                 raise ValueError("Four Gates terrain lacks roads, water, or elevation variation")
+            if light_count < 16:
+                raise ValueError("Four Gates lacks its civic night-light network")
 
 
 def validate_runtime_xml(root: Path) -> None:
@@ -188,6 +191,9 @@ def validate_four_gates_scenery(root: Path) -> None:
         "four_gates_radial_bridge.e3d": 480,
         "four_gates_civic_pavilion.e3d": 440,
         "four_gates_park_tree.e3d": 400,
+        "four_gates_gatehouse.e3d": 800,
+        "four_gates_waystone.e3d": 320,
+        "four_gates_lantern.e3d": 220,
     }
     scenery = root / "3dobjects/nymara"
     for filename, minimum in minimum_vertices.items():
@@ -206,6 +212,10 @@ def validate_four_gates_scenery(root: Path) -> None:
             raise ValueError(f"invalid Four Gates E3D section layout: {path}")
         if png_dimensions(path.with_suffix(".png")) != (256, 256):
             raise ValueError(f"invalid Four Gates material resolution: {path}")
+    for tile_id in range(4, 8):
+        path = root / f"3dobjects/tile{tile_id}.png"
+        if png_dimensions(path) != (256, 256):
+            raise ValueError(f"invalid Four Gates terrain material: {path}")
 
 
 def expected_dds_size(name: str) -> tuple[int, int]:

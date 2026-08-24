@@ -56,6 +56,12 @@
       "source": "source-obj/four_gates_park_tree.obj"
     },
     {
+      "id": "four_gates_lantern",
+      "model": "3dobjects/nymara/four_gates_lantern.e3d",
+      "texture": "3dobjects/nymara/four_gates_lantern.png",
+      "source": "source-obj/four_gates_lantern.obj"
+    },
+    {
       "id": "crownwater_ferry_dock",
       "model": "3dobjects/nymara/crownwater_ferry_dock.e3d",
       "texture": "3dobjects/nymara/crownwater_ferry_dock.png",

@@ -184,9 +184,9 @@ def four_gates_tile(x,y):
  cx=cy=58/6; radius=math.hypot(x-cx,y-cy)
  causeway=abs(x-cx)<=1.0 or abs(y-cy)<=1.0
  ring_road=3.6<=radius<=4.7
- if 7.0<radius<10.2 and not causeway: return 3
- if causeway or ring_road: return 2
- return 0 if radius<7.0 else 1
+ if 7.0<radius<10.2 and not causeway: return 7
+ if causeway or ring_road: return 6
+ return 4 if radius<7.0 else 5
 
 def four_gates_height(x,y):
  # Keep the civic island, gates, portals and radial roads at the shared z=0
@@ -194,6 +194,22 @@ def four_gates_height(x,y):
  radius=math.hypot(x-58,y-58)
  if radius<=52 or abs(x-58)<=4 or abs(y-58)<=4: return 11
  return max(11,min(19,11+int((radius-52)//18)+region_noise('four_gates',x//8,y//8)//10))
+
+def four_gates_terrain_pixel(kind):
+ def pixel(x,y):
+  grain=((x*17+y*29+(x^y)*5)%23)-11
+  if kind=='civic_stone':
+   joint=x%48<3 or y%32<3; base=(112,113,99) if joint else (157,151,126)
+   if abs(((x*5+y*7)%61)-30)<2: base=(181,172,139)
+  elif kind=='highland_grass':
+   blade=((x*3+y*11)%37)<3; base=(91,112,69) if blade else (66,91,61)
+  elif kind=='ceremonial_road':
+   joint=x%32<2 or (y+(x//32)*7)%40<2; base=(118,108,86) if joint else (187,162,108)
+  else:
+   ripple=abs(((x*3+y*5)%47)-23)<3; base=(84,174,184) if ripple else (38,128,149)
+   grain//=2
+  return (*(max(0,min(255,channel+grain)) for channel in base),255)
+ return pixel
 
 MAP_FONT={
  'A':('01110','10001','10001','11111','10001','10001','10001'),
@@ -288,6 +304,9 @@ def four_gates_placements():
                            (96,72),(94,84),(84,94),(72,96),(44,96),(32,94),
                            (22,84),(20,72),(20,44),(22,32))):
   placements.append(("3dobjects/nymara/four_gates_park_tree.e3d",x,y,0,(j*29)%360))
+ for j,(x,y) in enumerate(((42,52),(42,64),(52,42),(64,42),(74,52),(74,64),
+                           (52,74),(64,74),(34,58),(82,58),(58,34),(58,82))):
+  placements.append(("3dobjects/nymara/four_gates_lantern.e3d",x,y,0,(j*30)%360))
  return placements
 
 def cartography_pixel(name, profile):
@@ -394,6 +413,8 @@ def generate_maps(root):
  for tile_id,(base,accent) in enumerate(tile_palettes):
   png(root/f"3dobjects/tile{tile_id}.png",256,256,
       lambda x,y,a=base,b=accent:(*(a if ((x//32+y//32)&1)==0 else b),255))
+ for tile_id,kind in enumerate(('civic_stone','highland_grass','ceremonial_road','water'),4):
+  png(root/f"3dobjects/tile{tile_id}.png",256,256,four_gates_terrain_pixel(kind))
  nymara3d=root/"3dobjects/nymara"
  interior=[p for p in (nymara3d/"interiors").rglob("*.e3d")]
  exterior=[p for p in nymara3d.glob("*.e3d")]
@@ -461,6 +482,10 @@ def generate_maps(root):
    ("3dobjects/nymara/interactives/archive_lift.e3d",64,62,0,0),
    ("3dobjects/nymara/interactives/stormglass_rod.e3d",68,62,0,0)]
   lights=[(58,58,4,1.25,1.02,.72),(6,58,3,.35,.70,.78),(110,58,3,.35,.70,.78),(58,100,3,.48,.64,.78)]
+  if name=='four_gates':
+   lights += [(x,y,3.5,1.08,.72,.31) for x,y in
+              ((42,52),(42,64),(52,42),(64,42),(74,52),(74,64),
+               (52,74),(64,74),(34,58),(82,58),(58,34),(58,82))]
   tile_function=(four_gates_tile if name=='four_gates'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
   height_function=(four_gates_height if name=='four_gates'
