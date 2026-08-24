@@ -177,6 +177,27 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Whitehorn Range lacks authored scenery or lighting")
             if set(whitehorn_tiles) != {0, 1, 2, 3} or len(set(whitehorn_heights)) < 12:
                 raise ValueError("Whitehorn Range lacks glacier and mountain relief")
+        if path.as_posix().endswith("maps/nymara/amethyst_barrens.elm"):
+            amethyst_tiles = data[tile_offset:height_offset]
+            amethyst_heights = data[height_offset:height_offset + width * height * 36]
+            required = {
+                "3dobjects/nymara/glasswarden_observatory.e3d": 1,
+                "3dobjects/nymara/amethyst_crystal_bridge.e3d": 7,
+                "3dobjects/nymara/amethyst_geode_cave.e3d": 4,
+                "3dobjects/nymara/amethyst_levitating_shards.e3d": 8,
+                "3dobjects/nymara/amethyst_storm_ruin.e3d": 6,
+                "3dobjects/nymara/resonant_crystal_cluster.e3d": 10,
+                "3dobjects/nymara/glasswarden_field_station.e3d": 6,
+            }
+            for landmark, minimum in required.items():
+                if sum(name == landmark for name, *_ in object_records) < minimum:
+                    raise ValueError(f"Amethyst Barrens is missing {landmark}")
+            if any(math.hypot(x-58, y-58) < 3.0 for _, x, y, _ in object_records):
+                raise ValueError("Amethyst Barrens arrival is obstructed")
+            if obj3_count < 50 or light_count < 12:
+                raise ValueError("Amethyst Barrens lacks authored scenery or lighting")
+            if set(amethyst_tiles) != {0, 1, 2, 3} or len(set(amethyst_heights)) < 10:
+                raise ValueError("Amethyst Barrens lacks basin, roads, crystal fields, or relief")
         if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
             required = {
                 "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,
