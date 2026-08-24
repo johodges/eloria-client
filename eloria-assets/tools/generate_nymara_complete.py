@@ -177,6 +177,119 @@ def region_height(profile, name, x, y):
  elif name in ('crownwater','manymouth_delta'): ridge=max(0,ridge-2)
  return max(6,min(28,11+ridge+region_noise(name,x//6,y//6)//9))
 
+def four_gates_tile(x,y):
+ # Four Gates is composed around the protected start plaza at actor (58,58),
+ # not the geometric centre of the 192x192 collision field.  The inner city
+ # occupies a fortified island with four dry causeways crossing its river.
+ cx=cy=58/6; radius=math.hypot(x-cx,y-cy)
+ causeway=abs(x-cx)<=1.0 or abs(y-cy)<=1.0
+ ring_road=3.6<=radius<=4.7
+ if 7.0<radius<10.2 and not causeway: return 3
+ if causeway or ring_road: return 2
+ return 0 if radius<7.0 else 1
+
+def four_gates_height(x,y):
+ # Keep the civic island, gates, portals and radial roads at the shared z=0
+ # datum.  Distant uplands rise in broad, walkable terraces.
+ radius=math.hypot(x-58,y-58)
+ if radius<=52 or abs(x-58)<=4 or abs(y-58)<=4: return 11
+ return max(11,min(19,11+int((radius-52)//18)+region_noise('four_gates',x//8,y//8)//10))
+
+MAP_FONT={
+ 'A':('01110','10001','10001','11111','10001','10001','10001'),
+ 'C':('01111','10000','10000','10000','10000','10000','01111'),
+ 'E':('11111','10000','10000','11110','10000','10000','11111'),
+ 'F':('11111','10000','10000','11110','10000','10000','10000'),
+ 'G':('01111','10000','10000','10111','10001','10001','01111'),
+ 'H':('10001','10001','10001','11111','10001','10001','10001'),
+ 'L':('10000','10000','10000','10000','10000','10000','11111'),
+ 'N':('10001','11001','10101','10011','10001','10001','10001'),
+ 'O':('01110','10001','10001','10001','10001','10001','01110'),
+ 'P':('11110','10001','10001','11110','10000','10000','10000'),
+ 'R':('11110','10001','10001','11110','10100','10010','10001'),
+ 'S':('01111','10000','10000','01110','00001','00001','11110'),
+ 'T':('11111','00100','00100','00100','00100','00100','00100'),
+ 'U':('10001','10001','10001','10001','10001','10001','01110'),
+ 'W':('10001','10001','10001','10101','10101','10101','01010'),
+ 'Z':('11111','00001','00010','00100','01000','10000','11111'),
+}
+
+def map_label_pixel(text,x,y,left,top,scale=2):
+ if y<top or y>=top+7*scale: return False
+ cursor=left
+ for character in text:
+  if character==' ':
+   cursor+=3*scale
+   continue
+  glyph=MAP_FONT[character]
+  if cursor<=x<cursor+5*scale:
+   return glyph[(y-top)//scale][(x-cursor)//scale]=='1'
+  cursor+=6*scale
+ return False
+
+def four_gates_cartography_pixel(x,y):
+ # Stylised survey map matching the ELM composition: outer highlands, the
+ # circular civic island, four water crossings and concentric districts.
+ cx=cy=155; radius=math.hypot(x-cx,y-cy)
+ causeway=abs(x-cx)<10 or abs(y-cy)<10
+ if 116<radius<158 and not causeway:
+  color=(38,132,151)
+  if (x+y)%37<3: color=(83,184,192)
+ elif radius<116:
+  color=(101,126,79) if radius>72 else (154,143,99)
+ else:
+  color=(65,91,61) if ((x//18+y//18)&1) else (75,103,68)
+ if causeway and radius<178: color=(190,166,105)
+ if 58<radius<66: color=(207,187,128)
+ if radius<25: color=(188,174,127)
+ # Fortified ring and the four monumental gate symbols.
+ if 106<radius<111: color=(81,85,77)
+ for gx,gy in ((155,44),(155,266),(44,155),(266,155)):
+  if abs(x-gx)<9 and abs(y-gy)<13: color=(218,193,126)
+ # Civic blocks are deliberately arranged in concentric districts.
+ for angle in range(0,360,30):
+  bx=int(cx+82*math.cos(math.radians(angle))); by=int(cy+82*math.sin(math.radians(angle)))
+  if abs(x-bx)<5 and abs(y-by)<4: color=(65,72,68)
+ labels=(("FOUR GATES",318,42,2),("NORTH GATE",318,82,1),
+         ("CENTRAL PLAZA",318,112,1),("EAST GATE",318,142,1),
+         ("SOUTH GATE",318,172,1),("WEST GATE",318,202,1))
+ if any(map_label_pixel(text,x,y,left,top,scale) for text,left,top,scale in labels):
+  color=(238,224,179)
+ # Legend strokes tie labels to the same visual language as roads and water.
+ if 315<x<492 and 28<y<224 and (x in (315,492) or y in (28,224)): color=(116,101,72)
+ return (*color,255)
+
+def four_gates_placements():
+ placements=[]
+ # Four cardinal gate complexes and paired bridge spans across the river.
+ for x,y,rotation in ((58,16,0),(58,104,180),(16,58,90),(104,58,270)):
+  placements.append(("3dobjects/nymara/four_gates_gatehouse.e3d",x,y,0,rotation))
+ for x,y,rotation in ((58,27,0),(58,89,0),(27,58,90),(89,58,90)):
+  placements.append(("3dobjects/nymara/mirrorhold_radial_bridge.e3d",x,y,0,rotation))
+ # Segmented civic wall reads as an octagonal fortified island while leaving
+ # wide openings at each travel axis.
+ wall_segments=((34,34,45),(46,27,15),(70,27,345),(82,34,315),
+                (89,46,285),(89,70,255),(82,82,225),(70,89,195),
+                (46,89,165),(34,82,135),(27,70,105),(27,46,75))
+ for x,y,rotation in wall_segments:
+  placements.append(("3dobjects/nymara/mirrorhold_canal_wall.e3d",x,y,0,rotation))
+ # Eight civic towers establish the skyline and frame the cardinal districts.
+ for j,(x,y) in enumerate(((40,40),(58,35),(76,40),(81,58),(76,76),(58,81),(40,76),(35,58))):
+  placements.append(("3dobjects/nymara/mirrorhold_civic_tower.e3d",x,y,0,j*45))
+ # Concentric plazas, ward waystones, public fountains and service pavilions.
+ placements.append(("3dobjects/nymara/four_gates_waystone.e3d",58,64,0,0))
+ for j,(x,y) in enumerate(((58,48),(68,58),(58,68),(48,58))):
+  placements.append(("3dobjects/nymara/mirrorhold_public_fountain.e3d",x,y,0,j*90))
+ for j,(x,y) in enumerate(((45,48),(71,48),(45,68),(71,68),(50,42),(66,42),(50,74),(66,74))):
+  placements.append(("3dobjects/nymara/glasswarden_field_station.e3d",x,y,0,(j%4)*90))
+ # Original vegetation softens the monumental stonework and marks the outer
+ # park belt visible in the concept rendering.
+ for j,(x,y) in enumerate(((32,22),(44,20),(72,20),(84,22),(94,32),(96,44),
+                           (96,72),(94,84),(84,94),(72,96),(44,96),(32,94),
+                           (22,84),(20,72),(20,44),(22,32))):
+  placements.append(("3dobjects/nymara/amberwood_tree.e3d",x,y,0,(j*29)%360))
+ return placements
+
 def cartography_pixel(name, profile):
  a,b,accent=profile['palette']
  def pixel(x,y):
@@ -308,7 +421,9 @@ def generate_maps(root):
   profile=REGION_ART.get(name,REGION_ART[REGIONS[idx%len(REGIONS)]])
   picks=[pool[(idx*5+j)%len(pool)] for j in range(min(12,len(pool)))]
   placements=[]
-  if name in REGIONS:
+  if name == 'four_gates':
+   placements=four_gates_placements()
+  elif name in REGIONS:
    authored=profile['objects']
    rings=((30,30),(58,28),(86,30),(28,58),(88,58),(30,86),(58,88),(86,86),
           (43,42),(73,42),(42,73),(74,74),(21,46),(95,46),(21,70),(95,70))
@@ -346,12 +461,16 @@ def generate_maps(root):
    ("3dobjects/nymara/interactives/archive_lift.e3d",64,62,0,0),
    ("3dobjects/nymara/interactives/stormglass_rod.e3d",68,62,0,0)]
   lights=[(58,58,4,1.25,1.02,.72),(6,58,3,.35,.70,.78),(110,58,3,.35,.70,.78),(58,100,3,.48,.64,.78)]
+  tile_function=(four_gates_tile if name=='four_gates'
+                 else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
+  height_function=(four_gates_height if name=='four_gates'
+                   else lambda x,y,p=profile,n=name:region_height(p,n,x,y))
   make_map(root/f"maps/nymara/{name}.elm",width=32,height=32,placements=placements,
    ambient=profile['ambient'],lights=lights,
-   tile_at=lambda x,y,p=profile,n=name:region_tile(p,n,x,y),
-   height_at=lambda x,y,p=profile,n=name:region_height(p,n,x,y))
+   tile_at=tile_function,height_at=height_function)
   concept=concept_root/f"{name}_region_concept.png"
-  if concept.is_file(): concept_dds(concept,root/f"maps/nymara/{name}.dds")
+  if name == 'four_gates': dds_mipped(root/f"maps/nymara/{name}.dds",512,512,four_gates_cartography_pixel)
+  elif concept.is_file(): concept_dds(concept,root/f"maps/nymara/{name}.dds")
   else: dds_mipped(root/f"maps/nymara/{name}.dds",512,512,cartography_pixel(name,profile))
   mapinfo.append(f"{name}|{name.replace('_',' ').title()}|maps/nymara/{name}.elm|maps/nymara/{name}.dds")
   regions.append({"id":name,"title":name.replace('_',' ').title(),"map":f"maps/nymara/{name}.elm","arrival":[58,58],"npc_hook":f"npcs.nymara.{name}","spawn_hook":f"spawns.nymara.{name}","hazard_hook":f"hazards.nymara.{name}","harvest_hook":f"harvest.nymara.{name}"})
