@@ -430,6 +430,32 @@ def actor_defs(path):
         for tag,name in files.items():
             kind=0 if tag in ("CAL_walk","CAL_run","CAL_idle","CAL_idle2","CAL_idle_sit","CAL_combat_idle") else 1
             ET.SubElement(frames,tag).text=f"animations/eloria/{Path(name).with_suffix('.caf').name} {kind}"
+        if aid == 1:
+            # Existing protocol-safe appearance IDs form the Four Gates Guard
+            # preset.  The server still sees a normal Luminous male, while the
+            # client reconstructs the imported model from its four body slots.
+            torso="actors/four_gates_guard/guard_torso.dds"
+            arms="actors/four_gates_guard/guard_arms.dds"
+            skin=a.find("hskin[@id='5']")
+            shirt=a.find("shirt[@id='11']")
+            shirt.find("arms").text=arms; shirt.find("torso").text=torso
+            shirt.find("mesh").text="actors/four_gates_guard/guard_body.cmf"
+            legs=a.find("legs[@id='8']")
+            legs.find("mesh").text="actors/eloria_none.cmf"
+            boots=a.find("boots[@id='5']")
+            boots.find("mesh").text="actors/eloria_none.cmf"
+            a.find("head[@id='4']/mesh").text="actors/eloria_none.cmf"
+            guard_frames={
+                "CAL_walk":"walk", "CAL_run":"run", "CAL_idle":"idle",
+                "CAL_idle2":"idle_2", "CAL_combat_idle":"combat_idle",
+                "CAL_attack_up_1":"attack", "CAL_attack_down_1":"attack",
+                "CAL_pain1":"pain", "CAL_pain2":"pain", "CAL_die1":"death",
+                "CAL_die2":"death", "CAL_harvest":"harvest", "CAL_pick":"pick",
+                "CAL_drop":"drop", "CAL_idle_sit":"sit",
+                "CAL_sit_down":"sit_down", "CAL_stand_up":"stand_up"}
+            for tag,name in guard_frames.items():
+                kind=0 if tag in ("CAL_walk","CAL_run","CAL_idle","CAL_idle2","CAL_idle_sit","CAL_combat_idle") else 1
+                frames.find(tag).text=f"animations/four_gates_guard/{name}.caf {kind}"
     for actor in root.findall("actor"):
         for tag,none_id in none_ids.items():
             if actor.find(f"{tag}[@id='{none_id}']") is None:

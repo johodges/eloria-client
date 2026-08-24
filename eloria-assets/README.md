@@ -20,6 +20,7 @@ The equivalent manual sequence is:
 ```bash
 python3 eloria-assets/tools/generate_bootstrap_pack.py
 python3 eloria-assets/tools/generate_characters.py
+python3 eloria-assets/tools/generate_four_gates_guard.py
 python3 eloria-assets/tools/generate_humanoid_enemies.py
 python3 eloria-assets/tools/generate_fantasy_archetypes.py
 python3 eloria-assets/tools/generate_npcs.py
@@ -42,9 +43,12 @@ The bootstrap includes Emberhaven plus five original biome regions. Region maps
 carry native ELM object IDs and emit `regions_eloria.json`, allowing the server
 to bind harvesting rules to exactly the models placed in each generated map.
 
-The character generator produces an original low-poly humanoid, fourteen-bone
-skeleton, four actor definitions, and idle, walk, run, attack, pain, death,
-harvest, and sitting animations in Cal3D XML source formats.
+The character generators produce twelve original culture/gender actor
+definitions on a 37-anchor skeleton. They also convert the user-supplied Four
+Gates Guard into a selectable Luminous-male preset with a 2048px painted atlas,
+40,000-triangle Cal3D body, and fifteen movement, combat, casting, reaction,
+sitting, and interaction animations. To re-import the original source GLB, run
+`import_four_gates_guard_glb.py SOURCE.glb eloria-assets/source/four-gates-guard`.
 
 The creature generator produces sixteen animals and sixteen monsters with original
 silhouettes, textures, a thirteen-bone quadruped rig, and shared idle, walk,

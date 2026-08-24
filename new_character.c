@@ -51,6 +51,7 @@ static const char nymara_glasswarden_str[] = "Glasswarden";
 static const char nymara_orun_str[] = "Orun";
 static const char nymara_greyhaven_str[] = "Greyhaven";
 static const char nymara_ssarathi_str[] = "Ssarathi";
+static const char four_gates_guard_str[] = "Four Gates Guard";
 static const char nymara_about_luminous[] = "Lake-city citizens shaped by civic duty, trade, and reflected light.";
 static const char nymara_about_votary[] = "Mountain ascetics adapted to cold, altitude, and patient discipline.";
 static const char nymara_about_glasswarden[] = "Crystal engineers who study resonance, storms, and the old observatories.";
@@ -991,6 +992,25 @@ static void change_race(int new_race)
 	change_actor();
 }
 
+static void select_four_gates_guard(void)
+{
+	/* Use established appearance IDs so old servers persist the selection. */
+	destroy_all_actors();
+	our_actor.our_model = NULL;
+	our_actor.race_id = 1;
+	our_actor.def = &races[1];
+	our_actor.race = human_male;
+	our_actor.male = 1;
+	our_actor.skin = SKIN_WHITE;
+	our_actor.hair = HAIR_BLACK;
+	our_actor.eyes = EYES_BLUE;
+	our_actor.shirt = SHIRT_YELLOW;
+	our_actor.pants = PANTS_WHITE;
+	our_actor.boots = BOOTS_ORANGE;
+	our_actor.head = HEAD_5;
+	change_actor();
+}
+
 int book_human=200000;
 int book_dwarf=200001;
 int book_elf=200002;
@@ -1374,6 +1394,9 @@ static int click_newchar_race_handler(widget_list *w, int mx, int my, Uint32 fla
 		break;
 		case 5:
 			change_race(draegoni_female - 31 + our_actor.male);
+		break;
+		case 6:
+			select_four_gates_guard();
 		break;
 	}
 	return 0;
@@ -1766,7 +1789,7 @@ static int init_color_race_handler(window_info * win)
 		int box_label_height = get_line_height(win->font_category, very_small);
 		int button_height = 2 * very_small * BUTTONRADIUS;
 		int button_y_off = box_label_height;
-		int button_set_height = 3 * button_height + 2 * sep;
+		int button_set_height = 4 * button_height + 3 * sep;
 		int button_set_width = win->len_x - 4 * sep;
 		int col_two_x_off = sep + button_set_width / 2;
 		int button_width = col_two_x_off - 4*sep - button_height;
@@ -1781,13 +1804,15 @@ static int init_color_race_handler(window_info * win)
 		widget_set_color(win->window_id, widget_id, 1.0f, 0.0f, 0.0f);
 		widget_set_OnMouseover(win->window_id, widget_id, &mouseover_p2p_race_handler);
 
-		widget_id = multiselect_add_extended(win->window_id, free_widget_id++, 0, 2 * sep, y + button_y_off , button_set_width, button_set_height, normal, r, g, b, rh, gh, bh, 6);
+		widget_id = multiselect_add_extended(win->window_id, free_widget_id++, 0, 2 * sep, y + button_y_off , button_set_width, button_set_height, normal, r, g, b, rh, gh, bh, 7);
 		multiselect_button_add_extended(win->window_id, widget_id, 0, 0, button_width, nymara_luminous_str, very_small, our_actor.race==human_female||our_actor.race==human_male);
 		multiselect_button_add_extended(win->window_id, widget_id, 0, button_height + sep, button_width, nymara_votary_str, very_small, our_actor.race==elf_female||our_actor.race==elf_male);
 		multiselect_button_add_extended(win->window_id, widget_id, 0, 2 * (button_height + sep), button_width, nymara_glasswarden_str, very_small, our_actor.race==dwarf_female||our_actor.race==dwarf_male);
 		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, 0, button_width, nymara_orun_str, very_small, our_actor.race==gnome_female||our_actor.race==gnome_male);
 		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, button_height + sep, button_width, nymara_greyhaven_str, very_small, our_actor.race==orchan_female||our_actor.race==orchan_male);
 		multiselect_button_add_extended(win->window_id, widget_id, col_two_x_off, 2 * (button_height + sep), button_width, nymara_ssarathi_str, very_small, our_actor.race==draegoni_female||our_actor.race==draegoni_male);
+		multiselect_button_add_extended(win->window_id, widget_id, 0, 3 * (button_height + sep), button_set_width, four_gates_guard_str, very_small,
+			our_actor.race==human_male && our_actor.skin==SKIN_WHITE && our_actor.shirt==SHIRT_YELLOW && our_actor.pants==PANTS_WHITE && our_actor.boots==BOOTS_ORANGE && our_actor.head==HEAD_5);
 		widget_set_OnClick(win->window_id, widget_id, &click_newchar_race_handler);
 
 		for(i = 0; i < 3; i++)

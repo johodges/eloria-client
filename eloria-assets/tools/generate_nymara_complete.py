@@ -10,8 +10,10 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 from generate_bootstrap_pack import png, make_map
-from generate_characters import skeleton as humanoid_skeleton
-from generate_humanoid_enemies import animation as humanoid_animation, enemy_mesh, material_pixel
+from generate_characters import (binary_mesh, cuboid, profile_surface,
+                                 skeleton as humanoid_skeleton, write_cal)
+from generate_humanoid_enemies import (animation as humanoid_animation,
+                                       ellipsoid, enemy_mesh, material_pixel)
 from generate_creatures import skeleton as creature_skeleton, creature_mesh, creature_material
 from generate_scenery import e3d, texture, box, tapered, crossed_leaves
 
@@ -906,6 +908,107 @@ def profession_idle(root, slug, feature):
  shutil.copy2(root/anim_dir/"idle.caf",root/anim_dir/"idle2.caf")
  return anim_dir
 
+
+def toran_concept_mesh(path):
+ """High-detail lantern-bearing civic official based on the concept sheet."""
+ vertices=[]; faces=[]
+ # Natural-proportion anatomical foundation; the costume layers conceal the
+ # bind rig while retaining stable deformation anchors used by the client.
+ profile_surface([(0,0,.86,.20,.15),(0,0,1.10,.29,.18),(0,0,1.40,.30,.18),(0,0,1.61,.21,.14)],
+                 [1,2,2,25],vertices,faces,sides=38)
+ for side,bones in ((-1,[28,4,5,16]),(1,[29,6,7,17])):
+  profile_surface([(side*.23,0,1.49,.135,.135),(side*.43,-.01,1.32,.12,.12),
+                   (side*.58,-.02,1.08,.105,.11),(side*.64,-.04,.84,.11,.12)],
+                  bones,vertices,faces,sides=30)
+ for side,bones in ((-1,[8,8,9,10]),(1,[11,11,12,13])):
+  profile_surface([(side*.14,0,.91,.145,.155),(side*.14,0,.64,.13,.14),
+                   (side*.14,.02,.30,.105,.12),(side*.14,.13,.02,.125,.235)],
+                  bones,vertices,faces,sides=30)
+ # Long ivory under-robe, split teal over-robe and rear cape.
+ profile_surface([(0,.005,.10,.43,.23),(0,.005,.48,.42,.22),(0,0,.91,.38,.205),
+                  (0,0,1.28,.34,.19),(0,0,1.58,.27,.16)],
+                 [1,1,1,2,25],vertices,faces,sides=44)
+ for side in (-1,1):
+  profile_surface([(side*.19,-.225,.12,.20,.045),(side*.20,-.235,.55,.205,.05),
+                   (side*.17,-.24,.98,.19,.055),(side*.14,-.235,1.43,.16,.055)],
+                  [1,1,2,2],vertices,faces,sides=22)
+ profile_surface([(0,.18,.14,.40,.035),(0,.19,.62,.43,.04),(0,.18,1.12,.45,.045),
+                  (0,.13,1.54,.39,.045)],
+                 [1,1,2,25],vertices,faces,sides=34)
+ # Draped teal shoulder scarf and layered mantle.
+ ellipsoid((0,.01,1.52),(.91,.49,.24),25,vertices,faces,14,40)
+ ellipsoid((-.18,-.17,1.43),(.57,.17,.68),25,vertices,faces,12,32)
+ ellipsoid((.22,-.18,1.35),(.45,.15,.78),25,vertices,faces,12,30)
+ # Head, facial planes, hood, wrapped turban, beard and hair silhouette.
+ ellipsoid((0,0,1.84),(.39,.35,.43),3,vertices,faces,16,36)
+ ellipsoid((0,-.205,1.78),(.27,.15,.27),3,vertices,faces,12,28)
+ ellipsoid((0,-.305,1.87),(.07,.13,.14),3,vertices,faces,8,18)
+ for side,eye in ((-1,30),(1,31)):
+  ellipsoid((side*.085,-.281,1.91),(.047,.028,.04),eye,vertices,faces,6,12)
+  ellipsoid((side*.205,-.02,1.84),(.055,.055,.13),3,vertices,faces,7,14)
+ ellipsoid((0,.015,1.98),(.50,.42,.35),3,vertices,faces,14,38)
+ ellipsoid((0,-.02,2.10),(.46,.39,.16),3,vertices,faces,10,34)
+ for x,z,size in ((-.12,1.69,.17),(0,1.65,.20),(.12,1.69,.17)):
+  ellipsoid((x,-.235,z),(size,.13,.28),15,vertices,faces,10,22)
+ # Antique-gold belt, buckle, robe edging, clasps and jewelry.
+ cuboid((0,-.235,1.08),(.79,.085,.115),2,vertices,faces)
+ cuboid((0,-.292,1.08),(.18,.055,.19),2,vertices,faces)
+ for z,width in ((1.45,.33),(1.31,.27),(1.17,.21),(.91,.16),(.57,.12)):
+  ellipsoid((0,-.255,z),(width,.085,.105),2,vertices,faces,8,22)
+ # Raised embroidered border bosses keep the robe ornament readable at the
+ # isometric gameplay camera instead of relying on sub-pixel texture lines.
+ for side in (-1,1):
+  for index,z in enumerate((.22,.34,.46,.58,.70,.82,.94,1.06,1.18,1.30)):
+   x=side*(.205-.035*index/9)
+   ellipsoid((x,-.273,z),(.070,.035,.085),2,vertices,faces,8,20)
+ for x in (-.23,.23):
+  ellipsoid((x,-.25,1.52),(.10,.07,.13),25,vertices,faces,8,18)
+  ellipsoid((x,-.255,1.39),(.045,.045,.16),25,vertices,faces,7,14)
+ # Leather travel pouch and layered sandals/boot straps.
+ ellipsoid((-.35,-.17,.94),(.30,.20,.42),2,vertices,faces,12,28)
+ cuboid((-.35,-.275,1.05),(.19,.045,.09),2,vertices,faces)
+ for side,bone in ((-1,10),(1,13)):
+  for z in (.08,.16,.24): cuboid((side*.14,-.105,z),(.25,.055,.055),bone,vertices,faces)
+ # Staff and luminous civic lantern are a single rigid right-hand assembly.
+ cuboid((.65,-.04,1.26),(.070,.070,2.52),17,vertices,faces)
+ for z,radius in ((.08,.12),(2.43,.14),(2.57,.10)):
+  ellipsoid((.65,-.04,z),(radius,radius,.14),17,vertices,faces,8,20)
+ cuboid((.65,-.04,2.18),(.38,.34,.08),17,vertices,faces)
+ cuboid((.65,-.04,2.58),(.34,.30,.08),17,vertices,faces)
+ for x in (.49,.65,.81): cuboid((x,-.19,2.38),(.035,.035,.42),17,vertices,faces)
+ for y in (-.19,.11): cuboid((.65,y,2.38),(.34,.035,.42),17,vertices,faces)
+ ellipsoid((.65,-.04,2.38),(.25,.22,.35),17,vertices,faces,12,30)
+ ellipsoid((.65,-.04,2.70),(.20,.18,.13),17,vertices,faces,8,22)
+ root=ET.Element("MESH",NUMSUBMESH="1")
+ sub=ET.SubElement(root,"SUBMESH",NUMVERTICES=str(len(vertices)),NUMFACES=str(len(faces)),
+  MATERIAL="0",NUMLODSTEPS="0",NUMSPRINGS="0",NUMTEXCOORDS="1")
+ for index,(pos,norm,uv,bone) in enumerate(vertices):
+  vertex=ET.SubElement(sub,"VERTEX",ID=str(index),NUMINFLUENCES="1")
+  ET.SubElement(vertex,"POS").text="%.8g %.8g %.8g"%pos
+  ET.SubElement(vertex,"NORM").text="%.8g %.8g %.8g"%norm
+  ET.SubElement(vertex,"TEXCOORD").text="%.8g %.8g"%uv
+  ET.SubElement(vertex,"INFLUENCE",ID=str(bone)).text="1"
+ for triangle in faces: ET.SubElement(sub,"FACE",VERTEXID="%d %d %d"%triangle)
+ write_cal(path,"XMF",root); binary_mesh(path.with_suffix(".cmf"),vertices,faces)
+
+
+def toran_material_pixel(x,y):
+ """Painted ivory, deep-teal, bronze, leather and lantern atlas."""
+ u=x/1023;v=y/1023; grain=((x*17+y*29+(x^y)*5)%31)-15
+ ivory=(222,214,185); teal=(21,91,99); gold=(193,142,48); leather=(82,49,29)
+ cyan=(69,198,211)
+ if v<.16: color=gold
+ elif v>.78 or u<.11 or u>.89: color=leather
+ elif .17<u<.83 and .20<v<.61: color=ivory
+ else: color=teal
+ border=(x%128<5 or y%128<5 or abs(u-.5)<.012 or abs(v-.65)<.010)
+ embroidery=(abs((u-.5)*1.7-(v-.39))<.010 or abs((u-.5)*1.7+(v-.39))<.010) and .22<v<.55
+ lantern=(u-.77)**2+(v-.22)**2<.018
+ if border or embroidery: color=gold
+ if lantern: color=cyan
+ detail=grain+(10 if ((x//7+y//7)&1) else -4)
+ return (*(max(0,min(255,c+detail)) for c in color),255)
+
 def generate_npcs(root, actors):
  base=root/"actors/nymara/npcs"; humanoid_skeleton(base/"nymara_humanoid.xsf")
  aliases={"idle.caf":"../../enemies/idle.caf","idle2.caf":"../../enemies/idle.caf","walk.caf":"../../enemies/walk.caf","run.caf":"../../enemies/run.caf","sit.caf":"../../eloria/sit.caf","sit_down.caf":"../../eloria/sit.caf","stand_up.caf":"../../eloria/idle.caf","combat_idle.caf":"../../enemies/combat_idle.caf","attack.caf":"../../enemies/attack.caf","cast.caf":"../../enemies/cast.caf","pain.caf":"../../enemies/pain.caf","die.caf":"../../enemies/die.caf","harvest.caf":"../../eloria/harvest.caf","pick.caf":"../../eloria/harvest.caf","drop.caf":"../../eloria/harvest.caf","wave.caf":"../../enemies/cast.caf","bow.caf":"../../eloria/harvest.caf"}
@@ -923,8 +1026,13 @@ def generate_npcs(root, actors):
     elif slug in ('luminous_lake_priest_f','luminous_lake_priest_m'): feature='civic_priest'
     elif slug in ('luminous_civilian_f','luminous_civilian_m'): feature='civic_civilian'
     else: feature=f"nymara:{culture}:{role}"
-    enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
-    png(base/f"{slug}.png",1024,1024,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",512,512,material_pixel(accent,feature))
+    if slug == "luminous_official_m":
+     toran_concept_mesh(base/f"{slug}.xmf")
+     png(base/f"{slug}.png",1024,1024,toran_material_pixel)
+    else:
+     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
+     png(base/f"{slug}.png",1024,1024,material_pixel(primary,feature))
+    png(root/f"portraits/nymara/npcs/{slug}.png",512,512,material_pixel(accent,feature))
     anim_dir=(profession_idle(root,slug,feature) if feature in ("civic_scholar","civic_ferryman","civic_official","civic_merchant")
               else "animations/nymara/humanoid")
     append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.csf",f"actors/nymara/npcs/{slug}.cmf",f"actors/nymara/npcs/{slug}.png",anim_dir,.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.65 if feature=="civic_ferryman" else 2.2))

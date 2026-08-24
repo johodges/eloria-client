@@ -1,0 +1,12 @@
+{
+  "source_file": "four_gates_guard.glb",
+  "source_sha256": "66627daea41175d15c5f583c8bce94a4af155fe1f7c77dd304b375973424790f",
+  "source_vertices": 1018724,
+  "source_triangles": 2000000,
+  "converted_vertices": 19103,
+  "converted_triangles": 40195,
+  "source_generator": "THREE.GLTFExporter r178",
+  "source_had_skin": false,
+  "source_had_animations": false,
+  "coordinate_conversion": "glTF Y-up to Eloria Z-up; 1.9m height"
+}

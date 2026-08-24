@@ -601,7 +601,7 @@ def validate_four_gates_npcs_equipment(root: Path) -> None:
         304: ("actors/nymara/npcs/luminous_scholar_f.cmf", 3100),
         305: ("actors/nymara/npcs/luminous_lake_priest_f.cmf", 1050),
         306: ("actors/nymara/npcs/luminous_civilian_f.cmf", 980),
-        307: ("actors/nymara/npcs/luminous_official_m.cmf", 2900),
+        307: ("actors/nymara/npcs/luminous_official_m.cmf", 12000),
         308: ("actors/nymara/npcs/luminous_guard_m.cmf", 1120),
         309: ("actors/nymara/npcs/luminous_merchant_m.cmf", 2500),
         310: ("actors/nymara/npcs/luminous_ferryman_m.cmf", 2800),
@@ -782,7 +782,10 @@ def validate_playable_characters(root: Path) -> None:
         paths.update(f"actors/playable/{culture}_{gender}_head_{i}.cmf" for i in range(5))
         referenced={node.text for tag in ("shirt","legs","boots","head")
                     for part in actor.findall(tag) for node in part.findall("mesh")}
-        if paths != referenced:
+        guard_paths={"actors/four_gates_guard/guard_body.cmf",
+                     "actors/eloria_none.cmf"} if actor_id == 1 else set()
+        replaced={f"actors/playable/{culture}_{gender}_head_4.cmf"} if actor_id == 1 else set()
+        if (paths - replaced) | guard_paths != referenced:
             raise ValueError(f"playable actor {actor_id} does not use its complete authored mesh set")
         for relative in paths:
             xml_path=(root/relative).with_suffix(".xmf")
@@ -795,6 +798,38 @@ def validate_playable_characters(root: Path) -> None:
         body_digests.add(hashlib.sha256(body).digest())
     if len(body_digests) != len(expected):
         raise ValueError("playable races or genders share duplicate body silhouettes")
+
+
+def validate_four_gates_guard(root: Path) -> None:
+    actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
+    actor = actors.find("actor[@id='1']")
+    expected = {
+        "shirt[@id='11']/arms": "actors/four_gates_guard/guard_arms.dds",
+        "shirt[@id='11']/torso": "actors/four_gates_guard/guard_torso.dds",
+        "shirt[@id='11']/mesh": "actors/four_gates_guard/guard_body.cmf",
+        "legs[@id='8']/mesh": "actors/eloria_none.cmf",
+        "boots[@id='5']/mesh": "actors/eloria_none.cmf",
+        "head[@id='4']/mesh": "actors/eloria_none.cmf",
+    }
+    if actor is None:
+        raise ValueError("missing Luminous male actor used by Four Gates Guard preset")
+    for query, value in expected.items():
+        if actor.findtext(query) != value:
+            raise ValueError(f"Four Gates Guard preset mapping changed: {query}")
+    mesh = cal_xml(root / "actors/four_gates_guard/guard_body.xmf")
+    triangles = sum(int(sub.attrib["NUMFACES"]) for sub in mesh.findall("SUBMESH"))
+    if triangles < 38000:
+        raise ValueError(f"Four Gates Guard fell below production topology floor: {triangles}")
+    for name, dimensions in (("guard_torso.dds", (216, 196)),
+                             ("guard_arms.dds", (160, 160))):
+        dds = (root / "actors/four_gates_guard" / name).read_bytes()
+        if dds[:4] != b"DDS " or struct.unpack_from("<II", dds, 12) != dimensions:
+            raise ValueError(f"Four Gates Guard has invalid compositor texture: {name}")
+    clips = {"idle","idle_2","walk","run","combat_idle","attack","cast",
+             "pain","death","sit","sit_down","stand_up","harvest","pick","drop"}
+    found = {path.stem for path in (root / "animations/four_gates_guard").glob("*.caf")}
+    if found != clips:
+        raise ValueError(f"incomplete Four Gates Guard animation set: {sorted(clips-found)}")
 
 def validate_map_dds(root: Path) -> None:
     local_maps = sorted((root / "maps/nymara").glob("*.dds"))
@@ -879,6 +914,7 @@ def main() -> None:
     validate_animations(root)
     validate_customization_dds(root)
     validate_playable_characters(root)
+    validate_four_gates_guard(root)
     validate_map_dds(root)
     validate_hud_dds(root)
     print("Validated every generated ELM, Cal3D XML family, and customization DDS")

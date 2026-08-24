@@ -20,6 +20,7 @@ class Task:
 
 ACTOR_CHAIN = Task("actors", (
     "generate_characters.py",
+    "generate_four_gates_guard.py",
     "generate_humanoid_enemies.py",
     "generate_fantasy_archetypes.py",
     "generate_npcs.py",
