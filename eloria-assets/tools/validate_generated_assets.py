@@ -172,6 +172,34 @@ def validate_customization_dds(root: Path) -> None:
         if len(data) != 128 + payload:
             raise ValueError(f"invalid DDS mip payload length: {path}")
 
+def validate_map_dds(root: Path) -> None:
+    local_maps = sorted((root / "maps/nymara").glob("*.dds"))
+    if len(local_maps) != 19:
+        raise ValueError(f"expected 19 Nymara local-map DDS files, found {len(local_maps)}")
+    paths = local_maps + [root / "maps/nymara_continent.dds"]
+    for path in paths:
+        data = path.read_bytes()
+        if data[:4] != b"DDS " or len(data) < 128:
+            raise ValueError(f"invalid map DDS header: {path}")
+        header = struct.unpack_from("<31I", data, 4)
+        height, width, mipmaps = header[2], header[3], header[6]
+        if (width, height, mipmaps) != (512, 512, 4):
+            raise ValueError(f"invalid map DDS layout: {path}")
+        expected = 128 + sum(max(1, width >> level) * max(1, height >> level) * 4
+                             for level in range(mipmaps))
+        if len(data) != expected:
+            raise ValueError(f"invalid map DDS payload: {path}")
+    entries = [line.split("|") for line in (root / "mapinfo.lst").read_text().splitlines()
+               if line.strip() and not line.lstrip().startswith("#")]
+    if len(entries) != 27 or any(len(entry) != 4 for entry in entries):
+        raise ValueError("mapinfo.lst must contain exactly 27 complete map records")
+    for _, _, elm, image in entries:
+        if not (root / elm).is_file() or not (root / image).is_file():
+            raise ValueError(f"mapinfo.lst references missing runtime asset: {elm} / {image}")
+    continent = (root / "continfo.lst").read_text().strip().split("|")
+    if continent != ["Nymara", "maps/nymara_continent.dds"]:
+        raise ValueError("continfo.lst does not reference the generated Nymara overview")
+
 
 def validate_animations(root: Path) -> None:
     animations = sorted(root.glob("animations/**/*.xaf"))
@@ -198,6 +226,7 @@ def main() -> None:
     validate_meshes(root)
     validate_animations(root)
     validate_customization_dds(root)
+    validate_map_dds(root)
     print("Validated every generated ELM, Cal3D XML family, and customization DDS")
 
 

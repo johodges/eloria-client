@@ -5,7 +5,7 @@ All geometry and pixels are deterministic procedural production proxies.  No
 Eternal Lands binary-data input is read or required.
 """
 from __future__ import annotations
-import argparse, json, math, shutil
+import argparse, json, math, shutil, struct, zlib
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
@@ -85,6 +85,103 @@ REGION_HARVESTS = {
  "ssarathi_ruins":["ssarathi_scale_moss","verdant_venom_bulb","delta_lotus","voltaic_geode"],
  "manymouth_delta":["delta_lotus","mangrove_sap","deep_lake_clay","crownwater_pearl"],
 }
+
+REGION_ART = {
+ "mirrorhold":{"palette":((47,70,73),(92,111,104),(174,151,92)),"objects":["glasswarden_observatory","glasswarden_lens_tower","glasswarden_field_station","mirrorhold_civic_tower","mirrorhold_canal_wall","mirrorhold_radial_bridge","mirrorhold_public_fountain"],"water":True,"ambient":(.48,.55,.60)},
+ "crownwater":{"palette":((36,125,145),(221,217,180),(42,87,91)),"objects":["crownwater_ferry_dock","crownwater_fishing_boat","crownwater_patrol_boat","crownwater_submerged_waystone","mirrorhold_radial_bridge","mirrorhold_public_fountain"],"water":True,"ambient":(.62,.68,.70)},
+ "four_gates":{"palette":((75,104,78),(172,162,126),(53,112,119)),"objects":["four_gates_gatehouse","four_gates_waystone","mirrorhold_radial_bridge","mirrorhold_civic_tower","mirrorhold_public_fountain","glasswarden_field_station"],"water":True,"ambient":(.58,.61,.58)},
+ "whitehorn_range":{"palette":((183,211,219),(65,78,83),(222,229,221)),"objects":["whitehorn_glacier","whitehorn_monastery","whitehorn_rope_bridge","whitehorn_shrine","whitehorn_cairn","whitehorn_ice_cave","whitehorn_mine_entrance"],"water":False,"ambient":(.67,.72,.76)},
+ "amethyst_barrens":{"palette":((110,72,139),(184,132,194),(122,99,65)),"objects":["glasswarden_observatory","amethyst_crystal_bridge","amethyst_geode_cave","amethyst_levitating_shards","amethyst_storm_ruin","resonant_crystal_cluster"],"water":False,"ambient":(.54,.49,.62)},
+ "sunmane_steppe":{"palette":((171,126,56),(208,177,101),(130,70,38)),"objects":["orun_round_tent","orun_seasonal_market","orun_banner_shrine","sunmane_caravanserai","sunmane_windmill","sunmane_well","sunmane_animal_pen","sunmane_burial_mound"],"water":False,"ambient":(.68,.61,.48)},
+ "amberwood":{"palette":((119,72,35),(190,109,39),(65,91,55)),"objects":["amberwood_estate","amberwood_hunting_lodge","amberwood_hollow_tree","amberwood_old_bridge","amberwood_tree","amberwood_ruin_arch","amberwood_garden_fountain"],"water":False,"ambient":(.55,.48,.38)},
+ "grey_moors":{"palette":((72,77,68),(105,83,108),(48,57,55)),"objects":["grey_moor_barrow","grey_moor_standing_stones","grey_moor_boardwalk","grey_moor_crypt_entrance","grey_moor_abandoned_cottage","grey_moor_dead_tree","grey_moor_ritual_shrine"],"water":True,"ambient":(.43,.46,.48)},
+ "westhaven":{"palette":((40,94,111),(130,84,55),(87,91,89)),"objects":["westhaven_lighthouse","westhaven_warehouse","westhaven_dry_dock","westhaven_harbor_crane","westhaven_shipyard_frame","westhaven_fish_market","westhaven_seawall"],"water":True,"ambient":(.52,.57,.60)},
+ "verdant_stair":{"palette":((42,105,66),(91,145,85),(44,92,101)),"objects":["verdant_basalt_steps","verdant_cenote_stairs","verdant_root_bridge","verdant_vine_bridge","verdant_tree_platform","verdant_water_shrine","verdant_giant_fern"],"water":True,"ambient":(.48,.60,.50)},
+ "ssarathi_ruins":{"palette":((42,91,68),(151,126,57),(38,111,108)),"objects":["ssarathi_temple","ssarathi_vault_entrance","ssarathi_water_gate","ssarathi_sunken_court","ssarathi_ritual_pool","ssarathi_sun_stela","ssarathi_ruin_arch"],"water":True,"ambient":(.47,.57,.48)},
+ "manymouth_delta":{"palette":((36,105,91),(117,112,56),(42,71,58)),"objects":["manymouth_stilt_house","manymouth_boardwalk","manymouth_ferry_dock","manymouth_hidden_dock","manymouth_mangrove","manymouth_market_stall","manymouth_flooded_cave"],"water":True,"ambient":(.48,.57,.52)},
+}
+
+def dds_mipped(path, width, height, pixel, levels=4):
+ path.parent.mkdir(parents=True,exist_ok=True)
+ header=[124,0x0002100F,width and height,width,width*4,0,levels]+[0]*11+[32,0x41,0,32,0x00FF0000,0x0000FF00,0x000000FF,0xFF000000]+[0x401008,0,0,0,0]
+ header[2]=height
+ payload=bytearray()
+ for level in range(levels):
+  w=max(1,width>>level); h=max(1,height>>level); scale=1<<level
+  for y in range(h):
+   for x in range(w):
+    r,g,b,a=pixel(min(width-1,x*scale),min(height-1,y*scale)); payload.extend((b,g,r,a))
+ path.write_bytes(b'DDS '+struct.pack('<31I',*header)+payload)
+
+def png_pixels(path):
+ data=path.read_bytes()
+ if data[:8] != b'\x89PNG\r\n\x1a\n': raise ValueError(f"invalid concept PNG: {path}")
+ pos=8; compressed=bytearray(); width=height=depth=color=None
+ while pos < len(data):
+  size=struct.unpack_from('>I',data,pos)[0]; kind=data[pos+4:pos+8]; chunk=data[pos+8:pos+8+size]; pos+=12+size
+  if kind==b'IHDR': width,height,depth,color,_,_,_=struct.unpack('>IIBBBBB',chunk)
+  elif kind==b'IDAT': compressed.extend(chunk)
+  elif kind==b'IEND': break
+ if depth!=8 or color not in (2,6): raise ValueError(f"unsupported concept PNG layout: {path}")
+ channels=3 if color==2 else 4; stride=width*channels; raw=zlib.decompress(bytes(compressed)); rows=[]; prior=bytearray(stride); cursor=0
+ for _ in range(height):
+  mode=raw[cursor]; cursor+=1; scan=bytearray(raw[cursor:cursor+stride]); cursor+=stride
+  for i in range(stride):
+   left=scan[i-channels] if i>=channels else 0; up=prior[i]; upper_left=prior[i-channels] if i>=channels else 0
+   if mode==1: scan[i]=(scan[i]+left)&255
+   elif mode==2: scan[i]=(scan[i]+up)&255
+   elif mode==3: scan[i]=(scan[i]+((left+up)//2))&255
+   elif mode==4:
+    p=left+up-upper_left; pa=abs(p-left); pb=abs(p-up); pc=abs(p-upper_left)
+    scan[i]=(scan[i]+(left if pa<=pb and pa<=pc else up if pb<=pc else upper_left))&255
+   elif mode!=0: raise ValueError(f"unsupported PNG filter {mode}: {path}")
+  rows.append(bytes(scan)); prior=scan
+ def sample(x,y):
+  i=x*channels; row=rows[y]
+  return (row[i],row[i+1],row[i+2],row[i+3] if channels==4 else 255)
+ return width,height,sample
+
+def concept_dds(source, target):
+ width,height,sample=png_pixels(source); side=min(width,height); ox=(width-side)//2; oy=(height-side)//2
+ dds_mipped(target,512,512,lambda x,y:sample(ox+x*side//512,oy+y*side//512))
+
+def region_noise(name, x, y):
+ seed=sum((i+1)*ord(c) for i,c in enumerate(name))
+ return ((x*37+y*61+seed+(x*y*13))%29)-14
+
+def region_tile(profile, name, x, y):
+ cx,cy=15.5,15.5; radial=math.hypot(x-cx,y-cy)
+ road=(abs(y-16)<=1 or abs(x-16)<=1 or abs(y-x)<=1)
+ water=profile['water'] and (radial>14 or (name in ('crownwater','manymouth_delta') and ((x*3+y*5)%17)<4))
+ return 3 if water else 2 if road else 1 if radial>12 else 0
+
+def region_height(profile, name, x, y):
+ # Height byte low six bits are the signed map datum plus 11. Keep arrivals and
+ # portal corridors at z=0 while sculpting distant terrain in broad terraces.
+ if abs(x-58)<=8 and abs(y-58)<=8: return 11
+ if abs(y-58)<=3 or abs(x-58)<=3: return 11
+ edge=min(x,y,191-x,191-y)
+ ridge=max(0,(35-edge)//7)
+ if name in ('whitehorn_range','mirrorhold'): ridge+=int(max(0,y-105)/18)
+ elif name in ('verdant_stair','ssarathi_ruins'): ridge+=((x//24+y//24)%3)
+ elif name in ('crownwater','manymouth_delta'): ridge=max(0,ridge-2)
+ return max(6,min(28,11+ridge+region_noise(name,x//6,y//6)//9))
+
+def cartography_pixel(name, profile):
+ a,b,accent=profile['palette']
+ def pixel(x,y):
+  tx=x*32//512; ty=y*32//512
+  tile=region_tile(profile,name,tx,ty)
+  base=(34,119,139) if tile==3 else (186,159,103) if tile==2 else b if tile==1 else a
+  grain=region_noise(name,x//3,y//3)//3
+  r,g,bl=(max(0,min(255,c+grain)) for c in base)
+  # Roads, border gates, central settlement, water highlights and landmark.
+  if abs(x-256)<5 or abs(y-256)<5: r,g,bl=accent
+  if (x-256)**2+(y-256)**2<58**2: r,g,bl=tuple(min(255,int(c*1.18)) for c in accent)
+  if (x in range(18,35) or x in range(477,494)) and abs(y-256)<28: r,g,bl=(225,199,128)
+  if profile['water'] and ((x+y)%41==0) and tile==3: r,g,bl=(101,196,202)
+  return r,g,bl,255
+ return pixel
 
 def checker(c1,c2):
  return lambda x,y: (*((c1 if ((x//24)^(y//24))&1 else c2)),255)
@@ -169,6 +266,11 @@ def generate_interactives_effects(root):
 def generate_maps(root):
  # Stable object IDs belong to the manifest, while ELM records carry native paths.
  allmaps=REGIONS+DUNGEONS; regions=[]; connections=[]
+ tile_palettes=(((71,103,72),(93,119,78)),((91,104,77),(118,126,88)),
+                ((151,126,83),(179,153,103)),((38,105,126),(61,145,157)))
+ for tile_id,(base,accent) in enumerate(tile_palettes):
+  png(root/f"3dobjects/tile{tile_id}.png",256,256,
+      lambda x,y,a=base,b=accent:(*(a if ((x//32+y//32)&1)==0 else b),255))
  nymara3d=root/"3dobjects/nymara"
  interior=[p for p in (nymara3d/"interiors").rglob("*.e3d")]
  exterior=[p for p in nymara3d.glob("*.e3d")]
@@ -189,9 +291,26 @@ def generate_maps(root):
     box(vertices,indices,(0,0,.25),(.72,.62,.50))
     tapered(vertices,indices,.42,.88,.25,.06,7)
   e3d(path,path.with_suffix('.png').name,harvest_shape)
+ mapinfo=[]
+ concept_root=Path(__file__).resolve().parents[1]/"concepts/nymara-regions"
  for idx,name in enumerate(allmaps):
-  pool=interior if name in DUNGEONS else exterior; picks=[pool[(idx*5+j)%len(pool)] for j in range(min(8,len(pool)))]
-  placements=[(str(p.relative_to(root)).replace('\\','/'),24+(j%4)*22,26+(j//4)*22,0,(j*37)%360) for j,p in enumerate(picks)]
+  pool=interior if name in DUNGEONS else exterior
+  profile=REGION_ART.get(name,REGION_ART[REGIONS[idx%len(REGIONS)]])
+  picks=[pool[(idx*5+j)%len(pool)] for j in range(min(12,len(pool)))]
+  placements=[]
+  if name in REGIONS:
+   authored=profile['objects']
+   rings=((30,30),(58,28),(86,30),(28,58),(88,58),(30,86),(58,88),(86,86),
+          (43,42),(73,42),(42,73),(74,74),(21,46),(95,46),(21,70),(95,70))
+   for j,(x,y) in enumerate(rings):
+    asset=authored[j%len(authored)]
+    placements.append((f"3dobjects/nymara/{asset}.e3d",x,y,0,(j*47)%360))
+   # Repeated modular assets form readable settlements rather than a sparse grid.
+   for j,(x,y) in enumerate(((48,50),(68,50),(48,66),(68,66),(38,55),(78,55),(38,63),(78,63))):
+    asset=authored[(j+3)%len(authored)]
+    placements.append((f"3dobjects/nymara/{asset}.e3d",x,y,0,(j*90)%360))
+  else:
+   placements=[(str(p.relative_to(root)).replace('\\','/'),24+(j%4)*22,26+(j//4)*22,0,(j*37)%360) for j,p in enumerate(picks)]
   if name in REGION_HARVESTS:
    for offset,resource in enumerate(REGION_HARVESTS[name]):
     x,y=((26,82),(48,84),(78,82),(98,76))[offset]
@@ -200,17 +319,43 @@ def generate_maps(root):
   else:
    placements += [(str(pool[(idx*5+8+j)%len(pool)].relative_to(root)).replace('\\','/'),26+j*22,82,0,j*41) for j in range(4)]
   placements += [
-   ("3dobjects/nymara/interactives/region_waygate.e3d",58,58,0,0),
+   ("3dobjects/nymara/interactives/region_waygate.e3d",6,58,0,90),
+   ("3dobjects/nymara/interactives/region_waygate.e3d",110,58,0,270),
+   ("3dobjects/nymara/interactives/region_waygate.e3d",58,100,0,180),
    ("3dobjects/nymara/interactives/crystal_console.e3d",60,62,0,0),
    ("3dobjects/nymara/interactives/archive_lift.e3d",64,62,0,0),
    ("3dobjects/nymara/interactives/stormglass_rod.e3d",68,62,0,0)]
-  make_map(root/f"maps/nymara/{name}.elm",width=32,height=32,tile_id=0,placements=placements,ambient=(.50,.58,.61))
+  lights=[(58,58,4,1.25,1.02,.72),(6,58,3,.35,.70,.78),(110,58,3,.35,.70,.78),(58,100,3,.48,.64,.78)]
+  make_map(root/f"maps/nymara/{name}.elm",width=32,height=32,placements=placements,
+   ambient=profile['ambient'],lights=lights,
+   tile_at=lambda x,y,p=profile,n=name:region_tile(p,n,x,y),
+   height_at=lambda x,y,p=profile,n=name:region_height(p,n,x,y))
+  concept=concept_root/f"{name}_region_concept.png"
+  if concept.is_file(): concept_dds(concept,root/f"maps/nymara/{name}.dds")
+  else: dds_mipped(root/f"maps/nymara/{name}.dds",512,512,cartography_pixel(name,profile))
+  mapinfo.append(f"{name}|{name.replace('_',' ').title()}|maps/nymara/{name}.elm|maps/nymara/{name}.dds")
   regions.append({"id":name,"title":name.replace('_',' ').title(),"map":f"maps/nymara/{name}.elm","arrival":[58,58],"npc_hook":f"npcs.nymara.{name}","spawn_hook":f"spawns.nymara.{name}","hazard_hook":f"hazards.nymara.{name}","harvest_hook":f"harvest.nymara.{name}"})
  for a,b in zip(REGIONS,REGIONS[1:]): connections.append({"from":a,"to":b,"from_xy":[110,58],"to_xy":[6,58],"type":"walk"})
  for d in DUNGEONS: connections.append({"from":REGIONS[DUNGEONS.index(d)%len(REGIONS)],"to":d,"from_xy":[58,100],"to_xy":[58,10],"type":"entrance"})
  data={"schema":1,"regions":regions,"connections":connections,"ferries":[{"from":"crownwater","to":"four_gates","service":"crownwater_ferry"},{"from":"manymouth_delta","to":"westhaven","service":"delta_ferry"}]}
  (root/"nymara_regions_connections.json").write_text(json.dumps(data,indent=2)+"\n")
  (root/"nymara_harvesting.json").write_text(json.dumps({"schema":1,"nodes":harvest_manifest},indent=2)+"\n")
+ bootstrap=("emberhaven","glasswind","frostmere","mirefen","verdant_reach","cinder_wastes")
+ configured=[f"{n}|{n.replace('_',' ').title()}|maps/{n}.elm|maps/legend.dds" for n in bootstrap]
+ configured += mapinfo
+ configured += ["nomap|No Map|maps/nomap.elm|maps/legend.dds",
+                "newcharactermap|Character Preview|maps/newcharactermap.elm|maps/legend.dds"]
+ (root/"mapinfo.lst").write_text("\n".join(configured)+"\n")
+ # The overview is deliberately generated from the same regional palettes so
+ # it remains reproducible while matching every local map's visual language.
+ def continent(x,y):
+  col=min(3,x*4//512); row=min(2,y*3//512); n=REGIONS[row*4+col]; p=REGION_ART[n]
+  lx=(x%128)*4; ly=(y%171)*3
+  return cartography_pixel(n,p)(lx,ly)
+ master=concept_root/"nymara_continent_master_concept.png"
+ if master.is_file(): concept_dds(master,root/"maps/nymara_continent.dds")
+ else: dds_mipped(root/"maps/nymara_continent.dds",512,512,continent)
+ (root/"continfo.lst").write_text("Nymara|maps/nymara_continent.dds\n")
  return data
 
 def merge_existing(root, source):
