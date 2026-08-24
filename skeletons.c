@@ -50,10 +50,15 @@ int get_skeleton(struct CalCoreModel *cal_model, const char *skeleton_name)
 		skel->cal_bones_id[i] = -1;
 
 	if (skeleton_name_ends_with(skeleton_name, "eloria_humanoid.xsf") ||
+		skeleton_name_ends_with(skeleton_name, "eloria_humanoid.csf") ||
 		skeleton_name_ends_with(skeleton_name, "nymara_humanoid.xsf") ||
+		skeleton_name_ends_with(skeleton_name, "nymara_humanoid.csf") ||
 		skeleton_name_ends_with(skeleton_name, "eloria_enemy_humanoid.xsf") ||
+		skeleton_name_ends_with(skeleton_name, "eloria_enemy_humanoid.csf") ||
 		skeleton_name_ends_with(skeleton_name, "eloria_fantasy_humanoid.xsf") ||
-		skeleton_name_ends_with(skeleton_name, "eloria_npc_humanoid.xsf")) {
+		skeleton_name_ends_with(skeleton_name, "eloria_fantasy_humanoid.csf") ||
+		skeleton_name_ends_with(skeleton_name, "eloria_npc_humanoid.xsf") ||
+		skeleton_name_ends_with(skeleton_name, "eloria_npc_humanoid.csf")) {
 		skel->cal_bones_id[head_bone] = find_core_bone_id(cal_skel, "head");
 		skel->cal_bones_id[mouth_bone] = find_core_bone_id(cal_skel, "mouth");
 		skel->cal_bones_id[body_top_bone] = find_core_bone_id(cal_skel, "spine");
