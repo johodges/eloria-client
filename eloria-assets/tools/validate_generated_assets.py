@@ -164,6 +164,23 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Resonant Vault arrival is obstructed")
             if obj3_count < 53 or light_count < 12:
                 raise ValueError("Resonant Vault lacks authored scenery or lighting")
+        if path.as_posix().endswith("maps/nymara/amberwood_estate.elm"):
+            required = {
+                "3dobjects/nymara/interiors/amberwood_manor_floor.e3d": 12,
+                "3dobjects/nymara/interiors/amberwood_manor_wall.e3d": 14,
+                "3dobjects/nymara/interiors/amberwood_estate_door.e3d": 6,
+                "3dobjects/nymara/interiors/amberwood_banquet_table.e3d": 4,
+                "3dobjects/nymara/interiors/amberwood_estate_bed.e3d": 6,
+                "3dobjects/nymara/interiors/amberwood_overgrown_statue.e3d": 4,
+            }
+            for landmark, minimum in required.items():
+                count = sum(name == landmark for name, *_ in object_records)
+                if count < minimum:
+                    raise ValueError(f"Amberwood Estate is missing {landmark}")
+            if any(math.hypot(x-58, y-10) < 4.0 for _, x, y, _ in object_records):
+                raise ValueError("Amberwood Estate arrival is obstructed")
+            if obj3_count < 52 or light_count < 12:
+                raise ValueError("Amberwood Estate lacks authored scenery or lighting")
 
 
 def validate_runtime_xml(root: Path) -> None:
