@@ -49,9 +49,12 @@ def panel(x: int, y: int) -> tuple[int, int, int, int]:
 
 def make_map(path: Path, width: int = 32, height: int = 32, *,
              tile_id: int = 0, placements=None,
-             ambient=(0.55, 0.58, 0.62), height_value: int = 11) -> None:
+             ambient=(0.55, 0.58, 0.62), height_value: int = 11,
+             lights=None) -> None:
     """Write an original ELM settlement with a fully walkable height field."""
-    header_size = 120
+    # map_header is 124 bytes in the current client.  The final reserved word
+    # is still part of the on-disk structure even though it has no semantics.
+    header_size = 124
     tiles = bytes([tile_id]) * (width * height)
     if not 0 <= height_value <= 255:
         raise ValueError("height_value must fit in one ELM height byte")
@@ -93,19 +96,27 @@ def make_map(path: Path, width: int = 32, height: int = 32, *,
         records.extend(struct.pack("<80s6fBB2x4f20s", encoded.ljust(80, b"\0"),
             x, y, z, 0.0, 0.0, rotation, 0, 0, 1.0, 1.0, 1.0, 1.0, b""))
     objects_end = object_offset + len(records)
-    # ELM map_header: magic, 12 ints, four bytes, 3 floats, then 12 ints.
+    lights = [] if lights is None else lights
+    light_records = bytearray()
+    for x, y, z, red, green, blue in lights:
+        light_records.extend(struct.pack(
+            "<7f12s", x, y, z, red, green, blue, 0.0, b""))
+    lights_offset = objects_end
+    particles_offset = lights_offset + len(light_records)
+    # ELM map_header: magic, 13 ints, four bytes, 3 floats, then 13 ints.
     ints_a = [width, height, header_size, height_offset,
               144, len(placements), object_offset, 128, 0, objects_end,
-              40, 0, objects_end]
+              40, len(lights), lights_offset]
     header = bytearray(b"elmf")
     header.extend(struct.pack("<13i", *ints_a))
     header.extend(bytes([0, 1, 0, 0]))
     header.extend(struct.pack("<3f", *ambient))
-    header.extend(struct.pack("<12i", 104, 0, objects_end, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+    header.extend(struct.pack("<13i", 104, 0, particles_offset,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
     if len(header) != header_size:
         raise AssertionError(f"unexpected ELM header size: {len(header)}")
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(header + tiles + heights + records)
+    path.write_bytes(header + tiles + heights + records + light_records)
 
 
 def main() -> None:
