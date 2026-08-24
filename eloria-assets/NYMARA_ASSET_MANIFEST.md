@@ -95,6 +95,15 @@ concept-comparison, overhead, and representative topology QA under
 - Complete roster, topology, material/icon resolution, attachment, and uniqueness checks are
   enforced; representative topology is committed under `qa/regional-equipment/`.
 
+## Regional creatures
+
+- The 28-creature roster keeps frozen extended actor types, semantic creature rig,
+  collision bounds, animation hooks, sounds, drops, and summoning metadata.
+- Crownwater, Whitehorn, Amethyst, Sunmane, Amber/Grey, Verdant, and Manymouth families
+  now use territory-derived material palettes with per-species deterministic variation.
+- Complete regional coverage, actor references above 255, topology floors, material
+  resolution, and unique geometry are validated; comparisons live under `qa/regional-creatures/`.
+
 ## Four Gates vertical slice
 
 - The ELM composition is centred on the authoritative `(58,58)` arrival rather

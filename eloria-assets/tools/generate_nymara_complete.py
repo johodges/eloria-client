@@ -907,10 +907,20 @@ def generate_creatures(root, actors):
  base=root/"actors/nymara/creatures"; creature_skeleton(base/"nymara_creature.xsf")
  aliases={"idle.xaf":"idle.xaf","idle2.xaf":"idle.xaf","walk.xaf":"walk.xaf","run.xaf":"run.xaf","sit.xaf":"idle.xaf","sit_down.xaf":"idle.xaf","stand_up.xaf":"idle.xaf","combat_idle.xaf":"idle.xaf","attack.xaf":"attack.xaf","cast.xaf":"attack.xaf","pain.xaf":"pain.xaf","die.xaf":"die.xaf","harvest.xaf":"attack.xaf","pick.xaf":"attack.xaf","drop.xaf":"attack.xaf","wave.xaf":"attack.xaf","bow.xaf":"idle.xaf","special.xaf":"attack.xaf"}
  copy_aliases(root,"animations/nymara/creatures",{k:f"../../creatures/{v}" for k,v in aliases.items()})
- palette=[(64,132,145),(181,205,214),(126,88,161),(187,120,51),(113,83,54),(55,126,79),(85,105,73)]
+ regional_palettes={
+  "crownwater":((57,126,145),(105,190,186)),
+  "whitehorn":((159,190,205),(218,229,225)),
+  "amethyst":((104,76,151),(177,119,190)),
+  "sunmane":((169,94,43),(214,153,67)),
+  "ambergrey":((99,75,52),(157,122,75)),
+  "verdant":((46,116,73),(107,166,91)),
+  "manymouth":((69,100,70),(126,139,77)),
+ }
  out=[]
  for i,(region,slug,label,body,head,feature) in enumerate(CREATURES):
-  aid=CREATURE_BASE+i; creature_mesh(base/f"{slug}.xmf",body,head,feature); c=palette[i%len(palette)]; c2=tuple(min(255,x+55) for x in c)
+  aid=CREATURE_BASE+i; creature_mesh(base/f"{slug}.xmf",body,head,feature)
+  pair=regional_palettes[region]; seed=sum((n+1)*ord(ch) for n,ch in enumerate(slug))
+  source=pair[seed%2]; c=tuple(max(0,min(255,value+(seed//(channel+3))%17-8)) for channel,value in enumerate(source)); c2=tuple(min(255,x+48) for x in c)
   png(base/f"{slug}.png",512,512,creature_material(c,feature)); png(root/f"portraits/nymara/creatures/{slug}.png",256,256,creature_material(c2,feature))
   radius=round(max(body[0],body[1])*.42,2); bounds=(-body[0]/2,-body[1]/2,0,body[0]/2,body[1]/2,1.6)
   append_actor(actors,aid,label,"nymara_creature","actors/nymara/creatures/nymara_creature.xsf",f"actors/nymara/creatures/{slug}.xmf",f"actors/nymara/creatures/{slug}.png","animations/nymara/creatures",radius,1.0,bounds,True)

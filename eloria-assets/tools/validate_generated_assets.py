@@ -691,6 +691,29 @@ def validate_regional_equipment(root: Path) -> None:
         raise ValueError("regional equipment roster reuses identical geometry")
 
 
+def validate_regional_creatures(root: Path) -> None:
+    actors=ET.parse(root/"actor_defs/actor_defs.xml").getroot()
+    records=json.loads((root/"nymara_creatures.json").read_text())["creatures"]
+    expected_regions={"crownwater","whitehorn","amethyst","sunmane","ambergrey","verdant","manymouth"}
+    if len(records) != 28 or {record["region"] for record in records} != expected_regions:
+        raise ValueError("regional creature roster is incomplete")
+    digests=set()
+    for record in records:
+        actor=actors.find(f"actor[@id='{record['actor_type']}']")
+        mesh_name=f"actors/nymara/creatures/{record['id']}.xmf"
+        if actor is None or actor.findtext("mesh") != mesh_name or int(record["actor_type"]) <= 255:
+            raise ValueError(f"regional creature actor mapping changed: {record['actor_type']}")
+        mesh=root/mesh_name
+        vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(mesh).findall("SUBMESH"))
+        if vertices < 590:
+            raise ValueError(f"regional creature fell back to proxy topology: {mesh}")
+        if png_dimensions(mesh.with_suffix(".png")) != (512,512):
+            raise ValueError(f"invalid regional creature material: {mesh}")
+        digests.add(hashlib.sha256(mesh.read_bytes()).digest())
+    if len(digests) != len(records):
+        raise ValueError("regional creature roster reuses identical geometry")
+
+
 def expected_dds_size(name: str) -> tuple[int, int]:
     if name.startswith("eyes_"):
         return 24, 24
@@ -829,6 +852,7 @@ def main() -> None:
     validate_four_gates_npcs_equipment(root)
     validate_regional_npcs(root)
     validate_regional_equipment(root)
+    validate_regional_creatures(root)
     validate_animations(root)
     validate_customization_dds(root)
     validate_playable_characters(root)
