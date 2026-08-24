@@ -63,6 +63,22 @@ def material_pixel(base, feature):
         culture=feature.split(':')[1] if feature.startswith('nymara:') else 'luminous' if feature.startswith('civic_') else ''
         role=feature.split(':')[2] if feature.startswith('nymara:') else feature.removeprefix('civic_')
         role_code=sum((index+1)*ord(char) for index,char in enumerate(role))
+        if feature.startswith("civic_") or feature.startswith("nymara:"):
+            column=0 if u < .5 else 1; row=min(2,int(v*3))
+            palettes=((224,218,194),base,(184,126,96),(91,57,35),(190,145,55),(52,190,210))
+            color=palettes[row*2+column]
+            local_u=(u*2)%1; local_v=(v*3)%1
+            edge=local_u<.025 or local_u>.975 or local_v<.025 or local_v>.975
+            embroidery=(abs(local_u-.5)<.018 or abs(local_v-.18)<.018) and row==0
+            emblem_x=.30+(role_code%37)/100
+            emblem_y=.34+((role_code//7)%29)/100
+            emblem=((local_u-emblem_x)**2+(local_v-emblem_y)**2 < .0045) and row==0
+            if emblem: color=(198,151,57)
+            detail=weave + (24 if edge or embroidery else 0)
+            if row==1 and column==0: detail+=((x*7+y*5)%13)-6
+            if row==1 and column==1: detail+=((x*5+y*11)%19)-9
+            if row==2 and column==0: detail+=18 if ((x//18+y//18)&1) else -5
+            return (*(max(0,min(255,c+detail)) for c in color),255)
         # Layered cloth/leather/metal zones with a culture-specific border and
         # profession sigil. These remain deterministic while reading as an
         # authored costume rather than a tiled placeholder.
@@ -295,6 +311,28 @@ def enemy_mesh(path, feature, scale):
         else:
             for x,bone in ((-.76,4),(.76,6)):
                 cuboid((x*scale,-.11*scale,1.39*scale),(.09*scale,.10*scale,.34*scale),bone,vertices,faces)
+    if feature.startswith("civic_") or feature.startswith("nymara:"):
+        regions={"ivory":(0.,0.,.5,1/3),"teal":(.5,0.,1.,1/3),
+                 "skin":(0.,1/3,.5,2/3),"leather":(.5,1/3,1.,2/3),
+                 "metal":(0.,2/3,.5,1.),"magic":(.5,2/3,1.,1.)}
+        remapped=[]
+        for pos,norm,uv,bone in vertices:
+            x,y,z=pos
+            region="teal"
+            if bone in (30,31): region="magic"
+            elif bone==3: region="metal" if z>2.05*scale else "skin"
+            elif bone in (10,13): region="leather"
+            elif bone in (5,7) and abs(x)>.88*scale: region="skin"
+            elif bone in (16,17):
+                if feature=="civic_scholar" and y<-.30*scale: region="leather"
+                elif feature=="civic_ferryman" and (abs(x)>.65*scale or z>1.9*scale): region="metal"
+                elif abs(x)>.55*scale or y<-.28*scale: region="leather"
+                else: region="skin"
+            elif feature in ("civic_guard",) and z>.95*scale: region="metal"
+            elif bone in (1,2,25): region="ivory" if y<0 else "teal"
+            u0,v0,u1,v1=regions[region]
+            remapped.append((pos,norm,(u0+(u1-u0)*(uv[0]%1),v0+(v1-v0)*(uv[1]%1)),bone))
+        vertices=remapped
     root=ET.Element("MESH",NUMSUBMESH="1")
     sub=ET.SubElement(root,"SUBMESH",NUMVERTICES=str(len(vertices)),NUMFACES=str(len(faces)),MATERIAL="0",NUMLODSTEPS="0",NUMSPRINGS="0",NUMTEXCOORDS="1")
     for i,(pos,norm,uv,bone) in enumerate(vertices):
@@ -322,9 +360,7 @@ def animation(path,duration,poses):
             ET.SubElement(key,"TRANSLATION").text="%g %g %g"%BONES[bone][2]
             ET.SubElement(key,"ROTATION").text="%g %g %g %g"%quat(axis,angle)
     write_cal(path,"XAF",root)
-    binary_animation(path.with_suffix(".caf"), duration,
-                     [(time, {bone: angle for bone, (_, angle) in frame.items()})
-                      for time, frame in poses], tracks)
+    binary_animation(path.with_suffix(".caf"), duration, poses, tracks)
 
 
 def append_actor_defs(path):
