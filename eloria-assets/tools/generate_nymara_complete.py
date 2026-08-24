@@ -1037,16 +1037,7 @@ def generate_maps(root):
   elif name == 'manymouth_delta':
    placements=manymouth_placements()
   elif name in REGIONS:
-   authored=profile['objects']
-   rings=((30,30),(58,28),(86,30),(28,58),(88,58),(30,86),(58,88),(86,86),
-          (43,42),(73,42),(42,73),(74,74),(21,46),(95,46),(21,70),(95,70))
-   for j,(x,y) in enumerate(rings):
-    asset=authored[j%len(authored)]
-    placements.append((f"3dobjects/nymara/{asset}.e3d",x,y,0,(j*47)%360))
-   # Repeated modular assets form readable settlements rather than a sparse grid.
-   for j,(x,y) in enumerate(((48,50),(68,50),(48,66),(68,66),(38,55),(78,55),(38,63),(78,63))):
-    asset=authored[(j+3)%len(authored)]
-    placements.append((f"3dobjects/nymara/{asset}.e3d",x,y,0,(j*90)%360))
+   raise ValueError(f"exterior region lacks an authored composition: {name}")
   elif name == 'drowned_crown':
    placements=drowned_crown_placements()
   elif name == 'whitehorn_glacier_temple':

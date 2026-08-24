@@ -13,6 +13,12 @@
 
 ## Exterior concepts and runtime composition
 
+All twelve exterior regions now use dedicated placement, terrain, elevation,
+lighting, and validation logic. The generator intentionally fails if an
+exterior reaches the generic composition path. Each region has committed
+concept-comparison, overhead, and representative topology QA under
+`eloria-assets/qa/regions/`.
+
 | Region | Authoritative concept | Primary runtime kit | Landmark and terrain direction |
 |---|---|---|---|
 | Mirrorhold | `mirrorhold_region_concept.png` | Glasswarden observatory and Mirrorhold canals | Alpine citadel, reflective pools, switchback roads |
@@ -27,6 +33,23 @@
 | Verdant Stair | `verdant_stair_region_concept.png` | Terraces, vine bridges and water shrines | Jungle limestone stairs and waterfalls |
 | Ssarathi Ruins | `ssarathi_ruins_region_concept.png` | Temple, archive gate and ritual pools | Flooded processional city and serpent ruins |
 | Manymouth Delta | `manymouth_delta_region_concept.png` | Stilt houses, docks and mangroves | Braided channels and flooded-labyrinth approach |
+
+## Exterior completion inventory
+
+| Region | Authored layout | Dedicated terrain | Exact validation | QA directory |
+|---|---:|---:|---:|---|
+| Mirrorhold | Yes | Yes | Yes | `qa/regions/mirrorhold/` |
+| Crownwater | Yes | Yes | Yes | `qa/regions/crownwater/` |
+| Four Gates | Yes | Yes | Yes | `qa/four-gates/` |
+| Whitehorn Range | Yes | Yes | Yes | `qa/regions/whitehorn-range/` |
+| Amethyst Barrens | Yes | Yes | Yes | `qa/regions/amethyst-barrens/` |
+| Sunmane Steppe | Yes | Yes | Yes | `qa/regions/sunmane-steppe/` |
+| Amberwood | Yes | Yes | Yes | `qa/regions/amberwood/` |
+| Grey Moors | Yes | Yes | Yes | `qa/regions/grey-moors/` |
+| Westhaven | Yes | Yes | Yes | `qa/regions/westhaven/` |
+| Verdant Stair | Yes | Yes | Yes | `qa/regions/verdant-stair/` |
+| Ssarthi Ruins | Yes | Yes | Yes | `qa/regions/ssarathi-ruins/` |
+| Manymouth Delta | Yes | Yes | Yes | `qa/regions/manymouth-delta/` |
 
 ## Style guide
 
