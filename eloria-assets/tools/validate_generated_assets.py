@@ -597,15 +597,15 @@ def validate_four_gates_npcs_equipment(root: Path) -> None:
         300: ("actors/nymara/npcs/luminous_official_f.cmf", 1050),
         301: ("actors/nymara/npcs/luminous_guard_f.cmf", 1120),
         302: ("actors/nymara/npcs/luminous_merchant_f.cmf", 980),
-        303: ("actors/nymara/npcs/luminous_ferryman_f.cmf", 1050),
-        304: ("actors/nymara/npcs/luminous_scholar_f.cmf", 1050),
+        303: ("actors/nymara/npcs/luminous_ferryman_f.cmf", 2800),
+        304: ("actors/nymara/npcs/luminous_scholar_f.cmf", 3100),
         305: ("actors/nymara/npcs/luminous_lake_priest_f.cmf", 1050),
         306: ("actors/nymara/npcs/luminous_civilian_f.cmf", 980),
         307: ("actors/nymara/npcs/luminous_official_m.cmf", 1050),
         308: ("actors/nymara/npcs/luminous_guard_m.cmf", 1120),
         309: ("actors/nymara/npcs/luminous_merchant_m.cmf", 980),
-        310: ("actors/nymara/npcs/luminous_ferryman_m.cmf", 1050),
-        311: ("actors/nymara/npcs/luminous_scholar_m.cmf", 1050),
+        310: ("actors/nymara/npcs/luminous_ferryman_m.cmf", 2800),
+        311: ("actors/nymara/npcs/luminous_scholar_m.cmf", 3100),
         312: ("actors/nymara/npcs/luminous_lake_priest_m.cmf", 1050),
         313: ("actors/nymara/npcs/luminous_civilian_m.cmf", 980),
     }
@@ -640,6 +640,13 @@ def validate_four_gates_npcs_equipment(root: Path) -> None:
             raise ValueError(f"invalid Four Gates equipment material: {path}")
         if png_dimensions(root / item["icon"]) != (64, 64):
             raise ValueError(f"invalid Four Gates equipment icon: {item['icon']}")
+    for actor_id, slug in ((303,"luminous_ferryman_f"),(304,"luminous_scholar_f"),
+                           (310,"luminous_ferryman_m"),(311,"luminous_scholar_m")):
+        actor=actors.find(f"actor[@id='{actor_id}']")
+        idle=(actor.findtext("frames/CAL_idle") or "").split()[0]
+        expected=f"animations/nymara/humanoid/{slug}/idle.caf"
+        if idle != expected or not (root/idle).is_file():
+            raise ValueError(f"Four Gates profession idle changed: actor {actor_id}")
 
 
 def validate_regional_npcs(root: Path) -> None:
