@@ -113,6 +113,23 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Four Gates terrain lacks roads, water, or elevation variation")
             if light_count < 16:
                 raise ValueError("Four Gates lacks its civic night-light network")
+        if path.as_posix().endswith("maps/nymara/drowned_crown.elm"):
+            required = {
+                "3dobjects/nymara/interiors/crownwater_drowned_floor.e3d": 12,
+                "3dobjects/nymara/interiors/crownwater_underwater_wall.e3d": 14,
+                "3dobjects/nymara/interiors/crownwater_submerged_arch.e3d": 6,
+                "3dobjects/nymara/interiors/crownwater_water_channel.e3d": 8,
+                "3dobjects/nymara/interiors/crownwater_drowned_statue.e3d": 4,
+                "3dobjects/nymara/interiors/crownwater_shell_altar.e3d": 1,
+            }
+            for landmark, minimum in required.items():
+                count = sum(name == landmark for name, *_ in object_records)
+                if count < minimum:
+                    raise ValueError(f"Drowned Crown is missing {landmark}")
+            if any(math.hypot(x-58, y-10) < 4.0 for _, x, y, _ in object_records):
+                raise ValueError("Drowned Crown arrival is obstructed")
+            if obj3_count < 50 or light_count < 12:
+                raise ValueError("Drowned Crown lacks authored scenery or lighting")
 
 
 def validate_runtime_xml(root: Path) -> None:

@@ -309,6 +309,27 @@ def four_gates_placements():
   placements.append(("3dobjects/nymara/four_gates_lantern.e3d",x,y,0,(j*30)%360))
  return placements
 
+def drowned_crown_placements():
+ # A ceremonial submerged processional: the safe arrival vestibule at (58,10)
+ # opens into twin water galleries, a statue court, and the crown altar.
+ p=[]
+ for x,y in ((34,22),(58,22),(82,22),(34,46),(58,46),(82,46),
+             (34,70),(58,70),(82,70),(34,94),(58,94),(82,94)):
+  p.append(("3dobjects/nymara/interiors/crownwater_drowned_floor.e3d",x,y,0,0))
+ for x,y,r in ((24,22,90),(24,40,90),(24,58,90),(24,76,90),(24,94,90),
+               (92,22,270),(92,40,270),(92,58,270),(92,76,270),(92,94,270),
+               (34,106,180),(50,106,180),(66,106,180),(82,106,180)):
+  p.append(("3dobjects/nymara/interiors/crownwater_underwater_wall.e3d",x,y,0,r))
+ for x,y,r in ((46,34,90),(70,34,90),(46,58,90),(70,58,90),(46,82,90),(70,82,90)):
+  p.append(("3dobjects/nymara/interiors/crownwater_submerged_arch.e3d",x,y,0,r))
+ for x,y,r in ((36,34,0),(58,34,0),(80,34,0),(36,58,0),(80,58,0),
+               (36,82,0),(58,82,0),(80,82,0)):
+  p.append(("3dobjects/nymara/interiors/crownwater_water_channel.e3d",x,y,0,r))
+ for x,y,r in ((34,58,45),(82,58,315),(42,92,20),(74,92,340)):
+  p.append(("3dobjects/nymara/interiors/crownwater_drowned_statue.e3d",x,y,0,r))
+ p.append(("3dobjects/nymara/interiors/crownwater_shell_altar.e3d",58,94,0,180))
+ return p
+
 def cartography_pixel(name, profile):
  a,b,accent=profile['palette']
  def pixel(x,y):
@@ -488,6 +509,8 @@ def generate_maps(root):
    for j,(x,y) in enumerate(((48,50),(68,50),(48,66),(68,66),(38,55),(78,55),(38,63),(78,63))):
     asset=authored[(j+3)%len(authored)]
     placements.append((f"3dobjects/nymara/{asset}.e3d",x,y,0,(j*90)%360))
+  elif name == 'drowned_crown':
+   placements=drowned_crown_placements()
   else:
    kit=INTERIOR_KITS[name]
    # Three connected chambers: arrival hall, cultural focal room, and deep
@@ -519,6 +542,9 @@ def generate_maps(root):
    lights += [(x,y,3.5,1.08,.72,.31) for x,y in
               ((42,52),(42,64),(52,42),(64,42),(74,52),(74,64),
                (52,74),(64,74),(34,58),(82,58),(58,34),(58,82))]
+  elif name=='drowned_crown':
+   lights += [(x,y,2.7,.24,.70,.78) for x,y in
+              ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
   tile_function=(four_gates_tile if name=='four_gates'
                  else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
   height_function=(four_gates_height if name=='four_gates'
