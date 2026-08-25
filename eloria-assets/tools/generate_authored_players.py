@@ -107,7 +107,17 @@ def clean_mesh(positions,normals,uvs,triangles):
         if sum(value*value for value in cross)<=1e-20: continue
         average=tuple(sum(out_normals[index][i] for index in mapped) for i in range(3))
         if sum(cross[i]*average[i] for i in range(3))<0:
-            mapped=(a,c,b)
+            mapped=(a,c,b); cross=tuple(-value for value in cross)
+        # EL's Cal3D validation and face setup use the first corner normal,
+        # rather than the averaged triangle normal.  Cyclically rotate the
+        # face so the best-aligned corner is first; rotation preserves winding
+        # and topology and avoids deleting tangential-but-valid source faces.
+        dots=[sum(cross[i]*out_normals[index][i] for i in range(3))
+              for index in mapped]
+        first=max(range(3),key=dots.__getitem__)
+        if dots[first]<=0.:
+            raise ValueError(f"authored face normals are tangential: {mapped}")
+        mapped=mapped[first:]+mapped[:first]
         seen.add(canonical); out_faces.append(mapped)
     return out_positions,out_normals,out_uvs,out_faces
 
