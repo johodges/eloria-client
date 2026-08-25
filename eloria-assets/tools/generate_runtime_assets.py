@@ -3,6 +3,7 @@
 from __future__ import annotations
 import argparse,shutil,struct
 from pathlib import Path
+from PIL import Image,ImageDraw,ImageFont
 from generate_bootstrap_pack import png,panel,make_map
 from generate_item_atlas import bmp,dds
 
@@ -20,6 +21,18 @@ def font_pixel(x,y):
  if not g:return (0,0,0,0)
  gx=(lx-3)//2;gy=(ly-2)//2
  return (244,238,216,255) if 0<=gx<5 and 0<=gy<7 and g[gy][gx]=="1" else (0,0,0,0)
+def ttf_font_pixels(font_path):
+ atlas=Image.new("RGBA",(256,256),(0,0,0,0));draw=ImageDraw.Draw(atlas)
+ font=ImageFont.truetype(str(font_path),16)
+ for pos in range(95):
+  ch=chr(pos+32);left=(pos%14)*18;top=(pos//14)*21
+  box=draw.textbbox((0,0),ch,font=font,stroke_width=1)
+  width=box[2]-box[0];height=box[3]-box[1]
+  x=left+(18-width)//2-box[0];y=top+(21-height)//2-box[1]
+  draw.text((x,y),ch,font=font,fill=(244,238,216,255),
+            stroke_width=1,stroke_fill=(8,18,23,230))
+ pixels=atlas.load()
+ return lambda x,y:pixels[x,y]
 CURSOR_COUNT, CURSOR_SIZE = 13, 16
 
 def cursor_index(x,y):
@@ -196,11 +209,12 @@ def e3d_fallback(path):
  texture=path.with_suffix('.png');e3d(path,texture.name,cube);png(texture,32,32,material)
 def main():
  p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output)
- for name in ("font","fontv","font2","font3","font5","font6","font7"):
-  png(root/f"textures/{name}.png",256,256,font_pixel);bmp(root/f"textures/{name}.bmp",256,256,font_pixel)
-  dds(root/f"textures/{name}.dds",256,256,font_pixel)
  bundled_font=Path(__file__).resolve().parents[1]/"fonts/EloriaSans-Regular.ttf"
  if not bundled_font.is_file():raise FileNotFoundError(f"Missing bundled font: {bundled_font}")
+ fallback_font_pixel=ttf_font_pixels(bundled_font)
+ for name in ("font","fontv","font2","font3","font5","font6","font7"):
+  png(root/f"textures/{name}.png",256,256,fallback_font_pixel);bmp(root/f"textures/{name}.bmp",256,256,fallback_font_pixel)
+  dds(root/f"textures/{name}.dds",256,256,fallback_font_pixel)
  (root/"fonts").mkdir(parents=True,exist_ok=True);shutil.copy2(bundled_font,root/"fonts/EloriaSans-Regular.ttf")
  for name in ("cursors","cursors2"):
   png(root/f"textures/{name}.png",CURSOR_COUNT*CURSOR_SIZE,CURSOR_SIZE,cursor_pixel)
