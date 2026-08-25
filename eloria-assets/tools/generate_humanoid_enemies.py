@@ -123,16 +123,20 @@ def enemy_mesh(path, feature, scale):
     # One connected torso, arm and leg shell replaces the disconnected
     # ellipsoid mannequin. Arm-authored details are rotated into the natural
     # bind stance below after all profession equipment has been added.
-    profile_surface([(0,0,.88*scale,.20*heavy*scale,.15*heavy*scale),(0,0,1.12*scale,.30*heavy*scale,.18*heavy*scale),(0,0,1.42*scale,.31*heavy*scale,.18*heavy*scale),(0,0,1.62*scale,.22*heavy*scale,.15*heavy*scale)],
-                    [1,2,2,25],vertices,faces,sides=22)
+    profile_surface([(0,0,.88*scale,.20*heavy*scale,.15*heavy*scale),(0,0,1.12*scale,.30*heavy*scale,.18*heavy*scale),(0,0,1.42*scale,.31*heavy*scale,.18*heavy*scale),(0,0,1.59*scale,.19*heavy*scale,.13*heavy*scale)],
+                    [1,2,2,25],vertices,faces,sides=30)
+    profile_surface([(0,0,1.55*scale,.082*scale,.075*scale),(0,0,1.65*scale,.087*scale,.078*scale),(0,0,1.72*scale,.092*scale,.082*scale)],
+                    [26,26,26],vertices,faces,sides=24)
     for side,bones in ((-1,[28,4,5,16]),(1,[29,6,7,17])):
-        profile_surface([(side*.24*heavy*scale,0,1.50*scale,.14*heavy*scale,.14*scale),(side*.48*heavy*scale,0,1.42*scale,.12*heavy*scale,.12*thin*scale),(side*.76*heavy*scale,0,1.42*scale,.105*heavy*scale,.105*thin*scale),(side*.98*heavy*scale,0,1.42*scale,.11*heavy*scale,.12*scale)],bones,vertices,faces,sides=18)
-    for side,bones in ((-1,[8,8,9,10]),(1,[11,11,12,13])):
-        profile_surface([(side*.15*scale,0,.91*scale,.14*heavy*scale,.15*heavy*scale),(side*.15*scale,0,.65*scale,.13*heavy*scale,.14*thin*scale),(side*.15*scale,-.02,.30*scale,.105*heavy*scale,.115*thin*scale),(side*.15*scale,-.12,-.03*scale,.12*heavy*scale,.23*scale)],bones,vertices,faces,sides=18)
-    ellipsoid((0,0,1.78*scale),(.34*heavy*scale,.32*scale,.38*scale),3,vertices,faces,16,28)
+        profile_surface([(side*.24*heavy*scale,0,1.50*scale,.14*heavy*scale,.14*scale),(side*.48*heavy*scale,0,1.42*scale,.12*heavy*scale,.12*thin*scale),(side*.76*heavy*scale,0,1.42*scale,.105*heavy*scale,.105*thin*scale),(side*.98*heavy*scale,0,1.42*scale,.11*heavy*scale,.12*scale)],bones,vertices,faces,sides=24)
+    for side,leg_bones,foot_bone in ((-1,[8,8,9,10],10),(1,[11,11,12,13],13)):
+        x=side*.15*scale
+        profile_surface([(x,0,.91*scale,.14*heavy*scale,.15*heavy*scale),(x,0,.65*scale,.13*heavy*scale,.14*thin*scale),(x,-.01,.30*scale,.105*heavy*scale,.115*thin*scale),(x,-.015,.08*scale,.105*scale,.105*scale)],leg_bones,vertices,faces,sides=24)
+        profile_surface([(x,.035*scale,.07*scale,.07*scale,.11*scale),(x,-.10*scale,.07*scale,.07*scale,.12*scale),(x,-.28*scale,.07*scale,.07*scale,.105*scale)],[foot_bone]*3,vertices,faces,sides=24)
+    ellipsoid((0,0,1.82*scale),(.35*heavy*scale,.33*scale,.39*scale),3,vertices,faces,20,36)
     # Facial expression is primarily painted into the atlas. A restrained
     # nose supplies profile depth without detached jaw and eye orbs.
-    ellipsoid((0,-.177*scale,1.80*scale),(.055*scale,.055*scale,.09*scale),3,vertices,faces,6,12)
+    ellipsoid((0,-.183*scale,1.84*scale),(.055*scale,.055*scale,.09*scale),3,vertices,faces,7,14)
     for side,hand,eye in ((-1,5,30),(1,7,31)):
         ellipsoid((side*1.00*scale,-.02*scale,1.41*scale),(.20*scale,.18*scale,.20*scale),hand,vertices,faces,6,12)
     if feature in ("hood", "crown", "armor"):
@@ -283,7 +287,9 @@ def enemy_mesh(path, feature, scale):
             for x in (-.20,0,.20): cuboid((x*scale,0,2.11*scale),(.10*scale,.10*scale,.44*scale),3,vertices,faces)
         elif culture == "orun":
             cuboid((0,-.22*scale,1.15*scale),(.78*scale,.08*scale,.28*scale),2,vertices,faces)
-            for x in (-.21,.21): ellipsoid((x*scale,.09*scale,.03*scale),(.28*scale,.48*scale,.22*scale),10 if x<0 else 13,vertices,faces,5,8)
+            for x in (-.21,.21):
+                ellipsoid((x*scale,-.04*scale,.11*scale),(.28*scale,.40*scale,.16*scale),
+                          10 if x<0 else 13,vertices,faces,6,12)
         elif culture == "greyhaven":
             ellipsoid((0,0,1.92*scale),(.52*scale,.46*scale,.20*scale),3,vertices,faces,5,12)
             cuboid((0,-.23*scale,1.28*scale),(.76*scale,.08*scale,.10*scale),2,vertices,faces)
