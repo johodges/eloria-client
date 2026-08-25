@@ -610,20 +610,20 @@ def validate_four_gates_scenery(root: Path) -> None:
 def validate_four_gates_npcs_equipment(root: Path) -> None:
     actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
     expected_actors = {
-        300: ("actors/nymara/npcs/luminous_official_f.cmf", 1050),
-        301: ("actors/nymara/npcs/luminous_guard_f.cmf", 1120),
-        302: ("actors/nymara/npcs/luminous_merchant_f.cmf", 980),
-        303: ("actors/nymara/npcs/luminous_ferryman_f.cmf", 2800),
-        304: ("actors/nymara/npcs/luminous_scholar_f.cmf", 3100),
-        305: ("actors/nymara/npcs/luminous_lake_priest_f.cmf", 1050),
-        306: ("actors/nymara/npcs/luminous_civilian_f.cmf", 980),
-        307: ("actors/nymara/npcs/luminous_official_m.cmf", 2900),
-        308: ("actors/nymara/npcs/luminous_guard_m.cmf", 1120),
-        309: ("actors/nymara/npcs/luminous_merchant_m.cmf", 2500),
-        310: ("actors/nymara/npcs/luminous_ferryman_m.cmf", 2800),
-        311: ("actors/nymara/npcs/luminous_scholar_m.cmf", 3100),
-        312: ("actors/nymara/npcs/luminous_lake_priest_m.cmf", 1050),
-        313: ("actors/nymara/npcs/luminous_civilian_m.cmf", 980),
+        300: ("actors/nymara/npcs/luminous_official_f.cmf", 4000),
+        301: ("actors/nymara/npcs/luminous_guard_f.cmf", 2850),
+        302: ("actors/nymara/npcs/luminous_merchant_f.cmf", 3650),
+        303: ("actors/nymara/npcs/luminous_ferryman_f.cmf", 3900),
+        304: ("actors/nymara/npcs/luminous_scholar_f.cmf", 4200),
+        305: ("actors/nymara/npcs/luminous_lake_priest_f.cmf", 2850),
+        306: ("actors/nymara/npcs/luminous_civilian_f.cmf", 2750),
+        307: ("actors/nymara/npcs/luminous_official_m.cmf", 4000),
+        308: ("actors/nymara/npcs/luminous_guard_m.cmf", 2850),
+        309: ("actors/nymara/npcs/luminous_merchant_m.cmf", 3650),
+        310: ("actors/nymara/npcs/luminous_ferryman_m.cmf", 3900),
+        311: ("actors/nymara/npcs/luminous_scholar_m.cmf", 4200),
+        312: ("actors/nymara/npcs/luminous_lake_priest_m.cmf", 2850),
+        313: ("actors/nymara/npcs/luminous_civilian_m.cmf", 2750),
     }
     for actor_id, (mesh_name, minimum) in expected_actors.items():
         actor = actors.find(f"actor[@id='{actor_id}']")
@@ -682,7 +682,7 @@ def validate_regional_npcs(root: Path) -> None:
         mesh=root/expected
         vertices=sum(int(sub.attrib["NUMVERTICES"])
                      for sub in cal_xml(mesh.with_suffix(".xmf")).findall("SUBMESH"))
-        if vertices < 950:
+        if vertices < 2600:
             raise ValueError(f"regional NPC fell back to proxy topology: {mesh}")
         cultures.add(record["culture"])
         digests.add(hashlib.sha256(mesh.read_bytes()).digest())
@@ -731,11 +731,16 @@ def validate_nymara_actor_runtime_graph(root: Path) -> None:
         # not allowed to conceal T-authored geometry while loading or blending.
         mesh_xml=cal_xml((root/references["mesh"]).with_suffix(".xmf"))
         arm_positions={5:[],7:[]}
+        neck_vertices=[]; foot_positions=[]
         for vertex in mesh_xml.findall(".//VERTEX"):
             influence=vertex.find("INFLUENCE")
             if influence is not None and int(influence.attrib["ID"]) in arm_positions:
                 arm_positions[int(influence.attrib["ID"])].append(
                     tuple(map(float,vertex.findtext("POS").split())))
+            if influence is not None and int(influence.attrib["ID"])==26:
+                neck_vertices.append(vertex)
+            if influence is not None and int(influence.attrib["ID"]) in (10,13):
+                foot_positions.append(tuple(map(float,vertex.findtext("POS").split())))
         for bone,positions in arm_positions.items():
             if not positions:
                 raise ValueError(f"Nymara actor {actor_id} has no forearm vertices for bone {bone}")
@@ -743,6 +748,11 @@ def validate_nymara_actor_runtime_graph(root: Path) -> None:
             mean_z=sum(p[2] for p in positions)/len(positions)
             if mean_x>.55 or mean_z>1.30:
                 raise ValueError(f"Nymara actor {actor_id} retains T-bind forearm {bone}")
+        if len(neck_vertices)<150:
+            raise ValueError(f"Nymara actor {actor_id} lacks an authored neck")
+        if (not foot_positions or min(p[2] for p in foot_positions)<-.002 or
+                sum(abs(p[2])<.002 for p in foot_positions)<4):
+            raise ValueError(f"Nymara actor {actor_id} does not plant both feet")
         resolved[actor_id] = tuple(hashlib.sha256((root / references[key]).read_bytes()).hexdigest()
                                    for key in ("mesh", "skin"))
     if {307, 309} - resolved.keys():
@@ -825,22 +835,32 @@ def validate_playable_characters(root: Path) -> None:
             vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(xml_path).findall("SUBMESH"))
             # Per-part floors protect the authored split meshes; the stricter
             # aggregate production budget below guards overall character fidelity.
-            minimum=(900 if "head_" in relative else 300 if "boots" in relative
-                     else 440 if "legs" in relative else 1000)
+            minimum=(1200 if "head_" in relative else 750 if "boots" in relative
+                     else 550 if "legs" in relative else 1350)
             if vertices < minimum:
                 raise ValueError(f"playable mesh fell below topology floor: {relative}")
             document=cal_xml(xml_path)
             if "boots" in relative:
-                toe_y=[float(vertex.findtext("POS").split()[1])
-                       for vertex in document.findall(".//VERTEX")]
+                positions=[tuple(map(float,vertex.findtext("POS").split()))
+                           for vertex in document.findall(".//VERTEX")]
+                toe_y=[position[1] for position in positions]
                 if min(toe_y)>-.25:
                     raise ValueError(f"playable boots point away from facing axis: {relative}")
+                if (min(position[2] for position in positions) < -.002 or
+                        sum(abs(position[2])<.002 for position in positions)<4):
+                    raise ValueError(f"playable boots do not have a flat planted sole: {relative}")
             if "head_" in relative:
                 eye_orbs=[vertex for vertex in document.findall(".//VERTEX")
                           if vertex.find("INFLUENCE") is not None and
                           int(vertex.find("INFLUENCE").attrib["ID"]) in (30,31)]
                 if eye_orbs:
                     raise ValueError(f"playable head contains detached eye geometry: {relative}")
+            if "shirt" in relative:
+                neck=[vertex for vertex in document.findall(".//VERTEX")
+                      if vertex.find("INFLUENCE") is not None and
+                      int(vertex.find("INFLUENCE").attrib["ID"])==26]
+                if len(neck)<190:
+                    raise ValueError(f"playable torso lacks an authored neck: {relative}")
         body=(root/f"actors/playable/{culture}_{gender}_body.xmf").read_bytes()
         body_digests.add(hashlib.sha256(body).digest())
     if len(body_digests) != len(expected):
@@ -848,7 +868,7 @@ def validate_playable_characters(root: Path) -> None:
     for culture,gender in expected.values():
         body=root/f"actors/playable/{culture}_{gender}_body.xmf"
         vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(body).findall("SUBMESH"))
-        if vertices < 2700:
+        if vertices < 4000:
             raise ValueError(f"playable body fell below production topology budget: {body}")
 
 def validate_map_dds(root: Path) -> None:
