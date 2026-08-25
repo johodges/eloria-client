@@ -491,8 +491,8 @@ def validate_runtime_xml(root: Path) -> None:
 
 def validate_skeletons(root: Path) -> None:
     skeletons = sorted(root.glob("actors/**/*.xsf"))
-    if len(skeletons) != 19:
-        raise ValueError(f"expected 19 generated skeletons, found {len(skeletons)}")
+    if len(skeletons) != 23:
+        raise ValueError(f"expected 23 generated skeletons, found {len(skeletons)}")
     for path in skeletons:
         document = cal_xml(path)
         bones = document.findall("BONE")
