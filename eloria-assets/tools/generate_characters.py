@@ -530,6 +530,8 @@ def main():
          "id":slug,"name":label,"description":description}
         for aid,(slug,label,_,description) in enumerate(RACES)]}
     (root/"races.json").write_text(json.dumps(race_catalog,indent=2)+"\n",encoding="utf-8")
-    for name,(duration,poses) in anims.items(): animation(root/f"animations/eloria/{name}.xaf",duration,poses)
+    for name in ("idle","walk","run","attack","pain","die","harvest","sit"):
+        duration,poses=anims[name]
+        animation(root/f"animations/eloria/{name}.xaf",duration,poses)
     actor_defs(root/"actor_defs/actor_defs.xml")
 if __name__=="__main__": main()
