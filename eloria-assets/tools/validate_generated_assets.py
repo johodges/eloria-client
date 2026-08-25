@@ -9,6 +9,7 @@ import json
 import math
 from pathlib import Path
 import struct
+import zlib
 import xml.etree.ElementTree as ET
 
 
@@ -1001,6 +1002,14 @@ def validate_playable_characters(root: Path) -> None:
                     if any(part.findtext(role)!=relative for role,relative in expected_textures.items()
                            if role in ("hands","head")):
                         raise ValueError(f"authored player skin compositor mapping changed: {name}")
+            else:
+                variant_nodes=(actor.findall("shirt")+actor.findall("hskin")+actor.findall("hair")+
+                               actor.findall("eyes")+actor.findall("legs")+actor.findall("boots"))
+                for part in variant_nodes:
+                    values=[part.text] if part.text and part.text.strip() else [child.text for child in part]
+                    for relative in values:
+                        if relative and relative.startswith("actors/playable/") and not (root/relative).is_file():
+                            raise ValueError(f"luminous customization texture is missing: {relative}")
     if len(body_digests) != len(expected):
         raise ValueError("playable races or genders share duplicate body silhouettes")
     if len(skeleton_digests) != len(expected):
@@ -1019,9 +1028,17 @@ def validate_playable_characters(root: Path) -> None:
         minimum=(6000,11000) if name.startswith("luminous_") else (20000,30000)
         if record["vertices"]<minimum[0] or record["triangles"]<minimum[1]:
             raise ValueError(f"cleaned authored source fell below fidelity budget: {name}")
-        texture_required=not name.startswith("luminous_")
-        if not (source/f"{name}.emesh").is_file() or (texture_required and not (source/f"{name}.png").is_file()):
+        if not (source/f"{name}.emesh").is_file() or not (source/f"{name}.png").is_file():
             raise ValueError(f"authored player source is missing: {name}")
+    animation_source=(source/"luminous_universal.eanim").read_bytes()
+    if animation_source[:8]!=b"EANM\x01\0\0\0":
+        raise ValueError("luminous Universal animation source has an invalid header")
+    animation_raw=zlib.decompress(animation_source[12:])
+    animation_manifest=json.loads(animation_raw)
+    if animation_manifest.get("schema")!=2 or set(animation_manifest.get("clips",{}))!={
+            "idle","idle2","walk","run","combat_idle","attack","cast","pain","die",
+            "sit_down","sit","stand_up","harvest","pick","drop"}:
+        raise ValueError("luminous Universal animations are not bind-relative and complete")
 
 def validate_map_dds(root: Path) -> None:
     local_maps = sorted((root / "maps/nymara").glob("*.dds"))

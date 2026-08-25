@@ -11,7 +11,8 @@ import xml.etree.ElementTree as ET
 import zlib
 import json
 
-from generate_characters import BONES, VERSION, _binary_header, _binary_string, write_cal
+from generate_characters import (BONES, VERSION, _binary_header, _binary_string, write_cal,
+                                 HAIR, EYES, CLOTH, PANTS, BOOTS, CULTURES)
 
 
 SOURCE = Path(__file__).resolve().parents[1] / "source/player_models"
@@ -31,7 +32,9 @@ ATLAS_REGIONS = {
 
 def read_emesh(path):
     data=path.read_bytes()
-    if data[:8] != b"EMSH\x01\x00\x00\x00": raise ValueError(f"invalid authored mesh: {path}")
+    if data[:8] not in (b"EMSH\x01\x00\x00\x00",b"EMSH\x02\x00\x00\x00"):
+        raise ValueError(f"invalid authored mesh: {path}")
+    weighted=data[4]==2
     raw_size,compressed_size=struct.unpack_from("<II",data,8)
     raw=zlib.decompress(data[16:16+compressed_size])
     if len(raw)!=raw_size: raise ValueError(f"authored mesh size mismatch: {path}")
@@ -39,8 +42,15 @@ def read_emesh(path):
     positions=[struct.unpack_from("<3f",raw,offset+i*12) for i in range(vertices)]; offset+=vertices*12
     normals=[struct.unpack_from("<3f",raw,offset+i*12) for i in range(vertices)]; offset+=vertices*12
     uvs=[struct.unpack_from("<2f",raw,offset+i*8) for i in range(vertices)]; offset+=vertices*8
+    weights=None
+    if weighted:
+        weights=[]
+        for i in range(vertices):
+            values=struct.unpack_from("<4H4f",raw,offset+i*24)
+            weights.append([(bone,weight) for bone,weight in zip(values[:4],values[4:]) if weight>1e-6])
+        offset+=vertices*24
     triangles=[struct.unpack_from("<3I",raw,offset+i*12) for i in range(faces)]
-    return positions,normals,uvs,triangles
+    return positions,normals,uvs,triangles,weights
 
 
 def blend(a,b,t):
@@ -158,14 +168,14 @@ def compatible_weights(left, right):
     return any(a & group and b & group for group in groups)
 
 
-def compact_section(positions,normals,uvs,faces,section):
+def compact_section(positions,normals,uvs,faces,section,source_weights=None):
     vertices=[]; compact_faces=[]; remap={}
     for face in faces:
         role=texture_role(section,[positions[index] for index in face]); mapped=[]
         for index in face:
             key=(index,role)
             if key not in remap:
-                weights=influences(positions[index]); remap[key]=len(vertices)
+                weights=source_weights[index] if source_weights is not None else influences(positions[index]); remap[key]=len(vertices)
                 vertices.append((positions[index],normals[index],atlas_uv(role,uvs[index]),weights))
             mapped.append(remap[key])
         compact_faces.append(tuple(mapped))
@@ -338,6 +348,35 @@ def write_dds(source,path,target_size=None):
     path.parent.mkdir(parents=True,exist_ok=True); path.write_bytes(b"DDS "+struct.pack("<31I",*header)+body)
 
 
+def recolor(source,target,size):
+    source_width,source_height,rgba=source; width,height=size; out=bytearray(width*height*4)
+    for y in range(height):
+      sy=min(source_height-1,int((y+.5)*source_height/height))
+      for x in range(width):
+        sx=min(source_width-1,int((x+.5)*source_width/width)); source_offset=(sy*source_width+sx)*4
+        offset=(y*width+x)*4; red,green,blue,alpha=rgba[source_offset:source_offset+4]
+        light=(red*54+green*183+blue*19)//256
+        for channel,value in enumerate(target):
+            out[offset+channel]=max(0,min(255,value+(light-128)*3//4))
+        out[offset+3]=alpha
+    return width,height,bytes(out)
+
+
+def write_luminous_variants(root,name,source):
+    directory=root/"actors/playable"
+    skins=(*CULTURES["luminous"],CULTURES["luminous"][1],(55,79,105),(222,224,216))
+    for index,color in enumerate(skins):
+        write_dds(recolor(source,color,(64,64)),directory/f"{name}_skin_{index}_hands.dds")
+        write_dds(recolor(source,color,(128,128)),directory/f"{name}_skin_{index}_head.dds")
+    for index,color in enumerate(HAIR): write_dds(recolor(source,color,(136,192)),directory/f"{name}_hair_{index}.dds")
+    for index,color in enumerate(EYES): write_dds(recolor(source,color,(24,24)),directory/f"{name}_eyes_{index}.dds")
+    for index,color in enumerate(CLOTH):
+        write_dds(recolor(source,color,(160,160)),directory/f"{name}_shirt_{index}_arms.dds")
+        write_dds(recolor(source,color,(196,216)),directory/f"{name}_shirt_{index}_torso.dds")
+    for index,color in enumerate(PANTS): write_dds(recolor(source,color,(160,160)),directory/f"{name}_pants_{index}.dds")
+    for index,color in enumerate(BOOTS): write_dds(recolor(source,color,(156,160)),directory/f"{name}_boots_{index}.dds")
+
+
 def patch_actor_defs(path,name,actor_id,texture,preserve_customization=False):
     tree=ET.parse(path); root=tree.getroot(); actor=root.find(f"actor[@id='{actor_id}']")
     if actor is None: raise ValueError(f"missing player actor {actor_id}")
@@ -357,6 +396,23 @@ def patch_actor_defs(path,name,actor_id,texture,preserve_customization=False):
             if len(part):
                 for child in part: child.text=f"actors/playable/{name}_{child.tag}.dds"
             else: part.text=f"actors/playable/{name}_{tag}.dds"
+    if name.startswith("luminous_"):
+        for part in actor.findall("shirt"):
+            ident=part.attrib["id"]
+            part.find("arms").text=f"actors/playable/{name}_shirt_{ident}_arms.dds"
+            part.find("torso").text=f"actors/playable/{name}_shirt_{ident}_torso.dds"
+        for part in actor.findall("hskin"):
+            ident=part.attrib["id"]
+            part.find("hands").text=f"actors/playable/{name}_skin_{ident}_hands.dds"
+            part.find("head").text=f"actors/playable/{name}_skin_{ident}_head.dds"
+        for part in actor.findall("hair"):
+            part.text=f"actors/playable/{name}_hair_{part.attrib['id']}.dds"
+        for part in actor.findall("eyes"):
+            part.text=f"actors/playable/{name}_eyes_{part.attrib['id']}.dds"
+        for part in actor.findall("legs"):
+            part.find("skin").text=f"actors/playable/{name}_pants_{part.attrib['id']}.dds"
+        for part in actor.findall("boots"):
+            part.find("skin").text=f"actors/playable/{name}_boots_{part.attrib['id']}.dds"
     frames=actor.find("frames"); mapping={
       "CAL_idle":"idle","CAL_idle2":"idle2","CAL_walk":"walk","CAL_run":"run",
       "CAL_combat_idle":"combat_idle","CAL_attack_up_1":"attack","CAL_attack_down_1":"attack",
@@ -396,7 +452,7 @@ def imported_animation(path,bones,clip):
 
 
 def generate_model(root,name,actor_id):
-    positions,normals,uvs,triangles=read_emesh(SOURCE/f"{name}.emesh")
+    positions,normals,uvs,triangles,source_weights=read_emesh(SOURCE/f"{name}.emesh")
     source_vertices,source_faces=len(positions),len(triangles)
     positions,normals,uvs,triangles=clean_mesh(positions,normals,uvs,triangles)
     if len(triangles) < source_faces * .999:
@@ -405,10 +461,11 @@ def generate_model(root,name,actor_id):
     split={section:[] for section in SECTION_NAMES}
     for face in triangles: split[section_for_triangle([positions[i] for i in face])].append(face)
     base=root/"actors/playable"
-    all_vertices=[(p,n,u,influences(p)) for p,n,u in zip(positions,normals,uvs)]
+    all_vertices=[(p,n,u,source_weights[index] if source_weights is not None else influences(p))
+                  for index,(p,n,u) in enumerate(zip(positions,normals,uvs))]
     write_mesh(base/f"{name}_body.xmf",all_vertices,triangles)
     for section in SECTION_NAMES:
-        vertices,faces=compact_section(positions,normals,uvs,split[section],section)
+        vertices,faces=compact_section(positions,normals,uvs,split[section],section,source_weights)
         write_mesh(base/f"{name}_{section}.xmf",vertices,faces)
     # The authored source supplies one intentional head per sex; retain the
     # five protocol slots without fabricating distorted alternatives.
@@ -425,13 +482,12 @@ def generate_model(root,name,actor_id):
     texture=f"actors/playable/{name}.dds"
     # Retain the full atlas as a QA/reference artifact; runtime enhanced actors
     # consume the compositor-sized role textures below.
-    preserve_customization=name.startswith("luminous_")
-    if not preserve_customization:
-        source_texture=png_rgba(SOURCE/f"{name}.png")
-        write_dds(source_texture,root/texture)
-        for role,(_,_,width,height) in ATLAS_REGIONS.items():
-            write_dds(source_texture,root/f"actors/playable/{name}_{role}.dds",(width*4,height*4))
-    patch_actor_defs(root/"actor_defs/actor_defs.xml",name,actor_id,texture,preserve_customization)
+    source_texture=png_rgba(SOURCE/f"{name}.png")
+    write_dds(source_texture,root/texture)
+    for role,(_,_,width,height) in ATLAS_REGIONS.items():
+        write_dds(source_texture,root/f"actors/playable/{name}_{role}.dds",(width*4,height*4))
+    if name.startswith("luminous_"): write_luminous_variants(root,name,source_texture)
+    patch_actor_defs(root/"actor_defs/actor_defs.xml",name,actor_id,texture,False)
     print(f"{name}: {source_vertices}->{len(positions)} vertices, {source_faces}->{len(triangles)} triangles, {sum(len(v) for v in split.values())} assigned")
 
 
