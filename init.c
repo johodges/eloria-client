@@ -897,6 +897,13 @@ void init_stuff(void)
 
 	// initialize the fonts, but don't load the textures yet. Do that here
 	// because the messages need the font widths.
+#ifdef TTF
+	// Eloria's loading UI is part of the branded client, not a persisted user
+	// preference.  An old configuration can disable TTF before the first font
+	// catalogue is built, which prevents EloriaSans from even being registered
+	// and leaves actor-definition progress on the legacy bitmap atlas.
+	use_ttf = 1;
+#endif
 	if (!initialize_fonts())
 	{
 		// If we can't load fonts, we cant communicate with the user. Give up.
@@ -1028,6 +1035,7 @@ void init_stuff(void)
 #ifdef TTF
 	// Saved per-category indices are loaded above. Upgrade any legacy bitmap
 	// choices only now, so the login and character screens keep EloriaSans.
+	use_ttf = 1;
 	upgrade_eloria_bitmap_fonts();
 #endif
  	update_loading_win(init_weather_str, 3);

@@ -5,6 +5,56 @@
 #include <string>
 #include <vector>
 
+namespace
+{
+bool validate_playable_race(const std::string& root, const std::string& race,
+	const std::string& gender)
+{
+	const std::string model_name = race + "_" + gender;
+	CalCoreModel model(model_name);
+	if (!model.loadCoreSkeleton(root + "/actors/playable/" + model_name + ".csf"))
+	{
+		std::cerr << model_name << " skeleton: "
+			<< CalError::getLastErrorDescription() << '\n';
+		return false;
+	}
+	for (const char *part: { "shirt", "legs", "boots", "head_0" })
+	{
+		if (model.loadCoreMesh(root + "/actors/playable/" + model_name +
+			"_" + part + ".cmf") < 0)
+		{
+			std::cerr << model_name << ' ' << part << ": "
+				<< CalError::getLastErrorDescription() << '\n';
+			return false;
+		}
+	}
+	for (const char *animation: { "idle", "idle2", "combat_idle", "walk",
+		"run", "attack", "cast", "pain", "die", "harvest", "pick", "drop",
+		"sit_down", "sit", "stand_up" })
+	{
+		if (model.loadCoreAnimation(root + "/animations/playable/" + model_name +
+			"/" + animation + ".caf") < 0)
+		{
+			std::cerr << model_name << ' ' << animation << ": "
+				<< CalError::getLastErrorDescription() << '\n';
+			return false;
+		}
+	}
+	CalModel instance(&model);
+	for (int mesh_id = 0; mesh_id < 4; ++mesh_id)
+		if (!instance.attachMesh(mesh_id)) return false;
+	instance.update(0.0f);
+	CalRenderer *renderer = instance.getRenderer();
+	if (!renderer->beginRendering() || renderer->getMeshCount() != 4)
+	{
+		std::cerr << model_name << " produced no renderable meshes\n";
+		return false;
+	}
+	renderer->endRendering();
+	return true;
+}
+}
+
 int main(int argc, char **argv)
 {
 	if (argc != 2)
@@ -13,6 +63,10 @@ int main(int argc, char **argv)
 		return 2;
 	}
 	const std::string root = argv[1];
+	for (const char *race: { "luminous", "votary", "glasswarden", "orun",
+		"greyhaven", "ssarathi", "stoneborn", "mycelari" })
+		for (const char *gender: { "female", "male" })
+			if (!validate_playable_race(root, race, gender)) return 1;
 	CalCoreModel model("Eloria generated humanoid validation");
 	if (!model.loadCoreSkeleton(root + "/actors/eloria_humanoid.csf"))
 	{

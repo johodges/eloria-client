@@ -161,12 +161,13 @@ jobs:
           assert required_creature_bones <= bone_names(
               root / "actors/creatures/eloria_quadruped.xsf")
           actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
-          player_ids = {0,1,2,3,4,5,37,38,39,40,41,42}
+          player_ids = {0,1,2,3,4,5,37,38,39,40,41,42,79,80,81,82}
           player_actors = [actor for actor in actors.findall("actor")
                            if int(actor.attrib["id"]) in player_ids]
-          assert len(player_actors) == 12
+          assert len(player_actors) == 16
           assert {actor.attrib.get("race") for actor in player_actors} == {
-              "luminous", "votary", "glasswarden", "orun", "greyhaven", "ssarathi"}
+              "luminous", "votary", "glasswarden", "orun", "greyhaven", "ssarathi",
+              "stoneborn", "mycelari"}
           none_ids = {"neck": 0, "helmet": 20, "cape": 30, "shield": 11}
           for actor in player_actors:
               assert actor.findtext("skeleton").endswith(".csf")
