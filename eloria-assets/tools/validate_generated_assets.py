@@ -1037,10 +1037,6 @@ def validate_authored_simple_assets(root: Path) -> None:
     dds_assets = {
         "textures/sigils.dds": (512, 512),
         "textures/portraits1.dds": (512, 512),
-        "textures/moonmap.dds": (512, 512),
-        "textures/BrightSun.dds": (512, 512),
-        "textures/thick_clouds.dds": (512, 512),
-        "textures/thick_clouds_detail.dds": (512, 512),
         "maps/legend.dds": (512, 512),
     }
     for relative, size in dds_assets.items():
@@ -1049,6 +1045,15 @@ def validate_authored_simple_assets(root: Path) -> None:
         if (data[:4] != b"DDS " or struct.unpack_from("<II", data, 12) !=
                 (size[1], size[0]) or data[84:88] != b"DXT5"):
             raise ValueError(f"invalid authored simple asset: {path}")
+
+    for name in ("moonmap.dds", "BrightSun.dds", "thick_clouds.dds", "thick_clouds_detail.dds"):
+        path = root / "textures" / name
+        data = path.read_bytes()
+        if data[:4] != b"DDS " or struct.unpack_from("<II", data, 12) != (512, 512):
+            raise ValueError(f"invalid startup sky texture: {path}")
+        pixel_flags, fourcc, rgb_bits = struct.unpack_from("<3I", data, 80)
+        if pixel_flags & 0x4 or fourcc != 0 or rgb_bits != 32:
+            raise ValueError(f"startup sky texture must be uncompressed 32-bit DDS: {path}")
 
     png_sets = {
         "actors/races/*.png": (6, 128, 128),
