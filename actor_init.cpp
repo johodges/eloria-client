@@ -582,6 +582,7 @@ extern "C" void build_buffers(actor_types* a)
 	ActorVertex* buffer;
 	Uint32* data32;
 	Uint32 face_count, vertex_count, max_index;
+	std::size_t vertex_capacity, face_capacity;
 	Sint32 i, j;
 	Uint32 offset, count;
 #ifdef	USE_ACTORS_OPTIMIZER
@@ -596,15 +597,23 @@ extern "C" void build_buffers(actor_types* a)
 	LOG_INFO("Build vertex buffers for '%s'", a->actor_name);
 
 	calculate_face_and_vertex_count(a->coremodel, face_count, vertex_count);
+	// CalHardwareModel may duplicate vertices when it partitions meshes to fit
+	// the bone palette.  Three vertices per source face is a conservative upper
+	// bound, while vertex_count also covers meshes containing loose vertices.
+	// The previous fixed 32768-vertex staging buffers were overrun by higher
+	// fidelity actors before getTotalVertexCount() could be queried.
+	vertex_capacity = std::max<std::size_t>(vertex_count,
+		static_cast<std::size_t>(face_count) * 3);
+	face_capacity = face_count;
 
 	a->hardware_model = new CalHardwareModel(a->coremodel);
 
-	vertex_buffer = new float[32768 * 3];
-	normal_buffer = new float[32768 * 3];
-	weight_buffer = new float[32768 * 4];
-	matrix_index_buffer = new float[32768 * 4];
-	texture_coordinate_buffer = new float[32768 * 2];
-	indices = new CalIndex[65536 * 3];
+	vertex_buffer = new float[vertex_capacity * 3];
+	normal_buffer = new float[vertex_capacity * 3];
+	weight_buffer = new float[vertex_capacity * 4];
+	matrix_index_buffer = new float[vertex_capacity * 4];
+	texture_coordinate_buffer = new float[vertex_capacity * 2];
+	indices = new CalIndex[face_capacity * 3];
 
 	a->hardware_model->setVertexBuffer(reinterpret_cast<char*>(vertex_buffer),
 		3 * sizeof(float));
