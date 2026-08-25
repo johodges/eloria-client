@@ -65,6 +65,24 @@ def validate_cursor_bmp(path):
  colours=struct.unpack_from("<I",data,46)[0]
  if (w,h,planes,bpp,colours)!=(CURSOR_COUNT*CURSOR_SIZE,CURSOR_SIZE,1,8,4):
   raise ValueError(f"{path}: cursor sheet must be 208x16, 8-bit, four-colour indexed BMP")
+
+def window_icon_bmp(source,path):
+ # Use the same crest master as the executable's elc.ico.  SDL_LoadBMP does
+ # not retain PNG alpha, so composite onto a reserved magenta colour that the
+ # client marks transparent immediately after loading.
+ icon=Image.open(source).convert("RGBA")
+ icon.thumbnail((30,30),Image.Resampling.LANCZOS)
+ canvas=Image.new("RGB",(32,32),(255,0,255))
+ left=(32-icon.width)//2;top=(32-icon.height)//2
+ canvas.paste(icon.convert("RGB"),(left,top),icon.getchannel("A"))
+ path.parent.mkdir(parents=True,exist_ok=True);canvas.save(path,"BMP")
+
+def validate_window_icon_bmp(path):
+ icon=Image.open(path).convert("RGB")
+ if icon.size!=(32,32):raise ValueError(f"{path}: window icon must be 32x32")
+ colours=set(icon.getdata())
+ if (255,0,255) not in colours or len(colours)<64:
+  raise ValueError(f"{path}: window icon lacks transparent surround or crest detail")
 def sky(x,y):
  grain=(x*13+y*29+(x^y)*3)%29
  return (72+grain//3,95+grain//2,126+grain,255)
@@ -261,7 +279,10 @@ def main():
                     ("thick_clouds",clouds),("thick_clouds_detail",clouds_detail)):
   dds(root/f"textures/{name}.dds",512,512,pixel)
  shutil.copy2(authored/"portraits/portraits1.dds",root/"textures/portraits1.dds")
- bmp(root/"icon.bmp",32,32,cursor_pixel)
+ window_icon_master=Path(__file__).resolve().parents[2]/"elc.png"
+ if not window_icon_master.is_file():raise FileNotFoundError(f"Missing Eloria window icon: {window_icon_master}")
+ window_icon_bmp(window_icon_master,root/"icon.bmp")
+ validate_window_icon_bmp(root/"icon.bmp")
  legend_target=root/"maps/legend.dds";legend_target.parent.mkdir(parents=True,exist_ok=True)
  shutil.copy2(authored/"maps/legend.dds",legend_target)
  e3d_fallback(root/"3dobjects/badobject.e3d");e3d_fallback(root/"3dobjects/bag1.e3d");e3d_fallback(root/"3dobjects/portal1.e3d")
