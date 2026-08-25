@@ -79,10 +79,17 @@ def login_menu_pixel(x,y):
  return (199,137,70,255) if border else (49,82,91,235) if selected else (18,29,34,225)
 def portrait(x,y):
  cell=(x//128)+(y//128)*4;lx=x%128;ly=y%128
- skin=((126+cell*17)%90+105,(83+cell*11)%65+80,(61+cell*7)%45+65,255)
- if (lx-64)**2+(ly-56)**2<34**2:return skin
- if 42<lx<86 and 84<ly<126:return (42+cell*9,61+cell*7,70+cell*11,255)
- return (24,31,38,255)
+ cultures=((196,151,112),(151,167,176),(123,92,145),(183,115,61),(83,112,128),(79,139,108),(126,116,105),(125,151,91))
+ accent=cultures[cell%len(cultures)];female=(cell//8)==0
+ vignette=max(0,35-int(((lx-64)**2+(ly-64)**2)**.5/2));base=(12+vignette//5,28+vignette//3,34+vignette//2,255)
+ if (lx-64)**2+(ly-52)**2<(29 if female else 32)**2:
+  shade=max(-22,min(20,(64-lx)//2));return tuple(max(0,min(255,c+shade)) for c in accent)+(255,)
+ if 37<lx<91 and 79<ly<127:
+  weave=((lx//5+ly//5+cell)%2)*8;return (35+weave,78+weave,84+weave,255)
+ if 43<lx<85 and 20<ly<35:return (28,25,24,255)
+ if (lx-53)**2+(ly-52)**2<5 or (lx-75)**2+(ly-52)**2<5:return (74,194,205,255)
+ if abs(ly-69)<2 and 55<lx<73:return (93,48,43,255)
+ return base
 
 # Runtime HUD atlases.  The client addresses these textures with the original
 # 256-pixel UV contract; generating a generic 512-pixel panel here made every

@@ -8,6 +8,7 @@
 #include "asc.h"
 #define draw_string_small(x, y, text, max_lines) draw_string_small_zoomed((x), (y), (text), (max_lines), 1.0f)
 #include "gamewin.h"
+#include "items.h"
 #include "marketplace.h"
 #include "multiplayer.h"
 #include "notepad.h"
@@ -131,7 +132,8 @@ static int display_handler(window_info *win)
 		glColor3f(.93f, .91f, .82f);
 		safe_snprintf(text, sizeof(text), "#%u", listings[i].id);
 		draw_string_small(14, y, (const unsigned char *)text, 1);
-		draw_string_small(70, y, (const unsigned char *)listings[i].item, 1);
+		draw_item(listings[i].image_id, 50, y - 3, 20);
+		draw_string_small(74, y, (const unsigned char *)listings[i].item, 1);
 		safe_snprintf(text, sizeof(text), "%u", listings[i].quantity);
 		draw_string_small(330, y, (const unsigned char *)text, 1);
 		safe_snprintf(text, sizeof(text), "%u gc", listings[i].unit_price);
