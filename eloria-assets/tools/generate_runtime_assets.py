@@ -82,9 +82,22 @@ def login_background(x,y):
   s=max(0,1-abs(x-390)/170)*max(0,1-(y-330)/210);r+=int(35*s);g+=int(85*s);b+=int(100*s)
  return (min(255,r),min(255,g),min(255,b),255)
 def login_menu_pixel(x,y):
- selected=(y<32) or (120<=y<155) or (200<=y<235)
- border=(x<3 or y%40<3)
- return (199,137,70,255) if border else (49,82,91,235) if selected else (18,29,34,225)
+ # Atlas regions consumed by loginwin.c.  Each control uses a complete
+ # blue-black frame, warm gold bevel, and a restrained teal focus state.
+ regions=((0,0,174,28,True),(0,40,170,23,False),
+          (0,80,87,35,False),(0,120,87,35,True),
+          (100,80,138,35,False),(100,120,138,35,True),
+          (0,160,87,35,False),(0,200,87,35,True))
+ for left,top,width,height,selected in regions:
+  if left<=x<left+width and top<=y<top+height:
+   dx=min(x-left,left+width-1-x);dy=min(y-top,top+height-1-y)
+   if dx==0 or dy==0:return (20,42,49,255)
+   if dx==1 or dy==1:return (218,160,68,255) if selected else (151,108,55,255)
+   if dx==2 or dy==2:return (73,154,163,255) if selected else (75,91,88,255)
+   depth=(y-top-3)/max(1,height-6)
+   if selected:return (27+int(8*depth),68+int(12*depth),76+int(13*depth),244)
+   return (15+int(7*depth),29+int(8*depth),34+int(9*depth),242)
+ return (0,0,0,0)
 def portrait(x,y):
  cell=(x//128)+(y//128)*4;lx=x%128;ly=y%128
  cultures=((196,151,112),(151,167,176),(123,92,145),(183,115,61),(83,112,128),(79,139,108),(126,116,105),(125,151,91))
