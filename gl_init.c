@@ -93,7 +93,13 @@ static void load_window_icon(void)
 	if (icon_bmp == NULL)
 		LOG_ERROR("Failed to load window icon: %s\n",str_buf);
 	else
+	{
+		/* Generated icon.bmp uses a magenta transparency key so it can carry
+		 * the same anti-aliased crest silhouette as the executable icon. */
+		SDL_SetColorKey(icon_bmp, SDL_TRUE,
+			SDL_MapRGB(icon_bmp->format, 255, 0, 255));
 		SDL_SetWindowIcon(el_gl_window, icon_bmp);
+	}
 	free(str_buf);
 }
 
