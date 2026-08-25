@@ -727,10 +727,22 @@ def validate_nymara_actor_runtime_graph(root: Path) -> None:
         idle=(actor.findtext("frames/CAL_idle") or "").split()[0]
         if idle != f"animations/nymara/humanoid/{slug}/idle.caf":
             raise ValueError(f"Nymara actor {actor_id} does not use its profession idle")
-        shoulder_tracks=caf_track_quaternions(root/idle)
-        for bone in (4,6):
-            if bone not in shoulder_tracks or not any(abs(q[1])>.35 for q in shoulder_tracks[bone]):
-                raise ValueError(f"Nymara actor {actor_id} idle does not lower shoulder {bone}")
+        # A production mesh must be natural in its bind pose; an animation is
+        # not allowed to conceal T-authored geometry while loading or blending.
+        mesh_xml=cal_xml((root/references["mesh"]).with_suffix(".xmf"))
+        arm_positions={5:[],7:[]}
+        for vertex in mesh_xml.findall(".//VERTEX"):
+            influence=vertex.find("INFLUENCE")
+            if influence is not None and int(influence.attrib["ID"]) in arm_positions:
+                arm_positions[int(influence.attrib["ID"])].append(
+                    tuple(map(float,vertex.findtext("POS").split())))
+        for bone,positions in arm_positions.items():
+            if not positions:
+                raise ValueError(f"Nymara actor {actor_id} has no forearm vertices for bone {bone}")
+            mean_x=sum(abs(p[0]) for p in positions)/len(positions)
+            mean_z=sum(p[2] for p in positions)/len(positions)
+            if mean_x>.55 or mean_z>1.30:
+                raise ValueError(f"Nymara actor {actor_id} retains T-bind forearm {bone}")
         resolved[actor_id] = tuple(hashlib.sha256((root / references[key]).read_bytes()).hexdigest()
                                    for key in ("mesh", "skin"))
     if {307, 309} - resolved.keys():
@@ -817,6 +829,18 @@ def validate_playable_characters(root: Path) -> None:
                      else 440 if "legs" in relative else 1000)
             if vertices < minimum:
                 raise ValueError(f"playable mesh fell below topology floor: {relative}")
+            document=cal_xml(xml_path)
+            if "boots" in relative:
+                toe_y=[float(vertex.findtext("POS").split()[1])
+                       for vertex in document.findall(".//VERTEX")]
+                if min(toe_y)>-.25:
+                    raise ValueError(f"playable boots point away from facing axis: {relative}")
+            if "head_" in relative:
+                eye_orbs=[vertex for vertex in document.findall(".//VERTEX")
+                          if vertex.find("INFLUENCE") is not None and
+                          int(vertex.find("INFLUENCE").attrib["ID"]) in (30,31)]
+                if eye_orbs:
+                    raise ValueError(f"playable head contains detached eye geometry: {relative}")
         body=(root/f"actors/playable/{culture}_{gender}_body.xmf").read_bytes()
         body_digests.add(hashlib.sha256(body).digest())
     if len(body_digests) != len(expected):

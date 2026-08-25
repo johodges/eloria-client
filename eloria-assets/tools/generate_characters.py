@@ -18,8 +18,8 @@ RACES = (
 )
 
 BONES = (("root",-1,(0.,0.,0.)),("pelvis",0,(0.,0.,.92)),("spine",1,(0.,0.,.34)),
- ("head",2,(0.,0.,.52)),("upper_arm_l",2,(-.32,0.,.38)),("lower_arm_l",4,(-.34,0.,0.)),
- ("upper_arm_r",2,(.32,0.,.38)),("lower_arm_r",6,(.34,0.,0.)),
+ ("head",2,(0.,0.,.52)),("upper_arm_l",2,(-.24,0.,.30)),("lower_arm_l",4,(0.,0.,-.30)),
+ ("upper_arm_r",2,(.24,0.,.30)),("lower_arm_r",6,(0.,0.,-.30)),
  ("upper_leg_l",1,(-.15,0.,-.08)),("lower_leg_l",8,(0.,0.,-.48)),("foot_l",9,(0.,.06,-.45)),
  ("upper_leg_r",1,(.15,0.,-.08)),("lower_leg_r",11,(0.,0.,-.48)),("foot_r",12,(0.,.06,-.45)),
  # Stable semantic anchors used by effects, equipment, capes and ranged combat.
@@ -35,7 +35,7 @@ BONES = (("root",-1,(0.,0.,0.)),("pelvis",0,(0.,0.,.92)),("spine",1,(0.,0.,.34))
  ("eye_l",3,(-.075,-.16,.035)),("eye_r",3,(.075,-.16,.035)),
  ("thumb_l",16,(-.055,-.025,0.)),("index_l",16,(-.11,-.015,0.)),
  ("thumb_r",17,(.055,-.025,0.)),("index_r",17,(.11,-.015,0.)),
- ("toe_l",10,(0.,.17,-.01)),("toe_r",13,(0.,.17,-.01)))
+ ("toe_l",10,(0.,-.17,-.01)),("toe_r",13,(0.,-.17,-.01)))
 
 def write_cal(path, magic, root):
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -242,12 +242,12 @@ def mesh(path, section="all", variant=0, culture=None, gender=None):
                                 bones,vertices,faces,legs_uv,22)
         if section in ("all","boots"):
             for side,bones in ((-1,[9,10,10]),(1,[12,13,13])):
-                profile_surface([(side*.12*hips*gender_width,.01,.34*height,.105,.115),(side*.12*hips*gender_width,.03,.10*height,.11,.13),(side*.12*hips*gender_width,.14,.025*height,.12,.24)],
+                profile_surface([(side*.12*hips*gender_width,.01,.34*height,.105,.115),(side*.12*hips*gender_width,-.03,.10*height,.11,.13),(side*.12*hips*gender_width,-.14,.025*height,.12,.24)],
                                 bones,vertices,faces,boots_uv,22)
         if section in ("all","head"):
             center,size,bone,uv_rect=parts[1]
             cx,cy,cz=center; sx,sy,sz=size
-            ellipsoid((0,-.01,cz*height),(sx*head_scale*gender_width,sy,sz*height),bone,vertices,faces,uv_rect,16,28)
+            ellipsoid((0,-.01,cz*height),(sx*head_scale*gender_width,sy,sz*height),bone,vertices,faces,uv_rect,22,42)
         for i in (() if section in ("all","shirt","legs","boots","head") else chosen):
             center,size,bone,uv_rect=parts[i]
             cx,cy,cz=center; sx,sy,sz=size
@@ -260,14 +260,11 @@ def mesh(path, section="all", variant=0, culture=None, gender=None):
             scaled_size=(sx*width*gender_width,sy*(1.04 if feature in ("cold","maritime") else .96),sz*height)
             ellipsoid(scaled_center,scaled_size,bone,vertices,faces,uv_rect,10 if i!=1 else 12,18 if i!=1 else 22)
         if section in ("all","head"):
-            # Profiled face geometry replaces the featureless head capsule.
+            # Keep relief inside the head silhouette. Eyes, lips and brows are
+            # atlas detail; separate eye and ear spheres read as bubbles.
             z=1.51*height
-            ellipsoid((0,-.125,z-.055),(.22,.16,.20*height),3,vertices,faces,head_uv,10,20)
-            ellipsoid((0,-.245,z+.015),(.075,.15,.12*height),3,vertices,faces,head_uv,8,16)
-            for side in (-1,1):
-                ellipsoid((side*.105*head_scale*gender_width,-.205,z+.055),(.075,.045,.048),3,vertices,faces,head_uv,5,10)
-                ellipsoid((side*.105*head_scale*gender_width,-.205,z+.055),(.032,.018,.028),30 if side<0 else 31,vertices,faces,head_uv,4,8)
-                ellipsoid((side*.105*head_scale*gender_width,-.01,z+.005),(.055,.035,.12),3,vertices,faces,head_uv,5,10)
+            ellipsoid((0,-.137,z+.005),(.052,.055,.090*height),3,
+                      vertices,faces,head_uv,6,12)
         if section in ("all","shirt"):
             # Hands and fingers give gestures a readable silhouette at close range.
             for side,bone,thumb,index in ((-1,5,32,33),(1,7,34,35)):
