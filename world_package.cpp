@@ -17,6 +17,10 @@
 #include "tiles.h"
 #include "lights.h"
 #include "sky.h"
+extern "C" {
+extern float ambient_r, ambient_g, ambient_b;
+extern char dungeon;
+}
 namespace {
 using json=nlohmann::json;
 bool active=false;std::string minimap_path;float sun[4]={0,0,1,0},fog_color[4]={0,0,0,1},fog_start=100,fog_end=500;bool fog=false;int collision_w=0,collision_h=0;bool show_collision=false;
