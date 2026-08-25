@@ -357,12 +357,16 @@ static int display_login_handler (window_info *win)
 		const int logo_width = min2i((int)(win->len_x * .56f), (int)(win->len_y * .82f));
 		const int logo_height = logo_width / 2;
 		bind_texture(login_logo);
+		glPushAttrib(GL_COLOR_BUFFER_BIT);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glColor4f(1.0f, 1.0f, 1.0f, .98f);
 		glBegin(GL_QUADS);
 		draw_2d_thing(0.0f, 0.0f, 1.0f, 1.0f,
 			(win->len_x-logo_width)/2, max2i(8, username_bar_y-logo_height-28),
 			(win->len_x+logo_width)/2, max2i(8, username_bar_y-logo_height-28)+logo_height);
 		glEnd();
+		glPopAttrib();
 	}
 
 	// ok, start drawing the interface...
