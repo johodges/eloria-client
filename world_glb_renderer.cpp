@@ -8,12 +8,10 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
-extern "C" {
 #include "errors.h"
 #include "bbox_tree.h"
 #include "gl_init.h"
 #include "textures.h"
-}
 namespace {
 using json=nlohmann::json;
 struct V{float p[3],n[3],uv[2],color[4];};struct P{std::vector<V>v;std::vector<uint32_t>i;GLuint vb=0,ib=0;Uint32 tex=0;float color[4]={1,1,1,1},cutoff=.5f,min[3],max[3];bool blend=false,mask=false,two=false;};struct I{size_t p;float m[16];AABBOX bbox;};

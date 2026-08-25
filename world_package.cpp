@@ -11,18 +11,12 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
-extern "C" {
 #include "asc.h"
 #include "errors.h"
 #include "io/map_io.h"
 #include "tiles.h"
 #include "lights.h"
 #include "sky.h"
-extern unsigned char *tile_map, *height_map;
-extern int tile_map_size_x, tile_map_size_y;
-extern float ambient_r, ambient_g, ambient_b;
-extern int dungeon;
-}
 namespace {
 using json=nlohmann::json;
 bool active=false;std::string minimap_path;float sun[4]={0,0,1,0},fog_color[4]={0,0,0,1},fog_start=100,fog_end=500;bool fog=false;int collision_w=0,collision_h=0;bool show_collision=false;
