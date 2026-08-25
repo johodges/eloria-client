@@ -216,13 +216,13 @@ def mesh(path, section="all", variant=0, culture=None, gender=None):
     legs_uv=(39/128,0,79/128,40/128); boots_uv=(0,0,39/128,40/128)
     # Match the proven EL player coordinate envelope.  In particular, arms are
     # down beside the torso rather than extending almost two units in a T pose.
-    parts=(((0,0,1.12),(.50,.24,.60),2,torso_uv),((0,-.01,1.51),(.18,.23,.27),3,head_uv),
+    parts=(((0,0,1.12),(.50,.24,.60),2,torso_uv),((0,-.01,1.62),(.18,.23,.27),3,head_uv),
       ((-.27,0,1.10),(.14,.18,.42),4,arms_uv),((-.27,0,.75),(.13,.17,.34),5,hands_uv),((.27,0,1.10),(.14,.18,.42),6,arms_uv),((.27,0,.75),(.13,.17,.34),7,hands_uv),
       ((-.12,0,.70),(.18,.22,.52),8,legs_uv),((-.12,0,.28),(.17,.21,.42),9,legs_uv),((-.12,.02,.08),(.18,.30,.18),10,boots_uv),
       ((.12,0,.70),(.18,.22,.52),11,legs_uv),((.12,0,.28),(.17,.21,.42),12,legs_uv),((.12,.02,.08),(.18,.30,.18),13,boots_uv))
     if section=="head":
         head_sizes=((.18,.23,.27),(.19,.22,.26),(.17,.24,.28),(.20,.23,.25),(.18,.21,.29))
-        parts=list(parts);parts[1]=((0,-.01,1.51),head_sizes[variant%len(head_sizes)],3,head_uv)
+        parts=list(parts);parts[1]=((0,-.01,1.62),head_sizes[variant%len(head_sizes)],3,head_uv)
     sections={"head":(1,),"shirt":(0,2,3,4,5),"legs":(6,7,9,10),"boots":(8,11),"none":()}
     chosen=range(len(parts)) if section=="all" else sections[section]
     if culture:
@@ -231,23 +231,30 @@ def mesh(path, section="all", variant=0, culture=None, gender=None):
         # Connected garment/anatomical shells eliminate the bead-like gaps of
         # the former one-ellipsoid-per-bone mannequin.
         if section in ("all","shirt"):
-            profile_surface([(0,0,.84*height,.17*hips*gender_width,.12),(0,0,1.02*height,.255*shoulders*gender_width,.145),(0,0,1.30*height,.29*shoulders*gender_width,.16),(0,0,1.48*height,.205*shoulders*gender_width,.13)],
-                            [1,2,2,25],vertices,faces,torso_uv,30)
+            profile_surface([(0,0,.84*height,.17*hips*gender_width,.12),(0,0,1.02*height,.255*shoulders*gender_width,.145),(0,0,1.28*height,.29*shoulders*gender_width,.16),(0,0,1.43*height,.16*shoulders*gender_width,.115)],
+                            [1,2,2,25],vertices,faces,torso_uv,36)
+            profile_surface([(0,0,1.39*height,.078*gender_width,.072),(0,0,1.48*height,.082*gender_width,.074),(0,0,1.55*height,.088*gender_width,.078)],
+                            [26,26,26],vertices,faces,head_uv,28)
             for side,bones in ((-1,[28,4,5,16]),(1,[29,6,7,17])):
                 profile_surface([(side*.20*shoulders*gender_width,0,1.39*height,.125,.13),(side*.285*shoulders*gender_width,0,1.18*height,.105,.115),(side*.285*shoulders*gender_width,-.005,.91*height,.09,.10),(side*.285*shoulders*gender_width,-.015,.72*height,.105,.12)],
-                                bones,vertices,faces,arms_uv,22)
+                                bones,vertices,faces,arms_uv,28)
         if section in ("all","legs"):
             for side,bones in ((-1,[8,8,9,9]),(1,[11,11,12,12])):
                 profile_surface([(side*.115*hips*gender_width,0,.91*height,.125,.135),(side*.12*hips*gender_width,0,.67*height,.118,.128),(side*.12*hips*gender_width,.005,.40*height,.095,.108),(side*.12*hips*gender_width,.01,.12*height,.085,.095)],
-                                bones,vertices,faces,legs_uv,22)
+                                bones,vertices,faces,legs_uv,28)
         if section in ("all","boots"):
-            for side,bones in ((-1,[9,10,10]),(1,[12,13,13])):
-                profile_surface([(side*.12*hips*gender_width,.01,.34*height,.105,.115),(side*.12*hips*gender_width,-.03,.10*height,.11,.13),(side*.12*hips*gender_width,-.14,.025*height,.12,.24)],
-                                bones,vertices,faces,boots_uv,22)
+            for side,shaft_bones,foot_bone in ((-1,[9,10,10],10),(1,[12,13,13],13)):
+                x=side*.12*hips*gender_width
+                profile_surface([(x,.005,.34*height,.105,.11),(x,0,.18*height,.102,.105),(x,-.015,.085*height,.105,.105)],
+                                shaft_bones,vertices,faces,boots_uv,28)
+                # Horizontal foot with a constant-radius underside: center Z
+                # equals vertical radius, producing a planted sole at Z=0.
+                profile_surface([(x,.035,.070*height,.070*height,.105),(x,-.10,.070*height,.070*height,.115),(x,-.27,.070*height,.070*height,.105)],
+                                [foot_bone]*3,vertices,faces,boots_uv,28)
         if section in ("all","head"):
             center,size,bone,uv_rect=parts[1]
             cx,cy,cz=center; sx,sy,sz=size
-            ellipsoid((0,-.01,cz*height),(sx*head_scale*gender_width,sy,sz*height),bone,vertices,faces,uv_rect,22,42)
+            ellipsoid((0,-.01,cz*height),(sx*head_scale*gender_width,sy,sz*height),bone,vertices,faces,uv_rect,26,48)
         for i in (() if section in ("all","shirt","legs","boots","head") else chosen):
             center,size,bone,uv_rect=parts[i]
             cx,cy,cz=center; sx,sy,sz=size
@@ -262,7 +269,7 @@ def mesh(path, section="all", variant=0, culture=None, gender=None):
         if section in ("all","head"):
             # Keep relief inside the head silhouette. Eyes, lips and brows are
             # atlas detail; separate eye and ear spheres read as bubbles.
-            z=1.51*height
+            z=1.62*height
             ellipsoid((0,-.137,z+.005),(.052,.055,.090*height),3,
                       vertices,faces,head_uv,6,12)
         if section in ("all","shirt"):
