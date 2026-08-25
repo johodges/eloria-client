@@ -490,6 +490,15 @@ def validate_runtime_xml(root: Path) -> None:
     knowledge = root / "knowledge.xml"
     if not knowledge.is_file() or ET.parse(knowledge).getroot().tag != "Knowledge_Books":
         raise ValueError("knowledge.xml must use the client-required Knowledge_Books root")
+    rules = root / "languages/en/rules.xml"
+    if not rules.is_file():
+        raise ValueError("missing languages/en/rules.xml")
+    rules_root = ET.parse(rules).getroot()
+    if rules_root.tag != "rules":
+        raise ValueError("languages/en/rules.xml must use the rules root")
+    for node in rules_root.findall("rule") + rules_root.findall("info"):
+        if node.find("short") is None or node.find("long") is None:
+            raise ValueError(f"rules.xml {node.tag} entries require short and long children")
 
 
 def validate_skeletons(root: Path) -> None:

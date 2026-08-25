@@ -299,7 +299,7 @@ def main():
  <rule><short>Respect other players.</short><long>Harassment, threats, impersonation, and targeted abuse are not permitted.</long></rule>
  <rule><short>Play fairly.</short><long>Do not exploit defects, automate play, or interfere with the service or another player.</long></rule>
  <rule><short>Protect the original world.</short><long>Only submit content you have permission to share and respect Eloria's independent asset policy.</long></rule>
- <info>Rules may evolve during testing. Material changes will be announced with the server release notes.</info>
+ <info><short>Testing notice</short><long>Rules may evolve during testing. Material changes will be announced with the server release notes.</long></info>
 </rules>\n''')
  for name in ("console","errors","help","options","spells","stats","titles"):
   write_text(root/f"languages/en/strings/{name}.xml","<root/>\n")
