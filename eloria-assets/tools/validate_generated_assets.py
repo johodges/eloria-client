@@ -491,8 +491,8 @@ def validate_runtime_xml(root: Path) -> None:
 
 def validate_skeletons(root: Path) -> None:
     skeletons = sorted(root.glob("actors/**/*.xsf"))
-    if len(skeletons) != 7:
-        raise ValueError(f"expected 7 generated skeletons, found {len(skeletons)}")
+    if len(skeletons) != 11:
+        raise ValueError(f"expected 11 generated skeletons, found {len(skeletons)}")
     for path in skeletons:
         document = cal_xml(path)
         bones = document.findall("BONE")
@@ -816,6 +816,7 @@ def validate_playable_characters(root: Path) -> None:
         41:("ssarathi","female"),42:("ssarathi","male"),
     }
     body_digests=set()
+    authored={"glasswarden_female","glasswarden_male","ssarathi_female","ssarathi_male"}
     for actor_id,(culture,gender) in expected.items():
         actor=actors.find(f"actor[@id='{actor_id}']")
         if actor is None or actor.attrib.get("race") != culture or actor.attrib.get("gender") != gender:
@@ -844,7 +845,8 @@ def validate_playable_characters(root: Path) -> None:
                 positions=[tuple(map(float,vertex.findtext("POS").split()))
                            for vertex in document.findall(".//VERTEX")]
                 toe_y=[position[1] for position in positions]
-                if min(toe_y)>-.25:
+                facing_floor=-.12 if f"{culture}_{gender}" in authored else -.25
+                if min(toe_y)>facing_floor:
                     raise ValueError(f"playable boots point away from facing axis: {relative}")
                 if (min(position[2] for position in positions) < -.002 or
                         sum(abs(position[2])<.002 for position in positions)<4):
@@ -855,7 +857,7 @@ def validate_playable_characters(root: Path) -> None:
                           int(vertex.find("INFLUENCE").attrib["ID"]) in (30,31)]
                 if eye_orbs:
                     raise ValueError(f"playable head contains detached eye geometry: {relative}")
-            if "shirt" in relative:
+            if "shirt" in relative and f"{culture}_{gender}" not in authored:
                 neck=[vertex for vertex in document.findall(".//VERTEX")
                       if vertex.find("INFLUENCE") is not None and
                       int(vertex.find("INFLUENCE").attrib["ID"])==26]
@@ -863,6 +865,32 @@ def validate_playable_characters(root: Path) -> None:
                     raise ValueError(f"playable torso lacks an authored neck: {relative}")
         body=(root/f"actors/playable/{culture}_{gender}_body.xmf").read_bytes()
         body_digests.add(hashlib.sha256(body).digest())
+        name=f"{culture}_{gender}"
+        if name in authored:
+            expected_skeleton=f"actors/playable/{name}.csf"
+            if actor.findtext("skeleton") != expected_skeleton or not (root/expected_skeleton).is_file():
+                raise ValueError(f"authored player {actor_id} does not use its fitted skeleton")
+            body_xml=cal_xml(root/f"actors/playable/{name}_body.xmf")
+            body_vertices=body_xml.findall(".//VERTEX")
+            if len(body_vertices)<20000:
+                raise ValueError(f"authored player topology regressed: {name}")
+            if sum(len(vertex.findall("INFLUENCE"))>1 for vertex in body_vertices)<100:
+                raise ValueError(f"authored player lacks smooth multi-bone skinning: {name}")
+            neck=sum(1 for vertex in body_vertices for influence in vertex.findall("INFLUENCE")
+                     if int(influence.attrib["ID"])==26 and float(influence.text)>.05)
+            if neck<190:
+                raise ValueError(f"authored player lacks a weighted neck: {name}")
+            texture=f"actors/playable/{name}.dds"; data=(root/texture).read_bytes()
+            if data[:4]!=b"DDS " or struct.unpack_from("<II",data,12)!=(2048,2048):
+                raise ValueError(f"authored player atlas is not runtime 2048 DDS: {name}")
+            if struct.unpack_from("<I",data,28)[0] < 5:
+                raise ValueError(f"authored player atlas lacks mipmaps: {name}")
+            for tag in ("CAL_idle","CAL_idle2","CAL_walk","CAL_run","CAL_combat_idle",
+                        "CAL_attack_up_1","CAL_attack_cast","CAL_pain1","CAL_die1",
+                        "CAL_idle_sit","CAL_sit_down","CAL_stand_up","CAL_harvest","CAL_pick","CAL_drop"):
+                relative=(actor.findtext(f"frames/{tag}") or "").split()[0]
+                if not relative.startswith(f"animations/playable/{name}/") or not (root/relative).is_file():
+                    raise ValueError(f"authored player {name} lacks dedicated {tag}")
     if len(body_digests) != len(expected):
         raise ValueError("playable races or genders share duplicate body silhouettes")
     for culture,gender in expected.values():
@@ -870,6 +898,16 @@ def validate_playable_characters(root: Path) -> None:
         vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(body).findall("SUBMESH"))
         if vertices < 4000:
             raise ValueError(f"playable body fell below production topology budget: {body}")
+
+    source=Path(__file__).resolve().parents[1]/"source/player_models"
+    manifest=json.loads((source/"manifest.json").read_text(encoding="utf-8"))
+    if set(manifest.get("models",{})) != authored:
+        raise ValueError("authored player source manifest is incomplete")
+    for name,record in manifest["models"].items():
+        if record["vertices"]<20000 or record["triangles"]<30000:
+            raise ValueError(f"cleaned authored source fell below fidelity budget: {name}")
+        if not (source/f"{name}.emesh").is_file() or not (source/f"{name}.png").is_file():
+            raise ValueError(f"authored player source is missing: {name}")
 
 def validate_map_dds(root: Path) -> None:
     local_maps = sorted((root / "maps/nymara").glob("*.dds"))
