@@ -23,7 +23,7 @@ def source_xz(cell_x: int, cell_y: int) -> tuple[float, float]:
 def walkable(x: float, z: float) -> bool:
     # V1 intentionally exposes the complete authored terrain envelope. A later
     # art pass can replace this conservative grid with detailed blockers.
-    return -750.0 <= x <= 750.0 and -820.0 <= z <= 750.0
+    return True
 
 
 def main() -> None:
