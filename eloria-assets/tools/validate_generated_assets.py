@@ -487,6 +487,9 @@ def validate_runtime_xml(root: Path) -> None:
     path = root / "extentions.xml"
     if not path.is_file() or ET.parse(path).getroot().tag != "extentions":
         raise ValueError("missing or invalid legacy extentions.xml")
+    knowledge = root / "knowledge.xml"
+    if not knowledge.is_file() or ET.parse(knowledge).getroot().tag != "Knowledge_Books":
+        raise ValueError("knowledge.xml must use the client-required Knowledge_Books root")
 
 
 def validate_skeletons(root: Path) -> None:
@@ -759,6 +762,20 @@ def validate_nymara_actor_runtime_graph(root: Path) -> None:
         raise ValueError("Toran (307) or Nima Vey (309) is missing from the client actor registry")
     if resolved[307][0] == resolved[309][0] or resolved[307][1] == resolved[309][1]:
         raise ValueError("Toran and Nima Vey unexpectedly share a mesh or texture digest")
+
+    creature_actors = [actor for actor in actors.findall("actor")
+                       if 400 <= int(actor.attrib["id"]) < 500]
+    if not creature_actors:
+        raise ValueError("Nymara creature actors are missing from the client registry")
+    for actor in creature_actors:
+        actor_id = int(actor.attrib["id"])
+        for frame in actor.findall("frames/*"):
+            relative = (frame.text or "").split()[0]
+            target = root / relative
+            if Path(relative).suffix.casefold() != ".xaf" or not target.is_file():
+                raise ValueError(f"Nymara creature {actor_id} has invalid animation: {relative}")
+            if not target.read_bytes().startswith(b'<HEADER MAGIC="XAF"'):
+                raise ValueError(f"Nymara creature {actor_id} animation is not Cal3D XML: {relative}")
 
 
 def expected_dds_size(name: str) -> tuple[int, int]:

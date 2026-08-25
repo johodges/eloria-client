@@ -865,15 +865,15 @@ def cartography_pixel(name, profile):
 def checker(c1,c2):
  return lambda x,y: (*((c1 if ((x//24)^(y//24))&1 else c2)),255)
 
-def append_actor(root, aid, label, family, skel, mesh, skin, anim_dir, radius, scale, bounds, special=False):
+def append_actor(root, aid, label, family, skel, mesh, skin, anim_dir, radius, scale, bounds, special=False, animation_extension=".caf"):
  a=ET.SubElement(root,"actor",id=str(aid),type=label,family=family,collision_radius=str(radius),scale=str(scale),bounds=" ".join(map(str,bounds)))
  ET.SubElement(a,"skeleton").text=skel; ET.SubElement(a,"mesh").text=mesh; ET.SubElement(a,"skin").text=skin; ET.SubElement(a,"step_duration").text="260"
  frames=ET.SubElement(a,"frames")
- mapping={"CAL_idle":"idle.caf","CAL_idle2":"idle2.caf","CAL_walk":"walk.caf","CAL_run":"run.caf","CAL_idle_sit":"sit.caf","CAL_sit_down":"sit_down.caf","CAL_stand_up":"stand_up.caf","CAL_combat_idle":"combat_idle.caf","CAL_attack_up_1":"attack.caf","CAL_attack_down_1":"attack.caf","CAL_attack_cast":"cast.caf","CAL_pain1":"pain.caf","CAL_pain2":"pain.caf","CAL_die1":"die.caf","CAL_die2":"die.caf","CAL_harvest":"harvest.caf","CAL_pick":"pick.caf","CAL_drop":"drop.caf"}
- if special: mapping["CAL_attack_up_2"]="special.caf"
+ mapping={"CAL_idle":"idle","CAL_idle2":"idle2","CAL_walk":"walk","CAL_run":"run","CAL_idle_sit":"sit","CAL_sit_down":"sit_down","CAL_stand_up":"stand_up","CAL_combat_idle":"combat_idle","CAL_attack_up_1":"attack","CAL_attack_down_1":"attack","CAL_attack_cast":"cast","CAL_pain1":"pain","CAL_pain2":"pain","CAL_die1":"die","CAL_die2":"die","CAL_harvest":"harvest","CAL_pick":"pick","CAL_drop":"drop"}
+ if special: mapping["CAL_attack_up_2"]="special"
  for tag,f in mapping.items():
   kind=0 if tag in ("CAL_idle","CAL_idle2","CAL_walk","CAL_run","CAL_idle_sit","CAL_combat_idle") else 1
-  ET.SubElement(frames,tag).text=f"{anim_dir}/{f} {kind}"
+  ET.SubElement(frames,tag).text=f"{anim_dir}/{f}{animation_extension} {kind}"
 
 def copy_aliases(root, srcdir, names):
  for name,src in names.items():
@@ -945,7 +945,7 @@ def generate_creatures(root, actors):
   portrait_source=Path(__file__).resolve().parents[1]/f"ui/generated/portraits/creature_{i%14:02}.png"
   portrait_target=root/f"portraits/nymara/creatures/{slug}.png";portrait_target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(portrait_source,portrait_target)
   radius=round(max(body[0],body[1])*.42,2); bounds=(-body[0]/2,-body[1]/2,0,body[0]/2,body[1]/2,1.6)
-  append_actor(actors,aid,label,"nymara_creature","actors/nymara/creatures/nymara_creature.xsf",f"actors/nymara/creatures/{slug}.xmf",f"actors/nymara/creatures/{slug}.png","animations/nymara/creatures",radius,1.0,bounds,True)
+  append_actor(actors,aid,label,"nymara_creature","actors/nymara/creatures/nymara_creature.xsf",f"actors/nymara/creatures/{slug}.xmf",f"actors/nymara/creatures/{slug}.png","animations/nymara/creatures",radius,1.0,bounds,True,".xaf")
   out.append({"actor_type":aid,"id":slug,"name":label,"region":region,"portrait":f"portraits/nymara/creatures/{slug}.png","collision_radius":radius,"bounds":bounds,"sound_events":{x:f"nymara.{slug}.{x}" for x in ("idle","attack","pain","death")},"drop_table_hook":f"drops.nymara.{slug}","summoning_hook":f"summon.nymara.{slug}"})
  (root/"nymara_creatures.json").write_text(json.dumps({"schema":1,"creatures":out},indent=2)+"\n"); return out
 
