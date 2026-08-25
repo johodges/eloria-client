@@ -4,12 +4,14 @@ Validated 2026-08-25.
 
 ## Passed
 
-- GLB header is `glTF`, version 2; declared and actual length both 77,344 bytes.
+- GLB header is `glTF`, version 2; declared and actual length both 4,470,960 bytes.
 - JSON parses successfully and names `four-gates-city.glb` exactly.
-- 395 unique named nodes are present.
+- 634 unique named nodes are present.
 - Every landmark, district, gate, portcullis, bridge, collision, and navigation node referenced by JSON exists exactly in the GLB.
 - All primitives use indexed triangles with float32 positions and uint32 indices.
-- Materials use core glTF metallic-roughness, alpha blending, and emissive factors only; no proprietary extensions or external texture paths exist.
+- Materials use glTF metallic-roughness, alpha blending, emissive factors, and standard `KHR_texture_transform`; no proprietary extensions or broken external texture paths exist.
+- Three PNG atlases are embedded: base color, tangent normal, and packed ORM.
+- Every visible primitive provides `POSITION`, `NORMAL`, and `TEXCOORD_0` attributes.
 - Scene root, coordinate system, units, origin, bounds, gate approaches, spawns, paths, and camera targets are explicit.
 - Collision proxies are separate from visible meshes and align by construction.
 - Static transforms remain coherent when animation and custom effects are disabled.
@@ -27,5 +29,5 @@ Open the GLB in Blender, Babylon.js Sandbox, or Don McCurdy's glTF Viewer and co
 
 ## Release-gate limitations
 
-- This is an LOD1 production blockout with shared constant-factor PBR materials, not a final texture-authored LOD0 environment.
-- UV atlases, bespoke ornament, authored LOD0/LOD2, baked navmesh, and effect shaders remain future work.
+- This is a textured LOD1 environment, not a hand-authored cinematic LOD0.
+- Landmark-specific unwraps, bespoke ornament, authored LOD0/LOD2, baked navmesh, and effect shaders remain future work.

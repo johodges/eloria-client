@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.1.0",
+  "assetVersion": "0.2.0",
   "asset": {
     "id": "four-gates-city",
     "name": "Four Gates City",
@@ -1093,10 +1093,10 @@
     "Southern imagery conflicts in scale; the canonical double-gate sequence is preserved."
   ],
   "knownLimitations": [
-    "Procedural first-pass uses reusable untextured PBR materials; UV-authored texture atlases are future work.",
     "LOD0 and LOD2 are documented but not included.",
     "Navigation is path/area metadata rather than a baked navmesh.",
-    "Water, waterfalls and pulsing energy need client shader support for final appearance."
+    "Water, waterfalls and pulsing energy need client shader support for final appearance.",
+    "Atlas UVs are procedural cylindrical projections; landmark-specific authored unwraps remain recommended for final LOD0 close inspection."
   ],
   "sources": [
     {
@@ -1119,5 +1119,21 @@
       "file": "ChatGPT Image Aug 25, 2026, 11_38_19 PM (3).png",
       "role": "districts-and-skyline"
     }
-  ]
+  ],
+  "materials": {
+    "strategy": "embedded-4x4-atlas",
+    "resolution": [
+      1024,
+      1024
+    ],
+    "embeddedTextures": [
+      "four-gates-basecolor",
+      "four-gates-normal",
+      "four-gates-orm"
+    ],
+    "channelPacking": {
+      "orm": "R=occlusion,G=roughness,B=metallic"
+    },
+    "extension": "KHR_texture_transform"
+  }
 }
