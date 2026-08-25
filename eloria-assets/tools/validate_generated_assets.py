@@ -841,6 +841,15 @@ def validate_playable_characters(root: Path) -> None:
             if vertices < minimum:
                 raise ValueError(f"playable mesh fell below topology floor: {relative}")
             document=cal_xml(xml_path)
+            if f"{culture}_{gender}" in authored:
+                weights=[{int(influence.attrib["ID"]) for influence in vertex.findall("INFLUENCE")
+                          if float(influence.text)>.02}
+                         for vertex in document.findall(".//VERTEX")]
+                for face in document.findall(".//FACE"):
+                    indices=list(map(int,face.attrib["VERTEXID"].split()))
+                    if any(not(weights[indices[index]] & weights[indices[(index+1)%3]])
+                           for index in range(3)):
+                        raise ValueError(f"playable mesh has a disjoint-weight animation seam: {relative}")
             if "boots" in relative:
                 positions=[tuple(map(float,vertex.findtext("POS").split()))
                            for vertex in document.findall(".//VERTEX")]
@@ -872,8 +881,8 @@ def validate_playable_characters(root: Path) -> None:
                 raise ValueError(f"authored player {actor_id} does not use its fitted skeleton")
             body_xml=cal_xml(root/f"actors/playable/{name}_body.xmf")
             body_vertices=body_xml.findall(".//VERTEX")
-            if len(body_vertices)<20000:
-                raise ValueError(f"authored player topology regressed: {name}")
+            if not 15000 <= len(body_vertices) <= 32000:
+                raise ValueError(f"authored player topology is outside runtime budget: {name}")
             if sum(len(vertex.findall("INFLUENCE"))>1 for vertex in body_vertices)<100:
                 raise ValueError(f"authored player lacks smooth multi-bone skinning: {name}")
             neck=sum(1 for vertex in body_vertices for influence in vertex.findall("INFLUENCE")
@@ -885,6 +894,28 @@ def validate_playable_characters(root: Path) -> None:
                 raise ValueError(f"authored player atlas is not runtime 2048 DDS: {name}")
             if struct.unpack_from("<I",data,28)[0] < 5:
                 raise ValueError(f"authored player atlas lacks mipmaps: {name}")
+            regions={"head":(128,128),"hair":(136,192),"eyes":(24,24),
+                     "hands":(64,64),"arms":(160,160),"torso":(196,216),
+                     "boots":(156,160),"legs":(160,160)}
+            for role,size in regions.items():
+                relative=f"actors/playable/{name}_{role}.dds"
+                role_data=(root/relative).read_bytes()
+                if role_data[:4]!=b"DDS " or struct.unpack_from("<II",role_data,12)!=(size[1],size[0]):
+                    raise ValueError(f"authored player compositor texture is invalid: {relative}")
+            expected_textures={
+                "arms":f"actors/playable/{name}_arms.dds",
+                "torso":f"actors/playable/{name}_torso.dds",
+                "hands":f"actors/playable/{name}_hands.dds",
+                "head":f"actors/playable/{name}_head.dds",
+            }
+            for part in actor.findall("shirt"):
+                if any(part.findtext(role)!=relative for role,relative in expected_textures.items()
+                       if role in ("arms","torso")):
+                    raise ValueError(f"authored player shirt compositor mapping changed: {name}")
+            for part in actor.findall("hskin"):
+                if any(part.findtext(role)!=relative for role,relative in expected_textures.items()
+                       if role in ("hands","head")):
+                    raise ValueError(f"authored player skin compositor mapping changed: {name}")
             for tag in ("CAL_idle","CAL_idle2","CAL_walk","CAL_run","CAL_combat_idle",
                         "CAL_attack_up_1","CAL_attack_cast","CAL_pain1","CAL_die1",
                         "CAL_idle_sit","CAL_sit_down","CAL_stand_up","CAL_harvest","CAL_pick","CAL_drop"):
