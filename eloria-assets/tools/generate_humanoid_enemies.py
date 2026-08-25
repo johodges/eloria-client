@@ -121,20 +121,19 @@ def enemy_mesh(path, feature, scale):
         ((.15,.09,-.03),(.22*heavy,.42*heavy,.14),13),
     )
     # One connected torso, arm and leg shell replaces the disconnected
-    # ellipsoid mannequin while preserving the established T-pose rig.
+    # ellipsoid mannequin. Arm-authored details are rotated into the natural
+    # bind stance below after all profession equipment has been added.
     profile_surface([(0,0,.88*scale,.20*heavy*scale,.15*heavy*scale),(0,0,1.12*scale,.30*heavy*scale,.18*heavy*scale),(0,0,1.42*scale,.31*heavy*scale,.18*heavy*scale),(0,0,1.62*scale,.22*heavy*scale,.15*heavy*scale)],
                     [1,2,2,25],vertices,faces,sides=22)
     for side,bones in ((-1,[28,4,5,16]),(1,[29,6,7,17])):
         profile_surface([(side*.24*heavy*scale,0,1.50*scale,.14*heavy*scale,.14*scale),(side*.48*heavy*scale,0,1.42*scale,.12*heavy*scale,.12*thin*scale),(side*.76*heavy*scale,0,1.42*scale,.105*heavy*scale,.105*thin*scale),(side*.98*heavy*scale,0,1.42*scale,.11*heavy*scale,.12*scale)],bones,vertices,faces,sides=18)
     for side,bones in ((-1,[8,8,9,10]),(1,[11,11,12,13])):
-        profile_surface([(side*.15*scale,0,.91*scale,.14*heavy*scale,.15*heavy*scale),(side*.15*scale,0,.65*scale,.13*heavy*scale,.14*thin*scale),(side*.15*scale,.02,.30*scale,.105*heavy*scale,.115*thin*scale),(side*.15*scale,.12,-.03*scale,.12*heavy*scale,.23*scale)],bones,vertices,faces,sides=18)
-    ellipsoid((0,0,1.78*scale),(.34*heavy*scale,.32*scale,.38*scale),3,vertices,faces,12,22)
-    # Eyes, nose, jaw, ears, hands and boots carry the concept silhouettes at
-    # conversational camera distance instead of collapsing into one capsule.
-    ellipsoid((0,-.18*scale,1.72*scale),(.22*scale,.15*scale,.20*scale),3,vertices,faces,7,14)
-    ellipsoid((0,-.285*scale,1.81*scale),(.07*scale,.14*scale,.13*scale),3,vertices,faces,6,12)
+        profile_surface([(side*.15*scale,0,.91*scale,.14*heavy*scale,.15*heavy*scale),(side*.15*scale,0,.65*scale,.13*heavy*scale,.14*thin*scale),(side*.15*scale,-.02,.30*scale,.105*heavy*scale,.115*thin*scale),(side*.15*scale,-.12,-.03*scale,.12*heavy*scale,.23*scale)],bones,vertices,faces,sides=18)
+    ellipsoid((0,0,1.78*scale),(.34*heavy*scale,.32*scale,.38*scale),3,vertices,faces,16,28)
+    # Facial expression is primarily painted into the atlas. A restrained
+    # nose supplies profile depth without detached jaw and eye orbs.
+    ellipsoid((0,-.177*scale,1.80*scale),(.055*scale,.055*scale,.09*scale),3,vertices,faces,6,12)
     for side,hand,eye in ((-1,5,30),(1,7,31)):
-        ellipsoid((side*.10*scale,-.255*scale,1.84*scale),(.045*scale,.025*scale,.038*scale),eye,vertices,faces,4,8)
         ellipsoid((side*1.00*scale,-.02*scale,1.41*scale),(.20*scale,.18*scale,.20*scale),hand,vertices,faces,6,12)
     if feature in ("hood", "crown", "armor"):
         cuboid((0,0,1.82*scale),(.48*scale,.44*scale,.48*scale),3,vertices,faces)
@@ -333,6 +332,22 @@ def enemy_mesh(path, feature, scale):
             u0,v0,u1,v1=regions[region]
             remapped.append((pos,norm,(u0+(u1-u0)*(uv[0]%1),v0+(v1-v0)*(uv[1]%1)),bone))
         vertices=remapped
+    # Convert the historically authored T-bind arms and everything rigidly
+    # weighted to them into an arms-down bind. This includes hands, weapons,
+    # shields and staffs, so equipment cannot remain floating at shoulder level.
+    left={4,5,16,18,28,32,33}; right={6,7,17,19,20,29,34,35}
+    posed=[]
+    for pos,norm,uv,bone in vertices:
+        if bone in left or bone in right:
+            angle=-math.pi/2 if bone in left else math.pi/2
+            pivot_x=(-.24 if bone in left else .24)*scale
+            pivot_z=1.50*scale
+            ca,sa=math.cos(angle),math.sin(angle)
+            dx,dz=pos[0]-pivot_x,pos[2]-pivot_z
+            pos=(pivot_x+ca*dx+sa*dz,pos[1],pivot_z-sa*dx+ca*dz)
+            norm=(ca*norm[0]+sa*norm[2],norm[1],-sa*norm[0]+ca*norm[2])
+        posed.append((pos,norm,uv,bone))
+    vertices=posed
     root=ET.Element("MESH",NUMSUBMESH="1")
     sub=ET.SubElement(root,"SUBMESH",NUMVERTICES=str(len(vertices)),NUMFACES=str(len(faces)),MATERIAL="0",NUMLODSTEPS="0",NUMSPRINGS="0",NUMTEXCOORDS="1")
     for i,(pos,norm,uv,bone) in enumerate(vertices):
