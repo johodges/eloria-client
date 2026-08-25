@@ -94,7 +94,11 @@ typedef enum actor_types_type
 	yeti = 75,
 	snake4 = 76,
 	feros = 77,
-	dragon1 = 78
+	dragon1 = 78,
+	stoneborn_female = 79,
+	stoneborn_male = 80,
+	mycelari_female = 81,
+	mycelari_male = 82
 } actor_types_type;
 /*! @} */
 

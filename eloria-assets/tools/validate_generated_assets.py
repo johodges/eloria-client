@@ -781,8 +781,8 @@ def expected_dds_size(name: str) -> tuple[int, int]:
 
 def validate_customization_dds(root: Path) -> None:
     textures = sorted(root.glob("actors/custom/**/*.dds"))
-    if len(textures) != 654:
-        raise ValueError(f"expected 654 customization DDS files, found {len(textures)}")
+    if len(textures) != 872:
+        raise ValueError(f"expected 872 customization DDS files, found {len(textures)}")
     for path in textures:
         data = path.read_bytes()
         if data[:4] != b"DDS " or len(data) < 128:
@@ -814,6 +814,8 @@ def validate_playable_characters(root: Path) -> None:
         37:("orun","female"),38:("orun","male"),
         39:("greyhaven","female"),40:("greyhaven","male"),
         41:("ssarathi","female"),42:("ssarathi","male"),
+        79:("stoneborn","female"),80:("stoneborn","male"),
+        81:("mycelari","female"),82:("mycelari","male"),
     }
     body_digests=set()
     skeleton_digests=set()

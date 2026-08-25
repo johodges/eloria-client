@@ -416,6 +416,10 @@ static __inline__ int emote_actor_type(int actor_type){
 		case gnome_male: return 9;
 		case draegoni_female: return 10;
 		case draegoni_male: return 11;
+		case stoneborn_female: return 0;
+		case stoneborn_male: return 1;
+		case mycelari_female: return 0;
+		case mycelari_male: return 1;
 		default: return 12; //all other mobs
 	}
 }
