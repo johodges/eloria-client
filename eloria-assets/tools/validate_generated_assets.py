@@ -30,6 +30,22 @@ def cal_xml(path: Path) -> ET.Element:
     return ET.fromstring("\n".join(lines[1:]))
 
 
+def caf_track_quaternions(path: Path) -> dict[int, list[tuple[float,float,float,float]]]:
+    data=path.read_bytes()
+    if data[:4] != b"CAF\0" or len(data) < 16:
+        raise ValueError(f"invalid CAF header: {path}")
+    _,tracks=struct.unpack_from("<fi",data,8); offset=16; result={}
+    for _ in range(tracks):
+        bone,count=struct.unpack_from("<ii",data,offset); offset+=8; rotations=[]
+        for _ in range(count):
+            values=struct.unpack_from("<f3f4f",data,offset); offset+=32
+            rotations.append(tuple(values[4:8]))
+        result[bone]=rotations
+    if offset != len(data):
+        raise ValueError(f"invalid CAF track bounds: {path}")
+    return result
+
+
 def validate_maps(root: Path) -> None:
     maps = sorted(root.glob("maps/**/*.elm"))
     if len(maps) != 27:
@@ -707,6 +723,14 @@ def validate_nymara_actor_runtime_graph(root: Path) -> None:
             target = root / relative
             if not target.is_file() or target.read_bytes()[:4] != b"CAF\0":
                 raise ValueError(f"Nymara actor {actor_id} has missing/invalid animation: {relative}")
+        slug=Path(references["mesh"]).stem
+        idle=(actor.findtext("frames/CAL_idle") or "").split()[0]
+        if idle != f"animations/nymara/humanoid/{slug}/idle.caf":
+            raise ValueError(f"Nymara actor {actor_id} does not use its profession idle")
+        shoulder_tracks=caf_track_quaternions(root/idle)
+        for bone in (4,6):
+            if bone not in shoulder_tracks or not any(abs(q[1])>.35 for q in shoulder_tracks[bone]):
+                raise ValueError(f"Nymara actor {actor_id} idle does not lower shoulder {bone}")
         resolved[actor_id] = tuple(hashlib.sha256((root / references[key]).read_bytes()).hexdigest()
                                    for key in ("mesh", "skin"))
     if {307, 309} - resolved.keys():
@@ -787,14 +811,21 @@ def validate_playable_characters(root: Path) -> None:
         for relative in paths:
             xml_path=(root/relative).with_suffix(".xmf")
             vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(xml_path).findall("SUBMESH"))
-            minimum=(600 if "head_" in relative else 240 if "boots" in relative
-                     else 340 if "legs" in relative else 800)
+            # Per-part floors protect the authored split meshes; the stricter
+            # aggregate production budget below guards overall character fidelity.
+            minimum=(900 if "head_" in relative else 300 if "boots" in relative
+                     else 440 if "legs" in relative else 1000)
             if vertices < minimum:
                 raise ValueError(f"playable mesh fell below topology floor: {relative}")
         body=(root/f"actors/playable/{culture}_{gender}_body.xmf").read_bytes()
         body_digests.add(hashlib.sha256(body).digest())
     if len(body_digests) != len(expected):
         raise ValueError("playable races or genders share duplicate body silhouettes")
+    for culture,gender in expected.values():
+        body=root/f"actors/playable/{culture}_{gender}_body.xmf"
+        vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(body).findall("SUBMESH"))
+        if vertices < 2700:
+            raise ValueError(f"playable body fell below production topology budget: {body}")
 
 def validate_map_dds(root: Path) -> None:
     local_maps = sorted((root / "maps/nymara").glob("*.dds"))
