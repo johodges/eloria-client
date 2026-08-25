@@ -61,6 +61,14 @@ def moon(x,y):
 def sun(x,y):
  dx=x-256;dy=y-256;d=dx*dx+dy*dy
  return (255,220,98,255) if d<95*95 else (255,166,53,max(0,180-d//400))
+def clouds(x,y):
+ grain=(x*17+y*31+(x^y)*7)%97
+ alpha=max(24,min(210,52+grain+((x//37+y//29)%3)*22))
+ return (188+grain//8,202+grain//10,216+grain//12,alpha)
+def clouds_detail(x,y):
+ grain=(x*43+y*19+(x^y)*11)%113
+ alpha=max(12,min(176,28+grain))
+ return (172+grain//10,188+grain//11,204+grain//13,alpha)
 def login_background(x,y):
  t=y/511.0
  if y<330:r,g,b=int(20+38*t),int(29+34*t),int(58+38*t)
@@ -213,8 +221,11 @@ def main():
  shutil.copy2(authored/"magic/sigils.dds",root/"textures/sigils.dds")
  dds(root/"textures/login_menu.dds",256,256,login_menu_pixel)
  # The minimap compass was installed with the authored HUD assets above.
- for name in ("moonmap","BrightSun","thick_clouds","thick_clouds_detail"):
-  shutil.copy2(authored/f"sky/{name}.dds",root/f"textures/{name}.dds")
+ # Keep startup sky textures in the uncompressed BGRA DDS layout supported by
+ # the legacy loader.  Modern DXT5 output corrupts its heap on Windows.
+ for name,pixel in (("moonmap",moon),("BrightSun",sun),
+                    ("thick_clouds",clouds),("thick_clouds_detail",clouds_detail)):
+  dds(root/f"textures/{name}.dds",512,512,pixel)
  shutil.copy2(authored/"portraits/portraits1.dds",root/"textures/portraits1.dds")
  bmp(root/"icon.bmp",32,32,cursor_pixel)
  legend_target=root/"maps/legend.dds";legend_target.parent.mkdir(parents=True,exist_ok=True)
