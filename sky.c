@@ -2398,14 +2398,10 @@ void skybox_init_gl()
 	glEnd();
 	glEndList();
 
-	destroy_dome(&dome_sky);
-	destroy_dome(&dome_clouds);
-	destroy_sphere(&moon_mesh);
-	if (dome_clouds_detail_colors) free(dome_clouds_detail_colors);
-	if (dome_clouds_colors_bis) free(dome_clouds_colors_bis);
-	if (dome_clouds_detail_colors_bis) free(dome_clouds_detail_colors_bis);
-	if (dome_clouds_tex_coords_bis) free(dome_clouds_tex_coords_bis);
-
+	/* This is the one-time GL initializer.  The static sky meshes and helper
+	 * buffers have not been allocated yet, so trying to release their current
+	 * values here can pass corrupted pre-init state to free() on Windows.
+	 * free_skybox() owns teardown after successful initialization. */
 	dome_sky = create_dome(24, 12, 500.0, 80.0, 90.0, 3.5, 1.0);
 	dome_clouds = create_dome(24, 12, 500.0, 80.0, 90.0, 2.0, 1.0);
 	moon_mesh = create_sphere(24, 12);
@@ -2432,4 +2428,3 @@ void free_skybox()
 	if (dome_clouds_detail_colors_bis) free(dome_clouds_detail_colors_bis);
 	if (dome_clouds_tex_coords_bis) free(dome_clouds_tex_coords_bis);
 }
-
