@@ -67,14 +67,23 @@ def validate_cursor_bmp(path):
   raise ValueError(f"{path}: cursor sheet must be 208x16, 8-bit, four-colour indexed BMP")
 
 def window_icon_bmp(source,path):
- # Use the same crest master as the executable's elc.ico.  SDL_LoadBMP does
- # not retain PNG alpha, so composite onto a reserved magenta colour that the
- # client marks transparent immediately after loading.
- icon=Image.open(source).convert("RGBA")
- icon.thumbnail((30,30),Image.Resampling.LANCZOS)
+ # Extract the exact 32-pixel Windows resource used by the executable rather
+ # than resampling a separate PNG approximation.  SDL_LoadBMP does not retain
+ # alpha, so composite onto the colour key applied by gl_init.c.
+ container=Image.open(source)
+ if source.suffix.lower()==".ico" and hasattr(container,"ico"):
+  sizes=container.ico.sizes()
+  if (32,32) not in sizes:raise ValueError(f"{source}: executable icon lacks a 32x32 frame")
+  icon=container.ico.getimage((32,32)).convert("RGBA")
+ else:
+  icon=container.convert("RGBA");icon.thumbnail((32,32),Image.Resampling.LANCZOS)
  canvas=Image.new("RGB",(32,32),(255,0,255))
  left=(32-icon.width)//2;top=(32-icon.height)//2
- canvas.paste(icon.convert("RGB"),(left,top),icon.getchannel("A"))
+ source_pixels=icon.load();target_pixels=canvas.load()
+ for y in range(icon.height):
+  for x in range(icon.width):
+   r,g,b,a=source_pixels[x,y]
+   if a>=64:target_pixels[left+x,top+y]=(r,g,b)
  path.parent.mkdir(parents=True,exist_ok=True);canvas.save(path,"BMP")
 
 def validate_window_icon_bmp(path):
@@ -279,7 +288,7 @@ def main():
                     ("thick_clouds",clouds),("thick_clouds_detail",clouds_detail)):
   dds(root/f"textures/{name}.dds",512,512,pixel)
  shutil.copy2(authored/"portraits/portraits1.dds",root/"textures/portraits1.dds")
- window_icon_master=Path(__file__).resolve().parents[2]/"elc.png"
+ window_icon_master=Path(__file__).resolve().parents[2]/"elc.ico"
  if not window_icon_master.is_file():raise FileNotFoundError(f"Missing Eloria window icon: {window_icon_master}")
  window_icon_bmp(window_icon_master,root/"icon.bmp")
  validate_window_icon_bmp(root/"icon.bmp")
