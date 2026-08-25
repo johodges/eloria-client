@@ -164,7 +164,15 @@ def e3d_fallback(path):
  # Use a generated native E3D box from the scenery tool when available.
  from generate_scenery import e3d,box
  def cube(v,i):box(v,i,(0,0,.5),(1,1,1))
- e3d(path,"badobject.png",cube);png(path.with_suffix('.png'),32,32,lambda x,y:(210,55,55,255))
+ kind=path.stem
+ def material(x,y):
+  edge=x<3 or y<3 or x>28 or y>28
+  if kind=="bag1":
+   seam=abs(x-16)<2 or abs(y-16)<2;return (207,151,65,255) if seam or edge else (91+(x*y)%18,57,36,255)
+  if kind=="portal1":
+   ring=70<((x-16)**2+(y-16)**2)<130;return (216,158,66,255) if edge else (74,213,221,255) if ring else (18,45,57,235)
+  cross=abs(x-y)<3 or abs(x+y-31)<3;return (238,174,69,255) if edge else (196,48,61,255) if cross else (33,42,46,255)
+ texture=path.with_suffix('.png');e3d(path,texture.name,cube);png(texture,32,32,material)
 def main():
  p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output)
  for name in ("font","fontv","font2","font3","font5","font6","font7"):
