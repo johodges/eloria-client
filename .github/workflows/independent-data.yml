@@ -181,7 +181,7 @@ jobs:
               assert actor.find("weapon[@id='0']") is not None, actor.attrib["id"]
           assert len(list(root.glob("animations/eloria/*.xaf"))) == 8
           assert len(list(root.glob("maps/**/*.elm"))) == 27
-          assert len(list(root.glob("textures/items*.png"))) == 5
+          assert len(list(root.glob("textures/items*.dds"))) == 5
           PY
       - name: Validate binary Cal3D player through runtime
         run: |
