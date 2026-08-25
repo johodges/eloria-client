@@ -902,11 +902,6 @@ def profession_idle(root, slug, feature):
   poses=[(0,{2:(0,-.035),4:(0,.12),6:(0,-.20),7:(0,.10)}),
          (1.7,{2:(0,.025),4:(0,.08),6:(0,-.17),7:(0,.08)}),
          (3.4,{2:(0,-.035),4:(0,.12),6:(0,-.20),7:(0,.10)})]
- shoulder_angle={"civic_scholar":1.18,"civic_official":1.30,
-                 "civic_merchant":1.22,"civic_ferryman":1.26}.get(feature,1.24)
- for _,frame in poses:
-  frame[4]=(1,-shoulder_angle)
-  frame[6]=(1,shoulder_angle)
  humanoid_animation(root/anim_dir/"idle.xaf",poses[-1][0],poses)
  shutil.copy2(root/anim_dir/"idle.caf",root/anim_dir/"idle2.caf")
  return anim_dir
