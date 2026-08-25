@@ -104,7 +104,7 @@ def validate_maps(root: Path) -> None:
             if obj3_count < 4 or light_count < 1:
                 raise ValueError("character preview scene lacks scenery or lighting")
         if path.as_posix().endswith("maps/nymara/four_gates.elm"):
-            spawn_x, spawn_y = 58, 58
+            spawn_x, spawn_y = 96, 42
             tiles = data[tile_offset:height_offset]
             heights = data[height_offset:height_offset + width * height * 36]
             tile = tiles[(spawn_y // 6) * width + spawn_x // 6]
@@ -122,6 +122,17 @@ def validate_maps(root: Path) -> None:
                 "3dobjects/nymara/four_gates_park_tree.e3d": 16,
                 "3dobjects/nymara/four_gates_lantern.e3d": 12,
                 "3dobjects/nymara/four_gates_waystone.e3d": 1,
+                "3dobjects/nymara/four_gates_townhouse.e3d": 20,
+                "3dobjects/nymara/four_gates_farmstead.e3d": 8,
+                "3dobjects/nymara/four_gates_beacon_tower.e3d": 10,
+                "3dobjects/nymara/four_gates_citadel_gatehouse.e3d": 1,
+                "3dobjects/nymara/four_gates_summit_portal.e3d": 1,
+                "3dobjects/nymara/four_gates_plaza_monument.e3d": 1,
+                "3dobjects/nymara/four_gates_cliff_terrace.e3d": 16,
+                "3dobjects/nymara/four_gates_market_hall.e3d": 8,
+                "3dobjects/nymara/four_gates_garden_court.e3d": 16,
+                "3dobjects/nymara/four_gates_field_plot.e3d": 12,
+                "3dobjects/nymara/four_gates_waterfall.e3d": 16,
             }
             for landmark, minimum in required_landmarks.items():
                 count = sum(name == landmark for name, *_ in object_records)
@@ -597,6 +608,17 @@ def validate_four_gates_scenery(root: Path) -> None:
         "four_gates_gatehouse.e3d": 800,
         "four_gates_waystone.e3d": 320,
         "four_gates_lantern.e3d": 220,
+        "four_gates_townhouse.e3d": 160,
+        "four_gates_farmstead.e3d": 180,
+        "four_gates_beacon_tower.e3d": 450,
+        "four_gates_citadel_gatehouse.e3d": 500,
+        "four_gates_summit_portal.e3d": 400,
+        "four_gates_plaza_monument.e3d": 320,
+        "four_gates_cliff_terrace.e3d": 150,
+        "four_gates_market_hall.e3d": 200,
+        "four_gates_garden_court.e3d": 400,
+        "four_gates_field_plot.e3d": 150,
+        "four_gates_waterfall.e3d": 60,
         "resonant_crystal.e3d": 150,
         "stormglass_shard.e3d": 150,
         "mirror_reed.e3d": 150,

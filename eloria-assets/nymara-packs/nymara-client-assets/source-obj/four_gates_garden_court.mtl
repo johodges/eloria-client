@@ -1,0 +1,3 @@
+newmtl four_gates_garden_court
+Kd 1 1 1
+map_Kd ../runtime/3dobjects/nymara/four_gates_garden_court.png

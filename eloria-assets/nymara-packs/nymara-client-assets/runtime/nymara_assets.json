@@ -62,6 +62,72 @@
       "source": "source-obj/four_gates_lantern.obj"
     },
     {
+      "id": "four_gates_townhouse",
+      "model": "3dobjects/nymara/four_gates_townhouse.e3d",
+      "texture": "3dobjects/nymara/four_gates_townhouse.png",
+      "source": "source-obj/four_gates_townhouse.obj"
+    },
+    {
+      "id": "four_gates_market_hall",
+      "model": "3dobjects/nymara/four_gates_market_hall.e3d",
+      "texture": "3dobjects/nymara/four_gates_market_hall.png",
+      "source": "source-obj/four_gates_market_hall.obj"
+    },
+    {
+      "id": "four_gates_garden_court",
+      "model": "3dobjects/nymara/four_gates_garden_court.e3d",
+      "texture": "3dobjects/nymara/four_gates_garden_court.png",
+      "source": "source-obj/four_gates_garden_court.obj"
+    },
+    {
+      "id": "four_gates_field_plot",
+      "model": "3dobjects/nymara/four_gates_field_plot.e3d",
+      "texture": "3dobjects/nymara/four_gates_field_plot.png",
+      "source": "source-obj/four_gates_field_plot.obj"
+    },
+    {
+      "id": "four_gates_waterfall",
+      "model": "3dobjects/nymara/four_gates_waterfall.e3d",
+      "texture": "3dobjects/nymara/four_gates_waterfall.png",
+      "source": "source-obj/four_gates_waterfall.obj"
+    },
+    {
+      "id": "four_gates_farmstead",
+      "model": "3dobjects/nymara/four_gates_farmstead.e3d",
+      "texture": "3dobjects/nymara/four_gates_farmstead.png",
+      "source": "source-obj/four_gates_farmstead.obj"
+    },
+    {
+      "id": "four_gates_beacon_tower",
+      "model": "3dobjects/nymara/four_gates_beacon_tower.e3d",
+      "texture": "3dobjects/nymara/four_gates_beacon_tower.png",
+      "source": "source-obj/four_gates_beacon_tower.obj"
+    },
+    {
+      "id": "four_gates_citadel_gatehouse",
+      "model": "3dobjects/nymara/four_gates_citadel_gatehouse.e3d",
+      "texture": "3dobjects/nymara/four_gates_citadel_gatehouse.png",
+      "source": "source-obj/four_gates_citadel_gatehouse.obj"
+    },
+    {
+      "id": "four_gates_summit_portal",
+      "model": "3dobjects/nymara/four_gates_summit_portal.e3d",
+      "texture": "3dobjects/nymara/four_gates_summit_portal.png",
+      "source": "source-obj/four_gates_summit_portal.obj"
+    },
+    {
+      "id": "four_gates_plaza_monument",
+      "model": "3dobjects/nymara/four_gates_plaza_monument.e3d",
+      "texture": "3dobjects/nymara/four_gates_plaza_monument.png",
+      "source": "source-obj/four_gates_plaza_monument.obj"
+    },
+    {
+      "id": "four_gates_cliff_terrace",
+      "model": "3dobjects/nymara/four_gates_cliff_terrace.e3d",
+      "texture": "3dobjects/nymara/four_gates_cliff_terrace.png",
+      "source": "source-obj/four_gates_cliff_terrace.obj"
+    },
+    {
       "id": "crownwater_ferry_dock",
       "model": "3dobjects/nymara/crownwater_ferry_dock.e3d",
       "texture": "3dobjects/nymara/crownwater_ferry_dock.png",

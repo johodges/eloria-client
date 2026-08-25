@@ -83,20 +83,28 @@ def main() -> None:
         color = tuple(max(0, min(255, channel + grain)) for channel in base)
         for name, object_x, object_y in objects:
             distance = (x - object_x) ** 2 + (y - object_y) ** 2
-            if distance <= 16:
+            radius = 7 if "field_plot" in name else 6 if "market_hall" in name or "farmstead" in name else 5 if "gatehouse" in name or "wall" in name or "waterfall" in name else 4
+            if distance <= radius * radius:
                 if "gatehouse" in name:
                     color = (238, 204, 118)
                 elif "bridge" in name:
                     color = (220, 188, 121)
                 elif "tower" in name:
                     color = (222, 225, 205)
-                elif "tree" in name:
+                elif "waterfall" in name:
+                    color = (104, 205, 220)
+                elif "field_plot" in name:
+                    color = (155, 119, 52)
+                elif "garden" in name or "tree" in name:
                     color = (48, 91, 48)
+                elif "wall" in name:
+                    color = (105, 108, 98)
                 else:
                     color = (151, 116, 80)
         # Authoritative new-character spawn crosshair.
-        spawn_x = 58 / (width * 6) * 512
-        spawn_y = 58 / (height * 6) * 512
+        spawn_actor_x, spawn_actor_y = ((96, 42) if args.map.stem == "four_gates" else (58, 58))
+        spawn_x = spawn_actor_x / (width * 6) * 512
+        spawn_y = spawn_actor_y / (height * 6) * 512
         if abs(x - spawn_x) <= 7 and abs(y - spawn_y) <= 1 \
                 or abs(y - spawn_y) <= 7 and abs(x - spawn_x) <= 1:
             color = (255, 246, 185)

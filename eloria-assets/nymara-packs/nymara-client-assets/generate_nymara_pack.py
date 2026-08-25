@@ -113,6 +113,66 @@ def four_gates_lantern(v,i):
         for y in (-.28,.28): box(v,i,(x,y,3.45),(.07,.07,.9))
     box(v,i,(0,0,3.05),(.68,.68,.12));box(v,i,(0,0,3.85),(.72,.72,.12))
     taper(v,i,3.9,4.35,.58,0,8)
+def four_gates_townhouse(v,i):
+    # A compact, manifold-friendly ward building assembled from broad masses.
+    box(v,i,(0,0,1.55),(4.8,3.5,3.1));box(v,i,(0,-1.62,2.0),(2.0,.35,2.5))
+    taper(v,i,3.1,4.75,3.25,.18,4)
+    for x in (-1.45,0,1.45): box(v,i,(x,-1.82,2.15),(.55,.18,.85))
+    taper(v,i,4.65,5.45,.18,0,8,(1.5,0))
+def four_gates_market_hall(v,i):
+    box(v,i,(0,0,1.35),(6.4,4.2,2.7));taper(v,i,2.7,4.65,3.9,.15,4)
+    for x in (-2.6,-1.3,0,1.3,2.6):
+        taper(v,i,0,2.7,.16,.12,8,(x,-2.25));box(v,i,(x,-2.12,1.55),(.48,.18,.78))
+    box(v,i,(0,-2.28,.45),(2.0,.25,.9));taper(v,i,4.55,5.35,.2,0,8)
+def four_gates_garden_court(v,i):
+    taper(v,i,0,.28,3.0,2.8,16);taper(v,i,.28,.48,2.55,2.35,16)
+    for angle in range(0,360,45):
+        a=math.radians(angle);x=2.0*math.cos(a);y=2.0*math.sin(a)
+        taper(v,i,.45,1.7,.15,.08,7,(x,y));taper(v,i,1.2,2.4,.62,.06,8,(x,y))
+    taper(v,i,.45,1.7,.22,.1,8);taper(v,i,1.55,2.1,.58,0,8)
+def four_gates_field_plot(v,i):
+    box(v,i,(0,0,.08),(6.2,4.4,.16))
+    for x in (-2.5,-1.5,-.5,.5,1.5,2.5):
+        box(v,i,(x,0,.22),(.18,4.0,.20))
+    for x in (-3.2,3.2):
+        for y in (-2.25,0,2.25): taper(v,i,0,.85,.09,.07,6,(x,y))
+def four_gates_waterfall(v,i):
+    box(v,i,(0,.25,1.75),(3.2,.35,3.5));box(v,i,(0,0,.18),(4.2,2.2,.28))
+    for x in (-1.15,-.38,.38,1.15):
+        face(v,i,[(x-.25,0,3.45),(x+.25,0,3.45),(x+.38,-.15,.3),(x-.38,-.15,.3)],(0,-1,0))
+def four_gates_farmstead(v,i):
+    box(v,i,(-1.45,0,1.05),(3.7,3.0,2.1));taper(v,i,2.1,3.55,2.45,.1,4,(-1.45,0))
+    box(v,i,(2.0,.35,.8),(2.4,2.3,1.6));taper(v,i,1.6,2.65,1.65,.1,4,(2.0,.35))
+    for x in (-2.4,-.6,.9,2.8): box(v,i,(x,-1.75,.55),(.14,.14,1.1))
+    for z in (.25,.85): box(v,i,(.2,-1.75,z),(5.5,.12,.12))
+def four_gates_beacon_tower(v,i):
+    taper(v,i,0,.55,1.55,1.35,12);taper(v,i,.55,5.8,1.15,.82,12)
+    for z in (1.0,3.0,5.35): taper(v,i,z,z+.22,1.3,1.3,12)
+    for angle in range(0,360,60):
+        a=math.radians(angle); taper(v,i,5.5,7.0,.16,.10,7,(1.05*math.cos(a),1.05*math.sin(a)))
+    taper(v,i,5.7,6.2,.72,.52,8);taper(v,i,6.2,8.1,.48,0,8)
+def four_gates_citadel_gatehouse(v,i):
+    for x in (-3.0,3.0):
+        taper(v,i,0,.7,1.55,1.35,12,(x,0));taper(v,i,.7,6.7,1.25,.95,12,(x,0))
+        taper(v,i,6.55,8.0,1.45,.12,12,(x,0));taper(v,i,7.95,8.65,.11,0,8,(x,0))
+    box(v,i,(0,0,5.65),(3.8,1.35,.75));box(v,i,(0,0,6.35),(4.8,1.1,.55))
+    for x in (-1.8,-.9,0,.9,1.8): box(v,i,(x,0,6.95),(.42,1.15,.72))
+def four_gates_summit_portal(v,i):
+    taper(v,i,0,.55,3.1,2.65,12);taper(v,i,.55,.9,2.55,2.25,12)
+    for x in (-2.0,2.0):
+        taper(v,i,.85,5.9,.42,.28,10,(x,0));taper(v,i,5.7,7.35,.52,.08,10,(x,0))
+    box(v,i,(0,0,6.0),(3.7,.72,.7));taper(v,i,6.15,8.25,2.5,.12,12)
+def four_gates_plaza_monument(v,i):
+    taper(v,i,0,.42,3.2,2.8,16);taper(v,i,.42,.72,2.6,2.25,16)
+    for angle in (0,90,180,270):
+        a=math.radians(angle); taper(v,i,.65,3.5,.25,.17,8,(1.55*math.cos(a),1.55*math.sin(a)))
+    taper(v,i,.7,4.8,.52,.3,10);taper(v,i,4.8,6.6,.75,.08,8)
+def four_gates_cliff_terrace(v,i):
+    # Stepped masses avoid the dense overlapping rock fragments in the source GLB.
+    for k,(width,depth,height) in enumerate(((7.0,4.8,1.0),(5.8,4.0,1.1),(4.4,3.2,1.0))):
+        box(v,i,(0,.45*k,.5+k*.9),(width,depth,height))
+    for x,y,h,r in ((-2.5,.4,3.4,.65),(2.2,.8,3.0,.55),(0,1.5,4.0,.7)):
+        taper(v,i,2.0,h,r,.18,7,(x,y))
 def dock(v,i):
     for x in (-1.2,-.4,.4,1.2): box(v,i,(x,0,.2),(.7,4,.28))
     for x in (-1.55,1.55):
@@ -197,6 +257,17 @@ ASSETS={
  'four_gates_civic_pavilion':(four_gates_pavilion,(190,181,150),(47,116,116)),
  'four_gates_park_tree':(four_gates_tree,(79,76,51),(74,126,66)),
  'four_gates_lantern':(four_gates_lantern,(76,79,70),(213,169,72)),
+ 'four_gates_townhouse':(four_gates_townhouse,(169,166,151),(48,101,122)),
+ 'four_gates_market_hall':(four_gates_market_hall,(174,165,142),(53,103,124)),
+ 'four_gates_garden_court':(four_gates_garden_court,(82,104,65),(188,162,93)),
+ 'four_gates_field_plot':(four_gates_field_plot,(104,89,54),(148,119,57)),
+ 'four_gates_waterfall':(four_gates_waterfall,(52,116,124),(116,194,205)),
+ 'four_gates_farmstead':(four_gates_farmstead,(126,105,73),(52,92,109)),
+ 'four_gates_beacon_tower':(four_gates_beacon_tower,(91,96,99),(206,151,54)),
+ 'four_gates_citadel_gatehouse':(four_gates_citadel_gatehouse,(160,156,142),(55,113,137)),
+ 'four_gates_summit_portal':(four_gates_summit_portal,(64,68,76),(91,72,191)),
+ 'four_gates_plaza_monument':(four_gates_plaza_monument,(189,181,153),(61,132,157)),
+ 'four_gates_cliff_terrace':(four_gates_cliff_terrace,(84,91,78),(53,95,63)),
  'crownwater_ferry_dock':(dock,(113,83,52),(43,120,128)),'crownwater_ferry':(boat,(104,73,42),(42,131,143)),
  'glasswarden_observatory':(observatory,(101,87,112),(154,92,181)),'resonant_crystal_cluster':(crystal,(101,72,125),(191,104,230)),
  'orun_round_tent':(tent,(171,111,54),(42,131,134)),'amberwood_estate':(manor,(116,77,48),(181,103,46)),

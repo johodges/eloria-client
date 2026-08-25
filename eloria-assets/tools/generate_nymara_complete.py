@@ -178,22 +178,23 @@ def region_height(profile, name, x, y):
  return max(6,min(28,11+ridge+region_noise(name,x//6,y//6)//9))
 
 def four_gates_tile(x,y):
- # Four Gates is composed around the protected start plaza at actor (58,58),
- # not the geometric centre of the 192x192 collision field.  The inner city
- # occupies a fortified island with four dry causeways crossing its river.
- cx=cy=58/6; radius=math.hypot(x-cx,y-cy)
- causeway=abs(x-cx)<=1.0 or abs(y-cy)<=1.0
- ring_road=3.6<=radius<=4.7
- if 7.0<radius<10.2 and not causeway: return 7
- if causeway or ring_road: return 6
- return 4 if radius<7.0 else 5
+ # Centre the capital on the 192x192 field. The (96,42) arrival occupies the
+ # protected southern ceremonial approach inside the fortified island.
+ cx=cy=96/6; radius=math.hypot(x-cx,y-cy)
+ cardinal=abs(x-cx)<=1.05 or abs(y-cy)<=1.05
+ arrival_axis=abs((x-cx)-(y-cy))<=.72
+ ring_road=(2.6<=radius<=3.5) or (5.0<=radius<=6.0) or (7.5<=radius<=8.5)
+ if 10.0<radius<13.0 and not (cardinal or arrival_axis): return 7
+ if cardinal or arrival_axis or ring_road: return 6
+ return 4 if radius<10.0 else 5
 
 def four_gates_height(x,y):
  # Keep the civic island, gates, portals and radial roads at the shared z=0
  # datum.  Distant uplands rise in broad, walkable terraces.
- radius=math.hypot(x-58,y-58)
- if radius<=52 or abs(x-58)<=4 or abs(y-58)<=4: return 11
- return max(11,min(19,11+int((radius-52)//18)+region_noise('four_gates',x//8,y//8)//10))
+ radius=math.hypot(x-96,y-96)
+ if radius<=80 or abs(x-96)<=5 or abs(y-96)<=5 or (abs(x-58)<=10 and abs(y-58)<=10): return 11
+ north_rise=max(0,(y-166)//8)
+ return max(11,min(22,11+int((radius-80)//13)+north_rise+region_noise('four_gates',x//8,y//8)//10))
 
 def mirrorhold_tile(x,y):
  cx=58/6; lake_y=91/6
@@ -414,66 +415,114 @@ def map_label_pixel(text,x,y,left,top,scale=2):
 def four_gates_cartography_pixel(x,y):
  # Stylised survey map matching the ELM composition: outer highlands, the
  # circular civic island, four water crossings and concentric districts.
- cx=cy=155; radius=math.hypot(x-cx,y-cy)
- causeway=abs(x-cx)<10 or abs(y-cy)<10
- if 116<radius<158 and not causeway:
+ cx=cy=205; radius=math.hypot(x-cx,y-cy)
+ causeway=abs(x-cx)<10 or abs(y-cy)<10 or abs((x-cx)-(y-cy))<8
+ if 142<radius<184 and not causeway:
   color=(38,132,151)
   if (x+y)%37<3: color=(83,184,192)
- elif radius<116:
-  color=(101,126,79) if radius>72 else (154,143,99)
+ elif radius<142:
+  color=(101,126,79) if radius>88 else (154,143,99)
  else:
   color=(65,91,61) if ((x//18+y//18)&1) else (75,103,68)
- if causeway and radius<178: color=(190,166,105)
- if 58<radius<66: color=(207,187,128)
- if radius<25: color=(188,174,127)
+ if causeway and radius<202: color=(190,166,105)
+ if 79<radius<88 or 112<radius<120: color=(207,187,128)
+ if radius<30: color=(188,174,127)
  # Fortified ring and the four monumental gate symbols.
- if 106<radius<111: color=(81,85,77)
- for gx,gy in ((155,44),(155,266),(44,155),(266,155)):
+ if 132<radius<138: color=(81,85,77)
+ for gx,gy in ((205,69),(205,341),(69,205),(341,205)):
   if abs(x-gx)<9 and abs(y-gy)<13: color=(218,193,126)
  # Civic blocks are deliberately arranged in concentric districts.
  for angle in range(0,360,30):
-  bx=int(cx+82*math.cos(math.radians(angle))); by=int(cy+82*math.sin(math.radians(angle)))
+  bx=int(cx+103*math.cos(math.radians(angle))); by=int(cy+103*math.sin(math.radians(angle)))
   if abs(x-bx)<5 and abs(y-by)<4: color=(65,72,68)
- labels=(("FOUR GATES",318,42,2),("NORTH GATE",318,82,1),
-         ("CENTRAL PLAZA",318,112,1),("EAST GATE",318,142,1),
-         ("SOUTH GATE",318,172,1),("WEST GATE",318,202,1))
+ labels=(("FOUR GATES",374,42,2),("NORTH PORTAL",374,82,1),
+         ("CENTRAL PLAZA",374,112,1),("EAST GATE",374,142,1),
+         ("SOUTH GATE",374,172,1),("WEST GATE",374,202,1))
  if any(map_label_pixel(text,x,y,left,top,scale) for text,left,top,scale in labels):
   color=(238,224,179)
  # Legend strokes tie labels to the same visual language as roads and water.
- if 315<x<492 and 28<y<224 and (x in (315,492) or y in (28,224)): color=(116,101,72)
+ if 370<x<506 and 28<y<224 and (x in (370,506) or y in (28,224)): color=(116,101,72)
  return (*color,255)
 
 def four_gates_placements():
  placements=[]
- # Four cardinal gate complexes and paired bridge spans across the river.
- for x,y,rotation in ((58,16,0),(58,104,180),(16,58,90),(104,58,270)):
+ cx=cy=96
+ # Four cardinal gate complexes and bridge spans across the centred river ring.
+ for x,y,rotation in ((96,18,0),(96,174,180),(18,96,90),(174,96,270)):
   placements.append(("3dobjects/nymara/four_gates_gatehouse.e3d",x,y,0,rotation))
- for x,y,rotation in ((58,27,0),(58,89,0),(27,58,90),(89,58,90)):
+ for x,y,rotation in ((96,31,0),(96,161,0),(31,96,90),(161,96,90)):
   placements.append(("3dobjects/nymara/four_gates_radial_bridge.e3d",x,y,0,rotation))
- # Segmented civic wall reads as an octagonal fortified island while leaving
- # wide openings at each travel axis.
- wall_segments=((34,34,45),(46,27,15),(70,27,345),(82,34,315),
-                (89,46,285),(89,70,255),(82,82,225),(70,89,195),
-                (46,89,165),(34,82,135),(27,70,105),(27,46,75))
- for x,y,rotation in wall_segments:
-  placements.append(("3dobjects/nymara/four_gates_civic_wall.e3d",x,y,0,rotation))
- # Eight civic towers establish the skyline and frame the cardinal districts.
- for j,(x,y) in enumerate(((40,40),(58,35),(76,40),(81,58),(76,76),(58,81),(40,76),(35,58))):
-  placements.append(("3dobjects/nymara/four_gates_civic_tower.e3d",x,y,0,j*45))
- # Concentric plazas, ward waystones, public fountains and service pavilions.
+ # Thirty-two tangent wall modules produce a broad fortified island without
+ # shipping the overlapping topology of the supplied monolithic wall mesh.
+ for j in range(32):
+  angle=math.radians(j*11.25)
+  if j%8 in (0,1,7): continue
+  placements.append(("3dobjects/nymara/four_gates_civic_wall.e3d",cx+58*math.cos(angle),cy+58*math.sin(angle),0,90-j*11.25))
+ # Towers establish two readable skyline rings and frame every approach.
+ for j in range(16):
+  angle=math.radians(j*22.5+11.25)
+  placements.append(("3dobjects/nymara/four_gates_civic_tower.e3d",cx+51*math.cos(angle),cy+51*math.sin(angle),0,j*22.5))
+ for j in range(12):
+  angle=math.radians(j*30)
+  placements.append(("3dobjects/nymara/four_gates_beacon_tower.e3d",cx+38*math.cos(angle),cy+38*math.sin(angle),0,j*30))
+ # Central monument, concentric plazas and civic pavilions.
+ placements.append(("3dobjects/nymara/four_gates_plaza_monument.e3d",cx,cy,0,0))
  placements.append(("3dobjects/nymara/four_gates_waystone.e3d",58,64,0,0))
- for j,(x,y) in enumerate(((58,48),(68,58),(58,68),(48,58))):
+ for j,(x,y) in enumerate(((96,82),(110,96),(96,110),(82,96),(86,86),(106,86),(106,106),(86,106))):
   placements.append(("3dobjects/nymara/mirrorhold_public_fountain.e3d",x,y,0,j*90))
- for j,(x,y) in enumerate(((45,48),(71,48),(45,68),(71,68),(50,42),(66,42),(50,74),(66,74))):
+ for j,(x,y) in enumerate(((72,76),(120,76),(72,116),(120,116),(80,66),(112,66),(80,126),(112,126),(66,88),(126,88),(66,104),(126,104))):
   placements.append(("3dobjects/nymara/four_gates_civic_pavilion.e3d",x,y,0,(j%4)*90))
- # Original vegetation softens the monumental stonework and marks the outer
- # park belt visible in the concept rendering.
- for j,(x,y) in enumerate(((32,22),(44,20),(72,20),(84,22),(94,32),(96,44),
-                           (96,72),(94,84),(84,94),(72,96),(44,96),(32,94),
-                           (22,84),(20,72),(20,44),(22,32))):
+ # Dense modular wards fill three rings. Staggered radii and rotations create
+ # individual streets while leaving the processional axes and plazas legible.
+ for ring,count,offset in ((20,16,11.25),(32,28,6.5),(46,40,4.5)):
+  for j in range(count):
+   angle=math.radians(j*360/count+offset)
+   x=cx+ring*math.cos(angle);y=cy+ring*math.sin(angle)
+   if abs(x-cx)<6 or abs(y-cy)<6 or (abs(x-58)<10 and abs(y-58)<10): continue
+   placements.append(("3dobjects/nymara/four_gates_townhouse.e3d",x,y,0,90-math.degrees(angle)))
+ # Secondary courtyard buildings add depth between the principal ward rings.
+ for ring,count,offset in ((26,16,0),(39,24,7.5)):
+  for j in range(count):
+   angle=math.radians(j*360/count+offset);x=cx+ring*math.cos(angle);y=cy+ring*math.sin(angle)
+   if abs(x-cx)<7 or abs(y-cy)<7: continue
+   asset="four_gates_civic_pavilion" if j%3==0 else "four_gates_townhouse"
+   placements.append((f"3dobjects/nymara/{asset}.e3d",x,y,0,90-math.degrees(angle)))
+ # Market halls anchor the four commercial quarters; formal gardens fill the
+ # quieter interstitial courts visible between radial streets.
+ for j,(x,y,r) in enumerate(((74,74,45),(118,74,315),(74,118,135),(118,118,225),
+                              (96,62,0),(130,96,270),(96,130,180),(62,96,90))):
+  placements.append(("3dobjects/nymara/four_gates_market_hall.e3d",x,y,0,r))
+ for j in range(16):
+  angle=math.radians(j*22.5+11.25)
+  placements.append(("3dobjects/nymara/four_gates_garden_court.e3d",cx+34*math.cos(angle),cy+34*math.sin(angle),0,j*22.5))
+ # Farmsteads occupy the outer banks seen in the aerial concept.
+ for j,(x,y,r) in enumerate(((24,28,35),(43,18,20),(149,18,340),(168,34,325),(24,158,145),(45,174,160),(147,174,200),(169,156,215),(13,55,70),(179,55,290),(13,137,110),(179,137,250))):
+  placements.append(("3dobjects/nymara/four_gates_farmstead.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((18,40,15),(34,18,75),(158,18,105),(174,40,165),
+                              (18,152,345),(38,174,285),(154,174,255),(174,152,195),
+                              (12,70,0),(180,70,0),(12,122,0),(180,122,0))):
+  placements.append(("3dobjects/nymara/four_gates_field_plot.e3d",x,y,0,r))
+ # Northern axial sequence: inner citadel gate, beacon court and summit portal.
+ placements.append(("3dobjects/nymara/four_gates_citadel_gatehouse.e3d",96,148,0,180))
+ placements.append(("3dobjects/nymara/four_gates_summit_portal.e3d",96,184,1,180))
+ for x in (82,110): placements.append(("3dobjects/nymara/four_gates_beacon_tower.e3d",x,165,0,180))
+ # Vegetation and cliff terraces soften the monumental stonework and define banks.
+ tree_points=[]
+ for j in range(48):
+  angle=math.radians(j*7.5);tree_points.append((cx+70*math.cos(angle),cy+70*math.sin(angle)))
+ for j,(x,y) in enumerate(tree_points):
   placements.append(("3dobjects/nymara/four_gates_park_tree.e3d",x,y,0,(j*29)%360))
- for j,(x,y) in enumerate(((42,52),(42,64),(52,42),(64,42),(74,52),(74,64),
-                           (52,74),(64,74),(34,58),(82,58),(58,34),(58,82))):
+ for j in range(24):
+  angle=math.radians(j*15+7.5);x=cx+76*math.cos(angle);y=cy+76*math.sin(angle)
+  placements.append(("3dobjects/nymara/four_gates_cliff_terrace.e3d",x,y,-1,90-j*15))
+ for j in range(16):
+  angle=math.radians(j*22.5+11.25);x=cx+72*math.cos(angle);y=cy+72*math.sin(angle)
+  placements.append(("3dobjects/nymara/four_gates_waterfall.e3d",x,y,-1,90-j*22.5))
+ lantern_points=[]
+ for radius,count in ((14,12),(28,20),(43,28)):
+  for j in range(count):
+   angle=math.radians(j*360/count);lantern_points.append((cx+radius*math.cos(angle),cy+radius*math.sin(angle)))
+ for j,(x,y) in enumerate(lantern_points):
   placements.append(("3dobjects/nymara/four_gates_lantern.e3d",x,y,0,(j*30)%360))
  return placements
 
@@ -1101,28 +1150,38 @@ def generate_maps(root):
     asset=kit[2+j%(len(kit)-2)]
     placements.append((f"3dobjects/nymara/interiors/{asset}.e3d",x,y,0,(j*45)%360))
   if name in REGION_HARVESTS:
+   harvest_positions=((60,68),(132,68),(60,124),(132,124)) if name=='four_gates' else ((26,82),(48,84),(78,82),(98,76))
    for offset,resource in enumerate(REGION_HARVESTS[name]):
-    x,y=((26,82),(48,84),(78,82),(98,76))[offset]
+    x,y=harvest_positions[offset]
     placements.append((f"3dobjects/nymara/{resource}.e3d",x,y,0,(offset*41)%360))
     harvest_manifest.append({"map_id":name,"object_id":8+offset,"x":x,"y":y,"resource":resource})
   else:
    placements += [(str(pool[(idx*5+8+j)%len(pool)].relative_to(root)).replace('\\','/'),26+j*22,82,0,j*41) for j in range(4)]
-  placements += [
-   ("3dobjects/nymara/interactives/region_waygate.e3d",6,58,0,90),
-   ("3dobjects/nymara/interactives/region_waygate.e3d",110,58,0,270),
-   ("3dobjects/nymara/interactives/region_waygate.e3d",58,100,0,180),
-   ("3dobjects/nymara/interactives/crystal_console.e3d",60,62,0,0),
-   ("3dobjects/nymara/interactives/archive_lift.e3d",64,62,0,0),
-   ("3dobjects/nymara/interactives/stormglass_rod.e3d",68,62,0,0)]
+  if name == 'four_gates':
+   placements += [
+    ("3dobjects/nymara/interactives/region_waygate.e3d",6,96,0,90),
+    ("3dobjects/nymara/interactives/region_waygate.e3d",186,96,0,270),
+    ("3dobjects/nymara/interactives/region_waygate.e3d",96,180,0,180),
+    ("3dobjects/nymara/interactives/crystal_console.e3d",90,178,0,0),
+    ("3dobjects/nymara/interactives/archive_lift.e3d",96,178,0,0),
+    ("3dobjects/nymara/interactives/stormglass_rod.e3d",102,178,0,0)]
+  else:
+   placements += [
+    ("3dobjects/nymara/interactives/region_waygate.e3d",6,58,0,90),
+    ("3dobjects/nymara/interactives/region_waygate.e3d",110,58,0,270),
+    ("3dobjects/nymara/interactives/region_waygate.e3d",58,100,0,180),
+    ("3dobjects/nymara/interactives/crystal_console.e3d",60,62,0,0),
+    ("3dobjects/nymara/interactives/archive_lift.e3d",64,62,0,0),
+    ("3dobjects/nymara/interactives/stormglass_rod.e3d",68,62,0,0)]
   lights=[(58,58,4,1.25,1.02,.72),(6,58,3,.35,.70,.78),(110,58,3,.35,.70,.78),(58,100,3,.48,.64,.78)]
   if name=='four_gates':
    lights += [(x,y,3.5,1.08,.72,.31) for x,y in
-              ((42,52),(42,64),(52,42),(64,42),(74,52),(74,64),
-               (52,74),(64,74),(34,58),(82,58),(58,34),(58,82))]
+              ((81,86),(81,106),(86,81),(106,81),(111,86),(111,106),
+               (86,111),(106,111),(68,96),(124,96),(96,68),(96,124))]
    # Soft plaza fills keep stone, brass, glass, NPCs, and player materials
    # readable during the pre-dawn hours without flattening the outer city.
    lights += [(x,y,5.0,.72,.82,.84) for x,y in
-              ((48,48),(68,48),(48,68),(68,68))]
+              ((76,76),(116,76),(76,116),(116,116),(96,148),(96,184))]
   elif name=='mirrorhold':
    lights += [(x,y,4.2,.42,.68,.92) for x,y in
               ((58,34),(42,34),(74,34),(50,48),(66,48),(42,58),(74,58),(38,92),(78,92))]
@@ -1196,9 +1255,16 @@ def generate_maps(root):
   x0=col*128; x1=(col+1)*128
   y0=(row*512)//3; y1=((row+1)*512)//3
   mapinfo.append(f"Nymara {x0} {y0} {x1} {y1} ./maps/nymara/{name}.elm")
-  regions.append({"id":name,"title":name.replace('_',' ').title(),"map":f"maps/nymara/{name}.elm","arrival":[58,58],"npc_hook":f"npcs.nymara.{name}","spawn_hook":f"spawns.nymara.{name}","hazard_hook":f"hazards.nymara.{name}","harvest_hook":f"harvest.nymara.{name}"})
- for a,b in zip(REGIONS,REGIONS[1:]): connections.append({"from":a,"to":b,"from_xy":[110,58],"to_xy":[6,58],"type":"walk"})
- for d in DUNGEONS: connections.append({"from":REGIONS[DUNGEONS.index(d)%len(REGIONS)],"to":d,"from_xy":[58,100],"to_xy":[58,10],"type":"entrance"})
+  arrival=[96,42] if name=='four_gates' else [58,58]
+  regions.append({"id":name,"title":name.replace('_',' ').title(),"map":f"maps/nymara/{name}.elm","arrival":arrival,"npc_hook":f"npcs.nymara.{name}","spawn_hook":f"spawns.nymara.{name}","hazard_hook":f"hazards.nymara.{name}","harvest_hook":f"harvest.nymara.{name}"})
+ for a,b in zip(REGIONS,REGIONS[1:]):
+  from_xy=[186,96] if a=='four_gates' else [110,58]
+  to_xy=[6,96] if b=='four_gates' else [6,58]
+  connections.append({"from":a,"to":b,"from_xy":from_xy,"to_xy":to_xy,"type":"walk"})
+ for d in DUNGEONS:
+  source=REGIONS[DUNGEONS.index(d)%len(REGIONS)]
+  from_xy=[96,180] if source=='four_gates' else [58,100]
+  connections.append({"from":source,"to":d,"from_xy":from_xy,"to_xy":[58,10],"type":"entrance"})
  data={"schema":1,"regions":regions,"connections":connections,"ferries":[{"from":"crownwater","to":"four_gates","service":"crownwater_ferry"},{"from":"manymouth_delta","to":"westhaven","service":"delta_ferry"}]}
  (root/"nymara_regions_connections.json").write_text(json.dumps(data,indent=2)+"\n")
  (root/"nymara_harvesting.json").write_text(json.dumps({"schema":1,"nodes":harvest_manifest},indent=2)+"\n")
