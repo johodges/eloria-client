@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate an original item icon atlas and independent catalog manifest."""
 from __future__ import annotations
-import argparse,json,struct
+import argparse,json,shutil,struct
 from pathlib import Path
 from generate_bootstrap_pack import png
 
@@ -33,8 +33,11 @@ def dds(path,w,h,pixel):
 
 def main():
  p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output)
+ authored=Path(__file__).resolve().parents[1]/"ui/items"
  for atlas in range((len(ITEMS)+len(NYMARA_ITEMS)+24)//25):
-  pixel=atlas_pixels(atlas*25);name=f"items{atlas+1}";png(root/f"textures/{name}.png",256,256,pixel);bmp(root/f"textures/{name}.bmp",256,256,pixel);dds(root/f"textures/{name}.dds",256,256,pixel)
+  name=f"items{atlas+1}";source=authored/f"{name}.dds"
+  if not source.is_file():raise FileNotFoundError(f"Missing authored item atlas: {source}")
+  (root/"textures").mkdir(parents=True,exist_ok=True);shutil.copy2(source,root/"textures"/source.name)
  catalog=[{"item_id":i,"image_id":i,"name":n} for i,n in enumerate(ITEMS)]
  catalog += [{"item_id":1000+i,"image_id":len(ITEMS)+i,"name":n} for i,n in enumerate(NYMARA_ITEMS)]
  (root/"items_eloria.json").write_text(json.dumps({"schema":2,"items":catalog},indent=2)+"\n")

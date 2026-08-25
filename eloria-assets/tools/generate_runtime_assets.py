@@ -29,12 +29,12 @@ def cursor_index(x,y):
  return 2 if outline and not fill else 1 if fill else 0
 
 def cursor_pixel(x,y):
- return ((255,255,255,255),(255,255,255,255),(0,0,0,255),(128,128,128,255))[cursor_index(x,y)]
+ return ((0,0,0,0),(102,220,225,255),(218,160,68,255),(18,43,51,255))[cursor_index(x,y)]
 
 def indexed_cursor_bmp(path):
  w,h=CURSOR_COUNT*CURSOR_SIZE,CURSOR_SIZE
  row=(w+3)&~3
- palette=b"\\x00\\x00\\x00\\x00"+b"\\xff\\xff\\xff\\x00"+b"\\x00\\x00\\x00\\x00"+b"\\x80\\x80\\x80\\x00"
+ palette=bytes((0,0,0,0, 225,220,102,0, 68,160,218,0, 51,43,18,0))
  pixels=bytearray()
  for y in range(h-1,-1,-1):
   line=bytearray(cursor_index(x,y) for x in range(w))
@@ -79,10 +79,17 @@ def login_menu_pixel(x,y):
  return (199,137,70,255) if border else (49,82,91,235) if selected else (18,29,34,225)
 def portrait(x,y):
  cell=(x//128)+(y//128)*4;lx=x%128;ly=y%128
- skin=((126+cell*17)%90+105,(83+cell*11)%65+80,(61+cell*7)%45+65,255)
- if (lx-64)**2+(ly-56)**2<34**2:return skin
- if 42<lx<86 and 84<ly<126:return (42+cell*9,61+cell*7,70+cell*11,255)
- return (24,31,38,255)
+ cultures=((196,151,112),(151,167,176),(123,92,145),(183,115,61),(83,112,128),(79,139,108),(126,116,105),(125,151,91))
+ accent=cultures[cell%len(cultures)];female=(cell//8)==0
+ vignette=max(0,35-int(((lx-64)**2+(ly-64)**2)**.5/2));base=(12+vignette//5,28+vignette//3,34+vignette//2,255)
+ if (lx-64)**2+(ly-52)**2<(29 if female else 32)**2:
+  shade=max(-22,min(20,(64-lx)//2));return tuple(max(0,min(255,c+shade)) for c in accent)+(255,)
+ if 37<lx<91 and 79<ly<127:
+  weave=((lx//5+ly//5+cell)%2)*8;return (35+weave,78+weave,84+weave,255)
+ if 43<lx<85 and 20<ly<35:return (28,25,24,255)
+ if (lx-53)**2+(ly-52)**2<5 or (lx-75)**2+(ly-52)**2<5:return (74,194,205,255)
+ if abs(ly-69)<2 and 55<lx<73:return (93,48,43,255)
+ return base
 
 # Runtime HUD atlases.  The client addresses these textures with the original
 # 256-pixel UV contract; generating a generic 512-pixel panel here made every
@@ -157,7 +164,15 @@ def e3d_fallback(path):
  # Use a generated native E3D box from the scenery tool when available.
  from generate_scenery import e3d,box
  def cube(v,i):box(v,i,(0,0,.5),(1,1,1))
- e3d(path,"badobject.png",cube);png(path.with_suffix('.png'),32,32,lambda x,y:(210,55,55,255))
+ kind=path.stem
+ def material(x,y):
+  edge=x<3 or y<3 or x>28 or y>28
+  if kind=="bag1":
+   seam=abs(x-16)<2 or abs(y-16)<2;return (207,151,65,255) if seam or edge else (91+(x*y)%18,57,36,255)
+  if kind=="portal1":
+   ring=70<((x-16)**2+(y-16)**2)<130;return (216,158,66,255) if edge else (74,213,221,255) if ring else (18,45,57,235)
+  cross=abs(x-y)<3 or abs(x+y-31)<3;return (238,174,69,255) if edge else (196,48,61,255) if cross else (33,42,46,255)
+ texture=path.with_suffix('.png');e3d(path,texture.name,cube);png(texture,32,32,material)
 def main():
  p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output)
  for name in ("font","fontv","font2","font3","font5","font6","font7"):
@@ -183,20 +198,27 @@ def main():
  shutil.copy2(bundled_buttons,root/"textures/gamebuttons.dds")
  bundled_hud=Path(__file__).resolve().parents[1]/"ui/gamebuttons2.dds"
  bundled_compass=Path(__file__).resolve().parents[1]/"ui/compass.dds"
- for source,name in ((bundled_hud,"gamebuttons2.dds"),(bundled_compass,"compass.dds")):
+ branding=Path(__file__).resolve().parents[1]/"ui/branding"
+ bundled_login=branding/"eloria_login_background.dds"
+ bundled_logo=branding/"eloria_logo_master.dds"
+ bundled_crest=branding/"eloria_crest.dds"
+ for source,name in ((bundled_hud,"gamebuttons2.dds"),(bundled_compass,"compass.dds"),
+                     (bundled_login,"login_back.dds"),(bundled_logo,"eloria_logo.dds"),
+                     (bundled_crest,"eloria_crest.dds")):
   if not source.is_file():raise FileNotFoundError(f"Missing authored HUD atlas: {source}")
   shutil.copy2(source,root/"textures"/name)
- for name in ("console","ground_detail","sigils"):
+ for name in ("console","ground_detail"):
   dds(root/f"textures/{name}.dds",512,512,panel)
+ authored=Path(__file__).resolve().parents[1]/"ui/generated"
+ shutil.copy2(authored/"magic/sigils.dds",root/"textures/sigils.dds")
  dds(root/"textures/login_menu.dds",256,256,login_menu_pixel)
- dds(root/"textures/login_back.dds",512,512,login_background)
  # The minimap compass was installed with the authored HUD assets above.
- for name in ("thick_clouds","thick_clouds_detail"):
-  dds(root/f"textures/{name}.dds",512,512,sky)
- dds(root/"textures/moonmap.dds",512,512,moon);dds(root/"textures/BrightSun.dds",512,512,sun)
- dds(root/"textures/portraits1.dds",512,512,portrait)
+ for name in ("moonmap","BrightSun","thick_clouds","thick_clouds_detail"):
+  shutil.copy2(authored/f"sky/{name}.dds",root/f"textures/{name}.dds")
+ shutil.copy2(authored/"portraits/portraits1.dds",root/"textures/portraits1.dds")
  bmp(root/"icon.bmp",32,32,cursor_pixel)
- dds(root/"maps/legend.dds",512,512,panel)
+ legend_target=root/"maps/legend.dds";legend_target.parent.mkdir(parents=True,exist_ok=True)
+ shutil.copy2(authored/"maps/legend.dds",legend_target)
  e3d_fallback(root/"3dobjects/badobject.e3d");e3d_fallback(root/"3dobjects/bag1.e3d");e3d_fallback(root/"3dobjects/portal1.e3d")
  make_map(root/"maps/nomap.elm",placements=[])
  preview_map=root/"maps/newcharactermap.elm"

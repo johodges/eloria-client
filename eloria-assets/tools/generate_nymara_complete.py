@@ -924,7 +924,9 @@ def generate_npcs(root, actors):
     elif slug in ('luminous_civilian_f','luminous_civilian_m'): feature='civic_civilian'
     else: feature=f"nymara:{culture}:{role}"
     enemy_mesh(base/f"{slug}.xmf",feature,.96 if variant=="f" else 1.0)
-    png(base/f"{slug}.png",1024,1024,material_pixel(primary,feature)); png(root/f"portraits/nymara/npcs/{slug}.png",512,512,material_pixel(accent,feature))
+    png(base/f"{slug}.png",1024,1024,material_pixel(primary,feature))
+    portrait_source=Path(__file__).resolve().parents[1]/f"ui/generated/portraits/npc_{(aid-NPC_BASE)%14:02}.png"
+    portrait_target=root/f"portraits/nymara/npcs/{slug}.png";portrait_target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(portrait_source,portrait_target)
     anim_dir=profession_idle(root,slug,feature)
     append_actor(actors,aid,slug.replace('_',' ').title(),"nymara_npc","actors/nymara/npcs/nymara_humanoid.csf",f"actors/nymara/npcs/{slug}.cmf",f"actors/nymara/npcs/{slug}.png",anim_dir,.42,.96 if variant=='f' else 1.0,(-.55,-.35,0,.55,.35,2.65 if feature=="civic_ferryman" else 2.2))
     out.append({"actor_type":aid,"id":slug,"culture":culture,"role":role,"variant":variant,"portrait":f"portraits/nymara/npcs/{slug}.png","collision_radius":.42,"scale":.96 if variant=='f' else 1.0}); aid+=1
@@ -939,7 +941,9 @@ def generate_creatures(root, actors):
  out=[]
  for i,(region,slug,label,body,head,feature) in enumerate(CREATURES):
   aid=CREATURE_BASE+i; creature_mesh(base/f"{slug}.xmf",body,head,feature); c=palette[i%len(palette)]; c2=tuple(min(255,x+55) for x in c)
-  png(base/f"{slug}.png",512,512,creature_material(c,feature)); png(root/f"portraits/nymara/creatures/{slug}.png",256,256,creature_material(c2,feature))
+  png(base/f"{slug}.png",512,512,creature_material(c,feature))
+  portrait_source=Path(__file__).resolve().parents[1]/f"ui/generated/portraits/creature_{i%14:02}.png"
+  portrait_target=root/f"portraits/nymara/creatures/{slug}.png";portrait_target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(portrait_source,portrait_target)
   radius=round(max(body[0],body[1])*.42,2); bounds=(-body[0]/2,-body[1]/2,0,body[0]/2,body[1]/2,1.6)
   append_actor(actors,aid,label,"nymara_creature","actors/nymara/creatures/nymara_creature.xsf",f"actors/nymara/creatures/{slug}.xmf",f"actors/nymara/creatures/{slug}.png","animations/nymara/creatures",radius,1.0,bounds,True)
   out.append({"actor_type":aid,"id":slug,"name":label,"region":region,"portrait":f"portraits/nymara/creatures/{slug}.png","collision_radius":radius,"bounds":bounds,"sound_events":{x:f"nymara.{slug}.{x}" for x in ("idle","attack","pain","death")},"drop_table_hook":f"drops.nymara.{slug}","summoning_hook":f"summon.nymara.{slug}"})
@@ -972,7 +976,8 @@ def generate_equipment(root):
  out=[]; colors={"luminous":((66,151,160),(208,193,132)),"votary":((158,190,204),(222,230,229)),"glasswarden":((113,76,151),(190,142,67)),"orun":((167,91,43),(46,137,143)),"greyhaven":((55,78,93),(151,127,82)),"ssarathi":((47,112,77),(184,151,67))}
  for i,(culture,name) in enumerate(EQUIPMENT):
   iid=ITEM_BASE+i; model=root/f"3dobjects/nymara/equipment/{culture}/{name}.e3d"; texture(model.with_suffix('.png'),colors[culture]); e3d(model,model.with_suffix('.png').name,equipment_shape(name))
-  png(root/f"textures/nymara/items/{name}.png",64,64,lambda x,y,c=colors[culture]: (*c[0],max(0,255-int(math.hypot(x-32,y-32)*7))) if math.hypot(x-32,y-32)<30 else (0,0,0,0))
+  icon_source=Path(__file__).resolve().parents[1]/f"ui/generated/equipment/{name}.png"
+  icon_target=root/f"textures/nymara/items/{name}.png";icon_target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(icon_source,icon_target)
   slot="weapon" if any(x in name for x in ("blade","sabre","cutlass","spear","pike","bow","hammer","pick","adze","staff","hook")) else "shield" if "shield" in name else "body" if any(x in name for x in ("mail","armor","leathers")) else "cape" if any(x in name for x in ("cape","mantle")) else "neck"
   out.append({"item_id":iid,"id":name,"name":name.replace('_',' ').title(),"culture":culture,"slot":slot,"model":f"3dobjects/nymara/equipment/{culture}/{name}.e3d","icon":f"textures/nymara/items/{name}.png","attachment_bone":"lower_arm_r" if slot=='weapon' else "lower_arm_l" if slot=='shield' else "spine","compatible_actor_family":"nymara_npc","unique_instance":slot in ("weapon","shield","body","cape")})
  (root/"nymara_equipment.json").write_text(json.dumps({"schema":1,"items":out},indent=2)+"\n"); return out
@@ -982,9 +987,12 @@ def generate_interactives_effects(root):
  def prop(v,i): box(v,i,(0,0,.8),(1.2,.55,1.6)); tapered(v,i,1.55,2.35,.45,.12,8)
  out=[]
  for j,n in enumerate(names):
-  path=root/f"3dobjects/nymara/interactives/{n}.e3d"; texture(path.with_suffix('.png'),((58+7*j%90,91+11*j%90,105+13*j%100),(172,142,75))); e3d(path,path.with_suffix('.png').name,prop); out.append({"interactive_id":2000+j,"id":n,"model":f"3dobjects/nymara/interactives/{n}.e3d","states":["idle","active"]})
+  path=root/f"3dobjects/nymara/interactives/{n}.e3d"; texture(path.with_suffix('.png'),((58+7*j%90,91+11*j%90,105+13*j%100),(172,142,75))); e3d(path,path.with_suffix('.png').name,prop)
+  icon_source=Path(__file__).resolve().parents[1]/f"ui/generated/interactives/{n}.png";icon_target=root/f"textures/nymara/interactives/{n}.png";icon_target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(icon_source,icon_target)
+  out.append({"interactive_id":2000+j,"id":n,"model":f"3dobjects/nymara/interactives/{n}.e3d","icon":f"textures/nymara/interactives/{n}.png","states":["idle","active"]})
  particles=["ferry_wake","waterfall","spray","bog_gas","thin_ice_crack","crystal_storm","portal","crystal_discharge","spell_water","spell_sun","impact_scale","landmark_glow"]
- for k,n in enumerate(particles): png(root/f"textures/nymara/effects/{n}.png",128,128,lambda x,y,k=k:(60+13*k%180,120+17*k%130,180+7*k%70,max(0,255-int(math.hypot(x-64,y-64)*4))))
+ for k,n in enumerate(particles):
+  source=Path(__file__).resolve().parents[1]/f"ui/generated/effects/{n}.png";target=root/f"textures/nymara/effects/{n}.png";target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
  projectiles=["canal_bolt","sun_disc","crystal_shard","water_orb","scale_dart","storm_spark"]
  for k,n in enumerate(projectiles):
   path=root/f"3dobjects/nymara/projectiles/{n}.e3d"; texture(path.with_suffix('.png'),((54+20*k,113+9*k,176),(210,184,95))); e3d(path,path.with_suffix('.png').name,lambda v,i:tapered(v,i,-.6,.8,.28,0,6))

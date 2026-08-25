@@ -31,6 +31,7 @@ static char password_box_selected = 0;
 
 static int game_buttons;
 static int login_screen_menus;
+static int login_logo;
 
 static char log_in_error_str[520] = {0};
 
@@ -158,6 +159,7 @@ void init_login_screen (void)
 	game_buttons = load_texture_cached("textures/gamebuttons.dds", tt_image);
 	login_screen_menus = load_texture_cached("textures/login_menu.dds", tt_image);
 	login_text = load_texture_cached("textures/login_back.dds", tt_image);
+	login_logo = load_texture_cached("textures/eloria_logo.dds", tt_image);
 	CHECK_GL_ERRORS();
 
 	set_username(active_username_str);
@@ -351,6 +353,17 @@ static int display_login_handler (window_info *win)
 #endif
 
 	draw_console_pic(login_text);
+	{
+		const int logo_width = min2i((int)(win->len_x * .56f), (int)(win->len_y * .82f));
+		const int logo_height = logo_width / 2;
+		bind_texture(login_logo);
+		glColor4f(1.0f, 1.0f, 1.0f, .98f);
+		glBegin(GL_QUADS);
+		draw_2d_thing(0.0f, 0.0f, 1.0f, 1.0f,
+			(win->len_x-logo_width)/2, max2i(8, username_bar_y-logo_height-28),
+			(win->len_x+logo_width)/2, max2i(8, username_bar_y-logo_height-28)+logo_height);
+		glEnd();
+	}
 
 	// ok, start drawing the interface...
 	draw_text(username_text_x, username_text_y, (const unsigned char*)login_username_str,
