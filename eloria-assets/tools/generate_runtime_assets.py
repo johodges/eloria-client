@@ -111,6 +111,13 @@ def login_menu_pixel(x,y):
    if selected:return (27+int(8*depth),68+int(12*depth),76+int(13*depth),244)
    return (15+int(7*depth),29+int(8*depth),34+int(9*depth),242)
  return (0,0,0,0)
+def console_panel(x,y):
+ edge=min(x,y,511-x,511-y)
+ if edge<3:return (221,164,72,255)
+ if edge<7:return (58,116,122,255)
+ grain=((x*11+y*17+(x^y)*3)%13)-6
+ glow=max(0,18-int(((x-256)**2+(y-256)**2)**.5/13))
+ return (19+grain//3,40+grain//2+glow//3,47+grain+glow,245)
 def portrait(x,y):
  cell=(x//128)+(y//128)*4;lx=x%128;ly=y%128
  cultures=((196,151,112),(151,167,176),(123,92,145),(183,115,61),(83,112,128),(79,139,108),(126,116,105),(125,151,91))
@@ -242,8 +249,8 @@ def main():
                      (bundled_crest,"eloria_crest.dds")):
   if not source.is_file():raise FileNotFoundError(f"Missing authored HUD atlas: {source}")
   shutil.copy2(source,root/"textures"/name)
- for name in ("console","ground_detail"):
-  dds(root/f"textures/{name}.dds",512,512,panel)
+ dds(root/"textures/console.dds",512,512,console_panel)
+ dds(root/"textures/ground_detail.dds",512,512,panel)
  authored=Path(__file__).resolve().parents[1]/"ui/generated"
  shutil.copy2(authored/"magic/sigils.dds",root/"textures/sigils.dds")
  dds(root/"textures/login_menu.dds",256,256,login_menu_pixel)
