@@ -48,17 +48,17 @@ def _binary_string(value):
     encoded=value.encode("utf-8")+b"\0"
     return struct.pack("<i",len(encoded))+encoded
 
-def binary_skeleton(path):
-    children={i:[] for i in range(len(BONES))}
-    for i,(_,parent,_) in enumerate(BONES):
+def binary_skeleton(path,bones=BONES):
+    children={i:[] for i in range(len(bones))}
+    for i,(_,parent,_) in enumerate(bones):
         if parent>=0: children[parent].append(i)
     absolute=[]
-    for _,parent,pos in BONES:
+    for _,parent,pos in bones:
         base=(0.,0.,0.) if parent < 0 else absolute[parent]
         absolute.append(tuple(base[j]+pos[j] for j in range(3)))
     data=_binary_header("CSF")
-    data.extend(struct.pack("<i",len(BONES)))
-    for i,(name,parent,pos) in enumerate(BONES):
+    data.extend(struct.pack("<i",len(bones)))
+    for i,(name,parent,pos) in enumerate(bones):
         data.extend(_binary_string(name))
         data.extend(struct.pack("<3f4f3f4f",*pos,0.,0.,0.,1.,
                                 *(-v for v in absolute[i]),0.,0.,0.,1.))
@@ -75,7 +75,7 @@ def binary_mesh(path, vertices, faces):
     for tri in faces: data.extend(struct.pack("<3i",*tri))
     path.write_bytes(data)
 
-def binary_animation(path,duration,poses,tracks):
+def binary_animation(path,duration,poses,tracks,bones=BONES):
     data=_binary_header("CAF")
     # EL uses the classic Cal3D 0.11 binary layout: duration follows version.
     data.extend(struct.pack("<fi",duration,len(tracks)))
@@ -88,20 +88,20 @@ def binary_animation(path,duration,poses,tracks):
                 rotation=quat_axis(axis,angle)
             else:
                 rotation=quat_x(value)
-            data.extend(struct.pack("<f3f4f",time,*BONES[bone][2],
+            data.extend(struct.pack("<f3f4f",time,*bones[bone][2],
                                     *rotation))
     path.write_bytes(data)
 
-def skeleton(path):
-    children={i:[] for i in range(len(BONES))}
-    for i,(_,p,_) in enumerate(BONES):
+def skeleton(path,bones=BONES):
+    children={i:[] for i in range(len(bones))}
+    for i,(_,p,_) in enumerate(bones):
         if p>=0: children[p].append(i)
     absolute=[]
-    for _,parent,pos in BONES:
+    for _,parent,pos in bones:
         base=(0.,0.,0.) if parent < 0 else absolute[parent]
         absolute.append(tuple(base[j]+pos[j] for j in range(3)))
-    root=ET.Element("SKELETON",NUMBONES=str(len(BONES)))
-    for i,(name,parent,pos) in enumerate(BONES):
+    root=ET.Element("SKELETON",NUMBONES=str(len(bones)))
+    for i,(name,parent,pos) in enumerate(bones):
         b=ET.SubElement(root,"BONE",ID=str(i),NAME=name,NUMCHILD=str(len(children[i])))
         ET.SubElement(b,"TRANSLATION").text="%g %g %g"%pos
         ET.SubElement(b,"ROTATION").text="0 0 0 1"
@@ -110,7 +110,7 @@ def skeleton(path):
         ET.SubElement(b,"PARENTID").text=str(parent)
         for child in children[i]: ET.SubElement(b,"CHILDID").text=str(child)
     write_cal(path,"XSF",root)
-    binary_skeleton(path.with_suffix(".csf"))
+    binary_skeleton(path.with_suffix(".csf"),bones)
 
 def cuboid(center,size,bone,vertices,faces,uv_rect=(0.,0.,1.,1.)):
     cx,cy,cz=center; sx,sy,sz=(v/2 for v in size)
@@ -205,6 +205,22 @@ RACE_SHAPES={
  "greyhaven":(1.04,1.12,1.08,1.06,"maritime"),
  "ssarathi":(1.08,.96,.94,1.08,"scaled"),
 }
+
+def fitted_bones(culture,gender):
+    height,shoulders,hips,head_scale,_=RACE_SHAPES[culture]
+    gender_width=.94 if gender=="female" else 1.04
+    shoulder_ids={4,5,6,7,16,17,18,19,20,27,28,31,32,33,34}
+    hip_ids={8,9,10,11,12,13,35,36}
+    head_ids={14,15,29,30}
+    result=[]
+    for ident,(name,parent,pos) in enumerate(BONES):
+        x,y,z=pos
+        if ident in shoulder_ids: x*=shoulders*gender_width
+        elif ident in hip_ids: x*=hips*gender_width
+        elif ident in head_ids: x*=head_scale
+        z*=height
+        result.append((name,parent,(x,y,z)))
+    return tuple(result)
 
 def mesh(path, section="all", variant=0, culture=None, gender=None):
     vertices=[]; faces=[]
@@ -303,16 +319,16 @@ def quat_axis(axis,a):
     value=[0.,0.,0.]; value[axis]=math.sin(a/2)
     return *value,math.cos(a/2)
 def quat_x(a): return quat_axis(0,a)
-def animation(path,duration,poses):
+def animation(path,duration,poses,bones=BONES):
     tracks=sorted({b for _,frame in poses for b in frame}); root=ET.Element("ANIMATION",DURATION=str(duration),NUMTRACKS=str(len(tracks)))
     for bone in tracks:
         tr=ET.SubElement(root,"TRACK",BONEID=str(bone),NUMKEYFRAMES=str(len(poses)))
         for time,frame in poses:
             key=ET.SubElement(tr,"KEYFRAME",TIME=str(time))
-            ET.SubElement(key,"TRANSLATION").text="%g %g %g"%BONES[bone][2]
+            ET.SubElement(key,"TRANSLATION").text="%g %g %g"%bones[bone][2]
             ET.SubElement(key,"ROTATION").text="%g %g %g %g"%quat_x(frame.get(bone,0.))
     write_cal(path,"XAF",root)
-    binary_animation(path.with_suffix(".caf"),duration,poses,tracks)
+    binary_animation(path.with_suffix(".caf"),duration,poses,tracks,bones)
 
 CULTURES={
  "luminous":((190,139,104),(224,179,139),(238,207,174)),
@@ -344,7 +360,7 @@ def texture(path, base, accent, style=0):
         return tuple(max(0,min(255,c+weave+seam)) for c in sigil)+(255,)
     png(path,256,256,pixel)
 
-def actor_texture(path, width, height, base, accent, style=0, levels=3, role="cloth"):
+def actor_texture(path, width, height, base, accent, style=0, levels=3, role="cloth", motif=""):
     """Author a role-specific BGRA material while preserving EL's fixed atlas contract."""
     header=[124,0x0002100F,height,width,width*4,0,levels]+[0]*11
     header += [32,0x41,0,32,0x00FF0000,0x0000FF00,0x000000FF,0xFF000000]
@@ -378,6 +394,12 @@ def actor_texture(path, width, height, base, accent, style=0, levels=3, role="cl
                     seam_width=max(.006,1.5/w)
                     if abs(u-.5)<seam_width or abs(v-.12)<seam_width: color=accent
                     if role=="cloth" and abs(abs(u-.5)+abs(v-.52)-.28)<.015: color=accent
+                    if motif=="luminous" and (abs((u*4)%1-.5)<.025 or abs(v-.72)<.018): color=accent
+                    elif motif=="votary" and abs(abs(u-.5)*1.8-(v-.22)% .34)<.025: color=accent
+                    elif motif=="orun" and abs(abs(u-.5)+abs(v-.52)-(.18+.06*(style%3)))<.022: color=accent
+                    elif motif=="greyhaven" and (int(v*12+style)%4==0 and (y%max(2,5>>level))<2): color=accent
+                    elif motif=="glasswarden" and abs(abs(u-.5)+abs(v-.5)-.22)<.018: color=accent
+                    elif motif=="ssarathi" and ((int(u*18)+int(v*22)+style)%5==0): color=accent
                 elif role == "leather":
                     detail += ((x*5+y*11+style*23)%17)-8
                     if abs(u-.12)<.012 or abs(u-.88)<.012 or abs(v-.18)<.012: color=accent
@@ -388,29 +410,45 @@ def actor_texture(path, width, height, base, accent, style=0, levels=3, role="cl
     path.write_bytes(b'DDS '+struct.pack('<31I',*header)+data)
 
 def generate_customization(root):
+    wardrobe={
+        "luminous":((39,112,126),(214,188,111),(28,62,78),(104,76,48)),
+        "votary":((126,157,176),(226,231,228),(66,78,91),(93,100,105)),
+        "glasswarden":((92,61,128),(191,142,65),(55,47,72),(105,73,45)),
+        "orun":((159,78,35),(219,166,72),(83,59,38),(122,73,34)),
+        "greyhaven":((48,73,91),(154,174,171),(42,54,66),(89,66,47)),
+        "ssarathi":((45,111,88),(184,151,70),(39,72,65),(85,68,43)),
+    }
+    def harmonize(colors,target,amount=.38):
+        return tuple(tuple(round(value*(1-amount)+target[i]*amount) for i,value in enumerate(color))
+                     for color in colors)
     for culture,skins in CULTURES.items():
         directory=root/f"actors/custom/{culture}"
+        cloth_accent,trim,pants_target,leather_target=wardrobe[culture]
+        cloth_palette=harmonize(CLOTH,cloth_accent)
+        pants_palette=harmonize(PANTS,pants_target,.32)
+        boots_palette=harmonize(BOOTS,leather_target,.30)
         dark_blue=(55,79,105) if culture=="votary" else tuple(max(35,c-35) for c in skins[0])
         white=(222,224,216) if culture!="ssarathi" else (169,207,178)
         skin_palette=(skins[0],skins[1],skins[2],skins[1],dark_blue,white)
         for i,color in enumerate(skin_palette):
-            actor_texture(directory/f"skin_{i}_hands.dds",64,64,color,(220,188,150),i,role="skin")
-            actor_texture(directory/f"skin_{i}_head.dds",128,128,color,(220,188,150),i,role="skin")
-        for i,color in enumerate(HAIR):actor_texture(directory/f"hair_{i}.dds",136,192,color,tuple(min(255,c+35) for c in color),i,role="hair")
-        for i,color in enumerate(EYES):actor_texture(directory/f"eyes_{i}.dds",24,24,color,(235,235,220),i,role="eyes")
-        for i,color in enumerate(CLOTH):
-            actor_texture(directory/f"shirt_{i}_torso.dds",196,216,color,(207,151,70),i,role="cloth")
-            actor_texture(directory/f"shirt_{i}_arms.dds",160,160,color,(207,151,70),i,role="cloth")
-        for i,color in enumerate(PANTS):actor_texture(directory/f"pants_{i}.dds",160,160,color,(126,104,78),i,role="pants")
-        for i,color in enumerate(BOOTS):actor_texture(directory/f"boots_{i}.dds",156,160,color,(176,137,87),i,role="leather")
+            actor_texture(directory/f"skin_{i}_hands.dds",64,64,color,trim,i,role="skin",motif=culture)
+            actor_texture(directory/f"skin_{i}_head.dds",128,128,color,trim,i,role="skin",motif=culture)
+        for i,color in enumerate(HAIR):actor_texture(directory/f"hair_{i}.dds",136,192,color,tuple(min(255,c+35) for c in color),i,role="hair",motif=culture)
+        for i,color in enumerate(EYES):actor_texture(directory/f"eyes_{i}.dds",24,24,color,(235,235,220),i,role="eyes",motif=culture)
+        for i,color in enumerate(cloth_palette):
+            actor_texture(directory/f"shirt_{i}_torso.dds",196,216,color,trim,i,role="cloth",motif=culture)
+            actor_texture(directory/f"shirt_{i}_arms.dds",160,160,color,trim,i,role="cloth",motif=culture)
+        for i,color in enumerate(pants_palette):actor_texture(directory/f"pants_{i}.dds",160,160,color,trim,i,role="pants",motif=culture)
+        for i,color in enumerate(boots_palette):actor_texture(directory/f"boots_{i}.dds",156,160,color,trim,i,role="leather",motif=culture)
 
 def actor_defs(path):
-    files={"CAL_walk":"walk.xaf","CAL_run":"run.xaf","CAL_idle":"idle.xaf","CAL_idle2":"idle.xaf","CAL_combat_idle":"idle.xaf","CAL_attack_up_1":"attack.xaf","CAL_attack_down_1":"attack.xaf","CAL_pain1":"pain.xaf","CAL_pain2":"pain.xaf","CAL_die1":"die.xaf","CAL_die2":"die.xaf","CAL_harvest":"harvest.xaf","CAL_pick":"harvest.xaf","CAL_drop":"harvest.xaf","CAL_idle_sit":"sit.xaf","CAL_sit_down":"sit.xaf","CAL_stand_up":"idle.xaf"}
+    files={"CAL_walk":"walk","CAL_run":"run","CAL_idle":"idle","CAL_idle2":"idle2","CAL_combat_idle":"combat_idle","CAL_attack_up_1":"attack","CAL_attack_down_1":"attack","CAL_attack_cast":"cast","CAL_pain1":"pain","CAL_pain2":"pain","CAL_die1":"die","CAL_die2":"die","CAL_harvest":"harvest","CAL_pick":"pick","CAL_drop":"drop","CAL_idle_sit":"sit","CAL_sit_down":"sit_down","CAL_stand_up":"stand_up"}
     root=ET.Element("actors")
     for race_index,(culture,label,_,_) in enumerate(RACES):
       for gender,aid in zip(("female","male"),PLAYER_ACTOR_TYPES[race_index]):
+        model=f"{culture}_{gender}"
         a=ET.SubElement(root,"actor",id=str(aid),type=f"Eloria {label} {gender.title()}",race=culture,gender=gender)
-        ET.SubElement(a,"skeleton").text="actors/eloria_humanoid.csf"; ET.SubElement(a,"step_duration").text="250"
+        ET.SubElement(a,"skeleton").text=f"actors/playable/{model}.csf"; ET.SubElement(a,"step_duration").text="250"
         prefix=f"actors/custom/{culture}"
         for i in range(len(CLOTH)):
             shirt=ET.SubElement(a,"shirt",id=str(i))
@@ -440,9 +478,9 @@ def actor_defs(path):
         weapon=ET.SubElement(a,"weapon",id="0")
         ET.SubElement(weapon,"skin").text="actors/eloria_humanoid.png"
         frames=ET.SubElement(a,"frames")
-        for tag,name in files.items():
+        for tag,animation_name in files.items():
             kind=0 if tag in ("CAL_walk","CAL_run","CAL_idle","CAL_idle2","CAL_idle_sit","CAL_combat_idle") else 1
-            ET.SubElement(frames,tag).text=f"animations/eloria/{Path(name).with_suffix('.caf').name} {kind}"
+            ET.SubElement(frames,tag).text=f"animations/playable/{model}/{animation_name}.caf {kind}"
     for actor in root.findall("actor"):
         for tag,none_id in none_ids.items():
             if actor.find(f"{tag}[@id='{none_id}']") is None:
@@ -456,8 +494,27 @@ def main():
     skeleton(root/"actors/eloria_humanoid.xsf"); mesh(root/"actors/eloria_humanoid.xmf")
     for section in ("shirt","legs","boots","none"):mesh(root/f"actors/eloria_{section}.xmf",section)
     for i in range(5):mesh(root/f"actors/eloria_head_{i}.xmf","head",i)
+    anims={"idle":(2.,[(0,{2:-.03}),(1,{2:.03}),(2,{2:-.03})]),
+           "idle2":(3.,[(0,{1:-.025,4:.06}),(1.5,{1:.025,6:.08}),(3.,{1:-.025,4:.06})]),
+           "combat_idle":(2.,[(0,{4:-.32,6:-.32}),(1,{2:.04,4:-.28,6:-.36}),(2.,{4:-.32,6:-.32})]),
+           "walk":(1.,[(0,{4:.5,6:-.5,8:-.55,11:.55}),(.5,{4:-.5,6:.5,8:.55,11:-.55}),(1,{4:.5,6:-.5,8:-.55,11:.55})]),
+           "run":(.7,[(0,{4:.8,6:-.8,8:-.85,11:.85}),(.35,{4:-.8,6:.8,8:.85,11:-.85}),(.7,{4:.8,6:-.8,8:-.85,11:.85})]),
+           "attack":(.65,[(0,{2:-.15,6:-.5}),(.3,{2:.55,6:1.5,7:.7}),(.65,{2:-.15,6:-.5})]),
+           "cast":(1.1,[(0,{4:-.2,6:-.2}),(.55,{4:.75,6:.75,5:-.45,7:-.45}),(1.1,{4:-.2,6:-.2})]),
+           "pain":(.45,[(0,{}),(.2,{2:-.35,4:-.25,6:-.25}),(.45,{})]),
+           "die":(1.2,[(0,{}),(.6,{1:-.8,2:-.8}),(1.2,{1:-1.45,2:-1.45})]),
+           "harvest":(1.1,[(0,{}),(.55,{2:.45,4:1.,6:1.}),(1.1,{})]),
+           "pick":(.8,[(0,{}),(.4,{1:.35,2:.48,6:.3}),(.8,{})]),
+           "drop":(.7,[(0,{6:.2}),(.35,{6:.75,7:.3}),(.7,{})]),
+           "sit_down":(.8,[(0,{}),(.8,{8:1.35,9:-1.35,11:1.35,12:-1.35})]),
+           "sit":(2.,[(0,{8:1.35,9:-1.35,11:1.35,12:-1.35}),(1,{2:.04,8:1.35,9:-1.35,11:1.35,12:-1.35}),(2.,{8:1.35,9:-1.35,11:1.35,12:-1.35})]),
+           "stand_up":(.8,[(0,{8:1.35,9:-1.35,11:1.35,12:-1.35}),(.8,{})])}
     for culture,_,_,_ in RACES:
         for gender in ("female","male"):
+            model=f"{culture}_{gender}";bones=fitted_bones(culture,gender)
+            skeleton(root/f"actors/playable/{model}.xsf",bones)
+            for name,(duration,poses) in anims.items():
+                animation(root/f"animations/playable/{model}/{name}.xaf",duration,poses,bones)
             mesh(root/f"actors/playable/{culture}_{gender}_body.xmf","all",0,culture,gender)
             for section in ("shirt","legs","boots"):
                 mesh(root/f"actors/playable/{culture}_{gender}_{section}.xmf",section,0,culture,gender)
@@ -473,7 +530,6 @@ def main():
          "id":slug,"name":label,"description":description}
         for aid,(slug,label,_,description) in enumerate(RACES)]}
     (root/"races.json").write_text(json.dumps(race_catalog,indent=2)+"\n",encoding="utf-8")
-    anims={"idle":(2.,[(0,{2:-.03}),(1,{2:.03}),(2,{2:-.03})]),"walk":(1.,[(0,{4:.5,6:-.5,8:-.55,11:.55}),(.5,{4:-.5,6:.5,8:.55,11:-.55}),(1,{4:.5,6:-.5,8:-.55,11:.55})]),"run":(.7,[(0,{4:.8,6:-.8,8:-.85,11:.85}),(.35,{4:-.8,6:.8,8:.85,11:-.85}),(.7,{4:.8,6:-.8,8:-.85,11:.85})]),"attack":(.65,[(0,{2:-.15,6:-.5}),(.3,{2:.55,6:1.5,7:.7}),(.65,{2:-.15,6:-.5})]),"pain":(.45,[(0,{}),(.2,{2:-.35,4:-.25,6:-.25}),(.45,{})]),"die":(1.2,[(0,{}),(.6,{1:-.8,2:-.8}),(1.2,{1:-1.45,2:-1.45})]),"harvest":(1.1,[(0,{}),(.55,{2:.45,4:1.,6:1.}),(1.1,{})]),"sit":(.8,[(0,{}),(.8,{8:1.35,9:-1.35,11:1.35,12:-1.35})])}
     for name,(duration,poses) in anims.items(): animation(root/f"animations/eloria/{name}.xaf",duration,poses)
     actor_defs(root/"actor_defs/actor_defs.xml")
 if __name__=="__main__": main()
