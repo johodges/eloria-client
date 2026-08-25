@@ -7,13 +7,19 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 
 from generate_characters import (BONES, animation, binary_mesh, cuboid,
                                  ellipsoid, profile_surface, write_cal)
 
 SOURCE = Path(__file__).parents[1] / "source/four-gates-guard"
 BODY_UV_RECT = (79 / 128, 0, 1, 54 / 128)
+FILL_RECTS = {
+    "teal": (0.000, 0.000, 0.031, 0.031),
+    "gold": (0.031, 0.000, 0.062, 0.031),
+    "leather": (0.062, 0.000, 0.093, 0.031),
+    "skin": (0.093, 0.000, 0.124, 0.031),
+}
 
 
 def write_mesh(path: Path, positions, normals, uv, faces, bones, rect) -> None:
@@ -51,10 +57,37 @@ def write_mesh(path: Path, positions, normals, uv, faces, bones, rect) -> None:
     binary_mesh(path.with_suffix(".cmf"), vertices, oriented)
 
 
-def write_dds(path: Path, source: Path, size: tuple[int, int]) -> None:
+def _paint_body_swatches(image: Image.Image) -> Image.Image:
+    """Reserve tiny, otherwise-dark atlas cells for procedural gap geometry."""
+    image = image.copy()
+    draw = ImageDraw.Draw(image)
+    colors = {
+        "teal": ((8, 70, 76, 255), (15, 105, 109, 255)),
+        "gold": ((116, 68, 17, 255), (218, 162, 58, 255)),
+        "leather": ((54, 25, 14, 255), (126, 64, 31, 255)),
+        "skin": ((104, 48, 32, 255), (184, 103, 70, 255)),
+    }
+    for name, rect in FILL_RECTS.items():
+        x0, y0, x1, y1 = (int(value * image.width) for value in rect)
+        dark, light = colors[name]
+        draw.rectangle((x0, y0, x1, y1), fill=dark)
+        for y in range(y0, y1 + 1, 8):
+            draw.line((x0, y, x1, y), fill=light, width=2)
+        # Mirror the cells for renderers using the opposite DDS V origin.
+        my0, my1 = image.height - y1, image.height - y0
+        draw.rectangle((x0, my0, x1, my1), fill=dark)
+        for y in range(my0, my1 + 1, 8):
+            draw.line((x0, y, x1, y), fill=light, width=2)
+    return image
+
+
+def write_dds(path: Path, source: Path, size: tuple[int, int], *, swatches=False) -> None:
     """Use the established generator's uncompressed BGRA DDS contract."""
     import struct
-    base = Image.open(source).convert("RGBA").resize(size, Image.Resampling.LANCZOS)
+    base = Image.open(source).convert("RGBA")
+    if swatches:
+        base = _paint_body_swatches(base)
+    base = base.resize(size, Image.Resampling.LANCZOS)
     levels = 4
     header = [124, 0x0002100F, base.height, base.width, base.width*4, 0, levels] + [0]*11
     header += [32, 0x41, 0, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000]
@@ -114,18 +147,15 @@ def main() -> None:
                          (side*.10,.01,.30,.10,.115),(side*.10,.13,.02,.12,.22)],
                         chain,filler_vertices,filler_faces,sides=24)
     ellipsoid((0,0,1.72),(.32,.29,.36),3,filler_vertices,filler_faces,rings=12,sides=28)
-    # Neutral-pose armor replaces the discarded action-pose limb shells.
-    for side,upper,lower,hand in ((-1,4,5,16),(1,6,7,17)):
-        ellipsoid((side*.255,0,1.43),(.28,.28,.25),upper,filler_vertices,filler_faces,rings=10,sides=24)
-        ellipsoid((side*.31,-.005,1.05),(.23,.22,.34),lower,filler_vertices,filler_faces,rings=10,sides=22)
-        ellipsoid((side*.31,-.015,.77),(.20,.19,.20),hand,filler_vertices,filler_faces,rings=8,sides=20)
-    for side,upper,lower,foot in ((-1,8,9,10),(1,11,12,13)):
-        ellipsoid((side*.10,0,.71),(.27,.28,.38),upper,filler_vertices,filler_faces,rings=10,sides=24)
-        ellipsoid((side*.10,.015,.31),(.22,.24,.39),lower,filler_vertices,filler_faces,rings=10,sides=22)
-        ellipsoid((side*.10,.13,.04),(.25,.39,.16),foot,filler_vertices,filler_faces,rings=8,sides=20)
+    # Do not wrap extra spherical armor shells around the neutral body. Besides
+    # distorting the silhouette, their generic 0..1 UVs sampled unrelated face,
+    # shield and cloth islands from the authored atlas.
     offset=len(positions)
     for pos,norm,uv,bone in filler_vertices:
-        positions.append(np.asarray(pos)); normals.append(np.asarray(norm)); texcoords.append(np.asarray(uv)); bones.append(bone)
+        material = "skin" if bone in {3,16,17} else "leather" if bone in {10,13} else "teal"
+        u0,v0,u1,v1 = FILL_RECTS[material]
+        mapped_uv = (u0 + uv[0] * (u1-u0), v0 + uv[1] * (v1-v0))
+        positions.append(np.asarray(pos)); normals.append(np.asarray(norm)); texcoords.append(np.asarray(mapped_uv)); bones.append(bone)
     faces.extend(tuple(offset+index for index in triangle) for triangle in filler_faces)
     write_mesh(root / "actors/four_gates_guard/guard_body.xmf",
         np.asarray(positions), np.asarray(normals), np.asarray(texcoords),
@@ -153,14 +183,22 @@ def main() -> None:
             np.asarray([q[0] for q in vertices]),np.asarray([q[1] for q in vertices]),
             np.asarray([q[2] for q in vertices]),np.asarray(triangles),
             np.asarray([q[3] for q in vertices]),(0,0,1,1))
-    Image.open(SOURCE/"guard_atlas.webp").convert("RGB").resize((512,512),Image.Resampling.LANCZOS).save(
-        root/"actors/four_gates_guard/guard_equipment.png")
+    equipment_texture = Image.new("RGB", (512,512), (8,45,49))
+    draw = ImageDraw.Draw(equipment_texture)
+    for y in range(512):
+        draw.line((0,y,511,y), fill=(8+y//12, 54+y//8, 58+y//7))
+    for radius in range(238, 20, -24):
+        color=(211,155,53) if (radius//24)%2 else (93,54,18)
+        draw.ellipse((256-radius,256-radius,256+radius,256+radius),outline=color,width=8)
+    draw.line((0,64,512,448),fill=(226,177,69),width=10)
+    draw.line((0,448,512,64),fill=(95,50,20),width=10)
+    equipment_texture.save(root/"actors/four_gates_guard/guard_equipment.png")
     # Enhanced actors require source images at each slot's native dimensions;
     # feeding the compositor one 2048px image caused its white fallback.
     write_dds(root / "actors/four_gates_guard/guard_torso.dds",
-        SOURCE / "guard_atlas.webp", (196, 216))
+        SOURCE / "guard_atlas.webp", (196, 216), swatches=True)
     write_dds(root / "actors/four_gates_guard/guard_arms.dds",
-        SOURCE / "guard_atlas.webp", (160, 160))
+        SOURCE / "guard_atlas.webp", (160, 160), swatches=True)
     generate_animations(root)
     print(f"Generated Four Gates guard: {len(data['faces'])} triangles, 15 animations")
 

@@ -4,7 +4,7 @@
   "source_vertices": 1018724,
   "source_triangles": 2000000,
   "converted_vertices": 19103,
-  "converted_triangles": 12930,
+  "converted_triangles": 10261,
   "source_generator": "THREE.GLTFExporter r178",
   "source_had_skin": false,
   "source_had_animations": false,

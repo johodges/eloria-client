@@ -73,7 +73,12 @@ def main():
   # independent equippable meshes instead of deforming with the body.
   baked_arm=abs(center[0])>.24 and center[2]>.70
   baked_leg=abs(center[0])>.12 and center[2]<.86
-  cape=center[1]>.14 and center[2]>.70 and bounds[0]>.14
+  # The long lower cape shell sits slightly below the old centre-height cutoff
+  # (z ~= .695), so the earlier predicate left most of it welded to the body.
+  # Rear cloth is broad, tall and centred behind the hips; armor plates are
+  # much shorter in Z and therefore remain intact.
+  cape=(center[1]>.14 and center[2]>.70 and bounds[0]>.14) or (
+       center[1]>.18 and bounds[2]>.55 and bounds[0]>.14)
   if baked_arm or baked_leg or cape:
    removed[members]=True; continue
   dominant=int(np.bincount(bone[members].astype(np.int64)).argmax())

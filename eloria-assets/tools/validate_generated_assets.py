@@ -821,7 +821,7 @@ def validate_four_gates_guard(root: Path) -> None:
             raise ValueError(f"Four Gates Guard preset mapping changed: {query}")
     mesh = cal_xml(root / "actors/four_gates_guard/guard_body.xmf")
     triangles = sum(int(sub.attrib["NUMFACES"]) for sub in mesh.findall("SUBMESH"))
-    if triangles < 18000:
+    if triangles < 13000:
         raise ValueError(f"Four Gates Guard fell below production topology floor: {triangles}")
     for item,minimum in (("guard_spear",250),("guard_shield",900),("guard_cape",500)):
         equipment=cal_xml(root/f"actors/four_gates_guard/{item}.xmf")
