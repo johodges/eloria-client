@@ -132,8 +132,8 @@ static void add_rule(const char* short_desc, const char* long_desc, int type)
 {
 	struct rule_struct* rule = &rules.rule[rules.no++];
 
-	MY_XMLSTRCPY(&rule->short_desc, short_desc);
-	MY_XMLSTRCPY(&rule->long_desc, long_desc);
+	MY_XMLSTRCPY(&rule->short_desc, short_desc ? short_desc : "");
+	MY_XMLSTRCPY(&rule->long_desc, long_desc ? long_desc : "");
 
 	rule->type=type;
 }
