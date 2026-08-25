@@ -19,6 +19,12 @@ MODELS = {
     "ssarathi_female": 41, "ssarathi_male": 42,
 }
 SECTION_NAMES = ("shirt", "legs", "boots", "head")
+ATLAS_REGIONS = {
+    "head": (34, 0, 32, 32), "hair": (0, 0, 34, 48),
+    "eyes": (50, 32, 6, 6), "hands": (34, 32, 16, 16),
+    "arms": (0, 48, 40, 40), "torso": (79, 74, 49, 54),
+    "boots": (0, 88, 39, 40), "legs": (39, 88, 40, 40),
+}
 
 
 def read_emesh(path):
@@ -45,19 +51,59 @@ def influences(position):
     # The source bodies are in a natural A pose. Detect arms outside the ribcage
     # and project down their shoulder-to-hand line.
     arm_limit=.19 + max(0.,z-.75)*.08
-    if abs(x)>arm_limit and .55<z<1.58:
-        t=max(0.,min(1.,(1.52-z)/.82))
-        if t<.43: return blend(upper_arm,lower_arm,t/.43*.45)
-        if t<.82: return blend(lower_arm,hand,(t-.43)/.39*.35)
+    # Back panels, coats, and shoulder ornaments can extend past the arm
+    # silhouette.  Keep them on the torso rather than letting arm animation
+    # pull them into long spikes.
+    if y>.12 and z>.94:
+        return blend(1,2,(z-.94)/.24)
+    if abs(x)>arm_limit and -.18<y<.12 and .55<z<1.58:
+        if z>1.38: return blend(2,upper_arm,(1.58-z)/.20)
+        if z>1.10: return [(upper_arm,1.)]
+        if z>.80: return blend(upper_arm,lower_arm,(1.10-z)/.30)
+        if z>.62: return blend(lower_arm,hand,(.80-z)/.18)
         return [(hand,1.)]
     if z>1.48:
         return blend(26,3,(z-1.48)/.16)
     if z<.18: return [(foot,1.)]
-    if z<.56: return blend(shin,foot,max(0.,(.25-z)/.08)) if z<.25 else [(shin,1.)]
-    if z<.94: return blend(thigh,shin,max(0.,(.70-z)/.14)) if z<.70 else [(thigh,1.)]
-    if z<1.08: return blend(1,2,(z-.94)/.14)
+    if z<.30: return blend(foot,shin,(z-.18)/.12)
+    if z<.56: return [(shin,1.)]
+    if z<.76: return blend(shin,thigh,(z-.56)/.20)
+    if z<.94: return [(thigh,1.)]
+    if z<1.08: return blend(thigh,1,(z-.94)/.14)
     if z<1.35: return [(2,1.)]
     return blend(2,25,(z-1.35)/.13)
+
+
+def clean_mesh(positions,normals,uvs,triangles,cell=.035):
+    """Cluster dense source topology while retaining UV and normal seams."""
+    clusters={}; members=[]; remap=[]
+    for position,normal,uv in zip(positions,normals,uvs):
+        key=(*(round(value/cell) for value in position),
+             round(uv[0]/.015),round(uv[1]/.015),
+             *(round(value/.35) for value in normal))
+        index=clusters.get(key)
+        if index is None:
+            index=len(members); clusters[key]=index; members.append([])
+        members[index].append((position,normal,uv)); remap.append(index)
+    out_positions=[];out_normals=[];out_uvs=[]
+    for group in members:
+        count=len(group)
+        position=tuple(sum(item[0][axis] for item in group)/count for axis in range(3))
+        normal=[sum(item[1][axis] for item in group) for axis in range(3)]
+        length=math.sqrt(sum(value*value for value in normal)) or 1.
+        out_positions.append(position);out_normals.append(tuple(value/length for value in normal))
+        out_uvs.append(tuple(sum(item[2][axis] for item in group)/count for axis in range(2)))
+    out_faces=[];seen=set()
+    for face in triangles:
+        mapped=tuple(remap[index] for index in face)
+        if len(set(mapped))<3 or mapped in seen: continue
+        a,b,c=mapped;pa,pb,pc=(out_positions[index] for index in mapped)
+        ab=tuple(pb[i]-pa[i] for i in range(3));ac=tuple(pc[i]-pa[i] for i in range(3))
+        cross=(ab[1]*ac[2]-ab[2]*ac[1],ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0])
+        average=tuple(sum(out_normals[index][i] for index in mapped) for i in range(3))
+        if sum(cross[i]*average[i] for i in range(3))<0: mapped=(a,c,b)
+        seen.add(mapped);out_faces.append(mapped)
+    return out_positions,out_normals,out_uvs,out_faces
 
 
 def section_for_triangle(points):
@@ -68,10 +114,42 @@ def section_for_triangle(points):
     return "shirt"
 
 
-def compact_section(positions,normals,uvs,faces):
+def atlas_uv(section,uv,weights):
+    role=section
+    bones={bone for bone,_ in weights}
+    if section=="shirt":
+        if bones & {16,17,32,33,34,35}: role="hands"
+        elif bones & {4,5,6,7}: role="arms"
+        else: role="torso"
+    x,y,w,h=ATLAS_REGIONS[role]
+    return ((x+uv[0]*w)/128.,(y+uv[1]*h)/128.)
+
+
+def compact_section(positions,normals,uvs,faces,section):
     used=sorted({i for face in faces for i in face}); remap={old:new for new,old in enumerate(used)}
-    vertices=[(positions[i],normals[i],uvs[i],influences(positions[i])) for i in used]
-    return vertices,[tuple(remap[i] for i in face) for face in faces]
+    vertices=[]
+    for i in used:
+        weights=influences(positions[i])
+        vertices.append((positions[i],normals[i],atlas_uv(section,uvs[i],weights),weights))
+    compact_faces=[tuple(remap[i] for i in face) for face in faces]
+    neighbors=[set() for _ in vertices]
+    for face in compact_faces:
+        for index in face: neighbors[index].update(other for other in face if other!=index)
+    # Diffuse a small amount of weight across actual triangle adjacency.  This
+    # preserves rigid regions but prevents one triangle from joining three
+    # unrelated bones and exploding into a sheet during animation.
+    smoothed=[]
+    for index,vertex in enumerate(vertices):
+        own=dict(vertex[3]); combined={bone:.65*weight for bone,weight in own.items()}
+        adjacent=neighbors[index]
+        if adjacent:
+            scale=.35/len(adjacent)
+            for other in adjacent:
+                for bone,weight in vertices[other][3]: combined[bone]=combined.get(bone,0.)+scale*weight
+        selected=sorted(combined.items(),key=lambda item:item[1],reverse=True)[:4]
+        total=sum(weight for _,weight in selected) or 1.
+        smoothed.append((*vertex[:3],[(bone,weight/total) for bone,weight in selected]))
+    return smoothed,compact_faces
 
 
 def write_mesh(path,vertices,faces):
@@ -191,8 +269,17 @@ def png_rgba(path):
     return width,height,b"".join(rows)
 
 
-def write_dds(source,path):
-    width,height,rgba=png_rgba(source); levels=[]; w,h=width,height; pixels=rgba
+def write_dds(source,path,target_size=None):
+    width,height,rgba=source if isinstance(source,tuple) else png_rgba(source)
+    levels=[]; w,h=width,height; pixels=rgba
+    if target_size is not None:
+        target_width,target_height=target_size; resized=bytearray(target_width*target_height*4)
+        for y in range(target_height):
+            sy=min(height-1,int((y+.5)*height/target_height))
+            for x in range(target_width):
+                sx=min(width-1,int((x+.5)*width/target_width))
+                resized[(y*target_width+x)*4:(y*target_width+x+1)*4]=rgba[(sy*width+sx)*4:(sy*width+sx+1)*4]
+        width,height,rgba=target_width,target_height,bytes(resized);w,h,pixels=width,height,rgba
     for _ in range(5):
         levels.append((w,h,pixels))
         if w==1 and h==1: break
@@ -223,12 +310,14 @@ def patch_actor_defs(path,name,actor_id,texture):
                 suffix=f"head_{part.attrib['id']}" if tag=="head" else tag
                 mesh.text=f"actors/playable/{name}_{suffix}.cmf"
             for child in part:
-                if child.tag in ("arms","torso","skin"): child.text=texture
+                if child.tag in ("arms","torso","skin"):
+                    role=child.tag if child.tag!="skin" else tag
+                    child.text=f"actors/playable/{name}_{role}.dds"
     for tag in ("hskin","hair","eyes"):
         for part in actor.findall(tag):
             if len(part):
-                for child in part: child.text=texture
-            else: part.text=texture
+                for child in part: child.text=f"actors/playable/{name}_{child.tag}.dds"
+            else: part.text=f"actors/playable/{name}_{tag}.dds"
     frames=actor.find("frames"); mapping={
       "CAL_idle":"idle","CAL_idle2":"idle2","CAL_walk":"walk","CAL_run":"run",
       "CAL_combat_idle":"combat_idle","CAL_attack_up_1":"attack","CAL_attack_down_1":"attack",
@@ -246,13 +335,15 @@ def patch_actor_defs(path,name,actor_id,texture):
 
 def generate_model(root,name,actor_id):
     positions,normals,uvs,triangles=read_emesh(SOURCE/f"{name}.emesh")
+    source_vertices,source_faces=len(positions),len(triangles)
+    positions,normals,uvs,triangles=clean_mesh(positions,normals,uvs,triangles)
     split={section:[] for section in SECTION_NAMES}
     for face in triangles: split[section_for_triangle([positions[i] for i in face])].append(face)
     base=root/"actors/playable"
     all_vertices=[(p,n,u,influences(p)) for p,n,u in zip(positions,normals,uvs)]
     write_mesh(base/f"{name}_body.xmf",all_vertices,triangles)
     for section in SECTION_NAMES:
-        vertices,faces=compact_section(positions,normals,uvs,split[section])
+        vertices,faces=compact_section(positions,normals,uvs,split[section],section)
         write_mesh(base/f"{name}_{section}.xmf",vertices,faces)
     # The authored source supplies one intentional head per sex; retain the
     # five protocol slots without fabricating distorted alternatives.
@@ -262,9 +353,15 @@ def generate_model(root,name,actor_id):
     bones=fitted_bones(name); skeleton(base/f"{name}.xsf",bones)
     anim_dir=root/f"animations/playable/{name}"
     for anim,(duration,poses) in ANIMATIONS.items(): animation(anim_dir/f"{anim}.xaf",bones,duration,poses)
-    texture=f"actors/playable/{name}.dds"; write_dds(SOURCE/f"{name}.png",root/texture)
+    texture=f"actors/playable/{name}.dds"
+    # Retain the full atlas as a QA/reference artifact; runtime enhanced actors
+    # consume the compositor-sized role textures below.
+    source_texture=png_rgba(SOURCE/f"{name}.png")
+    write_dds(source_texture,root/texture)
+    for role,(_,_,width,height) in ATLAS_REGIONS.items():
+        write_dds(source_texture,root/f"actors/playable/{name}_{role}.dds",(width*4,height*4))
     patch_actor_defs(root/"actor_defs/actor_defs.xml",name,actor_id,texture)
-    print(f"{name}: {len(positions)} vertices, {len(triangles)} triangles, {sum(len(v) for v in split.values())} assigned")
+    print(f"{name}: {source_vertices}->{len(positions)} vertices, {source_faces}->{len(triangles)} triangles, {sum(len(v) for v in split.values())} assigned")
 
 
 def main():
