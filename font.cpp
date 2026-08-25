@@ -100,7 +100,10 @@ TTF_Font* open_font(const std::string& file_name, int point_size)
 {
 	// First try to interpret ttf_file_name as a path relative to the data directory. If that fails,
 	// try a path relative to the ttf_directory. If that also fails, try as an absolute path.
-	std::string path = datadir + file_name;
+	std::string path = datadir;
+	if (!path.empty() && path.back() != '/' && path.back() != '\\')
+		path += '/';
+	path += file_name;
 	TTF_Font *font = TTF_OpenFont(path.c_str(), point_size);
 	if (!font)
 	{
@@ -1727,11 +1730,7 @@ void FontManager::upgrade_eloria_bitmap_fonts()
 	const size_t bundled_idx = std::distance(_options.begin(), bundled);
 	for (font_cat category: { UI_FONT, CHAT_FONT, NAME_FONT, BOOK_FONT,
 		NOTE_FONT, RULES_FONT, CONFIG_FONT })
-	{
-		const size_t selected = font_idxs[category];
-		if (selected >= _options.size() || !_options[selected].is_ttf())
-			font_idxs[category] = bundled_idx;
-	}
+		font_idxs[category] = bundled_idx;
 }
 
 void FontManager::initialize_ttf()
