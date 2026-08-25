@@ -21,6 +21,12 @@ CREATURE_ANCHORS = {
     "root", "body", "head", "mouth", "jaw", "handL", "handR",
     "weaponL", "weaponR", "staffR", "arrow", "cape1", "cape2", "cape3",
 }
+PLAYER_ATLAS_REGIONS = {
+    "head": (34, 0, 32, 32), "hair": (0, 0, 34, 48),
+    "eyes": (50, 32, 6, 6), "hands": (34, 32, 16, 16),
+    "arms": (0, 48, 40, 40), "torso": (79, 74, 49, 54),
+    "boots": (0, 88, 39, 40), "legs": (39, 88, 40, 40),
+}
 
 
 def cal_xml(path: Path) -> ET.Element:
@@ -874,11 +880,23 @@ def validate_playable_characters(root: Path) -> None:
                 weights=[{int(influence.attrib["ID"]) for influence in vertex.findall("INFLUENCE")
                           if float(influence.text)>.02}
                          for vertex in document.findall(".//VERTEX")]
+                texcoords=[tuple(map(float,vertex.findtext("TEXCOORD").split()))
+                           for vertex in document.findall(".//VERTEX")]
                 for face in document.findall(".//FACE"):
                     indices=list(map(int,face.attrib["VERTEXID"].split()))
                     if any(not(weights[indices[index]] & weights[indices[(index+1)%3]])
                            for index in range(3)):
                         raise ValueError(f"playable mesh has a disjoint-weight animation seam: {relative}")
+                    if "shirt" in relative:
+                        regions=[]
+                        for index in indices:
+                            u,v=texcoords[index]
+                            roles=[role for role,(x,y,w,h) in PLAYER_ATLAS_REGIONS.items()
+                                   if x/128.-1e-5<=u<=(x+w)/128.+1e-5 and
+                                      y/128.-1e-5<=v<=(y+h)/128.+1e-5]
+                            regions.append(set(roles))
+                        if not set.intersection(*regions):
+                            raise ValueError(f"playable triangle crosses compositor regions: {relative}")
             if "boots" in relative:
                 positions=[tuple(map(float,vertex.findtext("POS").split()))
                            for vertex in document.findall(".//VERTEX")]
@@ -917,7 +935,7 @@ def validate_playable_characters(root: Path) -> None:
         if name in authored:
             body_xml=cal_xml(root/f"actors/playable/{name}_body.xmf")
             body_vertices=body_xml.findall(".//VERTEX")
-            if not 15000 <= len(body_vertices) <= 32000:
+            if not 15000 <= len(body_vertices) <= 45000:
                 raise ValueError(f"authored player topology is outside runtime budget: {name}")
             if sum(len(vertex.findall("INFLUENCE"))>1 for vertex in body_vertices)<100:
                 raise ValueError(f"authored player lacks smooth multi-bone skinning: {name}")

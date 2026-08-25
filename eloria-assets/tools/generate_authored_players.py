@@ -50,13 +50,19 @@ def influences(position):
     hand=17 if side else 16; thigh=11 if side else 8; shin=12 if side else 9; foot=13 if side else 10
     # The source bodies are in a natural A pose. Detect arms outside the ribcage
     # and project down their shoulder-to-hand line.
-    arm_limit=.19 + max(0.,z-.75)*.08
+    # Keep hips and outer thighs out of the arm chain.  The old .19 cutoff
+    # crossed the authored characters' leg silhouette around knee height and
+    # bound individual trouser vertices to hand/forearm bones.
+    arm_limit=.28 if z<1.00 else .22+max(0.,z-1.00)*.04
     # Back panels, coats, and shoulder ornaments can extend past the arm
     # silhouette.  Keep them on the torso rather than letting arm animation
     # pull them into long spikes.
-    if y>.12 and z>.94:
-        return blend(1,2,(z-.94)/.24)
-    if abs(x)>arm_limit and -.18<y<.12 and .55<z<1.58:
+    if y>.20 and z>1.05:
+        return blend(1,2,(z-1.05)/.20)
+    if (1.08<z<1.42 and -.18<y<.20 and
+            arm_limit-.04<abs(x)<=arm_limit+.04):
+        return blend(2,upper_arm,(abs(x)-(arm_limit-.04))/.08)
+    if abs(x)>arm_limit and -.18<y<.20 and .55<z<1.58:
         if z>1.38: return blend(2,upper_arm,(1.58-z)/.20)
         if z>1.10: return [(upper_arm,1.)]
         if z>.80: return blend(upper_arm,lower_arm,(1.10-z)/.30)
@@ -68,46 +74,41 @@ def influences(position):
     if z<.30: return blend(foot,shin,(z-.18)/.12)
     if z<.56: return [(shin,1.)]
     if z<.76: return blend(shin,thigh,(z-.56)/.20)
-    if z<.94: return [(thigh,1.)]
+    if z<.94:
+        if z>.78 and abs(x)<.08:
+            pelvis_weight=(z-.78)/.16*(1.-abs(x)/.08)
+            return blend(thigh,1,pelvis_weight)
+        return [(thigh,1.)]
     if z<1.08: return blend(thigh,1,(z-.94)/.14)
     if z<1.35: return [(2,1.)]
     return blend(2,25,(z-1.35)/.13)
 
 
-def clean_mesh(positions,normals,uvs,triangles,cell=.035):
-    """Cluster dense source topology while retaining UV and normal seams."""
-    clusters={}; members=[]; remap=[]
-    for position,normal,uv in zip(positions,normals,uvs):
-        key=(*(round(value/cell) for value in position),
-             round(uv[0]/.015),round(uv[1]/.015),
-             *(round(value/.35) for value in normal))
-        index=clusters.get(key)
-        if index is None:
-            index=len(members); clusters[key]=index; members.append([])
-        members[index].append((position,normal,uv)); remap.append(index)
-    out_positions=[];out_normals=[];out_uvs=[]
-    for group in members:
-        count=len(group)
-        position=tuple(sum(item[0][axis] for item in group)/count for axis in range(3))
-        normal=[sum(item[1][axis] for item in group) for axis in range(3)]
+def clean_mesh(positions,normals,uvs,triangles):
+    """Validate the checked-in cleaned topology without collapsing its surface.
+
+    The authoring importer has already clustered the scan.  Clustering it a
+    second time merged opposite sides of thin garments and facial features;
+    the subsequent winding filter then removed valid triangles and left holes.
+    """
+    out_positions=list(positions); out_uvs=list(uvs); out_normals=[]
+    for normal in normals:
         length=math.sqrt(sum(value*value for value in normal)) or 1.
-        out_positions.append(position);out_normals.append(tuple(value/length for value in normal))
-        out_uvs.append(tuple(sum(item[2][axis] for item in group)/count for axis in range(2)))
-    out_faces=[];seen=set()
+        out_normals.append(tuple(value/length for value in normal))
+    out_faces=[]; seen=set()
     for face in triangles:
-        mapped=tuple(remap[index] for index in face)
-        if len(set(mapped))<3 or mapped in seen: continue
+        mapped=tuple(face)
+        if len(set(mapped))<3: continue
+        canonical=tuple(sorted(mapped))
+        if canonical in seen: continue
         a,b,c=mapped;pa,pb,pc=(out_positions[index] for index in mapped)
         ab=tuple(pb[i]-pa[i] for i in range(3));ac=tuple(pc[i]-pa[i] for i in range(3))
         cross=(ab[1]*ac[2]-ab[2]*ac[1],ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0])
+        if sum(value*value for value in cross)<=1e-20: continue
         average=tuple(sum(out_normals[index][i] for index in mapped) for i in range(3))
         if sum(cross[i]*average[i] for i in range(3))<0:
-            mapped=(a,c,b);cross=tuple(-value for value in cross)
-        dots=[sum(cross[i]*out_normals[index][i] for i in range(3)) for index in mapped]
-        first=max(range(3),key=dots.__getitem__)
-        if dots[first]<=1e-12: continue
-        mapped=mapped[first:]+mapped[:first]
-        seen.add(mapped);out_faces.append(mapped)
+            mapped=(a,c,b)
+        seen.add(canonical); out_faces.append(mapped)
     return out_positions,out_normals,out_uvs,out_faces
 
 
@@ -119,24 +120,43 @@ def section_for_triangle(points):
     return "shirt"
 
 
-def atlas_uv(section,uv,weights):
-    role=section
-    bones={bone for bone,_ in weights}
-    if section=="shirt":
-        if bones & {16,17,32,33,34,35}: role="hands"
-        elif bones & {4,5,6,7}: role="arms"
-        else: role="torso"
+def atlas_uv(role,uv):
     x,y,w,h=ATLAS_REGIONS[role]
     return ((x+uv[0]*w)/128.,(y+uv[1]*h)/128.)
 
 
+def texture_role(section, points):
+    """Choose one compositor region for the whole triangle.
+
+    A Cal3D triangle must never interpolate between unrelated atlas rectangles.
+    Vertices shared by triangles with different roles are duplicated below.
+    """
+    if section != "shirt": return section
+    x=sum(abs(point[0]) for point in points)/3
+    z=sum(point[2] for point in points)/3
+    if x>.30 and z<.82: return "hands"
+    if x>.22 and z<1.49: return "arms"
+    return "torso"
+
+
+def compatible_weights(left, right):
+    groups=({1,2,25,26,3,27,28}, {4,5,16,18,20,29,30,32,33},
+            {6,7,17,19,21,31,34,35}, {8,9,10,36}, {11,12,13})
+    a={bone for bone,_ in left}; b={bone for bone,_ in right}
+    return any(a & group and b & group for group in groups)
+
+
 def compact_section(positions,normals,uvs,faces,section):
-    used=sorted({i for face in faces for i in face}); remap={old:new for new,old in enumerate(used)}
-    vertices=[]
-    for i in used:
-        weights=influences(positions[i])
-        vertices.append((positions[i],normals[i],atlas_uv(section,uvs[i],weights),weights))
-    compact_faces=[tuple(remap[i] for i in face) for face in faces]
+    vertices=[]; compact_faces=[]; remap={}
+    for face in faces:
+        role=texture_role(section,[positions[index] for index in face]); mapped=[]
+        for index in face:
+            key=(index,role)
+            if key not in remap:
+                weights=influences(positions[index]); remap[key]=len(vertices)
+                vertices.append((positions[index],normals[index],atlas_uv(role,uvs[index]),weights))
+            mapped.append(remap[key])
+        compact_faces.append(tuple(mapped))
     neighbors=[set() for _ in vertices]
     for face in compact_faces:
         for index in face: neighbors[index].update(other for other in face if other!=index)
@@ -148,8 +168,9 @@ def compact_section(positions,normals,uvs,faces,section):
         own=dict(vertex[3]); combined={bone:.65*weight for bone,weight in own.items()}
         adjacent=neighbors[index]
         if adjacent:
-            scale=.35/len(adjacent)
-            for other in adjacent:
+            compatible=[other for other in adjacent if compatible_weights(vertex[3],vertices[other][3])]
+            scale=.35/len(compatible) if compatible else 0.
+            for other in compatible:
                 for bone,weight in vertices[other][3]: combined[bone]=combined.get(bone,0.)+scale*weight
         selected=sorted(combined.items(),key=lambda item:item[1],reverse=True)[:4]
         total=sum(weight for _,weight in selected) or 1.
@@ -342,6 +363,9 @@ def generate_model(root,name,actor_id):
     positions,normals,uvs,triangles=read_emesh(SOURCE/f"{name}.emesh")
     source_vertices,source_faces=len(positions),len(triangles)
     positions,normals,uvs,triangles=clean_mesh(positions,normals,uvs,triangles)
+    if len(triangles) < source_faces * .999:
+        raise ValueError(f"authored topology unexpectedly lost faces: {name} "
+                         f"{source_faces}->{len(triangles)}")
     split={section:[] for section in SECTION_NAMES}
     for face in triangles: split[section_for_triangle([positions[i] for i in face])].append(face)
     base=root/"actors/playable"
