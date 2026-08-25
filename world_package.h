@@ -9,6 +9,8 @@ int load_world_package(const char *, world_update_func *);
 void destroy_world_package(void);
 int world_package_active(void);
 void world_package_draw(int transparent);
+const char *world_package_minimap(void);
+void world_package_apply_environment(void);
 void world_gltf_to_eloria(const float source[3], float units_per_meter,
 	const float origin[3], float destination[3]);
 #ifdef __cplusplus

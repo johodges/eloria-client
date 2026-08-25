@@ -35,9 +35,13 @@ Eloria is Z-up and +Y-forward. Conversion is centralized as:
 
 All integers are little-endian: `EWCG` magic, uint16 version (1), uint16
 flags (0), uint32 width, uint32 height, then exactly width*height bytes.
-Each byte is the existing signed height/walkability value; 127 is blocked.
+Each byte is the existing ELM height/walkability value: zero is blocked and
+non-zero values encode walkable height exactly as the current client expects.
 Dimensions must be positive multiples of six because an ELM tile is a 6x6
 set of half-metre movement cells.
+
+In a debug build, set `ELORIA_WORLD_COLLISION_DEBUG=1` before starting the
+client to draw blocked collision cells as red points over the world.
 
 ## Supported GLB subset and Blender
 

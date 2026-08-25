@@ -22,7 +22,7 @@ def glb(path):
         if len(head)!=12: raise Invalid("scene: truncated GLB header")
         magic,version,total=struct.unpack("<III",head)
         if magic!=0x46546C67 or version!=2 or total!=path.stat().st_size: raise Invalid("scene: invalid GLB 2.0 header/length")
-        doc=None
+        doc=None; bin_size=None
         while f.tell()<total:
             chunk=f.read(8)
             if len(chunk)!=8: raise Invalid("scene: truncated chunk header")
@@ -31,9 +31,22 @@ def glb(path):
             if kind==0x4E4F534A and doc is None:
                 try: doc=json.loads(data.rstrip(b" \t\r\n\0"))
                 except Exception as e: raise Invalid(f"scene: invalid JSON chunk: {e}")
+            elif kind==0x004E4942 and bin_size is None: bin_size=len(data)
     if not isinstance(doc,dict) or doc.get("asset",{}).get("version")!="2.0": raise Invalid("scene: missing glTF 2.0 asset")
     if not isinstance(doc.get("meshes"),list): raise Invalid("scene: meshes array required")
     if doc.get("extensionsRequired"): raise Invalid(f"scene: unsupported required extensions: {doc['extensionsRequired']}")
+    buffers=doc.get("buffers",[])
+    if not isinstance(buffers,list) or len(buffers)!=1 or bin_size is None or buffers[0].get("byteLength",0)>bin_size: raise Invalid("scene: exactly one valid embedded BIN buffer is required")
+    views=doc.get("bufferViews",[]); accessors=doc.get("accessors",[])
+    widths={5120:1,5121:1,5122:2,5123:2,5125:4,5126:4}; components={"SCALAR":1,"VEC2":2,"VEC3":3,"VEC4":4}
+    for i,v in enumerate(views):
+        off=v.get("byteOffset",0); length=v.get("byteLength")
+        if v.get("buffer")!=0 or not isinstance(off,int) or not isinstance(length,int) or off<0 or length<0 or off+length>bin_size: raise Invalid(f"scene: bufferViews[{i}] range is invalid")
+    for i,a in enumerate(accessors):
+        vi=a.get("bufferView"); count=a.get("count"); width=widths.get(a.get("componentType")); comp=components.get(a.get("type")); off=a.get("byteOffset",0)
+        if not isinstance(vi,int) or vi<0 or vi>=len(views) or not isinstance(count,int) or count<=0 or not width or not comp or not isinstance(off,int) or off<0: raise Invalid(f"scene: accessors[{i}] metadata is invalid")
+        stride=views[vi].get("byteStride",width*comp)
+        if not isinstance(stride,int) or stride<width*comp or off+stride*(count-1)+width*comp>views[vi]["byteLength"]: raise Invalid(f"scene: accessors[{i}] range is invalid")
     for mi,mesh in enumerate(doc["meshes"]):
         for pi,prim in enumerate(mesh.get("primitives",[])):
             if prim.get("mode",4)!=4: raise Invalid(f"scene: meshes[{mi}].primitives[{pi}] is not triangles")
@@ -50,6 +63,7 @@ def validate(manifest):
     if not isinstance(data.get("id"),str) or not ID.fullmatch(data["id"]): raise Invalid("id: expected 1-64 ASCII letters, digits, '_' or '-'")
     root=manifest.parent
     scene=rel(root,data.get("scene","world.glb"),"scene"); glbdoc=glb(scene)
+    if data.get("minimap") is not None and not rel(root,data["minimap"],"minimap").is_file(): raise Invalid("minimap: referenced file is missing")
     bounds=data.get("bounds")
     if not isinstance(bounds,dict): raise Invalid("bounds: required object")
     vec3(bounds.get("minimum"),"bounds.minimum"); vec3(bounds.get("maximum"),"bounds.maximum")

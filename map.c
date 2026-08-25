@@ -238,6 +238,7 @@ static int el_load_map(const char * file_name)
 
 	// reset light levels in case we enter or leave an inside map
 	new_minute();
+	world_package_apply_environment();
 
 	destroy_loading_win();
 	return ret;
