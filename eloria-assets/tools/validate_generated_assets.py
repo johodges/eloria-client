@@ -111,8 +111,8 @@ def validate_maps(root: Path) -> None:
             raw_height = heights[spawn_y * width * 6 + spawn_x]
             if tile == 255 or (raw_height & 0x3f) != 11:
                 raise ValueError("Four Gates start spawn must be on visible z=0 terrain")
-            if obj3_count < 65:
-                raise ValueError("Four Gates vertical slice lacks production scenery density")
+            if obj3_count < 350:
+                raise ValueError("Four Gates lacks Palon-scale production scenery density")
             required_landmarks = {
                 "3dobjects/nymara/four_gates_gatehouse.e3d": 4,
                 "3dobjects/nymara/four_gates_radial_bridge.e3d": 4,
@@ -133,6 +133,12 @@ def validate_maps(root: Path) -> None:
                 "3dobjects/nymara/four_gates_garden_court.e3d": 16,
                 "3dobjects/nymara/four_gates_field_plot.e3d": 12,
                 "3dobjects/nymara/four_gates_waterfall.e3d": 16,
+                "3dobjects/nymara/four_gates_market_stall.e3d": 12,
+                "3dobjects/nymara/four_gates_bench.e3d": 12,
+                "3dobjects/nymara/four_gates_crate_stack.e3d": 12,
+                "3dobjects/nymara/four_gates_flower_planter.e3d": 16,
+                "3dobjects/nymara/four_gates_public_well.e3d": 8,
+                "3dobjects/nymara/four_gates_road_bollard.e3d": 48,
             }
             for landmark, minimum in required_landmarks.items():
                 count = sum(name == landmark for name, *_ in object_records)
@@ -144,8 +150,8 @@ def validate_maps(root: Path) -> None:
                 raise ValueError("Four Gates start plaza is obstructed")
             if set(tiles) != {4, 5, 6, 7} or len(set(heights)) < 4:
                 raise ValueError("Four Gates terrain lacks roads, water, or elevation variation")
-            if light_count < 20:
-                raise ValueError("Four Gates lacks its civic night-light network")
+            if light_count < 30:
+                raise ValueError("Four Gates lacks its bright civic light network")
         if path.as_posix().endswith("maps/nymara/mirrorhold.elm"):
             mirror_tiles = data[tile_offset:height_offset]
             mirror_heights = data[height_offset:height_offset + width * height * 36]

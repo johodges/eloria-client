@@ -89,7 +89,7 @@ REGION_HARVESTS = {
 REGION_ART = {
  "mirrorhold":{"palette":((47,70,73),(92,111,104),(174,151,92)),"objects":["glasswarden_observatory","glasswarden_lens_tower","glasswarden_field_station","mirrorhold_civic_tower","mirrorhold_canal_wall","mirrorhold_radial_bridge","mirrorhold_public_fountain"],"water":True,"ambient":(.48,.55,.60)},
  "crownwater":{"palette":((36,125,145),(221,217,180),(42,87,91)),"objects":["crownwater_ferry_dock","crownwater_fishing_boat","crownwater_patrol_boat","crownwater_submerged_waystone","mirrorhold_radial_bridge","mirrorhold_public_fountain"],"water":True,"ambient":(.62,.68,.70)},
- "four_gates":{"palette":((75,104,78),(172,162,126),(53,112,119)),"objects":["four_gates_gatehouse","four_gates_waystone","mirrorhold_radial_bridge","mirrorhold_civic_tower","mirrorhold_public_fountain","glasswarden_field_station"],"water":True,"ambient":(.78,.80,.74)},
+ "four_gates":{"palette":((102,132,78),(202,187,137),(75,158,170)),"objects":["four_gates_gatehouse","four_gates_waystone","mirrorhold_radial_bridge","mirrorhold_civic_tower","mirrorhold_public_fountain","glasswarden_field_station"],"water":True,"ambient":(.90,.91,.84)},
  "whitehorn_range":{"palette":((183,211,219),(65,78,83),(222,229,221)),"objects":["whitehorn_glacier","whitehorn_monastery","whitehorn_rope_bridge","whitehorn_shrine","whitehorn_cairn","whitehorn_ice_cave","whitehorn_mine_entrance"],"water":False,"ambient":(.67,.72,.76)},
  "amethyst_barrens":{"palette":((110,72,139),(184,132,194),(122,99,65)),"objects":["glasswarden_observatory","amethyst_crystal_bridge","amethyst_geode_cave","amethyst_levitating_shards","amethyst_storm_ruin","resonant_crystal_cluster"],"water":False,"ambient":(.54,.49,.62)},
  "sunmane_steppe":{"palette":((171,126,56),(208,177,101),(130,70,38)),"objects":["orun_round_tent","orun_seasonal_market","orun_banner_shrine","sunmane_caravanserai","sunmane_windmill","sunmane_well","sunmane_animal_pen","sunmane_burial_mound"],"water":False,"ambient":(.68,.61,.48)},
@@ -368,14 +368,21 @@ def four_gates_terrain_pixel(kind):
  def pixel(x,y):
   grain=((x*17+y*29+(x^y)*5)%23)-11
   if kind=='civic_stone':
-   joint=x%48<3 or y%32<3; base=(112,113,99) if joint else (157,151,126)
-   if abs(((x*5+y*7)%61)-30)<2: base=(181,172,139)
+   # Warm pale ashlar with mortar, wear, and occasional honey-coloured repairs.
+   joint=x%48<3 or y%32<3; wear=((x*7+y*13)%97)<5
+   base=(137,135,113) if joint else (194,186,151) if wear else (176,171,143)
+   if abs(((x*5+y*7)%61)-30)<2: base=(207,192,151)
   elif kind=='highland_grass':
-   blade=((x*3+y*11)%37)<3; base=(91,112,69) if blade else (66,91,61)
+   # High-key meadow greens keep the outskirts readable in daylight.
+   blade=((x*3+y*11)%37)<3; flowers=((x*17+y*23)%211)<3
+   base=(118,142,78) if blade else (91,125,73)
+   if flowers: base=(202,176,94)
   elif kind=='ceremonial_road':
-   joint=x%32<2 or (y+(x//32)*7)%40<2; base=(118,108,86) if joint else (187,162,108)
+   joint=x%32<2 or (y+(x//32)*7)%40<2; rut=abs(((x*11-y*3)%83)-41)<3
+   base=(147,132,101) if joint else (211,184,124) if not rut else (178,151,102)
   else:
-   ripple=abs(((x*3+y*5)%47)-23)<3; base=(84,174,184) if ripple else (38,128,149)
+   ripple=abs(((x*3+y*5)%47)-23)<3; foam=((x*19+y*7)%173)<4
+   base=(116,205,211) if foam else (86,190,198) if ripple else (48,148,169)
    grain//=2
   return (*(max(0,min(255,channel+grain)) for channel in base),255)
  return pixel
@@ -443,6 +450,43 @@ def four_gates_cartography_pixel(x,y):
  # Legend strokes tie labels to the same visual language as roads and water.
  if 370<x<506 and 28<y<224 and (x in (370,506) or y in (28,224)): color=(116,101,72)
  return (*color,255)
+
+def generate_four_gates_detail_assets(root):
+ # Small reusable props provide the human-scale density seen in classic EL
+ # capitals without copying Eternal Lands geometry or textures.
+ specs={}
+ def market_stall(v,i):
+  for x in (-1.35,1.35):
+   for y in (-.85,.85): box(v,i,(x,y,1.15),(.14,.14,2.3))
+  box(v,i,(0,0,1.08),(3.0,1.9,.18))
+  for x in (-1.45,1.45): tapered(v,i,2.15,2.8,.12,.08,7,center=(x,0))
+  face(v,i,[(-1.65,-1.05,2.2),(1.65,-1.05,2.2),(1.45,1.05,2.65),(-1.45,1.05,2.65)],(0,-.2,.98))
+ def bench(v,i):
+  box(v,i,(0,0,.62),(2.2,.55,.18)); box(v,i,(0,.23,1.05),(2.2,.16,.72))
+  for x in (-.82,.82): box(v,i,(x,0,.30),(.18,.42,.60))
+ def crate_stack(v,i):
+  box(v,i,(-.35,0,.38),(.78,.78,.76)); box(v,i,(.42,.08,.31),(.62,.62,.62))
+  box(v,i,(.05,.02,.93),(.66,.66,.54))
+ def planter(v,i):
+  box(v,i,(0,0,.22),(2.0,.85,.44))
+  for x in (-.70,-.35,0,.35,.70):
+   tapered(v,i,.38,.88,.07,.025,6,center=(x,0))
+   tapered(v,i,.73,1.04,.20,0,7,center=(x,0))
+ def well(v,i):
+  tapered(v,i,0,.72,1.0,1.0,12); tapered(v,i,.12,.58,.70,.70,12)
+  for x in (-1.05,1.05): box(v,i,(x,0,1.35),(.14,.14,2.7))
+  face(v,i,[(-1.3,-.7,2.45),(1.3,-.7,2.45),(1.1,.7,2.9),(-1.1,.7,2.9)],(0,-.3,.95))
+ def bollard(v,i): tapered(v,i,0,.92,.18,.13,8); tapered(v,i,.82,1.08,.25,.08,8)
+ specs={
+  'four_gates_market_stall':(market_stall,((222,191,126),(76,139,139))),
+  'four_gates_bench':(bench,((121,83,46),(187,143,77))),
+  'four_gates_crate_stack':(crate_stack,((116,77,43),(170,122,68))),
+  'four_gates_flower_planter':(planter,((104,118,68),(214,151,82))),
+  'four_gates_public_well':(well,((153,148,126),(208,190,148))),
+  'four_gates_road_bollard':(bollard,((132,132,115),(216,178,87)))}
+ for name,(builder,colors) in specs.items():
+  path=root/f"3dobjects/nymara/{name}.e3d"
+  texture(path.with_suffix('.png'),colors); e3d(path,path.with_suffix('.png').name,builder)
 
 def four_gates_placements():
  placements=[]
@@ -524,6 +568,40 @@ def four_gates_placements():
    angle=math.radians(j*360/count);lantern_points.append((cx+radius*math.cos(angle),cy+radius*math.sin(angle)))
  for j,(x,y) in enumerate(lantern_points):
   placements.append(("3dobjects/nymara/four_gates_lantern.e3d",x,y,0,(j*30)%360))
+ # District-scale detail: market clutter, resting places, planters, wells and
+ # road markers break the radial repetition and make each ward identifiable.
+ for j,(x,y,r) in enumerate(((68,70,35),(76,67,80),(116,69,280),(124,75,325),
+                              (68,118,145),(76,125,100),(116,123,260),(124,117,215),
+                              (88,61,5),(104,63,175),(131,88,270),(129,104,90))):
+  placements.append(("3dobjects/nymara/four_gates_market_stall.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((78,82,45),(114,82,315),(78,110,135),(114,110,225),
+                              (88,74,0),(104,74,180),(88,118,180),(104,118,0),
+                              (61,88,90),(61,104,90),(131,88,270),(131,104,270))):
+  placements.append(("3dobjects/nymara/four_gates_bench.e3d",x,y,0,r))
+ for j,(x,y,r) in enumerate(((65,73,10),(79,69,70),(113,69,110),(127,78,160),
+                              (65,114,350),(79,125,290),(113,125,250),(127,114,200),
+                              (52,80,45),(140,80,315),(52,112,135),(140,112,225))):
+  placements.append(("3dobjects/nymara/four_gates_crate_stack.e3d",x,y,0,r))
+ for j in range(24):
+  angle=math.radians(j*15+7.5); radius=24 if j%2 else 42
+  x=cx+radius*math.cos(angle); y=cy+radius*math.sin(angle)
+  if abs(x-cx)>7 and abs(y-cy)>7:
+   placements.append(("3dobjects/nymara/four_gates_flower_planter.e3d",x,y,0,90-math.degrees(angle)))
+ for j,(x,y) in enumerate(((72,96),(120,96),(96,72),(96,120),(78,78),(114,78),(78,114),(114,114))):
+  placements.append(("3dobjects/nymara/four_gates_public_well.e3d",x,y,0,j*45))
+ for axis in (-1,1):
+  for step in range(7):
+   offset=20+step*8
+   for x,y,r in ((cx+axis*5,cy+offset,0),(cx+axis*5,cy-offset,180),
+                 (cx+offset,cy+axis*5,90),(cx-offset,cy+axis*5,270)):
+    if math.hypot(x-96,y-42)>=4:
+     placements.append(("3dobjects/nymara/four_gates_road_bollard.e3d",x,y,0,r))
+ # Irregular outer groves and roadside homesteads give the map an inhabited
+ # transition zone instead of a bare geometric perimeter.
+ for j,(x,y) in enumerate(((20,22),(31,49),(49,30),(143,31),(160,48),(173,22),
+                            (20,170),(35,146),(52,164),(140,163),(158,145),(174,169),
+                            (9,83),(25,112),(167,82),(181,111))):
+  placements.append(("3dobjects/nymara/four_gates_park_tree.e3d",x,y,0,(j*47)%360))
  return placements
 
 def mirrorhold_placements():
@@ -1050,6 +1128,7 @@ def generate_interactives_effects(root):
 
 def generate_maps(root):
  # Stable object IDs belong to the manifest, while ELM records carry native paths.
+ generate_four_gates_detail_assets(root)
  allmaps=REGIONS+DUNGEONS; regions=[]; connections=[]
  tile_palettes=(((71,103,72),(93,119,78)),((91,104,77),(118,126,88)),
                 ((151,126,83),(179,153,103)),((38,105,126),(61,145,157)))
@@ -1180,8 +1259,11 @@ def generate_maps(root):
                (86,111),(106,111),(68,96),(124,96),(96,68),(96,124))]
    # Soft plaza fills keep stone, brass, glass, NPCs, and player materials
    # readable during the pre-dawn hours without flattening the outer city.
-   lights += [(x,y,5.0,.72,.82,.84) for x,y in
-              ((76,76),(116,76),(76,116),(116,116),(96,148),(96,184))]
+   lights += [(x,y,5.0,.84,.91,.88) for x,y in
+              ((76,76),(116,76),(76,116),(116,116),(96,148),(96,184),
+               (96,96),(58,96),(134,96),(96,58),(96,134))]
+   lights += [(x,y,3.2,1.00,.84,.52) for x,y in
+              ((68,70),(124,75),(68,118),(124,117),(88,61),(104,63))]
   elif name=='mirrorhold':
    lights += [(x,y,4.2,.42,.68,.92) for x,y in
               ((58,34),(42,34),(74,34),(50,48),(66,48),(42,58),(74,58),(38,92),(78,92))]

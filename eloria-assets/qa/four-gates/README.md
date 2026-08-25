@@ -8,7 +8,13 @@
   footprint (up from roughly 88), three primary ward rings, two secondary
   courtyard rings, four outer approaches, modular markets, gardens, farms,
   field plots, cliff banks, waterfalls, an inner citadel gate, and a northern
-  summit portal. The protected arrival is `(96,42)` on the ceremonial axis.
+  summit portal. A Palon Vertas density pass adds original market stalls,
+  benches, stacked crates, flower planters, public wells, road bollards, and
+  irregular outer groves. These are new Eloria assets influenced by the
+  reference's composition and density, not copied Eternal Lands geometry or
+  textures. Materials use brighter warm stone, meadow greens, gold roads, and
+  cyan water with expanded daylight fill. The protected arrival is `(96,42)`
+  on the ceremonial axis.
   The authored reference
   GLBs informed silhouette and materials; runtime E3Ds use simplified,
   non-overlapping procedural masses and reusable modular pieces.
