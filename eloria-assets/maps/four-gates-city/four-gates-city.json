@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.1.0",
+  "assetVersion": "0.3.0",
   "asset": {
     "id": "four-gates-city",
     "name": "Four Gates City",
@@ -1038,7 +1038,158 @@
       "ring-roads",
       "bridges",
       "plaza"
-    ]
+    ],
+    "navmesh": {
+      "format": "inline-convex-polygons-v1",
+      "coordinateSystem": "asset",
+      "agentRadius": 0.6,
+      "agentHeight": 2.0,
+      "maxSlopeDegrees": 35,
+      "polygons": [
+        {
+          "id": "plaza",
+          "vertices": [
+            [
+              -72,
+              31,
+              -72
+            ],
+            [
+              72,
+              31,
+              -72
+            ],
+            [
+              72,
+              31,
+              72
+            ],
+            [
+              -72,
+              31,
+              72
+            ]
+          ]
+        },
+        {
+          "id": "south-axis",
+          "vertices": [
+            [
+              -13,
+              31,
+              0
+            ],
+            [
+              13,
+              31,
+              0
+            ],
+            [
+              13,
+              31,
+              620
+            ],
+            [
+              -13,
+              31,
+              620
+            ]
+          ]
+        },
+        {
+          "id": "north-axis",
+          "vertices": [
+            [
+              -14,
+              31,
+              -690
+            ],
+            [
+              14,
+              31,
+              -690
+            ],
+            [
+              14,
+              31,
+              0
+            ],
+            [
+              -14,
+              31,
+              0
+            ]
+          ]
+        },
+        {
+          "id": "east-axis",
+          "vertices": [
+            [
+              0,
+              31,
+              -13
+            ],
+            [
+              620,
+              31,
+              -13
+            ],
+            [
+              620,
+              31,
+              13
+            ],
+            [
+              0,
+              31,
+              13
+            ]
+          ]
+        },
+        {
+          "id": "west-axis",
+          "vertices": [
+            [
+              -620,
+              31,
+              -13
+            ],
+            [
+              0,
+              31,
+              -13
+            ],
+            [
+              0,
+              31,
+              13
+            ],
+            [
+              -620,
+              31,
+              13
+            ]
+          ]
+        }
+      ],
+      "offMeshLinks": [
+        {
+          "id": "sanctuary-rise",
+          "start": [
+            0,
+            34,
+            -620
+          ],
+          "end": [
+            0,
+            55,
+            -690
+          ],
+          "bidirectional": true,
+          "type": "ramp"
+        }
+      ]
+    }
   },
   "streamingGroups": [
     {
@@ -1079,11 +1230,23 @@
       "id": "city-landmarks",
       "strategy": "node-suffix",
       "levels": [
-        "LOD0",
-        "LOD1",
-        "LOD2"
+        {
+          "id": "LOD0",
+          "suffix": "_LOD0",
+          "screenCoverage": 0.35
+        },
+        {
+          "id": "LOD1",
+          "suffix": null,
+          "screenCoverage": 0.08
+        },
+        {
+          "id": "LOD2",
+          "proposedSibling": "four-gates-city-lod2.glb",
+          "screenCoverage": 0.0
+        }
       ],
-      "note": "This first-pass GLB provides LOD1 plus collision proxies; authored LOD0/LOD2 are proposed as future sibling GLBs."
+      "fallback": "LOD1"
     }
   ],
   "assumptions": [
@@ -1093,10 +1256,10 @@
     "Southern imagery conflicts in scale; the canonical double-gate sequence is preserved."
   ],
   "knownLimitations": [
-    "Procedural first-pass uses reusable untextured PBR materials; UV-authored texture atlases are future work.",
     "LOD0 and LOD2 are documented but not included.",
-    "Navigation is path/area metadata rather than a baked navmesh.",
-    "Water, waterfalls and pulsing energy need client shader support for final appearance."
+    "Water, waterfalls and pulsing energy need client shader support for final appearance.",
+    "Atlas UVs are procedural cylindrical projections; landmark-specific authored unwraps remain recommended for final LOD0 close inspection.",
+    "Inline navmesh covers principal axes and plaza; district alley polygons remain to be baked from final collision geometry."
   ],
   "sources": [
     {
@@ -1118,6 +1281,59 @@
       "id": "perspective-3",
       "file": "ChatGPT Image Aug 25, 2026, 11_38_19 PM (3).png",
       "role": "districts-and-skyline"
+    }
+  ],
+  "materials": {
+    "strategy": "embedded-4x4-atlas",
+    "resolution": [
+      1024,
+      1024
+    ],
+    "embeddedTextures": [
+      "four-gates-basecolor",
+      "four-gates-normal",
+      "four-gates-orm"
+    ],
+    "channelPacking": {
+      "orm": "R=occlusion,G=roughness,B=metallic"
+    },
+    "extension": "KHR_texture_transform"
+  },
+  "animations": [
+    {
+      "name": "Gate_South_Outer_OpenClose",
+      "standard": "glTF-2.0",
+      "optional": true
+    },
+    {
+      "name": "Gate_South_Inner_OpenClose",
+      "standard": "glTF-2.0",
+      "optional": true
+    },
+    {
+      "name": "Gate_North_OpenClose",
+      "standard": "glTF-2.0",
+      "optional": true
+    },
+    {
+      "name": "Gate_East_OpenClose",
+      "standard": "glTF-2.0",
+      "optional": true
+    },
+    {
+      "name": "Gate_West_OpenClose",
+      "standard": "glTF-2.0",
+      "optional": true
+    },
+    {
+      "name": "Sanctuary_Beacon_Pulse",
+      "standard": "glTF-2.0",
+      "optional": true
+    },
+    {
+      "name": "Plaza_Monument_Crystal_Pulse",
+      "standard": "glTF-2.0",
+      "optional": true
     }
   ]
 }
