@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "license": "CC0-1.0",
+  "author": "Quaternius",
+  "models": {
+    "luminous_female": {
+      "source": "Superhero_Female_FullBody.gltf",
+      "vertices": 6692,
+      "triangles": 11807,
+      "cell": 0.006,
+      "uv_bins": 96
+    },
+    "luminous_male": {
+      "source": "Superhero_Male_FullBody.gltf",
+      "vertices": 6641,
+      "triangles": 11664,
+      "cell": 0.006,
+      "uv_bins": 96
+    }
+  }
+}
