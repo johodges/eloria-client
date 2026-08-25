@@ -19,6 +19,7 @@
 #include "tiles.h"
 #include "translate.h"
 #include "io/e3d_io.h"
+#include "world_package.h"
 #ifdef CLUSTER_INSIDES
 #include "cluster.h"
 #endif
@@ -695,6 +696,7 @@ void display_objects(void)
 	draw_3d_objects(TYPE_3D_NO_BLEND_NO_GROUND_NO_ALPHA_NO_SELF_LIT_OBJECT);
 	draw_3d_objects(TYPE_3D_NO_BLEND_GROUND_NO_ALPHA_SELF_LIT_OBJECT);
 	draw_3d_objects(TYPE_3D_NO_BLEND_GROUND_NO_ALPHA_NO_SELF_LIT_OBJECT);
+	world_package_draw(0);
 
 	CHECK_GL_ERRORS();
 	glDisable(GL_CULL_FACE);
@@ -776,6 +778,7 @@ void display_alpha_objects(void)
 
 	draw_3d_objects(TYPE_3D_NO_BLEND_NO_GROUND_ALPHA_SELF_LIT_OBJECT);
 	draw_3d_objects(TYPE_3D_NO_BLEND_NO_GROUND_ALPHA_NO_SELF_LIT_OBJECT);
+	world_package_draw(1);
 
 	CHECK_GL_ERRORS();
 	glDisable(GL_COLOR_MATERIAL);

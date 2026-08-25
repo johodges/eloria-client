@@ -1,4 +1,5 @@
 #include "world_package.h"
+#include "world_glb_renderer.h"
 #include <algorithm>
 #include <cctype>
 #include <cmath>
@@ -66,7 +67,7 @@ extern "C" int load_world_package(const char *name,world_update_func *update){
 	if(!r.contains("version")||!r["version"].is_number_unsigned()||r["version"]!=1){LOG_ERROR("World package '%s': unsupported version (supported: 1)",m.c_str());return -1;}
 	std::string id=r.value("id",""),scene=r.value("scene","world.glb"),col=r.value("collision","");
 	if(id.empty()||id.size()>64||!std::all_of(id.begin(),id.end(),[](char c){return std::isalnum((unsigned char)c)||c=='_'||c=='-';})){LOG_ERROR("World package '%s': invalid id",m.c_str());return -1;}
-	if(!safe_rel(scene)||!safe_rel(col)){LOG_ERROR("World package '%s': unsafe scene/collision path",m.c_str());return -1;}if(!glb(dir(m)+"/"+scene,e)){LOG_ERROR("World package '%s': scene: %s",m.c_str(),e.c_str());return -1;}
+	if(!safe_rel(scene)||!safe_rel(col)){LOG_ERROR("World package '%s': unsafe scene/collision path",m.c_str());return -1;}std::string scene_path=dir(m)+"/"+scene;if(!glb(scene_path,e)){LOG_ERROR("World package '%s': scene: %s",m.c_str(),e.c_str());return -1;}
 	float lo[3],hi[3];if(!r.contains("bounds")||!vec3(r["bounds"]["minimum"],lo,"bounds.minimum",e)||!vec3(r["bounds"]["maximum"],hi,"bounds.maximum",e)){LOG_ERROR("World package '%s': %s",m.c_str(),e.c_str());return -1;}
 	for(int i=0;i<3;i++)if(lo[i]>=hi[i]){LOG_ERROR("World package '%s': inverted bounds",m.c_str());return -1;}
 	int w=r.value("collision_width",int(std::ceil((hi[0]-lo[0])*2))),h=r.value("collision_height",int(std::ceil((hi[2]-lo[2])*2)));
@@ -75,6 +76,8 @@ extern "C" int load_world_package(const char *name,world_update_func *update){
 	tile_map_size_x=(w+5)/6;tile_map_size_y=(h+5)/6;tile_map=(unsigned char*)malloc(size_t(tile_map_size_x)*tile_map_size_y);if(!tile_map){rollback();return -1;}memset(tile_map,255,size_t(tile_map_size_x)*tile_map_size_y);
 	json env=r.value("environment",json::object());float a[3];if(!vec3(env.value("ambient_color",json::array({.6,.65,.75})),a,"environment.ambient_color",e)){rollback();LOG_ERROR("World package '%s': %s",m.c_str(),e.c_str());return -1;}
 	float intensity=env.value("ambient_intensity",1.0f);if(!std::isfinite(intensity)||intensity<0||intensity>16){rollback();LOG_ERROR("World package '%s': invalid ambient intensity",m.c_str());return -1;}
+	json coordinates=r.value("coordinates",json::object());float origin[3];if(!vec3(coordinates.value("origin",json::array({0,0,0})),origin,"coordinates.origin",e)){rollback();LOG_ERROR("World package '%s': %s",m.c_str(),e.c_str());return -1;}float units=coordinates.value("units_per_meter",1.0f);if(!std::isfinite(units)||units<=0||coordinates.value("up_axis","Y")!="Y"||coordinates.value("forward_axis","-Z")!="-Z"){rollback();LOG_ERROR("World package '%s': unsupported coordinates",m.c_str());return -1;}if(!world_glb_load(scene_path.c_str(),units,origin)){world_glb_destroy();rollback();LOG_ERROR("World package '%s': GLB render resource creation failed",m.c_str());return -1;}
 	ambient_r=a[0]*intensity;ambient_g=a[1]*intensity;ambient_b=a[2]*intensity;dungeon=0;safe_strncpy(map_file_name,m.c_str(),sizeof(map_file_name));active=true;if(update)update((char*)"Loading portable world",100);LOG_INFO("Loaded package '%s' (%dx%d)",m.c_str(),w,h);return 1;
 }
-extern "C" void destroy_world_package(){active=false;}extern "C" int world_package_active(){return active?1:0;}
+extern "C" void destroy_world_package(){world_glb_destroy();active=false;}extern "C" int world_package_active(){return active?1:0;}
+extern "C" void world_package_draw(int transparent){if(active)world_glb_draw(transparent);}

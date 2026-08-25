@@ -43,10 +43,14 @@ set of half-metre movement cells.
 
 Version 1 validates GLB 2.0, embedded buffers, triangle primitives and
 POSITION. It rejects required extensions and non-triangle primitives.
-The runtime integration currently establishes package selection, safe
-validation, environment state, coordinate conversion, collision/pathfinding
-data and deterministic cleanup. Static mesh GPU/material translation is the
-next implementation stage; packages are not yet visually rendered.
+The runtime creates one reusable CPU/GPU mesh per primitive and separate node
+instances with accumulated transforms. It supports float POSITION, NORMAL and
+TEXCOORD_0 attributes, unsigned 8/16/32-bit indices, non-indexed triangles,
+external base-color textures, base-color factors, double-sided materials, and
+opaque/transparent passes. Embedded images, vertex colors, alpha cutoff,
+metallic/roughness shading, compressed meshes, skins and animation remain
+unsupported. Base color plus the existing fixed-function lighting is the v1
+PBR fallback.
 
 In Blender export **glTF 2.0**, format **GLB**, +Y Up, meshes and materials,
 normals, UVs, vertex colors as needed, and applied transforms unless node
