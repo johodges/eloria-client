@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 from generate_bootstrap_pack import png
 
 VERSION = "919"
-PLAYER_ACTOR_TYPES = ((0,1),(2,3),(4,5),(37,38),(39,40),(41,42))
+PLAYER_ACTOR_TYPES = ((0,1),(2,3),(4,5),(37,38),(39,40),(41,42),(79,80),(81,82))
 RACES = (
  ("luminous", "Luminous", (77,155,162), "Lake-city citizens shaped by civic duty, trade, and reflected light."),
  ("votary", "Whitehorn Votary", (139,173,188), "Mountain ascetics adapted to cold, altitude, and patient discipline."),
@@ -15,6 +15,8 @@ RACES = (
  ("orun", "Orun", (172,99,47), "Steppe riders whose camps follow the sunmane herds and seasonal roads."),
  ("greyhaven", "Greyhaven", (62,86,101), "Western sailors, shipwrights, and moorland wardens."),
  ("ssarathi", "Ssarathi", (52,116,91), "Scaled riverfolk preserving the archives and water rites of the south."),
+ ("stoneborn", "Stoneborn", (118,105,91), "Living stonefolk whose crystalline seams preserve the memory of the deep earth."),
+ ("mycelari", "Mycelari", (116,137,91), "Fungal folk joined by luminous mycelial networks and the patient wisdom of the forest floor."),
 )
 
 BONES = (("root",-1,(0.,0.,0.)),("pelvis",0,(0.,0.,.92)),("spine",1,(0.,0.,.34)),
@@ -204,6 +206,8 @@ RACE_SHAPES={
  "orun":(1.02,1.04,.97,.98,"rider"),
  "greyhaven":(1.04,1.12,1.08,1.06,"maritime"),
  "ssarathi":(1.08,.96,.94,1.08,"scaled"),
+ "stoneborn":(1.05,1.17,1.08,1.03,"stone"),
+ "mycelari":(1.02,1.04,1.04,1.12,"fungal"),
 }
 
 def fitted_bones(culture,gender):
@@ -301,6 +305,24 @@ def mesh(path, section="all", variant=0, culture=None, gender=None):
         if section in ("all","shirt") and feature=="crystal":
             for side in (-1,1):
                 ellipsoid((side*.32*gender_width,0,1.36*height),(.12,.17,.28),2,vertices,faces,torso_uv,5,8)
+        if section in ("all","shirt") and feature=="stone":
+            # Broad, low-resolution plates read as hewn anatomy while keeping
+            # deformation concentrated around the underlying humanoid joints.
+            for side in (-1,1):
+                ellipsoid((side*.25*gender_width,-.01,1.31*height),(.24,.20,.20),2,vertices,faces,torso_uv,4,7)
+            ellipsoid((0,.01,1.18*height),(.46,.25,.32),2,vertices,faces,torso_uv,5,8)
+        if section in ("all","head") and feature=="stone":
+            for side in (-1,1):
+                ellipsoid((side*.095,-.005,1.76*height),(.09,.13,.19),3,vertices,faces,head_uv,4,6)
+        if section in ("all","head") and feature=="fungal":
+            # Layered cap and smaller shelf growths follow the concept's wide
+            # silhouette but remain on the head bone for stable animation.
+            ellipsoid((0,-.005,1.78*height),(.46,.39,.13),3,vertices,faces,head_uv,6,18)
+            ellipsoid((-.17,.015,1.69*height),(.18,.16,.08),3,vertices,faces,head_uv,5,12)
+            ellipsoid((.18,.025,1.66*height),(.15,.14,.07),3,vertices,faces,head_uv,5,12)
+        if section in ("all","shirt") and feature=="fungal":
+            for side in (-1,1):
+                ellipsoid((side*.27*gender_width,.035,1.31*height),(.14,.13,.07),2,vertices,faces,torso_uv,4,10)
     else:
         for i in chosen:
             center,size,bone,uv_rect=parts[i]
@@ -337,6 +359,8 @@ CULTURES={
  "orun":((126,91,74),(184,139,105),(224,188,148)),
  "greyhaven":((102,76,66),(153,111,89),(198,153,119)),
  "ssarathi":((64,112,103),(91,153,126),(139,190,151)),
+ "stoneborn":((73,69,66),(116,105,91),(164,151,130)),
+ "mycelari":((72,94,68),(117,139,91),(178,184,125)),
 }
 HAIR=((24,20,22),(202,169,91),(103,66,42),(116,112,108),(142,53,40),(221,219,205),
  (50,80,142),(49,115,76),(105,67,136),(55,35,29),(184,91,70),(232,207,143),
@@ -400,6 +424,8 @@ def actor_texture(path, width, height, base, accent, style=0, levels=3, role="cl
                     elif motif=="greyhaven" and (int(v*12+style)%4==0 and (y%max(2,5>>level))<2): color=accent
                     elif motif=="glasswarden" and abs(abs(u-.5)+abs(v-.5)-.22)<.018: color=accent
                     elif motif=="ssarathi" and ((int(u*18)+int(v*22)+style)%5==0): color=accent
+                    elif motif=="stoneborn" and (abs((u*7+v*5+style*.13)%1-.5)<.035): color=accent
+                    elif motif=="mycelari" and (((int(u*15)+int(v*17)+style)%7==0) or (u-.5)**2+(v-.5)**2<.012): color=accent
                 elif role == "leather":
                     detail += ((x*5+y*11+style*23)%17)-8
                     if abs(u-.12)<.012 or abs(u-.88)<.012 or abs(v-.18)<.012: color=accent
@@ -417,6 +443,8 @@ def generate_customization(root):
         "orun":((159,78,35),(219,166,72),(83,59,38),(122,73,34)),
         "greyhaven":((48,73,91),(154,174,171),(42,54,66),(89,66,47)),
         "ssarathi":((45,111,88),(184,151,70),(39,72,65),(85,68,43)),
+        "stoneborn":((91,83,76),(103,184,191),(66,61,58),(72,61,51)),
+        "mycelari":((91,119,65),(211,151,98),(56,77,53),(83,61,43)),
     }
     def harmonize(colors,target,amount=.38):
         return tuple(tuple(round(value*(1-amount)+target[i]*amount) for i,value in enumerate(color))
