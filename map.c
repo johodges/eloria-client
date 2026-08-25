@@ -44,6 +44,7 @@
 #include "sky.h"
 #include "mines.h"
 #include "highlight.h"
+#include "world_package.h"
 
 #define MARK_CLIP_POS 20
 #define MARK_DIST 20
@@ -64,6 +65,7 @@ void destroy_map(void)
 #endif
 
 	have_a_map = 0;
+	destroy_world_package();
 
 	clear_bbox_tree(main_bbox_tree);
 	//kill the tile and height map
@@ -185,10 +187,26 @@ static void updat_func(char *str, float percent)
 static int el_load_map(const char * file_name)
 {
 	int ret;
+	char elm_name[512];
+	const char *elm_file = file_name;
 
 	LOG_INFO("Loading map '%s'", file_name);
 	init_map_loading(file_name);
-	ret = load_map(file_name, &updat_func);
+	ret = load_world_package(file_name, &updat_func);
+	if (ret == 0)
+	{
+		/* Extensionless server values are logical IDs. Explicit paths/extensions
+		 * retain the historical behavior and cannot select another format. */
+		if (strchr(file_name, '.') == NULL && strchr(file_name, '/') == NULL &&
+			strchr(file_name, '\\') == NULL)
+		{
+			safe_snprintf(elm_name, sizeof(elm_name), "./maps/%s.elm", file_name);
+			elm_file = elm_name;
+		}
+		ret = load_map(elm_file, &updat_func);
+	}
+	else if (ret < 0)
+		ret = 0; /* Never conceal a malformed package by falling back to ELM. */
 	if (!ret)
 	{
 		LOG_ERROR("Map loader rejected '%s'; an empty-map fallback will be used", file_name);
