@@ -183,13 +183,18 @@ def main():
  shutil.copy2(bundled_buttons,root/"textures/gamebuttons.dds")
  bundled_hud=Path(__file__).resolve().parents[1]/"ui/gamebuttons2.dds"
  bundled_compass=Path(__file__).resolve().parents[1]/"ui/compass.dds"
- for source,name in ((bundled_hud,"gamebuttons2.dds"),(bundled_compass,"compass.dds")):
+ branding=Path(__file__).resolve().parents[1]/"ui/branding"
+ bundled_login=branding/"eloria_login_background.dds"
+ bundled_logo=branding/"eloria_logo_master.dds"
+ bundled_crest=branding/"eloria_crest.dds"
+ for source,name in ((bundled_hud,"gamebuttons2.dds"),(bundled_compass,"compass.dds"),
+                     (bundled_login,"login_back.dds"),(bundled_logo,"eloria_logo.dds"),
+                     (bundled_crest,"eloria_crest.dds")):
   if not source.is_file():raise FileNotFoundError(f"Missing authored HUD atlas: {source}")
   shutil.copy2(source,root/"textures"/name)
  for name in ("console","ground_detail","sigils"):
   dds(root/f"textures/{name}.dds",512,512,panel)
  dds(root/"textures/login_menu.dds",256,256,login_menu_pixel)
- dds(root/"textures/login_back.dds",512,512,login_background)
  # The minimap compass was installed with the authored HUD assets above.
  for name in ("thick_clouds","thick_clouds_detail"):
   dds(root/f"textures/{name}.dds",512,512,sky)

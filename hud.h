@@ -32,6 +32,7 @@ typedef enum
 extern Uint32 exp_lev[MAX_EXP_LEVEL];
 
 extern int hud_text;
+extern int hud_logo_text;
 extern int hud_x;
 extern int hud_y;
 #ifdef ANDROID

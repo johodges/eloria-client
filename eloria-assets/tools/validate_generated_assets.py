@@ -994,6 +994,14 @@ def validate_hud_dds(root: Path) -> None:
         opaque = sum(pixels[i+3] > 32 for i in range(0, len(pixels), 4))
         if len(colours) < 4 or opaque < 256:
             raise ValueError(f"HUD atlas lacks authored icon content: {path}")
+    for name,size in (("eloria_crest.dds",(256,256)),
+                      ("eloria_logo.dds",(1024,512)),
+                      ("login_back.dds",(1024,512))):
+        path=root/"textures"/name; data=path.read_bytes()
+        if data[:4] != b"DDS " or struct.unpack_from("<II",data,12) != (size[1],size[0]):
+            raise ValueError(f"invalid Eloria branding texture: {path}")
+        if data[84:88] != b"DXT5" or len(data) < 128 + size[0]*size[1]:
+            raise ValueError(f"Eloria branding texture is not production DXT5: {path}")
 
 
 def validate_animations(root: Path) -> None:

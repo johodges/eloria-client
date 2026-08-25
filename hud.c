@@ -40,6 +40,7 @@ int hud_y= 48;
 int use_transparent_hud = 1;
 #endif
 int hud_text;
+int hud_logo_text;
 int show_help_text=1;
 int always_enlarge_text=1;
 Uint32 exp_lev[MAX_EXP_LEVEL];
@@ -226,10 +227,6 @@ void draw_hud_interface(window_info *win)
 	const float horizontal_bar_u_start = (float)144/256;
 	const float horizontal_bar_u_end = (float)191/256;
 	const float horizontal_bar_v_end = 0.0f;
-	const float logo_u_start = (float)64/256;
-	const float logo_v_start = (float)128/256;
-	const float logo_u_end = (float)127/256;
-	const float logo_v_end = (float)191/256;
 	float vertical_bar_v_end = (float)window_height/256;
 	float horizontal_bar_v_start = (float)(window_width-hud_x)/256;
 	int hud_logo_size = get_hud_logo_size();
@@ -244,11 +241,15 @@ CHECK_GL_ERRORS();
 	if(last_interface == HUD_INTERFACE_GAME)
 	{
 		draw_2d_thing(vertical_bar_u_start, vertical_bar_v_start, vertical_bar_u_end, vertical_bar_v_end,window_width-hud_x, 0, window_width, window_height);
-		//draw the logo
-		if (hud_x)
-			draw_2d_thing(logo_u_start, logo_v_start, logo_u_end, logo_v_end, window_width - hud_logo_size, 0, window_width, hud_logo_size);
 	}
 	glEnd();
+	if (last_interface == HUD_INTERFACE_GAME && hud_x)
+	{
+		bind_texture(hud_logo_text);
+		glBegin(GL_QUADS);
+		draw_2d_thing(0.0f, 0.0f, 1.0f, 1.0f, window_width - hud_logo_size, 0, window_width, hud_logo_size);
+		glEnd();
+	}
 #ifdef OPENGL_TRACE
 CHECK_GL_ERRORS();
 #endif //OPENGL_TRACE

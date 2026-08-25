@@ -906,6 +906,13 @@ void init_stuff(void)
 		FATAL_ERROR_WINDOW("%s", fatal_data_error);
 		exit(1);
 	}
+#ifdef TTF
+	// The first loading window is drawn before saved configuration is read.
+	// Select the bundled Eloria face now so actor-definition progress never
+	// falls back to the legacy bitmap atlas; the later upgrade still preserves
+	// this guarantee after user settings have been loaded.
+	upgrade_eloria_bitmap_fonts();
+#endif
 	// Update values for multi-selects that weren't fully initialized yet
 	check_deferred_options();
 
@@ -1031,6 +1038,7 @@ void init_stuff(void)
 	//load the necesary textures
 	icons_text = load_texture_cached("textures/gamebuttons.dds", tt_gui);
 	hud_text = load_texture_cached("textures/gamebuttons2.dds", tt_gui);
+	hud_logo_text = load_texture_cached("textures/eloria_crest.dds", tt_gui);
 	update_loading_win(load_textures_str, 4);
 	cons_text = load_texture_cached("textures/console.dds", tt_gui);
 
