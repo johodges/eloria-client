@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate an original low-poly Cal3D humanoid and core animation set."""
 from __future__ import annotations
-import argparse, json, math, struct
+import argparse, json, math, shutil, struct
 from pathlib import Path
 import xml.etree.ElementTree as ET
 from generate_bootstrap_pack import png
@@ -522,9 +522,11 @@ def main():
                 mesh(root/f"actors/playable/{culture}_{gender}_head_{i}.xmf","head",i,culture,gender)
     png(root/"actors/eloria_humanoid.png",256,256,lambda x,y:(82+(x//32%2)*18,105+(y//32%2)*12,96,255))
     generate_customization(root)
+    race_art=Path(__file__).resolve().parents[1]/"ui/generated/races"
     for slug,_,color,_ in RACES:
-        png(root/f"actors/races/{slug}.png",256,256,
-            lambda x,y,color=color:(min(255,color[0]+(x//32%2)*18),min(255,color[1]+(y//32%2)*12),color[2],255))
+        source=race_art/f"{slug}.png"
+        if not source.is_file():raise FileNotFoundError(f"Missing authored race portrait: {source}")
+        target=root/f"actors/races/{slug}.png";target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,target)
     race_catalog={"schema":1,"default":"luminous","races":[
         {"actor_types":{"female":PLAYER_ACTOR_TYPES[aid][0],"male":PLAYER_ACTOR_TYPES[aid][1]},
          "id":slug,"name":label,"description":description}

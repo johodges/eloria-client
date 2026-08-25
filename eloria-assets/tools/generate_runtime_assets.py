@@ -29,12 +29,12 @@ def cursor_index(x,y):
  return 2 if outline and not fill else 1 if fill else 0
 
 def cursor_pixel(x,y):
- return ((255,255,255,255),(255,255,255,255),(0,0,0,255),(128,128,128,255))[cursor_index(x,y)]
+ return ((0,0,0,0),(102,220,225,255),(218,160,68,255),(18,43,51,255))[cursor_index(x,y)]
 
 def indexed_cursor_bmp(path):
  w,h=CURSOR_COUNT*CURSOR_SIZE,CURSOR_SIZE
  row=(w+3)&~3
- palette=b"\\x00\\x00\\x00\\x00"+b"\\xff\\xff\\xff\\x00"+b"\\x00\\x00\\x00\\x00"+b"\\x80\\x80\\x80\\x00"
+ palette=bytes((0,0,0,0, 225,220,102,0, 68,160,218,0, 51,43,18,0))
  pixels=bytearray()
  for y in range(h-1,-1,-1):
   line=bytearray(cursor_index(x,y) for x in range(w))
@@ -207,16 +207,18 @@ def main():
                      (bundled_crest,"eloria_crest.dds")):
   if not source.is_file():raise FileNotFoundError(f"Missing authored HUD atlas: {source}")
   shutil.copy2(source,root/"textures"/name)
- for name in ("console","ground_detail","sigils"):
+ for name in ("console","ground_detail"):
   dds(root/f"textures/{name}.dds",512,512,panel)
+ authored=Path(__file__).resolve().parents[1]/"ui/generated"
+ shutil.copy2(authored/"magic/sigils.dds",root/"textures/sigils.dds")
  dds(root/"textures/login_menu.dds",256,256,login_menu_pixel)
  # The minimap compass was installed with the authored HUD assets above.
- for name in ("thick_clouds","thick_clouds_detail"):
-  dds(root/f"textures/{name}.dds",512,512,sky)
- dds(root/"textures/moonmap.dds",512,512,moon);dds(root/"textures/BrightSun.dds",512,512,sun)
- dds(root/"textures/portraits1.dds",512,512,portrait)
+ for name in ("moonmap","BrightSun","thick_clouds","thick_clouds_detail"):
+  shutil.copy2(authored/f"sky/{name}.dds",root/f"textures/{name}.dds")
+ shutil.copy2(authored/"portraits/portraits1.dds",root/"textures/portraits1.dds")
  bmp(root/"icon.bmp",32,32,cursor_pixel)
- dds(root/"maps/legend.dds",512,512,panel)
+ legend_target=root/"maps/legend.dds";legend_target.parent.mkdir(parents=True,exist_ok=True)
+ shutil.copy2(authored/"maps/legend.dds",legend_target)
  e3d_fallback(root/"3dobjects/badobject.e3d");e3d_fallback(root/"3dobjects/bag1.e3d");e3d_fallback(root/"3dobjects/portal1.e3d")
  make_map(root/"maps/nomap.elm",placements=[])
  preview_map=root/"maps/newcharactermap.elm"

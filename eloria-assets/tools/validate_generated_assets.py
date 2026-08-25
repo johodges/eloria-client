@@ -1004,6 +1004,42 @@ def validate_hud_dds(root: Path) -> None:
             raise ValueError(f"Eloria branding texture is not production DXT5: {path}")
 
 
+def validate_authored_simple_assets(root: Path) -> None:
+    """Validate the authored icon, portrait, weather, and VFX replacements."""
+    dds_assets = {
+        "textures/sigils.dds": (512, 512),
+        "textures/portraits1.dds": (512, 512),
+        "textures/moonmap.dds": (512, 512),
+        "textures/BrightSun.dds": (512, 512),
+        "textures/thick_clouds.dds": (512, 512),
+        "textures/thick_clouds_detail.dds": (512, 512),
+        "maps/legend.dds": (512, 512),
+    }
+    for relative, size in dds_assets.items():
+        path = root / relative
+        data = path.read_bytes()
+        if (data[:4] != b"DDS " or struct.unpack_from("<II", data, 12) !=
+                (size[1], size[0]) or data[84:88] != b"DXT5"):
+            raise ValueError(f"invalid authored simple asset: {path}")
+
+    png_sets = {
+        "actors/races/*.png": (6, 128, 128),
+        "textures/nymara/items/*.png": (36, 64, 64),
+        "textures/nymara/interactives/*.png": (20, 64, 64),
+        "textures/nymara/effects/*.png": (12, 128, 128),
+        "portraits/nymara/npcs/*.png": (14, 128, 128),
+        "portraits/nymara/creatures/*.png": (14, 128, 128),
+    }
+    for pattern, (minimum, width, height) in png_sets.items():
+        paths = sorted(root.glob(pattern))
+        if len(paths) < minimum:
+            raise ValueError(f"expected at least {minimum} authored PNGs for {pattern}")
+        for path in paths:
+            data = path.read_bytes()
+            if data[:8] != b"\x89PNG\r\n\x1a\n" or struct.unpack_from(">II", data, 16) != (width, height):
+                raise ValueError(f"invalid authored PNG dimensions: {path}")
+
+
 def validate_animations(root: Path) -> None:
     animations = sorted(root.glob("animations/**/*.xaf"))
     if not animations:
@@ -1037,6 +1073,7 @@ def main() -> None:
     validate_playable_characters(root)
     validate_map_dds(root)
     validate_hud_dds(root)
+    validate_authored_simple_assets(root)
     print("Validated every generated ELM, Cal3D XML family, and customization DDS")
 
 
