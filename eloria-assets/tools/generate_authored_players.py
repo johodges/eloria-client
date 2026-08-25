@@ -101,7 +101,12 @@ def clean_mesh(positions,normals,uvs,triangles,cell=.035):
         ab=tuple(pb[i]-pa[i] for i in range(3));ac=tuple(pc[i]-pa[i] for i in range(3))
         cross=(ab[1]*ac[2]-ab[2]*ac[1],ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0])
         average=tuple(sum(out_normals[index][i] for index in mapped) for i in range(3))
-        if sum(cross[i]*average[i] for i in range(3))<0: mapped=(a,c,b)
+        if sum(cross[i]*average[i] for i in range(3))<0:
+            mapped=(a,c,b);cross=tuple(-value for value in cross)
+        dots=[sum(cross[i]*out_normals[index][i] for i in range(3)) for index in mapped]
+        first=max(range(3),key=dots.__getitem__)
+        if dots[first]<=1e-12: continue
+        mapped=mapped[first:]+mapped[:first]
         seen.add(mapped);out_faces.append(mapped)
     return out_positions,out_normals,out_uvs,out_faces
 
