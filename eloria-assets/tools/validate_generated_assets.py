@@ -810,6 +810,9 @@ def validate_four_gates_guard(root: Path) -> None:
         "legs[@id='8']/mesh": "actors/eloria_none.cmf",
         "boots[@id='5']/mesh": "actors/eloria_none.cmf",
         "head[@id='4']/mesh": "actors/eloria_none.cmf",
+        "weapon[@id='11']/mesh": "actors/four_gates_guard/guard_spear.cmf",
+        "shield[@id='5']/mesh": "actors/four_gates_guard/guard_shield.cmf",
+        "cape[@id='11']/mesh": "actors/four_gates_guard/guard_cape.cmf",
     }
     if actor is None:
         raise ValueError("missing Luminous male actor used by Four Gates Guard preset")
@@ -818,8 +821,15 @@ def validate_four_gates_guard(root: Path) -> None:
             raise ValueError(f"Four Gates Guard preset mapping changed: {query}")
     mesh = cal_xml(root / "actors/four_gates_guard/guard_body.xmf")
     triangles = sum(int(sub.attrib["NUMFACES"]) for sub in mesh.findall("SUBMESH"))
-    if triangles < 38000:
+    if triangles < 18000:
         raise ValueError(f"Four Gates Guard fell below production topology floor: {triangles}")
+    for item,minimum in (("guard_spear",250),("guard_shield",900),("guard_cape",500)):
+        equipment=cal_xml(root/f"actors/four_gates_guard/{item}.xmf")
+        faces=sum(int(sub.attrib["NUMFACES"]) for sub in equipment.findall("SUBMESH"))
+        if faces < minimum:
+            raise ValueError(f"Four Gates Guard equipment is incomplete: {item}")
+    if png_dimensions(root/"actors/four_gates_guard/guard_equipment.png") != (512,512):
+        raise ValueError("Four Gates Guard equipment material is not 512px")
     for name, dimensions in (("guard_torso.dds", (216, 196)),
                              ("guard_arms.dds", (160, 160))):
         dds = (root / "actors/four_gates_guard" / name).read_bytes()

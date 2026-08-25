@@ -445,6 +445,13 @@ def actor_defs(path):
             boots=a.find("boots[@id='5']")
             boots.find("mesh").text="actors/eloria_none.cmf"
             a.find("head[@id='4']/mesh").text="actors/eloria_none.cmf"
+            equipment_skin="actors/four_gates_guard/guard_equipment.png"
+            for tag,item_id,mesh_name in (("weapon",11,"guard_spear"),
+                                          ("shield",5,"guard_shield"),
+                                          ("cape",11,"guard_cape")):
+                item=ET.SubElement(a,tag,id=str(item_id))
+                ET.SubElement(item,"mesh").text=f"actors/four_gates_guard/{mesh_name}.cmf"
+                ET.SubElement(item,"skin").text=equipment_skin
             guard_frames={
                 "CAL_walk":"walk", "CAL_run":"run", "CAL_idle":"idle",
                 "CAL_idle2":"idle_2", "CAL_combat_idle":"combat_idle",

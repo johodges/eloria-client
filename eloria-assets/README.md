@@ -46,7 +46,8 @@ to bind harvesting rules to exactly the models placed in each generated map.
 The character generators produce twelve original culture/gender actor
 definitions on a 37-anchor skeleton. They also convert the user-supplied Four
 Gates Guard into a selectable Luminous-male preset with a 2048px painted atlas,
-40,000-triangle Cal3D body, and fifteen movement, combat, casting, reaction,
+20,000-face neutral-pose Cal3D body, three detachable equipment meshes, and
+fifteen movement, combat, casting, reaction,
 sitting, and interaction animations. To re-import the original source GLB, run
 `import_four_gates_guard_glb.py SOURCE.glb eloria-assets/source/four-gates-guard`.
 

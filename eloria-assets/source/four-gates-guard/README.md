@@ -17,5 +17,6 @@ python3 eloria-assets/tools/import_four_gates_guard_glb.py \
   four_gates_guard.glb eloria-assets/source/four-gates-guard
 ```
 
-The runtime Cal3D meshes, DDS texture, and complete animation set are produced
-by `generate_four_gates_guard.py` as part of `generate_all_assets.py`.
+The runtime neutral-pose Cal3D body, detachable spear/shield/cape, DDS texture,
+and complete animation set are produced by `generate_four_gates_guard.py` as
+part of `generate_all_assets.py`.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Import the supplied static Four Gates guard GLB into compact authored sources."""
 from __future__ import annotations
-import argparse, hashlib, io, json, struct
+import argparse, hashlib, io, json, math, struct
 from pathlib import Path
 import numpy as np
 from PIL import Image
@@ -54,9 +54,9 @@ def main():
  bone[z<.95]=np.where(left[z<.95],8,11);bone[z<.55]=np.where(left[z<.55],9,12);bone[z<.20]=np.where(left[z<.20],10,13)
  bone[z>1.52]=3; arm=(ax>.27)&(z>.68)&(z<1.62)
  bone[arm]=np.where(left[arm],4,6); fore=arm&(ax>.48);bone[fore]=np.where(left[fore],5,7); hand=arm&(ax>.70);bone[hand]=np.where(left[hand],16,17)
- # The spear and shield are authored as many disconnected metal/wood shells.
- # Weight each extreme connected shell rigidly to one hand; spatial weighting
- # otherwise cuts a long prop between torso, arm, and head bones.
+ # Discover authored shells.  The source is an action-pose render mesh rather
+ # than a skinned character, so each disconnected armor/anatomy shell must be
+ # kept rigid; splitting one shell between bones opens visible animation holes.
  parent=np.arange(count,dtype=np.int32)
  def find(value):
   while parent[value]!=value: parent[value]=parent[parent[value]];value=parent[value]
@@ -66,10 +66,29 @@ def main():
   if first!=second: parent[second]=first
  for first,second,third in faces: union(first,second);union(first,third)
  roots=np.array([find(i) for i in range(count)])
+ removed=np.zeros(count,dtype=bool)
  for component in np.unique(roots):
   members=roots==component; center=pos[members].mean(0); bounds=np.ptp(pos[members],axis=0)
-  if center[0]<-.32 and (bounds[2]>.35 or center[0]<-.43): bone[members]=16
-  elif center[0]>.34 and (max(bounds)>.30 or center[0]>.43): bone[members]=17
+  # Remove baked spear, shield and rear cape shells. They are regenerated as
+  # independent equippable meshes instead of deforming with the body.
+  baked_arm=abs(center[0])>.24 and center[2]>.70
+  baked_leg=abs(center[0])>.12 and center[2]<.86
+  cape=center[1]>.14 and center[2]>.70 and bounds[0]>.14
+  if baked_arm or baked_leg or cape:
+   removed[members]=True; continue
+  dominant=int(np.bincount(bone[members].astype(np.int64)).argmax())
+  if center[2]>1.48 and abs(center[0])<.34: dominant=3
+  bone[members]=dominant
+  # Rotate the authored three-quarter head about 37 degrees to face -Y, the
+  # client's forward direction, without rotating the torso or headdress trim.
+  if dominant==3:
+   angle=math.radians(-37); origin=np.array((-.08,.06))
+   planar=pos[members,:2]-origin
+   rotation=np.array(((math.cos(angle),-math.sin(angle)),(math.sin(angle),math.cos(angle))))
+   pos[members,:2]=planar@rotation.T+origin
+   norm[members,:2]=norm[members,:2]@rotation.T
+ keep=~removed[faces].any(axis=1)
+ faces=faces[keep]
  # Keep one continuous mesh. Splitting faces at arbitrary height planes creates
  # visible cracks as independently weighted body-slot meshes animate.
  part=np.ones(len(faces),dtype=np.uint8)
