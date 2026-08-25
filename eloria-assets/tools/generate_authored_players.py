@@ -9,12 +9,14 @@ import shutil
 import struct
 import xml.etree.ElementTree as ET
 import zlib
+import json
 
 from generate_characters import BONES, VERSION, _binary_header, _binary_string, write_cal
 
 
 SOURCE = Path(__file__).resolve().parents[1] / "source/player_models"
 MODELS = {
+    "luminous_female": 0, "luminous_male": 1,
     "glasswarden_female": 4, "glasswarden_male": 5,
     "ssarathi_female": 41, "ssarathi_male": 42,
 }
@@ -211,7 +213,8 @@ def write_mesh(path,vertices,faces):
 
 def fitted_bones(name):
     female=name.endswith("female"); ssarathi=name.startswith("ssarathi")
-    width=(.94 if female else 1.05)*(1.04 if ssarathi else 1.)
+    culture_scale=(1.07 if ssarathi else 1.03 if name.startswith("glasswarden") else .98)
+    width=(.94 if female else 1.05)*culture_scale
     result=[]
     lateral={4,6,8,11,16,17,27,28,29,30,31,32,33,34,35,36}
     for ident,(bone,parent,pos) in enumerate(BONES):
@@ -335,7 +338,7 @@ def write_dds(source,path,target_size=None):
     path.parent.mkdir(parents=True,exist_ok=True); path.write_bytes(b"DDS "+struct.pack("<31I",*header)+body)
 
 
-def patch_actor_defs(path,name,actor_id,texture):
+def patch_actor_defs(path,name,actor_id,texture,preserve_customization=False):
     tree=ET.parse(path); root=tree.getroot(); actor=root.find(f"actor[@id='{actor_id}']")
     if actor is None: raise ValueError(f"missing player actor {actor_id}")
     actor.find("skeleton").text=f"actors/playable/{name}.csf"
@@ -346,10 +349,10 @@ def patch_actor_defs(path,name,actor_id,texture):
                 suffix=f"head_{part.attrib['id']}" if tag=="head" else tag
                 mesh.text=f"actors/playable/{name}_{suffix}.cmf"
             for child in part:
-                if child.tag in ("arms","torso","skin"):
+                if not preserve_customization and child.tag in ("arms","torso","skin"):
                     role=child.tag if child.tag!="skin" else tag
                     child.text=f"actors/playable/{name}_{role}.dds"
-    for tag in ("hskin","hair","eyes"):
+    for tag in (() if preserve_customization else ("hskin","hair","eyes")):
         for part in actor.findall(tag):
             if len(part):
                 for child in part: child.text=f"actors/playable/{name}_{child.tag}.dds"
@@ -367,6 +370,29 @@ def patch_actor_defs(path,name,actor_id,texture):
         kind=0 if tag in ("CAL_idle","CAL_idle2","CAL_walk","CAL_run","CAL_combat_idle","CAL_idle_sit") else 1
         node.text=f"animations/playable/{name}/{filename}.caf {kind}"
     path.write_text('<?xml version="1.0"?>\n'+ET.tostring(root,encoding="unicode")+'\n',encoding="utf-8")
+
+
+def read_universal_animations(path):
+    data=path.read_bytes()
+    if data[:8] != b"EANM\x01\0\0\0": raise ValueError(f"invalid animation source: {path}")
+    raw_size=struct.unpack_from("<I",data,8)[0]; raw=zlib.decompress(data[12:])
+    if len(raw)!=raw_size: raise ValueError(f"animation source size mismatch: {path}")
+    return json.loads(raw)["clips"]
+
+
+def imported_animation(path,bones,clip):
+    tracks={int(bone):keys for bone,keys in clip["tracks"].items()}
+    root=ET.Element("ANIMATION",DURATION=str(clip["duration"]),NUMTRACKS=str(len(tracks)))
+    data=_binary_header("CAF"); data.extend(struct.pack("<fi",clip["duration"],len(tracks)))
+    for bone,keys in sorted(tracks.items()):
+        track=ET.SubElement(root,"TRACK",BONEID=str(bone),NUMKEYFRAMES=str(len(keys)))
+        data.extend(struct.pack("<ii",bone,len(keys)))
+        for time,rotation in keys:
+            key=ET.SubElement(track,"KEYFRAME",TIME=str(time))
+            ET.SubElement(key,"TRANSLATION").text="%g %g %g"%bones[bone][2]
+            ET.SubElement(key,"ROTATION").text="%g %g %g %g"%tuple(rotation)
+            data.extend(struct.pack("<f3f4f",time,*bones[bone][2],*rotation))
+    write_cal(path,"XAF",root); path.with_suffix(".caf").write_bytes(data)
 
 
 def generate_model(root,name,actor_id):
@@ -391,15 +417,21 @@ def generate_model(root,name,actor_id):
         shutil.copy2(base/f"{name}_head.cmf",base/f"{name}_head_{variant}.cmf")
     bones=fitted_bones(name); skeleton(base/f"{name}.xsf",bones)
     anim_dir=root/f"animations/playable/{name}"
-    for anim,(duration,poses) in ANIMATIONS.items(): animation(anim_dir/f"{anim}.xaf",bones,duration,poses)
+    if name.startswith("luminous_"):
+        clips=read_universal_animations(SOURCE/"luminous_universal.eanim")
+        for anim,clip in clips.items(): imported_animation(anim_dir/f"{anim}.xaf",bones,clip)
+    else:
+        for anim,(duration,poses) in ANIMATIONS.items(): animation(anim_dir/f"{anim}.xaf",bones,duration,poses)
     texture=f"actors/playable/{name}.dds"
     # Retain the full atlas as a QA/reference artifact; runtime enhanced actors
     # consume the compositor-sized role textures below.
-    source_texture=png_rgba(SOURCE/f"{name}.png")
-    write_dds(source_texture,root/texture)
-    for role,(_,_,width,height) in ATLAS_REGIONS.items():
-        write_dds(source_texture,root/f"actors/playable/{name}_{role}.dds",(width*4,height*4))
-    patch_actor_defs(root/"actor_defs/actor_defs.xml",name,actor_id,texture)
+    preserve_customization=name.startswith("luminous_")
+    if not preserve_customization:
+        source_texture=png_rgba(SOURCE/f"{name}.png")
+        write_dds(source_texture,root/texture)
+        for role,(_,_,width,height) in ATLAS_REGIONS.items():
+            write_dds(source_texture,root/f"actors/playable/{name}_{role}.dds",(width*4,height*4))
+    patch_actor_defs(root/"actor_defs/actor_defs.xml",name,actor_id,texture,preserve_customization)
     print(f"{name}: {source_vertices}->{len(positions)} vertices, {source_faces}->{len(triangles)} triangles, {sum(len(v) for v in split.values())} assigned")
 
 

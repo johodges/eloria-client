@@ -2,6 +2,20 @@
   "schema": 1,
   "assets": [
     {
+      "path": "actors/playable/luminous_*",
+      "source": "source/player_models/luminous_*.emesh",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "description": "Universal Base Characters male and female geometry converted to Eloria Cal3D player sections"
+    },
+    {
+      "path": "animations/playable/luminous_*/*",
+      "source": "source/player_models/luminous_universal.eanim",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "description": "Supported player actions retargeted from the Universal Animation Library"
+    },
+    {
       "path": "maps/emberhaven.elm",
       "source": "tools/generate_bootstrap_pack.py",
       "author": "Eloria project",

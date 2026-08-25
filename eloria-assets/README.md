@@ -46,6 +46,11 @@ The character generator produces an original low-poly humanoid, fourteen-bone
 skeleton, four actor definitions, and idle, walk, run, attack, pain, death,
 harvest, and sitting animations in Cal3D XML source formats.
 
+The luminous player actors replace their procedural body with CC0 Quaternius
+male and female base geometry. Their supported client actions use retargeted
+Universal Animation Library clips, while the existing Eloria customization
+contract continues to expose 16 hair colors, 12 eye colors, and 6 skin colors.
+
 The creature generator produces sixteen animals and sixteen monsters with original
 silhouettes, textures, a thirteen-bone quadruped rig, and shared idle, walk,
 run, attack, pain, and death animation clips. Actor IDs 200-207 are reserved

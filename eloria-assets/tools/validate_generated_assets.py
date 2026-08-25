@@ -879,7 +879,8 @@ def validate_playable_characters(root: Path) -> None:
     }
     body_digests=set()
     skeleton_digests=set()
-    authored={"glasswarden_female","glasswarden_male","ssarathi_female","ssarathi_male"}
+    authored={"luminous_female","luminous_male","glasswarden_female","glasswarden_male",
+              "ssarathi_female","ssarathi_male"}
     for actor_id,(culture,gender) in expected.items():
         actor=actors.find(f"actor[@id='{actor_id}']")
         if actor is None or actor.attrib.get("race") != culture or actor.attrib.get("gender") != gender:
@@ -963,7 +964,8 @@ def validate_playable_characters(root: Path) -> None:
         if name in authored:
             body_xml=cal_xml(root/f"actors/playable/{name}_body.xmf")
             body_vertices=body_xml.findall(".//VERTEX")
-            if not 15000 <= len(body_vertices) <= 45000:
+            minimum_vertices=6000 if name.startswith("luminous_") else 15000
+            if not minimum_vertices <= len(body_vertices) <= 45000:
                 raise ValueError(f"authored player topology is outside runtime budget: {name}")
             if sum(len(vertex.findall("INFLUENCE"))>1 for vertex in body_vertices)<100:
                 raise ValueError(f"authored player lacks smooth multi-bone skinning: {name}")
@@ -971,33 +973,34 @@ def validate_playable_characters(root: Path) -> None:
                      if int(influence.attrib["ID"])==26 and float(influence.text)>.05)
             if neck<190:
                 raise ValueError(f"authored player lacks a weighted neck: {name}")
-            texture=f"actors/playable/{name}.dds"; data=(root/texture).read_bytes()
-            if data[:4]!=b"DDS " or struct.unpack_from("<II",data,12)!=(2048,2048):
-                raise ValueError(f"authored player atlas is not runtime 2048 DDS: {name}")
-            if struct.unpack_from("<I",data,28)[0] < 5:
-                raise ValueError(f"authored player atlas lacks mipmaps: {name}")
-            regions={"head":(128,128),"hair":(136,192),"eyes":(24,24),
-                     "hands":(64,64),"arms":(160,160),"torso":(196,216),
-                     "boots":(156,160),"legs":(160,160)}
-            for role,size in regions.items():
-                relative=f"actors/playable/{name}_{role}.dds"
-                role_data=(root/relative).read_bytes()
-                if role_data[:4]!=b"DDS " or struct.unpack_from("<II",role_data,12)!=(size[1],size[0]):
-                    raise ValueError(f"authored player compositor texture is invalid: {relative}")
-            expected_textures={
-                "arms":f"actors/playable/{name}_arms.dds",
-                "torso":f"actors/playable/{name}_torso.dds",
-                "hands":f"actors/playable/{name}_hands.dds",
-                "head":f"actors/playable/{name}_head.dds",
-            }
-            for part in actor.findall("shirt"):
-                if any(part.findtext(role)!=relative for role,relative in expected_textures.items()
-                       if role in ("arms","torso")):
-                    raise ValueError(f"authored player shirt compositor mapping changed: {name}")
-            for part in actor.findall("hskin"):
-                if any(part.findtext(role)!=relative for role,relative in expected_textures.items()
-                       if role in ("hands","head")):
-                    raise ValueError(f"authored player skin compositor mapping changed: {name}")
+            if not name.startswith("luminous_"):
+                texture=f"actors/playable/{name}.dds"; data=(root/texture).read_bytes()
+                if data[:4]!=b"DDS " or struct.unpack_from("<II",data,12)!=(2048,2048):
+                    raise ValueError(f"authored player atlas is not runtime 2048 DDS: {name}")
+                if struct.unpack_from("<I",data,28)[0] < 5:
+                    raise ValueError(f"authored player atlas lacks mipmaps: {name}")
+                regions={"head":(128,128),"hair":(136,192),"eyes":(24,24),
+                         "hands":(64,64),"arms":(160,160),"torso":(196,216),
+                         "boots":(156,160),"legs":(160,160)}
+                for role,size in regions.items():
+                    relative=f"actors/playable/{name}_{role}.dds"
+                    role_data=(root/relative).read_bytes()
+                    if role_data[:4]!=b"DDS " or struct.unpack_from("<II",role_data,12)!=(size[1],size[0]):
+                        raise ValueError(f"authored player compositor texture is invalid: {relative}")
+                expected_textures={
+                    "arms":f"actors/playable/{name}_arms.dds",
+                    "torso":f"actors/playable/{name}_torso.dds",
+                    "hands":f"actors/playable/{name}_hands.dds",
+                    "head":f"actors/playable/{name}_head.dds",
+                }
+                for part in actor.findall("shirt"):
+                    if any(part.findtext(role)!=relative for role,relative in expected_textures.items()
+                           if role in ("arms","torso")):
+                        raise ValueError(f"authored player shirt compositor mapping changed: {name}")
+                for part in actor.findall("hskin"):
+                    if any(part.findtext(role)!=relative for role,relative in expected_textures.items()
+                           if role in ("hands","head")):
+                        raise ValueError(f"authored player skin compositor mapping changed: {name}")
     if len(body_digests) != len(expected):
         raise ValueError("playable races or genders share duplicate body silhouettes")
     if len(skeleton_digests) != len(expected):
@@ -1013,9 +1016,11 @@ def validate_playable_characters(root: Path) -> None:
     if set(manifest.get("models",{})) != authored:
         raise ValueError("authored player source manifest is incomplete")
     for name,record in manifest["models"].items():
-        if record["vertices"]<20000 or record["triangles"]<30000:
+        minimum=(6000,11000) if name.startswith("luminous_") else (20000,30000)
+        if record["vertices"]<minimum[0] or record["triangles"]<minimum[1]:
             raise ValueError(f"cleaned authored source fell below fidelity budget: {name}")
-        if not (source/f"{name}.emesh").is_file() or not (source/f"{name}.png").is_file():
+        texture_required=not name.startswith("luminous_")
+        if not (source/f"{name}.emesh").is_file() or (texture_required and not (source/f"{name}.png").is_file()):
             raise ValueError(f"authored player source is missing: {name}")
 
 def validate_map_dds(root: Path) -> None:

@@ -1,6 +1,22 @@
 {
   "schema": 1,
   "models": {
+    "luminous_female": {
+      "source": "Superhero_Female_FullBody.gltf",
+      "vertices": 6692,
+      "triangles": 11807,
+      "license": "CC0-1.0",
+      "cell": 0.006,
+      "uv_bins": 96
+    },
+    "luminous_male": {
+      "source": "Superhero_Male_FullBody.gltf",
+      "vertices": 6641,
+      "triangles": 11664,
+      "license": "CC0-1.0",
+      "cell": 0.006,
+      "uv_bins": 96
+    },
     "glasswarden_female": {
       "source": "glasswarden_female.glb",
       "vertices": 24568,
