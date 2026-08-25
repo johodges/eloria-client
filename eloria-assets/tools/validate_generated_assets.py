@@ -491,8 +491,8 @@ def validate_runtime_xml(root: Path) -> None:
 
 def validate_skeletons(root: Path) -> None:
     skeletons = sorted(root.glob("actors/**/*.xsf"))
-    if len(skeletons) != 11:
-        raise ValueError(f"expected 11 generated skeletons, found {len(skeletons)}")
+    if len(skeletons) != 19:
+        raise ValueError(f"expected 19 generated skeletons, found {len(skeletons)}")
     for path in skeletons:
         document = cal_xml(path)
         bones = document.findall("BONE")
@@ -816,6 +816,7 @@ def validate_playable_characters(root: Path) -> None:
         41:("ssarathi","female"),42:("ssarathi","male"),
     }
     body_digests=set()
+    skeleton_digests=set()
     authored={"glasswarden_female","glasswarden_male","ssarathi_female","ssarathi_male"}
     for actor_id,(culture,gender) in expected.items():
         actor=actors.find(f"actor[@id='{actor_id}']")
@@ -875,10 +876,17 @@ def validate_playable_characters(root: Path) -> None:
         body=(root/f"actors/playable/{culture}_{gender}_body.xmf").read_bytes()
         body_digests.add(hashlib.sha256(body).digest())
         name=f"{culture}_{gender}"
+        expected_skeleton=f"actors/playable/{name}.csf"
+        if actor.findtext("skeleton") != expected_skeleton or not (root/expected_skeleton).is_file():
+            raise ValueError(f"playable actor {actor_id} does not use its fitted skeleton")
+        skeleton_digests.add(hashlib.sha256((root/expected_skeleton).read_bytes()).digest())
+        for tag in ("CAL_idle","CAL_idle2","CAL_walk","CAL_run","CAL_combat_idle",
+                    "CAL_attack_up_1","CAL_attack_cast","CAL_pain1","CAL_die1",
+                    "CAL_idle_sit","CAL_sit_down","CAL_stand_up","CAL_harvest","CAL_pick","CAL_drop"):
+            relative=(actor.findtext(f"frames/{tag}") or "").split()[0]
+            if not relative.startswith(f"animations/playable/{name}/") or not (root/relative).is_file():
+                raise ValueError(f"playable actor {name} lacks dedicated {tag}")
         if name in authored:
-            expected_skeleton=f"actors/playable/{name}.csf"
-            if actor.findtext("skeleton") != expected_skeleton or not (root/expected_skeleton).is_file():
-                raise ValueError(f"authored player {actor_id} does not use its fitted skeleton")
             body_xml=cal_xml(root/f"actors/playable/{name}_body.xmf")
             body_vertices=body_xml.findall(".//VERTEX")
             if not 15000 <= len(body_vertices) <= 32000:
@@ -916,14 +924,10 @@ def validate_playable_characters(root: Path) -> None:
                 if any(part.findtext(role)!=relative for role,relative in expected_textures.items()
                        if role in ("hands","head")):
                     raise ValueError(f"authored player skin compositor mapping changed: {name}")
-            for tag in ("CAL_idle","CAL_idle2","CAL_walk","CAL_run","CAL_combat_idle",
-                        "CAL_attack_up_1","CAL_attack_cast","CAL_pain1","CAL_die1",
-                        "CAL_idle_sit","CAL_sit_down","CAL_stand_up","CAL_harvest","CAL_pick","CAL_drop"):
-                relative=(actor.findtext(f"frames/{tag}") or "").split()[0]
-                if not relative.startswith(f"animations/playable/{name}/") or not (root/relative).is_file():
-                    raise ValueError(f"authored player {name} lacks dedicated {tag}")
     if len(body_digests) != len(expected):
         raise ValueError("playable races or genders share duplicate body silhouettes")
+    if len(skeleton_digests) != len(expected):
+        raise ValueError("playable races or genders share unfitted skeletons")
     for culture,gender in expected.values():
         body=root/f"actors/playable/{culture}_{gender}_body.xmf"
         vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(body).findall("SUBMESH"))
