@@ -31,6 +31,7 @@
 #include "mapwin.h"
 #include "map.h"
 #include "image_loading.h"
+#include "world_package.h"
 
 float minimap_tiles_distance = 48;
 int rotate_minimap = 1;
@@ -728,7 +729,12 @@ void change_minimap(void)
 		glDeleteTextures(1,&exploration_texture);
 
 	//make filename
-	if (check_image_name(map_file_name, sizeof(minimap_file_name), minimap_file_name) == 1)
+	if (world_package_active() && world_package_minimap()[0] != 0)
+	{
+		safe_strncpy(minimap_file_name, world_package_minimap(), sizeof(minimap_file_name));
+		minimap_texture = load_texture_cached(minimap_file_name, tt_image);
+	}
+	else if (check_image_name(map_file_name, sizeof(minimap_file_name), minimap_file_name) == 1)
 	{
 		minimap_texture = load_texture_cached(minimap_file_name, tt_image);
 	}

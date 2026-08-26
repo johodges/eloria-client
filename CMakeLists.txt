@@ -150,7 +150,7 @@ if (JSON_FILES)
 endif()
 
 # set the paths to header files
-include_directories(${SD} ${SD}io ${SD}shader ${SD}xz ${SD}engine ${SD}exceptions ${SD}xml ${SD}eye_candy)
+include_directories(${SD} ${SD}io ${SD}shader ${SD}xz ${SD}engine ${SD}exceptions ${SD}xml ${SD}eye_candy ${SD}nlohmann_json/include)
 
 # list the C source files
 set(SOURCES
@@ -188,6 +188,8 @@ set(SOURCES ${SOURCES}
 	${SD}invasion_window.cpp ${SD}io/cal3d_io_wrapper.cpp ${SD}item_info.cpp ${SD}item_lists.cpp ${SD}named_colours.cpp
 	${SD}optimizer.cpp ${SD}password_manager.cpp ${SD}quest_log.cpp ${SD}select.cpp ${SD}sendvideoinfo.cpp
 	${SD}trade_log.cpp ${SD}user_menus.cpp ${SD}xor_cipher.cpp ${SD}engine/hardwarebuffer.cpp ${SD}engine/logging.cpp
+	${SD}world_package.cpp
+	${SD}world_glb_renderer.cpp
 	${SD}exceptions/extendedexception.cpp ${SD}eye_candy/effect_bag.cpp ${SD}eye_candy/effect_breath.cpp
 	${SD}eye_candy/effect_campfire.cpp ${SD}eye_candy/effect_candle.cpp ${SD}eye_candy/effect_cloud.cpp
 	${SD}eye_candy/effect_firefly.cpp ${SD}eye_candy/effect_fountain.cpp ${SD}eye_candy/effect_glow.cpp

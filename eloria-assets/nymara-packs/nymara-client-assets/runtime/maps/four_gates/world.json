@@ -1,0 +1,40 @@
+{
+  "format": "eloria-world",
+  "version": 1,
+  "id": "four_gates",
+  "display_name": "Four Gates",
+  "scene": "world.glb",
+  "collision": "collision.bin",
+  "collision_width": 1536,
+  "collision_height": 1536,
+  "coordinates": {
+    "units_per_meter": 2.15,
+    "up_axis": "Y",
+    "forward_axis": "-Z",
+    "origin": [384.0, 384.0, 0.0]
+  },
+  "bounds": {
+    "minimum": [-750.0, -40.0, -820.0],
+    "maximum": [750.0, 195.0, 750.0]
+  },
+  "environment": {
+    "ambient_color": [0.58, 0.63, 0.72],
+    "ambient_intensity": 1.0,
+    "sun_direction": [-0.4, -0.8, -0.3],
+    "sun_color": [1.0, 0.95, 0.85],
+    "sun_intensity": 1.0,
+    "fog_enabled": false
+  },
+  "player_starts": [
+    {"id": "default", "position": [0.0, 32.0, 464.4], "rotation_degrees": 180.0}
+  ],
+  "portals": [
+    {"id": "south", "position": [0.0, 30.0, 722.2]},
+    {"id": "east", "position": [722.2, 30.0, 0.0]},
+    {"id": "north", "position": [0.0, 30.0, -722.2]}
+  ],
+  "harvestables": [],
+  "npc_markers": [],
+  "spawn_markers": [],
+  "regions": []
+}
