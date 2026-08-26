@@ -12,6 +12,51 @@ UNITS_PER_METER = 2.15
 ORIGIN = (384.0, 384.0, 0.0)
 
 
+def correct_clockwise_indices(raw: bytes) -> bytes:
+    """Convert the authored fixture's clockwise triangles to glTF CCW."""
+    data = bytearray(raw)
+    offset = 12
+    document = None
+    binary_offset = None
+    while offset < len(data):
+        length, kind = struct.unpack_from("<II", data, offset)
+        offset += 8
+        if kind == 0x4E4F534A:
+            document = json.loads(data[offset:offset + length])
+        elif kind == 0x004E4942:
+            binary_offset = offset
+        offset += length
+    if document is None or binary_offset is None:
+        raise RuntimeError("source GLB lacks JSON or BIN chunk")
+
+    component_formats = {5121: "B", 5123: "H", 5125: "I"}
+    corrected = set()
+    for mesh in document.get("meshes", []):
+        for primitive in mesh.get("primitives", []):
+            if primitive.get("mode", 4) != 4 or "indices" not in primitive:
+                continue
+            accessor_index = primitive["indices"]
+            if accessor_index in corrected:
+                continue
+            accessor = document["accessors"][accessor_index]
+            view = document["bufferViews"][accessor["bufferView"]]
+            fmt = component_formats.get(accessor["componentType"])
+            count = accessor["count"]
+            if fmt is None or count % 3:
+                raise RuntimeError("unsupported Four Gates triangle indices")
+            width = struct.calcsize(fmt)
+            stride = view.get("byteStride", width)
+            start = (binary_offset + view.get("byteOffset", 0)
+                     + accessor.get("byteOffset", 0))
+            for triangle in range(0, count, 3):
+                second = start + (triangle + 1) * stride
+                third = start + (triangle + 2) * stride
+                data[second:second + width], data[third:third + width] = (
+                    data[third:third + width], data[second:second + width])
+            corrected.add(accessor_index)
+    return bytes(data)
+
+
 def source_xz(cell_x: int, cell_y: int) -> tuple[float, float]:
     world_x = (cell_x + 0.5) * 0.5
     world_y = (cell_y + 0.5) * 0.5
@@ -42,7 +87,8 @@ def main() -> None:
     replacement = b'"BLEND"' + b' ' * (len(invalid) - len(b'"BLEND"'))
     if raw.count(invalid) != 2:
         raise RuntimeError("unexpected Four Gates alphaMode encoding")
-    (OUTPUT / "world.glb").write_bytes(raw.replace(invalid, replacement))
+    patched = raw.replace(invalid, replacement)
+    (OUTPUT / "world.glb").write_bytes(correct_clockwise_indices(patched))
     manifest = {
         "format": "eloria-world", "version": 1, "id": "four_gates",
         "display_name": "Four Gates", "scene": "world.glb",
