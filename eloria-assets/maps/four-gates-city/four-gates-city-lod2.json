@@ -1,10 +1,10 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.4.0",
+  "assetVersion": "0.4.0-lod2",
   "asset": {
     "id": "four-gates-city",
     "name": "Four Gates City",
-    "glb": "four-gates-city.glb",
+    "glb": "four-gates-city-lod2.glb",
     "units": "meters",
     "coordinateSystem": {
       "handedness": "right",
@@ -1469,43 +1469,7 @@
     },
     "extension": "KHR_texture_transform"
   },
-  "animations": [
-    {
-      "name": "Gate_South_Outer_OpenClose",
-      "standard": "glTF-2.0",
-      "optional": true
-    },
-    {
-      "name": "Gate_South_Inner_OpenClose",
-      "standard": "glTF-2.0",
-      "optional": true
-    },
-    {
-      "name": "Gate_North_OpenClose",
-      "standard": "glTF-2.0",
-      "optional": true
-    },
-    {
-      "name": "Gate_East_OpenClose",
-      "standard": "glTF-2.0",
-      "optional": true
-    },
-    {
-      "name": "Gate_West_OpenClose",
-      "standard": "glTF-2.0",
-      "optional": true
-    },
-    {
-      "name": "Sanctuary_Beacon_Pulse",
-      "standard": "glTF-2.0",
-      "optional": true
-    },
-    {
-      "name": "Plaza_Monument_Crystal_Pulse",
-      "standard": "glTF-2.0",
-      "optional": true
-    }
-  ],
+  "animations": [],
   "districtDetail": {
     "civic": {
       "families": [
