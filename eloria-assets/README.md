@@ -10,6 +10,12 @@ Generate the bootstrap pack with:
 python3 eloria-assets/tools/generate_all_assets.py build/eloria-data
 ```
 
+Normal CMake builds generate this same directory automatically. The generated
+data target tracks the asset tools and authored sources, so pulling a revision
+with changed player models cannot leave legacy meshes in `build/eloria-data`.
+Use `-DGENERATE_ELORIA_DATA=Off` only when intentionally managing a separate
+runtime data directory yourself.
+
 The wrapper runs independent generator pipelines in parallel, waits for each
 dependency wave, then runs effects, the complete Nymara blocker, provenance,
 and validation. Control concurrency with `--jobs` (for example `--jobs 4`).
