@@ -34,6 +34,9 @@ func send_frame(frame: PackedByteArray, sensitive := false) -> Error:
 func login(username: String, password: String) -> Error:
 	return send_frame(EloriaProtocol.login(username, password), true)
 
+func create_character(username: String, password: String, appearance: Dictionary) -> Error:
+	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)
+
 func _process(_delta: float) -> void:
 	_peer.poll()
 	var status := _peer.get_status()
