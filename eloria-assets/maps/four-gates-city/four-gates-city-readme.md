@@ -5,20 +5,22 @@ Production-oriented textured environment derived from the supplied Four Gates re
 ## Scene conventions
 
 - Meters, right-handed, +Y up, -Z north, origin at the central plaza.
-- Defensive-ring diameter: 720 m. Walking plateau: Y=30 m. Water: Y=-2 m. Lowest useful terrain: Y=-40 m.
+- Defensive-ring diameter: 720 m. Authored walking terraces: approximately Y=24–36 m. Water: Y=-2 m. Lowest useful terrain: Y=-40 m.
 - Named hierarchy, interaction parts, collision proxies, markers, PBR materials, and stable JSON identifiers are included.
 
 ## Loading
 
 Load `four-gates-city.glb` with any glTF 2.0 loader, then parse `four-gates-city.json`. Resolve metadata `node` fields by exact GLB node name. The loader must support `KHR_texture_transform` for atlas selection. Unknown extras and JSON extensions should be ignored safely.
 
+Rebuild from the compact checked-in blockout seed with `python3 eloria-assets/tools/rebuild_four_gates_glb.py`. Run `python3 eloria-assets/tools/validate_four_gates_package.py` after any binary or metadata change; it rejects truncated containers, out-of-bounds buffer views, undecodable embedded images, duplicate node names, and stale JSON node references.
+
 ## Materials and effects
 
-The package uses 15 shared metallic-roughness materials and three embedded 1024×1024 PNG atlases: base color, tangent-space normal, and packed ORM (`R=occlusion`, `G=roughness`, `B=metallic`). Source and derived maps are also included under `textures/`. Water, waterfall sheets, and blue-energy pulses retain optional client-effect metadata.
+The package uses 19 metallic-roughness materials. A three-map citywide atlas covers general assets, while a dedicated four-map landmark family provides base color, tangent normal, packed ORM, and emissive detail for monumental stone, bronze trim, foundations, and blue-energy inlays. Source and derived maps are included under `textures/`.
 
 ## LOD, collision, navigation
 
-The main GLB contains gameplay-distance LOD1 plus `_LOD0` landmark overlays. `four-gates-city-lod2.glb` is a reduced-node distant sibling with 557 active nodes, no animations, and no close-detail overlays. Low-poly `COLLISION_*` nodes remain separate. Navigation includes ten conservative convex walkable polygons, monument and wall exclusions, agent dimensions, and an off-mesh sanctuary link.
+The main GLB contains gameplay-distance LOD1 plus `_LOD0` landmark overlays. `four-gates-city-lod2.glb` is a resource-pruned distant sibling with 558 active nodes, 23 meshes, 16 materials, overview textures capped at 512 px, no animations, and no close-detail overlays. Low-poly `COLLISION_*` nodes remain separate. Navigation includes ten conservative convex walkable polygons, monument and wall exclusions, agent dimensions, and an off-mesh sanctuary link.
 
 ## Animation
 
@@ -26,8 +28,8 @@ Seven optional standard glTF clips are embedded: five portcullis open/close clip
 
 ## Reference coverage
 
-`references/` contains 20 indexed verification views and a generated four-panel architecture reference sheet.
+`references/` contains 20 indexed verification views and a labeled 20-view contact sheet.
 
 ## Known limitations
 
-This is a textured gameplay environment with landmark LOD0 overlays and an authored reduced-node LOD2 sibling, not a hand-authored cinematic city. Landmark-specific UV unwraps, final per-building navigation blockers, mist particles, and bespoke vegetation remain follow-up work.
+This is a textured gameplay environment with authored modular landmark geometry, landmark UVs, sculpted concentric terrain and shoreline transitions, building blockers, waterfall effect locators, and a resource-pruned LOD2 sibling. Water, foam, and mist remain understandable as static glTF geometry/locators when effects are disabled; animated turbulence, depth fade, refraction, and particles require client shaders. Remaining work is primarily bespoke district UVs, higher-density ornament, bespoke vegetation, and effect shaders.

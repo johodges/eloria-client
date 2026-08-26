@@ -1,5 +1,33 @@
 # Change log
 
+## 0.6.1 — 2026-08-26
+
+- Rebuilt both committed GLBs after detecting truncated binary chunks in the prior delivery.
+- Added deterministic atlas fallbacks and a compact blockout seed so a clean checkout can reproduce the complete package.
+- Normalized strict glTF material properties, removed empty child arrays, separated animation accessors from vertex-buffer targets, and added tangent attributes to every normal-mapped primitive.
+- Pruned LOD2 metadata references to match the nodes actually retained by the distant model.
+- Added package-integrity validation for container lengths, buffer bounds, embedded images, unique node names, and JSON-to-GLB node references.
+- Rebuilt the truncated reference composite as a labeled contact sheet from all 20 verified source renders.
+- Passed Khronos glTF Validator with zero errors and zero warnings for both LOD1 and LOD2.
+
+## 0.6.0 — 2026-08-26
+
+- Replaced the flat city plateau with authored concentric terrain terraces and a continuous irregular rocky shoreline transition.
+- Reoriented and deepened the existing stable cliff nodes into tangent-aligned shoreline buttresses.
+- Added eight radial water channels, eight plunge pools, eight foam surfaces, and eight loader-addressable mist emitter locators.
+- Added explicit terrain elevation, shoreline, water-system, shader-fallback, and effect metadata.
+- Rebuilt LOD2 with resource pruning and 512 px overview textures while retaining overview landmarks.
+- Increased reusable unique mesh geometry from 2,682 to 4,310 triangles.
+
+## 0.5.0 — 2026-08-26
+
+- Replaced stable gate tower and roof nodes with authored multi-ring shafts and ribbed dome meshes.
+- Added extruded structural bridge arches and subdivided irregular cliff-face modules.
+- Added gate façade energy inlays using a dedicated emissive material.
+- Embedded a dedicated 1024×1024 landmark base-color, normal, ORM, and emissive texture family.
+- Added modular landmark UVs and 70 building-derived navigation obstacles.
+- Increased reusable unique mesh geometry from 1,168 to 2,682 triangles.
+
 ## 0.4.0 — 2026-08-26
 
 - Added district-specific civic halls, arcades, cupolas, residences, courtyards, farmhouses, granaries, irrigation channels, docks, and cranes.
