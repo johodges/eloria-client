@@ -25,6 +25,16 @@ def walkable(x: float, z: float) -> bool:
     return True
 
 
+def collision_height(x: float, z: float) -> int:
+    """Return the legacy encoded surface height for a source-space point."""
+    # The server start is on the authored southern bridge.  Its visible deck
+    # spans x=-22..22, z=360..570 and tops out at source Y=34.  Encoding the
+    # previous uniform plateau height placed the actor and camera inside it.
+    if -22.0 <= x <= 22.0 and 360.0 <= z <= 570.0:
+        return 90  # (34 / UNITS_PER_METER + 2.2) / 0.2 == 90.06
+    return 81
+
+
 def main() -> None:
     OUTPUT.mkdir(parents=True, exist_ok=True)
     raw = SOURCE.read_bytes()
@@ -47,7 +57,7 @@ def main() -> None:
                         "sun_direction": [-0.4, -0.8, -0.3],
                         "sun_color": [1.0, 0.95, 0.85], "sun_intensity": 1.0,
                         "fog_enabled": False},
-        "player_starts": [{"id": "default", "position": [0.0, 32.0, 464.4],
+        "player_starts": [{"id": "default", "position": [0.0, 34.0, 464.4],
                            "rotation_degrees": 180.0}],
         "portals": [
             {"id": "south", "position": [0.0, 30.0, 722.2]},
@@ -62,7 +72,7 @@ def main() -> None:
         for cx in range(SIZE):
             x, z = source_xz(cx, cy)
             if walkable(x, z):
-                payload[row + cx] = 81
+                payload[row + cx] = collision_height(x, z)
     (OUTPUT / "collision.bin").write_bytes(
         struct.pack("<4sHHII", b"EWCG", 1, 0, SIZE, SIZE) + payload)
 
