@@ -13,7 +13,7 @@ from generate_bootstrap_pack import png, make_map
 from generate_characters import skeleton as humanoid_skeleton
 from generate_humanoid_enemies import animation as humanoid_animation, enemy_mesh, material_pixel
 from generate_creatures import skeleton as creature_skeleton, creature_mesh, creature_material
-from generate_scenery import e3d, texture, box, tapered, crossed_leaves
+from generate_scenery import e3d, texture, face, box, tapered, crossed_leaves
 
 NPC_BASE, CREATURE_BASE, ITEM_BASE = 300, 400, 1000
 

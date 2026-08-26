@@ -498,9 +498,22 @@ def generate_model(root,name,actor_id):
     print(f"{name}: {source_vertices}->{len(positions)} vertices, {source_faces}->{len(triangles)} triangles, {sum(len(v) for v in split.values())} assigned")
 
 
+def remove_legacy_luminous_outputs(root):
+    """Make an in-place data rebuild equivalent to a clean generation."""
+    playable=root/"actors/playable"
+    for source_name in ("luminous_female","luminous_male"):
+        for path in playable.glob(f"{source_name}*"):
+            if path.is_file(): path.unlink()
+        animations=root/f"animations/playable/{source_name}"
+        if animations.exists(): shutil.rmtree(animations)
+        versioned=root/f"animations/playable/{source_name}_quaternius_v2"
+        if versioned.exists(): shutil.rmtree(versioned)
+
+
 def main():
     parser=argparse.ArgumentParser(); parser.add_argument("output",nargs="?",default="build/eloria-data")
     root=Path(parser.parse_args().output)
+    remove_legacy_luminous_outputs(root)
     for name,actor_id in MODELS.items(): generate_model(root,name,actor_id)
 
 
