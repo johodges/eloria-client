@@ -26,8 +26,14 @@ jobs:
       - name: Protocol and reducer fixtures
         run: godot --headless --path godot-client --script res://tests/test_protocol.gd
       - name: Main scene smoke test
-        run: godot --headless --path godot-client --quit-after 3
+        run: |
+          godot --headless --path godot-client --quit-after 3 2>&1 | tee main-scene.log
+          ! grep -E "SCRIPT ERROR|Parse Error" main-scene.log
       - name: Four Gates production loader smoke test
-        run: godot --headless --path godot-client res://src/dev/world_validation.tscn --quit-after 12
+        run: |
+          godot --headless --path godot-client res://src/dev/world_validation.tscn --quit-after 12 2>&1 | tee world-scene.log
+          ! grep -E "SCRIPT ERROR|Parse Error" world-scene.log
       - name: Native character runtime smoke test
-        run: godot --headless --path godot-client res://src/dev/model_validation.tscn --quit-after 12
+        run: |
+          godot --headless --path godot-client res://src/dev/model_validation.tscn --quit-after 12 2>&1 | tee model-scene.log
+          ! grep -E "SCRIPT ERROR|Parse Error" model-scene.log
