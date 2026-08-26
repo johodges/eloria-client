@@ -485,7 +485,7 @@ func _pick_actor(viewport_position: Vector2) -> int:
 	return -1
 
 func _apply_eloria_art() -> void:
-	login_background.texture = _external_texture("res://assets/ui/eloria_login_background.png")
+	login_background.texture = _external_texture("res://assets/ui/eloria_login_background.jpg")
 	login_logo.texture = _external_texture("res://assets/ui/eloria_logo_master.png")
 	var compass_texture: Texture2D = _external_texture("res://../eloria-assets/ui/compass.png")
 	if compass_texture != null:
