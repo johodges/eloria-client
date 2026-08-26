@@ -3,7 +3,7 @@ extends Control
 @onready var login_panel: Control = %LoginPanel
 @onready var game_view: Control = %GameView
 @onready var creation_panel: Control = %CreationPanel
-@onready var new_character_button: Button = %NewCharacterButton
+@onready var new_character_button: Button = %NewCharacter
 @onready var create_name: LineEdit = %CreateName
 @onready var create_password: LineEdit = %CreatePassword
 @onready var create_confirm: LineEdit = %CreateConfirm
@@ -14,8 +14,8 @@ extends Control
 @onready var port_edit: SpinBox = %Port
 @onready var user_edit: LineEdit = %Username
 @onready var password_edit: LineEdit = %Password
-@onready var connect_button: Button = %ConnectButton
-@onready var login_button: Button = %LoginButton
+@onready var connect_button: Button = %Connect
+@onready var login_button: Button = %Login
 @onready var status_label: Label = %Status
 @onready var world_root: Node3D = %WorldRoot
 @onready var camera: Camera3D = %Camera
@@ -150,6 +150,7 @@ func _on_login_pressed() -> void:
 
 func _on_login_succeeded() -> void:
 	login_panel.hide()
+	creation_panel.hide()
 	game_view.show()
 	map_label.text = "Entering world…"
 	_sync_world()
