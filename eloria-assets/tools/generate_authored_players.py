@@ -559,10 +559,12 @@ def generate_model(root,name,actor_id):
     if name.startswith("luminous_"):
         clips=read_universal_animations(SOURCE/"luminous_universal.eanim")
         for anim,clip in clips.items(): imported_animation(anim_dir/f"{anim}.xaf",bones,clip)
-        # Runtime consumes this checked-in, self-contained GLB directly.  It is
-        # authored from the CC0 Quaternius base-character and Universal
-        # animation GLBs; normal client/data builds never need those archives.
-        shutil.copy2(SOURCE/"runtime"/f"{output_name}.glb",base/f"{output_name}.glb")
+        # Copy the original Quaternius glTF hierarchy, materials, external
+        # buffers, textures, and animation library byte-for-byte.
+        native_source=SOURCE/"native"; native_output=base/"native"
+        native_output.mkdir(parents=True,exist_ok=True)
+        for source in native_source.iterdir():
+            if source.is_file(): shutil.copy2(source,native_output/source.name)
     else:
         for anim,(duration,poses) in ANIMATIONS.items(): animation(anim_dir/f"{anim}.xaf",bones,duration,poses)
     texture=f"actors/playable/{output_name}.dds"

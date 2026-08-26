@@ -1,79 +1,50 @@
 import json
 import struct
-import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
-import generate_authored_players as authored
+NATIVE = ROOT / "eloria-assets/source/player_models/native"
+REQUIRED = {"Idle_A", "Idle_Subtle", "Walk", "Jog", "Fighting_Idle",
+            "Sword_Attack", "Spell_Simple_Shoot", "Hit_Chest", "Death_A",
+            "Sitting_Enter", "Sitting_Idle", "Sitting_Exit", "Farm_Harvest",
+            "PickUp_Table", "Throw_Object"}
 
 
-REQUIRED_CLIPS = {
-    "idle", "idle2", "walk", "run", "combat_idle", "attack", "cast",
-    "pain", "die", "sit_down", "sit", "stand_up", "harvest", "pick", "drop",
-}
-
-
-def read_glb(path):
+def glb_document(path):
     data = path.read_bytes()
     assert data[:4] == b"glTF"
     version, total = struct.unpack_from("<II", data, 4)
     assert version == 2 and total == len(data)
-    json_size, json_kind = struct.unpack_from("<II", data, 12)
-    assert json_kind == 0x4E4F534A
-    document = json.loads(data[20:20 + json_size])
-    binary_offset = 20 + json_size
-    binary_size, binary_kind = struct.unpack_from("<II", data, binary_offset)
-    assert binary_kind == 0x004E4942
-    assert binary_offset + 8 + binary_size == len(data)
-    assert binary_size >= document["buffers"][0]["byteLength"]
-    return document
+    size, kind = struct.unpack_from("<II", data, 12)
+    assert kind == 0x4E4F534A
+    return json.loads(data[20:20 + size])
 
 
-def test_luminous_runtime_glbs_have_skin_and_complete_action_set(tmp_path):
-    clips = authored.read_universal_animations(authored.SOURCE / "luminous_universal.eanim")
-    assert set(clips) == REQUIRED_CLIPS
-    for sex in ("female", "male"):
-        name = f"luminous_{sex}"
-        positions, normals, uvs, faces, weights = authored.read_emesh(authored.SOURCE / f"{name}.emesh")
-        output = tmp_path / f"{name}_quaternius_v2.glb"
-        runtime = authored.luminous_runtime_mesh(positions, normals, uvs, faces, weights)
-        authored.write_luminous_glb(output, name, *runtime, authored.fitted_bones(name), clips)
-        document = read_glb(output)
+def test_native_characters_preserve_original_gltf_resources():
+    for sex in ("Female", "Male"):
+        document = json.loads((NATIVE / f"Superhero_{sex}_FullBody.gltf").read_text())
         assert len(document["skins"]) == 1
-        assert len(document["skins"][0]["joints"]) == 37
-        assert {animation["name"] for animation in document["animations"]} == REQUIRED_CLIPS
-        attributes = document["meshes"][0]["primitives"][0]["attributes"]
-        assert {"POSITION", "NORMAL", "TEXCOORD_0", "JOINTS_0", "WEIGHTS_0"} <= set(attributes)
+        assert len(document["skins"][0]["joints"]) == 65
+        assert len(document["meshes"]) == 3
+        assert len(document["materials"]) == 3
+        assert len(document["images"]) == 7
+        for resource in document["buffers"] + document["images"]:
+            assert (NATIVE / resource["uri"]).is_file()
 
 
-def test_checked_in_runtime_glbs_are_self_contained():
-    for sex in ("female", "male"):
-        path = authored.SOURCE / "runtime" / f"luminous_{sex}_quaternius_v2.glb"
-        document = read_glb(path)
-        assert document["buffers"] == [{"byteLength": document["buffers"][0]["byteLength"]}]
-        assert not document.get("images") and not document.get("textures")
-        assert {animation["name"] for animation in document["animations"]} == REQUIRED_CLIPS
+def test_native_animation_library_is_not_rebuilt():
+    document = glb_document(NATIVE / "Universal_Animation_Library.glb")
+    clips = {animation["name"] for animation in document["animations"]}
+    assert len(clips) >= 120 and REQUIRED <= clips
+    paths = {channel["target"]["path"] for animation in document["animations"]
+             for channel in animation["channels"]}
+    assert {"rotation", "translation"} <= paths
 
 
-def test_runtime_action_mapping_covers_every_protocol_frame():
-    source = (ROOT / "actor_glb_runtime.cpp").read_text(encoding="utf-8")
-    for clip in REQUIRED_CLIPS:
+def test_runtime_has_no_legacy_joint_or_atlas_remapping():
+    source = (ROOT / "actor_glb_runtime.cpp").read_text()
+    for clip in REQUIRED:
         assert f'"{clip}"' in source
-    assert "for(int f=19;f<=61;f++)" in source
-
-
-def test_quaternius_joint_mapping_matches_runtime_skeleton():
-    source = (ROOT / "eloria-assets" / "tools" / "import_quaternius_luminous.py").read_text(
-        encoding="utf-8"
-    )
-    expected = {
-        '"thumb_01_l": 31', '"index_01_l": 32',
-        '"thumb_01_r": 33', '"index_01_r": 34',
-        '"ball_l": 35', '"ball_r": 36',
-    }
-    assert all(mapping in source for mapping in expected)
-    runtime = (ROOT / "actor_glb_runtime.cpp").read_text(encoding="utf-8")
-    assert "if(joint==32)joint=31" in runtime
-    assert "joint==35&&m.v[x].p[2]>.30f" in runtime
+    assert "joint==32" not in source
+    assert "EloriaActorAtlas" not in source
+    assert '"Universal_Animation_Library.glb"' in source
