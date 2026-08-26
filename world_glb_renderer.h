@@ -4,6 +4,7 @@
 extern "C" {
 #endif
 int world_glb_load(const char *, float, const float[3]);
+void world_glb_set_material_effects(float, float, float, float, float);
 void world_glb_draw(int);
 void world_glb_destroy(void);
 #ifdef __cplusplus

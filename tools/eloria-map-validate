@@ -14,6 +14,13 @@ def rel(root,value,field):
     return out
 def vec3(value,field):
     if not isinstance(value,list) or len(value)!=3 or any(isinstance(x,bool) or not isinstance(x,(int,float)) or not math.isfinite(x) for x in value): raise Invalid(f"{field}: expected three finite numbers")
+def dds(path):
+    raw=path.read_bytes()
+    if len(raw)<128 or raw[:4]!=b"DDS ": raise Invalid("minimap: invalid DDS signature")
+    size,flags,height,width,pitch,depth,mips=struct.unpack_from("<7I",raw,4)
+    if size!=124 or width!=512 or height!=512 or mips!=4: raise Invalid("minimap: expected 512x512 DDS with four mip levels")
+    expected=128+sum(max(1,width>>level)*max(1,height>>level)*4 for level in range(mips))
+    if len(raw)!=expected: raise Invalid("minimap: uncompressed BGRA mip payload size mismatch")
 def glb(path):
     if not path.is_file(): raise Invalid(f"scene: missing {path.name}")
     if path.stat().st_size>MAX_GLB: raise Invalid("scene: exceeds 1 GiB limit")
@@ -67,7 +74,12 @@ def validate(manifest):
     if not isinstance(data.get("id"),str) or not ID.fullmatch(data["id"]): raise Invalid("id: expected 1-64 ASCII letters, digits, '_' or '-'")
     root=manifest.parent
     scene=rel(root,data.get("scene","world.glb"),"scene"); glbdoc=glb(scene)
-    if data.get("minimap") is not None and not rel(root,data["minimap"],"minimap").is_file(): raise Invalid("minimap: referenced file is missing")
+    for i,image in enumerate(glbdoc.get("images",[])):
+        if "uri" in image and not rel(scene.parent,image["uri"],f"scene.images[{i}].uri").is_file(): raise Invalid(f"scene.images[{i}].uri: referenced image is missing")
+    if data.get("minimap") is not None:
+        minimap=rel(root,data["minimap"],"minimap")
+        if not minimap.is_file(): raise Invalid("minimap: referenced file is missing")
+        dds(minimap)
     bounds=data.get("bounds")
     if not isinstance(bounds,dict): raise Invalid("bounds: required object")
     vec3(bounds.get("minimum"),"bounds.minimum"); vec3(bounds.get("maximum"),"bounds.maximum")
@@ -83,6 +95,8 @@ def validate(manifest):
     if version!=1: raise Invalid(f"collision: unsupported version {version}")
     if flags!=0: raise Invalid(f"collision: unsupported flags 0x{flags:x}")
     if (cw,ch)!=(w,h) or len(raw)!=16+cw*ch: raise Invalid("collision: dimensions or payload size mismatch")
+    cells=raw[16:]
+    if data.get("navigation") is not None and (not any(cells) or not any(value==0 for value in cells)): raise Invalid("collision: navigated worlds must contain both walkable and blocked cells")
     coords=data.get("coordinates",{})
     if coords.get("up_axis","Y")!="Y" or coords.get("forward_axis","-Z")!="-Z": raise Invalid("coordinates: v1 supports only Y up and -Z forward")
     units=coords.get("units_per_meter",1.0)
@@ -97,7 +111,20 @@ def validate(manifest):
             key=(group,item["id"])
             if key in seen: raise Invalid(f"{group}[{i}].id: duplicate '{item['id']}'")
             seen.add(key)
-            if "position" in item: vec3(item["position"],f"{group}[{i}].position")
+            if "position" in item:
+                vec3(item["position"],f"{group}[{i}].position")
+                source=item["position"]; origin=coords.get("origin",[0,0,0]); cx=int((origin[0]+source[0]/units)*2); cy=int((origin[1]-source[2]/units)*2)
+                if cx<0 or cy<0 or cx>=w or cy>=h: raise Invalid(f"{group}[{i}].position: outside collision bounds")
+                if data.get("navigation") is not None and group in ("player_starts","portals","harvestables","npc_markers") and cells[cy*w+cx]==0: raise Invalid(f"{group}[{i}].position: placed on blocked collision")
+    effects=data.get("effects",{}); waterfalls=effects.get("waterfalls",[]) if isinstance(effects,dict) else None
+    if waterfalls is not None:
+        if not isinstance(waterfalls,list): raise Invalid("effects.waterfalls: expected an array")
+        node_names={node.get("name") for node in glbdoc.get("nodes",[])}
+        for i,effect in enumerate(waterfalls):
+            if not isinstance(effect,dict) or not isinstance(effect.get("id"),str) or not ID.fullmatch(effect["id"]): raise Invalid(f"effects.waterfalls[{i}].id: invalid identifier")
+            for field in ("channel_node","pool_node","foam_node","mist_node"):
+                if effect.get(field) not in node_names: raise Invalid(f"effects.waterfalls[{i}].{field}: missing GLB node")
+            vec3(effect.get("position"),f"effects.waterfalls[{i}].position")
     return data,glbdoc,w,h
 def main():
     p=argparse.ArgumentParser();p.add_argument("manifest",type=Path);p.add_argument("--stats",action="store_true");a=p.parse_args()
