@@ -22,7 +22,19 @@
 #include "textures.h"
 #include "tiles.h"
 #include "weather.h"
+#ifndef MAP_EDITOR2
+#include "world_package.h"
+#endif
 #include "io/e3d_io.h"
+
+static int portable_world_active(void)
+{
+#ifdef MAP_EDITOR2
+	return 0;
+#else
+	return world_package_active();
+#endif
+}
 
 #ifdef OSX
 #define GL_EXT_texture_env_combine 1
@@ -661,8 +673,8 @@ void draw_sun_shadowed_scene(int any_reflection)
 			if (use_fog) glEnable(GL_FOG);
 #endif
 			glNormal3f(0.0f,0.0f,1.0f);
-			if(any_reflection)draw_lake_tiles();
-			draw_tile_map();
+			if(any_reflection && !portable_world_active())draw_lake_tiles();
+			if(!portable_world_active())draw_tile_map();
 #ifdef MAP_EDITOR2
 			get_world_x_y ();
 			display_mode();
@@ -714,11 +726,11 @@ void draw_sun_shadowed_scene(int any_reflection)
 	else
 		{
 			glNormal3f(0.0f,0.0f,1.0f);
-			if(any_reflection)draw_lake_tiles();
+			if(any_reflection && !portable_world_active())draw_lake_tiles();
 
 			setup_cloud_texturing();
 
-			draw_tile_map();
+			if(!portable_world_active())draw_tile_map();
 #ifdef MAP_EDITOR2
 			get_world_x_y ();
 			display_mode();

@@ -40,6 +40,7 @@
 #include "tiles.h"
 #include "translate.h"
 #include "weather.h"
+#include "world_package.h"
 #include "widgets.h"
 #include "actor_init.h"
 
@@ -486,13 +487,14 @@ static int display_newchar_handler (window_info *win)
 		draw_sun_shadowed_scene (any_reflection);
 	} else {
 		glNormal3f (0.0f,0.0f,1.0f);
-		if (any_reflection) draw_lake_tiles ();
+		if (any_reflection && !world_package_active()) draw_lake_tiles ();
 		/* Match the normal game-window render path.  This resets the texture
 		 * units after the sky/light passes even when clouds are disabled by the
 		 * data pack; otherwise enhanced actors can rasterize with stale texture
 		 * state and produce no visible colour output. */
 		setup_cloud_texturing();
-		draw_tile_map ();
+		if (!world_package_active())
+			draw_tile_map ();
 		CHECK_GL_ERRORS ();
 		display_2d_objects ();
 		CHECK_GL_ERRORS ();

@@ -7,34 +7,805 @@
   "collision": "collision.bin",
   "collision_width": 1536,
   "collision_height": 1536,
+  "minimap": "four_gates.dds",
   "coordinates": {
     "units_per_meter": 2.15,
     "up_axis": "Y",
     "forward_axis": "-Z",
-    "origin": [384.0, 384.0, 0.0]
+    "origin": [
+      384.0,
+      384.0,
+      0.0
+    ]
   },
   "bounds": {
-    "minimum": [-750.0, -40.0, -820.0],
-    "maximum": [750.0, 195.0, 750.0]
+    "minimum": [
+      -750.0,
+      -40.0,
+      -820.0
+    ],
+    "maximum": [
+      750.0,
+      195.0,
+      750.0
+    ]
   },
   "environment": {
-    "ambient_color": [0.58, 0.63, 0.72],
-    "ambient_intensity": 1.0,
-    "sun_direction": [-0.4, -0.8, -0.3],
-    "sun_color": [1.0, 0.95, 0.85],
+    "ambient_color": [
+      0.72,
+      0.76,
+      0.78
+    ],
+    "ambient_intensity": 1.15,
+    "sun_direction": [
+      -0.4,
+      -0.8,
+      -0.3
+    ],
+    "sun_color": [
+      1.0,
+      0.95,
+      0.85
+    ],
     "sun_intensity": 1.0,
     "fog_enabled": false
   },
   "player_starts": [
-    {"id": "default", "position": [0.0, 32.0, 464.4], "rotation_degrees": 180.0}
+    {
+      "id": "default",
+      "position": [
+        0.0,
+        32.0,
+        310.0
+      ],
+      "rotation_degrees": 180.0
+    }
   ],
   "portals": [
-    {"id": "south", "position": [0.0, 30.0, 722.2]},
-    {"id": "east", "position": [722.2, 30.0, 0.0]},
-    {"id": "north", "position": [0.0, 30.0, -722.2]}
+    {
+      "id": "south",
+      "position": [
+        0.0,
+        31.0,
+        722.2
+      ],
+      "target_hook": "nymara.south"
+    },
+    {
+      "id": "east",
+      "position": [
+        722.2,
+        31.0,
+        0.0
+      ],
+      "target_hook": "nymara.east"
+    },
+    {
+      "id": "west",
+      "position": [
+        -722.2,
+        31.0,
+        0.0
+      ],
+      "target_hook": "nymara.west"
+    },
+    {
+      "id": "north",
+      "position": [
+        0.0,
+        31.0,
+        -722.2
+      ],
+      "target_hook": "nymara.sanctuary"
+    }
   ],
-  "harvestables": [],
-  "npc_markers": [],
-  "spawn_markers": [],
-  "regions": []
+  "navigation": {
+    "format": "inline-convex-polygons-v1",
+    "polygons": [
+      {
+        "id": "plaza",
+        "vertices": [
+          [
+            -72,
+            31,
+            -72
+          ],
+          [
+            72,
+            31,
+            -72
+          ],
+          [
+            72,
+            31,
+            72
+          ],
+          [
+            -72,
+            31,
+            72
+          ]
+        ]
+      },
+      {
+        "id": "south-axis",
+        "vertices": [
+          [
+            -13,
+            31,
+            0
+          ],
+          [
+            13,
+            31,
+            0
+          ],
+          [
+            13,
+            31,
+            620
+          ],
+          [
+            -13,
+            31,
+            620
+          ]
+        ]
+      },
+      {
+        "id": "north-axis",
+        "vertices": [
+          [
+            -14,
+            31,
+            -690
+          ],
+          [
+            14,
+            31,
+            -690
+          ],
+          [
+            14,
+            31,
+            0
+          ],
+          [
+            -14,
+            31,
+            0
+          ]
+        ]
+      },
+      {
+        "id": "east-axis",
+        "vertices": [
+          [
+            0,
+            31,
+            -13
+          ],
+          [
+            620,
+            31,
+            -13
+          ],
+          [
+            620,
+            31,
+            13
+          ],
+          [
+            0,
+            31,
+            13
+          ]
+        ]
+      },
+      {
+        "id": "west-axis",
+        "vertices": [
+          [
+            -620,
+            31,
+            -13
+          ],
+          [
+            0,
+            31,
+            -13
+          ],
+          [
+            0,
+            31,
+            13
+          ],
+          [
+            -620,
+            31,
+            13
+          ]
+        ]
+      },
+      {
+        "id": "district-walkable-0",
+        "vertices": [
+          [
+            -330,
+            31,
+            -330
+          ],
+          [
+            -35,
+            31,
+            -330
+          ],
+          [
+            -35,
+            31,
+            -35
+          ],
+          [
+            -330,
+            31,
+            -35
+          ]
+        ],
+        "tags": [
+          "district",
+          "alley-courtyard"
+        ]
+      },
+      {
+        "id": "district-walkable-1",
+        "vertices": [
+          [
+            35,
+            31,
+            -330
+          ],
+          [
+            330,
+            31,
+            -330
+          ],
+          [
+            330,
+            31,
+            -35
+          ],
+          [
+            35,
+            31,
+            -35
+          ]
+        ],
+        "tags": [
+          "district",
+          "alley-courtyard"
+        ]
+      },
+      {
+        "id": "district-walkable-2",
+        "vertices": [
+          [
+            -330,
+            31,
+            35
+          ],
+          [
+            -35,
+            31,
+            35
+          ],
+          [
+            -35,
+            31,
+            330
+          ],
+          [
+            -330,
+            31,
+            330
+          ]
+        ],
+        "tags": [
+          "district",
+          "alley-courtyard"
+        ]
+      },
+      {
+        "id": "district-walkable-3",
+        "vertices": [
+          [
+            35,
+            31,
+            35
+          ],
+          [
+            330,
+            31,
+            35
+          ],
+          [
+            330,
+            31,
+            330
+          ],
+          [
+            35,
+            31,
+            330
+          ]
+        ],
+        "tags": [
+          "district",
+          "alley-courtyard"
+        ]
+      },
+      {
+        "id": "district-walkable-4",
+        "vertices": [
+          [
+            -300,
+            31,
+            205
+          ],
+          [
+            300,
+            31,
+            205
+          ],
+          [
+            300,
+            31,
+            315
+          ],
+          [
+            -300,
+            31,
+            315
+          ]
+        ],
+        "tags": [
+          "district",
+          "alley-courtyard"
+        ]
+      }
+    ],
+    "off_mesh_links": [
+      {
+        "id": "sanctuary-rise",
+        "start": [
+          0,
+          34,
+          -620
+        ],
+        "end": [
+          0,
+          55,
+          -690
+        ],
+        "bidirectional": true,
+        "type": "ramp"
+      }
+    ],
+    "obstacle_count": 38
+  },
+  "effects": {
+    "waterfalls": [
+      {
+        "id": "waterfall-00",
+        "channel_node": "Water_Channel_00",
+        "pool_node": "Waterfall_Pool_00",
+        "foam_node": "Waterfall_Foam_00",
+        "mist_node": "FX_Waterfall_Mist_00",
+        "position": [
+          171.16039600498328,
+          0.0,
+          367.0546537498432
+        ],
+        "uv_scroll": [
+          0.0,
+          -0.32
+        ],
+        "foam_scroll": [
+          0.08,
+          -0.18
+        ],
+        "mist_particle": "waterfall_mist",
+        "fallback": "static-geometry"
+      },
+      {
+        "id": "waterfall-01",
+        "channel_node": "Water_Channel_01",
+        "pool_node": "Waterfall_Pool_01",
+        "foam_node": "Waterfall_Foam_01",
+        "mist_node": "FX_Waterfall_Mist_01",
+        "position": [
+          380.5755114182929,
+          0.0,
+          138.51815804689588
+        ],
+        "uv_scroll": [
+          0.0,
+          -0.32
+        ],
+        "foam_scroll": [
+          0.08,
+          -0.18
+        ],
+        "mist_particle": "waterfall_mist",
+        "fallback": "static-geometry"
+      },
+      {
+        "id": "waterfall-02",
+        "channel_node": "Water_Channel_02",
+        "pool_node": "Waterfall_Pool_02",
+        "foam_node": "Waterfall_Foam_02",
+        "mist_node": "FX_Waterfall_Mist_02",
+        "position": [
+          367.0546537498433,
+          0.0,
+          -171.16039600498323
+        ],
+        "uv_scroll": [
+          0.0,
+          -0.32
+        ],
+        "foam_scroll": [
+          0.08,
+          -0.18
+        ],
+        "mist_particle": "waterfall_mist",
+        "fallback": "static-geometry"
+      },
+      {
+        "id": "waterfall-03",
+        "channel_node": "Water_Channel_03",
+        "pool_node": "Waterfall_Pool_03",
+        "foam_node": "Waterfall_Foam_03",
+        "mist_node": "FX_Waterfall_Mist_03",
+        "position": [
+          138.5181580468959,
+          0.0,
+          -380.5755114182929
+        ],
+        "uv_scroll": [
+          0.0,
+          -0.32
+        ],
+        "foam_scroll": [
+          0.08,
+          -0.18
+        ],
+        "mist_particle": "waterfall_mist",
+        "fallback": "static-geometry"
+      },
+      {
+        "id": "waterfall-04",
+        "channel_node": "Water_Channel_04",
+        "pool_node": "Waterfall_Pool_04",
+        "foam_node": "Waterfall_Foam_04",
+        "mist_node": "FX_Waterfall_Mist_04",
+        "position": [
+          -171.1603960049832,
+          0.0,
+          -367.0546537498433
+        ],
+        "uv_scroll": [
+          0.0,
+          -0.32
+        ],
+        "foam_scroll": [
+          0.08,
+          -0.18
+        ],
+        "mist_particle": "waterfall_mist",
+        "fallback": "static-geometry"
+      },
+      {
+        "id": "waterfall-05",
+        "channel_node": "Water_Channel_05",
+        "pool_node": "Waterfall_Pool_05",
+        "foam_node": "Waterfall_Foam_05",
+        "mist_node": "FX_Waterfall_Mist_05",
+        "position": [
+          -380.57551141829293,
+          0.0,
+          -138.51815804689576
+        ],
+        "uv_scroll": [
+          0.0,
+          -0.32
+        ],
+        "foam_scroll": [
+          0.08,
+          -0.18
+        ],
+        "mist_particle": "waterfall_mist",
+        "fallback": "static-geometry"
+      },
+      {
+        "id": "waterfall-06",
+        "channel_node": "Water_Channel_06",
+        "pool_node": "Waterfall_Pool_06",
+        "foam_node": "Waterfall_Foam_06",
+        "mist_node": "FX_Waterfall_Mist_06",
+        "position": [
+          -367.0546537498432,
+          0.0,
+          171.16039600498334
+        ],
+        "uv_scroll": [
+          0.0,
+          -0.32
+        ],
+        "foam_scroll": [
+          0.08,
+          -0.18
+        ],
+        "mist_particle": "waterfall_mist",
+        "fallback": "static-geometry"
+      },
+      {
+        "id": "waterfall-07",
+        "channel_node": "Water_Channel_07",
+        "pool_node": "Waterfall_Pool_07",
+        "foam_node": "Waterfall_Foam_07",
+        "mist_node": "FX_Waterfall_Mist_07",
+        "position": [
+          -138.5181580468958,
+          0.0,
+          380.57551141829293
+        ],
+        "uv_scroll": [
+          0.0,
+          -0.32
+        ],
+        "foam_scroll": [
+          0.08,
+          -0.18
+        ],
+        "mist_particle": "waterfall_mist",
+        "fallback": "static-geometry"
+      }
+    ],
+    "materials": {
+      "water": {
+        "uv_scroll": [
+          0.02,
+          -0.04
+        ],
+        "blend": "alpha"
+      },
+      "waterfall": {
+        "uv_scroll": [
+          0.0,
+          -0.32
+        ],
+        "blend": "alpha"
+      },
+      "landmark-energy": {
+        "pulse_hz": 0.75,
+        "blend": "additive"
+      }
+    }
+  },
+  "harvestables": [
+    {
+      "id": "resonant-crystal-east",
+      "resource": "resonant_crystal",
+      "position": [
+        238.0,
+        33.0,
+        120.0
+      ],
+      "interaction_radius": 2.5,
+      "respawn_seconds": 90
+    },
+    {
+      "id": "stormglass-west",
+      "resource": "stormglass_shard",
+      "position": [
+        -242.0,
+        32.0,
+        116.0
+      ],
+      "interaction_radius": 2.5,
+      "respawn_seconds": 90
+    },
+    {
+      "id": "mirror-reed-south",
+      "resource": "mirror_reed",
+      "position": [
+        -82.0,
+        31.0,
+        258.0
+      ],
+      "interaction_radius": 2.5,
+      "respawn_seconds": 90
+    },
+    {
+      "id": "sunmane-seed-north",
+      "resource": "sunmane_seed",
+      "position": [
+        92.0,
+        31.0,
+        -252.0
+      ],
+      "interaction_radius": 2.5,
+      "respawn_seconds": 90
+    }
+  ],
+  "npc_markers": [
+    {
+      "id": "toran-civic-official",
+      "actor_type": 307,
+      "role": "official",
+      "position": [
+        -28.0,
+        32.0,
+        42.0
+      ],
+      "rotation_degrees": 200.0
+    },
+    {
+      "id": "nima-vey-merchant",
+      "actor_type": 309,
+      "role": "merchant",
+      "position": [
+        -142.0,
+        31.0,
+        -92.0
+      ],
+      "rotation_degrees": 45.0
+    },
+    {
+      "id": "south-gate-guard",
+      "actor_type": 301,
+      "role": "guard",
+      "position": [
+        18.0,
+        31.0,
+        325.0
+      ],
+      "rotation_degrees": 180.0
+    },
+    {
+      "id": "north-gate-guard",
+      "actor_type": 308,
+      "role": "guard",
+      "position": [
+        -18.0,
+        31.0,
+        -325.0
+      ],
+      "rotation_degrees": 0.0
+    },
+    {
+      "id": "civic-scholar",
+      "actor_type": 304,
+      "role": "scholar",
+      "position": [
+        -112.0,
+        32.0,
+        70.0
+      ],
+      "rotation_degrees": 110.0
+    },
+    {
+      "id": "ferry-lantern-bearer",
+      "actor_type": 303,
+      "role": "ferryman",
+      "position": [
+        15.0,
+        31.0,
+        405.0
+      ],
+      "rotation_degrees": 180.0
+    }
+  ],
+  "spawn_markers": [
+    {
+      "id": "garden-glasswings",
+      "creature": "glasswing_moth",
+      "position": [
+        225.0,
+        31.0,
+        -185.0
+      ],
+      "radius": 22.0,
+      "maximum_alive": 4
+    },
+    {
+      "id": "shore-reefbacks",
+      "creature": "reefback_crab",
+      "position": [
+        -270.0,
+        24.0,
+        185.0
+      ],
+      "radius": 24.0,
+      "maximum_alive": 3
+    },
+    {
+      "id": "outer-lumen-stags",
+      "creature": "lumen_stag",
+      "position": [
+        248.0,
+        27.0,
+        210.0
+      ],
+      "radius": 30.0,
+      "maximum_alive": 2
+    }
+  ],
+  "regions": [
+    {
+      "id": "central-plaza",
+      "position": [
+        0.0,
+        32.0,
+        0.0
+      ],
+      "radius": 82.0,
+      "tags": [
+        "safe",
+        "civic"
+      ]
+    },
+    {
+      "id": "civic-quarter",
+      "position": [
+        -145.0,
+        31.0,
+        -45.0
+      ],
+      "radius": 125.0,
+      "tags": [
+        "safe",
+        "market"
+      ]
+    },
+    {
+      "id": "residential-quarter",
+      "position": [
+        190.0,
+        31.0,
+        20.0
+      ],
+      "radius": 145.0,
+      "tags": [
+        "safe",
+        "residential"
+      ]
+    },
+    {
+      "id": "agricultural-quarter",
+      "position": [
+        0.0,
+        30.0,
+        245.0
+      ],
+      "radius": 125.0,
+      "tags": [
+        "safe",
+        "harvest"
+      ]
+    },
+    {
+      "id": "sanctuary-approach",
+      "position": [
+        0.0,
+        42.0,
+        -505.0
+      ],
+      "radius": 165.0,
+      "tags": [
+        "ceremonial",
+        "portal"
+      ]
+    }
+  ]
 }

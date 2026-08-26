@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <errno.h>
 #include <math.h>
@@ -160,12 +161,28 @@ static void init_map_loading(const char *file_name)
 	show_window(loading_win);
 }
 
-static __inline__ void build_path_map(void)
+static __inline__ int build_path_map(void)
 {
-	int i, x, y;
+	size_t i;
+	int x, y;
+	size_t cells;
 
 	//create the tile map that will be used for pathfinding
-	pf_tile_map = calloc(tile_map_size_x*tile_map_size_y*6*6, sizeof(PF_TILE));
+	if (tile_map_size_x <= 0 || tile_map_size_y <= 0)
+		return 0;
+	cells = (size_t)tile_map_size_x * (size_t)tile_map_size_y * 6u * 6u;
+	if (cells > SIZE_MAX / sizeof(PF_TILE))
+	{
+		LOG_ERROR("Path map dimensions overflow: %dx%d", tile_map_size_x, tile_map_size_y);
+		return 0;
+	}
+	pf_tile_map = calloc(cells, sizeof(PF_TILE));
+	if (pf_tile_map == NULL)
+	{
+		LOG_ERROR("Unable to allocate path map: %u cells (%u bytes)",
+			(unsigned)cells, (unsigned)(cells * sizeof(PF_TILE)));
+		return 0;
+	}
 
 	i = 0;
 	for (y = 0; y < tile_map_size_y*6; y++)
@@ -177,6 +194,7 @@ static __inline__ void build_path_map(void)
 			pf_tile_map[i].z = height_map[i];
 		}
 	}
+	return 1;
 }
 
 static void updat_func(char *str, float percent)
@@ -189,6 +207,7 @@ static int el_load_map(const char * file_name)
 	int ret;
 	char elm_name[512];
 	const char *elm_file = file_name;
+	const char *logical_name = file_name;
 
 	LOG_INFO("Loading map '%s'", file_name);
 	init_map_loading(file_name);
@@ -197,10 +216,12 @@ static int el_load_map(const char * file_name)
 	{
 		/* Extensionless server values are logical IDs. Explicit paths/extensions
 		 * retain the historical behavior and cannot select another format. */
-		if (strchr(file_name, '.') == NULL && strchr(file_name, '/') == NULL &&
-			strchr(file_name, '\\') == NULL)
+		if (logical_name[0] == '.' && logical_name[1] == '/')
+			logical_name += 2;
+		if (logical_name[0] != '\0' && strchr(logical_name, '.') == NULL &&
+			strchr(logical_name, '/') == NULL && strchr(logical_name, '\\') == NULL)
 		{
-			safe_snprintf(elm_name, sizeof(elm_name), "./maps/%s.elm", file_name);
+			safe_snprintf(elm_name, sizeof(elm_name), "./maps/%s.elm", logical_name);
 			elm_file = elm_name;
 		}
 		ret = load_map(elm_file, &updat_func);
@@ -233,14 +254,25 @@ static int el_load_map(const char * file_name)
 		skybox_set_type(SKYBOX_CLOUDY);
 		skybox_init_defs(file_name);
 	}
-	build_path_map();
+	LOG_INFO("Building path map for %dx%d movement cells",
+		tile_map_size_x * 6, tile_map_size_y * 6);
+	if (!build_path_map())
+	{
+		LOG_ERROR("Map '%s' could not initialize pathfinding", file_name);
+		return 0;
+	}
+	LOG_INFO("Path map initialized");
+	LOG_INFO("Initializing legacy terrain buffers");
 	init_buffers();
+	LOG_INFO("Legacy terrain buffers initialized");
 
 	// reset light levels in case we enter or leave an inside map
 	new_minute();
 	world_package_apply_environment();
+	LOG_INFO("Map environment initialized");
 
 	destroy_loading_win();
+	LOG_INFO("Map load lifecycle complete");
 	return ret;
 }
 
@@ -275,15 +307,21 @@ void change_map (const char *mapname)
 	} else {
 		locked_to_console = 0;
 	}
+	LOG_INFO("Initializing map marks");
 	load_map_marks();
+	LOG_INFO("Map marks initialized");
 
 #ifdef NEW_SOUND
+	LOG_INFO("Initializing map audio");
 	get_map_playlist();
 	setup_map_sounds(mapname);
+	LOG_INFO("Map audio initialized");
 #endif // NEW_SOUND
 	have_a_map=1;
 	//also, stop the rain
+	LOG_INFO("Resetting map weather");
 	weather_clear();
+	LOG_INFO("Map weather reset");
 
 	if (get_show_window_MW(MW_TABMAP))
 	{
@@ -310,11 +348,16 @@ void change_map (const char *mapname)
 #endif // NEW_SOUND
 	have_a_map=1;
 #endif  //MAP_EDITOR2
+	LOG_INFO("Initializing minimap");
 	change_minimap();
+	LOG_INFO("Minimap initialized");
 
 #ifdef PAWN
+	LOG_INFO("Running map-change script");
 	run_pawn_map_function ("change_map", "s", mapname);
+	LOG_INFO("Map-change script complete");
 #endif
+	LOG_INFO("Map transition complete");
 }
 
 static int load_empty_map(void)

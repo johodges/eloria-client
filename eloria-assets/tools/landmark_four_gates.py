@@ -38,7 +38,7 @@ def arch_mesh(name,outer=38,inner=27,height=42,depth=9,segments=20,material='sto
  for band in range(2):
   for i in range(segments):
    a=band*2*ring+i;b=band*2*ring+i+1;c=(1-band)*2*ring+i+1;d=(1-band)*2*ring+i;faces += [[a,b,c],[a,c,d]]
- v=np.array(verts,np.float32); n=v.copy();n[:,1]=0;n/=np.maximum(np.linalg.norm(n,axis=1,keepdims=True),1e-6);p={'attributes':{'POSITION':acc(v,'VEC3'),'NORMAL':acc(n,'VEC3'),'TEXCOORD_0':acc(np.array(uv,np.float32),'VEC2')},'indices':acc(np.array(faces,np.uint32).reshape(-1),'SCALAR',5125,34963),'material':mati[material]};g['meshes'].append({'name':name,'primitives':[p]});mi[name]=len(g['meshes'])-1;return mi[name]
+ v=np.array(verts,np.float32); n=v.copy();n[:,1]=0;n/=np.maximum(np.linalg.norm(n,axis=1,keepdims=True),1e-6);t=np.cross(np.tile([0.,1.,0.],(len(n),1)),n);weak=np.linalg.norm(t,axis=1)<1e-5;t[weak]=[1,0,0];t/=np.maximum(np.linalg.norm(t,axis=1,keepdims=True),1e-6);t=np.column_stack((t,np.ones(len(t),np.float32)));p={'attributes':{'POSITION':acc(v,'VEC3'),'NORMAL':acc(n,'VEC3'),'TEXCOORD_0':acc(np.array(uv,np.float32),'VEC2'),'TANGENT':acc(t,'VEC4')},'indices':acc(np.array(faces,np.uint32).reshape(-1),'SCALAR',5125,34963),'material':mati[material]};g['meshes'].append({'name':name,'primitives':[p]});mi[name]=len(g['meshes'])-1;return mi[name]
 arch=arch_mesh('landmark_pointed_arch')
 arch_trim=arch_mesh('landmark_pointed_arch_bronze',40,36,42,10,20,'bronze')
 gates={'Gate_South_Outer':(0,570,0,0.9),'Gate_South_Inner':(0,345,0,1.35),'Gate_North':(0,-345,0,1.25),'Gate_East':(345,0,math.pi/2,.9),'Gate_West':(-345,0,math.pi/2,.9)}
@@ -60,11 +60,11 @@ for ring,r in enumerate([32,46,61]):
   rad=math.radians(a);x,z=r*math.sin(rad),r*math.cos(rad);node(f'Plaza_Stair_{ring}_{a:03}','Central_Plaza',mi['cube_paving'],(x,31+ring*.8,z),(18,2,8),rot=[0,math.sin(rad/2),0,math.cos(rad/2)])
 
 # Standard animations: gate portcullises and sanctuary/central energy pulse.
-times=np.array([0,1.5,3],np.float32); ta=acc(times,'SCALAR'); animations=[]
+times=np.array([0,1.5,3],np.float32); ta=acc(times,'SCALAR',target=None); animations=[]
 for parent in gates:
- target=ni[parent+'_Portcullis']; base=nodes[target]['translation']; vals=np.array([base,[base[0],base[1]+38,base[2]],base],np.float32); oa=acc(vals,'VEC3');animations.append({'name':parent+'_OpenClose','samplers':[{'input':ta,'output':oa,'interpolation':'LINEAR'}],'channels':[{'sampler':0,'target':{'node':target,'path':'translation'}}]})
+ target=ni[parent+'_Portcullis']; base=nodes[target]['translation']; vals=np.array([base,[base[0],base[1]+38,base[2]],base],np.float32); oa=acc(vals,'VEC3',target=None);animations.append({'name':parent+'_OpenClose','samplers':[{'input':ta,'output':oa,'interpolation':'LINEAR'}],'channels':[{'sampler':0,'target':{'node':target,'path':'translation'}}]})
 for name in ['Sanctuary_Beacon','Plaza_Monument_Crystal']:
- vals=np.array([[1,1,1],[1.12,1.2,1.12],[1,1,1]],np.float32);oa=acc(vals,'VEC3');animations.append({'name':name+'_Pulse','samplers':[{'input':ta,'output':oa,'interpolation':'LINEAR'}],'channels':[{'sampler':0,'target':{'node':ni[name],'path':'scale'}}]})
+ vals=np.array([[1,1,1],[1.12,1.2,1.12],[1,1,1]],np.float32);oa=acc(vals,'VEC3',target=None);animations.append({'name':name+'_Pulse','samplers':[{'input':ta,'output':oa,'interpolation':'LINEAR'}],'channels':[{'sampler':0,'target':{'node':ni[name],'path':'scale'}}]})
 g['animations']=animations;g['asset']['generator']='Eloria Four Gates production environment 0.3'
 align();g['buffers'][0]['byteLength']=len(buf);jb=json.dumps(g,separators=(',',':')).encode();jb+=b' '*((-len(jb))%4);F.write_bytes(struct.pack('<4sII',b'glTF',2,12+8+len(jb)+8+len(buf))+struct.pack('<I4s',len(jb),b'JSON')+jb+struct.pack('<I4s',len(buf),b'BIN\0')+buf)
 

@@ -490,6 +490,16 @@ void check_bbox_tree(BBOX_TREE* bbox_tree)
 		if (bbox_tree->intersect[idx].intersect_update_needed > 0)
 		{
 			bbox_tree->intersect[idx].count = 0;
+			/* A package map may legitimately have no legacy ELM objects.  During
+			 * map changes clear_bbox_tree() also leaves the tree in this empty
+			 * state until the next ELM tree is built.  Do not traverse root node
+			 * zero unless it exists. */
+			if ((bbox_tree->nodes == NULL) || (bbox_tree->nodes_count == 0))
+			{
+				build_start_stop(bbox_tree);
+				bbox_tree->intersect[idx].intersect_update_needed = 0;
+				return;
+			}
 			check_sub_nodes(bbox_tree, 0, bbox_tree->intersect[idx].frustum_mask);
 			qsort((void *)(bbox_tree->intersect[idx].items), bbox_tree->intersect[idx].count, sizeof(BBOX_ITEM), comp_items);
 			build_start_stop(bbox_tree);
@@ -508,6 +518,8 @@ void calc_scene_bbox(BBOX_TREE* bbox_tree, AABBOX* bbox)
 		idx = bbox_tree->cur_intersect_type;
 		VFill(bbox->bbmax, -BOUND_HUGE);
 		VFill(bbox->bbmin, BOUND_HUGE);
+		if ((bbox_tree->nodes == NULL) || (bbox_tree->nodes_count == 0))
+			return;
 		calc_bbox_sub_nodes(bbox_tree, 0, bbox_tree->intersect[idx].frustum_mask, bbox);
 	}
 	else BBOX_TREE_LOG_INFO("bbox_tree");
@@ -1756,6 +1768,13 @@ void check_bbox_tree_shadow(BBOX_TREE* bbox_tree, const FRUSTUM frustum, Uint32 
 		if (idx != INTERSECTION_TYPE_SHADOW) return;
 		if (bbox_tree->intersect[idx].intersect_update_needed > 0)
 		{
+			if ((bbox_tree->nodes == NULL) || (bbox_tree->nodes_count == 0))
+			{
+				bbox_tree->intersect[idx].count = 0;
+				build_start_stop(bbox_tree);
+				bbox_tree->intersect[idx].intersect_update_needed = 0;
+				return;
+			}
 			point_mask = calculate_point_mask(light_dir);
 			calculate_frustum_data(data, view_frustum, light_dir, view_mask);
 			bbox_tree->intersect[idx].count = 0;
@@ -1819,4 +1838,3 @@ void reflection_portal_check(BBOX_TREE* bbox_tree, const PLANE* portals, Uint32 
 	}
 	else BBOX_TREE_LOG_INFO("bbox_tree");
 }
-
