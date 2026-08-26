@@ -30,7 +30,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 			errors.append("Skeleton3D missing")
 		else:
 			var animation_path := _external_path(str(model_config.get("animationLibrary", "")))
-			var imported := NativeAnimationImporter.import_library(self, animation_path, skeleton)
+			var imported := NativeAnimationImporter.import_library(self, animation_path, skeleton, model_config.get("boneAliases", {}))
 			animation_player = imported.player
 			errors.append_array(Array(imported.errors))
 			if animation_player != null:
