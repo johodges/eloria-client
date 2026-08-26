@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Build the loader-ready Four Gates package from the checked-in art source."""
 import json
-import shutil
 import struct
 from pathlib import Path
 
@@ -28,7 +27,12 @@ def walkable(x: float, z: float) -> bool:
 
 def main() -> None:
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(SOURCE, OUTPUT / "world.glb")
+    raw = SOURCE.read_bytes()
+    invalid = b'["BLEND","doubleSided"]'
+    replacement = b'"BLEND"' + b' ' * (len(invalid) - len(b'"BLEND"'))
+    if raw.count(invalid) != 2:
+        raise RuntimeError("unexpected Four Gates alphaMode encoding")
+    (OUTPUT / "world.glb").write_bytes(raw.replace(invalid, replacement))
     manifest = {
         "format": "eloria-world", "version": 1, "id": "four_gates",
         "display_name": "Four Gates", "scene": "world.glb",
