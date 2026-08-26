@@ -200,7 +200,7 @@ static int el_load_map(const char * file_name)
 		 * retain the historical behavior and cannot select another format. */
 		if (logical_name[0] == '.' && logical_name[1] == '/')
 			logical_name += 2;
-		if (logical_name[0] != '\\0' && strchr(logical_name, '.') == NULL &&
+		if (logical_name[0] != '\0' && strchr(logical_name, '.') == NULL &&
 			strchr(logical_name, '/') == NULL && strchr(logical_name, '\\') == NULL)
 		{
 			safe_snprintf(elm_name, sizeof(elm_name), "./maps/%s.elm", logical_name);
