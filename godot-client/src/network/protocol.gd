@@ -66,6 +66,14 @@ static func login(username: String, password: String) -> PackedByteArray:
 	payload.append(0)
 	return encode(ClientMessage.LOG_IN, payload)
 
+static func create_character(username: String, password: String, appearance: Dictionary) -> PackedByteArray:
+	var payload := (username + " " + password).to_utf8_buffer()
+	payload.append(0)
+	# Exact legacy order: skin, hair, shirt, pants, boots, actor type, head, eyes.
+	for key in ["skin", "hair", "shirt", "pants", "boots", "actor_type", "head", "eyes"]:
+		payload.append(clampi(int(appearance.get(key, 0)), 0, 255))
+	return encode(ClientMessage.CREATE_CHAR, payload)
+
 static func version(protocol_major: int, protocol_minor: int,
 		client_version: PackedByteArray, host := PackedByteArray([0, 0, 0, 0]),
 		port := 0) -> PackedByteArray:
@@ -91,6 +99,10 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "login_ok"}
 		ServerMessage.LOG_IN_NOT_OK:
 			return {"type": "login_error", "message": nul_string(payload)}
+		ServerMessage.CREATE_CHAR_OK:
+			return {"type": "create_character_ok"}
+		ServerMessage.CREATE_CHAR_NOT_OK:
+			return {"type": "create_character_error", "message": nul_string(payload)}
 		ServerMessage.YOU_ARE:
 			return {"type": "you_are", "actor_id": u16(payload)} if payload.size() >= 2 else {"type": "invalid", "error": "short_payload"}
 		ServerMessage.CHANGE_MAP:
