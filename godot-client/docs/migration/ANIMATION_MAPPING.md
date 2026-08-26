@@ -1,18 +1,25 @@
 # Native character and animation runtime
 
-Playable characters are instantiated directly from their original GLB with GLTFDocument. The generated hierarchy, skins, skeletons, materials, morphs, and animations are retained. ReplicatedActor3D applies only an outer scale/orientation adapter and never rebuilds bones or meshes.
+Playable characters are instantiated directly from the supplied native glTF 2.0 packages. The generated hierarchy, skins, skeletons, materials, morphs, and animations are retained. ReplicatedActor3D applies only an outer scale/orientation adapter and never rebuilds bones or meshes.
 
 Animation selection is explicit data: gameplay action to exact clip name, and server command to gameplay action. Substring guessing is prohibited. Root motion never controls replicated actor position.
 
-## Current asset gate
+## Verified source assets
 
-At the audited develop revision, the repository has Universal_Animation_Library.glb plus male/female body glTF, bin, and texture files. The original luminous male and female playable GLBs are not present at a repository path. Registry entries therefore remain deliberately empty and marked blocked. Put the supplied original GLBs at stable repository/LFS paths and fill only registry paths, exact clip names, and attachment bone names. Do not convert them.
+The user-supplied archive and animation GLB were compared using Git blob hashes. They match the canonical files already on develop byte-for-byte:
 
-## Validation required
+- Superhero_Female_FullBody.gltf plus bin and seven referenced textures
+- Superhero_Male_FullBody.gltf plus bin and seven referenced textures
+- Universal_Animation_Library.glb (the uploaded exported-model GLB)
 
-1. Load the native GLB.
-2. Confirm one Skeleton3D and expected skinned meshes.
-3. Cycle every mapped clip and report missing clips.
-4. Draw skeleton and attachment locators.
-5. Verify bind pose, scale, orientation, transparency, textures, and root motion.
-6. Test male and female independently.
+Each body has one 65-joint skin, three meshes, and three materials. The animation GLB has 162 clips and a 66-node hierarchy. The only bone-name difference is animation head to model Head; this is an explicit per-model alias. The animation-only head_leaf node has no target and is intentionally ignored.
+
+Godot loads both glTF and GLB natively through GLTFDocument. No custom mesh, skeleton, skin, or legacy actor format is generated.
+
+## Exact gameplay mappings
+
+Idle_A/Idle_Subtle, Walk, Jog, Fighting_Idle, Sword_Attack, Bow_Release, Spell_Simple_Shoot, Hit_Chest, Death_A, Sitting_Enter/Sitting_Idle/Sitting_Exit, Farm_Harvest, PickUp_Table, Throw_Object, and Greeting are explicitly mapped in data/animations/luminous.json.
+
+## Remaining runtime validation
+
+A Godot 4.7.2 executable is still required to render both bodies, cycle every mapped clip, inspect Skeleton3D/rest pose/materials, and verify attachments under gameplay lighting. Registry status remains source_validated_runtime_pending until that executable validation passes.
