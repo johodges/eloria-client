@@ -60,4 +60,14 @@ class Validation(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);p=package(root);raw=(root/"world.glb").read_bytes();jl=struct.unpack_from("<I",raw,12)[0];doc=json.loads(raw[20:20+jl]);doc["images"]=[{"uri":"textures/missing.png"}];jb=json.dumps(doc).encode();jb+=b" "*((-len(jb))%4);binary=raw[20+jl+8:];(root/"world.glb").write_bytes(struct.pack("<III",0x46546C67,2,28+len(jb)+len(binary))+struct.pack("<II",len(jb),0x4E4F534A)+jb+struct.pack("<II",len(binary),0x004E4942)+binary)
             with self.assertRaisesRegex(validator.Invalid,"referenced image is missing"):validator.validate(p)
+    def test_checked_four_gates_handoff_is_complete(self):
+        root=ROOT/"eloria-assets/nymara-packs/nymara-client-assets/runtime/maps/four_gates"
+        data,glb,w,h=validator.validate(root/"world.json")
+        raw=(root/"world.glb").read_bytes()
+        self.assertEqual(struct.unpack_from("<I",raw,8)[0],len(raw))
+        self.assertGreater(len(raw),500000)
+        self.assertEqual((w,h),(1536,1536))
+        self.assertEqual((root/"collision.bin").stat().st_size,16+w*h)
+        self.assertEqual(len(glb.get("images",[])),7)
+        self.assertTrue(all((root/image["uri"]).is_file() for image in glb["images"]))
 if __name__=="__main__":unittest.main()

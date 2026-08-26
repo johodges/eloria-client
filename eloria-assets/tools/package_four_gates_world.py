@@ -138,7 +138,10 @@ def main():
  manifest={'format':'eloria-world','version':1,'id':'four_gates','display_name':'Four Gates','scene':'world.glb','collision':'collision.bin','collision_width':SIZE,'collision_height':SIZE,'minimap':'four_gates.dds',
   'coordinates':{'units_per_meter':UNITS_PER_METER,'up_axis':'Y','forward_axis':'-Z','origin':list(ORIGIN)},'bounds':{'minimum':[-750.,-40.,-820.],'maximum':[750.,195.,750.]},
   'environment':{'ambient_color':[.72,.76,.78],'ambient_intensity':1.15,'sun_direction':[-.4,-.8,-.3],'sun_color':[1.,.95,.85],'sun_intensity':1.,'fog_enabled':False},
-   'player_starts':[{'id':'default','position':[0.,32.,310.],'rotation_degrees':180.}],
+  # Use the authored central-plaza marker for the default test/login spawn.
+  # The former south marker maps to server [768,480] and places the camera
+  # among the dense inner-gate roofs, obscuring almost the entire city.
+  'player_starts':[{'id':'default','position':[0.,32.,55.],'rotation_degrees':180.}],
   'portals':[{'id':'south','position':[0.,31.,722.2],'target_hook':'nymara.south'},{'id':'east','position':[722.2,31.,0.],'target_hook':'nymara.east'},{'id':'west','position':[-722.2,31.,0.],'target_hook':'nymara.west'},{'id':'north','position':[0.,31.,-722.2],'target_hook':'nymara.sanctuary'}],
   'navigation':{'format':meta['navigation']['navmesh']['format'],'polygons':meta['navigation']['navmesh']['polygons'],'off_mesh_links':meta['navigation']['navmesh'].get('offMeshLinks',[]),'obstacle_count':len(obstacles)},
   'effects':{'waterfalls':water,'materials':{'water':{'uv_scroll':[.02,-.04],'blend':'alpha'},'waterfall':{'uv_scroll':[0.,-.32],'blend':'alpha'},'landmark-energy':{'pulse_hz':.75,'blend':'additive'}}},**gameplay}
