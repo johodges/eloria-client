@@ -67,15 +67,16 @@ secret = true
 [node name="Connect" type="Button" parent="LoginPanel/Content"]
 layout_mode = 2
 text = "Connect"
-pressed.connect = NodePath("../../../:_on_connect_pressed")
 
 [node name="Login" type="Button" parent="LoginPanel/Content"]
 layout_mode = 2
 text = "Log In"
-pressed.connect = NodePath("../../../:_on_login_pressed")
 
 [node name="Status" type="Label" parent="LoginPanel/Content"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Disconnected"
 horizontal_alignment = 1
+
+[connection signal="pressed" from="LoginPanel/Content/Connect" to="." method="_on_connect_pressed"]
+[connection signal="pressed" from="LoginPanel/Content/Login" to="." method="_on_login_pressed"]
