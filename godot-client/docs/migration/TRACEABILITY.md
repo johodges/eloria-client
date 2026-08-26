@@ -10,6 +10,7 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | Actor spawn/update/remove | multiplayer.c; server actor packets/commands | state/actors | actor packet + command-step fixtures | IMPLEMENTED |
 | NPC activation/dialogue | gamewin.c; server protocol/world | protocol/state/dialogue UI | byte + decode fixtures; runtime pending | IMPLEMENTED |
 | Chat send/receive | chat.c; server RAW_TEXT | protocol/state/chat UI | byte + decode fixtures; runtime pending | IMPLEMENTED |
+| Title/login artwork | generated Eloria branding DDS | portable PNG copies + themed login | main-scene smoke; visual review pending | IMPLEMENTED |
 | GLB map + JSON | GLB runtime/map.c | world/map loader | schema, GLB header, normalized registry; runtime pending | IMPLEMENTED |
 | Native luminous models | actor GLB runtime/assets | actor presentation | byte/source validation; render pending | FOUNDATION |
 | Movement reconciliation | client movement/server authority | controller/state | real MOVE_TO wiring; reconciliation verification pending | FOUNDATION |
