@@ -129,7 +129,11 @@ def main() -> None:
                 output, repo_root, args.dry_run)
 
     # This consumes the actor registry and all shared generated world assets.
-    run_blocker(Task("nymara", ("generate_nymara_complete.py",)), tools_dir,
+    # Rebuild the portable Four Gates package before merging the Nymara pack.
+    # The checked-in runtime copy may be stale or truncated, while the authored
+    # GLB and metadata remain the source of truth.
+    run_blocker(Task("nymara", ("package_four_gates_world.py",
+                                "generate_nymara_complete.py")), tools_dir,
                 output, repo_root, args.dry_run)
 
     if not args.skip_validation:
