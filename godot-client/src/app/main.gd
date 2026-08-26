@@ -9,6 +9,8 @@ extends Control
 func _ready() -> void:
 	Network.connection_state_changed.connect(_on_connection_state_changed)
 	Network.protocol_error.connect(func(message: String): status_label.text = "Protocol error: " + message)
+	AppState.login_succeeded.connect(func(): status_label.text = "Authenticated — loading world…")
+	AppState.login_failed.connect(func(message: String): status_label.text = "Login failed: " + message)
 
 func _on_connect_pressed() -> void:
 	status_label.text = "Connecting…"
