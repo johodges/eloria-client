@@ -4,6 +4,7 @@
     "luminous_male": {
       "scene": "res://../eloria-assets/source/player_models/native/Superhero_Male_FullBody.gltf",
       "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "boneAliases": {"head": "Head"},
       "status": "source_validated_runtime_pending",
       "import": {"scale": 1.0, "rotationDegreesX": 0.0, "rotationDegreesY": 180.0, "rotationDegreesZ": 0.0},
       "animationMap": "res://data/animations/luminous.json",
