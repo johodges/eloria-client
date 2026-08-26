@@ -38,6 +38,7 @@ OPTION(ADDRSANITISER "Enable the gcc address sanitisation options to do run-time
 OPTION(TTF "Add the ability to use True Type system fonts." On)
 OPTION(USE_SSL "Encrypt the traffic with the server." On)
 OPTION(PACKET_COMPRESSION "Add support for compressed data packets from the proxy server" On)
+OPTION(GENERATE_ELORIA_DATA "Generate the matching Eloria runtime data pack as part of the client build." On)
 
 # standard options
 add_definitions(
@@ -305,6 +306,34 @@ string(STRIP "${EXTRA_LD_FLAGS}" EXTRA_LD_FLAGS)
 # build
 
 add_executable(${EXEC} ${SOURCES})
+
+# The client executable and its generated data are one revisioned product.
+# Building only the C/C++ target previously left an older build/eloria-data in
+# place, which could silently load legacy actor meshes after a source update.
+if (GENERATE_ELORIA_DATA)
+	find_package(Python3 REQUIRED COMPONENTS Interpreter)
+	file(GLOB_RECURSE ELORIA_DATA_INPUTS CONFIGURE_DEPENDS
+		"${CMAKE_SOURCE_DIR}/eloria-assets/tools/*.py"
+		"${CMAKE_SOURCE_DIR}/eloria-assets/source/*"
+		"${CMAKE_SOURCE_DIR}/eloria-assets/fonts/*"
+		"${CMAKE_SOURCE_DIR}/eloria-assets/ui/*"
+	)
+	set(ELORIA_DATA_DIR "${CMAKE_BINARY_DIR}/eloria-data")
+	set(ELORIA_DATA_STAMP "${ELORIA_DATA_DIR}/.generated-from-source")
+	add_custom_command(
+		OUTPUT "${ELORIA_DATA_STAMP}"
+		COMMAND "${Python3_EXECUTABLE}"
+			"${CMAKE_SOURCE_DIR}/eloria-assets/tools/generate_all_assets.py"
+			--jobs 4 --skip-validation "${ELORIA_DATA_DIR}"
+		COMMAND "${CMAKE_COMMAND}" -E touch "${ELORIA_DATA_STAMP}"
+		DEPENDS ${ELORIA_DATA_INPUTS}
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+		COMMENT "Generating Eloria runtime data pack"
+		VERBATIM
+	)
+	add_custom_target(eloria_data ALL DEPENDS "${ELORIA_DATA_STAMP}")
+	add_dependencies(${EXEC} eloria_data)
+endif()
 
 # if JSON_FILES wanted define dependancies
 if (JSON_FILES)
