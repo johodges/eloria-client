@@ -103,7 +103,7 @@ def main() -> None:
                         "sun_direction": [-0.4, -0.8, -0.3],
                         "sun_color": [1.0, 0.95, 0.85], "sun_intensity": 1.0,
                         "fog_enabled": False},
-        "player_starts": [{"id": "default", "position": [0.0, 34.0, 464.4],
+        "player_starts": [{"id": "default", "position": [0.0, 32.0, 310.0],
                            "rotation_degrees": 180.0}],
         "portals": [
             {"id": "south", "position": [0.0, 30.0, 722.2]},
