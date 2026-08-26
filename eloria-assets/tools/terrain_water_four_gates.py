@@ -45,11 +45,18 @@ def accessor(a, kind, component=5126, target=34962):
 
 
 def mesh(name, vertices, faces, normals, uv, material):
+    normals = np.asarray(normals, np.float32)
+    tangents = np.cross(np.tile([0.0, 1.0, 0.0], (len(normals), 1)), normals)
+    weak = np.linalg.norm(tangents, axis=1) < 1e-5
+    tangents[weak] = [1, 0, 0]
+    tangents /= np.maximum(np.linalg.norm(tangents, axis=1, keepdims=True), 1e-6)
+    tangents = np.column_stack((tangents, np.ones(len(tangents), np.float32)))
     primitive = {
         "attributes": {
             "POSITION": accessor(vertices, "VEC3"),
             "NORMAL": accessor(normals, "VEC3"),
             "TEXCOORD_0": accessor(uv, "VEC2"),
+            "TANGENT": accessor(tangents, "VEC4"),
         },
         "indices": accessor(np.asarray(faces, np.uint32).reshape(-1), "SCALAR", 5125, 34963),
         "material": material,
@@ -193,7 +200,7 @@ write(F, g, buf)
 
 meta_path = P / "four-gates-city.json"
 m = json.loads(meta_path.read_text())
-m["assetVersion"] = "0.6.0"
+m["assetVersion"] = "0.6.1"
 m["terrain"] = {
     "minimumUsefulElevation": -40.0,
     "cityTerraceNode": "Terrain_City_Plateau",
@@ -218,4 +225,4 @@ m["knownLimitations"] = [x for x in m["knownLimitations"] if "cliff" not in x.lo
 m["knownLimitations"].append("Water, waterfall foam, and mist use glTF geometry and locators; animated turbulence, refraction, particles, and depth fade require client shaders.")
 meta_path.write_text(json.dumps(m, indent=2) + "\n")
 
-print(json.dumps({"assetVersion": "0.6.0", "nodes": len(nodes), "meshes": len(g["meshes"]), "glbBytes": F.stat().st_size}, indent=2))
+print(json.dumps({"assetVersion": "0.6.1", "nodes": len(nodes), "meshes": len(g["meshes"]), "glbBytes": F.stat().st_size}, indent=2))

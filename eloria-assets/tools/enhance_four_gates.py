@@ -1,10 +1,17 @@
 import json, math, struct
 from pathlib import Path
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 
 PKG=Path('four-gates-city-package'); GLB=PKG/'four-gates-city.glb'; TEX=PKG/'textures'; TEX.mkdir(exist_ok=True)
 raw=GLB.read_bytes(); jlen,jtype=struct.unpack_from('<I4s',raw,12); g=json.loads(raw[20:20+jlen]); boff=20+jlen; blen,btype=struct.unpack_from('<I4s',raw,boff); buf=bytearray(raw[boff+8:boff+8+blen])
+# Normalize legacy authoring shorthand into strict glTF 2.0 properties.
+for material in g.get('materials',[]):
+ if isinstance(material.get('alphaMode'),list):
+  modes=material['alphaMode'];material['alphaMode']=modes[0]
+  if 'doubleSided' in modes:material['doubleSided']=True
+for node in g.get('nodes',[]):
+ if node.get('children')==[]:node.pop('children')
 def align4():
  while len(buf)%4: buf.append(0)
 def add_view(data,target=None):
@@ -17,7 +24,27 @@ def read_pos(ai):
  a=g['accessors'][ai]; v=g['bufferViews'][a['bufferView']]; off=v.get('byteOffset',0)+a.get('byteOffset',0); return np.frombuffer(buf,dtype='<f4',count=a['count']*3,offset=off).reshape(-1,3).copy()
 
 # Add generated production atlas plus deterministic normal and ORM companions.
-src=Image.open(TEX/'four-gates-material-atlas-source.png').convert('RGB').resize((1024,1024),Image.Resampling.LANCZOS); src.save(TEX/'four-gates-material-basecolor.png',optimize=True)
+def load_or_generate_city_atlas(path):
+ try:
+  return Image.open(path).convert('RGB').resize((1024,1024),Image.Resampling.LANCZOS)
+ except (FileNotFoundError, OSError):
+  image=Image.new('RGB',(1024,1024));draw=ImageDraw.Draw(image)
+  palette=[(186,188,184),(76,85,96),(159,151,136),(91,82,78),
+           (56,77,102),(157,116,48),(104,66,39),(210,202,177),
+           (113,82,52),(104,139,84),(225,230,226),(40,105,139),
+           (58,190,224),(113,190,222),(67,116,76),(47,131,158)]
+  for tile,color in enumerate(palette):
+   x=(tile%4)*256;y=(tile//4)*256;draw.rectangle((x,y,x+255,y+255),fill=color)
+   for line in range(16,256,32):
+    shade=tuple(max(0,c-18) for c in color)
+    draw.line((x,y+line,x+255,y+line+((tile*7)%11)-5),fill=shade,width=3)
+   if tile in (0,1,2,3,7,8):
+    for row in range(0,256,48):
+     offset=24 if (row//48)%2 else 0
+     for col in range(-offset,256,64):draw.rectangle((x+col,y+row,x+col+60,y+row+43),outline=tuple(min(255,c+15) for c in color),width=2)
+  image.save(path,optimize=True)
+  return image
+src=load_or_generate_city_atlas(TEX/'four-gates-material-atlas-source.png'); src.save(TEX/'four-gates-material-basecolor.png',optimize=True)
 gray=np.asarray(src.convert('L'),np.float32)/255.; gy,gx=np.gradient(gray); n=np.dstack((-gx*2.1,-gy*2.1,np.ones_like(gray))); n/=np.linalg.norm(n,axis=2,keepdims=True); Image.fromarray(((n*.5+.5)*255).astype(np.uint8)).save(TEX/'four-gates-material-normal.png',optimize=True)
 orm=np.zeros((1024,1024,3),np.uint8); orm[:,:,0]=235; orm[:,:,1]=185
 for c,r,val in [(1,1,195),(2,1,215)]:orm[r*256:(r+1)*256,c*256:(c+1)*256,2]=val
@@ -29,7 +56,8 @@ for mesh in g['meshes']:
  for p in mesh['primitives']:
   v=read_pos(p['attributes']['POSITION']); n=v.copy(); n[:,1]*=.7; n/=np.maximum(np.linalg.norm(n,axis=1,keepdims=True),1e-6)
   u=(np.arctan2(v[:,2],v[:,0])/(2*np.pi)+.5)%1; vv=(v[:,1]-v[:,1].min())/max(float(np.ptp(v[:,1])),1e-6); uv=np.column_stack((u,vv)).astype(np.float32)
-  p['attributes']['NORMAL']=add_acc(n,'VEC3'); p['attributes']['TEXCOORD_0']=add_acc(uv,'VEC2')
+  t=np.cross(np.tile([0.,1.,0.],(len(n),1)),n);weak=np.linalg.norm(t,axis=1)<1e-5;t[weak]=[1,0,0];t/=np.maximum(np.linalg.norm(t,axis=1,keepdims=True),1e-6);t=np.column_stack((t,np.ones(len(t),np.float32)))
+  p['attributes']['NORMAL']=add_acc(n,'VEC3'); p['attributes']['TEXCOORD_0']=add_acc(uv,'VEC2'); p['attributes']['TANGENT']=add_acc(t,'VEC4')
 
 iv=[]
 for fn in ['four-gates-material-basecolor.png','four-gates-material-normal.png','four-gates-material-orm.png']:iv.append(add_view((TEX/fn).read_bytes()))

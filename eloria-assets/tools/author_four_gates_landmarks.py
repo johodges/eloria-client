@@ -1,7 +1,7 @@
 import json, math, random, struct
 from pathlib import Path
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 
 P=Path('four-gates-city-package');F=P/'four-gates-city.glb';T=P/'textures';T.mkdir(exist_ok=True)
 raw=F.read_bytes();jl,_=struct.unpack_from('<I4s',raw,12);g=json.loads(raw[20:20+jl]);bo=20+jl;bl,_=struct.unpack_from('<I4s',raw,bo);buf=bytearray(raw[bo+8:bo+8+bl])
@@ -14,12 +14,28 @@ def view(data,target=None):
 def acc(a,typ,comp=5126,target=34962):
  a=np.asarray(a,np.float32 if comp==5126 else np.uint32);d={'bufferView':view(a.tobytes(),target),'componentType':comp,'count':len(a),'type':typ,'min':a.min(0).tolist() if a.ndim>1 else [float(a.min())],'max':a.max(0).tolist() if a.ndim>1 else [float(a.max())]};g['accessors'].append(d);return len(g['accessors'])-1
 def mesh(name,v,f,n,uv,mat):
- p={'attributes':{'POSITION':acc(v,'VEC3'),'NORMAL':acc(n,'VEC3'),'TEXCOORD_0':acc(uv,'VEC2')},'indices':acc(np.asarray(f,np.uint32).reshape(-1),'SCALAR',5125,34963),'material':mat};g['meshes'].append({'name':name,'primitives':[p]});return len(g['meshes'])-1
+ n=np.asarray(n,np.float32);t=np.cross(np.tile([0.,1.,0.],(len(n),1)),n);weak=np.linalg.norm(t,axis=1)<1e-5;t[weak]=[1,0,0];t/=np.maximum(np.linalg.norm(t,axis=1,keepdims=True),1e-6);t=np.column_stack((t,np.ones(len(t),np.float32)));p={'attributes':{'POSITION':acc(v,'VEC3'),'NORMAL':acc(n,'VEC3'),'TEXCOORD_0':acc(uv,'VEC2'),'TANGENT':acc(t,'VEC4')},'indices':acc(np.asarray(f,np.uint32).reshape(-1),'SCALAR',5125,34963),'material':mat};g['meshes'].append({'name':name,'primitives':[p]});return len(g['meshes'])-1
 def write(path,doc,binary):
  align();doc['buffers'][0]['byteLength']=len(binary);jb=json.dumps(doc,separators=(',',':')).encode();jb+=b' '*((-len(jb))%4);path.write_bytes(struct.pack('<4sII',b'glTF',2,12+8+len(jb)+8+len(binary))+struct.pack('<I4s',len(jb),b'JSON')+jb+struct.pack('<I4s',len(binary),b'BIN\0')+binary)
 
 # Dedicated landmark texture family.
-src=Image.open(T/'four-gates-landmark-trims-source.png').convert('RGB').resize((1024,1024),Image.Resampling.LANCZOS);src.save(T/'four-gates-landmark-basecolor.png',optimize=True)
+def load_or_generate_landmark_atlas(path):
+ try:
+  return Image.open(path).convert('RGB').resize((1024,1024),Image.Resampling.LANCZOS)
+ except (FileNotFoundError, OSError):
+  image=Image.new('RGB',(1024,1024));draw=ImageDraw.Draw(image)
+  quadrants=[(190,194,190),(156,112,44),(67,73,82),(40,171,216)]
+  for tile,color in enumerate(quadrants):
+   x=(tile%2)*512;y=(tile//2)*512;draw.rectangle((x,y,x+511,y+511),fill=color)
+   for band in range(0,512,48):
+    light=tuple(min(255,c+22) for c in color);dark=tuple(max(0,c-24) for c in color)
+    draw.line((x,y+band,x+511,y+band),fill=dark,width=4)
+    draw.line((x,y+band+5,x+511,y+band+5),fill=light,width=2)
+   if tile in (1,3):
+    for stripe in range(20,512,64):draw.line((x+stripe,y,x+stripe+128,y+511),fill=tuple(min(255,c+35) for c in color),width=8)
+  image.save(path,optimize=True)
+  return image
+src=load_or_generate_landmark_atlas(T/'four-gates-landmark-trims-source.png');src.save(T/'four-gates-landmark-basecolor.png',optimize=True)
 gray=np.asarray(src.convert('L'),np.float32)/255.;gy,gx=np.gradient(gray);nn=np.dstack((-gx*2.8,-gy*2.8,np.ones_like(gray)));nn/=np.linalg.norm(nn,axis=2,keepdims=True);Image.fromarray(((nn*.5+.5)*255).astype(np.uint8)).save(T/'four-gates-landmark-normal.png',optimize=True)
 orm=np.zeros((1024,1024,3),np.uint8);orm[:,:,0]=238;orm[:,:,1]=175;orm[:512,512:,1]=78;orm[:512,512:,2]=205;orm[512:,512:,1]=55;orm[512:,512:,2]=145;Image.fromarray(orm).save(T/'four-gates-landmark-orm.png',optimize=True)
 em=np.zeros((1024,1024,3),np.uint8);em[512:,512:]=np.asarray(src)[512:,512:];Image.fromarray(em).save(T/'four-gates-landmark-emissive.png',optimize=True)

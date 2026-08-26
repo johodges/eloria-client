@@ -12,6 +12,8 @@ Production-oriented textured environment derived from the supplied Four Gates re
 
 Load `four-gates-city.glb` with any glTF 2.0 loader, then parse `four-gates-city.json`. Resolve metadata `node` fields by exact GLB node name. The loader must support `KHR_texture_transform` for atlas selection. Unknown extras and JSON extensions should be ignored safely.
 
+Rebuild from the compact checked-in blockout seed with `python3 eloria-assets/tools/rebuild_four_gates_glb.py`. Run `python3 eloria-assets/tools/validate_four_gates_package.py` after any binary or metadata change; it rejects truncated containers, out-of-bounds buffer views, undecodable embedded images, duplicate node names, and stale JSON node references.
+
 ## Materials and effects
 
 The package uses 19 metallic-roughness materials. A three-map citywide atlas covers general assets, while a dedicated four-map landmark family provides base color, tangent normal, packed ORM, and emissive detail for monumental stone, bronze trim, foundations, and blue-energy inlays. Source and derived maps are included under `textures/`.
@@ -26,7 +28,7 @@ Seven optional standard glTF clips are embedded: five portcullis open/close clip
 
 ## Reference coverage
 
-`references/` contains 20 indexed verification views and a generated four-panel architecture reference sheet.
+`references/` contains 20 indexed verification views and a labeled 20-view contact sheet.
 
 ## Known limitations
 

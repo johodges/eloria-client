@@ -21,6 +21,8 @@ for old, yes in enumerate(keep):
     n = copy.deepcopy(g["nodes"][old])
     if "children" in n:
         n["children"] = [node_map[c] for c in n["children"] if c in node_map]
+        if not n["children"]:
+            n.pop("children")
     nodes.append(n)
 
 used_meshes = sorted({n["mesh"] for n in nodes if "mesh" in n})
@@ -124,6 +126,27 @@ out.write_bytes(struct.pack("<4sII", b"glTF", 2, 12 + 8 + len(jb) + 8 + len(bina
 meta = json.loads((P / "four-gates-city.json").read_text())
 meta["lodGroups"][0]["levels"][2].update({"glb": out.name, "nodeCount": len(nodes), "meshCount": len(meshes), "materialCount": len(materials), "textureMaxResolution": 512, "animations": 0, "resourcePruned": True})
 (P / "four-gates-city.json").write_text(json.dumps(meta, indent=2) + "\n")
-lm = copy.deepcopy(meta); lm["asset"]["glb"] = out.name; lm["assetVersion"] = "0.6.0-lod2"; lm["animations"] = []
+lm = copy.deepcopy(meta); lm["asset"]["glb"] = out.name; lm["assetVersion"] = "0.6.1-lod2"; lm["animations"] = []
+lod_node_names = {node.get("name") for node in nodes}
+def prune_node_references(value, key=None):
+    if isinstance(value, dict):
+        if isinstance(value.get("node"), str) and value["node"] not in lod_node_names:
+            return None
+        if isinstance(value.get("targetNode"), str) and value["targetNode"] not in lod_node_names:
+            return None
+        result = {}
+        for child_key, child in value.items():
+            pruned = prune_node_references(child, child_key)
+            if pruned is not None:
+                result[child_key] = pruned
+        return result
+    if isinstance(value, list):
+        if key and key.endswith("Nodes") and all(isinstance(child, str) for child in value):
+            return [child for child in value if child in lod_node_names]
+        return [pruned for child in value if (pruned := prune_node_references(child, key)) is not None]
+    return value
+lm = prune_node_references(lm)
+if "waterSystem" in lm:
+    lm["waterSystem"]["waterfallCount"] = len(lm["waterSystem"].get("channelNodes", []))
 (P / "four-gates-city-lod2.json").write_text(json.dumps(lm, indent=2) + "\n")
 print(json.dumps({"lod2Nodes": len(nodes), "lod2Meshes": len(meshes), "lod2Materials": len(materials), "lod2Bytes": out.stat().st_size, "reductionPct": round((1 - out.stat().st_size / src.stat().st_size) * 100, 1)}, indent=2))

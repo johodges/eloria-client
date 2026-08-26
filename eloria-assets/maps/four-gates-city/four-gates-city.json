@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.6.0",
+  "assetVersion": "0.6.1",
   "asset": {
     "id": "four-gates-city",
     "name": "Four Gates City",
@@ -2463,8 +2463,8 @@
           "animations": 0,
           "meshCount": 23,
           "materialCount": 16,
-          "resourcePruned": true,
-          "textureMaxResolution": 512
+          "textureMaxResolution": 512,
+          "resourcePruned": true
         }
       ],
       "fallback": "LOD1"
@@ -2477,6 +2477,7 @@
     "Southern imagery conflicts in scale; the canonical double-gate sequence is preserved."
   ],
   "knownLimitations": [
+    "LOD0 and LOD2 are documented but not included.",
     "Inline navmesh covers principal axes and plaza; district alley polygons remain to be baked from final collision geometry.",
     "District navmesh uses conservative convex coverage; final blockers should be rebaked after hand-authored building placement.",
     "Water, waterfall foam, and mist use glTF geometry and locators; animated turbulence, refraction, particles, and depth fade require client shaders."

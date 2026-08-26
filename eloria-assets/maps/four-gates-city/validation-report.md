@@ -1,11 +1,11 @@
 # Validation report
 
-Validated 2026-08-26 for asset version 0.6.0.
+Validated 2026-08-26 for asset version 0.6.1.
 
 ## Passed
 
-- LOD1 GLB header is `glTF`, version 2; declared and actual length both 9,265,616 bytes.
-- LOD2 GLB header is `glTF`, version 2; declared and actual length both 2,327,160 bytes.
+- LOD1 GLB header is `glTF`, version 2; declared and actual length both 497,656 bytes.
+- LOD2 GLB header is `glTF`, version 2; declared and actual length both 316,984 bytes.
 - JSON parses successfully and names `four-gates-city.glb` exactly.
 - LOD1 contains 1,378 unique named nodes; compact LOD2 contains 558.
 - Every landmark, district, gate, portcullis, bridge, collision, and navigation node referenced by JSON exists exactly in the GLB.
@@ -13,6 +13,7 @@ Validated 2026-08-26 for asset version 0.6.0.
 - Materials use glTF metallic-roughness, alpha blending, emissive factors, and standard `KHR_texture_transform`; no proprietary extensions or broken external texture paths exist.
 - Seven PNG maps are embedded: the citywide base-color/normal/ORM atlas and landmark base-color/normal/ORM/emissive family.
 - Every visible primitive provides `POSITION`, `NORMAL`, and `TEXCOORD_0` attributes.
+- Every normal-mapped primitive also provides a portable `TANGENT` attribute.
 - Seven standard glTF animation clips reference existing nodes and valid translation or scale channels.
 - Ten principal/district convex navmesh polygons, two exclusions, and one sanctuary off-mesh link use documented asset coordinates.
 - Seventy major-building obstacles provide conservative navigation blockers.
@@ -25,13 +26,9 @@ Validated 2026-08-26 for asset version 0.6.0.
 
 ## Independent-validator/viewer status
 
-The package passed the local binary/container and cross-reference validation above. The Khronos npm validator library was not available as an executable in this restricted workspace, and no independent interactive glTF viewer was available. Consequently, Khronos validator and viewer-open checks remain release-gate items rather than being falsely reported as passed. Recommended commands:
+The package passed local binary/container and cross-reference validation. Khronos glTF Validator was run against both assets: LOD1 reports 0 errors, 0 warnings, 4 informational messages; LOD2 reports 0 errors, 0 warnings, 3 informational messages. Machine-readable reports are checked in beside the GLBs.
 
-```text
-gltf-validator -i four-gates-city.glb -o gltf-validator-report.json
-```
-
-Open the GLB in Blender, Babylon.js Sandbox, or Don McCurdy's glTF Viewer and confirm material appearance, culling, and camera framing before tagging 1.0.0.
+Independent interactive viewer inspection is still required. Open the GLB in Blender, Babylon.js Sandbox, or Don McCurdy's glTF Viewer and confirm material appearance, culling, animation, and camera framing before tagging 1.0.0.
 
 ## Release-gate limitations
 
