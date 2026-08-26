@@ -36,3 +36,12 @@ Password-containing frames are marked sensitive and never printed. The protocol 
 ## Status
 
 This milestone is an executable foundation, not parity completion. See `docs/migration/` for discovery, protocol, risks, and traceability.
+
+## Validation scenes
+
+Open and run these scenes in Godot 4.7.2:
+
+- `src/dev/model_validation.tscn`: switches luminous male/female, retargets the native 162-clip animation GLB, cycles mapped clips, and rotates lighting.
+- `src/dev/world_validation.tscn`: loads Four Gates through the production `WorldLoader`, including manifest validation and declared collision.
+
+A PASS label is evidence of source/runtime loading only. Record screenshots and review skeletons, materials, attachments, navigation, and coordinate placement before changing traceability to VERIFIED.
