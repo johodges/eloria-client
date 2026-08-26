@@ -32,8 +32,8 @@ TARGET_BONES = {
     "thigh_r": 11, "calf_r": 12, "foot_r": 13,
     "hand_l": 16, "hand_r": 17, "spine_03": 25, "neck_01": 26,
     "clavicle_l": 27, "clavicle_r": 28,
-    "thumb_01_l": 32, "index_01_l": 33,
-    "thumb_01_r": 34, "index_01_r": 35,
+    "thumb_01_l": 31, "index_01_l": 32,
+    "thumb_01_r": 33, "index_01_r": 34,
     "ball_l": 35, "ball_r": 36,
 }
 TARGET_PARENTS = {
