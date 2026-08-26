@@ -272,6 +272,7 @@ static int el_load_map(const char * file_name)
 	LOG_INFO("Map environment initialized");
 
 	destroy_loading_win();
+	LOG_INFO("Map load lifecycle complete");
 	return ret;
 }
 
@@ -306,15 +307,21 @@ void change_map (const char *mapname)
 	} else {
 		locked_to_console = 0;
 	}
+	LOG_INFO("Initializing map marks");
 	load_map_marks();
+	LOG_INFO("Map marks initialized");
 
 #ifdef NEW_SOUND
+	LOG_INFO("Initializing map audio");
 	get_map_playlist();
 	setup_map_sounds(mapname);
+	LOG_INFO("Map audio initialized");
 #endif // NEW_SOUND
 	have_a_map=1;
 	//also, stop the rain
+	LOG_INFO("Resetting map weather");
 	weather_clear();
+	LOG_INFO("Map weather reset");
 
 	if (get_show_window_MW(MW_TABMAP))
 	{
@@ -341,11 +348,16 @@ void change_map (const char *mapname)
 #endif // NEW_SOUND
 	have_a_map=1;
 #endif  //MAP_EDITOR2
+	LOG_INFO("Initializing minimap");
 	change_minimap();
+	LOG_INFO("Minimap initialized");
 
 #ifdef PAWN
+	LOG_INFO("Running map-change script");
 	run_pawn_map_function ("change_map", "s", mapname);
+	LOG_INFO("Map-change script complete");
 #endif
+	LOG_INFO("Map transition complete");
 }
 
 static int load_empty_map(void)
