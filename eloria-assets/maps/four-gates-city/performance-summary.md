@@ -2,13 +2,15 @@
 
 ```json
 {
-  "nodes": 746,
-  "meshes": 25,
+  "nodes": 1319,
+  "meshes": 27,
   "materials": 15,
   "animations": 7,
   "textures": 3,
   "textureMemoryBytes": 12582912,
-  "glbBytes": 4501064,
+  "glbBytes": 4586452,
+  "lod2Nodes": 557,
+  "lod2GlbBytes": 4477328,
   "estimatedTriangles": 652
 }
 ```

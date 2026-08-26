@@ -1,5 +1,12 @@
 # Change log
 
+## 0.4.0 — 2026-08-26
+
+- Added district-specific civic halls, arcades, cupolas, residences, courtyards, farmhouses, granaries, irrigation channels, docks, and cranes.
+- Added ring-road lamps and banners plus deterministic tree/trunk population outside principal routes.
+- Expanded navigation from five principal polygons to ten principal and district walkable polygons with monument and wall exclusions.
+- Added `four-gates-city-lod2.glb` and companion JSON; LOD2 reduces active nodes from 1,319 to 557 and removes animation and close-detail overlays.
+
 ## 0.3.0 — 2026-08-25
 
 - Added thick pointed arch-ring and bronze-trim meshes to all five traversable gate structures.

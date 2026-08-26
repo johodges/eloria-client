@@ -18,7 +18,7 @@ The package uses 15 shared metallic-roughness materials and three embedded 1024Ã
 
 ## LOD, collision, navigation
 
-The GLB contains gameplay-distance LOD1 plus `_LOD0` landmark overlays. Low-poly `COLLISION_*` nodes are separate. JSON defines screen-coverage thresholds and an LOD1 fallback; a future LOD2 sibling filename is reserved. Navigation includes stable walkable groups, human-readable paths, five principal convex navmesh polygons, agent dimensions, and an off-mesh sanctuary link.
+The main GLB contains gameplay-distance LOD1 plus `_LOD0` landmark overlays. `four-gates-city-lod2.glb` is a reduced-node distant sibling with 557 active nodes, no animations, and no close-detail overlays. Low-poly `COLLISION_*` nodes remain separate. Navigation includes ten conservative convex walkable polygons, monument and wall exclusions, agent dimensions, and an off-mesh sanctuary link.
 
 ## Animation
 
@@ -30,4 +30,4 @@ Seven optional standard glTF clips are embedded: five portcullis open/close clip
 
 ## Known limitations
 
-This is a textured gameplay environment with landmark LOD0 overlays, not a hand-authored cinematic city. Landmark-specific UV unwraps, a complete district-alley navmesh, authored LOD2, mist particles, and final vegetation remain follow-up work.
+This is a textured gameplay environment with landmark LOD0 overlays and an authored reduced-node LOD2 sibling, not a hand-authored cinematic city. Landmark-specific UV unwraps, final per-building navigation blockers, mist particles, and bespoke vegetation remain follow-up work.
