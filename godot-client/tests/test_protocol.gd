@@ -45,12 +45,12 @@ func _init() -> void:
 
 	var created := EloriaProtocol.decode_server(252, PackedByteArray())
 	_expect(created.type == "create_character_ok", "character creation ok")
-	var creation_error := EloriaProtocol.decode_server(253, "Name exists\0".to_utf8_buffer())
+	var creation_error := EloriaProtocol.decode_server(253, _nul_bytes("Name exists"))
 	_expect(creation_error.type == "create_character_error"
 		and creation_error.message == "Name exists", "character creation error")
 	var login_ok := EloriaProtocol.decode_server(250, PackedByteArray())
 	_expect(login_ok.type == "login_ok", "login ok")
-	var login_error := EloriaProtocol.decode_server(251, "Bad login\0".to_utf8_buffer())
+	var login_error := EloriaProtocol.decode_server(251, _nul_bytes("Bad login"))
 	_expect(login_error.type == "login_error" and login_error.message == "Bad login", "login error")
 	var yourself := EloriaProtocol.decode_server(3, PackedByteArray([0x34, 0x12]))
 	_expect(yourself.actor_id == 0x1234, "you are")
@@ -114,6 +114,11 @@ func _init() -> void:
 
 func _expect_bytes(label: String, actual: PackedByteArray, expected: PackedByteArray) -> void:
 	_expect(actual == expected, label + ": " + actual.hex_encode())
+
+func _nul_bytes(value: String) -> PackedByteArray:
+	var bytes: PackedByteArray = value.to_utf8_buffer()
+	bytes.append(0)
+	return bytes
 
 func _expect(condition: bool, label: String) -> void:
 	if not condition:
