@@ -17,15 +17,25 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	position = server_target
 	rotation.y = adapter.rotation_to_godot(int(dto.rotation))
 	resolver = AnimationResolver.new(animation_config)
-	var errors := _load_native_glb(str(model_config.get("glb", "")))
+	var source_path := _external_path(str(model_config.get("scene", "")))
+	var errors := _load_native_scene(source_path)
 	if errors.is_empty():
 		_apply_import_adapter(model_config.get("import", {}))
-		_find_animation_player()
-		if animation_player == null:
-			errors.append("AnimationPlayer missing")
+		var skeleton := find_child("*", true, false) as Skeleton3D
+		if skeleton == null:
+			for node in find_children("*", "Skeleton3D", true, false):
+				skeleton = node as Skeleton3D
+				break
+		if skeleton == null:
+			errors.append("Skeleton3D missing")
 		else:
-			errors.append_array(resolver.validate(animation_player.get_animation_list()))
-			play_action(&"idle")
+			var animation_path := _external_path(str(model_config.get("animationLibrary", "")))
+			var imported := NativeAnimationImporter.import_library(self, animation_path, skeleton)
+			animation_player = imported.player
+			errors.append_array(Array(imported.errors))
+			if animation_player != null:
+				errors.append_array(resolver.validate(imported.clips))
+				play_action(&"idle")
 	return errors
 
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
@@ -56,17 +66,17 @@ func _physics_process(delta: float) -> void:
 	var weight := clampf(delta / maxf(interpolation_seconds, 0.001), 0.0, 1.0)
 	global_position = global_position.lerp(server_target, weight)
 
-func _load_native_glb(path: String) -> Array[String]:
+func _load_native_scene(path: String) -> Array[String]:
 	if path.is_empty():
-		return ["model GLB path missing"]
+		return ["model scene path missing"]
 	var document := GLTFDocument.new()
 	var state := GLTFState.new()
 	var error := document.append_from_file(path, state)
 	if error != OK:
-		return ["model GLB import failed: " + error_string(error), path]
+		return ["model glTF import failed: " + error_string(error), path]
 	var model := document.generate_scene(state)
 	if model == null:
-		return ["model GLB scene generation failed"]
+		return ["model glTF scene generation failed"]
 	model.name = "NativeModel"
 	add_child(model)
 	return []
@@ -81,7 +91,5 @@ func _apply_import_adapter(config: Dictionary) -> void:
 		float(config.get("rotationDegreesY", 0.0)),
 		float(config.get("rotationDegreesZ", 0.0)))
 
-func _find_animation_player() -> void:
-	for node in find_children("*", "AnimationPlayer", true, false):
-		animation_player = node as AnimationPlayer
-		break
+static func _external_path(path: String) -> String:
+	return ProjectSettings.globalize_path(path) if path.begins_with("res://") else path
