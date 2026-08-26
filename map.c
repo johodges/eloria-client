@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <errno.h>
 #include <math.h>
@@ -160,12 +161,28 @@ static void init_map_loading(const char *file_name)
 	show_window(loading_win);
 }
 
-static __inline__ void build_path_map(void)
+static __inline__ int build_path_map(void)
 {
-	int i, x, y;
+	size_t i;
+	int x, y;
+	size_t cells;
 
 	//create the tile map that will be used for pathfinding
-	pf_tile_map = calloc(tile_map_size_x*tile_map_size_y*6*6, sizeof(PF_TILE));
+	if (tile_map_size_x <= 0 || tile_map_size_y <= 0)
+		return 0;
+	cells = (size_t)tile_map_size_x * (size_t)tile_map_size_y * 6u * 6u;
+	if (cells > SIZE_MAX / sizeof(PF_TILE))
+	{
+		LOG_ERROR("Path map dimensions overflow: %dx%d", tile_map_size_x, tile_map_size_y);
+		return 0;
+	}
+	pf_tile_map = calloc(cells, sizeof(PF_TILE));
+	if (pf_tile_map == NULL)
+	{
+		LOG_ERROR("Unable to allocate path map: %u cells (%u bytes)",
+			(unsigned)cells, (unsigned)(cells * sizeof(PF_TILE)));
+		return 0;
+	}
 
 	i = 0;
 	for (y = 0; y < tile_map_size_y*6; y++)
@@ -177,6 +194,7 @@ static __inline__ void build_path_map(void)
 			pf_tile_map[i].z = height_map[i];
 		}
 	}
+	return 1;
 }
 
 static void updat_func(char *str, float percent)
@@ -236,12 +254,22 @@ static int el_load_map(const char * file_name)
 		skybox_set_type(SKYBOX_CLOUDY);
 		skybox_init_defs(file_name);
 	}
-	build_path_map();
+	LOG_INFO("Building path map for %dx%d movement cells",
+		tile_map_size_x * 6, tile_map_size_y * 6);
+	if (!build_path_map())
+	{
+		LOG_ERROR("Map '%s' could not initialize pathfinding", file_name);
+		return 0;
+	}
+	LOG_INFO("Path map initialized");
+	LOG_INFO("Initializing legacy terrain buffers");
 	init_buffers();
+	LOG_INFO("Legacy terrain buffers initialized");
 
 	// reset light levels in case we enter or leave an inside map
 	new_minute();
 	world_package_apply_environment();
+	LOG_INFO("Map environment initialized");
 
 	destroy_loading_win();
 	return ret;
