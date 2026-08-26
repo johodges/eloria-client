@@ -46,6 +46,8 @@ static int title_len = 0;
 
 static GLuint compass_tex;
 static GLuint minimap_texture = 0;
+/* Texture cache handle zero is valid; track package image presence separately. */
+static int minimap_texture_available = 0;
 static GLuint exploration_texture = 0;
 //static GLubyte exploration_map[256][256];
 //static char current_exploration_map_filename[256];
@@ -476,7 +478,7 @@ static int display_minimap_handler(window_info *win)
 	
 	zoom_multip = minimap_get_zoom();
 
-	if(!minimap_texture) 
+	if (!minimap_texture_available)
 	{
 		//there's no minimap for this map :( draw a X
 		glTranslatef(0.0f, win->title_height, 0.0f);
@@ -733,14 +735,17 @@ void change_minimap(void)
 	{
 		safe_strncpy(minimap_file_name, world_package_minimap(), sizeof(minimap_file_name));
 		minimap_texture = load_texture_cached(minimap_file_name, tt_image);
+		minimap_texture_available = 1;
 	}
 	else if (check_image_name(map_file_name, sizeof(minimap_file_name), minimap_file_name) == 1)
 	{
 		minimap_texture = load_texture_cached(minimap_file_name, tt_image);
+		minimap_texture_available = 1;
 	}
 	else
 	{
 		minimap_texture = 0;
+		minimap_texture_available = 0;
 	}
 
 	compass_tex = load_texture_cached("./textures/compass", tt_gui);
