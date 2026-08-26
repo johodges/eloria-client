@@ -64,6 +64,8 @@ func _init() -> void:
 		and npc_options.options[0].label == "Bye"
 		and npc_options.options[0].response_id == 0x1234
 		and npc_options.options[0].actor_id == 0x5678, "npc options")
+	_expect(EloriaProtocol.decode_server(31, PackedByteArray([9, 0, 65])).type ==
+		"invalid", "truncated npc option")
 	var commands := EloriaProtocol.decode_server(2,
 		PackedByteArray([0x34, 0x12, 20, 0x78, 0x56, 7]))
 	_expect(commands.commands.size() == 2 and commands.commands[1].actor_id == 0x5678,
@@ -96,6 +98,16 @@ func _init() -> void:
 		"coordinate walking height is absolute")
 	_expect(coordinate.godot_to_server(godot_position) == Vector2i(102, 198),
 		"coordinate round trip")
+
+	AppState.actors.clear()
+	AppState._on_packet(1, actor_payload)
+	AppState._on_packet(2, PackedByteArray([0x34, 0x12, 21]))
+	var reduced_actor: Dictionary = AppState.actors.get(0x1234, {})
+	_expect(int(reduced_actor.get("x", -1)) == 11
+		and int(reduced_actor.get("y", -1)) == 21, "actor movement reducer")
+	AppState._on_packet(2, PackedByteArray([0x34, 0x12, 13]))
+	reduced_actor = AppState.actors.get(0x1234, {})
+	_expect(bool(reduced_actor.get("sitting", false)), "actor sit reducer")
 
 	print("protocol tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)

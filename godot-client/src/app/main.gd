@@ -32,6 +32,7 @@ extends Control
 @onready var map_image: TextureRect = %MapImage
 @onready var health_bar: ProgressBar = %Health
 @onready var health_text: Label = %HealthText
+@onready var player_map_marker: MeshInstance3D = %PlayerMapMarker
 @onready var map_label: Label = %MapLabel
 @onready var actor_label: Label = %ActorLabel
 @onready var chat_output: RichTextLabel = %ChatOutput
@@ -181,6 +182,27 @@ func _on_login_pressed() -> void:
 		status_label.text = "Login send failed: " + error_string(error)
 		login_button.disabled = false
 
+func _on_login_submitted(_text: String) -> void:
+	if AppState.connection_state == "disconnected":
+		_on_connect_pressed()
+	elif AppState.connection_state == "connected":
+		_on_login_pressed()
+
+func _on_map_button_pressed() -> void:
+	full_map.visible = not full_map.visible
+
+func _on_sit_button_pressed() -> void:
+	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
+	var error: Error = Network.set_sitting(not bool(local_actor.get("sitting", false)))
+	if error != OK:
+		push_warning("SIT_DOWN failed: " + error_string(error))
+
+func _on_chat_button_pressed() -> void:
+	chat_input.grab_focus()
+
+func _on_disconnect_pressed() -> void:
+	Network.disconnect_from_server()
+
 func _on_login_succeeded() -> void:
 	login_panel.hide()
 	creation_panel.hide()
@@ -274,9 +296,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				print_debug("world_input godot=", point, " server_tile=", tile,
 					" command=", "RUN_TO" if event.shift_pressed else "MOVE_TO")
 				var error: Error = Network.move_to(tile, event.shift_pressed)
-				if error == OK:
-					camera_rig.pan_offset = Vector3.ZERO
-				else:
+				if error != OK:
 					push_warning("MOVE_TO failed: " + error_string(error))
 			get_viewport().set_input_as_handled()
 			return
@@ -358,6 +378,8 @@ func _sync_world() -> void:
 		camera_rig.set_focus(target.global_position)
 		map_camera.global_position = target.global_position + Vector3(0, 220, 0)
 		map_camera.rotation_degrees = Vector3(-90, 0, 0)
+		player_map_marker.global_position = target.global_position + Vector3(0, 3.0, 0)
+		player_map_marker.visible = true
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
 		var current_health := int(local_dto.get("health", 0))
 		var maximum_health := maxi(1, int(local_dto.get("max_health", 1)))
@@ -465,6 +487,9 @@ func _pick_actor(viewport_position: Vector2) -> int:
 func _apply_eloria_art() -> void:
 	login_background.texture = _external_texture("res://../eloria-assets/ui/branding/eloria_login_background.dds")
 	login_logo.texture = _external_texture("res://../eloria-assets/ui/branding/eloria_logo_master.dds")
+	var compass_texture: Texture2D = _external_texture("res://../eloria-assets/ui/compass.png")
+	if compass_texture != null:
+		%CompassOverlay.texture = compass_texture
 
 func _apply_eloria_theme() -> void:
 	var eloria_theme: Theme = Theme.new()
