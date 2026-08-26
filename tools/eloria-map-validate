@@ -51,6 +51,10 @@ def glb(path):
         for pi,prim in enumerate(mesh.get("primitives",[])):
             if prim.get("mode",4)!=4: raise Invalid(f"scene: meshes[{mi}].primitives[{pi}] is not triangles")
             if "POSITION" not in prim.get("attributes",{}): raise Invalid(f"scene: meshes[{mi}].primitives[{pi}] lacks POSITION")
+    for i,material in enumerate(doc.get("materials",[])):
+        alpha=material.get("alphaMode","OPAQUE")
+        if alpha not in ("OPAQUE","MASK","BLEND"): raise Invalid(f"scene: materials[{i}].alphaMode is invalid")
+        if not isinstance(material.get("doubleSided",False),bool): raise Invalid(f"scene: materials[{i}].doubleSided is invalid")
     return doc
 def validate(manifest):
     if not manifest.is_file(): raise Invalid("manifest: file does not exist")
