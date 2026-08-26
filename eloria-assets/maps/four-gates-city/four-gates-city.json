@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.5.0",
+  "assetVersion": "0.6.0",
   "asset": {
     "id": "four-gates-city",
     "name": "Four Gates City",
@@ -1013,6 +1013,142 @@
         1,
         1
       ]
+    },
+    {
+      "id": "waterfall-mist-00",
+      "node": "FX_Waterfall_Mist_00",
+      "type": "mist-emitter",
+      "dimensions": [
+        40,
+        36,
+        28
+      ],
+      "color": [
+        0.72,
+        0.9,
+        1.0
+      ],
+      "intensity": 0.65,
+      "fallback": "locator-only"
+    },
+    {
+      "id": "waterfall-mist-01",
+      "node": "FX_Waterfall_Mist_01",
+      "type": "mist-emitter",
+      "dimensions": [
+        40,
+        36,
+        28
+      ],
+      "color": [
+        0.72,
+        0.9,
+        1.0
+      ],
+      "intensity": 0.65,
+      "fallback": "locator-only"
+    },
+    {
+      "id": "waterfall-mist-02",
+      "node": "FX_Waterfall_Mist_02",
+      "type": "mist-emitter",
+      "dimensions": [
+        40,
+        36,
+        28
+      ],
+      "color": [
+        0.72,
+        0.9,
+        1.0
+      ],
+      "intensity": 0.65,
+      "fallback": "locator-only"
+    },
+    {
+      "id": "waterfall-mist-03",
+      "node": "FX_Waterfall_Mist_03",
+      "type": "mist-emitter",
+      "dimensions": [
+        40,
+        36,
+        28
+      ],
+      "color": [
+        0.72,
+        0.9,
+        1.0
+      ],
+      "intensity": 0.65,
+      "fallback": "locator-only"
+    },
+    {
+      "id": "waterfall-mist-04",
+      "node": "FX_Waterfall_Mist_04",
+      "type": "mist-emitter",
+      "dimensions": [
+        40,
+        36,
+        28
+      ],
+      "color": [
+        0.72,
+        0.9,
+        1.0
+      ],
+      "intensity": 0.65,
+      "fallback": "locator-only"
+    },
+    {
+      "id": "waterfall-mist-05",
+      "node": "FX_Waterfall_Mist_05",
+      "type": "mist-emitter",
+      "dimensions": [
+        40,
+        36,
+        28
+      ],
+      "color": [
+        0.72,
+        0.9,
+        1.0
+      ],
+      "intensity": 0.65,
+      "fallback": "locator-only"
+    },
+    {
+      "id": "waterfall-mist-06",
+      "node": "FX_Waterfall_Mist_06",
+      "type": "mist-emitter",
+      "dimensions": [
+        40,
+        36,
+        28
+      ],
+      "color": [
+        0.72,
+        0.9,
+        1.0
+      ],
+      "intensity": 0.65,
+      "fallback": "locator-only"
+    },
+    {
+      "id": "waterfall-mist-07",
+      "node": "FX_Waterfall_Mist_07",
+      "type": "mist-emitter",
+      "dimensions": [
+        40,
+        36,
+        28
+      ],
+      "color": [
+        0.72,
+        0.9,
+        1.0
+      ],
+      "intensity": 0.65,
+      "fallback": "locator-only"
     }
   ],
   "collision": {
@@ -2323,8 +2459,12 @@
           "id": "LOD2",
           "glb": "four-gates-city-lod2.glb",
           "screenCoverage": 0.0,
-          "nodeCount": 557,
-          "animations": 0
+          "nodeCount": 558,
+          "animations": 0,
+          "meshCount": 23,
+          "materialCount": 16,
+          "resourcePruned": true,
+          "textureMaxResolution": 512
         }
       ],
       "fallback": "LOD1"
@@ -2337,10 +2477,9 @@
     "Southern imagery conflicts in scale; the canonical double-gate sequence is preserved."
   ],
   "knownLimitations": [
-    "Water, waterfalls and pulsing energy need client shader support for final appearance.",
     "Inline navmesh covers principal axes and plaza; district alley polygons remain to be baked from final collision geometry.",
     "District navmesh uses conservative convex coverage; final blockers should be rebaked after hand-authored building placement.",
-    "General district assets retain shared atlas projection; major gate towers, domes, bridge arches, and cliffs use authored modular UVs."
+    "Water, waterfall foam, and mist use glTF geometry and locators; animated turbulence, refraction, particles, and depth fade require client shaders."
   ],
   "sources": [
     {
@@ -2470,5 +2609,62 @@
     "bridgeArchMesh": "authored_bridge_arch",
     "cliffMesh": "authored_cliff_face",
     "replacedStableNodes": true
+  },
+  "terrain": {
+    "minimumUsefulElevation": -40.0,
+    "cityTerraceNode": "Terrain_City_Plateau",
+    "shorelineNode": "Terrain_Shoreline_Sculpt",
+    "terraceRadii": [
+      175,
+      285,
+      365,
+      400
+    ],
+    "shorelineOuterRadius": 454,
+    "waterLevel": -2.0
+  },
+  "waterSystem": {
+    "waterfallCount": 8,
+    "channelNodes": [
+      "Water_Channel_00",
+      "Water_Channel_01",
+      "Water_Channel_02",
+      "Water_Channel_03",
+      "Water_Channel_04",
+      "Water_Channel_05",
+      "Water_Channel_06",
+      "Water_Channel_07"
+    ],
+    "poolNodes": [
+      "Waterfall_Pool_00",
+      "Waterfall_Pool_01",
+      "Waterfall_Pool_02",
+      "Waterfall_Pool_03",
+      "Waterfall_Pool_04",
+      "Waterfall_Pool_05",
+      "Waterfall_Pool_06",
+      "Waterfall_Pool_07"
+    ],
+    "foamNodes": [
+      "Waterfall_Foam_00",
+      "Waterfall_Foam_01",
+      "Waterfall_Foam_02",
+      "Waterfall_Foam_03",
+      "Waterfall_Foam_04",
+      "Waterfall_Foam_05",
+      "Waterfall_Foam_06",
+      "Waterfall_Foam_07"
+    ],
+    "mistLocatorNodes": [
+      "FX_Waterfall_Mist_00",
+      "FX_Waterfall_Mist_01",
+      "FX_Waterfall_Mist_02",
+      "FX_Waterfall_Mist_03",
+      "FX_Waterfall_Mist_04",
+      "FX_Waterfall_Mist_05",
+      "FX_Waterfall_Mist_06",
+      "FX_Waterfall_Mist_07"
+    ],
+    "requiresCustomShaderForBestResult": true
   }
 }

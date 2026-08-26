@@ -1,5 +1,14 @@
 # Change log
 
+## 0.6.0 — 2026-08-26
+
+- Replaced the flat city plateau with authored concentric terrain terraces and a continuous irregular rocky shoreline transition.
+- Reoriented and deepened the existing stable cliff nodes into tangent-aligned shoreline buttresses.
+- Added eight radial water channels, eight plunge pools, eight foam surfaces, and eight loader-addressable mist emitter locators.
+- Added explicit terrain elevation, shoreline, water-system, shader-fallback, and effect metadata.
+- Rebuilt LOD2 with resource pruning and 512 px overview textures, reducing it from 9.08 MB to 2.33 MB while retaining overview landmarks.
+- Increased reusable unique mesh geometry from 2,682 to 4,310 triangles.
+
 ## 0.5.0 — 2026-08-26
 
 - Replaced stable gate tower and roof nodes with authored multi-ring shafts and ribbed dome meshes.
