@@ -1,3 +1,4 @@
+class_name EloriaAppState
 extends Node
 
 signal state_changed(path: StringName)
