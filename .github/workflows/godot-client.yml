@@ -6,7 +6,7 @@ on:
       - "godot-client/**"
       - ".github/workflows/godot-client.yml"
   push:
-    branches: [develop]
+    branches: [develop, feature/godot-client-migration]
     paths:
       - "godot-client/**"
 
