@@ -68,6 +68,12 @@ func screen_to_ground(screen_position: Vector2, ground_height: float) -> Variant
 		return null
 	return origin + direction * distance_to_plane
 
+func ray_origin(screen_position: Vector2) -> Vector3:
+	return camera.project_ray_origin(screen_position)
+
+func ray_direction(screen_position: Vector2) -> Vector3:
+	return camera.project_ray_normal(screen_position)
+
 func reset_pan() -> void:
 	pan_offset = Vector3.ZERO
 	_update_camera()

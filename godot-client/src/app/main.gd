@@ -25,6 +25,8 @@ extends Control
 @onready var viewport_container: SubViewportContainer = $GameView/ViewportContainer
 @onready var map_viewport: SubViewport = %MapViewport
 @onready var map_camera: Camera3D = %MapCamera
+@onready var full_map_viewport: SubViewport = %FullMapViewport
+@onready var full_map_camera: Camera3D = %FullMapCamera
 @onready var minimap: TextureRect = %Minimap
 @onready var full_map: Control = %FullMap
 @onready var map_image: TextureRect = %MapImage
@@ -33,6 +35,14 @@ extends Control
 @onready var map_label: Label = %MapLabel
 @onready var actor_label: Label = %ActorLabel
 @onready var chat_output: RichTextLabel = %ChatOutput
+@onready var chat_input: LineEdit = %ChatInput
+@onready var selected_target: Label = %SelectedTarget
+@onready var dialogue_panel: Control = %DialoguePanel
+@onready var dialogue_name: Label = %DialogueName
+@onready var dialogue_text: RichTextLabel = %DialogueText
+@onready var dialogue_options: VBoxContainer = %DialogueOptions
+@onready var login_background: TextureRect = %LoginBackground
+@onready var login_logo: TextureRect = %LoginLogo
 
 var actor_nodes: Dictionary = {}
 var models: Dictionary = {}
@@ -58,13 +68,16 @@ func _ready() -> void:
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
 	map_viewport.world_3d = main_viewport.world_3d
+	full_map_viewport.world_3d = main_viewport.world_3d
 	minimap.texture = map_viewport.get_texture()
-	map_image.texture = map_viewport.get_texture()
+	map_image.texture = full_map_viewport.get_texture()
 	full_map.hide()
 	game_view.hide()
 	creation_panel.hide()
 	create_gender.add_item("Luminous Female", 0)
 	create_gender.add_item("Luminous Male", 1)
+	_apply_eloria_art()
+	_apply_eloria_theme()
 
 func _on_connect_pressed() -> void:
 	connect_button.disabled = true
@@ -186,15 +199,42 @@ func _on_connection_state_changed(value: String) -> void:
 	login_button.disabled = value != "connected" or AppState.authenticated
 	new_character_button.disabled = value != "connected" or AppState.authenticated
 	if value == "disconnected" and game_view.visible:
+		_clear_world_presentation()
 		game_view.hide()
 		login_panel.show()
 		status_label.text = "Disconnected"
+
+func _clear_world_presentation() -> void:
+	for raw_node: Variant in actor_nodes.values():
+		var actor_node: Node = raw_node as Node
+		if is_instance_valid(actor_node):
+			actor_node.queue_free()
+	actor_nodes.clear()
+	world_loader.unload_world()
+	loaded_server_map = ""
+	full_map.hide()
+	dialogue_panel.hide()
+	chat_output.clear()
+	selected_target.text = "Target: none"
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not game_view.visible:
 		return
 	if event.is_action_pressed("toggle_map") or (event is InputEventKey and event.pressed and event.keycode == KEY_TAB):
 		full_map.visible = not full_map.visible
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("chat_focus"):
+		chat_input.grab_focus()
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("cancel"):
+		if dialogue_panel.visible:
+			AppState.close_dialogue()
+		elif full_map.visible:
+			full_map.hide()
+		else:
+			chat_input.release_focus()
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("toggle_sit"):
@@ -210,13 +250,22 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			var viewport_position: Vector2 = _viewport_position(event.global_position)
+			var picked_actor_id: int = _pick_actor(viewport_position)
+			if picked_actor_id >= 0:
+				AppState.select_actor(picked_actor_id)
+				var selected_dto: Dictionary = AppState.actors.get(picked_actor_id, {})
+				if int(selected_dto.get("kind", 0)) == 2:
+					var touch_error: Error = Network.touch_actor(picked_actor_id)
+					if touch_error != OK:
+						push_warning("TOUCH_PLAYER failed: " + error_string(touch_error))
+				get_viewport().set_input_as_handled()
+				return
 			var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
 			var ground_height: float = adapter.walking_height
 			if not local_actor.is_empty() and actor_nodes.has(AppState.local_actor_id):
 				var local_actor_node: Node3D = actor_nodes[AppState.local_actor_id] as Node3D
 				ground_height = local_actor_node.global_position.y
-			var viewport_position: Vector2 = viewport_container.get_global_transform().affine_inverse() * event.global_position
-			viewport_position *= Vector2(main_viewport.size) / viewport_container.size
 			var point: Variant = camera_rig.screen_to_ground(viewport_position, ground_height)
 			print_debug("world_input click=", event.global_position,
 				" viewport=", viewport_position, " intersection=", point)
@@ -245,6 +294,10 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_world()
 		&"chat":
 			_sync_chat()
+		&"selection":
+			_sync_selection()
+		&"npc_dialogue":
+			_sync_dialogue()
 
 func _load_server_map() -> void:
 	if AppState.current_map.is_empty() or loaded_server_map == AppState.current_map:
@@ -272,6 +325,7 @@ func _load_server_map() -> void:
 func _on_world_loaded(manifest: WorldManifest) -> void:
 	fallback_ground.hide()
 	map_label.text = "Map: " + manifest.data.get("asset", {}).get("name", manifest.asset_id())
+	_configure_full_map(manifest)
 	_sync_world()
 
 func _on_world_load_failed(errors: Array[String]) -> void:
@@ -311,11 +365,141 @@ func _sync_world() -> void:
 		health_bar.value = current_health
 		health_text.text = "Health: %d / %d" % [current_health, maximum_health]
 
+func _configure_full_map(manifest: WorldManifest) -> void:
+	var asset_value: Variant = manifest.data.get("asset", {})
+	if not asset_value is Dictionary:
+		return
+	var asset: Dictionary = asset_value as Dictionary
+	var bounds_value: Variant = asset.get("bounds", {})
+	if not bounds_value is Dictionary:
+		return
+	var bounds: Dictionary = bounds_value as Dictionary
+	var min_value: Variant = bounds.get("min", [])
+	var max_value: Variant = bounds.get("max", [])
+	if not min_value is Array or not max_value is Array:
+		return
+	var minimum: Array = min_value as Array
+	var maximum: Array = max_value as Array
+	if minimum.size() < 3 or maximum.size() < 3:
+		return
+	var center: Vector3 = Vector3(
+		(float(minimum[0]) + float(maximum[0])) * 0.5,
+		maxf(float(maximum[1]) + 100.0, 300.0),
+		(float(minimum[2]) + float(maximum[2])) * 0.5)
+	var extent: float = maxf(float(maximum[0]) - float(minimum[0]),
+		float(maximum[2]) - float(minimum[2]))
+	full_map_camera.global_position = center
+	full_map_camera.rotation_degrees = Vector3(-90, 0, 0)
+	full_map_camera.size = extent * 1.05
+	full_map_camera.far = maxf(2500.0, center.y + 500.0)
+
 func _sync_chat() -> void:
 	chat_output.clear()
 	for line in AppState.chat_lines.slice(maxi(0, AppState.chat_lines.size() - 100)):
 		chat_output.append_text(str(line.text) + "\n")
 	chat_output.scroll_to_line(maxi(0, chat_output.get_line_count() - 1))
+
+func _on_chat_submitted(text: String) -> void:
+	var message: String = text.strip_edges()
+	if message.is_empty():
+		chat_input.release_focus()
+		return
+	var error: Error = Network.send_chat(message)
+	if error == OK:
+		chat_input.clear()
+	else:
+		push_warning("RAW_TEXT failed: " + error_string(error))
+
+func _sync_selection() -> void:
+	var dto: Dictionary = AppState.actors.get(AppState.selected_actor_id, {})
+	selected_target.text = ("Target: none" if dto.is_empty()
+		else "Target: %s" % str(dto.get("name", "Actor %d" % AppState.selected_actor_id)))
+	for raw_id: Variant in actor_nodes.keys():
+		var id: int = int(raw_id)
+		var actor: ReplicatedActor3D = actor_nodes.get(id) as ReplicatedActor3D
+		if is_instance_valid(actor):
+			actor.set_selected(id == AppState.selected_actor_id)
+
+func _sync_dialogue() -> void:
+	var dialogue: Dictionary = AppState.npc_dialogue
+	dialogue_panel.visible = bool(dialogue.get("open", false))
+	if not dialogue_panel.visible:
+		return
+	dialogue_name.text = str(dialogue.get("name", "NPC"))
+	dialogue_text.text = str(dialogue.get("text", ""))
+	for child: Node in dialogue_options.get_children():
+		child.queue_free()
+	var raw_options: Variant = dialogue.get("options", [])
+	if raw_options is Array:
+		for raw_option: Variant in raw_options:
+			if not raw_option is Dictionary:
+				continue
+			var option: Dictionary = raw_option as Dictionary
+			var button: Button = Button.new()
+			button.text = str(option.get("label", "Continue"))
+			button.pressed.connect(_on_dialogue_option.bind(
+				int(option.get("actor_id", -1)), int(option.get("response_id", -1))))
+			dialogue_options.add_child(button)
+
+func _on_dialogue_option(actor_id: int, response_id: int) -> void:
+	if actor_id < 0 or response_id < 0:
+		return
+	var error: Error = Network.respond_to_npc(actor_id, response_id)
+	if error != OK:
+		push_warning("RESPOND_TO_NPC failed: " + error_string(error))
+
+func _viewport_position(global_position: Vector2) -> Vector2:
+	var local_position: Vector2 = viewport_container.get_global_transform().affine_inverse() * global_position
+	return local_position * Vector2(main_viewport.size) / viewport_container.size
+
+func _pick_actor(viewport_position: Vector2) -> int:
+	var origin: Vector3 = camera_rig.ray_origin(viewport_position)
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
+		origin, origin + camera_rig.ray_direction(viewport_position) * 2000.0, 2)
+	var hit: Dictionary = main_viewport.world_3d.direct_space_state.intersect_ray(query)
+	var collider_value: Variant = hit.get("collider")
+	if collider_value is ReplicatedActor3D:
+		return (collider_value as ReplicatedActor3D).actor_id
+	return -1
+
+func _apply_eloria_art() -> void:
+	login_background.texture = _external_texture("res://../eloria-assets/ui/branding/eloria_login_background.dds")
+	login_logo.texture = _external_texture("res://../eloria-assets/ui/branding/eloria_logo_master.dds")
+
+func _apply_eloria_theme() -> void:
+	var eloria_theme: Theme = Theme.new()
+	var panel: StyleBoxFlat = StyleBoxFlat.new()
+	panel.bg_color = Color(0.045, 0.075, 0.09, 0.92)
+	panel.border_color = Color(0.72, 0.53, 0.22, 0.95)
+	panel.set_border_width_all(2)
+	panel.corner_radius_top_left = 7
+	panel.corner_radius_top_right = 7
+	panel.corner_radius_bottom_left = 7
+	panel.corner_radius_bottom_right = 7
+	panel.set_content_margin_all(12.0)
+	eloria_theme.set_stylebox("panel", "PanelContainer", panel)
+	var button: StyleBoxFlat = panel.duplicate() as StyleBoxFlat
+	button.bg_color = Color(0.11, 0.18, 0.19, 0.96)
+	button.set_border_width_all(1)
+	eloria_theme.set_stylebox("normal", "Button", button)
+	var button_hover: StyleBoxFlat = button.duplicate() as StyleBoxFlat
+	button_hover.bg_color = Color(0.23, 0.31, 0.28, 0.98)
+	button_hover.border_color = Color(0.94, 0.72, 0.30, 1.0)
+	eloria_theme.set_stylebox("hover", "Button", button_hover)
+	eloria_theme.set_stylebox("pressed", "Button", button_hover)
+	var field: StyleBoxFlat = button.duplicate() as StyleBoxFlat
+	field.bg_color = Color(0.025, 0.045, 0.055, 0.98)
+	eloria_theme.set_stylebox("normal", "LineEdit", field)
+	eloria_theme.set_color("font_color", "Label", Color(0.91, 0.86, 0.70))
+	eloria_theme.set_color("font_color", "Button", Color(0.96, 0.88, 0.66))
+	theme = eloria_theme
+
+static func _external_texture(path: String) -> Texture2D:
+	var image: Image = Image.load_from_file(ProjectSettings.globalize_path(path))
+	if image.is_empty():
+		push_warning("UI texture load failed: " + path)
+		return null
+	return ImageTexture.create_from_image(image)
 
 func _model_for_actor(dto: Dictionary) -> String:
 	# Enhanced actors are player avatars. NPCs and creatures retain their server

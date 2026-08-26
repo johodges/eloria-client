@@ -31,6 +31,12 @@ are one-tile walk steps and 30–37 are the equivalent run steps. `SIT_DOWN(7)`
 carries one desired-state byte (`1` sit, `0` stand); the server broadcasts actor
 commands 13/14 after accepting the state change. The legacy default is Alt+S.
 
+Chat sends `RAW_TEXT(0)` as UTF-8 plus NUL. NPC activation sends
+`TOUCH_PLAYER(28)` with `actor_id:u32le`. Dialogue uses `SEND_NPC_INFO(33)`,
+`NPC_TEXT(30)`, and a repeated `NPC_OPTIONS_LIST(31)` entry layout of
+`text_size:u16le | NUL text | response_id:u16le | actor_id:u16le`; replies send
+`RESPOND_TO_NPC(29)` as `actor_id:u16le | response_id:u16le`.
+
 ## Open verification items
 
 Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; every inventory/trade/storage variant; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.

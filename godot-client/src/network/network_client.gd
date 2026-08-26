@@ -40,6 +40,15 @@ func move_to(tile: Vector2i, run := false) -> Error:
 func set_sitting(sitting: bool) -> Error:
 	return send_frame(EloriaProtocol.set_sitting(sitting))
 
+func send_chat(text: String) -> Error:
+	return send_frame(EloriaProtocol.chat(text))
+
+func touch_actor(actor_id: int) -> Error:
+	return send_frame(EloriaProtocol.touch_actor(actor_id))
+
+func respond_to_npc(actor_id: int, response_id: int) -> Error:
+	return send_frame(EloriaProtocol.npc_response(actor_id, response_id))
+
 func create_character(username: String, password: String, appearance: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)
 

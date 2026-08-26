@@ -16,6 +16,30 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	server_target = adapter.tile_center(int(dto.x), int(dto.y))
 	position = server_target
 	rotation.y = adapter.rotation_to_godot(int(dto.rotation))
+	collision_layer = 2
+	collision_mask = 0
+	var selection_shape: CollisionShape3D = CollisionShape3D.new()
+	selection_shape.name = "SelectionCollision"
+	var capsule_shape: CapsuleShape3D = CapsuleShape3D.new()
+	capsule_shape.radius = 0.45
+	capsule_shape.height = 1.9
+	selection_shape.shape = capsule_shape
+	selection_shape.position.y = 0.95
+	add_child(selection_shape)
+	var selection_ring: MeshInstance3D = MeshInstance3D.new()
+	selection_ring.name = "SelectionRing"
+	var ring: TorusMesh = TorusMesh.new()
+	ring.inner_radius = 0.48
+	ring.outer_radius = 0.58
+	var ring_material: StandardMaterial3D = StandardMaterial3D.new()
+	ring_material.albedo_color = Color(0.95, 0.76, 0.18, 0.9)
+	ring_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ring_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	ring.material = ring_material
+	selection_ring.mesh = ring
+	selection_ring.position.y = 0.05
+	selection_ring.visible = false
+	add_child(selection_ring)
 	resolver = AnimationResolver.new(animation_config)
 	var source_path := _external_path(str(model_config.get("scene", "")))
 	var errors := _load_native_scene(source_path)
@@ -80,6 +104,11 @@ func play_action(action: StringName) -> void:
 		return
 	current_action = action
 	animation_player.play(clip)
+
+func set_selected(value: bool) -> void:
+	var ring: Node3D = get_node_or_null("SelectionRing") as Node3D
+	if ring != null:
+		ring.visible = value
 
 func _physics_process(delta: float) -> void:
 	if _snap_pending:

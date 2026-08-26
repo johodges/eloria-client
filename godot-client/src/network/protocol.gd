@@ -96,6 +96,21 @@ static func move_to(x: int, y: int, run := false) -> PackedByteArray:
 static func set_sitting(sitting: bool) -> PackedByteArray:
 	return encode(ClientMessage.SIT_DOWN, PackedByteArray([1 if sitting else 0]))
 
+static func chat(text: String) -> PackedByteArray:
+	var payload: PackedByteArray = text.to_utf8_buffer()
+	payload.append(0)
+	return encode(ClientMessage.RAW_TEXT, payload)
+
+static func touch_actor(actor_id: int) -> PackedByteArray:
+	return encode(ClientMessage.TOUCH_PLAYER, PackedByteArray([
+		actor_id & 0xff, (actor_id >> 8) & 0xff,
+		(actor_id >> 16) & 0xff, (actor_id >> 24) & 0xff]))
+
+static func npc_response(actor_id: int, response_id: int) -> PackedByteArray:
+	return encode(ClientMessage.RESPOND_TO_NPC, PackedByteArray([
+		actor_id & 0xff, (actor_id >> 8) & 0xff,
+		response_id & 0xff, (response_id >> 8) & 0xff]))
+
 static func actor_command_step(command: int) -> Vector2i:
 	# Server movement frames are the authoritative one-tile updates used by the
 	# legacy client. Walk and run use the same tile delta; timing differs.
@@ -147,10 +162,39 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				return {"type": "invalid", "error": "chat_length"}
 			return {"type": "chat", "channel": int(payload[0]),
 				"text": nul_string(payload.slice(1))}
+		ServerMessage.SEND_NPC_INFO:
+			if payload.size() < 20:
+				return {"type": "invalid", "error": "npc_info_length"}
+			return {"type": "npc_info", "name": nul_string(payload.slice(0, 20)),
+				"portrait": int(payload[20]) if payload.size() > 20 else 0}
+		ServerMessage.NPC_TEXT:
+			return {"type": "npc_text", "text": nul_string(payload)}
+		ServerMessage.NPC_OPTIONS_LIST:
+			return decode_npc_options(payload)
+		ServerMessage.CLOSE_NPC_MENU:
+			return {"type": "npc_close"}
 		ServerMessage.PING_REQUEST:
 			return {"type": "ping_request"}
 		_:
 			return {"type": "unknown", "command": command, "payload": payload}
+
+static func decode_npc_options(payload: PackedByteArray) -> Dictionary:
+	var options: Array[Dictionary] = []
+	var offset: int = 0
+	while offset < payload.size():
+		if offset + 2 > payload.size():
+			return {"type": "invalid", "error": "npc_option_size"}
+		var text_size: int = u16(payload, offset)
+		offset += 2
+		if text_size < 1 or offset + text_size + 4 > payload.size():
+			return {"type": "invalid", "error": "npc_option_length"}
+		var label: String = nul_string(payload.slice(offset, offset + text_size))
+		offset += text_size
+		var response_id: int = u16(payload, offset)
+		var actor_id: int = u16(payload, offset + 2)
+		offset += 4
+		options.append({"label": label, "response_id": response_id, "actor_id": actor_id})
+	return {"type": "npc_options", "options": options}
 
 static func decode_actor(payload: PackedByteArray, enhanced: bool) -> Dictionary:
 	var minimum := 31 if enhanced else 18

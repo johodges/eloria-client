@@ -33,5 +33,7 @@ World input must be suppressed when a Control consumes the pointer event. Debug 
 | Mouse wheel | Zoom with configured limits |
 | Tab | Toggle full map using the minimap render |
 | Alt+S | Send the authoritative desired sit/stand state |
+| T / Enter | Focus chat; Enter submits RAW_TEXT |
+| Click NPC | Select actor and send TOUCH_PLAYER |
 
 All world gestures are handled only after Control nodes decline the event, preventing HUD click-through.

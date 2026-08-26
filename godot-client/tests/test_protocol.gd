@@ -10,6 +10,12 @@ func _init() -> void:
 		PackedByteArray([7, 2, 0, 1]))
 	_expect_bytes("stand fixture", EloriaProtocol.set_sitting(false),
 		PackedByteArray([7, 2, 0, 0]))
+	_expect_bytes("chat fixture", EloriaProtocol.chat("Hello"),
+		PackedByteArray([0, 7, 0, 72, 101, 108, 108, 111, 0]))
+	_expect_bytes("touch actor fixture", EloriaProtocol.touch_actor(0x12345678),
+		PackedByteArray([28, 5, 0, 0x78, 0x56, 0x34, 0x12]))
+	_expect_bytes("npc response fixture", EloriaProtocol.npc_response(0x1234, 0x5678),
+		PackedByteArray([29, 5, 0, 0x34, 0x12, 0x78, 0x56]))
 	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
 	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
 	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")
@@ -51,6 +57,13 @@ func _init() -> void:
 	_expect(EloriaProtocol.decode_server(3, PackedByteArray()).type == "invalid", "short you are")
 	var chat := EloriaProtocol.decode_server(0, PackedByteArray([3, 72, 105, 0]))
 	_expect(chat.type == "chat" and chat.channel == 3 and chat.text == "Hi", "chat")
+	var option_payload: PackedByteArray = PackedByteArray([4, 0, 66, 121, 101, 0,
+		0x34, 0x12, 0x78, 0x56])
+	var npc_options: Dictionary = EloriaProtocol.decode_server(31, option_payload)
+	_expect(npc_options.type == "npc_options" and npc_options.options.size() == 1
+		and npc_options.options[0].label == "Bye"
+		and npc_options.options[0].response_id == 0x1234
+		and npc_options.options[0].actor_id == 0x5678, "npc options")
 	var commands := EloriaProtocol.decode_server(2,
 		PackedByteArray([0x34, 0x12, 20, 0x78, 0x56, 7]))
 	_expect(commands.commands.size() == 2 and commands.commands[1].actor_id == 0x5678,
