@@ -201,14 +201,15 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			return
 		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-			var local_actor := AppState.actors.get(AppState.local_actor_id, {})
-			var ground_height := adapter.walking_height
+			var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
+			var ground_height: float = adapter.walking_height
 			if not local_actor.is_empty() and actor_nodes.has(AppState.local_actor_id):
-				ground_height = actor_nodes[AppState.local_actor_id].global_position.y
-			var point = camera_rig.screen_to_ground(event.position, ground_height)
+				var local_actor_node: Node3D = actor_nodes[AppState.local_actor_id] as Node3D
+				ground_height = local_actor_node.global_position.y
+			var point: Variant = camera_rig.screen_to_ground(event.position, ground_height)
 			if point is Vector3:
-				var tile := adapter.godot_to_server(point)
-				var error := Network.move_to(tile, event.shift_pressed)
+				var tile: Vector2i = adapter.godot_to_server(point as Vector3)
+				var error: Error = Network.move_to(tile, event.shift_pressed)
 				if error == OK:
 					camera_rig.pan_offset = Vector3.ZERO
 				else:
