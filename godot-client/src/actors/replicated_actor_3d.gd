@@ -1,0 +1,87 @@
+class_name ReplicatedActor3D
+extends CharacterBody3D
+
+@export var interpolation_seconds := 0.12
+
+var actor_id := -1
+var server_target := Vector3.ZERO
+var resolver: AnimationResolver
+var animation_player: AnimationPlayer
+var current_action: StringName = &"idle"
+var _snap_pending := true
+
+func configure(dto: Dictionary, adapter: CoordinateAdapter,
+		model_config: Dictionary, animation_config: Dictionary) -> Array[String]:
+	actor_id = int(dto.actor_id)
+	server_target = adapter.tile_center(int(dto.x), int(dto.y))
+	position = server_target
+	rotation.y = adapter.rotation_to_godot(int(dto.rotation))
+	resolver = AnimationResolver.new(animation_config)
+	var errors := _load_native_glb(str(model_config.get("glb", "")))
+	if errors.is_empty():
+		_apply_import_adapter(model_config.get("import", {}))
+		_find_animation_player()
+		if animation_player == null:
+			errors.append("AnimationPlayer missing")
+		else:
+			errors.append_array(resolver.validate(animation_player.get_animation_list()))
+			play_action(&"idle")
+	return errors
+
+func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
+	server_target = adapter.tile_center(int(dto.x), int(dto.y))
+	rotation.y = adapter.rotation_to_godot(int(dto.rotation))
+	if teleport or global_position.distance_to(server_target) > 8.0:
+		global_position = server_target
+		_snap_pending = false
+	if dto.has("command"):
+		play_action(resolver.action_for_command(int(dto.command)))
+
+func play_action(action: StringName) -> void:
+	if animation_player == null or resolver == null:
+		return
+	var clip := resolver.clip_for_action(action)
+	if clip.is_empty() or not animation_player.has_animation(clip):
+		return
+	if current_action == action and animation_player.is_playing():
+		return
+	current_action = action
+	animation_player.play(clip)
+
+func _physics_process(delta: float) -> void:
+	if _snap_pending:
+		global_position = server_target
+		_snap_pending = false
+		return
+	var weight := clampf(delta / maxf(interpolation_seconds, 0.001), 0.0, 1.0)
+	global_position = global_position.lerp(server_target, weight)
+
+func _load_native_glb(path: String) -> Array[String]:
+	if path.is_empty():
+		return ["model GLB path missing"]
+	var document := GLTFDocument.new()
+	var state := GLTFState.new()
+	var error := document.append_from_file(path, state)
+	if error != OK:
+		return ["model GLB import failed: " + error_string(error), path]
+	var model := document.generate_scene(state)
+	if model == null:
+		return ["model GLB scene generation failed"]
+	model.name = "NativeModel"
+	add_child(model)
+	return []
+
+func _apply_import_adapter(config: Dictionary) -> void:
+	var model := get_node_or_null("NativeModel") as Node3D
+	if model == null:
+		return
+	model.scale = Vector3.ONE * float(config.get("scale", 1.0))
+	model.rotation_degrees = Vector3(
+		float(config.get("rotationDegreesX", 0.0)),
+		float(config.get("rotationDegreesY", 0.0)),
+		float(config.get("rotationDegreesZ", 0.0)))
+
+func _find_animation_player() -> void:
+	for node in find_children("*", "AnimationPlayer", true, false):
+		animation_player = node as AnimationPlayer
+		break
