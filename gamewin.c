@@ -56,6 +56,7 @@
 #include "trade.h"
 #include "url.h"
 #include "weather.h"
+#include "world_package.h"
 
 // exported
 int HUD_MARGIN_X = 64;
@@ -1565,13 +1566,14 @@ static int display_game_handler (window_info *win)
 #endif
 	{
 		glNormal3f (0.0f,0.0f,1.0f);
-		if (any_reflection) {
+		if (any_reflection && !world_package_active()) {
 			blend_reflection_fog();
 			draw_lake_tiles ();
 		}
 
 		setup_cloud_texturing();
-		draw_tile_map();
+		if (!world_package_active())
+			draw_tile_map();
 		CHECK_GL_ERRORS ();
 		display_2d_objects();
 		CHECK_GL_ERRORS();
