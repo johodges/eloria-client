@@ -11,7 +11,8 @@ import xml.etree.ElementTree as ET
 import zlib
 import json
 
-from generate_characters import BONES, VERSION, _binary_header, _binary_string, write_cal
+from generate_characters import (BONES, VERSION, _binary_header, _binary_string, write_cal,
+                                 HAIR, EYES, CLOTH, PANTS, BOOTS, CULTURES)
 
 
 SOURCE = Path(__file__).resolve().parents[1] / "source/player_models"
@@ -31,7 +32,9 @@ ATLAS_REGIONS = {
 
 def read_emesh(path):
     data=path.read_bytes()
-    if data[:8] != b"EMSH\x01\x00\x00\x00": raise ValueError(f"invalid authored mesh: {path}")
+    if data[:8] not in (b"EMSH\x01\x00\x00\x00",b"EMSH\x02\x00\x00\x00"):
+        raise ValueError(f"invalid authored mesh: {path}")
+    weighted=data[4]==2
     raw_size,compressed_size=struct.unpack_from("<II",data,8)
     raw=zlib.decompress(data[16:16+compressed_size])
     if len(raw)!=raw_size: raise ValueError(f"authored mesh size mismatch: {path}")
@@ -39,8 +42,15 @@ def read_emesh(path):
     positions=[struct.unpack_from("<3f",raw,offset+i*12) for i in range(vertices)]; offset+=vertices*12
     normals=[struct.unpack_from("<3f",raw,offset+i*12) for i in range(vertices)]; offset+=vertices*12
     uvs=[struct.unpack_from("<2f",raw,offset+i*8) for i in range(vertices)]; offset+=vertices*8
+    weights=None
+    if weighted:
+        weights=[]
+        for i in range(vertices):
+            values=struct.unpack_from("<4H4f",raw,offset+i*24)
+            weights.append([(bone,weight) for bone,weight in zip(values[:4],values[4:]) if weight>1e-6])
+        offset+=vertices*24
     triangles=[struct.unpack_from("<3I",raw,offset+i*12) for i in range(faces)]
-    return positions,normals,uvs,triangles
+    return positions,normals,uvs,triangles,weights
 
 
 def blend(a,b,t):
@@ -134,7 +144,10 @@ def section_for_triangle(points):
 
 def atlas_uv(role,uv):
     x,y,w,h=ATLAS_REGIONS[role]
-    return ((x+uv[0]*w)/128.,(y+uv[1]*h)/128.)
+    # Compositor rectangles use image coordinates (origin at top-left), while
+    # Cal3D/OpenGL texture V grows from the bottom.  glTF UVs also address the
+    # source image from its top edge, so convert both conventions here.
+    return ((x+uv[0]*w)/128.,(128.-y-uv[1]*h)/128.)
 
 
 def texture_role(section, points):
@@ -158,14 +171,14 @@ def compatible_weights(left, right):
     return any(a & group and b & group for group in groups)
 
 
-def compact_section(positions,normals,uvs,faces,section):
+def compact_section(positions,normals,uvs,faces,section,source_weights=None):
     vertices=[]; compact_faces=[]; remap={}
     for face in faces:
         role=texture_role(section,[positions[index] for index in face]); mapped=[]
         for index in face:
             key=(index,role)
             if key not in remap:
-                weights=influences(positions[index]); remap[key]=len(vertices)
+                weights=source_weights[index] if source_weights is not None else influences(positions[index]); remap[key]=len(vertices)
                 vertices.append((positions[index],normals[index],atlas_uv(role,uvs[index]),weights))
             mapped.append(remap[key])
         compact_faces.append(tuple(mapped))
@@ -338,6 +351,35 @@ def write_dds(source,path,target_size=None):
     path.parent.mkdir(parents=True,exist_ok=True); path.write_bytes(b"DDS "+struct.pack("<31I",*header)+body)
 
 
+def recolor(source,target,size):
+    source_width,source_height,rgba=source; width,height=size; out=bytearray(width*height*4)
+    for y in range(height):
+      sy=min(source_height-1,int((y+.5)*source_height/height))
+      for x in range(width):
+        sx=min(source_width-1,int((x+.5)*source_width/width)); source_offset=(sy*source_width+sx)*4
+        offset=(y*width+x)*4; red,green,blue,alpha=rgba[source_offset:source_offset+4]
+        light=(red*54+green*183+blue*19)//256
+        for channel,value in enumerate(target):
+            out[offset+channel]=max(0,min(255,value+(light-128)*3//4))
+        out[offset+3]=alpha
+    return width,height,bytes(out)
+
+
+def write_luminous_variants(root,name,source):
+    directory=root/"actors/playable"
+    skins=(*CULTURES["luminous"],CULTURES["luminous"][1],(55,79,105),(222,224,216))
+    for index,color in enumerate(skins):
+        write_dds(recolor(source,color,(64,64)),directory/f"{name}_skin_{index}_hands.dds")
+        write_dds(recolor(source,color,(128,128)),directory/f"{name}_skin_{index}_head.dds")
+    for index,color in enumerate(HAIR): write_dds(recolor(source,color,(136,192)),directory/f"{name}_hair_{index}.dds")
+    for index,color in enumerate(EYES): write_dds(recolor(source,color,(24,24)),directory/f"{name}_eyes_{index}.dds")
+    for index,color in enumerate(CLOTH):
+        write_dds(recolor(source,color,(160,160)),directory/f"{name}_shirt_{index}_arms.dds")
+        write_dds(recolor(source,color,(196,216)),directory/f"{name}_shirt_{index}_torso.dds")
+    for index,color in enumerate(PANTS): write_dds(recolor(source,color,(160,160)),directory/f"{name}_pants_{index}.dds")
+    for index,color in enumerate(BOOTS): write_dds(recolor(source,color,(156,160)),directory/f"{name}_boots_{index}.dds")
+
+
 def patch_actor_defs(path,name,actor_id,texture,preserve_customization=False):
     tree=ET.parse(path); root=tree.getroot(); actor=root.find(f"actor[@id='{actor_id}']")
     if actor is None: raise ValueError(f"missing player actor {actor_id}")
@@ -357,6 +399,23 @@ def patch_actor_defs(path,name,actor_id,texture,preserve_customization=False):
             if len(part):
                 for child in part: child.text=f"actors/playable/{name}_{child.tag}.dds"
             else: part.text=f"actors/playable/{name}_{tag}.dds"
+    if name.startswith("luminous_"):
+        for part in actor.findall("shirt"):
+            ident=part.attrib["id"]
+            part.find("arms").text=f"actors/playable/{name}_shirt_{ident}_arms.dds"
+            part.find("torso").text=f"actors/playable/{name}_shirt_{ident}_torso.dds"
+        for part in actor.findall("hskin"):
+            ident=part.attrib["id"]
+            part.find("hands").text=f"actors/playable/{name}_skin_{ident}_hands.dds"
+            part.find("head").text=f"actors/playable/{name}_skin_{ident}_head.dds"
+        for part in actor.findall("hair"):
+            part.text=f"actors/playable/{name}_hair_{part.attrib['id']}.dds"
+        for part in actor.findall("eyes"):
+            part.text=f"actors/playable/{name}_eyes_{part.attrib['id']}.dds"
+        for part in actor.findall("legs"):
+            part.find("skin").text=f"actors/playable/{name}_pants_{part.attrib['id']}.dds"
+        for part in actor.findall("boots"):
+            part.find("skin").text=f"actors/playable/{name}_boots_{part.attrib['id']}.dds"
     frames=actor.find("frames"); mapping={
       "CAL_idle":"idle","CAL_idle2":"idle2","CAL_walk":"walk","CAL_run":"run",
       "CAL_combat_idle":"combat_idle","CAL_attack_up_1":"attack","CAL_attack_down_1":"attack",
@@ -380,6 +439,81 @@ def read_universal_animations(path):
     return json.loads(raw)["clips"]
 
 
+def write_luminous_glb(path, name, positions, normals, uvs, triangles, weights, bones, clips):
+    """Write the checked-in Quaternius data as the actual animated runtime asset."""
+    blob=bytearray(); views=[]; accessors=[]
+    def append(data,target=None):
+        while len(blob)%4: blob.append(0)
+        offset=len(blob); blob.extend(data); view={"buffer":0,"byteOffset":offset,"byteLength":len(data)}
+        if target: view["target"]=target
+        views.append(view); return len(views)-1
+    def acc(data,component,kind,count,target=None,minimum=None,maximum=None):
+        view=append(data,target); value={"bufferView":view,"componentType":component,"count":count,"type":kind}
+        if minimum is not None: value["min"]=minimum
+        if maximum is not None: value["max"]=maximum
+        accessors.append(value); return len(accessors)-1
+    flat_pos=[v for p in positions for v in p]; flat_norm=[v for n in normals for v in n]; flat_uv=[v for uv in uvs for v in uv]
+    pos=acc(struct.pack(f"<{len(flat_pos)}f",*flat_pos),5126,"VEC3",len(positions),34962,
+            [min(p[i] for p in positions) for i in range(3)],[max(p[i] for p in positions) for i in range(3)])
+    norm=acc(struct.pack(f"<{len(flat_norm)}f",*flat_norm),5126,"VEC3",len(normals),34962)
+    tex=acc(struct.pack(f"<{len(flat_uv)}f",*flat_uv),5126,"VEC2",len(uvs),34962)
+    joint_values=[]; weight_values=[]
+    for influences in weights:
+        padded=influences+[(0,0.)]*(4-len(influences)); joint_values.extend(int(v[0]) for v in padded); weight_values.extend(float(v[1]) for v in padded)
+    joints=acc(struct.pack(f"<{len(joint_values)}H",*joint_values),5123,"VEC4",len(positions),34962)
+    weight_acc=acc(struct.pack(f"<{len(weight_values)}f",*weight_values),5126,"VEC4",len(positions),34962)
+    indices=[v for face in triangles for v in face]
+    index_acc=acc(struct.pack(f"<{len(indices)}I",*indices),5125,"SCALAR",len(indices),34963)
+    absolute=[]
+    for _,parent,translation in bones:
+        base=(0.,0.,0.) if parent<0 else absolute[parent]; absolute.append(tuple(base[i]+translation[i] for i in range(3)))
+    matrices=[]
+    for x,y,z in absolute: matrices.extend((1.,0.,0.,0.,0.,1.,0.,0.,0.,0.,1.,0.,-x,-y,-z,1.))
+    inverse=acc(struct.pack(f"<{len(matrices)}f",*matrices),5126,"MAT4",len(bones))
+    nodes=[]
+    for index,(bone,parent,translation) in enumerate(bones):
+        node={"name":bone,"translation":list(translation)}; children=[i for i,(_,p,_) in enumerate(bones) if p==index]
+        if children: node["children"]=children
+        nodes.append(node)
+    mesh_node=len(nodes); nodes.append({"name":name,"mesh":0,"skin":0})
+    animations=[]
+    for clip_name,clip in sorted(clips.items()):
+        samplers=[]; channels=[]
+        for bone,keys in sorted((int(k),v) for k,v in clip["tracks"].items()):
+            if not keys: continue
+            times=[float(k[0]) for k in keys]; rotations=[v for k in keys for v in k[1]]
+            tin=acc(struct.pack(f"<{len(times)}f",*times),5126,"SCALAR",len(times),minimum=[min(times)],maximum=[max(times)])
+            tout=acc(struct.pack(f"<{len(rotations)}f",*rotations),5126,"VEC4",len(times))
+            samplers.append({"input":tin,"output":tout,"interpolation":"LINEAR"})
+            channels.append({"sampler":len(samplers)-1,"target":{"node":bone,"path":"rotation"}})
+        animations.append({"name":clip_name,"samplers":samplers,"channels":channels,"extras":{"loop":clip_name in ("idle","idle2","walk","run","combat_idle","sit")}})
+    document={"asset":{"version":"2.0","generator":"Eloria Luminous GLB packager"},"scene":0,
+      "scenes":[{"nodes":[0,mesh_node]}],"nodes":nodes,
+      "meshes":[{"name":name,"primitives":[{"attributes":{"POSITION":pos,"NORMAL":norm,"TEXCOORD_0":tex,"JOINTS_0":joints,"WEIGHTS_0":weight_acc},"indices":index_acc,"material":0}]}],
+      "skins":[{"name":"LuminousRig","inverseBindMatrices":inverse,"skeleton":0,"joints":list(range(len(bones)))}],
+      "materials":[{"name":"EloriaActorAtlas","pbrMetallicRoughness":{"metallicFactor":0.,"roughnessFactor":.85}}],
+      "animations":animations,
+      "bufferViews":views,"accessors":accessors,"buffers":[{"byteLength":len(blob)}]}
+    encoded=json.dumps(document,separators=(",",":"),ensure_ascii=True).encode(); encoded+=b" "*((-len(encoded))%4)
+    while len(blob)%4: blob.append(0)
+    total=12+8+len(encoded)+8+len(blob)
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_bytes(b"glTF"+struct.pack("<II",2,total)+struct.pack("<II",len(encoded),0x4e4f534a)+encoded+struct.pack("<II",len(blob),0x004e4942)+blob)
+
+
+def luminous_runtime_mesh(positions, normals, uvs, triangles, source_weights):
+    """Split the source surface where Eloria actor-atlas roles change."""
+    split={section:[] for section in SECTION_NAMES}
+    for face in triangles: split[section_for_triangle([positions[i] for i in face])].append(face)
+    out_vertices=[]; out_faces=[]
+    for section in SECTION_NAMES:
+        vertices,faces=compact_section(positions,normals,uvs,split[section],section,source_weights)
+        base=len(out_vertices); out_vertices.extend(vertices)
+        out_faces.extend(tuple(base+i for i in face) for face in faces)
+    return ([v[0] for v in out_vertices],[v[1] for v in out_vertices],
+            [v[2] for v in out_vertices],out_faces,[v[3] for v in out_vertices])
+
+
 def imported_animation(path,bones,clip):
     tracks={int(bone):keys for bone,keys in clip["tracks"].items()}
     root=ET.Element("ANIMATION",DURATION=str(clip["duration"]),NUMTRACKS=str(len(tracks)))
@@ -396,7 +530,11 @@ def imported_animation(path,bones,clip):
 
 
 def generate_model(root,name,actor_id):
-    positions,normals,uvs,triangles=read_emesh(SOURCE/f"{name}.emesh")
+    positions,normals,uvs,triangles,source_weights=read_emesh(SOURCE/f"{name}.emesh")
+    # Version imported Luminous runtime paths.  Besides making the provenance
+    # explicit, this prevents an existing client/model cache from satisfying a
+    # new actor definition with the legacy procedural meshes or old DDS files.
+    runtime_name=f"{name}_quaternius_v2" if name.startswith("luminous_") else name
     source_vertices,source_faces=len(positions),len(triangles)
     positions,normals,uvs,triangles=clean_mesh(positions,normals,uvs,triangles)
     if len(triangles) < source_faces * .999:
@@ -404,34 +542,38 @@ def generate_model(root,name,actor_id):
                          f"{source_faces}->{len(triangles)}")
     split={section:[] for section in SECTION_NAMES}
     for face in triangles: split[section_for_triangle([positions[i] for i in face])].append(face)
-    base=root/"actors/playable"
-    all_vertices=[(p,n,u,influences(p)) for p,n,u in zip(positions,normals,uvs)]
-    write_mesh(base/f"{name}_body.xmf",all_vertices,triangles)
+    base=root/"actors/playable"; output_name=runtime_name
+    all_vertices=[(p,n,u,source_weights[index] if source_weights is not None else influences(p))
+                  for index,(p,n,u) in enumerate(zip(positions,normals,uvs))]
+    write_mesh(base/f"{output_name}_body.xmf",all_vertices,triangles)
     for section in SECTION_NAMES:
-        vertices,faces=compact_section(positions,normals,uvs,split[section],section)
-        write_mesh(base/f"{name}_{section}.xmf",vertices,faces)
+        vertices,faces=compact_section(positions,normals,uvs,split[section],section,source_weights)
+        write_mesh(base/f"{output_name}_{section}.xmf",vertices,faces)
     # The authored source supplies one intentional head per sex; retain the
     # five protocol slots without fabricating distorted alternatives.
     for variant in range(5):
-        shutil.copy2(base/f"{name}_head.xmf",base/f"{name}_head_{variant}.xmf")
-        shutil.copy2(base/f"{name}_head.cmf",base/f"{name}_head_{variant}.cmf")
-    bones=fitted_bones(name); skeleton(base/f"{name}.xsf",bones)
-    anim_dir=root/f"animations/playable/{name}"
+        shutil.copy2(base/f"{output_name}_head.xmf",base/f"{output_name}_head_{variant}.xmf")
+        shutil.copy2(base/f"{output_name}_head.cmf",base/f"{output_name}_head_{variant}.cmf")
+    bones=fitted_bones(name); skeleton(base/f"{output_name}.xsf",bones)
+    anim_dir=root/f"animations/playable/{output_name}"
     if name.startswith("luminous_"):
         clips=read_universal_animations(SOURCE/"luminous_universal.eanim")
         for anim,clip in clips.items(): imported_animation(anim_dir/f"{anim}.xaf",bones,clip)
+        # Runtime consumes this checked-in, self-contained GLB directly.  It is
+        # authored from the CC0 Quaternius base-character and Universal
+        # animation GLBs; normal client/data builds never need those archives.
+        shutil.copy2(SOURCE/"runtime"/f"{output_name}.glb",base/f"{output_name}.glb")
     else:
         for anim,(duration,poses) in ANIMATIONS.items(): animation(anim_dir/f"{anim}.xaf",bones,duration,poses)
-    texture=f"actors/playable/{name}.dds"
+    texture=f"actors/playable/{output_name}.dds"
     # Retain the full atlas as a QA/reference artifact; runtime enhanced actors
     # consume the compositor-sized role textures below.
-    preserve_customization=name.startswith("luminous_")
-    if not preserve_customization:
-        source_texture=png_rgba(SOURCE/f"{name}.png")
-        write_dds(source_texture,root/texture)
-        for role,(_,_,width,height) in ATLAS_REGIONS.items():
-            write_dds(source_texture,root/f"actors/playable/{name}_{role}.dds",(width*4,height*4))
-    patch_actor_defs(root/"actor_defs/actor_defs.xml",name,actor_id,texture,preserve_customization)
+    source_texture=png_rgba(SOURCE/f"{name}.png")
+    write_dds(source_texture,root/texture)
+    for role,(_,_,width,height) in ATLAS_REGIONS.items():
+        write_dds(source_texture,root/f"actors/playable/{output_name}_{role}.dds",(width*4,height*4))
+    if name.startswith("luminous_"): write_luminous_variants(root,output_name,source_texture)
+    patch_actor_defs(root/"actor_defs/actor_defs.xml",output_name,actor_id,texture,False)
     print(f"{name}: {source_vertices}->{len(positions)} vertices, {source_faces}->{len(triangles)} triangles, {sum(len(v) for v in split.values())} assigned")
 
 

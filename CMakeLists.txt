@@ -190,6 +190,7 @@ set(SOURCES ${SOURCES}
 	${SD}trade_log.cpp ${SD}user_menus.cpp ${SD}xor_cipher.cpp ${SD}engine/hardwarebuffer.cpp ${SD}engine/logging.cpp
 	${SD}world_package.cpp
 	${SD}world_glb_renderer.cpp
+	${SD}actor_glb_runtime.cpp
 	${SD}exceptions/extendedexception.cpp ${SD}eye_candy/effect_bag.cpp ${SD}eye_candy/effect_breath.cpp
 	${SD}eye_candy/effect_campfire.cpp ${SD}eye_candy/effect_candle.cpp ${SD}eye_candy/effect_cloud.cpp
 	${SD}eye_candy/effect_firefly.cpp ${SD}eye_candy/effect_fountain.cpp ${SD}eye_candy/effect_glow.cpp

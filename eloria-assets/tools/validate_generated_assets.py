@@ -9,6 +9,7 @@ import json
 import math
 from pathlib import Path
 import struct
+import zlib
 import xml.etree.ElementTree as ET
 
 
@@ -34,6 +35,35 @@ def cal_xml(path: Path) -> ET.Element:
     if not lines or not lines[0].startswith("<HEADER MAGIC="):
         raise ValueError(f"missing Cal3D XML header: {path}")
     return ET.fromstring("\n".join(lines[1:]))
+
+
+def validate_rgba_png(path: Path) -> None:
+    """Reject a PNG whose header survived but compressed stream was truncated."""
+    data=path.read_bytes()
+    if data[:8]!=b"\x89PNG\r\n\x1a\n":
+        raise ValueError(f"invalid PNG signature: {path}")
+    offset=8; payload=bytearray(); width=height=None; complete=False
+    while offset+12<=len(data):
+        size=struct.unpack_from(">I",data,offset)[0]
+        end=offset+12+size
+        if end>len(data):
+            raise ValueError(f"truncated PNG chunk: {path}")
+        kind=data[offset+4:offset+8]; chunk=data[offset+8:offset+8+size]
+        if kind==b"IHDR":
+            width,height,depth,color,_,_,_=struct.unpack(">IIBBBBB",chunk)
+            if depth!=8 or color!=6:
+                raise ValueError(f"PNG must be 8-bit RGBA: {path}")
+        elif kind==b"IDAT": payload.extend(chunk)
+        elif kind==b"IEND": complete=True; break
+        offset=end
+    if not complete or width is None or height is None:
+        raise ValueError(f"PNG is missing a complete IEND stream: {path}")
+    try:
+        raw=zlib.decompress(payload)
+    except zlib.error as error:
+        raise ValueError(f"PNG has an incomplete compressed stream: {path}") from error
+    if len(raw)!=(width*4+1)*height:
+        raise ValueError(f"PNG scanline payload has the wrong size: {path}")
 
 
 def caf_track_quaternions(path: Path) -> dict[int, list[tuple[float,float,float,float]]]:
@@ -1001,6 +1031,14 @@ def validate_playable_characters(root: Path) -> None:
                     if any(part.findtext(role)!=relative for role,relative in expected_textures.items()
                            if role in ("hands","head")):
                         raise ValueError(f"authored player skin compositor mapping changed: {name}")
+            else:
+                variant_nodes=(actor.findall("shirt")+actor.findall("hskin")+actor.findall("hair")+
+                               actor.findall("eyes")+actor.findall("legs")+actor.findall("boots"))
+                for part in variant_nodes:
+                    values=[part.text] if part.text and part.text.strip() else [child.text for child in part]
+                    for relative in values:
+                        if relative and relative.startswith("actors/playable/") and not (root/relative).is_file():
+                            raise ValueError(f"luminous customization texture is missing: {relative}")
     if len(body_digests) != len(expected):
         raise ValueError("playable races or genders share duplicate body silhouettes")
     if len(skeleton_digests) != len(expected):
@@ -1019,9 +1057,18 @@ def validate_playable_characters(root: Path) -> None:
         minimum=(6000,11000) if name.startswith("luminous_") else (20000,30000)
         if record["vertices"]<minimum[0] or record["triangles"]<minimum[1]:
             raise ValueError(f"cleaned authored source fell below fidelity budget: {name}")
-        texture_required=not name.startswith("luminous_")
-        if not (source/f"{name}.emesh").is_file() or (texture_required and not (source/f"{name}.png").is_file()):
+        if not (source/f"{name}.emesh").is_file() or not (source/f"{name}.png").is_file():
             raise ValueError(f"authored player source is missing: {name}")
+        validate_rgba_png(source/f"{name}.png")
+    animation_source=(source/"luminous_universal.eanim").read_bytes()
+    if animation_source[:8]!=b"EANM\x01\0\0\0":
+        raise ValueError("luminous Universal animation source has an invalid header")
+    animation_raw=zlib.decompress(animation_source[12:])
+    animation_manifest=json.loads(animation_raw)
+    if animation_manifest.get("schema")!=2 or set(animation_manifest.get("clips",{}))!={
+            "idle","idle2","walk","run","combat_idle","attack","cast","pain","die",
+            "sit_down","sit","stand_up","harvest","pick","drop"}:
+        raise ValueError("luminous Universal animations are not bind-relative and complete")
 
 def validate_map_dds(root: Path) -> None:
     local_maps = sorted((root / "maps/nymara").glob("*.dds"))
