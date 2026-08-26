@@ -64,6 +64,8 @@ func _process(_delta: float) -> void:
 		protocol_error.emit("socket_error")
 		disconnect_from_server()
 		return
+	elif status != StreamPeerTCP.STATUS_CONNECTED:
+		return
 	var available := _peer.get_available_bytes()
 	if available > 0:
 		var result := _peer.get_data(available)

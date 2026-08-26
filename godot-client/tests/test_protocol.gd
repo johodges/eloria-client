@@ -99,15 +99,13 @@ func _init() -> void:
 	_expect(coordinate.godot_to_server(godot_position) == Vector2i(102, 198),
 		"coordinate round trip")
 
-	var app_state: EloriaAppState = EloriaAppState.new()
-	app_state._on_packet(1, actor_payload)
-	app_state._on_packet(2, PackedByteArray([0x34, 0x12, 21]))
-	var reduced_actor: Dictionary = app_state.actors.get(0x1234, {})
+	var reduced_actor: Dictionary = ActorReducer.apply_command(actor, 21)
 	_expect(int(reduced_actor.get("x", -1)) == 11
 		and int(reduced_actor.get("y", -1)) == 21, "actor movement reducer")
-	app_state._on_packet(2, PackedByteArray([0x34, 0x12, 13]))
-	reduced_actor = app_state.actors.get(0x1234, {})
+	reduced_actor = ActorReducer.apply_command(reduced_actor, 13)
 	_expect(bool(reduced_actor.get("sitting", false)), "actor sit reducer")
+	reduced_actor = ActorReducer.apply_command(reduced_actor, 14)
+	_expect(not bool(reduced_actor.get("sitting", true)), "actor stand reducer")
 
 	print("protocol tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)
