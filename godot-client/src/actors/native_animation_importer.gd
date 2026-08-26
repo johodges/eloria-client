@@ -2,7 +2,7 @@ class_name NativeAnimationImporter
 extends RefCounted
 
 static func import_library(owner: Node, source_path: String,
-		target_skeleton: Skeleton3D) -> Dictionary:
+		target_skeleton: Skeleton3D, bone_aliases := {}) -> Dictionary:
 	var result := {"player": null, "clips": PackedStringArray(), "errors": PackedStringArray()}
 	var source_scene := _load_gltf(source_path)
 	if source_scene == null:
@@ -25,7 +25,8 @@ static func import_library(owner: Node, source_path: String,
 		target.length = source.length
 		target.loop_mode = source.loop_mode
 		for source_track in source.get_track_count():
-			var bone := _track_bone(source.track_get_path(source_track))
+			var source_bone := _track_bone(source.track_get_path(source_track))
+			var bone := str(bone_aliases.get(source_bone, source_bone))
 			if bone.is_empty() or target_skeleton.find_bone(bone) < 0:
 				continue
 			var target_track := target.add_track(source.track_get_type(source_track))
