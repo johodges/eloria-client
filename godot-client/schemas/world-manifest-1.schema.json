@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eloria.example/schemas/world-manifest-1.schema.json",
+  "title": "Eloria GLB world manifest",
+  "type": "object",
+  "required": ["schemaVersion", "asset", "spawnPoints", "collision", "navigation"],
+  "properties": {
+    "schemaVersion": {"type": "string", "pattern": "^1\\."},
+    "assetVersion": {"type": "string"},
+    "asset": {
+      "type": "object",
+      "required": ["id", "name", "glb", "units", "coordinateSystem", "origin", "bounds"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "name": {"type": "string"},
+        "glb": {"type": "string", "pattern": "\\.glb$"},
+        "units": {"const": "meters"},
+        "coordinateSystem": {
+          "type": "object",
+          "required": ["handedness", "upAxis", "northAxis"],
+          "properties": {
+            "handedness": {"enum": ["right", "left"]},
+            "upAxis": {"const": "Y"},
+            "northAxis": {"enum": ["Z", "-Z", "X", "-X"]}
+          }
+        },
+        "origin": {"$ref": "#/$defs/vec3"},
+        "bounds": {
+          "type": "object",
+          "required": ["min", "max"],
+          "properties": {"min": {"$ref": "#/$defs/vec3"}, "max": {"$ref": "#/$defs/vec3"}}
+        }
+      }
+    },
+    "coordinateTransform": {
+      "type": "object",
+      "required": ["metresPerTile", "origin", "walkingHeight", "invertServerY"],
+      "properties": {
+        "metresPerTile": {"type": "number", "exclusiveMinimum": 0},
+        "origin": {"$ref": "#/$defs/vec3"},
+        "walkingHeight": {"type": "number"},
+        "invertServerY": {"type": "boolean"}
+      }
+    },
+    "spawnPoints": {"type": "array", "items": {"type": "object", "required": ["id", "position"]}},
+    "collision": {"type": "object", "required": ["nodeNames"]},
+    "navigation": {"type": "object"},
+    "interactives": {"type": "array"},
+    "landmarks": {"type": "array"}
+  },
+  "$defs": {
+    "vec3": {
+      "type": "array", "prefixItems": [{"type": "number"}, {"type": "number"}, {"type": "number"}],
+      "minItems": 3, "maxItems": 3
+    }
+  }
+}
