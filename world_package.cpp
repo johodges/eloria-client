@@ -60,7 +60,14 @@ void rollback(){free(tile_map);free(height_map);tile_map=height_map=NULL;tile_ma
 }
 extern "C" void world_gltf_to_eloria(const float s[3],float u,const float o[3],float d[3]){d[0]=o[0]+s[0]/u;d[1]=o[1]-s[2]/u;d[2]=o[2]+s[1]/u;}
 extern "C" int load_world_package(const char *name,world_update_func *update){
-	std::string in=name?name:"",m;if(in.size()>5&&in.substr(in.size()-5)==".json")m=in;else if(in.find('.')==std::string::npos)m="./maps/"+in+"/world.json";else return 0;
+	std::string in=name?name:"",logical=in;
+	/* CHANGE_MAP historically prefixes server filenames with "./" in
+	 * multiplayer.c. Strip that transport prefix only when the remainder is a
+	 * safe logical ID; explicit paths and extensions keep their exact meaning. */
+	if(logical.rfind("./",0)==0)logical.erase(0,2);
+	bool logical_id=!logical.empty()&&logical.find('.')==std::string::npos&&
+		logical.find('/')==std::string::npos&&logical.find('\\')==std::string::npos;
+	std::string m;if(in.size()>5&&in.substr(in.size()-5)==".json")m=in;else if(logical_id)m="./maps/"+logical+"/world.json";else return 0;
 	if(!exists(m))return 0;std::vector<unsigned char>b;std::string e;if(!read(m,4u*1024u*1024u,b,e)){LOG_ERROR("World package '%s': %s",m.c_str(),e.c_str());return -1;}
 	json r;try{r=json::parse(b.begin(),b.end());}catch(const std::exception&x){LOG_ERROR("World package '%s': invalid JSON: %s",m.c_str(),x.what());return -1;}
 	if(!r.is_object()||r.value("format","")!="eloria-world"){LOG_ERROR("World package '%s': format must be 'eloria-world'",m.c_str());return -1;}
