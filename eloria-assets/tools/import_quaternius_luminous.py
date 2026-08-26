@@ -42,6 +42,7 @@ TARGET_PARENTS = {
     32:16, 33:16, 34:17, 35:10, 36:13,
 }
 REFERENCE_POSE = "Idle_A"
+SOURCE_TEXTURE_SIZE = (512, 512)
 
 
 def read_document(path: Path):
@@ -279,7 +280,13 @@ def main():
         positions,normals,uvs,faces,weights=import_model(document,binary,pose_by_name)
         name=f"luminous_{gender}"; write_weighted_emesh(args.output/f"{name}.emesh",positions,normals,uvs,faces,weights)
         texture_name="T_Superhero_Female_Light_BaseColor.png" if gender=="female" else "T_Superhero_Male_Ligh.png"
-        texture=next(args.characters.rglob(texture_name)); Image.open(texture).convert("RGBA").save(args.output/f"{name}.png",optimize=True)
+        texture=next(args.characters.rglob(texture_name))
+        # Runtime compositor inputs top out at 216 px.  A losslessly encoded
+        # 2048 RGBA source exceeds the repository API's binary upload limit;
+        # retain more than 2x oversampling for the largest compositor input
+        # while keeping each checked-in PNG complete.
+        image=Image.open(texture).convert("RGBA").resize(SOURCE_TEXTURE_SIZE,Image.Resampling.LANCZOS)
+        image.save(args.output/f"{name}.png",optimize=True,compress_level=9)
         manifest["models"][name]={"source":filename,"vertices":len(positions),"triangles":len(faces),
                                   "cell":.006,"uv_bins":96}
         print(f"{name}: {len(positions)} vertices, {len(faces)} triangles")

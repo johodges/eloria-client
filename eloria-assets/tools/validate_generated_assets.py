@@ -37,6 +37,35 @@ def cal_xml(path: Path) -> ET.Element:
     return ET.fromstring("\n".join(lines[1:]))
 
 
+def validate_rgba_png(path: Path) -> None:
+    """Reject a PNG whose header survived but compressed stream was truncated."""
+    data=path.read_bytes()
+    if data[:8]!=b"\x89PNG\r\n\x1a\n":
+        raise ValueError(f"invalid PNG signature: {path}")
+    offset=8; payload=bytearray(); width=height=None; complete=False
+    while offset+12<=len(data):
+        size=struct.unpack_from(">I",data,offset)[0]
+        end=offset+12+size
+        if end>len(data):
+            raise ValueError(f"truncated PNG chunk: {path}")
+        kind=data[offset+4:offset+8]; chunk=data[offset+8:offset+8+size]
+        if kind==b"IHDR":
+            width,height,depth,color,_,_,_=struct.unpack(">IIBBBBB",chunk)
+            if depth!=8 or color!=6:
+                raise ValueError(f"PNG must be 8-bit RGBA: {path}")
+        elif kind==b"IDAT": payload.extend(chunk)
+        elif kind==b"IEND": complete=True; break
+        offset=end
+    if not complete or width is None or height is None:
+        raise ValueError(f"PNG is missing a complete IEND stream: {path}")
+    try:
+        raw=zlib.decompress(payload)
+    except zlib.error as error:
+        raise ValueError(f"PNG has an incomplete compressed stream: {path}") from error
+    if len(raw)!=(width*4+1)*height:
+        raise ValueError(f"PNG scanline payload has the wrong size: {path}")
+
+
 def caf_track_quaternions(path: Path) -> dict[int, list[tuple[float,float,float,float]]]:
     data=path.read_bytes()
     if data[:4] != b"CAF\0" or len(data) < 16:
@@ -1033,6 +1062,7 @@ def validate_playable_characters(root: Path) -> None:
             raise ValueError(f"cleaned authored source fell below fidelity budget: {name}")
         if not (source/f"{name}.emesh").is_file() or not (source/f"{name}.png").is_file():
             raise ValueError(f"authored player source is missing: {name}")
+        validate_rgba_png(source/f"{name}.png")
     animation_source=(source/"luminous_universal.eanim").read_bytes()
     if animation_source[:8]!=b"EANM\x01\0\0\0":
         raise ValueError("luminous Universal animation source has an invalid header")
