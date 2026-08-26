@@ -4,6 +4,7 @@
 #include <string.h>
 #include <SDL.h>
 #include "actors_list.h"
+#include "actor_glb_runtime.h"
 #include "actor_scripts.h"
 #include "asc.h"
 #include "bbox_tree.h"
@@ -40,6 +41,8 @@
 
 //! The initial size of the near_actors array
 #define INITIAL_NEAR_ACTORS_SIZE 10
+static int active_actor_render_pass = DEFAULT_RENDER_PASS;
+static int active_actor_ghost_program = 0;
 
 /*!
  * The near_actor structure holds information about the actors within range. It is filled once every frame.
@@ -1085,6 +1088,7 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 {
 	double x_pos,y_pos,z_pos;
 	float x_rot,y_rot,z_rot;
+	int glb_drawn;
 	//if first person, dont draw actor
 	if (actor_id->actor_id == yourself && first_person) return;
 	if (use_textures)
@@ -1137,7 +1141,16 @@ void draw_actor_without_banner(actor * actor_id, Uint32 use_lightning, Uint32 us
 	if (has_attachment(actor_id))
 		glTranslatef(actor_id->attachment_shift[0], actor_id->attachment_shift[1], actor_id->attachment_shift[2]);
 
-	if (use_animation_program)
+	if (actor_glb_is_luminous(actor_id) && use_animation_program)
+		disable_actor_animation_program();
+	glb_drawn = actor_glb_draw(actor_id, use_lightning, use_textures);
+	if (actor_glb_is_luminous(actor_id) && use_animation_program)
+		set_actor_animation_program(active_actor_render_pass, active_actor_ghost_program);
+	if (glb_drawn)
+	{
+		/* Drawn by the direct animated glTF runtime. */
+	}
+	else if (use_animation_program)
 	{
 		cal_render_actor_shader(actor_id, use_lightning, use_textures, use_glow);
 	}
@@ -1380,6 +1393,8 @@ void display_actors(int banner, int render_pass)
 	Uint32 use_lightning = 0, use_textures = 0;
 
 	get_actors_in_range();
+	active_actor_render_pass = render_pass;
+	active_actor_ghost_program = 0;
 
 	glEnable(GL_CULL_FACE);
 
@@ -1518,6 +1533,7 @@ void display_actors(int banner, int render_pass)
 		glDisable(GL_LIGHTING);
 		if (use_animation_program)
 		{
+			active_actor_ghost_program = 1;
 			set_actor_animation_program(render_pass, 1);
 		}
 

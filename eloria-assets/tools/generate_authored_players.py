@@ -439,6 +439,81 @@ def read_universal_animations(path):
     return json.loads(raw)["clips"]
 
 
+def write_luminous_glb(path, name, positions, normals, uvs, triangles, weights, bones, clips):
+    """Write the checked-in Quaternius data as the actual animated runtime asset."""
+    blob=bytearray(); views=[]; accessors=[]
+    def append(data,target=None):
+        while len(blob)%4: blob.append(0)
+        offset=len(blob); blob.extend(data); view={"buffer":0,"byteOffset":offset,"byteLength":len(data)}
+        if target: view["target"]=target
+        views.append(view); return len(views)-1
+    def acc(data,component,kind,count,target=None,minimum=None,maximum=None):
+        view=append(data,target); value={"bufferView":view,"componentType":component,"count":count,"type":kind}
+        if minimum is not None: value["min"]=minimum
+        if maximum is not None: value["max"]=maximum
+        accessors.append(value); return len(accessors)-1
+    flat_pos=[v for p in positions for v in p]; flat_norm=[v for n in normals for v in n]; flat_uv=[v for uv in uvs for v in uv]
+    pos=acc(struct.pack(f"<{len(flat_pos)}f",*flat_pos),5126,"VEC3",len(positions),34962,
+            [min(p[i] for p in positions) for i in range(3)],[max(p[i] for p in positions) for i in range(3)])
+    norm=acc(struct.pack(f"<{len(flat_norm)}f",*flat_norm),5126,"VEC3",len(normals),34962)
+    tex=acc(struct.pack(f"<{len(flat_uv)}f",*flat_uv),5126,"VEC2",len(uvs),34962)
+    joint_values=[]; weight_values=[]
+    for influences in weights:
+        padded=influences+[(0,0.)]*(4-len(influences)); joint_values.extend(int(v[0]) for v in padded); weight_values.extend(float(v[1]) for v in padded)
+    joints=acc(struct.pack(f"<{len(joint_values)}H",*joint_values),5123,"VEC4",len(positions),34962)
+    weight_acc=acc(struct.pack(f"<{len(weight_values)}f",*weight_values),5126,"VEC4",len(positions),34962)
+    indices=[v for face in triangles for v in face]
+    index_acc=acc(struct.pack(f"<{len(indices)}I",*indices),5125,"SCALAR",len(indices),34963)
+    absolute=[]
+    for _,parent,translation in bones:
+        base=(0.,0.,0.) if parent<0 else absolute[parent]; absolute.append(tuple(base[i]+translation[i] for i in range(3)))
+    matrices=[]
+    for x,y,z in absolute: matrices.extend((1.,0.,0.,0.,0.,1.,0.,0.,0.,0.,1.,0.,-x,-y,-z,1.))
+    inverse=acc(struct.pack(f"<{len(matrices)}f",*matrices),5126,"MAT4",len(bones))
+    nodes=[]
+    for index,(bone,parent,translation) in enumerate(bones):
+        node={"name":bone,"translation":list(translation)}; children=[i for i,(_,p,_) in enumerate(bones) if p==index]
+        if children: node["children"]=children
+        nodes.append(node)
+    mesh_node=len(nodes); nodes.append({"name":name,"mesh":0,"skin":0})
+    animations=[]
+    for clip_name,clip in sorted(clips.items()):
+        samplers=[]; channels=[]
+        for bone,keys in sorted((int(k),v) for k,v in clip["tracks"].items()):
+            if not keys: continue
+            times=[float(k[0]) for k in keys]; rotations=[v for k in keys for v in k[1]]
+            tin=acc(struct.pack(f"<{len(times)}f",*times),5126,"SCALAR",len(times),minimum=[min(times)],maximum=[max(times)])
+            tout=acc(struct.pack(f"<{len(rotations)}f",*rotations),5126,"VEC4",len(times))
+            samplers.append({"input":tin,"output":tout,"interpolation":"LINEAR"})
+            channels.append({"sampler":len(samplers)-1,"target":{"node":bone,"path":"rotation"}})
+        animations.append({"name":clip_name,"samplers":samplers,"channels":channels,"extras":{"loop":clip_name in ("idle","idle2","walk","run","combat_idle","sit")}})
+    document={"asset":{"version":"2.0","generator":"Eloria Luminous GLB packager"},"scene":0,
+      "scenes":[{"nodes":[0,mesh_node]}],"nodes":nodes,
+      "meshes":[{"name":name,"primitives":[{"attributes":{"POSITION":pos,"NORMAL":norm,"TEXCOORD_0":tex,"JOINTS_0":joints,"WEIGHTS_0":weight_acc},"indices":index_acc,"material":0}]}],
+      "skins":[{"name":"LuminousRig","inverseBindMatrices":inverse,"skeleton":0,"joints":list(range(len(bones)))}],
+      "materials":[{"name":"EloriaActorAtlas","pbrMetallicRoughness":{"metallicFactor":0.,"roughnessFactor":.85}}],
+      "animations":animations,
+      "bufferViews":views,"accessors":accessors,"buffers":[{"byteLength":len(blob)}]}
+    encoded=json.dumps(document,separators=(",",":"),ensure_ascii=True).encode(); encoded+=b" "*((-len(encoded))%4)
+    while len(blob)%4: blob.append(0)
+    total=12+8+len(encoded)+8+len(blob)
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_bytes(b"glTF"+struct.pack("<II",2,total)+struct.pack("<II",len(encoded),0x4e4f534a)+encoded+struct.pack("<II",len(blob),0x004e4942)+blob)
+
+
+def luminous_runtime_mesh(positions, normals, uvs, triangles, source_weights):
+    """Split the source surface where Eloria actor-atlas roles change."""
+    split={section:[] for section in SECTION_NAMES}
+    for face in triangles: split[section_for_triangle([positions[i] for i in face])].append(face)
+    out_vertices=[]; out_faces=[]
+    for section in SECTION_NAMES:
+        vertices,faces=compact_section(positions,normals,uvs,split[section],section,source_weights)
+        base=len(out_vertices); out_vertices.extend(vertices)
+        out_faces.extend(tuple(base+i for i in face) for face in faces)
+    return ([v[0] for v in out_vertices],[v[1] for v in out_vertices],
+            [v[2] for v in out_vertices],out_faces,[v[3] for v in out_vertices])
+
+
 def imported_animation(path,bones,clip):
     tracks={int(bone):keys for bone,keys in clip["tracks"].items()}
     root=ET.Element("ANIMATION",DURATION=str(clip["duration"]),NUMTRACKS=str(len(tracks)))
@@ -484,6 +559,10 @@ def generate_model(root,name,actor_id):
     if name.startswith("luminous_"):
         clips=read_universal_animations(SOURCE/"luminous_universal.eanim")
         for anim,clip in clips.items(): imported_animation(anim_dir/f"{anim}.xaf",bones,clip)
+        # Runtime consumes this checked-in, self-contained GLB directly.  It is
+        # authored from the CC0 Quaternius base-character and Universal
+        # animation GLBs; normal client/data builds never need those archives.
+        shutil.copy2(SOURCE/"runtime"/f"{output_name}.glb",base/f"{output_name}.glb")
     else:
         for anim,(duration,poses) in ANIMATIONS.items(): animation(anim_dir/f"{anim}.xaf",bones,duration,poses)
     texture=f"actors/playable/{output_name}.dds"
