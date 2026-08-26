@@ -520,8 +520,14 @@ func _apply_eloria_theme() -> void:
 	theme = eloria_theme
 
 static func _external_texture(path: String) -> Texture2D:
-	var image: Image = Image.load_from_file(ProjectSettings.globalize_path(path))
-	if image.is_empty():
+	var absolute_path: String = ProjectSettings.globalize_path(path)
+	var image: Image
+	if path.get_extension().to_lower() == "dds":
+		var bytes: PackedByteArray = FileAccess.get_file_as_bytes(absolute_path)
+		image = Image.load_dds_from_buffer(bytes)
+	else:
+		image = Image.load_from_file(absolute_path)
+	if image == null or image.is_empty():
 		push_warning("UI texture load failed: " + path)
 		return null
 	return ImageTexture.create_from_image(image)
