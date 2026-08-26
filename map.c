@@ -189,6 +189,7 @@ static int el_load_map(const char * file_name)
 	int ret;
 	char elm_name[512];
 	const char *elm_file = file_name;
+	const char *logical_name = file_name;
 
 	LOG_INFO("Loading map '%s'", file_name);
 	init_map_loading(file_name);
@@ -197,10 +198,12 @@ static int el_load_map(const char * file_name)
 	{
 		/* Extensionless server values are logical IDs. Explicit paths/extensions
 		 * retain the historical behavior and cannot select another format. */
-		if (strchr(file_name, '.') == NULL && strchr(file_name, '/') == NULL &&
-			strchr(file_name, '\\') == NULL)
+		if (logical_name[0] == '.' && logical_name[1] == '/')
+			logical_name += 2;
+		if (logical_name[0] != '\\0' && strchr(logical_name, '.') == NULL &&
+			strchr(logical_name, '/') == NULL && strchr(logical_name, '\\') == NULL)
 		{
-			safe_snprintf(elm_name, sizeof(elm_name), "./maps/%s.elm", file_name);
+			safe_snprintf(elm_name, sizeof(elm_name), "./maps/%s.elm", logical_name);
 			elm_file = elm_name;
 		}
 		ret = load_map(elm_file, &updat_func);
