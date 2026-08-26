@@ -99,14 +99,18 @@ func _init() -> void:
 	_expect(coordinate.godot_to_server(godot_position) == Vector2i(102, 198),
 		"coordinate round trip")
 
-	AppState.actors.clear()
-	AppState._on_packet(1, actor_payload)
-	AppState._on_packet(2, PackedByteArray([0x34, 0x12, 21]))
-	var reduced_actor: Dictionary = AppState.actors.get(0x1234, {})
+	var app_state: Node = get_root().get_node("AppState")
+	var state_actors: Dictionary = app_state.get("actors") as Dictionary
+	state_actors.clear()
+	app_state.call("_on_packet", 1, actor_payload)
+	app_state.call("_on_packet", 2, PackedByteArray([0x34, 0x12, 21]))
+	state_actors = app_state.get("actors") as Dictionary
+	var reduced_actor: Dictionary = state_actors.get(0x1234, {})
 	_expect(int(reduced_actor.get("x", -1)) == 11
 		and int(reduced_actor.get("y", -1)) == 21, "actor movement reducer")
-	AppState._on_packet(2, PackedByteArray([0x34, 0x12, 13]))
-	reduced_actor = AppState.actors.get(0x1234, {})
+	app_state.call("_on_packet", 2, PackedByteArray([0x34, 0x12, 13]))
+	state_actors = app_state.get("actors") as Dictionary
+	reduced_actor = state_actors.get(0x1234, {})
 	_expect(bool(reduced_actor.get("sitting", false)), "actor sit reducer")
 
 	print("protocol tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
