@@ -883,15 +883,17 @@ def validate_playable_characters(root: Path) -> None:
     authored={"luminous_female","luminous_male","glasswarden_female","glasswarden_male",
               "ssarathi_female","ssarathi_male"}
     for actor_id,(culture,gender) in expected.items():
+        source_name=f"{culture}_{gender}"
+        name=(f"{source_name}_quaternius_v2" if culture=="luminous" else source_name)
         actor=actors.find(f"actor[@id='{actor_id}']")
         if actor is None or actor.attrib.get("race") != culture or actor.attrib.get("gender") != gender:
             raise ValueError(f"playable actor mapping changed: {actor_id}")
         paths={
-            f"actors/playable/{culture}_{gender}_shirt.cmf",
-            f"actors/playable/{culture}_{gender}_legs.cmf",
-            f"actors/playable/{culture}_{gender}_boots.cmf",
+            f"actors/playable/{name}_shirt.cmf",
+            f"actors/playable/{name}_legs.cmf",
+            f"actors/playable/{name}_boots.cmf",
         }
-        paths.update(f"actors/playable/{culture}_{gender}_head_{i}.cmf" for i in range(5))
+        paths.update(f"actors/playable/{name}_head_{i}.cmf" for i in range(5))
         referenced={node.text for tag in ("shirt","legs","boots","head")
                     for part in actor.findall(tag) for node in part.findall("mesh")}
         if paths != referenced:
@@ -906,7 +908,7 @@ def validate_playable_characters(root: Path) -> None:
             if vertices < minimum:
                 raise ValueError(f"playable mesh fell below topology floor: {relative}")
             document=cal_xml(xml_path)
-            if f"{culture}_{gender}" in authored:
+            if source_name in authored:
                 weights=[{int(influence.attrib["ID"]) for influence in vertex.findall("INFLUENCE")
                           if float(influence.text)>.02}
                          for vertex in document.findall(".//VERTEX")]
@@ -923,7 +925,7 @@ def validate_playable_characters(root: Path) -> None:
                             u,v=texcoords[index]
                             roles=[role for role,(x,y,w,h) in PLAYER_ATLAS_REGIONS.items()
                                    if x/128.-1e-5<=u<=(x+w)/128.+1e-5 and
-                                      y/128.-1e-5<=v<=(y+h)/128.+1e-5]
+                                      (128-y-h)/128.-1e-5<=v<=(128-y)/128.+1e-5]
                             regions.append(set(roles))
                         if not set.intersection(*regions):
                             raise ValueError(f"playable triangle crosses compositor regions: {relative}")
@@ -931,7 +933,7 @@ def validate_playable_characters(root: Path) -> None:
                 positions=[tuple(map(float,vertex.findtext("POS").split()))
                            for vertex in document.findall(".//VERTEX")]
                 toe_y=[position[1] for position in positions]
-                facing_floor=-.12 if f"{culture}_{gender}" in authored else -.25
+                facing_floor=-.12 if source_name in authored else -.25
                 if min(toe_y)>facing_floor:
                     raise ValueError(f"playable boots point away from facing axis: {relative}")
                 if (min(position[2] for position in positions) < -.002 or
@@ -943,15 +945,14 @@ def validate_playable_characters(root: Path) -> None:
                           int(vertex.find("INFLUENCE").attrib["ID"]) in (30,31)]
                 if eye_orbs:
                     raise ValueError(f"playable head contains detached eye geometry: {relative}")
-            if "shirt" in relative and f"{culture}_{gender}" not in authored:
+            if "shirt" in relative and source_name not in authored:
                 neck=[vertex for vertex in document.findall(".//VERTEX")
                       if vertex.find("INFLUENCE") is not None and
                       int(vertex.find("INFLUENCE").attrib["ID"])==26]
                 if len(neck)<190:
                     raise ValueError(f"playable torso lacks an authored neck: {relative}")
-        body=(root/f"actors/playable/{culture}_{gender}_body.xmf").read_bytes()
+        body=(root/f"actors/playable/{name}_body.xmf").read_bytes()
         body_digests.add(hashlib.sha256(body).digest())
-        name=f"{culture}_{gender}"
         expected_skeleton=f"actors/playable/{name}.csf"
         if actor.findtext("skeleton") != expected_skeleton or not (root/expected_skeleton).is_file():
             raise ValueError(f"playable actor {actor_id} does not use its fitted skeleton")
@@ -962,10 +963,10 @@ def validate_playable_characters(root: Path) -> None:
             relative=(actor.findtext(f"frames/{tag}") or "").split()[0]
             if not relative.startswith(f"animations/playable/{name}/") or not (root/relative).is_file():
                 raise ValueError(f"playable actor {name} lacks dedicated {tag}")
-        if name in authored:
+        if source_name in authored:
             body_xml=cal_xml(root/f"actors/playable/{name}_body.xmf")
             body_vertices=body_xml.findall(".//VERTEX")
-            minimum_vertices=6000 if name.startswith("luminous_") else 15000
+            minimum_vertices=6000 if source_name.startswith("luminous_") else 15000
             if not minimum_vertices <= len(body_vertices) <= 45000:
                 raise ValueError(f"authored player topology is outside runtime budget: {name}")
             if sum(len(vertex.findall("INFLUENCE"))>1 for vertex in body_vertices)<100:
@@ -974,7 +975,7 @@ def validate_playable_characters(root: Path) -> None:
                      if int(influence.attrib["ID"])==26 and float(influence.text)>.05)
             if neck<190:
                 raise ValueError(f"authored player lacks a weighted neck: {name}")
-            if not name.startswith("luminous_"):
+            if not source_name.startswith("luminous_"):
                 texture=f"actors/playable/{name}.dds"; data=(root/texture).read_bytes()
                 if data[:4]!=b"DDS " or struct.unpack_from("<II",data,12)!=(2048,2048):
                     raise ValueError(f"authored player atlas is not runtime 2048 DDS: {name}")
@@ -1015,7 +1016,9 @@ def validate_playable_characters(root: Path) -> None:
     if len(skeleton_digests) != len(expected):
         raise ValueError("playable races or genders share unfitted skeletons")
     for culture,gender in expected.values():
-        body=root/f"actors/playable/{culture}_{gender}_body.xmf"
+        source_name=f"{culture}_{gender}"
+        name=(f"{source_name}_quaternius_v2" if culture=="luminous" else source_name)
+        body=root/f"actors/playable/{name}_body.xmf"
         vertices=sum(int(sub.attrib["NUMVERTICES"]) for sub in cal_xml(body).findall("SUBMESH"))
         if vertices < 4000:
             raise ValueError(f"playable body fell below production topology budget: {body}")
