@@ -105,6 +105,150 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 190)
 scroll_following = true
 
+
+[node name="CreationPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 190.0
+offset_top = 80.0
+offset_right = 1090.0
+offset_bottom = 650.0
+
+[node name="Columns" type="HBoxContainer" parent="CreationPanel"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Preview" type="SubViewportContainer" parent="CreationPanel/Columns"]
+custom_minimum_size = Vector2(430, 520)
+layout_mode = 2
+stretch = true
+
+[node name="Viewport" type="SubViewport" parent="CreationPanel/Columns/Preview"]
+size = Vector2i(430, 520)
+render_target_update_mode = 4
+
+[node name="PreviewRoot" type="Node3D" parent="CreationPanel/Columns/Preview/Viewport"]
+unique_name_in_owner = true
+
+[node name="Camera" type="Camera3D" parent="CreationPanel/Columns/Preview/Viewport/PreviewRoot"]
+position = Vector3(0, 1.5, 4.2)
+current = true
+
+[node name="Sun" type="DirectionalLight3D" parent="CreationPanel/Columns/Preview/Viewport/PreviewRoot"]
+rotation_degrees = Vector3(-45, -35, 0)
+light_energy = 1.25
+
+[node name="Form" type="VBoxContainer" parent="CreationPanel/Columns"]
+custom_minimum_size = Vector2(410, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="CreationPanel/Columns/Form"]
+layout_mode = 2
+text = "CREATE YOUR ELORIA CHARACTER"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 24
+
+[node name="CreateName" type="LineEdit" parent="CreationPanel/Columns/Form"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Character name (3–20 characters)"
+max_length = 20
+
+[node name="CreatePassword" type="LineEdit" parent="CreationPanel/Columns/Form"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Password (minimum 4 characters)"
+secret = true
+max_length = 72
+
+[node name="CreateConfirm" type="LineEdit" parent="CreationPanel/Columns/Form"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Confirm password"
+secret = true
+max_length = 72
+
+[node name="GenderLabel" type="Label" parent="CreationPanel/Columns/Form"]
+layout_mode = 2
+text = "Luminous character"
+
+[node name="CreateGender" type="OptionButton" parent="CreationPanel/Columns/Form"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="AppearanceGrid" type="GridContainer" parent="CreationPanel/Columns/Form"]
+layout_mode = 2
+columns = 2
+
+[node name="SkinLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+text = "Skin"
+[node name="CreateSkin" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+unique_name_in_owner = true
+min_value = 0.0
+max_value = 5.0
+
+[node name="HairLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+text = "Hair"
+[node name="CreateHair" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+unique_name_in_owner = true
+min_value = 0.0
+max_value = 15.0
+
+[node name="EyesLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+text = "Eyes"
+[node name="CreateEyes" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+unique_name_in_owner = true
+min_value = 0.0
+max_value = 11.0
+
+[node name="ShirtLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+text = "Shirt"
+[node name="CreateShirt" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+unique_name_in_owner = true
+min_value = 0.0
+max_value = 11.0
+
+[node name="PantsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+text = "Pants"
+[node name="CreatePants" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+unique_name_in_owner = true
+min_value = 0.0
+max_value = 8.0
+
+[node name="BootsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+text = "Boots"
+[node name="CreateBoots" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+unique_name_in_owner = true
+min_value = 0.0
+max_value = 5.0
+
+[node name="HeadLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+text = "Head"
+[node name="CreateHead" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid"]
+unique_name_in_owner = true
+min_value = 0.0
+max_value = 4.0
+
+[node name="CreateStatus" type="Label" parent="CreationPanel/Columns/Form"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Choose appearance, then create your character."
+autowrap_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="CreationPanel/Columns/Form"]
+layout_mode = 2
+
+[node name="Back" type="Button" parent="CreationPanel/Columns/Form/Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Back"
+
+[node name="Create" type="Button" parent="CreationPanel/Columns/Form/Actions"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Create Character"
+
 [node name="LoginPanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 0
@@ -162,6 +306,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Log In"
 
+[node name="NewCharacter" type="Button" parent="LoginPanel/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Create New Character"
+
 [node name="Status" type="Label" parent="LoginPanel/Content"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -170,3 +319,7 @@ horizontal_alignment = 1
 
 [connection signal="pressed" from="LoginPanel/Content/Connect" to="." method="_on_connect_pressed"]
 [connection signal="pressed" from="LoginPanel/Content/Login" to="." method="_on_login_pressed"]
+[connection signal="pressed" from="LoginPanel/Content/NewCharacter" to="." method="_on_new_character_pressed"]
+[connection signal="pressed" from="CreationPanel/Columns/Form/Actions/Back" to="." method="_on_creation_back_pressed"]
+[connection signal="pressed" from="CreationPanel/Columns/Form/Actions/Create" to="." method="_on_create_pressed"]
+[connection signal="item_selected" from="CreationPanel/Columns/Form/CreateGender" to="." method="_on_create_gender_item_selected"]
