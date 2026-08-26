@@ -4,6 +4,10 @@ signal connection_state_changed(state: String)
 signal packet_received(command: int, payload: PackedByteArray)
 signal protocol_error(message: String)
 
+const PROTOCOL_MAJOR := 9
+const PROTOCOL_MINOR := 5
+const CLIENT_VERSION := PackedByteArray([0, 1, 0, 0])
+
 var _peer := StreamPeerTCP.new()
 var _rx := PackedByteArray()
 var _state := "disconnected"
@@ -23,7 +27,6 @@ func disconnect_from_server() -> void:
 func send_frame(frame: PackedByteArray, sensitive := false) -> Error:
 	if _peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
 		return ERR_UNCONFIGURED
-	# Inspector intentionally receives metadata only for sensitive frames.
 	if not sensitive:
 		print_debug("protocol tx bytes=", frame.hex_encode())
 	return _peer.put_data(frame)
@@ -36,7 +39,11 @@ func _process(_delta: float) -> void:
 	var status := _peer.get_status()
 	if status == StreamPeerTCP.STATUS_CONNECTED and _state != "connected":
 		_set_state("connected")
+		# Matches the legacy connection lifecycle. Server currently tolerates/ignores version metadata.
+		send_frame(EloriaProtocol.version(PROTOCOL_MAJOR, PROTOCOL_MINOR, CLIENT_VERSION))
+		send_frame(EloriaProtocol.encode(EloriaProtocol.ClientMessage.SEND_OPENING_SCREEN))
 	elif status == StreamPeerTCP.STATUS_ERROR:
+		protocol_error.emit("socket_error")
 		disconnect_from_server()
 		return
 	var available := _peer.get_available_bytes()
