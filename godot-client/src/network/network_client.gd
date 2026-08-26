@@ -6,7 +6,7 @@ signal protocol_error(message: String)
 
 const PROTOCOL_MAJOR := 10
 const PROTOCOL_MINOR := 31
-const CLIENT_VERSION := PackedByteArray([1, 9, 7, 0])
+static var client_version: PackedByteArray = PackedByteArray([1, 9, 7, 0])
 
 var _peer := StreamPeerTCP.new()
 var _rx := PackedByteArray()
@@ -40,7 +40,7 @@ func _process(_delta: float) -> void:
 	if status == StreamPeerTCP.STATUS_CONNECTED and _state != "connected":
 		_set_state("connected")
 		# Matches the legacy connection lifecycle. Server currently tolerates/ignores version metadata.
-		send_frame(EloriaProtocol.version(PROTOCOL_MAJOR, PROTOCOL_MINOR, CLIENT_VERSION))
+		send_frame(EloriaProtocol.version(PROTOCOL_MAJOR, PROTOCOL_MINOR, client_version))
 		send_frame(EloriaProtocol.encode(EloriaProtocol.ClientMessage.SEND_OPENING_SCREEN))
 	elif status == StreamPeerTCP.STATUS_ERROR:
 		protocol_error.emit("socket_error")
