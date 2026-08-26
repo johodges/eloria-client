@@ -314,6 +314,7 @@ if (GENERATE_ELORIA_DATA)
 	find_package(Python3 REQUIRED COMPONENTS Interpreter)
 	file(GLOB_RECURSE ELORIA_DATA_INPUTS CONFIGURE_DEPENDS
 		"${CMAKE_SOURCE_DIR}/eloria-assets/tools/*.py"
+		"${CMAKE_SOURCE_DIR}/eloria-assets/maps/*"
 		"${CMAKE_SOURCE_DIR}/eloria-assets/source/*"
 		"${CMAKE_SOURCE_DIR}/eloria-assets/fonts/*"
 		"${CMAKE_SOURCE_DIR}/eloria-assets/ui/*"
