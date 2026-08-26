@@ -192,7 +192,7 @@ func _on_connection_state_changed(value: String) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not game_view.visible:
 		return
-	if event.is_action_pressed("toggle_map"):
+	if event.is_action_pressed("toggle_map") or (event is InputEventKey and event.pressed and event.keycode == KEY_TAB):
 		full_map.visible = not full_map.visible
 		get_viewport().set_input_as_handled()
 		return
