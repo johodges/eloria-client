@@ -144,7 +144,10 @@ def section_for_triangle(points):
 
 def atlas_uv(role,uv):
     x,y,w,h=ATLAS_REGIONS[role]
-    return ((x+uv[0]*w)/128.,(y+uv[1]*h)/128.)
+    # Compositor rectangles use image coordinates (origin at top-left), while
+    # Cal3D/OpenGL texture V grows from the bottom.  glTF UVs also address the
+    # source image from its top edge, so convert both conventions here.
+    return ((x+uv[0]*w)/128.,(128.-y-uv[1]*h)/128.)
 
 
 def texture_role(section, points):
@@ -453,6 +456,10 @@ def imported_animation(path,bones,clip):
 
 def generate_model(root,name,actor_id):
     positions,normals,uvs,triangles,source_weights=read_emesh(SOURCE/f"{name}.emesh")
+    # Version imported Luminous runtime paths.  Besides making the provenance
+    # explicit, this prevents an existing client/model cache from satisfying a
+    # new actor definition with the legacy procedural meshes or old DDS files.
+    runtime_name=f"{name}_quaternius_v2" if name.startswith("luminous_") else name
     source_vertices,source_faces=len(positions),len(triangles)
     positions,normals,uvs,triangles=clean_mesh(positions,normals,uvs,triangles)
     if len(triangles) < source_faces * .999:
@@ -460,34 +467,34 @@ def generate_model(root,name,actor_id):
                          f"{source_faces}->{len(triangles)}")
     split={section:[] for section in SECTION_NAMES}
     for face in triangles: split[section_for_triangle([positions[i] for i in face])].append(face)
-    base=root/"actors/playable"
+    base=root/"actors/playable"; output_name=runtime_name
     all_vertices=[(p,n,u,source_weights[index] if source_weights is not None else influences(p))
                   for index,(p,n,u) in enumerate(zip(positions,normals,uvs))]
-    write_mesh(base/f"{name}_body.xmf",all_vertices,triangles)
+    write_mesh(base/f"{output_name}_body.xmf",all_vertices,triangles)
     for section in SECTION_NAMES:
         vertices,faces=compact_section(positions,normals,uvs,split[section],section,source_weights)
-        write_mesh(base/f"{name}_{section}.xmf",vertices,faces)
+        write_mesh(base/f"{output_name}_{section}.xmf",vertices,faces)
     # The authored source supplies one intentional head per sex; retain the
     # five protocol slots without fabricating distorted alternatives.
     for variant in range(5):
-        shutil.copy2(base/f"{name}_head.xmf",base/f"{name}_head_{variant}.xmf")
-        shutil.copy2(base/f"{name}_head.cmf",base/f"{name}_head_{variant}.cmf")
-    bones=fitted_bones(name); skeleton(base/f"{name}.xsf",bones)
-    anim_dir=root/f"animations/playable/{name}"
+        shutil.copy2(base/f"{output_name}_head.xmf",base/f"{output_name}_head_{variant}.xmf")
+        shutil.copy2(base/f"{output_name}_head.cmf",base/f"{output_name}_head_{variant}.cmf")
+    bones=fitted_bones(name); skeleton(base/f"{output_name}.xsf",bones)
+    anim_dir=root/f"animations/playable/{output_name}"
     if name.startswith("luminous_"):
         clips=read_universal_animations(SOURCE/"luminous_universal.eanim")
         for anim,clip in clips.items(): imported_animation(anim_dir/f"{anim}.xaf",bones,clip)
     else:
         for anim,(duration,poses) in ANIMATIONS.items(): animation(anim_dir/f"{anim}.xaf",bones,duration,poses)
-    texture=f"actors/playable/{name}.dds"
+    texture=f"actors/playable/{output_name}.dds"
     # Retain the full atlas as a QA/reference artifact; runtime enhanced actors
     # consume the compositor-sized role textures below.
     source_texture=png_rgba(SOURCE/f"{name}.png")
     write_dds(source_texture,root/texture)
     for role,(_,_,width,height) in ATLAS_REGIONS.items():
-        write_dds(source_texture,root/f"actors/playable/{name}_{role}.dds",(width*4,height*4))
-    if name.startswith("luminous_"): write_luminous_variants(root,name,source_texture)
-    patch_actor_defs(root/"actor_defs/actor_defs.xml",name,actor_id,texture,False)
+        write_dds(source_texture,root/f"actors/playable/{output_name}_{role}.dds",(width*4,height*4))
+    if name.startswith("luminous_"): write_luminous_variants(root,output_name,source_texture)
+    patch_actor_defs(root/"actor_defs/actor_defs.xml",output_name,actor_id,texture,False)
     print(f"{name}: {source_vertices}->{len(positions)} vertices, {source_faces}->{len(triangles)} triangles, {sum(len(v) for v in split.values())} assigned")
 
 
