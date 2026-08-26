@@ -8,6 +8,12 @@ func _init() -> void:
 		PackedByteArray([1, 5, 0, 0x34, 0x12, 0x78, 0x56]))
 	_expect_bytes("login fixture", EloriaProtocol.login("Test", "secret"),
 		PackedByteArray([140, 13, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114, 101, 116, 0]))
+	_expect_bytes("create character fixture",
+		EloriaProtocol.create_character("Test", "secret",
+			{"skin": 1, "hair": 2, "shirt": 3, "pants": 4, "boots": 5,
+			"actor_type": 0, "head": 2, "eyes": 6}),
+		PackedByteArray([141, 21, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114,
+			101, 116, 0, 1, 2, 3, 4, 5, 0, 2, 6]))
 	_expect_bytes("version fixture",
 		EloriaProtocol.version(10, 31, PackedByteArray([1, 9, 7, 0]),
 			PackedByteArray([127, 0, 0, 1]), 2000),
@@ -24,6 +30,11 @@ func _init() -> void:
 	_expect(EloriaProtocol.try_decode(PackedByteArray([1, 0, 0])).status == "error",
 		"invalid length")
 
+	var created := EloriaProtocol.decode_server(252, PackedByteArray())
+	_expect(created.type == "create_character_ok", "character creation ok")
+	var creation_error := EloriaProtocol.decode_server(253, "Name exists\0".to_utf8_buffer())
+	_expect(creation_error.type == "create_character_error"
+		and creation_error.message == "Name exists", "character creation error")
 	var login_ok := EloriaProtocol.decode_server(250, PackedByteArray())
 	_expect(login_ok.type == "login_ok", "login ok")
 	var login_error := EloriaProtocol.decode_server(251, "Bad login\0".to_utf8_buffer())
