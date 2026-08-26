@@ -20,7 +20,7 @@ Server: RAW_TEXT 0, actor spawn 1/51, actor command 2, YOU_ARE 3, clock 4/5, act
 
 ## Authentication
 
-The initial implementation encodes `LOG_IN(140)` as `username\0password\0`, matching the legacy flow under audit. Before declaring authentication verified, capture the actual outgoing legacy frame and compare it byte-for-byte, including version/session fields if the selected server configuration requires them.
+LOG_IN(140) is username, one ASCII space, password, then NUL. This matches legacy send_login_info() and server _credentials(). On connection the client first sends SEND_VERSION with protocol 10.31, application 1.9.7.0, IPv4 bytes, and a network-order port, followed by SEND_OPENING_SCREEN. Password-containing frames are always redacted.
 
 ## Coordinate baseline
 
