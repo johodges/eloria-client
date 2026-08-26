@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "maps": {
+    "maps/startmap.elm": {
+      "manifest": "res://../eloria-assets/maps/four-gates-city/four-gates-city.json",
+      "coordinateTransform": {
+        "metresPerTile": 0.4651162791,
+        "serverOrigin": [384.0, 384.0],
+        "origin": [0.0, 30.0, 0.0],
+        "walkingHeight": 30.0,
+        "invertServerY": true
+      },
+      "status": "development_server_binding"
+    },
+    "startmap.elm": {
+      "alias": "maps/startmap.elm"
+    }
+  }
+}
