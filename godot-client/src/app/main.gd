@@ -186,19 +186,18 @@ func _sync_world() -> void:
 			actor_nodes.erase(id)
 	for id in AppState.actors:
 		var dto: Dictionary = AppState.actors[id]
-		if not actor_nodes.has(id):
-			var node := ReplicatedActor3D.new()
-			node.name = "Actor_%d" % id
-			world_root.add_child(node)
-			actor_nodes[id] = node
-			var model_id := _model_for_actor(dto)
-			var errors := node.configure(dto, adapter, models.get(model_id, {}), animation_config)
-			if not errors.is_empty():
-				push_warning("Actor %d: %s" % [id, "; ".join(errors)])
-		else:
-			node.apply_server_state(dto, adapter, true)
-		else:
+		if actor_nodes.has(id):
 			actor_nodes[id].apply_server_state(dto, adapter)
+			continue
+		var node := ReplicatedActor3D.new()
+		node.name = "Actor_%d" % id
+		world_root.add_child(node)
+		actor_nodes[id] = node
+		var model_id := _model_for_actor(dto)
+		var errors := node.configure(dto, adapter, models.get(model_id, {}), animation_config)
+		if not errors.is_empty():
+			push_warning("Actor %d: %s" % [id, "; ".join(errors)])
+		node.apply_server_state(dto, adapter, true)
 	actor_label.text = "Actors: %d" % AppState.actors.size()
 	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id):
 		var target: Node3D = actor_nodes[AppState.local_actor_id]
