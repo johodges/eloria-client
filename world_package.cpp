@@ -73,7 +73,8 @@ extern "C" int load_world_package(const char *name,world_update_func *update){
 	bool logical_id=!logical.empty()&&logical.find('.')==std::string::npos&&
 		logical.find('/')==std::string::npos&&logical.find('\\')==std::string::npos;
 	std::string m;if(in.size()>5&&in.substr(in.size()-5)==".json")m=in;else if(logical_id)m="./maps/"+logical+"/world.json";else return 0;
-	if(!exists(m))return 0;std::vector<unsigned char>b;std::string e;if(!read(m,4u*1024u*1024u,b,e)){LOG_ERROR("World package '%s': %s",m.c_str(),e.c_str());return -1;}
+	if(!exists(m))return 0;
+	std::vector<unsigned char>b;std::string e;if(!read(m,4u*1024u*1024u,b,e)){LOG_ERROR("World package '%s': %s",m.c_str(),e.c_str());return -1;}
 	json r;try{r=json::parse(b.begin(),b.end());}catch(const std::exception&x){LOG_ERROR("World package '%s': invalid JSON: %s",m.c_str(),x.what());return -1;}
 	if(!r.is_object()||r.value("format","")!="eloria-world"){LOG_ERROR("World package '%s': format must be 'eloria-world'",m.c_str());return -1;}
 	if(!r.contains("version")||!r["version"].is_number_unsigned()||r["version"]!=1){LOG_ERROR("World package '%s': unsupported version (supported: 1)",m.c_str());return -1;}
