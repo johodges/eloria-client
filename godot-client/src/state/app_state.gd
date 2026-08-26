@@ -3,6 +3,8 @@ extends Node
 signal state_changed(path: StringName)
 signal login_succeeded
 signal login_failed(message: String)
+signal character_created
+signal character_creation_failed(message: String)
 
 var connection_state := "disconnected"
 var authenticated := false
@@ -37,6 +39,10 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			authenticated = false
 			login_failed.emit(event.message)
 			state_changed.emit(&"authentication")
+		"create_character_ok":
+			character_created.emit()
+		"create_character_error":
+			character_creation_failed.emit(event.message)
 		"you_are":
 			local_actor_id = event.actor_id
 			state_changed.emit(&"local_actor")
