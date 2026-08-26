@@ -23,6 +23,9 @@ Validated 2026-08-26 for asset version 0.6.1.
 - Collision proxies are separate from visible meshes and align by construction.
 - Static transforms remain coherent when animation and custom effects are disabled.
 - Twenty requested verification cameras/renders and one generated architectural reference sheet are included.
+- The portable 1536×1536 collision grid contains both blocked and walkable terrain, preserves all four causeways, blocks the central monument, water channels, and final building footprints, and keeps all required gameplay anchors walkable.
+- The portable manifest contains four portals, six NPC markers, three creature spawn zones, four harvestables, five gameplay regions, and eight waterfall effect stacks whose node names resolve in the GLB.
+- `four_gates.dds` is a client-readable 512×512 uncompressed BGRA DDS with exactly four mip levels.
 
 ## Independent-validator/viewer status
 

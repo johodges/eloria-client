@@ -1,5 +1,14 @@
 # Change log
 
+## Portable runtime integration — 2026-08-26
+
+- Replaced the all-walkable collision placeholder with terrain-, causeway-, water-channel-, monument-, and building-aware collision at 1536×1536 resolution.
+- Exported the authored convex navigation polygons, sanctuary off-mesh link, and final building obstacle count into `world.json`.
+- Added four portal hooks, six civic NPC anchors, three creature population zones, four harvest sites, and five tagged gameplay regions.
+- Added eight loader-addressable waterfall effect stacks plus water, waterfall, and landmark-energy material animation parameters.
+- Added a matching client-readable 512×512 uncompressed BGRA DDS map with four mip levels.
+- Extended offline validation to reject missing effect nodes, malformed minimaps, out-of-bounds placements, and gameplay anchors on blocked collision.
+
 ## 0.6.1 — 2026-08-26
 
 - Rebuilt both committed GLBs after detecting truncated binary chunks in the prior delivery.
