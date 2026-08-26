@@ -1,5 +1,20 @@
 # Change log
 
+## 0.3.0 — 2026-08-25
+
+- Added thick pointed arch-ring and bronze-trim meshes to all five traversable gate structures.
+- Added layered buttresses, finials, façade beacons, twelve sanctuary spires, and three plaza stair rings.
+- Added five standard glTF portcullis clips and two energy-pulse clips with sensible static initial transforms.
+- Added an inline principal-route convex navmesh with agent dimensions, slope limits, and a sanctuary off-mesh link.
+- Replaced placeholder LOD notes with explicit suffix, screen-coverage, and fallback metadata.
+
+## 0.2.0 — 2026-08-25
+
+- Embedded 1024×1024 base-color, tangent-normal, and packed ORM atlases.
+- Added normals and UVs to every reusable visible primitive using `KHR_texture_transform` atlas addressing.
+- Added 239 detail nodes covering battlements, bridge parapets and piers, plaza furniture and lighting, market stalls, and farm fences.
+- Preserved every loader-facing landmark, collision, navigation, interaction, and marker identifier.
+
 ## 0.1.0 — 2026-08-25
 
 - Established canonical 720 m radial plan and elevation conventions.
