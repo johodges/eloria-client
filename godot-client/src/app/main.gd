@@ -520,6 +520,12 @@ func _apply_eloria_theme() -> void:
 	theme = eloria_theme
 
 static func _external_texture(path: String) -> Texture2D:
+	if path.begins_with("res://assets/"):
+		var imported: Resource = ResourceLoader.load(path)
+		if imported is Texture2D:
+			return imported as Texture2D
+		push_warning("Imported UI texture load failed: " + path)
+		return null
 	var absolute_path: String = ProjectSettings.globalize_path(path)
 	var image: Image = Image.new()
 	var error: Error
