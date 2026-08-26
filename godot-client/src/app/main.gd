@@ -2,6 +2,14 @@ extends Control
 
 @onready var login_panel: Control = %LoginPanel
 @onready var game_view: Control = %GameView
+@onready var creation_panel: Control = %CreationPanel
+@onready var new_character_button: Button = %NewCharacterButton
+@onready var create_name: LineEdit = %CreateName
+@onready var create_password: LineEdit = %CreatePassword
+@onready var create_confirm: LineEdit = %CreateConfirm
+@onready var create_gender: OptionButton = %CreateGender
+@onready var create_status: Label = %CreateStatus
+@onready var preview_root: Node3D = %PreviewRoot
 @onready var host_edit: LineEdit = %Host
 @onready var port_edit: SpinBox = %Port
 @onready var user_edit: LineEdit = %Username
@@ -19,6 +27,9 @@ var actor_nodes: Dictionary = {}
 var models: Dictionary = {}
 var animation_config: Dictionary = {}
 var adapter := CoordinateAdapter.new({"walkingHeight": 0.0, "invertServerY": true})
+var preview_actor: ReplicatedActor3D
+var pending_create_username := ""
+var pending_create_password := ""
 
 func _ready() -> void:
 	models = _json("res://data/actors/models.json").get("models", {})
@@ -27,8 +38,13 @@ func _ready() -> void:
 	Network.protocol_error.connect(func(message: String): status_label.text = "Protocol error: " + message)
 	AppState.login_succeeded.connect(_on_login_succeeded)
 	AppState.login_failed.connect(_on_login_failed)
+	AppState.character_created.connect(_on_character_created)
+	AppState.character_creation_failed.connect(_on_character_creation_failed)
 	AppState.state_changed.connect(_on_state_changed)
 	game_view.hide()
+	creation_panel.hide()
+	create_gender.add_item("Luminous Female", 0)
+	create_gender.add_item("Luminous Male", 1)
 
 func _on_connect_pressed() -> void:
 	connect_button.disabled = true
@@ -38,6 +54,82 @@ func _on_connect_pressed() -> void:
 	if error != OK:
 		status_label.text = "Connection failed: " + error_string(error)
 		connect_button.disabled = false
+
+func _on_new_character_pressed() -> void:
+	if AppState.connection_state != "connected":
+		status_label.text = "Connect to the server before creating a character."
+		return
+	login_panel.hide()
+	creation_panel.show()
+	_refresh_creation_preview()
+
+func _on_creation_back_pressed() -> void:
+	_clear_pending_creation()
+	creation_panel.hide()
+	login_panel.show()
+
+func _on_create_gender_item_selected(_index: int) -> void:
+	_refresh_creation_preview()
+
+func _on_create_pressed() -> void:
+	var username := create_name.text.strip_edges()
+	var password := create_password.text
+	if username.length() < 3 or username.length() > 20:
+		create_status.text = "Name must contain 3–20 characters."
+		return
+	if password.length() < 4:
+		create_status.text = "Password must contain at least 4 characters."
+		return
+	if password != create_confirm.text:
+		create_status.text = "Passwords do not match."
+		return
+	pending_create_username = username
+	pending_create_password = password
+	create_status.text = "Creating character…"
+	var appearance := {
+		"skin": int(%CreateSkin.value), "hair": int(%CreateHair.value),
+		"eyes": int(%CreateEyes.value), "shirt": int(%CreateShirt.value),
+		"pants": int(%CreatePants.value), "boots": int(%CreateBoots.value),
+		"head": int(%CreateHead.value), "actor_type": create_gender.get_selected_id()}
+	var error := Network.create_character(username, password, appearance)
+	if error != OK:
+		create_status.text = "Creation request failed: " + error_string(error)
+		_clear_pending_creation()
+
+func _on_character_created() -> void:
+	create_status.text = "Character created. Entering Eloria…"
+	user_edit.text = pending_create_username
+	var username := pending_create_username
+	var password := pending_create_password
+	create_password.clear()
+	create_confirm.clear()
+	_clear_pending_creation()
+	var error := Network.login(username, password)
+	if error != OK:
+		create_status.text = "Created, but login failed to send: " + error_string(error)
+		creation_panel.hide()
+		login_panel.show()
+
+func _on_character_creation_failed(message: String) -> void:
+	create_status.text = "Creation failed: " + message
+	_clear_pending_creation()
+
+func _clear_pending_creation() -> void:
+	pending_create_username = ""
+	pending_create_password = ""
+
+func _refresh_creation_preview() -> void:
+	if is_instance_valid(preview_actor):
+		preview_actor.queue_free()
+	preview_actor = ReplicatedActor3D.new()
+	preview_root.add_child(preview_actor)
+	var actor_type := create_gender.get_selected_id()
+	var dto := {"actor_id": 0, "x": 0, "y": 0, "rotation": 0, "actor_type": actor_type}
+	var model_id := "luminous_female" if actor_type == 0 else "luminous_male"
+	var errors := preview_actor.configure(dto,
+		CoordinateAdapter.new({"walkingHeight": 0.0}), models.get(model_id, {}), animation_config)
+	if not errors.is_empty():
+		create_status.text = "Preview warnings: " + "; ".join(errors)
 
 func _on_login_pressed() -> void:
 	if AppState.authenticated:
@@ -70,6 +162,7 @@ func _on_connection_state_changed(value: String) -> void:
 	status_label.text = value.capitalize()
 	connect_button.disabled = value != "disconnected"
 	login_button.disabled = value != "connected" or AppState.authenticated
+	new_character_button.disabled = value != "connected" or AppState.authenticated
 	if value == "disconnected" and game_view.visible:
 		game_view.hide()
 		login_panel.show()
