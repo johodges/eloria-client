@@ -92,11 +92,11 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 		ServerMessage.LOG_IN_NOT_OK:
 			return {"type": "login_error", "message": nul_string(payload)}
 		ServerMessage.YOU_ARE:
-			return _require(payload, 2, {"type": "you_are", "actor_id": u16(payload)})
+			return {"type": "you_are", "actor_id": u16(payload)} if payload.size() >= 2 else {"type": "invalid", "error": "short_payload"}
 		ServerMessage.CHANGE_MAP:
 			return {"type": "change_map", "map_name": nul_string(payload)}
 		ServerMessage.REMOVE_ACTOR:
-			return _require(payload, 2, {"type": "remove_actor", "actor_id": u16(payload)})
+			return {"type": "remove_actor", "actor_id": u16(payload)} if payload.size() >= 2 else {"type": "invalid", "error": "short_payload"}
 		ServerMessage.KILL_ALL_ACTORS:
 			return {"type": "clear_actors"}
 		ServerMessage.ADD_ACTOR_COMMAND:
@@ -159,5 +159,3 @@ static func s16(bytes: PackedByteArray, offset := 0) -> int:
 	var value := u16(bytes, offset)
 	return value - 65536 if value >= 32768 else value
 
-static func _require(payload: PackedByteArray, size: int, value: Dictionary) -> Dictionary:
-	return value if payload.size() >= size else {"type": "invalid", "error": "short_payload"}
