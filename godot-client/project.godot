@@ -21,6 +21,11 @@ renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 
 [input]
+
+toggle_sit={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"physical_keycode":83,"unicode":115)]
+}
 connect={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":67,"ctrl_pressed":true)] }
 disconnect={ "deadzone": 0.5, "events": [] }
 chat_focus={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":84)] }

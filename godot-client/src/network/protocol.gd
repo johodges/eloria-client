@@ -93,6 +93,26 @@ static func move_to(x: int, y: int, run := false) -> PackedByteArray:
 	return encode(ClientMessage.RUN_TO if run else ClientMessage.MOVE_TO,
 		PackedByteArray([x & 0xff, (x >> 8) & 0xff, y & 0xff, (y >> 8) & 0xff]))
 
+static func sit_toggle() -> PackedByteArray:
+	return encode(ClientMessage.SIT_DOWN)
+
+static func actor_command_step(command: int) -> Vector2i:
+	# Server movement frames are the authoritative one-tile updates used by the
+	# legacy client. Walk and run use the same tile delta; timing differs.
+	var direction: int = command
+	if command >= 30 and command <= 37:
+		direction = command - 10
+	match direction:
+		20: return Vector2i(0, 1)
+		21: return Vector2i(1, 1)
+		22: return Vector2i(1, 0)
+		23: return Vector2i(1, -1)
+		24: return Vector2i(0, -1)
+		25: return Vector2i(-1, -1)
+		26: return Vector2i(-1, 0)
+		27: return Vector2i(-1, 1)
+		_: return Vector2i.ZERO
+
 static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 	match command:
 		ServerMessage.LOG_IN_OK:
@@ -170,4 +190,3 @@ static func u16(bytes: PackedByteArray, offset := 0) -> int:
 static func s16(bytes: PackedByteArray, offset := 0) -> int:
 	var value := u16(bytes, offset)
 	return value - 65536 if value >= 32768 else value
-

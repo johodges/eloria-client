@@ -6,6 +6,10 @@ func _init() -> void:
 	_expect_bytes("empty frame", EloriaProtocol.encode(13), PackedByteArray([13, 1, 0]))
 	_expect_bytes("move fixture", EloriaProtocol.move_to(0x1234, 0x5678),
 		PackedByteArray([1, 5, 0, 0x34, 0x12, 0x78, 0x56]))
+	_expect_bytes("sit fixture", EloriaProtocol.sit_toggle(), PackedByteArray([7, 1, 0]))
+	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
+	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
+	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")
 	_expect_bytes("login fixture", EloriaProtocol.login("Test", "secret"),
 		PackedByteArray([140, 13, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114, 101, 116, 0]))
 	_expect_bytes("create character fixture",
@@ -58,6 +62,24 @@ func _init() -> void:
 	_expect(actor.name == "Bob" and actor.health == 90, "actor identity and health")
 	_expect(EloriaProtocol.decode_server(1, PackedByteArray([1])).type == "invalid",
 		"short actor")
+
+	_expect(MapRegistry.normalize_server_map_id(" /MAPS\\StartMap.ELM ") ==
+		"maps/startmap.elm", "map id normalization")
+	var registry: Dictionary = {
+		"maps/startmap.elm": {"manifest": "res://world.json"},
+		"startmap.elm": {"alias": "maps/startmap.elm"}}
+	var resolved: Dictionary = MapRegistry.resolve(registry, "STARTMAP.ELM")
+	_expect(resolved.get("manifest", "") == "res://world.json"
+		and resolved.get("registryKey", "") == "maps/startmap.elm", "map alias resolution")
+	var coordinate: CoordinateAdapter = CoordinateAdapter.new({
+		"metresPerTile": 0.5, "serverOrigin": [100.0, 200.0],
+		"origin": [10.0, 30.0, -5.0], "walkingHeight": 30.0,
+		"invertServerY": true})
+	var godot_position: Vector3 = coordinate.server_to_godot(102.0, 198.0)
+	_expect(godot_position.is_equal_approx(Vector3(11.0, 30.0, -4.0)),
+		"coordinate walking height is absolute")
+	_expect(coordinate.godot_to_server(godot_position) == Vector2i(102, 198),
+		"coordinate round trip")
 
 	print("protocol tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)

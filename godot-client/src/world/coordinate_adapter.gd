@@ -22,8 +22,11 @@ func server_to_godot(server_x: float, server_y: float, elevation := NAN) -> Vect
 	var local_x := server_x - server_origin.x
 	var local_y := server_y - server_origin.y
 	var z := -local_y if invert_server_y else local_y
-	var y := walking_height if is_nan(elevation) else elevation
-	return origin + Vector3(local_x * metres_per_tile, y, z * metres_per_tile)
+	# walkingHeight/elevation are absolute Godot Y values. Adding origin.y here
+	# placed Four Gates actors and the follow camera 30 metres too high.
+	var y: float = walking_height if is_nan(elevation) else elevation
+	return Vector3(origin.x + local_x * metres_per_tile, y,
+		origin.z + z * metres_per_tile)
 
 func godot_to_server(position: Vector3) -> Vector2i:
 	var local := position - origin

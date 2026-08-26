@@ -60,9 +60,20 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			actors.clear()
 			state_changed.emit(&"actors")
 		"actor_commands":
-			for command_event in event.commands:
-				if actors.has(command_event.actor_id):
-					actors[command_event.actor_id]["command"] = command_event.command
+			for raw_command_event: Variant in event.commands:
+				var command_event: Dictionary = raw_command_event as Dictionary
+				var actor_id: int = int(command_event.get("actor_id", -1))
+				if actors.has(actor_id):
+					var actor: Dictionary = actors[actor_id]
+					var actor_command: int = int(command_event.get("command", 0))
+					var step: Vector2i = EloriaProtocol.actor_command_step(actor_command)
+					actor["x"] = int(actor.get("x", 0)) + step.x
+					actor["y"] = int(actor.get("y", 0)) + step.y
+					actor["command"] = actor_command
+					actor["sitting"] = actor_command == 13
+					if actor_command == 14:
+						actor["sitting"] = false
+					actors[actor_id] = actor
 			state_changed.emit(&"actors")
 		"chat":
 			chat_lines.append({"channel": event.channel, "text": event.text})

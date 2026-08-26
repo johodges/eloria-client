@@ -22,6 +22,7 @@ extends Control
 @onready var world_loader: WorldLoader = %WorldLoader
 @onready var fallback_ground: MeshInstance3D = $GameView/ViewportContainer/Viewport/WorldRoot/Ground
 @onready var main_viewport: SubViewport = $GameView/ViewportContainer/Viewport
+@onready var viewport_container: SubViewportContainer = $GameView/ViewportContainer
 @onready var map_viewport: SubViewport = %MapViewport
 @onready var map_camera: Camera3D = %MapCamera
 @onready var minimap: TextureRect = %Minimap
@@ -196,6 +197,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		full_map.visible = not full_map.visible
 		get_viewport().set_input_as_handled()
 		return
+	if event.is_action_pressed("toggle_sit"):
+		var sit_error: Error = Network.toggle_sit()
+		if sit_error != OK:
+			push_warning("SIT_DOWN failed: " + error_string(sit_error))
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton:
 		if camera_rig.handle_mouse_button(event):
 			get_viewport().set_input_as_handled()
@@ -206,9 +213,15 @@ func _unhandled_input(event: InputEvent) -> void:
 			if not local_actor.is_empty() and actor_nodes.has(AppState.local_actor_id):
 				var local_actor_node: Node3D = actor_nodes[AppState.local_actor_id] as Node3D
 				ground_height = local_actor_node.global_position.y
-			var point: Variant = camera_rig.screen_to_ground(event.position, ground_height)
+			var viewport_position: Vector2 = viewport_container.get_global_transform().affine_inverse() * event.global_position
+			viewport_position *= Vector2(main_viewport.size) / viewport_container.size
+			var point: Variant = camera_rig.screen_to_ground(viewport_position, ground_height)
+			print_debug("world_input click=", event.global_position,
+				" viewport=", viewport_position, " intersection=", point)
 			if point is Vector3:
 				var tile: Vector2i = adapter.godot_to_server(point as Vector3)
+				print_debug("world_input godot=", point, " server_tile=", tile,
+					" command=", "RUN_TO" if event.shift_pressed else "MOVE_TO")
 				var error: Error = Network.move_to(tile, event.shift_pressed)
 				if error == OK:
 					camera_rig.pan_offset = Vector3.ZERO
@@ -234,18 +247,23 @@ func _on_state_changed(path: StringName) -> void:
 func _load_server_map() -> void:
 	if AppState.current_map.is_empty() or loaded_server_map == AppState.current_map:
 		return
-	var entry: Dictionary = map_registry.get(AppState.current_map, {})
-	if entry.has("alias"):
-		entry = map_registry.get(str(entry.alias), {})
+	var normalized_map: String = MapRegistry.normalize_server_map_id(AppState.current_map)
+	var entry: Dictionary = MapRegistry.resolve(map_registry, AppState.current_map)
 	if entry.is_empty():
 		map_label.text = "Map: " + AppState.current_map + " (GLB package unavailable)"
+		push_error("map_registry_miss server_id=%s normalized=%s keys=%s" % [
+			AppState.current_map, normalized_map, map_registry.keys()])
 		return
 	loaded_server_map = AppState.current_map
 	adapter = CoordinateAdapter.new(entry.get("coordinateTransform", {}))
 	for node in actor_nodes.values():
 		node.queue_free()
 	actor_nodes.clear()
-	var manifest_path := ProjectSettings.globalize_path(str(entry.get("manifest", "")))
+	var manifest_resource: String = str(entry.get("manifest", ""))
+	var manifest_path: String = ProjectSettings.globalize_path(manifest_resource)
+	print_debug("map_resolved server_id=", AppState.current_map,
+		" normalized=", normalized_map, " registry_key=", entry.get("registryKey", ""),
+		" manifest_resource=", manifest_resource, " manifest_path=", manifest_path)
 	world_loader.load_world(manifest_path)
 	map_label.text = "Loading " + AppState.current_map + "…"
 
@@ -298,7 +316,10 @@ func _sync_chat() -> void:
 	chat_output.scroll_to_line(maxi(0, chat_output.get_line_count() - 1))
 
 func _model_for_actor(dto: Dictionary) -> String:
-	# Server player actor types 0/1 are luminous female/male respectively.
+	# Enhanced actors are player avatars. NPCs and creatures retain their server
+	# kind and use a visible fallback until their actor type has a registry entry.
+	if not bool(dto.get("enhanced", false)) and int(dto.get("kind", 0)) not in [1, 4]:
+		return ""
 	return "luminous_female" if int(dto.get("actor_type", 1)) == 0 else "luminous_male"
 
 static func _json(path: String) -> Dictionary:

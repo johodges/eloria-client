@@ -19,6 +19,8 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	resolver = AnimationResolver.new(animation_config)
 	var source_path := _external_path(str(model_config.get("scene", "")))
 	var errors := _load_native_scene(source_path)
+	if not errors.is_empty():
+		_add_fallback_visual(dto)
 	if errors.is_empty():
 		_apply_import_adapter(model_config.get("import", {}))
 		var skeleton := find_child("*", true, false) as Skeleton3D
@@ -37,6 +39,27 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 				errors.append_array(resolver.validate(imported.clips))
 				play_action(&"idle")
 	return errors
+
+func _add_fallback_visual(dto: Dictionary) -> void:
+	var mesh_instance: MeshInstance3D = MeshInstance3D.new()
+	mesh_instance.name = "MissingModelFallback"
+	var capsule: CapsuleMesh = CapsuleMesh.new()
+	capsule.radius = 0.32
+	capsule.height = 1.7
+	var material: StandardMaterial3D = StandardMaterial3D.new()
+	var kind: int = int(dto.get("kind", 0))
+	material.albedo_color = Color(0.92, 0.56, 0.18) if kind == 2 else Color(0.75, 0.18, 0.78)
+	capsule.material = material
+	mesh_instance.mesh = capsule
+	mesh_instance.position.y = 0.85
+	add_child(mesh_instance)
+	var label: Label3D = Label3D.new()
+	label.name = "Nameplate"
+	label.text = str(dto.get("name", "Unknown actor"))
+	label.position.y = 2.05
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.no_depth_test = true
+	add_child(label)
 
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
 	server_target = adapter.tile_center(int(dto.x), int(dto.y))
