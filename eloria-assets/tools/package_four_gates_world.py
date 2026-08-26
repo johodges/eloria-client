@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Build the playable portable-world Four Gates package from the authored GLB."""
-import json, math, struct
+import argparse, json, math, struct
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]; SOURCE_DIR=ROOT/"maps/four-gates-city"; SOURCE=SOURCE_DIR/"four-gates-city.glb"; METADATA=SOURCE_DIR/"four-gates-city.json"
-OUTPUT=ROOT/"nymara-packs/nymara-client-assets/runtime/maps/four_gates"; SIZE=1536; UNITS_PER_METER=2.15; ORIGIN=(384.0,384.0,0.0)
+SOURCE_OUTPUT=ROOT/"nymara-packs/nymara-client-assets/runtime/maps/four_gates"
+OUTPUT=SOURCE_OUTPUT; SIZE=1536; UNITS_PER_METER=2.15; ORIGIN=(384.0,384.0,0.0)
 BUILDING_MARKERS=[(r*math.sin(math.radians(a)),r*math.cos(math.radians(a))) for r in (125,195,265) for a in range(15,360,30)]
 
 def correct_clockwise_indices(raw):
@@ -124,6 +125,11 @@ def gameplay_manifest():
   'regions':[{'id':'central-plaza','position':[0.,32.,0.],'radius':82.,'tags':['safe','civic']},{'id':'civic-quarter','position':[-145.,31.,-45.],'radius':125.,'tags':['safe','market']},{'id':'residential-quarter','position':[190.,31.,20.],'radius':145.,'tags':['safe','residential']},{'id':'agricultural-quarter','position':[0.,30.,245.],'radius':125.,'tags':['safe','harvest']},{'id':'sanctuary-approach','position':[0.,42.,-505.],'radius':165.,'tags':['ceremonial','portal']}]}
 
 def main():
+ global OUTPUT
+ parser=argparse.ArgumentParser(description=__doc__)
+ parser.add_argument("output",nargs="?",help="runtime data root; omit to refresh the checked-in handoff pack")
+ args=parser.parse_args()
+ if args.output: OUTPUT=Path(args.output)/"maps/four_gates"
  OUTPUT.mkdir(parents=True,exist_ok=True);meta=json.loads(METADATA.read_text())
  if meta.get('assetVersion')!='0.6.1':raise RuntimeError('Four Gates portable package requires authored asset version 0.6.1')
  build_portable_glb();obstacles=[o for o in meta['navigation']['navmesh'].get('obstacles',[]) if 'Window' not in o['node']];gameplay=gameplay_manifest();water=[]
