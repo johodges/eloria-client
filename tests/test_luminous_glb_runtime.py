@@ -22,7 +22,13 @@ def read_glb(path):
     assert version == 2 and total == len(data)
     json_size, json_kind = struct.unpack_from("<II", data, 12)
     assert json_kind == 0x4E4F534A
-    return json.loads(data[20:20 + json_size])
+    document = json.loads(data[20:20 + json_size])
+    binary_offset = 20 + json_size
+    binary_size, binary_kind = struct.unpack_from("<II", data, binary_offset)
+    assert binary_kind == 0x004E4942
+    assert binary_offset + 8 + binary_size == len(data)
+    assert binary_size >= document["buffers"][0]["byteLength"]
+    return document
 
 
 def test_luminous_runtime_glbs_have_skin_and_complete_action_set(tmp_path):

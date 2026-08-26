@@ -33,6 +33,7 @@
 #include "translate.h"
 #include "update.h"
 #include "weather.h"
+#include "world_package.h"
 #include "io/map_io.h"
  #include "errors.h"
  #include "io/elpathwrapper.h"
@@ -612,7 +613,12 @@ int switch_to_game_map(void)
 		return 0;
 	}
 
-	if (check_image_name(map_file_name, sizeof(buffer), buffer) == 1)
+	if (world_package_active() && world_package_minimap()[0] != '\0')
+	{
+		safe_strncpy(buffer, world_package_minimap(), sizeof(buffer));
+		map_text = load_texture_cached(buffer, tt_image);
+	}
+	else if (check_image_name(map_file_name, sizeof(buffer), buffer) == 1)
 	{
 		map_text = load_texture_cached(buffer, tt_image);
 	}
