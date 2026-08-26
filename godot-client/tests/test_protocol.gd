@@ -9,9 +9,9 @@ func _init() -> void:
 	_expect_bytes("login fixture", EloriaProtocol.login("Test", "secret"),
 		PackedByteArray([140, 13, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114, 101, 116, 0]))
 	_expect_bytes("version fixture",
-		EloriaProtocol.version(9, 5, PackedByteArray([0, 1, 0, 0]),
+		EloriaProtocol.version(10, 31, PackedByteArray([1, 9, 7, 0]),
 			PackedByteArray([127, 0, 0, 1]), 2000),
-		PackedByteArray([10, 15, 0, 9, 0, 5, 0, 0, 1, 0, 0, 127, 0, 0, 1, 7, 208]))
+		PackedByteArray([10, 15, 0, 10, 0, 31, 0, 1, 9, 7, 0, 127, 0, 0, 1, 7, 208]))
 
 	var combined := EloriaProtocol.encode(11)
 	combined.append_array(EloriaProtocol.encode(5, PackedByteArray([9, 0])))
