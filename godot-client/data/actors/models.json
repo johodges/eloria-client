@@ -1,1 +1,21 @@
-{"schemaVersion":1,"models":{"luminous_male":{"glb":"","status":"blocked_original_glb_not_committed","import":{"scale":1.0,"rotationDegreesX":0.0,"rotationDegreesY":180.0,"rotationDegreesZ":0.0},"animationMap":"res://data/animations/luminous.json","attachments":{"right_hand":"","left_hand":"","head":"","back":""}},"luminous_female":{"glb":"","status":"blocked_original_glb_not_committed","import":{"scale":1.0,"rotationDegreesX":0.0,"rotationDegreesY":180.0,"rotationDegreesZ":0.0},"animationMap":"res://data/animations/luminous.json","attachments":{"right_hand":"","left_hand":"","head":"","back":""}}}}
+{
+  "schemaVersion": 1,
+  "models": {
+    "luminous_male": {
+      "scene": "res://../eloria-assets/source/player_models/native/Superhero_Male_FullBody.gltf",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "status": "source_validated_runtime_pending",
+      "import": {"scale": 1.0, "rotationDegreesX": 0.0, "rotationDegreesY": 180.0, "rotationDegreesZ": 0.0},
+      "animationMap": "res://data/animations/luminous.json",
+      "attachments": {"right_hand": "hand_r", "left_hand": "hand_l", "head": "head", "back": "spine_03"}
+    },
+    "luminous_female": {
+      "scene": "res://../eloria-assets/source/player_models/native/Superhero_Female_FullBody.gltf",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "status": "source_validated_runtime_pending",
+      "import": {"scale": 1.0, "rotationDegreesX": 0.0, "rotationDegreesY": 180.0, "rotationDegreesZ": 0.0},
+      "animationMap": "res://data/animations/luminous.json",
+      "attachments": {"right_hand": "hand_r", "left_hand": "hand_l", "head": "head", "back": "spine_03"}
+    }
+  }
+}
