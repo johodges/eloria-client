@@ -56,3 +56,18 @@ def test_runtime_action_mapping_covers_every_protocol_frame():
     for clip in REQUIRED_CLIPS:
         assert f'"{clip}"' in source
     assert "for(int f=19;f<=61;f++)" in source
+
+
+def test_quaternius_joint_mapping_matches_runtime_skeleton():
+    source = (ROOT / "eloria-assets" / "tools" / "import_quaternius_luminous.py").read_text(
+        encoding="utf-8"
+    )
+    expected = {
+        '"thumb_01_l": 31', '"index_01_l": 32',
+        '"thumb_01_r": 33', '"index_01_r": 34',
+        '"ball_l": 35', '"ball_r": 36',
+    }
+    assert all(mapping in source for mapping in expected)
+    runtime = (ROOT / "actor_glb_runtime.cpp").read_text(encoding="utf-8")
+    assert "if(joint==32)joint=31" in runtime
+    assert "joint==35&&m.v[x].p[2]>.30f" in runtime
