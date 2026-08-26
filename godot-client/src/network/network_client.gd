@@ -4,9 +4,9 @@ signal connection_state_changed(state: String)
 signal packet_received(command: int, payload: PackedByteArray)
 signal protocol_error(message: String)
 
-const PROTOCOL_MAJOR := 9
-const PROTOCOL_MINOR := 5
-const CLIENT_VERSION := PackedByteArray([0, 1, 0, 0])
+const PROTOCOL_MAJOR := 10
+const PROTOCOL_MINOR := 31
+const CLIENT_VERSION := PackedByteArray([1, 9, 7, 0])
 
 var _peer := StreamPeerTCP.new()
 var _rx := PackedByteArray()
