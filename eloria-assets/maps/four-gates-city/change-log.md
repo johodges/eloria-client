@@ -1,5 +1,14 @@
 # Change log
 
+## 0.5.0 — 2026-08-26
+
+- Replaced stable gate tower and roof nodes with authored multi-ring shafts and ribbed dome meshes.
+- Added extruded structural bridge arches and subdivided irregular cliff-face modules.
+- Added gate façade energy inlays using a dedicated emissive material.
+- Embedded a dedicated 1024×1024 landmark base-color, normal, ORM, and emissive texture family.
+- Added modular landmark UVs and 70 building-derived navigation obstacles.
+- Increased reusable unique mesh geometry from 1,168 to 2,682 triangles.
+
 ## 0.4.0 — 2026-08-26
 
 - Added district-specific civic halls, arcades, cupolas, residences, courtyards, farmhouses, granaries, irrigation channels, docks, and cranes.

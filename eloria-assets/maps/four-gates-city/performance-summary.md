@@ -2,16 +2,16 @@
 
 ```json
 {
-  "nodes": 1319,
-  "meshes": 27,
-  "materials": 15,
+  "nodes": 1345,
+  "meshes": 32,
+  "materials": 19,
   "animations": 7,
-  "textures": 3,
-  "textureMemoryBytes": 12582912,
-  "glbBytes": 4586452,
+  "textures": 7,
+  "textureMemoryBytes": 29360128,
+  "glbBytes": 9197000,
   "lod2Nodes": 557,
-  "lod2GlbBytes": 4477328,
-  "estimatedTriangles": 652
+  "lod2GlbBytes": 9082832,
+  "uniqueMeshTriangles": 2682
 }
 ```
 

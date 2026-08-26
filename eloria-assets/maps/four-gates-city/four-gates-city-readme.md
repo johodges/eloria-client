@@ -14,7 +14,7 @@ Load `four-gates-city.glb` with any glTF 2.0 loader, then parse `four-gates-city
 
 ## Materials and effects
 
-The package uses 15 shared metallic-roughness materials and three embedded 1024×1024 PNG atlases: base color, tangent-space normal, and packed ORM (`R=occlusion`, `G=roughness`, `B=metallic`). Source and derived maps are also included under `textures/`. Water, waterfall sheets, and blue-energy pulses retain optional client-effect metadata.
+The package uses 19 metallic-roughness materials. A three-map citywide atlas covers general assets, while a dedicated four-map landmark family provides base color, tangent normal, packed ORM, and emissive detail for monumental stone, bronze trim, foundations, and blue-energy inlays. Source and derived maps are included under `textures/`.
 
 ## LOD, collision, navigation
 
@@ -30,4 +30,4 @@ Seven optional standard glTF clips are embedded: five portcullis open/close clip
 
 ## Known limitations
 
-This is a textured gameplay environment with landmark LOD0 overlays and an authored reduced-node LOD2 sibling, not a hand-authored cinematic city. Landmark-specific UV unwraps, final per-building navigation blockers, mist particles, and bespoke vegetation remain follow-up work.
+This is a textured gameplay environment with authored modular landmark geometry, landmark UVs, building blockers, and a reduced-node LOD2 sibling. Remaining work is primarily bespoke district UVs, complete terrain sculpting, mist/water shaders, higher-density ornament, and bespoke vegetation.
