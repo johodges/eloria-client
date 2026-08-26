@@ -26,6 +26,11 @@ LOG_IN(140) is username, one ASCII space, password, then NUL. This matches legac
 
 Movement payload is `x:u16le, y:u16le`. Actor packets use 11-bit tile coordinates in server serialization. Godot conversion is centralized and will be finalized from map/client inspection; no scene may implement its own conversion.
 
+Actor movement is advanced by server `ADD_ACTOR_COMMAND` frames: commands 20–27
+are one-tile walk steps and 30–37 are the equivalent run steps. `SIT_DOWN(7)`
+carries one desired-state byte (`1` sit, `0` stand); the server broadcasts actor
+commands 13/14 after accepting the state change. The legacy default is Alt+S.
+
 ## Open verification items
 
 Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; every inventory/trade/storage variant; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.

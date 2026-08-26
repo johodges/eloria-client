@@ -24,7 +24,7 @@ renderer/rendering_method.mobile="gl_compatibility"
 
 toggle_sit={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"physical_keycode":83,"unicode":115)]
+"events": [Object(InputEventKey,"alt_pressed":true,"physical_keycode":83,"unicode":115)]
 }
 connect={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":67,"ctrl_pressed":true)] }
 disconnect={ "deadzone": 0.5, "events": [] }

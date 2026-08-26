@@ -198,7 +198,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("toggle_sit"):
-		var sit_error: Error = Network.toggle_sit()
+		var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
+		var wants_to_sit: bool = not bool(local_actor.get("sitting", false))
+		var sit_error: Error = Network.set_sitting(wants_to_sit)
 		if sit_error != OK:
 			push_warning("SIT_DOWN failed: " + error_string(sit_error))
 		get_viewport().set_input_as_handled()

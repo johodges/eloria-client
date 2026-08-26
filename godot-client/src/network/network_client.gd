@@ -37,8 +37,8 @@ func login(username: String, password: String) -> Error:
 func move_to(tile: Vector2i, run := false) -> Error:
 	return send_frame(EloriaProtocol.move_to(tile.x, tile.y, run))
 
-func toggle_sit() -> Error:
-	return send_frame(EloriaProtocol.sit_toggle())
+func set_sitting(sitting: bool) -> Error:
+	return send_frame(EloriaProtocol.set_sitting(sitting))
 
 func create_character(username: String, password: String, appearance: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)

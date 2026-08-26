@@ -6,7 +6,10 @@ func _init() -> void:
 	_expect_bytes("empty frame", EloriaProtocol.encode(13), PackedByteArray([13, 1, 0]))
 	_expect_bytes("move fixture", EloriaProtocol.move_to(0x1234, 0x5678),
 		PackedByteArray([1, 5, 0, 0x34, 0x12, 0x78, 0x56]))
-	_expect_bytes("sit fixture", EloriaProtocol.sit_toggle(), PackedByteArray([7, 1, 0]))
+	_expect_bytes("sit fixture", EloriaProtocol.set_sitting(true),
+		PackedByteArray([7, 2, 0, 1]))
+	_expect_bytes("stand fixture", EloriaProtocol.set_sitting(false),
+		PackedByteArray([7, 2, 0, 0]))
 	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
 	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
 	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")

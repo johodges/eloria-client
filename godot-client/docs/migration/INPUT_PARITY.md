@@ -16,6 +16,7 @@ The complete legacy `keys.c` audit is in progress. Names below are stable Godot 
 | Magic | HUD | toggle_magic | yes |
 | Manufacture | HUD | toggle_manufacture | yes |
 | Escape / cancel | global | cancel | yes |
+| Sit / stand (Alt+S) | world | toggle_sit | yes |
 | Screenshot | global | screenshot | yes |
 | Fullscreen | global | toggle_fullscreen | yes |
 
@@ -31,5 +32,6 @@ World input must be suppressed when a Control consumes the pointer event. Debug 
 | Middle-button drag | Pan focus offset |
 | Mouse wheel | Zoom with configured limits |
 | Tab | Toggle full map using the minimap render |
+| Alt+S | Send the authoritative desired sit/stand state |
 
 All world gestures are handled only after Control nodes decline the event, preventing HUD click-through.

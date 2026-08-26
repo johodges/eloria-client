@@ -93,8 +93,8 @@ static func move_to(x: int, y: int, run := false) -> PackedByteArray:
 	return encode(ClientMessage.RUN_TO if run else ClientMessage.MOVE_TO,
 		PackedByteArray([x & 0xff, (x >> 8) & 0xff, y & 0xff, (y >> 8) & 0xff]))
 
-static func sit_toggle() -> PackedByteArray:
-	return encode(ClientMessage.SIT_DOWN)
+static func set_sitting(sitting: bool) -> PackedByteArray:
+	return encode(ClientMessage.SIT_DOWN, PackedByteArray([1 if sitting else 0]))
 
 static func actor_command_step(command: int) -> Vector2i:
 	# Server movement frames are the authoritative one-tile updates used by the
