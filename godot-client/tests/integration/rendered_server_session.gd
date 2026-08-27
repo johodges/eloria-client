@@ -580,6 +580,57 @@ func _run() -> void:
 		})
 		await _capture("world-standing-after-move.png")
 
+	main.call("_on_inventory_button_pressed")
+	main.call("_on_inventory_slot_pressed", 0)
+	main.call("_on_inventory_equip_pressed")
+	var spear_equipped: Callable = func() -> bool:
+		var current_inventory: Dictionary = _app_state.get("inventory") as Dictionary
+		var current_actors: Dictionary = _app_state.get("actors") as Dictionary
+		var current_dto: Dictionary = current_actors.get(local_actor_id, {}) as Dictionary
+		var current_visuals: Dictionary = current_dto.get("equipment_visuals", {}) as Dictionary
+		return current_inventory.has(36) and not current_inventory.has(0) and (
+			current_visuals.has(0) or current_visuals.has("0"))
+	_expect(await _wait_for(spear_equipped, 8.0),
+		"real MOVE_INVENTORY_ITEM equips the guard spear and broadcasts its actor visual")
+	main.call("_sync_inventory")
+	var equipped_button: Button = equipment_grid.get_child(0) as Button
+	_expect(equipped_button.icon != null and equipped_button.text.contains("×1"),
+		"authoritative spear appears in the equipment window")
+	var equipped_actor: ReplicatedActor3D = (
+		main.get("actor_nodes") as Dictionary).get(local_actor_id) as ReplicatedActor3D
+	var equipped_diagnostics: Dictionary = equipped_actor.equipment_diagnostics()
+	_expect(int(equipped_diagnostics.get("fallback", 0)) > 0,
+		"unmapped guard spear renders a visible development equipment fallback")
+	main.call("_on_inventory_close_pressed")
+	var equipment_capture_distance: float = camera_rig.distance
+	camera_rig.distance = 12.0
+	camera_rig.set_focus(equipped_actor.global_position)
+	await _capture("world-equipment-fallback.png")
+	camera_rig.distance = equipment_capture_distance
+	main.call("_on_inventory_button_pressed")
+	main.call("_on_equipment_slot_pressed", 36)
+	main.call("_on_inventory_unequip_pressed")
+	var spear_unequipped: Callable = func() -> bool:
+		var current_inventory: Dictionary = _app_state.get("inventory") as Dictionary
+		var current_actors: Dictionary = _app_state.get("actors") as Dictionary
+		var current_dto: Dictionary = current_actors.get(local_actor_id, {}) as Dictionary
+		var current_visuals: Dictionary = current_dto.get("equipment_visuals", {}) as Dictionary
+		return current_inventory.has(0) and not current_inventory.has(36) and (
+			not current_visuals.has(0) and not current_visuals.has("0"))
+	_expect(await _wait_for(spear_unequipped, 8.0),
+		"real MOVE_INVENTORY_ITEM unequips the spear and clears its actor visual")
+	main.call("_on_inventory_close_pressed")
+	var unequipped_diagnostics: Dictionary = equipped_actor.equipment_diagnostics()
+	_expect(int(unequipped_diagnostics.get("fallback", 0)) == 0,
+		"equipment presentation removes the development fallback after server unwear")
+	_write_json("equipment.json", {
+		"equipped_slot": 36,
+		"equipped_diagnostics": _json_safe(equipped_diagnostics),
+		"unequipped_diagnostics": _json_safe(unequipped_diagnostics),
+		"restored_inventory": _json_safe(_app_state.get("inventory")),
+		"credentials": "REDACTED",
+	})
+
 	helper_network.disconnect_from_server()
 	var helper_removed: Callable = func() -> bool:
 		return (not (_app_state.get("actors") as Dictionary).has(remote_actor_id)
