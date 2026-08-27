@@ -500,6 +500,22 @@ func _pick_actor(viewport_position: Vector2) -> int:
 func _apply_eloria_art() -> void:
 	login_background.texture = _external_texture("res://assets/ui/eloria_login_background.jpg")
 	login_logo.texture = _external_texture("res://assets/ui/eloria_logo_master.png")
+	var button_atlas: Texture2D = _external_texture("res://assets/ui/eloria_gamebuttons.png")
+	if button_atlas != null:
+		%MapButton.icon = _atlas_region(button_atlas, Rect2(128, 128, 32, 32))
+		%SitButton.icon = _atlas_region(button_atlas, Rect2(192, 32, 32, 32))
+		%ChatButton.icon = _atlas_region(button_atlas, Rect2(32, 0, 32, 32))
+		%DisconnectButton.icon = _atlas_region(button_atlas, Rect2(224, 0, 32, 32))
+	var hud_atlas: Texture2D = _external_texture("res://assets/ui/eloria_hud_atlas.png")
+	if hud_atlas != null:
+		%CompassOverlay.texture = _atlas_region(hud_atlas, Rect2(32, 193, 63, 63))
+		%CompassOverlay.show()
+
+static func _atlas_region(atlas: Texture2D, region: Rect2) -> AtlasTexture:
+	var texture: AtlasTexture = AtlasTexture.new()
+	texture.atlas = atlas
+	texture.region = region
+	return texture
 
 func _apply_eloria_theme() -> void:
 	var eloria_theme: Theme = Theme.new()

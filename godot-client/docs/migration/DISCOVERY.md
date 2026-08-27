@@ -25,6 +25,12 @@ Login/account, main viewport frame, status bars, quickbar, quick spells, minimap
 
 Four Gates already has production-path GLB/JSON assets under `eloria-assets/maps/four-gates-city/`. Native playable GLBs must remain unconverted. Registries will store model path, import scale/orientation, skeleton path, explicit clip map, and attachment bone names per model.
 
+HUD presentation is sourced from the legacy `hud.c` and `hud_misc_window.c` layout:
+a horizontal lower status region, right-side controls, and the compass region at atlas pixels
+`(32, 193, 63, 63)`. The source `gamebuttons.png` and `gamebuttons2.png` atlases are
+copied unchanged into `godot-client/assets/ui/` so Godot exports include them. Only
+functional actions are exposed in the initial quickbar.
+
 ## Intentional architecture changes
 
 Legacy rendering globals become state reducers plus reactive scenes. GLB is native. Legacy ELM support, if retained, is isolated behind an adapter. Gameplay authority remains server-side.
