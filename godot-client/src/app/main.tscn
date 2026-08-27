@@ -1276,23 +1276,26 @@ grow_vertical = 2
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="Preview" type="SubViewportContainer" parent="CreationPanel/Columns"]
+[node name="CharacterPreview" type="SubViewportContainer" parent="CreationPanel/Columns"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(420, 520)
 layout_mode = 2
 stretch = true
+tooltip_text = "Drag to rotate; mouse wheel to zoom"
 
-[node name="Viewport" type="SubViewport" parent="CreationPanel/Columns/Preview"]
+[node name="Viewport" type="SubViewport" parent="CreationPanel/Columns/CharacterPreview"]
 size = Vector2i(430, 520)
 render_target_update_mode = 4
 
-[node name="PreviewRoot" type="Node3D" parent="CreationPanel/Columns/Preview/Viewport"]
+[node name="PreviewRoot" type="Node3D" parent="CreationPanel/Columns/CharacterPreview/Viewport"]
 unique_name_in_owner = true
 
-[node name="Camera" type="Camera3D" parent="CreationPanel/Columns/Preview/Viewport/PreviewRoot"]
+[node name="PreviewCamera" type="Camera3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot"]
+unique_name_in_owner = true
 position = Vector3(0, 1.5, 4.2)
 current = true
 
-[node name="Sun" type="DirectionalLight3D" parent="CreationPanel/Columns/Preview/Viewport/PreviewRoot"]
+[node name="Sun" type="DirectionalLight3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot"]
 rotation_degrees = Vector3(-45, -35, 0)
 light_energy = 1.25
 
@@ -1366,6 +1369,7 @@ text = "Shirt"
 unique_name_in_owner = true
 min_value = 0.0
 max_value = 11.0
+value = 1.0
 
 [node name="PantsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid"]
 text = "Pants"
@@ -1373,6 +1377,7 @@ text = "Pants"
 unique_name_in_owner = true
 min_value = 0.0
 max_value = 8.0
+value = 1.0
 
 [node name="BootsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid"]
 text = "Boots"
@@ -1380,6 +1385,7 @@ text = "Boots"
 unique_name_in_owner = true
 min_value = 0.0
 max_value = 5.0
+value = 1.0
 
 [node name="HeadLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid"]
 text = "Head"
@@ -1496,6 +1502,14 @@ horizontal_alignment = 1
 [connection signal="pressed" from="CreationPanel/Columns/Form/Actions/Back" to="." method="_on_creation_back_pressed"]
 [connection signal="pressed" from="CreationPanel/Columns/Form/Actions/Create" to="." method="_on_create_pressed"]
 [connection signal="item_selected" from="CreationPanel/Columns/Form/CreateGender" to="." method="_on_create_gender_item_selected"]
+[connection signal="gui_input" from="CreationPanel/Columns/CharacterPreview" to="." method="_on_character_preview_gui_input"]
+[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateSkin" to="." method="_on_create_appearance_changed"]
+[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateHair" to="." method="_on_create_appearance_changed"]
+[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateEyes" to="." method="_on_create_appearance_changed"]
+[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateShirt" to="." method="_on_create_appearance_changed"]
+[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreatePants" to="." method="_on_create_appearance_changed"]
+[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateBoots" to="." method="_on_create_appearance_changed"]
+[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateHead" to="." method="_on_create_appearance_changed"]
 [connection signal="text_submitted" from="GameView/ChatInput" to="." method="_on_chat_submitted"]
 [connection signal="text_submitted" from="LoginPanel/Content/Password" to="." method="_on_login_submitted"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/WalkButton" to="." method="_on_walk_button_pressed"]
