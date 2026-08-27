@@ -37,6 +37,21 @@ Chat sends `RAW_TEXT(0)` as UTF-8 plus NUL. NPC activation sends
 `text_size:u16le | NUL text | response_id:u16le | actor_id:u16le`; replies send
 `RESPOND_TO_NPC(29)` as `actor_id:u16le | response_id:u16le`.
 
+Inventory snapshots use `HERE_YOUR_INVENTORY(19)` with a count byte followed
+by `image_id:u16le | quantity:u32le | slot:u8 | flags:u8` entries. The optional
+legacy UID capability extends each entry with `uid:u16le`. Incremental updates
+use the same entry in `GET_NEW_INVENTORY_ITEM(21)`; removals are one or more
+slot bytes in `REMOVE_ITEM_FROM_INVENTORY(22)`. Inspect and use send one slot
+byte with commands 19 and 31. Moving/equipping sends
+`MOVE_INVENTORY_ITEM(20)` as `source_slot:u8 | destination_slot:u8`; inventory
+positions are 0–35 and the eight generic wear positions are 36–43. Cooldown
+command 77 repeats `slot:u8 | maximum_seconds:u16le | remaining_seconds:u16le`.
+
+Actor equipment changes are server commands 52/53. Wear is
+`actor_id:u16le | part:u8 | visual_id:u8`; unwear omits the visual byte. Parts
+0–7 mean weapon, shield, cape, helmet, legs, body, boots, and neck. These part
+IDs are distinct from the eight generic inventory wear positions.
+
 ## Open verification items
 
 Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; every inventory/trade/storage variant; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.

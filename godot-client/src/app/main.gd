@@ -38,8 +38,11 @@ extends Control
 @onready var stats_text: RichTextLabel = %StatsText
 @onready var inventory_panel: Control = %InventoryPanel
 @onready var inventory_grid: GridContainer = %InventoryGrid
+@onready var equipment_grid: GridContainer = %EquipmentGrid
 @onready var inventory_description: RichTextLabel = %InventoryDescription
 @onready var inventory_use_button: Button = %InventoryUse
+@onready var inventory_equip_button: Button = %InventoryEquip
+@onready var inventory_unequip_button: Button = %InventoryUnequip
 @onready var quick_slot_container: GridContainer = $GameView/ItemSpellQuickbar/QuickContent/Slots
 @onready var player_map_marker: MeshInstance3D = %PlayerMapMarker
 @onready var map_label: Label = %MapLabel
@@ -58,6 +61,7 @@ var actor_nodes: Dictionary = {}
 var models: Dictionary = {}
 var animation_config: Dictionary = {}
 var map_registry: Dictionary = {}
+var equipment_config: Dictionary = {}
 var item_atlas := ItemAtlas.new()
 var gameplay_world: World3D
 var loaded_server_map := ""
@@ -66,6 +70,7 @@ var preview_actor: ReplicatedActor3D
 var pending_create_username := ""
 var pending_create_password := ""
 var inventory_slot_buttons: Array[Button] = []
+var equipment_slot_buttons: Array[Button] = []
 var quick_slot_buttons: Array[Button] = []
 var selected_inventory_slot := -1
 var cooldown_display_second := -1
@@ -74,6 +79,7 @@ func _ready() -> void:
 	models = _json("res://data/actors/models.json").get("models", {})
 	animation_config = _json("res://data/animations/luminous.json")
 	map_registry = _json("res://data/maps/registry.json").get("maps", {})
+	equipment_config = _json("res://data/actors/equipment.json")
 	item_atlas.configure(_json("res://data/items/atlases.json"))
 	Network.connection_state_changed.connect(_on_connection_state_changed)
 	Network.protocol_error.connect(func(message: String): status_label.text = "Protocol error: " + message)
@@ -98,6 +104,7 @@ func _ready() -> void:
 	_apply_eloria_art()
 	_apply_eloria_theme()
 	_build_inventory_slots()
+	_build_equipment_slots()
 	_bind_quick_slots()
 
 func _bind_shared_world() -> void:
@@ -201,7 +208,8 @@ func _refresh_creation_preview() -> void:
 	var dto := {"actor_id": 0, "x": 0, "y": 0, "rotation": 0, "actor_type": actor_type}
 	var model_id := "luminous_female" if actor_type == 0 else "luminous_male"
 	var errors := preview_actor.configure(dto,
-		CoordinateAdapter.new({"walkingHeight": 0.0}), models.get(model_id, {}), animation_config)
+		CoordinateAdapter.new({"walkingHeight": 0.0}), models.get(model_id, {}),
+		animation_config, equipment_config)
 	if not errors.is_empty():
 		create_status.text = "Preview warnings: " + "; ".join(errors)
 
@@ -264,6 +272,20 @@ func _on_inventory_close_pressed() -> void:
 
 func _on_inventory_use_pressed() -> void:
 	_use_inventory_slot(selected_inventory_slot)
+
+func _on_inventory_equip_pressed() -> void:
+	if selected_inventory_slot < 0 or selected_inventory_slot >= 36:
+		return
+	var destination: int = _first_empty_slot(36, 44)
+	if destination >= 0:
+		_move_inventory_item(selected_inventory_slot, destination)
+
+func _on_inventory_unequip_pressed() -> void:
+	if selected_inventory_slot < 36 or selected_inventory_slot >= 44:
+		return
+	var destination: int = _first_empty_slot(0, 36)
+	if destination >= 0:
+		_move_inventory_item(selected_inventory_slot, destination)
 
 func _on_inventory_inspect_pressed() -> void:
 	if selected_inventory_slot < 0:
@@ -479,7 +501,8 @@ func _sync_world() -> void:
 		world_root.add_child(node)
 		actor_nodes[id] = node
 		var model_id := _model_for_actor(dto)
-		var errors := node.configure(dto, adapter, models.get(model_id, {}), animation_config)
+		var errors := node.configure(dto, adapter, models.get(model_id, {}),
+			animation_config, equipment_config)
 		if not errors.is_empty():
 			push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 		node.apply_server_state(dto, adapter, true)
@@ -622,6 +645,18 @@ func _build_inventory_slots() -> void:
 		inventory_grid.add_child(button)
 		inventory_slot_buttons.append(button)
 
+func _build_equipment_slots() -> void:
+	for index: int in range(8):
+		var button: Button = Button.new()
+		button.custom_minimum_size = Vector2(92.0, 48.0)
+		button.expand_icon = true
+		button.text = "Wear %d" % (index + 1)
+		button.tooltip_text = "Generic legacy equipment position %d" % (index + 1)
+		button.disabled = true
+		button.pressed.connect(_on_equipment_slot_pressed.bind(36 + index))
+		equipment_grid.add_child(button)
+		equipment_slot_buttons.append(button)
+
 func _bind_quick_slots() -> void:
 	var slot: int = 0
 	for child: Node in quick_slot_container.get_children():
@@ -647,6 +682,7 @@ func _sync_inventory() -> void:
 			button.text = str(slot + 1)
 			button.tooltip_text = "Empty inventory slot %d" % (slot + 1)
 			button.disabled = true
+	_sync_equipment_slots()
 	_sync_quick_slots()
 	if selected_inventory_slot >= 0:
 		var selected_value: Variant = AppState.inventory.get(selected_inventory_slot)
@@ -659,6 +695,27 @@ func _sync_inventory() -> void:
 			inventory_use_button.disabled = true
 	if not AppState.inventory_text.is_empty():
 		inventory_description.text = AppState.inventory_text
+
+func _sync_equipment_slots() -> void:
+	for index: int in range(equipment_slot_buttons.size()):
+		var slot: int = 36 + index
+		var button: Button = equipment_slot_buttons[index]
+		var item_value: Variant = AppState.inventory.get(slot)
+		if item_value is Dictionary:
+			var item: Dictionary = item_value as Dictionary
+			button.icon = item_atlas.icon_for(int(item.get("image_id", 0)))
+			button.text = "Wear %d ×%d" % [index + 1, int(item.get("quantity", 1))]
+			button.tooltip_text = _inventory_tooltip(item) + "\nEquipped position %d" % (index + 1)
+			button.disabled = false
+		else:
+			button.icon = null
+			button.text = "Wear %d" % (index + 1)
+			button.tooltip_text = "Empty generic equipment position %d" % (index + 1)
+			button.disabled = true
+	inventory_equip_button.disabled = (selected_inventory_slot < 0
+		or selected_inventory_slot >= 36 or _first_empty_slot(36, 44) < 0)
+	inventory_unequip_button.disabled = (selected_inventory_slot < 36
+		or selected_inventory_slot >= 44 or _first_empty_slot(0, 36) < 0)
 
 func _sync_quick_slots() -> void:
 	for slot: int in range(quick_slot_buttons.size()):
@@ -711,10 +768,30 @@ func _on_inventory_slot_pressed(slot: int) -> void:
 	selected_inventory_slot = slot
 	var item: Dictionary = AppState.inventory.get(slot, {}) as Dictionary
 	inventory_use_button.disabled = not bool(item.get("inventory_usable", false))
+	_sync_equipment_slots()
 	inventory_description.text = "Inspecting item image #%d…" % int(item.get("image_id", 0))
 	var error: Error = Network.look_at_inventory_item(slot)
 	if error != OK:
 		push_warning("LOOK_AT_INVENTORY_ITEM failed: " + error_string(error))
+
+func _on_equipment_slot_pressed(slot: int) -> void:
+	selected_inventory_slot = slot
+	inventory_use_button.disabled = true
+	_sync_equipment_slots()
+	var error: Error = Network.look_at_inventory_item(slot)
+	if error != OK:
+		push_warning("LOOK_AT_INVENTORY_ITEM failed: " + error_string(error))
+
+func _first_empty_slot(start: int, end: int) -> int:
+	for slot: int in range(start, end):
+		if not AppState.inventory.has(slot):
+			return slot
+	return -1
+
+func _move_inventory_item(source: int, destination: int) -> void:
+	var error: Error = Network.move_inventory_item(source, destination)
+	if error != OK:
+		push_warning("MOVE_INVENTORY_ITEM failed: " + error_string(error))
 
 func _on_quick_slot_pressed(slot: int) -> void:
 	_use_inventory_slot(slot)

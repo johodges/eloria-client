@@ -88,6 +88,31 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 					var actor: Dictionary = actors[actor_id]
 					actors[actor_id] = ActorReducer.apply_command(actor, actor_command)
 			state_changed.emit(&"actors")
+		"actor_wear":
+			var wear_actor_id: int = int(event.actor_id)
+			if actors.has(wear_actor_id):
+				var wear_actor: Dictionary = actors[wear_actor_id]
+				var wear_visuals: Dictionary = (wear_actor.get("equipment_visuals", {}) as Dictionary).duplicate()
+				wear_visuals[int(event.part)] = int(event.visual_id)
+				wear_actor["equipment_visuals"] = wear_visuals
+				var wear_fallback_parts: Array = (wear_actor.get("equipment_fallback_parts", []) as Array).duplicate()
+				if not wear_fallback_parts.has(int(event.part)):
+					wear_fallback_parts.append(int(event.part))
+				wear_actor["equipment_fallback_parts"] = wear_fallback_parts
+				actors[wear_actor_id] = wear_actor
+				state_changed.emit(&"actors")
+		"actor_unwear":
+			var unwear_actor_id: int = int(event.actor_id)
+			if actors.has(unwear_actor_id):
+				var unwear_actor: Dictionary = actors[unwear_actor_id]
+				var unwear_visuals: Dictionary = (unwear_actor.get("equipment_visuals", {}) as Dictionary).duplicate()
+				unwear_visuals.erase(int(event.part))
+				unwear_actor["equipment_visuals"] = unwear_visuals
+				var unwear_fallback_parts: Array = (unwear_actor.get("equipment_fallback_parts", []) as Array).duplicate()
+				unwear_fallback_parts.erase(int(event.part))
+				unwear_actor["equipment_fallback_parts"] = unwear_fallback_parts
+				actors[unwear_actor_id] = unwear_actor
+				state_changed.emit(&"actors")
 		"stats":
 			stats = (event.values as Dictionary).duplicate(true)
 			state_changed.emit(&"stats")

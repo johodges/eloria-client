@@ -80,6 +80,17 @@ func _init() -> void:
 		PackedByteArray([0x34, 0x12, 20, 0x78, 0x56, 7]))
 	_expect(commands.commands.size() == 2 and commands.commands[1].actor_id == 0x5678,
 		"batched actor commands")
+	var actor_wear: Dictionary = EloriaProtocol.decode_server(52,
+		PackedByteArray([0x34, 0x12, 2, 25]))
+	_expect(actor_wear.type == "actor_wear" and actor_wear.actor_id == 0x1234
+		and actor_wear.part == 2 and actor_wear.visual_id == 25,
+		"actor wear equipment fields")
+	var actor_unwear: Dictionary = EloriaProtocol.decode_server(53,
+		PackedByteArray([0x34, 0x12, 2]))
+	_expect(actor_unwear.type == "actor_unwear" and actor_unwear.actor_id == 0x1234
+		and actor_unwear.part == 2, "actor unwear equipment fields")
+	_expect(EloriaProtocol.decode_server(52, PackedByteArray([1, 0, 2])).type == "invalid",
+		"malformed actor wear rejected")
 
 	var actor_payload := PackedByteArray([
 		0x34, 0x12, 10, 0, 20, 0, 0, 0, 0xff, 0xff, 1, 7,
@@ -90,6 +101,18 @@ func _init() -> void:
 	_expect(actor.name == "Bob" and actor.health == 90, "actor identity and health")
 	_expect(EloriaProtocol.decode_server(1, PackedByteArray([1])).type == "invalid",
 		"short actor")
+	var equipment_config_file: FileAccess = FileAccess.open(
+		"res://data/actors/equipment.json", FileAccess.READ)
+	_expect(equipment_config_file != null, "equipment part registry opens")
+	if equipment_config_file != null:
+		var equipment_config_value: Variant = JSON.parse_string(equipment_config_file.get_as_text())
+		_expect(equipment_config_value is Dictionary, "equipment part registry parses")
+		if equipment_config_value is Dictionary:
+			var equipment_parts: Dictionary = (equipment_config_value as Dictionary).get("parts", {})
+			_expect(equipment_parts.size() == 8
+				and str((equipment_parts.get("0", {}) as Dictionary).get("attachment", "")) == "right_hand"
+				and str((equipment_parts.get("1", {}) as Dictionary).get("attachment", "")) == "left_hand",
+				"weapon and shield use explicit native skeleton anchors")
 
 	_expect(MapRegistry.normalize_server_map_id(" /MAPS\\StartMap.ELM ") ==
 		"maps/startmap.elm", "map id normalization")

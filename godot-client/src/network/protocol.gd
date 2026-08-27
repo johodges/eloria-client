@@ -209,6 +209,16 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				"text": nul_string(payload.slice(1))}
 		ServerMessage.GET_ITEMS_COOLDOWN:
 			return decode_item_cooldowns(payload)
+		ServerMessage.ACTOR_WEAR_ITEM:
+			if payload.size() != 4:
+				return {"type": "invalid", "error": "actor_wear_length"}
+			return {"type": "actor_wear", "actor_id": u16(payload),
+				"part": int(payload[2]), "visual_id": int(payload[3])}
+		ServerMessage.ACTOR_UNWEAR_ITEM:
+			if payload.size() != 3:
+				return {"type": "invalid", "error": "actor_unwear_length"}
+			return {"type": "actor_unwear", "actor_id": u16(payload),
+				"part": int(payload[2])}
 		ServerMessage.RAW_TEXT:
 			if payload.is_empty():
 				return {"type": "invalid", "error": "chat_length"}
@@ -349,6 +359,11 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool) -> Dictionary
 			"pants": int(payload[15]), "boots": int(payload[16]), "head": int(payload[17]),
 			"shield": int(payload[18]), "weapon": int(payload[19]),
 			"cape": int(payload[20]), "helmet": int(payload[21])}
+		actor["equipment_visuals"] = {
+			0: int(payload[19]), 1: int(payload[18]), 2: int(payload[20]),
+			3: int(payload[21]), 4: int(payload[15]), 5: int(payload[14]),
+			6: int(payload[16])}
+		actor["equipment_fallback_parts"] = []
 		actor["frame"] = int(payload[22])
 		actor["max_health"] = u16(payload, 23)
 		actor["health"] = u16(payload, 25)

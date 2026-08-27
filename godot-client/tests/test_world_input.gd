@@ -110,18 +110,25 @@ func _run() -> void:
 	var app_state_inventory: Node = root.get_node("AppState")
 	app_state_inventory.set("inventory", {0: {
 		"image_id": 3, "quantity": 9, "slot": 0, "flags": 12,
-		"inventory_usable": true, "stackable": true}})
+		"inventory_usable": true, "stackable": true}, 36: {
+		"image_id": 8, "quantity": 1, "slot": 36, "flags": 0,
+		"inventory_usable": false, "stackable": false}})
 	main.call("_sync_inventory")
 	var first_inventory_slot: Button = main.get_node(
 		"GameView/InventoryPanel/Content/Scroll/InventoryGrid").get_child(0) as Button
 	var first_quick_slot: Button = main.get_node(
 		"GameView/ItemSpellQuickbar/QuickContent/Slots/Slot1") as Button
+	var first_equipment_slot: Button = main.get_node(
+		"GameView/InventoryPanel/Content/EquipmentGrid").get_child(0) as Button
 	_expect(first_inventory_slot.text.contains("×9") and first_inventory_slot.icon != null
 		and not first_inventory_slot.disabled,
 		"inventory snapshot populates its server slot")
 	_expect(first_quick_slot.text.contains("×9") and first_quick_slot.icon != null
 		and not first_quick_slot.disabled,
 		"usable inventory slot populates the matching live quick slot")
+	_expect(first_equipment_slot.text.contains("×1") and first_equipment_slot.icon != null
+		and not first_equipment_slot.disabled,
+		"authoritative wear slot populates the equipment grid")
 	app_state_inventory.set("inventory_cooldowns", {0: {
 		"maximum_msec": 30000, "end_msec": Time.get_ticks_msec() + 12000}})
 	main.call("_sync_quick_slots")

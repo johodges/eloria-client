@@ -447,7 +447,7 @@ anchor_bottom = 0.5
 offset_left = -300.0
 offset_top = -280.0
 offset_right = 220.0
-offset_bottom = 250.0
+offset_bottom = 270.0
 
 [node name="Content" type="VBoxContainer" parent="GameView/InventoryPanel"]
 theme_override_constants/separation = 8
@@ -457,12 +457,22 @@ text = "INVENTORY"
 horizontal_alignment = 1
 
 [node name="Scroll" type="ScrollContainer" parent="GameView/InventoryPanel/Content"]
-custom_minimum_size = Vector2(500, 390)
+custom_minimum_size = Vector2(500, 280)
 horizontal_scroll_mode = 0
 
 [node name="InventoryGrid" type="GridContainer" parent="GameView/InventoryPanel/Content/Scroll"]
 unique_name_in_owner = true
 columns = 6
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+
+[node name="EquipmentTitle" type="Label" parent="GameView/InventoryPanel/Content"]
+text = "EQUIPMENT"
+horizontal_alignment = 1
+
+[node name="EquipmentGrid" type="GridContainer" parent="GameView/InventoryPanel/Content"]
+unique_name_in_owner = true
+columns = 4
 theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 4
 
@@ -479,6 +489,18 @@ alignment = 2
 unique_name_in_owner = true
 text = "Use selected"
 tooltip_text = "Use the selected item"
+disabled = true
+
+[node name="InventoryEquip" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Equip selected"
+tooltip_text = "Equip the selected inventory item; the server validates compatibility"
+disabled = true
+
+[node name="InventoryUnequip" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Unequip selected"
+tooltip_text = "Move the selected equipped item into the first empty inventory slot"
 disabled = true
 
 [node name="Inspect" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
@@ -744,6 +766,8 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryUse" to="." method="_on_inventory_use_pressed"]
+[connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryEquip" to="." method="_on_inventory_equip_pressed"]
+[connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryUnequip" to="." method="_on_inventory_unequip_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/Inspect" to="." method="_on_inventory_inspect_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/Close" to="." method="_on_inventory_close_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/DisconnectButton" to="." method="_on_disconnect_pressed"]

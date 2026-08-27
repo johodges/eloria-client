@@ -19,7 +19,11 @@
         "right_hand": "hand_r",
         "left_hand": "hand_l",
         "head": "Head",
-        "back": "spine_03"
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": ["foot_l", "foot_r"],
+        "neck": "neck_01"
       }
     },
     "luminous_female": {
@@ -37,7 +41,11 @@
         "right_hand": "hand_r",
         "left_hand": "hand_l",
         "head": "Head",
-        "back": "spine_03"
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": ["foot_l", "foot_r"],
+        "neck": "neck_01"
       },
       "boneAliases": {
         "head": "Head"

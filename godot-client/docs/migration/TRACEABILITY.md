@@ -15,7 +15,7 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | Native luminous models | actor GLB runtime/assets | actor presentation | byte/source validation; render pending | FOUNDATION |
 | Movement reconciliation | client movement/server authority | controller/state | real MOVE_TO wiring; server X/Z plus navigation-sampled presentation Y; live verification pending | FOUNDATION |
 | Core HUD/chat | `hud.c`, `hud_misc_window.c`, `gamebuttons*.dds` | ui/hud | lower action/window rail; right stats and item/spell quickbar; unsupported windows visibly disabled | IMPLEMENTED |
-| Inventory/equipment | items.c | state/ui | mutation fixtures | NOT_STARTED |
+| Inventory/equipment | `items.c`, `items.h`, `hud_quickbar_window.c`; server `protocol.py`, `world.py`, `items.py` | protocol/state/inventory/equipment UI and actor presentation | exact snapshot/update/remove/use/move/cooldown/wear fixtures; local TCP count-0 snapshot; native item atlases visually inspected; populated live render pending | IMPLEMENTED |
 | Combat | actor commands/combat HUD | gameplay/ui | server combat trace | NOT_STARTED |
 | NPC/storage/trade | respective modules | reducers/windows | packet and integration tests | NOT_STARTED |
 | Magic/crafting/harvest | respective modules | reducers/windows | action/result traces | NOT_STARTED |

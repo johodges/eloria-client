@@ -13,9 +13,15 @@ var current_action: StringName = &"idle"
 var _snap_pending := true
 var _target_yaw := 0.0
 var _presentation_speed := 6.0
+var _native_skeleton: Skeleton3D
+var _attachment_bones: Dictionary = {}
+var _equipment_config: Dictionary = {}
+var _equipment_visuals: Dictionary = {}
+var _equipment_nodes: Dictionary = {}
 
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
-		model_config: Dictionary, animation_config: Dictionary) -> Array[String]:
+		model_config: Dictionary, animation_config: Dictionary,
+		equipment_config: Dictionary = {}) -> Array[String]:
 	actor_id = int(dto.actor_id)
 	server_target = adapter.tile_center(int(dto.x), int(dto.y))
 	position = server_target
@@ -47,6 +53,8 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	add_child(selection_ring)
 	_add_nameplate(dto)
 	resolver = AnimationResolver.new(animation_config)
+	_attachment_bones = (model_config.get("attachments", {}) as Dictionary).duplicate(true)
+	_equipment_config = (equipment_config as Dictionary).duplicate(true)
 	var source_path := _external_path(str(model_config.get("scene", "")))
 	var errors := _load_native_scene(source_path)
 	if not errors.is_empty():
@@ -65,6 +73,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		if skeleton == null:
 			errors.append("Skeleton3D missing")
 		else:
+			_native_skeleton = skeleton
 			var animation_path := _external_path(str(model_config.get("animationLibrary", "")))
 			var imported := NativeAnimationImporter.import_library(self, animation_path, skeleton, model_config.get("boneAliases", {}))
 			animation_player = imported.player
@@ -72,6 +81,8 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 			if animation_player != null:
 				errors.append_array(resolver.validate(imported.clips))
 				play_action(&"idle")
+	apply_equipment_visuals(dto.get("equipment_visuals", {}) as Dictionary,
+		dto.get("equipment_fallback_parts", []) as Array)
 	return errors
 
 func render_diagnostics() -> Dictionary:
@@ -138,6 +149,141 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_snap_pending = false
 	if dto.has("command") and resolver != null:
 		play_action(resolver.action_for_command(actor_command))
+	apply_equipment_visuals(dto.get("equipment_visuals", {}) as Dictionary,
+		dto.get("equipment_fallback_parts", []) as Array)
+
+func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) -> void:
+	for raw_part: Variant in _equipment_visuals.keys():
+		var old_part: int = int(raw_part)
+		if not visuals.has(old_part) and not visuals.has(str(old_part)):
+			_clear_equipment_part(old_part)
+	for raw_part: Variant in visuals:
+		var part: int = int(raw_part)
+		var visual_id: int = int(visuals[raw_part])
+		var allow_fallback: bool = fallback_parts.has(part)
+		if int(_equipment_visuals.get(part, -1)) == visual_id and (
+				not allow_fallback or _equipment_nodes.has(part)):
+			continue
+		_clear_equipment_part(part)
+		_equipment_visuals[part] = visual_id
+		_create_equipment_part(part, visual_id, allow_fallback)
+
+func equipment_diagnostics() -> Dictionary:
+	var native_count: int = 0
+	var fallback_count: int = 0
+	for nodes_value: Variant in _equipment_nodes.values():
+		for node_value: Variant in nodes_value:
+			var node: Node = node_value as Node
+			if is_instance_valid(node):
+				if node.has_meta("native_equipment"):
+					native_count += 1
+				else:
+					fallback_count += 1
+	return {"visuals": _equipment_visuals.duplicate(), "native": native_count,
+		"fallback": fallback_count}
+
+func _clear_equipment_part(part: int) -> void:
+	var nodes_value: Variant = _equipment_nodes.get(part, [])
+	if nodes_value is Array:
+		for node_value: Variant in nodes_value:
+			var node: Node = node_value as Node
+			if is_instance_valid(node):
+				node.queue_free()
+	_equipment_nodes.erase(part)
+	_equipment_visuals.erase(part)
+
+func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> void:
+	if _native_skeleton == null:
+		return
+	var parts: Dictionary = _equipment_config.get("parts", {}) as Dictionary
+	var part_config: Dictionary = parts.get(str(part), {}) as Dictionary
+	if part_config.is_empty():
+		return
+	var semantic: String = str(part_config.get("attachment", ""))
+	var bones_value: Variant = _attachment_bones.get(semantic, "")
+	var bones: Array[String] = []
+	if bones_value is Array:
+		for raw_bone: Variant in bones_value:
+			bones.append(str(raw_bone))
+	elif not str(bones_value).is_empty():
+		bones.append(str(bones_value))
+	var created: Array[Node] = []
+	var models: Dictionary = _equipment_config.get("models", {}) as Dictionary
+	var model_config: Dictionary = models.get("%d:%d" % [part, visual_id], {}) as Dictionary
+	if not model_config.is_empty() and not bones.is_empty():
+		var native_model: Node3D = _load_native_equipment(str(model_config.get("scene", "")))
+		if native_model != null:
+			var native_attachment: BoneAttachment3D = _bone_attachment(bones[0], part, visual_id)
+			if native_attachment != null:
+				native_attachment.add_child(native_model)
+				native_attachment.set_meta("native_equipment", true)
+				created.append(native_attachment)
+	if created.is_empty() and allow_fallback:
+		for bone: String in bones:
+			var fallback_attachment: BoneAttachment3D = _bone_attachment(bone, part, visual_id)
+			if fallback_attachment == null:
+				continue
+			fallback_attachment.add_child(_equipment_fallback_mesh(
+				str(part_config.get("fallback", "body"))))
+			created.append(fallback_attachment)
+	if created.is_empty():
+		_equipment_nodes.erase(part)
+	else:
+		_equipment_nodes[part] = created
+
+func _bone_attachment(bone: String, part: int, visual_id: int) -> BoneAttachment3D:
+	if _native_skeleton == null or _native_skeleton.find_bone(bone) < 0:
+		return null
+	var attachment: BoneAttachment3D = BoneAttachment3D.new()
+	attachment.name = "EquipmentPart_%d_Visual_%d_%s" % [part, visual_id, bone]
+	attachment.bone_name = bone
+	_native_skeleton.add_child(attachment)
+	return attachment
+
+func _load_native_equipment(path: String) -> Node3D:
+	if path.is_empty():
+		return null
+	var document: GLTFDocument = GLTFDocument.new()
+	var state: GLTFState = GLTFState.new()
+	if document.append_from_file(_external_path(path), state) != OK:
+		return null
+	var generated: Node = document.generate_scene(state)
+	return generated as Node3D if generated is Node3D else null
+
+func _equipment_fallback_mesh(shape: String) -> MeshInstance3D:
+	var instance: MeshInstance3D = MeshInstance3D.new()
+	instance.name = "MissingNativeEquipmentFallback"
+	var material: StandardMaterial3D = StandardMaterial3D.new()
+	material.albedo_color = Color(1.0, 0.1, 0.85, 0.85)
+	material.emission_enabled = true
+	material.emission = Color(0.7, 0.0, 0.5)
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	match shape:
+		"weapon":
+			var weapon: BoxMesh = BoxMesh.new()
+			weapon.size = Vector3(0.08, 0.7, 0.08)
+			instance.mesh = weapon
+		"shield":
+			var shield: CylinderMesh = CylinderMesh.new()
+			shield.top_radius = 0.28
+			shield.bottom_radius = 0.28
+			shield.height = 0.06
+			instance.mesh = shield
+		"head":
+			var head: SphereMesh = SphereMesh.new()
+			head.radius = 0.2
+			head.height = 0.35
+			instance.mesh = head
+		"feet":
+			var foot: BoxMesh = BoxMesh.new()
+			foot.size = Vector3(0.18, 0.12, 0.32)
+			instance.mesh = foot
+		_:
+			var body: BoxMesh = BoxMesh.new()
+			body.size = Vector3(0.32, 0.22, 0.18)
+			instance.mesh = body
+	instance.material_override = material
+	return instance
 
 func play_action(action: StringName) -> void:
 	if animation_player == null or resolver == null:

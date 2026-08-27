@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "parts": {
+    "0": {"name": "weapon", "attachment": "right_hand", "fallback": "weapon"},
+    "1": {"name": "shield", "attachment": "left_hand", "fallback": "shield"},
+    "2": {"name": "cape", "attachment": "back", "fallback": "body"},
+    "3": {"name": "helmet", "attachment": "head", "fallback": "head"},
+    "4": {"name": "legs", "attachment": "pelvis", "fallback": "body"},
+    "5": {"name": "body", "attachment": "body", "fallback": "body"},
+    "6": {"name": "boots", "attachment": "feet", "fallback": "feet"},
+    "7": {"name": "neck", "attachment": "neck", "fallback": "head"}
+  },
+  "models": {}
+}
