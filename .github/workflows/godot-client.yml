@@ -68,9 +68,13 @@ jobs:
           xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_server_session.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/session.log"
           ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/session.log"
           test -s "$ELORIA_ARTIFACT_DIR/world-default.png"
+          test -s "$ELORIA_ARTIFACT_DIR/world-rotated.png"
+          test -s "$ELORIA_ARTIFACT_DIR/world-panned.png"
+          test -s "$ELORIA_ARTIFACT_DIR/world-zoomed.png"
           test -s "$ELORIA_ARTIFACT_DIR/world-full-map.png"
           test -s "$ELORIA_ARTIFACT_DIR/world-after-move.png"
           test -s "$ELORIA_ARTIFACT_DIR/session.json"
+          test -s "$ELORIA_ARTIFACT_DIR/camera-states.json"
           test -s "$ELORIA_ARTIFACT_DIR/movement.json"
       - name: Upload rendered evidence
         if: always()
