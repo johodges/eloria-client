@@ -1,4 +1,6 @@
 *.o
+__pycache__/
+*.py[cod]
 .deps/
 make.conf
 el.linux.bin

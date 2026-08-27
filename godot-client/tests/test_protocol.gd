@@ -179,6 +179,16 @@ func _init() -> void:
 	_expect(actor.name == "Bob" and actor.health == 90, "actor identity and health")
 	_expect(EloriaProtocol.decode_server(1, PackedByteArray([1])).type == "invalid",
 		"short actor")
+	var extended_actor_payload := PackedByteArray([
+		0x35, 0x12, 11, 0, 21, 0, 0, 0, 0xfe, 0xff, 0x33, 0x01, 7,
+		120, 0, 88, 0, 2, 84, 111, 114, 97, 110, 0])
+	var extended_actor := EloriaProtocol.decode_server(247, extended_actor_payload)
+	_expect(extended_actor.type == "actor_spawn"
+		and extended_actor.actor_type == 307 and extended_actor.actor_id == 0x1235,
+		"extended Nymara actor type")
+	_expect(extended_actor.x == 11 and extended_actor.y == 21
+		and extended_actor.rotation == -2 and extended_actor.name == "Toran",
+		"extended Nymara actor fields")
 	var equipment_config_file: FileAccess = FileAccess.open(
 		"res://data/actors/equipment.json", FileAccess.READ)
 	_expect(equipment_config_file != null, "equipment part registry opens")

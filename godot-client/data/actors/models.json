@@ -1,42 +1,19 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "models": {
-    "luminous_male": {
-      "scene": "res://../eloria-assets/source/player_models/native/Superhero_Male_FullBody.gltf",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
-      "boneAliases": {
-        "head": "Head"
-      },
-      "status": "source_validated_runtime_pending",
-      "import": {
-        "scale": 1,
-        "rotationDegreesX": 0,
-        "rotationDegreesY": 180,
-        "rotationDegreesZ": 0
-      },
-      "animationMap": "res://data/animations/luminous.json",
-      "attachments": {
-        "right_hand": "hand_r",
-        "left_hand": "hand_l",
-        "head": "Head",
-        "back": "spine_03",
-        "body": "spine_02",
-        "pelvis": "pelvis",
-        "feet": ["foot_l", "foot_r"],
-        "neck": "neck_01"
-      }
-    },
     "luminous_female": {
       "scene": "res://../eloria-assets/source/player_models/native/Superhero_Female_FullBody.gltf",
       "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
-      "status": "source_validated_runtime_pending",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
       "import": {
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 180,
         "rotationDegreesZ": 0
       },
-      "animationMap": "res://data/animations/luminous.json",
       "attachments": {
         "right_hand": "hand_r",
         "left_hand": "hand_l",
@@ -44,11 +21,1870 @@
         "back": "spine_03",
         "body": "spine_02",
         "pelvis": "pelvis",
-        "feet": ["foot_l", "foot_r"],
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
         "neck": "neck_01"
-      },
+      }
+    },
+    "luminous_male": {
+      "scene": "res://../eloria-assets/source/player_models/native/Superhero_Male_FullBody.gltf",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "votary_female": {
+      "scene": "res://assets/actors/native/races/votary_female.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "votary_male": {
+      "scene": "res://assets/actors/native/races/votary_male.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "glasswarden_female": {
+      "scene": "res://assets/actors/native/races/glasswarden_female.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "glasswarden_male": {
+      "scene": "res://assets/actors/native/races/glasswarden_male.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "orun_female": {
+      "scene": "res://assets/actors/native/races/orun_female.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "orun_male": {
+      "scene": "res://assets/actors/native/races/orun_male.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "greyhaven_female": {
+      "scene": "res://assets/actors/native/races/greyhaven_female.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "greyhaven_male": {
+      "scene": "res://assets/actors/native/races/greyhaven_male.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "ssarathi_female": {
+      "scene": "res://assets/actors/native/races/ssarathi_female.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "ssarathi_male": {
+      "scene": "res://assets/actors/native/races/ssarathi_male.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "stoneborn_female": {
+      "scene": "res://assets/actors/native/races/stoneborn_female.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "stoneborn_male": {
+      "scene": "res://assets/actors/native/races/stoneborn_male.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "mycelari_female": {
+      "scene": "res://assets/actors/native/races/mycelari_female.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "mycelari_male": {
+      "scene": "res://assets/actors/native/races/mycelari_male.glb",
+      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/luminous.json",
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 180,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      }
+    },
+    "emberfox": {
+      "scene": "res://assets/actors/native/creatures/emberfox.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/emberfox.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "mossback_boar": {
+      "scene": "res://assets/actors/native/creatures/mossback_boar.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/mossback_boar.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "ridgehorn": {
+      "scene": "res://assets/actors/native/creatures/ridgehorn.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/ridgehorn.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "miretoad": {
+      "scene": "res://assets/actors/native/creatures/miretoad.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/miretoad.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "ash_crawler": {
+      "scene": "res://assets/actors/native/creatures/ash_crawler.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/ash_crawler.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "frost_maw": {
+      "scene": "res://assets/actors/native/creatures/frost_maw.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/frost_maw.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "bog_lurker": {
+      "scene": "res://assets/actors/native/creatures/bog_lurker.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/bog_lurker.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "sunscale_drake": {
+      "scene": "res://assets/actors/native/creatures/sunscale_drake.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/sunscale_drake.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "red_fox": {
+      "scene": "res://assets/actors/native/creatures/red_fox.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/red_fox.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "snow_hare": {
+      "scene": "res://assets/actors/native/creatures/snow_hare.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/snow_hare.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "mountain_goat": {
+      "scene": "res://assets/actors/native/creatures/mountain_goat.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/mountain_goat.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "black_bear": {
+      "scene": "res://assets/actors/native/creatures/black_bear.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/black_bear.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "elk": {
+      "scene": "res://assets/actors/native/creatures/elk.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/elk.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "wild_boar": {
+      "scene": "res://assets/actors/native/creatures/wild_boar.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/wild_boar.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "dire_wolf": {
+      "scene": "res://assets/actors/native/creatures/dire_wolf.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/dire_wolf.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "frost_tiger": {
+      "scene": "res://assets/actors/native/creatures/frost_tiger.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/frost_tiger.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "giant_crocodile": {
+      "scene": "res://assets/actors/native/creatures/giant_crocodile.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/giant_crocodile.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "fire_salamander": {
+      "scene": "res://assets/actors/native/creatures/fire_salamander.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/fire_salamander.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "thunder_ram": {
+      "scene": "res://assets/actors/native/creatures/thunder_ram.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/thunder_ram.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "giant_rat": {
+      "scene": "res://assets/actors/native/creatures/giant_rat.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/giant_rat.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "raccoon": {
+      "scene": "res://assets/actors/native/creatures/raccoon.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/raccoon.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "river_otter": {
+      "scene": "res://assets/actors/native/creatures/river_otter.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/river_otter.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "porcupine": {
+      "scene": "res://assets/actors/native/creatures/porcupine.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/porcupine.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "moose": {
+      "scene": "res://assets/actors/native/creatures/moose.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/moose.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "lynx": {
+      "scene": "res://assets/actors/native/creatures/lynx.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/lynx.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "desert_tortoise": {
+      "scene": "res://assets/actors/native/creatures/desert_tortoise.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/desert_tortoise.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "saber_tooth_cat": {
+      "scene": "res://assets/actors/native/creatures/saber_tooth_cat.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/saber_tooth_cat.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "armored_rhino": {
+      "scene": "res://assets/actors/native/creatures/armored_rhino.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/armored_rhino.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "giant_komodo": {
+      "scene": "res://assets/actors/native/creatures/giant_komodo.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/giant_komodo.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "ice_bear": {
+      "scene": "res://assets/actors/native/creatures/ice_bear.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/ice_bear.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "lava_hound": {
+      "scene": "res://assets/actors/native/creatures/lava_hound.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/lava_hound.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
+    "two_tailed_fox": {
+      "scene": "res://assets/actors/native/creatures/two_tailed_fox.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/two_tailed_fox.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    }
+  },
+  "actorTypes": {
+    "0": "luminous_female",
+    "1": "luminous_male",
+    "2": "votary_female",
+    "3": "votary_male",
+    "4": "glasswarden_female",
+    "5": "glasswarden_male",
+    "37": "orun_female",
+    "38": "orun_male",
+    "39": "greyhaven_female",
+    "40": "greyhaven_male",
+    "41": "ssarathi_female",
+    "42": "ssarathi_male",
+    "79": "stoneborn_female",
+    "80": "stoneborn_male",
+    "81": "mycelari_female",
+    "82": "mycelari_male",
+    "204": "emberfox",
+    "205": "mossback_boar",
+    "206": "ridgehorn",
+    "207": "miretoad",
+    "208": "ash_crawler",
+    "209": "frost_maw",
+    "210": "bog_lurker",
+    "211": "sunscale_drake",
+    "212": "red_fox",
+    "213": "snow_hare",
+    "214": "mountain_goat",
+    "215": "black_bear",
+    "216": "elk",
+    "217": "wild_boar",
+    "218": "dire_wolf",
+    "219": "frost_tiger",
+    "220": "giant_crocodile",
+    "221": "fire_salamander",
+    "222": "thunder_ram",
+    "223": "giant_rat",
+    "224": "raccoon",
+    "225": "river_otter",
+    "226": "porcupine",
+    "227": "moose",
+    "228": "lynx",
+    "229": "desert_tortoise",
+    "230": "saber_tooth_cat",
+    "231": "armored_rhino",
+    "232": "giant_komodo",
+    "233": "ice_bear",
+    "234": "lava_hound",
+    "235": "two_tailed_fox",
+    "236": "luminous_male",
+    "237": "luminous_male",
+    "238": "stoneborn_male",
+    "239": "luminous_male",
+    "240": "luminous_male",
+    "241": "luminous_male",
+    "242": "glasswarden_male",
+    "243": "stoneborn_male",
+    "244": "stoneborn_male",
+    "245": "votary_male",
+    "246": "luminous_female",
+    "247": "greyhaven_male",
+    "248": "ssarathi_male",
+    "249": "orun_male",
+    "250": "ssarathi_female",
+    "251": "ssarathi_male",
+    "252": "orun_male",
+    "253": "orun_male",
+    "254": "orun_male",
+    "255": "luminous_female",
+    "256": "luminous_male",
+    "257": "orun_male",
+    "258": "orun_male",
+    "259": "ssarathi_male",
+    "300": "luminous_female",
+    "301": "luminous_female",
+    "302": "luminous_female",
+    "303": "luminous_female",
+    "304": "luminous_female",
+    "305": "luminous_female",
+    "306": "luminous_female",
+    "307": "luminous_male",
+    "308": "luminous_male",
+    "309": "luminous_male",
+    "310": "luminous_male",
+    "311": "luminous_male",
+    "312": "luminous_male",
+    "313": "luminous_male",
+    "314": "votary_female",
+    "315": "votary_female",
+    "316": "votary_female",
+    "317": "votary_female",
+    "318": "votary_male",
+    "319": "votary_male",
+    "320": "votary_male",
+    "321": "votary_male",
+    "322": "glasswarden_female",
+    "323": "glasswarden_female",
+    "324": "glasswarden_female",
+    "325": "glasswarden_female",
+    "326": "glasswarden_male",
+    "327": "glasswarden_male",
+    "328": "glasswarden_male",
+    "329": "glasswarden_male",
+    "330": "orun_female",
+    "331": "orun_female",
+    "332": "orun_female",
+    "333": "orun_female",
+    "334": "orun_female",
+    "335": "orun_male",
+    "336": "orun_male",
+    "337": "orun_male",
+    "338": "orun_male",
+    "339": "orun_male",
+    "340": "greyhaven_female",
+    "341": "greyhaven_female",
+    "342": "greyhaven_female",
+    "343": "greyhaven_female",
+    "344": "greyhaven_female",
+    "345": "greyhaven_female",
+    "346": "greyhaven_male",
+    "347": "greyhaven_male",
+    "348": "greyhaven_male",
+    "349": "greyhaven_male",
+    "350": "greyhaven_male",
+    "351": "greyhaven_male",
+    "352": "ssarathi_female",
+    "353": "ssarathi_female",
+    "354": "ssarathi_female",
+    "355": "ssarathi_female",
+    "356": "ssarathi_female",
+    "357": "ssarathi_male",
+    "358": "ssarathi_male",
+    "359": "ssarathi_male",
+    "360": "ssarathi_male",
+    "361": "ssarathi_male"
+  },
+  "creationOptions": [
+    {
+      "actorType": 0,
+      "model": "luminous_female",
+      "label": "Luminous Female"
+    },
+    {
+      "actorType": 1,
+      "model": "luminous_male",
+      "label": "Luminous Male"
+    },
+    {
+      "actorType": 2,
+      "model": "votary_female",
+      "label": "Whitehorn Votary Female"
+    },
+    {
+      "actorType": 3,
+      "model": "votary_male",
+      "label": "Whitehorn Votary Male"
+    },
+    {
+      "actorType": 4,
+      "model": "glasswarden_female",
+      "label": "Glasswarden Female"
+    },
+    {
+      "actorType": 5,
+      "model": "glasswarden_male",
+      "label": "Glasswarden Male"
+    },
+    {
+      "actorType": 37,
+      "model": "orun_female",
+      "label": "Orun Female"
+    },
+    {
+      "actorType": 38,
+      "model": "orun_male",
+      "label": "Orun Male"
+    },
+    {
+      "actorType": 39,
+      "model": "greyhaven_female",
+      "label": "Greyhaven Female"
+    },
+    {
+      "actorType": 40,
+      "model": "greyhaven_male",
+      "label": "Greyhaven Male"
+    },
+    {
+      "actorType": 41,
+      "model": "ssarathi_female",
+      "label": "Ssarathi Female"
+    },
+    {
+      "actorType": 42,
+      "model": "ssarathi_male",
+      "label": "Ssarathi Male"
+    },
+    {
+      "actorType": 79,
+      "model": "stoneborn_female",
+      "label": "Stoneborn Female"
+    },
+    {
+      "actorType": 80,
+      "model": "stoneborn_male",
+      "label": "Stoneborn Male"
+    },
+    {
+      "actorType": 81,
+      "model": "mycelari_female",
+      "label": "Mycelari Female"
+    },
+    {
+      "actorType": 82,
+      "model": "mycelari_male",
+      "label": "Mycelari Male"
+    }
+  ],
+  "npcLooks": {
+    "300": {
+      "model": "luminous_female",
+      "equipmentVisuals": {
+        "3": 105,
+        "5": 105,
+        "7": 105
+      }
+    },
+    "301": {
+      "model": "luminous_female",
+      "equipmentVisuals": {
+        "0": 112,
+        "1": 105,
+        "2": 105,
+        "3": 105,
+        "5": 109,
+        "7": 105
+      }
+    },
+    "302": {
+      "model": "luminous_female",
+      "equipmentVisuals": {
+        "3": 105,
+        "5": 105,
+        "7": 105,
+        "0": 108
+      }
+    },
+    "303": {
+      "model": "luminous_female",
+      "equipmentVisuals": {
+        "0": 105,
+        "2": 102,
+        "3": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "304": {
+      "model": "luminous_female",
+      "equipmentVisuals": {
+        "3": 105,
+        "5": 105,
+        "7": 105,
+        "0": 108
+      }
+    },
+    "305": {
+      "model": "luminous_female",
+      "equipmentVisuals": {
+        "3": 105,
+        "5": 105,
+        "7": 105
+      }
+    },
+    "306": {
+      "model": "luminous_female",
+      "equipmentVisuals": {
+        "3": 105,
+        "5": 105,
+        "7": 105
+      }
+    },
+    "307": {
+      "model": "luminous_male",
+      "equipmentVisuals": {
+        "3": 105,
+        "5": 105,
+        "7": 105
+      }
+    },
+    "308": {
+      "model": "luminous_male",
+      "equipmentVisuals": {
+        "0": 112,
+        "1": 105,
+        "2": 105,
+        "3": 105,
+        "5": 109,
+        "7": 105
+      }
+    },
+    "309": {
+      "model": "luminous_male",
+      "equipmentVisuals": {
+        "3": 105,
+        "5": 105,
+        "7": 105,
+        "0": 108
+      }
+    },
+    "310": {
+      "model": "luminous_male",
+      "equipmentVisuals": {
+        "0": 105,
+        "2": 102,
+        "3": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "311": {
+      "model": "luminous_male",
+      "equipmentVisuals": {
+        "3": 105,
+        "5": 105,
+        "7": 105,
+        "0": 108
+      }
+    },
+    "312": {
+      "model": "luminous_male",
+      "equipmentVisuals": {
+        "3": 105,
+        "5": 105,
+        "7": 105
+      }
+    },
+    "313": {
+      "model": "luminous_male",
+      "equipmentVisuals": {
+        "3": 105,
+        "5": 105,
+        "7": 105
+      }
+    },
+    "314": {
+      "model": "votary_female",
+      "equipmentVisuals": {
+        "0": 109,
+        "3": 106,
+        "4": 105,
+        "5": 106,
+        "6": 105
+      }
+    },
+    "315": {
+      "model": "votary_female",
+      "equipmentVisuals": {
+        "0": 109,
+        "3": 106,
+        "4": 105,
+        "5": 106,
+        "6": 105
+      }
+    },
+    "316": {
+      "model": "votary_female",
+      "equipmentVisuals": {
+        "0": 109,
+        "3": 106,
+        "4": 105,
+        "5": 106,
+        "6": 105
+      }
+    },
+    "317": {
+      "model": "votary_female",
+      "equipmentVisuals": {
+        "0": 109,
+        "3": 106,
+        "4": 105,
+        "5": 106,
+        "6": 105
+      }
+    },
+    "318": {
+      "model": "votary_male",
+      "equipmentVisuals": {
+        "0": 109,
+        "3": 106,
+        "4": 105,
+        "5": 106,
+        "6": 105
+      }
+    },
+    "319": {
+      "model": "votary_male",
+      "equipmentVisuals": {
+        "0": 109,
+        "3": 106,
+        "4": 105,
+        "5": 106,
+        "6": 105
+      }
+    },
+    "320": {
+      "model": "votary_male",
+      "equipmentVisuals": {
+        "0": 109,
+        "3": 106,
+        "4": 105,
+        "5": 106,
+        "6": 105
+      }
+    },
+    "321": {
+      "model": "votary_male",
+      "equipmentVisuals": {
+        "0": 109,
+        "3": 106,
+        "4": 105,
+        "5": 106,
+        "6": 105
+      }
+    },
+    "322": {
+      "model": "glasswarden_female",
+      "equipmentVisuals": {
+        "0": 102,
+        "1": 101,
+        "2": 101,
+        "3": 101,
+        "4": 101,
+        "5": 101,
+        "6": 101,
+        "7": 101
+      }
+    },
+    "323": {
+      "model": "glasswarden_female",
+      "equipmentVisuals": {
+        "0": 102,
+        "1": 101,
+        "2": 101,
+        "3": 101,
+        "4": 101,
+        "5": 101,
+        "6": 101,
+        "7": 101
+      }
+    },
+    "324": {
+      "model": "glasswarden_female",
+      "equipmentVisuals": {
+        "0": 102,
+        "1": 101,
+        "2": 101,
+        "3": 101,
+        "4": 101,
+        "5": 101,
+        "6": 101,
+        "7": 101
+      }
+    },
+    "325": {
+      "model": "glasswarden_female",
+      "equipmentVisuals": {
+        "0": 102,
+        "1": 101,
+        "2": 101,
+        "3": 101,
+        "4": 101,
+        "5": 101,
+        "6": 101,
+        "7": 101
+      }
+    },
+    "326": {
+      "model": "glasswarden_male",
+      "equipmentVisuals": {
+        "0": 102,
+        "1": 101,
+        "2": 101,
+        "3": 101,
+        "4": 101,
+        "5": 101,
+        "6": 101,
+        "7": 101
+      }
+    },
+    "327": {
+      "model": "glasswarden_male",
+      "equipmentVisuals": {
+        "0": 102,
+        "1": 101,
+        "2": 101,
+        "3": 101,
+        "4": 101,
+        "5": 101,
+        "6": 101,
+        "7": 101
+      }
+    },
+    "328": {
+      "model": "glasswarden_male",
+      "equipmentVisuals": {
+        "0": 102,
+        "1": 101,
+        "2": 101,
+        "3": 101,
+        "4": 101,
+        "5": 101,
+        "6": 101,
+        "7": 101
+      }
+    },
+    "329": {
+      "model": "glasswarden_male",
+      "equipmentVisuals": {
+        "0": 102,
+        "1": 101,
+        "2": 101,
+        "3": 101,
+        "4": 101,
+        "5": 101,
+        "6": 101,
+        "7": 101
+      }
+    },
+    "330": {
+      "model": "orun_female",
+      "equipmentVisuals": {
+        "0": 106,
+        "1": 103,
+        "2": 103,
+        "3": 103,
+        "4": 103,
+        "5": 103,
+        "6": 103,
+        "7": 103
+      }
+    },
+    "331": {
+      "model": "orun_female",
+      "equipmentVisuals": {
+        "0": 106,
+        "1": 103,
+        "2": 103,
+        "3": 103,
+        "4": 103,
+        "5": 103,
+        "6": 103,
+        "7": 103
+      }
+    },
+    "332": {
+      "model": "orun_female",
+      "equipmentVisuals": {
+        "0": 106,
+        "2": 103,
+        "3": 103,
+        "4": 103,
+        "5": 103,
+        "6": 103,
+        "7": 103
+      }
+    },
+    "333": {
+      "model": "orun_female",
+      "equipmentVisuals": {
+        "0": 106,
+        "1": 103,
+        "2": 103,
+        "3": 103,
+        "4": 103,
+        "5": 103,
+        "6": 103,
+        "7": 103
+      }
+    },
+    "334": {
+      "model": "orun_female",
+      "equipmentVisuals": {
+        "0": 106,
+        "1": 103,
+        "2": 103,
+        "3": 103,
+        "4": 103,
+        "5": 103,
+        "6": 103,
+        "7": 103
+      }
+    },
+    "335": {
+      "model": "orun_male",
+      "equipmentVisuals": {
+        "0": 106,
+        "1": 103,
+        "2": 103,
+        "3": 103,
+        "4": 103,
+        "5": 103,
+        "6": 103,
+        "7": 103
+      }
+    },
+    "336": {
+      "model": "orun_male",
+      "equipmentVisuals": {
+        "0": 106,
+        "1": 103,
+        "2": 103,
+        "3": 103,
+        "4": 103,
+        "5": 103,
+        "6": 103,
+        "7": 103
+      }
+    },
+    "337": {
+      "model": "orun_male",
+      "equipmentVisuals": {
+        "0": 106,
+        "2": 103,
+        "3": 103,
+        "4": 103,
+        "5": 103,
+        "6": 103,
+        "7": 103
+      }
+    },
+    "338": {
+      "model": "orun_male",
+      "equipmentVisuals": {
+        "0": 106,
+        "1": 103,
+        "2": 103,
+        "3": 103,
+        "4": 103,
+        "5": 103,
+        "6": 103,
+        "7": 103
+      }
+    },
+    "339": {
+      "model": "orun_male",
+      "equipmentVisuals": {
+        "0": 106,
+        "1": 103,
+        "2": 103,
+        "3": 103,
+        "4": 103,
+        "5": 103,
+        "6": 103,
+        "7": 103
+      }
+    },
+    "340": {
+      "model": "greyhaven_female",
+      "equipmentVisuals": {
+        "0": 104,
+        "1": 102,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "341": {
+      "model": "greyhaven_female",
+      "equipmentVisuals": {
+        "0": 104,
+        "1": 102,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "342": {
+      "model": "greyhaven_female",
+      "equipmentVisuals": {
+        "0": 104,
+        "1": 102,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "343": {
+      "model": "greyhaven_female",
+      "equipmentVisuals": {
+        "0": 113,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "344": {
+      "model": "greyhaven_female",
+      "equipmentVisuals": {
+        "0": 104,
+        "1": 102,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "345": {
+      "model": "greyhaven_female",
+      "equipmentVisuals": {
+        "0": 104,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "346": {
+      "model": "greyhaven_male",
+      "equipmentVisuals": {
+        "0": 104,
+        "1": 102,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "347": {
+      "model": "greyhaven_male",
+      "equipmentVisuals": {
+        "0": 104,
+        "1": 102,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "348": {
+      "model": "greyhaven_male",
+      "equipmentVisuals": {
+        "0": 104,
+        "1": 102,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "349": {
+      "model": "greyhaven_male",
+      "equipmentVisuals": {
+        "0": 113,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "350": {
+      "model": "greyhaven_male",
+      "equipmentVisuals": {
+        "0": 104,
+        "1": 102,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "351": {
+      "model": "greyhaven_male",
+      "equipmentVisuals": {
+        "0": 104,
+        "2": 102,
+        "3": 102,
+        "4": 102,
+        "5": 102,
+        "6": 102,
+        "7": 102
+      }
+    },
+    "352": {
+      "model": "ssarathi_female",
+      "equipmentVisuals": {
+        "0": 107,
+        "1": 104,
+        "2": 104,
+        "3": 104,
+        "4": 104,
+        "5": 104,
+        "6": 104,
+        "7": 104
+      }
+    },
+    "353": {
+      "model": "ssarathi_female",
+      "equipmentVisuals": {
+        "0": 107,
+        "1": 104,
+        "2": 104,
+        "3": 104,
+        "4": 104,
+        "5": 104,
+        "6": 104,
+        "7": 104
+      }
+    },
+    "354": {
+      "model": "ssarathi_female",
+      "equipmentVisuals": {
+        "0": 107,
+        "1": 104,
+        "2": 104,
+        "3": 104,
+        "4": 104,
+        "5": 104,
+        "6": 104,
+        "7": 104
+      }
+    },
+    "355": {
+      "model": "ssarathi_female",
+      "equipmentVisuals": {
+        "0": 107,
+        "1": 104,
+        "2": 104,
+        "3": 104,
+        "4": 104,
+        "5": 104,
+        "6": 104,
+        "7": 104
+      }
+    },
+    "356": {
+      "model": "ssarathi_female",
+      "equipmentVisuals": {
+        "0": 107,
+        "1": 104,
+        "2": 104,
+        "3": 104,
+        "4": 104,
+        "5": 104,
+        "6": 104,
+        "7": 104
+      }
+    },
+    "357": {
+      "model": "ssarathi_male",
+      "equipmentVisuals": {
+        "0": 107,
+        "1": 104,
+        "2": 104,
+        "3": 104,
+        "4": 104,
+        "5": 104,
+        "6": 104,
+        "7": 104
+      }
+    },
+    "358": {
+      "model": "ssarathi_male",
+      "equipmentVisuals": {
+        "0": 107,
+        "1": 104,
+        "2": 104,
+        "3": 104,
+        "4": 104,
+        "5": 104,
+        "6": 104,
+        "7": 104
+      }
+    },
+    "359": {
+      "model": "ssarathi_male",
+      "equipmentVisuals": {
+        "0": 107,
+        "1": 104,
+        "2": 104,
+        "3": 104,
+        "4": 104,
+        "5": 104,
+        "6": 104,
+        "7": 104
+      }
+    },
+    "360": {
+      "model": "ssarathi_male",
+      "equipmentVisuals": {
+        "0": 107,
+        "1": 104,
+        "2": 104,
+        "3": 104,
+        "4": 104,
+        "5": 104,
+        "6": 104,
+        "7": 104
+      }
+    },
+    "361": {
+      "model": "ssarathi_male",
+      "equipmentVisuals": {
+        "0": 107,
+        "1": 104,
+        "2": 104,
+        "3": 104,
+        "4": 104,
+        "5": 104,
+        "6": 104,
+        "7": 104
       }
     }
   }

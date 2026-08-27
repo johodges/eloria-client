@@ -43,7 +43,8 @@ enum ServerMessage {
 	PING_REQUEST = 60, SPELL_CAST = 70, GET_ACTIVE_CHANNELS = 71, GET_ACTOR_HEALTH = 73,
 	GET_ITEMS_COOLDOWN = 77, SEND_BUFFS = 78, SEND_SPECIAL_EFFECT = 79,
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
-	SEND_ACHIEVEMENTS = 95, LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
+	SEND_ACHIEVEMENTS = 95, ADD_NEW_ACTOR_EXTENDED = 247,
+	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
 }
 
@@ -306,6 +307,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "actor_commands", "commands": commands}
 		ServerMessage.ADD_NEW_ACTOR:
 			return decode_actor(payload, false)
+		ServerMessage.ADD_NEW_ACTOR_EXTENDED:
+			return decode_actor(payload, false, true)
 		ServerMessage.ADD_NEW_ENHANCED_ACTOR:
 			return decode_actor(payload, true)
 		ServerMessage.HERE_YOUR_STATS:
@@ -656,14 +659,16 @@ static func stat_key(slot: int) -> String:
 		101: "tailoring", 107: "ranging"}
 	return str(keys.get(slot, "slot_%d" % slot))
 
-static func decode_actor(payload: PackedByteArray, enhanced: bool) -> Dictionary:
-	var minimum := 31 if enhanced else 18
+static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := false) -> Dictionary:
+	var minimum := 31 if enhanced else (19 if extended else 18)
 	if payload.size() < minimum:
 		return {"type": "invalid", "error": "actor_length"}
+	var shift := 1 if extended else 0
 	var actor := {
 		"type": "actor_spawn", "enhanced": enhanced, "actor_id": u16(payload),
 		"x": u16(payload, 2) & 0x7ff, "y": u16(payload, 4) & 0x7ff,
-		"rotation": s16(payload, 8), "actor_type": int(payload[10])}
+		"rotation": s16(payload, 8),
+		"actor_type": u16(payload, 10) if extended else int(payload[10])}
 	if enhanced:
 		actor["appearance"] = {
 			"skin": int(payload[12]), "hair": int(payload[13]), "shirt": int(payload[14]),
@@ -681,11 +686,11 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool) -> Dictionary
 		actor["kind"] = int(payload[27])
 		actor["name"] = nul_string(payload.slice(28, min(payload.size(), 58)))
 	else:
-		actor["frame"] = int(payload[11])
-		actor["max_health"] = u16(payload, 12)
-		actor["health"] = u16(payload, 14)
-		actor["kind"] = int(payload[16])
-		actor["name"] = nul_string(payload.slice(17, min(payload.size(), 47)))
+		actor["frame"] = int(payload[11 + shift])
+		actor["max_health"] = u16(payload, 12 + shift)
+		actor["health"] = u16(payload, 14 + shift)
+		actor["kind"] = int(payload[16 + shift])
+		actor["name"] = nul_string(payload.slice(17 + shift, min(payload.size(), 47 + shift)))
 	actor["alive"] = int(actor.get("health", 0)) > 0
 	actor["in_combat"] = false
 	return actor

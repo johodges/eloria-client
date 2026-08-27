@@ -102,7 +102,11 @@ extends Control
 var actor_nodes: Dictionary = {}
 var ground_bag_nodes: Dictionary = {}
 var models: Dictionary = {}
+var actor_type_models: Dictionary = {}
+var npc_looks: Dictionary = {}
+var creation_options: Array = []
 var animation_config: Dictionary = {}
+var animation_configs: Dictionary = {}
 var map_registry: Dictionary = {}
 var equipment_config: Dictionary = {}
 var item_atlas := ItemAtlas.new()
@@ -129,8 +133,13 @@ var manufacturing_server_status := "Select a recipe."
 var cooldown_display_second := -1
 
 func _ready() -> void:
-	models = _json("res://data/actors/models.json").get("models", {})
+	var model_registry: Dictionary = _json("res://data/actors/models.json")
+	models = model_registry.get("models", {})
+	actor_type_models = model_registry.get("actorTypes", {})
+	npc_looks = model_registry.get("npcLooks", {})
+	creation_options = model_registry.get("creationOptions", [])
 	animation_config = _json("res://data/animations/luminous.json")
+	animation_configs["res://data/animations/luminous.json"] = animation_config
 	map_registry = _json("res://data/maps/registry.json").get("maps", {})
 	equipment_config = _json("res://data/actors/equipment.json")
 	item_atlas.configure(_json("res://data/items/atlases.json"))
@@ -164,8 +173,12 @@ func _ready() -> void:
 	manufacturing_panel.hide()
 	game_view.hide()
 	creation_panel.hide()
-	create_gender.add_item("Luminous Female", 0)
-	create_gender.add_item("Luminous Male", 1)
+	for raw_option: Variant in creation_options:
+		if raw_option is not Dictionary:
+			continue
+		var option: Dictionary = raw_option as Dictionary
+		create_gender.add_item(str(option.get("label", "Unknown appearance")),
+			int(option.get("actorType", 1)))
 	_apply_eloria_art()
 	_apply_eloria_theme()
 	_build_inventory_slots()
@@ -285,10 +298,11 @@ func _refresh_creation_preview() -> void:
 	preview_root.add_child(preview_actor)
 	var actor_type := create_gender.get_selected_id()
 	var dto := {"actor_id": 0, "x": 0, "y": 0, "rotation": 0, "actor_type": actor_type}
-	var model_id := "luminous_female" if actor_type == 0 else "luminous_male"
+	var model_id := _model_for_actor(dto)
+	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 	var errors := preview_actor.configure(dto,
-		CoordinateAdapter.new({"walkingHeight": 0.0}), models.get(model_id, {}),
-		animation_config, equipment_config)
+		CoordinateAdapter.new({"walkingHeight": 0.0}), model_config,
+		_animation_for_model(model_config), equipment_config)
 	if not errors.is_empty():
 		create_status.text = "Preview warnings: " + "; ".join(errors)
 
@@ -994,7 +1008,7 @@ func _sync_world() -> void:
 			actor_nodes[id].queue_free()
 			actor_nodes.erase(id)
 	for id in AppState.actors:
-		var dto: Dictionary = AppState.actors[id]
+		var dto: Dictionary = _presentation_dto(AppState.actors[id])
 		if actor_nodes.has(id):
 			actor_nodes[id].apply_server_state(dto, adapter)
 			_place_actor_on_surface(actor_nodes[id] as ReplicatedActor3D)
@@ -1004,8 +1018,9 @@ func _sync_world() -> void:
 		world_root.add_child(node)
 		actor_nodes[id] = node
 		var model_id := _model_for_actor(dto)
-		var errors := node.configure(dto, adapter, models.get(model_id, {}),
-			animation_config, equipment_config)
+		var model_config: Dictionary = models.get(model_id, {}) as Dictionary
+		var errors := node.configure(dto, adapter, model_config,
+			_animation_for_model(model_config), equipment_config)
 		if not errors.is_empty():
 			push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 		node.apply_server_state(dto, adapter, true)
@@ -1956,11 +1971,31 @@ static func _external_texture(path: String) -> Texture2D:
 	return ImageTexture.create_from_image(image)
 
 func _model_for_actor(dto: Dictionary) -> String:
-	# Enhanced actors are player avatars. NPCs and creatures retain their server
-	# kind and use a visible fallback until their actor type has a registry entry.
+	var actor_type := str(int(dto.get("actor_type", 1)))
+	if actor_type_models.has(actor_type):
+		return str(actor_type_models[actor_type])
+	# Preserve the current avatar fallback for servers that omit actor type.
 	if not bool(dto.get("enhanced", false)) and int(dto.get("kind", 0)) not in [1, 4]:
 		return ""
 	return "luminous_female" if int(dto.get("actor_type", 1)) == 0 else "luminous_male"
+
+func _presentation_dto(dto: Dictionary) -> Dictionary:
+	var result: Dictionary = dto.duplicate(true)
+	var look: Dictionary = npc_looks.get(str(int(dto.get("actor_type", -1))), {}) as Dictionary
+	if look.is_empty():
+		return result
+	var visuals: Dictionary = (look.get("equipmentVisuals", {}) as Dictionary).duplicate(true)
+	var server_visuals: Dictionary = dto.get("equipment_visuals", {}) as Dictionary
+	for raw_part: Variant in server_visuals:
+		visuals[raw_part] = server_visuals[raw_part]
+	result["equipment_visuals"] = visuals
+	return result
+
+func _animation_for_model(model_config: Dictionary) -> Dictionary:
+	var path := str(model_config.get("animationMap", "res://data/animations/luminous.json"))
+	if not animation_configs.has(path):
+		animation_configs[path] = _json(path)
+	return animation_configs[path] as Dictionary
 
 static func _json(path: String) -> Dictionary:
 	var file := FileAccess.open(path, FileAccess.READ)
