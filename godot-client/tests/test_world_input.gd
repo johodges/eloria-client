@@ -35,14 +35,18 @@ func _run() -> void:
 		"world viewport input handler is connected")
 	_expect(not compass_overlay.visible and compass_overlay.texture == null,
 		"minimap render is not covered by decorative artwork")
-	_expect(minimap_viewport.world_3d == world_viewport.world_3d,
+	var resolved_world: World3D = world_viewport.find_world_3d()
+	_expect(resolved_world != null, "gameplay World3D resolves from the world viewport")
+	_expect(minimap_viewport.world_3d != null and minimap_viewport.world_3d == resolved_world,
 		"minimap shares the gameplay World3D")
-	_expect(full_map_viewport.world_3d == world_viewport.world_3d,
+	_expect(full_map_viewport.world_3d != null and full_map_viewport.world_3d == resolved_world,
 		"Tab map shares the gameplay World3D")
 	_expect(minimap_image.texture == minimap_viewport.get_texture(),
 		"minimap displays its live viewport texture")
 	_expect(full_map_image.texture == full_map_viewport.get_texture(),
 		"Tab map displays its live viewport texture")
+	var pick_result: int = int(main.call("_pick_actor", Vector2(640.0, 360.0)))
+	_expect(pick_result >= -1, "world click actor ray executes against a non-null World3D")
 	var full_map_panel: Control = main.get_node("GameView/FullMap") as Control
 	_expect(not full_map_panel.visible, "Tab map starts closed")
 	main.call("_on_map_button_pressed")

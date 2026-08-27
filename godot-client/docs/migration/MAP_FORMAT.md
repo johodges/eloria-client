@@ -29,6 +29,10 @@ runtime capture; without it the renderer retained only the blue fallback world.
 The minimap and full-map SubViewports share the gameplay `World3D` and each TextureRect
 is bound directly to its corresponding live viewport texture. The supplied compass and
 HUD atlas regions are opaque, so they are never placed above either map render.
+The shared world is resolved from `WorldRoot.get_world_3d()` after it enters the scene
+tree; reading `SubViewport.world_3d` directly can return null even while its Node3D
+children resolve an inherited world. Picking and terrain rays use the resolved, guarded
+reference.
 
 The inline navigation polygons are converted into static concave collision shapes at
 load time. Actor X/Z remains server-authoritative; presentation Y is ray-projected onto

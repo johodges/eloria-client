@@ -49,6 +49,7 @@ var actor_nodes: Dictionary = {}
 var models: Dictionary = {}
 var animation_config: Dictionary = {}
 var map_registry: Dictionary = {}
+var gameplay_world: World3D
 var loaded_server_map := ""
 var adapter := CoordinateAdapter.new({"walkingHeight": 0.0, "invertServerY": true})
 var preview_actor: ReplicatedActor3D
@@ -69,8 +70,7 @@ func _ready() -> void:
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
 	viewport_container.gui_input.connect(_on_world_gui_input)
-	map_viewport.world_3d = main_viewport.world_3d
-	full_map_viewport.world_3d = main_viewport.world_3d
+	_bind_shared_world()
 	minimap.texture = map_viewport.get_texture()
 	map_image.texture = full_map_viewport.get_texture()
 	full_map.hide()
@@ -80,6 +80,15 @@ func _ready() -> void:
 	create_gender.add_item("Luminous Male", 1)
 	_apply_eloria_art()
 	_apply_eloria_theme()
+
+func _bind_shared_world() -> void:
+	gameplay_world = world_root.get_world_3d()
+	if gameplay_world == null:
+		push_error("world_binding stage=resolve error=WorldRoot_has_no_World3D")
+		return
+	map_viewport.world_3d = gameplay_world
+	full_map_viewport.world_3d = gameplay_world
+	print_debug("world_binding stage=shared world=", gameplay_world)
 
 func _process(_delta: float) -> void:
 	if game_view.visible:
@@ -366,6 +375,7 @@ func _load_server_map() -> void:
 	map_label.text = "Loading " + AppState.current_map + "…"
 
 func _on_world_loaded(manifest: WorldManifest) -> void:
+	_bind_shared_world()
 	fallback_ground.hide()
 	map_label.text = "Map: " + manifest.data.get("asset", {}).get("name", manifest.asset_id())
 	_configure_full_map(manifest)
@@ -432,14 +442,14 @@ func _update_local_actor_follow() -> void:
 	player_map_marker.visible = true
 
 func _place_actor_on_surface(actor: ReplicatedActor3D) -> void:
-	if not is_instance_valid(actor) or not is_instance_valid(main_viewport.world_3d):
+	if not is_instance_valid(actor) or gameplay_world == null:
 		return
 	var actor_position: Vector3 = actor.server_target
 	var ray_start: Vector3 = Vector3(actor_position.x, 400.0, actor_position.z)
 	var ray_end: Vector3 = Vector3(actor_position.x, -100.0, actor_position.z)
 	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
 		ray_start, ray_end, 1)
-	var hit: Dictionary = main_viewport.world_3d.direct_space_state.intersect_ray(query)
+	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
 	var hit_position_value: Variant = hit.get("position")
 	if hit_position_value is Vector3:
 		var hit_position: Vector3 = hit_position_value as Vector3
@@ -538,10 +548,13 @@ func _local_viewport_position(local_position: Vector2) -> Vector2:
 	return local_position * Vector2(main_viewport.size) / viewport_container.size
 
 func _pick_actor(viewport_position: Vector2) -> int:
+	if gameplay_world == null:
+		push_warning("world_input actor_pick skipped: World3D unavailable")
+		return -1
 	var origin: Vector3 = camera_rig.ray_origin(viewport_position)
 	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
 		origin, origin + camera_rig.ray_direction(viewport_position) * 2000.0, 2)
-	var hit: Dictionary = main_viewport.world_3d.direct_space_state.intersect_ray(query)
+	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
 	var collider_value: Variant = hit.get("collider")
 	if collider_value is ReplicatedActor3D:
 		return (collider_value as ReplicatedActor3D).actor_id
