@@ -17,7 +17,7 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | Sit/stand | legacy `gamewin.c`, `keys.c`, `multiplayer.c`, `client_serv.h`; server `protocol.py`, `server.py`, `world.py` | exact desired-state codec, actor reducer, native transition/rest animation state | exact `07 02 00 01` / `07 02 00 00` fixtures; rendered real-server explicit sit/stand and automatic stand-on-move | VERIFIED |
 | Core HUD/chat | `hud.c`, `hud_misc_window.c`, `gamebuttons*.dds` | ui/hud | lower action/window rail; right stats and item/spell quickbar; unsupported windows visibly disabled | IMPLEMENTED |
 | Inventory | `items.c`, `items.h`, `hud_quickbar_window.c`; server `protocol.py`, `world.py`, `items.py` | protocol/state/inventory UI | exact snapshot/update/remove/use/move/cooldown fixtures; two-click placement; rendered real-server 3-item snapshot with 3/3 visible icons and quantities | VERIFIED |
-| Equipment | `items.c`, `items.h`; server `protocol.py`, `world.py`, `items.py` | equipment slots and actor attachment presentation | exact wear-slot and move fixtures; real-server fresh character supplied zero equipped items, so native attachment remains pending | IMPLEMENTED |
+| Equipment | `items.c`, `items.h`; server `protocol.py`, `world.py`, `items.py` | equipment slots and actor attachment presentation | exact wear-slot/move fixtures; rendered real-server spear equip/unwear, slot reconciliation, actor visual, skeleton fallback, and cleanup; native GLB mapping remains pending | IMPLEMENTED |
 | Character statistics | legacy statistics/HUD code; server `protocol.py`, `stats.py`, `world.py` | authoritative reducer, resource rail, statistics window | rendered real-server health, ether, food, carry, attributes, and skills; visually inspected non-overlapping 1280x720 window | VERIFIED |
 | Item quickbar | `hud_quickbar_window.c`; server inventory state | first eight authoritative inventory positions | rendered real-server 3/3 populated quick items with visible icons and quantities | VERIFIED |
 | Combat | `gamewin.c`, actor command handling; server `protocol.py`, `server.py`, `world.py` | selected-target attack action, health/combat/death replication | exact attack/damage/heal fixtures; local server approach, facing, enter-combat, and attack commands | IMPLEMENTED |
@@ -176,12 +176,13 @@ accepted as visual evidence; the final layout reserves separate anchored bands
 for history, entry, and the lower action rail. `chat.json` and the session log
 contain `credentials: REDACTED`.
 
-### Verified inventory and statistics evidence: workflow run 33081830716
+### Verified inventory, statistics, and equipment evidence: workflow run 33082783309
 
-Commit `ad1ff5e18c75cf6e7beeb1e58cbe43e1e2979eef` passed the strict
+Commit `d9a8932415a8087f17c8171f44e3645d4d589f44` passed the strict
 headless job and the opt-in rendered development-server job. Artifact
-`9650463534` contains sanitized `inventory-stats.json` plus human-inspected
-1280x720 inventory and statistics captures.
+`9650864916` contains sanitized `inventory-stats.json` and `equipment.json`
+plus human-inspected 1280x720 inventory, statistics, and equipped-fallback
+captures.
 
 The authoritative fresh-character snapshot contained three backpack entries
 at slots 0 through 2 with image IDs `114`, `397`, and `460`, each at quantity
@@ -189,8 +190,8 @@ one. Real item-inspection responses identified them as Four Gates Guard Spear,
 Guard Shield, and Guard Cape respectively, and each alias is pinned to matching
 independent weapon, shield, or cloak artwork. All three inventory buttons and
 all three corresponding item quick slots held visible icons and quantities.
-The independent asset pack does not bundle
-the complete legacy Eternal Lands item atlas range, so the registry resolves
+The independent asset pack does not bundle the complete legacy Eternal Lands
+item atlas range, so the registry resolves
 those observed IDs through explicit data-driven Eloria substitutes and uses a
 disclosed generic Eloria fallback for other unbundled IDs; tooltips retain the
 authoritative legacy image ID instead of pretending the substitute is exact.
@@ -202,4 +203,18 @@ confirmed the inventory window fits above the lower HUD, the item and spell
 quickbars remain readable, and the shifted statistics window no longer covers
 the fixed resource rail. All six configured spell slots exposed availability
 state. The fresh character had zero equipped items, so this run is not evidence
-for native equipment attachment. Artifact credentials remain `REDACTED`.
+for a native equipment model. Artifact credentials remain `REDACTED`.
+
+The same run selected the guard spear through the inventory UI and sent
+`MOVE_INVENTORY_ITEM(20)` as `source_slot:u8 | destination_slot:u8`, moving
+slot `0` to generic wear slot `36`. The server returned the authoritative
+inventory/statistics snapshots and broadcast weapon part `0`, visual `112`.
+The local luminous actor retained its native skeleton and created one visible
+development fallback on the configured right-hand attachment. Human inspection
+of `world-equipment-fallback.png` confirmed the bright fallback is visible on
+the zoomed actor. Reversing the UI action moved slot `36` back to `0`, consumed
+the server unwear update, removed the fallback node, and restored all three
+backpack items. `equipment.json` records native count `0` and fallback count
+`1 -> 0`; `data/actors/equipment.json` still contains no native GLB model
+mappings, so this is explicit fallback evidence rather than native equipment
+completion.
