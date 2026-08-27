@@ -16,7 +16,10 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | Movement reconciliation | client movement/server authority | controller/state | rendered real-server MOVE_TO changed authoritative tile `(768,480)` to `(773,481)`; actor yaw and camera followed | VERIFIED |
 | Sit/stand | legacy `gamewin.c`, `keys.c`, `multiplayer.c`, `client_serv.h`; server `protocol.py`, `server.py`, `world.py` | exact desired-state codec, actor reducer, native transition/rest animation state | exact `07 02 00 01` / `07 02 00 00` fixtures; rendered real-server explicit sit/stand and automatic stand-on-move | VERIFIED |
 | Core HUD/chat | `hud.c`, `hud_misc_window.c`, `gamebuttons*.dds` | ui/hud | lower action/window rail; right stats and item/spell quickbar; unsupported windows visibly disabled | IMPLEMENTED |
-| Inventory/equipment | `items.c`, `items.h`, `hud_quickbar_window.c`; server `protocol.py`, `world.py`, `items.py` | protocol/state/inventory/equipment UI and actor presentation | exact snapshot/update/remove/use/move/cooldown/wear fixtures; two-click backpack/wear placement; local TCP count-0 snapshot; native item atlases visually inspected; populated live render pending | IMPLEMENTED |
+| Inventory | `items.c`, `items.h`, `hud_quickbar_window.c`; server `protocol.py`, `world.py`, `items.py` | protocol/state/inventory UI | exact snapshot/update/remove/use/move/cooldown fixtures; two-click placement; rendered real-server 3-item snapshot with 3/3 visible icons and quantities | VERIFIED |
+| Equipment | `items.c`, `items.h`; server `protocol.py`, `world.py`, `items.py` | equipment slots and actor attachment presentation | exact wear-slot and move fixtures; real-server fresh character supplied zero equipped items, so native attachment remains pending | IMPLEMENTED |
+| Character statistics | legacy statistics/HUD code; server `protocol.py`, `stats.py`, `world.py` | authoritative reducer, resource rail, statistics window | rendered real-server health, ether, food, carry, attributes, and skills; visually inspected non-overlapping 1280x720 window | VERIFIED |
+| Item quickbar | `hud_quickbar_window.c`; server inventory state | first eight authoritative inventory positions | rendered real-server 3/3 populated quick items with visible icons and quantities | VERIFIED |
 | Combat | `gamewin.c`, actor command handling; server `protocol.py`, `server.py`, `world.py` | selected-target attack action, health/combat/death replication | exact attack/damage/heal fixtures; local server approach, facing, enter-combat, and attack commands | IMPLEMENTED |
 | Player trade | legacy `trade.c`, `items.c`, `multiplayer.c`; server `protocol.py`, `server.py`, `world.py` | exact codecs, reducer, selected-player action, three-column offer window, per-slot inventory/storage destinations | exact request/offer/remove/inspect/two-phase accept/reject/exit/destination fixtures; reducer cleanup; local two-client TCP request, offer, restoration, cancel, and completion verified | IMPLEMENTED |
 | Storage | legacy `storage.c`, `multiplayer.c`; server `protocol.py`, `server.py`, `world.py`, storage NPC dialogue | exact codecs, reducer, category/stored/inventory window | exact category/deposit/withdraw/inspect fixtures; local TCP NPC activation, open, category selection, deposit, inspect, withdrawal, and inventory restoration | IMPLEMENTED |
@@ -166,3 +169,28 @@ lower HUD rail. The first rendered attempt exposed the overlap and was not
 accepted as visual evidence; the final layout reserves separate anchored bands
 for history, entry, and the lower action rail. `chat.json` and the session log
 contain `credentials: REDACTED`.
+
+### Verified inventory and statistics evidence: workflow run 33079768795
+
+Commit `f2a568ef12f0dfd20a0d63a6ab92a6b7fff4e484` passed the strict
+headless job and the opt-in rendered development-server job. Artifact
+`9649555004` contains sanitized `inventory-stats.json` plus human-inspected
+1280x720 inventory and statistics captures.
+
+The authoritative fresh-character snapshot contained three backpack entries
+at slots 0 through 2 with image IDs `114`, `397`, and `460`, each at quantity
+one. All three inventory buttons and all three corresponding item quick slots
+held visible icons and quantities. The independent asset pack does not bundle
+the complete legacy Eternal Lands item atlas range, so the registry resolves
+those observed IDs through explicit data-driven Eloria substitutes and uses a
+disclosed generic Eloria fallback for other unbundled IDs; tooltips retain the
+authoritative legacy image ID instead of pretending the substitute is exact.
+
+The server supplied health `20/20`, ether `32/32`, food `45`, carried/capacity
+`20/80`, all six base attributes at `4`, and the complete skill snapshot. The
+resource rail and statistics window presented those values. Human inspection
+confirmed the inventory window fits above the lower HUD, the item and spell
+quickbars remain readable, and the shifted statistics window no longer covers
+the fixed resource rail. All six configured spell slots exposed availability
+state. The fresh character had zero equipped items, so this run is not evidence
+for native equipment attachment. Artifact credentials remain `REDACTED`.
