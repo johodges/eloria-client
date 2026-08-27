@@ -270,6 +270,43 @@ func _run() -> void:
 	_expect(str(main.call("_model_for_actor", {
 		"enhanced": true, "kind": 1, "actor_type": 1})) == "luminous_male",
 		"enhanced player wire packets retain the native luminous model")
+	var invasion_models: Dictionary = {
+		400: "river_otter", 401: "elk", 402: "desert_tortoise",
+		403: "sunscale_drake", 404: "snow_hare", 405: "thunder_ram",
+		406: "ice_bear", 407: "frost_tiger", 408: "ash_crawler",
+		409: "dire_wolf", 410: "armored_rhino", 411: "giant_komodo",
+		412: "emberfox", 413: "ridgehorn", 414: "saber_tooth_cat",
+		415: "fire_salamander", 416: "moose", 417: "mossback_boar",
+		418: "frost_maw", 419: "porcupine", 420: "two_tailed_fox",
+		421: "miretoad", 422: "giant_komodo", 423: "sunscale_drake",
+		424: "bog_lurker", 425: "miretoad", 426: "giant_crocodile",
+		427: "giant_crocodile",
+	}
+	for actor_type_value: Variant in invasion_models:
+		var invasion_actor_type: int = int(actor_type_value)
+		var expected_model: String = str(invasion_models[actor_type_value])
+		_expect(str(main.call("_model_for_actor", {
+			"enhanced": true, "kind": 3,
+			"actor_type": invasion_actor_type})) == expected_model,
+			"invasion actor type %d resolves to native model %s" % [
+				invasion_actor_type, expected_model])
+	var lakeglass_model_id: String = str(main.call("_model_for_actor", {
+		"enhanced": true, "kind": 3, "actor_type": 403}))
+	var lakeglass_model_config: Dictionary = (main.get("models") as Dictionary).get(
+		lakeglass_model_id, {}) as Dictionary
+	var lakeglass_actor: ReplicatedActor3D = ReplicatedActor3D.new()
+	main.add_child(lakeglass_actor)
+	var lakeglass_errors: Array[String] = lakeglass_actor.configure({
+		"actor_id": 4030, "x": 0, "y": 0, "rotation": 0,
+		"actor_type": 403, "kind": 3, "name": "Lakeglass Drake",
+	}, CoordinateAdapter.new({"walkingHeight": 0.0}), lakeglass_model_config,
+		main.call("_animation_for_model", lakeglass_model_config) as Dictionary,
+		main.get("equipment_config") as Dictionary)
+	_expect(lakeglass_errors.is_empty()
+		and lakeglass_actor.get_node_or_null("NativeModel") != null
+		and lakeglass_actor.get_node_or_null("MissingModelFallback") == null,
+		"Lakeglass Drake actor type 403 loads its animated native GLB without fallback")
+	lakeglass_actor.queue_free()
 	app_state_inventory.set("actors", {77: attackable_actor})
 	app_state_inventory.set("selected_actor_id", 77)
 	main.call("_sync_selection")
