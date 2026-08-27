@@ -268,14 +268,21 @@ func _run() -> void:
 		"every real backpack item has a visible icon and quantity")
 	_expect(populated_equipment_buttons == expected_equipment_buttons,
 		"every real equipped item has a visible icon and quantity")
-	var first_inventory_slot: int = _first_inventory_slot(server_inventory)
-	var prior_inventory_text: String = str(_app_state.get("inventory_text"))
-	main.call("_on_inventory_slot_pressed", first_inventory_slot)
-	var received_inventory_text: Callable = func() -> bool:
-		var current_text: String = str(_app_state.get("inventory_text"))
-		return not current_text.is_empty() and current_text != prior_inventory_text
-	_expect(await _wait_for(received_inventory_text, 8.0),
-		"real LOOK_AT_INVENTORY_ITEM receives the authoritative item description")
+	var inventory_inspections: Array[Dictionary] = []
+	for inspection_slot: int in _inventory_slots(server_inventory, 0, 36):
+		_app_state.set("inventory_text", "")
+		main.call("_on_inventory_slot_pressed", inspection_slot)
+		var received_inventory_text: Callable = func() -> bool:
+			return not str(_app_state.get("inventory_text")).is_empty()
+		_expect(await _wait_for(received_inventory_text, 8.0),
+			"real LOOK_AT_INVENTORY_ITEM receives the authoritative description for slot %d"
+			% inspection_slot)
+		var inspected_item: Dictionary = server_inventory.get(inspection_slot, {}) as Dictionary
+		inventory_inspections.append({
+			"slot": inspection_slot,
+			"image_id": int(inspected_item.get("image_id", -1)),
+			"text": str(_app_state.get("inventory_text")),
+		})
 	main.call("_sync_inventory")
 	var inventory_description: RichTextLabel = main.get_node(
 		"GameView/InventoryPanel/Content/InventoryDescription") as RichTextLabel
@@ -321,8 +328,7 @@ func _run() -> void:
 		"expected_inventory_buttons": expected_inventory_buttons,
 		"expected_equipment_buttons": expected_equipment_buttons,
 		"expected_quick_items": expected_quick_items,
-		"inspected_slot": first_inventory_slot,
-		"inventory_inspect_text": str(_app_state.get("inventory_text")),
+		"inventory_inspections": inventory_inspections,
 		"configured_spell_slots": configured_spell_slots,
 		"credentials": "REDACTED",
 	})
@@ -665,13 +671,14 @@ func _inventory_item_count(inventory: Dictionary, first_slot: int, end_slot: int
 			count += 1
 	return count
 
-func _first_inventory_slot(inventory: Dictionary) -> int:
-	var first_slot: int = 44
+func _inventory_slots(inventory: Dictionary, first_slot: int, end_slot: int) -> Array[int]:
+	var slots: Array[int] = []
 	for slot_value: Variant in inventory:
 		var slot: int = int(slot_value)
-		if slot >= 0 and slot < first_slot:
-			first_slot = slot
-	return first_slot
+		if slot >= first_slot and slot < end_slot:
+			slots.append(slot)
+	slots.sort()
+	return slots
 
 func _configured_spell_buttons(container: Container) -> int:
 	var configured: int = 0
