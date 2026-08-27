@@ -7,8 +7,8 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | TCP framing | client connection; server protocol.py | network/protocol.gd | byte fixtures + fragmented/combined reads | FOUNDATION |
 | Configurable endpoint | servers.c | responsive login scene/config | rendered CI connected to `18.235.240.60:2000` through the real login/creation UI | VERIFIED |
 | Login | loginwin.c; LOG_IN | auth/network | disposable character creation and subsequent login against the development server; credentials redacted | VERIFIED |
-| Actor spawn/update/remove | multiplayer.c; server actor packets/commands | state/actors | actor packet + command-step fixtures; opt-in rendered two-client replication gate | IMPLEMENTED |
-| NPC activation/dialogue | gamewin.c; server protocol/world | protocol/state/dialogue UI | byte + decode fixtures; runtime pending | IMPLEMENTED |
+| Actor spawn/update/remove | multiplayer.c; server actor packets/commands | state/actors | actor packet + command-step fixtures; rendered two-client native spawn, authoritative movement, ray selection, and disconnect cleanup | VERIFIED |
+| NPC activation/dialogue | gamewin.c; server protocol/world | protocol/state/dialogue UI | byte + decode fixtures; development Four Gates visibility set contained no NPCs, so rendered activation/dialogue remains pending | IMPLEMENTED |
 | Chat send/receive + PM | legacy `text.c`, `chat.c`, `pm_log.c`; server `protocol.py`, `server.py`, `world.py` | exact RAW_TEXT/SEND_PM codecs, channel state, safe lower-left presentation | exact bytes and channel/color/UTF-8 fixtures; two-client local TCP delivery, sender acknowledgement, reply-last, and offline-recipient rejection | IMPLEMENTED |
 | Title/login artwork | generated Eloria branding DDS | portable PNG copies + responsive themed login/creation | 1280x720 bounds fixture covers login and creation action rows; user screenshot comparison | IMPLEMENTED |
 | GLB map + JSON | GLB runtime/map.c | world/map loader | `four_gates` alias fixture, headless attach, and rendered development-server Four Gates capture | VERIFIED |
@@ -118,3 +118,25 @@ The native animation now progresses from `Sitting_Enter` to the explicit
 followed by MOVE_TO proved server-driven automatic standing: the actor moved
 from `(773,481)` to `(774,481)`, finished in `walk`, and did not retain a stale
 seated pose. Credentials remained `REDACTED` in every artifact file.
+
+### Verified remote-player evidence: workflow run 33073030852
+
+Commit `7b5b6b1bbfa376d879d4966a1286c7882edde5ce` passed the strict
+headless job and the opt-in rendered development-server job. Artifact
+`9646673225` contains the sanitized remote actor diagnostics and the visually
+inspected 1280×720 selected-player frame.
+
+The helper connection created and logged in a second disposable character with
+credentials retained only in memory. The primary client received remote actor
+ID `124` as enhanced player kind `1`, preserved the native luminous glTF model
+with three visible native meshes and no missing-model fallback, applied the
+authoritative movement from `(767,479)` to `(763,479)`, and selected the remote
+collision capsule through the gameplay camera ray. The selected actor's gold
+ring and both native players are visible on the authored terrain in the capture.
+Closing the helper connection removed actor `124` from both authoritative state
+and the rendered actor-node map.
+
+The same real-server actor snapshot contained no kind-`2` NPCs in the Four
+Gates visibility set. This is recorded as a development-server/map population
+limitation; it is not treated as evidence that rendered NPC activation or live
+dialogue works.
