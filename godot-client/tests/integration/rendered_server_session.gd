@@ -253,9 +253,9 @@ func _run() -> void:
 	await process_frame
 	var inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
 	var inventory_grid: GridContainer = main.get_node(
-		"GameView/InventoryPanel/Content/Scroll/InventoryGrid") as GridContainer
+		"GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Scroll/InventoryGrid") as GridContainer
 	var equipment_grid: GridContainer = main.get_node(
-		"GameView/InventoryPanel/Content/EquipmentGrid") as GridContainer
+		"GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn/EquipmentGrid") as GridContainer
 	var populated_inventory_buttons: int = _populated_item_buttons(inventory_grid)
 	var populated_equipment_buttons: int = _populated_item_buttons(equipment_grid)
 	var expected_inventory_buttons: int = _inventory_item_count(server_inventory, 0, 36)

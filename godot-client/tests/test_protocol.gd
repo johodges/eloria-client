@@ -321,10 +321,11 @@ func _init() -> void:
 	_expect(not bool(reduced_actor.get("sitting", true)), "actor stand reducer")
 	var animation_actor: ReplicatedActor3D = ReplicatedActor3D.new()
 	animation_actor.resolver = AnimationResolver.new({"actions": {
-		"idle": "Idle", "sit": "Sit", "seated_idle": "Seated", "stand": "Stand"}})
+		"idle": "Idle", "walk": "Walk", "sit": "Sit",
+		"seated_idle": "Seated", "stand": "Stand"}})
 	var animation_player_fixture: AnimationPlayer = AnimationPlayer.new()
 	var animation_library_fixture: AnimationLibrary = AnimationLibrary.new()
-	for clip_name: String in ["Idle", "Sit", "Seated", "Stand"]:
+	for clip_name: String in ["Idle", "Walk", "Sit", "Seated", "Stand"]:
 		var clip_fixture: Animation = Animation.new()
 		clip_fixture.length = 1.0
 		animation_library_fixture.add_animation(clip_name, clip_fixture)
@@ -338,6 +339,21 @@ func _init() -> void:
 	animation_actor.call("_on_animation_finished", &"Stand")
 	_expect(animation_actor.current_action == &"idle",
 		"completed stand transition returns to idle")
+	animation_actor.current_action = &"walk"
+	animation_actor.call("_finish_movement_presentation")
+	_expect(animation_actor.current_action == &"idle",
+		"completed movement segment switches from walk to idle")
+	var seated_yaw: float = ReplicatedActor3D.target_yaw_for_state(
+		1.25, 13, 0, CoordinateAdapter.new())
+	_expect(is_equal_approx(seated_yaw, 1.25),
+		"sitting preserves the actor's facing direction")
+	var animation_file: FileAccess = FileAccess.open(
+		"res://data/animations/luminous.json", FileAccess.READ)
+	var animation_data: Dictionary = JSON.parse_string(animation_file.get_as_text()) as Dictionary
+	var transition_resolver := AnimationResolver.new(animation_data)
+	_expect(is_equal_approx(transition_resolver.playback_speed_for_action(&"sit"), 2.0)
+		and is_equal_approx(transition_resolver.playback_speed_for_action(&"stand"), 2.0),
+		"sit and stand transitions play at twice speed")
 	reduced_actor = ActorReducer.apply_command(reduced_actor, 18)
 	_expect(bool(reduced_actor.get("in_combat", false)), "actor enters combat")
 	reduced_actor = ActorReducer.apply_command(reduced_actor, 19)
@@ -353,12 +369,28 @@ func _init() -> void:
 	stats_payload.encode_s16(88, 12)
 	stats_payload.encode_s16(90, 20)
 	stats_payload.encode_s16(92, -7)
+	stats_payload.encode_s16(0, 52)
+	stats_payload.encode_s16(2, 50)
+	stats_payload.encode_s16(64, 24)
+	stats_payload.encode_s16(66, 23)
+	stats_payload.encode_s16(60, 5)
+	stats_payload.encode_s16(62, 17)
+	stats_payload.encode_u32(130, 123456)
+	stats_payload.encode_u32(134, 150000)
 	stats_payload.encode_s16(226, 14)
 	stats_payload.encode_s16(228, 30)
 	var stats_event: Dictionary = EloriaProtocol.decode_server(18, stats_payload)
 	_expect(stats_event.type == "stats" and int(stats_event.values.health) == 18
 		and int(stats_event.values.max_health) == 25
 		and int(stats_event.values.food) == -7
+		and int(stats_event.values.physique) == 52
+		and int(stats_event.values.physique_base) == 50
+		and int(stats_event.values.attack) == 24
+		and int(stats_event.values.attack_base) == 23
+		and int(stats_event.values.overall) == 5
+		and int(stats_event.values.overall_level) == 17
+		and int(stats_event.values.attack_exp) == 123456
+		and int(stats_event.values.attack_exp_next) == 150000
 		and int(stats_event.values.action_points) == 14
 		and int(stats_event.values.max_action_points) == 30, "full character stats")
 	var partial_event: Dictionary = EloriaProtocol.decode_server(49,
@@ -370,6 +402,14 @@ func _init() -> void:
 	_expect(int(partial_action_event.values.action_points) == 9
 		and int(partial_action_event.values.max_action_points) == 22,
 		"partial action-point update")
+	_expect(int(partial_action_event.values.pickpoints_spent) == 9
+		and int(partial_action_event.values.pickpoints_earned) == 22
+		and int(partial_action_event.values.overall_level) == 22,
+		"partial pickpoint and overall-level aliases")
+	var partial_experience_event: Dictionary = EloriaProtocol.decode_server(49,
+		PackedByteArray([59, 0x40, 0xe2, 0x01, 0x00]))
+	_expect(int(partial_experience_event.values.attack_exp) == 123456,
+		"partial skill experience uses the legacy stat identifier map")
 
 	var inventory_payload: PackedByteArray = PackedByteArray([
 		2,
