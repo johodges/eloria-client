@@ -61,6 +61,9 @@ func move_inventory_item(source: int, destination: int) -> Error:
 func cast_spell(sigils: Array[int]) -> Error:
 	return send_frame(EloriaProtocol.cast_spell(sigils))
 
+func attack_actor(actor_id: int) -> Error:
+	return send_frame(EloriaProtocol.attack_actor(actor_id))
+
 func create_character(username: String, password: String, appearance: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)
 

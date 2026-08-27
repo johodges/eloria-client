@@ -16,7 +16,7 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | Movement reconciliation | client movement/server authority | controller/state | real MOVE_TO wiring; server X/Z plus navigation-sampled presentation Y; live verification pending | FOUNDATION |
 | Core HUD/chat | `hud.c`, `hud_misc_window.c`, `gamebuttons*.dds` | ui/hud | lower action/window rail; right stats and item/spell quickbar; unsupported windows visibly disabled | IMPLEMENTED |
 | Inventory/equipment | `items.c`, `items.h`, `hud_quickbar_window.c`; server `protocol.py`, `world.py`, `items.py` | protocol/state/inventory/equipment UI and actor presentation | exact snapshot/update/remove/use/move/cooldown/wear fixtures; two-click backpack/wear placement; local TCP count-0 snapshot; native item atlases visually inspected; populated live render pending | IMPLEMENTED |
-| Combat | actor commands/combat HUD | gameplay/ui | server combat trace | NOT_STARTED |
+| Combat | `gamewin.c`, actor command handling; server `protocol.py`, `server.py`, `world.py` | selected-target attack action, health/combat/death replication | exact attack/damage/heal fixtures; local server approach, facing, enter-combat, and attack commands | IMPLEMENTED |
 | NPC/storage/trade | respective modules | reducers/windows | packet and integration tests | NOT_STARTED |
 | Magic | `spells.c`, `hud_quickspells_window.c`; server `magic.py`, `protocol.py`, `world.py`, `config/spells.xml` | exact cast codec, sigil/result/buff state, separate spell quick slots | cast/sigil/result/availability fixtures; live owned-spell success pending | IMPLEMENTED |
 | Crafting/harvest | respective modules | reducers/windows | action/result traces | NOT_STARTED |

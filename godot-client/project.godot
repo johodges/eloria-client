@@ -31,6 +31,7 @@ disconnect={ "deadzone": 0.5, "events": [] }
 chat_focus={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":84)] }
 toggle_map={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":9)] }
 cancel={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":4194305)] }
+attack_selected={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":65)] }
 quick_item_1={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":49)] }
 quick_item_2={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":50)] }
 quick_item_3={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":51)] }

@@ -43,6 +43,7 @@ extends Control
 @onready var inventory_use_button: Button = %InventoryUse
 @onready var inventory_equip_button: Button = %InventoryEquip
 @onready var inventory_unequip_button: Button = %InventoryUnequip
+@onready var attack_button: Button = %AttackButton
 @onready var quick_slot_container: GridContainer = $GameView/ItemSpellQuickbar/QuickContent/Slots
 @onready var spell_slot_container: GridContainer = %SpellSlots
 @onready var spell_status: Label = %SpellStatus
@@ -258,6 +259,9 @@ func _on_sit_button_pressed() -> void:
 	if error != OK:
 		push_warning("SIT_DOWN failed: " + error_string(error))
 
+func _on_attack_button_pressed() -> void:
+	_attack_selected_actor()
+
 func _on_chat_button_pressed() -> void:
 	chat_input.grab_focus()
 
@@ -350,6 +354,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			_cast_spell_slot(spell_slot)
 			get_viewport().set_input_as_handled()
 			return
+	if event.is_action_pressed("attack_selected"):
+		_attack_selected_actor()
+		get_viewport().set_input_as_handled()
+		return
 	for slot: int in range(8):
 		if event.is_action_pressed("quick_item_%d" % (slot + 1)):
 			_use_inventory_slot(slot)
@@ -406,6 +414,14 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 	if picked_actor_id >= 0:
 		AppState.select_actor(picked_actor_id)
 		var selected_dto: Dictionary = AppState.actors.get(picked_actor_id, {})
+		if AppState.pending_spell_target == "actor":
+			var spell_touch_error: Error = Network.touch_actor(picked_actor_id)
+			if spell_touch_error != OK:
+				push_warning("TOUCH_PLAYER spell target failed: " + error_string(spell_touch_error))
+			return
+		if event.alt_pressed and _is_attackable_actor(picked_actor_id, selected_dto):
+			_send_attack(picked_actor_id)
+			return
 		if int(selected_dto.get("kind", 0)) == 2:
 			var touch_error: Error = Network.touch_actor(picked_actor_id)
 			if touch_error != OK:
@@ -440,6 +456,7 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_world()
 		&"actors", &"local_actor":
 			_sync_world()
+			_sync_selection()
 		&"chat":
 			_sync_chat()
 		&"stats":
@@ -939,13 +956,41 @@ func _on_chat_submitted(text: String) -> void:
 
 func _sync_selection() -> void:
 	var dto: Dictionary = AppState.actors.get(AppState.selected_actor_id, {})
-	selected_target.text = ("Target: none" if dto.is_empty()
-		else "Target: %s" % str(dto.get("name", "Actor %d" % AppState.selected_actor_id)))
+	if dto.is_empty():
+		selected_target.text = "Target: none"
+	else:
+		selected_target.text = "Target: %s  Health: %d / %d%s" % [
+			str(dto.get("name", "Actor %d" % AppState.selected_actor_id)),
+			int(dto.get("health", 0)), int(dto.get("max_health", 0)),
+			"  [combat]" if bool(dto.get("in_combat", false)) else ""]
+	var can_attack: bool = _is_attackable_actor(AppState.selected_actor_id, dto)
+	attack_button.disabled = not can_attack
+	attack_button.tooltip_text = ("Attack selected target [A] or Alt-click; the server approaches and validates combat"
+		if can_attack else "Select a living player or creature to attack")
 	for raw_id: Variant in actor_nodes.keys():
 		var id: int = int(raw_id)
 		var actor: ReplicatedActor3D = actor_nodes.get(id) as ReplicatedActor3D
 		if is_instance_valid(actor):
 			actor.set_selected(id == AppState.selected_actor_id)
+
+func _is_attackable_actor(actor_id: int, dto: Dictionary) -> bool:
+	if actor_id < 0 or actor_id == AppState.local_actor_id or dto.is_empty():
+		return false
+	var kind: int = int(dto.get("kind", 0))
+	return kind in [1, 3, 4, 5] and bool(dto.get("alive", int(dto.get("health", 0)) > 0))
+
+func _attack_selected_actor() -> void:
+	var actor_id: int = AppState.selected_actor_id
+	var dto: Dictionary = AppState.actors.get(actor_id, {})
+	if _is_attackable_actor(actor_id, dto):
+		_send_attack(actor_id)
+
+func _send_attack(actor_id: int) -> void:
+	print_debug("combat_input command=ATTACK_SOMEONE target_actor_id=", actor_id,
+		" redacted_bytes=not_sensitive")
+	var error: Error = Network.attack_actor(actor_id)
+	if error != OK:
+		push_warning("ATTACK_SOMEONE failed: " + error_string(error))
 
 func _sync_dialogue() -> void:
 	var dialogue: Dictionary = AppState.npc_dialogue

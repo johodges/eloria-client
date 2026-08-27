@@ -61,6 +61,13 @@ for an actor selected through `TOUCH_PLAYER(28)`, and 5 asks for a location
 submitted through the normal movement packet. `GET_ACTIVE_SPELL(44)` carries
 `buff_id:u8 | duration_seconds:u8`.
 
+Melee targeting sends `ATTACK_SOMEONE(40)` as `actor_id:u32le`. The server may
+approach the target before broadcasting actor command 18 (enter combat), 46
+(primary attack), and 19 (leave combat); command 3 is death. Actor damage and
+heal messages 47/48 carry `actor_id:u16le | amount:u16le`, while command 73
+carries `actor_id:u16le | max_health:u16le`. Creature and PvP range, PK-area,
+Peace Day, already-in-combat, death, and flee validation remain server-owned.
+
 ## Open verification items
 
 Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; every inventory/trade/storage variant; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.

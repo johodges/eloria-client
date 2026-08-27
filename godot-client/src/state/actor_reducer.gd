@@ -11,4 +11,11 @@ static func apply_command(actor: Dictionary, actor_command: int) -> Dictionary:
 		next["sitting"] = true
 	elif actor_command == 14:
 		next["sitting"] = false
+	elif actor_command == 18:
+		next["in_combat"] = true
+	elif actor_command == 19:
+		next["in_combat"] = false
+	elif actor_command == 3:
+		next["alive"] = false
+		next["health"] = 0
 	return next

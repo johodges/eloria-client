@@ -122,6 +122,23 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				unwear_actor["equipment_fallback_parts"] = unwear_fallback_parts
 				actors[unwear_actor_id] = unwear_actor
 				state_changed.emit(&"actors")
+		"actor_damage":
+			_apply_actor_health_delta(int(event.actor_id), -int(event.amount))
+		"actor_heal":
+			_apply_actor_health_delta(int(event.actor_id), int(event.amount))
+		"actor_max_health":
+			var health_actor_id: int = int(event.actor_id)
+			if actors.has(health_actor_id):
+				var health_actor: Dictionary = actors[health_actor_id]
+				health_actor["max_health"] = int(event.max_health)
+				health_actor["health"] = mini(int(health_actor.get("health", 0)),
+					int(event.max_health))
+				actors[health_actor_id] = health_actor
+				state_changed.emit(&"actors")
+				if health_actor_id == local_actor_id:
+					stats["max_health"] = int(event.max_health)
+					stats["health"] = int(health_actor.get("health", 0))
+					state_changed.emit(&"stats")
 		"stats":
 			stats = (event.values as Dictionary).duplicate(true)
 			state_changed.emit(&"stats")
@@ -222,6 +239,20 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 func select_actor(actor_id: int) -> void:
 	selected_actor_id = actor_id if actors.has(actor_id) else -1
 	state_changed.emit(&"selection")
+
+func _apply_actor_health_delta(actor_id: int, amount: int) -> void:
+	if not actors.has(actor_id):
+		return
+	var actor: Dictionary = actors[actor_id]
+	var maximum: int = maxi(0, int(actor.get("max_health", 0)))
+	var health: int = clampi(int(actor.get("health", 0)) + amount, 0, maximum)
+	actor["health"] = health
+	actor["alive"] = health > 0
+	actors[actor_id] = actor
+	state_changed.emit(&"actors")
+	if actor_id == local_actor_id:
+		stats["health"] = health
+		state_changed.emit(&"stats")
 
 func close_dialogue() -> void:
 	npc_dialogue["open"] = false

@@ -94,6 +94,9 @@ func _run() -> void:
 	var inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
 	var inventory_button: Button = main.get_node(
 		"GameView/Quickbar/Buttons/InventoryButton") as Button
+	var attack_button: Button = main.get_node(
+		"GameView/Quickbar/Buttons/AttackButton") as Button
+	var app_state_inventory: Node = root.get_node("AppState")
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
@@ -104,10 +107,35 @@ func _run() -> void:
 	main.call("_on_stats_button_pressed")
 	_expect(not inventory_panel.visible and not inventory_button.disabled,
 		"real inventory window starts closed with its HUD action enabled")
+	_expect(attack_button.disabled, "attack action starts disabled without a selected target")
+	var attackable_actor: Dictionary = {
+		"actor_id": 77, "name": "Rat", "kind": 3, "health": 12,
+		"max_health": 12, "alive": true}
+	app_state_inventory.set("actors", {77: attackable_actor})
+	app_state_inventory.set("selected_actor_id", 77)
+	main.call("_sync_selection")
+	_expect(not attack_button.disabled and attack_button.tooltip_text.contains("server"),
+		"living creature selection enables the server-authoritative attack action")
+	app_state_inventory.call("_on_packet", 47, PackedByteArray([77, 0, 5, 0]))
+	var damaged_value: Variant = (app_state_inventory.get("actors") as Dictionary).get(77, {})
+	var damaged_actor: Dictionary = damaged_value as Dictionary
+	_expect(int(damaged_actor.get("health", -1)) == 7,
+		"authoritative combat damage updates replicated actor health")
+	app_state_inventory.call("_on_packet", 48, PackedByteArray([77, 0, 3, 0]))
+	var healed_value: Variant = (app_state_inventory.get("actors") as Dictionary).get(77, {})
+	var healed_actor: Dictionary = healed_value as Dictionary
+	_expect(int(healed_actor.get("health", -1)) == 10,
+		"authoritative combat heal updates replicated actor health")
+	attackable_actor["alive"] = false
+	attackable_actor["health"] = 0
+	app_state_inventory.set("actors", {77: attackable_actor})
+	main.call("_sync_selection")
+	_expect(attack_button.disabled, "dead target disables the attack action")
+	app_state_inventory.set("actors", {})
+	app_state_inventory.set("selected_actor_id", -1)
 	main.call("_on_inventory_button_pressed")
 	_expect(inventory_panel.visible and not stats_panel.visible,
 		"inventory action opens the window and centrally closes statistics")
-	var app_state_inventory: Node = root.get_node("AppState")
 	app_state_inventory.set("inventory", {0: {
 		"image_id": 3, "quantity": 9, "slot": 0, "flags": 12,
 		"inventory_usable": true, "stackable": true}, 36: {
@@ -176,6 +204,8 @@ func _run() -> void:
 	for spell_index: int in range(1, 7):
 		_expect(InputMap.has_action("quick_spell_%d" % spell_index),
 			"spell quick slot %d has a centralized input action" % spell_index)
+	_expect(InputMap.has_action("attack_selected"),
+		"combat attack has a centralized input action")
 	app_state_inventory.set("inventory", {})
 	app_state_inventory.set("stats", {})
 	main.call("_on_inventory_close_pressed")

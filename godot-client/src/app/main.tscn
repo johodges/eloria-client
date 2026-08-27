@@ -315,6 +315,13 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 tooltip_text = "Sit / stand [Alt+S]"
 
+[node name="AttackButton" type="Button" parent="GameView/Quickbar/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 44)
+text = "Attack"
+tooltip_text = "Select a living player or creature to attack"
+disabled = true
+
 [node name="TradeButton" type="Button" parent="GameView/Quickbar/Buttons"]
 custom_minimum_size = Vector2(44, 44)
 text = "Trade"
@@ -802,6 +809,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/Buttons/WalkButton" to="." method="_on_walk_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/MapButton" to="." method="_on_map_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/SitButton" to="." method="_on_sit_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/Buttons/AttackButton" to="." method="_on_attack_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/ChatButton" to="." method="_on_chat_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]

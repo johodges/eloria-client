@@ -24,6 +24,8 @@ func _init() -> void:
 		PackedByteArray([20, 3, 0, 7, 9]))
 	_expect_bytes("cast spell fixture", EloriaProtocol.cast_spell([3, 23]),
 		PackedByteArray([39, 4, 0, 2, 3, 23]))
+	_expect_bytes("attack actor fixture", EloriaProtocol.attack_actor(0x12345678),
+		PackedByteArray([40, 5, 0, 0x78, 0x56, 0x34, 0x12]))
 	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
 	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
 	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")
@@ -93,6 +95,20 @@ func _init() -> void:
 		and actor_unwear.part == 2, "actor unwear equipment fields")
 	_expect(EloriaProtocol.decode_server(52, PackedByteArray([1, 0, 2])).type == "invalid",
 		"malformed actor wear rejected")
+	var actor_damage: Dictionary = EloriaProtocol.decode_server(47,
+		PackedByteArray([0x34, 0x12, 7, 0]))
+	_expect(actor_damage.type == "actor_damage" and actor_damage.actor_id == 0x1234
+		and actor_damage.amount == 7, "actor damage fields")
+	var actor_heal: Dictionary = EloriaProtocol.decode_server(48,
+		PackedByteArray([0x34, 0x12, 5, 0]))
+	_expect(actor_heal.type == "actor_heal" and actor_heal.amount == 5,
+		"actor heal fields")
+	var actor_max_health: Dictionary = EloriaProtocol.decode_server(73,
+		PackedByteArray([0x34, 0x12, 120, 0]))
+	_expect(actor_max_health.type == "actor_max_health"
+		and actor_max_health.max_health == 120, "actor maximum-health fields")
+	_expect(EloriaProtocol.decode_server(47, PackedByteArray([1, 0, 2])).type == "invalid",
+		"malformed actor damage rejected")
 
 	var actor_payload := PackedByteArray([
 		0x34, 0x12, 10, 0, 20, 0, 0, 0, 0xff, 0xff, 1, 7,
@@ -162,6 +178,13 @@ func _init() -> void:
 	_expect(bool(reduced_actor.get("sitting", false)), "actor sit reducer")
 	reduced_actor = ActorReducer.apply_command(reduced_actor, 14)
 	_expect(not bool(reduced_actor.get("sitting", true)), "actor stand reducer")
+	reduced_actor = ActorReducer.apply_command(reduced_actor, 18)
+	_expect(bool(reduced_actor.get("in_combat", false)), "actor enters combat")
+	reduced_actor = ActorReducer.apply_command(reduced_actor, 19)
+	_expect(not bool(reduced_actor.get("in_combat", true)), "actor leaves combat")
+	reduced_actor = ActorReducer.apply_command(reduced_actor, 3)
+	_expect(not bool(reduced_actor.get("alive", true))
+		and int(reduced_actor.get("health", -1)) == 0, "actor death is authoritative")
 
 	var stats_payload: PackedByteArray = PackedByteArray()
 	stats_payload.resize(230)

@@ -32,7 +32,7 @@ enum ServerMessage {
 	NPC_OPTIONS_LIST = 31, CLOSE_NPC_MENU = 32, SEND_NPC_INFO = 33,
 	GET_YOUR_SIGILS = 42, GET_ACTIVE_SPELL = 44,
 	GET_ACTIVE_SPELL_LIST = 45, REMOVE_ACTIVE_SPELL = 46,
-	SEND_PARTIAL_STAT = 49,
+	GET_ACTOR_DAMAGE = 47, GET_ACTOR_HEAL = 48, SEND_PARTIAL_STAT = 49,
 	ADD_NEW_ENHANCED_ACTOR = 51, ACTOR_WEAR_ITEM = 52, ACTOR_UNWEAR_ITEM = 53,
 	PING_REQUEST = 60, SPELL_CAST = 70, GET_ACTIVE_CHANNELS = 71, GET_ACTOR_HEALTH = 73,
 	GET_ITEMS_COOLDOWN = 77, SEND_BUFFS = 78, SEND_SPECIAL_EFFECT = 79,
@@ -133,6 +133,11 @@ static func cast_spell(sigils: Array[int]) -> PackedByteArray:
 		assert(sigil_id >= 0 and sigil_id <= 63)
 		payload.append(sigil_id)
 	return encode(ClientMessage.CAST_SPELL, payload)
+
+static func attack_actor(actor_id: int) -> PackedByteArray:
+	return encode(ClientMessage.ATTACK_SOMEONE, PackedByteArray([
+		actor_id & 0xff, (actor_id >> 8) & 0xff,
+		(actor_id >> 16) & 0xff, (actor_id >> 24) & 0xff]))
 
 static func actor_command_step(command: int) -> Vector2i:
 	# Server movement frames are the authoritative one-tile updates used by the
@@ -262,6 +267,21 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				return {"type": "invalid", "error": "actor_unwear_length"}
 			return {"type": "actor_unwear", "actor_id": u16(payload),
 				"part": int(payload[2])}
+		ServerMessage.GET_ACTOR_DAMAGE:
+			if payload.size() != 4:
+				return {"type": "invalid", "error": "actor_damage_length"}
+			return {"type": "actor_damage", "actor_id": u16(payload),
+				"amount": u16(payload, 2)}
+		ServerMessage.GET_ACTOR_HEAL:
+			if payload.size() != 4:
+				return {"type": "invalid", "error": "actor_heal_length"}
+			return {"type": "actor_heal", "actor_id": u16(payload),
+				"amount": u16(payload, 2)}
+		ServerMessage.GET_ACTOR_HEALTH:
+			if payload.size() != 4:
+				return {"type": "invalid", "error": "actor_health_length"}
+			return {"type": "actor_max_health", "actor_id": u16(payload),
+				"max_health": u16(payload, 2)}
 		ServerMessage.RAW_TEXT:
 			if payload.is_empty():
 				return {"type": "invalid", "error": "chat_length"}
@@ -418,6 +438,8 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool) -> Dictionary
 		actor["health"] = u16(payload, 14)
 		actor["kind"] = int(payload[16])
 		actor["name"] = nul_string(payload.slice(17, min(payload.size(), 47)))
+	actor["alive"] = int(actor.get("health", 0)) > 0
+	actor["in_combat"] = false
 	return actor
 
 static func nul_string(bytes: PackedByteArray) -> String:
