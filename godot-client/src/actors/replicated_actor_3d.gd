@@ -79,6 +79,9 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 			animation_player = imported.player
 			errors.append_array(Array(imported.errors))
 			if animation_player != null:
+				if not animation_player.animation_finished.is_connected(
+						_on_animation_finished):
+					animation_player.animation_finished.connect(_on_animation_finished)
 				errors.append_array(resolver.validate(imported.clips))
 				play_action(&"idle")
 	apply_equipment_visuals(dto.get("equipment_visuals", {}) as Dictionary,
@@ -296,6 +299,14 @@ func play_action(action: StringName) -> void:
 		return
 	current_action = action
 	animation_player.play(clip)
+
+func _on_animation_finished(_animation_name: StringName) -> void:
+	# The server sends transition commands, not a second command for the resting
+	# pose. Keep this explicit and data-driven through the action map.
+	if current_action == &"sit":
+		play_action(&"seated_idle")
+	elif current_action == &"stand":
+		play_action(&"idle")
 
 func set_selected(value: bool) -> void:
 	var ring: Node3D = get_node_or_null("SelectionRing") as Node3D

@@ -73,9 +73,12 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/world-zoomed.png"
           test -s "$ELORIA_ARTIFACT_DIR/world-full-map.png"
           test -s "$ELORIA_ARTIFACT_DIR/world-after-move.png"
+          test -s "$ELORIA_ARTIFACT_DIR/world-seated.png"
+          test -s "$ELORIA_ARTIFACT_DIR/world-standing-after-move.png"
           test -s "$ELORIA_ARTIFACT_DIR/session.json"
           test -s "$ELORIA_ARTIFACT_DIR/camera-states.json"
           test -s "$ELORIA_ARTIFACT_DIR/movement.json"
+          test -s "$ELORIA_ARTIFACT_DIR/sit-stand.json"
       - name: Upload rendered evidence
         if: always()
         uses: actions/upload-artifact@v4

@@ -238,6 +238,25 @@ func _init() -> void:
 	_expect(bool(reduced_actor.get("sitting", false)), "actor sit reducer")
 	reduced_actor = ActorReducer.apply_command(reduced_actor, 14)
 	_expect(not bool(reduced_actor.get("sitting", true)), "actor stand reducer")
+	var animation_actor: ReplicatedActor3D = ReplicatedActor3D.new()
+	animation_actor.resolver = AnimationResolver.new({"actions": {
+		"idle": "Idle", "sit": "Sit", "seated_idle": "Seated", "stand": "Stand"}})
+	var animation_player_fixture: AnimationPlayer = AnimationPlayer.new()
+	var animation_library_fixture: AnimationLibrary = AnimationLibrary.new()
+	for clip_name: String in ["Idle", "Sit", "Seated", "Stand"]:
+		var clip_fixture: Animation = Animation.new()
+		clip_fixture.length = 1.0
+		animation_library_fixture.add_animation(clip_name, clip_fixture)
+	animation_player_fixture.add_animation_library("", animation_library_fixture)
+	animation_actor.animation_player = animation_player_fixture
+	animation_actor.current_action = &"sit"
+	animation_actor.call("_on_animation_finished", &"Sit")
+	_expect(animation_actor.current_action == &"seated_idle",
+		"completed sit transition advances to seated idle")
+	animation_actor.current_action = &"stand"
+	animation_actor.call("_on_animation_finished", &"Stand")
+	_expect(animation_actor.current_action == &"idle",
+		"completed stand transition returns to idle")
 	reduced_actor = ActorReducer.apply_command(reduced_actor, 18)
 	_expect(bool(reduced_actor.get("in_combat", false)), "actor enters combat")
 	reduced_actor = ActorReducer.apply_command(reduced_actor, 19)

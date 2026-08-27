@@ -252,6 +252,76 @@ func _run() -> void:
 		_write_json("movement.json", movement_evidence)
 		await _capture("world-after-move.png")
 
+		main.call("_on_sit_button_pressed")
+		var sitting_received: Callable = func() -> bool:
+			var current_actors: Dictionary = _app_state.get("actors") as Dictionary
+			var current_dto: Dictionary = current_actors.get(local_actor_id, {}) as Dictionary
+			return bool(current_dto.get("sitting", false))
+		var sat_down: bool = await _wait_for(sitting_received, 8.0)
+		_expect(sat_down, "real server accepted the explicit sit request")
+		var seated_idle_started: Callable = func() -> bool:
+			var current_actor: ReplicatedActor3D = (
+				main.get("actor_nodes") as Dictionary).get(
+				local_actor_id) as ReplicatedActor3D
+			return current_actor != null and current_actor.current_action == &"seated_idle"
+		_expect(await _wait_for(seated_idle_started, 5.0),
+			"native sit transition advances to the explicit seated idle")
+		await _capture("world-seated.png")
+
+		main.call("_on_sit_button_pressed")
+		var standing_received: Callable = func() -> bool:
+			var current_actors: Dictionary = _app_state.get("actors") as Dictionary
+			var current_dto: Dictionary = current_actors.get(local_actor_id, {}) as Dictionary
+			return not bool(current_dto.get("sitting", true))
+		var stood_up: bool = await _wait_for(standing_received, 8.0)
+		_expect(stood_up, "real server accepted the explicit stand request")
+		var idle_after_stand: Callable = func() -> bool:
+			var current_actor: ReplicatedActor3D = (
+				main.get("actor_nodes") as Dictionary).get(
+				local_actor_id) as ReplicatedActor3D
+			return current_actor != null and current_actor.current_action == &"idle"
+		_expect(await _wait_for(idle_after_stand, 5.0),
+			"native stand transition returns to explicit idle")
+
+		main.call("_on_sit_button_pressed")
+		var sat_before_move: bool = await _wait_for(sitting_received, 8.0)
+		_expect(sat_before_move,
+			"actor can sit again before automatic-standing movement test")
+		var actors_before_auto_stand: Dictionary = _app_state.get("actors") as Dictionary
+		var dto_before_auto_stand: Dictionary = actors_before_auto_stand.get(
+			local_actor_id, {}) as Dictionary
+		var tile_before_auto_stand: Vector2i = Vector2i(
+			int(dto_before_auto_stand.get("x", -1)),
+			int(dto_before_auto_stand.get("y", -1)))
+		var auto_stand_move: bool = await _send_real_world_click(
+			main, camera, tile_before_auto_stand)
+		_expect(auto_stand_move, "movement while seated receives an authoritative step")
+		var automatically_stood: bool = await _wait_for(standing_received, 8.0)
+		_expect(automatically_stood, "server automatically stands the actor before movement")
+		var actors_after_auto_stand: Dictionary = _app_state.get("actors") as Dictionary
+		var dto_after_auto_stand: Dictionary = actors_after_auto_stand.get(
+			local_actor_id, {}) as Dictionary
+		var actor_after_auto_stand: ReplicatedActor3D = (
+			main.get("actor_nodes") as Dictionary).get(
+			local_actor_id) as ReplicatedActor3D
+		_write_json("sit-stand.json", {
+			"sit_packet": "07 02 00 01",
+			"stand_packet": "07 02 00 00",
+			"server_sit": sat_down,
+			"seated_action": "seated_idle",
+			"server_stand": stood_up,
+			"standing_action": "idle",
+			"automatic_stand_on_move": automatically_stood,
+			"tile_before_auto_stand": [tile_before_auto_stand.x,
+				tile_before_auto_stand.y],
+			"tile_after_auto_stand": [int(dto_after_auto_stand.get("x", -1)),
+				int(dto_after_auto_stand.get("y", -1))],
+			"resulting_actor_position": str(actor_after_auto_stand.global_position),
+			"resulting_action": str(actor_after_auto_stand.current_action),
+			"credentials": "REDACTED",
+		})
+		await _capture("world-standing-after-move.png")
+
 	_network.call("disconnect_from_server")
 	print("rendered server session: ", "PASS" if _failures == 0 else "FAIL")
 	print("credentials: REDACTED")
