@@ -38,7 +38,7 @@ RACES = {
                 "wardrobe": ((113, 145, 164), (76, 94, 108), (79, 91, 99),
                               (218, 232, 235))},
     "glasswarden": {"label": "Glasswarden", "color": (168, 121, 91),
-                     "feature_color": (67, 53, 103), "accent": (82, 185, 211),
+                     "feature_color": (38, 29, 62), "accent": (45, 128, 164),
                      "shape": (.98, 1.01, .99, 1.), "feature": "crystal",
                      "body_pattern": "none",
                      "wardrobe": ((54, 48, 84), (42, 44, 62), (83, 57, 39),
@@ -54,19 +54,19 @@ RACES = {
                    "wardrobe": ((225, 220, 202), (41, 59, 75), (65, 49, 39),
                                  (171, 137, 70))},
     "ssarathi": {"label": "Ssarathi", "color": (91, 153, 126),
-                  "feature_color": (48, 119, 94), "accent": (184, 151, 70),
+                  "feature_color": (32, 91, 68), "accent": (157, 122, 50),
                   "shape": (1.05, .98, .96, 1.03),
                   "feature": "scaled",
                   "wardrobe": ((43, 112, 86), (34, 76, 62), (71, 63, 42),
                                 (189, 153, 67))},
     "stoneborn": {"label": "Stoneborn", "color": (118, 105, 91),
-                   "feature_color": (99, 96, 91), "accent": (103, 184, 191),
+                   "feature_color": (61, 59, 56), "accent": (50, 122, 133),
                    "shape": (1.04, 1.08, 1.04, 1.02),
                    "feature": "stone",
                    "wardrobe": ((91, 86, 80), (65, 67, 68), (62, 55, 48),
                                  (84, 189, 199))},
     "mycelari": {"label": "Mycelari", "color": (116, 137, 91),
-                  "feature_color": (142, 112, 78), "accent": (211, 151, 98),
+                  "feature_color": (82, 56, 35), "accent": (154, 92, 48),
                   "shape": (1., 1.02, 1.02, 1.03),
                   "feature": "fungal",
                   "wardrobe": ((88, 112, 70), (62, 75, 53), (71, 54, 39),
@@ -546,8 +546,8 @@ def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[i
                             head, 1, 2, 8)
     elif feature == "crystal":
         # Glasswardens are human scholars and field engineers in the concept
-        # sheets. A compact brass-and-crystal lens rig, plus small clavicle-
-        # rooted resonance pins, conveys that identity without a fantasy crown.
+        # sheets. A compact brass-and-crystal lens rig conveys that identity
+        # without a fantasy crown or detached shoulder shards.
         mesh.tapered_curve([(-.150, 1.700, .070), (-.095, 1.714, .105),
                             (0., 1.720, .116), (.095, 1.714, .105),
                             (.150, 1.700, .070)],
@@ -560,15 +560,6 @@ def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[i
                         head, 1, 6, 16)
             mesh.cylinder((side * .094, 1.704, .131),
                           (side * .146, 1.696, .083), .007, head, 0, 10)
-            shoulder = clavicles[side]
-            for offset, height, reach in ((-.030, .085, .080),
-                                          (.015, .110, .105),
-                                          (.055, .070, .070)):
-                base = (side * (.245 + abs(offset) * .15),
-                        1.405 + offset, -.005)
-                tip = (side * (.245 + reach), 1.405 + height + offset,
-                       -.025 - reach * .22)
-                mesh.cone(base, tip, .025, shoulder, 1, 10)
         mesh.cylinder((-.010, 1.704, .136), (.010, 1.704, .136),
                       .007, head, 0, 10)
     elif feature == "scaled":
@@ -604,17 +595,12 @@ def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[i
         mesh.sphere((0., 1.300, .060), (.310, .245, .070),
                     spine, 0, 3, 8)
         for side in (-1., 1.):
-            mesh.sphere((side * .270, 1.385, -.005), (.205, .145, .175),
-                        clavicles[side], 0, 3, 7)
-            mesh.sphere((side * .120, 1.660, .052), (.078, .108, .050),
-                        head, 0, 3, 7)
-            mesh.sphere((side * .100, 1.600, .072), (.074, .074, .045),
-                        head, 0, 3, 7)
-            mesh.tapered_curve([(side * .075, 1.704, .112),
-                                (side * .120, 1.674, .096)],
-                               [.006, .003], head, 1, 6)
+            mesh.sphere((side * .230, 1.360, -.005), (.160, .120, .140),
+                        clavicles[side], 0, 4, 8)
+            mesh.sphere((side * .105, 1.650, .052), (.065, .095, .045),
+                        head, 0, 4, 9)
         mesh.sphere((0., 1.704, .096), (.175, .045, .040),
-                    head, 0, 3, 8)
+                    head, 0, 3, 10)
         mesh.tapered_curve([(-.035, 1.298, .098), (.010, 1.260, .102),
                             (-.018, 1.220, .088)],
                            [.006, .005, .003], spine, 1, 6)
@@ -628,23 +614,13 @@ def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[i
                     head, 0, 6, 18)
         mesh.sphere((-.018, 1.790, -.012), (.360, .068, .285),
                     head, 1, 3, 16)
-        for x, y, z, sx, sy, sz in ((-.175, 1.725, -.010, .155, .060, .125),
-                                     (.155, 1.690, -.025, .125, .050, .105)):
-            mesh.tapered_curve([(x * .72, y - .035, z), (x, y, z)],
-                               [.027, .018], head, 0, 7)
+        for x, y, z, sx, sy, sz in ((-.145, 1.725, -.010, .145, .058, .115),
+                                     (.135, 1.690, -.025, .115, .048, .095)):
+            mesh.tapered_curve([(x * .48, y - .040, z), (x, y, z)],
+                               [.033, .020], head, 0, 7)
             mesh.sphere((x, y, z), (sx, sy, sz), head, 0, 4, 12)
             mesh.sphere((x, y - .014, z + .004),
                         (sx * .82, sy * .35, sz * .82), head, 1, 2, 10)
-        for side in (-1., 1.):
-            shoulder = clavicles[side]
-            x = side * .275
-            mesh.tapered_curve([(side * .240, 1.380, -.010),
-                                (x, 1.405, -.015)],
-                               [.025, .015], shoulder, 0, 6)
-            mesh.sphere((x, 1.410, -.012), (.120, .045, .095),
-                        shoulder, 0, 3, 10)
-            mesh.sphere((x, 1.399, -.007), (.098, .018, .075),
-                        shoulder, 1, 2, 8)
     return mesh.arrays()
 
 

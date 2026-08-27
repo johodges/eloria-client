@@ -36,16 +36,16 @@
       "path": "godot-client/assets/actors/native/races/votary_male.glb"
     },
     "glasswarden_female": {
-      "vertices": 13961,
-      "triangles": 23274,
+      "vertices": 13895,
+      "triangles": 23214,
       "joints": 65,
       "feature": "crystal",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/glasswarden_female.glb"
     },
     "glasswarden_male": {
-      "vertices": 13881,
-      "triangles": 22934,
+      "vertices": 13815,
+      "triangles": 22874,
       "joints": 65,
       "feature": "crystal",
       "wardrobe": "skinned",
@@ -100,32 +100,32 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_male.glb"
     },
     "stoneborn_female": {
-      "vertices": 14489,
-      "triangles": 24260,
+      "vertices": 14471,
+      "triangles": 24268,
       "joints": 65,
       "feature": "stone",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/stoneborn_female.glb"
     },
     "stoneborn_male": {
-      "vertices": 13798,
-      "triangles": 22804,
+      "vertices": 13780,
+      "triangles": 22812,
       "joints": 65,
       "feature": "stone",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/stoneborn_male.glb"
     },
     "mycelari_female": {
-      "vertices": 14358,
-      "triangles": 23904,
+      "vertices": 14192,
+      "triangles": 23696,
       "joints": 65,
       "feature": "fungal",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/mycelari_female.glb"
     },
     "mycelari_male": {
-      "vertices": 14291,
-      "triangles": 23578,
+      "vertices": 14125,
+      "triangles": 23370,
       "joints": 65,
       "feature": "fungal",
       "wardrobe": "skinned",

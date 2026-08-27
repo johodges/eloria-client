@@ -16,10 +16,10 @@ creature generators.
 The palettes and integrated silhouette features were reviewed against the named
 Nymara character, armor, wildlife, guardian, and regional creature sheets. The
 human culture defaults retain the concept sheets' natural skin range instead of
-using culture accent colors as skin. Glasswardens use compact lens gear and
-shoulder resonance pins; Ssarathi use a joined muzzle, dorsal crest, and tail;
-Stoneborn mass is concentrated in shallow shoulder and sternum plates; and
-Mycelari caps use layered, surface-rooted growths.
+using culture accent colors as skin. Glasswardens use compact lens gear;
+Ssarathi use a joined muzzle, dorsal crest, and tail; Stoneborn mass is
+concentrated in shallow shoulder and sternum plates; and Mycelari caps use
+layered, surface-rooted growths.
 
 The software contact sheets provide a dependency-free review surface, while the
 Godot rendered-character test drives the real creation menu and rejects rigid
