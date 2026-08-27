@@ -35,6 +35,15 @@ func _run() -> void:
 	var player_marker: MeshInstance3D = main.get_node(
 		"GameView/ViewportContainer/Viewport/WorldRoot/PlayerMapMarker") as MeshInstance3D
 	game_view.show()
+	var original_window_size: Vector2i = root.size
+	root.size = Vector2i(1100, 720)
+	await process_frame
+	main.call("_on_window_size_changed")
+	_expect(world_viewport.size == Vector2i(container.size)
+		and world_viewport.size.x != roundi(float(world_viewport.size.y) * 16.0 / 9.0),
+		"resizing changes the gameplay viewport aspect without stretching 16:9")
+	root.size = original_window_size
+	await process_frame
 	_expect(container.mouse_filter == Control.MOUSE_FILTER_STOP,
 		"world viewport receives gameplay mouse input")
 	_expect(container.gui_input.is_connected(Callable(main, "_on_world_gui_input")),
@@ -157,11 +166,13 @@ func _run() -> void:
 	var stats_tabs: TabContainer = main.get_node(
 		"GameView/StatsPanel/Content/StatsTabs") as TabContainer
 	var inventory_button: Button = main.get_node(
-		"GameView/Quickbar/Buttons/InventoryButton") as Button
+		"GameView/Quickbar/QuickRows/Buttons/InventoryButton") as Button
+	var walk_button: Button = main.get_node(
+		"GameView/Quickbar/QuickRows/Buttons/WalkButton") as Button
 	var attack_button: Button = main.get_node(
-		"GameView/Quickbar/Buttons/AttackButton") as Button
+		"GameView/Quickbar/QuickRows/Buttons/AttackButton") as Button
 	var trade_button: Button = main.get_node(
-		"GameView/Quickbar/Buttons/TradeButton") as Button
+		"GameView/Quickbar/QuickRows/Buttons/TradeButton") as Button
 	var trade_panel: Control = main.get_node("GameView/TradePanel") as Control
 	var app_state_inventory: Node = root.get_node("AppState")
 	var chat_output: RichTextLabel = main.get_node("GameView/ChatPanel/ChatOutput") as RichTextLabel
@@ -193,6 +204,11 @@ func _run() -> void:
 		"chat tab selection restores faded messages")
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
+	main.call("_sync_hud_button_states", true)
+	_expect(walk_button.button_pressed and not inventory_button.button_pressed
+		and (walk_button.icon as AtlasTexture).atlas !=
+			(inventory_button.icon as AtlasTexture).atlas,
+		"active and inactive HUD actions use distinct highlighted icon atlases")
 	_expect(inventory_button.flat and inventory_button.focus_mode == Control.FOCUS_NONE,
 		"bottom HUD icons have no individual box and cannot steal Tab focus")
 	var chat_tabs: Control = main.get_node("GameView/ChatTabs") as Control
@@ -202,13 +218,14 @@ func _run() -> void:
 		"legacy chat tabs sit at upper left while entry remains above the lower rail")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
 		"stats and item/spell quickbar occupy the right HUD rail")
-	var item_slots: GridContainer = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/Slots") as GridContainer
-	var spell_slots: GridContainer = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/SpellSlots") as GridContainer
-	_expect(item_slots.columns == 1 and spell_slots.columns == 1
-		and spell_slots.get_index() < item_slots.get_index(),
-		"spell and item icons form adjacent single-column vertical bars")
+	var item_slots: GridContainer = main.get_node("%ItemSlots") as GridContainer
+	var spell_slots: GridContainer = main.get_node("%SpellSlots") as GridContainer
+	_expect(item_slots.columns == 1 and item_slots.visible and not spell_slots.visible,
+		"right rail presents compact single-column item and spell modes")
+	main.call("_on_quickbar_mode_pressed", "spells")
+	_expect(not item_slots.visible and spell_slots.visible,
+		"right rail switches between item and spell quick slots")
+	main.call("_on_quickbar_mode_pressed", "items")
 	var clock_face: TextureRect = main.get_node("GameView/ClockFrame/ClockFace") as TextureRect
 	var compass_face: TextureRect = main.get_node("GameView/CompassFrame/CompassFace") as TextureRect
 	_expect(clock_face.texture != null and compass_face.texture != null,
@@ -236,20 +253,27 @@ func _run() -> void:
 		and main.get_node("GameView/StatsPanel/Content/StatsTabs/Session Experience/SessionContent/SessionXpText") is RichTextLabel,
 		"statistics has close, counters, session XP, and perks-ready content")
 	for meter_path: String in [
-		"GameView/Quickbar/Buttons/BottomMeters/HealthMeter/HealthBottom",
-		"GameView/Quickbar/Buttons/BottomMeters/EtherMeter/EtherBottom",
-		"GameView/Quickbar/Buttons/BottomMeters/ActionMeter/ActionBottom"]:
+		"GameView/Quickbar/QuickRows/BottomMeters/ManaMeter/EtherBottom",
+		"GameView/Quickbar/QuickRows/BottomMeters/FoodMeter/FoodBottom",
+		"GameView/Quickbar/QuickRows/BottomMeters/HealthMeter/HealthBottom",
+		"GameView/Quickbar/QuickRows/BottomMeters/LoadMeter/LoadBottom",
+		"GameView/Quickbar/QuickRows/BottomMeters/ActionMeter/ActionBottom",
+		"GameView/Quickbar/QuickRows/BottomMeters/ExperienceMeter/ExperienceBottom"]:
 		_expect(main.get_node_or_null(meter_path) is ProgressBar,
 			"bottom HUD exposes %s" % meter_path.get_file())
 	var actor_menu: Control = main.get_node("GameView/ActorHudMenu") as Control
 	main.call("_open_actor_hud_menu", Vector2(640.0, 360.0))
 	_expect(actor_menu.visible and main.get_node("GameView/ActorHudMenu/Options/ShowHealth") is CheckButton
 		and main.get_node("GameView/ActorHudMenu/Options/ShowEther") is CheckButton
+		and main.get_node("GameView/ActorHudMenu/Options/ShowFood") is CheckButton
 		and main.get_node("GameView/ActorHudMenu/Options/ShowAction") is CheckButton,
-		"character context menu exposes all three overhead bar-and-number options")
+		"character context menu exposes all overhead bar-and-number options")
 	app_state_inventory.set("stats", {"health": 72, "max_health": 100,
 		"ether": 33, "max_ether": 50, "action_points": 18,
-		"max_action_points": 30, "attack": 24, "overall": 22})
+		"max_action_points": 30, "food": 42, "carried": 205, "capacity": 320,
+		"attack": 24, "overall": 22, "harvesting": 8,
+		"harvesting_base": 8, "harvesting_exp": 1480,
+		"harvesting_exp_next": 2066})
 	main.call("_sync_stats")
 	var overhead_health_bar: ProgressBar = main.get_node(
 		"GameView/ActorResourceOverlay/Rows/HealthRow/Bar") as ProgressBar
@@ -261,12 +285,22 @@ func _run() -> void:
 			> overhead_health_label.get_theme_color("font_color").g,
 		"overhead health bar and numbers render red")
 	_expect(is_equal_approx((main.get_node(
-		"GameView/Quickbar/Buttons/BottomMeters/HealthMeter/HealthBottom") as ProgressBar).value, 72.0)
+		"GameView/Quickbar/QuickRows/BottomMeters/HealthMeter/HealthBottom") as ProgressBar).value, 72.0)
 		and is_equal_approx((main.get_node(
-		"GameView/Quickbar/Buttons/BottomMeters/EtherMeter/EtherBottom") as ProgressBar).value, 33.0)
+		"GameView/Quickbar/QuickRows/BottomMeters/ManaMeter/EtherBottom") as ProgressBar).value, 33.0)
 		and is_equal_approx((main.get_node(
-		"GameView/Quickbar/Buttons/BottomMeters/ActionMeter/ActionBottom") as ProgressBar).value, 18.0),
+		"GameView/Quickbar/QuickRows/BottomMeters/ActionMeter/ActionBottom") as ProgressBar).value, 18.0),
 		"health, ethereality, and action-point meters synchronize live values")
+	var floating_feedback: Array[Dictionary] = []
+	app_state_inventory.floating_feedback_requested.connect(
+		func(feedback: Dictionary) -> void: floating_feedback.append(feedback))
+	app_state_inventory.call("_on_packet", 49, PackedByteArray([
+		51, 0xd4, 0x05, 0, 0, 27, 9, 0, 0, 0]))
+	_expect(floating_feedback.size() == 2
+		and floating_feedback[0].kind == "experience"
+		and int(floating_feedback[0].amount) == 12
+		and floating_feedback[1].kind == "level",
+		"partial experience and level updates request EL-style floating feedback")
 	var show_ether: CheckButton = main.get_node(
 		"GameView/ActorHudMenu/Options/ShowEther") as CheckButton
 	show_ether.button_pressed = false
@@ -485,7 +519,7 @@ func _run() -> void:
 	_expect(not storage_panel.visible, "storage close clears its local session window")
 	var knowledge_panel: Control = main.get_node("GameView/StatsPanel") as Control
 	var knowledge_button: Button = main.get_node(
-		"GameView/Quickbar/Buttons/KnowledgeButton") as Button
+		"GameView/Quickbar/QuickRows/Buttons/KnowledgeButton") as Button
 	_expect(not knowledge_panel.visible and not knowledge_button.disabled,
 		"knowledge window starts closed with its real HUD action enabled")
 	app_state_inventory.call("_on_packet", 55, PackedByteArray([0x09]))
@@ -511,7 +545,7 @@ func _run() -> void:
 	main.call("_on_knowledge_close_pressed")
 	var manufacturing_panel: Control = main.get_node("GameView/ManufacturingPanel") as Control
 	var manufacturing_button: Button = main.get_node(
-		"GameView/Quickbar/Buttons/ManufacturingButton") as Button
+		"GameView/Quickbar/QuickRows/Buttons/ManufacturingButton") as Button
 	_expect(not manufacturing_panel.visible and not manufacturing_button.disabled,
 		"manufacturing window starts closed with its real HUD action enabled")
 	app_state_inventory.set("inventory", {
@@ -592,7 +626,7 @@ func _run() -> void:
 	var first_inventory_slot: Button = main.get_node(
 		"GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Scroll/InventoryGrid").get_child(0) as Button
 	var first_quick_slot: Button = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/Slots/Slot1") as Button
+		"GameView/ItemSpellQuickbar/QuickContent/ItemSlots/Slot1") as Button
 	var first_equipment_slot: Button = main.get_node(
 		"GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn/EquipmentGrid").get_child(0) as Button
 	_expect(first_inventory_slot.text.contains("×9") and first_inventory_slot.icon != null

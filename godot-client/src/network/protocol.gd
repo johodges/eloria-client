@@ -611,13 +611,13 @@ static func decode_stats(payload: PackedByteArray) -> Dictionary:
 		var key: String = attribute_names[index]
 		values[key] = s16(payload, index * 4)
 		values[key + "_base"] = s16(payload, index * 4 + 2)
-	var skills: Dictionary = {
+	var skill_level_slots: Dictionary = {
 		"manufacturing": 24, "harvesting": 26, "alchemy": 28, "overall": 30,
 		"attack": 32, "defense": 34, "magic": 36, "potion": 38,
 		"summoning": 83, "crafting": 89, "engineering": 95,
 		"tailoring": 101, "ranging": 107}
-	for skill_name: String in skills:
-		var level_slot: int = int(skills[skill_name])
+	for skill_name: String in skill_level_slots:
+		var level_slot: int = int(skill_level_slots[skill_name])
 		values[skill_name] = s16(payload, level_slot * 2)
 		values[skill_name + "_base"] = s16(payload, (level_slot + 1) * 2)
 	# Eloria sends spent pickpoints in the current half of the legacy overall

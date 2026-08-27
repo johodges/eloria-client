@@ -28,6 +28,7 @@ var _attachment_bones: Dictionary = {}
 var _equipment_config: Dictionary = {}
 var _equipment_visuals: Dictionary = {}
 var _equipment_nodes: Dictionary = {}
+var _nameplate: Label3D
 
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		model_config: Dictionary, animation_config: Dictionary,
@@ -216,6 +217,11 @@ func _add_nameplate(dto: Dictionary) -> void:
 	label.outline_size = 6
 	label.modulate = Color(1.0, 1.0, 1.0, 1.0)
 	add_child(label)
+	_nameplate = label
+
+func set_nameplate_visible(enabled: bool) -> void:
+	if is_instance_valid(_nameplate):
+		_nameplate.visible = enabled
 
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
 	var next_target: Vector3 = adapter.tile_center(int(dto.x), int(dto.y))

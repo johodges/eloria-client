@@ -205,10 +205,10 @@ anchor_top = 1.0
 anchor_left = 0.58
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -118.0
+offset_top = -144.0
 offset_left = 6.0
 offset_right = -92.0
-offset_bottom = -86.0
+offset_bottom = -112.0
 placeholder_text = "Chat, /name private message, or // reply"
 tooltip_text = "Enter sends local chat; /name message sends a private message; // message replies to the last sender"
 
@@ -528,132 +528,195 @@ offset_right = -8.0
 offset_bottom = -170.0
 
 [node name="Quickbar" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 8.0
-offset_top = -82.0
+offset_top = -108.0
 offset_right = -86.0
 offset_bottom = -4.0
+mouse_filter = 1
 
-[node name="Buttons" type="HBoxContainer" parent="GameView/Quickbar"]
+[node name="QuickRows" type="VBoxContainer" parent="GameView/Quickbar"]
+theme_override_constants/separation = 3
+
+[node name="BottomMeters" type="HBoxContainer" parent="GameView/Quickbar/QuickRows"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
 theme_override_constants/separation = 6
 
-[node name="WalkButton" type="Button" parent="GameView/Quickbar/Buttons"]
+[node name="ManaMeter" type="VBoxContainer" parent="GameView/Quickbar/QuickRows/BottomMeters"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="EtherBottomText" type="Label" parent="GameView/Quickbar/QuickRows/BottomMeters/ManaMeter"]
+unique_name_in_owner = true
+text = "Mana 0 / 0"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+
+[node name="EtherBottom" type="ProgressBar" parent="GameView/Quickbar/QuickRows/BottomMeters/ManaMeter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(84, 12)
+size_flags_horizontal = 3
+show_percentage = false
+mouse_filter = 2
+
+[node name="FoodMeter" type="VBoxContainer" parent="GameView/Quickbar/QuickRows/BottomMeters"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="FoodBottomText" type="Label" parent="GameView/Quickbar/QuickRows/BottomMeters/FoodMeter"]
+unique_name_in_owner = true
+text = "Food 0 / 45"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+
+[node name="FoodBottom" type="ProgressBar" parent="GameView/Quickbar/QuickRows/BottomMeters/FoodMeter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(84, 12)
+size_flags_horizontal = 3
+show_percentage = false
+mouse_filter = 2
+
+[node name="HealthMeter" type="VBoxContainer" parent="GameView/Quickbar/QuickRows/BottomMeters"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="HealthBottomText" type="Label" parent="GameView/Quickbar/QuickRows/BottomMeters/HealthMeter"]
+unique_name_in_owner = true
+text = "Health 0 / 0"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+
+[node name="HealthBottom" type="ProgressBar" parent="GameView/Quickbar/QuickRows/BottomMeters/HealthMeter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(84, 12)
+size_flags_horizontal = 3
+show_percentage = false
+mouse_filter = 2
+
+[node name="LoadMeter" type="VBoxContainer" parent="GameView/Quickbar/QuickRows/BottomMeters"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="LoadBottomText" type="Label" parent="GameView/Quickbar/QuickRows/BottomMeters/LoadMeter"]
+unique_name_in_owner = true
+text = "Load 0 / 0"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+
+[node name="LoadBottom" type="ProgressBar" parent="GameView/Quickbar/QuickRows/BottomMeters/LoadMeter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(84, 12)
+size_flags_horizontal = 3
+show_percentage = false
+mouse_filter = 2
+
+[node name="ActionMeter" type="VBoxContainer" parent="GameView/Quickbar/QuickRows/BottomMeters"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="ActionBottomText" type="Label" parent="GameView/Quickbar/QuickRows/BottomMeters/ActionMeter"]
+unique_name_in_owner = true
+text = "Action 0 / 0"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+
+[node name="ActionBottom" type="ProgressBar" parent="GameView/Quickbar/QuickRows/BottomMeters/ActionMeter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(84, 12)
+size_flags_horizontal = 3
+show_percentage = false
+mouse_filter = 2
+
+[node name="ExperienceMeter" type="VBoxContainer" parent="GameView/Quickbar/QuickRows/BottomMeters"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="ExperienceBottomText" type="Label" parent="GameView/Quickbar/QuickRows/BottomMeters/ExperienceMeter"]
+unique_name_in_owner = true
+text = "Harvesting 0 / 0"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+theme_override_font_sizes/font_size = 10
+
+[node name="ExperienceBottom" type="ProgressBar" parent="GameView/Quickbar/QuickRows/BottomMeters/ExperienceMeter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(84, 12)
+size_flags_horizontal = 3
+show_percentage = false
+mouse_filter = 2
+
+[node name="Buttons" type="HBoxContainer" parent="GameView/Quickbar/QuickRows"]
+theme_override_constants/separation = 6
+
+[node name="WalkButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Walk"
 tooltip_text = "Walk mode; hold Shift while clicking to run"
 
-[node name="MapButton" type="Button" parent="GameView/Quickbar/Buttons"]
+[node name="MapButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 tooltip_text = "Map [Tab]"
 
-[node name="SitButton" type="Button" parent="GameView/Quickbar/Buttons"]
+[node name="SitButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 tooltip_text = "Sit / stand [Alt+S]"
 
-[node name="AttackButton" type="Button" parent="GameView/Quickbar/Buttons"]
+[node name="AttackButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Attack"
 tooltip_text = "Select a living player or creature to attack"
 disabled = true
 
-[node name="TradeButton" type="Button" parent="GameView/Quickbar/Buttons"]
+[node name="TradeButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Trade"
 tooltip_text = "Select a player to trade"
 disabled = true
 
-[node name="InventoryButton" type="Button" parent="GameView/Quickbar/Buttons"]
+[node name="InventoryButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Inventory"
 tooltip_text = "Inventory"
 
-[node name="StatsButton" type="Button" parent="GameView/Quickbar/Buttons"]
+[node name="StatsButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Stats"
 tooltip_text = "Character statistics"
 
-[node name="KnowledgeButton" type="Button" parent="GameView/Quickbar/Buttons"]
+[node name="KnowledgeButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Knowledge"
 tooltip_text = "Knowledge and books"
 
-[node name="ManufacturingButton" type="Button" parent="GameView/Quickbar/Buttons"]
+[node name="ManufacturingButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Mix"
 tooltip_text = "Manufacturing and mixing"
 
-[node name="ChatButton" type="Button" parent="GameView/Quickbar/Buttons"]
+[node name="ChatButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 tooltip_text = "Chat [T]"
 
-[node name="DisconnectButton" type="Button" parent="GameView/Quickbar/Buttons"]
+[node name="DisconnectButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 tooltip_text = "Disconnect"
-
-[node name="BottomMeters" type="HBoxContainer" parent="GameView/Quickbar/Buttons"]
-unique_name_in_owner = true
-size_flags_horizontal = 3
-theme_override_constants/separation = 6
-
-[node name="HealthMeter" type="VBoxContainer" parent="GameView/Quickbar/Buttons/BottomMeters"]
-size_flags_horizontal = 3
-
-[node name="HealthBottomText" type="Label" parent="GameView/Quickbar/Buttons/BottomMeters/HealthMeter"]
-unique_name_in_owner = true
-text = "Health 0 / 0"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 11
-
-[node name="HealthBottom" type="ProgressBar" parent="GameView/Quickbar/Buttons/BottomMeters/HealthMeter"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(112, 14)
-size_flags_horizontal = 3
-show_percentage = false
-
-[node name="EtherMeter" type="VBoxContainer" parent="GameView/Quickbar/Buttons/BottomMeters"]
-size_flags_horizontal = 3
-
-[node name="EtherBottomText" type="Label" parent="GameView/Quickbar/Buttons/BottomMeters/EtherMeter"]
-unique_name_in_owner = true
-text = "Ethereality 0 / 0"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 11
-
-[node name="EtherBottom" type="ProgressBar" parent="GameView/Quickbar/Buttons/BottomMeters/EtherMeter"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(112, 14)
-size_flags_horizontal = 3
-show_percentage = false
-
-[node name="ActionMeter" type="VBoxContainer" parent="GameView/Quickbar/Buttons/BottomMeters"]
-size_flags_horizontal = 3
-
-[node name="ActionBottomText" type="Label" parent="GameView/Quickbar/Buttons/BottomMeters/ActionMeter"]
-unique_name_in_owner = true
-text = "Action 0 / 0"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 11
-
-[node name="ActionBottom" type="ProgressBar" parent="GameView/Quickbar/Buttons/BottomMeters/ActionMeter"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(112, 14)
-size_flags_horizontal = 3
-show_percentage = false
 
 [node name="ItemSpellQuickbar" type="PanelContainer" parent="GameView"]
 layout_mode = 1
@@ -665,81 +728,93 @@ offset_top = 62.0
 offset_right = -8.0
 offset_bottom = 356.0
 
-[node name="QuickContent" type="HBoxContainer" parent="GameView/ItemSpellQuickbar"]
+[node name="QuickContent" type="VBoxContainer" parent="GameView/ItemSpellQuickbar"]
 theme_override_constants/separation = 2
 
-[node name="QuickTitle" type="Label" parent="GameView/ItemSpellQuickbar/QuickContent"]
-visible = false
-text = "ITEMS"
-horizontal_alignment = 1
+[node name="ModeButtons" type="HBoxContainer" parent="GameView/ItemSpellQuickbar/QuickContent"]
+theme_override_constants/separation = 2
 
-[node name="Slots" type="GridContainer" parent="GameView/ItemSpellQuickbar/QuickContent"]
-columns = 1
+[node name="ItemMode" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ModeButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(31, 24)
+size_flags_horizontal = 3
+toggle_mode = true
+button_pressed = true
+text = "I"
+tooltip_text = "Item quick slots [1-8]"
 
-[node name="Slot1" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(32, 32)
-text = "1"
-disabled = true
-[node name="Slot2" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(32, 32)
-text = "2"
-disabled = true
-[node name="Slot3" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(32, 32)
-text = "3"
-disabled = true
-[node name="Slot4" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(32, 32)
-text = "4"
-disabled = true
-[node name="Slot5" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(32, 32)
-text = "5"
-disabled = true
-[node name="Slot6" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(32, 32)
-text = "6"
-disabled = true
-[node name="Slot7" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(32, 32)
-text = "7"
-disabled = true
-[node name="Slot8" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(32, 32)
-text = "8"
-disabled = true
+[node name="SpellMode" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ModeButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(31, 24)
+size_flags_horizontal = 3
+toggle_mode = true
+text = "S"
+tooltip_text = "Spell quick slots [Shift+1-6]"
 
-[node name="SpellTitle" type="Label" parent="GameView/ItemSpellQuickbar/QuickContent"]
-visible = false
-text = "SPELLS"
-horizontal_alignment = 1
-
-[node name="SpellSlots" type="GridContainer" parent="GameView/ItemSpellQuickbar/QuickContent"]
+[node name="ItemSlots" type="GridContainer" parent="GameView/ItemSpellQuickbar/QuickContent"]
 unique_name_in_owner = true
 columns = 1
 
+[node name="Slot1" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ItemSlots"]
+custom_minimum_size = Vector2(62, 28)
+text = "1"
+disabled = true
+[node name="Slot2" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ItemSlots"]
+custom_minimum_size = Vector2(62, 28)
+text = "2"
+disabled = true
+[node name="Slot3" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ItemSlots"]
+custom_minimum_size = Vector2(62, 28)
+text = "3"
+disabled = true
+[node name="Slot4" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ItemSlots"]
+custom_minimum_size = Vector2(62, 28)
+text = "4"
+disabled = true
+[node name="Slot5" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ItemSlots"]
+custom_minimum_size = Vector2(62, 28)
+text = "5"
+disabled = true
+[node name="Slot6" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ItemSlots"]
+custom_minimum_size = Vector2(62, 28)
+text = "6"
+disabled = true
+[node name="Slot7" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ItemSlots"]
+custom_minimum_size = Vector2(62, 28)
+text = "7"
+disabled = true
+[node name="Slot8" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ItemSlots"]
+custom_minimum_size = Vector2(62, 28)
+text = "8"
+disabled = true
+
+[node name="SpellSlots" type="GridContainer" parent="GameView/ItemSpellQuickbar/QuickContent"]
+unique_name_in_owner = true
+visible = false
+columns = 1
+
 [node name="Spell1" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(32, 32)
+custom_minimum_size = Vector2(62, 28)
 text = "S1"
 disabled = true
 [node name="Spell2" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(32, 32)
+custom_minimum_size = Vector2(62, 28)
 text = "S2"
 disabled = true
 [node name="Spell3" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(32, 32)
+custom_minimum_size = Vector2(62, 28)
 text = "S3"
 disabled = true
 [node name="Spell4" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(32, 32)
+custom_minimum_size = Vector2(62, 28)
 text = "S4"
 disabled = true
 [node name="Spell5" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(32, 32)
+custom_minimum_size = Vector2(62, 28)
 text = "S5"
 disabled = true
 [node name="Spell6" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(32, 32)
+custom_minimum_size = Vector2(62, 28)
 text = "S6"
 disabled = true
 
@@ -876,11 +951,20 @@ visible = false
 z_index = 1
 layout_mode = 0
 offset_right = 150.0
-offset_bottom = 66.0
+offset_bottom = 86.0
 mouse_filter = 2
 
 [node name="Rows" type="VBoxContainer" parent="GameView/ActorResourceOverlay"]
 theme_override_constants/separation = 1
+
+[node name="OverheadPlayerName" type="Label" parent="GameView/ActorResourceOverlay/Rows"]
+unique_name_in_owner = true
+text = "Player"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(0.92, 0.9, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.015, 0.02, 0.025, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 11
 
 [node name="HealthRow" type="HBoxContainer" parent="GameView/ActorResourceOverlay/Rows"]
 unique_name_in_owner = true
@@ -905,6 +989,17 @@ text = "0/0"
 theme_override_colors/font_color = Color(0.35, 0.45, 1, 1)
 theme_override_font_sizes/font_size = 11
 
+[node name="FoodRow" type="HBoxContainer" parent="GameView/ActorResourceOverlay/Rows"]
+unique_name_in_owner = true
+[node name="Bar" type="ProgressBar" parent="GameView/ActorResourceOverlay/Rows/FoodRow"]
+custom_minimum_size = Vector2(90, 13)
+show_percentage = false
+[node name="Number" type="Label" parent="GameView/ActorResourceOverlay/Rows/FoodRow"]
+custom_minimum_size = Vector2(52, 13)
+text = "0/45"
+theme_override_colors/font_color = Color(1, 0.82, 0.18, 1)
+theme_override_font_sizes/font_size = 11
+
 [node name="ActionRow" type="HBoxContainer" parent="GameView/ActorResourceOverlay/Rows"]
 unique_name_in_owner = true
 [node name="Bar" type="ProgressBar" parent="GameView/ActorResourceOverlay/Rows/ActionRow"]
@@ -922,7 +1017,7 @@ visible = false
 z_index = 20
 layout_mode = 0
 offset_right = 248.0
-offset_bottom = 164.0
+offset_bottom = 190.0
 
 [node name="Options" type="VBoxContainer" parent="GameView/ActorHudMenu"]
 theme_override_constants/separation = 4
@@ -937,6 +1032,10 @@ text = "Health bar and numbers"
 unique_name_in_owner = true
 button_pressed = true
 text = "Ethereality bar and numbers"
+[node name="ShowFood" type="CheckButton" parent="GameView/ActorHudMenu/Options"]
+unique_name_in_owner = true
+button_pressed = true
+text = "Food bar and numbers"
 [node name="ShowAction" type="CheckButton" parent="GameView/ActorHudMenu/Options"]
 unique_name_in_owner = true
 button_pressed = true
@@ -1985,16 +2084,16 @@ horizontal_alignment = 1
 [connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateHead" to="." method="_on_create_appearance_changed"]
 [connection signal="text_submitted" from="GameView/ChatInput" to="." method="_on_chat_submitted"]
 [connection signal="text_submitted" from="LoginPanel/Content/Password" to="." method="_on_login_submitted"]
-[connection signal="pressed" from="GameView/Quickbar/Buttons/WalkButton" to="." method="_on_walk_button_pressed"]
-[connection signal="pressed" from="GameView/Quickbar/Buttons/MapButton" to="." method="_on_map_button_pressed"]
-[connection signal="pressed" from="GameView/Quickbar/Buttons/SitButton" to="." method="_on_sit_button_pressed"]
-[connection signal="pressed" from="GameView/Quickbar/Buttons/AttackButton" to="." method="_on_attack_button_pressed"]
-[connection signal="pressed" from="GameView/Quickbar/Buttons/TradeButton" to="." method="_on_trade_button_pressed"]
-[connection signal="pressed" from="GameView/Quickbar/Buttons/ChatButton" to="." method="_on_chat_button_pressed"]
-[connection signal="pressed" from="GameView/Quickbar/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
-[connection signal="pressed" from="GameView/Quickbar/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
-[connection signal="pressed" from="GameView/Quickbar/Buttons/KnowledgeButton" to="." method="_on_knowledge_button_pressed"]
-[connection signal="pressed" from="GameView/Quickbar/Buttons/ManufacturingButton" to="." method="_on_manufacturing_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/WalkButton" to="." method="_on_walk_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/MapButton" to="." method="_on_map_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/SitButton" to="." method="_on_sit_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/AttackButton" to="." method="_on_attack_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/TradeButton" to="." method="_on_trade_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/ChatButton" to="." method="_on_chat_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/KnowledgeButton" to="." method="_on_knowledge_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/ManufacturingButton" to="." method="_on_manufacturing_button_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/InventoryUse" to="." method="_on_inventory_use_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/InventoryEquip" to="." method="_on_inventory_equip_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/InventoryUnequip" to="." method="_on_inventory_unequip_pressed"]
@@ -2018,4 +2117,4 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagPickAll" to="." method="_on_ground_bag_pick_all_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagDrop" to="." method="_on_ground_bag_drop_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagClose" to="." method="_on_ground_bag_close_pressed"]
-[connection signal="pressed" from="GameView/Quickbar/Buttons/DisconnectButton" to="." method="_on_disconnect_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/DisconnectButton" to="." method="_on_disconnect_pressed"]
