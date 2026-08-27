@@ -29,6 +29,9 @@ runtime capture; without it the renderer retained only the blue fallback world.
 The minimap and full-map SubViewports share the gameplay `World3D` and each TextureRect
 is bound directly to its corresponding live viewport texture. The supplied compass and
 HUD atlas regions are opaque, so they are never placed above either map render.
+Each TextureRect also owns an explicit `gui_input` route. A left click is scaled into its
+SubViewport coordinates, projected through the matching orthographic camera, converted
+by the shared `CoordinateAdapter`, and sent as `MOVE_TO` (or `RUN_TO` while Shift is held).
 The shared world is resolved from `WorldRoot.get_world_3d()` after it enters the scene
 tree; reading `SubViewport.world_3d` directly can return null even while its Node3D
 children resolve an inherited world. Picking and terrain rays use the resolved, guarded

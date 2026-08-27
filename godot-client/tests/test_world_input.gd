@@ -38,6 +38,10 @@ func _run() -> void:
 		"world viewport receives gameplay mouse input")
 	_expect(container.gui_input.is_connected(Callable(main, "_on_world_gui_input")),
 		"world viewport input handler is connected")
+	_expect(minimap_image.gui_input.is_connected(Callable(main, "_on_minimap_gui_input")),
+		"minimap click-to-walk input handler is connected")
+	_expect(full_map_image.gui_input.is_connected(Callable(main, "_on_full_map_gui_input")),
+		"Tab map click-to-walk input handler is connected")
 	_expect(not compass_overlay.visible and compass_overlay.texture == null,
 		"minimap render is not covered by decorative artwork")
 	var resolved_world: World3D = world_viewport.find_world_3d()
@@ -50,6 +54,18 @@ func _run() -> void:
 		"minimap displays its live viewport texture")
 	_expect(full_map_image.texture == full_map_viewport.get_texture(),
 		"Tab map displays its live viewport texture")
+	var minimap_center: Vector2 = main.call("_control_to_viewport_position",
+		minimap_image.size * 0.5, minimap_image.size, minimap_viewport.size) as Vector2
+	var full_map_center: Vector2 = main.call("_control_to_viewport_position",
+		full_map_image.size * 0.5, full_map_image.size, full_map_viewport.size) as Vector2
+	_expect(minimap_center.is_equal_approx(Vector2(minimap_viewport.size) * 0.5),
+		"minimap controls convert local clicks into minimap viewport pixels")
+	_expect(full_map_center.is_equal_approx(Vector2(full_map_viewport.size) * 0.5),
+		"Tab map controls convert local clicks into full-map viewport pixels")
+	_expect(main.call("_map_target_tile", map_camera, minimap_center) is Vector2i,
+		"minimap camera ray resolves a server walking target")
+	_expect(main.call("_map_target_tile", full_map_camera, full_map_center) is Vector2i,
+		"Tab map camera ray resolves a server walking target")
 	_expect((map_camera.cull_mask & 4) != 0 and (full_map_camera.cull_mask & 4) != 0,
 		"both map cameras render the local-player marker layer")
 	var marker_material: StandardMaterial3D = player_marker.material_override as StandardMaterial3D
