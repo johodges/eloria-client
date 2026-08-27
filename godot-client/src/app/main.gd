@@ -310,6 +310,11 @@ func _clear_world_presentation() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not game_view.visible:
 		return
+	for slot: int in range(8):
+		if event.is_action_pressed("quick_item_%d" % (slot + 1)):
+			_use_inventory_slot(slot)
+			get_viewport().set_input_as_handled()
+			return
 	if event.is_action_pressed("toggle_map") or (event is InputEventKey and event.pressed and event.keycode == KEY_TAB):
 		full_map.visible = not full_map.visible
 		get_viewport().set_input_as_handled()

@@ -120,6 +120,9 @@ func _run() -> void:
 		"inventory snapshot populates its server slot")
 	_expect(first_quick_slot.text.contains("#321") and not first_quick_slot.disabled,
 		"usable inventory slot populates the matching live quick slot")
+	for quick_index: int in range(1, 9):
+		_expect(InputMap.has_action("quick_item_%d" % quick_index),
+			"item quick slot %d has a centralized input action" % quick_index)
 	app_state_inventory.set("inventory", {})
 	main.call("_on_inventory_close_pressed")
 	var viewport_rect: Rect2 = root.get_visible_rect()
