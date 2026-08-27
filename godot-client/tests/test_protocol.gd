@@ -89,6 +89,20 @@ func _init() -> void:
 	var resolved: Dictionary = MapRegistry.resolve(registry, "STARTMAP.ELM")
 	_expect(resolved.get("manifest", "") == "res://world.json"
 		and resolved.get("registryKey", "") == "maps/startmap.elm", "map alias resolution")
+	var registry_file: FileAccess = FileAccess.open("res://data/maps/registry.json", FileAccess.READ)
+	_expect(registry_file != null, "production map registry opens")
+	if registry_file != null:
+		var parsed_registry: Variant = JSON.parse_string(registry_file.get_as_text())
+		_expect(parsed_registry is Dictionary, "production map registry parses")
+		if parsed_registry is Dictionary:
+			var registry_root: Dictionary = parsed_registry as Dictionary
+			var production_maps_value: Variant = registry_root.get("maps", {})
+			if production_maps_value is Dictionary:
+				var production_maps: Dictionary = production_maps_value as Dictionary
+				var four_gates: Dictionary = MapRegistry.resolve(production_maps, "four_gates")
+				_expect(not four_gates.is_empty(), "runtime four_gates map id resolves")
+				_expect(str(four_gates.get("registryKey", "")) == "maps/startmap.elm",
+					"runtime four_gates resolves to production start map")
 	var coordinate: CoordinateAdapter = CoordinateAdapter.new({
 		"metresPerTile": 0.5, "serverOrigin": [100.0, 200.0],
 		"origin": [10.0, 30.0, -5.0], "walkingHeight": 30.0,

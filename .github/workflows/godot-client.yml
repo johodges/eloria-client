@@ -25,6 +25,8 @@ jobs:
         run: godot --headless --path godot-client --editor --quit
       - name: Protocol and reducer fixtures
         run: godot --headless --path godot-client --script res://tests/test_protocol.gd
+      - name: World input routing fixtures
+        run: godot --headless --path godot-client --script res://tests/test_world_input.gd
       - name: Main scene smoke test
         run: |
           godot --headless --path godot-client --quit-after 3 2>&1 | tee main-scene.log

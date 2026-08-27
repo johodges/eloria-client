@@ -36,4 +36,7 @@ World input must be suppressed when a Control consumes the pointer event. Debug 
 | T / Enter | Focus chat; Enter submits RAW_TEXT |
 | Click NPC | Select actor and send TOUCH_PLAYER |
 
-All world gestures are handled only after Control nodes decline the event, preventing HUD click-through.
+The full-screen `SubViewportContainer` owns world mouse input through its `gui_input`
+signal. HUD controls render above it and consume their own events, preventing click-through.
+This explicit route is required because mouse events delivered to an embedded viewport are
+not guaranteed to reappear in the root Control's `_unhandled_input()` callback.

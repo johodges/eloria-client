@@ -72,7 +72,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 stretch = true
-mouse_filter = 2
+mouse_filter = 0
 
 [node name="Viewport" type="SubViewport" parent="GameView/ViewportContainer"]
 handle_input_locally = false
@@ -243,6 +243,7 @@ mouse_filter = 1
 
 [node name="CompassOverlay" type="TextureRect" parent="GameView/MinimapFrame"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

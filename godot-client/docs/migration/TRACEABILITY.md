@@ -11,12 +11,12 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | NPC activation/dialogue | gamewin.c; server protocol/world | protocol/state/dialogue UI | byte + decode fixtures; runtime pending | IMPLEMENTED |
 | Chat send/receive | chat.c; server RAW_TEXT | protocol/state/chat UI | byte + decode fixtures; runtime pending | IMPLEMENTED |
 | Title/login artwork | generated Eloria branding DDS | portable PNG copies + themed login | main-scene smoke; visual review pending | IMPLEMENTED |
-| GLB map + JSON | GLB runtime/map.c | world/map loader | schema, GLB header, normalized registry; runtime pending | IMPLEMENTED |
+| GLB map + JSON | GLB runtime/map.c | world/map loader | `four_gates` production alias fixture; headless GLB scene attach; visual recheck pending | IMPLEMENTED |
 | Native luminous models | actor GLB runtime/assets | actor presentation | byte/source validation; render pending | FOUNDATION |
 | Movement reconciliation | client movement/server authority | controller/state | real MOVE_TO wiring; reconciliation verification pending | FOUNDATION |
-| Core HUD/chat | hud/interface/chat | ui/hud | resource HUD, chat, minimap/full map shell | FOUNDATION |
+| Core HUD/chat | hud/interface/chat | ui/hud | shared-world minimap uncovered; legacy layout/art parity still pending | FOUNDATION |
 | Inventory/equipment | items.c | state/ui | mutation fixtures | NOT_STARTED |
 | Combat | actor commands/combat HUD | gameplay/ui | server combat trace | NOT_STARTED |
 | NPC/storage/trade | respective modules | reducers/windows | packet and integration tests | NOT_STARTED |
 | Magic/crafting/harvest | respective modules | reducers/windows | action/result traces | NOT_STARTED |
-| Hotkeys/settings | keys.c/elconfig.c | InputMap/settings | camera/move/Tab implemented; full audit pending | FOUNDATION |
+| Hotkeys/settings | keys.c/elconfig.c | InputMap/settings | viewport routing fixture verifies rotate/pan/zoom; live click-to-move recheck pending | FOUNDATION |

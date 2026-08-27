@@ -68,6 +68,7 @@ func _ready() -> void:
 	AppState.state_changed.connect(_on_state_changed)
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
+	viewport_container.gui_input.connect(_on_world_gui_input)
 	map_viewport.world_3d = main_viewport.world_3d
 	full_map_viewport.world_3d = main_viewport.world_3d
 	minimap.texture = map_viewport.get_texture()
@@ -267,41 +268,48 @@ func _unhandled_input(event: InputEvent) -> void:
 			push_warning("SIT_DOWN failed: " + error_string(sit_error))
 		get_viewport().set_input_as_handled()
 		return
+
+func _on_world_gui_input(event: InputEvent) -> void:
+	if not game_view.visible or full_map.visible or dialogue_panel.visible:
+		return
 	if event is InputEventMouseButton:
-		if camera_rig.handle_mouse_button(event):
-			get_viewport().set_input_as_handled()
+		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
+		if camera_rig.handle_mouse_button(mouse_button):
+			viewport_container.accept_event()
 			return
-		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-			var viewport_position: Vector2 = _viewport_position(event.global_position)
-			var picked_actor_id: int = _pick_actor(viewport_position)
-			if picked_actor_id >= 0:
-				AppState.select_actor(picked_actor_id)
-				var selected_dto: Dictionary = AppState.actors.get(picked_actor_id, {})
-				if int(selected_dto.get("kind", 0)) == 2:
-					var touch_error: Error = Network.touch_actor(picked_actor_id)
-					if touch_error != OK:
-						push_warning("TOUCH_PLAYER failed: " + error_string(touch_error))
-				get_viewport().set_input_as_handled()
-				return
-			var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
-			var ground_height: float = adapter.walking_height
-			if not local_actor.is_empty() and actor_nodes.has(AppState.local_actor_id):
-				var local_actor_node: Node3D = actor_nodes[AppState.local_actor_id] as Node3D
-				ground_height = local_actor_node.global_position.y
-			var point: Variant = camera_rig.screen_to_ground(viewport_position, ground_height)
-			print_debug("world_input click=", event.global_position,
-				" viewport=", viewport_position, " intersection=", point)
-			if point is Vector3:
-				var tile: Vector2i = adapter.godot_to_server(point as Vector3)
-				print_debug("world_input godot=", point, " server_tile=", tile,
-					" command=", "RUN_TO" if event.shift_pressed else "MOVE_TO")
-				var error: Error = Network.move_to(tile, event.shift_pressed)
-				if error != OK:
-					push_warning("MOVE_TO failed: " + error_string(error))
-			get_viewport().set_input_as_handled()
-			return
-	if event is InputEventMouseMotion and camera_rig.handle_mouse_motion(event):
-		get_viewport().set_input_as_handled()
+		if mouse_button.pressed and mouse_button.button_index == MOUSE_BUTTON_LEFT:
+			_handle_world_click(mouse_button, _local_viewport_position(mouse_button.position))
+			viewport_container.accept_event()
+	elif event is InputEventMouseMotion:
+		var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
+		if camera_rig.handle_mouse_motion(mouse_motion):
+			viewport_container.accept_event()
+
+func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector2) -> void:
+	var picked_actor_id: int = _pick_actor(viewport_position)
+	if picked_actor_id >= 0:
+		AppState.select_actor(picked_actor_id)
+		var selected_dto: Dictionary = AppState.actors.get(picked_actor_id, {})
+		if int(selected_dto.get("kind", 0)) == 2:
+			var touch_error: Error = Network.touch_actor(picked_actor_id)
+			if touch_error != OK:
+				push_warning("TOUCH_PLAYER failed: " + error_string(touch_error))
+		return
+	var ground_height: float = adapter.walking_height
+	if actor_nodes.has(AppState.local_actor_id):
+		var local_actor_node: Node3D = actor_nodes.get(AppState.local_actor_id) as Node3D
+		if is_instance_valid(local_actor_node):
+			ground_height = local_actor_node.global_position.y
+	var point: Variant = camera_rig.screen_to_ground(viewport_position, ground_height)
+	print_debug("world_input local_click=", event.position,
+		" viewport=", viewport_position, " intersection=", point)
+	if point is Vector3:
+		var tile: Vector2i = adapter.godot_to_server(point as Vector3)
+		print_debug("world_input godot=", point, " server_tile=", tile,
+			" command=", "RUN_TO" if event.shift_pressed else "MOVE_TO")
+		var move_error: Error = Network.move_to(tile, event.shift_pressed)
+		if move_error != OK:
+			push_warning("MOVE_TO failed: " + error_string(move_error))
 
 func _on_state_changed(path: StringName) -> void:
 	if not AppState.authenticated:
@@ -472,6 +480,11 @@ func _on_dialogue_option(actor_id: int, response_id: int) -> void:
 
 func _viewport_position(global_position: Vector2) -> Vector2:
 	var local_position: Vector2 = viewport_container.get_global_transform().affine_inverse() * global_position
+	return _local_viewport_position(local_position)
+
+func _local_viewport_position(local_position: Vector2) -> Vector2:
+	if viewport_container.size.x <= 0.0 or viewport_container.size.y <= 0.0:
+		return local_position
 	return local_position * Vector2(main_viewport.size) / viewport_container.size
 
 func _pick_actor(viewport_position: Vector2) -> int:
@@ -487,9 +500,6 @@ func _pick_actor(viewport_position: Vector2) -> int:
 func _apply_eloria_art() -> void:
 	login_background.texture = _external_texture("res://assets/ui/eloria_login_background.jpg")
 	login_logo.texture = _external_texture("res://assets/ui/eloria_logo_master.png")
-	var compass_texture: Texture2D = _external_texture("res://../eloria-assets/ui/compass.png")
-	if compass_texture != null:
-		%CompassOverlay.texture = compass_texture
 
 func _apply_eloria_theme() -> void:
 	var eloria_theme: Theme = Theme.new()
