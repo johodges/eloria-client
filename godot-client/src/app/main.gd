@@ -71,13 +71,37 @@ extends Control
 @onready var show_overhead_action: CheckButton = %ShowAction
 @onready var stats_panel: Control = %StatsPanel
 @onready var stats_text: RichTextLabel = %StatsText
+@onready var stats_tabs: TabContainer = %StatsTabs
+@onready var stats_close: Button = %StatsClose
+@onready var counter_categories: ItemList = %CounterCategories
+@onready var counter_text: RichTextLabel = %CounterText
+@onready var session_xp_text: RichTextLabel = %SessionXpText
+@onready var session_reset: Button = %SessionReset
 @onready var inventory_panel: Control = %InventoryPanel
 @onready var inventory_grid: GridContainer = %InventoryGrid
 @onready var equipment_grid: GridContainer = %EquipmentGrid
+@onready var inventory_body: HBoxContainer = %InventoryBody
+@onready var equipment_column: VBoxContainer = %EquipmentColumn
+@onready var backpack_column: VBoxContainer = %BackpackColumn
 @onready var inventory_description: RichTextLabel = %InventoryDescription
 @onready var inventory_use_button: Button = %InventoryUse
 @onready var inventory_equip_button: Button = %InventoryEquip
 @onready var inventory_unequip_button: Button = %InventoryUnequip
+@onready var inventory_store_all: Button = %InventoryStoreAll
+@onready var inventory_get_all: Button = %InventoryGetAll
+@onready var inventory_drop_all: Button = %InventoryDropAll
+@onready var inventory_mix_all: Button = %InventoryMixAll
+@onready var inventory_item_lists: Button = %InventoryItemLists
+@onready var inventory_load: Label = %InventoryLoad
+@onready var item_lists_panel: Control = %ItemListsPanel
+@onready var saved_item_lists: ItemList = %SavedItemLists
+@onready var item_list_name: LineEdit = %ItemListName
+@onready var item_list_entries: TextEdit = %ItemListEntries
+@onready var item_list_status: Label = %ItemListStatus
+@onready var item_list_save: Button = %ItemListSave
+@onready var item_list_delete: Button = %ItemListDelete
+@onready var item_list_get: Button = %ItemListGet
+@onready var item_lists_close: Button = %ItemListsClose
 @onready var attack_button: Button = %AttackButton
 @onready var trade_button: Button = %TradeButton
 @onready var trade_panel: Control = %TradePanel
@@ -107,7 +131,6 @@ extends Control
 @onready var ground_bag_quantity: SpinBox = %GroundBagQuantity
 @onready var ground_bag_pick_button: Button = %GroundBagPick
 @onready var ground_bag_drop_button: Button = %GroundBagDrop
-@onready var knowledge_panel: Control = %KnowledgePanel
 @onready var knowledge_list: ItemList = %KnowledgeList
 @onready var knowledge_detail: RichTextLabel = %KnowledgeDetail
 @onready var knowledge_known_only: CheckBox = %KnowledgeKnownOnly
@@ -133,6 +156,11 @@ extends Control
 @onready var settings_panel: PanelContainer = %SettingsPanel
 @onready var minimap_size: HSlider = %MinimapSize
 @onready var minimap_size_value: Label = %MinimapSizeValue
+@onready var equipment_side: OptionButton = %EquipmentSide
+@onready var minimap_north: Label = %North
+@onready var minimap_east: Label = %East
+@onready var minimap_south: Label = %South
+@onready var minimap_west: Label = %West
 @onready var selected_target: Label = %SelectedTarget
 @onready var dialogue_panel: Control = %DialoguePanel
 @onready var dialogue_name: Label = %DialogueName
@@ -182,12 +210,55 @@ var _chat_tab := "all"
 var _last_chat_activity_msec := 0
 var _current_map_display_name := "Unknown map"
 var _minimap_scale := 1.0
+var _minimap_orientation := "north_up"
+var _minimap_dragging := false
+var _minimap_drag_offset := Vector2.ZERO
+var _equipment_side := "left"
+var _bulk_exclusions: Dictionary = {
+	"store": [false, false, false, false],
+	"drop": [false, false, false, false]}
+var _item_lists: Dictionary = {}
+var _store_options_menu: PopupMenu
+var _drop_options_menu: PopupMenu
+var _minimap_menu: PopupMenu
+var _session_started_msec := 0
+var _experience_snapshot: Dictionary = {}
+var _session_xp_gain: Dictionary = {}
+var _session_xp_max: Dictionary = {}
+var _session_xp_last: Dictionary = {}
+var _session_distance := 0
+var _last_distance_tile := Vector2i(-99999, -99999)
+var _session_counters: Dictionary = {}
+var _total_counters: Dictionary = {}
+var _keyboard_move_cooldown_msec := 0
+var _keyboard_origin_tile := Vector2i(-99999, -99999)
+var _keyboard_target_tile := Vector2i(-99999, -99999)
+var _selected_counter_category := "Kills"
+var _known_perks: Array[String] = []
+var _perk_capture_until_msec := 0
 var _right_mouse_down := false
 var _right_mouse_dragged := false
 
 const CHAT_FADE_DELAY_MSEC := 7000
 const CHAT_FADE_DURATION_MSEC := 1800
 const SETTINGS_PATH := "user://eloria_hud.cfg"
+const EXPERIENCE_SKILLS: Array[String] = [
+	"attack", "defense", "harvesting", "alchemy", "magic", "potion",
+	"summoning", "manufacturing", "crafting", "engineering", "tailoring",
+	"ranging", "overall"]
+const COUNTER_CATEGORIES: Array[String] = [
+	"Kills", "Deaths", "Breakages", "Crit Fails", "Used Items", "Events",
+	"Harvests", "Alchemy", "Crafting", "Manufacturing", "Potions", "Spells",
+	"Summons", "Engineering", "Tailoring", "Storage", "Drops"]
+const PERK_NAMES: Array[String] = [
+	"Power Saving", "Self Destruct", "There is no Fork", "Excavator", "Conjurer",
+	"I Glow in the Dark", "Body Piercing", "Artificer", "I Eat Dead People",
+	"Fatal Man", "Monster Magnetism", "Careful Guy", "Fast Regeneration",
+	"Evanescence", "Mirror Skin", "Sharp Shooter", "Power Hungry", "I can't dance",
+	"No More Tears", "Ethereal Ranger", "Wilhelm Hood", "Antisocial",
+	"Gelatine Bones", "Godless", "Harvester of Sorrow", "One", "Underworlder",
+	"Summoner", "Skeptic", "Collateral Damage", "Dedicated Harvester", "Hellspawn",
+	"Scotty Died"]
 
 func _ready() -> void:
 	var model_registry: Dictionary = _json("res://data/actors/models.json")
@@ -220,6 +291,7 @@ func _ready() -> void:
 	world_loader.load_failed.connect(_on_world_load_failed)
 	viewport_container.gui_input.connect(_on_world_gui_input)
 	minimap.gui_input.connect(_on_minimap_gui_input)
+	minimap_frame.gui_input.connect(_on_minimap_frame_gui_input)
 	map_image.gui_input.connect(_on_full_map_gui_input)
 	map_image.mouse_exited.connect(_on_full_map_mouse_exited)
 	clock_face.gui_input.connect(_on_clock_gui_input)
@@ -234,10 +306,10 @@ func _ready() -> void:
 	settings_panel.hide()
 	stats_panel.hide()
 	inventory_panel.hide()
+	item_lists_panel.hide()
 	trade_panel.hide()
 	storage_panel.hide()
 	ground_bag_panel.hide()
-	knowledge_panel.hide()
 	manufacturing_panel.hide()
 	game_view.hide()
 	creation_panel.hide()
@@ -253,6 +325,8 @@ func _ready() -> void:
 	_configure_window_layers()
 	_configure_cartography()
 	_load_hud_settings()
+	_configure_inventory_menus()
+	_configure_minimap_menu()
 	_build_inventory_slots()
 	_build_equipment_slots()
 	quick_content.move_child(spell_slot_container, 0)
@@ -269,6 +343,10 @@ func _ready() -> void:
 	ground_bag_inventory.item_selected.connect(_on_ground_bag_inventory_selected)
 	knowledge_list.item_selected.connect(_on_knowledge_selected)
 	knowledge_known_only.toggled.connect(_on_knowledge_filter_toggled)
+	stats_tabs.tab_changed.connect(_on_stats_tab_changed)
+	stats_close.pressed.connect(func() -> void: stats_panel.hide())
+	counter_categories.item_selected.connect(_on_counter_category_selected)
+	session_reset.pressed.connect(_reset_session_tracking)
 	manufacturing_list.item_selected.connect(_on_manufacturing_selected)
 	manufacturing_filter.text_changed.connect(_on_manufacturing_filter_changed)
 	show_overhead_health.toggled.connect(_on_overhead_option_toggled)
@@ -283,8 +361,30 @@ func _ready() -> void:
 			"GameView/ChatTabs/Channel%d" % (channel_index + 1)) as Button
 		channel_button.pressed.connect(_on_channel_tab_pressed.bind(channel_index))
 	minimap_size.value_changed.connect(_on_minimap_size_changed)
+	equipment_side.add_item("Left", 0)
+	equipment_side.add_item("Right", 1)
+	equipment_side.select(1 if _equipment_side == "right" else 0)
+	equipment_side.item_selected.connect(_on_equipment_side_selected)
+	inventory_store_all.pressed.connect(_on_inventory_store_all_pressed)
+	inventory_get_all.pressed.connect(_on_inventory_get_all_pressed)
+	inventory_drop_all.pressed.connect(_on_inventory_drop_all_pressed)
+	inventory_mix_all.pressed.connect(_on_inventory_mix_all_pressed)
+	inventory_item_lists.pressed.connect(_on_inventory_item_lists_pressed)
+	inventory_store_all.gui_input.connect(_on_bulk_button_gui_input.bind("store"))
+	inventory_drop_all.gui_input.connect(_on_bulk_button_gui_input.bind("drop"))
+	saved_item_lists.item_selected.connect(_on_saved_item_list_selected)
+	item_list_save.pressed.connect(_on_item_list_save_pressed)
+	item_list_delete.pressed.connect(_on_item_list_delete_pressed)
+	item_list_get.pressed.connect(_on_item_list_get_pressed)
+	item_lists_close.pressed.connect(func() -> void: item_lists_panel.hide())
 	%SettingsClose.pressed.connect(_close_settings)
 	%ConsoleClose.pressed.connect(_toggle_console)
+	_session_started_msec = Time.get_ticks_msec()
+	for category: String in COUNTER_CATEGORIES:
+		counter_categories.add_item(category)
+	counter_categories.select(0)
+	_apply_equipment_side()
+	_sync_saved_item_lists()
 	_sync_channel_tabs()
 	_sync_stats()
 
@@ -300,6 +400,8 @@ func _bind_shared_world() -> void:
 func _process(_delta: float) -> void:
 	if game_view.visible:
 		_update_local_actor_follow()
+		_update_keyboard_movement()
+		_update_session_distance()
 		_update_legacy_clock_and_compass()
 		_update_actor_resource_overlay()
 		_update_chat_fade()
@@ -307,6 +409,55 @@ func _process(_delta: float) -> void:
 		if display_second != cooldown_display_second:
 			cooldown_display_second = display_second
 			_sync_quick_slots()
+			if stats_panel.visible and stats_tabs.current_tab == 3:
+				_sync_session_experience()
+
+func _text_entry_active() -> bool:
+	var focus: Control = get_viewport().gui_get_focus_owner()
+	return focus is LineEdit or focus is TextEdit
+
+func _update_keyboard_movement() -> void:
+	if _text_entry_active() or dialogue_panel.visible or trade_panel.visible \
+			or storage_panel.visible or ground_bag_panel.visible or full_map.visible \
+			or console_panel.visible or settings_panel.visible or item_lists_panel.visible \
+			or Input.is_key_pressed(KEY_ALT) or Input.is_key_pressed(KEY_CTRL):
+		_keyboard_target_tile = Vector2i(-99999, -99999)
+		return
+	var direction := Vector2i.ZERO
+	if Input.is_action_pressed("move_north"):
+		direction.y -= 1
+	if Input.is_action_pressed("move_south"):
+		direction.y += 1
+	if Input.is_action_pressed("move_west"):
+		direction.x -= 1
+	if Input.is_action_pressed("move_east"):
+		direction.x += 1
+	if direction == Vector2i.ZERO:
+		_keyboard_target_tile = Vector2i(-99999, -99999)
+		return
+	var actor_value: Variant = AppState.actors.get(AppState.local_actor_id)
+	if not actor_value is Dictionary:
+		return
+	var dto: Dictionary = actor_value as Dictionary
+	var origin := Vector2i(int(dto.get("x", 0)), int(dto.get("y", 0)))
+	var target: Vector2i = origin + direction
+	var now: int = Time.get_ticks_msec()
+	if now < _keyboard_move_cooldown_msec:
+		return
+	if origin == _keyboard_origin_tile and target == _keyboard_target_tile:
+		return
+	var error: Error = Network.move_to(target, Input.is_key_pressed(KEY_SHIFT))
+	if error == OK:
+		_keyboard_origin_tile = origin
+		_keyboard_target_tile = target
+		_keyboard_move_cooldown_msec = now + 120
+	else:
+		push_warning("keyboard MOVE_TO failed: " + error_string(error))
+
+func _turn_local_actor(step: int) -> void:
+	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	if actor_value is ReplicatedActor3D and is_instance_valid(actor_value as ReplicatedActor3D):
+		(actor_value as ReplicatedActor3D).turn_by(float(step) * PI / 4.0)
 
 func _on_connect_pressed() -> void:
 	if AppState.connection_state != "disconnected":
@@ -552,19 +703,18 @@ func _on_stats_button_pressed() -> void:
 	stats_panel.visible = not stats_panel.visible
 	if stats_panel.visible:
 		inventory_panel.hide()
-		knowledge_panel.hide()
 		manufacturing_panel.hide()
+		stats_tabs.current_tab = 0
+		_request_perks()
 		_sync_stats()
 
 func _on_inventory_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
-			or bool(AppState.storage.get("open", false))
 			or bool(AppState.ground_bag.get("open", false))):
 		return
 	inventory_panel.visible = not inventory_panel.visible
 	if inventory_panel.visible:
 		stats_panel.hide()
-		knowledge_panel.hide()
 		manufacturing_panel.hide()
 		_sync_inventory()
 
@@ -573,10 +723,11 @@ func _on_knowledge_button_pressed() -> void:
 			or bool(AppState.storage.get("open", false))
 			or bool(AppState.ground_bag.get("open", false))):
 		return
-	knowledge_panel.visible = not knowledge_panel.visible
-	if knowledge_panel.visible:
+	var was_knowledge_open: bool = stats_panel.visible and stats_tabs.current_tab == 1
+	stats_panel.visible = not was_knowledge_open
+	if stats_panel.visible:
+		stats_tabs.current_tab = 1
 		inventory_panel.hide()
-		stats_panel.hide()
 		manufacturing_panel.hide()
 		full_map.hide()
 		_sync_knowledge()
@@ -590,7 +741,6 @@ func _on_manufacturing_button_pressed() -> void:
 	if manufacturing_panel.visible:
 		inventory_panel.hide()
 		stats_panel.hide()
-		knowledge_panel.hide()
 		full_map.hide()
 		_sync_manufacturing()
 
@@ -628,6 +778,7 @@ func _send_manufacturing_request(wanted: int) -> void:
 		" ingredients=", typed_selection, " redacted_bytes=not_sensitive")
 	var error: Error = Network.manufacture(typed_selection, wanted)
 	if error == OK:
+		_increment_counter("Manufacturing", 1)
 		manufacturing_server_status = ("Mix-all request sent; awaiting the server."
 			if wanted == 255 else "Mix request sent; awaiting the server.")
 	else:
@@ -647,7 +798,7 @@ func _on_knowledge_filter_toggled(_enabled: bool) -> void:
 	_sync_knowledge()
 
 func _on_knowledge_close_pressed() -> void:
-	knowledge_panel.hide()
+	stats_panel.hide()
 
 func _on_inventory_close_pressed() -> void:
 	inventory_panel.hide()
@@ -675,6 +826,214 @@ func _on_inventory_inspect_pressed() -> void:
 	var error: Error = Network.look_at_inventory_item(selected_inventory_slot)
 	if error != OK:
 		push_warning("LOOK_AT_INVENTORY_ITEM failed: " + error_string(error))
+
+func _configure_inventory_menus() -> void:
+	_store_options_menu = PopupMenu.new()
+	_drop_options_menu = PopupMenu.new()
+	for menu: PopupMenu in [_store_options_menu, _drop_options_menu]:
+		for label: String in ["Protect first row", "Protect last row",
+				"Protect first column", "Protect last column"]:
+			menu.add_check_item(label)
+		inventory_panel.add_child(menu)
+	_store_options_menu.id_pressed.connect(_on_bulk_option_selected.bind("store"))
+	_drop_options_menu.id_pressed.connect(_on_bulk_option_selected.bind("drop"))
+	_sync_bulk_option_menus()
+
+func _sync_bulk_option_menus() -> void:
+	for menu_and_key: Array in [[_store_options_menu, "store"], [_drop_options_menu, "drop"]]:
+		var menu: PopupMenu = menu_and_key[0] as PopupMenu
+		var values: Array = _bulk_exclusions.get(str(menu_and_key[1]), []) as Array
+		for index: int in range(4):
+			menu.set_item_checked(index, index < values.size() and bool(values[index]))
+
+func _on_bulk_button_gui_input(event: InputEvent, kind: String) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse: InputEventMouseButton = event as InputEventMouseButton
+	if not mouse.pressed or mouse.button_index != MOUSE_BUTTON_RIGHT:
+		return
+	var menu: PopupMenu = _store_options_menu if kind == "store" else _drop_options_menu
+	menu.position = Vector2i(get_viewport().get_mouse_position())
+	menu.popup()
+	(inventory_store_all if kind == "store" else inventory_drop_all).accept_event()
+
+func _on_bulk_option_selected(option_id: int, kind: String) -> void:
+	if option_id < 0 or option_id >= 4:
+		return
+	var values: Array = (_bulk_exclusions.get(kind, [false, false, false, false]) as Array).duplicate()
+	values[option_id] = not bool(values[option_id])
+	_bulk_exclusions[kind] = values
+	_sync_bulk_option_menus()
+	_save_hud_settings()
+
+func _inventory_slot_is_protected(slot: int, kind: String) -> bool:
+	var values: Array = _bulk_exclusions.get(kind, [false, false, false, false]) as Array
+	return ((bool(values[0]) and slot < 6)
+		or (bool(values[1]) and slot >= 30)
+		or (bool(values[2]) and slot % 6 == 0)
+		or (bool(values[3]) and slot % 6 == 5))
+
+func _on_inventory_store_all_pressed() -> void:
+	if not bool(AppState.storage.get("open", false)):
+		inventory_description.text = "Open storage before using Sto All."
+		return
+	var sent := 0
+	var slots: Array = AppState.inventory.keys()
+	slots.sort()
+	for raw_slot: Variant in slots:
+		var slot: int = int(raw_slot)
+		if slot < 0 or slot >= 36 or _inventory_slot_is_protected(slot, "store"):
+			continue
+		var item: Dictionary = AppState.inventory.get(slot, {}) as Dictionary
+		if not item.is_empty() and Network.deposit_storage(slot,
+				int(item.get("quantity", 0))) == OK:
+			sent += 1
+	if sent > 0:
+		_increment_counter("Storage", sent)
+	inventory_description.text = "Sto All sent %d stack%s to the server." % [
+		sent, "" if sent == 1 else "s"]
+
+func _on_inventory_get_all_pressed() -> void:
+	if not bool(AppState.storage.get("open", false)):
+		inventory_description.text = "Open a storage category before using Get All."
+		return
+	var items: Dictionary = AppState.storage.get("items", {}) as Dictionary
+	var positions: Array = items.keys()
+	positions.sort()
+	positions.reverse()
+	var sent := 0
+	for raw_position: Variant in positions:
+		var position: int = int(raw_position)
+		var item: Dictionary = items.get(position, {}) as Dictionary
+		if not item.is_empty() and Network.withdraw_storage(position,
+				int(item.get("quantity", 0))) == OK:
+			sent += 1
+	if sent > 0:
+		_increment_counter("Storage", sent)
+	inventory_description.text = "Get All requested %d stored stack%s." % [
+		sent, "" if sent == 1 else "s"]
+
+func _on_inventory_drop_all_pressed() -> void:
+	var sent := 0
+	var slots: Array = AppState.inventory.keys()
+	slots.sort()
+	for raw_slot: Variant in slots:
+		var slot: int = int(raw_slot)
+		if slot < 0 or slot >= 36 or _inventory_slot_is_protected(slot, "drop"):
+			continue
+		var item: Dictionary = AppState.inventory.get(slot, {}) as Dictionary
+		if not item.is_empty() and Network.drop_inventory_item(slot,
+				int(item.get("quantity", 0))) == OK:
+			sent += 1
+	if sent > 0:
+		_increment_counter("Drops", sent)
+	inventory_description.text = "Drop All sent %d stack%s to the server." % [
+		sent, "" if sent == 1 else "s"]
+
+func _on_inventory_mix_all_pressed() -> void:
+	if selected_manufacturing_recipe < 0:
+		manufacturing_panel.show()
+		manufacturing_panel.move_to_front()
+		manufacturing_status.text = "Select a recipe, then use Mix All."
+		return
+	_send_manufacturing_request(255)
+
+func _on_inventory_item_lists_pressed() -> void:
+	_sync_saved_item_lists()
+	item_lists_panel.show()
+	item_lists_panel.move_to_front()
+
+func _sync_saved_item_lists() -> void:
+	if saved_item_lists == null:
+		return
+	saved_item_lists.clear()
+	var names: Array = _item_lists.keys()
+	names.sort_custom(func(a: Variant, b: Variant) -> bool:
+		return str(a).naturalnocasecmp_to(str(b)) < 0)
+	for raw_name: Variant in names:
+		var name: String = str(raw_name)
+		var index: int = saved_item_lists.item_count
+		saved_item_lists.add_item(name)
+		saved_item_lists.set_item_metadata(index, name)
+
+func _on_saved_item_list_selected(index: int) -> void:
+	if index < 0 or index >= saved_item_lists.item_count:
+		return
+	var name: String = str(saved_item_lists.get_item_metadata(index))
+	item_list_name.text = name
+	item_list_entries.text = str(_item_lists.get(name, ""))
+	item_list_status.text = "Loaded %s." % name
+
+func _parse_item_list(text: String) -> Array[Dictionary]:
+	var parsed: Array[Dictionary] = []
+	for raw_line: String in text.split("\n"):
+		var line: String = raw_line.strip_edges().replace(",", ":")
+		if line.is_empty() or line.begins_with("#"):
+			continue
+		var parts: PackedStringArray = line.split(":", false, 1)
+		if parts.size() != 2 or not parts[0].strip_edges().is_valid_int() \
+				or not parts[1].strip_edges().is_valid_int():
+			return []
+		var image_id: int = int(parts[0].strip_edges())
+		var quantity: int = int(parts[1].strip_edges())
+		if image_id < 0 or quantity <= 0:
+			return []
+		parsed.append({"image_id": image_id, "quantity": quantity})
+	return parsed
+
+func _on_item_list_save_pressed() -> void:
+	var name: String = item_list_name.text.strip_edges()
+	var entries: Array[Dictionary] = _parse_item_list(item_list_entries.text)
+	if name.is_empty() or entries.is_empty():
+		item_list_status.text = "Enter a name and valid image_id:quantity lines."
+		return
+	_item_lists[name] = item_list_entries.text.strip_edges()
+	_save_hud_settings()
+	_sync_saved_item_lists()
+	item_list_status.text = "Saved %s (%d item types)." % [name, entries.size()]
+
+func _on_item_list_delete_pressed() -> void:
+	var name: String = item_list_name.text.strip_edges()
+	if _item_lists.erase(name):
+		_save_hud_settings()
+		_sync_saved_item_lists()
+		item_list_name.clear()
+		item_list_entries.clear()
+		item_list_status.text = "Deleted %s." % name
+
+func _on_item_list_get_pressed() -> void:
+	if not bool(AppState.storage.get("open", false)):
+		item_list_status.text = "Open the relevant storage category first."
+		return
+	var wanted: Array[Dictionary] = _parse_item_list(item_list_entries.text)
+	if wanted.is_empty():
+		item_list_status.text = "The list has no valid entries."
+		return
+	var items: Dictionary = AppState.storage.get("items", {}) as Dictionary
+	var request_count := 0
+	var missing: Array[String] = []
+	for request: Dictionary in wanted:
+		var remaining: int = int(request.get("quantity", 0))
+		var positions: Array = items.keys()
+		positions.sort()
+		positions.reverse()
+		for raw_position: Variant in positions:
+			var item: Dictionary = items.get(int(raw_position), {}) as Dictionary
+			if int(item.get("image_id", -1)) != int(request.get("image_id", -2)):
+				continue
+			var quantity: int = mini(remaining, int(item.get("quantity", 0)))
+			if quantity > 0 and Network.withdraw_storage(int(raw_position), quantity) == OK:
+				remaining -= quantity
+				request_count += 1
+			if remaining <= 0:
+				break
+		if remaining > 0:
+			missing.append("#%d ×%d" % [int(request.get("image_id", 0)), remaining])
+	if request_count > 0:
+		_increment_counter("Storage", request_count)
+	item_list_status.text = ("Requested %d stack%s." % [request_count,
+		"" if request_count == 1 else "s"]
+		+ (" Missing " + ", ".join(missing) + "." if not missing.is_empty() else ""))
 
 func _on_trade_source_selected(index: int) -> void:
 	selected_trade_side = "source"
@@ -804,7 +1163,9 @@ func _on_storage_deposit_pressed() -> void:
 	var quantity: int = clampi(int(storage_quantity.value), 1,
 		int((item_value as Dictionary).get("quantity", 1)))
 	var error: Error = Network.deposit_storage(slot, quantity)
-	if error != OK:
+	if error == OK:
+		_increment_counter("Storage", 1)
+	else:
 		push_warning("DEPOSIT_ITEM failed: " + error_string(error))
 
 func _on_storage_withdraw_pressed() -> void:
@@ -819,7 +1180,9 @@ func _on_storage_withdraw_pressed() -> void:
 	var quantity: int = clampi(int(storage_quantity.value), 1,
 		int((item_value as Dictionary).get("quantity", 1)))
 	var error: Error = Network.withdraw_storage(position, quantity)
-	if error != OK:
+	if error == OK:
+		_increment_counter("Storage", 1)
+	else:
 		push_warning("WITHDRAW_ITEM failed: " + error_string(error))
 
 func _on_storage_inspect_pressed() -> void:
@@ -895,7 +1258,9 @@ func _on_ground_bag_drop_pressed() -> void:
 	var quantity: int = clampi(int(ground_bag_quantity.value), 1,
 		int((item_value as Dictionary).get("quantity", 1)))
 	var error: Error = Network.drop_inventory_item(slot, quantity)
-	if error != OK:
+	if error == OK:
+		_increment_counter("Drops", 1)
+	else:
 		push_warning("DROP_ITEM failed: " + error_string(error))
 
 func _on_ground_bag_close_pressed() -> void:
@@ -953,8 +1318,8 @@ func _clear_world_presentation() -> void:
 	trade_panel.hide()
 	storage_panel.hide()
 	ground_bag_panel.hide()
-	knowledge_panel.hide()
 	manufacturing_panel.hide()
+	item_lists_panel.hide()
 	dialogue_panel.hide()
 	console_panel.hide()
 	_close_settings()
@@ -968,7 +1333,17 @@ func _input(event: InputEvent) -> void:
 	var key_event: InputEventKey = event as InputEventKey
 	if not key_event.pressed or key_event.echo:
 		return
-	if key_event.keycode == KEY_TAB or key_event.physical_keycode == KEY_TAB:
+	if key_event.ctrl_pressed and (key_event.keycode == KEY_I
+			or key_event.physical_keycode == KEY_I):
+		_on_inventory_button_pressed()
+		get_viewport().set_input_as_handled()
+	elif (not _text_entry_active() and not key_event.ctrl_pressed and not key_event.alt_pressed
+			and (key_event.keycode in [KEY_Q, KEY_E]
+			or key_event.physical_keycode in [KEY_Q, KEY_E])):
+		_turn_local_actor(1 if (key_event.keycode == KEY_E
+			or key_event.physical_keycode == KEY_E) else -1)
+		get_viewport().set_input_as_handled()
+	elif key_event.keycode == KEY_TAB or key_event.physical_keycode == KEY_TAB:
 		_toggle_full_map()
 		get_viewport().set_input_as_handled()
 	elif (key_event.alt_pressed and (key_event.keycode == KEY_M
@@ -1034,8 +1409,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			AppState.close_storage()
 		elif bool(AppState.ground_bag.get("open", false)):
 			_close_ground_bag()
-		elif knowledge_panel.visible:
-			knowledge_panel.hide()
+		elif item_lists_panel.visible:
+			item_lists_panel.hide()
 		elif manufacturing_panel.visible:
 			manufacturing_panel.hide()
 		elif inventory_panel.visible:
@@ -1060,7 +1435,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _on_world_gui_input(event: InputEvent) -> void:
 	if (not game_view.visible or full_map.visible or dialogue_panel.visible
 			or trade_panel.visible or storage_panel.visible or ground_bag_panel.visible
-			or knowledge_panel.visible or manufacturing_panel.visible):
+			or manufacturing_panel.visible):
 		return
 	if event is InputEventMouseButton:
 		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
@@ -1238,7 +1613,7 @@ func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 		map_render_viewport: SubViewport, camera: Camera3D, source: String) -> void:
 	if (not game_view.visible or dialogue_panel.visible or trade_panel.visible
 			or storage_panel.visible or ground_bag_panel.visible
-			or knowledge_panel.visible or manufacturing_panel.visible):
+			or manufacturing_panel.visible):
 		return
 	if not event is InputEventMouseButton:
 		return
@@ -1356,6 +1731,7 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_world()
 			_sync_selection()
 		&"chat":
+			_capture_perks_from_chat()
 			_sync_chat()
 			_sync_console()
 			_reveal_chat_messages()
@@ -1504,7 +1880,9 @@ func _update_local_actor_follow() -> void:
 	var focus_position: Vector3 = target.global_position
 	camera_rig.set_focus(focus_position)
 	map_camera.global_position = focus_position + Vector3(0, 220, 0)
-	map_camera.rotation_degrees = Vector3(-90, 0, 0)
+	map_camera.rotation = Vector3(-PI * 0.5,
+		target.rotation.y if _minimap_orientation == "player_up" else 0.0, 0.0)
+	_layout_minimap_cardinals()
 	# Render above the actor and ignore depth so roofs/bridges cannot hide the
 	# local-position dot in either top-down map camera.
 	player_map_marker.global_position = focus_position + Vector3(0, 5.0, 0)
@@ -1594,7 +1972,6 @@ func _sync_ground_bag() -> void:
 	full_map.hide()
 	trade_panel.hide()
 	storage_panel.hide()
-	knowledge_panel.hide()
 	manufacturing_panel.hide()
 	_fill_storage_item_list(ground_bag_items,
 		AppState.ground_bag.get("items", {}) as Dictionary, "Ground")
@@ -1611,7 +1988,7 @@ func _sync_ground_bag_actions() -> void:
 	ground_bag_drop_button.disabled = ground_bag_inventory.get_selected_items().is_empty()
 
 func _sync_knowledge() -> void:
-	if not knowledge_panel.visible:
+	if not stats_panel.visible or stats_tabs.current_tab != 1:
 		return
 	knowledge_list.clear()
 	var known_only: bool = knowledge_known_only.button_pressed
@@ -1816,15 +2193,43 @@ func _load_hud_settings() -> void:
 	if config.load(SETTINGS_PATH) == OK:
 		_minimap_scale = clampf(float(config.get_value(
 			"hud", "minimap_scale", 1.0)), 0.75, 1.75)
+		_minimap_orientation = str(config.get_value(
+			"hud", "minimap_orientation", "north_up"))
+		var position_value: Variant = config.get_value(
+			"hud", "minimap_position", Vector2(16.0, 42.0))
+		if position_value is Vector2:
+			minimap_frame.position = position_value as Vector2
+		_equipment_side = str(config.get_value("inventory", "equipment_side", "left"))
+		var bulk_value: Variant = config.get_value("inventory", "bulk_exclusions", {})
+		if bulk_value is Dictionary:
+			for kind: String in ["store", "drop"]:
+				var options_value: Variant = (bulk_value as Dictionary).get(kind)
+				if options_value is Array and (options_value as Array).size() == 4:
+					_bulk_exclusions[kind] = (options_value as Array).duplicate()
+		var lists_value: Variant = config.get_value("inventory", "item_lists", {})
+		if lists_value is Dictionary:
+			_item_lists = (lists_value as Dictionary).duplicate(true)
+		var counters_value: Variant = config.get_value("statistics", "counters", {})
+		if counters_value is Dictionary:
+			_total_counters = (counters_value as Dictionary).duplicate(true)
 	minimap_size.set_value_no_signal(_minimap_scale)
 	_apply_minimap_scale()
 
 func _on_minimap_size_changed(value: float) -> void:
 	_minimap_scale = clampf(value, 0.75, 1.75)
 	_apply_minimap_scale()
+	_save_hud_settings()
+
+func _save_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	config.load(SETTINGS_PATH)
 	config.set_value("hud", "minimap_scale", _minimap_scale)
+	config.set_value("hud", "minimap_orientation", _minimap_orientation)
+	config.set_value("hud", "minimap_position", minimap_frame.position)
+	config.set_value("inventory", "equipment_side", _equipment_side)
+	config.set_value("inventory", "bulk_exclusions", _bulk_exclusions)
+	config.set_value("inventory", "item_lists", _item_lists)
+	config.set_value("statistics", "counters", _total_counters)
 	var error: Error = config.save(SETTINGS_PATH)
 	if error != OK:
 		push_warning("HUD settings save failed: " + error_string(error))
@@ -1833,15 +2238,89 @@ func _apply_minimap_scale() -> void:
 	var frame_size: float = roundf(192.0 * _minimap_scale)
 	minimap_frame.offset_right = minimap_frame.offset_left + frame_size
 	minimap_frame.offset_bottom = minimap_frame.offset_top + frame_size
-	minimap.custom_minimum_size = Vector2.ONE * maxf(64.0, frame_size - 8.0)
+	minimap.custom_minimum_size = Vector2.ZERO
 	minimap_size_value.text = "%d%%" % roundi(_minimap_scale * 100.0)
+	_layout_minimap_cardinals()
+
+func _on_equipment_side_selected(index: int) -> void:
+	_equipment_side = "right" if index == 1 else "left"
+	_apply_equipment_side()
+	_save_hud_settings()
+
+func _apply_equipment_side() -> void:
+	if equipment_column == null or inventory_body == null:
+		return
+	inventory_body.move_child(equipment_column,
+		inventory_body.get_child_count() - 1 if _equipment_side == "right" else 0)
+
+func _configure_minimap_menu() -> void:
+	_minimap_menu = PopupMenu.new()
+	_minimap_menu.add_radio_check_item("North always up", 0)
+	_minimap_menu.add_radio_check_item("Rotate with player", 1)
+	_minimap_menu.id_pressed.connect(_on_minimap_orientation_selected)
+	minimap_frame.add_child(_minimap_menu)
+	_sync_minimap_menu()
+
+func _sync_minimap_menu() -> void:
+	if _minimap_menu == null:
+		return
+	_minimap_menu.set_item_checked(0, _minimap_orientation == "north_up")
+	_minimap_menu.set_item_checked(1, _minimap_orientation == "player_up")
+
+func _on_minimap_orientation_selected(id: int) -> void:
+	_minimap_orientation = "player_up" if id == 1 else "north_up"
+	_sync_minimap_menu()
+	_save_hud_settings()
+
+func _on_minimap_frame_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse: InputEventMouseButton = event as InputEventMouseButton
+		if mouse.button_index == MOUSE_BUTTON_RIGHT and mouse.pressed:
+			_minimap_menu.position = Vector2i(get_viewport().get_mouse_position())
+			_minimap_menu.popup()
+			minimap_frame.accept_event()
+			return
+		if mouse.button_index == MOUSE_BUTTON_LEFT:
+			if mouse.pressed:
+				var inner := Rect2(Vector2(18.0, 18.0),
+					minimap_frame.size - Vector2(36.0, 36.0))
+				if not inner.has_point(mouse.position):
+					_minimap_dragging = true
+					_minimap_drag_offset = get_viewport().get_mouse_position() - minimap_frame.position
+					minimap_frame.accept_event()
+			else:
+				if _minimap_dragging:
+					_minimap_dragging = false
+					_save_hud_settings()
+					minimap_frame.accept_event()
+	elif event is InputEventMouseMotion and _minimap_dragging:
+		var target_position: Vector2 = (get_viewport().get_mouse_position()
+			- _minimap_drag_offset)
+		var maximum: Vector2 = (game_view.size - minimap_frame.size).max(Vector2.ZERO)
+		minimap_frame.position = Vector2(
+			clampf(target_position.x, 0.0, maximum.x),
+			clampf(target_position.y, 30.0, maximum.y))
+		minimap_frame.accept_event()
+
+func _layout_minimap_cardinals() -> void:
+	if minimap_north == null:
+		return
+	var center: Vector2 = minimap_frame.size * 0.5
+	var radius: float = maxf(12.0, minf(minimap_frame.size.x,
+		minimap_frame.size.y) * 0.5 - 9.0)
+	var heading: float = map_camera.rotation.y if _minimap_orientation == "player_up" else 0.0
+	var labels: Array[Label] = [minimap_north, minimap_east, minimap_south, minimap_west]
+	for index: int in range(labels.size()):
+		var angle: float = -PI * 0.5 + float(index) * PI * 0.5 - heading
+		labels[index].position = center + Vector2(cos(angle), sin(angle)) * radius \
+			- labels[index].size * 0.5
 
 func _configure_window_layers() -> void:
 	actor_resource_overlay.z_index = 1
 	for panel: Control in [full_map, stats_panel, inventory_panel, dialogue_panel,
-		trade_panel, storage_panel, ground_bag_panel, knowledge_panel,
-		manufacturing_panel]:
+		trade_panel, storage_panel, ground_bag_panel, manufacturing_panel]:
 		panel.z_index = 20
+	item_lists_panel.z_index = 25
 	console_panel.z_index = 25
 	settings_panel.z_index = 30
 	actor_hud_menu.z_index = 30
@@ -1885,6 +2364,7 @@ func _formatted_chat_line(line: Dictionary) -> String:
 
 func _sync_stats() -> void:
 	var stats: Dictionary = AppState.stats
+	_track_experience()
 	var health: int = int(stats.get("health", 0))
 	var max_health: int = maxi(1, int(stats.get("max_health", 1)))
 	var ether: int = int(stats.get("ether", 0))
@@ -1900,6 +2380,9 @@ func _sync_stats() -> void:
 	_set_overhead_meter(overhead_health_row, health, max_health)
 	_set_overhead_meter(overhead_ether_row, ether, max_ether)
 	_set_overhead_meter(overhead_action_row, action, max_action)
+	if inventory_load != null:
+		inventory_load.text = "Load: %d / %d" % [int(stats.get("carried", 0)),
+			int(stats.get("capacity", 0))]
 	var abbreviated: Array[Array] = [
 		["att", "attack"], ["def", "defense"], ["har", "harvesting"],
 		["alc", "alchemy"], ["mag", "magic"], ["pot", "potion"],
@@ -1908,24 +2391,191 @@ func _sync_stats() -> void:
 		["oa", "overall"]]
 	var indicator_cells: Array[String] = []
 	for label_and_key: Array in abbreviated:
+		var stat_value: int = int(stats.get("overall_level", 0)) \
+			if label_and_key[1] == "overall" else int(stats.get(label_and_key[1], 0))
 		indicator_cells.append("[cell]%s[/cell][cell]%d[/cell]" % [
-			label_and_key[0], int(stats.get(label_and_key[1], 0))])
+			label_and_key[0], stat_value])
 	skill_indicators.text = "[table=2]%s[/table]" % "".join(indicator_cells)
 	if stats.is_empty():
+		stats_text.text = "[center]Waiting for server statistics…[/center]"
+		_sync_session_experience()
+		_sync_counters()
 		return
-	var lines: Array[String] = ["[center][b]CHARACTER STATISTICS[/b][/center]"]
-	var displayed_stats: Array[Array] = [
-		["Physique", "physique"], ["Coordination", "coordination"],
-		["Reasoning", "reasoning"], ["Will", "will"],
-		["Instinct", "instinct"], ["Vitality", "vitality"],
-		["Attack", "attack"], ["Defense", "defense"], ["Magic", "magic"],
-		["Harvesting", "harvesting"], ["Alchemy", "alchemy"],
-		["Manufacturing", "manufacturing"], ["Summoning", "summoning"],
-		["Crafting", "crafting"], ["Engineering", "engineering"],
-		["Tailoring", "tailoring"], ["Ranging", "ranging"], ["Overall", "overall"]]
-	for label_and_key: Array in displayed_stats:
-		lines.append("%s: %d" % [label_and_key[0], int(stats.get(label_and_key[1], 0))])
-	stats_text.text = "\n".join(lines)
+	var basic_lines: Array[String] = ["[b]Basic Attributes[/b]"]
+	for label_and_key: Array in [["Physique", "physique"],
+			["Coordination", "coordination"], ["Reasoning", "reasoning"],
+			["Will", "will"], ["Instinct", "instinct"], ["Vitality", "vitality"]]:
+		basic_lines.append("%-14s %s" % [label_and_key[0],
+			_stat_pair(stats, str(label_and_key[1]))])
+	basic_lines.append("\n[color=yellow][b]Cross Attributes[/b][/color]")
+	for cross: Array in [["Might", "physique", "coordination"],
+			["Matter", "physique", "will"], ["Toughness", "physique", "vitality"],
+			["Charm", "instinct", "vitality"], ["Reaction", "instinct", "coordination"],
+			["Perception", "instinct", "reasoning"], ["Rationality", "will", "reasoning"],
+			["Dexterity", "coordination", "reasoning"], ["Ethereality", "will", "vitality"]]:
+		basic_lines.append("%-14s %s" % [cross[0],
+			_cross_pair(stats, str(cross[1]), str(cross[2]))])
+	var nexus_lines: Array[String] = ["[b]Nexus[/b]"]
+	for label_and_key: Array in [["Human", "human_nexus"], ["Animal", "animal_nexus"],
+			["Vegetal", "vegetal_nexus"], ["Inorganic", "inorganic_nexus"],
+			["Artificial", "artificial_nexus"], ["Magic", "magic_nexus"]]:
+		nexus_lines.append("%-12s %s" % [label_and_key[0],
+			_stat_pair(stats, str(label_and_key[1]))])
+	var pickpoints: int = int(stats.get("pickpoints_earned", stats.get("overall", 0))) \
+		- int(stats.get("pickpoints_spent", 0))
+	nexus_lines.append("\nPickpoints       %d" % pickpoints)
+	nexus_lines.append("\n[color=#d7a85b][b]Perks[/b][/color]")
+	if _known_perks.is_empty():
+		nexus_lines.append("None reported")
+	else:
+		for perk: String in _known_perks:
+			nexus_lines.append("• " + perk)
+	nexus_lines.append("\n[color=#9999ff]Material Points  %d/%d[/color]" % [health, max_health])
+	nexus_lines.append("[color=#9999ff]Ethereal Points  %d/%d[/color]" % [ether, max_ether])
+	nexus_lines.append("[color=#9999ff]Action Points    %d/%d[/color]" % [action, max_action])
+	nexus_lines.append("Food Level       %d" % int(stats.get("food", 0)))
+	var skill_lines: Array[String] = ["[color=#ff8a28][b]Levels and Experience[/b][/color]"]
+	for skill: String in EXPERIENCE_SKILLS:
+		var current_level: int = int(stats.get("overall_level", 0)) \
+			if skill == "overall" else int(stats.get(skill, 0))
+		var base_level: int = current_level if skill == "overall" else int(
+			stats.get(skill + "_base", current_level))
+		skill_lines.append("%-15s %3d/%-3d  %d / %d" % [skill.capitalize(),
+			current_level, base_level,
+			int(stats.get(skill + "_exp", 0)), int(stats.get(skill + "_exp_next", 0))])
+	stats_text.text = "[table=3][cell]%s[/cell][cell]%s[/cell][cell]%s[/cell][/table]" % [
+		"\n".join(basic_lines), "\n".join(nexus_lines), "\n".join(skill_lines)]
+	_sync_session_experience()
+	_sync_counters()
+
+static func _stat_pair(stats: Dictionary, key: String) -> String:
+	return "%d/%d" % [int(stats.get(key, 0)), int(stats.get(key + "_base", stats.get(key, 0)))]
+
+static func _cross_pair(stats: Dictionary, first: String, second: String) -> String:
+	var current: int = (int(stats.get(first, 0)) + int(stats.get(second, 0))) / 2
+	var base: int = (int(stats.get(first + "_base", stats.get(first, 0)))
+		+ int(stats.get(second + "_base", stats.get(second, 0)))) / 2
+	return "%d/%d" % [current, base]
+
+func _on_stats_tab_changed(tab: int) -> void:
+	if tab == 1:
+		_sync_knowledge()
+	elif tab == 2:
+		_sync_counters()
+	elif tab == 3:
+		_sync_session_experience()
+
+func _track_experience() -> void:
+	for skill: String in EXPERIENCE_SKILLS:
+		var key: String = skill + "_exp"
+		if not AppState.stats.has(key):
+			continue
+		var current: int = int(AppState.stats[key])
+		if _experience_snapshot.has(skill):
+			var gain: int = current - int(_experience_snapshot[skill])
+			if gain > 0:
+				_session_xp_gain[skill] = int(_session_xp_gain.get(skill, 0)) + gain
+				_session_xp_last[skill] = gain
+				_session_xp_max[skill] = maxi(int(_session_xp_max.get(skill, 0)), gain)
+		_experience_snapshot[skill] = current
+
+func _sync_session_experience() -> void:
+	if session_xp_text == null:
+		return
+	var cells: Array[String] = ["[cell][b]Skill[/b][/cell]",
+		"[cell][right][b]Total Exp[/b][/right][/cell]",
+		"[cell][right][b]Max Exp[/b][/right][/cell]",
+		"[cell][right][b]Last Exp[/b][/right][/cell]"]
+	for skill: String in EXPERIENCE_SKILLS:
+		cells.append("[cell]%s[/cell]" % skill.capitalize())
+		cells.append("[cell][right]%d[/right][/cell]" % int(_session_xp_gain.get(skill, 0)))
+		cells.append("[cell][right]%d[/right][/cell]" % int(_session_xp_max.get(skill, 0)))
+		cells.append("[cell][right]%d[/right][/cell]" % int(_session_xp_last.get(skill, 0)))
+	var seconds: int = maxi(0, (Time.get_ticks_msec() - _session_started_msec) / 1000)
+	var xp_for_rate: int = int(_session_xp_gain.get("overall", 0))
+	if xp_for_rate <= 0:
+		for skill: String in EXPERIENCE_SKILLS:
+			if skill != "overall":
+				xp_for_rate += int(_session_xp_gain.get(skill, 0))
+	var rate: float = float(xp_for_rate) * 60.0 / maxf(1.0, float(seconds))
+	session_xp_text.text = ("[table=4]%s[/table]\n\nSession Time      %02d:%02d:%02d\n"
+		+ "Exp/Min           %.2f\nDistance          %d") % ["".join(cells),
+		seconds / 3600, (seconds / 60) % 60, seconds % 60, rate, _session_distance]
+
+func _reset_session_tracking() -> void:
+	_session_started_msec = Time.get_ticks_msec()
+	_session_xp_gain.clear()
+	_session_xp_max.clear()
+	_session_xp_last.clear()
+	_experience_snapshot.clear()
+	_session_counters.clear()
+	_session_distance = 0
+	_last_distance_tile = Vector2i(-99999, -99999)
+	_track_experience()
+	_sync_session_experience()
+	_sync_counters()
+
+func _update_session_distance() -> void:
+	var actor_value: Variant = AppState.actors.get(AppState.local_actor_id)
+	if not actor_value is Dictionary:
+		return
+	var actor: Dictionary = actor_value as Dictionary
+	var tile := Vector2i(int(actor.get("x", 0)), int(actor.get("y", 0)))
+	if _last_distance_tile.x < -90000:
+		_last_distance_tile = tile
+		return
+	var distance: int = maxi(absi(tile.x - _last_distance_tile.x),
+		absi(tile.y - _last_distance_tile.y))
+	if distance > 0 and distance <= 4:
+		_session_distance += distance
+	_last_distance_tile = tile
+
+func _on_counter_category_selected(index: int) -> void:
+	if index >= 0 and index < counter_categories.item_count:
+		_selected_counter_category = counter_categories.get_item_text(index)
+		_sync_counters()
+
+func _increment_counter(category: String, amount := 1) -> void:
+	_session_counters[category] = int(_session_counters.get(category, 0)) + amount
+	_total_counters[category] = int(_total_counters.get(category, 0)) + amount
+	_save_hud_settings()
+	if stats_panel.visible and stats_tabs.current_tab == 2:
+		_sync_counters()
+
+func _sync_counters() -> void:
+	if counter_text == null:
+		return
+	counter_text.text = ("[table=3][cell][b]Name[/b][/cell]"
+		+ "[cell][right][b]This Session[/b][/right][/cell]"
+		+ "[cell][right][b]Total[/b][/right][/cell]"
+		+ "[cell]%s[/cell][cell][right]%d[/right][/cell]"
+		+ "[cell][right]%d[/right][/cell][/table]\n\n"
+		+ "Totals reflect actions observed by this client.\nDistance this session: %d tiles") % [
+		_selected_counter_category, int(_session_counters.get(_selected_counter_category, 0)),
+		int(_total_counters.get(_selected_counter_category, 0)), _session_distance]
+
+func _request_perks() -> void:
+	var now: int = Time.get_ticks_msec()
+	if now < _perk_capture_until_msec:
+		return
+	_known_perks.clear()
+	_perk_capture_until_msec = now + 8000
+	var error: Error = Network.send_chat("#list_perks")
+	if error != OK:
+		_perk_capture_until_msec = 0
+
+func _capture_perks_from_chat() -> void:
+	if Time.get_ticks_msec() > _perk_capture_until_msec or AppState.chat_lines.is_empty():
+		return
+	var line: Dictionary = AppState.chat_lines.back() as Dictionary
+	var text: String = str(line.get("text", "")).strip_edges()
+	if text == "You have no perks.":
+		_known_perks.clear()
+	elif PERK_NAMES.has(text) and not _known_perks.has(text):
+		_known_perks.append(text)
+		_known_perks.sort()
+	if stats_panel.visible and stats_tabs.current_tab == 0:
+		_sync_stats()
 
 static func _set_meter(bar: ProgressBar, label: Label, value: int,
 		maximum: int, title: String) -> void:
@@ -1979,7 +2629,7 @@ func _update_actor_resource_overlay() -> void:
 func _build_inventory_slots() -> void:
 	for slot: int in range(36):
 		var button: Button = Button.new()
-		button.custom_minimum_size = Vector2(64.0, 52.0)
+		button.custom_minimum_size = Vector2(60.0, 52.0)
 		button.expand_icon = true
 		button.text = str(slot + 1)
 		button.tooltip_text = "Empty inventory slot %d" % (slot + 1)
@@ -1991,9 +2641,9 @@ func _build_inventory_slots() -> void:
 func _build_equipment_slots() -> void:
 	for index: int in range(8):
 		var button: Button = Button.new()
-		button.custom_minimum_size = Vector2(92.0, 48.0)
+		button.custom_minimum_size = Vector2(58.0, 48.0)
 		button.expand_icon = true
-		button.text = "Wear %d" % (index + 1)
+		button.text = str(index + 1)
 		button.tooltip_text = "Generic legacy equipment position %d" % (index + 1)
 		button.disabled = true
 		button.pressed.connect(_on_equipment_slot_pressed.bind(36 + index))
@@ -2022,6 +2672,8 @@ func _bind_spell_slots() -> void:
 	_sync_spells()
 
 func _sync_inventory() -> void:
+	inventory_load.text = "Load: %d / %d" % [int(AppState.stats.get("carried", 0)),
+		int(AppState.stats.get("capacity", 0))]
 	for slot: int in range(inventory_slot_buttons.size()):
 		var button: Button = inventory_slot_buttons[slot]
 		var item_value: Variant = AppState.inventory.get(slot)
@@ -2063,12 +2715,12 @@ func _sync_equipment_slots() -> void:
 		if item_value is Dictionary:
 			var item: Dictionary = item_value as Dictionary
 			button.icon = item_atlas.icon_for(int(item.get("image_id", 0)))
-			button.text = "Wear %d ×%d" % [index + 1, int(item.get("quantity", 1))]
+			button.text = "×%d" % int(item.get("quantity", 1))
 			button.tooltip_text = _inventory_tooltip(item) + "\nEquipped position %d" % (index + 1)
 			button.disabled = false
 		else:
 			button.icon = null
-			button.text = "Wear %d" % (index + 1)
+			button.text = str(index + 1)
 			var can_equip_here: bool = (selected_inventory_slot >= 0
 				and selected_inventory_slot < 36
 				and AppState.inventory.has(selected_inventory_slot))
@@ -2260,7 +2912,9 @@ func _use_inventory_slot(slot: int) -> void:
 	if not bool(item.get("inventory_usable", false)) or _inventory_cooldown_remaining(slot) > 0:
 		return
 	var error: Error = Network.use_inventory_item(slot)
-	if error != OK:
+	if error == OK:
+		_increment_counter("Used Items", 1)
+	else:
 		push_warning("USE_INVENTORY_ITEM failed: " + error_string(error))
 
 func _on_chat_submitted(text: String) -> void:
@@ -2296,7 +2950,6 @@ func _sync_trade() -> void:
 	stats_panel.hide()
 	full_map.hide()
 	storage_panel.hide()
-	knowledge_panel.hide()
 	manufacturing_panel.hide()
 	trade_partner.text = "Trading with %s%s" % [
 		str(AppState.trade.get("partner", "another player")),
@@ -2383,11 +3036,9 @@ func _sync_storage() -> void:
 	if not is_open:
 		selected_storage_side = ""
 		return
-	inventory_panel.hide()
 	stats_panel.hide()
 	full_map.hide()
 	trade_panel.hide()
-	knowledge_panel.hide()
 	manufacturing_panel.hide()
 	storage_categories.clear()
 	var active_category: int = int(AppState.storage.get("category_id", -1))

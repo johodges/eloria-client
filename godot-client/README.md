@@ -21,6 +21,15 @@ godot --path godot-client
 
 The initial screen connects over real TCP and sends the server's real `LOG_IN` frame. Use a development server only.
 
+## Default controls
+
+- `W`, `A`, `S`, `D`: walk while a text entry is not active; hold Shift to run.
+- `Q` / `E`: turn the local character left or right.
+- `Ctrl+I`: toggle inventory; right-click Sto All or Drop All to protect individual edge rows/columns.
+- `Tab`: toggle the full map. `Alt+M`: toggle the minimap; drag its compass border and right-click it for north-up/player-up orientation.
+- `T`: focus chat; `Esc`: dismiss it. Backtick/tilde toggles full chat history.
+- `Alt+A`: attack the selected target. `Alt+S`: sit or stand.
+
 ## Test
 
 ```sh

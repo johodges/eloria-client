@@ -37,10 +37,15 @@ func _run() -> void:
 	app_state.set("stats", {
 		"health": 72, "max_health": 100, "ether": 33, "max_ether": 50,
 		"action_points": 18, "max_action_points": 30, "food": 42,
+		"physique": 52, "physique_base": 52, "coordination": 52, "coordination_base": 52,
+		"reasoning": 40, "reasoning_base": 40, "will": 52, "will_base": 52,
+		"instinct": 52, "instinct_base": 52, "vitality": 4, "vitality_base": 4,
+		"human_nexus": 9, "animal_nexus": 6, "vegetal_nexus": 4,
+		"inorganic_nexus": 6, "artificial_nexus": 6, "magic_nexus": 2,
 		"attack": 24, "defense": 21, "harvesting": 8, "alchemy": 12,
 		"magic": 17, "potion": 9, "summoning": 4, "manufacturing": 14,
 		"crafting": 11, "engineering": 3, "tailoring": 6, "ranging": 19,
-		"overall": 22})
+		"overall": 4, "overall_base": 22, "overall_level": 22})
 	app_state.set("inventory", {
 		0: {"image_id": 3, "quantity": 9, "slot": 0, "inventory_usable": true},
 		1: {"image_id": 31, "quantity": 2, "slot": 1, "inventory_usable": true},
@@ -70,6 +75,18 @@ func _run() -> void:
 	main.call("_toggle_minimap")
 	await _capture("legacy-hud-minimap.png")
 	main.call("_toggle_minimap")
+	main.call("_on_inventory_button_pressed")
+	await _capture("legacy-inventory.png")
+	main.call("_on_inventory_button_pressed")
+	main.call("_on_stats_button_pressed")
+	await _capture("legacy-statistics.png")
+	(main.get_node("GameView/StatsPanel/Content/StatsTabs") as TabContainer).current_tab = 2
+	main.call("_sync_counters")
+	await _capture("legacy-counters.png")
+	(main.get_node("GameView/StatsPanel/Content/StatsTabs") as TabContainer).current_tab = 3
+	main.call("_sync_session_experience")
+	await _capture("legacy-session-experience.png")
+	(main.get_node("GameView/StatsPanel") as Control).hide()
 	main.call("_toggle_full_map")
 	for unused_frame: int in range(4):
 		await process_frame
