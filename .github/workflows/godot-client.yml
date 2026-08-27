@@ -25,6 +25,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Import project
         run: godot --headless --path godot-client --editor --quit
+      - name: Install Python asset validator
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python3
       - name: Validate native Nymara GLB catalog
         run: python3 godot-client/tests/test_native_glb_assets.py -v
       - name: Protocol and reducer fixtures
