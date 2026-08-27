@@ -11,6 +11,37 @@ import unittest
 ROOT = Path(__file__).resolve().parents[2]
 CLIENT = ROOT / "godot-client"
 
+NYMARA_INVASION_MODELS = {
+    400: ("mirrorfin_otter", "river_otter"),
+    401: ("reedhorn_stag", "elk"),
+    402: ("gate_turtle", "desert_tortoise"),
+    403: ("lakeglass_drake", "sunscale_drake"),
+    404: ("snowcrest_hare", "snow_hare"),
+    405: ("glacier_ram", "thunder_ram"),
+    406: ("iceback_ursid", "ice_bear"),
+    407: ("rimeclaw", "frost_tiger"),
+    408: ("crystal_mite", "ash_crawler"),
+    409: ("resonant_hound", "dire_wolf"),
+    410: ("stormglass_grazer", "armored_rhino"),
+    411: ("prism_wyrm", "giant_komodo"),
+    412: ("dunrunner", "emberfox"),
+    413: ("steppe_aurochs", "ridgehorn"),
+    414: ("sunmane_cat", "saber_tooth_cat"),
+    415: ("dustscale_drake", "fire_salamander"),
+    416: ("amberhart", "moose"),
+    417: ("rootback_boar", "mossback_boar"),
+    418: ("moor_wisp_hound", "frost_maw"),
+    419: ("barrow_quillbeast", "porcupine"),
+    420: ("canopy_glider", "two_tailed_fox"),
+    421: ("cenote_toader", "miretoad"),
+    422: ("scalevine_stalker", "giant_komodo"),
+    423: ("sunscale_basilisk", "sunscale_drake"),
+    424: ("mangrove_crab", "bog_lurker"),
+    425: ("mudskipper_beast", "miretoad"),
+    426: ("delta_crocodile", "giant_crocodile"),
+    427: ("floodmaw", "giant_crocodile"),
+}
+
 
 def glb_document(path: Path) -> dict:
     raw = path.read_bytes()
@@ -60,6 +91,17 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertEqual(21, len(document["skins"][0]["joints"]))
                 self.assertEqual(7, len(document["animations"]))
                 self.assertEqual(slug, self.models["actorTypes"][str(entry["actor_type"])])
+
+    def test_nymara_invasion_actor_types_resolve_to_native_models(self) -> None:
+        self.assertEqual(set(range(400, 428)), set(NYMARA_INVASION_MODELS))
+        for actor_type, (creature_type, model_id) in NYMARA_INVASION_MODELS.items():
+            with self.subTest(actor_type=actor_type, creature=creature_type):
+                self.assertEqual(model_id, self.models["actorTypes"][str(actor_type)])
+                model = self.models["models"][model_id]
+                scene = CLIENT / model["scene"].removeprefix("res://")
+                document = glb_document(scene)
+                self.assertTrue(document.get("meshes"), model_id)
+                self.assertTrue(document.get("animations"), model_id)
 
     def test_every_equipment_visual_is_registered(self) -> None:
         expected = {f"{entry['part']}:{entry['visual']}"
