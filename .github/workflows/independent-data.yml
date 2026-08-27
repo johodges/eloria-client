@@ -22,7 +22,7 @@ jobs:
         run: |
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            xvfb xauth imagemagick libgl1-mesa-dri libfontconfig1 libxcursor1 \
+            python3 xvfb xauth imagemagick libgl1-mesa-dri libfontconfig1 libxcursor1 \
             libxinerama1 libxrandr2 libxi6 libxkbcommon0 libasound2t64 \
             libpulse0 libudev1
       - name: Configure current luminous actor with native guard gear
