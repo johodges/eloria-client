@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "whitehorn_glacier_temple",
+  "name": "Whitehorn Glacier Temple",
+  "status": "concept-complete-production-queued",
+  "parentRegion": "whitehorn_range",
+  "source": {
+    "elm": "../../source-elm/whitehorn_glacier_temple.elm",
+    "sha256": "6dbcef790e34fea7ad830b32c6bdc0a37d241cd6cf360aef7c6b04b8ee288c1b"
+  },
+  "conceptArt": {
+    "culturalReference": "../../../../concepts/nymara-regions/whitehorn_range_region_concept.png",
+    "detailBoard": "references/00-concept-detail-board.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "snow entry",
+      "monastery nave",
+      "prayer columns",
+      "ice arch",
+      "glacier altar",
+      "mining gallery",
+      "chasm bridge",
+      "votive chamber",
+      "upper sanctuary",
+      "ice granite silver materials"
+    ]
+  }
+}

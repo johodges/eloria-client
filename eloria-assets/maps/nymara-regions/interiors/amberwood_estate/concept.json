@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "amberwood_estate",
+  "name": "Amberwood Estate",
+  "status": "concept-complete-production-queued",
+  "parentRegion": "amberwood",
+  "source": {
+    "elm": "../../source-elm/amberwood_estate.elm",
+    "sha256": "7d0e3d0a331e72a7f01b567e09268f88a5a70d2d567055d4e3fb73d4ce61a1cb"
+  },
+  "conceptArt": {
+    "culturalReference": "../../../../concepts/nymara-regions/amberwood_region_concept.png",
+    "detailBoard": "references/00-concept-detail-board.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "entry hall",
+      "banquet room",
+      "bedchamber",
+      "root gallery",
+      "statue court",
+      "conservatory",
+      "servant passage",
+      "flooded cellar",
+      "upper balcony",
+      "oak amber velvet materials"
+    ]
+  }
+}

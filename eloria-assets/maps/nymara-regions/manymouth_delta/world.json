@@ -1,0 +1,980 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "0.1.0",
+  "asset": {
+    "id": "manymouth_delta",
+    "name": "Manymouth Delta",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -96,
+        0.0,
+        -96
+      ],
+      "max": [
+        96,
+        18.0,
+        96
+      ]
+    }
+  },
+  "source": {
+    "elm": "../source-elm/manymouth_delta.elm",
+    "sha256": "a947e5e1a0be2244c3029acc61e26de7107ed5dd3d00c8b6c55720a300fb80f8",
+    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
+    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
+  },
+  "conceptArt": {
+    "macro": "../../../concepts/nymara-regions/manymouth_delta_region_concept.png",
+    "detailBoard": "references/00-concept-detail-board.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "generator": "OpenAI ImageGen (built-in)",
+    "checkpoints": [
+      {
+        "panel": 1,
+        "id": "concept-01",
+        "subject": "mangrove channel",
+        "cameraPosition": [
+          0.0,
+          20.0,
+          -72.0
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_manymouth_mangrove_007",
+          "Landmark_manymouth_mangrove_043",
+          "Landmark_manymouth_mangrove_044"
+        ]
+      },
+      {
+        "panel": 2,
+        "id": "concept-02",
+        "subject": "stilt village",
+        "cameraPosition": [
+          42.32,
+          24.0,
+          -58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_manymouth_stilt_house_013",
+          "Landmark_manymouth_stilt_house_014",
+          "Landmark_manymouth_stilt_house_015"
+        ]
+      },
+      {
+        "panel": 3,
+        "id": "concept-03",
+        "subject": "boardwalk junction",
+        "cameraPosition": [
+          68.48,
+          16.0,
+          -22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_manymouth_boardwalk_024",
+          "Landmark_manymouth_boardwalk_025",
+          "Landmark_manymouth_boardwalk_026"
+        ]
+      },
+      {
+        "panel": 4,
+        "id": "concept-04",
+        "subject": "ferry dock",
+        "cameraPosition": [
+          68.48,
+          20.0,
+          22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_manymouth_ferry_dock_034",
+          "Landmark_manymouth_ferry_dock_035",
+          "Landmark_manymouth_ferry_dock_036"
+        ]
+      },
+      {
+        "panel": 5,
+        "id": "concept-05",
+        "subject": "hidden dock",
+        "cameraPosition": [
+          42.32,
+          24.0,
+          58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_manymouth_ferry_dock_034",
+          "Landmark_manymouth_ferry_dock_035",
+          "Landmark_manymouth_ferry_dock_036"
+        ]
+      },
+      {
+        "panel": 6,
+        "id": "concept-06",
+        "subject": "floating market",
+        "cameraPosition": [
+          0.0,
+          16.0,
+          72.0
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_manymouth_market_stall_055",
+          "Landmark_manymouth_market_stall_056",
+          "Landmark_manymouth_market_stall_057"
+        ]
+      },
+      {
+        "panel": 7,
+        "id": "concept-07",
+        "subject": "reed farm",
+        "cameraPosition": [
+          -42.32,
+          20.0,
+          58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      },
+      {
+        "panel": 8,
+        "id": "concept-08",
+        "subject": "flooded portal",
+        "cameraPosition": [
+          -68.48,
+          24.0,
+          22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_manymouth_flooded_cave_061",
+          "Landmark_manymouth_flooded_cave_062",
+          "Landmark_manymouth_flooded_cave_063"
+        ]
+      },
+      {
+        "panel": 9,
+        "id": "concept-09",
+        "subject": "delta panorama",
+        "cameraPosition": [
+          -68.48,
+          16.0,
+          -22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      },
+      {
+        "panel": 10,
+        "id": "concept-10",
+        "subject": "reed wood rope lotus materials",
+        "cameraPosition": [
+          -42.32,
+          20.0,
+          -58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      }
+    ]
+  },
+  "landmarks": [
+    {
+      "id": "landmark-000",
+      "name": "Resonant Crystal Cluster",
+      "node": "Landmark_resonant_crystal_cluster_000",
+      "position": [
+        -34.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-001",
+      "name": "Verdant Vine Bridge",
+      "node": "Landmark_verdant_vine_bridge_001",
+      "position": [
+        -12.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-002",
+      "name": "Verdant Jungle Cave",
+      "node": "Landmark_verdant_jungle_cave_002",
+      "position": [
+        10.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-003",
+      "name": "Four Gates Waystone",
+      "node": "Landmark_four_gates_waystone_003",
+      "position": [
+        32.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-004",
+      "name": "Westhaven Lantern Tower",
+      "node": "Landmark_westhaven_lantern_tower_004",
+      "position": [
+        -34.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-005",
+      "name": "Verdant Tree Platform",
+      "node": "Landmark_verdant_tree_platform_005",
+      "position": [
+        -12.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-006",
+      "name": "Ssarathi Sunken Court",
+      "node": "Landmark_ssarathi_sunken_court_006",
+      "position": [
+        10.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-007",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_007",
+      "position": [
+        32.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-008",
+      "name": "Ssarathi Sun Stela",
+      "node": "Landmark_ssarathi_sun_stela_008",
+      "position": [
+        -34.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-009",
+      "name": "Amethyst Geode Cave",
+      "node": "Landmark_amethyst_geode_cave_009",
+      "position": [
+        -12.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-010",
+      "name": "Grey Moor Dead Tree",
+      "node": "Landmark_grey_moor_dead_tree_010",
+      "position": [
+        10.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-011",
+      "name": "Whitehorn Cairn",
+      "node": "Landmark_whitehorn_cairn_011",
+      "position": [
+        32.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-013",
+      "name": "Manymouth Stilt House",
+      "node": "Landmark_manymouth_stilt_house_013",
+      "position": [
+        -20.0,
+        0,
+        24.0
+      ]
+    },
+    {
+      "id": "landmark-014",
+      "name": "Manymouth Stilt House",
+      "node": "Landmark_manymouth_stilt_house_014",
+      "position": [
+        0.0,
+        0,
+        26.0
+      ]
+    },
+    {
+      "id": "landmark-015",
+      "name": "Manymouth Stilt House",
+      "node": "Landmark_manymouth_stilt_house_015",
+      "position": [
+        20.0,
+        0,
+        22.0
+      ]
+    },
+    {
+      "id": "landmark-016",
+      "name": "Manymouth Stilt House",
+      "node": "Landmark_manymouth_stilt_house_016",
+      "position": [
+        -26.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-017",
+      "name": "Manymouth Stilt House",
+      "node": "Landmark_manymouth_stilt_house_017",
+      "position": [
+        -4.0,
+        0,
+        2.0
+      ]
+    },
+    {
+      "id": "landmark-018",
+      "name": "Manymouth Stilt House",
+      "node": "Landmark_manymouth_stilt_house_018",
+      "position": [
+        20.0,
+        0,
+        -2.0
+      ]
+    },
+    {
+      "id": "landmark-019",
+      "name": "Manymouth Stilt House",
+      "node": "Landmark_manymouth_stilt_house_019",
+      "position": [
+        -20.0,
+        0,
+        -24.0
+      ]
+    },
+    {
+      "id": "landmark-020",
+      "name": "Manymouth Stilt House",
+      "node": "Landmark_manymouth_stilt_house_020",
+      "position": [
+        2.0,
+        0,
+        -22.0
+      ]
+    },
+    {
+      "id": "landmark-021",
+      "name": "Manymouth Stilt House",
+      "node": "Landmark_manymouth_stilt_house_021",
+      "position": [
+        24.0,
+        0,
+        -28.0
+      ]
+    },
+    {
+      "id": "landmark-022",
+      "name": "Manymouth Stilt House",
+      "node": "Landmark_manymouth_stilt_house_022",
+      "position": [
+        -10.0,
+        0,
+        -46.0
+      ]
+    },
+    {
+      "id": "landmark-023",
+      "name": "Manymouth Stilt House",
+      "node": "Landmark_manymouth_stilt_house_023",
+      "position": [
+        14.0,
+        0,
+        -48.0
+      ]
+    },
+    {
+      "id": "landmark-024",
+      "name": "Manymouth Boardwalk",
+      "node": "Landmark_manymouth_boardwalk_024",
+      "position": [
+        0.0,
+        0,
+        16.0
+      ]
+    },
+    {
+      "id": "landmark-025",
+      "name": "Manymouth Boardwalk",
+      "node": "Landmark_manymouth_boardwalk_025",
+      "position": [
+        -16.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-026",
+      "name": "Manymouth Boardwalk",
+      "node": "Landmark_manymouth_boardwalk_026",
+      "position": [
+        12.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-027",
+      "name": "Manymouth Boardwalk",
+      "node": "Landmark_manymouth_boardwalk_027",
+      "position": [
+        0.0,
+        0,
+        -16.0
+      ]
+    },
+    {
+      "id": "landmark-028",
+      "name": "Manymouth Boardwalk",
+      "node": "Landmark_manymouth_boardwalk_028",
+      "position": [
+        -24.0,
+        0,
+        12.0
+      ]
+    },
+    {
+      "id": "landmark-029",
+      "name": "Manymouth Boardwalk",
+      "node": "Landmark_manymouth_boardwalk_029",
+      "position": [
+        24.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-030",
+      "name": "Manymouth Boardwalk",
+      "node": "Landmark_manymouth_boardwalk_030",
+      "position": [
+        -20.0,
+        0,
+        -14.0
+      ]
+    },
+    {
+      "id": "landmark-031",
+      "name": "Manymouth Boardwalk",
+      "node": "Landmark_manymouth_boardwalk_031",
+      "position": [
+        20.0,
+        0,
+        -18.0
+      ]
+    },
+    {
+      "id": "landmark-032",
+      "name": "Manymouth Boardwalk",
+      "node": "Landmark_manymouth_boardwalk_032",
+      "position": [
+        -8.0,
+        0,
+        -36.0
+      ]
+    },
+    {
+      "id": "landmark-033",
+      "name": "Manymouth Boardwalk",
+      "node": "Landmark_manymouth_boardwalk_033",
+      "position": [
+        12.0,
+        0,
+        -38.0
+      ]
+    },
+    {
+      "id": "landmark-034",
+      "name": "Manymouth Ferry Dock",
+      "node": "Landmark_manymouth_ferry_dock_034",
+      "position": [
+        -30.0,
+        0,
+        20.0
+      ]
+    },
+    {
+      "id": "landmark-035",
+      "name": "Manymouth Ferry Dock",
+      "node": "Landmark_manymouth_ferry_dock_035",
+      "position": [
+        30.0,
+        0,
+        18.0
+      ]
+    },
+    {
+      "id": "landmark-036",
+      "name": "Manymouth Ferry Dock",
+      "node": "Landmark_manymouth_ferry_dock_036",
+      "position": [
+        -34.0,
+        0,
+        -16.0
+      ]
+    },
+    {
+      "id": "landmark-037",
+      "name": "Manymouth Ferry Dock",
+      "node": "Landmark_manymouth_ferry_dock_037",
+      "position": [
+        34.0,
+        0,
+        -20.0
+      ]
+    },
+    {
+      "id": "landmark-038",
+      "name": "Manymouth Ferry Dock",
+      "node": "Landmark_manymouth_ferry_dock_038",
+      "position": [
+        0.0,
+        0,
+        -54.0
+      ]
+    },
+    {
+      "id": "landmark-039",
+      "name": "Manymouth Hidden Dock",
+      "node": "Landmark_manymouth_hidden_dock_039",
+      "position": [
+        -28.0,
+        0,
+        -34.0
+      ]
+    },
+    {
+      "id": "landmark-040",
+      "name": "Manymouth Hidden Dock",
+      "node": "Landmark_manymouth_hidden_dock_040",
+      "position": [
+        28.0,
+        0,
+        -36.0
+      ]
+    },
+    {
+      "id": "landmark-041",
+      "name": "Manymouth Hidden Dock",
+      "node": "Landmark_manymouth_hidden_dock_041",
+      "position": [
+        -16.0,
+        0,
+        -54.0
+      ]
+    },
+    {
+      "id": "landmark-042",
+      "name": "Manymouth Hidden Dock",
+      "node": "Landmark_manymouth_hidden_dock_042",
+      "position": [
+        18.0,
+        0,
+        -56.0
+      ]
+    },
+    {
+      "id": "landmark-043",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_043",
+      "position": [
+        -36.0,
+        0,
+        30.0
+      ]
+    },
+    {
+      "id": "landmark-044",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_044",
+      "position": [
+        36.0,
+        0,
+        30.0
+      ]
+    },
+    {
+      "id": "landmark-045",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_045",
+      "position": [
+        -40.0,
+        0,
+        4.0
+      ]
+    },
+    {
+      "id": "landmark-046",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_046",
+      "position": [
+        40.0,
+        0,
+        4.0
+      ]
+    },
+    {
+      "id": "landmark-047",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_047",
+      "position": [
+        -38.0,
+        0,
+        -30.0
+      ]
+    },
+    {
+      "id": "landmark-048",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_048",
+      "position": [
+        38.0,
+        0,
+        -30.0
+      ]
+    },
+    {
+      "id": "landmark-049",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_049",
+      "position": [
+        -30.0,
+        0,
+        -50.0
+      ]
+    },
+    {
+      "id": "landmark-050",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_050",
+      "position": [
+        30.0,
+        0,
+        -50.0
+      ]
+    },
+    {
+      "id": "landmark-051",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_051",
+      "position": [
+        -16.0,
+        0,
+        14.0
+      ]
+    },
+    {
+      "id": "landmark-052",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_052",
+      "position": [
+        16.0,
+        0,
+        14.0
+      ]
+    },
+    {
+      "id": "landmark-053",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_053",
+      "position": [
+        -24.0,
+        0,
+        -10.0
+      ]
+    },
+    {
+      "id": "landmark-054",
+      "name": "Manymouth Mangrove",
+      "node": "Landmark_manymouth_mangrove_054",
+      "position": [
+        24.0,
+        0,
+        -10.0
+      ]
+    },
+    {
+      "id": "landmark-055",
+      "name": "Manymouth Market Stall",
+      "node": "Landmark_manymouth_market_stall_055",
+      "position": [
+        -12.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-056",
+      "name": "Manymouth Market Stall",
+      "node": "Landmark_manymouth_market_stall_056",
+      "position": [
+        8.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-057",
+      "name": "Manymouth Market Stall",
+      "node": "Landmark_manymouth_market_stall_057",
+      "position": [
+        -12.0,
+        0,
+        -10.0
+      ]
+    },
+    {
+      "id": "landmark-058",
+      "name": "Manymouth Market Stall",
+      "node": "Landmark_manymouth_market_stall_058",
+      "position": [
+        8.0,
+        0,
+        -10.0
+      ]
+    },
+    {
+      "id": "landmark-059",
+      "name": "Manymouth Market Stall",
+      "node": "Landmark_manymouth_market_stall_059",
+      "position": [
+        -2.0,
+        0,
+        -28.0
+      ]
+    },
+    {
+      "id": "landmark-060",
+      "name": "Manymouth Market Stall",
+      "node": "Landmark_manymouth_market_stall_060",
+      "position": [
+        18.0,
+        0,
+        -30.0
+      ]
+    },
+    {
+      "id": "landmark-061",
+      "name": "Manymouth Flooded Cave",
+      "node": "Landmark_manymouth_flooded_cave_061",
+      "position": [
+        -32.0,
+        0,
+        -2.0
+      ]
+    },
+    {
+      "id": "landmark-062",
+      "name": "Manymouth Flooded Cave",
+      "node": "Landmark_manymouth_flooded_cave_062",
+      "position": [
+        32.0,
+        0,
+        -4.0
+      ]
+    },
+    {
+      "id": "landmark-063",
+      "name": "Manymouth Flooded Cave",
+      "node": "Landmark_manymouth_flooded_cave_063",
+      "position": [
+        -24.0,
+        0,
+        -42.0
+      ]
+    },
+    {
+      "id": "landmark-064",
+      "name": "Manymouth Flooded Cave",
+      "node": "Landmark_manymouth_flooded_cave_064",
+      "position": [
+        24.0,
+        0,
+        -44.0
+      ]
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0,
+        1,
+        0
+      ],
+      "rotationDegrees": 180
+    }
+  ],
+  "collision": {
+    "nodeNames": [
+      "Landmark_resonant_crystal_cluster_000",
+      "Landmark_verdant_vine_bridge_001",
+      "Landmark_verdant_jungle_cave_002",
+      "Landmark_four_gates_waystone_003",
+      "Landmark_westhaven_lantern_tower_004",
+      "Landmark_verdant_tree_platform_005",
+      "Landmark_ssarathi_sunken_court_006",
+      "Landmark_manymouth_mangrove_007",
+      "Landmark_ssarathi_sun_stela_008",
+      "Landmark_amethyst_geode_cave_009",
+      "Landmark_grey_moor_dead_tree_010",
+      "Landmark_whitehorn_cairn_011",
+      "Landmark_manymouth_stilt_house_013",
+      "Landmark_manymouth_stilt_house_014",
+      "Landmark_manymouth_stilt_house_015",
+      "Landmark_manymouth_stilt_house_016",
+      "Landmark_manymouth_stilt_house_017",
+      "Landmark_manymouth_stilt_house_018",
+      "Landmark_manymouth_stilt_house_019",
+      "Landmark_manymouth_stilt_house_020",
+      "Landmark_manymouth_stilt_house_021",
+      "Landmark_manymouth_stilt_house_022",
+      "Landmark_manymouth_stilt_house_023",
+      "Landmark_manymouth_boardwalk_024",
+      "Landmark_manymouth_boardwalk_025",
+      "Landmark_manymouth_boardwalk_026",
+      "Landmark_manymouth_boardwalk_027",
+      "Landmark_manymouth_boardwalk_028",
+      "Landmark_manymouth_boardwalk_029",
+      "Landmark_manymouth_boardwalk_030",
+      "Landmark_manymouth_boardwalk_031",
+      "Landmark_manymouth_boardwalk_032",
+      "Landmark_manymouth_boardwalk_033",
+      "Landmark_manymouth_ferry_dock_034",
+      "Landmark_manymouth_ferry_dock_035",
+      "Landmark_manymouth_ferry_dock_036",
+      "Landmark_manymouth_ferry_dock_037",
+      "Landmark_manymouth_ferry_dock_038",
+      "Landmark_manymouth_hidden_dock_039",
+      "Landmark_manymouth_hidden_dock_040",
+      "Landmark_manymouth_hidden_dock_041",
+      "Landmark_manymouth_hidden_dock_042",
+      "Landmark_manymouth_mangrove_043",
+      "Landmark_manymouth_mangrove_044",
+      "Landmark_manymouth_mangrove_045",
+      "Landmark_manymouth_mangrove_046",
+      "Landmark_manymouth_mangrove_047",
+      "Landmark_manymouth_mangrove_048",
+      "Landmark_manymouth_mangrove_049",
+      "Landmark_manymouth_mangrove_050",
+      "Landmark_manymouth_mangrove_051",
+      "Landmark_manymouth_mangrove_052",
+      "Landmark_manymouth_mangrove_053",
+      "Landmark_manymouth_mangrove_054",
+      "Landmark_manymouth_market_stall_055",
+      "Landmark_manymouth_market_stall_056",
+      "Landmark_manymouth_market_stall_057",
+      "Landmark_manymouth_market_stall_058",
+      "Landmark_manymouth_market_stall_059",
+      "Landmark_manymouth_market_stall_060",
+      "Landmark_manymouth_flooded_cave_061",
+      "Landmark_manymouth_flooded_cave_062",
+      "Landmark_manymouth_flooded_cave_063",
+      "Landmark_manymouth_flooded_cave_064"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Terrain_"
+    ],
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "materials": {
+    "baseColor": "textures/region-basecolor.png",
+    "normal": "textures/region-normal.png",
+    "orm": "textures/region-orm.png"
+  },
+  "productionStatus": "terrain-landmark-material-pass"
+}

@@ -1,0 +1,991 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "0.1.0",
+  "asset": {
+    "id": "crownwater",
+    "name": "Crownwater",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -96,
+        0.0,
+        -96
+      ],
+      "max": [
+        96,
+        18.0,
+        96
+      ]
+    }
+  },
+  "source": {
+    "elm": "../source-elm/crownwater.elm",
+    "sha256": "6a82698d2eb23908aa960b317731ee50b90f0943d4867542f12b679894a1f2ca",
+    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
+    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
+  },
+  "conceptArt": {
+    "macro": "../../../concepts/nymara-regions/crownwater_region_concept.png",
+    "detailBoard": "references/00-concept-detail-board.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "generator": "OpenAI ImageGen (built-in)",
+    "checkpoints": [
+      {
+        "panel": 1,
+        "id": "concept-01",
+        "subject": "ferry arrival",
+        "cameraPosition": [
+          0.0,
+          20.0,
+          -72.0
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_crownwater_ferry_dock_038",
+          "Landmark_crownwater_ferry_dock_039",
+          "Landmark_crownwater_ferry_dock_040"
+        ]
+      },
+      {
+        "panel": 2,
+        "id": "concept-02",
+        "subject": "stone quay",
+        "cameraPosition": [
+          42.32,
+          24.0,
+          -58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_manymouth_tidal_waystone_004",
+          "Landmark_crownwater_submerged_waystone_055",
+          "Landmark_crownwater_submerged_waystone_056"
+        ]
+      },
+      {
+        "panel": 3,
+        "id": "concept-03",
+        "subject": "domed civic plaza",
+        "cameraPosition": [
+          68.48,
+          16.0,
+          -22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_mirrorhold_civic_tower_013",
+          "Landmark_mirrorhold_civic_tower_014",
+          "Landmark_mirrorhold_civic_tower_015"
+        ]
+      },
+      {
+        "panel": 4,
+        "id": "concept-04",
+        "subject": "radial causeway",
+        "cameraPosition": [
+          68.48,
+          20.0,
+          22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_mirrorhold_radial_bridge_029",
+          "Landmark_mirrorhold_radial_bridge_030",
+          "Landmark_mirrorhold_radial_bridge_031"
+        ]
+      },
+      {
+        "panel": 5,
+        "id": "concept-05",
+        "subject": "satellite island",
+        "cameraPosition": [
+          42.32,
+          24.0,
+          58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      },
+      {
+        "panel": 6,
+        "id": "concept-06",
+        "subject": "patrol boat",
+        "cameraPosition": [
+          0.0,
+          16.0,
+          72.0
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_crownwater_fishing_boat_045",
+          "Landmark_crownwater_fishing_boat_046",
+          "Landmark_crownwater_fishing_boat_047"
+        ]
+      },
+      {
+        "panel": 7,
+        "id": "concept-07",
+        "subject": "submerged waystone",
+        "cameraPosition": [
+          -42.32,
+          20.0,
+          58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_manymouth_tidal_waystone_004",
+          "Landmark_crownwater_submerged_waystone_055",
+          "Landmark_crownwater_submerged_waystone_056"
+        ]
+      },
+      {
+        "panel": 8,
+        "id": "concept-08",
+        "subject": "fountain garden",
+        "cameraPosition": [
+          -68.48,
+          24.0,
+          22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_mirrorhold_public_fountain_021",
+          "Landmark_mirrorhold_public_fountain_022",
+          "Landmark_mirrorhold_public_fountain_023"
+        ]
+      },
+      {
+        "panel": 9,
+        "id": "concept-09",
+        "subject": "archipelago skyline",
+        "cameraPosition": [
+          -68.48,
+          16.0,
+          -22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      },
+      {
+        "panel": 10,
+        "id": "concept-10",
+        "subject": "limestone brass tile materials",
+        "cameraPosition": [
+          -42.32,
+          20.0,
+          -58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      }
+    ]
+  },
+  "landmarks": [
+    {
+      "id": "landmark-000",
+      "name": "Grey Moor Ritual Shrine",
+      "node": "Landmark_grey_moor_ritual_shrine_000",
+      "position": [
+        -34.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-001",
+      "name": "Sunmane Caravan Camp",
+      "node": "Landmark_sunmane_caravan_camp_001",
+      "position": [
+        -12.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-002",
+      "name": "Amberwood Hollow Tree",
+      "node": "Landmark_amberwood_hollow_tree_002",
+      "position": [
+        10.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-003",
+      "name": "Mirrorhold Market Crate",
+      "node": "Landmark_mirrorhold_market_crate_003",
+      "position": [
+        32.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-004",
+      "name": "Manymouth Tidal Waystone",
+      "node": "Landmark_manymouth_tidal_waystone_004",
+      "position": [
+        -34.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-005",
+      "name": "Whitehorn Glacier",
+      "node": "Landmark_whitehorn_glacier_005",
+      "position": [
+        -12.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-006",
+      "name": "Sunmane Burial Mound",
+      "node": "Landmark_sunmane_burial_mound_006",
+      "position": [
+        10.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-007",
+      "name": "Orun Seasonal Market",
+      "node": "Landmark_orun_seasonal_market_007",
+      "position": [
+        32.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-009",
+      "name": "Amberwood Root Cave",
+      "node": "Landmark_amberwood_root_cave_009",
+      "position": [
+        -12.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-010",
+      "name": "Grey Moor Peat Fence",
+      "node": "Landmark_grey_moor_peat_fence_010",
+      "position": [
+        10.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-011",
+      "name": "Westhaven Seawall",
+      "node": "Landmark_westhaven_seawall_011",
+      "position": [
+        32.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-013",
+      "name": "Mirrorhold Civic Tower",
+      "node": "Landmark_mirrorhold_civic_tower_013",
+      "position": [
+        -16.0,
+        0,
+        16.0
+      ]
+    },
+    {
+      "id": "landmark-014",
+      "name": "Mirrorhold Civic Tower",
+      "node": "Landmark_mirrorhold_civic_tower_014",
+      "position": [
+        16.0,
+        0,
+        16.0
+      ]
+    },
+    {
+      "id": "landmark-015",
+      "name": "Mirrorhold Civic Tower",
+      "node": "Landmark_mirrorhold_civic_tower_015",
+      "position": [
+        -16.0,
+        0,
+        -16.0
+      ]
+    },
+    {
+      "id": "landmark-016",
+      "name": "Mirrorhold Civic Tower",
+      "node": "Landmark_mirrorhold_civic_tower_016",
+      "position": [
+        16.0,
+        0,
+        -16.0
+      ]
+    },
+    {
+      "id": "landmark-017",
+      "name": "Mirrorhold Civic Tower",
+      "node": "Landmark_mirrorhold_civic_tower_017",
+      "position": [
+        0.0,
+        0,
+        22.0
+      ]
+    },
+    {
+      "id": "landmark-018",
+      "name": "Mirrorhold Civic Tower",
+      "node": "Landmark_mirrorhold_civic_tower_018",
+      "position": [
+        -22.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-019",
+      "name": "Mirrorhold Civic Tower",
+      "node": "Landmark_mirrorhold_civic_tower_019",
+      "position": [
+        22.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-020",
+      "name": "Mirrorhold Civic Tower",
+      "node": "Landmark_mirrorhold_civic_tower_020",
+      "position": [
+        0.0,
+        0,
+        -22.0
+      ]
+    },
+    {
+      "id": "landmark-021",
+      "name": "Mirrorhold Public Fountain",
+      "node": "Landmark_mirrorhold_public_fountain_021",
+      "position": [
+        -10.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-022",
+      "name": "Mirrorhold Public Fountain",
+      "node": "Landmark_mirrorhold_public_fountain_022",
+      "position": [
+        10.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-023",
+      "name": "Mirrorhold Public Fountain",
+      "node": "Landmark_mirrorhold_public_fountain_023",
+      "position": [
+        -10.0,
+        0,
+        -10.0
+      ]
+    },
+    {
+      "id": "landmark-024",
+      "name": "Mirrorhold Public Fountain",
+      "node": "Landmark_mirrorhold_public_fountain_024",
+      "position": [
+        10.0,
+        0,
+        -10.0
+      ]
+    },
+    {
+      "id": "landmark-025",
+      "name": "Mirrorhold Public Fountain",
+      "node": "Landmark_mirrorhold_public_fountain_025",
+      "position": [
+        0.0,
+        0,
+        14.0
+      ]
+    },
+    {
+      "id": "landmark-026",
+      "name": "Mirrorhold Public Fountain",
+      "node": "Landmark_mirrorhold_public_fountain_026",
+      "position": [
+        -14.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-027",
+      "name": "Mirrorhold Public Fountain",
+      "node": "Landmark_mirrorhold_public_fountain_027",
+      "position": [
+        14.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-028",
+      "name": "Mirrorhold Public Fountain",
+      "node": "Landmark_mirrorhold_public_fountain_028",
+      "position": [
+        0.0,
+        0,
+        -14.0
+      ]
+    },
+    {
+      "id": "landmark-029",
+      "name": "Mirrorhold Radial Bridge",
+      "node": "Landmark_mirrorhold_radial_bridge_029",
+      "position": [
+        0.0,
+        0,
+        34.0
+      ]
+    },
+    {
+      "id": "landmark-030",
+      "name": "Mirrorhold Radial Bridge",
+      "node": "Landmark_mirrorhold_radial_bridge_030",
+      "position": [
+        -34.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-031",
+      "name": "Mirrorhold Radial Bridge",
+      "node": "Landmark_mirrorhold_radial_bridge_031",
+      "position": [
+        34.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-032",
+      "name": "Mirrorhold Radial Bridge",
+      "node": "Landmark_mirrorhold_radial_bridge_032",
+      "position": [
+        0.0,
+        0,
+        -34.0
+      ]
+    },
+    {
+      "id": "landmark-033",
+      "name": "Mirrorhold Radial Bridge",
+      "node": "Landmark_mirrorhold_radial_bridge_033",
+      "position": [
+        0.0,
+        0,
+        -52.0
+      ]
+    },
+    {
+      "id": "landmark-034",
+      "name": "Mirrorhold Radial Bridge",
+      "node": "Landmark_mirrorhold_radial_bridge_034",
+      "position": [
+        -22.0,
+        0,
+        22.0
+      ]
+    },
+    {
+      "id": "landmark-035",
+      "name": "Mirrorhold Radial Bridge",
+      "node": "Landmark_mirrorhold_radial_bridge_035",
+      "position": [
+        22.0,
+        0,
+        22.0
+      ]
+    },
+    {
+      "id": "landmark-036",
+      "name": "Mirrorhold Radial Bridge",
+      "node": "Landmark_mirrorhold_radial_bridge_036",
+      "position": [
+        -22.0,
+        0,
+        -22.0
+      ]
+    },
+    {
+      "id": "landmark-037",
+      "name": "Mirrorhold Radial Bridge",
+      "node": "Landmark_mirrorhold_radial_bridge_037",
+      "position": [
+        22.0,
+        0,
+        -22.0
+      ]
+    },
+    {
+      "id": "landmark-038",
+      "name": "Crownwater Ferry Dock",
+      "node": "Landmark_crownwater_ferry_dock_038",
+      "position": [
+        -28.0,
+        0,
+        28.0
+      ]
+    },
+    {
+      "id": "landmark-039",
+      "name": "Crownwater Ferry Dock",
+      "node": "Landmark_crownwater_ferry_dock_039",
+      "position": [
+        28.0,
+        0,
+        28.0
+      ]
+    },
+    {
+      "id": "landmark-040",
+      "name": "Crownwater Ferry Dock",
+      "node": "Landmark_crownwater_ferry_dock_040",
+      "position": [
+        -30.0,
+        0,
+        -28.0
+      ]
+    },
+    {
+      "id": "landmark-041",
+      "name": "Crownwater Ferry Dock",
+      "node": "Landmark_crownwater_ferry_dock_041",
+      "position": [
+        30.0,
+        0,
+        -28.0
+      ]
+    },
+    {
+      "id": "landmark-042",
+      "name": "Crownwater Ferry Dock",
+      "node": "Landmark_crownwater_ferry_dock_042",
+      "position": [
+        0.0,
+        0,
+        -48.0
+      ]
+    },
+    {
+      "id": "landmark-043",
+      "name": "Crownwater Ferry Dock",
+      "node": "Landmark_crownwater_ferry_dock_043",
+      "position": [
+        -38.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-044",
+      "name": "Crownwater Ferry Dock",
+      "node": "Landmark_crownwater_ferry_dock_044",
+      "position": [
+        40.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-045",
+      "name": "Crownwater Fishing Boat",
+      "node": "Landmark_crownwater_fishing_boat_045",
+      "position": [
+        -36.0,
+        0,
+        18.0
+      ]
+    },
+    {
+      "id": "landmark-046",
+      "name": "Crownwater Fishing Boat",
+      "node": "Landmark_crownwater_fishing_boat_046",
+      "position": [
+        38.0,
+        0,
+        18.0
+      ]
+    },
+    {
+      "id": "landmark-047",
+      "name": "Crownwater Fishing Boat",
+      "node": "Landmark_crownwater_fishing_boat_047",
+      "position": [
+        -34.0,
+        0,
+        -18.0
+      ]
+    },
+    {
+      "id": "landmark-048",
+      "name": "Crownwater Fishing Boat",
+      "node": "Landmark_crownwater_fishing_boat_048",
+      "position": [
+        36.0,
+        0,
+        -20.0
+      ]
+    },
+    {
+      "id": "landmark-049",
+      "name": "Crownwater Fishing Boat",
+      "node": "Landmark_crownwater_fishing_boat_049",
+      "position": [
+        -12.0,
+        0,
+        -46.0
+      ]
+    },
+    {
+      "id": "landmark-050",
+      "name": "Crownwater Fishing Boat",
+      "node": "Landmark_crownwater_fishing_boat_050",
+      "position": [
+        14.0,
+        0,
+        -48.0
+      ]
+    },
+    {
+      "id": "landmark-051",
+      "name": "Crownwater Patrol Boat",
+      "node": "Landmark_crownwater_patrol_boat_051",
+      "position": [
+        -24.0,
+        0,
+        38.0
+      ]
+    },
+    {
+      "id": "landmark-052",
+      "name": "Crownwater Patrol Boat",
+      "node": "Landmark_crownwater_patrol_boat_052",
+      "position": [
+        24.0,
+        0,
+        36.0
+      ]
+    },
+    {
+      "id": "landmark-053",
+      "name": "Crownwater Patrol Boat",
+      "node": "Landmark_crownwater_patrol_boat_053",
+      "position": [
+        -40.0,
+        0,
+        -4.0
+      ]
+    },
+    {
+      "id": "landmark-054",
+      "name": "Crownwater Patrol Boat",
+      "node": "Landmark_crownwater_patrol_boat_054",
+      "position": [
+        42.0,
+        0,
+        -6.0
+      ]
+    },
+    {
+      "id": "landmark-055",
+      "name": "Crownwater Submerged Waystone",
+      "node": "Landmark_crownwater_submerged_waystone_055",
+      "position": [
+        -30.0,
+        0,
+        12.0
+      ]
+    },
+    {
+      "id": "landmark-056",
+      "name": "Crownwater Submerged Waystone",
+      "node": "Landmark_crownwater_submerged_waystone_056",
+      "position": [
+        30.0,
+        0,
+        12.0
+      ]
+    },
+    {
+      "id": "landmark-057",
+      "name": "Crownwater Submerged Waystone",
+      "node": "Landmark_crownwater_submerged_waystone_057",
+      "position": [
+        -28.0,
+        0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-058",
+      "name": "Crownwater Submerged Waystone",
+      "node": "Landmark_crownwater_submerged_waystone_058",
+      "position": [
+        28.0,
+        0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-059",
+      "name": "Crownwater Submerged Waystone",
+      "node": "Landmark_crownwater_submerged_waystone_059",
+      "position": [
+        -12.0,
+        0,
+        -32.0
+      ]
+    },
+    {
+      "id": "landmark-060",
+      "name": "Crownwater Submerged Waystone",
+      "node": "Landmark_crownwater_submerged_waystone_060",
+      "position": [
+        12.0,
+        0,
+        -32.0
+      ]
+    },
+    {
+      "id": "landmark-061",
+      "name": "Mirrorhold Lake House",
+      "node": "Landmark_mirrorhold_lake_house_061",
+      "position": [
+        -26.0,
+        0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-062",
+      "name": "Mirrorhold Lake House",
+      "node": "Landmark_mirrorhold_lake_house_062",
+      "position": [
+        26.0,
+        0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-063",
+      "name": "Mirrorhold Lake House",
+      "node": "Landmark_mirrorhold_lake_house_063",
+      "position": [
+        -32.0,
+        0,
+        -26.0
+      ]
+    },
+    {
+      "id": "landmark-064",
+      "name": "Mirrorhold Lake House",
+      "node": "Landmark_mirrorhold_lake_house_064",
+      "position": [
+        32.0,
+        0,
+        -26.0
+      ]
+    },
+    {
+      "id": "landmark-065",
+      "name": "Mirrorhold Lake House",
+      "node": "Landmark_mirrorhold_lake_house_065",
+      "position": [
+        -10.0,
+        0,
+        -50.0
+      ]
+    },
+    {
+      "id": "landmark-066",
+      "name": "Mirrorhold Lake House",
+      "node": "Landmark_mirrorhold_lake_house_066",
+      "position": [
+        10.0,
+        0,
+        -50.0
+      ]
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0,
+        1,
+        0
+      ],
+      "rotationDegrees": 180
+    }
+  ],
+  "collision": {
+    "nodeNames": [
+      "Landmark_grey_moor_ritual_shrine_000",
+      "Landmark_sunmane_caravan_camp_001",
+      "Landmark_amberwood_hollow_tree_002",
+      "Landmark_mirrorhold_market_crate_003",
+      "Landmark_manymouth_tidal_waystone_004",
+      "Landmark_whitehorn_glacier_005",
+      "Landmark_sunmane_burial_mound_006",
+      "Landmark_orun_seasonal_market_007",
+      "Landmark_amberwood_root_cave_009",
+      "Landmark_grey_moor_peat_fence_010",
+      "Landmark_westhaven_seawall_011",
+      "Landmark_mirrorhold_civic_tower_013",
+      "Landmark_mirrorhold_civic_tower_014",
+      "Landmark_mirrorhold_civic_tower_015",
+      "Landmark_mirrorhold_civic_tower_016",
+      "Landmark_mirrorhold_civic_tower_017",
+      "Landmark_mirrorhold_civic_tower_018",
+      "Landmark_mirrorhold_civic_tower_019",
+      "Landmark_mirrorhold_civic_tower_020",
+      "Landmark_mirrorhold_public_fountain_021",
+      "Landmark_mirrorhold_public_fountain_022",
+      "Landmark_mirrorhold_public_fountain_023",
+      "Landmark_mirrorhold_public_fountain_024",
+      "Landmark_mirrorhold_public_fountain_025",
+      "Landmark_mirrorhold_public_fountain_026",
+      "Landmark_mirrorhold_public_fountain_027",
+      "Landmark_mirrorhold_public_fountain_028",
+      "Landmark_mirrorhold_radial_bridge_029",
+      "Landmark_mirrorhold_radial_bridge_030",
+      "Landmark_mirrorhold_radial_bridge_031",
+      "Landmark_mirrorhold_radial_bridge_032",
+      "Landmark_mirrorhold_radial_bridge_033",
+      "Landmark_mirrorhold_radial_bridge_034",
+      "Landmark_mirrorhold_radial_bridge_035",
+      "Landmark_mirrorhold_radial_bridge_036",
+      "Landmark_mirrorhold_radial_bridge_037",
+      "Landmark_crownwater_ferry_dock_038",
+      "Landmark_crownwater_ferry_dock_039",
+      "Landmark_crownwater_ferry_dock_040",
+      "Landmark_crownwater_ferry_dock_041",
+      "Landmark_crownwater_ferry_dock_042",
+      "Landmark_crownwater_ferry_dock_043",
+      "Landmark_crownwater_ferry_dock_044",
+      "Landmark_crownwater_fishing_boat_045",
+      "Landmark_crownwater_fishing_boat_046",
+      "Landmark_crownwater_fishing_boat_047",
+      "Landmark_crownwater_fishing_boat_048",
+      "Landmark_crownwater_fishing_boat_049",
+      "Landmark_crownwater_fishing_boat_050",
+      "Landmark_crownwater_patrol_boat_051",
+      "Landmark_crownwater_patrol_boat_052",
+      "Landmark_crownwater_patrol_boat_053",
+      "Landmark_crownwater_patrol_boat_054",
+      "Landmark_crownwater_submerged_waystone_055",
+      "Landmark_crownwater_submerged_waystone_056",
+      "Landmark_crownwater_submerged_waystone_057",
+      "Landmark_crownwater_submerged_waystone_058",
+      "Landmark_crownwater_submerged_waystone_059",
+      "Landmark_crownwater_submerged_waystone_060",
+      "Landmark_mirrorhold_lake_house_061",
+      "Landmark_mirrorhold_lake_house_062",
+      "Landmark_mirrorhold_lake_house_063",
+      "Landmark_mirrorhold_lake_house_064",
+      "Landmark_mirrorhold_lake_house_065",
+      "Landmark_mirrorhold_lake_house_066"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Terrain_"
+    ],
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "materials": {
+    "baseColor": "textures/region-basecolor.png",
+    "normal": "textures/region-normal.png",
+    "orm": "textures/region-orm.png"
+  },
+  "productionStatus": "terrain-landmark-material-pass"
+}

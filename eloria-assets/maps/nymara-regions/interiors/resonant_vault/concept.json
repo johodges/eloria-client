@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "resonant_vault",
+  "name": "Resonant Vault",
+  "status": "concept-complete-production-queued",
+  "parentRegion": "amethyst_barrens",
+  "source": {
+    "elm": "../../source-elm/resonant_vault.elm",
+    "sha256": "af14180d2fb102504717c2306ebf9c75991612b48d30c6e25718c2175b8d278a"
+  },
+  "conceptArt": {
+    "culturalReference": "../../../../concepts/nymara-regions/amethyst_barrens_region_concept.png",
+    "detailBoard": "references/00-concept-detail-board.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "sealed approach",
+      "laboratory gallery",
+      "archive aisle",
+      "crystal brazier",
+      "experiment table",
+      "lens room",
+      "containment cell",
+      "energy crossing",
+      "research hall",
+      "amethyst brass machinery materials"
+    ]
+  }
+}

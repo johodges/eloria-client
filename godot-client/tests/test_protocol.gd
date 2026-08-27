@@ -227,6 +227,15 @@ func _init() -> void:
 				var transform: Dictionary = four_gates.get("coordinateTransform", {})
 				_expect(is_equal_approx(float(transform.get("walkingHeight", 0.0)), 31.15),
 					"Four Gates actors stand above the authored y=31 walk surface")
+				var regional_ids: Array[String] = ["mirrorhold", "crownwater", "whitehorn_range",
+					"amethyst_barrens", "sunmane_steppe", "amberwood", "grey_moors", "westhaven",
+					"verdant_stair", "ssarathi_ruins", "manymouth_delta"]
+				for regional_id: String in regional_ids:
+					var regional_map: Dictionary = MapRegistry.resolve(production_maps, regional_id)
+					_expect(not regional_map.is_empty(), "runtime %s map id resolves" % regional_id)
+					_expect(str(regional_map.get("manifest", "")).contains(
+						"nymara-regions/%s/world.json" % regional_id),
+						"runtime %s resolves to its production package" % regional_id)
 	var coordinate: CoordinateAdapter = CoordinateAdapter.new({
 		"metresPerTile": 0.5, "serverOrigin": [100.0, 200.0],
 		"origin": [10.0, 30.0, -5.0], "walkingHeight": 30.0,
