@@ -1,4 +1,4 @@
-name: Consolidate open PRs into Godot migration
+name: Validate consolidated open PRs
 
 on:
   push:
@@ -6,68 +6,41 @@ on:
       - codex/consolidate-open-prs-20260827
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  merge:
+  validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: barichello/godot-ci:4.7.2
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-      - name: Merge open PR heads
-        shell: bash
+          ref: codex/consolidate-open-prs-result-20260827
+      - name: Install test dependencies
         run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin \
-            fix/four-gates-runtime-contracts \
-            feature/godot-legacy-hud \
-            fix/godot-character-creation-polish
-
-          echo "=== merging PR #138 ==="
-          git merge --no-ff --no-edit origin/fix/four-gates-runtime-contracts
-
-          echo "=== merging PR #145 ==="
-          if ! git merge --no-ff --no-edit origin/feature/godot-legacy-hud; then
-            conflicts="$(git diff --name-only --diff-filter=U)"
-            echo "PR #145 conflicts:"
-            printf '%s\n' "$conflicts"
-            if [ "$conflicts" != ".github/workflows/godot-client.yml" ]; then
-              exit 1
-            fi
-            git checkout --ours .github/workflows/godot-client.yml
-            git add .github/workflows/godot-client.yml
-            git commit --no-edit
-          fi
-
-          python3 - <<'PY'
-          from pathlib import Path
-          path = Path('.github/workflows/godot-client.yml')
-          text = path.read_text()
-          if 'Render legacy HUD and character menu' not in text:
-              marker = '      - name: Upload Four Gates rendered evidence\n'
-              step = '''      - name: Render legacy HUD and character menu\n        run: |\n          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_legacy_hud.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/legacy-hud.log"\n          ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/legacy-hud.log"\n          test -s "$ELORIA_ARTIFACT_DIR/legacy-hud.png"\n          test -s "$ELORIA_ARTIFACT_DIR/legacy-hud-context-menu.png"\n'''
-              if marker not in text:
-                  raise SystemExit('HUD workflow insertion marker missing')
-              text = text.replace(marker, step + marker, 1)
-              path.write_text(text)
-          PY
-          if ! git diff --quiet -- .github/workflows/godot-client.yml; then
-            git add .github/workflows/godot-client.yml
-            git commit -m "ci(godot): retain legacy HUD rendered evidence"
-          fi
-
-          echo "=== merging PR #146 ==="
-          if ! git merge --no-ff --no-edit origin/fix/godot-character-creation-polish; then
-            echo "=== PR #146 conflicts ==="
-            git status --short
-            echo "=== unresolved paths ==="
-            git diff --name-only --diff-filter=U
-            exit 1
-          fi
-
-          git diff --check HEAD~5..HEAD
-          git log --oneline --decorate -15
-          git push origin HEAD:codex/consolidate-open-prs-result-20260827
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            python3 xvfb xauth libgl1-mesa-dri libfontconfig1 libxcursor1 libxinerama1 \
+            libxrandr2 libxi6 libxkbcommon0 libasound2t64 libpulse0 libudev1
+      - name: Validate native GLBs
+        run: python3 godot-client/tests/test_native_glb_assets.py -v
+      - name: Import Godot project
+        run: godot --headless --path godot-client --editor --quit
+      - name: Protocol and reducer fixtures
+        run: godot --headless --path godot-client --script res://tests/test_protocol.gd
+      - name: World input fixtures
+        run: godot --headless --path godot-client --script res://tests/test_world_input.gd
+      - name: Main scene smoke
+        run: |
+          godot --headless --path godot-client --quit-after 3 2>&1 | tee main-scene.log
+          ! grep -E "SCRIPT ERROR|Parse Error" main-scene.log
+      - name: Render legacy HUD evidence
+        run: |
+          export ELORIA_ARTIFACT_DIR="$PWD/godot-client/test-artifacts/consolidated"
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_legacy_hud.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/legacy-hud.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/legacy-hud.log"
+          test -s "$ELORIA_ARTIFACT_DIR/legacy-hud.png"
+          test -s "$ELORIA_ARTIFACT_DIR/legacy-hud-context-menu.png"
