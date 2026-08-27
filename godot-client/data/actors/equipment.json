@@ -1,0 +1,1108 @@
+{
+  "schemaVersion": 2,
+  "parts": {
+    "0": {
+      "name": "weapon",
+      "attachment": "right_hand",
+      "fallback": "weapon"
+    },
+    "1": {
+      "name": "shield",
+      "attachment": "left_hand",
+      "fallback": "shield"
+    },
+    "2": {
+      "name": "cape",
+      "attachment": "back",
+      "fallback": "body"
+    },
+    "3": {
+      "name": "helmet",
+      "attachment": "head",
+      "fallback": "head"
+    },
+    "4": {
+      "name": "legs",
+      "attachment": "pelvis",
+      "fallback": "body"
+    },
+    "5": {
+      "name": "body",
+      "attachment": "body",
+      "fallback": "body"
+    },
+    "6": {
+      "name": "boots",
+      "attachment": "pelvis",
+      "fallback": "feet"
+    },
+    "7": {
+      "name": "neck",
+      "attachment": "neck",
+      "fallback": "head"
+    }
+  },
+  "models": {
+    "0:100": {
+      "scene": "res://assets/actors/native/equipment/amberwood_longbow.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:101": {
+      "scene": "res://assets/actors/native/equipment/ranger_leafblade.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:102": {
+      "scene": "res://assets/actors/native/equipment/glasswarden_staff.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:103": {
+      "scene": "res://assets/actors/native/equipment/glasswarden_pick.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:104": {
+      "scene": "res://assets/actors/native/equipment/greyhaven_cutlass.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:105": {
+      "scene": "res://assets/actors/native/equipment/greyhaven_harpoon.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:106": {
+      "scene": "res://assets/actors/native/equipment/orun_sun_spear.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:107": {
+      "scene": "res://assets/actors/native/equipment/ssarathi_glaive.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:108": {
+      "scene": "res://assets/actors/native/equipment/luminous_mace.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:109": {
+      "scene": "res://assets/actors/native/equipment/votary_ice_sword.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:110": {
+      "scene": "res://assets/actors/native/equipment/stoneborn_hammer.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:111": {
+      "scene": "res://assets/actors/native/equipment/mycelari_staff.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:112": {
+      "scene": "res://assets/actors/native/equipment/four_gates_guard_spear_native.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "0:113": {
+      "scene": "res://assets/actors/native/equipment/maritime_crossbow.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "1:100": {
+      "scene": "res://assets/actors/native/equipment/amberwood_roundshield.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "1:101": {
+      "scene": "res://assets/actors/native/equipment/glasswarden_shield.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "1:102": {
+      "scene": "res://assets/actors/native/equipment/greyhaven_anchor_shield.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "1:103": {
+      "scene": "res://assets/actors/native/equipment/orun_sun_shield.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "1:104": {
+      "scene": "res://assets/actors/native/equipment/ssarathi_shell_shield.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "1:105": {
+      "scene": "res://assets/actors/native/equipment/four_gates_guard_shield_native.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "2:100": {
+      "scene": "res://assets/actors/native/equipment/amberwood_leaf_cape.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "2:101": {
+      "scene": "res://assets/actors/native/equipment/glasswarden_crystal_cape.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "2:102": {
+      "scene": "res://assets/actors/native/equipment/greyhaven_storm_cape.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "2:103": {
+      "scene": "res://assets/actors/native/equipment/orun_rider_cape.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "2:104": {
+      "scene": "res://assets/actors/native/equipment/ssarathi_frond_cape.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "2:105": {
+      "scene": "res://assets/actors/native/equipment/four_gates_guard_cape_native.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "3:100": {
+      "scene": "res://assets/actors/native/equipment/amberwood_ranger_hood.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "3:101": {
+      "scene": "res://assets/actors/native/equipment/glasswarden_helm.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "3:102": {
+      "scene": "res://assets/actors/native/equipment/greyhaven_helm.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "3:103": {
+      "scene": "res://assets/actors/native/equipment/orun_sunmane_helm.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "3:104": {
+      "scene": "res://assets/actors/native/equipment/ssarathi_crest_helm.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "3:105": {
+      "scene": "res://assets/actors/native/equipment/luminous_circlet.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "3:106": {
+      "scene": "res://assets/actors/native/equipment/votary_fur_hood.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "3:107": {
+      "scene": "res://assets/actors/native/equipment/stoneborn_crown.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "3:108": {
+      "scene": "res://assets/actors/native/equipment/mycelari_cap.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "4:100": {
+      "scene": "res://assets/actors/native/equipment/amberwood_ranger_legs.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "4:101": {
+      "scene": "res://assets/actors/native/equipment/glasswarden_greaves.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "4:102": {
+      "scene": "res://assets/actors/native/equipment/greyhaven_trousers.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "4:103": {
+      "scene": "res://assets/actors/native/equipment/orun_rider_legs.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "4:104": {
+      "scene": "res://assets/actors/native/equipment/ssarathi_scale_legs.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "4:105": {
+      "scene": "res://assets/actors/native/equipment/votary_winter_legs.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "4:106": {
+      "scene": "res://assets/actors/native/equipment/luminous_casual_pants.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "5:100": {
+      "scene": "res://assets/actors/native/equipment/amberwood_ranger_cuirass.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "5:101": {
+      "scene": "res://assets/actors/native/equipment/glasswarden_cuirass.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "5:102": {
+      "scene": "res://assets/actors/native/equipment/greyhaven_coat.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "5:103": {
+      "scene": "res://assets/actors/native/equipment/orun_sun_cuirass.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "5:104": {
+      "scene": "res://assets/actors/native/equipment/ssarathi_scale_cuirass.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "5:105": {
+      "scene": "res://assets/actors/native/equipment/luminous_turquoise_robe.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "5:106": {
+      "scene": "res://assets/actors/native/equipment/votary_fur_mantle.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "5:107": {
+      "scene": "res://assets/actors/native/equipment/stoneborn_plate.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "5:108": {
+      "scene": "res://assets/actors/native/equipment/mycelari_mantle.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "5:109": {
+      "scene": "res://assets/actors/native/equipment/four_gates_guard_cuirass.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "5:110": {
+      "scene": "res://assets/actors/native/equipment/luminous_short_sleeve_shirt.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "6:100": {
+      "scene": "res://assets/actors/native/equipment/amberwood_ranger_boots.glb",
+      "import": {
+        "translation": [
+          0,
+          -0.72,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "6:101": {
+      "scene": "res://assets/actors/native/equipment/glasswarden_boots.glb",
+      "import": {
+        "translation": [
+          0,
+          -0.72,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "6:102": {
+      "scene": "res://assets/actors/native/equipment/greyhaven_boots.glb",
+      "import": {
+        "translation": [
+          0,
+          -0.72,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "6:103": {
+      "scene": "res://assets/actors/native/equipment/orun_rider_boots.glb",
+      "import": {
+        "translation": [
+          0,
+          -0.72,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "6:104": {
+      "scene": "res://assets/actors/native/equipment/ssarathi_scale_boots.glb",
+      "import": {
+        "translation": [
+          0,
+          -0.72,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "6:105": {
+      "scene": "res://assets/actors/native/equipment/votary_winter_boots.glb",
+      "import": {
+        "translation": [
+          0,
+          -0.72,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "6:106": {
+      "scene": "res://assets/actors/native/equipment/luminous_casual_boots.glb",
+      "import": {
+        "translation": [
+          0,
+          -0.72,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "7:100": {
+      "scene": "res://assets/actors/native/equipment/amberwood_amulet.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "7:101": {
+      "scene": "res://assets/actors/native/equipment/glasswarden_resonator.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "7:102": {
+      "scene": "res://assets/actors/native/equipment/greyhaven_compass.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "7:103": {
+      "scene": "res://assets/actors/native/equipment/orun_sun_amulet.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "7:104": {
+      "scene": "res://assets/actors/native/equipment/ssarathi_shell_amulet.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "7:105": {
+      "scene": "res://assets/actors/native/equipment/luminous_orbit_amulet.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    }
+  },
+  "aliases": {
+    "0:11": "0:112",
+    "1:5": "1:105",
+    "2:11": "2:105"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "cellSize": [50, 50],
+  "columns": 5,
+  "imagesPerAtlas": 25,
+  "fallbackImageId": 79,
+  "aliases": {
+    "114": 38,
+    "397": 41,
+    "460": 49
+  },
+  "atlases": [
+    "res://assets/ui/items/items1.png",
+    "res://assets/ui/items/items2.png",
+    "res://assets/ui/items/items3.png",
+    "res://assets/ui/items/items4.png",
+    "res://assets/ui/items/items5.png"
+  ]
+}

@@ -1,7 +1,7 @@
 import json, math, struct
 from pathlib import Path
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 
 PKG=Path('four-gates-city-package'); GLB=PKG/'four-gates-city.glb'; TEX=PKG/'textures'; TEX.mkdir(exist_ok=True)
 raw=GLB.read_bytes(); jlen,jtype=struct.unpack_from('<I4s',raw,12); g=json.loads(raw[20:20+jlen]); boff=20+jlen; blen,btype=struct.unpack_from('<I4s',raw,boff); buf=bytearray(raw[boff+8:boff+8+blen])
@@ -23,32 +23,66 @@ def add_acc(arr,typ,component=5126,target=34962):
 def read_pos(ai):
  a=g['accessors'][ai]; v=g['bufferViews'][a['bufferView']]; off=v.get('byteOffset',0)+a.get('byteOffset',0); return np.frombuffer(buf,dtype='<f4',count=a['count']*3,offset=off).reshape(-1,3).copy()
 
-# Add generated production atlas plus deterministic normal and ORM companions.
-def load_or_generate_city_atlas(path):
- try:
-  return Image.open(path).convert('RGB').resize((1024,1024),Image.Resampling.LANCZOS)
- except (FileNotFoundError, OSError):
-  image=Image.new('RGB',(1024,1024));draw=ImageDraw.Draw(image)
-  palette=[(186,188,184),(76,85,96),(159,151,136),(91,82,78),
-           (56,77,102),(157,116,48),(104,66,39),(210,202,177),
-           (113,82,52),(104,139,84),(225,230,226),(40,105,139),
-           (58,190,224),(113,190,222),(67,116,76),(47,131,158)]
-  for tile,color in enumerate(palette):
-   x=(tile%4)*256;y=(tile//4)*256;draw.rectangle((x,y,x+255,y+255),fill=color)
-   for line in range(16,256,32):
-    shade=tuple(max(0,c-18) for c in color)
-    draw.line((x,y+line,x+255,y+line+((tile*7)%11)-5),fill=shade,width=3)
-   if tile in (0,1,2,3,7,8):
-    for row in range(0,256,48):
-     offset=24 if (row//48)%2 else 0
-     for col in range(-offset,256,64):draw.rectangle((x+col,y+row,x+col+60,y+row+43),outline=tuple(min(255,c+15) for c in color),width=2)
-  image.save(path,optimize=True)
-  return image
-src=load_or_generate_city_atlas(TEX/'four-gates-material-atlas-source.png'); src.save(TEX/'four-gates-material-basecolor.png',optimize=True)
-gray=np.asarray(src.convert('L'),np.float32)/255.; gy,gx=np.gradient(gray); n=np.dstack((-gx*2.1,-gy*2.1,np.ones_like(gray))); n/=np.linalg.norm(n,axis=2,keepdims=True); Image.fromarray(((n*.5+.5)*255).astype(np.uint8)).save(TEX/'four-gates-material-normal.png',optimize=True)
-orm=np.zeros((1024,1024,3),np.uint8); orm[:,:,0]=235; orm[:,:,1]=185
+def normalize_atlas(image,grid):
+ """Resize generated source atlases tile-by-tile so no color crosses a UV cell."""
+ image=image.convert('RGB');w,h=image.size;tile=1024//grid;result=Image.new('RGB',(1024,1024))
+ for row in range(grid):
+  for col in range(grid):
+   box=(round(col*w/grid),round(row*h/grid),round((col+1)*w/grid),round((row+1)*h/grid))
+   sample=image.crop(box).resize((tile,tile),Image.Resampling.LANCZOS)
+   result.paste(sample,(col*tile,row*tile))
+ return result
+
+def normal_atlas(image,grid,strength):
+ """Derive normals per tile; atlas boundaries must never become false ridges."""
+ source=np.asarray(image.convert('L'),np.float32)/255.;result=np.empty((1024,1024,3),np.uint8);tile=1024//grid
+ for row in range(grid):
+  for col in range(grid):
+   y0,y1=row*tile,(row+1)*tile;x0,x1=col*tile,(col+1)*tile;gray=source[y0:y1,x0:x1]
+   gy,gx=np.gradient(gray);normal=np.dstack((-gx*strength,-gy*strength,np.ones_like(gray)))
+   normal/=np.maximum(np.linalg.norm(normal,axis=2,keepdims=True),1e-6)
+   result[y0:y1,x0:x1]=((normal*.5+.5)*255).astype(np.uint8)
+ return Image.fromarray(result)
+
+# Add an art-directed production atlas plus deterministic normal and ORM
+# companions.  Concept paintings are color and value references, not literal
+# texture sources: baking their buildings and highlights into repeating tiles
+# creates unreadable photo-collage surfaces in Godot.
+def paint_city_atlas(path):
+ palette=[(111,108,101),(50,54,59),(148,137,118),(61,63,62),
+          (43,55,64),(139,96,34),(105,79,45),(78,53,36),
+          (143,133,114),(87,64,40),(72,86,45),(188,194,197),
+          (31,103,118),(34,102,177),(77,151,169),(43,69,37)]
+ rng=np.random.default_rng(406);image=Image.new('RGB',(1024,1024));draw=ImageDraw.Draw(image)
+ masonry={0,1,2,3,7,8};
+ for tile,color in enumerate(palette):
+  x=(tile%4)*256;y=(tile//4)*256
+  noise=rng.normal(0,4.0,(256,256,1));base=np.asarray(color,dtype=np.float32)[None,None,:]
+  patch=np.clip(base+noise,0,255).astype(np.uint8)
+  patch=Image.fromarray(patch).filter(ImageFilter.GaussianBlur(.65));image.paste(patch,(x,y))
+  dark=tuple(max(0,c-13) for c in color);light=tuple(min(255,c+10) for c in color)
+  if tile in masonry:
+   for row in range(0,256,42):
+    draw.line((x,y+row,x+255,y+row),fill=dark,width=2)
+    offset=31 if (row//42)%2 else 0
+    for col in range(-offset,256,62):draw.line((x+col,y+row,x+col,y+min(row+42,255)),fill=dark,width=2)
+  elif tile==4:
+   for line in range(-256,512,20):draw.line((x+line,y,x+line+256,y+256),fill=dark,width=2)
+  elif tile in (5,6):
+   for line in range(8,256,22):draw.line((x+line,y,x+line,y+255),fill=light,width=2)
+  elif tile in (12,14):
+   for row in range(12,256,24):draw.arc((x-24,y+row-8,x+280,y+row+18),185,350,fill=light,width=2)
+  elif tile==13:
+   for line in range(-220,500,34):draw.line((x+line,y+255,x+line+210,y),fill=light,width=3)
+  elif tile in (10,15):
+   for _ in range(180):
+    px=x+int(rng.integers(0,256));py=y+int(rng.integers(0,256));r=int(rng.integers(1,4));draw.ellipse((px-r,py-r,px+r,py+r),fill=light)
+ image.save(path,optimize=True);return image
+src=paint_city_atlas(TEX/'four-gates-material-atlas-source.png');src.save(TEX/'four-gates-material-basecolor.png',optimize=True)
+normal_atlas(src,4,.52).save(TEX/'four-gates-material-normal.png',optimize=True)
+orm=np.zeros((1024,1024,3),np.uint8); orm[:,:,0]=235; orm[:,:,1]=210
 for c,r,val in [(1,1,195),(2,1,215)]:orm[r*256:(r+1)*256,c*256:(c+1)*256,2]=val
-for c,r,val in [(1,1,80),(2,1,120),(0,3,45),(1,3,55),(2,3,70)]:orm[r*256:(r+1)*256,c*256:(c+1)*256,1]=val
+for c,r,val in [(1,1,92),(2,1,130),(0,3,105),(1,3,95),(2,3,120)]:orm[r*256:(r+1)*256,c*256:(c+1)*256,1]=val
 Image.fromarray(orm).save(TEX/'four-gates-material-orm.png',optimize=True)
 
 # UVs and normals for every reusable primitive.
@@ -66,7 +100,8 @@ g['samplers']=[{'magFilter':9729,'minFilter':9987,'wrapS':10497,'wrapT':10497}];
 tile={'stone':(0,0),'dark-stone':(1,0),'paving':(2,0),'rock':(3,0),'roof':(0,1),'bronze':(1,1),'wood':(3,1),'plaster':(0,2),'soil':(1,2),'grass':(2,2),'snow':(3,2),'water':(0,3),'blue-crystal':(1,3),'waterfall':(2,3),'vegetation':(3,3)}
 for m in g['materials']:
  c,r=tile[m['name']]; tr={'offset':[c*.25,(3-r)*.25],'scale':[.25,.25]}; ti=lambda i:{'index':i,'extensions':{'KHR_texture_transform':tr}}
- p=m['pbrMetallicRoughness']; p['baseColorTexture']=ti(0); p['metallicRoughnessTexture']=ti(2); p['metallicFactor']=1; p['roughnessFactor']=1; m['normalTexture']=ti(1); m['occlusionTexture']=ti(2)
+ p=m['pbrMetallicRoughness'];alpha=float(p.get('baseColorFactor',[1,1,1,1])[3]);p['baseColorFactor']=[1,1,1,alpha]
+ p['baseColorTexture']=ti(0); p['metallicRoughnessTexture']=ti(2); p['metallicFactor']=1; p['roughnessFactor']=1; m['normalTexture']=ti(1); m['occlusionTexture']=ti(2)
 
 # Add maintainable detail nodes using existing shared meshes.
 nodes=g['nodes']; byname={n['name']:i for i,n in enumerate(nodes)}; mesh_by_name={m['name']:i for i,m in enumerate(g['meshes'])}
@@ -75,6 +110,25 @@ def ensure_mesh(name,prototype,material):
  if name in mesh_by_name:return
  src=g['meshes'][mesh_by_name[prototype]]; clone={'name':name,'primitives':[dict(src['primitives'][0])]}; clone['primitives'][0]['attributes']=dict(src['primitives'][0]['attributes']); clone['primitives'][0]['material']=mat_by_name[material]; g['meshes'].append(clone); mesh_by_name[name]=len(g['meshes'])-1
 ensure_mesh('cube_wood','cube_stone','wood'); ensure_mesh('cube_roof','cube_stone','roof'); ensure_mesh('cylinder_bronze','cylinder_stone','bronze')
+
+# A proper triangular-prism roof replaces the oversized umbrella-like cones on
+# ordinary houses.  Vertices are split per face so Godot imports clean normals.
+def add_gable_roof_mesh():
+ positions=[];normals=[];uv=[];indices=[]
+ def face(points,face_uv):
+  start=len(positions);a=np.asarray(points,np.float32);normal=np.cross(a[1]-a[0],a[2]-a[0]);normal/=max(float(np.linalg.norm(normal)),1e-6)
+  positions.extend(a.tolist());normals.extend([normal.tolist()]*len(points));uv.extend(face_uv)
+  if len(points)==3:indices.extend([start,start+1,start+2])
+  else:indices.extend([start,start+1,start+2,start,start+2,start+3])
+ face([[-.5,-.5,-.5],[.5,-.5,-.5],[.5,-.5,.5],[-.5,-.5,.5]],[[0,0],[1,0],[1,1],[0,1]])
+ face([[-.5,-.5,-.5],[-.5,-.5,.5],[0,.5,.5],[0,.5,-.5]],[[0,0],[1,0],[1,1],[0,1]])
+ face([[0,.5,-.5],[0,.5,.5],[.5,-.5,.5],[.5,-.5,-.5]],[[0,1],[1,1],[1,0],[0,0]])
+ face([[-.5,-.5,-.5],[0,.5,-.5],[.5,-.5,-.5]],[[0,0],[.5,1],[1,0]])
+ face([[-.5,-.5,.5],[.5,-.5,.5],[0,.5,.5]],[[0,0],[1,0],[.5,1]])
+ n=np.asarray(normals,np.float32);t=np.cross(np.tile([0.,1.,0.],(len(n),1)),n);weak=np.linalg.norm(t,axis=1)<1e-5;t[weak]=[1,0,0];t/=np.maximum(np.linalg.norm(t,axis=1,keepdims=True),1e-6);t=np.column_stack((t,np.ones(len(t),np.float32)))
+ primitive={'attributes':{'POSITION':add_acc(positions,'VEC3'),'NORMAL':add_acc(n,'VEC3'),'TEXCOORD_0':add_acc(uv,'VEC2'),'TANGENT':add_acc(t,'VEC4')},'indices':add_acc(np.asarray(indices,np.uint32),'SCALAR',5125,34963),'material':mat_by_name['roof']}
+ g['meshes'].append({'name':'gable_roof','primitives':[primitive]});mesh_by_name['gable_roof']=len(g['meshes'])-1
+add_gable_roof_mesh()
 def add(name,parent,mesh,pos,scale,extras=None):
  d={'name':name,'mesh':mesh_by_name[mesh],'translation':[float(x) for x in pos],'scale':[float(x) for x in scale]};
  if extras:d['extras']=extras

@@ -17,6 +17,7 @@ def add(name,parent,mesh,pos,scale,rot=None,extras=None):
 def cyl(name,parent,pos,scale,mat='stone'):return add(name,parent,'cylinder_'+mat,pos,scale)
 def cube(name,parent,pos,scale,mat='plaster',rot=None,extras=None):return add(name,parent,'cube_'+mat,pos,scale,rot,extras)
 def cone(name,parent,pos,scale,mat='roof'):return add(name,parent,'cone_'+mat,pos,scale)
+def gable(name,parent,pos,scale,rot=None):return add(name,parent,'gable_roof',pos,scale,rot)
 
 # Civic district: arcaded halls, domed council annexes and service courts.
 for i,a in enumerate(range(200,321,20)):
@@ -29,18 +30,20 @@ for i,a in enumerate(range(200,321,20)):
 
 # Residential neighborhoods: façades, entrances, chimneys and walled courtyards.
 for i,a in enumerate(range(15,196,15)):
- rad=math.radians(a);r=235+(i%3)*28;x,z=r*math.sin(rad),r*math.cos(rad);h=22+(i%4)*5
- cube(f'Residence_{i}_Body','District_Residential',(x,30+h/2,z),(25+(i%2)*8,h,21+(i%3)*4),'plaster')
- cone(f'Residence_{i}_Roof','District_Residential',(x,30+h+7,z),(31,14,31),'roof')
- cube(f'Residence_{i}_Door','District_Residential',(x,35,z+12),(4,9,1),'wood')
+ rad=math.radians(a);r=235+(i%3)*28;x,z=r*math.sin(rad),r*math.cos(rad);h=22+(i%4)*5;ry=rad;q=[0,math.sin(ry/2),0,math.cos(ry/2)]
+ width=24+(i%2)*7;depth=19+(i%3)*3
+ cube(f'Residence_{i}_Body','District_Residential',(x,30+h/2,z),(width,h,depth),'plaster',q)
+ gable(f'Residence_{i}_Roof','District_Residential',(x,30+h+6,z),(width+5,12,depth+5),q)
+ fx,fz=math.sin(rad),math.cos(rad);cube(f'Residence_{i}_Door','District_Residential',(x+fx*(depth*.5+.5),35,z+fz*(depth*.5+.5)),(4,9,1),'wood',q)
  for floor in range(1,1+int(h//10)):
-  cube(f'Residence_{i}_Window_{floor}','District_Residential',(x-7,34+floor*8,z+12.5),(4,5,.6),'blue-crystal',extras={'emissiveWindow':True})
- cyl(f'Residence_{i}_Chimney','District_Residential',(x+8,30+h+13,z-4),(3,18,3),'dark-stone')
- cube(f'Residence_{i}_Courtyard','District_Residential',(x,31,z-20),(30,1,16),'paving',extras={'walkable':True})
+  side=-7;wx=x+math.cos(rad)*side+fx*(depth*.5+.7);wz=z-math.sin(rad)*side+fz*(depth*.5+.7)
+  cube(f'Residence_{i}_Window_{floor}','District_Residential',(wx,34+floor*8,wz),(4,5,.6),'blue-crystal',q,{'emissiveWindow':True})
+ cx=x+math.cos(rad)*8-fx*4;cz=z-math.sin(rad)*8-fz*4;cyl(f'Residence_{i}_Chimney','District_Residential',(cx,30+h+10,cz),(2.4,14,2.4),'dark-stone')
+ cube(f'Residence_{i}_Courtyard','District_Residential',(x-fx*(depth*.5+8),31,z-fz*(depth*.5+8)),(width+6,1,14),'paving',q,{'walkable':True})
 
 # Agricultural/service district: farmhouses, granaries, irrigation and docks.
 for i,x in enumerate(range(-260,261,65)):
- z=255+(i%2)*35;cube(f'Farmhouse_{i}','District_Agricultural',(x,41,z),(32,22,24),'plaster');cone(f'Farmhouse_{i}_Roof','District_Agricultural',(x,59,z),(38,16,34),'roof');cyl(f'Granary_{i}','District_Agricultural',(x+22,43,z-20),(15,26,15),'wood');cone(f'Granary_{i}_Roof','District_Agricultural',(x+22,62,z-20),(18,12,18),'roof')
+ z=255+(i%2)*35;farm_rot=[0,0,0,1];cube(f'Farmhouse_{i}','District_Agricultural',(x,41,z),(30,22,22),'plaster',farm_rot);gable(f'Farmhouse_{i}_Roof','District_Agricultural',(x,59,z),(35,14,27),farm_rot);cyl(f'Granary_{i}','District_Agricultural',(x+22,43,z-20),(15,26,15),'wood');cone(f'Granary_{i}_Roof','District_Agricultural',(x+22,62,z-20),(18,12,18),'roof')
  cube(f'Irrigation_Channel_{i}','District_Agricultural',(x,30.3,225),(50,.6,4),'water',extras={'effect':'irrigation-water'})
 for i,x in enumerate([-170,-95,95,170]):
  cube(f'Service_Dock_{i}','District_Service',(x,3,390),(48,5,16),'wood');cyl(f'Service_Crane_Post_{i}','District_Service',(x,19,390),(3,28,3),'wood');cube(f'Service_Crane_Boom_{i}','District_Service',(x+8,31,390),(20,2,2),'wood')

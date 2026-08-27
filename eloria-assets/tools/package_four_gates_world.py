@@ -8,28 +8,72 @@ SOURCE_OUTPUT=ROOT/"nymara-packs/nymara-client-assets/runtime/maps/four_gates"
 OUTPUT=SOURCE_OUTPUT; SIZE=1536; UNITS_PER_METER=2.15; ORIGIN=(384.0,384.0,0.0)
 BUILDING_MARKERS=[(r*math.sin(math.radians(a)),r*math.cos(math.radians(a))) for r in (125,195,265) for a in range(15,360,30)]
 
-def correct_clockwise_indices(raw):
- data=bytearray(raw);offset=12;document=None;binary_offset=None
- while offset<len(data):
-  length,kind=struct.unpack_from('<II',data,offset);offset+=8
-  if kind==0x4E4F534A:document=json.loads(data[offset:offset+length])
-  elif kind==0x004E4942:binary_offset=offset
+def correct_winding_indices(raw):
+ offset=12;document=None;binary=None
+ while offset<len(raw):
+  length,kind=struct.unpack_from('<II',raw,offset);offset+=8
+  chunk=raw[offset:offset+length]
+  if kind==0x4E4F534A:document=json.loads(chunk)
+  elif kind==0x004E4942:binary=bytearray(chunk)
   offset+=length
- if document is None or binary_offset is None:raise RuntimeError('source GLB lacks JSON or BIN chunk')
- formats={5121:'B',5123:'H',5125:'I'};corrected=set()
+ if document is None or binary is None:raise RuntimeError('source GLB lacks JSON or BIN chunk')
+ formats={5121:'B',5123:'H',5125:'I'};reversed_accessors={}
+ def accessor(index):
+  item=document['accessors'][index];view=document['bufferViews'][item['bufferView']]
+  component=item['componentType'];width={5121:1,5123:2,5125:4,5126:4}.get(component)
+  components={'SCALAR':1,'VEC2':2,'VEC3':3,'VEC4':4}.get(item['type'])
+  if width is None or components is None:raise RuntimeError('unsupported Four Gates accessor')
+  stride=view.get('byteStride',width*components)
+  start=view.get('byteOffset',0)+item.get('byteOffset',0)
+  return item,view,start,stride,width,components
+ def vec3(index,element):
+  item,_,start,stride,_,components=accessor(index)
+  if item['componentType']!=5126 or components!=3:raise RuntimeError('Four Gates vectors must be float VEC3')
+  return struct.unpack_from('<3f',binary,start+element*stride)
+ def index_value(index,element):
+  item,_,start,stride,_,components=accessor(index);fmt=formats.get(item['componentType'])
+  if fmt is None or components!=1:raise RuntimeError('unsupported Four Gates triangle indices')
+  return struct.unpack_from('<'+fmt,binary,start+element*stride)[0]
+ def reversed_accessor(index):
+  cached=reversed_accessors.get(index)
+  if cached is not None:return cached
+  item,view,_,_,_,components=accessor(index);fmt=formats.get(item['componentType'])
+  if fmt is None or components!=1:raise RuntimeError('unsupported Four Gates triangle indices')
+  values=[index_value(index,element) for element in range(item['count'])]
+  for triangle in range(0,len(values),3):values[triangle+1],values[triangle+2]=values[triangle+2],values[triangle+1]
+  while len(binary)%4:binary.append(0)
+  packed=struct.pack('<'+fmt*len(values),*values);new_view={'buffer':view.get('buffer',0),'byteOffset':len(binary),'byteLength':len(packed)}
+  if 'target' in view:new_view['target']=view['target']
+  document['bufferViews'].append(new_view);binary.extend(packed)
+  new_item=dict(item);new_item['bufferView']=len(document['bufferViews'])-1;new_item['byteOffset']=0
+  document['accessors'].append(new_item);cached=len(document['accessors'])-1;reversed_accessors[index]=cached
+  return cached
  for mesh in document.get('meshes',[]):
   for primitive in mesh.get('primitives',[]):
    if primitive.get('mode',4)!=4 or 'indices' not in primitive:continue
-   accessor_index=primitive['indices']
-   if accessor_index in corrected:continue
-   accessor=document['accessors'][accessor_index];view=document['bufferViews'][accessor['bufferView']];fmt=formats.get(accessor['componentType']);count=accessor['count']
-   if fmt is None or count%3:raise RuntimeError('unsupported Four Gates triangle indices')
-   width=struct.calcsize(fmt);stride=view.get('byteStride',width);start=binary_offset+view.get('byteOffset',0)+accessor.get('byteOffset',0)
-   for triangle in range(0,count,3):
-    second=start+(triangle+1)*stride;third=start+(triangle+2)*stride
-    data[second:second+width],data[third:third+width]=data[third:third+width],data[second:second+width]
-   corrected.add(accessor_index)
- return bytes(data)
+   accessor_index=primitive['indices'];indices=document['accessors'][accessor_index];count=indices['count']
+   if count%3:raise RuntimeError('Four Gates triangle index count is not divisible by three')
+   normal_index=primitive.get('attributes',{}).get('NORMAL');position_index=primitive.get('attributes',{}).get('POSITION')
+   reverse=False
+   if normal_index is not None and position_index is not None:
+    score=0
+    # The source contains both CCW and CW helper meshes. Compare geometric
+    # faces with authored normals instead of reversing the complete package.
+    step=max(3,(count//(512*3))*3)
+    for triangle in range(0,count,step):
+     if triangle+2>=count:break
+     ia,ib,ic=(index_value(accessor_index,triangle+i) for i in range(3))
+     a,b,c=(vec3(position_index,index) for index in (ia,ib,ic));normal=vec3(normal_index,ia)
+     ux,uy,uz=(b[i]-a[i] for i in range(3));vx,vy,vz=(c[i]-a[i] for i in range(3))
+     dot=(uy*vz-uz*vy)*normal[0]+(uz*vx-ux*vz)*normal[1]+(ux*vy-uy*vx)*normal[2]
+     if dot>1e-8:score+=1
+     elif dot< -1e-8:score-=1
+    reverse=score<0
+   if reverse:primitive['indices']=reversed_accessor(accessor_index)
+ document['buffers'][0]['byteLength']=len(binary)
+ encoded=json.dumps(document,separators=(',',':')).encode();encoded+=b' '*((-len(encoded))%4)
+ while len(binary)%4:binary.append(0)
+ return struct.pack('<4sII',b'glTF',2,12+8+len(encoded)+8+len(binary))+struct.pack('<I4s',len(encoded),b'JSON')+encoded+struct.pack('<I4s',len(binary),b'BIN\\0')+binary
 
 def source_xz(cx,cy):
  world_x=(cx+.5)*.5;world_y=(cy+.5)*.5;return ((world_x-ORIGIN[0])*UNITS_PER_METER,(ORIGIN[1]-world_y)*UNITS_PER_METER)
@@ -55,7 +99,7 @@ def encode_height(y):
  return max(1,min(255,int(round((y/UNITS_PER_METER+2.2)/.2))))
 
 def build_portable_glb():
- raw=correct_clockwise_indices(SOURCE.read_bytes());jlen=struct.unpack_from('<I',raw,12)[0];doc=json.loads(raw[20:20+jlen]);bo=20+jlen;blen=struct.unpack_from('<I',raw,bo)[0];binary=bytearray(raw[bo+8:bo+8+blen]);textures=OUTPUT/'textures';textures.mkdir(exist_ok=True)
+ raw=correct_winding_indices(SOURCE.read_bytes());jlen=struct.unpack_from('<I',raw,12)[0];doc=json.loads(raw[20:20+jlen]);bo=20+jlen;blen=struct.unpack_from('<I',raw,bo)[0];binary=bytearray(raw[bo+8:bo+8+blen]);textures=OUTPUT/'textures';textures.mkdir(exist_ok=True)
  for index,image in enumerate(doc.get('images',[])):
   view=doc['bufferViews'][image['bufferView']];start=view.get('byteOffset',0);data=bytes(binary[start:start+view['byteLength']]);name=''.join(c if c.isalnum() or c in '-_' else '-' for c in image.get('name',f'image-{index}'))+'.png';(textures/name).write_bytes(data);image.pop('bufferView',None);image.pop('mimeType',None);image['uri']=f'textures/{name}'
  def transformed_uv(accessor_index,transform):
@@ -131,7 +175,7 @@ def main():
  args=parser.parse_args()
  if args.output: OUTPUT=Path(args.output)/"maps/four_gates"
  OUTPUT.mkdir(parents=True,exist_ok=True);meta=json.loads(METADATA.read_text())
- if meta.get('assetVersion')!='0.6.1':raise RuntimeError('Four Gates portable package requires authored asset version 0.6.1')
+ if meta.get('assetVersion')!='0.9.0':raise RuntimeError('Four Gates portable package requires authored asset version 0.9.0')
  build_portable_glb();obstacles=[o for o in meta['navigation']['navmesh'].get('obstacles',[]) if 'Window' not in o['node']];gameplay=gameplay_manifest();water=[]
  for i in range(8):
   a=math.radians(25+i*45);water.append({'id':f'waterfall-{i:02}','channel_node':f'Water_Channel_{i:02}','pool_node':f'Waterfall_Pool_{i:02}','foam_node':f'Waterfall_Foam_{i:02}','mist_node':f'FX_Waterfall_Mist_{i:02}','position':[405*math.sin(a),0.,405*math.cos(a)],'uv_scroll':[0.,-.32],'foam_scroll':[.08,-.18],'mist_particle':'waterfall_mist','fallback':'static-geometry'})

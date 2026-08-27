@@ -1,0 +1,48 @@
+; Engine configuration file.
+; Eloria Godot client — pinned to Godot 4.7.2-stable.
+config_version=5
+
+[application]
+config/name="Eloria"
+run/main_scene="res://src/app/main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[autoload]
+AppState="*res://src/state/app_state.gd"
+Network="*res://src/network/network_client.gd"
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+
+[input]
+
+toggle_sit={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"alt_pressed":true,"physical_keycode":83,"unicode":115)]
+}
+connect={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":67,"ctrl_pressed":true)] }
+disconnect={ "deadzone": 0.5, "events": [] }
+chat_focus={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":84)] }
+toggle_map={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":9)] }
+cancel={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":4194305)] }
+attack_selected={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":65)] }
+quick_item_1={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":49)] }
+quick_item_2={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":50)] }
+quick_item_3={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":51)] }
+quick_item_4={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":52)] }
+quick_item_5={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":53)] }
+quick_item_6={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":54)] }
+quick_item_7={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":55)] }
+quick_item_8={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":56)] }
+quick_spell_1={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":49)] }
+quick_spell_2={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":50)] }
+quick_spell_3={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":51)] }
+quick_spell_4={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":52)] }
+quick_spell_5={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":53)] }
+quick_spell_6={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":54)] }

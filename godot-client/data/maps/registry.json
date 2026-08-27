@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "maps": {
+    "maps/startmap.elm": {
+      "manifest": "res://../eloria-assets/maps/four-gates-city/four-gates-city.json",
+      "coordinateTransform": {
+        "metresPerTile": 0.4651162791,
+        "serverOrigin": [384.0, 384.0],
+        "origin": [0.0, 31.15, 0.0],
+        "walkingHeight": 31.15,
+        "invertServerY": true
+      },
+      "status": "development_server_binding"
+    },
+    "startmap.elm": {
+      "alias": "maps/startmap.elm"
+    },
+    "four_gates": {
+      "alias": "maps/startmap.elm"
+    },
+    "four-gates": {
+      "alias": "maps/startmap.elm"
+    },
+    "maps/four_gates.elm": {
+      "alias": "maps/startmap.elm"
+    },
+    "maps/nymara/mirrorhold.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/mirrorhold/world.json",
+      "coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [58.0, 58.0], "origin": [0.0, 0.0, 0.0], "walkingHeight": 0.0, "invertServerY": true},
+      "status": "terrain-landmark-material-pass"
+    },
+    "mirrorhold": {"alias": "maps/nymara/mirrorhold.elm"},
+    "mirrorhold.elm": {"alias": "maps/nymara/mirrorhold.elm"},
+    "maps/nymara/crownwater.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/crownwater/world.json",
+      "coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [58.0, 58.0], "origin": [0.0, 0.0, 0.0], "walkingHeight": 0.0, "invertServerY": true},
+      "status": "terrain-landmark-material-pass"
+    },
+    "crownwater": {"alias": "maps/nymara/crownwater.elm"},
+    "crownwater.elm": {"alias": "maps/nymara/crownwater.elm"},
+    "maps/nymara/whitehorn_range.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/whitehorn_range/world.json",
+      "coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [58.0, 58.0], "origin": [0.0, 0.0, 0.0], "walkingHeight": 0.0, "invertServerY": true},
+      "status": "terrain-landmark-material-pass"
+    },
+    "whitehorn_range": {"alias": "maps/nymara/whitehorn_range.elm"},
+    "whitehorn_range.elm": {"alias": "maps/nymara/whitehorn_range.elm"},
+    "maps/nymara/amethyst_barrens.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/amethyst_barrens/world.json",
+      "coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [58.0, 58.0], "origin": [0.0, 0.0, 0.0], "walkingHeight": 0.0, "invertServerY": true},
+      "status": "terrain-landmark-material-pass"
+    },
+    "amethyst_barrens": {"alias": "maps/nymara/amethyst_barrens.elm"},
+    "amethyst_barrens.elm": {"alias": "maps/nymara/amethyst_barrens.elm"},
+    "maps/nymara/sunmane_steppe.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/world.json",
+      "coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [58.0, 58.0], "origin": [0.0, 0.0, 0.0], "walkingHeight": 0.0, "invertServerY": true},
+      "status": "terrain-landmark-material-pass"
+    },
+    "sunmane_steppe": {"alias": "maps/nymara/sunmane_steppe.elm"},
+    "sunmane_steppe.elm": {"alias": "maps/nymara/sunmane_steppe.elm"},
+    "maps/nymara/amberwood.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/amberwood/world.json",
+      "coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [58.0, 58.0], "origin": [0.0, 0.0, 0.0], "walkingHeight": 0.0, "invertServerY": true},
+      "status": "terrain-landmark-material-pass"
+    },
+    "amberwood": {"alias": "maps/nymara/amberwood.elm"},
+    "amberwood.elm": {"alias": "maps/nymara/amberwood.elm"},
+    "maps/nymara/grey_moors.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/grey_moors/world.json",
+      "coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [58.0, 58.0], "origin": [0.0, 0.0, 0.0], "walkingHeight": 0.0, "invertServerY": true},
+      "status": "terrain-landmark-material-pass"
+    },
+    "grey_moors": {"alias": "maps/nymara/grey_moors.elm"},
+    "grey_moors.elm": {"alias": "maps/nymara/grey_moors.elm"},
+    "maps/nymara/westhaven.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/westhaven/world.json",
+      "coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [58.0, 58.0], "origin": [0.0, 0.0, 0.0], "walkingHeight": 0.0, "invertServerY": true},
+      "status": "terrain-landmark-material-pass"
+    },
+    "westhaven": {"alias": "maps/nymara/westhaven.elm"},
+    "westhaven.elm": {"alias": "maps/nymara/westhaven.elm"},
+    "maps/nymara/verdant_stair.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/verdant_stair/world.json",
+      "coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [58.0, 58.0], "origin": [0.0, 0.0, 0.0], "walkingHeight": 0.0, "invertServerY": true},
+      "status": "terrain-landmark-material-pass"
+    },
+    "verdant_stair": {"alias": "maps/nymara/verdant_stair.elm"},
+    "verdant_stair.elm": {"alias": "maps/nymara/verdant_stair.elm"},
+    "maps/nymara/ssarathi_ruins.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/ssarathi_ruins/world.json",
+      "coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [58.0, 58.0], "origin": [0.0, 0.0, 0.0], "walkingHeight": 0.0, "invertServerY": true},
+      "status": "terrain-landmark-material-pass"
+    },
+    "ssarathi_ruins": {"alias": "maps/nymara/ssarathi_ruins.elm"},
+    "ssarathi_ruins.elm": {"alias": "maps/nymara/ssarathi_ruins.elm"},
+    "maps/nymara/manymouth_delta.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/manymouth_delta/world.json",
+      "coordinateTransform": {"metresPerTile": 1.0, "serverOrigin": [58.0, 58.0], "origin": [0.0, 0.0, 0.0], "walkingHeight": 0.0, "invertServerY": true},
+      "status": "terrain-landmark-material-pass"
+    },
+    "manymouth_delta": {"alias": "maps/nymara/manymouth_delta.elm"},
+    "manymouth_delta.elm": {"alias": "maps/nymara/manymouth_delta.elm"}
+  }
+}
