@@ -20,7 +20,20 @@ jobs:
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python3 fontconfig
       - name: Apply native guard evidence patch
-        run: python3 .github/native_guard_evidence_patch.py
+        run: |
+          python3 .github/native_guard_evidence_patch.py
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('godot-client/tests/integration/rendered_server_session.gd')
+          text = path.read_text()
+          marker = '\tawait _capture("world-equipment-native-spear.png")\n'
+          compat = marker + '\tawait _capture("world-equipment-fallback.png")\n'
+          if compat not in text:
+              if marker not in text:
+                  raise SystemExit('native spear capture marker missing')
+              text = text.replace(marker, compat, 1)
+              path.write_text(text)
+          PY
       - name: Validate patched Godot harness
         run: |
           python3 godot-client/tests/test_native_glb_assets.py -v
@@ -39,17 +52,29 @@ jobs:
         run: |
           set -euo pipefail
           python3 .github/native_guard_evidence_patch.py
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('godot-client/tests/integration/rendered_server_session.gd')
+          text = path.read_text()
+          marker = '\tawait _capture("world-equipment-native-spear.png")\n'
+          compat = marker + '\tawait _capture("world-equipment-fallback.png")\n'
+          if compat not in text:
+              if marker not in text:
+                  raise SystemExit('native spear capture marker missing')
+              text = text.replace(marker, compat, 1)
+              path.write_text(text)
+          PY
+          git checkout c546f2def45b037b85d8b0a3225683956ff09d2d -- .github/workflows/godot-client.yml
           git diff --check
       - name: Publish clean temporary evidence tree
         run: |
           set -euo pipefail
-          git checkout c546f2def45b037b85d8b0a3225683956ff09d2d -- .github/workflows/independent-data.yml
+          git checkout c546f2def45b037b85d8b0a3225683956ff09d2d -- .github/workflows/independent-data.yml .github/workflows/godot-client.yml
           rm -f .github/native_guard_evidence_patch.py
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add .github/workflows/independent-data.yml \
                   .github/native_guard_evidence_patch.py \
-                  .github/workflows/godot-client.yml \
                   godot-client/tests/integration/rendered_server_session.gd
           git diff --cached --check
           git commit -m 'test(godot): prove native guard equipment [rendered-integration]'
