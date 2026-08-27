@@ -48,11 +48,14 @@ The gate fails unless it proves all of the following before uploading evidence:
 - the remote player uses a visible native luminous model, can be selected by a
   world-space ray, and is removed from both state and presentation after its
   connection closes;
+- chat submitted through the primary lower-left UI reaches the second real
+  client, and chat sent by the second client is decoded and presented by the
+  primary reducer/UI;
 - each 1280×720 capture contains rendered color variation rather than a dummy frame.
 
 The artifact contains default, rotated, panned, zoomed, full-map, and
-post-movement PNGs, a selected-remote-player PNG, and sanitized session,
-camera-state, movement, and remote-actor JSON. A
+post-movement PNGs, selected-remote-player and chat PNGs, and sanitized session,
+camera-state, movement, remote-actor, and chat JSON. A
 passing structural assertion is still classified separately from human visual
 inspection of those PNGs.
 
