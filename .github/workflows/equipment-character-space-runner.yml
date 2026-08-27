@@ -15,7 +15,7 @@ jobs:
     container:
       image: barichello/godot-ci:4.7.2
     env:
-      ELORIA_ARTIFACT_DIR: ${{ github.workspace }}/godot-client/test-artifacts/equipment-character-space
+      ELORIA_ARTIFACT_DIR: godot-client/test-artifacts/equipment-character-space
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,6 +31,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          cd "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git fetch origin codex/equipment-character-space-fix
@@ -80,6 +81,7 @@ jobs:
           git diff --check
       - name: Validate generated catalog and Godot runtime
         run: |
+          cd "$GITHUB_WORKSPACE"
           python3 godot-client/tests/test_native_glb_assets.py -v
           godot --headless --path godot-client --editor --quit
           godot --headless --path godot-client res://src/dev/model_validation.tscn --quit-after 12 2>&1 | tee /tmp/model-validation.log
@@ -88,6 +90,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          cd "$GITHUB_WORKSPACE"
           cp godot-client/src/dev/model_validation.gd /tmp/model_validation.gd
           python3 - <<'PY'
           from pathlib import Path
@@ -121,6 +124,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          cd "$GITHUB_WORKSPACE"
           git add eloria-assets/tools/build_native_nymara_glbs.py \
             godot-client/src/actors/replicated_actor_3d.gd \
             godot-client/data/actors/equipment.json \
