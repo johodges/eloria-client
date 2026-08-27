@@ -74,6 +74,10 @@ jobs:
           ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/render.log"
           test -s "$ELORIA_ARTIFACT_DIR/four-gates-aerial.png"
           test -s "$ELORIA_ARTIFACT_DIR/four-gates-gameplay.png"
+          test -s "$ELORIA_ARTIFACT_DIR/four-gates-central-plaza-detail.png"
+          test -s "$ELORIA_ARTIFACT_DIR/four-gates-south-gate-detail.png"
+          test -s "$ELORIA_ARTIFACT_DIR/four-gates-market-detail.png"
+          test -s "$ELORIA_ARTIFACT_DIR/four-gates-waterfall-detail.png"
       - name: Upload Four Gates rendered evidence
         if: always()
         uses: actions/upload-artifact@v4

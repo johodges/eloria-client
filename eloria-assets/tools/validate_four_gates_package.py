@@ -2,6 +2,7 @@
 """Fail fast on truncated or internally inconsistent Four Gates GLB deliveries."""
 
 import json
+import math
 import struct
 from pathlib import Path
 
@@ -69,8 +70,38 @@ def validate_pair(glb_name, json_name):
 
 
 def main():
+    lod1_document = read_glb(PACKAGE / "four-gates-city.glb")
+    lod2_document = read_glb(PACKAGE / "four-gates-city-lod2.glb")
     lod1 = validate_pair("four-gates-city.glb", "four-gates-city.json")
     lod2 = validate_pair("four-gates-city-lod2.glb", "four-gates-city-lod2.json")
+    metadata = json.loads((PACKAGE / "four-gates-city.json").read_text())
+    if metadata.get("assetVersion") != "0.9.0":
+        raise ValueError("four-gates-city.json: expected close-detail asset version 0.9.0")
+    detail_names = {node.get("name") for node in lod1_document["nodes"] if node.get("name", "").startswith("Detail_")}
+    if len(detail_names) < 250 or len(detail_names) != metadata.get("detailPass", {}).get("nodeCount"):
+        raise ValueError("four-gates-city.glb: incomplete deterministic close-detail pass")
+    if any(node.get("name", "").startswith("Detail_") for node in lod2_document["nodes"]):
+        raise ValueError("four-gates-city-lod2.glb: close-detail nodes were not pruned")
+    required = {
+        "Detail_Gate_South_Inner_Crown_+1",
+        "Detail_Civic_Planter_00_Border",
+        "Detail_Market_Crate_00_A",
+        "Detail_Residence_0_Balcony",
+        "Detail_Waterfall_00_Foam_Ribbon_0",
+        "Detail_Broadleaf_00_Crown",
+    }
+    missing_detail = required - detail_names
+    if missing_detail:
+        raise ValueError(f"four-gates-city.glb: missing detail contracts: {', '.join(sorted(missing_detail))}")
+    route_intrusions = []
+    for node in lod1_document["nodes"]:
+        if not node.get("name", "").startswith("Detail_") or "translation" not in node:
+            continue
+        x, _, z = node["translation"]
+        if math.hypot(x, z) > 70.0 and min(abs(x), abs(z)) < 30.0:
+            route_intrusions.append(node["name"])
+    if route_intrusions:
+        raise ValueError(f"four-gates-city.glb: detail intrudes on principal-route clearance: {', '.join(route_intrusions[:8])}")
     print(f"Four Gates package valid: LOD1 {lod1[0]} nodes/{lod1[1]} meshes; LOD2 {lod2[0]} nodes/{lod2[1]} meshes")
 
 

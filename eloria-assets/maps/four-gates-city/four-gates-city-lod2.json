@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.8.0-lod2",
+  "assetVersion": "0.9.0-lod2",
   "asset": {
     "id": "four-gates-city",
     "name": "Four Gates City",
@@ -1429,11 +1429,10 @@
     "Southern imagery conflicts in scale; the canonical double-gate sequence is preserved."
   ],
   "knownLimitations": [
-    "LOD0 and LOD2 are documented but not included.",
     "Inline navmesh covers principal axes and plaza; district alley polygons remain to be baked from final collision geometry.",
     "District navmesh uses conservative convex coverage; final blockers should be rebaked after hand-authored building placement.",
-    "Water, waterfall foam, and mist use glTF geometry and locators; animated turbulence, refraction, particles, and depth fade require client shaders.",
-    "General district assets use modular atlas UVs; hero fa\u00e7ades and roofs should receive bespoke unwraps in a later close-detail pass."
+    "General district assets use modular atlas UVs; hero fa\u00e7ades and roofs still need bespoke unwraps.",
+    "Water, foam, mist, and energy retain static geometry fallbacks; production refraction, turbulence, depth-fade, and mist particles remain client-shader work."
   ],
   "sources": [
     {
@@ -1669,5 +1668,43 @@
       "Outer_Evergreen_54",
       "Outer_Evergreen_55"
     ]
+  },
+  "detailPass": {
+    "reference": "canonical-four-gates-concept-art",
+    "nodePrefix": "Detail_",
+    "nodeCount": 267,
+    "detailNodes": [],
+    "families": {
+      "gates": [
+        "integrated crowns",
+        "energy tracery",
+        "hanging banners"
+      ],
+      "centralCivic": [
+        "radial planted beds",
+        "broadleaf shrubs"
+      ],
+      "market": [
+        "stock crates",
+        "barrels",
+        "sapphire signs"
+      ],
+      "residential": [
+        "balconies",
+        "roof finials"
+      ],
+      "waterfalls": [
+        "rocky lips",
+        "stepped foam ribbons"
+      ],
+      "vegetation": [
+        "inner-ring broadleaf trees",
+        "tiered outer evergreens"
+      ]
+    },
+    "routeClearance": {
+      "cardinalHalfWidth": 30.0,
+      "plazaSpawnClear": true
+    }
   }
 }
