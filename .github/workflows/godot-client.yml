@@ -41,9 +41,9 @@ jobs:
           ! grep -E "SCRIPT ERROR|Parse Error" model-scene.log
 
   rendered-server-session:
-    # Temporarily enabled for PR #136 to establish the first rendered/server
-    # evidence artifact. Restore the commit-message guard after inspection.
-    if: github.event_name == 'pull_request'
+    # Real-server runs create disposable characters. Run only for an explicit
+    # milestone push so ordinary PR updates stay deterministic and non-mutating.
+    if: github.event_name == 'push' && contains(github.event.head_commit.message, '[rendered-integration]')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     container:
