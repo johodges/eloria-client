@@ -25,6 +25,7 @@ var _last_movement_update_msec := -1
 var _smoothed_server_interval := 0.25
 var _native_skeleton: Skeleton3D
 var _attachment_bones: Dictionary = {}
+var _model_config: Dictionary = {}
 var _equipment_config: Dictionary = {}
 var _equipment_visuals: Dictionary = {}
 var _equipment_nodes: Dictionary = {}
@@ -65,6 +66,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	add_child(selection_ring)
 	_add_nameplate(dto)
 	resolver = AnimationResolver.new(animation_config)
+	_model_config = model_config.duplicate(true)
 	_attachment_bones = (model_config.get("attachments", {}) as Dictionary).duplicate(true)
 	_equipment_config = (equipment_config as Dictionary).duplicate(true)
 	var source_path := _external_path(str(model_config.get("scene", "")))
@@ -102,11 +104,13 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	return errors
 
 func apply_appearance_variants(appearance: Dictionary) -> void:
-	if _native_skeleton == null or appearance.is_empty():
+	if _native_skeleton == null:
 		return
+	var culture: String = str(_model_config.get("culture", "luminous"))
 	var skin_tint: Color = AppearanceVariants.skin_tint(int(appearance.get("skin", 0)))
 	var hair_tint: Color = AppearanceVariants.hair_color(int(appearance.get("hair", 0)))
 	var eye_tint: Color = AppearanceVariants.eye_color(int(appearance.get("eyes", 0)))
+	var head_style: int = AppearanceVariants.head_style(int(appearance.get("head", 0)))
 	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
 	if native_model == null:
 		return
@@ -117,8 +121,25 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 			_tint_mesh(mesh_node, eye_tint, true)
 		elif mesh_name == "eyebrows":
 			_tint_mesh(mesh_node, hair_tint)
-		elif mesh_name.begins_with("superhero_"):
+		elif mesh_name == "body":
 			_tint_mesh(mesh_node, skin_tint)
+		elif mesh_name == "wardrobe_shirt":
+			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
+				culture, AppearanceVariants.PART_SHIRT, int(appearance.get("shirt", 0))))
+		elif mesh_name == "wardrobe_pants":
+			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
+				culture, AppearanceVariants.PART_PANTS, int(appearance.get("pants", 0))))
+		elif mesh_name == "wardrobe_boots":
+			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
+				culture, AppearanceVariants.PART_BOOTS, int(appearance.get("boots", 0))))
+		elif mesh_name == "wardrobe_head_band":
+			mesh_node.visible = head_style == 1 or head_style == 3
+			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
+				culture, AppearanceVariants.PART_HEAD, int(appearance.get("head", 0))))
+		elif mesh_name == "wardrobe_head_cap":
+			mesh_node.visible = head_style == 2 or head_style == 3
+			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
+				culture, AppearanceVariants.PART_HEAD, int(appearance.get("head", 0))))
 	_add_hair_variant(AppearanceVariants.hair_style(
 		int(appearance.get("hair", 0))), hair_tint)
 
@@ -136,39 +157,38 @@ func _tint_mesh(mesh_node: MeshInstance3D, tint: Color,
 		material.emission = tint * 0.28
 	mesh_node.material_override = material
 
+func _set_mesh_color(mesh_node: MeshInstance3D, color: Color) -> void:
+	if mesh_node.mesh == null or mesh_node.mesh.get_surface_count() == 0:
+		return
+	var source: Material = mesh_node.get_active_material(0)
+	if source is not StandardMaterial3D:
+		return
+	var material: StandardMaterial3D = (source as StandardMaterial3D).duplicate()
+	material.albedo_color = color
+	mesh_node.material_override = material
+
 func _add_hair_variant(style: int, color: Color) -> void:
-	if style == 0:
+	for old_attachment: Node in _native_skeleton.get_children():
+		if old_attachment.name.begins_with("AppearanceHair_"):
+			old_attachment.queue_free()
+	var styles_value: Variant = _model_config.get("hairStyles", [])
+	if styles_value is not Array or (styles_value as Array).is_empty():
+		return
+	var styles: Array = styles_value as Array
+	var path: String = str(styles[posmod(style, styles.size())])
+	var native_hair: Node3D = _load_native_equipment(path)
+	if native_hair == null:
+		push_warning("Native hairstyle failed to load: " + path)
 		return
 	var attachment: BoneAttachment3D = _bone_attachment("Head", 9, style)
 	if attachment == null:
+		native_hair.queue_free()
 		return
 	attachment.name = "AppearanceHair_%d" % style
-	var material: StandardMaterial3D = StandardMaterial3D.new()
-	material.albedo_color = color
-	material.roughness = 0.88
-	_hair_piece(attachment, Vector3(0.0, 0.08, 0.015),
-		Vector3(0.42, 0.22, 0.40), material)
-	if style == 2:
-		_hair_piece(attachment, Vector3(0.0, -0.08, 0.13),
-			Vector3(0.36, 0.45, 0.24), material)
-	elif style == 3:
-		_hair_piece(attachment, Vector3(0.0, 0.19, 0.015),
-			Vector3(0.15, 0.38, 0.18), material)
-
-func _hair_piece(parent: Node3D, local_position: Vector3, local_scale: Vector3,
-		material: StandardMaterial3D) -> void:
-	var instance: MeshInstance3D = MeshInstance3D.new()
-	instance.name = "HairPiece"
-	var mesh: SphereMesh = SphereMesh.new()
-	mesh.radius = 0.5
-	mesh.height = 1.0
-	mesh.radial_segments = 16
-	mesh.rings = 8
-	mesh.material = material
-	instance.mesh = mesh
-	instance.position = local_position
-	instance.scale = local_scale
-	parent.add_child(instance)
+	native_hair.name = "NativeHair"
+	attachment.add_child(native_hair)
+	for node_value: Node in native_hair.find_children("*", "MeshInstance3D", true, false):
+		_tint_mesh(node_value as MeshInstance3D, color)
 
 func render_diagnostics() -> Dictionary:
 	var meshes: Array[Dictionary] = []

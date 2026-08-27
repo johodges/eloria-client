@@ -33,22 +33,33 @@ class NativeGlbAssetsTest(unittest.TestCase):
         cls.equipment = json.loads((CLIENT / "data/actors/equipment.json").read_text())
 
     def test_catalog_is_complete(self) -> None:
-        self.assertEqual(14, len(self.catalog["races"]))
+        self.assertEqual(16, len(self.catalog["races"]))
+        self.assertEqual(8, len(self.catalog["hair"]))
         self.assertEqual(32, len(self.catalog["creatures"]))
         self.assertEqual(66, len(self.catalog["equipment"]))
-        self.assertEqual(113, self.catalog["validation"]["files"])
+        self.assertEqual(123, self.catalog["validation"]["files"])
 
     def test_player_rigs_preserve_current_skeleton_and_budget(self) -> None:
         for model_id, entry in self.catalog["races"].items():
             with self.subTest(model=model_id):
                 self.assertEqual(65, entry["joints"])
-                self.assertGreaterEqual(entry["vertices"], 8_400)
-                self.assertLess(entry["vertices"], 10_500)
+                self.assertEqual("skinned", entry["wardrobe"])
+                self.assertGreaterEqual(entry["vertices"], 13_500)
+                self.assertLess(entry["vertices"], 14_500)
                 document = glb_document(ROOT / entry["path"])
                 self.assertEqual(65, len(document["skins"][0]["joints"]))
-                # Greyhaven intentionally has no extra silhouette mesh: its
-                # former brow box intersected the head in the creation view.
-                self.assertGreaterEqual(len(document["meshes"]), 3)
+                mesh_names = {mesh["name"] for mesh in document["meshes"]}
+                self.assertTrue({"Eyebrows", "Eyes", "Body", "Wardrobe_Shirt",
+                                 "Wardrobe_Pants", "Wardrobe_Boots"} <= mesh_names)
+
+    def test_native_hair_is_authored_geometry_in_head_local_space(self) -> None:
+        for hair_id, entry in self.catalog["hair"].items():
+            with self.subTest(hair=hair_id):
+                document = glb_document(ROOT / entry["path"])
+                self.assertEqual([], document.get("skins", []))
+                self.assertGreater(entry["vertices"], 400)
+                self.assertLess(entry["bounds"]["min"][1], .12)
+                self.assertLess(entry["bounds"]["max"][1], .31)
 
     def test_creatures_have_new_rigs_and_embedded_clips(self) -> None:
         expected_actor_types = set(range(204, 236))
@@ -105,6 +116,15 @@ class NativeGlbAssetsTest(unittest.TestCase):
                             *(image["uri"] for image in document.get("images", []) if "uri" in image),
                         ]:
                             self.assertTrue((path.parent / dependency).is_file(), dependency)
+                for resource in entry.get("hairStyles", []):
+                    self.assertTrue(resource.startswith("res://"), resource)
+                    self.assertTrue((CLIENT / resource.removeprefix("res://")).is_file(), resource)
+
+    def test_runtime_does_not_synthesize_placeholder_hair(self) -> None:
+        source = (CLIENT / "src/actors/replicated_actor_3d.gd").read_text()
+        self.assertNotIn("func _hair_piece", source)
+        self.assertIn('native_hair.name = "NativeHair"', source)
+        self.assertIn('model_config.get("hairStyles"', source)
 
     def test_character_preview_uses_player_model_registry(self) -> None:
         source = (CLIENT / "src/app/main.gd").read_text()

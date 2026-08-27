@@ -2,9 +2,17 @@
   "schemaVersion": 2,
   "models": {
     "luminous_female": {
-      "scene": "res://assets/actors/native/shared/Superhero_Female_FullBody.gltf",
+      "scene": "res://assets/actors/native/races/luminous_female.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "luminous",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -29,9 +37,17 @@
       }
     },
     "luminous_male": {
-      "scene": "res://assets/actors/native/shared/Superhero_Male_FullBody.gltf",
+      "scene": "res://assets/actors/native/races/luminous_male.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "luminous",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -59,6 +75,14 @@
       "scene": "res://assets/actors/native/races/votary_female.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "votary",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -86,6 +110,14 @@
       "scene": "res://assets/actors/native/races/votary_male.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "votary",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -113,6 +145,14 @@
       "scene": "res://assets/actors/native/races/glasswarden_female.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "glasswarden",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -140,6 +180,14 @@
       "scene": "res://assets/actors/native/races/glasswarden_male.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "glasswarden",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -167,6 +215,14 @@
       "scene": "res://assets/actors/native/races/orun_female.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "orun",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -194,6 +250,14 @@
       "scene": "res://assets/actors/native/races/orun_male.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "orun",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -221,6 +285,14 @@
       "scene": "res://assets/actors/native/races/greyhaven_female.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "greyhaven",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -248,6 +320,14 @@
       "scene": "res://assets/actors/native/races/greyhaven_male.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "greyhaven",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -275,6 +355,14 @@
       "scene": "res://assets/actors/native/races/ssarathi_female.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "ssarathi",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -302,6 +390,14 @@
       "scene": "res://assets/actors/native/races/ssarathi_male.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "ssarathi",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -329,6 +425,14 @@
       "scene": "res://assets/actors/native/races/stoneborn_female.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "stoneborn",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -356,6 +460,14 @@
       "scene": "res://assets/actors/native/races/stoneborn_male.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "stoneborn",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -383,6 +495,14 @@
       "scene": "res://assets/actors/native/races/mycelari_female.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "mycelari",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -410,6 +530,14 @@
       "scene": "res://assets/actors/native/races/mycelari_male.glb",
       "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
+      "culture": "mycelari",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
       "boneAliases": {
         "head": "Head"
       },
@@ -1167,210 +1295,128 @@
   "npcLooks": {
     "300": {
       "model": "luminous_female",
-      "equipmentVisuals": {
-        "3": 105,
-        "5": 105,
-        "7": 105
-      }
+      "equipmentVisuals": {}
     },
     "301": {
       "model": "luminous_female",
       "equipmentVisuals": {
         "0": 112,
         "1": 105,
-        "2": 105,
-        "3": 105,
-        "5": 109,
-        "7": 105
+        "2": 105
       }
     },
     "302": {
       "model": "luminous_female",
       "equipmentVisuals": {
-        "0": 108,
-        "3": 105,
-        "5": 105,
-        "7": 105
+        "0": 108
       }
     },
     "303": {
       "model": "luminous_female",
       "equipmentVisuals": {
         "0": 105,
-        "2": 102,
-        "3": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "304": {
       "model": "luminous_female",
       "equipmentVisuals": {
-        "0": 108,
-        "3": 105,
-        "5": 105,
-        "7": 105
+        "0": 108
       }
     },
     "305": {
       "model": "luminous_female",
-      "equipmentVisuals": {
-        "3": 105,
-        "5": 105,
-        "7": 105
-      }
+      "equipmentVisuals": {}
     },
     "306": {
       "model": "luminous_female",
-      "equipmentVisuals": {
-        "3": 105,
-        "5": 105,
-        "7": 105
-      }
+      "equipmentVisuals": {}
     },
     "307": {
       "model": "luminous_male",
-      "equipmentVisuals": {
-        "3": 105,
-        "5": 105,
-        "7": 105
-      }
+      "equipmentVisuals": {}
     },
     "308": {
       "model": "luminous_male",
       "equipmentVisuals": {
         "0": 112,
         "1": 105,
-        "2": 105,
-        "3": 105,
-        "5": 109,
-        "7": 105
+        "2": 105
       }
     },
     "309": {
       "model": "luminous_male",
       "equipmentVisuals": {
-        "0": 108,
-        "3": 105,
-        "5": 105,
-        "7": 105
+        "0": 108
       }
     },
     "310": {
       "model": "luminous_male",
       "equipmentVisuals": {
         "0": 105,
-        "2": 102,
-        "3": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "311": {
       "model": "luminous_male",
       "equipmentVisuals": {
-        "0": 108,
-        "3": 105,
-        "5": 105,
-        "7": 105
+        "0": 108
       }
     },
     "312": {
       "model": "luminous_male",
-      "equipmentVisuals": {
-        "3": 105,
-        "5": 105,
-        "7": 105
-      }
+      "equipmentVisuals": {}
     },
     "313": {
       "model": "luminous_male",
-      "equipmentVisuals": {
-        "3": 105,
-        "5": 105,
-        "7": 105
-      }
+      "equipmentVisuals": {}
     },
     "314": {
       "model": "votary_female",
       "equipmentVisuals": {
-        "0": 109,
-        "3": 106,
-        "4": 105,
-        "5": 106,
-        "6": 105
+        "0": 109
       }
     },
     "315": {
       "model": "votary_female",
       "equipmentVisuals": {
-        "0": 109,
-        "3": 106,
-        "4": 105,
-        "5": 106,
-        "6": 105
+        "0": 109
       }
     },
     "316": {
       "model": "votary_female",
       "equipmentVisuals": {
-        "0": 109,
-        "3": 106,
-        "4": 105,
-        "5": 106,
-        "6": 105
+        "0": 109
       }
     },
     "317": {
       "model": "votary_female",
       "equipmentVisuals": {
-        "0": 109,
-        "3": 106,
-        "4": 105,
-        "5": 106,
-        "6": 105
+        "0": 109
       }
     },
     "318": {
       "model": "votary_male",
       "equipmentVisuals": {
-        "0": 109,
-        "3": 106,
-        "4": 105,
-        "5": 106,
-        "6": 105
+        "0": 109
       }
     },
     "319": {
       "model": "votary_male",
       "equipmentVisuals": {
-        "0": 109,
-        "3": 106,
-        "4": 105,
-        "5": 106,
-        "6": 105
+        "0": 109
       }
     },
     "320": {
       "model": "votary_male",
       "equipmentVisuals": {
-        "0": 109,
-        "3": 106,
-        "4": 105,
-        "5": 106,
-        "6": 105
+        "0": 109
       }
     },
     "321": {
       "model": "votary_male",
       "equipmentVisuals": {
-        "0": 109,
-        "3": 106,
-        "4": 105,
-        "5": 106,
-        "6": 105
+        "0": 109
       }
     },
     "322": {
@@ -1378,12 +1424,7 @@
       "equipmentVisuals": {
         "0": 102,
         "1": 101,
-        "2": 101,
-        "3": 101,
-        "4": 101,
-        "5": 101,
-        "6": 101,
-        "7": 101
+        "2": 101
       }
     },
     "323": {
@@ -1391,12 +1432,7 @@
       "equipmentVisuals": {
         "0": 102,
         "1": 101,
-        "2": 101,
-        "3": 101,
-        "4": 101,
-        "5": 101,
-        "6": 101,
-        "7": 101
+        "2": 101
       }
     },
     "324": {
@@ -1404,12 +1440,7 @@
       "equipmentVisuals": {
         "0": 102,
         "1": 101,
-        "2": 101,
-        "3": 101,
-        "4": 101,
-        "5": 101,
-        "6": 101,
-        "7": 101
+        "2": 101
       }
     },
     "325": {
@@ -1417,12 +1448,7 @@
       "equipmentVisuals": {
         "0": 102,
         "1": 101,
-        "2": 101,
-        "3": 101,
-        "4": 101,
-        "5": 101,
-        "6": 101,
-        "7": 101
+        "2": 101
       }
     },
     "326": {
@@ -1430,12 +1456,7 @@
       "equipmentVisuals": {
         "0": 102,
         "1": 101,
-        "2": 101,
-        "3": 101,
-        "4": 101,
-        "5": 101,
-        "6": 101,
-        "7": 101
+        "2": 101
       }
     },
     "327": {
@@ -1443,12 +1464,7 @@
       "equipmentVisuals": {
         "0": 102,
         "1": 101,
-        "2": 101,
-        "3": 101,
-        "4": 101,
-        "5": 101,
-        "6": 101,
-        "7": 101
+        "2": 101
       }
     },
     "328": {
@@ -1456,12 +1472,7 @@
       "equipmentVisuals": {
         "0": 102,
         "1": 101,
-        "2": 101,
-        "3": 101,
-        "4": 101,
-        "5": 101,
-        "6": 101,
-        "7": 101
+        "2": 101
       }
     },
     "329": {
@@ -1469,12 +1480,7 @@
       "equipmentVisuals": {
         "0": 102,
         "1": 101,
-        "2": 101,
-        "3": 101,
-        "4": 101,
-        "5": 101,
-        "6": 101,
-        "7": 101
+        "2": 101
       }
     },
     "330": {
@@ -1482,12 +1488,7 @@
       "equipmentVisuals": {
         "0": 106,
         "1": 103,
-        "2": 103,
-        "3": 103,
-        "4": 103,
-        "5": 103,
-        "6": 103,
-        "7": 103
+        "2": 103
       }
     },
     "331": {
@@ -1495,24 +1496,14 @@
       "equipmentVisuals": {
         "0": 106,
         "1": 103,
-        "2": 103,
-        "3": 103,
-        "4": 103,
-        "5": 103,
-        "6": 103,
-        "7": 103
+        "2": 103
       }
     },
     "332": {
       "model": "orun_female",
       "equipmentVisuals": {
         "0": 106,
-        "2": 103,
-        "3": 103,
-        "4": 103,
-        "5": 103,
-        "6": 103,
-        "7": 103
+        "2": 103
       }
     },
     "333": {
@@ -1520,12 +1511,7 @@
       "equipmentVisuals": {
         "0": 106,
         "1": 103,
-        "2": 103,
-        "3": 103,
-        "4": 103,
-        "5": 103,
-        "6": 103,
-        "7": 103
+        "2": 103
       }
     },
     "334": {
@@ -1533,12 +1519,7 @@
       "equipmentVisuals": {
         "0": 106,
         "1": 103,
-        "2": 103,
-        "3": 103,
-        "4": 103,
-        "5": 103,
-        "6": 103,
-        "7": 103
+        "2": 103
       }
     },
     "335": {
@@ -1546,12 +1527,7 @@
       "equipmentVisuals": {
         "0": 106,
         "1": 103,
-        "2": 103,
-        "3": 103,
-        "4": 103,
-        "5": 103,
-        "6": 103,
-        "7": 103
+        "2": 103
       }
     },
     "336": {
@@ -1559,24 +1535,14 @@
       "equipmentVisuals": {
         "0": 106,
         "1": 103,
-        "2": 103,
-        "3": 103,
-        "4": 103,
-        "5": 103,
-        "6": 103,
-        "7": 103
+        "2": 103
       }
     },
     "337": {
       "model": "orun_male",
       "equipmentVisuals": {
         "0": 106,
-        "2": 103,
-        "3": 103,
-        "4": 103,
-        "5": 103,
-        "6": 103,
-        "7": 103
+        "2": 103
       }
     },
     "338": {
@@ -1584,12 +1550,7 @@
       "equipmentVisuals": {
         "0": 106,
         "1": 103,
-        "2": 103,
-        "3": 103,
-        "4": 103,
-        "5": 103,
-        "6": 103,
-        "7": 103
+        "2": 103
       }
     },
     "339": {
@@ -1597,12 +1558,7 @@
       "equipmentVisuals": {
         "0": 106,
         "1": 103,
-        "2": 103,
-        "3": 103,
-        "4": 103,
-        "5": 103,
-        "6": 103,
-        "7": 103
+        "2": 103
       }
     },
     "340": {
@@ -1610,12 +1566,7 @@
       "equipmentVisuals": {
         "0": 104,
         "1": 102,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "341": {
@@ -1623,12 +1574,7 @@
       "equipmentVisuals": {
         "0": 104,
         "1": 102,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "342": {
@@ -1636,24 +1582,14 @@
       "equipmentVisuals": {
         "0": 104,
         "1": 102,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "343": {
       "model": "greyhaven_female",
       "equipmentVisuals": {
         "0": 113,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "344": {
@@ -1661,24 +1597,14 @@
       "equipmentVisuals": {
         "0": 104,
         "1": 102,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "345": {
       "model": "greyhaven_female",
       "equipmentVisuals": {
         "0": 104,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "346": {
@@ -1686,12 +1612,7 @@
       "equipmentVisuals": {
         "0": 104,
         "1": 102,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "347": {
@@ -1699,12 +1620,7 @@
       "equipmentVisuals": {
         "0": 104,
         "1": 102,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "348": {
@@ -1712,24 +1628,14 @@
       "equipmentVisuals": {
         "0": 104,
         "1": 102,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "349": {
       "model": "greyhaven_male",
       "equipmentVisuals": {
         "0": 113,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "350": {
@@ -1737,24 +1643,14 @@
       "equipmentVisuals": {
         "0": 104,
         "1": 102,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "351": {
       "model": "greyhaven_male",
       "equipmentVisuals": {
         "0": 104,
-        "2": 102,
-        "3": 102,
-        "4": 102,
-        "5": 102,
-        "6": 102,
-        "7": 102
+        "2": 102
       }
     },
     "352": {
@@ -1762,12 +1658,7 @@
       "equipmentVisuals": {
         "0": 107,
         "1": 104,
-        "2": 104,
-        "3": 104,
-        "4": 104,
-        "5": 104,
-        "6": 104,
-        "7": 104
+        "2": 104
       }
     },
     "353": {
@@ -1775,12 +1666,7 @@
       "equipmentVisuals": {
         "0": 107,
         "1": 104,
-        "2": 104,
-        "3": 104,
-        "4": 104,
-        "5": 104,
-        "6": 104,
-        "7": 104
+        "2": 104
       }
     },
     "354": {
@@ -1788,12 +1674,7 @@
       "equipmentVisuals": {
         "0": 107,
         "1": 104,
-        "2": 104,
-        "3": 104,
-        "4": 104,
-        "5": 104,
-        "6": 104,
-        "7": 104
+        "2": 104
       }
     },
     "355": {
@@ -1801,12 +1682,7 @@
       "equipmentVisuals": {
         "0": 107,
         "1": 104,
-        "2": 104,
-        "3": 104,
-        "4": 104,
-        "5": 104,
-        "6": 104,
-        "7": 104
+        "2": 104
       }
     },
     "356": {
@@ -1814,12 +1690,7 @@
       "equipmentVisuals": {
         "0": 107,
         "1": 104,
-        "2": 104,
-        "3": 104,
-        "4": 104,
-        "5": 104,
-        "6": 104,
-        "7": 104
+        "2": 104
       }
     },
     "357": {
@@ -1827,12 +1698,7 @@
       "equipmentVisuals": {
         "0": 107,
         "1": 104,
-        "2": 104,
-        "3": 104,
-        "4": 104,
-        "5": 104,
-        "6": 104,
-        "7": 104
+        "2": 104
       }
     },
     "358": {
@@ -1840,12 +1706,7 @@
       "equipmentVisuals": {
         "0": 107,
         "1": 104,
-        "2": 104,
-        "3": 104,
-        "4": 104,
-        "5": 104,
-        "6": 104,
-        "7": 104
+        "2": 104
       }
     },
     "359": {
@@ -1853,12 +1714,7 @@
       "equipmentVisuals": {
         "0": 107,
         "1": 104,
-        "2": 104,
-        "3": 104,
-        "4": 104,
-        "5": 104,
-        "6": 104,
-        "7": 104
+        "2": 104
       }
     },
     "360": {
@@ -1866,12 +1722,7 @@
       "equipmentVisuals": {
         "0": 107,
         "1": 104,
-        "2": 104,
-        "3": 104,
-        "4": 104,
-        "5": 104,
-        "6": 104,
-        "7": 104
+        "2": 104
       }
     },
     "361": {
@@ -1879,12 +1730,7 @@
       "equipmentVisuals": {
         "0": 107,
         "1": 104,
-        "2": 104,
-        "3": 104,
-        "4": 104,
-        "5": 104,
-        "6": 104,
-        "7": 104
+        "2": 104
       }
     }
   }

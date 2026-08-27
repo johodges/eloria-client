@@ -7,14 +7,17 @@ creature generators.
 
 | Library | Coverage | Runtime contract |
 | --- | ---: | --- |
-| Non-Luminous player races | 14 gender variants | Current 65-joint player rig and Universal animation library; 8.5k-9.3k vertices |
+| Player cultures | 16 race/gender variants | Original 65-joint player rig, skinned default wardrobe, and Universal animation library; 13.7k-14.2k vertices |
+| Hairstyles | 8 gender-localized assets | Four original Quaternius styles with authored topology and texture detail |
 | Creatures | 32 species | New 21-joint rig with 7 embedded clips per GLB |
-| Equipment | 63 items across 8 parts | Independent GLBs attached through `BoneAttachment3D` |
-| Concept NPC looks | 62 actor types | Player models combined with culture- and role-specific native equipment |
+| Equipment | 66 items across 8 parts | Independent GLBs attached through `BoneAttachment3D` |
+| Concept NPC looks | 62 actor types | Skinned culture wardrobe plus role-specific held and back props |
 
-The palettes and silhouette features were reviewed against the named Nymara
-character, armor, wildlife, guardian, and regional creature sheets. The three
-PNG contact sheets provide a dependency-free review surface for every output.
+The palettes and integrated silhouette features were reviewed against the named
+Nymara character, armor, wildlife, guardian, and regional creature sheets. The
+software contact sheets provide a dependency-free review surface, while the
+Godot rendered-character test drives the real creation menu and rejects rigid
+default equipment, missing native hair, and oversized placeholder geometry.
 
 Regenerate and validate with:
 
@@ -24,4 +27,6 @@ python3 godot-client/tests/test_native_glb_assets.py -v
 python3 eloria-assets/tools/render_native_glb_preview.py \
   godot-client/assets/actors/native/races/*.glb \
   --output eloria-assets/qa/native-glb/races.png --columns 4
+godot --path godot-client --script \
+  res://tests/integration/rendered_character_creation_models.gd
 ```

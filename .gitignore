@@ -1,6 +1,12 @@
 *.o
 __pycache__/
 *.py[cod]
+godot-client/.godot/
+godot-client/test-artifacts/
+godot-client/**/*.import
+godot-client/**/*.uid
+godot-client/assets/actors/native/races/* *.png
+godot-client/assets/actors/native/hair/* *.png
 .deps/
 make.conf
 el.linux.bin

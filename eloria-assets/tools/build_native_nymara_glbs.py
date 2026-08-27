@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+from functools import lru_cache
 import io
 import json
 import math
@@ -26,22 +27,49 @@ COMPONENT_TYPES = {np.dtype("uint8"): 5121, np.dtype("int16"): 5122,
 TYPE_WIDTHS = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT4": 16}
 
 RACES = {
+    "luminous": {"label": "Luminous", "color": (196, 139, 103),
+                  "accent": (48, 151, 164), "shape": (1., 1., 1., 1.),
+                  "feature": "none", "preserve_body": True,
+                  "wardrobe": ((42, 126, 142), (42, 55, 72), (78, 55, 39),
+                                (221, 190, 101))},
     "votary": {"label": "Whitehorn Votary", "color": (139, 173, 188),
-                "accent": (226, 231, 228), "shape": (1.075, 1.035, 1.02, .97), "feature": "ears"},
+                "accent": (226, 231, 228), "shape": (1., 1., 1., 1.),
+                "feature": "horns",
+                "wardrobe": ((113, 145, 164), (76, 94, 108), (79, 91, 99),
+                              (218, 232, 235))},
     "glasswarden": {"label": "Glasswarden", "color": (121, 91, 158),
-                     "accent": (103, 184, 191), "shape": (.965, 1.10, 1.03, 1.03), "feature": "crystal"},
+                     "accent": (103, 184, 191), "shape": (1., 1., 1., 1.),
+                     "feature": "crystal",
+                     "wardrobe": ((54, 48, 84), (42, 44, 62), (83, 57, 39),
+                                   (187, 145, 63))},
     "orun": {"label": "Orun", "color": (172, 99, 47),
-             "accent": (219, 166, 72), "shape": (1.02, 1.04, 1.01, .98), "feature": "mane"},
+             "accent": (219, 166, 72), "shape": (1., 1., 1., 1.),
+             "feature": "none",
+             "wardrobe": ((146, 76, 39), (85, 64, 48), (82, 54, 35),
+                           (49, 142, 145))},
     "greyhaven": {"label": "Greyhaven", "color": (62, 86, 101),
-                   "accent": (154, 174, 171), "shape": (1.04, 1.10, 1.08, 1.04), "feature": "brow"},
+                   "accent": (154, 174, 171), "shape": (1., 1., 1., 1.),
+                   "feature": "none",
+                   "wardrobe": ((225, 220, 202), (41, 59, 75), (65, 49, 39),
+                                 (171, 137, 70))},
     "ssarathi": {"label": "Ssarathi", "color": (52, 116, 91),
-                  "accent": (184, 151, 70), "shape": (1.075, .98, .96, 1.08), "feature": "scaled"},
+                  "accent": (184, 151, 70), "shape": (1., 1., 1., 1.),
+                  "feature": "scaled",
+                  "wardrobe": ((43, 112, 86), (34, 76, 62), (71, 63, 42),
+                                (189, 153, 67))},
     "stoneborn": {"label": "Stoneborn", "color": (118, 105, 91),
-                   "accent": (103, 184, 191), "shape": (1.05, 1.16, 1.10, 1.04), "feature": "stone"},
+                   "accent": (103, 184, 191), "shape": (1., 1., 1., 1.),
+                   "feature": "stone",
+                   "wardrobe": ((91, 86, 80), (65, 67, 68), (62, 55, 48),
+                                 (84, 189, 199))},
     "mycelari": {"label": "Mycelari", "color": (116, 137, 91),
-                  "accent": (211, 151, 98), "shape": (1.02, 1.04, 1.04, 1.10), "feature": "fungal"},
+                  "accent": (211, 151, 98), "shape": (1., 1., 1., 1.),
+                  "feature": "fungal",
+                  "wardrobe": ((88, 112, 70), (62, 75, 53), (71, 54, 39),
+                                (207, 143, 89))},
 }
 PLAYER_ACTOR_TYPES = {
+    0: "luminous_female", 1: "luminous_male",
     2: "votary_female", 3: "votary_male", 4: "glasswarden_female", 5: "glasswarden_male",
     37: "orun_female", 38: "orun_male", 39: "greyhaven_female", 40: "greyhaven_male",
     41: "ssarathi_female", 42: "ssarathi_male", 79: "stoneborn_female", 80: "stoneborn_male",
@@ -211,23 +239,33 @@ class GLB:
         self.doc["accessors"].append(spec)
         return len(self.doc["accessors"]) - 1
 
+    def texture(self, name: str, png: bytes) -> int:
+        view = self.bytes_view(png)
+        self.doc.setdefault("images", []).append(
+            {"name": name, "bufferView": view, "mimeType": "image/png"})
+        image = len(self.doc["images"]) - 1
+        self.doc.setdefault("samplers", []).append(
+            {"magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497})
+        sampler = len(self.doc["samplers"]) - 1
+        self.doc.setdefault("textures", []).append({"source": image, "sampler": sampler})
+        return len(self.doc["textures"]) - 1
+
     def material(self, name: str, color: tuple[int, int, int], *, metallic: float = 0.,
                  roughness: float = .78, emissive: tuple[int, int, int] | None = None,
-                 texture_png: bytes | None = None, double_sided: bool = False) -> int:
+                 texture_png: bytes | None = None, normal_png: bytes | None = None,
+                 metallic_roughness_png: bytes | None = None,
+                 double_sided: bool = False) -> int:
         factor = [c / 255. for c in color] + [1.]
         pbr = {"baseColorFactor": factor, "metallicFactor": metallic,
                "roughnessFactor": roughness}
         if texture_png is not None:
-            view = self.bytes_view(texture_png)
-            self.doc.setdefault("images", []).append(
-                {"name": name + " Atlas", "bufferView": view, "mimeType": "image/png"})
-            image = len(self.doc["images"]) - 1
-            self.doc.setdefault("samplers", []).append(
-                {"magFilter": 9729, "minFilter": 9987, "wrapS": 10497, "wrapT": 10497})
-            sampler = len(self.doc["samplers"]) - 1
-            self.doc.setdefault("textures", []).append({"source": image, "sampler": sampler})
-            pbr["baseColorTexture"] = {"index": len(self.doc["textures"]) - 1}
+            pbr["baseColorTexture"] = {"index": self.texture(name + " Base Color", texture_png)}
+        if metallic_roughness_png is not None:
+            pbr["metallicRoughnessTexture"] = {
+                "index": self.texture(name + " Roughness", metallic_roughness_png)}
         material = {"name": name, "pbrMetallicRoughness": pbr, "doubleSided": double_sided}
+        if normal_png is not None:
+            material["normalTexture"] = {"index": self.texture(name + " Normal", normal_png)}
         if emissive is not None:
             material["emissiveFactor"] = [c / 255. for c in emissive]
         self.doc["materials"].append(material)
@@ -319,6 +357,90 @@ def recolored_texture(path: Path, base: tuple[int, int, int], accent: tuple[int,
     return encoded.getvalue()
 
 
+@lru_cache(maxsize=64)
+def resized_texture(path: Path, size: int = 512) -> bytes:
+    image = Image.open(path).convert("RGBA")
+    if max(image.size) > size:
+        image.thumbnail((size, size), Image.Resampling.LANCZOS)
+    encoded = io.BytesIO()
+    image.save(encoded, format="PNG", optimize=True)
+    return encoded.getvalue()
+
+
+@lru_cache(maxsize=64)
+def neutral_texture(path: Path, *, floor: float = .34, size: int = 512) -> bytes:
+    """Retain authored texture detail while making it safe for runtime tinting."""
+    image = Image.open(path).convert("RGBA")
+    if max(image.size) > size:
+        image.thumbnail((size, size), Image.Resampling.LANCZOS)
+    source = np.asarray(image).astype(np.float32)
+    luminance = (source[..., :3] * np.array([.2126, .7152, .0722])).sum(axis=2) / 255.
+    luminance = floor + (1. - floor) * luminance
+    rgb = np.repeat((luminance * 255.)[..., None], 3, axis=2)
+    out = np.dstack((np.clip(rgb, 0, 255).astype(np.uint8), source[..., 3].astype(np.uint8)))
+    encoded = io.BytesIO()
+    Image.fromarray(out, "RGBA").save(encoded, format="PNG", optimize=True)
+    return encoded.getvalue()
+
+
+def source_texture(document: dict, directory: Path, material_index: int,
+                   texture_key: str) -> bytes | None:
+    material = document["materials"][material_index]
+    if texture_key == "normalTexture":
+        texture_spec = material.get("normalTexture")
+    else:
+        texture_spec = material.get("pbrMetallicRoughness", {}).get(texture_key)
+    if texture_spec is None:
+        return None
+    texture = document["textures"][texture_spec["index"]]
+    image = document["images"][texture["source"]]
+    path = directory / image["uri"]
+    if not path.is_file():
+        path = directory.parent / image["uri"]
+    return resized_texture(path)
+
+
+def quaternion_matrix(rotation: list[float]) -> np.ndarray:
+    x, y, z, w = rotation
+    length = math.sqrt(x*x + y*y + z*z + w*w)
+    if length < 1e-8:
+        return np.eye(4, dtype=np.float64)
+    x, y, z, w = x/length, y/length, z/length, w/length
+    return np.array([
+        [1-2*(y*y+z*z), 2*(x*y-z*w), 2*(x*z+y*w), 0],
+        [2*(x*y+z*w), 1-2*(x*x+z*z), 2*(y*z-x*w), 0],
+        [2*(x*z-y*w), 2*(y*z+x*w), 1-2*(x*x+y*y), 0],
+        [0, 0, 0, 1],
+    ], dtype=np.float64)
+
+
+def node_matrix(node: dict) -> np.ndarray:
+    if "matrix" in node:
+        return np.asarray(node["matrix"], dtype=np.float64).reshape(4, 4).T
+    translation = np.eye(4, dtype=np.float64)
+    translation[:3, 3] = np.asarray(node.get("translation", [0, 0, 0]), dtype=np.float64)
+    rotation = quaternion_matrix(node.get("rotation", [0, 0, 0, 1]))
+    scale = np.eye(4, dtype=np.float64)
+    scale[np.arange(3), np.arange(3)] = np.asarray(node.get("scale", [1, 1, 1]), dtype=np.float64)
+    return translation @ rotation @ scale
+
+
+def global_node_matrix(document: dict, node_index: int) -> np.ndarray:
+    parents = {}
+    for parent, node in enumerate(document["nodes"]):
+        for child in node.get("children", []):
+            parents[child] = parent
+    chain = []
+    current = node_index
+    while current is not None:
+        chain.append(current)
+        current = parents.get(current)
+    result = np.eye(4, dtype=np.float64)
+    for index in reversed(chain):
+        result = result @ node_matrix(document["nodes"][index])
+    return result
+
+
 def deform_player(positions: np.ndarray, bounds: tuple[np.ndarray, np.ndarray],
                   shape: tuple[float, float, float, float], gender: str) -> np.ndarray:
     low, high = bounds
@@ -329,55 +451,96 @@ def deform_player(positions: np.ndarray, bounds: tuple[np.ndarray, np.ndarray],
     width = np.where(t < .48, hips, width)
     width = np.where((t >= .48) & (t < .78), shoulders, width)
     width = np.where(t >= .78, head, width)
-    width *= .965 if gender == "female" else 1.025
     result[:, 0] *= width
     result[:, 2] *= .98 + (width - 1.) * .35
     result[:, 1] = low[1] + (result[:, 1] - low[1]) * height
     return result
 
 
+def deform_player_normals(normals: np.ndarray, positions: np.ndarray,
+                          bounds: tuple[np.ndarray, np.ndarray],
+                          shape: tuple[float, float, float, float], gender: str) -> np.ndarray:
+    low, high = bounds
+    height, shoulders, hips, head = shape
+    t = np.clip((positions[:, 1] - low[1]) / max(1e-5, high[1] - low[1]), 0., 1.)
+    width = np.ones(len(positions), dtype=np.float32)
+    width = np.where(t < .48, hips, width)
+    width = np.where((t >= .48) & (t < .78), shoulders, width)
+    width = np.where(t >= .78, head, width)
+    scales = np.column_stack((width, np.full(len(width), height),
+                              .98 + (width - 1.) * .35))
+    result = normals.astype(np.float32) / scales
+    result /= np.maximum(np.linalg.norm(result, axis=1, keepdims=True), 1e-6)
+    return result
+
+
+def skinned_subset(positions: np.ndarray, normals: np.ndarray, uvs: np.ndarray,
+                   joints: np.ndarray, weights: np.ndarray, faces: np.ndarray,
+                   face_mask: np.ndarray, offset: float):
+    selected = faces[face_mask]
+    if not len(selected):
+        empty = np.empty((0, 3), dtype=np.float32)
+        return (empty, empty.copy(), np.empty((0, 2), dtype=np.float32),
+                np.empty(0, dtype=np.uint32), np.empty((0, 4), dtype=np.uint16),
+                np.empty((0, 4), dtype=np.float32))
+    unique, remapped = np.unique(selected.reshape(-1), return_inverse=True)
+    garment_positions = positions[unique] + normals[unique] * offset
+    return (garment_positions.astype(np.float32), normals[unique].astype(np.float32),
+            uvs[unique].astype(np.float32), remapped.astype(np.uint32),
+            joints[unique].astype(np.uint16), weights[unique].astype(np.float32))
+
+
+def influence(weights: np.ndarray, joints: np.ndarray, selected_joints: set[int]) -> np.ndarray:
+    return np.where(np.isin(joints, list(selected_joints)), weights, 0.).sum(axis=1)
+
+
 def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[int, int, int],
                      accent: tuple[int, int, int]):
     mesh = ShapeMesh()
     head = joint_by_name["Head"]
-    spine = joint_by_name["spine_03"]
     pelvis = joint_by_name["pelvis"]
-    if feature == "ears":
-        # Whitehorn horns begin inside the temple silhouette.  The previous
-        # shoulder-height cones began outside the head and read as floating
-        # triangles once the bind pose was animated.
-        mesh.cone((-.095, 1.735, .005), (-.225, 1.905, .025), .070, head, 1)
-        mesh.cone((.095, 1.735, .005), (.225, 1.905, .025), .070, head, 1)
+    if feature == "horns":
+        # Broad roots begin inside the temples and sweep behind the skull. The
+        # continuous rings replace the visibly detached one-triangle cones.
+        for side in (-1., 1.):
+            mesh.tapered_curve([
+                (side * .070, 1.700, -.010),
+                (side * .145, 1.755, -.035),
+                (side * .215, 1.815, -.105),
+                (side * .235, 1.875, -.185),
+            ], [.057, .050, .031, .006], head, 1, 14)
     elif feature == "crystal":
-        # Keep the Glasswarden facets close to the upper back so their bases
-        # intersect the torso instead of hovering beyond the shoulders.
-        for x in (-.12, .12):
-            mesh.cone((x, 1.535, -.035), (x * 1.28, 1.715, -.12), .060, spine, 1)
-        mesh.cone((0., 1.59, -.045), (0., 1.835, -.145), .070, spine, 1)
-    elif feature == "mane":
-        for i in range(7):
-            angle = (i - 3) * .27
-            mesh.cone((0., 1.62, .06), (math.sin(angle) * .22, 1.85, .06 + math.cos(angle) * .12),
-                      .055, head, 1)
-    elif feature == "brow":
-        # Greyhaven's former box crossed the entire skull.  Their maritime
-        # identity now comes from the authored material and wearable variants.
-        pass
+        # Small facial inlays echo the concept crystals without floating beyond
+        # the shoulders or competing with the original humanoid silhouette.
+        mesh.sphere((0., 1.716, .091), (.070, .115, .035), head, 1, 4, 8)
+        for side in (-1., 1.):
+            mesh.sphere((side * .073, 1.675, .073), (.045, .075, .030),
+                        head, 1, 3, 7)
     elif feature == "scaled":
-        for y in (1.58, 1.69, 1.80):
-            mesh.cone((0., y, -.06), (0., y + .10, -.20), .06, head, 1)
-        # The source humanoid faces positive Z; extend the tail behind it.
-        mesh.curved_tail((0., .92, -.10), (0., .22, -.64), pelvis, 0)
+        # A low reptilian muzzle and embedded dorsal crest carry the Ssarathi
+        # profile. The source humanoid faces positive Z, so the tail runs -Z.
+        mesh.sphere((0., 1.655, .120), (.145, .105, .185), head, 0, 6, 12)
+        for y, size in ((1.615, .045), (1.705, .055), (1.790, .045)):
+            mesh.cone((0., y, -.055), (0., y + .075, -.145), size, head, 1, 12)
+        mesh.tapered_curve([
+            (0., .930, -.115), (0., .825, -.285), (0., .650, -.500),
+            (.055, .470, -.700), (.020, .285, -.875),
+        ], [.105, .100, .080, .050, .009], pelvis, 0, 14)
     elif feature == "stone":
-        # A compact crown intersects the scalp; the old shoulder shards were
-        # detached from the body and looked identical to missing-mesh markers.
-        for x in (-.09, .09):
-            mesh.cone((x, 1.735, .005), (x * 1.18, 1.925, .045), .060, head, 1)
+        # Faceted brow and crown plates intersect the underlying scalp. No
+        # separate shoulder shards remain to resemble missing-mesh markers.
+        mesh.sphere((0., 1.704, .078), (.185, .060, .050), head, 0, 3, 8)
+        for x, height in ((-.080, .135), (0., .170), (.080, .135)):
+            mesh.sphere((x, 1.785 + height * .20, -.010),
+                        (.085, height, .090), head, 1, 3, 7)
     elif feature == "fungal":
-        # One stemmed cap reads as anatomy/headwear.  Detached shoulder caps
-        # were removed because their gaps were conspicuous during animation.
-        mesh.cylinder((0., 1.705, .01), (0., 1.815, .01), .055, head, 0, 14)
-        mesh.sphere((0., 1.835, .01), (.39, .115, .32), head, 1, 8, 20)
+        # A single scalp-rooted stem and low-poly cap reads as one intentional
+        # fungal crown. Detached shoulder mushrooms are deliberately absent.
+        mesh.tapered_curve([(0., 1.705, -.015), (.010, 1.760, -.020),
+                            (-.008, 1.820, -.018)], [.068, .060, .048],
+                           head, 0, 14)
+        mesh.sphere((-.008, 1.810, -.018), (.370, .135, .310),
+                    head, 1, 6, 18)
     return mesh.arrays()
 
 
@@ -402,36 +565,137 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     body_primitive = document["meshes"][2]["primitives"][0]
     body_positions = read_accessor(document, binary, body_primitive["attributes"]["POSITION"])
     bounds = (body_positions.min(axis=0), body_positions.max(axis=0))
-    texture_uri = document["images"][document["textures"][
+    base_uri = document["images"][document["textures"][
         document["materials"][2]["pbrMetallicRoughness"]["baseColorTexture"]["index"]]["source"]]["uri"]
-    texture = recolored_texture(source.parent / texture_uri, config["color"], config["accent"], config["feature"])
-    materials = [
-        glb.material(config["label"] + " Hair", tuple(max(20, c // 3) for c in config["color"]), roughness=.86),
-        glb.material(config["label"] + " Eyes", config["accent"], roughness=.24, emissive=tuple(c // 5 for c in config["accent"])),
-        glb.material(config["label"] + " Body", config["color"], roughness=.74, texture_png=texture),
-        glb.material(config["label"] + " Silhouette", config["color"], roughness=.72),
-        glb.material(config["label"] + " Accent", config["accent"], metallic=.15, roughness=.42,
-                     emissive=tuple(c // 8 for c in config["accent"])),
-    ]
+    if config.get("preserve_body"):
+        body_texture = resized_texture(source.parent / base_uri)
+    else:
+        body_texture = recolored_texture(
+            source.parent / base_uri, config["color"], config["accent"], config["feature"])
+    hair_base = source_texture(document, source.parent, 0, "baseColorTexture")
+    eye_base = source_texture(document, source.parent, 1, "baseColorTexture")
+    materials = {
+        "eyebrows": glb.material(
+            config["label"] + " Eyebrows", (255, 255, 255), roughness=.82,
+            texture_png=neutral_texture(source.parent / document["images"][document["textures"][
+                document["materials"][0]["pbrMetallicRoughness"]["baseColorTexture"]["index"]]["source"]]["uri"])
+                if hair_base else None,
+            normal_png=source_texture(document, source.parent, 0, "normalTexture"),
+            double_sided=True),
+        "eyes": glb.material(
+            config["label"] + " Eyes", (255, 255, 255), roughness=.30,
+            texture_png=neutral_texture(source.parent / document["images"][document["textures"][
+                document["materials"][1]["pbrMetallicRoughness"]["baseColorTexture"]["index"]]["source"]]["uri"], floor=.62)
+                if eye_base else None,
+            normal_png=source_texture(document, source.parent, 1, "normalTexture"),
+            emissive=tuple(c // 16 for c in config["accent"]), double_sided=True),
+        "body": glb.material(
+            config["label"] + " Body", (255, 255, 255), roughness=.78,
+            texture_png=body_texture,
+            normal_png=source_texture(document, source.parent, 2, "normalTexture"),
+            metallic_roughness_png=source_texture(
+                document, source.parent, 2, "metallicRoughnessTexture"),
+            double_sided=True),
+        "feature": glb.material(config["label"] + " Integrated Feature",
+                                config["color"], roughness=.76),
+        "accent": glb.material(config["label"] + " Integrated Accent",
+                               config["accent"], metallic=.12, roughness=.46,
+                               emissive=tuple(c // 18 for c in config["accent"])),
+    }
+    shirt, pants, boots, trim = config["wardrobe"]
+    materials.update({
+        "shirt": glb.material(config["label"] + " Shirt", shirt, roughness=.88),
+        "shirt_trim": glb.material(config["label"] + " Shirt Trim", trim,
+                                   metallic=.22, roughness=.52),
+        "pants": glb.material(config["label"] + " Pants", pants, roughness=.91),
+        "pants_trim": glb.material(config["label"] + " Pants Trim", trim,
+                                   metallic=.12, roughness=.60),
+        "boots": glb.material(config["label"] + " Boots", boots, roughness=.82),
+        "boots_trim": glb.material(config["label"] + " Boots Trim", trim,
+                                   metallic=.18, roughness=.48),
+        "headwear": glb.material(config["label"] + " Headwear", shirt, roughness=.88),
+        "headwear_trim": glb.material(config["label"] + " Headwear Trim", trim,
+                                      metallic=.20, roughness=.50),
+    })
     vertices = triangles = 0
+    body_arrays = None
     for mesh_index, node_index in enumerate((65, 66, 67)):
         source_primitive = document["meshes"][mesh_index]["primitives"][0]
         attrs = source_primitive["attributes"]
-        positions = deform_player(read_accessor(document, binary, attrs["POSITION"]), bounds,
-                                  config["shape"], gender)
-        normals = read_accessor(document, binary, attrs["NORMAL"]).astype("float32")
+        source_positions = read_accessor(document, binary, attrs["POSITION"])
+        positions = deform_player(source_positions, bounds, config["shape"], gender)
+        normals = deform_player_normals(
+            read_accessor(document, binary, attrs["NORMAL"]), source_positions,
+            bounds, config["shape"], gender)
         uvs = read_accessor(document, binary, attrs["TEXCOORD_0"]).astype("float32")
         joints = read_accessor(document, binary, attrs["JOINTS_0"]).astype("uint16")
         weights = read_accessor(document, binary, attrs["WEIGHTS_0"]).astype("float32")
         indices = read_accessor(document, binary, source_primitive["indices"]).astype("uint32")
-        primitive = glb.primitive(positions, normals, uvs, indices, materials[mesh_index],
+        material = (materials["eyebrows"], materials["eyes"], materials["body"])[mesh_index]
+        primitive = glb.primitive(positions, normals, uvs, indices, material,
                                   joints=joints, weights=weights)
-        glb.doc["meshes"].append({"name": document["meshes"][mesh_index].get("name", f"Mesh{mesh_index}"),
+        canonical_name = ("Eyebrows", "Eyes", "Body")[mesh_index]
+        glb.doc["meshes"].append({"name": canonical_name,
                                   "primitives": [primitive]})
+        glb.doc["nodes"][node_index]["name"] = canonical_name
         glb.doc["nodes"][node_index]["mesh"] = len(glb.doc["meshes"]) - 1
         glb.doc["nodes"][node_index]["skin"] = 0
         vertices += len(positions)
         triangles += len(indices) // 3
+        if mesh_index == 2:
+            body_arrays = (positions, normals, uvs, joints, weights,
+                           indices.reshape(-1, 3))
+
+    # Default clothing is copied from the original body surface, offset by only
+    # millimetres and retaining the exact skin weights. It therefore follows all
+    # 65 joints instead of moving as one rigid chest/pelvis attachment.
+    positions, normals, uvs, joints, weights, faces = body_arrays
+    centers = positions[faces].mean(axis=1)
+    y = centers[:, 1]
+    x = np.abs(centers[:, 0])
+    z = centers[:, 2]
+    by_name = lambda *names: {joint_by_name[name] for name in names}
+    shirt_score = influence(weights, joints, by_name(
+        "pelvis", "spine_01", "spine_02", "spine_03", "clavicle_l", "clavicle_r",
+        "upperarm_l", "upperarm_r"))
+    pants_score = influence(weights, joints, by_name(
+        "pelvis", "thigh_l", "thigh_r", "calf_l", "calf_r"))
+    boots_score = influence(weights, joints, by_name(
+        "calf_l", "calf_r", "foot_l", "foot_r", "ball_l", "ball_r",
+        "ball_leaf_l", "ball_leaf_r"))
+    head_score = influence(weights, joints, by_name("Head"))
+    shirt_mask = ((shirt_score[faces].mean(axis=1) > .30) & (y > 1.015) & (y < 1.535))
+    pants_mask = ((pants_score[faces].mean(axis=1) > .30) & (y > .105) & (y < 1.055))
+    boots_mask = ((boots_score[faces].mean(axis=1) > .28) & (y < .405))
+    shirt_trim = shirt_mask & (((y > 1.015) & (y < 1.080)) |
+                               ((x > .285) & (y > 1.345)) |
+                               ((y > 1.435) & (x < .145) & (z > .045)))
+    pants_trim = pants_mask & (y > .965) & (y < 1.045)
+    boots_trim = boots_mask & (y > .330) & (y < .410)
+    head_band = ((head_score[faces].mean(axis=1) > .45) &
+                 (y > 1.655) & (y < 1.710) & (z < .075))
+    head_cap = ((head_score[faces].mean(axis=1) > .45) &
+                (y > 1.690) & (z < .050))
+
+    def add_skinned(name: str, mask: np.ndarray, offset: float, material: int) -> None:
+        nonlocal vertices, triangles
+        arrays = skinned_subset(positions, normals, uvs, joints, weights, faces, mask, offset)
+        if not len(arrays[0]):
+            return
+        primitive = glb.primitive(*arrays[:4], material, joints=arrays[4], weights=arrays[5])
+        glb.mesh_node(name, [primitive], skin=0, parent=68)
+        vertices += len(arrays[0])
+        triangles += len(arrays[3]) // 3
+
+    add_skinned("Wardrobe_Shirt", shirt_mask, .008, materials["shirt"])
+    add_skinned("Wardrobe_Shirt_Trim", shirt_trim, .012, materials["shirt_trim"])
+    add_skinned("Wardrobe_Pants", pants_mask, .009, materials["pants"])
+    add_skinned("Wardrobe_Pants_Trim", pants_trim, .013, materials["pants_trim"])
+    add_skinned("Wardrobe_Boots", boots_mask, .013, materials["boots"])
+    add_skinned("Wardrobe_Boots_Trim", boots_trim, .017, materials["boots_trim"])
+    add_skinned("Wardrobe_Head_Band", head_band, .012, materials["headwear_trim"])
+    add_skinned("Wardrobe_Head_Cap", head_cap, .014, materials["headwear"])
+
     accessory = player_accessory(config["feature"], joint_by_name, config["color"], config["accent"])
     if len(accessory[0]):
         primitives = []
@@ -439,14 +703,17 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
         for material_index, arrays in enumerate(accessory[6]):
             if len(arrays[0]) == 0:
                 continue
-            primitives.append(glb.primitive(*arrays[:4], materials[3 + material_index],
+            feature_material = (materials["feature"], materials["accent"])[material_index]
+            primitives.append(glb.primitive(*arrays[:4], feature_material,
                                             joints=arrays[4], weights=arrays[5]))
             vertices += len(arrays[0])
             triangles += len(arrays[3]) // 3
-        glb.mesh_node(config["label"] + " Silhouette", primitives, skin=0, parent=68)
+        glb.mesh_node("Integrated_%s_Feature" % config["label"].replace(" ", "_"),
+                      primitives, skin=0, parent=68)
     glb.write(output)
     return {"vertices": vertices, "triangles": triangles,
-            "joints": len(skin["joints"]), "feature": config["feature"]}
+            "joints": len(skin["joints"]), "feature": config["feature"],
+            "wardrobe": "skinned"}
 
 
 class ShapeMesh:
@@ -503,6 +770,45 @@ class ShapeMesh:
         for side in range(sides):
             nxt=(side+1)%sides;a0=side;a1=nxt;b0=sides+side;b1=sides+nxt
             f.extend((a0,b0,a1,a1,b0,b1))
+        self._append(p,n,u,f,joint,material)
+
+    def tapered_curve(self, points, radii, joint=0, material=0, sides=16):
+        """Author a continuous tapered tube through bind-pose control points."""
+        centers = np.asarray(points, dtype=float)
+        if len(centers) < 2 or len(centers) != len(radii):
+            return
+        p=[];n=[];u=[];f=[]
+        previous_right = None
+        for row, center in enumerate(centers):
+            if row == 0:
+                tangent = centers[1] - center
+            elif row == len(centers) - 1:
+                tangent = center - centers[row - 1]
+            else:
+                tangent = centers[row + 1] - centers[row - 1]
+            tangent /= max(np.linalg.norm(tangent), 1e-6)
+            if previous_right is None:
+                ref = np.array((1., 0., 0.)) if abs(tangent[0]) < .82 else np.array((0., 0., 1.))
+                right = np.cross(tangent, ref)
+            else:
+                right = previous_right - tangent * np.dot(previous_right, tangent)
+            if np.linalg.norm(right) < 1e-5:
+                right = np.cross(tangent, np.array((0., 1., 0.)))
+            right /= max(np.linalg.norm(right), 1e-6)
+            forward = np.cross(right, tangent)
+            forward /= max(np.linalg.norm(forward), 1e-6)
+            previous_right = right
+            for side in range(sides):
+                angle = 2 * math.pi * side / sides
+                normal = right * math.cos(angle) + forward * math.sin(angle)
+                p.append(tuple(center + normal * radii[row]))
+                n.append(tuple(normal));u.append((side / sides, row / (len(centers) - 1)))
+        for row in range(len(centers) - 1):
+            for side in range(sides):
+                nxt = (side + 1) % sides
+                a = row * sides + side; b = row * sides + nxt
+                c = (row + 1) * sides + side; d = (row + 1) * sides + nxt
+                f.extend((a, c, b, b, c, d))
         self._append(p,n,u,f,joint,material)
 
     def cone(self, start, end, radius, joint=0, material=0, sides=14):
@@ -731,6 +1037,61 @@ def build_equipment(path: Path, slug: str, label: str, kind: str,
     return {"id":slug,"name":label,"kind":kind,"vertices":vertices,"triangles":triangles}
 
 
+HAIR_SOURCES = {
+    "buzzed": {"female": "Hair_BuzzedFemale", "male": "Hair_Buzzed"},
+    "parted": {"female": "Hair_SimpleParted", "male": "Hair_SimpleParted"},
+    "long": {"female": "Hair_Long", "male": "Hair_Long"},
+    "buns": {"female": "Hair_Buns", "male": "Hair_Buns"},
+}
+
+
+def build_hair(source_dir: Path, output: Path, style: str, gender: str) -> dict:
+    source_name = HAIR_SOURCES[style][gender]
+    source = source_dir / "hairstyles" / f"{source_name}.gltf"
+    document = json.loads(source.read_text(encoding="utf-8"))
+    binary = (source.parent / document["buffers"][0]["uri"]).read_bytes()
+    mesh_node_index = next(i for i, node in enumerate(document["nodes"]) if "mesh" in node)
+    mesh_index = document["nodes"][mesh_node_index]["mesh"]
+    primitive_source = document["meshes"][mesh_index]["primitives"][0]
+    attrs = primitive_source["attributes"]
+    positions = read_accessor(document, binary, attrs["POSITION"]).astype(np.float64)
+    normals = read_accessor(document, binary, attrs["NORMAL"]).astype(np.float64)
+    uvs = read_accessor(document, binary, attrs["TEXCOORD_0"]).astype(np.float32)
+    indices = read_accessor(document, binary, primitive_source["indices"]).astype(np.uint32)
+
+    body_path = source_dir / f"Superhero_{gender.title()}_FullBody.gltf"
+    body_document = json.loads(body_path.read_text(encoding="utf-8"))
+    head_node = next(i for i, node in enumerate(body_document["nodes"])
+                     if node.get("name") == "Head")
+    to_head_local = np.linalg.inv(global_node_matrix(body_document, head_node))
+    transform = to_head_local @ global_node_matrix(document, mesh_node_index)
+    homogeneous = np.column_stack((positions, np.ones(len(positions))))
+    positions = (transform @ homogeneous.T).T[:, :3].astype(np.float32)
+    normal_matrix = np.linalg.inv(transform[:3, :3]).T
+    normals = (normal_matrix @ normals.T).T
+    normals /= np.maximum(np.linalg.norm(normals, axis=1, keepdims=True), 1e-6)
+
+    material_source = primitive_source.get("material", 0)
+    base_spec = document["materials"][material_source]["pbrMetallicRoughness"]["baseColorTexture"]
+    image_uri = document["images"][document["textures"][base_spec["index"]]["source"]]["uri"]
+    image_path = source.parent / image_uri
+    if not image_path.is_file():
+        image_path = source_dir / image_uri
+    glb = GLB(generator="Eloria native Quaternius hairstyle packer")
+    material = glb.material(
+        f"Native Hair {style.title()}", (255, 255, 255), roughness=.82,
+        texture_png=neutral_texture(image_path, floor=.42),
+        normal_png=source_texture(document, source.parent, material_source, "normalTexture"),
+        double_sided=True)
+    primitive = glb.primitive(positions, normals.astype(np.float32), uvs, indices, material)
+    glb.mesh_node("NativeHair_%s_%s" % (style.title(), gender.title()), [primitive])
+    glb.write(output)
+    return {"style": style, "gender": gender, "source": source_name,
+            "vertices": len(positions), "triangles": len(indices) // 3,
+            "bounds": {"min": positions.min(axis=0).round(5).tolist(),
+                       "max": positions.max(axis=0).round(5).tolist()}}
+
+
 def validate_glb(path: Path) -> dict:
     raw=path.read_bytes()
     if raw[:4]!=b"glTF":raise ValueError(f"invalid GLB magic: {path}")
@@ -746,11 +1107,19 @@ def validate_glb(path: Path) -> dict:
             "skins":len(doc.get("skins",[])),"animations":len(doc.get("animations",[]))}
 
 
-def humanoid_model(scene: str) -> dict:
+def humanoid_model(scene: str, culture: str, gender: str) -> dict:
     return {
         "scene": scene,
-        "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+        "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
         "animationMap": "res://data/animations/luminous.json",
+        "culture": culture,
+        "gender": gender,
+        "hairStyles": [
+            f"res://assets/actors/native/hair/buzzed_{gender}.glb",
+            f"res://assets/actors/native/hair/parted_{gender}.glb",
+            f"res://assets/actors/native/hair/long_{gender}.glb",
+            f"res://assets/actors/native/hair/buns_{gender}.glb",
+        ],
         "boneAliases": {"head": "Head"},
         "import": {"scale": 1, "rotationDegreesX": 0,
                    "rotationDegreesY": 180, "rotationDegreesZ": 0},
@@ -763,18 +1132,21 @@ def humanoid_model(scene: str) -> dict:
 
 
 def culture_loadout(culture: str, role: str = "") -> dict[str, int]:
+    # The culture body models already carry a fully skinned shirt, pants, boots,
+    # trim, and optional headwear. Keep NPC defaults to held/shoulder props so
+    # rigid pelvis/body/head attachments cannot cover that production wardrobe.
     base = {
-        "luminous": {3: 105, 5: 105, 7: 105},
-        "votary": {0: 109, 3: 106, 4: 105, 5: 106, 6: 105},
-        "glasswarden": {0: 102, 1: 101, 2: 101, 3: 101, 4: 101, 5: 101, 6: 101, 7: 101},
-        "orun": {0: 106, 1: 103, 2: 103, 3: 103, 4: 103, 5: 103, 6: 103, 7: 103},
-        "greyhaven": {0: 104, 1: 102, 2: 102, 3: 102, 4: 102, 5: 102, 6: 102, 7: 102},
-        "ssarathi": {0: 107, 1: 104, 2: 104, 3: 104, 4: 104, 5: 104, 6: 104, 7: 104},
+        "luminous": {},
+        "votary": {0: 109},
+        "glasswarden": {0: 102, 1: 101, 2: 101},
+        "orun": {0: 106, 1: 103, 2: 103},
+        "greyhaven": {0: 104, 1: 102, 2: 102},
+        "ssarathi": {0: 107, 1: 104, 2: 104},
     }[culture].copy()
     if culture == "luminous" and role == "guard":
-        return {0: 112, 1: 105, 2: 105, 3: 105, 5: 109, 7: 105}
+        return {0: 112, 1: 105, 2: 105}
     if culture == "luminous" and role == "ferryman":
-        return {0: 105, 2: 102, 3: 102, 5: 102, 6: 102, 7: 102}
+        return {0: 105, 2: 102}
     if role in {"merchant", "official", "scholar", "lake_priest", "elder", "councilor"}:
         base.pop(1, None)
     if role in {"merchant", "scholar", "researcher", "astronomer"}:
@@ -784,22 +1156,14 @@ def culture_loadout(culture: str, role: str = "") -> dict[str, int]:
 
 
 def build_model_registry() -> dict:
-    models = {
-        "luminous_female": humanoid_model(
-            "res://../eloria-assets/source/player_models/native/Superhero_Female_FullBody.gltf"),
-        "luminous_male": humanoid_model(
-            "res://../eloria-assets/source/player_models/native/Superhero_Male_FullBody.gltf"),
-    }
-    actor_types = {"0": "luminous_female", "1": "luminous_male"}
-    creation = [
-        {"actorType": 0, "model": "luminous_female", "label": "Luminous Female"},
-        {"actorType": 1, "model": "luminous_male", "label": "Luminous Male"},
-    ]
+    models = {}
+    actor_types = {}
+    creation = []
     for actor_type, model_id in PLAYER_ACTOR_TYPES.items():
-        models[model_id] = humanoid_model(
-            f"res://assets/actors/native/races/{model_id}.glb")
-        actor_types[str(actor_type)] = model_id
         race, gender = model_id.rsplit("_", 1)
+        models[model_id] = humanoid_model(
+            f"res://assets/actors/native/races/{model_id}.glb", race, gender)
+        actor_types[str(actor_type)] = model_id
         creation.append({"actorType": actor_type, "model": model_id,
                          "label": f"{RACES[race]['label']} {gender.title()}"})
     for actor_type, slug, *_ in CREATURES:
@@ -890,8 +1254,16 @@ def main() -> None:
     parser.add_argument("--models",type=Path,default=repo_root/"godot-client/data/actors/models.json")
     parser.add_argument("--equipment-registry",type=Path,
                         default=repo_root/"godot-client/data/actors/equipment.json")
-    args=parser.parse_args();manifest={"schemaVersion":1,"source":"nymara-concept-art-named.zip",
-                                      "pipeline":"build_native_nymara_glbs.py","races":{},"creatures":{},"equipment":{}}
+    args=parser.parse_args();manifest={"schemaVersion":2,"source":"nymara-concept-art-named.zip",
+                                      "pipeline":"build_native_nymara_glbs.py","races":{},"hair":{},
+                                      "creatures":{},"equipment":{}}
+    for gender in ("female", "male"):
+        for style in HAIR_SOURCES:
+            hair_id = f"{style}_{gender}"
+            path = args.output / "hair" / f"{hair_id}.glb"
+            manifest["hair"][hair_id] = build_hair(args.source, path, style, gender) | {
+                "path": str(path.relative_to(repo_root))}
+            print("hair", hair_id, manifest["hair"][hair_id])
     for race in RACES:
         for gender in ("female","male"):
             model=f"{race}_{gender}";path=args.output/"races"/f"{model}.glb"

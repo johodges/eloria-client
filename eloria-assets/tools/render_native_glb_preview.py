@@ -62,6 +62,9 @@ def render(path: Path, size: int = 480) -> Image.Image:
     triangles = []
     all_positions = []
     for mesh in document.get("meshes", []):
+        # Optional creation headwear is hidden for the zero-valued default.
+        if mesh.get("name", "").startswith("Wardrobe_Head_"):
+            continue
         for primitive in mesh.get("primitives", []):
             positions = accessor(document, binary, primitive["attributes"]["POSITION"])
             indices = accessor(document, binary, primitive["indices"]).reshape(-1, 3)
@@ -86,8 +89,9 @@ def render(path: Path, size: int = 480) -> Image.Image:
     for step in range(0, size, 32):
         draw.line((step, 0, step, size), fill=(35, 45, 48))
         draw.line((0, step, size, step), fill=(35, 45, 48))
-    # Back-to-front order for a stable software preview.
-    triangles.sort(key=lambda entry: float(entry[0][:, 2].mean()), reverse=True)
+    # Source humanoids face +Z. Draw lower-depth triangles first so the final
+    # software preview shows the face and concept features, not the back.
+    triangles.sort(key=lambda entry: float(entry[0][:, 2].mean()))
     for face, color in triangles:
         points = [point(vertex) for vertex in face]
         normal = np.cross(face[1] - face[0], face[2] - face[0])
