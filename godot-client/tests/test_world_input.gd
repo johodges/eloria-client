@@ -271,6 +271,18 @@ func _run() -> void:
 		and main.get_node("GameView/ConsolePanel/Content/ConsoleOutput") is RichTextLabel
 		and chat_input.anchor_left > 0.5,
 		"console, Ctrl+I inventory, WASD/QE/Space, and bottom-right chat controls are available")
+	_expect(main.call("_movement_axes_for_actions", false, false, true, false)
+		== Vector2i(0, 1)
+		and main.call("_movement_axes_for_actions", false, false, false, true)
+		== Vector2i(0, -1),
+		"A and D use the corrected opposite horizontal movement directions")
+	var q_turn := InputEventKey.new()
+	q_turn.physical_keycode = KEY_Q
+	var e_turn := InputEventKey.new()
+	e_turn.physical_keycode = KEY_E
+	_expect(int(main.call("_turn_step_for_key_event", q_turn)) == 1
+		and int(main.call("_turn_step_for_key_event", e_turn)) == -1,
+		"Q and E use the corrected opposite rotation directions")
 	_expect(stats_tabs.get_tab_count() == 4
 		and stats_tabs.get_tab_title(0) == "Statistics"
 		and stats_tabs.get_tab_title(1) == "Knowledge"
