@@ -66,6 +66,7 @@
 #include "translate.h"
 #include "update.h"
 #include "weather.h"
+#include "world_package.h"
 #include "counters.h"
 #include "special_effects.h"
 #include "eye_candy_wrapper.h"
@@ -342,6 +343,12 @@ int move_to (short int *x, short int *y, int try_pathfinder)
 				return 1;
 		}
 	}
+
+	/* Portable worlds use their packaged collision as the client contract.
+	 * Do not bypass a failed local route with a direct server move, which can
+	 * target hidden GLB obstacles and produces repeated cannot-reach errors. */
+	if (pathfinder_failed && world_package_active())
+		return 0;
 
 	str[0]= MOVE_TO;
 	*((short *)(str+1))= SDL_SwapLE16 (*x);
