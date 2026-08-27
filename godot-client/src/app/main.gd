@@ -1971,15 +1971,20 @@ static func _external_texture(path: String) -> Texture2D:
 	return ImageTexture.create_from_image(image)
 
 func _model_for_actor(dto: Dictionary) -> String:
-	var actor_type := str(int(dto.get("actor_type", 1)))
-	if actor_type_models.has(actor_type):
+	var actor_type_value := int(dto.get("actor_type", 1))
+	var actor_type := str(actor_type_value)
+	var kind := int(dto.get("kind", 0))
+	# Player actor IDs are not safe for NPC wire records: the server may send an
+	# enhanced packet for an NPC while keeping the legacy actor_type byte at 1.
+	# Nymara NPC/creature/enemy IDs occupy the dedicated 200+ registry range.
+	if actor_type_models.has(actor_type) and (kind in [1, 4] or actor_type_value >= 200):
 		return str(actor_type_models[actor_type])
 	# The server uses the enhanced wire layout for most NPCs so their appearance
 	# bytes survive replication. Registry actor type wins for native NPCs and
 	# creatures; actor kind decides the fallback for unknown records.
-	if int(dto.get("kind", 0)) not in [1, 4]:
+	if kind not in [1, 4]:
 		return ""
-	return "luminous_female" if int(dto.get("actor_type", 1)) == 0 else "luminous_male"
+	return "luminous_female" if actor_type_value == 0 else "luminous_male"
 
 func _presentation_dto(dto: Dictionary) -> Dictionary:
 	var result: Dictionary = dto.duplicate(true)
