@@ -30,6 +30,7 @@ enum ServerMessage {
 	HERE_YOUR_GROUND_ITEMS = 23, REMOVE_ITEM_FROM_GROUND = 25, CLOSE_BAG = 26,
 	GET_NEW_BAG = 27, GET_BAGS_LIST = 28, DESTROY_BAG = 29, NPC_TEXT = 30,
 	NPC_OPTIONS_LIST = 31, CLOSE_NPC_MENU = 32, SEND_NPC_INFO = 33,
+	SEND_PARTIAL_STAT = 49,
 	ADD_NEW_ENHANCED_ACTOR = 51, ACTOR_WEAR_ITEM = 52, ACTOR_UNWEAR_ITEM = 53,
 	PING_REQUEST = 60, GET_ACTIVE_CHANNELS = 71, GET_ACTOR_HEALTH = 73,
 	GET_ITEMS_COOLDOWN = 77, SEND_BUFFS = 78, SEND_SPECIAL_EFFECT = 79,
@@ -174,6 +175,10 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_actor(payload, false)
 		ServerMessage.ADD_NEW_ENHANCED_ACTOR:
 			return decode_actor(payload, true)
+		ServerMessage.HERE_YOUR_STATS:
+			return decode_stats(payload)
+		ServerMessage.SEND_PARTIAL_STAT:
+			return decode_partial_stats(payload)
 		ServerMessage.RAW_TEXT:
 			if payload.is_empty():
 				return {"type": "invalid", "error": "chat_length"}
@@ -213,6 +218,48 @@ static func decode_npc_options(payload: PackedByteArray) -> Dictionary:
 		options.append({"label": label, "response_id": response_id, "actor_id": actor_id})
 	return {"type": "npc_options", "options": options}
 
+static func decode_stats(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 230:
+		return {"type": "invalid", "error": "stats_length"}
+	var values: Dictionary = {}
+	var attribute_names: Array[String] = [
+		"physique", "coordination", "reasoning", "will", "instinct", "vitality",
+		"human_nexus", "animal_nexus", "vegetal_nexus", "inorganic_nexus",
+		"artificial_nexus", "magic_nexus"]
+	for index: int in range(attribute_names.size()):
+		values[attribute_names[index]] = s16(payload, index * 4)
+	var skills: Dictionary = {
+		"manufacturing": 24, "harvesting": 26, "alchemy": 28, "overall": 30,
+		"attack": 32, "defense": 34, "magic": 36, "potion": 38,
+		"summoning": 83, "crafting": 89, "engineering": 95,
+		"tailoring": 101, "ranging": 107}
+	for skill_name: String in skills:
+		values[skill_name] = s16(payload, int(skills[skill_name]) * 2)
+	for resource: String in ["carried", "capacity", "health", "max_health", "ether", "max_ether"]:
+		var resource_index: int = ["carried", "capacity", "health", "max_health", "ether", "max_ether"].find(resource)
+		values[resource] = s16(payload, (40 + resource_index) * 2)
+	values["food"] = s16(payload, 46 * 2)
+	return {"type": "stats", "values": values}
+
+static func decode_partial_stats(payload: PackedByteArray) -> Dictionary:
+	if payload.size() % 5 != 0:
+		return {"type": "invalid", "error": "partial_stats_length"}
+	var values: Dictionary = {}
+	for offset: int in range(0, payload.size(), 5):
+		var slot: int = int(payload[offset])
+		values[stat_key(slot)] = s32(payload, offset + 1)
+	return {"type": "partial_stats", "values": values}
+
+static func stat_key(slot: int) -> String:
+	var keys: Dictionary = {
+		40: "carried", 41: "capacity", 42: "health", 43: "max_health",
+		44: "ether", 45: "max_ether", 46: "food",
+		24: "manufacturing", 26: "harvesting", 28: "alchemy", 30: "overall",
+		32: "attack", 34: "defense", 36: "magic", 38: "potion",
+		83: "summoning", 89: "crafting", 95: "engineering",
+		101: "tailoring", 107: "ranging"}
+	return str(keys.get(slot, "slot_%d" % slot))
+
 static func decode_actor(payload: PackedByteArray, enhanced: bool) -> Dictionary:
 	var minimum := 31 if enhanced else 18
 	if payload.size() < minimum:
@@ -251,3 +298,11 @@ static func u16(bytes: PackedByteArray, offset := 0) -> int:
 static func s16(bytes: PackedByteArray, offset := 0) -> int:
 	var value := u16(bytes, offset)
 	return value - 65536 if value >= 32768 else value
+
+static func u32(bytes: PackedByteArray, offset := 0) -> int:
+	return (int(bytes[offset]) | (int(bytes[offset + 1]) << 8)
+		| (int(bytes[offset + 2]) << 16) | (int(bytes[offset + 3]) << 24))
+
+static func s32(bytes: PackedByteArray, offset := 0) -> int:
+	var value: int = u32(bytes, offset)
+	return value - 4294967296 if value >= 2147483648 else value

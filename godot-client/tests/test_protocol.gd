@@ -132,6 +132,22 @@ func _init() -> void:
 	reduced_actor = ActorReducer.apply_command(reduced_actor, 14)
 	_expect(not bool(reduced_actor.get("sitting", true)), "actor stand reducer")
 
+	var stats_payload: PackedByteArray = PackedByteArray()
+	stats_payload.resize(230)
+	stats_payload.encode_s16(84, 18)
+	stats_payload.encode_s16(86, 25)
+	stats_payload.encode_s16(88, 12)
+	stats_payload.encode_s16(90, 20)
+	stats_payload.encode_s16(92, -7)
+	var stats_event: Dictionary = EloriaProtocol.decode_server(18, stats_payload)
+	_expect(stats_event.type == "stats" and int(stats_event.values.health) == 18
+		and int(stats_event.values.max_health) == 25
+		and int(stats_event.values.food) == -7, "full character stats")
+	var partial_event: Dictionary = EloriaProtocol.decode_server(49,
+		PackedByteArray([46, 0xfb, 0xff, 0xff, 0xff]))
+	_expect(partial_event.type == "partial_stats" and int(partial_event.values.food) == -5,
+		"signed partial food update")
+
 	print("protocol tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)
 

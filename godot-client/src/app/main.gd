@@ -32,6 +32,10 @@ extends Control
 @onready var map_image: TextureRect = %MapImage
 @onready var health_bar: ProgressBar = %Health
 @onready var health_text: Label = %HealthText
+@onready var mana_bar: ProgressBar = %Mana
+@onready var mana_text: Label = %ManaText
+@onready var stats_panel: Control = %StatsPanel
+@onready var stats_text: RichTextLabel = %StatsText
 @onready var player_map_marker: MeshInstance3D = %PlayerMapMarker
 @onready var map_label: Label = %MapLabel
 @onready var actor_label: Label = %ActorLabel
@@ -74,6 +78,7 @@ func _ready() -> void:
 	minimap.texture = map_viewport.get_texture()
 	map_image.texture = full_map_viewport.get_texture()
 	full_map.hide()
+	stats_panel.hide()
 	game_view.hide()
 	creation_panel.hide()
 	create_gender.add_item("Luminous Female", 0)
@@ -224,6 +229,11 @@ func _on_sit_button_pressed() -> void:
 func _on_chat_button_pressed() -> void:
 	chat_input.grab_focus()
 
+func _on_stats_button_pressed() -> void:
+	stats_panel.visible = not stats_panel.visible
+	if stats_panel.visible:
+		_sync_stats()
+
 func _on_disconnect_pressed() -> void:
 	Network.disconnect_from_server()
 
@@ -278,6 +288,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("cancel"):
 		if dialogue_panel.visible:
 			AppState.close_dialogue()
+		elif stats_panel.visible:
+			stats_panel.hide()
 		elif full_map.visible:
 			full_map.hide()
 		else:
@@ -350,6 +362,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_world()
 		&"chat":
 			_sync_chat()
+		&"stats":
+			_sync_stats()
 		&"selection":
 			_sync_selection()
 		&"npc_dialogue":
@@ -425,9 +439,10 @@ func _sync_world() -> void:
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
 		var current_health := int(local_dto.get("health", 0))
 		var maximum_health := maxi(1, int(local_dto.get("max_health", 1)))
-		health_bar.max_value = maximum_health
-		health_bar.value = current_health
-		health_text.text = "Health: %d / %d" % [current_health, maximum_health]
+		if AppState.stats.is_empty():
+			health_bar.max_value = maximum_health
+			health_bar.value = current_health
+			health_text.text = "Health: %d / %d" % [current_health, maximum_health]
 
 func _update_local_actor_follow() -> void:
 	if AppState.local_actor_id < 0:
@@ -513,6 +528,36 @@ func _sync_chat() -> void:
 	for line in AppState.chat_lines.slice(maxi(0, AppState.chat_lines.size() - 100)):
 		chat_output.append_text(str(line.text) + "\n")
 	chat_output.scroll_to_line(maxi(0, chat_output.get_line_count() - 1))
+
+func _sync_stats() -> void:
+	var stats: Dictionary = AppState.stats
+	if stats.is_empty():
+		return
+	var health: int = int(stats.get("health", 0))
+	var max_health: int = maxi(1, int(stats.get("max_health", 1)))
+	var ether: int = int(stats.get("ether", 0))
+	var max_ether: int = maxi(1, int(stats.get("max_ether", 1)))
+	health_bar.max_value = max_health
+	health_bar.value = health
+	health_text.text = "Health: %d / %d" % [health, max_health]
+	mana_bar.max_value = max_ether
+	mana_bar.value = ether
+	mana_text.text = "Mana: %d / %d   Food: %d   Carry: %d / %d" % [
+		ether, max_ether, int(stats.get("food", 0)),
+		int(stats.get("carried", 0)), int(stats.get("capacity", 0))]
+	var lines: Array[String] = ["[center][b]CHARACTER STATISTICS[/b][/center]"]
+	var displayed_stats: Array[Array] = [
+		["Physique", "physique"], ["Coordination", "coordination"],
+		["Reasoning", "reasoning"], ["Will", "will"],
+		["Instinct", "instinct"], ["Vitality", "vitality"],
+		["Attack", "attack"], ["Defense", "defense"], ["Magic", "magic"],
+		["Harvesting", "harvesting"], ["Alchemy", "alchemy"],
+		["Manufacturing", "manufacturing"], ["Summoning", "summoning"],
+		["Crafting", "crafting"], ["Engineering", "engineering"],
+		["Tailoring", "tailoring"], ["Ranging", "ranging"], ["Overall", "overall"]]
+	for label_and_key: Array in displayed_stats:
+		lines.append("%s: %d" % [label_and_key[0], int(stats.get(label_and_key[1], 0))])
+	stats_text.text = "\n".join(lines)
 
 func _on_chat_submitted(text: String) -> void:
 	var message: String = text.strip_edges()

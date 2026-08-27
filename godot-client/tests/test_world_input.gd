@@ -90,10 +90,15 @@ func _run() -> void:
 	var lower_hud: Control = main.get_node("GameView/Quickbar") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
 	var right_quickbar: Control = main.get_node("GameView/ItemSpellQuickbar") as Control
+	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
 		"stats and item/spell quickbar occupy the right HUD rail")
+	_expect(not stats_panel.visible, "statistics window starts closed")
+	main.call("_on_stats_button_pressed")
+	_expect(stats_panel.visible, "statistics button opens the real stats window")
+	main.call("_on_stats_button_pressed")
 	var viewport_rect: Rect2 = root.get_visible_rect()
 	_expect(viewport_rect.encloses(login_panel.get_global_rect()),
 		"login panel fits the reference viewport")

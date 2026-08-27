@@ -12,6 +12,7 @@ var local_actor_id := -1
 var current_map := ""
 var actors: Dictionary = {}
 var inventory: Array[Dictionary] = []
+var stats: Dictionary = {}
 var chat_lines: Array[Dictionary] = []
 var selected_actor_id := -1
 var npc_dialogue: Dictionary = {"open": false, "name": "", "portrait": 0,
@@ -30,6 +31,7 @@ func _on_connection_state_changed(value: String) -> void:
 		local_actor_id = -1
 		actors.clear()
 		inventory.clear()
+		stats.clear()
 		chat_lines.clear()
 		current_map = ""
 		selected_actor_id = -1
@@ -82,6 +84,14 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 					var actor: Dictionary = actors[actor_id]
 					actors[actor_id] = ActorReducer.apply_command(actor, actor_command)
 			state_changed.emit(&"actors")
+		"stats":
+			stats = (event.values as Dictionary).duplicate(true)
+			state_changed.emit(&"stats")
+		"partial_stats":
+			for stat_key_value: Variant in event.values:
+				var stat_key: String = str(stat_key_value)
+				stats[stat_key] = event.values[stat_key_value]
+			state_changed.emit(&"stats")
 		"chat":
 			chat_lines.append({"channel": event.channel, "text": event.text})
 			if chat_lines.size() > 1000:
