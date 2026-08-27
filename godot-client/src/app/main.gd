@@ -82,6 +82,9 @@ func _ready() -> void:
 	_apply_eloria_theme()
 
 func _on_connect_pressed() -> void:
+	if AppState.connection_state != "disconnected":
+		Network.disconnect_from_server()
+		return
 	connect_button.disabled = true
 	login_button.disabled = true
 	status_label.text = "Connecting…"
@@ -218,7 +221,8 @@ func _on_login_failed(message: String) -> void:
 
 func _on_connection_state_changed(value: String) -> void:
 	status_label.text = value.capitalize()
-	connect_button.disabled = value != "disconnected"
+	connect_button.text = "Disconnect" if value == "connected" else "Connect"
+	connect_button.disabled = value == "connecting"
 	login_button.disabled = value != "connected" or AppState.authenticated
 	new_character_button.disabled = value != "connected" or AppState.authenticated
 	if value == "disconnected" and game_view.visible:

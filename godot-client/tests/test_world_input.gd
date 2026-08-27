@@ -15,6 +15,9 @@ func _run() -> void:
 	root.add_child(main)
 	await process_frame
 	var game_view: Control = main.get_node("GameView") as Control
+	var login_panel: Control = main.get_node("LoginPanel") as Control
+	var new_character: Button = main.get_node("LoginPanel/Content/NewCharacter") as Button
+	var status: Label = main.get_node("LoginPanel/Content/Status") as Label
 	var container: SubViewportContainer = main.get_node("GameView/ViewportContainer") as SubViewportContainer
 	var camera_rig: IsometricCameraController = main.get_node(
 		"GameView/ViewportContainer/Viewport/WorldRoot/CameraRig") as IsometricCameraController
@@ -23,6 +26,14 @@ func _run() -> void:
 		"world viewport receives gameplay mouse input")
 	_expect(container.gui_input.is_connected(Callable(main, "_on_world_gui_input")),
 		"world viewport input handler is connected")
+	var viewport_rect: Rect2 = root.get_visible_rect()
+	_expect(viewport_rect.encloses(login_panel.get_global_rect()),
+		"login panel fits the reference viewport")
+	_expect(viewport_rect.encloses(new_character.get_global_rect()),
+		"create-character action is visible")
+	_expect(viewport_rect.encloses(status.get_global_rect()), "login status is visible")
+	var host: LineEdit = main.get_node("LoginPanel/Content/Host") as LineEdit
+	_expect(host.text == "18.235.240.60", "development server is the default endpoint")
 
 	var right_down: InputEventMouseButton = InputEventMouseButton.new()
 	right_down.button_index = MOUSE_BUTTON_RIGHT
