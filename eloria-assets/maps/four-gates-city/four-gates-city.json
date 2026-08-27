@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.6.1",
+  "assetVersion": "0.8.0",
   "asset": {
     "id": "four-gates-city",
     "name": "Four Gates City",
@@ -1169,12 +1169,6 @@
     "nodeNames": [
       "Navigation"
     ],
-    "surfaceNodePrefixes": [
-      "Terrain_City_Plateau",
-      "Road_",
-      "Bridge_",
-      "Central_Plaza"
-    ],
     "walkableAreas": [
       "radial-roads",
       "ring-roads",
@@ -1598,17 +1592,17 @@
             226.99256917793105
           ],
           "halfExtents": [
-            12.5,
+            12.0,
             11.0,
-            10.5
+            9.5
           ]
         },
         {
           "node": "Residence_0_Window_1",
           "center": [
-            53.82247559909237,
+            56.70094907511461,
             42.0,
-            239.49256917793105
+            238.65674592179718
           ],
           "halfExtents": [
             2.0,
@@ -1619,9 +1613,9 @@
         {
           "node": "Residence_0_Window_2",
           "center": [
-            53.82247559909237,
+            56.70094907511461,
             50.0,
-            239.49256917793105
+            238.65674592179718
           ],
           "halfExtents": [
             2.0,
@@ -1637,17 +1631,17 @@
             227.7646811953074
           ],
           "halfExtents": [
-            16.5,
+            15.5,
             13.5,
-            12.5
+            11.0
           ]
         },
         {
           "node": "Residence_1_Window_1",
           "center": [
-            124.49999999999997,
+            131.2878221735089,
             42.0,
-            240.2646811953074
+            241.39717841958532
           ],
           "halfExtents": [
             2.0,
@@ -1658,9 +1652,9 @@
         {
           "node": "Residence_1_Window_2",
           "center": [
-            124.49999999999997,
+            131.2878221735089,
             50.0,
-            240.2646811953074
+            241.39717841958532
           ],
           "halfExtents": [
             2.0,
@@ -1676,17 +1670,17 @@
             205.76807332528534
           ],
           "halfExtents": [
-            12.5,
+            12.0,
             16.0,
-            14.5
+            12.5
           ]
         },
         {
           "node": "Residence_2_Window_1",
           "center": [
-            198.76807332528531,
+            210.1521353686419,
             42.0,
-            218.26807332528534
+            220.0516303052536
           ],
           "halfExtents": [
             2.0,
@@ -1697,9 +1691,9 @@
         {
           "node": "Residence_2_Window_2",
           "center": [
-            198.76807332528531,
+            210.1521353686419,
             50.0,
-            218.26807332528534
+            220.0516303052536
           ],
           "halfExtents": [
             2.0,
@@ -1710,9 +1704,9 @@
         {
           "node": "Residence_2_Window_3",
           "center": [
-            198.76807332528531,
+            210.1521353686419,
             58.0,
-            218.26807332528534
+            220.0516303052536
           ],
           "halfExtents": [
             2.0,
@@ -1728,17 +1722,17 @@
             117.50000000000003
           ],
           "halfExtents": [
-            16.5,
+            15.5,
             18.5,
-            10.5
+            9.5
           ]
         },
         {
           "node": "Residence_3_Window_1",
           "center": [
-            196.51596988934307,
+            208.84942900794434,
             42.0,
-            130.00000000000003
+            128.6621778264911
           ],
           "halfExtents": [
             2.0,
@@ -1749,9 +1743,9 @@
         {
           "node": "Residence_3_Window_2",
           "center": [
-            196.51596988934307,
+            208.84942900794434,
             50.0,
-            130.00000000000003
+            128.6621778264911
           ],
           "halfExtents": [
             2.0,
@@ -1762,9 +1756,9 @@
         {
           "node": "Residence_3_Window_3",
           "center": [
-            196.51596988934307,
+            208.84942900794434,
             58.0,
-            130.00000000000003
+            128.6621778264911
           ],
           "halfExtents": [
             2.0,
@@ -1780,17 +1774,17 @@
             68.06940886196296
           ],
           "halfExtents": [
-            12.5,
+            12.0,
             11.0,
-            12.5
+            11.0
           ]
         },
         {
           "node": "Residence_4_Window_1",
           "center": [
-            247.03849231402498,
+            263.5280911658894,
             42.0,
-            80.56940886196296
+            77.85907247368593
           ],
           "halfExtents": [
             2.0,
@@ -1801,9 +1795,9 @@
         {
           "node": "Residence_4_Window_2",
           "center": [
-            247.03849231402498,
+            263.5280911658894,
             50.0,
-            80.56940886196296
+            77.85907247368593
           ],
           "halfExtents": [
             2.0,
@@ -1819,17 +1813,17 @@
             1.781861092759399e-14
           ],
           "halfExtents": [
-            16.5,
+            15.5,
             13.5,
-            14.5
+            12.5
           ]
         },
         {
           "node": "Residence_5_Window_1",
           "center": [
-            284.0,
+            304.2,
             42.0,
-            12.500000000000018
+            7.000000000000019
           ],
           "halfExtents": [
             2.0,
@@ -1840,9 +1834,9 @@
         {
           "node": "Residence_5_Window_2",
           "center": [
-            284.0,
+            304.2,
             50.0,
-            12.500000000000018
+            7.000000000000019
           ],
           "halfExtents": [
             2.0,
@@ -1858,17 +1852,17 @@
             -60.8224755990924
           ],
           "halfExtents": [
-            12.5,
+            12.0,
             16.0,
-            10.5
+            9.5
           ]
         },
         {
           "node": "Residence_6_Window_1",
           "center": [
-            219.99256917793105,
+            238.65674592179718,
             42.0,
-            -48.3224755990924
+            -56.700949075114636
           ],
           "halfExtents": [
             2.0,
@@ -1879,9 +1873,9 @@
         {
           "node": "Residence_6_Window_2",
           "center": [
-            219.99256917793105,
+            238.65674592179718,
             50.0,
-            -48.3224755990924
+            -56.700949075114636
           ],
           "halfExtents": [
             2.0,
@@ -1892,9 +1886,9 @@
         {
           "node": "Residence_6_Window_3",
           "center": [
-            219.99256917793105,
+            238.65674592179718,
             58.0,
-            -48.3224755990924
+            -56.700949075114636
           ],
           "halfExtents": [
             2.0,
@@ -1910,17 +1904,17 @@
             -131.49999999999994
           ],
           "halfExtents": [
-            16.5,
+            15.5,
             18.5,
-            12.5
+            11.0
           ]
         },
         {
           "node": "Residence_7_Window_1",
           "center": [
-            220.7646811953074,
+            241.39717841958532,
             42.0,
-            -118.99999999999994
+            -131.28782217350889
           ],
           "halfExtents": [
             2.0,
@@ -1931,9 +1925,9 @@
         {
           "node": "Residence_7_Window_2",
           "center": [
-            220.7646811953074,
+            241.39717841958532,
             50.0,
-            -118.99999999999994
+            -131.28782217350889
           ],
           "halfExtents": [
             2.0,
@@ -1944,9 +1938,9 @@
         {
           "node": "Residence_7_Window_3",
           "center": [
-            220.7646811953074,
+            241.39717841958532,
             58.0,
-            -118.99999999999994
+            -131.28782217350889
           ],
           "halfExtents": [
             2.0,
@@ -1962,17 +1956,17 @@
             -205.76807332528531
           ],
           "halfExtents": [
-            12.5,
+            12.0,
             11.0,
-            14.5
+            12.5
           ]
         },
         {
           "node": "Residence_8_Window_1",
           "center": [
-            198.76807332528534,
+            220.0516303052536,
             42.0,
-            -193.26807332528531
+            -210.1521353686419
           ],
           "halfExtents": [
             2.0,
@@ -1983,9 +1977,9 @@
         {
           "node": "Residence_8_Window_2",
           "center": [
-            198.76807332528534,
+            220.0516303052536,
             50.0,
-            -193.26807332528531
+            -210.1521353686419
           ],
           "halfExtents": [
             2.0,
@@ -2001,17 +1995,17 @@
             -203.5159698893431
           ],
           "halfExtents": [
-            16.5,
+            15.5,
             13.5,
-            10.5
+            9.5
           ]
         },
         {
           "node": "Residence_9_Window_1",
           "center": [
-            110.49999999999999,
+            128.66217782649105,
             42.0,
-            -191.0159698893431
+            -208.84942900794437
           ],
           "halfExtents": [
             2.0,
@@ -2022,9 +2016,9 @@
         {
           "node": "Residence_9_Window_2",
           "center": [
-            110.49999999999999,
+            128.66217782649105,
             50.0,
-            -191.0159698893431
+            -208.84942900794437
           ],
           "halfExtents": [
             2.0,
@@ -2040,17 +2034,17 @@
             -254.03849231402495
           ],
           "halfExtents": [
-            12.5,
+            12.0,
             16.0,
-            12.5
+            11.0
           ]
         },
         {
           "node": "Residence_10_Window_1",
           "center": [
-            61.069408861963026,
+            77.859072473686,
             42.0,
-            -241.53849231402495
+            -263.5280911658894
           ],
           "halfExtents": [
             2.0,
@@ -2061,9 +2055,9 @@
         {
           "node": "Residence_10_Window_2",
           "center": [
-            61.069408861963026,
+            77.859072473686,
             50.0,
-            -241.53849231402495
+            -263.5280911658894
           ],
           "halfExtents": [
             2.0,
@@ -2074,9 +2068,9 @@
         {
           "node": "Residence_10_Window_3",
           "center": [
-            61.069408861963026,
+            77.859072473686,
             58.0,
-            -241.53849231402495
+            -263.5280911658894
           ],
           "halfExtents": [
             2.0,
@@ -2092,17 +2086,17 @@
             -291.0
           ],
           "halfExtents": [
-            16.5,
+            15.5,
             18.5,
-            14.5
+            12.5
           ]
         },
         {
           "node": "Residence_11_Window_1",
           "center": [
-            -6.9999999999999645,
+            7.000000000000037,
             42.0,
-            -278.5
+            -304.2
           ],
           "halfExtents": [
             2.0,
@@ -2113,9 +2107,9 @@
         {
           "node": "Residence_11_Window_2",
           "center": [
-            -6.9999999999999645,
+            7.000000000000037,
             50.0,
-            -278.5
+            -304.2
           ],
           "halfExtents": [
             2.0,
@@ -2126,9 +2120,9 @@
         {
           "node": "Residence_11_Window_3",
           "center": [
-            -6.9999999999999645,
+            7.000000000000037,
             58.0,
-            -278.5
+            -304.2
           ],
           "halfExtents": [
             2.0,
@@ -2144,17 +2138,17 @@
             -226.99256917793105
           ],
           "halfExtents": [
-            12.5,
+            12.0,
             11.0,
-            10.5
+            9.5
           ]
         },
         {
           "node": "Residence_12_Window_1",
           "center": [
-            -67.82247559909239,
+            -56.70094907511462,
             42.0,
-            -214.49256917793105
+            -238.65674592179718
           ],
           "halfExtents": [
             2.0,
@@ -2165,9 +2159,9 @@
         {
           "node": "Residence_12_Window_2",
           "center": [
-            -67.82247559909239,
+            -56.70094907511462,
             50.0,
-            -214.49256917793105
+            -238.65674592179718
           ],
           "halfExtents": [
             2.0,
@@ -2183,9 +2177,9 @@
             255.0
           ],
           "halfExtents": [
-            16.0,
+            15.0,
             11.0,
-            12.0
+            11.0
           ]
         },
         {
@@ -2209,9 +2203,9 @@
             290.0
           ],
           "halfExtents": [
-            16.0,
+            15.0,
             11.0,
-            12.0
+            11.0
           ]
         },
         {
@@ -2235,9 +2229,9 @@
             255.0
           ],
           "halfExtents": [
-            16.0,
+            15.0,
             11.0,
-            12.0
+            11.0
           ]
         },
         {
@@ -2261,9 +2255,9 @@
             290.0
           ],
           "halfExtents": [
-            16.0,
+            15.0,
             11.0,
-            12.0
+            11.0
           ]
         },
         {
@@ -2287,9 +2281,9 @@
             255.0
           ],
           "halfExtents": [
-            16.0,
+            15.0,
             11.0,
-            12.0
+            11.0
           ]
         },
         {
@@ -2313,9 +2307,9 @@
             290.0
           ],
           "halfExtents": [
-            16.0,
+            15.0,
             11.0,
-            12.0
+            11.0
           ]
         },
         {
@@ -2339,9 +2333,9 @@
             255.0
           ],
           "halfExtents": [
-            16.0,
+            15.0,
             11.0,
-            12.0
+            11.0
           ]
         },
         {
@@ -2365,9 +2359,9 @@
             290.0
           ],
           "halfExtents": [
-            16.0,
+            15.0,
             11.0,
-            12.0
+            11.0
           ]
         },
         {
@@ -2391,9 +2385,9 @@
             255.0
           ],
           "halfExtents": [
-            16.0,
+            15.0,
             11.0,
-            12.0
+            11.0
           ]
         },
         {
@@ -2465,10 +2459,10 @@
           "id": "LOD2",
           "glb": "four-gates-city-lod2.glb",
           "screenCoverage": 0.0,
-          "nodeCount": 558,
+          "nodeCount": 663,
           "animations": 0,
-          "meshCount": 23,
-          "materialCount": 16,
+          "meshCount": 26,
+          "materialCount": 17,
           "textureMaxResolution": 512,
           "resourcePruned": true
         }
@@ -2486,7 +2480,8 @@
     "LOD0 and LOD2 are documented but not included.",
     "Inline navmesh covers principal axes and plaza; district alley polygons remain to be baked from final collision geometry.",
     "District navmesh uses conservative convex coverage; final blockers should be rebaked after hand-authored building placement.",
-    "Water, waterfall foam, and mist use glTF geometry and locators; animated turbulence, refraction, particles, and depth fade require client shaders."
+    "Water, waterfall foam, and mist use glTF geometry and locators; animated turbulence, refraction, particles, and depth fade require client shaders.",
+    "General district assets use modular atlas UVs; hero fa\u00e7ades and roofs should receive bespoke unwraps in a later close-detail pass."
   ],
   "sources": [
     {
@@ -2511,7 +2506,7 @@
     }
   ],
   "materials": {
-    "strategy": "embedded-4x4-atlas",
+    "strategy": "embedded-atlas-with-baked-primitive-uvs",
     "resolution": [
       1024,
       1024
@@ -2524,7 +2519,6 @@
     "channelPacking": {
       "orm": "R=occlusion,G=roughness,B=metallic"
     },
-    "extension": "KHR_texture_transform",
     "landmarkAtlas": {
       "resolution": [
         1024,
@@ -2673,5 +2667,127 @@
       "FX_Waterfall_Mist_07"
     ],
     "requiresCustomShaderForBestResult": true
+  },
+  "visualDirection": {
+    "reference": "canonical-four-gates-concept-art",
+    "palette": [
+      "warm limestone",
+      "charcoal slate",
+      "aged gold",
+      "sapphire",
+      "turquoise",
+      "alpine green"
+    ],
+    "materialAtlas": "art-directed-4x4-pbr-basecolor",
+    "landmarkAtlas": "art-directed-2x2-pbr-basecolor",
+    "alpineSkylineNodes": [
+      "Mountain_Peak_00",
+      "Mountain_Snowcap_00",
+      "Mountain_Peak_01",
+      "Mountain_Snowcap_01",
+      "Mountain_Peak_02",
+      "Mountain_Snowcap_02",
+      "Mountain_Peak_03",
+      "Mountain_Snowcap_03",
+      "Mountain_Peak_04",
+      "Mountain_Snowcap_04",
+      "Mountain_Peak_05",
+      "Mountain_Snowcap_05",
+      "Mountain_Peak_06",
+      "Mountain_Snowcap_06",
+      "Mountain_Peak_07",
+      "Mountain_Snowcap_07",
+      "Mountain_Peak_08",
+      "Mountain_Snowcap_08",
+      "Mountain_Peak_09",
+      "Mountain_Snowcap_09",
+      "Mountain_Peak_10",
+      "Mountain_Snowcap_10",
+      "Mountain_Peak_11",
+      "Mountain_Snowcap_11",
+      "Mountain_Peak_12",
+      "Mountain_Snowcap_12",
+      "Mountain_Peak_13",
+      "Mountain_Snowcap_13",
+      "Mountain_Peak_14",
+      "Mountain_Snowcap_14",
+      "Mountain_Peak_15",
+      "Mountain_Snowcap_15",
+      "Mountain_Peak_16",
+      "Mountain_Snowcap_16",
+      "Mountain_Peak_17",
+      "Mountain_Snowcap_17",
+      "Mountain_Peak_18",
+      "Mountain_Snowcap_18",
+      "Mountain_Peak_19",
+      "Mountain_Snowcap_19",
+      "Mountain_Peak_20",
+      "Mountain_Snowcap_20",
+      "Mountain_Peak_21",
+      "Mountain_Snowcap_21",
+      "Mountain_Peak_22",
+      "Mountain_Snowcap_22",
+      "Mountain_Peak_23",
+      "Mountain_Snowcap_23",
+      "Mountain_Peak_24",
+      "Mountain_Snowcap_24",
+      "Mountain_Peak_25",
+      "Mountain_Snowcap_25",
+      "Mountain_Peak_26",
+      "Mountain_Snowcap_26",
+      "Mountain_Peak_27",
+      "Mountain_Snowcap_27"
+    ],
+    "outerEvergreenNodes": [
+      "Outer_Evergreen_01",
+      "Outer_Evergreen_02",
+      "Outer_Evergreen_03",
+      "Outer_Evergreen_04",
+      "Outer_Evergreen_05",
+      "Outer_Evergreen_06",
+      "Outer_Evergreen_07",
+      "Outer_Evergreen_08",
+      "Outer_Evergreen_09",
+      "Outer_Evergreen_10",
+      "Outer_Evergreen_11",
+      "Outer_Evergreen_12",
+      "Outer_Evergreen_16",
+      "Outer_Evergreen_17",
+      "Outer_Evergreen_18",
+      "Outer_Evergreen_19",
+      "Outer_Evergreen_20",
+      "Outer_Evergreen_21",
+      "Outer_Evergreen_22",
+      "Outer_Evergreen_23",
+      "Outer_Evergreen_24",
+      "Outer_Evergreen_25",
+      "Outer_Evergreen_26",
+      "Outer_Evergreen_29",
+      "Outer_Evergreen_30",
+      "Outer_Evergreen_31",
+      "Outer_Evergreen_32",
+      "Outer_Evergreen_33",
+      "Outer_Evergreen_34",
+      "Outer_Evergreen_35",
+      "Outer_Evergreen_36",
+      "Outer_Evergreen_37",
+      "Outer_Evergreen_38",
+      "Outer_Evergreen_39",
+      "Outer_Evergreen_40",
+      "Outer_Evergreen_41",
+      "Outer_Evergreen_43",
+      "Outer_Evergreen_44",
+      "Outer_Evergreen_45",
+      "Outer_Evergreen_46",
+      "Outer_Evergreen_47",
+      "Outer_Evergreen_48",
+      "Outer_Evergreen_49",
+      "Outer_Evergreen_50",
+      "Outer_Evergreen_51",
+      "Outer_Evergreen_52",
+      "Outer_Evergreen_53",
+      "Outer_Evergreen_54",
+      "Outer_Evergreen_55"
+    ]
   }
 }

@@ -2,7 +2,7 @@
   "uri": "four-gates-city-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "2.0.0-dev.3.10",
-  "validatedAt": "2026-08-26T05:46:19.979Z",
+  "validatedAt": "2026-08-27T14:04:24.810Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
@@ -32,16 +32,13 @@
   },
   "info": {
     "version": "2.0",
-    "generator": "Eloria Four Gates compact resource-pruned LOD2 0.6",
-    "extensionsUsed": [
-      "KHR_texture_transform"
-    ],
+    "generator": "Eloria Four Gates compact resource-pruned LOD2 0.8",
     "resources": [
       {
         "pointer": "/buffers/0",
         "mimeType": "application/gltf-buffer",
         "storage": "glb",
-        "byteLength": 204040
+        "byteLength": 711912
       },
       {
         "pointer": "/images/0",
@@ -123,14 +120,14 @@
       }
     ],
     "animationCount": 0,
-    "materialCount": 16,
+    "materialCount": 17,
     "hasMorphTargets": false,
     "hasSkins": false,
     "hasTextures": true,
     "hasDefaultScene": true,
-    "drawCallCount": 23,
-    "totalVertexCount": 2113,
-    "totalTriangleCount": 3544,
+    "drawCallCount": 26,
+    "totalVertexCount": 2509,
+    "totalTriangleCount": 3676,
     "maxUVs": 1,
     "maxInfluences": 0,
     "maxAttributes": 4
