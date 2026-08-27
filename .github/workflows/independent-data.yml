@@ -9,14 +9,12 @@ permissions:
   contents: write
 
 jobs:
-  reconstruct:
+  validate:
     runs-on: ubuntu-latest
     container:
       image: barichello/godot-ci:4.7.2
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Install Python validator
         run: |
           apt-get update
@@ -29,7 +27,19 @@ jobs:
           godot --headless --path godot-client --editor --quit
           godot --headless --path godot-client --quit-after 3 2>&1 | tee /tmp/main-scene.log
           ! grep -E "SCRIPT ERROR|Parse Error" /tmp/main-scene.log
-          git -C /__w/eloria-client/eloria-client diff --check
+
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reapply deterministic patch and verify clean diff
+        run: |
+          set -euo pipefail
+          python3 .github/native_guard_evidence_patch.py
+          git diff --check
       - name: Publish clean temporary evidence tree
         run: |
           set -euo pipefail
