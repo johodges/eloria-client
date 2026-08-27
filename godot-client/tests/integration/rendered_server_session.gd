@@ -5,6 +5,8 @@ const SCREEN_SIZE := Vector2i(1280, 720)
 
 var _failures := 0
 var _artifact_directory := ""
+var _app_state: Node
+var _network: Node
 
 func _init() -> void:
 	call_deferred("_run")
@@ -24,6 +26,8 @@ func _run() -> void:
 	var main: Control = (scene_resource as PackedScene).instantiate() as Control
 	root.add_child(main)
 	await process_frame
+	_app_state = root.get_node("AppState")
+	_network = root.get_node("Network")
 
 	var host: String = OS.get_environment("ELORIA_INTEGRATION_HOST")
 	if host.is_empty():
@@ -39,8 +43,9 @@ func _run() -> void:
 	host_edit.text = host
 	port_edit.value = port
 	main.call("_on_connect_pressed")
-	if not await _wait_for(func() -> bool: return AppState.connection_state == "connected",
-			SESSION_TIMEOUT_SECONDS):
+	var connected: Callable = func() -> bool:
+		return str(_app_state.get("connection_state")) == "connected"
+	if not await _wait_for(connected, SESSION_TIMEOUT_SECONDS):
 		_fail("development server connection timed out")
 		_finish()
 		return
@@ -56,8 +61,9 @@ func _run() -> void:
 	password_edit.text = password
 	confirm_edit.text = password
 	main.call("_on_create_pressed")
-	if not await _wait_for(func() -> bool: return AppState.authenticated,
-			SESSION_TIMEOUT_SECONDS):
+	var authenticated: Callable = func() -> bool:
+		return bool(_app_state.get("authenticated"))
+	if not await _wait_for(authenticated, SESSION_TIMEOUT_SECONDS):
 		_fail("character creation/login timed out")
 		_finish()
 		return
@@ -65,8 +71,9 @@ func _run() -> void:
 	var world_loader: WorldLoader = main.get_node(
 		"GameView/ViewportContainer/Viewport/WorldRoot/WorldLoader") as WorldLoader
 	var presentation_ready: Callable = func() -> bool:
-		return (not AppState.current_map.is_empty() and AppState.local_actor_id >= 0
-			and (main.get("actor_nodes") as Dictionary).has(AppState.local_actor_id)
+		var local_id: int = int(_app_state.get("local_actor_id"))
+		return (not str(_app_state.get("current_map")).is_empty() and local_id >= 0
+			and (main.get("actor_nodes") as Dictionary).has(local_id)
 			and world_loader.world_root != null)
 	if not await _wait_for(presentation_ready, SESSION_TIMEOUT_SECONDS):
 		_fail("authoritative map/local actor presentation timed out")
@@ -77,8 +84,10 @@ func _run() -> void:
 		await process_frame
 
 	var actor_nodes: Dictionary = main.get("actor_nodes") as Dictionary
-	var actor: ReplicatedActor3D = actor_nodes.get(AppState.local_actor_id) as ReplicatedActor3D
-	var local_dto: Dictionary = AppState.actors.get(AppState.local_actor_id, {}) as Dictionary
+	var local_actor_id: int = int(_app_state.get("local_actor_id"))
+	var actors: Dictionary = _app_state.get("actors") as Dictionary
+	var actor: ReplicatedActor3D = actor_nodes.get(local_actor_id) as ReplicatedActor3D
+	var local_dto: Dictionary = actors.get(local_actor_id, {}) as Dictionary
 	var native_model: Node3D = actor.get_node_or_null("NativeModel") as Node3D
 	var fallback: Node = actor.get_node_or_null("MissingModelFallback")
 	var visible_native_meshes: int = _visible_native_mesh_count(native_model)
@@ -116,8 +125,8 @@ func _run() -> void:
 		"minimap and full-map cameras both render the player marker")
 
 	var evidence: Dictionary = {
-		"server_map": AppState.current_map,
-		"local_actor_id": AppState.local_actor_id,
+		"server_map": str(_app_state.get("current_map")),
+		"local_actor_id": local_actor_id,
 		"spawn_dto": _json_safe(local_dto),
 		"server_tile": [int(local_dto.get("x", -1)), int(local_dto.get("y", -1))],
 		"converted_godot_position": str(actor.server_target),
@@ -145,11 +154,11 @@ func _run() -> void:
 		for unused_frame: int in range(8):
 			await physics_frame
 			await process_frame
-		var resulting_dto: Dictionary = AppState.actors.get(
-			AppState.local_actor_id, {}) as Dictionary
+		actors = _app_state.get("actors") as Dictionary
+		var resulting_dto: Dictionary = actors.get(local_actor_id, {}) as Dictionary
 		var resulting_actor: ReplicatedActor3D = (
 			main.get("actor_nodes") as Dictionary).get(
-			AppState.local_actor_id) as ReplicatedActor3D
+			local_actor_id) as ReplicatedActor3D
 		var movement_evidence: Dictionary = {
 			"initial_tile": [initial_tile.x, initial_tile.y],
 			"resulting_tile": [int(resulting_dto.get("x", -1)),
@@ -162,7 +171,7 @@ func _run() -> void:
 		_write_json("movement.json", movement_evidence)
 		await _capture("world-after-move.png")
 
-	Network.disconnect_from_server()
+	_network.call("disconnect_from_server")
 	print("rendered server session: ", "PASS" if _failures == 0 else "FAIL")
 	print("credentials: REDACTED")
 	_finish()
@@ -193,7 +202,9 @@ func _send_real_world_click(main: Control, camera: Camera3D,
 		click.position = viewport_position
 		main.call("_on_world_gui_input", click)
 		var actor_tile_changed: Callable = func() -> bool:
-			var dto: Dictionary = AppState.actors.get(AppState.local_actor_id, {}) as Dictionary
+			var local_id: int = int(_app_state.get("local_actor_id"))
+			var actors: Dictionary = _app_state.get("actors") as Dictionary
+			var dto: Dictionary = actors.get(local_id, {}) as Dictionary
 			return Vector2i(int(dto.get("x", initial_tile.x)),
 				int(dto.get("y", initial_tile.y))) != initial_tile
 		var changed: bool = await _wait_for(actor_tile_changed, 8.0)
