@@ -292,6 +292,10 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "create_character_error", "message": nul_string(payload)}
 		ServerMessage.YOU_ARE:
 			return {"type": "you_are", "actor_id": u16(payload)} if payload.size() >= 2 else {"type": "invalid", "error": "short_payload"}
+		ServerMessage.SYNC_CLOCK:
+			return {"type": "clock_sync", "server_timestamp": u32(payload)} if payload.size() >= 4 else {"type": "invalid", "error": "clock_sync_length"}
+		ServerMessage.NEW_MINUTE:
+			return {"type": "new_minute", "minute": u16(payload) % 360} if payload.size() >= 2 else {"type": "invalid", "error": "new_minute_length"}
 		ServerMessage.CHANGE_MAP:
 			return {"type": "change_map", "map_name": nul_string(payload)}
 		ServerMessage.REMOVE_ACTOR:
@@ -593,6 +597,8 @@ static func decode_stats(payload: PackedByteArray) -> Dictionary:
 		var resource_index: int = ["carried", "capacity", "health", "max_health", "ether", "max_ether"].find(resource)
 		values[resource] = s16(payload, (40 + resource_index) * 2)
 	values["food"] = s16(payload, 46 * 2)
+	values["action_points"] = s16(payload, 113 * 2)
+	values["max_action_points"] = s16(payload, 114 * 2)
 	return {"type": "stats", "values": values}
 
 static func decode_partial_stats(payload: PackedByteArray) -> Dictionary:
@@ -653,6 +659,7 @@ static func stat_key(slot: int) -> String:
 	var keys: Dictionary = {
 		40: "carried", 41: "capacity", 42: "health", 43: "max_health",
 		44: "ether", 45: "max_ether", 46: "food",
+		113: "action_points", 114: "max_action_points",
 		24: "manufacturing", 26: "harvesting", 28: "alchemy", 30: "overall",
 		32: "attack", 34: "defense", 36: "magic", 38: "potion",
 		83: "summoning", 89: "crafting", 95: "engineering",
