@@ -29,8 +29,9 @@ func _run() -> void:
 	var app_state: Node = root.get_node("AppState")
 	app_state.set("authenticated", true)
 	app_state.set("local_actor_id", 99)
+	app_state.set("current_map", "maps/startmap.elm")
 	app_state.set("actors", {99: {
-		"actor_id": 99, "x": 0, "y": 0, "rotation": 0, "actor_type": 1,
+		"actor_id": 99, "x": 58, "y": 58, "rotation": 0, "actor_type": 1,
 		"kind": 1, "name": "Ari", "health": 72, "max_health": 100,
 		"alive": true, "sitting": false}})
 	app_state.set("stats", {
@@ -40,20 +41,54 @@ func _run() -> void:
 		"magic": 17, "potion": 9, "summoning": 4, "manufacturing": 14,
 		"crafting": 11, "engineering": 3, "tailoring": 6, "ranging": 19,
 		"overall": 22})
+	app_state.set("inventory", {
+		0: {"image_id": 3, "quantity": 9, "slot": 0, "inventory_usable": true},
+		1: {"image_id": 31, "quantity": 2, "slot": 1, "inventory_usable": true},
+		2: {"image_id": 35, "quantity": 1, "slot": 2, "inventory_usable": true},
+		3: {"image_id": 42, "quantity": 4, "slot": 3, "inventory_usable": true}})
+	app_state.set("active_channels", [1, 4, 12])
+	app_state.set("active_channel_index", 1)
 	var chat_lines: Array = app_state.get("chat_lines") as Array
 	chat_lines.clear()
 	chat_lines.append({"channel": 3, "text": "Welcome to Four Gates."})
 	chat_lines.append({"channel": 0, "text": "Legacy HUD layout ready."})
 	app_state.set("game_minute", 91)
 	app_state.set("game_minute_anchor_msec", Time.get_ticks_msec())
+	main.call("_load_server_map")
 	main.call("_sync_world")
 	main.call("_sync_stats")
+	main.call("_sync_inventory")
+	main.call("_sync_channel_tabs")
 	main.call("_sync_chat")
+	main.call("_reveal_chat_messages")
 	for unused_frame: int in range(12):
 		await process_frame
 	await _capture("legacy-hud.png")
 	main.call("_open_actor_hud_menu", Vector2(510.0, 300.0))
 	await _capture("legacy-hud-context-menu.png")
+	(main.get_node("GameView/ActorHudMenu") as Control).hide()
+	main.call("_toggle_minimap")
+	await _capture("legacy-hud-minimap.png")
+	main.call("_toggle_minimap")
+	main.call("_toggle_full_map")
+	for unused_frame: int in range(4):
+		await process_frame
+	var map_image: TextureRect = main.get_node(
+		"GameView/FullMap/MapLayout/MapImage") as TextureRect
+	var map_motion: InputEventMouseMotion = InputEventMouseMotion.new()
+	map_motion.position = map_image.size * 0.5
+	main.call("_on_full_map_gui_input", map_motion)
+	await _capture("legacy-full-map.png")
+	main.call("_show_continent_view")
+	await _capture("legacy-continent-map.png")
+	main.call("_preview_region", 1)
+	await _capture("legacy-region-preview.png")
+	(main.get_node("GameView/FullMap") as Control).hide()
+	main.call("_toggle_console")
+	await _capture("legacy-chat-console.png")
+	main.call("_toggle_console")
+	main.call("_on_options_pressed")
+	await _capture("legacy-hud-settings.png")
 	_finish()
 
 func _capture(file_name: String) -> void:
@@ -87,8 +122,12 @@ func _finish() -> void:
 	if app_state != null:
 		app_state.set("authenticated", false)
 		app_state.set("local_actor_id", -1)
+		app_state.set("current_map", "")
+		app_state.set("active_channels", [0, 0, 0])
+		app_state.set("active_channel_index", 0)
 		(app_state.get("actors") as Dictionary).clear()
 		(app_state.get("stats") as Dictionary).clear()
+		(app_state.get("inventory") as Dictionary).clear()
 		(app_state.get("chat_lines") as Array).clear()
 	print("rendered legacy HUD: ", "PASS" if _failures == 0 else "FAIL")
 	quit(_failures)

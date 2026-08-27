@@ -26,7 +26,8 @@ func _run() -> void:
 	var full_map_camera: Camera3D = main.get_node(
 		"GameView/FullMapViewport/FullMapCamera") as Camera3D
 	var minimap_image: TextureRect = main.get_node("GameView/MinimapFrame/Minimap") as TextureRect
-	var full_map_image: TextureRect = main.get_node("GameView/FullMap/MapImage") as TextureRect
+	var full_map_image: TextureRect = main.get_node(
+		"GameView/FullMap/MapLayout/MapImage") as TextureRect
 	var camera_rig: IsometricCameraController = main.get_node(
 		"GameView/ViewportContainer/Viewport/WorldRoot/CameraRig") as IsometricCameraController
 	var compass_overlay: TextureRect = main.get_node(
@@ -44,6 +45,10 @@ func _run() -> void:
 		"Tab map click-to-walk input handler is connected")
 	_expect(not compass_overlay.visible and compass_overlay.texture == null,
 		"minimap render is not covered by decorative artwork")
+	var minimap_frame: Control = main.get_node("GameView/MinimapFrame") as Control
+	_expect(not minimap_frame.visible and minimap_frame.anchor_left == 0.0
+		and InputMap.has_action("toggle_minimap"),
+		"Alt+M controls a floating minimap outside the right HUD rail")
 	var resolved_world: World3D = world_viewport.find_world_3d()
 	_expect(resolved_world != null, "gameplay World3D resolves from the world viewport")
 	_expect(minimap_viewport.world_3d != null and minimap_viewport.world_3d == resolved_world,
@@ -86,6 +91,27 @@ func _run() -> void:
 	_expect(not full_map_panel.visible, "Tab map starts closed")
 	main.call("_on_map_button_pressed")
 	_expect(full_map_panel.visible, "Tab map control opens the populated map viewport")
+	var displayed_map_center: Variant = main.call("_texture_to_viewport_position",
+		full_map_image.size * 0.5, full_map_image, full_map_viewport.size)
+	_expect(displayed_map_center is Vector2 and (displayed_map_center as Vector2).is_equal_approx(
+		Vector2(full_map_viewport.size) * 0.5),
+		"full-map hover mapping accounts for keep-aspect centering")
+	if full_map_image.size.x > full_map_image.size.y:
+		_expect(main.call("_texture_to_viewport_position",
+			Vector2(1.0, full_map_image.size.y * 0.5), full_map_image,
+			full_map_viewport.size) == null,
+			"full-map letterbox margins do not report false coordinates")
+	_expect(InputMap.has_action("toggle_map")
+		and main.get_node("GameView/FullMap/MapLayout/Sidebar/SidebarContent/ContinentButton") is TextureButton
+		and main.get_node("GameView/FullMap/MapLayout/Sidebar/SidebarContent/MapLegend") is RichTextLabel
+		and main.get_node("GameView/FullMap/MapLayout/Sidebar/SidebarContent/MapCoordinates") is Label,
+		"Tab map exposes continent navigation, a legend, and hover coordinates")
+	var map_motion: InputEventMouseMotion = InputEventMouseMotion.new()
+	map_motion.position = full_map_image.size * 0.5
+	main.call("_on_full_map_gui_input", map_motion)
+	_expect((main.get_node(
+		"GameView/FullMap/MapLayout/Sidebar/SidebarContent/MapCoordinates") as Label).text.contains(","),
+		"map hover reports the same server tile used by click-to-walk")
 	main.call("_on_map_button_pressed")
 	var gameplay_camera: Camera3D = camera_rig.get_node("Camera") as Camera3D
 	_expect(camera_rig.distance >= 24.0 and camera_rig.distance <= 28.0
@@ -103,6 +129,8 @@ func _run() -> void:
 	actor_height_fixture.actor_id = 77
 	actor_height_fixture.apply_server_state({
 		"x": 3, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
+	_expect(is_equal_approx(actor_height_fixture.server_target.y, 42.08),
+		"movement packets preserve the rendered terrain sample")
 	_expect(is_equal_approx(float(actor_height_fixture.get("_target_yaw")), -PI / 2.0),
 		"actor faces the authoritative movement direction")
 	_expect(float(actor_height_fixture.get("_presentation_speed")) >= 6.0,
@@ -132,8 +160,27 @@ func _run() -> void:
 		"private chat receives its personal-channel label")
 	_expect(not chat_output.bbcode_enabled and chat_input.placeholder_text.contains("/name"),
 		"chat remains markup-safe and exposes legacy addressing syntax")
+	app_state_inventory.call("_on_packet", 71,
+		PackedByteArray([1, 1, 0, 0, 0, 4, 0, 0, 0, 12, 0, 0, 0]))
+	main.call("_sync_channel_tabs")
+	var numeric_channel: Button = main.get_node("GameView/ChatTabs/Channel2") as Button
+	_expect(numeric_channel.visible and numeric_channel.text == "4",
+		"server active channels appear as numeric chat tabs")
+	main.call("_hide_chat_input")
+	_expect(not chat_input.visible, "Esc behavior can dismiss the active chat entry")
+	main.call("_show_chat_input")
+	_expect(chat_input.visible and chat_input.has_focus(), "T behavior restores chat entry focus")
+	main.call("_reveal_chat_messages")
+	main.set("_last_chat_activity_msec", Time.get_ticks_msec() - 10000)
+	main.call("_update_chat_fade")
+	_expect(not chat_panel.visible, "upper chat messages fade away after their display window")
+	main.call("_on_chat_tab_pressed", "all")
+	_expect(chat_panel.visible and is_equal_approx(chat_panel.modulate.a, 1.0),
+		"chat tab selection restores faded messages")
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
+	_expect(inventory_button.flat and inventory_button.focus_mode == Control.FOCUS_NONE,
+		"bottom HUD icons have no individual box and cannot steal Tab focus")
 	var chat_tabs: Control = main.get_node("GameView/ChatTabs") as Control
 	_expect(chat_tabs.position.x <= 12.0 and chat_tabs.position.y <= 8.0
 		and chat_panel.anchor_bottom < 0.3
@@ -141,10 +188,25 @@ func _run() -> void:
 		"legacy chat tabs sit at upper left while entry remains above the lower rail")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
 		"stats and item/spell quickbar occupy the right HUD rail")
+	var item_slots: GridContainer = main.get_node(
+		"GameView/ItemSpellQuickbar/QuickContent/Slots") as GridContainer
+	var spell_slots: GridContainer = main.get_node(
+		"GameView/ItemSpellQuickbar/QuickContent/SpellSlots") as GridContainer
+	_expect(item_slots.columns == 1 and spell_slots.columns == 1
+		and spell_slots.get_index() < item_slots.get_index(),
+		"spell and item icons form adjacent single-column vertical bars")
 	var clock_face: TextureRect = main.get_node("GameView/ClockFrame/ClockFace") as TextureRect
 	var compass_face: TextureRect = main.get_node("GameView/CompassFrame/CompassFace") as TextureRect
 	_expect(clock_face.texture != null and compass_face.texture != null,
 		"legacy clock and compass use the existing Eloria HUD atlas")
+	_expect(clock_face.gui_input.is_connected(Callable(main, "_on_clock_gui_input"))
+		and compass_face.gui_input.is_connected(Callable(main, "_on_compass_gui_input"))
+		and (main.get_node("GameView/EloriaLogoFrame/HudLogo") as TextureRect).texture != null,
+		"clock, compass, and top-right Eloria logo are interactive/present")
+	_expect(InputMap.has_action("toggle_console")
+		and main.get_node("GameView/ConsolePanel/Content/ConsoleOutput") is RichTextLabel
+		and chat_input.anchor_left > 0.5,
+		"tilde console history and bottom-right T/Esc chat entry are available")
 	for meter_path: String in [
 		"GameView/Quickbar/Buttons/BottomMeters/HealthMeter/HealthBottom",
 		"GameView/Quickbar/Buttons/BottomMeters/EtherMeter/EtherBottom",
@@ -161,6 +223,15 @@ func _run() -> void:
 		"ether": 33, "max_ether": 50, "action_points": 18,
 		"max_action_points": 30, "attack": 24, "overall": 22})
 	main.call("_sync_stats")
+	var overhead_health_bar: ProgressBar = main.get_node(
+		"GameView/ActorResourceOverlay/Rows/HealthRow/Bar") as ProgressBar
+	var overhead_health_label: Label = main.get_node(
+		"GameView/ActorResourceOverlay/Rows/HealthRow/Number") as Label
+	var overhead_fill: StyleBoxFlat = overhead_health_bar.get_theme_stylebox("fill") as StyleBoxFlat
+	_expect(overhead_fill != null and overhead_fill.bg_color.r > overhead_fill.bg_color.g
+		and overhead_health_label.get_theme_color("font_color").r
+			> overhead_health_label.get_theme_color("font_color").g,
+		"overhead health bar and numbers render red")
 	_expect(is_equal_approx((main.get_node(
 		"GameView/Quickbar/Buttons/BottomMeters/HealthMeter/HealthBottom") as ProgressBar).value, 72.0)
 		and is_equal_approx((main.get_node(
@@ -182,6 +253,8 @@ func _run() -> void:
 	_expect(stats_panel.visible and not stats_panel.get_global_rect().intersects(
 		right_stats.get_global_rect()),
 		"statistics window opens without covering the fixed resource rail")
+	_expect(stats_panel.z_index > (main.get_node("GameView/ActorResourceOverlay") as Control).z_index,
+		"popup windows render above the player resource overlay")
 	main.call("_on_stats_button_pressed")
 	_expect(not inventory_panel.visible and not inventory_button.disabled,
 		"real inventory window starts closed with its HUD action enabled")
@@ -427,9 +500,10 @@ func _run() -> void:
 	_expect(first_inventory_slot.text.contains("×9") and first_inventory_slot.icon != null
 		and not first_inventory_slot.disabled,
 		"inventory snapshot populates its server slot")
-	_expect(first_quick_slot.text.contains("×9") and first_quick_slot.icon != null
+	_expect(first_quick_slot.text.is_empty() and first_quick_slot.icon != null
+		and first_quick_slot.tooltip_text.contains("Quantity: 9")
 		and not first_quick_slot.disabled,
-		"usable inventory slot populates the matching live quick slot")
+		"usable inventory slot populates the icon-only vertical quick slot")
 	_expect(first_equipment_slot.text.contains("×1") and first_equipment_slot.icon != null
 		and not first_equipment_slot.disabled,
 		"authoritative wear slot populates the equipment grid")
@@ -452,7 +526,7 @@ func _run() -> void:
 	app_state_inventory.set("inventory_cooldowns", {0: {
 		"maximum_msec": 30000, "end_msec": Time.get_ticks_msec() + 12000}})
 	main.call("_sync_quick_slots")
-	_expect(first_quick_slot.disabled and first_quick_slot.text.contains("12s"),
+	_expect(first_quick_slot.disabled and first_quick_slot.tooltip_text.contains("12 seconds"),
 		"server cooldown disables the usable quick slot with remaining time")
 	app_state_inventory.set("inventory_cooldowns", {})
 	for quick_index: int in range(1, 9):

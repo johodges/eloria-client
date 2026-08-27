@@ -1175,6 +1175,16 @@
       "bridges",
       "plaza"
     ],
+    "surfaceNodePrefixes": [
+      "Terrain_City_Plateau",
+      "Road_Radial_",
+      "Road_Ring_",
+      "Plaza_Disc",
+      "Bridge_South_Deck",
+      "Bridge_North_Deck",
+      "Bridge_East_Deck",
+      "Bridge_West_Deck"
+    ],
     "navmesh": {
       "format": "inline-convex-polygons-v1",
       "coordinateSystem": "asset",
