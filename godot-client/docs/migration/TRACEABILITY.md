@@ -182,8 +182,11 @@ headless job and the opt-in rendered development-server job. Artifact
 
 The authoritative fresh-character snapshot contained three backpack entries
 at slots 0 through 2 with image IDs `114`, `397`, and `460`, each at quantity
-one. All three inventory buttons and all three corresponding item quick slots
-held visible icons and quantities. The independent asset pack does not bundle
+one. Real item-inspection responses identified them as Four Gates Guard Spear,
+Guard Shield, and Guard Cape respectively, and each alias is pinned to matching
+independent weapon, shield, or cloak artwork. All three inventory buttons and
+all three corresponding item quick slots held visible icons and quantities.
+The independent asset pack does not bundle
 the complete legacy Eternal Lands item atlas range, so the registry resolves
 those observed IDs through explicit data-driven Eloria substitutes and uses a
 disclosed generic Eloria fallback for other unbundled IDs; tooltips retain the
