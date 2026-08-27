@@ -31,8 +31,17 @@ extends Control
 @onready var full_map_viewport: SubViewport = %FullMapViewport
 @onready var full_map_camera: Camera3D = %FullMapCamera
 @onready var minimap: TextureRect = %Minimap
+@onready var minimap_frame: PanelContainer = %MinimapFrame
 @onready var full_map: Control = %FullMap
 @onready var map_image: TextureRect = %MapImage
+@onready var map_title: Label = %MapTitle
+@onready var map_coordinates: Label = %MapCoordinates
+@onready var continent_button: TextureButton = %ContinentButton
+@onready var current_map_button: Button = %CurrentMapButton
+@onready var region_preview: TextureRect = %RegionPreview
+@onready var continent_view: Control = %ContinentView
+@onready var continent_image: TextureRect = %ContinentImage
+@onready var region_buttons: VBoxContainer = %RegionButtons
 @onready var health_bar: ProgressBar = %Health
 @onready var health_text: Label = %HealthText
 @onready var mana_bar: ProgressBar = %Mana
@@ -48,7 +57,10 @@ extends Control
 @onready var skill_indicators: RichTextLabel = %SkillIndicators
 @onready var clock_text: Label = %ClockText
 @onready var clock_hand: Line2D = %ClockHand
+@onready var clock_face: TextureRect = %ClockFace
 @onready var compass_needle: Line2D = %CompassNeedle
+@onready var compass_face: TextureRect = %CompassFace
+@onready var hud_logo: TextureRect = %HudLogo
 @onready var actor_resource_overlay: PanelContainer = %ActorResourceOverlay
 @onready var actor_hud_menu: PanelContainer = %ActorHudMenu
 @onready var overhead_health_row: HBoxContainer = %HealthRow
@@ -108,12 +120,19 @@ extends Control
 @onready var manufacturing_mix_all: Button = %ManufacturingMixAll
 @onready var quick_slot_container: GridContainer = $GameView/ItemSpellQuickbar/QuickContent/Slots
 @onready var spell_slot_container: GridContainer = %SpellSlots
+@onready var quick_content: HBoxContainer = $GameView/ItemSpellQuickbar/QuickContent
 @onready var spell_status: Label = %SpellStatus
 @onready var player_map_marker: MeshInstance3D = %PlayerMapMarker
 @onready var map_label: Label = %MapLabel
 @onready var actor_label: Label = %ActorLabel
 @onready var chat_output: RichTextLabel = %ChatOutput
 @onready var chat_input: LineEdit = %ChatInput
+@onready var chat_panel: PanelContainer = $GameView/ChatPanel
+@onready var console_panel: PanelContainer = %ConsolePanel
+@onready var console_output: RichTextLabel = %ConsoleOutput
+@onready var settings_panel: PanelContainer = %SettingsPanel
+@onready var minimap_size: HSlider = %MinimapSize
+@onready var minimap_size_value: Label = %MinimapSizeValue
 @onready var selected_target: Label = %SelectedTarget
 @onready var dialogue_panel: Control = %DialoguePanel
 @onready var dialogue_name: Label = %DialogueName
@@ -131,6 +150,8 @@ var creation_options: Array = []
 var animation_config: Dictionary = {}
 var animation_configs: Dictionary = {}
 var map_registry: Dictionary = {}
+var cartography: Dictionary = {}
+var cartography_regions: Array = []
 var equipment_config: Dictionary = {}
 var item_atlas := ItemAtlas.new()
 var spell_catalog := SpellCatalog.new()
@@ -158,8 +179,15 @@ var selected_manufacturing_recipe := -1
 var manufacturing_server_status := "Select a recipe."
 var cooldown_display_second := -1
 var _chat_tab := "all"
+var _last_chat_activity_msec := 0
+var _current_map_display_name := "Unknown map"
+var _minimap_scale := 1.0
 var _right_mouse_down := false
 var _right_mouse_dragged := false
+
+const CHAT_FADE_DELAY_MSEC := 7000
+const CHAT_FADE_DURATION_MSEC := 1800
+const SETTINGS_PATH := "user://eloria_hud.cfg"
 
 func _ready() -> void:
 	var model_registry: Dictionary = _json("res://data/actors/models.json")
@@ -170,6 +198,8 @@ func _ready() -> void:
 	animation_config = _json("res://data/animations/luminous.json")
 	animation_configs["res://data/animations/luminous.json"] = animation_config
 	map_registry = _json("res://data/maps/registry.json").get("maps", {})
+	cartography = _json("res://data/maps/cartography.json")
+	cartography_regions = cartography.get("regions", []) as Array
 	equipment_config = _json("res://data/actors/equipment.json")
 	item_atlas.configure(_json("res://data/items/atlases.json"))
 	spell_catalog.configure(_json("res://data/spells/catalog.json"))
@@ -191,10 +221,17 @@ func _ready() -> void:
 	viewport_container.gui_input.connect(_on_world_gui_input)
 	minimap.gui_input.connect(_on_minimap_gui_input)
 	map_image.gui_input.connect(_on_full_map_gui_input)
+	map_image.mouse_exited.connect(_on_full_map_mouse_exited)
+	clock_face.gui_input.connect(_on_clock_gui_input)
+	compass_face.gui_input.connect(_on_compass_gui_input)
+	continent_button.pressed.connect(_show_continent_view)
+	current_map_button.pressed.connect(_show_current_map_view)
 	_bind_shared_world()
 	minimap.texture = map_viewport.get_texture()
 	map_image.texture = full_map_viewport.get_texture()
 	full_map.hide()
+	console_panel.hide()
+	settings_panel.hide()
 	stats_panel.hide()
 	inventory_panel.hide()
 	trade_panel.hide()
@@ -213,8 +250,12 @@ func _ready() -> void:
 	_update_preview_camera()
 	_apply_eloria_art()
 	_apply_eloria_theme()
+	_configure_window_layers()
+	_configure_cartography()
+	_load_hud_settings()
 	_build_inventory_slots()
 	_build_equipment_slots()
+	quick_content.move_child(spell_slot_container, 0)
 	_bind_quick_slots()
 	_bind_spell_slots()
 	_reset_trade_destinations()
@@ -236,7 +277,15 @@ func _ready() -> void:
 	%Close.pressed.connect(func() -> void: actor_hud_menu.hide())
 	$GameView/ChatTabs/All.pressed.connect(_on_chat_tab_pressed.bind("all"))
 	$GameView/ChatTabs/History.pressed.connect(_on_chat_tab_pressed.bind("history"))
-	$GameView/ChatTabs/Options.pressed.connect(_on_chat_tab_pressed.bind("options"))
+	$GameView/ChatTabs/Options.pressed.connect(_on_options_pressed)
+	for channel_index: int in range(3):
+		var channel_button: Button = get_node(
+			"GameView/ChatTabs/Channel%d" % (channel_index + 1)) as Button
+		channel_button.pressed.connect(_on_channel_tab_pressed.bind(channel_index))
+	minimap_size.value_changed.connect(_on_minimap_size_changed)
+	%SettingsClose.pressed.connect(_close_settings)
+	%ConsoleClose.pressed.connect(_toggle_console)
+	_sync_channel_tabs()
 	_sync_stats()
 
 func _bind_shared_world() -> void:
@@ -253,6 +302,7 @@ func _process(_delta: float) -> void:
 		_update_local_actor_follow()
 		_update_legacy_clock_and_compass()
 		_update_actor_resource_overlay()
+		_update_chat_fade()
 		var display_second: int = floori(float(Time.get_ticks_msec()) / 1000.0)
 		if display_second != cooldown_display_second:
 			cooldown_display_second = display_second
@@ -420,7 +470,7 @@ func _on_login_submitted(_text: String) -> void:
 		_on_login_pressed()
 
 func _on_map_button_pressed() -> void:
-	full_map.visible = not full_map.visible
+	_toggle_full_map()
 
 func _on_walk_button_pressed() -> void:
 	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
@@ -450,7 +500,49 @@ func _on_trade_button_pressed() -> void:
 		push_warning("TRADE_WITH failed: " + error_string(error))
 
 func _on_chat_button_pressed() -> void:
+	_show_chat_input()
+
+func _show_chat_input() -> void:
+	chat_input.show()
 	chat_input.grab_focus()
+
+func _hide_chat_input() -> void:
+	chat_input.release_focus()
+	chat_input.hide()
+
+func _toggle_full_map() -> void:
+	if full_map.visible:
+		full_map.hide()
+		return
+	console_panel.hide()
+	_close_settings()
+	_show_current_map_view()
+	full_map.show()
+	full_map.move_to_front()
+
+func _toggle_minimap() -> void:
+	minimap_frame.visible = not minimap_frame.visible
+
+func _toggle_console() -> void:
+	if console_panel.visible:
+		console_panel.hide()
+		return
+	full_map.hide()
+	_close_settings()
+	_sync_console()
+	console_panel.show()
+	console_panel.move_to_front()
+
+func _on_options_pressed() -> void:
+	settings_panel.visible = not settings_panel.visible
+	if settings_panel.visible:
+		console_panel.hide()
+		settings_panel.move_to_front()
+	$GameView/ChatTabs/Options.button_pressed = settings_panel.visible
+
+func _close_settings() -> void:
+	settings_panel.hide()
+	$GameView/ChatTabs/Options.button_pressed = false
 
 func _on_stats_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
@@ -864,8 +956,35 @@ func _clear_world_presentation() -> void:
 	knowledge_panel.hide()
 	manufacturing_panel.hide()
 	dialogue_panel.hide()
+	console_panel.hide()
+	_close_settings()
+	minimap_frame.hide()
 	chat_output.clear()
 	selected_target.text = "Target: none"
+
+func _input(event: InputEvent) -> void:
+	if not game_view.visible or not event is InputEventKey:
+		return
+	var key_event: InputEventKey = event as InputEventKey
+	if not key_event.pressed or key_event.echo:
+		return
+	if key_event.keycode == KEY_TAB or key_event.physical_keycode == KEY_TAB:
+		_toggle_full_map()
+		get_viewport().set_input_as_handled()
+	elif (key_event.alt_pressed and (key_event.keycode == KEY_M
+			or key_event.physical_keycode == KEY_M)):
+		_toggle_minimap()
+		get_viewport().set_input_as_handled()
+	elif (key_event.keycode in [96, 126]
+			or key_event.physical_keycode == 96 or key_event.unicode in [96, 126]):
+		_toggle_console()
+		get_viewport().set_input_as_handled()
+	elif key_event.keycode == KEY_ESCAPE and console_panel.visible:
+		console_panel.hide()
+		get_viewport().set_input_as_handled()
+	elif key_event.keycode == KEY_ESCAPE and chat_input.has_focus():
+		_hide_chat_input()
+		get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not game_view.visible:
@@ -884,16 +1003,30 @@ func _unhandled_input(event: InputEvent) -> void:
 			_use_inventory_slot(slot)
 			get_viewport().set_input_as_handled()
 			return
-	if event.is_action_pressed("toggle_map") or (event is InputEventKey and event.pressed and event.keycode == KEY_TAB):
-		full_map.visible = not full_map.visible
+	if event.is_action_pressed("toggle_map"):
+		_toggle_full_map()
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("toggle_minimap"):
+		_toggle_minimap()
+		get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("toggle_console"):
+		_toggle_console()
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("chat_focus"):
-		chat_input.grab_focus()
+		_show_chat_input()
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("cancel"):
-		if dialogue_panel.visible:
+		if chat_input.has_focus():
+			_hide_chat_input()
+		elif settings_panel.visible:
+			_close_settings()
+		elif console_panel.visible:
+			console_panel.hide()
+		elif dialogue_panel.visible:
 			AppState.close_dialogue()
 		elif bool(AppState.trade.get("open", false)):
 			_on_trade_cancel_pressed()
@@ -912,7 +1045,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif full_map.visible:
 			full_map.hide()
 		else:
-			chat_input.release_focus()
+			actor_hud_menu.hide()
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("toggle_sit"):
@@ -978,16 +1111,130 @@ func _on_chat_tab_pressed(tab: String) -> void:
 	_chat_tab = tab
 	$GameView/ChatTabs/All.button_pressed = tab == "all"
 	$GameView/ChatTabs/History.button_pressed = tab == "history"
-	$GameView/ChatTabs/Options.button_pressed = tab == "options"
+	$GameView/ChatTabs/Options.button_pressed = false
+	for channel_index: int in range(3):
+		var channel_button: Button = get_node(
+			"GameView/ChatTabs/Channel%d" % (channel_index + 1)) as Button
+		channel_button.button_pressed = tab == "channel:%d" % channel_index
 	_sync_chat()
+	_reveal_chat_messages()
+
+func _on_channel_tab_pressed(channel_index: int) -> void:
+	if channel_index < 0 or channel_index >= AppState.active_channels.size():
+		return
+	if int(AppState.active_channels[channel_index]) <= 0:
+		return
+	var error: Error = Network.set_active_channel(channel_index)
+	if error != OK:
+		push_warning("SET_ACTIVE_CHANNEL failed: " + error_string(error))
+	AppState.active_channel_index = channel_index
+	_on_chat_tab_pressed("channel:%d" % channel_index)
+
+func _sync_channel_tabs() -> void:
+	for channel_index: int in range(3):
+		var button: Button = get_node(
+			"GameView/ChatTabs/Channel%d" % (channel_index + 1)) as Button
+		var channel_number: int = (int(AppState.active_channels[channel_index])
+			if channel_index < AppState.active_channels.size() else 0)
+		button.visible = channel_number > 0
+		button.text = str(channel_number) if channel_number > 0 else str(channel_index + 1)
+		button.tooltip_text = ("Active channel #%d" % channel_number
+			if channel_number > 0 else "Unused channel slot")
+		button.button_pressed = _chat_tab == "channel:%d" % channel_index
+
+func _reveal_chat_messages() -> void:
+	_last_chat_activity_msec = Time.get_ticks_msec()
+	chat_panel.modulate.a = 1.0
+	chat_panel.show()
+
+func _update_chat_fade() -> void:
+	if console_panel.visible or not chat_panel.visible:
+		return
+	var age_msec: int = Time.get_ticks_msec() - _last_chat_activity_msec
+	if age_msec <= CHAT_FADE_DELAY_MSEC:
+		chat_panel.modulate.a = 1.0
+		return
+	var fade_progress: float = clampf(float(age_msec - CHAT_FADE_DELAY_MSEC)
+		/ float(CHAT_FADE_DURATION_MSEC), 0.0, 1.0)
+	chat_panel.modulate.a = 1.0 - fade_progress
+	if fade_progress >= 1.0:
+		chat_panel.hide()
 
 func _on_minimap_gui_input(event: InputEvent) -> void:
 	_handle_map_gui_input(event, minimap, map_viewport, map_camera, "minimap")
 
 func _on_full_map_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
+		var viewport_position_value: Variant = _texture_to_viewport_position(
+			mouse_motion.position, map_image, full_map_viewport.size)
+		if not viewport_position_value is Vector2:
+			map_coordinates.text = "Coordinates: outside map image"
+			return
+		var viewport_position: Vector2 = viewport_position_value as Vector2
+		var target_value: Variant = _map_target_tile(full_map_camera, viewport_position)
+		if target_value is Vector2i:
+			var tile: Vector2i = target_value as Vector2i
+			map_coordinates.text = "Coordinates: %d, %d" % [tile.x, tile.y]
+		else:
+			map_coordinates.text = "Coordinates: outside walkable map"
+		return
 	_handle_map_gui_input(event, map_image, full_map_viewport, full_map_camera, "full_map")
 
-func _handle_map_gui_input(event: InputEvent, map_control: Control,
+func _on_full_map_mouse_exited() -> void:
+	if map_image.visible:
+		map_coordinates.text = "Coordinates: —"
+
+func _on_compass_gui_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse_button: InputEventMouseButton = event as InputEventMouseButton
+	if not mouse_button.pressed or mouse_button.button_index != MOUSE_BUTTON_LEFT:
+		return
+	if mouse_button.ctrl_pressed:
+		var tile_value: Variant = _local_actor_server_tile()
+		if not tile_value is Vector2i:
+			AppState.append_local_message("Your position is not available yet.")
+			compass_face.accept_event()
+			return
+		var tile: Vector2i = tile_value as Vector2i
+		var location: String = "%s (%d, %d)" % [
+			_current_map_display_name, tile.x, tile.y]
+		if AppState.active_channel_number() <= 0:
+			AppState.append_local_message(
+				"Join or select a numeric channel before sharing your position.")
+		else:
+			var share_error: Error = Network.send_chat("@My Position: " + location)
+			if share_error != OK:
+				AppState.append_local_message(
+					"Could not share your position: " + error_string(share_error))
+	else:
+		var locate_error: Error = Network.locate_me()
+		if locate_error != OK:
+			AppState.append_local_message(
+				"Could not request your location: " + error_string(locate_error))
+	compass_face.accept_event()
+
+func _on_clock_gui_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse_button: InputEventMouseButton = event as InputEventMouseButton
+	if not mouse_button.pressed or mouse_button.button_index != MOUSE_BUTTON_LEFT:
+		return
+	var date_error: Error = Network.request_server_date()
+	var time_error: Error = Network.request_server_time()
+	if date_error != OK or time_error != OK:
+		AppState.append_local_message("Server date/time request failed: %s" %
+			error_string(date_error if date_error != OK else time_error))
+	clock_face.accept_event()
+
+func _local_actor_server_tile() -> Variant:
+	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	if not actor_value is Node3D or not is_instance_valid(actor_value as Node3D):
+		return null
+	return adapter.godot_to_server((actor_value as Node3D).global_position)
+
+func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 		map_render_viewport: SubViewport, camera: Camera3D, source: String) -> void:
 	if (not game_view.visible or dialogue_panel.visible or trade_panel.visible
 			or storage_panel.visible or ground_bag_panel.visible
@@ -998,8 +1245,12 @@ func _handle_map_gui_input(event: InputEvent, map_control: Control,
 	var mouse_button: InputEventMouseButton = event as InputEventMouseButton
 	if not mouse_button.pressed or mouse_button.button_index != MOUSE_BUTTON_LEFT:
 		return
-	var viewport_position: Vector2 = _control_to_viewport_position(
-		mouse_button.position, map_control.size, map_render_viewport.size)
+	var viewport_position_value: Variant = _texture_to_viewport_position(
+		mouse_button.position, map_control, map_render_viewport.size)
+	if not viewport_position_value is Vector2:
+		map_control.accept_event()
+		return
+	var viewport_position: Vector2 = viewport_position_value as Vector2
 	var target_value: Variant = _map_target_tile(camera, viewport_position)
 	print_debug("map_input source=", source, " local_click=", mouse_button.position,
 		" viewport=", viewport_position, " server_tile=", target_value,
@@ -1031,6 +1282,21 @@ static func _control_to_viewport_position(local_position: Vector2,
 	if control_size.x <= 0.0 or control_size.y <= 0.0:
 		return local_position
 	return local_position * Vector2(target_size) / control_size
+
+static func _texture_to_viewport_position(local_position: Vector2,
+		texture_rect: TextureRect, target_size: Vector2i) -> Variant:
+	var control_size: Vector2 = texture_rect.size
+	var target: Vector2 = Vector2(target_size)
+	if control_size.x <= 0.0 or control_size.y <= 0.0 or target.x <= 0.0 or target.y <= 0.0:
+		return null
+	if texture_rect.stretch_mode == TextureRect.STRETCH_KEEP_ASPECT_CENTERED:
+		var scale: float = minf(control_size.x / target.x, control_size.y / target.y)
+		var displayed_size: Vector2 = target * scale
+		var displayed_origin: Vector2 = (control_size - displayed_size) * 0.5
+		if not Rect2(displayed_origin, displayed_size).has_point(local_position):
+			return null
+		return (local_position - displayed_origin) * target / displayed_size
+	return _control_to_viewport_position(local_position, control_size, target_size)
 
 func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector2) -> void:
 	var picked_actor_id: int = _pick_actor(viewport_position)
@@ -1091,6 +1357,10 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_selection()
 		&"chat":
 			_sync_chat()
+			_sync_console()
+			_reveal_chat_messages()
+		&"channels":
+			_sync_channel_tabs()
 		&"stats":
 			_sync_stats()
 			_sync_spells()
@@ -1136,6 +1406,7 @@ func _load_server_map() -> void:
 			AppState.current_map, normalized_map, map_registry.keys()])
 		return
 	loaded_server_map = AppState.current_map
+	_current_map_display_name = _friendly_map_name(AppState.current_map)
 	adapter = CoordinateAdapter.new(entry.get("coordinateTransform", {}))
 	for node in actor_nodes.values():
 		node.queue_free()
@@ -1156,7 +1427,11 @@ func _load_server_map() -> void:
 func _on_world_loaded(manifest: WorldManifest) -> void:
 	_bind_shared_world()
 	fallback_ground.hide()
-	map_label.text = "Map: " + manifest.data.get("asset", {}).get("name", manifest.asset_id())
+	_current_map_display_name = str(
+		manifest.data.get("asset", {}).get("name", manifest.asset_id()))
+	map_label.text = "Map: " + _current_map_display_name
+	map_title.text = _current_map_display_name.to_upper()
+	current_map_button.text = "Current: " + _current_map_display_name
 	_configure_full_map(manifest)
 	_sync_world()
 	_sync_ground_bags()
@@ -1474,21 +1749,139 @@ func _configure_full_map(manifest: WorldManifest) -> void:
 	full_map_camera.size = extent * 1.05
 	full_map_camera.far = maxf(2500.0, center.y + 500.0)
 
+func _configure_cartography() -> void:
+	var continent_value: Variant = cartography.get("continent", {})
+	if continent_value is Dictionary:
+		var continent: Dictionary = continent_value as Dictionary
+		var continent_texture: Texture2D = _external_texture(
+			str(continent.get("texture", "")))
+		continent_button.texture_normal = continent_texture
+		continent_image.texture = continent_texture
+	for child: Node in region_buttons.get_children():
+		child.queue_free()
+	for region_index: int in range(cartography_regions.size()):
+		var region_value: Variant = cartography_regions[region_index]
+		if not region_value is Dictionary:
+			continue
+		var region: Dictionary = region_value as Dictionary
+		var button: Button = Button.new()
+		button.text = str(region.get("name", "Unknown region"))
+		button.tooltip_text = "Preview " + button.text
+		button.focus_mode = Control.FOCUS_NONE
+		button.pressed.connect(_preview_region.bind(region_index))
+		region_buttons.add_child(button)
+
+func _show_current_map_view() -> void:
+	continent_view.hide()
+	region_preview.hide()
+	map_image.show()
+	map_title.text = _current_map_display_name.to_upper()
+	map_coordinates.text = "Coordinates: —"
+
+func _show_continent_view() -> void:
+	map_image.hide()
+	region_preview.hide()
+	continent_view.show()
+	var continent: Dictionary = cartography.get("continent", {}) as Dictionary
+	map_title.text = str(continent.get("name", "Nymara")).to_upper() + " CONTINENT"
+	map_coordinates.text = "Select a region to preview. Your server map will not change."
+
+func _preview_region(region_index: int) -> void:
+	if region_index < 0 or region_index >= cartography_regions.size():
+		return
+	var region_value: Variant = cartography_regions[region_index]
+	if not region_value is Dictionary:
+		return
+	var region: Dictionary = region_value as Dictionary
+	var preview_texture: Texture2D = _external_texture(str(region.get("preview", "")))
+	if preview_texture == null:
+		map_coordinates.text = "Preview unavailable for " + str(region.get("name", "region"))
+		return
+	continent_view.hide()
+	map_image.hide()
+	region_preview.texture = preview_texture
+	region_preview.show()
+	map_title.text = str(region.get("name", "REGION")).to_upper() + " PREVIEW"
+	map_coordinates.text = "Preview only — click Current map to return."
+
+func _friendly_map_name(server_map: String) -> String:
+	var normalized: String = MapRegistry.normalize_server_map_id(server_map)
+	if normalized in ["maps/startmap.elm", "startmap.elm", "four_gates", "four-gates"]:
+		return "Four Gates City"
+	var file_name: String = normalized.get_file().get_basename()
+	return file_name.replace("_", " ").replace("-", " ").capitalize()
+
+func _load_hud_settings() -> void:
+	var config: ConfigFile = ConfigFile.new()
+	if config.load(SETTINGS_PATH) == OK:
+		_minimap_scale = clampf(float(config.get_value(
+			"hud", "minimap_scale", 1.0)), 0.75, 1.75)
+	minimap_size.set_value_no_signal(_minimap_scale)
+	_apply_minimap_scale()
+
+func _on_minimap_size_changed(value: float) -> void:
+	_minimap_scale = clampf(value, 0.75, 1.75)
+	_apply_minimap_scale()
+	var config: ConfigFile = ConfigFile.new()
+	config.load(SETTINGS_PATH)
+	config.set_value("hud", "minimap_scale", _minimap_scale)
+	var error: Error = config.save(SETTINGS_PATH)
+	if error != OK:
+		push_warning("HUD settings save failed: " + error_string(error))
+
+func _apply_minimap_scale() -> void:
+	var frame_size: float = roundf(192.0 * _minimap_scale)
+	minimap_frame.offset_right = minimap_frame.offset_left + frame_size
+	minimap_frame.offset_bottom = minimap_frame.offset_top + frame_size
+	minimap.custom_minimum_size = Vector2.ONE * maxf(64.0, frame_size - 8.0)
+	minimap_size_value.text = "%d%%" % roundi(_minimap_scale * 100.0)
+
+func _configure_window_layers() -> void:
+	actor_resource_overlay.z_index = 1
+	for panel: Control in [full_map, stats_panel, inventory_panel, dialogue_panel,
+		trade_panel, storage_panel, ground_bag_panel, knowledge_panel,
+		manufacturing_panel]:
+		panel.z_index = 20
+	console_panel.z_index = 25
+	settings_panel.z_index = 30
+	actor_hud_menu.z_index = 30
+
 func _sync_chat() -> void:
 	chat_output.clear()
-	if _chat_tab == "options":
-		chat_output.append_text("All: recent messages\nHistory: complete session log\n")
-		return
-	var first_line := 0 if _chat_tab == "history" else maxi(0, AppState.chat_lines.size() - 100)
-	for line in AppState.chat_lines.slice(first_line):
+	var first_line: int = (0 if _chat_tab == "history"
+		else maxi(0, AppState.chat_lines.size() - 100))
+	for line_value: Variant in AppState.chat_lines.slice(first_line):
+		var line: Dictionary = line_value as Dictionary
 		var channel: int = int(line.get("channel", 0))
-		var prefix: String = ""
-		match channel:
-			1: prefix = "[PM] "
-			3, 255: prefix = "[System] "
-			5, 6, 7: prefix = "[Channel] "
-		chat_output.append_text(prefix + str(line.get("text", "")) + "\n")
+		if not _chat_line_visible(channel):
+			continue
+		chat_output.append_text(_formatted_chat_line(line) + "\n")
 	chat_output.scroll_to_line(maxi(0, chat_output.get_line_count() - 1))
+
+func _sync_console() -> void:
+	console_output.clear()
+	for line_value: Variant in AppState.chat_lines:
+		console_output.append_text(_formatted_chat_line(line_value as Dictionary) + "\n")
+
+func _chat_line_visible(channel: int) -> bool:
+	if not _chat_tab.begins_with("channel:"):
+		return true
+	var slot: int = int(_chat_tab.trim_prefix("channel:"))
+	return channel == 5 + slot
+
+func _formatted_chat_line(line: Dictionary) -> String:
+	var channel: int = int(line.get("channel", 0))
+	var prefix: String = ""
+	match channel:
+		1: prefix = "[PM] "
+		3, 255: prefix = "[System] "
+		5, 6, 7:
+			var slot: int = channel - 5
+			var channel_number: int = (int(AppState.active_channels[slot])
+				if slot >= 0 and slot < AppState.active_channels.size() else 0)
+			prefix = ("[#%d] " % channel_number
+				if channel_number > 0 else "[Channel] ")
+	return prefix + str(line.get("text", ""))
 
 func _sync_stats() -> void:
 	var stats: Dictionary = AppState.stats
@@ -1612,6 +2005,7 @@ func _bind_quick_slots() -> void:
 	for child: Node in quick_slot_container.get_children():
 		if child is Button:
 			var button: Button = child as Button
+			button.focus_mode = Control.FOCUS_NONE
 			button.pressed.connect(_on_quick_slot_pressed.bind(slot))
 			quick_slot_buttons.append(button)
 			slot += 1
@@ -1621,6 +2015,7 @@ func _bind_spell_slots() -> void:
 	for child: Node in spell_slot_container.get_children():
 		if child is Button:
 			var button: Button = child as Button
+			button.focus_mode = Control.FOCUS_NONE
 			button.pressed.connect(_cast_spell_slot.bind(slot))
 			spell_slot_buttons.append(button)
 			slot += 1
@@ -1695,13 +2090,16 @@ func _sync_quick_slots() -> void:
 			var cooldown_seconds: int = _inventory_cooldown_remaining(slot)
 			quick_button.icon = item_atlas.icon_for(int(quick_item.get("image_id", 0)))
 			quick_button.expand_icon = true
-			quick_button.text = "%d  ×%d%s" % [slot + 1, int(quick_item.get("quantity", 0)),
-				"\n%ds" % cooldown_seconds if cooldown_seconds > 0 else ""]
+			quick_button.text = ""
 			quick_button.disabled = not usable or cooldown_seconds > 0
-			quick_button.tooltip_text = ((_inventory_tooltip(quick_item)
-				+ "\nCooldown: %d seconds" % cooldown_seconds) if cooldown_seconds > 0 else
-				_inventory_tooltip(quick_item) if usable else
-				_inventory_tooltip(quick_item) + "\nThis item cannot be used directly.")
+			var quick_tooltip: String = (_inventory_tooltip(quick_item)
+				+ "\nQuick slot: %d  Quantity: %d" % [slot + 1,
+					int(quick_item.get("quantity", 0))])
+			if cooldown_seconds > 0:
+				quick_tooltip += "\nCooldown: %d seconds" % cooldown_seconds
+			elif not usable:
+				quick_tooltip += "\nThis item cannot be used directly."
+			quick_button.tooltip_text = quick_tooltip
 		else:
 			quick_button.icon = null
 			quick_button.text = str(slot + 1)
@@ -1719,7 +2117,7 @@ func _sync_spells() -> void:
 		var button: Button = spell_slot_buttons[slot]
 		if slot >= spell_catalog.default_quick_slots.size():
 			button.icon = null
-			button.text = "S%d" % (slot + 1)
+			button.text = ""
 			button.tooltip_text = "Empty spell quick slot"
 			button.disabled = true
 			continue
@@ -1731,7 +2129,7 @@ func _sync_spells() -> void:
 			reasons.append("Complete the pending spell target first")
 		button.icon = spell_catalog.icon_for(spell_id)
 		button.expand_icon = true
-		button.text = "S%d" % (slot + 1)
+		button.text = ""
 		button.disabled = not reasons.is_empty()
 		button.tooltip_text = _spell_tooltip(definition, reasons, slot)
 	match AppState.pending_spell_target:
@@ -1871,6 +2269,8 @@ func _on_chat_submitted(text: String) -> void:
 		chat_input.release_focus()
 		return
 	var is_private: bool = message.begins_with("/") and message.length() > 1
+	if not is_private and _chat_tab.begins_with("channel:") and not message.begins_with("@"):
+		message = "@" + message
 	var error: Error = (Network.send_private_message(message.substr(1))
 		if is_private else Network.send_chat(message))
 	if error == OK:
@@ -2160,7 +2560,9 @@ func _pick_ground_bag(viewport_position: Vector2) -> int:
 
 func _apply_eloria_art() -> void:
 	login_background.texture = _external_texture("res://assets/ui/eloria_login_background.jpg")
-	login_logo.texture = _external_texture("res://assets/ui/eloria_logo_master.png")
+	var logo_texture: Texture2D = _external_texture("res://assets/ui/eloria_logo_master.png")
+	login_logo.texture = logo_texture
+	hud_logo.texture = logo_texture
 	var button_atlas: Texture2D = _external_texture("res://assets/ui/eloria_gamebuttons.png")
 	if button_atlas != null:
 		var icon_regions: Dictionary = {
@@ -2214,10 +2616,24 @@ func _apply_eloria_theme() -> void:
 	eloria_theme.set_color("font_color", "Label", Color(0.91, 0.86, 0.70))
 	eloria_theme.set_color("font_color", "Button", Color(0.96, 0.88, 0.66))
 	theme = eloria_theme
+	var map_sidebar_style: StyleBoxFlat = panel.duplicate() as StyleBoxFlat
+	map_sidebar_style.bg_color = Color(0.0, 0.0, 0.0, 0.98)
+	($GameView/FullMap/MapLayout/Sidebar as PanelContainer).add_theme_stylebox_override(
+		"panel", map_sidebar_style)
+	var empty_button: StyleBoxEmpty = StyleBoxEmpty.new()
+	for child: Node in $GameView/Quickbar/Buttons.get_children():
+		if child is Button:
+			var icon_button: Button = child as Button
+			icon_button.flat = true
+			icon_button.focus_mode = Control.FOCUS_NONE
+			for state_name: String in ["normal", "hover", "pressed", "disabled", "focus"]:
+				icon_button.add_theme_stylebox_override(state_name, empty_button)
+	for quick_button: Button in quick_slot_buttons + spell_slot_buttons:
+		quick_button.focus_mode = Control.FOCUS_NONE
 	_style_meter(health_bar, Color(0.17, 0.82, 0.22, 1.0))
 	_style_meter(health_bottom, Color(0.9, 0.16, 0.14, 1.0))
 	_style_meter(overhead_health_row.get_node("Bar") as ProgressBar,
-		Color(0.12, 0.9, 0.18, 1.0))
+		Color(0.9, 0.16, 0.14, 1.0))
 	for ether_bar: ProgressBar in [mana_bar, ether_bottom,
 		overhead_ether_row.get_node("Bar") as ProgressBar]:
 		_style_meter(ether_bar, Color(0.24, 0.31, 1.0, 1.0))

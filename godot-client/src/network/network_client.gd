@@ -44,6 +44,18 @@ func set_sitting(sitting: bool) -> Error:
 func send_chat(text: String) -> Error:
 	return send_frame(EloriaProtocol.chat(text))
 
+func set_active_channel(slot: int) -> Error:
+	return send_frame(EloriaProtocol.set_active_channel(slot))
+
+func locate_me() -> Error:
+	return send_frame(EloriaProtocol.locate_me())
+
+func request_server_date() -> Error:
+	return send_frame(EloriaProtocol.get_date())
+
+func request_server_time() -> Error:
+	return send_frame(EloriaProtocol.get_time())
+
 func send_private_message(text: String) -> Error:
 	return send_frame(EloriaProtocol.private_message(text))
 
