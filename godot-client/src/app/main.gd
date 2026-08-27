@@ -538,7 +538,7 @@ func _update_keyboard_movement() -> void:
 func _movement_axes_for_actions(north_pressed: bool, south_pressed: bool,
 		west_pressed: bool, east_pressed: bool) -> Vector2i:
 	var forward_input: int = (1 if north_pressed else 0) - (1 if south_pressed else 0)
-	var right_input: int = (1 if east_pressed else 0) - (1 if west_pressed else 0)
+	var right_input: int = (1 if west_pressed else 0) - (1 if east_pressed else 0)
 	return Vector2i(forward_input, right_input)
 
 func _facing_relative_tile_direction(yaw: float, forward_input: int,
