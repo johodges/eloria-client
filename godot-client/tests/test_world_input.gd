@@ -129,6 +129,22 @@ func _run() -> void:
 	_expect(first_equipment_slot.text.contains("×1") and first_equipment_slot.icon != null
 		and not first_equipment_slot.disabled,
 		"authoritative wear slot populates the equipment grid")
+	main.set("selected_inventory_slot", 0)
+	main.call("_sync_inventory")
+	var empty_inventory_slot: Button = main.get_node(
+		"GameView/InventoryPanel/Content/Scroll/InventoryGrid").get_child(1) as Button
+	var empty_equipment_slot: Button = main.get_node(
+		"GameView/InventoryPanel/Content/EquipmentGrid").get_child(1) as Button
+	_expect(not empty_inventory_slot.disabled
+		and empty_inventory_slot.tooltip_text.contains("Move selected"),
+		"selected backpack item can move to a chosen empty inventory slot")
+	_expect(not empty_equipment_slot.disabled
+		and empty_equipment_slot.tooltip_text.contains("Equip selected"),
+		"selected backpack item can move to a chosen generic wear slot")
+	main.set("selected_inventory_slot", 36)
+	main.call("_sync_inventory")
+	_expect(not empty_inventory_slot.disabled,
+		"selected equipment can move to a chosen empty inventory slot")
 	app_state_inventory.set("inventory_cooldowns", {0: {
 		"maximum_msec": 30000, "end_msec": Time.get_ticks_msec() + 12000}})
 	main.call("_sync_quick_slots")

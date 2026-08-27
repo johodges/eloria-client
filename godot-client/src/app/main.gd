@@ -680,8 +680,12 @@ func _sync_inventory() -> void:
 		else:
 			button.icon = null
 			button.text = str(slot + 1)
-			button.tooltip_text = "Empty inventory slot %d" % (slot + 1)
-			button.disabled = true
+			var can_place: bool = (selected_inventory_slot >= 0
+				and selected_inventory_slot < 44
+				and AppState.inventory.has(selected_inventory_slot))
+			button.tooltip_text = ("Move selected item to slot %d" % (slot + 1)
+				if can_place else "Empty inventory slot %d" % (slot + 1))
+			button.disabled = not can_place
 	_sync_equipment_slots()
 	_sync_quick_slots()
 	if selected_inventory_slot >= 0:
@@ -710,8 +714,12 @@ func _sync_equipment_slots() -> void:
 		else:
 			button.icon = null
 			button.text = "Wear %d" % (index + 1)
-			button.tooltip_text = "Empty generic equipment position %d" % (index + 1)
-			button.disabled = true
+			var can_equip_here: bool = (selected_inventory_slot >= 0
+				and selected_inventory_slot < 36
+				and AppState.inventory.has(selected_inventory_slot))
+			button.tooltip_text = ("Equip selected item in generic wear position %d" % (index + 1)
+				if can_equip_here else "Empty generic equipment position %d" % (index + 1))
+			button.disabled = not can_equip_here
 	inventory_equip_button.disabled = (selected_inventory_slot < 0
 		or selected_inventory_slot >= 36 or _first_empty_slot(36, 44) < 0)
 	inventory_unequip_button.disabled = (selected_inventory_slot < 36
@@ -765,6 +773,11 @@ func _inventory_tooltip(item: Dictionary) -> String:
 		int(item.get("quantity", 0)), " — " + ", ".join(traits) if not traits.is_empty() else ""]
 
 func _on_inventory_slot_pressed(slot: int) -> void:
+	if not AppState.inventory.has(slot):
+		if (selected_inventory_slot >= 0 and selected_inventory_slot < 44
+				and AppState.inventory.has(selected_inventory_slot)):
+			_move_inventory_item(selected_inventory_slot, slot)
+		return
 	selected_inventory_slot = slot
 	var item: Dictionary = AppState.inventory.get(slot, {}) as Dictionary
 	inventory_use_button.disabled = not bool(item.get("inventory_usable", false))
@@ -773,14 +786,21 @@ func _on_inventory_slot_pressed(slot: int) -> void:
 	var error: Error = Network.look_at_inventory_item(slot)
 	if error != OK:
 		push_warning("LOOK_AT_INVENTORY_ITEM failed: " + error_string(error))
+	_sync_inventory()
 
 func _on_equipment_slot_pressed(slot: int) -> void:
+	if not AppState.inventory.has(slot):
+		if (selected_inventory_slot >= 0 and selected_inventory_slot < 36
+				and AppState.inventory.has(selected_inventory_slot)):
+			_move_inventory_item(selected_inventory_slot, slot)
+		return
 	selected_inventory_slot = slot
 	inventory_use_button.disabled = true
 	_sync_equipment_slots()
 	var error: Error = Network.look_at_inventory_item(slot)
 	if error != OK:
 		push_warning("LOOK_AT_INVENTORY_ITEM failed: " + error_string(error))
+	_sync_inventory()
 
 func _first_empty_slot(start: int, end: int) -> int:
 	for slot: int in range(start, end):
