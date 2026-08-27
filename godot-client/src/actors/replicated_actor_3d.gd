@@ -47,6 +47,10 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		_add_fallback_visual(dto)
 	if errors.is_empty():
 		_apply_import_adapter(model_config.get("import", {}))
+		var visual_error: String = _validate_native_visual()
+		if not visual_error.is_empty():
+			errors.append(visual_error)
+			_add_fallback_visual(dto)
 		var skeleton := find_child("*", true, false) as Skeleton3D
 		if skeleton == null:
 			for node in find_children("*", "Skeleton3D", true, false):
@@ -63,6 +67,27 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 				errors.append_array(resolver.validate(imported.clips))
 				play_action(&"idle")
 	return errors
+
+func render_diagnostics() -> Dictionary:
+	var meshes: Array[Dictionary] = []
+	for node_value: Node in find_children("*", "MeshInstance3D", true, false):
+		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+		meshes.append({
+			"path": str(mesh_node.get_path()),
+			"visible": mesh_node.visible,
+			"visible_in_tree": mesh_node.is_visible_in_tree(),
+			"layers": mesh_node.layers,
+			"aabb": mesh_node.get_aabb(),
+			"material_override": mesh_node.material_override != null,
+		})
+	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
+	return {
+		"actor_id": actor_id,
+		"server_target": server_target,
+		"final_global_position": global_position,
+		"native_model_transform": native_model.transform if native_model != null else Transform3D.IDENTITY,
+		"meshes": meshes,
+	}
 
 func _add_fallback_visual(dto: Dictionary) -> void:
 	var mesh_instance: MeshInstance3D = MeshInstance3D.new()
@@ -147,6 +172,35 @@ func _apply_import_adapter(config: Dictionary) -> void:
 		float(config.get("rotationDegreesX", 0.0)),
 		float(config.get("rotationDegreesY", 0.0)),
 		float(config.get("rotationDegreesZ", 0.0)))
+	# The protocol position is a foot point. Normalize the imported visual at
+	# its root without flattening or rewriting the glTF hierarchy/skeleton.
+	var bounds: AABB = _native_visual_bounds(model)
+	if bounds.size.y > 0.0:
+		model.position.y = -bounds.position.y
+
+func _validate_native_visual() -> String:
+	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
+	if native_model == null:
+		return "native model root missing"
+	var visible_meshes: int = 0
+	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+		if mesh_node.mesh != null and mesh_node.visible and mesh_node.layers != 0:
+			visible_meshes += 1
+	return "native model has no renderable meshes" if visible_meshes == 0 else ""
+
+func _native_visual_bounds(model: Node3D) -> AABB:
+	var combined: AABB = AABB()
+	var initialized: bool = false
+	for node_value: Node in model.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+		if mesh_node.mesh == null:
+			continue
+		var relative: Transform3D = model.global_transform.affine_inverse() * mesh_node.global_transform
+		var mesh_bounds: AABB = relative * mesh_node.get_aabb()
+		combined = combined.merge(mesh_bounds) if initialized else mesh_bounds
+		initialized = true
+	return combined
 
 static func _external_path(path: String) -> String:
 	return ProjectSettings.globalize_path(path) if path.begins_with("res://") else path

@@ -74,6 +74,17 @@ func ray_origin(screen_position: Vector2) -> Vector3:
 func ray_direction(screen_position: Vector2) -> Vector3:
 	return camera.project_ray_normal(screen_position)
 
+func camera_diagnostics() -> Dictionary:
+	return {
+		"focus": focus,
+		"pan_offset": pan_offset,
+		"rig_transform": global_transform,
+		"camera_transform": camera.global_transform if is_instance_valid(camera) else Transform3D.IDENTITY,
+		"yaw_degrees": yaw_degrees,
+		"pitch_degrees": pitch_degrees,
+		"distance": distance,
+	}
+
 func reset_pan() -> void:
 	pan_offset = Vector3.ZERO
 	_update_camera()

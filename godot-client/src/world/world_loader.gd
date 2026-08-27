@@ -1,6 +1,9 @@
 class_name WorldLoader
 extends Node3D
 
+const WORLD_COLLISION_LAYER := 1
+const NAVIGATION_SURFACE_LAYER := 8
+
 signal load_started(manifest_path: String)
 signal load_completed(manifest: WorldManifest)
 signal load_failed(errors: Array[String])
@@ -77,7 +80,10 @@ func _apply_navigation_collision() -> void:
 		return
 	var body: StaticBody3D = StaticBody3D.new()
 	body.name = "NavigationSurfaceCollision"
-	body.collision_layer = 1
+	# Keep walk surfaces separate from gates, bridges, and other authored
+	# collision. Actor grounding and MOVE_TO picking must never snap to the top
+	# of structural collision merely because it is the first ray hit.
+	body.collision_layer = NAVIGATION_SURFACE_LAYER
 	body.collision_mask = 0
 	for polygon_value: Variant in polygons_value as Array:
 		if not polygon_value is Dictionary:
@@ -118,6 +124,7 @@ func _create_static_collision(mesh_instance: MeshInstance3D) -> void:
 		return
 	var body := StaticBody3D.new()
 	body.name = mesh_instance.name + "_Collision"
+	body.collision_layer = WORLD_COLLISION_LAYER
 	var shape := CollisionShape3D.new()
 	shape.shape = mesh_instance.mesh.create_trimesh_shape()
 	body.add_child(shape)

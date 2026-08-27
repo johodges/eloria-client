@@ -47,6 +47,8 @@ func _run() -> void:
 		"Tab map displays its live viewport texture")
 	var pick_result: int = int(main.call("_pick_actor", Vector2(640.0, 360.0)))
 	_expect(pick_result >= -1, "world click actor ray executes against a non-null World3D")
+	_expect(WorldLoader.NAVIGATION_SURFACE_LAYER != WorldLoader.WORLD_COLLISION_LAYER,
+		"actor grounding is isolated from structural collision")
 	var full_map_panel: Control = main.get_node("GameView/FullMap") as Control
 	_expect(not full_map_panel.visible, "Tab map starts closed")
 	main.call("_on_map_button_pressed")

@@ -319,14 +319,18 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 			if touch_error != OK:
 				push_warning("TOUCH_PLAYER failed: " + error_string(touch_error))
 		return
-	var ground_height: float = adapter.walking_height
-	if actor_nodes.has(AppState.local_actor_id):
-		var local_actor_node: Node3D = actor_nodes.get(AppState.local_actor_id) as Node3D
-		if is_instance_valid(local_actor_node):
-			ground_height = local_actor_node.global_position.y
-	var point: Variant = camera_rig.screen_to_ground(viewport_position, ground_height)
-	print_debug("world_input local_click=", event.position,
-		" viewport=", viewport_position, " intersection=", point)
+	var ray_origin: Vector3 = camera_rig.ray_origin(viewport_position)
+	var ray_direction: Vector3 = camera_rig.ray_direction(viewport_position)
+	var point: Variant = _navigation_ray_position(ray_origin, ray_direction)
+	if not point is Vector3:
+		var ground_height: float = adapter.walking_height
+		if actor_nodes.has(AppState.local_actor_id):
+			var local_actor_node: Node3D = actor_nodes.get(AppState.local_actor_id) as Node3D
+			if is_instance_valid(local_actor_node):
+				ground_height = local_actor_node.global_position.y
+		point = camera_rig.screen_to_ground(viewport_position, ground_height)
+	print_debug("world_input local_click=", event.position, " viewport=", viewport_position,
+		" ray_origin=", ray_origin, " ray_direction=", ray_direction, " intersection=", point)
 	if point is Vector3:
 		var tile: Vector2i = adapter.godot_to_server(point as Vector3)
 		print_debug("world_input godot=", point, " server_tile=", tile,
@@ -448,12 +452,31 @@ func _place_actor_on_surface(actor: ReplicatedActor3D) -> void:
 	var ray_start: Vector3 = Vector3(actor_position.x, 400.0, actor_position.z)
 	var ray_end: Vector3 = Vector3(actor_position.x, -100.0, actor_position.z)
 	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
-		ray_start, ray_end, 1)
+		ray_start, ray_end, WorldLoader.NAVIGATION_SURFACE_LAYER)
 	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
 	var hit_position_value: Variant = hit.get("position")
 	if hit_position_value is Vector3:
 		var hit_position: Vector3 = hit_position_value as Vector3
 		actor.set_surface_height(hit_position.y + 0.08)
+		if actor.actor_id == AppState.local_actor_id:
+			print_debug("local_actor_placement map=", AppState.current_map,
+				" actor_id=", actor.actor_id, " server_target=", actor_position,
+				" navigation_hit=", hit_position, " render=", actor.render_diagnostics(),
+				" camera=", camera_rig.camera_diagnostics())
+	else:
+		actor.set_surface_height(adapter.walking_height + 0.08)
+		if actor.actor_id == AppState.local_actor_id:
+			push_warning("local_actor_placement navigation_miss map=%s actor_id=%d target=%s fallback_y=%.3f" % [
+				AppState.current_map, actor.actor_id, actor_position, adapter.walking_height + 0.08])
+
+func _navigation_ray_position(origin: Vector3, direction: Vector3) -> Variant:
+	if gameplay_world == null:
+		return null
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
+		origin, origin + direction * 2000.0, WorldLoader.NAVIGATION_SURFACE_LAYER)
+	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
+	var position_value: Variant = hit.get("position")
+	return position_value if position_value is Vector3 else null
 
 func _configure_full_map(manifest: WorldManifest) -> void:
 	var asset_value: Variant = manifest.data.get("asset", {})
