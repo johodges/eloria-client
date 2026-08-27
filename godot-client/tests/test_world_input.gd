@@ -68,8 +68,10 @@ func _run() -> void:
 	main.call("_on_map_button_pressed")
 	_expect(full_map_panel.visible, "Tab map control opens the populated map viewport")
 	main.call("_on_map_button_pressed")
-	_expect(camera_rig.distance >= 30.0 and camera_rig.pitch_degrees <= -50.0,
-		"default camera presents the map from above")
+	var gameplay_camera: Camera3D = camera_rig.get_node("Camera") as Camera3D
+	_expect(camera_rig.distance >= 24.0 and camera_rig.distance <= 28.0
+		and camera_rig.pitch_degrees <= -58.0 and gameplay_camera.fov <= 52.0,
+		"default camera keeps the actor readable from a steep isometric angle")
 	var actor_height_fixture: ReplicatedActor3D = ReplicatedActor3D.new()
 	root.add_child(actor_height_fixture)
 	actor_height_fixture.server_target = Vector3(2.0, 31.15, 3.0)

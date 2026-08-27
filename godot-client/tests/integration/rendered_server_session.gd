@@ -108,9 +108,15 @@ func _run() -> void:
 		"GameView/ViewportContainer/Viewport/WorldRoot/CameraRig/Camera") as Camera3D
 	var actor_focus: Vector3 = actor.global_position + Vector3.UP
 	var actor_screen: Vector2 = camera.unproject_position(actor_focus)
+	var actor_feet_screen: Vector2 = camera.unproject_position(actor.global_position)
+	var actor_head_screen: Vector2 = camera.unproject_position(
+		actor.global_position + Vector3.UP * 1.78)
+	var actor_pixel_height: float = absf(actor_head_screen.y - actor_feet_screen.y)
 	_expect(not camera.is_position_behind(actor_focus)
 		and Rect2(Vector2.ZERO, Vector2(SCREEN_SIZE)).has_point(actor_screen),
 		"local actor is inside the gameplay camera frame")
+	_expect(actor_pixel_height >= 24.0,
+		"native actor remains readable at the default camera framing")
 	var marker: MeshInstance3D = main.get_node(
 		"GameView/ViewportContainer/Viewport/WorldRoot/PlayerMapMarker") as MeshInstance3D
 	_expect(marker.visible and Vector2(marker.global_position.x, marker.global_position.z).distance_to(
@@ -135,6 +141,7 @@ func _run() -> void:
 		"render": _json_safe(actor.render_diagnostics()),
 		"native_visible_meshes": visible_native_meshes,
 		"camera_focus_screen": str(actor_screen),
+		"actor_projected_height_pixels": actor_pixel_height,
 		"camera": _json_safe(camera_rig.camera_diagnostics()),
 		"credentials": "REDACTED",
 	}

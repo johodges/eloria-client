@@ -111,6 +111,7 @@ mesh = SubResource("Mesh_map_marker")
 [node name="Camera" type="Camera3D" parent="GameView/ViewportContainer/Viewport/WorldRoot/CameraRig"]
 unique_name_in_owner = true
 current = true
+fov = 50.0
 far = 1800.0
 cull_mask = 3
 

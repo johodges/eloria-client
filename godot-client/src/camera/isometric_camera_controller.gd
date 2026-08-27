@@ -1,9 +1,9 @@
 class_name IsometricCameraController
 extends Node3D
 
-@export_range(-80.0, -15.0) var pitch_degrees := -52.0
+@export_range(-80.0, -15.0) var pitch_degrees := -60.0
 @export var yaw_degrees := 0.0
-@export_range(3.0, 100.0) var distance := 34.0
+@export_range(3.0, 100.0) var distance := 26.0
 @export var zoom_step := 2.5
 @export var rotation_sensitivity := 0.25
 @export var pan_sensitivity := 0.012
