@@ -39,6 +39,9 @@ jobs:
                   git checkout --theirs -- "$path"
                   ;;
                 .github/workflows/godot-client.yml)
+                  # GitHub Apps cannot push workflow mutations. Preserve the
+                  # combined workflow here; the connector applies PR154's
+                  # four evidence assertions after this clean merge lands.
                   git checkout --ours -- "$path"
                   ;;
                 *)
@@ -58,21 +61,6 @@ jobs:
           navigation = data.setdefault('navigation', {})
           navigation['surfaceNodePrefixes'] = ['Terrain_City_Plateau']
           manifest.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
-
-          workflow = Path('.github/workflows/godot-client.yml')
-          text = workflow.read_text(encoding='utf-8')
-          detail_lines = [
-              '          test -s "$ELORIA_ARTIFACT_DIR/four-gates-central-plaza-detail.png"',
-              '          test -s "$ELORIA_ARTIFACT_DIR/four-gates-south-gate-detail.png"',
-              '          test -s "$ELORIA_ARTIFACT_DIR/four-gates-market-detail.png"',
-              '          test -s "$ELORIA_ARTIFACT_DIR/four-gates-waterfall-detail.png"',
-          ]
-          if detail_lines[0] not in text:
-              marker = '          test -s "$ELORIA_ARTIFACT_DIR/four-gates-gameplay.png"\n'
-              if marker not in text:
-                  raise SystemExit('Four Gates rendered-evidence marker missing')
-              text = text.replace(marker, marker + '\n'.join(detail_lines) + '\n', 1)
-              workflow.write_text(text, encoding='utf-8')
           PY
 
           git add .
@@ -83,7 +71,6 @@ jobs:
           fi
           grep -q '"assetVersion": "0.9.0"' eloria-assets/maps/four-gates-city/four-gates-city.json
           grep -q '"Terrain_City_Plateau"' eloria-assets/maps/four-gates-city/four-gates-city.json
-          grep -q 'four-gates-central-plaza-detail.png' .github/workflows/godot-client.yml
           git diff --cached --check
           git commit -m "Merge Four Gates 0.9 detail pass into combined Godot branch"
           git push --force-with-lease origin HEAD:codex/integrated-four-gates-detail-20260827
