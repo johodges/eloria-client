@@ -35,6 +35,7 @@ toggle_map={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode"
 toggle_minimap={ "deadzone": 0.5, "events": [Object(InputEventKey,"alt_pressed":true,"physical_keycode":77)] }
 toggle_console={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":96)] }
 toggle_inventory={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":73,"ctrl_pressed":true)] }
+recenter_viewport={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":32)] }
 move_north={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":87)] }
 move_south={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":83)] }
 move_west={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":65)] }

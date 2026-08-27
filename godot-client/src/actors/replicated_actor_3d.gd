@@ -23,6 +23,8 @@ var _segment_elapsed := 0.0
 var _segment_duration := 0.0
 var _last_movement_update_msec := -1
 var _smoothed_server_interval := 0.25
+var _facing_override_active := false
+var _facing_override_yaw := 0.0
 var _native_skeleton: Skeleton3D
 var _attachment_bones: Dictionary = {}
 var _equipment_config: Dictionary = {}
@@ -233,8 +235,9 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	var target_changed: bool = server_target.distance_squared_to(next_target) > 0.000001
 	server_target = next_target
 	var actor_command: int = int(dto.get("command", -1))
-	_target_yaw = target_yaw_for_state(
+	var authoritative_yaw: float = target_yaw_for_state(
 		_target_yaw, actor_command, int(dto.rotation), adapter)
+	_target_yaw = _facing_override_yaw if _facing_override_active else authoritative_yaw
 	_presentation_speed = walk_presentation_speed
 	if actor_command >= 30 and actor_command <= 37:
 		_presentation_speed = run_presentation_speed
@@ -445,7 +448,17 @@ func _on_animation_finished(_animation_name: StringName) -> void:
 
 func turn_by(radians: float) -> void:
 	_target_yaw = wrapf(_target_yaw + radians, -PI, PI)
+	_facing_override_active = true
+	_facing_override_yaw = _target_yaw
 	play_action(&"turn")
+
+func desired_facing_yaw() -> float:
+	return _target_yaw
+
+func set_facing_override(enabled: bool) -> void:
+	_facing_override_active = enabled
+	if enabled:
+		_facing_override_yaw = _target_yaw
 
 static func target_yaw_for_state(current_yaw: float, actor_command: int,
 		server_rotation: int, adapter: CoordinateAdapter) -> float:

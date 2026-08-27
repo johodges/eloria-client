@@ -23,10 +23,10 @@ The initial screen connects over real TCP and sends the server's real `LOG_IN` f
 
 ## Default controls
 
-- `W`, `A`, `S`, `D`: walk while a text entry is not active; hold Shift to run.
-- `Q` / `E`: turn the local character left or right.
-- `Ctrl+I`: toggle inventory; right-click Sto All or Drop All to protect individual edge rows/columns.
-- `Tab`: toggle the full map. `Alt+M`: toggle the minimap; drag its compass border and right-click it for north-up/player-up orientation.
+- `W`/`S`: move forward/backward relative to facing. `A`/`D`: strafe without turning; combine keys for diagonal movement and hold Shift to run.
+- `Q`/`E`: turn the local character. `Space`: recenter the viewport on your character.
+- `Ctrl+I`: toggle inventory. Drag its title bar to move it and its lower-right grip to scale the whole window proportionally. Right-click Sto All or Drop All to protect individual edge rows/columns; Get All opens and empties the ground bag on your tile subject to server slot/load validation.
+- `Tab`: toggle the full map. `Alt+M`: toggle the minimap; drag its thick compass border and right-click it for north-up, player-up, or viewport-up orientation.
 - `T`: focus chat; `Esc`: dismiss it. Backtick/tilde toggles full chat history.
 - `Alt+A`: attack the selected target. `Alt+S`: sit or stand.
 
