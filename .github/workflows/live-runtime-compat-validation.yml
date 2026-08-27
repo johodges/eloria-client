@@ -1,0 +1,55 @@
+name: Live runtime compatibility validation
+
+on:
+  push:
+    branches:
+      - codex/live-runtime-compat-validation-20260827
+
+permissions:
+  contents: read
+
+jobs:
+  rendered-server-session:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: barichello/godot-ci:4.7.2
+    env:
+      ELORIA_ARTIFACT_DIR: ${{ github.workspace }}/godot-client/test-artifacts/live-runtime-compat
+      ELORIA_INTEGRATION_HOST: 18.235.240.60
+      ELORIA_INTEGRATION_PORT: 2000
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install virtual display and software rendering
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            xvfb xauth libgl1-mesa-dri libfontconfig1 libxcursor1 libxinerama1 \
+            libxrandr2 libxi6 libxkbcommon0 libasound2t64 libpulse0 libudev1
+      - name: Import project
+        run: godot --headless --path godot-client --editor --quit
+      - name: Render real development-server session
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot \
+            --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility \
+            --path godot-client --script res://tests/integration/rendered_server_session.gd \
+            2>&1 | tee "$ELORIA_ARTIFACT_DIR/session.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/session.log"
+          grep -q "rendered server session: PASS" "$ELORIA_ARTIFACT_DIR/session.log"
+          test -s "$ELORIA_ARTIFACT_DIR/world-default.png"
+          test -s "$ELORIA_ARTIFACT_DIR/world-equipment-native-spear.png"
+          test -s "$ELORIA_ARTIFACT_DIR/world-equipment-native-shield.png"
+          test -s "$ELORIA_ARTIFACT_DIR/world-equipment-native-cape.png"
+          test -s "$ELORIA_ARTIFACT_DIR/equipment.json"
+          test -s "$ELORIA_ARTIFACT_DIR/session.json"
+          test -s "$ELORIA_ARTIFACT_DIR/remote-actor.json"
+          test -s "$ELORIA_ARTIFACT_DIR/movement.json"
+          test -s "$ELORIA_ARTIFACT_DIR/sit-stand.json"
+      - name: Upload rendered live evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-runtime-compat
+          path: godot-client/test-artifacts/live-runtime-compat
+          if-no-files-found: error
