@@ -63,12 +63,15 @@ The gate fails unless it proves all of the following before uploading evidence:
 - selecting every real backpack item sends `LOOK_AT_INVENTORY_ITEM`, receives
   its authoritative description, and presents the selected description in the
   inventory window;
+- equipping the real guard spear moves it into wear slot 36, applies the
+  server-broadcast actor visual to the native skeleton through a visible
+  development fallback, and unequipping restores inventory and clears it;
 - each 1280×720 capture contains rendered color variation rather than a dummy frame.
 
 The artifact contains default, rotated, panned, zoomed, full-map, and
 post-movement PNGs, selected-remote-player, chat, inventory, and statistics
-PNGs, and sanitized session, camera-state, movement, remote-actor, chat, and
-inventory/statistics JSON. A
+PNGs plus an equipped-fallback PNG, and sanitized session, camera-state,
+movement, remote-actor, chat, inventory/statistics, and equipment JSON. A
 passing structural assertion is still classified separately from human visual
 inspection of those PNGs.
 
