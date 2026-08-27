@@ -680,6 +680,7 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		actor["appearance"] = {
 			"skin": int(payload[12]), "hair": int(payload[13]), "shirt": int(payload[14]),
 			"pants": int(payload[15]), "boots": int(payload[16]), "head": int(payload[17]),
+			"eyes": 0,
 			"shield": int(payload[18]), "weapon": int(payload[19]),
 			"cape": int(payload[20]), "helmet": int(payload[21])}
 		actor["equipment_visuals"] = {
@@ -691,7 +692,23 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		actor["max_health"] = u16(payload, 23)
 		actor["health"] = u16(payload, 25)
 		actor["kind"] = int(payload[27])
-		actor["name"] = nul_string(payload.slice(28, min(payload.size(), 58)))
+		var name_end: int = payload.find(0, 28)
+		if name_end < 0:
+			name_end = min(payload.size(), 58)
+		actor["name"] = payload.slice(28, name_end).get_string_from_utf8()
+		# The enhanced-actor trailer follows the variable-length name: attached
+		# actor id, mount type, eye style, and neck visual. Preserve eye choices
+		# across the real server round trip instead of silently reverting to 0.
+		var trailer_offset: int = name_end + 1
+		if payload.size() >= trailer_offset + 5:
+			actor["attached_actor_id"] = u16(payload, trailer_offset)
+			actor["mount_type"] = int(payload[trailer_offset + 2])
+			var appearance: Dictionary = actor["appearance"] as Dictionary
+			appearance["eyes"] = int(payload[trailer_offset + 3])
+			var neck_visual: int = int(payload[trailer_offset + 4])
+			if neck_visual > 0:
+				var equipment_visuals: Dictionary = actor["equipment_visuals"] as Dictionary
+				equipment_visuals[7] = neck_visual
 	else:
 		actor["frame"] = int(payload[11 + shift])
 		actor["max_health"] = u16(payload, 12 + shift)
