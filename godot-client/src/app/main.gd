@@ -72,6 +72,10 @@ extends Control
 @onready var ground_bag_quantity: SpinBox = %GroundBagQuantity
 @onready var ground_bag_pick_button: Button = %GroundBagPick
 @onready var ground_bag_drop_button: Button = %GroundBagDrop
+@onready var knowledge_panel: Control = %KnowledgePanel
+@onready var knowledge_list: ItemList = %KnowledgeList
+@onready var knowledge_detail: RichTextLabel = %KnowledgeDetail
+@onready var knowledge_known_only: CheckBox = %KnowledgeKnownOnly
 @onready var quick_slot_container: GridContainer = $GameView/ItemSpellQuickbar/QuickContent/Slots
 @onready var spell_slot_container: GridContainer = %SpellSlots
 @onready var spell_status: Label = %SpellStatus
@@ -96,6 +100,7 @@ var map_registry: Dictionary = {}
 var equipment_config: Dictionary = {}
 var item_atlas := ItemAtlas.new()
 var spell_catalog := SpellCatalog.new()
+var knowledge_catalog: Array[String] = []
 var gameplay_world: World3D
 var loaded_server_map := ""
 var adapter := CoordinateAdapter.new({"walkingHeight": 0.0, "invertServerY": true})
@@ -120,6 +125,11 @@ func _ready() -> void:
 	equipment_config = _json("res://data/actors/equipment.json")
 	item_atlas.configure(_json("res://data/items/atlases.json"))
 	spell_catalog.configure(_json("res://data/spells/catalog.json"))
+	var knowledge_catalog_value: Variant = _json(
+		"res://data/knowledge/catalog.json").get("entries", [])
+	if knowledge_catalog_value is Array:
+		for raw_knowledge_name: Variant in knowledge_catalog_value as Array:
+			knowledge_catalog.append(str(raw_knowledge_name))
 	Network.connection_state_changed.connect(_on_connection_state_changed)
 	Network.protocol_error.connect(func(message: String): status_label.text = "Protocol error: " + message)
 	AppState.login_succeeded.connect(_on_login_succeeded)
@@ -139,6 +149,7 @@ func _ready() -> void:
 	trade_panel.hide()
 	storage_panel.hide()
 	ground_bag_panel.hide()
+	knowledge_panel.hide()
 	game_view.hide()
 	creation_panel.hide()
 	create_gender.add_item("Luminous Female", 0)
@@ -158,6 +169,8 @@ func _ready() -> void:
 	storage_inventory.item_selected.connect(_on_storage_inventory_selected)
 	ground_bag_items.item_selected.connect(_on_ground_bag_item_selected)
 	ground_bag_inventory.item_selected.connect(_on_ground_bag_inventory_selected)
+	knowledge_list.item_selected.connect(_on_knowledge_selected)
+	knowledge_known_only.toggled.connect(_on_knowledge_filter_toggled)
 
 func _bind_shared_world() -> void:
 	gameplay_world = world_root.get_world_3d()
@@ -323,21 +336,52 @@ func _on_chat_button_pressed() -> void:
 
 func _on_stats_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
-			or bool(AppState.storage.get("open", false))):
+			or bool(AppState.storage.get("open", false))
+			or bool(AppState.ground_bag.get("open", false))):
 		return
 	stats_panel.visible = not stats_panel.visible
 	if stats_panel.visible:
 		inventory_panel.hide()
+		knowledge_panel.hide()
 		_sync_stats()
 
 func _on_inventory_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
-			or bool(AppState.storage.get("open", false))):
+			or bool(AppState.storage.get("open", false))
+			or bool(AppState.ground_bag.get("open", false))):
 		return
 	inventory_panel.visible = not inventory_panel.visible
 	if inventory_panel.visible:
 		stats_panel.hide()
+		knowledge_panel.hide()
 		_sync_inventory()
+
+func _on_knowledge_button_pressed() -> void:
+	if (bool(AppState.trade.get("open", false))
+			or bool(AppState.storage.get("open", false))
+			or bool(AppState.ground_bag.get("open", false))):
+		return
+	knowledge_panel.visible = not knowledge_panel.visible
+	if knowledge_panel.visible:
+		inventory_panel.hide()
+		stats_panel.hide()
+		full_map.hide()
+		_sync_knowledge()
+
+func _on_knowledge_selected(index: int) -> void:
+	var knowledge_index: int = _list_metadata_int(knowledge_list, index)
+	if knowledge_index < 0 or knowledge_index >= knowledge_catalog.size():
+		return
+	AppState.select_knowledge(knowledge_index)
+	var error: Error = Network.get_knowledge_info(knowledge_index)
+	if error != OK:
+		push_warning("GET_KNOWLEDGE_INFO failed: " + error_string(error))
+
+func _on_knowledge_filter_toggled(_enabled: bool) -> void:
+	_sync_knowledge()
+
+func _on_knowledge_close_pressed() -> void:
+	knowledge_panel.hide()
 
 func _on_inventory_close_pressed() -> void:
 	inventory_panel.hide()
@@ -643,6 +687,7 @@ func _clear_world_presentation() -> void:
 	trade_panel.hide()
 	storage_panel.hide()
 	ground_bag_panel.hide()
+	knowledge_panel.hide()
 	dialogue_panel.hide()
 	chat_output.clear()
 	selected_target.text = "Target: none"
@@ -681,6 +726,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			AppState.close_storage()
 		elif bool(AppState.ground_bag.get("open", false)):
 			_close_ground_bag()
+		elif knowledge_panel.visible:
+			knowledge_panel.hide()
 		elif inventory_panel.visible:
 			inventory_panel.hide()
 		elif stats_panel.visible:
@@ -702,7 +749,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_world_gui_input(event: InputEvent) -> void:
 	if (not game_view.visible or full_map.visible or dialogue_panel.visible
-			or trade_panel.visible or storage_panel.visible or ground_bag_panel.visible):
+			or trade_panel.visible or storage_panel.visible or ground_bag_panel.visible
+			or knowledge_panel.visible):
 		return
 	if event is InputEventMouseButton:
 		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
@@ -802,6 +850,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_ground_bags()
 		&"ground_bag":
 			_sync_ground_bag()
+		&"knowledge":
+			_sync_knowledge()
 
 func _load_server_map() -> void:
 	if AppState.current_map.is_empty() or loaded_server_map == AppState.current_map:
@@ -995,6 +1045,7 @@ func _sync_ground_bag() -> void:
 	full_map.hide()
 	trade_panel.hide()
 	storage_panel.hide()
+	knowledge_panel.hide()
 	_fill_storage_item_list(ground_bag_items,
 		AppState.ground_bag.get("items", {}) as Dictionary, "Ground")
 	var backpack: Dictionary = {}
@@ -1008,6 +1059,35 @@ func _sync_ground_bag() -> void:
 func _sync_ground_bag_actions() -> void:
 	ground_bag_pick_button.disabled = ground_bag_items.get_selected_items().is_empty()
 	ground_bag_drop_button.disabled = ground_bag_inventory.get_selected_items().is_empty()
+
+func _sync_knowledge() -> void:
+	if not knowledge_panel.visible:
+		return
+	knowledge_list.clear()
+	var known_only: bool = knowledge_known_only.button_pressed
+	for knowledge_index: int in range(knowledge_catalog.size()):
+		var is_known: bool = AppState.known_knowledge.has(knowledge_index)
+		if known_only and not is_known:
+			continue
+		var item_index: int = knowledge_list.item_count
+		knowledge_list.add_item("%s  %s" % ["[Read]" if is_known else "[Unread]",
+			knowledge_catalog[knowledge_index]])
+		knowledge_list.set_item_metadata(item_index, knowledge_index)
+		knowledge_list.set_item_tooltip(item_index,
+			"Knowledge #%d — %s" % [knowledge_index, "read" if is_known else "unread"])
+		if knowledge_index == AppState.selected_knowledge:
+			knowledge_list.select(item_index)
+	var owned_count: int = AppState.known_knowledge.size()
+	if AppState.selected_knowledge < 0 or AppState.selected_knowledge >= knowledge_catalog.size():
+		knowledge_detail.text = ("Select an entry to request its server description.\n"
+			+ "Read %d of %d knowledge entries." % [owned_count, knowledge_catalog.size()])
+		return
+	var selected_index: int = AppState.selected_knowledge
+	var status: String = "Read" if AppState.known_knowledge.has(selected_index) else "Unread"
+	var server_text: String = AppState.knowledge_text
+	knowledge_detail.text = "%s\nStatus: %s\nKnowledge ID: %d\n\n%s" % [
+		knowledge_catalog[selected_index], status, selected_index,
+		server_text if not server_text.is_empty() else "Waiting for the server description…"]
 
 func _configure_full_map(manifest: WorldManifest) -> void:
 	var asset_value: Variant = manifest.data.get("asset", {})
@@ -1379,6 +1459,7 @@ func _sync_trade() -> void:
 	stats_panel.hide()
 	full_map.hide()
 	storage_panel.hide()
+	knowledge_panel.hide()
 	trade_partner.text = "Trading with %s%s" % [
 		str(AppState.trade.get("partner", "another player")),
 		" — storage destinations available" if bool(
@@ -1468,6 +1549,7 @@ func _sync_storage() -> void:
 	stats_panel.hide()
 	full_map.hide()
 	trade_panel.hide()
+	knowledge_panel.hide()
 	storage_categories.clear()
 	var active_category: int = int(AppState.storage.get("category_id", -1))
 	var raw_categories: Variant = AppState.storage.get("categories", [])

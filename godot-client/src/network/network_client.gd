@@ -109,6 +109,9 @@ func pick_up_ground_item(position: int, quantity: int) -> Error:
 func drop_inventory_item(slot: int, quantity: int) -> Error:
 	return send_frame(EloriaProtocol.drop_inventory_item(slot, quantity))
 
+func get_knowledge_info(index: int) -> Error:
+	return send_frame(EloriaProtocol.get_knowledge_info(index))
+
 func create_character(username: String, password: String, appearance: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)
 

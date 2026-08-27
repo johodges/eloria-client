@@ -340,6 +340,11 @@ custom_minimum_size = Vector2(44, 44)
 text = "Stats"
 tooltip_text = "Character statistics"
 
+[node name="KnowledgeButton" type="Button" parent="GameView/Quickbar/Buttons"]
+custom_minimum_size = Vector2(44, 44)
+text = "Knowledge"
+tooltip_text = "Knowledge and books"
+
 [node name="ChatButton" type="Button" parent="GameView/Quickbar/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
@@ -777,6 +782,54 @@ disabled = true
 [node name="StorageClose" type="Button" parent="GameView/StoragePanel/Content/Actions"]
 text = "Close"
 
+[node name="KnowledgePanel" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -250.0
+offset_right = 360.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Content" type="VBoxContainer" parent="GameView/KnowledgePanel"]
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="GameView/KnowledgePanel/Content"]
+text = "KNOWLEDGE"
+horizontal_alignment = 1
+
+[node name="KnowledgeKnownOnly" type="CheckBox" parent="GameView/KnowledgePanel/Content"]
+unique_name_in_owner = true
+text = "Show read knowledge only"
+tooltip_text = "Filter the server-owned knowledge bitset"
+
+[node name="Columns" type="HBoxContainer" parent="GameView/KnowledgePanel/Content"]
+theme_override_constants/separation = 12
+
+[node name="KnowledgeList" type="ItemList" parent="GameView/KnowledgePanel/Content/Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(330, 390)
+select_mode = 0
+allow_reselect = true
+
+[node name="KnowledgeDetail" type="RichTextLabel" parent="GameView/KnowledgePanel/Content/Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 390)
+fit_content = false
+text = "Select an entry to request its server description."
+
+[node name="Actions" type="HBoxContainer" parent="GameView/KnowledgePanel/Content"]
+alignment = 2
+
+[node name="KnowledgeClose" type="Button" parent="GameView/KnowledgePanel/Content/Actions"]
+text = "Close"
+
 [node name="GroundBagPanel" type="PanelContainer" parent="GameView"]
 unique_name_in_owner = true
 layout_mode = 1
@@ -1123,6 +1176,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/Buttons/ChatButton" to="." method="_on_chat_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/Buttons/KnowledgeButton" to="." method="_on_knowledge_button_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryUse" to="." method="_on_inventory_use_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryEquip" to="." method="_on_inventory_equip_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryUnequip" to="." method="_on_inventory_unequip_pressed"]
@@ -1139,6 +1193,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageWithdraw" to="." method="_on_storage_withdraw_pressed"]
 [connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageInspect" to="." method="_on_storage_inspect_pressed"]
 [connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageClose" to="." method="_on_storage_close_pressed"]
+[connection signal="pressed" from="GameView/KnowledgePanel/Content/Actions/KnowledgeClose" to="." method="_on_knowledge_close_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagPick" to="." method="_on_ground_bag_pick_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagPickAll" to="." method="_on_ground_bag_pick_all_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagDrop" to="." method="_on_ground_bag_drop_pressed"]

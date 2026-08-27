@@ -30,6 +30,9 @@ var storage: Dictionary = {"open": false, "categories": [], "category_id": -1,
 	"items": {}, "text": ""}
 var ground_bags: Dictionary = {}
 var ground_bag: Dictionary = {"open": false, "bag_id": -1, "items": {}}
+var known_knowledge: Array[int] = []
+var selected_knowledge: int = -1
+var knowledge_text: String = ""
 var unknown_packet_count := 0
 var recent_protocol_errors: Array[String] = []
 
@@ -59,6 +62,9 @@ func _on_connection_state_changed(value: String) -> void:
 		storage = _empty_storage_state()
 		ground_bags.clear()
 		ground_bag = _empty_ground_bag_state()
+		known_knowledge.clear()
+		selected_knowledge = -1
+		knowledge_text = ""
 	state_changed.emit(&"connection")
 
 func _on_packet(command: int, payload: PackedByteArray) -> void:
@@ -220,6 +226,20 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"ground_bag_close":
 			ground_bag = _empty_ground_bag_state()
 			state_changed.emit(&"ground_bag")
+		"knowledge_list":
+			known_knowledge.clear()
+			for raw_index: Variant in event.known:
+				known_knowledge.append(int(raw_index))
+			state_changed.emit(&"knowledge")
+		"new_knowledge":
+			var new_knowledge_index: int = int(event.index)
+			if not known_knowledge.has(new_knowledge_index):
+				known_knowledge.append(new_knowledge_index)
+				known_knowledge.sort()
+			state_changed.emit(&"knowledge")
+		"knowledge_text":
+			knowledge_text = str(event.text)
+			state_changed.emit(&"knowledge")
 		"trade_partner":
 			trade["open"] = true
 			trade["partner"] = str(event.name)
@@ -419,3 +439,8 @@ func close_ground_bag() -> void:
 
 func _empty_ground_bag_state() -> Dictionary:
 	return {"open": false, "bag_id": -1, "items": {}}
+
+func select_knowledge(index: int) -> void:
+	selected_knowledge = index
+	knowledge_text = ""
+	state_changed.emit(&"knowledge")

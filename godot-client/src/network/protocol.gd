@@ -38,6 +38,7 @@ enum ServerMessage {
 	GET_ACTIVE_SPELL_LIST = 45, REMOVE_ACTIVE_SPELL = 46,
 	GET_ACTOR_DAMAGE = 47, GET_ACTOR_HEAL = 48, SEND_PARTIAL_STAT = 49,
 	ADD_NEW_ENHANCED_ACTOR = 51, ACTOR_WEAR_ITEM = 52, ACTOR_UNWEAR_ITEM = 53,
+	GET_KNOWLEDGE_LIST = 55, GET_NEW_KNOWLEDGE = 56, GET_KNOWLEDGE_TEXT = 57,
 	STORAGE_LIST = 67, STORAGE_ITEMS = 68, STORAGE_TEXT = 69,
 	PING_REQUEST = 60, SPELL_CAST = 70, GET_ACTIVE_CHANNELS = 71, GET_ACTOR_HEALTH = 73,
 	GET_ITEMS_COOLDOWN = 77, SEND_BUFFS = 78, SEND_SPECIAL_EFFECT = 79,
@@ -216,6 +217,10 @@ static func drop_inventory_item(slot: int, quantity: int) -> PackedByteArray:
 		clampi(slot, 0, 255), quantity & 0xff, (quantity >> 8) & 0xff,
 		(quantity >> 16) & 0xff, (quantity >> 24) & 0xff]))
 
+static func get_knowledge_info(index: int) -> PackedByteArray:
+	return encode(ClientMessage.GET_KNOWLEDGE_INFO,
+		PackedByteArray([index & 0xff, (index >> 8) & 0xff]))
+
 static func actor_command_step(command: int) -> Vector2i:
 	# Server movement frames are the authoritative one-tile updates used by the
 	# legacy client. Walk and run use the same tile delta; timing differs.
@@ -321,6 +326,22 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			if not payload.is_empty():
 				return {"type": "invalid", "error": "ground_bag_close_length"}
 			return {"type": "ground_bag_close"}
+		ServerMessage.GET_KNOWLEDGE_LIST:
+			var known: Array[int] = []
+			for byte_index: int in range(payload.size()):
+				for bit_index: int in range(8):
+					if (int(payload[byte_index]) & (1 << bit_index)) != 0:
+						known.append(byte_index * 8 + bit_index)
+			return {"type": "knowledge_list", "known": known,
+				"capacity": payload.size() * 8}
+		ServerMessage.GET_NEW_KNOWLEDGE:
+			if payload.size() != 2:
+				return {"type": "invalid", "error": "new_knowledge_length"}
+			return {"type": "new_knowledge", "index": u16(payload)}
+		ServerMessage.GET_KNOWLEDGE_TEXT:
+			if payload.is_empty():
+				return {"type": "invalid", "error": "knowledge_text_length"}
+			return {"type": "knowledge_text", "text": nul_string(payload)}
 		ServerMessage.GET_ITEMS_COOLDOWN:
 			return decode_item_cooldowns(payload)
 		ServerMessage.GET_TRADE_PARTNER_NAME:

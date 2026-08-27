@@ -68,6 +68,8 @@ func _init() -> void:
 	_expect_bytes("drop inventory item fixture",
 		EloriaProtocol.drop_inventory_item(7, 0x12345678),
 		PackedByteArray([22, 6, 0, 7, 0x78, 0x56, 0x34, 0x12]))
+	_expect_bytes("knowledge inspection fixture", EloriaProtocol.get_knowledge_info(0x1234),
+		PackedByteArray([41, 3, 0, 0x34, 0x12]))
 	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
 	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
 	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")
@@ -297,6 +299,22 @@ func _init() -> void:
 		and EloriaProtocol.decode_server(23, PackedByteArray([1, 2])).type == "invalid"
 		and EloriaProtocol.decode_server(26, PackedByteArray([0])).type == "invalid",
 		"malformed ground bag packets rejected")
+	var knowledge_list_event: Dictionary = EloriaProtocol.decode_server(55,
+		PackedByteArray([0x09, 0x80]))
+	_expect(knowledge_list_event.type == "knowledge_list"
+		and knowledge_list_event.known == [0, 3, 15]
+		and knowledge_list_event.capacity == 16, "knowledge ownership bitset")
+	var new_knowledge_event: Dictionary = EloriaProtocol.decode_server(56,
+		PackedByteArray([0x34, 0x12]))
+	_expect(new_knowledge_event.type == "new_knowledge"
+		and new_knowledge_event.index == 0x1234, "new knowledge index")
+	var knowledge_text_event: Dictionary = EloriaProtocol.decode_server(57,
+		PackedByteArray([77, 101, 116, 97, 108, 108, 117, 114, 103, 121, 0]))
+	_expect(knowledge_text_event.type == "knowledge_text"
+		and knowledge_text_event.text == "Metallurgy", "knowledge inspection text")
+	_expect(EloriaProtocol.decode_server(56, PackedByteArray([1])).type == "invalid"
+		and EloriaProtocol.decode_server(57, PackedByteArray()).type == "invalid",
+		"malformed knowledge packets rejected")
 	var trade_partner: Dictionary = EloriaProtocol.decode_server(41,
 		PackedByteArray([1, 65, 108, 105, 99, 101, 0]))
 	_expect(trade_partner.type == "trade_partner" and trade_partner.name == "Alice"
@@ -373,6 +391,20 @@ func _init() -> void:
 		and active_spell.duration_seconds == 90, "active spell duration fields")
 	_expect(EloriaProtocol.decode_server(19, PackedByteArray([1, 0])).type == "invalid",
 		"malformed inventory snapshot rejected")
+	var knowledge_catalog_file: FileAccess = FileAccess.open(
+		"res://data/knowledge/catalog.json", FileAccess.READ)
+	_expect(knowledge_catalog_file != null, "knowledge catalog opens")
+	if knowledge_catalog_file != null:
+		var knowledge_catalog_value: Variant = JSON.parse_string(
+			knowledge_catalog_file.get_as_text())
+		_expect(knowledge_catalog_value is Dictionary, "knowledge catalog parses")
+		if knowledge_catalog_value is Dictionary:
+			var knowledge_entries: Array = (knowledge_catalog_value as Dictionary).get(
+				"entries", []) as Array
+			_expect(knowledge_entries.size() == 385
+				and str(knowledge_entries[0]) == "Metallurgy"
+				and str(knowledge_entries[1]) == "Metal Smelting",
+				"knowledge catalog matches the audited server insertion order")
 	var atlas_config_file: FileAccess = FileAccess.open(
 		"res://data/items/atlases.json", FileAccess.READ)
 	_expect(atlas_config_file != null, "legacy item atlas registry opens")

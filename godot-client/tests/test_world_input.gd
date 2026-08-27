@@ -232,6 +232,31 @@ func _run() -> void:
 	app_state_inventory.call("close_storage")
 	main.call("_sync_storage")
 	_expect(not storage_panel.visible, "storage close clears its local session window")
+	var knowledge_panel: Control = main.get_node("GameView/KnowledgePanel") as Control
+	var knowledge_button: Button = main.get_node(
+		"GameView/Quickbar/Buttons/KnowledgeButton") as Button
+	_expect(not knowledge_panel.visible and not knowledge_button.disabled,
+		"knowledge window starts closed with its real HUD action enabled")
+	app_state_inventory.call("_on_packet", 55, PackedByteArray([0x09]))
+	main.call("_on_knowledge_button_pressed")
+	var knowledge_list: ItemList = main.get_node(
+		"GameView/KnowledgePanel/Content/Columns/KnowledgeList") as ItemList
+	_expect(knowledge_panel.visible and knowledge_list.item_count == 385
+		and root.get_visible_rect().encloses(knowledge_panel.get_global_rect()),
+		"server knowledge ownership opens the complete catalog within the viewport")
+	app_state_inventory.call("select_knowledge", 0)
+	app_state_inventory.call("_on_packet", 57,
+		PackedByteArray([77, 101, 116, 97, 108, 108, 117, 114, 103, 121, 0]))
+	main.call("_sync_knowledge")
+	var knowledge_detail: RichTextLabel = main.get_node(
+		"GameView/KnowledgePanel/Content/Columns/KnowledgeDetail") as RichTextLabel
+	_expect(knowledge_detail.text.contains("Metallurgy")
+		and knowledge_detail.text.contains("Status: Read"),
+		"selected knowledge renders server text and owned status")
+	app_state_inventory.call("_on_packet", 56, PackedByteArray([2, 0]))
+	var known_knowledge: Array = app_state_inventory.get("known_knowledge") as Array
+	_expect(known_knowledge.has(2), "incremental knowledge acquisition updates ownership")
+	main.call("_on_knowledge_close_pressed")
 	app_state_inventory.call("_on_packet", 28,
 		PackedByteArray([1, 10, 0, 20, 0, 7]))
 	main.call("_sync_ground_bags")

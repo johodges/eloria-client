@@ -110,6 +110,17 @@ remove commands are 24 and 25; command 26 closes the view. Pickup sends
 creation/destruction, interaction range, carry capacity, quantities, and the
 resulting inventory snapshots.
 
+Knowledge ownership is sent by `GET_KNOWLEDGE_LIST(55)` as a little-endian
+bitset: bit `index % 8` of byte `index / 8` marks one catalog entry as read.
+`GET_NEW_KNOWLEDGE(56)` carries a newly completed `index:u16le`. Selecting an
+entry sends `GET_KNOWLEDGE_INFO(41)` with `index:u16le`, and the server replies
+with `GET_KNOWLEDGE_TEXT(57)` as NUL-terminated UTF-8. Index-to-name mapping is
+the insertion-ordered result of the server's `load_books` catalog, excluding
+repeatable big books; the checked-in Godot catalog records the exact source
+configuration hashes used to generate it. Reading itself remains initiated by
+using a server-recognized book from inventory, and the server owns progress,
+completion, recipe gating, and rejection messages.
+
 ## Open verification items
 
 Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; storage-backed trade positions and storage lifecycle; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.
