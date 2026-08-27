@@ -131,7 +131,7 @@ def main():
  args=parser.parse_args()
  if args.output: OUTPUT=Path(args.output)/"maps/four_gates"
  OUTPUT.mkdir(parents=True,exist_ok=True);meta=json.loads(METADATA.read_text())
- if meta.get('assetVersion')!='0.6.1':raise RuntimeError('Four Gates portable package requires authored asset version 0.6.1')
+ if meta.get('assetVersion')!='0.9.0':raise RuntimeError('Four Gates portable package requires authored asset version 0.9.0')
  build_portable_glb();obstacles=[o for o in meta['navigation']['navmesh'].get('obstacles',[]) if 'Window' not in o['node']];gameplay=gameplay_manifest();water=[]
  for i in range(8):
   a=math.radians(25+i*45);water.append({'id':f'waterfall-{i:02}','channel_node':f'Water_Channel_{i:02}','pool_node':f'Waterfall_Pool_{i:02}','foam_node':f'Waterfall_Foam_{i:02}','mist_node':f'FX_Waterfall_Mist_{i:02}','position':[405*math.sin(a),0.,405*math.cos(a)],'uv_scroll':[0.,-.32],'foam_scroll':[.08,-.18],'mist_particle':'waterfall_mist','fallback':'static-geometry'})

@@ -1,6 +1,6 @@
 # Four Gates City GLB + JSON package
 
-Production-oriented textured environment derived from the supplied Four Gates references. The square aerial controls layout; perspective images inform silhouettes and materials. Asset version 0.8 adds an art-directed city and landmark material family, baked atlas UVs, radially oriented gabled housing, tiered evergreens, and the surrounding faceted snow-capped alpine skyline.
+Production-oriented textured environment derived from the supplied Four Gates references. The square aerial controls layout; perspective images inform silhouettes and materials. Asset version 0.9 retains the art-directed material/skyline pass and adds a gameplay-distance detail layer: integrated gate ornament, radial civic gardens, bespoke broadleaf planting, lived-in market dressing, residential balconies, and rocky waterfall edges.
 
 ## Scene conventions
 
@@ -20,7 +20,7 @@ The package uses 19 metallic-roughness materials. An art-directed three-map city
 
 ## LOD, collision, navigation
 
-The main GLB contains gameplay-distance LOD1 plus `_LOD0` landmark overlays. `four-gates-city-lod2.glb` is a resource-pruned distant sibling with 663 active nodes, 26 meshes, 17 materials, overview textures capped at 512 px, no animations, and no close-detail overlays. Low-poly `COLLISION_*` nodes remain separate. Navigation includes ten conservative convex walkable polygons, monument and wall exclusions, agent dimensions, and an off-mesh sanctuary link.
+The main GLB contains gameplay-distance LOD1 plus `_LOD0` landmark overlays and 267 `Detail_` close-detail nodes. `four-gates-city-lod2.glb` is a resource-pruned distant sibling with 663 active nodes, 26 meshes, 17 materials, overview textures capped at 512 px, no animations, and no close-detail overlays. Low-poly `COLLISION_*` nodes remain separate. Navigation includes ten conservative convex walkable polygons, monument and wall exclusions, agent dimensions, and an off-mesh sanctuary link. New civic planting is diagonal to the axes, and the generator enforces a 30 m half-width visual-clearance contract around principal roads.
 
 ## Animation
 
@@ -36,4 +36,4 @@ Run `python3 eloria-assets/tools/package_four_gates_world.py` to build `runtime/
 
 ## Known limitations
 
-This is a textured gameplay environment with authored modular landmark geometry, landmark UVs, sculpted concentric terrain and shoreline transitions, building blockers, waterfall effect locators, an alpine skyline, and a resource-pruned LOD2 sibling. Water, foam, and mist remain understandable as static glTF geometry/locators when effects are disabled; animated turbulence, depth fade, refraction, and particles require client shaders. Remaining work is primarily bespoke district UVs, higher-density hero ornament, bespoke vegetation, and effect shaders.
+This is a textured gameplay environment with authored modular landmark geometry, landmark UVs, sculpted concentric terrain and shoreline transitions, building blockers, waterfall effect locators, an alpine skyline, concept-aligned close detail, and a resource-pruned LOD2 sibling. Water, foam, mist, and energy remain understandable as static glTF geometry/locators when effects are disabled. Remaining work is primarily bespoke district UVs plus production turbulence, depth-fade, refraction, and particle shaders.

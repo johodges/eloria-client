@@ -1,5 +1,15 @@
 # Change log
 
+## 0.9.0 — 2026-08-27
+
+- Added 267 deterministic gameplay-distance detail nodes aligned to the canonical concept art while preserving 30 m half-width clearance around every cardinal route.
+- Layered integrated aged-gold crowns, sapphire tracery, and hanging standards onto all five traversable gate structures.
+- Added eight radial civic planters, bespoke low-poly broadleaf shrubs and inner-ring trees, market stock/sign dressing, residential balconies, and roof finials.
+- Integrated each waterfall into the shoreline with rock clusters and stepped foam ribbons that remain readable when client effects are disabled.
+- Kept the compact LOD2 unchanged at 663 nodes by pruning every `Detail_` node and its now-unused broadleaf mesh resources.
+- Restored the lost 0.8 polish step and art-directed generator inputs to the rebuild pipeline, and advanced portable-package guards to 0.9.0.
+- Expanded Godot/Xvfb visual evidence with central-plaza, south-gate, market, and waterfall close views.
+
 ## 0.8.0 — 2026-08-27
 
 - Repainted the city and landmark atlases as restrained, seamless material swatches based on the concept palette; removed literal scene fragments that produced collage-like repetition in Godot.
