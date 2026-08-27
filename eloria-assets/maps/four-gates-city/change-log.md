@@ -1,5 +1,15 @@
 # Change log
 
+## 0.7.0 — 2026-08-27
+
+- Replaced the flat placeholder atlases with concept-derived 4×4 city and 2×2 landmark PBR source atlases matching the canonical warm limestone, charcoal slate, aged gold, sapphire, turquoise, and alpine-green palette.
+- Removed the legacy dark per-material tint that multiplied textured surfaces into olive/near-black output in Godot.
+- Rebuilt atlas resizing and normal derivation per UV cell to prevent cross-material color and normal seams.
+- Replaced residential and farmhouse cone roofs with reusable gabled roof geometry and oriented district façades radially around the civic plan.
+- Added 28 deterministic rock/snow peak pairs and 49 outer evergreens to reproduce the painted alpine skyline while preserving all four cardinal approaches.
+- Added a server-independent Godot/Xvfb rendered validation job that captures aerial and gameplay map views for every Four Gates asset pull request.
+- Revalidated LOD1 and compact LOD2 with the Khronos glTF Validator at zero errors and zero warnings.
+
 ## Portable runtime integration — 2026-08-26
 
 - Replaced the all-walkable collision placeholder with terrain-, causeway-, water-channel-, monument-, and building-aware collision at 1536×1536 resolution.

@@ -23,10 +23,31 @@ def add_acc(arr,typ,component=5126,target=34962):
 def read_pos(ai):
  a=g['accessors'][ai]; v=g['bufferViews'][a['bufferView']]; off=v.get('byteOffset',0)+a.get('byteOffset',0); return np.frombuffer(buf,dtype='<f4',count=a['count']*3,offset=off).reshape(-1,3).copy()
 
+def normalize_atlas(image,grid):
+ """Resize generated source atlases tile-by-tile so no color crosses a UV cell."""
+ image=image.convert('RGB');w,h=image.size;tile=1024//grid;result=Image.new('RGB',(1024,1024))
+ for row in range(grid):
+  for col in range(grid):
+   box=(round(col*w/grid),round(row*h/grid),round((col+1)*w/grid),round((row+1)*h/grid))
+   sample=image.crop(box).resize((tile,tile),Image.Resampling.LANCZOS)
+   result.paste(sample,(col*tile,row*tile))
+ return result
+
+def normal_atlas(image,grid,strength):
+ """Derive normals per tile; atlas boundaries must never become false ridges."""
+ source=np.asarray(image.convert('L'),np.float32)/255.;result=np.empty((1024,1024,3),np.uint8);tile=1024//grid
+ for row in range(grid):
+  for col in range(grid):
+   y0,y1=row*tile,(row+1)*tile;x0,x1=col*tile,(col+1)*tile;gray=source[y0:y1,x0:x1]
+   gy,gx=np.gradient(gray);normal=np.dstack((-gx*strength,-gy*strength,np.ones_like(gray)))
+   normal/=np.maximum(np.linalg.norm(normal,axis=2,keepdims=True),1e-6)
+   result[y0:y1,x0:x1]=((normal*.5+.5)*255).astype(np.uint8)
+ return Image.fromarray(result)
+
 # Add generated production atlas plus deterministic normal and ORM companions.
 def load_or_generate_city_atlas(path):
  try:
-  return Image.open(path).convert('RGB').resize((1024,1024),Image.Resampling.LANCZOS)
+  return normalize_atlas(Image.open(path),4)
  except (FileNotFoundError, OSError):
   image=Image.new('RGB',(1024,1024));draw=ImageDraw.Draw(image)
   palette=[(186,188,184),(76,85,96),(159,151,136),(91,82,78),
@@ -45,7 +66,7 @@ def load_or_generate_city_atlas(path):
   image.save(path,optimize=True)
   return image
 src=load_or_generate_city_atlas(TEX/'four-gates-material-atlas-source.png'); src.save(TEX/'four-gates-material-basecolor.png',optimize=True)
-gray=np.asarray(src.convert('L'),np.float32)/255.; gy,gx=np.gradient(gray); n=np.dstack((-gx*2.1,-gy*2.1,np.ones_like(gray))); n/=np.linalg.norm(n,axis=2,keepdims=True); Image.fromarray(((n*.5+.5)*255).astype(np.uint8)).save(TEX/'four-gates-material-normal.png',optimize=True)
+normal_atlas(src,4,1.45).save(TEX/'four-gates-material-normal.png',optimize=True)
 orm=np.zeros((1024,1024,3),np.uint8); orm[:,:,0]=235; orm[:,:,1]=185
 for c,r,val in [(1,1,195),(2,1,215)]:orm[r*256:(r+1)*256,c*256:(c+1)*256,2]=val
 for c,r,val in [(1,1,80),(2,1,120),(0,3,45),(1,3,55),(2,3,70)]:orm[r*256:(r+1)*256,c*256:(c+1)*256,1]=val
@@ -66,7 +87,8 @@ g['samplers']=[{'magFilter':9729,'minFilter':9987,'wrapS':10497,'wrapT':10497}];
 tile={'stone':(0,0),'dark-stone':(1,0),'paving':(2,0),'rock':(3,0),'roof':(0,1),'bronze':(1,1),'wood':(3,1),'plaster':(0,2),'soil':(1,2),'grass':(2,2),'snow':(3,2),'water':(0,3),'blue-crystal':(1,3),'waterfall':(2,3),'vegetation':(3,3)}
 for m in g['materials']:
  c,r=tile[m['name']]; tr={'offset':[c*.25,(3-r)*.25],'scale':[.25,.25]}; ti=lambda i:{'index':i,'extensions':{'KHR_texture_transform':tr}}
- p=m['pbrMetallicRoughness']; p['baseColorTexture']=ti(0); p['metallicRoughnessTexture']=ti(2); p['metallicFactor']=1; p['roughnessFactor']=1; m['normalTexture']=ti(1); m['occlusionTexture']=ti(2)
+ p=m['pbrMetallicRoughness'];alpha=float(p.get('baseColorFactor',[1,1,1,1])[3]);p['baseColorFactor']=[.94,.94,.94,alpha]
+ p['baseColorTexture']=ti(0); p['metallicRoughnessTexture']=ti(2); p['metallicFactor']=1; p['roughnessFactor']=1; m['normalTexture']=ti(1); m['occlusionTexture']=ti(2)
 
 # Add maintainable detail nodes using existing shared meshes.
 nodes=g['nodes']; byname={n['name']:i for i,n in enumerate(nodes)}; mesh_by_name={m['name']:i for i,m in enumerate(g['meshes'])}
@@ -75,6 +97,25 @@ def ensure_mesh(name,prototype,material):
  if name in mesh_by_name:return
  src=g['meshes'][mesh_by_name[prototype]]; clone={'name':name,'primitives':[dict(src['primitives'][0])]}; clone['primitives'][0]['attributes']=dict(src['primitives'][0]['attributes']); clone['primitives'][0]['material']=mat_by_name[material]; g['meshes'].append(clone); mesh_by_name[name]=len(g['meshes'])-1
 ensure_mesh('cube_wood','cube_stone','wood'); ensure_mesh('cube_roof','cube_stone','roof'); ensure_mesh('cylinder_bronze','cylinder_stone','bronze')
+
+# A proper triangular-prism roof replaces the oversized umbrella-like cones on
+# ordinary houses.  Vertices are split per face so Godot imports clean normals.
+def add_gable_roof_mesh():
+ positions=[];normals=[];uv=[];indices=[]
+ def face(points,face_uv):
+  start=len(positions);a=np.asarray(points,np.float32);normal=np.cross(a[1]-a[0],a[2]-a[0]);normal/=max(float(np.linalg.norm(normal)),1e-6)
+  positions.extend(a.tolist());normals.extend([normal.tolist()]*len(points));uv.extend(face_uv)
+  if len(points)==3:indices.extend([start,start+1,start+2])
+  else:indices.extend([start,start+1,start+2,start,start+2,start+3])
+ face([[-.5,-.5,-.5],[.5,-.5,-.5],[.5,-.5,.5],[-.5,-.5,.5]],[[0,0],[1,0],[1,1],[0,1]])
+ face([[-.5,-.5,-.5],[-.5,-.5,.5],[0,.5,.5],[0,.5,-.5]],[[0,0],[1,0],[1,1],[0,1]])
+ face([[0,.5,-.5],[0,.5,.5],[.5,-.5,.5],[.5,-.5,-.5]],[[0,1],[1,1],[1,0],[0,0]])
+ face([[-.5,-.5,-.5],[0,.5,-.5],[.5,-.5,-.5]],[[0,0],[.5,1],[1,0]])
+ face([[-.5,-.5,.5],[.5,-.5,.5],[0,.5,.5]],[[0,0],[1,0],[.5,1]])
+ n=np.asarray(normals,np.float32);t=np.cross(np.tile([0.,1.,0.],(len(n),1)),n);weak=np.linalg.norm(t,axis=1)<1e-5;t[weak]=[1,0,0];t/=np.maximum(np.linalg.norm(t,axis=1,keepdims=True),1e-6);t=np.column_stack((t,np.ones(len(t),np.float32)))
+ primitive={'attributes':{'POSITION':add_acc(positions,'VEC3'),'NORMAL':add_acc(n,'VEC3'),'TEXCOORD_0':add_acc(uv,'VEC2'),'TANGENT':add_acc(t,'VEC4')},'indices':add_acc(np.asarray(indices,np.uint32),'SCALAR',5125,34963),'material':mat_by_name['roof']}
+ g['meshes'].append({'name':'gable_roof','primitives':[primitive]});mesh_by_name['gable_roof']=len(g['meshes'])-1
+add_gable_roof_mesh()
 def add(name,parent,mesh,pos,scale,extras=None):
  d={'name':name,'mesh':mesh_by_name[mesh],'translation':[float(x) for x in pos],'scale':[float(x) for x in scale]};
  if extras:d['extras']=extras

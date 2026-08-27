@@ -1,13 +1,13 @@
 # Validation report
 
-Validated 2026-08-26 for asset version 0.6.1.
+Validated 2026-08-27 for asset version 0.7.0.
 
 ## Passed
 
-- LOD1 GLB header is `glTF`, version 2; declared and actual length both 497,656 bytes.
-- LOD2 GLB header is `glTF`, version 2; declared and actual length both 316,984 bytes.
+- LOD1 GLB header is `glTF`, version 2; declared and actual length both 9,156,172 bytes.
+- LOD2 GLB header is `glTF`, version 2; declared and actual length both 2,325,380 bytes.
 - JSON parses successfully and names `four-gates-city.glb` exactly.
-- LOD1 contains 1,378 unique named nodes; compact LOD2 contains 558.
+- LOD1 contains 1,483 unique named nodes; compact LOD2 contains 663.
 - Every landmark, district, gate, portcullis, bridge, collision, and navigation node referenced by JSON exists exactly in the GLB.
 - All primitives use indexed triangles with float32 positions and uint32 indices.
 - Materials use glTF metallic-roughness, alpha blending, emissive factors, and standard `KHR_texture_transform`; no proprietary extensions or broken external texture paths exist.
@@ -29,9 +29,9 @@ Validated 2026-08-26 for asset version 0.6.1.
 
 ## Independent-validator/viewer status
 
-The package passed local binary/container and cross-reference validation. Khronos glTF Validator was run against both assets: LOD1 reports 0 errors, 0 warnings, 4 informational messages; LOD2 reports 0 errors, 0 warnings, 3 informational messages. Machine-readable reports are checked in beside the GLBs.
+The package passed local binary/container and cross-reference validation. Khronos glTF Validator was run against both assets: LOD1 reports 0 errors, 0 warnings, 3 informational messages; LOD2 reports 0 errors, 0 warnings, 3 informational messages. Machine-readable reports are checked in beside the GLBs.
 
-Independent interactive viewer inspection is still required. Open the GLB in Blender, Babylon.js Sandbox, or Don McCurdy's glTF Viewer and confirm material appearance, culling, animation, and camera framing before tagging 1.0.0.
+Pull requests that change Four Gates now run an independent Godot/Xvfb render and upload aerial and gameplay screenshots. Blender, Babylon.js Sandbox, or Don McCurdy's glTF Viewer inspection remains recommended before tagging 1.0.0.
 
 ## Release-gate limitations
 

@@ -18,10 +18,27 @@ def mesh(name,v,f,n,uv,mat):
 def write(path,doc,binary):
  align();doc['buffers'][0]['byteLength']=len(binary);jb=json.dumps(doc,separators=(',',':')).encode();jb+=b' '*((-len(jb))%4);path.write_bytes(struct.pack('<4sII',b'glTF',2,12+8+len(jb)+8+len(binary))+struct.pack('<I4s',len(jb),b'JSON')+jb+struct.pack('<I4s',len(binary),b'BIN\0')+binary)
 
+def normalize_atlas(image,grid):
+ image=image.convert('RGB');w,h=image.size;tile=1024//grid;result=Image.new('RGB',(1024,1024))
+ for row in range(grid):
+  for col in range(grid):
+   box=(round(col*w/grid),round(row*h/grid),round((col+1)*w/grid),round((row+1)*h/grid))
+   result.paste(image.crop(box).resize((tile,tile),Image.Resampling.LANCZOS),(col*tile,row*tile))
+ return result
+
+def normal_atlas(image,grid,strength):
+ source=np.asarray(image.convert('L'),np.float32)/255.;result=np.empty((1024,1024,3),np.uint8);tile=1024//grid
+ for row in range(grid):
+  for col in range(grid):
+   y0,y1=row*tile,(row+1)*tile;x0,x1=col*tile,(col+1)*tile;gray=source[y0:y1,x0:x1]
+   gy,gx=np.gradient(gray);normal=np.dstack((-gx*strength,-gy*strength,np.ones_like(gray)));normal/=np.maximum(np.linalg.norm(normal,axis=2,keepdims=True),1e-6)
+   result[y0:y1,x0:x1]=((normal*.5+.5)*255).astype(np.uint8)
+ return Image.fromarray(result)
+
 # Dedicated landmark texture family.
 def load_or_generate_landmark_atlas(path):
  try:
-  return Image.open(path).convert('RGB').resize((1024,1024),Image.Resampling.LANCZOS)
+  return normalize_atlas(Image.open(path),2)
  except (FileNotFoundError, OSError):
   image=Image.new('RGB',(1024,1024));draw=ImageDraw.Draw(image)
   quadrants=[(190,194,190),(156,112,44),(67,73,82),(40,171,216)]
@@ -36,7 +53,7 @@ def load_or_generate_landmark_atlas(path):
   image.save(path,optimize=True)
   return image
 src=load_or_generate_landmark_atlas(T/'four-gates-landmark-trims-source.png');src.save(T/'four-gates-landmark-basecolor.png',optimize=True)
-gray=np.asarray(src.convert('L'),np.float32)/255.;gy,gx=np.gradient(gray);nn=np.dstack((-gx*2.8,-gy*2.8,np.ones_like(gray)));nn/=np.linalg.norm(nn,axis=2,keepdims=True);Image.fromarray(((nn*.5+.5)*255).astype(np.uint8)).save(T/'four-gates-landmark-normal.png',optimize=True)
+normal_atlas(src,2,1.65).save(T/'four-gates-landmark-normal.png',optimize=True)
 orm=np.zeros((1024,1024,3),np.uint8);orm[:,:,0]=238;orm[:,:,1]=175;orm[:512,512:,1]=78;orm[:512,512:,2]=205;orm[512:,512:,1]=55;orm[512:,512:,2]=145;Image.fromarray(orm).save(T/'four-gates-landmark-orm.png',optimize=True)
 em=np.zeros((1024,1024,3),np.uint8);em[512:,512:]=np.asarray(src)[512:,512:];Image.fromarray(em).save(T/'four-gates-landmark-emissive.png',optimize=True)
 start_tex=len(g.get('textures',[]));ivs=[]

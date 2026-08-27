@@ -18,6 +18,7 @@ STEPS = (
     "populate_four_gates.py",
     "author_four_gates_landmarks.py",
     "terrain_water_four_gates.py",
+    "polish_four_gates_visuals.py",
     "compact_four_gates_lod2.py",
 )
 
