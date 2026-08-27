@@ -7,7 +7,7 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | TCP framing | client connection; server protocol.py | network/protocol.gd | byte fixtures + fragmented/combined reads | FOUNDATION |
 | Configurable endpoint | servers.c | responsive login scene/config | rendered CI connected to `18.235.240.60:2000` through the real login/creation UI | VERIFIED |
 | Login | loginwin.c; LOG_IN | auth/network | disposable character creation and subsequent login against the development server; credentials redacted | VERIFIED |
-| Actor spawn/update/remove | multiplayer.c; server actor packets/commands | state/actors | actor packet + command-step fixtures | IMPLEMENTED |
+| Actor spawn/update/remove | multiplayer.c; server actor packets/commands | state/actors | actor packet + command-step fixtures; opt-in rendered two-client replication gate | IMPLEMENTED |
 | NPC activation/dialogue | gamewin.c; server protocol/world | protocol/state/dialogue UI | byte + decode fixtures; runtime pending | IMPLEMENTED |
 | Chat send/receive + PM | legacy `text.c`, `chat.c`, `pm_log.c`; server `protocol.py`, `server.py`, `world.py` | exact RAW_TEXT/SEND_PM codecs, channel state, safe lower-left presentation | exact bytes and channel/color/UTF-8 fixtures; two-client local TCP delivery, sender acknowledgement, reply-last, and offline-recipient rejection | IMPLEMENTED |
 | Title/login artwork | generated Eloria branding DDS | portable PNG copies + responsive themed login/creation | 1280x720 bounds fixture covers login and creation action rows; user screenshot comparison | IMPLEMENTED |
@@ -42,10 +42,17 @@ The gate fails unless it proves all of the following before uploading evidence:
   camera state while the actor remains in frame, then restore actor follow;
 - the white player marker follows the actor and both map cameras include its layer;
 - a left-click routed through the gameplay viewport produces a server actor-tile update;
+- a second real connection creates and logs in a disposable player without
+  persisting credentials, and the primary client receives its authoritative
+  spawn, movement, and disconnect;
+- the remote player uses a visible native luminous model, can be selected by a
+  world-space ray, and is removed from both state and presentation after its
+  connection closes;
 - each 1280×720 capture contains rendered color variation rather than a dummy frame.
 
 The artifact contains default, rotated, panned, zoomed, full-map, and
-post-movement PNGs plus sanitized session, camera-state, and movement JSON. A
+post-movement PNGs, a selected-remote-player PNG, and sanitized session,
+camera-state, movement, and remote-actor JSON. A
 passing structural assertion is still classified separately from human visual
 inspection of those PNGs.
 
