@@ -1,16 +1,16 @@
 # Validation report
 
-Validated 2026-08-27 for asset version 0.7.0.
+Validated 2026-08-27 for asset version 0.8.0.
 
 ## Passed
 
-- LOD1 GLB header is `glTF`, version 2; declared and actual length both 9,156,172 bytes.
-- LOD2 GLB header is `glTF`, version 2; declared and actual length both 2,325,380 bytes.
+- LOD1 GLB header is `glTF`, version 2; declared and actual length both 2,929,580 bytes.
+- LOD2 GLB header is `glTF`, version 2; declared and actual length both 851,036 bytes.
 - JSON parses successfully and names `four-gates-city.glb` exactly.
 - LOD1 contains 1,483 unique named nodes; compact LOD2 contains 663.
 - Every landmark, district, gate, portcullis, bridge, collision, and navigation node referenced by JSON exists exactly in the GLB.
 - All primitives use indexed triangles with float32 positions and uint32 indices.
-- Materials use glTF metallic-roughness, alpha blending, emissive factors, and standard `KHR_texture_transform`; no proprietary extensions or broken external texture paths exist.
+- Materials use glTF metallic-roughness, alpha blending, emissive factors, and baked atlas UV rectangles; no proprietary extensions or broken external texture paths exist.
 - Seven PNG maps are embedded: the citywide base-color/normal/ORM atlas and landmark base-color/normal/ORM/emissive family.
 - Every visible primitive provides `POSITION`, `NORMAL`, and `TEXCOORD_0` attributes.
 - Every normal-mapped primitive also provides a portable `TANGENT` attribute.
@@ -29,7 +29,7 @@ Validated 2026-08-27 for asset version 0.7.0.
 
 ## Independent-validator/viewer status
 
-The package passed local binary/container and cross-reference validation. Khronos glTF Validator was run against both assets: LOD1 reports 0 errors, 0 warnings, 3 informational messages; LOD2 reports 0 errors, 0 warnings, 3 informational messages. Machine-readable reports are checked in beside the GLBs.
+The package passed local binary/container and cross-reference validation. Khronos glTF Validator was run against both assets: LOD1 reports 0 errors and 0 warnings; LOD2 reports 0 errors and 0 warnings. Machine-readable reports are checked in beside the GLBs.
 
 Pull requests that change Four Gates now run an independent Godot/Xvfb render and upload aerial and gameplay screenshots. Blender, Babylon.js Sandbox, or Don McCurdy's glTF Viewer inspection remains recommended before tagging 1.0.0.
 

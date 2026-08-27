@@ -1,6 +1,6 @@
 # Four Gates City GLB + JSON package
 
-Production-oriented textured environment derived from the supplied Four Gates references. The square aerial controls layout; perspective images inform silhouettes and materials. Asset version 0.7 adds concept-derived city and landmark atlases, radially oriented gabled housing, and the surrounding snow-capped alpine skyline.
+Production-oriented textured environment derived from the supplied Four Gates references. The square aerial controls layout; perspective images inform silhouettes and materials. Asset version 0.8 adds an art-directed city and landmark material family, baked atlas UVs, radially oriented gabled housing, tiered evergreens, and the surrounding faceted snow-capped alpine skyline.
 
 ## Scene conventions
 
@@ -10,17 +10,17 @@ Production-oriented textured environment derived from the supplied Four Gates re
 
 ## Loading
 
-Load `four-gates-city.glb` with any glTF 2.0 loader, then parse `four-gates-city.json`. Resolve metadata `node` fields by exact GLB node name. The loader must support `KHR_texture_transform` for atlas selection. Unknown extras and JSON extensions should be ignored safely.
+Load `four-gates-city.glb` with any glTF 2.0 loader, then parse `four-gates-city.json`. Resolve metadata `node` fields by exact GLB node name. Atlas rectangles are baked into primitive UVs and require no optional glTF extension. Unknown extras and JSON extensions should be ignored safely.
 
 Rebuild from the compact checked-in blockout seed with `python3 eloria-assets/tools/rebuild_four_gates_glb.py`. Run `python3 eloria-assets/tools/validate_four_gates_package.py` after any binary or metadata change; it rejects truncated containers, out-of-bounds buffer views, undecodable embedded images, duplicate node names, and stale JSON node references.
 
 ## Materials and effects
 
-The package uses 19 metallic-roughness materials. A concept-derived three-map citywide atlas covers general assets, while a dedicated concept-derived four-map landmark family provides base color, tangent normal, packed ORM, and emissive detail for monumental stone, bronze trim, foundations, and blue-energy inlays. Atlas resizing and normal derivation are isolated per UV tile so colors and normals never bleed across material cells. Source and derived maps are included under `textures/`.
+The package uses 19 metallic-roughness materials. An art-directed three-map citywide atlas covers general assets, while a dedicated four-map landmark family provides base color, tangent normal, packed ORM, and emissive detail for monumental stone, bronze trim, foundations, and blue-energy inlays. Primitive UVs directly address their material rectangle, and normal derivation is isolated per tile so colors and normals never bleed across material cells. Source and derived maps are included under `textures/`.
 
 ## LOD, collision, navigation
 
-The main GLB contains gameplay-distance LOD1 plus `_LOD0` landmark overlays. `four-gates-city-lod2.glb` is a resource-pruned distant sibling with 663 active nodes, 25 meshes, 17 materials, overview textures capped at 512 px, no animations, and no close-detail overlays. Low-poly `COLLISION_*` nodes remain separate. Navigation includes ten conservative convex walkable polygons, monument and wall exclusions, agent dimensions, and an off-mesh sanctuary link.
+The main GLB contains gameplay-distance LOD1 plus `_LOD0` landmark overlays. `four-gates-city-lod2.glb` is a resource-pruned distant sibling with 663 active nodes, 26 meshes, 17 materials, overview textures capped at 512 px, no animations, and no close-detail overlays. Low-poly `COLLISION_*` nodes remain separate. Navigation includes ten conservative convex walkable polygons, monument and wall exclusions, agent dimensions, and an off-mesh sanctuary link.
 
 ## Animation
 

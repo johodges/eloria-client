@@ -206,6 +206,16 @@ for index in range(56):
 # every generated primitive.  Bake each material's atlas rectangle into that
 # primitive's UV accessor so all clients sample the same swatch, then remove
 # the now-redundant extension.  A one-texel inset prevents mip bleed.
+city_rects = {
+    "stone": (0, 0), "dark-stone": (1, 0), "paving": (2, 0), "rock": (3, 0),
+    "roof": (0, 1), "bronze": (1, 1), "wood": (3, 1), "plaster": (0, 2),
+    "soil": (1, 2), "grass": (2, 2), "snow": (3, 2), "water": (0, 3),
+    "blue-crystal": (1, 3), "waterfall": (2, 3), "vegetation": (3, 3),
+}
+landmark_rects = {
+    "landmark-stone": (0, 0), "landmark-bronze": (1, 0),
+    "landmark-foundation": (0, 1), "landmark-energy": (1, 1),
+}
 for mesh in document["meshes"]:
     for primitive in mesh["primitives"]:
         material = document["materials"][primitive["material"]]
@@ -215,8 +225,18 @@ for mesh in document["meshes"]:
         uv_accessor = primitive.get("attributes", {}).get("TEXCOORD_0")
         if transform is None or uv_accessor is None:
             continue
-        offset = np.asarray(transform.get("offset", [0., 0.]), np.float32)
-        scale = np.asarray(transform.get("scale", [1., 1.]), np.float32)
+        name = material.get("name", "")
+        if name in city_rects:
+            column, row = city_rects[name]
+            offset = np.asarray([column * .25, row * .25], np.float32)
+            scale = np.asarray([.25, .25], np.float32)
+        elif name in landmark_rects:
+            column, row = landmark_rects[name]
+            offset = np.asarray([column * .5, row * .5], np.float32)
+            scale = np.asarray([.5, .5], np.float32)
+        else:
+            offset = np.asarray(transform.get("offset", [0., 0.]), np.float32)
+            scale = np.asarray(transform.get("scale", [1., 1.]), np.float32)
         local_uv = np.mod(read_float_accessor(uv_accessor, 2), 1.0)
         inset = np.asarray([1.0 / 1024.0, 1.0 / 1024.0], np.float32)
         baked_uv = offset + inset + local_uv * (scale - inset * 2.0)

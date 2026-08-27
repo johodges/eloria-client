@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.7.0-lod2",
+  "assetVersion": "0.8.0-lod2",
   "asset": {
     "id": "four-gates-city",
     "name": "Four Gates City",
@@ -1413,7 +1413,7 @@
           "screenCoverage": 0.0,
           "nodeCount": 663,
           "animations": 0,
-          "meshCount": 25,
+          "meshCount": 26,
           "materialCount": 17,
           "textureMaxResolution": 512,
           "resourcePruned": true
@@ -1458,7 +1458,7 @@
     }
   ],
   "materials": {
-    "strategy": "embedded-4x4-atlas",
+    "strategy": "embedded-atlas-with-baked-primitive-uvs",
     "resolution": [
       1024,
       1024
@@ -1471,7 +1471,6 @@
     "channelPacking": {
       "orm": "R=occlusion,G=roughness,B=metallic"
     },
-    "extension": "KHR_texture_transform",
     "landmarkAtlas": {
       "resolution": [
         1024,
@@ -1559,8 +1558,8 @@
       "turquoise",
       "alpine green"
     ],
-    "materialAtlas": "concept-derived-4x4-pbr-basecolor",
-    "landmarkAtlas": "concept-derived-2x2-pbr-basecolor",
+    "materialAtlas": "art-directed-4x4-pbr-basecolor",
+    "landmarkAtlas": "art-directed-2x2-pbr-basecolor",
     "alpineSkylineNodes": [
       "Mountain_Peak_00",
       "Mountain_Snowcap_00",
@@ -1632,7 +1631,6 @@
       "Outer_Evergreen_10",
       "Outer_Evergreen_11",
       "Outer_Evergreen_12",
-      "Outer_Evergreen_13",
       "Outer_Evergreen_16",
       "Outer_Evergreen_17",
       "Outer_Evergreen_18",
@@ -1644,7 +1642,7 @@
       "Outer_Evergreen_24",
       "Outer_Evergreen_25",
       "Outer_Evergreen_26",
-      "Outer_Evergreen_27",
+      "Outer_Evergreen_29",
       "Outer_Evergreen_30",
       "Outer_Evergreen_31",
       "Outer_Evergreen_32",
@@ -1657,6 +1655,7 @@
       "Outer_Evergreen_39",
       "Outer_Evergreen_40",
       "Outer_Evergreen_41",
+      "Outer_Evergreen_43",
       "Outer_Evergreen_44",
       "Outer_Evergreen_45",
       "Outer_Evergreen_46",

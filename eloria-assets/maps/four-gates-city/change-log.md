@@ -1,5 +1,13 @@
 # Change log
 
+## 0.8.0 — 2026-08-27
+
+- Repainted the city and landmark atlases as restrained, seamless material swatches based on the concept palette; removed literal scene fragments that produced collage-like repetition in Godot.
+- Baked each material's atlas rectangle into primitive UVs, eliminating the client importer's inconsistent `KHR_texture_transform` behavior and cross-material sampling.
+- Reduced normal intensity, surface glare, and landmark emission so charcoal masonry, aged gold, turquoise water, and sapphire inlays retain the paintings' value hierarchy.
+- Replaced cone mountains and crowns with deterministic faceted peaks, fitted snowcaps, and tiered evergreen silhouettes.
+- Removed the validation overlay and calibrated neutral lighting in CI screenshots so visual review reflects the map itself.
+
 ## 0.7.0 — 2026-08-27
 
 - Replaced the flat placeholder atlases with concept-derived 4×4 city and 2×2 landmark PBR source atlases matching the canonical warm limestone, charcoal slate, aged gold, sapphire, turquoise, and alpine-green palette.

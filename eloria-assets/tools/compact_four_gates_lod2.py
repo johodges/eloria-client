@@ -115,7 +115,7 @@ for i in images:
 lod = {k: copy.deepcopy(v) for k, v in g.items() if k not in ("nodes", "meshes", "materials", "textures", "images", "accessors", "bufferViews", "animations")}
 lod.update({"nodes": nodes, "meshes": meshes, "materials": materials, "textures": textures, "images": images, "accessors": accessors, "bufferViews": views})
 lod["scenes"] = [{"name": "Four Gates City LOD2", "nodes": [node_map[0]]}]
-lod["asset"]["generator"] = "Eloria Four Gates compact resource-pruned LOD2 0.7"
+lod["asset"]["generator"] = "Eloria Four Gates compact resource-pruned LOD2 0.8"
 lod["buffers"] = [{"byteLength": len(binary)}]
 while len(binary) % 4: binary.append(0)
 lod["buffers"][0]["byteLength"] = len(binary)
@@ -126,7 +126,7 @@ out.write_bytes(struct.pack("<4sII", b"glTF", 2, 12 + 8 + len(jb) + 8 + len(bina
 meta = json.loads((P / "four-gates-city.json").read_text())
 meta["lodGroups"][0]["levels"][2].update({"glb": out.name, "nodeCount": len(nodes), "meshCount": len(meshes), "materialCount": len(materials), "textureMaxResolution": 512, "animations": 0, "resourcePruned": True})
 (P / "four-gates-city.json").write_text(json.dumps(meta, indent=2) + "\n")
-lm = copy.deepcopy(meta); lm["asset"]["glb"] = out.name; lm["assetVersion"] = "0.7.0-lod2"; lm["animations"] = []
+lm = copy.deepcopy(meta); lm["asset"]["glb"] = out.name; lm["assetVersion"] = "0.8.0-lod2"; lm["animations"] = []
 lod_node_names = {node.get("name") for node in nodes}
 def prune_node_references(value, key=None):
     if isinstance(value, dict):
