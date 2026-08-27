@@ -65,7 +65,7 @@ text = "Previous"
 text = "Next"
 
 [node name="Model" type="Button" parent="UI/Panel/Rows/Buttons"]
-text = "Male / Female"
+text = "Next Model"
 
 [connection signal="pressed" from="UI/Panel/Rows/Buttons/Previous" to="." method="_on_previous_pressed"]
 [connection signal="pressed" from="UI/Panel/Rows/Buttons/Next" to="." method="_on_next_pressed"]

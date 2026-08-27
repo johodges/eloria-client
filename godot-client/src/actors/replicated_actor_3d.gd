@@ -216,6 +216,7 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	if not model_config.is_empty() and not bones.is_empty():
 		var native_model: Node3D = _load_native_equipment(str(model_config.get("scene", "")))
 		if native_model != null:
+			_apply_equipment_import(native_model, model_config.get("import", {}) as Dictionary)
 			var native_attachment: BoneAttachment3D = _bone_attachment(bones[0], part, visual_id)
 			if native_attachment != null:
 				native_attachment.add_child(native_model)
@@ -252,6 +253,19 @@ func _load_native_equipment(path: String) -> Node3D:
 		return null
 	var generated: Node = document.generate_scene(state)
 	return generated as Node3D if generated is Node3D else null
+
+func _apply_equipment_import(model: Node3D, config: Dictionary) -> void:
+	model.scale = Vector3.ONE * float(config.get("scale", 1.0))
+	var translation_value: Variant = config.get("translation", [0, 0, 0])
+	if translation_value is Array and (translation_value as Array).size() >= 3:
+		var translation: Array = translation_value as Array
+		model.position = Vector3(float(translation[0]), float(translation[1]),
+			float(translation[2]))
+	var rotation_value: Variant = config.get("rotationDegrees", [0, 0, 0])
+	if rotation_value is Array and (rotation_value as Array).size() >= 3:
+		var rotation: Array = rotation_value as Array
+		model.rotation_degrees = Vector3(float(rotation[0]), float(rotation[1]),
+			float(rotation[2]))
 
 func _equipment_fallback_mesh(shape: String) -> MeshInstance3D:
 	var instance: MeshInstance3D = MeshInstance3D.new()
