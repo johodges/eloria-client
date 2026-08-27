@@ -106,10 +106,10 @@ func _run() -> void:
 		PackedByteArray([1, 128, 91, 80, 77, 32, 102, 114, 111, 109, 32, 65, 108,
 			105, 99, 101, 58, 32, 104, 105, 93, 0]))
 	main.call("_sync_chat")
-	_expect(chat_output.text.contains("[PM] [PM from Alice: hi]")
-		and not chat_output.bbcode_enabled
-		and chat_input.placeholder_text.contains("/name"),
-		"private chat is labeled, markup-safe, and exposes legacy addressing syntax")
+	_expect(chat_output.get_parsed_text().contains("[PM] [PM from Alice: hi]"),
+		"private chat receives its personal-channel label")
+	_expect(not chat_output.bbcode_enabled and chat_input.placeholder_text.contains("/name"),
+		"chat remains markup-safe and exposes legacy addressing syntax")
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
