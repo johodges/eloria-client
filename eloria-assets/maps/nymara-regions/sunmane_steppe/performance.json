@@ -1,0 +1,156 @@
+{
+  "packages": {
+    "lod1": {
+      "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+      "ambientAnimals": 84,
+      "collisionBodies": 172,
+      "godotVersion": "4.7.2",
+      "loadMilliseconds": 503.7,
+      "manifest": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/world.json",
+      "meshInstances": 735,
+      "renderer": "gl_compatibility",
+      "samples": [
+        {
+          "bufferMemoryBytes": 16850018,
+          "drawCalls": 2241,
+          "frameMilliseconds": 416.35,
+          "framesPerSecond": 2.4,
+          "id": "gameplay-default",
+          "primitivesInFrame": 587535,
+          "renderScale": 1.0,
+          "shadows": true,
+          "textureMemoryBytes": 23234118,
+          "videoMemoryBytes": 40084136
+        },
+        {
+          "bufferMemoryBytes": 16850018,
+          "drawCalls": 2739,
+          "frameMilliseconds": 434.85,
+          "framesPerSecond": 2.3,
+          "id": "gameplay-zoomed-out",
+          "primitivesInFrame": 645761,
+          "renderScale": 1.0,
+          "shadows": true,
+          "textureMemoryBytes": 23234118,
+          "videoMemoryBytes": 40084136
+        },
+        {
+          "bufferMemoryBytes": 16850018,
+          "drawCalls": 1737,
+          "frameMilliseconds": 257.64,
+          "framesPerSecond": 3.9,
+          "id": "region-overview",
+          "primitivesInFrame": 350338,
+          "renderScale": 1.0,
+          "shadows": true,
+          "textureMemoryBytes": 23234118,
+          "videoMemoryBytes": 40084136
+        },
+        {
+          "bufferMemoryBytes": 16850018,
+          "drawCalls": 924,
+          "frameMilliseconds": 167.27,
+          "framesPerSecond": 6.0,
+          "id": "low-settings-no-shadows",
+          "primitivesInFrame": 223087,
+          "renderScale": 0.75,
+          "shadows": false,
+          "textureMemoryBytes": 27381318,
+          "videoMemoryBytes": 44231336
+        },
+        {
+          "bufferMemoryBytes": 16850018,
+          "drawCalls": 2088,
+          "frameMilliseconds": 370.13,
+          "framesPerSecond": 2.7,
+          "id": "high-settings",
+          "primitivesInFrame": 519880,
+          "renderScale": 1.0,
+          "shadows": true,
+          "textureMemoryBytes": 23234118,
+          "videoMemoryBytes": 40084136
+        }
+      ],
+      "viewport": [
+        1280,
+        720
+      ]
+    },
+    "lod2": {
+      "adapter": "llvmpipe (LLVM 20.1.2, 256 bits)",
+      "ambientAnimals": 84,
+      "collisionBodies": 172,
+      "godotVersion": "4.7.2",
+      "loadMilliseconds": 324.2,
+      "manifest": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/world-lod2.json",
+      "meshInstances": 201,
+      "renderer": "gl_compatibility",
+      "samples": [
+        {
+          "bufferMemoryBytes": 14414726,
+          "drawCalls": 1587,
+          "frameMilliseconds": 381.71,
+          "framesPerSecond": 2.6,
+          "id": "gameplay-default",
+          "primitivesInFrame": 418335,
+          "renderScale": 1.0,
+          "shadows": true,
+          "textureMemoryBytes": 12617286,
+          "videoMemoryBytes": 27032012
+        },
+        {
+          "bufferMemoryBytes": 14414726,
+          "drawCalls": 1856,
+          "frameMilliseconds": 366.35,
+          "framesPerSecond": 2.7,
+          "id": "gameplay-zoomed-out",
+          "primitivesInFrame": 411269,
+          "renderScale": 1.0,
+          "shadows": true,
+          "textureMemoryBytes": 12617286,
+          "videoMemoryBytes": 27032012
+        },
+        {
+          "bufferMemoryBytes": 14414726,
+          "drawCalls": 1086,
+          "frameMilliseconds": 223.66,
+          "framesPerSecond": 4.5,
+          "id": "region-overview",
+          "primitivesInFrame": 215592,
+          "renderScale": 1.0,
+          "shadows": true,
+          "textureMemoryBytes": 12617286,
+          "videoMemoryBytes": 27032012
+        },
+        {
+          "bufferMemoryBytes": 14414726,
+          "drawCalls": 624,
+          "frameMilliseconds": 150.74,
+          "framesPerSecond": 6.6,
+          "id": "low-settings-no-shadows",
+          "primitivesInFrame": 158242,
+          "renderScale": 0.75,
+          "shadows": false,
+          "textureMemoryBytes": 16764486,
+          "videoMemoryBytes": 31179212
+        },
+        {
+          "bufferMemoryBytes": 14414726,
+          "drawCalls": 1453,
+          "frameMilliseconds": 342.63,
+          "framesPerSecond": 2.9,
+          "id": "high-settings",
+          "primitivesInFrame": 371152,
+          "renderScale": 1.0,
+          "shadows": true,
+          "textureMemoryBytes": 12617286,
+          "videoMemoryBytes": 27032012
+        }
+      ],
+      "viewport": [
+        1280,
+        720
+      ]
+    }
+  }
+}

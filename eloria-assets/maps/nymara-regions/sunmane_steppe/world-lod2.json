@@ -2,9 +2,9 @@
   "schemaVersion": "1.1.0",
   "assetVersion": "1.0.0",
   "asset": {
-    "id": "sunmane_steppe",
-    "name": "Sunmane Steppe",
-    "glb": "world.glb",
+    "id": "sunmane_steppe_lod2",
+    "name": "Sunmane Steppe (LOD2)",
+    "glb": "world-lod2.glb",
     "units": "meters",
     "coordinateSystem": {
       "handedness": "right",
@@ -2724,36 +2724,7 @@
   },
   "minimap": {
     "image": "minimap.webp",
-    "fullMapImage": "full-map.webp",
-    "previewImage": "minimap-preview.webp",
-    "projection": "orthographic-top-down",
-    "renderedFrom": "world.glb",
-    "generator": "godot-client/tests/integration/sunmane_minimap.gd, rendered through the client's own WorldLoader",
-    "northAxis": "-Z",
-    "imageSize": [
-      1024,
-      1024
-    ],
-    "worldMin": [
-      -104.0,
-      -104.0
-    ],
-    "worldMax": [
-      104.0,
-      104.0
-    ],
-    "pixelsPerMetre": 4.923077,
-    "transform": {
-      "pixelX": {
-        "scale": 4.923077,
-        "offset": 512.0
-      },
-      "pixelY": {
-        "scale": 4.923077,
-        "offset": 512.0
-      },
-      "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
-    }
+    "note": "shared with the LOD1 package"
   },
   "ambientPopulation": {
     "note": "Scenery livestock instanced by the client's ambient population system. They carry no actor id and no collision, and are deliberately not baked into the world mesh.",
@@ -2769,7 +2740,7 @@
         ],
         "radius": 6.0,
         "animation": "Idle_A",
-        "seed": 77875,
+        "seed": 32595,
         "serverTile": [
           28,
           88
@@ -2786,7 +2757,7 @@
         ],
         "radius": 5.6,
         "animation": "Idle_A",
-        "seed": 43845,
+        "seed": 53784,
         "serverTile": [
           98,
           76
@@ -2803,7 +2774,7 @@
         ],
         "radius": 5.8,
         "animation": "Idle_A",
-        "seed": 66808,
+        "seed": 3129,
         "serverTile": [
           114,
           30
@@ -2820,7 +2791,7 @@
         ],
         "radius": 6.2,
         "animation": "Idle_A",
-        "seed": 14992,
+        "seed": 55109,
         "serverTile": [
           14,
           18
@@ -2837,7 +2808,7 @@
         ],
         "radius": 5.4,
         "animation": "Idle_A",
-        "seed": 72802,
+        "seed": 8170,
         "serverTile": [
           76,
           18
@@ -2854,7 +2825,7 @@
         ],
         "radius": 5.6,
         "animation": "Idle_A",
-        "seed": 56718,
+        "seed": 52584,
         "serverTile": [
           42,
           110
@@ -2871,7 +2842,7 @@
         ],
         "radius": 13.0,
         "animation": "Idle_A",
-        "seed": 81511,
+        "seed": 14153,
         "serverTile": [
           8,
           66
@@ -2888,7 +2859,7 @@
         ],
         "radius": 12.0,
         "animation": "Idle_A",
-        "seed": 23032,
+        "seed": 23080,
         "serverTile": [
           124,
           66
@@ -2905,7 +2876,7 @@
         ],
         "radius": 12.0,
         "animation": "Idle_A",
-        "seed": 76173,
+        "seed": 39030,
         "serverTile": [
           52,
           122
@@ -2922,7 +2893,7 @@
         ],
         "radius": 12.0,
         "animation": "Idle_A",
-        "seed": 60197,
+        "seed": 25846,
         "serverTile": [
           82,
           8
@@ -2939,7 +2910,7 @@
         ],
         "radius": 2.6,
         "animation": "Idle_A",
-        "seed": 32089,
+        "seed": 20474,
         "serverTile": [
           37,
           46
@@ -2956,7 +2927,7 @@
         ],
         "radius": 2.6,
         "animation": "Idle_A",
-        "seed": 56267,
+        "seed": 37703,
         "serverTile": [
           79,
           45
@@ -2973,7 +2944,7 @@
         ],
         "radius": 3.2,
         "animation": "Idle_A",
-        "seed": 21362,
+        "seed": 4771,
         "serverTile": [
           16,
           54
@@ -2990,7 +2961,7 @@
         ],
         "radius": 3.2,
         "animation": "Idle_A",
-        "seed": 44291,
+        "seed": 68779,
         "serverTile": [
           100,
           54
@@ -3007,7 +2978,7 @@
         ],
         "radius": 3.0,
         "animation": "Idle_A",
-        "seed": 37179,
+        "seed": 9984,
         "serverTile": [
           58,
           36
@@ -3523,21 +3494,21 @@
     "terrainChunks": 64,
     "seaTriangles": 338,
     "pondTriangles": 1048,
-    "kitAssets": 44,
-    "kitUniqueTriangles": 41211,
-    "instances": 607,
-    "scatterTriangles": 60870,
+    "kitAssets": 35,
+    "kitUniqueTriangles": 39939,
+    "instances": 129,
+    "scatterTriangles": 0,
     "landmarks": 77,
     "interactives": 61,
-    "nodes": 747,
-    "meshes": 172,
-    "materials": 27,
+    "nodes": 213,
+    "meshes": 107,
+    "materials": 25,
     "textures": 27,
-    "accessors": 2226,
-    "uniqueMeshTriangles": 167779,
-    "glbBytes": 14447996,
-    "lod": 1,
-    "textureScale": 1.0,
-    "buildSeconds": 19.7
+    "accessors": 1937,
+    "uniqueMeshTriangles": 101073,
+    "glbBytes": 7189332,
+    "lod": 2,
+    "textureScale": 0.5,
+    "buildSeconds": 5.4
   }
 }
