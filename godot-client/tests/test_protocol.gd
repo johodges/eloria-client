@@ -92,6 +92,26 @@ func _init() -> void:
 			"actor_type": 0, "head": 2, "eyes": 6}),
 		PackedByteArray([141, 21, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114,
 			101, 116, 0, 1, 2, 3, 4, 5, 0, 2, 6]))
+	var appearance_visuals: Dictionary = AppearanceVariants.equipment_visuals(2, {
+		"head": 1, "pants": 1, "shirt": 1, "boots": 1})
+	_expect(int(appearance_visuals.get(AppearanceVariants.PART_HEAD, -1)) == 106
+		and int(appearance_visuals.get(AppearanceVariants.PART_PANTS, -1)) == 105
+		and int(appearance_visuals.get(AppearanceVariants.PART_SHIRT, -1)) == 106
+		and int(appearance_visuals.get(AppearanceVariants.PART_BOOTS, -1)) == 105,
+		"Whitehorn appearance choices prefer culture-matched native wearables")
+	var luminous_outfit: Dictionary = AppearanceVariants.equipment_visuals(0, {
+		"head": 0, "pants": 1, "shirt": 1, "boots": 1})
+	_expect(int(luminous_outfit.get(AppearanceVariants.PART_PANTS, -1)) == 106
+		and int(luminous_outfit.get(AppearanceVariants.PART_SHIRT, -1)) == 110
+		and int(luminous_outfit.get(AppearanceVariants.PART_BOOTS, -1)) == 106,
+		"Luminous default uses casual shirt, long pants, and boots")
+	_expect(AppearanceVariants.equipment_visuals(2, {
+		"head": 0, "pants": 0, "shirt": 0, "boots": 0}).is_empty(),
+		"zero appearance choices leave optional wearables hidden")
+	_expect(AppearanceVariants.skin_tint(0) != AppearanceVariants.skin_tint(1)
+		and AppearanceVariants.eye_color(0) != AppearanceVariants.eye_color(1)
+		and AppearanceVariants.hair_style(6) == 2,
+		"skin, eye, and hair choices produce distinct variants")
 	_expect_bytes("version fixture",
 		EloriaProtocol.version(10, 31, PackedByteArray([1, 9, 7, 0]),
 			PackedByteArray([127, 0, 0, 1]), 2000),
