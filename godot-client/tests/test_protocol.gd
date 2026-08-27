@@ -241,6 +241,23 @@ func _init() -> void:
 	_expect(is_equal_approx(coordinate.direction_to_godot(Vector2i(1, 0)), -PI / 2.0),
 		"server east faces Godot right")
 
+	var walk_segment := ReplicatedActor3D.presentation_segment_duration(
+		1.0, 6.0, 0.25, 1.05, 0.06, 0.75)
+	_expect(is_equal_approx(walk_segment, 0.2625),
+		"actor interpolation spans the 250 ms server cadence")
+	var fast_segment := ReplicatedActor3D.presentation_segment_duration(
+		1.0, 9.0, 0.125, 1.05, 0.06, 0.75)
+	_expect(is_equal_approx(fast_segment, 0.13125),
+		"actor interpolation adapts to double-speed cadence")
+	var catchup_segment := ReplicatedActor3D.presentation_segment_duration(
+		3.0, 6.0, 0.10, 1.05, 0.06, 0.75)
+	_expect(is_equal_approx(catchup_segment, 0.5),
+		"batched actor steps retain nominal catch-up speed")
+	var capped_segment := ReplicatedActor3D.presentation_segment_duration(
+		20.0, 6.0, 0.25, 1.05, 0.06, 0.75)
+	_expect(is_equal_approx(capped_segment, 0.75),
+		"large corrections cannot interpolate indefinitely")
+
 	var reduced_actor: Dictionary = ActorReducer.apply_command(actor, 21)
 	_expect(int(reduced_actor.get("x", -1)) == 11
 		and int(reduced_actor.get("y", -1)) == 21, "actor movement reducer")

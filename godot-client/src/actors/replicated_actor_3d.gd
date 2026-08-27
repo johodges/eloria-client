@@ -4,6 +4,11 @@ extends CharacterBody3D
 @export var walk_presentation_speed := 6.0
 @export var run_presentation_speed := 9.0
 @export var turn_speed_radians := 12.0
+@export var initial_server_interval := 0.25
+@export var interval_smoothing := 0.5
+@export var arrival_margin := 1.05
+@export var minimum_segment_duration := 0.06
+@export var maximum_segment_duration := 0.75
 
 var actor_id := -1
 var server_target := Vector3.ZERO
@@ -13,6 +18,11 @@ var current_action: StringName = &"idle"
 var _snap_pending := true
 var _target_yaw := 0.0
 var _presentation_speed := 6.0
+var _segment_start := Vector3.ZERO
+var _segment_elapsed := 0.0
+var _segment_duration := 0.0
+var _last_movement_update_msec := -1
+var _smoothed_server_interval := 0.25
 var _native_skeleton: Skeleton3D
 var _attachment_bones: Dictionary = {}
 var _equipment_config: Dictionary = {}
@@ -25,6 +35,8 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	actor_id = int(dto.actor_id)
 	server_target = adapter.tile_center(int(dto.x), int(dto.y))
 	position = server_target
+	_segment_start = position
+	_smoothed_server_interval = initial_server_interval
 	rotation.y = adapter.rotation_to_godot(int(dto.rotation))
 	_target_yaw = rotation.y
 	collision_layer = 2
@@ -136,7 +148,9 @@ func _add_nameplate(dto: Dictionary) -> void:
 	add_child(label)
 
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
-	server_target = adapter.tile_center(int(dto.x), int(dto.y))
+	var next_target: Vector3 = adapter.tile_center(int(dto.x), int(dto.y))
+	var target_changed: bool = server_target.distance_squared_to(next_target) > 0.000001
+	server_target = next_target
 	var actor_command: int = int(dto.get("command", -1))
 	var command_direction: Vector2i = EloriaProtocol.actor_command_direction(actor_command)
 	if command_direction != Vector2i.ZERO:
@@ -149,7 +163,33 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	if teleport or global_position.distance_to(server_target) > 8.0:
 		global_position = server_target
 		rotation.y = _target_yaw
+		_segment_start = server_target
+		_segment_elapsed = 0.0
+		_segment_duration = 0.0
+		_last_movement_update_msec = -1
+		_smoothed_server_interval = initial_server_interval
 		_snap_pending = false
+	elif target_changed:
+		var now_msec: int = Time.get_ticks_msec()
+		if _last_movement_update_msec >= 0:
+			var observed_interval: float = float(
+				now_msec - _last_movement_update_msec) / 1000.0
+			if observed_interval <= maximum_segment_duration * 2.0:
+				observed_interval = clampf(observed_interval, 0.05,
+					maximum_segment_duration)
+				_smoothed_server_interval = lerpf(_smoothed_server_interval,
+					observed_interval, interval_smoothing)
+			else:
+				# A long stationary pause begins a new movement burst; do not
+				# treat the idle time as the next step's network cadence.
+				_smoothed_server_interval = initial_server_interval
+		_last_movement_update_msec = now_msec
+		_segment_start = global_position
+		_segment_elapsed = 0.0
+		_segment_duration = presentation_segment_duration(
+			global_position.distance_to(server_target), _presentation_speed,
+			_smoothed_server_interval, arrival_margin,
+			minimum_segment_duration, maximum_segment_duration)
 	if dto.has("command") and resolver != null:
 		play_action(resolver.action_for_command(actor_command))
 	apply_equipment_visuals(dto.get("equipment_visuals", {}) as Dictionary,
@@ -335,13 +375,30 @@ func set_surface_height(value: float) -> void:
 	if _snap_pending or absf(global_position.y - value) > 0.5:
 		global_position.y = value
 
+static func presentation_segment_duration(distance: float, nominal_speed: float,
+		observed_interval: float, margin: float, minimum_duration: float,
+		maximum_duration: float) -> float:
+	var nominal_duration: float = distance / maxf(nominal_speed, 0.001)
+	var cadence_duration: float = observed_interval * margin
+	return clampf(maxf(nominal_duration, cadence_duration),
+		minimum_duration, maximum_duration)
+
 func _physics_process(delta: float) -> void:
 	if _snap_pending:
 		global_position = server_target
 		rotation.y = _target_yaw
+		_segment_start = server_target
 		_snap_pending = false
 		return
-	global_position = global_position.move_toward(server_target, _presentation_speed * delta)
+	if _segment_duration > 0.0:
+		_segment_elapsed = minf(_segment_elapsed + delta, _segment_duration)
+		var progress: float = _segment_elapsed / _segment_duration
+		global_position = _segment_start.lerp(server_target, progress)
+		if progress >= 1.0:
+			global_position = server_target
+			_segment_duration = 0.0
+	else:
+		global_position = server_target
 	rotation.y = rotate_toward(rotation.y, _target_yaw, turn_speed_radians * delta)
 
 func _load_native_scene(path: String) -> Array[String]:
