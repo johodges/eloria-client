@@ -18,6 +18,8 @@ Nymara character, armor, wildlife, guardian, and regional creature sheets. The
 software contact sheets provide a dependency-free review surface, while the
 Godot rendered-character test drives the real creation menu and rejects rigid
 default equipment, missing native hair, and oversized placeholder geometry.
+`races.png` exposes topology edges; `races-solid.png` provides the companion
+material and silhouette review without wireframe noise.
 
 Regenerate and validate with:
 
@@ -27,6 +29,9 @@ python3 godot-client/tests/test_native_glb_assets.py -v
 python3 eloria-assets/tools/render_native_glb_preview.py \
   godot-client/assets/actors/native/races/*.glb \
   --output eloria-assets/qa/native-glb/races.png --columns 4
+python3 eloria-assets/tools/render_native_glb_preview.py \
+  godot-client/assets/actors/native/races/*.glb --solid \
+  --output eloria-assets/qa/native-glb/races-solid.png --columns 4
 godot --path godot-client --script \
   res://tests/integration/rendered_character_creation_models.gd
 ```

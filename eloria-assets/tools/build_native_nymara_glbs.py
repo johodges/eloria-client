@@ -383,6 +383,30 @@ def neutral_texture(path: Path, *, floor: float = .34, size: int = 512) -> bytes
     return encoded.getvalue()
 
 
+@lru_cache(maxsize=16)
+def surface_detail_texture(kind: str, size: int = 512) -> bytes:
+    """Neutral cloth/leather detail that remains compatible with runtime tinting."""
+    yy, xx = np.mgrid[0:size, 0:size]
+    if kind == "cloth":
+        value = (.86 + np.sin(xx * math.pi) * .035
+                 + np.sin(yy * math.pi) * .028
+                 + np.sin((xx + yy) * math.pi / 31.) * .020)
+    elif kind == "leather":
+        grain = (np.sin(xx * .173 + np.sin(yy * .071) * 2.1)
+                 + np.sin(yy * .219 + np.sin(xx * .049) * 1.7)) * .035
+        pores = (((xx * 17 + yy * 29) % 113) < 3) * -.08
+        value = .82 + grain + pores
+    else:
+        value = (.90 + np.sin((xx + yy) * math.pi / 6.) * .035
+                 + np.sin((xx - yy) * math.pi / 6.) * .025)
+    channel = np.clip(value * 255., 0, 255).astype(np.uint8)
+    alpha = np.full((size, size), 255, dtype=np.uint8)
+    encoded = io.BytesIO()
+    Image.fromarray(np.dstack((channel, channel, channel, alpha)), "RGBA").save(
+        encoded, format="PNG", optimize=True)
+    return encoded.getvalue()
+
+
 def source_texture(document: dict, directory: Path, material_index: int,
                    texture_key: str) -> bytes | None:
     material = document["materials"][material_index]
@@ -500,47 +524,80 @@ def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[i
     head = joint_by_name["Head"]
     pelvis = joint_by_name["pelvis"]
     if feature == "horns":
-        # Broad roots begin inside the temples and sweep behind the skull. The
-        # continuous rings replace the visibly detached one-triangle cones.
+        # Curved, ringed horns grow from broad roots inside the temples. This
+        # preserves the original stylized model language without detached fins.
         for side in (-1., 1.):
             mesh.tapered_curve([
-                (side * .070, 1.700, -.010),
-                (side * .145, 1.755, -.035),
-                (side * .215, 1.815, -.105),
-                (side * .235, 1.875, -.185),
-            ], [.057, .050, .031, .006], head, 1, 14)
+                (side * .070, 1.700, -.010), (side * .132, 1.738, -.035),
+                (side * .178, 1.776, -.095), (side * .200, 1.818, -.155),
+                (side * .186, 1.856, -.205), (side * .148, 1.875, -.225),
+            ], [.058, .055, .045, .032, .018, .006], head, 0, 18)
+            for y, x, z, radius in ((1.741, .136, -.041, .058),
+                                     (1.780, .182, -.100, .045),
+                                     (1.820, .200, -.158, .032)):
+                mesh.sphere((side * x, y, z), (radius, .026, radius),
+                            head, 1, 3, 10)
     elif feature == "crystal":
-        # Small facial inlays echo the concept crystals without floating beyond
-        # the shoulders or competing with the original humanoid silhouette.
-        mesh.sphere((0., 1.716, .091), (.070, .115, .035), head, 1, 4, 8)
+        # An embedded diadem replaces the prior floating shoulder shards. Its
+        # low-sided crystal planes match the concept crown at gameplay scale.
+        mesh.tapered_curve([(-.145, 1.700, .020), (-.070, 1.720, .060),
+                            (0., 1.730, .075), (.070, 1.720, .060),
+                            (.145, 1.700, .020)],
+                           [.018, .017, .016, .017, .018], head, 0, 12)
+        for x, height, lean in ((-.125, .130, -.025), (-.063, .175, -.010),
+                                (0., .205, 0.), (.063, .175, .010),
+                                (.125, .130, .025)):
+            mesh.sphere((x + lean * .35, 1.710 + height * .48, -.015),
+                        (.052, height, .050), head, 1, 3, 7)
         for side in (-1., 1.):
-            mesh.sphere((side * .073, 1.675, .073), (.045, .075, .030),
-                        head, 1, 3, 7)
+            mesh.sphere((side * .083, 1.665, .079), (.042, .070, .025),
+                        head, 1, 4, 8)
     elif feature == "scaled":
-        # A low reptilian muzzle and embedded dorsal crest carry the Ssarathi
-        # profile. The source humanoid faces positive Z, so the tail runs -Z.
-        mesh.sphere((0., 1.655, .120), (.145, .105, .185), head, 0, 6, 12)
-        for y, size in ((1.615, .045), (1.705, .055), (1.790, .045)):
-            mesh.cone((0., y, -.055), (0., y + .075, -.145), size, head, 1, 12)
+        # Layered brow, low muzzle, cheek plates, and a rear-running tail give
+        # Ssarathi a readable reptilian profile without obscuring the face.
+        mesh.sphere((0., 1.620, .135), (.175, .095, .235), head, 0, 6, 14)
+        for side in (-1., 1.):
+            mesh.tapered_curve([(side * .025, 1.704, .102),
+                                (side * .095, 1.710, .090),
+                                (side * .140, 1.690, .045)],
+                               [.024, .027, .010], head, 1, 10)
+            mesh.sphere((side * .125, 1.635, .050), (.070, .095, .034),
+                        head, 0, 4, 8)
+        for y, size in ((1.665, .040), (1.735, .046), (1.802, .038)):
+            mesh.cone((0., y, -.048), (0., y + .082, -.128), size,
+                      head, 0, 12)
         mesh.tapered_curve([
             (0., .930, -.115), (0., .825, -.285), (0., .650, -.500),
             (.055, .470, -.700), (.020, .285, -.875),
-        ], [.105, .100, .080, .050, .009], pelvis, 0, 14)
+        ], [.115, .108, .087, .052, .008], pelvis, 0, 18)
     elif feature == "stone":
-        # Faceted brow and crown plates intersect the underlying scalp. No
-        # separate shoulder shards remain to resemble missing-mesh markers.
-        mesh.sphere((0., 1.704, .078), (.185, .060, .050), head, 0, 3, 8)
-        for x, height in ((-.080, .135), (0., .170), (.080, .135)):
-            mesh.sphere((x, 1.785 + height * .20, -.010),
-                        (.085, height, .090), head, 1, 3, 7)
+        # Intersecting low-sided facial planes stay embedded in brow, temples,
+        # and jaw; tiny cyan memory insets replace floating crown triangles.
+        mesh.sphere((0., 1.704, .083), (.260, .072, .055), head, 0, 3, 9)
+        for side in (-1., 1.):
+            mesh.sphere((side * .125, 1.665, .047), (.105, .180, .070),
+                        head, 0, 3, 8)
+            mesh.sphere((side * .105, 1.585, .060), (.120, .105, .065),
+                        head, 0, 3, 8)
+            mesh.sphere((side * .070, 1.710, .103), (.040, .025, .020),
+                        head, 1, 3, 7)
+        for x, height in ((-.090, .085), (0., .110), (.090, .085)):
+            mesh.sphere((x, 1.770 + height * .18, -.020),
+                        (.088, height, .088), head, 0, 3, 8)
     elif feature == "fungal":
-        # A single scalp-rooted stem and low-poly cap reads as one intentional
-        # fungal crown. Detached shoulder mushrooms are deliberately absent.
+        # A thick, rolled cap grows from one scalp-rooted stem. There are no
+        # detached shoulder mushrooms.
         mesh.tapered_curve([(0., 1.705, -.015), (.010, 1.760, -.020),
-                            (-.008, 1.820, -.018)], [.068, .060, .048],
-                           head, 0, 14)
-        mesh.sphere((-.008, 1.810, -.018), (.370, .135, .310),
-                    head, 1, 6, 18)
+                            (-.008, 1.818, -.020)], [.072, .062, .050],
+                           head, 0, 16)
+        mesh.sphere((-.008, 1.835, -.020), (.500, .240, .420),
+                    head, 1, 8, 24)
+        mesh.sphere((-.008, 1.785, -.018), (.440, .105, .360),
+                    head, 0, 4, 20)
+        for x, z, radius in ((-.105, .020, .028), (.075, .045, .023),
+                             (.135, -.050, .018), (-.035, -.105, .020)):
+            mesh.sphere((x, 1.900, z), (radius * 2., radius, radius * 2.),
+                        head, 0, 4, 8)
     return mesh.arrays()
 
 
@@ -604,18 +661,26 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     }
     shirt, pants, boots, trim = config["wardrobe"]
     materials.update({
-        "shirt": glb.material(config["label"] + " Shirt", shirt, roughness=.88),
+        "shirt": glb.material(config["label"] + " Shirt", shirt, roughness=.88,
+                              texture_png=surface_detail_texture("cloth")),
         "shirt_trim": glb.material(config["label"] + " Shirt Trim", trim,
-                                   metallic=.22, roughness=.52),
-        "pants": glb.material(config["label"] + " Pants", pants, roughness=.91),
+                                   metallic=.22, roughness=.52,
+                                   texture_png=surface_detail_texture("trim")),
+        "pants": glb.material(config["label"] + " Pants", pants, roughness=.91,
+                              texture_png=surface_detail_texture("cloth")),
         "pants_trim": glb.material(config["label"] + " Pants Trim", trim,
-                                   metallic=.12, roughness=.60),
-        "boots": glb.material(config["label"] + " Boots", boots, roughness=.82),
+                                   metallic=.12, roughness=.60,
+                                   texture_png=surface_detail_texture("trim")),
+        "boots": glb.material(config["label"] + " Boots", boots, roughness=.82,
+                              texture_png=surface_detail_texture("leather")),
         "boots_trim": glb.material(config["label"] + " Boots Trim", trim,
-                                   metallic=.18, roughness=.48),
-        "headwear": glb.material(config["label"] + " Headwear", shirt, roughness=.88),
+                                   metallic=.18, roughness=.48,
+                                   texture_png=surface_detail_texture("trim")),
+        "headwear": glb.material(config["label"] + " Headwear", shirt, roughness=.88,
+                                 texture_png=surface_detail_texture("cloth")),
         "headwear_trim": glb.material(config["label"] + " Headwear Trim", trim,
-                                      metallic=.20, roughness=.50),
+                                      metallic=.20, roughness=.50,
+                                      texture_png=surface_detail_texture("trim")),
     })
     vertices = triangles = 0
     body_arrays = None
@@ -664,14 +729,14 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
         "calf_l", "calf_r", "foot_l", "foot_r", "ball_l", "ball_r",
         "ball_leaf_l", "ball_leaf_r"))
     head_score = influence(weights, joints, by_name("Head"))
-    shirt_mask = ((shirt_score[faces].mean(axis=1) > .30) & (y > 1.015) & (y < 1.535))
-    pants_mask = ((pants_score[faces].mean(axis=1) > .30) & (y > .105) & (y < 1.055))
-    boots_mask = ((boots_score[faces].mean(axis=1) > .28) & (y < .405))
-    shirt_trim = shirt_mask & (((y > 1.015) & (y < 1.080)) |
+    shirt_mask = ((shirt_score[faces].mean(axis=1) > .30) & (y > .990) & (y < 1.550))
+    pants_mask = ((pants_score[faces].mean(axis=1) > .30) & (y > .245) & (y < 1.055))
+    boots_mask = ((boots_score[faces].mean(axis=1) > .24) & (y < .320))
+    shirt_trim = shirt_mask & (((y > .995) & (y < 1.065)) |
                                ((x > .285) & (y > 1.345)) |
                                ((y > 1.435) & (x < .145) & (z > .045)))
     pants_trim = pants_mask & (y > .965) & (y < 1.045)
-    boots_trim = boots_mask & (y > .330) & (y < .410)
+    boots_trim = boots_mask & (y > .270) & (y < .325)
     head_band = ((head_score[faces].mean(axis=1) > .45) &
                  (y > 1.655) & (y < 1.710) & (z < .075))
     head_cap = ((head_score[faces].mean(axis=1) > .45) &
@@ -1193,6 +1258,21 @@ def build_model_registry() -> dict:
         257: "orun_male", 258: "orun_male", 259: "ssarathi_male",
     }
     actor_types.update({str(key): value for key, value in enemy_models.items()})
+    # Invasion-only server IDs intentionally reuse the production native
+    # creature library. Keep these in the generator so rebuilding character
+    # assets cannot silently regress them to magenta fallbacks.
+    invasion_models = {
+        400: "river_otter", 401: "elk", 402: "desert_tortoise",
+        403: "sunscale_drake", 404: "snow_hare", 405: "thunder_ram",
+        406: "ice_bear", 407: "frost_tiger", 408: "ash_crawler",
+        409: "dire_wolf", 410: "armored_rhino", 411: "giant_komodo",
+        412: "emberfox", 413: "ridgehorn", 414: "saber_tooth_cat",
+        415: "fire_salamander", 416: "moose", 417: "mossback_boar",
+        418: "frost_maw", 419: "porcupine", 420: "two_tailed_fox",
+        421: "miretoad", 422: "giant_komodo", 423: "sunscale_drake",
+        424: "bog_lurker", 425: "miretoad", 426: "giant_crocodile",
+        427: "giant_crocodile",
+    }
 
     npc_looks = {}
     cultures = {
@@ -1214,6 +1294,7 @@ def build_model_registry() -> dict:
                     "equipmentVisuals": {str(k): v for k, v in culture_loadout(culture, role).items()},
                 }
                 actor_type += 1
+    actor_types.update({str(key): value for key, value in invasion_models.items()})
     return {"schemaVersion": 2, "models": models, "actorTypes": actor_types,
             "creationOptions": creation, "npcLooks": npc_looks}
 
