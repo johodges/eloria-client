@@ -173,11 +173,11 @@ accepted as visual evidence; the final layout reserves separate anchored bands
 for history, entry, and the lower action rail. `chat.json` and the session log
 contain `credentials: REDACTED`.
 
-### Verified inventory and statistics evidence: workflow run 33079768795
+### Verified inventory and statistics evidence: workflow run 33081830716
 
-Commit `f2a568ef12f0dfd20a0d63a6ab92a6b7fff4e484` passed the strict
+Commit `ad1ff5e18c75cf6e7beeb1e58cbe43e1e2979eef` passed the strict
 headless job and the opt-in rendered development-server job. Artifact
-`9649555004` contains sanitized `inventory-stats.json` plus human-inspected
+`9650463534` contains sanitized `inventory-stats.json` plus human-inspected
 1280x720 inventory and statistics captures.
 
 The authoritative fresh-character snapshot contained three backpack entries
