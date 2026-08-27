@@ -211,8 +211,11 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	elif not str(bones_value).is_empty():
 		bones.append(str(bones_value))
 	var created: Array[Node] = []
+	var aliases: Dictionary = _equipment_config.get("aliases", {}) as Dictionary
+	var model_key: String = "%d:%d" % [part, visual_id]
+	model_key = str(aliases.get(model_key, model_key))
 	var models: Dictionary = _equipment_config.get("models", {}) as Dictionary
-	var model_config: Dictionary = models.get("%d:%d" % [part, visual_id], {}) as Dictionary
+	var model_config: Dictionary = models.get(model_key, {}) as Dictionary
 	if not model_config.is_empty() and not bones.is_empty():
 		var native_model: Node3D = _load_native_equipment(str(model_config.get("scene", "")))
 		if native_model != null:

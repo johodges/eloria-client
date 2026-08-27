@@ -66,6 +66,16 @@ class NativeGlbAssetsTest(unittest.TestCase):
         for entry in self.catalog["equipment"].values():
             glb_document(ROOT / entry["path"])
 
+    def test_legacy_guard_visuals_alias_to_native_models(self) -> None:
+        expected = {
+            "0:11": "0:112",
+            "1:5": "1:105",
+            "2:11": "2:105",
+        }
+        self.assertEqual(expected, self.equipment["aliases"])
+        for native_visual in expected.values():
+            self.assertIn(native_visual, self.equipment["models"])
+
     def test_every_playable_actor_type_has_creation_option(self) -> None:
         options = self.models["creationOptions"]
         self.assertEqual(16, len(options))
