@@ -143,4 +143,10 @@ Stated plainly rather than glossed:
    golden hour under the default daylight profile. The declared `golden-hour`
    environment variant is closer to the reference; daylight was chosen as the
    default because it keeps the playable scene readable rather than muddy, which
-   the brief asks for explicitly.
+   the brief asks for explicitly. Panel 8 is compared against the golden-hour
+   capture, since its reference is painted at dusk.
+6. **Panel 10 is compared at stall scale, not macro.** Its reference is an
+   extreme close-up of tack, bone, buckles and woven cloth - a framing no
+   gameplay camera reaches. The comparison uses the nearest view a player can
+   actually stand in, which shows the same material language on the market
+   counter, pottery, crates, pennants and awning.

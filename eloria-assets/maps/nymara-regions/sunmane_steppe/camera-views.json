@@ -211,18 +211,18 @@
     {
       "id": "p01-caravan-road",
       "position": [
-        14.0,
-        13.12,
-        70.0
+        26.0,
+        16.88,
+        46.0
       ],
       "target": [
-        5.0,
-        14.28,
-        38.0
+        4.0,
+        16.6,
+        20.0
       ],
-      "fov": 50.0,
+      "fov": 54.0,
       "framing": "placed",
-      "note": "caravan road with the encampment on the skyline",
+      "note": "crop block and riding trail with the encampment on the skyline",
       "golden": true
     },
     {
@@ -317,16 +317,16 @@
     {
       "id": "p07-well-and-pens",
       "position": [
-        -27.0,
-        15.11,
-        22.0
+        -28.5,
+        13.51,
+        25.5
       ],
       "target": [
-        -33.5,
-        12.96,
-        29.5
+        -33.0,
+        12.66,
+        30.0
       ],
-      "fov": 48.0,
+      "fov": 46.0,
       "framing": "placed",
       "note": "well, trough and horse paddocks",
       "golden": false
@@ -335,19 +335,19 @@
       "id": "p08-standing-stones",
       "target": [
         -44.0,
-        10.0,
+        12.0,
         -18.0
       ],
       "position": [
-        -30.66,
-        13.82,
-        -35.07
+        -24.18,
+        14.56,
+        -24.44
       ],
-      "fov": 46.0,
-      "pitchDegrees": -10.0,
-      "yawDegrees": 142.0,
-      "distance": 22.0,
-      "note": "standing stone circle",
+      "fov": 44.0,
+      "pitchDegrees": -7.0,
+      "yawDegrees": 108.0,
+      "distance": 21.0,
+      "note": "standing stone circle against the low sun",
       "golden": true
     },
     {
@@ -372,16 +372,16 @@
     {
       "id": "p10-market-props",
       "position": [
-        5.0,
-        12.0,
-        12.5
+        8.6,
+        11.3,
+        12.4
       ],
       "target": [
-        8.5,
-        11.0,
-        7.6
+        8.6,
+        10.6,
+        8.6
       ],
-      "fov": 42.0,
+      "fov": 40.0,
       "framing": "placed",
       "note": "player-scale market goods and prop language",
       "golden": false

@@ -24,15 +24,15 @@ PACKAGE = Path(__file__).resolve().parents[2] / "maps" / "nymara-regions" / "sun
 # stay correct if the landform is resculpted:
 #   id, (eye x, eye z, eye height), (aim x, aim z, aim height), fov, note
 PLACED = [
-    ("p01-caravan-road", (14.0, 70.0, 4.6), (5.0, 38.0, 3.0), 50.0,
-     "caravan road with the encampment on the skyline"),
+    ("p01-caravan-road", (26.0, 46.0, 2.6), (4.0, 20.0, 7.0), 54.0,
+     "crop block and riding trail with the encampment on the skyline"),
     ("p03-seasonal-market", (0.0, 20.0, 5.6), (0.0, 1.0, 3.4), 55.0,
      "seasonal market with the great hall behind"),
     ("p05-caravanserai-gate", (-6.0, 40.0, 4.4), (-1.0, 25.5, 3.6), 48.0,
      "fortified gate bay and palisade from the road"),
-    ("p07-well-and-pens", (-27.0, 22.0, 4.2), (-33.5, 29.5, 1.6), 48.0,
+    ("p07-well-and-pens", (-28.5, 25.5, 2.4), (-33.0, 30.0, 1.3), 46.0,
      "well, trough and horse paddocks"),
-    ("p10-market-props", (5.0, 12.5, 2.4), (8.5, 7.6, 1.4), 42.0,
+    ("p10-market-props", (8.6, 12.4, 1.7), (8.6, 8.6, 1.0), 40.0,
      "player-scale market goods and prop language"),
     ("p02-round-tent-camp", (-25.0, -35.0, 4.0), (-33.5, -44.5, 2.2), 48.0,
      "Orun round-tent camp"),
@@ -58,8 +58,8 @@ VIEWS = [
      "windmill over the crop block"),
     ("p07-well-and-pens", "Landmark_sunmane_well_01", -13.0, 118.0, 17.0, 48.0,
      "well and horse paddocks"),
-    ("p08-standing-stones", (-44.0, 10.0, -18.0), -10.0, 142.0, 22.0, 46.0,
-     "standing stone circle"),
+    ("p08-standing-stones", (-44.0, 12.0, -18.0), -7.0, 108.0, 21.0, 44.0,
+     "standing stone circle against the low sun"),
     ("p09-steppe-overlook", (0.0, 9.5, -4.0), -15.0, 212.0, 88.0, 55.0,
      "rider's overlook above the encampment"),
     ("p10-market-props", (8.5, 10.2, 8.0), -14.0, 172.0, 11.0, 42.0,
@@ -85,6 +85,8 @@ VIEWS = [
      "maximum client zoom-out over the encampment"),
 ]
 
+# Panels 8 and 9 are painted at golden hour, so those two are captured under the
+# declared golden-hour environment variant as well as under daylight.
 GOLDEN = ["p08-standing-stones", "p09-steppe-overlook", "aerial-overview",
           "p01-caravan-road"]
 

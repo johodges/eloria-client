@@ -30,7 +30,7 @@ PANELS = [
     (4, "p05-caravanserai-gate", "Fortified gate"),
     (5, "p06-windmill", "Windmill and crop block"),
     (6, "p07-well-and-pens", "Well and horse pens"),
-    (7, "p08-standing-stones", "Standing stones"),
+    (7, "golden-p08-standing-stones", "Standing stones at golden hour"),
     (8, "p09-steppe-overlook", "Steppe overlook"),
     (9, "p10-market-props", "Prop and material language"),
 ]
