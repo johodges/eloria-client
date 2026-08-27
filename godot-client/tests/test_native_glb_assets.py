@@ -84,6 +84,26 @@ class NativeGlbAssetsTest(unittest.TestCase):
             self.assertEqual(option["model"], self.models["actorTypes"][actor_type])
             self.assertIn(option["model"], self.models["models"])
 
+    def test_model_resources_stay_inside_godot_project(self) -> None:
+        for model_id, entry in self.models["models"].items():
+            with self.subTest(model=model_id):
+                for field in ("scene", "animationLibrary", "animationMap"):
+                    resource = entry.get(field)
+                    if not resource:
+                        continue
+                    self.assertTrue(resource.startswith("res://"), resource)
+                    relative = resource.removeprefix("res://")
+                    self.assertNotIn("..", Path(relative).parts, resource)
+                    path = CLIENT / relative
+                    self.assertTrue(path.is_file(), resource)
+                    if path.suffix == ".gltf":
+                        document = json.loads(path.read_text())
+                        for dependency in [
+                            *(buffer["uri"] for buffer in document.get("buffers", []) if "uri" in buffer),
+                            *(image["uri"] for image in document.get("images", []) if "uri" in image),
+                        ]:
+                            self.assertTrue((path.parent / dependency).is_file(), dependency)
+
     def test_concept_npc_roster_uses_player_models_and_native_gear(self) -> None:
         self.assertEqual(62, len(self.models["npcLooks"]))
         for actor_type, look in self.models["npcLooks"].items():
