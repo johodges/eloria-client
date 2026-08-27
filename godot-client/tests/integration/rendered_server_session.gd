@@ -258,12 +258,16 @@ func _run() -> void:
 		"GameView/InventoryPanel/Content/EquipmentGrid") as GridContainer
 	var populated_inventory_buttons: int = _populated_item_buttons(inventory_grid)
 	var populated_equipment_buttons: int = _populated_item_buttons(equipment_grid)
+	var expected_inventory_buttons: int = _inventory_item_count(server_inventory, 0, 36)
+	var expected_equipment_buttons: int = _inventory_item_count(server_inventory, 36, 44)
 	_expect(inventory_panel.visible
 		and Rect2(Vector2.ZERO, Vector2(SCREEN_SIZE)).encloses(
 			inventory_panel.get_global_rect()),
 		"real inventory window opens entirely within the rendered viewport")
-	_expect(populated_inventory_buttons > 0,
-		"real inventory snapshot populates item icons and quantities")
+	_expect(populated_inventory_buttons == expected_inventory_buttons,
+		"every real backpack item has a visible icon and quantity")
+	_expect(populated_equipment_buttons == expected_equipment_buttons,
+		"every real equipped item has a visible icon and quantity")
 	await _capture("world-inventory.png")
 	main.call("_on_inventory_close_pressed")
 	main.call("_on_stats_button_pressed")
@@ -285,9 +289,10 @@ func _run() -> void:
 	var quick_spell_grid: GridContainer = main.get_node(
 		"GameView/ItemSpellQuickbar/QuickContent/SpellSlots") as GridContainer
 	var populated_quick_items: int = _populated_item_buttons(quick_item_grid)
+	var expected_quick_items: int = _inventory_item_count(server_inventory, 0, 8)
 	var configured_spell_slots: int = _configured_spell_buttons(quick_spell_grid)
-	_expect(populated_quick_items > 0,
-		"server inventory populates the visible item quick slots")
+	_expect(populated_quick_items == expected_quick_items,
+		"every server item in slots one through eight populates the visible quickbar")
 	_expect(configured_spell_slots == 6,
 		"all six spell quick slots expose their configured availability state")
 	_write_json("inventory-stats.json", {
@@ -297,6 +302,9 @@ func _run() -> void:
 		"populated_inventory_buttons": populated_inventory_buttons,
 		"populated_equipment_buttons": populated_equipment_buttons,
 		"populated_quick_items": populated_quick_items,
+		"expected_inventory_buttons": expected_inventory_buttons,
+		"expected_equipment_buttons": expected_equipment_buttons,
+		"expected_quick_items": expected_quick_items,
 		"configured_spell_slots": configured_spell_slots,
 		"credentials": "REDACTED",
 	})
@@ -630,6 +638,14 @@ func _populated_item_buttons(container: Container) -> int:
 			if button.icon != null and button.text.contains("×"):
 				populated += 1
 	return populated
+
+func _inventory_item_count(inventory: Dictionary, first_slot: int, end_slot: int) -> int:
+	var count: int = 0
+	for slot_value: Variant in inventory:
+		var slot: int = int(slot_value)
+		if slot >= first_slot and slot < end_slot:
+			count += 1
+	return count
 
 func _configured_spell_buttons(container: Container) -> int:
 	var configured: int = 0

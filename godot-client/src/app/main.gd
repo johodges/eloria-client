@@ -1540,8 +1540,12 @@ func _inventory_tooltip(item: Dictionary) -> String:
 		["resource", "resource"], ["reagent", "reagent"]]:
 		if bool(item.get(flag_and_label[0], false)):
 			traits.append(str(flag_and_label[1]))
-	return "Item image #%d — quantity %d%s" % [int(item.get("image_id", 0)),
+	var image_id: int = int(item.get("image_id", 0))
+	var tooltip: String = "Item image #%d — quantity %d%s" % [image_id,
 		int(item.get("quantity", 0)), " — " + ", ".join(traits) if not traits.is_empty() else ""]
+	if item_atlas.uses_substitute(image_id):
+		tooltip += "\nIndependent Eloria icon substitute for legacy image #%d." % image_id
+	return tooltip
 
 func _on_inventory_slot_pressed(slot: int) -> void:
 	if not AppState.inventory.has(slot):

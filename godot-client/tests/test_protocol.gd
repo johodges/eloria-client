@@ -492,8 +492,11 @@ func _init() -> void:
 				"first legacy item icon resolves at native aspect")
 			_expect(last_icon is AtlasTexture and last_icon.get_size() == Vector2(50, 50),
 				"fifth legacy item atlas resolves")
-			_expect(not atlas.supports(125) and atlas.icon_for(125) == null,
-				"unknown item artwork remains an explicit fallback")
+			_expect(not atlas.supports(125) and atlas.icon_for(125) != null
+				and atlas.uses_substitute(125),
+				"unsupported legacy item image receives the configured visible fallback")
+			_expect(atlas.icon_for(114) != null and atlas.uses_substitute(114),
+				"known legacy item image receives its data-driven Eloria substitute")
 	var spell_config_file: FileAccess = FileAccess.open(
 		"res://data/spells/catalog.json", FileAccess.READ)
 	_expect(spell_config_file != null, "spell catalog opens")

@@ -2,6 +2,12 @@
   "cellSize": [50, 50],
   "columns": 5,
   "imagesPerAtlas": 25,
+  "fallbackImageId": 79,
+  "aliases": {
+    "114": 38,
+    "397": 0,
+    "460": 49
+  },
   "atlases": [
     "res://assets/ui/items/items1.png",
     "res://assets/ui/items/items2.png",
