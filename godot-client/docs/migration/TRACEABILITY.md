@@ -14,7 +14,7 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | GLB map + JSON | GLB runtime/map.c | world/map loader | `four_gates` alias fixture, headless attach, and rendered development-server Four Gates capture | VERIFIED |
 | Native luminous models | actor GLB runtime/assets | actor presentation | rendered female luminous GLB with three visible native meshes and no fallback | VERIFIED |
 | Movement reconciliation | client movement/server authority | controller/state | rendered real-server MOVE_TO changed authoritative tile `(768,480)` to `(773,481)`; actor yaw and camera followed | VERIFIED |
-| Sit/stand | legacy `gamewin.c`, `keys.c`, `multiplayer.c`, `client_serv.h`; server `protocol.py`, `server.py`, `world.py` | exact desired-state codec, actor reducer, native transition/rest animation state | exact `07 02 00 01` / `07 02 00 00` fixtures; command 13/14 reducer and one-shot-to-rest animation fixtures; rendered real-server verification pending | IMPLEMENTED |
+| Sit/stand | legacy `gamewin.c`, `keys.c`, `multiplayer.c`, `client_serv.h`; server `protocol.py`, `server.py`, `world.py` | exact desired-state codec, actor reducer, native transition/rest animation state | exact `07 02 00 01` / `07 02 00 00` fixtures; rendered real-server explicit sit/stand and automatic stand-on-move | VERIFIED |
 | Core HUD/chat | `hud.c`, `hud_misc_window.c`, `gamebuttons*.dds` | ui/hud | lower action/window rail; right stats and item/spell quickbar; unsupported windows visibly disabled | IMPLEMENTED |
 | Inventory/equipment | `items.c`, `items.h`, `hud_quickbar_window.c`; server `protocol.py`, `world.py`, `items.py` | protocol/state/inventory/equipment UI and actor presentation | exact snapshot/update/remove/use/move/cooldown/wear fixtures; two-click backpack/wear placement; local TCP count-0 snapshot; native item atlases visually inspected; populated live render pending | IMPLEMENTED |
 | Combat | `gamewin.c`, actor command handling; server `protocol.py`, `server.py`, `world.py` | selected-target attack action, health/combat/death replication | exact attack/damage/heal fixtures; local server approach, facing, enter-combat, and attack commands | IMPLEMENTED |
@@ -97,3 +97,17 @@ plus sanitized `camera-states.json`:
 All camera-state PNGs were visually inspected. Rotation, pan, zoom, the HUD,
 the populated minimap, and the white minimap marker rendered in every frame;
 the zoomed frame made the native actor substantially easier to read.
+
+### Verified sit/stand evidence: workflow run 33069841631
+
+Commit `f677c789fa05f51ae8f25657c5e7872b5cee5724` passed both jobs.
+Artifact `9645336657` records local actor ID `122` and contains visually
+inspected seated and standing-after-move frames. The real server accepted
+desired-state packets `07 02 00 01` (sit) and `07 02 00 00` (stand), then
+broadcast commands 13 and 14 through the normal actor reducer.
+
+The native animation now progresses from `Sitting_Enter` to the explicit
+`seated_idle` action and from `Sitting_Exit` back to `idle`. A second sit
+followed by MOVE_TO proved server-driven automatic standing: the actor moved
+from `(773,481)` to `(774,481)`, finished in `walk`, and did not retain a stale
+seated pose. Credentials remained `REDACTED` in every artifact file.
