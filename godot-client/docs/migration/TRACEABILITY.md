@@ -60,6 +60,8 @@ The gate fails unless it proves all of the following before uploading evidence:
   independent-Eloria substitute icon plus its quantity; character values, item
   quick slots, and all configured spell quick slots are presented from that
   state;
+- selecting a real inventory item sends `LOOK_AT_INVENTORY_ITEM`, receives the
+  authoritative description, and presents it in the inventory window;
 - each 1280×720 capture contains rendered color variation rather than a dummy frame.
 
 The artifact contains default, rotated, panned, zoomed, full-map, and
