@@ -68,6 +68,23 @@ heal messages 47/48 carry `actor_id:u16le | amount:u16le`, while command 73
 carries `actor_id:u16le | max_health:u16le`. Creature and PvP range, PK-area,
 Peace Day, already-in-combat, death, and flee validation remain server-owned.
 
+Player trade begins with `TRADE_WITH(32)` carrying `actor_id:u32le`; the target
+accepts the 30-second request by sending the reciprocal command while within a
+four-tile Chebyshev radius. `GET_TRADE_PARTNER_NAME(41)` carries
+`storage_available:u8 | name[0..19] | NUL`, followed by
+`GET_YOUR_TRADEOBJECTS(40)` using the normal inventory snapshot body. Inventory
+offers send `PUT_OBJECT_ON_TRADE(36)` as
+`source_type=1:u8 | source_slot:u8 | quantity:u32le`; the server immediately
+removes the accepted quantity from inventory and broadcasts `GET_TRADE_OBJECT`
+(35) as `image_id:u16le | quantity:u32le | source_type:u8 | offer_slot:u8 |
+other:u8`. Removal sends `REMOVE_OBJECT_FROM_TRADE(37)` as
+`offer_slot:u8 | quantity:u32le`; server command 39 returns
+`quantity:u32le | offer_slot:u8 | other:u8`. `ACCEPT_TRADE(33)` carries sixteen
+destination bytes (1 inventory, or 2 storage where allowed). Acceptance is a
+server-authoritative two-phase sequence reported by command 36; command 37
+resets the indicated side, and command 38 closes the trade. `REJECT_TRADE(34)`
+only resets acceptance. `EXIT_TRADE(35)` cancels and restores all offers.
+
 ## Open verification items
 
-Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; every inventory/trade/storage variant; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.
+Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; storage-backed trade positions and storage lifecycle; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.

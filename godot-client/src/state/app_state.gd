@@ -23,6 +23,9 @@ var chat_lines: Array[Dictionary] = []
 var selected_actor_id := -1
 var npc_dialogue: Dictionary = {"open": false, "name": "", "portrait": 0,
 	"text": "", "options": []}
+var trade: Dictionary = {"open": false, "partner": "", "storage_available": false,
+	"source_inventory": {}, "own_offers": {}, "other_offers": {},
+	"own_accepts": 0, "other_accepts": 0}
 var unknown_packet_count := 0
 var recent_protocol_errors: Array[String] = []
 
@@ -48,6 +51,7 @@ func _on_connection_state_changed(value: String) -> void:
 		current_map = ""
 		selected_actor_id = -1
 		npc_dialogue = {"open": false, "name": "", "portrait": 0, "text": "", "options": []}
+		trade = _empty_trade_state()
 	state_changed.emit(&"connection")
 
 func _on_packet(command: int, payload: PackedByteArray) -> void:
@@ -75,6 +79,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			npc_dialogue = {"open": false, "name": "", "portrait": 0,
 				"text": "", "options": []}
 			pending_spell_target = ""
+			trade = _empty_trade_state()
 			state_changed.emit(&"map")
 		"actor_spawn":
 			actors[event.actor_id] = event
@@ -164,6 +169,62 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"inventory_text":
 			inventory_text = str(event.text)
 			state_changed.emit(&"inventory_text")
+		"trade_partner":
+			trade["open"] = true
+			trade["partner"] = str(event.name)
+			trade["storage_available"] = bool(event.storage_available)
+			trade["own_offers"] = {}
+			trade["other_offers"] = {}
+			trade["own_accepts"] = 0
+			trade["other_accepts"] = 0
+			state_changed.emit(&"trade")
+		"trade_inventory":
+			var source_inventory: Dictionary = {}
+			for raw_trade_item: Variant in event.items:
+				var trade_item: Dictionary = raw_trade_item as Dictionary
+				source_inventory[int(trade_item.get("slot", -1))] = trade_item
+			trade["source_inventory"] = source_inventory
+			trade["open"] = true
+			state_changed.emit(&"trade")
+		"trade_object":
+			var offers_key: String = "other_offers" if bool(event.other) else "own_offers"
+			var offers: Dictionary = (trade.get(offers_key, {}) as Dictionary).duplicate(true)
+			var offer_slot: int = int(event.slot)
+			var prior_quantity: int = 0
+			var prior_offer_value: Variant = offers.get(offer_slot)
+			if prior_offer_value is Dictionary:
+				prior_quantity = int((prior_offer_value as Dictionary).get("quantity", 0))
+			offers[offer_slot] = {"image_id": int(event.image_id),
+				"quantity": prior_quantity + int(event.quantity),
+				"source_type": int(event.source_type), "slot": offer_slot}
+			trade[offers_key] = offers
+			state_changed.emit(&"trade")
+		"trade_remove":
+			var remove_key: String = "other_offers" if bool(event.other) else "own_offers"
+			var remove_offers: Dictionary = (trade.get(remove_key, {}) as Dictionary).duplicate(true)
+			var remove_slot: int = int(event.slot)
+			var remove_value: Variant = remove_offers.get(remove_slot)
+			if remove_value is Dictionary:
+				var remove_offer: Dictionary = (remove_value as Dictionary).duplicate(true)
+				var remaining: int = int(remove_offer.get("quantity", 0)) - int(event.quantity)
+				if remaining > 0:
+					remove_offer["quantity"] = remaining
+					remove_offers[remove_slot] = remove_offer
+				else:
+					remove_offers.erase(remove_slot)
+			trade[remove_key] = remove_offers
+			state_changed.emit(&"trade")
+		"trade_accept":
+			var accept_key: String = "other_accepts" if bool(event.other) else "own_accepts"
+			trade[accept_key] = mini(2, int(trade.get(accept_key, 0)) + 1)
+			state_changed.emit(&"trade")
+		"trade_reject":
+			var reject_key: String = "other_accepts" if bool(event.other) else "own_accepts"
+			trade[reject_key] = 0
+			state_changed.emit(&"trade")
+		"trade_exit":
+			trade = _empty_trade_state()
+			state_changed.emit(&"trade")
 		"item_cooldowns":
 			inventory_cooldowns.clear()
 			var received_msec: int = Time.get_ticks_msec()
@@ -258,3 +319,8 @@ func close_dialogue() -> void:
 	npc_dialogue["open"] = false
 	npc_dialogue["options"] = []
 	state_changed.emit(&"npc_dialogue")
+
+func _empty_trade_state() -> Dictionary:
+	return {"open": false, "partner": "", "storage_available": false,
+		"source_inventory": {}, "own_offers": {}, "other_offers": {},
+		"own_accepts": 0, "other_accepts": 0}

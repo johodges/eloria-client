@@ -64,6 +64,27 @@ func cast_spell(sigils: Array[int]) -> Error:
 func attack_actor(actor_id: int) -> Error:
 	return send_frame(EloriaProtocol.attack_actor(actor_id))
 
+func trade_with(actor_id: int) -> Error:
+	return send_frame(EloriaProtocol.trade_with(actor_id))
+
+func put_inventory_on_trade(source_slot: int, quantity: int) -> Error:
+	return send_frame(EloriaProtocol.put_inventory_on_trade(source_slot, quantity))
+
+func remove_trade_item(offer_slot: int, quantity: int) -> Error:
+	return send_frame(EloriaProtocol.remove_trade_item(offer_slot, quantity))
+
+func accept_trade(destinations: PackedByteArray = PackedByteArray()) -> Error:
+	return send_frame(EloriaProtocol.accept_trade(destinations))
+
+func reject_trade() -> Error:
+	return send_frame(EloriaProtocol.reject_trade())
+
+func exit_trade() -> Error:
+	return send_frame(EloriaProtocol.exit_trade())
+
+func look_at_trade_item(offer_slot: int, other: bool) -> Error:
+	return send_frame(EloriaProtocol.look_at_trade_item(offer_slot, other))
+
 func create_character(username: String, password: String, appearance: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)
 

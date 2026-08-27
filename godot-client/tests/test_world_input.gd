@@ -96,6 +96,9 @@ func _run() -> void:
 		"GameView/Quickbar/Buttons/InventoryButton") as Button
 	var attack_button: Button = main.get_node(
 		"GameView/Quickbar/Buttons/AttackButton") as Button
+	var trade_button: Button = main.get_node(
+		"GameView/Quickbar/Buttons/TradeButton") as Button
+	var trade_panel: Control = main.get_node("GameView/TradePanel") as Control
 	var app_state_inventory: Node = root.get_node("AppState")
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
@@ -108,6 +111,8 @@ func _run() -> void:
 	_expect(not inventory_panel.visible and not inventory_button.disabled,
 		"real inventory window starts closed with its HUD action enabled")
 	_expect(attack_button.disabled, "attack action starts disabled without a selected target")
+	_expect(trade_button.disabled and not trade_panel.visible,
+		"trade starts closed and disabled without a selected player")
 	var attackable_actor: Dictionary = {
 		"actor_id": 77, "name": "Rat", "kind": 3, "health": 12,
 		"max_health": 12, "alive": true}
@@ -131,6 +136,61 @@ func _run() -> void:
 	app_state_inventory.set("actors", {77: attackable_actor})
 	main.call("_sync_selection")
 	_expect(attack_button.disabled, "dead target disables the attack action")
+	var tradeable_actor: Dictionary = {
+		"actor_id": 88, "name": "Alice", "kind": 1, "health": 20,
+		"max_health": 20, "alive": true}
+	app_state_inventory.set("actors", {88: tradeable_actor})
+	app_state_inventory.set("selected_actor_id", 88)
+	main.call("_sync_selection")
+	_expect(not trade_button.disabled and trade_button.tooltip_text.contains("four tiles"),
+		"living player selection enables the real trade request")
+	app_state_inventory.call("_on_packet", 41,
+		PackedByteArray([0, 65, 108, 105, 99, 101, 0]))
+	app_state_inventory.call("_on_packet", 40,
+		PackedByteArray([1, 3, 0, 9, 0, 0, 0, 7, 12]))
+	app_state_inventory.call("_on_packet", 35,
+		PackedByteArray([3, 0, 4, 0, 0, 0, 1, 2, 0]))
+	app_state_inventory.call("_on_packet", 35,
+		PackedByteArray([3, 0, 2, 0, 0, 0, 1, 2, 0]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([1]))
+	main.call("_sync_trade")
+	var trade_state: Dictionary = app_state_inventory.get("trade") as Dictionary
+	var own_offers: Dictionary = trade_state.get("own_offers", {}) as Dictionary
+	var accumulated_offer: Dictionary = own_offers.get(2, {}) as Dictionary
+	_expect(trade_panel.visible and str(trade_state.get("partner", "")) == "Alice",
+		"server partner and trade inventory open the real trade window")
+	_expect(root.get_visible_rect().encloses(trade_panel.get_global_rect()),
+		"trade window fits the reference viewport")
+	var trade_source: ItemList = main.get_node(
+		"GameView/TradePanel/Content/Columns/Source/TradeSource") as ItemList
+	var trade_own_list: ItemList = main.get_node(
+		"GameView/TradePanel/Content/Columns/Own/TradeOwnOffers") as ItemList
+	var trade_accept_button: Button = main.get_node(
+		"GameView/TradePanel/Content/Actions/TradeAccept") as Button
+	_expect(trade_source.item_count == 1 and trade_own_list.item_count == 1,
+		"trade source and own-offer columns render authoritative items")
+	_expect(not trade_accept_button.disabled and trade_accept_button.text.contains("Confirm"),
+		"mutual first acceptance enables the explicit confirmation phase")
+	_expect(int(accumulated_offer.get("quantity", 0)) == 6,
+		"incremental trade offers accumulate in their authoritative slot")
+	_expect(int(trade_state.get("own_accepts", 0)) == 1
+		and int(trade_state.get("other_accepts", 0)) == 1,
+		"two-sided trade acceptance state is tracked independently")
+	app_state_inventory.call("_on_packet", 39, PackedByteArray([5, 0, 0, 0, 2, 0]))
+	trade_state = app_state_inventory.get("trade") as Dictionary
+	own_offers = trade_state.get("own_offers", {}) as Dictionary
+	accumulated_offer = own_offers.get(2, {}) as Dictionary
+	_expect(int(accumulated_offer.get("quantity", 0)) == 1,
+		"partial offer removal preserves the remaining quantity")
+	app_state_inventory.call("_on_packet", 37, PackedByteArray([0]))
+	_expect(int((app_state_inventory.get("trade") as Dictionary).get("own_accepts", -1)) == 0,
+		"trade rejection resets the correct acceptance side")
+	app_state_inventory.call("_on_packet", 38, PackedByteArray())
+	main.call("_sync_trade")
+	_expect(not trade_panel.visible
+		and not bool((app_state_inventory.get("trade") as Dictionary).get("open", true)),
+		"trade exit clears offers and closes the window")
 	app_state_inventory.set("actors", {})
 	app_state_inventory.set("selected_actor_id", -1)
 	main.call("_on_inventory_button_pressed")

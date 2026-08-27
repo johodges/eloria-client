@@ -26,6 +26,22 @@ func _init() -> void:
 		PackedByteArray([39, 4, 0, 2, 3, 23]))
 	_expect_bytes("attack actor fixture", EloriaProtocol.attack_actor(0x12345678),
 		PackedByteArray([40, 5, 0, 0x78, 0x56, 0x34, 0x12]))
+	_expect_bytes("trade request fixture", EloriaProtocol.trade_with(0x12345678),
+		PackedByteArray([32, 5, 0, 0x78, 0x56, 0x34, 0x12]))
+	_expect_bytes("trade inventory offer fixture",
+		EloriaProtocol.put_inventory_on_trade(7, 0x12345678),
+		PackedByteArray([36, 7, 0, 1, 7, 0x78, 0x56, 0x34, 0x12]))
+	_expect_bytes("trade offer removal fixture",
+		EloriaProtocol.remove_trade_item(3, 0x12345678),
+		PackedByteArray([37, 6, 0, 3, 0x78, 0x56, 0x34, 0x12]))
+	_expect_bytes("trade accept destinations fixture", EloriaProtocol.accept_trade(),
+		PackedByteArray([33, 17, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]))
+	_expect_bytes("trade reject fixture", EloriaProtocol.reject_trade(),
+		PackedByteArray([34, 1, 0]))
+	_expect_bytes("trade exit fixture", EloriaProtocol.exit_trade(),
+		PackedByteArray([35, 1, 0]))
+	_expect_bytes("trade inspection fixture", EloriaProtocol.look_at_trade_item(3, true),
+		PackedByteArray([38, 3, 0, 3, 1]))
 	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
 	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
 	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")
@@ -225,6 +241,34 @@ func _init() -> void:
 		PackedByteArray([130, 80, 111, 116, 105, 111, 110, 0]))
 	_expect(item_text.type == "inventory_text" and item_text.text == "Potion",
 		"inventory inspection text")
+	var trade_partner: Dictionary = EloriaProtocol.decode_server(41,
+		PackedByteArray([1, 65, 108, 105, 99, 101, 0]))
+	_expect(trade_partner.type == "trade_partner" and trade_partner.name == "Alice"
+		and trade_partner.storage_available, "trade partner fields")
+	var trade_inventory: Dictionary = EloriaProtocol.decode_server(40, inventory_payload)
+	_expect(trade_inventory.type == "trade_inventory"
+		and trade_inventory.items.size() == 2, "trade source inventory snapshot")
+	var trade_object: Dictionary = EloriaProtocol.decode_server(35,
+		PackedByteArray([0x34, 0x12, 5, 0, 0, 0, 1, 3, 1]))
+	_expect(trade_object.type == "trade_object" and trade_object.image_id == 0x1234
+		and trade_object.quantity == 5 and trade_object.source_type == 1
+		and trade_object.slot == 3 and trade_object.other, "trade offer fields")
+	var trade_remove: Dictionary = EloriaProtocol.decode_server(39,
+		PackedByteArray([5, 0, 0, 0, 3, 0]))
+	_expect(trade_remove.type == "trade_remove" and trade_remove.quantity == 5
+		and trade_remove.slot == 3 and not trade_remove.other, "trade removal fields")
+	var trade_accept: Dictionary = EloriaProtocol.decode_server(36, PackedByteArray([1]))
+	_expect(trade_accept.type == "trade_accept" and trade_accept.other,
+		"trade partner acceptance field")
+	var trade_reject: Dictionary = EloriaProtocol.decode_server(37, PackedByteArray([0]))
+	_expect(trade_reject.type == "trade_reject" and not trade_reject.other,
+		"trade own rejection field")
+	_expect(EloriaProtocol.decode_server(38, PackedByteArray()).type == "trade_exit",
+		"trade exit event")
+	_expect(EloriaProtocol.decode_server(35, PackedByteArray([1])).type == "invalid"
+		and EloriaProtocol.decode_server(36, PackedByteArray()).type == "invalid"
+		and EloriaProtocol.decode_server(38, PackedByteArray([0])).type == "invalid",
+		"malformed trade packets rejected")
 	var cooldown_event: Dictionary = EloriaProtocol.decode_server(77,
 		PackedByteArray([7, 30, 0, 12, 0, 2, 60, 0, 1, 0]))
 	_expect(cooldown_event.type == "item_cooldowns"

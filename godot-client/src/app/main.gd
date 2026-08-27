@@ -44,6 +44,18 @@ extends Control
 @onready var inventory_equip_button: Button = %InventoryEquip
 @onready var inventory_unequip_button: Button = %InventoryUnequip
 @onready var attack_button: Button = %AttackButton
+@onready var trade_button: Button = %TradeButton
+@onready var trade_panel: Control = %TradePanel
+@onready var trade_partner: Label = %TradePartner
+@onready var trade_source: ItemList = %TradeSource
+@onready var trade_own_offers: ItemList = %TradeOwnOffers
+@onready var trade_other_offers: ItemList = %TradeOtherOffers
+@onready var trade_quantity: SpinBox = %TradeQuantity
+@onready var trade_status: Label = %TradeStatus
+@onready var trade_offer_button: Button = %TradeOffer
+@onready var trade_remove_button: Button = %TradeRemove
+@onready var trade_accept_button: Button = %TradeAccept
+@onready var trade_reject_button: Button = %TradeReject
 @onready var quick_slot_container: GridContainer = $GameView/ItemSpellQuickbar/QuickContent/Slots
 @onready var spell_slot_container: GridContainer = %SpellSlots
 @onready var spell_status: Label = %SpellStatus
@@ -78,6 +90,7 @@ var equipment_slot_buttons: Array[Button] = []
 var quick_slot_buttons: Array[Button] = []
 var spell_slot_buttons: Array[Button] = []
 var selected_inventory_slot := -1
+var selected_trade_side := ""
 var cooldown_display_second := -1
 
 func _ready() -> void:
@@ -103,6 +116,7 @@ func _ready() -> void:
 	full_map.hide()
 	stats_panel.hide()
 	inventory_panel.hide()
+	trade_panel.hide()
 	game_view.hide()
 	creation_panel.hide()
 	create_gender.add_item("Luminous Female", 0)
@@ -113,6 +127,9 @@ func _ready() -> void:
 	_build_equipment_slots()
 	_bind_quick_slots()
 	_bind_spell_slots()
+	trade_source.item_selected.connect(_on_trade_source_selected)
+	trade_own_offers.item_selected.connect(_on_trade_own_selected)
+	trade_other_offers.item_selected.connect(_on_trade_other_selected)
 
 func _bind_shared_world() -> void:
 	gameplay_world = world_root.get_world_3d()
@@ -262,16 +279,31 @@ func _on_sit_button_pressed() -> void:
 func _on_attack_button_pressed() -> void:
 	_attack_selected_actor()
 
+func _on_trade_button_pressed() -> void:
+	var actor_id: int = AppState.selected_actor_id
+	var dto: Dictionary = AppState.actors.get(actor_id, {})
+	if not _is_tradeable_player(actor_id, dto):
+		return
+	print_debug("trade_input command=TRADE_WITH target_actor_id=", actor_id,
+		" redacted_bytes=not_sensitive")
+	var error: Error = Network.trade_with(actor_id)
+	if error != OK:
+		push_warning("TRADE_WITH failed: " + error_string(error))
+
 func _on_chat_button_pressed() -> void:
 	chat_input.grab_focus()
 
 func _on_stats_button_pressed() -> void:
+	if bool(AppState.trade.get("open", false)):
+		return
 	stats_panel.visible = not stats_panel.visible
 	if stats_panel.visible:
 		inventory_panel.hide()
 		_sync_stats()
 
 func _on_inventory_button_pressed() -> void:
+	if bool(AppState.trade.get("open", false)):
+		return
 	inventory_panel.visible = not inventory_panel.visible
 	if inventory_panel.visible:
 		stats_panel.hide()
@@ -303,6 +335,86 @@ func _on_inventory_inspect_pressed() -> void:
 	var error: Error = Network.look_at_inventory_item(selected_inventory_slot)
 	if error != OK:
 		push_warning("LOOK_AT_INVENTORY_ITEM failed: " + error_string(error))
+
+func _on_trade_source_selected(index: int) -> void:
+	selected_trade_side = "source"
+	var slot: int = _trade_list_slot(trade_source, index)
+	var source_inventory: Dictionary = AppState.trade.get("source_inventory", {}) as Dictionary
+	var item_value: Variant = source_inventory.get(slot)
+	if item_value is Dictionary:
+		trade_quantity.max_value = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
+		trade_quantity.value = mini(int(trade_quantity.value), int(trade_quantity.max_value))
+	_sync_trade_actions()
+
+func _on_trade_own_selected(_index: int) -> void:
+	selected_trade_side = "own"
+	_sync_trade_actions()
+
+func _on_trade_other_selected(_index: int) -> void:
+	selected_trade_side = "other"
+	_sync_trade_actions()
+
+func _on_trade_offer_pressed() -> void:
+	var selected: PackedInt32Array = trade_source.get_selected_items()
+	if selected.is_empty():
+		return
+	var slot: int = _trade_list_slot(trade_source, int(selected[0]))
+	var source_inventory: Dictionary = AppState.trade.get("source_inventory", {}) as Dictionary
+	var item_value: Variant = source_inventory.get(slot)
+	if not item_value is Dictionary:
+		return
+	var item: Dictionary = item_value as Dictionary
+	var quantity: int = clampi(int(trade_quantity.value), 1, int(item.get("quantity", 1)))
+	var error: Error = Network.put_inventory_on_trade(slot, quantity)
+	if error != OK:
+		push_warning("PUT_OBJECT_ON_TRADE failed: " + error_string(error))
+
+func _on_trade_remove_pressed() -> void:
+	var selected: PackedInt32Array = trade_own_offers.get_selected_items()
+	if selected.is_empty():
+		return
+	var offer_slot: int = _trade_list_slot(trade_own_offers, int(selected[0]))
+	var own_offers: Dictionary = AppState.trade.get("own_offers", {}) as Dictionary
+	var offer_value: Variant = own_offers.get(offer_slot)
+	if not offer_value is Dictionary:
+		return
+	var offer: Dictionary = offer_value as Dictionary
+	var quantity: int = clampi(int(trade_quantity.value), 1, int(offer.get("quantity", 1)))
+	var error: Error = Network.remove_trade_item(offer_slot, quantity)
+	if error != OK:
+		push_warning("REMOVE_OBJECT_FROM_TRADE failed: " + error_string(error))
+
+func _on_trade_inspect_pressed() -> void:
+	var list: ItemList = trade_other_offers if selected_trade_side == "other" else trade_own_offers
+	var selected: PackedInt32Array = list.get_selected_items()
+	if selected.is_empty():
+		return
+	var offer_slot: int = _trade_list_slot(list, int(selected[0]))
+	var error: Error = Network.look_at_trade_item(offer_slot, list == trade_other_offers)
+	if error != OK:
+		push_warning("LOOK_AT_TRADE_ITEM failed: " + error_string(error))
+
+func _on_trade_accept_pressed() -> void:
+	if not bool(AppState.trade.get("open", false)):
+		return
+	var error: Error = Network.accept_trade()
+	if error != OK:
+		push_warning("ACCEPT_TRADE failed: " + error_string(error))
+
+func _on_trade_reject_pressed() -> void:
+	if not bool(AppState.trade.get("open", false)):
+		return
+	var error: Error = Network.reject_trade()
+	if error != OK:
+		push_warning("REJECT_TRADE failed: " + error_string(error))
+
+func _on_trade_cancel_pressed() -> void:
+	if not bool(AppState.trade.get("open", false)):
+		return
+	trade_status.text = "Cancelling trade and restoring offers…"
+	var error: Error = Network.exit_trade()
+	if error != OK:
+		push_warning("EXIT_TRADE failed: " + error_string(error))
 
 func _on_disconnect_pressed() -> void:
 	Network.disconnect_from_server()
@@ -342,6 +454,7 @@ func _clear_world_presentation() -> void:
 	full_map.hide()
 	inventory_panel.hide()
 	stats_panel.hide()
+	trade_panel.hide()
 	dialogue_panel.hide()
 	chat_output.clear()
 	selected_target.text = "Target: none"
@@ -374,6 +487,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("cancel"):
 		if dialogue_panel.visible:
 			AppState.close_dialogue()
+		elif bool(AppState.trade.get("open", false)):
+			_on_trade_cancel_pressed()
 		elif inventory_panel.visible:
 			inventory_panel.hide()
 		elif stats_panel.visible:
@@ -394,7 +509,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 
 func _on_world_gui_input(event: InputEvent) -> void:
-	if not game_view.visible or full_map.visible or dialogue_panel.visible:
+	if (not game_view.visible or full_map.visible or dialogue_panel.visible
+			or trade_panel.visible):
 		return
 	if event is InputEventMouseButton:
 		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
@@ -473,6 +589,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_selection()
 		&"npc_dialogue":
 			_sync_dialogue()
+		&"trade":
+			_sync_trade()
 
 func _load_server_map() -> void:
 	if AppState.current_map.is_empty() or loaded_server_map == AppState.current_map:
@@ -954,6 +1072,80 @@ func _on_chat_submitted(text: String) -> void:
 	else:
 		push_warning("RAW_TEXT failed: " + error_string(error))
 
+func _sync_trade() -> void:
+	var is_open: bool = bool(AppState.trade.get("open", false))
+	trade_panel.visible = is_open
+	if not is_open:
+		selected_trade_side = ""
+		return
+	inventory_panel.hide()
+	stats_panel.hide()
+	full_map.hide()
+	trade_partner.text = "Trading with %s%s" % [
+		str(AppState.trade.get("partner", "another player")),
+		" — storage destinations available" if bool(
+			AppState.trade.get("storage_available", false)) else ""]
+	_fill_trade_list(trade_source,
+		AppState.trade.get("source_inventory", {}) as Dictionary, "Inventory")
+	_fill_trade_list(trade_own_offers,
+		AppState.trade.get("own_offers", {}) as Dictionary, "Offer")
+	_fill_trade_list(trade_other_offers,
+		AppState.trade.get("other_offers", {}) as Dictionary, "Offer")
+	var own_accepts: int = int(AppState.trade.get("own_accepts", 0))
+	var other_accepts: int = int(AppState.trade.get("other_accepts", 0))
+	trade_status.text = "You: %s  •  %s: %s" % [
+		_trade_acceptance_text(own_accepts), str(AppState.trade.get("partner", "Partner")),
+		_trade_acceptance_text(other_accepts)]
+	if own_accepts == 0:
+		trade_accept_button.text = "Accept offer (1/2)"
+		trade_accept_button.disabled = false
+	elif own_accepts == 1 and other_accepts >= 1:
+		trade_accept_button.text = "Confirm trade (2/2)"
+		trade_accept_button.disabled = false
+	elif own_accepts == 1:
+		trade_accept_button.text = "Waiting for partner"
+		trade_accept_button.disabled = true
+	else:
+		trade_accept_button.text = "Confirmed — waiting"
+		trade_accept_button.disabled = true
+	trade_reject_button.disabled = own_accepts == 0 and other_accepts == 0
+	_sync_trade_actions()
+
+func _fill_trade_list(list_control: ItemList, items: Dictionary, prefix: String) -> void:
+	list_control.clear()
+	var slots: Array = items.keys()
+	slots.sort()
+	for raw_slot: Variant in slots:
+		var slot: int = int(raw_slot)
+		var item_value: Variant = items.get(slot)
+		if not item_value is Dictionary:
+			continue
+		var item: Dictionary = item_value as Dictionary
+		var image_id: int = int(item.get("image_id", 0))
+		var index: int = list_control.item_count
+		list_control.add_item("%s %d  •  item #%d  ×%d" % [
+			prefix, slot + 1, image_id, int(item.get("quantity", 0))])
+		list_control.set_item_metadata(index, slot)
+		var icon: Texture2D = item_atlas.icon_for(image_id)
+		if icon != null:
+			list_control.set_item_icon(index, icon)
+
+func _trade_list_slot(list_control: ItemList, index: int) -> int:
+	if index < 0 or index >= list_control.item_count:
+		return -1
+	var metadata: Variant = list_control.get_item_metadata(index)
+	return int(metadata) if metadata != null else -1
+
+func _sync_trade_actions() -> void:
+	trade_offer_button.disabled = trade_source.get_selected_items().is_empty()
+	trade_remove_button.disabled = trade_own_offers.get_selected_items().is_empty()
+
+func _trade_acceptance_text(value: int) -> String:
+	match value:
+		1: return "accepted"
+		2: return "confirmed"
+		_: return "reviewing"
+
 func _sync_selection() -> void:
 	var dto: Dictionary = AppState.actors.get(AppState.selected_actor_id, {})
 	if dto.is_empty():
@@ -967,6 +1159,10 @@ func _sync_selection() -> void:
 	attack_button.disabled = not can_attack
 	attack_button.tooltip_text = ("Attack selected target [A] or Alt-click; the server approaches and validates combat"
 		if can_attack else "Select a living player or creature to attack")
+	var can_trade: bool = _is_tradeable_player(AppState.selected_actor_id, dto)
+	trade_button.disabled = not can_trade
+	trade_button.tooltip_text = ("Request or accept trade with the selected player; both players must be within four tiles"
+		if can_trade else "Select a living player to trade")
 	for raw_id: Variant in actor_nodes.keys():
 		var id: int = int(raw_id)
 		var actor: ReplicatedActor3D = actor_nodes.get(id) as ReplicatedActor3D
@@ -978,6 +1174,12 @@ func _is_attackable_actor(actor_id: int, dto: Dictionary) -> bool:
 		return false
 	var kind: int = int(dto.get("kind", 0))
 	return kind in [1, 3, 4, 5] and bool(dto.get("alive", int(dto.get("health", 0)) > 0))
+
+func _is_tradeable_player(actor_id: int, dto: Dictionary) -> bool:
+	if actor_id < 0 or actor_id == AppState.local_actor_id or dto.is_empty():
+		return false
+	var kind: int = int(dto.get("kind", 0))
+	return kind in [1, 4] and bool(dto.get("alive", int(dto.get("health", 0)) > 0))
 
 func _attack_selected_actor() -> void:
 	var actor_id: int = AppState.selected_actor_id

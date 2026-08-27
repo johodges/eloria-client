@@ -30,6 +30,9 @@ enum ServerMessage {
 	HERE_YOUR_GROUND_ITEMS = 23, REMOVE_ITEM_FROM_GROUND = 25, CLOSE_BAG = 26,
 	GET_NEW_BAG = 27, GET_BAGS_LIST = 28, DESTROY_BAG = 29, NPC_TEXT = 30,
 	NPC_OPTIONS_LIST = 31, CLOSE_NPC_MENU = 32, SEND_NPC_INFO = 33,
+	GET_TRADE_OBJECT = 35, GET_TRADE_ACCEPT = 36, GET_TRADE_REJECT = 37,
+	GET_TRADE_EXIT = 38, REMOVE_TRADE_OBJECT = 39, GET_YOUR_TRADEOBJECTS = 40,
+	GET_TRADE_PARTNER_NAME = 41,
 	GET_YOUR_SIGILS = 42, GET_ACTIVE_SPELL = 44,
 	GET_ACTIVE_SPELL_LIST = 45, REMOVE_ACTIVE_SPELL = 46,
 	GET_ACTOR_DAMAGE = 47, GET_ACTOR_HEAL = 48, SEND_PARTIAL_STAT = 49,
@@ -139,6 +142,42 @@ static func attack_actor(actor_id: int) -> PackedByteArray:
 		actor_id & 0xff, (actor_id >> 8) & 0xff,
 		(actor_id >> 16) & 0xff, (actor_id >> 24) & 0xff]))
 
+static func trade_with(actor_id: int) -> PackedByteArray:
+	return encode(ClientMessage.TRADE_WITH, PackedByteArray([
+		actor_id & 0xff, (actor_id >> 8) & 0xff,
+		(actor_id >> 16) & 0xff, (actor_id >> 24) & 0xff]))
+
+static func put_inventory_on_trade(source_slot: int, quantity: int) -> PackedByteArray:
+	var payload: PackedByteArray = PackedByteArray([
+		1, clampi(source_slot, 0, 255),
+		quantity & 0xff, (quantity >> 8) & 0xff,
+		(quantity >> 16) & 0xff, (quantity >> 24) & 0xff])
+	return encode(ClientMessage.PUT_OBJECT_ON_TRADE, payload)
+
+static func remove_trade_item(offer_slot: int, quantity: int) -> PackedByteArray:
+	var payload: PackedByteArray = PackedByteArray([
+		clampi(offer_slot, 0, 15), quantity & 0xff, (quantity >> 8) & 0xff,
+		(quantity >> 16) & 0xff, (quantity >> 24) & 0xff])
+	return encode(ClientMessage.REMOVE_OBJECT_FROM_TRADE, payload)
+
+static func accept_trade(destinations: PackedByteArray = PackedByteArray()) -> PackedByteArray:
+	var payload: PackedByteArray = destinations.slice(0, 16)
+	while payload.size() < 16:
+		payload.append(1)
+	for index: int in range(payload.size()):
+		payload[index] = 2 if int(payload[index]) == 2 else 1
+	return encode(ClientMessage.ACCEPT_TRADE, payload)
+
+static func reject_trade() -> PackedByteArray:
+	return encode(ClientMessage.REJECT_TRADE)
+
+static func exit_trade() -> PackedByteArray:
+	return encode(ClientMessage.EXIT_TRADE)
+
+static func look_at_trade_item(offer_slot: int, other: bool) -> PackedByteArray:
+	return encode(ClientMessage.LOOK_AT_TRADE_ITEM,
+		PackedByteArray([clampi(offer_slot, 0, 15), 1 if other else 0]))
+
 static func actor_command_step(command: int) -> Vector2i:
 	# Server movement frames are the authoritative one-tile updates used by the
 	# legacy client. Walk and run use the same tile delta; timing differs.
@@ -224,6 +263,39 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				"text": nul_string(payload.slice(1))}
 		ServerMessage.GET_ITEMS_COOLDOWN:
 			return decode_item_cooldowns(payload)
+		ServerMessage.GET_TRADE_PARTNER_NAME:
+			if payload.size() < 2:
+				return {"type": "invalid", "error": "trade_partner_length"}
+			return {"type": "trade_partner", "storage_available": bool(payload[0]),
+				"name": nul_string(payload.slice(1))}
+		ServerMessage.GET_YOUR_TRADEOBJECTS:
+			var trade_inventory: Dictionary = decode_inventory(payload)
+			if trade_inventory.get("type", "") == "inventory":
+				trade_inventory["type"] = "trade_inventory"
+			return trade_inventory
+		ServerMessage.GET_TRADE_OBJECT:
+			if payload.size() != 9:
+				return {"type": "invalid", "error": "trade_object_length"}
+			return {"type": "trade_object", "image_id": u16(payload),
+				"quantity": u32(payload, 2), "source_type": int(payload[6]),
+				"slot": int(payload[7]), "other": bool(payload[8])}
+		ServerMessage.REMOVE_TRADE_OBJECT:
+			if payload.size() != 6:
+				return {"type": "invalid", "error": "trade_remove_length"}
+			return {"type": "trade_remove", "quantity": u32(payload),
+				"slot": int(payload[4]), "other": bool(payload[5])}
+		ServerMessage.GET_TRADE_ACCEPT:
+			if payload.size() != 1:
+				return {"type": "invalid", "error": "trade_accept_length"}
+			return {"type": "trade_accept", "other": bool(payload[0])}
+		ServerMessage.GET_TRADE_REJECT:
+			if payload.size() != 1:
+				return {"type": "invalid", "error": "trade_reject_length"}
+			return {"type": "trade_reject", "other": bool(payload[0])}
+		ServerMessage.GET_TRADE_EXIT:
+			if not payload.is_empty():
+				return {"type": "invalid", "error": "trade_exit_length"}
+			return {"type": "trade_exit"}
 		ServerMessage.GET_YOUR_SIGILS:
 			if payload.size() != 8:
 				return {"type": "invalid", "error": "sigils_length"}

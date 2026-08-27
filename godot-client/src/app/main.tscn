@@ -323,6 +323,7 @@ tooltip_text = "Select a living player or creature to attack"
 disabled = true
 
 [node name="TradeButton" type="Button" parent="GameView/Quickbar/Buttons"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Trade"
 tooltip_text = "Select a player to trade"
@@ -555,6 +556,120 @@ text = "Inspect"
 
 [node name="Close" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
 text = "Close"
+
+[node name="TradePanel" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -390.0
+offset_top = -260.0
+offset_right = 300.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Content" type="VBoxContainer" parent="GameView/TradePanel"]
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="GameView/TradePanel/Content"]
+text = "TRADE"
+horizontal_alignment = 1
+
+[node name="TradePartner" type="Label" parent="GameView/TradePanel/Content"]
+unique_name_in_owner = true
+text = "Synchronizing trade partner…"
+horizontal_alignment = 1
+
+[node name="Columns" type="HBoxContainer" parent="GameView/TradePanel/Content"]
+theme_override_constants/separation = 10
+
+[node name="Source" type="VBoxContainer" parent="GameView/TradePanel/Content/Columns"]
+
+[node name="Label" type="Label" parent="GameView/TradePanel/Content/Columns/Source"]
+text = "YOUR INVENTORY"
+horizontal_alignment = 1
+
+[node name="TradeSource" type="ItemList" parent="GameView/TradePanel/Content/Columns/Source"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 300)
+select_mode = 0
+allow_reselect = true
+
+[node name="Own" type="VBoxContainer" parent="GameView/TradePanel/Content/Columns"]
+
+[node name="Label" type="Label" parent="GameView/TradePanel/Content/Columns/Own"]
+text = "YOUR OFFER"
+horizontal_alignment = 1
+
+[node name="TradeOwnOffers" type="ItemList" parent="GameView/TradePanel/Content/Columns/Own"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 300)
+select_mode = 0
+allow_reselect = true
+
+[node name="Other" type="VBoxContainer" parent="GameView/TradePanel/Content/Columns"]
+
+[node name="Label" type="Label" parent="GameView/TradePanel/Content/Columns/Other"]
+text = "THEIR OFFER"
+horizontal_alignment = 1
+
+[node name="TradeOtherOffers" type="ItemList" parent="GameView/TradePanel/Content/Columns/Other"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 300)
+select_mode = 0
+allow_reselect = true
+
+[node name="QuantityRow" type="HBoxContainer" parent="GameView/TradePanel/Content"]
+alignment = 1
+
+[node name="Label" type="Label" parent="GameView/TradePanel/Content/QuantityRow"]
+text = "Quantity"
+
+[node name="TradeQuantity" type="SpinBox" parent="GameView/TradePanel/Content/QuantityRow"]
+unique_name_in_owner = true
+min_value = 1.0
+max_value = 2147483647.0
+value = 1.0
+allow_greater = false
+
+[node name="TradeStatus" type="Label" parent="GameView/TradePanel/Content"]
+unique_name_in_owner = true
+text = "Both players must accept and then confirm."
+horizontal_alignment = 1
+
+[node name="Actions" type="HBoxContainer" parent="GameView/TradePanel/Content"]
+alignment = 1
+
+[node name="TradeOffer" type="Button" parent="GameView/TradePanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Offer selected"
+tooltip_text = "Move the selected inventory quantity into your server-authoritative offer"
+
+[node name="TradeRemove" type="Button" parent="GameView/TradePanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Remove selected"
+tooltip_text = "Return the selected offered quantity to your inventory"
+
+[node name="TradeInspect" type="Button" parent="GameView/TradePanel/Content/Actions"]
+text = "Inspect"
+tooltip_text = "Ask the server to describe the selected offer"
+
+[node name="TradeAccept" type="Button" parent="GameView/TradePanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Accept offer"
+
+[node name="TradeReject" type="Button" parent="GameView/TradePanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Withdraw acceptance"
+tooltip_text = "Reset both players' acceptance without closing the trade"
+
+[node name="TradeCancel" type="Button" parent="GameView/TradePanel/Content/Actions"]
+text = "Cancel trade"
+tooltip_text = "Cancel the trade and restore all offered items"
 
 [node name="Help" type="Label" parent="GameView"]
 visible = false
@@ -810,6 +925,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/Buttons/MapButton" to="." method="_on_map_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/SitButton" to="." method="_on_sit_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/AttackButton" to="." method="_on_attack_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/Buttons/TradeButton" to="." method="_on_trade_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/ChatButton" to="." method="_on_chat_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
@@ -818,4 +934,10 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryUnequip" to="." method="_on_inventory_unequip_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/Inspect" to="." method="_on_inventory_inspect_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/Close" to="." method="_on_inventory_close_pressed"]
+[connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeOffer" to="." method="_on_trade_offer_pressed"]
+[connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeRemove" to="." method="_on_trade_remove_pressed"]
+[connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeInspect" to="." method="_on_trade_inspect_pressed"]
+[connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeAccept" to="." method="_on_trade_accept_pressed"]
+[connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeReject" to="." method="_on_trade_reject_pressed"]
+[connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeCancel" to="." method="_on_trade_cancel_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/DisconnectButton" to="." method="_on_disconnect_pressed"]
