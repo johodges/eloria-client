@@ -39,18 +39,7 @@ jobs:
                   git checkout --theirs -- "$path"
                   ;;
                 .github/workflows/godot-client.yml)
-                  base_sha=$(git merge-base HEAD MERGE_HEAD)
-                  git show "HEAD:$path" > /tmp/workflow-ours.yml
-                  git show "$base_sha:$path" > /tmp/workflow-base.yml
-                  git show "MERGE_HEAD:$path" > /tmp/workflow-theirs.yml
-                  set +e
-                  git merge-file -p /tmp/workflow-ours.yml /tmp/workflow-base.yml /tmp/workflow-theirs.yml > "$path"
-                  workflow_status=$?
-                  set -e
-                  if [ "$workflow_status" -gt 1 ] || grep -q '^<<<<<<< ' "$path"; then
-                    echo "Unable to resolve workflow conflict automatically"
-                    exit 1
-                  fi
+                  git checkout --ours -- "$path"
                   ;;
                 *)
                   echo "Unexpected conflict: $path"
@@ -64,11 +53,26 @@ jobs:
           import json
           from pathlib import Path
 
-          path = Path('eloria-assets/maps/four-gates-city/four-gates-city.json')
-          data = json.loads(path.read_text(encoding='utf-8'))
+          manifest = Path('eloria-assets/maps/four-gates-city/four-gates-city.json')
+          data = json.loads(manifest.read_text(encoding='utf-8'))
           navigation = data.setdefault('navigation', {})
           navigation['surfaceNodePrefixes'] = ['Terrain_City_Plateau']
-          path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+          manifest.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+
+          workflow = Path('.github/workflows/godot-client.yml')
+          text = workflow.read_text(encoding='utf-8')
+          detail_lines = [
+              '          test -s "$ELORIA_ARTIFACT_DIR/four-gates-central-plaza-detail.png"',
+              '          test -s "$ELORIA_ARTIFACT_DIR/four-gates-south-gate-detail.png"',
+              '          test -s "$ELORIA_ARTIFACT_DIR/four-gates-market-detail.png"',
+              '          test -s "$ELORIA_ARTIFACT_DIR/four-gates-waterfall-detail.png"',
+          ]
+          if detail_lines[0] not in text:
+              marker = '          test -s "$ELORIA_ARTIFACT_DIR/four-gates-gameplay.png"\n'
+              if marker not in text:
+                  raise SystemExit('Four Gates rendered-evidence marker missing')
+              text = text.replace(marker, marker + '\n'.join(detail_lines) + '\n', 1)
+              workflow.write_text(text, encoding='utf-8')
           PY
 
           git add .
