@@ -1,81 +1,194 @@
-name: Native guard evidence tree reconstruction
+name: independent-data
 
 on:
+  pull_request:
   push:
-    branches:
-      - codex/native-guard-evidence-20260827
-
-permissions:
-  contents: write
 
 jobs:
-  validate:
-    runs-on: ubuntu-latest
-    container:
-      image: barichello/godot-ci:4.7.2
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Python validator
-        run: |
-          apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends python3 fontconfig
-      - name: Apply native guard evidence patch
-        run: |
-          python3 .github/native_guard_evidence_patch.py
-          python3 - <<'PY'
-          from pathlib import Path
-          path = Path('godot-client/tests/integration/rendered_server_session.gd')
-          text = path.read_text()
-          marker = '\tawait _capture("world-equipment-native-spear.png")\n'
-          compat = marker + '\tawait _capture("world-equipment-fallback.png")\n'
-          if compat not in text:
-              if marker not in text:
-                  raise SystemExit('native spear capture marker missing')
-              text = text.replace(marker, compat, 1)
-              path.write_text(text)
-          PY
-      - name: Validate patched Godot harness
-        run: |
-          python3 godot-client/tests/test_native_glb_assets.py -v
-          godot --headless --path godot-client --editor --quit
-          godot --headless --path godot-client --quit-after 3 2>&1 | tee /tmp/main-scene.log
-          ! grep -E "SCRIPT ERROR|Parse Error" /tmp/main-scene.log
-
-  publish:
-    needs: validate
+  provenance:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Reapply deterministic patch and verify clean diff
+      - name: Install asset generator dependencies
+        run: python3 -m pip install Pillow
+      - name: Generate complete independent data
         run: |
-          set -euo pipefail
-          python3 .github/native_guard_evidence_patch.py
+          python3 eloria-assets/tools/generate_all_assets.py --jobs 4 --skip-validation build/eloria-data
+      - name: Verify provenance policy
+        run: python3 eloria-assets/tools/check_provenance.py
+      - name: Validate all shared generated asset contracts
+        run: python3 eloria-assets/tools/validate_generated_assets.py build/eloria-data
+      - name: Validate complete sky and safe fog density
+        run: |
           python3 - <<'PY'
           from pathlib import Path
-          path = Path('godot-client/tests/integration/rendered_server_session.gd')
-          text = path.read_text()
-          marker = '\tawait _capture("world-equipment-native-spear.png")\n'
-          compat = marker + '\tawait _capture("world-equipment-fallback.png")\n'
-          if compat not in text:
-              if marker not in text:
-                  raise SystemExit('native spear capture marker missing')
-              text = text.replace(marker, compat, 1)
-              path.write_text(text)
+          import xml.etree.ElementTree as ET
+          root = ET.parse(Path("build/eloria-data/skybox/skybox_defs.xml")).getroot()
+          required = {
+              "clouds", "clouds_detail", "clouds_sunny",
+              "clouds_detail_sunny", "clouds_rainy",
+              "clouds_detail_rainy", "sky1", "sky2", "sky3", "sky4",
+              "sky5", "sky1_sunny", "sky2_sunny", "sky3_sunny",
+              "sky4_sunny", "sky5_sunny", "sun", "fog", "fog_sunny",
+              "fog_rainy", "light_ambient", "light_diffuse",
+              "light_ambient_rainy", "light_diffuse_rainy",
+          }
+          assert required <= {child.tag for child in root}
+          for tag in ("fog", "fog_sunny", "fog_rainy"):
+              colors = root.find(tag).findall("color")
+              assert colors and all("a" in color.attrib for color in colors)
+              assert all(0.0 < float(color.attrib["a"]) <= 0.05
+                         for color in colors)
+          for tag in ("light_ambient", "light_diffuse",
+                      "light_ambient_rainy", "light_diffuse_rainy"):
+              colors = root.find(tag).findall("color")
+              assert colors
+              assert all(sum(float(color.attrib[channel])
+                             for channel in ("r", "g", "b")) > 0.0
+                         for color in colors)
           PY
-          git checkout c546f2def45b037b85d8b0a3225683956ff09d2d -- .github/workflows/godot-client.yml
-          git diff --check
-      - name: Publish clean temporary evidence tree
+      - name: Verify original map
         run: |
-          set -euo pipefail
-          git checkout c546f2def45b037b85d8b0a3225683956ff09d2d -- .github/workflows/independent-data.yml .github/workflows/godot-client.yml
-          rm -f .github/native_guard_evidence_patch.py
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/workflows/independent-data.yml \
-                  .github/native_guard_evidence_patch.py \
-                  godot-client/tests/integration/rendered_server_session.gd
-          git diff --cached --check
-          git commit -m 'test(godot): prove native guard equipment [rendered-integration]'
-          git push origin HEAD:codex/native-guard-evidence-20260827
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          path = Path("build/eloria-data/maps/emberhaven.elm")
+          data = path.read_bytes()
+          assert data[:4] == b"elmf"
+          assert struct.unpack_from("<ii", data, 4) == (32, 32)
+          assert len(data) == 41756
+          preview = Path("build/eloria-data/maps/newcharactermap.elm").read_bytes()
+          width, height, tile_offset, height_offset = struct.unpack_from(
+              "<4i", preview, 4)
+          assert (width, height, tile_offset) == (32, 32, 124)
+          preview_x, preview_y = 43, 156
+          assert preview[tile_offset + (preview_y // 6) * width +
+                         preview_x // 6] == 0
+          assert preview[height_offset + preview_y * width * 6 +
+                         preview_x] & 0x3f == 11
+          assert struct.unpack_from("<3f", preview, 60) == (
+              1.0199999809265137,) * 3
+          PY
+      - name: Validate specialty-event assets
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path("build/eloria-data")
+          events = json.loads((root / "special_event_assets.json").read_text())["events"]
+          assert len(events) == 12
+          assert len({event["icon"] for event in events}) == 12
+          assert len({event["prop"] for event in events}) == 12
+          for event in events:
+              assert (root / event["icon"]).is_file()
+              assert (root / event["prop"]).read_bytes()[:4] == b"e3dx"
+          PY
+      - name: Validate generated native E3D scenery
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          import struct
+          root = Path("build/eloria-data")
+          models = list(root.glob("3dobjects/**/*.e3d"))
+          assert len(models) >= 223
+          for path in models:
+              data = path.read_bytes()
+              magic, version, digest, offset = struct.unpack_from("<4s4s16si", data)
+              assert magic == b"e3dx"
+              assert version == bytes((1, 1, 0, 0))
+              assert offset == 28
+              assert hashlib.md5(data[offset:]).digest() == digest
+              values = struct.unpack_from("<9i4B", data, offset)
+              vertices, vertex_size, vertex_offset, indices, index_size, _, materials, material_size, material_offset, *_ = values
+              assert vertices > 0 and indices > 0
+              assert vertex_size == 32 and vertex_offset == 68
+              assert index_size == 2
+              assert materials == 1 and material_size == 172
+              assert material_offset + 172 == len(data)
+          PY
+      - name: Validate generated Cal3D XML
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          root = Path("build/eloria-data")
+          paths = list(root.glob("actors/*.x?f")) + list(root.glob("animations/eloria/*.xaf"))
+          for path in paths:
+              lines = path.read_text().splitlines()
+              assert lines[0].startswith("<HEADER MAGIC=")
+              document = ET.fromstring("\n".join(lines[1:]))
+              if path.suffix == ".xsf":
+                  bones = document.findall("BONE")
+                  assert bones
+                  for bone in bones:
+                      assert "NUMCHILD" in bone.attrib
+                      assert "NUMCHILDS" not in bone.attrib
+                      assert int(bone.attrib["NUMCHILD"]) == len(
+                          bone.findall("CHILDID"))
+          required_humanoid_bones = {"head", "mouth", "pelvis", "spine",
+              "handL", "handR", "weaponL", "weaponR", "staffR", "arrow",
+              "cape1", "cape2", "cape3"}
+          required_creature_bones = {"root", "body", "head", "mouth",
+              "handL", "handR", "weaponL", "weaponR", "staffR", "arrow",
+              "cape1", "cape2", "cape3"}
+          def bone_names(path):
+              lines = path.read_text().splitlines()
+              return {bone.attrib["NAME"] for bone in
+                  ET.fromstring("\n".join(lines[1:])).findall("BONE")}
+          def assert_outward_winding(path):
+              lines = path.read_text().splitlines()
+              mesh = ET.fromstring("\n".join(lines[1:])).find("SUBMESH")
+              vertices = {}
+              normals = {}
+              for vertex in mesh.findall("VERTEX"):
+                  ident = int(vertex.attrib["ID"])
+                  vertices[ident] = tuple(map(float, vertex.findtext("POS").split()))
+                  normals[ident] = tuple(map(float, vertex.findtext("NORM").split()))
+              for face in mesh.findall("FACE"):
+                  a,b,c = map(int, face.attrib["VERTEXID"].split())
+                  ab = tuple(vertices[b][i]-vertices[a][i] for i in range(3))
+                  ac = tuple(vertices[c][i]-vertices[a][i] for i in range(3))
+                  cross = (ab[1]*ac[2]-ab[2]*ac[1],
+                      ab[2]*ac[0]-ab[0]*ac[2], ab[0]*ac[1]-ab[1]*ac[0])
+                  assert sum(cross[i]*normals[a][i] for i in range(3)) > 0, path
+          assert_outward_winding(root / "actors/eloria_shirt.xmf")
+          creature_mesh = next((root / "actors/creatures").glob("*.xmf"))
+          assert_outward_winding(creature_mesh)
+          assert required_humanoid_bones <= bone_names(root / "actors/eloria_humanoid.xsf")
+          assert required_humanoid_bones <= bone_names(
+              root / "actors/nymara/npcs/nymara_humanoid.xsf")
+          assert required_creature_bones <= bone_names(
+              root / "actors/nymara/creatures/nymara_creature.xsf")
+          assert required_creature_bones <= bone_names(
+              root / "actors/creatures/eloria_quadruped.xsf")
+          actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
+          player_ids = {0,1,2,3,4,5,37,38,39,40,41,42,79,80,81,82}
+          player_actors = [actor for actor in actors.findall("actor")
+                           if int(actor.attrib["id"]) in player_ids]
+          assert len(player_actors) == 16
+          assert {actor.attrib.get("race") for actor in player_actors} == {
+              "luminous", "votary", "glasswarden", "orun", "greyhaven", "ssarathi",
+              "stoneborn", "mycelari"}
+          none_ids = {"neck": 0, "helmet": 20, "cape": 30, "shield": 11}
+          for actor in player_actors:
+              assert actor.findtext("skeleton").endswith(".csf")
+              assert all(mesh.text.endswith(".cmf") for mesh in
+                  actor.findall(".//mesh"))
+              assert all((frame.text or "").split()[0].endswith(".caf") for frame in
+                  actor.findall("frames/*"))
+              for tag, none_id in none_ids.items():
+                  assert actor.find(f"{tag}[@id='{none_id}']") is not None, (
+                      actor.attrib["id"], tag, none_id)
+              assert actor.find("weapon[@id='0']") is not None, actor.attrib["id"]
+          assert len(list(root.glob("animations/eloria/*.xaf"))) == 8
+          assert len(list(root.glob("maps/**/*.elm"))) == 27
+          assert len(list(root.glob("textures/items*.dds"))) == 5
+          PY
+      - name: Validate binary Cal3D player through runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libcal3d12-dev
+          g++ -std=c++11 eloria-assets/tools/validate_cal3d_runtime.cpp \
+            -o build/validate_cal3d_runtime -lcal3d
+          build/validate_cal3d_runtime build/eloria-data
