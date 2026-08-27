@@ -244,7 +244,7 @@ if not document["extensionsUsed"]:
     document.pop("extensionsUsed", None)
 
 
-document["asset"]["generator"] = "Eloria Four Gates concept-art visual pass 0.7"
+document["asset"]["generator"] = "Eloria Four Gates concept-art visual pass 0.8"
 while len(binary) % 4:
     binary += b"\0"
 document["buffers"][0]["byteLength"] = len(binary)
@@ -258,12 +258,14 @@ GLB.write_bytes(
 
 metadata_path = PACKAGE / "four-gates-city.json"
 metadata = json.loads(metadata_path.read_text())
-metadata["assetVersion"] = "0.7.0"
+metadata["assetVersion"] = "0.8.0"
+metadata["materials"]["strategy"] = "embedded-atlas-with-baked-primitive-uvs"
+metadata["materials"].pop("extension", None)
 metadata["visualDirection"] = {
     "reference": "canonical-four-gates-concept-art",
     "palette": ["warm limestone", "charcoal slate", "aged gold", "sapphire", "turquoise", "alpine green"],
-    "materialAtlas": "concept-derived-4x4-pbr-basecolor",
-    "landmarkAtlas": "concept-derived-2x2-pbr-basecolor",
+    "materialAtlas": "art-directed-4x4-pbr-basecolor",
+    "landmarkAtlas": "art-directed-2x2-pbr-basecolor",
     "alpineSkylineNodes": mountain_nodes,
     "outerEvergreenNodes": evergreen_nodes,
 }
