@@ -1169,6 +1169,12 @@
     "nodeNames": [
       "Navigation"
     ],
+    "surfaceNodePrefixes": [
+      "Terrain_City_Plateau",
+      "Road_",
+      "Bridge_",
+      "Central_Plaza"
+    ],
     "walkableAreas": [
       "radial-roads",
       "ring-roads",

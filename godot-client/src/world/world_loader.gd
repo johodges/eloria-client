@@ -49,6 +49,7 @@ func load_world(manifest_path: String) -> void:
 	print_debug("world_load stage=scene_attached node=", world_root.get_path(),
 		" children=", world_root.get_child_count(), " transform=", world_root.transform)
 	_apply_collision_declarations()
+	_apply_rendered_walk_surfaces()
 	_apply_navigation_collision()
 	load_completed.emit(manifest)
 
@@ -119,12 +120,31 @@ func _apply_navigation_collision() -> void:
 		return
 	world_root.add_child(body)
 
-func _create_static_collision(mesh_instance: MeshInstance3D) -> void:
+func _apply_rendered_walk_surfaces() -> void:
+	var navigation: Dictionary = manifest.data.get("navigation", {})
+	var prefixes_value: Variant = navigation.get("surfaceNodePrefixes", [])
+	if not prefixes_value is Array:
+		return
+	var prefixes: Array = prefixes_value as Array
+	for node_value: Node in world_root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance: MeshInstance3D = node_value as MeshInstance3D
+		var node_name: String = mesh_instance.name
+		var matches_surface: bool = false
+		for prefix_value: Variant in prefixes:
+			if node_name.begins_with(str(prefix_value)):
+				matches_surface = true
+				break
+		if matches_surface:
+			_create_static_collision(mesh_instance, NAVIGATION_SURFACE_LAYER,
+				"_WalkSurfaceCollision")
+
+func _create_static_collision(mesh_instance: MeshInstance3D,
+		layer: int = WORLD_COLLISION_LAYER, suffix: String = "_Collision") -> void:
 	if mesh_instance.mesh == null:
 		return
 	var body := StaticBody3D.new()
-	body.name = mesh_instance.name + "_Collision"
-	body.collision_layer = WORLD_COLLISION_LAYER
+	body.name = mesh_instance.name + suffix
+	body.collision_layer = layer
 	var shape := CollisionShape3D.new()
 	shape.shape = mesh_instance.mesh.create_trimesh_shape()
 	body.add_child(shape)

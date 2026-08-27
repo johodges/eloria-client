@@ -21,15 +21,16 @@ size = Vector2(1200, 1200)
 
 [sub_resource type="StandardMaterial3D" id="Material_map_marker"]
 shading_mode = 0
-albedo_color = Color(1, 0.76, 0.14, 1)
+albedo_color = Color(1, 1, 1, 1)
 emission_enabled = true
-emission = Color(1, 0.55, 0.05, 1)
-emission_energy_multiplier = 2.0
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 3.0
+no_depth_test = true
 
 [sub_resource type="CylinderMesh" id="Mesh_map_marker"]
 material = SubResource("Material_map_marker")
-top_radius = 1.8
-bottom_radius = 1.8
+top_radius = 3.0
+bottom_radius = 3.0
 height = 0.35
 
 [node name="Main" type="Control"]
@@ -210,6 +211,7 @@ position = Vector3(0, 220, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 current = true
 far = 1000.0
+cull_mask = 5
 
 [node name="FullMapViewport" type="SubViewport" parent="GameView"]
 unique_name_in_owner = true
@@ -224,6 +226,7 @@ position = Vector3(0, 1200, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 current = true
 far = 2500.0
+cull_mask = 5
 
 [node name="MinimapFrame" type="PanelContainer" parent="GameView"]
 layout_mode = 1

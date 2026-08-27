@@ -442,7 +442,9 @@ func _update_local_actor_follow() -> void:
 	camera_rig.set_focus(focus_position)
 	map_camera.global_position = focus_position + Vector3(0, 220, 0)
 	map_camera.rotation_degrees = Vector3(-90, 0, 0)
-	player_map_marker.global_position = focus_position + Vector3(0, 3.0, 0)
+	# Render above the actor and ignore depth so roofs/bridges cannot hide the
+	# local-position dot in either top-down map camera.
+	player_map_marker.global_position = focus_position + Vector3(0, 5.0, 0)
 	player_map_marker.visible = true
 
 func _place_actor_on_surface(actor: ReplicatedActor3D) -> void:
@@ -457,17 +459,17 @@ func _place_actor_on_surface(actor: ReplicatedActor3D) -> void:
 	var hit_position_value: Variant = hit.get("position")
 	if hit_position_value is Vector3:
 		var hit_position: Vector3 = hit_position_value as Vector3
-		actor.set_surface_height(hit_position.y + 0.08)
+		actor.set_surface_height(hit_position.y + 0.02)
 		if actor.actor_id == AppState.local_actor_id:
 			print_debug("local_actor_placement map=", AppState.current_map,
 				" actor_id=", actor.actor_id, " server_target=", actor_position,
 				" navigation_hit=", hit_position, " render=", actor.render_diagnostics(),
 				" camera=", camera_rig.camera_diagnostics())
 	else:
-		actor.set_surface_height(adapter.walking_height + 0.08)
+		actor.set_surface_height(adapter.walking_height + 0.02)
 		if actor.actor_id == AppState.local_actor_id:
 			push_warning("local_actor_placement navigation_miss map=%s actor_id=%d target=%s fallback_y=%.3f" % [
-				AppState.current_map, actor.actor_id, actor_position, adapter.walking_height + 0.08])
+				AppState.current_map, actor.actor_id, actor_position, adapter.walking_height + 0.02])
 
 func _navigation_ray_position(origin: Vector3, direction: Vector3) -> Variant:
 	if gameplay_world == null:

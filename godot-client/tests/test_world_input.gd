@@ -22,12 +22,17 @@ func _run() -> void:
 	var world_viewport: SubViewport = main.get_node("GameView/ViewportContainer/Viewport") as SubViewport
 	var minimap_viewport: SubViewport = main.get_node("GameView/MapViewport") as SubViewport
 	var full_map_viewport: SubViewport = main.get_node("GameView/FullMapViewport") as SubViewport
+	var map_camera: Camera3D = main.get_node("GameView/MapViewport/MapCamera") as Camera3D
+	var full_map_camera: Camera3D = main.get_node(
+		"GameView/FullMapViewport/FullMapCamera") as Camera3D
 	var minimap_image: TextureRect = main.get_node("GameView/MinimapFrame/Minimap") as TextureRect
 	var full_map_image: TextureRect = main.get_node("GameView/FullMap/MapImage") as TextureRect
 	var camera_rig: IsometricCameraController = main.get_node(
 		"GameView/ViewportContainer/Viewport/WorldRoot/CameraRig") as IsometricCameraController
 	var compass_overlay: TextureRect = main.get_node(
 		"GameView/MinimapFrame/CompassOverlay") as TextureRect
+	var player_marker: MeshInstance3D = main.get_node(
+		"GameView/ViewportContainer/Viewport/WorldRoot/PlayerMapMarker") as MeshInstance3D
 	game_view.show()
 	_expect(container.mouse_filter == Control.MOUSE_FILTER_STOP,
 		"world viewport receives gameplay mouse input")
@@ -45,6 +50,15 @@ func _run() -> void:
 		"minimap displays its live viewport texture")
 	_expect(full_map_image.texture == full_map_viewport.get_texture(),
 		"Tab map displays its live viewport texture")
+	_expect((map_camera.cull_mask & 4) != 0 and (full_map_camera.cull_mask & 4) != 0,
+		"both map cameras render the local-player marker layer")
+	var marker_material: StandardMaterial3D = player_marker.material_override as StandardMaterial3D
+	if marker_material == null and player_marker.mesh != null:
+		marker_material = player_marker.mesh.material as StandardMaterial3D
+	_expect(marker_material != null and marker_material.albedo_color == Color.WHITE,
+		"local-player map marker is white")
+	_expect(marker_material != null and marker_material.no_depth_test,
+		"local-player map marker remains visible above map geometry")
 	var pick_result: int = int(main.call("_pick_actor", Vector2(640.0, 360.0)))
 	_expect(pick_result >= -1, "world click actor ray executes against a non-null World3D")
 	_expect(WorldLoader.NAVIGATION_SURFACE_LAYER != WorldLoader.WORLD_COLLISION_LAYER,
