@@ -27,6 +27,7 @@ World input must be suppressed when a Control consumes the pointer event. Debug 
 | Gesture | Result |
 |---|---|
 | Left click on world | Convert Godot ground point to server tile and send MOVE_TO |
+| Left click on minimap / full map | Project through that map camera and send MOVE_TO |
 | Shift + left click | Send RUN_TO |
 | Right-button drag | Orbit yaw and pitch |
 | Middle-button drag | Pan focus offset |

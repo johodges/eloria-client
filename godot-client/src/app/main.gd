@@ -160,6 +160,8 @@ func _ready() -> void:
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
 	viewport_container.gui_input.connect(_on_world_gui_input)
+	minimap.gui_input.connect(_on_minimap_gui_input)
+	map_image.gui_input.connect(_on_full_map_gui_input)
 	_bind_shared_world()
 	minimap.texture = map_viewport.get_texture()
 	map_image.texture = full_map_viewport.get_texture()
@@ -851,6 +853,57 @@ func _on_world_gui_input(event: InputEvent) -> void:
 		var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
 		if camera_rig.handle_mouse_motion(mouse_motion):
 			viewport_container.accept_event()
+
+func _on_minimap_gui_input(event: InputEvent) -> void:
+	_handle_map_gui_input(event, minimap, map_viewport, map_camera, "minimap")
+
+func _on_full_map_gui_input(event: InputEvent) -> void:
+	_handle_map_gui_input(event, map_image, full_map_viewport, full_map_camera, "full_map")
+
+func _handle_map_gui_input(event: InputEvent, map_control: Control,
+		map_render_viewport: SubViewport, camera: Camera3D, source: String) -> void:
+	if (not game_view.visible or dialogue_panel.visible or trade_panel.visible
+			or storage_panel.visible or ground_bag_panel.visible
+			or knowledge_panel.visible or manufacturing_panel.visible):
+		return
+	if not event is InputEventMouseButton:
+		return
+	var mouse_button: InputEventMouseButton = event as InputEventMouseButton
+	if not mouse_button.pressed or mouse_button.button_index != MOUSE_BUTTON_LEFT:
+		return
+	var viewport_position: Vector2 = _control_to_viewport_position(
+		mouse_button.position, map_control.size, map_render_viewport.size)
+	var target_value: Variant = _map_target_tile(camera, viewport_position)
+	print_debug("map_input source=", source, " local_click=", mouse_button.position,
+		" viewport=", viewport_position, " server_tile=", target_value,
+		" command=", "RUN_TO" if mouse_button.shift_pressed else "MOVE_TO")
+	if target_value is Vector2i:
+		var move_error: Error = Network.move_to(target_value as Vector2i,
+			mouse_button.shift_pressed)
+		if move_error != OK:
+			push_warning("%s MOVE_TO failed: %s" % [source, error_string(move_error)])
+	map_control.accept_event()
+
+func _map_target_tile(camera: Camera3D, viewport_position: Vector2) -> Variant:
+	if not is_instance_valid(camera):
+		return null
+	var ray_origin: Vector3 = camera.project_ray_origin(viewport_position)
+	var ray_direction: Vector3 = camera.project_ray_normal(viewport_position)
+	var point: Variant = _navigation_ray_position(ray_origin, ray_direction)
+	if not point is Vector3:
+		if absf(ray_direction.y) < 0.0001:
+			return null
+		var distance_to_ground: float = (adapter.walking_height - ray_origin.y) / ray_direction.y
+		if distance_to_ground < 0.0:
+			return null
+		point = ray_origin + ray_direction * distance_to_ground
+	return adapter.godot_to_server(point as Vector3)
+
+static func _control_to_viewport_position(local_position: Vector2,
+		control_size: Vector2, target_size: Vector2i) -> Vector2:
+	if control_size.x <= 0.0 or control_size.y <= 0.0:
+		return local_position
+	return local_position * Vector2(target_size) / control_size
 
 func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector2) -> void:
 	var picked_actor_id: int = _pick_actor(viewport_position)
