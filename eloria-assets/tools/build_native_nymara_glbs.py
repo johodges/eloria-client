@@ -340,32 +340,41 @@ def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[i
     spine = joint_by_name["spine_03"]
     pelvis = joint_by_name["pelvis"]
     if feature == "ears":
-        mesh.cone((-0.16, 1.70, 0.), (-0.31, 1.78, .01), .075, head, 0)
-        mesh.cone((0.16, 1.70, 0.), (0.31, 1.78, .01), .075, head, 0)
+        # Whitehorn horns begin inside the temple silhouette.  The previous
+        # shoulder-height cones began outside the head and read as floating
+        # triangles once the bind pose was animated.
+        mesh.cone((-.095, 1.735, .005), (-.225, 1.905, .025), .070, head, 1)
+        mesh.cone((.095, 1.735, .005), (.225, 1.905, .025), .070, head, 1)
     elif feature == "crystal":
-        for x in (-.30, .30):
-            mesh.cone((x, 1.42, .02), (x * 1.24, 1.72, .08), .09, spine, 1)
-        mesh.cone((0., 1.48, .13), (0., 1.82, .20), .10, spine, 1)
+        # Keep the Glasswarden facets close to the upper back so their bases
+        # intersect the torso instead of hovering beyond the shoulders.
+        for x in (-.12, .12):
+            mesh.cone((x, 1.535, -.035), (x * 1.28, 1.715, -.12), .060, spine, 1)
+        mesh.cone((0., 1.59, -.045), (0., 1.835, -.145), .070, spine, 1)
     elif feature == "mane":
         for i in range(7):
             angle = (i - 3) * .27
             mesh.cone((0., 1.62, .06), (math.sin(angle) * .22, 1.85, .06 + math.cos(angle) * .12),
                       .055, head, 1)
     elif feature == "brow":
-        mesh.box((0., 1.72, -.105), (.38, .045, .07), head, 0)
+        # Greyhaven's former box crossed the entire skull.  Their maritime
+        # identity now comes from the authored material and wearable variants.
+        pass
     elif feature == "scaled":
         for y in (1.58, 1.69, 1.80):
-            mesh.cone((0., y, .06), (0., y + .10, .20), .06, head, 1)
-        mesh.curved_tail((0., .92, .10), (0., .22, .64), pelvis, 0)
+            mesh.cone((0., y, -.06), (0., y + .10, -.20), .06, head, 1)
+        # The source humanoid faces positive Z; extend the tail behind it.
+        mesh.curved_tail((0., .92, -.10), (0., .22, -.64), pelvis, 0)
     elif feature == "stone":
-        for x in (-.23, 0., .23):
-            mesh.cone((x, 1.36, .05), (x * 1.08, 1.68, .16), .10, spine, 1)
-        for x in (-.13, .13):
-            mesh.cone((x, 1.73, .01), (x * 1.20, 1.96, .05), .07, head, 1)
+        # A compact crown intersects the scalp; the old shoulder shards were
+        # detached from the body and looked identical to missing-mesh markers.
+        for x in (-.09, .09):
+            mesh.cone((x, 1.735, .005), (x * 1.18, 1.925, .045), .060, head, 1)
     elif feature == "fungal":
-        mesh.sphere((0., 1.82, .01), (.42, .12, .34), head, 1, 8, 20)
-        mesh.sphere((-.24, 1.63, .08), (.16, .07, .13), head, 1, 6, 14)
-        mesh.sphere((.27, 1.57, .10), (.13, .06, .11), head, 1, 6, 14)
+        # One stemmed cap reads as anatomy/headwear.  Detached shoulder caps
+        # were removed because their gaps were conspicuous during animation.
+        mesh.cylinder((0., 1.705, .01), (0., 1.815, .01), .055, head, 0, 14)
+        mesh.sphere((0., 1.835, .01), (.39, .115, .32), head, 1, 8, 20)
     return mesh.arrays()
 
 

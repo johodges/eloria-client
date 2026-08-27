@@ -9,7 +9,9 @@ extends Control
 @onready var create_confirm: LineEdit = %CreateConfirm
 @onready var create_gender: OptionButton = %CreateGender
 @onready var create_status: Label = %CreateStatus
+@onready var preview_container: SubViewportContainer = %CharacterPreview
 @onready var preview_root: Node3D = %PreviewRoot
+@onready var preview_camera: Camera3D = %PreviewCamera
 @onready var host_edit: LineEdit = %Host
 @onready var port_edit: SpinBox = %Port
 @onready var user_edit: LineEdit = %Username
@@ -119,6 +121,9 @@ var adapter := CoordinateAdapter.new({"walkingHeight": 0.0, "invertServerY": tru
 var preview_actor: ReplicatedActor3D
 var pending_create_username := ""
 var pending_create_password := ""
+var preview_yaw := 0.0
+var preview_pitch := 0.12
+var preview_distance := 4.2
 var inventory_slot_buttons: Array[Button] = []
 var equipment_slot_buttons: Array[Button] = []
 var quick_slot_buttons: Array[Button] = []
@@ -181,6 +186,7 @@ func _ready() -> void:
 		var option: Dictionary = raw_option as Dictionary
 		create_gender.add_item(str(option.get("label", "Unknown appearance")),
 			int(option.get("actorType", 1)))
+	_update_preview_camera()
 	_apply_eloria_art()
 	_apply_eloria_theme()
 	_build_inventory_slots()
@@ -246,6 +252,9 @@ func _on_creation_back_pressed() -> void:
 func _on_create_gender_item_selected(_index: int) -> void:
 	_refresh_creation_preview()
 
+func _on_create_appearance_changed(_value: float) -> void:
+	_refresh_creation_preview()
+
 func _on_create_pressed() -> void:
 	var username := create_name.text.strip_edges()
 	var password := create_password.text
@@ -261,11 +270,8 @@ func _on_create_pressed() -> void:
 	pending_create_username = username
 	pending_create_password = password
 	create_status.text = "Creating character…"
-	var appearance := {
-		"skin": int(%CreateSkin.value), "hair": int(%CreateHair.value),
-		"eyes": int(%CreateEyes.value), "shirt": int(%CreateShirt.value),
-		"pants": int(%CreatePants.value), "boots": int(%CreateBoots.value),
-		"head": int(%CreateHead.value), "actor_type": create_gender.get_selected_id()}
+	var appearance: Dictionary = _creation_appearance()
+	appearance["actor_type"] = create_gender.get_selected_id()
 	var error := Network.create_character(username, password, appearance)
 	if error != OK:
 		create_status.text = "Creation request failed: " + error_string(error)
@@ -298,8 +304,13 @@ func _refresh_creation_preview() -> void:
 		preview_actor.queue_free()
 	preview_actor = ReplicatedActor3D.new()
 	preview_root.add_child(preview_actor)
-	var actor_type := create_gender.get_selected_id()
-	var dto := {"actor_id": 0, "x": 0, "y": 0, "rotation": 0, "actor_type": actor_type, "kind": 1}
+	var actor_type: int = create_gender.get_selected_id()
+	var appearance: Dictionary = _creation_appearance()
+	var dto := {"actor_id": 0, "x": 0, "y": 0, "rotation": 0,
+		"actor_type": actor_type, "kind": 1, "name": "Preview",
+		"appearance": appearance,
+		"equipment_visuals": AppearanceVariants.equipment_visuals(
+			actor_type, appearance)}
 	var model_id := _model_for_actor(dto)
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 	var errors := preview_actor.configure(dto,
@@ -307,6 +318,49 @@ func _refresh_creation_preview() -> void:
 		_animation_for_model(model_config), equipment_config)
 	if not errors.is_empty():
 		create_status.text = "Preview warnings: " + "; ".join(errors)
+	else:
+		create_status.text = "Drag the preview to rotate; use the mouse wheel to zoom."
+
+func _creation_appearance() -> Dictionary:
+	return {
+		"skin": int(%CreateSkin.value), "hair": int(%CreateHair.value),
+		"eyes": int(%CreateEyes.value), "shirt": int(%CreateShirt.value),
+		"pants": int(%CreatePants.value), "boots": int(%CreateBoots.value),
+		"head": int(%CreateHead.value),
+	}
+
+func _on_character_preview_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
+		if not mouse_button.pressed:
+			return
+		if mouse_button.button_index == MOUSE_BUTTON_WHEEL_UP:
+			preview_distance = maxf(2.4, preview_distance - 0.3)
+		elif mouse_button.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			preview_distance = minf(7.0, preview_distance + 0.3)
+		else:
+			return
+		_update_preview_camera()
+		preview_container.accept_event()
+	elif event is InputEventMouseMotion:
+		var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
+		if (mouse_motion.button_mask & (MOUSE_BUTTON_MASK_LEFT |
+				MOUSE_BUTTON_MASK_RIGHT)) == 0:
+			return
+		preview_yaw -= mouse_motion.relative.x * 0.01
+		preview_pitch = clampf(preview_pitch + mouse_motion.relative.y * 0.008,
+			-0.35, 0.65)
+		_update_preview_camera()
+		preview_container.accept_event()
+
+func _update_preview_camera() -> void:
+	if preview_camera == null:
+		return
+	var focus := Vector3(0.0, 1.0, 0.0)
+	var horizontal: float = cos(preview_pitch) * preview_distance
+	preview_camera.position = focus + Vector3(sin(preview_yaw) * horizontal,
+		sin(preview_pitch) * preview_distance, cos(preview_yaw) * horizontal)
+	preview_camera.look_at(focus)
 
 func _on_login_pressed() -> void:
 	if AppState.authenticated:
@@ -2045,13 +2099,24 @@ func _model_for_actor(dto: Dictionary) -> String:
 
 func _presentation_dto(dto: Dictionary) -> Dictionary:
 	var result: Dictionary = dto.duplicate(true)
+	var actor_type: int = int(dto.get("actor_type", -1))
+	var appearance: Dictionary = dto.get("appearance", {}) as Dictionary
+	var visuals: Dictionary = AppearanceVariants.equipment_visuals(
+		actor_type, appearance)
 	var look: Dictionary = npc_looks.get(str(int(dto.get("actor_type", -1))), {}) as Dictionary
-	if look.is_empty():
-		return result
-	var visuals: Dictionary = (look.get("equipmentVisuals", {}) as Dictionary).duplicate(true)
+	var look_visuals: Dictionary = look.get("equipmentVisuals", {}) as Dictionary
+	for raw_part: Variant in look_visuals:
+		visuals[raw_part] = look_visuals[raw_part]
 	var server_visuals: Dictionary = dto.get("equipment_visuals", {}) as Dictionary
 	for raw_part: Variant in server_visuals:
-		visuals[raw_part] = server_visuals[raw_part]
+		var part: int = int(raw_part)
+		var visual_id: int = int(server_visuals[raw_part])
+		# Enhanced actor records repeat the legacy creation bytes in parts 3–6.
+		# Values below 100 are choices, not native equipment visual IDs.
+		if part not in [AppearanceVariants.PART_HEAD,
+				AppearanceVariants.PART_PANTS, AppearanceVariants.PART_SHIRT,
+				AppearanceVariants.PART_BOOTS] or visual_id >= 100:
+			visuals[raw_part] = visual_id
 	result["equipment_visuals"] = visuals
 	return result
 

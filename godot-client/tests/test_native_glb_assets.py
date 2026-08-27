@@ -36,7 +36,7 @@ class NativeGlbAssetsTest(unittest.TestCase):
         self.assertEqual(14, len(self.catalog["races"]))
         self.assertEqual(32, len(self.catalog["creatures"]))
         self.assertEqual(63, len(self.catalog["equipment"]))
-        self.assertEqual(109, self.catalog["validation"]["files"])
+        self.assertEqual(110, self.catalog["validation"]["files"])
 
     def test_player_rigs_preserve_current_skeleton_and_budget(self) -> None:
         for model_id, entry in self.catalog["races"].items():
@@ -46,7 +46,9 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertLess(entry["vertices"], 10_500)
                 document = glb_document(ROOT / entry["path"])
                 self.assertEqual(65, len(document["skins"][0]["joints"]))
-                self.assertGreaterEqual(len(document["meshes"]), 4)
+                # Greyhaven intentionally has no extra silhouette mesh: its
+                # former brow box intersected the head in the creation view.
+                self.assertGreaterEqual(len(document["meshes"]), 3)
 
     def test_creatures_have_new_rigs_and_embedded_clips(self) -> None:
         expected_actor_types = set(range(204, 236))

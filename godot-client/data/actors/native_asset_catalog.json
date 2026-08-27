@@ -46,15 +46,15 @@
       "path": "godot-client/assets/actors/native/races/orun_male.glb"
     },
     "greyhaven_female": {
-      "vertices": 8868,
-      "triangles": 15072,
+      "vertices": 8844,
+      "triangles": 15060,
       "joints": 65,
       "feature": "brow",
       "path": "godot-client/assets/actors/native/races/greyhaven_female.glb"
     },
     "greyhaven_male": {
-      "vertices": 8507,
-      "triangles": 14330,
+      "vertices": 8483,
+      "triangles": 14318,
       "joints": 65,
       "feature": "brow",
       "path": "godot-client/assets/actors/native/races/greyhaven_male.glb"
@@ -74,29 +74,29 @@
       "path": "godot-client/assets/actors/native/races/ssarathi_male.glb"
     },
     "stoneborn_female": {
-      "vertices": 8919,
-      "triangles": 15130,
+      "vertices": 8874,
+      "triangles": 15088,
       "joints": 65,
       "feature": "stone",
       "path": "godot-client/assets/actors/native/races/stoneborn_female.glb"
     },
     "stoneborn_male": {
-      "vertices": 8558,
-      "triangles": 14388,
+      "vertices": 8513,
+      "triangles": 14346,
       "joints": 65,
       "feature": "stone",
       "path": "godot-client/assets/actors/native/races/stoneborn_male.glb"
     },
     "mycelari_female": {
-      "vertices": 9243,
-      "triangles": 15716,
+      "vertices": 9061,
+      "triangles": 15408,
       "joints": 65,
       "feature": "fungal",
       "path": "godot-client/assets/actors/native/races/mycelari_female.glb"
     },
     "mycelari_male": {
-      "vertices": 8882,
-      "triangles": 14974,
+      "vertices": 8700,
+      "triangles": 14666,
       "joints": 65,
       "feature": "fungal",
       "path": "godot-client/assets/actors/native/races/mycelari_male.glb"
@@ -1089,7 +1089,7 @@
     }
   },
   "validation": {
-    "files": 109,
+    "files": 110,
     "results": {
       "godot-client/assets/actors/native/races/mycelari_female.glb": {
         "nodes": 70,
@@ -1128,8 +1128,8 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/races/greyhaven_female.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 69,
+        "meshes": 3,
         "skins": 1,
         "animations": 0
       },
@@ -1158,8 +1158,8 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/races/greyhaven_male.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 69,
+        "meshes": 3,
         "skins": 1,
         "animations": 0
       },
@@ -1174,6 +1174,12 @@
         "meshes": 4,
         "skins": 1,
         "animations": 0
+      },
+      "godot-client/assets/actors/native/shared/Universal_Animation_Library.glb": {
+        "nodes": 66,
+        "meshes": 0,
+        "skins": 0,
+        "animations": 162
       },
       "godot-client/assets/actors/native/creatures/miretoad.glb": {
         "nodes": 22,
