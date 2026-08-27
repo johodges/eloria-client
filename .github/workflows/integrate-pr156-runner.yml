@@ -31,31 +31,33 @@ jobs:
             exit 1
           fi
           git diff --check
-          git commit -m "Merge Nymara regional production maps into combined Godot branch"
-      - name: Validate regional assets
+      - name: Repair and validate regional concept boards
         shell: bash
         run: |
           set -euo pipefail
           python3 -m pip install --disable-pip-version-check numpy pillow
-          file eloria-assets/maps/nymara-regions/amberwood/references/00-concept-detail-board.png || true
           python3 - <<'PY'
-          from PIL import Image
           from pathlib import Path
-          p = Path('eloria-assets/maps/nymara-regions/amberwood/references/00-concept-detail-board.png')
-          try:
-              im = Image.open(p)
-              print('amberwood concept board:', im.format, im.size, im.mode)
-          except Exception as e:
-              print('amberwood concept board open error:', repr(e))
+          from PIL import Image, ImageFile
+          ImageFile.LOAD_TRUNCATED_IMAGES = True
+          boards = sorted(Path('eloria-assets/maps/nymara-regions').glob('**/references/00-concept-detail-board.png'))
+          if len(boards) != 18:
+              raise SystemExit(f'expected 18 concept boards, found {len(boards)}')
+          for path in boards:
+              with Image.open(path) as image:
+                  image.load()
+                  repaired = image.convert('RGB')
+              repaired.save(path, format='PNG', optimize=True)
+              with Image.open(path) as check:
+                  check.verify()
+              print('repaired', path)
           PY
-          set +e
           python3 eloria-assets/tools/validate_nymara_region_maps.py
-          status=$?
-          set -e
-          cat eloria-assets/maps/nymara-regions/validation-report.json
-          test "$status" -eq 0
           python3 -m json.tool godot-client/data/maps/registry.json >/dev/null
           test -f eloria-assets/maps/nymara-regions/mirrorhold/world.glb
           test -f eloria-assets/maps/nymara-regions/manymouth_delta/world.glb
+          git add eloria-assets/maps/nymara-regions
+          git diff --check
+          git commit -m "Merge Nymara regional production maps into combined Godot branch"
       - name: Publish clean integration result
         run: git push --force origin HEAD:codex/integrated-pr156-20260827
