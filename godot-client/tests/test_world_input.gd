@@ -282,10 +282,10 @@ func _run() -> void:
 		and main.call("_movement_axes_for_actions", false, true, false, false)
 		== Vector2i(-1, 0)
 		and main.call("_movement_axes_for_actions", false, false, true, false)
-		== Vector2i(0, -1)
+		== Vector2i(0, 1)
 		and main.call("_movement_axes_for_actions", false, false, false, true)
-		== Vector2i(0, 1),
-		"W/S move forward/backward and A/D move left/right")
+		== Vector2i(0, -1),
+		"W/S move forward/backward and A/D use the requested swapped strafe directions")
 	var q_turn := InputEventKey.new()
 	q_turn.physical_keycode = KEY_Q
 	var e_turn := InputEventKey.new()
