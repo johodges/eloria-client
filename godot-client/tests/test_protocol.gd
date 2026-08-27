@@ -255,7 +255,9 @@ func _init() -> void:
 			var spell_catalog: SpellCatalog = SpellCatalog.new()
 			spell_catalog.configure(spell_config_value as Dictionary)
 			var heal: Dictionary = spell_catalog.spell(0)
-			_expect(heal.get("sigils", []) == [3, 23],
+			var heal_sigils: Array = heal.get("sigils", []) as Array
+			_expect(heal_sigils.size() == 2 and int(heal_sigils[0]) == 3
+				and int(heal_sigils[1]) == 23,
 				"Heal uses the audited ordered sigil sequence")
 			var heal_icon: Texture2D = spell_catalog.icon_for(0)
 			_expect(heal_icon is AtlasTexture and heal_icon.get_size() == Vector2(64, 64),
