@@ -454,15 +454,19 @@ func _emit_stat_feedback(stat_key: String, previous_value: int,
 		next_value: int) -> void:
 	if next_value <= previous_value:
 		return
-	if stat_key.ends_with("_experience_next"):
+	if stat_key.ends_with("_exp_next"):
 		return
-	if stat_key.ends_with("_experience"):
-		var skill_key: String = stat_key.trim_suffix("_experience")
+	if stat_key.ends_with("_exp"):
+		var skill_key: String = stat_key.trim_suffix("_exp")
 		floating_feedback_requested.emit({
 			"kind": "experience", "skill": skill_key,
 			"amount": next_value - previous_value, "value": next_value})
-	elif stat_key.ends_with("_base_level"):
-		var skill_key: String = stat_key.trim_suffix("_base_level")
+	elif stat_key.ends_with("_base"):
+		var skill_key: String = stat_key.trim_suffix("_base")
+		if not skill_key in ["attack", "defense", "harvesting", "alchemy",
+				"magic", "potion", "summoning", "manufacturing", "crafting",
+				"engineering", "tailoring", "ranging", "overall"]:
+			return
 		floating_feedback_requested.emit({
 			"kind": "level", "skill": skill_key, "level": next_value})
 

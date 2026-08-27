@@ -608,31 +608,43 @@ static func decode_stats(payload: PackedByteArray) -> Dictionary:
 		"human_nexus", "animal_nexus", "vegetal_nexus", "inorganic_nexus",
 		"artificial_nexus", "magic_nexus"]
 	for index: int in range(attribute_names.size()):
-		values[attribute_names[index]] = s16(payload, index * 4)
-	# Each entry is [current level, base level, current experience,
-	# next-level experience] in the legacy 16-bit stat-slot coordinate system.
-	# Experience values span two slots and must be decoded as unsigned 32-bit
-	# values, matching the original EL/Eloria client.
-	var skills: Dictionary = {
-		"manufacturing": [24, 25, 49, 51], "harvesting": [26, 27, 53, 55],
-		"alchemy": [28, 29, 57, 59], "overall": [30, 31, 61, 63],
-		"attack": [32, 33, 65, 67], "defense": [34, 35, 69, 71],
-		"magic": [36, 37, 73, 75], "potion": [38, 39, 77, 79],
-		"summoning": [83, 84, 85, 87], "crafting": [89, 90, 91, 93],
-		"engineering": [95, 96, 97, 99], "tailoring": [101, 102, 103, 105],
-		"ranging": [107, 108, 109, 111]}
-	for skill_name: String in skills:
-		var layout: Array = skills[skill_name] as Array
-		values[skill_name] = s16(payload, int(layout[0]) * 2)
-		values[skill_name + "_base_level"] = s16(payload, int(layout[1]) * 2)
-		values[skill_name + "_experience"] = u32(payload, int(layout[2]) * 2)
-		values[skill_name + "_experience_next"] = u32(payload, int(layout[3]) * 2)
+		var key: String = attribute_names[index]
+		values[key] = s16(payload, index * 4)
+		values[key + "_base"] = s16(payload, index * 4 + 2)
+	var skill_level_slots: Dictionary = {
+		"manufacturing": 24, "harvesting": 26, "alchemy": 28, "overall": 30,
+		"attack": 32, "defense": 34, "magic": 36, "potion": 38,
+		"summoning": 83, "crafting": 89, "engineering": 95,
+		"tailoring": 101, "ranging": 107}
+	for skill_name: String in skill_level_slots:
+		var level_slot: int = int(skill_level_slots[skill_name])
+		values[skill_name] = s16(payload, level_slot * 2)
+		values[skill_name + "_base"] = s16(payload, (level_slot + 1) * 2)
+	# Eloria sends spent pickpoints in the current half of the legacy overall
+	# pair and the actual overall level in the base half.
+	values["overall_level"] = values["overall_base"]
+	var experience_slots: Dictionary = {
+		"manufacturing": 49, "harvesting": 53, "alchemy": 57,
+		"overall": 61, "attack": 65, "defense": 69, "magic": 73,
+		"potion": 77, "summoning": 85, "crafting": 91,
+		"engineering": 97, "tailoring": 103, "ranging": 109}
+	for skill_name: String in experience_slots:
+		var experience_slot: int = int(experience_slots[skill_name])
+		values[skill_name + "_exp"] = u32(payload, experience_slot * 2)
+		values[skill_name + "_exp_next"] = u32(payload, (experience_slot + 2) * 2)
 	for resource: String in ["carried", "capacity", "health", "max_health", "ether", "max_ether"]:
 		var resource_index: int = ["carried", "capacity", "health", "max_health", "ether", "max_ether"].find(resource)
 		values[resource] = s16(payload, (40 + resource_index) * 2)
 	values["food"] = s16(payload, 46 * 2)
+	values["research_completed"] = s16(payload, 47 * 2)
+	values["researching"] = s16(payload, 81 * 2)
+	values["research_total"] = s16(payload, 82 * 2)
 	values["action_points"] = s16(payload, 113 * 2)
 	values["max_action_points"] = s16(payload, 114 * 2)
+	# Eloria's current server also uses these legacy tail slots for pickpoint
+	# accounting. Keep the action-point aliases for older servers/HUD meters.
+	values["pickpoints_spent"] = values["action_points"]
+	values["pickpoints_earned"] = values["max_action_points"]
 	return {"type": "stats", "values": values}
 
 static func decode_partial_stats(payload: PackedByteArray) -> Dictionary:
@@ -641,7 +653,14 @@ static func decode_partial_stats(payload: PackedByteArray) -> Dictionary:
 	var values: Dictionary = {}
 	for offset: int in range(0, payload.size(), 5):
 		var slot: int = int(payload[offset])
-		values[stat_key(slot)] = s32(payload, offset + 1)
+		var value: int = s32(payload, offset + 1)
+		values[stat_key(slot)] = value
+		if slot == 31 or slot == 114:
+			values["overall_level"] = value
+		if slot == 113:
+			values["pickpoints_spent"] = value
+		elif slot == 114:
+			values["pickpoints_earned"] = value
 	return {"type": "partial_stats", "values": values}
 
 static func decode_inventory(payload: PackedByteArray) -> Dictionary:
@@ -691,33 +710,35 @@ static func decode_item_cooldowns(payload: PackedByteArray) -> Dictionary:
 
 static func stat_key(slot: int) -> String:
 	var keys: Dictionary = {
-		40: "carried", 41: "capacity", 42: "health", 43: "max_health",
-		44: "ether", 45: "max_ether", 46: "food",
-		113: "action_points", 114: "max_action_points",
-		24: "manufacturing", 26: "harvesting", 28: "alchemy", 30: "overall",
-		32: "attack", 34: "defense", 36: "magic", 38: "potion",
-		83: "summoning", 89: "crafting", 95: "engineering",
-		101: "tailoring", 107: "ranging",
-		25: "manufacturing_base_level", 27: "harvesting_base_level",
-		29: "alchemy_base_level", 31: "overall_base_level",
-		33: "attack_base_level", 35: "defense_base_level",
-		37: "magic_base_level", 39: "potion_base_level",
-		84: "summoning_base_level", 90: "crafting_base_level",
-		96: "engineering_base_level", 102: "tailoring_base_level",
-		108: "ranging_base_level",
-		49: "manufacturing_experience", 51: "manufacturing_experience_next",
-		53: "harvesting_experience", 55: "harvesting_experience_next",
-		57: "alchemy_experience", 59: "alchemy_experience_next",
-		61: "overall_experience", 63: "overall_experience_next",
-		65: "attack_experience", 67: "attack_experience_next",
-		69: "defense_experience", 71: "defense_experience_next",
-		73: "magic_experience", 75: "magic_experience_next",
-		77: "potion_experience", 79: "potion_experience_next",
-		85: "summoning_experience", 87: "summoning_experience_next",
-		91: "crafting_experience", 93: "crafting_experience_next",
-		97: "engineering_experience", 99: "engineering_experience_next",
-		103: "tailoring_experience", 105: "tailoring_experience_next",
-		109: "ranging_experience", 111: "ranging_experience_next"}
+		0: "physique", 1: "physique_base", 2: "coordination",
+		3: "coordination_base", 4: "reasoning", 5: "reasoning_base",
+		6: "will", 7: "will_base", 8: "instinct", 9: "instinct_base",
+		10: "vitality", 11: "vitality_base", 12: "human_nexus",
+		13: "human_nexus_base", 14: "animal_nexus", 15: "animal_nexus_base",
+		16: "vegetal_nexus", 17: "vegetal_nexus_base", 18: "inorganic_nexus",
+		19: "inorganic_nexus_base", 20: "artificial_nexus",
+		21: "artificial_nexus_base", 22: "magic_nexus", 23: "magic_nexus_base",
+		24: "manufacturing", 25: "manufacturing_base", 26: "harvesting",
+		27: "harvesting_base", 28: "alchemy", 29: "alchemy_base",
+		30: "overall", 31: "overall_base", 32: "defense", 33: "defense_base",
+		34: "attack", 35: "attack_base", 36: "magic", 37: "magic_base",
+		38: "potion", 39: "potion_base", 40: "carried", 41: "capacity",
+		42: "health", 43: "max_health", 44: "ether", 45: "max_ether",
+		46: "food", 47: "researching", 49: "manufacturing_exp",
+		50: "manufacturing_exp_next", 51: "harvesting_exp",
+		52: "harvesting_exp_next", 53: "alchemy_exp", 54: "alchemy_exp_next",
+		55: "overall_exp", 56: "overall_exp_next", 57: "defense_exp",
+		58: "defense_exp_next", 59: "attack_exp", 60: "attack_exp_next",
+		61: "magic_exp", 62: "magic_exp_next", 63: "potion_exp",
+		64: "potion_exp_next", 65: "research_completed", 66: "research_total",
+		67: "summoning_exp", 68: "summoning_exp_next", 69: "summoning",
+		70: "summoning_base", 71: "crafting_exp", 72: "crafting_exp_next",
+		73: "crafting", 74: "crafting_base", 75: "engineering_exp",
+		76: "engineering_exp_next", 77: "engineering", 78: "engineering_base",
+		79: "ranging_exp", 80: "ranging_exp_next", 81: "ranging",
+		82: "ranging_base", 83: "tailoring_exp", 84: "tailoring_exp_next",
+		85: "tailoring", 86: "tailoring_base", 87: "action_points",
+		88: "max_action_points", 113: "action_points", 114: "max_action_points"}
 	return str(keys.get(slot, "slot_%d" % slot))
 
 static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := false) -> Dictionary:

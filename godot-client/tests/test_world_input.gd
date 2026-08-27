@@ -58,6 +58,18 @@ func _run() -> void:
 	_expect(not minimap_frame.visible and minimap_frame.anchor_left == 0.0
 		and InputMap.has_action("toggle_minimap"),
 		"Alt+M controls a floating minimap outside the right HUD rail")
+	_expect(minimap_frame.gui_input.is_connected(Callable(main, "_on_minimap_frame_gui_input"))
+		and main.get_node("GameView/MinimapFrame/North") is Label
+		and main.get_node("GameView/MinimapFrame/East") is Label
+		and main.get_node("GameView/MinimapFrame/South") is Label
+		and main.get_node("GameView/MinimapFrame/West") is Label,
+		"minimap compass border exposes cardinal labels and drag/context input")
+	_expect(main.get("_minimap_menu") is PopupMenu,
+		"minimap right-click orientation menu is configured")
+	main.call("_on_minimap_orientation_selected", 1)
+	_expect(str(main.get("_minimap_orientation")) == "player_up",
+		"minimap can rotate with the player")
+	main.call("_on_minimap_orientation_selected", 0)
 	var resolved_world: World3D = world_viewport.find_world_3d()
 	_expect(resolved_world != null, "gameplay World3D resolves from the world viewport")
 	_expect(minimap_viewport.world_3d != null and minimap_viewport.world_3d == resolved_world,
@@ -151,6 +163,8 @@ func _run() -> void:
 	var right_quickbar: Control = main.get_node("GameView/ItemSpellQuickbar") as Control
 	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
 	var inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
+	var stats_tabs: TabContainer = main.get_node(
+		"GameView/StatsPanel/Content/StatsTabs") as TabContainer
 	var inventory_button: Button = main.get_node(
 		"GameView/Quickbar/QuickRows/Buttons/InventoryButton") as Button
 	var walk_button: Button = main.get_node(
@@ -221,9 +235,23 @@ func _run() -> void:
 		and (main.get_node("GameView/EloriaLogoFrame/HudLogo") as TextureRect).texture != null,
 		"clock, compass, and top-right Eloria logo are interactive/present")
 	_expect(InputMap.has_action("toggle_console")
+		and InputMap.has_action("toggle_inventory")
+		and InputMap.has_action("move_north") and InputMap.has_action("move_south")
+		and InputMap.has_action("move_west") and InputMap.has_action("move_east")
+		and InputMap.has_action("turn_left") and InputMap.has_action("turn_right")
 		and main.get_node("GameView/ConsolePanel/Content/ConsoleOutput") is RichTextLabel
 		and chat_input.anchor_left > 0.5,
-		"tilde console history and bottom-right T/Esc chat entry are available")
+		"console, Ctrl+I inventory, WASD/QE, and bottom-right chat controls are available")
+	_expect(stats_tabs.get_tab_count() == 4
+		and stats_tabs.get_tab_title(0) == "Statistics"
+		and stats_tabs.get_tab_title(1) == "Knowledge"
+		and stats_tabs.get_tab_title(2) == "Counters"
+		and stats_tabs.get_tab_title(3) == "Session Experience",
+		"statistics frame provides the four Eternal Lands-style tabs")
+	_expect(main.get_node("GameView/StatsPanel/Content/Header/StatsClose") is Button
+		and main.get_node("GameView/StatsPanel/Content/StatsTabs/Counters/CounterColumns/CounterCategories") is ItemList
+		and main.get_node("GameView/StatsPanel/Content/StatsTabs/Session Experience/SessionContent/SessionXpText") is RichTextLabel,
+		"statistics has close, counters, session XP, and perks-ready content")
 	for meter_path: String in [
 		"GameView/Quickbar/QuickRows/BottomMeters/ManaMeter/EtherBottom",
 		"GameView/Quickbar/QuickRows/BottomMeters/FoodMeter/FoodBottom",
@@ -244,8 +272,8 @@ func _run() -> void:
 		"ether": 33, "max_ether": 50, "action_points": 18,
 		"max_action_points": 30, "food": 42, "carried": 205, "capacity": 320,
 		"attack": 24, "overall": 22, "harvesting": 8,
-		"harvesting_base_level": 8, "harvesting_experience": 1480,
-		"harvesting_experience_next": 2066})
+		"harvesting_base": 8, "harvesting_exp": 1480,
+		"harvesting_exp_next": 2066})
 	main.call("_sync_stats")
 	var overhead_health_bar: ProgressBar = main.get_node(
 		"GameView/ActorResourceOverlay/Rows/HealthRow/Bar") as ProgressBar
@@ -267,7 +295,7 @@ func _run() -> void:
 	app_state_inventory.floating_feedback_requested.connect(
 		func(feedback: Dictionary) -> void: floating_feedback.append(feedback))
 	app_state_inventory.call("_on_packet", 49, PackedByteArray([
-		53, 0xd4, 0x05, 0, 0, 27, 9, 0, 0, 0]))
+		51, 0xd4, 0x05, 0, 0, 27, 9, 0, 0, 0]))
 	_expect(floating_feedback.size() == 2
 		and floating_feedback[0].kind == "experience"
 		and int(floating_feedback[0].amount) == 12
@@ -292,6 +320,38 @@ func _run() -> void:
 	main.call("_on_stats_button_pressed")
 	_expect(not inventory_panel.visible and not inventory_button.disabled,
 		"real inventory window starts closed with its HUD action enabled")
+	var inventory_hotkey := InputEventKey.new()
+	inventory_hotkey.pressed = true
+	inventory_hotkey.ctrl_pressed = true
+	inventory_hotkey.physical_keycode = KEY_I
+	main.call("_input", inventory_hotkey)
+	_expect(inventory_panel.visible, "Ctrl+I opens inventory")
+	main.call("_input", inventory_hotkey)
+	_expect(not inventory_panel.visible, "Ctrl+I closes inventory")
+	_expect(main.get_node("GameView/InventoryPanel/Content/Header/InventoryClose") is Button
+		and main.get_node("GameView/InventoryPanel/Content/InventoryBody/SideActions/InventoryStoreAll") is Button
+		and main.get_node("GameView/InventoryPanel/Content/InventoryBody/SideActions/InventoryGetAll") is Button
+		and main.get_node("GameView/InventoryPanel/Content/InventoryBody/SideActions/InventoryDropAll") is Button
+		and main.get_node("GameView/InventoryPanel/Content/InventoryBody/SideActions/InventoryMixAll") is Button
+		and main.get_node("GameView/InventoryPanel/Content/InventoryBody/SideActions/InventoryItemLists") is Button,
+		"inventory exposes close and all EL-style side actions")
+	_expect((main.call("_parse_item_list", "1158:20\n189:1") as Array).size() == 2,
+		"custom storage item lists parse image IDs and quantities")
+	var inventory_body: HBoxContainer = main.get_node(
+		"GameView/InventoryPanel/Content/InventoryBody") as HBoxContainer
+	var equipment_column: VBoxContainer = main.get_node(
+		"GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn") as VBoxContainer
+	main.call("_on_equipment_side_selected", 1)
+	_expect(equipment_column.get_index() == inventory_body.get_child_count() - 1,
+		"settings can place equipment on the right side")
+	main.call("_on_equipment_side_selected", 0)
+	_expect(equipment_column.get_index() == 0,
+		"settings can independently restore equipment to the left side")
+	main.call("_on_bulk_option_selected", 0, "drop")
+	_expect(bool(main.call("_inventory_slot_is_protected", 0, "drop"))
+		and not bool(main.call("_inventory_slot_is_protected", 6, "drop")),
+		"drop-all row and column protections are independently selectable")
+	main.call("_on_bulk_option_selected", 0, "drop")
 	_expect(attack_button.disabled, "attack action starts disabled without a selected target")
 	_expect(trade_button.disabled and not trade_panel.visible,
 		"trade starts closed and disabled without a selected player")
@@ -457,7 +517,7 @@ func _run() -> void:
 	app_state_inventory.call("close_storage")
 	main.call("_sync_storage")
 	_expect(not storage_panel.visible, "storage close clears its local session window")
-	var knowledge_panel: Control = main.get_node("GameView/KnowledgePanel") as Control
+	var knowledge_panel: Control = main.get_node("GameView/StatsPanel") as Control
 	var knowledge_button: Button = main.get_node(
 		"GameView/Quickbar/QuickRows/Buttons/KnowledgeButton") as Button
 	_expect(not knowledge_panel.visible and not knowledge_button.disabled,
@@ -465,16 +525,17 @@ func _run() -> void:
 	app_state_inventory.call("_on_packet", 55, PackedByteArray([0x09]))
 	main.call("_on_knowledge_button_pressed")
 	var knowledge_list: ItemList = main.get_node(
-		"GameView/KnowledgePanel/Content/Columns/KnowledgeList") as ItemList
+		"GameView/StatsPanel/Content/StatsTabs/Knowledge/KnowledgeContent/Columns/KnowledgeList") as ItemList
 	_expect(knowledge_panel.visible and knowledge_list.item_count == 385
+		and (main.get_node("GameView/StatsPanel/Content/StatsTabs") as TabContainer).current_tab == 1
 		and root.get_visible_rect().encloses(knowledge_panel.get_global_rect()),
-		"server knowledge ownership opens the complete catalog within the viewport")
+		"knowledge tab opens the complete server catalog within the statistics frame")
 	app_state_inventory.call("select_knowledge", 0)
 	app_state_inventory.call("_on_packet", 57,
 		PackedByteArray([77, 101, 116, 97, 108, 108, 117, 114, 103, 121, 0]))
 	main.call("_sync_knowledge")
 	var knowledge_detail: RichTextLabel = main.get_node(
-		"GameView/KnowledgePanel/Content/Columns/KnowledgeDetail") as RichTextLabel
+		"GameView/StatsPanel/Content/StatsTabs/Knowledge/KnowledgeContent/Columns/KnowledgeDetail") as RichTextLabel
 	_expect(knowledge_detail.text.contains("Metallurgy")
 		and knowledge_detail.text.contains("Status: Read"),
 		"selected knowledge renders server text and owned status")
@@ -563,11 +624,11 @@ func _run() -> void:
 		"inventory_usable": false, "stackable": false}})
 	main.call("_sync_inventory")
 	var first_inventory_slot: Button = main.get_node(
-		"GameView/InventoryPanel/Content/Scroll/InventoryGrid").get_child(0) as Button
+		"GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Scroll/InventoryGrid").get_child(0) as Button
 	var first_quick_slot: Button = main.get_node(
 		"GameView/ItemSpellQuickbar/QuickContent/ItemSlots/Slot1") as Button
 	var first_equipment_slot: Button = main.get_node(
-		"GameView/InventoryPanel/Content/EquipmentGrid").get_child(0) as Button
+		"GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn/EquipmentGrid").get_child(0) as Button
 	_expect(first_inventory_slot.text.contains("×9") and first_inventory_slot.icon != null
 		and not first_inventory_slot.disabled,
 		"inventory snapshot populates its server slot")
@@ -581,9 +642,9 @@ func _run() -> void:
 	main.set("selected_inventory_slot", 0)
 	main.call("_sync_inventory")
 	var empty_inventory_slot: Button = main.get_node(
-		"GameView/InventoryPanel/Content/Scroll/InventoryGrid").get_child(1) as Button
+		"GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Scroll/InventoryGrid").get_child(1) as Button
 	var empty_equipment_slot: Button = main.get_node(
-		"GameView/InventoryPanel/Content/EquipmentGrid").get_child(1) as Button
+		"GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn/EquipmentGrid").get_child(1) as Button
 	_expect(not empty_inventory_slot.disabled
 		and empty_inventory_slot.tooltip_text.contains("Move selected"),
 		"selected backpack item can move to a chosen empty inventory slot")

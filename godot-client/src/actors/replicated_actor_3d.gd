@@ -233,11 +233,8 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	var target_changed: bool = server_target.distance_squared_to(next_target) > 0.000001
 	server_target = next_target
 	var actor_command: int = int(dto.get("command", -1))
-	var command_direction: Vector2i = EloriaProtocol.actor_command_direction(actor_command)
-	if command_direction != Vector2i.ZERO:
-		_target_yaw = adapter.direction_to_godot(command_direction)
-	else:
-		_target_yaw = adapter.rotation_to_godot(int(dto.rotation))
+	_target_yaw = target_yaw_for_state(
+		_target_yaw, actor_command, int(dto.rotation), adapter)
 	_presentation_speed = walk_presentation_speed
 	if actor_command >= 30 and actor_command <= 37:
 		_presentation_speed = run_presentation_speed
@@ -446,6 +443,25 @@ func _on_animation_finished(_animation_name: StringName) -> void:
 	elif current_action == &"stand":
 		play_action(&"idle")
 
+func turn_by(radians: float) -> void:
+	_target_yaw = wrapf(_target_yaw + radians, -PI, PI)
+	play_action(&"turn")
+
+static func target_yaw_for_state(current_yaw: float, actor_command: int,
+		server_rotation: int, adapter: CoordinateAdapter) -> float:
+	var command_direction: Vector2i = EloriaProtocol.actor_command_direction(actor_command)
+	if command_direction != Vector2i.ZERO:
+		return adapter.direction_to_godot(command_direction)
+	# Sitting and standing are pose transitions. Their packet rotation can be
+	# stale, so preserve the direction the actor was already facing.
+	if actor_command in [13, 14]:
+		return current_yaw
+	return adapter.rotation_to_godot(server_rotation)
+
+func _finish_movement_presentation() -> void:
+	if current_action in [&"walk", &"run"]:
+		play_action(&"idle")
+
 func set_selected(value: bool) -> void:
 	var ring: Node3D = get_node_or_null("SelectionRing") as Node3D
 	if ring != null:
@@ -478,6 +494,7 @@ func _physics_process(delta: float) -> void:
 		if progress >= 1.0:
 			global_position = server_target
 			_segment_duration = 0.0
+			_finish_movement_presentation()
 	else:
 		global_position = server_target
 	rotation.y = rotate_toward(rotation.y, _target_yaw, turn_speed_radians * delta)

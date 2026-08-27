@@ -312,14 +312,65 @@ offset_left = 16.0
 offset_top = 42.0
 offset_right = 208.0
 offset_bottom = 234.0
-tooltip_text = "Floating minimap [Alt+M]"
+tooltip_text = "Floating minimap [Alt+M] — drag its compass border; right-click for orientation"
 
 [node name="Minimap" type="TextureRect" parent="GameView/MinimapFrame"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(184, 184)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = -18.0
 expand_mode = 1
 stretch_mode = 5
 mouse_filter = 1
+
+[node name="North" type="Label" parent="GameView/MinimapFrame"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 88.0
+offset_top = 0.0
+offset_right = 104.0
+offset_bottom = 18.0
+text = "N"
+horizontal_alignment = 1
+mouse_filter = 2
+
+[node name="East" type="Label" parent="GameView/MinimapFrame"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 174.0
+offset_top = 87.0
+offset_right = 190.0
+offset_bottom = 105.0
+text = "E"
+horizontal_alignment = 1
+mouse_filter = 2
+
+[node name="South" type="Label" parent="GameView/MinimapFrame"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 88.0
+offset_top = 174.0
+offset_right = 104.0
+offset_bottom = 192.0
+text = "S"
+horizontal_alignment = 1
+mouse_filter = 2
+
+[node name="West" type="Label" parent="GameView/MinimapFrame"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 2.0
+offset_top = 87.0
+offset_right = 18.0
+offset_bottom = 105.0
+text = "W"
+horizontal_alignment = 1
+mouse_filter = 2
 
 [node name="CompassOverlay" type="TextureRect" parent="GameView/MinimapFrame"]
 unique_name_in_owner = true
@@ -1042,6 +1093,17 @@ custom_minimum_size = Vector2(52, 0)
 text = "100%"
 horizontal_alignment = 2
 
+[node name="EquipmentSideRow" type="HBoxContainer" parent="GameView/SettingsPanel/Content"]
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="GameView/SettingsPanel/Content/EquipmentSideRow"]
+text = "Equipment slots"
+
+[node name="EquipmentSide" type="OptionButton" parent="GameView/SettingsPanel/Content/EquipmentSideRow"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+tooltip_text = "Choose which side of the backpack holds equipped items"
+
 [node name="SettingsClose" type="Button" parent="GameView/SettingsPanel/Content"]
 unique_name_in_owner = true
 text = "Close"
@@ -1083,19 +1145,108 @@ selection_enabled = true
 [node name="StatsPanel" type="PanelContainer" parent="GameView"]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -648.0
-offset_top = 192.0
-offset_right = -352.0
-offset_bottom = 644.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -390.0
+offset_top = -285.0
+offset_right = 300.0
+offset_bottom = 260.0
 
-[node name="StatsText" type="RichTextLabel" parent="GameView/StatsPanel"]
+[node name="Content" type="VBoxContainer" parent="GameView/StatsPanel"]
+theme_override_constants/separation = 4
+
+[node name="Header" type="HBoxContainer" parent="GameView/StatsPanel/Content"]
+
+[node name="Title" type="Label" parent="GameView/StatsPanel/Content/Header"]
+size_flags_horizontal = 3
+text = "STATISTICS"
+horizontal_alignment = 1
+
+[node name="StatsClose" type="Button" parent="GameView/StatsPanel/Content/Header"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(280, 430)
+custom_minimum_size = Vector2(30, 28)
+text = "×"
+tooltip_text = "Close statistics"
+
+[node name="StatsTabs" type="TabContainer" parent="GameView/StatsPanel/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(670, 500)
+size_flags_vertical = 3
+
+[node name="Statistics" type="MarginContainer" parent="GameView/StatsPanel/Content/StatsTabs"]
+
+[node name="StatsText" type="RichTextLabel" parent="GameView/StatsPanel/Content/StatsTabs/Statistics"]
+unique_name_in_owner = true
 bbcode_enabled = true
 scroll_active = true
+selection_enabled = true
+theme_override_constants/table_h_separation = 12
+theme_override_font_sizes/normal_font_size = 15
+
+[node name="Knowledge" type="MarginContainer" parent="GameView/StatsPanel/Content/StatsTabs"]
+
+[node name="KnowledgeContent" type="VBoxContainer" parent="GameView/StatsPanel/Content/StatsTabs/Knowledge"]
+theme_override_constants/separation = 8
+
+[node name="KnowledgeKnownOnly" type="CheckBox" parent="GameView/StatsPanel/Content/StatsTabs/Knowledge/KnowledgeContent"]
+unique_name_in_owner = true
+text = "Show read knowledge only"
+tooltip_text = "Filter the server-owned knowledge bitset"
+
+[node name="Columns" type="HBoxContainer" parent="GameView/StatsPanel/Content/StatsTabs/Knowledge/KnowledgeContent"]
+theme_override_constants/separation = 12
+
+[node name="KnowledgeList" type="ItemList" parent="GameView/StatsPanel/Content/StatsTabs/Knowledge/KnowledgeContent/Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 410)
+select_mode = 0
+allow_reselect = true
+
+[node name="KnowledgeDetail" type="RichTextLabel" parent="GameView/StatsPanel/Content/StatsTabs/Knowledge/KnowledgeContent/Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 410)
+size_flags_horizontal = 3
+text = "Select an entry to request its server description."
+
+[node name="Counters" type="MarginContainer" parent="GameView/StatsPanel/Content/StatsTabs"]
+
+[node name="CounterColumns" type="HBoxContainer" parent="GameView/StatsPanel/Content/StatsTabs/Counters"]
+theme_override_constants/separation = 10
+
+[node name="CounterCategories" type="ItemList" parent="GameView/StatsPanel/Content/StatsTabs/Counters/CounterColumns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(145, 430)
+select_mode = 0
+
+[node name="CounterText" type="RichTextLabel" parent="GameView/StatsPanel/Content/StatsTabs/Counters/CounterColumns"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+bbcode_enabled = true
+selection_enabled = true
+theme_override_constants/table_h_separation = 18
+theme_override_font_sizes/normal_font_size = 15
+
+[node name="Session Experience" type="MarginContainer" parent="GameView/StatsPanel/Content/StatsTabs"]
+
+[node name="SessionContent" type="VBoxContainer" parent="GameView/StatsPanel/Content/StatsTabs/Session Experience"]
+
+[node name="SessionXpText" type="RichTextLabel" parent="GameView/StatsPanel/Content/StatsTabs/Session Experience/SessionContent"]
+unique_name_in_owner = true
+size_flags_vertical = 3
+bbcode_enabled = true
+selection_enabled = true
+theme_override_constants/table_h_separation = 18
+theme_override_font_sizes/normal_font_size = 15
+
+[node name="SessionFooter" type="HBoxContainer" parent="GameView/StatsPanel/Content/StatsTabs/Session Experience/SessionContent"]
+alignment = 2
+
+[node name="SessionReset" type="Button" parent="GameView/StatsPanel/Content/StatsTabs/Session Experience/SessionContent/SessionFooter"]
+unique_name_in_owner = true
+text = "Reset session"
 
 [node name="InventoryPanel" type="PanelContainer" parent="GameView"]
 unique_name_in_owner = true
@@ -1105,70 +1256,194 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -280.0
-offset_right = 220.0
+offset_left = -340.0
+offset_top = -270.0
+offset_right = 340.0
 offset_bottom = 270.0
 
 [node name="Content" type="VBoxContainer" parent="GameView/InventoryPanel"]
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 
-[node name="Title" type="Label" parent="GameView/InventoryPanel/Content"]
+[node name="Header" type="HBoxContainer" parent="GameView/InventoryPanel/Content"]
+
+[node name="Title" type="Label" parent="GameView/InventoryPanel/Content/Header"]
+size_flags_horizontal = 3
 text = "INVENTORY"
 horizontal_alignment = 1
 
-[node name="Scroll" type="ScrollContainer" parent="GameView/InventoryPanel/Content"]
-custom_minimum_size = Vector2(500, 280)
+[node name="InventoryClose" type="Button" parent="GameView/InventoryPanel/Content/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 28)
+text = "×"
+tooltip_text = "Close inventory [Ctrl+I]"
+
+[node name="InventoryBody" type="HBoxContainer" parent="GameView/InventoryPanel/Content"]
+unique_name_in_owner = true
+theme_override_constants/separation = 8
+
+[node name="EquipmentColumn" type="VBoxContainer" parent="GameView/InventoryPanel/Content/InventoryBody"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(126, 0)
+
+[node name="EquipmentTitle" type="Label" parent="GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn"]
+text = "EQUIPMENT"
+horizontal_alignment = 1
+
+[node name="EquipmentGrid" type="GridContainer" parent="GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn"]
+unique_name_in_owner = true
+columns = 2
+theme_override_constants/h_separation = 3
+theme_override_constants/v_separation = 3
+
+[node name="BackpackColumn" type="VBoxContainer" parent="GameView/InventoryPanel/Content/InventoryBody"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="Scroll" type="ScrollContainer" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn"]
+custom_minimum_size = Vector2(390, 350)
 horizontal_scroll_mode = 0
 
-[node name="InventoryGrid" type="GridContainer" parent="GameView/InventoryPanel/Content/Scroll"]
+[node name="InventoryGrid" type="GridContainer" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Scroll"]
 unique_name_in_owner = true
 columns = 6
 theme_override_constants/h_separation = 4
 theme_override_constants/v_separation = 4
 
-[node name="EquipmentTitle" type="Label" parent="GameView/InventoryPanel/Content"]
-text = "EQUIPMENT"
-horizontal_alignment = 1
-
-[node name="EquipmentGrid" type="GridContainer" parent="GameView/InventoryPanel/Content"]
+[node name="InventoryDescription" type="RichTextLabel" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn"]
 unique_name_in_owner = true
-columns = 4
-theme_override_constants/h_separation = 4
-theme_override_constants/v_separation = 4
-
-[node name="InventoryDescription" type="RichTextLabel" parent="GameView/InventoryPanel/Content"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(500, 48)
+custom_minimum_size = Vector2(390, 54)
 fit_content = true
 text = "Select an item to inspect it."
 
-[node name="Actions" type="HBoxContainer" parent="GameView/InventoryPanel/Content"]
+[node name="Actions" type="HBoxContainer" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn"]
 alignment = 2
 
-[node name="InventoryUse" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
+[node name="InventoryUse" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions"]
 unique_name_in_owner = true
-text = "Use selected"
+text = "Use"
 tooltip_text = "Use the selected item"
 disabled = true
 
-[node name="InventoryEquip" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
+[node name="InventoryEquip" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions"]
 unique_name_in_owner = true
-text = "Equip selected"
+text = "Equip"
 tooltip_text = "Equip the selected inventory item; the server validates compatibility"
 disabled = true
 
-[node name="InventoryUnequip" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
+[node name="InventoryUnequip" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions"]
 unique_name_in_owner = true
-text = "Unequip selected"
+text = "Unequip"
 tooltip_text = "Move the selected equipped item into the first empty inventory slot"
 disabled = true
 
-[node name="Inspect" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
+[node name="Inspect" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions"]
 text = "Inspect"
 
-[node name="Close" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
-text = "Close"
+[node name="SideActions" type="VBoxContainer" parent="GameView/InventoryPanel/Content/InventoryBody"]
+custom_minimum_size = Vector2(78, 0)
+
+[node name="InventoryStoreAll" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/SideActions"]
+unique_name_in_owner = true
+text = "Sto\nAll"
+tooltip_text = "Deposit all eligible backpack items. Right-click to set protected rows and columns."
+
+[node name="InventoryGetAll" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/SideActions"]
+unique_name_in_owner = true
+text = "Get\nAll"
+tooltip_text = "Withdraw every item in the current storage category"
+
+[node name="InventoryDropAll" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/SideActions"]
+unique_name_in_owner = true
+text = "Drop\nAll"
+tooltip_text = "Drop all eligible backpack items. Right-click to set protected rows and columns."
+
+[node name="InventoryMixAll" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/SideActions"]
+unique_name_in_owner = true
+text = "Mix\nAll"
+tooltip_text = "Mix as many of the selected recipe as the server allows"
+
+[node name="InventoryItemLists" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/SideActions"]
+unique_name_in_owner = true
+text = "Item\nLists"
+tooltip_text = "Define reusable item-id and quantity lists for storage"
+
+[node name="InventoryLoad" type="Label" parent="GameView/InventoryPanel/Content"]
+unique_name_in_owner = true
+text = "Load: 0 / 0"
+
+[node name="ItemListsPanel" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+visible = false
+z_index = 25
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -225.0
+offset_right = 280.0
+offset_bottom = 225.0
+
+[node name="Content" type="VBoxContainer" parent="GameView/ItemListsPanel"]
+
+[node name="Header" type="HBoxContainer" parent="GameView/ItemListsPanel/Content"]
+
+[node name="Title" type="Label" parent="GameView/ItemListsPanel/Content/Header"]
+size_flags_horizontal = 3
+text = "STORAGE ITEM LISTS"
+horizontal_alignment = 1
+
+[node name="ItemListsClose" type="Button" parent="GameView/ItemListsPanel/Content/Header"]
+unique_name_in_owner = true
+text = "×"
+
+[node name="ItemListColumns" type="HBoxContainer" parent="GameView/ItemListsPanel/Content"]
+size_flags_vertical = 3
+
+[node name="SavedLists" type="VBoxContainer" parent="GameView/ItemListsPanel/Content/ItemListColumns"]
+
+[node name="Label" type="Label" parent="GameView/ItemListsPanel/Content/ItemListColumns/SavedLists"]
+text = "Saved lists"
+
+[node name="SavedItemLists" type="ItemList" parent="GameView/ItemListsPanel/Content/ItemListColumns/SavedLists"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 300)
+
+[node name="Editor" type="VBoxContainer" parent="GameView/ItemListsPanel/Content/ItemListColumns"]
+size_flags_horizontal = 3
+
+[node name="ItemListName" type="LineEdit" parent="GameView/ItemListsPanel/Content/ItemListColumns/Editor"]
+unique_name_in_owner = true
+placeholder_text = "List name"
+
+[node name="Hint" type="Label" parent="GameView/ItemListsPanel/Content/ItemListColumns/Editor"]
+text = "One item per line: image_id:quantity"
+
+[node name="ItemListEntries" type="TextEdit" parent="GameView/ItemListsPanel/Content/ItemListColumns/Editor"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 240)
+placeholder_text = "1158:20\n189:1"
+
+[node name="ItemListStatus" type="Label" parent="GameView/ItemListsPanel/Content/ItemListColumns/Editor"]
+unique_name_in_owner = true
+autowrap_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="GameView/ItemListsPanel/Content"]
+alignment = 2
+
+[node name="ItemListSave" type="Button" parent="GameView/ItemListsPanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Save"
+
+[node name="ItemListDelete" type="Button" parent="GameView/ItemListsPanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Delete"
+
+[node name="ItemListGet" type="Button" parent="GameView/ItemListsPanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Get from storage"
 
 [node name="TradePanel" type="PanelContainer" parent="GameView"]
 unique_name_in_owner = true
@@ -1388,54 +1663,6 @@ text = "Inspect stored item"
 disabled = true
 
 [node name="StorageClose" type="Button" parent="GameView/StoragePanel/Content/Actions"]
-text = "Close"
-
-[node name="KnowledgePanel" type="PanelContainer" parent="GameView"]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -360.0
-offset_top = -250.0
-offset_right = 360.0
-offset_bottom = 250.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Content" type="VBoxContainer" parent="GameView/KnowledgePanel"]
-theme_override_constants/separation = 8
-
-[node name="Title" type="Label" parent="GameView/KnowledgePanel/Content"]
-text = "KNOWLEDGE"
-horizontal_alignment = 1
-
-[node name="KnowledgeKnownOnly" type="CheckBox" parent="GameView/KnowledgePanel/Content"]
-unique_name_in_owner = true
-text = "Show read knowledge only"
-tooltip_text = "Filter the server-owned knowledge bitset"
-
-[node name="Columns" type="HBoxContainer" parent="GameView/KnowledgePanel/Content"]
-theme_override_constants/separation = 12
-
-[node name="KnowledgeList" type="ItemList" parent="GameView/KnowledgePanel/Content/Columns"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(330, 390)
-select_mode = 0
-allow_reselect = true
-
-[node name="KnowledgeDetail" type="RichTextLabel" parent="GameView/KnowledgePanel/Content/Columns"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(340, 390)
-fit_content = false
-text = "Select an entry to request its server description."
-
-[node name="Actions" type="HBoxContainer" parent="GameView/KnowledgePanel/Content"]
-alignment = 2
-
-[node name="KnowledgeClose" type="Button" parent="GameView/KnowledgePanel/Content/Actions"]
 text = "Close"
 
 [node name="ManufacturingPanel" type="PanelContainer" parent="GameView"]
@@ -1867,11 +2094,11 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/KnowledgeButton" to="." method="_on_knowledge_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/ManufacturingButton" to="." method="_on_manufacturing_button_pressed"]
-[connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryUse" to="." method="_on_inventory_use_pressed"]
-[connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryEquip" to="." method="_on_inventory_equip_pressed"]
-[connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryUnequip" to="." method="_on_inventory_unequip_pressed"]
-[connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/Inspect" to="." method="_on_inventory_inspect_pressed"]
-[connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/Close" to="." method="_on_inventory_close_pressed"]
+[connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/InventoryUse" to="." method="_on_inventory_use_pressed"]
+[connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/InventoryEquip" to="." method="_on_inventory_equip_pressed"]
+[connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/InventoryUnequip" to="." method="_on_inventory_unequip_pressed"]
+[connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/Inspect" to="." method="_on_inventory_inspect_pressed"]
+[connection signal="pressed" from="GameView/InventoryPanel/Content/Header/InventoryClose" to="." method="_on_inventory_close_pressed"]
 [connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeOffer" to="." method="_on_trade_offer_pressed"]
 [connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeRemove" to="." method="_on_trade_remove_pressed"]
 [connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeInspect" to="." method="_on_trade_inspect_pressed"]
@@ -1883,7 +2110,6 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageWithdraw" to="." method="_on_storage_withdraw_pressed"]
 [connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageInspect" to="." method="_on_storage_inspect_pressed"]
 [connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageClose" to="." method="_on_storage_close_pressed"]
-[connection signal="pressed" from="GameView/KnowledgePanel/Content/Actions/KnowledgeClose" to="." method="_on_knowledge_close_pressed"]
 [connection signal="pressed" from="GameView/ManufacturingPanel/Content/Actions/ManufacturingMixOne" to="." method="_on_manufacturing_mix_one_pressed"]
 [connection signal="pressed" from="GameView/ManufacturingPanel/Content/Actions/ManufacturingMixAll" to="." method="_on_manufacturing_mix_all_pressed"]
 [connection signal="pressed" from="GameView/ManufacturingPanel/Content/Actions/ManufacturingClose" to="." method="_on_manufacturing_close_pressed"]
