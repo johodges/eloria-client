@@ -1,0 +1,86 @@
+name: Integrate PR156 into combined Godot branch
+
+on:
+  push:
+    branches:
+      - codex/integrate-pr156-runner-20260827
+
+permissions:
+  contents: write
+
+jobs:
+  merge-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Merge regional production map PR
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin codex/native-guard-evidence-20260827 feature/godot-regional-production-maps
+          git checkout -B codex/integrated-pr156-20260827 67316f5be4797aeaae6134884f0fb465f4d29561
+          set +e
+          git merge --no-ff --no-commit 039565c19c558b8fb9eb73899b6ab7cf2e3b3cb5
+          merge_status=$?
+          set -e
+          if [ "$merge_status" -ne 0 ]; then
+            unresolved=$(git diff --name-only --diff-filter=U)
+            expected=$'godot-client/data/maps/registry.json\ngodot-client/tests/test_protocol.gd'
+            if [ "$unresolved" != "$expected" ]; then
+              echo "Unexpected conflicts:"
+              printf '%s\n' "$unresolved"
+              exit 1
+            fi
+            git checkout --ours godot-client/data/maps/registry.json godot-client/tests/test_protocol.gd
+            python3 - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          registry_path = Path('godot-client/data/maps/registry.json')
+          ours = json.loads(registry_path.read_text())
+          theirs = json.loads(subprocess.check_output([
+              'git', 'show', '039565c19c558b8fb9eb73899b6ab7cf2e3b3cb5:godot-client/data/maps/registry.json'
+          ], text=True))
+          ours_maps = ours.setdefault('maps', {})
+          for key, value in theirs.get('maps', {}).items():
+              if key in ours_maps:
+                  if ours_maps[key] != value:
+                      raise SystemExit(f'conflicting existing map registry key: {key}')
+              else:
+                  ours_maps[key] = value
+          registry_path.write_text(json.dumps(ours, indent=2) + '\n')
+
+          test_path = Path('godot-client/tests/test_protocol.gd')
+          text = test_path.read_text()
+          marker = '''\t\t\t\t_expect(is_equal_approx(float(transform.get("walkingHeight", 0.0)), 31.15),\n\t\t\t\t\t"Four Gates actors stand above the authored y=31 walk surface")\n'''
+          addition = '''\t\t\t\tvar regional_ids: Array[String] = ["mirrorhold", "crownwater", "whitehorn_range",\n\t\t\t\t\t"amethyst_barrens", "sunmane_steppe", "amberwood", "grey_moors", "westhaven",\n\t\t\t\t\t"verdant_stair", "ssarathi_ruins", "manymouth_delta"]\n\t\t\t\tfor regional_id: String in regional_ids:\n\t\t\t\t\tvar regional_map: Dictionary = MapRegistry.resolve(production_maps, regional_id)\n\t\t\t\t\t_expect(not regional_map.is_empty(), "runtime %s map id resolves" % regional_id)\n\t\t\t\t\t_expect(str(regional_map.get("manifest", "")).contains(\n\t\t\t\t\t\t"nymara-regions/%s/world.json" % regional_id),\n\t\t\t\t\t\t"runtime %s resolves to its production package" % regional_id)\n'''
+          if marker not in text:
+              raise SystemExit('Four Gates protocol-test marker missing')
+          if 'var regional_ids: Array[String]' not in text:
+              text = text.replace(marker, marker + addition, 1)
+          test_path.write_text(text)
+          PY
+            git add godot-client/data/maps/registry.json godot-client/tests/test_protocol.gd
+          fi
+          if git diff --name-only --diff-filter=U | grep -q .; then
+            echo "Unresolved conflicts remain"
+            git diff --name-only --diff-filter=U
+            exit 1
+          fi
+          git diff --check
+          git commit -m "Merge Nymara regional production maps into combined Godot branch"
+      - name: Validate regional assets
+        run: |
+          python3 -m pip install --disable-pip-version-check numpy pillow
+          python3 eloria-assets/tools/validate_nymara_region_maps.py
+          python3 -m json.tool godot-client/data/maps/registry.json >/dev/null
+          test -f eloria-assets/maps/nymara-regions/mirrorhold/world.glb
+          test -f eloria-assets/maps/nymara-regions/manymouth_delta/world.glb
+      - name: Publish clean integration result
+        run: git push --force origin HEAD:codex/integrated-pr156-20260827
