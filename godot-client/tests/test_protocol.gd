@@ -338,12 +338,20 @@ func _init() -> void:
 	stats_payload.encode_s16(88, 12)
 	stats_payload.encode_s16(90, 20)
 	stats_payload.encode_s16(92, -7)
+	stats_payload.encode_s16(64, 24)
+	stats_payload.encode_s16(66, 23)
+	stats_payload.encode_u32(130, 542802)
+	stats_payload.encode_u32(134, 600000)
 	stats_payload.encode_s16(226, 14)
 	stats_payload.encode_s16(228, 30)
 	var stats_event: Dictionary = EloriaProtocol.decode_server(18, stats_payload)
 	_expect(stats_event.type == "stats" and int(stats_event.values.health) == 18
 		and int(stats_event.values.max_health) == 25
 		and int(stats_event.values.food) == -7
+		and int(stats_event.values.attack) == 24
+		and int(stats_event.values.attack_base_level) == 23
+		and int(stats_event.values.attack_experience) == 542802
+		and int(stats_event.values.attack_experience_next) == 600000
 		and int(stats_event.values.action_points) == 14
 		and int(stats_event.values.max_action_points) == 30, "full character stats")
 	var partial_event: Dictionary = EloriaProtocol.decode_server(49,
@@ -355,6 +363,11 @@ func _init() -> void:
 	_expect(int(partial_action_event.values.action_points) == 9
 		and int(partial_action_event.values.max_action_points) == 22,
 		"partial action-point update")
+	var partial_experience_event: Dictionary = EloriaProtocol.decode_server(49,
+		PackedByteArray([65, 0x52, 0x48, 0x08, 0, 33, 25, 0, 0, 0]))
+	_expect(int(partial_experience_event.values.attack_experience) == 542802
+		and int(partial_experience_event.values.attack_base_level) == 25,
+		"partial experience and level update")
 
 	var inventory_payload: PackedByteArray = PackedByteArray([
 		2,

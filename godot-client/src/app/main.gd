@@ -43,19 +43,29 @@ extends Control
 @onready var health_bottom_text: Label = %HealthBottomText
 @onready var ether_bottom: ProgressBar = %EtherBottom
 @onready var ether_bottom_text: Label = %EtherBottomText
+@onready var food_bottom: ProgressBar = %FoodBottom
+@onready var food_bottom_text: Label = %FoodBottomText
+@onready var load_bottom: ProgressBar = %LoadBottom
+@onready var load_bottom_text: Label = %LoadBottomText
 @onready var action_bottom: ProgressBar = %ActionBottom
 @onready var action_bottom_text: Label = %ActionBottomText
+@onready var experience_bottom: ProgressBar = %ExperienceBottom
+@onready var experience_bottom_text: Label = %ExperienceBottomText
+@onready var bottom_meters: HBoxContainer = %BottomMeters
 @onready var skill_indicators: RichTextLabel = %SkillIndicators
 @onready var clock_text: Label = %ClockText
 @onready var clock_hand: Line2D = %ClockHand
 @onready var compass_needle: Line2D = %CompassNeedle
 @onready var actor_resource_overlay: PanelContainer = %ActorResourceOverlay
 @onready var actor_hud_menu: PanelContainer = %ActorHudMenu
+@onready var overhead_player_name: Label = %OverheadPlayerName
 @onready var overhead_health_row: HBoxContainer = %HealthRow
 @onready var overhead_ether_row: HBoxContainer = %EtherRow
+@onready var overhead_food_row: HBoxContainer = %FoodRow
 @onready var overhead_action_row: HBoxContainer = %ActionRow
 @onready var show_overhead_health: CheckButton = %ShowHealth
 @onready var show_overhead_ether: CheckButton = %ShowEther
+@onready var show_overhead_food: CheckButton = %ShowFood
 @onready var show_overhead_action: CheckButton = %ShowAction
 @onready var stats_panel: Control = %StatsPanel
 @onready var stats_text: RichTextLabel = %StatsText
@@ -106,7 +116,7 @@ extends Control
 @onready var manufacturing_status: Label = %ManufacturingStatus
 @onready var manufacturing_mix_one: Button = %ManufacturingMixOne
 @onready var manufacturing_mix_all: Button = %ManufacturingMixAll
-@onready var quick_slot_container: GridContainer = $GameView/ItemSpellQuickbar/QuickContent/Slots
+@onready var quick_slot_container: GridContainer = %ItemSlots
 @onready var spell_slot_container: GridContainer = %SpellSlots
 @onready var spell_status: Label = %SpellStatus
 @onready var player_map_marker: MeshInstance3D = %PlayerMapMarker
@@ -160,6 +170,27 @@ var cooldown_display_second := -1
 var _chat_tab := "all"
 var _right_mouse_down := false
 var _right_mouse_dragged := false
+var _interaction_mode := "walk"
+var _hud_icon_regions: Dictionary = {}
+var _hud_active_atlas: Texture2D
+var _hud_inactive_atlas: Texture2D
+var _hud_button_state_signature := ""
+var _hud_meter_order: Array[String] = ["mana", "food", "health", "load", "action", "experience"]
+var _hud_meter_visible: Dictionary = {
+	"mana": true, "food": true, "health": true,
+	"load": true, "action": true, "experience": true}
+var _selected_experience_skill := "harvesting"
+var _hud_layout_menu: PopupPanel
+var _hud_layout_list: ItemList
+var _hud_layout_visible: CheckButton
+var _hud_skill_selector: OptionButton
+var _floating_feedback_layer: Control
+var _floating_feedback_offset := 0
+
+const HUD_SKILLS: Array[String] = [
+	"attack", "defense", "harvesting", "alchemy", "magic", "potion",
+	"summoning", "manufacturing", "crafting", "engineering", "tailoring",
+	"ranging", "overall"]
 
 func _ready() -> void:
 	var model_registry: Dictionary = _json("res://data/actors/models.json")
@@ -186,6 +217,7 @@ func _ready() -> void:
 	AppState.character_created.connect(_on_character_created)
 	AppState.character_creation_failed.connect(_on_character_creation_failed)
 	AppState.state_changed.connect(_on_state_changed)
+	AppState.floating_feedback_requested.connect(_on_floating_feedback_requested)
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
 	viewport_container.gui_input.connect(_on_world_gui_input)
@@ -232,11 +264,20 @@ func _ready() -> void:
 	manufacturing_filter.text_changed.connect(_on_manufacturing_filter_changed)
 	show_overhead_health.toggled.connect(_on_overhead_option_toggled)
 	show_overhead_ether.toggled.connect(_on_overhead_option_toggled)
+	show_overhead_food.toggled.connect(_on_overhead_option_toggled)
 	show_overhead_action.toggled.connect(_on_overhead_option_toggled)
 	%Close.pressed.connect(func() -> void: actor_hud_menu.hide())
 	$GameView/ChatTabs/All.pressed.connect(_on_chat_tab_pressed.bind("all"))
 	$GameView/ChatTabs/History.pressed.connect(_on_chat_tab_pressed.bind("history"))
 	$GameView/ChatTabs/Options.pressed.connect(_on_chat_tab_pressed.bind("options"))
+	%ItemMode.pressed.connect(_on_quickbar_mode_pressed.bind("items"))
+	%SpellMode.pressed.connect(_on_quickbar_mode_pressed.bind("spells"))
+	_build_hud_layout_menu()
+	_load_hud_layout()
+	_connect_hud_context_inputs(%Quickbar)
+	get_viewport().size_changed.connect(_on_window_size_changed)
+	call_deferred("_on_window_size_changed")
+	_on_quickbar_mode_pressed("items")
 	_sync_stats()
 
 func _bind_shared_world() -> void:
@@ -257,6 +298,7 @@ func _process(_delta: float) -> void:
 		if display_second != cooldown_display_second:
 			cooldown_display_second = display_second
 			_sync_quick_slots()
+		_sync_hud_button_states()
 
 func _on_connect_pressed() -> void:
 	if AppState.connection_state != "disconnected":
@@ -421,13 +463,16 @@ func _on_login_submitted(_text: String) -> void:
 
 func _on_map_button_pressed() -> void:
 	full_map.visible = not full_map.visible
+	_sync_hud_button_states(true)
 
 func _on_walk_button_pressed() -> void:
+	_interaction_mode = "walk"
 	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
 	if bool(local_actor.get("sitting", false)):
 		var error: Error = Network.set_sitting(false)
 		if error != OK:
 			push_warning("STAND_UP failed: " + error_string(error))
+	_sync_hud_button_states(true)
 
 func _on_sit_button_pressed() -> void:
 	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
@@ -436,9 +481,12 @@ func _on_sit_button_pressed() -> void:
 		push_warning("SIT_DOWN failed: " + error_string(error))
 
 func _on_attack_button_pressed() -> void:
+	_interaction_mode = "attack"
 	_attack_selected_actor()
+	_sync_hud_button_states(true)
 
 func _on_trade_button_pressed() -> void:
+	_interaction_mode = "trade"
 	var actor_id: int = AppState.selected_actor_id
 	var dto: Dictionary = AppState.actors.get(actor_id, {})
 	if not _is_tradeable_player(actor_id, dto):
@@ -448,9 +496,11 @@ func _on_trade_button_pressed() -> void:
 	var error: Error = Network.trade_with(actor_id)
 	if error != OK:
 		push_warning("TRADE_WITH failed: " + error_string(error))
+	_sync_hud_button_states(true)
 
 func _on_chat_button_pressed() -> void:
 	chat_input.grab_focus()
+	_sync_hud_button_states(true)
 
 func _on_stats_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
@@ -463,6 +513,7 @@ func _on_stats_button_pressed() -> void:
 		knowledge_panel.hide()
 		manufacturing_panel.hide()
 		_sync_stats()
+	_sync_hud_button_states(true)
 
 func _on_inventory_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
@@ -475,6 +526,7 @@ func _on_inventory_button_pressed() -> void:
 		knowledge_panel.hide()
 		manufacturing_panel.hide()
 		_sync_inventory()
+	_sync_hud_button_states(true)
 
 func _on_knowledge_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
@@ -488,6 +540,7 @@ func _on_knowledge_button_pressed() -> void:
 		manufacturing_panel.hide()
 		full_map.hide()
 		_sync_knowledge()
+	_sync_hud_button_states(true)
 
 func _on_manufacturing_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
@@ -501,6 +554,7 @@ func _on_manufacturing_button_pressed() -> void:
 		knowledge_panel.hide()
 		full_map.hide()
 		_sync_manufacturing()
+	_sync_hud_button_states(true)
 
 func _on_manufacturing_selected(index: int) -> void:
 	selected_manufacturing_recipe = _list_metadata_int(manufacturing_list, index)
@@ -971,6 +1025,7 @@ func _open_actor_hud_menu(position: Vector2) -> void:
 func _on_overhead_option_toggled(_enabled: bool) -> void:
 	overhead_health_row.visible = show_overhead_health.button_pressed
 	overhead_ether_row.visible = show_overhead_ether.button_pressed
+	overhead_food_row.visible = show_overhead_food.button_pressed
 	overhead_action_row.visible = show_overhead_action.button_pressed
 	_update_actor_resource_overlay()
 
@@ -1041,6 +1096,16 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 			var spell_touch_error: Error = Network.touch_actor(picked_actor_id)
 			if spell_touch_error != OK:
 				push_warning("TOUCH_PLAYER spell target failed: " + error_string(spell_touch_error))
+			return
+		if _interaction_mode == "attack" and _is_attackable_actor(
+				picked_actor_id, selected_dto):
+			_send_attack(picked_actor_id)
+			return
+		if _interaction_mode == "trade" and _is_tradeable_player(
+				picked_actor_id, selected_dto):
+			var trade_error: Error = Network.trade_with(picked_actor_id)
+			if trade_error != OK:
+				push_warning("TRADE_WITH failed: " + error_string(trade_error))
 			return
 		if event.alt_pressed and _is_attackable_actor(picked_actor_id, selected_dto):
 			_send_attack(picked_actor_id)
@@ -1190,8 +1255,10 @@ func _sync_world() -> void:
 	for id in AppState.actors:
 		var dto: Dictionary = _presentation_dto(AppState.actors[id])
 		if actor_nodes.has(id):
-			actor_nodes[id].apply_server_state(dto, adapter)
-			_place_actor_on_surface(actor_nodes[id] as ReplicatedActor3D)
+			var existing_actor: ReplicatedActor3D = actor_nodes[id] as ReplicatedActor3D
+			existing_actor.apply_server_state(dto, adapter)
+			existing_actor.set_nameplate_visible(int(id) != AppState.local_actor_id)
+			_place_actor_on_surface(existing_actor)
 			continue
 		var node := ReplicatedActor3D.new()
 		node.name = "Actor_%d" % id
@@ -1204,11 +1271,13 @@ func _sync_world() -> void:
 		if not errors.is_empty():
 			push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 		node.apply_server_state(dto, adapter, true)
+		node.set_nameplate_visible(int(id) != AppState.local_actor_id)
 		_place_actor_on_surface(node)
 	actor_label.text = "Actors: %d" % AppState.actors.size()
 	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id):
 		_update_local_actor_follow()
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
+		overhead_player_name.text = str(local_dto.get("name", "Player"))
 		var current_health := int(local_dto.get("health", 0))
 		var maximum_health := maxi(1, int(local_dto.get("max_health", 1)))
 		if AppState.stats.is_empty():
@@ -1496,16 +1565,24 @@ func _sync_stats() -> void:
 	var max_health: int = maxi(1, int(stats.get("max_health", 1)))
 	var ether: int = int(stats.get("ether", 0))
 	var max_ether: int = maxi(1, int(stats.get("max_ether", 1)))
+	var food: int = int(stats.get("food", 0))
+	var max_food: int = maxi(45, food)
+	var carried: int = int(stats.get("carried", 0))
+	var capacity: int = maxi(1, int(stats.get("capacity", 1)))
 	var action: int = int(stats.get("action_points", 0))
 	var max_action: int = maxi(1, int(stats.get("max_action_points", 1)))
 	_set_meter(health_bar, health_text, health, max_health, "Health")
 	_set_meter(mana_bar, mana_text, ether, max_ether, "Ethereality")
 	_set_meter(action_bar, action_text, action, max_action, "Action")
 	_set_meter(health_bottom, health_bottom_text, health, max_health, "Health")
-	_set_meter(ether_bottom, ether_bottom_text, ether, max_ether, "Ethereality")
+	_set_meter(ether_bottom, ether_bottom_text, ether, max_ether, "Mana")
+	_set_meter(food_bottom, food_bottom_text, food, max_food, "Food")
+	_set_meter(load_bottom, load_bottom_text, carried, capacity, "Load")
 	_set_meter(action_bottom, action_bottom_text, action, max_action, "Action")
+	_sync_experience_meter(stats)
 	_set_overhead_meter(overhead_health_row, health, max_health)
 	_set_overhead_meter(overhead_ether_row, ether, max_ether)
+	_set_overhead_meter(overhead_food_row, food, max_food)
 	_set_overhead_meter(overhead_action_row, action, max_action)
 	var abbreviated: Array[Array] = [
 		["att", "attack"], ["def", "defense"], ["har", "harvesting"],
@@ -1533,6 +1610,40 @@ func _sync_stats() -> void:
 	for label_and_key: Array in displayed_stats:
 		lines.append("%s: %d" % [label_and_key[0], int(stats.get(label_and_key[1], 0))])
 	stats_text.text = "\n".join(lines)
+
+func _sync_experience_meter(stats: Dictionary) -> void:
+	var skill: String = _selected_experience_skill
+	var current_experience: int = int(stats.get(skill + "_experience", 0))
+	var next_experience: int = int(stats.get(skill + "_experience_next", 0))
+	var level: int = int(stats.get(skill + "_base_level", stats.get(skill, 0)))
+	var level_floor: int = _experience_floor_for_level(level)
+	if next_experience <= level_floor:
+		level_floor = 0
+	var progress_maximum: int = maxi(1, next_experience - level_floor)
+	var progress_value: int = clampi(current_experience - level_floor, 0, progress_maximum)
+	experience_bottom.max_value = progress_maximum
+	experience_bottom.value = progress_value
+	experience_bottom_text.text = "%s %d / %d" % [
+		skill.capitalize(), current_experience, next_experience]
+
+static func _experience_floor_for_level(level: int) -> int:
+	if level <= 0:
+		return 0
+	var experience: int = 100
+	for index: int in range(1, level + 1):
+		if index <= 10:
+			experience += experience * 40 / 100
+		elif index <= 20:
+			experience += experience * 30 / 100
+		elif index <= 30:
+			experience += experience * 20 / 100
+		elif index <= 40:
+			experience += experience * 14 / 100
+		elif index <= 90:
+			experience += experience * 7 / 100
+		else:
+			experience += experience * 5 / 100
+	return experience
 
 static func _set_meter(bar: ProgressBar, label: Label, value: int,
 		maximum: int, title: String) -> void:
@@ -1581,7 +1692,281 @@ func _update_actor_resource_overlay() -> void:
 		clampf(overlay_position.y, 34.0,
 			maxf(34.0, game_view.size.y - actor_resource_overlay.size.y - 86.0)))
 	actor_resource_overlay.visible = (show_overhead_health.button_pressed
-		or show_overhead_ether.button_pressed or show_overhead_action.button_pressed)
+		or show_overhead_ether.button_pressed or show_overhead_food.button_pressed
+		or show_overhead_action.button_pressed)
+
+func _on_floating_feedback_requested(feedback: Dictionary) -> void:
+	if not game_view.visible or AppState.local_actor_id < 0:
+		return
+	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	if not actor_value is Node3D or not is_instance_valid(actor_value as Node3D):
+		return
+	var actor_node: Node3D = actor_value as Node3D
+	var world_position: Vector3 = actor_node.global_position + Vector3(0.0, 3.15, 0.0)
+	if gameplay_camera.is_position_behind(world_position):
+		return
+	var viewport_position: Vector2 = gameplay_camera.unproject_position(world_position)
+	var viewport_scale := Vector2.ONE
+	if main_viewport.size.x > 0 and main_viewport.size.y > 0:
+		viewport_scale = viewport_container.size / Vector2(main_viewport.size)
+	var screen_position: Vector2 = viewport_container.position + viewport_position * viewport_scale
+	var kind: String = str(feedback.get("kind", "experience"))
+	var skill: String = str(feedback.get("skill", "skill"))
+	var label: Label = Label.new()
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.custom_minimum_size = Vector2(190.0, 26.0)
+	label.add_theme_font_size_override("font_size", 17 if kind == "level" else 15)
+	label.add_theme_color_override("font_outline_color", Color(0.015, 0.02, 0.025, 0.98))
+	label.add_theme_constant_override("outline_size", 5)
+	if kind == "level":
+		label.text = "Level %d %s" % [int(feedback.get("level", 0)), skill.capitalize()]
+		label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.22, 1.0))
+	else:
+		label.text = "+%d %s experience" % [
+			int(feedback.get("amount", 0)), skill.capitalize()]
+		label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.38, 1.0))
+	_floating_feedback_offset = (_floating_feedback_offset + 1) % 4
+	label.position = screen_position - Vector2(95.0,
+		84.0 + float(_floating_feedback_offset) * 20.0)
+	_floating_feedback_layer.add_child(label)
+	var tween: Tween = create_tween().set_parallel(true)
+	tween.tween_property(label, "position", label.position - Vector2(0.0, 76.0), 1.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, 1.8).set_delay(0.55)
+	tween.finished.connect(label.queue_free)
+
+func _on_window_size_changed() -> void:
+	# Match the render viewport to the actual drawable area so resizing changes
+	# camera aspect instead of stretching a fixed 16:9 render target.
+	var target_size := Vector2i(maxi(1, roundi(viewport_container.size.x)),
+		maxi(1, roundi(viewport_container.size.y)))
+	if main_viewport.size != target_size:
+		main_viewport.size = target_size
+
+func _on_quickbar_mode_pressed(mode: String) -> void:
+	var showing_items: bool = mode == "items"
+	quick_slot_container.visible = showing_items
+	spell_slot_container.visible = not showing_items
+	%ItemMode.set_pressed_no_signal(showing_items)
+	%SpellMode.set_pressed_no_signal(not showing_items)
+
+func _sync_hud_button_states(force := false) -> void:
+	if _hud_icon_regions.is_empty():
+		return
+	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
+	var sitting: bool = bool(local_actor.get("sitting", false))
+	var states: Dictionary = {
+		%WalkButton: _interaction_mode == "walk" and not sitting,
+		%MapButton: full_map.visible,
+		%SitButton: sitting,
+		%AttackButton: _interaction_mode == "attack",
+		%TradeButton: _interaction_mode == "trade" or bool(AppState.trade.get("open", false)),
+		%InventoryButton: inventory_panel.visible,
+		%StatsButton: stats_panel.visible,
+		%KnowledgeButton: knowledge_panel.visible,
+		%ManufacturingButton: manufacturing_panel.visible,
+		%ChatButton: chat_input.has_focus(),
+		%DisconnectButton: AppState.connection_state == "connected"}
+	var signature: String = str(states.values())
+	if not force and signature == _hud_button_state_signature:
+		return
+	_hud_button_state_signature = signature
+	for button_value: Variant in states:
+		var button: Button = button_value as Button
+		var active: bool = bool(states[button_value])
+		button.set_pressed_no_signal(active)
+		var atlas: Texture2D = _hud_active_atlas if active else _hud_inactive_atlas
+		if atlas != null:
+			button.icon = _atlas_region(atlas, _hud_icon_regions[button_value] as Rect2)
+
+func _build_hud_layout_menu() -> void:
+	_floating_feedback_layer = Control.new()
+	_floating_feedback_layer.name = "FloatingFeedbackLayer"
+	_floating_feedback_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_floating_feedback_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_floating_feedback_layer.z_index = 18
+	game_view.add_child(_floating_feedback_layer)
+
+	_hud_layout_menu = PopupPanel.new()
+	_hud_layout_menu.name = "HudLayoutMenu"
+	_hud_layout_menu.size = Vector2i(330, 390)
+	add_child(_hud_layout_menu)
+	var content := VBoxContainer.new()
+	content.add_theme_constant_override("separation", 6)
+	_hud_layout_menu.add_child(content)
+	var title := Label.new()
+	title.text = "LOWER HUD INDICATORS"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	content.add_child(title)
+	var help := Label.new()
+	help.text = "Select a bar, then reorder or hide it."
+	help.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	content.add_child(help)
+	_hud_layout_list = ItemList.new()
+	_hud_layout_list.custom_minimum_size = Vector2(310.0, 185.0)
+	_hud_layout_list.item_selected.connect(_on_hud_layout_item_selected)
+	content.add_child(_hud_layout_list)
+	var order_actions := HBoxContainer.new()
+	var move_up := Button.new()
+	move_up.text = "Move up"
+	move_up.pressed.connect(_on_hud_layout_move.bind(-1))
+	order_actions.add_child(move_up)
+	var move_down := Button.new()
+	move_down.text = "Move down"
+	move_down.pressed.connect(_on_hud_layout_move.bind(1))
+	order_actions.add_child(move_down)
+	content.add_child(order_actions)
+	_hud_layout_visible = CheckButton.new()
+	_hud_layout_visible.text = "Show selected indicator"
+	_hud_layout_visible.toggled.connect(_on_hud_layout_visibility_toggled)
+	content.add_child(_hud_layout_visible)
+	var skill_row := HBoxContainer.new()
+	var skill_label := Label.new()
+	skill_label.text = "Experience skill"
+	skill_row.add_child(skill_label)
+	_hud_skill_selector = OptionButton.new()
+	_hud_skill_selector.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for skill: String in HUD_SKILLS:
+		_hud_skill_selector.add_item(skill.capitalize())
+		_hud_skill_selector.set_item_metadata(_hud_skill_selector.item_count - 1, skill)
+	_hud_skill_selector.item_selected.connect(_on_hud_skill_selected)
+	skill_row.add_child(_hud_skill_selector)
+	content.add_child(skill_row)
+	var close_button := Button.new()
+	close_button.text = "Close"
+	close_button.pressed.connect(_hud_layout_menu.hide)
+	content.add_child(close_button)
+
+func _connect_hud_context_inputs(control: Control) -> void:
+	if not control.gui_input.is_connected(_on_lower_hud_gui_input):
+		control.gui_input.connect(_on_lower_hud_gui_input)
+	for child: Node in control.get_children():
+		if child is Control:
+			_connect_hud_context_inputs(child as Control)
+
+func _on_lower_hud_gui_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse_event: InputEventMouseButton = event as InputEventMouseButton
+	if not mouse_event.pressed or mouse_event.button_index != MOUSE_BUTTON_RIGHT:
+		return
+	_refresh_hud_layout_menu()
+	_hud_layout_menu.position = Vector2i(get_viewport().get_mouse_position())
+	_hud_layout_menu.popup()
+	get_viewport().set_input_as_handled()
+
+func _refresh_hud_layout_menu() -> void:
+	var previous_selection: int = 0
+	var selected: PackedInt32Array = _hud_layout_list.get_selected_items()
+	if not selected.is_empty():
+		previous_selection = int(selected[0])
+	_hud_layout_list.clear()
+	for meter_key: String in _hud_meter_order:
+		var index: int = _hud_layout_list.item_count
+		_hud_layout_list.add_item(meter_key.capitalize())
+		_hud_layout_list.set_item_metadata(index, meter_key)
+		_hud_layout_list.set_item_custom_fg_color(index,
+			Color(0.91, 0.86, 0.70) if bool(_hud_meter_visible.get(meter_key, true))
+			else Color(0.48, 0.48, 0.48))
+	if _hud_layout_list.item_count > 0:
+		_hud_layout_list.select(clampi(previous_selection, 0,
+			_hud_layout_list.item_count - 1))
+		_on_hud_layout_item_selected(int(_hud_layout_list.get_selected_items()[0]))
+	for option_index: int in range(_hud_skill_selector.item_count):
+		if str(_hud_skill_selector.get_item_metadata(option_index)) == _selected_experience_skill:
+			_hud_skill_selector.select(option_index)
+			break
+
+func _on_hud_layout_item_selected(index: int) -> void:
+	if index < 0 or index >= _hud_layout_list.item_count:
+		return
+	var meter_key: String = str(_hud_layout_list.get_item_metadata(index))
+	_hud_layout_visible.set_pressed_no_signal(bool(_hud_meter_visible.get(meter_key, true)))
+
+func _on_hud_layout_move(direction: int) -> void:
+	var selected: PackedInt32Array = _hud_layout_list.get_selected_items()
+	if selected.is_empty():
+		return
+	var source: int = int(selected[0])
+	var destination: int = clampi(source + direction, 0, _hud_meter_order.size() - 1)
+	if source == destination:
+		return
+	var meter_key: String = _hud_meter_order[source]
+	_hud_meter_order.remove_at(source)
+	_hud_meter_order.insert(destination, meter_key)
+	_apply_hud_meter_layout()
+	_refresh_hud_layout_menu()
+	_hud_layout_list.select(destination)
+	_save_hud_layout()
+
+func _on_hud_layout_visibility_toggled(enabled: bool) -> void:
+	var selected: PackedInt32Array = _hud_layout_list.get_selected_items()
+	if selected.is_empty():
+		return
+	var meter_key: String = str(_hud_layout_list.get_item_metadata(int(selected[0])))
+	_hud_meter_visible[meter_key] = enabled
+	_apply_hud_meter_layout()
+	_refresh_hud_layout_menu()
+	_save_hud_layout()
+
+func _on_hud_skill_selected(index: int) -> void:
+	if index < 0 or index >= _hud_skill_selector.item_count:
+		return
+	_selected_experience_skill = str(_hud_skill_selector.get_item_metadata(index))
+	_sync_stats()
+	_save_hud_layout()
+
+func _meter_node(meter_key: String) -> Control:
+	match meter_key:
+		"mana": return %ManaMeter
+		"food": return %FoodMeter
+		"health": return %HealthMeter
+		"load": return %LoadMeter
+		"action": return %ActionMeter
+		"experience": return %ExperienceMeter
+		_: return null
+
+func _apply_hud_meter_layout() -> void:
+	for index: int in range(_hud_meter_order.size()):
+		var meter_key: String = _hud_meter_order[index]
+		var meter: Control = _meter_node(meter_key)
+		if meter == null:
+			continue
+		bottom_meters.move_child(meter, index)
+		meter.visible = bool(_hud_meter_visible.get(meter_key, true))
+
+func _load_hud_layout() -> void:
+	var config := ConfigFile.new()
+	if config.load("user://eloria_hud.cfg") == OK:
+		var saved_order_value: Variant = config.get_value("lower_hud", "order", _hud_meter_order)
+		if saved_order_value is Array:
+			var saved_order: Array = saved_order_value as Array
+			var validated: Array[String] = []
+			for raw_key: Variant in saved_order:
+				var key: String = str(raw_key)
+				if _hud_meter_order.has(key) and not validated.has(key):
+					validated.append(key)
+			if validated.size() == _hud_meter_order.size():
+				_hud_meter_order = validated
+		for meter_key: String in _hud_meter_order:
+			_hud_meter_visible[meter_key] = bool(config.get_value(
+				"lower_hud", "show_" + meter_key, true))
+		var saved_skill: String = str(config.get_value(
+			"lower_hud", "experience_skill", _selected_experience_skill))
+		if HUD_SKILLS.has(saved_skill):
+			_selected_experience_skill = saved_skill
+	_apply_hud_meter_layout()
+
+func _save_hud_layout() -> void:
+	var config := ConfigFile.new()
+	config.set_value("lower_hud", "order", _hud_meter_order)
+	for meter_key: String in _hud_meter_order:
+		config.set_value("lower_hud", "show_" + meter_key,
+			bool(_hud_meter_visible.get(meter_key, true)))
+	config.set_value("lower_hud", "experience_skill", _selected_experience_skill)
+	var error: Error = config.save("user://eloria_hud.cfg")
+	if error != OK:
+		push_warning("Unable to save lower HUD preferences: " + error_string(error))
 
 func _build_inventory_slots() -> void:
 	for slot: int in range(36):
@@ -2161,20 +2546,24 @@ func _pick_ground_bag(viewport_position: Vector2) -> int:
 func _apply_eloria_art() -> void:
 	login_background.texture = _external_texture("res://assets/ui/eloria_login_background.jpg")
 	login_logo.texture = _external_texture("res://assets/ui/eloria_logo_master.png")
-	var button_atlas: Texture2D = _external_texture("res://assets/ui/eloria_gamebuttons.png")
-	if button_atlas != null:
-		var icon_regions: Dictionary = {
+	_hud_active_atlas = _external_texture("res://assets/ui/eloria_gamebuttons.png")
+	_hud_inactive_atlas = _external_texture("res://assets/ui/eloria_gamebuttons_inactive.png")
+	if _hud_active_atlas != null:
+		_hud_icon_regions = {
 			%WalkButton: Rect2(0, 0, 32, 32), %ChatButton: Rect2(32, 0, 32, 32),
 			%KnowledgeButton: Rect2(96, 0, 32, 32), %AttackButton: Rect2(160, 0, 32, 32),
 			%StatsButton: Rect2(192, 0, 32, 32), %SitButton: Rect2(0, 32, 32, 32),
 			%TradeButton: Rect2(64, 32, 32, 32), %InventoryButton: Rect2(96, 32, 32, 32),
 			%ManufacturingButton: Rect2(128, 32, 32, 32),
 			%DisconnectButton: Rect2(224, 0, 32, 32), %MapButton: Rect2(128, 128, 32, 32)}
-		for button_value: Variant in icon_regions:
+		for button_value: Variant in _hud_icon_regions:
 			var icon_button: Button = button_value as Button
-			icon_button.icon = _atlas_region(button_atlas, icon_regions[button_value] as Rect2)
+			icon_button.icon = _atlas_region(_hud_active_atlas,
+				_hud_icon_regions[button_value] as Rect2)
 			icon_button.text = ""
 			icon_button.expand_icon = true
+			icon_button.toggle_mode = true
+		_sync_hud_button_states(true)
 	var hud_atlas: Texture2D = _external_texture("res://assets/ui/eloria_hud_atlas.png")
 	if hud_atlas != null:
 		%ClockFace.texture = _atlas_region(hud_atlas, Rect2(0, 128, 64, 64))
@@ -2216,11 +2605,16 @@ func _apply_eloria_theme() -> void:
 	theme = eloria_theme
 	_style_meter(health_bar, Color(0.17, 0.82, 0.22, 1.0))
 	_style_meter(health_bottom, Color(0.9, 0.16, 0.14, 1.0))
+	_style_meter(food_bottom, Color(0.96, 0.78, 0.16, 1.0))
+	_style_meter(load_bottom, Color(0.62, 0.43, 0.34, 1.0))
+	_style_meter(experience_bottom, Color(0.18, 0.76, 0.22, 1.0))
 	_style_meter(overhead_health_row.get_node("Bar") as ProgressBar,
 		Color(0.12, 0.9, 0.18, 1.0))
 	for ether_bar: ProgressBar in [mana_bar, ether_bottom,
 		overhead_ether_row.get_node("Bar") as ProgressBar]:
 		_style_meter(ether_bar, Color(0.24, 0.31, 1.0, 1.0))
+	_style_meter(overhead_food_row.get_node("Bar") as ProgressBar,
+		Color(0.96, 0.78, 0.16, 1.0))
 	for points_bar: ProgressBar in [action_bar, action_bottom,
 		overhead_action_row.get_node("Bar") as ProgressBar]:
 		_style_meter(points_bar, Color(0.73, 0.28, 0.86, 1.0))
