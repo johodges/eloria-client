@@ -29,6 +29,6 @@ def main():
  (ROOT/"collision.bin").write_bytes(b"EWCG"+struct.pack("<HHII",1,0,12,12)+bytes([1]*144))
  manifest={"format":"eloria-world","version":1,"id":"fixture","display_name":"Portable World Fixture","scene":"world.glb","collision":"collision.bin","collision_width":12,"collision_height":12,
   "coordinates":{"units_per_meter":1,"up_axis":"Y","forward_axis":"-Z","origin":[0,0,0]},"bounds":{"minimum":[0,-1,0],"maximum":[6,3,6]},"environment":{"ambient_color":[0.6,0.65,0.75],"ambient_intensity":1},
-  "player_starts":[{"id":"default","position":[4,0,-5],"rotation_degrees":0}],"portals":[{"id":"fixture_exit","position":[4,0,-7]}],"harvestables":[],"npc_markers":[],"spawn_markers":[],"regions":[]}
+  "player_starts":[{"id":"default","position":[4,0,-5],"rotation_degrees":0}],"portals":[{"id":"fixture_exit","position":[4,0,-5.5]}],"harvestables":[],"npc_markers":[],"spawn_markers":[],"regions":[]}
  (ROOT/"world.json").write_text(json.dumps(manifest,indent=2)+"\n")
 if __name__=="__main__":main()
