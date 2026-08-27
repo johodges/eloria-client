@@ -495,10 +495,13 @@ func _update_keyboard_movement() -> void:
 		return
 	var dto: Dictionary = actor_value as Dictionary
 	var actor_node: ReplicatedActor3D = actor_node_value as ReplicatedActor3D
-	var forward_input: int = (1 if Input.is_action_pressed("move_north") else 0) \
-		- (1 if Input.is_action_pressed("move_south") else 0)
-	var right_input: int = (1 if Input.is_action_pressed("move_east") else 0) \
-		- (1 if Input.is_action_pressed("move_west") else 0)
+	var input_axes := _movement_axes_for_actions(
+		Input.is_action_pressed("move_north"),
+		Input.is_action_pressed("move_south"),
+		Input.is_action_pressed("move_west"),
+		Input.is_action_pressed("move_east"))
+	var forward_input: int = input_axes.x
+	var right_input: int = input_axes.y
 	if forward_input == 0 and right_input == 0:
 		_stop_keyboard_movement()
 		return
@@ -527,6 +530,12 @@ func _update_keyboard_movement() -> void:
 	else:
 		push_warning("keyboard MOVE_TO failed: " + error_string(error))
 		_keyboard_moving = false
+
+func _movement_axes_for_actions(north_pressed: bool, south_pressed: bool,
+		west_pressed: bool, east_pressed: bool) -> Vector2i:
+	var forward_input: int = (1 if north_pressed else 0) - (1 if south_pressed else 0)
+	var right_input: int = (1 if west_pressed else 0) - (1 if east_pressed else 0)
+	return Vector2i(forward_input, right_input)
 
 func _facing_relative_tile_direction(yaw: float, forward_input: int,
 		right_input: int) -> Vector2i:
@@ -571,6 +580,13 @@ func _turn_local_actor(step: int) -> void:
 	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	if actor_value is ReplicatedActor3D and is_instance_valid(actor_value as ReplicatedActor3D):
 		(actor_value as ReplicatedActor3D).turn_by(float(step) * PI / 4.0)
+
+func _turn_step_for_key_event(key_event: InputEventKey) -> int:
+	if key_event.keycode == KEY_Q or key_event.physical_keycode == KEY_Q:
+		return 1
+	if key_event.keycode == KEY_E or key_event.physical_keycode == KEY_E:
+		return -1
+	return 0
 
 func _on_connect_pressed() -> void:
 	if AppState.connection_state != "disconnected":
@@ -1502,8 +1518,7 @@ func _input(event: InputEvent) -> void:
 	elif (not _text_entry_active() and not key_event.ctrl_pressed and not key_event.alt_pressed
 			and (key_event.keycode in [KEY_Q, KEY_E]
 			or key_event.physical_keycode in [KEY_Q, KEY_E])):
-		_turn_local_actor(1 if (key_event.keycode == KEY_E
-			or key_event.physical_keycode == KEY_E) else -1)
+		_turn_local_actor(_turn_step_for_key_event(key_event))
 		get_viewport().set_input_as_handled()
 	elif key_event.keycode == KEY_TAB or key_event.physical_keycode == KEY_TAB:
 		_toggle_full_map()
