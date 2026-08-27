@@ -580,56 +580,170 @@ func _run() -> void:
 		})
 		await _capture("world-standing-after-move.png")
 
+	var guard_specs: Array[Dictionary] = [
+		{
+			"name": "spear",
+			"part": 0,
+			"source_slot": _inspection_slot_for(inventory_inspections,
+				"Four Gates Guard Spear"),
+			"wear_slot": 36,
+			"allowed_visuals": [11, 112],
+			"bone": "hand_r",
+		},
+		{
+			"name": "shield",
+			"part": 1,
+			"source_slot": _inspection_slot_for(inventory_inspections,
+				"Guard Shield"),
+			"wear_slot": 37,
+			"allowed_visuals": [5, 105],
+			"bone": "hand_l",
+		},
+		{
+			"name": "cape",
+			"part": 2,
+			"source_slot": _inspection_slot_for(inventory_inspections,
+				"Guard Cape"),
+			"wear_slot": 38,
+			"allowed_visuals": [11, 105],
+			"bone": "spine_03",
+		},
+	]
 	main.call("_on_inventory_button_pressed")
-	main.call("_on_inventory_slot_pressed", 0)
-	main.call("_on_inventory_equip_pressed")
-	var spear_equipped: Callable = func() -> bool:
-		var current_inventory: Dictionary = _app_state.get("inventory") as Dictionary
-		var current_actors: Dictionary = _app_state.get("actors") as Dictionary
-		var current_dto: Dictionary = current_actors.get(local_actor_id, {}) as Dictionary
-		var current_visuals: Dictionary = current_dto.get("equipment_visuals", {}) as Dictionary
-		return current_inventory.has(36) and not current_inventory.has(0) and (
-			current_visuals.has(0) or current_visuals.has("0"))
-	_expect(await _wait_for(spear_equipped, 8.0),
-		"real MOVE_INVENTORY_ITEM equips the guard spear and broadcasts its actor visual")
+	var guard_server_visuals: Dictionary = {}
+	for guard_spec: Dictionary in guard_specs:
+		var source_slot: int = int(guard_spec.get("source_slot", -1))
+		var wear_slot: int = int(guard_spec.get("wear_slot", -1))
+		var part: int = int(guard_spec.get("part", -1))
+		var guard_name: String = str(guard_spec.get("name", "guard item"))
+		_expect(source_slot >= 0, "real inventory contains the Four Gates guard " + guard_name)
+		if source_slot < 0:
+			continue
+		main.call("_on_inventory_slot_pressed", source_slot)
+		main.call("_on_inventory_equip_pressed")
+		var guard_equipped: Callable = func() -> bool:
+			var current_inventory: Dictionary = _app_state.get("inventory") as Dictionary
+			var current_actors: Dictionary = _app_state.get("actors") as Dictionary
+			var current_dto: Dictionary = current_actors.get(local_actor_id, {}) as Dictionary
+			var current_visuals: Dictionary = current_dto.get("equipment_visuals", {}) as Dictionary
+			return current_inventory.has(wear_slot) and not current_inventory.has(source_slot) \
+				and _equipment_visual_id(current_visuals, part) >= 0
+		var equipped_ok: bool = await _wait_for(guard_equipped, 8.0)
+		_expect(equipped_ok,
+			"real MOVE_INVENTORY_ITEM equips guard %s into wear slot %d and broadcasts part %d"
+			% [guard_name, wear_slot, part])
+		if not equipped_ok:
+			continue
+		var equipped_actors: Dictionary = _app_state.get("actors") as Dictionary
+		var equipped_dto: Dictionary = equipped_actors.get(local_actor_id, {}) as Dictionary
+		var equipped_visuals: Dictionary = equipped_dto.get("equipment_visuals", {}) as Dictionary
+		var server_visual_id: int = _equipment_visual_id(equipped_visuals, part)
+		guard_server_visuals[part] = server_visual_id
+		var allowed_visuals: Array = guard_spec.get("allowed_visuals", []) as Array
+		_expect(allowed_visuals.has(server_visual_id),
+			"server guard %s visual id %d is a supported legacy/native compatibility id"
+			% [guard_name, server_visual_id])
 	main.call("_sync_inventory")
-	var equipped_button: Button = equipment_grid.get_child(0) as Button
-	_expect(equipped_button.icon != null and equipped_button.text.contains("×1"),
-		"authoritative spear appears in the equipment window")
+	for guard_spec: Dictionary in guard_specs:
+		var wear_slot: int = int(guard_spec.get("wear_slot", -1))
+		var button_index: int = wear_slot - 36
+		var equipped_button: Button = equipment_grid.get_child(button_index) as Button
+		_expect(equipped_button != null and equipped_button.icon != null
+			and equipped_button.text.contains("×1"),
+			"authoritative guard %s appears in wear slot %d"
+			% [str(guard_spec.get("name", "item")), wear_slot])
 	var equipped_actor: ReplicatedActor3D = (
 		main.get("actor_nodes") as Dictionary).get(local_actor_id) as ReplicatedActor3D
 	var equipped_diagnostics: Dictionary = equipped_actor.equipment_diagnostics()
-	_expect(int(equipped_diagnostics.get("fallback", 0)) > 0,
-		"unmapped guard spear renders a visible development equipment fallback")
+	_expect(int(equipped_diagnostics.get("native", 0)) == 3
+		and int(equipped_diagnostics.get("fallback", 0)) == 0,
+		"all three guard visuals resolve to native equipment with zero fallback")
+	var native_attachments: Dictionary = _native_equipment_attachments(equipped_actor)
+	for guard_spec: Dictionary in guard_specs:
+		var part: int = int(guard_spec.get("part", -1))
+		var attachment: Dictionary = native_attachments.get(part, {}) as Dictionary
+		_expect(str(attachment.get("bone", "")) == str(guard_spec.get("bone", ""))
+			and int(attachment.get("visible_meshes", 0)) > 0
+			and bool(attachment.get("under_skeleton", false)),
+			"native guard %s attaches to %s with visible geometry under the actor skeleton"
+			% [str(guard_spec.get("name", "item")), str(guard_spec.get("bone", ""))])
+	var attachment_positions_before: Dictionary = _native_equipment_attachment_positions(
+		equipped_actor)
+	equipped_actor.play_action(&"walk")
+	for unused_equipment_animation_frame: int in range(12):
+		await process_frame
+	var attachment_positions_after: Dictionary = _native_equipment_attachment_positions(
+		equipped_actor)
+	var animation_followed_parts: int = 0
+	for guard_spec: Dictionary in guard_specs:
+		var part: int = int(guard_spec.get("part", -1))
+		var before_value: Variant = attachment_positions_before.get(part)
+		var after_value: Variant = attachment_positions_after.get(part)
+		if before_value is Vector3 and after_value is Vector3 and (
+				before_value as Vector3).distance_to(after_value as Vector3) > 0.0005:
+			animation_followed_parts += 1
+	_expect(animation_followed_parts == 3,
+		"spear, shield, and cape bone attachments follow native actor animation")
+	equipped_actor.play_action(&"idle")
 	main.call("_on_inventory_close_pressed")
 	var equipment_capture_distance: float = camera_rig.distance
-	camera_rig.distance = 12.0
-	camera_rig.set_focus(equipped_actor.global_position)
+	var equipment_capture_yaw: float = camera_rig.yaw_degrees
+	var equipment_capture_pitch: float = camera_rig.pitch_degrees
+	camera_rig.distance = 9.0
+	camera_rig.pitch_degrees = -38.0
+	camera_rig.set_focus(equipped_actor.global_position + Vector3.UP * 0.2)
+	camera_rig.yaw_degrees = default_yaw - 38.0
+	await _capture("world-equipment-native-spear.png")
 	await _capture("world-equipment-fallback.png")
+	camera_rig.yaw_degrees = default_yaw + 38.0
+	await _capture("world-equipment-native-shield.png")
+	camera_rig.yaw_degrees = default_yaw + 180.0
+	await _capture("world-equipment-native-cape.png")
 	camera_rig.distance = equipment_capture_distance
+	camera_rig.yaw_degrees = equipment_capture_yaw
+	camera_rig.pitch_degrees = equipment_capture_pitch
+	camera_rig.set_focus(equipped_actor.global_position)
 	main.call("_on_inventory_button_pressed")
-	main.call("_on_equipment_slot_pressed", 36)
-	main.call("_on_inventory_unequip_pressed")
-	var spear_unequipped: Callable = func() -> bool:
-		var current_inventory: Dictionary = _app_state.get("inventory") as Dictionary
-		var current_actors: Dictionary = _app_state.get("actors") as Dictionary
-		var current_dto: Dictionary = current_actors.get(local_actor_id, {}) as Dictionary
-		var current_visuals: Dictionary = current_dto.get("equipment_visuals", {}) as Dictionary
-		return current_inventory.has(0) and not current_inventory.has(36) and (
-			not current_visuals.has(0) and not current_visuals.has("0"))
-	_expect(await _wait_for(spear_unequipped, 8.0),
-		"real MOVE_INVENTORY_ITEM unequips the spear and clears its actor visual")
+	for guard_index: int in range(guard_specs.size() - 1, -1, -1):
+		var guard_spec: Dictionary = guard_specs[guard_index]
+		var wear_slot: int = int(guard_spec.get("wear_slot", -1))
+		var part: int = int(guard_spec.get("part", -1))
+		main.call("_on_equipment_slot_pressed", wear_slot)
+		main.call("_on_inventory_unequip_pressed")
+		var guard_unequipped: Callable = func() -> bool:
+			var current_inventory: Dictionary = _app_state.get("inventory") as Dictionary
+			var current_actors: Dictionary = _app_state.get("actors") as Dictionary
+			var current_dto: Dictionary = current_actors.get(local_actor_id, {}) as Dictionary
+			var current_visuals: Dictionary = current_dto.get("equipment_visuals", {}) as Dictionary
+			return not current_inventory.has(wear_slot) \
+				and _equipment_visual_id(current_visuals, part) < 0
+		_expect(await _wait_for(guard_unequipped, 8.0),
+			"real MOVE_INVENTORY_ITEM unequips guard %s from wear slot %d and clears part %d"
+			% [str(guard_spec.get("name", "item")), wear_slot, part])
 	main.call("_on_inventory_close_pressed")
 	var unequipped_diagnostics: Dictionary = equipped_actor.equipment_diagnostics()
-	_expect(int(unequipped_diagnostics.get("fallback", 0)) == 0,
-		"equipment presentation removes the development fallback after server unwear")
+	var restored_inventory: Dictionary = _app_state.get("inventory") as Dictionary
+	_expect(int(unequipped_diagnostics.get("native", 0)) == 0
+		and int(unequipped_diagnostics.get("fallback", 0)) == 0,
+		"authoritative unwear removes every native guard attachment cleanly")
+	_expect(_inventory_item_count(restored_inventory, 0, 36) == expected_inventory_buttons,
+		"all guard items return to the backpack after authoritative unwear")
 	_write_json("equipment.json", {
-		"equipped_slot": 36,
+		"wear_slots": [36, 37, 38],
+		"server_visual_ids": _json_safe(guard_server_visuals),
+		"supported_visual_ids": {
+			"0": [11, 112],
+			"1": [5, 105],
+			"2": [11, 105],
+		},
+		"native_attachments": _json_safe(native_attachments),
+		"animation_followed_parts": animation_followed_parts,
 		"equipped_diagnostics": _json_safe(equipped_diagnostics),
 		"unequipped_diagnostics": _json_safe(unequipped_diagnostics),
-		"restored_inventory": _json_safe(_app_state.get("inventory")),
+		"restored_inventory": _json_safe(restored_inventory),
 		"credentials": "REDACTED",
 	})
+
 
 	helper_network.disconnect_from_server()
 	var helper_removed: Callable = func() -> bool:
@@ -704,6 +818,54 @@ func _chat_contains(lines: Array, marker: String) -> bool:
 				(line_value as Dictionary).get("text", "")).contains(marker):
 			return true
 	return false
+
+func _inspection_slot_for(inspections: Array[Dictionary], marker: String) -> int:
+	for inspection: Dictionary in inspections:
+		if str(inspection.get("text", "")).contains(marker):
+			return int(inspection.get("slot", -1))
+	return -1
+
+func _equipment_visual_id(visuals: Dictionary, part: int) -> int:
+	if visuals.has(part):
+		return int(visuals[part])
+	if visuals.has(str(part)):
+		return int(visuals[str(part)])
+	return -1
+
+func _equipment_attachment_part(attachment: BoneAttachment3D) -> int:
+	var attachment_name: String = str(attachment.name)
+	for part: int in range(8):
+		if attachment_name.begins_with("EquipmentPart_%d_Visual_" % part):
+			return part
+	return -1
+
+func _native_equipment_attachments(actor: ReplicatedActor3D) -> Dictionary:
+	var attachments: Dictionary = {}
+	for node_value: Node in actor.find_children("*", "BoneAttachment3D", true, false):
+		var attachment: BoneAttachment3D = node_value as BoneAttachment3D
+		if not attachment.has_meta("native_equipment"):
+			continue
+		var part: int = _equipment_attachment_part(attachment)
+		if part < 0:
+			continue
+		attachments[part] = {
+			"bone": str(attachment.bone_name),
+			"path": str(attachment.get_path()),
+			"under_skeleton": attachment.get_parent() is Skeleton3D,
+			"visible_meshes": _visible_native_mesh_count(attachment),
+		}
+	return attachments
+
+func _native_equipment_attachment_positions(actor: ReplicatedActor3D) -> Dictionary:
+	var positions: Dictionary = {}
+	for node_value: Node in actor.find_children("*", "BoneAttachment3D", true, false):
+		var attachment: BoneAttachment3D = node_value as BoneAttachment3D
+		if not attachment.has_meta("native_equipment"):
+			continue
+		var part: int = _equipment_attachment_part(attachment)
+		if part >= 0:
+			positions[part] = attachment.global_transform.origin
+	return positions
 
 func _populated_item_buttons(container: Container) -> int:
 	var populated: int = 0
