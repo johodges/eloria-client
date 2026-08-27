@@ -36,6 +36,13 @@ func _init() -> void:
 		PackedByteArray([37, 6, 0, 3, 0x78, 0x56, 0x34, 0x12]))
 	_expect_bytes("trade accept destinations fixture", EloriaProtocol.accept_trade(),
 		PackedByteArray([33, 17, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]))
+	var storage_destinations: PackedByteArray = PackedByteArray()
+	storage_destinations.resize(16)
+	storage_destinations.fill(1)
+	storage_destinations[3] = 2
+	_expect_bytes("trade per-slot storage destination fixture",
+		EloriaProtocol.accept_trade(storage_destinations), PackedByteArray([
+			33, 17, 0, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]))
 	_expect_bytes("trade reject fixture", EloriaProtocol.reject_trade(),
 		PackedByteArray([34, 1, 0]))
 	_expect_bytes("trade exit fixture", EloriaProtocol.exit_trade(),

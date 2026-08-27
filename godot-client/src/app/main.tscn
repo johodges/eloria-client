@@ -636,6 +636,12 @@ max_value = 2147483647.0
 value = 1.0
 allow_greater = false
 
+[node name="TradeStorageDestination" type="CheckBox" parent="GameView/TradePanel/Content/QuantityRow"]
+unique_name_in_owner = true
+text = "Receive selected partner offer in storage"
+tooltip_text = "Available only when both players are near storage; applies to the selected partner-offer slot"
+disabled = true
+
 [node name="TradeStatus" type="Label" parent="GameView/TradePanel/Content"]
 unique_name_in_owner = true
 text = "Both players must accept and then confirm."
@@ -1040,6 +1046,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeAccept" to="." method="_on_trade_accept_pressed"]
 [connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeReject" to="." method="_on_trade_reject_pressed"]
 [connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeCancel" to="." method="_on_trade_cancel_pressed"]
+[connection signal="toggled" from="GameView/TradePanel/Content/QuantityRow/TradeStorageDestination" to="." method="_on_trade_storage_destination_toggled"]
 [connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageDeposit" to="." method="_on_storage_deposit_pressed"]
 [connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageWithdraw" to="." method="_on_storage_withdraw_pressed"]
 [connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageInspect" to="." method="_on_storage_inspect_pressed"]

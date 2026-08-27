@@ -145,13 +145,15 @@ func _run() -> void:
 	_expect(not trade_button.disabled and trade_button.tooltip_text.contains("four tiles"),
 		"living player selection enables the real trade request")
 	app_state_inventory.call("_on_packet", 41,
-		PackedByteArray([0, 65, 108, 105, 99, 101, 0]))
+		PackedByteArray([1, 65, 108, 105, 99, 101, 0]))
 	app_state_inventory.call("_on_packet", 40,
 		PackedByteArray([1, 3, 0, 9, 0, 0, 0, 7, 12]))
 	app_state_inventory.call("_on_packet", 35,
 		PackedByteArray([3, 0, 4, 0, 0, 0, 1, 2, 0]))
 	app_state_inventory.call("_on_packet", 35,
 		PackedByteArray([3, 0, 2, 0, 0, 0, 1, 2, 0]))
+	app_state_inventory.call("_on_packet", 35,
+		PackedByteArray([3, 0, 1, 0, 0, 0, 1, 2, 1]))
 	app_state_inventory.call("_on_packet", 36, PackedByteArray([0]))
 	app_state_inventory.call("_on_packet", 36, PackedByteArray([1]))
 	main.call("_sync_trade")
@@ -166,12 +168,23 @@ func _run() -> void:
 		"GameView/TradePanel/Content/Columns/Source/TradeSource") as ItemList
 	var trade_own_list: ItemList = main.get_node(
 		"GameView/TradePanel/Content/Columns/Own/TradeOwnOffers") as ItemList
+	var trade_other_list: ItemList = main.get_node(
+		"GameView/TradePanel/Content/Columns/Other/TradeOtherOffers") as ItemList
 	var trade_accept_button: Button = main.get_node(
 		"GameView/TradePanel/Content/Actions/TradeAccept") as Button
-	_expect(trade_source.item_count == 1 and trade_own_list.item_count == 1,
+	var trade_storage_destination: CheckBox = main.get_node(
+		"GameView/TradePanel/Content/QuantityRow/TradeStorageDestination") as CheckBox
+	_expect(trade_source.item_count == 1 and trade_own_list.item_count == 1
+		and trade_other_list.item_count == 1,
 		"trade source and own-offer columns render authoritative items")
 	_expect(not trade_accept_button.disabled and trade_accept_button.text.contains("Confirm"),
 		"mutual first acceptance enables the explicit confirmation phase")
+	trade_other_list.select(0)
+	main.call("_on_trade_other_selected", 0)
+	main.call("_on_trade_storage_destination_toggled", true)
+	var trade_destinations: PackedByteArray = main.get("trade_destinations") as PackedByteArray
+	_expect(not trade_storage_destination.disabled and int(trade_destinations[2]) == 2,
+		"storage-adjacent trade records a per-offer storage destination")
 	_expect(int(accumulated_offer.get("quantity", 0)) == 6,
 		"incremental trade offers accumulate in their authoritative slot")
 	_expect(int(trade_state.get("own_accepts", 0)) == 1

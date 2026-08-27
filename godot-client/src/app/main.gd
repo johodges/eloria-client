@@ -56,6 +56,7 @@ extends Control
 @onready var trade_remove_button: Button = %TradeRemove
 @onready var trade_accept_button: Button = %TradeAccept
 @onready var trade_reject_button: Button = %TradeReject
+@onready var trade_storage_destination: CheckBox = %TradeStorageDestination
 @onready var storage_panel: Control = %StoragePanel
 @onready var storage_categories: ItemList = %StorageCategories
 @onready var storage_items: ItemList = %StorageItems
@@ -100,6 +101,8 @@ var quick_slot_buttons: Array[Button] = []
 var spell_slot_buttons: Array[Button] = []
 var selected_inventory_slot := -1
 var selected_trade_side := ""
+var trade_destinations: PackedByteArray = PackedByteArray()
+var trade_was_open := false
 var selected_storage_side := ""
 var cooldown_display_second := -1
 
@@ -138,6 +141,7 @@ func _ready() -> void:
 	_build_equipment_slots()
 	_bind_quick_slots()
 	_bind_spell_slots()
+	_reset_trade_destinations()
 	trade_source.item_selected.connect(_on_trade_source_selected)
 	trade_own_offers.item_selected.connect(_on_trade_own_selected)
 	trade_other_offers.item_selected.connect(_on_trade_other_selected)
@@ -370,6 +374,16 @@ func _on_trade_other_selected(_index: int) -> void:
 	selected_trade_side = "other"
 	_sync_trade_actions()
 
+func _on_trade_storage_destination_toggled(enabled: bool) -> void:
+	if not bool(AppState.trade.get("storage_available", false)):
+		return
+	var selected: PackedInt32Array = trade_other_offers.get_selected_items()
+	if selected.is_empty():
+		return
+	var offer_slot: int = _trade_list_slot(trade_other_offers, int(selected[0]))
+	if offer_slot >= 0 and offer_slot < trade_destinations.size():
+		trade_destinations[offer_slot] = 2 if enabled else 1
+
 func _on_trade_offer_pressed() -> void:
 	var selected: PackedInt32Array = trade_source.get_selected_items()
 	if selected.is_empty():
@@ -413,7 +427,7 @@ func _on_trade_inspect_pressed() -> void:
 func _on_trade_accept_pressed() -> void:
 	if not bool(AppState.trade.get("open", false)):
 		return
-	var error: Error = Network.accept_trade()
+	var error: Error = Network.accept_trade(trade_destinations)
 	if error != OK:
 		push_warning("ACCEPT_TRADE failed: " + error_string(error))
 
@@ -1168,7 +1182,14 @@ func _sync_trade() -> void:
 	trade_panel.visible = is_open
 	if not is_open:
 		selected_trade_side = ""
+		trade_was_open = false
+		_reset_trade_destinations()
 		return
+	if not trade_was_open:
+		trade_was_open = true
+		_reset_trade_destinations()
+	if not bool(AppState.trade.get("storage_available", false)):
+		_reset_trade_destinations()
 	inventory_panel.hide()
 	stats_panel.hide()
 	full_map.hide()
@@ -1231,6 +1252,20 @@ func _trade_list_slot(list_control: ItemList, index: int) -> int:
 func _sync_trade_actions() -> void:
 	trade_offer_button.disabled = trade_source.get_selected_items().is_empty()
 	trade_remove_button.disabled = trade_own_offers.get_selected_items().is_empty()
+	var selected_other: PackedInt32Array = trade_other_offers.get_selected_items()
+	var destination_available: bool = (bool(AppState.trade.get("storage_available", false))
+		and not selected_other.is_empty())
+	trade_storage_destination.disabled = not destination_available
+	var destination_is_storage: bool = false
+	if destination_available:
+		var offer_slot: int = _trade_list_slot(trade_other_offers, int(selected_other[0]))
+		destination_is_storage = (offer_slot >= 0 and offer_slot < trade_destinations.size()
+			and int(trade_destinations[offer_slot]) == 2)
+	trade_storage_destination.set_pressed_no_signal(destination_is_storage)
+
+func _reset_trade_destinations() -> void:
+	trade_destinations.resize(16)
+	trade_destinations.fill(1)
 
 func _trade_acceptance_text(value: int) -> String:
 	match value:
