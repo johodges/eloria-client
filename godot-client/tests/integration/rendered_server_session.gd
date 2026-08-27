@@ -65,9 +65,9 @@ func _run() -> void:
 	var world_loader: WorldLoader = main.get_node(
 		"GameView/ViewportContainer/Viewport/WorldRoot/WorldLoader") as WorldLoader
 	var presentation_ready: Callable = func() -> bool:
-		return not AppState.current_map.is_empty() and AppState.local_actor_id >= 0
+		return (not AppState.current_map.is_empty() and AppState.local_actor_id >= 0
 			and (main.get("actor_nodes") as Dictionary).has(AppState.local_actor_id)
-			and world_loader.world_root != null
+			and world_loader.world_root != null)
 	if not await _wait_for(presentation_ready, SESSION_TIMEOUT_SECONDS):
 		_fail("authoritative map/local actor presentation timed out")
 		_finish()
