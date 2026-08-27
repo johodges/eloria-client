@@ -154,7 +154,9 @@ func _run() -> void:
 	for quick_index: int in range(1, 9):
 		_expect(InputMap.has_action("quick_item_%d" % quick_index),
 			"item quick slot %d has a centralized input action" % quick_index)
-	app_state_inventory.set("owned_sigils", [3, 23])
+	var ready_sigils: Array[int] = [3, 23]
+	app_state_inventory.set("owned_sigils", ready_sigils)
+	app_state_inventory.set("pending_spell_target", "")
 	app_state_inventory.set("stats", {"magic": 0, "ether": 5})
 	app_state_inventory.set("inventory", {0: {
 		"image_id": 59, "quantity": 1, "slot": 0, "flags": 6}})
