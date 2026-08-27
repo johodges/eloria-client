@@ -136,7 +136,7 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		global_position = server_target
 		rotation.y = _target_yaw
 		_snap_pending = false
-	if dto.has("command"):
+	if dto.has("command") and resolver != null:
 		play_action(resolver.action_for_command(actor_command))
 
 func play_action(action: StringName) -> void:
