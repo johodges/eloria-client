@@ -268,6 +268,20 @@ func _run() -> void:
 		"every real backpack item has a visible icon and quantity")
 	_expect(populated_equipment_buttons == expected_equipment_buttons,
 		"every real equipped item has a visible icon and quantity")
+	var first_inventory_slot: int = _first_inventory_slot(server_inventory)
+	var prior_inventory_text: String = str(_app_state.get("inventory_text"))
+	main.call("_on_inventory_slot_pressed", first_inventory_slot)
+	var received_inventory_text: Callable = func() -> bool:
+		var current_text: String = str(_app_state.get("inventory_text"))
+		return not current_text.is_empty() and current_text != prior_inventory_text
+	_expect(await _wait_for(received_inventory_text, 8.0),
+		"real LOOK_AT_INVENTORY_ITEM receives the authoritative item description")
+	main.call("_sync_inventory")
+	var inventory_description: RichTextLabel = main.get_node(
+		"GameView/InventoryPanel/Content/InventoryDescription") as RichTextLabel
+	_expect(inventory_description.get_parsed_text() == str(
+		_app_state.get("inventory_text")),
+		"inventory window presents the real server item description")
 	await _capture("world-inventory.png")
 	main.call("_on_inventory_close_pressed")
 	main.call("_on_stats_button_pressed")
@@ -307,6 +321,8 @@ func _run() -> void:
 		"expected_inventory_buttons": expected_inventory_buttons,
 		"expected_equipment_buttons": expected_equipment_buttons,
 		"expected_quick_items": expected_quick_items,
+		"inspected_slot": first_inventory_slot,
+		"inventory_inspect_text": str(_app_state.get("inventory_text")),
 		"configured_spell_slots": configured_spell_slots,
 		"credentials": "REDACTED",
 	})
@@ -648,6 +664,14 @@ func _inventory_item_count(inventory: Dictionary, first_slot: int, end_slot: int
 		if slot >= first_slot and slot < end_slot:
 			count += 1
 	return count
+
+func _first_inventory_slot(inventory: Dictionary) -> int:
+	var first_slot: int = 44
+	for slot_value: Variant in inventory:
+		var slot: int = int(slot_value)
+		if slot >= 0 and slot < first_slot:
+			first_slot = slot
+	return first_slot
 
 func _configured_spell_buttons(container: Container) -> int:
 	var configured: int = 0
