@@ -179,6 +179,23 @@ func _init() -> void:
 		"inventory inspection text")
 	_expect(EloriaProtocol.decode_server(19, PackedByteArray([1, 0])).type == "invalid",
 		"malformed inventory snapshot rejected")
+	var atlas_config_file: FileAccess = FileAccess.open(
+		"res://data/items/atlases.json", FileAccess.READ)
+	_expect(atlas_config_file != null, "legacy item atlas registry opens")
+	if atlas_config_file != null:
+		var atlas_config_value: Variant = JSON.parse_string(atlas_config_file.get_as_text())
+		_expect(atlas_config_value is Dictionary, "legacy item atlas registry parses")
+		if atlas_config_value is Dictionary:
+			var atlas: ItemAtlas = ItemAtlas.new()
+			atlas.configure(atlas_config_value as Dictionary)
+			var first_icon: Texture2D = atlas.icon_for(0)
+			var last_icon: Texture2D = atlas.icon_for(124)
+			_expect(first_icon is AtlasTexture and first_icon.get_size() == Vector2(50, 50),
+				"first legacy item icon resolves at native aspect")
+			_expect(last_icon is AtlasTexture and last_icon.get_size() == Vector2(50, 50),
+				"fifth legacy item atlas resolves")
+			_expect(not atlas.supports(125) and atlas.icon_for(125) == null,
+				"unknown item artwork remains an explicit fallback")
 
 	print("protocol tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)

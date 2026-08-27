@@ -109,16 +109,18 @@ func _run() -> void:
 		"inventory action opens the window and centrally closes statistics")
 	var app_state_inventory: Node = root.get_node("AppState")
 	app_state_inventory.set("inventory", {0: {
-		"image_id": 321, "quantity": 9, "slot": 0, "flags": 12,
+		"image_id": 3, "quantity": 9, "slot": 0, "flags": 12,
 		"inventory_usable": true, "stackable": true}})
 	main.call("_sync_inventory")
 	var first_inventory_slot: Button = main.get_node(
 		"GameView/InventoryPanel/Content/Scroll/InventoryGrid").get_child(0) as Button
 	var first_quick_slot: Button = main.get_node(
 		"GameView/ItemSpellQuickbar/QuickContent/Slots/Slot1") as Button
-	_expect(first_inventory_slot.text.contains("#321") and not first_inventory_slot.disabled,
+	_expect(first_inventory_slot.text.contains("×9") and first_inventory_slot.icon != null
+		and not first_inventory_slot.disabled,
 		"inventory snapshot populates its server slot")
-	_expect(first_quick_slot.text.contains("#321") and not first_quick_slot.disabled,
+	_expect(first_quick_slot.text.contains("×9") and first_quick_slot.icon != null
+		and not first_quick_slot.disabled,
 		"usable inventory slot populates the matching live quick slot")
 	for quick_index: int in range(1, 9):
 		_expect(InputMap.has_action("quick_item_%d" % quick_index),

@@ -58,6 +58,7 @@ var actor_nodes: Dictionary = {}
 var models: Dictionary = {}
 var animation_config: Dictionary = {}
 var map_registry: Dictionary = {}
+var item_atlas := ItemAtlas.new()
 var gameplay_world: World3D
 var loaded_server_map := ""
 var adapter := CoordinateAdapter.new({"walkingHeight": 0.0, "invertServerY": true})
@@ -72,6 +73,7 @@ func _ready() -> void:
 	models = _json("res://data/actors/models.json").get("models", {})
 	animation_config = _json("res://data/animations/luminous.json")
 	map_registry = _json("res://data/maps/registry.json").get("maps", {})
+	item_atlas.configure(_json("res://data/items/atlases.json"))
 	Network.connection_state_changed.connect(_on_connection_state_changed)
 	Network.protocol_error.connect(func(message: String): status_label.text = "Protocol error: " + message)
 	AppState.login_succeeded.connect(_on_login_succeeded)
@@ -605,6 +607,7 @@ func _build_inventory_slots() -> void:
 	for slot: int in range(36):
 		var button: Button = Button.new()
 		button.custom_minimum_size = Vector2(64.0, 52.0)
+		button.expand_icon = true
 		button.text = str(slot + 1)
 		button.tooltip_text = "Empty inventory slot %d" % (slot + 1)
 		button.disabled = true
@@ -627,11 +630,13 @@ func _sync_inventory() -> void:
 		var item_value: Variant = AppState.inventory.get(slot)
 		if item_value is Dictionary:
 			var item: Dictionary = item_value as Dictionary
-			button.text = "#%d\n×%d" % [int(item.get("image_id", 0)),
-				int(item.get("quantity", 0))]
+			var image_id: int = int(item.get("image_id", 0))
+			button.icon = item_atlas.icon_for(image_id)
+			button.text = "×%d" % int(item.get("quantity", 0))
 			button.tooltip_text = _inventory_tooltip(item)
 			button.disabled = false
 		else:
+			button.icon = null
 			button.text = str(slot + 1)
 			button.tooltip_text = "Empty inventory slot %d" % (slot + 1)
 			button.disabled = true
@@ -641,12 +646,14 @@ func _sync_inventory() -> void:
 		if quick_item_value is Dictionary:
 			var quick_item: Dictionary = quick_item_value as Dictionary
 			var usable: bool = bool(quick_item.get("inventory_usable", false))
-			quick_button.text = "%d\n#%d ×%d" % [slot + 1,
-				int(quick_item.get("image_id", 0)), int(quick_item.get("quantity", 0))]
+			quick_button.icon = item_atlas.icon_for(int(quick_item.get("image_id", 0)))
+			quick_button.expand_icon = true
+			quick_button.text = "%d  ×%d" % [slot + 1, int(quick_item.get("quantity", 0))]
 			quick_button.disabled = not usable
 			quick_button.tooltip_text = (_inventory_tooltip(quick_item) if usable else
 				_inventory_tooltip(quick_item) + "\nThis item cannot be used directly.")
 		else:
+			quick_button.icon = null
 			quick_button.text = str(slot + 1)
 			quick_button.disabled = true
 			quick_button.tooltip_text = "Empty item quick slot"
