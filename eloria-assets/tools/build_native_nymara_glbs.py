@@ -1121,8 +1121,11 @@ def humanoid_model(scene: str, culture: str, gender: str) -> dict:
             f"res://assets/actors/native/hair/buns_{gender}.glb",
         ],
         "boneAliases": {"head": "Head"},
+        # Native source characters face +Z, matching the creation-preview
+        # camera.  Keeping this at zero presents the face and culture features
+        # by default; the legacy 180-degree correction showed their backs.
         "import": {"scale": 1, "rotationDegreesX": 0,
-                   "rotationDegreesY": 180, "rotationDegreesZ": 0},
+                   "rotationDegreesY": 0, "rotationDegreesZ": 0},
         "attachments": {
             "right_hand": "hand_r", "left_hand": "hand_l", "head": "Head",
             "back": "spine_03", "body": "spine_02", "pelvis": "pelvis",

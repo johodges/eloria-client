@@ -1,7 +1,7 @@
 extends SceneTree
 
 const SCREEN_SIZE := Vector2i(1280, 720)
-const PREVIEW_SIZE := Vector2i(430, 520)
+const PREVIEW_SIZE := Vector2i(420, 612)
 
 var _artifact_directory := ""
 var _failures := 0
@@ -32,6 +32,12 @@ func _run() -> void:
 	(main.get_node("LoginPanel") as Control).hide()
 	(main.get_node("GameView") as Control).hide()
 	(main.get_node("CreationPanel") as Control).show()
+	# Capture a close three-quarter view so face, hair, clothing fit, and
+	# culture features are large enough for the CI artifact to review.
+	main.set("preview_yaw", 0.28)
+	main.set("preview_pitch", 0.08)
+	main.set("preview_distance", 2.4)
+	main.call("_update_preview_camera")
 
 	var selector: OptionButton = main.get_node(
 		"CreationPanel/Columns/Form/CreateGender") as OptionButton
