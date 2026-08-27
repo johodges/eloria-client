@@ -102,7 +102,7 @@ func _run() -> void:
 	var helper_password: String = _random_hex(24)
 	var helper_state: Dictionary = {
 		"connection": "disconnected", "created": false, "authenticated": false,
-		"actor_id": -1, "map": "", "error": ""}
+		"actor_id": -1, "map": "", "error": "", "chat": []}
 	var helper_network: EloriaNetworkClient = EloriaNetworkClient.new()
 	helper_network.name = "RemoteActorHelperNetwork"
 	var helper_connection_handler: Callable = func(state: String) -> void:
@@ -128,6 +128,11 @@ func _run() -> void:
 				helper_state["actor_id"] = int(helper_event.get("actor_id", -1))
 			"change_map":
 				helper_state["map"] = str(helper_event.get("map_name", ""))
+			"chat":
+				var helper_chat: Array = helper_state.get("chat", []) as Array
+				helper_chat.append({"channel": int(helper_event.get("channel", 0)),
+					"text": str(helper_event.get("text", ""))})
+				helper_state["chat"] = helper_chat
 			"ping_request":
 				helper_network.send_frame(EloriaProtocol.encode(
 					EloriaProtocol.ClientMessage.PING_RESPONSE))
@@ -205,6 +210,36 @@ func _run() -> void:
 	_expect(int(_app_state.get("selected_actor_id")) == remote_actor_id
 		and remote_selection_ring != null and remote_selection_ring.visible,
 		"ray-based world click selects the rendered remote player")
+	var primary_chat_marker: String = "primary-chat-" + _random_hex(4)
+	main.call("_on_chat_submitted", primary_chat_marker)
+	var helper_received_chat: Callable = func() -> bool:
+		return _chat_contains(helper_state.get("chat", []) as Array,
+			primary_chat_marker)
+	_expect(await _wait_for(helper_received_chat, 8.0),
+		"real local chat sent through the primary UI reaches the remote client")
+	var remote_chat_marker: String = "remote-chat-" + _random_hex(4)
+	var remote_chat_error: Error = helper_network.send_chat(remote_chat_marker)
+	_expect(remote_chat_error == OK,
+		"remote client sends a real legacy RAW_TEXT chat frame")
+	var primary_received_chat: Callable = func() -> bool:
+		return _chat_contains(_app_state.get("chat_lines") as Array,
+			remote_chat_marker)
+	_expect(await _wait_for(primary_received_chat, 8.0),
+		"primary reducer receives real chat from the remote client")
+	main.call("_sync_chat")
+	var chat_output: RichTextLabel = main.get_node(
+		"GameView/ChatPanel/ChatOutput") as RichTextLabel
+	_expect(chat_output.get_parsed_text().contains(primary_chat_marker)
+		and chat_output.get_parsed_text().contains(remote_chat_marker),
+		"lower-left chat UI presents both real server-delivered messages")
+	_write_json("chat.json", {
+		"primary_to_remote": primary_chat_marker,
+		"remote_to_primary": remote_chat_marker,
+		"primary_chat_lines": _json_safe(_app_state.get("chat_lines")),
+		"remote_chat_lines": _json_safe(helper_state.get("chat", [])),
+		"credentials": "REDACTED",
+	})
+	await _capture("world-chat.png")
 	var visible_npc_ids: Array[int] = []
 	for actor_id_value: Variant in (_app_state.get("actors") as Dictionary):
 		var actor_id: int = int(actor_id_value)
@@ -517,6 +552,13 @@ func _move_remote_helper(helper_network: EloriaNetworkClient, remote_actor_id: i
 			return Vector2i(int(dto.get("x", initial_tile.x)),
 				int(dto.get("y", initial_tile.y))) != initial_tile
 		if await _wait_for(remote_tile_changed, 8.0):
+			return true
+	return false
+
+func _chat_contains(lines: Array, marker: String) -> bool:
+	for line_value: Variant in lines:
+		if line_value is Dictionary and str(
+				(line_value as Dictionary).get("text", "")).contains(marker):
 			return true
 	return false
 

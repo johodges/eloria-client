@@ -1974,8 +1974,10 @@ func _model_for_actor(dto: Dictionary) -> String:
 	var actor_type := str(int(dto.get("actor_type", 1)))
 	if actor_type_models.has(actor_type):
 		return str(actor_type_models[actor_type])
-	# Preserve the current avatar fallback for servers that omit actor type.
-	if not bool(dto.get("enhanced", false)) and int(dto.get("kind", 0)) not in [1, 4]:
+	# The server uses the enhanced wire layout for most NPCs so their appearance
+	# bytes survive replication. Registry actor type wins for native NPCs and
+	# creatures; actor kind decides the fallback for unknown records.
+	if int(dto.get("kind", 0)) not in [1, 4]:
 		return ""
 	return "luminous_female" if int(dto.get("actor_type", 1)) == 0 else "luminous_male"
 

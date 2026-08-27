@@ -144,9 +144,9 @@ anchor_top = 1.0
 anchor_right = 0.48
 anchor_bottom = 1.0
 offset_left = 12.0
-offset_top = -116.0
+offset_top = -188.0
 offset_right = -6.0
-offset_bottom = -42.0
+offset_bottom = -112.0
 
 [node name="ChatOutput" type="RichTextLabel" parent="GameView/ChatPanel"]
 unique_name_in_owner = true
@@ -161,9 +161,9 @@ anchor_top = 1.0
 anchor_right = 0.48
 anchor_bottom = 1.0
 offset_left = 12.0
-offset_top = -44.0
+offset_top = -108.0
 offset_right = -6.0
-offset_bottom = -12.0
+offset_bottom = -76.0
 placeholder_text = "Chat, /name private message, or // reply"
 tooltip_text = "Enter sends local chat; /name message sends a private message; // message replies to the last sender"
 

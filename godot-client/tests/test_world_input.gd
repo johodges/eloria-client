@@ -93,6 +93,7 @@ func _run() -> void:
 		"walk presentation closes authoritative steps promptly")
 	actor_height_fixture.free()
 	var lower_hud: Control = main.get_node("GameView/Quickbar") as Control
+	var chat_panel: Control = main.get_node("GameView/ChatPanel") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
 	var right_quickbar: Control = main.get_node("GameView/ItemSpellQuickbar") as Control
 	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
@@ -117,6 +118,11 @@ func _run() -> void:
 		"chat remains markup-safe and exposes legacy addressing syntax")
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
+	_expect(chat_panel.anchor_bottom == lower_hud.anchor_top
+		and chat_input.anchor_bottom == lower_hud.anchor_top
+		and chat_panel.offset_bottom <= lower_hud.offset_top
+		and chat_input.offset_bottom <= lower_hud.offset_top,
+		"chat history and entry remain fully above the opaque lower HUD rail")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
 		"stats and item/spell quickbar occupy the right HUD rail")
 	_expect(not stats_panel.visible, "statistics window starts closed")
@@ -131,6 +137,12 @@ func _run() -> void:
 	var attackable_actor: Dictionary = {
 		"actor_id": 77, "name": "Rat", "kind": 3, "health": 12,
 		"max_health": 12, "alive": true}
+	_expect(str(main.call("_model_for_actor", {
+		"enhanced": true, "kind": 2, "actor_type": 1})).is_empty(),
+		"enhanced NPC wire packets never select a luminous player model")
+	_expect(str(main.call("_model_for_actor", {
+		"enhanced": true, "kind": 1, "actor_type": 1})) == "luminous_male",
+		"enhanced player wire packets retain the native luminous model")
 	app_state_inventory.set("actors", {77: attackable_actor})
 	app_state_inventory.set("selected_actor_id", 77)
 	main.call("_sync_selection")
