@@ -91,6 +91,7 @@ jobs:
             echo "Character-model render validation reported an error."
             exit 1
           fi
+          grep -q "rendered character creation models: PASS" "$ELORIA_ARTIFACT_DIR/character-models.log"
           test -s "$ELORIA_ARTIFACT_DIR/default-00-luminous-female.png"
           test -s "$ELORIA_ARTIFACT_DIR/default-15-mycelari-male.png"
           test -s "$ELORIA_ARTIFACT_DIR/appearance-variant-3.png"
