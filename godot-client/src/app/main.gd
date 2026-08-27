@@ -204,7 +204,7 @@ var pending_create_username := ""
 var pending_create_password := ""
 var preview_yaw := 0.0
 var preview_pitch := 0.12
-var preview_distance := 4.2
+var preview_distance := 2.65
 var inventory_slot_buttons: Array[Button] = []
 var inventory_quantity_labels: Array[Label] = []
 var equipment_slot_buttons: Array[Button] = []
@@ -699,7 +699,7 @@ func _on_character_preview_gui_input(event: InputEvent) -> void:
 		if not mouse_button.pressed:
 			return
 		if mouse_button.button_index == MOUSE_BUTTON_WHEEL_UP:
-			preview_distance = maxf(2.4, preview_distance - 0.3)
+			preview_distance = maxf(1.8, preview_distance - 0.3)
 		elif mouse_button.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			preview_distance = minf(7.0, preview_distance + 0.3)
 		else:

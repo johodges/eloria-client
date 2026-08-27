@@ -102,28 +102,27 @@ func _init() -> void:
 			101, 116, 0, 1, 2, 3, 4, 5, 0, 2, 6]))
 	var appearance_visuals: Dictionary = AppearanceVariants.equipment_visuals(2, {
 		"head": 1, "pants": 1, "shirt": 1, "boots": 1})
-	_expect(int(appearance_visuals.get(AppearanceVariants.PART_HEAD, -1)) == 106
-		and int(appearance_visuals.get(AppearanceVariants.PART_PANTS, -1)) == 105
-		and int(appearance_visuals.get(AppearanceVariants.PART_SHIRT, -1)) == 106
-		and int(appearance_visuals.get(AppearanceVariants.PART_BOOTS, -1)) == 105,
-		"Whitehorn appearance choices prefer culture-matched native wearables")
+	_expect(appearance_visuals.is_empty(),
+		"creation choices use skinned actor surfaces instead of rigid equipment")
 	var luminous_outfit: Dictionary = AppearanceVariants.equipment_visuals(0, {
 		"head": 0, "pants": 1, "shirt": 1, "boots": 1})
-	_expect(int(luminous_outfit.get(AppearanceVariants.PART_PANTS, -1)) == 106
-		and int(luminous_outfit.get(AppearanceVariants.PART_SHIRT, -1)) == 110
-		and int(luminous_outfit.get(AppearanceVariants.PART_BOOTS, -1)) == 106,
-		"Luminous default uses casual shirt, long pants, and boots")
+	_expect(luminous_outfit.is_empty(),
+		"Luminous defaults do not spawn placeholder attachment geometry")
 	var legacy_luminous_outfit: Dictionary = AppearanceVariants.equipment_visuals(1, {
 		"head": 0, "pants": 0, "shirt": 0, "boots": 0})
 	_expect(legacy_luminous_outfit == luminous_outfit,
-		"legacy zero-valued Luminous characters remain fully clothed")
+		"legacy zero-valued Luminous characters use the integrated wardrobe")
 	_expect(AppearanceVariants.equipment_visuals(2, {
 		"head": 0, "pants": 0, "shirt": 0, "boots": 0}).is_empty(),
 		"zero appearance choices leave optional wearables hidden")
 	_expect(AppearanceVariants.skin_tint(0) != AppearanceVariants.skin_tint(1)
 		and AppearanceVariants.eye_color(0) != AppearanceVariants.eye_color(1)
-		and AppearanceVariants.hair_style(6) == 2,
-		"skin, eye, and hair choices produce distinct variants")
+		and AppearanceVariants.hair_style(6) == 2
+		and AppearanceVariants.head_style(7) == 3
+		and AppearanceVariants.wardrobe_color("luminous",
+			AppearanceVariants.PART_SHIRT, 0) != AppearanceVariants.wardrobe_color(
+				"luminous", AppearanceVariants.PART_SHIRT, 1),
+		"skin, eye, hair, head, and wardrobe choices produce distinct variants")
 	_expect_bytes("version fixture",
 		EloriaProtocol.version(10, 31, PackedByteArray([1, 9, 7, 0]),
 			PackedByteArray([127, 0, 0, 1]), 2000),
@@ -234,6 +233,19 @@ func _init() -> void:
 	_expect(extended_actor.x == 11 and extended_actor.y == 21
 		and extended_actor.rotation == -2 and extended_actor.name == "Toran",
 		"extended Nymara actor fields")
+	var enhanced_actor_payload := PackedByteArray([
+		0x36, 0x12, 12, 0, 22, 0, 0, 0, 0xfd, 0xff, 81, 0,
+		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+		100, 0, 90, 0, 1, 77, 105, 99, 97, 0,
+		0, 0x40, 255, 12, 13])
+	var enhanced_actor: Dictionary = EloriaProtocol.decode_server(
+		51, enhanced_actor_payload)
+	_expect(enhanced_actor.type == "actor_spawn"
+		and enhanced_actor.actor_type == 81 and enhanced_actor.name == "Mica",
+		"enhanced Nymara actor identity")
+	_expect(int((enhanced_actor.appearance as Dictionary).eyes) == 12
+		and int((enhanced_actor.equipment_visuals as Dictionary).get(7, 0)) == 13,
+		"enhanced actor trailer preserves eyes and neck visual")
 	var equipment_config_file: FileAccess = FileAccess.open(
 		"res://data/actors/equipment.json", FileAccess.READ)
 	_expect(equipment_config_file != null, "equipment part registry opens")

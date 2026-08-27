@@ -1,105 +1,297 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "source": "nymara-concept-art-named.zip",
   "pipeline": "build_native_nymara_glbs.py",
   "races": {
-    "votary_female": {
-      "vertices": 8874,
-      "triangles": 15088,
+    "luminous_female": {
+      "vertices": 13727,
+      "triangles": 23038,
       "joints": 65,
-      "feature": "ears",
+      "feature": "none",
+      "wardrobe": "skinned",
+      "path": "godot-client/assets/actors/native/races/luminous_female.glb"
+    },
+    "luminous_male": {
+      "vertices": 13658,
+      "triangles": 22706,
+      "joints": 65,
+      "feature": "none",
+      "wardrobe": "skinned",
+      "path": "godot-client/assets/actors/native/races/luminous_male.glb"
+    },
+    "votary_female": {
+      "vertices": 14495,
+      "triangles": 24304,
+      "joints": 65,
+      "feature": "horns",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/votary_female.glb"
     },
     "votary_male": {
-      "vertices": 8513,
-      "triangles": 14346,
+      "vertices": 13803,
+      "triangles": 22848,
       "joints": 65,
-      "feature": "ears",
+      "feature": "horns",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/votary_male.glb"
     },
     "glasswarden_female": {
-      "vertices": 8889,
-      "triangles": 15102,
+      "vertices": 13895,
+      "triangles": 23214,
       "joints": 65,
       "feature": "crystal",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/glasswarden_female.glb"
     },
     "glasswarden_male": {
-      "vertices": 8528,
-      "triangles": 14360,
+      "vertices": 13815,
+      "triangles": 22874,
       "joints": 65,
       "feature": "crystal",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/glasswarden_male.glb"
     },
     "orun_female": {
-      "vertices": 8949,
-      "triangles": 15158,
+      "vertices": 14115,
+      "triangles": 23764,
       "joints": 65,
-      "feature": "mane",
+      "feature": "none",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/orun_female.glb"
     },
     "orun_male": {
-      "vertices": 8588,
-      "triangles": 14416,
+      "vertices": 13633,
+      "triangles": 22600,
       "joints": 65,
-      "feature": "mane",
+      "feature": "none",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/orun_male.glb"
     },
     "greyhaven_female": {
-      "vertices": 8844,
-      "triangles": 15060,
+      "vertices": 14262,
+      "triangles": 24010,
       "joints": 65,
-      "feature": "brow",
+      "feature": "none",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/greyhaven_female.glb"
     },
     "greyhaven_male": {
-      "vertices": 8483,
-      "triangles": 14318,
+      "vertices": 13577,
+      "triangles": 22558,
       "joints": 65,
-      "feature": "brow",
+      "feature": "none",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/greyhaven_male.glb"
     },
     "ssarathi_female": {
-      "vertices": 9033,
-      "triangles": 15246,
+      "vertices": 14496,
+      "triangles": 24250,
       "joints": 65,
       "feature": "scaled",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/ssarathi_female.glb"
     },
     "ssarathi_male": {
-      "vertices": 8672,
-      "triangles": 14504,
+      "vertices": 13558,
+      "triangles": 22502,
       "joints": 65,
       "feature": "scaled",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/ssarathi_male.glb"
     },
     "stoneborn_female": {
-      "vertices": 8874,
-      "triangles": 15088,
+      "vertices": 14471,
+      "triangles": 24268,
       "joints": 65,
       "feature": "stone",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/stoneborn_female.glb"
     },
     "stoneborn_male": {
-      "vertices": 8513,
-      "triangles": 14346,
+      "vertices": 13780,
+      "triangles": 22812,
       "joints": 65,
       "feature": "stone",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/stoneborn_male.glb"
     },
     "mycelari_female": {
-      "vertices": 9061,
-      "triangles": 15408,
+      "vertices": 14192,
+      "triangles": 23696,
       "joints": 65,
       "feature": "fungal",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/mycelari_female.glb"
     },
     "mycelari_male": {
-      "vertices": 8700,
-      "triangles": 14666,
+      "vertices": 14125,
+      "triangles": 23370,
       "joints": 65,
       "feature": "fungal",
+      "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/mycelari_male.glb"
+    }
+  },
+  "hair": {
+    "buzzed_female": {
+      "style": "buzzed",
+      "gender": "female",
+      "source": "Hair_BuzzedFemale",
+      "vertices": 466,
+      "triangles": 830,
+      "bounds": {
+        "min": [
+          -0.07932999730110168,
+          0.049789998680353165,
+          -0.10628999769687653
+        ],
+        "max": [
+          0.07932999730110168,
+          0.22133000195026398,
+          0.09058000147342682
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/buzzed_female.glb"
+    },
+    "parted_female": {
+      "style": "parted",
+      "gender": "female",
+      "source": "Hair_SimpleParted",
+      "vertices": 757,
+      "triangles": 1301,
+      "bounds": {
+        "min": [
+          -0.08541999757289886,
+          0.10955999791622162,
+          -0.10044000297784805
+        ],
+        "max": [
+          0.09000000357627869,
+          0.2908500134944916,
+          0.08573000133037567
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/parted_female.glb"
+    },
+    "long_female": {
+      "style": "long",
+      "gender": "female",
+      "source": "Hair_Long",
+      "vertices": 3080,
+      "triangles": 2906,
+      "bounds": {
+        "min": [
+          -0.122359998524189,
+          -0.05056999996304512,
+          -0.15070000290870667
+        ],
+        "max": [
+          0.122359998524189,
+          0.22746999561786652,
+          0.11695999652147293
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/long_female.glb"
+    },
+    "buns_female": {
+      "style": "buns",
+      "gender": "female",
+      "source": "Hair_Buns",
+      "vertices": 3502,
+      "triangles": 3284,
+      "bounds": {
+        "min": [
+          -0.1507599949836731,
+          -0.018780000507831573,
+          -0.12619000673294067
+        ],
+        "max": [
+          0.1507599949836731,
+          0.2293899953365326,
+          0.11078999936580658
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/buns_female.glb"
+    },
+    "buzzed_male": {
+      "style": "buzzed",
+      "gender": "male",
+      "source": "Hair_Buzzed",
+      "vertices": 466,
+      "triangles": 830,
+      "bounds": {
+        "min": [
+          -0.07729999721050262,
+          0.04244999960064888,
+          -0.09436000138521194
+        ],
+        "max": [
+          0.07729999721050262,
+          0.2138800024986267,
+          0.0953499972820282
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/buzzed_male.glb"
+    },
+    "parted_male": {
+      "style": "parted",
+      "gender": "male",
+      "source": "Hair_SimpleParted",
+      "vertices": 757,
+      "triangles": 1301,
+      "bounds": {
+        "min": [
+          -0.08541999757289886,
+          0.0587100014090538,
+          -0.09438999742269516
+        ],
+        "max": [
+          0.09000000357627869,
+          0.24124999344348907,
+          0.09128999710083008
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/parted_male.glb"
+    },
+    "long_male": {
+      "style": "long",
+      "gender": "male",
+      "source": "Hair_Long",
+      "vertices": 3080,
+      "triangles": 2906,
+      "bounds": {
+        "min": [
+          -0.122359998524189,
+          -0.10165999829769135,
+          -0.1427299976348877
+        ],
+        "max": [
+          0.122359998524189,
+          0.17734000086784363,
+          0.12320999801158905
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/long_male.glb"
+    },
+    "buns_male": {
+      "style": "buns",
+      "gender": "male",
+      "source": "Hair_Buns",
+      "vertices": 3502,
+      "triangles": 3284,
+      "bounds": {
+        "min": [
+          -0.1507599949836731,
+          -0.06831000000238419,
+          -0.12002000212669373
+        ],
+        "max": [
+          0.1507599949836731,
+          0.1792600005865097,
+          0.11704999953508377
+        ]
+      },
+      "path": "godot-client/assets/actors/native/hair/buns_male.glb"
     }
   },
   "creatures": {
@@ -1119,89 +1311,101 @@
     }
   },
   "validation": {
-    "files": 113,
+    "files": 123,
     "results": {
       "godot-client/assets/actors/native/races/mycelari_female.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 78,
+        "meshes": 12,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/luminous_male.glb": {
+        "nodes": 77,
+        "meshes": 11,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/votary_female.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 78,
+        "meshes": 12,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/ssarathi_female.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 78,
+        "meshes": 12,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/stoneborn_male.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 78,
+        "meshes": 12,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/glasswarden_male.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 78,
+        "meshes": 12,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/votary_male.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 78,
+        "meshes": 12,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/greyhaven_female.glb": {
-        "nodes": 69,
-        "meshes": 3,
+        "nodes": 77,
+        "meshes": 11,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/luminous_female.glb": {
+        "nodes": 77,
+        "meshes": 11,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/glasswarden_female.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 78,
+        "meshes": 12,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/ssarathi_male.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 78,
+        "meshes": 12,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/mycelari_male.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 78,
+        "meshes": 12,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/orun_male.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 77,
+        "meshes": 11,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/greyhaven_male.glb": {
-        "nodes": 69,
-        "meshes": 3,
+        "nodes": 77,
+        "meshes": 11,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/orun_female.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 77,
+        "meshes": 11,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/stoneborn_female.glb": {
-        "nodes": 70,
-        "meshes": 4,
+        "nodes": 78,
+        "meshes": 12,
         "skins": 1,
         "animations": 0
       },
@@ -1794,6 +1998,54 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/ssarathi_scale_boots.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/buns_male.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/buns_female.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/long_female.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/parted_male.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/buzzed_male.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/parted_female.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/long_male.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/buzzed_female.glb": {
         "nodes": 1,
         "meshes": 1,
         "skins": 0,

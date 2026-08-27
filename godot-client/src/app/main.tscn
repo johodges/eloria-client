@@ -1884,7 +1884,8 @@ current = true
 
 [node name="Sun" type="DirectionalLight3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot"]
 rotation_degrees = Vector3(-45, -35, 0)
-light_energy = 1.25
+light_energy = 0.9
+shadow_enabled = true
 
 [node name="Form" type="VBoxContainer" parent="CreationPanel/Columns"]
 custom_minimum_size = Vector2(440, 0)

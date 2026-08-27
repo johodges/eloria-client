@@ -6,53 +6,37 @@ const PART_PANTS := 4
 const PART_SHIRT := 5
 const PART_BOOTS := 6
 
-const PART_KEYS := {
-	PART_HEAD: "head",
-	PART_PANTS: "pants",
-	PART_SHIRT: "shirt",
-	PART_BOOTS: "boots",
-}
+static func equipment_visuals(_actor_type: int, _appearance: Dictionary) -> Dictionary:
+	# Creation bytes select skinned surfaces already authored into each actor GLB.
+	# They must never be reinterpreted as rigid BoneAttachment3D equipment.
+	return {}
 
-const PART_VISUALS := {
-	PART_HEAD: [100, 101, 102, 103, 104, 105, 106, 107, 108],
-	PART_PANTS: [100, 101, 102, 103, 104, 105, 106],
-	PART_SHIRT: [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
-	PART_BOOTS: [100, 101, 102, 103, 104, 105, 106],
-}
-
-const CULTURE_VISUALS := {
-	"luminous": {PART_HEAD: 105, PART_PANTS: 106, PART_SHIRT: 110,
-		PART_BOOTS: 106},
-	"votary": {PART_HEAD: 106, PART_PANTS: 105, PART_SHIRT: 106, PART_BOOTS: 105},
-	"glasswarden": {PART_HEAD: 101, PART_PANTS: 101, PART_SHIRT: 101, PART_BOOTS: 101},
-	"orun": {PART_HEAD: 103, PART_PANTS: 103, PART_SHIRT: 103, PART_BOOTS: 103},
-	"greyhaven": {PART_HEAD: 102, PART_PANTS: 102, PART_SHIRT: 102, PART_BOOTS: 102},
-	"ssarathi": {PART_HEAD: 104, PART_PANTS: 104, PART_SHIRT: 104, PART_BOOTS: 104},
-	"stoneborn": {PART_HEAD: 107, PART_SHIRT: 107},
-	"mycelari": {PART_HEAD: 108, PART_SHIRT: 108},
-}
-
-static func equipment_visuals(actor_type: int, appearance: Dictionary) -> Dictionary:
-	var result: Dictionary = {}
-	var culture: String = culture_for_actor_type(actor_type)
-	var preferred: Dictionary = CULTURE_VISUALS.get(culture, {}) as Dictionary
-	for raw_part: Variant in PART_KEYS:
-		var part: int = int(raw_part)
-		var key: String = str(PART_KEYS[part])
-		var choice: int = int(appearance.get(key, 0))
-		if choice <= 0:
-			# Older Luminous records commonly carry zero for every creation
-			# wearable. Keep their base body layer covered as well.
-			if culture == "luminous" and preferred.has(part) and part != PART_HEAD:
-				result[part] = int(preferred[part])
-			continue
-		var available: Array = (PART_VISUALS[part] as Array).duplicate()
-		var preferred_visual: int = int(preferred.get(part, -1))
-		if available.has(preferred_visual):
-			available.erase(preferred_visual)
-			available.push_front(preferred_visual)
-		result[part] = int(available[posmod(choice - 1, available.size())])
-	return result
+static func wardrobe_color(culture: String, part: int, index: int) -> Color:
+	var palettes: Dictionary = {
+		"luminous": {PART_SHIRT: Color8(42, 126, 142), PART_PANTS: Color8(42, 55, 72),
+			PART_BOOTS: Color8(78, 55, 39), "accent": Color8(221, 190, 101)},
+		"votary": {PART_SHIRT: Color8(113, 145, 164), PART_PANTS: Color8(76, 94, 108),
+			PART_BOOTS: Color8(79, 91, 99), "accent": Color8(218, 232, 235)},
+		"glasswarden": {PART_SHIRT: Color8(54, 48, 84), PART_PANTS: Color8(42, 44, 62),
+			PART_BOOTS: Color8(83, 57, 39), "accent": Color8(187, 145, 63)},
+		"orun": {PART_SHIRT: Color8(146, 76, 39), PART_PANTS: Color8(85, 64, 48),
+			PART_BOOTS: Color8(82, 54, 35), "accent": Color8(49, 142, 145)},
+		"greyhaven": {PART_SHIRT: Color8(225, 220, 202), PART_PANTS: Color8(41, 59, 75),
+			PART_BOOTS: Color8(65, 49, 39), "accent": Color8(171, 137, 70)},
+		"ssarathi": {PART_SHIRT: Color8(43, 112, 86), PART_PANTS: Color8(34, 76, 62),
+			PART_BOOTS: Color8(71, 63, 42), "accent": Color8(189, 153, 67)},
+		"stoneborn": {PART_SHIRT: Color8(91, 86, 80), PART_PANTS: Color8(65, 67, 68),
+			PART_BOOTS: Color8(62, 55, 48), "accent": Color8(84, 189, 199)},
+		"mycelari": {PART_SHIRT: Color8(88, 112, 70), PART_PANTS: Color8(62, 75, 53),
+			PART_BOOTS: Color8(71, 54, 39), "accent": Color8(207, 143, 89)},
+	}
+	var palette: Dictionary = palettes.get(culture, palettes["luminous"]) as Dictionary
+	var wardrobe_part: int = PART_SHIRT if part == PART_HEAD else part
+	var base: Color = palette.get(wardrobe_part, Color.WHITE)
+	var accent: Color = palette.get("accent", Color.WHITE)
+	var variants: Array[Color] = [base, base.lightened(0.18),
+		base.darkened(0.22), accent]
+	return variants[posmod(index, variants.size())]
 
 static func culture_for_actor_type(actor_type: int) -> String:
 	match actor_type:
@@ -115,4 +99,7 @@ static func eye_color(index: int) -> Color:
 	return colors[posmod(index, colors.size())]
 
 static func hair_style(index: int) -> int:
+	return posmod(index, 4)
+
+static func head_style(index: int) -> int:
 	return posmod(index, 4)

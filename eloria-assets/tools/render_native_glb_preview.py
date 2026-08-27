@@ -52,16 +52,21 @@ def material_color(document: dict, binary: bytes, index: int) -> tuple[int, int,
         start = view.get("byteOffset", 0)
         sample = Image.open(io.BytesIO(binary[start:start + view["byteLength"]])).convert("RGB")
         colors = np.asarray(sample.resize((32, 32))).reshape(-1, 3)
-        return tuple(int(value) for value in np.quantile(colors, .62, axis=0))
+        sampled = np.quantile(colors, .62, axis=0)
+        factor = np.asarray(pbr.get("baseColorFactor", [1, 1, 1, 1])[:3])
+        return tuple(int(value) for value in np.clip(sampled * factor, 0, 255))
     factor = pbr.get("baseColorFactor", [.68, .72, .72, 1])
     return tuple(int(255 * value) for value in factor[:3])
 
 
-def render(path: Path, size: int = 480) -> Image.Image:
+def render(path: Path, size: int = 480, *, wireframe: bool = True) -> Image.Image:
     document, binary = read_glb(path)
     triangles = []
     all_positions = []
     for mesh in document.get("meshes", []):
+        # Optional creation headwear is hidden for the zero-valued default.
+        if mesh.get("name", "").startswith("Wardrobe_Head_"):
+            continue
         for primitive in mesh.get("primitives", []):
             positions = accessor(document, binary, primitive["attributes"]["POSITION"])
             indices = accessor(document, binary, primitive["indices"]).reshape(-1, 3)
@@ -86,8 +91,9 @@ def render(path: Path, size: int = 480) -> Image.Image:
     for step in range(0, size, 32):
         draw.line((step, 0, step, size), fill=(35, 45, 48))
         draw.line((0, step, size, step), fill=(35, 45, 48))
-    # Back-to-front order for a stable software preview.
-    triangles.sort(key=lambda entry: float(entry[0][:, 2].mean()), reverse=True)
+    # Source humanoids face +Z. Draw lower-depth triangles first so the final
+    # software preview shows the face and concept features, not the back.
+    triangles.sort(key=lambda entry: float(entry[0][:, 2].mean()))
     for face, color in triangles:
         points = [point(vertex) for vertex in face]
         normal = np.cross(face[1] - face[0], face[2] - face[0])
@@ -95,7 +101,7 @@ def render(path: Path, size: int = 480) -> Image.Image:
         light = .72 if length < 1e-8 else .62 + .38 * abs(float(normal[1] / length))
         fill = tuple(max(0, min(255, int(component * light))) for component in color)
         edge = tuple(max(0, int(component * .42)) for component in fill)
-        draw.polygon(points, fill=fill, outline=edge)
+        draw.polygon(points, fill=fill, outline=edge if wireframe else None)
     return canvas
 
 
@@ -104,6 +110,8 @@ def main() -> None:
     parser.add_argument("models", nargs="+", type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--columns", type=int, default=4)
+    parser.add_argument("--solid", action="store_true",
+                        help="omit topology edges for a material/silhouette review")
     args = parser.parse_args()
     columns = max(1, args.columns)
     rows = math.ceil(len(args.models) / columns)
@@ -114,7 +122,7 @@ def main() -> None:
     for index, path in enumerate(args.models):
         x = index % columns * tile
         y = index // columns * (tile + label_height)
-        sheet.paste(render(path, tile), (x, y))
+        sheet.paste(render(path, tile, wireframe=not args.solid), (x, y))
         label = path.stem.replace("_", " ").title()
         draw.text((x + 10, y + tile + 8), label, fill=(215, 224, 220), font=font)
     args.output.parent.mkdir(parents=True, exist_ok=True)

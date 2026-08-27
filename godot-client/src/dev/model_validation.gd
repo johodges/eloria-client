@@ -39,14 +39,14 @@ func _load_model(id: String) -> void:
 		"animationMap", "res://data/animations/luminous.json")))
 	var is_creature := str(model_config.get("animationMap", "")).ends_with("creature.json")
 	var equipment_visuals: Dictionary = {} if is_creature else {0: 100, 1: 100}
-	if id.begins_with("luminous_"):
-		equipment_visuals.merge({4: 106, 5: 110, 6: 106})
 	var dto := {"actor_id": 1, "x": 0, "y": 0, "rotation": 0,
+		"appearance": {"skin": 1, "hair": 2, "eyes": 3,
+			"shirt": 1, "pants": 2, "boots": 3, "head": 1},
 		"equipment_visuals": equipment_visuals}
 	var adapter := CoordinateAdapter.new({"walkingHeight": 0.0, "invertServerY": true})
 	var errors := actor.configure(dto, adapter, model_config, animation_config, equipment_config)
 	var equipment_diagnostics: Dictionary = actor.equipment_diagnostics()
-	var expected_equipment: int = 5 if id.begins_with("luminous_") else 2
+	var expected_equipment: int = 2
 	if not is_creature and int(equipment_diagnostics.get("native", 0)) != expected_equipment:
 		errors.append("native equipment bone attachments missing")
 	clips.clear()
