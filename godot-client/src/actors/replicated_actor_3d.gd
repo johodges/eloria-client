@@ -225,6 +225,11 @@ func set_nameplate_visible(enabled: bool) -> void:
 
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
 	var next_target: Vector3 = adapter.tile_center(int(dto.x), int(dto.y))
+	# Server movement contains tile coordinates only. Keep the last sampled
+	# rendered-surface height until Main performs the ray sample for the new tile;
+	# otherwise each packet temporarily pushes actors back to the flat manifest
+	# fallback and can leave them visibly embedded in sculpted terrain.
+	next_target.y = server_target.y
 	var target_changed: bool = server_target.distance_squared_to(next_target) > 0.000001
 	server_target = next_target
 	var actor_command: int = int(dto.get("command", -1))

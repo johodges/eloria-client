@@ -111,6 +111,21 @@ static func chat(text: String) -> PackedByteArray:
 	payload.append(0)
 	return encode(ClientMessage.RAW_TEXT, payload)
 
+static func set_active_channel(slot: int) -> PackedByteArray:
+	assert(slot >= 0 and slot < 3)
+	# The legacy wire values CHAT_CHANNEL1..3 are 5..7. The server keeps the
+	# selected public channel behind those three stable UI slots.
+	return encode(ClientMessage.SET_ACTIVE_CHANNEL, PackedByteArray([5 + slot]))
+
+static func locate_me() -> PackedByteArray:
+	return encode(ClientMessage.LOCATE_ME)
+
+static func get_date() -> PackedByteArray:
+	return encode(ClientMessage.GET_DATE)
+
+static func get_time() -> PackedByteArray:
+	return encode(ClientMessage.GET_TIME)
+
 static func private_message(text: String) -> PackedByteArray:
 	# Legacy send_input_text_line() removes exactly one leading slash before
 	# SEND_PM. Callers provide "name message" or "/message" for reply-last.
@@ -475,6 +490,14 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				return {"type": "invalid", "error": "actor_health_length"}
 			return {"type": "actor_max_health", "actor_id": u16(payload),
 				"max_health": u16(payload, 2)}
+		ServerMessage.GET_ACTIVE_CHANNELS:
+			if payload.is_empty() or (payload.size() - 1) % 4 != 0:
+				return {"type": "invalid", "error": "active_channels_length"}
+			var active_channels: Array[int] = []
+			for offset: int in range(1, payload.size(), 4):
+				active_channels.append(u32(payload, offset))
+			return {"type": "active_channels", "active_index": int(payload[0]),
+				"channels": active_channels}
 		ServerMessage.RAW_TEXT:
 			if payload.is_empty():
 				return {"type": "invalid", "error": "chat_length"}

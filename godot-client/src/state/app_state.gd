@@ -24,6 +24,8 @@ var game_minute := 0
 var game_minute_anchor_msec := 0
 var server_timestamp := 0
 var chat_lines: Array[Dictionary] = []
+var active_channels: Array[int] = [0, 0, 0]
+var active_channel_index := 0
 var selected_actor_id := -1
 var npc_dialogue: Dictionary = {"open": false, "name": "", "portrait": 0,
 	"text": "", "options": []}
@@ -62,6 +64,8 @@ func _on_connection_state_changed(value: String) -> void:
 		game_minute_anchor_msec = 0
 		server_timestamp = 0
 		chat_lines.clear()
+		active_channels = [0, 0, 0]
+		active_channel_index = 0
 		current_map = ""
 		selected_actor_id = -1
 		npc_dialogue = {"open": false, "name": "", "portrait": 0, "text": "", "options": []}
@@ -377,6 +381,13 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"remove_active_spell":
 			active_spells.erase(int(event.buff_id))
 			state_changed.emit(&"spells")
+		"active_channels":
+			active_channels = [0, 0, 0]
+			var incoming_channels: Array = event.channels as Array
+			for index: int in range(mini(3, incoming_channels.size())):
+				active_channels[index] = int(incoming_channels[index])
+			active_channel_index = clampi(int(event.active_index), 0, 2)
+			state_changed.emit(&"channels")
 		"chat":
 			chat_lines.append({"channel": event.channel, "text": event.text})
 			if chat_lines.size() > 1000:
@@ -409,6 +420,17 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"unknown":
 			unknown_packet_count += 1
 			state_changed.emit(&"protocol_unknown")
+
+func append_local_message(text: String, channel: int = 255) -> void:
+	chat_lines.append({"channel": channel, "text": text})
+	if chat_lines.size() > 1000:
+		chat_lines.pop_front()
+	state_changed.emit(&"chat")
+
+func active_channel_number() -> int:
+	if active_channel_index < 0 or active_channel_index >= active_channels.size():
+		return 0
+	return active_channels[active_channel_index]
 
 func select_actor(actor_id: int) -> void:
 	selected_actor_id = actor_id if actors.has(actor_id) else -1

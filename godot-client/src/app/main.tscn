@@ -162,6 +162,27 @@ toggle_mode = true
 button_pressed = true
 text = "All"
 
+[node name="Channel1" type="Button" parent="GameView/ChatTabs"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(42, 24)
+toggle_mode = true
+text = "1"
+
+[node name="Channel2" type="Button" parent="GameView/ChatTabs"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(42, 24)
+toggle_mode = true
+text = "2"
+
+[node name="Channel3" type="Button" parent="GameView/ChatTabs"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(42, 24)
+toggle_mode = true
+text = "3"
+
 [node name="ChatPanel" type="PanelContainer" parent="GameView"]
 layout_mode = 1
 anchor_right = 0.56
@@ -181,11 +202,12 @@ unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
-anchor_right = 0.48
+anchor_left = 0.58
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 12.0
 offset_top = -144.0
-offset_right = -6.0
+offset_left = 6.0
+offset_right = -92.0
 offset_bottom = -112.0
 placeholder_text = "Chat, /name private message, or // reply"
 tooltip_text = "Enter sends local chat; /name message sends a private message; // message replies to the last sender"
@@ -263,7 +285,7 @@ anchor_bottom = 1.0
 offset_left = -86.0
 mouse_filter = 2
 
-[node name="MinimapFrame" type="PanelContainer" parent="GameView"]
+[node name="EloriaLogoFrame" type="PanelContainer" parent="GameView"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -271,11 +293,30 @@ anchor_right = 1.0
 offset_left = -82.0
 offset_top = 4.0
 offset_right = -8.0
-offset_bottom = 78.0
+offset_bottom = 58.0
+mouse_filter = 2
+
+[node name="HudLogo" type="TextureRect" parent="GameView/EloriaLogoFrame"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(68, 48)
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="MinimapFrame" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+visible = false
+z_index = 4
+layout_mode = 1
+offset_left = 16.0
+offset_top = 42.0
+offset_right = 208.0
+offset_bottom = 234.0
+tooltip_text = "Floating minimap [Alt+M]"
 
 [node name="Minimap" type="TextureRect" parent="GameView/MinimapFrame"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 68)
+custom_minimum_size = Vector2(184, 184)
 expand_mode = 1
 stretch_mode = 5
 mouse_filter = 1
@@ -293,23 +334,137 @@ mouse_filter = 2
 
 [node name="FullMap" type="PanelContainer" parent="GameView"]
 unique_name_in_owner = true
+visible = false
+z_index = 20
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -330.0
-offset_top = -330.0
-offset_right = 330.0
-offset_bottom = 330.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 32.0
+offset_right = -94.0
+offset_bottom = -86.0
 
-[node name="MapImage" type="TextureRect" parent="GameView/FullMap"]
+[node name="MapLayout" type="Control" parent="GameView/FullMap"]
+custom_minimum_size = Vector2(856, 560)
+layout_mode = 2
+
+[node name="Sidebar" type="PanelContainer" parent="GameView/FullMap/MapLayout"]
+layout_mode = 1
+anchor_bottom = 1.0
+offset_right = 216.0
+
+[node name="SidebarContent" type="VBoxContainer" parent="GameView/FullMap/MapLayout/Sidebar"]
+theme_override_constants/separation = 6
+
+[node name="ContinentButton" type="TextureButton" parent="GameView/FullMap/MapLayout/Sidebar/SidebarContent"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(640, 640)
+custom_minimum_size = Vector2(210, 150)
+ignore_texture_size = true
+stretch_mode = 5
+tooltip_text = "Show the Nymara continent and preview another region"
+
+[node name="CurrentMapButton" type="Button" parent="GameView/FullMap/MapLayout/Sidebar/SidebarContent"]
+unique_name_in_owner = true
+text = "Current map"
+tooltip_text = "Return to your current server map"
+
+[node name="LegendTitle" type="Label" parent="GameView/FullMap/MapLayout/Sidebar/SidebarContent"]
+text = "LEGEND"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 20
+
+[node name="MapLegend" type="RichTextLabel" parent="GameView/FullMap/MapLayout/Sidebar/SidebarContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(210, 312)
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+text = "[color=#ef795f]◆[/color] Tavern\n[color=#4fc67a]◆[/color] General store\n[color=#d6bb7a]◆[/color] Storage\n[color=#e687da]◆[/color] Flower shop\n[color=#e75252]◆[/color] Books\n[color=#e2cf48]◆[/color] Magic / crafts\n[color=#9d73d8]◆[/color] Blacksmith\n[color=#58b8d9]◆[/color] Potion / tailor\n[color=#e8a84f]◆[/color] Temple / school\n[color=#9fd2ff]●[/color] NPC\n[color=#ffffff]●[/color] Your position\n[color=#58e1ff]P[/color] Portal\n[color=#ff4747]X[/color] Map exit"
+theme_override_font_sizes/normal_font_size = 14
+
+[node name="MapCoordinates" type="Label" parent="GameView/FullMap/MapLayout/Sidebar/SidebarContent"]
+unique_name_in_owner = true
+size_flags_vertical = 10
+text = "Coordinates: —"
+vertical_alignment = 2
+autowrap_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.35, 1)
+
+[node name="MapTitle" type="Label" parent="GameView/FullMap/MapLayout"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+offset_left = 224.0
+offset_right = -8.0
+offset_bottom = 30.0
+text = "CURRENT MAP"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+
+[node name="MapImage" type="TextureRect" parent="GameView/FullMap/MapLayout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(480, 480)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 224.0
+offset_top = 32.0
+offset_right = -8.0
+offset_bottom = -8.0
 expand_mode = 1
 stretch_mode = 5
 mouse_filter = 1
+
+[node name="RegionPreview" type="TextureRect" parent="GameView/FullMap/MapLayout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 224.0
+offset_top = 32.0
+offset_right = -8.0
+offset_bottom = -8.0
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="ContinentView" type="Control" parent="GameView/FullMap/MapLayout"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 224.0
+offset_top = 32.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="ContinentImage" type="TextureRect" parent="GameView/FullMap/MapLayout/ContinentView"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="RegionButtons" type="VBoxContainer" parent="GameView/FullMap/MapLayout/ContinentView"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -196.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = 560.0
+theme_override_constants/separation = 3
 
 [node name="ResourceHud" type="PanelContainer" parent="GameView"]
 layout_mode = 1
@@ -518,9 +673,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -82.0
-offset_top = 82.0
+offset_top = 62.0
 offset_right = -8.0
-offset_bottom = 370.0
+offset_bottom = 356.0
 
 [node name="QuickContent" type="VBoxContainer" parent="GameView/ItemSpellQuickbar"]
 theme_override_constants/separation = 2
@@ -689,7 +844,8 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(64, 64)
 expand_mode = 1
 stretch_mode = 5
-mouse_filter = 2
+mouse_filter = 0
+tooltip_text = "Click for the server date and time"
 
 [node name="ClockHand" type="Line2D" parent="GameView/ClockFrame/ClockFace"]
 unique_name_in_owner = true
@@ -728,7 +884,8 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(64, 64)
 expand_mode = 1
 stretch_mode = 5
-mouse_filter = 2
+mouse_filter = 0
+tooltip_text = "Click for your map and coordinates; Ctrl+click shares them to your active channel"
 
 [node name="CompassNeedle" type="Line2D" parent="GameView/CompassFrame/CompassFace"]
 unique_name_in_owner = true
@@ -740,7 +897,7 @@ default_color = Color(0.12, 0.82, 0.92, 1)
 [node name="ActorResourceOverlay" type="PanelContainer" parent="GameView"]
 unique_name_in_owner = true
 visible = false
-z_index = 10
+z_index = 1
 layout_mode = 0
 offset_right = 150.0
 offset_bottom = 86.0
@@ -767,7 +924,7 @@ show_percentage = false
 [node name="Number" type="Label" parent="GameView/ActorResourceOverlay/Rows/HealthRow"]
 custom_minimum_size = Vector2(52, 13)
 text = "0/0"
-theme_override_colors/font_color = Color(0.2, 1, 0.25, 1)
+theme_override_colors/font_color = Color(1, 0.24, 0.2, 1)
 theme_override_font_sizes/font_size = 11
 
 [node name="EtherRow" type="HBoxContainer" parent="GameView/ActorResourceOverlay/Rows"]
@@ -835,6 +992,93 @@ text = "Action points bar and numbers"
 [node name="Close" type="Button" parent="GameView/ActorHudMenu/Options"]
 unique_name_in_owner = true
 text = "Close"
+
+[node name="SettingsPanel" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+visible = false
+z_index = 30
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -230.0
+offset_top = -150.0
+offset_right = 230.0
+offset_bottom = 150.0
+
+[node name="Content" type="VBoxContainer" parent="GameView/SettingsPanel"]
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="GameView/SettingsPanel/Content"]
+text = "HUD SETTINGS"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 22
+
+[node name="MinimapHint" type="Label" parent="GameView/SettingsPanel/Content"]
+text = "The minimap is a floating window. Toggle it with Alt+M."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="MinimapSizeRow" type="HBoxContainer" parent="GameView/SettingsPanel/Content"]
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="GameView/SettingsPanel/Content/MinimapSizeRow"]
+text = "Minimap size"
+
+[node name="MinimapSize" type="HSlider" parent="GameView/SettingsPanel/Content/MinimapSizeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 0)
+size_flags_horizontal = 3
+min_value = 0.75
+max_value = 1.75
+step = 0.05
+value = 1.0
+
+[node name="MinimapSizeValue" type="Label" parent="GameView/SettingsPanel/Content/MinimapSizeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(52, 0)
+text = "100%"
+horizontal_alignment = 2
+
+[node name="SettingsClose" type="Button" parent="GameView/SettingsPanel/Content"]
+unique_name_in_owner = true
+text = "Close"
+
+[node name="ConsolePanel" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+visible = false
+z_index = 25
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 32.0
+offset_right = -94.0
+offset_bottom = -86.0
+
+[node name="Content" type="VBoxContainer" parent="GameView/ConsolePanel"]
+theme_override_constants/separation = 4
+
+[node name="Header" type="HBoxContainer" parent="GameView/ConsolePanel/Content"]
+
+[node name="Title" type="Label" parent="GameView/ConsolePanel/Content/Header"]
+size_flags_horizontal = 3
+text = "MESSAGE CONSOLE  •  full session history  •  ~ to close"
+theme_override_font_sizes/font_size = 16
+
+[node name="ConsoleClose" type="Button" parent="GameView/ConsolePanel/Content/Header"]
+unique_name_in_owner = true
+text = "Close"
+
+[node name="ConsoleOutput" type="RichTextLabel" parent="GameView/ConsolePanel/Content"]
+unique_name_in_owner = true
+size_flags_vertical = 3
+scroll_active = true
+scroll_following = false
+selection_enabled = true
 
 [node name="StatsPanel" type="PanelContainer" parent="GameView"]
 unique_name_in_owner = true
