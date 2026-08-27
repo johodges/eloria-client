@@ -103,6 +103,9 @@ func _init() -> void:
 				_expect(not four_gates.is_empty(), "runtime four_gates map id resolves")
 				_expect(str(four_gates.get("registryKey", "")) == "maps/startmap.elm",
 					"runtime four_gates resolves to production start map")
+				var transform: Dictionary = four_gates.get("coordinateTransform", {})
+				_expect(is_equal_approx(float(transform.get("walkingHeight", 0.0)), 31.15),
+					"Four Gates actors stand above the authored y=31 walk surface")
 	var coordinate: CoordinateAdapter = CoordinateAdapter.new({
 		"metresPerTile": 0.5, "serverOrigin": [100.0, 200.0],
 		"origin": [10.0, 30.0, -5.0], "walkingHeight": 30.0,

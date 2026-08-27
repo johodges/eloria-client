@@ -14,7 +14,7 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | GLB map + JSON | GLB runtime/map.c | world/map loader | `four_gates` production alias fixture; headless GLB scene attach; visual recheck pending | IMPLEMENTED |
 | Native luminous models | actor GLB runtime/assets | actor presentation | byte/source validation; render pending | FOUNDATION |
 | Movement reconciliation | client movement/server authority | controller/state | real MOVE_TO wiring; reconciliation verification pending | FOUNDATION |
-| Core HUD/chat | `hud.c`, `hud_misc_window.c`, `gamebuttons*.dds` | ui/hud | packaged legacy icon/HUD atlases, right quickbar, bottom stats, transparent minimap frame; visual review pending | IMPLEMENTED |
+| Core HUD/chat | `hud.c`, `hud_misc_window.c`, `gamebuttons*.dds` | ui/hud | legacy icons/right rail/bottom stats, unobscured shared-world map textures; exact visual parity pending | FOUNDATION |
 | Inventory/equipment | items.c | state/ui | mutation fixtures | NOT_STARTED |
 | Combat | actor commands/combat HUD | gameplay/ui | server combat trace | NOT_STARTED |
 | NPC/storage/trade | respective modules | reducers/windows | packet and integration tests | NOT_STARTED |

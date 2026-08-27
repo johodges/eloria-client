@@ -19,13 +19,37 @@ func _run() -> void:
 	var new_character: Button = main.get_node("LoginPanel/Content/NewCharacter") as Button
 	var status: Label = main.get_node("LoginPanel/Content/Status") as Label
 	var container: SubViewportContainer = main.get_node("GameView/ViewportContainer") as SubViewportContainer
+	var world_viewport: SubViewport = main.get_node("GameView/ViewportContainer/Viewport") as SubViewport
+	var minimap_viewport: SubViewport = main.get_node("GameView/MapViewport") as SubViewport
+	var full_map_viewport: SubViewport = main.get_node("GameView/FullMapViewport") as SubViewport
+	var minimap_image: TextureRect = main.get_node("GameView/MinimapFrame/Minimap") as TextureRect
+	var full_map_image: TextureRect = main.get_node("GameView/FullMap/MapImage") as TextureRect
 	var camera_rig: IsometricCameraController = main.get_node(
 		"GameView/ViewportContainer/Viewport/WorldRoot/CameraRig") as IsometricCameraController
+	var compass_overlay: TextureRect = main.get_node(
+		"GameView/MinimapFrame/CompassOverlay") as TextureRect
 	game_view.show()
 	_expect(container.mouse_filter == Control.MOUSE_FILTER_STOP,
 		"world viewport receives gameplay mouse input")
 	_expect(container.gui_input.is_connected(Callable(main, "_on_world_gui_input")),
 		"world viewport input handler is connected")
+	_expect(not compass_overlay.visible and compass_overlay.texture == null,
+		"minimap render is not covered by decorative artwork")
+	_expect(minimap_viewport.world_3d == world_viewport.world_3d,
+		"minimap shares the gameplay World3D")
+	_expect(full_map_viewport.world_3d == world_viewport.world_3d,
+		"Tab map shares the gameplay World3D")
+	_expect(minimap_image.texture == minimap_viewport.get_texture(),
+		"minimap displays its live viewport texture")
+	_expect(full_map_image.texture == full_map_viewport.get_texture(),
+		"Tab map displays its live viewport texture")
+	var full_map_panel: Control = main.get_node("GameView/FullMap") as Control
+	_expect(not full_map_panel.visible, "Tab map starts closed")
+	main.call("_on_map_button_pressed")
+	_expect(full_map_panel.visible, "Tab map control opens the populated map viewport")
+	main.call("_on_map_button_pressed")
+	_expect(camera_rig.distance >= 30.0 and camera_rig.pitch_degrees <= -50.0,
+		"default camera presents the map from above")
 	var viewport_rect: Rect2 = root.get_visible_rect()
 	_expect(viewport_rect.encloses(login_panel.get_global_rect()),
 		"login panel fits the reference viewport")

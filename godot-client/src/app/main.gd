@@ -510,10 +510,6 @@ func _apply_eloria_art() -> void:
 		%SitButton.icon = _atlas_region(button_atlas, Rect2(192, 32, 32, 32))
 		%ChatButton.icon = _atlas_region(button_atlas, Rect2(32, 0, 32, 32))
 		%DisconnectButton.icon = _atlas_region(button_atlas, Rect2(224, 0, 32, 32))
-	var hud_atlas: Texture2D = _external_texture("res://assets/ui/eloria_hud_atlas.png")
-	if hud_atlas != null:
-		%CompassOverlay.texture = _atlas_region(hud_atlas, Rect2(32, 193, 63, 63))
-		%CompassOverlay.show()
 
 static func _atlas_region(atlas: Texture2D, region: Rect2) -> AtlasTexture:
 	var texture: AtlasTexture = AtlasTexture.new()

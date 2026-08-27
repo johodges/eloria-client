@@ -6,8 +6,8 @@
       "coordinateTransform": {
         "metresPerTile": 0.4651162791,
         "serverOrigin": [384.0, 384.0],
-        "origin": [0.0, 30.0, 0.0],
-        "walkingHeight": 30.0,
+        "origin": [0.0, 31.15, 0.0],
+        "walkingHeight": 31.15,
         "invertServerY": true
       },
       "status": "development_server_binding"

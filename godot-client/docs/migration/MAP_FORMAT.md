@@ -19,15 +19,16 @@ Export packaging must copy approved world packages into the exported content dir
 Godot is Y-up, metres, right-handed, north = -Z. Server `(x, y)` tiles map to Godot `(x * metresPerTile, elevation, -y * metresPerTile) + origin`. Conversion is exclusively owned by `CoordinateAdapter`.
 
 The registry supplies the verified development binding for Four Gates: 0.4651162791
-metres per server tile, server origin `(384, 384)`, authored walking height 30, and
+metres per server tile, server origin `(384, 384)`, authored walk surface Y=31 with
+an actor baseline of 31.15 to prevent terrain z-fighting, and
 inverted server Y. Server IDs `maps/startmap.elm`, `startmap.elm`, `four_gates`,
 `four-gates`, and `maps/four_gates.elm` resolve to the same canonical entry. The bare
 `four_gates` alias is required by the development-server state observed in the 2026-08-27
 runtime capture; without it the renderer retained only the blue fallback world.
 
-The minimap and full-map SubViewports share the gameplay `World3D`. Decorative compass
-art must not be placed as an opaque TextureRect above the viewport texture; framing art
-must have a transparent map aperture.
+The minimap and full-map SubViewports share the gameplay `World3D` and each TextureRect
+is bound directly to its corresponding live viewport texture. The supplied compass and
+HUD atlas regions are opaque, so they are never placed above either map render.
 
 ## Collision and navigation
 
