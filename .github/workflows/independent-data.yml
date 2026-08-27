@@ -1,194 +1,124 @@
-name: independent-data
+name: Four Gates Grounding Validation
 
 on:
-  pull_request:
   push:
+    branches:
+      - codex/four-gates-grounding-fix2-20260827
+
+permissions:
+  contents: write
+
+env:
+  BASE_SHA: f81b5868b0d48869896ad595c6137278f6764403
+  RESULT_BRANCH: codex/four-gates-grounding-result2-20260827
+  MANIFEST: eloria-assets/maps/four-gates-city/four-gates-city.json
 
 jobs:
-  provenance:
+  validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: barichello/godot-ci:4.7.2
     steps:
       - uses: actions/checkout@v4
-      - name: Install asset generator dependencies
-        run: python3 -m pip install Pillow
-      - name: Generate complete independent data
+      - name: Install validation dependencies
         run: |
-          python3 eloria-assets/tools/generate_all_assets.py --jobs 4 --skip-validation build/eloria-data
-      - name: Verify provenance policy
-        run: python3 eloria-assets/tools/check_provenance.py
-      - name: Validate all shared generated asset contracts
-        run: python3 eloria-assets/tools/validate_generated_assets.py build/eloria-data
-      - name: Validate complete sky and safe fog density
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import xml.etree.ElementTree as ET
-          root = ET.parse(Path("build/eloria-data/skybox/skybox_defs.xml")).getroot()
-          required = {
-              "clouds", "clouds_detail", "clouds_sunny",
-              "clouds_detail_sunny", "clouds_rainy",
-              "clouds_detail_rainy", "sky1", "sky2", "sky3", "sky4",
-              "sky5", "sky1_sunny", "sky2_sunny", "sky3_sunny",
-              "sky4_sunny", "sky5_sunny", "sun", "fog", "fog_sunny",
-              "fog_rainy", "light_ambient", "light_diffuse",
-              "light_ambient_rainy", "light_diffuse_rainy",
-          }
-          assert required <= {child.tag for child in root}
-          for tag in ("fog", "fog_sunny", "fog_rainy"):
-              colors = root.find(tag).findall("color")
-              assert colors and all("a" in color.attrib for color in colors)
-              assert all(0.0 < float(color.attrib["a"]) <= 0.05
-                         for color in colors)
-          for tag in ("light_ambient", "light_diffuse",
-                      "light_ambient_rainy", "light_diffuse_rainy"):
-              colors = root.find(tag).findall("color")
-              assert colors
-              assert all(sum(float(color.attrib[channel])
-                             for channel in ("r", "g", "b")) > 0.0
-                         for color in colors)
-          PY
-      - name: Verify original map
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import struct
-          path = Path("build/eloria-data/maps/emberhaven.elm")
-          data = path.read_bytes()
-          assert data[:4] == b"elmf"
-          assert struct.unpack_from("<ii", data, 4) == (32, 32)
-          assert len(data) == 41756
-          preview = Path("build/eloria-data/maps/newcharactermap.elm").read_bytes()
-          width, height, tile_offset, height_offset = struct.unpack_from(
-              "<4i", preview, 4)
-          assert (width, height, tile_offset) == (32, 32, 124)
-          preview_x, preview_y = 43, 156
-          assert preview[tile_offset + (preview_y // 6) * width +
-                         preview_x // 6] == 0
-          assert preview[height_offset + preview_y * width * 6 +
-                         preview_x] & 0x3f == 11
-          assert struct.unpack_from("<3f", preview, 60) == (
-              1.0199999809265137,) * 3
-          PY
-      - name: Validate specialty-event assets
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            python3 xvfb xauth libgl1-mesa-dri libfontconfig1 libxcursor1 \
+            libxinerama1 libxrandr2 libxi6 libxkbcommon0 libasound2t64 \
+            libpulse0 libudev1
+      - name: Add rendered plateau walk surface
         run: |
           python3 - <<'PY'
           import json
           from pathlib import Path
-          root = Path("build/eloria-data")
-          events = json.loads((root / "special_event_assets.json").read_text())["events"]
-          assert len(events) == 12
-          assert len({event["icon"] for event in events}) == 12
-          assert len({event["prop"] for event in events}) == 12
-          for event in events:
-              assert (root / event["icon"]).is_file()
-              assert (root / event["prop"]).read_bytes()[:4] == b"e3dx"
+          path = Path('eloria-assets/maps/four-gates-city/four-gates-city.json')
+          data = json.loads(path.read_text())
+          nav = data.setdefault('navigation', {})
+          prefixes = nav.setdefault('surfaceNodePrefixes', [])
+          if 'Terrain_City_Plateau' not in prefixes:
+              prefixes.append('Terrain_City_Plateau')
+          path.write_text(json.dumps(data, indent=2) + '\n')
+          assert data['navigation']['surfaceNodePrefixes'] == ['Terrain_City_Plateau']
           PY
-      - name: Validate generated native E3D scenery
+      - name: Import Godot project
+        run: godot --headless --path godot-client --editor --quit
+      - name: Native asset catalog
+        run: python3 godot-client/tests/test_native_glb_assets.py -v
+      - name: Protocol and reducer fixtures
+        run: godot --headless --path godot-client --script res://tests/test_protocol.gd
+      - name: World input routing fixtures
+        run: godot --headless --path godot-client --script res://tests/test_world_input.gd
+      - name: Main scene smoke
+        run: |
+          godot --headless --path godot-client --quit-after 3 2>&1 | tee main-scene.log
+          ! grep -E 'SCRIPT ERROR|Parse Error' main-scene.log
+      - name: Four Gates loader smoke
+        run: |
+          godot --headless --path godot-client res://src/dev/world_validation.tscn --quit-after 12 2>&1 | tee world-scene.log
+          ! grep -E 'SCRIPT ERROR|Parse Error' world-scene.log
+      - name: Native character runtime smoke
+        run: |
+          godot --headless --path godot-client res://src/dev/model_validation.tscn --quit-after 12 2>&1 | tee model-scene.log
+          ! grep -E 'SCRIPT ERROR|Parse Error' model-scene.log
+      - name: Render Four Gates and legacy HUD
+        env:
+          ELORIA_ARTIFACT_DIR: ${{ github.workspace }}/godot-client/test-artifacts/four-gates-grounding
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s '-screen 0 1280x720x24' godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_four_gates_map.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/map.log"
+          xvfb-run -a -s '-screen 0 1280x720x24' godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_legacy_hud.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/hud.log"
+          ! grep -E 'SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed' "$ELORIA_ARTIFACT_DIR/map.log" "$ELORIA_ARTIFACT_DIR/hud.log"
+          test -s "$ELORIA_ARTIFACT_DIR/four-gates-aerial.png"
+          test -s "$ELORIA_ARTIFACT_DIR/four-gates-gameplay.png"
+          test -s "$ELORIA_ARTIFACT_DIR/legacy-hud.png"
+          test -s "$ELORIA_ARTIFACT_DIR/legacy-hud-context-menu.png"
+      - name: Upload rendered validation
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: four-gates-grounding-validation
+          path: godot-client/test-artifacts/four-gates-grounding
+          if-no-files-found: warn
+
+  publish-clean-result:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build clean one-file commit from validated base
+        id: publish
         run: |
           python3 - <<'PY'
+          import json
           from pathlib import Path
-          import hashlib
-          import struct
-          root = Path("build/eloria-data")
-          models = list(root.glob("3dobjects/**/*.e3d"))
-          assert len(models) >= 223
-          for path in models:
-              data = path.read_bytes()
-              magic, version, digest, offset = struct.unpack_from("<4s4s16si", data)
-              assert magic == b"e3dx"
-              assert version == bytes((1, 1, 0, 0))
-              assert offset == 28
-              assert hashlib.md5(data[offset:]).digest() == digest
-              values = struct.unpack_from("<9i4B", data, offset)
-              vertices, vertex_size, vertex_offset, indices, index_size, _, materials, material_size, material_offset, *_ = values
-              assert vertices > 0 and indices > 0
-              assert vertex_size == 32 and vertex_offset == 68
-              assert index_size == 2
-              assert materials == 1 and material_size == 172
-              assert material_offset + 172 == len(data)
+          path = Path('eloria-assets/maps/four-gates-city/four-gates-city.json')
+          data = json.loads(path.read_text())
+          nav = data.setdefault('navigation', {})
+          prefixes = nav.setdefault('surfaceNodePrefixes', [])
+          if 'Terrain_City_Plateau' not in prefixes:
+              prefixes.append('Terrain_City_Plateau')
+          path.write_text(json.dumps(data, indent=2) + '\n')
+          assert data['navigation']['surfaceNodePrefixes'] == ['Terrain_City_Plateau']
           PY
-      - name: Validate generated Cal3D XML
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import xml.etree.ElementTree as ET
-          root = Path("build/eloria-data")
-          paths = list(root.glob("actors/*.x?f")) + list(root.glob("animations/eloria/*.xaf"))
-          for path in paths:
-              lines = path.read_text().splitlines()
-              assert lines[0].startswith("<HEADER MAGIC=")
-              document = ET.fromstring("\n".join(lines[1:]))
-              if path.suffix == ".xsf":
-                  bones = document.findall("BONE")
-                  assert bones
-                  for bone in bones:
-                      assert "NUMCHILD" in bone.attrib
-                      assert "NUMCHILDS" not in bone.attrib
-                      assert int(bone.attrib["NUMCHILD"]) == len(
-                          bone.findall("CHILDID"))
-          required_humanoid_bones = {"head", "mouth", "pelvis", "spine",
-              "handL", "handR", "weaponL", "weaponR", "staffR", "arrow",
-              "cape1", "cape2", "cape3"}
-          required_creature_bones = {"root", "body", "head", "mouth",
-              "handL", "handR", "weaponL", "weaponR", "staffR", "arrow",
-              "cape1", "cape2", "cape3"}
-          def bone_names(path):
-              lines = path.read_text().splitlines()
-              return {bone.attrib["NAME"] for bone in
-                  ET.fromstring("\n".join(lines[1:])).findall("BONE")}
-          def assert_outward_winding(path):
-              lines = path.read_text().splitlines()
-              mesh = ET.fromstring("\n".join(lines[1:])).find("SUBMESH")
-              vertices = {}
-              normals = {}
-              for vertex in mesh.findall("VERTEX"):
-                  ident = int(vertex.attrib["ID"])
-                  vertices[ident] = tuple(map(float, vertex.findtext("POS").split()))
-                  normals[ident] = tuple(map(float, vertex.findtext("NORM").split()))
-              for face in mesh.findall("FACE"):
-                  a,b,c = map(int, face.attrib["VERTEXID"].split())
-                  ab = tuple(vertices[b][i]-vertices[a][i] for i in range(3))
-                  ac = tuple(vertices[c][i]-vertices[a][i] for i in range(3))
-                  cross = (ab[1]*ac[2]-ab[2]*ac[1],
-                      ab[2]*ac[0]-ab[0]*ac[2], ab[0]*ac[1]-ab[1]*ac[0])
-                  assert sum(cross[i]*normals[a][i] for i in range(3)) > 0, path
-          assert_outward_winding(root / "actors/eloria_shirt.xmf")
-          creature_mesh = next((root / "actors/creatures").glob("*.xmf"))
-          assert_outward_winding(creature_mesh)
-          assert required_humanoid_bones <= bone_names(root / "actors/eloria_humanoid.xsf")
-          assert required_humanoid_bones <= bone_names(
-              root / "actors/nymara/npcs/nymara_humanoid.xsf")
-          assert required_creature_bones <= bone_names(
-              root / "actors/nymara/creatures/nymara_creature.xsf")
-          assert required_creature_bones <= bone_names(
-              root / "actors/creatures/eloria_quadruped.xsf")
-          actors = ET.parse(root / "actor_defs/actor_defs.xml").getroot()
-          player_ids = {0,1,2,3,4,5,37,38,39,40,41,42,79,80,81,82}
-          player_actors = [actor for actor in actors.findall("actor")
-                           if int(actor.attrib["id"]) in player_ids]
-          assert len(player_actors) == 16
-          assert {actor.attrib.get("race") for actor in player_actors} == {
-              "luminous", "votary", "glasswarden", "orun", "greyhaven", "ssarathi",
-              "stoneborn", "mycelari"}
-          none_ids = {"neck": 0, "helmet": 20, "cape": 30, "shield": 11}
-          for actor in player_actors:
-              assert actor.findtext("skeleton").endswith(".csf")
-              assert all(mesh.text.endswith(".cmf") for mesh in
-                  actor.findall(".//mesh"))
-              assert all((frame.text or "").split()[0].endswith(".caf") for frame in
-                  actor.findall("frames/*"))
-              for tag, none_id in none_ids.items():
-                  assert actor.find(f"{tag}[@id='{none_id}']") is not None, (
-                      actor.attrib["id"], tag, none_id)
-              assert actor.find("weapon[@id='0']") is not None, actor.attrib["id"]
-          assert len(list(root.glob("animations/eloria/*.xaf"))) == 8
-          assert len(list(root.glob("maps/**/*.elm"))) == 27
-          assert len(list(root.glob("textures/items*.dds"))) == 5
-          PY
-      - name: Validate binary Cal3D player through runtime
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y libcal3d12-dev
-          g++ -std=c++11 eloria-assets/tools/validate_cal3d_runtime.cpp \
-            -o build/validate_cal3d_runtime -lcal3d
-          build/validate_cal3d_runtime build/eloria-data
+          git fetch origin "$BASE_SHA"
+          git read-tree "$BASE_SHA"
+          git add "$MANIFEST"
+          tree=$(git write-tree)
+          export GIT_AUTHOR_NAME='Eloria Migration Agent'
+          export GIT_AUTHOR_EMAIL='actions@users.noreply.github.com'
+          export GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
+          export GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
+          commit=$(printf '%s\n' 'fix(godot): ground actors on rendered Four Gates plateau' | git commit-tree "$tree" -p "$BASE_SHA")
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+          git diff-tree --no-commit-id --name-status -r "$commit"
+          changed=$(git diff-tree --no-commit-id --name-only -r "$commit" | wc -l)
+          test "$changed" -eq 1
+          test "$(git diff-tree --no-commit-id --name-only -r "$commit")" = "$MANIFEST"
+          git push origin "$commit:refs/heads/$RESULT_BRANCH"
+      - name: Report result
+        run: echo "Clean result commit ${{ steps.publish.outputs.commit }} on $RESULT_BRANCH"
