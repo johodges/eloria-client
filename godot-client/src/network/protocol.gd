@@ -110,6 +110,13 @@ static func chat(text: String) -> PackedByteArray:
 	payload.append(0)
 	return encode(ClientMessage.RAW_TEXT, payload)
 
+static func private_message(text: String) -> PackedByteArray:
+	# Legacy send_input_text_line() removes exactly one leading slash before
+	# SEND_PM. Callers provide "name message" or "/message" for reply-last.
+	var payload: PackedByteArray = text.to_utf8_buffer()
+	payload.append(0)
+	return encode(ClientMessage.SEND_PM, payload)
+
 static func touch_actor(actor_id: int) -> PackedByteArray:
 	return encode(ClientMessage.TOUCH_PLAYER, PackedByteArray([
 		actor_id & 0xff, (actor_id >> 8) & 0xff,
@@ -465,7 +472,7 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			if payload.is_empty():
 				return {"type": "invalid", "error": "chat_length"}
 			return {"type": "chat", "channel": int(payload[0]),
-				"text": nul_string(payload.slice(1))}
+				"text": legacy_colored_string(payload.slice(1))}
 		ServerMessage.SEND_NPC_INFO:
 			if payload.size() < 20:
 				return {"type": "invalid", "error": "npc_info_length"}
@@ -686,6 +693,32 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool) -> Dictionary
 static func nul_string(bytes: PackedByteArray) -> String:
 	var end := bytes.find(0)
 	var clean := bytes if end < 0 else bytes.slice(0, end)
+	return clean.get_string_from_utf8()
+
+static func legacy_colored_string(bytes: PackedByteArray) -> String:
+	# EL color markers occupy the C1-control range. Preserve bytes in valid
+	# UTF-8 multibyte sequences so non-ASCII chat is not damaged while removing
+	# standalone presentation controls from the text DTO.
+	var end: int = bytes.find(0)
+	var source: PackedByteArray = bytes if end < 0 else bytes.slice(0, end)
+	var clean: PackedByteArray = PackedByteArray()
+	var continuation_bytes: int = 0
+	for byte_value: int in source:
+		if continuation_bytes > 0:
+			if byte_value >= 0x80 and byte_value <= 0xbf:
+				clean.append(byte_value)
+				continuation_bytes -= 1
+				continue
+			continuation_bytes = 0
+		if byte_value >= 0x7f and byte_value <= 0x9f:
+			continue
+		clean.append(byte_value)
+		if byte_value >= 0xc2 and byte_value <= 0xdf:
+			continuation_bytes = 1
+		elif byte_value >= 0xe0 and byte_value <= 0xef:
+			continuation_bytes = 2
+		elif byte_value >= 0xf0 and byte_value <= 0xf4:
+			continuation_bytes = 3
 	return clean.get_string_from_utf8()
 
 static func u16(bytes: PackedByteArray, offset := 0) -> int:

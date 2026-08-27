@@ -43,6 +43,9 @@ func set_sitting(sitting: bool) -> Error:
 func send_chat(text: String) -> Error:
 	return send_frame(EloriaProtocol.chat(text))
 
+func send_private_message(text: String) -> Error:
+	return send_frame(EloriaProtocol.private_message(text))
+
 func touch_actor(actor_id: int) -> Error:
 	return send_frame(EloriaProtocol.touch_actor(actor_id))
 

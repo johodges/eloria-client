@@ -1281,7 +1281,13 @@ func _configure_full_map(manifest: WorldManifest) -> void:
 func _sync_chat() -> void:
 	chat_output.clear()
 	for line in AppState.chat_lines.slice(maxi(0, AppState.chat_lines.size() - 100)):
-		chat_output.append_text(str(line.text) + "\n")
+		var channel: int = int(line.get("channel", 0))
+		var prefix: String = ""
+		match channel:
+			1: prefix = "[PM] "
+			3, 255: prefix = "[System] "
+			5, 6, 7: prefix = "[Channel] "
+		chat_output.append_text(prefix + str(line.get("text", "")) + "\n")
 	chat_output.scroll_to_line(maxi(0, chat_output.get_line_count() - 1))
 
 func _sync_stats() -> void:
@@ -1597,11 +1603,14 @@ func _on_chat_submitted(text: String) -> void:
 	if message.is_empty():
 		chat_input.release_focus()
 		return
-	var error: Error = Network.send_chat(message)
+	var is_private: bool = message.begins_with("/") and message.length() > 1
+	var error: Error = (Network.send_private_message(message.substr(1))
+		if is_private else Network.send_chat(message))
 	if error == OK:
 		chat_input.clear()
 	else:
-		push_warning("RAW_TEXT failed: " + error_string(error))
+		push_warning(("SEND_PM" if is_private else "RAW_TEXT")
+			+ " failed: " + error_string(error))
 
 func _sync_trade() -> void:
 	var is_open: bool = bool(AppState.trade.get("open", false))

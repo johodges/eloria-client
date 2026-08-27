@@ -12,6 +12,10 @@ func _init() -> void:
 		PackedByteArray([7, 2, 0, 0]))
 	_expect_bytes("chat fixture", EloriaProtocol.chat("Hello"),
 		PackedByteArray([0, 7, 0, 72, 101, 108, 108, 111, 0]))
+	_expect_bytes("private message fixture", EloriaProtocol.private_message("Alice Hello"),
+		PackedByteArray([2, 13, 0, 65, 108, 105, 99, 101, 32, 72, 101, 108, 108, 111, 0]))
+	_expect_bytes("private reply fixture", EloriaProtocol.private_message("/Hello"),
+		PackedByteArray([2, 8, 0, 47, 72, 101, 108, 108, 111, 0]))
 	_expect_bytes("touch actor fixture", EloriaProtocol.touch_actor(0x12345678),
 		PackedByteArray([28, 5, 0, 0x78, 0x56, 0x34, 0x12]))
 	_expect_bytes("npc response fixture", EloriaProtocol.npc_response(0x1234, 0x5678),
@@ -118,6 +122,15 @@ func _init() -> void:
 	_expect(EloriaProtocol.decode_server(3, PackedByteArray()).type == "invalid", "short you are")
 	var chat := EloriaProtocol.decode_server(0, PackedByteArray([3, 72, 105, 0]))
 	_expect(chat.type == "chat" and chat.channel == 3 and chat.text == "Hi", "chat")
+	var colored_pm: Dictionary = EloriaProtocol.decode_server(0,
+		PackedByteArray([1, 128, 91, 80, 77, 32, 102, 114, 111, 109, 32, 65, 108,
+			105, 99, 101, 58, 32, 104, 105, 93, 0]))
+	_expect(colored_pm.type == "chat" and colored_pm.channel == 1
+		and colored_pm.text == "[PM from Alice: hi]",
+		"personal channel strips legacy color controls")
+	var unicode_chat: Dictionary = EloriaProtocol.decode_server(0,
+		PackedByteArray([0, 128, 72, 195, 169, 108, 111, 0]))
+	_expect(unicode_chat.text == "Hélo", "chat sanitizer preserves UTF-8 sequences")
 	var option_payload: PackedByteArray = PackedByteArray([4, 0, 66, 121, 101, 0,
 		0x34, 0x12, 0x78, 0x56])
 	var npc_options: Dictionary = EloriaProtocol.decode_server(31, option_payload)

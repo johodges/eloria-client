@@ -31,7 +31,15 @@ are one-tile walk steps and 30–37 are the equivalent run steps. `SIT_DOWN(7)`
 carries one desired-state byte (`1` sit, `0` stand); the server broadcasts actor
 commands 13/14 after accepting the state change. The legacy default is Alt+S.
 
-Chat sends `RAW_TEXT(0)` as UTF-8 plus NUL. NPC activation sends
+Chat sends `RAW_TEXT(0)` as UTF-8 plus NUL. A private message sends
+`SEND_PM(2)` as `recipient ASCII-space message NUL`, omitting the leading slash
+typed in the legacy input line; payloads beginning with `/` implement the
+legacy `// message` reply-to-last-sender shortcut. Incoming private messages
+are normal `RAW_TEXT(0)` frames on channel 1. Local, personal, server, and the
+three rendered channel tabs use channel IDs 0, 1, 3, and 5–7 respectively.
+Standalone legacy color-control bytes are presentation metadata and are
+removed from DTO text without removing valid UTF-8 continuation bytes.
+NPC activation sends
 `TOUCH_PLAYER(28)` with `actor_id:u32le`. Dialogue uses `SEND_NPC_INFO(33)`,
 `NPC_TEXT(30)`, and a repeated `NPC_OPTIONS_LIST(31)` entry layout of
 `text_size:u16le | NUL text | response_id:u16le | actor_id:u16le`; replies send
