@@ -1,3 +1,4 @@
+class_name EloriaNetworkClient
 extends Node
 
 signal connection_state_changed(state: String)

@@ -93,6 +93,137 @@ func _run() -> void:
 	var visible_native_meshes: int = _visible_native_mesh_count(native_model)
 	_expect(native_model != null and fallback == null and visible_native_meshes >= 3,
 		"local player uses the visible native luminous GLB")
+	var camera: Camera3D = main.get_node(
+		"GameView/ViewportContainer/Viewport/WorldRoot/CameraRig/Camera") as Camera3D
+
+	# Keep a second real connection alive so the primary client must replicate,
+	# render, move, select, and later remove a genuine remote player.
+	var helper_username: String = "Remote" + _random_hex(5)
+	var helper_password: String = _random_hex(24)
+	var helper_state: Dictionary = {
+		"connection": "disconnected", "created": false, "authenticated": false,
+		"actor_id": -1, "map": "", "error": ""}
+	var helper_network: EloriaNetworkClient = EloriaNetworkClient.new()
+	helper_network.name = "RemoteActorHelperNetwork"
+	helper_network.connection_state_changed.connect(func(state: String) -> void:
+		helper_state["connection"] = state)
+	helper_network.packet_received.connect(func(command: int,
+			payload: PackedByteArray) -> void:
+		var helper_event: Dictionary = EloriaProtocol.decode_server(command, payload)
+		match str(helper_event.get("type", "")):
+			"create_character_ok":
+				helper_state["created"] = true
+				var login_error: Error = helper_network.login(
+					helper_username, helper_password)
+				if login_error != OK:
+					helper_state["error"] = "login_send_failed"
+			"create_character_error":
+				helper_state["error"] = "create_character_rejected"
+			"login_ok":
+				helper_state["authenticated"] = true
+			"login_error":
+				helper_state["error"] = "login_rejected"
+			"you_are":
+				helper_state["actor_id"] = int(helper_event.get("actor_id", -1))
+			"change_map":
+				helper_state["map"] = str(helper_event.get("map_name", ""))
+			"ping_request":
+				helper_network.send_frame(EloriaProtocol.encode(
+					EloriaProtocol.ClientMessage.PING_RESPONSE)))
+	root.add_child(helper_network)
+	var helper_connect_error: Error = helper_network.connect_to_server(host, port)
+	_expect(helper_connect_error == OK, "remote-player helper begins a real TCP connection")
+	var helper_connected: Callable = func() -> bool:
+		return str(helper_state.get("connection", "")) == "connected"
+	_expect(await _wait_for(helper_connected, SESSION_TIMEOUT_SECONDS),
+		"remote-player helper connected to the development server")
+	var helper_create_error: Error = helper_network.create_character(
+		helper_username, helper_password, {
+			"skin": 0, "hair": 0, "shirt": 0, "pants": 0, "boots": 0,
+			"actor_type": 1, "head": 0, "eyes": 0})
+	_expect(helper_create_error == OK,
+		"remote-player helper sent a redacted character-creation request")
+	var helper_ready: Callable = func() -> bool:
+		var helper_id: int = int(helper_state.get("actor_id", -1))
+		return (bool(helper_state.get("authenticated", false)) and helper_id >= 0
+			and not str(helper_state.get("map", "")).is_empty()
+			and (_app_state.get("actors") as Dictionary).has(helper_id)
+			and (main.get("actor_nodes") as Dictionary).has(helper_id))
+	var helper_became_ready: bool = await _wait_for(
+		helper_ready, SESSION_TIMEOUT_SECONDS)
+	_expect(helper_became_ready,
+		"primary client received the real remote-player spawn")
+	if not helper_became_ready:
+		_fail("remote-player helper state=" + str(_json_safe(helper_state)))
+		helper_network.disconnect_from_server()
+		_finish()
+		return
+	for unused_remote_frame: int in range(8):
+		await physics_frame
+		await process_frame
+	var remote_actor_id: int = int(helper_state.get("actor_id", -1))
+	var remote_dto: Dictionary = (_app_state.get("actors") as Dictionary).get(
+		remote_actor_id, {}) as Dictionary
+	var remote_actor: ReplicatedActor3D = (main.get("actor_nodes") as Dictionary).get(
+		remote_actor_id) as ReplicatedActor3D
+	var remote_native_model: Node3D = remote_actor.get_node_or_null("NativeModel") as Node3D
+	var remote_fallback: Node = remote_actor.get_node_or_null("MissingModelFallback")
+	var remote_visible_native_meshes: int = _visible_native_mesh_count(remote_native_model)
+	_expect(bool(remote_dto.get("enhanced", false))
+		and int(remote_dto.get("kind", 0)) in [1, 4]
+		and remote_native_model != null and remote_fallback == null
+		and remote_visible_native_meshes >= 3,
+		"remote player preserves its kind and visible native luminous model")
+	var remote_initial_tile: Vector2i = Vector2i(int(remote_dto.get("x", -1)),
+		int(remote_dto.get("y", -1)))
+	var remote_moved: bool = await _move_remote_helper(
+		helper_network, remote_actor_id, remote_initial_tile)
+	_expect(remote_moved,
+		"primary client applied a real authoritative remote-player movement update")
+	for unused_remote_follow_frame: int in range(8):
+		await physics_frame
+		await process_frame
+	remote_dto = (_app_state.get("actors") as Dictionary).get(
+		remote_actor_id, {}) as Dictionary
+	remote_actor = (main.get("actor_nodes") as Dictionary).get(
+		remote_actor_id) as ReplicatedActor3D
+	var remote_screen: Vector2 = camera.unproject_position(
+		remote_actor.global_position + Vector3.UP)
+	_expect(not camera.is_position_behind(remote_actor.global_position + Vector3.UP)
+		and Rect2(Vector2.ZERO, Vector2(SCREEN_SIZE)).has_point(remote_screen),
+		"remote player is inside the gameplay camera frame")
+	var remote_click: InputEventMouseButton = InputEventMouseButton.new()
+	remote_click.button_index = MOUSE_BUTTON_LEFT
+	remote_click.pressed = true
+	remote_click.position = remote_screen
+	main.call("_on_world_gui_input", remote_click)
+	await process_frame
+	var remote_selection_ring: Node3D = remote_actor.get_node_or_null(
+		"SelectionRing") as Node3D
+	_expect(int(_app_state.get("selected_actor_id")) == remote_actor_id
+		and remote_selection_ring != null and remote_selection_ring.visible,
+		"ray-based world click selects the rendered remote player")
+	var visible_npc_ids: Array[int] = []
+	for actor_id_value: Variant in (_app_state.get("actors") as Dictionary):
+		var actor_id: int = int(actor_id_value)
+		var actor_dto: Dictionary = (_app_state.get("actors") as Dictionary).get(
+			actor_id, {}) as Dictionary
+		if int(actor_dto.get("kind", 0)) == 2:
+			visible_npc_ids.append(actor_id)
+	_write_json("remote-actor.json", {
+		"server_map": str(_app_state.get("current_map")),
+		"remote_actor_id": remote_actor_id,
+		"spawn_dto": _json_safe(remote_dto),
+		"initial_tile": [remote_initial_tile.x, remote_initial_tile.y],
+		"resulting_tile": [int(remote_dto.get("x", -1)),
+			int(remote_dto.get("y", -1))],
+		"render": _json_safe(remote_actor.render_diagnostics()),
+		"visible_native_meshes": remote_visible_native_meshes,
+		"selected": int(_app_state.get("selected_actor_id")) == remote_actor_id,
+		"visible_npc_ids": visible_npc_ids,
+		"credentials": "REDACTED",
+	})
+	await _capture("world-remote-player-selected.png")
 
 	var gameplay_world: World3D = main.get("gameplay_world") as World3D
 	_expect(gameplay_world != null, "gameplay World3D is non-null")
@@ -104,8 +235,6 @@ func _run() -> void:
 		_expect(absf(actor.global_position.y - (surface_position.y + 0.02)) < 0.04,
 			"actor foot is aligned to the sampled navigation surface")
 
-	var camera: Camera3D = main.get_node(
-		"GameView/ViewportContainer/Viewport/WorldRoot/CameraRig/Camera") as Camera3D
 	var actor_focus: Vector3 = actor.global_position + Vector3.UP
 	var actor_screen: Vector2 = camera.unproject_position(actor_focus)
 	var actor_feet_screen: Vector2 = camera.unproject_position(actor.global_position)
@@ -322,6 +451,13 @@ func _run() -> void:
 		})
 		await _capture("world-standing-after-move.png")
 
+	helper_network.disconnect_from_server()
+	var helper_removed: Callable = func() -> bool:
+		return (not (_app_state.get("actors") as Dictionary).has(remote_actor_id)
+			and not (main.get("actor_nodes") as Dictionary).has(remote_actor_id))
+	_expect(await _wait_for(helper_removed, 8.0),
+		"remote-player disconnect removes authoritative and rendered actor state")
+	helper_network.queue_free()
 	_network.call("disconnect_from_server")
 	print("rendered server session: ", "PASS" if _failures == 0 else "FAIL")
 	print("credentials: REDACTED")
@@ -363,6 +499,23 @@ func _send_real_world_click(main: Control, camera: Camera3D,
 			return true
 		# Restore focus before trying another reachable direction.
 		main.call("_update_local_actor_follow")
+	return false
+
+func _move_remote_helper(helper_network: EloriaNetworkClient, remote_actor_id: int,
+		initial_tile: Vector2i) -> bool:
+	var offsets: Array[Vector2i] = [Vector2i(-4, 0), Vector2i(0, -4),
+		Vector2i(4, 0), Vector2i(0, 4)]
+	for offset: Vector2i in offsets:
+		var send_error: Error = helper_network.move_to(initial_tile + offset)
+		if send_error != OK:
+			continue
+		var remote_tile_changed: Callable = func() -> bool:
+			var actors: Dictionary = _app_state.get("actors") as Dictionary
+			var dto: Dictionary = actors.get(remote_actor_id, {}) as Dictionary
+			return Vector2i(int(dto.get("x", initial_tile.x)),
+				int(dto.get("y", initial_tile.y))) != initial_tile
+		if await _wait_for(remote_tile_changed, 8.0):
+			return true
 	return false
 
 func _surface_hit(world: World3D, target: Vector3) -> Dictionary:
