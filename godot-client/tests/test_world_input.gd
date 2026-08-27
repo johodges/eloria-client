@@ -150,6 +150,12 @@ func _run() -> void:
 		"default camera keeps the actor readable from a steep isometric angle")
 	var actor_height_fixture: ReplicatedActor3D = ReplicatedActor3D.new()
 	root.add_child(actor_height_fixture)
+	var imported_visual := Node3D.new()
+	imported_visual.name = "NativeModel"
+	actor_height_fixture.add_child(imported_visual)
+	actor_height_fixture.call("_apply_import_adapter", {})
+	_expect(is_equal_approx(absf(imported_visual.rotation.y), PI),
+		"native visual forward is corrected from glTF +Z to Godot -Z")
 	actor_height_fixture.server_target = Vector3(2.0, 31.15, 3.0)
 	actor_height_fixture.global_position = actor_height_fixture.server_target
 	actor_height_fixture.set_surface_height(42.08)
@@ -271,11 +277,15 @@ func _run() -> void:
 		and main.get_node("GameView/ConsolePanel/Content/ConsoleOutput") is RichTextLabel
 		and chat_input.anchor_left > 0.5,
 		"console, Ctrl+I inventory, WASD/QE/Space, and bottom-right chat controls are available")
-	_expect(main.call("_movement_axes_for_actions", false, false, true, false)
-		== Vector2i(0, 1)
+	_expect(main.call("_movement_axes_for_actions", true, false, false, false)
+		== Vector2i(1, 0)
+		and main.call("_movement_axes_for_actions", false, true, false, false)
+		== Vector2i(-1, 0)
+		and main.call("_movement_axes_for_actions", false, false, true, false)
+		== Vector2i(0, -1)
 		and main.call("_movement_axes_for_actions", false, false, false, true)
-		== Vector2i(0, -1),
-		"A and D use the corrected opposite horizontal movement directions")
+		== Vector2i(0, 1),
+		"W/S move forward/backward and A/D move left/right")
 	var q_turn := InputEventKey.new()
 	q_turn.physical_keycode = KEY_Q
 	var e_turn := InputEventKey.new()
