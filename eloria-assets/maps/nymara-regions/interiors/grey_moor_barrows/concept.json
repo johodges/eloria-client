@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "grey_moor_barrows",
+  "name": "Grey Moor Barrows",
+  "status": "concept-complete-production-queued",
+  "parentRegion": "grey_moors",
+  "source": {
+    "elm": "../../source-elm/grey_moor_barrows.elm",
+    "sha256": "3e48d543ade53801d36ad9b3bc120c834bdb59e3d799d0dae4b73d668a38bbaf"
+  },
+  "conceptArt": {
+    "culturalReference": "../../../../concepts/nymara-regions/grey_moors_region_concept.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "barrow entry",
+      "burial gallery",
+      "carved arch",
+      "ritual altar",
+      "sarcophagus hall",
+      "spike trap",
+      "root crypt",
+      "flooded ossuary",
+      "royal tomb",
+      "peat stone bone materials"
+    ],
+    "detailBoardStatus": "regeneration-required"
+  }
+}

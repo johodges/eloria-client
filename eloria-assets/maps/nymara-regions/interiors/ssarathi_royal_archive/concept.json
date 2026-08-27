@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "ssarathi_royal_archive",
+  "name": "Ssarathi Royal Archive",
+  "status": "concept-complete-production-queued",
+  "parentRegion": "ssarathi_ruins",
+  "source": {
+    "elm": "../../source-elm/ssarathi_royal_archive.elm",
+    "sha256": "31a6476f2737f841439ca0fd83bf3d61a875f29272bb351eaeafca252d72fe0f"
+  },
+  "conceptArt": {
+    "culturalReference": "../../../../concepts/nymara-regions/ssarathi_ruins_region_concept.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "water entrance",
+      "reading hall",
+      "scaled mosaic",
+      "water arch",
+      "archive shelves",
+      "royal statue",
+      "vault trap",
+      "flooded repository",
+      "central archive",
+      "scale stone papyrus materials"
+    ],
+    "detailBoardStatus": "regeneration-required"
+  }
+}

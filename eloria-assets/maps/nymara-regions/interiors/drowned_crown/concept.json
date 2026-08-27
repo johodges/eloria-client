@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "drowned_crown",
+  "name": "Drowned Crown",
+  "status": "concept-complete-production-queued",
+  "parentRegion": "crownwater",
+  "source": {
+    "elm": "../../source-elm/drowned_crown.elm",
+    "sha256": "eacc253b09d4722ef6697f35e8f5f18cab173c4092b773117a3170120fdd7c64"
+  },
+  "conceptArt": {
+    "culturalReference": "../../../../concepts/nymara-regions/crownwater_region_concept.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "flooded vestibule",
+      "water galleries",
+      "submerged arch",
+      "shell altar",
+      "statue court",
+      "water channel",
+      "collapsed dome",
+      "air pocket",
+      "objective hall",
+      "limestone shell brass materials"
+    ],
+    "detailBoardStatus": "regeneration-required"
+  }
+}

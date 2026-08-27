@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "manymouth_flooded_labyrinth",
+  "name": "Manymouth Flooded Labyrinth",
+  "status": "concept-complete-production-queued",
+  "parentRegion": "manymouth_delta",
+  "source": {
+    "elm": "../../source-elm/manymouth_flooded_labyrinth.elm",
+    "sha256": "3115f4d8dcacd649955f80caa483a2044086346112e332f4c305f51f7cf2c9f9"
+  },
+  "conceptArt": {
+    "culturalReference": "../../../../concepts/nymara-regions/manymouth_delta_region_concept.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "hidden entry",
+      "stilt corridor",
+      "boardwalk maze",
+      "flood channel",
+      "smuggler cache",
+      "crate workroom",
+      "root chamber",
+      "submerged gate",
+      "labyrinth panorama",
+      "reed rope mangrove materials"
+    ],
+    "detailBoardStatus": "regeneration-required"
+  }
+}

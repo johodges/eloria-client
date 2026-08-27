@@ -1,0 +1,883 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "0.1.0",
+  "asset": {
+    "id": "verdant_stair",
+    "name": "Verdant Stair",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -96,
+        0.0,
+        -96
+      ],
+      "max": [
+        96,
+        18.0,
+        96
+      ]
+    }
+  },
+  "source": {
+    "elm": "../source-elm/verdant_stair.elm",
+    "sha256": "5b0dcc5d1bf12891043d570699b5356ecb8eb148b24020cb856b2964bf44daf0",
+    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
+    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
+  },
+  "conceptArt": {
+    "macro": "../../../concepts/nymara-regions/verdant_stair_region_concept.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "generator": "OpenAI ImageGen (built-in)",
+    "checkpoints": [
+      {
+        "panel": 1,
+        "id": "concept-01",
+        "subject": "lower river arrival",
+        "cameraPosition": [
+          0.0,
+          20.0,
+          -72.0
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      },
+      {
+        "panel": 2,
+        "id": "concept-02",
+        "subject": "basalt stair",
+        "cameraPosition": [
+          42.32,
+          24.0,
+          -58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_verdant_basalt_steps_013",
+          "Landmark_verdant_basalt_steps_014",
+          "Landmark_verdant_basalt_steps_015"
+        ]
+      },
+      {
+        "panel": 3,
+        "id": "concept-03",
+        "subject": "cenote spiral",
+        "cameraPosition": [
+          68.48,
+          16.0,
+          -22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_verdant_cenote_stairs_020",
+          "Landmark_verdant_cenote_stairs_021",
+          "Landmark_verdant_cenote_stairs_022"
+        ]
+      },
+      {
+        "panel": 4,
+        "id": "concept-04",
+        "subject": "root bridge",
+        "cameraPosition": [
+          68.48,
+          20.0,
+          22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_whitehorn_rope_bridge_009",
+          "Landmark_verdant_vine_bridge_011",
+          "Landmark_verdant_root_bridge_024"
+        ]
+      },
+      {
+        "panel": 5,
+        "id": "concept-05",
+        "subject": "vine bridge",
+        "cameraPosition": [
+          42.32,
+          24.0,
+          58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_whitehorn_rope_bridge_009",
+          "Landmark_verdant_vine_bridge_011",
+          "Landmark_verdant_root_bridge_024"
+        ]
+      },
+      {
+        "panel": 6,
+        "id": "concept-06",
+        "subject": "tree platform",
+        "cameraPosition": [
+          0.0,
+          16.0,
+          72.0
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_verdant_tree_platform_035",
+          "Landmark_verdant_tree_platform_036",
+          "Landmark_verdant_tree_platform_037"
+        ]
+      },
+      {
+        "panel": 7,
+        "id": "concept-07",
+        "subject": "water shrine",
+        "cameraPosition": [
+          -42.32,
+          20.0,
+          58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_crownwater_ferry_dock_002",
+          "Landmark_ssarathi_water_gate_006",
+          "Landmark_verdant_water_shrine_041"
+        ]
+      },
+      {
+        "panel": 8,
+        "id": "concept-08",
+        "subject": "fern trail",
+        "cameraPosition": [
+          -68.48,
+          24.0,
+          22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_verdant_giant_fern_046",
+          "Landmark_verdant_giant_fern_047",
+          "Landmark_verdant_giant_fern_048"
+        ]
+      },
+      {
+        "panel": 9,
+        "id": "concept-09",
+        "subject": "terrace panorama",
+        "cameraPosition": [
+          -68.48,
+          16.0,
+          -22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      },
+      {
+        "panel": 10,
+        "id": "concept-10",
+        "subject": "basalt jade vine materials",
+        "cameraPosition": [
+          -42.32,
+          20.0,
+          -58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_verdant_vine_bridge_011",
+          "Landmark_verdant_basalt_steps_013",
+          "Landmark_verdant_basalt_steps_014"
+        ]
+      }
+    ],
+    "detailBoardStatus": "regeneration-required"
+  },
+  "landmarks": [
+    {
+      "id": "landmark-001",
+      "name": "Amberwood Estate",
+      "node": "Landmark_amberwood_estate_001",
+      "position": [
+        -12.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-002",
+      "name": "Crownwater Ferry Dock",
+      "node": "Landmark_crownwater_ferry_dock_002",
+      "position": [
+        10.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-003",
+      "name": "Four Gates Gatehouse",
+      "node": "Landmark_four_gates_gatehouse_003",
+      "position": [
+        32.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-004",
+      "name": "Westhaven Dry Dock",
+      "node": "Landmark_westhaven_dry_dock_004",
+      "position": [
+        -34.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-005",
+      "name": "Mirrorhold Floating Market",
+      "node": "Landmark_mirrorhold_floating_market_005",
+      "position": [
+        -12.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-006",
+      "name": "Ssarathi Water Gate",
+      "node": "Landmark_ssarathi_water_gate_006",
+      "position": [
+        10.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-008",
+      "name": "Manymouth Hidden Dock",
+      "node": "Landmark_manymouth_hidden_dock_008",
+      "position": [
+        -34.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-009",
+      "name": "Whitehorn Rope Bridge",
+      "node": "Landmark_whitehorn_rope_bridge_009",
+      "position": [
+        -12.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-010",
+      "name": "Resonant Crystal Cluster",
+      "node": "Landmark_resonant_crystal_cluster_010",
+      "position": [
+        10.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-011",
+      "name": "Verdant Vine Bridge",
+      "node": "Landmark_verdant_vine_bridge_011",
+      "position": [
+        32.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-013",
+      "name": "Verdant Basalt Steps",
+      "node": "Landmark_verdant_basalt_steps_013",
+      "position": [
+        0.0,
+        0,
+        34.0
+      ]
+    },
+    {
+      "id": "landmark-014",
+      "name": "Verdant Basalt Steps",
+      "node": "Landmark_verdant_basalt_steps_014",
+      "position": [
+        0.0,
+        0,
+        20.0
+      ]
+    },
+    {
+      "id": "landmark-015",
+      "name": "Verdant Basalt Steps",
+      "node": "Landmark_verdant_basalt_steps_015",
+      "position": [
+        -6.0,
+        0,
+        6.0
+      ]
+    },
+    {
+      "id": "landmark-016",
+      "name": "Verdant Basalt Steps",
+      "node": "Landmark_verdant_basalt_steps_016",
+      "position": [
+        6.0,
+        0,
+        -8.0
+      ]
+    },
+    {
+      "id": "landmark-017",
+      "name": "Verdant Basalt Steps",
+      "node": "Landmark_verdant_basalt_steps_017",
+      "position": [
+        -8.0,
+        0,
+        -22.0
+      ]
+    },
+    {
+      "id": "landmark-018",
+      "name": "Verdant Basalt Steps",
+      "node": "Landmark_verdant_basalt_steps_018",
+      "position": [
+        8.0,
+        0,
+        -36.0
+      ]
+    },
+    {
+      "id": "landmark-019",
+      "name": "Verdant Basalt Steps",
+      "node": "Landmark_verdant_basalt_steps_019",
+      "position": [
+        0.0,
+        0,
+        -50.0
+      ]
+    },
+    {
+      "id": "landmark-020",
+      "name": "Verdant Cenote Stairs",
+      "node": "Landmark_verdant_cenote_stairs_020",
+      "position": [
+        -28.0,
+        0,
+        24.0
+      ]
+    },
+    {
+      "id": "landmark-021",
+      "name": "Verdant Cenote Stairs",
+      "node": "Landmark_verdant_cenote_stairs_021",
+      "position": [
+        28.0,
+        0,
+        20.0
+      ]
+    },
+    {
+      "id": "landmark-022",
+      "name": "Verdant Cenote Stairs",
+      "node": "Landmark_verdant_cenote_stairs_022",
+      "position": [
+        -32.0,
+        0,
+        -20.0
+      ]
+    },
+    {
+      "id": "landmark-023",
+      "name": "Verdant Cenote Stairs",
+      "node": "Landmark_verdant_cenote_stairs_023",
+      "position": [
+        32.0,
+        0,
+        -24.0
+      ]
+    },
+    {
+      "id": "landmark-024",
+      "name": "Verdant Root Bridge",
+      "node": "Landmark_verdant_root_bridge_024",
+      "position": [
+        -16.0,
+        0,
+        16.0
+      ]
+    },
+    {
+      "id": "landmark-025",
+      "name": "Verdant Root Bridge",
+      "node": "Landmark_verdant_root_bridge_025",
+      "position": [
+        16.0,
+        0,
+        14.0
+      ]
+    },
+    {
+      "id": "landmark-026",
+      "name": "Verdant Root Bridge",
+      "node": "Landmark_verdant_root_bridge_026",
+      "position": [
+        -20.0,
+        0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-027",
+      "name": "Verdant Root Bridge",
+      "node": "Landmark_verdant_root_bridge_027",
+      "position": [
+        20.0,
+        0,
+        -14.0
+      ]
+    },
+    {
+      "id": "landmark-028",
+      "name": "Verdant Root Bridge",
+      "node": "Landmark_verdant_root_bridge_028",
+      "position": [
+        -14.0,
+        0,
+        -40.0
+      ]
+    },
+    {
+      "id": "landmark-029",
+      "name": "Verdant Root Bridge",
+      "node": "Landmark_verdant_root_bridge_029",
+      "position": [
+        14.0,
+        0,
+        -42.0
+      ]
+    },
+    {
+      "id": "landmark-030",
+      "name": "Verdant Vine Bridge",
+      "node": "Landmark_verdant_vine_bridge_030",
+      "position": [
+        -30.0,
+        0,
+        4.0
+      ]
+    },
+    {
+      "id": "landmark-031",
+      "name": "Verdant Vine Bridge",
+      "node": "Landmark_verdant_vine_bridge_031",
+      "position": [
+        30.0,
+        0,
+        2.0
+      ]
+    },
+    {
+      "id": "landmark-032",
+      "name": "Verdant Vine Bridge",
+      "node": "Landmark_verdant_vine_bridge_032",
+      "position": [
+        -26.0,
+        0,
+        -34.0
+      ]
+    },
+    {
+      "id": "landmark-033",
+      "name": "Verdant Vine Bridge",
+      "node": "Landmark_verdant_vine_bridge_033",
+      "position": [
+        26.0,
+        0,
+        -36.0
+      ]
+    },
+    {
+      "id": "landmark-034",
+      "name": "Verdant Vine Bridge",
+      "node": "Landmark_verdant_vine_bridge_034",
+      "position": [
+        0.0,
+        0,
+        -26.0
+      ]
+    },
+    {
+      "id": "landmark-035",
+      "name": "Verdant Tree Platform",
+      "node": "Landmark_verdant_tree_platform_035",
+      "position": [
+        -24.0,
+        0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-036",
+      "name": "Verdant Tree Platform",
+      "node": "Landmark_verdant_tree_platform_036",
+      "position": [
+        24.0,
+        0,
+        30.0
+      ]
+    },
+    {
+      "id": "landmark-037",
+      "name": "Verdant Tree Platform",
+      "node": "Landmark_verdant_tree_platform_037",
+      "position": [
+        -34.0,
+        0,
+        -6.0
+      ]
+    },
+    {
+      "id": "landmark-038",
+      "name": "Verdant Tree Platform",
+      "node": "Landmark_verdant_tree_platform_038",
+      "position": [
+        34.0,
+        0,
+        -8.0
+      ]
+    },
+    {
+      "id": "landmark-039",
+      "name": "Verdant Tree Platform",
+      "node": "Landmark_verdant_tree_platform_039",
+      "position": [
+        -22.0,
+        0,
+        -50.0
+      ]
+    },
+    {
+      "id": "landmark-040",
+      "name": "Verdant Tree Platform",
+      "node": "Landmark_verdant_tree_platform_040",
+      "position": [
+        22.0,
+        0,
+        -52.0
+      ]
+    },
+    {
+      "id": "landmark-041",
+      "name": "Verdant Water Shrine",
+      "node": "Landmark_verdant_water_shrine_041",
+      "position": [
+        -10.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-042",
+      "name": "Verdant Water Shrine",
+      "node": "Landmark_verdant_water_shrine_042",
+      "position": [
+        10.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-043",
+      "name": "Verdant Water Shrine",
+      "node": "Landmark_verdant_water_shrine_043",
+      "position": [
+        -14.0,
+        0,
+        -18.0
+      ]
+    },
+    {
+      "id": "landmark-044",
+      "name": "Verdant Water Shrine",
+      "node": "Landmark_verdant_water_shrine_044",
+      "position": [
+        14.0,
+        0,
+        -18.0
+      ]
+    },
+    {
+      "id": "landmark-045",
+      "name": "Verdant Water Shrine",
+      "node": "Landmark_verdant_water_shrine_045",
+      "position": [
+        0.0,
+        0,
+        -42.0
+      ]
+    },
+    {
+      "id": "landmark-046",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_046",
+      "position": [
+        -36.0,
+        0,
+        30.0
+      ]
+    },
+    {
+      "id": "landmark-047",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_047",
+      "position": [
+        36.0,
+        0,
+        30.0
+      ]
+    },
+    {
+      "id": "landmark-048",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_048",
+      "position": [
+        -40.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-049",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_049",
+      "position": [
+        40.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-050",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_050",
+      "position": [
+        -38.0,
+        0,
+        -28.0
+      ]
+    },
+    {
+      "id": "landmark-051",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_051",
+      "position": [
+        38.0,
+        0,
+        -28.0
+      ]
+    },
+    {
+      "id": "landmark-052",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_052",
+      "position": [
+        -30.0,
+        0,
+        -54.0
+      ]
+    },
+    {
+      "id": "landmark-053",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_053",
+      "position": [
+        30.0,
+        0,
+        -54.0
+      ]
+    },
+    {
+      "id": "landmark-054",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_054",
+      "position": [
+        -18.0,
+        0,
+        -4.0
+      ]
+    },
+    {
+      "id": "landmark-055",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_055",
+      "position": [
+        18.0,
+        0,
+        -4.0
+      ]
+    },
+    {
+      "id": "landmark-056",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_056",
+      "position": [
+        -16.0,
+        0,
+        -32.0
+      ]
+    },
+    {
+      "id": "landmark-057",
+      "name": "Verdant Giant Fern",
+      "node": "Landmark_verdant_giant_fern_057",
+      "position": [
+        16.0,
+        0,
+        -32.0
+      ]
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0,
+        1,
+        0
+      ],
+      "rotationDegrees": 180
+    }
+  ],
+  "collision": {
+    "nodeNames": [
+      "Landmark_amberwood_estate_001",
+      "Landmark_crownwater_ferry_dock_002",
+      "Landmark_four_gates_gatehouse_003",
+      "Landmark_westhaven_dry_dock_004",
+      "Landmark_mirrorhold_floating_market_005",
+      "Landmark_ssarathi_water_gate_006",
+      "Landmark_manymouth_hidden_dock_008",
+      "Landmark_whitehorn_rope_bridge_009",
+      "Landmark_resonant_crystal_cluster_010",
+      "Landmark_verdant_vine_bridge_011",
+      "Landmark_verdant_basalt_steps_013",
+      "Landmark_verdant_basalt_steps_014",
+      "Landmark_verdant_basalt_steps_015",
+      "Landmark_verdant_basalt_steps_016",
+      "Landmark_verdant_basalt_steps_017",
+      "Landmark_verdant_basalt_steps_018",
+      "Landmark_verdant_basalt_steps_019",
+      "Landmark_verdant_cenote_stairs_020",
+      "Landmark_verdant_cenote_stairs_021",
+      "Landmark_verdant_cenote_stairs_022",
+      "Landmark_verdant_cenote_stairs_023",
+      "Landmark_verdant_root_bridge_024",
+      "Landmark_verdant_root_bridge_025",
+      "Landmark_verdant_root_bridge_026",
+      "Landmark_verdant_root_bridge_027",
+      "Landmark_verdant_root_bridge_028",
+      "Landmark_verdant_root_bridge_029",
+      "Landmark_verdant_vine_bridge_030",
+      "Landmark_verdant_vine_bridge_031",
+      "Landmark_verdant_vine_bridge_032",
+      "Landmark_verdant_vine_bridge_033",
+      "Landmark_verdant_vine_bridge_034",
+      "Landmark_verdant_tree_platform_035",
+      "Landmark_verdant_tree_platform_036",
+      "Landmark_verdant_tree_platform_037",
+      "Landmark_verdant_tree_platform_038",
+      "Landmark_verdant_tree_platform_039",
+      "Landmark_verdant_tree_platform_040",
+      "Landmark_verdant_water_shrine_041",
+      "Landmark_verdant_water_shrine_042",
+      "Landmark_verdant_water_shrine_043",
+      "Landmark_verdant_water_shrine_044",
+      "Landmark_verdant_water_shrine_045",
+      "Landmark_verdant_giant_fern_046",
+      "Landmark_verdant_giant_fern_047",
+      "Landmark_verdant_giant_fern_048",
+      "Landmark_verdant_giant_fern_049",
+      "Landmark_verdant_giant_fern_050",
+      "Landmark_verdant_giant_fern_051",
+      "Landmark_verdant_giant_fern_052",
+      "Landmark_verdant_giant_fern_053",
+      "Landmark_verdant_giant_fern_054",
+      "Landmark_verdant_giant_fern_055",
+      "Landmark_verdant_giant_fern_056",
+      "Landmark_verdant_giant_fern_057"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Terrain_"
+    ],
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "materials": {
+    "baseColor": "textures/region-basecolor.png",
+    "normal": "textures/region-normal.png",
+    "orm": "textures/region-orm.png"
+  },
+  "productionStatus": "terrain-landmark-material-pass"
+}

@@ -1,0 +1,960 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "0.1.0",
+  "asset": {
+    "id": "sunmane_steppe",
+    "name": "Sunmane Steppe",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -96,
+        0.0,
+        -96
+      ],
+      "max": [
+        96,
+        18.0,
+        96
+      ]
+    }
+  },
+  "source": {
+    "elm": "../source-elm/sunmane_steppe.elm",
+    "sha256": "8e9bfb3b6a2f05ffb8d464560e5411e368c66d15884b92fbd80dc712cf974894",
+    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
+    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
+  },
+  "conceptArt": {
+    "macro": "../../../concepts/nymara-regions/sunmane_steppe_region_concept.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "generator": "OpenAI ImageGen (built-in)",
+    "checkpoints": [
+      {
+        "panel": 1,
+        "id": "concept-01",
+        "subject": "caravan road",
+        "cameraPosition": [
+          0.0,
+          20.0,
+          -72.0
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_sunmane_caravanserai_037",
+          "Landmark_sunmane_caravanserai_038",
+          "Landmark_sunmane_caravanserai_039"
+        ]
+      },
+      {
+        "panel": 2,
+        "id": "concept-02",
+        "subject": "round-tent camp",
+        "cameraPosition": [
+          42.32,
+          24.0,
+          -58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_orun_round_tent_013",
+          "Landmark_orun_round_tent_014",
+          "Landmark_orun_round_tent_015"
+        ]
+      },
+      {
+        "panel": 3,
+        "id": "concept-03",
+        "subject": "seasonal market",
+        "cameraPosition": [
+          68.48,
+          16.0,
+          -22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_manymouth_market_stall_000",
+          "Landmark_orun_seasonal_market_025",
+          "Landmark_orun_seasonal_market_026"
+        ]
+      },
+      {
+        "panel": 4,
+        "id": "concept-04",
+        "subject": "banner shrine",
+        "cameraPosition": [
+          68.48,
+          20.0,
+          22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_orun_portable_shrine_002",
+          "Landmark_orun_banner_shrine_029",
+          "Landmark_orun_banner_shrine_030"
+        ]
+      },
+      {
+        "panel": 5,
+        "id": "concept-05",
+        "subject": "caravanserai",
+        "cameraPosition": [
+          42.32,
+          24.0,
+          58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_sunmane_caravanserai_037",
+          "Landmark_sunmane_caravanserai_038",
+          "Landmark_sunmane_caravanserai_039"
+        ]
+      },
+      {
+        "panel": 6,
+        "id": "concept-06",
+        "subject": "windmill",
+        "cameraPosition": [
+          0.0,
+          16.0,
+          72.0
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_sunmane_windmill_041",
+          "Landmark_sunmane_windmill_042",
+          "Landmark_sunmane_windmill_043"
+        ]
+      },
+      {
+        "panel": 7,
+        "id": "concept-07",
+        "subject": "well and pens",
+        "cameraPosition": [
+          -42.32,
+          20.0,
+          58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_manymouth_market_stall_000",
+          "Landmark_crownwater_submerged_waystone_001",
+          "Landmark_orun_portable_shrine_002"
+        ]
+      },
+      {
+        "panel": 8,
+        "id": "concept-08",
+        "subject": "burial mound",
+        "cameraPosition": [
+          -68.48,
+          24.0,
+          22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_sunmane_burial_mound_057",
+          "Landmark_sunmane_burial_mound_058",
+          "Landmark_sunmane_burial_mound_059"
+        ]
+      },
+      {
+        "panel": 9,
+        "id": "concept-09",
+        "subject": "steppe overlook",
+        "cameraPosition": [
+          -68.48,
+          16.0,
+          -22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      },
+      {
+        "panel": 10,
+        "id": "concept-10",
+        "subject": "hide bone timber materials",
+        "cameraPosition": [
+          -42.32,
+          20.0,
+          -58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      }
+    ],
+    "detailBoardStatus": "regeneration-required"
+  },
+  "landmarks": [
+    {
+      "id": "landmark-000",
+      "name": "Manymouth Market Stall",
+      "node": "Landmark_manymouth_market_stall_000",
+      "position": [
+        -34.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-001",
+      "name": "Crownwater Submerged Waystone",
+      "node": "Landmark_crownwater_submerged_waystone_001",
+      "position": [
+        -12.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-002",
+      "name": "Orun Portable Shrine",
+      "node": "Landmark_orun_portable_shrine_002",
+      "position": [
+        10.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-003",
+      "name": "Amethyst Levitating Shards",
+      "node": "Landmark_amethyst_levitating_shards_003",
+      "position": [
+        32.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-004",
+      "name": "Whitehorn Mine Entrance",
+      "node": "Landmark_whitehorn_mine_entrance_004",
+      "position": [
+        -34.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-005",
+      "name": "Manymouth Flooded Cave",
+      "node": "Landmark_manymouth_flooded_cave_005",
+      "position": [
+        -12.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-006",
+      "name": "Amberwood Orchard Fence",
+      "node": "Landmark_amberwood_orchard_fence_006",
+      "position": [
+        10.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-007",
+      "name": "Amethyst Crystal Bridge",
+      "node": "Landmark_amethyst_crystal_bridge_007",
+      "position": [
+        32.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-008",
+      "name": "Westhaven Warehouse",
+      "node": "Landmark_westhaven_warehouse_008",
+      "position": [
+        -34.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-009",
+      "name": "Manymouth Smuggler Crate",
+      "node": "Landmark_manymouth_smuggler_crate_009",
+      "position": [
+        -12.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-010",
+      "name": "Crownwater Fishing Boat",
+      "node": "Landmark_crownwater_fishing_boat_010",
+      "position": [
+        10.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-011",
+      "name": "Crownwater Ferry",
+      "node": "Landmark_crownwater_ferry_011",
+      "position": [
+        32.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-013",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_013",
+      "position": [
+        -22.0,
+        0,
+        22.0
+      ]
+    },
+    {
+      "id": "landmark-014",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_014",
+      "position": [
+        22.0,
+        0,
+        22.0
+      ]
+    },
+    {
+      "id": "landmark-015",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_015",
+      "position": [
+        -22.0,
+        0,
+        -22.0
+      ]
+    },
+    {
+      "id": "landmark-016",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_016",
+      "position": [
+        22.0,
+        0,
+        -22.0
+      ]
+    },
+    {
+      "id": "landmark-017",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_017",
+      "position": [
+        -10.0,
+        0,
+        28.0
+      ]
+    },
+    {
+      "id": "landmark-018",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_018",
+      "position": [
+        10.0,
+        0,
+        28.0
+      ]
+    },
+    {
+      "id": "landmark-019",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_019",
+      "position": [
+        -28.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-020",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_020",
+      "position": [
+        28.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-021",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_021",
+      "position": [
+        -28.0,
+        0,
+        -10.0
+      ]
+    },
+    {
+      "id": "landmark-022",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_022",
+      "position": [
+        28.0,
+        0,
+        -10.0
+      ]
+    },
+    {
+      "id": "landmark-023",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_023",
+      "position": [
+        -10.0,
+        0,
+        -28.0
+      ]
+    },
+    {
+      "id": "landmark-024",
+      "name": "Orun Round Tent",
+      "node": "Landmark_orun_round_tent_024",
+      "position": [
+        10.0,
+        0,
+        -28.0
+      ]
+    },
+    {
+      "id": "landmark-025",
+      "name": "Orun Seasonal Market",
+      "node": "Landmark_orun_seasonal_market_025",
+      "position": [
+        -10.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-026",
+      "name": "Orun Seasonal Market",
+      "node": "Landmark_orun_seasonal_market_026",
+      "position": [
+        10.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-027",
+      "name": "Orun Seasonal Market",
+      "node": "Landmark_orun_seasonal_market_027",
+      "position": [
+        -10.0,
+        0,
+        -10.0
+      ]
+    },
+    {
+      "id": "landmark-028",
+      "name": "Orun Seasonal Market",
+      "node": "Landmark_orun_seasonal_market_028",
+      "position": [
+        10.0,
+        0,
+        -10.0
+      ]
+    },
+    {
+      "id": "landmark-029",
+      "name": "Orun Banner Shrine",
+      "node": "Landmark_orun_banner_shrine_029",
+      "position": [
+        0.0,
+        0,
+        24.0
+      ]
+    },
+    {
+      "id": "landmark-030",
+      "name": "Orun Banner Shrine",
+      "node": "Landmark_orun_banner_shrine_030",
+      "position": [
+        24.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-031",
+      "name": "Orun Banner Shrine",
+      "node": "Landmark_orun_banner_shrine_031",
+      "position": [
+        0.0,
+        0,
+        -24.0
+      ]
+    },
+    {
+      "id": "landmark-032",
+      "name": "Orun Banner Shrine",
+      "node": "Landmark_orun_banner_shrine_032",
+      "position": [
+        -24.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-033",
+      "name": "Orun Banner Shrine",
+      "node": "Landmark_orun_banner_shrine_033",
+      "position": [
+        -16.0,
+        0,
+        16.0
+      ]
+    },
+    {
+      "id": "landmark-034",
+      "name": "Orun Banner Shrine",
+      "node": "Landmark_orun_banner_shrine_034",
+      "position": [
+        16.0,
+        0,
+        16.0
+      ]
+    },
+    {
+      "id": "landmark-035",
+      "name": "Orun Banner Shrine",
+      "node": "Landmark_orun_banner_shrine_035",
+      "position": [
+        -16.0,
+        0,
+        -16.0
+      ]
+    },
+    {
+      "id": "landmark-036",
+      "name": "Orun Banner Shrine",
+      "node": "Landmark_orun_banner_shrine_036",
+      "position": [
+        16.0,
+        0,
+        -16.0
+      ]
+    },
+    {
+      "id": "landmark-037",
+      "name": "Sunmane Caravanserai",
+      "node": "Landmark_sunmane_caravanserai_037",
+      "position": [
+        0.0,
+        0,
+        34.0
+      ]
+    },
+    {
+      "id": "landmark-038",
+      "name": "Sunmane Caravanserai",
+      "node": "Landmark_sunmane_caravanserai_038",
+      "position": [
+        -34.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-039",
+      "name": "Sunmane Caravanserai",
+      "node": "Landmark_sunmane_caravanserai_039",
+      "position": [
+        34.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-040",
+      "name": "Sunmane Caravanserai",
+      "node": "Landmark_sunmane_caravanserai_040",
+      "position": [
+        0.0,
+        0,
+        -36.0
+      ]
+    },
+    {
+      "id": "landmark-041",
+      "name": "Sunmane Windmill",
+      "node": "Landmark_sunmane_windmill_041",
+      "position": [
+        -36.0,
+        0,
+        24.0
+      ]
+    },
+    {
+      "id": "landmark-042",
+      "name": "Sunmane Windmill",
+      "node": "Landmark_sunmane_windmill_042",
+      "position": [
+        36.0,
+        0,
+        24.0
+      ]
+    },
+    {
+      "id": "landmark-043",
+      "name": "Sunmane Windmill",
+      "node": "Landmark_sunmane_windmill_043",
+      "position": [
+        -36.0,
+        0,
+        -24.0
+      ]
+    },
+    {
+      "id": "landmark-044",
+      "name": "Sunmane Windmill",
+      "node": "Landmark_sunmane_windmill_044",
+      "position": [
+        36.0,
+        0,
+        -24.0
+      ]
+    },
+    {
+      "id": "landmark-045",
+      "name": "Sunmane Windmill",
+      "node": "Landmark_sunmane_windmill_045",
+      "position": [
+        -18.0,
+        0,
+        -46.0
+      ]
+    },
+    {
+      "id": "landmark-046",
+      "name": "Sunmane Windmill",
+      "node": "Landmark_sunmane_windmill_046",
+      "position": [
+        18.0,
+        0,
+        -46.0
+      ]
+    },
+    {
+      "id": "landmark-047",
+      "name": "Sunmane Well",
+      "node": "Landmark_sunmane_well_047",
+      "position": [
+        0.0,
+        0,
+        14.0
+      ]
+    },
+    {
+      "id": "landmark-048",
+      "name": "Sunmane Well",
+      "node": "Landmark_sunmane_well_048",
+      "position": [
+        -14.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-049",
+      "name": "Sunmane Well",
+      "node": "Landmark_sunmane_well_049",
+      "position": [
+        14.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-050",
+      "name": "Sunmane Well",
+      "node": "Landmark_sunmane_well_050",
+      "position": [
+        0.0,
+        0,
+        -14.0
+      ]
+    },
+    {
+      "id": "landmark-051",
+      "name": "Sunmane Animal Pen",
+      "node": "Landmark_sunmane_animal_pen_051",
+      "position": [
+        -32.0,
+        0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-052",
+      "name": "Sunmane Animal Pen",
+      "node": "Landmark_sunmane_animal_pen_052",
+      "position": [
+        32.0,
+        0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-053",
+      "name": "Sunmane Animal Pen",
+      "node": "Landmark_sunmane_animal_pen_053",
+      "position": [
+        -32.0,
+        0,
+        -32.0
+      ]
+    },
+    {
+      "id": "landmark-054",
+      "name": "Sunmane Animal Pen",
+      "node": "Landmark_sunmane_animal_pen_054",
+      "position": [
+        32.0,
+        0,
+        -32.0
+      ]
+    },
+    {
+      "id": "landmark-055",
+      "name": "Sunmane Animal Pen",
+      "node": "Landmark_sunmane_animal_pen_055",
+      "position": [
+        -10.0,
+        0,
+        -50.0
+      ]
+    },
+    {
+      "id": "landmark-056",
+      "name": "Sunmane Animal Pen",
+      "node": "Landmark_sunmane_animal_pen_056",
+      "position": [
+        10.0,
+        0,
+        -50.0
+      ]
+    },
+    {
+      "id": "landmark-057",
+      "name": "Sunmane Burial Mound",
+      "node": "Landmark_sunmane_burial_mound_057",
+      "position": [
+        -40.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-058",
+      "name": "Sunmane Burial Mound",
+      "node": "Landmark_sunmane_burial_mound_058",
+      "position": [
+        40.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-059",
+      "name": "Sunmane Burial Mound",
+      "node": "Landmark_sunmane_burial_mound_059",
+      "position": [
+        -40.0,
+        0,
+        -14.0
+      ]
+    },
+    {
+      "id": "landmark-060",
+      "name": "Sunmane Burial Mound",
+      "node": "Landmark_sunmane_burial_mound_060",
+      "position": [
+        40.0,
+        0,
+        -14.0
+      ]
+    },
+    {
+      "id": "landmark-061",
+      "name": "Sunmane Burial Mound",
+      "node": "Landmark_sunmane_burial_mound_061",
+      "position": [
+        -24.0,
+        0,
+        -50.0
+      ]
+    },
+    {
+      "id": "landmark-062",
+      "name": "Sunmane Burial Mound",
+      "node": "Landmark_sunmane_burial_mound_062",
+      "position": [
+        24.0,
+        0,
+        -50.0
+      ]
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0,
+        1,
+        0
+      ],
+      "rotationDegrees": 180
+    }
+  ],
+  "collision": {
+    "nodeNames": [
+      "Landmark_manymouth_market_stall_000",
+      "Landmark_crownwater_submerged_waystone_001",
+      "Landmark_orun_portable_shrine_002",
+      "Landmark_amethyst_levitating_shards_003",
+      "Landmark_whitehorn_mine_entrance_004",
+      "Landmark_manymouth_flooded_cave_005",
+      "Landmark_amberwood_orchard_fence_006",
+      "Landmark_amethyst_crystal_bridge_007",
+      "Landmark_westhaven_warehouse_008",
+      "Landmark_manymouth_smuggler_crate_009",
+      "Landmark_crownwater_fishing_boat_010",
+      "Landmark_crownwater_ferry_011",
+      "Landmark_orun_round_tent_013",
+      "Landmark_orun_round_tent_014",
+      "Landmark_orun_round_tent_015",
+      "Landmark_orun_round_tent_016",
+      "Landmark_orun_round_tent_017",
+      "Landmark_orun_round_tent_018",
+      "Landmark_orun_round_tent_019",
+      "Landmark_orun_round_tent_020",
+      "Landmark_orun_round_tent_021",
+      "Landmark_orun_round_tent_022",
+      "Landmark_orun_round_tent_023",
+      "Landmark_orun_round_tent_024",
+      "Landmark_orun_seasonal_market_025",
+      "Landmark_orun_seasonal_market_026",
+      "Landmark_orun_seasonal_market_027",
+      "Landmark_orun_seasonal_market_028",
+      "Landmark_orun_banner_shrine_029",
+      "Landmark_orun_banner_shrine_030",
+      "Landmark_orun_banner_shrine_031",
+      "Landmark_orun_banner_shrine_032",
+      "Landmark_orun_banner_shrine_033",
+      "Landmark_orun_banner_shrine_034",
+      "Landmark_orun_banner_shrine_035",
+      "Landmark_orun_banner_shrine_036",
+      "Landmark_sunmane_caravanserai_037",
+      "Landmark_sunmane_caravanserai_038",
+      "Landmark_sunmane_caravanserai_039",
+      "Landmark_sunmane_caravanserai_040",
+      "Landmark_sunmane_windmill_041",
+      "Landmark_sunmane_windmill_042",
+      "Landmark_sunmane_windmill_043",
+      "Landmark_sunmane_windmill_044",
+      "Landmark_sunmane_windmill_045",
+      "Landmark_sunmane_windmill_046",
+      "Landmark_sunmane_well_047",
+      "Landmark_sunmane_well_048",
+      "Landmark_sunmane_well_049",
+      "Landmark_sunmane_well_050",
+      "Landmark_sunmane_animal_pen_051",
+      "Landmark_sunmane_animal_pen_052",
+      "Landmark_sunmane_animal_pen_053",
+      "Landmark_sunmane_animal_pen_054",
+      "Landmark_sunmane_animal_pen_055",
+      "Landmark_sunmane_animal_pen_056",
+      "Landmark_sunmane_burial_mound_057",
+      "Landmark_sunmane_burial_mound_058",
+      "Landmark_sunmane_burial_mound_059",
+      "Landmark_sunmane_burial_mound_060",
+      "Landmark_sunmane_burial_mound_061",
+      "Landmark_sunmane_burial_mound_062"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Terrain_"
+    ],
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "materials": {
+    "baseColor": "textures/region-basecolor.png",
+    "normal": "textures/region-normal.png",
+    "orm": "textures/region-orm.png"
+  },
+  "productionStatus": "terrain-landmark-material-pass"
+}

@@ -1,0 +1,899 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "0.1.0",
+  "asset": {
+    "id": "amberwood",
+    "name": "Amberwood",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -96,
+        0.0,
+        -96
+      ],
+      "max": [
+        96,
+        18.0,
+        96
+      ]
+    }
+  },
+  "source": {
+    "elm": "../source-elm/amberwood.elm",
+    "sha256": "293da9eb40751e8bfbfba571ea2d5a127cff3fddaa66cd36c4ad7ecfd58bdf7a",
+    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
+    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
+  },
+  "conceptArt": {
+    "macro": "../../../concepts/nymara-regions/amberwood_region_concept.png",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "generator": "OpenAI ImageGen (built-in)",
+    "checkpoints": [
+      {
+        "panel": 1,
+        "id": "concept-01",
+        "subject": "forest road",
+        "cameraPosition": [
+          0.0,
+          20.0,
+          -72.0
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      },
+      {
+        "panel": 2,
+        "id": "concept-02",
+        "subject": "estate terrace",
+        "cameraPosition": [
+          42.32,
+          24.0,
+          -58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_amberwood_estate_013"
+        ]
+      },
+      {
+        "panel": 3,
+        "id": "concept-03",
+        "subject": "hunting lodge",
+        "cameraPosition": [
+          68.48,
+          16.0,
+          -22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_amberwood_hunting_lodge_014",
+          "Landmark_amberwood_hunting_lodge_015",
+          "Landmark_amberwood_hunting_lodge_016"
+        ]
+      },
+      {
+        "panel": 4,
+        "id": "concept-04",
+        "subject": "hollow tree",
+        "cameraPosition": [
+          68.48,
+          20.0,
+          22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_amberwood_hollow_tree_020",
+          "Landmark_amberwood_hollow_tree_021",
+          "Landmark_amberwood_hollow_tree_022"
+        ]
+      },
+      {
+        "panel": 5,
+        "id": "concept-05",
+        "subject": "old ravine bridge",
+        "cameraPosition": [
+          42.32,
+          24.0,
+          58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_amethyst_crystal_bridge_002",
+          "Landmark_mirrorhold_canal_stairs_009",
+          "Landmark_amberwood_old_bridge_028"
+        ]
+      },
+      {
+        "panel": 6,
+        "id": "concept-06",
+        "subject": "ruin arch",
+        "cameraPosition": [
+          0.0,
+          16.0,
+          72.0
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_amberwood_ruin_arch_048",
+          "Landmark_amberwood_ruin_arch_049",
+          "Landmark_amberwood_ruin_arch_050"
+        ]
+      },
+      {
+        "panel": 7,
+        "id": "concept-07",
+        "subject": "garden fountain",
+        "cameraPosition": [
+          -42.32,
+          20.0,
+          58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_amberwood_garden_fountain_054",
+          "Landmark_amberwood_garden_fountain_055",
+          "Landmark_amberwood_garden_fountain_056"
+        ]
+      },
+      {
+        "panel": 8,
+        "id": "concept-08",
+        "subject": "resin canopy trail",
+        "cameraPosition": [
+          -68.48,
+          24.0,
+          22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      },
+      {
+        "panel": 9,
+        "id": "concept-09",
+        "subject": "estate overlook",
+        "cameraPosition": [
+          -68.48,
+          16.0,
+          -22.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Landmark_amberwood_estate_013"
+        ]
+      },
+      {
+        "panel": 10,
+        "id": "concept-10",
+        "subject": "leaf resin manor materials",
+        "cameraPosition": [
+          -42.32,
+          20.0,
+          -58.25
+        ],
+        "target": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "evidenceNodes": [
+          "Terrain_ELM_Authority"
+        ]
+      }
+    ],
+    "detailBoardStatus": "regeneration-required"
+  },
+  "landmarks": [
+    {
+      "id": "landmark-000",
+      "name": "Manymouth Flooded Cave",
+      "node": "Landmark_manymouth_flooded_cave_000",
+      "position": [
+        -34.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-001",
+      "name": "Amberwood Orchard Fence",
+      "node": "Landmark_amberwood_orchard_fence_001",
+      "position": [
+        -12.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-002",
+      "name": "Amethyst Crystal Bridge",
+      "node": "Landmark_amethyst_crystal_bridge_002",
+      "position": [
+        10.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-003",
+      "name": "Westhaven Warehouse",
+      "node": "Landmark_westhaven_warehouse_003",
+      "position": [
+        32.0,
+        0.0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-004",
+      "name": "Manymouth Smuggler Crate",
+      "node": "Landmark_manymouth_smuggler_crate_004",
+      "position": [
+        -34.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-005",
+      "name": "Crownwater Fishing Boat",
+      "node": "Landmark_crownwater_fishing_boat_005",
+      "position": [
+        -12.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-006",
+      "name": "Crownwater Ferry",
+      "node": "Landmark_crownwater_ferry_006",
+      "position": [
+        10.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-007",
+      "name": "Whitehorn Carved Stairs",
+      "node": "Landmark_whitehorn_carved_stairs_007",
+      "position": [
+        32.0,
+        0.0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-008",
+      "name": "Crownwater Patrol Boat",
+      "node": "Landmark_crownwater_patrol_boat_008",
+      "position": [
+        -34.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-009",
+      "name": "Mirrorhold Canal Stairs",
+      "node": "Landmark_mirrorhold_canal_stairs_009",
+      "position": [
+        -12.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-010",
+      "name": "Ssarathi Curved Wall",
+      "node": "Landmark_ssarathi_curved_wall_010",
+      "position": [
+        10.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-011",
+      "name": "Sunmane Dry Cave",
+      "node": "Landmark_sunmane_dry_cave_011",
+      "position": [
+        32.0,
+        0.0,
+        -12.0
+      ]
+    },
+    {
+      "id": "landmark-013",
+      "name": "Amberwood Estate",
+      "node": "Landmark_amberwood_estate_013",
+      "position": [
+        0.0,
+        0,
+        16.0
+      ]
+    },
+    {
+      "id": "landmark-014",
+      "name": "Amberwood Hunting Lodge",
+      "node": "Landmark_amberwood_hunting_lodge_014",
+      "position": [
+        -24.0,
+        0,
+        24.0
+      ]
+    },
+    {
+      "id": "landmark-015",
+      "name": "Amberwood Hunting Lodge",
+      "node": "Landmark_amberwood_hunting_lodge_015",
+      "position": [
+        24.0,
+        0,
+        24.0
+      ]
+    },
+    {
+      "id": "landmark-016",
+      "name": "Amberwood Hunting Lodge",
+      "node": "Landmark_amberwood_hunting_lodge_016",
+      "position": [
+        -30.0,
+        0,
+        -6.0
+      ]
+    },
+    {
+      "id": "landmark-017",
+      "name": "Amberwood Hunting Lodge",
+      "node": "Landmark_amberwood_hunting_lodge_017",
+      "position": [
+        30.0,
+        0,
+        -6.0
+      ]
+    },
+    {
+      "id": "landmark-018",
+      "name": "Amberwood Hunting Lodge",
+      "node": "Landmark_amberwood_hunting_lodge_018",
+      "position": [
+        -20.0,
+        0,
+        -36.0
+      ]
+    },
+    {
+      "id": "landmark-019",
+      "name": "Amberwood Hunting Lodge",
+      "node": "Landmark_amberwood_hunting_lodge_019",
+      "position": [
+        20.0,
+        0,
+        -36.0
+      ]
+    },
+    {
+      "id": "landmark-020",
+      "name": "Amberwood Hollow Tree",
+      "node": "Landmark_amberwood_hollow_tree_020",
+      "position": [
+        -34.0,
+        0,
+        34.0
+      ]
+    },
+    {
+      "id": "landmark-021",
+      "name": "Amberwood Hollow Tree",
+      "node": "Landmark_amberwood_hollow_tree_021",
+      "position": [
+        34.0,
+        0,
+        34.0
+      ]
+    },
+    {
+      "id": "landmark-022",
+      "name": "Amberwood Hollow Tree",
+      "node": "Landmark_amberwood_hollow_tree_022",
+      "position": [
+        -38.0,
+        0,
+        6.0
+      ]
+    },
+    {
+      "id": "landmark-023",
+      "name": "Amberwood Hollow Tree",
+      "node": "Landmark_amberwood_hollow_tree_023",
+      "position": [
+        38.0,
+        0,
+        6.0
+      ]
+    },
+    {
+      "id": "landmark-024",
+      "name": "Amberwood Hollow Tree",
+      "node": "Landmark_amberwood_hollow_tree_024",
+      "position": [
+        -34.0,
+        0,
+        -26.0
+      ]
+    },
+    {
+      "id": "landmark-025",
+      "name": "Amberwood Hollow Tree",
+      "node": "Landmark_amberwood_hollow_tree_025",
+      "position": [
+        34.0,
+        0,
+        -26.0
+      ]
+    },
+    {
+      "id": "landmark-026",
+      "name": "Amberwood Hollow Tree",
+      "node": "Landmark_amberwood_hollow_tree_026",
+      "position": [
+        -24.0,
+        0,
+        -50.0
+      ]
+    },
+    {
+      "id": "landmark-027",
+      "name": "Amberwood Hollow Tree",
+      "node": "Landmark_amberwood_hollow_tree_027",
+      "position": [
+        24.0,
+        0,
+        -50.0
+      ]
+    },
+    {
+      "id": "landmark-028",
+      "name": "Amberwood Old Bridge",
+      "node": "Landmark_amberwood_old_bridge_028",
+      "position": [
+        0.0,
+        0,
+        28.0
+      ]
+    },
+    {
+      "id": "landmark-029",
+      "name": "Amberwood Old Bridge",
+      "node": "Landmark_amberwood_old_bridge_029",
+      "position": [
+        -28.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-030",
+      "name": "Amberwood Old Bridge",
+      "node": "Landmark_amberwood_old_bridge_030",
+      "position": [
+        28.0,
+        0,
+        0.0
+      ]
+    },
+    {
+      "id": "landmark-031",
+      "name": "Amberwood Old Bridge",
+      "node": "Landmark_amberwood_old_bridge_031",
+      "position": [
+        0.0,
+        0,
+        -30.0
+      ]
+    },
+    {
+      "id": "landmark-032",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_032",
+      "position": [
+        -28.0,
+        0,
+        28.0
+      ]
+    },
+    {
+      "id": "landmark-033",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_033",
+      "position": [
+        -12.0,
+        0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-034",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_034",
+      "position": [
+        12.0,
+        0,
+        32.0
+      ]
+    },
+    {
+      "id": "landmark-035",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_035",
+      "position": [
+        28.0,
+        0,
+        28.0
+      ]
+    },
+    {
+      "id": "landmark-036",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_036",
+      "position": [
+        -36.0,
+        0,
+        16.0
+      ]
+    },
+    {
+      "id": "landmark-037",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_037",
+      "position": [
+        36.0,
+        0,
+        16.0
+      ]
+    },
+    {
+      "id": "landmark-038",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_038",
+      "position": [
+        -36.0,
+        0,
+        -16.0
+      ]
+    },
+    {
+      "id": "landmark-039",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_039",
+      "position": [
+        36.0,
+        0,
+        -16.0
+      ]
+    },
+    {
+      "id": "landmark-040",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_040",
+      "position": [
+        -28.0,
+        0,
+        -40.0
+      ]
+    },
+    {
+      "id": "landmark-041",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_041",
+      "position": [
+        -12.0,
+        0,
+        -48.0
+      ]
+    },
+    {
+      "id": "landmark-042",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_042",
+      "position": [
+        12.0,
+        0,
+        -48.0
+      ]
+    },
+    {
+      "id": "landmark-043",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_043",
+      "position": [
+        28.0,
+        0,
+        -40.0
+      ]
+    },
+    {
+      "id": "landmark-044",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_044",
+      "position": [
+        -20.0,
+        0,
+        8.0
+      ]
+    },
+    {
+      "id": "landmark-045",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_045",
+      "position": [
+        20.0,
+        0,
+        8.0
+      ]
+    },
+    {
+      "id": "landmark-046",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_046",
+      "position": [
+        -20.0,
+        0,
+        -20.0
+      ]
+    },
+    {
+      "id": "landmark-047",
+      "name": "Amberwood Tree",
+      "node": "Landmark_amberwood_tree_047",
+      "position": [
+        20.0,
+        0,
+        -20.0
+      ]
+    },
+    {
+      "id": "landmark-048",
+      "name": "Amberwood Ruin Arch",
+      "node": "Landmark_amberwood_ruin_arch_048",
+      "position": [
+        -16.0,
+        0,
+        20.0
+      ]
+    },
+    {
+      "id": "landmark-049",
+      "name": "Amberwood Ruin Arch",
+      "node": "Landmark_amberwood_ruin_arch_049",
+      "position": [
+        16.0,
+        0,
+        20.0
+      ]
+    },
+    {
+      "id": "landmark-050",
+      "name": "Amberwood Ruin Arch",
+      "node": "Landmark_amberwood_ruin_arch_050",
+      "position": [
+        -24.0,
+        0,
+        -14.0
+      ]
+    },
+    {
+      "id": "landmark-051",
+      "name": "Amberwood Ruin Arch",
+      "node": "Landmark_amberwood_ruin_arch_051",
+      "position": [
+        24.0,
+        0,
+        -14.0
+      ]
+    },
+    {
+      "id": "landmark-052",
+      "name": "Amberwood Ruin Arch",
+      "node": "Landmark_amberwood_ruin_arch_052",
+      "position": [
+        -12.0,
+        0,
+        -38.0
+      ]
+    },
+    {
+      "id": "landmark-053",
+      "name": "Amberwood Ruin Arch",
+      "node": "Landmark_amberwood_ruin_arch_053",
+      "position": [
+        12.0,
+        0,
+        -38.0
+      ]
+    },
+    {
+      "id": "landmark-054",
+      "name": "Amberwood Garden Fountain",
+      "node": "Landmark_amberwood_garden_fountain_054",
+      "position": [
+        -10.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-055",
+      "name": "Amberwood Garden Fountain",
+      "node": "Landmark_amberwood_garden_fountain_055",
+      "position": [
+        10.0,
+        0,
+        10.0
+      ]
+    },
+    {
+      "id": "landmark-056",
+      "name": "Amberwood Garden Fountain",
+      "node": "Landmark_amberwood_garden_fountain_056",
+      "position": [
+        -10.0,
+        0,
+        -10.0
+      ]
+    },
+    {
+      "id": "landmark-057",
+      "name": "Amberwood Garden Fountain",
+      "node": "Landmark_amberwood_garden_fountain_057",
+      "position": [
+        10.0,
+        0,
+        -10.0
+      ]
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0,
+        1,
+        0
+      ],
+      "rotationDegrees": 180
+    }
+  ],
+  "collision": {
+    "nodeNames": [
+      "Landmark_manymouth_flooded_cave_000",
+      "Landmark_amberwood_orchard_fence_001",
+      "Landmark_amethyst_crystal_bridge_002",
+      "Landmark_westhaven_warehouse_003",
+      "Landmark_manymouth_smuggler_crate_004",
+      "Landmark_crownwater_fishing_boat_005",
+      "Landmark_crownwater_ferry_006",
+      "Landmark_whitehorn_carved_stairs_007",
+      "Landmark_crownwater_patrol_boat_008",
+      "Landmark_mirrorhold_canal_stairs_009",
+      "Landmark_ssarathi_curved_wall_010",
+      "Landmark_sunmane_dry_cave_011",
+      "Landmark_amberwood_estate_013",
+      "Landmark_amberwood_hunting_lodge_014",
+      "Landmark_amberwood_hunting_lodge_015",
+      "Landmark_amberwood_hunting_lodge_016",
+      "Landmark_amberwood_hunting_lodge_017",
+      "Landmark_amberwood_hunting_lodge_018",
+      "Landmark_amberwood_hunting_lodge_019",
+      "Landmark_amberwood_hollow_tree_020",
+      "Landmark_amberwood_hollow_tree_021",
+      "Landmark_amberwood_hollow_tree_022",
+      "Landmark_amberwood_hollow_tree_023",
+      "Landmark_amberwood_hollow_tree_024",
+      "Landmark_amberwood_hollow_tree_025",
+      "Landmark_amberwood_hollow_tree_026",
+      "Landmark_amberwood_hollow_tree_027",
+      "Landmark_amberwood_old_bridge_028",
+      "Landmark_amberwood_old_bridge_029",
+      "Landmark_amberwood_old_bridge_030",
+      "Landmark_amberwood_old_bridge_031",
+      "Landmark_amberwood_tree_032",
+      "Landmark_amberwood_tree_033",
+      "Landmark_amberwood_tree_034",
+      "Landmark_amberwood_tree_035",
+      "Landmark_amberwood_tree_036",
+      "Landmark_amberwood_tree_037",
+      "Landmark_amberwood_tree_038",
+      "Landmark_amberwood_tree_039",
+      "Landmark_amberwood_tree_040",
+      "Landmark_amberwood_tree_041",
+      "Landmark_amberwood_tree_042",
+      "Landmark_amberwood_tree_043",
+      "Landmark_amberwood_tree_044",
+      "Landmark_amberwood_tree_045",
+      "Landmark_amberwood_tree_046",
+      "Landmark_amberwood_tree_047",
+      "Landmark_amberwood_ruin_arch_048",
+      "Landmark_amberwood_ruin_arch_049",
+      "Landmark_amberwood_ruin_arch_050",
+      "Landmark_amberwood_ruin_arch_051",
+      "Landmark_amberwood_ruin_arch_052",
+      "Landmark_amberwood_ruin_arch_053",
+      "Landmark_amberwood_garden_fountain_054",
+      "Landmark_amberwood_garden_fountain_055",
+      "Landmark_amberwood_garden_fountain_056",
+      "Landmark_amberwood_garden_fountain_057"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Terrain_"
+    ],
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    }
+  },
+  "materials": {
+    "baseColor": "textures/region-basecolor.png",
+    "normal": "textures/region-normal.png",
+    "orm": "textures/region-orm.png"
+  },
+  "productionStatus": "terrain-landmark-material-pass"
+}
