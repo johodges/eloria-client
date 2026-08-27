@@ -163,9 +163,11 @@ func _run() -> void:
 	main.call("_sync_spells")
 	var first_spell_slot: Button = main.get_node(
 		"GameView/ItemSpellQuickbar/QuickContent/SpellSlots/Spell1") as Button
-	_expect(not first_spell_slot.disabled and first_spell_slot.icon != null
-		and first_spell_slot.tooltip_text.contains("Heal"),
-		"owned castable spell populates the live spell quickbar")
+	_expect(not first_spell_slot.disabled,
+		"owned castable spell is enabled; tooltip=" + first_spell_slot.tooltip_text)
+	_expect(first_spell_slot.icon != null, "owned castable spell has its legacy icon")
+	_expect(first_spell_slot.tooltip_text.contains("Heal"),
+		"owned castable spell tooltip identifies Heal: " + first_spell_slot.tooltip_text)
 	app_state_inventory.set("owned_sigils", [])
 	main.call("_sync_spells")
 	_expect(first_spell_slot.disabled and first_spell_slot.tooltip_text.contains("Missing sigils"),
