@@ -9,7 +9,7 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | Login | loginwin.c; LOG_IN | auth/network | disposable character creation and subsequent login against the development server; credentials redacted | VERIFIED |
 | Actor spawn/update/remove | multiplayer.c; server actor packets/commands | state/actors | actor packet + command-step fixtures; rendered two-client native spawn, authoritative movement, ray selection, and disconnect cleanup | VERIFIED |
 | NPC activation/dialogue | gamewin.c; server protocol/world | protocol/state/dialogue UI | byte/decode fixtures plus local unmodified-server enhanced NPC, activation, reply, and close; development Four Gates rendered dialogue remains pending | IMPLEMENTED |
-| Chat send/receive + PM | legacy `text.c`, `chat.c`, `pm_log.c`; server `protocol.py`, `server.py`, `world.py` | exact RAW_TEXT/SEND_PM codecs, channel state, safe lower-left presentation | exact bytes and channel/color/UTF-8 fixtures; two-client local TCP delivery, sender acknowledgement, reply-last, and offline-recipient rejection | IMPLEMENTED |
+| Chat send/receive + PM | legacy `text.c`, `chat.c`, `pm_log.c`; server `protocol.py`, `server.py`, `world.py` | exact RAW_TEXT/SEND_PM codecs, channel state, safe lower-left presentation | exact bytes and channel/color/UTF-8 fixtures; local PM contract; rendered bidirectional development-server local chat and unobscured lower-left UI | VERIFIED |
 | Title/login artwork | generated Eloria branding DDS | portable PNG copies + responsive themed login/creation | 1280x720 bounds fixture covers login and creation action rows; user screenshot comparison | IMPLEMENTED |
 | GLB map + JSON | GLB runtime/map.c | world/map loader | `four_gates` alias fixture, headless attach, and rendered development-server Four Gates capture | VERIFIED |
 | Native luminous models | actor GLB runtime/assets | actor presentation | rendered female luminous GLB with three visible native meshes and no fallback | VERIFIED |
@@ -51,11 +51,16 @@ The gate fails unless it proves all of the following before uploading evidence:
 - chat submitted through the primary lower-left UI reaches the second real
   client, and chat sent by the second client is decoded and presented by the
   primary reducer/UI;
+- the authoritative inventory and statistics snapshots are non-empty, the
+  inventory and statistics windows fit within 1280x720, and item icons,
+  quantities, character values, item quick slots, and all configured spell
+  quick slots are presented from that state;
 - each 1280×720 capture contains rendered color variation rather than a dummy frame.
 
 The artifact contains default, rotated, panned, zoomed, full-map, and
-post-movement PNGs, selected-remote-player and chat PNGs, and sanitized session,
-camera-state, movement, remote-actor, and chat JSON. A
+post-movement PNGs, selected-remote-player, chat, inventory, and statistics
+PNGs, and sanitized session, camera-state, movement, remote-actor, chat, and
+inventory/statistics JSON. A
 passing structural assertion is still classified separately from human visual
 inspection of those PNGs.
 
@@ -143,3 +148,19 @@ The same real-server actor snapshot contained no kind-`2` NPCs in the Four
 Gates visibility set. This is recorded as a development-server/map population
 limitation; it is not treated as evidence that rendered NPC activation or live
 dialogue works.
+
+### Verified bidirectional chat evidence: workflow run 33076142698
+
+Commit `0f2798b127d269adac081c590bdd6d4d59862d29` passed the strict
+headless job and the opt-in rendered development-server job. Artifact
+`9647992715` records two distinct channel-`0` messages delivered through the
+real server: the primary client submitted its marker through the normal chat UI
+and the helper received it, then the helper sent its marker and the primary
+reducer/UI received it.
+
+Human inspection of `world-chat.png` confirmed that both sender-prefixed lines
+and the chat entry are readable in the lower-left area, fully above the opaque
+lower HUD rail. The first rendered attempt exposed the overlap and was not
+accepted as visual evidence; the final layout reserves separate anchored bands
+for history, entry, and the lower action rail. `chat.json` and the session log
+contain `credentials: REDACTED`.

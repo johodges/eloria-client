@@ -240,6 +240,66 @@ func _run() -> void:
 		"credentials": "REDACTED",
 	})
 	await _capture("world-chat.png")
+
+	var server_inventory: Dictionary = _app_state.get("inventory") as Dictionary
+	var server_stats: Dictionary = _app_state.get("stats") as Dictionary
+	_expect(not server_inventory.is_empty(),
+		"development server supplied a non-empty authoritative inventory")
+	_expect(not server_stats.is_empty()
+		and int(server_stats.get("max_health", 0)) > 0
+		and int(server_stats.get("capacity", 0)) > 0,
+		"development server supplied health, resources, and carry statistics")
+	main.call("_on_inventory_button_pressed")
+	await process_frame
+	var inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
+	var inventory_grid: GridContainer = main.get_node(
+		"GameView/InventoryPanel/Content/Scroll/InventoryGrid") as GridContainer
+	var equipment_grid: GridContainer = main.get_node(
+		"GameView/InventoryPanel/Content/EquipmentGrid") as GridContainer
+	var populated_inventory_buttons: int = _populated_item_buttons(inventory_grid)
+	var populated_equipment_buttons: int = _populated_item_buttons(equipment_grid)
+	_expect(inventory_panel.visible
+		and Rect2(Vector2.ZERO, Vector2(SCREEN_SIZE)).encloses(
+			inventory_panel.get_global_rect()),
+		"real inventory window opens entirely within the rendered viewport")
+	_expect(populated_inventory_buttons > 0,
+		"real inventory snapshot populates item icons and quantities")
+	await _capture("world-inventory.png")
+	main.call("_on_inventory_close_pressed")
+	main.call("_on_stats_button_pressed")
+	await process_frame
+	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
+	var stats_text: RichTextLabel = main.get_node("GameView/StatsPanel/StatsText") as RichTextLabel
+	_expect(stats_panel.visible
+		and Rect2(Vector2.ZERO, Vector2(SCREEN_SIZE)).encloses(
+			stats_panel.get_global_rect()),
+		"real statistics window opens entirely within the rendered viewport")
+	_expect(stats_text.get_parsed_text().contains("CHARACTER STATISTICS")
+		and stats_text.get_parsed_text().contains("Attack:")
+		and stats_text.get_parsed_text().contains("Overall:"),
+		"statistics window presents the authoritative character values")
+	await _capture("world-stats.png")
+	main.call("_on_stats_button_pressed")
+	var quick_item_grid: GridContainer = main.get_node(
+		"GameView/ItemSpellQuickbar/QuickContent/Slots") as GridContainer
+	var quick_spell_grid: GridContainer = main.get_node(
+		"GameView/ItemSpellQuickbar/QuickContent/SpellSlots") as GridContainer
+	var populated_quick_items: int = _populated_item_buttons(quick_item_grid)
+	var configured_spell_slots: int = _configured_spell_buttons(quick_spell_grid)
+	_expect(populated_quick_items > 0,
+		"server inventory populates the visible item quick slots")
+	_expect(configured_spell_slots == 6,
+		"all six spell quick slots expose their configured availability state")
+	_write_json("inventory-stats.json", {
+		"inventory": _json_safe(server_inventory),
+		"stats": _json_safe(server_stats),
+		"known_sigils": _json_safe(_app_state.get("owned_sigils")),
+		"populated_inventory_buttons": populated_inventory_buttons,
+		"populated_equipment_buttons": populated_equipment_buttons,
+		"populated_quick_items": populated_quick_items,
+		"configured_spell_slots": configured_spell_slots,
+		"credentials": "REDACTED",
+	})
 	var visible_npc_ids: Array[int] = []
 	for actor_id_value: Variant in (_app_state.get("actors") as Dictionary):
 		var actor_id: int = int(actor_id_value)
@@ -561,6 +621,24 @@ func _chat_contains(lines: Array, marker: String) -> bool:
 				(line_value as Dictionary).get("text", "")).contains(marker):
 			return true
 	return false
+
+func _populated_item_buttons(container: Container) -> int:
+	var populated: int = 0
+	for child: Node in container.get_children():
+		if child is Button:
+			var button: Button = child as Button
+			if button.icon != null and button.text.contains("×"):
+				populated += 1
+	return populated
+
+func _configured_spell_buttons(container: Container) -> int:
+	var configured: int = 0
+	for child: Node in container.get_children():
+		if child is Button:
+			var button: Button = child as Button
+			if button.text.begins_with("S") and not button.tooltip_text.is_empty():
+				configured += 1
+	return configured
 
 func _surface_hit(world: World3D, target: Vector3) -> Dictionary:
 	if world == null:
