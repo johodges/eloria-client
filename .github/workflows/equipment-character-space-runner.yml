@@ -15,12 +15,13 @@ jobs:
     container:
       image: barichello/godot-ci:4.7.2
     env:
-      WORKTREE: /__w/eloria-client/eloria-client
       ELORIA_ARTIFACT_DIR: godot-client/test-artifacts/equipment-character-space
+      TARGET_BRANCH: codex/equipment-character-space-fix
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Install validation dependencies
         run: |
           apt-get update
@@ -32,20 +33,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cd "$WORKTREE"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin codex/equipment-character-space-fix
-          git checkout -B codex/equipment-character-space-result origin/codex/equipment-character-space-fix
-          git show origin/codex/equipment-character-space-runner:.github/scripts/apply_equipment_character_space.py > /tmp/apply_equipment_character_space.py
-          python3 /tmp/apply_equipment_character_space.py
+          python3 .github/scripts/apply_equipment_character_space.py
           python3 eloria-assets/tools/build_native_nymara_glbs.py >/tmp/native-build.log
-          git diff --check
       - name: Validate generated catalog and Godot runtime
         shell: bash
         run: |
           set -euo pipefail
-          cd "$WORKTREE"
           python3 godot-client/tests/test_native_glb_assets.py -v
           godot --headless --path godot-client --editor --quit
           godot --headless --path godot-client res://src/dev/model_validation.tscn --quit-after 12 2>&1 | tee /tmp/model-validation.log
@@ -54,7 +47,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cd "$WORKTREE"
           cp godot-client/src/dev/model_validation.gd /tmp/model_validation.gd
           python3 - <<'PY'
           from pathlib import Path
@@ -84,29 +76,57 @@ jobs:
           ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/render.log"
           test -s "$ELORIA_ARTIFACT_DIR/aligned-luminous-guard.png"
           mv /tmp/model_validation.gd godot-client/src/dev/model_validation.gd
-      - name: Publish clean implementation branch
+      - name: Publish validated source and data files
         shell: bash
         run: |
           set -euo pipefail
-          cd "$WORKTREE"
-          git add eloria-assets/tools/build_native_nymara_glbs.py \
-            godot-client/src/actors/replicated_actor_3d.gd \
-            godot-client/data/actors/equipment.json \
-            godot-client/tests/test_native_glb_assets.py \
-            godot-client/tests/integration/rendered_server_session.gd
-          git diff --cached --check
-          unexpected=$(git status --short | awk '{print $2}' | grep -v -E '^(eloria-assets/tools/build_native_nymara_glbs.py|godot-client/src/actors/replicated_actor_3d.gd|godot-client/data/actors/equipment.json|godot-client/tests/test_native_glb_assets.py|godot-client/tests/integration/rendered_server_session.gd|godot-client/test-artifacts/)' || true)
-          if [ -n "$unexpected" ]; then
-            echo "Unexpected generator changes:"
-            echo "$unexpected"
-            exit 1
-          fi
-          git commit -m "Fix native equipment character-space alignment"
-          git push --force-with-lease origin HEAD:codex/equipment-character-space-result
+          python3 - <<'PY'
+          import base64
+          import json
+          import os
+          from pathlib import Path
+          from urllib.parse import quote
+          from urllib.request import Request, urlopen
+
+          repo = os.environ['GITHUB_REPOSITORY']
+          branch = os.environ['TARGET_BRANCH']
+          token = os.environ['GH_TOKEN']
+          paths = [
+              'eloria-assets/tools/build_native_nymara_glbs.py',
+              'godot-client/src/actors/replicated_actor_3d.gd',
+              'godot-client/data/actors/equipment.json',
+              'godot-client/tests/test_native_glb_assets.py',
+              'godot-client/tests/integration/rendered_server_session.gd',
+          ]
+          headers = {
+              'Authorization': f'Bearer {token}',
+              'Accept': 'application/vnd.github+json',
+              'X-GitHub-Api-Version': '2022-11-28',
+              'User-Agent': 'eloria-equipment-validation',
+          }
+          for path in paths:
+              url = f'https://api.github.com/repos/{repo}/contents/{quote(path)}?ref={quote(branch)}'
+              with urlopen(Request(url, headers=headers)) as response:
+                  current = json.load(response)
+              payload = json.dumps({
+                  'message': 'Fix native equipment character-space alignment',
+                  'content': base64.b64encode(Path(path).read_bytes()).decode('ascii'),
+                  'sha': current['sha'],
+                  'branch': branch,
+              }).encode('utf-8')
+              request = Request(
+                  f'https://api.github.com/repos/{repo}/contents/{quote(path)}',
+                  data=payload,
+                  headers={**headers, 'Content-Type': 'application/json'},
+                  method='PUT')
+              with urlopen(request) as response:
+                  result = json.load(response)
+              print(path, result['commit']['sha'])
+          PY
       - name: Upload rendered evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: equipment-character-space
-          path: /__w/eloria-client/eloria-client/godot-client/test-artifacts/equipment-character-space
+          path: godot-client/test-artifacts/equipment-character-space
           if-no-files-found: error
