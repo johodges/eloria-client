@@ -74,6 +74,10 @@ jobs:
           ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/render.log"
           test -s "$ELORIA_ARTIFACT_DIR/four-gates-aerial.png"
           test -s "$ELORIA_ARTIFACT_DIR/four-gates-gameplay.png"
+          test -s "$ELORIA_ARTIFACT_DIR/four-gates-central-plaza-detail.png"
+          test -s "$ELORIA_ARTIFACT_DIR/four-gates-south-gate-detail.png"
+          test -s "$ELORIA_ARTIFACT_DIR/four-gates-market-detail.png"
+          test -s "$ELORIA_ARTIFACT_DIR/four-gates-waterfall-detail.png"
       - name: Render legacy HUD and character menu
         run: |
           xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_legacy_hud.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/legacy-hud.log"
