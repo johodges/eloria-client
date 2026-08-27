@@ -868,7 +868,7 @@ def build_equipment_registry() -> dict:
         models[f"{part}:{visual}"] = {
             "scene": f"res://assets/actors/native/equipment/{slug}.glb",
             "import": {"translation": translation, "rotationDegrees": [0, 0, 0],
-                       "scale": 1},
+                       "scale": 1, "characterSpace": True},
         }
     aliases = {"0:11": "0:112", "1:5": "1:105", "2:11": "2:105"}
     return {"schemaVersion": 2, "parts": parts, "models": models,

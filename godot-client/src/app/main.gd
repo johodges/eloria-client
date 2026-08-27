@@ -2256,29 +2256,33 @@ static func _external_texture(path: String) -> Texture2D:
 		return null
 	return ImageTexture.create_from_image(image)
 
+func _resolved_actor_type(dto: Dictionary) -> int:
+	var wire_actor_type: int = int(dto.get("actor_type", 1))
+	var kind: int = int(dto.get("kind", 0))
+	if kind not in [1, 4] and wire_actor_type >= 0 and wire_actor_type < 256:
+		var expanded_actor_type: int = wire_actor_type + 256
+		var expanded_key: String = str(expanded_actor_type)
+		if actor_type_models.has(expanded_key) or npc_looks.has(expanded_key):
+			return expanded_actor_type
+	return wire_actor_type
+
 func _model_for_actor(dto: Dictionary) -> String:
-	var actor_type_value := int(dto.get("actor_type", 1))
-	var actor_type := str(actor_type_value)
-	var kind := int(dto.get("kind", 0))
-	# Player actor IDs are not safe for NPC wire records: the server may send an
-	# enhanced packet for an NPC while keeping the legacy actor_type byte at 1.
-	# Nymara NPC/creature/enemy IDs occupy the dedicated 200+ registry range.
+	var actor_type_value: int = _resolved_actor_type(dto)
+	var actor_type: String = str(actor_type_value)
+	var kind: int = int(dto.get("kind", 0))
 	if actor_type_models.has(actor_type) and (kind in [1, 4] or actor_type_value >= 200):
 		return str(actor_type_models[actor_type])
-	# The server uses the enhanced wire layout for most NPCs so their appearance
-	# bytes survive replication. Registry actor type wins for native NPCs and
-	# creatures; actor kind decides the fallback for unknown records.
 	if kind not in [1, 4]:
 		return ""
 	return "luminous_female" if actor_type_value == 0 else "luminous_male"
 
 func _presentation_dto(dto: Dictionary) -> Dictionary:
 	var result: Dictionary = dto.duplicate(true)
-	var actor_type: int = int(dto.get("actor_type", -1))
+	var actor_type: int = _resolved_actor_type(dto)
 	var appearance: Dictionary = dto.get("appearance", {}) as Dictionary
 	var visuals: Dictionary = AppearanceVariants.equipment_visuals(
 		actor_type, appearance)
-	var look: Dictionary = npc_looks.get(str(int(dto.get("actor_type", -1))), {}) as Dictionary
+	var look: Dictionary = npc_looks.get(str(actor_type), {}) as Dictionary
 	var look_visuals: Dictionary = look.get("equipmentVisuals", {}) as Dictionary
 	for raw_part: Variant in look_visuals:
 		visuals[raw_part] = look_visuals[raw_part]

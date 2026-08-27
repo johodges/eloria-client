@@ -329,7 +329,9 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	if not model_config.is_empty() and not bones.is_empty():
 		var native_model: Node3D = _load_native_equipment(str(model_config.get("scene", "")))
 		if native_model != null:
-			_apply_equipment_import(native_model, model_config.get("import", {}) as Dictionary)
+			var bone_index: int = _native_skeleton.find_bone(bones[0])
+			_apply_equipment_import(native_model,
+				model_config.get("import", {}) as Dictionary, bone_index)
 			var native_attachment: BoneAttachment3D = _bone_attachment(bones[0], part, visual_id)
 			if native_attachment != null:
 				native_attachment.add_child(native_model)
@@ -367,7 +369,8 @@ func _load_native_equipment(path: String) -> Node3D:
 	var generated: Node = document.generate_scene(state)
 	return generated as Node3D if generated is Node3D else null
 
-func _apply_equipment_import(model: Node3D, config: Dictionary) -> void:
+func _apply_equipment_import(model: Node3D, config: Dictionary,
+		bone_index: int = -1) -> void:
 	model.scale = Vector3.ONE * float(config.get("scale", 1.0))
 	var translation_value: Variant = config.get("translation", [0, 0, 0])
 	if translation_value is Array and (translation_value as Array).size() >= 3:
@@ -379,6 +382,14 @@ func _apply_equipment_import(model: Node3D, config: Dictionary) -> void:
 		var rotation: Array = rotation_value as Array
 		model.rotation_degrees = Vector3(float(rotation[0]), float(rotation[1]),
 			float(rotation[2]))
+	if bool(config.get("characterSpace", false)) and _native_skeleton != null \
+			and bone_index >= 0:
+		# Generated Nymara equipment is authored upright in actor space, while
+		# BoneAttachment3D presents the attachment bone's rest-space axes. Cancel
+		# only that rest basis; the bone origin and animated pose still drive gear.
+		var rest_basis: Basis = _native_skeleton.get_bone_global_rest(
+			bone_index).basis.orthonormalized()
+		model.transform = Transform3D(rest_basis.inverse(), Vector3.ZERO) * model.transform
 
 func _equipment_fallback_mesh(shape: String) -> MeshInstance3D:
 	var instance: MeshInstance3D = MeshInstance3D.new()

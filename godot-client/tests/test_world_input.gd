@@ -191,9 +191,24 @@ func _run() -> void:
 	var attackable_actor: Dictionary = {
 		"actor_id": 77, "name": "Rat", "kind": 3, "health": 12,
 		"max_health": 12, "alive": true}
-	_expect(str(main.call("_model_for_actor", {
-		"enhanced": true, "kind": 2, "actor_type": 1})).is_empty(),
-		"enhanced NPC wire packets never select a luminous player model")
+	var registered_actor_types: Dictionary = main.get("actor_type_models") as Dictionary
+	var registered_npc_looks: Dictionary = main.get("npc_looks") as Dictionary
+	var toran_wire: Dictionary = {"enhanced": true, "kind": 2, "actor_type": 51}
+	_expect(int(main.call("_resolved_actor_type", toran_wire)) == 307,
+		"legacy one-byte NPC actor type reconstructs the configured Four Gates ID")
+	_expect(str(main.call("_model_for_actor", toran_wire)) ==
+		str(registered_actor_types.get("307", "")),
+		"reconstructed Four Gates NPC uses its native registered model")
+	var toran_presentation: Dictionary = main.call("_presentation_dto", toran_wire) as Dictionary
+	var toran_visuals: Dictionary = toran_presentation.get("equipment_visuals", {}) as Dictionary
+	var toran_look: Dictionary = registered_npc_looks.get("307", {}) as Dictionary
+	var toran_expected_visuals: Dictionary = toran_look.get("equipmentVisuals", {}) as Dictionary
+	var toran_gear_matches: bool = not toran_expected_visuals.is_empty()
+	for raw_part: Variant in toran_expected_visuals:
+		if int(toran_visuals.get(raw_part, -1)) != int(toran_expected_visuals[raw_part]):
+			toran_gear_matches = false
+	_expect(toran_gear_matches,
+		"reconstructed Four Gates NPC applies its concept-native equipment look")
 	_expect(str(main.call("_model_for_actor", {
 		"enhanced": true, "kind": 1, "actor_type": 1})) == "luminous_male",
 		"enhanced player wire packets retain the native luminous model")

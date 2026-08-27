@@ -68,6 +68,11 @@ class NativeGlbAssetsTest(unittest.TestCase):
         for entry in self.catalog["equipment"].values():
             glb_document(ROOT / entry["path"])
 
+    def test_generated_equipment_uses_character_space_axes(self) -> None:
+        for model_key, model in self.equipment["models"].items():
+            with self.subTest(model=model_key):
+                self.assertTrue(model["import"].get("characterSpace"), model_key)
+
     def test_legacy_guard_visuals_alias_to_native_models(self) -> None:
         expected = {
             "0:11": "0:112",

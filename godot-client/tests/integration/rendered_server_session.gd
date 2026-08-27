@@ -722,10 +722,17 @@ func _run() -> void:
 			% [str(guard_spec.get("name", "item")), wear_slot, part])
 	main.call("_on_inventory_close_pressed")
 	var unequipped_diagnostics: Dictionary = equipped_actor.equipment_diagnostics()
+	var restored_native_attachments: Dictionary = _native_equipment_attachments(equipped_actor)
 	var restored_inventory: Dictionary = _app_state.get("inventory") as Dictionary
-	_expect(int(unequipped_diagnostics.get("native", 0)) == 0
-		and int(unequipped_diagnostics.get("fallback", 0)) == 0,
-		"authoritative unwear removes every native guard attachment cleanly")
+	_expect(int(unequipped_diagnostics.get("native", 0)) == 3
+		and int(unequipped_diagnostics.get("fallback", 0)) == 0
+		and not restored_native_attachments.has(0)
+		and not restored_native_attachments.has(1)
+		and not restored_native_attachments.has(2)
+		and restored_native_attachments.has(4)
+		and restored_native_attachments.has(5)
+		and restored_native_attachments.has(6),
+		"authoritative unwear removes guard gear while retaining the default Luminous outfit")
 	_expect(_inventory_item_count(restored_inventory, 0, 36) == expected_inventory_buttons,
 		"all guard items return to the backpack after authoritative unwear")
 	_write_json("equipment.json", {
