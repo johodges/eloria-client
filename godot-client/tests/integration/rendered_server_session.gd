@@ -105,9 +105,10 @@ func _run() -> void:
 		"actor_id": -1, "map": "", "error": ""}
 	var helper_network: EloriaNetworkClient = EloriaNetworkClient.new()
 	helper_network.name = "RemoteActorHelperNetwork"
-	helper_network.connection_state_changed.connect(func(state: String) -> void:
-		helper_state["connection"] = state)
-	helper_network.packet_received.connect(func(command: int,
+	var helper_connection_handler: Callable = func(state: String) -> void:
+		helper_state["connection"] = state
+	helper_network.connection_state_changed.connect(helper_connection_handler)
+	var helper_packet_handler: Callable = func(command: int,
 			payload: PackedByteArray) -> void:
 		var helper_event: Dictionary = EloriaProtocol.decode_server(command, payload)
 		match str(helper_event.get("type", "")):
@@ -129,7 +130,8 @@ func _run() -> void:
 				helper_state["map"] = str(helper_event.get("map_name", ""))
 			"ping_request":
 				helper_network.send_frame(EloriaProtocol.encode(
-					EloriaProtocol.ClientMessage.PING_RESPONSE)))
+					EloriaProtocol.ClientMessage.PING_RESPONSE))
+	helper_network.packet_received.connect(helper_packet_handler)
 	root.add_child(helper_network)
 	var helper_connect_error: Error = helper_network.connect_to_server(host, port)
 	_expect(helper_connect_error == OK, "remote-player helper begins a real TCP connection")
