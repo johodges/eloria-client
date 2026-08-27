@@ -15,6 +15,7 @@ jobs:
     container:
       image: barichello/godot-ci:4.7.2
     env:
+      WORKTREE: /__w/eloria-client/eloria-client
       ELORIA_ARTIFACT_DIR: godot-client/test-artifacts/equipment-character-space
     steps:
       - uses: actions/checkout@v4
@@ -31,57 +32,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cd "$GITHUB_WORKSPACE"
+          cd "$WORKTREE"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git fetch origin codex/equipment-character-space-fix
           git checkout -B codex/equipment-character-space-result origin/codex/equipment-character-space-fix
-          python3 - <<'PY'
-          from pathlib import Path
-
-          actor = Path('godot-client/src/actors/replicated_actor_3d.gd')
-          s = actor.read_text(encoding='utf-8')
-          old = '''\tif not model_config.is_empty() and not bones.is_empty():\n\t\tvar native_model: Node3D = _load_native_equipment(str(model_config.get("scene", "")))\n\t\tif native_model != null:\n\t\t\t_apply_equipment_import(native_model, model_config.get("import", {}) as Dictionary)\n\t\t\tvar native_attachment: BoneAttachment3D = _bone_attachment(bones[0], part, visual_id)\n'''
-          new = '''\tif not model_config.is_empty() and not bones.is_empty():\n\t\tvar native_model: Node3D = _load_native_equipment(str(model_config.get("scene", "")))\n\t\tif native_model != null:\n\t\t\tvar bone_index: int = _native_skeleton.find_bone(bones[0])\n\t\t\t_apply_equipment_import(native_model,\n\t\t\t\tmodel_config.get("import", {}) as Dictionary, bone_index)\n\t\t\tvar native_attachment: BoneAttachment3D = _bone_attachment(bones[0], part, visual_id)\n'''
-          if old not in s:
-              raise SystemExit('native equipment creation marker missing')
-          s = s.replace(old, new, 1)
-          old = '''func _apply_equipment_import(model: Node3D, config: Dictionary) -> void:\n\tmodel.scale = Vector3.ONE * float(config.get("scale", 1.0))\n\tvar translation_value: Variant = config.get("translation", [0, 0, 0])\n\tif translation_value is Array and (translation_value as Array).size() >= 3:\n\t\tvar translation: Array = translation_value as Array\n\t\tmodel.position = Vector3(float(translation[0]), float(translation[1]),\n\t\t\tfloat(translation[2]))\n\tvar rotation_value: Variant = config.get("rotationDegrees", [0, 0, 0])\n\tif rotation_value is Array and (rotation_value as Array).size() >= 3:\n\t\tvar rotation: Array = rotation_value as Array\n\t\tmodel.rotation_degrees = Vector3(float(rotation[0]), float(rotation[1]),\n\t\t\tfloat(rotation[2]))\n'''
-          new = '''func _apply_equipment_import(model: Node3D, config: Dictionary,\n\t\tbone_index: int = -1) -> void:\n\tmodel.scale = Vector3.ONE * float(config.get("scale", 1.0))\n\tvar translation_value: Variant = config.get("translation", [0, 0, 0])\n\tif translation_value is Array and (translation_value as Array).size() >= 3:\n\t\tvar translation: Array = translation_value as Array\n\t\tmodel.position = Vector3(float(translation[0]), float(translation[1]),\n\t\t\tfloat(translation[2]))\n\tvar rotation_value: Variant = config.get("rotationDegrees", [0, 0, 0])\n\tif rotation_value is Array and (rotation_value as Array).size() >= 3:\n\t\tvar rotation: Array = rotation_value as Array\n\t\tmodel.rotation_degrees = Vector3(float(rotation[0]), float(rotation[1]),\n\t\t\tfloat(rotation[2]))\n\tif bool(config.get("characterSpace", false)) and _native_skeleton != null \\\n\t\t\tand bone_index >= 0:\n\t\t# Generated Nymara equipment is authored upright in actor space, while\n\t\t# BoneAttachment3D presents the attachment bone's rest-space axes.\n\t\t# Cancel only the rest basis: the bone origin stays the anchor and pose\n\t\t# deltas still drive weapons, clothing, shields, and capes in animation.\n\t\tvar rest_basis: Basis = _native_skeleton.get_bone_global_rest(\n\t\t\tbone_index).basis.orthonormalized()\n\t\tmodel.transform = Transform3D(rest_basis.inverse(), Vector3.ZERO) * model.transform\n'''
-          if old not in s:
-              raise SystemExit('equipment import marker missing')
-          actor.write_text(s.replace(old, new, 1), encoding='utf-8')
-
-          builder = Path('eloria-assets/tools/build_native_nymara_glbs.py')
-          s = builder.read_text(encoding='utf-8')
-          old = '''            "import": {"translation": translation, "rotationDegrees": [0, 0, 0],\n                       "scale": 1},\n'''
-          new = '''            "import": {"translation": translation, "rotationDegrees": [0, 0, 0],\n                       "scale": 1, "characterSpace": True},\n'''
-          if old not in s:
-              raise SystemExit('equipment registry marker missing')
-          builder.write_text(s.replace(old, new, 1), encoding='utf-8')
-
-          tests = Path('godot-client/tests/test_native_glb_assets.py')
-          s = tests.read_text(encoding='utf-8')
-          marker = '''    def test_legacy_guard_visuals_alias_to_native_models(self) -> None:\n'''
-          addition = '''    def test_generated_equipment_uses_character_space_axes(self) -> None:\n        for model_key, model in self.equipment["models"].items():\n            with self.subTest(model=model_key):\n                self.assertTrue(model["import"].get("characterSpace"), model_key)\n\n'''
-          if marker not in s:
-              raise SystemExit('native asset test marker missing')
-          tests.write_text(s.replace(marker, addition + marker, 1), encoding='utf-8')
-
-          session = Path('godot-client/tests/integration/rendered_server_session.gd')
-          s = session.read_text(encoding='utf-8')
-          old = '''\tvar unequipped_diagnostics: Dictionary = equipped_actor.equipment_diagnostics()\n\tvar restored_inventory: Dictionary = _app_state.get("inventory") as Dictionary\n\t_expect(int(unequipped_diagnostics.get("native", 0)) == 0\n\t\tand int(unequipped_diagnostics.get("fallback", 0)) == 0,\n\t\t"authoritative unwear removes every native guard attachment cleanly")\n'''
-          new = '''\tvar unequipped_diagnostics: Dictionary = equipped_actor.equipment_diagnostics()\n\tvar restored_native_attachments: Dictionary = _native_equipment_attachments(equipped_actor)\n\tvar restored_inventory: Dictionary = _app_state.get("inventory") as Dictionary\n\t_expect(int(unequipped_diagnostics.get("native", 0)) == 3\n\t\tand int(unequipped_diagnostics.get("fallback", 0)) == 0\n\t\tand not restored_native_attachments.has(0)\n\t\tand not restored_native_attachments.has(1)\n\t\tand not restored_native_attachments.has(2)\n\t\tand restored_native_attachments.has(4)\n\t\tand restored_native_attachments.has(5)\n\t\tand restored_native_attachments.has(6),\n\t\t"authoritative unwear removes guard gear while retaining the default Luminous outfit")\n'''
-          if old not in s:
-              raise SystemExit('live-session unequip marker missing')
-          session.write_text(s.replace(old, new, 1), encoding='utf-8')
-          PY
-
+          git show origin/codex/equipment-character-space-runner:.github/scripts/apply_equipment_character_space.py > /tmp/apply_equipment_character_space.py
+          python3 /tmp/apply_equipment_character_space.py
           python3 eloria-assets/tools/build_native_nymara_glbs.py >/tmp/native-build.log
           git diff --check
       - name: Validate generated catalog and Godot runtime
+        shell: bash
         run: |
-          cd "$GITHUB_WORKSPACE"
+          set -euo pipefail
+          cd "$WORKTREE"
           python3 godot-client/tests/test_native_glb_assets.py -v
           godot --headless --path godot-client --editor --quit
           godot --headless --path godot-client res://src/dev/model_validation.tscn --quit-after 12 2>&1 | tee /tmp/model-validation.log
@@ -90,7 +54,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cd "$GITHUB_WORKSPACE"
+          cd "$WORKTREE"
           cp godot-client/src/dev/model_validation.gd /tmp/model_validation.gd
           python3 - <<'PY'
           from pathlib import Path
@@ -124,14 +88,13 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cd "$GITHUB_WORKSPACE"
+          cd "$WORKTREE"
           git add eloria-assets/tools/build_native_nymara_glbs.py \
             godot-client/src/actors/replicated_actor_3d.gd \
             godot-client/data/actors/equipment.json \
             godot-client/tests/test_native_glb_assets.py \
             godot-client/tests/integration/rendered_server_session.gd
           git diff --cached --check
-          git status --short
           unexpected=$(git status --short | awk '{print $2}' | grep -v -E '^(eloria-assets/tools/build_native_nymara_glbs.py|godot-client/src/actors/replicated_actor_3d.gd|godot-client/data/actors/equipment.json|godot-client/tests/test_native_glb_assets.py|godot-client/tests/integration/rendered_server_session.gd|godot-client/test-artifacts/)' || true)
           if [ -n "$unexpected" ]; then
             echo "Unexpected generator changes:"
@@ -145,5 +108,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: equipment-character-space
-          path: godot-client/test-artifacts/equipment-character-space
+          path: /__w/eloria-client/eloria-client/godot-client/test-artifacts/equipment-character-space
           if-no-files-found: error
