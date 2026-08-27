@@ -2404,7 +2404,10 @@
           ]
         }
       ]
-    }
+    },
+    "surfaceNodePrefixes": [
+      "Terrain_City_Plateau"
+    ]
   },
   "streamingGroups": [
     {
