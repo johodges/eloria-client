@@ -168,7 +168,8 @@ func _run() -> void:
 	_expect(first_spell_slot.icon != null, "owned castable spell has its legacy icon")
 	_expect(first_spell_slot.tooltip_text.contains("Heal"),
 		"owned castable spell tooltip identifies Heal: " + first_spell_slot.tooltip_text)
-	app_state_inventory.set("owned_sigils", [])
+	var no_sigils: Array[int] = []
+	app_state_inventory.set("owned_sigils", no_sigils)
 	main.call("_sync_spells")
 	_expect(first_spell_slot.disabled and first_spell_slot.tooltip_text.contains("Missing sigils"),
 		"unowned spell is visibly disabled with the exact availability reason")
