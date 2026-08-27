@@ -2,7 +2,7 @@
   "uri": "four-gates-city-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "2.0.0-dev.3.10",
-  "validatedAt": "2026-08-27T13:54:05.064Z",
+  "validatedAt": "2026-08-27T14:04:24.810Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
@@ -38,7 +38,7 @@
         "pointer": "/buffers/0",
         "mimeType": "application/gltf-buffer",
         "storage": "glb",
-        "byteLength": 711892
+        "byteLength": 711912
       },
       {
         "pointer": "/images/0",

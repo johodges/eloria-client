@@ -49,9 +49,9 @@ def normal_atlas(image,grid,strength):
 # texture sources: baking their buildings and highlights into repeating tiles
 # creates unreadable photo-collage surfaces in Godot.
 def paint_city_atlas(path):
- palette=[(143,137,124),(57,61,65),(169,157,137),(69,69,66),
-          (48,61,69),(145,102,39),(113,86,49),(84,58,39),
-          (186,174,147),(94,69,42),(78,91,48),(188,194,197),
+ palette=[(111,108,101),(50,54,59),(148,137,118),(61,63,62),
+          (43,55,64),(139,96,34),(105,79,45),(78,53,36),
+          (143,133,114),(87,64,40),(72,86,45),(188,194,197),
           (31,103,118),(34,102,177),(77,151,169),(43,69,37)]
  rng=np.random.default_rng(406);image=Image.new('RGB',(1024,1024));draw=ImageDraw.Draw(image)
  masonry={0,1,2,3,7,8};

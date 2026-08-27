@@ -4,8 +4,8 @@ Validated 2026-08-27 for asset version 0.8.0.
 
 ## Passed
 
-- LOD1 GLB header is `glTF`, version 2; declared and actual length both 2,929,580 bytes.
-- LOD2 GLB header is `glTF`, version 2; declared and actual length both 851,036 bytes.
+- LOD1 GLB header is `glTF`, version 2; declared and actual length both 2,928,740 bytes.
+- LOD2 GLB header is `glTF`, version 2; declared and actual length both 851,056 bytes.
 - JSON parses successfully and names `four-gates-city.glb` exactly.
 - LOD1 contains 1,483 unique named nodes; compact LOD2 contains 663.
 - Every landmark, district, gate, portcullis, bridge, collision, and navigation node referenced by JSON exists exactly in the GLB.
