@@ -70,6 +70,29 @@ class NativeGlbAssetsTest(unittest.TestCase):
         self.assertEqual(66, len(self.catalog["equipment"]))
         self.assertEqual(123, self.catalog["validation"]["files"])
 
+    def test_ambient_creatures_are_scenery_only(self) -> None:
+        """Ambient livestock are client scenery and must not claim actor types.
+
+        Actor-type allocation belongs to the server. An ambient model that
+        carried one could collide with a real creature id, so the catalogue
+        keeps them in their own section and the roster count above stays exact.
+        """
+        ambient = self.catalog.get("ambientCreatures", {})
+        self.assertTrue(ambient, "ambient creature section is present")
+        for slug, entry in ambient.items():
+            with self.subTest(model=slug):
+                self.assertNotIn("actor_type", entry)
+                self.assertIn(slug, self.models["models"])
+                self.assertIsNone(self.models["models"][slug]["serverActorType"])
+                self.assertNotIn(slug, set(self.models["actorTypes"].values()))
+                path = ROOT / entry["path"]
+                self.assertTrue(path.is_file(), entry["path"])
+                document = glb_document(path)
+                self.assertEqual(
+                    7, len(document.get("animations", [])),
+                    "ambient creatures carry the shared creature action set")
+                self.assertEqual(21, len(document["skins"][0]["joints"]))
+
     def test_player_rigs_preserve_current_skeleton_and_budget(self) -> None:
         for model_id, entry in self.catalog["races"].items():
             with self.subTest(model=model_id):

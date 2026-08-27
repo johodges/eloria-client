@@ -24,6 +24,10 @@ extends Control
 @onready var gameplay_camera: Camera3D = %Camera
 @onready var world_loader: WorldLoader = %WorldLoader
 @onready var fallback_ground: MeshInstance3D = $GameView/ViewportContainer/Viewport/WorldRoot/Ground
+@onready var world_environment: WorldEnvironment = $GameView/ViewportContainer/Viewport/WorldRoot/Environment
+@onready var world_sun: DirectionalLight3D = $GameView/ViewportContainer/Viewport/WorldRoot/Sun
+
+var ambient_population: AmbientPopulation
 @onready var main_viewport: SubViewport = $GameView/ViewportContainer/Viewport
 @onready var viewport_container: SubViewportContainer = $GameView/ViewportContainer
 @onready var map_viewport: SubViewport = %MapViewport
@@ -1999,6 +2003,10 @@ func _load_server_map() -> void:
 func _on_world_loaded(manifest: WorldManifest) -> void:
 	_bind_shared_world()
 	fallback_ground.hide()
+	# Regions may declare their own sky, sun, fog and tonemap. Maps that do not
+	# keep the client's previous placeholder environment unchanged.
+	WorldEnvironmentBinder.apply(manifest, world_environment, world_sun)
+	_populate_ambient_life(manifest)
 	_current_map_display_name = str(
 		manifest.data.get("asset", {}).get("name", manifest.asset_id()))
 	map_label.text = "Map: " + _current_map_display_name
@@ -2009,6 +2017,20 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	_sync_ground_bags()
 	_snap_all_actors_to_surface.call_deferred()
 	_snap_all_ground_bags_to_surface.call_deferred()
+
+func _populate_ambient_life(manifest: WorldManifest) -> void:
+	# Scenery livestock declared by the map. Networked actors are untouched.
+	if ambient_population == null:
+		ambient_population = AmbientPopulation.new()
+		ambient_population.name = "AmbientPopulation"
+		world_root.add_child(ambient_population)
+	await get_tree().physics_frame
+	if gameplay_world == null:
+		return
+	var spawned: int = ambient_population.populate(manifest,
+		gameplay_world.direct_space_state)
+	if spawned > 0:
+		print_debug("ambient_population map=", AppState.current_map, " spawned=", spawned)
 
 func _snap_all_actors_to_surface() -> void:
 	await get_tree().physics_frame
