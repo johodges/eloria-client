@@ -41,9 +41,10 @@ def accessor(document: dict, binary: bytes, index: int) -> np.ndarray:
                       strides=strides).copy()
 
 
-def material_color(document: dict, binary: bytes, index: int) -> tuple[int, int, int]:
+def material_source(document: dict, binary: bytes, index: int) -> tuple[np.ndarray, Image.Image | None]:
     material = document.get("materials", [])[index]
     pbr = material.get("pbrMetallicRoughness", {})
+    factor = np.asarray(pbr.get("baseColorFactor", [1, 1, 1, 1])[:3], dtype=float)
     texture = pbr.get("baseColorTexture", {}).get("index")
     if texture is not None:
         image_index = document["textures"][texture]["source"]
@@ -51,12 +52,25 @@ def material_color(document: dict, binary: bytes, index: int) -> tuple[int, int,
         view = document["bufferViews"][image_spec["bufferView"]]
         start = view.get("byteOffset", 0)
         sample = Image.open(io.BytesIO(binary[start:start + view["byteLength"]])).convert("RGB")
-        colors = np.asarray(sample.resize((32, 32))).reshape(-1, 3)
-        sampled = np.quantile(colors, .62, axis=0)
-        factor = np.asarray(pbr.get("baseColorFactor", [1, 1, 1, 1])[:3])
-        return tuple(int(value) for value in np.clip(sampled * factor, 0, 255))
-    factor = pbr.get("baseColorFactor", [.68, .72, .72, 1])
-    return tuple(int(255 * value) for value in factor[:3])
+        return factor, sample
+    return factor, None
+
+
+def triangle_color(factor: np.ndarray, texture: Image.Image | None,
+                   uvs: np.ndarray) -> tuple[int, int, int]:
+    if texture is None:
+        return tuple(int(255 * value) for value in factor)
+    # Sampling several barycentric locations retains the authored pattern in a
+    # dependency-free review render instead of reducing every PBR material to
+    # one average swatch.
+    samples = []
+    for weights in ((1 / 3, 1 / 3, 1 / 3), (.62, .19, .19), (.19, .62, .19)):
+        uv = sum(uvs[index] * weights[index] for index in range(3))
+        x = int((float(uv[0]) % 1.0) * (texture.width - 1))
+        y = int((1.0 - float(uv[1]) % 1.0) * (texture.height - 1))
+        samples.append(np.asarray(texture.getpixel((x, y)), dtype=float))
+    color = np.mean(samples, axis=0) * factor
+    return tuple(int(max(0, min(255, value))) for value in color)
 
 
 def render(path: Path, size: int = 480, *, wireframe: bool = True) -> Image.Image:
@@ -69,11 +83,12 @@ def render(path: Path, size: int = 480, *, wireframe: bool = True) -> Image.Imag
             continue
         for primitive in mesh.get("primitives", []):
             positions = accessor(document, binary, primitive["attributes"]["POSITION"])
+            uvs = accessor(document, binary, primitive["attributes"]["TEXCOORD_0"])
             indices = accessor(document, binary, primitive["indices"]).reshape(-1, 3)
-            color = material_color(document, binary, primitive.get("material", 0))
+            factor, texture = material_source(document, binary, primitive.get("material", 0))
             all_positions.append(positions)
             for face in indices:
-                triangles.append((positions[face], color))
+                triangles.append((positions[face], triangle_color(factor, texture, uvs[face])))
     positions = np.concatenate(all_positions)
     # Three-quarter view with Y up; the generated creatures face camera-left.
     projected = np.column_stack((positions[:, 0] - positions[:, 2] * .42,

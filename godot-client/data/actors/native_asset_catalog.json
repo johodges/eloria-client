@@ -646,6 +646,566 @@
       "joints": 21,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/two_tailed_fox.glb"
+    },
+    "mirrorfin_otter": {
+      "actor_type": 400,
+      "id": "mirrorfin_otter",
+      "name": "Mirrorfin Otter",
+      "family": "otter",
+      "region": "Crownwater",
+      "conceptSheet": "crownwater_magical_aquatic_creatures_sheet.png",
+      "conceptSlot": [
+        0,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 17427,
+      "triangles": 27260,
+      "materials": 8,
+      "embeddedTextures": 14,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mirrorfin_otter.glb"
+    },
+    "reedhorn_stag": {
+      "actor_type": 401,
+      "id": "reedhorn_stag",
+      "name": "Reedhorn Stag",
+      "family": "stag",
+      "region": "Amberwood",
+      "conceptSheet": "amberwood_forest_spirits_creatures_sheet.png",
+      "conceptSlot": [
+        0,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 17725,
+      "triangles": 25420,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/reedhorn_stag.glb"
+    },
+    "gate_turtle": {
+      "actor_type": 402,
+      "id": "gate_turtle",
+      "name": "Four Gates Turtle",
+      "family": "turtle",
+      "region": "Four Gates",
+      "conceptSheet": "cross-region_natural_wildlife_sheet.png",
+      "conceptSlot": [
+        3,
+        1
+      ],
+      "qualityTier": "production",
+      "vertices": 26900,
+      "triangles": 18868,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/gate_turtle.glb"
+    },
+    "lakeglass_drake": {
+      "actor_type": 403,
+      "id": "lakeglass_drake",
+      "name": "Lakeglass Drake",
+      "family": "drake",
+      "region": "Crownwater",
+      "conceptSheet": "crownwater_crystal_aquatic_creatures_sheet.png",
+      "conceptSlot": [
+        1,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 17960,
+      "triangles": 20810,
+      "materials": 8,
+      "embeddedTextures": 14,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/lakeglass_drake.glb"
+    },
+    "snowcrest_hare": {
+      "actor_type": 404,
+      "id": "snowcrest_hare",
+      "name": "Snowcrest Hare",
+      "family": "hare",
+      "region": "Whitehorn Range",
+      "conceptSheet": "whitehorn_glacier_creatures_sheet.png",
+      "conceptSlot": [
+        1,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 10907,
+      "triangles": 19134,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/snowcrest_hare.glb"
+    },
+    "glacier_ram": {
+      "actor_type": 405,
+      "id": "glacier_ram",
+      "name": "Glacier Ram",
+      "family": "ram",
+      "region": "Whitehorn Range",
+      "conceptSheet": "whitehorn_glacier_creatures_sheet.png",
+      "conceptSlot": [
+        0,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 16036,
+      "triangles": 26976,
+      "materials": 8,
+      "embeddedTextures": 14,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/glacier_ram.glb"
+    },
+    "iceback_ursid": {
+      "actor_type": 406,
+      "id": "iceback_ursid",
+      "name": "Iceback Ursid",
+      "family": "bear",
+      "region": "Whitehorn Range",
+      "conceptSheet": "whitehorn_glacier_creatures_sheet.png",
+      "conceptSlot": [
+        3,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 19850,
+      "triangles": 28988,
+      "materials": 8,
+      "embeddedTextures": 14,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/iceback_ursid.glb"
+    },
+    "rimeclaw": {
+      "actor_type": 407,
+      "id": "rimeclaw",
+      "name": "Rimeclaw",
+      "family": "cat",
+      "region": "Whitehorn Range",
+      "conceptSheet": "whitehorn_glacier_creatures_sheet.png",
+      "conceptSlot": [
+        2,
+        1
+      ],
+      "qualityTier": "production",
+      "vertices": 13789,
+      "triangles": 21654,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/rimeclaw.glb"
+    },
+    "crystal_mite": {
+      "actor_type": 408,
+      "id": "crystal_mite",
+      "name": "Crystal Mite",
+      "family": "mite",
+      "region": "Amethyst Barrens",
+      "conceptSheet": "amethyst_barrens_crystal_creatures_sheet.png",
+      "conceptSlot": [
+        1,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 12122,
+      "triangles": 7244,
+      "materials": 8,
+      "embeddedTextures": 14,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/crystal_mite.glb"
+    },
+    "resonant_hound": {
+      "actor_type": 409,
+      "id": "resonant_hound",
+      "name": "Resonant Hound",
+      "family": "hound",
+      "region": "Amethyst Barrens",
+      "conceptSheet": "amethyst_barrens_crystal_creatures_sheet.png",
+      "conceptSlot": [
+        0,
+        2
+      ],
+      "qualityTier": "production",
+      "vertices": 23176,
+      "triangles": 26764,
+      "materials": 8,
+      "embeddedTextures": 14,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/resonant_hound.glb"
+    },
+    "stormglass_grazer": {
+      "actor_type": 410,
+      "id": "stormglass_grazer",
+      "name": "Stormglass Grazer",
+      "family": "grazer",
+      "region": "Amethyst Barrens",
+      "conceptSheet": "amethyst_barrens_crystal_creatures_sheet.png",
+      "conceptSlot": [
+        3,
+        1
+      ],
+      "qualityTier": "production",
+      "vertices": 17625,
+      "triangles": 17472,
+      "materials": 8,
+      "embeddedTextures": 14,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/stormglass_grazer.glb"
+    },
+    "prism_wyrm": {
+      "actor_type": 411,
+      "id": "prism_wyrm",
+      "name": "Prism Wyrm",
+      "family": "wyrm",
+      "region": "Amethyst Barrens",
+      "conceptSheet": "amethyst_barrens_crystal_creatures_sheet.png",
+      "conceptSlot": [
+        2,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 21566,
+      "triangles": 23680,
+      "materials": 8,
+      "embeddedTextures": 14,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/prism_wyrm.glb"
+    },
+    "dunrunner": {
+      "actor_type": 412,
+      "id": "dunrunner",
+      "name": "Dunrunner",
+      "family": "fox",
+      "region": "Sunmane Steppe",
+      "conceptSheet": "cross-region_natural_wildlife_sheet.png",
+      "conceptSlot": [
+        2,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 13744,
+      "triangles": 23904,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/dunrunner.glb"
+    },
+    "steppe_aurochs": {
+      "actor_type": 413,
+      "id": "steppe_aurochs",
+      "name": "Steppe Aurochs",
+      "family": "aurochs",
+      "region": "Sunmane Steppe",
+      "conceptSheet": "cross-region_natural_wildlife_sheet.png",
+      "conceptSlot": [
+        1,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 14927,
+      "triangles": 25136,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/steppe_aurochs.glb"
+    },
+    "sunmane_cat": {
+      "actor_type": 414,
+      "id": "sunmane_cat",
+      "name": "Sunmane Cat",
+      "family": "cat",
+      "region": "Sunmane Steppe",
+      "conceptSheet": "cross-region_natural_wildlife_sheet.png",
+      "conceptSlot": [
+        2,
+        1
+      ],
+      "qualityTier": "production",
+      "vertices": 17129,
+      "triangles": 29354,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/sunmane_cat.glb"
+    },
+    "dustscale_drake": {
+      "actor_type": 415,
+      "id": "dustscale_drake",
+      "name": "Dustscale Drake",
+      "family": "drake",
+      "region": "Sunmane Steppe",
+      "conceptSheet": "crownwater_crystal_aquatic_creatures_sheet.png",
+      "conceptSlot": [
+        3,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 23870,
+      "triangles": 24184,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/dustscale_drake.glb"
+    },
+    "amberhart": {
+      "actor_type": 416,
+      "id": "amberhart",
+      "name": "Amberhart",
+      "family": "stag",
+      "region": "Amberwood",
+      "conceptSheet": "amberwood_forest_spirits_creatures_sheet_b.png",
+      "conceptSlot": [
+        0,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 19237,
+      "triangles": 27292,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/amberhart.glb"
+    },
+    "rootback_boar": {
+      "actor_type": 417,
+      "id": "rootback_boar",
+      "name": "Rootback Boar",
+      "family": "boar",
+      "region": "Amberwood",
+      "conceptSheet": "amberwood_forest_spirits_creatures_sheet_b.png",
+      "conceptSlot": [
+        1,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 29767,
+      "triangles": 30060,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/rootback_boar.glb"
+    },
+    "moor_wisp_hound": {
+      "actor_type": 418,
+      "id": "moor_wisp_hound",
+      "name": "Moor Wisp Hound",
+      "family": "hound",
+      "region": "Grey Moors",
+      "conceptSheet": "grey_moors_spirits_creatures_sheet.png",
+      "conceptSlot": [
+        2,
+        2
+      ],
+      "qualityTier": "production",
+      "vertices": 16156,
+      "triangles": 26840,
+      "materials": 8,
+      "embeddedTextures": 14,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/moor_wisp_hound.glb"
+    },
+    "barrow_quillbeast": {
+      "actor_type": 419,
+      "id": "barrow_quillbeast",
+      "name": "Barrow Quillbeast",
+      "family": "quillbeast",
+      "region": "Grey Moors",
+      "conceptSheet": "amberwood_grey_moors_creatures_transparent_sheet_a.png",
+      "conceptSlot": [
+        1,
+        1
+      ],
+      "qualityTier": "production",
+      "vertices": 17497,
+      "triangles": 25920,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/barrow_quillbeast.glb"
+    },
+    "canopy_glider": {
+      "actor_type": 420,
+      "id": "canopy_glider",
+      "name": "Canopy Glider",
+      "family": "glider",
+      "region": "Amberwood",
+      "conceptSheet": "amberwood_forest_spirits_creatures_sheet.png",
+      "conceptSlot": [
+        3,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 18643,
+      "triangles": 19924,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/canopy_glider.glb"
+    },
+    "cenote_toader": {
+      "actor_type": 421,
+      "id": "cenote_toader",
+      "name": "Cenote Toader",
+      "family": "toad",
+      "region": "Manymouth Delta",
+      "conceptSheet": "manymouth_delta_swamp_creatures_sheet.png",
+      "conceptSlot": [
+        2,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 8122,
+      "triangles": 13262,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/cenote_toader.glb"
+    },
+    "scalevine_stalker": {
+      "actor_type": 422,
+      "id": "scalevine_stalker",
+      "name": "Scalevine Stalker",
+      "family": "stalker",
+      "region": "Verdant Stair",
+      "conceptSheet": "verdant_ssarathi_jungle_creatures_sheet.png",
+      "conceptSlot": [
+        1,
+        1
+      ],
+      "qualityTier": "production",
+      "vertices": 15748,
+      "triangles": 22202,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/scalevine_stalker.glb"
+    },
+    "sunscale_basilisk": {
+      "actor_type": 423,
+      "id": "sunscale_basilisk",
+      "name": "Sunscale Basilisk",
+      "family": "basilisk",
+      "region": "Verdant Stair",
+      "conceptSheet": "verdant_ssarathi_jungle_creatures_sheet.png",
+      "conceptSlot": [
+        0,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 20479,
+      "triangles": 18308,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/sunscale_basilisk.glb"
+    },
+    "mangrove_crab": {
+      "actor_type": 424,
+      "id": "mangrove_crab",
+      "name": "Mangrove Crab",
+      "family": "crab",
+      "region": "Manymouth Delta",
+      "conceptSheet": "manymouth_delta_swamp_creatures_sheet.png",
+      "conceptSlot": [
+        0,
+        0
+      ],
+      "qualityTier": "production",
+      "vertices": 14298,
+      "triangles": 9832,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mangrove_crab.glb"
+    },
+    "mudskipper_beast": {
+      "actor_type": 425,
+      "id": "mudskipper_beast",
+      "name": "Mudskipper Beast",
+      "family": "mudskipper",
+      "region": "Manymouth Delta",
+      "conceptSheet": "manymouth_delta_swamp_creatures_sheet.png",
+      "conceptSlot": [
+        1,
+        2
+      ],
+      "qualityTier": "production",
+      "vertices": 6001,
+      "triangles": 10100,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mudskipper_beast.glb"
+    },
+    "delta_crocodile": {
+      "actor_type": 426,
+      "id": "delta_crocodile",
+      "name": "Delta Crocodile",
+      "family": "crocodile",
+      "region": "Manymouth Delta",
+      "conceptSheet": "manymouth_delta_swamp_creatures_sheet.png",
+      "conceptSlot": [
+        0,
+        1
+      ],
+      "qualityTier": "production",
+      "vertices": 28089,
+      "triangles": 20436,
+      "materials": 8,
+      "embeddedTextures": 13,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/delta_crocodile.glb"
+    },
+    "floodmaw": {
+      "actor_type": 427,
+      "id": "floodmaw",
+      "name": "Floodmaw",
+      "family": "floodmaw",
+      "region": "Manymouth Delta",
+      "conceptSheet": "manymouth_delta_swamp_creatures_sheet.png",
+      "conceptSlot": [
+        3,
+        2
+      ],
+      "qualityTier": "production",
+      "vertices": 25277,
+      "triangles": 21196,
+      "materials": 8,
+      "embeddedTextures": 14,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/floodmaw.glb"
     }
   },
   "equipment": {
@@ -1311,7 +1871,7 @@
     }
   },
   "validation": {
-    "files": 123,
+    "files": 151,
     "results": {
       "godot-client/assets/actors/native/races/mycelari_female.glb": {
         "nodes": 78,
@@ -1445,6 +2005,12 @@
         "skins": 1,
         "animations": 7
       },
+      "godot-client/assets/actors/native/creatures/delta_crocodile.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
       "godot-client/assets/actors/native/creatures/red_fox.glb": {
         "nodes": 22,
         "meshes": 1,
@@ -1457,6 +2023,30 @@
         "skins": 1,
         "animations": 7
       },
+      "godot-client/assets/actors/native/creatures/lakeglass_drake.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/scalevine_stalker.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/dunrunner.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/cenote_toader.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
       "godot-client/assets/actors/native/creatures/wild_boar.glb": {
         "nodes": 22,
         "meshes": 1,
@@ -1464,6 +2054,24 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/giant_rat.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/canopy_glider.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/barrow_quillbeast.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/stormglass_grazer.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,
@@ -1493,7 +2101,37 @@
         "skins": 1,
         "animations": 7
       },
+      "godot-client/assets/actors/native/creatures/rootback_boar.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
       "godot-client/assets/actors/native/creatures/giant_komodo.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/sunmane_cat.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mudskipper_beast.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/reedhorn_stag.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/gate_turtle.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,
@@ -1511,6 +2149,24 @@
         "skins": 1,
         "animations": 7
       },
+      "godot-client/assets/actors/native/creatures/mirrorfin_otter.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/snowcrest_hare.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/iceback_ursid.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
       "godot-client/assets/actors/native/creatures/ridgehorn.glb": {
         "nodes": 22,
         "meshes": 1,
@@ -1523,13 +2179,37 @@
         "skins": 1,
         "animations": 7
       },
+      "godot-client/assets/actors/native/creatures/mangrove_crab.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
       "godot-client/assets/actors/native/creatures/lava_hound.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
+      "godot-client/assets/actors/native/creatures/floodmaw.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/sunscale_basilisk.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
       "godot-client/assets/actors/native/creatures/dire_wolf.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/crystal_mite.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,
@@ -1548,6 +2228,18 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/desert_tortoise.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/resonant_hound.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/prism_wyrm.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,
@@ -1577,7 +2269,19 @@
         "skins": 1,
         "animations": 7
       },
+      "godot-client/assets/actors/native/creatures/steppe_aurochs.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
       "godot-client/assets/actors/native/creatures/snow_hare.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/dustscale_drake.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,
@@ -1589,7 +2293,31 @@
         "skins": 1,
         "animations": 7
       },
+      "godot-client/assets/actors/native/creatures/rimeclaw.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/moor_wisp_hound.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
       "godot-client/assets/actors/native/creatures/sunscale_drake.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/amberhart.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/glacier_ram.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,

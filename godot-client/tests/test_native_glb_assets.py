@@ -12,34 +12,16 @@ ROOT = Path(__file__).resolve().parents[2]
 CLIENT = ROOT / "godot-client"
 
 NYMARA_INVASION_MODELS = {
-    400: ("mirrorfin_otter", "river_otter"),
-    401: ("reedhorn_stag", "elk"),
-    402: ("gate_turtle", "desert_tortoise"),
-    403: ("lakeglass_drake", "sunscale_drake"),
-    404: ("snowcrest_hare", "snow_hare"),
-    405: ("glacier_ram", "thunder_ram"),
-    406: ("iceback_ursid", "ice_bear"),
-    407: ("rimeclaw", "frost_tiger"),
-    408: ("crystal_mite", "ash_crawler"),
-    409: ("resonant_hound", "dire_wolf"),
-    410: ("stormglass_grazer", "armored_rhino"),
-    411: ("prism_wyrm", "giant_komodo"),
-    412: ("dunrunner", "emberfox"),
-    413: ("steppe_aurochs", "ridgehorn"),
-    414: ("sunmane_cat", "saber_tooth_cat"),
-    415: ("dustscale_drake", "fire_salamander"),
-    416: ("amberhart", "moose"),
-    417: ("rootback_boar", "mossback_boar"),
-    418: ("moor_wisp_hound", "frost_maw"),
-    419: ("barrow_quillbeast", "porcupine"),
-    420: ("canopy_glider", "two_tailed_fox"),
-    421: ("cenote_toader", "miretoad"),
-    422: ("scalevine_stalker", "giant_komodo"),
-    423: ("sunscale_basilisk", "sunscale_drake"),
-    424: ("mangrove_crab", "bog_lurker"),
-    425: ("mudskipper_beast", "miretoad"),
-    426: ("delta_crocodile", "giant_crocodile"),
-    427: ("floodmaw", "giant_crocodile"),
+    400: "mirrorfin_otter", 401: "reedhorn_stag", 402: "gate_turtle",
+    403: "lakeglass_drake", 404: "snowcrest_hare", 405: "glacier_ram",
+    406: "iceback_ursid", 407: "rimeclaw", 408: "crystal_mite",
+    409: "resonant_hound", 410: "stormglass_grazer", 411: "prism_wyrm",
+    412: "dunrunner", 413: "steppe_aurochs", 414: "sunmane_cat",
+    415: "dustscale_drake", 416: "amberhart", 417: "rootback_boar",
+    418: "moor_wisp_hound", 419: "barrow_quillbeast", 420: "canopy_glider",
+    421: "cenote_toader", 422: "scalevine_stalker", 423: "sunscale_basilisk",
+    424: "mangrove_crab", 425: "mudskipper_beast", 426: "delta_crocodile",
+    427: "floodmaw",
 }
 
 
@@ -66,9 +48,9 @@ class NativeGlbAssetsTest(unittest.TestCase):
     def test_catalog_is_complete(self) -> None:
         self.assertEqual(16, len(self.catalog["races"]))
         self.assertEqual(8, len(self.catalog["hair"]))
-        self.assertEqual(32, len(self.catalog["creatures"]))
+        self.assertEqual(60, len(self.catalog["creatures"]))
         self.assertEqual(66, len(self.catalog["equipment"]))
-        self.assertEqual(123, self.catalog["validation"]["files"])
+        self.assertEqual(151, self.catalog["validation"]["files"])
 
     def test_player_rigs_preserve_current_skeleton_and_budget(self) -> None:
         for model_id, entry in self.catalog["races"].items():
@@ -93,7 +75,7 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertLess(entry["bounds"]["max"][1], .31)
 
     def test_creatures_have_new_rigs_and_embedded_clips(self) -> None:
-        expected_actor_types = set(range(204, 236))
+        expected_actor_types = set(range(204, 236)) | set(range(400, 428))
         actual_actor_types = {entry["actor_type"] for entry in self.catalog["creatures"].values()}
         self.assertEqual(expected_actor_types, actual_actor_types)
         for slug, entry in self.catalog["creatures"].items():
@@ -105,14 +87,21 @@ class NativeGlbAssetsTest(unittest.TestCase):
 
     def test_nymara_invasion_actor_types_resolve_to_native_models(self) -> None:
         self.assertEqual(set(range(400, 428)), set(NYMARA_INVASION_MODELS))
-        for actor_type, (creature_type, model_id) in NYMARA_INVASION_MODELS.items():
-            with self.subTest(actor_type=actor_type, creature=creature_type):
+        for actor_type, model_id in NYMARA_INVASION_MODELS.items():
+            with self.subTest(actor_type=actor_type, creature=model_id):
                 self.assertEqual(model_id, self.models["actorTypes"][str(actor_type)])
                 model = self.models["models"][model_id]
                 scene = CLIENT / model["scene"].removeprefix("res://")
                 document = glb_document(scene)
                 self.assertTrue(document.get("meshes"), model_id)
-                self.assertTrue(document.get("animations"), model_id)
+                self.assertEqual(7, len(document.get("animations", [])), model_id)
+                self.assertEqual(21, len(document["skins"][0]["joints"]), model_id)
+                self.assertGreaterEqual(len(document.get("materials", [])), 5, model_id)
+                self.assertGreaterEqual(len(document.get("images", [])), 12, model_id)
+                self.assertGreaterEqual(len(document.get("textures", [])), 12, model_id)
+                catalog_entry = self.catalog["creatures"][model_id]
+                self.assertEqual("production", catalog_entry["qualityTier"])
+                self.assertGreater(catalog_entry["vertices"], 5_000)
 
     def test_every_equipment_visual_is_registered(self) -> None:
         expected = {f"{entry['part']}:{entry['visual']}"

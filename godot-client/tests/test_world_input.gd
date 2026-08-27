@@ -412,16 +412,16 @@ func _run() -> void:
 		"enhanced": true, "kind": 1, "actor_type": 1})) == "luminous_male",
 		"enhanced player wire packets retain the native luminous model")
 	var invasion_models: Dictionary = {
-		400: "river_otter", 401: "elk", 402: "desert_tortoise",
-		403: "sunscale_drake", 404: "snow_hare", 405: "thunder_ram",
-		406: "ice_bear", 407: "frost_tiger", 408: "ash_crawler",
-		409: "dire_wolf", 410: "armored_rhino", 411: "giant_komodo",
-		412: "emberfox", 413: "ridgehorn", 414: "saber_tooth_cat",
-		415: "fire_salamander", 416: "moose", 417: "mossback_boar",
-		418: "frost_maw", 419: "porcupine", 420: "two_tailed_fox",
-		421: "miretoad", 422: "giant_komodo", 423: "sunscale_drake",
-		424: "bog_lurker", 425: "miretoad", 426: "giant_crocodile",
-		427: "giant_crocodile",
+		400: "mirrorfin_otter", 401: "reedhorn_stag", 402: "gate_turtle",
+		403: "lakeglass_drake", 404: "snowcrest_hare", 405: "glacier_ram",
+		406: "iceback_ursid", 407: "rimeclaw", 408: "crystal_mite",
+		409: "resonant_hound", 410: "stormglass_grazer", 411: "prism_wyrm",
+		412: "dunrunner", 413: "steppe_aurochs", 414: "sunmane_cat",
+		415: "dustscale_drake", 416: "amberhart", 417: "rootback_boar",
+		418: "moor_wisp_hound", 419: "barrow_quillbeast", 420: "canopy_glider",
+		421: "cenote_toader", 422: "scalevine_stalker", 423: "sunscale_basilisk",
+		424: "mangrove_crab", 425: "mudskipper_beast", 426: "delta_crocodile",
+		427: "floodmaw",
 	}
 	for actor_type_value: Variant in invasion_models:
 		var invasion_actor_type: int = int(actor_type_value)

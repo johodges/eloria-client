@@ -5,6 +5,8 @@ on:
     paths:
       - "godot-client/**"
       - "eloria-assets/tools/build_native_nymara_glbs.py"
+      - "eloria-assets/tools/build_production_invasion_creatures.py"
+      - "eloria-assets/tools/render_invasion_creature_comparison.py"
       - "eloria-assets/tools/render_native_glb_preview.py"
       - "eloria-assets/maps/four-gates-city/**"
       - "eloria-assets/tools/*four_gates*.py"
@@ -109,6 +111,38 @@ jobs:
         with:
           name: rendered-four-gates-map
           path: godot-client/test-artifacts/four-gates
+          if-no-files-found: error
+
+  rendered-invasion-creatures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      image: barichello/godot-ci:4.7.2
+    env:
+      ELORIA_ARTIFACT_DIR: ${{ github.workspace }}/godot-client/test-artifacts/invasion-creatures
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install virtual display and software rendering
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            xvfb xauth libgl1-mesa-dri libfontconfig1 libxcursor1 libxinerama1 \
+            libxrandr2 libxi6 libxkbcommon0 libasound2t64 libpulse0 libudev1
+      - name: Import production creature assets
+        run: godot --headless --path godot-client --editor --quit
+      - name: Invade and render every creature through the client actor pipeline
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_invasion_creatures.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/render.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed|FAIL:" "$ELORIA_ARTIFACT_DIR/render.log"
+          test -s "$ELORIA_ARTIFACT_DIR/validation.json"
+          test "$(find "$ELORIA_ARTIFACT_DIR" -maxdepth 1 -name '*.png' | wc -l)" -eq 28
+      - name: Upload invasion creature rendered evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-invasion-creatures
+          path: godot-client/test-artifacts/invasion-creatures
           if-no-files-found: error
 
   rendered-server-session:

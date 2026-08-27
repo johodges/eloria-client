@@ -19,6 +19,12 @@ import struct
 import numpy as np
 from PIL import Image
 
+from build_production_invasion_creatures import (
+    INVASION_CREATURES,
+    build_invasion_creature,
+    registry_entry as invasion_creature_registry_entry,
+)
+
 
 COMPONENT_DTYPES = {5121: "<u1", 5122: "<i2", 5123: "<u2", 5125: "<u4", 5126: "<f4"}
 COMPONENT_TYPES = {np.dtype("uint8"): 5121, np.dtype("int16"): 5122,
@@ -1272,6 +1278,12 @@ def build_model_registry() -> dict:
         }
         actor_types[str(actor_type)] = slug
 
+    # Server invasion actor types have bespoke concept-directed assets.  These
+    # entries intentionally override the former generic wildlife aliases.
+    for spec in INVASION_CREATURES:
+        models[spec.slug] = invasion_creature_registry_entry(spec.slug)
+        actor_types[str(spec.actor_type)] = spec.slug
+
     # Humanoid enemies share player rigs and gain equipment-defined silhouettes.
     enemy_models = {
         236: "luminous_male", 237: "luminous_male", 238: "stoneborn_male",
@@ -1284,22 +1296,6 @@ def build_model_registry() -> dict:
         257: "orun_male", 258: "orun_male", 259: "ssarathi_male",
     }
     actor_types.update({str(key): value for key, value in enemy_models.items()})
-    # Invasion-only server IDs intentionally reuse the production native
-    # creature library. Keep these in the generator so rebuilding character
-    # assets cannot silently regress them to magenta fallbacks.
-    invasion_models = {
-        400: "river_otter", 401: "elk", 402: "desert_tortoise",
-        403: "sunscale_drake", 404: "snow_hare", 405: "thunder_ram",
-        406: "ice_bear", 407: "frost_tiger", 408: "ash_crawler",
-        409: "dire_wolf", 410: "armored_rhino", 411: "giant_komodo",
-        412: "emberfox", 413: "ridgehorn", 414: "saber_tooth_cat",
-        415: "fire_salamander", 416: "moose", 417: "mossback_boar",
-        418: "frost_maw", 419: "porcupine", 420: "two_tailed_fox",
-        421: "miretoad", 422: "giant_komodo", 423: "sunscale_drake",
-        424: "bog_lurker", 425: "miretoad", 426: "giant_crocodile",
-        427: "giant_crocodile",
-    }
-
     npc_looks = {}
     cultures = {
         "luminous": ["official", "guard", "merchant", "ferryman", "scholar", "lake_priest", "civilian"],
@@ -1320,7 +1316,6 @@ def build_model_registry() -> dict:
                     "equipmentVisuals": {str(k): v for k, v in culture_loadout(culture, role).items()},
                 }
                 actor_type += 1
-    actor_types.update({str(key): value for key, value in invasion_models.items()})
     return {"schemaVersion": 2, "models": models, "actorTypes": actor_types,
             "creationOptions": creation, "npcLooks": npc_looks}
 
@@ -1384,6 +1379,11 @@ def main() -> None:
         path=args.output/"creatures"/f"{slug}.glb"
         manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":str(path.relative_to(repo_root))}
         print("creature",slug,manifest["creatures"][slug])
+    for spec in INVASION_CREATURES:
+        path=args.output/"creatures"/f"{spec.slug}.glb"
+        manifest["creatures"][spec.slug]=build_invasion_creature(path,spec)|{
+            "path":str(path.relative_to(repo_root))}
+        print("invasion creature",spec.slug,manifest["creatures"][spec.slug])
     for slug,label,part,visual,kind,base,accent in EQUIPMENT:
         path=args.output/"equipment"/f"{slug}.glb"
         manifest["equipment"][slug]=build_equipment(path,slug,label,kind,base,accent)|{
