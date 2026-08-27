@@ -64,11 +64,11 @@ func _run() -> void:
 
 	var world_loader: WorldLoader = main.get_node(
 		"GameView/ViewportContainer/Viewport/WorldRoot/WorldLoader") as WorldLoader
-	if not await _wait_for(func() -> bool:
+	var presentation_ready: Callable = func() -> bool:
 		return not AppState.current_map.is_empty() and AppState.local_actor_id >= 0
 			and (main.get("actor_nodes") as Dictionary).has(AppState.local_actor_id)
-			and world_loader.world_root != null,
-			SESSION_TIMEOUT_SECONDS):
+			and world_loader.world_root != null
+	if not await _wait_for(presentation_ready, SESSION_TIMEOUT_SECONDS):
 		_fail("authoritative map/local actor presentation timed out")
 		_finish()
 		return
@@ -192,10 +192,11 @@ func _send_real_world_click(main: Control, camera: Camera3D,
 		click.pressed = true
 		click.position = viewport_position
 		main.call("_on_world_gui_input", click)
-		var changed: bool = await _wait_for(func() -> bool:
+		var actor_tile_changed: Callable = func() -> bool:
 			var dto: Dictionary = AppState.actors.get(AppState.local_actor_id, {}) as Dictionary
 			return Vector2i(int(dto.get("x", initial_tile.x)),
-				int(dto.get("y", initial_tile.y))) != initial_tile, 8.0)
+				int(dto.get("y", initial_tile.y))) != initial_tile
+		var changed: bool = await _wait_for(actor_tile_changed, 8.0)
 		if changed:
 			return true
 		# Restore focus before trying another reachable direction.
