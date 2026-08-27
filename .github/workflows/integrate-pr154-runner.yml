@@ -1,0 +1,85 @@
+name: Integrate PR154 into combined Godot branch
+
+on:
+  push:
+    branches:
+      - codex/integrate-pr154-runner-20260827
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Merge Four Gates detail work cleanly
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin codex/native-guard-evidence-20260827 art/godot-four-gates-detail-pass
+          git checkout -B codex/integrated-four-gates-detail-20260827 origin/codex/native-guard-evidence-20260827
+
+          set +e
+          git merge --no-commit --no-ff origin/art/godot-four-gates-detail-pass
+          merge_status=$?
+          set -e
+
+          if [ "$merge_status" -ne 0 ]; then
+            mapfile -t conflicts < <(git diff --name-only --diff-filter=U)
+            printf 'Merge conflicts:\n%s\n' "${conflicts[*]}"
+            for path in "${conflicts[@]}"; do
+              case "$path" in
+                eloria-assets/maps/four-gates-city/four-gates-city.json)
+                  git checkout --theirs -- "$path"
+                  ;;
+                .github/workflows/godot-client.yml)
+                  base_sha=$(git merge-base HEAD MERGE_HEAD)
+                  git show "HEAD:$path" > /tmp/workflow-ours.yml
+                  git show "$base_sha:$path" > /tmp/workflow-base.yml
+                  git show "MERGE_HEAD:$path" > /tmp/workflow-theirs.yml
+                  set +e
+                  git merge-file -p /tmp/workflow-ours.yml /tmp/workflow-base.yml /tmp/workflow-theirs.yml > "$path"
+                  workflow_status=$?
+                  set -e
+                  if [ "$workflow_status" -gt 1 ] || grep -q '^<<<<<<< ' "$path"; then
+                    echo "Unable to resolve workflow conflict automatically"
+                    exit 1
+                  fi
+                  ;;
+                *)
+                  echo "Unexpected conflict: $path"
+                  exit 1
+                  ;;
+              esac
+            done
+          fi
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path('eloria-assets/maps/four-gates-city/four-gates-city.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+          navigation = data.setdefault('navigation', {})
+          navigation['surfaceNodePrefixes'] = ['Terrain_City_Plateau']
+          path.write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+          PY
+
+          git add .
+          if git diff --name-only --diff-filter=U | grep -q .; then
+            echo "Unresolved conflicts remain"
+            git diff --name-only --diff-filter=U
+            exit 1
+          fi
+          grep -q '"assetVersion": "0.9.0"' eloria-assets/maps/four-gates-city/four-gates-city.json
+          grep -q '"Terrain_City_Plateau"' eloria-assets/maps/four-gates-city/four-gates-city.json
+          grep -q 'four-gates-central-plaza-detail.png' .github/workflows/godot-client.yml
+          git diff --cached --check
+          git commit -m "Merge Four Gates 0.9 detail pass into combined Godot branch"
+          git push --force-with-lease origin HEAD:codex/integrated-four-gates-detail-20260827
