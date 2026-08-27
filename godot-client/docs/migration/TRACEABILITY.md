@@ -52,9 +52,10 @@ The gate fails unless it proves all of the following before uploading evidence:
   client, and chat sent by the second client is decoded and presented by the
   primary reducer/UI;
 - the authoritative inventory and statistics snapshots are non-empty, the
-  inventory and statistics windows fit within 1280x720, and item icons,
-  quantities, character values, item quick slots, and all configured spell
-  quick slots are presented from that state;
+  inventory and statistics windows fit within 1280x720, and every item has a
+  native or explicitly disclosed independent-Eloria substitute icon plus its
+  quantity; character values, item quick slots, and all configured spell quick
+  slots are presented from that state;
 - each 1280×720 capture contains rendered color variation rather than a dummy frame.
 
 The artifact contains default, rotated, panned, zoomed, full-map, and
