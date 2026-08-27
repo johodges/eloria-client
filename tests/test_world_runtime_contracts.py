@@ -20,6 +20,11 @@ class WorldRuntimeContracts(unittest.TestCase):
         self.assertNotIn("bind_texture(p.tex)", source)
         self.assertIn("last_texture=-1", source)
 
+    def test_portable_pathfinder_failure_is_not_bypassed(self):
+        source = (ROOT / "multiplayer.c").read_text(encoding="utf-8")
+        self.assertIn('#include "world_package.h"', source)
+        self.assertIn("if (pathfinder_failed && world_package_active())", source)
+
     def test_reported_spawn_neighbourhood_is_walkable(self):
         script = ROOT / "eloria-assets/tools/package_four_gates_world.py"
         spec = importlib.util.spec_from_file_location("four_gates_package", script)
