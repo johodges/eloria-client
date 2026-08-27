@@ -112,6 +112,18 @@ static func npc_response(actor_id: int, response_id: int) -> PackedByteArray:
 		actor_id & 0xff, (actor_id >> 8) & 0xff,
 		response_id & 0xff, (response_id >> 8) & 0xff]))
 
+static func look_at_inventory_item(slot: int) -> PackedByteArray:
+	return encode(ClientMessage.LOOK_AT_INVENTORY_ITEM,
+		PackedByteArray([clampi(slot, 0, 255)]))
+
+static func use_inventory_item(slot: int) -> PackedByteArray:
+	return encode(ClientMessage.USE_INVENTORY_ITEM,
+		PackedByteArray([clampi(slot, 0, 255)]))
+
+static func move_inventory_item(source: int, destination: int) -> PackedByteArray:
+	return encode(ClientMessage.MOVE_INVENTORY_ITEM, PackedByteArray([
+		clampi(source, 0, 255), clampi(destination, 0, 255)]))
+
 static func actor_command_step(command: int) -> Vector2i:
 	# Server movement frames are the authoritative one-tile updates used by the
 	# legacy client. Walk and run use the same tile delta; timing differs.
@@ -179,6 +191,22 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_stats(payload)
 		ServerMessage.SEND_PARTIAL_STAT:
 			return decode_partial_stats(payload)
+		ServerMessage.HERE_YOUR_INVENTORY:
+			return decode_inventory(payload)
+		ServerMessage.GET_NEW_INVENTORY_ITEM:
+			return decode_inventory_update(payload)
+		ServerMessage.REMOVE_ITEM_FROM_INVENTORY:
+			if payload.is_empty():
+				return {"type": "invalid", "error": "inventory_remove_length"}
+			var removed_slots: Array[int] = []
+			for slot_value: int in payload:
+				removed_slots.append(slot_value)
+			return {"type": "inventory_remove", "slots": removed_slots}
+		ServerMessage.INVENTORY_ITEM_TEXT:
+			if payload.is_empty():
+				return {"type": "invalid", "error": "inventory_text_length"}
+			return {"type": "inventory_text", "color": int(payload[0]),
+				"text": nul_string(payload.slice(1))}
 		ServerMessage.RAW_TEXT:
 			if payload.is_empty():
 				return {"type": "invalid", "error": "chat_length"}
@@ -249,6 +277,41 @@ static func decode_partial_stats(payload: PackedByteArray) -> Dictionary:
 		var slot: int = int(payload[offset])
 		values[stat_key(slot)] = s32(payload, offset + 1)
 	return {"type": "partial_stats", "values": values}
+
+static func decode_inventory(payload: PackedByteArray) -> Dictionary:
+	if payload.is_empty():
+		return {"type": "invalid", "error": "inventory_length"}
+	var count: int = int(payload[0])
+	var entry_size: int = 8
+	if payload.size() == 1 + count * 10:
+		entry_size = 10
+	elif payload.size() != 1 + count * 8:
+		return {"type": "invalid", "error": "inventory_length"}
+	var items: Array[Dictionary] = []
+	for index: int in range(count):
+		var offset: int = 1 + index * entry_size
+		items.append(decode_inventory_item(payload, offset, entry_size == 10))
+	return {"type": "inventory", "items": items}
+
+static func decode_inventory_update(payload: PackedByteArray) -> Dictionary:
+	if payload.size() != 8 and payload.size() != 10:
+		return {"type": "invalid", "error": "inventory_update_length"}
+	return {"type": "inventory_update",
+		"item": decode_inventory_item(payload, 0, payload.size() == 10)}
+
+static func decode_inventory_item(payload: PackedByteArray, offset: int,
+		with_uid: bool) -> Dictionary:
+	var flags: int = int(payload[offset + 7])
+	var item: Dictionary = {
+		"image_id": u16(payload, offset), "quantity": u32(payload, offset + 2),
+		"slot": int(payload[offset + 6]), "flags": flags,
+		"reagent": (flags & 1) != 0, "resource": (flags & 2) != 0,
+		"stackable": (flags & 4) != 0, "inventory_usable": (flags & 8) != 0,
+		"tile_usable": (flags & 16) != 0, "player_usable": (flags & 32) != 0,
+		"object_usable": (flags & 64) != 0, "on_off": (flags & 128) != 0}
+	if with_uid:
+		item["uid"] = u16(payload, offset + 8)
+	return item
 
 static func stat_key(slot: int) -> String:
 	var keys: Dictionary = {

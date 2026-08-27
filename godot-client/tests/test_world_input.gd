@@ -91,12 +91,35 @@ func _run() -> void:
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
 	var right_quickbar: Control = main.get_node("GameView/ItemSpellQuickbar") as Control
 	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
+	var inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
+	var inventory_button: Button = main.get_node(
+		"GameView/Quickbar/Buttons/InventoryButton") as Button
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
 		"stats and item/spell quickbar occupy the right HUD rail")
 	_expect(not stats_panel.visible, "statistics window starts closed")
 	main.call("_on_stats_button_pressed")
+	_expect(not inventory_panel.visible and not inventory_button.disabled,
+		"real inventory window starts closed with its HUD action enabled")
+	main.call("_on_inventory_button_pressed")
+	_expect(inventory_panel.visible and not stats_panel.visible,
+		"inventory action opens the window and centrally closes statistics")
+	var app_state_inventory: Node = root.get_node("AppState")
+	app_state_inventory.set("inventory", {0: {
+		"image_id": 321, "quantity": 9, "slot": 0, "flags": 12,
+		"inventory_usable": true, "stackable": true}})
+	main.call("_sync_inventory")
+	var first_inventory_slot: Button = main.get_node(
+		"GameView/InventoryPanel/Content/Scroll/InventoryGrid").get_child(0) as Button
+	var first_quick_slot: Button = main.get_node(
+		"GameView/ItemSpellQuickbar/QuickContent/Slots/Slot1") as Button
+	_expect(first_inventory_slot.text.contains("#321") and not first_inventory_slot.disabled,
+		"inventory snapshot populates its server slot")
+	_expect(first_quick_slot.text.contains("#321") and not first_quick_slot.disabled,
+		"usable inventory slot populates the matching live quick slot")
+	app_state_inventory.set("inventory", {})
+	main.call("_on_inventory_close_pressed")
 	_expect(stats_panel.visible, "statistics button opens the real stats window")
 	main.call("_on_stats_button_pressed")
 	var viewport_rect: Rect2 = root.get_visible_rect()

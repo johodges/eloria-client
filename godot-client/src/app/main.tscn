@@ -322,10 +322,10 @@ tooltip_text = "Select a player to trade"
 disabled = true
 
 [node name="InventoryButton" type="Button" parent="GameView/Quickbar/Buttons"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Inventory"
-tooltip_text = "Inventory window is not migrated yet"
-disabled = true
+tooltip_text = "Inventory"
 
 [node name="StatsButton" type="Button" parent="GameView/Quickbar/Buttons"]
 custom_minimum_size = Vector2(44, 44)
@@ -435,6 +435,57 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(280, 430)
 bbcode_enabled = true
 scroll_active = true
+
+[node name="InventoryPanel" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -280.0
+offset_right = 220.0
+offset_bottom = 250.0
+
+[node name="Content" type="VBoxContainer" parent="GameView/InventoryPanel"]
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="GameView/InventoryPanel/Content"]
+text = "INVENTORY"
+horizontal_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="GameView/InventoryPanel/Content"]
+custom_minimum_size = Vector2(500, 390)
+horizontal_scroll_mode = 0
+
+[node name="InventoryGrid" type="GridContainer" parent="GameView/InventoryPanel/Content/Scroll"]
+unique_name_in_owner = true
+columns = 6
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+
+[node name="InventoryDescription" type="RichTextLabel" parent="GameView/InventoryPanel/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 48)
+fit_content = true
+text = "Select an item to inspect it."
+
+[node name="Actions" type="HBoxContainer" parent="GameView/InventoryPanel/Content"]
+alignment = 2
+
+[node name="InventoryUse" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Use selected"
+tooltip_text = "Use the selected item"
+disabled = true
+
+[node name="Inspect" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
+text = "Inspect"
+
+[node name="Close" type="Button" parent="GameView/InventoryPanel/Content/Actions"]
+text = "Close"
 
 [node name="Help" type="Label" parent="GameView"]
 visible = false
@@ -690,5 +741,9 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/Buttons/MapButton" to="." method="_on_map_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/SitButton" to="." method="_on_sit_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/ChatButton" to="." method="_on_chat_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
+[connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryUse" to="." method="_on_inventory_use_pressed"]
+[connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/Inspect" to="." method="_on_inventory_inspect_pressed"]
+[connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/Close" to="." method="_on_inventory_close_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/DisconnectButton" to="." method="_on_disconnect_pressed"]

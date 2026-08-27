@@ -16,6 +16,12 @@ func _init() -> void:
 		PackedByteArray([28, 5, 0, 0x78, 0x56, 0x34, 0x12]))
 	_expect_bytes("npc response fixture", EloriaProtocol.npc_response(0x1234, 0x5678),
 		PackedByteArray([29, 5, 0, 0x34, 0x12, 0x78, 0x56]))
+	_expect_bytes("inspect inventory fixture", EloriaProtocol.look_at_inventory_item(7),
+		PackedByteArray([19, 2, 0, 7]))
+	_expect_bytes("use inventory fixture", EloriaProtocol.use_inventory_item(7),
+		PackedByteArray([31, 2, 0, 7]))
+	_expect_bytes("move inventory fixture", EloriaProtocol.move_inventory_item(7, 9),
+		PackedByteArray([20, 3, 0, 7, 9]))
 	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
 	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
 	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")
@@ -147,6 +153,32 @@ func _init() -> void:
 		PackedByteArray([46, 0xfb, 0xff, 0xff, 0xff]))
 	_expect(partial_event.type == "partial_stats" and int(partial_event.values.food) == -5,
 		"signed partial food update")
+
+	var inventory_payload: PackedByteArray = PackedByteArray([
+		2,
+		0x34, 0x12, 5, 0, 0, 0, 0, 12,
+		0x78, 0x56, 0x2c, 0x01, 0, 0, 7, 6])
+	var inventory_event: Dictionary = EloriaProtocol.decode_server(19, inventory_payload)
+	_expect(inventory_event.type == "inventory" and inventory_event.items.size() == 2,
+		"full inventory snapshot")
+	_expect(int(inventory_event.items[0].image_id) == 0x1234
+		and int(inventory_event.items[0].quantity) == 5
+		and int(inventory_event.items[0].slot) == 0
+		and bool(inventory_event.items[0].inventory_usable), "inventory item fields and flags")
+	var inventory_update: Dictionary = EloriaProtocol.decode_server(21,
+		PackedByteArray([0x34, 0x12, 4, 0, 0, 0, 0, 12]))
+	_expect(inventory_update.type == "inventory_update"
+		and int(inventory_update.item.quantity) == 4, "incremental inventory quantity")
+	var inventory_remove: Dictionary = EloriaProtocol.decode_server(22,
+		PackedByteArray([0, 7]))
+	_expect(inventory_remove.type == "inventory_remove"
+		and inventory_remove.slots == [0, 7], "batched inventory removal")
+	var item_text: Dictionary = EloriaProtocol.decode_server(20,
+		PackedByteArray([130, 80, 111, 116, 105, 111, 110, 0]))
+	_expect(item_text.type == "inventory_text" and item_text.text == "Potion",
+		"inventory inspection text")
+	_expect(EloriaProtocol.decode_server(19, PackedByteArray([1, 0])).type == "invalid",
+		"malformed inventory snapshot rejected")
 
 	print("protocol tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)

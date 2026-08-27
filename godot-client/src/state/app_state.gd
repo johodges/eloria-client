@@ -11,7 +11,8 @@ var authenticated := false
 var local_actor_id := -1
 var current_map := ""
 var actors: Dictionary = {}
-var inventory: Array[Dictionary] = []
+var inventory: Dictionary = {}
+var inventory_text := ""
 var stats: Dictionary = {}
 var chat_lines: Array[Dictionary] = []
 var selected_actor_id := -1
@@ -31,6 +32,7 @@ func _on_connection_state_changed(value: String) -> void:
 		local_actor_id = -1
 		actors.clear()
 		inventory.clear()
+		inventory_text = ""
 		stats.clear()
 		chat_lines.clear()
 		current_map = ""
@@ -92,6 +94,23 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				var stat_key: String = str(stat_key_value)
 				stats[stat_key] = event.values[stat_key_value]
 			state_changed.emit(&"stats")
+		"inventory":
+			inventory.clear()
+			for raw_item: Variant in event.items:
+				var item: Dictionary = raw_item as Dictionary
+				inventory[int(item.get("slot", -1))] = item
+			state_changed.emit(&"inventory")
+		"inventory_update":
+			var updated_item: Dictionary = event.item as Dictionary
+			inventory[int(updated_item.get("slot", -1))] = updated_item
+			state_changed.emit(&"inventory")
+		"inventory_remove":
+			for raw_slot: Variant in event.slots:
+				inventory.erase(int(raw_slot))
+			state_changed.emit(&"inventory")
+		"inventory_text":
+			inventory_text = str(event.text)
+			state_changed.emit(&"inventory_text")
 		"chat":
 			chat_lines.append({"channel": event.channel, "text": event.text})
 			if chat_lines.size() > 1000:

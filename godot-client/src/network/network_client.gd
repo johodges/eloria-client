@@ -49,6 +49,15 @@ func touch_actor(actor_id: int) -> Error:
 func respond_to_npc(actor_id: int, response_id: int) -> Error:
 	return send_frame(EloriaProtocol.npc_response(actor_id, response_id))
 
+func look_at_inventory_item(slot: int) -> Error:
+	return send_frame(EloriaProtocol.look_at_inventory_item(slot))
+
+func use_inventory_item(slot: int) -> Error:
+	return send_frame(EloriaProtocol.use_inventory_item(slot))
+
+func move_inventory_item(source: int, destination: int) -> Error:
+	return send_frame(EloriaProtocol.move_inventory_item(source, destination))
+
 func create_character(username: String, password: String, appearance: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)
 

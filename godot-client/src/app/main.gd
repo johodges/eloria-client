@@ -36,6 +36,11 @@ extends Control
 @onready var mana_text: Label = %ManaText
 @onready var stats_panel: Control = %StatsPanel
 @onready var stats_text: RichTextLabel = %StatsText
+@onready var inventory_panel: Control = %InventoryPanel
+@onready var inventory_grid: GridContainer = %InventoryGrid
+@onready var inventory_description: RichTextLabel = %InventoryDescription
+@onready var inventory_use_button: Button = %InventoryUse
+@onready var quick_slot_container: GridContainer = $GameView/ItemSpellQuickbar/QuickContent/Slots
 @onready var player_map_marker: MeshInstance3D = %PlayerMapMarker
 @onready var map_label: Label = %MapLabel
 @onready var actor_label: Label = %ActorLabel
@@ -59,6 +64,9 @@ var adapter := CoordinateAdapter.new({"walkingHeight": 0.0, "invertServerY": tru
 var preview_actor: ReplicatedActor3D
 var pending_create_username := ""
 var pending_create_password := ""
+var inventory_slot_buttons: Array[Button] = []
+var quick_slot_buttons: Array[Button] = []
+var selected_inventory_slot := -1
 
 func _ready() -> void:
 	models = _json("res://data/actors/models.json").get("models", {})
@@ -79,12 +87,15 @@ func _ready() -> void:
 	map_image.texture = full_map_viewport.get_texture()
 	full_map.hide()
 	stats_panel.hide()
+	inventory_panel.hide()
 	game_view.hide()
 	creation_panel.hide()
 	create_gender.add_item("Luminous Female", 0)
 	create_gender.add_item("Luminous Male", 1)
 	_apply_eloria_art()
 	_apply_eloria_theme()
+	_build_inventory_slots()
+	_bind_quick_slots()
 
 func _bind_shared_world() -> void:
 	gameplay_world = world_root.get_world_3d()
@@ -232,7 +243,27 @@ func _on_chat_button_pressed() -> void:
 func _on_stats_button_pressed() -> void:
 	stats_panel.visible = not stats_panel.visible
 	if stats_panel.visible:
+		inventory_panel.hide()
 		_sync_stats()
+
+func _on_inventory_button_pressed() -> void:
+	inventory_panel.visible = not inventory_panel.visible
+	if inventory_panel.visible:
+		stats_panel.hide()
+		_sync_inventory()
+
+func _on_inventory_close_pressed() -> void:
+	inventory_panel.hide()
+
+func _on_inventory_use_pressed() -> void:
+	_use_inventory_slot(selected_inventory_slot)
+
+func _on_inventory_inspect_pressed() -> void:
+	if selected_inventory_slot < 0:
+		return
+	var error: Error = Network.look_at_inventory_item(selected_inventory_slot)
+	if error != OK:
+		push_warning("LOOK_AT_INVENTORY_ITEM failed: " + error_string(error))
 
 func _on_disconnect_pressed() -> void:
 	Network.disconnect_from_server()
@@ -270,6 +301,8 @@ func _clear_world_presentation() -> void:
 	world_loader.unload_world()
 	loaded_server_map = ""
 	full_map.hide()
+	inventory_panel.hide()
+	stats_panel.hide()
 	dialogue_panel.hide()
 	chat_output.clear()
 	selected_target.text = "Target: none"
@@ -288,6 +321,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("cancel"):
 		if dialogue_panel.visible:
 			AppState.close_dialogue()
+		elif inventory_panel.visible:
+			inventory_panel.hide()
 		elif stats_panel.visible:
 			stats_panel.hide()
 		elif full_map.visible:
@@ -364,6 +399,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_chat()
 		&"stats":
 			_sync_stats()
+		&"inventory", &"inventory_text":
+			_sync_inventory()
 		&"selection":
 			_sync_selection()
 		&"npc_dialogue":
@@ -558,6 +595,99 @@ func _sync_stats() -> void:
 	for label_and_key: Array in displayed_stats:
 		lines.append("%s: %d" % [label_and_key[0], int(stats.get(label_and_key[1], 0))])
 	stats_text.text = "\n".join(lines)
+
+func _build_inventory_slots() -> void:
+	for slot: int in range(36):
+		var button: Button = Button.new()
+		button.custom_minimum_size = Vector2(64.0, 52.0)
+		button.text = str(slot + 1)
+		button.tooltip_text = "Empty inventory slot %d" % (slot + 1)
+		button.disabled = true
+		button.pressed.connect(_on_inventory_slot_pressed.bind(slot))
+		inventory_grid.add_child(button)
+		inventory_slot_buttons.append(button)
+
+func _bind_quick_slots() -> void:
+	var slot: int = 0
+	for child: Node in quick_slot_container.get_children():
+		if child is Button:
+			var button: Button = child as Button
+			button.pressed.connect(_on_quick_slot_pressed.bind(slot))
+			quick_slot_buttons.append(button)
+			slot += 1
+
+func _sync_inventory() -> void:
+	for slot: int in range(inventory_slot_buttons.size()):
+		var button: Button = inventory_slot_buttons[slot]
+		var item_value: Variant = AppState.inventory.get(slot)
+		if item_value is Dictionary:
+			var item: Dictionary = item_value as Dictionary
+			button.text = "#%d\n×%d" % [int(item.get("image_id", 0)),
+				int(item.get("quantity", 0))]
+			button.tooltip_text = _inventory_tooltip(item)
+			button.disabled = false
+		else:
+			button.text = str(slot + 1)
+			button.tooltip_text = "Empty inventory slot %d" % (slot + 1)
+			button.disabled = true
+	for slot: int in range(quick_slot_buttons.size()):
+		var quick_button: Button = quick_slot_buttons[slot]
+		var quick_item_value: Variant = AppState.inventory.get(slot)
+		if quick_item_value is Dictionary:
+			var quick_item: Dictionary = quick_item_value as Dictionary
+			var usable: bool = bool(quick_item.get("inventory_usable", false))
+			quick_button.text = "%d\n#%d ×%d" % [slot + 1,
+				int(quick_item.get("image_id", 0)), int(quick_item.get("quantity", 0))]
+			quick_button.disabled = not usable
+			quick_button.tooltip_text = (_inventory_tooltip(quick_item) if usable else
+				_inventory_tooltip(quick_item) + "\nThis item cannot be used directly.")
+		else:
+			quick_button.text = str(slot + 1)
+			quick_button.disabled = true
+			quick_button.tooltip_text = "Empty item quick slot"
+	if selected_inventory_slot >= 0:
+		var selected_value: Variant = AppState.inventory.get(selected_inventory_slot)
+		if selected_value is Dictionary:
+			var selected_item: Dictionary = selected_value as Dictionary
+			inventory_use_button.disabled = not bool(selected_item.get("inventory_usable", false))
+		else:
+			selected_inventory_slot = -1
+			inventory_use_button.disabled = true
+	if not AppState.inventory_text.is_empty():
+		inventory_description.text = AppState.inventory_text
+
+func _inventory_tooltip(item: Dictionary) -> String:
+	var traits: Array[String] = []
+	for flag_and_label: Array in [
+		["inventory_usable", "usable"], ["stackable", "stackable"],
+		["resource", "resource"], ["reagent", "reagent"]]:
+		if bool(item.get(flag_and_label[0], false)):
+			traits.append(str(flag_and_label[1]))
+	return "Item image #%d — quantity %d%s" % [int(item.get("image_id", 0)),
+		int(item.get("quantity", 0)), " — " + ", ".join(traits) if not traits.is_empty() else ""]
+
+func _on_inventory_slot_pressed(slot: int) -> void:
+	selected_inventory_slot = slot
+	var item: Dictionary = AppState.inventory.get(slot, {}) as Dictionary
+	inventory_use_button.disabled = not bool(item.get("inventory_usable", false))
+	inventory_description.text = "Inspecting item image #%d…" % int(item.get("image_id", 0))
+	var error: Error = Network.look_at_inventory_item(slot)
+	if error != OK:
+		push_warning("LOOK_AT_INVENTORY_ITEM failed: " + error_string(error))
+
+func _on_quick_slot_pressed(slot: int) -> void:
+	_use_inventory_slot(slot)
+
+func _use_inventory_slot(slot: int) -> void:
+	var item_value: Variant = AppState.inventory.get(slot)
+	if not item_value is Dictionary:
+		return
+	var item: Dictionary = item_value as Dictionary
+	if not bool(item.get("inventory_usable", false)):
+		return
+	var error: Error = Network.use_inventory_item(slot)
+	if error != OK:
+		push_warning("USE_INVENTORY_ITEM failed: " + error_string(error))
 
 func _on_chat_submitted(text: String) -> void:
 	var message: String = text.strip_edges()
