@@ -1956,9 +1956,11 @@ static func _external_texture(path: String) -> Texture2D:
 	return ImageTexture.create_from_image(image)
 
 func _model_for_actor(dto: Dictionary) -> String:
-	# Enhanced actors are player avatars. NPCs and creatures retain their server
-	# kind and use a visible fallback until their actor type has a registry entry.
-	if not bool(dto.get("enhanced", false)) and int(dto.get("kind", 0)) not in [1, 4]:
+	# The server uses the enhanced wire layout for most NPCs so their appearance
+	# bytes survive replication. Actor kind, not packet layout, decides whether a
+	# luminous player body is valid. Unknown NPCs/creatures stay visibly typed by
+	# the development fallback until their native model has a registry entry.
+	if int(dto.get("kind", 0)) not in [1, 4]:
 		return ""
 	return "luminous_female" if int(dto.get("actor_type", 1)) == 0 else "luminous_male"
 

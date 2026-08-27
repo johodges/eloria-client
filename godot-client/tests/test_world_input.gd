@@ -131,6 +131,12 @@ func _run() -> void:
 	var attackable_actor: Dictionary = {
 		"actor_id": 77, "name": "Rat", "kind": 3, "health": 12,
 		"max_health": 12, "alive": true}
+	_expect(str(main.call("_model_for_actor", {
+		"enhanced": true, "kind": 2, "actor_type": 1})).is_empty(),
+		"enhanced NPC wire packets never select a luminous player model")
+	_expect(str(main.call("_model_for_actor", {
+		"enhanced": true, "kind": 1, "actor_type": 1})) == "luminous_male",
+		"enhanced player wire packets retain the native luminous model")
 	app_state_inventory.set("actors", {77: attackable_actor})
 	app_state_inventory.set("selected_actor_id", 77)
 	main.call("_sync_selection")
