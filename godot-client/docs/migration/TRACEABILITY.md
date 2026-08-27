@@ -26,3 +26,19 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | Harvesting | respective modules; server harvest-node manifests | reducer/window and world-object selection | action/result traces; Four Gates harvest object IDs unavailable | NOT_STARTED |
 | Quest journal | legacy `questlog.c`, `quest_journal.c`, `multiplayer.c`, server command 224 contract | server-owned journal reducer/window | legacy decoder is audited, but the unmodified server does not emit command 224 or another complete journal snapshot; dialogue inference is intentionally rejected | BLOCKED |
 | Hotkeys/settings | keys.c/elconfig.c | InputMap/settings | viewport routing fixture verifies rotate/pan/zoom; live click-to-move recheck pending | FOUNDATION |
+
+## Rendered development-server evidence gate
+
+`tests/integration/rendered_server_session.gd` drives the real login and character-creation UI against the authorized development endpoint from an opt-in Xvfb GitHub Actions job. It generates a disposable name and strong password in memory, never prints either value, and records credentials only as `REDACTED`.
+
+The gate fails unless it proves all of the following before uploading evidence:
+
+- the server supplied a map ID, local actor ID, spawn DTO, and authoritative tile;
+- the local actor has a visible native luminous GLB with at least three meshes and no missing-model fallback;
+- a navigation-surface ray exists below the spawn and the actor foot agrees with it;
+- the actor is in front of and within the gameplay camera frame;
+- the white player marker follows the actor and both map cameras include its layer;
+- a left-click routed through the gameplay viewport produces a server actor-tile update;
+- each 1280×720 capture contains rendered color variation rather than a dummy frame.
+
+The artifact contains default-world, full-map, and post-movement PNGs plus sanitized session and movement JSON. A passing structural assertion is still classified separately from human visual inspection of those PNGs.
