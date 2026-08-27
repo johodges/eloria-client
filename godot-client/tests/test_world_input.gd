@@ -50,6 +50,23 @@ func _run() -> void:
 	main.call("_on_map_button_pressed")
 	_expect(camera_rig.distance >= 30.0 and camera_rig.pitch_degrees <= -50.0,
 		"default camera presents the map from above")
+	var actor_height_fixture: ReplicatedActor3D = ReplicatedActor3D.new()
+	root.add_child(actor_height_fixture)
+	actor_height_fixture.server_target = Vector3(2.0, 31.15, 3.0)
+	actor_height_fixture.global_position = actor_height_fixture.server_target
+	actor_height_fixture.set_surface_height(42.08)
+	_expect(is_equal_approx(actor_height_fixture.server_target.y, 42.08),
+		"actor target follows sampled terrain height")
+	_expect(is_equal_approx(actor_height_fixture.global_position.y, 42.08),
+		"actor presentation snaps out of terrain")
+	actor_height_fixture.free()
+	var lower_hud: Control = main.get_node("GameView/Quickbar") as Control
+	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
+	var right_quickbar: Control = main.get_node("GameView/ItemSpellQuickbar") as Control
+	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
+		"lower HUD border spans the bottom edge")
+	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
+		"stats and item/spell quickbar occupy the right HUD rail")
 	var viewport_rect: Rect2 = root.get_visible_rect()
 	_expect(viewport_rect.encloses(login_panel.get_global_rect()),
 		"login panel fits the reference viewport")

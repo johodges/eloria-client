@@ -195,6 +195,13 @@ func _on_login_submitted(_text: String) -> void:
 func _on_map_button_pressed() -> void:
 	full_map.visible = not full_map.visible
 
+func _on_walk_button_pressed() -> void:
+	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
+	if bool(local_actor.get("sitting", false)):
+		var error: Error = Network.set_sitting(false)
+		if error != OK:
+			push_warning("STAND_UP failed: " + error_string(error))
+
 func _on_sit_button_pressed() -> void:
 	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
 	var error: Error = Network.set_sitting(not bool(local_actor.get("sitting", false)))
@@ -359,6 +366,14 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	map_label.text = "Map: " + manifest.data.get("asset", {}).get("name", manifest.asset_id())
 	_configure_full_map(manifest)
 	_sync_world()
+	_snap_all_actors_to_surface.call_deferred()
+
+func _snap_all_actors_to_surface() -> void:
+	await get_tree().physics_frame
+	for actor_value: Variant in actor_nodes.values():
+		var actor: ReplicatedActor3D = actor_value as ReplicatedActor3D
+		if is_instance_valid(actor):
+			_place_actor_on_surface(actor)
 
 func _on_world_load_failed(errors: Array[String]) -> void:
 	fallback_ground.show()
@@ -374,6 +389,7 @@ func _sync_world() -> void:
 		var dto: Dictionary = AppState.actors[id]
 		if actor_nodes.has(id):
 			actor_nodes[id].apply_server_state(dto, adapter)
+			_place_actor_on_surface(actor_nodes[id] as ReplicatedActor3D)
 			continue
 		var node := ReplicatedActor3D.new()
 		node.name = "Actor_%d" % id
@@ -384,6 +400,7 @@ func _sync_world() -> void:
 		if not errors.is_empty():
 			push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 		node.apply_server_state(dto, adapter, true)
+		_place_actor_on_surface(node)
 	actor_label.text = "Actors: %d" % AppState.actors.size()
 	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id):
 		var target: Node3D = actor_nodes[AppState.local_actor_id]
@@ -398,6 +415,20 @@ func _sync_world() -> void:
 		health_bar.max_value = maximum_health
 		health_bar.value = current_health
 		health_text.text = "Health: %d / %d" % [current_health, maximum_health]
+
+func _place_actor_on_surface(actor: ReplicatedActor3D) -> void:
+	if not is_instance_valid(actor) or not is_instance_valid(main_viewport.world_3d):
+		return
+	var actor_position: Vector3 = actor.server_target
+	var ray_start: Vector3 = Vector3(actor_position.x, 400.0, actor_position.z)
+	var ray_end: Vector3 = Vector3(actor_position.x, -100.0, actor_position.z)
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
+		ray_start, ray_end, 1)
+	var hit: Dictionary = main_viewport.world_3d.direct_space_state.intersect_ray(query)
+	var hit_position_value: Variant = hit.get("position")
+	if hit_position_value is Vector3:
+		var hit_position: Vector3 = hit_position_value as Vector3
+		actor.set_surface_height(hit_position.y + 0.08)
 
 func _configure_full_map(manifest: WorldManifest) -> void:
 	var asset_value: Variant = manifest.data.get("asset", {})

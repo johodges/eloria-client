@@ -15,3 +15,9 @@ func _on_loaded(manifest: WorldManifest) -> void:
 	status.text = "LOADED: " + manifest.asset_id()
 	if not manifest.warnings.is_empty():
 		status.text += "\nWARNINGS:\n" + "\n".join(manifest.warnings)
+	var collision: Node = loader.world_root.find_child(
+		"NavigationSurfaceCollision", false, false)
+	if not collision is StaticBody3D or collision.get_child_count() == 0:
+		push_error("world validation: Navigation surface collision missing")
+		return
+	print("world validation: navigation surface collision PASS")

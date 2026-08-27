@@ -110,6 +110,11 @@ func set_selected(value: bool) -> void:
 	if ring != null:
 		ring.visible = value
 
+func set_surface_height(value: float) -> void:
+	server_target.y = value
+	if _snap_pending or absf(global_position.y - value) > 0.5:
+		global_position.y = value
+
 func _physics_process(delta: float) -> void:
 	if _snap_pending:
 		global_position = server_target

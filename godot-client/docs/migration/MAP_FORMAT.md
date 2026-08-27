@@ -30,6 +30,12 @@ The minimap and full-map SubViewports share the gameplay `World3D` and each Text
 is bound directly to its corresponding live viewport texture. The supplied compass and
 HUD atlas regions are opaque, so they are never placed above either map render.
 
+The inline navigation polygons are converted into static concave collision shapes at
+load time. Actor X/Z remains server-authoritative; presentation Y is ray-projected onto
+that navigation surface after the first physics frame and after subsequent actor state
+updates. This prevents player models from being buried by local terrain elevations while
+leaving server tile authority unchanged.
+
 ## Collision and navigation
 
 Collision node names are resolved recursively and receive trimesh static bodies. This is appropriate for static authored structures; frequently updated or simple props must use primitive collision declarations in a subsequent schema revision. Navigation metadata remains separate and will be used to construct/bake `NavigationRegion3D`; visual meshes are never implicitly considered walkable.

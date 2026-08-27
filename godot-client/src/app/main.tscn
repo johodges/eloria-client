@@ -275,27 +275,32 @@ mouse_filter = 1
 
 [node name="ResourceHud" type="PanelContainer" parent="GameView"]
 layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -184.0
+offset_top = 192.0
+offset_right = -8.0
+offset_bottom = 328.0
+
+[node name="Quickbar" type="PanelContainer" parent="GameView"]
+layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 614.0
-offset_top = -78.0
-offset_right = -70.0
+offset_left = 8.0
+offset_top = -70.0
+offset_right = -8.0
 offset_bottom = -6.0
 
-[node name="Quickbar" type="PanelContainer" parent="GameView"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -66.0
-offset_top = 194.0
-offset_right = -8.0
-offset_bottom = 420.0
-
-[node name="Buttons" type="VBoxContainer" parent="GameView/Quickbar"]
+[node name="Buttons" type="HBoxContainer" parent="GameView/Quickbar"]
 theme_override_constants/separation = 6
+
+[node name="WalkButton" type="Button" parent="GameView/Quickbar/Buttons"]
+custom_minimum_size = Vector2(44, 44)
+text = "Walk"
+tooltip_text = "Walk mode; hold Shift while clicking to run"
 
 [node name="MapButton" type="Button" parent="GameView/Quickbar/Buttons"]
 unique_name_in_owner = true
@@ -307,6 +312,24 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 tooltip_text = "Sit / stand [Alt+S]"
 
+[node name="TradeButton" type="Button" parent="GameView/Quickbar/Buttons"]
+custom_minimum_size = Vector2(44, 44)
+text = "Trade"
+tooltip_text = "Select a player to trade"
+disabled = true
+
+[node name="InventoryButton" type="Button" parent="GameView/Quickbar/Buttons"]
+custom_minimum_size = Vector2(44, 44)
+text = "Inventory"
+tooltip_text = "Inventory window is not migrated yet"
+disabled = true
+
+[node name="StatsButton" type="Button" parent="GameView/Quickbar/Buttons"]
+custom_minimum_size = Vector2(44, 44)
+text = "Stats"
+tooltip_text = "Extended statistics are not migrated yet"
+disabled = true
+
 [node name="ChatButton" type="Button" parent="GameView/Quickbar/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
@@ -316,6 +339,59 @@ tooltip_text = "Chat [T]"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 tooltip_text = "Disconnect"
+
+[node name="ItemSpellQuickbar" type="PanelContainer" parent="GameView"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -184.0
+offset_top = 334.0
+offset_right = -8.0
+offset_bottom = 644.0
+
+[node name="QuickContent" type="VBoxContainer" parent="GameView/ItemSpellQuickbar"]
+theme_override_constants/separation = 6
+
+[node name="QuickTitle" type="Label" parent="GameView/ItemSpellQuickbar/QuickContent"]
+text = "ITEMS / SPELLS"
+horizontal_alignment = 1
+
+[node name="Slots" type="GridContainer" parent="GameView/ItemSpellQuickbar/QuickContent"]
+columns = 2
+
+[node name="Slot1" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
+custom_minimum_size = Vector2(68, 48)
+text = "1"
+disabled = true
+[node name="Slot2" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
+custom_minimum_size = Vector2(68, 48)
+text = "2"
+disabled = true
+[node name="Slot3" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
+custom_minimum_size = Vector2(68, 48)
+text = "3"
+disabled = true
+[node name="Slot4" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
+custom_minimum_size = Vector2(68, 48)
+text = "4"
+disabled = true
+[node name="Slot5" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
+custom_minimum_size = Vector2(68, 48)
+text = "5"
+disabled = true
+[node name="Slot6" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
+custom_minimum_size = Vector2(68, 48)
+text = "6"
+disabled = true
+[node name="Slot7" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
+custom_minimum_size = Vector2(68, 48)
+text = "7"
+disabled = true
+[node name="Slot8" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
+custom_minimum_size = Vector2(68, 48)
+text = "8"
+disabled = true
 
 [node name="Bars" type="VBoxContainer" parent="GameView/ResourceHud"]
 
@@ -590,6 +666,7 @@ horizontal_alignment = 1
 [connection signal="item_selected" from="CreationPanel/Columns/Form/CreateGender" to="." method="_on_create_gender_item_selected"]
 [connection signal="text_submitted" from="GameView/ChatInput" to="." method="_on_chat_submitted"]
 [connection signal="text_submitted" from="LoginPanel/Content/Password" to="." method="_on_login_submitted"]
+[connection signal="pressed" from="GameView/Quickbar/Buttons/WalkButton" to="." method="_on_walk_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/MapButton" to="." method="_on_map_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/SitButton" to="." method="_on_sit_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/ChatButton" to="." method="_on_chat_button_pressed"]

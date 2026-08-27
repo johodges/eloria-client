@@ -46,6 +46,7 @@ func load_world(manifest_path: String) -> void:
 	print_debug("world_load stage=scene_attached node=", world_root.get_path(),
 		" children=", world_root.get_child_count(), " transform=", world_root.transform)
 	_apply_collision_declarations()
+	_apply_navigation_collision()
 	load_completed.emit(manifest)
 
 func unload_world() -> void:
@@ -64,6 +65,53 @@ func _apply_collision_declarations() -> void:
 			_create_static_collision(node)
 		elif node == null:
 			manifest.warnings.append("collision node not found: " + str(node_name))
+
+func _apply_navigation_collision() -> void:
+	var navigation: Dictionary = manifest.data.get("navigation", {})
+	var navmesh_value: Variant = navigation.get("navmesh", {})
+	if not navmesh_value is Dictionary:
+		return
+	var navmesh: Dictionary = navmesh_value as Dictionary
+	var polygons_value: Variant = navmesh.get("polygons", [])
+	if not polygons_value is Array:
+		return
+	var body: StaticBody3D = StaticBody3D.new()
+	body.name = "NavigationSurfaceCollision"
+	body.collision_layer = 1
+	body.collision_mask = 0
+	for polygon_value: Variant in polygons_value as Array:
+		if not polygon_value is Dictionary:
+			continue
+		var polygon: Dictionary = polygon_value as Dictionary
+		var vertices_value: Variant = polygon.get("vertices", [])
+		if not vertices_value is Array:
+			continue
+		var raw_vertices: Array = vertices_value as Array
+		if raw_vertices.size() < 3:
+			continue
+		var vertices: Array[Vector3] = []
+		for raw_vertex: Variant in raw_vertices:
+			if raw_vertex is Array and (raw_vertex as Array).size() >= 3:
+				var values: Array = raw_vertex as Array
+				vertices.append(Vector3(float(values[0]), float(values[1]), float(values[2])))
+		if vertices.size() < 3:
+			continue
+		var faces: PackedVector3Array = PackedVector3Array()
+		for index: int in range(1, vertices.size() - 1):
+			faces.append(vertices[0])
+			faces.append(vertices[index])
+			faces.append(vertices[index + 1])
+		var shape: ConcavePolygonShape3D = ConcavePolygonShape3D.new()
+		shape.set_faces(faces)
+		var collision: CollisionShape3D = CollisionShape3D.new()
+		collision.name = "Nav_" + str(polygon.get("id", body.get_child_count()))
+		collision.shape = shape
+		body.add_child(collision)
+	if body.get_child_count() == 0:
+		body.queue_free()
+		manifest.warnings.append("navigation polygons did not produce collision")
+		return
+	world_root.add_child(body)
 
 func _create_static_collision(mesh_instance: MeshInstance3D) -> void:
 	if mesh_instance.mesh == null:
