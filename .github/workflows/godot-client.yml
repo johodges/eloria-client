@@ -59,7 +59,7 @@ jobs:
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
             xvfb xauth libgl1-mesa-dri libfontconfig1 libxcursor1 libxinerama1 \
-            libxrandr2 libxi6 libasound2 libpulse0 libudev1
+            libxrandr2 libxi6 libasound2t64 libpulse0 libudev1
       - name: Import project
         run: godot --headless --path godot-client --editor --quit
       - name: Render real development-server session
