@@ -85,6 +85,18 @@ func exit_trade() -> Error:
 func look_at_trade_item(offer_slot: int, other: bool) -> Error:
 	return send_frame(EloriaProtocol.look_at_trade_item(offer_slot, other))
 
+func get_storage_category(category_id: int) -> Error:
+	return send_frame(EloriaProtocol.get_storage_category(category_id))
+
+func deposit_storage(inventory_slot: int, quantity: int) -> Error:
+	return send_frame(EloriaProtocol.deposit_storage(inventory_slot, quantity))
+
+func withdraw_storage(position: int, quantity: int) -> Error:
+	return send_frame(EloriaProtocol.withdraw_storage(position, quantity))
+
+func look_at_storage_item(position: int) -> Error:
+	return send_frame(EloriaProtocol.look_at_storage_item(position))
+
 func create_character(username: String, password: String, appearance: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)
 

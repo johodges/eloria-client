@@ -26,6 +26,8 @@ var npc_dialogue: Dictionary = {"open": false, "name": "", "portrait": 0,
 var trade: Dictionary = {"open": false, "partner": "", "storage_available": false,
 	"source_inventory": {}, "own_offers": {}, "other_offers": {},
 	"own_accepts": 0, "other_accepts": 0}
+var storage: Dictionary = {"open": false, "categories": [], "category_id": -1,
+	"items": {}, "text": ""}
 var unknown_packet_count := 0
 var recent_protocol_errors: Array[String] = []
 
@@ -52,6 +54,7 @@ func _on_connection_state_changed(value: String) -> void:
 		selected_actor_id = -1
 		npc_dialogue = {"open": false, "name": "", "portrait": 0, "text": "", "options": []}
 		trade = _empty_trade_state()
+		storage = _empty_storage_state()
 	state_changed.emit(&"connection")
 
 func _on_packet(command: int, payload: PackedByteArray) -> void:
@@ -80,6 +83,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				"text": "", "options": []}
 			pending_spell_target = ""
 			trade = _empty_trade_state()
+			storage = _empty_storage_state()
 			state_changed.emit(&"map")
 		"actor_spawn":
 			actors[event.actor_id] = event
@@ -225,6 +229,29 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"trade_exit":
 			trade = _empty_trade_state()
 			state_changed.emit(&"trade")
+		"storage_categories":
+			storage["open"] = true
+			storage["categories"] = (event.categories as Array).duplicate(true)
+			storage["text"] = ""
+			state_changed.emit(&"storage")
+		"storage_items":
+			var storage_items: Dictionary = (storage.get("items", {}) as Dictionary).duplicate(true)
+			if not bool(event.update):
+				storage_items.clear()
+			for raw_storage_item: Variant in event.items:
+				var storage_item: Dictionary = raw_storage_item as Dictionary
+				var storage_position: int = int(storage_item.get("position", -1))
+				if int(storage_item.get("quantity", 0)) > 0:
+					storage_items[storage_position] = storage_item
+				else:
+					storage_items.erase(storage_position)
+			storage["items"] = storage_items
+			storage["category_id"] = int(event.category_id)
+			storage["open"] = true
+			state_changed.emit(&"storage")
+		"storage_text":
+			storage["text"] = str(event.text)
+			state_changed.emit(&"storage")
 		"item_cooldowns":
 			inventory_cooldowns.clear()
 			var received_msec: int = Time.get_ticks_msec()
@@ -324,3 +351,11 @@ func _empty_trade_state() -> Dictionary:
 	return {"open": false, "partner": "", "storage_available": false,
 		"source_inventory": {}, "own_offers": {}, "other_offers": {},
 		"own_accepts": 0, "other_accepts": 0}
+
+func close_storage() -> void:
+	storage = _empty_storage_state()
+	state_changed.emit(&"storage")
+
+func _empty_storage_state() -> Dictionary:
+	return {"open": false, "categories": [], "category_id": -1,
+		"items": {}, "text": ""}

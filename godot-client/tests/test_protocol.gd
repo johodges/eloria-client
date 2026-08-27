@@ -42,6 +42,15 @@ func _init() -> void:
 		PackedByteArray([35, 1, 0]))
 	_expect_bytes("trade inspection fixture", EloriaProtocol.look_at_trade_item(3, true),
 		PackedByteArray([38, 3, 0, 3, 1]))
+	_expect_bytes("storage category fixture", EloriaProtocol.get_storage_category(4),
+		PackedByteArray([44, 2, 0, 4]))
+	_expect_bytes("storage deposit fixture", EloriaProtocol.deposit_storage(7, 0x12345678),
+		PackedByteArray([45, 6, 0, 7, 0x78, 0x56, 0x34, 0x12]))
+	_expect_bytes("storage withdrawal fixture", EloriaProtocol.withdraw_storage(
+		0x1234, 0x56789abc), PackedByteArray([
+			46, 7, 0, 0x34, 0x12, 0xbc, 0x9a, 0x78, 0x56]))
+	_expect_bytes("storage inspection fixture", EloriaProtocol.look_at_storage_item(0x1234),
+		PackedByteArray([47, 3, 0, 0x34, 0x12]))
 	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
 	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
 	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")
@@ -269,6 +278,28 @@ func _init() -> void:
 		and EloriaProtocol.decode_server(36, PackedByteArray()).type == "invalid"
 		and EloriaProtocol.decode_server(38, PackedByteArray([0])).type == "invalid",
 		"malformed trade packets rejected")
+	var storage_categories: Dictionary = EloriaProtocol.decode_server(67,
+		PackedByteArray([2, 0, 71, 101, 110, 101, 114, 97, 108, 0,
+			4, 70, 108, 111, 119, 101, 114, 115, 0]))
+	_expect(storage_categories.type == "storage_categories"
+		and storage_categories.categories.size() == 2
+		and storage_categories.categories[1].id == 4
+		and storage_categories.categories[1].name == "Flowers",
+		"storage category fields")
+	var storage_items: Dictionary = EloriaProtocol.decode_server(68,
+		PackedByteArray([0, 4, 0x34, 0x12, 5, 0, 0, 0, 0x78, 0x56]))
+	_expect(storage_items.type == "storage_items" and storage_items.category_id == 4
+		and not storage_items.update and storage_items.items.size() == 1
+		and storage_items.items[0].position == 0x5678,
+		"storage item fields")
+	var storage_text: Dictionary = EloriaProtocol.decode_server(69,
+		PackedByteArray([132, 83, 97, 102, 101, 0]))
+	_expect(storage_text.type == "storage_text" and storage_text.text == "Safe",
+		"storage inspection text")
+	_expect(EloriaProtocol.decode_server(67, PackedByteArray([1, 0, 65])).type == "invalid"
+		and EloriaProtocol.decode_server(68, PackedByteArray([0, 1, 2])).type == "invalid"
+		and EloriaProtocol.decode_server(69, PackedByteArray()).type == "invalid",
+		"malformed storage packets rejected")
 	var cooldown_event: Dictionary = EloriaProtocol.decode_server(77,
 		PackedByteArray([7, 30, 0, 12, 0, 2, 60, 0, 1, 0]))
 	_expect(cooldown_event.type == "item_cooldowns"

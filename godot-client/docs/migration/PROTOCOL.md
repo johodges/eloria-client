@@ -85,6 +85,19 @@ server-authoritative two-phase sequence reported by command 36; command 37
 resets the indicated side, and command 38 closes the trade. `REJECT_TRADE(34)`
 only resets acceptance. `EXIT_TRADE(35)` cancels and restores all offers.
 
+Storage is opened only through a nearby storage NPC dialogue response. Server
+command `STORAGE_LIST(67)` carries `count:u8` followed by repeated
+`category_id:u8 | NUL name`; `GET_STORAGE_CATEGORY(44)` selects one category by
+its `u8` identifier. `STORAGE_ITEMS(68)` starts with
+`mode:u8 | category_id:u8`; mode 0 is a full snapshot and mode 255 is one
+incremental entry. Each entry is `image_id:u16le | quantity:u32le |
+position:u16le`. Deposits use `DEPOSIT_ITEM(45)` as
+`inventory_slot:u8 | quantity:u32le`. Withdrawals use `WITHDRAW_ITEM(46)` as
+`storage_position:u16le | quantity:u32le`. Inspection uses
+`LOOK_AT_STORAGE_ITEM(47)` with a `u16le` position and receives
+`STORAGE_TEXT(69)` as `color:u8 | NUL text`. The server validates NPC range,
+category/session state, quantities, inventory slots, and carry capacity.
+
 ## Open verification items
 
 Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; storage-backed trade positions and storage lifecycle; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.

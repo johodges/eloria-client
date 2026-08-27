@@ -37,6 +37,7 @@ enum ServerMessage {
 	GET_ACTIVE_SPELL_LIST = 45, REMOVE_ACTIVE_SPELL = 46,
 	GET_ACTOR_DAMAGE = 47, GET_ACTOR_HEAL = 48, SEND_PARTIAL_STAT = 49,
 	ADD_NEW_ENHANCED_ACTOR = 51, ACTOR_WEAR_ITEM = 52, ACTOR_UNWEAR_ITEM = 53,
+	STORAGE_LIST = 67, STORAGE_ITEMS = 68, STORAGE_TEXT = 69,
 	PING_REQUEST = 60, SPELL_CAST = 70, GET_ACTIVE_CHANNELS = 71, GET_ACTOR_HEALTH = 73,
 	GET_ITEMS_COOLDOWN = 77, SEND_BUFFS = 78, SEND_SPECIAL_EFFECT = 79,
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
@@ -178,6 +179,25 @@ static func look_at_trade_item(offer_slot: int, other: bool) -> PackedByteArray:
 	return encode(ClientMessage.LOOK_AT_TRADE_ITEM,
 		PackedByteArray([clampi(offer_slot, 0, 15), 1 if other else 0]))
 
+static func get_storage_category(category_id: int) -> PackedByteArray:
+	return encode(ClientMessage.GET_STORAGE_CATEGORY,
+		PackedByteArray([clampi(category_id, 0, 255)]))
+
+static func deposit_storage(inventory_slot: int, quantity: int) -> PackedByteArray:
+	return encode(ClientMessage.DEPOSIT_ITEM, PackedByteArray([
+		clampi(inventory_slot, 0, 255), quantity & 0xff, (quantity >> 8) & 0xff,
+		(quantity >> 16) & 0xff, (quantity >> 24) & 0xff]))
+
+static func withdraw_storage(position: int, quantity: int) -> PackedByteArray:
+	return encode(ClientMessage.WITHDRAW_ITEM, PackedByteArray([
+		position & 0xff, (position >> 8) & 0xff,
+		quantity & 0xff, (quantity >> 8) & 0xff,
+		(quantity >> 16) & 0xff, (quantity >> 24) & 0xff]))
+
+static func look_at_storage_item(position: int) -> PackedByteArray:
+	return encode(ClientMessage.LOOK_AT_STORAGE_ITEM,
+		PackedByteArray([position & 0xff, (position >> 8) & 0xff]))
+
 static func actor_command_step(command: int) -> Vector2i:
 	# Server movement frames are the authoritative one-tile updates used by the
 	# legacy client. Walk and run use the same tile delta; timing differs.
@@ -296,6 +316,15 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			if not payload.is_empty():
 				return {"type": "invalid", "error": "trade_exit_length"}
 			return {"type": "trade_exit"}
+		ServerMessage.STORAGE_LIST:
+			return decode_storage_categories(payload)
+		ServerMessage.STORAGE_ITEMS:
+			return decode_storage_items(payload)
+		ServerMessage.STORAGE_TEXT:
+			if payload.is_empty():
+				return {"type": "invalid", "error": "storage_text_length"}
+			return {"type": "storage_text", "color": int(payload[0]),
+				"text": nul_string(payload.slice(1))}
 		ServerMessage.GET_YOUR_SIGILS:
 			if payload.size() != 8:
 				return {"type": "invalid", "error": "sigils_length"}
@@ -392,6 +421,40 @@ static func decode_npc_options(payload: PackedByteArray) -> Dictionary:
 		offset += 4
 		options.append({"label": label, "response_id": response_id, "actor_id": actor_id})
 	return {"type": "npc_options", "options": options}
+
+static func decode_storage_categories(payload: PackedByteArray) -> Dictionary:
+	if payload.is_empty():
+		return {"type": "invalid", "error": "storage_categories_length"}
+	var categories: Array[Dictionary] = []
+	var offset: int = 1
+	for _index: int in range(int(payload[0])):
+		if offset >= payload.size():
+			return {"type": "invalid", "error": "storage_category_length"}
+		var category_id: int = int(payload[offset])
+		offset += 1
+		var terminator: int = payload.find(0, offset)
+		if terminator < 0:
+			return {"type": "invalid", "error": "storage_category_name"}
+		categories.append({"id": category_id,
+			"name": payload.slice(offset, terminator).get_string_from_utf8()})
+		offset = terminator + 1
+	if offset != payload.size():
+		return {"type": "invalid", "error": "storage_categories_trailing"}
+	return {"type": "storage_categories", "categories": categories}
+
+static func decode_storage_items(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2 or (payload.size() - 2) % 8 != 0:
+		return {"type": "invalid", "error": "storage_items_length"}
+	var update: bool = int(payload[0]) == 255
+	if int(payload[0]) not in [0, 255]:
+		return {"type": "invalid", "error": "storage_items_mode"}
+	var items: Array[Dictionary] = []
+	for offset: int in range(2, payload.size(), 8):
+		items.append({"image_id": u16(payload, offset),
+			"quantity": u32(payload, offset + 2),
+			"position": u16(payload, offset + 6)})
+	return {"type": "storage_items", "category_id": int(payload[1]),
+		"update": update, "items": items}
 
 static func decode_stats(payload: PackedByteArray) -> Dictionary:
 	if payload.size() < 230:

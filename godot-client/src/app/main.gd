@@ -56,6 +56,15 @@ extends Control
 @onready var trade_remove_button: Button = %TradeRemove
 @onready var trade_accept_button: Button = %TradeAccept
 @onready var trade_reject_button: Button = %TradeReject
+@onready var storage_panel: Control = %StoragePanel
+@onready var storage_categories: ItemList = %StorageCategories
+@onready var storage_items: ItemList = %StorageItems
+@onready var storage_inventory: ItemList = %StorageInventory
+@onready var storage_quantity: SpinBox = %StorageQuantity
+@onready var storage_status: Label = %StorageStatus
+@onready var storage_deposit_button: Button = %StorageDeposit
+@onready var storage_withdraw_button: Button = %StorageWithdraw
+@onready var storage_inspect_button: Button = %StorageInspect
 @onready var quick_slot_container: GridContainer = $GameView/ItemSpellQuickbar/QuickContent/Slots
 @onready var spell_slot_container: GridContainer = %SpellSlots
 @onready var spell_status: Label = %SpellStatus
@@ -91,6 +100,7 @@ var quick_slot_buttons: Array[Button] = []
 var spell_slot_buttons: Array[Button] = []
 var selected_inventory_slot := -1
 var selected_trade_side := ""
+var selected_storage_side := ""
 var cooldown_display_second := -1
 
 func _ready() -> void:
@@ -117,6 +127,7 @@ func _ready() -> void:
 	stats_panel.hide()
 	inventory_panel.hide()
 	trade_panel.hide()
+	storage_panel.hide()
 	game_view.hide()
 	creation_panel.hide()
 	create_gender.add_item("Luminous Female", 0)
@@ -130,6 +141,9 @@ func _ready() -> void:
 	trade_source.item_selected.connect(_on_trade_source_selected)
 	trade_own_offers.item_selected.connect(_on_trade_own_selected)
 	trade_other_offers.item_selected.connect(_on_trade_other_selected)
+	storage_categories.item_selected.connect(_on_storage_category_selected)
+	storage_items.item_selected.connect(_on_storage_item_selected)
+	storage_inventory.item_selected.connect(_on_storage_inventory_selected)
 
 func _bind_shared_world() -> void:
 	gameplay_world = world_root.get_world_3d()
@@ -294,7 +308,8 @@ func _on_chat_button_pressed() -> void:
 	chat_input.grab_focus()
 
 func _on_stats_button_pressed() -> void:
-	if bool(AppState.trade.get("open", false)):
+	if (bool(AppState.trade.get("open", false))
+			or bool(AppState.storage.get("open", false))):
 		return
 	stats_panel.visible = not stats_panel.visible
 	if stats_panel.visible:
@@ -302,7 +317,8 @@ func _on_stats_button_pressed() -> void:
 		_sync_stats()
 
 func _on_inventory_button_pressed() -> void:
-	if bool(AppState.trade.get("open", false)):
+	if (bool(AppState.trade.get("open", false))
+			or bool(AppState.storage.get("open", false))):
 		return
 	inventory_panel.visible = not inventory_panel.visible
 	if inventory_panel.visible:
@@ -416,6 +432,74 @@ func _on_trade_cancel_pressed() -> void:
 	if error != OK:
 		push_warning("EXIT_TRADE failed: " + error_string(error))
 
+func _on_storage_category_selected(index: int) -> void:
+	var category_id: int = _list_metadata_int(storage_categories, index)
+	if category_id < 0:
+		return
+	var error: Error = Network.get_storage_category(category_id)
+	if error != OK:
+		push_warning("GET_STORAGE_CATEGORY failed: " + error_string(error))
+
+func _on_storage_item_selected(index: int) -> void:
+	selected_storage_side = "storage"
+	var position: int = _list_metadata_int(storage_items, index)
+	var items: Dictionary = AppState.storage.get("items", {}) as Dictionary
+	var item_value: Variant = items.get(position)
+	if item_value is Dictionary:
+		storage_quantity.max_value = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
+		storage_quantity.value = mini(int(storage_quantity.value), int(storage_quantity.max_value))
+	_sync_storage_actions()
+
+func _on_storage_inventory_selected(index: int) -> void:
+	selected_storage_side = "inventory"
+	var slot: int = _list_metadata_int(storage_inventory, index)
+	var item_value: Variant = AppState.inventory.get(slot)
+	if item_value is Dictionary:
+		storage_quantity.max_value = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
+		storage_quantity.value = mini(int(storage_quantity.value), int(storage_quantity.max_value))
+	_sync_storage_actions()
+
+func _on_storage_deposit_pressed() -> void:
+	var selected: PackedInt32Array = storage_inventory.get_selected_items()
+	if selected.is_empty():
+		return
+	var slot: int = _list_metadata_int(storage_inventory, int(selected[0]))
+	var item_value: Variant = AppState.inventory.get(slot)
+	if not item_value is Dictionary:
+		return
+	var quantity: int = clampi(int(storage_quantity.value), 1,
+		int((item_value as Dictionary).get("quantity", 1)))
+	var error: Error = Network.deposit_storage(slot, quantity)
+	if error != OK:
+		push_warning("DEPOSIT_ITEM failed: " + error_string(error))
+
+func _on_storage_withdraw_pressed() -> void:
+	var selected: PackedInt32Array = storage_items.get_selected_items()
+	if selected.is_empty():
+		return
+	var position: int = _list_metadata_int(storage_items, int(selected[0]))
+	var items: Dictionary = AppState.storage.get("items", {}) as Dictionary
+	var item_value: Variant = items.get(position)
+	if not item_value is Dictionary:
+		return
+	var quantity: int = clampi(int(storage_quantity.value), 1,
+		int((item_value as Dictionary).get("quantity", 1)))
+	var error: Error = Network.withdraw_storage(position, quantity)
+	if error != OK:
+		push_warning("WITHDRAW_ITEM failed: " + error_string(error))
+
+func _on_storage_inspect_pressed() -> void:
+	var selected: PackedInt32Array = storage_items.get_selected_items()
+	if selected.is_empty():
+		return
+	var position: int = _list_metadata_int(storage_items, int(selected[0]))
+	var error: Error = Network.look_at_storage_item(position)
+	if error != OK:
+		push_warning("LOOK_AT_STORAGE_ITEM failed: " + error_string(error))
+
+func _on_storage_close_pressed() -> void:
+	AppState.close_storage()
+
 func _on_disconnect_pressed() -> void:
 	Network.disconnect_from_server()
 
@@ -455,6 +539,7 @@ func _clear_world_presentation() -> void:
 	inventory_panel.hide()
 	stats_panel.hide()
 	trade_panel.hide()
+	storage_panel.hide()
 	dialogue_panel.hide()
 	chat_output.clear()
 	selected_target.text = "Target: none"
@@ -489,6 +574,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			AppState.close_dialogue()
 		elif bool(AppState.trade.get("open", false)):
 			_on_trade_cancel_pressed()
+		elif bool(AppState.storage.get("open", false)):
+			AppState.close_storage()
 		elif inventory_panel.visible:
 			inventory_panel.hide()
 		elif stats_panel.visible:
@@ -510,7 +597,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_world_gui_input(event: InputEvent) -> void:
 	if (not game_view.visible or full_map.visible or dialogue_panel.visible
-			or trade_panel.visible):
+			or trade_panel.visible or storage_panel.visible):
 		return
 	if event is InputEventMouseButton:
 		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
@@ -581,6 +668,8 @@ func _on_state_changed(path: StringName) -> void:
 		&"inventory", &"inventory_text":
 			_sync_inventory()
 			_sync_spells()
+			if bool(AppState.storage.get("open", false)):
+				_sync_storage()
 		&"inventory_cooldowns":
 			_sync_quick_slots()
 		&"spells":
@@ -591,6 +680,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_dialogue()
 		&"trade":
 			_sync_trade()
+		&"storage":
+			_sync_storage()
 
 func _load_server_map() -> void:
 	if AppState.current_map.is_empty() or loaded_server_map == AppState.current_map:
@@ -1081,6 +1172,7 @@ func _sync_trade() -> void:
 	inventory_panel.hide()
 	stats_panel.hide()
 	full_map.hide()
+	storage_panel.hide()
 	trade_partner.text = "Trading with %s%s" % [
 		str(AppState.trade.get("partner", "another player")),
 		" — storage destinations available" if bool(
@@ -1145,6 +1237,74 @@ func _trade_acceptance_text(value: int) -> String:
 		1: return "accepted"
 		2: return "confirmed"
 		_: return "reviewing"
+
+func _sync_storage() -> void:
+	var is_open: bool = bool(AppState.storage.get("open", false))
+	storage_panel.visible = is_open
+	if not is_open:
+		selected_storage_side = ""
+		return
+	inventory_panel.hide()
+	stats_panel.hide()
+	full_map.hide()
+	trade_panel.hide()
+	storage_categories.clear()
+	var active_category: int = int(AppState.storage.get("category_id", -1))
+	var raw_categories: Variant = AppState.storage.get("categories", [])
+	if raw_categories is Array:
+		for raw_category: Variant in raw_categories:
+			if not raw_category is Dictionary:
+				continue
+			var category: Dictionary = raw_category as Dictionary
+			var index: int = storage_categories.item_count
+			storage_categories.add_item(str(category.get("name", "Category")))
+			storage_categories.set_item_metadata(index, int(category.get("id", -1)))
+			if int(category.get("id", -1)) == active_category:
+				storage_categories.select(index)
+	_fill_storage_item_list(storage_items,
+		AppState.storage.get("items", {}) as Dictionary, "Stored")
+	var backpack: Dictionary = {}
+	for raw_slot: Variant in AppState.inventory:
+		var slot: int = int(raw_slot)
+		if slot >= 0 and slot < 36:
+			backpack[slot] = AppState.inventory[raw_slot]
+	_fill_storage_item_list(storage_inventory, backpack, "Inventory")
+	var message: String = str(AppState.storage.get("text", ""))
+	storage_status.text = (message if not message.is_empty() else
+		"Select an inventory item to deposit or a stored item to withdraw.")
+	_sync_storage_actions()
+
+func _fill_storage_item_list(list_control: ItemList, items: Dictionary, prefix: String) -> void:
+	list_control.clear()
+	var positions: Array = items.keys()
+	positions.sort()
+	for raw_position: Variant in positions:
+		var position: int = int(raw_position)
+		var item_value: Variant = items.get(position)
+		if not item_value is Dictionary:
+			continue
+		var item: Dictionary = item_value as Dictionary
+		var image_id: int = int(item.get("image_id", 0))
+		var index: int = list_control.item_count
+		list_control.add_item("%s %d  •  item #%d  ×%d" % [prefix,
+			position + 1, image_id, int(item.get("quantity", 0))])
+		list_control.set_item_metadata(index, position)
+		var icon: Texture2D = item_atlas.icon_for(image_id)
+		if icon != null:
+			list_control.set_item_icon(index, icon)
+
+func _list_metadata_int(list_control: ItemList, index: int) -> int:
+	if index < 0 or index >= list_control.item_count:
+		return -1
+	var metadata: Variant = list_control.get_item_metadata(index)
+	return int(metadata) if metadata != null else -1
+
+func _sync_storage_actions() -> void:
+	var inventory_selected: bool = not storage_inventory.get_selected_items().is_empty()
+	var storage_selected: bool = not storage_items.get_selected_items().is_empty()
+	storage_deposit_button.disabled = not inventory_selected
+	storage_withdraw_button.disabled = not storage_selected
+	storage_inspect_button.disabled = not storage_selected
 
 func _sync_selection() -> void:
 	var dto: Dictionary = AppState.actors.get(AppState.selected_actor_id, {})

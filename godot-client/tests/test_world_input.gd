@@ -191,6 +191,34 @@ func _run() -> void:
 	_expect(not trade_panel.visible
 		and not bool((app_state_inventory.get("trade") as Dictionary).get("open", true)),
 		"trade exit clears offers and closes the window")
+	app_state_inventory.call("_on_packet", 67,
+		PackedByteArray([1, 4, 70, 108, 111, 119, 101, 114, 115, 0]))
+	app_state_inventory.call("_on_packet", 68,
+		PackedByteArray([0, 4, 3, 0, 5, 0, 0, 0, 2, 0]))
+	app_state_inventory.call("_on_packet", 69,
+		PackedByteArray([132, 83, 116, 111, 114, 101, 100, 32, 115, 97, 102, 101, 108, 121, 0]))
+	main.call("_sync_storage")
+	var storage_panel: Control = main.get_node("GameView/StoragePanel") as Control
+	var storage_categories: ItemList = main.get_node(
+		"GameView/StoragePanel/Content/Columns/Categories/StorageCategories") as ItemList
+	var storage_items: ItemList = main.get_node(
+		"GameView/StoragePanel/Content/Columns/Stored/StorageItems") as ItemList
+	var storage_status: Label = main.get_node(
+		"GameView/StoragePanel/Content/StorageStatus") as Label
+	_expect(storage_panel.visible and root.get_visible_rect().encloses(
+		storage_panel.get_global_rect()), "server storage opens within the reference viewport")
+	_expect(storage_categories.item_count == 1 and storage_items.item_count == 1
+		and storage_status.text == "Stored safely",
+		"storage categories, items, and inspection text render from server state")
+	app_state_inventory.call("_on_packet", 68,
+		PackedByteArray([255, 4, 3, 0, 7, 0, 0, 0, 2, 0]))
+	var storage_state: Dictionary = app_state_inventory.get("storage") as Dictionary
+	var stored_items: Dictionary = storage_state.get("items", {}) as Dictionary
+	_expect(int((stored_items.get(2, {}) as Dictionary).get("quantity", 0)) == 7,
+		"incremental storage updates replace the authoritative position")
+	app_state_inventory.call("close_storage")
+	main.call("_sync_storage")
+	_expect(not storage_panel.visible, "storage close clears its local session window")
 	app_state_inventory.set("actors", {})
 	app_state_inventory.set("selected_actor_id", -1)
 	main.call("_on_inventory_button_pressed")

@@ -671,6 +671,106 @@ tooltip_text = "Reset both players' acceptance without closing the trade"
 text = "Cancel trade"
 tooltip_text = "Cancel the trade and restore all offered items"
 
+[node name="StoragePanel" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -410.0
+offset_top = -260.0
+offset_right = 330.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Content" type="VBoxContainer" parent="GameView/StoragePanel"]
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="GameView/StoragePanel/Content"]
+text = "STORAGE"
+horizontal_alignment = 1
+
+[node name="Columns" type="HBoxContainer" parent="GameView/StoragePanel/Content"]
+theme_override_constants/separation = 10
+
+[node name="Categories" type="VBoxContainer" parent="GameView/StoragePanel/Content/Columns"]
+
+[node name="Label" type="Label" parent="GameView/StoragePanel/Content/Columns/Categories"]
+text = "CATEGORIES"
+horizontal_alignment = 1
+
+[node name="StorageCategories" type="ItemList" parent="GameView/StoragePanel/Content/Columns/Categories"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 320)
+select_mode = 0
+allow_reselect = true
+
+[node name="Stored" type="VBoxContainer" parent="GameView/StoragePanel/Content/Columns"]
+
+[node name="Label" type="Label" parent="GameView/StoragePanel/Content/Columns/Stored"]
+text = "STORED ITEMS"
+horizontal_alignment = 1
+
+[node name="StorageItems" type="ItemList" parent="GameView/StoragePanel/Content/Columns/Stored"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 320)
+select_mode = 0
+allow_reselect = true
+
+[node name="Inventory" type="VBoxContainer" parent="GameView/StoragePanel/Content/Columns"]
+
+[node name="Label" type="Label" parent="GameView/StoragePanel/Content/Columns/Inventory"]
+text = "YOUR INVENTORY"
+horizontal_alignment = 1
+
+[node name="StorageInventory" type="ItemList" parent="GameView/StoragePanel/Content/Columns/Inventory"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 320)
+select_mode = 0
+allow_reselect = true
+
+[node name="QuantityRow" type="HBoxContainer" parent="GameView/StoragePanel/Content"]
+alignment = 1
+
+[node name="Label" type="Label" parent="GameView/StoragePanel/Content/QuantityRow"]
+text = "Quantity"
+
+[node name="StorageQuantity" type="SpinBox" parent="GameView/StoragePanel/Content/QuantityRow"]
+unique_name_in_owner = true
+min_value = 1.0
+max_value = 2147483647.0
+value = 1.0
+allow_greater = false
+
+[node name="StorageStatus" type="Label" parent="GameView/StoragePanel/Content"]
+unique_name_in_owner = true
+text = "Select an inventory item to deposit or a stored item to withdraw."
+horizontal_alignment = 1
+
+[node name="Actions" type="HBoxContainer" parent="GameView/StoragePanel/Content"]
+alignment = 1
+
+[node name="StorageDeposit" type="Button" parent="GameView/StoragePanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Deposit selected"
+disabled = true
+
+[node name="StorageWithdraw" type="Button" parent="GameView/StoragePanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Withdraw selected"
+disabled = true
+
+[node name="StorageInspect" type="Button" parent="GameView/StoragePanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Inspect stored item"
+disabled = true
+
+[node name="StorageClose" type="Button" parent="GameView/StoragePanel/Content/Actions"]
+text = "Close"
+
 [node name="Help" type="Label" parent="GameView"]
 visible = false
 layout_mode = 0
@@ -940,4 +1040,8 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeAccept" to="." method="_on_trade_accept_pressed"]
 [connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeReject" to="." method="_on_trade_reject_pressed"]
 [connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeCancel" to="." method="_on_trade_cancel_pressed"]
+[connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageDeposit" to="." method="_on_storage_deposit_pressed"]
+[connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageWithdraw" to="." method="_on_storage_withdraw_pressed"]
+[connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageInspect" to="." method="_on_storage_inspect_pressed"]
+[connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageClose" to="." method="_on_storage_close_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/DisconnectButton" to="." method="_on_disconnect_pressed"]
