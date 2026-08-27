@@ -66,6 +66,12 @@ extends Control
 @onready var storage_deposit_button: Button = %StorageDeposit
 @onready var storage_withdraw_button: Button = %StorageWithdraw
 @onready var storage_inspect_button: Button = %StorageInspect
+@onready var ground_bag_panel: Control = %GroundBagPanel
+@onready var ground_bag_items: ItemList = %GroundBagItems
+@onready var ground_bag_inventory: ItemList = %GroundBagInventory
+@onready var ground_bag_quantity: SpinBox = %GroundBagQuantity
+@onready var ground_bag_pick_button: Button = %GroundBagPick
+@onready var ground_bag_drop_button: Button = %GroundBagDrop
 @onready var quick_slot_container: GridContainer = $GameView/ItemSpellQuickbar/QuickContent/Slots
 @onready var spell_slot_container: GridContainer = %SpellSlots
 @onready var spell_status: Label = %SpellStatus
@@ -83,6 +89,7 @@ extends Control
 @onready var login_logo: TextureRect = %LoginLogo
 
 var actor_nodes: Dictionary = {}
+var ground_bag_nodes: Dictionary = {}
 var models: Dictionary = {}
 var animation_config: Dictionary = {}
 var map_registry: Dictionary = {}
@@ -131,6 +138,7 @@ func _ready() -> void:
 	inventory_panel.hide()
 	trade_panel.hide()
 	storage_panel.hide()
+	ground_bag_panel.hide()
 	game_view.hide()
 	creation_panel.hide()
 	create_gender.add_item("Luminous Female", 0)
@@ -148,6 +156,8 @@ func _ready() -> void:
 	storage_categories.item_selected.connect(_on_storage_category_selected)
 	storage_items.item_selected.connect(_on_storage_item_selected)
 	storage_inventory.item_selected.connect(_on_storage_inventory_selected)
+	ground_bag_items.item_selected.connect(_on_ground_bag_item_selected)
+	ground_bag_inventory.item_selected.connect(_on_ground_bag_inventory_selected)
 
 func _bind_shared_world() -> void:
 	gameplay_world = world_root.get_world_3d()
@@ -514,6 +524,79 @@ func _on_storage_inspect_pressed() -> void:
 func _on_storage_close_pressed() -> void:
 	AppState.close_storage()
 
+func _on_ground_bag_item_selected(index: int) -> void:
+	var position: int = _list_metadata_int(ground_bag_items, index)
+	var items: Dictionary = AppState.ground_bag.get("items", {}) as Dictionary
+	var item_value: Variant = items.get(position)
+	if item_value is Dictionary:
+		ground_bag_quantity.max_value = maxi(1,
+			int((item_value as Dictionary).get("quantity", 1)))
+		ground_bag_quantity.value = mini(int(ground_bag_quantity.value),
+			int(ground_bag_quantity.max_value))
+	_sync_ground_bag_actions()
+
+func _on_ground_bag_inventory_selected(index: int) -> void:
+	var slot: int = _list_metadata_int(ground_bag_inventory, index)
+	var item_value: Variant = AppState.inventory.get(slot)
+	if item_value is Dictionary:
+		ground_bag_quantity.max_value = maxi(1,
+			int((item_value as Dictionary).get("quantity", 1)))
+		ground_bag_quantity.value = mini(int(ground_bag_quantity.value),
+			int(ground_bag_quantity.max_value))
+	_sync_ground_bag_actions()
+
+func _on_ground_bag_pick_pressed() -> void:
+	var selected: PackedInt32Array = ground_bag_items.get_selected_items()
+	if selected.is_empty():
+		return
+	var position: int = _list_metadata_int(ground_bag_items, int(selected[0]))
+	var items: Dictionary = AppState.ground_bag.get("items", {}) as Dictionary
+	var item_value: Variant = items.get(position)
+	if not item_value is Dictionary:
+		return
+	var quantity: int = clampi(int(ground_bag_quantity.value), 1,
+		int((item_value as Dictionary).get("quantity", 1)))
+	var error: Error = Network.pick_up_ground_item(position, quantity)
+	if error != OK:
+		push_warning("PICK_UP_ITEM failed: " + error_string(error))
+
+func _on_ground_bag_pick_all_pressed() -> void:
+	var items: Dictionary = AppState.ground_bag.get("items", {}) as Dictionary
+	var positions: Array = items.keys()
+	positions.sort()
+	for raw_position: Variant in positions:
+		var position: int = int(raw_position)
+		var item_value: Variant = items.get(position)
+		if item_value is Dictionary:
+			var quantity: int = int((item_value as Dictionary).get("quantity", 0))
+			if quantity > 0:
+				var error: Error = Network.pick_up_ground_item(position, quantity)
+				if error != OK:
+					push_warning("PICK_UP_ITEM failed: " + error_string(error))
+
+func _on_ground_bag_drop_pressed() -> void:
+	var selected: PackedInt32Array = ground_bag_inventory.get_selected_items()
+	if selected.is_empty():
+		return
+	var slot: int = _list_metadata_int(ground_bag_inventory, int(selected[0]))
+	var item_value: Variant = AppState.inventory.get(slot)
+	if not item_value is Dictionary:
+		return
+	var quantity: int = clampi(int(ground_bag_quantity.value), 1,
+		int((item_value as Dictionary).get("quantity", 1)))
+	var error: Error = Network.drop_inventory_item(slot, quantity)
+	if error != OK:
+		push_warning("DROP_ITEM failed: " + error_string(error))
+
+func _on_ground_bag_close_pressed() -> void:
+	_close_ground_bag()
+
+func _close_ground_bag() -> void:
+	var error: Error = Network.close_bag()
+	if error != OK:
+		push_warning("CLOSE_BAG failed: " + error_string(error))
+	AppState.close_ground_bag()
+
 func _on_disconnect_pressed() -> void:
 	Network.disconnect_from_server()
 
@@ -547,6 +630,11 @@ func _clear_world_presentation() -> void:
 		if is_instance_valid(actor_node):
 			actor_node.queue_free()
 	actor_nodes.clear()
+	for raw_bag_node: Variant in ground_bag_nodes.values():
+		var bag_node: Node = raw_bag_node as Node
+		if is_instance_valid(bag_node):
+			bag_node.queue_free()
+	ground_bag_nodes.clear()
 	world_loader.unload_world()
 	loaded_server_map = ""
 	full_map.hide()
@@ -554,6 +642,7 @@ func _clear_world_presentation() -> void:
 	stats_panel.hide()
 	trade_panel.hide()
 	storage_panel.hide()
+	ground_bag_panel.hide()
 	dialogue_panel.hide()
 	chat_output.clear()
 	selected_target.text = "Target: none"
@@ -590,6 +679,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			_on_trade_cancel_pressed()
 		elif bool(AppState.storage.get("open", false)):
 			AppState.close_storage()
+		elif bool(AppState.ground_bag.get("open", false)):
+			_close_ground_bag()
 		elif inventory_panel.visible:
 			inventory_panel.hide()
 		elif stats_panel.visible:
@@ -611,7 +702,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_world_gui_input(event: InputEvent) -> void:
 	if (not game_view.visible or full_map.visible or dialogue_panel.visible
-			or trade_panel.visible or storage_panel.visible):
+			or trade_panel.visible or storage_panel.visible or ground_bag_panel.visible):
 		return
 	if event is InputEventMouseButton:
 		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
@@ -643,6 +734,15 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 			var touch_error: Error = Network.touch_actor(picked_actor_id)
 			if touch_error != OK:
 				push_warning("TOUCH_PLAYER failed: " + error_string(touch_error))
+		return
+	var picked_bag_id: int = _pick_ground_bag(viewport_position)
+	if picked_bag_id >= 0:
+		print_debug("ground_bag_input command=INSPECT_BAG bag_id=", picked_bag_id,
+			" redacted_bytes=not_sensitive")
+		AppState.begin_ground_bag_inspection(picked_bag_id)
+		var inspect_error: Error = Network.inspect_bag(picked_bag_id)
+		if inspect_error != OK:
+			push_warning("INSPECT_BAG failed: " + error_string(inspect_error))
 		return
 	var ray_origin: Vector3 = camera_rig.ray_origin(viewport_position)
 	var ray_direction: Vector3 = camera_rig.ray_direction(viewport_position)
@@ -684,6 +784,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_spells()
 			if bool(AppState.storage.get("open", false)):
 				_sync_storage()
+			if bool(AppState.ground_bag.get("open", false)):
+				_sync_ground_bag()
 		&"inventory_cooldowns":
 			_sync_quick_slots()
 		&"spells":
@@ -696,6 +798,10 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_trade()
 		&"storage":
 			_sync_storage()
+		&"ground_bags":
+			_sync_ground_bags()
+		&"ground_bag":
+			_sync_ground_bag()
 
 func _load_server_map() -> void:
 	if AppState.current_map.is_empty() or loaded_server_map == AppState.current_map:
@@ -712,6 +818,11 @@ func _load_server_map() -> void:
 	for node in actor_nodes.values():
 		node.queue_free()
 	actor_nodes.clear()
+	for bag_node_value: Variant in ground_bag_nodes.values():
+		var bag_node: Node = bag_node_value as Node
+		if is_instance_valid(bag_node):
+			bag_node.queue_free()
+	ground_bag_nodes.clear()
 	var manifest_resource: String = str(entry.get("manifest", ""))
 	var manifest_path: String = ProjectSettings.globalize_path(manifest_resource)
 	print_debug("map_resolved server_id=", AppState.current_map,
@@ -726,7 +837,9 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	map_label.text = "Map: " + manifest.data.get("asset", {}).get("name", manifest.asset_id())
 	_configure_full_map(manifest)
 	_sync_world()
+	_sync_ground_bags()
 	_snap_all_actors_to_surface.call_deferred()
+	_snap_all_ground_bags_to_surface.call_deferred()
 
 func _snap_all_actors_to_surface() -> void:
 	await get_tree().physics_frame
@@ -734,6 +847,13 @@ func _snap_all_actors_to_surface() -> void:
 		var actor: ReplicatedActor3D = actor_value as ReplicatedActor3D
 		if is_instance_valid(actor):
 			_place_actor_on_surface(actor)
+
+func _snap_all_ground_bags_to_surface() -> void:
+	await get_tree().physics_frame
+	for bag_value: Variant in ground_bag_nodes.values():
+		var bag: GroundBag3D = bag_value as GroundBag3D
+		if is_instance_valid(bag):
+			_place_ground_bag_on_surface(bag)
 
 func _on_world_load_failed(errors: Array[String]) -> void:
 	fallback_ground.show()
@@ -823,6 +943,71 @@ func _navigation_ray_position(origin: Vector3, direction: Vector3) -> Variant:
 	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
 	var position_value: Variant = hit.get("position")
 	return position_value if position_value is Vector3 else null
+
+func _sync_ground_bags() -> void:
+	for raw_id: Variant in ground_bag_nodes.keys():
+		var bag_id: int = int(raw_id)
+		if not AppState.ground_bags.has(bag_id):
+			var stale_value: Variant = ground_bag_nodes.get(bag_id)
+			if stale_value is Node:
+				(stale_value as Node).queue_free()
+			ground_bag_nodes.erase(bag_id)
+	for raw_id: Variant in AppState.ground_bags:
+		var bag_id: int = int(raw_id)
+		var dto_value: Variant = AppState.ground_bags.get(bag_id)
+		if not dto_value is Dictionary:
+			continue
+		var dto: Dictionary = dto_value as Dictionary
+		if ground_bag_nodes.has(bag_id):
+			var existing: GroundBag3D = ground_bag_nodes.get(bag_id) as GroundBag3D
+			if is_instance_valid(existing):
+				existing.global_position = adapter.server_to_godot(
+					int(dto.get("x", 0)), int(dto.get("y", 0)))
+				_place_ground_bag_on_surface(existing)
+			continue
+		var bag: GroundBag3D = GroundBag3D.new()
+		bag.configure(dto, adapter)
+		world_root.add_child(bag)
+		ground_bag_nodes[bag_id] = bag
+		_place_ground_bag_on_surface(bag)
+
+func _place_ground_bag_on_surface(bag: GroundBag3D) -> void:
+	if not is_instance_valid(bag) or gameplay_world == null:
+		return
+	var ray_start: Vector3 = Vector3(bag.global_position.x, 400.0, bag.global_position.z)
+	var ray_end: Vector3 = Vector3(bag.global_position.x, -100.0, bag.global_position.z)
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
+		ray_start, ray_end, WorldLoader.NAVIGATION_SURFACE_LAYER)
+	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
+	var position_value: Variant = hit.get("position")
+	if position_value is Vector3:
+		bag.set_surface_height((position_value as Vector3).y)
+	else:
+		bag.set_surface_height(adapter.walking_height)
+
+func _sync_ground_bag() -> void:
+	var is_open: bool = bool(AppState.ground_bag.get("open", false))
+	ground_bag_panel.visible = is_open
+	if not is_open:
+		return
+	inventory_panel.hide()
+	stats_panel.hide()
+	full_map.hide()
+	trade_panel.hide()
+	storage_panel.hide()
+	_fill_storage_item_list(ground_bag_items,
+		AppState.ground_bag.get("items", {}) as Dictionary, "Ground")
+	var backpack: Dictionary = {}
+	for raw_slot: Variant in AppState.inventory:
+		var slot: int = int(raw_slot)
+		if slot >= 0 and slot < 36:
+			backpack[slot] = AppState.inventory[raw_slot]
+	_fill_storage_item_list(ground_bag_inventory, backpack, "Inventory")
+	_sync_ground_bag_actions()
+
+func _sync_ground_bag_actions() -> void:
+	ground_bag_pick_button.disabled = ground_bag_items.get_selected_items().is_empty()
+	ground_bag_drop_button.disabled = ground_bag_inventory.get_selected_items().is_empty()
 
 func _configure_full_map(manifest: WorldManifest) -> void:
 	var asset_value: Variant = manifest.data.get("asset", {})
@@ -1437,6 +1622,19 @@ func _pick_actor(viewport_position: Vector2) -> int:
 	var collider_value: Variant = hit.get("collider")
 	if collider_value is ReplicatedActor3D:
 		return (collider_value as ReplicatedActor3D).actor_id
+	return -1
+
+func _pick_ground_bag(viewport_position: Vector2) -> int:
+	if gameplay_world == null:
+		return -1
+	var origin: Vector3 = camera_rig.ray_origin(viewport_position)
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
+		origin, origin + camera_rig.ray_direction(viewport_position) * 2000.0,
+		GroundBag3D.PICK_LAYER)
+	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
+	var collider_value: Variant = hit.get("collider")
+	if collider_value is GroundBag3D:
+		return (collider_value as GroundBag3D).bag_id
 	return -1
 
 func _apply_eloria_art() -> void:

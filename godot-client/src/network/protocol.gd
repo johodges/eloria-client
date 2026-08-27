@@ -27,7 +27,8 @@ enum ServerMessage {
 	COMBAT_MODE = 8, KILL_ALL_ACTORS = 9, PONG = 11, HERE_YOUR_STATS = 18,
 	HERE_YOUR_INVENTORY = 19, INVENTORY_ITEM_TEXT = 20,
 	GET_NEW_INVENTORY_ITEM = 21, REMOVE_ITEM_FROM_INVENTORY = 22,
-	HERE_YOUR_GROUND_ITEMS = 23, REMOVE_ITEM_FROM_GROUND = 25, CLOSE_BAG = 26,
+	HERE_YOUR_GROUND_ITEMS = 23, GET_NEW_GROUND_ITEM = 24,
+	REMOVE_ITEM_FROM_GROUND = 25, CLOSE_BAG = 26,
 	GET_NEW_BAG = 27, GET_BAGS_LIST = 28, DESTROY_BAG = 29, NPC_TEXT = 30,
 	NPC_OPTIONS_LIST = 31, CLOSE_NPC_MENU = 32, SEND_NPC_INFO = 33,
 	GET_TRADE_OBJECT = 35, GET_TRADE_ACCEPT = 36, GET_TRADE_REJECT = 37,
@@ -198,6 +199,23 @@ static func look_at_storage_item(position: int) -> PackedByteArray:
 	return encode(ClientMessage.LOOK_AT_STORAGE_ITEM,
 		PackedByteArray([position & 0xff, (position >> 8) & 0xff]))
 
+static func inspect_bag(bag_id: int) -> PackedByteArray:
+	return encode(ClientMessage.INSPECT_BAG,
+		PackedByteArray([clampi(bag_id, 0, 255)]))
+
+static func close_bag() -> PackedByteArray:
+	return encode(ClientMessage.CLOSE_BAG)
+
+static func pick_up_ground_item(position: int, quantity: int) -> PackedByteArray:
+	return encode(ClientMessage.PICK_UP_ITEM, PackedByteArray([
+		clampi(position, 0, 255), quantity & 0xff, (quantity >> 8) & 0xff,
+		(quantity >> 16) & 0xff, (quantity >> 24) & 0xff]))
+
+static func drop_inventory_item(slot: int, quantity: int) -> PackedByteArray:
+	return encode(ClientMessage.DROP_ITEM, PackedByteArray([
+		clampi(slot, 0, 255), quantity & 0xff, (quantity >> 8) & 0xff,
+		(quantity >> 16) & 0xff, (quantity >> 24) & 0xff]))
+
 static func actor_command_step(command: int) -> Vector2i:
 	# Server movement frames are the authoritative one-tile updates used by the
 	# legacy client. Walk and run use the same tile delta; timing differs.
@@ -281,6 +299,28 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				return {"type": "invalid", "error": "inventory_text_length"}
 			return {"type": "inventory_text", "color": int(payload[0]),
 				"text": nul_string(payload.slice(1))}
+		ServerMessage.GET_NEW_BAG:
+			return decode_ground_bag(payload)
+		ServerMessage.GET_BAGS_LIST:
+			return decode_ground_bags(payload)
+		ServerMessage.DESTROY_BAG:
+			if payload.size() != 1:
+				return {"type": "invalid", "error": "ground_bag_destroy_length"}
+			return {"type": "ground_bag_destroy", "bag_id": int(payload[0])}
+		ServerMessage.HERE_YOUR_GROUND_ITEMS:
+			return decode_ground_items(payload)
+		ServerMessage.GET_NEW_GROUND_ITEM:
+			if payload.size() != 7:
+				return {"type": "invalid", "error": "ground_item_length"}
+			return {"type": "ground_item", "item": decode_ground_item(payload)}
+		ServerMessage.REMOVE_ITEM_FROM_GROUND:
+			if payload.size() != 1:
+				return {"type": "invalid", "error": "ground_item_remove_length"}
+			return {"type": "ground_item_remove", "position": int(payload[0])}
+		ServerMessage.CLOSE_BAG:
+			if not payload.is_empty():
+				return {"type": "invalid", "error": "ground_bag_close_length"}
+			return {"type": "ground_bag_close"}
 		ServerMessage.GET_ITEMS_COOLDOWN:
 			return decode_item_cooldowns(payload)
 		ServerMessage.GET_TRADE_PARTNER_NAME:
@@ -441,6 +481,34 @@ static func decode_storage_categories(payload: PackedByteArray) -> Dictionary:
 	if offset != payload.size():
 		return {"type": "invalid", "error": "storage_categories_trailing"}
 	return {"type": "storage_categories", "categories": categories}
+
+static func decode_ground_bag(payload: PackedByteArray) -> Dictionary:
+	if payload.size() != 5:
+		return {"type": "invalid", "error": "ground_bag_length"}
+	return {"type": "ground_bag", "x": u16(payload), "y": u16(payload, 2),
+		"bag_id": int(payload[4])}
+
+static func decode_ground_bags(payload: PackedByteArray) -> Dictionary:
+	if payload.is_empty() or payload.size() != 1 + int(payload[0]) * 5:
+		return {"type": "invalid", "error": "ground_bags_length"}
+	var bags: Array[Dictionary] = []
+	for index: int in range(int(payload[0])):
+		var offset: int = 1 + index * 5
+		bags.append({"x": u16(payload, offset), "y": u16(payload, offset + 2),
+			"bag_id": int(payload[offset + 4])})
+	return {"type": "ground_bags", "bags": bags}
+
+static func decode_ground_items(payload: PackedByteArray) -> Dictionary:
+	if payload.is_empty() or payload.size() != 1 + int(payload[0]) * 7:
+		return {"type": "invalid", "error": "ground_items_length"}
+	var items: Array[Dictionary] = []
+	for index: int in range(int(payload[0])):
+		items.append(decode_ground_item(payload, 1 + index * 7))
+	return {"type": "ground_items", "items": items}
+
+static func decode_ground_item(payload: PackedByteArray, offset: int = 0) -> Dictionary:
+	return {"image_id": u16(payload, offset), "quantity": u32(payload, offset + 2),
+		"position": int(payload[offset + 6])}
 
 static func decode_storage_items(payload: PackedByteArray) -> Dictionary:
 	if payload.size() < 2 or (payload.size() - 2) % 8 != 0:

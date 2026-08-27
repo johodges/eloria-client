@@ -58,6 +58,16 @@ func _init() -> void:
 			46, 7, 0, 0x34, 0x12, 0xbc, 0x9a, 0x78, 0x56]))
 	_expect_bytes("storage inspection fixture", EloriaProtocol.look_at_storage_item(0x1234),
 		PackedByteArray([47, 3, 0, 0x34, 0x12]))
+	_expect_bytes("inspect ground bag fixture", EloriaProtocol.inspect_bag(7),
+		PackedByteArray([25, 2, 0, 7]))
+	_expect_bytes("close ground bag fixture", EloriaProtocol.close_bag(),
+		PackedByteArray([26, 1, 0]))
+	_expect_bytes("pick up ground item fixture",
+		EloriaProtocol.pick_up_ground_item(3, 0x12345678),
+		PackedByteArray([23, 6, 0, 3, 0x78, 0x56, 0x34, 0x12]))
+	_expect_bytes("drop inventory item fixture",
+		EloriaProtocol.drop_inventory_item(7, 0x12345678),
+		PackedByteArray([22, 6, 0, 7, 0x78, 0x56, 0x34, 0x12]))
 	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
 	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
 	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")
@@ -257,6 +267,36 @@ func _init() -> void:
 		PackedByteArray([130, 80, 111, 116, 105, 111, 110, 0]))
 	_expect(item_text.type == "inventory_text" and item_text.text == "Potion",
 		"inventory inspection text")
+	var ground_bag: Dictionary = EloriaProtocol.decode_server(27,
+		PackedByteArray([0x34, 0x12, 0x78, 0x56, 7]))
+	_expect(ground_bag.type == "ground_bag" and ground_bag.x == 0x1234
+		and ground_bag.y == 0x5678 and ground_bag.bag_id == 7,
+		"new ground bag fields")
+	var ground_bags: Dictionary = EloriaProtocol.decode_server(28,
+		PackedByteArray([2, 10, 0, 20, 0, 3, 30, 0, 40, 0, 4]))
+	_expect(ground_bags.type == "ground_bags" and ground_bags.bags.size() == 2
+		and ground_bags.bags[1].x == 30 and ground_bags.bags[1].bag_id == 4,
+		"ground bag snapshot fields")
+	var ground_items: Dictionary = EloriaProtocol.decode_server(23,
+		PackedByteArray([2, 0x34, 0x12, 5, 0, 0, 0, 3,
+			0x78, 0x56, 9, 0, 0, 0, 7]))
+	_expect(ground_items.type == "ground_items" and ground_items.items.size() == 2
+		and ground_items.items[0].image_id == 0x1234
+		and ground_items.items[1].quantity == 9
+		and ground_items.items[1].position == 7, "ground bag item fields")
+	var ground_item_update: Dictionary = EloriaProtocol.decode_server(24,
+		PackedByteArray([3, 0, 4, 0, 0, 0, 2]))
+	_expect(ground_item_update.type == "ground_item"
+		and ground_item_update.item.position == 2, "incremental ground item fields")
+	_expect(EloriaProtocol.decode_server(25, PackedByteArray([3])).type ==
+		"ground_item_remove" and EloriaProtocol.decode_server(26, PackedByteArray()).type ==
+		"ground_bag_close" and EloriaProtocol.decode_server(29, PackedByteArray([7])).type ==
+		"ground_bag_destroy", "ground bag lifecycle events")
+	_expect(EloriaProtocol.decode_server(27, PackedByteArray([1])).type == "invalid"
+		and EloriaProtocol.decode_server(28, PackedByteArray([1, 2])).type == "invalid"
+		and EloriaProtocol.decode_server(23, PackedByteArray([1, 2])).type == "invalid"
+		and EloriaProtocol.decode_server(26, PackedByteArray([0])).type == "invalid",
+		"malformed ground bag packets rejected")
 	var trade_partner: Dictionary = EloriaProtocol.decode_server(41,
 		PackedByteArray([1, 65, 108, 105, 99, 101, 0]))
 	_expect(trade_partner.type == "trade_partner" and trade_partner.name == "Alice"

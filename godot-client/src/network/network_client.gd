@@ -97,6 +97,18 @@ func withdraw_storage(position: int, quantity: int) -> Error:
 func look_at_storage_item(position: int) -> Error:
 	return send_frame(EloriaProtocol.look_at_storage_item(position))
 
+func inspect_bag(bag_id: int) -> Error:
+	return send_frame(EloriaProtocol.inspect_bag(bag_id))
+
+func close_bag() -> Error:
+	return send_frame(EloriaProtocol.close_bag())
+
+func pick_up_ground_item(position: int, quantity: int) -> Error:
+	return send_frame(EloriaProtocol.pick_up_ground_item(position, quantity))
+
+func drop_inventory_item(slot: int, quantity: int) -> Error:
+	return send_frame(EloriaProtocol.drop_inventory_item(slot, quantity))
+
 func create_character(username: String, password: String, appearance: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)
 

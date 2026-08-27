@@ -98,6 +98,18 @@ position:u16le`. Deposits use `DEPOSIT_ITEM(45)` as
 `STORAGE_TEXT(69)` as `color:u8 | NUL text`. The server validates NPC range,
 category/session state, quantities, inventory slots, and carry capacity.
 
+Ground bags are map-authoritative. `GET_NEW_BAG(27)` carries
+`x:u16le | y:u16le | bag_id:u8`; `GET_BAGS_LIST(28)` prefixes repeated entries
+with a count byte, and `DESTROY_BAG(29)` carries the map-local bag ID. Inspect
+sends `INSPECT_BAG(25)` with that ID. The server approaches the bag when
+needed, then `HERE_YOUR_GROUND_ITEMS(23)` sends `count:u8` plus repeated
+`image_id:u16le | quantity:u32le | position:u8` entries. Incremental add and
+remove commands are 24 and 25; command 26 closes the view. Pickup sends
+`PICK_UP_ITEM(23)` as `position:u8 | quantity:u32le`; dropping sends
+`DROP_ITEM(22)` as `inventory_slot:u8 | quantity:u32le`. The server owns bag
+creation/destruction, interaction range, carry capacity, quantities, and the
+resulting inventory snapshots.
+
 ## Open verification items
 
 Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; storage-backed trade positions and storage lifecycle; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.

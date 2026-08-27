@@ -232,6 +232,43 @@ func _run() -> void:
 	app_state_inventory.call("close_storage")
 	main.call("_sync_storage")
 	_expect(not storage_panel.visible, "storage close clears its local session window")
+	app_state_inventory.call("_on_packet", 28,
+		PackedByteArray([1, 10, 0, 20, 0, 7]))
+	main.call("_sync_ground_bags")
+	var ground_bag_nodes: Dictionary = main.get("ground_bag_nodes") as Dictionary
+	_expect(ground_bag_nodes.has(7) and ground_bag_nodes.get(7) is GroundBag3D,
+		"server bag snapshot creates a pickable world marker")
+	var bag_node: GroundBag3D = ground_bag_nodes.get(7) as GroundBag3D
+	_expect(bag_node.collision_layer == GroundBag3D.PICK_LAYER
+		and bag_node.server_tile == Vector2i(10, 20),
+		"ground bag marker preserves its authoritative tile and pick layer")
+	app_state_inventory.call("begin_ground_bag_inspection", 7)
+	app_state_inventory.call("_on_packet", 23,
+		PackedByteArray([1, 3, 0, 5, 0, 0, 0, 2]))
+	main.call("_sync_ground_bag")
+	var ground_bag_panel: Control = main.get_node("GameView/GroundBagPanel") as Control
+	var ground_bag_items: ItemList = main.get_node(
+		"GameView/GroundBagPanel/Content/Columns/Ground/GroundBagItems") as ItemList
+	_expect(ground_bag_panel.visible and ground_bag_items.item_count == 1
+		and root.get_visible_rect().encloses(ground_bag_panel.get_global_rect()),
+		"authoritative bag contents open within the reference viewport")
+	app_state_inventory.call("_on_packet", 24,
+		PackedByteArray([4, 0, 9, 0, 0, 0, 5]))
+	var ground_bag_state: Dictionary = app_state_inventory.get("ground_bag") as Dictionary
+	var ground_items_state: Dictionary = ground_bag_state.get("items", {}) as Dictionary
+	_expect(ground_items_state.size() == 2
+		and int((ground_items_state.get(5, {}) as Dictionary).get("quantity", 0)) == 9,
+		"incremental ground item updates the open bag")
+	app_state_inventory.call("_on_packet", 25, PackedByteArray([2]))
+	ground_bag_state = app_state_inventory.get("ground_bag") as Dictionary
+	ground_items_state = ground_bag_state.get("items", {}) as Dictionary
+	_expect(not ground_items_state.has(2),
+		"ground item removal clears the authoritative slot")
+	app_state_inventory.call("_on_packet", 29, PackedByteArray([7]))
+	main.call("_sync_ground_bags")
+	_expect(not (app_state_inventory.get("ground_bags") as Dictionary).has(7)
+		and not bool((app_state_inventory.get("ground_bag") as Dictionary).get("open", true)),
+		"destroyed bag removes its world marker and closes its matching window")
 	app_state_inventory.set("actors", {})
 	app_state_inventory.set("selected_actor_id", -1)
 	main.call("_on_inventory_button_pressed")

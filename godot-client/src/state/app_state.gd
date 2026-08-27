@@ -28,6 +28,8 @@ var trade: Dictionary = {"open": false, "partner": "", "storage_available": fals
 	"own_accepts": 0, "other_accepts": 0}
 var storage: Dictionary = {"open": false, "categories": [], "category_id": -1,
 	"items": {}, "text": ""}
+var ground_bags: Dictionary = {}
+var ground_bag: Dictionary = {"open": false, "bag_id": -1, "items": {}}
 var unknown_packet_count := 0
 var recent_protocol_errors: Array[String] = []
 
@@ -55,6 +57,8 @@ func _on_connection_state_changed(value: String) -> void:
 		npc_dialogue = {"open": false, "name": "", "portrait": 0, "text": "", "options": []}
 		trade = _empty_trade_state()
 		storage = _empty_storage_state()
+		ground_bags.clear()
+		ground_bag = _empty_ground_bag_state()
 	state_changed.emit(&"connection")
 
 func _on_packet(command: int, payload: PackedByteArray) -> void:
@@ -84,6 +88,8 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			pending_spell_target = ""
 			trade = _empty_trade_state()
 			storage = _empty_storage_state()
+			ground_bags.clear()
+			ground_bag = _empty_ground_bag_state()
 			state_changed.emit(&"map")
 		"actor_spawn":
 			actors[event.actor_id] = event
@@ -173,6 +179,47 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"inventory_text":
 			inventory_text = str(event.text)
 			state_changed.emit(&"inventory_text")
+		"ground_bag":
+			var bag: Dictionary = {"bag_id": int(event.bag_id),
+				"x": int(event.x), "y": int(event.y)}
+			ground_bags[int(event.bag_id)] = bag
+			state_changed.emit(&"ground_bags")
+		"ground_bags":
+			ground_bags.clear()
+			for raw_bag: Variant in event.bags:
+				var listed_bag: Dictionary = raw_bag as Dictionary
+				ground_bags[int(listed_bag.get("bag_id", -1))] = listed_bag.duplicate(true)
+			state_changed.emit(&"ground_bags")
+		"ground_bag_destroy":
+			var destroyed_bag_id: int = int(event.bag_id)
+			ground_bags.erase(destroyed_bag_id)
+			if int(ground_bag.get("bag_id", -1)) == destroyed_bag_id:
+				ground_bag = _empty_ground_bag_state()
+				state_changed.emit(&"ground_bag")
+			state_changed.emit(&"ground_bags")
+		"ground_items":
+			var ground_items: Dictionary = {}
+			for raw_ground_item: Variant in event.items:
+				var ground_item: Dictionary = raw_ground_item as Dictionary
+				ground_items[int(ground_item.get("position", -1))] = ground_item
+			ground_bag["items"] = ground_items
+			ground_bag["open"] = true
+			state_changed.emit(&"ground_bag")
+		"ground_item":
+			var new_ground_item: Dictionary = event.item as Dictionary
+			var current_ground_items: Dictionary = (ground_bag.get("items", {}) as Dictionary).duplicate(true)
+			current_ground_items[int(new_ground_item.get("position", -1))] = new_ground_item
+			ground_bag["items"] = current_ground_items
+			ground_bag["open"] = true
+			state_changed.emit(&"ground_bag")
+		"ground_item_remove":
+			var remaining_ground_items: Dictionary = (ground_bag.get("items", {}) as Dictionary).duplicate(true)
+			remaining_ground_items.erase(int(event.position))
+			ground_bag["items"] = remaining_ground_items
+			state_changed.emit(&"ground_bag")
+		"ground_bag_close":
+			ground_bag = _empty_ground_bag_state()
+			state_changed.emit(&"ground_bag")
 		"trade_partner":
 			trade["open"] = true
 			trade["partner"] = str(event.name)
@@ -359,3 +406,16 @@ func close_storage() -> void:
 func _empty_storage_state() -> Dictionary:
 	return {"open": false, "categories": [], "category_id": -1,
 		"items": {}, "text": ""}
+
+func begin_ground_bag_inspection(bag_id: int) -> void:
+	ground_bag["bag_id"] = bag_id
+	ground_bag["open"] = false
+	ground_bag["items"] = {}
+	state_changed.emit(&"ground_bag")
+
+func close_ground_bag() -> void:
+	ground_bag = _empty_ground_bag_state()
+	state_changed.emit(&"ground_bag")
+
+func _empty_ground_bag_state() -> Dictionary:
+	return {"open": false, "bag_id": -1, "items": {}}
