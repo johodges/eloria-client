@@ -1,0 +1,63 @@
+name: Build runtime compatibility fixes
+
+on:
+  push:
+    branches:
+      - codex/runtime-compat-runner-20260827
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply equipment and NPC compatibility fixes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin codex/native-guard-evidence-20260827 codex/runtime-compat-runner-20260827
+          git show origin/codex/runtime-compat-runner-20260827:.github/scripts/apply_runtime_compat_fixes.py > /tmp/apply_runtime_compat_fixes.py
+          git checkout -B codex/runtime-compat-equipment-npc-20260827 a6d970d8ce34be66c609ba71f8040ecb9ab71ea5
+          python3 /tmp/apply_runtime_compat_fixes.py
+          git diff --check
+      - name: Validate registries and structural asset tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 godot-client/tests/test_native_glb_assets.py -v
+          python3 -m json.tool godot-client/data/actors/equipment.json >/dev/null
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          models = json.loads(Path('godot-client/data/actors/models.json').read_text())
+          equipment = json.loads(Path('godot-client/data/actors/equipment.json').read_text())
+          assert '307' in models['actorTypes'], 'Four Gates Toran actor type missing'
+          assert '307' in models['npcLooks'], 'Four Gates Toran look missing'
+          assert models['npcLooks']['307']['equipmentVisuals'], 'Toran native equipment look empty'
+          assert all(model['import'].get('characterSpace') for model in equipment['models'].values())
+          print('actor 307 model:', models['actorTypes']['307'])
+          print('actor 307 equipment:', models['npcLooks']['307']['equipmentVisuals'])
+          print('character-space equipment models:', len(equipment['models']))
+          PY
+          git diff --check
+      - name: Publish implementation branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add eloria-assets/tools/build_native_nymara_glbs.py \
+            godot-client/src/actors/replicated_actor_3d.gd \
+            godot-client/src/app/main.gd \
+            godot-client/data/actors/equipment.json \
+            godot-client/tests/test_native_glb_assets.py \
+            godot-client/tests/test_world_input.gd \
+            godot-client/tests/integration/rendered_server_session.gd
+          git diff --cached --check
+          git commit -m "Fix native equipment alignment and legacy NPC actor types"
+          git push --force origin HEAD:codex/runtime-compat-equipment-npc-20260827
