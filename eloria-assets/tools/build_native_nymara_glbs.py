@@ -32,38 +32,42 @@ RACES = {
                   "feature": "none", "preserve_body": True,
                   "wardrobe": ((42, 126, 142), (42, 55, 72), (78, 55, 39),
                                 (221, 190, 101))},
-    "votary": {"label": "Whitehorn Votary", "color": (139, 173, 188),
-                "accent": (226, 231, 228), "shape": (1., 1., 1., 1.),
-                "feature": "horns",
+    "votary": {"label": "Whitehorn Votary", "color": (161, 145, 108),
+                "feature_color": (205, 216, 213), "accent": (226, 231, 228),
+                "shape": (1.04, 1.03, 1.02, .99), "feature": "horns",
                 "wardrobe": ((113, 145, 164), (76, 94, 108), (79, 91, 99),
                               (218, 232, 235))},
-    "glasswarden": {"label": "Glasswarden", "color": (121, 91, 158),
-                     "accent": (103, 184, 191), "shape": (1., 1., 1., 1.),
-                     "feature": "crystal",
+    "glasswarden": {"label": "Glasswarden", "color": (168, 121, 91),
+                     "feature_color": (67, 53, 103), "accent": (82, 185, 211),
+                     "shape": (.98, 1.01, .99, 1.), "feature": "crystal",
+                     "body_pattern": "none",
                      "wardrobe": ((54, 48, 84), (42, 44, 62), (83, 57, 39),
                                    (187, 145, 63))},
-    "orun": {"label": "Orun", "color": (172, 99, 47),
-             "accent": (219, 166, 72), "shape": (1., 1., 1., 1.),
+    "orun": {"label": "Orun", "color": (184, 139, 105),
+             "accent": (219, 166, 72), "shape": (1.02, 1.04, .97, .98),
              "feature": "none",
              "wardrobe": ((146, 76, 39), (85, 64, 48), (82, 54, 35),
                            (49, 142, 145))},
-    "greyhaven": {"label": "Greyhaven", "color": (62, 86, 101),
-                   "accent": (154, 174, 171), "shape": (1., 1., 1., 1.),
+    "greyhaven": {"label": "Greyhaven", "color": (153, 111, 89),
+                   "accent": (154, 174, 171), "shape": (1.03, 1.07, 1.04, 1.02),
                    "feature": "none",
                    "wardrobe": ((225, 220, 202), (41, 59, 75), (65, 49, 39),
                                  (171, 137, 70))},
-    "ssarathi": {"label": "Ssarathi", "color": (52, 116, 91),
-                  "accent": (184, 151, 70), "shape": (1., 1., 1., 1.),
+    "ssarathi": {"label": "Ssarathi", "color": (91, 153, 126),
+                  "feature_color": (48, 119, 94), "accent": (184, 151, 70),
+                  "shape": (1.05, .98, .96, 1.03),
                   "feature": "scaled",
                   "wardrobe": ((43, 112, 86), (34, 76, 62), (71, 63, 42),
                                 (189, 153, 67))},
     "stoneborn": {"label": "Stoneborn", "color": (118, 105, 91),
-                   "accent": (103, 184, 191), "shape": (1., 1., 1., 1.),
+                   "feature_color": (99, 96, 91), "accent": (103, 184, 191),
+                   "shape": (1.04, 1.08, 1.04, 1.02),
                    "feature": "stone",
                    "wardrobe": ((91, 86, 80), (65, 67, 68), (62, 55, 48),
                                  (84, 189, 199))},
     "mycelari": {"label": "Mycelari", "color": (116, 137, 91),
-                  "accent": (211, 151, 98), "shape": (1., 1., 1., 1.),
+                  "feature_color": (142, 112, 78), "accent": (211, 151, 98),
+                  "shape": (1., 1.02, 1.02, 1.03),
                   "feature": "fungal",
                   "wardrobe": ((88, 112, 70), (62, 75, 53), (71, 54, 39),
                                 (207, 143, 89))},
@@ -523,6 +527,9 @@ def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[i
     mesh = ShapeMesh()
     head = joint_by_name["Head"]
     pelvis = joint_by_name["pelvis"]
+    spine = joint_by_name["spine_03"]
+    clavicles = {-1.: joint_by_name["clavicle_l"],
+                  1.: joint_by_name["clavicle_r"]}
     if feature == "horns":
         # Curved, ringed horns grow from broad roots inside the temples. This
         # preserves the original stylized model language without detached fins.
@@ -531,73 +538,113 @@ def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[i
                 (side * .070, 1.700, -.010), (side * .132, 1.738, -.035),
                 (side * .178, 1.776, -.095), (side * .200, 1.818, -.155),
                 (side * .186, 1.856, -.205), (side * .148, 1.875, -.225),
-            ], [.058, .055, .045, .032, .018, .006], head, 0, 18)
+            ], [.058, .055, .045, .032, .018, .006], head, 0, 13)
             for y, x, z, radius in ((1.741, .136, -.041, .058),
                                      (1.780, .182, -.100, .045),
                                      (1.820, .200, -.158, .032)):
                 mesh.sphere((side * x, y, z), (radius, .026, radius),
-                            head, 1, 3, 10)
+                            head, 1, 2, 8)
     elif feature == "crystal":
-        # An embedded diadem replaces the prior floating shoulder shards. Its
-        # low-sided crystal planes match the concept crown at gameplay scale.
-        mesh.tapered_curve([(-.145, 1.700, .020), (-.070, 1.720, .060),
-                            (0., 1.730, .075), (.070, 1.720, .060),
-                            (.145, 1.700, .020)],
-                           [.018, .017, .016, .017, .018], head, 0, 12)
-        for x, height, lean in ((-.125, .130, -.025), (-.063, .175, -.010),
-                                (0., .205, 0.), (.063, .175, .010),
-                                (.125, .130, .025)):
-            mesh.sphere((x + lean * .35, 1.710 + height * .48, -.015),
-                        (.052, height, .050), head, 1, 3, 7)
+        # Glasswardens are human scholars and field engineers in the concept
+        # sheets. A compact brass-and-crystal lens rig, plus small clavicle-
+        # rooted resonance pins, conveys that identity without a fantasy crown.
+        mesh.tapered_curve([(-.150, 1.700, .070), (-.095, 1.714, .105),
+                            (0., 1.720, .116), (.095, 1.714, .105),
+                            (.150, 1.700, .070)],
+                           [.010, .010, .009, .010, .010], head, 0, 12)
         for side in (-1., 1.):
-            mesh.sphere((side * .083, 1.665, .079), (.042, .070, .025),
-                        head, 1, 4, 8)
+            x = side * .052
+            mesh.cylinder((x, 1.704, .112), (x, 1.704, .146), .043,
+                          head, 0, 16)
+            mesh.sphere((x, 1.704, .150), (.072, .066, .018),
+                        head, 1, 6, 16)
+            mesh.cylinder((side * .094, 1.704, .131),
+                          (side * .146, 1.696, .083), .007, head, 0, 10)
+            shoulder = clavicles[side]
+            for offset, height, reach in ((-.030, .085, .080),
+                                          (.015, .110, .105),
+                                          (.055, .070, .070)):
+                base = (side * (.245 + abs(offset) * .15),
+                        1.405 + offset, -.005)
+                tip = (side * (.245 + reach), 1.405 + height + offset,
+                       -.025 - reach * .22)
+                mesh.cone(base, tip, .025, shoulder, 1, 10)
+        mesh.cylinder((-.010, 1.704, .136), (.010, 1.704, .136),
+                      .007, head, 0, 10)
     elif feature == "scaled":
-        # Layered brow, low muzzle, cheek plates, and a rear-running tail give
-        # Ssarathi a readable reptilian profile without obscuring the face.
-        mesh.sphere((0., 1.620, .135), (.175, .095, .235), head, 0, 6, 14)
+        # The Ssarathi concept is reptilian rather than a human wearing a crest.
+        # Build a compact joined muzzle, jaw, brow and dorsal ridge in skin
+        # tones; gold is reserved for tiny nostril/scale accents.
+        mesh.sphere((0., 1.625, .145), (.170, .100, .220), head, 0, 5, 10)
+        mesh.sphere((0., 1.592, .125), (.145, .058, .185), head, 0, 4, 8)
+        mesh.tapered_curve([(0., 1.620, .230), (0., 1.665, .150),
+                            (0., 1.710, .080)],
+                           [.014, .018, .010], head, 0, 6)
         for side in (-1., 1.):
-            mesh.tapered_curve([(side * .025, 1.704, .102),
-                                (side * .095, 1.710, .090),
-                                (side * .140, 1.690, .045)],
-                               [.024, .027, .010], head, 1, 10)
-            mesh.sphere((side * .125, 1.635, .050), (.070, .095, .034),
-                        head, 0, 4, 8)
-        for y, size in ((1.665, .040), (1.735, .046), (1.802, .038)):
-            mesh.cone((0., y, -.048), (0., y + .082, -.128), size,
-                      head, 0, 12)
+            mesh.tapered_curve([(side * .018, 1.702, .105),
+                                (side * .082, 1.714, .090),
+                                (side * .138, 1.690, .040)],
+                               [.018, .021, .007], head, 0, 6)
+            mesh.cone((side * .035, 1.636, .239),
+                      (side * .035, 1.636, .250), .006, head, 1, 7)
+        for y, z, height, size in ((1.660, -.045, .075, .034),
+                                    (1.715, -.070, .092, .039),
+                                    (1.770, -.090, .090, .036),
+                                    (1.820, -.112, .070, .028)):
+            mesh.cone((0., y, z), (0., y + height, z - .075), size,
+                      head, 0, 10)
         mesh.tapered_curve([
             (0., .930, -.115), (0., .825, -.285), (0., .650, -.500),
-            (.055, .470, -.700), (.020, .285, -.875),
-        ], [.115, .108, .087, .052, .008], pelvis, 0, 18)
+            (.045, .470, -.700), (.135, .285, -.875),
+        ], [.115, .108, .087, .052, .008], pelvis, 0, 7)
     elif feature == "stone":
-        # Intersecting low-sided facial planes stay embedded in brow, temples,
-        # and jaw; tiny cyan memory insets replace floating crown triangles.
-        mesh.sphere((0., 1.704, .083), (.260, .072, .055), head, 0, 3, 9)
+        # Hewn anatomy belongs primarily to the shoulders and sternum, matching
+        # the original race silhouette. Facial plates remain shallow and leave
+        # the eyes, mouth, hair line, and human proportions readable.
+        mesh.sphere((0., 1.300, .060), (.310, .245, .070),
+                    spine, 0, 3, 8)
         for side in (-1., 1.):
-            mesh.sphere((side * .125, 1.665, .047), (.105, .180, .070),
-                        head, 0, 3, 8)
-            mesh.sphere((side * .105, 1.585, .060), (.120, .105, .065),
-                        head, 0, 3, 8)
-            mesh.sphere((side * .070, 1.710, .103), (.040, .025, .020),
-                        head, 1, 3, 7)
-        for x, height in ((-.090, .085), (0., .110), (.090, .085)):
-            mesh.sphere((x, 1.770 + height * .18, -.020),
-                        (.088, height, .088), head, 0, 3, 8)
+            mesh.sphere((side * .270, 1.385, -.005), (.205, .145, .175),
+                        clavicles[side], 0, 3, 7)
+            mesh.sphere((side * .120, 1.660, .052), (.078, .108, .050),
+                        head, 0, 3, 7)
+            mesh.sphere((side * .100, 1.600, .072), (.074, .074, .045),
+                        head, 0, 3, 7)
+            mesh.tapered_curve([(side * .075, 1.704, .112),
+                                (side * .120, 1.674, .096)],
+                               [.006, .003], head, 1, 6)
+        mesh.sphere((0., 1.704, .096), (.175, .045, .040),
+                    head, 0, 3, 8)
+        mesh.tapered_curve([(-.035, 1.298, .098), (.010, 1.260, .102),
+                            (-.018, 1.220, .088)],
+                           [.006, .005, .003], spine, 1, 6)
     elif feature == "fungal":
-        # A thick, rolled cap grows from one scalp-rooted stem. There are no
-        # detached shoulder mushrooms.
+        # Layered, asymmetric caps and shelf growths follow the original race
+        # silhouette. Every growth intersects the scalp or clavicle surface.
         mesh.tapered_curve([(0., 1.705, -.015), (.010, 1.760, -.020),
-                            (-.008, 1.818, -.020)], [.072, .062, .050],
-                           head, 0, 16)
-        mesh.sphere((-.008, 1.835, -.020), (.500, .240, .420),
-                    head, 1, 8, 24)
-        mesh.sphere((-.008, 1.785, -.018), (.440, .105, .360),
-                    head, 0, 4, 20)
-        for x, z, radius in ((-.105, .020, .028), (.075, .045, .023),
-                             (.135, -.050, .018), (-.035, -.105, .020)):
-            mesh.sphere((x, 1.900, z), (radius * 2., radius, radius * 2.),
-                        head, 0, 4, 8)
+                            (-.012, 1.810, -.020)], [.060, .052, .042],
+                           head, 0, 10)
+        mesh.sphere((-.018, 1.830, -.020), (.420, .180, .340),
+                    head, 0, 6, 18)
+        mesh.sphere((-.018, 1.790, -.012), (.360, .068, .285),
+                    head, 1, 3, 16)
+        for x, y, z, sx, sy, sz in ((-.175, 1.725, -.010, .155, .060, .125),
+                                     (.155, 1.690, -.025, .125, .050, .105)):
+            mesh.tapered_curve([(x * .72, y - .035, z), (x, y, z)],
+                               [.027, .018], head, 0, 7)
+            mesh.sphere((x, y, z), (sx, sy, sz), head, 0, 4, 12)
+            mesh.sphere((x, y - .014, z + .004),
+                        (sx * .82, sy * .35, sz * .82), head, 1, 2, 10)
+        for side in (-1., 1.):
+            shoulder = clavicles[side]
+            x = side * .275
+            mesh.tapered_curve([(side * .240, 1.380, -.010),
+                                (x, 1.405, -.015)],
+                               [.025, .015], shoulder, 0, 6)
+            mesh.sphere((x, 1.410, -.012), (.120, .045, .095),
+                        shoulder, 0, 3, 10)
+            mesh.sphere((x, 1.399, -.007), (.098, .018, .075),
+                        shoulder, 1, 2, 8)
     return mesh.arrays()
 
 
@@ -628,7 +675,8 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
         body_texture = resized_texture(source.parent / base_uri)
     else:
         body_texture = recolored_texture(
-            source.parent / base_uri, config["color"], config["accent"], config["feature"])
+            source.parent / base_uri, config["color"], config["accent"],
+            config.get("body_pattern", config["feature"]))
     hair_base = source_texture(document, source.parent, 0, "baseColorTexture")
     eye_base = source_texture(document, source.parent, 1, "baseColorTexture")
     materials = {
@@ -654,10 +702,11 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
                 document, source.parent, 2, "metallicRoughnessTexture"),
             double_sided=True),
         "feature": glb.material(config["label"] + " Integrated Feature",
-                                config["color"], roughness=.76),
+                                config.get("feature_color", config["color"]),
+                                metallic=.04, roughness=.72),
         "accent": glb.material(config["label"] + " Integrated Accent",
                                config["accent"], metallic=.12, roughness=.46,
-                               emissive=tuple(c // 18 for c in config["accent"])),
+                               emissive=tuple(c // 28 for c in config["accent"])),
     }
     shirt, pants, boots, trim = config["wardrobe"]
     materials.update({
@@ -668,12 +717,14 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
                                    texture_png=surface_detail_texture("trim")),
         "pants": glb.material(config["label"] + " Pants", pants, roughness=.91,
                               texture_png=surface_detail_texture("cloth")),
-        "pants_trim": glb.material(config["label"] + " Pants Trim", trim,
+        "pants_trim": glb.material(config["label"] + " Pants Seam",
+                                    tuple(round(c * .68) for c in pants),
                                    metallic=.12, roughness=.60,
                                    texture_png=surface_detail_texture("trim")),
         "boots": glb.material(config["label"] + " Boots", boots, roughness=.82,
                               texture_png=surface_detail_texture("leather")),
-        "boots_trim": glb.material(config["label"] + " Boots Trim", trim,
+        "boots_trim": glb.material(config["label"] + " Boots Seam",
+                                    tuple(round(c * .68) for c in boots),
                                    metallic=.18, roughness=.48,
                                    texture_png=surface_detail_texture("trim")),
         "headwear": glb.material(config["label"] + " Headwear", shirt, roughness=.88,
@@ -729,13 +780,12 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
         "calf_l", "calf_r", "foot_l", "foot_r", "ball_l", "ball_r",
         "ball_leaf_l", "ball_leaf_r"))
     head_score = influence(weights, joints, by_name("Head"))
-    shirt_mask = ((shirt_score[faces].mean(axis=1) > .30) & (y > .990) & (y < 1.550))
-    pants_mask = ((pants_score[faces].mean(axis=1) > .30) & (y > .245) & (y < 1.055))
+    shirt_mask = ((shirt_score[faces].mean(axis=1) > .30) & (y > .900) & (y < 1.550))
+    pants_mask = ((pants_score[faces].mean(axis=1) > .30) & (y > .245) & (y < 1.120))
     boots_mask = ((boots_score[faces].mean(axis=1) > .24) & (y < .320))
-    shirt_trim = shirt_mask & (((y > .995) & (y < 1.065)) |
-                               ((x > .285) & (y > 1.345)) |
+    shirt_trim = shirt_mask & (((x > .285) & (y > 1.345)) |
                                ((y > 1.435) & (x < .145) & (z > .045)))
-    pants_trim = pants_mask & (y > .965) & (y < 1.045)
+    pants_trim = pants_mask & (y > 1.015) & (y < 1.110)
     boots_trim = boots_mask & (y > .270) & (y < .325)
     head_band = ((head_score[faces].mean(axis=1) > .45) &
                  (y > 1.655) & (y < 1.710) & (z < .075))
@@ -755,9 +805,9 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     add_skinned("Wardrobe_Shirt", shirt_mask, .008, materials["shirt"])
     add_skinned("Wardrobe_Shirt_Trim", shirt_trim, .012, materials["shirt_trim"])
     add_skinned("Wardrobe_Pants", pants_mask, .009, materials["pants"])
-    add_skinned("Wardrobe_Pants_Trim", pants_trim, .013, materials["pants_trim"])
+    add_skinned("Wardrobe_Pants_Seam", pants_trim, .013, materials["pants_trim"])
     add_skinned("Wardrobe_Boots", boots_mask, .013, materials["boots"])
-    add_skinned("Wardrobe_Boots_Trim", boots_trim, .017, materials["boots_trim"])
+    add_skinned("Wardrobe_Boots_Seam", boots_trim, .017, materials["boots_trim"])
     add_skinned("Wardrobe_Head_Band", head_band, .012, materials["headwear_trim"])
     add_skinned("Wardrobe_Head_Cap", head_cap, .014, materials["headwear"])
 

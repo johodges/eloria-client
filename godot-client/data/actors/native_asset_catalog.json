@@ -4,128 +4,128 @@
   "pipeline": "build_native_nymara_glbs.py",
   "races": {
     "luminous_female": {
-      "vertices": 13757,
-      "triangles": 23060,
+      "vertices": 13727,
+      "triangles": 23038,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/luminous_female.glb"
     },
     "luminous_male": {
-      "vertices": 13504,
-      "triangles": 22494,
+      "vertices": 13658,
+      "triangles": 22706,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/luminous_male.glb"
     },
     "votary_female": {
-      "vertices": 14237,
-      "triangles": 23780,
+      "vertices": 14495,
+      "triangles": 24304,
       "joints": 65,
       "feature": "horns",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/votary_female.glb"
     },
     "votary_male": {
-      "vertices": 13984,
-      "triangles": 23214,
+      "vertices": 13803,
+      "triangles": 22848,
       "joints": 65,
       "feature": "horns",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/votary_male.glb"
     },
     "glasswarden_female": {
-      "vertices": 14067,
-      "triangles": 23494,
+      "vertices": 13961,
+      "triangles": 23274,
       "joints": 65,
       "feature": "crystal",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/glasswarden_female.glb"
     },
     "glasswarden_male": {
-      "vertices": 13814,
-      "triangles": 22928,
+      "vertices": 13881,
+      "triangles": 22934,
       "joints": 65,
       "feature": "crystal",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/glasswarden_male.glb"
     },
     "orun_female": {
-      "vertices": 13757,
-      "triangles": 23060,
+      "vertices": 14115,
+      "triangles": 23764,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/orun_female.glb"
     },
     "orun_male": {
-      "vertices": 13504,
-      "triangles": 22494,
+      "vertices": 13633,
+      "triangles": 22600,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/orun_male.glb"
     },
     "greyhaven_female": {
-      "vertices": 13757,
-      "triangles": 23060,
+      "vertices": 14262,
+      "triangles": 24010,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/greyhaven_female.glb"
     },
     "greyhaven_male": {
-      "vertices": 13504,
-      "triangles": 22494,
+      "vertices": 13577,
+      "triangles": 22558,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/greyhaven_male.glb"
     },
     "ssarathi_female": {
-      "vertices": 14141,
-      "triangles": 23616,
+      "vertices": 14496,
+      "triangles": 24250,
       "joints": 65,
       "feature": "scaled",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/ssarathi_female.glb"
     },
     "ssarathi_male": {
-      "vertices": 13888,
-      "triangles": 23050,
+      "vertices": 13558,
+      "triangles": 22502,
       "joints": 65,
       "feature": "scaled",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/ssarathi_male.glb"
     },
     "stoneborn_female": {
-      "vertices": 14113,
-      "triangles": 23534,
+      "vertices": 14489,
+      "triangles": 24260,
       "joints": 65,
       "feature": "stone",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/stoneborn_female.glb"
     },
     "stoneborn_male": {
-      "vertices": 13860,
-      "triangles": 22968,
+      "vertices": 13798,
+      "triangles": 22804,
       "joints": 65,
       "feature": "stone",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/stoneborn_male.glb"
     },
     "mycelari_female": {
-      "vertices": 14315,
-      "triangles": 23924,
+      "vertices": 14358,
+      "triangles": 23904,
       "joints": 65,
       "feature": "fungal",
       "wardrobe": "skinned",
       "path": "godot-client/assets/actors/native/races/mycelari_female.glb"
     },
     "mycelari_male": {
-      "vertices": 14062,
-      "triangles": 23358,
+      "vertices": 14291,
+      "triangles": 23578,
       "joints": 65,
       "feature": "fungal",
       "wardrobe": "skinned",

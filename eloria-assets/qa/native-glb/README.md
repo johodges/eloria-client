@@ -7,7 +7,7 @@ creature generators.
 
 | Library | Coverage | Runtime contract |
 | --- | ---: | --- |
-| Player cultures | 16 race/gender variants | Original 65-joint player rig, skinned default wardrobe, and Universal animation library; 13.7k-14.2k vertices |
+| Player cultures | 16 race/gender variants | Original 65-joint player rig, skinned default wardrobe, and Universal animation library; 13.5k-14.5k vertices |
 | Hairstyles | 8 gender-localized assets | Four original Quaternius styles with authored topology and texture detail |
 | Creatures | 32 species | New 21-joint rig with 7 embedded clips per GLB |
 | Equipment | 66 items across 8 parts | Independent GLBs attached through `BoneAttachment3D` |
@@ -15,7 +15,13 @@ creature generators.
 
 The palettes and integrated silhouette features were reviewed against the named
 Nymara character, armor, wildlife, guardian, and regional creature sheets. The
-software contact sheets provide a dependency-free review surface, while the
+human culture defaults retain the concept sheets' natural skin range instead of
+using culture accent colors as skin. Glasswardens use compact lens gear and
+shoulder resonance pins; Ssarathi use a joined muzzle, dorsal crest, and tail;
+Stoneborn mass is concentrated in shallow shoulder and sternum plates; and
+Mycelari caps use layered, surface-rooted growths.
+
+The software contact sheets provide a dependency-free review surface, while the
 Godot rendered-character test drives the real creation menu and rejects rigid
 default equipment, missing native hair, and oversized placeholder geometry.
 `races.png` exposes topology edges; `races-solid.png` provides the companion
