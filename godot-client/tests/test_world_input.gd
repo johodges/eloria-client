@@ -118,8 +118,10 @@ func _run() -> void:
 		"chat remains markup-safe and exposes legacy addressing syntax")
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
-	_expect(chat_panel.get_global_rect().end.y <= lower_hud.get_global_rect().position.y
-		and chat_input.get_global_rect().end.y <= lower_hud.get_global_rect().position.y,
+	_expect(chat_panel.anchor_bottom == lower_hud.anchor_top
+		and chat_input.anchor_bottom == lower_hud.anchor_top
+		and chat_panel.offset_bottom <= lower_hud.offset_top
+		and chat_input.offset_bottom <= lower_hud.offset_top,
 		"chat history and entry remain fully above the opaque lower HUD rail")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
 		"stats and item/spell quickbar occupy the right HUD rail")
