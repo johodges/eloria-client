@@ -49,6 +49,18 @@ func _run() -> void:
 	camera.position = Vector3(0.0, 155.0, 275.0)
 	camera.look_at(Vector3(0.0, 42.0, 20.0), Vector3.UP)
 	await _capture("four-gates-gameplay.png")
+	camera.position = Vector3(145.0, 110.0, 165.0)
+	camera.look_at(Vector3(0.0, 40.0, 0.0), Vector3.UP)
+	await _capture("four-gates-central-plaza-detail.png")
+	camera.position = Vector3(118.0, 125.0, 455.0)
+	camera.look_at(Vector3(0.0, 70.0, 345.0), Vector3.UP)
+	await _capture("four-gates-south-gate-detail.png")
+	camera.position = Vector3(-285.0, 115.0, -10.0)
+	camera.look_at(Vector3(-125.0, 40.0, -92.0), Vector3.UP)
+	await _capture("four-gates-market-detail.png")
+	camera.position = Vector3(285.0, 115.0, 465.0)
+	camera.look_at(Vector3(170.0, 5.0, 365.0), Vector3.UP)
+	await _capture("four-gates-waterfall-detail.png")
 	_finish()
 
 func _wait_for(predicate: Callable, timeout_seconds: float) -> bool:
