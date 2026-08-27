@@ -122,6 +122,22 @@ func _run() -> void:
 	pan_motion.relative = Vector2(25.0, -10.0)
 	main.call("_on_world_gui_input", pan_motion)
 	_expect(camera_rig.pan_offset.length() > 0.0, "middle drag pans camera")
+	var follow_actor: Node3D = Node3D.new()
+	world_viewport.get_node("WorldRoot").add_child(follow_actor)
+	follow_actor.global_position = Vector3(18.0, 47.0, -9.0)
+	var app_state: Node = root.get_node("AppState")
+	var previous_local_actor_id: int = int(app_state.get("local_actor_id"))
+	app_state.set("local_actor_id", 9001)
+	var fixture_actors: Dictionary = {9001: follow_actor}
+	main.set("actor_nodes", fixture_actors)
+	var saved_pan: Vector3 = camera_rig.pan_offset
+	main.call("_update_local_actor_follow")
+	_expect(camera_rig.focus.is_equal_approx(follow_actor.global_position),
+		"camera continuously follows the rendered local actor")
+	_expect(camera_rig.pan_offset.is_equal_approx(saved_pan),
+		"camera follow preserves the user pan offset")
+	app_state.set("local_actor_id", previous_local_actor_id)
+	follow_actor.queue_free()
 
 	print("world input tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()

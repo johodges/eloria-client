@@ -81,6 +81,10 @@ func _ready() -> void:
 	_apply_eloria_art()
 	_apply_eloria_theme()
 
+func _process(_delta: float) -> void:
+	if game_view.visible:
+		_update_local_actor_follow()
+
 func _on_connect_pressed() -> void:
 	if AppState.connection_state != "disconnected":
 		Network.disconnect_from_server()
@@ -403,18 +407,29 @@ func _sync_world() -> void:
 		_place_actor_on_surface(node)
 	actor_label.text = "Actors: %d" % AppState.actors.size()
 	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id):
-		var target: Node3D = actor_nodes[AppState.local_actor_id]
-		camera_rig.set_focus(target.global_position)
-		map_camera.global_position = target.global_position + Vector3(0, 220, 0)
-		map_camera.rotation_degrees = Vector3(-90, 0, 0)
-		player_map_marker.global_position = target.global_position + Vector3(0, 3.0, 0)
-		player_map_marker.visible = true
+		_update_local_actor_follow()
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
 		var current_health := int(local_dto.get("health", 0))
 		var maximum_health := maxi(1, int(local_dto.get("max_health", 1)))
 		health_bar.max_value = maximum_health
 		health_bar.value = current_health
 		health_text.text = "Health: %d / %d" % [current_health, maximum_health]
+
+func _update_local_actor_follow() -> void:
+	if AppState.local_actor_id < 0:
+		return
+	var target_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	if not target_value is Node3D:
+		return
+	var target: Node3D = target_value as Node3D
+	if not is_instance_valid(target):
+		return
+	var focus_position: Vector3 = target.global_position
+	camera_rig.set_focus(focus_position)
+	map_camera.global_position = focus_position + Vector3(0, 220, 0)
+	map_camera.rotation_degrees = Vector3(-90, 0, 0)
+	player_map_marker.global_position = focus_position + Vector3(0, 3.0, 0)
+	player_map_marker.visible = true
 
 func _place_actor_on_surface(actor: ReplicatedActor3D) -> void:
 	if not is_instance_valid(actor) or not is_instance_valid(main_viewport.world_3d):

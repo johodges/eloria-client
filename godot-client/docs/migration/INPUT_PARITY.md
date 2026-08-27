@@ -40,3 +40,8 @@ The full-screen `SubViewportContainer` owns world mouse input through its `gui_i
 signal. HUD controls render above it and consume their own events, preventing click-through.
 This explicit route is required because mouse events delivered to an embedded viewport are
 not guaranteed to reappear in the root Control's `_unhandled_input()` callback.
+
+The camera focus is updated every rendered frame from the local actor's presentation
+transform. Server reconciliation, interpolation, and terrain-height projection therefore
+cannot leave the camera at a stale position. Focus updates preserve yaw, pitch, zoom, and
+the explicit user pan offset.
