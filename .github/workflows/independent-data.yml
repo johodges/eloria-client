@@ -1,4 +1,4 @@
-name: Actor Visibility Probe
+name: Four Gates Surface Probe
 
 on:
   push:
@@ -12,76 +12,14 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    container:
-      image: barichello/godot-ci:4.7.2
-    env:
-      ELORIA_ARTIFACT_DIR: ${{ github.workspace }}/godot-client/test-artifacts/actor-probe
     steps:
       - uses: actions/checkout@v4
-      - name: Install software-rendered display tools
-        run: |
-          apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-            python3 xvfb xauth imagemagick libgl1-mesa-dri libfontconfig1 libxcursor1 \
-            libxinerama1 libxrandr2 libxi6 libxkbcommon0 libasound2t64 \
-            libpulse0 libudev1
-      - name: Configure current luminous actor with native guard gear
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          path = Path('godot-client/src/dev/model_validation.gd')
-          text = path.read_text()
-          old = '"equipment_visuals": {} if is_creature else {0: 100, 1: 100}}'
-          new = '"equipment_visuals": {} if is_creature else {0: 112, 1: 105, 2: 105}}'
-          if old not in text:
-              raise SystemExit('model validation equipment marker missing')
-          path.write_text(text.replace(old, new, 1))
-          PY
-      - name: Import project
-        run: godot --headless --path godot-client --editor --quit
-      - name: Render actor on normal floor
-        run: |
-          mkdir -p "$ELORIA_ARTIFACT_DIR"
-          xvfb-run -a -s "-screen 0 1280x720x24" bash -lc '
-            godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility \
-              --path godot-client res://src/dev/model_validation.tscn \
-              >"$ELORIA_ARTIFACT_DIR/flat.log" 2>&1 &
-            pid=$!
-            sleep 8
-            import -window root "$ELORIA_ARTIFACT_DIR/actor-flat-floor.png"
-            kill "$pid" 2>/dev/null || true
-            wait "$pid" 2>/dev/null || true
-          '
-          ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/flat.log"
-          test -s "$ELORIA_ARTIFACT_DIR/actor-flat-floor.png"
-      - name: Raise floor through actor and render occlusion control
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          path = Path('godot-client/src/dev/model_validation.tscn')
-          text = path.read_text()
-          marker = '[node name="Floor" type="MeshInstance3D" parent="."]\n'
-          replacement = marker + 'position = Vector3(0, 1.1, 0)\n'
-          if marker not in text:
-              raise SystemExit('floor marker missing')
-          path.write_text(text.replace(marker, replacement, 1))
-          PY
-          xvfb-run -a -s "-screen 0 1280x720x24" bash -lc '
-            godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility \
-              --path godot-client res://src/dev/model_validation.tscn \
-              >"$ELORIA_ARTIFACT_DIR/raised.log" 2>&1 &
-            pid=$!
-            sleep 8
-            import -window root "$ELORIA_ARTIFACT_DIR/actor-raised-floor.png"
-            kill "$pid" 2>/dev/null || true
-            wait "$pid" 2>/dev/null || true
-          '
-          ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/raised.log"
-          test -s "$ELORIA_ARTIFACT_DIR/actor-raised-floor.png"
-      - name: Upload actor visibility evidence
+      - name: Probe rendered GLB surface at live actor position
+        run: python3 .github/four_gates_surface_probe.py
+      - name: Upload surface evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: actor-visibility-probe
-          path: godot-client/test-artifacts/actor-probe
+          name: four-gates-surface-probe
+          path: godot-client/test-artifacts/surface-probe
           if-no-files-found: error
