@@ -35,3 +35,6 @@ godot-client/.godot/
 godot-client/assets/actors/native/creatures/*-basecolor.png
 godot-client/assets/actors/native/races/*Atlas.png
 godot-client/**/*.glb.report.json
+
+# Rendered test evidence. CI uploads it as a build artifact.
+godot-client/test-artifacts/
