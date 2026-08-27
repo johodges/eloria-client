@@ -12,6 +12,14 @@ func _init() -> void:
 		PackedByteArray([7, 2, 0, 0]))
 	_expect_bytes("chat fixture", EloriaProtocol.chat("Hello"),
 		PackedByteArray([0, 7, 0, 72, 101, 108, 108, 111, 0]))
+	_expect_bytes("active channel fixture", EloriaProtocol.set_active_channel(1),
+		PackedByteArray([61, 2, 0, 6]))
+	_expect_bytes("locate fixture", EloriaProtocol.locate_me(),
+		PackedByteArray([15, 1, 0]))
+	_expect_bytes("date fixture", EloriaProtocol.get_date(),
+		PackedByteArray([230, 1, 0]))
+	_expect_bytes("time fixture", EloriaProtocol.get_time(),
+		PackedByteArray([231, 1, 0]))
 	_expect_bytes("private message fixture", EloriaProtocol.private_message("Alice Hello"),
 		PackedByteArray([2, 13, 0, 65, 108, 105, 99, 101, 32, 72, 101, 108, 108, 111, 0]))
 	_expect_bytes("private reply fixture", EloriaProtocol.private_message("/Hello"),
@@ -151,6 +159,13 @@ func _init() -> void:
 		"game clock wraps after six hours")
 	var chat := EloriaProtocol.decode_server(0, PackedByteArray([3, 72, 105, 0]))
 	_expect(chat.type == "chat" and chat.channel == 3 and chat.text == "Hi", "chat")
+	var active_channels: Dictionary = EloriaProtocol.decode_server(71,
+		PackedByteArray([1, 1, 0, 0, 0, 4, 0, 0, 0, 12, 0, 0, 0]))
+	_expect(active_channels.type == "active_channels"
+		and active_channels.active_index == 1
+		and active_channels.channels == [1, 4, 12], "active channel synchronization")
+	_expect(EloriaProtocol.decode_server(71, PackedByteArray([0, 1])).type == "invalid",
+		"active channel payload validation")
 	var colored_pm: Dictionary = EloriaProtocol.decode_server(0,
 		PackedByteArray([1, 128, 91, 80, 77, 32, 102, 114, 111, 109, 32, 65, 108,
 			105, 99, 101, 58, 32, 104, 105, 93, 0]))

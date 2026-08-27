@@ -84,6 +84,12 @@ jobs:
           ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/legacy-hud.log"
           test -s "$ELORIA_ARTIFACT_DIR/legacy-hud.png"
           test -s "$ELORIA_ARTIFACT_DIR/legacy-hud-context-menu.png"
+          test -s "$ELORIA_ARTIFACT_DIR/legacy-hud-minimap.png"
+          test -s "$ELORIA_ARTIFACT_DIR/legacy-full-map.png"
+          test -s "$ELORIA_ARTIFACT_DIR/legacy-continent-map.png"
+          test -s "$ELORIA_ARTIFACT_DIR/legacy-region-preview.png"
+          test -s "$ELORIA_ARTIFACT_DIR/legacy-chat-console.png"
+          test -s "$ELORIA_ARTIFACT_DIR/legacy-hud-settings.png"
       - name: Render all character-creation models
         run: |
           xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_character_creation_models.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/character-models.log"
