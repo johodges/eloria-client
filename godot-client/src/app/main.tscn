@@ -137,16 +137,39 @@ text = "Actors: 0"
 unique_name_in_owner = true
 text = "Target: none"
 
-[node name="ChatPanel" type="MarginContainer" parent="GameView"]
+[node name="ChatTabs" type="HBoxContainer" parent="GameView"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = 236.0
+offset_bottom = 30.0
+theme_override_constants/separation = 2
+
+[node name="Options" type="Button" parent="GameView/ChatTabs"]
+custom_minimum_size = Vector2(74, 24)
+toggle_mode = true
+text = "Options"
+
+[node name="History" type="Button" parent="GameView/ChatTabs"]
+custom_minimum_size = Vector2(74, 24)
+toggle_mode = true
+text = "History"
+
+[node name="All" type="Button" parent="GameView/ChatTabs"]
+custom_minimum_size = Vector2(48, 24)
+toggle_mode = true
+button_pressed = true
+text = "All"
+
+[node name="ChatPanel" type="PanelContainer" parent="GameView"]
 layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 0.48
-anchor_bottom = 1.0
-offset_left = 12.0
-offset_top = -188.0
-offset_right = -6.0
-offset_bottom = -112.0
+anchor_right = 0.56
+anchor_bottom = 0.16
+offset_left = 8.0
+offset_top = 32.0
+offset_right = -8.0
+offset_bottom = -8.0
 
 [node name="ChatOutput" type="RichTextLabel" parent="GameView/ChatPanel"]
 unique_name_in_owner = true
@@ -161,9 +184,9 @@ anchor_top = 1.0
 anchor_right = 0.48
 anchor_bottom = 1.0
 offset_left = 12.0
-offset_top = -108.0
+offset_top = -118.0
 offset_right = -6.0
-offset_bottom = -76.0
+offset_bottom = -86.0
 placeholder_text = "Chat, /name private message, or // reply"
 tooltip_text = "Enter sends local chat; /name message sends a private message; // message replies to the last sender"
 
@@ -230,19 +253,29 @@ current = true
 far = 2500.0
 cull_mask = 5
 
+[node name="LegacyRightRail" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -86.0
+mouse_filter = 2
+
 [node name="MinimapFrame" type="PanelContainer" parent="GameView"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -184.0
-offset_top = 8.0
+offset_left = -82.0
+offset_top = 4.0
 offset_right = -8.0
-offset_bottom = 184.0
+offset_bottom = 78.0
 
 [node name="Minimap" type="TextureRect" parent="GameView/MinimapFrame"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(168, 168)
+custom_minimum_size = Vector2(68, 68)
 expand_mode = 1
 stretch_mode = 5
 mouse_filter = 1
@@ -283,10 +316,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -184.0
-offset_top = 192.0
+offset_left = -82.0
+offset_top = 374.0
 offset_right = -8.0
-offset_bottom = 328.0
+offset_bottom = -170.0
 
 [node name="Quickbar" type="PanelContainer" parent="GameView"]
 layout_mode = 1
@@ -295,14 +328,15 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 8.0
-offset_top = -70.0
-offset_right = -8.0
-offset_bottom = -6.0
+offset_top = -82.0
+offset_right = -86.0
+offset_bottom = -4.0
 
 [node name="Buttons" type="HBoxContainer" parent="GameView/Quickbar"]
 theme_override_constants/separation = 6
 
 [node name="WalkButton" type="Button" parent="GameView/Quickbar/Buttons"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Walk"
 tooltip_text = "Walk mode; hold Shift while clicking to run"
@@ -338,11 +372,13 @@ text = "Inventory"
 tooltip_text = "Inventory"
 
 [node name="StatsButton" type="Button" parent="GameView/Quickbar/Buttons"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Stats"
 tooltip_text = "Character statistics"
 
 [node name="KnowledgeButton" type="Button" parent="GameView/Quickbar/Buttons"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 text = "Knowledge"
 tooltip_text = "Knowledge and books"
@@ -363,15 +399,65 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
 tooltip_text = "Disconnect"
 
+[node name="BottomMeters" type="HBoxContainer" parent="GameView/Quickbar/Buttons"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="HealthMeter" type="VBoxContainer" parent="GameView/Quickbar/Buttons/BottomMeters"]
+size_flags_horizontal = 3
+
+[node name="HealthBottomText" type="Label" parent="GameView/Quickbar/Buttons/BottomMeters/HealthMeter"]
+unique_name_in_owner = true
+text = "Health 0 / 0"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+
+[node name="HealthBottom" type="ProgressBar" parent="GameView/Quickbar/Buttons/BottomMeters/HealthMeter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 14)
+size_flags_horizontal = 3
+show_percentage = false
+
+[node name="EtherMeter" type="VBoxContainer" parent="GameView/Quickbar/Buttons/BottomMeters"]
+size_flags_horizontal = 3
+
+[node name="EtherBottomText" type="Label" parent="GameView/Quickbar/Buttons/BottomMeters/EtherMeter"]
+unique_name_in_owner = true
+text = "Ethereality 0 / 0"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+
+[node name="EtherBottom" type="ProgressBar" parent="GameView/Quickbar/Buttons/BottomMeters/EtherMeter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 14)
+size_flags_horizontal = 3
+show_percentage = false
+
+[node name="ActionMeter" type="VBoxContainer" parent="GameView/Quickbar/Buttons/BottomMeters"]
+size_flags_horizontal = 3
+
+[node name="ActionBottomText" type="Label" parent="GameView/Quickbar/Buttons/BottomMeters/ActionMeter"]
+unique_name_in_owner = true
+text = "Action 0 / 0"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+
+[node name="ActionBottom" type="ProgressBar" parent="GameView/Quickbar/Buttons/BottomMeters/ActionMeter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 14)
+size_flags_horizontal = 3
+show_percentage = false
+
 [node name="ItemSpellQuickbar" type="PanelContainer" parent="GameView"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -184.0
-offset_top = 330.0
+offset_left = -82.0
+offset_top = 82.0
 offset_right = -8.0
-offset_bottom = 644.0
+offset_bottom = 370.0
 
 [node name="QuickContent" type="VBoxContainer" parent="GameView/ItemSpellQuickbar"]
 theme_override_constants/separation = 2
@@ -384,35 +470,35 @@ horizontal_alignment = 1
 columns = 2
 
 [node name="Slot1" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "1"
 disabled = true
 [node name="Slot2" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "2"
 disabled = true
 [node name="Slot3" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "3"
 disabled = true
 [node name="Slot4" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "4"
 disabled = true
 [node name="Slot5" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "5"
 disabled = true
 [node name="Slot6" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "6"
 disabled = true
 [node name="Slot7" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "7"
 disabled = true
 [node name="Slot8" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "8"
 disabled = true
 
@@ -425,60 +511,229 @@ unique_name_in_owner = true
 columns = 2
 
 [node name="Spell1" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "S1"
 disabled = true
 [node name="Spell2" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "S2"
 disabled = true
 [node name="Spell3" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "S3"
 disabled = true
 [node name="Spell4" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "S4"
 disabled = true
 [node name="Spell5" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "S5"
 disabled = true
 [node name="Spell6" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
-custom_minimum_size = Vector2(68, 34)
+custom_minimum_size = Vector2(30, 28)
 text = "S6"
 disabled = true
 
 [node name="SpellStatus" type="Label" parent="GameView/ItemSpellQuickbar/QuickContent"]
 unique_name_in_owner = true
+visible = false
 text = "Spells synchronize with the server"
 horizontal_alignment = 1
 autowrap_mode = 2
 theme_override_font_sizes/font_size = 11
 
 [node name="Bars" type="VBoxContainer" parent="GameView/ResourceHud"]
+theme_override_constants/separation = 1
 
 [node name="Health" type="ProgressBar" parent="GameView/ResourceHud/Bars"]
 unique_name_in_owner = true
+visible = false
 max_value = 100.0
 value = 100.0
 show_percentage = false
 
 [node name="HealthText" type="Label" parent="GameView/ResourceHud/Bars"]
 unique_name_in_owner = true
+visible = false
 text = "Health: synchronizing"
 horizontal_alignment = 1
 
 [node name="Mana" type="ProgressBar" parent="GameView/ResourceHud/Bars"]
 unique_name_in_owner = true
+visible = false
 max_value = 100.0
 value = 100.0
 show_percentage = false
 
 [node name="ManaText" type="Label" parent="GameView/ResourceHud/Bars"]
 unique_name_in_owner = true
-text = "Mana / Action / Food: synchronizing"
+visible = false
+text = "Ethereality"
 horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+
+[node name="Action" type="ProgressBar" parent="GameView/ResourceHud/Bars"]
+unique_name_in_owner = true
+visible = false
+max_value = 100.0
+value = 100.0
+show_percentage = false
+
+[node name="ActionText" type="Label" parent="GameView/ResourceHud/Bars"]
+unique_name_in_owner = true
+visible = false
+text = "Action"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+
+[node name="SkillIndicators" type="RichTextLabel" parent="GameView/ResourceHud/Bars"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(62, 150)
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+theme_override_font_sizes/normal_font_size = 7
+
+[node name="ClockFrame" type="PanelContainer" parent="GameView"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -82.0
+offset_top = -166.0
+offset_right = -8.0
+offset_bottom = -94.0
+
+[node name="ClockFace" type="TextureRect" parent="GameView/ClockFrame"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="ClockHand" type="Line2D" parent="GameView/ClockFrame/ClockFace"]
+unique_name_in_owner = true
+position = Vector2(32, 32)
+points = PackedVector2Array(0, 4, 0, -20)
+width = 2.0
+default_color = Color(0.96, 0.65, 0.16, 1)
+
+[node name="ClockText" type="Label" parent="GameView/ClockFrame/ClockFace"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -15.0
+text = "0:00"
+horizontal_alignment = 1
+theme_override_colors/font_color = Color(1, 0.85, 0.42, 1)
+theme_override_font_sizes/font_size = 10
+
+[node name="CompassFrame" type="PanelContainer" parent="GameView"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -82.0
+offset_top = -90.0
+offset_right = -8.0
+offset_bottom = -18.0
+
+[node name="CompassFace" type="TextureRect" parent="GameView/CompassFrame"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 64)
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="CompassNeedle" type="Line2D" parent="GameView/CompassFrame/CompassFace"]
+unique_name_in_owner = true
+position = Vector2(32, 32)
+points = PackedVector2Array(0, 7, 0, -23)
+width = 3.0
+default_color = Color(0.12, 0.82, 0.92, 1)
+
+[node name="ActorResourceOverlay" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+visible = false
+z_index = 10
+layout_mode = 0
+offset_right = 150.0
+offset_bottom = 66.0
+mouse_filter = 2
+
+[node name="Rows" type="VBoxContainer" parent="GameView/ActorResourceOverlay"]
+theme_override_constants/separation = 1
+
+[node name="HealthRow" type="HBoxContainer" parent="GameView/ActorResourceOverlay/Rows"]
+unique_name_in_owner = true
+[node name="Bar" type="ProgressBar" parent="GameView/ActorResourceOverlay/Rows/HealthRow"]
+unique_name_in_owner = false
+custom_minimum_size = Vector2(90, 13)
+show_percentage = false
+[node name="Number" type="Label" parent="GameView/ActorResourceOverlay/Rows/HealthRow"]
+custom_minimum_size = Vector2(52, 13)
+text = "0/0"
+theme_override_colors/font_color = Color(0.2, 1, 0.25, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="EtherRow" type="HBoxContainer" parent="GameView/ActorResourceOverlay/Rows"]
+unique_name_in_owner = true
+[node name="Bar" type="ProgressBar" parent="GameView/ActorResourceOverlay/Rows/EtherRow"]
+custom_minimum_size = Vector2(90, 13)
+show_percentage = false
+[node name="Number" type="Label" parent="GameView/ActorResourceOverlay/Rows/EtherRow"]
+custom_minimum_size = Vector2(52, 13)
+text = "0/0"
+theme_override_colors/font_color = Color(0.35, 0.45, 1, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="ActionRow" type="HBoxContainer" parent="GameView/ActorResourceOverlay/Rows"]
+unique_name_in_owner = true
+[node name="Bar" type="ProgressBar" parent="GameView/ActorResourceOverlay/Rows/ActionRow"]
+custom_minimum_size = Vector2(90, 13)
+show_percentage = false
+[node name="Number" type="Label" parent="GameView/ActorResourceOverlay/Rows/ActionRow"]
+custom_minimum_size = Vector2(52, 13)
+text = "0/0"
+theme_override_colors/font_color = Color(0.9, 0.48, 1, 1)
+theme_override_font_sizes/font_size = 11
+
+[node name="ActorHudMenu" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+visible = false
+z_index = 20
+layout_mode = 0
+offset_right = 248.0
+offset_bottom = 164.0
+
+[node name="Options" type="VBoxContainer" parent="GameView/ActorHudMenu"]
+theme_override_constants/separation = 4
+[node name="Title" type="Label" parent="GameView/ActorHudMenu/Options"]
+text = "OVERHEAD DISPLAY"
+horizontal_alignment = 1
+[node name="ShowHealth" type="CheckButton" parent="GameView/ActorHudMenu/Options"]
+unique_name_in_owner = true
+button_pressed = true
+text = "Health bar and numbers"
+[node name="ShowEther" type="CheckButton" parent="GameView/ActorHudMenu/Options"]
+unique_name_in_owner = true
+button_pressed = true
+text = "Ethereality bar and numbers"
+[node name="ShowAction" type="CheckButton" parent="GameView/ActorHudMenu/Options"]
+unique_name_in_owner = true
+button_pressed = true
+text = "Action points bar and numbers"
+[node name="Close" type="Button" parent="GameView/ActorHudMenu/Options"]
+unique_name_in_owner = true
+text = "Close"
 
 [node name="StatsPanel" type="PanelContainer" parent="GameView"]
 unique_name_in_owner = true
