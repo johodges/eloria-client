@@ -127,7 +127,9 @@ func _run() -> void:
 		"stats and item/spell quickbar occupy the right HUD rail")
 	_expect(not stats_panel.visible, "statistics window starts closed")
 	main.call("_on_stats_button_pressed")
-	_expect(stats_panel.visible, "statistics button opens the real stats window")
+	_expect(stats_panel.visible and not stats_panel.get_global_rect().intersects(
+		right_stats.get_global_rect()),
+		"statistics window opens without covering the fixed resource rail")
 	main.call("_on_stats_button_pressed")
 	_expect(not inventory_panel.visible and not inventory_button.disabled,
 		"real inventory window starts closed with its HUD action enabled")

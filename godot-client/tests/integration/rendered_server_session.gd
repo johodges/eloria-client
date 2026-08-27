@@ -273,11 +273,13 @@ func _run() -> void:
 	main.call("_on_stats_button_pressed")
 	await process_frame
 	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
+	var resource_hud: Control = main.get_node("GameView/ResourceHud") as Control
 	var stats_text: RichTextLabel = main.get_node("GameView/StatsPanel/StatsText") as RichTextLabel
 	_expect(stats_panel.visible
 		and Rect2(Vector2.ZERO, Vector2(SCREEN_SIZE)).encloses(
-			stats_panel.get_global_rect()),
-		"real statistics window opens entirely within the rendered viewport")
+			stats_panel.get_global_rect())
+		and not stats_panel.get_global_rect().intersects(resource_hud.get_global_rect()),
+		"real statistics window fits the viewport without covering the resource rail")
 	_expect(stats_text.get_parsed_text().contains("CHARACTER STATISTICS")
 		and stats_text.get_parsed_text().contains("Attack:")
 		and stats_text.get_parsed_text().contains("Overall:"),
