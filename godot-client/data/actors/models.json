@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "models": {
     "luminous_female": {
-      "scene": "res://../eloria-assets/source/player_models/native/Superhero_Female_FullBody.gltf",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "scene": "res://assets/actors/native/shared/Superhero_Female_FullBody.gltf",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -29,8 +29,8 @@
       }
     },
     "luminous_male": {
-      "scene": "res://../eloria-assets/source/player_models/native/Superhero_Male_FullBody.gltf",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "scene": "res://assets/actors/native/shared/Superhero_Male_FullBody.gltf",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -57,7 +57,7 @@
     },
     "votary_female": {
       "scene": "res://assets/actors/native/races/votary_female.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -84,7 +84,7 @@
     },
     "votary_male": {
       "scene": "res://assets/actors/native/races/votary_male.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -111,7 +111,7 @@
     },
     "glasswarden_female": {
       "scene": "res://assets/actors/native/races/glasswarden_female.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -138,7 +138,7 @@
     },
     "glasswarden_male": {
       "scene": "res://assets/actors/native/races/glasswarden_male.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -165,7 +165,7 @@
     },
     "orun_female": {
       "scene": "res://assets/actors/native/races/orun_female.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -192,7 +192,7 @@
     },
     "orun_male": {
       "scene": "res://assets/actors/native/races/orun_male.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -219,7 +219,7 @@
     },
     "greyhaven_female": {
       "scene": "res://assets/actors/native/races/greyhaven_female.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -246,7 +246,7 @@
     },
     "greyhaven_male": {
       "scene": "res://assets/actors/native/races/greyhaven_male.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -273,7 +273,7 @@
     },
     "ssarathi_female": {
       "scene": "res://assets/actors/native/races/ssarathi_female.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -300,7 +300,7 @@
     },
     "ssarathi_male": {
       "scene": "res://assets/actors/native/races/ssarathi_male.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -327,7 +327,7 @@
     },
     "stoneborn_female": {
       "scene": "res://assets/actors/native/races/stoneborn_female.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -354,7 +354,7 @@
     },
     "stoneborn_male": {
       "scene": "res://assets/actors/native/races/stoneborn_male.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -381,7 +381,7 @@
     },
     "mycelari_female": {
       "scene": "res://assets/actors/native/races/mycelari_female.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -408,7 +408,7 @@
     },
     "mycelari_male": {
       "scene": "res://assets/actors/native/races/mycelari_male.glb",
-      "animationLibrary": "res://../eloria-assets/source/player_models/native/Universal_Animation_Library.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
       "animationMap": "res://data/animations/luminous.json",
       "boneAliases": {
         "head": "Head"
@@ -1187,10 +1187,10 @@
     "302": {
       "model": "luminous_female",
       "equipmentVisuals": {
+        "0": 108,
         "3": 105,
         "5": 105,
-        "7": 105,
-        "0": 108
+        "7": 105
       }
     },
     "303": {
@@ -1207,10 +1207,10 @@
     "304": {
       "model": "luminous_female",
       "equipmentVisuals": {
+        "0": 108,
         "3": 105,
         "5": 105,
-        "7": 105,
-        "0": 108
+        "7": 105
       }
     },
     "305": {
@@ -1251,10 +1251,10 @@
     "309": {
       "model": "luminous_male",
       "equipmentVisuals": {
+        "0": 108,
         "3": 105,
         "5": 105,
-        "7": 105,
-        "0": 108
+        "7": 105
       }
     },
     "310": {
@@ -1271,10 +1271,10 @@
     "311": {
       "model": "luminous_male",
       "equipmentVisuals": {
+        "0": 108,
         "3": 105,
         "5": 105,
-        "7": 105,
-        "0": 108
+        "7": 105
       }
     },
     "312": {
