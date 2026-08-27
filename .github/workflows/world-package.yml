@@ -45,5 +45,5 @@ jobs:
       - run: |
           sudo apt update -qq
           sudo apt install -y cmake libsdl2-dev libsdl2-net-dev libsdl2-image-dev libssl-dev libopenal-dev libcal3d12-dev libvorbis-dev libsdl2-ttf-dev
-      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DLOCAL_NLOHMANN_JSON=ON
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DLOCAL_NLOHMANN_JSON=ON -DGENERATE_ELORIA_DATA=OFF
       - run: cmake --build build --parallel 2
