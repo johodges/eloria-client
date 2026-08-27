@@ -40,21 +40,21 @@ and memory totals, all of which are hardware independent.
 
 | Package | View | Draw calls | Primitives | ms/frame (llvmpipe) |
 |---|---|---:|---:|---:|
-| LOD1 | gameplay-default | 2,241 | 587,535 | 416.35 |
-| LOD1 | gameplay-zoomed-out | 2,739 | 645,761 | 434.85 |
-| LOD1 | region-overview | 1,737 | 350,338 | 257.64 |
-| LOD1 | low-settings-no-shadows | 924 | 223,087 | 167.27 |
-| LOD1 | high-settings | 2,088 | 519,880 | 370.13 |
-| LOD2 | gameplay-default | 1,587 | 418,335 | 381.71 |
-| LOD2 | gameplay-zoomed-out | 1,856 | 411,269 | 366.35 |
-| LOD2 | region-overview | 1,086 | 215,592 | 223.66 |
-| LOD2 | low-settings-no-shadows | 624 | 158,242 | 150.74 |
-| LOD2 | high-settings | 1,453 | 371,152 | 342.63 |
+| LOD1 | gameplay-default | 2,216 | 577,110 | 408.96 |
+| LOD1 | gameplay-zoomed-out | 2,739 | 644,181 | 434.0 |
+| LOD1 | region-overview | 1,737 | 350,314 | 261.77 |
+| LOD1 | low-settings-no-shadows | 909 | 216,408 | 162.95 |
+| LOD1 | high-settings | 2,087 | 522,233 | 366.96 |
+| LOD2 | gameplay-default | 1,587 | 418,335 | 352.26 |
+| LOD2 | gameplay-zoomed-out | 1,856 | 411,269 | 355.69 |
+| LOD2 | region-overview | 1,086 | 215,592 | 210.14 |
+| LOD2 | low-settings-no-shadows | 624 | 158,242 | 144.82 |
+| LOD2 | high-settings | 1,453 | 371,152 | 329.8 |
 
 | Package | Load time | Mesh instances | Collision bodies | Ambient animals |
 |---|---:|---:|---:|---:|
-| LOD1 | 503.7 ms | 735 | 172 | 84 |
-| LOD2 | 324.2 ms | 201 | 172 | 84 |
+| LOD1 | 482.5 ms | 735 | 172 | 84 |
+| LOD2 | 327.3 ms | 201 | 172 | 84 |
 
 Renderer-reported GPU memory at the default gameplay camera, LOD1: texture
 22.2 MiB, buffers
@@ -79,7 +79,7 @@ plateau, and because its architecture is authored rather than assembled from
 scaled primitives. Both sit well inside the documented desktop budget; LOD2 sits
 inside the mobile one.
 
-Draw calls are the honest weak point: 2,241 at the
+Draw calls are the honest weak point: 2,216 at the
 default gameplay camera against 1,587 for LOD2.
 That is the cost of instancing several hundred authored props as plain glTF
 nodes, which is what the current loader consumes; Four Gates sits in the same
