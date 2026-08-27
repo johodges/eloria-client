@@ -93,6 +93,7 @@ func _run() -> void:
 		"walk presentation closes authoritative steps promptly")
 	actor_height_fixture.free()
 	var lower_hud: Control = main.get_node("GameView/Quickbar") as Control
+	var chat_panel: Control = main.get_node("GameView/ChatPanel") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
 	var right_quickbar: Control = main.get_node("GameView/ItemSpellQuickbar") as Control
 	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
@@ -117,6 +118,9 @@ func _run() -> void:
 		"chat remains markup-safe and exposes legacy addressing syntax")
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
+	_expect(chat_panel.get_global_rect().end.y <= lower_hud.get_global_rect().position.y
+		and chat_input.get_global_rect().end.y <= lower_hud.get_global_rect().position.y,
+		"chat history and entry remain fully above the opaque lower HUD rail")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
 		"stats and item/spell quickbar occupy the right HUD rail")
 	_expect(not stats_panel.visible, "statistics window starts closed")
