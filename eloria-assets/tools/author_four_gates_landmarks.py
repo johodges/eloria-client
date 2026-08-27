@@ -1,7 +1,7 @@
 import json, math, random, struct
 from pathlib import Path
 import numpy as np
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 
 P=Path('four-gates-city-package');F=P/'four-gates-city.glb';T=P/'textures';T.mkdir(exist_ok=True)
 raw=F.read_bytes();jl,_=struct.unpack_from('<I4s',raw,12);g=json.loads(raw[20:20+jl]);bo=20+jl;bl,_=struct.unpack_from('<I4s',raw,bo);buf=bytearray(raw[bo+8:bo+8+bl])
@@ -35,26 +35,29 @@ def normal_atlas(image,grid,strength):
    result[y0:y1,x0:x1]=((normal*.5+.5)*255).astype(np.uint8)
  return Image.fromarray(result)
 
-# Dedicated landmark texture family.
-def load_or_generate_landmark_atlas(path):
- try:
-  return normalize_atlas(Image.open(path),2)
- except (FileNotFoundError, OSError):
-  image=Image.new('RGB',(1024,1024));draw=ImageDraw.Draw(image)
-  quadrants=[(190,194,190),(156,112,44),(67,73,82),(40,171,216)]
-  for tile,color in enumerate(quadrants):
-   x=(tile%2)*512;y=(tile//2)*512;draw.rectangle((x,y,x+511,y+511),fill=color)
-   for band in range(0,512,48):
-    light=tuple(min(255,c+22) for c in color);dark=tuple(max(0,c-24) for c in color)
-    draw.line((x,y+band,x+511,y+band),fill=dark,width=4)
-    draw.line((x,y+band+5,x+511,y+band+5),fill=light,width=2)
-   if tile in (1,3):
-    for stripe in range(20,512,64):draw.line((x+stripe,y,x+stripe+128,y+511),fill=tuple(min(255,c+35) for c in color),width=8)
-  image.save(path,optimize=True)
-  return image
-src=load_or_generate_landmark_atlas(T/'four-gates-landmark-trims-source.png');src.save(T/'four-gates-landmark-basecolor.png',optimize=True)
-normal_atlas(src,2,1.65).save(T/'four-gates-landmark-normal.png',optimize=True)
-orm=np.zeros((1024,1024,3),np.uint8);orm[:,:,0]=238;orm[:,:,1]=175;orm[:512,512:,1]=78;orm[:512,512:,2]=205;orm[512:,512:,1]=55;orm[512:,512:,2]=145;Image.fromarray(orm).save(T/'four-gates-landmark-orm.png',optimize=True)
+# Dedicated landmark texture family.  The restrained charcoal-and-gold value
+# hierarchy keeps the blue inlays legible without turning whole façades cyan.
+def paint_landmark_atlas(path):
+ quadrants=[(76,76,74),(147,101,35),(55,58,59),(31,91,166)]
+ rng=np.random.default_rng(407);image=Image.new('RGB',(1024,1024));draw=ImageDraw.Draw(image)
+ for tile,color in enumerate(quadrants):
+  x=(tile%2)*512;y=(tile//2)*512
+  noise=rng.normal(0,3.4,(512,512,1));base=np.asarray(color,dtype=np.float32)[None,None,:]
+  patch=Image.fromarray(np.clip(base+noise,0,255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(.7));image.paste(patch,(x,y))
+  dark=tuple(max(0,c-14) for c in color);light=tuple(min(255,c+13) for c in color)
+  if tile in (0,2):
+   for row in range(0,512,52):
+    draw.line((x,y+row,x+511,y+row),fill=dark,width=3)
+    offset=43 if (row//52)%2 else 0
+    for col in range(-offset,512,86):draw.line((x+col,y+row,x+col,y+min(51+row,511)),fill=dark,width=3)
+  elif tile==1:
+   for line in range(14,512,30):draw.line((x+line,y,x+line,y+511),fill=light,width=3)
+  else:
+   for line in range(-420,900,60):draw.line((x+line,y+511,x+line+260,y),fill=light,width=5)
+ image.save(path,optimize=True);return image
+src=paint_landmark_atlas(T/'four-gates-landmark-trims-source.png');src.save(T/'four-gates-landmark-basecolor.png',optimize=True)
+normal_atlas(src,2,.58).save(T/'four-gates-landmark-normal.png',optimize=True)
+orm=np.zeros((1024,1024,3),np.uint8);orm[:,:,0]=238;orm[:,:,1]=210;orm[:512,512:,1]=96;orm[:512,512:,2]=220;orm[512:,512:,1]=105;orm[512:,512:,2]=25;Image.fromarray(orm).save(T/'four-gates-landmark-orm.png',optimize=True)
 em=np.zeros((1024,1024,3),np.uint8);em[512:,512:]=np.asarray(src)[512:,512:];Image.fromarray(em).save(T/'four-gates-landmark-emissive.png',optimize=True)
 start_tex=len(g.get('textures',[]));ivs=[]
 for fn in ['four-gates-landmark-basecolor.png','four-gates-landmark-normal.png','four-gates-landmark-orm.png','four-gates-landmark-emissive.png']:ivs.append(view((T/fn).read_bytes()))
@@ -64,7 +67,7 @@ def ti(idx,c,r):return {'index':start_tex+idx,'extensions':{'KHR_texture_transfo
 mat0=len(g['materials'])
 for name,c,r,metal,rough,emissive in [('landmark-stone',0,0,0,.72,False),('landmark-bronze',1,0,1,.38,False),('landmark-foundation',0,1,0,.9,False),('landmark-energy',1,1,.5,.22,True)]:
  d={'name':name,'pbrMetallicRoughness':{'baseColorFactor':[1,1,1,1],'metallicFactor':1,'roughnessFactor':1,'baseColorTexture':ti(0,c,r),'metallicRoughnessTexture':ti(2,c,r)},'normalTexture':ti(1,c,r),'occlusionTexture':ti(2,c,r)}
- if emissive:d['emissiveFactor']=[.12,.45,1];d['emissiveTexture']=ti(3,c,r)
+ if emissive:d['emissiveFactor']=[.05,.24,.72];d['emissiveTexture']=ti(3,c,r)
  g['materials'].append(d)
 
 # Authored multi-ring tower shaft.

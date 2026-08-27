@@ -36,9 +36,11 @@ func _run() -> void:
 	environment.background_color = Color("a9cde2")
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	environment.ambient_light_color = Color("d9e7ee")
-	environment.ambient_light_energy = 0.72
+	environment.ambient_light_energy = 0.52
 	environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	environment_node.environment = environment
+	(scene.get_node("Sun") as DirectionalLight3D).light_energy = 1.05
+	(scene.get_node("UI") as CanvasLayer).visible = false
 
 	var camera: Camera3D = scene.get_node("Camera") as Camera3D
 	camera.position = Vector3(620.0, 610.0, 720.0)
