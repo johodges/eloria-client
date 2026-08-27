@@ -266,6 +266,7 @@ func _run() -> void:
 		"ground item removal clears the authoritative slot")
 	app_state_inventory.call("_on_packet", 29, PackedByteArray([7]))
 	main.call("_sync_ground_bags")
+	main.call("_sync_ground_bag")
 	_expect(not (app_state_inventory.get("ground_bags") as Dictionary).has(7)
 		and not bool((app_state_inventory.get("ground_bag") as Dictionary).get("open", true)),
 		"destroyed bag removes its world marker and closes its matching window")

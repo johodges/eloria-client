@@ -12,7 +12,9 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter) -> void:
 	name = "GroundBag_%d" % bag_id
 	collision_layer = PICK_LAYER
 	collision_mask = 0
-	global_position = adapter.server_to_godot(server_tile.x, server_tile.y)
+	# Configure before the node enters the scene tree; its parent WorldRoot uses
+	# the same authored coordinate space, so a local transform is correct here.
+	position = adapter.server_to_godot(server_tile.x, server_tile.y)
 	_build_visual()
 
 func set_surface_height(height: float) -> void:
