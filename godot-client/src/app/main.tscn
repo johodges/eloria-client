@@ -29,8 +29,8 @@ no_depth_test = true
 
 [sub_resource type="CylinderMesh" id="Mesh_map_marker"]
 material = SubResource("Material_map_marker")
-top_radius = 3.0
-bottom_radius = 3.0
+top_radius = 5.0
+bottom_radius = 5.0
 height = 0.35
 
 [node name="Main" type="Control"]

@@ -59,6 +59,9 @@ func _run() -> void:
 		"local-player map marker is white")
 	_expect(marker_material != null and marker_material.no_depth_test,
 		"local-player map marker remains visible above map geometry")
+	var marker_mesh: CylinderMesh = player_marker.mesh as CylinderMesh
+	_expect(marker_mesh != null and marker_mesh.top_radius >= 5.0,
+		"local-player white dot remains legible on the full-map scale")
 	var pick_result: int = int(main.call("_pick_actor", Vector2(640.0, 360.0)))
 	_expect(pick_result >= -1, "world click actor ray executes against a non-null World3D")
 	_expect(WorldLoader.NAVIGATION_SURFACE_LAYER != WorldLoader.WORLD_COLLISION_LAYER,

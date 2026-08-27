@@ -119,9 +119,12 @@ func _run() -> void:
 		"native actor remains readable at the default camera framing")
 	var marker: MeshInstance3D = main.get_node(
 		"GameView/ViewportContainer/Viewport/WorldRoot/PlayerMapMarker") as MeshInstance3D
+	var marker_mesh: CylinderMesh = marker.mesh as CylinderMesh
 	_expect(marker.visible and Vector2(marker.global_position.x, marker.global_position.z).distance_to(
 		Vector2(actor.global_position.x, actor.global_position.z)) < 0.01,
 		"white local-player marker follows the actor")
+	_expect(marker_mesh != null and marker_mesh.top_radius >= 5.0,
+		"white local-player marker is legible at the full-map scale")
 	var map_camera: Camera3D = main.get_node("GameView/MapViewport/MapCamera") as Camera3D
 	var full_map_camera: Camera3D = main.get_node(
 		"GameView/FullMapViewport/FullMapCamera") as Camera3D
