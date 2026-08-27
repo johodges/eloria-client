@@ -351,18 +351,25 @@ text = "LMB move  •  RMB drag rotate  •  MMB drag pan  •  Wheel zoom  • 
 
 [node name="CreationPanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
-layout_mode = 0
-offset_left = 190.0
-offset_top = 80.0
-offset_right = 1090.0
-offset_bottom = 650.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -460.0
+offset_top = -310.0
+offset_right = 460.0
+offset_bottom = 310.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Columns" type="HBoxContainer" parent="CreationPanel"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="Preview" type="SubViewportContainer" parent="CreationPanel/Columns"]
-custom_minimum_size = Vector2(430, 520)
+custom_minimum_size = Vector2(420, 520)
 layout_mode = 2
 stretch = true
 
@@ -382,7 +389,7 @@ rotation_degrees = Vector3(-45, -35, 0)
 light_energy = 1.25
 
 [node name="Form" type="VBoxContainer" parent="CreationPanel/Columns"]
-custom_minimum_size = Vector2(410, 0)
+custom_minimum_size = Vector2(440, 0)
 layout_mode = 2
 theme_override_constants/separation = 8
 
@@ -422,7 +429,7 @@ layout_mode = 2
 
 [node name="AppearanceGrid" type="GridContainer" parent="CreationPanel/Columns/Form"]
 layout_mode = 2
-columns = 2
+columns = 4
 
 [node name="SkinLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid"]
 text = "Skin"

@@ -34,6 +34,22 @@ func _run() -> void:
 	_expect(viewport_rect.encloses(status.get_global_rect()), "login status is visible")
 	var host: LineEdit = main.get_node("LoginPanel/Content/Host") as LineEdit
 	_expect(host.text == "18.235.240.60", "development server is the default endpoint")
+	var creation_panel: Control = main.get_node("CreationPanel") as Control
+	var create_button: Button = main.get_node(
+		"CreationPanel/Columns/Form/Actions/Create") as Button
+	var back_button: Button = main.get_node(
+		"CreationPanel/Columns/Form/Actions/Back") as Button
+	login_panel.hide()
+	creation_panel.show()
+	await process_frame
+	_expect(viewport_rect.encloses(creation_panel.get_global_rect()),
+		"character-creation panel fits the reference viewport")
+	_expect(viewport_rect.encloses(create_button.get_global_rect()),
+		"create-character submit action is visible")
+	_expect(viewport_rect.encloses(back_button.get_global_rect()),
+		"character-creation back action is visible")
+	creation_panel.hide()
+	game_view.show()
 
 	var right_down: InputEventMouseButton = InputEventMouseButton.new()
 	right_down.button_index = MOUSE_BUTTON_RIGHT
