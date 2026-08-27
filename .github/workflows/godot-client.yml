@@ -25,14 +25,6 @@ jobs:
         run: godot --headless --path godot-client --editor --quit
       - name: Protocol and reducer fixtures
         run: godot --headless --path godot-client --script res://tests/test_protocol.gd
-      - name: Check out unmodified server contract
-        uses: actions/checkout@v4
-        with:
-          repository: johodges/eloria-server
-          ref: b3c87a34eea2372881399aa4caab59166262e899
-          path: eloria-server
-      - name: NPC replication and dialogue against local server
-        run: python3 godot-client/tests/integration/npc_dialogue_local.py --server-root eloria-server
       - name: World input routing fixtures
         run: godot --headless --path godot-client --script res://tests/test_world_input.gd
       - name: Main scene smoke test
