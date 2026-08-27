@@ -308,7 +308,7 @@ func _run() -> void:
 	await _capture("world-stats.png")
 	main.call("_on_stats_button_pressed")
 	var quick_item_grid: GridContainer = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/Slots") as GridContainer
+		"GameView/ItemSpellQuickbar/QuickContent/ItemSlots") as GridContainer
 	var quick_spell_grid: GridContainer = main.get_node(
 		"GameView/ItemSpellQuickbar/QuickContent/SpellSlots") as GridContainer
 	var populated_quick_items: int = _populated_item_buttons(quick_item_grid)

@@ -36,10 +36,12 @@ func _run() -> void:
 	app_state.set("stats", {
 		"health": 72, "max_health": 100, "ether": 33, "max_ether": 50,
 		"action_points": 18, "max_action_points": 30, "food": 42,
+		"carried": 205, "capacity": 320,
 		"attack": 24, "defense": 21, "harvesting": 8, "alchemy": 12,
 		"magic": 17, "potion": 9, "summoning": 4, "manufacturing": 14,
 		"crafting": 11, "engineering": 3, "tailoring": 6, "ranging": 19,
-		"overall": 22})
+		"overall": 22, "harvesting_base_level": 8,
+		"harvesting_experience": 1480, "harvesting_experience_next": 2066})
 	var chat_lines: Array = app_state.get("chat_lines") as Array
 	chat_lines.clear()
 	chat_lines.append({"channel": 3, "text": "Welcome to Four Gates."})
@@ -51,6 +53,17 @@ func _run() -> void:
 	main.call("_sync_chat")
 	for unused_frame: int in range(12):
 		await process_frame
+	var bottom_meters: HBoxContainer = main.get_node("%BottomMeters") as HBoxContainer
+	_expect(bottom_meters.get_child(0).name == "ManaMeter"
+		and bottom_meters.get_child(1).name == "FoodMeter"
+		and bottom_meters.get_child(5).name == "ExperienceMeter",
+		"lower HUD uses EL meter order")
+	_expect((main.get_node("%FoodBottom") as ProgressBar).value == 42.0,
+		"food meter is server driven")
+	_expect((main.get_node("%OverheadPlayerName") as Label).text == "Ari",
+		"zoom-stable player name is above overhead meters")
+	main.call("_on_floating_feedback_requested", {
+		"kind": "experience", "skill": "harvesting", "amount": 12})
 	await _capture("legacy-hud.png")
 	main.call("_open_actor_hud_menu", Vector2(510.0, 300.0))
 	await _capture("legacy-hud-context-menu.png")

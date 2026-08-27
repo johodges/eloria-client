@@ -5,6 +5,7 @@ signal login_succeeded
 signal login_failed(message: String)
 signal character_created
 signal character_creation_failed(message: String)
+signal floating_feedback_requested(feedback: Dictionary)
 
 var connection_state := "disconnected"
 var authenticated := false
@@ -179,7 +180,12 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"partial_stats":
 			for stat_key_value: Variant in event.values:
 				var stat_key: String = str(stat_key_value)
-				stats[stat_key] = event.values[stat_key_value]
+				var next_value: int = int(event.values[stat_key_value])
+				var had_previous: bool = stats.has(stat_key)
+				var previous_value: int = int(stats.get(stat_key, next_value))
+				stats[stat_key] = next_value
+				if had_previous:
+					_emit_stat_feedback(stat_key, previous_value, next_value)
 			state_changed.emit(&"stats")
 		"inventory":
 			inventory.clear()
@@ -421,6 +427,22 @@ func _apply_actor_health_delta(actor_id: int, amount: int) -> void:
 	if actor_id == local_actor_id:
 		stats["health"] = health
 		state_changed.emit(&"stats")
+
+func _emit_stat_feedback(stat_key: String, previous_value: int,
+		next_value: int) -> void:
+	if next_value <= previous_value:
+		return
+	if stat_key.ends_with("_experience_next"):
+		return
+	if stat_key.ends_with("_experience"):
+		var skill_key: String = stat_key.trim_suffix("_experience")
+		floating_feedback_requested.emit({
+			"kind": "experience", "skill": skill_key,
+			"amount": next_value - previous_value, "value": next_value})
+	elif stat_key.ends_with("_base_level"):
+		var skill_key: String = stat_key.trim_suffix("_base_level")
+		floating_feedback_requested.emit({
+			"kind": "level", "skill": skill_key, "level": next_value})
 
 func close_dialogue() -> void:
 	npc_dialogue["open"] = false

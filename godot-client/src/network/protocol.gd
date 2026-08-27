@@ -586,13 +586,24 @@ static func decode_stats(payload: PackedByteArray) -> Dictionary:
 		"artificial_nexus", "magic_nexus"]
 	for index: int in range(attribute_names.size()):
 		values[attribute_names[index]] = s16(payload, index * 4)
+	# Each entry is [current level, base level, current experience,
+	# next-level experience] in the legacy 16-bit stat-slot coordinate system.
+	# Experience values span two slots and must be decoded as unsigned 32-bit
+	# values, matching the original EL/Eloria client.
 	var skills: Dictionary = {
-		"manufacturing": 24, "harvesting": 26, "alchemy": 28, "overall": 30,
-		"attack": 32, "defense": 34, "magic": 36, "potion": 38,
-		"summoning": 83, "crafting": 89, "engineering": 95,
-		"tailoring": 101, "ranging": 107}
+		"manufacturing": [24, 25, 49, 51], "harvesting": [26, 27, 53, 55],
+		"alchemy": [28, 29, 57, 59], "overall": [30, 31, 61, 63],
+		"attack": [32, 33, 65, 67], "defense": [34, 35, 69, 71],
+		"magic": [36, 37, 73, 75], "potion": [38, 39, 77, 79],
+		"summoning": [83, 84, 85, 87], "crafting": [89, 90, 91, 93],
+		"engineering": [95, 96, 97, 99], "tailoring": [101, 102, 103, 105],
+		"ranging": [107, 108, 109, 111]}
 	for skill_name: String in skills:
-		values[skill_name] = s16(payload, int(skills[skill_name]) * 2)
+		var layout: Array = skills[skill_name] as Array
+		values[skill_name] = s16(payload, int(layout[0]) * 2)
+		values[skill_name + "_base_level"] = s16(payload, int(layout[1]) * 2)
+		values[skill_name + "_experience"] = u32(payload, int(layout[2]) * 2)
+		values[skill_name + "_experience_next"] = u32(payload, int(layout[3]) * 2)
 	for resource: String in ["carried", "capacity", "health", "max_health", "ether", "max_ether"]:
 		var resource_index: int = ["carried", "capacity", "health", "max_health", "ether", "max_ether"].find(resource)
 		values[resource] = s16(payload, (40 + resource_index) * 2)
@@ -663,7 +674,27 @@ static func stat_key(slot: int) -> String:
 		24: "manufacturing", 26: "harvesting", 28: "alchemy", 30: "overall",
 		32: "attack", 34: "defense", 36: "magic", 38: "potion",
 		83: "summoning", 89: "crafting", 95: "engineering",
-		101: "tailoring", 107: "ranging"}
+		101: "tailoring", 107: "ranging",
+		25: "manufacturing_base_level", 27: "harvesting_base_level",
+		29: "alchemy_base_level", 31: "overall_base_level",
+		33: "attack_base_level", 35: "defense_base_level",
+		37: "magic_base_level", 39: "potion_base_level",
+		84: "summoning_base_level", 90: "crafting_base_level",
+		96: "engineering_base_level", 102: "tailoring_base_level",
+		108: "ranging_base_level",
+		49: "manufacturing_experience", 51: "manufacturing_experience_next",
+		53: "harvesting_experience", 55: "harvesting_experience_next",
+		57: "alchemy_experience", 59: "alchemy_experience_next",
+		61: "overall_experience", 63: "overall_experience_next",
+		65: "attack_experience", 67: "attack_experience_next",
+		69: "defense_experience", 71: "defense_experience_next",
+		73: "magic_experience", 75: "magic_experience_next",
+		77: "potion_experience", 79: "potion_experience_next",
+		85: "summoning_experience", 87: "summoning_experience_next",
+		91: "crafting_experience", 93: "crafting_experience_next",
+		97: "engineering_experience", 99: "engineering_experience_next",
+		103: "tailoring_experience", 105: "tailoring_experience_next",
+		109: "ranging_experience", 111: "ranging_experience_next"}
 	return str(keys.get(slot, "slot_%d" % slot))
 
 static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := false) -> Dictionary:
