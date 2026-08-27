@@ -77,3 +77,22 @@ Sanitized runtime values:
 The job is commit-message opt-in (`[rendered-integration]`) because every run
 creates a disposable server character. Ordinary pull-request updates only run
 the deterministic headless suite.
+
+### Verified camera-state evidence: workflow run 33068947381
+
+Commit `2ee71b536e525120cb1237334ce390c721cbbd8a` passed both the
+headless protocol job and the opt-in real-server rendered job. Artifact
+`9645038330` adds human-inspected rotated, panned, and zoomed 1280×720 frames
+plus sanitized `camera-states.json`:
+
+- rotation: yaw `0 -> -30` degrees and pitch `-60 -> -56` degrees;
+- intentional pan: `(0,0,0) -> (5.799599,0,1.186798)`;
+- zoom: distance `26 -> 18.5`;
+- the native actor remained inside the gameplay camera in every state;
+- restoring the default camera reset pan, re-established actor focus, and the
+  subsequent real MOVE_TO still reconciled `(768,480) -> (773,481)` with actor
+  yaw `-0.785398`.
+
+All camera-state PNGs were visually inspected. Rotation, pan, zoom, the HUD,
+the populated minimap, and the white minimap marker rendered in every frame;
+the zoomed frame made the native actor substantially easier to read.
