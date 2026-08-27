@@ -497,6 +497,15 @@ func _init() -> void:
 				"unsupported legacy item image receives the configured visible fallback")
 			_expect(atlas.icon_for(114) != null and atlas.uses_substitute(114),
 				"known legacy item image receives its data-driven Eloria substitute")
+			var guard_spear_icon: AtlasTexture = atlas.icon_for(114) as AtlasTexture
+			var guard_shield_icon: AtlasTexture = atlas.icon_for(397) as AtlasTexture
+			var guard_cape_icon: AtlasTexture = atlas.icon_for(460) as AtlasTexture
+			_expect(guard_spear_icon != null and guard_spear_icon.region.position == Vector2(150, 100),
+				"Four Gates guard spear uses the configured independent weapon artwork")
+			_expect(guard_shield_icon != null and guard_shield_icon.region.position == Vector2(50, 150),
+				"Four Gates guard shield uses the configured independent shield artwork")
+			_expect(guard_cape_icon != null and guard_cape_icon.region.position == Vector2(200, 200),
+				"Four Gates guard cape uses the configured independent cloak artwork")
 	var spell_config_file: FileAccess = FileAccess.open(
 		"res://data/spells/catalog.json", FileAccess.READ)
 	_expect(spell_config_file != null, "spell catalog opens")
