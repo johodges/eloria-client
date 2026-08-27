@@ -221,6 +221,23 @@ static func get_knowledge_info(index: int) -> PackedByteArray:
 	return encode(ClientMessage.GET_KNOWLEDGE_INFO,
 		PackedByteArray([index & 0xff, (index >> 8) & 0xff]))
 
+static func manufacture(ingredients: Array[Dictionary], wanted: int = 1) -> PackedByteArray:
+	# Legacy mix_handler(): count:u8, repeated slot:u8 + quantity:u16le,
+	# then wanted:u8. The six-entry cap is the legacy manufacture tray size.
+	assert(ingredients.size() >= 1 and ingredients.size() <= 6)
+	assert(wanted >= 1 and wanted <= 255)
+	var payload: PackedByteArray = PackedByteArray([ingredients.size()])
+	for ingredient: Dictionary in ingredients:
+		var slot: int = int(ingredient.get("slot", -1))
+		var quantity: int = int(ingredient.get("quantity", 0))
+		assert(slot >= 0 and slot <= 35)
+		assert(quantity >= 1 and quantity <= 0xffff)
+		payload.append(slot)
+		payload.append(quantity & 0xff)
+		payload.append((quantity >> 8) & 0xff)
+	payload.append(wanted)
+	return encode(ClientMessage.MANUFACTURE_THIS, payload)
+
 static func actor_command_step(command: int) -> Vector2i:
 	# Server movement frames are the authoritative one-tile updates used by the
 	# legacy client. Walk and run use the same tile delta; timing differs.

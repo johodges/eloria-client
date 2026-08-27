@@ -112,6 +112,9 @@ func drop_inventory_item(slot: int, quantity: int) -> Error:
 func get_knowledge_info(index: int) -> Error:
 	return send_frame(EloriaProtocol.get_knowledge_info(index))
 
+func manufacture(ingredients: Array[Dictionary], wanted: int = 1) -> Error:
+	return send_frame(EloriaProtocol.manufacture(ingredients, wanted))
+
 func create_character(username: String, password: String, appearance: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)
 

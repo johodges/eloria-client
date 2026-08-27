@@ -121,6 +121,20 @@ configuration hashes used to generate it. Reading itself remains initiated by
 using a server-recognized book from inventory, and the server owns progress,
 completion, recipe gating, and rejection messages.
 
+Manufacturing sends `MANUFACTURE_THIS(30)` as `count:u8`, followed by `count`
+entries of `inventory_slot:u8 | quantity:u16le`, and a trailing `wanted:u8`.
+The legacy tray and imported server catalog both cap ingredient entries at six.
+`wanted=1` requests one attempt and `wanted=255` requests the legacy mix-all
+loop. The server matches authoritative item names and quantities to one exact
+recipe; validates knowledge, tools, skills, food, ethereal points, combat,
+special days, nexus, and carry capacity; then reports outcomes through the
+existing inventory text (20), raw text (0), inventory (19/21/22), and
+partial/full statistics (49/18) messages. The checked-in recipe catalog is
+generated from the unmodified server's recipes, items, and books configuration
+and records all three source hashes. Recipes whose distinct item names share a
+legacy image ID are shown but automatic mixing remains disabled, because the
+default inventory wire format transmits neither an item name nor UID.
+
 ## Open verification items
 
 Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; storage-backed trade positions and storage lifecycle; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.

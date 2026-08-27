@@ -76,6 +76,13 @@ extends Control
 @onready var knowledge_list: ItemList = %KnowledgeList
 @onready var knowledge_detail: RichTextLabel = %KnowledgeDetail
 @onready var knowledge_known_only: CheckBox = %KnowledgeKnownOnly
+@onready var manufacturing_panel: Control = %ManufacturingPanel
+@onready var manufacturing_filter: LineEdit = %ManufacturingFilter
+@onready var manufacturing_list: ItemList = %ManufacturingList
+@onready var manufacturing_detail: RichTextLabel = %ManufacturingDetail
+@onready var manufacturing_status: Label = %ManufacturingStatus
+@onready var manufacturing_mix_one: Button = %ManufacturingMixOne
+@onready var manufacturing_mix_all: Button = %ManufacturingMixAll
 @onready var quick_slot_container: GridContainer = $GameView/ItemSpellQuickbar/QuickContent/Slots
 @onready var spell_slot_container: GridContainer = %SpellSlots
 @onready var spell_status: Label = %SpellStatus
@@ -100,6 +107,7 @@ var map_registry: Dictionary = {}
 var equipment_config: Dictionary = {}
 var item_atlas := ItemAtlas.new()
 var spell_catalog := SpellCatalog.new()
+var manufacturing_catalog := ManufacturingCatalog.new()
 var knowledge_catalog: Array[String] = []
 var gameplay_world: World3D
 var loaded_server_map := ""
@@ -116,6 +124,8 @@ var selected_trade_side := ""
 var trade_destinations: PackedByteArray = PackedByteArray()
 var trade_was_open := false
 var selected_storage_side := ""
+var selected_manufacturing_recipe := -1
+var manufacturing_server_status := "Select a recipe."
 var cooldown_display_second := -1
 
 func _ready() -> void:
@@ -125,6 +135,7 @@ func _ready() -> void:
 	equipment_config = _json("res://data/actors/equipment.json")
 	item_atlas.configure(_json("res://data/items/atlases.json"))
 	spell_catalog.configure(_json("res://data/spells/catalog.json"))
+	manufacturing_catalog.configure(_json("res://data/manufacturing/recipes.json"))
 	var knowledge_catalog_value: Variant = _json(
 		"res://data/knowledge/catalog.json").get("entries", [])
 	if knowledge_catalog_value is Array:
@@ -150,6 +161,7 @@ func _ready() -> void:
 	storage_panel.hide()
 	ground_bag_panel.hide()
 	knowledge_panel.hide()
+	manufacturing_panel.hide()
 	game_view.hide()
 	creation_panel.hide()
 	create_gender.add_item("Luminous Female", 0)
@@ -171,6 +183,8 @@ func _ready() -> void:
 	ground_bag_inventory.item_selected.connect(_on_ground_bag_inventory_selected)
 	knowledge_list.item_selected.connect(_on_knowledge_selected)
 	knowledge_known_only.toggled.connect(_on_knowledge_filter_toggled)
+	manufacturing_list.item_selected.connect(_on_manufacturing_selected)
+	manufacturing_filter.text_changed.connect(_on_manufacturing_filter_changed)
 
 func _bind_shared_world() -> void:
 	gameplay_world = world_root.get_world_3d()
@@ -343,6 +357,7 @@ func _on_stats_button_pressed() -> void:
 	if stats_panel.visible:
 		inventory_panel.hide()
 		knowledge_panel.hide()
+		manufacturing_panel.hide()
 		_sync_stats()
 
 func _on_inventory_button_pressed() -> void:
@@ -354,6 +369,7 @@ func _on_inventory_button_pressed() -> void:
 	if inventory_panel.visible:
 		stats_panel.hide()
 		knowledge_panel.hide()
+		manufacturing_panel.hide()
 		_sync_inventory()
 
 func _on_knowledge_button_pressed() -> void:
@@ -365,8 +381,62 @@ func _on_knowledge_button_pressed() -> void:
 	if knowledge_panel.visible:
 		inventory_panel.hide()
 		stats_panel.hide()
+		manufacturing_panel.hide()
 		full_map.hide()
 		_sync_knowledge()
+
+func _on_manufacturing_button_pressed() -> void:
+	if (bool(AppState.trade.get("open", false))
+			or bool(AppState.storage.get("open", false))
+			or bool(AppState.ground_bag.get("open", false))):
+		return
+	manufacturing_panel.visible = not manufacturing_panel.visible
+	if manufacturing_panel.visible:
+		inventory_panel.hide()
+		stats_panel.hide()
+		knowledge_panel.hide()
+		full_map.hide()
+		_sync_manufacturing()
+
+func _on_manufacturing_selected(index: int) -> void:
+	selected_manufacturing_recipe = _list_metadata_int(manufacturing_list, index)
+	manufacturing_server_status = "Ready for server validation."
+	_sync_manufacturing_detail()
+
+func _on_manufacturing_filter_changed(_text: String) -> void:
+	_sync_manufacturing()
+
+func _on_manufacturing_mix_one_pressed() -> void:
+	_send_manufacturing_request(1)
+
+func _on_manufacturing_mix_all_pressed() -> void:
+	_send_manufacturing_request(255)
+
+func _on_manufacturing_close_pressed() -> void:
+	manufacturing_panel.hide()
+
+func _send_manufacturing_request(wanted: int) -> void:
+	var availability: Dictionary = manufacturing_catalog.availability(
+		selected_manufacturing_recipe, AppState.inventory, AppState.known_knowledge,
+		AppState.stats)
+	var reasons: Array = availability.get("reasons", []) as Array
+	var selection: Array = availability.get("selection", []) as Array
+	if not reasons.is_empty() or selection.is_empty():
+		return
+	var typed_selection: Array[Dictionary] = []
+	for selection_value: Variant in selection:
+		if selection_value is Dictionary:
+			typed_selection.append(selection_value as Dictionary)
+	print_debug("manufacturing_input command=MANUFACTURE_THIS recipe_id=",
+		selected_manufacturing_recipe, " wanted=", wanted,
+		" ingredients=", typed_selection, " redacted_bytes=not_sensitive")
+	var error: Error = Network.manufacture(typed_selection, wanted)
+	if error == OK:
+		manufacturing_server_status = ("Mix-all request sent; awaiting the server."
+			if wanted == 255 else "Mix request sent; awaiting the server.")
+	else:
+		manufacturing_server_status = "MANUFACTURE_THIS failed: " + error_string(error)
+	_sync_manufacturing_detail()
 
 func _on_knowledge_selected(index: int) -> void:
 	var knowledge_index: int = _list_metadata_int(knowledge_list, index)
@@ -688,6 +758,7 @@ func _clear_world_presentation() -> void:
 	storage_panel.hide()
 	ground_bag_panel.hide()
 	knowledge_panel.hide()
+	manufacturing_panel.hide()
 	dialogue_panel.hide()
 	chat_output.clear()
 	selected_target.text = "Target: none"
@@ -728,6 +799,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			_close_ground_bag()
 		elif knowledge_panel.visible:
 			knowledge_panel.hide()
+		elif manufacturing_panel.visible:
+			manufacturing_panel.hide()
 		elif inventory_panel.visible:
 			inventory_panel.hide()
 		elif stats_panel.visible:
@@ -750,7 +823,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _on_world_gui_input(event: InputEvent) -> void:
 	if (not game_view.visible or full_map.visible or dialogue_panel.visible
 			or trade_panel.visible or storage_panel.visible or ground_bag_panel.visible
-			or knowledge_panel.visible):
+			or knowledge_panel.visible or manufacturing_panel.visible):
 		return
 	if event is InputEventMouseButton:
 		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
@@ -827,9 +900,13 @@ func _on_state_changed(path: StringName) -> void:
 		&"stats":
 			_sync_stats()
 			_sync_spells()
+			_sync_manufacturing()
 		&"inventory", &"inventory_text":
+			if path == &"inventory_text" and manufacturing_panel.visible:
+				manufacturing_server_status = AppState.inventory_text
 			_sync_inventory()
 			_sync_spells()
+			_sync_manufacturing()
 			if bool(AppState.storage.get("open", false)):
 				_sync_storage()
 			if bool(AppState.ground_bag.get("open", false)):
@@ -852,6 +929,7 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_ground_bag()
 		&"knowledge":
 			_sync_knowledge()
+			_sync_manufacturing()
 
 func _load_server_map() -> void:
 	if AppState.current_map.is_empty() or loaded_server_map == AppState.current_map:
@@ -1046,6 +1124,7 @@ func _sync_ground_bag() -> void:
 	trade_panel.hide()
 	storage_panel.hide()
 	knowledge_panel.hide()
+	manufacturing_panel.hide()
 	_fill_storage_item_list(ground_bag_items,
 		AppState.ground_bag.get("items", {}) as Dictionary, "Ground")
 	var backpack: Dictionary = {}
@@ -1088,6 +1167,88 @@ func _sync_knowledge() -> void:
 	knowledge_detail.text = "%s\nStatus: %s\nKnowledge ID: %d\n\n%s" % [
 		knowledge_catalog[selected_index], status, selected_index,
 		server_text if not server_text.is_empty() else "Waiting for the server description…"]
+
+func _sync_manufacturing() -> void:
+	if not manufacturing_panel.visible:
+		return
+	manufacturing_list.clear()
+	var filter_text: String = manufacturing_filter.text.strip_edges().to_lower()
+	for recipe_index: int in range(manufacturing_catalog.count()):
+		var definition: Dictionary = manufacturing_catalog.recipe(recipe_index)
+		var searchable: String = (str(definition.get("output", "")) + " "
+			+ str(definition.get("skill", ""))).to_lower()
+		var ingredients_value: Variant = definition.get("ingredients", [])
+		if ingredients_value is Array:
+			for ingredient_value: Variant in ingredients_value as Array:
+				if ingredient_value is Dictionary:
+					searchable += " " + str((ingredient_value as Dictionary).get("name", "")).to_lower()
+		if not filter_text.is_empty() and not searchable.contains(filter_text):
+			continue
+		var availability: Dictionary = manufacturing_catalog.availability(recipe_index,
+			AppState.inventory, AppState.known_knowledge, AppState.stats)
+		var reasons: Array = availability.get("reasons", []) as Array
+		var reason_lines: Array[String] = []
+		for reason_value: Variant in reasons:
+			reason_lines.append(str(reason_value))
+		var prefix: String = "[Ready]" if reasons.is_empty() else "[Blocked]"
+		var item_index: int = manufacturing_list.item_count
+		manufacturing_list.add_item("%s  %s — %s %d" % [prefix,
+			str(definition.get("output", "Unknown")),
+			str(definition.get("skill", "skill")).capitalize(),
+			int(definition.get("level", 0))])
+		manufacturing_list.set_item_metadata(item_index, recipe_index)
+		manufacturing_list.set_item_tooltip(item_index,
+			"Ready for server validation" if reasons.is_empty() else "\n".join(reason_lines))
+		var output_icon: Texture2D = item_atlas.icon_for(int(definition.get("outputImageId", -1)))
+		if output_icon != null:
+			manufacturing_list.set_item_icon(item_index, output_icon)
+		if recipe_index == selected_manufacturing_recipe:
+			manufacturing_list.select(item_index)
+	_sync_manufacturing_detail()
+
+func _sync_manufacturing_detail() -> void:
+	var definition: Dictionary = manufacturing_catalog.recipe(selected_manufacturing_recipe)
+	if definition.is_empty():
+		manufacturing_detail.text = "Select a server recipe to review exact ingredients."
+		manufacturing_status.text = manufacturing_server_status
+		manufacturing_mix_one.disabled = true
+		manufacturing_mix_all.disabled = true
+		return
+	var lines: Array[String] = ["[b]%s[/b]" % str(definition.get("output", "Unknown")),
+		"%s level %d  •  %d experience  •  food %d  •  mana %d" % [
+			str(definition.get("skill", "skill")).capitalize(),
+			int(definition.get("level", 0)), int(definition.get("experience", 0)),
+			int(definition.get("food", 0)), int(definition.get("mana", 0))], "", "Ingredients:"]
+	var ingredients_value: Variant = definition.get("ingredients", [])
+	if ingredients_value is Array:
+		for ingredient_value: Variant in ingredients_value as Array:
+			if ingredient_value is Dictionary:
+				var ingredient: Dictionary = ingredient_value as Dictionary
+				lines.append("  • %s ×%d" % [str(ingredient.get("name", "Unknown")),
+					int(ingredient.get("quantity", 0))])
+	var tools_value: Variant = definition.get("tools", [])
+	if tools_value is Array and not (tools_value as Array).is_empty():
+		lines.append("Tools:")
+		for tool_value: Variant in tools_value as Array:
+			if tool_value is Dictionary:
+				lines.append("  • " + str((tool_value as Dictionary).get("name", "Unknown")))
+	var knowledge: String = str(definition.get("knowledge", ""))
+	if not knowledge.is_empty():
+		lines.append("Knowledge: " + knowledge)
+	var availability: Dictionary = manufacturing_catalog.availability(
+		selected_manufacturing_recipe, AppState.inventory, AppState.known_knowledge,
+		AppState.stats)
+	var reasons: Array = availability.get("reasons", []) as Array
+	if reasons.is_empty():
+		lines.append("\nReady. The server remains authoritative for skill chance, special days, combat, capacity, and ingredient state.")
+	else:
+		lines.append("\nUnavailable:")
+		for reason_value: Variant in reasons:
+			lines.append("  • " + str(reason_value))
+	manufacturing_detail.text = "\n".join(lines)
+	manufacturing_status.text = manufacturing_server_status
+	manufacturing_mix_one.disabled = not reasons.is_empty()
+	manufacturing_mix_all.disabled = not reasons.is_empty()
 
 func _configure_full_map(manifest: WorldManifest) -> void:
 	var asset_value: Variant = manifest.data.get("asset", {})
@@ -1460,6 +1621,7 @@ func _sync_trade() -> void:
 	full_map.hide()
 	storage_panel.hide()
 	knowledge_panel.hide()
+	manufacturing_panel.hide()
 	trade_partner.text = "Trading with %s%s" % [
 		str(AppState.trade.get("partner", "another player")),
 		" — storage destinations available" if bool(
@@ -1550,6 +1712,7 @@ func _sync_storage() -> void:
 	full_map.hide()
 	trade_panel.hide()
 	knowledge_panel.hide()
+	manufacturing_panel.hide()
 	storage_categories.clear()
 	var active_category: int = int(AppState.storage.get("category_id", -1))
 	var raw_categories: Variant = AppState.storage.get("categories", [])

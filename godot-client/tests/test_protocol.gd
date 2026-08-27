@@ -70,6 +70,9 @@ func _init() -> void:
 		PackedByteArray([22, 6, 0, 7, 0x78, 0x56, 0x34, 0x12]))
 	_expect_bytes("knowledge inspection fixture", EloriaProtocol.get_knowledge_info(0x1234),
 		PackedByteArray([41, 3, 0, 0x34, 0x12]))
+	_expect_bytes("manufacturing fixture", EloriaProtocol.manufacture([
+		{"slot": 7, "quantity": 0x1234}, {"slot": 2, "quantity": 3}], 255),
+		PackedByteArray([30, 9, 0, 2, 7, 0x34, 0x12, 2, 3, 0, 255]))
 	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
 	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
 	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")
@@ -405,6 +408,43 @@ func _init() -> void:
 				and str(knowledge_entries[0]) == "Metallurgy"
 				and str(knowledge_entries[1]) == "Metal Smelting",
 				"knowledge catalog matches the audited server insertion order")
+	var manufacturing_catalog_file: FileAccess = FileAccess.open(
+		"res://data/manufacturing/recipes.json", FileAccess.READ)
+	_expect(manufacturing_catalog_file != null, "manufacturing catalog opens")
+	if manufacturing_catalog_file != null:
+		var manufacturing_value: Variant = JSON.parse_string(
+			manufacturing_catalog_file.get_as_text())
+		_expect(manufacturing_value is Dictionary, "manufacturing catalog parses")
+		if manufacturing_value is Dictionary:
+			var manufacturing_data: Dictionary = manufacturing_value as Dictionary
+			var manufacturing_recipes: Array = manufacturing_data.get("recipes", []) as Array
+			var sources: Dictionary = manufacturing_data.get("sources", {}) as Dictionary
+			_expect(manufacturing_recipes.size() == 389
+				and str((manufacturing_recipes[0] as Dictionary).get("output", "")) == "Fire Essence"
+				and str(sources.get("recipesSha256", "")) ==
+					"e6d3c8988effb22f11cce1dcb553097860e066b0ca85eaa7bb01390809160d4e",
+				"manufacturing catalog matches the audited unmodified server data")
+			var catalog: ManufacturingCatalog = ManufacturingCatalog.new()
+			catalog.configure(manufacturing_data)
+			var ready: Dictionary = catalog.availability(0, {
+				4: {"image_id": 42, "quantity": 1},
+				5: {"image_id": 31, "quantity": 1},
+				6: {"image_id": 35, "quantity": 1}}, [], {"food": 45, "ether": 0})
+			var ready_selection: Array = ready.get("selection", []) as Array
+			_expect((ready.get("reasons", []) as Array).is_empty()
+				and ready_selection.size() == 3
+				and int((ready_selection[0] as Dictionary).get("slot", -1)) == 4,
+				"recipe resolves authoritative inventory slots and quantities")
+			var missing: Dictionary = catalog.availability(0, {}, [],
+				{"food": 45, "ether": 0})
+			_expect((missing.get("reasons", []) as Array).size() == 3,
+				"missing ingredients explicitly block manufacturing")
+			var ambiguous: Dictionary = catalog.availability(173, {
+				0: {"image_id": 50, "quantity": 1},
+				1: {"image_id": 140, "quantity": 3}}, [], {"food": 45, "ether": 0})
+			_expect(str((ambiguous.get("reasons", []) as Array)[0]).contains(
+				"automatic selection is unavailable"),
+				"ambiguous legacy item artwork never guesses an authoritative item")
 	var atlas_config_file: FileAccess = FileAccess.open(
 		"res://data/items/atlases.json", FileAccess.READ)
 	_expect(atlas_config_file != null, "legacy item atlas registry opens")

@@ -345,6 +345,12 @@ custom_minimum_size = Vector2(44, 44)
 text = "Knowledge"
 tooltip_text = "Knowledge and books"
 
+[node name="ManufacturingButton" type="Button" parent="GameView/Quickbar/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 44)
+text = "Mix"
+tooltip_text = "Manufacturing and mixing"
+
 [node name="ChatButton" type="Button" parent="GameView/Quickbar/Buttons"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
@@ -830,6 +836,73 @@ alignment = 2
 [node name="KnowledgeClose" type="Button" parent="GameView/KnowledgePanel/Content/Actions"]
 text = "Close"
 
+[node name="ManufacturingPanel" type="PanelContainer" parent="GameView"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -250.0
+offset_right = 350.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Content" type="VBoxContainer" parent="GameView/ManufacturingPanel"]
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="GameView/ManufacturingPanel/Content"]
+text = "MANUFACTURING"
+horizontal_alignment = 1
+
+[node name="ManufacturingFilter" type="LineEdit" parent="GameView/ManufacturingPanel/Content"]
+unique_name_in_owner = true
+placeholder_text = "Filter recipes by result, skill, or ingredient"
+clear_button_enabled = true
+
+[node name="Columns" type="HBoxContainer" parent="GameView/ManufacturingPanel/Content"]
+theme_override_constants/separation = 12
+
+[node name="ManufacturingList" type="ItemList" parent="GameView/ManufacturingPanel/Content/Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 350)
+select_mode = 0
+allow_reselect = true
+
+[node name="ManufacturingDetail" type="RichTextLabel" parent="GameView/ManufacturingPanel/Content/Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(350, 350)
+bbcode_enabled = true
+fit_content = false
+text = "Select a server recipe to review exact ingredients."
+
+[node name="ManufacturingStatus" type="Label" parent="GameView/ManufacturingPanel/Content"]
+unique_name_in_owner = true
+text = "Select a recipe."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="GameView/ManufacturingPanel/Content"]
+alignment = 2
+
+[node name="ManufacturingMixOne" type="Button" parent="GameView/ManufacturingPanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Mix one"
+tooltip_text = "Ask the server to make one item from the exact selected recipe"
+disabled = true
+
+[node name="ManufacturingMixAll" type="Button" parent="GameView/ManufacturingPanel/Content/Actions"]
+unique_name_in_owner = true
+text = "Mix all"
+tooltip_text = "Ask the server to repeat this recipe while resources and validation permit"
+disabled = true
+
+[node name="ManufacturingClose" type="Button" parent="GameView/ManufacturingPanel/Content/Actions"]
+text = "Close"
+
 [node name="GroundBagPanel" type="PanelContainer" parent="GameView"]
 unique_name_in_owner = true
 layout_mode = 1
@@ -1177,6 +1250,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/Buttons/KnowledgeButton" to="." method="_on_knowledge_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/Buttons/ManufacturingButton" to="." method="_on_manufacturing_button_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryUse" to="." method="_on_inventory_use_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryEquip" to="." method="_on_inventory_equip_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/Actions/InventoryUnequip" to="." method="_on_inventory_unequip_pressed"]
@@ -1194,6 +1268,9 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageInspect" to="." method="_on_storage_inspect_pressed"]
 [connection signal="pressed" from="GameView/StoragePanel/Content/Actions/StorageClose" to="." method="_on_storage_close_pressed"]
 [connection signal="pressed" from="GameView/KnowledgePanel/Content/Actions/KnowledgeClose" to="." method="_on_knowledge_close_pressed"]
+[connection signal="pressed" from="GameView/ManufacturingPanel/Content/Actions/ManufacturingMixOne" to="." method="_on_manufacturing_mix_one_pressed"]
+[connection signal="pressed" from="GameView/ManufacturingPanel/Content/Actions/ManufacturingMixAll" to="." method="_on_manufacturing_mix_all_pressed"]
+[connection signal="pressed" from="GameView/ManufacturingPanel/Content/Actions/ManufacturingClose" to="." method="_on_manufacturing_close_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagPick" to="." method="_on_ground_bag_pick_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagPickAll" to="." method="_on_ground_bag_pick_all_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagDrop" to="." method="_on_ground_bag_drop_pressed"]

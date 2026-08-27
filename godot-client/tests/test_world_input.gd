@@ -257,6 +257,37 @@ func _run() -> void:
 	var known_knowledge: Array = app_state_inventory.get("known_knowledge") as Array
 	_expect(known_knowledge.has(2), "incremental knowledge acquisition updates ownership")
 	main.call("_on_knowledge_close_pressed")
+	var manufacturing_panel: Control = main.get_node("GameView/ManufacturingPanel") as Control
+	var manufacturing_button: Button = main.get_node(
+		"GameView/Quickbar/Buttons/ManufacturingButton") as Button
+	_expect(not manufacturing_panel.visible and not manufacturing_button.disabled,
+		"manufacturing window starts closed with its real HUD action enabled")
+	app_state_inventory.set("inventory", {
+		4: {"image_id": 42, "quantity": 1, "slot": 4, "flags": 6},
+		5: {"image_id": 31, "quantity": 1, "slot": 5, "flags": 6},
+		6: {"image_id": 35, "quantity": 1, "slot": 6, "flags": 6}})
+	app_state_inventory.set("stats", {"food": 45, "ether": 0})
+	main.call("_on_manufacturing_button_pressed")
+	var manufacturing_list: ItemList = main.get_node(
+		"GameView/ManufacturingPanel/Content/Columns/ManufacturingList") as ItemList
+	var manufacturing_detail: RichTextLabel = main.get_node(
+		"GameView/ManufacturingPanel/Content/Columns/ManufacturingDetail") as RichTextLabel
+	var manufacturing_mix_one: Button = main.get_node(
+		"GameView/ManufacturingPanel/Content/Actions/ManufacturingMixOne") as Button
+	_expect(manufacturing_panel.visible and manufacturing_list.item_count == 389
+		and root.get_visible_rect().encloses(manufacturing_panel.get_global_rect()),
+		"complete server recipe catalog opens within the reference viewport")
+	main.call("_on_manufacturing_selected", 0)
+	_expect(not manufacturing_mix_one.disabled
+		and manufacturing_detail.text.contains("Fire Essence")
+		and manufacturing_detail.text.contains("Sulfur ×1"),
+		"available recipe resolves ingredients and enables the real server action")
+	app_state_inventory.set("inventory", {})
+	main.call("_sync_manufacturing")
+	_expect(manufacturing_mix_one.disabled
+		and manufacturing_detail.text.contains("Missing Sulfur ×1"),
+		"inventory reconciliation disables a recipe with explicit missing ingredients")
+	main.call("_on_manufacturing_close_pressed")
 	app_state_inventory.call("_on_packet", 28,
 		PackedByteArray([1, 10, 0, 20, 0, 7]))
 	main.call("_sync_ground_bags")
