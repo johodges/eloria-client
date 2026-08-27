@@ -44,6 +44,8 @@ extends Control
 @onready var inventory_equip_button: Button = %InventoryEquip
 @onready var inventory_unequip_button: Button = %InventoryUnequip
 @onready var quick_slot_container: GridContainer = $GameView/ItemSpellQuickbar/QuickContent/Slots
+@onready var spell_slot_container: GridContainer = %SpellSlots
+@onready var spell_status: Label = %SpellStatus
 @onready var player_map_marker: MeshInstance3D = %PlayerMapMarker
 @onready var map_label: Label = %MapLabel
 @onready var actor_label: Label = %ActorLabel
@@ -63,6 +65,7 @@ var animation_config: Dictionary = {}
 var map_registry: Dictionary = {}
 var equipment_config: Dictionary = {}
 var item_atlas := ItemAtlas.new()
+var spell_catalog := SpellCatalog.new()
 var gameplay_world: World3D
 var loaded_server_map := ""
 var adapter := CoordinateAdapter.new({"walkingHeight": 0.0, "invertServerY": true})
@@ -72,6 +75,7 @@ var pending_create_password := ""
 var inventory_slot_buttons: Array[Button] = []
 var equipment_slot_buttons: Array[Button] = []
 var quick_slot_buttons: Array[Button] = []
+var spell_slot_buttons: Array[Button] = []
 var selected_inventory_slot := -1
 var cooldown_display_second := -1
 
@@ -81,6 +85,7 @@ func _ready() -> void:
 	map_registry = _json("res://data/maps/registry.json").get("maps", {})
 	equipment_config = _json("res://data/actors/equipment.json")
 	item_atlas.configure(_json("res://data/items/atlases.json"))
+	spell_catalog.configure(_json("res://data/spells/catalog.json"))
 	Network.connection_state_changed.connect(_on_connection_state_changed)
 	Network.protocol_error.connect(func(message: String): status_label.text = "Protocol error: " + message)
 	AppState.login_succeeded.connect(_on_login_succeeded)
@@ -106,6 +111,7 @@ func _ready() -> void:
 	_build_inventory_slots()
 	_build_equipment_slots()
 	_bind_quick_slots()
+	_bind_spell_slots()
 
 func _bind_shared_world() -> void:
 	gameplay_world = world_root.get_world_3d()
@@ -339,6 +345,11 @@ func _clear_world_presentation() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not game_view.visible:
 		return
+	for spell_slot: int in range(6):
+		if event.is_action_pressed("quick_spell_%d" % (spell_slot + 1)):
+			_cast_spell_slot(spell_slot)
+			get_viewport().set_input_as_handled()
+			return
 	for slot: int in range(8):
 		if event.is_action_pressed("quick_item_%d" % (slot + 1)):
 			_use_inventory_slot(slot)
@@ -433,10 +444,14 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_chat()
 		&"stats":
 			_sync_stats()
+			_sync_spells()
 		&"inventory", &"inventory_text":
 			_sync_inventory()
+			_sync_spells()
 		&"inventory_cooldowns":
 			_sync_quick_slots()
+		&"spells":
+			_sync_spells()
 		&"selection":
 			_sync_selection()
 		&"npc_dialogue":
@@ -666,6 +681,16 @@ func _bind_quick_slots() -> void:
 			quick_slot_buttons.append(button)
 			slot += 1
 
+func _bind_spell_slots() -> void:
+	var slot := 0
+	for child: Node in spell_slot_container.get_children():
+		if child is Button:
+			var button: Button = child as Button
+			button.pressed.connect(_cast_spell_slot.bind(slot))
+			spell_slot_buttons.append(button)
+			slot += 1
+	_sync_spells()
+
 func _sync_inventory() -> void:
 	for slot: int in range(inventory_slot_buttons.size()):
 		var button: Button = inventory_slot_buttons[slot]
@@ -753,6 +778,80 @@ func _sync_quick_slots() -> void:
 			var selected_item: Dictionary = selected_value as Dictionary
 			inventory_use_button.disabled = (not bool(selected_item.get("inventory_usable", false))
 				or _inventory_cooldown_remaining(selected_inventory_slot) > 0)
+
+func _sync_spells() -> void:
+	for slot: int in range(spell_slot_buttons.size()):
+		var button: Button = spell_slot_buttons[slot]
+		if slot >= spell_catalog.default_quick_slots.size():
+			button.icon = null
+			button.text = "S%d" % (slot + 1)
+			button.tooltip_text = "Empty spell quick slot"
+			button.disabled = true
+			continue
+		var spell_id: int = spell_catalog.default_quick_slots[slot]
+		var definition: Dictionary = spell_catalog.spell(spell_id)
+		var reasons: Array[String] = spell_catalog.unavailable_reasons(
+			spell_id, AppState.owned_sigils, AppState.stats, AppState.inventory)
+		if not AppState.pending_spell_target.is_empty():
+			reasons.append("Complete the pending spell target first")
+		button.icon = spell_catalog.icon_for(spell_id)
+		button.expand_icon = true
+		button.text = "S%d" % (slot + 1)
+		button.disabled = not reasons.is_empty()
+		button.tooltip_text = _spell_tooltip(definition, reasons, slot)
+	match AppState.pending_spell_target:
+		"actor":
+			spell_status.text = "Select an actor for the spell"
+		"location":
+			spell_status.text = "Select a ground location for the spell"
+		_:
+			spell_status.text = _spell_result_text(AppState.last_spell_result)
+
+func _spell_tooltip(definition: Dictionary, reasons: Array[String], slot: int) -> String:
+	var lines: Array[String] = [str(definition.get("name", "Unknown spell")),
+		str(definition.get("description", "")), "Mana: %d  Magic: %d" % [
+			int(definition.get("mana", 0)), int(definition.get("level", 0))],
+		"Shortcut: Shift+%d" % (slot + 1)]
+	if reasons.is_empty():
+		lines.append("Ready; the server validates the cast")
+	else:
+		lines.append_array(reasons)
+	return "\n".join(lines)
+
+func _spell_result_text(result: Dictionary) -> String:
+	if result.is_empty():
+		return "Spells synchronize with the server"
+	var spell_id: int = int(result.get("spell_id", -1))
+	var definition: Dictionary = spell_catalog.spell(spell_id)
+	var spell_name: String = str(definition.get("name", "spell"))
+	match int(result.get("status", 0)):
+		1: return "%s cast successfully" % spell_name
+		2: return "%s was rejected" % spell_name
+		3: return "Invalid or unknown spell"
+		4: return "Select an actor for %s" % spell_name
+		5: return "Select a location for %s" % spell_name
+		_: return "Spell response received"
+
+func _cast_spell_slot(slot: int) -> void:
+	if slot < 0 or slot >= spell_catalog.default_quick_slots.size():
+		return
+	var spell_id: int = spell_catalog.default_quick_slots[slot]
+	var reasons: Array[String] = spell_catalog.unavailable_reasons(
+		spell_id, AppState.owned_sigils, AppState.stats, AppState.inventory)
+	if not reasons.is_empty() or not AppState.pending_spell_target.is_empty():
+		return
+	var definition: Dictionary = spell_catalog.spell(spell_id)
+	var sigils_value: Variant = definition.get("sigils", [])
+	if not sigils_value is Array:
+		return
+	var sigils: Array[int] = []
+	for raw_sigil: Variant in sigils_value:
+		sigils.append(int(raw_sigil))
+	var error: Error = Network.cast_spell(sigils)
+	if error != OK:
+		push_warning("CAST_SPELL failed: " + error_string(error))
+	else:
+		spell_status.text = "Casting %s…" % str(definition.get("name", "spell"))
 
 func _inventory_cooldown_remaining(slot: int) -> int:
 	var cooldown_value: Variant = AppState.inventory_cooldowns.get(slot)

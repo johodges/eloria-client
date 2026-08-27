@@ -52,6 +52,15 @@ Actor equipment changes are server commands 52/53. Wear is
 0–7 mean weapon, shield, cape, helmet, legs, body, boots, and neck. These part
 IDs are distinct from the eight generic inventory wear positions.
 
+Spell casting sends `CAST_SPELL(39)` as `count:u8 | sigil_id:u8[count]`; the
+ordered sigil sequence, not the local spell ID, identifies the spell. The
+server publishes ownership with `GET_YOUR_SIGILS(42)` as two `u32le` masks and
+returns `SPELL_CAST(70)` as `status:u8 | spell_id:u8`. Status 1 succeeds, 2
+fails validation or the cast roll, 3 rejects an invalid/unknown spell, 4 asks
+for an actor selected through `TOUCH_PLAYER(28)`, and 5 asks for a location
+submitted through the normal movement packet. `GET_ACTIVE_SPELL(44)` carries
+`buff_id:u8 | duration_seconds:u8`.
+
 ## Open verification items
 
 Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; every inventory/trade/storage variant; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.

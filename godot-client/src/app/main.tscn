@@ -348,52 +348,92 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -184.0
-offset_top = 334.0
+offset_top = 330.0
 offset_right = -8.0
 offset_bottom = 644.0
 
 [node name="QuickContent" type="VBoxContainer" parent="GameView/ItemSpellQuickbar"]
-theme_override_constants/separation = 6
+theme_override_constants/separation = 2
 
 [node name="QuickTitle" type="Label" parent="GameView/ItemSpellQuickbar/QuickContent"]
-text = "ITEMS / SPELLS"
+text = "ITEMS"
 horizontal_alignment = 1
 
 [node name="Slots" type="GridContainer" parent="GameView/ItemSpellQuickbar/QuickContent"]
 columns = 2
 
 [node name="Slot1" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 48)
+custom_minimum_size = Vector2(68, 34)
 text = "1"
 disabled = true
 [node name="Slot2" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 48)
+custom_minimum_size = Vector2(68, 34)
 text = "2"
 disabled = true
 [node name="Slot3" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 48)
+custom_minimum_size = Vector2(68, 34)
 text = "3"
 disabled = true
 [node name="Slot4" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 48)
+custom_minimum_size = Vector2(68, 34)
 text = "4"
 disabled = true
 [node name="Slot5" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 48)
+custom_minimum_size = Vector2(68, 34)
 text = "5"
 disabled = true
 [node name="Slot6" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 48)
+custom_minimum_size = Vector2(68, 34)
 text = "6"
 disabled = true
 [node name="Slot7" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 48)
+custom_minimum_size = Vector2(68, 34)
 text = "7"
 disabled = true
 [node name="Slot8" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/Slots"]
-custom_minimum_size = Vector2(68, 48)
+custom_minimum_size = Vector2(68, 34)
 text = "8"
 disabled = true
+
+[node name="SpellTitle" type="Label" parent="GameView/ItemSpellQuickbar/QuickContent"]
+text = "SPELLS"
+horizontal_alignment = 1
+
+[node name="SpellSlots" type="GridContainer" parent="GameView/ItemSpellQuickbar/QuickContent"]
+unique_name_in_owner = true
+columns = 2
+
+[node name="Spell1" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
+custom_minimum_size = Vector2(68, 34)
+text = "S1"
+disabled = true
+[node name="Spell2" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
+custom_minimum_size = Vector2(68, 34)
+text = "S2"
+disabled = true
+[node name="Spell3" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
+custom_minimum_size = Vector2(68, 34)
+text = "S3"
+disabled = true
+[node name="Spell4" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
+custom_minimum_size = Vector2(68, 34)
+text = "S4"
+disabled = true
+[node name="Spell5" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
+custom_minimum_size = Vector2(68, 34)
+text = "S5"
+disabled = true
+[node name="Spell6" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots"]
+custom_minimum_size = Vector2(68, 34)
+text = "S6"
+disabled = true
+
+[node name="SpellStatus" type="Label" parent="GameView/ItemSpellQuickbar/QuickContent"]
+unique_name_in_owner = true
+text = "Spells synchronize with the server"
+horizontal_alignment = 1
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 11
 
 [node name="Bars" type="VBoxContainer" parent="GameView/ResourceHud"]
 

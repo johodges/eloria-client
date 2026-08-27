@@ -22,6 +22,8 @@ func _init() -> void:
 		PackedByteArray([31, 2, 0, 7]))
 	_expect_bytes("move inventory fixture", EloriaProtocol.move_inventory_item(7, 9),
 		PackedByteArray([20, 3, 0, 7, 9]))
+	_expect_bytes("cast spell fixture", EloriaProtocol.cast_spell([3, 23]),
+		PackedByteArray([39, 4, 0, 2, 3, 23]))
 	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
 	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
 	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")
@@ -210,6 +212,20 @@ func _init() -> void:
 		"batched item cooldown fields")
 	_expect(EloriaProtocol.decode_server(77, PackedByteArray([1, 2])).type == "invalid",
 		"malformed item cooldown rejected")
+	var sigils_event: Dictionary = EloriaProtocol.decode_server(42,
+		PackedByteArray([8, 0, 128, 0, 2, 0, 0, 0]))
+	_expect(sigils_event.type == "sigils" and sigils_event.owned == [3, 23, 33],
+		"two-word sigil ownership mask")
+	_expect(EloriaProtocol.decode_server(42, PackedByteArray([8, 0, 0, 0])).type == "invalid",
+		"malformed sigil mask rejected")
+	var spell_result: Dictionary = EloriaProtocol.decode_server(70, PackedByteArray([4, 1]))
+	_expect(spell_result.type == "spell_result" and spell_result.status == 4
+		and spell_result.spell_id == 1, "spell target result fields")
+	_expect(EloriaProtocol.decode_server(70, PackedByteArray([1])).type == "invalid",
+		"malformed spell result rejected")
+	var active_spell: Dictionary = EloriaProtocol.decode_server(44, PackedByteArray([3, 90]))
+	_expect(active_spell.type == "active_spell" and active_spell.buff_id == 3
+		and active_spell.duration_seconds == 90, "active spell duration fields")
 	_expect(EloriaProtocol.decode_server(19, PackedByteArray([1, 0])).type == "invalid",
 		"malformed inventory snapshot rejected")
 	var atlas_config_file: FileAccess = FileAccess.open(
@@ -229,6 +245,28 @@ func _init() -> void:
 				"fifth legacy item atlas resolves")
 			_expect(not atlas.supports(125) and atlas.icon_for(125) == null,
 				"unknown item artwork remains an explicit fallback")
+	var spell_config_file: FileAccess = FileAccess.open(
+		"res://data/spells/catalog.json", FileAccess.READ)
+	_expect(spell_config_file != null, "spell catalog opens")
+	if spell_config_file != null:
+		var spell_config_value: Variant = JSON.parse_string(spell_config_file.get_as_text())
+		_expect(spell_config_value is Dictionary, "spell catalog parses")
+		if spell_config_value is Dictionary:
+			var spell_catalog: SpellCatalog = SpellCatalog.new()
+			spell_catalog.configure(spell_config_value as Dictionary)
+			var heal: Dictionary = spell_catalog.spell(0)
+			_expect(heal.get("sigils", []) == [3, 23],
+				"Heal uses the audited ordered sigil sequence")
+			var heal_icon: Texture2D = spell_catalog.icon_for(0)
+			_expect(heal_icon is AtlasTexture and heal_icon.get_size() == Vector2(64, 64),
+				"legacy spell icon resolves at native aspect")
+			var ready_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
+				[3, 23], {"magic": 0, "ether": 5}, {0: {
+					"image_id": 59, "quantity": 1}})
+			_expect(ready_reasons.is_empty(), "owned Heal requirements are locally ready")
+			var blocked_reasons: Array[String] = spell_catalog.unavailable_reasons(0,
+				[3], {"magic": 0, "ether": 4}, {})
+			_expect(blocked_reasons.size() == 3, "missing sigil, mana, and reagent are explicit")
 
 	print("protocol tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)

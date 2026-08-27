@@ -14,6 +14,10 @@ var actors: Dictionary = {}
 var inventory: Dictionary = {}
 var inventory_text := ""
 var inventory_cooldowns: Dictionary = {}
+var owned_sigils: Array[int] = []
+var active_spells: Dictionary = {}
+var last_spell_result: Dictionary = {}
+var pending_spell_target := ""
 var stats: Dictionary = {}
 var chat_lines: Array[Dictionary] = []
 var selected_actor_id := -1
@@ -35,6 +39,10 @@ func _on_connection_state_changed(value: String) -> void:
 		inventory.clear()
 		inventory_text = ""
 		inventory_cooldowns.clear()
+		owned_sigils.clear()
+		active_spells.clear()
+		last_spell_result.clear()
+		pending_spell_target = ""
 		stats.clear()
 		chat_lines.clear()
 		current_map = ""
@@ -66,6 +74,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			selected_actor_id = -1
 			npc_dialogue = {"open": false, "name": "", "portrait": 0,
 				"text": "", "options": []}
+			pending_spell_target = ""
 			state_changed.emit(&"map")
 		"actor_spawn":
 			actors[event.actor_id] = event
@@ -150,6 +159,33 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 					"maximum_msec": maximum_seconds * 1000,
 					"end_msec": received_msec + remaining_seconds * 1000}
 			state_changed.emit(&"inventory_cooldowns")
+		"sigils":
+			owned_sigils.clear()
+			for raw_sigil: Variant in event.owned:
+				owned_sigils.append(int(raw_sigil))
+			state_changed.emit(&"spells")
+		"spell_result":
+			last_spell_result = {"status": int(event.status), "spell_id": int(event.spell_id)}
+			match int(event.status):
+				4:
+					pending_spell_target = "actor"
+				5:
+					pending_spell_target = "location"
+				_:
+					pending_spell_target = ""
+			state_changed.emit(&"spells")
+		"active_spell":
+			active_spells[int(event.buff_id)] = {
+				"end_msec": Time.get_ticks_msec() + int(event.duration_seconds) * 1000}
+			state_changed.emit(&"spells")
+		"active_spell_list":
+			active_spells.clear()
+			for raw_buff: Variant in event.buffs:
+				active_spells[int(raw_buff)] = {"end_msec": 0}
+			state_changed.emit(&"spells")
+		"remove_active_spell":
+			active_spells.erase(int(event.buff_id))
+			state_changed.emit(&"spells")
 		"chat":
 			chat_lines.append({"channel": event.channel, "text": event.text})
 			if chat_lines.size() > 1000:

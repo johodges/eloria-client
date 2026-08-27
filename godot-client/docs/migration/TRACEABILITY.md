@@ -18,5 +18,6 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | Inventory/equipment | `items.c`, `items.h`, `hud_quickbar_window.c`; server `protocol.py`, `world.py`, `items.py` | protocol/state/inventory/equipment UI and actor presentation | exact snapshot/update/remove/use/move/cooldown/wear fixtures; two-click backpack/wear placement; local TCP count-0 snapshot; native item atlases visually inspected; populated live render pending | IMPLEMENTED |
 | Combat | actor commands/combat HUD | gameplay/ui | server combat trace | NOT_STARTED |
 | NPC/storage/trade | respective modules | reducers/windows | packet and integration tests | NOT_STARTED |
-| Magic/crafting/harvest | respective modules | reducers/windows | action/result traces | NOT_STARTED |
+| Magic | `spells.c`, `hud_quickspells_window.c`; server `magic.py`, `protocol.py`, `world.py`, `config/spells.xml` | exact cast codec, sigil/result/buff state, separate spell quick slots | cast/sigil/result/availability fixtures; live owned-spell success pending | IMPLEMENTED |
+| Crafting/harvest | respective modules | reducers/windows | action/result traces | NOT_STARTED |
 | Hotkeys/settings | keys.c/elconfig.c | InputMap/settings | viewport routing fixture verifies rotate/pan/zoom; live click-to-move recheck pending | FOUNDATION |

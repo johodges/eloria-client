@@ -30,9 +30,11 @@ enum ServerMessage {
 	HERE_YOUR_GROUND_ITEMS = 23, REMOVE_ITEM_FROM_GROUND = 25, CLOSE_BAG = 26,
 	GET_NEW_BAG = 27, GET_BAGS_LIST = 28, DESTROY_BAG = 29, NPC_TEXT = 30,
 	NPC_OPTIONS_LIST = 31, CLOSE_NPC_MENU = 32, SEND_NPC_INFO = 33,
+	GET_YOUR_SIGILS = 42, GET_ACTIVE_SPELL = 44,
+	GET_ACTIVE_SPELL_LIST = 45, REMOVE_ACTIVE_SPELL = 46,
 	SEND_PARTIAL_STAT = 49,
 	ADD_NEW_ENHANCED_ACTOR = 51, ACTOR_WEAR_ITEM = 52, ACTOR_UNWEAR_ITEM = 53,
-	PING_REQUEST = 60, GET_ACTIVE_CHANNELS = 71, GET_ACTOR_HEALTH = 73,
+	PING_REQUEST = 60, SPELL_CAST = 70, GET_ACTIVE_CHANNELS = 71, GET_ACTOR_HEALTH = 73,
 	GET_ITEMS_COOLDOWN = 77, SEND_BUFFS = 78, SEND_SPECIAL_EFFECT = 79,
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
 	SEND_ACHIEVEMENTS = 95, LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
@@ -124,6 +126,14 @@ static func move_inventory_item(source: int, destination: int) -> PackedByteArra
 	return encode(ClientMessage.MOVE_INVENTORY_ITEM, PackedByteArray([
 		clampi(source, 0, 255), clampi(destination, 0, 255)]))
 
+static func cast_spell(sigils: Array[int]) -> PackedByteArray:
+	assert(sigils.size() >= 2 and sigils.size() <= 6)
+	var payload: PackedByteArray = PackedByteArray([sigils.size()])
+	for sigil_id: int in sigils:
+		assert(sigil_id >= 0 and sigil_id <= 63)
+		payload.append(sigil_id)
+	return encode(ClientMessage.CAST_SPELL, payload)
+
 static func actor_command_step(command: int) -> Vector2i:
 	# Server movement frames are the authoritative one-tile updates used by the
 	# legacy client. Walk and run use the same tile delta; timing differs.
@@ -209,6 +219,39 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				"text": nul_string(payload.slice(1))}
 		ServerMessage.GET_ITEMS_COOLDOWN:
 			return decode_item_cooldowns(payload)
+		ServerMessage.GET_YOUR_SIGILS:
+			if payload.size() != 8:
+				return {"type": "invalid", "error": "sigils_length"}
+			var owned_sigils: Array[int] = []
+			for sigil_id: int in range(64):
+				var mask_offset: int = 0 if sigil_id < 32 else 4
+				var mask_bit: int = sigil_id if sigil_id < 32 else sigil_id - 32
+				if (u32(payload, mask_offset) & (1 << mask_bit)) != 0:
+					owned_sigils.append(sigil_id)
+			return {"type": "sigils", "owned": owned_sigils,
+				"low_mask": u32(payload), "high_mask": u32(payload, 4)}
+		ServerMessage.SPELL_CAST:
+			if payload.size() < 2 or int(payload[0]) < 1 or int(payload[0]) > 6:
+				return {"type": "invalid", "error": "spell_result_length"}
+			return {"type": "spell_result", "status": int(payload[0]),
+				"spell_id": int(payload[1])}
+		ServerMessage.GET_ACTIVE_SPELL:
+			if payload.size() != 2:
+				return {"type": "invalid", "error": "active_spell_length"}
+			return {"type": "active_spell", "buff_id": int(payload[0]),
+				"duration_seconds": int(payload[1])}
+		ServerMessage.GET_ACTIVE_SPELL_LIST:
+			if payload.size() != 10:
+				return {"type": "invalid", "error": "active_spell_list_length"}
+			var active_buffs: Array[int] = []
+			for buff_id: int in payload:
+				if buff_id != 255:
+					active_buffs.append(buff_id)
+			return {"type": "active_spell_list", "buffs": active_buffs}
+		ServerMessage.REMOVE_ACTIVE_SPELL:
+			if payload.size() != 1:
+				return {"type": "invalid", "error": "remove_active_spell_length"}
+			return {"type": "remove_active_spell", "buff_id": int(payload[0])}
 		ServerMessage.ACTOR_WEAR_ITEM:
 			if payload.size() != 4:
 				return {"type": "invalid", "error": "actor_wear_length"}

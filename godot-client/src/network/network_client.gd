@@ -58,6 +58,9 @@ func use_inventory_item(slot: int) -> Error:
 func move_inventory_item(source: int, destination: int) -> Error:
 	return send_frame(EloriaProtocol.move_inventory_item(source, destination))
 
+func cast_spell(sigils: Array[int]) -> Error:
+	return send_frame(EloriaProtocol.cast_spell(sigils))
+
 func create_character(username: String, password: String, appearance: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.create_character(username, password, appearance), true)
 

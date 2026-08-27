@@ -154,7 +154,25 @@ func _run() -> void:
 	for quick_index: int in range(1, 9):
 		_expect(InputMap.has_action("quick_item_%d" % quick_index),
 			"item quick slot %d has a centralized input action" % quick_index)
+	app_state_inventory.set("owned_sigils", [3, 23])
+	app_state_inventory.set("stats", {"magic": 0, "ether": 5})
+	app_state_inventory.set("inventory", {0: {
+		"image_id": 59, "quantity": 1, "slot": 0, "flags": 6}})
+	main.call("_sync_spells")
+	var first_spell_slot: Button = main.get_node(
+		"GameView/ItemSpellQuickbar/QuickContent/SpellSlots/Spell1") as Button
+	_expect(not first_spell_slot.disabled and first_spell_slot.icon != null
+		and first_spell_slot.tooltip_text.contains("Heal"),
+		"owned castable spell populates the live spell quickbar")
+	app_state_inventory.set("owned_sigils", [])
+	main.call("_sync_spells")
+	_expect(first_spell_slot.disabled and first_spell_slot.tooltip_text.contains("Missing sigils"),
+		"unowned spell is visibly disabled with the exact availability reason")
+	for spell_index: int in range(1, 7):
+		_expect(InputMap.has_action("quick_spell_%d" % spell_index),
+			"spell quick slot %d has a centralized input action" % spell_index)
 	app_state_inventory.set("inventory", {})
+	app_state_inventory.set("stats", {})
 	main.call("_on_inventory_close_pressed")
 	var viewport_rect: Rect2 = root.get_visible_rect()
 	_expect(viewport_rect.encloses(login_panel.get_global_rect()),
