@@ -133,6 +133,7 @@ EQUIPMENT = (
     ("orun_rider_legs", "Orun Rider Leggings", 4, 103, "legs", (121, 64, 33), (193, 132, 57)),
     ("ssarathi_scale_legs", "Ssarathi Scale Leggings", 4, 104, "legs", (37, 93, 75), (143, 137, 67)),
     ("votary_winter_legs", "Votary Winter Leggings", 4, 105, "legs", (96, 125, 143), (211, 222, 219)),
+    ("luminous_casual_pants", "Luminous Casual Pants", 4, 106, "pants", (47, 65, 83), (52, 126, 139)),
     # part 5: bodies
     ("amberwood_ranger_cuirass", "Amberwood Ranger Cuirass", 5, 100, "cuirass", (64, 91, 52), (170, 103, 43)),
     ("glasswarden_cuirass", "Glasswarden Crystal Cuirass", 5, 101, "cuirass", (76, 58, 116), (90, 195, 211)),
@@ -144,6 +145,7 @@ EQUIPMENT = (
     ("stoneborn_plate", "Stoneborn Memory Plate", 5, 107, "cuirass", (101, 94, 86), (88, 184, 194)),
     ("mycelari_mantle", "Mycelari Spore Mantle", 5, 108, "robe", (91, 116, 66), (205, 142, 90)),
     ("four_gates_guard_cuirass", "Four Gates Guardian Cuirass", 5, 109, "cuirass", (40, 112, 125), (219, 190, 102)),
+    ("luminous_short_sleeve_shirt", "Luminous Short-Sleeve Shirt", 5, 110, "shirt", (45, 125, 139), (222, 198, 110)),
     # part 6: boots
     ("amberwood_ranger_boots", "Amberwood Ranger Boots", 6, 100, "boots", (78, 55, 37), (137, 92, 46)),
     ("glasswarden_boots", "Glasswarden Crystal Boots", 6, 101, "boots", (70, 55, 104), (88, 181, 200)),
@@ -151,6 +153,7 @@ EQUIPMENT = (
     ("orun_rider_boots", "Orun Rider Boots", 6, 103, "boots", (103, 58, 35), (179, 116, 53)),
     ("ssarathi_scale_boots", "Ssarathi Scale Boots", 6, 104, "boots", (39, 88, 72), (132, 126, 64)),
     ("votary_winter_boots", "Votary Winter Boots", 6, 105, "boots", (91, 112, 125), (205, 216, 213)),
+    ("luminous_casual_boots", "Luminous Casual Boots", 6, 106, "boots", (64, 47, 39), (52, 126, 139)),
     # part 7: neck
     ("amberwood_amulet", "Amberwood Leaf Amulet", 7, 100, "amulet", (76, 104, 51), (211, 137, 50)),
     ("glasswarden_resonator", "Glasswarden Resonator", 7, 101, "amulet", (75, 58, 112), (89, 198, 215)),
@@ -693,8 +696,20 @@ def equipment_geometry(kind: str) -> ShapeMesh:
     elif kind in {"cuirass","coat","robe"}:
         m.sphere((0,0,0),(.72,.78,.40),0,0,10,20);m.box((0,-.30,.18),(.58,.62,.08),0,1)
         if kind=="robe":m.sphere((0,-.55,0),(.82,.62,.50),0,0,8,20)
+    elif kind=="shirt":
+        # A fitted torso plus upper-arm cylinders gives the Luminous base
+        # outfit an unmistakable short-sleeve silhouette.
+        m.sphere((0,-.02,0),(.68,.72,.38),0,0,10,20)
+        m.box((0,-.30,.18),(.58,.54,.07),0,1)
+        m.cylinder((-.38,.20,0),(-.43,-.10,0),.15,0,0,14)
+        m.cylinder((.38,.20,0),(.43,-.10,0),.15,0,0,14)
     elif kind=="legs":
         for x in (-.15,.15):m.cylinder((x,.22,0),(x,-.58,0),.13,0,0,14);m.box((x,-.12,.08),(.30,.22,.10),0,1)
+    elif kind=="pants":
+        m.sphere((0,.22,0),(.58,.34,.38),0,0,8,18)
+        for x in (-.15,.15):
+            m.cylinder((x,.24,0),(x,-.66,0),.15,0,0,14)
+            m.box((x,-.22,.08),(.31,.28,.10),0,1)
     elif kind=="boots":
         for x in (-.15,.15):m.cylinder((x,.18,0),(x,-.35,0),.14,0,0,14);m.box((x,-.36,-.09),(.30,.18,.42),0,1)
     elif kind=="amulet":
@@ -855,7 +870,9 @@ def build_equipment_registry() -> dict:
             "import": {"translation": translation, "rotationDegrees": [0, 0, 0],
                        "scale": 1},
         }
-    return {"schemaVersion": 2, "parts": parts, "models": models}
+    aliases = {"0:11": "0:112", "1:5": "1:105", "2:11": "2:105"}
+    return {"schemaVersion": 2, "parts": parts, "models": models,
+            "aliases": aliases}
 
 
 def write_json(path: Path, value: dict) -> None:

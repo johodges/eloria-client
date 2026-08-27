@@ -35,8 +35,8 @@ class NativeGlbAssetsTest(unittest.TestCase):
     def test_catalog_is_complete(self) -> None:
         self.assertEqual(14, len(self.catalog["races"]))
         self.assertEqual(32, len(self.catalog["creatures"]))
-        self.assertEqual(63, len(self.catalog["equipment"]))
-        self.assertEqual(110, self.catalog["validation"]["files"])
+        self.assertEqual(66, len(self.catalog["equipment"]))
+        self.assertEqual(113, self.catalog["validation"]["files"])
 
     def test_player_rigs_preserve_current_skeleton_and_budget(self) -> None:
         for model_id, entry in self.catalog["races"].items():

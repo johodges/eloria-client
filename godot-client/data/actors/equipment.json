@@ -699,6 +699,22 @@
         "scale": 1
       }
     },
+    "4:106": {
+      "scene": "res://assets/actors/native/equipment/luminous_casual_pants.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
     "5:100": {
       "scene": "res://assets/actors/native/equipment/amberwood_ranger_cuirass.glb",
       "import": {
@@ -859,6 +875,22 @@
         "scale": 1
       }
     },
+    "5:110": {
+      "scene": "res://assets/actors/native/equipment/luminous_short_sleeve_shirt.glb",
+      "import": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
     "6:100": {
       "scene": "res://assets/actors/native/equipment/amberwood_ranger_boots.glb",
       "import": {
@@ -941,6 +973,22 @@
     },
     "6:105": {
       "scene": "res://assets/actors/native/equipment/votary_winter_boots.glb",
+      "import": {
+        "translation": [
+          0,
+          -0.72,
+          0
+        ],
+        "rotationDegrees": [
+          0,
+          0,
+          0
+        ],
+        "scale": 1
+      }
+    },
+    "6:106": {
+      "scene": "res://assets/actors/native/equipment/luminous_casual_boots.glb",
       "import": {
         "translation": [
           0,

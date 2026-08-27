@@ -867,6 +867,16 @@
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/votary_winter_legs.glb"
     },
+    "luminous_casual_pants": {
+      "id": "luminous_casual_pants",
+      "name": "Luminous Casual Pants",
+      "kind": "pants",
+      "vertices": 275,
+      "triangles": 368,
+      "part": 4,
+      "visual": 106,
+      "path": "godot-client/assets/actors/native/equipment/luminous_casual_pants.glb"
+    },
     "amberwood_ranger_cuirass": {
       "id": "amberwood_ranger_cuirass",
       "name": "Amberwood Ranger Cuirass",
@@ -967,6 +977,16 @@
       "visual": 109,
       "path": "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass.glb"
     },
+    "luminous_short_sleeve_shirt": {
+      "id": "luminous_short_sleeve_shirt",
+      "name": "Luminous Short-Sleeve Shirt",
+      "kind": "shirt",
+      "vertices": 311,
+      "triangles": 468,
+      "part": 5,
+      "visual": 110,
+      "path": "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt.glb"
+    },
     "amberwood_ranger_boots": {
       "id": "amberwood_ranger_boots",
       "name": "Amberwood Ranger Boots",
@@ -1026,6 +1046,16 @@
       "part": 6,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/votary_winter_boots.glb"
+    },
+    "luminous_casual_boots": {
+      "id": "luminous_casual_boots",
+      "name": "Luminous Casual Boots",
+      "kind": "boots",
+      "vertices": 104,
+      "triangles": 80,
+      "part": 6,
+      "visual": 106,
+      "path": "godot-client/assets/actors/native/equipment/luminous_casual_boots.glb"
     },
     "amberwood_amulet": {
       "id": "amberwood_amulet",
@@ -1089,7 +1119,7 @@
     }
   },
   "validation": {
-    "files": 110,
+    "files": 113,
     "results": {
       "godot-client/assets/actors/native/races/mycelari_female.glb": {
         "nodes": 70,
@@ -1433,6 +1463,12 @@
         "skins": 0,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/amberwood_ranger_legs.glb": {
         "nodes": 1,
         "meshes": 1,
@@ -1464,6 +1500,12 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/greyhaven_trousers.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_casual_boots.glb": {
         "nodes": 1,
         "meshes": 1,
         "skins": 0,
@@ -1530,6 +1572,12 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/stoneborn_hammer.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_casual_pants.glb": {
         "nodes": 1,
         "meshes": 1,
         "skins": 0,

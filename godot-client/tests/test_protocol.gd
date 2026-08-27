@@ -99,6 +99,12 @@ func _init() -> void:
 		and int(appearance_visuals.get(AppearanceVariants.PART_SHIRT, -1)) == 106
 		and int(appearance_visuals.get(AppearanceVariants.PART_BOOTS, -1)) == 105,
 		"Whitehorn appearance choices prefer culture-matched native wearables")
+	var luminous_outfit: Dictionary = AppearanceVariants.equipment_visuals(0, {
+		"head": 0, "pants": 1, "shirt": 1, "boots": 1})
+	_expect(int(luminous_outfit.get(AppearanceVariants.PART_PANTS, -1)) == 106
+		and int(luminous_outfit.get(AppearanceVariants.PART_SHIRT, -1)) == 110
+		and int(luminous_outfit.get(AppearanceVariants.PART_BOOTS, -1)) == 106,
+		"Luminous default uses casual shirt, long pants, and boots")
 	_expect(AppearanceVariants.equipment_visuals(2, {
 		"head": 0, "pants": 0, "shirt": 0, "boots": 0}).is_empty(),
 		"zero appearance choices leave optional wearables hidden")
