@@ -51,11 +51,16 @@ The gate fails unless it proves all of the following before uploading evidence:
 - chat submitted through the primary lower-left UI reaches the second real
   client, and chat sent by the second client is decoded and presented by the
   primary reducer/UI;
+- the authoritative inventory and statistics snapshots are non-empty, the
+  inventory and statistics windows fit within 1280x720, and item icons,
+  quantities, character values, item quick slots, and all configured spell
+  quick slots are presented from that state;
 - each 1280×720 capture contains rendered color variation rather than a dummy frame.
 
 The artifact contains default, rotated, panned, zoomed, full-map, and
-post-movement PNGs, selected-remote-player and chat PNGs, and sanitized session,
-camera-state, movement, remote-actor, and chat JSON. A
+post-movement PNGs, selected-remote-player, chat, inventory, and statistics
+PNGs, and sanitized session, camera-state, movement, remote-actor, chat, and
+inventory/statistics JSON. A
 passing structural assertion is still classified separately from human visual
 inspection of those PNGs.
 
