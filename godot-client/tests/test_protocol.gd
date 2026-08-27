@@ -105,6 +105,10 @@ func _init() -> void:
 		and int(luminous_outfit.get(AppearanceVariants.PART_SHIRT, -1)) == 110
 		and int(luminous_outfit.get(AppearanceVariants.PART_BOOTS, -1)) == 106,
 		"Luminous default uses casual shirt, long pants, and boots")
+	var legacy_luminous_outfit: Dictionary = AppearanceVariants.equipment_visuals(1, {
+		"head": 0, "pants": 0, "shirt": 0, "boots": 0})
+	_expect(legacy_luminous_outfit == luminous_outfit,
+		"legacy zero-valued Luminous characters remain fully clothed")
 	_expect(AppearanceVariants.equipment_visuals(2, {
 		"head": 0, "pants": 0, "shirt": 0, "boots": 0}).is_empty(),
 		"zero appearance choices leave optional wearables hidden")

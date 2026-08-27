@@ -41,6 +41,10 @@ static func equipment_visuals(actor_type: int, appearance: Dictionary) -> Dictio
 		var key: String = str(PART_KEYS[part])
 		var choice: int = int(appearance.get(key, 0))
 		if choice <= 0:
+			# Older Luminous records commonly carry zero for every creation
+			# wearable. Keep their base body layer covered as well.
+			if culture == "luminous" and preferred.has(part) and part != PART_HEAD:
+				result[part] = int(preferred[part])
 			continue
 		var available: Array = (PART_VISUALS[part] as Array).duplicate()
 		var preferred_visual: int = int(preferred.get(part, -1))
