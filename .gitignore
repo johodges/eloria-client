@@ -25,3 +25,13 @@ xcuserdata/
 # CLion workspace files
 .idea/
 cmake-build-*/
+
+# Godot editor artefacts. The godot-client project is imported by CI
+# ("godot --headless --path godot-client --editor --quit"), which regenerates
+# all of these, so none of them belong in the tree.
+godot-client/.godot/
+*.import
+*.uid
+godot-client/assets/actors/native/creatures/*-basecolor.png
+godot-client/assets/actors/native/races/*Atlas.png
+godot-client/**/*.glb.report.json
