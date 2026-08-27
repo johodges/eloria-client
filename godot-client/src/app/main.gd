@@ -9,7 +9,9 @@ extends Control
 @onready var create_confirm: LineEdit = %CreateConfirm
 @onready var create_gender: OptionButton = %CreateGender
 @onready var create_status: Label = %CreateStatus
+@onready var preview_container: SubViewportContainer = %CharacterPreview
 @onready var preview_root: Node3D = %PreviewRoot
+@onready var preview_camera: Camera3D = %PreviewCamera
 @onready var host_edit: LineEdit = %Host
 @onready var port_edit: SpinBox = %Port
 @onready var user_edit: LineEdit = %Username
@@ -19,6 +21,7 @@ extends Control
 @onready var status_label: Label = %Status
 @onready var world_root: Node3D = %WorldRoot
 @onready var camera_rig: IsometricCameraController = %CameraRig
+@onready var gameplay_camera: Camera3D = %Camera
 @onready var world_loader: WorldLoader = %WorldLoader
 @onready var fallback_ground: MeshInstance3D = $GameView/ViewportContainer/Viewport/WorldRoot/Ground
 @onready var main_viewport: SubViewport = $GameView/ViewportContainer/Viewport
@@ -34,6 +37,26 @@ extends Control
 @onready var health_text: Label = %HealthText
 @onready var mana_bar: ProgressBar = %Mana
 @onready var mana_text: Label = %ManaText
+@onready var action_bar: ProgressBar = %Action
+@onready var action_text: Label = %ActionText
+@onready var health_bottom: ProgressBar = %HealthBottom
+@onready var health_bottom_text: Label = %HealthBottomText
+@onready var ether_bottom: ProgressBar = %EtherBottom
+@onready var ether_bottom_text: Label = %EtherBottomText
+@onready var action_bottom: ProgressBar = %ActionBottom
+@onready var action_bottom_text: Label = %ActionBottomText
+@onready var skill_indicators: RichTextLabel = %SkillIndicators
+@onready var clock_text: Label = %ClockText
+@onready var clock_hand: Line2D = %ClockHand
+@onready var compass_needle: Line2D = %CompassNeedle
+@onready var actor_resource_overlay: PanelContainer = %ActorResourceOverlay
+@onready var actor_hud_menu: PanelContainer = %ActorHudMenu
+@onready var overhead_health_row: HBoxContainer = %HealthRow
+@onready var overhead_ether_row: HBoxContainer = %EtherRow
+@onready var overhead_action_row: HBoxContainer = %ActionRow
+@onready var show_overhead_health: CheckButton = %ShowHealth
+@onready var show_overhead_ether: CheckButton = %ShowEther
+@onready var show_overhead_action: CheckButton = %ShowAction
 @onready var stats_panel: Control = %StatsPanel
 @onready var stats_text: RichTextLabel = %StatsText
 @onready var inventory_panel: Control = %InventoryPanel
@@ -119,6 +142,9 @@ var adapter := CoordinateAdapter.new({"walkingHeight": 0.0, "invertServerY": tru
 var preview_actor: ReplicatedActor3D
 var pending_create_username := ""
 var pending_create_password := ""
+var preview_yaw := 0.0
+var preview_pitch := 0.12
+var preview_distance := 4.2
 var inventory_slot_buttons: Array[Button] = []
 var equipment_slot_buttons: Array[Button] = []
 var quick_slot_buttons: Array[Button] = []
@@ -131,6 +157,9 @@ var selected_storage_side := ""
 var selected_manufacturing_recipe := -1
 var manufacturing_server_status := "Select a recipe."
 var cooldown_display_second := -1
+var _chat_tab := "all"
+var _right_mouse_down := false
+var _right_mouse_dragged := false
 
 func _ready() -> void:
 	var model_registry: Dictionary = _json("res://data/actors/models.json")
@@ -181,6 +210,7 @@ func _ready() -> void:
 		var option: Dictionary = raw_option as Dictionary
 		create_gender.add_item(str(option.get("label", "Unknown appearance")),
 			int(option.get("actorType", 1)))
+	_update_preview_camera()
 	_apply_eloria_art()
 	_apply_eloria_theme()
 	_build_inventory_slots()
@@ -200,6 +230,14 @@ func _ready() -> void:
 	knowledge_known_only.toggled.connect(_on_knowledge_filter_toggled)
 	manufacturing_list.item_selected.connect(_on_manufacturing_selected)
 	manufacturing_filter.text_changed.connect(_on_manufacturing_filter_changed)
+	show_overhead_health.toggled.connect(_on_overhead_option_toggled)
+	show_overhead_ether.toggled.connect(_on_overhead_option_toggled)
+	show_overhead_action.toggled.connect(_on_overhead_option_toggled)
+	%Close.pressed.connect(func() -> void: actor_hud_menu.hide())
+	$GameView/ChatTabs/All.pressed.connect(_on_chat_tab_pressed.bind("all"))
+	$GameView/ChatTabs/History.pressed.connect(_on_chat_tab_pressed.bind("history"))
+	$GameView/ChatTabs/Options.pressed.connect(_on_chat_tab_pressed.bind("options"))
+	_sync_stats()
 
 func _bind_shared_world() -> void:
 	gameplay_world = world_root.get_world_3d()
@@ -213,6 +251,8 @@ func _bind_shared_world() -> void:
 func _process(_delta: float) -> void:
 	if game_view.visible:
 		_update_local_actor_follow()
+		_update_legacy_clock_and_compass()
+		_update_actor_resource_overlay()
 		var display_second: int = floori(float(Time.get_ticks_msec()) / 1000.0)
 		if display_second != cooldown_display_second:
 			cooldown_display_second = display_second
@@ -246,6 +286,9 @@ func _on_creation_back_pressed() -> void:
 func _on_create_gender_item_selected(_index: int) -> void:
 	_refresh_creation_preview()
 
+func _on_create_appearance_changed(_value: float) -> void:
+	_refresh_creation_preview()
+
 func _on_create_pressed() -> void:
 	var username := create_name.text.strip_edges()
 	var password := create_password.text
@@ -261,11 +304,8 @@ func _on_create_pressed() -> void:
 	pending_create_username = username
 	pending_create_password = password
 	create_status.text = "Creating character…"
-	var appearance := {
-		"skin": int(%CreateSkin.value), "hair": int(%CreateHair.value),
-		"eyes": int(%CreateEyes.value), "shirt": int(%CreateShirt.value),
-		"pants": int(%CreatePants.value), "boots": int(%CreateBoots.value),
-		"head": int(%CreateHead.value), "actor_type": create_gender.get_selected_id()}
+	var appearance: Dictionary = _creation_appearance()
+	appearance["actor_type"] = create_gender.get_selected_id()
 	var error := Network.create_character(username, password, appearance)
 	if error != OK:
 		create_status.text = "Creation request failed: " + error_string(error)
@@ -298,8 +338,13 @@ func _refresh_creation_preview() -> void:
 		preview_actor.queue_free()
 	preview_actor = ReplicatedActor3D.new()
 	preview_root.add_child(preview_actor)
-	var actor_type := create_gender.get_selected_id()
-	var dto := {"actor_id": 0, "x": 0, "y": 0, "rotation": 0, "actor_type": actor_type, "kind": 1}
+	var actor_type: int = create_gender.get_selected_id()
+	var appearance: Dictionary = _creation_appearance()
+	var dto := {"actor_id": 0, "x": 0, "y": 0, "rotation": 0,
+		"actor_type": actor_type, "kind": 1, "name": "Preview",
+		"appearance": appearance,
+		"equipment_visuals": AppearanceVariants.equipment_visuals(
+			actor_type, appearance)}
 	var model_id := _model_for_actor(dto)
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 	var errors := preview_actor.configure(dto,
@@ -307,6 +352,49 @@ func _refresh_creation_preview() -> void:
 		_animation_for_model(model_config), equipment_config)
 	if not errors.is_empty():
 		create_status.text = "Preview warnings: " + "; ".join(errors)
+	else:
+		create_status.text = "Drag the preview to rotate; use the mouse wheel to zoom."
+
+func _creation_appearance() -> Dictionary:
+	return {
+		"skin": int(%CreateSkin.value), "hair": int(%CreateHair.value),
+		"eyes": int(%CreateEyes.value), "shirt": int(%CreateShirt.value),
+		"pants": int(%CreatePants.value), "boots": int(%CreateBoots.value),
+		"head": int(%CreateHead.value),
+	}
+
+func _on_character_preview_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
+		if not mouse_button.pressed:
+			return
+		if mouse_button.button_index == MOUSE_BUTTON_WHEEL_UP:
+			preview_distance = maxf(2.4, preview_distance - 0.3)
+		elif mouse_button.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			preview_distance = minf(7.0, preview_distance + 0.3)
+		else:
+			return
+		_update_preview_camera()
+		preview_container.accept_event()
+	elif event is InputEventMouseMotion:
+		var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
+		if (mouse_motion.button_mask & (MOUSE_BUTTON_MASK_LEFT |
+				MOUSE_BUTTON_MASK_RIGHT)) == 0:
+			return
+		preview_yaw -= mouse_motion.relative.x * 0.01
+		preview_pitch = clampf(preview_pitch + mouse_motion.relative.y * 0.008,
+			-0.35, 0.65)
+		_update_preview_camera()
+		preview_container.accept_event()
+
+func _update_preview_camera() -> void:
+	if preview_camera == null:
+		return
+	var focus := Vector3(0.0, 1.0, 0.0)
+	var horizontal: float = cos(preview_pitch) * preview_distance
+	preview_camera.position = focus + Vector3(sin(preview_yaw) * horizontal,
+		sin(preview_pitch) * preview_distance, cos(preview_yaw) * horizontal)
+	preview_camera.look_at(focus)
 
 func _on_login_pressed() -> void:
 	if AppState.authenticated:
@@ -843,6 +931,20 @@ func _on_world_gui_input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton:
 		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
+		if mouse_button.button_index == MOUSE_BUTTON_RIGHT:
+			if mouse_button.pressed:
+				_right_mouse_down = true
+				_right_mouse_dragged = false
+				actor_hud_menu.hide()
+			camera_rig.handle_mouse_button(mouse_button)
+			if not mouse_button.pressed:
+				_right_mouse_down = false
+				if not _right_mouse_dragged:
+					var local_position: Vector2 = _local_viewport_position(mouse_button.position)
+					if _pick_actor(local_position) == AppState.local_actor_id:
+						_open_actor_hud_menu(mouse_button.position + viewport_container.position)
+			viewport_container.accept_event()
+			return
 		if camera_rig.handle_mouse_button(mouse_button):
 			viewport_container.accept_event()
 			return
@@ -851,8 +953,33 @@ func _on_world_gui_input(event: InputEvent) -> void:
 			viewport_container.accept_event()
 	elif event is InputEventMouseMotion:
 		var mouse_motion: InputEventMouseMotion = event as InputEventMouseMotion
+		if _right_mouse_down and mouse_motion.relative.length_squared() > 4.0:
+			_right_mouse_dragged = true
 		if camera_rig.handle_mouse_motion(mouse_motion):
 			viewport_container.accept_event()
+
+func _open_actor_hud_menu(position: Vector2) -> void:
+	actor_hud_menu.show()
+	actor_hud_menu.reset_size()
+	var menu_size: Vector2 = actor_hud_menu.size
+	var boundary: Vector2 = game_view.size - menu_size - Vector2(8.0, 8.0)
+	actor_hud_menu.position = Vector2(
+		clampf(position.x, 8.0, maxf(8.0, boundary.x)),
+		clampf(position.y, 8.0, maxf(8.0, boundary.y)))
+	actor_hud_menu.move_to_front()
+
+func _on_overhead_option_toggled(_enabled: bool) -> void:
+	overhead_health_row.visible = show_overhead_health.button_pressed
+	overhead_ether_row.visible = show_overhead_ether.button_pressed
+	overhead_action_row.visible = show_overhead_action.button_pressed
+	_update_actor_resource_overlay()
+
+func _on_chat_tab_pressed(tab: String) -> void:
+	_chat_tab = tab
+	$GameView/ChatTabs/All.button_pressed = tab == "all"
+	$GameView/ChatTabs/History.button_pressed = tab == "history"
+	$GameView/ChatTabs/Options.button_pressed = tab == "options"
+	_sync_chat()
 
 func _on_minimap_gui_input(event: InputEvent) -> void:
 	_handle_map_gui_input(event, minimap, map_viewport, map_camera, "minimap")
@@ -1085,9 +1212,10 @@ func _sync_world() -> void:
 		var current_health := int(local_dto.get("health", 0))
 		var maximum_health := maxi(1, int(local_dto.get("max_health", 1)))
 		if AppState.stats.is_empty():
-			health_bar.max_value = maximum_health
-			health_bar.value = current_health
-			health_text.text = "Health: %d / %d" % [current_health, maximum_health]
+			_set_meter(health_bar, health_text, current_health, maximum_health, "Health")
+			_set_meter(health_bottom, health_bottom_text,
+				current_health, maximum_health, "Health")
+			_set_overhead_meter(overhead_health_row, current_health, maximum_health)
 
 func _update_local_actor_follow() -> void:
 	if AppState.local_actor_id < 0:
@@ -1348,7 +1476,11 @@ func _configure_full_map(manifest: WorldManifest) -> void:
 
 func _sync_chat() -> void:
 	chat_output.clear()
-	for line in AppState.chat_lines.slice(maxi(0, AppState.chat_lines.size() - 100)):
+	if _chat_tab == "options":
+		chat_output.append_text("All: recent messages\nHistory: complete session log\n")
+		return
+	var first_line := 0 if _chat_tab == "history" else maxi(0, AppState.chat_lines.size() - 100)
+	for line in AppState.chat_lines.slice(first_line):
 		var channel: int = int(line.get("channel", 0))
 		var prefix: String = ""
 		match channel:
@@ -1360,20 +1492,34 @@ func _sync_chat() -> void:
 
 func _sync_stats() -> void:
 	var stats: Dictionary = AppState.stats
-	if stats.is_empty():
-		return
 	var health: int = int(stats.get("health", 0))
 	var max_health: int = maxi(1, int(stats.get("max_health", 1)))
 	var ether: int = int(stats.get("ether", 0))
 	var max_ether: int = maxi(1, int(stats.get("max_ether", 1)))
-	health_bar.max_value = max_health
-	health_bar.value = health
-	health_text.text = "Health: %d / %d" % [health, max_health]
-	mana_bar.max_value = max_ether
-	mana_bar.value = ether
-	mana_text.text = "Mana: %d / %d   Food: %d   Carry: %d / %d" % [
-		ether, max_ether, int(stats.get("food", 0)),
-		int(stats.get("carried", 0)), int(stats.get("capacity", 0))]
+	var action: int = int(stats.get("action_points", 0))
+	var max_action: int = maxi(1, int(stats.get("max_action_points", 1)))
+	_set_meter(health_bar, health_text, health, max_health, "Health")
+	_set_meter(mana_bar, mana_text, ether, max_ether, "Ethereality")
+	_set_meter(action_bar, action_text, action, max_action, "Action")
+	_set_meter(health_bottom, health_bottom_text, health, max_health, "Health")
+	_set_meter(ether_bottom, ether_bottom_text, ether, max_ether, "Ethereality")
+	_set_meter(action_bottom, action_bottom_text, action, max_action, "Action")
+	_set_overhead_meter(overhead_health_row, health, max_health)
+	_set_overhead_meter(overhead_ether_row, ether, max_ether)
+	_set_overhead_meter(overhead_action_row, action, max_action)
+	var abbreviated: Array[Array] = [
+		["att", "attack"], ["def", "defense"], ["har", "harvesting"],
+		["alc", "alchemy"], ["mag", "magic"], ["pot", "potion"],
+		["sum", "summoning"], ["man", "manufacturing"], ["cra", "crafting"],
+		["eng", "engineering"], ["tai", "tailoring"], ["ran", "ranging"],
+		["oa", "overall"]]
+	var indicator_cells: Array[String] = []
+	for label_and_key: Array in abbreviated:
+		indicator_cells.append("[cell]%s[/cell][cell]%d[/cell]" % [
+			label_and_key[0], int(stats.get(label_and_key[1], 0))])
+	skill_indicators.text = "[table=2]%s[/table]" % "".join(indicator_cells)
+	if stats.is_empty():
+		return
 	var lines: Array[String] = ["[center][b]CHARACTER STATISTICS[/b][/center]"]
 	var displayed_stats: Array[Array] = [
 		["Physique", "physique"], ["Coordination", "coordination"],
@@ -1387,6 +1533,55 @@ func _sync_stats() -> void:
 	for label_and_key: Array in displayed_stats:
 		lines.append("%s: %d" % [label_and_key[0], int(stats.get(label_and_key[1], 0))])
 	stats_text.text = "\n".join(lines)
+
+static func _set_meter(bar: ProgressBar, label: Label, value: int,
+		maximum: int, title: String) -> void:
+	bar.max_value = maxi(1, maximum)
+	bar.value = clampi(value, 0, maxi(1, maximum))
+	label.text = "%s %d / %d" % [title, value, maximum]
+
+static func _set_overhead_meter(row: HBoxContainer, value: int, maximum: int) -> void:
+	var bar: ProgressBar = row.get_node("Bar") as ProgressBar
+	var label: Label = row.get_node("Number") as Label
+	bar.max_value = maxi(1, maximum)
+	bar.value = clampi(value, 0, maxi(1, maximum))
+	label.text = "%d/%d" % [value, maximum]
+
+func _update_legacy_clock_and_compass() -> void:
+	var elapsed_seconds := 0.0
+	if AppState.game_minute_anchor_msec > 0:
+		elapsed_seconds = maxf(0.0,
+			float(Time.get_ticks_msec() - AppState.game_minute_anchor_msec) / 1000.0)
+	var minute_fraction: float = fmod(float(AppState.game_minute) + elapsed_seconds / 60.0, 360.0)
+	var display_minute: int = floori(minute_fraction)
+	clock_text.text = "%d:%02d" % [display_minute / 60, display_minute % 60]
+	clock_hand.rotation = fmod(minute_fraction, 60.0) / 60.0 * TAU
+	compass_needle.rotation = deg_to_rad(-camera_rig.yaw_degrees)
+
+func _update_actor_resource_overlay() -> void:
+	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	if not actor_value is Node3D or not is_instance_valid(actor_value as Node3D):
+		actor_resource_overlay.hide()
+		return
+	var actor_node: Node3D = actor_value as Node3D
+	var world_position: Vector3 = actor_node.global_position + Vector3(0.0, 2.8, 0.0)
+	if gameplay_camera.is_position_behind(world_position):
+		actor_resource_overlay.hide()
+		return
+	var viewport_position: Vector2 = gameplay_camera.unproject_position(world_position)
+	var viewport_scale := Vector2.ONE
+	if main_viewport.size.x > 0 and main_viewport.size.y > 0:
+		viewport_scale = viewport_container.size / Vector2(main_viewport.size)
+	var screen_position: Vector2 = viewport_container.position + viewport_position * viewport_scale
+	var overlay_position: Vector2 = screen_position - Vector2(
+		actor_resource_overlay.size.x * 0.5, actor_resource_overlay.size.y + 8.0)
+	actor_resource_overlay.position = Vector2(
+		clampf(overlay_position.x, 4.0,
+			maxf(4.0, game_view.size.x - actor_resource_overlay.size.x - 90.0)),
+		clampf(overlay_position.y, 34.0,
+			maxf(34.0, game_view.size.y - actor_resource_overlay.size.y - 86.0)))
+	actor_resource_overlay.visible = (show_overhead_health.button_pressed
+		or show_overhead_ether.button_pressed or show_overhead_action.button_pressed)
 
 func _build_inventory_slots() -> void:
 	for slot: int in range(36):
@@ -1968,10 +2163,22 @@ func _apply_eloria_art() -> void:
 	login_logo.texture = _external_texture("res://assets/ui/eloria_logo_master.png")
 	var button_atlas: Texture2D = _external_texture("res://assets/ui/eloria_gamebuttons.png")
 	if button_atlas != null:
-		%MapButton.icon = _atlas_region(button_atlas, Rect2(128, 128, 32, 32))
-		%SitButton.icon = _atlas_region(button_atlas, Rect2(192, 32, 32, 32))
-		%ChatButton.icon = _atlas_region(button_atlas, Rect2(32, 0, 32, 32))
-		%DisconnectButton.icon = _atlas_region(button_atlas, Rect2(224, 0, 32, 32))
+		var icon_regions: Dictionary = {
+			%WalkButton: Rect2(0, 0, 32, 32), %ChatButton: Rect2(32, 0, 32, 32),
+			%KnowledgeButton: Rect2(96, 0, 32, 32), %AttackButton: Rect2(160, 0, 32, 32),
+			%StatsButton: Rect2(192, 0, 32, 32), %SitButton: Rect2(0, 32, 32, 32),
+			%TradeButton: Rect2(64, 32, 32, 32), %InventoryButton: Rect2(96, 32, 32, 32),
+			%ManufacturingButton: Rect2(128, 32, 32, 32),
+			%DisconnectButton: Rect2(224, 0, 32, 32), %MapButton: Rect2(128, 128, 32, 32)}
+		for button_value: Variant in icon_regions:
+			var icon_button: Button = button_value as Button
+			icon_button.icon = _atlas_region(button_atlas, icon_regions[button_value] as Rect2)
+			icon_button.text = ""
+			icon_button.expand_icon = true
+	var hud_atlas: Texture2D = _external_texture("res://assets/ui/eloria_hud_atlas.png")
+	if hud_atlas != null:
+		%ClockFace.texture = _atlas_region(hud_atlas, Rect2(0, 128, 64, 64))
+		%CompassFace.texture = _atlas_region(hud_atlas, Rect2(32, 192, 64, 64))
 
 static func _atlas_region(atlas: Texture2D, region: Rect2) -> AtlasTexture:
 	var texture: AtlasTexture = AtlasTexture.new()
@@ -1985,15 +2192,16 @@ func _apply_eloria_theme() -> void:
 	panel.bg_color = Color(0.045, 0.075, 0.09, 0.92)
 	panel.border_color = Color(0.72, 0.53, 0.22, 0.95)
 	panel.set_border_width_all(2)
-	panel.corner_radius_top_left = 7
-	panel.corner_radius_top_right = 7
-	panel.corner_radius_bottom_left = 7
-	panel.corner_radius_bottom_right = 7
-	panel.set_content_margin_all(12.0)
+	panel.corner_radius_top_left = 1
+	panel.corner_radius_top_right = 1
+	panel.corner_radius_bottom_left = 1
+	panel.corner_radius_bottom_right = 1
+	panel.set_content_margin_all(4.0)
 	eloria_theme.set_stylebox("panel", "PanelContainer", panel)
 	var button: StyleBoxFlat = panel.duplicate() as StyleBoxFlat
 	button.bg_color = Color(0.11, 0.18, 0.19, 0.96)
 	button.set_border_width_all(1)
+	button.set_content_margin_all(4.0)
 	eloria_theme.set_stylebox("normal", "Button", button)
 	var button_hover: StyleBoxFlat = button.duplicate() as StyleBoxFlat
 	button_hover.bg_color = Color(0.23, 0.31, 0.28, 0.98)
@@ -2006,6 +2214,27 @@ func _apply_eloria_theme() -> void:
 	eloria_theme.set_color("font_color", "Label", Color(0.91, 0.86, 0.70))
 	eloria_theme.set_color("font_color", "Button", Color(0.96, 0.88, 0.66))
 	theme = eloria_theme
+	_style_meter(health_bar, Color(0.17, 0.82, 0.22, 1.0))
+	_style_meter(health_bottom, Color(0.9, 0.16, 0.14, 1.0))
+	_style_meter(overhead_health_row.get_node("Bar") as ProgressBar,
+		Color(0.12, 0.9, 0.18, 1.0))
+	for ether_bar: ProgressBar in [mana_bar, ether_bottom,
+		overhead_ether_row.get_node("Bar") as ProgressBar]:
+		_style_meter(ether_bar, Color(0.24, 0.31, 1.0, 1.0))
+	for points_bar: ProgressBar in [action_bar, action_bottom,
+		overhead_action_row.get_node("Bar") as ProgressBar]:
+		_style_meter(points_bar, Color(0.73, 0.28, 0.86, 1.0))
+
+static func _style_meter(bar: ProgressBar, color: Color) -> void:
+	var background := StyleBoxFlat.new()
+	background.bg_color = Color(0.015, 0.02, 0.025, 0.96)
+	background.border_color = Color(0.72, 0.53, 0.22, 0.9)
+	background.set_border_width_all(1)
+	var fill := background.duplicate() as StyleBoxFlat
+	fill.bg_color = color
+	fill.border_color = color.lightened(0.18)
+	bar.add_theme_stylebox_override("background", background)
+	bar.add_theme_stylebox_override("fill", fill)
 
 static func _external_texture(path: String) -> Texture2D:
 	if path.begins_with("res://assets/"):
@@ -2045,13 +2274,24 @@ func _model_for_actor(dto: Dictionary) -> String:
 
 func _presentation_dto(dto: Dictionary) -> Dictionary:
 	var result: Dictionary = dto.duplicate(true)
+	var actor_type: int = int(dto.get("actor_type", -1))
+	var appearance: Dictionary = dto.get("appearance", {}) as Dictionary
+	var visuals: Dictionary = AppearanceVariants.equipment_visuals(
+		actor_type, appearance)
 	var look: Dictionary = npc_looks.get(str(int(dto.get("actor_type", -1))), {}) as Dictionary
-	if look.is_empty():
-		return result
-	var visuals: Dictionary = (look.get("equipmentVisuals", {}) as Dictionary).duplicate(true)
+	var look_visuals: Dictionary = look.get("equipmentVisuals", {}) as Dictionary
+	for raw_part: Variant in look_visuals:
+		visuals[raw_part] = look_visuals[raw_part]
 	var server_visuals: Dictionary = dto.get("equipment_visuals", {}) as Dictionary
 	for raw_part: Variant in server_visuals:
-		visuals[raw_part] = server_visuals[raw_part]
+		var part: int = int(raw_part)
+		var visual_id: int = int(server_visuals[raw_part])
+		# Enhanced actor records repeat the legacy creation bytes in parts 3–6.
+		# Values below 100 are choices, not native equipment visual IDs.
+		if part not in [AppearanceVariants.PART_HEAD,
+				AppearanceVariants.PART_PANTS, AppearanceVariants.PART_SHIRT,
+				AppearanceVariants.PART_BOOTS] or visual_id >= 100:
+			visuals[raw_part] = visual_id
 	result["equipment_visuals"] = visuals
 	return result
 

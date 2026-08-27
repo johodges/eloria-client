@@ -86,6 +86,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 			errors.append("Skeleton3D missing")
 		else:
 			_native_skeleton = skeleton
+			apply_appearance_variants(dto.get("appearance", {}) as Dictionary)
 			var animation_path := _external_path(str(model_config.get("animationLibrary", "")))
 			var imported := NativeAnimationImporter.import_library(self, animation_path, skeleton, model_config.get("boneAliases", {}))
 			animation_player = imported.player
@@ -99,6 +100,75 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	apply_equipment_visuals(dto.get("equipment_visuals", {}) as Dictionary,
 		dto.get("equipment_fallback_parts", []) as Array)
 	return errors
+
+func apply_appearance_variants(appearance: Dictionary) -> void:
+	if _native_skeleton == null or appearance.is_empty():
+		return
+	var skin_tint: Color = AppearanceVariants.skin_tint(int(appearance.get("skin", 0)))
+	var hair_tint: Color = AppearanceVariants.hair_color(int(appearance.get("hair", 0)))
+	var eye_tint: Color = AppearanceVariants.eye_color(int(appearance.get("eyes", 0)))
+	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
+	if native_model == null:
+		return
+	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+		var mesh_name: String = mesh_node.name.to_lower()
+		if mesh_name == "eyes":
+			_tint_mesh(mesh_node, eye_tint, true)
+		elif mesh_name == "eyebrows":
+			_tint_mesh(mesh_node, hair_tint)
+		elif mesh_name.begins_with("superhero_"):
+			_tint_mesh(mesh_node, skin_tint)
+	_add_hair_variant(AppearanceVariants.hair_style(
+		int(appearance.get("hair", 0))), hair_tint)
+
+func _tint_mesh(mesh_node: MeshInstance3D, tint: Color,
+		emissive: bool = false) -> void:
+	if mesh_node.mesh == null or mesh_node.mesh.get_surface_count() == 0:
+		return
+	var source: Material = mesh_node.get_active_material(0)
+	if source is not StandardMaterial3D:
+		return
+	var material: StandardMaterial3D = (source as StandardMaterial3D).duplicate()
+	material.albedo_color = (source as StandardMaterial3D).albedo_color * tint
+	if emissive:
+		material.emission_enabled = true
+		material.emission = tint * 0.28
+	mesh_node.material_override = material
+
+func _add_hair_variant(style: int, color: Color) -> void:
+	if style == 0:
+		return
+	var attachment: BoneAttachment3D = _bone_attachment("Head", 9, style)
+	if attachment == null:
+		return
+	attachment.name = "AppearanceHair_%d" % style
+	var material: StandardMaterial3D = StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = 0.88
+	_hair_piece(attachment, Vector3(0.0, 0.08, 0.015),
+		Vector3(0.42, 0.22, 0.40), material)
+	if style == 2:
+		_hair_piece(attachment, Vector3(0.0, -0.08, 0.13),
+			Vector3(0.36, 0.45, 0.24), material)
+	elif style == 3:
+		_hair_piece(attachment, Vector3(0.0, 0.19, 0.015),
+			Vector3(0.15, 0.38, 0.18), material)
+
+func _hair_piece(parent: Node3D, local_position: Vector3, local_scale: Vector3,
+		material: StandardMaterial3D) -> void:
+	var instance: MeshInstance3D = MeshInstance3D.new()
+	instance.name = "HairPiece"
+	var mesh: SphereMesh = SphereMesh.new()
+	mesh.radius = 0.5
+	mesh.height = 1.0
+	mesh.radial_segments = 16
+	mesh.rings = 8
+	mesh.material = material
+	instance.mesh = mesh
+	instance.position = local_position
+	instance.scale = local_scale
+	parent.add_child(instance)
 
 func render_diagnostics() -> Dictionary:
 	var meshes: Array[Dictionary] = []

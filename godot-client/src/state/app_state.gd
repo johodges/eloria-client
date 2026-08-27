@@ -19,6 +19,9 @@ var active_spells: Dictionary = {}
 var last_spell_result: Dictionary = {}
 var pending_spell_target := ""
 var stats: Dictionary = {}
+var game_minute := 0
+var game_minute_anchor_msec := 0
+var server_timestamp := 0
 var chat_lines: Array[Dictionary] = []
 var selected_actor_id := -1
 var npc_dialogue: Dictionary = {"open": false, "name": "", "portrait": 0,
@@ -54,6 +57,9 @@ func _on_connection_state_changed(value: String) -> void:
 		last_spell_result.clear()
 		pending_spell_target = ""
 		stats.clear()
+		game_minute = 0
+		game_minute_anchor_msec = 0
+		server_timestamp = 0
 		chat_lines.clear()
 		current_map = ""
 		selected_actor_id = -1
@@ -85,6 +91,13 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"you_are":
 			local_actor_id = event.actor_id
 			state_changed.emit(&"local_actor")
+		"clock_sync":
+			server_timestamp = int(event.server_timestamp)
+			state_changed.emit(&"clock")
+		"new_minute":
+			game_minute = int(event.minute)
+			game_minute_anchor_msec = Time.get_ticks_msec()
+			state_changed.emit(&"clock")
 		"change_map":
 			current_map = event.map_name
 			actors.clear()

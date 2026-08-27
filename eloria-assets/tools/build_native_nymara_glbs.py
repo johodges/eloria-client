@@ -133,6 +133,7 @@ EQUIPMENT = (
     ("orun_rider_legs", "Orun Rider Leggings", 4, 103, "legs", (121, 64, 33), (193, 132, 57)),
     ("ssarathi_scale_legs", "Ssarathi Scale Leggings", 4, 104, "legs", (37, 93, 75), (143, 137, 67)),
     ("votary_winter_legs", "Votary Winter Leggings", 4, 105, "legs", (96, 125, 143), (211, 222, 219)),
+    ("luminous_casual_pants", "Luminous Casual Pants", 4, 106, "pants", (47, 65, 83), (52, 126, 139)),
     # part 5: bodies
     ("amberwood_ranger_cuirass", "Amberwood Ranger Cuirass", 5, 100, "cuirass", (64, 91, 52), (170, 103, 43)),
     ("glasswarden_cuirass", "Glasswarden Crystal Cuirass", 5, 101, "cuirass", (76, 58, 116), (90, 195, 211)),
@@ -144,6 +145,7 @@ EQUIPMENT = (
     ("stoneborn_plate", "Stoneborn Memory Plate", 5, 107, "cuirass", (101, 94, 86), (88, 184, 194)),
     ("mycelari_mantle", "Mycelari Spore Mantle", 5, 108, "robe", (91, 116, 66), (205, 142, 90)),
     ("four_gates_guard_cuirass", "Four Gates Guardian Cuirass", 5, 109, "cuirass", (40, 112, 125), (219, 190, 102)),
+    ("luminous_short_sleeve_shirt", "Luminous Short-Sleeve Shirt", 5, 110, "shirt", (45, 125, 139), (222, 198, 110)),
     # part 6: boots
     ("amberwood_ranger_boots", "Amberwood Ranger Boots", 6, 100, "boots", (78, 55, 37), (137, 92, 46)),
     ("glasswarden_boots", "Glasswarden Crystal Boots", 6, 101, "boots", (70, 55, 104), (88, 181, 200)),
@@ -151,6 +153,7 @@ EQUIPMENT = (
     ("orun_rider_boots", "Orun Rider Boots", 6, 103, "boots", (103, 58, 35), (179, 116, 53)),
     ("ssarathi_scale_boots", "Ssarathi Scale Boots", 6, 104, "boots", (39, 88, 72), (132, 126, 64)),
     ("votary_winter_boots", "Votary Winter Boots", 6, 105, "boots", (91, 112, 125), (205, 216, 213)),
+    ("luminous_casual_boots", "Luminous Casual Boots", 6, 106, "boots", (64, 47, 39), (52, 126, 139)),
     # part 7: neck
     ("amberwood_amulet", "Amberwood Leaf Amulet", 7, 100, "amulet", (76, 104, 51), (211, 137, 50)),
     ("glasswarden_resonator", "Glasswarden Resonator", 7, 101, "amulet", (75, 58, 112), (89, 198, 215)),
@@ -340,32 +343,41 @@ def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[i
     spine = joint_by_name["spine_03"]
     pelvis = joint_by_name["pelvis"]
     if feature == "ears":
-        mesh.cone((-0.16, 1.70, 0.), (-0.31, 1.78, .01), .075, head, 0)
-        mesh.cone((0.16, 1.70, 0.), (0.31, 1.78, .01), .075, head, 0)
+        # Whitehorn horns begin inside the temple silhouette.  The previous
+        # shoulder-height cones began outside the head and read as floating
+        # triangles once the bind pose was animated.
+        mesh.cone((-.095, 1.735, .005), (-.225, 1.905, .025), .070, head, 1)
+        mesh.cone((.095, 1.735, .005), (.225, 1.905, .025), .070, head, 1)
     elif feature == "crystal":
-        for x in (-.30, .30):
-            mesh.cone((x, 1.42, .02), (x * 1.24, 1.72, .08), .09, spine, 1)
-        mesh.cone((0., 1.48, .13), (0., 1.82, .20), .10, spine, 1)
+        # Keep the Glasswarden facets close to the upper back so their bases
+        # intersect the torso instead of hovering beyond the shoulders.
+        for x in (-.12, .12):
+            mesh.cone((x, 1.535, -.035), (x * 1.28, 1.715, -.12), .060, spine, 1)
+        mesh.cone((0., 1.59, -.045), (0., 1.835, -.145), .070, spine, 1)
     elif feature == "mane":
         for i in range(7):
             angle = (i - 3) * .27
             mesh.cone((0., 1.62, .06), (math.sin(angle) * .22, 1.85, .06 + math.cos(angle) * .12),
                       .055, head, 1)
     elif feature == "brow":
-        mesh.box((0., 1.72, -.105), (.38, .045, .07), head, 0)
+        # Greyhaven's former box crossed the entire skull.  Their maritime
+        # identity now comes from the authored material and wearable variants.
+        pass
     elif feature == "scaled":
         for y in (1.58, 1.69, 1.80):
-            mesh.cone((0., y, .06), (0., y + .10, .20), .06, head, 1)
-        mesh.curved_tail((0., .92, .10), (0., .22, .64), pelvis, 0)
+            mesh.cone((0., y, -.06), (0., y + .10, -.20), .06, head, 1)
+        # The source humanoid faces positive Z; extend the tail behind it.
+        mesh.curved_tail((0., .92, -.10), (0., .22, -.64), pelvis, 0)
     elif feature == "stone":
-        for x in (-.23, 0., .23):
-            mesh.cone((x, 1.36, .05), (x * 1.08, 1.68, .16), .10, spine, 1)
-        for x in (-.13, .13):
-            mesh.cone((x, 1.73, .01), (x * 1.20, 1.96, .05), .07, head, 1)
+        # A compact crown intersects the scalp; the old shoulder shards were
+        # detached from the body and looked identical to missing-mesh markers.
+        for x in (-.09, .09):
+            mesh.cone((x, 1.735, .005), (x * 1.18, 1.925, .045), .060, head, 1)
     elif feature == "fungal":
-        mesh.sphere((0., 1.82, .01), (.42, .12, .34), head, 1, 8, 20)
-        mesh.sphere((-.24, 1.63, .08), (.16, .07, .13), head, 1, 6, 14)
-        mesh.sphere((.27, 1.57, .10), (.13, .06, .11), head, 1, 6, 14)
+        # One stemmed cap reads as anatomy/headwear.  Detached shoulder caps
+        # were removed because their gaps were conspicuous during animation.
+        mesh.cylinder((0., 1.705, .01), (0., 1.815, .01), .055, head, 0, 14)
+        mesh.sphere((0., 1.835, .01), (.39, .115, .32), head, 1, 8, 20)
     return mesh.arrays()
 
 
@@ -684,8 +696,20 @@ def equipment_geometry(kind: str) -> ShapeMesh:
     elif kind in {"cuirass","coat","robe"}:
         m.sphere((0,0,0),(.72,.78,.40),0,0,10,20);m.box((0,-.30,.18),(.58,.62,.08),0,1)
         if kind=="robe":m.sphere((0,-.55,0),(.82,.62,.50),0,0,8,20)
+    elif kind=="shirt":
+        # A fitted torso plus upper-arm cylinders gives the Luminous base
+        # outfit an unmistakable short-sleeve silhouette.
+        m.sphere((0,-.02,0),(.68,.72,.38),0,0,10,20)
+        m.box((0,-.30,.18),(.58,.54,.07),0,1)
+        m.cylinder((-.38,.20,0),(-.43,-.10,0),.15,0,0,14)
+        m.cylinder((.38,.20,0),(.43,-.10,0),.15,0,0,14)
     elif kind=="legs":
         for x in (-.15,.15):m.cylinder((x,.22,0),(x,-.58,0),.13,0,0,14);m.box((x,-.12,.08),(.30,.22,.10),0,1)
+    elif kind=="pants":
+        m.sphere((0,.22,0),(.58,.34,.38),0,0,8,18)
+        for x in (-.15,.15):
+            m.cylinder((x,.24,0),(x,-.66,0),.15,0,0,14)
+            m.box((x,-.22,.08),(.31,.28,.10),0,1)
     elif kind=="boots":
         for x in (-.15,.15):m.cylinder((x,.18,0),(x,-.35,0),.14,0,0,14);m.box((x,-.36,-.09),(.30,.18,.42),0,1)
     elif kind=="amulet":
@@ -846,7 +870,9 @@ def build_equipment_registry() -> dict:
             "import": {"translation": translation, "rotationDegrees": [0, 0, 0],
                        "scale": 1},
         }
-    return {"schemaVersion": 2, "parts": parts, "models": models}
+    aliases = {"0:11": "0:112", "1:5": "1:105", "2:11": "2:105"}
+    return {"schemaVersion": 2, "parts": parts, "models": models,
+            "aliases": aliases}
 
 
 def write_json(path: Path, value: dict) -> None:

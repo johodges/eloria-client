@@ -5,9 +5,13 @@ on:
     paths:
       - "world_package.*"
       - "world_glb_renderer.*"
+      - "minimap.c"
+      - "multiplayer.c"
+      - "eloria-assets/tools/package_four_gates_world.py"
       - "tools/eloria-map-validate"
       - "tests/fixtures/world_package/**"
       - "tests/test_world_package_validator.py"
+      - "tests/test_world_runtime_contracts.py"
       - ".github/workflows/world-package.yml"
   push:
     branches:
@@ -26,7 +30,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: python3 -m unittest tests.test_world_package_validator -v
-      - run: tools/eloria-map-validate tests/fixtures/world_package/world.json --stats
+      - run: python3 tools/eloria-map-validate tests/fixtures/world_package/world.json --stats
+      - run: python3 -m unittest tests.test_world_runtime_contracts -v
       - run: |
           python3 tools/generate_world_fixture.py
           git diff --exit-code -- tests/fixtures/world_package
@@ -40,5 +45,5 @@ jobs:
       - run: |
           sudo apt update -qq
           sudo apt install -y cmake libsdl2-dev libsdl2-net-dev libsdl2-image-dev libssl-dev libopenal-dev libcal3d12-dev libvorbis-dev libsdl2-ttf-dev
-      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DLOCAL_NLOHMANN_JSON=ON
+      - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DLOCAL_NLOHMANN_JSON=ON -DGENERATE_ELORIA_DATA=OFF
       - run: cmake --build build --parallel 2

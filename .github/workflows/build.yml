@@ -28,7 +28,7 @@ jobs:
     
     - name: "cmake"
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=release -DLOCAL_NLOHMANN_JSON=ON
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=release -DLOCAL_NLOHMANN_JSON=ON -DGENERATE_ELORIA_DATA=OFF
         
     - name: "compile"
       run: |
@@ -51,7 +51,7 @@ jobs:
     - name: "cmake"
       working-directory: ./map_editor
       run: |
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=release -DLOCAL_NLOHMANN_JSON=ON
+        cmake -S . -B build -DCMAKE_BUILD_TYPE=release -DLOCAL_NLOHMANN_JSON=ON -DGENERATE_ELORIA_DATA=OFF
         
     - name: "compile"
       working-directory: ./map_editor
@@ -102,7 +102,7 @@ jobs:
       - name: "cmake"
         shell: msys2 {0}
         run: |
-          cmake -G "MinGW Makefiles" -S . -B build -DCMAKE_BUILD_TYPE=release -DLOCAL_NLOHMANN_JSON=ON
+          cmake -G "MinGW Makefiles" -S . -B build -DCMAKE_BUILD_TYPE=release -DLOCAL_NLOHMANN_JSON=ON -DGENERATE_ELORIA_DATA=OFF
         
       - name: "compile"
         shell: msys2 {0}

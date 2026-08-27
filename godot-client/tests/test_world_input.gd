@@ -134,13 +134,49 @@ func _run() -> void:
 		"chat remains markup-safe and exposes legacy addressing syntax")
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
-	_expect(chat_panel.anchor_bottom == lower_hud.anchor_top
-		and chat_input.anchor_bottom == lower_hud.anchor_top
-		and chat_panel.offset_bottom <= lower_hud.offset_top
+	var chat_tabs: Control = main.get_node("GameView/ChatTabs") as Control
+	_expect(chat_tabs.position.x <= 12.0 and chat_tabs.position.y <= 8.0
+		and chat_panel.anchor_bottom < 0.3
 		and chat_input.offset_bottom <= lower_hud.offset_top,
-		"chat history and entry remain fully above the opaque lower HUD rail")
+		"legacy chat tabs sit at upper left while entry remains above the lower rail")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
 		"stats and item/spell quickbar occupy the right HUD rail")
+	var clock_face: TextureRect = main.get_node("GameView/ClockFrame/ClockFace") as TextureRect
+	var compass_face: TextureRect = main.get_node("GameView/CompassFrame/CompassFace") as TextureRect
+	_expect(clock_face.texture != null and compass_face.texture != null,
+		"legacy clock and compass use the existing Eloria HUD atlas")
+	for meter_path: String in [
+		"GameView/Quickbar/Buttons/BottomMeters/HealthMeter/HealthBottom",
+		"GameView/Quickbar/Buttons/BottomMeters/EtherMeter/EtherBottom",
+		"GameView/Quickbar/Buttons/BottomMeters/ActionMeter/ActionBottom"]:
+		_expect(main.get_node_or_null(meter_path) is ProgressBar,
+			"bottom HUD exposes %s" % meter_path.get_file())
+	var actor_menu: Control = main.get_node("GameView/ActorHudMenu") as Control
+	main.call("_open_actor_hud_menu", Vector2(640.0, 360.0))
+	_expect(actor_menu.visible and main.get_node("GameView/ActorHudMenu/Options/ShowHealth") is CheckButton
+		and main.get_node("GameView/ActorHudMenu/Options/ShowEther") is CheckButton
+		and main.get_node("GameView/ActorHudMenu/Options/ShowAction") is CheckButton,
+		"character context menu exposes all three overhead bar-and-number options")
+	app_state_inventory.set("stats", {"health": 72, "max_health": 100,
+		"ether": 33, "max_ether": 50, "action_points": 18,
+		"max_action_points": 30, "attack": 24, "overall": 22})
+	main.call("_sync_stats")
+	_expect(is_equal_approx((main.get_node(
+		"GameView/Quickbar/Buttons/BottomMeters/HealthMeter/HealthBottom") as ProgressBar).value, 72.0)
+		and is_equal_approx((main.get_node(
+		"GameView/Quickbar/Buttons/BottomMeters/EtherMeter/EtherBottom") as ProgressBar).value, 33.0)
+		and is_equal_approx((main.get_node(
+		"GameView/Quickbar/Buttons/BottomMeters/ActionMeter/ActionBottom") as ProgressBar).value, 18.0),
+		"health, ethereality, and action-point meters synchronize live values")
+	var show_ether: CheckButton = main.get_node(
+		"GameView/ActorHudMenu/Options/ShowEther") as CheckButton
+	show_ether.button_pressed = false
+	main.call("_on_overhead_option_toggled", false)
+	_expect(not (main.get_node("GameView/ActorResourceOverlay/Rows/EtherRow") as Control).visible,
+		"character menu independently toggles the overhead ethereality copy")
+	show_ether.button_pressed = true
+	main.call("_on_overhead_option_toggled", true)
+	actor_menu.hide()
 	_expect(not stats_panel.visible, "statistics window starts closed")
 	main.call("_on_stats_button_pressed")
 	_expect(stats_panel.visible and not stats_panel.get_global_rect().intersects(
