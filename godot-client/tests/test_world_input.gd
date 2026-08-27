@@ -122,6 +122,12 @@ func _run() -> void:
 	_expect(first_quick_slot.text.contains("×9") and first_quick_slot.icon != null
 		and not first_quick_slot.disabled,
 		"usable inventory slot populates the matching live quick slot")
+	app_state_inventory.set("inventory_cooldowns", {0: {
+		"maximum_msec": 30000, "end_msec": Time.get_ticks_msec() + 12000}})
+	main.call("_sync_quick_slots")
+	_expect(first_quick_slot.disabled and first_quick_slot.text.contains("12s"),
+		"server cooldown disables the usable quick slot with remaining time")
+	app_state_inventory.set("inventory_cooldowns", {})
 	for quick_index: int in range(1, 9):
 		_expect(InputMap.has_action("quick_item_%d" % quick_index),
 			"item quick slot %d has a centralized input action" % quick_index)

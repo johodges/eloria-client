@@ -177,6 +177,16 @@ func _init() -> void:
 		PackedByteArray([130, 80, 111, 116, 105, 111, 110, 0]))
 	_expect(item_text.type == "inventory_text" and item_text.text == "Potion",
 		"inventory inspection text")
+	var cooldown_event: Dictionary = EloriaProtocol.decode_server(77,
+		PackedByteArray([7, 30, 0, 12, 0, 2, 60, 0, 1, 0]))
+	_expect(cooldown_event.type == "item_cooldowns"
+		and cooldown_event.cooldowns.size() == 2
+		and int(cooldown_event.cooldowns[0].slot) == 7
+		and int(cooldown_event.cooldowns[0].maximum_seconds) == 30
+		and int(cooldown_event.cooldowns[0].remaining_seconds) == 12,
+		"batched item cooldown fields")
+	_expect(EloriaProtocol.decode_server(77, PackedByteArray([1, 2])).type == "invalid",
+		"malformed item cooldown rejected")
 	_expect(EloriaProtocol.decode_server(19, PackedByteArray([1, 0])).type == "invalid",
 		"malformed inventory snapshot rejected")
 	var atlas_config_file: FileAccess = FileAccess.open(

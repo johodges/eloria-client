@@ -68,6 +68,7 @@ var pending_create_password := ""
 var inventory_slot_buttons: Array[Button] = []
 var quick_slot_buttons: Array[Button] = []
 var selected_inventory_slot := -1
+var cooldown_display_second := -1
 
 func _ready() -> void:
 	models = _json("res://data/actors/models.json").get("models", {})
@@ -111,6 +112,10 @@ func _bind_shared_world() -> void:
 func _process(_delta: float) -> void:
 	if game_view.visible:
 		_update_local_actor_follow()
+		var display_second: int = floori(float(Time.get_ticks_msec()) / 1000.0)
+		if display_second != cooldown_display_second:
+			cooldown_display_second = display_second
+			_sync_quick_slots()
 
 func _on_connect_pressed() -> void:
 	if AppState.connection_state != "disconnected":
@@ -408,6 +413,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_stats()
 		&"inventory", &"inventory_text":
 			_sync_inventory()
+		&"inventory_cooldowns":
+			_sync_quick_slots()
 		&"selection":
 			_sync_selection()
 		&"npc_dialogue":
@@ -640,17 +647,35 @@ func _sync_inventory() -> void:
 			button.text = str(slot + 1)
 			button.tooltip_text = "Empty inventory slot %d" % (slot + 1)
 			button.disabled = true
+	_sync_quick_slots()
+	if selected_inventory_slot >= 0:
+		var selected_value: Variant = AppState.inventory.get(selected_inventory_slot)
+		if selected_value is Dictionary:
+			var selected_item: Dictionary = selected_value as Dictionary
+			inventory_use_button.disabled = (not bool(selected_item.get("inventory_usable", false))
+				or _inventory_cooldown_remaining(selected_inventory_slot) > 0)
+		else:
+			selected_inventory_slot = -1
+			inventory_use_button.disabled = true
+	if not AppState.inventory_text.is_empty():
+		inventory_description.text = AppState.inventory_text
+
+func _sync_quick_slots() -> void:
 	for slot: int in range(quick_slot_buttons.size()):
 		var quick_button: Button = quick_slot_buttons[slot]
 		var quick_item_value: Variant = AppState.inventory.get(slot)
 		if quick_item_value is Dictionary:
 			var quick_item: Dictionary = quick_item_value as Dictionary
 			var usable: bool = bool(quick_item.get("inventory_usable", false))
+			var cooldown_seconds: int = _inventory_cooldown_remaining(slot)
 			quick_button.icon = item_atlas.icon_for(int(quick_item.get("image_id", 0)))
 			quick_button.expand_icon = true
-			quick_button.text = "%d  ×%d" % [slot + 1, int(quick_item.get("quantity", 0))]
-			quick_button.disabled = not usable
-			quick_button.tooltip_text = (_inventory_tooltip(quick_item) if usable else
+			quick_button.text = "%d  ×%d%s" % [slot + 1, int(quick_item.get("quantity", 0)),
+				"\n%ds" % cooldown_seconds if cooldown_seconds > 0 else ""]
+			quick_button.disabled = not usable or cooldown_seconds > 0
+			quick_button.tooltip_text = ((_inventory_tooltip(quick_item)
+				+ "\nCooldown: %d seconds" % cooldown_seconds) if cooldown_seconds > 0 else
+				_inventory_tooltip(quick_item) if usable else
 				_inventory_tooltip(quick_item) + "\nThis item cannot be used directly.")
 		else:
 			quick_button.icon = null
@@ -661,12 +686,16 @@ func _sync_inventory() -> void:
 		var selected_value: Variant = AppState.inventory.get(selected_inventory_slot)
 		if selected_value is Dictionary:
 			var selected_item: Dictionary = selected_value as Dictionary
-			inventory_use_button.disabled = not bool(selected_item.get("inventory_usable", false))
-		else:
-			selected_inventory_slot = -1
-			inventory_use_button.disabled = true
-	if not AppState.inventory_text.is_empty():
-		inventory_description.text = AppState.inventory_text
+			inventory_use_button.disabled = (not bool(selected_item.get("inventory_usable", false))
+				or _inventory_cooldown_remaining(selected_inventory_slot) > 0)
+
+func _inventory_cooldown_remaining(slot: int) -> int:
+	var cooldown_value: Variant = AppState.inventory_cooldowns.get(slot)
+	if not cooldown_value is Dictionary:
+		return 0
+	var cooldown: Dictionary = cooldown_value as Dictionary
+	var remaining_msec: int = int(cooldown.get("end_msec", 0)) - Time.get_ticks_msec()
+	return maxi(0, ceili(float(remaining_msec) / 1000.0))
 
 func _inventory_tooltip(item: Dictionary) -> String:
 	var traits: Array[String] = []
@@ -695,7 +724,7 @@ func _use_inventory_slot(slot: int) -> void:
 	if not item_value is Dictionary:
 		return
 	var item: Dictionary = item_value as Dictionary
-	if not bool(item.get("inventory_usable", false)):
+	if not bool(item.get("inventory_usable", false)) or _inventory_cooldown_remaining(slot) > 0:
 		return
 	var error: Error = Network.use_inventory_item(slot)
 	if error != OK:

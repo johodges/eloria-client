@@ -13,6 +13,7 @@ var current_map := ""
 var actors: Dictionary = {}
 var inventory: Dictionary = {}
 var inventory_text := ""
+var inventory_cooldowns: Dictionary = {}
 var stats: Dictionary = {}
 var chat_lines: Array[Dictionary] = []
 var selected_actor_id := -1
@@ -33,6 +34,7 @@ func _on_connection_state_changed(value: String) -> void:
 		actors.clear()
 		inventory.clear()
 		inventory_text = ""
+		inventory_cooldowns.clear()
 		stats.clear()
 		chat_lines.clear()
 		current_map = ""
@@ -111,6 +113,18 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"inventory_text":
 			inventory_text = str(event.text)
 			state_changed.emit(&"inventory_text")
+		"item_cooldowns":
+			inventory_cooldowns.clear()
+			var received_msec: int = Time.get_ticks_msec()
+			for raw_cooldown: Variant in event.cooldowns:
+				var cooldown: Dictionary = raw_cooldown as Dictionary
+				var slot: int = int(cooldown.get("slot", -1))
+				var maximum_seconds: int = int(cooldown.get("maximum_seconds", 0))
+				var remaining_seconds: int = int(cooldown.get("remaining_seconds", 0))
+				inventory_cooldowns[slot] = {
+					"maximum_msec": maximum_seconds * 1000,
+					"end_msec": received_msec + remaining_seconds * 1000}
+			state_changed.emit(&"inventory_cooldowns")
 		"chat":
 			chat_lines.append({"channel": event.channel, "text": event.text})
 			if chat_lines.size() > 1000:

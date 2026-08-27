@@ -207,6 +207,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				return {"type": "invalid", "error": "inventory_text_length"}
 			return {"type": "inventory_text", "color": int(payload[0]),
 				"text": nul_string(payload.slice(1))}
+		ServerMessage.GET_ITEMS_COOLDOWN:
+			return decode_item_cooldowns(payload)
 		ServerMessage.RAW_TEXT:
 			if payload.is_empty():
 				return {"type": "invalid", "error": "chat_length"}
@@ -312,6 +314,16 @@ static func decode_inventory_item(payload: PackedByteArray, offset: int,
 	if with_uid:
 		item["uid"] = u16(payload, offset + 8)
 	return item
+
+static func decode_item_cooldowns(payload: PackedByteArray) -> Dictionary:
+	if payload.size() % 5 != 0:
+		return {"type": "invalid", "error": "item_cooldown_length"}
+	var cooldowns: Array[Dictionary] = []
+	for offset: int in range(0, payload.size(), 5):
+		cooldowns.append({"slot": int(payload[offset]),
+			"maximum_seconds": u16(payload, offset + 1),
+			"remaining_seconds": u16(payload, offset + 3)})
+	return {"type": "item_cooldowns", "cooldowns": cooldowns}
 
 static func stat_key(slot: int) -> String:
 	var keys: Dictionary = {
