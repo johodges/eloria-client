@@ -38,5 +38,11 @@ func rotation_to_godot(server_rotation: int) -> float:
 	# Legacy actor rotations span signed 16-bit storage; direction frames are audited separately.
 	return -float(server_rotation) * TAU / 65536.0
 
+func direction_to_godot(direction: Vector2i) -> float:
+	var godot_direction: Vector3 = Vector3(
+		float(direction.x), 0.0,
+		-float(direction.y) if invert_server_y else float(direction.y)).normalized()
+	return atan2(-godot_direction.x, -godot_direction.z)
+
 func tile_center(server_x: int, server_y: int) -> Vector3:
 	return server_to_godot(float(server_x) + 0.5, float(server_y) + 0.5)

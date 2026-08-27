@@ -128,6 +128,23 @@ static func actor_command_step(command: int) -> Vector2i:
 		27: return Vector2i(-1, 1)
 		_: return Vector2i.ZERO
 
+static func actor_command_direction(command: int) -> Vector2i:
+	var direction: int = command
+	if command >= 30 and command <= 37:
+		direction = command - 10
+	elif command >= 38 and command <= 45:
+		direction = command - 18
+	match direction:
+		20: return Vector2i(0, 1)
+		21: return Vector2i(1, 1)
+		22: return Vector2i(1, 0)
+		23: return Vector2i(1, -1)
+		24: return Vector2i(0, -1)
+		25: return Vector2i(-1, -1)
+		26: return Vector2i(-1, 0)
+		27: return Vector2i(-1, 1)
+		_: return Vector2i.ZERO
+
 static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 	match command:
 		ServerMessage.LOG_IN_OK:

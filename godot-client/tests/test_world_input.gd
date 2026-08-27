@@ -79,6 +79,13 @@ func _run() -> void:
 		"actor target follows sampled terrain height")
 	_expect(is_equal_approx(actor_height_fixture.global_position.y, 42.08),
 		"actor presentation snaps out of terrain")
+	actor_height_fixture.actor_id = 77
+	actor_height_fixture.apply_server_state({
+		"x": 3, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
+	_expect(is_equal_approx(float(actor_height_fixture.get("_target_yaw")), -PI / 2.0),
+		"actor faces the authoritative movement direction")
+	_expect(float(actor_height_fixture.get("_presentation_speed")) >= 6.0,
+		"walk presentation closes authoritative steps promptly")
 	actor_height_fixture.free()
 	var lower_hud: Control = main.get_node("GameView/Quickbar") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control

@@ -19,6 +19,10 @@ func _init() -> void:
 	_expect(EloriaProtocol.actor_command_step(20) == Vector2i(0, 1), "walk north step")
 	_expect(EloriaProtocol.actor_command_step(37) == Vector2i(-1, 1), "run northwest step")
 	_expect(EloriaProtocol.actor_command_step(13) == Vector2i.ZERO, "sit has no step")
+	_expect(EloriaProtocol.actor_command_direction(22) == Vector2i(1, 0),
+		"walk command faces east")
+	_expect(EloriaProtocol.actor_command_direction(40) == Vector2i(1, 0),
+		"turn-only command faces east without moving")
 	_expect_bytes("login fixture", EloriaProtocol.login("Test", "secret"),
 		PackedByteArray([140, 13, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114, 101, 116, 0]))
 	_expect_bytes("create character fixture",
@@ -115,6 +119,10 @@ func _init() -> void:
 		"coordinate walking height is absolute")
 	_expect(coordinate.godot_to_server(godot_position) == Vector2i(102, 198),
 		"coordinate round trip")
+	_expect(is_equal_approx(coordinate.direction_to_godot(Vector2i(0, 1)), 0.0),
+		"server north faces Godot forward")
+	_expect(is_equal_approx(coordinate.direction_to_godot(Vector2i(1, 0)), -PI / 2.0),
+		"server east faces Godot right")
 
 	var reduced_actor: Dictionary = ActorReducer.apply_command(actor, 21)
 	_expect(int(reduced_actor.get("x", -1)) == 11

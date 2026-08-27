@@ -1,7 +1,9 @@
 class_name ReplicatedActor3D
 extends CharacterBody3D
 
-@export var interpolation_seconds := 0.12
+@export var walk_presentation_speed := 6.0
+@export var run_presentation_speed := 9.0
+@export var turn_speed_radians := 12.0
 
 var actor_id := -1
 var server_target := Vector3.ZERO
@@ -9,6 +11,8 @@ var resolver: AnimationResolver
 var animation_player: AnimationPlayer
 var current_action: StringName = &"idle"
 var _snap_pending := true
+var _target_yaw := 0.0
+var _presentation_speed := 6.0
 
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		model_config: Dictionary, animation_config: Dictionary) -> Array[String]:
@@ -16,6 +20,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	server_target = adapter.tile_center(int(dto.x), int(dto.y))
 	position = server_target
 	rotation.y = adapter.rotation_to_godot(int(dto.rotation))
+	_target_yaw = rotation.y
 	collision_layer = 2
 	collision_mask = 0
 	var selection_shape: CollisionShape3D = CollisionShape3D.new()
@@ -40,6 +45,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	selection_ring.position.y = 0.05
 	selection_ring.visible = false
 	add_child(selection_ring)
+	_add_nameplate(dto)
 	resolver = AnimationResolver.new(animation_config)
 	var source_path := _external_path(str(model_config.get("scene", "")))
 	var errors := _load_native_scene(source_path)
@@ -102,22 +108,36 @@ func _add_fallback_visual(dto: Dictionary) -> void:
 	mesh_instance.mesh = capsule
 	mesh_instance.position.y = 0.85
 	add_child(mesh_instance)
+
+func _add_nameplate(dto: Dictionary) -> void:
 	var label: Label3D = Label3D.new()
 	label.name = "Nameplate"
 	label.text = str(dto.get("name", "Unknown actor"))
-	label.position.y = 2.05
+	label.position.y = 2.15
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
+	label.font_size = 28
+	label.outline_size = 6
+	label.modulate = Color(1.0, 1.0, 1.0, 1.0)
 	add_child(label)
 
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
 	server_target = adapter.tile_center(int(dto.x), int(dto.y))
-	rotation.y = adapter.rotation_to_godot(int(dto.rotation))
+	var actor_command: int = int(dto.get("command", -1))
+	var command_direction: Vector2i = EloriaProtocol.actor_command_direction(actor_command)
+	if command_direction != Vector2i.ZERO:
+		_target_yaw = adapter.direction_to_godot(command_direction)
+	else:
+		_target_yaw = adapter.rotation_to_godot(int(dto.rotation))
+	_presentation_speed = walk_presentation_speed
+	if actor_command >= 30 and actor_command <= 37:
+		_presentation_speed = run_presentation_speed
 	if teleport or global_position.distance_to(server_target) > 8.0:
 		global_position = server_target
+		rotation.y = _target_yaw
 		_snap_pending = false
 	if dto.has("command"):
-		play_action(resolver.action_for_command(int(dto.command)))
+		play_action(resolver.action_for_command(actor_command))
 
 func play_action(action: StringName) -> void:
 	if animation_player == null or resolver == null:
@@ -125,6 +145,7 @@ func play_action(action: StringName) -> void:
 	var clip := resolver.clip_for_action(action)
 	if clip.is_empty() or not animation_player.has_animation(clip):
 		return
+	animation_player.speed_scale = resolver.playback_speed_for_action(action)
 	if current_action == action and animation_player.is_playing():
 		return
 	current_action = action
@@ -143,10 +164,11 @@ func set_surface_height(value: float) -> void:
 func _physics_process(delta: float) -> void:
 	if _snap_pending:
 		global_position = server_target
+		rotation.y = _target_yaw
 		_snap_pending = false
 		return
-	var weight := clampf(delta / maxf(interpolation_seconds, 0.001), 0.0, 1.0)
-	global_position = global_position.lerp(server_target, weight)
+	global_position = global_position.move_toward(server_target, _presentation_speed * delta)
+	rotation.y = rotate_toward(rotation.y, _target_yaw, turn_speed_radians * delta)
 
 func _load_native_scene(path: String) -> Array[String]:
 	if path.is_empty():

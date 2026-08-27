@@ -3,11 +3,13 @@ extends RefCounted
 
 var action_to_clip: Dictionary
 var command_to_action: Dictionary
+var playback_speeds: Dictionary
 var fallback_action: StringName
 
 func _init(config: Dictionary) -> void:
 	action_to_clip = config.get("actions", {}).duplicate(true)
 	command_to_action = config.get("serverCommands", {}).duplicate(true)
+	playback_speeds = config.get("playbackSpeeds", {}).duplicate(true)
 	fallback_action = StringName(config.get("fallbackAction", "idle"))
 
 func action_for_command(command: int, combat_mode := false) -> StringName:
@@ -19,6 +21,9 @@ func action_for_command(command: int, combat_mode := false) -> StringName:
 func clip_for_action(action: StringName) -> StringName:
 	var value = action_to_clip.get(String(action), action_to_clip.get(String(fallback_action), ""))
 	return StringName(value)
+
+func playback_speed_for_action(action: StringName) -> float:
+	return maxf(0.01, float(playback_speeds.get(String(action), 1.0)))
 
 func validate(available_clips: PackedStringArray) -> Array[String]:
 	var missing: Array[String] = []
