@@ -297,7 +297,7 @@ func _refresh_creation_preview() -> void:
 	preview_actor = ReplicatedActor3D.new()
 	preview_root.add_child(preview_actor)
 	var actor_type := create_gender.get_selected_id()
-	var dto := {"actor_id": 0, "x": 0, "y": 0, "rotation": 0, "actor_type": actor_type}
+	var dto := {"actor_id": 0, "x": 0, "y": 0, "rotation": 0, "actor_type": actor_type, "kind": 1}
 	var model_id := _model_for_actor(dto)
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 	var errors := preview_actor.configure(dto,

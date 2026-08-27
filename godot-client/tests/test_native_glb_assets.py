@@ -104,6 +104,17 @@ class NativeGlbAssetsTest(unittest.TestCase):
                         ]:
                             self.assertTrue((path.parent / dependency).is_file(), dependency)
 
+    def test_character_preview_uses_player_model_registry(self) -> None:
+        source = (CLIENT / "src/app/main.gd").read_text()
+        start = source.index("func _refresh_creation_preview()")
+        end = source.index("func _on_login_pressed()", start)
+        preview = source[start:end]
+        self.assertIn('"kind": 1', preview)
+        for option in self.models["creationOptions"]:
+            self.assertEqual(
+                option["model"],
+                self.models["actorTypes"][str(option["actorType"])])
+
     def test_concept_npc_roster_uses_player_models_and_native_gear(self) -> None:
         self.assertEqual(62, len(self.models["npcLooks"]))
         for actor_type, look in self.models["npcLooks"].items():
