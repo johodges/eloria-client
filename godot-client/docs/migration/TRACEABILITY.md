@@ -37,11 +37,16 @@ The gate fails unless it proves all of the following before uploading evidence:
 - the local actor has a visible native luminous GLB with at least three meshes and no missing-model fallback;
 - a navigation-surface ray exists below the spawn and the actor foot agrees with it;
 - the actor is in front of and within the gameplay camera frame;
+- right-drag rotation, middle-drag pan, and wheel zoom change their respective
+  camera state while the actor remains in frame, then restore actor follow;
 - the white player marker follows the actor and both map cameras include its layer;
 - a left-click routed through the gameplay viewport produces a server actor-tile update;
 - each 1280×720 capture contains rendered color variation rather than a dummy frame.
 
-The artifact contains default-world, full-map, and post-movement PNGs plus sanitized session and movement JSON. A passing structural assertion is still classified separately from human visual inspection of those PNGs.
+The artifact contains default, rotated, panned, zoomed, full-map, and
+post-movement PNGs plus sanitized session, camera-state, and movement JSON. A
+passing structural assertion is still classified separately from human visual
+inspection of those PNGs.
 
 ### Verified evidence: workflow run 33068336019
 
