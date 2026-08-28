@@ -160,10 +160,18 @@ def main() -> int:
         check(tile_ok(entry["serverTile"]),
               f"interactive is addressable by the server: {entry['id']} at "
               f"{entry['serverTile']}")
+    interactive_nodes = {entry["node"] for entry in manifest["interactives"]}
     for entry in manifest["landmarks"]:
-        check(tile_ok(entry["serverTile"]),
-              f"landmark is addressable by the server: {entry['id']} at "
+        check("reachable" in entry,
+              f"landmark declares whether it is reachable: {entry['id']}")
+        check(bool(entry.get("reachable")) == tile_ok(entry["serverTile"]),
+              f"landmark reachability matches its tile: {entry['id']} at "
               f"{entry['serverTile']}")
+        if not entry.get("reachable"):
+            # Scenery beyond the band closes the horizon. It may not carry an
+            # interaction, because a player could never stand at it.
+            check(entry["id"] not in interactive_nodes,
+                  f"unreachable scenery carries no interaction: {entry['id']}")
     for group in manifest["ambientPopulation"]["groups"]:
         check(tile_ok(group["serverTile"]),
               f"ambient group is addressable: {group['id']}")
@@ -183,9 +191,19 @@ def main() -> int:
     expected_scale = minimap["imageSize"][0] / span
     check(math.isclose(minimap["pixelsPerMetre"], expected_scale, rel_tol=1e-4),
           "minimap pixels-per-metre matches the bounds and image size")
-    check(math.isclose(minimap["transform"]["pixelX"]["offset"],
-                       minimap["imageSize"][0] / 2.0, rel_tol=1e-4),
-          "minimap pixel offset centres the world origin")
+    # The region is not centred on the world origin, so the offset is checked by
+    # mapping the declared bounds onto the image rather than assuming symmetry.
+    for key, image_axis, world_axis, label in (("pixelX", 0, 0, "east-west"),
+                                               ("pixelY", 1, 2, "north-south")):
+        axis = minimap["transform"][key]
+        low = bounds["min"][world_axis]
+        high = bounds["max"][world_axis]
+        pixels = minimap["imageSize"][image_axis]
+        check(math.isclose(axis["scale"], pixels / (high - low), rel_tol=1e-4),
+              f"minimap {label} scale matches the bounds and image size")
+        check(abs(low * axis["scale"] + axis["offset"]) < 0.01
+              and abs(high * axis["scale"] + axis["offset"] - pixels) < 0.01,
+              f"minimap {label} transform maps the declared bounds onto the image")
 
     # --- population ----------------------------------------------------------
     ambient = manifest.get("ambientPopulation", {}).get("groups", [])

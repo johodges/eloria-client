@@ -126,10 +126,11 @@ def build_terrain(builder: Builder, landform: terrain.Landform) -> dict:
     class_material = {}
     for terrain_class, tint in terrain.CLASS_TINT.items():
         name = f"ground_{terrain.CLASS_NAMES[terrain_class]}"
-        roughness = 0.94 if terrain_class != terrain.CLASS_ROCK else 0.88
+        rocky = terrain_class in (terrain.CLASS_ROCK, terrain.CLASS_BADLAND,
+                                  terrain.CLASS_MOUNTAIN)
         class_material[terrain_class] = builder.material(
-            name, "stone" if terrain_class == terrain.CLASS_ROCK else "ground",
-            base_color=tint, roughness=roughness, normal_scale=0.9)
+            name, "stone" if rocky else "ground", base_color=tint,
+            roughness=0.88 if rocky else 0.94, normal_scale=0.9)
 
     chunks = terrain_mesh.build_chunks(landform)
     triangles = 0

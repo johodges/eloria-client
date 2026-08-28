@@ -18,8 +18,8 @@ import numpy as np
 
 from glb import Geometry
 from shapes import (UV_SCALE, add_quad, beam, box, conical_canopy, frustum,
-                    polygon_points, prism, revolve, ribbon, sheet, sphere,
-                    wall_run)
+                    oriented_quad, oriented_triangle, polygon_points, prism,
+                    revolve, ribbon, sheet, sphere, wall_run)
 
 TAU = math.pi * 2.0
 
@@ -31,6 +31,10 @@ TIMBER_DARK = "timber_dark"
 TIMBER_WARM = "timber_warm"
 STONE_PALE = "stone_pale"
 STONE_DARK = "stone_dark"
+# Cave rock is its own pair: the surface map's "dark" stone is the red
+# sandstone of the mesas, which underground reads as raw salmon.
+CAVE_ROCK_PALE = "cave_rock_pale"
+CAVE_ROCK_WARM = "cave_rock_warm"
 THATCH = "thatch_gold"
 LEATHER = "leather"
 TEXTILE = "textile"
@@ -1382,4 +1386,426 @@ def camp_pavilion(width: float = 5.4, depth: float = 4.4, variant: int = 0) -> P
         barrel(parts, (bx, bz), 0.34, 0.82)
     for index in range(2):
         pot(parts, (-half_w + 0.7 + index * 0.5, half_d - 0.8), 0.28)
+    return parts
+
+
+# ------------------------------------------------------ desert and highlands
+CRYSTAL = "crystal_amethyst"
+
+
+def badland_spire(height: float = 11.0, radius: float = 2.4, seed: int = 0,
+                  crystal: bool = False) -> Parts:
+    """A wind-carved badland spire, undercut and banded like the Barrens' rock.
+
+    Modelled rather than sculpted into the heightfield: at the region's cell
+    size a spire would be two cells wide, which folds the terrain surface over
+    instead of making a spire.
+    """
+    parts = Parts()
+    rock = parts.geometry(STONE_DARK if seed % 2 else STONE_PALE)
+    rng = np.random.default_rng(seed + 700)
+    levels = 7
+    previous = None
+    lean = float(rng.normal()) * 0.05
+    for index in range(levels + 1):
+        t = index / levels
+        # Undercut waist, flared cap: the wind erodes the softer middle beds.
+        profile = (1.0 - 0.55 * math.sin(t * math.pi * 0.92) ** 2) * (1.0 - 0.30 * t)
+        ring = radius * profile * (1.0 + 0.10 * float(rng.normal()))
+        y = height * t
+        offset = lean * height * t + 0.18 * math.sin(t * 5.0)
+        if previous is not None:
+            frustum(rock, (previous[2], previous[1], previous[3]),
+                    (offset, y, offset * 0.4), max(previous[0], 0.10),
+                    max(ring, 0.10), sides=7, uv_scale=UV_SCALE["stone"],
+                    cap_start=index == 1, cap_end=index == levels)
+        previous = (ring, y, offset, offset * 0.4)
+    # Talus of shed blocks around the foot.
+    for index in range(6):
+        angle = TAU * index / 6 + float(rng.random())
+        reach = radius * (1.4 + 0.7 * float(rng.random()))
+        sphere(rock, (math.cos(angle) * reach, 0.16,
+                      math.sin(angle) * reach), 0.32 + 0.26 * float(rng.random()),
+               rings=4, sides=7, uv_scale=UV_SCALE["stone"], squash=0.62)
+    if crystal:
+        gems = parts.geometry(CRYSTAL)
+        for index in range(5):
+            angle = TAU * index / 5 + float(rng.random())
+            base = (math.cos(angle) * radius * 0.85, height * (0.18 + 0.5 * float(rng.random())),
+                    math.sin(angle) * radius * 0.85)
+            tip = (base[0] + math.cos(angle) * 1.1, base[1] + 0.9 + float(rng.random()),
+                   base[2] + math.sin(angle) * 1.1)
+            frustum(gems, base, tip, 0.20, 0.0, sides=6,
+                    uv_scale=UV_SCALE["crystal"], cap_start=True, cap_end=False)
+    return parts
+
+
+def crystal_cluster(scale: float = 1.0, seed: int = 0) -> Parts:
+    """A cluster of amethyst points pushing out of the badland ground."""
+    parts = Parts()
+    gems = parts.geometry(CRYSTAL)
+    matrix = parts.geometry(STONE_DARK)
+    rng = np.random.default_rng(seed + 810)
+    sphere(matrix, (0.0, -0.10, 0.0), 0.62 * scale, rings=5, sides=8,
+           uv_scale=UV_SCALE["stone"], squash=0.5)
+    for index in range(6):
+        angle = TAU * index / 6 + float(rng.random()) * 0.7
+        lean = 0.24 + 0.34 * float(rng.random())
+        length = scale * (0.85 + 0.9 * float(rng.random()))
+        base = (math.cos(angle) * 0.26 * scale, 0.0, math.sin(angle) * 0.26 * scale)
+        tip = (base[0] + math.cos(angle) * lean * length, length,
+               base[2] + math.sin(angle) * lean * length)
+        width = 0.11 * scale * (0.7 + 0.6 * float(rng.random()))
+        shoulder = ((base[0] + tip[0]) * 0.5, tip[1] * 0.78, (base[2] + tip[2]) * 0.5)
+        frustum(gems, base, shoulder, width, width * 0.92, sides=6,
+                uv_scale=UV_SCALE["crystal"], cap_start=True, cap_end=False)
+        frustum(gems, shoulder, tip, width * 0.92, 0.0, sides=6,
+                uv_scale=UV_SCALE["crystal"], cap_start=False, cap_end=False)
+    return parts
+
+
+def dead_scrub(radius: float = 0.8, seed: int = 0) -> Parts:
+    """A wind-killed desert bush: bare forked wood, no leaves."""
+    parts = Parts()
+    wood = parts.geometry(TIMBER_DARK)
+    rng = np.random.default_rng(seed + 920)
+    for index in range(5):
+        angle = TAU * index / 5 + float(rng.random())
+        lean = 0.5 + 0.5 * float(rng.random())
+        tip = (math.cos(angle) * radius * lean, radius * (0.7 + 0.5 * float(rng.random())),
+               math.sin(angle) * radius * lean)
+        beam(wood, (0.0, -0.08, 0.0), tip, 0.045, uv_scale=UV_SCALE["timber"])
+        for fork in range(2):
+            spread = angle + (fork - 0.5) * 0.9
+            beam(wood, tip, (tip[0] + math.cos(spread) * radius * 0.42,
+                             tip[1] + radius * 0.30,
+                             tip[2] + math.sin(spread) * radius * 0.42), 0.026,
+                 uv_scale=UV_SCALE["timber"])
+    return parts
+
+
+def bleached_bones(seed: int = 0) -> Parts:
+    """A weathered skull and ribs in the sand - the steppe's memento mori."""
+    parts = Parts()
+    bone_parts = parts.geometry(BONE)
+    rng = np.random.default_rng(seed + 1010)
+    skull = (0.0, 0.16, 0.0)
+    sphere(bone_parts, skull, 0.26, rings=6, sides=9, uv_scale=UV_SCALE["bone"],
+           squash=0.72)
+    frustum(bone_parts, skull, (0.0, 0.12, -0.46), 0.17, 0.10, sides=7,
+            uv_scale=UV_SCALE["bone"], cap_start=False, cap_end=True)
+    for side in (-1, 1):
+        horn = (side * 0.18, 0.30, -0.04)
+        frustum(bone_parts, horn, (side * 0.52, 0.42, 0.10), 0.055, 0.018, sides=6,
+                uv_scale=UV_SCALE["bone"], cap_start=True, cap_end=False)
+    for index in range(5):
+        offset = 0.42 + index * 0.20
+        arc = 0.30 - index * 0.035
+        for side in (-1, 1):
+            beam(bone_parts, (side * 0.04, 0.08, offset),
+                 (side * arc, 0.05 + 0.10 * float(rng.random()), offset + 0.10),
+                 0.035, uv_scale=UV_SCALE["bone"])
+    beam(bone_parts, (0.0, 0.10, 0.34), (0.0, 0.10, 1.42), 0.055,
+         uv_scale=UV_SCALE["bone"])
+    return parts
+
+
+def desert_waystone(height: float = 3.2, seed: int = 0) -> Parts:
+    """A stacked cairn with a carved marker slab and a pennant, for the sand roads."""
+    parts = Parts()
+    stone = parts.geometry(STONE_PALE)
+    rng = np.random.default_rng(seed + 1120)
+    courses = 6
+    for index in range(courses):
+        t = index / courses
+        radius = 0.85 * (1.0 - 0.55 * t)
+        y = height * 0.62 * t
+        prism(stone, polygon_points((0, 0, 0), radius, 6,
+                                    rotation=0.5 * index + float(rng.random()) * 0.3),
+              y, y + height * 0.62 / courses, uv_scale=UV_SCALE["stone"],
+              cap_top=index == courses - 1)
+    box(parts.geometry(BONE), (0.0, height * 0.62 + 0.42, 0.0), (0.62, 0.84, 0.10),
+        uv_scale=UV_SCALE["bone"])
+    beam(parts.geometry(TIMBER_DARK), (0.0, height * 0.55, 0.14),
+         (0.0, height + 0.5, 0.14), 0.08, uv_scale=UV_SCALE["timber"])
+    banner(parts, (0.0, height + 0.42, 0.14), 0.5, 1.2, facing=math.pi / 2)
+    return parts
+
+
+def desert_water_station() -> Parts:
+    """A sunken cistern under a canvas sun-shade, for the desert caravan road."""
+    parts = Parts()
+    stone = parts.geometry(STONE_PALE)
+    timber = parts.geometry(TIMBER_DARK)
+    canvas = parts.geometry(CANVAS_PALE)
+    # Sunken stone kerb around the cistern mouth.
+    revolve(stone, [(1.55, 0.0), (1.62, 0.34), (1.50, 0.48), (1.24, 0.44)],
+            (0, 0, 0), sides=16, uv_scale=UV_SCALE["stone"], close_bottom=False)
+    revolve(stone, [(1.24, -0.9), (1.24, 0.44)], (0, 0, 0), sides=16,
+            uv_scale=UV_SCALE["stone"], close_bottom=True)
+    # Four posts and a taut sun-shade over the water.
+    half = 2.5
+    for sx in (-1, 1):
+        for sz in (-1, 1):
+            beam(timber, (sx * half, -0.2, sz * half), (sx * half, 3.0, sz * half),
+                 0.16, uv_scale=UV_SCALE["timber"])
+    apex = (0.0, 3.75, 0.0)
+    corners = [(-half, 2.95, -half), (half, 2.95, -half),
+               (half, 2.95, half), (-half, 2.95, half)]
+    for index in range(4):
+        first = corners[index]
+        second = corners[(index + 1) % 4]
+        mid = ((first[0] + second[0]) * 0.5, 2.82, (first[2] + second[2]) * 0.5)
+        for lower, upper in ((first, mid), (mid, second)):
+            normal = np.cross(np.asarray(upper) - np.asarray(lower),
+                              np.asarray(apex) - np.asarray(lower))
+            length = float(np.linalg.norm(normal))
+            if length < 1e-9:
+                continue
+            canvas.add([lower, upper, apex], np.tile(normal / length, (3, 1)),
+                       [[lower[0] / 2.4, lower[2] / 2.4], [upper[0] / 2.4, upper[2] / 2.4],
+                        [0.0, 1.5]], [0, 1, 2])
+        beam(timber, first, apex, 0.075, uv_scale=UV_SCALE["timber"])
+    finial(parts, (0.0, 0.0), 3.70, 0.7)
+    box(parts.geometry(TIMBER_WARM), (2.9, 0.34, 0.0), (0.7, 0.48, 2.6),
+        uv_scale=UV_SCALE["timber"])
+    for index in range(3):
+        pot(parts, (-2.6, -0.9 + index * 0.8), 0.30 + 0.04 * index)
+    barrel(parts, (2.4, -1.9), 0.36, 0.86)
+    hitching_post(parts, (0.0, -3.6), 3.4, rotation=0.0)
+    return parts
+
+
+def cave_mouth(width: float = 5.2, height: float = 4.4, depth: float = 6.5,
+               *, framed: bool = True, crystal: bool = False,
+               seed: int = 0) -> Parts:
+    """A cave entrance cut into a rock face.
+
+    Built as a real recess rather than a dark decal: an arched throat sunk into
+    the hillside, a lintel and jambs where the Orun have timbered it, spoil and
+    boulders at the lip. The throat closes at the back so the interior stays a
+    separate map and a player can never see into an empty shell.
+    """
+    parts = Parts()
+    rock = parts.geometry(STONE_DARK)
+    face = parts.geometry(STONE_PALE)
+    rng = np.random.default_rng(seed + 1300)
+    sides = 11
+    half = width * 0.5
+
+    def arch(t: float) -> list:
+        """Cross-section of the throat at depth fraction t, narrowing inward."""
+        taper = 1.0 - 0.34 * t
+        ring = []
+        for index in range(sides):
+            angle = math.pi * index / (sides - 1)
+            ring.append((math.cos(angle) * half * taper,
+                         math.sin(angle) * height * taper * (0.92 + 0.08 * (1.0 - t)),
+                         -depth * t))
+        return ring
+
+    rings = 5
+    previous = arch(0.0)
+    for step in range(1, rings + 1):
+        current = arch(step / rings)
+        for index in range(sides - 1):
+            quad = [previous[index], previous[index + 1],
+                    current[index + 1], current[index]]
+            # The throat is seen from inside, so its surface faces the axis.
+            inward = np.array([-(quad[0][0] + quad[2][0]) * 0.5,
+                               -(quad[0][1] + quad[2][1]) * 0.5 + height * 0.4, 0.0])
+            oriented_quad(rock, quad,
+                          [[q[0] / UV_SCALE["stone"], q[1] / UV_SCALE["stone"]]
+                           for q in quad], inward)
+            if step == 1:
+                floor = [(previous[index][0], -0.1, previous[index][2]),
+                         (previous[index + 1][0], -0.1, previous[index + 1][2]),
+                         (current[index + 1][0], -0.1, current[index + 1][2]),
+                         (current[index][0], -0.1, current[index][2])]
+                oriented_quad(rock, floor,
+                              [[q[0] / UV_SCALE["stone"], q[2] / UV_SCALE["stone"]]
+                               for q in floor], (0.0, 1.0, 0.0))
+        previous = current
+    # Back wall: the throat is closed, the interior is its own map.
+    back = previous
+    centre = (0.0, height * 0.30, -depth)
+    for index in range(sides - 1):
+        oriented_triangle(rock, [centre, back[index + 1], back[index]],
+                          [[0.5, 0.5], [1.0, 0.0], [0.0, 0.0]], (0.0, 0.0, 1.0))
+
+    # Rock face around the opening, so the mouth sits in a cliff rather than
+    # floating on the ground.
+    outer = half + 2.6
+    crest = height + 2.4
+    face_ring = [(-outer, 0.0, 0.4), (-outer, crest * 0.72, 0.25),
+                 (-half * 0.9, crest, 0.1), (half * 0.9, crest, 0.1),
+                 (outer, crest * 0.72, 0.25), (outer, 0.0, 0.4)]
+    mouth_ring = arch(0.0)
+    for index in range(len(face_ring) - 1):
+        a = face_ring[index]
+        b = face_ring[index + 1]
+        near = mouth_ring[min(len(mouth_ring) - 1,
+                              int(index * (sides - 1) / (len(face_ring) - 1)))]
+        far = mouth_ring[min(len(mouth_ring) - 1,
+                             int((index + 1) * (sides - 1) / (len(face_ring) - 1)))]
+        oriented_quad(face, [a, b, (far[0], far[1], far[2] + 0.15),
+                             (near[0], near[1], near[2] + 0.15)],
+                      [[a[0] / 3.0, a[1] / 3.0], [b[0] / 3.0, b[1] / 3.0],
+                       [far[0] / 3.0, far[1] / 3.0], [near[0] / 3.0, near[1] / 3.0]],
+                      (0.0, 0.0, 1.0))
+    for index in range(7):
+        angle = math.pi * (index + 0.5) / 7
+        sphere(face, (math.cos(angle) * (outer * 0.82),
+                      crest * 0.5 + math.sin(angle) * crest * 0.42,
+                      0.55 + 0.2 * float(rng.random())),
+               0.65 + 0.5 * float(rng.random()), rings=4, sides=7,
+               uv_scale=UV_SCALE["stone"], squash=0.7)
+
+    if framed:
+        timber = parts.geometry(TIMBER_DARK)
+        for sign in (-1, 1):
+            post = (sign * (half + 0.32), 0.0, 0.55)
+            beam(timber, post, (post[0], height * 0.86, post[2]), 0.28,
+                 uv_scale=UV_SCALE["timber"])
+            beam(timber, (post[0], height * 0.86, post[2]),
+                 (sign * (half - 0.5), height * 0.86 - 0.9, 0.4), 0.16,
+                 uv_scale=UV_SCALE["timber"])
+        beam(timber, (-(half + 0.55), height * 0.9, 0.55),
+             (half + 0.55, height * 0.9, 0.55), 0.34, 0.40,
+             uv_scale=UV_SCALE["timber"])
+        box(parts.geometry(BONE), (0.0, height * 0.9 + 0.46, 0.55),
+            (1.5, 0.5, 0.14), uv_scale=UV_SCALE["bone"])
+        banner(parts, (0.0, height * 0.86, 0.75), 0.9, 1.9, facing=0.0)
+        for sign in (-1, 1):
+            beam(timber, (sign * (half + 0.32), 1.35, 0.55),
+                 (sign * (half + 1.55), 1.05, 1.5), 0.11,
+                 uv_scale=UV_SCALE["timber"])
+    if crystal:
+        gems = parts.geometry(CRYSTAL)
+        for index in range(7):
+            angle = math.pi * (index + 0.5) / 7
+            base = (math.cos(angle) * half * 0.85, math.sin(angle) * height * 0.8, -0.3)
+            tip = (base[0] * 1.25, base[1] * 0.94, base[2] + 0.85)
+            frustum(gems, base, tip, 0.14, 0.0, sides=6,
+                    uv_scale=UV_SCALE["crystal"], cap_start=True, cap_end=False)
+
+    # Spoil heap and fallen blocks at the lip.
+    for index in range(7):
+        angle = math.pi * (index + 0.5) / 7
+        reach = half + 0.6 + 1.9 * float(rng.random())
+        sphere(face, (math.cos(angle) * reach * 0.9, 0.18,
+                      1.5 + 1.4 * float(rng.random())),
+               0.30 + 0.30 * float(rng.random()), rings=4, sides=7,
+               uv_scale=UV_SCALE["stone"], squash=0.6)
+    return parts
+
+
+def mountain_scree(radius: float = 3.0, seed: int = 0) -> Parts:
+    """A scree fan of broken slabs for the mountain foot."""
+    parts = Parts()
+    stone = parts.geometry(STONE_DARK)
+    rng = np.random.default_rng(seed + 1400)
+    for index in range(9):
+        angle = TAU * float(rng.random())
+        reach = radius * math.sqrt(float(rng.random()))
+        size = 0.34 + 0.55 * float(rng.random())
+        box(stone, (math.cos(angle) * reach, size * 0.32, math.sin(angle) * reach),
+            (size * 1.7, size * 0.55, size * 1.2), uv_scale=UV_SCALE["stone"],
+            rotation_y=float(rng.random()) * TAU)
+    return parts
+
+
+def cave_formation(height: float = 2.4, radius: float = 0.5, seed: int = 0,
+                   *, hanging: bool = False) -> Parts:
+    """A stalagmite or, hanging, a stalactite.
+
+    Built as a stack of narrowing rings with a wandering axis so no two read as
+    the same casting, and with a flared foot where it meets the rock.
+    """
+    parts = Parts()
+    rock = parts.geometry(CAVE_ROCK_PALE if seed % 2 else CAVE_ROCK_WARM)
+    rng = np.random.default_rng(seed + 1700)
+    levels = 6
+    drift = np.array([float(rng.normal()) * 0.06, float(rng.normal()) * 0.06])
+    previous = None
+    for index in range(levels + 1):
+        t = index / levels
+        # Flared foot, slow taper, fine tip - the shape carbonate leaves.
+        ring = radius * (1.0 - t) ** 1.45 * (1.0 + 0.16 * float(rng.normal()))
+        ring = max(ring, 0.035)
+        y = height * t * (-1.0 if hanging else 1.0)
+        offset = drift * height * t
+        if previous is not None:
+            frustum(rock, (previous[1], previous[0], previous[2]),
+                    (offset[0], y, offset[1]), max(previous[3], 0.035), ring,
+                    sides=7, uv_scale=UV_SCALE["stone"],
+                    cap_start=index == 1, cap_end=index == levels)
+        previous = (y, offset[0], offset[1], ring)
+    return parts
+
+
+def cave_column(height: float = 3.6, radius: float = 0.62, seed: int = 0) -> Parts:
+    """A grown-together column: a stalagmite and stalactite joined at a waist."""
+    parts = Parts()
+    rock = parts.geometry(CAVE_ROCK_PALE)
+    rng = np.random.default_rng(seed + 1800)
+    levels = 8
+    previous = None
+    for index in range(levels + 1):
+        t = index / levels
+        # Two flares meeting at a pinched waist halfway up.
+        waist = abs(t - 0.5) * 2.0
+        ring = radius * (0.34 + 0.66 * waist ** 1.6) * (1.0 + 0.12 * float(rng.normal()))
+        y = height * t
+        wobble = 0.05 * math.sin(t * 7.0 + float(rng.random()))
+        if previous is not None:
+            frustum(rock, (previous[1], previous[0], previous[2]),
+                    (wobble, y, wobble * 0.6), max(previous[3], 0.06),
+                    max(ring, 0.06), sides=8, uv_scale=UV_SCALE["stone"],
+                    cap_start=index == 1, cap_end=index == levels)
+        previous = (y, wobble, wobble * 0.6, ring)
+    return parts
+
+
+def pit_props(width: float = 2.6, height: float = 2.5, seed: int = 0) -> Parts:
+    """A timber frame the Orun have set to hold a worked passage open."""
+    parts = Parts()
+    timber = parts.geometry(TIMBER_DARK)
+    warm = parts.geometry(TIMBER_WARM)
+    half = width * 0.5
+    for side in (-1, 1):
+        # Legs raked slightly outward at the foot, as a set frame is built.
+        beam(timber, (side * (half + 0.14), 0.0, 0.0), (side * half, height, 0.0),
+             0.22, uv_scale=UV_SCALE["timber"])
+    beam(warm, (-half - 0.18, height, 0.0), (half + 0.18, height, 0.0), 0.24,
+         uv_scale=UV_SCALE["timber"])
+    for side in (-1, 1):
+        beam(timber, (side * half, height - 0.55, 0.0),
+             (side * (half - 0.55), height, 0.0), 0.13,
+             uv_scale=UV_SCALE["timber"])
+    # Lagging boards across the crown, laid unevenly as salvage timber is.
+    rng = np.random.default_rng(seed + 1900)
+    for index in range(4):
+        offset = -0.42 + index * 0.28
+        box(warm, (0.0, height + 0.19, offset),
+            (width + 0.3, 0.09, 0.22 + 0.05 * float(rng.random())),
+            uv_scale=UV_SCALE["timber"])
+    return parts
+
+
+def cave_brazier(height: float = 1.05) -> Parts:
+    """A standing iron brazier: the light source the Orun carry underground."""
+    parts = Parts()
+    metal = parts.geometry(METAL)
+    coals = parts.geometry(STONE_DARK)
+    for index in range(3):
+        angle = TAU * index / 3
+        beam(metal, (math.cos(angle) * 0.34, 0.0, math.sin(angle) * 0.34),
+             (math.cos(angle) * 0.12, height, math.sin(angle) * 0.12), 0.07,
+             uv_scale=UV_SCALE["metal"])
+    revolve(metal, ((0.0, height), (0.34, height + 0.06), (0.40, height + 0.30),
+                    (0.36, height + 0.34), (0.30, height + 0.10), (0.0, height + 0.04)),
+            (0.0, 0.0, 0.0), sides=14, uv_scale=UV_SCALE["metal"])
+    sphere(coals, (0.0, height + 0.20, 0.0), 0.26, rings=4, sides=10,
+           uv_scale=UV_SCALE["stone"], squash=0.45)
     return parts
