@@ -194,10 +194,17 @@ def _crossings(build: RegionBuild, seed: int) -> None:
         span = kit.rope_bridge(length=length, width=1.9, sag=1.4,
                                seed=seed + index, deck_y=0.0)
         node = f"Landmark_rope_bridge_{index:02d}"
+        # NOT walk_surface=True. The bridge is a MeshGroup that already
+        # declares its deck through `add_walk`, and the exporter gives that
+        # part the Walk_ prefix on its own. Setting the flag here renames the
+        # *container* node, and every solid child then inherits the prefix -
+        # so the abutments, the posts, the iron caps and the ropes themselves
+        # all became walk surfaces, and an actor could be grounded on a
+        # handrail. build_collision still registers the elevated deck, because
+        # it tests the group's walk_bounds before it tests this flag.
         _place(build, node, f"rope_bridge_{index:02d}", span, bx, bz,
                rotation_y=math.pi * 0.5, kind="landmark", collides=False,
-               walk_surface=True, y=deck_y,
-               landmark=f"whitehorn-rope-bridge-{index:02d}")
+               y=deck_y, landmark=f"whitehorn-rope-bridge-{index:02d}")
         _landmark(build, f"whitehorn-rope-bridge-{index:02d}",
                   "Whitehorn Rope Bridge", node, bx, bz, "bridge", y=deck_y)
         build.notes.append(

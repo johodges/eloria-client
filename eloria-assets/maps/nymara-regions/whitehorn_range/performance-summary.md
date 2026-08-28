@@ -11,9 +11,9 @@
   "bufferViews": 632,
   "uniqueTriangles": 228142,
   "uniqueVertices": 136782,
-  "glbBytes": 11881108,
+  "glbBytes": 11865208,
   "instancedTriangles": 681510,
-  "embeddedTextureBytes": 5451447,
+  "embeddedTextureBytes": 5435605,
   "placements": 1926,
   "collision": {
     "width": 1152,

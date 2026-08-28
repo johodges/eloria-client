@@ -1116,7 +1116,7 @@
     {
       "id": "whitehorn-rope-bridge-00",
       "name": "Whitehorn Rope Bridge",
-      "node": "Walk_Landmark_rope_bridge_00",
+      "node": "Landmark_rope_bridge_00",
       "type": "bridge",
       "position": [
         51.0,
@@ -1128,7 +1128,7 @@
     {
       "id": "whitehorn-rope-bridge-01",
       "name": "Whitehorn Rope Bridge",
-      "node": "Walk_Landmark_rope_bridge_01",
+      "node": "Landmark_rope_bridge_01",
       "type": "bridge",
       "position": [
         186.0,
@@ -1832,9 +1832,9 @@
     "bufferViews": 632,
     "uniqueTriangles": 228142,
     "uniqueVertices": 136782,
-    "glbBytes": 11881108,
+    "glbBytes": 11865208,
     "instancedTriangles": 681510,
-    "embeddedTextureBytes": 5451447,
+    "embeddedTextureBytes": 5435605,
     "placements": 1926,
     "collision": {
       "width": 1152,

@@ -140,6 +140,37 @@ func _init() -> void:
 	for row in spawn_rows:
 		print("[client-check] spawn ", row)
 
+	# Opt-in: bind the manifest's own environment block through the shipped
+	# WorldEnvironmentBinder and report the key light's actual emission vector.
+	#
+	# This exists because `environment.sun.direction` is the direction the light
+	# TRAVELS, not where the sun sits: the binder aims the node's -Z at the
+	# declared vector and a DirectionalLight3D emits along -Z, so a positive Y
+	# component lights the world from underneath. No offline preview can show
+	# that, and a capture harness using its own neutral sky cannot either, so a
+	# manifest can ship with an inverted key light and nothing catches it.
+	# Amberwood declares [-0.46, 0.50, 0.73] and is in exactly that state.
+	var sun_report: Dictionary = {}
+	if bool(opts.get("check-sun", "0") == "1"):
+		var world_env := WorldEnvironment.new()
+		world_root.add_child(world_env)
+		var sun_light := DirectionalLight3D.new()
+		world_root.add_child(sun_light)
+		var bound: bool = WorldEnvironmentBinder.apply(
+			loader.manifest, world_env, sun_light, world_root)
+		var travel: Vector3 = -sun_light.global_transform.basis.z
+		sun_report = {
+			"environmentBound": bound,
+			"travelDirection": [snappedf(travel.x, 0.001),
+				snappedf(travel.y, 0.001), snappedf(travel.z, 0.001)],
+			"lightsFromBelow": bound and travel.y > 0.0,
+			"energy": sun_light.light_energy,
+		}
+		print("[client-check] sun ", sun_report)
+		if sun_report["lightsFromBelow"]:
+			printerr("[client-check] sun.direction has a positive Y: this "
+				+ "manifest lights the world from underneath")
+
 	var ok := misses == 0 and spawn_errors == 0
 	print("[client-check] %s" % ("PASS" if ok else "FAIL"))
 
@@ -157,6 +188,7 @@ func _init() -> void:
 			"missExamples": miss_examples,
 			"surfaceHeightRange": [lowest, highest],
 			"spawns": spawn_rows,
+			"sun": sun_report,
 			"pass": ok,
 		}
 		var file := FileAccess.open(report_path, FileAccess.WRITE)
