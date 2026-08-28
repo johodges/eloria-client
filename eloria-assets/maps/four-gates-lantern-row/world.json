@@ -345,15 +345,15 @@
     ]
   },
   "performance": {
-    "bytes": 3304560,
+    "bytes": 3476264,
     "nodes": 54,
     "meshes": 14,
-    "materials": 12,
-    "textures": 37,
+    "materials": 13,
+    "textures": 41,
     "animations": 0,
-    "uniqueTriangles": 1484,
+    "uniqueTriangles": 1648,
     "instances": 49,
-    "visibleTriangles": 6312,
-    "textureMemoryBytes": 25515349
+    "visibleTriangles": 7296,
+    "textureMemoryBytes": 26913450
   }
 }

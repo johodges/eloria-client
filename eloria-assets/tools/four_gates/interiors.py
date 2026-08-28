@@ -360,16 +360,26 @@ def stool(p: Palette, height: float = 0.52) -> Geo:
 
 
 def hanging_lantern(p: Palette, drop: float = 0.9, size: float = 0.3) -> Geo:
+    """A lamp on a chain. The globe is emissive glass, not metal.
+
+    The point light that goes with a lantern sits inside its shade, so every
+    outward face of a metal globe is turned away from it and the lamp renders
+    as a black ball against the room. The glass carries the glow instead, and
+    the metal is reduced to the cap and the ring that hold it.
+    """
     chain = M.cylinder(0.022, drop, 5, p.metal_iron, 0.4)
     chain.translate(0.0, -drop, 0.0)
-    cage = M.revolve([(0.0, 0.0), (size, size * 0.32), (size * 0.86, size * 1.1),
-                      (size * 0.3, size * 1.35), (0.0, size * 1.45)],
-                     8, p.metal_gold, 0.6)
-    cage.translate(0.0, -drop - size * 1.45, 0.0)
-    gem = M.revolve([(0.0, 0.0), (size * 0.5, size * 0.34), (0.0, size * 0.86)],
-                    6, p.crystal_blue, 0.5)
-    gem.translate(0.0, -drop - size * 1.16, 0.0)
-    return Geo.concat([chain, cage, gem])
+    globe = M.revolve([(0.0, 0.0), (size, size * 0.32), (size * 0.86, size * 1.1),
+                       (size * 0.3, size * 1.35), (0.0, size * 1.45)],
+                      8, p.lamp_glow, 0.6)
+    globe.translate(0.0, -drop - size * 1.45, 0.0)
+    cap = M.revolve([(0.0, 0.0), (size * 0.34, 0.0), (size * 0.3, size * 0.16),
+                     (0.0, size * 0.2)], 8, p.metal_gold, 0.4)
+    cap.translate(0.0, -drop - size * 0.06, 0.0)
+    ring = M.torus_arc(size * 0.9, size * 0.045, 0.0, math.tau, 12, 6,
+                       p.metal_gold, 0.4)
+    ring.translate(0.0, -drop - size * 0.35, 0.0)
+    return Geo.concat([chain, globe, cap, ring])
 
 
 def wall_sconce(p: Palette) -> Geo:
@@ -379,7 +389,8 @@ def wall_sconce(p: Palette) -> Geo:
     bowl = M.revolve([(0.0, 0.0), (0.15, 0.1), (0.12, 0.24), (0.0, 0.3)],
                      8, p.metal_gold, 0.4)
     bowl.translate(0.0, 0.34, 0.3)
-    gem = M.revolve([(0.0, 0.0), (0.1, 0.1), (0.0, 0.3)], 6, p.crystal_blue, 0.4)
+    # emissive glass, for the same reason the hanging lantern uses it
+    gem = M.revolve([(0.0, 0.0), (0.1, 0.1), (0.0, 0.3)], 6, p.lamp_glow, 0.4)
     gem.translate(0.0, 0.42, 0.3)
     return Geo.concat([bracket, arm, bowl, gem])
 

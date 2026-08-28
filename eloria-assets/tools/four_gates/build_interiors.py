@@ -65,7 +65,7 @@ SHELL_OUTWARD = {
 
 BASE_MATERIALS = ["stone_ashlar", "stone_trim", "plaster_warm", "timber_dark",
                   "paving_road", "metal_gold", "metal_iron", "glass_window",
-                  "cloth_banner", "crystal_blue"]
+                  "cloth_banner", "crystal_blue", "lamp_glow"]
 
 
 class Interior:

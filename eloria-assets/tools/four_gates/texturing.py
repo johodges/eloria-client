@@ -415,6 +415,24 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
                                       emissive=emissive, emissive_factor=(1.0, 1.0, 1.0),
                                       normal_strength=1.4, uv_scale=1.2)
 
+    # -- warm lamp glass (emissive) --
+    # A hanging lantern is the only light in most interiors, so its globe has to
+    # read as lit from any angle. Lit by the point light alone it renders as a
+    # black ball: the light sits inside the shade, so every outward-facing
+    # surface is turned away from it.
+    speck = fbm(S, 26, 4, rng)
+    swirl = fbm(S, 7, 5, rng)
+    height = 0.55 + swirl * 0.2 + speck * 0.08
+    warm_core = np.array([1.0, 0.812, 0.478])
+    warm_hot = np.array([1.0, 0.949, 0.831])
+    blend = np.clip(swirl * 0.85 + speck * 0.3, 0, 1)[..., None]
+    colour = warm_core[None, None, :] * (1 - blend) + warm_hot[None, None, :] * blend
+    emissive = np.clip(colour * (0.82 + 0.5 * np.clip(swirl * 1.4, 0, 1))[..., None], 0, 1)
+    materials["lamp_glow"] = _pack("lamp_glow", np.clip(colour, 0, 1), height,
+                                   0.34 + 0.18 * speck, metallic=0.0,
+                                   emissive=emissive, emissive_factor=(1.0, 1.0, 1.0),
+                                   normal_strength=0.8, uv_scale=1.0)
+
     # -- glazing --
     grain = fbm(S, 30, 3, rng)
     pane_mask, ident, fx, fy = brick_mask(S, 5, 4, mortar=0.06, offset=0.0)
