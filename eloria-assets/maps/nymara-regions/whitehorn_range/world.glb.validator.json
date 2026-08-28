@@ -2,115 +2,12 @@
   "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-whitehorn\\eloria-assets\\maps\\nymara-regions\\whitehorn_range\\world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-08-28T15:17:00.452103Z",
+  "validatedAt": "2026-08-28T16:03:06.389229Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 17,
+    "numInfos": 0,
     "numHints": 0,
-    "messages": [
-      {
-        "code": "NODE_EMPTY",
-        "message": "Empty node encountered.",
-        "severity": 2,
-        "pointer": "/nodes/2"
-      },
-      {
-        "code": "NODE_EMPTY",
-        "message": "Empty node encountered.",
-        "severity": 2,
-        "pointer": "/nodes/3"
-      },
-      {
-        "code": "NODE_EMPTY",
-        "message": "Empty node encountered.",
-        "severity": 2,
-        "pointer": "/nodes/4"
-      },
-      {
-        "code": "NODE_EMPTY",
-        "message": "Empty node encountered.",
-        "severity": 2,
-        "pointer": "/nodes/5"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/0"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/1"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/2"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/3"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/4"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/5"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/7"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/9"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/10"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/11"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/14"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/17"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/18"
-      }
-    ]
+    "messages": []
   }
 }

@@ -62,7 +62,9 @@ VALLEY_FLOOR = 6.0
 TERRAIN_CELL = 2.0
 
 # Snow lies above this height, on ground that is not too steep to hold it.
-SNOW_LINE = 62.0
+# Turf survives below this; everything above is snow unless it is too
+# steep to hold it. Low, because the concept is a white region.
+SNOW_LINE = 30.0
 # The glacier surface: authored, not derived from height.
 GLACIER_WIDTH = 15.0
 
@@ -246,7 +248,7 @@ def build_terrain(seed: int = 20260828) -> TER.Terrain:
     t.smooth(iterations=2, weight=0.35)
 
     # Close the world on all four sides. No coast here, so nothing is left open.
-    t.clamp_edges(MARGIN + 22.0, 52.0,
+    t.clamp_edges(MARGIN + 14.0, 62.0,
                   sides=("west", "east", "north", "south"))
     return t
 
@@ -261,7 +263,7 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
     # The pilgrim road and its branches. Graded so the climb is walkable
     # rather than a staircase of noise.
     for name, points in ROUTES.items():
-        width = 5.0 if name in ("approach_road", "temple_road") else 3.8
+        width = 3.4 if name in ("approach_road", "temple_road") else 2.6
         t.grade_path(points, width * LOCAL, shoulder=2.6, surface=TER.PATH)
 
     # The temple stands on a cut shelf. Terraces take the natural height at
@@ -290,6 +292,13 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
                   edge=4.5 * LOCAL, surface=surface,
                   seed=seed + N.stable_hash(name) % 89)
 
+    # Re-cut the gorge. `grade_path` levels its corridor to a smoothed profile
+    # along the route, which happily bridges a 22 m chasm and fills it in - the
+    # approach road and the upper path both cross the gorge, so grading them
+    # erased the one feature the rope bridges exist to span. The cut has to win
+    # over the roads, so it is repeated after them rather than before.
+    t.carve_channel(GORGE, 5.4 * SCALE, 22.0, bank=1.8, seed=seed + 37)
+
     # Keep vegetation and scatter out of the built places.
     for name, radius in (("temple", 30.0), ("temple_forecourt", 26.0),
                          ("gate_shrine", 17.0), ("north_shrine", 14.0),
@@ -316,24 +325,34 @@ def assign_surfaces(t: TER.Terrain, seed: int = 20260828) -> None:
 
     authored = np.isin(t.surface, [TER.PATH, TER.PAVING, TER.MARBLE])
 
-    # Default: bare alpine rock.
-    t.surface = np.where(authored, t.surface, TER.ROCK)
+    # Snow is the default, not the exception. The concept is a white region:
+    # everything holds snow except ground too steep for it to lie on. The
+    # first pass of this build made rock the default and snow a high-altitude
+    # band, which rendered as a brown bowl with a white rim - the opposite of
+    # the painting.
+    t.surface = np.where(authored, t.surface, TER.SNOW)
 
-    # Turf on the low, sheltered southern ground where it is not too steep.
-    turf_noise = N.fbm(t.gx * 0.018, t.gz * 0.018, seed=seed + 61)
-    turf = (t.height < SNOW_LINE - 22.0) & (slope < 0.72) & ~authored \
-        & (turf_noise > 0.40)
+    # Wind-scoured rock breaks through wherever the ground is steep. This is
+    # what draws the ridges, the gorge walls and the crags, so it is a slope
+    # rule with a noisy threshold rather than a height rule.
+    scour = N.fbm(t.gx * 0.030, t.gz * 0.030, seed=seed + 63)
+    # High ground holds snow on steeper faces than low ground does, so the
+    # peaks and the boundary ridges stay white and only their steepest faces
+    # break through as rock. Without this the whole boundary ramp - which is
+    # sloped along its entire width - classifies as rock and reads as a brown
+    # apron around the map.
+    altitude = np.clip((t.height - SNOW_LINE) / 90.0, 0.0, 1.0)
+    scour_limit = (0.72 + 0.95 * altitude) + (scour - 0.5) * 0.40
+    t.surface = np.where((slope > scour_limit) & ~authored, TER.ROCK,
+                         t.surface)
+
+    # Bare turf survives only on the lowest, most sheltered southern ground,
+    # below the snow line and out of the wind. It is a small part of the
+    # region and should read as an exception to the snow.
+    turf_noise = N.fbm(t.gx * 0.016, t.gz * 0.016, seed=seed + 61)
+    turf = (t.height < SNOW_LINE) & (slope < 0.52) & ~authored \
+        & (turf_noise > 0.62)
     t.surface = np.where(turf, TER.TURF, t.surface)
-
-    # Snow above the snow line, wherever the ground is shallow enough to hold
-    # it. The band is dithered by noise so the line is not a contour.
-    snow_noise = N.fbm(t.gx * 0.026, t.gz * 0.026, seed=seed + 63)
-    snow_line = SNOW_LINE + (snow_noise - 0.5) * 26.0
-    snow = (t.height > snow_line) & (slope < 1.15) & ~authored
-    t.surface = np.where(snow, TER.SNOW, t.surface)
-
-    # Wind-scoured rock breaks through the snow on the steepest ground.
-    t.surface = np.where((slope > 1.15) & ~authored, TER.ROCK, t.surface)
 
     # The glacier: authored from the route, not derived from height, so it
     # stays continuous where it drops below the snow line at the snout.
@@ -343,7 +362,9 @@ def assign_surfaces(t: TER.Terrain, seed: int = 20260828) -> None:
     ice_width = GLACIER_WIDTH * SCALE * (0.80 + 0.30 * ice_noise)
     t.surface = np.where((distance < ice_width) & ~authored, TER.ICE, t.surface)
 
-    t.dither_boundaries(seed=seed + 71, amount=0.45)
+    # a light dither only: at a 2 m terrain cell a heavy one reads as
+    # stair-stepped rectangles from the air rather than an organic edge
+    t.dither_boundaries(seed=seed + 71, amount=0.18)
 
 
 # Whitehorn's surface-class material overrides. PATH defaults to `leaf_path`,

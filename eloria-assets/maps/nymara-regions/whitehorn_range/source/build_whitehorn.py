@@ -48,12 +48,16 @@ SCHEMA_VERSION = "1.0.0"
 # `snow_pack`, `glacier_ice`, `veined_marble`, `pale_ashlar`, `blue_crystal`,
 # `gilt_brass`, `slate_roof` and `alpine_turf` were added to the toolkit by the
 # Mirrorhold build; reusing them by name is the intended contract.
+#
+# This set is exactly the materials the build emits - verified against the
+# meshes it actually produces, not guessed. An unused name would embed a
+# texture nothing references; a missing one is a hard error at export.
 MATERIALS = frozenset({
     'snow_pack', 'glacier_ice', 'veined_marble', 'pale_ashlar',
-    'blue_crystal', 'gilt_brass', 'slate_roof', 'alpine_turf',
-    'cliff_rock', 'rubble_stone', 'packed_earth', 'cobble_paving',
-    'ashlar', 'timber_grey', 'timber_dark', 'carved_wood', 'dark_iron',
-    'woven_cloth', 'bark_dark', 'foliage_green',
+    'blue_crystal', 'gilt_brass', 'alpine_turf',
+    'cliff_rock', 'rubble_stone', 'packed_earth', 'ashlar',
+    'timber_grey', 'timber_dark', 'dark_iron', 'woven_cloth',
+    'bark_dark', 'foliage_green', 'amber_resin',
 })
 
 COLLISION_CELL = 0.5
@@ -72,9 +76,8 @@ def build_region(seed: int = SEED, lod: str | None = None) -> RegionBuild:
     build.terrain_meshes = terrain.build_meshes(
         uv_scale=0.30, materials=REG.SURFACE_MATERIALS)
 
-    build.notes.append(
-        "Terrain pass: heightfield, built ground and surface classes. "
-        "Population is added by populate.py once grounding verifies clean.")
+    import populate
+    populate.populate(build, seed, lod=lod)
 
     _add_spawns(build)
     return build
@@ -142,10 +145,22 @@ def export_glb(build: RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuilder, 
         exported[key] = (solid_names, walk_names)
 
     root_index = builder.add_node(GLTF.Node("WhitehornRange"))
-    groups = {}
-    for group_name in ("Terrain", "Ice", "Structures", "Props", "Boundary"):
-        groups[group_name] = builder.add_node(
-            GLTF.Node(f"Group_{group_name}"), root_index)
+    # Group nodes are created on first use. Emitting the full set up front
+    # leaves childless nodes in the GLB, which the validator reports as
+    # NODE_EMPTY and which serve no purpose in the scene tree.
+    _groups: dict[str, int] = {}
+
+    def groups_get(name: str) -> int:
+        if name not in _groups:
+            _groups[name] = builder.add_node(
+                GLTF.Node(f"Group_{name}"), root_index)
+        return _groups[name]
+
+    class _Groups:
+        def __getitem__(self, name: str) -> int:
+            return groups_get(name)
+
+    groups = _Groups()
 
     for name, piece in build.terrain_meshes.items():
         if piece.triangle_count == 0:
@@ -237,10 +252,19 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
     cz = np.clip(((gz - t.z0) / t.cell).astype(int), 0, t.rows - 1)
     slope = slope_grid[cz, cx]
 
-    # Whitehorn has no sea, so walkability is a slope question, not a depth
-    # one. The glacier surface is walkable; the gorge walls and the ranges
-    # that close the world are not.
+    # Whitehorn has no sea, so walkability is mostly a slope question. The
+    # glacier surface is walkable; the gorge walls and the ranges that close
+    # the world are not.
     walkable = slope < 1.05
+
+    # The gorge floor is excluded deliberately. It sits 22 m below the valley
+    # datum, which is past what the legacy six-bit height field can encode -
+    # those cells quantised to the floor of the range and then disagreed with
+    # the rendered surface. More importantly it is a chasm: the two rope
+    # bridges exist precisely because it is not something a player walks
+    # across, so marking its bed unwalkable states the design rather than
+    # working around the encoding.
+    walkable &= ground > (REG.VALLEY_FLOOR - 10.0)
 
     blockers = np.zeros_like(walkable)
     for placement in build.placements:
@@ -300,29 +324,40 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
 # --------------------------------------------------------------------------
 def render_minimap(build: RegionBuild, sets, path: Path, size: int = 768) -> dict:
     """Top-down capture of the finished geometry, not a hand-drawn map."""
+    import math
+
     import preview
-    from amberwood import render as R
+    from amberwood import render as RENDER
 
     scene = preview.scene_from_build(build, sets)
-    t = build.terrain
     centre_x = (REG.PLAY_MIN_X + REG.PLAY_MAX_X) * 0.5
     centre_z = (REG.PLAY_MIN_Z + REG.PLAY_MAX_Z) * 0.5
-    span = max(REG.PLAY_MAX_X - REG.PLAY_MIN_X,
-               REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
-    eye_y = float(t.height.max()) + span * 1.25
-    camera = R.Camera(position=(centre_x, eye_y, centre_z + 0.001),
-                      target=(centre_x, float(t.height.mean()), centre_z),
-                      fov_degrees=48.0, width=size, height=size)
-    image = scene.render(camera, R.alpine_lighting()
-                         if hasattr(R, "alpine_lighting") else R.default_lighting())
-    image.save(path, format="WEBP", quality=88, method=6)
-    metres_per_pixel = span / float(size)
+    extent = max(REG.PLAY_MAX_X - REG.PLAY_MIN_X,
+                 REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
+    altitude = 1100.0
+    fov = 2.0 * math.degrees(math.atan((extent * 0.5) / altitude))
+    # Cold, near-shadowless light: a snow region under the warm preset reads
+    # as sand, and heavy shadow on a white subject hides the relief rather
+    # than describing it.
+    lighting = RENDER.Lighting(sun_direction=(-0.28, 0.92, 0.28),
+                               fog_density=0.0, ambient_strength=0.78,
+                               shadow_strength=0.42,
+                               sun_color=(1.02, 1.04, 1.10),
+                               sky_color=(0.42, 0.50, 0.64),
+                               saturation=0.94, exposure=1.0)
+    image = scene.render(eye=(centre_x, altitude, centre_z + 0.01),
+                         target=(centre_x, 0.0, centre_z),
+                         width=size, height=size, fov=fov, lighting=lighting,
+                         shadows=True, shadow_size=2048,
+                         shadow_center=(centre_x, 40.0, centre_z),
+                         shadow_radius=extent * 0.62, near=240.0, far=1700.0)
+    image.save(path, "WEBP", quality=88, method=5)
     return {
         "file": path.name,
         "pixels": size,
-        "metresPerPixel": round(metres_per_pixel, 4),
+        "metresPerPixel": round(extent / size, 4),
         "worldMin": [REG.PLAY_MIN_X, REG.PLAY_MIN_Z],
-        "worldMax": [REG.PLAY_MAX_X, REG.PLAY_MAX_Z],
+        "worldMax": [REG.PLAY_MIN_X + extent, REG.PLAY_MIN_Z + extent],
         "northAxis": "-Z",
         "orientation": "north-up",
     }

@@ -50,12 +50,17 @@ GOLDEN = RENDER.Lighting(sun_direction=(-0.86, 0.19, 0.47),
                          exposure=1.10, saturation=1.32,
                          sky_zenith=(0.20, 0.24, 0.40), sky_horizon=(0.86, 0.60, 0.34))
 
-A = REG.ANCHORS
-
-
-def _v(anchor, dy=0.0, dx=0.0, dz=0.0):
-    return (anchor[0] + dx, dy, anchor[1] + dz)
-
+# Per-region lighting. The presets above are tuned for Amberwood's warm autumn
+# forest; a snow region under that sun renders brown. A region may override any
+# Lighting field by declaring DAY_LIGHTING / GOLDEN_LIGHTING dicts in its
+# views.py. Regions that declare neither keep the presets exactly as they were.
+_VIEWS_MODULE = regionpaths.load_region_views(PACKAGE)
+_day_overrides = getattr(_VIEWS_MODULE, "DAY_LIGHTING", None)
+if _day_overrides:
+    DAY = RENDER.Lighting(**{**vars(DAY), **_day_overrides})
+_golden_overrides = getattr(_VIEWS_MODULE, "GOLDEN_LIGHTING", None)
+if _golden_overrides:
+    GOLDEN = RENDER.Lighting(**{**vars(GOLDEN), **_golden_overrides})
 
 # Each view is (id, panel, (eye_x, eye_z), eye_height_above_ground,
 #               (target_x, target_z), target_height_above_ground,
@@ -172,7 +177,8 @@ def main() -> int:
                 angle = math.pi * 2.0 * k / 16
                 cx = xz[0] + math.cos(angle) * radius
                 cz = xz[1] + math.sin(angle) * radius
-                if terrain.height_at(cx, cz) < REG.SEA_LEVEL + 0.3:
+                sea_level = getattr(REG, "SEA_LEVEL", None)
+                if sea_level is not None                         and terrain.height_at(cx, cz) < sea_level + 0.3:
                     continue
                 value = clearance(cx, cz)
                 if value > best[0]:
