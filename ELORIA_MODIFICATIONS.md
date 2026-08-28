@@ -43,6 +43,18 @@ Lands Binary Data is included in the Eloria data pack.
 - Realigned the item icon atlases to the grid the client samples, restored the
   icons that the placeholder block had truncated, repainted the sixteen Nymara
   material icons, and added an explicit unknown-item glyph.
+- Authored a generic equipment tier claiming the legacy visual-id space
+  directly: 155 ids across seven parts, served by 43 meshes under a runtime
+  tint, so the craftable economy has geometry instead of drawing nothing.
+- Added great sword, battle axe, cutlass, rapier, club, quiver and glove
+  shapes, and enchanted-metal finishes for the elemental weapon ladders.
+- Corrected sRGB palettes being written into glTF's linear colour factors,
+  which had every untextured surface rendering about forty percent bright;
+  applied to the equipment and creature libraries, with races and hair pending
+  a rebuild.
+- Removed the three visual-id aliases, which now collide with real generic ids,
+  and made an authored NPC look outrank the server's appearance bytes.
+- Cached parsed equipment geometry and rebound skins per model.
 
 Every later modification to an upstream source file must carry a prominent
 dated notice as required by section 3(c) of the client license.

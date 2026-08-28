@@ -68,7 +68,10 @@ class NativeGlbAssetsTest(unittest.TestCase):
         self.assertEqual(8, len(self.catalog["hair"]))
         self.assertEqual(32, len(self.catalog["creatures"]))
         self.assertEqual(66, len(self.catalog["equipment"]))
-        self.assertEqual(123, self.catalog["validation"]["files"])
+        # The generic tier claims the legacy visual-id space with one authored
+        # mesh per material ladder rather than one per id.
+        self.assertEqual(43, len(self.catalog["genericEquipment"]))
+        self.assertEqual(166, self.catalog["validation"]["files"])
 
     def test_ambient_creatures_are_scenery_only(self) -> None:
         """Ambient livestock are client scenery and must not claim actor types.
@@ -140,19 +143,31 @@ class NativeGlbAssetsTest(unittest.TestCase):
     def test_every_equipment_visual_is_registered(self) -> None:
         expected = {f"{entry['part']}:{entry['visual']}"
                     for entry in self.catalog["equipment"].values()}
+        for entry in self.catalog["genericEquipment"].values():
+            expected |= {f"{entry['part']}:{visual}" for visual in entry["visuals"]}
         self.assertEqual(expected, set(self.equipment["models"]))
-        for entry in self.catalog["equipment"].values():
+        for entry in self._all_equipment():
             glb_document(ROOT / entry["path"])
 
-    def test_legacy_guard_visuals_alias_to_native_models(self) -> None:
-        expected = {
-            "0:11": "0:112",
-            "1:5": "1:105",
-            "2:11": "2:105",
-        }
-        self.assertEqual(expected, self.equipment["aliases"])
-        for native_visual in expected.values():
-            self.assertIn(native_visual, self.equipment["models"])
+    def _all_equipment(self):
+        return list(self.catalog["equipment"].values()) + list(
+            self.catalog["genericEquipment"].values())
+
+    def test_legacy_visual_ids_render_as_themselves(self) -> None:
+        """The alias table existed only because the legacy tier had no models.
+
+        Weapon 11, shield 5 and cape 11 were redirected to Four Gates guard gear.
+        They are STAFF_4, SHIELD_BRONZE and CAPE_GOLD, so with the generic tier
+        authored an alias would hijack three ids every actor can legitimately
+        wear. Bespoke NPC gear comes from npcLooks, which names native ids.
+        """
+        self.assertEqual({}, self.equipment["aliases"])
+        for legacy in ("0:11", "1:5", "2:11"):
+            self.assertIn(legacy, self.equipment["models"])
+        for native in ("0:112", "1:105", "2:105"):
+            self.assertIn(native, self.equipment["models"])
+        guard_look = self.models["npcLooks"]["301"]["equipmentVisuals"]
+        self.assertEqual({"0": 112, "1": 105, "2": 105}, guard_look)
 
     def test_equipment_registry_is_schema_three(self) -> None:
         """Sockets and skinned garments replace the identity bone parenting.
@@ -191,11 +206,13 @@ class NativeGlbAssetsTest(unittest.TestCase):
         for key, model in self.equipment["models"].items():
             part = int(key.split(":")[0])
             with self.subTest(model=key):
+                # Gloves are worn on the weapon part but cover both hands, so
+                # attachment is declared per model, not inferred from the part.
                 if part in garment_parts:
                     self.assertEqual("skinned", model["attach"])
+                if model["attach"] == "skinned":
                     self.assertIn(model["skinRegion"], self.equipment["skinRegions"])
                 else:
-                    self.assertEqual("socket", model["attach"])
                     socket = model.get("socket") or self.equipment["sockets"][str(part)]
                     self.assertTrue(socket["bone"])
 
@@ -204,14 +221,11 @@ class NativeGlbAssetsTest(unittest.TestCase):
         rig = glb_document(CLIENT / "assets/actors/native/races/luminous_male.glb")
         expected = [rig["nodes"][node].get("name", "")
                     for node in rig["skins"][0]["joints"]]
-        garment_parts = {2, 4, 5, 6}
         checked = 0
-        for entry in self.catalog["equipment"].values():
-            if entry["part"] not in garment_parts:
-                self.assertEqual("socket", entry["attach"])
+        for entry in self._all_equipment():
+            if entry["attach"] != "skinned":
                 continue
             with self.subTest(equipment=entry["id"]):
-                self.assertEqual("skinned", entry["attach"])
                 document = glb_document(ROOT / entry["path"])
                 skin = document["skins"][0]
                 names = [document["nodes"][node].get("name", "")
@@ -222,7 +236,7 @@ class NativeGlbAssetsTest(unittest.TestCase):
                         self.assertIn("JOINTS_0", primitive["attributes"])
                         self.assertIn("WEIGHTS_0", primitive["attributes"])
                 checked += 1
-        self.assertEqual(31, checked)
+        self.assertEqual(47, checked)
 
     def test_equipment_hides_name_real_body_surfaces(self) -> None:
         """A hide that names nothing would silently fail to cover anything."""
@@ -245,7 +259,7 @@ class NativeGlbAssetsTest(unittest.TestCase):
         body scale, which swallowed the actor wearing them."""
         limits = {0: (.55, 2.00), 1: (.35, .95), 2: (.80, 1.60), 3: (.18, .60),
                   4: (.60, 1.30), 5: (.45, 1.60), 6: (.30, .70), 7: (.10, .40)}
-        for entry in self.catalog["equipment"].values():
+        for entry in self._all_equipment():
             document = glb_document(ROOT / entry["path"])
             extents = []
             for accessor in document["accessors"]:
@@ -260,7 +274,7 @@ class NativeGlbAssetsTest(unittest.TestCase):
 
     def test_equipment_carries_material_detail(self) -> None:
         """Equipment shipped untextured beside a body with fifteen maps."""
-        for entry in self.catalog["equipment"].values():
+        for entry in self._all_equipment():
             document = glb_document(ROOT / entry["path"])
             with self.subTest(equipment=entry["id"]):
                 self.assertGreaterEqual(len(document.get("materials", [])), 2)

@@ -130,6 +130,22 @@
       "pelvis",
       "spine_01"
     ],
+    "hands": [
+      "hand_l",
+      "hand_r",
+      "lowerarm_l",
+      "lowerarm_r",
+      "index_01_l",
+      "index_01_r",
+      "middle_01_l",
+      "middle_01_r",
+      "ring_01_l",
+      "ring_01_r",
+      "pinky_01_l",
+      "pinky_01_r",
+      "thumb_01_l",
+      "thumb_01_r"
+    ],
     "legs": [
       "pelvis",
       "thigh_l",
@@ -609,11 +625,3658 @@
     "7:105": {
       "scene": "res://assets/actors/native/equipment/luminous_orbit_amulet.glb",
       "attach": "socket"
+    },
+    "0:1": {
+      "scene": "res://assets/actors/native/equipment/generic_sword.glb",
+      "attach": "socket",
+      "name": "Iron Sword",
+      "tint": [
+        [
+          122,
+          126,
+          132
+        ],
+        [
+          170,
+          175,
+          182
+        ],
+        [
+          74,
+          76,
+          79
+        ]
+      ]
+    },
+    "0:2": {
+      "scene": "res://assets/actors/native/equipment/generic_sword.glb",
+      "attach": "socket",
+      "name": "Iron Broad Sword",
+      "tint": [
+        [
+          134,
+          138,
+          144
+        ],
+        [
+          178,
+          183,
+          190
+        ],
+        [
+          80,
+          81,
+          84
+        ]
+      ]
+    },
+    "0:3": {
+      "scene": "res://assets/actors/native/equipment/generic_sword.glb",
+      "attach": "socket",
+      "name": "Steel Sword",
+      "tint": [
+        [
+          172,
+          179,
+          188
+        ],
+        [
+          216,
+          222,
+          229
+        ],
+        [
+          97,
+          100,
+          104
+        ]
+      ]
+    },
+    "0:4": {
+      "scene": "res://assets/actors/native/equipment/generic_sword.glb",
+      "attach": "socket",
+      "name": "Steel Broad Sword",
+      "tint": [
+        [
+          182,
+          189,
+          197
+        ],
+        [
+          222,
+          228,
+          234
+        ],
+        [
+          102,
+          105,
+          109
+        ]
+      ]
+    },
+    "0:5": {
+      "scene": "res://assets/actors/native/equipment/generic_sword.glb",
+      "attach": "socket",
+      "name": "Titanium Sword",
+      "tint": [
+        [
+          198,
+          208,
+          217
+        ],
+        [
+          236,
+          242,
+          248
+        ],
+        [
+          109,
+          114,
+          118
+        ]
+      ]
+    },
+    "0:6": {
+      "scene": "res://assets/actors/native/equipment/generic_sword.glb",
+      "attach": "socket",
+      "name": "Titanium Long Sword",
+      "tint": [
+        [
+          206,
+          216,
+          224
+        ],
+        [
+          240,
+          246,
+          250
+        ],
+        [
+          113,
+          117,
+          121
+        ]
+      ]
+    },
+    "0:7": {
+      "scene": "res://assets/actors/native/equipment/generic_sword.glb",
+      "attach": "socket",
+      "name": "Titanium Serpent Sword",
+      "tint": [
+        [
+          214,
+          224,
+          231
+        ],
+        [
+          246,
+          250,
+          253
+        ],
+        [
+          116,
+          121,
+          124
+        ]
+      ]
+    },
+    "0:58": {
+      "scene": "res://assets/actors/native/equipment/generic_sword.glb",
+      "attach": "socket",
+      "name": "Bronze Sword",
+      "tint": [
+        [
+          174,
+          122,
+          60
+        ],
+        [
+          219,
+          170,
+          90
+        ],
+        [
+          98,
+          74,
+          46
+        ]
+      ]
+    },
+    "0:15": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_fire.glb",
+      "attach": "socket",
+      "name": "Iron Sword of Fire",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          236,
+          116,
+          44
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:16": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_fire.glb",
+      "attach": "socket",
+      "name": "Iron Broad Sword of Fire",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          236,
+          116,
+          44
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:18": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_fire.glb",
+      "attach": "socket",
+      "name": "Steel Sword of Fire",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          236,
+          116,
+          44
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:21": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_fire.glb",
+      "attach": "socket",
+      "name": "Steel Broad Sword of Fire",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          236,
+          116,
+          44
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:25": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_fire.glb",
+      "attach": "socket",
+      "name": "Titanium Sword of Fire",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          236,
+          116,
+          44
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:29": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_fire.glb",
+      "attach": "socket",
+      "name": "Titanium Long Sword of Fire",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          236,
+          116,
+          44
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:33": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_fire.glb",
+      "attach": "socket",
+      "name": "Titanium Serpent Sword of Fire",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          236,
+          116,
+          44
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:17": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_ice.glb",
+      "attach": "socket",
+      "name": "Iron Broad Sword of Ice",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          142,
+          208,
+          238
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:19": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_ice.glb",
+      "attach": "socket",
+      "name": "Steel Sword of Ice",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          142,
+          208,
+          238
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:22": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_ice.glb",
+      "attach": "socket",
+      "name": "Steel Broad Sword of Ice",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          142,
+          208,
+          238
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:26": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_ice.glb",
+      "attach": "socket",
+      "name": "Titanium Sword of Ice",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          142,
+          208,
+          238
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:30": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_ice.glb",
+      "attach": "socket",
+      "name": "Titanium Long Sword of Ice",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          142,
+          208,
+          238
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:34": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_ice.glb",
+      "attach": "socket",
+      "name": "Titanium Serpent Sword of Ice",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          142,
+          208,
+          238
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:20": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_magic.glb",
+      "attach": "socket",
+      "name": "Steel Sword of Magic",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          180,
+          126,
+          236
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:23": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_magic.glb",
+      "attach": "socket",
+      "name": "Steel Broad Sword of Magic",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          180,
+          126,
+          236
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:27": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_magic.glb",
+      "attach": "socket",
+      "name": "Titanium Sword of Magic",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          180,
+          126,
+          236
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:31": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_magic.glb",
+      "attach": "socket",
+      "name": "Titanium Long Sword of Magic",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          180,
+          126,
+          236
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:35": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_magic.glb",
+      "attach": "socket",
+      "name": "Titanium Serpent Sword of Magic",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          180,
+          126,
+          236
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:24": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_thermal.glb",
+      "attach": "socket",
+      "name": "Steel Broad Thermal Sword",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          242,
+          172,
+          76
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:28": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_thermal.glb",
+      "attach": "socket",
+      "name": "Titanium Thermal Sword",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          242,
+          172,
+          76
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:32": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_thermal.glb",
+      "attach": "socket",
+      "name": "Titanium Long Thermal Sword",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          242,
+          172,
+          76
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:36": {
+      "scene": "res://assets/actors/native/equipment/generic_sword_thermal.glb",
+      "attach": "socket",
+      "name": "Titanium Serpent Thermal Sword",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          242,
+          172,
+          76
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:51": {
+      "scene": "res://assets/actors/native/equipment/generic_greatsword.glb",
+      "attach": "socket",
+      "name": "Emerald Claymore",
+      "tint": [
+        [
+          168,
+          182,
+          176
+        ],
+        [
+          96,
+          198,
+          142
+        ],
+        [
+          95,
+          102,
+          99
+        ]
+      ]
+    },
+    "0:53": {
+      "scene": "res://assets/actors/native/equipment/generic_greatsword.glb",
+      "attach": "socket",
+      "name": "Sunbreaker",
+      "tint": [
+        [
+          196,
+          176,
+          128
+        ],
+        [
+          240,
+          198,
+          96
+        ],
+        [
+          108,
+          99,
+          77
+        ]
+      ]
+    },
+    "0:54": {
+      "scene": "res://assets/actors/native/equipment/generic_greatsword.glb",
+      "attach": "socket",
+      "name": "Orc Slayer",
+      "tint": [
+        [
+          146,
+          142,
+          136
+        ],
+        [
+          188,
+          96,
+          72
+        ],
+        [
+          85,
+          83,
+          81
+        ]
+      ]
+    },
+    "0:55": {
+      "scene": "res://assets/actors/native/equipment/generic_greatsword.glb",
+      "attach": "socket",
+      "name": "Eagle Wing",
+      "tint": [
+        [
+          200,
+          206,
+          212
+        ],
+        [
+          232,
+          226,
+          196
+        ],
+        [
+          110,
+          113,
+          116
+        ]
+      ]
+    },
+    "0:52": {
+      "scene": "res://assets/actors/native/equipment/generic_cutlass.glb",
+      "attach": "socket",
+      "name": "Cutlass",
+      "tint": [
+        [
+          162,
+          168,
+          176
+        ],
+        [
+          206,
+          178,
+          96
+        ],
+        [
+          93,
+          95,
+          99
+        ]
+      ]
+    },
+    "0:57": {
+      "scene": "res://assets/actors/native/equipment/generic_cutlass.glb",
+      "attach": "socket",
+      "name": "Jagged Saber",
+      "tint": [
+        [
+          150,
+          156,
+          164
+        ],
+        [
+          198,
+          200,
+          204
+        ],
+        [
+          87,
+          90,
+          93
+        ]
+      ]
+    },
+    "0:56": {
+      "scene": "res://assets/actors/native/equipment/generic_rapier.glb",
+      "attach": "socket",
+      "name": "Rapier",
+      "tint": [
+        [
+          188,
+          194,
+          202
+        ],
+        [
+          216,
+          186,
+          104
+        ],
+        [
+          104,
+          107,
+          111
+        ]
+      ]
+    },
+    "0:8": {
+      "scene": "res://assets/actors/native/equipment/generic_staff.glb",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_r",
+        "offset": [
+          -0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          1.43809,
+          -35.06637,
+          -80.14768
+        ]
+      },
+      "name": "Wooden Staff",
+      "tint": [
+        [
+          124,
+          92,
+          58
+        ],
+        [
+          168,
+          133,
+          84
+        ],
+        [
+          75,
+          60,
+          45
+        ]
+      ]
+    },
+    "0:9": {
+      "scene": "res://assets/actors/native/equipment/generic_staff.glb",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_r",
+        "offset": [
+          -0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          1.43809,
+          -35.06637,
+          -80.14768
+        ]
+      },
+      "name": "Ash Staff",
+      "tint": [
+        [
+          104,
+          80,
+          54
+        ],
+        [
+          150,
+          122,
+          84
+        ],
+        [
+          66,
+          55,
+          43
+        ]
+      ]
+    },
+    "0:10": {
+      "scene": "res://assets/actors/native/equipment/generic_staff.glb",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_r",
+        "offset": [
+          -0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          1.43809,
+          -35.06637,
+          -80.14768
+        ]
+      },
+      "name": "Bound Staff",
+      "tint": [
+        [
+          88,
+          66,
+          46
+        ],
+        [
+          182,
+          150,
+          96
+        ],
+        [
+          58,
+          48,
+          39
+        ]
+      ]
+    },
+    "0:11": {
+      "scene": "res://assets/actors/native/equipment/generic_staff.glb",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_r",
+        "offset": [
+          -0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          1.43809,
+          -35.06637,
+          -80.14768
+        ]
+      },
+      "name": "Runed Staff",
+      "tint": [
+        [
+          72,
+          58,
+          46
+        ],
+        [
+          140,
+          176,
+          206
+        ],
+        [
+          51,
+          45,
+          39
+        ]
+      ]
+    },
+    "0:38": {
+      "scene": "res://assets/actors/native/equipment/generic_battleaxe.glb",
+      "attach": "socket",
+      "name": "Iron Battle Axe",
+      "tint": [
+        [
+          122,
+          126,
+          132
+        ],
+        [
+          170,
+          175,
+          182
+        ],
+        [
+          74,
+          76,
+          79
+        ]
+      ]
+    },
+    "0:39": {
+      "scene": "res://assets/actors/native/equipment/generic_battleaxe.glb",
+      "attach": "socket",
+      "name": "Steel Battle Axe",
+      "tint": [
+        [
+          172,
+          179,
+          188
+        ],
+        [
+          216,
+          222,
+          229
+        ],
+        [
+          97,
+          100,
+          104
+        ]
+      ]
+    },
+    "0:40": {
+      "scene": "res://assets/actors/native/equipment/generic_battleaxe.glb",
+      "attach": "socket",
+      "name": "Titanium Battle Axe",
+      "tint": [
+        [
+          198,
+          208,
+          217
+        ],
+        [
+          236,
+          242,
+          248
+        ],
+        [
+          109,
+          114,
+          118
+        ]
+      ]
+    },
+    "0:41": {
+      "scene": "res://assets/actors/native/equipment/generic_battleaxe_fire.glb",
+      "attach": "socket",
+      "name": "Iron Battle Axe of Fire",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          236,
+          116,
+          44
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:43": {
+      "scene": "res://assets/actors/native/equipment/generic_battleaxe_fire.glb",
+      "attach": "socket",
+      "name": "Steel Battle Axe of Fire",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          236,
+          116,
+          44
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:45": {
+      "scene": "res://assets/actors/native/equipment/generic_battleaxe_fire.glb",
+      "attach": "socket",
+      "name": "Titanium Battle Axe of Fire",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          236,
+          116,
+          44
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:42": {
+      "scene": "res://assets/actors/native/equipment/generic_battleaxe_ice.glb",
+      "attach": "socket",
+      "name": "Steel Battle Axe of Ice",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          142,
+          208,
+          238
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:44": {
+      "scene": "res://assets/actors/native/equipment/generic_battleaxe_ice.glb",
+      "attach": "socket",
+      "name": "Titanium Battle Axe of Ice",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          142,
+          208,
+          238
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:46": {
+      "scene": "res://assets/actors/native/equipment/generic_battleaxe_magic.glb",
+      "attach": "socket",
+      "name": "Titanium Battle Axe of Magic",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          180,
+          126,
+          236
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:49": {
+      "scene": "res://assets/actors/native/equipment/generic_club_bone.glb",
+      "attach": "socket",
+      "name": "Bone",
+      "tint": [
+        [
+          218,
+          212,
+          196
+        ],
+        [
+          240,
+          236,
+          226
+        ],
+        [
+          118,
+          116,
+          108
+        ]
+      ]
+    },
+    "0:50": {
+      "scene": "res://assets/actors/native/equipment/generic_club_wood.glb",
+      "attach": "socket",
+      "name": "Stick",
+      "tint": [
+        [
+          124,
+          92,
+          58
+        ],
+        [
+          168,
+          133,
+          84
+        ],
+        [
+          75,
+          60,
+          45
+        ]
+      ]
+    },
+    "0:12": {
+      "scene": "res://assets/actors/native/equipment/generic_hammer.glb",
+      "attach": "socket",
+      "name": "Iron War Hammer",
+      "tint": [
+        [
+          122,
+          126,
+          132
+        ],
+        [
+          170,
+          175,
+          182
+        ],
+        [
+          74,
+          76,
+          79
+        ]
+      ]
+    },
+    "0:13": {
+      "scene": "res://assets/actors/native/equipment/generic_hammer.glb",
+      "attach": "socket",
+      "name": "Steel War Hammer",
+      "tint": [
+        [
+          172,
+          179,
+          188
+        ],
+        [
+          216,
+          222,
+          229
+        ],
+        [
+          97,
+          100,
+          104
+        ]
+      ]
+    },
+    "0:14": {
+      "scene": "res://assets/actors/native/equipment/generic_pickaxe.glb",
+      "attach": "socket",
+      "name": "Pickaxe",
+      "tint": [
+        [
+          122,
+          126,
+          132
+        ],
+        [
+          170,
+          175,
+          182
+        ],
+        [
+          74,
+          76,
+          79
+        ]
+      ]
+    },
+    "0:37": {
+      "scene": "res://assets/actors/native/equipment/generic_pickaxe_magic.glb",
+      "attach": "socket",
+      "name": "Magic Pickaxe",
+      "tint": [
+        [
+          146,
+          152,
+          160
+        ],
+        [
+          180,
+          126,
+          236
+        ],
+        [
+          85,
+          88,
+          92
+        ]
+      ]
+    },
+    "0:64": {
+      "scene": "res://assets/actors/native/equipment/generic_bow.glb",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_r",
+        "offset": [
+          -0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          1.43809,
+          -35.06637,
+          -80.14768
+        ]
+      },
+      "name": "Long Bow",
+      "tint": [
+        [
+          124,
+          92,
+          58
+        ],
+        [
+          168,
+          133,
+          84
+        ],
+        [
+          75,
+          60,
+          45
+        ]
+      ]
+    },
+    "0:65": {
+      "scene": "res://assets/actors/native/equipment/generic_bow.glb",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_r",
+        "offset": [
+          -0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          1.43809,
+          -35.06637,
+          -80.14768
+        ]
+      },
+      "name": "Short Bow",
+      "tint": [
+        [
+          140,
+          106,
+          68
+        ],
+        [
+          182,
+          148,
+          98
+        ],
+        [
+          82,
+          67,
+          49
+        ]
+      ]
+    },
+    "0:66": {
+      "scene": "res://assets/actors/native/equipment/generic_bow.glb",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_r",
+        "offset": [
+          -0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          1.43809,
+          -35.06637,
+          -80.14768
+        ]
+      },
+      "name": "Recurve Bow",
+      "tint": [
+        [
+          96,
+          70,
+          46
+        ],
+        [
+          162,
+          126,
+          78
+        ],
+        [
+          62,
+          50,
+          39
+        ]
+      ]
+    },
+    "0:67": {
+      "scene": "res://assets/actors/native/equipment/generic_bow.glb",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_r",
+        "offset": [
+          -0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          1.43809,
+          -35.06637,
+          -80.14768
+        ]
+      },
+      "name": "Elven Bow",
+      "tint": [
+        [
+          118,
+          128,
+          96
+        ],
+        [
+          196,
+          206,
+          168
+        ],
+        [
+          72,
+          77,
+          62
+        ]
+      ]
+    },
+    "0:68": {
+      "scene": "res://assets/actors/native/equipment/generic_crossbow.glb",
+      "attach": "socket",
+      "socket": {
+        "bone": "hand_r",
+        "offset": [
+          -0.05194,
+          -0.00242,
+          0.00037
+        ],
+        "rotationDegrees": [
+          1.43809,
+          -35.06637,
+          -80.14768
+        ]
+      },
+      "name": "Crossbow",
+      "tint": [
+        [
+          110,
+          84,
+          56
+        ],
+        [
+          156,
+          160,
+          166
+        ],
+        [
+          69,
+          57,
+          44
+        ]
+      ]
+    },
+    "0:48": {
+      "scene": "res://assets/actors/native/equipment/generic_gloves_leather.glb",
+      "attach": "skinned",
+      "skinRegion": "hands",
+      "name": "Leather Gloves",
+      "tint": [
+        [
+          108,
+          76,
+          48
+        ],
+        [
+          152,
+          113,
+          67
+        ],
+        [
+          68,
+          53,
+          40
+        ]
+      ]
+    },
+    "0:47": {
+      "scene": "res://assets/actors/native/equipment/generic_gloves_fur.glb",
+      "attach": "skinned",
+      "skinRegion": "hands",
+      "name": "Fur Gloves",
+      "tint": [
+        [
+          156,
+          142,
+          124
+        ],
+        [
+          208,
+          197,
+          181
+        ],
+        [
+          90,
+          83,
+          75
+        ]
+      ]
+    },
+    "1:0": {
+      "scene": "res://assets/actors/native/equipment/generic_shield_wood.glb",
+      "attach": "socket",
+      "name": "Wooden Shield",
+      "tint": [
+        [
+          124,
+          92,
+          58
+        ],
+        [
+          168,
+          133,
+          84
+        ],
+        [
+          75,
+          60,
+          45
+        ]
+      ]
+    },
+    "1:1": {
+      "scene": "res://assets/actors/native/equipment/generic_shield_wood.glb",
+      "attach": "socket",
+      "name": "Enhanced Wooden Shield",
+      "tint": [
+        [
+          104,
+          78,
+          50
+        ],
+        [
+          188,
+          154,
+          92
+        ],
+        [
+          66,
+          54,
+          41
+        ]
+      ]
+    },
+    "1:2": {
+      "scene": "res://assets/actors/native/equipment/generic_shield_metal.glb",
+      "attach": "socket",
+      "name": "Iron Shield",
+      "tint": [
+        [
+          122,
+          126,
+          132
+        ],
+        [
+          170,
+          175,
+          182
+        ],
+        [
+          74,
+          76,
+          79
+        ]
+      ]
+    },
+    "1:3": {
+      "scene": "res://assets/actors/native/equipment/generic_shield_metal.glb",
+      "attach": "socket",
+      "name": "Steel Shield",
+      "tint": [
+        [
+          172,
+          179,
+          188
+        ],
+        [
+          216,
+          222,
+          229
+        ],
+        [
+          97,
+          100,
+          104
+        ]
+      ]
+    },
+    "1:4": {
+      "scene": "res://assets/actors/native/equipment/generic_shield_metal.glb",
+      "attach": "socket",
+      "name": "Titanium Shield",
+      "tint": [
+        [
+          198,
+          208,
+          217
+        ],
+        [
+          236,
+          242,
+          248
+        ],
+        [
+          109,
+          114,
+          118
+        ]
+      ]
+    },
+    "1:5": {
+      "scene": "res://assets/actors/native/equipment/generic_shield_metal.glb",
+      "attach": "socket",
+      "name": "Bronze Shield",
+      "tint": [
+        [
+          174,
+          122,
+          60
+        ],
+        [
+          219,
+          170,
+          90
+        ],
+        [
+          98,
+          74,
+          46
+        ]
+      ]
+    },
+    "1:7": {
+      "scene": "res://assets/actors/native/equipment/generic_quiver.glb",
+      "attach": "socket",
+      "name": "Quiver of Arrows",
+      "tint": [
+        [
+          108,
+          76,
+          48
+        ],
+        [
+          152,
+          113,
+          67
+        ],
+        [
+          68,
+          53,
+          40
+        ]
+      ]
+    },
+    "1:13": {
+      "scene": "res://assets/actors/native/equipment/generic_quiver.glb",
+      "attach": "socket",
+      "name": "Quiver of Bolts",
+      "tint": [
+        [
+          88,
+          70,
+          52
+        ],
+        [
+          162,
+          134,
+          88
+        ],
+        [
+          58,
+          50,
+          42
+        ]
+      ]
+    },
+    "2:0": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Black Cape",
+      "tint": [
+        [
+          44,
+          44,
+          48
+        ],
+        [
+          86,
+          86,
+          92
+        ],
+        [
+          38,
+          38,
+          40
+        ]
+      ]
+    },
+    "2:1": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Blue Cape",
+      "tint": [
+        [
+          52,
+          76,
+          124
+        ],
+        [
+          104,
+          133,
+          186
+        ],
+        [
+          42,
+          53,
+          75
+        ]
+      ]
+    },
+    "2:2": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Blue-Gray Cape",
+      "tint": [
+        [
+          84,
+          100,
+          122
+        ],
+        [
+          140,
+          156,
+          178
+        ],
+        [
+          57,
+          64,
+          74
+        ]
+      ]
+    },
+    "2:3": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Brown Cape",
+      "tint": [
+        [
+          96,
+          70,
+          46
+        ],
+        [
+          146,
+          113,
+          76
+        ],
+        [
+          62,
+          50,
+          39
+        ]
+      ]
+    },
+    "2:4": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Brown-Gray Cape",
+      "tint": [
+        [
+          104,
+          92,
+          80
+        ],
+        [
+          152,
+          140,
+          126
+        ],
+        [
+          66,
+          60,
+          55
+        ]
+      ]
+    },
+    "2:5": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Gray Cape",
+      "tint": [
+        [
+          98,
+          100,
+          104
+        ],
+        [
+          148,
+          150,
+          155
+        ],
+        [
+          63,
+          64,
+          66
+        ]
+      ]
+    },
+    "2:6": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Green Cape",
+      "tint": [
+        [
+          62,
+          92,
+          58
+        ],
+        [
+          108,
+          143,
+          98
+        ],
+        [
+          47,
+          60,
+          45
+        ]
+      ]
+    },
+    "2:7": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Green-Gray Cape",
+      "tint": [
+        [
+          92,
+          106,
+          92
+        ],
+        [
+          140,
+          155,
+          138
+        ],
+        [
+          60,
+          67,
+          60
+        ]
+      ]
+    },
+    "2:8": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Purple Cape",
+      "tint": [
+        [
+          92,
+          62,
+          124
+        ],
+        [
+          144,
+          108,
+          182
+        ],
+        [
+          60,
+          47,
+          75
+        ]
+      ]
+    },
+    "2:9": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "White Cape",
+      "tint": [
+        [
+          208,
+          206,
+          198
+        ],
+        [
+          240,
+          239,
+          234
+        ],
+        [
+          114,
+          113,
+          109
+        ]
+      ]
+    },
+    "2:11": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Gold Cape",
+      "tint": [
+        [
+          178,
+          142,
+          58
+        ],
+        [
+          232,
+          200,
+          108
+        ],
+        [
+          100,
+          83,
+          45
+        ]
+      ]
+    },
+    "2:12": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Red Cape",
+      "tint": [
+        [
+          132,
+          48,
+          44
+        ],
+        [
+          186,
+          88,
+          78
+        ],
+        [
+          79,
+          40,
+          38
+        ]
+      ]
+    },
+    "2:13": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Orange Cape",
+      "tint": [
+        [
+          186,
+          108,
+          44
+        ],
+        [
+          232,
+          158,
+          84
+        ],
+        [
+          104,
+          68,
+          38
+        ]
+      ]
+    },
+    "2:14": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Warden Cape",
+      "tint": [
+        [
+          58,
+          62,
+          118
+        ],
+        [
+          108,
+          114,
+          178
+        ],
+        [
+          45,
+          47,
+          72
+        ]
+      ]
+    },
+    "2:15": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Tidewatch Cape",
+      "tint": [
+        [
+          46,
+          108,
+          112
+        ],
+        [
+          96,
+          162,
+          166
+        ],
+        [
+          39,
+          68,
+          70
+        ]
+      ]
+    },
+    "2:16": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Nightfall Cape",
+      "tint": [
+        [
+          122,
+          34,
+          46
+        ],
+        [
+          180,
+          74,
+          84
+        ],
+        [
+          74,
+          34,
+          39
+        ]
+      ]
+    },
+    "2:17": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Quiet Cape",
+      "tint": [
+        [
+          78,
+          96,
+          62
+        ],
+        [
+          126,
+          146,
+          104
+        ],
+        [
+          54,
+          62,
+          47
+        ]
+      ]
+    },
+    "2:18": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Highreach Cape",
+      "tint": [
+        [
+          72,
+          82,
+          92
+        ],
+        [
+          122,
+          134,
+          146
+        ],
+        [
+          51,
+          56,
+          60
+        ]
+      ]
+    },
+    "2:19": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Dawnward Cape",
+      "tint": [
+        [
+          176,
+          156,
+          116
+        ],
+        [
+          218,
+          203,
+          168
+        ],
+        [
+          99,
+          90,
+          71
+        ]
+      ]
+    },
+    "2:20": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Sunwake Cape",
+      "tint": [
+        [
+          94,
+          44,
+          62
+        ],
+        [
+          146,
+          84,
+          102
+        ],
+        [
+          61,
+          38,
+          47
+        ]
+      ]
+    },
+    "2:21": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Farhold Cape",
+      "tint": [
+        [
+          118,
+          116,
+          112
+        ],
+        [
+          168,
+          166,
+          162
+        ],
+        [
+          72,
+          71,
+          70
+        ]
+      ]
+    },
+    "2:22": {
+      "scene": "res://assets/actors/native/equipment/generic_cape.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Learner Cape",
+      "tint": [
+        [
+          146,
+          112,
+          74
+        ],
+        [
+          192,
+          160,
+          118
+        ],
+        [
+          85,
+          70,
+          52
+        ]
+      ]
+    },
+    "2:10": {
+      "scene": "res://assets/actors/native/equipment/generic_cape_fur.glb",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "name": "Fur Cape",
+      "tint": [
+        [
+          156,
+          142,
+          124
+        ],
+        [
+          208,
+          197,
+          181
+        ],
+        [
+          90,
+          83,
+          75
+        ]
+      ]
+    },
+    "3:0": {
+      "scene": "res://assets/actors/native/equipment/generic_helm.glb",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap",
+        "hair"
+      ],
+      "name": "Iron Helmet",
+      "tint": [
+        [
+          122,
+          126,
+          132
+        ],
+        [
+          170,
+          175,
+          182
+        ],
+        [
+          74,
+          76,
+          79
+        ]
+      ]
+    },
+    "3:7": {
+      "scene": "res://assets/actors/native/equipment/generic_helm.glb",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap",
+        "hair"
+      ],
+      "name": "Steel Helmet",
+      "tint": [
+        [
+          172,
+          179,
+          188
+        ],
+        [
+          216,
+          222,
+          229
+        ],
+        [
+          97,
+          100,
+          104
+        ]
+      ]
+    },
+    "3:8": {
+      "scene": "res://assets/actors/native/equipment/generic_helm.glb",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap",
+        "hair"
+      ],
+      "name": "Titanium Helmet",
+      "tint": [
+        [
+          198,
+          208,
+          217
+        ],
+        [
+          236,
+          242,
+          248
+        ],
+        [
+          109,
+          114,
+          118
+        ]
+      ]
+    },
+    "3:9": {
+      "scene": "res://assets/actors/native/equipment/generic_helm.glb",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap",
+        "hair"
+      ],
+      "name": "Bronze Helmet",
+      "tint": [
+        [
+          174,
+          122,
+          60
+        ],
+        [
+          219,
+          170,
+          90
+        ],
+        [
+          98,
+          74,
+          46
+        ]
+      ]
+    },
+    "3:2": {
+      "scene": "res://assets/actors/native/equipment/generic_hood_leather.glb",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap",
+        "hair"
+      ],
+      "name": "Leather Helmet",
+      "tint": [
+        [
+          108,
+          76,
+          48
+        ],
+        [
+          152,
+          113,
+          67
+        ],
+        [
+          68,
+          53,
+          40
+        ]
+      ]
+    },
+    "3:1": {
+      "scene": "res://assets/actors/native/equipment/generic_hood_fur.glb",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap",
+        "hair"
+      ],
+      "name": "Fur Helmet",
+      "tint": [
+        [
+          156,
+          142,
+          124
+        ],
+        [
+          208,
+          197,
+          181
+        ],
+        [
+          90,
+          83,
+          75
+        ]
+      ]
+    },
+    "3:3": {
+      "scene": "res://assets/actors/native/equipment/generic_hood_fur.glb",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap",
+        "hair"
+      ],
+      "name": "Racoon Cap",
+      "tint": [
+        [
+          110,
+          104,
+          98
+        ],
+        [
+          226,
+          224,
+          218
+        ],
+        [
+          69,
+          66,
+          63
+        ]
+      ]
+    },
+    "3:4": {
+      "scene": "res://assets/actors/native/equipment/generic_hood_fur.glb",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap",
+        "hair"
+      ],
+      "name": "Skunk Cap",
+      "tint": [
+        [
+          44,
+          42,
+          46
+        ],
+        [
+          232,
+          231,
+          228
+        ],
+        [
+          38,
+          37,
+          39
+        ]
+      ]
+    },
+    "3:5": {
+      "scene": "res://assets/actors/native/equipment/generic_crown.glb",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ],
+      "name": "Crown of Mana",
+      "tint": [
+        [
+          72,
+          82,
+          138
+        ],
+        [
+          128,
+          176,
+          240
+        ],
+        [
+          51,
+          56,
+          81
+        ]
+      ]
+    },
+    "3:6": {
+      "scene": "res://assets/actors/native/equipment/generic_crown.glb",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ],
+      "name": "Crown of Life",
+      "tint": [
+        [
+          76,
+          118,
+          84
+        ],
+        [
+          140,
+          224,
+          152
+        ],
+        [
+          53,
+          72,
+          57
+        ]
+      ]
+    },
+    "4:0": {
+      "scene": "res://assets/actors/native/equipment/generic_pants.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Black Pants",
+      "tint": [
+        [
+          44,
+          44,
+          48
+        ],
+        [
+          86,
+          86,
+          92
+        ],
+        [
+          38,
+          38,
+          40
+        ]
+      ]
+    },
+    "4:1": {
+      "scene": "res://assets/actors/native/equipment/generic_pants.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Blue Pants",
+      "tint": [
+        [
+          52,
+          76,
+          124
+        ],
+        [
+          104,
+          133,
+          186
+        ],
+        [
+          42,
+          53,
+          75
+        ]
+      ]
+    },
+    "4:2": {
+      "scene": "res://assets/actors/native/equipment/generic_pants.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Brown Pants",
+      "tint": [
+        [
+          96,
+          70,
+          46
+        ],
+        [
+          146,
+          113,
+          76
+        ],
+        [
+          62,
+          50,
+          39
+        ]
+      ]
+    },
+    "4:3": {
+      "scene": "res://assets/actors/native/equipment/generic_pants.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Dark Brown Pants",
+      "tint": [
+        [
+          64,
+          46,
+          32
+        ],
+        [
+          108,
+          84,
+          60
+        ],
+        [
+          47,
+          39,
+          33
+        ]
+      ]
+    },
+    "4:4": {
+      "scene": "res://assets/actors/native/equipment/generic_pants.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Grey Pants",
+      "tint": [
+        [
+          98,
+          100,
+          104
+        ],
+        [
+          148,
+          150,
+          155
+        ],
+        [
+          63,
+          64,
+          66
+        ]
+      ]
+    },
+    "4:5": {
+      "scene": "res://assets/actors/native/equipment/generic_pants.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Green Pants",
+      "tint": [
+        [
+          62,
+          92,
+          58
+        ],
+        [
+          108,
+          143,
+          98
+        ],
+        [
+          47,
+          60,
+          45
+        ]
+      ]
+    },
+    "4:6": {
+      "scene": "res://assets/actors/native/equipment/generic_pants.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Light Brown Pants",
+      "tint": [
+        [
+          146,
+          112,
+          74
+        ],
+        [
+          192,
+          160,
+          118
+        ],
+        [
+          85,
+          70,
+          52
+        ]
+      ]
+    },
+    "4:7": {
+      "scene": "res://assets/actors/native/equipment/generic_pants.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Red Pants",
+      "tint": [
+        [
+          132,
+          48,
+          44
+        ],
+        [
+          186,
+          88,
+          78
+        ],
+        [
+          79,
+          40,
+          38
+        ]
+      ]
+    },
+    "4:8": {
+      "scene": "res://assets/actors/native/equipment/generic_pants.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "White Pants",
+      "tint": [
+        [
+          208,
+          206,
+          198
+        ],
+        [
+          240,
+          239,
+          234
+        ],
+        [
+          114,
+          113,
+          109
+        ]
+      ]
+    },
+    "4:9": {
+      "scene": "res://assets/actors/native/equipment/generic_legs_leather.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Leather Pants",
+      "tint": [
+        [
+          108,
+          76,
+          48
+        ],
+        [
+          152,
+          113,
+          67
+        ],
+        [
+          68,
+          53,
+          40
+        ]
+      ]
+    },
+    "4:15": {
+      "scene": "res://assets/actors/native/equipment/generic_legs_leather.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Augmented Leather Cuisses",
+      "tint": [
+        [
+          84,
+          60,
+          42
+        ],
+        [
+          190,
+          151,
+          84
+        ],
+        [
+          57,
+          46,
+          37
+        ]
+      ]
+    },
+    "4:11": {
+      "scene": "res://assets/actors/native/equipment/generic_legs_fur.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Fur Pants",
+      "tint": [
+        [
+          156,
+          142,
+          124
+        ],
+        [
+          208,
+          197,
+          181
+        ],
+        [
+          90,
+          83,
+          75
+        ]
+      ]
+    },
+    "4:10": {
+      "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Iron Cuisses",
+      "tint": [
+        [
+          122,
+          126,
+          132
+        ],
+        [
+          170,
+          175,
+          182
+        ],
+        [
+          74,
+          76,
+          79
+        ]
+      ]
+    },
+    "4:12": {
+      "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Steel Cuisses",
+      "tint": [
+        [
+          172,
+          179,
+          188
+        ],
+        [
+          216,
+          222,
+          229
+        ],
+        [
+          97,
+          100,
+          104
+        ]
+      ]
+    },
+    "4:13": {
+      "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Titanium Cuisses",
+      "tint": [
+        [
+          198,
+          208,
+          217
+        ],
+        [
+          236,
+          242,
+          248
+        ],
+        [
+          109,
+          114,
+          118
+        ]
+      ]
+    },
+    "4:14": {
+      "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "name": "Bronze Cuisses",
+      "tint": [
+        [
+          174,
+          122,
+          60
+        ],
+        [
+          219,
+          170,
+          90
+        ],
+        [
+          98,
+          74,
+          46
+        ]
+      ]
+    },
+    "5:0": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Black Shirt",
+      "tint": [
+        [
+          44,
+          44,
+          48
+        ],
+        [
+          86,
+          86,
+          92
+        ],
+        [
+          38,
+          38,
+          40
+        ]
+      ]
+    },
+    "5:1": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Blue Shirt",
+      "tint": [
+        [
+          52,
+          76,
+          124
+        ],
+        [
+          104,
+          133,
+          186
+        ],
+        [
+          42,
+          53,
+          75
+        ]
+      ]
+    },
+    "5:2": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Brown Shirt",
+      "tint": [
+        [
+          96,
+          70,
+          46
+        ],
+        [
+          146,
+          113,
+          76
+        ],
+        [
+          62,
+          50,
+          39
+        ]
+      ]
+    },
+    "5:3": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Grey Shirt",
+      "tint": [
+        [
+          98,
+          100,
+          104
+        ],
+        [
+          148,
+          150,
+          155
+        ],
+        [
+          63,
+          64,
+          66
+        ]
+      ]
+    },
+    "5:4": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Green Shirt",
+      "tint": [
+        [
+          62,
+          92,
+          58
+        ],
+        [
+          108,
+          143,
+          98
+        ],
+        [
+          47,
+          60,
+          45
+        ]
+      ]
+    },
+    "5:5": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Light Brown Shirt",
+      "tint": [
+        [
+          146,
+          112,
+          74
+        ],
+        [
+          192,
+          160,
+          118
+        ],
+        [
+          85,
+          70,
+          52
+        ]
+      ]
+    },
+    "5:6": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Orange Shirt",
+      "tint": [
+        [
+          186,
+          108,
+          44
+        ],
+        [
+          232,
+          158,
+          84
+        ],
+        [
+          104,
+          68,
+          38
+        ]
+      ]
+    },
+    "5:7": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Pink Shirt",
+      "tint": [
+        [
+          198,
+          130,
+          152
+        ],
+        [
+          234,
+          180,
+          196
+        ],
+        [
+          109,
+          78,
+          88
+        ]
+      ]
+    },
+    "5:8": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Purple Shirt",
+      "tint": [
+        [
+          92,
+          62,
+          124
+        ],
+        [
+          144,
+          108,
+          182
+        ],
+        [
+          60,
+          47,
+          75
+        ]
+      ]
+    },
+    "5:9": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Red Shirt",
+      "tint": [
+        [
+          132,
+          48,
+          44
+        ],
+        [
+          186,
+          88,
+          78
+        ],
+        [
+          79,
+          40,
+          38
+        ]
+      ]
+    },
+    "5:10": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "White Shirt",
+      "tint": [
+        [
+          208,
+          206,
+          198
+        ],
+        [
+          240,
+          239,
+          234
+        ],
+        [
+          114,
+          113,
+          109
+        ]
+      ]
+    },
+    "5:11": {
+      "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Yellow Shirt",
+      "tint": [
+        [
+          206,
+          178,
+          72
+        ],
+        [
+          240,
+          219,
+          128
+        ],
+        [
+          113,
+          100,
+          51
+        ]
+      ]
+    },
+    "5:12": {
+      "scene": "res://assets/actors/native/equipment/generic_leather_armor.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Leather Armor",
+      "tint": [
+        [
+          108,
+          76,
+          48
+        ],
+        [
+          152,
+          113,
+          67
+        ],
+        [
+          68,
+          53,
+          40
+        ]
+      ]
+    },
+    "5:17": {
+      "scene": "res://assets/actors/native/equipment/generic_leather_armor.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Augmented Leather Armor",
+      "tint": [
+        [
+          84,
+          60,
+          42
+        ],
+        [
+          190,
+          151,
+          84
+        ],
+        [
+          57,
+          46,
+          37
+        ]
+      ]
+    },
+    "5:13": {
+      "scene": "res://assets/actors/native/equipment/generic_chain_armor.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Chain Mail",
+      "tint": [
+        [
+          122,
+          126,
+          132
+        ],
+        [
+          170,
+          175,
+          182
+        ],
+        [
+          74,
+          76,
+          79
+        ]
+      ]
+    },
+    "5:14": {
+      "scene": "res://assets/actors/native/equipment/generic_chain_armor.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Steel Chain Mail",
+      "tint": [
+        [
+          172,
+          179,
+          188
+        ],
+        [
+          216,
+          222,
+          229
+        ],
+        [
+          97,
+          100,
+          104
+        ]
+      ]
+    },
+    "5:15": {
+      "scene": "res://assets/actors/native/equipment/generic_chain_armor.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Titanium Chain Mail",
+      "tint": [
+        [
+          198,
+          208,
+          217
+        ],
+        [
+          236,
+          242,
+          248
+        ],
+        [
+          109,
+          114,
+          118
+        ]
+      ]
+    },
+    "5:16": {
+      "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Iron Plate Mail",
+      "tint": [
+        [
+          122,
+          126,
+          132
+        ],
+        [
+          170,
+          175,
+          182
+        ],
+        [
+          74,
+          76,
+          79
+        ]
+      ]
+    },
+    "5:19": {
+      "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Steel Plate Mail",
+      "tint": [
+        [
+          172,
+          179,
+          188
+        ],
+        [
+          216,
+          222,
+          229
+        ],
+        [
+          97,
+          100,
+          104
+        ]
+      ]
+    },
+    "5:20": {
+      "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Titanium Plate Mail",
+      "tint": [
+        [
+          198,
+          208,
+          217
+        ],
+        [
+          236,
+          242,
+          248
+        ],
+        [
+          109,
+          114,
+          118
+        ]
+      ]
+    },
+    "5:21": {
+      "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Bronze Plate Mail",
+      "tint": [
+        [
+          174,
+          122,
+          60
+        ],
+        [
+          219,
+          170,
+          90
+        ],
+        [
+          98,
+          74,
+          46
+        ]
+      ]
+    },
+    "5:18": {
+      "scene": "res://assets/actors/native/equipment/generic_fur_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "name": "Fur Coat",
+      "tint": [
+        [
+          156,
+          142,
+          124
+        ],
+        [
+          208,
+          197,
+          181
+        ],
+        [
+          90,
+          83,
+          75
+        ]
+      ]
+    },
+    "6:0": {
+      "scene": "res://assets/actors/native/equipment/generic_boots.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Black Boots",
+      "tint": [
+        [
+          44,
+          44,
+          48
+        ],
+        [
+          86,
+          86,
+          92
+        ],
+        [
+          38,
+          38,
+          40
+        ]
+      ]
+    },
+    "6:1": {
+      "scene": "res://assets/actors/native/equipment/generic_boots.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Brown Boots",
+      "tint": [
+        [
+          96,
+          70,
+          46
+        ],
+        [
+          146,
+          113,
+          76
+        ],
+        [
+          62,
+          50,
+          39
+        ]
+      ]
+    },
+    "6:2": {
+      "scene": "res://assets/actors/native/equipment/generic_boots.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Dark Brown Boots",
+      "tint": [
+        [
+          64,
+          46,
+          32
+        ],
+        [
+          108,
+          84,
+          60
+        ],
+        [
+          47,
+          39,
+          33
+        ]
+      ]
+    },
+    "6:3": {
+      "scene": "res://assets/actors/native/equipment/generic_boots.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Dull Brown Boots",
+      "tint": [
+        [
+          98,
+          82,
+          64
+        ],
+        [
+          142,
+          124,
+          100
+        ],
+        [
+          63,
+          56,
+          47
+        ]
+      ]
+    },
+    "6:4": {
+      "scene": "res://assets/actors/native/equipment/generic_boots.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Light Brown Boots",
+      "tint": [
+        [
+          146,
+          112,
+          74
+        ],
+        [
+          192,
+          160,
+          118
+        ],
+        [
+          85,
+          70,
+          52
+        ]
+      ]
+    },
+    "6:5": {
+      "scene": "res://assets/actors/native/equipment/generic_boots.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Orange Boots",
+      "tint": [
+        [
+          186,
+          108,
+          44
+        ],
+        [
+          232,
+          158,
+          84
+        ],
+        [
+          104,
+          68,
+          38
+        ]
+      ]
+    },
+    "6:6": {
+      "scene": "res://assets/actors/native/equipment/generic_boots.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Leather Boots",
+      "tint": [
+        [
+          108,
+          76,
+          48
+        ],
+        [
+          152,
+          113,
+          67
+        ],
+        [
+          68,
+          53,
+          40
+        ]
+      ]
+    },
+    "6:12": {
+      "scene": "res://assets/actors/native/equipment/generic_boots.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Augmented Leather Greaves",
+      "tint": [
+        [
+          84,
+          60,
+          42
+        ],
+        [
+          190,
+          151,
+          84
+        ],
+        [
+          57,
+          46,
+          37
+        ]
+      ]
+    },
+    "6:7": {
+      "scene": "res://assets/actors/native/equipment/generic_boots_fur.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Fur Boots",
+      "tint": [
+        [
+          156,
+          142,
+          124
+        ],
+        [
+          208,
+          197,
+          181
+        ],
+        [
+          90,
+          83,
+          75
+        ]
+      ]
+    },
+    "6:8": {
+      "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Iron Greaves",
+      "tint": [
+        [
+          122,
+          126,
+          132
+        ],
+        [
+          170,
+          175,
+          182
+        ],
+        [
+          74,
+          76,
+          79
+        ]
+      ]
+    },
+    "6:9": {
+      "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Steel Greaves",
+      "tint": [
+        [
+          172,
+          179,
+          188
+        ],
+        [
+          216,
+          222,
+          229
+        ],
+        [
+          97,
+          100,
+          104
+        ]
+      ]
+    },
+    "6:10": {
+      "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Titanium Greaves",
+      "tint": [
+        [
+          198,
+          208,
+          217
+        ],
+        [
+          236,
+          242,
+          248
+        ],
+        [
+          109,
+          114,
+          118
+        ]
+      ]
+    },
+    "6:11": {
+      "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "name": "Bronze Greaves",
+      "tint": [
+        [
+          174,
+          122,
+          60
+        ],
+        [
+          219,
+          170,
+          90
+        ],
+        [
+          98,
+          74,
+          46
+        ]
+      ]
     }
   },
-  "aliases": {
-    "0:11": "0:112",
-    "1:5": "1:105",
-    "2:11": "2:105"
-  }
+  "aliases": {}
 }

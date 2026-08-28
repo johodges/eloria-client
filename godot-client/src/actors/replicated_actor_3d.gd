@@ -193,7 +193,7 @@ func _add_hair_variant(style: int, color: Color) -> void:
 		return
 	var styles: Array = styles_value as Array
 	var path: String = str(styles[posmod(style, styles.size())])
-	var native_hair: Node3D = _load_native_equipment(path)
+	var native_hair: Node3D = _equipment_instance(path)
 	if native_hair == null:
 		push_warning("Native hairstyle failed to load: " + path)
 		return
@@ -379,7 +379,8 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	if not model_config.is_empty():
 		var scene_path: String = str(model_config.get("scene", ""))
 		if str(model_config.get("attach", "socket")) == "skinned":
-			created.append_array(_attach_skinned_equipment(scene_path, part, visual_id))
+			created.append_array(_attach_skinned_equipment(scene_path, part, visual_id,
+				model_config.get("tint", []) as Array))
 		else:
 			var socket: Dictionary = _equipment_socket(part, model_config)
 			var attachment: BoneAttachment3D = _attach_socketed_equipment(
@@ -481,7 +482,7 @@ func _attach_socketed_equipment(socket: Dictionary, scene_path: String,
 	var attachment: BoneAttachment3D = _bone_attachment(bone, part, visual_id)
 	if attachment == null:
 		return null
-	var native_model: Node3D = _load_native_equipment(scene_path)
+	var native_model: Node3D = _equipment_instance(scene_path)
 	if native_model == null:
 		attachment.queue_free()
 		return null
@@ -496,65 +497,127 @@ func _attach_socketed_equipment(socket: Dictionary, scene_path: String,
 	# The socket is authored in character space; cancelling the bone rest keeps
 	# it readable while still riding the bone once the clip plays.
 	native_model.transform = rest.affine_inverse() * placement
+	_tint_equipment(native_model, model_config.get("tint", []) as Array)
 	attachment.add_child(native_model)
 	attachment.set_meta("native_equipment", true)
 	return attachment
 
-func _attach_skinned_equipment(scene_path: String, part: int,
-		visual_id: int) -> Array[Node]:
+func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
+		tint: Array = []) -> Array[Node]:
 	# The garment ships with the shared joint hierarchy so it is a valid skinned
 	# glTF on its own. Replacing its bind poses with this skeleton's rest poses
 	# retargets the garment and applies the rig fit scale in one step.
 	var created: Array[Node] = []
-	var source: Node3D = _load_native_equipment(scene_path)
-	if source == null:
-		return created
-	var source_skeleton: Skeleton3D = null
-	for node_value: Node in source.find_children("*", "Skeleton3D", true, false):
-		source_skeleton = node_value as Skeleton3D
-		break
 	var fit: float = rig_fit_scale()
 	var fit_basis: Transform3D = Transform3D(
 		Basis.IDENTITY.scaled(Vector3.ONE * fit), Vector3.ZERO)
-	for node_value: Node in source.find_children("*", "MeshInstance3D", true, false):
-		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
-		if mesh_node.mesh == null:
-			continue
-		var rebound: Skin = _rebound_skin(mesh_node.skin, source_skeleton, fit_basis)
+	# Bind poses depend only on the rig, and every actor built from one model
+	# shares a rest pose, so the rebound skin is cached per model and garment
+	# instead of rebuilt from 65 named binds for each actor that wears one.
+	var cache_key: String = "%s|%s" % [str(_model_config.get("scene", "")), scene_path]
+	for piece_value: Variant in _equipment_pieces(scene_path):
+		var piece: Dictionary = piece_value as Dictionary
+		var surface_key: String = "%s|%s" % [cache_key, str(piece.get("name", ""))]
+		var rebound: Skin = _rebound_skins.get(surface_key) as Skin
+		if rebound == null:
+			rebound = _rebound_skin(piece.get("bones", PackedStringArray()) as PackedStringArray,
+				fit_basis)
+			if rebound != null:
+				_rebound_skins[surface_key] = rebound
 		if rebound == null:
 			continue
 		var clone: MeshInstance3D = MeshInstance3D.new()
-		clone.name = "EquipmentSkin_%d_Visual_%d_%s" % [part, visual_id, mesh_node.name]
-		clone.mesh = mesh_node.mesh
+		clone.name = "EquipmentSkin_%d_Visual_%d_%s" % [part, visual_id,
+			str(piece.get("name", "Mesh"))]
+		clone.mesh = piece.get("mesh") as Mesh
 		clone.skin = rebound
+		_tint_surfaces(clone, tint)
 		_native_skeleton.add_child(clone)
 		clone.skeleton = NodePath("..")
 		clone.set_meta("native_equipment", true)
 		created.append(clone)
-	source.queue_free()
 	return created
 
-func _rebound_skin(source_skin: Skin, source_skeleton: Skeleton3D,
-		fit: Transform3D) -> Skin:
-	if source_skin == null or source_skeleton == null:
+func _equipment_instance(scene_path: String) -> Node3D:
+	var pieces: Array = _equipment_pieces(scene_path)
+	if pieces.is_empty():
 		return null
+	var holder: Node3D = Node3D.new()
+	holder.name = "NativeEquipment"
+	for piece_value: Variant in pieces:
+		var piece: Dictionary = piece_value as Dictionary
+		var mesh_node: MeshInstance3D = MeshInstance3D.new()
+		mesh_node.name = str(piece.get("name", "Mesh"))
+		mesh_node.mesh = piece.get("mesh") as Mesh
+		mesh_node.transform = piece.get("transform", Transform3D.IDENTITY)
+		holder.add_child(mesh_node)
+	return holder
+
+const TINT_SLOTS := {"base": 0, "trim": 1, "detail": 2}
+
+func _tint_equipment(root: Node3D, tint: Array) -> void:
+	if tint.is_empty():
+		return
+	for node_value: Node in root.find_children("*", "MeshInstance3D", true, false):
+		_tint_surfaces(node_value as MeshInstance3D, tint)
+
+func _tint_surfaces(mesh_node: MeshInstance3D, tint: Array) -> void:
+	# One authored mesh serves a whole material ladder, so an iron and a steel
+	# helm are the same scene under different tints. The slot is read from the
+	# material name rather than the surface index, because a piece that uses no
+	# trim geometry would otherwise shift its detail colour onto the trim.
+	if tint.is_empty() or mesh_node.mesh == null:
+		return
+	for surface: int in range(mesh_node.mesh.get_surface_count()):
+		var source: Material = mesh_node.mesh.surface_get_material(surface)
+		if source is not StandardMaterial3D:
+			continue
+		var slot: int = _tint_slot(source.resource_name, surface)
+		if slot < 0 or slot >= tint.size():
+			continue
+		var origin: StandardMaterial3D = source as StandardMaterial3D
+		var material: StandardMaterial3D = origin.duplicate()
+		material.albedo_color = _tint_colour(tint[slot], origin.albedo_color)
+		if origin.emission_enabled:
+			# An enchanted finish carries its glow on the same slot, so a shared
+			# mesh would otherwise keep the first variant's light: a Crown of
+			# Life tinted green but still glowing the Crown of Mana's blue.
+			var glow: Color = _tint_colour(tint[slot], origin.emission)
+			var authored: float = maxf(origin.emission.r, maxf(
+				origin.emission.g, origin.emission.b))
+			var tinted: float = maxf(glow.r, maxf(glow.g, glow.b))
+			material.emission = glow * (authored / maxf(tinted, 0.001))
+		mesh_node.set_surface_override_material(surface, material)
+
+static func _tint_slot(material_name: String, fallback: int) -> int:
+	var suffix: String = material_name.get_slice(" ", material_name.count(" ")).to_lower()
+	return int(TINT_SLOTS.get(suffix, fallback))
+
+static func _tint_colour(value: Variant, fallback: Color) -> Color:
+	# Tints are authored as sRGB bytes and albedo_color is sRGB, so they pass
+	# through unconverted. The generator converts the same bytes to linear on
+	# its way into the glTF factor, which the importer converts back, so a
+	# tinted piece and the mesh it was authored from land on the same colour.
+	if value is Array and (value as Array).size() >= 3:
+		var channels: Array = value as Array
+		return Color(float(channels[0]) / 255.0, float(channels[1]) / 255.0,
+			float(channels[2]) / 255.0, fallback.a)
+	return fallback
+
+func _rebound_skin(bone_names: PackedStringArray, fit: Transform3D) -> Skin:
 	# The mesh's JOINTS_0 values index this bind array, so a bind may never be
 	# skipped: dropping one would shift every later bone by a slot. A garment
 	# whose rig this actor does not carry is refused outright instead.
+	if bone_names.is_empty():
+		return null
 	var rebound: Skin = Skin.new()
-	for index: int in range(source_skin.get_bind_count()):
-		var bone_name: String = source_skin.get_bind_name(index)
-		if bone_name.is_empty():
-			var source_bone: int = source_skin.get_bind_bone(index)
-			if source_bone < 0 or source_bone >= source_skeleton.get_bone_count():
-				return null
-			bone_name = source_skeleton.get_bone_name(source_bone)
+	for bone_name: String in bone_names:
 		var target: int = _native_skeleton.find_bone(bone_name)
-		if target < 0:
+		if bone_name.is_empty() or target < 0:
 			return null
 		rebound.add_named_bind(bone_name,
 			_native_skeleton.get_bone_global_rest(target).affine_inverse() * fit)
-	return rebound if rebound.get_bind_count() > 0 else null
+	return rebound
 
 func _attach_fallback_equipment(part: int, visual_id: int,
 		part_config: Dictionary) -> Array[Node]:
@@ -595,16 +658,6 @@ func _bone_attachment(bone: String, part: int, visual_id: int) -> BoneAttachment
 	attachment.bone_name = bone
 	_native_skeleton.add_child(attachment)
 	return attachment
-
-func _load_native_equipment(path: String) -> Node3D:
-	if path.is_empty():
-		return null
-	var document: GLTFDocument = GLTFDocument.new()
-	var state: GLTFState = GLTFState.new()
-	if document.append_from_file(_external_path(path), state) != OK:
-		return null
-	var generated: Node = document.generate_scene(state)
-	return generated as Node3D if generated is Node3D else null
 
 func _equipment_fallback_mesh(shape: String) -> MeshInstance3D:
 	var instance: MeshInstance3D = MeshInstance3D.new()
@@ -741,6 +794,68 @@ func _load_native_scene(path: String) -> Array[String]:
 	model.name = "NativeModel"
 	add_child(model)
 	return []
+
+# Parsed equipment geometry, cached for the session. Only resources and plain
+# data are held: caching the imported Node3D scenes instead would keep hundreds
+# of nodes alive with no owner to free them.
+static var _equipment_pieces_cache: Dictionary = {}
+static var _rebound_skins: Dictionary = {}
+
+static func _equipment_pieces(path: String) -> Array:
+	# One parse per scene per session. The generic tier means every actor now
+	# wears a shirt, leggings and boots by default, so re-importing a GLB for
+	# each actor would cost hundreds of parses on a populated map.
+	if _equipment_pieces_cache.has(path):
+		return _equipment_pieces_cache[path] as Array
+	var pieces: Array = []
+	var document: GLTFDocument = GLTFDocument.new()
+	var state: GLTFState = GLTFState.new()
+	if document.append_from_file(_external_path(path), state) == OK:
+		var generated: Node = document.generate_scene(state)
+		var root: Node3D = generated as Node3D
+		if root != null:
+			var skeleton: Skeleton3D = null
+			for node_value: Node in root.find_children("*", "Skeleton3D", true, false):
+				skeleton = node_value as Skeleton3D
+				break
+			for node_value: Node in root.find_children("*", "MeshInstance3D", true, false):
+				var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+				if mesh_node.mesh == null:
+					continue
+				pieces.append({
+					"mesh": mesh_node.mesh,
+					"name": str(mesh_node.name),
+					"transform": _relative_transform(mesh_node, root),
+					"bones": _skin_bone_names(mesh_node.skin, skeleton),
+				})
+		if generated != null:
+			generated.free()
+	if not pieces.is_empty():
+		_equipment_pieces_cache[path] = pieces
+	return pieces
+
+static func _relative_transform(node: Node3D, root: Node3D) -> Transform3D:
+	# Accumulated by hand: global_transform is only meaningful inside the tree,
+	# and the imported scene is parsed without ever being added to one.
+	var accumulated: Transform3D = Transform3D.IDENTITY
+	var walker: Node3D = node
+	while walker != null and walker != root:
+		accumulated = walker.transform * accumulated
+		walker = walker.get_parent() as Node3D
+	return accumulated
+
+static func _skin_bone_names(skin: Skin, skeleton: Skeleton3D) -> PackedStringArray:
+	var names: PackedStringArray = PackedStringArray()
+	if skin == null:
+		return names
+	for index: int in range(skin.get_bind_count()):
+		var bone_name: String = skin.get_bind_name(index)
+		if bone_name.is_empty() and skeleton != null:
+			var source_bone: int = skin.get_bind_bone(index)
+			if source_bone >= 0 and source_bone < skeleton.get_bone_count():
+				bone_name = skeleton.get_bone_name(source_bone)
+		names.append(bone_name)
+	return names
 
 func _apply_import_adapter(config: Dictionary) -> void:
 	var model := get_node_or_null("NativeModel") as Node3D

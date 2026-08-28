@@ -674,7 +674,7 @@
       "vertices": 522,
       "triangles": 880,
       "joints": 0,
-      "bytes": 57452,
+      "bytes": 57456,
       "part": 0,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/ranger_leafblade.glb"
@@ -689,7 +689,7 @@
       "vertices": 898,
       "triangles": 1556,
       "joints": 0,
-      "bytes": 75460,
+      "bytes": 75468,
       "part": 0,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_staff.glb"
@@ -704,7 +704,7 @@
       "vertices": 600,
       "triangles": 976,
       "joints": 0,
-      "bytes": 58936,
+      "bytes": 58940,
       "part": 0,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_pick.glb"
@@ -719,7 +719,7 @@
       "vertices": 522,
       "triangles": 880,
       "joints": 0,
-      "bytes": 57456,
+      "bytes": 57460,
       "part": 0,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_cutlass.glb"
@@ -734,7 +734,7 @@
       "vertices": 438,
       "triangles": 704,
       "joints": 0,
-      "bytes": 52640,
+      "bytes": 52644,
       "part": 0,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_harpoon.glb"
@@ -749,7 +749,7 @@
       "vertices": 438,
       "triangles": 704,
       "joints": 0,
-      "bytes": 52624,
+      "bytes": 52628,
       "part": 0,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/orun_sun_spear.glb"
@@ -764,7 +764,7 @@
       "vertices": 580,
       "triangles": 956,
       "joints": 0,
-      "bytes": 60224,
+      "bytes": 60244,
       "part": 0,
       "visual": 107,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_glaive.glb"
@@ -779,7 +779,7 @@
       "vertices": 932,
       "triangles": 1384,
       "joints": 0,
-      "bytes": 76620,
+      "bytes": 76628,
       "part": 0,
       "visual": 108,
       "path": "godot-client/assets/actors/native/equipment/luminous_mace.glb"
@@ -794,7 +794,7 @@
       "vertices": 522,
       "triangles": 880,
       "joints": 0,
-      "bytes": 55256,
+      "bytes": 55260,
       "part": 0,
       "visual": 109,
       "path": "godot-client/assets/actors/native/equipment/votary_ice_sword.glb"
@@ -839,7 +839,7 @@
       "vertices": 438,
       "triangles": 704,
       "joints": 0,
-      "bytes": 52672,
+      "bytes": 52684,
       "part": 0,
       "visual": 112,
       "path": "godot-client/assets/actors/native/equipment/four_gates_guard_spear_native.glb"
@@ -854,7 +854,7 @@
       "vertices": 254,
       "triangles": 328,
       "joints": 0,
-      "bytes": 51520,
+      "bytes": 51540,
       "part": 0,
       "visual": 113,
       "path": "godot-client/assets/actors/native/equipment/maritime_crossbow.glb"
@@ -869,7 +869,7 @@
       "vertices": 765,
       "triangles": 1192,
       "joints": 0,
-      "bytes": 78244,
+      "bytes": 78252,
       "part": 1,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_roundshield.glb"
@@ -884,7 +884,7 @@
       "vertices": 765,
       "triangles": 1192,
       "joints": 0,
-      "bytes": 66812,
+      "bytes": 66832,
       "part": 1,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_shield.glb"
@@ -899,7 +899,7 @@
       "vertices": 765,
       "triangles": 1192,
       "joints": 0,
-      "bytes": 68988,
+      "bytes": 69008,
       "part": 1,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_anchor_shield.glb"
@@ -914,7 +914,7 @@
       "vertices": 765,
       "triangles": 1192,
       "joints": 0,
-      "bytes": 68964,
+      "bytes": 68968,
       "part": 1,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_sun_shield.glb"
@@ -929,7 +929,7 @@
       "vertices": 935,
       "triangles": 1352,
       "joints": 0,
-      "bytes": 78152,
+      "bytes": 78156,
       "part": 1,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_shell_shield.glb"
@@ -959,7 +959,7 @@
       "vertices": 1146,
       "triangles": 1900,
       "joints": 65,
-      "bytes": 116516,
+      "bytes": 116524,
       "part": 2,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_leaf_cape.glb"
@@ -974,7 +974,7 @@
       "vertices": 1146,
       "triangles": 1900,
       "joints": 65,
-      "bytes": 116544,
+      "bytes": 116540,
       "part": 2,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_crystal_cape.glb"
@@ -989,7 +989,7 @@
       "vertices": 1146,
       "triangles": 1900,
       "joints": 65,
-      "bytes": 116520,
+      "bytes": 116524,
       "part": 2,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_storm_cape.glb"
@@ -1004,7 +1004,7 @@
       "vertices": 1146,
       "triangles": 1900,
       "joints": 65,
-      "bytes": 116496,
+      "bytes": 116500,
       "part": 2,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_rider_cape.glb"
@@ -1019,7 +1019,7 @@
       "vertices": 1146,
       "triangles": 1900,
       "joints": 65,
-      "bytes": 116516,
+      "bytes": 116520,
       "part": 2,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_frond_cape.glb"
@@ -1049,7 +1049,7 @@
       "vertices": 573,
       "triangles": 1014,
       "joints": 0,
-      "bytes": 59960,
+      "bytes": 59964,
       "part": 3,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_hood.glb"
@@ -1064,7 +1064,7 @@
       "vertices": 703,
       "triangles": 1178,
       "joints": 0,
-      "bytes": 63908,
+      "bytes": 63916,
       "part": 3,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_helm.glb"
@@ -1079,7 +1079,7 @@
       "vertices": 703,
       "triangles": 1178,
       "joints": 0,
-      "bytes": 66084,
+      "bytes": 66088,
       "part": 3,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_helm.glb"
@@ -1094,7 +1094,7 @@
       "vertices": 703,
       "triangles": 1178,
       "joints": 0,
-      "bytes": 66048,
+      "bytes": 66068,
       "part": 3,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_sunmane_helm.glb"
@@ -1109,7 +1109,7 @@
       "vertices": 761,
       "triangles": 1274,
       "joints": 0,
-      "bytes": 70876,
+      "bytes": 70884,
       "part": 3,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_crest_helm.glb"
@@ -1124,7 +1124,7 @@
       "vertices": 676,
       "triangles": 924,
       "joints": 0,
-      "bytes": 62188,
+      "bytes": 62192,
       "part": 3,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/luminous_circlet.glb"
@@ -1154,7 +1154,7 @@
       "vertices": 761,
       "triangles": 1274,
       "joints": 0,
-      "bytes": 66912,
+      "bytes": 66920,
       "part": 3,
       "visual": 107,
       "path": "godot-client/assets/actors/native/equipment/stoneborn_crown.glb"
@@ -1169,7 +1169,7 @@
       "vertices": 1560,
       "triangles": 2752,
       "joints": 0,
-      "bytes": 104848,
+      "bytes": 104856,
       "part": 3,
       "visual": 108,
       "path": "godot-client/assets/actors/native/equipment/mycelari_cap.glb"
@@ -1184,7 +1184,7 @@
       "vertices": 1371,
       "triangles": 2294,
       "joints": 65,
-      "bytes": 135904,
+      "bytes": 135908,
       "part": 4,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_legs.glb"
@@ -1199,7 +1199,7 @@
       "vertices": 1371,
       "triangles": 2294,
       "joints": 65,
-      "bytes": 133708,
+      "bytes": 133728,
       "part": 4,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_greaves.glb"
@@ -1214,7 +1214,7 @@
       "vertices": 1371,
       "triangles": 2294,
       "joints": 65,
-      "bytes": 130308,
+      "bytes": 130312,
       "part": 4,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_trousers.glb"
@@ -1229,7 +1229,7 @@
       "vertices": 1371,
       "triangles": 2294,
       "joints": 65,
-      "bytes": 135872,
+      "bytes": 135880,
       "part": 4,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_rider_legs.glb"
@@ -1244,7 +1244,7 @@
       "vertices": 1371,
       "triangles": 2294,
       "joints": 65,
-      "bytes": 137696,
+      "bytes": 137704,
       "part": 4,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_legs.glb"
@@ -1259,7 +1259,7 @@
       "vertices": 1371,
       "triangles": 2294,
       "joints": 65,
-      "bytes": 140008,
+      "bytes": 140012,
       "part": 4,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/votary_winter_legs.glb"
@@ -1274,7 +1274,7 @@
       "vertices": 975,
       "triangles": 1678,
       "joints": 65,
-      "bytes": 107048,
+      "bytes": 107056,
       "part": 4,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_pants.glb"
@@ -1289,7 +1289,7 @@
       "vertices": 1252,
       "triangles": 2060,
       "joints": 65,
-      "bytes": 128320,
+      "bytes": 128328,
       "part": 5,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_cuirass.glb"
@@ -1304,7 +1304,7 @@
       "vertices": 1252,
       "triangles": 2060,
       "joints": 65,
-      "bytes": 126148,
+      "bytes": 126152,
       "part": 5,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_cuirass.glb"
@@ -1334,7 +1334,7 @@
       "vertices": 1252,
       "triangles": 2060,
       "joints": 65,
-      "bytes": 128268,
+      "bytes": 128288,
       "part": 5,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_sun_cuirass.glb"
@@ -1349,7 +1349,7 @@
       "vertices": 1252,
       "triangles": 2060,
       "joints": 65,
-      "bytes": 130112,
+      "bytes": 130116,
       "part": 5,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_cuirass.glb"
@@ -1364,7 +1364,7 @@
       "vertices": 1593,
       "triangles": 2766,
       "joints": 65,
-      "bytes": 144840,
+      "bytes": 144844,
       "part": 5,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/luminous_turquoise_robe.glb"
@@ -1379,7 +1379,7 @@
       "vertices": 1563,
       "triangles": 2706,
       "joints": 65,
-      "bytes": 152608,
+      "bytes": 152612,
       "part": 5,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/votary_fur_mantle.glb"
@@ -1394,7 +1394,7 @@
       "vertices": 1252,
       "triangles": 2060,
       "joints": 65,
-      "bytes": 128312,
+      "bytes": 128316,
       "part": 5,
       "visual": 107,
       "path": "godot-client/assets/actors/native/equipment/stoneborn_plate.glb"
@@ -1409,7 +1409,7 @@
       "vertices": 1593,
       "triangles": 2766,
       "joints": 65,
-      "bytes": 142132,
+      "bytes": 142136,
       "part": 5,
       "visual": 108,
       "path": "godot-client/assets/actors/native/equipment/mycelari_mantle.glb"
@@ -1424,7 +1424,7 @@
       "vertices": 1252,
       "triangles": 2060,
       "joints": 65,
-      "bytes": 128320,
+      "bytes": 128340,
       "part": 5,
       "visual": 109,
       "path": "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass.glb"
@@ -1439,7 +1439,7 @@
       "vertices": 1309,
       "triangles": 2166,
       "joints": 65,
-      "bytes": 126300,
+      "bytes": 126304,
       "part": 5,
       "visual": 110,
       "path": "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt.glb"
@@ -1454,7 +1454,7 @@
       "vertices": 1146,
       "triangles": 1784,
       "joints": 65,
-      "bytes": 121824,
+      "bytes": 121832,
       "part": 6,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_boots.glb"
@@ -1469,7 +1469,7 @@
       "vertices": 1146,
       "triangles": 1784,
       "joints": 65,
-      "bytes": 119652,
+      "bytes": 119656,
       "part": 6,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_boots.glb"
@@ -1484,7 +1484,7 @@
       "vertices": 1146,
       "triangles": 1784,
       "joints": 65,
-      "bytes": 121824,
+      "bytes": 121832,
       "part": 6,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_boots.glb"
@@ -1499,7 +1499,7 @@
       "vertices": 1146,
       "triangles": 1784,
       "joints": 65,
-      "bytes": 121796,
+      "bytes": 121804,
       "part": 6,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_rider_boots.glb"
@@ -1514,7 +1514,7 @@
       "vertices": 1146,
       "triangles": 1784,
       "joints": 65,
-      "bytes": 123600,
+      "bytes": 123624,
       "part": 6,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_boots.glb"
@@ -1544,7 +1544,7 @@
       "vertices": 1146,
       "triangles": 1784,
       "joints": 65,
-      "bytes": 121820,
+      "bytes": 121828,
       "part": 6,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_boots.glb"
@@ -1559,7 +1559,7 @@
       "vertices": 728,
       "triangles": 1328,
       "joints": 0,
-      "bytes": 78684,
+      "bytes": 78704,
       "part": 7,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_amulet.glb"
@@ -1574,7 +1574,7 @@
       "vertices": 728,
       "triangles": 1328,
       "joints": 0,
-      "bytes": 67260,
+      "bytes": 67264,
       "part": 7,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_resonator.glb"
@@ -1589,7 +1589,7 @@
       "vertices": 728,
       "triangles": 1328,
       "joints": 0,
-      "bytes": 69432,
+      "bytes": 69436,
       "part": 7,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_compass.glb"
@@ -1604,7 +1604,7 @@
       "vertices": 728,
       "triangles": 1328,
       "joints": 0,
-      "bytes": 69420,
+      "bytes": 69424,
       "part": 7,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_sun_amulet.glb"
@@ -1619,7 +1619,7 @@
       "vertices": 728,
       "triangles": 1328,
       "joints": 0,
-      "bytes": 71244,
+      "bytes": 71252,
       "part": 7,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_shell_amulet.glb"
@@ -1641,7 +1641,7 @@
     }
   },
   "validation": {
-    "files": 123,
+    "files": 166,
     "results": {
       "godot-client/assets/actors/native/races/mycelari_female.glb": {
         "nodes": 78,
@@ -2380,6 +2380,264 @@
         "meshes": 1,
         "skins": 0,
         "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_staff.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_hood_fur.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_fur_coat.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_rapier.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_sword_fire.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_gloves_fur.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_hammer.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_sword_thermal.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_crossbow.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_leather_armor.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_legs_fur.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_shield_wood.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_chain_armor.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_hood_leather.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_cuisses.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_pickaxe.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_greaves.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_shirt.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_crown.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_cape.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_sword_magic.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_pants.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_helm.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_cutlass.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_sword_ice.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_bow.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_shield_metal.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_gloves_leather.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_boots.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_pickaxe_magic.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_sword.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_boots_fur.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_legs_leather.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_plate_armor.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_greatsword.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_cape_fur.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_battleaxe_fire.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_club_wood.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_quiver.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_club_bone.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_battleaxe.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_battleaxe_ice.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_battleaxe_magic.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
       }
     }
   },
@@ -2424,5 +2682,850 @@
       "note": "Authored to equine proportions on the shared creature rig; the generic creature generator's sphere-and-cylinder blank cannot produce a horse."
     }
   },
-  "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire."
+  "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire.",
+  "genericEquipment": {
+    "generic_sword": {
+      "id": "generic_sword",
+      "name": "Sword",
+      "kind": "sword",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 57396,
+      "part": 0,
+      "visuals": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        58
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_sword.glb"
+    },
+    "generic_sword_fire": {
+      "id": "generic_sword_fire",
+      "name": "Sword of Fire",
+      "kind": "sword",
+      "finish": "fire",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 57516,
+      "part": 0,
+      "visuals": [
+        15,
+        16,
+        18,
+        21,
+        25,
+        29,
+        33
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_sword_fire.glb"
+    },
+    "generic_sword_ice": {
+      "id": "generic_sword_ice",
+      "name": "Sword of Ice",
+      "kind": "sword",
+      "finish": "cold",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 69452,
+      "part": 0,
+      "visuals": [
+        17,
+        19,
+        22,
+        26,
+        30,
+        34
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_sword_ice.glb"
+    },
+    "generic_sword_magic": {
+      "id": "generic_sword_magic",
+      "name": "Sword of Magic",
+      "kind": "sword",
+      "finish": "magic",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 56876,
+      "part": 0,
+      "visuals": [
+        20,
+        23,
+        27,
+        31,
+        35
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_sword_magic.glb"
+    },
+    "generic_sword_thermal": {
+      "id": "generic_sword_thermal",
+      "name": "Thermal Sword",
+      "kind": "sword",
+      "finish": "thermal",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 69460,
+      "part": 0,
+      "visuals": [
+        24,
+        28,
+        32,
+        36
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_sword_thermal.glb"
+    },
+    "generic_greatsword": {
+      "id": "generic_greatsword",
+      "name": "Great Sword",
+      "kind": "greatsword",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 57420,
+      "part": 0,
+      "visuals": [
+        51,
+        53,
+        54,
+        55
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_greatsword.glb"
+    },
+    "generic_cutlass": {
+      "id": "generic_cutlass",
+      "name": "Cutlass",
+      "kind": "curved_sword",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 584,
+      "triangles": 960,
+      "joints": 0,
+      "bytes": 60352,
+      "part": 0,
+      "visuals": [
+        52,
+        57
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_cutlass.glb"
+    },
+    "generic_rapier": {
+      "id": "generic_rapier",
+      "name": "Rapier",
+      "kind": "rapier",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 602,
+      "triangles": 1000,
+      "joints": 0,
+      "bytes": 61400,
+      "part": 0,
+      "visuals": [
+        56
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_rapier.glb"
+    },
+    "generic_staff": {
+      "id": "generic_staff",
+      "name": "Staff",
+      "kind": "staff",
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 898,
+      "triangles": 1556,
+      "joints": 0,
+      "bytes": 86800,
+      "part": 0,
+      "visuals": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_staff.glb"
+    },
+    "generic_battleaxe": {
+      "id": "generic_battleaxe",
+      "name": "Battle Axe",
+      "kind": "battleaxe",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 526,
+      "triangles": 844,
+      "joints": 0,
+      "bytes": 57116,
+      "part": 0,
+      "visuals": [
+        38,
+        39,
+        40
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_battleaxe.glb"
+    },
+    "generic_battleaxe_fire": {
+      "id": "generic_battleaxe_fire",
+      "name": "Battle Axe of Fire",
+      "kind": "battleaxe",
+      "finish": "fire",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 526,
+      "triangles": 844,
+      "joints": 0,
+      "bytes": 57236,
+      "part": 0,
+      "visuals": [
+        41,
+        43,
+        45
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_battleaxe_fire.glb"
+    },
+    "generic_battleaxe_ice": {
+      "id": "generic_battleaxe_ice",
+      "name": "Battle Axe of Ice",
+      "kind": "battleaxe",
+      "finish": "cold",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 526,
+      "triangles": 844,
+      "joints": 0,
+      "bytes": 69172,
+      "part": 0,
+      "visuals": [
+        42,
+        44
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_battleaxe_ice.glb"
+    },
+    "generic_battleaxe_magic": {
+      "id": "generic_battleaxe_magic",
+      "name": "Battle Axe of Magic",
+      "kind": "battleaxe",
+      "finish": "magic",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 526,
+      "triangles": 844,
+      "joints": 0,
+      "bytes": 56596,
+      "part": 0,
+      "visuals": [
+        46
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_battleaxe_magic.glb"
+    },
+    "generic_club_bone": {
+      "id": "generic_club_bone",
+      "name": "Bone Club",
+      "kind": "club",
+      "finish": "shell",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 766,
+      "triangles": 1340,
+      "joints": 0,
+      "bytes": 71776,
+      "part": 0,
+      "visuals": [
+        49
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_club_bone.glb"
+    },
+    "generic_club_wood": {
+      "id": "generic_club_wood",
+      "name": "Wooden Club",
+      "kind": "club",
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 766,
+      "triangles": 1340,
+      "joints": 0,
+      "bytes": 79248,
+      "part": 0,
+      "visuals": [
+        50
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_club_wood.glb"
+    },
+    "generic_hammer": {
+      "id": "generic_hammer",
+      "name": "War Hammer",
+      "kind": "hammer",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 492,
+      "triangles": 768,
+      "joints": 0,
+      "bytes": 55108,
+      "part": 0,
+      "visuals": [
+        12,
+        13
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_hammer.glb"
+    },
+    "generic_pickaxe": {
+      "id": "generic_pickaxe",
+      "name": "Pickaxe",
+      "kind": "pick",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 600,
+      "triangles": 976,
+      "joints": 0,
+      "bytes": 61040,
+      "part": 0,
+      "visuals": [
+        14
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_pickaxe.glb"
+    },
+    "generic_pickaxe_magic": {
+      "id": "generic_pickaxe_magic",
+      "name": "Magic Pickaxe",
+      "kind": "pick",
+      "finish": "magic",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 600,
+      "triangles": 976,
+      "joints": 0,
+      "bytes": 60504,
+      "part": 0,
+      "visuals": [
+        37
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_pickaxe_magic.glb"
+    },
+    "generic_bow": {
+      "id": "generic_bow",
+      "name": "Bow",
+      "kind": "bow",
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 202,
+      "triangles": 264,
+      "joints": 0,
+      "bytes": 48996,
+      "part": 0,
+      "visuals": [
+        64,
+        65,
+        66,
+        67
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_bow.glb"
+    },
+    "generic_crossbow": {
+      "id": "generic_crossbow",
+      "name": "Crossbow",
+      "kind": "crossbow",
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 254,
+      "triangles": 328,
+      "joints": 0,
+      "bytes": 51444,
+      "part": 0,
+      "visuals": [
+        68
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_crossbow.glb"
+    },
+    "generic_gloves_leather": {
+      "id": "generic_gloves_leather",
+      "name": "Leather Gloves",
+      "kind": "gloves",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "hands",
+      "vertices": 578,
+      "triangles": 816,
+      "joints": 65,
+      "bytes": 86388,
+      "part": 0,
+      "visuals": [
+        48
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_gloves_leather.glb"
+    },
+    "generic_gloves_fur": {
+      "id": "generic_gloves_fur",
+      "name": "Fur Gloves",
+      "kind": "gloves",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "hands",
+      "vertices": 578,
+      "triangles": 816,
+      "joints": 65,
+      "bytes": 90484,
+      "part": 0,
+      "visuals": [
+        47
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_gloves_fur.glb"
+    },
+    "generic_shield_wood": {
+      "id": "generic_shield_wood",
+      "name": "Wooden Shield",
+      "kind": "roundshield",
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 765,
+      "triangles": 1192,
+      "joints": 0,
+      "bytes": 78212,
+      "part": 1,
+      "visuals": [
+        0,
+        1
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_shield_wood.glb"
+    },
+    "generic_shield_metal": {
+      "id": "generic_shield_metal",
+      "name": "Metal Shield",
+      "kind": "kite",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 765,
+      "triangles": 1192,
+      "joints": 0,
+      "bytes": 68948,
+      "part": 1,
+      "visuals": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_shield_metal.glb"
+    },
+    "generic_quiver": {
+      "id": "generic_quiver",
+      "name": "Quiver",
+      "kind": "quiver",
+      "finish": "leather",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 690,
+      "triangles": 912,
+      "joints": 0,
+      "bytes": 63156,
+      "part": 1,
+      "visuals": [
+        7,
+        13
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_quiver.glb"
+    },
+    "generic_cape": {
+      "id": "generic_cape",
+      "name": "Cape",
+      "kind": "cape",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "vertices": 1146,
+      "triangles": 1900,
+      "joints": 65,
+      "bytes": 116448,
+      "part": 2,
+      "visuals": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_cape.glb"
+    },
+    "generic_cape_fur": {
+      "id": "generic_cape_fur",
+      "name": "Fur Cape",
+      "kind": "cape",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "vertices": 1146,
+      "triangles": 1900,
+      "joints": 65,
+      "bytes": 126176,
+      "part": 2,
+      "visuals": [
+        10
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_cape_fur.glb"
+    },
+    "generic_helm": {
+      "id": "generic_helm",
+      "name": "Helm",
+      "kind": "helm",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 703,
+      "triangles": 1178,
+      "joints": 0,
+      "bytes": 66000,
+      "part": 3,
+      "visuals": [
+        0,
+        7,
+        8,
+        9
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_helm.glb"
+    },
+    "generic_hood_leather": {
+      "id": "generic_hood_leather",
+      "name": "Leather Cap",
+      "kind": "hood",
+      "finish": "leather",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 573,
+      "triangles": 1014,
+      "joints": 0,
+      "bytes": 59912,
+      "part": 3,
+      "visuals": [
+        2
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_hood_leather.glb"
+    },
+    "generic_hood_fur": {
+      "id": "generic_hood_fur",
+      "name": "Fur Cap",
+      "kind": "hood",
+      "finish": "fur",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 573,
+      "triangles": 1014,
+      "joints": 0,
+      "bytes": 64008,
+      "part": 3,
+      "visuals": [
+        1,
+        3,
+        4
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_hood_fur.glb"
+    },
+    "generic_crown": {
+      "id": "generic_crown",
+      "name": "Crown",
+      "kind": "circlet",
+      "finish": "crystal",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 676,
+      "triangles": 924,
+      "joints": 0,
+      "bytes": 59908,
+      "part": 3,
+      "visuals": [
+        5,
+        6
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_crown.glb"
+    },
+    "generic_pants": {
+      "id": "generic_pants",
+      "name": "Pants",
+      "kind": "pants",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 975,
+      "triangles": 1678,
+      "joints": 65,
+      "bytes": 106976,
+      "part": 4,
+      "visuals": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_pants.glb"
+    },
+    "generic_legs_leather": {
+      "id": "generic_legs_leather",
+      "name": "Leather Leggings",
+      "kind": "legs",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 135864,
+      "part": 4,
+      "visuals": [
+        9,
+        15
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_legs_leather.glb"
+    },
+    "generic_legs_fur": {
+      "id": "generic_legs_fur",
+      "name": "Fur Leggings",
+      "kind": "legs",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 139960,
+      "part": 4,
+      "visuals": [
+        11
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_legs_fur.glb"
+    },
+    "generic_cuisses": {
+      "id": "generic_cuisses",
+      "name": "Cuisses",
+      "kind": "legs",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 135816,
+      "part": 4,
+      "visuals": [
+        10,
+        12,
+        13,
+        14
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_cuisses.glb"
+    },
+    "generic_shirt": {
+      "id": "generic_shirt",
+      "name": "Shirt",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1309,
+      "triangles": 2166,
+      "joints": 65,
+      "bytes": 126200,
+      "part": 5,
+      "visuals": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_shirt.glb"
+    },
+    "generic_leather_armor": {
+      "id": "generic_leather_armor",
+      "name": "Leather Armor",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 128272,
+      "part": 5,
+      "visuals": [
+        12,
+        17
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_leather_armor.glb"
+    },
+    "generic_chain_armor": {
+      "id": "generic_chain_armor",
+      "name": "Chain Armor",
+      "kind": "cuirass",
+      "finish": "mail",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 130056,
+      "part": 5,
+      "visuals": [
+        13,
+        14,
+        15
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_chain_armor.glb"
+    },
+    "generic_plate_armor": {
+      "id": "generic_plate_armor",
+      "name": "Plate Armor",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 128256,
+      "part": 5,
+      "visuals": [
+        16,
+        19,
+        20,
+        21
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_plate_armor.glb"
+    },
+    "generic_fur_coat": {
+      "id": "generic_fur_coat",
+      "name": "Fur Coat",
+      "kind": "coat",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1563,
+      "triangles": 2706,
+      "joints": 65,
+      "bytes": 152568,
+      "part": 5,
+      "visuals": [
+        18
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_fur_coat.glb"
+    },
+    "generic_boots": {
+      "id": "generic_boots",
+      "name": "Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 121748,
+      "part": 6,
+      "visuals": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        12
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_boots.glb"
+    },
+    "generic_boots_fur": {
+      "id": "generic_boots_fur",
+      "name": "Fur Boots",
+      "kind": "boots",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 125880,
+      "part": 6,
+      "visuals": [
+        7
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_boots_fur.glb"
+    },
+    "generic_greaves": {
+      "id": "generic_greaves",
+      "name": "Greaves",
+      "kind": "boots",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 121752,
+      "part": 6,
+      "visuals": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_greaves.glb"
+    }
+  }
 }

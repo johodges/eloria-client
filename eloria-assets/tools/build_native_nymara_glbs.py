@@ -267,7 +267,10 @@ class GLB:
                  texture_png: bytes | None = None, normal_png: bytes | None = None,
                  metallic_roughness_png: bytes | None = None,
                  double_sided: bool = False) -> int:
-        factor = [c / 255. for c in color] + [1.]
+        # Modified 2026-08-28 for Eloria Client: palettes are authored as sRGB
+        # but glTF defines these factors as linear, so writing the bytes raw
+        # landed every untextured surface about forty percent bright.
+        factor = equipment_authoring.srgb_to_linear(color) + [1.]
         pbr = {"baseColorFactor": factor, "metallicFactor": metallic,
                "roughnessFactor": roughness}
         if texture_png is not None:
@@ -279,7 +282,7 @@ class GLB:
         if normal_png is not None:
             material["normalTexture"] = {"index": self.texture(name + " Normal", normal_png)}
         if emissive is not None:
-            material["emissiveFactor"] = [c / 255. for c in emissive]
+            material["emissiveFactor"] = equipment_authoring.srgb_to_linear(emissive)
         self.doc["materials"].append(material)
         return len(self.doc["materials"]) - 1
 
@@ -1296,16 +1299,20 @@ def main() -> None:
     parser.add_argument("--animation-library",type=Path,
                         default=repo_root/"godot-client/assets/actors/native/shared/Universal_Animation_Library.glb",
                         help="clip source used to solve weapon grips in the idle pose")
-    parser.add_argument("--only",choices=("all","equipment"),default="all",
-                        help="rebuild only the equipment library and its registry")
+    parser.add_argument("--only",choices=("all","equipment","creatures"),default="all",
+                        help="rebuild a single section instead of the whole library")
     args=parser.parse_args()
-    if args.only=="equipment" and args.manifest.is_file():
+    if args.only in ("equipment","creatures") and args.manifest.is_file():
         manifest=json.loads(args.manifest.read_text(encoding="utf-8"))
-        manifest["equipment"]={}
+        if args.only=="equipment":
+            manifest["equipment"]={}
+            manifest["genericEquipment"]={}
+        else:
+            manifest["creatures"]={}
     else:
         manifest={"schemaVersion":2,"source":"nymara-concept-art-named.zip",
                   "pipeline":"build_native_nymara_glbs.py","races":{},"hair":{},
-                  "creatures":{},"equipment":{}}
+                  "creatures":{},"equipment":{},"genericEquipment":{}}
     if args.only=="all":
         for gender in ("female", "male"):
             for style in HAIR_SOURCES:
@@ -1319,11 +1326,21 @@ def main() -> None:
                 model=f"{race}_{gender}";path=args.output/"races"/f"{model}.glb"
                 manifest["races"][model]=build_player(args.source,path,race,gender)|{"path":str(path.relative_to(repo_root))}
                 print("race",model,manifest["races"][model])
+    if args.only in ("all","creatures"):
         for actor_type,slug,label,archetype,base,accent,scale in CREATURES:
             actor_type += CREATURE_ACTOR_TYPE_OFFSET
             path=args.output/"creatures"/f"{slug}.glb"
             manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":str(path.relative_to(repo_root))}
             print("creature",slug,manifest["creatures"][slug])
+    if args.only=="creatures":
+        previous=manifest.get("validation",{}).get("results",{})
+        rebuilt={str(path.relative_to(repo_root)):validate_glb(path)
+                 for path in (args.output/"creatures").rglob("*.glb")}
+        merged={**previous,**{k:v for k,v in rebuilt.items() if k in previous}}
+        manifest["validation"]={"files":len(merged),"results":merged}
+        write_json(args.manifest, manifest)
+        print(f"rebuilt {len(manifest['creatures'])} creature GLBs")
+        return
     # Equipment is authored against the rig as it exists on disk, so a full run
     # has to build the races first or the geometry is fitted to a stale rest
     # pose. Loading the rig here also keeps a clean tree bootstrappable.
@@ -1338,6 +1355,19 @@ def main() -> None:
         manifest["equipment"][slug]=build_equipment(path,slug,label,kind,base,accent,rig)|{
             "part":part,"visual":visual,"path":str(path.relative_to(repo_root))}
         print("equipment",slug,manifest["equipment"][slug])
+    # The generic tier claims the legacy visual ids directly. One authored mesh
+    # serves a whole material ladder; the ids differ by a runtime tint.
+    manifest["genericEquipment"]={}
+    for piece in equipment_authoring.GENERIC_EQUIPMENT:
+        path=args.output/"equipment"/f"{piece.slug}.glb"
+        info=equipment_authoring.build_equipment_piece(
+            path,rig,piece.slug,piece.label,piece.kind,piece.base,piece.accent,
+            finish=piece.finish)
+        manifest["genericEquipment"][piece.slug]=info|{
+            "part":piece.part,
+            "visuals":[visual for visual,_n,_b,_a in piece.variants],
+            "path":str(path.relative_to(repo_root))}
+        print("generic",piece.slug,manifest["genericEquipment"][piece.slug])
     validation={str(path.relative_to(repo_root)):validate_glb(path) for path in args.output.rglob("*.glb")}
     if args.only=="equipment":
         # Only revalidate what this run rebuilt.  Ambient scenery GLBs are

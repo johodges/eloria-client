@@ -536,6 +536,10 @@ GARMENT_SKIN = {
     "legs": ["pelvis", "thigh_l", "thigh_r", "calf_l", "calf_r", "foot_l", "foot_r"],
     "boots": ["calf_l", "calf_r", "foot_l", "foot_r", "ball_l", "ball_r"],
     "cape": ["spine_02", "spine_03", "clavicle_l", "clavicle_r", "pelvis", "spine_01"],
+    "hands": ["hand_l", "hand_r", "lowerarm_l", "lowerarm_r",
+              "index_01_l", "index_01_r", "middle_01_l", "middle_01_r",
+              "ring_01_l", "ring_01_r", "pinky_01_l", "pinky_01_r",
+              "thumb_01_l", "thumb_01_r"],
 }
 
 
@@ -818,6 +822,33 @@ def prop_geometry(kind: str) -> Surface:
     if kind == "sword":
         _hilt(surface)
         _blade(surface, .74, .062, base=.03, thickness=.012)
+    elif kind == "greatsword":
+        # A two-hander: longer grip, wider quillons, a heavier blade.
+        _hilt(surface, grip_low=-.20, grip_high=.020, guard_span=.150)
+        _blade(surface, .96, .086, base=.04, thickness=.016)
+    elif kind == "curved_sword":
+        _hilt(surface, grip_low=-.10, grip_high=.012, guard_span=.085)
+        _blade(surface, .70, .066, base=.03, thickness=.012, curve=.115,
+               fuller=False)
+        # Knuckle bow, which is what reads a cutlass apart from a longsword.
+        surface.tube([np.array([.030, .010, 0.]), np.array([.105, -.040, 0.]),
+                      np.array([.090, -.115, 0.]), np.array([.010, -.130, 0.])],
+                     [.011, .013, .013, .011], MATERIAL_TRIM, sides=10)
+    elif kind == "rapier":
+        _hilt(surface, grip_low=-.10, grip_high=.010, guard_span=.052,
+              pommel=True)
+        _blade(surface, .82, .028, base=.03, thickness=.020, fuller=False)
+        # Swept cup guard.
+        cup = []
+        for travel, radius, depth in ((.0, .022, .010), (.35, .056, -.010),
+                                       (.70, .070, -.040), (1.0, .066, -.070)):
+            ring = np.empty((20, 3))
+            for index in range(20):
+                angle = 2 * math.pi * index / 20
+                ring[index] = (math.cos(angle) * radius, .010 - depth,
+                               math.sin(angle) * radius)
+            cup.append(ring)
+        surface.loft(cup, MATERIAL_TRIM)
     elif kind == "glaive":
         _haft(surface, -.42, .58, .019)
         _blade(surface, 1.02, .085, base=.55, thickness=.014, curve=.055)
@@ -849,6 +880,49 @@ def prop_geometry(kind: str) -> Surface:
                          [.030, .004], MATERIAL_TRIM, sides=10)
         surface.tube([np.array([0., .625, 0.]), np.array([0., .70, 0.])],
                      [.030, .004], MATERIAL_TRIM, sides=10)
+    elif kind == "battleaxe":
+        _haft(surface, -.34, .46, .021)
+        # A bearded double head: two swept crescents either side of the haft.
+        for sign in (-1., 1.):
+            blade = []
+            for travel in np.linspace(0., 1., 12):
+                reach = sign * (.052 + .150 * math.sin(travel * math.pi) ** .70)
+                height = .560 - .230 * travel
+                half = .020 + .020 * math.sin(travel * math.pi)
+                blade.append(np.array([
+                    (sign * .034, height + half, -.011),
+                    (reach, height + half * .55, -.007),
+                    (reach, height - half * .55, .007),
+                    (sign * .034, height - half, .011)]))
+            surface.loft(blade, MATERIAL_BASE, cap_start=True, cap_end=True)
+        surface.revolve([(.0, .0), (.036, .020), (.030, .052), (.0, .070)],
+                        MATERIAL_TRIM, sides=18, centre=(0., .500, 0.))
+    elif kind == "club":
+        # A knot of bone or a stripped branch: no edge, all weight at the end.
+        surface.tube([np.array([0., -.30, 0.]), np.array([0., -.10, 0.]),
+                      np.array([0., .16, 0.]), np.array([0., .40, 0.]),
+                      np.array([0., .58, 0.])],
+                     [.021, .024, .030, .042, .050], MATERIAL_BASE, sides=14)
+        surface.sphere((0., .615, 0.), (.108, .096, .102), MATERIAL_BASE,
+                       rings=12, sides=18)
+        for index in range(4):
+            angle = 2 * math.pi * index / 4 + .4
+            surface.sphere((math.cos(angle) * .052, .630, math.sin(angle) * .050),
+                           (.040, .036, .038), MATERIAL_TRIM, rings=8, sides=12)
+    elif kind == "quiver":
+        # Worn on the off-hand slot, so it is authored like a held prop.
+        surface.revolve([(.0, -.20), (.058, -.19), (.062, .0), (.066, .18),
+                         (.060, .21)], MATERIAL_BASE, sides=20)
+        for height in (-.14, .04, .17):
+            surface.revolve([(.0, -.014), (.070, -.010), (.070, .010), (.0, .014)],
+                            MATERIAL_TRIM, sides=20, centre=(0., height, 0.))
+        for index in range(7):
+            angle = 2 * math.pi * index / 7
+            base = np.array([math.cos(angle) * .030, .190, math.sin(angle) * .030])
+            surface.tube([base, base + np.array([0., .155, 0.])],
+                         [.005, .005], MATERIAL_DETAIL, sides=6)
+            surface.revolve([(.0, .0), (.017, .020), (.0, .042)], MATERIAL_TRIM,
+                            sides=8, centre=(base[0], .330, base[2]))
     elif kind == "hammer":
         _haft(surface, -.36, .52, .020)
         surface.box((0., .565, 0.), (.215, .105, .105), MATERIAL_BASE, bevel=.022)
@@ -1224,7 +1298,42 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
         surface.extend(_cape_body(rig))
         return Garment(surface, "cape")
 
+    if kind == "gloves":
+        for side in ("l", "r"):
+            surface.extend(_glove_shell(rig, side))
+        return Garment(surface, "hands")
+
     raise ValueError(f"unknown garment kind: {kind}")
+
+
+def _glove_shell(rig: Rig, side: str) -> Surface:
+    """A glove over one hand: cuff down the forearm, back plate, thumb roll."""
+    surface = Surface()
+    fingers, _, palm = grip_frame(rig, side)
+    wrist = rig.origin(f"hand_{side}")
+    cuff = limb_rings(rig, [f"lowerarm_{side}"], rows=5, sides=16,
+                      thickness=.020, start=.62, end=1.06, floor=.032)
+    surface.loft(cuff, MATERIAL_TRIM, cap_start=True)
+    across = np.cross(fingers, palm)
+    across /= np.linalg.norm(across)
+    rings = []
+    for travel, width, depth in ((-.02, .048, .034), (.34, .054, .036),
+                                  (.72, .052, .032), (1.02, .044, .026),
+                                  (1.24, .030, .018)):
+        centre = wrist + fingers * (travel * .118)
+        ring = np.empty((16, 3))
+        for index in range(16):
+            angle = 2 * math.pi * index / 16
+            ring[index] = centre + (across * math.cos(angle) * width
+                                    + palm * math.sin(angle) * depth)
+        rings.append(ring)
+    surface.loft(rings, MATERIAL_BASE, cap_start=True, cap_end=True)
+    thumb = rig.origin(f"thumb_01_{side}")
+    thumb_tip = rig.origin(f"thumb_03_{side}")
+    surface.tube([wrist + (thumb - wrist) * .35, thumb,
+                  thumb + (thumb_tip - thumb) * .80],
+                 [.030, .026, .018], MATERIAL_BASE, sides=12)
+    return surface
 
 
 def _foot_shell(rig: Rig, side: str) -> Surface:
@@ -1494,6 +1603,16 @@ def detail_maps(family: str, size: int = 128) -> tuple[bytes, bytes]:
 # GLB emission
 # ---------------------------------------------------------------------------
 
+def srgb_to_linear(colour) -> list[float]:
+    """Convert an authored sRGB byte triple into the linear factor glTF wants."""
+    converted = []
+    for channel in colour:
+        value = channel / 255.
+        converted.append(value / 12.92 if value <= .04045
+                         else ((value + .055) / 1.055) ** 2.4)
+    return converted
+
+
 def _align4(value: int) -> int:
     return (value + 3) & ~3
 
@@ -1555,14 +1674,17 @@ class EquipmentGLB:
     def material(self, name: str, colour, *, metallic: float, roughness: float,
                  family: str, emissive=None, double_sided: bool = False) -> int:
         base, normal = detail_maps(family)
-        pbr = {"baseColorFactor": [c / 255. for c in colour] + [1.],
+        # Palettes are picked as sRGB but glTF defines these factors as linear,
+        # so they are converted on the way in. Writing the bytes raw would land
+        # roughly forty percent bright and turn iron plate into near-white.
+        pbr = {"baseColorFactor": srgb_to_linear(colour) + [1.],
                "metallicFactor": metallic, "roughnessFactor": roughness,
                "baseColorTexture": {"index": self.texture(base)}}
         spec = {"name": name, "pbrMetallicRoughness": pbr,
                 "normalTexture": {"index": self.texture(normal)},
                 "doubleSided": double_sided}
         if emissive is not None:
-            spec["emissiveFactor"] = [c / 255. for c in emissive]
+            spec["emissiveFactor"] = srgb_to_linear(emissive)
         self.doc["materials"].append(spec)
         return len(self.doc["materials"]) - 1
 
@@ -1662,6 +1784,16 @@ FINISHES = {
     "shell": Finish(("scale", "metal", "leather"), (.10, .62, .05), (.40, .30, .68)),
     "spore": Finish(("scale", "fur", "cloth"), (.0, .0, .0), (.76, .90, .82),
                     double_sided=True),
+    # Enchanted metal: the same plate, lit along its trim so an elemental blade
+    # reads as enchanted at a glance rather than only in its tooltip.
+    "fire": Finish(("metal", "metal", "leather"), (.74, .82, .05), (.36, .24, .62),
+                   emissive=.62),
+    "cold": Finish(("crystal", "metal", "leather"), (.60, .80, .05), (.22, .20, .62),
+                   emissive=.52),
+    "magic": Finish(("crystal", "crystal", "leather"), (.52, .70, .05), (.20, .16, .62),
+                    emissive=.58),
+    "thermal": Finish(("metal", "crystal", "leather"), (.78, .74, .05), (.30, .18, .62),
+                      emissive=.66),
 }
 
 # Which finish each authored piece wears.  Kept beside the geometry rather than
@@ -1704,7 +1836,8 @@ EQUIPMENT_FINISH = {
     "ssarathi_shell_amulet": "shell", "luminous_orbit_amulet": "plate",
 }
 
-GARMENT_KINDS = {"cuirass", "coat", "robe", "shirt", "legs", "pants", "boots", "cape"}
+GARMENT_KINDS = {"cuirass", "coat", "robe", "shirt", "legs", "pants", "boots",
+                 "cape", "gloves"}
 
 
 def build_equipment_piece(path: Path, rig: Rig, slug: str, label: str, kind: str,
@@ -1784,32 +1917,59 @@ PARTS = {
 # Enclosing headwear also covers the hairstyle; open headwear leaves it alone.
 ENCLOSING_HEADWEAR = {"helm", "crest", "hood", "mushroom"}
 
-ALIASES = {"0:11": "0:112", "1:5": "1:105", "2:11": "2:105"}
+# No aliases. The three that existed - weapon 11, shield 5, cape 11 - redirected
+# legacy ids to Four Gates guard gear because the legacy tier had no geometry.
+# Those ids are now STAFF_4, SHIELD_BRONZE and CAPE_GOLD and render as
+# themselves; bespoke NPC gear comes from npcLooks, which names native ids.
+ALIASES: dict[str, str] = {}
+
+
+def detail_colour(base) -> tuple:
+    """Third material slot: the same hue, dropped back for straps and soles."""
+    return tuple(round(channel * .46 + 18) for channel in base)
+
+
+def _model_entry(rig: Rig, idle_bases: dict | None, scene_root: str, slug: str,
+                 part: int, kind: str) -> dict:
+    model = {"scene": f"{scene_root}/{slug}.glb"}
+    if kind in GARMENT_KINDS:
+        model["attach"] = "skinned"
+        model["skinRegion"] = garment_region(kind)
+    else:
+        model["attach"] = "socket"
+        socket = build_sockets(rig, idle_bases, kind).get(part)
+        if socket is not None and (
+                idle_bases is not None and kind in GRIP_UPRIGHT):
+            model["socket"] = socket.as_json()
+    if part == 3:
+        hides = list(PARTS[3]["hides"])
+        if kind in ENCLOSING_HEADWEAR:
+            hides.append("hair")
+        model["hides"] = hides
+    return model
 
 
 def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
-                             scene_root: str = "res://assets/actors/native/equipment") -> dict:
+                             scene_root: str = "res://assets/actors/native/equipment",
+                             generic=None) -> dict:
     """Emit ``data/actors/equipment.json`` for the runtime attachment path."""
+    # Resolved here rather than as a default: the generic catalogue is declared
+    # further down the module, beside the geometry it describes.
+    generic = GENERIC_EQUIPMENT if generic is None else generic
     default_sockets = build_sockets(rig, idle_bases)
     models: dict[str, dict] = {}
     for slug, _label, part, visual, kind, *_ in entries:
-        key = f"{part}:{visual}"
-        model = {"scene": f"{scene_root}/{slug}.glb"}
-        if kind in GARMENT_KINDS:
-            model["attach"] = "skinned"
-            model["skinRegion"] = garment_region(kind)
-        else:
-            model["attach"] = "socket"
-            socket = build_sockets(rig, idle_bases, kind).get(part)
-            if socket is not None and (
-                    idle_bases is not None and kind in GRIP_UPRIGHT):
-                model["socket"] = socket.as_json()
-        if part == 3:
-            hides = list(PARTS[3]["hides"])
-            if kind in ENCLOSING_HEADWEAR:
-                hides.append("hair")
-            model["hides"] = hides
-        models[key] = model
+        models[f"{part}:{visual}"] = _model_entry(
+            rig, idle_bases, scene_root, slug, part, kind)
+    # The generic tier shares one mesh across a material ladder, so each legacy
+    # id is the same scene under a different tint rather than its own asset.
+    for piece in generic:
+        for visual, name, base, accent in piece.variants:
+            model = _model_entry(rig, idle_bases, scene_root, piece.slug,
+                                 piece.part, piece.kind)
+            model["name"] = name
+            model["tint"] = [list(base), list(accent), list(detail_colour(base))]
+            models[f"{piece.part}:{visual}"] = model
     return {
         "schemaVersion": 3,
         "canonicalHeadRestY": round(float(rig.rest["Head"][1, 3]), 5),
@@ -1831,4 +1991,278 @@ def garment_region(kind: str) -> str:
         return "boots"
     if kind == "cape":
         return "cape"
+    if kind == "gloves":
+        return "hands"
     raise ValueError(f"not a garment: {kind}")
+
+
+# ---------------------------------------------------------------------------
+# Generic equipment: the legacy visual-id space
+# ---------------------------------------------------------------------------
+
+# The protocol's appearance bytes still carry the original wearable ids, and the
+# craftable economy is built almost entirely on that generic tier: 168 of the
+# 388 manufacturing outputs are wearable or wieldable.  Only the culture pieces
+# had geometry, so an iron sword or a pair of leather boots drew nothing at all.
+#
+# One authored mesh serves a whole material ladder.  The ladder is a tint the
+# runtime applies to the shared scene, so covering 155 ids costs 43 GLBs rather
+# than 155.
+
+# Material ladders, reused across every part so a steel helm and steel greaves
+# read as the same alloy.
+IRON = ((122, 126, 132), (170, 175, 182))
+STEEL = ((172, 179, 188), (216, 222, 229))
+TITANIUM = ((198, 208, 217), (236, 242, 248))
+BRONZE = ((174, 122, 60), (219, 170, 90))
+WOOD = ((124, 92, 58), (168, 133, 84))
+LEATHER = ((108, 76, 48), (152, 113, 67))
+AUGMENTED = ((84, 60, 42), (190, 151, 84))
+FUR = ((156, 142, 124), (208, 197, 181))
+RACOON = ((110, 104, 98), (226, 224, 218))
+SKUNK = ((44, 42, 46), (232, 231, 228))
+
+# Dye ladders for cloth.
+DYES = {
+    "black": ((44, 44, 48), (86, 86, 92)),
+    "blue": ((52, 76, 124), (104, 133, 186)),
+    "bluegray": ((84, 100, 122), (140, 156, 178)),
+    "brown": ((96, 70, 46), (146, 113, 76)),
+    "browngray": ((104, 92, 80), (152, 140, 126)),
+    "gray": ((98, 100, 104), (148, 150, 155)),
+    "green": ((62, 92, 58), (108, 143, 98)),
+    "greengray": ((92, 106, 92), (140, 155, 138)),
+    "purple": ((92, 62, 124), (144, 108, 182)),
+    "white": ((208, 206, 198), (240, 239, 234)),
+    "gold": ((178, 142, 58), (232, 200, 108)),
+    "red": ((132, 48, 44), (186, 88, 78)),
+    "orange": ((186, 108, 44), (232, 158, 84)),
+    "darkbrown": ((64, 46, 32), (108, 84, 60)),
+    "lightbrown": ((146, 112, 74), (192, 160, 118)),
+    "dullbrown": ((98, 82, 64), (142, 124, 100)),
+    "pink": ((198, 130, 152), (234, 180, 196)),
+    "yellow": ((206, 178, 72), (240, 219, 128)),
+    "indigo": ((58, 62, 118), (108, 114, 178)),
+    "teal": ((46, 108, 112), (96, 162, 166)),
+    "crimson": ((122, 34, 46), (180, 74, 84)),
+    "moss": ((78, 96, 62), (126, 146, 104)),
+    "slate": ((72, 82, 92), (122, 134, 146)),
+    "sand": ((176, 156, 116), (218, 203, 168)),
+    "wine": ((94, 44, 62), (146, 84, 102)),
+    "ash": ((118, 116, 112), (168, 166, 162)),
+}
+
+
+def dye(name: str) -> tuple:
+    return DYES[name]
+
+
+@dataclass(frozen=True)
+class GenericPiece:
+    """One authored mesh serving a run of legacy visual ids."""
+
+    slug: str
+    label: str
+    part: int
+    kind: str
+    finish: str
+    # (visual id, name, base rgb, accent rgb)
+    variants: tuple
+
+    @property
+    def base(self):
+        return self.variants[0][2]
+
+    @property
+    def accent(self):
+        return self.variants[0][3]
+
+
+def _sword_ladder():
+    """Seven tiers of blade, from a plain bar to a polished alloy."""
+    return (
+        (1, "Iron Sword", *IRON),
+        (2, "Iron Broad Sword", (134, 138, 144), (178, 183, 190)),
+        (3, "Steel Sword", *STEEL),
+        (4, "Steel Broad Sword", (182, 189, 197), (222, 228, 234)),
+        (5, "Titanium Sword", *TITANIUM),
+        (6, "Titanium Long Sword", (206, 216, 224), (240, 246, 250)),
+        (7, "Titanium Serpent Sword", (214, 224, 231), (246, 250, 253)),
+        (58, "Bronze Sword", *BRONZE),
+    )
+
+
+def _elemental(ids_and_names, accent):
+    return tuple((visual, name, (146, 152, 160), accent)
+                 for visual, name in ids_and_names)
+
+
+GENERIC_EQUIPMENT = (
+    # -- part 0: weapons ---------------------------------------------------
+    GenericPiece("generic_sword", "Sword", 0, "sword", "plate", _sword_ladder()),
+    GenericPiece("generic_sword_fire", "Sword of Fire", 0, "sword", "fire",
+                 _elemental(((15, "Iron Sword of Fire"), (16, "Iron Broad Sword of Fire"),
+                             (18, "Steel Sword of Fire"), (21, "Steel Broad Sword of Fire"),
+                             (25, "Titanium Sword of Fire"), (29, "Titanium Long Sword of Fire"),
+                             (33, "Titanium Serpent Sword of Fire")), (236, 116, 44))),
+    GenericPiece("generic_sword_ice", "Sword of Ice", 0, "sword", "cold",
+                 _elemental(((17, "Iron Broad Sword of Ice"), (19, "Steel Sword of Ice"),
+                             (22, "Steel Broad Sword of Ice"), (26, "Titanium Sword of Ice"),
+                             (30, "Titanium Long Sword of Ice"),
+                             (34, "Titanium Serpent Sword of Ice")), (142, 208, 238))),
+    GenericPiece("generic_sword_magic", "Sword of Magic", 0, "sword", "magic",
+                 _elemental(((20, "Steel Sword of Magic"), (23, "Steel Broad Sword of Magic"),
+                             (27, "Titanium Sword of Magic"),
+                             (31, "Titanium Long Sword of Magic"),
+                             (35, "Titanium Serpent Sword of Magic")), (180, 126, 236))),
+    GenericPiece("generic_sword_thermal", "Thermal Sword", 0, "sword", "thermal",
+                 _elemental(((24, "Steel Broad Thermal Sword"), (28, "Titanium Thermal Sword"),
+                             (32, "Titanium Long Thermal Sword"),
+                             (36, "Titanium Serpent Thermal Sword")), (242, 172, 76))),
+    GenericPiece("generic_greatsword", "Great Sword", 0, "greatsword", "plate", (
+        (51, "Emerald Claymore", (168, 182, 176), (96, 198, 142)),
+        (53, "Sunbreaker", (196, 176, 128), (240, 198, 96)),
+        (54, "Orc Slayer", (146, 142, 136), (188, 96, 72)),
+        (55, "Eagle Wing", (200, 206, 212), (232, 226, 196)))),
+    GenericPiece("generic_cutlass", "Cutlass", 0, "curved_sword", "plate", (
+        (52, "Cutlass", (162, 168, 176), (206, 178, 96)),
+        (57, "Jagged Saber", (150, 156, 164), (198, 200, 204)))),
+    GenericPiece("generic_rapier", "Rapier", 0, "rapier", "plate", (
+        (56, "Rapier", (188, 194, 202), (216, 186, 104)),)),
+    GenericPiece("generic_staff", "Staff", 0, "staff", "wood", (
+        (8, "Wooden Staff", *WOOD),
+        (9, "Ash Staff", (104, 80, 54), (150, 122, 84)),
+        (10, "Bound Staff", (88, 66, 46), (182, 150, 96)),
+        (11, "Runed Staff", (72, 58, 46), (140, 176, 206)))),
+    GenericPiece("generic_battleaxe", "Battle Axe", 0, "battleaxe", "plate", (
+        (38, "Iron Battle Axe", *IRON), (39, "Steel Battle Axe", *STEEL),
+        (40, "Titanium Battle Axe", *TITANIUM))),
+    GenericPiece("generic_battleaxe_fire", "Battle Axe of Fire", 0, "battleaxe",
+                 "fire", _elemental(
+                     ((41, "Iron Battle Axe of Fire"), (43, "Steel Battle Axe of Fire"),
+                      (45, "Titanium Battle Axe of Fire")), (236, 116, 44))),
+    GenericPiece("generic_battleaxe_ice", "Battle Axe of Ice", 0, "battleaxe",
+                 "cold", _elemental(
+                     ((42, "Steel Battle Axe of Ice"),
+                      (44, "Titanium Battle Axe of Ice")), (142, 208, 238))),
+    GenericPiece("generic_battleaxe_magic", "Battle Axe of Magic", 0, "battleaxe",
+                 "magic", _elemental(
+                     ((46, "Titanium Battle Axe of Magic"),), (180, 126, 236))),
+    GenericPiece("generic_club_bone", "Bone Club", 0, "club", "shell", (
+        (49, "Bone", (218, 212, 196), (240, 236, 226)),)),
+    GenericPiece("generic_club_wood", "Wooden Club", 0, "club", "wood", (
+        (50, "Stick", *WOOD),)),
+    GenericPiece("generic_hammer", "War Hammer", 0, "hammer", "plate", (
+        (12, "Iron War Hammer", *IRON),
+        (13, "Steel War Hammer", *STEEL))),
+    GenericPiece("generic_pickaxe", "Pickaxe", 0, "pick", "plate", (
+        (14, "Pickaxe", *IRON),)),
+    GenericPiece("generic_pickaxe_magic", "Magic Pickaxe", 0, "pick", "magic", (
+        (37, "Magic Pickaxe", (146, 152, 160), (180, 126, 236)),)),
+    GenericPiece("generic_bow", "Bow", 0, "bow", "wood", (
+        (64, "Long Bow", *WOOD),
+        (65, "Short Bow", (140, 106, 68), (182, 148, 98)),
+        (66, "Recurve Bow", (96, 70, 46), (162, 126, 78)),
+        (67, "Elven Bow", (118, 128, 96), (196, 206, 168)))),
+    GenericPiece("generic_crossbow", "Crossbow", 0, "crossbow", "wood", (
+        (68, "Crossbow", (110, 84, 56), (156, 160, 166)),)),
+    GenericPiece("generic_gloves_leather", "Leather Gloves", 0, "gloves", "leather", (
+        (48, "Leather Gloves", *LEATHER),)),
+    GenericPiece("generic_gloves_fur", "Fur Gloves", 0, "gloves", "fur", (
+        (47, "Fur Gloves", *FUR),)),
+
+    # -- part 1: shields ---------------------------------------------------
+    GenericPiece("generic_shield_wood", "Wooden Shield", 1, "roundshield", "wood", (
+        (0, "Wooden Shield", *WOOD),
+        (1, "Enhanced Wooden Shield", (104, 78, 50), (188, 154, 92)))),
+    GenericPiece("generic_shield_metal", "Metal Shield", 1, "kite", "plate", (
+        (2, "Iron Shield", *IRON),
+        (3, "Steel Shield", *STEEL),
+        (4, "Titanium Shield", *TITANIUM),
+        (5, "Bronze Shield", *BRONZE))),
+
+    GenericPiece("generic_quiver", "Quiver", 1, "quiver", "leather", (
+        (7, "Quiver of Arrows", *LEATHER),
+        (13, "Quiver of Bolts", (88, 70, 52), (162, 134, 88)))),
+
+    # -- part 2: capes -----------------------------------------------------
+    # Twenty-two dyes over one cape, plus a fur cape that needs its own pelt.
+    GenericPiece("generic_cape", "Cape", 2, "cape", "cloth", (
+        (0, "Black Cape", *dye("black")), (1, "Blue Cape", *dye("blue")),
+        (2, "Blue-Gray Cape", *dye("bluegray")), (3, "Brown Cape", *dye("brown")),
+        (4, "Brown-Gray Cape", *dye("browngray")), (5, "Gray Cape", *dye("gray")),
+        (6, "Green Cape", *dye("green")), (7, "Green-Gray Cape", *dye("greengray")),
+        (8, "Purple Cape", *dye("purple")), (9, "White Cape", *dye("white")),
+        (11, "Gold Cape", *dye("gold")), (12, "Red Cape", *dye("red")),
+        (13, "Orange Cape", *dye("orange")),
+        (14, "Warden Cape", *dye("indigo")), (15, "Tidewatch Cape", *dye("teal")),
+        (16, "Nightfall Cape", *dye("crimson")), (17, "Quiet Cape", *dye("moss")),
+        (18, "Highreach Cape", *dye("slate")), (19, "Dawnward Cape", *dye("sand")),
+        (20, "Sunwake Cape", *dye("wine")), (21, "Farhold Cape", *dye("ash")),
+        (22, "Learner Cape", *dye("lightbrown")))),
+    GenericPiece("generic_cape_fur", "Fur Cape", 2, "cape", "fur", (
+        (10, "Fur Cape", *FUR),)),
+
+    # -- part 3: helmets ---------------------------------------------------
+    GenericPiece("generic_helm", "Helm", 3, "helm", "plate", (
+        (0, "Iron Helmet", *IRON), (7, "Steel Helmet", *STEEL),
+        (8, "Titanium Helmet", *TITANIUM), (9, "Bronze Helmet", *BRONZE))),
+    GenericPiece("generic_hood_leather", "Leather Cap", 3, "hood", "leather", (
+        (2, "Leather Helmet", *LEATHER),)),
+    GenericPiece("generic_hood_fur", "Fur Cap", 3, "hood", "fur", (
+        (1, "Fur Helmet", *FUR), (3, "Racoon Cap", *RACOON),
+        (4, "Skunk Cap", *SKUNK))),
+    GenericPiece("generic_crown", "Crown", 3, "circlet", "crystal", (
+        (5, "Crown of Mana", (72, 82, 138), (128, 176, 240)),
+        (6, "Crown of Life", (76, 118, 84), (140, 224, 152)))),
+
+    # -- part 4: leg armour ------------------------------------------------
+    GenericPiece("generic_pants", "Pants", 4, "pants", "cloth", (
+        (0, "Black Pants", *dye("black")), (1, "Blue Pants", *dye("blue")),
+        (2, "Brown Pants", *dye("brown")), (3, "Dark Brown Pants", *dye("darkbrown")),
+        (4, "Grey Pants", *dye("gray")), (5, "Green Pants", *dye("green")),
+        (6, "Light Brown Pants", *dye("lightbrown")), (7, "Red Pants", *dye("red")),
+        (8, "White Pants", *dye("white")))),
+    GenericPiece("generic_legs_leather", "Leather Leggings", 4, "legs", "leather", (
+        (9, "Leather Pants", *LEATHER),
+        (15, "Augmented Leather Cuisses", *AUGMENTED))),
+    GenericPiece("generic_legs_fur", "Fur Leggings", 4, "legs", "fur", (
+        (11, "Fur Pants", *FUR),)),
+    GenericPiece("generic_cuisses", "Cuisses", 4, "legs", "plate", (
+        (10, "Iron Cuisses", *IRON), (12, "Steel Cuisses", *STEEL),
+        (13, "Titanium Cuisses", *TITANIUM), (14, "Bronze Cuisses", *BRONZE))),
+
+    # -- part 5: body armour -----------------------------------------------
+    GenericPiece("generic_shirt", "Shirt", 5, "shirt", "cloth", (
+        (0, "Black Shirt", *dye("black")), (1, "Blue Shirt", *dye("blue")),
+        (2, "Brown Shirt", *dye("brown")), (3, "Grey Shirt", *dye("gray")),
+        (4, "Green Shirt", *dye("green")), (5, "Light Brown Shirt", *dye("lightbrown")),
+        (6, "Orange Shirt", *dye("orange")), (7, "Pink Shirt", *dye("pink")),
+        (8, "Purple Shirt", *dye("purple")), (9, "Red Shirt", *dye("red")),
+        (10, "White Shirt", *dye("white")), (11, "Yellow Shirt", *dye("yellow")))),
+    GenericPiece("generic_leather_armor", "Leather Armor", 5, "cuirass", "leather", (
+        (12, "Leather Armor", *LEATHER),
+        (17, "Augmented Leather Armor", *AUGMENTED))),
+    GenericPiece("generic_chain_armor", "Chain Armor", 5, "cuirass", "mail", (
+        (13, "Chain Mail", *IRON), (14, "Steel Chain Mail", *STEEL),
+        (15, "Titanium Chain Mail", *TITANIUM))),
+    GenericPiece("generic_plate_armor", "Plate Armor", 5, "cuirass", "plate", (
+        (16, "Iron Plate Mail", *IRON), (19, "Steel Plate Mail", *STEEL),
+        (20, "Titanium Plate Mail", *TITANIUM), (21, "Bronze Plate Mail", *BRONZE))),
+    GenericPiece("generic_fur_coat", "Fur Coat", 5, "coat", "fur", (
+        (18, "Fur Coat", *FUR),)),
+
+    # -- part 6: boots -----------------------------------------------------
+    GenericPiece("generic_boots", "Boots", 6, "boots", "leather", (
+        (0, "Black Boots", *dye("black")), (1, "Brown Boots", *dye("brown")),
+        (2, "Dark Brown Boots", *dye("darkbrown")),
+        (3, "Dull Brown Boots", *dye("dullbrown")),
+        (4, "Light Brown Boots", *dye("lightbrown")),
+        (5, "Orange Boots", *dye("orange")), (6, "Leather Boots", *LEATHER),
+        (12, "Augmented Leather Greaves", *AUGMENTED))),
+    GenericPiece("generic_boots_fur", "Fur Boots", 6, "boots", "fur", (
+        (7, "Fur Boots", *FUR),)),
+    GenericPiece("generic_greaves", "Greaves", 6, "boots", "plate", (
+        (8, "Iron Greaves", *IRON), (9, "Steel Greaves", *STEEL),
+        (10, "Titanium Greaves", *TITANIUM), (11, "Bronze Greaves", *BRONZE))),
+)
