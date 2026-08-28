@@ -656,3 +656,161 @@ ALL = {
     "cistern": mirror_cistern,
     "stair_cellars": stair_cellars,
 }
+
+
+# ------------------------------------------------- one map, three interiors
+
+# Eternal Lands puts many insides on a single map, separated by dead space you
+# cannot reach. That is the model here: one package, one collision grid, three
+# self-contained blocks of rooms, and nothing between them. The gaps are not
+# corridors - there is no geometry there at all, so the grid reads 0 and the
+# black is genuinely black.
+BLOCK_GAP = 34.0
+MARGIN = 12.0
+TILE_METRES = 6.0   # one ELM tile at the interior collision scale
+
+
+def _offset_interior(source: Interior, dx: float, dz: float, prefix: str,
+                     target: Interior) -> dict:
+    """Copy one authored interior into `target`, shifted, with keys prefixed."""
+    for part in source.group.parts:
+        target.group.add(part.translate(dx, 0.0, dz))
+    for part in source.group.walk_parts:
+        target.group.add_walk(part.translate(dx, 0.0, dz))
+
+    def key(name: str) -> str:
+        return f"{prefix}_{name}"
+
+    for name, s in source.spaces.items():
+        target.spaces[key(name)] = {
+            "x0": s["x0"] + dx, "x1": s["x1"] + dx,
+            "z0": s["z0"] + dz, "z1": s["z1"] + dz,
+            "floor": s["floor"], "height": s["height"],
+        }
+    for name, p in source.passages.items():
+        target.passages[key(name)] = {
+            "a": (p["a"][0] + dx, p["a"][1] + dz),
+            "b": (p["b"][0] + dx, p["b"][1] + dz),
+            "y0": p["y0"], "y1": p["y1"],
+            "width": p["width"], "height": p["height"],
+        }
+    for name in source.open_to_sky:
+        target.open_to_sky.append(key(name))
+
+    def shift(entry: dict) -> dict:
+        out = dict(entry)
+        if "position" in out and len(out["position"]) == 3:
+            x, y, z = out["position"]
+            out["position"] = [round(x + dx, 2), round(y, 2), round(z + dz, 2)]
+        if "space" in out and out["space"] in source.spaces:
+            out["space"] = key(out["space"])
+        return out
+
+    for entry in source.landmarks:
+        target.landmarks.append(shift(entry))
+    for bucket, dest in ((source.interactives, target.interactives),
+                         (source.harvestables, target.harvestables),
+                         (source.npc_markers, target.npc_markers)):
+        for entry in bucket:
+            dest.append(shift(entry))
+    for lamp in source.lamps:
+        target.lamps.append([round(lamp[0] + dx, 2), round(lamp[1], 2),
+                             round(lamp[2] + dz, 2)])
+    for ident, label, space in source.subjects:
+        target.subjects.append((f"{prefix}-{ident}", label, key(space)))
+
+    spawn_space = source.spawn_space or source.subjects[0][2]
+    s = target.spaces[key(spawn_space)]
+    return {
+        "id": prefix.replace("_", "-"),
+        "name": source.name,
+        "space": key(spawn_space),
+        "portal": source.destination_spawn,
+        "anchor_landmark": source.anchor_landmark,
+        "position": [round((s["x0"] + s["x1"]) * 0.5, 2),
+                     round(s["floor"] + 0.05, 2),
+                     round((s["z0"] + s["z1"]) * 0.5, 2)],
+    }
+
+
+def mirrorhold_interiors(seed: int = 20260904) -> Interior:
+    """All three of Mirrorhold's interiors on one square map.
+
+    Laid out on a grid rather than in a row. Two constraints force this: the
+    server's ELM validator requires width == height, so a long strip could
+    never be served; and a map is a whole number of ELM tiles, six metres each
+    at this scale. So the blocks are placed in a 2x2 arrangement with dead
+    ground between and around them, and the map is squared up to the next tile
+    boundary. The fourth quarter is left empty, which is where a later interior
+    goes without moving anything already authored.
+    """
+    parts = [("lens_vault", lens_vault(seed)),
+             ("cistern", mirror_cistern(seed + 1)),
+             ("cellars", stair_cellars(seed + 2))]
+
+    combined = Interior("mirrorhold_interiors", "Mirrorhold Interiors",
+                        "multi", "citadel", [162.0, 124.0, -267.0],
+                        "lens-vault-stair")
+    combined.blocks = []
+
+    sizes = []
+    for _, source in parts:
+        lo, hi = source.group.bounds()
+        sizes.append((lo, hi, float(hi[0] - lo[0]), float(hi[2] - lo[2])))
+
+    col_w = [max(sizes[0][2], sizes[2][2]), sizes[1][2]]
+    row_d = [max(sizes[0][3], sizes[1][3]), sizes[2][3]]
+    span_x = MARGIN * 2 + col_w[0] + BLOCK_GAP + col_w[1]
+    span_z = MARGIN * 2 + row_d[0] + BLOCK_GAP + row_d[1]
+
+    # Square, and a whole number of six-metre ELM tiles.
+    side = max(span_x, span_z)
+    tiles = int(math.ceil(side / TILE_METRES))
+    side = tiles * TILE_METRES
+
+    # cell origins for the 2x2 arrangement: A top-left, B top-right,
+    # C bottom-left, fourth quarter reserved.
+    cell_origin = [
+        (MARGIN, MARGIN),
+        (MARGIN + col_w[0] + BLOCK_GAP, MARGIN),
+        (MARGIN, MARGIN + row_d[0] + BLOCK_GAP),
+    ]
+
+    for (prefix, source), (lo, hi, _w, _d), (ox, oz) in zip(parts, sizes,
+                                                            cell_origin):
+        dx = ox - float(lo[0])
+        dz = oz - float(lo[2])
+        combined.blocks.append(_offset_interior(source, dx, dz, prefix, combined))
+
+    combined.map_metres = side
+    combined.map_tiles = tiles
+    combined.spawn_space = combined.blocks[0]["space"]
+    combined.environment = {
+        "sky": "none",
+        "ambient": {"colour": [0.13, 0.16, 0.21], "energy": 0.34},
+        "fog": {"enabled": True, "colour": [0.08, 0.10, 0.13],
+                "begin": 14.0, "end": 52.0},
+        "audio": [entry for _, s in parts
+                  for entry in s.environment.get("audio", [])],
+    }
+    combined.notes = [
+        "Three interiors on one map, in the Eternal Lands manner: separate "
+        f"blocks on a {side:.0f} m square ({tiles} ELM tiles) with "
+        f"{BLOCK_GAP:.0f} m of dead ground between them and nothing joining "
+        "them in-map.",
+        "Square because the server's ELM validator requires width == height, "
+        "and a whole number of tiles because a map is measured in them. A row "
+        "of blocks would have been neither.",
+        "The gaps carry no geometry, so the collision grid reads 0 there: the "
+        "space between blocks is unreachable rather than merely unlit.",
+        "Each block keeps the coordinates it was authored in; only its origin "
+        "moves. Space keys are prefixed with the block name.",
+        "The fourth quarter is deliberately empty, so a later interior can be "
+        "added without moving any block already placed.",
+    ]
+    for _, source in parts:
+        combined.notes.extend(source.notes)
+    return combined
+
+
+ALL = {"interiors": mirrorhold_interiors}

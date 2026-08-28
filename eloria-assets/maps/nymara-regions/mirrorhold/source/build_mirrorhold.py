@@ -136,18 +136,19 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             "authority": "server"})
 
     # Interior entrances sit on the landmark they belong to.
-    # Interior entrances. `resonant_vault` used to be listed here and was
-    # wrong: its concept declares amethyst_barrens as its parent and the server
-    # links it to four_gates. Mirrorhold's own interiors replace it.
+    # Interior entrances. Two earlier entries were wrong and are gone:
+    # `resonant_vault` belongs to amethyst_barrens, and `drowned_crown` to
+    # crownwater - the latter settled by the user, against a maps.txt link that
+    # had pointed it here since before this region was authored. All three
+    # remaining entrances open on Mirrorhold's own interior map, at different
+    # arrival points on it.
     for portal_id, name, landmark_id, destination, spawn in (
-            ("drowned-crown-stair", "The Drowned Crown", "ring",
-             "maps/nymara/drowned_crown.elm", "default"),
             ("lens-vault-stair", "The Lens Vault", "orrery",
-             "maps/nymara/mirrorhold_lens_vault.elm", "default"),
+             "maps/nymara/mirrorhold_interiors.elm", "lens-vault-stair"),
             ("cistern-door", "The Mirror Cistern", "plaza",
-             "maps/nymara/mirrorhold_cistern.elm", "default"),
+             "maps/nymara/mirrorhold_interiors.elm", "cistern-door"),
             ("stair-cellars-door", "The Stair Cellars", "cliff-town",
-             "maps/nymara/mirrorhold_stair_cellars.elm", "default")):
+             "maps/nymara/mirrorhold_interiors.elm", "stair-cellars-door")):
         anchor = next((l for l in build.landmarks if l.get("id") == landmark_id), None)
         if anchor is None:
             continue

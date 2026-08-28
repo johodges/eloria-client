@@ -1712,25 +1712,6 @@
       "authority": "server"
     },
     {
-      "id": "drowned-crown-stair",
-      "name": "The Drowned Crown",
-      "type": "interior-entrance",
-      "position": [
-        156.0,
-        3.6,
-        60.0
-      ],
-      "serverTile": [
-        330,
-        114
-      ],
-      "landmark": "ring",
-      "destinationMap": "maps/nymara/drowned_crown.elm",
-      "destinationSpawn": "default",
-      "radius": 2.5,
-      "authority": "server"
-    },
-    {
       "id": "lens-vault-stair",
       "name": "The Lens Vault",
       "type": "interior-entrance",
@@ -1744,8 +1725,8 @@
         441
       ],
       "landmark": "orrery",
-      "destinationMap": "maps/nymara/mirrorhold_lens_vault.elm",
-      "destinationSpawn": "default",
+      "destinationMap": "maps/nymara/mirrorhold_interiors.elm",
+      "destinationSpawn": "lens-vault-stair",
       "radius": 2.5,
       "authority": "server"
     },
@@ -1763,8 +1744,8 @@
         264
       ],
       "landmark": "plaza",
-      "destinationMap": "maps/nymara/mirrorhold_cistern.elm",
-      "destinationSpawn": "default",
+      "destinationMap": "maps/nymara/mirrorhold_interiors.elm",
+      "destinationSpawn": "cistern-door",
       "radius": 2.5,
       "authority": "server"
     },
@@ -1782,8 +1763,8 @@
         228
       ],
       "landmark": "cliff-town",
-      "destinationMap": "maps/nymara/mirrorhold_stair_cellars.elm",
-      "destinationSpawn": "default",
+      "destinationMap": "maps/nymara/mirrorhold_interiors.elm",
+      "destinationSpawn": "stair-cellars-door",
       "radius": 2.5,
       "authority": "server"
     }

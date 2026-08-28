@@ -61,18 +61,22 @@ byte-for-byte. Runtime startup never depends on rerunning any of it.
 Three, authored on the shared interiors toolkit and documented in
 `../interiors/MIRRORHOLD_INTERIORS.md`:
 
-| id | name | entered from |
+All three share one map, `mirrorhold_interiors` - separate blocks on a 204 m
+square with unreachable ground between them, in the Eternal Lands manner.
+
+| block | name | entered from |
 | --- | --- | --- |
-| `mirrorhold_lens_vault` | The Lens Vault | the orrery drum |
-| `mirrorhold_cistern` | The Mirror Cistern | the fountain plaza |
-| `mirrorhold_stair_cellars` | The Stair Cellars | the cliff town |
+| `lens-vault` | The Lens Vault | the orrery drum |
+| `cistern` | The Mirror Cistern | the fountain plaza |
+| `cellars` | The Stair Cellars | the cliff town |
 
 ```sh
 cd source && python3 build_interiors.py
 ```
 
-All three pass the in-engine check with zero walkable cells lacking a surface.
-They still need server map entries before they are reachable in play.
+Passes the in-engine check with zero walkable cells lacking a surface. The
+server map and its three portal pairs are on
+`feature/mirrorhold-576m-server-map`.
 
 ## Server dependency
 

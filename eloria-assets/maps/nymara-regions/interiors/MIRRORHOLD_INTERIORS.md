@@ -1,14 +1,34 @@
 # Mirrorhold interiors
 
-Three interiors, authored to answer questions the exterior raises rather than
-to add generic dungeon. Built by `mirrorhold/source/build_interiors.py` from
+Three interiors on **one map**, in the Eternal Lands manner: separate blocks of
+rooms on a single square map with unreachable ground between them, entered at
+three different arrivals rather than through three map files.
+
+Built by `mirrorhold/source/build_interiors.py` from
 `mirrorhold/source/interiors_mirrorhold.py`, on the shared interiors toolkit.
 
-| id | name | entered from | class |
+Map: `mirrorhold_interiors`, 204 m square (34 ELM tiles), 12.3% walkable.
+
+| block | name | entered from | arrival spawn |
 | --- | --- | --- | --- |
-| `mirrorhold_lens_vault` | The Lens Vault | the orrery drum, summit | workshop |
-| `mirrorhold_cistern` | The Mirror Cistern | the fountain plaza | works |
-| `mirrorhold_stair_cellars` | The Stair Cellars | the cliff town | cellar |
+| `lens-vault` | The Lens Vault | the orrery drum, summit | `lens-vault-stair` |
+| `cistern` | The Mirror Cistern | the fountain plaza | `cistern-door` |
+| `cellars` | The Stair Cellars | the cliff town | `stair-cellars-door` |
+
+`references/plan.png` renders the collision grid: three blocks, black between
+them, and an empty fourth quarter where a later interior goes without moving
+anything already placed.
+
+## Why one map
+
+Two constraints decide the shape. The server's `validate_generated_map`
+requires `width == height`, and a map is a whole number of six-metre ELM tiles.
+The first layout put the blocks in a row - 296 x 56 m - which is neither, and
+could never have been served. They are now placed on a grid and the map squared
+up to the next tile boundary.
+
+The gaps carry no geometry at all, so the collision grid reads 0 there: the
+space between blocks is unreachable by construction rather than merely unlit.
 
 ## Why these three
 
@@ -43,20 +63,23 @@ Sixteen rooms and nine connecting passages in total.
 
 ## Verification
 
-Each package carries `world.glb`, `world.json`, `collision.bin`, its validator
-report and `client-check-report.json`.
+The package carries `world.glb`, `world.json`, `collision.bin`, its validator
+report, `client-check-report.json` and `references/plan.png`.
 
-| | tris | GLB | walkable cells | validator | in-engine |
-| --- | --- | --- | --- | --- | --- |
-| Lens Vault | 11,180 | 5.40 MB | 7,652 | 0 errors | PASS |
-| Mirror Cistern | 8,230 | 4.52 MB | 8,424 | 0 errors | PASS |
-| Stair Cellars | 6,620 | 4.51 MB | 4,384 | 0 errors | PASS |
+| | value |
+| --- | --- |
+| triangles | 26,030 |
+| GLB | 7.01 MB |
+| collision grid | 408 x 408 cells at 0.5 m, square |
+| walkable cells | 20,460 (12.3%) |
+| validator | 0 errors |
+| in-engine | PASS - 166,464 cells sampled, 20,460 walkable, **0 with no surface** |
+| arrivals | all four within 0.05 m of their manifest height |
 
 The in-engine column is `_toolkit/region_client_check.gd`: Godot loads the
 package through the project's own `WorldLoader` and casts `main.gd`'s grounding
-ray at **every** cell the collision grid marks walkable. All three report zero
-cells without a surface, and both spawns per interior land within 0.05 m of
-their manifest height.
+ray at **every** cell the collision grid marks walkable. Zero cells lack a
+surface, and all four arrivals land within 0.05 m of their manifest height.
 
 That check was extended for this work. Its previous pass condition — every tile
 in the bounding box must have floor — is right for a region, whose terrain
@@ -67,9 +90,14 @@ surface under it. Re-run against both regions afterwards, which still pass.
 
 ## Captures
 
-`references/godot-captures/` in each package: real Godot 4.7.2 frames on a
-Vulkan device, one per area plus a plan overview, generated from the manifest's
-own space list by `_toolkit/interior_views.py` rather than maintained by hand.
+`references/godot-captures/`: real Godot 4.7.2 frames on a Vulkan device, one
+per area across all three blocks, generated from the manifest's own space list
+by `_toolkit/interior_views.py` rather than maintained by hand.
+
+The plan is `references/plan.png`, rendered from the collision grid by
+`_toolkit/plan_image.py`, not from a camera. A top-down 3D shot of a lidded map
+photographs its ceilings and comes back black; the grid is what a plan of an
+interior actually wants to show.
 
 The capture harness now honours what a package declares — `sky: "none"`, the
 ambient and fog block, and the point lights standing in its lamps — instead of
@@ -83,9 +111,10 @@ outdoors is not a picture of anything that will exist.
   Mirrorhold's (see below), and there is no board for these. Nothing here was
   compared against concept art because there is none to compare against.
 - **Names are placeholders**, as everywhere else in this region.
-- **No server maps.** These need `maps/nymara/mirrorhold_*.elm` entries and
-  portal pairs in `config/eloria/maps.txt` before they are reachable in play.
-  The client registry entries are in place.
+- **Server entries are in place** on `feature/mirrorhold-576m-server-map`:
+  `mirrorhold_interiors` at 34 tiles with three portal pairs, generator sizes,
+  arrival tiles and the content manifest. Both maps generate square at the
+  expected dimensions and the four content tests pass.
 - **Lighting is declared, not baked.** The manifests carry point lights; there
   are no lightmaps.
 
@@ -106,9 +135,8 @@ earlier pass of this region. Both were wrong, in different ways:
   portal | drowned_crown | 58 | 10 | mirrorhold | 58 | 98
   ```
 
-  The concept data and the server disagree, and they have disagreed from the
-  start. The Crownwater session is authoring it as a Crownwater interior.
-  Mirrorhold's portal to it is **left in place and marked contested** rather
-  than removed: deleting a link the server still serves would resolve the
-  conflict in one direction on no authority. This needs a decision from whoever
-  owns the concept data, and then one edit in one place.
+  The user has settled it: **`drowned_crown` is Crownwater's.** Mirrorhold's
+  manifest portal to it is removed, and this branch's 576-scale portal pair in
+  `config/eloria/maps.txt` with it. The pre-existing 192-scale pair is left
+  alone - it predates all of this work and belongs to whoever repoints it,
+  which is the Crownwater session, not this change.

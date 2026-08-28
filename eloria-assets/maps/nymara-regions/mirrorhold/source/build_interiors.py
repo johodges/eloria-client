@@ -76,12 +76,22 @@ def build_collision(interior: I.Interior):
     cannot read, so this emits exactly the same layout.
     """
     lo, hi = interior.group.walk_bounds()
-    x0 = math.floor(float(lo[0])) - 2
-    z1 = math.ceil(float(hi[2])) + 2
-    width = int(math.ceil((math.ceil(float(hi[0])) + 2 - x0) / COLLISION_CELL))
-    height = int(math.ceil((z1 - (math.floor(float(lo[2])) - 2)) / COLLISION_CELL))
-    width -= width % 6
-    height -= height % 6
+    map_metres = getattr(interior, "map_metres", None)
+    if map_metres:
+        # A multi-block map declares its own square extent. The grid must cover
+        # it exactly rather than shrink-wrap the geometry: the dead ground
+        # between blocks is part of the map, and the server's ELM validator
+        # requires width == height.
+        x0 = 0.0
+        z1 = float(map_metres)
+        width = height = int(round(map_metres / COLLISION_CELL))
+    else:
+        x0 = math.floor(float(lo[0])) - 2
+        z1 = math.ceil(float(hi[2])) + 2
+        width = int(math.ceil((math.ceil(float(hi[0])) + 2 - x0) / COLLISION_CELL))
+        height = int(math.ceil((z1 - (math.floor(float(lo[2])) - 2)) / COLLISION_CELL))
+        width -= width % 6
+        height -= height % 6
 
     walkable = np.zeros((height, width), dtype=bool)
     tops = np.full((height, width), np.nan)
@@ -171,6 +181,27 @@ def build_collision(interior: I.Interior):
     return payload, stats
 
 
+def _spawn_points(interior, default_spawn) -> list[dict]:
+    """Arrival points: one per block on a multi-block map, else the one room."""
+    blocks = getattr(interior, "blocks", None)
+    if not blocks:
+        return [
+            {"id": "default", "position": default_spawn, "rotationDegrees": 0,
+             "surface": "Walk"},
+            {"id": interior.destination_spawn, "position": default_spawn,
+             "rotationDegrees": 0, "surface": "Walk"},
+        ]
+    points = [{"id": "default", "position": blocks[0]["position"],
+               "rotationDegrees": 0, "surface": "Walk",
+               "block": blocks[0]["id"]}]
+    for block in blocks:
+        points.append({"id": block["portal"], "position": block["position"],
+                       "rotationDegrees": 0, "surface": "Walk",
+                       "block": block["id"], "name": block["name"],
+                       "anchorLandmark": block["anchor_landmark"]})
+    return points
+
+
 def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
     lo, hi = interior.group.bounds()
     walk_lo, walk_hi = interior.group.walk_bounds()
@@ -205,12 +236,10 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
             "walkingHeight": round(float(space["floor"]), 2),
             "invertServerY": True,
         },
-        "spawnPoints": [
-            {"id": "default", "position": spawn, "rotationDegrees": 0,
-             "surface": "Walk"},
-            {"id": interior.destination_spawn, "position": spawn, "rotationDegrees": 0,
-             "surface": "Walk"},
-        ],
+        # One arrival per block. A multi-block map is entered at whichever
+        # block the portal used opens on, so the region's three entrances name
+        # three different spawns on the same map.
+        "spawnPoints": _spawn_points(interior, spawn),
         "collision": dict(collision_stats,
                           nodeNames=[n for n in stats["nodeNames"]
                                      if not n.startswith("Walk_")]),
@@ -245,6 +274,11 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
                     "colour": [0.52, 0.72, 1.0], "range": 10.0, "energy": 1.7}
                    for i, p in enumerate(interior.lamps)],
         "environment": dict(interior.environment, openToSky=interior.open_to_sky),
+        "blocks": [
+            {"id": b["id"], "name": b["name"], "spawn": b["portal"],
+             "anchorLandmark": b["anchor_landmark"], "arrivalSpace": b["space"]}
+            for b in getattr(interior, "blocks", [])
+        ],
         "spaces": {key: {k: round(float(v), 2) for k, v in value.items()}
                    for key, value in interior.spaces.items()},
         "conceptArt": {

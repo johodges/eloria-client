@@ -87,8 +87,15 @@ Changes made in `../_toolkit/` for this region, all additive:
 
 Three Mirrorhold interiors added - the Lens Vault under the orrery, the Mirror
 Cistern under the fountain plaza, and the Stair Cellars behind the cliff town -
-with sixteen rooms and nine passages between them. Full account in
+with sixteen rooms and nine passages between them, on **one map** in the
+Eternal Lands manner: separate blocks on a 204 m square with unreachable ground
+between them, entered at three arrivals. Full account in
 `../interiors/MIRRORHOLD_INTERIORS.md`.
+
+The first layout put the blocks in a row, 296 x 56 m. That could never have
+been served: the server's ELM validator requires width == height, and a map is
+a whole number of six-metre tiles. Blocks are now on a grid and the map squared
+up to the next tile boundary, with the fourth quarter left free.
 
 Region changes this required:
 
@@ -97,9 +104,10 @@ Region changes this required:
   `four_gates`; Mirrorhold never had a claim on it. It was an error in the
   first production pass of this region, not a data conflict.
 - Three interior entrances added, at the orrery, the plaza and the cliff town.
-- The `drowned_crown` portal is left in place and marked contested: its concept
-  declares Crownwater as parent while `maps.txt` links it here. See the
-  interiors doc.
+- The `drowned_crown` portal is removed. Its concept declares Crownwater as
+  parent and the user has settled it as Crownwater's, against a `maps.txt` link
+  that had pointed it here since before this region was authored. The
+  pre-existing 192-scale server pair is left for whoever repoints it.
 - **The declared sun direction was inverted.** `environment.sun.direction` is
   read by the client's `WorldEnvironmentBinder` as the direction light
   *travels* - it does `look_at_from_position(ZERO, direction)` and a

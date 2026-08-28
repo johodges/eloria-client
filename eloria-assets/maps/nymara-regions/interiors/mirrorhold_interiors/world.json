@@ -1,0 +1,1094 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "mirrorhold_interiors",
+    "name": "Mirrorhold Interiors",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        12.0,
+        -29.09,
+        12.0
+      ],
+      "max": [
+        191.2,
+        29.09,
+        158.55
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        12.0,
+        -8.8,
+        12.0
+      ],
+      "max": [
+        191.2,
+        6.0,
+        158.55
+      ]
+    },
+    "interiorClass": "multi",
+    "parentRegion": "mirrorhold",
+    "serverCells": 204
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -0.0,
+      204.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 6.0,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        46.55,
+        6.05,
+        16.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "block": "lens-vault"
+    },
+    {
+      "id": "lens-vault-stair",
+      "position": [
+        46.55,
+        6.05,
+        16.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "block": "lens-vault",
+      "name": "The Lens Vault",
+      "anchorLandmark": "orrery"
+    },
+    {
+      "id": "cistern-door",
+      "position": [
+        153.65,
+        0.05,
+        21.55
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "block": "cistern",
+      "name": "The Mirror Cistern",
+      "anchorLandmark": "plaza"
+    },
+    {
+      "id": "stair-cellars-door",
+      "position": [
+        38.55,
+        0.05,
+        108.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "block": "cellars",
+      "name": "The Stair Cellars",
+      "anchorLandmark": "cliff-town"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 408,
+    "height": 408,
+    "cellMetres": 0.5,
+    "originMetres": [
+      0.0,
+      204.0
+    ],
+    "heightEncoding": {
+      "origin": -8.636,
+      "step": 0.2361,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
+    },
+    "walkableCells": 20460,
+    "blockedCells": 146004,
+    "walkableFraction": 0.1229,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Interior_mirrorhold_interiors",
+      "Build_mirrorhold_interiors_amber_resin",
+      "Build_mirrorhold_interiors_ashlar",
+      "Build_mirrorhold_interiors_blue_crystal",
+      "Build_mirrorhold_interiors_cliff_rock",
+      "Build_mirrorhold_interiors_cobble_paving",
+      "Build_mirrorhold_interiors_dark_iron",
+      "Build_mirrorhold_interiors_gilt_brass",
+      "Build_mirrorhold_interiors_glacier_ice",
+      "Build_mirrorhold_interiors_mirror_glass",
+      "Build_mirrorhold_interiors_pale_ashlar",
+      "Build_mirrorhold_interiors_rubble_stone",
+      "Build_mirrorhold_interiors_timber_dark",
+      "Build_mirrorhold_interiors_timber_grey",
+      "Build_mirrorhold_interiors_timber_warm",
+      "Build_mirrorhold_interiors_veined_marble",
+      "Build_mirrorhold_interiors_water_lake",
+      "Build_mirrorhold_interiors_water_pool",
+      "Build_mirrorhold_interiors_water_stream",
+      "Build_mirrorhold_interiors_woven_cloth"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    },
+    "notes": [
+      "Every standable surface is a Walk_<material> node, matching the region's contract: the client turns navigation.surfaceNodePrefixes into the layer its downward grounding ray tests."
+    ]
+  },
+  "portals": [
+    {
+      "id": "exit-to-amberwood",
+      "name": "Return to Amberwood",
+      "type": "map-transition",
+      "position": [
+        46.55,
+        6.05,
+        16.55
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/amberwood.elm",
+      "destinationSpawn": "lens-vault-stair",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "the-meridian",
+      "name": "The Meridian Line",
+      "space": "lens_vault_sighting_floor",
+      "position": [
+        46.55,
+        0.4,
+        35.55
+      ]
+    },
+    {
+      "id": "the-mirror-well",
+      "name": "The Mirror Well",
+      "space": "lens_vault_mirror_well",
+      "position": [
+        20.55,
+        -6.0,
+        35.55
+      ]
+    },
+    {
+      "id": "annealing-beds",
+      "name": "The Annealing Beds",
+      "space": "lens_vault_annealing_ice",
+      "position": [
+        71.55,
+        0.0,
+        56.55
+      ]
+    },
+    {
+      "id": "the-stilling-floor",
+      "name": "The Stilling Floor",
+      "space": "cistern_stilling_floor",
+      "position": [
+        126.15,
+        -0.6,
+        27.55
+      ]
+    },
+    {
+      "id": "the-settling-basin",
+      "name": "The Settling Basin",
+      "space": "cistern_settling_basin",
+      "position": [
+        180.65,
+        -2.0,
+        24.55
+      ]
+    },
+    {
+      "id": "the-sluice-gates",
+      "name": "The Sluice Gates",
+      "space": "cistern_sluice_hall",
+      "position": [
+        153.65,
+        1.4,
+        21.55
+      ]
+    },
+    {
+      "id": "the-water-gate",
+      "name": "The Water Gate",
+      "space": "cellars_water_gate",
+      "position": [
+        35.55,
+        -7.2,
+        151.0
+      ]
+    },
+    {
+      "id": "the-rock-shrine",
+      "name": "The Rock Shrine",
+      "space": "cellars_rock_shrine",
+      "position": [
+        18.55,
+        0.2,
+        126.0
+      ]
+    },
+    {
+      "id": "cold-larder",
+      "name": "The Cold Larder",
+      "space": "cellars_cold_larder",
+      "position": [
+        60.55,
+        -0.4,
+        126.0
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "meridian-sight",
+      "label": "Meridian Sight",
+      "space": "lens_vault_sighting_floor"
+    },
+    {
+      "id": "grinding-lap",
+      "label": "Grinding Lap",
+      "space": "lens_vault_grinding_room"
+    },
+    {
+      "id": "well-plumb",
+      "label": "Well Plumb Line",
+      "space": "lens_vault_mirror_well"
+    },
+    {
+      "id": "chart-press",
+      "label": "Chart Press",
+      "space": "lens_vault_chart_aisle"
+    },
+    {
+      "id": "sluice-wheel",
+      "label": "Sluice Wheel",
+      "space": "cistern_sluice_hall"
+    },
+    {
+      "id": "filter-rack",
+      "label": "Filter Rack",
+      "space": "cistern_filter_racks"
+    },
+    {
+      "id": "pump-drive",
+      "label": "Pump Drive",
+      "space": "cistern_pump_gallery"
+    },
+    {
+      "id": "stilling-gauge",
+      "label": "Stilling Gauge",
+      "space": "cistern_stilling_floor"
+    },
+    {
+      "id": "cellar-hatch",
+      "label": "Cellar Hatch",
+      "space": "cellars_cellar_head"
+    },
+    {
+      "id": "store-table",
+      "label": "Store Table",
+      "space": "cellars_common_cellar"
+    },
+    {
+      "id": "shrine-niche",
+      "label": "Shrine Niche",
+      "space": "cellars_rock_shrine"
+    },
+    {
+      "id": "water-gate-bars",
+      "label": "Water Gate Bars",
+      "space": "cellars_water_gate"
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "lens-master",
+      "label": "Lens Master",
+      "space": "lens_vault_grinding_room"
+    },
+    {
+      "id": "well-reader",
+      "label": "Well Reader",
+      "space": "lens_vault_mirror_well"
+    },
+    {
+      "id": "cistern-reeve",
+      "label": "Cistern Reeve",
+      "space": "cistern_sluice_hall"
+    },
+    {
+      "id": "flour-shoveller",
+      "label": "Flour Shoveller",
+      "space": "cistern_settling_basin"
+    },
+    {
+      "id": "cellar-keeper",
+      "label": "Cellar Keeper",
+      "space": "cellars_common_cellar"
+    },
+    {
+      "id": "ice-cutter",
+      "label": "Ice Cutter",
+      "space": "cellars_cold_larder"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "lens-quartz-blank",
+      "label": "Quartz Blank",
+      "space": "lens_vault_grinding_room"
+    },
+    {
+      "id": "annealing-rime",
+      "label": "Annealing Rime",
+      "space": "lens_vault_annealing_ice"
+    },
+    {
+      "id": "rock-flour",
+      "label": "Glacier Rock Flour",
+      "space": "cistern_settling_basin"
+    },
+    {
+      "id": "filter-charcoal",
+      "label": "Filter Charcoal",
+      "space": "cistern_filter_racks"
+    },
+    {
+      "id": "stored-glacier-ice",
+      "label": "Stored Glacier Ice",
+      "space": "cellars_cold_larder"
+    },
+    {
+      "id": "cellar-moss",
+      "label": "Cellar Moss",
+      "space": "cellars_water_gate"
+    }
+  ],
+  "lights": [
+    {
+      "id": "lantern-00",
+      "kind": "point",
+      "position": [
+        46.55,
+        5.0,
+        35.55
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-01",
+      "kind": "point",
+      "position": [
+        72.55,
+        3.4,
+        30.55
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-02",
+      "kind": "point",
+      "position": [
+        71.55,
+        2.8,
+        56.55
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-03",
+      "kind": "point",
+      "position": [
+        20.55,
+        -3.0,
+        35.55
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-04",
+      "kind": "point",
+      "position": [
+        46.55,
+        3.2,
+        60.55
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-05",
+      "kind": "point",
+      "position": [
+        46.55,
+        8.4,
+        16.55
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-06",
+      "kind": "point",
+      "position": [
+        153.65,
+        4.2,
+        20.55
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-07",
+      "kind": "point",
+      "position": [
+        180.65,
+        2.6,
+        24.55
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-08",
+      "kind": "point",
+      "position": [
+        126.15,
+        2.4,
+        27.55
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-09",
+      "kind": "point",
+      "position": [
+        153.65,
+        3.2,
+        43.55
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-10",
+      "kind": "point",
+      "position": [
+        176.65,
+        3.6,
+        46.55
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-11",
+      "kind": "point",
+      "position": [
+        38.55,
+        2.6,
+        108.0
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-12",
+      "kind": "point",
+      "position": [
+        38.55,
+        2.0,
+        126.0
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-13",
+      "kind": "point",
+      "position": [
+        60.55,
+        1.6,
+        126.0
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-14",
+      "kind": "point",
+      "position": [
+        18.55,
+        2.2,
+        126.0
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-15",
+      "kind": "point",
+      "position": [
+        35.55,
+        -6.0,
+        148.0
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.13,
+        0.16,
+        0.21
+      ],
+      "energy": 0.34
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.08,
+        0.1,
+        0.13
+      ],
+      "begin": 14.0,
+      "end": 52.0
+    },
+    "audio": [
+      {
+        "id": "lap-grind",
+        "space": "grinding_room",
+        "loop": true
+      },
+      {
+        "id": "drip",
+        "space": "mirror_well",
+        "loop": true
+      },
+      {
+        "id": "sluice-roar",
+        "space": "sluice_hall",
+        "loop": true
+      },
+      {
+        "id": "still-water",
+        "space": "stilling_floor",
+        "loop": true
+      },
+      {
+        "id": "lap",
+        "space": "water_gate",
+        "loop": true
+      },
+      {
+        "id": "settle",
+        "space": "common_cellar",
+        "loop": true
+      }
+    ],
+    "openToSky": [
+      "lens_vault_sighting_floor"
+    ]
+  },
+  "blocks": [
+    {
+      "id": "lens-vault",
+      "name": "The Lens Vault",
+      "spawn": "lens-vault-stair",
+      "anchorLandmark": "orrery",
+      "arrivalSpace": "lens_vault_stairhead"
+    },
+    {
+      "id": "cistern",
+      "name": "The Mirror Cistern",
+      "spawn": "cistern-door",
+      "anchorLandmark": "plaza",
+      "arrivalSpace": "cistern_sluice_hall"
+    },
+    {
+      "id": "cellars",
+      "name": "The Stair Cellars",
+      "spawn": "stair-cellars-door",
+      "anchorLandmark": "cliff-town",
+      "arrivalSpace": "cellars_cellar_head"
+    }
+  ],
+  "spaces": {
+    "lens_vault_stairhead": {
+      "x0": 42.55,
+      "x1": 50.55,
+      "z0": 12.55,
+      "z1": 20.55,
+      "floor": 6.0,
+      "height": 4.0
+    },
+    "lens_vault_sighting_floor": {
+      "x0": 34.55,
+      "x1": 58.55,
+      "z0": 23.55,
+      "z1": 47.55,
+      "floor": 0.0,
+      "height": 8.0
+    },
+    "lens_vault_grinding_room": {
+      "x0": 64.55,
+      "x1": 80.55,
+      "z0": 25.55,
+      "z1": 43.55,
+      "floor": -0.8,
+      "height": 5.2
+    },
+    "lens_vault_annealing_ice": {
+      "x0": 64.55,
+      "x1": 78.55,
+      "z0": 49.55,
+      "z1": 63.55,
+      "floor": -0.8,
+      "height": 4.4
+    },
+    "lens_vault_mirror_well": {
+      "x0": 12.55,
+      "x1": 28.55,
+      "z0": 26.55,
+      "z1": 44.55,
+      "floor": -7.2,
+      "height": 11.0
+    },
+    "lens_vault_chart_aisle": {
+      "x0": 37.55,
+      "x1": 55.55,
+      "z0": 53.55,
+      "z1": 67.55,
+      "floor": 0.0,
+      "height": 4.8
+    },
+    "lens_vault_descent": {
+      "x0": 44.95,
+      "x1": 48.15,
+      "z0": 18.95,
+      "z1": 25.15,
+      "floor": 0.0,
+      "height": 3.6
+    },
+    "lens_vault_grind_aisle": {
+      "x0": 57.05,
+      "x1": 66.05,
+      "z0": 34.05,
+      "z1": 37.05,
+      "floor": -0.8,
+      "height": 3.4
+    },
+    "lens_vault_well_stair": {
+      "x0": 27.05,
+      "x1": 36.05,
+      "z0": 34.05,
+      "z1": 37.05,
+      "floor": -7.2,
+      "height": 3.6
+    },
+    "lens_vault_chart_link": {
+      "x0": 43.05,
+      "x1": 46.05,
+      "z0": 46.05,
+      "z1": 55.05,
+      "floor": 0.0,
+      "height": 3.4
+    },
+    "cistern_sluice_hall": {
+      "x0": 142.65,
+      "x1": 164.65,
+      "z0": 12.55,
+      "z1": 30.55,
+      "floor": 0.0,
+      "height": 6.4
+    },
+    "cistern_settling_basin": {
+      "x0": 170.65,
+      "x1": 190.65,
+      "z0": 14.55,
+      "z1": 34.55,
+      "floor": -3.0,
+      "height": 7.2
+    },
+    "cistern_stilling_floor": {
+      "x0": 115.65,
+      "x1": 136.65,
+      "z0": 14.55,
+      "z1": 40.55,
+      "floor": -1.6,
+      "height": 5.6
+    },
+    "cistern_filter_racks": {
+      "x0": 144.65,
+      "x1": 162.65,
+      "z0": 36.55,
+      "z1": 50.55,
+      "floor": 0.0,
+      "height": 4.6
+    },
+    "cistern_pump_gallery": {
+      "x0": 168.65,
+      "x1": 184.65,
+      "z0": 38.55,
+      "z1": 54.55,
+      "floor": 0.0,
+      "height": 5.4
+    },
+    "cistern_basin_aisle": {
+      "x0": 163.15,
+      "x1": 172.15,
+      "z0": 21.05,
+      "z1": 24.05,
+      "floor": -3.0,
+      "height": 3.4
+    },
+    "cistern_stilling_aisle": {
+      "x0": 135.15,
+      "x1": 144.15,
+      "z0": 21.05,
+      "z1": 24.05,
+      "floor": -1.6,
+      "height": 3.4
+    },
+    "cistern_filter_link": {
+      "x0": 152.05,
+      "x1": 155.25,
+      "z0": 28.95,
+      "z1": 38.15,
+      "floor": 0.0,
+      "height": 3.4
+    },
+    "cistern_pump_link": {
+      "x0": 161.25,
+      "x1": 170.05,
+      "z0": 42.15,
+      "z1": 44.95,
+      "floor": 0.0,
+      "height": 3.2
+    },
+    "cellars_cellar_head": {
+      "x0": 32.55,
+      "x1": 44.55,
+      "z0": 103.0,
+      "z1": 113.0,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "cellars_common_cellar": {
+      "x0": 28.55,
+      "x1": 48.55,
+      "z0": 118.0,
+      "z1": 134.0,
+      "floor": -1.4,
+      "height": 4.0
+    },
+    "cellars_cold_larder": {
+      "x0": 54.55,
+      "x1": 66.55,
+      "z0": 120.0,
+      "z1": 132.0,
+      "floor": -1.4,
+      "height": 3.4
+    },
+    "cellars_rock_shrine": {
+      "x0": 12.55,
+      "x1": 24.55,
+      "z0": 120.0,
+      "z1": 132.0,
+      "floor": -1.0,
+      "height": 4.4
+    },
+    "cellars_water_gate": {
+      "x0": 29.55,
+      "x1": 41.55,
+      "z0": 144.0,
+      "z1": 158.0,
+      "floor": -8.4,
+      "height": 4.6
+    },
+    "cellars_head_stair": {
+      "x0": 37.15,
+      "x1": 39.95,
+      "z0": 111.6,
+      "z1": 119.4,
+      "floor": -1.4,
+      "height": 3.0
+    },
+    "cellars_larder_aisle": {
+      "x0": 47.25,
+      "x1": 55.85,
+      "z0": 124.7,
+      "z1": 127.3,
+      "floor": -1.4,
+      "height": 3.0
+    },
+    "cellars_shrine_aisle": {
+      "x0": 23.25,
+      "x1": 29.85,
+      "z0": 124.7,
+      "z1": 127.3,
+      "floor": -1.4,
+      "height": 3.0
+    },
+    "cellars_smugglers_stair": {
+      "x0": 34.25,
+      "x1": 36.85,
+      "z0": 132.7,
+      "z1": 145.3,
+      "floor": -8.4,
+      "height": 3.2
+    }
+  },
+  "conceptArt": {
+    "detailBoard": "../../amberwood/references/00-concept-detail-board.png",
+    "role": "parent-region board; these interiors have no board of their own",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "stair down from the orrery drum",
+      "the sighting floor and its meridian",
+      "oculus to the sphere above",
+      "grinding laps and blank racks",
+      "the drive shaft and its channel",
+      "ice-lined annealing beds",
+      "descent to the mirror well",
+      "the still pool as a horizontal mirror",
+      "chart presses and instrument bench",
+      "marble brass crystal ice materials",
+      "sluice gates and the incoming main",
+      "the vaulted sluice hall",
+      "descent to the settling basin",
+      "baffles dropping the rock flour",
+      "spoil barrow and shovelled flour",
+      "gravel and charcoal filter beds",
+      "the pump gallery and rising main",
+      "the stilling floor walkway",
+      "columns standing in the mirror",
+      "ashlar marble brass water materials",
+      "cellar head under the trap door",
+      "stair into the common cellar",
+      "the town's stores and long table",
+      "glacier ice bedded in sawdust",
+      "hung stores on the iron rail",
+      "the niche shrine cut in rock",
+      "mirror offerings at the plinth",
+      "the long stair down to the water",
+      "the barred water gate and its boat",
+      "rubble ice timber iron materials"
+    ]
+  },
+  "performance": {
+    "nodes": 24,
+    "meshes": 23,
+    "materials": 19,
+    "images": 53,
+    "textures": 53,
+    "accessors": 115,
+    "bufferViews": 168,
+    "uniqueTriangles": 26030,
+    "uniqueVertices": 33658,
+    "glbBytes": 7014608,
+    "nodeNames": [
+      "Interior_mirrorhold_interiors",
+      "Build_mirrorhold_interiors_amber_resin",
+      "Build_mirrorhold_interiors_ashlar",
+      "Build_mirrorhold_interiors_blue_crystal",
+      "Build_mirrorhold_interiors_cliff_rock",
+      "Build_mirrorhold_interiors_cobble_paving",
+      "Build_mirrorhold_interiors_dark_iron",
+      "Build_mirrorhold_interiors_gilt_brass",
+      "Build_mirrorhold_interiors_glacier_ice",
+      "Build_mirrorhold_interiors_mirror_glass",
+      "Build_mirrorhold_interiors_pale_ashlar",
+      "Build_mirrorhold_interiors_rubble_stone",
+      "Build_mirrorhold_interiors_timber_dark",
+      "Build_mirrorhold_interiors_timber_grey",
+      "Build_mirrorhold_interiors_timber_warm",
+      "Build_mirrorhold_interiors_veined_marble",
+      "Build_mirrorhold_interiors_water_lake",
+      "Build_mirrorhold_interiors_water_pool",
+      "Build_mirrorhold_interiors_water_stream",
+      "Build_mirrorhold_interiors_woven_cloth",
+      "Walk_cliff_rock",
+      "Walk_cobble_paving",
+      "Walk_rubble_stone",
+      "Walk_veined_marble"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "source/build_interiors.py",
+      "role": "reproducible-build",
+      "seed": 20260828
+    },
+    {
+      "id": "anchor",
+      "landmark": "citadel",
+      "position": [
+        162.0,
+        124.0,
+        -267.0
+      ],
+      "role": "surface entrance on the Amberwood region map"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the Amberwood region toolkit; no scattered placement",
+    "textures": "procedural, from amberwood/textures.py",
+    "thirdParty": "none"
+  },
+  "notes": [
+    "Three interiors on one map, in the Eternal Lands manner: separate blocks on a 204 m square (34 ELM tiles) with 34 m of dead ground between them and nothing joining them in-map.",
+    "Square because the server's ELM validator requires width == height, and a whole number of tiles because a map is measured in them. A row of blocks would have been neither.",
+    "The gaps carry no geometry, so the collision grid reads 0 there: the space between blocks is unreachable rather than merely unlit.",
+    "Each block keeps the coordinates it was authored in; only its origin moves. Space keys are prefixed with the block name.",
+    "The fourth quarter is deliberately empty, so a later interior can be added without moving any block already placed.",
+    "One route in, from the orrery drum. The well is the deepest point at -7.2 m and the only dead end; everything else is a loop through the sighting floor.",
+    "The pool in the mirror well is not a walk surface. Its coping is.",
+    "The oculus is the only opening: the space list marks sighting_floor as open to sky so the loader does not light it as a sealed room.",
+    "Water levels descend west to east through the works: sluice hall at 0.0, stilling floor at -1.6, settling basin at -3.0. The two water surfaces are meshes, not walk surfaces.",
+    "The stilling floor's walkway is the only way across it and is a walk surface; the water either side is not.",
+    "A branch, not a loop: the common cellar is the hub and the larder, shrine and water stair are dead ends off it.",
+    "The water gate is at -8.4 m, roughly lake level relative to the cliff town's terrace. Its water is a mesh, not a walk surface."
+  ],
+  "productionStatus": "authored-geometry-materials-population",
+  "knownLimitations": [
+    "Not opened in Godot: no client is installable in the build environment, so collision response, navmesh generation, portal transition, LOD and transparency sorting are unverified.",
+    "eloria-server has not registered these map keys."
+  ]
+}

@@ -40,6 +40,7 @@ def views_for(manifest: dict) -> list[dict]:
     # culled - it is here for the plan, not for beauty.
     out.append({
         "id": "00-plan-overview",
+        "file": "00-plan-overview.png",
         "space": None,
         "eye": [round(cx, 2), round(hi_y + span * 0.75, 2), round(hi_z + span * 0.55, 2)],
         "target": [round(cx, 2), 0.0, round(cz, 2)],
@@ -68,6 +69,7 @@ def views_for(manifest: dict) -> list[dict]:
                       s["z1"] - inset_d * 0.6]
         out.append({
             "id": f"{index:02d}-{key.replace('_', '-')}",
+            "file": f"{index:02d}-{key.replace('_', '-')}.png",
             "space": key,
             "eye": [round(v, 2) for v in eye],
             "target": [round(v, 2) for v in target],
