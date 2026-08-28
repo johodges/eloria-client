@@ -187,6 +187,9 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
     space = interior.spaces[spawn_space]
     spawn = [round((space["x0"] + space["x1"]) * 0.5, 2), round(space["floor"] + 0.05, 2),
              round((space["z0"] + space["z1"]) * 0.5, 2)]
+    arrivals = getattr(interior, "arrivals", None) or [
+        {"id": interior.destination_spawn, "name": interior.name,
+         "section": interior.ident, "position": spawn}]
     doc = {
         "schemaVersion": "1.0.0",
         "assetVersion": "1.0.0",
@@ -214,12 +217,15 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
             "walkingHeight": round(float(space["floor"]), 2),
             "invertServerY": True,
         },
-        "spawnPoints": [
-            {"id": "default", "position": spawn, "rotationDegrees": 0,
-             "surface": "Walk"},
-            {"id": interior.destination_spawn, "position": spawn, "rotationDegrees": 0,
-             "surface": "Walk"},
-        ],
+        # One arrival per surface door. A combined insides map is entered at a
+        # different point depending on which door was used, so the spawn list is
+        # the whole point of it rather than a formality.
+        "spawnPoints": ([{"id": "default", "position": spawn, "rotationDegrees": 0,
+                          "surface": "Walk"}]
+                        + [{"id": a["id"], "name": a["name"], "position": a["position"],
+                            "rotationDegrees": 0, "surface": "Walk",
+                            "section": a["section"]}
+                           for a in arrivals]),
         "collision": dict(collision_stats,
                           nodeNames=[n for n in stats["nodeNames"]
                                      if not n.startswith("Walk_")]),
@@ -233,16 +239,20 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
                       "region's contract: the client turns navigation.surfaceNodePrefixes "
                       "into the layer its downward grounding ray tests."],
         },
+        # A return portal standing on each arrival, sending the player back to
+        # the surface door they came in by rather than to one shared exit.
         "portals": [{
-            "id": f"exit-to-{PARENT_REGION_ID}",
+            "id": f"exit-{a['id']}",
             "name": f"Return to {PARENT_REGION_NAME}",
             "type": "map-transition",
-            "position": spawn,
+            "position": a["position"],
             "radius": 3.0,
             "destinationMap": PARENT_REGION_MAP,
-            "destinationSpawn": interior.destination_spawn,
+            "destinationSpawn": a["id"],
+            "section": a["section"],
             "authority": "server",
-        }],
+        } for a in arrivals],
+        "sections": getattr(interior, "sections", []),
         "landmarks": interior.landmarks,
         "interactives": interior.interactives,
         "npcMarkers": interior.npc_markers,
@@ -293,7 +303,8 @@ def main() -> int:
     args = ap.parse_args()
     sets = preview.texture_sets()
     summary = []
-    for key, builder_fn in I.ALL.items():
+    # One combined map, not four packages: see interiors.combine().
+    for key, builder_fn in (("amethyst_barrens_insides", I.combine),):
         if args.only and key not in args.only:
             continue
         t0 = time.time()

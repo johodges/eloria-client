@@ -40,6 +40,7 @@ INTERIOR_LIGHT = R.Lighting(
 )
 
 BUILDERS = dict(I.ALL)
+BUILDERS["insides"] = I.combine
 
 
 DAYLIT = R.Lighting(

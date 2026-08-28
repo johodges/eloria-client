@@ -1033,3 +1033,136 @@ ALL = {
     "shardworks": shardworks,
     "storm_barrow": storm_barrow,
 }
+
+
+# --------------------------------------------------------------------------
+# The combined insides map
+# --------------------------------------------------------------------------
+# Eternal Lands puts every inside belonging to a region on one map, separated by
+# unwalkable void, and sends the player to a different arrival point on that map
+# depending on which door was used. Doing the same here means one GLB, one
+# manifest and one collision grid instead of four, one server map key instead of
+# four, and one load rather than a load per doorway.
+#
+# The blackspace falls out of the construction rather than being drawn: the
+# collision grid is built only where a Walk_ surface exists, so the gutters
+# between the four are already blocked, and nothing is rendered there either.
+#
+# Offsets are chosen from each interior's measured footprint so no two come
+# within about forty metres of each other. That gap is not decoration - it is
+# what stops a lamp in the Shardworks lighting the Barrow, and what keeps a
+# stray camera in one from seeing into another.
+LAYOUT = {
+    #                     offset x, offset z, gutter neighbours
+    "resonant_vault": (0.0, 0.0),
+    "geode_hollow": (140.0, 0.0),
+    "shardworks": (30.0, 190.0),
+    "storm_barrow": (165.0, 190.0),
+}
+
+# Shift the whole assembly clear of the origin so the map sits in positive
+# coordinates with a margin on every side, the way a server map is indexed.
+LAYOUT_ORIGIN = (53.0, 39.0)
+
+
+def combine(seed: int = 20260901) -> Interior:
+    """Assemble the four interiors onto one map with blackspace between them."""
+    combined = Interior("amethyst_barrens_insides", "Amethyst Barrens Insides",
+                        "insides", "glasswarden-observatory",
+                        [-78.0, 8.15, -204.0], "resonant-vault-stair")
+    combined.arrivals = []
+    combined.sections = []
+
+    for key, build_fn in ALL.items():
+        part = build_fn(seed)
+        dx = LAYOUT[key][0] + LAYOUT_ORIGIN[0]
+        dz = LAYOUT[key][1] + LAYOUT_ORIGIN[1]
+
+        part.group.translate(dx, 0.0, dz)
+        combined.group.add(part.group)
+
+        def move(position):
+            return [round(float(position[0]) + dx, 2), round(float(position[1]), 2),
+                    round(float(position[2]) + dz, 2)]
+
+        for space_key, space in part.spaces.items():
+            combined.spaces[f"{key}.{space_key}"] = {
+                "x0": space["x0"] + dx, "x1": space["x1"] + dx,
+                "z0": space["z0"] + dz, "z1": space["z1"] + dz,
+                "floor": space["floor"], "height": space["height"]}
+        for run_key, run in part.passages.items():
+            combined.passages[f"{key}.{run_key}"] = {
+                "a": (run["a"][0] + dx, run["a"][1] + dz),
+                "b": (run["b"][0] + dx, run["b"][1] + dz),
+                "y0": run["y0"], "y1": run["y1"],
+                "width": run["width"], "height": run["height"]}
+
+        for entry in part.landmarks:
+            item = dict(entry)
+            item["position"] = move(entry["position"])
+            item["space"] = f"{key}.{entry['space']}" if "space" in entry else None
+            item["section"] = key
+            combined.landmarks.append(item)
+        for source, target in ((part.interactives, combined.interactives),
+                               (part.harvestables, combined.harvestables),
+                               (part.npc_markers, combined.npc_markers)):
+            for entry in source:
+                item = dict(entry)
+                item["position"] = move(entry["position"])
+                item["section"] = key
+                target.append(item)
+        combined.lamps.extend(move(p) for p in part.lamps)
+        combined.open_to_sky.extend(f"{key}.{s}" for s in part.open_to_sky)
+        for entry in part.subjects:
+            ident, subject, space = entry[0], entry[1], entry[2]
+            rest = tuple(entry[3:])
+            moved = tuple(move(v) for v in rest) if rest else ()
+            combined.subjects.append(
+                (f"{key}-{ident}", f"{part.name}: {subject}", f"{key}.{space}") + moved)
+
+        # the arrival: where a player using this section's surface door lands
+        spawn_space = combined.spaces[f"{key}.{part.spawn_space}"]
+        arrival = [round((spawn_space["x0"] + spawn_space["x1"]) * 0.5, 2),
+                   round(spawn_space["floor"] + 0.05, 2),
+                   round((spawn_space["z0"] + spawn_space["z1"]) * 0.5, 2)]
+        combined.arrivals.append({
+            "id": part.destination_spawn, "name": part.name, "section": key,
+            "space": f"{key}.{part.spawn_space}", "position": arrival})
+        combined.sections.append({
+            "id": key, "name": part.name, "class": part.klass,
+            "offset": [dx, 0.0, dz], "arrival": arrival,
+            "spaces": [f"{key}.{s}" for s in part.spaces],
+            "notes": part.notes})
+
+    combined.spawn_space = f"resonant_vault.{ALL['resonant_vault'](seed).spawn_space}"
+
+    # One map, one environment. The four sections carry their own audio, and the
+    # Barrow's strike well stays declared open to the sky so the client can keep
+    # a hole in the roof where the region's storm comes down.
+    combined.environment = {
+        "sky": "none",
+        "ambient": {"colour": [0.14, 0.12, 0.19], "energy": 0.44},
+        "fog": {"enabled": True, "colour": [0.06, 0.06, 0.09],
+                "begin": 15.0, "end": 52.0},
+        "audio": [
+            {"id": "resonance-hum", "space": "resonant_vault.hall", "loop": True},
+            {"id": "arc-crackle", "space": "resonant_vault.crossing", "loop": True},
+            {"id": "crystal-resonance", "space": "geode_hollow.hollow", "loop": True},
+            {"id": "drip", "space": "geode_hollow.mirror", "loop": True},
+            {"id": "pick-work", "space": "shardworks.stope", "loop": True},
+            {"id": "winding-gear", "space": "shardworks.headframe", "loop": True},
+            {"id": "storm-distant", "space": "storm_barrow.strikewell", "loop": True},
+            {"id": "wind-hollow", "space": "storm_barrow.cella", "loop": True},
+        ],
+    }
+    combined.notes = [
+        "Four interiors on one map with blackspace between them, in the Eternal "
+        "Lands convention: one GLB, one manifest, one collision grid, one server "
+        "map key, and an arrival point per surface door.",
+        "The blackspace is not drawn. The collision grid is built only where a "
+        "Walk_ surface exists, so the gutters between sections are blocked by "
+        "construction rather than by a mask that could drift out of step.",
+        "Sections are spaced so no two come within about forty metres, which is "
+        "what keeps one section's lamps and cameras out of the next.",
+    ]
+    return combined

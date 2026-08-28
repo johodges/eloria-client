@@ -138,31 +138,38 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             "destinationMap": destination, "radius": 3.5,
             "authority": "server"})
 
-    # Interior entrances. Each sits on the landmark it belongs to, so the way in
-    # is the thing the player was looking at, and each interior package carries
-    # the matching return portal.
-    for portal_id, name, landmark_id, destination, spawn in (
-            ("resonant-vault-stair", "The Resonant Vault", "glasswarden-observatory",
-             "maps/nymara/resonant_vault.elm", "default"),
-            ("geode-hollow-mouth", "The Geode Hollow", "amethyst-geode-cave-1",
-             "maps/nymara/amethyst_geode_hollow.elm", "default"),
-            ("shardworks-headframe", "The Shardworks", "resonant-crystal-cluster-0",
-             "maps/nymara/amethyst_shardworks.elm", "default"),
-            ("storm-barrow-stair", "The Storm Barrow", "amethyst-storm-ruin-0",
-             "maps/nymara/amethyst_storm_barrow.elm", "default")):
+    # Interior entrances. All four Amethyst insides live on one map with
+    # blackspace between them, in the Eternal Lands convention, so every door
+    # targets the same `destinationMap` and differs only in which arrival point
+    # it asks for. Each door also gets a spawn of the same name on this map, so
+    # the return portal on the insides map has somewhere to put the player back.
+    for portal_id, name, landmark_id in (
+            ("resonant-vault-stair", "The Resonant Vault", "glasswarden-observatory"),
+            ("geode-hollow-mouth", "The Geode Hollow", "amethyst-geode-cave-1"),
+            ("shardworks-headframe", "The Shardworks", "resonant-crystal-cluster-0"),
+            ("storm-barrow-stair", "The Storm Barrow", "amethyst-storm-ruin-0")):
         anchor = next((l for l in build.landmarks if l.get("id") == landmark_id), None)
         if anchor is None:
             continue
         x, y, z = anchor["position"]
+        position = [round(float(x), 2), round(float(y) + 0.1, 2), round(float(z), 2)]
+        tile = [int(round(x + REG.SERVER_ORIGIN[0])),
+                int(round(REG.SERVER_ORIGIN[1] - z))]
         build.portals.append({
             "id": portal_id, "name": name, "type": "interior-entrance",
-            "position": [round(float(x), 2), round(float(y) + 0.1, 2),
-                         round(float(z), 2)],
-            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
-                           int(round(REG.SERVER_ORIGIN[1] - z))],
-            "landmark": landmark_id,
-            "destinationMap": destination, "destinationSpawn": spawn, "radius": 2.5,
+            "position": position, "serverTile": tile, "landmark": landmark_id,
+            "destinationMap": "maps/nymara/resonant_vault.elm",
+            "destinationSpawn": portal_id, "radius": 2.5,
             "authority": "server"})
+        build.spawns.append({
+            "id": portal_id,
+            "position": [position[0], round(float(t.height_at(x, z)) + 0.05, 2),
+                         position[2]],
+            "serverTile": tile,
+            "rotationDegrees": 0.0,
+            "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
+            "grounded": True,
+            "note": "return point from the Amethyst Barrens insides map"})
 
 
 def _add_population_markers(build: REG.RegionBuild, seed: int) -> None:
@@ -456,6 +463,63 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     return payload, width, height, stats
 
 
+
+def snap_to_walkable(build: REG.RegionBuild, payload: bytes, width: int,
+                     height: int) -> list[str]:
+    """Move any spawn or portal that landed on a blocked cell onto the nearest
+    walkable one.
+
+    An interior door sits on the landmark it belongs to, and a landmark that
+    collides blocks its own footprint - so the doorway tile can end up inside
+    the disc the door is attached to, and the server will not let a player stand
+    in it. Rather than special-case the radius per landmark, every spawn and
+    portal is checked against the finished collision grid and nudged out.
+    """
+    grid = np.frombuffer(payload, dtype=np.uint8, offset=16).reshape(height, width)
+    walk = grid > 0
+    moved: list[str] = []
+
+    def cell_of(x: float, z: float) -> tuple[int, int]:
+        cx = int((x - REG.PLAY_MIN_X) / COLLISION_CELL)
+        cz = int((REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - z) / COLLISION_CELL)
+        return cx, cz
+
+    def world_of(cx: int, cz: int) -> tuple[float, float]:
+        x = REG.PLAY_MIN_X + (cx + 0.5) * COLLISION_CELL
+        z = REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - (cz + 0.5) * COLLISION_CELL
+        return x, z
+
+    for entry in list(build.spawns) + list(build.portals):
+        x, y, z = entry["position"]
+        cx, cz = cell_of(x, z)
+        if not (0 <= cx < width and 0 <= cz < height):
+            continue
+        if walk[cz, cx]:
+            continue
+        best = None
+        for radius in range(1, 60):
+            lo_z, hi_z = max(cz - radius, 0), min(cz + radius + 1, height)
+            lo_x, hi_x = max(cx - radius, 0), min(cx + radius + 1, width)
+            window = walk[lo_z:hi_z, lo_x:hi_x]
+            if not window.any():
+                continue
+            zs, xs = np.nonzero(window)
+            zs, xs = zs + lo_z, xs + lo_x
+            best_index = int(np.argmin((xs - cx) ** 2 + (zs - cz) ** 2))
+            best = (int(xs[best_index]), int(zs[best_index]))
+            break
+        if best is None:
+            continue
+        nx, nz = world_of(*best)
+        entry["position"] = [round(nx, 2), round(float(build.terrain.height_at(nx, nz)) + 0.1, 2),
+                             round(nz, 2)]
+        entry["serverTile"] = [int(round(nx + REG.SERVER_ORIGIN[0])),
+                               int(round(REG.SERVER_ORIGIN[1] - nz))]
+        distance = math.hypot(nx - x, nz - z)
+        moved.append(f"{entry['id']} moved {distance:.1f} m onto walkable ground")
+    return moved
+
+
 # --------------------------------------------------------------------------
 def render_minimap(build: REG.RegionBuild, sets, path: Path, size: int = 768) -> dict:
     """Top-down capture of the finished geometry."""
@@ -693,6 +757,10 @@ def main() -> int:
 
     payload, width, height, collision_stats = build_collision(build)
     (out / "collision.bin").write_bytes(payload)
+    nudged = snap_to_walkable(build, payload, width, height)
+    for line in nudged:
+        print(f"[snap] {line}")
+    build.notes.extend(nudged)
     print(f"[collision] {width}x{height} cells, "
           f"{collision_stats['walkableFraction'] * 100:.1f}% walkable, "
           f"{collision_stats['saturatedFraction'] * 100:.1f}% saturated")
