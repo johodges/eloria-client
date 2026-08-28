@@ -287,13 +287,65 @@ func _run() -> void:
 		and main.call("_movement_axes_for_actions", false, false, false, true)
 		== Vector2i(0, -1),
 		"W/S move forward/backward and A/D use the requested swapped strafe directions")
-	var q_turn := InputEventKey.new()
-	q_turn.physical_keycode = KEY_Q
-	var e_turn := InputEventKey.new()
-	e_turn.physical_keycode = KEY_E
-	_expect(int(main.call("_turn_step_for_key_event", q_turn)) == 1
-		and int(main.call("_turn_step_for_key_event", e_turn)) == -1,
-		"Q and E use the corrected opposite rotation directions")
+	# The chat entry above kept keyboard focus. Release it: bound printable keys
+	# are deliberately inert while a text field is focused.
+	main.call("_hide_chat_input")
+	await process_frame
+	# Every keyboard binding is resolved through the InputMap. Raw keycode
+	# comparisons used to shadow toggle_inventory, turn_left and turn_right, so
+	# rebinding them appeared to work and changed nothing. Rebinding an action
+	# and pressing both the old and the new key is what proves that is gone.
+	for rebindable: String in ["turn_left", "turn_right", "toggle_inventory",
+			"toggle_map", "toggle_minimap", "toggle_console",
+			"recenter_viewport", "connect", "disconnect"]:
+		_expect(InputMap.has_action(rebindable)
+			and InputMap.action_get_events(rebindable).size() > 0,
+			"%s is a declared action with at least one real event" % rebindable)
+	for rebindable: String in ["turn_left", "turn_right", "toggle_map",
+			"toggle_minimap", "toggle_console"]:
+		var defaults: Array[InputEvent] = InputMap.action_get_events(rebindable)
+		var original_key: InputEventKey = defaults[0].duplicate() as InputEventKey
+		original_key.pressed = true
+		var moved := InputEventKey.new()
+		moved.physical_keycode = KEY_F9
+		moved.pressed = true
+		InputMap.action_erase_events(rebindable)
+		InputMap.action_add_event(rebindable, moved)
+		_expect(not bool(main.call("_handle_bound_action", original_key)),
+			"rebinding %s releases its previous key" % rebindable)
+		_expect(bool(main.call("_handle_bound_action", moved)),
+			"rebinding %s moves the behaviour onto the new key" % rebindable)
+		InputMap.action_erase_events(rebindable)
+		for restored: InputEvent in defaults:
+			InputMap.action_add_event(rebindable, restored)
+		_expect(bool(main.call("_handle_bound_action", original_key)),
+			"restoring the %s binding restores its default key" % rebindable)
+	# Both connection actions reach a handler. connect() is driven from the
+	# already-connected branch so the assertion opens no socket.
+	app_state_inventory.set("connection_state", "connected")
+	var connect_key: InputEventKey = InputMap.action_get_events(
+		"connect")[0].duplicate() as InputEventKey
+	connect_key.pressed = true
+	_expect(bool(main.call("_handle_bound_action", connect_key)),
+		"the connect binding reaches a handler")
+	var disconnect_key: InputEventKey = InputMap.action_get_events(
+		"disconnect")[0].duplicate() as InputEventKey
+	disconnect_key.pressed = true
+	_expect(bool(main.call("_handle_bound_action", disconnect_key)),
+		"the disconnect binding reaches a handler")
+	app_state_inventory.set("connection_state", "disconnected")
+	# A focused text field keeps its own characters and clipboard shortcuts.
+	chat_input.show()
+	chat_input.grab_focus()
+	await process_frame
+	var console_key: InputEventKey = InputMap.action_get_events(
+		"toggle_console")[0].duplicate() as InputEventKey
+	console_key.pressed = true
+	_expect(not bool(main.call("_handle_bound_action", console_key)),
+		"a bound printable key typed into chat does not also toggle a window")
+	chat_input.release_focus()
+	chat_input.hide()
+	await process_frame
 	_expect(stats_tabs.get_tab_count() == 4
 		and stats_tabs.get_tab_title(0) == "Statistics"
 		and stats_tabs.get_tab_title(1) == "Knowledge"

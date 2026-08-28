@@ -653,13 +653,6 @@ func _turn_local_actor(step: int) -> void:
 	if actor_value is ReplicatedActor3D and is_instance_valid(actor_value as ReplicatedActor3D):
 		(actor_value as ReplicatedActor3D).turn_by(float(step) * PI / 4.0)
 
-func _turn_step_for_key_event(key_event: InputEventKey) -> int:
-	if key_event.keycode == KEY_Q or key_event.physical_keycode == KEY_Q:
-		return 1
-	if key_event.keycode == KEY_E or key_event.physical_keycode == KEY_E:
-		return -1
-	return 0
-
 func _on_connect_pressed() -> void:
 	if AppState.connection_state != "disconnected":
 		Network.disconnect_from_server()
@@ -1638,40 +1631,63 @@ func _clear_world_presentation() -> void:
 	selected_target.text = "Target: none"
 
 func _input(event: InputEvent) -> void:
-	if not game_view.visible or not event is InputEventKey:
+	if event is InputEventKey and (event as InputEventKey).echo:
 		return
-	var key_event: InputEventKey = event as InputEventKey
-	if not key_event.pressed or key_event.echo:
-		return
-	if key_event.ctrl_pressed and (key_event.keycode == KEY_I
-			or key_event.physical_keycode == KEY_I):
+	if _handle_bound_action(event):
+		get_viewport().set_input_as_handled()
+
+## Bindings that have to beat a focused HUD control, which is why they are
+## resolved here instead of in _unhandled_input().
+##
+## Every branch is an InputMap action. Raw keycode comparisons used to shadow
+## `toggle_inventory`, `turn_left` and `turn_right`, so rebinding those actions
+## appeared to work and changed nothing, while `toggle_map`, `toggle_minimap`
+## and `toggle_console` were resolved twice - once by keycode here and once by
+## action in _unhandled_input(). Returns true when the event was consumed.
+func _handle_bound_action(event: InputEvent) -> bool:
+	# A focused text field owns its own characters and its own clipboard
+	# shortcuts. Several of these actions default to bare printable keys, so
+	# without this a backtick typed into chat would also open the console.
+	if _text_entry_active():
+		if event.is_action_pressed("cancel") and chat_input.has_focus():
+			_hide_chat_input()
+			return true
+		return false
+	# Connection control is reachable before the world exists, so it is
+	# resolved ahead of the game-view gate below.
+	if event.is_action_pressed("connect"):
+		_on_connect_pressed()
+		return true
+	if event.is_action_pressed("disconnect"):
+		_on_disconnect_pressed()
+		return true
+	if not game_view.visible:
+		return false
+	if event.is_action_pressed("toggle_inventory"):
 		_on_inventory_button_pressed()
-		get_viewport().set_input_as_handled()
-	elif not _text_entry_active() and key_event.is_action_pressed("recenter_viewport"):
-		_recenter_viewport_on_player()
-		get_viewport().set_input_as_handled()
-	elif (not _text_entry_active() and not key_event.ctrl_pressed and not key_event.alt_pressed
-			and (key_event.keycode in [KEY_Q, KEY_E]
-			or key_event.physical_keycode in [KEY_Q, KEY_E])):
-		_turn_local_actor(_turn_step_for_key_event(key_event))
-		get_viewport().set_input_as_handled()
-	elif key_event.keycode == KEY_TAB or key_event.physical_keycode == KEY_TAB:
+		return true
+	if event.is_action_pressed("toggle_map"):
 		_toggle_full_map()
-		get_viewport().set_input_as_handled()
-	elif (key_event.alt_pressed and (key_event.keycode == KEY_M
-			or key_event.physical_keycode == KEY_M)):
+		return true
+	if event.is_action_pressed("toggle_minimap"):
 		_toggle_minimap()
-		get_viewport().set_input_as_handled()
-	elif (key_event.keycode in [96, 126]
-			or key_event.physical_keycode == 96 or key_event.unicode in [96, 126]):
+		return true
+	if event.is_action_pressed("toggle_console"):
 		_toggle_console()
-		get_viewport().set_input_as_handled()
-	elif key_event.keycode == KEY_ESCAPE and console_panel.visible:
+		return true
+	if event.is_action_pressed("recenter_viewport"):
+		_recenter_viewport_on_player()
+		return true
+	if event.is_action_pressed("turn_left"):
+		_turn_local_actor(1)
+		return true
+	if event.is_action_pressed("turn_right"):
+		_turn_local_actor(-1)
+		return true
+	if event.is_action_pressed("cancel") and console_panel.visible:
 		console_panel.hide()
-		get_viewport().set_input_as_handled()
-	elif key_event.keycode == KEY_ESCAPE and chat_input.has_focus():
-		_hide_chat_input()
-		get_viewport().set_input_as_handled()
+		return true
+	return false
 
 func _recenter_viewport_on_player() -> void:
 	camera_rig.reset_pan()
@@ -1694,18 +1710,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			_use_inventory_slot(slot)
 			get_viewport().set_input_as_handled()
 			return
-	if event.is_action_pressed("toggle_map"):
-		_toggle_full_map()
-		get_viewport().set_input_as_handled()
-		return
-	if event.is_action_pressed("toggle_minimap"):
-		_toggle_minimap()
-		get_viewport().set_input_as_handled()
-		return
-	if event.is_action_pressed("toggle_console"):
-		_toggle_console()
-		get_viewport().set_input_as_handled()
-		return
 	if event.is_action_pressed("chat_focus"):
 		_show_chat_input()
 		get_viewport().set_input_as_handled()
