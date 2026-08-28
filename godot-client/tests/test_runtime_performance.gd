@@ -56,7 +56,7 @@ func _run() -> void:
 	minimap_frame.hide()
 	full_map.hide()
 
-	# _sync_map_viewport_activity() runs on every map load and every full-map
+	# The map-load and toggle path runs on every map load and every full-map
 	# toggle. It used to set UPDATE_ALWAYS for a visible panel, which put the
 	# world back on full-rate rendering for up to one throttle interval and
 	# undid the throttle it shares the file with. It may only ever idle a

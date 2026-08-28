@@ -2,7 +2,7 @@ extends SceneTree
 ## Guards the manifest-driven lighting rig.
 ##
 ## `LightMarkerBinder` was written, tested in isolation, and never called: the
-## binder had no call site in `_on_world_loaded()`, so every brazier, hearth and
+## binder had no call site in the world-loaded handler, so every brazier, hearth and
 ## shrine lamp a map declared was silently dropped and `map_light_root` stayed
 ## null for the whole session. These assertions therefore drive the real
 ## world-loaded entry point rather than the binder directly.
