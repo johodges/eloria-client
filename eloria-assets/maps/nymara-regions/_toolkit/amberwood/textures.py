@@ -1509,3 +1509,438 @@ def amethyst_vault_floor(size: int = 512, seed: int = 577) -> TextureSet:
     return TextureSet("amethyst_vault_floor", _u8(np.clip(color, 0, 1)),
                       pack_orm(occlusion, roughness, metallic),
                       normal_from_height(height, 1.6))
+
+
+# --------------------------------------------------------------------------
+# Grey Moors kit
+#
+# A drowned burial moor under permanent overcast: sodden black peat and olive
+# moor-grass shot through with purple heather, grey lichen-blotched granite
+# standing in it, and warm candle-light in the barrow mouths. The palette is
+# deliberately narrow and desaturated - the concept has almost no saturated
+# colour except the heather, the amber doorways and the blue-white wisps, and
+# those only read as bright because everything around them is grey.
+#
+# Appended, never inserted, and every name carries the `grey_` prefix so the
+# regions in flight cannot collide on a material name.
+# --------------------------------------------------------------------------
+
+_MOOR_PEAT = (0.086, 0.074, 0.062)
+_MOOR_LOAM = (0.170, 0.152, 0.112)
+_MOOR_GRASS = (0.264, 0.256, 0.164)
+_MOOR_STRAW = (0.372, 0.344, 0.226)
+_MOOR_HEATHER = (0.336, 0.226, 0.352)
+_MOOR_HEATHER_PALE = (0.494, 0.372, 0.500)
+_MOOR_GRANITE = (0.392, 0.396, 0.388)
+_MOOR_LICHEN = (0.508, 0.520, 0.436)
+
+
+def grey_heather_moor(size: int = 512, seed: int = 601) -> TextureSet:
+    """The default ground of the region: tussock moor-grass over wet peat.
+
+    Panels 1, 3 and 10 all show the same surface - olive and straw grass in
+    clumps, dark sodden ground between them, and heather coming through in
+    ragged purple patches rather than an even wash.
+    """
+    tussock = N.tileable_fbm(size, 24, 5, seed=seed)
+    drift = N.tileable_fbm(size, 6, 4, seed=seed + 3)
+    clump = _upsample(N.tileable_worley(min(size, 256), 18, seed=seed + 7), size)
+    body = np.clip(tussock * 0.52 + drift * 0.30 + (1.0 - clump) * 0.18, 0, 1)
+    color = _colorize(body, (0.0, _MOOR_PEAT), (0.34, _MOOR_LOAM),
+                      (0.68, _MOOR_GRASS), (1.0, _MOOR_STRAW))
+    # heather in patches, driven by a separate low-frequency field so it does
+    # not simply follow the grass and turn the whole surface mauve
+    heath = np.clip(N.tileable_fbm(size, 4, 4, seed=seed + 11) * 2.3 - 1.18, 0.0, 1.0)
+    heath = heath * np.clip(tussock * 1.5 - 0.25, 0.0, 1.0)
+    color = _mix(color, np.array(_MOOR_HEATHER), heath * 0.72)
+    color = _mix(color, np.array(_MOOR_HEATHER_PALE), heath * heath * 0.34)
+    # standing wet in the hollows: darker and much less rough
+    wet = np.clip(0.62 - body, 0.0, 1.0) * np.clip(drift * 1.8 - 0.35, 0.0, 1.0)
+    color = _mix(color, np.array([0.056, 0.056, 0.052]), wet * 0.72)
+    height = np.clip(0.34 + tussock * 0.44 + (1.0 - clump) * 0.22, 0.0, 1.0)
+    occlusion = np.clip(0.38 + height * 0.60, 0.0, 1.0)
+    roughness = np.clip(0.98 - wet * 0.62, 0.05, 1.0)
+    return TextureSet("grey_heather_moor", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.6))
+
+
+def grey_peat_bog(size: int = 512, seed: int = 607) -> TextureSet:
+    """Sodden cut peat and sphagnum: the black ground the boardwalks cross.
+
+    Panel 8's peat banks are almost pure black-brown with a wet sheen, broken
+    by pale sphagnum and the white heads of bog cotton.
+    """
+    fibre = N.tileable_fbm(size, 30, 5, seed=seed)
+    slick = N.tileable_fbm(size, 7, 4, seed=seed + 5)
+    body = np.clip(fibre * 0.46 + slick * 0.54, 0, 1)
+    color = _colorize(body, (0.0, (0.038, 0.034, 0.030)),
+                      (0.42, (0.086, 0.072, 0.056)),
+                      (0.74, (0.146, 0.124, 0.090)),
+                      (1.0, (0.208, 0.182, 0.128)))
+    # sphagnum: pale sour green, in small close cushions
+    moss = np.clip(_upsample(N.tileable_worley(min(size, 256), 26, seed=seed + 9), size)
+                   * -1.9 + 1.05, 0.0, 1.0)
+    moss = moss * np.clip(slick * 1.7 - 0.42, 0.0, 1.0)
+    color = _mix(color, np.array([0.286, 0.320, 0.204]), moss * 0.88)
+    # Bog cotton: few and large. A high Worley cell count with a hard
+    # threshold gave a uniform star-field of single texels, which reads as
+    # sensor noise rather than as flower heads.
+    cotton = np.clip(_upsample(N.tileable_worley(min(size, 256), 5, seed=seed + 13), size)
+                     * -6.0 + 0.72, 0.0, 1.0)
+    cotton = cotton * np.clip(N.tileable_fbm(size, 4, 3, seed=seed + 21) * 1.9 - 0.72,
+                              0.0, 1.0)
+    color = _mix(color, np.array([0.828, 0.840, 0.808]), cotton * 0.86)
+    # the sheen: peat holds water, so most of this surface is near-mirror
+    sheen = np.clip(slick * 1.4 - 0.24, 0.0, 1.0)
+    height = np.clip(0.42 + fibre * 0.34 + moss * 0.24, 0.0, 1.0)
+    occlusion = np.clip(0.34 + height * 0.58, 0.0, 1.0)
+    roughness = np.clip(0.86 - sheen * 0.64 + moss * 0.14, 0.04, 1.0)
+    return TextureSet("grey_peat_bog", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.2))
+
+
+def grey_causeway(size: int = 512, seed: int = 613) -> TextureSet:
+    """The laid stone track of panel 1: irregular wet flags, moss in the joints.
+
+    Not a Roman road - these are field stones set flat into the peat, so the
+    courses are irregular and the joints are wide and green.
+    """
+    # irregular flags: a jittered Worley cellular pattern reads as set stones
+    dist = _upsample(N.tileable_worley(min(size, 256), 11, seed=seed), size)
+    edge = _upsample(N.tileable_worley(min(size, 256), 11, seed=seed, order=1), size)
+    joint = np.clip(1.0 - (edge - dist) * 7.0, 0.0, 1.0)
+    grain = N.tileable_fbm(size, 28, 4, seed=seed + 3)
+    face = np.clip(0.52 + grain * 0.42 - dist * 0.34, 0, 1)
+    # Darker than dressed masonry: these are field stones bedded in wet peat
+    # under a permanently overcast sky, not a swept plaza.
+    color = _colorize(face, (0.0, (0.118, 0.122, 0.120)), (0.45, (0.194, 0.200, 0.196)),
+                      (0.78, (0.268, 0.274, 0.266)), (1.0, (0.344, 0.346, 0.334)))
+    # Each flag takes its own tone. Modulating by the Worley distance itself
+    # gives a smooth gradient inside every cell instead of one tone per stone,
+    # so the variation is driven by a coarse field sampled at cell scale.
+    patch = N.tileable_fbm(size, 12, 2, seed=seed + 31)
+    color = _mix(color, np.array([0.148, 0.156, 0.142]),
+                 np.clip(patch * 1.6 - 0.36, 0.0, 1.0) * 0.52)
+    color = _mix(color, np.array([0.316, 0.312, 0.290]),
+                 np.clip(patch * -1.6 + 0.72, 0.0, 1.0) * 0.30)
+    # wet moss and peat pushed up between the stones
+    color = _mix(color, np.array([0.146, 0.170, 0.106]), joint * 0.82)
+    # standing water lying on the flags: the panel's track is mirror-wet
+    pool = np.clip(N.tileable_fbm(size, 5, 3, seed=seed + 17) * 2.0 - 1.02, 0.0, 1.0)
+    color = _mix(color, np.array([0.128, 0.136, 0.140]), pool * 0.44)
+    height = np.clip(0.68 + grain * 0.20 - joint * 0.56, 0.0, 1.0)
+    occlusion = np.clip(0.40 + height * 0.58, 0.0, 1.0)
+    roughness = np.clip(0.82 - pool * 0.66 + joint * 0.12, 0.04, 1.0)
+    return TextureSet("grey_causeway", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 3.0))
+
+
+def grey_barrow_turf(size: int = 512, seed: int = 617) -> TextureSet:
+    """Close-cropped turf over a barrow: greener than the moor, stone beneath.
+
+    Panel 2's mound is grassed right over, but the kerb stones and the drystone
+    of the chamber show through wherever the turf has slipped.
+    """
+    turf = N.tileable_fbm(size, 44, 5, seed=seed)
+    sward = N.tileable_fbm(size, 9, 4, seed=seed + 5)
+    body = np.clip(turf * 0.60 + sward * 0.40, 0, 1)
+    color = _colorize(body, (0.0, (0.098, 0.108, 0.068)), (0.40, (0.166, 0.188, 0.104)),
+                      (0.74, (0.232, 0.256, 0.140)), (1.0, (0.312, 0.328, 0.196)))
+    # stone showing through where the turf is thin
+    # Worley ridges run along the cell boundaries, so a strong mix paints a
+    # bright web of veins over the whole mound rather than a few bald patches.
+    # Kept sparse, and to a stone tone darker than the turf so it reads as
+    # something showing through rather than as cracking.
+    stone = np.clip(_upsample(N.tileable_worley(min(size, 256), 10, seed=seed + 9), size)
+                    * 2.6 - 1.86, 0.0, 1.0)
+    color = _mix(color, np.array([0.268, 0.268, 0.258]), stone * 0.52)
+    lichen = np.clip(N.tileable_fbm(size, 30, 3, seed=seed + 13) * 2.2 - 1.32, 0.0, 1.0)
+    color = _mix(color, np.array(_MOOR_LICHEN), lichen * stone * 0.62)
+    height = np.clip(0.44 + turf * 0.34 + stone * 0.22, 0.0, 1.0)
+    occlusion = np.clip(0.42 + height * 0.56, 0.0, 1.0)
+    roughness = np.clip(0.96 - stone * 0.12, 0.05, 1.0)
+    return TextureSet("grey_barrow_turf", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.4))
+
+
+def grey_moor_granite(size: int = 512, seed: int = 619) -> TextureSet:
+    """The standing stones: coarse grey granite under grey and gold lichen.
+
+    Panel 3 is the reference. The lichen is what makes these read as ancient
+    rather than as freshly quarried, so it is generous and blotchy.
+    """
+    grain = N.tileable_fbm(size, 34, 5, seed=seed)
+    body = N.tileable_fbm(size, 9, 4, seed=seed + 3)
+    crystal = _upsample(N.tileable_worley(min(size, 256), 40, seed=seed + 7), size)
+    face = np.clip(body * 0.54 + grain * 0.32 + (1.0 - crystal) * 0.14, 0, 1)
+    color = _colorize(face, (0.0, (0.128, 0.130, 0.132)), (0.42, (0.244, 0.248, 0.246)),
+                      (0.76, (0.372, 0.376, 0.368)), (1.0, (0.512, 0.512, 0.498)))
+    # feldspar flecks
+    color = _mix(color, np.array([0.640, 0.628, 0.598]),
+                 np.clip(crystal * -2.6 + 0.62, 0.0, 1.0) * 0.42)
+    # lichen: two colonies, grey-green and a rarer ochre
+    # Lichen colonises in discrete patches with bare stone between them. Driving
+    # it hard off a near-uniform Worley field covered the whole face in even
+    # yellow-green spots, which reads as mould on cheese rather than as a
+    # weathered menhir; the coarse fbm gate is what keeps colonies apart.
+    lichen = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 11) * 2.6 - 1.42, 0.0, 1.0)
+    fringe = np.clip(_upsample(N.tileable_worley(min(size, 256), 18, seed=seed + 17), size)
+                     * -2.0 + 1.12, 0.0, 1.0)
+    color = _mix(color, np.array([0.436, 0.452, 0.396]), lichen * fringe * 0.62)
+    ochre = np.clip(N.tileable_fbm(size, 11, 3, seed=seed + 23) * 2.6 - 1.72, 0.0, 1.0)
+    color = _mix(color, np.array([0.508, 0.436, 0.244]), ochre * fringe * 0.60)
+    # rain streaks running down the stone
+    streak = np.clip(N.tileable_fbm(size, 3, 3, seed=seed + 29) * 1.9 - 0.92, 0.0, 1.0)
+    color = _mix(color, np.array([0.176, 0.180, 0.180]), streak * 0.30)
+    height = np.clip(0.46 + grain * 0.30 + (1.0 - crystal) * 0.24, 0.0, 1.0)
+    occlusion = np.clip(0.40 + height * 0.58, 0.0, 1.0)
+    roughness = np.clip(0.92 - streak * 0.26 + lichen * 0.06, 0.05, 1.0)
+    return TextureSet("grey_moor_granite", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 3.2))
+
+
+def grey_carved_stone(size: int = 512, seed: int = 631) -> TextureSet:
+    """The runed jambs of the crypt doorways in panels 2 and 5.
+
+    Dressed stone, darker than the raw granite because it is cut and always
+    wet, with a band of incised spiral and chevron work.
+    """
+    grain = N.tileable_fbm(size, 30, 4, seed=seed)
+    body = N.tileable_fbm(size, 8, 4, seed=seed + 3)
+    face = np.clip(body * 0.58 + grain * 0.42, 0, 1)
+    color = _colorize(face, (0.0, (0.146, 0.140, 0.130)), (0.44, (0.226, 0.218, 0.202)),
+                      (0.78, (0.312, 0.300, 0.278)), (1.0, (0.392, 0.376, 0.348)))
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    # incised work: concentric spirals on a coarse lattice, plus chevron bands
+    cell_x = (gx * 4.0) % 1.0 - 0.5
+    cell_y = (gy * 4.0) % 1.0 - 0.5
+    radius = np.hypot(cell_x, cell_y)
+    angle = np.arctan2(cell_y, cell_x)
+    spiral = np.cos(radius * 44.0 - angle * 3.0)
+    carve = np.clip((spiral - 0.62) * 3.0, 0.0, 1.0) * np.clip(1.0 - radius * 2.6, 0.0, 1.0)
+    chevron = np.clip(np.cos((np.abs((gy * 9.0) % 1.0 - 0.5) * 2.0 - gx * 6.0)
+                             * np.pi * 2.0) - 0.72, 0.0, 1.0) * 3.4
+    # Carving is banded on the real jambs, not applied over the whole face, so
+    # both motifs are gated by a coarse field and the plain stone shows between.
+    band = np.clip(np.cos(gy * np.pi * 4.0) * 1.4 + 0.35, 0.0, 1.0)
+    carve = np.clip(carve * band + chevron * 0.5 * (1.0 - band), 0.0, 1.0)
+    carve = carve * np.clip(N.tileable_fbm(size, 5, 3, seed=seed + 37) * 1.5 + 0.42,
+                            0.0, 1.0)
+    # cut lines hold shadow, water and lichen
+    color = _mix(color, np.array([0.086, 0.086, 0.078]), carve * 0.80)
+    lichen = np.clip(N.tileable_fbm(size, 12, 3, seed=seed + 13) * 2.3 - 1.42, 0.0, 1.0)
+    color = _mix(color, np.array(_MOOR_LICHEN), lichen * 0.44)
+    height = np.clip(0.72 + grain * 0.18 - carve * 0.66, 0.0, 1.0)
+    occlusion = np.clip(0.32 + height * 0.64, 0.0, 1.0)
+    roughness = np.clip(0.88 - lichen * 0.10, 0.05, 1.0)
+    return TextureSet("grey_carved_stone", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 4.0))
+
+
+def grey_bog_timber(size: int = 512, seed: int = 641) -> TextureSet:
+    """The boardwalk of panel 4: bog oak planks, black-wet, silvered at the edge."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    plank = (gy * 7.0) % 1.0
+    seam = np.clip(1.0 - np.minimum(plank, 1.0 - plank) * 26.0, 0.0, 1.0)
+    index = np.floor(gy * 7.0)
+    # each plank keeps its own tone and its own grain phase
+    tone = np.clip(np.sin(index * 12.9898) * 0.5 + 0.5, 0, 1)
+    grain = N.tileable_fbm(size, 46, 4, seed=seed) * 0.6 \
+        + N.tileable_fbm(size, 12, 3, seed=seed + 5) * 0.4
+    body = np.clip(grain * 0.62 + tone * 0.38, 0, 1)
+    color = _colorize(body, (0.0, (0.062, 0.056, 0.050)), (0.40, (0.128, 0.112, 0.094)),
+                      (0.74, (0.206, 0.188, 0.162)), (1.0, (0.302, 0.288, 0.262)))
+    # silvered, weathered fibre standing up on the wearing surface
+    silver = np.clip(N.tileable_fbm(size, 40, 3, seed=seed + 9) * 2.1 - 1.16, 0.0, 1.0)
+    color = _mix(color, np.array([0.404, 0.400, 0.382]), silver * 0.50)
+    # green slime in the seams and along the shaded edge of every plank
+    slime = np.clip(N.tileable_fbm(size, 16, 3, seed=seed + 13) * 1.8 - 0.72, 0.0, 1.0)
+    color = _mix(color, np.array([0.140, 0.176, 0.108]),
+                 np.clip(seam + slime * 0.5, 0, 1) * 0.62)
+    color = _mix(color, np.array([0.030, 0.028, 0.026]), seam * 0.72)
+    wet = np.clip(N.tileable_fbm(size, 6, 3, seed=seed + 19) * 1.8 - 0.74, 0.0, 1.0)
+    height = np.clip(0.70 + grain * 0.24 - seam * 0.64, 0.0, 1.0)
+    occlusion = np.clip(0.34 + height * 0.62, 0.0, 1.0)
+    roughness = np.clip(0.86 - wet * 0.58, 0.04, 1.0)
+    return TextureSet("grey_bog_timber", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 3.4))
+
+
+def grey_drystone(size: int = 512, seed: int = 643, courses: int = 9) -> TextureSet:
+    """The cottage walling of panel 6: uncoursed drystone, no mortar at all.
+
+    The gaps are true voids rather than mortar joints, so they go almost black
+    and the normal map has to push them a long way in.
+    """
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    row = gy * courses
+    index = np.floor(row)
+    within = row % 1.0
+    # every course is offset by its own pseudo-random amount
+    shift = (np.sin(index * 78.233) * 0.5 + 0.5)
+    span = 6.0 + np.floor(np.sin(index * 21.7) * 1.6 + 1.6)
+    col = (gx * span + shift) % 1.0
+    joint = np.clip(1.0 - np.minimum(within, 1.0 - within) * 13.0, 0.0, 1.0)
+    joint = np.maximum(joint, np.clip(1.0 - np.minimum(col, 1.0 - col) * 15.0, 0.0, 1.0))
+    grain = N.tileable_fbm(size, 32, 4, seed=seed)
+    stone_tone = np.clip(np.sin(index * 45.1 + np.floor(gx * span + shift) * 9.7)
+                         * 0.5 + 0.5, 0, 1)
+    face = np.clip(grain * 0.52 + stone_tone * 0.48, 0, 1)
+    color = _colorize(face, (0.0, (0.176, 0.176, 0.170)), (0.42, (0.276, 0.278, 0.268)),
+                      (0.76, (0.376, 0.374, 0.358)), (1.0, (0.470, 0.462, 0.440)))
+    lichen = np.clip(N.tileable_fbm(size, 10, 4, seed=seed + 11) * 2.2 - 1.20, 0.0, 1.0)
+    color = _mix(color, np.array(_MOOR_LICHEN), lichen * 0.56)
+    # the voids between stones
+    color = _mix(color, np.array([0.028, 0.028, 0.026]), joint * 0.88)
+    height = np.clip(0.76 + grain * 0.18 - joint * 0.74, 0.0, 1.0)
+    occlusion = np.clip(0.26 + height * 0.70, 0.0, 1.0)
+    roughness = np.clip(0.96 - lichen * 0.06, 0.05, 1.0)
+    return TextureSet("grey_drystone", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 4.6))
+
+
+def grey_turf_roof(size: int = 512, seed: int = 647) -> TextureSet:
+    """Sod roofing over the cottages, half fallen in and grown over."""
+    sod = N.tileable_fbm(size, 16, 5, seed=seed)
+    grass = N.tileable_fbm(size, 52, 4, seed=seed + 5)
+    body = np.clip(sod * 0.42 + grass * 0.58, 0, 1)
+    color = _colorize(body, (0.0, (0.076, 0.078, 0.056)), (0.40, (0.146, 0.156, 0.096)),
+                      (0.74, (0.216, 0.226, 0.132)), (1.0, (0.296, 0.294, 0.184)))
+    # bare earth and rotted thatch showing where the roof has failed
+    bare = np.clip(N.tileable_fbm(size, 5, 3, seed=seed + 9) * 2.2 - 1.24, 0.0, 1.0)
+    color = _mix(color, np.array([0.152, 0.126, 0.092]), bare * 0.72)
+    height = np.clip(0.44 + sod * 0.36 + grass * 0.20, 0.0, 1.0)
+    occlusion = np.clip(0.36 + height * 0.60, 0.0, 1.0)
+    return TextureSet("grey_turf_roof", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, np.full((size, size), 0.97)),
+                      normal_from_height(height, 3.0))
+
+
+def grey_dead_bark(size: int = 512, seed: int = 653) -> TextureSet:
+    """The bare tree of panel 7: bark long gone, silvered and split heartwood."""
+    fibre = N.tileable_fbm(size, 8, 5, seed=seed)
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    # long vertical splits running the length of the trunk
+    split = np.clip(np.abs(np.sin((gx * 9.0 + fibre * 1.8) * np.pi)) * -3.4 + 1.0,
+                    0.0, 1.0)
+    grain = N.tileable_fbm(size, 60, 3, seed=seed + 5)
+    body = np.clip(fibre * 0.50 + grain * 0.50, 0, 1)
+    color = _colorize(body, (0.0, (0.128, 0.120, 0.108)), (0.42, (0.226, 0.216, 0.196)),
+                      (0.76, (0.352, 0.340, 0.316)), (1.0, (0.474, 0.462, 0.436)))
+    color = _mix(color, np.array([0.048, 0.044, 0.040]), split * 0.82)
+    moss = np.clip(N.tileable_fbm(size, 16, 3, seed=seed + 13) * 2.4 - 1.52, 0.0, 1.0)
+    color = _mix(color, np.array([0.176, 0.204, 0.128]), moss * 0.54)
+    height = np.clip(0.66 + grain * 0.26 - split * 0.60, 0.0, 1.0)
+    occlusion = np.clip(0.32 + height * 0.64, 0.0, 1.0)
+    return TextureSet("grey_dead_bark", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, np.clip(0.94 - moss * 0.08, 0.05, 1.0)),
+                      normal_from_height(height, 3.8))
+
+
+def grey_bog_water(size: int = 512, seed: int = 659) -> TextureSet:
+    """Peat-stained standing water: near-black, barely moving, highly reflective.
+
+    Distinct from the region's sea. Bog pools in the concept are flat black
+    mirrors holding the sky, not blue water.
+    """
+    ripple = N.tileable_fbm(size, 12, 4, seed=seed) * 0.6 \
+        + N.tileable_fbm(size, 30, 3, seed=seed + 5) * 0.4
+    scum = np.clip(N.tileable_fbm(size, 6, 4, seed=seed + 9) * 2.1 - 1.28, 0.0, 1.0)
+    color = _colorize(np.clip(ripple, 0, 1),
+                      (0.0, (0.020, 0.024, 0.024)), (0.5, (0.040, 0.046, 0.044)),
+                      (1.0, (0.070, 0.076, 0.070)))
+    # peat scum and duckweed gathering at the edges
+    color = _mix(color, np.array([0.124, 0.134, 0.092]), scum * 0.66)
+    height = np.clip(0.5 + (ripple - 0.5) * 0.30, 0.0, 1.0)
+    roughness = np.clip(0.10 + scum * 0.62, 0.03, 1.0)
+    return TextureSet("grey_bog_water", _u8(np.clip(color, 0, 1)),
+                      pack_orm(np.full((size, size), 0.98), roughness),
+                      normal_from_height(height, 1.1))
+
+
+def grey_moor_scrub(size: int = 512, seed: int = 661) -> TextureSet:
+    """Alpha-cut atlas of moor ground cover: heather, sedge, bog cotton, bracken.
+
+    Four cells in a 2x2 grid, matched to the clumps in panels 3, 8 and 10.
+    """
+    image = Image.new("RGB", (size, size), (0, 0, 0))
+    alpha = Image.new("L", (size, size), 0)
+    draw = ImageDraw.Draw(image)
+    mask = ImageDraw.Draw(alpha)
+    rng = np.random.default_rng(seed)
+    half = size // 2
+
+    def stalk(ox, oy, count, height_frac, spread, palette, head=None,
+              head_radius=0.0):
+        for _ in range(count):
+            bx = ox + half * (0.5 + (rng.random() - 0.5) * spread)
+            by = oy + half * 0.94
+            length = half * height_frac * (0.6 + rng.random() * 0.7)
+            lean = (rng.random() - 0.5) * half * 0.30
+            tx, ty = bx + lean, by - length
+            width = max(1, int(half * 0.012 * (0.7 + rng.random())))
+            tone = palette[int(rng.integers(0, len(palette)))]
+            draw.line([(bx, by), (tx, ty)], fill=tone, width=width)
+            mask.line([(bx, by), (tx, ty)], fill=255, width=width)
+            if head is not None:
+                r = half * head_radius * (0.7 + rng.random() * 0.6)
+                box = [tx - r, ty - r, tx + r, ty + r]
+                draw.ellipse(box, fill=head[int(rng.integers(0, len(head)))])
+                mask.ellipse(box, fill=255)
+
+    # heather: dense, woody, purple flower heads
+    stalk(0, 0, 150, 0.52, 1.05,
+          [(38, 42, 26), (52, 56, 34), (30, 32, 22)],
+          head=[(86, 58, 90), (118, 88, 120), (70, 46, 74)], head_radius=0.035)
+    # sedge and moor grass: tall, thin, straw
+    stalk(half, 0, 190, 0.86, 1.05,
+          [(64, 60, 38), (86, 80, 50), (46, 46, 30), (104, 96, 60)])
+    # bog cotton: sparse, with white heads
+    stalk(0, half, 70, 0.74, 1.0,
+          [(58, 62, 40), (74, 78, 48)],
+          head=[(226, 228, 218), (198, 200, 190)], head_radius=0.042)
+    # bracken and dead fern, rust brown, low and broad
+    stalk(half, half, 130, 0.44, 1.05,
+          [(88, 62, 34), (110, 78, 42), (68, 48, 28), (126, 96, 54)])
+
+    color = np.asarray(image).astype(np.float64) / 255.0
+    alpha_array = np.asarray(alpha).astype(np.uint8)
+    body = np.clip(N.tileable_fbm(size, 20, 3, seed=seed + 3), 0, 1)
+    color = _mix(color, color * 0.62, body[..., None] * 0.34)
+    occlusion = np.clip(0.52 + body * 0.42, 0.0, 1.0)
+    return TextureSet("grey_moor_scrub", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, np.full((size, size), 0.95)),
+                      normal_from_height(np.full((size, size), 0.5), 1.0),
+                      alpha_array)
+
+
+def grey_wisp(size: int = 128, seed: int = 673) -> TextureSet:
+    """The blue-white marsh lights of panel 7. Emissive, no surface detail."""
+    body = np.clip(N.tileable_fbm(size, 6, 3, seed=seed) * 0.4 + 0.72, 0, 1)
+    color = _colorize(body, (0.0, (0.352, 0.560, 0.700)), (0.6, (0.640, 0.812, 0.912)),
+                      (1.0, (0.880, 0.948, 0.984)))
+    return TextureSet("grey_wisp", _u8(np.clip(color, 0, 1)),
+                      pack_orm(np.full((size, size), 1.0), np.full((size, size), 0.34)),
+                      normal_from_height(np.full((size, size), 0.5), 1.0))
+
+
+def grey_votive_flame(size: int = 128, seed: int = 677) -> TextureSet:
+    """Candle and doorway light: the warm amber that reads against all this grey."""
+    body = np.clip(N.tileable_fbm(size, 5, 3, seed=seed) * 0.36 + 0.74, 0, 1)
+    color = _colorize(body, (0.0, (0.560, 0.284, 0.076)), (0.55, (0.856, 0.564, 0.184)),
+                      (1.0, (0.980, 0.856, 0.560)))
+    return TextureSet("grey_votive_flame", _u8(np.clip(color, 0, 1)),
+                      pack_orm(np.full((size, size), 1.0), np.full((size, size), 0.42)),
+                      normal_from_height(np.full((size, size), 0.5), 1.0))

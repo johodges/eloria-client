@@ -38,12 +38,21 @@ CRYSTAL_FIELD = 16
 RESONANT_ROAD = 17
 STORM_ROCK = 18
 
+# -- Grey Moors. Appended in the next free block; 19-22 stays reserved for
+# Crownwater so the two can land in either order without renumbering.
+HEATHER_MOOR = 23
+PEAT_BOG = 24
+CAUSEWAY = 25
+BARROW_TURF = 26
+
 SURFACE_NAMES = {
     FOREST: "ForestFloor", PATH: "Trail", PAVING: "Paving", SHORE: "Shore",
     ROCK: "Rock", SCORCHED: "Ash", MEADOW: "Meadow",
     SNOW: "Snow", ICE: "Ice", MARBLE: "Marble", TURF: "AlpineTurf",
     BARRENS: "Barrens", CRYSTAL_FIELD: "CrystalField",
     RESONANT_ROAD: "ResonantRoad", STORM_ROCK: "StormRock",
+    HEATHER_MOOR: "HeatherMoor", PEAT_BOG: "PeatBog",
+    CAUSEWAY: "Causeway", BARROW_TURF: "BarrowTurf",
 }
 SURFACE_MATERIALS = {
     FOREST: "forest_floor", PATH: "leaf_path", PAVING: "cobble_paving",
@@ -53,6 +62,8 @@ SURFACE_MATERIALS = {
     TURF: "alpine_turf",
     BARRENS: "amethyst_barrens_dust", CRYSTAL_FIELD: "amethyst_crystal_field",
     RESONANT_ROAD: "amethyst_resonant_road", STORM_ROCK: "amethyst_storm_rock",
+    HEATHER_MOOR: "grey_heather_moor", PEAT_BOG: "grey_peat_bog",
+    CAUSEWAY: "grey_causeway", BARROW_TURF: "grey_barrow_turf",
 }
 
 # Surfaces a region placed deliberately, which the slope and shore rules in
@@ -62,11 +73,15 @@ SURFACE_MATERIALS = {
 AUTHORED_SURFACES: set[int] = {
     PATH, PAVING, SCORCHED, MEADOW,
     RESONANT_ROAD,
+    # Grey Moors lays its causeways and cuts its peat by hand; the slope and
+    # shore rules must not repaint either. The barrow turf is authored too -
+    # a barrow is a built mound, not ground that happened to rise.
+    CAUSEWAY, BARROW_TURF,
 }
 
 # Surfaces whose border must stay crisp, so `dither_boundaries` leaves them
 # alone. Paving and the resonant roadway read as laid, not grown.
-UNDITHERED_SURFACES: set[int] = {PAVING, RESONANT_ROAD}
+UNDITHERED_SURFACES: set[int] = {PAVING, RESONANT_ROAD, CAUSEWAY}
 
 
 def _smoothstep(edge0: float, edge1: float, x: np.ndarray) -> np.ndarray:
