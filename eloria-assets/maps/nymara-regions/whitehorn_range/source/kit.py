@@ -44,6 +44,7 @@ TIMBER_DARK = "timber_dark"
 CARVED = "carved_wood"
 ROPE = "woven_cloth"
 SLATE = "slate_roof"
+AMBER = "amber_resin"
 
 
 def _rng(seed: int) -> np.random.Generator:
@@ -210,8 +211,14 @@ def mine_portal(seed: int = 0, width: float = 3.6, height: float = 3.9,
                     uv_scale=1.1, material=RUBBLE))
     # the dark of the tunnel: a recessed box, not a hole, so the silhouette
     # reads from outside without needing an interior
-    group.add(M.box((width, height, 2.6), center=(0.0, height * 0.5, -1.0),
-                    uv_scale=1.0, material=TIMBER_DARK))
+    # A deep recess, not a shallow panel: at 2.6 m deep and lit from outside
+    # the face still caught the sun and read as a tan board across the
+    # opening. Six metres back puts it in its own shadow.
+    # `timber_dark` is a warm brown, not a dark: lit from outside it read as
+    # a tan board across the opening rather than as a hole. `dark_iron` is the
+    # darkest material in the pinned set and is what makes the adit read.
+    group.add(M.box((width, height, 6.0), center=(0.0, height * 0.5, 1.6),
+                    uv_scale=1.0, material=IRON))
 
     # heavy timber frame - two posts and a lintel, braced
     for side in (-1.0, 1.0):
@@ -280,75 +287,136 @@ def ice_cave_mouth(seed: int = 0, span: float = 7.5,
                    height: float = 5.2) -> SW.MeshGroup:
     """A cavern opening in blue ice, fringed with icicles. Panel 6.
 
-    Faces -Z. The interior is a recessed dark volume rather than an actual
-    cave: the region has no interior package, and a lit opening reads
-    correctly from the outside without one.
+    Faces -Z. The first version was a single icosphere with a throat pushed
+    into it, which rendered as a plain pale ball: the opening was swallowed by
+    the mass and nothing read as a cave at all. This builds the mouth as a
+    dark arched void framed by ice, which is what makes an opening legible
+    from outside without an interior behind it.
     """
     rng = _rng(seed)
     group = SW.MeshGroup()
+    half = span * 0.5
 
-    # the ice mass the mouth is cut into
-    mass = M.icosphere(span * 0.92, subdivisions=2, material=ICE)
-    mass.transform(M.scaling(1.0, 0.78, 0.72))
-    mass.transform(M.translation(0.0, height * 0.42, 1.9))
-    group.add(mass)
+    # The ice mass, as two flanking shoulders and a lintel rather than one
+    # ball, so there is an actual hole between them.
+    for side in (-1.0, 1.0):
+        shoulder = M.icosphere(span * 0.46, subdivisions=2, material=ICE)
+        shoulder.transform(M.scaling(0.85, 1.25, 1.05))
+        shoulder.transform(M.translation(side * (half + span * 0.20),
+                                         height * 0.42, 1.4))
+        group.add(shoulder)
+    brow = M.icosphere(span * 0.55, subdivisions=2, material=ICE)
+    brow.transform(M.scaling(1.35, 0.55, 1.0))
+    brow.transform(M.translation(0.0, height * 0.95, 1.5))
+    group.add(brow)
 
-    # the opening: a tapered recess
-    throat = M.cylinder(span * 0.42, span * 0.20, 4.2, segments=10,
-                        uv_scale=1.2, material=TIMBER_DARK)
-    throat.transform(M.rotation_x(-math.pi * 0.5))
-    throat.transform(M.translation(0.0, height * 0.36, 0.6))
-    group.add(throat)
+    # the void: a dark recess the shoulders frame, set back from the lip
+    group.add(M.box((span * 0.78, height * 0.86, 5.0),
+                    center=(0.0, height * 0.43, 3.1),
+                    uv_scale=1.0, material=IRON))
+    # a floor of trodden ice running out of it
+    floor = M.box((span * 0.80, 0.25, 6.0), center=(0.0, 0.12, 1.4),
+                  uv_scale=1.4, material=ICE)
+    group.add(floor)
 
-    # a rim of broken ice around the mouth
+    # broken ice around the lip, and the icicle fringe over the opening
     shards = []
-    for i in range(14):
-        angle = math.pi * (i / 13.0)
-        radius = span * 0.48 * (0.94 + 0.12 * rng.random())
-        shard = M.icosphere(0.42 + 0.30 * rng.random(), subdivisions=1,
+    for i in range(16):
+        angle = math.pi * (i / 15.0)
+        radius = half * (1.02 + 0.16 * rng.random())
+        shard = M.icosphere(0.30 + 0.34 * rng.random(), subdivisions=1,
                             material=ICE)
-        shard.transform(M.scaling(0.7, 1.5, 0.7))
+        shard.transform(M.scaling(0.7, 1.6, 0.7))
         shard.transform(M.translation(math.cos(angle) * radius,
-                                      height * 0.30 + math.sin(angle) * radius * 0.86,
-                                      0.1))
+                                      height * 0.30
+                                      + math.sin(angle) * height * 0.62,
+                                      0.35))
         shards.append(shard)
     group.add(M.merge(shards, material=ICE))
-    group.add(_icicle_fringe(span * 0.82, 16, seed + 5, drop=1.7,
-                             y=height * 0.80))
+    group.add(_icicle_fringe(span * 0.80, 18, seed + 5, drop=2.0,
+                             y=height * 0.86, material=ICE))
+
+    # lanterns at the mouth, as panel 6 has them
+    for side in (-1.0, 1.0):
+        post = M.cylinder(0.07, 0.06, 1.1, segments=6, uv_scale=1.2,
+                          material=IRON)
+        post.transform(M.translation(side * (half * 0.72), 0.0, -1.2))
+        group.add(post)
+        glow = M.icosphere(0.16, subdivisions=1, material=AMBER)
+        glow.transform(M.translation(side * (half * 0.72), 1.22, -1.2))
+        group.add(glow)
     return group
 
 
 def frozen_cascade(width: float = 9.0, height: float = 16.0,
-                   seed: int = 0) -> M.Mesh:
-    """A waterfall caught mid-fall. Panels 3 and 8.
+                   seed: int = 0) -> SW.MeshGroup:
+    """A waterfall caught mid-fall, on the cliff it falls down. Panels 3 and 8.
 
-    Built as a set of overlapping vertical lobes rather than a flat sheet, so
-    it catches light like ice instead of reading as a painted plane. Purely
-    structural - never a walk surface.
+    Two things the first version got wrong. It was built as a handful of fat
+    lathed lobes, which read as flat cardboard slabs rather than ice; and it
+    carried no rock, so it stood free on open snow instead of pouring down a
+    face. An icefall is only legible against the cliff it hangs on, so the
+    cliff is part of the piece.
+
+    Built facing -Z. Structural throughout - never a walk surface.
     """
     rng = _rng(seed)
-    lobes = []
-    count = max(4, int(width / 1.5))
+    group = SW.MeshGroup()
+
+    # The cliff the ice hangs on. Sized to the fall and no larger: at
+    # width*1.9 by height*2.2 this was a 44 m wall that filled the whole
+    # frame and hid the ice it was supposed to back. Its top sits just above
+    # the lip, and it runs 6 m below grade so it never floats.
+    cliff_h = height * 1.06
+    group.add(M.box((width * 1.25, cliff_h + 6.0, 2.6),
+                    center=(0.0, cliff_h * 0.5 - 6.0, 2.3),
+                    uv_scale=1.2, material=ROCK))
+
+    # many thin columns, overlapping, at varied depth and height
+    columns, caps = [], []
+    count = max(10, int(width * 2.2))
     for i in range(count):
-        x = -width * 0.5 + width * ((i + 0.5) / count)
-        radius = width / count * (0.55 + 0.30 * rng.random())
-        drop = height * (0.72 + 0.28 * rng.random())
+        x = -width * 0.5 + width * (i / float(count - 1))
+        radius = width / count * (0.85 + 0.9 * rng.random())
+        drop = height * (0.55 + 0.45 * rng.random())
+        z = 0.35 + rng.random() * 0.7
+        rings = 9
         profile = []
-        rings = 7
         for r in range(rings):
             t = r / (rings - 1.0)
-            # the lobe narrows as it falls, with a little per-ring variation so
-            # neighbouring lobes do not read as copies of one another
-            jitter = 0.86 + 0.28 * rng.random()
-            profile.append([max(radius * (1.0 - 0.55 * t ** 1.6) * jitter, 0.03),
+            # bulge near the top, taper to a point: the shape meltwater makes
+            bulge = 1.0 + 0.35 * (1.0 - abs(t - 0.22) / 0.6 if t < 0.82 else 0.0)
+            profile.append([max(radius * bulge * (1.0 - 0.72 * t ** 1.7), 0.02),
                             -drop * t])
-        lobe = M.lathe(profile, segments=7, uv_scale=1.3, material=ICE)
-        lobe.transform(M.translation(x + 0.2 * rng.standard_normal(), height,
-                                     0.28 * rng.standard_normal()))
-        lobes.append(lobe)
-    fringe = _icicle_fringe(width, count * 3, seed + 11, drop=2.4,
-                            y=height * 0.06)
-    return M.merge(lobes + [fringe], material=ICE)
+        column = M.lathe(profile, segments=9, uv_scale=1.4, material=ICE)
+        column.transform(M.rotation_y(rng.random() * math.tau))
+        column.transform(M.translation(x + 0.12 * rng.standard_normal(),
+                                       height, z))
+        columns.append(column)
+        # a snow cap where the flow goes over the lip
+        cap = M.icosphere(radius * 1.25, subdivisions=1, material=SNOW)
+        cap.transform(M.scaling(1.2, 0.5, 1.0))
+        cap.transform(M.translation(x, height + 0.15, z + 0.2))
+        caps.append(cap)
+    group.add(M.merge(columns, material=ICE))
+    group.add(M.merge(caps, material=SNOW))
+
+    # the frozen pool the fall lands in, and broken ice around it
+    pool = M.cylinder(width * 0.62, width * 0.70, 0.5, segments=14,
+                      uv_scale=1.6, material=ICE)
+    pool.transform(M.translation(0.0, 0.0, -0.6))
+    group.add(pool)
+    rubble = []
+    for _ in range(8):
+        block = M.icosphere(0.35 + 0.5 * rng.random(), subdivisions=1,
+                            material=ICE)
+        block.transform(M.translation((rng.random() - 0.5) * width * 1.3,
+                                      0.25, -1.4 - rng.random() * 1.6))
+        rubble.append(block)
+    group.add(M.merge(rubble, material=ICE))
+    group.add(_icicle_fringe(width, count * 2, seed + 11, drop=2.6,
+                             y=height * 0.30, material=ICE))
+    return group
 
 
 # --------------------------------------------------------------------------

@@ -21,16 +21,16 @@
     "panel": 1,
     "file": "01-approach-road.png",
     "eye": [
-      19.61,
-      38.3,
-      128.56
+      15.0,
+      31.42,
+      55.2
     ],
     "target": [
-      36.0,
-      19.65,
-      -6.0
+      6.0,
+      23.85,
+      -3.0
     ],
-    "fieldOfViewDegrees": 60,
+    "fieldOfViewDegrees": 58,
     "lighting": "day"
   },
   {
@@ -38,16 +38,16 @@
     "panel": 2,
     "file": "02-glacier-temple.png",
     "eye": [
-      105.0,
-      56.46,
-      -252.0
+      105.82,
+      56.06,
+      -275.18
     ],
     "target": [
       102.0,
-      76.85,
-      -303.0
+      74.85,
+      -304.5
     ],
-    "fieldOfViewDegrees": 52,
+    "fieldOfViewDegrees": 56,
     "lighting": "day"
   },
   {
@@ -55,16 +55,16 @@
     "panel": 3,
     "file": "03-rope-bridge.png",
     "eye": [
-      54.8,
-      30.82,
-      5.06
+      49.34,
+      50.27,
+      -37.18
     ],
     "target": [
       51.0,
-      14.06,
-      -90.0
+      -17.48,
+      -78.0
     ],
-    "fieldOfViewDegrees": 56,
+    "fieldOfViewDegrees": 60,
     "lighting": "day"
   },
   {
@@ -73,15 +73,15 @@
     "file": "04-gate-shrine.png",
     "eye": [
       -33.0,
-      25.84,
-      123.0
+      22.69,
+      114.0
     ],
     "target": [
       -33.0,
-      24.1,
-      102.0
+      23.7,
+      100.5
     ],
-    "fieldOfViewDegrees": 55,
+    "fieldOfViewDegrees": 54,
     "lighting": "day"
   },
   {
@@ -89,14 +89,14 @@
     "panel": 5,
     "file": "05-cairn-ridge.png",
     "eye": [
-      -60.0,
-      87.6,
-      -174.0
+      -73.85,
+      75.31,
+      -186.23
     ],
     "target": [
-      -90.0,
-      73.85,
-      -207.0
+      -87.0,
+      73.03,
+      -204.0
     ],
     "fieldOfViewDegrees": 58,
     "lighting": "day"
@@ -106,14 +106,14 @@
     "panel": 6,
     "file": "06-ice-cave.png",
     "eye": [
-      -84.01,
-      45.87,
-      -20.71
+      -99.0,
+      39.63,
+      -28.5
     ],
     "target": [
       -114.0,
-      31.15,
-      -45.0
+      32.07,
+      -42.0
     ],
     "fieldOfViewDegrees": 56,
     "lighting": "day"
@@ -123,16 +123,16 @@
     "panel": 7,
     "file": "07-mine-portal.png",
     "eye": [
-      269.07,
-      60.95,
-      -112.01
+      277.5,
+      53.83,
+      -127.5
     ],
     "target": [
       288.0,
-      53.53,
+      52.93,
       -138.0
     ],
-    "fieldOfViewDegrees": 55,
+    "fieldOfViewDegrees": 54,
     "lighting": "day"
   },
   {
@@ -140,16 +140,16 @@
     "panel": 8,
     "file": "08-frozen-cascade.png",
     "eye": [
-      81.0,
-      46.4,
-      -132.0
+      73.01,
+      36.41,
+      -147.93
     ],
     "target": [
       78.0,
-      42.7,
-      -174.0
+      41.62,
+      -172.5
     ],
-    "fieldOfViewDegrees": 54,
+    "fieldOfViewDegrees": 56,
     "lighting": "day"
   },
   {
@@ -174,16 +174,16 @@
     "panel": 10,
     "file": "10-material-study.png",
     "eye": [
-      28.47,
-      42.69,
-      -53.24
+      27.44,
+      40.43,
+      -55.39
     ],
     "target": [
       51.0,
-      -25.77,
-      -75.0
+      -24.43,
+      -75.6
     ],
-    "fieldOfViewDegrees": 40,
+    "fieldOfViewDegrees": 38,
     "lighting": "day"
   },
   {

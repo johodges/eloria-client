@@ -22,35 +22,35 @@ VIEWS = [
 
     # -- the ten detail-board panels -------------------------------------
     # 1: the approach - cairn-lined road climbing north toward the blue temple
-    ("01-approach-road", 1, (4.0, 22.0), 1.7, (12.0, -2.0), 3.0, 60,
-     (1180, 760), 40, "day"),
+    ("01-approach-road", 1, (5.0, 15.0), 1.7, (2.0, -1.0), 6.0, 58,
+     (1180, 760), 12, "day"),
     # 2: the temple facade, its glowing arch, statues, braziers and inlay
-    ("02-glacier-temple", 2, (34.0, -84.0), 2.4, (34.0, -101.0), 9.0, 52,
-     (1180, 900), 34, "day"),
+    ("02-glacier-temple", 2, (34.0, -93.0), 2.0, (34.0, -101.5), 7.0, 56,
+     (1180, 900), 10, "day"),
     # 3: the rope bridge over the gorge
-    ("03-rope-bridge", 3, (17.0, -13.0), 2.6, (17.0, -30.0), 5.0, 56,
-     (1180, 780), 34, "day"),
+    ("03-rope-bridge", 3, (17.0, -17.5), 2.2, (17.0, -26.0), 2.0, 60,
+     (1180, 780), 8, "day"),
     # 4: the statue shrine in its arched alcove
-    ("04-gate-shrine", 4, (-11.0, 42.0), 2.2, (-11.0, 34.0), 3.4, 55,
-     (1080, 920), 24, "day"),
+    ("04-gate-shrine", 4, (-11.0, 38.0), 2.0, (-11.0, 33.5), 3.0, 54,
+     (1080, 920), 7, "day"),
     # 5: the cairn field on the western ridge
-    ("05-cairn-ridge", 5, (-20.0, -58.0), 2.0, (-30.0, -69.0), 1.6, 58,
-     (1180, 780), 30, "day"),
+    ("05-cairn-ridge", 5, (-25.0, -63.0), 1.8, (-29.0, -68.0), 1.4, 58,
+     (1180, 780), 9, "day"),
     # 6: the ice cave mouth
-    ("06-ice-cave", 6, (-30.0, -6.0), 2.4, (-38.0, -15.0), 3.4, 56,
-     (1180, 800), 26, "day"),
+    ("06-ice-cave", 6, (-34.0, -9.5), 2.0, (-38.0, -14.0), 3.0, 56,
+     (1180, 800), 8, "day"),
     # 7: the mine portal, its rails and spoil heaps
-    ("07-mine-portal", 7, (89.0, -39.0), 2.4, (96.0, -46.0), 3.2, 55,
-     (1180, 800), 28, "day"),
+    ("07-mine-portal", 7, (92.5, -42.5), 2.0, (96.0, -46.0), 2.6, 54,
+     (1180, 800), 8, "day"),
     # 8: the frozen cascade and the waystones at its foot
-    ("08-frozen-cascade", 8, (26.0, -44.0), 3.0, (26.0, -58.0), 9.0, 54,
-     (1180, 900), 34, "day"),
+    ("08-frozen-cascade", 8, (26.0, -50.0), 2.4, (26.0, -57.5), 8.0, 56,
+     (1180, 900), 9, "day"),
     # 9: the cairn stair and the panorama beyond it
     ("09-high-overlook", 9, (74.0, 12.0), 4.0, (34.0, -60.0), 30.0, 50,
      (1400, 800), 120, "day"),
     # 10: a material study - rope, brass, ice and dressed stone together
-    ("10-material-study", 10, (17.0, -21.4), 1.2, (17.0, -25.0), 0.9, 40,
-     (1080, 880), 14, "day"),
+    ("10-material-study", 10, (17.0, -22.6), 1.1, (17.0, -25.2), 0.8, 38,
+     (1080, 880), 5, "day"),
 
     # -- views that exist to check the build, not to match a panel -------
     ("11-spawn-grounding", None, (-6.0, 8.0), 1.7, (6.0, -6.0), 1.6, 58,

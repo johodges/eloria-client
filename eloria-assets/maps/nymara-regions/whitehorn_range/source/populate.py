@@ -146,8 +146,12 @@ def _primary_landmarks(build: RegionBuild, seed: int) -> None:
         fall = kit.frozen_cascade(width=width, height=height,
                                   seed=seed + 11 + index)
         node = f"Landmark_frozen_cascade_{index:02d}"
+        # Same trap as the temple: the piece is built facing -Z, with its rock
+        # backing behind it at positive local z. Placed unrotated on a valley
+        # approached from the south, the backing ends up between the camera
+        # and the ice, and the fall renders as a plain grey slab.
         _place(build, node, f"frozen_cascade_{index:02d}", fall, fx, fz,
-               kind="landmark", collides=True,
+               rotation_y=math.pi, kind="landmark", collides=True,
                landmark=f"whitehorn-frozen-cascade-{index:02d}")
         _landmark(build, f"whitehorn-frozen-cascade-{index:02d}",
                   "Frozen Cascade", node, fx, fz, "natural")
