@@ -395,7 +395,7 @@ def build_terrain(seed: int = 20260827) -> TER.Terrain:
     for name, points in STREAMS.items():
         depth = 3.8 if name == "north_beck" else 2.8
         width = (2.4 if name == "garden_rill" else 3.2) * SCALE
-        t.carve_channel(points, width, depth, bank=2.6, seed=seed + abs(hash(name)) % 97)
+        t.carve_channel(points, width, depth, bank=2.6, seed=seed + N.stable_hash(name) % 97)
     t.carve_channel(RAVINE, 5.0 * SCALE, 10.5, bank=1.9, seed=seed + 23)
     t.carve_channel(RAVINE_NORTH, 4.2 * SCALE, 8.5, bank=1.9, seed=seed + 27)
     # the forest lake basin
@@ -416,7 +416,7 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260827) -> None:
         if name in ("burnt_track", "charcoal_track"):
             surface = TER.SCORCHED
         t.grade_path(points, width, shoulder=2.1, surface=surface,
-                     seed=seed + abs(hash(name)) % 89, flatten=0.92)
+                     seed=seed + N.stable_hash(name) % 89, flatten=0.92)
 
     t.terrace(ANCHORS["settlement_market"], 11.0 * LOCAL,
               float(t.height_at(*ANCHORS["settlement_market"])), surface=TER.PAVING)
