@@ -67,7 +67,11 @@ class NativeGlbAssetsTest(unittest.TestCase):
     def test_catalog_is_complete(self) -> None:
         self.assertEqual(16, len(self.catalog["races"]))
         self.assertEqual(8, len(self.catalog["hair"]))
-        self.assertEqual(32, len(self.catalog["creatures"]))
+        # 32 first-pass creatures plus the wider concept-art roster.
+        sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
+        import creature_roster
+        self.assertEqual(32 + len(creature_roster.ROSTER),
+                         len(self.catalog["creatures"]))
         self.assertEqual(66, len(self.catalog["equipment"]))
         # Compare against what is actually on disk instead of a fixed number:
         # the catalogue's count had drifted stale when the ambient livestock
@@ -135,7 +139,12 @@ class NativeGlbAssetsTest(unittest.TestCase):
         the exact clip names named by data/animations/creature.json - so those
         are what this test pins.
         """
-        expected_actor_types = set(range(204, 236))
+        sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
+        import creature_roster
+        # The concept-art roster occupies one contiguous block after every
+        # range already in models.json; the server adopts these ids.
+        expected_actor_types = set(range(204, 236)) | set(
+            range(428, 428 + len(creature_roster.ROSTER)))
         actual_actor_types = {entry["actor_type"] for entry in self.catalog["creatures"].values()}
         self.assertEqual(expected_actor_types, actual_actor_types)
         animation_map = json.loads(
@@ -183,7 +192,8 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 path = ROOT / entry["path"]
                 document, binary = validator.read_glb(path)
                 problems, _ = validator.check(document, binary, path,
-                                              required_clips, attachments)
+                                              required_clips, attachments,
+                                              bool(entry.get("hovers")))
                 self.assertEqual([], problems)
 
     def test_nymara_invasion_actor_types_resolve_to_native_models(self) -> None:
