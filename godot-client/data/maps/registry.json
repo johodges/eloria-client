@@ -679,6 +679,44 @@
     },
     "whitehorn_insides": {
       "alias": "maps/nymara/whitehorn_glacier_temple.elm"
+    },
+    "maps/nymara/drowned_crown.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/crownwater_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -7.0,
+          337.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/crownwater.elm",
+      "insidesOf": "maps/nymara/crownwater.elm",
+      "sections": [
+        "drowned_crown",
+        "tide_cistern",
+        "customs_hall",
+        "tide_campanile"
+      ]
+    },
+    "drowned_crown": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "drowned_crown.elm": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "crownwater_insides": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "crownwater_insides.elm": {
+      "alias": "maps/nymara/drowned_crown.elm"
     }
   }
 }

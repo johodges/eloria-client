@@ -60,6 +60,16 @@ ELORIA_ARTIFACT_DIR=<dir> godot --audio-driver Dummy \
 See `validation-report.md` for what those numbers do and do not cover, and
 `modeling-assumptions.md` for the decisions a reviewer may want to overrule.
 
+## Interiors
+
+Four insides open off this map - The Drowned Crown (under the basilica), The
+Tide Cistern (under the garden islet), The Harbour Customs Hall and The Tide
+Campanile - and they share **one map with unwalkable blackspace between them**,
+as Eternal Lands lays out a region's interiors. Built by
+`source/build_insides.py`, verified by `source/verify_interiors.py`, server map
+written by `source/export_insides_elm.py`, documented in
+`../interiors/CROWNWATER_INTERIORS.md`.
+
 ## Server
 
 Crownwater needs a bigger server map, as Amberwood does.
