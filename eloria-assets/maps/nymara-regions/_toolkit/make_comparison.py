@@ -22,9 +22,20 @@ PACKAGE = regionpaths.package_root()
 # build" should show what the engine draws, not the authoring preview.
 _GODOT = PACKAGE / "references" / "godot-captures"
 _OFFLINE = PACKAGE / "references" / "captures"
-CAPTURES = _GODOT if _GODOT.is_dir() and any(_GODOT.glob("*.png")) else _OFFLINE
-BUILD_LABEL = ("build, real Godot frame" if CAPTURES is _GODOT
-               else "build, offline preview renderer")
+def _has_frames(directory: Path) -> bool:
+    # Both extensions: compress_captures.py converts these to WebP, and
+    # globbing only for PNG silently falls back to the offline set the moment
+    # the package is compressed.
+    return directory.is_dir() and any(
+        path for suffix in ("*.png", "*.webp") for path in directory.glob(suffix))
+
+
+CAPTURES = _GODOT if _has_frames(_GODOT) else _OFFLINE
+# Name the region on the sheet itself: these get looked at detached from the
+# directory they came out of, and "build" alone does not say whose.
+REGION = PACKAGE.name
+BUILD_LABEL = (f"{REGION} build, real Godot frame" if CAPTURES is _GODOT
+               else f"{REGION} build, offline preview renderer")
 BOARD = PACKAGE / "references" / "00-concept-detail-board.png"
 AERIAL = PACKAGE / "references" / "01-concept-aerial-overview.png"
 OUT = PACKAGE / "references" / "comparisons"
@@ -154,7 +165,7 @@ def main() -> int:
             continue
         image = Image.open(path).convert("RGB")
         image.thumbnail(thumb)
-        tile = _label(image, entry["id"], 22)
+        tile = _label(image, f"{REGION}  {entry['id']}", 22)
         sheet2.paste(tile, ((i % cols) * thumb[0], (i // cols) * (thumb[1] + 24)))
     sheet2.convert("RGB").save(OUT / "landmark-contact-sheet.webp", "WEBP",
                                quality=86, method=5)
