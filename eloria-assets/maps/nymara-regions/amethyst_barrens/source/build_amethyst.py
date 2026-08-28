@@ -138,22 +138,30 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             "destinationMap": destination, "radius": 3.5,
             "authority": "server"})
 
-    # Interior entrance. The Resonant Vault is the region's interior in the
-    # server's map table; its package is not part of this region's scope.
-    anchor = next((l for l in build.landmarks
-                   if l.get("id") == "glasswarden-observatory"), None)
-    if anchor is not None:
+    # Interior entrances. Each sits on the landmark it belongs to, so the way in
+    # is the thing the player was looking at, and each interior package carries
+    # the matching return portal.
+    for portal_id, name, landmark_id, destination, spawn in (
+            ("resonant-vault-stair", "The Resonant Vault", "glasswarden-observatory",
+             "maps/nymara/resonant_vault.elm", "default"),
+            ("geode-hollow-mouth", "The Geode Hollow", "amethyst-geode-cave-1",
+             "maps/nymara/amethyst_geode_hollow.elm", "default"),
+            ("shardworks-headframe", "The Shardworks", "resonant-crystal-cluster-0",
+             "maps/nymara/amethyst_shardworks.elm", "default"),
+            ("storm-barrow-stair", "The Storm Barrow", "amethyst-storm-ruin-0",
+             "maps/nymara/amethyst_storm_barrow.elm", "default")):
+        anchor = next((l for l in build.landmarks if l.get("id") == landmark_id), None)
+        if anchor is None:
+            continue
         x, y, z = anchor["position"]
         build.portals.append({
-            "id": "resonant-vault-stair", "name": "The Resonant Vault",
-            "type": "interior-entrance",
+            "id": portal_id, "name": name, "type": "interior-entrance",
             "position": [round(float(x), 2), round(float(y) + 0.1, 2),
                          round(float(z), 2)],
             "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
                            int(round(REG.SERVER_ORIGIN[1] - z))],
-            "landmark": "glasswarden-observatory",
-            "destinationMap": "maps/nymara/resonant_vault.elm",
-            "destinationSpawn": "default", "radius": 2.5,
+            "landmark": landmark_id,
+            "destinationMap": destination, "destinationSpawn": spawn, "radius": 2.5,
             "authority": "server"})
 
 

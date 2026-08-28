@@ -82,6 +82,20 @@ func _init() -> void:
 					tri_count += idx.size() / 3
 	print("[capture] meshes=%d triangles=%d" % [mesh_count, tri_count])
 
+	# A package that declares `environment.sky == "none"` is sealed - an interior,
+	# rooms inside rock. Lighting it with the region rig floods it with sky and
+	# puts a sun through its ceiling, which is not a moody frame but a wrong one:
+	# the reviewer sees daylight in a vault that has none. Such a package is lit
+	# from its own manifest instead.
+	var manifest_env: Dictionary = {}
+	var manifest_file := FileAccess.open(package.path_join("world.json"), FileAccess.READ)
+	if manifest_file != null:
+		var parsed: Variant = JSON.parse_string(manifest_file.get_as_text())
+		manifest_file.close()
+		if typeof(parsed) == TYPE_DICTIONARY:
+			manifest_env = parsed.get("environment", {})
+	var sealed := str(manifest_env.get("sky", "")) == "none"
+
 	# environment: a plain daylight sky so the shot shows the map, not a mood
 	var env := Environment.new()
 	var sky := Sky.new()
@@ -102,6 +116,23 @@ func _init() -> void:
 	# A WorldEnvironment, not camera.environment: the camera override does not
 	# supply the sky the background is drawn from, which leaves the frame in a
 	# flat void.
+	if sealed:
+		var amb: Dictionary = manifest_env.get("ambient", {})
+		var amb_colour: Variant = amb.get("colour", [0.14, 0.13, 0.18])
+		env.background_mode = Environment.BG_COLOR
+		env.background_color = Color(0.02, 0.02, 0.03)
+		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		env.ambient_light_color = Color(amb_colour[0], amb_colour[1], amb_colour[2])
+		# lifted well above the manifest value: the manifest number is for a
+		# renderer with the interior's own lamps, and this harness has none
+		env.ambient_light_energy = float(amb.get("energy", 0.4)) * 4.0
+		var fog: Dictionary = manifest_env.get("fog", {})
+		if bool(fog.get("enabled", false)):
+			var fc: Variant = fog.get("colour", [0.06, 0.06, 0.08])
+			env.fog_enabled = true
+			env.fog_light_color = Color(fc[0], fc[1], fc[2])
+			env.fog_density = 0.010
+
 	var world_env := WorldEnvironment.new()
 	world_env.environment = env
 	world.add_child(world_env)
@@ -121,6 +152,13 @@ func _init() -> void:
 	# look south and most cameras look north, so the light must travel north
 	# too: yaw near zero, not near 180, or every shot is backlit.
 	sun.rotation_degrees = Vector3(-46.0, 24.0, 0.0)
+	if sealed:
+		# straight down and weak: a sealed package has no sun, and this only
+		# keeps surfaces from reading as flat unlit colour
+		sun.light_energy = 0.30
+		sun.light_color = Color(0.82, 0.80, 0.92)
+		sun.shadow_enabled = false
+		sun.rotation_degrees = Vector3(-88.0, 0.0, 0.0)
 	world.add_child(sun)
 
 	var camera := Camera3D.new()

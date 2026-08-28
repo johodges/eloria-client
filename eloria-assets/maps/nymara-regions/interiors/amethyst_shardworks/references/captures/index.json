@@ -1,0 +1,178 @@
+[
+  {
+    "id": "concept-01-headframe-and-winding-gear",
+    "file": "concept-01-headframe-and-winding-gear.png",
+    "panel": "concept-01",
+    "subject": "headframe and winding gear",
+    "space": "headframe",
+    "eye": [
+      -5.44,
+      1.7,
+      -1.428
+    ],
+    "target": [
+      2.176,
+      1.445,
+      0.571
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-02-the-shaft",
+    "file": "concept-02-the-shaft.png",
+    "panel": "concept-02",
+    "subject": "the shaft",
+    "space": "shaft",
+    "eye": [
+      0.0,
+      1.7,
+      7.65
+    ],
+    "target": [
+      0.0,
+      -4.64,
+      19.48
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-03-sorting-floor",
+    "file": "concept-03-sorting-floor.png",
+    "panel": "concept-03",
+    "subject": "sorting floor",
+    "space": "sorting",
+    "eye": [
+      -9.52,
+      -4.3,
+      27.96
+    ],
+    "target": [
+      3.808,
+      -4.555,
+      30.816
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-04-the-scale-pan",
+    "file": "concept-04-the-scale-pan.png",
+    "panel": "concept-04",
+    "subject": "the scale pan",
+    "space": "sorting",
+    "eye": [
+      -5.474,
+      -4.3,
+      36.772
+    ],
+    "target": [
+      0.0,
+      -4.555,
+      30.0
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-05-cutting-floor",
+    "file": "concept-05-cutting-floor.png",
+    "panel": "concept-05",
+    "subject": "cutting floor",
+    "space": "cutting",
+    "eye": [
+      29.2,
+      -4.3,
+      31.164
+    ],
+    "target": [
+      38.72,
+      -4.555,
+      33.734
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-06-the-working-stope",
+    "file": "concept-06-the-working-stope.png",
+    "panel": "concept-06",
+    "subject": "the working stope",
+    "space": "stope",
+    "eye": [
+      -38.04,
+      -5.7,
+      27.52
+    ],
+    "target": [
+      -35.184,
+      -5.955,
+      37.992
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-07-the-winze",
+    "file": "concept-07-the-winze.png",
+    "panel": "concept-07",
+    "subject": "the winze",
+    "space": "winze",
+    "eye": [
+      -36.0,
+      -5.7,
+      46.6
+    ],
+    "target": [
+      -36.0,
+      -9.64,
+      57.52
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-08-the-deep",
+    "file": "concept-08-the-deep.png",
+    "panel": "concept-08",
+    "subject": "the deep",
+    "space": "deep",
+    "eye": [
+      -42.16,
+      -9.3,
+      67.552
+    ],
+    "target": [
+      -30.736,
+      -9.555,
+      70.979
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  }
+]

@@ -603,6 +603,106 @@
     },
     "amberwood_cinder_chapel.elm": {
       "alias": "maps/nymara/amberwood_cinder_chapel.elm"
+    },
+    "maps/nymara/amethyst_geode_hollow.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amethyst_geode_hollow/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          25.0,
+          89.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/amethyst_barrens.elm"
+    },
+    "amethyst_geode_hollow": {
+      "alias": "maps/nymara/amethyst_geode_hollow.elm"
+    },
+    "amethyst_geode_hollow.elm": {
+      "alias": "maps/nymara/amethyst_geode_hollow.elm"
+    },
+    "maps/nymara/amethyst_shardworks.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amethyst_shardworks/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          49.0,
+          85.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/amethyst_barrens.elm"
+    },
+    "amethyst_shardworks": {
+      "alias": "maps/nymara/amethyst_shardworks.elm"
+    },
+    "amethyst_shardworks.elm": {
+      "alias": "maps/nymara/amethyst_shardworks.elm"
+    },
+    "maps/nymara/amethyst_storm_barrow.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amethyst_storm_barrow/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          19.0,
+          117.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/amethyst_barrens.elm"
+    },
+    "amethyst_storm_barrow": {
+      "alias": "maps/nymara/amethyst_storm_barrow.elm"
+    },
+    "amethyst_storm_barrow.elm": {
+      "alias": "maps/nymara/amethyst_storm_barrow.elm"
+    },
+    "maps/nymara/resonant_vault.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/resonant_vault/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          25.0,
+          139.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/amethyst_barrens.elm"
+    },
+    "resonant_vault": {
+      "alias": "maps/nymara/resonant_vault.elm"
+    },
+    "resonant_vault.elm": {
+      "alias": "maps/nymara/resonant_vault.elm"
     }
   }
 }

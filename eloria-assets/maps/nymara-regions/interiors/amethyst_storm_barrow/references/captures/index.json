@@ -1,0 +1,156 @@
+[
+  {
+    "id": "concept-01-the-ruined-dromos",
+    "file": "concept-01-the-ruined-dromos.png",
+    "panel": "concept-01",
+    "subject": "the ruined dromos",
+    "space": "dromos",
+    "eye": [
+      -1.02,
+      1.7,
+      -3.76
+    ],
+    "target": [
+      0.408,
+      1.445,
+      2.904
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-02-standing-stones-brought-inside",
+    "file": "concept-02-standing-stones-brought-inside.png",
+    "panel": "concept-02",
+    "subject": "standing stones brought inside",
+    "space": "antechamber",
+    "eye": [
+      -7.48,
+      -2.9,
+      26.368
+    ],
+    "target": [
+      2.992,
+      -3.155,
+      28.653
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-03-the-strike-well-from-below",
+    "file": "concept-03-the-strike-well-from-below.png",
+    "panel": "concept-03",
+    "subject": "the strike well from below",
+    "space": "strikewell",
+    "eye": [
+      -8.84,
+      -4.3,
+      58.348
+    ],
+    "target": [
+      3.536,
+      -4.555,
+      62.061
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-04-the-fused-floor",
+    "file": "concept-04-the-fused-floor.png",
+    "panel": "concept-04",
+    "subject": "the fused floor",
+    "space": "strikewell",
+    "eye": [
+      -5.083,
+      -4.3,
+      69.804
+    ],
+    "target": [
+      0.0,
+      -4.555,
+      61.0
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-05-fulgurite-on-the-walls",
+    "file": "concept-05-fulgurite-on-the-walls.png",
+    "panel": "concept-05",
+    "subject": "fulgurite on the walls",
+    "space": "strikewell",
+    "eye": [
+      -5.083,
+      -4.3,
+      52.196
+    ],
+    "target": [
+      0.0,
+      -4.555,
+      61.0
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-06-the-sealed-cella",
+    "file": "concept-06-the-sealed-cella.png",
+    "panel": "concept-06",
+    "subject": "the sealed cella",
+    "space": "cella",
+    "eye": [
+      -10.88,
+      -6.7,
+      97.144
+    ],
+    "target": [
+      4.352,
+      -6.955,
+      101.142
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  },
+  {
+    "id": "concept-07-the-crystal-bier",
+    "file": "concept-07-the-crystal-bier.png",
+    "panel": "concept-07",
+    "subject": "the crystal bier",
+    "space": "cella",
+    "eye": [
+      -6.256,
+      -6.7,
+      109.481
+    ],
+    "target": [
+      0.0,
+      -6.955,
+      100.0
+    ],
+    "fov": 62.0,
+    "pixels": [
+      1180,
+      760
+    ]
+  }
+]

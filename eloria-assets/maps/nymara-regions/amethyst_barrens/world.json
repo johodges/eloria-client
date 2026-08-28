@@ -2120,6 +2120,63 @@
       "destinationSpawn": "default",
       "radius": 2.5,
       "authority": "server"
+    },
+    {
+      "id": "geode-hollow-mouth",
+      "name": "The Geode Hollow",
+      "type": "interior-entrance",
+      "position": [
+        318.0,
+        5.22,
+        -102.0
+      ],
+      "serverTile": [
+        492,
+        276
+      ],
+      "landmark": "amethyst-geode-cave-1",
+      "destinationMap": "maps/nymara/amethyst_geode_hollow.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "shardworks-headframe",
+      "name": "The Shardworks",
+      "type": "interior-entrance",
+      "position": [
+        138.0,
+        2.99,
+        -42.0
+      ],
+      "serverTile": [
+        312,
+        216
+      ],
+      "landmark": "resonant-crystal-cluster-0",
+      "destinationMap": "maps/nymara/amethyst_shardworks.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "storm-barrow-stair",
+      "name": "The Storm Barrow",
+      "type": "interior-entrance",
+      "position": [
+        216.0,
+        4.54,
+        -168.0
+      ],
+      "serverTile": [
+        390,
+        342
+      ],
+      "landmark": "amethyst-storm-ruin-0",
+      "destinationMap": "maps/nymara/amethyst_storm_barrow.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "authority": "server"
     }
   ],
   "roads": [
