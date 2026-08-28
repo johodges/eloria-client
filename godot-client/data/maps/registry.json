@@ -109,18 +109,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 5.2,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": {
+        "tiles": 96,
+        "collisionCells": 576,
+        "metresPerTile": 1.0,
+        "arrivalTile": [
+          174,
+          174
+        ],
+        "note": "Amethyst Barrens is authored at 576 m x 576 m. The server map grows from 32x32 to 96x96 ELM tiles; see eloria-server tools/generate_nymara_maps.py and eloria-assets/maps/nymara-regions/source-elm/amethyst_barrens.elm."
+      }
     },
     "amethyst_barrens": {
       "alias": "maps/nymara/amethyst_barrens.elm"

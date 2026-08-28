@@ -47,14 +47,20 @@
     {
       "id": "amethyst_barrens",
       "title": "Amethyst Barrens",
-      "sourceSha256": "364ba0cb438529f4b052474f511d67ce4bb388181854d23aa913f4ae8918b3fc",
+      "sourceSha256": "2eff864b2d4ae14b1b7cd11c24bf6d7053af861ca07cb51e7aed884a75d0b98c",
       "conceptViews": 10,
-      "landmarkInstances": 54,
+      "landmarkInstances": 47,
       "terrainHeightRange": [
-        0.0,
-        0.0
+        -22.0,
+        62.79
       ],
-      "water": false
+      "water": true,
+      "status": "production-geometry-materials-population",
+      "serverCells": 576,
+      "requiresServerMap": "96x96 ELM tiles (576 cells)",
+      "uniqueTriangles": 444452,
+      "instancedTriangles": 601820,
+      "glbBytes": 19520164
     },
     {
       "id": "sunmane_steppe",

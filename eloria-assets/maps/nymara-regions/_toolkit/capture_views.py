@@ -25,10 +25,22 @@ import regionpaths
 HERE = Path(__file__).resolve().parent
 PACKAGE = regionpaths.package_root()
 CAPTURES = PACKAGE / "references" / "captures"
-VIEWS = regionpaths.load_region_views(PACKAGE).VIEWS
+_REGION_VIEWS = regionpaths.load_region_views(PACKAGE)
+VIEWS = _REGION_VIEWS.VIEWS
 # The plan and the build script belong to the region, not to the toolkit.
 REG = regionpaths.load_region_plan(PACKAGE)
 build_region = regionpaths.load_region_build(PACKAGE).build_region
+
+# A region may override the capture lighting from its own `views.py`. The
+# presets below are Amberwood's warm afternoon sun, which is wrong for a region
+# under permanent storm - and the captures are the only visual evidence a
+# reviewer has. Two spellings are accepted, a single LIGHTING dict or a pair of
+# DAY_LIGHTING / GOLDEN_LIGHTING constants, because both are in use.
+REGION_LIGHTING = dict(getattr(_REGION_VIEWS, "LIGHTING", {}) or {})
+if getattr(_REGION_VIEWS, "DAY_LIGHTING", None) is not None:
+    REGION_LIGHTING.setdefault("day", _REGION_VIEWS.DAY_LIGHTING)
+if getattr(_REGION_VIEWS, "GOLDEN_LIGHTING", None) is not None:
+    REGION_LIGHTING.setdefault("golden", _REGION_VIEWS.GOLDEN_LIGHTING)
 
 DAY = RENDER.Lighting(sun_direction=(-0.46, 0.50, 0.73),
                       sun_color=(1.22, 0.94, 0.60),
@@ -200,11 +212,12 @@ def main() -> int:
         if eye_h > 40.0:
             eye_h = eye_h * scale
         t0 = time.time()
-        lighting = GOLDEN if mode == "golden" else DAY
+        lighting = REGION_LIGHTING.get(mode, GOLDEN if mode == "golden" else DAY)
         if panel == "aerial":
             # a 576 m region seen from 500 m up is far enough away that the
             # normal ground-level haze would swallow the far half of it
-            lighting = RENDER.Lighting(**{**vars(DAY), "fog_density": 0.00022,
+            base = REGION_LIGHTING.get("day", DAY)
+            lighting = RENDER.Lighting(**{**vars(base), "fog_density": 0.00022,
                                           "fog_height_falloff": 0.0016})
         placed_eye = eye_xz if eye_h > 20.0 else find_clear(eye_xz)
         eye = ground(placed_eye, eye_h)
