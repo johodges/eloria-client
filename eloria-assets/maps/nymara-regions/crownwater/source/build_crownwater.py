@@ -128,6 +128,35 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             "destinationMap": destination, "radius": 3.5,
             "authority": "server"})
 
+    # Interior entrances. Each sits on the landmark it belongs to, so the door a
+    # player walks into is the building they were looking at; the interior
+    # package carries the matching return portal.
+    for portal_id, name, landmark_id, destination, spawn in (
+            ("basilica-undercroft", "The Drowned Crown", "crownwater-cathedral",
+             "maps/nymara/drowned_crown.elm", "default"),
+            ("campanile-door", "The Tide Campanile", "crownwater-campanile",
+             "maps/nymara/crownwater_tide_campanile.elm", "default"),
+            ("cistern-stair", "The Tide Cistern",
+             "crownwater-pavilion-pavilion_west",
+             "maps/nymara/crownwater_tide_cistern.elm", "default"),
+            ("customs-door", "The Harbour Customs Hall",
+             "crownwater-customs-hall",
+             "maps/nymara/crownwater_customs_hall.elm", "default")):
+        anchor = next((l for l in build.landmarks if l.get("id") == landmark_id),
+                      None)
+        if anchor is None:
+            continue
+        x, y, z = anchor["position"]
+        build.portals.append({
+            "id": portal_id, "name": name, "type": "interior-entrance",
+            "position": [round(float(x), 2), round(float(y) + 0.1, 2),
+                         round(float(z), 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "landmark": landmark_id,
+            "destinationMap": destination, "destinationSpawn": spawn,
+            "radius": 2.5, "authority": "server"})
+
 
 def _add_population_markers(build: REG.RegionBuild, seed: int) -> None:
     """Editor/visual markers only - the server owns actual spawning."""

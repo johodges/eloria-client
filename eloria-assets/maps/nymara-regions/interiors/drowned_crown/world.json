@@ -1,0 +1,591 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "drowned_crown",
+    "name": "The Drowned Crown",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -40.55,
+        -10.13,
+        -52.96
+      ],
+      "max": [
+        80.12,
+        7.45,
+        118.55
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        -40.55,
+        -8.4,
+        -6.55
+      ],
+      "max": [
+        52.55,
+        0.0,
+        118.55
+      ]
+    },
+    "interiorClass": "dungeon",
+    "parentRegion": "amberwood",
+    "serverCells": 129
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      43.0,
+      121.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "basilica-undercroft",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 192,
+    "height": 258,
+    "cellMetres": 0.5,
+    "originMetres": [
+      -43.0,
+      121.0
+    ],
+    "heightEncoding": {
+      "origin": -8.131,
+      "step": 0.1311,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
+    },
+    "walkableCells": 17100,
+    "blockedCells": 32436,
+    "walkableFraction": 0.3452,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Interior_drowned_crown",
+      "Build_drowned_crown_amber_resin",
+      "Build_drowned_crown_ashlar",
+      "Build_drowned_crown_canvas_awning",
+      "Build_drowned_crown_crownwater_gilt",
+      "Build_drowned_crown_crownwater_marble",
+      "Build_drowned_crown_crownwater_mosaic",
+      "Build_drowned_crown_crownwater_verdigris",
+      "Build_drowned_crown_dark_iron",
+      "Build_drowned_crown_rubble_stone",
+      "Build_drowned_crown_timber_grey",
+      "Build_drowned_crown_timber_warm",
+      "Build_drowned_crown_water_deep",
+      "Build_drowned_crown_water_pool"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    },
+    "notes": [
+      "Every standable surface is a Walk_<material> node, matching the region's contract: the client turns navigation.surfaceNodePrefixes into the layer its downward grounding ray tests."
+    ]
+  },
+  "portals": [
+    {
+      "id": "exit-to-crownwater",
+      "name": "Return to Crownwater",
+      "type": "map-transition",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationSpawn": "basilica-undercroft",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "drowned-crown-throne",
+      "name": "The Drowned Throne",
+      "space": "crown_hall",
+      "position": [
+        36.0,
+        -6.2,
+        105.0
+      ]
+    },
+    {
+      "id": "drowned-crown-altar",
+      "name": "The Shell Altar",
+      "space": "shell_altar",
+      "position": [
+        -3.0,
+        -6.6,
+        66.0
+      ]
+    },
+    {
+      "id": "drowned-crown-oculus",
+      "name": "The Fallen Dome",
+      "space": "collapsed_dome",
+      "position": [
+        -29.0,
+        -6.0,
+        66.0
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "drowned-crown-shell-altar",
+      "name": "Shell Altar",
+      "type": "altar",
+      "position": [
+        -3.0,
+        -6.6,
+        66.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "drowned-crown-sluice",
+      "name": "Palace Sluice",
+      "type": "mechanism",
+      "position": [
+        35.0,
+        -6.4,
+        47.0
+      ],
+      "authority": "server"
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [],
+  "environment": {
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.06,
+        0.14,
+        0.2
+      ],
+      "horizon": [
+        0.12,
+        0.24,
+        0.28
+      ]
+    },
+    "sun": {
+      "enabled": true,
+      "direction": [
+        -0.12,
+        -0.94,
+        0.32
+      ],
+      "color": [
+        0.72,
+        0.86,
+        0.92
+      ],
+      "energy": 0.95
+    },
+    "ambient": {
+      "color": [
+        0.28,
+        0.42,
+        0.48
+      ],
+      "energy": 0.92,
+      "skyContribution": 0.35
+    },
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.16,
+        0.28,
+        0.32
+      ],
+      "density": 0.012
+    },
+    "openToSky": [
+      "collapsed_dome"
+    ],
+    "lights": [
+      {
+        "id": "lantern-00",
+        "kind": "point",
+        "position": [
+          0.0,
+          2.98,
+          0.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-01",
+        "kind": "point",
+        "position": [
+          0.0,
+          -3.62,
+          27.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-02",
+        "kind": "point",
+        "position": [
+          35.0,
+          -4.22,
+          28.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-03",
+        "kind": "point",
+        "position": [
+          36.0,
+          -4.22,
+          66.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-04",
+        "kind": "point",
+        "position": [
+          -3.0,
+          -5.02,
+          66.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-05",
+        "kind": "point",
+        "position": [
+          -29.0,
+          -2.42,
+          37.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-06",
+        "kind": "point",
+        "position": [
+          36.0,
+          -4.62,
+          105.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "stairhead": {
+      "x0": -6.0,
+      "z0": -6.0,
+      "x1": 6.0,
+      "z1": 6.0,
+      "floor": 0.0,
+      "height": 5.0
+    },
+    "flooded_vestibule": {
+      "x0": -10.0,
+      "z0": 18.0,
+      "x1": 10.0,
+      "z1": 36.0,
+      "floor": -6.5,
+      "height": 6.0
+    },
+    "water_gallery": {
+      "x0": 24.0,
+      "z0": 16.0,
+      "x1": 46.0,
+      "z1": 40.0,
+      "floor": -7.2,
+      "height": 7.0
+    },
+    "statue_court": {
+      "x0": 22.0,
+      "z0": 54.0,
+      "x1": 50.0,
+      "z1": 78.0,
+      "floor": -7.2,
+      "height": 8.5
+    },
+    "shell_altar": {
+      "x0": -12.0,
+      "z0": 56.0,
+      "x1": 6.0,
+      "z1": 76.0,
+      "floor": -8.0,
+      "height": 6.5
+    },
+    "collapsed_dome": {
+      "x0": -40.0,
+      "z0": 54.0,
+      "x1": -18.0,
+      "z1": 78.0,
+      "floor": -8.0,
+      "height": 13.0
+    },
+    "air_pocket": {
+      "x0": -35.0,
+      "z0": 30.0,
+      "x1": -23.0,
+      "z1": 44.0,
+      "floor": -5.2,
+      "height": 4.4
+    },
+    "crown_hall": {
+      "x0": 20.0,
+      "z0": 92.0,
+      "x1": 52.0,
+      "z1": 118.0,
+      "floor": -7.8,
+      "height": 10.0
+    },
+    "descent": {
+      "x0": -2.2,
+      "z0": 3.8,
+      "x1": 2.2,
+      "z1": 20.2,
+      "floor": -6.5,
+      "height": 4.4
+    },
+    "gallery_run": {
+      "x0": 7.9,
+      "z0": 24.9,
+      "x1": 26.1,
+      "z1": 29.1,
+      "floor": -7.2,
+      "height": 4.2
+    },
+    "submerged_arch": {
+      "x0": 32.7,
+      "z0": 37.7,
+      "x1": 37.3,
+      "z1": 56.3,
+      "floor": -7.2,
+      "height": 4.6
+    },
+    "altar_run": {
+      "x0": 4.0,
+      "z0": 64.0,
+      "x1": 24.0,
+      "z1": 68.0,
+      "floor": -8.0,
+      "height": 4.0
+    },
+    "dome_run": {
+      "x0": -20.3,
+      "z0": 63.7,
+      "x1": -9.7,
+      "z1": 68.3,
+      "floor": -8.0,
+      "height": 4.4
+    },
+    "air_stair": {
+      "x0": -31.0,
+      "z0": 42.0,
+      "x1": -27.0,
+      "z1": 56.0,
+      "floor": -8.0,
+      "height": 4.0
+    },
+    "hall_run": {
+      "x0": 33.6,
+      "z0": 75.6,
+      "x1": 38.4,
+      "z1": 94.4,
+      "floor": -7.8,
+      "height": 5.0
+    }
+  },
+  "conceptArt": {
+    "detailBoard": "../../crownwater/references/00-concept-detail-board.png",
+    "role": "parent-region board; only drowned_crown has its own concept",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "flooded_vestibule",
+      "water_gallery",
+      "submerged_arch",
+      "shell_altar",
+      "statue_court",
+      "gallery_run",
+      "collapsed_dome",
+      "air_pocket",
+      "crown_hall",
+      "shell_altar"
+    ]
+  },
+  "performance": {
+    "nodes": 18,
+    "meshes": 17,
+    "materials": 14,
+    "images": 38,
+    "textures": 38,
+    "accessors": 85,
+    "bufferViews": 123,
+    "uniqueTriangles": 25334,
+    "uniqueVertices": 25654,
+    "glbBytes": 5238844,
+    "nodeNames": [
+      "Interior_drowned_crown",
+      "Build_drowned_crown_amber_resin",
+      "Build_drowned_crown_ashlar",
+      "Build_drowned_crown_canvas_awning",
+      "Build_drowned_crown_crownwater_gilt",
+      "Build_drowned_crown_crownwater_marble",
+      "Build_drowned_crown_crownwater_mosaic",
+      "Build_drowned_crown_crownwater_verdigris",
+      "Build_drowned_crown_dark_iron",
+      "Build_drowned_crown_rubble_stone",
+      "Build_drowned_crown_timber_grey",
+      "Build_drowned_crown_timber_warm",
+      "Build_drowned_crown_water_deep",
+      "Build_drowned_crown_water_pool",
+      "Walk_crownwater_marble",
+      "Walk_crownwater_mosaic",
+      "Walk_crownwater_sand",
+      "Walk_rubble_stone"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "source/build_interiors.py",
+      "role": "reproducible-build",
+      "seed": 20260901
+    },
+    {
+      "id": "anchor",
+      "landmark": "crownwater-cathedral",
+      "position": [
+        114.0,
+        18.09,
+        -132.0
+      ],
+      "role": "surface entrance on the Crownwater region map"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the Crownwater region kit over the shared toolkit; no scattered placement",
+    "textures": "procedural, from amberwood/textures.py",
+    "thirdParty": "none"
+  },
+  "notes": [
+    "Water level is held at y = -6.05 throughout; rooms step down beneath it rather than the water rising to meet them."
+  ],
+  "productionStatus": "authored-geometry-materials-population",
+  "knownLimitations": [
+    "Not opened in Godot: no client is installable in the build environment, so collision response, navmesh generation, portal transition, LOD and transparency sorting are unverified.",
+    "eloria-server has not registered these map keys."
+  ]
+}

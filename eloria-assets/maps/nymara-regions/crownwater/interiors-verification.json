@@ -1,0 +1,56 @@
+{
+  "tolerances": {
+    "height": 0.75,
+    "spawn": 0.3
+  },
+  "interiors": [
+    {
+      "id": "drowned_crown",
+      "walkSurfaceNodes": 4,
+      "walkableCells": 17100,
+      "walkableCellsWithoutSurface": 0,
+      "misses": [],
+      "heightDisagreements": 0,
+      "disagreementSamples": [],
+      "spawnProblems": [],
+      "portalProblems": [],
+      "ok": true
+    },
+    {
+      "id": "crownwater_tide_campanile",
+      "walkSurfaceNodes": 3,
+      "walkableCells": 536,
+      "walkableCellsWithoutSurface": 0,
+      "misses": [],
+      "heightDisagreements": 0,
+      "disagreementSamples": [],
+      "spawnProblems": [],
+      "portalProblems": [],
+      "ok": true
+    },
+    {
+      "id": "crownwater_tide_cistern",
+      "walkSurfaceNodes": 2,
+      "walkableCells": 11784,
+      "walkableCellsWithoutSurface": 0,
+      "misses": [],
+      "heightDisagreements": 0,
+      "disagreementSamples": [],
+      "spawnProblems": [],
+      "portalProblems": [],
+      "ok": true
+    },
+    {
+      "id": "crownwater_customs_hall",
+      "walkSurfaceNodes": 2,
+      "walkableCells": 9304,
+      "walkableCellsWithoutSurface": 0,
+      "misses": [],
+      "heightDisagreements": 0,
+      "disagreementSamples": [],
+      "spawnProblems": [],
+      "portalProblems": [],
+      "ok": true
+    }
+  ]
+}

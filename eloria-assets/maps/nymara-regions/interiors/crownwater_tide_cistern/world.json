@@ -1,0 +1,475 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "crownwater_tide_cistern",
+    "name": "The Tide Cistern",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -53.25,
+        -4.4,
+        -54.35
+      ],
+      "max": [
+        56.26,
+        6.95,
+        62.55
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        -26.55,
+        -4.4,
+        -5.55
+      ],
+      "max": [
+        44.55,
+        0.0,
+        62.55
+      ]
+    },
+    "interiorClass": "utility",
+    "parentRegion": "amberwood",
+    "serverCells": 75
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      29.0,
+      65.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "cistern-stair",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 150,
+    "height": 144,
+    "cellMetres": 0.5,
+    "originMetres": [
+      -29.0,
+      65.0
+    ],
+    "heightEncoding": {
+      "origin": -4.1,
+      "step": 0.1,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
+    },
+    "walkableCells": 11784,
+    "blockedCells": 9816,
+    "walkableFraction": 0.5456,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Interior_crownwater_tide_cistern",
+      "Build_crownwater_tide_cistern_amber_resin",
+      "Build_crownwater_tide_cistern_ashlar",
+      "Build_crownwater_tide_cistern_crownwater_gilt",
+      "Build_crownwater_tide_cistern_dark_iron",
+      "Build_crownwater_tide_cistern_timber_grey",
+      "Build_crownwater_tide_cistern_water_deep"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    },
+    "notes": [
+      "Every standable surface is a Walk_<material> node, matching the region's contract: the client turns navigation.surfaceNodePrefixes into the layer its downward grounding ray tests."
+    ]
+  },
+  "portals": [
+    {
+      "id": "exit-to-crownwater",
+      "name": "Return to Crownwater",
+      "type": "map-transition",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationSpawn": "cistern-stair",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "cistern-sluice",
+      "name": "The Sluice Gear",
+      "space": "sluice_room",
+      "position": [
+        37.0,
+        -2.8,
+        39.0
+      ]
+    },
+    {
+      "id": "cistern-basin",
+      "name": "The Tide Basin",
+      "space": "basin",
+      "position": [
+        0.0,
+        -2.2,
+        39.0
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "cistern-sluice-wheel",
+      "name": "Sluice Wheel",
+      "type": "mechanism",
+      "position": [
+        37.0,
+        -1.4,
+        39.0
+      ],
+      "authority": "server"
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "cistern-freshwater",
+      "resource": "freshwater",
+      "position": [
+        0.0,
+        -3.35,
+        39.0
+      ],
+      "authority": "server"
+    }
+  ],
+  "environment": {
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.08,
+        0.16,
+        0.2
+      ],
+      "horizon": [
+        0.18,
+        0.3,
+        0.32
+      ]
+    },
+    "sun": {
+      "enabled": true,
+      "direction": [
+        -0.05,
+        -0.98,
+        0.16
+      ],
+      "color": [
+        1.05,
+        1.02,
+        0.92
+      ],
+      "energy": 1.05
+    },
+    "ambient": {
+      "color": [
+        0.34,
+        0.44,
+        0.48
+      ],
+      "energy": 0.88,
+      "skyContribution": 0.3
+    },
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.2,
+        0.3,
+        0.33
+      ],
+      "density": 0.01
+    },
+    "openToSky": [],
+    "lights": [
+      {
+        "id": "lantern-00",
+        "kind": "point",
+        "position": [
+          -11.0,
+          3.0,
+          27.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-01",
+        "kind": "point",
+        "position": [
+          11.0,
+          3.0,
+          39.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-02",
+        "kind": "point",
+        "position": [
+          -11.0,
+          3.0,
+          51.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-03",
+        "kind": "point",
+        "position": [
+          0.0,
+          -2.02,
+          22.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-04",
+        "kind": "point",
+        "position": [
+          0.0,
+          -2.02,
+          39.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-05",
+        "kind": "point",
+        "position": [
+          0.0,
+          -2.02,
+          56.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-06",
+        "kind": "point",
+        "position": [
+          37.0,
+          -2.22,
+          39.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "wellhouse": {
+      "x0": -5.0,
+      "z0": -5.0,
+      "x1": 5.0,
+      "z1": 5.0,
+      "floor": 0.0,
+      "height": 4.4
+    },
+    "basin": {
+      "x0": -26.0,
+      "z0": 16.0,
+      "x1": 26.0,
+      "z1": 62.0,
+      "floor": -4.0,
+      "height": 7.5
+    },
+    "sluice_room": {
+      "x0": 30.0,
+      "z0": 30.0,
+      "x1": 44.0,
+      "z1": 48.0,
+      "floor": -4.0,
+      "height": 5.4
+    },
+    "cistern_stair": {
+      "x0": -1.8,
+      "z0": 3.2,
+      "x1": 1.8,
+      "z1": 17.8,
+      "floor": -4.0,
+      "height": 3.6
+    },
+    "sluice_run": {
+      "x0": 24.3,
+      "z0": 37.3,
+      "x1": 31.7,
+      "z1": 40.7,
+      "floor": -4.0,
+      "height": 3.4
+    }
+  },
+  "conceptArt": {
+    "detailBoard": "../../crownwater/references/00-concept-detail-board.png",
+    "role": "parent-region board; only drowned_crown has its own concept",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "basin",
+      "basin",
+      "basin",
+      "sluice_room"
+    ]
+  },
+  "performance": {
+    "nodes": 9,
+    "meshes": 8,
+    "materials": 8,
+    "images": 24,
+    "textures": 24,
+    "accessors": 40,
+    "bufferViews": 64,
+    "uniqueTriangles": 32976,
+    "uniqueVertices": 27524,
+    "glbBytes": 3776292,
+    "nodeNames": [
+      "Interior_crownwater_tide_cistern",
+      "Build_crownwater_tide_cistern_amber_resin",
+      "Build_crownwater_tide_cistern_ashlar",
+      "Build_crownwater_tide_cistern_crownwater_gilt",
+      "Build_crownwater_tide_cistern_dark_iron",
+      "Build_crownwater_tide_cistern_timber_grey",
+      "Build_crownwater_tide_cistern_water_deep",
+      "Walk_cobble_paving",
+      "Walk_crownwater_sand"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "source/build_interiors.py",
+      "role": "reproducible-build",
+      "seed": 20260901
+    },
+    {
+      "id": "anchor",
+      "landmark": "crownwater-pavilion-pavilion_west",
+      "position": [
+        -48.0,
+        5.21,
+        -114.0
+      ],
+      "role": "surface entrance on the Crownwater region map"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the Crownwater region kit over the shared toolkit; no scattered placement",
+    "textures": "procedural, from amberwood/textures.py",
+    "thirdParty": "none"
+  },
+  "notes": [],
+  "productionStatus": "authored-geometry-materials-population",
+  "knownLimitations": [
+    "Not opened in Godot: no client is installable in the build environment, so collision response, navmesh generation, portal transition, LOD and transparency sorting are unverified.",
+    "eloria-server has not registered these map keys."
+  ]
+}

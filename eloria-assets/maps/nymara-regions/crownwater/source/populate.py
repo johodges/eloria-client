@@ -152,7 +152,7 @@ def populate_crown_isle(build, seed: int = 0) -> None:
          (cx, cy, cz), math.pi, kind="landmark", collides=True,
          landmark="crownwater-cathedral")
     build.landmarks.append({
-        "id": "crownwater-cathedral", "name": "The Drowned Crown",
+        "id": "crownwater-cathedral", "name": "The Crown Basilica",
         "node": "Landmark_Cathedral", "type": "monument",
         "position": [round(cx, 2), round(cy, 2), round(cz, 2)],
         "serverTile": [int(round(cx + REG.SERVER_ORIGIN[0])),
@@ -315,6 +315,19 @@ def populate_harbour(build, seed: int = 0) -> None:
              # four dark slabs across the shot
              (hx - 12.0 + k * 8.0, hy, hz - 11.0), 0.0, kind="prop",
              collides=True)
+
+    hx2, hz2 = REG.ANCHORS["customs_house"]
+    hy2 = float(t.height_at(hx2, hz2))
+    _add(build, "Landmark_CustomsHouse", "CustomsHouse",
+         CA.customs_house(seed=seed), (hx2, hy2, hz2), math.pi,
+         kind="landmark", collides=True, landmark="crownwater-customs-hall")
+    build.landmarks.append({
+        "id": "crownwater-customs-hall", "name": "The Harbour Customs Hall",
+        "node": "Landmark_CustomsHouse", "type": "building",
+        "position": [round(hx2, 2), round(hy2, 2), round(hz2, 2)],
+        "serverTile": [int(round(hx2 + REG.SERVER_ORIGIN[0])),
+                       int(round(REG.SERVER_ORIGIN[1] - hz2))],
+        "note": "placeholder name - see modeling-assumptions.md"})
 
     mx, mz = REG.ANCHORS["harbour_market"]
     my = float(t.height_at(mx, mz))

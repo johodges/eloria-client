@@ -605,6 +605,106 @@
     },
     "amberwood_cinder_chapel.elm": {
       "alias": "maps/nymara/amberwood_cinder_chapel.elm"
+    },
+    "maps/nymara/drowned_crown.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/drowned_crown/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          43.0,
+          121.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/crownwater.elm"
+    },
+    "drowned_crown": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "drowned_crown.elm": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "maps/nymara/crownwater_tide_campanile.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/crownwater_tide_campanile/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          8.0,
+          8.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/crownwater.elm"
+    },
+    "crownwater_tide_campanile": {
+      "alias": "maps/nymara/crownwater_tide_campanile.elm"
+    },
+    "crownwater_tide_campanile.elm": {
+      "alias": "maps/nymara/crownwater_tide_campanile.elm"
+    },
+    "maps/nymara/crownwater_tide_cistern.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/crownwater_tide_cistern/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          29.0,
+          65.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/crownwater.elm"
+    },
+    "crownwater_tide_cistern": {
+      "alias": "maps/nymara/crownwater_tide_cistern.elm"
+    },
+    "crownwater_tide_cistern.elm": {
+      "alias": "maps/nymara/crownwater_tide_cistern.elm"
+    },
+    "maps/nymara/crownwater_customs_hall.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/crownwater_customs_hall/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          19.0,
+          77.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/crownwater.elm"
+    },
+    "crownwater_customs_hall": {
+      "alias": "maps/nymara/crownwater_customs_hall.elm"
+    },
+    "crownwater_customs_hall.elm": {
+      "alias": "maps/nymara/crownwater_customs_hall.elm"
     }
   }
 }

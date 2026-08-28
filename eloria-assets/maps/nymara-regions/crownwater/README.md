@@ -60,6 +60,14 @@ ELORIA_ARTIFACT_DIR=<dir> godot --audio-driver Dummy \
 See `validation-report.md` for what those numbers do and do not cover, and
 `modeling-assumptions.md` for the decisions a reviewer may want to overrule.
 
+## Interiors
+
+Four interiors open off this map: The Drowned Crown (under the basilica), The
+Tide Cistern (under the garden islet), The Harbour Customs Hall and The Tide
+Campanile. Built by `source/build_interiors.py`, verified by
+`source/verify_interiors.py`, documented in
+`../interiors/CROWNWATER_INTERIORS.md`.
+
 ## Server
 
 Crownwater needs a bigger server map, as Amberwood does.

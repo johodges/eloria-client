@@ -1,0 +1,351 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "crownwater_tide_campanile",
+    "name": "The Tide Campanile",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -5.8,
+        -0.4,
+        -5.8
+      ],
+      "max": [
+        5.8,
+        27.17,
+        5.8
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        -5.8,
+        -0.4,
+        -5.8
+      ],
+      "max": [
+        5.8,
+        26.0,
+        5.8
+      ]
+    },
+    "interiorClass": "tower",
+    "parentRegion": "amberwood",
+    "serverCells": 15
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      8.0,
+      8.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "campanile-door",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 30,
+    "height": 30,
+    "cellMetres": 0.5,
+    "originMetres": [
+      -8.0,
+      8.0
+    ],
+    "heightEncoding": {
+      "origin": -0.426,
+      "step": 0.4262,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
+    },
+    "walkableCells": 536,
+    "blockedCells": 364,
+    "walkableFraction": 0.5956,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Interior_crownwater_tide_campanile",
+      "Build_crownwater_tide_campanile_amber_resin",
+      "Build_crownwater_tide_campanile_canvas_awning",
+      "Build_crownwater_tide_campanile_crownwater_marble",
+      "Build_crownwater_tide_campanile_crownwater_verdigris",
+      "Build_crownwater_tide_campanile_dark_iron",
+      "Build_crownwater_tide_campanile_timber_dark"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    },
+    "notes": [
+      "Every standable surface is a Walk_<material> node, matching the region's contract: the client turns navigation.surfaceNodePrefixes into the layer its downward grounding ray tests."
+    ]
+  },
+  "portals": [
+    {
+      "id": "exit-to-crownwater",
+      "name": "Return to Crownwater",
+      "type": "map-transition",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationSpawn": "campanile-door",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "campanile-bell",
+      "name": "The Tide Bell",
+      "space": "shaft",
+      "position": [
+        0.0,
+        22.0,
+        0.0
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "campanile-bell-rope",
+      "name": "Bell Rope",
+      "type": "mechanism",
+      "position": [
+        1.6,
+        1.4,
+        0.0
+      ],
+      "authority": "server"
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [],
+  "environment": {
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.16,
+        0.42,
+        0.72
+      ],
+      "horizon": [
+        0.72,
+        0.87,
+        0.92
+      ]
+    },
+    "sun": {
+      "enabled": true,
+      "direction": [
+        -0.3,
+        -0.84,
+        0.45
+      ],
+      "color": [
+        1.12,
+        1.05,
+        0.95
+      ],
+      "energy": 0.95
+    },
+    "ambient": {
+      "color": [
+        0.6,
+        0.72,
+        0.8
+      ],
+      "energy": 0.62,
+      "skyContribution": 0.55
+    },
+    "fog": {
+      "enabled": false
+    },
+    "openToSky": [],
+    "lights": [
+      {
+        "id": "lantern-00",
+        "kind": "point",
+        "position": [
+          0.0,
+          8.08,
+          0.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-01",
+        "kind": "point",
+        "position": [
+          0.0,
+          17.83,
+          0.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-02",
+        "kind": "point",
+        "position": [
+          0.0,
+          21.28,
+          0.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "shaft": {
+      "x0": -5.0,
+      "z0": -5.0,
+      "x1": 5.0,
+      "z1": 5.0,
+      "floor": 0.0,
+      "height": 26.0
+    }
+  },
+  "conceptArt": {
+    "detailBoard": "../../crownwater/references/00-concept-detail-board.png",
+    "role": "parent-region board; only drowned_crown has its own concept",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "shaft",
+      "shaft",
+      "shaft"
+    ]
+  },
+  "performance": {
+    "nodes": 10,
+    "meshes": 9,
+    "materials": 8,
+    "images": 23,
+    "textures": 23,
+    "accessors": 45,
+    "bufferViews": 68,
+    "uniqueTriangles": 6510,
+    "uniqueVertices": 6430,
+    "glbBytes": 2582908,
+    "nodeNames": [
+      "Interior_crownwater_tide_campanile",
+      "Build_crownwater_tide_campanile_amber_resin",
+      "Build_crownwater_tide_campanile_canvas_awning",
+      "Build_crownwater_tide_campanile_crownwater_marble",
+      "Build_crownwater_tide_campanile_crownwater_verdigris",
+      "Build_crownwater_tide_campanile_dark_iron",
+      "Build_crownwater_tide_campanile_timber_dark",
+      "Walk_crownwater_marble",
+      "Walk_crownwater_mosaic",
+      "Walk_timber_warm"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "source/build_interiors.py",
+      "role": "reproducible-build",
+      "seed": 20260901
+    },
+    {
+      "id": "anchor",
+      "landmark": "crownwater-campanile",
+      "position": [
+        162.0,
+        17.59,
+        -150.0
+      ],
+      "role": "surface entrance on the Crownwater region map"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the Crownwater region kit over the shared toolkit; no scattered placement",
+    "textures": "procedural, from amberwood/textures.py",
+    "thirdParty": "none"
+  },
+  "notes": [
+    "Modelled as one 26 m shaft with flights and landings added as walk geometry, not as stacked chambers.",
+    "The ringing floor and belfry gallery are annular. The client places an actor on the first surface a downward ray meets, so a full-footprint deck would ground every placement in the tower on the topmost floor. A player can still WALK the stair normally - only placement is single-layer - but no spawn or portal may sit beneath a deck."
+  ],
+  "productionStatus": "authored-geometry-materials-population",
+  "knownLimitations": [
+    "Not opened in Godot: no client is installable in the build environment, so collision response, navmesh generation, portal transition, LOD and transparency sorting are unverified.",
+    "eloria-server has not registered these map keys."
+  ]
+}

@@ -91,3 +91,21 @@ to overrule the build.
     the terrain. Panel 7 depends on seeing tiling through clear water; read from
     the lagoon floor it lands wherever the noise and the nearest channel put it,
     which was 8 m down and invisible.
+
+15. **The cathedral is "The Crown Basilica", not "The Drowned Crown".** The
+    interior beneath it - `interiors/drowned_crown`, whose concept file names
+    Crownwater as its parent - is the drowned palace the basilica was built over.
+    Two things could not carry the same name, and the older ruin has the better
+    claim to it since its name was given rather than invented here.
+
+16. **A customs house stands on the harbour islet.** The islet had quays, lamps,
+    stalls and boats but no building, so `interiors/crownwater_customs_hall` had
+    no surface entrance to hang off. It is deliberately the plainest structure in
+    the region - ashlar base, plastered wall, verdigris roof - because Crownwater's
+    marble is for its monuments and a bonded warehouse is built to keep rain off
+    crates.
+
+17. **Four interior entrances are declared on this manifest.** They are portals
+    of type `interior-entrance` sitting on the landmark each belongs to. The
+    server owns the actual transition; these are alignment metadata, as the edge
+    portals are. See `../interiors/CROWNWATER_INTERIORS.md`.
