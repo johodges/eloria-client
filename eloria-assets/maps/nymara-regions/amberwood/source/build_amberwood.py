@@ -26,9 +26,13 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-import validate_gltf
-
+# The authoring toolkit is shared by every region and lives one level up, in
+# `maps/nymara-regions/_toolkit/`. It must be on the path before the toolkit
+# modules below are imported.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "_toolkit"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import validate_gltf
 
 from amberwood import gltf as GLTF
 from amberwood import materials as MAT

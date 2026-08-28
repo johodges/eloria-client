@@ -8,25 +8,16 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
+import regionpaths
+
 HERE = Path(__file__).resolve().parent
-PACKAGE = HERE.parent
+PACKAGE = regionpaths.package_root()
 CAPTURES = PACKAGE / "references" / "captures"
 BOARD = PACKAGE / "references" / "00-concept-detail-board.png"
 AERIAL = PACKAGE / "references" / "01-concept-aerial-overview.png"
 OUT = PACKAGE / "references" / "comparisons"
+PANELS = regionpaths.load_region_views(PACKAGE).PANELS
 
-PANELS = {
-    1: ("01-forest-road", "Leaf-covered forest road under the amber canopy"),
-    2: ("02-moot-hall", "Multi-storey timber-and-stone civic hall"),
-    3: ("03-forest-lodge", "Player-scale forest lodge with porch and workshop"),
-    4: ("04-hollow-tree", "Colossal hollow-tree entrance"),
-    5: ("05-high-bridge", "High stone bridge over a rocky watercourse"),
-    6: ("06-root-arch", "Root-overgrown ancient stone arch"),
-    7: ("07-garden-terrace", "Formal garden: fountain, statues, rotunda, terrace"),
-    8: ("08-canopy-amber", "Canopy platform and amber working"),
-    9: ("09-high-overlook", "High overlook toward the settlement"),
-    10: ("10-material-study", "Material study: amber, carved wood, moss, leaves"),
-}
 
 
 def _label(image: Image.Image, text: str, height: int = 26) -> Image.Image:

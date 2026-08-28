@@ -11,6 +11,7 @@ import sys
 
 from PIL import Image, ImageDraw
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "_toolkit"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import preview

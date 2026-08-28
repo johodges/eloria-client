@@ -13,7 +13,9 @@ from pathlib import Path
 
 from PIL import Image
 
-ROOT = Path(__file__).resolve().parent.parent / "references"
+import regionpaths
+
+ROOT = regionpaths.package_root() / "references"
 
 
 def convert(directory: Path, quality: int = 88) -> tuple[int, int]:
