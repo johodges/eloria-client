@@ -25,7 +25,7 @@ package was loaded through the **shipped loader path**, not a reimplementation:
 
 ```
 godot --path godot-client res://tools/region_client_check.tscn -- \
-    --manifest res://../eloria-assets/.../whitehorn_range/world.json --step 8
+    --manifest res://../eloria-assets/.../whitehorn_range/world.json --step 6
 ```
 
 `tools/region_client_check.gd` calls `WorldLoader.load_world()`, waits for
@@ -35,8 +35,8 @@ physics, and casts the identical ray `main.gd:2250` casts in
 
 ```
 world_load stage=glb_imported        (Godot's own GLTFDocument accepted the GLB)
-world_load stage=static_batching     batches=127 instances=1126
-[client-check] tiles_sampled=5184 step=8 misses=0 surface_y=-36.07..148.48
+world_load stage=static_batching     batches=147 instances=2482
+[client-check] tiles_sampled=9216 step=6 misses=0 surface_y=-32.49..151.26
 [client-check] spawn whitehorn-arrival manifest_y=17.59 client_y=17.59
 [client-check] spawn whitehorn-temple  manifest_y=54.06 client_y=54.06
 [client-check] spawn whitehorn-mine    manifest_y=49.66 client_y=49.64
@@ -47,7 +47,7 @@ So the engine agrees with `verify_runtime.py`: the GLB imports, the navigation
 layer builds from the node-name prefixes, and every sampled tile and every
 declared spawn grounds. Spawn heights agree with the manifest to 0.02 m.
 
-**Scope of that check.** It sampled every 8th tile in each axis (5,184 of
+**Scope of that check.** It sampled every 6th tile in each axis (9,216 of
 331,776). The exhaustive 331,776-tile pass is the Python one. It ran windowed on
 an RTX 5080 under the OpenGL compatibility renderer, which is what
 `project.godot` selects.
@@ -107,10 +107,15 @@ Stated plainly, because a clean validator report does not cover any of this.
 
 ## Reproducibility
 
-The build is deterministic for a fixed seed. Two consecutive builds of Amberwood
-from identical source on this machine produced byte-identical `world.glb`,
-`world-lod2.glb`, `world.json`, `collision.bin` and `minimap.webp`, which is what
-establishes that the toolkit itself is sound here.
+The build is deterministic for a fixed seed. Two independent builds of Whitehorn
+from identical source produced byte-identical `world.glb`, `world.json`,
+`collision.bin` and `minimap.webp`, **and the committed package matches a fresh
+build byte for byte** — so what is in this directory is exactly what `source/`
+produces.
+
+The same check on Amberwood (two consecutive builds, all five artefacts
+identical) is what establishes that the toolkit itself is sound on this
+machine.
 
 Note for anyone repeating the production guide's TASK ZERO: **the committed
 Amberwood artefacts are stale and a rebuild cannot match them.**
