@@ -4,6 +4,16 @@ extends Node3D
 const WORLD_COLLISION_LAYER := 1
 const NAVIGATION_SURFACE_LAYER := 8
 
+# Static-instance batching. A region such as Four Gates imports ~1700 mesh
+# nodes that between them reference only 42 meshes, so almost every draw call
+# repeats geometry the GPU already holds. Groups of identical opaque meshes are
+# collapsed into one MultiMeshInstance3D per spatial cell, which keeps frustum
+# culling meaningful while cutting draw calls by more than an order of
+# magnitude. The rendered result is the same geometry with the same materials
+# at the same transforms.
+const BATCH_MINIMUM_INSTANCES := 4
+const BATCH_CELL_METRES := 180.0
+
 signal load_started(manifest_path: String)
 signal load_completed(manifest: WorldManifest)
 signal load_failed(errors: Array[String])
@@ -51,6 +61,9 @@ func load_world(manifest_path: String) -> void:
 	_apply_collision_declarations()
 	_apply_rendered_walk_surfaces()
 	_apply_navigation_collision()
+	# Must run last: it skips anything that carries collision, so the collision
+	# passes above decide what stays an individually culled MeshInstance3D.
+	_batch_static_instances()
 	load_completed.emit(manifest)
 
 func unload_world() -> void:
@@ -63,10 +76,17 @@ func unload_world() -> void:
 func _apply_collision_declarations() -> void:
 	var collision: Dictionary = manifest.data.get("collision", {})
 	var declared: Array = collision.get("nodeNames", [])
+	if declared.is_empty():
+		return
+	# One walk of a 1700-node import instead of one walk per declared name.
+	var by_name: Dictionary = {}
+	for node_value: Node in world_root.find_children("*", "", true, false):
+		if not by_name.has(node_value.name):
+			by_name[node_value.name] = node_value
 	for node_name in declared:
-		var node := world_root.find_child(str(node_name), true, false)
+		var node: Node = by_name.get(str(node_name)) as Node
 		if node is MeshInstance3D:
-			_create_static_collision(node)
+			_create_static_collision(node as MeshInstance3D)
 		elif node == null:
 			manifest.warnings.append("collision node not found: " + str(node_name))
 
@@ -119,6 +139,95 @@ func _apply_navigation_collision() -> void:
 		manifest.warnings.append("navigation polygons did not produce collision")
 		return
 	world_root.add_child(body)
+
+func _batch_static_instances() -> void:
+	var rendering_value: Variant = manifest.data.get("rendering", {})
+	var rendering: Dictionary = rendering_value as Dictionary if rendering_value is Dictionary else {}
+	if not bool(rendering.get("batchStaticInstances", true)):
+		return
+	var minimum: int = maxi(2, int(rendering.get("batchMinimumInstances",
+		BATCH_MINIMUM_INSTANCES)))
+	var cell_size: float = maxf(1.0, float(rendering.get("batchCellMetres",
+		BATCH_CELL_METRES)))
+	var groups: Dictionary = {}
+	for node_value: Node in world_root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance: MeshInstance3D = node_value as MeshInstance3D
+		if not _is_batchable(mesh_instance):
+			continue
+		var origin: Vector3 = mesh_instance.global_transform.origin
+		var key: String = "%d|%d|%d|%d|%d|%d|%d" % [
+			mesh_instance.mesh.get_instance_id(), mesh_instance.layers,
+			mesh_instance.cast_shadow, mesh_instance.gi_mode,
+			floori(origin.x / cell_size), floori(origin.y / cell_size),
+			floori(origin.z / cell_size)]
+		if not groups.has(key):
+			groups[key] = []
+		(groups[key] as Array).append(mesh_instance)
+	var batches: int = 0
+	var collapsed: int = 0
+	for key_value: Variant in groups:
+		var members: Array = groups[key_value] as Array
+		if members.size() < minimum:
+			continue
+		_create_batch(members, batches)
+		batches += 1
+		collapsed += members.size()
+	if batches > 0:
+		print_debug("world_load stage=static_batching batches=", batches,
+			" instances=", collapsed)
+
+func _is_batchable(mesh_instance: MeshInstance3D) -> bool:
+	var mesh: Mesh = mesh_instance.mesh
+	if mesh == null or mesh.get_surface_count() == 0:
+		return false
+	# Anything that carries collision, an animation target, a skin or an author
+	# override keeps its own node so lookups, physics and skinning are untouched.
+	if mesh_instance.get_child_count() > 0:
+		return false
+	if mesh_instance.skin != null or not mesh_instance.skeleton.is_empty():
+		return false
+	if mesh_instance.material_override != null or mesh_instance.material_overlay != null:
+		return false
+	if not mesh_instance.visible or not mesh_instance.is_visible_in_tree():
+		return false
+	if mesh_instance.visibility_range_end > 0.0:
+		return false
+	for surface: int in mesh_instance.get_surface_override_material_count():
+		# MultiMeshInstance3D has no per-surface overrides to carry these onto.
+		if mesh_instance.get_surface_override_material(surface) != null:
+			return false
+	for surface: int in mesh.get_surface_count():
+		var material: Material = mesh.surface_get_material(surface)
+		if material == null:
+			continue
+		if material is not BaseMaterial3D:
+			return false
+		# Blended surfaces are sorted per instance; batching them would change
+		# the draw order and therefore the picture.
+		if (material as BaseMaterial3D).transparency != BaseMaterial3D.TRANSPARENCY_DISABLED:
+			return false
+	return true
+
+func _create_batch(members: Array, index: int) -> void:
+	var reference: MeshInstance3D = members[0] as MeshInstance3D
+	var multimesh: MultiMesh = MultiMesh.new()
+	multimesh.transform_format = MultiMesh.TRANSFORM_3D
+	multimesh.mesh = reference.mesh
+	multimesh.instance_count = members.size()
+	var batch: MultiMeshInstance3D = MultiMeshInstance3D.new()
+	batch.name = "StaticBatch_%d_%s" % [index, reference.name]
+	batch.multimesh = multimesh
+	batch.layers = reference.layers
+	batch.cast_shadow = reference.cast_shadow
+	batch.gi_mode = reference.gi_mode
+	world_root.add_child(batch)
+	batch.global_transform = Transform3D.IDENTITY
+	for member_index: int in members.size():
+		var member: MeshInstance3D = members[member_index] as MeshInstance3D
+		multimesh.set_instance_transform(member_index, member.global_transform)
+		# The source node stays in the tree so name lookups, manifest
+		# declarations and tooling keep resolving; it simply stops drawing.
+		member.visible = false
 
 func _apply_rendered_walk_surfaces() -> void:
 	var navigation: Dictionary = manifest.data.get("navigation", {})

@@ -58,17 +58,22 @@ static func encode(command: int, payload := PackedByteArray()) -> PackedByteArra
 	frame.append_array(payload)
 	return frame
 
-static func try_decode(buffer: PackedByteArray) -> Dictionary:
-	if buffer.size() < HEADER_SIZE:
+## Decodes the packet that starts at `offset`. Reading in place lets a caller
+## drain a burst of packets from one receive buffer without re-slicing the
+## remainder after each of them. `consumed` stays relative to `offset`.
+static func try_decode(buffer: PackedByteArray, offset := 0) -> Dictionary:
+	var available := buffer.size() - offset
+	if available < HEADER_SIZE:
 		return {"status": "incomplete"}
-	var wire_length := u16(buffer, 1)
+	var wire_length := u16(buffer, offset + 1)
 	if wire_length < 1 or wire_length - 1 > MAX_PAYLOAD:
 		return {"status": "error", "error": "invalid_packet_length"}
 	var total := wire_length + 2
-	if buffer.size() < total:
+	if available < total:
 		return {"status": "incomplete"}
-	return {"status": "ok", "command": int(buffer[0]),
-		"payload": buffer.slice(HEADER_SIZE, total), "consumed": total}
+	return {"status": "ok", "command": int(buffer[offset]),
+		"payload": buffer.slice(offset + HEADER_SIZE, offset + total),
+		"consumed": total}
 
 static func login(username: String, password: String) -> PackedByteArray:
 	# Legacy send_login_info(): "username password\0".

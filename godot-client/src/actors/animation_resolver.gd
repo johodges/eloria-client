@@ -25,6 +25,17 @@ func clip_for_action(action: StringName) -> StringName:
 func playback_speed_for_action(action: StringName) -> float:
 	return maxf(0.01, float(playback_speeds.get(String(action), 1.0)))
 
+## Every clip this resolver can ever ask an AnimationPlayer to play. The native
+## animation importer uses it to rebuild only the clips an actor needs instead
+## of the whole shared library.
+func required_clips() -> PackedStringArray:
+	var clips := PackedStringArray()
+	for action in action_to_clip:
+		var clip := str(action_to_clip[action])
+		if not clip.is_empty() and not clips.has(clip):
+			clips.append(clip)
+	return clips
+
 func validate(available_clips: PackedStringArray) -> Array[String]:
 	var missing: Array[String] = []
 	for action in action_to_clip:
