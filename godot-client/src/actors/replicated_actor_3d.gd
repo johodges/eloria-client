@@ -31,6 +31,8 @@ var _model_config: Dictionary = {}
 var _equipment_config: Dictionary = {}
 var _equipment_visuals: Dictionary = {}
 var _equipment_nodes: Dictionary = {}
+var _equipment_hides: Dictionary = {}
+var _hidden_body_surfaces: Dictionary = {}
 var _nameplate: Label3D
 
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
@@ -136,15 +138,27 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_BOOTS, int(appearance.get("boots", 0))))
 		elif mesh_name == "wardrobe_head_band":
-			mesh_node.visible = head_style == 1 or head_style == 3
+			_set_appearance_visible(mesh_node, head_style == 1 or head_style == 3)
 			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_HEAD, int(appearance.get("head", 0))))
 		elif mesh_name == "wardrobe_head_cap":
-			mesh_node.visible = head_style == 2 or head_style == 3
+			_set_appearance_visible(mesh_node, head_style == 2 or head_style == 3)
 			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_HEAD, int(appearance.get("head", 0))))
 	_add_hair_variant(AppearanceVariants.hair_style(
 		int(appearance.get("hair", 0))), hair_tint)
+	_refresh_body_surface_visibility()
+
+func _set_appearance_visible(mesh_node: MeshInstance3D, visible_by_style: bool) -> void:
+	# Appearance owns whether a wardrobe surface exists at all; equipment only
+	# covers one that does. Recording the appearance choice keeps unequipping a
+	# helmet from revealing a headband the character never chose.
+	if visible_by_style:
+		if mesh_node.has_meta("appearance_hidden"):
+			mesh_node.remove_meta("appearance_hidden")
+	else:
+		mesh_node.set_meta("appearance_hidden", true)
+	mesh_node.visible = visible_by_style
 
 func _tint_mesh(mesh_node: MeshInstance3D, tint: Color,
 		emissive: bool = false) -> void:
@@ -313,18 +327,29 @@ func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) ->
 		_create_equipment_part(part, visual_id, allow_fallback)
 
 func equipment_diagnostics() -> Dictionary:
+	# Modified 2026-08-28 for Eloria Client: garments are now skinned to this
+	# actor's skeleton rather than parented to a bone, so the two attachment
+	# paths are reported separately and a regression in either one is visible.
 	var native_count: int = 0
 	var fallback_count: int = 0
+	var skinned_count: int = 0
+	var socket_count: int = 0
 	for nodes_value: Variant in _equipment_nodes.values():
 		for node_value: Variant in nodes_value:
 			var node: Node = node_value as Node
-			if is_instance_valid(node):
-				if node.has_meta("native_equipment"):
-					native_count += 1
+			if not is_instance_valid(node):
+				continue
+			if node.has_meta("native_equipment"):
+				native_count += 1
+				if node is MeshInstance3D:
+					skinned_count += 1
 				else:
-					fallback_count += 1
+					socket_count += 1
+			else:
+				fallback_count += 1
 	return {"visuals": _equipment_visuals.duplicate(), "native": native_count,
-		"fallback": fallback_count}
+		"fallback": fallback_count, "skinned": skinned_count,
+		"socket": socket_count, "rigFitScale": rig_fit_scale()}
 
 func _clear_equipment_part(part: int) -> void:
 	var nodes_value: Variant = _equipment_nodes.get(part, [])
@@ -335,49 +360,232 @@ func _clear_equipment_part(part: int) -> void:
 				node.queue_free()
 	_equipment_nodes.erase(part)
 	_equipment_visuals.erase(part)
+	_release_equipment_hides(part)
 
 func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> void:
+	# Modified 2026-08-28 for Eloria Client: equipment used to be parented to a
+	# raw bone with an identity transform.  Bone rest bases are not axis aligned,
+	# so every hilt left the hand sideways, and a rigid child of one bone could
+	# never follow the spine or the knees.  Props now resolve a character-space
+	# socket through the bone rest, and garments rebind to this actor's skeleton.
 	if _native_skeleton == null:
 		return
 	var parts: Dictionary = _equipment_config.get("parts", {}) as Dictionary
 	var part_config: Dictionary = parts.get(str(part), {}) as Dictionary
 	if part_config.is_empty():
 		return
-	var semantic: String = str(part_config.get("attachment", ""))
-	var bones_value: Variant = _attachment_bones.get(semantic, "")
-	var bones: Array[String] = []
-	if bones_value is Array:
-		for raw_bone: Variant in bones_value:
-			bones.append(str(raw_bone))
-	elif not str(bones_value).is_empty():
-		bones.append(str(bones_value))
+	var model_config: Dictionary = _equipment_model_config(part, visual_id)
 	var created: Array[Node] = []
-	var aliases: Dictionary = _equipment_config.get("aliases", {}) as Dictionary
-	var model_key: String = "%d:%d" % [part, visual_id]
-	model_key = str(aliases.get(model_key, model_key))
-	var models: Dictionary = _equipment_config.get("models", {}) as Dictionary
-	var model_config: Dictionary = models.get(model_key, {}) as Dictionary
-	if not model_config.is_empty() and not bones.is_empty():
-		var native_model: Node3D = _load_native_equipment(str(model_config.get("scene", "")))
-		if native_model != null:
-			_apply_equipment_import(native_model, model_config.get("import", {}) as Dictionary)
-			var native_attachment: BoneAttachment3D = _bone_attachment(bones[0], part, visual_id)
-			if native_attachment != null:
-				native_attachment.add_child(native_model)
-				native_attachment.set_meta("native_equipment", true)
-				created.append(native_attachment)
+	if not model_config.is_empty():
+		var scene_path: String = str(model_config.get("scene", ""))
+		if str(model_config.get("attach", "socket")) == "skinned":
+			created.append_array(_attach_skinned_equipment(scene_path, part, visual_id))
+		else:
+			var socket: Dictionary = _equipment_socket(part, model_config)
+			var attachment: BoneAttachment3D = _attach_socketed_equipment(
+				socket, scene_path, model_config, part, visual_id)
+			if attachment != null:
+				created.append(attachment)
 	if created.is_empty() and allow_fallback:
-		for bone: String in bones:
-			var fallback_attachment: BoneAttachment3D = _bone_attachment(bone, part, visual_id)
-			if fallback_attachment == null:
-				continue
-			fallback_attachment.add_child(_equipment_fallback_mesh(
-				str(part_config.get("fallback", "body"))))
-			created.append(fallback_attachment)
+		created.append_array(_attach_fallback_equipment(part, visual_id, part_config))
 	if created.is_empty():
 		_equipment_nodes.erase(part)
 	else:
 		_equipment_nodes[part] = created
+		_apply_equipment_hides(part, part_config, model_config)
+
+func _apply_equipment_hides(part: int, part_config: Dictionary,
+		model_config: Dictionary) -> void:
+	# Garments are lofted with clearance over the reference body, but a bulkier
+	# wardrobe would still poke through, so the surfaces a piece covers are
+	# switched off while it is worn and counted so overlapping parts unwind.
+	var names_value: Variant = model_config.get("hides", part_config.get("hides", []))
+	var names: Array[String] = []
+	if names_value is Array:
+		for raw_name: Variant in names_value:
+			names.append(str(raw_name).to_lower())
+	if names.is_empty():
+		return
+	_equipment_hides[part] = names
+	for surface: String in names:
+		_hidden_body_surfaces[surface] = int(_hidden_body_surfaces.get(surface, 0)) + 1
+	_refresh_body_surface_visibility()
+
+func _release_equipment_hides(part: int) -> void:
+	var names_value: Variant = _equipment_hides.get(part, [])
+	if names_value is Array:
+		for raw_name: Variant in names_value:
+			var surface: String = str(raw_name)
+			var remaining: int = int(_hidden_body_surfaces.get(surface, 0)) - 1
+			if remaining > 0:
+				_hidden_body_surfaces[surface] = remaining
+			else:
+				_hidden_body_surfaces.erase(surface)
+	_equipment_hides.erase(part)
+	_refresh_body_surface_visibility()
+
+func _refresh_body_surface_visibility() -> void:
+	var native_model: Node3D = get_node_or_null("NativeModel") as Node3D
+	if native_model == null:
+		return
+	for node_value: Node in native_model.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+		var surface: String = mesh_node.name.to_lower()
+		if not surface.begins_with("wardrobe_"):
+			continue
+		if _hidden_body_surfaces.has(surface):
+			mesh_node.visible = false
+		elif not mesh_node.has_meta("appearance_hidden"):
+			mesh_node.visible = true
+	if _native_skeleton != null:
+		var hide_hair: bool = _hidden_body_surfaces.has("hair")
+		for node_value: Node in _native_skeleton.get_children():
+			if node_value.name.begins_with("AppearanceHair_"):
+				(node_value as Node3D).visible = not hide_hair
+
+func _equipment_model_config(part: int, visual_id: int) -> Dictionary:
+	var aliases: Dictionary = _equipment_config.get("aliases", {}) as Dictionary
+	var model_key: String = "%d:%d" % [part, visual_id]
+	model_key = str(aliases.get(model_key, model_key))
+	var models: Dictionary = _equipment_config.get("models", {}) as Dictionary
+	return models.get(model_key, {}) as Dictionary
+
+func _equipment_socket(part: int, model_config: Dictionary) -> Dictionary:
+	# A model may override the shared part socket, which is how a two-handed
+	# haft can ride differently from a one-handed hilt on the same bone.
+	var override: Dictionary = model_config.get("socket", {}) as Dictionary
+	if not override.is_empty():
+		return override
+	var sockets: Dictionary = _equipment_config.get("sockets", {}) as Dictionary
+	return sockets.get(str(part), {}) as Dictionary
+
+func rig_fit_scale() -> float:
+	# Equipment is authored once against the canonical rest pose. Rigs built
+	# shorter wear the same asset scaled about the floor, so one GLB fits every
+	# race and both body variants.
+	if _native_skeleton == null:
+		return 1.0
+	var canonical: float = float(_equipment_config.get("canonicalHeadRestY", 0.0))
+	if canonical <= 0.0:
+		return 1.0
+	var head: int = _native_skeleton.find_bone("Head")
+	if head < 0:
+		return 1.0
+	return _native_skeleton.get_bone_global_rest(head).origin.y / canonical
+
+func _attach_socketed_equipment(socket: Dictionary, scene_path: String,
+		model_config: Dictionary, part: int, visual_id: int) -> BoneAttachment3D:
+	if socket.is_empty():
+		return null
+	var bone: String = str(socket.get("bone", ""))
+	var attachment: BoneAttachment3D = _bone_attachment(bone, part, visual_id)
+	if attachment == null:
+		return null
+	var native_model: Node3D = _load_native_equipment(scene_path)
+	if native_model == null:
+		attachment.queue_free()
+		return null
+	var bone_index: int = _native_skeleton.find_bone(bone)
+	var rest: Transform3D = _native_skeleton.get_bone_global_rest(bone_index)
+	var fit: float = rig_fit_scale()
+	var scale: float = fit * float(model_config.get("scale", 1.0))
+	var placement: Transform3D = Transform3D(
+		Basis.from_euler(_vector3(socket.get("rotationDegrees", []),
+			Vector3.ZERO) * (PI / 180.0)).scaled(Vector3.ONE * scale),
+		rest.origin + _vector3(socket.get("offset", []), Vector3.ZERO) * fit)
+	# The socket is authored in character space; cancelling the bone rest keeps
+	# it readable while still riding the bone once the clip plays.
+	native_model.transform = rest.affine_inverse() * placement
+	attachment.add_child(native_model)
+	attachment.set_meta("native_equipment", true)
+	return attachment
+
+func _attach_skinned_equipment(scene_path: String, part: int,
+		visual_id: int) -> Array[Node]:
+	# The garment ships with the shared joint hierarchy so it is a valid skinned
+	# glTF on its own. Replacing its bind poses with this skeleton's rest poses
+	# retargets the garment and applies the rig fit scale in one step.
+	var created: Array[Node] = []
+	var source: Node3D = _load_native_equipment(scene_path)
+	if source == null:
+		return created
+	var source_skeleton: Skeleton3D = null
+	for node_value: Node in source.find_children("*", "Skeleton3D", true, false):
+		source_skeleton = node_value as Skeleton3D
+		break
+	var fit: float = rig_fit_scale()
+	var fit_basis: Transform3D = Transform3D(
+		Basis.IDENTITY.scaled(Vector3.ONE * fit), Vector3.ZERO)
+	for node_value: Node in source.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+		if mesh_node.mesh == null:
+			continue
+		var rebound: Skin = _rebound_skin(mesh_node.skin, source_skeleton, fit_basis)
+		if rebound == null:
+			continue
+		var clone: MeshInstance3D = MeshInstance3D.new()
+		clone.name = "EquipmentSkin_%d_Visual_%d_%s" % [part, visual_id, mesh_node.name]
+		clone.mesh = mesh_node.mesh
+		clone.skin = rebound
+		_native_skeleton.add_child(clone)
+		clone.skeleton = NodePath("..")
+		clone.set_meta("native_equipment", true)
+		created.append(clone)
+	source.queue_free()
+	return created
+
+func _rebound_skin(source_skin: Skin, source_skeleton: Skeleton3D,
+		fit: Transform3D) -> Skin:
+	if source_skin == null or source_skeleton == null:
+		return null
+	# The mesh's JOINTS_0 values index this bind array, so a bind may never be
+	# skipped: dropping one would shift every later bone by a slot. A garment
+	# whose rig this actor does not carry is refused outright instead.
+	var rebound: Skin = Skin.new()
+	for index: int in range(source_skin.get_bind_count()):
+		var bone_name: String = source_skin.get_bind_name(index)
+		if bone_name.is_empty():
+			var source_bone: int = source_skin.get_bind_bone(index)
+			if source_bone < 0 or source_bone >= source_skeleton.get_bone_count():
+				return null
+			bone_name = source_skeleton.get_bone_name(source_bone)
+		var target: int = _native_skeleton.find_bone(bone_name)
+		if target < 0:
+			return null
+		rebound.add_named_bind(bone_name,
+			_native_skeleton.get_bone_global_rest(target).affine_inverse() * fit)
+	return rebound if rebound.get_bind_count() > 0 else null
+
+func _attach_fallback_equipment(part: int, visual_id: int,
+		part_config: Dictionary) -> Array[Node]:
+	var created: Array[Node] = []
+	var socket: Dictionary = _equipment_socket(part, {})
+	var bones: Array[String] = []
+	var fallback_bone: String = str(socket.get("bone", ""))
+	if not fallback_bone.is_empty():
+		bones.append(fallback_bone)
+	var semantic: String = str(part_config.get("attachment", ""))
+	var bones_value: Variant = _attachment_bones.get(semantic, "")
+	if bones_value is Array:
+		for raw_bone: Variant in bones_value:
+			if not bones.has(str(raw_bone)):
+				bones.append(str(raw_bone))
+	elif not str(bones_value).is_empty() and not bones.has(str(bones_value)):
+		bones.append(str(bones_value))
+	for bone: String in bones:
+		var attachment: BoneAttachment3D = _bone_attachment(bone, part, visual_id)
+		if attachment == null:
+			continue
+		attachment.add_child(_equipment_fallback_mesh(
+			str(part_config.get("fallback", "body"))))
+		created.append(attachment)
+	return created
+
+static func _vector3(value: Variant, fallback: Vector3) -> Vector3:
+	if value is Array and (value as Array).size() >= 3:
+		var values: Array = value as Array
+		return Vector3(float(values[0]), float(values[1]), float(values[2]))
+	return fallback
 
 func _bone_attachment(bone: String, part: int, visual_id: int) -> BoneAttachment3D:
 	if _native_skeleton == null or _native_skeleton.find_bone(bone) < 0:
@@ -397,19 +605,6 @@ func _load_native_equipment(path: String) -> Node3D:
 		return null
 	var generated: Node = document.generate_scene(state)
 	return generated as Node3D if generated is Node3D else null
-
-func _apply_equipment_import(model: Node3D, config: Dictionary) -> void:
-	model.scale = Vector3.ONE * float(config.get("scale", 1.0))
-	var translation_value: Variant = config.get("translation", [0, 0, 0])
-	if translation_value is Array and (translation_value as Array).size() >= 3:
-		var translation: Array = translation_value as Array
-		model.position = Vector3(float(translation[0]), float(translation[1]),
-			float(translation[2]))
-	var rotation_value: Variant = config.get("rotationDegrees", [0, 0, 0])
-	if rotation_value is Array and (rotation_value as Array).size() >= 3:
-		var rotation: Array = rotation_value as Array
-		model.rotation_degrees = Vector3(float(rotation[0]), float(rotation[1]),
-			float(rotation[2]))
 
 func _equipment_fallback_mesh(shape: String) -> MeshInstance3D:
 	var instance: MeshInstance3D = MeshInstance3D.new()

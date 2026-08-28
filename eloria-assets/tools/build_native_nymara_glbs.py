@@ -4,7 +4,13 @@
 This pipeline deliberately does not consume the legacy Cal3D humanoid or creature
 generators.  Playable races retain the proven Quaternius 65-joint skin, topology,
 weights, and animation bone names.  Creature meshes, rigs, and clips are authored
-here from scratch.  Equipment is emitted as independent GLBs for BoneAttachment3D.
+here from scratch.
+
+Modified 2026-08-28 for Eloria Client: equipment is no longer a set of primitive
+blobs bolted to a bone with an identity transform.  ``equipment_authoring``
+lofts wearables around the measured body silhouette and skins them to the shared
+rig, and authors props against a character-space socket solved from the rig
+itself, so items attach at body scale and follow every animation clip.
 """
 from __future__ import annotations
 
@@ -18,6 +24,8 @@ from pathlib import Path
 import struct
 import numpy as np
 from PIL import Image
+
+import equipment_authoring
 
 
 COMPONENT_DTYPES = {5121: "<u1", 5122: "<i2", 5123: "<u2", 5125: "<u4", 5126: "<f4"}
@@ -1059,73 +1067,12 @@ def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype
             "vertices":vertices,"triangles":triangles,"joints":len(CREATURE_BONES),"animations":7}
 
 
-def equipment_geometry(kind: str) -> ShapeMesh:
-    m=ShapeMesh()
-    if kind in {"sword","glaive"}:
-        m.box((0,.40,0),(.055,.82,.035),0,0);m.box((0,-.045,0),(.32,.055,.075),0,1)
-        m.cone((0,.80,0),(0,1.04,0),.07,0,1,10)
-        if kind=="glaive":m.cone((0,.62,0),(.34,.90,0),.08,0,1,12)
-    elif kind in {"spear","harpoon"}:
-        m.cylinder((0,-.32,0),(0,1.02,0),.035,0,0,12);m.cone((0,1.02,0),(0,1.34,0),.10,0,1,12)
-        if kind=="harpoon":m.cone((0,1.12,0),(.18,1.02,0),.045,0,1,10)
-    elif kind in {"staff","mace","hammer","pick"}:
-        m.cylinder((0,-.38,0),(0,.88,0),.04,0,0,12)
-        if kind=="staff":m.sphere((0,1.02,0),(.24,.24,.24),0,1,8,16)
-        elif kind=="mace":
-            for axis in ((.20,1.02,0),(-.20,1.02,0),(0,1.02,.20),(0,1.02,-.20)):m.cone((0,1.02,0),axis,.08,0,1,10)
-        elif kind=="hammer":m.box((0,1.00,0),(.48,.22,.22),0,1)
-        else:m.cone((-.35,1.00,0),(.35,1.00,0),.11,0,1,14)
-    elif kind in {"bow","crossbow"}:
-        for start,end in (((0,-.55,0),(-.25,0,0)),((-.25,0,0),(0,.55,0)),((0,-.55,0),(.25,0,0)),((.25,0,0),(0,.55,0))):m.cylinder(start,end,.025,0,0,10)
-        m.cylinder((0,-.55,0),(0,.55,0),.008,0,1,8)
-        if kind=="crossbow":m.box((0,0,0),(.12,.65,.10),0,0)
-    elif kind in {"roundshield","shell","kite"}:
-        if kind=="kite":m.sphere((0,0,0),(.62,.92,.10),0,0,10,24)
-        else:m.sphere((0,0,0),(.78,.78,.12),0,0,10,24)
-        m.sphere((0,0,-.08),(.22,.22,.16),0,1,8,16)
-    elif kind=="cape":m.box((0,-.52,.12),(.78,1.08,.045),0,0);m.box((0,-.02,.08),(.86,.09,.08),0,1)
-    elif kind in {"hood","helm","crest","circlet","mushroom"}:
-        m.sphere((0,0,0),(.46,.44,.43),0,0,9,18)
-        if kind in {"helm","crest"}:m.cone((0,.14,.05),(0,.58,.08),.11,0,1,12)
-        elif kind=="circlet":
-            for a in np.linspace(0,2*math.pi,12,endpoint=False):m.sphere((math.cos(a)*.24,0,math.sin(a)*.22),(.06,.06,.06),0,1,4,8)
-        elif kind=="mushroom":m.sphere((0,.24,0),(.72,.18,.62),0,1,8,20)
-    elif kind in {"cuirass","coat","robe"}:
-        m.sphere((0,0,0),(.72,.78,.40),0,0,10,20);m.box((0,-.30,.18),(.58,.62,.08),0,1)
-        if kind=="robe":m.sphere((0,-.55,0),(.82,.62,.50),0,0,8,20)
-    elif kind=="shirt":
-        # A fitted torso plus upper-arm cylinders gives the Luminous base
-        # outfit an unmistakable short-sleeve silhouette.
-        m.sphere((0,-.02,0),(.68,.72,.38),0,0,10,20)
-        m.box((0,-.30,.18),(.58,.54,.07),0,1)
-        m.cylinder((-.38,.20,0),(-.43,-.10,0),.15,0,0,14)
-        m.cylinder((.38,.20,0),(.43,-.10,0),.15,0,0,14)
-    elif kind=="legs":
-        for x in (-.15,.15):m.cylinder((x,.22,0),(x,-.58,0),.13,0,0,14);m.box((x,-.12,.08),(.30,.22,.10),0,1)
-    elif kind=="pants":
-        m.sphere((0,.22,0),(.58,.34,.38),0,0,8,18)
-        for x in (-.15,.15):
-            m.cylinder((x,.24,0),(x,-.66,0),.15,0,0,14)
-            m.box((x,-.22,.08),(.31,.28,.10),0,1)
-    elif kind=="boots":
-        for x in (-.15,.15):m.cylinder((x,.18,0),(x,-.35,0),.14,0,0,14);m.box((x,-.36,-.09),(.30,.18,.42),0,1)
-    elif kind=="amulet":
-        for a in np.linspace(0,2*math.pi,16,endpoint=False):m.sphere((math.cos(a)*.18,math.sin(a)*.18,0),(.045,.045,.045),0,0,4,8)
-        m.sphere((0,-.24,0),(.18,.22,.08),0,1,8,16)
-    return m
-
-
 def build_equipment(path: Path, slug: str, label: str, kind: str,
-                    base: tuple[int,int,int], accent: tuple[int,int,int]) -> dict:
-    glb=GLB();mats=[glb.material(label+" Base",base,metallic=.12,roughness=.58),
-                    glb.material(label+" Trim",accent,metallic=.45,roughness=.30,
-                                 emissive=tuple(c//12 for c in accent))]
-    groups=equipment_geometry(kind).arrays()[6];primitives=[];vertices=triangles=0
-    for i,arrays in enumerate(groups):
-        if not len(arrays[0]):continue
-        primitives.append(glb.primitive(*arrays[:4],mats[i]));vertices+=len(arrays[0]);triangles+=len(arrays[3])//3
-    glb.mesh_node(label,primitives);glb.write(path)
-    return {"id":slug,"name":label,"kind":kind,"vertices":vertices,"triangles":triangles}
+                    base: tuple[int,int,int], accent: tuple[int,int,int],
+                    rig: "equipment_authoring.Rig") -> dict:
+    """Author one equipment GLB through the body-conforming pipeline."""
+    return equipment_authoring.build_equipment_piece(
+        path, rig, slug, label, kind, base, accent)
 
 
 HAIR_SOURCES = {
@@ -1325,28 +1272,10 @@ def build_model_registry() -> dict:
             "creationOptions": creation, "npcLooks": npc_looks}
 
 
-def build_equipment_registry() -> dict:
-    parts = {
-        "0": {"name": "weapon", "attachment": "right_hand", "fallback": "weapon"},
-        "1": {"name": "shield", "attachment": "left_hand", "fallback": "shield"},
-        "2": {"name": "cape", "attachment": "back", "fallback": "body"},
-        "3": {"name": "helmet", "attachment": "head", "fallback": "head"},
-        "4": {"name": "legs", "attachment": "pelvis", "fallback": "body"},
-        "5": {"name": "body", "attachment": "body", "fallback": "body"},
-        "6": {"name": "boots", "attachment": "pelvis", "fallback": "feet"},
-        "7": {"name": "neck", "attachment": "neck", "fallback": "head"},
-    }
-    models = {}
-    for slug, _, part, visual, *_ in EQUIPMENT:
-        translation = [0, -.72, 0] if part == 6 else [0, 0, 0]
-        models[f"{part}:{visual}"] = {
-            "scene": f"res://assets/actors/native/equipment/{slug}.glb",
-            "import": {"translation": translation, "rotationDegrees": [0, 0, 0],
-                       "scale": 1},
-        }
-    aliases = {"0:11": "0:112", "1:5": "1:105", "2:11": "2:105"}
-    return {"schemaVersion": 2, "parts": parts, "models": models,
-            "aliases": aliases}
+def build_equipment_registry(rig: "equipment_authoring.Rig",
+                             idle_bases: dict | None) -> dict:
+    """Equipment registry v3: character-space sockets and skinned garments."""
+    return equipment_authoring.build_equipment_registry(rig, EQUIPMENT, idle_bases)
 
 
 def write_json(path: Path, value: dict) -> None:
@@ -1364,36 +1293,65 @@ def main() -> None:
     parser.add_argument("--models",type=Path,default=repo_root/"godot-client/data/actors/models.json")
     parser.add_argument("--equipment-registry",type=Path,
                         default=repo_root/"godot-client/data/actors/equipment.json")
-    args=parser.parse_args();manifest={"schemaVersion":2,"source":"nymara-concept-art-named.zip",
-                                      "pipeline":"build_native_nymara_glbs.py","races":{},"hair":{},
-                                      "creatures":{},"equipment":{}}
-    for gender in ("female", "male"):
-        for style in HAIR_SOURCES:
-            hair_id = f"{style}_{gender}"
-            path = args.output / "hair" / f"{hair_id}.glb"
-            manifest["hair"][hair_id] = build_hair(args.source, path, style, gender) | {
-                "path": str(path.relative_to(repo_root))}
-            print("hair", hair_id, manifest["hair"][hair_id])
-    for race in RACES:
-        for gender in ("female","male"):
-            model=f"{race}_{gender}";path=args.output/"races"/f"{model}.glb"
-            manifest["races"][model]=build_player(args.source,path,race,gender)|{"path":str(path.relative_to(repo_root))}
-            print("race",model,manifest["races"][model])
-    for actor_type,slug,label,archetype,base,accent,scale in CREATURES:
-        actor_type += CREATURE_ACTOR_TYPE_OFFSET
-        path=args.output/"creatures"/f"{slug}.glb"
-        manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":str(path.relative_to(repo_root))}
-        print("creature",slug,manifest["creatures"][slug])
+    parser.add_argument("--animation-library",type=Path,
+                        default=repo_root/"godot-client/assets/actors/native/shared/Universal_Animation_Library.glb",
+                        help="clip source used to solve weapon grips in the idle pose")
+    parser.add_argument("--only",choices=("all","equipment"),default="all",
+                        help="rebuild only the equipment library and its registry")
+    args=parser.parse_args()
+    if args.only=="equipment" and args.manifest.is_file():
+        manifest=json.loads(args.manifest.read_text(encoding="utf-8"))
+        manifest["equipment"]={}
+    else:
+        manifest={"schemaVersion":2,"source":"nymara-concept-art-named.zip",
+                  "pipeline":"build_native_nymara_glbs.py","races":{},"hair":{},
+                  "creatures":{},"equipment":{}}
+    if args.only=="all":
+        for gender in ("female", "male"):
+            for style in HAIR_SOURCES:
+                hair_id = f"{style}_{gender}"
+                path = args.output / "hair" / f"{hair_id}.glb"
+                manifest["hair"][hair_id] = build_hair(args.source, path, style, gender) | {
+                    "path": str(path.relative_to(repo_root))}
+                print("hair", hair_id, manifest["hair"][hair_id])
+        for race in RACES:
+            for gender in ("female","male"):
+                model=f"{race}_{gender}";path=args.output/"races"/f"{model}.glb"
+                manifest["races"][model]=build_player(args.source,path,race,gender)|{"path":str(path.relative_to(repo_root))}
+                print("race",model,manifest["races"][model])
+        for actor_type,slug,label,archetype,base,accent,scale in CREATURES:
+            actor_type += CREATURE_ACTOR_TYPE_OFFSET
+            path=args.output/"creatures"/f"{slug}.glb"
+            manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":str(path.relative_to(repo_root))}
+            print("creature",slug,manifest["creatures"][slug])
+    # Equipment is authored against the rig as it exists on disk, so a full run
+    # has to build the races first or the geometry is fitted to a stale rest
+    # pose. Loading the rig here also keeps a clean tree bootstrappable.
+    rig_source=args.output/"races/luminous_male.glb"
+    rig=equipment_authoring.load_rig(rig_source)
+    idle_bases=None
+    if args.animation_library.is_file():
+        idle_bases=equipment_authoring._idle_hand_bases(
+            str(rig_source), str(args.animation_library))
     for slug,label,part,visual,kind,base,accent in EQUIPMENT:
         path=args.output/"equipment"/f"{slug}.glb"
-        manifest["equipment"][slug]=build_equipment(path,slug,label,kind,base,accent)|{
+        manifest["equipment"][slug]=build_equipment(path,slug,label,kind,base,accent,rig)|{
             "part":part,"visual":visual,"path":str(path.relative_to(repo_root))}
         print("equipment",slug,manifest["equipment"][slug])
     validation={str(path.relative_to(repo_root)):validate_glb(path) for path in args.output.rglob("*.glb")}
+    if args.only=="equipment":
+        # Only revalidate what this run rebuilt.  Ambient scenery GLBs are
+        # authored by a different generator and are not part of this manifest's
+        # validated set, so a partial rebuild must not adopt them.
+        previous=manifest.get("validation",{}).get("results",{})
+        validation={key:value for key,value in validation.items()
+                    if key in previous or "/equipment/" in key}
+        validation={**previous,**validation}
     manifest["validation"]={"files":len(validation),"results":validation}
     write_json(args.manifest, manifest)
-    write_json(args.models, build_model_registry())
-    write_json(args.equipment_registry, build_equipment_registry())
+    if args.only=="all":
+        write_json(args.models, build_model_registry())
+    write_json(args.equipment_registry, build_equipment_registry(rig, idle_bases))
     print(f"validated {len(validation)} native GLBs")
 
 

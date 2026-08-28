@@ -27,5 +27,22 @@ Lands Binary Data is included in the Eloria data pack.
 - Replaced the generic essence economy with catalyst, resonant, and anchor materials.
 - Added four item atlases for original magical materials, focuses, charges, and Echoes.
 
+## 2026-08-28
+
+- Rebuilt equipment attachment on character-space sockets solved from the rig,
+  replacing identity parenting that put every weapon sideways through the actor.
+- Skinned capes, leg armour, body armour and boots to the shared 65-joint rig so
+  worn equipment deforms with every clip instead of riding one bone.
+- Reauthored all 66 equipment GLBs against the measured body silhouette at body
+  scale, with PBR base-colour and normal maps and roughly five times the mesh
+  density of the previous primitives.
+- Moved the boots part from the pelvis to both feet and the cape behind the
+  actor rather than in front of it.
+- Added a rig fit scale so one authored asset fits every race and both body
+  variants.
+- Realigned the item icon atlases to the grid the client samples, restored the
+  icons that the placeholder block had truncated, repainted the sixteen Nymara
+  material icons, and added an explicit unknown-item glyph.
+
 Every later modification to an upstream source file must carry a prominent
 dated notice as required by section 3(c) of the client license.

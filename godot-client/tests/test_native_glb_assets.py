@@ -154,6 +154,121 @@ class NativeGlbAssetsTest(unittest.TestCase):
         for native_visual in expected.values():
             self.assertIn(native_visual, self.equipment["models"])
 
+    def test_equipment_registry_is_schema_three(self) -> None:
+        """Sockets and skinned garments replace the identity bone parenting.
+
+        Schema 2 attached every piece to a raw bone with an identity transform.
+        Bone rest bases are not axis aligned, so that alone put weapons through
+        the actor sideways; the registry now has to carry a socket per rigid
+        part and a skin region per garment.
+        """
+        self.assertEqual(3, self.equipment["schemaVersion"])
+        rig = glb_document(CLIENT / "assets/actors/native/races/luminous_male.glb")
+        joints = {rig["nodes"][node].get("name", "")
+                  for node in rig["skins"][0]["joints"]}
+        head = next(node for node in rig["nodes"] if node.get("name") == "Head")
+        self.assertIn("canonicalHeadRestY", self.equipment)
+        self.assertGreater(float(self.equipment["canonicalHeadRestY"]), 1.0)
+        for part, socket in self.equipment["sockets"].items():
+            with self.subTest(part=part):
+                self.assertIn(socket["bone"], joints)
+                self.assertEqual(3, len(socket["offset"]))
+                self.assertEqual(3, len(socket["rotationDegrees"]))
+        for region, bones in self.equipment["skinRegions"].items():
+            with self.subTest(region=region):
+                self.assertTrue(bones)
+                self.assertTrue(set(bones) <= joints)
+        del head
+
+    def test_boots_follow_both_feet(self) -> None:
+        """Boots used to hang off the pelvis, which parked them at the hips."""
+        self.assertEqual("feet", self.equipment["parts"]["6"]["attachment"])
+        feet = self.models["models"]["luminous_male"]["attachments"]["feet"]
+        self.assertEqual(["foot_l", "foot_r"], feet)
+
+    def test_socketed_props_and_skinned_garments_are_declared(self) -> None:
+        garment_parts = {2, 4, 5, 6}
+        for key, model in self.equipment["models"].items():
+            part = int(key.split(":")[0])
+            with self.subTest(model=key):
+                if part in garment_parts:
+                    self.assertEqual("skinned", model["attach"])
+                    self.assertIn(model["skinRegion"], self.equipment["skinRegions"])
+                else:
+                    self.assertEqual("socket", model["attach"])
+                    socket = model.get("socket") or self.equipment["sockets"][str(part)]
+                    self.assertTrue(socket["bone"])
+
+    def test_garments_ship_skinned_to_the_shared_rig(self) -> None:
+        """A garment bolted to one bone cannot bend; these carry skin weights."""
+        rig = glb_document(CLIENT / "assets/actors/native/races/luminous_male.glb")
+        expected = [rig["nodes"][node].get("name", "")
+                    for node in rig["skins"][0]["joints"]]
+        garment_parts = {2, 4, 5, 6}
+        checked = 0
+        for entry in self.catalog["equipment"].values():
+            if entry["part"] not in garment_parts:
+                self.assertEqual("socket", entry["attach"])
+                continue
+            with self.subTest(equipment=entry["id"]):
+                self.assertEqual("skinned", entry["attach"])
+                document = glb_document(ROOT / entry["path"])
+                skin = document["skins"][0]
+                names = [document["nodes"][node].get("name", "")
+                         for node in skin["joints"]]
+                self.assertEqual(expected, names)
+                for mesh in document["meshes"]:
+                    for primitive in mesh["primitives"]:
+                        self.assertIn("JOINTS_0", primitive["attributes"])
+                        self.assertIn("WEIGHTS_0", primitive["attributes"])
+                checked += 1
+        self.assertEqual(31, checked)
+
+    def test_equipment_hides_name_real_body_surfaces(self) -> None:
+        """A hide that names nothing would silently fail to cover anything."""
+        rig = glb_document(CLIENT / "assets/actors/native/races/luminous_male.glb")
+        surfaces = {mesh.get("name", "").lower() for mesh in rig["meshes"]}
+        surfaces.add("hair")
+        for part, config in self.equipment["parts"].items():
+            for surface in config.get("hides", []):
+                with self.subTest(part=part, surface=surface):
+                    self.assertIn(surface, surfaces)
+        for key, model in self.equipment["models"].items():
+            for surface in model.get("hides", []):
+                with self.subTest(model=key, surface=surface):
+                    self.assertIn(surface, surfaces)
+        self.assertEqual(["wardrobe_shirt", "wardrobe_shirt_trim"],
+                         self.equipment["parts"]["5"]["hides"])
+
+    def test_equipment_is_authored_at_body_scale(self) -> None:
+        """The first pass shipped helmets and amulets at three to five times
+        body scale, which swallowed the actor wearing them."""
+        limits = {0: (.55, 2.00), 1: (.35, .95), 2: (.80, 1.60), 3: (.18, .60),
+                  4: (.60, 1.30), 5: (.45, 1.60), 6: (.30, .70), 7: (.10, .40)}
+        for entry in self.catalog["equipment"].values():
+            document = glb_document(ROOT / entry["path"])
+            extents = []
+            for accessor in document["accessors"]:
+                if "min" in accessor and len(accessor["min"]) == 3:
+                    extents.append(max(high - low for low, high
+                                       in zip(accessor["min"], accessor["max"])))
+            low, high = limits[entry["part"]]
+            with self.subTest(equipment=entry["id"]):
+                self.assertTrue(extents, entry["id"])
+                self.assertGreaterEqual(max(extents), low)
+                self.assertLessEqual(max(extents), high)
+
+    def test_equipment_carries_material_detail(self) -> None:
+        """Equipment shipped untextured beside a body with fifteen maps."""
+        for entry in self.catalog["equipment"].values():
+            document = glb_document(ROOT / entry["path"])
+            with self.subTest(equipment=entry["id"]):
+                self.assertGreaterEqual(len(document.get("materials", [])), 2)
+                self.assertTrue(document.get("images"))
+                for material in document["materials"]:
+                    self.assertIn("normalTexture", material)
+                self.assertGreaterEqual(entry["triangles"], 240)
+
     def test_every_playable_actor_type_has_creation_option(self) -> None:
         options = self.models["creationOptions"]
         self.assertEqual(16, len(options))
