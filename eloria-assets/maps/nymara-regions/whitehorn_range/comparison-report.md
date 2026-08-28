@@ -29,11 +29,22 @@ structurally rather than pixel for pixel.
 
 Honest list, in order of how much it matters.
 
-1. **The boundary reads as a wall, not as peaks.** `clamp_edges` raises a
-   continuous rim inside the margin. The concept has individual summits with
-   sky between them. This is the largest visual departure and it is structural:
-   a heightfield rim cannot make separated peaks. Fixing it means authoring
-   individual summit domes along the boundary instead of a ramp.
+1. **The boundary reads as a rectangular lip with square corners.** This is
+   the largest visual departure, and the aerial shows it plainly: the
+   south-west and south-east corners are visibly right-angled. `clamp_edges`
+   raises a continuous rim on a rectangular foot, so on a region walled on all
+   four sides — which Whitehorn is, having no coast — the world boundary reads
+   as the edge of a table rather than as mountains. The concept has individual
+   summits with sky between them.
+
+   It is not inherent to a heightfield. The fix is a ridged wall on an
+   irregular foot rather than an axis-aligned ramp: `add_ridge` along a wandering
+   boundary polyline, with summit domes at intervals, so the silhouette breaks
+   up and the corners round off. The Mirrorhold build has since written exactly
+   this as `region._close_world`, and adopting it is the single highest-value
+   change available to this region's terrain. It is deliberately **not** done
+   here, because it would mean rewriting the world boundary after the package
+   was verified and pushed; it should be the first thing done next.
 2. **Relief is gentler than the painting.** The concept implies near-vertical
    faces; the build tops out around a 1.2 gradient because anything steeper
    stops being walkable and starts breaking the grounding contract.
