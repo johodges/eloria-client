@@ -1,3 +1,5 @@
 newmtl delta_lotus
 Kd 1 1 1
-map_Kd ../runtime/3dobjects/nymara/delta_lotus.png
+d 1
+map_Kd delta_lotus.png
+map_d delta_lotus.png

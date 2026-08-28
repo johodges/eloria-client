@@ -49,12 +49,21 @@ Lands Binary Data is included in the Eloria data pack.
 - Added great sword, battle axe, cutlass, rapier, club, quiver and glove
   shapes, and enchanted-metal finishes for the elemental weapon ladders.
 - Corrected sRGB palettes being written into glTF's linear colour factors,
-  which had every untextured surface rendering about forty percent bright;
-  applied to the equipment and creature libraries, with races and hair pending
-  a rebuild.
+  which had untextured equipment surfaces rendering about forty percent bright;
+  creature, race, and hair rebuilds remain separate asset work.
 - Removed the three visual-id aliases, which now collide with real generic ids,
   and made an authored NPC look outrank the server's appearance bytes.
 - Cached parsed equipment geometry and rebound skins per model.
+- Audited the harvestable layer and recorded the findings in `docs/harvestable-audit.md`.
+- Added `eloria-assets/tools/harvestables.py` as the single harvestable catalogue.
+- Rebuilt every harvest node model at the fidelity of the surrounding landmark kit.
+- Gave foliage harvestables alpha-tested, double-sided materials.
+- Added sixteen general-purpose harvestables covering the everyday crafting economy.
+- Wrote `harvestable.lst` and `entrable.lst` as the lowercase basenames the client looks up.
+- Scattered harvest nodes across each region instead of repeating four fixed coordinates.
+- Wrote ELM object and light coordinates in world units instead of height-map cells.
+- Added decorative 2D ground flora and the map writer support the client already had.
+- Moved harvestable item ids out of the equipment range and added `validate_harvestables.py`.
 
 Every later modification to an upstream source file must carry a prominent
 dated notice as required by section 3(c) of the client license.

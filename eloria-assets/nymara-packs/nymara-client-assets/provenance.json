@@ -14,6 +14,13 @@
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Original procedural Nymara inventory icons and atlas"
+    },
+    {
+      "path": "runtime/2dobjects/nymara/flora/*",
+      "source": "eloria-assets/tools/harvestables.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original procedural Nymara ground-flora sprites and .2d definitions"
     }
   ]
 }

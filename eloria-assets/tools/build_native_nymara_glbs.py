@@ -23,6 +23,11 @@ import math
 from pathlib import Path
 import struct
 import numpy as np
+
+import creature_anatomy as anatomy
+import creature_families as families
+import creature_roster as roster
+import creature_surfaces as surfaces
 from PIL import Image
 
 import equipment_authoring
@@ -90,24 +95,27 @@ PLAYER_ACTOR_TYPES = {
 
 CREATURES = (
     # Tuple IDs retain the authored sequence; add the four existing upstream
-    # creature slots when registering against eloria-server.
-    (200, "emberfox", "Emberfox", "fox", (190, 82, 37), (236, 152, 61), .82),
-    (201, "mossback_boar", "Mossback Boar", "boar", (69, 91, 54), (151, 120, 58), 1.18),
+    # creature slots when registering against eloria-server.  Palettes for the
+    # creatures that appear in the concept art are sampled from it by
+    # eloria-assets/tools/extract_concept_palettes.py; the rest, which were
+    # invented for this roster, keep their authored colours.
+    (200, "emberfox", "Emberfox", "fox", (205, 123, 10), (143, 84, 25), .82),
+    (201, "mossback_boar", "Mossback Boar", "boar", (111, 63, 29), (224, 154, 91), 1.18),
     (202, "ridgehorn", "Ridgehorn", "ram", (132, 112, 77), (214, 174, 91), 1.05),
-    (203, "miretoad", "Miretoad", "toad", (56, 111, 70), (160, 178, 72), 1.15),
+    (203, "miretoad", "Miretoad", "toad", (137, 82, 18), (224, 185, 109), 1.15),
     (204, "ash_crawler", "Ash Crawler", "lizard", (67, 62, 66), (172, 63, 54), 1.30),
-    (205, "frost_maw", "Frost Maw", "wolf", (136, 183, 198), (224, 245, 247), 1.18),
+    (205, "frost_maw", "Frost Maw", "wolf", (105, 153, 205), (38, 89, 196), 1.18),
     (206, "bog_lurker", "Bog Lurker", "toad", (48, 83, 65), (111, 151, 83), 1.42),
     (207, "sunscale_drake", "Sunscale Drake", "drake", (184, 117, 42), (57, 145, 141), 1.35),
-    (208, "red_fox", "Red Fox", "fox", (179, 74, 41), (237, 166, 91), .74),
-    (209, "snow_hare", "Snow Hare", "hare", (210, 220, 220), (134, 184, 203), .62),
-    (210, "mountain_goat", "Mountain Goat", "ram", (146, 139, 121), (96, 82, 67), .92),
+    (208, "red_fox", "Red Fox", "fox", (185, 75, 19), (224, 165, 116), .74),
+    (209, "snow_hare", "Snow Hare", "hare", (148, 152, 165), (55, 79, 151), .62),
+    (210, "mountain_goat", "Mountain Goat", "ram", (134, 150, 181), (73, 74, 109), .92),
     (211, "black_bear", "Black Bear", "bear", (43, 39, 38), (100, 88, 68), 1.28),
-    (212, "elk", "Elk", "elk", (130, 91, 54), (209, 138, 58), 1.08),
+    (212, "elk", "Elk", "elk", (150, 70, 26), (224, 164, 110), 1.08),
     (213, "wild_boar", "Wild Boar", "boar", (88, 73, 59), (151, 116, 72), 1.04),
     (214, "dire_wolf", "Dire Wolf", "wolf", (70, 80, 89), (132, 155, 166), 1.13),
-    (215, "frost_tiger", "Frost Tiger", "cat", (174, 200, 207), (81, 132, 160), 1.14),
-    (216, "giant_crocodile", "Giant Crocodile", "crocodile", (62, 101, 60), (139, 151, 62), 1.55),
+    (215, "frost_tiger", "Frost Tiger", "cat", (94, 148, 205), (32, 74, 158), 1.14),
+    (216, "giant_crocodile", "Giant Crocodile", "crocodile", (97, 88, 47), (224, 202, 159), 1.55),
     (217, "fire_salamander", "Fire Salamander", "lizard", (184, 69, 33), (245, 153, 48), 1.02),
     (218, "thunder_ram", "Thunder Ram", "ram", (102, 99, 94), (91, 160, 188), 1.24),
     (219, "giant_rat", "Giant Rat", "rat", (105, 85, 70), (179, 138, 92), .84),
@@ -116,15 +124,40 @@ CREATURES = (
     (222, "porcupine", "Porcupine", "porcupine", (107, 82, 55), (48, 44, 38), .82),
     (223, "moose", "Moose", "elk", (91, 70, 48), (171, 133, 77), 1.28),
     (224, "lynx", "Lynx", "cat", (157, 126, 88), (71, 65, 61), .82),
-    (225, "desert_tortoise", "Desert Tortoise", "tortoise", (119, 112, 73), (190, 156, 68), 1.06),
-    (226, "saber_tooth_cat", "Saber-Tooth Cat", "cat", (176, 137, 82), (235, 220, 173), 1.20),
+    (225, "desert_tortoise", "Desert Tortoise", "tortoise", (172, 112, 48), (224, 182, 110), 1.06),
+    (226, "saber_tooth_cat", "Saber-Tooth Cat", "saber_cat", (176, 137, 82), (235, 220, 173), 1.20),
     (227, "armored_rhino", "Armored Rhino", "rhino", (104, 105, 99), (62, 118, 128), 1.48),
-    (228, "giant_komodo", "Giant Komodo", "lizard", (88, 109, 63), (183, 140, 54), 1.42),
-    (229, "ice_bear", "Ice Bear", "bear", (188, 210, 218), (87, 151, 190), 1.48),
+    (228, "giant_komodo", "Giant Komodo", "lizard", (96, 82, 50), (224, 193, 112), 1.42),
+    (229, "ice_bear", "Ice Bear", "bear", (122, 155, 188), (56, 97, 171), 1.48),
     (230, "lava_hound", "Lava Hound", "wolf", (154, 55, 30), (246, 119, 38), 1.17),
     (231, "two_tailed_fox", "Two-Tailed Fox", "two_tail_fox", (183, 100, 44), (63, 151, 164), .90),
 )
 CREATURE_ACTOR_TYPE_OFFSET = 4
+
+# Scenery livestock authored by eloria-assets/tools/sunmane/creatures.py.  They
+# are not built here, but this script owns models.json and the asset catalog, so
+# it has to re-register them or a plain rebuild silently unregisters the herds.
+# The wider concept-art roster occupies one contiguous block after every range
+# already in models.json (which ends at 427).  Server-side actor-type allocation
+# belongs to eloria-server; these ids are reserved here for it to adopt.
+ROSTER_ACTOR_TYPE_BASE = 428
+HOVERING_FAMILIES = {"amorphous"}
+
+
+def roster_actor_type(index: int) -> int:
+    return ROSTER_ACTOR_TYPE_BASE + index
+
+
+AMBIENT_CREATURES = (
+    ("sunmane_steppe_horse", "Sunmane Steppe Horse", "equine", 1.25, False),
+    ("sunmane_dun_mare", "Sunmane Dun Mare", "equine", 1.2, False),
+    ("sunmane_grey_pony", "Sunmane Grey Pony", "equine", 1.1, True),
+)
+AMBIENT_NOTE = ("Scenery livestock instanced by the client's ambient population "
+                "system. They carry no server actor type: actor-type allocation "
+                "belongs to eloria-server, and these never arrive over the wire.")
+AMBIENT_SOURCE_NOTE = ("Authored to equine proportions on the shared creature rig "
+                       "by eloria-assets/tools/sunmane/creatures.py.")
 
 EQUIPMENT = (
     # part 0: weapons
@@ -266,11 +299,9 @@ class GLB:
                  roughness: float = .78, emissive: tuple[int, int, int] | None = None,
                  texture_png: bytes | None = None, normal_png: bytes | None = None,
                  metallic_roughness_png: bytes | None = None,
-                 double_sided: bool = False) -> int:
-        # Modified 2026-08-28 for Eloria Client: palettes are authored as sRGB
-        # but glTF defines these factors as linear, so writing the bytes raw
-        # landed every untextured surface about forty percent bright.
-        factor = equipment_authoring.srgb_to_linear(color) + [1.]
+                 double_sided: bool = False, alpha: float = 1.0,
+                 alpha_mode: str | None = None) -> int:
+        factor = [c / 255. for c in color] + [float(alpha)]
         pbr = {"baseColorFactor": factor, "metallicFactor": metallic,
                "roughnessFactor": roughness}
         if texture_png is not None:
@@ -279,10 +310,12 @@ class GLB:
             pbr["metallicRoughnessTexture"] = {
                 "index": self.texture(name + " Roughness", metallic_roughness_png)}
         material = {"name": name, "pbrMetallicRoughness": pbr, "doubleSided": double_sided}
+        if alpha_mode:
+            material["alphaMode"] = alpha_mode
         if normal_png is not None:
             material["normalTexture"] = {"index": self.texture(name + " Normal", normal_png)}
         if emissive is not None:
-            material["emissiveFactor"] = equipment_authoring.srgb_to_linear(emissive)
+            material["emissiveFactor"] = [c / 255. for c in emissive]
         self.doc["materials"].append(material)
         return len(self.doc["materials"]) - 1
 
@@ -946,70 +979,19 @@ class ShapeMesh:
         return (*nonempty, consolidated)
 
 
-CREATURE_BONES = (
-    ("root", -1, (0.,0.,0.)), ("body",0,(0.,.78,0.)), ("neck",1,(0.,.22,-.36)),
-    ("head",2,(0.,.18,-.24)), ("jaw",3,(0.,-.08,-.13)),
-    ("tail_1",1,(0.,.02,.48)), ("tail_2",5,(0.,0.,.43)),
-    ("front_leg_l",1,(-.25,-.18,-.32)), ("front_shin_l",7,(0.,-.34,0.)),
-    ("front_paw_l",8,(0.,-.30,-.08)), ("front_leg_r",1,(.25,-.18,-.32)),
-    ("front_shin_r",10,(0.,-.34,0.)), ("front_paw_r",11,(0.,-.30,-.08)),
-    ("rear_leg_l",1,(-.27,-.13,.33)), ("rear_shin_l",13,(0.,-.38,0.)),
-    ("rear_paw_l",14,(0.,-.28,-.04)), ("rear_leg_r",1,(.27,-.13,.33)),
-    ("rear_shin_r",16,(0.,-.38,0.)), ("rear_paw_r",17,(0.,-.28,-.04)),
-    ("wing_l",1,(-.22,.13,0.)), ("wing_r",1,(.22,.13,0.)),
-)
+# The legacy blockout bone table and sphere/box geometry were replaced by the
+# body-plan driven anatomy builder in creature_anatomy.py.  Bone *names* are
+# still part of the runtime contract: godot-client/data/actors/models.json
+# binds attachment points to "head", "body" and "neck".
+CREATURE_BONES = anatomy.BONE_TOPOLOGY
 
 
-def global_bone_positions(bones=CREATURE_BONES):
-    result=[]
-    for _,parent,translation in bones:
-        base=np.zeros(3) if parent<0 else result[parent]
-        result.append(base+np.asarray(translation,dtype=float))
-    return result
+def global_bone_positions(bones):
+    return anatomy.global_positions(bones)
 
 
-def creature_geometry(archetype: str, scale: float) -> ShapeMesh:
-    m=ShapeMesh(); s=scale; bones=global_bone_positions()
-    body=(.72*s,.62*s,1.15*s); head=(.48*s,.44*s,.55*s)
-    if archetype in {"bear","boar","rhino","porcupine"}: body=(.92*s,.78*s,1.18*s);head=(.58*s,.52*s,.60*s)
-    if archetype in {"lizard","crocodile","otter","rat"}: body=(.66*s,.42*s,1.35*s);head=(.42*s,.34*s,.48*s)
-    if archetype=="toad": body=(1.0*s,.48*s,.92*s);head=(.70*s,.38*s,.42*s)
-    if archetype=="tortoise": body=(1.02*s,.54*s,1.18*s);head=(.34*s,.30*s,.42*s)
-    m.sphere((0,.79,0),body,1,0,12,24)
-    m.sphere((0,1.00,-.46*s),(.48*s,.38*s,.48*s),2,0,9,18)
-    m.sphere((0,1.08,-.76*s),head,3,0,10,20)
-    for side,joints,x in ((-1,(7,8,9),-.25),(1,(10,11,12),.25),(-1,(13,14,15),-.27),(1,(16,17,18),.27)):
-        z=-.34 if joints[0] in (7,10) else .34
-        m.cylinder((x*s,.65,z*s),(x*s,.28,z*s),.09*s,joints[0],0,12)
-        m.cylinder((x*s,.28,z*s),(x*s,.06,(z-.08)*s),.075*s,joints[1],0,12)
-        m.sphere((x*s,.045,(z-.15)*s),(.20*s,.10*s,.34*s),joints[2],0,6,12)
-    m.cylinder((0,.82,.48*s),(0,.75,.90*s),.11*s,5,0,12)
-    m.cone((0,.75,.90*s),(0,.70,1.30*s),.10*s,6,0,12)
-    if archetype == "two_tail_fox":
-        m.cylinder((-.08,.82,.46*s),(-.18,.77,.91*s),.09*s,5,0,12)
-        m.cone((-.18,.77,.91*s),(-.30,.72,1.29*s),.085*s,6,1,12)
-    if archetype in {"fox","two_tail_fox","wolf","cat","hare","rat"}:
-        ear=.34*s if archetype=="hare" else .22*s
-        for x in (-.15,.15):m.cone((x*s,1.23,-.76*s),(x*s,1.23+ear,-.72*s),.10*s,3,1,12)
-    if archetype in {"ram","elk"}:
-        for side in (-1,1):
-            m.cylinder((side*.15*s,1.24,-.72*s),(side*.36*s,1.45,-.65*s),.055*s,3,1,10)
-            if archetype=="elk":
-                for z in (-.05,.08,.20):m.cone((side*.34*s,1.38,-.65*s+z*s),(side*.52*s,1.58,-.62*s+z*s),.045*s,3,1,8)
-    if archetype in {"boar","rhino"}:
-        count=2 if archetype=="boar" else 1
-        for i in range(count):
-            x=(-.15 if i==0 else .15)*s;m.cone((x,1.03,-.98*s),(x,1.18,-1.23*s),.055*s,3,1,10)
-    if archetype in {"lizard","crocodile","drake"}:
-        for z in np.linspace(-.35,.55,5):m.cone((0,1.06,z*s),(0,1.28,z*s),.055*s,1,1,8)
-    if archetype=="drake":
-        for side,joint in ((-1,19),(1,20)):
-            m.cone((side*.20*s,1.0,0),(side*1.02*s,1.28,.14*s),.14*s,joint,1,16)
-            m.cone((side*.34*s,1.02,.08*s),(side*.88*s,.92,.62*s),.12*s,joint,1,16)
-    if archetype=="tortoise":m.sphere((0,1.02,.02),(1.14*s,.48*s,1.26*s),1,1,10,24)
-    if archetype=="porcupine":
-        for z in np.linspace(-.35,.45,7):m.cone((0,1.04,z*s),(0,1.48,z*s),.045*s,1,1,8)
-    return m
+def creature_geometry(archetype: str, scale: float, bones=None) -> "anatomy.AnatomyMesh":
+    return anatomy.creature_geometry(archetype, scale, bones)
 
 
 def add_animation(glb: GLB, name: str, channels: dict[int, tuple[str, list[float], list[list[float]]]]) -> None:
@@ -1024,50 +1006,316 @@ def add_animation(glb: GLB, name: str, channels: dict[int, tuple[str, list[float
     glb.doc.setdefault("animations",[]).append(animation)
 
 
-def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype: str,
-                   base: tuple[int,int,int], accent: tuple[int,int,int], scale: float) -> dict:
-    glb=GLB();glb.doc["nodes"]=[];globals_=global_bone_positions();children={i:[] for i in range(len(CREATURE_BONES))}
-    for i,(_,parent,_) in enumerate(CREATURE_BONES):
-        if parent>=0:children[parent].append(i)
-    for i,(name,parent,translation) in enumerate(CREATURE_BONES):
-        node={"name":name,"translation":list(translation)}
-        if children[i]:node["children"]=children[i]
+
+def apply_growth(mesh, slug: str, scale: float) -> None:
+    """Scatter the moss, crystal, barnacles or bramble the art shows.
+
+    The art never scatters growth evenly.  A moss bear carries a mantle over
+    its back and shoulders with the brown hide showing on flank and belly; a
+    moss troll wears the same mantle plus a beard.  Scattering uniformly in
+    every direction — which is what an even radial pass does — turns both into
+    a featureless bush and throws away the silhouette the growth is there to
+    decorate.  So the heavy pass rides the upper surface, and a much lighter
+    pass drapes the flanks.
+    """
+    entries = roster.GROWTH.get(slug)
+    if not entries or not getattr(mesh, "torso", None):
+        return
+    spine, radii, bones = mesh.torso
+    # An upright body is narrower than a quadruped's barrel, so the same count
+    # reads as denser; it needs a size gain to clear a robe, not a count gain.
+    upright = getattr(mesh, "upright", False)
+    density = 1.60 if upright else 1.40
+    gain = 1.32 if upright else 1.22
+    limbs = getattr(mesh, "growth_extra", None) or ()
+    # A standing figure's growth stops at the collar; running it to the end of
+    # the torso spine buries the face, which is the one part a player reads.
+    crown = 0.86 if upright else 0.98
+    for kind, count, size in entries:
+        # Mineral growth erupts in every direction; soft growth settles on the
+        # upper surfaces.  One bias for both gave golems a tidy one-sided fan.
+        bias = .30 if kind in anatomy.SPIKY_GROWTH else .60
+        # Mantle: heaviest over the back and shoulders, thinning as it wraps.
+        anatomy.encrust(mesh, kind, max(int(count * density), 3), spine, radii,
+                        bones, scale, seed=f"{slug}:{kind}", size=size * gain,
+                        span=(0.10, crown), up_bias=bias)
+        # Drape: a sparse fringe further round the barrel, so the mantle has an
+        # edge rather than stopping dead at the waterline.
+        anatomy.encrust(mesh, kind, max(int(count * density * .40), 1), spine,
+                        radii, bones, scale, seed=f"{slug}:{kind}:flank",
+                        size=size * gain * .70, span=(0.14, crown * .96),
+                        up_bias=min(bias, .16))
+        # Limbs: arms and shoulders on the upright families, so growth does not
+        # stop at the shoulder seam.
+        for i, (pts, widths, limb_bones) in enumerate(limbs):
+            anatomy.encrust(mesh, kind, max(int(count * density * .38), 2), pts,
+                            widths, limb_bones, scale,
+                            seed=f"{slug}:{kind}:limb{i}", size=size * gain * .78,
+                            span=(0.05, 0.85), up_bias=.45)
+
+
+def add_baked_animation(glb: GLB, name: str,
+                        channels: dict[tuple[int, str], tuple[str, list, list]]) -> None:
+    """Write a baked clip that may drive several paths on the same node."""
+    animation = {"name": name, "samplers": [], "channels": []}
+    for (node, _), (path, times, values) in sorted(channels.items()):
+        input_acc = glb.accessor(np.asarray(times, dtype="float32"), "SCALAR", bounds=True)
+        width = "VEC4" if path == "rotation" else "VEC3"
+        output_acc = glb.accessor(np.asarray(values, dtype="float32"), width)
+        animation["samplers"].append({"input": input_acc, "output": output_acc,
+                                      "interpolation": "LINEAR"})
+        animation["channels"].append({"sampler": len(animation["samplers"]) - 1,
+                                      "target": {"node": node, "path": path}})
+    glb.doc.setdefault("animations", []).append(animation)
+
+
+def build_roster_creature(path: Path, actor_type: int, slug: str, label: str,
+                          family: str, plan: str, base: tuple[int, int, int],
+                          accent: tuple[int, int, int], scale: float,
+                          surface: str | None = None) -> dict:
+    """Author one creature from any skeleton family, not just the quadrupeds."""
+    glb = GLB()
+    glb.doc["nodes"] = []
+    bones, mesh, clips = families.build_parts(family, plan, scale, slug)
+    apply_growth(mesh, slug, scale)
+    globals_ = anatomy.global_positions(bones)
+    children: dict[int, list[int]] = {index: [] for index in range(len(bones))}
+    for index, (_, parent, _) in enumerate(bones):
+        if parent >= 0:
+            children[parent].append(index)
+    for index, (name, parent, translation) in enumerate(bones):
+        node = {"name": name, "translation": [float(v) for v in translation]}
+        if children[index]:
+            node["children"] = children[index]
         glb.doc["nodes"].append(node)
-    glb.doc["scenes"][0]["nodes"]=[0]
-    inverse=[]
+    glb.doc["scenes"][0]["nodes"] = [0]
+
+    inverse = []
     for position in globals_:
-        matrix=np.eye(4,dtype="float32");matrix[:3,3]=-position;inverse.append(matrix.T.reshape(-1))
-    inverse_acc=glb.accessor(np.asarray(inverse,dtype="float32"),"MAT4")
-    glb.doc["skins"]=[{"name":"Nymara Creature Rig","joints":list(range(len(CREATURE_BONES))),
-                       "skeleton":0,"inverseBindMatrices":inverse_acc}]
-    mats=[glb.material(label+" Body",base,roughness=.82),
-          glb.material(label+" Accent",accent,metallic=.08,roughness=.55,
-                       emissive=tuple(c//10 for c in accent))]
-    groups=creature_geometry(archetype,scale).arrays()[6];primitives=[];vertices=triangles=0
-    for index,arrays in enumerate(groups):
-        if not len(arrays[0]):continue
-        primitives.append(glb.primitive(*arrays[:4],mats[index],joints=arrays[4],weights=arrays[5]))
-        vertices+=len(arrays[0]);triangles+=len(arrays[3])//3
-    glb.mesh_node(label,primitives,skin=0,parent=0)
-    q=lambda axis,a:quat(axis,a)
-    add_animation(glb,"Idle_A",{1:("rotation",[0,1,2],[q("z",-.025),q("z",.025),q("z",-.025)]),
-                                 5:("rotation",[0,1,2],[q("y",-.10),q("y",.10),q("y",-.10)])})
-    walk={7:("rotation",[0,.5,1],[q("x",.52),q("x",-.52),q("x",.52)]),
-          10:("rotation",[0,.5,1],[q("x",-.52),q("x",.52),q("x",-.52)]),
-          13:("rotation",[0,.5,1],[q("x",-.52),q("x",.52),q("x",-.52)]),
-          16:("rotation",[0,.5,1],[q("x",.52),q("x",-.52),q("x",.52)])}
-    add_animation(glb,"Walk",walk)
-    run={bone:(path,[0,.35,.7],[q("x",.82 if vals[0][0]>0 else -.82),q("x",-.82 if vals[0][0]>0 else .82),q("x",.82 if vals[0][0]>0 else -.82)])
-         for bone,(path,_,vals) in walk.items()}
-    add_animation(glb,"Jog",run)
-    add_animation(glb,"Fighting_Idle",{2:("rotation",[0,.7,1.4],[q("x",-.08),q("x",.08),q("x",-.08)])})
-    add_animation(glb,"Sword_Attack",{2:("rotation",[0,.28,.65],[q("x",-.18),q("x",.55),q("x",-.18)]),
-                                      4:("rotation",[0,.28,.65],[q("x",0),q("x",.42),q("x",0)])})
-    add_animation(glb,"Hit_Chest",{1:("rotation",[0,.2,.48],[q("z",0),q("z",.25),q("z",0)])})
-    add_animation(glb,"Death_A",{0:("rotation",[0,.7,1.3],[q("z",0),q("z",1.0),q("z",1.48)])})
+        matrix = np.eye(4, dtype="float32")
+        matrix[:3, 3] = -position
+        inverse.append(matrix.T.reshape(-1))
+    glb.doc["skins"] = [{"name": f"Nymara {family.title()} Rig",
+                         "joints": list(range(len(bones))), "skeleton": 0,
+                         "inverseBindMatrices": glb.accessor(
+                             np.asarray(inverse, dtype="float32"), "MAT4")}]
+
+    # Full-colour albedo plus a matching normal map, both derived from one
+    # height field so the relief lines up with the pattern.  The albedo carries
+    # the palette, so the base colour factor stays white and is not applied
+    # twice; the underside shares the grain and tints with a factor.
+    hints = families.material_hints(family, plan, slug)
+    surface_kind = hints.get("surface") or surface or plan
+    albedo_png, _ = surfaces.surface_maps(
+        surface_kind, base, accent, seed=slug, size=256,
+        marking=surfaces.MARKINGS.get(slug))
+    _, normal_png = surfaces.surface_maps(
+        surface_kind, base, accent, seed=slug, size=192)
+    if hints.get("glow"):
+        # Shards, motes, orbs and props on an elemental belong to its own
+        # palette; bone-white keratin turned every crystal swarm grey.
+        horn_albedo, horn_normal = surfaces.surface_maps(
+            surface_kind, accent, base, seed=f"{slug}:feature", size=160)
+    else:
+        horn_albedo, horn_normal = surfaces.keratin_maps(accent, seed=slug, size=160)
+    dark = tuple(max(14, int(c * .26)) for c in base)
+    alpha = float(hints.get("alpha", 1.0))
+    alpha_mode = hints.get("alpha_mode")
+    glow = float(hints.get("glow", 0.0))
+    two_sided = bool(hints.get("double_sided", False))
+    body_glow = tuple(int(c * glow) for c in base) if glow else None
+    accent_glow = tuple(int(c * min(1.0, glow * 1.35)) for c in accent) if glow else None
+    mats = [glb.material(f"{label} Hide", (255, 255, 255), roughness=.86,
+                         texture_png=albedo_png, normal_png=normal_png,
+                         emissive=body_glow, alpha=alpha, alpha_mode=alpha_mode,
+                         double_sided=two_sided)]
+    hide_texture = len(glb.doc["textures"]) - 2
+    hide_normal = len(glb.doc["textures"]) - 1
+    underside = tuple(min(255, int(.46 * a + .54 * b) + 26) for a, b in zip(accent, base))
+    mats.append(glb.material(f"{label} Underside", underside, roughness=.82,
+                             emissive=accent_glow, alpha=alpha,
+                             alpha_mode=alpha_mode, double_sided=two_sided))
+    glb.doc["materials"][mats[1]]["pbrMetallicRoughness"]["baseColorTexture"] = {
+        "index": hide_texture}
+    glb.doc["materials"][mats[1]]["normalTexture"] = {"index": hide_normal}
+    mats.append(glb.material(f"{label} Claw", dark, roughness=.44, metallic=.04))
+    # Motes, shards, orbs and props stay opaque so they read through the body.
+    mats.append(glb.material(f"{label} Keratin", (255, 255, 255), roughness=.56,
+                             metallic=.03, texture_png=horn_albedo,
+                             normal_png=horn_normal, emissive=accent_glow))
+    # Growth carries its own colour and surface: moss is green, rime is pale
+    # ice, crystal keeps the creature's own mineral tint.
+    growth_kinds = [(kind, count) for kind, count, _ in roster.GROWTH.get(slug, [])]
+    growth_rgb = anatomy.growth_colour(growth_kinds, accent, base)
+    growth_surface = {"moss": "moss", "vine": "moss", "leaf": "moss",
+                      "fungus": "hide", "thorn": "bark", "barnacle": "barnacle",
+                      "coral": "barnacle", "rime": "ice", "crystal": "crystal",
+                      "ember": "energy", "plate": "stone", "spine": "bark"}.get(
+        growth_kinds[0][0] if growth_kinds else "moss", "moss")
+    growth_albedo, growth_normal = surfaces.surface_maps(
+        growth_surface, growth_rgb, accent, seed=f"{slug}:growth", size=160)
+    mats.append(glb.material(f"{label} Growth", (255, 255, 255), roughness=.80,
+                             texture_png=growth_albedo, normal_png=growth_normal,
+                             emissive=accent_glow))
+
+    groups = mesh.arrays()
+    # Settle the bind pose: raise the rig and its geometry together so a rest
+    # pose never starts below the floor.  Shifting the root translation moves
+    # every global, and shifting the vertices by the same amount keeps the skin
+    # binding identical.
+    filled = [a for a in groups if len(a[0])]
+    if filled:
+        lowest = float(min(a[0][:, 1].min() for a in filled))
+        if lowest < -0.002:
+            lift = -lowest
+            for arrays in groups:
+                if len(arrays[0]):
+                    arrays[0][:, 1] += lift
+            name, parent, translation = bones[0]
+            bones[0] = (name, parent, (translation[0], translation[1] + lift,
+                                       translation[2]))
+            globals_ = anatomy.global_positions(bones)
+            inverse = []
+            for position in globals_:
+                matrix = np.eye(4, dtype="float32")
+                matrix[:3, 3] = -position
+                inverse.append(matrix.T.reshape(-1))
+            glb.doc["skins"][0]["inverseBindMatrices"] = glb.accessor(
+                np.asarray(inverse, dtype="float32"), "MAT4")
+            glb.doc["nodes"][0]["translation"] = [float(v) for v in bones[0][2]]
+
+    primitives = []
+    vertices = triangles = 0
+    for index, arrays in enumerate(groups):
+        if not len(arrays[0]):
+            continue
+        primitives.append(glb.primitive(*arrays[:4], mats[index],
+                                        joints=arrays[4], weights=arrays[5]))
+        vertices += len(arrays[0])
+        triangles += len(arrays[3]) // 3
+    glb.mesh_node(label, primitives, skin=0, parent=0)
+
+    clips = anatomy.ground_clamp(clips, bones, groups)
+    clips = anatomy.settle_final_pose(clips, bones, groups, "Death_A")
+    for clip in anatomy.REQUIRED_CLIPS:
+        add_baked_animation(glb, clip, clips[clip])
     glb.write(path)
-    return {"actor_type":actor_type,"id":slug,"name":label,"archetype":archetype,
-            "vertices":vertices,"triangles":triangles,"joints":len(CREATURE_BONES),"animations":7}
+    return {"actor_type": actor_type, "id": slug, "name": label, "family": family,
+            "archetype": plan, "vertices": vertices, "triangles": triangles,
+            "joints": len(bones), "animations": len(anatomy.REQUIRED_CLIPS)}
+
+
+def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype: str,
+                   base: tuple[int, int, int], accent: tuple[int, int, int],
+                   scale: float) -> dict:
+    """Author one production creature GLB: rig, skin, materials and clips."""
+    glb = GLB()
+    glb.doc["nodes"] = []
+    bones = anatomy.skeleton_for(archetype, scale)
+    globals_ = anatomy.global_positions(bones)
+    children: dict[int, list[int]] = {index: [] for index in range(len(bones))}
+    for index, (_, parent, _) in enumerate(bones):
+        if parent >= 0:
+            children[parent].append(index)
+    for index, (name, parent, translation) in enumerate(bones):
+        node = {"name": name, "translation": [float(v) for v in translation]}
+        if children[index]:
+            node["children"] = children[index]
+        glb.doc["nodes"].append(node)
+    glb.doc["scenes"][0]["nodes"] = [0]
+
+    inverse = []
+    for position in globals_:
+        matrix = np.eye(4, dtype="float32")
+        matrix[:3, 3] = -position
+        inverse.append(matrix.T.reshape(-1))
+    inverse_acc = glb.accessor(np.asarray(inverse, dtype="float32"), "MAT4")
+    glb.doc["skins"] = [{"name": "Nymara Creature Rig",
+                         "joints": list(range(len(bones))),
+                         "skeleton": 0, "inverseBindMatrices": inverse_acc}]
+
+    # -- materials -------------------------------------------------------
+    # Full-colour albedo plus a matching normal map, both derived from one
+    # height field so the relief lines up with the pattern.  The albedo carries
+    # the palette, so the base colour factor stays white and is not applied
+    # twice; the underside shares the grain and tints with a factor.
+    hints = families.material_hints("quadruped", archetype, slug)
+    albedo_png, _ = surfaces.surface_maps(
+        archetype, base, accent, seed=slug, size=256,
+        marking=surfaces.MARKINGS.get(slug))
+    _, normal_png = surfaces.surface_maps(
+        archetype, base, accent, seed=slug, size=192)
+    if hints.get("glow"):
+        # Shards, motes, orbs and props on an elemental belong to its own
+        # palette; bone-white keratin turned every crystal swarm grey.
+        horn_albedo, horn_normal = surfaces.surface_maps(
+            surface_kind, accent, base, seed=f"{slug}:feature", size=160)
+    else:
+        horn_albedo, horn_normal = surfaces.keratin_maps(accent, seed=slug, size=160)
+    dark = tuple(max(14, int(c * .26)) for c in base)
+    alpha = float(hints.get("alpha", 1.0))
+    alpha_mode = hints.get("alpha_mode")
+    glow = float(hints.get("glow", 0.0))
+    two_sided = bool(hints.get("double_sided", False))
+    body_glow = tuple(int(c * glow) for c in base) if glow else None
+    accent_glow = tuple(int(c * min(1.0, glow * 1.35)) for c in accent) if glow else None
+    mats = [glb.material(f"{label} Hide", (255, 255, 255), roughness=.86,
+                         texture_png=albedo_png, normal_png=normal_png,
+                         emissive=body_glow, alpha=alpha, alpha_mode=alpha_mode,
+                         double_sided=two_sided)]
+    hide_texture = len(glb.doc["textures"]) - 2
+    hide_normal = len(glb.doc["textures"]) - 1
+    underside = tuple(min(255, int(.46 * a + .54 * b) + 26) for a, b in zip(accent, base))
+    mats.append(glb.material(f"{label} Underside", underside, roughness=.82,
+                             emissive=accent_glow, alpha=alpha,
+                             alpha_mode=alpha_mode, double_sided=two_sided))
+    glb.doc["materials"][mats[1]]["pbrMetallicRoughness"]["baseColorTexture"] = {
+        "index": hide_texture}
+    glb.doc["materials"][mats[1]]["normalTexture"] = {"index": hide_normal}
+    mats.append(glb.material(f"{label} Claw", dark, roughness=.44, metallic=.04))
+    # Motes, shards, orbs and props stay opaque so they read through the body.
+    mats.append(glb.material(f"{label} Keratin", (255, 255, 255), roughness=.56,
+                             metallic=.03, texture_png=horn_albedo,
+                             normal_png=horn_normal, emissive=accent_glow))
+    # Growth carries its own colour and surface: moss is green, rime is pale
+    # ice, crystal keeps the creature's own mineral tint.
+    growth_kinds = [(kind, count) for kind, count, _ in roster.GROWTH.get(slug, [])]
+    growth_rgb = anatomy.growth_colour(growth_kinds, accent, base)
+    growth_surface = {"moss": "moss", "vine": "moss", "leaf": "moss",
+                      "fungus": "hide", "thorn": "bark", "barnacle": "barnacle",
+                      "coral": "barnacle", "rime": "ice", "crystal": "crystal",
+                      "ember": "energy", "plate": "stone", "spine": "bark"}.get(
+        growth_kinds[0][0] if growth_kinds else "moss", "moss")
+    growth_albedo, growth_normal = surfaces.surface_maps(
+        growth_surface, growth_rgb, accent, seed=f"{slug}:growth", size=160)
+    mats.append(glb.material(f"{label} Growth", (255, 255, 255), roughness=.80,
+                             texture_png=growth_albedo, normal_png=growth_normal,
+                             emissive=accent_glow))
+
+    geometry = anatomy.creature_geometry(archetype, scale, bones)
+    apply_growth(geometry, slug, scale)
+    groups = geometry.arrays()
+    primitives = []
+    vertices = triangles = 0
+    for index, arrays in enumerate(groups):
+        if not len(arrays[0]):
+            continue
+        primitives.append(glb.primitive(*arrays[:4], mats[index],
+                                        joints=arrays[4], weights=arrays[5]))
+        vertices += len(arrays[0])
+        triangles += len(arrays[3]) // 3
+    glb.mesh_node(label, primitives, skin=0, parent=0)
+
+    clips = anatomy.ground_clamp(anatomy.animation_set(archetype, scale, bones),
+                                 bones, groups)
+    clips = anatomy.settle_final_pose(clips, bones, groups, "Death_A")
+    for clip in anatomy.REQUIRED_CLIPS:
+        add_baked_animation(glb, clip, clips[clip])
+
+    glb.write(path)
+    return {"actor_type": actor_type, "id": slug, "name": label, "archetype": archetype,
+            "vertices": vertices, "triangles": triangles, "joints": len(bones),
+            "animations": len(anatomy.REQUIRED_CLIPS)}
 
 
 def build_equipment(path: Path, slug: str, label: str, kind: str,
@@ -1131,6 +1379,21 @@ def build_hair(source_dir: Path, output: Path, style: str, gender: str) -> dict:
             "vertices": len(positions), "triangles": len(indices) // 3,
             "bounds": {"min": positions.min(axis=0).round(5).tolist(),
                        "max": positions.max(axis=0).round(5).tolist()}}
+
+
+def glb_geometry_stats(path: Path) -> dict:
+    """Triangle, joint and clip counts read back out of a finished GLB."""
+    raw = path.read_bytes()
+    json_length = struct.unpack_from("<II", raw, 12)[0]
+    doc = json.loads(raw[20:20 + json_length])
+    triangles = 0
+    for mesh in doc.get("meshes", []):
+        for primitive in mesh.get("primitives", []):
+            if "indices" in primitive:
+                triangles += doc["accessors"][primitive["indices"]]["count"] // 3
+    joints = len(doc["skins"][0]["joints"]) if doc.get("skins") else 0
+    return {"triangles": triangles, "joints": joints,
+            "animations": len(doc.get("animations", []))}
 
 
 def validate_glb(path: Path) -> dict:
@@ -1221,6 +1484,29 @@ def build_model_registry() -> dict:
             "attachments": {"head": "head", "body": "body", "neck": "neck"},
         }
         actor_types[str(actor_type)] = slug
+
+    for index, entry in enumerate(roster.ROSTER):
+        slug = entry[0]
+        models[slug] = {
+            "scene": f"res://assets/actors/native/creatures/{slug}.glb",
+            "animationLibrary": f"res://assets/actors/native/creatures/{slug}.glb",
+            "animationMap": "res://data/animations/creature.json",
+            "import": {"scale": 1, "rotationDegreesX": 0,
+                       "rotationDegreesY": 0, "rotationDegreesZ": 0},
+            "attachments": {"head": "head", "body": "body", "neck": "neck"},
+        }
+        actor_types[str(roster_actor_type(index))] = slug
+
+    for slug, _label, _archetype, scale, _tacked in AMBIENT_CREATURES:
+        models[slug] = {
+            "scene": f"res://assets/actors/native/creatures/{slug}.glb",
+            "animationLibrary": f"res://assets/actors/native/creatures/{slug}.glb",
+            "animationMap": "res://data/animations/creature.json",
+            "import": {"scale": scale, "rotationDegreesX": 0,
+                       "rotationDegreesY": 0, "rotationDegreesZ": 0},
+            "attachments": {"head": "head", "body": "body", "neck": "neck"},
+            "serverActorType": None,
+        }
 
     # Humanoid enemies share player rigs and gain equipment-defined silhouettes.
     enemy_models = {
@@ -1332,6 +1618,19 @@ def main() -> None:
             path=args.output/"creatures"/f"{slug}.glb"
             manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":str(path.relative_to(repo_root))}
             print("creature",slug,manifest["creatures"][slug])
+    if args.only in ("all","creatures"):
+        for index, entry in enumerate(roster.ROSTER):
+            slug, label, family, plan, base, accent, scale, sheet, row, column = entry
+            path = args.output / "creatures" / f"{slug}.glb"
+            record = build_roster_creature(path, roster_actor_type(index), slug, label,
+                                           family, plan, base, accent, scale)
+            record |= {"path": str(path.relative_to(repo_root)),
+                       "locale": roster.SHEET_LOCALES[sheet],
+                       "concept": {"sheet": sheet, "cell": [row, column]}}
+            if family in HOVERING_FAMILIES:
+                record["hovers"] = True
+            manifest["creatures"][slug] = record
+            print("creature", slug, record["triangles"], "tris")
     if args.only=="creatures":
         previous=manifest.get("validation",{}).get("results",{})
         rebuilt={str(path.relative_to(repo_root)):validate_glb(path)
@@ -1368,6 +1667,18 @@ def main() -> None:
             "visuals":[visual for visual,_n,_b,_a in piece.variants],
             "path":str(path.relative_to(repo_root))}
         print("generic",piece.slug,manifest["genericEquipment"][piece.slug])
+    manifest["ambientCreatures"] = {}
+    for slug, label, archetype, _scale, tacked in AMBIENT_CREATURES:
+        path = args.output / "creatures" / f"{slug}.glb"
+        record = {"id": slug, "name": label, "archetype": archetype,
+                  "path": str(path.relative_to(repo_root)),
+                  "generator": "eloria-assets/tools/sunmane/creatures.py",
+                  "tacked": tacked, "region": "sunmane_steppe",
+                  "note": AMBIENT_SOURCE_NOTE}
+        if path.exists():
+            record |= glb_geometry_stats(path)
+        manifest["ambientCreatures"][slug] = record
+    manifest["ambientCreaturesNote"] = AMBIENT_NOTE
     validation={str(path.relative_to(repo_root)):validate_glb(path) for path in args.output.rglob("*.glb")}
     if args.only=="equipment":
         # Only revalidate what this run rebuilt.  Ambient scenery GLBs are

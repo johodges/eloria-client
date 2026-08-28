@@ -34,6 +34,12 @@ var _equipment_nodes: Dictionary = {}
 var _equipment_hides: Dictionary = {}
 var _hidden_body_surfaces: Dictionary = {}
 var _nameplate: Label3D
+var _settled := false
+
+# Visual layer 2. The gameplay camera renders layers 1 and 2; the minimap and
+# full-map cameras render layers 1 and 3.
+const GAMEPLAY_ONLY_VISUAL_LAYER := 2
+const SETTLED_YAW_EPSILON := 0.0005
 
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		model_config: Dictionary, animation_config: Dictionary,
@@ -68,6 +74,10 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	selection_ring.mesh = ring
 	selection_ring.position.y = 0.05
 	selection_ring.visible = false
+	# Gameplay-only visual layer. The minimap and full-map cameras cull it, so
+	# neither top-down viewport pays for selection rings or nameplates it never
+	# shows at their scale.
+	selection_ring.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(selection_ring)
 	_add_nameplate(dto)
 	resolver = AnimationResolver.new(animation_config)
@@ -84,11 +94,10 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		if not visual_error.is_empty():
 			errors.append(visual_error)
 			_add_fallback_visual(dto)
-		var skeleton := find_child("*", true, false) as Skeleton3D
-		if skeleton == null:
-			for node in find_children("*", "Skeleton3D", true, false):
-				skeleton = node as Skeleton3D
-				break
+		var skeleton: Skeleton3D = null
+		for node in find_children("*", "Skeleton3D", true, false):
+			skeleton = node as Skeleton3D
+			break
 		if skeleton == null:
 			errors.append("Skeleton3D missing")
 		else:
@@ -252,6 +261,7 @@ func _add_nameplate(dto: Dictionary) -> void:
 	label.font_size = 28
 	label.outline_size = 6
 	label.modulate = Color(1.0, 1.0, 1.0, 1.0)
+	label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(label)
 	_nameplate = label
 
@@ -305,6 +315,7 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 			global_position.distance_to(server_target), _presentation_speed,
 			_smoothed_server_interval, arrival_margin,
 			minimum_segment_duration, maximum_segment_duration)
+	_wake()
 	if dto.has("command") and resolver != null:
 		play_action(resolver.action_for_command(actor_command))
 	apply_equipment_visuals(dto.get("equipment_visuals", {}) as Dictionary,
@@ -715,6 +726,7 @@ func _on_animation_finished(_animation_name: StringName) -> void:
 		play_action(&"idle")
 
 func turn_by(radians: float) -> void:
+	_wake()
 	_target_yaw = wrapf(_target_yaw + radians, -PI, PI)
 	_facing_override_active = true
 	_facing_override_yaw = _target_yaw
@@ -749,9 +761,12 @@ func set_selected(value: bool) -> void:
 		ring.visible = value
 
 func set_surface_height(value: float) -> void:
+	if not _snap_pending and is_equal_approx(server_target.y, value):
+		return
 	server_target.y = value
 	if _snap_pending or absf(global_position.y - value) > 0.5:
 		global_position.y = value
+	_wake()
 
 static func presentation_segment_duration(distance: float, nominal_speed: float,
 		observed_interval: float, margin: float, minimum_duration: float,
@@ -767,6 +782,7 @@ func _physics_process(delta: float) -> void:
 		rotation.y = _target_yaw
 		_segment_start = server_target
 		_snap_pending = false
+		_settle_if_idle()
 		return
 	if _segment_duration > 0.0:
 		_segment_elapsed = minf(_segment_elapsed + delta, _segment_duration)
@@ -779,18 +795,35 @@ func _physics_process(delta: float) -> void:
 	else:
 		global_position = server_target
 	rotation.y = rotate_toward(rotation.y, _target_yaw, turn_speed_radians * delta)
+	_settle_if_idle()
+
+## A standing actor reproduced the same transform 60 times a second. Once the
+## interpolation segment has finished and the actor faces where the server says
+## it should, the node is snapped exactly onto its target and physics processing
+## stops until the next packet, keypress or surface sample wakes it. Nothing
+## about the resulting pose differs from the value the loop kept rewriting.
+func _settle_if_idle() -> void:
+	if _snap_pending or _segment_duration > 0.0:
+		return
+	if absf(wrapf(_target_yaw - rotation.y, -PI, PI)) > SETTLED_YAW_EPSILON:
+		return
+	global_position = server_target
+	rotation.y = _target_yaw
+	_settled = true
+	set_physics_process(false)
+
+func _wake() -> void:
+	if not _settled:
+		return
+	_settled = false
+	set_physics_process(true)
 
 func _load_native_scene(path: String) -> Array[String]:
 	if path.is_empty():
 		return ["model scene path missing"]
-	var document := GLTFDocument.new()
-	var state := GLTFState.new()
-	var error := document.append_from_file(path, state)
-	if error != OK:
-		return ["model glTF import failed: " + error_string(error), path]
-	var model := document.generate_scene(state)
+	var model := GlbSceneCache.instantiate(path)
 	if model == null:
-		return ["model glTF scene generation failed"]
+		return ["model glTF import failed", path]
 	model.name = "NativeModel"
 	add_child(model)
 	return []
@@ -892,11 +925,12 @@ func _validate_native_visual() -> String:
 func _native_visual_bounds(model: Node3D) -> AABB:
 	var combined: AABB = AABB()
 	var initialized: bool = false
+	var to_model: Transform3D = model.global_transform.affine_inverse()
 	for node_value: Node in model.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
 		if mesh_node.mesh == null:
 			continue
-		var relative: Transform3D = model.global_transform.affine_inverse() * mesh_node.global_transform
+		var relative: Transform3D = to_model * mesh_node.global_transform
 		var mesh_bounds: AABB = relative * mesh_node.get_aabb()
 		combined = combined.merge(mesh_bounds) if initialized else mesh_bounds
 		initialized = true

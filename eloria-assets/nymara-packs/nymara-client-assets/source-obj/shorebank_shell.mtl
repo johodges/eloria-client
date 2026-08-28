@@ -1,0 +1,5 @@
+newmtl shorebank_shell
+Kd 1 1 1
+d 1
+map_Kd shorebank_shell.png
+map_d shorebank_shell.png

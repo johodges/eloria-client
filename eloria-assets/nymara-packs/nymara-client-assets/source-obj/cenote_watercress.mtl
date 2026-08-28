@@ -1,0 +1,5 @@
+newmtl cenote_watercress
+Kd 1 1 1
+d 1
+map_Kd cenote_watercress.png
+map_d cenote_watercress.png

@@ -1,0 +1,2930 @@
+{
+ "note": "Bind-pose renders of the checked-in GLBs beside the concept figure each creature was authored from. Concept crops use the true figure bounds found by concept_sheet_index.py, not a uniform grid, so wings, antlers and tails are not clipped.",
+ "renderer": "eloria-assets/tools/render_creature_qa.py",
+ "index": "eloria-assets/tools/concept_sheet_index.py",
+ "view": {
+  "yaw": 34.0,
+  "pitch": 14.0
+ },
+ "creatures": [
+  {
+   "creature": "moss_bear",
+   "name": "Moss Bear",
+   "locale": "amberwood",
+   "family": "quadruped",
+   "plan": "ursine",
+   "concept": {
+    "sheet": "4250fde7",
+    "cell": [
+     0,
+     3
+    ],
+    "box": [
+     1085,
+     65,
+     1407,
+     362
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/moss_bear.glb"
+  },
+  {
+   "creature": "amberwood_scarecrow",
+   "name": "Amberwood Scarecrow",
+   "locale": "amberwood",
+   "family": "biped",
+   "plan": "revenant",
+   "concept": {
+    "sheet": "4250fde7",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1086,
+     379,
+     1359,
+     687
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/amberwood_scarecrow.glb"
+  },
+  {
+   "creature": "amberwood_ghost_knight",
+   "name": "Amberwood Ghost Knight",
+   "locale": "amberwood",
+   "family": "biped",
+   "plan": "knight",
+   "concept": {
+    "sheet": "4250fde7",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     359,
+     714,
+     627,
+     1023
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/amberwood_ghost_knight.glb"
+  },
+  {
+   "creature": "emberwing_moth",
+   "name": "Emberwing Moth",
+   "locale": "amberwood",
+   "family": "insect",
+   "plan": "moth",
+   "concept": {
+    "sheet": "a5ba7c19",
+    "cell": [
+     0,
+     3
+    ],
+    "box": [
+     1086,
+     8,
+     1522,
+     296
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/emberwing_moth.glb"
+  },
+  {
+   "creature": "amberwood_owl",
+   "name": "Amberwood Owl",
+   "locale": "amberwood",
+   "family": "avian",
+   "plan": "owl",
+   "concept": {
+    "sheet": "a5ba7c19",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     54,
+     349,
+     284,
+     655
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/amberwood_owl.glb"
+  },
+  {
+   "creature": "bramble_wolf",
+   "name": "Bramble Wolf",
+   "locale": "amberwood",
+   "family": "quadruped",
+   "plan": "canid",
+   "concept": {
+    "sheet": "a5ba7c19",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     371,
+     376,
+     733,
+     640
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/bramble_wolf.glb"
+  },
+  {
+   "creature": "moss_troll",
+   "name": "Moss Troll",
+   "locale": "amberwood",
+   "family": "biped",
+   "plan": "brute",
+   "concept": {
+    "sheet": "a5ba7c19",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     788,
+     347,
+     1167,
+     690
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/moss_troll.glb"
+  },
+  {
+   "creature": "amberwood_treant",
+   "name": "Amberwood Treant",
+   "locale": "amberwood",
+   "family": "biped",
+   "plan": "treant",
+   "concept": {
+    "sheet": "a5ba7c19",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1086,
+     297,
+     1506,
+     667
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/amberwood_treant.glb"
+  },
+  {
+   "creature": "ivy_hound",
+   "name": "Ivy Hound",
+   "locale": "amberwood",
+   "family": "quadruped",
+   "plan": "canid",
+   "concept": {
+    "sheet": "a5ba7c19",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     7,
+     663,
+     323,
+     1007
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/ivy_hound.glb"
+  },
+  {
+   "creature": "thorn_revenant",
+   "name": "Thorn Revenant",
+   "locale": "amberwood",
+   "family": "biped",
+   "plan": "revenant",
+   "concept": {
+    "sheet": "a5ba7c19",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     434,
+     646,
+     692,
+     1019
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/thorn_revenant.glb"
+  },
+  {
+   "creature": "spectral_highwayman",
+   "name": "Spectral Highwayman",
+   "locale": "amberwood",
+   "family": "biped",
+   "plan": "revenant",
+   "concept": {
+    "sheet": "a5ba7c19",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     778,
+     640,
+     1151,
+     1018
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/spectral_highwayman.glb"
+  },
+  {
+   "creature": "lantern_stag",
+   "name": "Lantern Stag",
+   "locale": "amberwood",
+   "family": "quadruped",
+   "plan": "cervid",
+   "concept": {
+    "sheet": "a5ba7c19",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1086,
+     668,
+     1531,
+     1019
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/lantern_stag.glb"
+  },
+  {
+   "creature": "moss_badger",
+   "name": "Moss Badger",
+   "locale": "amberwood",
+   "family": "quadruped",
+   "plan": "mustelid",
+   "concept": {
+    "sheet": "c09f0eed",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     12,
+     550,
+     294,
+     762
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/moss_badger.glb"
+  },
+  {
+   "creature": "bramble_stag",
+   "name": "Bramble Stag",
+   "locale": "amberwood",
+   "family": "quadruped",
+   "plan": "cervid",
+   "concept": {
+    "sheet": "c09f0eed",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     320,
+     408,
+     607,
+     783
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/bramble_stag.glb"
+  },
+  {
+   "creature": "leafling_sprite",
+   "name": "Leafling Sprite",
+   "locale": "amberwood",
+   "family": "biped",
+   "plan": "treant",
+   "concept": {
+    "sheet": "c09f0eed",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     632,
+     503,
+     851,
+     790
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/leafling_sprite.glb"
+  },
+  {
+   "creature": "ember_wisp",
+   "name": "Ember Wisp",
+   "locale": "amberwood",
+   "family": "amorphous",
+   "plan": "wisp",
+   "concept": {
+    "sheet": "c09f0eed",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     9,
+     849,
+     216,
+     1213
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/ember_wisp.glb"
+  },
+  {
+   "creature": "ivy_stone_golem",
+   "name": "Ivy Stone Golem",
+   "locale": "amberwood",
+   "family": "biped",
+   "plan": "golem",
+   "concept": {
+    "sheet": "c09f0eed",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     515,
+     819,
+     886,
+     1263
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/ivy_stone_golem.glb"
+  },
+  {
+   "creature": "amberwood_dryad",
+   "name": "Amberwood Dryad",
+   "locale": "amberwood",
+   "family": "biped",
+   "plan": "mage",
+   "concept": {
+    "sheet": "c09f0eed",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     824,
+     783,
+     1222,
+     1263
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/amberwood_dryad.glb"
+  },
+  {
+   "creature": "amethyst_scorpion",
+   "name": "Amethyst Scorpion",
+   "locale": "amethyst_barrens",
+   "family": "arachnid",
+   "plan": "scorpion",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     0,
+     0
+    ],
+    "box": [
+     54,
+     17,
+     342,
+     323
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/amethyst_scorpion.glb"
+  },
+  {
+   "creature": "geode_scarab",
+   "name": "Geode Scarab",
+   "locale": "amethyst_barrens",
+   "family": "insect",
+   "plan": "beetle",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     0,
+     1
+    ],
+    "box": [
+     398,
+     70,
+     740,
+     314
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/geode_scarab.glb"
+  },
+  {
+   "creature": "prism_drake",
+   "name": "Prism Drake",
+   "locale": "amethyst_barrens",
+   "family": "quadruped",
+   "plan": "sprawler",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     0,
+     2
+    ],
+    "box": [
+     785,
+     23,
+     1131,
+     318
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/prism_drake.glb"
+  },
+  {
+   "creature": "shardling_swarm",
+   "name": "Shardling Swarm",
+   "locale": "amethyst_barrens",
+   "family": "amorphous",
+   "plan": "shards",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     0,
+     3
+    ],
+    "box": [
+     1191,
+     14,
+     1474,
+     314
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/shardling_swarm.glb"
+  },
+  {
+   "creature": "barrens_wisp",
+   "name": "Barrens Wisp",
+   "locale": "amethyst_barrens",
+   "family": "amorphous",
+   "plan": "wisp",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     57,
+     342,
+     348,
+     642
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/barrens_wisp.glb"
+  },
+  {
+   "creature": "amethyst_golem",
+   "name": "Amethyst Golem",
+   "locale": "amethyst_barrens",
+   "family": "biped",
+   "plan": "golem",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     414,
+     337,
+     716,
+     646
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/amethyst_golem.glb"
+  },
+  {
+   "creature": "crystalwing",
+   "name": "Crystalwing",
+   "locale": "amethyst_barrens",
+   "family": "quadruped",
+   "plan": "drake",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     781,
+     357,
+     1123,
+     636
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/crystalwing.glb"
+  },
+  {
+   "creature": "geode_tortoise",
+   "name": "Geode Tortoise",
+   "locale": "amethyst_barrens",
+   "family": "quadruped",
+   "plan": "chelonian",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1172,
+     417,
+     1504,
+     637
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/geode_tortoise.glb"
+  },
+  {
+   "creature": "facet_hound",
+   "name": "Facet Hound",
+   "locale": "amethyst_barrens",
+   "family": "quadruped",
+   "plan": "canid",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     61,
+     685,
+     355,
+     964
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/facet_hound.glb"
+  },
+  {
+   "creature": "prism_moth",
+   "name": "Prism Moth",
+   "locale": "amethyst_barrens",
+   "family": "insect",
+   "plan": "moth",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     411,
+     647,
+     727,
+     964
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/prism_moth.glb"
+  },
+  {
+   "creature": "lattice_spider",
+   "name": "Lattice Spider",
+   "locale": "amethyst_barrens",
+   "family": "arachnid",
+   "plan": "spider",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     770,
+     709,
+     1104,
+     985
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/lattice_spider.glb"
+  },
+  {
+   "creature": "orrery_sentinel",
+   "name": "Orrery Sentinel",
+   "locale": "amethyst_barrens",
+   "family": "biped",
+   "plan": "construct",
+   "concept": {
+    "sheet": "47a41963",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1176,
+     641,
+     1422,
+     992
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/orrery_sentinel.glb"
+  },
+  {
+   "creature": "crownwater_turtle",
+   "name": "Crownwater Turtle",
+   "locale": "crownwater",
+   "family": "quadruped",
+   "plan": "chelonian",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     0,
+     0
+    ],
+    "box": [
+     14,
+     45,
+     395,
+     320
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/crownwater_turtle.glb"
+  },
+  {
+   "creature": "tidefin_naga",
+   "name": "Tidefin Naga",
+   "locale": "crownwater",
+   "family": "biped",
+   "plan": "warrior",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     0,
+     1
+    ],
+    "box": [
+     435,
+     16,
+     773,
+     339
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/tidefin_naga.glb"
+  },
+  {
+   "creature": "lanternwyrm",
+   "name": "Lanternwyrm",
+   "locale": "crownwater",
+   "family": "serpent",
+   "plan": "sea_serpent",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     0,
+     2
+    ],
+    "box": [
+     772,
+     11,
+     1114,
+     334
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/lanternwyrm.glb"
+  },
+  {
+   "creature": "crownwater_wyvern",
+   "name": "Crownwater Wyvern",
+   "locale": "crownwater",
+   "family": "quadruped",
+   "plan": "drake",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     0,
+     3
+    ],
+    "box": [
+     1137,
+     8,
+     1524,
+     345
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/crownwater_wyvern.glb"
+  },
+  {
+   "creature": "cascade_golem",
+   "name": "Cascade Golem",
+   "locale": "crownwater",
+   "family": "biped",
+   "plan": "golem",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     6,
+     332,
+     387,
+     707
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/cascade_golem.glb"
+  },
+  {
+   "creature": "tidecoil_serpent",
+   "name": "Tidecoil Serpent",
+   "locale": "crownwater",
+   "family": "serpent",
+   "plan": "sea_serpent",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     409,
+     336,
+     764,
+     670
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/tidecoil_serpent.glb"
+  },
+  {
+   "creature": "palecrest_crab",
+   "name": "Palecrest Crab",
+   "locale": "crownwater",
+   "family": "arachnid",
+   "plan": "crab",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     779,
+     417,
+     1181,
+     663
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/palecrest_crab.glb"
+  },
+  {
+   "creature": "riverbank_ibis",
+   "name": "Riverbank Ibis",
+   "locale": "crownwater",
+   "family": "avian",
+   "plan": "wader",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1175,
+     350,
+     1501,
+     667
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/riverbank_ibis.glb"
+  },
+  {
+   "creature": "algae_alligator",
+   "name": "Algae Alligator",
+   "locale": "crownwater",
+   "family": "quadruped",
+   "plan": "sprawler",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     10,
+     734,
+     474,
+     999
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/algae_alligator.glb"
+  },
+  {
+   "creature": "springfly_sprite",
+   "name": "Springfly Sprite",
+   "locale": "crownwater",
+   "family": "amorphous",
+   "plan": "sprite",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     451,
+     673,
+     707,
+     1007
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/springfly_sprite.glb"
+  },
+  {
+   "creature": "gilded_water_lion",
+   "name": "Gilded Water Lion",
+   "locale": "crownwater",
+   "family": "quadruped",
+   "plan": "felid",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     775,
+     662,
+     1140,
+     1006
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/gilded_water_lion.glb"
+  },
+  {
+   "creature": "medusa_tidepriest",
+   "name": "Medusa Tidepriest",
+   "locale": "crownwater",
+   "family": "amorphous",
+   "plan": "tentacles",
+   "concept": {
+    "sheet": "bc78bfcc",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1189,
+     660,
+     1495,
+     1007
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/medusa_tidepriest.glb"
+  },
+  {
+   "creature": "harbor_gull",
+   "name": "Harbor Gull",
+   "locale": "drowned_crown",
+   "family": "avian",
+   "plan": "seabird",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     0,
+     0
+    ],
+    "box": [
+     75,
+     10,
+     314,
+     270
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/harbor_gull.glb"
+  },
+  {
+   "creature": "rockshell_crab",
+   "name": "Rockshell Crab",
+   "locale": "drowned_crown",
+   "family": "arachnid",
+   "plan": "crab",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     0,
+     1
+    ],
+    "box": [
+     361,
+     37,
+     703,
+     262
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/rockshell_crab.glb"
+  },
+  {
+   "creature": "harbor_seal",
+   "name": "Harbor Seal",
+   "locale": "drowned_crown",
+   "family": "quadruped",
+   "plan": "pinniped",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     0,
+     2
+    ],
+    "box": [
+     714,
+     30,
+     1133,
+     275
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/harbor_seal.glb"
+  },
+  {
+   "creature": "kelpback_turtle",
+   "name": "Kelpback Turtle",
+   "locale": "drowned_crown",
+   "family": "quadruped",
+   "plan": "chelonian",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     0,
+     3
+    ],
+    "box": [
+     1164,
+     16,
+     1512,
+     319
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/kelpback_turtle.glb"
+  },
+  {
+   "creature": "bluewater_marlin",
+   "name": "Bluewater Marlin",
+   "locale": "drowned_crown",
+   "family": "fish",
+   "plan": "billfish",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     21,
+     272,
+     390,
+     502
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/bluewater_marlin.glb"
+  },
+  {
+   "creature": "saltmarsh_crocodile",
+   "name": "Saltmarsh Crocodile",
+   "locale": "drowned_crown",
+   "family": "quadruped",
+   "plan": "sprawler",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     426,
+     287,
+     814,
+     544
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/saltmarsh_crocodile.glb"
+  },
+  {
+   "creature": "bilge_rat",
+   "name": "Bilge Rat",
+   "locale": "drowned_crown",
+   "family": "quadruped",
+   "plan": "mustelid",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     802,
+     297,
+     1164,
+     570
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/bilge_rat.glb"
+  },
+  {
+   "creature": "spinefin_eel",
+   "name": "Spinefin Eel",
+   "locale": "drowned_crown",
+   "family": "serpent",
+   "plan": "eel",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1199,
+     322,
+     1522,
+     587
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/spinefin_eel.glb"
+  },
+  {
+   "creature": "barnacle_troll",
+   "name": "Barnacle Troll",
+   "locale": "drowned_crown",
+   "family": "biped",
+   "plan": "brute",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     24,
+     521,
+     407,
+     995
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/barnacle_troll.glb"
+  },
+  {
+   "creature": "drowned_captain",
+   "name": "Drowned Captain",
+   "locale": "drowned_crown",
+   "family": "biped",
+   "plan": "revenant",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     411,
+     516,
+     704,
+     987
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/drowned_captain.glb"
+  },
+  {
+   "creature": "glowmantle_ray",
+   "name": "Glowmantle Ray",
+   "locale": "drowned_crown",
+   "family": "fish",
+   "plan": "ray",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     678,
+     561,
+     1170,
+     988
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/glowmantle_ray.glb"
+  },
+  {
+   "creature": "deepplate_coelacanth",
+   "name": "Deepplate Coelacanth",
+   "locale": "drowned_crown",
+   "family": "fish",
+   "plan": "armored",
+   "concept": {
+    "sheet": "5b11c39c",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1136,
+     581,
+     1523,
+     990
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/deepplate_coelacanth.glb"
+  },
+  {
+   "creature": "verdant_crown_king",
+   "name": "Verdant Crown King",
+   "locale": "elemental_lords",
+   "family": "biped",
+   "plan": "monarch",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     0,
+     0
+    ],
+    "box": [
+     16,
+     8,
+     336,
+     348
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/verdant_crown_king.glb"
+  },
+  {
+   "creature": "tidegold_wyrm",
+   "name": "Tidegold Wyrm",
+   "locale": "elemental_lords",
+   "family": "serpent",
+   "plan": "wyrm",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     0,
+     1
+    ],
+    "box": [
+     365,
+     13,
+     702,
+     346
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/tidegold_wyrm.glb"
+  },
+  {
+   "creature": "rimebound_archmage",
+   "name": "Rimebound Archmage",
+   "locale": "elemental_lords",
+   "family": "biped",
+   "plan": "mage",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     0,
+     2
+    ],
+    "box": [
+     744,
+     6,
+     992,
+     345
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/rimebound_archmage.glb"
+  },
+  {
+   "creature": "glacier_brute",
+   "name": "Glacier Brute",
+   "locale": "elemental_lords",
+   "family": "biped",
+   "plan": "brute",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     0,
+     3
+    ],
+    "box": [
+     1049,
+     5,
+     1428,
+     357
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/glacier_brute.glb"
+  },
+  {
+   "creature": "orrery_colossus",
+   "name": "Orrery Colossus",
+   "locale": "elemental_lords",
+   "family": "biped",
+   "plan": "construct",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     9,
+     356,
+     383,
+     687
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/orrery_colossus.glb"
+  },
+  {
+   "creature": "amethyst_sibyl",
+   "name": "Amethyst Sibyl",
+   "locale": "elemental_lords",
+   "family": "biped",
+   "plan": "mage",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     406,
+     357,
+     703,
+     686
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/amethyst_sibyl.glb"
+  },
+  {
+   "creature": "crimson_duelist",
+   "name": "Crimson Duelist",
+   "locale": "elemental_lords",
+   "family": "biped",
+   "plan": "duelist",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     733,
+     354,
+     1038,
+     687
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/crimson_duelist.glb"
+  },
+  {
+   "creature": "emberwood_matron",
+   "name": "Emberwood Matron",
+   "locale": "elemental_lords",
+   "family": "biped",
+   "plan": "treant",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1016,
+     357,
+     1441,
+     683
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/emberwood_matron.glb"
+  },
+  {
+   "creature": "barrow_sovereign",
+   "name": "Barrow Sovereign",
+   "locale": "elemental_lords",
+   "family": "biped",
+   "plan": "knight",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     14,
+     688,
+     383,
+     1070
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/barrow_sovereign.glb"
+  },
+  {
+   "creature": "gilded_devourer",
+   "name": "Gilded Devourer",
+   "locale": "elemental_lords",
+   "family": "amorphous",
+   "plan": "tentacles",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     354,
+     692,
+     702,
+     1068
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/gilded_devourer.glb"
+  },
+  {
+   "creature": "tidecaller_sorceress",
+   "name": "Tidecaller Sorceress",
+   "locale": "elemental_lords",
+   "family": "biped",
+   "plan": "mage",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     714,
+     698,
+     996,
+     1067
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/tidecaller_sorceress.glb"
+  },
+  {
+   "creature": "mirefather_leviathan",
+   "name": "Mirefather Leviathan",
+   "locale": "elemental_lords",
+   "family": "amorphous",
+   "plan": "tentacles",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1009,
+     687,
+     1441,
+     1071
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/mirefather_leviathan.glb"
+  },
+  {
+   "creature": "moor_pony",
+   "name": "Moor Pony",
+   "locale": "grey_moors",
+   "family": "quadruped",
+   "plan": "equine",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     0,
+     0
+    ],
+    "box": [
+     22,
+     11,
+     344,
+     326
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/moor_pony.glb"
+  },
+  {
+   "creature": "moorhorn_ram",
+   "name": "Moorhorn Ram",
+   "locale": "grey_moors",
+   "family": "quadruped",
+   "plan": "cervid",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     0,
+     1
+    ],
+    "box": [
+     425,
+     5,
+     754,
+     322
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/moorhorn_ram.glb"
+  },
+  {
+   "creature": "moor_heron",
+   "name": "Moor Heron",
+   "locale": "grey_moors",
+   "family": "avian",
+   "plan": "wader",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     0,
+     2
+    ],
+    "box": [
+     783,
+     14,
+     1166,
+     320
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/moor_heron.glb"
+  },
+  {
+   "creature": "cairnback_tortoise",
+   "name": "Cairnback Tortoise",
+   "locale": "grey_moors",
+   "family": "quadruped",
+   "plan": "chelonian",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     0,
+     3
+    ],
+    "box": [
+     1184,
+     76,
+     1507,
+     306
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/cairnback_tortoise.glb"
+  },
+  {
+   "creature": "moorfell_wolf",
+   "name": "Moorfell Wolf",
+   "locale": "grey_moors",
+   "family": "quadruped",
+   "plan": "canid",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     16,
+     340,
+     358,
+     618
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/moorfell_wolf.glb"
+  },
+  {
+   "creature": "reedmask_stalker",
+   "name": "Reedmask Stalker",
+   "locale": "grey_moors",
+   "family": "biped",
+   "plan": "warrior",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     420,
+     336,
+     754,
+     644
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/reedmask_stalker.glb"
+  },
+  {
+   "creature": "moorlight_wisp",
+   "name": "Moorlight Wisp",
+   "locale": "grey_moors",
+   "family": "amorphous",
+   "plan": "wisp",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     795,
+     336,
+     1120,
+     642
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/moorlight_wisp.glb"
+  },
+  {
+   "creature": "barrow_knight",
+   "name": "Barrow Knight",
+   "locale": "grey_moors",
+   "family": "biped",
+   "plan": "knight",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1193,
+     309,
+     1511,
+     632
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/barrow_knight.glb"
+  },
+  {
+   "creature": "cairn_golem",
+   "name": "Cairn Golem",
+   "locale": "grey_moors",
+   "family": "biped",
+   "plan": "golem",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     18,
+     619,
+     362,
+     1012
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/cairn_golem.glb"
+  },
+  {
+   "creature": "lantern_wraith",
+   "name": "Lantern Wraith",
+   "locale": "grey_moors",
+   "family": "biped",
+   "plan": "revenant",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     426,
+     623,
+     717,
+     1006
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/lantern_wraith.glb"
+  },
+  {
+   "creature": "spectral_moor_stag",
+   "name": "Spectral Moor Stag",
+   "locale": "grey_moors",
+   "family": "quadruped",
+   "plan": "cervid",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     792,
+     651,
+     1145,
+     999
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/spectral_moor_stag.glb"
+  },
+  {
+   "creature": "barrow_king",
+   "name": "Barrow King",
+   "locale": "grey_moors",
+   "family": "biped",
+   "plan": "monarch",
+   "concept": {
+    "sheet": "2dd667c5",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1182,
+     625,
+     1518,
+     1014
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/barrow_king.glb"
+  },
+  {
+   "creature": "mudflat_crab",
+   "name": "Mudflat Crab",
+   "locale": "manymouth_delta",
+   "family": "arachnid",
+   "plan": "crab",
+   "concept": {
+    "sheet": "4bbc1f8e",
+    "cell": [
+     0,
+     0
+    ],
+    "box": [
+     6,
+     67,
+     408,
+     323
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/mudflat_crab.glb"
+  },
+  {
+   "creature": "delta_heron",
+   "name": "Delta Heron",
+   "locale": "manymouth_delta",
+   "family": "avian",
+   "plan": "wader",
+   "concept": {
+    "sheet": "4bbc1f8e",
+    "cell": [
+     0,
+     1
+    ],
+    "box": [
+     444,
+     7,
+     705,
+     350
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/delta_heron.glb"
+  },
+  {
+   "creature": "voltfin_eel",
+   "name": "Voltfin Eel",
+   "locale": "manymouth_delta",
+   "family": "serpent",
+   "plan": "eel",
+   "concept": {
+    "sheet": "4bbc1f8e",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     435,
+     362,
+     733,
+     685
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/voltfin_eel.glb"
+  },
+  {
+   "creature": "reed_stalker",
+   "name": "Reed Stalker",
+   "locale": "manymouth_delta",
+   "family": "quadruped",
+   "plan": "sprawler",
+   "concept": {
+    "sheet": "4bbc1f8e",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     768,
+     340,
+     1107,
+     680
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/reed_stalker.glb"
+  },
+  {
+   "creature": "mangrove_turtle",
+   "name": "Mangrove Turtle",
+   "locale": "manymouth_delta",
+   "family": "quadruped",
+   "plan": "chelonian",
+   "concept": {
+    "sheet": "4bbc1f8e",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1142,
+     341,
+     1527,
+     662
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/mangrove_turtle.glb"
+  },
+  {
+   "creature": "bog_warden",
+   "name": "Bog Warden",
+   "locale": "manymouth_delta",
+   "family": "biped",
+   "plan": "construct",
+   "concept": {
+    "sheet": "4bbc1f8e",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     47,
+     657,
+     411,
+     1014
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/bog_warden.glb"
+  },
+  {
+   "creature": "frogspear_warrior",
+   "name": "Frogspear Warrior",
+   "locale": "manymouth_delta",
+   "family": "biped",
+   "plan": "warrior",
+   "concept": {
+    "sheet": "4bbc1f8e",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     434,
+     695,
+     754,
+     1013
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/frogspear_warrior.glb"
+  },
+  {
+   "creature": "reed_drake",
+   "name": "Reed Drake",
+   "locale": "manymouth_delta",
+   "family": "quadruped",
+   "plan": "sprawler",
+   "concept": {
+    "sheet": "4bbc1f8e",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     734,
+     718,
+     1131,
+     1011
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/reed_drake.glb"
+  },
+  {
+   "creature": "manymouth_hydra",
+   "name": "Manymouth Hydra",
+   "locale": "manymouth_delta",
+   "family": "serpent",
+   "plan": "hydra",
+   "concept": {
+    "sheet": "4bbc1f8e",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1122,
+     663,
+     1521,
+     1019
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/manymouth_hydra.glb"
+  },
+  {
+   "creature": "tidelance_construct",
+   "name": "Tidelance Construct",
+   "locale": "mirrorhold",
+   "family": "amorphous",
+   "plan": "vortex",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     0,
+     0
+    ],
+    "box": [
+     41,
+     94,
+     366,
+     308
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/tidelance_construct.glb"
+  },
+  {
+   "creature": "reefplate_golem",
+   "name": "Reefplate Golem",
+   "locale": "mirrorhold",
+   "family": "quadruped",
+   "plan": "ursine",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     0,
+     1
+    ],
+    "box": [
+     431,
+     18,
+     754,
+     319
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/reefplate_golem.glb"
+  },
+  {
+   "creature": "mirrorhold_wheelwarden",
+   "name": "Mirrorhold Wheelwarden",
+   "locale": "mirrorhold",
+   "family": "biped",
+   "plan": "construct",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     0,
+     2
+    ],
+    "box": [
+     800,
+     6,
+     1119,
+     330
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/mirrorhold_wheelwarden.glb"
+  },
+  {
+   "creature": "verdigris_warden",
+   "name": "Verdigris Warden",
+   "locale": "mirrorhold",
+   "family": "biped",
+   "plan": "construct",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     0,
+     3
+    ],
+    "box": [
+     1172,
+     15,
+     1455,
+     339
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/verdigris_warden.glb"
+  },
+  {
+   "creature": "palewater_wyrm",
+   "name": "Palewater Wyrm",
+   "locale": "mirrorhold",
+   "family": "serpent",
+   "plan": "sea_serpent",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     49,
+     319,
+     381,
+     639
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/palewater_wyrm.glb"
+  },
+  {
+   "creature": "mirrorwing_swarm",
+   "name": "Mirrorwing Swarm",
+   "locale": "mirrorhold",
+   "family": "amorphous",
+   "plan": "shards",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     403,
+     329,
+     734,
+     623
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/mirrorwing_swarm.glb"
+  },
+  {
+   "creature": "shattered_sentinel",
+   "name": "Shattered Sentinel",
+   "locale": "mirrorhold",
+   "family": "biped",
+   "plan": "golem",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     779,
+     347,
+     1155,
+     656
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/shattered_sentinel.glb"
+  },
+  {
+   "creature": "mirrorhold_oracle",
+   "name": "Mirrorhold Oracle",
+   "locale": "mirrorhold",
+   "family": "biped",
+   "plan": "mage",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1114,
+     314,
+     1458,
+     608
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/mirrorhold_oracle.glb"
+  },
+  {
+   "creature": "tideguard_vanguard",
+   "name": "Tideguard Vanguard",
+   "locale": "mirrorhold",
+   "family": "biped",
+   "plan": "knight",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     54,
+     610,
+     347,
+     984
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/tideguard_vanguard.glb"
+  },
+  {
+   "creature": "mirrorhold_siren",
+   "name": "Mirrorhold Siren",
+   "locale": "mirrorhold",
+   "family": "serpent",
+   "plan": "naga",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     419,
+     609,
+     743,
+     989
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/mirrorhold_siren.glb"
+  },
+  {
+   "creature": "shardbound_archivist",
+   "name": "Shardbound Archivist",
+   "locale": "mirrorhold",
+   "family": "amorphous",
+   "plan": "shards",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     807,
+     652,
+     1078,
+     1006
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/shardbound_archivist.glb"
+  },
+  {
+   "creature": "mirrorhold_loremaster",
+   "name": "Mirrorhold Loremaster",
+   "locale": "mirrorhold",
+   "family": "biped",
+   "plan": "mage",
+   "concept": {
+    "sheet": "53a67c51",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1114,
+     609,
+     1513,
+     999
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/mirrorhold_loremaster.glb"
+  },
+  {
+   "creature": "goldmane_aurochs",
+   "name": "Goldmane Aurochs",
+   "locale": "sunmane_steppe",
+   "family": "quadruped",
+   "plan": "bovine",
+   "concept": {
+    "sheet": "93197c59",
+    "cell": [
+     0,
+     1
+    ],
+    "box": [
+     398,
+     37,
+     758,
+     329
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/goldmane_aurochs.glb"
+  },
+  {
+   "creature": "dunburrow_mole",
+   "name": "Dunburrow Mole",
+   "locale": "sunmane_steppe",
+   "family": "quadruped",
+   "plan": "mustelid",
+   "concept": {
+    "sheet": "93197c59",
+    "cell": [
+     0,
+     3
+    ],
+    "box": [
+     1155,
+     125,
+     1504,
+     334
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/dunburrow_mole.glb"
+  },
+  {
+   "creature": "plumed_crane",
+   "name": "Plumed Crane",
+   "locale": "sunmane_steppe",
+   "family": "avian",
+   "plan": "wader",
+   "concept": {
+    "sheet": "93197c59",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     93,
+     343,
+     318,
+     702
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/plumed_crane.glb"
+  },
+  {
+   "creature": "sunmane_minotaur",
+   "name": "Sunmane Minotaur",
+   "locale": "sunmane_steppe",
+   "family": "biped",
+   "plan": "brute",
+   "concept": {
+    "sheet": "93197c59",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     398,
+     344,
+     636,
+     702
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/sunmane_minotaur.glb"
+  },
+  {
+   "creature": "stormmane_lion",
+   "name": "Stormmane Lion",
+   "locale": "sunmane_steppe",
+   "family": "quadruped",
+   "plan": "felid",
+   "concept": {
+    "sheet": "93197c59",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     705,
+     380,
+     1093,
+     681
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/stormmane_lion.glb"
+  },
+  {
+   "creature": "grasswing_mantis",
+   "name": "Grasswing Mantis",
+   "locale": "sunmane_steppe",
+   "family": "insect",
+   "plan": "mantis",
+   "concept": {
+    "sheet": "93197c59",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     48,
+     714,
+     348,
+     984
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/grasswing_mantis.glb"
+  },
+  {
+   "creature": "dust_hyena",
+   "name": "Dust Hyena",
+   "locale": "sunmane_steppe",
+   "family": "quadruped",
+   "plan": "canid",
+   "concept": {
+    "sheet": "93197c59",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     410,
+     733,
+     748,
+     995
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/dust_hyena.glb"
+  },
+  {
+   "creature": "steppe_jackrabbit",
+   "name": "Steppe Jackrabbit",
+   "locale": "sunmane_steppe",
+   "family": "quadruped",
+   "plan": "lagomorph",
+   "concept": {
+    "sheet": "93197c59",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     846,
+     687,
+     1064,
+     991
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/steppe_jackrabbit.glb"
+  },
+  {
+   "creature": "sunmane_gryphon",
+   "name": "Sunmane Gryphon",
+   "locale": "sunmane_steppe",
+   "family": "quadruped",
+   "plan": "gryphon",
+   "concept": {
+    "sheet": "93197c59",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1175,
+     695,
+     1481,
+     995
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/sunmane_gryphon.glb"
+  },
+  {
+   "creature": "emerald_basilisk",
+   "name": "Emerald Basilisk",
+   "locale": "verdant_stair",
+   "family": "quadruped",
+   "plan": "sprawler",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     0,
+     0
+    ],
+    "box": [
+     28,
+     14,
+     357,
+     331
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/emerald_basilisk.glb"
+  },
+  {
+   "creature": "leaf_mantis",
+   "name": "Leaf Mantis",
+   "locale": "verdant_stair",
+   "family": "insect",
+   "plan": "mantis",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     0,
+     1
+    ],
+    "box": [
+     401,
+     7,
+     752,
+     349
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/leaf_mantis.glb"
+  },
+  {
+   "creature": "dartback_treefrog",
+   "name": "Dartback Tree Frog",
+   "locale": "verdant_stair",
+   "family": "quadruped",
+   "plan": "anuran",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     0,
+     2
+    ],
+    "box": [
+     793,
+     101,
+     1084,
+     366
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/dartback_treefrog.glb"
+  },
+  {
+   "creature": "plumefire_hummingbird",
+   "name": "Plumefire Hummingbird",
+   "locale": "verdant_stair",
+   "family": "avian",
+   "plan": "songbird",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     0,
+     3
+    ],
+    "box": [
+     1146,
+     8,
+     1488,
+     351
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/plumefire_hummingbird.glb"
+  },
+  {
+   "creature": "vinecoil_snake",
+   "name": "Vinecoil Snake",
+   "locale": "verdant_stair",
+   "family": "serpent",
+   "plan": "snake",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     8,
+     332,
+     380,
+     654
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/vinecoil_snake.glb"
+  },
+  {
+   "creature": "canopy_lynx",
+   "name": "Canopy Lynx",
+   "locale": "verdant_stair",
+   "family": "quadruped",
+   "plan": "felid",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     357,
+     336,
+     752,
+     583
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/canopy_lynx.glb"
+  },
+  {
+   "creature": "mossback_anteater",
+   "name": "Mossback Anteater",
+   "locale": "verdant_stair",
+   "family": "quadruped",
+   "plan": "ursine",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     796,
+     335,
+     1152,
+     633
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/mossback_anteater.glb"
+  },
+  {
+   "creature": "bloomtail_axolotl",
+   "name": "Bloomtail Axolotl",
+   "locale": "verdant_stair",
+   "family": "fish",
+   "plan": "axolotl",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1162,
+     352,
+     1523,
+     596
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/bloomtail_axolotl.glb"
+  },
+  {
+   "creature": "canopy_gorilla",
+   "name": "Canopy Gorilla",
+   "locale": "verdant_stair",
+   "family": "biped",
+   "plan": "primate",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     13,
+     604,
+     412,
+     1013
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/canopy_gorilla.glb"
+  },
+  {
+   "creature": "vine_treant",
+   "name": "Vine Treant",
+   "locale": "verdant_stair",
+   "family": "biped",
+   "plan": "treant",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     357,
+     584,
+     763,
+     1014
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/vine_treant.glb"
+  },
+  {
+   "creature": "verdant_naiad",
+   "name": "Verdant Naiad",
+   "locale": "verdant_stair",
+   "family": "amorphous",
+   "plan": "vortex",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     766,
+     634,
+     1152,
+     1013
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/verdant_naiad.glb"
+  },
+  {
+   "creature": "verdant_stair_dragon",
+   "name": "Verdant Stair Dragon",
+   "locale": "verdant_stair",
+   "family": "quadruped",
+   "plan": "drake",
+   "concept": {
+    "sheet": "66616a1d",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1042,
+     589,
+     1527,
+     1011
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/verdant_stair_dragon.glb"
+  },
+  {
+   "creature": "courier_otter",
+   "name": "Courier Otter",
+   "locale": "westhaven",
+   "family": "quadruped",
+   "plan": "mustelid",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     0,
+     0
+    ],
+    "box": [
+     33,
+     58,
+     350,
+     324
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/courier_otter.glb"
+  },
+  {
+   "creature": "message_swallow",
+   "name": "Message Swallow",
+   "locale": "westhaven",
+   "family": "avian",
+   "plan": "songbird",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     0,
+     1
+    ],
+    "box": [
+     380,
+     11,
+     688,
+     315
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/message_swallow.glb"
+  },
+  {
+   "creature": "harborshell_crab",
+   "name": "Harborshell Crab",
+   "locale": "westhaven",
+   "family": "arachnid",
+   "plan": "crab",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     0,
+     2
+    ],
+    "box": [
+     724,
+     75,
+     1071,
+     293
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/harborshell_crab.glb"
+  },
+  {
+   "creature": "brassband_pike",
+   "name": "Brassband Pike",
+   "locale": "westhaven",
+   "family": "fish",
+   "plan": "pike",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     0,
+     3
+    ],
+    "box": [
+     1117,
+     34,
+     1426,
+     297
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/brassband_pike.glb"
+  },
+  {
+   "creature": "reedhat_fisher",
+   "name": "Reedhat Fisher",
+   "locale": "westhaven",
+   "family": "biped",
+   "plan": "warrior",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     31,
+     311,
+     316,
+     645
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/reedhat_fisher.glb"
+  },
+  {
+   "creature": "ratcatcher_tough",
+   "name": "Ratcatcher Tough",
+   "locale": "westhaven",
+   "family": "biped",
+   "plan": "warrior",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     395,
+     332,
+     655,
+     646
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/ratcatcher_tough.glb"
+  },
+  {
+   "creature": "verdigris_beetle",
+   "name": "Verdigris Beetle",
+   "locale": "westhaven",
+   "family": "insect",
+   "plan": "beetle",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     1,
+     2
+    ],
+    "box": [
+     727,
+     373,
+     1056,
+     614
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/verdigris_beetle.glb"
+  },
+  {
+   "creature": "lanternwake_sprite",
+   "name": "Lanternwake Sprite",
+   "locale": "westhaven",
+   "family": "amorphous",
+   "plan": "sprite",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1081,
+     344,
+     1432,
+     622
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/lanternwake_sprite.glb"
+  },
+  {
+   "creature": "millstone_golem",
+   "name": "Millstone Golem",
+   "locale": "westhaven",
+   "family": "biped",
+   "plan": "golem",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     32,
+     631,
+     371,
+     1072
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/millstone_golem.glb"
+  },
+  {
+   "creature": "drowned_dockhand",
+   "name": "Drowned Dockhand",
+   "locale": "westhaven",
+   "family": "biped",
+   "plan": "revenant",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     419,
+     675,
+     669,
+     1050
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/drowned_dockhand.glb"
+  },
+  {
+   "creature": "sluice_elemental",
+   "name": "Sluice Elemental",
+   "locale": "westhaven",
+   "family": "amorphous",
+   "plan": "vortex",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     715,
+     645,
+     1079,
+     1063
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/sluice_elemental.glb"
+  },
+  {
+   "creature": "waterwheel_golem",
+   "name": "Waterwheel Golem",
+   "locale": "westhaven",
+   "family": "biped",
+   "plan": "construct",
+   "concept": {
+    "sheet": "4cf4bb0e",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1085,
+     626,
+     1434,
+     1071
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/waterwheel_golem.glb"
+  },
+  {
+   "creature": "rime_harpy",
+   "name": "Rime Harpy",
+   "locale": "whitehorn_range",
+   "family": "avian",
+   "plan": "harpy",
+   "concept": {
+    "sheet": "15c7630b",
+    "cell": [
+     1,
+     0
+    ],
+    "box": [
+     14,
+     331,
+     362,
+     663
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/rime_harpy.glb"
+  },
+  {
+   "creature": "glacier_golem",
+   "name": "Glacier Golem",
+   "locale": "whitehorn_range",
+   "family": "biped",
+   "plan": "golem",
+   "concept": {
+    "sheet": "15c7630b",
+    "cell": [
+     1,
+     1
+    ],
+    "box": [
+     398,
+     335,
+     747,
+     653
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/glacier_golem.glb"
+  },
+  {
+   "creature": "whitehorn_yak",
+   "name": "Whitehorn Yak",
+   "locale": "whitehorn_range",
+   "family": "quadruped",
+   "plan": "bovine",
+   "concept": {
+    "sheet": "15c7630b",
+    "cell": [
+     1,
+     3
+    ],
+    "box": [
+     1151,
+     329,
+     1518,
+     646
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/whitehorn_yak.glb"
+  },
+  {
+   "creature": "rimeshell_crab",
+   "name": "Rimeshell Crab",
+   "locale": "whitehorn_range",
+   "family": "arachnid",
+   "plan": "crab",
+   "concept": {
+    "sheet": "15c7630b",
+    "cell": [
+     2,
+     0
+    ],
+    "box": [
+     15,
+     685,
+     385,
+     990
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/rimeshell_crab.glb"
+  },
+  {
+   "creature": "hoarfrost_serpent",
+   "name": "Hoarfrost Serpent",
+   "locale": "whitehorn_range",
+   "family": "serpent",
+   "plan": "snake",
+   "concept": {
+    "sheet": "15c7630b",
+    "cell": [
+     2,
+     1
+    ],
+    "box": [
+     398,
+     646,
+     754,
+     1009
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/hoarfrost_serpent.glb"
+  },
+  {
+   "creature": "glacier_eagle",
+   "name": "Glacier Eagle",
+   "locale": "whitehorn_range",
+   "family": "avian",
+   "plan": "raptor",
+   "concept": {
+    "sheet": "15c7630b",
+    "cell": [
+     2,
+     2
+    ],
+    "box": [
+     757,
+     640,
+     1171,
+     1007
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/glacier_eagle.glb"
+  },
+  {
+   "creature": "frostplate_knight",
+   "name": "Frostplate Knight",
+   "locale": "whitehorn_range",
+   "family": "biped",
+   "plan": "knight",
+   "concept": {
+    "sheet": "15c7630b",
+    "cell": [
+     2,
+     3
+    ],
+    "box": [
+     1184,
+     640,
+     1514,
+     1010
+    ]
+   },
+   "glb": "godot-client/assets/actors/native/creatures/frostplate_knight.glb"
+  }
+ ]
+}

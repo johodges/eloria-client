@@ -5,10 +5,13 @@ Outputs native E3D models plus PNG textures/icons. Geometry and pixels are
 procedural and independent; concept art is used only as art-direction input.
 """
 from __future__ import annotations
-import hashlib, json, math, struct, zlib
+import hashlib, json, math, struct, sys, zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+TOOLS = ROOT.parents[1] / 'tools'
+if str(TOOLS) not in sys.path: sys.path.insert(0, str(TOOLS))
+import harvestables  # noqa: E402  shared harvestable catalogue
 Vertex = tuple[float,float,float,float,float,float,float,float]
 
 def png(path,w,h,pixel):
@@ -272,10 +275,7 @@ ASSETS={
  'glasswarden_observatory':(observatory,(101,87,112),(154,92,181)),'resonant_crystal_cluster':(crystal,(101,72,125),(191,104,230)),
  'orun_round_tent':(tent,(171,111,54),(42,131,134)),'amberwood_estate':(manor,(116,77,48),(181,103,46)),
  'four_gates_waystone':(four_gates_waystone,(103,105,103),(50,118,118)),'amberwood_tree':(tree,(101,69,40),(188,92,38)),
- 'mirror_reed':(reed,(44,116,101),(107,190,165)),'crownwater_pearl':(pearl,(185,198,188),(71,143,151)),
- 'whitehorn_silverleaf':(flower,(102,137,118),(205,222,221)),'ghost_orchid':(flower,(94,91,113),(201,187,224)),
- 'delta_lotus':(flower,(57,117,75),(210,112,150)),'stormglass_shard':(crystal,(78,83,119),(154,166,231)),
- 'deep_lake_clay':(crate,(101,77,62),(63,122,128)),'mirrorhold_market_crate':(crate,(115,77,45),(36,126,130)),
+ 'mirrorhold_market_crate':(crate,(115,77,45),(36,126,130)),
  # Whitehorn Range
  'whitehorn_glacier':(glacier,(151,196,207),(222,239,240)),'whitehorn_monastery':(monastery,(116,125,129),(187,201,202)),
  'whitehorn_mine_entrance':(mine,(91,87,82),(142,149,151)),'whitehorn_cairn':(cairn,(111,119,120),(196,211,211)),
@@ -350,34 +350,58 @@ def four_gates_tex(path,a,b):
         return (*(max(0,min(255,channel+grain)) for channel in base),255)
     png(path,256,256,pixel)
 
-ICONS=[('crownwater_pearl',(207,221,211)),('mirror_reed',(60,151,123)),('glacier_salt',(202,227,231)),('whitehorn_silverleaf',(167,207,185)),('resonant_crystal',(185,104,218)),('stormglass_shard',(118,139,218)),('sunmane_seed',(194,157,72)),('amber_resin',(213,116,47)),('moor_peat',(91,72,62)),('ghost_orchid',(188,167,216)),('mangrove_sap',(104,143,72)),('ssarathi_scale_moss',(59,132,105)),('verdant_venom_bulb',(91,171,71)),('delta_lotus',(213,111,151)),('deep_lake_clay',(121,90,72)),('voltaic_geode',(132,115,198))]
+# One inventory icon per catalogue harvestable, coloured from the same palette
+# the model material uses so the icon and the world object read as one thing.
+ICONS=[(entry[0],entry[5][2]) for entry in harvestables.CATALOGUE]
+ICON_COLUMNS=8
+ICON_ROWS=(len(ICONS)+ICON_COLUMNS-1)//ICON_COLUMNS
+HARVESTABLE_ITEM_BASE=1100  # equipment owns 1000-1099
 def icon_pixel(idx,x,y):
-    name,c=ICONS[idx];dx=x-32;dy=y-32;r=(dx*dx+dy*dy)**.5;alpha=255 if r<22 else max(0,int((24-r)*128));
-    if 'reed' in name or 'leaf' in name or 'moss' in name: inside=abs(dx)<5+max(0,dy//5) and -22<dy<20
-    elif 'crystal' in name or 'shard' in name or 'geode' in name: inside=abs(dx)<max(3,17-abs(dy)//2) and -22<dy<20
+    if idx>=len(ICONS): return (0,0,0,0)
+    name,c=ICONS[idx];entry=harvestables.BY_ID[name];kind=entry[2]
+    base=entry[5][0]
+    dx=x-32;dy=y-32;r=(dx*dx+dy*dy)**.5
+    if kind in ('fibre','crop'): inside=abs(dx)<5+max(0,dy//4) and -24<dy<20
+    elif kind in ('flora','herb'): inside=r<19 or (abs(dx)<4 and dy>0)
+    elif kind=='crystal': inside=abs(dx)<max(3,17-abs(dy)//2) and -24<dy<20
+    elif kind=='fungus': inside=(dy<0 and r<19) or (abs(dx)<6 and 0<=dy<20)
+    elif kind=='aquatic': inside=abs(dx)<max(4,16-abs(dy)//3) and -22<dy<20
+    elif kind=='resin': inside=r<17 and dy>-14
+    elif kind=='fuel': inside=r<18 and abs(dx)+abs(dy)<26
     else: inside=r<19
-    edge=inside and (r>16 or abs(dx)>14);col=tuple(min(255,q+45) for q in c) if edge else c
-    return (*col,alpha if inside else 0)
+    if not inside: return (0,0,0,0)
+    # Shade from an upper-left key light and darken the rim so the icons read
+    # as objects at inventory size instead of flat colour chips.
+    lit=max(0.0,min(1.0,0.62-(dx*0.020+dy*0.024)+(1.0-min(1.0,r/22.0))*0.30))
+    rim=min(1.0,max(0.0,(r-14.0)/6.0))
+    col=tuple(int(b+(q-b)*(0.30+0.70*lit)) for q,b in zip(c,base))
+    col=tuple(int(q*(1.0-0.42*rim)) for q in col)
+    return (*(max(0,min(255,q)) for q in col),255)
 
 def main():
     runtime=ROOT/'runtime';source=ROOT/'source-obj';manifest=[]
+    harvestables.write_models(runtime,source)
     for name,(build,a,b) in ASSETS.items():
         texture=runtime/'3dobjects/nymara'/f'{name}.png'
         (four_gates_tex if name.startswith('four_gates_') else tex)(texture,a,b)
         e3d(runtime/'3dobjects/nymara'/f'{name}.e3d',texture.name,build);obj(source/f'{name}.obj',build,name,texture.name)
         manifest.append({'id':name,'model':f'3dobjects/nymara/{name}.e3d','texture':f'3dobjects/nymara/{name}.png','source':f'source-obj/{name}.obj'})
     for idx,(name,c) in enumerate(ICONS): png(runtime/f'textures/nymara/icons/{name}.png',64,64,lambda x,y,j=idx:icon_pixel(j,x,y))
-    png(runtime/'textures/nymara/items_nymara.png',512,128,lambda x,y: icon_pixel((x//64)+(y//64)*8,x%64,y%64))
-    twod=runtime/'2dobjects/nymara';twod.mkdir(parents=True,exist_ok=True)
-    png(twod/'nymara_harvestables.png',256,256,lambda x,y:icon_pixel((x//64)+(y//64)*4,x%64,y%64))
-    defs=[]
-    for idx,(name,_) in enumerate(ICONS):
-        x=(idx%4)*64;y=(idx//4)*64
-        body=f'file_x_len: 256\nfile_y_len: 256\nu_start: {x}\nu_end: {x+64}\nv_start: {y}\nv_end: {y+64}\nx_size: 0.9\ny_size: 1.25\nalpha_test: 0.18\ntexture: nymara_harvestables.png\ntype: plant\n'
-        (twod/f'{name}.2d').write_text(body);defs.append({'id':name,'definition':f'2dobjects/nymara/{name}.2d'})
-    (runtime/'nymara_assets.json').write_text(json.dumps({'schema':1,'objects':manifest,'objects_2d':defs,'items':[{'item_id':1000+i,'image_id':85+i,'name':n,'icon':f'textures/nymara/icons/{n}.png'} for i,(n,_) in enumerate(ICONS)]},indent=2)+'\n')
-    (ROOT/'provenance.json').write_text(json.dumps({'schema':1,'assets':[{'path':'runtime/3dobjects/nymara/*','source':'generate_nymara_pack.py','author':'Eloria project','license':'CC-BY-4.0','description':'Original procedural Nymara E3D models and textures'},{'path':'runtime/textures/nymara/*','source':'generate_nymara_pack.py','author':'Eloria project','license':'CC-BY-4.0','description':'Original procedural Nymara inventory icons and atlas'}]},indent=2)+'\n')
-    (ROOT/'README.md').write_text(f'''# Nymara native asset pack\n\nGenerated for `eloria-client` branch `feature/independent-eloria-client`.\n\n## Contents\n\n- `runtime/3dobjects/nymara/`: {len(ASSETS)} native E3D models and PNG textures.\n- `runtime/2dobjects/nymara/`: {len(ICONS)} native `.2d` definitions and shared RGBA atlas.\n- `runtime/textures/nymara/icons/`: {len(ICONS)} individual 64x64 RGBA item icons.\n- `runtime/textures/nymara/items_nymara.png`: 512x128 icon atlas.\n- `runtime/nymara_assets.json`: stable paths and item IDs.\n- `source-obj/`: editable OBJ/MTL source for every 3D object.\n- `generate_nymara_pack.py`: deterministic regeneration source.\n\nCopy the contents of `runtime/` into the generated Eloria data directory. E3D and `.2d` files can be placed directly by the bundled map editor. The JSON catalog is intended for client/server registration.\n\nThese are functional low-poly production proxies based on the approved Nymara art direction, not automatic 3D reconstructions of the painted concept sheets. They establish names, scale, pivots, native formats, texture paths, and provenance for later art refinement.\n''')
+    png(runtime/'textures/nymara/items_nymara.png',ICON_COLUMNS*64,ICON_ROWS*64,
+        lambda x,y: icon_pixel((x//64)+(y//64)*ICON_COLUMNS,x%64,y%64))
+    # Decorative ground flora replaces the old harvestable `.2d` sprites: a
+    # harvest node has to be a 3D object before the client will flag it
+    # harvestable, and reusing inventory icons as world sprites never looked
+    # like foliage.
+    defs=harvestables.write_flora(runtime)
+    (runtime/'nymara_assets.json').write_text(json.dumps({'schema':2,'objects':manifest,'objects_2d':defs,
+      'harvestables':[{'item_id':HARVESTABLE_ITEM_BASE+i,'image_id':85+i,'id':n,
+                       'label':harvestables.BY_ID[n][1],'kind':harvestables.BY_ID[n][2],
+                       'tier':harvestables.BY_ID[n][3],'regions':list(harvestables.BY_ID[n][4]),
+                       'model':harvestables.model_path(n),
+                       'icon':f'textures/nymara/icons/{n}.png'} for i,(n,_) in enumerate(ICONS)]},indent=2)+'\n')
+    (ROOT/'provenance.json').write_text(json.dumps({'schema':1,'assets':[{'path':'runtime/3dobjects/nymara/*','source':'generate_nymara_pack.py','author':'Eloria project','license':'CC-BY-4.0','description':'Original procedural Nymara E3D models and textures'},{'path':'runtime/textures/nymara/*','source':'generate_nymara_pack.py','author':'Eloria project','license':'CC-BY-4.0','description':'Original procedural Nymara inventory icons and atlas'},{'path':'runtime/2dobjects/nymara/flora/*','source':'eloria-assets/tools/harvestables.py','author':'Eloria project','license':'CC-BY-4.0','description':'Original procedural Nymara ground-flora sprites and .2d definitions'}]},indent=2)+'\n')
+    (ROOT/'README.md').write_text(f'''# Nymara native asset pack\n\nGenerated for `eloria-client` branch `feature/independent-eloria-client`.\n\n## Contents\n\n- `runtime/3dobjects/nymara/`: {len(ASSETS)} native E3D scenery models and PNG textures.\n- `runtime/3dobjects/nymara/` harvest nodes: {len(harvestables.CATALOGUE)} authored harvestable models with 256px materials.\n- `runtime/2dobjects/nymara/flora/`: {len(harvestables.FLORA)} decorative ground-flora `.2d` definitions and a shared alpha atlas.\n- `runtime/textures/nymara/icons/`: {len(ICONS)} individual 64x64 RGBA item icons.\n- `runtime/textures/nymara/items_nymara.png`: {ICON_COLUMNS*64}x{ICON_ROWS*64} icon atlas.\n- `runtime/nymara_assets.json`: stable paths and item IDs.\n- `source-obj/`: editable OBJ/MTL source for every 3D object.\n- `generate_nymara_pack.py`: deterministic regeneration source.\n\nCopy the contents of `runtime/` into the generated Eloria data directory. E3D and `.2d` files can be placed directly by the bundled map editor. The JSON catalog is intended for client/server registration.\n\nThese are functional low-poly production proxies based on the approved Nymara art direction, not automatic 3D reconstructions of the painted concept sheets. They establish names, scale, pivots, native formats, texture paths, and provenance for later art refinement.\n''')
     readme=ROOT/'README.md'
     readme.write_text(readme.read_text().replace(
         'These are functional low-poly production proxies based on the approved Nymara art direction, not automatic 3D reconstructions of the painted concept sheets. They establish names, scale, pivots, native formats, texture paths, and provenance for later art refinement.',
@@ -386,7 +410,12 @@ def main():
         'refined regional kit: they use intentional silhouette topology, 256px authored\n'
         'procedural materials, stable scale and pivots, native E3D output, and editable\n'
         'OBJ/MTL source. They are original interpretations of the approved art direction,\n'
-        'not automatic reconstructions of the concept paintings.'))
+        'not automatic reconstructions of the concept paintings.\n\n'
+        'Harvest nodes are held to the same standard and are authored in\n'
+        'eloria-assets/tools/harvestables.py, the single catalogue the models, icons,\n'
+        'harvestable.lst entries and map placements all read from. Foliage nodes declare\n'
+        'a transparent material so the client alpha-tests them and keeps both faces.\n'
+        'See docs/harvestable-audit.md.'))
     (ROOT/'generate_nymara_pack.py').write_text(Path(__file__).read_text())
     print(f'generated {len(ASSETS)} E3D models, {len(ICONS)} icons, OBJ sources and manifests in {ROOT}')
 if __name__=='__main__': main()

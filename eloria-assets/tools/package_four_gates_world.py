@@ -3,6 +3,8 @@
 import argparse, json, math, struct
 from pathlib import Path
 
+import harvestables
+
 ROOT=Path(__file__).resolve().parents[1]; SOURCE_DIR=ROOT/"maps/four-gates-city"; SOURCE=SOURCE_DIR/"four-gates-city.glb"; METADATA=SOURCE_DIR/"four-gates-city.json"
 SOURCE_OUTPUT=ROOT/"nymara-packs/nymara-client-assets/runtime/maps/four_gates"
 OUTPUT=SOURCE_OUTPUT; SIZE=1536; UNITS_PER_METER=2.15; ORIGIN=(384.0,384.0,0.0)
@@ -159,11 +161,31 @@ def cartography_pixel(px,py):
  if r<22:color=(62,187,219,255)
  return color
 
+# Four Gates harvest sites, grouped by quarter and drawn from the shared
+# catalogue.  The city used to expose four lone nodes; the agricultural belt in
+# the south now carries the crop and fibre work, the parks carry herbs, and the
+# outer terraces carry the mineral and crystal work.
+HARVEST_SITES=(
+ ('agricultural-wheat','steppe_wheat',((-40.,30.,238.),(46.,30.,252.),(-6.,30.,276.))),
+ ('south-canal-flax','riverflax',((-118.,30.,196.),(122.,30.,204.))),
+ ('south-reedbeds','mirror_reed',((-82.,31.,258.),(88.,31.,236.))),
+ ('civic-park-sage','wayside_sage',((-176.,31.,-58.),(196.,31.,36.),(-58.,32.,-142.))),
+ ('north-seed-terrace','sunmane_seed',((92.,31.,-252.),(-96.,31.,-236.))),
+ ('cliff-quartz','pale_quartz',((262.,32.,-88.),(-268.,32.,-72.))),
+ ('east-resonant-crystal','resonant_crystal',((238.,33.,120.),(276.,33.,-24.))),
+ ('west-stormglass','stormglass_shard',((-242.,32.,116.),(-284.,32.,-16.))),
+)
+
 def gameplay_manifest():
- harvest=[('resonant-crystal-east','resonant_crystal',(238.,33.,120.)),('stormglass-west','stormglass_shard',(-242.,32.,116.)),('mirror-reed-south','mirror_reed',(-82.,31.,258.)),('sunmane-seed-north','sunmane_seed',(92.,31.,-252.))]
+ harvest=[(f'{site}-{index:02d}',resource,position)
+          for site,resource,positions in HARVEST_SITES
+          for index,position in enumerate(positions)]
  npcs=[('toran-civic-official',307,'official',(-28.,32.,42.),200.),('nima-vey-merchant',309,'merchant',(-142.,31.,-92.),45.),('south-gate-guard',301,'guard',(18.,31.,325.),180.),('north-gate-guard',308,'guard',(-18.,31.,-325.),0.),('civic-scholar',304,'scholar',(-112.,32.,70.),110.),('ferry-lantern-bearer',303,'ferryman',(15.,31.,405.),180.)]
  spawns=[('garden-glasswings','glasswing_moth',(225.,31.,-185.),22.,4),('shore-reefbacks','reefback_crab',(-270.,24.,185.),24.,3),('outer-lumen-stags','lumen_stag',(248.,27.,210.),30.,2)]
- return {'harvestables':[{'id':i,'resource':r,'position':list(p),'interaction_radius':2.5,'respawn_seconds':90} for i,r,p in harvest],
+ return {'harvestables':[{'id':i,'resource':r,'position':list(p),'interaction_radius':2.5,
+   'kind':harvestables.BY_ID[r][2],'tier':harvestables.BY_ID[r][3],
+   'model':harvestables.model_path(r),
+   'respawn_seconds':harvestables.RESPAWN_SECONDS[harvestables.BY_ID[r][3]]} for i,r,p in harvest],
   'npc_markers':[{'id':i,'actor_type':a,'role':r,'position':list(p),'rotation_degrees':d} for i,a,r,p,d in npcs],
   'spawn_markers':[{'id':i,'creature':c,'position':list(p),'radius':r,'maximum_alive':n} for i,c,p,r,n in spawns],
   'regions':[{'id':'central-plaza','position':[0.,32.,0.],'radius':82.,'tags':['safe','civic']},{'id':'civic-quarter','position':[-145.,31.,-45.],'radius':125.,'tags':['safe','market']},{'id':'residential-quarter','position':[190.,31.,20.],'radius':145.,'tags':['safe','residential']},{'id':'agricultural-quarter','position':[0.,30.,245.],'radius':125.,'tags':['safe','harvest']},{'id':'sanctuary-approach','position':[0.,42.,-505.],'radius':165.,'tags':['ceremonial','portal']}]}

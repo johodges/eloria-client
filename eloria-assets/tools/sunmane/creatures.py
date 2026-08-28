@@ -22,6 +22,11 @@ from pathlib import Path
 
 import numpy as np
 
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[1]))
+import creature_surfaces  # noqa: E402
+
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
@@ -41,13 +46,13 @@ CREATURE_BONES = (
     ("jaw", 3, (0.0, -0.08, -0.13)),
     ("tail_1", 1, (0.0, 0.02, 0.48)), ("tail_2", 5, (0.0, 0.0, 0.43)),
     ("front_leg_l", 1, (-0.25, -0.18, -0.32)), ("front_shin_l", 7, (0.0, -0.34, 0.0)),
-    ("front_paw_l", 8, (0.0, -0.30, -0.08)),
+    ("front_paw_l", 8, (0.0, -0.233, -0.08)),
     ("front_leg_r", 1, (0.25, -0.18, -0.32)), ("front_shin_r", 10, (0.0, -0.34, 0.0)),
-    ("front_paw_r", 11, (0.0, -0.30, -0.08)),
+    ("front_paw_r", 11, (0.0, -0.233, -0.08)),
     ("rear_leg_l", 1, (-0.27, -0.13, 0.33)), ("rear_shin_l", 13, (0.0, -0.38, 0.0)),
-    ("rear_paw_l", 14, (0.0, -0.28, -0.04)),
+    ("rear_paw_l", 14, (0.0, -0.243, -0.04)),
     ("rear_leg_r", 1, (0.27, -0.13, 0.33)), ("rear_shin_r", 16, (0.0, -0.38, 0.0)),
-    ("rear_paw_r", 17, (0.0, -0.28, -0.04)),
+    ("rear_paw_r", 17, (0.0, -0.243, -0.04)),
     ("wing_l", 1, (-0.22, 0.13, 0.0)), ("wing_r", 1, (0.22, 0.13, 0.0)),
 )
 
@@ -357,11 +362,27 @@ def _horse_animations(writer: GLBWriter, joint_nodes: list[int]) -> None:
         node("neck"): ("rotation", [0.0, 0.16, 0.42],
                        [rotate("x", 0.0), rotate("x", -0.30), rotate("x", 0.0)]),
     })
+    # Roll about the body, not the root: rotating the root pivots the whole
+    # horse about the ground point and drives it through the floor.  The root
+    # only drops far enough for the carcass to rest on the surface.
     writer.animation("Death_A", {
-        node("root"): ("rotation", [0.0, 0.8, 1.4],
-                       [rotate("z", 0.0), rotate("z", 1.05), rotate("z", 1.52)]),
+        node("root"): ("translation", [0.0, 0.4, 0.8, 1.4],
+                       [[0.0, 0.0, 0.0], [0.0, -0.0, 0.0],
+                        [0.0, -0.02, 0.0], [0.0, -0.16, 0.0]]),
+        node("body"): ("rotation", [0.0, 0.4, 0.8, 1.4],
+                       [rotate("z", 0.0), rotate("z", 0.22),
+                        rotate("z", 0.55), rotate("z", 0.86)]),
         node("neck"): ("rotation", [0.0, 0.8, 1.4],
                        [rotate("x", 0.0), rotate("x", 0.4), rotate("x", 0.55)]),
+        node("front_leg_l"): ("rotation", [0.0, 0.4, 0.8, 1.4],
+                              [rotate("x", 0.0), rotate("x", 0.341),
+                               rotate("x", 0.62), rotate("x", 0.86)]),
+        node("front_leg_r"): ("rotation", [0.0, 0.8, 1.4],
+                              [rotate("x", 0.0), rotate("x", 0.55), rotate("x", 0.80)]),
+        node("rear_leg_l"): ("rotation", [0.0, 0.8, 1.4],
+                             [rotate("x", 0.0), rotate("x", 0.70), rotate("x", 0.94)]),
+        node("rear_leg_r"): ("rotation", [0.0, 0.8, 1.4],
+                             [rotate("x", 0.0), rotate("x", 0.64), rotate("x", 0.90)]),
     })
 
 
@@ -385,18 +406,24 @@ def build(slug: str, *, tacked: bool = False, scale: float = 1.0) -> dict:
     """Write one horse GLB and return its catalogue record."""
     palette = PALETTES[slug]
     writer = GLBWriter("Eloria Sunmane livestock builder 1.0")
-    # Base colour only, at a quarter of the authored resolution: an animal never
-    # covers enough screen for a normal or ORM map to pay for itself, and
-    # skipping them also keeps the primitives free of a tangent requirement.
-    families = {HIDE: "hide", MANE: "thatch", HOOF: "stone", TACK: "leather"}
-    kit = texture_kit.build_kit(scale=0.25, families=set(families.values()))
+    # Full-colour coat, mane, hoof and tack maps with matching normals, so the
+    # livestock carry the same surface fidelity as the rest of the creature
+    # library rather than a flat tinted greyscale.
+    surfaces = {HIDE: "coat", MANE: "fur", HOOF: "stone", TACK: "cloth"}
     materials = {}
-    for key, family in families.items():
-        base = writer.texture(kit[family].base_color, f"{family}-basecolor")
+    for key, kind in surfaces.items():
+        tone = tuple(int(round(c * 255)) for c in palette[key][:3])
+        accent = tuple(min(255, int(c * 0.55 + 90)) for c in tone)
+        albedo, _ = creature_surfaces.surface_maps(kind, tone, accent,
+                                                   seed=f"{slug}:{key}", size=256)
+        _, normal = creature_surfaces.surface_maps(kind, tone, accent,
+                                                   seed=f"{slug}:{key}", size=192)
         materials[key] = writer.material(
-            f"{slug}_{key}", base_color=palette[key], metallic=0.0,
+            f"{slug}_{key}", base_color=(1.0, 1.0, 1.0, 1.0), metallic=0.0,
             roughness=0.72 if key != HOOF else 0.42,
-            base_color_texture=base, double_sided=key == MANE)
+            base_color_texture=writer.texture(albedo, f"{slug}-{key}-basecolor"),
+            normal_texture=writer.texture(normal, f"{slug}-{key}-normal"),
+            double_sided=key == MANE)
 
     # Joint hierarchy, mirroring the shared creature rig exactly.
     children: dict[int, list[int]] = {index: [] for index in range(len(CREATURE_BONES))}

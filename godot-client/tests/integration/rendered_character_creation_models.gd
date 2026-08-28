@@ -120,9 +120,13 @@ func _validate_actor(actor: ReplicatedActor3D, label: String) -> void:
 	if actor == null:
 		return
 	var equipment: Dictionary = actor.equipment_diagnostics()
-	_expect(int(equipment.get("native", -1)) == 0 and
+	# Modified 2026-08-28 for Eloria Client: shirt, pants, and boots now use the
+	# same skinned equipment path as the world actor. The creation preview should
+	# contain those garments, but no socketed prop or fallback placeholder.
+	_expect(int(equipment.get("skinned", 0)) >= 3 and
+		int(equipment.get("socket", -1)) == 0 and
 		int(equipment.get("fallback", -1)) == 0,
-		label + " creation preview has no rigid equipment attachments")
+		label + " creation preview has skinned clothing without props or fallbacks")
 	var mesh_names: Array[String] = []
 	var maximum_extent := 0.0
 	for node_value: Node in actor.find_children("*", "MeshInstance3D", true, false):
