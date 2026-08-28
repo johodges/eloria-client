@@ -19,8 +19,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import preview
 from amberwood import render as RENDER
-from amberwood import region as REG
-from build_amberwood import build_region
 
 import regionpaths
 
@@ -28,6 +26,9 @@ HERE = Path(__file__).resolve().parent
 PACKAGE = regionpaths.package_root()
 CAPTURES = PACKAGE / "references" / "captures"
 VIEWS = regionpaths.load_region_views(PACKAGE).VIEWS
+# The plan and the build script belong to the region, not to the toolkit.
+REG = regionpaths.load_region_plan(PACKAGE)
+build_region = regionpaths.load_region_build(PACKAGE).build_region
 
 DAY = RENDER.Lighting(sun_direction=(-0.46, 0.50, 0.73),
                       sun_color=(1.22, 0.94, 0.60),
@@ -102,8 +103,7 @@ def _free_camera(scene, terrain, eye, target, fov, minimum=None):
         return sight * 2.0 + open_fraction - probe["near_fraction"] * 0.6
 
     best = (-1.0, tuple(eye))
-    import amberwood.region as _reg
-    scale = _reg.SCALE
+    scale = REG.SCALE
     for back in (0.0, 2.0 * scale, 4.0 * scale, 7.0 * scale, 10.0 * scale,
                  14.0 * scale, 19.0 * scale):
         for lateral in (0.0, -3.0 * scale, 3.0 * scale, -6.0 * scale, 6.0 * scale,
