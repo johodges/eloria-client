@@ -2124,9 +2124,11 @@ def build_model_registry() -> dict:
 
 
 def build_equipment_registry(rig: "equipment_authoring.Rig",
-                             idle_bases: dict | None) -> dict:
+                             idle_bases: dict | None, author_rig: str = "",
+                             girths: dict | None = None) -> dict:
     """Equipment registry v3: character-space sockets and skinned garments."""
-    return equipment_authoring.build_equipment_registry(rig, EQUIPMENT, idle_bases)
+    return equipment_authoring.build_equipment_registry(
+        rig, EQUIPMENT, idle_bases, author_rig=author_rig, girths=girths)
 
 
 def carry_forward_ambient(manifest_path: Path, models_path: Path,
@@ -2228,16 +2230,65 @@ def main() -> None:
     # has to build the races first or the geometry is fitted to a stale rest
     # pose. Loading the rig here also keeps a clean tree bootstrappable.
     rig_source=args.output/"races/luminous_male.glb"
+    reference_rig=rig_source.stem
     rig=equipment_authoring.load_rig(rig_source)
+    # Modified 2026-08-28 for Eloria Client: garments are lofted tight around
+    # this one reference body.  They used to be lofted around the widest
+    # silhouette in the whole cast so that a single mesh would clear everybody,
+    # which fitted the broadest race and hung off every other one.  Each race's
+    # measurements are shipped in the registry instead and the runtime refits
+    # the garment per wearer, so the authored piece can stay close to the body.
+    girths={}
+    race_rigs={}
+    for race_path in sorted((args.output/"races").glob("*.glb")):
+        try:
+            race_rigs[race_path.stem]=equipment_authoring.load_rig(race_path)
+        except Exception as error:  # a race still being authored must not stop a build
+            print("skip race measurement",race_path.name,error)
+            continue
+        girths[race_path.stem]=equipment_authoring.body_girth(race_rigs[race_path.stem])
+    print(f"measured {len(girths)} race silhouettes")
+    # Male and female bodies differ in shape, not only in size - a bust and a
+    # hip flare are not a scaled chest - and a per-bone radius cannot express
+    # that, so the two builds of the reference culture are both measured at
+    # authoring time.  Everything else is a size difference and is handled per
+    # wearer at runtime, which is what keeps the piece close to the body.
+    shape_cast=[race_rigs[name] for name in ("luminous_female",)
+                if name in race_rigs]
+    if shape_cast:
+        rig=equipment_authoring.RigSet(rig, shape_cast)
+        print(f"garment shape cast: reference + {len(shape_cast)}")
     idle_bases=None
     if args.animation_library.is_file():
         idle_bases=equipment_authoring._idle_hand_bases(
             str(rig_source), str(args.animation_library))
+    def fit_variants(slug,label,kind,base,accent,finish=None):
+        """Author the extra copies a race whose build differs needs."""
+        built=[]
+        for group,spec in equipment_authoring.FIT_GROUPS.items():
+            if kind not in spec["kinds"]:
+                continue
+            group_rig=race_rigs.get(spec["rig"])
+            if group_rig is None:
+                print("skip variant",slug,group,"- no rig",spec["rig"])
+                continue
+            vslug=equipment_authoring.variant_slug(slug,group)
+            vpath=args.output/"equipment"/f"{vslug}.glb"
+            info=equipment_authoring.build_equipment_piece(
+                vpath,group_rig,vslug,label,kind,base,accent,finish=finish)
+            built.append(info|{"group":group,"authoredFor":spec["rig"],
+                               "path":str(vpath.relative_to(repo_root))})
+        return built
+
+    manifest["fitVariants"]={}
     for slug,label,part,visual,kind,base,accent in EQUIPMENT:
         path=args.output/"equipment"/f"{slug}.glb"
         manifest["equipment"][slug]=build_equipment(path,slug,label,kind,base,accent,rig)|{
             "part":part,"visual":visual,"path":str(path.relative_to(repo_root))}
         print("equipment",slug,manifest["equipment"][slug])
+        for info in fit_variants(slug,label,kind,base,accent):
+            manifest["fitVariants"][info["id"]]=info
+            print("variant",info["id"],info["triangles"],"tris")
     # The generic tier claims the legacy visual ids directly. One authored mesh
     # serves a whole material ladder; the ids differ by a runtime tint.
     manifest["genericEquipment"]={}
@@ -2251,6 +2302,10 @@ def main() -> None:
             "visuals":[visual for visual,_n,_b,_a in piece.variants],
             "path":str(path.relative_to(repo_root))}
         print("generic",piece.slug,manifest["genericEquipment"][piece.slug])
+        for variant in fit_variants(piece.slug,piece.label,piece.kind,
+                                    piece.base,piece.accent,finish=piece.finish):
+            manifest["fitVariants"][variant["id"]]=variant
+            print("variant",variant["id"],variant["triangles"],"tris")
     manifest["ambientCreatures"] = {}
     for slug, label, archetype, _scale, tacked in AMBIENT_CREATURES:
         path = args.output / "creatures" / f"{slug}.glb"
@@ -2278,7 +2333,9 @@ def main() -> None:
     write_json(args.manifest, manifest)
     if args.only=="all":
         write_json(args.models, models)
-    write_json(args.equipment_registry, build_equipment_registry(rig, idle_bases))
+    write_json(args.equipment_registry,
+               build_equipment_registry(rig, idle_bases,
+                                        author_rig=reference_rig, girths=girths))
     print(f"validated {len(validation)} native GLBs")
 
 

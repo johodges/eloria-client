@@ -36,6 +36,8 @@ jobs:
             python3 python3-numpy
       - name: Validate native Nymara GLB catalog
         run: python3 godot-client/tests/test_native_glb_assets.py -v
+      - name: Validate garment fit registry
+        run: python3 godot-client/tests/test_equipment_fit.py -v
       - name: Validate creature rigs, skinning and animation
         run: |
           python3 eloria-assets/tools/validate_creature_glbs.py \
