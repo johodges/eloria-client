@@ -7,6 +7,7 @@ var _aliases: Dictionary = {}
 var _cell_size := Vector2(50.0, 50.0)
 var _columns := 5
 var _images_per_atlas := 25
+var _image_count := -1
 var _fallback_image_id := -1
 
 func configure(config: Dictionary) -> void:
@@ -20,6 +21,10 @@ func configure(config: Dictionary) -> void:
 			_cell_size = Vector2(float(values[0]), float(values[1]))
 	_columns = maxi(1, int(config.get("columns", 5)))
 	_images_per_atlas = maxi(1, int(config.get("imagesPerAtlas", 25)))
+	# Modified 2026-08-28 for Eloria Client: the atlases hold 102 icons in 125
+	# grid cells, so capacity alone said an unpainted cell was supported and an
+	# unknown item drew an empty square instead of the fallback glyph.
+	_image_count = int(config.get("imageCount", -1))
 	_fallback_image_id = int(config.get("fallbackImageId", -1))
 	var aliases_value: Variant = config.get("aliases", {})
 	if aliases_value is Dictionary:
@@ -53,7 +58,9 @@ func icon_for(image_id: int) -> Texture2D:
 	return atlas_texture
 
 func supports(image_id: int) -> bool:
-	return image_id >= 0 and image_id < _atlas_paths.size() * _images_per_atlas
+	var capacity: int = _atlas_paths.size() * _images_per_atlas
+	var painted: int = capacity if _image_count < 0 else mini(_image_count, capacity)
+	return image_id >= 0 and image_id < painted
 
 func uses_substitute(image_id: int) -> bool:
 	return image_id >= 0 and (_aliases.has(image_id) or not supports(image_id))

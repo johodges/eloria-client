@@ -717,11 +717,17 @@ func _refresh_creation_preview() -> void:
 	preview_root.add_child(preview_actor)
 	var actor_type: int = create_gender.get_selected_id()
 	var appearance: Dictionary = _creation_appearance()
-	var dto := {"actor_id": 0, "x": 0, "y": 0, "rotation": 0,
+	# Modified 2026-08-28 for Eloria Client: the creation bytes are equipment
+	# visual ids now, so the preview resolves them exactly as the world does.
+	# Building the dto by hand here would preview a different wardrobe from the
+	# one the character spawns wearing.
+	var dto := _presentation_dto({"actor_id": 0, "x": 0, "y": 0, "rotation": 0,
 		"actor_type": actor_type, "kind": 1, "name": "Preview",
 		"appearance": appearance,
-		"equipment_visuals": AppearanceVariants.equipment_visuals(
-			actor_type, appearance)}
+		"equipment_visuals": {
+			AppearanceVariants.PART_PANTS: int(appearance.get("pants", 0)),
+			AppearanceVariants.PART_SHIRT: int(appearance.get("shirt", 0)),
+			AppearanceVariants.PART_BOOTS: int(appearance.get("boots", 0))}})
 	var model_id := _model_for_actor(dto)
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 	var errors := preview_actor.configure(dto,
@@ -4152,22 +4158,20 @@ func _presentation_dto(dto: Dictionary) -> Dictionary:
 	var result: Dictionary = dto.duplicate(true)
 	var actor_type: int = int(dto.get("actor_type", -1))
 	var appearance: Dictionary = dto.get("appearance", {}) as Dictionary
+	# Modified 2026-08-28 for Eloria Client: the legacy visual ids below 100 are
+	# real equipment now, not creation leftovers, so they are no longer dropped.
+	# An authored NPC look is applied last and outranks the server's appearance
+	# bytes, which is how a Four Gates guard keeps its guard gear without an
+	# alias hijacking the shared legacy id for every other actor.
 	var visuals: Dictionary = AppearanceVariants.equipment_visuals(
 		actor_type, appearance)
+	var server_visuals: Dictionary = dto.get("equipment_visuals", {}) as Dictionary
+	for raw_part: Variant in server_visuals:
+		visuals[int(raw_part)] = int(server_visuals[raw_part])
 	var look: Dictionary = npc_looks.get(str(int(dto.get("actor_type", -1))), {}) as Dictionary
 	var look_visuals: Dictionary = look.get("equipmentVisuals", {}) as Dictionary
 	for raw_part: Variant in look_visuals:
-		visuals[raw_part] = look_visuals[raw_part]
-	var server_visuals: Dictionary = dto.get("equipment_visuals", {}) as Dictionary
-	for raw_part: Variant in server_visuals:
-		var part: int = int(raw_part)
-		var visual_id: int = int(server_visuals[raw_part])
-		# Enhanced actor records repeat the legacy creation bytes in parts 3–6.
-		# Values below 100 are choices, not native equipment visual IDs.
-		if part not in [AppearanceVariants.PART_HEAD,
-				AppearanceVariants.PART_PANTS, AppearanceVariants.PART_SHIRT,
-				AppearanceVariants.PART_BOOTS] or visual_id >= 100:
-			visuals[raw_part] = visual_id
+		visuals[int(raw_part)] = int(look_visuals[raw_part])
 	result["equipment_visuals"] = visuals
 	return result
 

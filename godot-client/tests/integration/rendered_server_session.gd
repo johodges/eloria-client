@@ -600,8 +600,12 @@ func _run() -> void:
 			"bone": "hand_l",
 		},
 		{
+			# Modified 2026-08-28 for Eloria Client: the cape is a skinned
+			# garment now, so it binds to this actor's skeleton rather than
+			# hanging off one bone.
 			"name": "cape",
 			"part": 2,
+			"attach": "skinned",
 			"source_slot": _inspection_slot_for(inventory_inspections,
 				"Guard Cape"),
 			"wear_slot": 38,
@@ -658,10 +662,20 @@ func _run() -> void:
 	_expect(int(equipped_diagnostics.get("native", 0)) == 3
 		and int(equipped_diagnostics.get("fallback", 0)) == 0,
 		"all three guard visuals resolve to native equipment with zero fallback")
+	_expect(int(equipped_diagnostics.get("socket", 0)) == 2
+		and int(equipped_diagnostics.get("skinned", 0)) >= 1,
+		"guard loadout resolves two socketed props and a skinned cape")
 	var native_attachments: Dictionary = _native_equipment_attachments(equipped_actor)
 	for guard_spec: Dictionary in guard_specs:
 		var part: int = int(guard_spec.get("part", -1))
 		var attachment: Dictionary = native_attachments.get(part, {}) as Dictionary
+		if str(guard_spec.get("attach", "socket")) == "skinned":
+			_expect(int(attachment.get("visible_meshes", 0)) > 0
+				and bool(attachment.get("under_skeleton", false))
+				and bool(attachment.get("skinned", false)),
+				"native guard %s binds to the actor skeleton with visible geometry"
+				% str(guard_spec.get("name", "item")))
+			continue
 		_expect(str(attachment.get("bone", "")) == str(guard_spec.get("bone", ""))
 			and int(attachment.get("visible_meshes", 0)) > 0
 			and bool(attachment.get("under_skeleton", false)),
@@ -675,15 +689,30 @@ func _run() -> void:
 	var attachment_positions_after: Dictionary = _native_equipment_attachment_positions(
 		equipped_actor)
 	var animation_followed_parts: int = 0
+	var socketed_parts: int = 0
 	for guard_spec: Dictionary in guard_specs:
+		if str(guard_spec.get("attach", "socket")) != "socket":
+			continue
+		socketed_parts += 1
 		var part: int = int(guard_spec.get("part", -1))
 		var before_value: Variant = attachment_positions_before.get(part)
 		var after_value: Variant = attachment_positions_after.get(part)
 		if before_value is Vector3 and after_value is Vector3 and (
 				before_value as Vector3).distance_to(after_value as Vector3) > 0.0005:
 			animation_followed_parts += 1
-	_expect(animation_followed_parts == 3,
-		"spear, shield, and cape bone attachments follow native actor animation")
+	_expect(animation_followed_parts == socketed_parts,
+		"spear and shield sockets follow native actor animation")
+	var skinned_bindings: Dictionary = _skinned_equipment_bindings(equipped_actor)
+	for guard_spec: Dictionary in guard_specs:
+		if str(guard_spec.get("attach", "socket")) != "skinned":
+			continue
+		var binding: Dictionary = skinned_bindings.get(
+			int(guard_spec.get("part", -1)), {}) as Dictionary
+		_expect(int(binding.get("binds", 0)) > 0
+			and int(binding.get("resolved", 0)) == int(binding.get("binds", -1))
+			and bool(binding.get("skeleton", false)),
+			"native guard %s rebinds every joint onto the actor skeleton"
+			% str(guard_spec.get("name", "item")))
 	equipped_actor.play_action(&"idle")
 	main.call("_on_inventory_close_pressed")
 	var equipment_capture_distance: float = camera_rig.distance
@@ -839,7 +868,17 @@ func _equipment_attachment_part(attachment: BoneAttachment3D) -> int:
 			return part
 	return -1
 
+func _equipment_skin_part(mesh_node: MeshInstance3D) -> int:
+	var mesh_name: String = str(mesh_node.name)
+	for part: int in range(8):
+		if mesh_name.begins_with("EquipmentSkin_%d_Visual_" % part):
+			return part
+	return -1
+
 func _native_equipment_attachments(actor: ReplicatedActor3D) -> Dictionary:
+	# Modified 2026-08-28 for Eloria Client: worn equipment is skinned to the
+	# actor's skeleton, so a bone attachment is no longer the only shape a
+	# native equipment node takes.
 	var attachments: Dictionary = {}
 	for node_value: Node in actor.find_children("*", "BoneAttachment3D", true, false):
 		var attachment: BoneAttachment3D = node_value as BoneAttachment3D
@@ -852,8 +891,24 @@ func _native_equipment_attachments(actor: ReplicatedActor3D) -> Dictionary:
 			"bone": str(attachment.bone_name),
 			"path": str(attachment.get_path()),
 			"under_skeleton": attachment.get_parent() is Skeleton3D,
+			"skinned": false,
 			"visible_meshes": _visible_native_mesh_count(attachment),
 		}
+	for node_value: Node in actor.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+		if not mesh_node.has_meta("native_equipment"):
+			continue
+		var part: int = _equipment_skin_part(mesh_node)
+		if part < 0:
+			continue
+		var entry: Dictionary = attachments.get(part, {
+			"bone": "", "path": str(mesh_node.get_path()),
+			"under_skeleton": mesh_node.get_parent() is Skeleton3D,
+			"skinned": true, "visible_meshes": 0}) as Dictionary
+		entry["skinned"] = true
+		entry["visible_meshes"] = int(entry.get("visible_meshes", 0)) + (
+			1 if mesh_node.mesh != null and mesh_node.is_visible_in_tree() else 0)
+		attachments[part] = entry
 	return attachments
 
 func _native_equipment_attachment_positions(actor: ReplicatedActor3D) -> Dictionary:
@@ -866,6 +921,34 @@ func _native_equipment_attachment_positions(actor: ReplicatedActor3D) -> Diction
 		if part >= 0:
 			positions[part] = attachment.global_transform.origin
 	return positions
+
+func _skinned_equipment_bindings(actor: ReplicatedActor3D) -> Dictionary:
+	# A skinned garment's own node never moves - the skeleton deforms it - so it
+	# is checked structurally: its skin must be bound to this actor's skeleton.
+	var bindings: Dictionary = {}
+	var skeleton: Skeleton3D = null
+	for node_value: Node in actor.find_children("*", "Skeleton3D", true, false):
+		skeleton = node_value as Skeleton3D
+		break
+	for node_value: Node in actor.find_children("*", "MeshInstance3D", true, false):
+		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+		if not mesh_node.has_meta("native_equipment"):
+			continue
+		var part: int = _equipment_skin_part(mesh_node)
+		if part < 0 or mesh_node.skin == null:
+			continue
+		var bound: int = 0
+		for index: int in range(mesh_node.skin.get_bind_count()):
+			var bone_name: String = mesh_node.skin.get_bind_name(index)
+			if skeleton != null and not bone_name.is_empty() and (
+					skeleton.find_bone(bone_name) >= 0):
+				bound += 1
+		bindings[part] = {
+			"binds": mesh_node.skin.get_bind_count(),
+			"resolved": bound,
+			"skeleton": mesh_node.get_node_or_null(mesh_node.skeleton) == skeleton,
+		}
+	return bindings
 
 func _populated_item_buttons(container: Container) -> int:
 	var populated: int = 0

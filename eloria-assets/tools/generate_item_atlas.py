@@ -34,11 +34,16 @@ def dds(path,w,h,pixel):
 def main():
  p=argparse.ArgumentParser();p.add_argument("output",nargs="?",default="build/eloria-data");root=Path(p.parse_args().output)
  authored=Path(__file__).resolve().parents[1]/"ui/items"
- for atlas in range((len(ITEMS)+len(NYMARA_ITEMS)+24)//25):
+ for atlas in range((len(ITEMS)+len(NYMARA_ITEMS)+1+24)//25):
   name=f"items{atlas+1}";source=authored/f"{name}.dds"
   if not source.is_file():raise FileNotFoundError(f"Missing authored item atlas: {source}")
   (root/"textures").mkdir(parents=True,exist_ok=True);shutil.copy2(source,root/"textures"/source.name)
  catalog=[{"item_id":i,"image_id":i,"name":n} for i,n in enumerate(ITEMS)]
  catalog += [{"item_id":1000+i,"image_id":len(ITEMS)+i,"name":n} for i,n in enumerate(NYMARA_ITEMS)]
- (root/"items_eloria.json").write_text(json.dumps({"schema":2,"items":catalog},indent=2)+"\n")
+ # Modified 2026-08-28 for Eloria Client: image id 101 is the unknown-item
+ # glyph the client falls back to, so it is catalogued rather than left as an
+ # unpainted cell the atlas would still claim to support.
+ unknown=len(ITEMS)+len(NYMARA_ITEMS)
+ catalog.append({"item_id":9999,"image_id":unknown,"name":"Unknown Item"})
+ (root/"items_eloria.json").write_text(json.dumps({"schema":2,"images":unknown+1,"items":catalog},indent=2)+"\n")
 if __name__=="__main__":main()
