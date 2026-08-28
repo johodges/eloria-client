@@ -41,50 +41,201 @@ TYPE_WIDTHS = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT4": 16}
 
 RACES = {
     "luminous": {"label": "Luminous", "color": (196, 139, 103),
-                  "accent": (48, 151, 164), "shape": (1., 1., 1., 1.),
+                  "accent": (48, 151, 164),
                   "feature": "none", "preserve_body": True,
                   "wardrobe": ((42, 126, 142), (42, 55, 72), (78, 55, 39),
                                 (221, 190, 101))},
     "votary": {"label": "Whitehorn Votary", "color": (161, 145, 108),
                 "feature_color": (205, 216, 213), "accent": (226, 231, 228),
-                "shape": (1.04, 1.03, 1.02, .99), "feature": "horns",
+                "feature": "horns",
                 "wardrobe": ((113, 145, 164), (76, 94, 108), (79, 91, 99),
                               (218, 232, 235))},
     "glasswarden": {"label": "Glasswarden", "color": (168, 121, 91),
                      "feature_color": (38, 29, 62), "accent": (45, 128, 164),
-                     "shape": (.98, 1.01, .99, 1.), "feature": "crystal",
+                     "feature": "crystal",
                      "body_pattern": "none",
                      "wardrobe": ((54, 48, 84), (42, 44, 62), (83, 57, 39),
                                    (187, 145, 63))},
     "orun": {"label": "Orun", "color": (184, 139, 105),
-             "accent": (219, 166, 72), "shape": (1.02, 1.04, .97, .98),
-             "feature": "none",
+             "accent": (219, 166, 72), "feature": "none",
              "wardrobe": ((146, 76, 39), (85, 64, 48), (82, 54, 35),
                            (49, 142, 145))},
     "greyhaven": {"label": "Greyhaven", "color": (153, 111, 89),
-                   "accent": (154, 174, 171), "shape": (1.03, 1.07, 1.04, 1.02),
-                   "feature": "none",
+                   "accent": (154, 174, 171), "feature": "none",
                    "wardrobe": ((225, 220, 202), (41, 59, 75), (65, 49, 39),
                                  (171, 137, 70))},
     "ssarathi": {"label": "Ssarathi", "color": (91, 153, 126),
                   "feature_color": (32, 91, 68), "accent": (157, 122, 50),
-                  "shape": (1.05, .98, .96, 1.03),
                   "feature": "scaled",
                   "wardrobe": ((43, 112, 86), (34, 76, 62), (71, 63, 42),
                                 (189, 153, 67))},
     "stoneborn": {"label": "Stoneborn", "color": (118, 105, 91),
                    "feature_color": (61, 59, 56), "accent": (50, 122, 133),
-                   "shape": (1.04, 1.08, 1.04, 1.02),
                    "feature": "stone",
                    "wardrobe": ((91, 86, 80), (65, 67, 68), (62, 55, 48),
                                  (84, 189, 199))},
     "mycelari": {"label": "Mycelari", "color": (116, 137, 91),
                   "feature_color": (82, 56, 35), "accent": (154, 92, 48),
-                  "shape": (1., 1.02, 1.02, 1.03),
                   "feature": "fungal",
                   "wardrobe": ((88, 112, 70), (62, 75, 53), (71, 54, 39),
                                 (207, 143, 89))},
 }
+
+# --- race anatomy ---------------------------------------------------------
+#
+# Every playable race shares the one 65-joint Quaternius rig so the universal
+# animation library keeps working, but sharing a rig does not have to mean
+# sharing a body.  The previous pass scaled the source mesh with three hard
+# width bands keyed off absolute height (hips below 48%, shoulders to 78%,
+# head above).  That produced a visible pinch at the waist and the neck, it
+# stretched arms lengthwise instead of thickening them -- the bands multiply
+# X, and an A-posed arm is almost entirely X -- and it left all eight races
+# the same human silhouette with a small prop glued on.
+#
+# This pass retargets the rest pose instead.  Segment lengths and rest
+# rotations move the joints, and the mesh follows through linear blend
+# skinning with T = B . G . A^-1, where A is the source bind pose, B the
+# retargeted bind pose, and G a girth scale expressed perpendicular to the
+# bone.  Deformation is therefore smooth by construction (it is blended by
+# the same skin weights the renderer uses), anatomically meaningful (a bone
+# gets longer or thicker rather than a slab of world space getting wider),
+# and it costs no extra vertices.
+#
+# Two invariants keep the shared animation library usable:
+#
+#   * hip-to-ground distance is preserved.  The clips write pelvis
+#     translation directly, so a longer leg cannot raise the hips -- it would
+#     push the feet through the floor.  After retargeting, the leg chain is
+#     rescaled by a single solved factor that restores the original ground
+#     contact height.  Races still differ in how the leg is *divided*, which
+#     is what makes a digitigrade stance possible at all.
+#   * overall stature rides on the model registry's import scale rather than
+#     on the rig, so a taller race is uniformly taller instead of having its
+#     hips detached from its feet.
+#
+# The rest of the runtime contract is untouched: 65 joints, the same joint
+# names and order, one skin, and rest transforms that stay rigid so the
+# clips' rotation tracks still mean what they meant before.
+
+CHAIN_CHILD = {"root": "pelvis", "pelvis": "spine_01",
+               "hand_l": "middle_01_l", "hand_r": "middle_01_r"}
+GROUND_JOINTS = ("ball_leaf_l", "ball_leaf_r")
+LEG_GROUPS = ("thigh", "calf", "foot", "ball")
+
+
+def joint_group(name: str) -> str:
+    """Coarse anatomical group for a rig joint, used to key the race specs."""
+    if name == "root":
+        return "root"
+    if name == "pelvis":
+        return "pelvis"
+    if name == "Head":
+        return "head"
+    for prefix in ("spine", "neck", "clavicle", "upperarm", "lowerarm",
+                   "hand", "thigh", "calf", "foot", "ball"):
+        if name.startswith(prefix):
+            return prefix
+    return "finger"
+
+
+# stature   uniform import scale for the whole actor (registry, not the rig)
+# segment   multiplies the bone that *leaves* this group, i.e. the local
+#           offsets of its children -- "thigh": 1.1 lengthens the femur
+# girth     thickness perpendicular to the bone
+# swell     uniform scale about the joint, for the skull and hands
+# stance    rotation of the joint's offset from its parent, in world bind
+#           axes (degrees), authored for the right side and mirrored to the
+#           left -- this is anatomy the animation clips cannot overwrite
+ANATOMY = {
+    # Reference proportions.  The Luminous are the baseline every other race
+    # is described against, so their body is left exactly as authored.
+    "luminous": {},
+    # Whitehorn highlanders: tall, long-limbed and lean, with the heavy neck
+    # and loaded calves of people who walk mountains carrying horns.
+    "votary": {
+        "stature": 1.045,
+        "segment": {"calf": 1.05, "thigh": 1.03, "neck": 1.10, "spine": 1.02},
+        "girth": {"upperarm": .94, "lowerarm": .93, "spine": .97,
+                  "neck": 1.16, "calf": 1.12, "thigh": 1.03},
+    },
+    # Glasswarden field engineers and scholars: shorter, lighter through the
+    # shoulders and arms, with the head carried slightly forward.
+    "glasswarden": {
+        "stature": .975,
+        "segment": {"clavicle": .95, "thigh": .99},
+        "girth": {"upperarm": .90, "lowerarm": .91, "spine": .95,
+                  "thigh": .95, "calf": .93},
+        "stance": {"neck_01": (7., 0., 0.), "Head": (-4., 0., 0.)},
+    },
+    # Orun riders: deep chest, heavy thighs, and the bowed, externally
+    # rotated legs of a culture that grows up in the saddle.
+    "orun": {
+        "stature": 1.01,
+        "segment": {"spine": .97, "thigh": 1.02, "clavicle": 1.04},
+        "girth": {"spine": 1.09, "thigh": 1.14, "calf": 1.04,
+                  "upperarm": 1.06, "lowerarm": 1.02},
+        # Knees carried outward and ankles tucked back under: a rider's legs.
+        "stance": {"calf_r": (0., 0., -7.), "foot_r": (0., 0., 10.)},
+    },
+    # Greyhaven coast: stocky and heavy-boned, broad through the shoulders
+    # and forearms, shorter in the leg than the arm.
+    "greyhaven": {
+        "stature": .99,
+        "segment": {"clavicle": 1.10, "thigh": .96, "calf": .96,
+                    "lowerarm": 1.04, "neck": .94},
+        "girth": {"spine": 1.12, "upperarm": 1.10, "lowerarm": 1.14,
+                  "hand": 1.08, "thigh": 1.08, "calf": 1.08, "neck": 1.10},
+        "stance": {"upperarm_r": (0., 0., -5.)},
+    },
+    # Ssarathi are reptilian, not humans in scale paint.  The leg is
+    # digitigrade: the femur swings forward, the shin back, and the body
+    # stands on a long metatarsal with the heel clear of the ground.  Total
+    # hip height is unchanged, so the shared walk cycle still plants.  The
+    # neck is longer and carried forward, counterweighted by the tail.
+    "ssarathi": {
+        "stature": 1.02,
+        "segment": {"thigh": .86, "calf": 1.12, "foot": 1.55, "ball": 1.30,
+                    "neck": 1.32, "spine": .97, "lowerarm": 1.10,
+                    "hand": 1.12, "finger": 1.15},
+        "girth": {"spine": .93, "upperarm": .88, "lowerarm": .86,
+                  "thigh": 1.02, "calf": .88, "foot": .82, "neck": .90},
+        "swell": {"hand": .96},
+        # Solved so the ankle sits 0.23 m clear of the ground with the ball
+        # and toe planted: femur forward, shin near vertical, a long
+        # metatarsal dropping steeply, and flat toes.
+        "stance": {"calf_r": (-29., 0., 0.), "foot_r": (6., 0., 0.),
+                   "ball_r": (45., 0., 0.), "ball_leaf_r": (5., 0., 0.),
+                   "neck_01": (18., 0., 0.), "Head": (-14., 0., 0.)},
+    },
+    # Stoneborn carry mineral mass.  Everything is thicker, and the neck is
+    # short and sunk between raised shoulders; the stance is wide because the
+    # thighs cannot pass each other.
+    "stoneborn": {
+        "stature": 1.06,
+        "segment": {"neck": .72, "clavicle": 1.14, "spine": 1.02,
+                    "thigh": .95, "calf": .93, "upperarm": 1.02},
+        "girth": {"spine": 1.24, "neck": 1.45, "clavicle": 1.30,
+                  "upperarm": 1.30, "lowerarm": 1.26, "hand": 1.18,
+                  "thigh": 1.26, "calf": 1.24, "foot": 1.14},
+        "swell": {"head": 1.06},
+        "stance": {"calf_r": (0., 0., -8.), "foot_r": (0., 0., 5.),
+                   "upperarm_r": (0., 0., -12.), "neck_01": (5., 0., 0.),
+                   "Head": (-4., 0., 0.)},
+    },
+    # Mycelari grow rather than build muscle: a long thin stipe of a body,
+    # narrow shoulders, light limbs, and a small skull under a heavy cap.
+    "mycelari": {
+        "stature": .995,
+        "segment": {"thigh": 1.08, "calf": 1.10, "spine": .95,
+                    "clavicle": .90, "neck": 1.14, "lowerarm": 1.05},
+        "girth": {"spine": .86, "upperarm": .76, "lowerarm": .74,
+                  "hand": .88, "thigh": .82, "calf": .78, "neck": .84,
+                  "clavicle": .86},
+        "swell": {"head": .93},
+        "stance": {"neck_01": (5., 0., 0.), "Head": (-5., 0., 0.)},
+    },
+}
+
 PLAYER_ACTOR_TYPES = {
     0: "luminous_female", 1: "luminous_male",
     2: "votary_female", 3: "votary_male", 4: "glasswarden_female", 5: "glasswarden_male",
@@ -513,37 +664,230 @@ def global_node_matrix(document: dict, node_index: int) -> np.ndarray:
     return result
 
 
-def deform_player(positions: np.ndarray, bounds: tuple[np.ndarray, np.ndarray],
-                  shape: tuple[float, float, float, float], gender: str) -> np.ndarray:
-    low, high = bounds
-    height, shoulders, hips, head = shape
-    result = positions.astype(np.float32).copy()
-    t = np.clip((result[:, 1] - low[1]) / max(1e-5, high[1] - low[1]), 0., 1.)
-    width = np.full(len(result), 1.0)
-    width = np.where(t < .48, hips, width)
-    width = np.where((t >= .48) & (t < .78), shoulders, width)
-    width = np.where(t >= .78, head, width)
-    result[:, 0] *= width
-    result[:, 2] *= .98 + (width - 1.) * .35
-    result[:, 1] = low[1] + (result[:, 1] - low[1]) * height
+def joint_parents(document: dict, skin: dict) -> dict[int, int | None]:
+    """Parent slot for every joint, indexed by position in skin["joints"]."""
+    slot_of = {node: slot for slot, node in enumerate(skin["joints"])}
+    parents: dict[int, int | None] = {slot: None for slot in range(len(skin["joints"]))}
+    for node_index, node in enumerate(document["nodes"]):
+        if node_index not in slot_of:
+            continue
+        for child in node.get("children", []):
+            if child in slot_of:
+                parents[slot_of[child]] = slot_of[node_index]
+    return parents
+
+
+def hierarchy_order(parents: dict[int, int | None]) -> list[int]:
+    """Joint slots ordered so a parent is always visited before its children."""
+    children: dict[int | None, list[int]] = {}
+    for slot, parent in parents.items():
+        children.setdefault(parent, []).append(slot)
+    order: list[int] = []
+    queue = list(children.get(None, []))
+    while queue:
+        slot = queue.pop(0)
+        order.append(slot)
+        queue.extend(children.get(slot, []))
+    return order
+
+
+def axis_rotation(degrees: tuple[float, float, float]) -> np.ndarray:
+    """Extrinsic X-then-Y-then-Z rotation in world bind axes."""
+    result = np.eye(3, dtype=np.float64)
+    for axis, value in enumerate(degrees):
+        if not value:
+            continue
+        angle = math.radians(value)
+        cos, sin = math.cos(angle), math.sin(angle)
+        matrix = np.eye(3, dtype=np.float64)
+        i, j = [(1, 2), (2, 0), (0, 1)][axis]
+        matrix[i, i] = cos; matrix[i, j] = -sin
+        matrix[j, i] = sin; matrix[j, j] = cos
+        result = matrix @ result
     return result
 
 
-def deform_player_normals(normals: np.ndarray, positions: np.ndarray,
-                          bounds: tuple[np.ndarray, np.ndarray],
-                          shape: tuple[float, float, float, float], gender: str) -> np.ndarray:
-    low, high = bounds
-    height, shoulders, hips, head = shape
-    t = np.clip((positions[:, 1] - low[1]) / max(1e-5, high[1] - low[1]), 0., 1.)
-    width = np.ones(len(positions), dtype=np.float32)
-    width = np.where(t < .48, hips, width)
-    width = np.where((t >= .48) & (t < .78), shoulders, width)
-    width = np.where(t >= .78, head, width)
-    scales = np.column_stack((width, np.full(len(width), height),
-                              .98 + (width - 1.) * .35))
-    result = normals.astype(np.float32) / scales
-    result /= np.maximum(np.linalg.norm(result, axis=1, keepdims=True), 1e-6)
+def stance_rotation(spec: dict, name: str) -> np.ndarray | None:
+    """Rotation applied to a joint's offset, mirrored from the right side."""
+    stance = spec.get("stance", {})
+    if name in stance:
+        return axis_rotation(stance[name])
+    if name.endswith("_l"):
+        mirrored = stance.get(name[:-2] + "_r")
+        if mirrored is not None:
+            # Reflecting through the YZ plane flips rotation about Y and Z.
+            return axis_rotation((mirrored[0], -mirrored[1], -mirrored[2]))
+    return None
+
+
+def retarget_bind(source_bind: np.ndarray, parents: dict[int, int | None],
+                  names: list[str], spec: dict, leg_scale: float) -> np.ndarray:
+    """Rebuild the global bind pose from race segment lengths and stance.
+
+    Stance is expressed by rotating a joint's *offset from its parent*, never
+    by rotating the joint's own frame.  That distinction is the whole reason a
+    digitigrade Ssarathi is possible at all on a shared rig: glTF rotation
+    tracks are absolute, so the animation library overwrites every rest
+    rotation the moment a clip plays, and any anatomy stored there would snap
+    back to the human A-pose.  Local translations are never animated below the
+    pelvis, so anatomy stored in the offsets survives every clip -- the limb
+    keeps its own segment directions inside whatever frame the clip puts the
+    parent in.  Joint frames are therefore left exactly as the source authored
+    them, which also means the clips' rotations still mean what they meant.
+    """
+    segment = spec.get("segment", {})
+    result = np.zeros_like(source_bind)
+    for slot in hierarchy_order(parents):
+        parent = parents[slot]
+        if parent is None:
+            result[slot] = source_bind[slot].copy()
+            continue
+        group = joint_group(names[parent])
+        scale = segment.get(group, 1.)
+        if group in LEG_GROUPS:
+            scale *= leg_scale
+        offset = (source_bind[slot][:3, 3] - source_bind[parent][:3, 3]) * scale
+        rotation = stance_rotation(spec, names[slot])
+        if rotation is not None:
+            offset = rotation @ offset
+        result[slot] = np.eye(4, dtype=np.float64)
+        result[slot][:3, :3] = source_bind[slot][:3, :3]
+        result[slot][:3, 3] = result[parent][:3, 3] + offset
     return result
+
+
+def solve_leg_scale(source_bind: np.ndarray, parents: dict[int, int | None],
+                    names: list[str], spec: dict) -> float:
+    """Leg-chain scale that restores the source hip-to-ground distance.
+
+    Ground contact height is affine in the chain scale -- the offsets are
+    scaled, the rotations are not -- so two probes solve it exactly.
+    """
+    ground = [names.index(joint) for joint in GROUND_JOINTS]
+    target = source_bind[ground, 1, 3].min()
+    probes = []
+    for candidate in (1., 1.1):
+        bind = retarget_bind(source_bind, parents, names, spec, candidate)
+        probes.append((candidate, float(bind[ground, 1, 3].min())))
+    (k0, y0), (k1, y1) = probes
+    if abs(y1 - y0) < 1e-9:
+        return 1.
+    return k0 + (target - y0) * (k1 - k0) / (y1 - y0)
+
+
+def bone_axis(slot: int, source_bind: np.ndarray, parents: dict[int, int | None],
+              names: list[str], children: dict[int, list[int]]) -> np.ndarray:
+    """Unit bone direction at a joint, in that joint's own bind frame."""
+    options = children.get(slot, [])
+    preferred = CHAIN_CHILD.get(names[slot])
+    target = None
+    for child in options:
+        if preferred is None or names[child] == preferred:
+            target = source_bind[child][:3, 3]
+            break
+    if target is None and options:
+        target = source_bind[options[0]][:3, 3]
+    if target is None:
+        parent = parents[slot]
+        if parent is None:
+            return np.array([0., 1., 0.])
+        direction = source_bind[slot][:3, 3] - source_bind[parent][:3, 3]
+    else:
+        direction = target - source_bind[slot][:3, 3]
+    length = np.linalg.norm(direction)
+    if length < 1e-7:
+        return np.array([0., 1., 0.])
+    return source_bind[slot][:3, :3].T @ (direction / length)
+
+
+def shape_matrices(source_bind: np.ndarray, target_bind: np.ndarray,
+                   parents: dict[int, int | None], names: list[str],
+                   spec: dict) -> np.ndarray:
+    """Per-joint skinning transform T = B . G . A^-1 for the race body."""
+    girth = spec.get("girth", {})
+    swell = spec.get("swell", {})
+    children: dict[int, list[int]] = {}
+    for slot, parent in parents.items():
+        if parent is not None:
+            children.setdefault(parent, []).append(slot)
+    result = np.zeros_like(source_bind)
+    identity = np.eye(3, dtype=np.float64)
+    for slot in range(len(source_bind)):
+        group = joint_group(names[slot])
+        thickness = girth.get(group, 1.)
+        uniform = swell.get(group, 1.)
+        axis = bone_axis(slot, source_bind, parents, names, children)
+        # Scale only across the bone, so a thicker arm stays the same length
+        # whatever direction the bone happens to point in world space.
+        local = uniform * (identity + (thickness - 1.) *
+                           (identity - np.outer(axis, axis)))
+        shape = np.eye(4, dtype=np.float64)
+        shape[:3, :3] = local
+        result[slot] = target_bind[slot] @ shape @ np.linalg.inv(source_bind[slot])
+    return result
+
+
+def apply_shape(positions: np.ndarray, normals: np.ndarray, joints: np.ndarray,
+                weights: np.ndarray, transforms: np.ndarray):
+    """Linear blend skinning of the source mesh into the retargeted rest pose."""
+    weight = weights.astype(np.float64)
+    total = weight.sum(axis=1, keepdims=True)
+    weight = np.divide(weight, total, out=np.zeros_like(weight), where=total > 1e-8)
+    blended = np.einsum("nk,nkij->nij", weight, transforms[joints.astype(np.int64)])
+    unweighted = total[:, 0] <= 1e-8
+    if unweighted.any():
+        blended[unweighted] = np.eye(4, dtype=np.float64)
+    linear = blended[:, :3, :3]
+    moved = np.einsum("nij,nj->ni", linear, positions.astype(np.float64)) + blended[:, :3, 3]
+    # Normals need the inverse transpose because girth scaling is not uniform.
+    cofactor = np.linalg.inv(linear).transpose(0, 2, 1)
+    turned = np.einsum("nij,nj->ni", cofactor, normals.astype(np.float64))
+    turned /= np.maximum(np.linalg.norm(turned, axis=1, keepdims=True), 1e-9)
+    return moved.astype(np.float32), turned.astype(np.float32)
+
+
+def matrix_quaternion(matrix: np.ndarray) -> list[float]:
+    """glTF (x, y, z, w) quaternion from a rotation matrix."""
+    trace = matrix[0, 0] + matrix[1, 1] + matrix[2, 2]
+    if trace > 0.:
+        scale = math.sqrt(trace + 1.) * 2.
+        w = .25 * scale
+        x = (matrix[2, 1] - matrix[1, 2]) / scale
+        y = (matrix[0, 2] - matrix[2, 0]) / scale
+        z = (matrix[1, 0] - matrix[0, 1]) / scale
+    else:
+        axis = int(np.argmax((matrix[0, 0], matrix[1, 1], matrix[2, 2])))
+        i, j, k = axis, (axis + 1) % 3, (axis + 2) % 3
+        scale = math.sqrt(1. + matrix[i, i] - matrix[j, j] - matrix[k, k]) * 2.
+        values = [0., 0., 0.]
+        values[i] = .25 * scale
+        values[j] = (matrix[j, i] + matrix[i, j]) / scale
+        values[k] = (matrix[k, i] + matrix[i, k]) / scale
+        x, y, z = values
+        w = (matrix[k, j] - matrix[j, k]) / scale
+    length = math.sqrt(x * x + y * y + z * z + w * w) or 1.
+    return [float(x / length), float(y / length), float(z / length), float(w / length)]
+
+
+def write_rest_pose(nodes: list[dict], skin_joints: list[int], target_bind: np.ndarray,
+                    parents: dict[int, int | None]) -> np.ndarray:
+    """Store the retargeted rest pose on the joint nodes; return inverse binds.
+
+    The rest transforms stay rigid, so the animation library's rotation tracks
+    keep their meaning and only the proportions they act on have changed.
+    """
+    for slot, node_index in enumerate(skin_joints):
+        parent = parents[slot]
+        if parent is None:
+            continue
+        local = np.linalg.inv(target_bind[parent]) @ target_bind[slot]
+        node = nodes[node_index]
+        node.pop("matrix", None)
+        node.pop("scale", None)
+        node["translation"] = [float(value) for value in local[:3, 3]]
+        node["rotation"] = matrix_quaternion(local[:3, :3])
+    inverse = np.linalg.inv(target_bind)
+    return inverse.transpose(0, 2, 1).reshape(-1, 16).astype("float32")
 
 
 def skinned_subset(positions: np.ndarray, normals: np.ndarray, uvs: np.ndarray,
@@ -566,28 +910,46 @@ def influence(weights: np.ndarray, joints: np.ndarray, selected_joints: set[int]
     return np.where(np.isin(joints, list(selected_joints)), weights, 0.).sum(axis=1)
 
 
-def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[int, int, int],
+def player_accessory(feature: str, joint_by_name: dict[str, int],
+                     bind: dict[str, np.ndarray], color: tuple[int, int, int],
                      accent: tuple[int, int, int]):
+    """Integrated race anatomy, authored against the reference bind pose.
+
+    These are not props hung off a human.  Each form is placed from the rig's
+    own joint positions and skinned to the joints it grows from, then pushed
+    through the same retarget as the body, so it lands on the race's own
+    skeleton rather than on the reference one it was measured against.
+    """
     mesh = ShapeMesh()
     head = joint_by_name["Head"]
     pelvis = joint_by_name["pelvis"]
     spine = joint_by_name["spine_03"]
+    lower_spine = joint_by_name["spine_01"]
+    neck = joint_by_name["neck_01"]
     clavicles = {-1.: joint_by_name["clavicle_l"],
                   1.: joint_by_name["clavicle_r"]}
+    forearms = {-1.: joint_by_name["lowerarm_l"],
+                 1.: joint_by_name["lowerarm_r"]}
+    thighs = {-1.: joint_by_name["thigh_l"], 1.: joint_by_name["thigh_r"]}
     if feature == "horns":
         # Curved, ringed horns grow from broad roots inside the temples. This
         # preserves the original stylized model language without detached fins.
         for side in (-1., 1.):
             mesh.tapered_curve([
-                (side * .070, 1.700, -.010), (side * .132, 1.738, -.035),
-                (side * .178, 1.776, -.095), (side * .200, 1.818, -.155),
-                (side * .186, 1.856, -.205), (side * .148, 1.875, -.225),
-            ], [.058, .055, .045, .032, .018, .006], head, 0, 13)
-            for y, x, z, radius in ((1.741, .136, -.041, .058),
-                                     (1.780, .182, -.100, .045),
-                                     (1.820, .200, -.158, .032)):
+                (side * .070, 1.700, -.010), (side * .118, 1.727, -.026),
+                (side * .155, 1.752, -.058), (side * .184, 1.782, -.104),
+                (side * .200, 1.818, -.155), (side * .196, 1.845, -.192),
+                (side * .186, 1.866, -.216), (side * .156, 1.879, -.230),
+                (side * .124, 1.882, -.234),
+            ], [.060, .057, .052, .045, .034, .026, .018, .010, .004],
+                head, 0, 14)
+            for y, x, z, radius in ((1.729, .120, -.028, .060),
+                                     (1.756, .157, -.062, .053),
+                                     (1.786, .186, -.108, .045),
+                                     (1.820, .200, -.158, .034),
+                                     (1.848, .195, -.196, .025)):
                 mesh.sphere((side * x, y, z), (radius, .026, radius),
-                            head, 1, 2, 8)
+                            head, 1, 3, 10)
     elif feature == "crystal":
         # Glasswardens are human scholars and field engineers in the concept
         # sheets. A compact brass-and-crystal lens rig conveys that identity
@@ -604,67 +966,203 @@ def player_accessory(feature: str, joint_by_name: dict[str, int], color: tuple[i
                         head, 1, 6, 16)
             mesh.cylinder((side * .094, 1.704, .131),
                           (side * .146, 1.696, .083), .007, head, 0, 10)
+            # Temple strap back to the band, so the rig is worn rather than
+            # hovering in front of the face.
+            mesh.tapered_curve([(side * .150, 1.700, .070),
+                                (side * .162, 1.696, .010),
+                                (side * .148, 1.690, -.048)],
+                               [.009, .008, .007], head, 0, 8)
         mesh.cylinder((-.010, 1.704, .136), (.010, 1.704, .136),
                       .007, head, 0, 10)
     elif feature == "scaled":
-        # The Ssarathi concept is reptilian rather than a human wearing a crest.
-        # Build a compact joined muzzle, jaw, brow and dorsal ridge in skin
-        # tones; gold is reserved for tiny nostril/scale accents.
-        mesh.sphere((0., 1.625, .145), (.170, .100, .220), head, 0, 5, 10)
-        mesh.sphere((0., 1.592, .125), (.145, .058, .185), head, 0, 4, 8)
-        mesh.tapered_curve([(0., 1.620, .230), (0., 1.665, .150),
-                            (0., 1.710, .080)],
-                           [.014, .018, .010], head, 0, 6)
+        # Ssarathi anatomy: a joined muzzle and jaw, a dorsal ridge that runs
+        # from the brow down the spine, a counterweighting tail, and claws.
+        # Gold is reserved for small nostril, tooth and scale accents.
+        mesh.sphere((0., 1.625, .145), (.176, .104, .232), head, 0, 7, 14)
+        mesh.sphere((0., 1.592, .124), (.150, .060, .196), head, 0, 6, 12)
+        mesh.sphere((0., 1.648, .062), (.204, .150, .150), head, 0, 6, 14)
+        mesh.tapered_curve([(0., 1.618, .238), (0., 1.648, .186),
+                            (0., 1.682, .124), (0., 1.712, .066)],
+                           [.016, .020, .019, .012], head, 0, 8)
         for side in (-1., 1.):
             mesh.tapered_curve([(side * .018, 1.702, .105),
-                                (side * .082, 1.714, .090),
-                                (side * .138, 1.690, .040)],
-                               [.018, .021, .007], head, 0, 6)
-            mesh.cone((side * .035, 1.636, .239),
-                      (side * .035, 1.636, .250), .006, head, 1, 7)
-        for y, z, height, size in ((1.660, -.045, .075, .034),
-                                    (1.715, -.070, .092, .039),
-                                    (1.770, -.090, .090, .036),
-                                    (1.820, -.112, .070, .028)):
-            mesh.cone((0., y, z), (0., y + height, z - .075), size,
-                      head, 0, 10)
-        mesh.tapered_curve([
-            (0., .930, -.115), (0., .825, -.285), (0., .650, -.500),
-            (.045, .470, -.700), (.135, .285, -.875),
-        ], [.115, .108, .087, .052, .008], pelvis, 0, 7)
+                                (side * .066, 1.716, .098),
+                                (side * .108, 1.708, .070),
+                                (side * .142, 1.688, .036)],
+                               [.018, .022, .016, .007], head, 0, 8)
+            mesh.cone((side * .036, 1.634, .240),
+                      (side * .036, 1.634, .252), .007, head, 1, 8)
+            # Brow scales and cheek scutes.
+            for y, z, radius in ((1.690, .128, .026), (1.664, .166, .021)):
+                mesh.sphere((side * .086, y, z), (radius, radius * .5, radius),
+                            head, 1, 3, 8)
+        # Dorsal crest: skull, nape and upper back, one continuous line.
+        crest = ((head, 1.672, -.032, .030, -.082, .034),
+                 (head, 1.700, -.070, .026, -.090, .038),
+                 (head, 1.712, -.116, .014, -.092, .036),
+                 (head, 1.702, -.160, -.004, -.086, .031),
+                 (neck, 1.586, -.092, -.012, -.078, .028),
+                 (neck, 1.522, -.104, -.014, -.070, .024),
+                 (spine, 1.412, -.118, -.014, -.062, .022),
+                 (spine, 1.332, -.130, -.014, -.054, .019))
+        for joint, y, z, rise, back, size in crest:
+            mesh.cone((0., y, z), (0., y + rise, z + back), size, joint, 0, 10)
+        # Tail: a real tapered chord off the sacrum rather than a flat blade,
+        # shared between the pelvis and the lower spine so it tracks the hips
+        # through the shared locomotion clips instead of swinging as one board.
+        points, radii = [], []
+        for step in range(13):
+            t = step / 12.
+            points.append((0.,
+                           .952 - .58 * t - .08 * math.sin(t * math.pi)
+                           + .10 * max(0., t - .78),
+                           -.100 - .86 * t))
+            radii.append(.112 * (1. - t) ** 1.30 + .007)
+        mesh.blend = lambda position: [
+            (pelvis, 1.),
+            (lower_spine, max(0., .42 * (1. + position[2] / .34)))]
+        mesh.tapered_curve(points, radii, pelvis, 0, 14)
+        # Tail scutes read the taper at a distance and break up the tube.
+        for step in range(1, 10):
+            t = step / 11.
+            y = (.952 - .58 * t - .08 * math.sin(t * math.pi)
+                 + .10 * max(0., t - .78))
+            z = -.100 - .86 * t
+            size = .088 * (1. - t) ** 1.2 + .008
+            mesh.sphere((0., y + size * .8, z), (size * .7, size, size * 1.5),
+                        pelvis, 1, 3, 8)
+        mesh.blend = None
+        # Claws on every finger and both toes, placed from the rig itself.
+        for side in ("l", "r"):
+            for digit in ("index", "middle", "pinky", "ring", "thumb"):
+                tip = bind.get(f"{digit}_04_leaf_{side}")
+                knuckle = bind.get(f"{digit}_03_{side}")
+                if tip is None or knuckle is None:
+                    continue
+                direction = tip - knuckle
+                length = float(np.linalg.norm(direction))
+                if length < 1e-5:
+                    continue
+                direction = direction / length
+                mesh.cone(tuple(tip - direction * length * .30),
+                          tuple(tip + direction * length * 1.15),
+                          length * .34, joint_by_name[f"{digit}_04_leaf_{side}"], 1, 8)
+            toe = bind.get(f"ball_leaf_{side}")
+            ball = bind.get(f"ball_{side}")
+            if toe is None or ball is None:
+                continue
+            direction = toe - ball
+            length = float(np.linalg.norm(direction))
+            if length < 1e-5:
+                continue
+            direction = direction / length
+            for offset in (-.030, .0, .030):
+                root = toe + np.array([offset, 0., 0.]) - direction * length * .2
+                mesh.cone(tuple(root), tuple(root + direction * length * .95),
+                          .019, joint_by_name[f"ball_leaf_{side}"], 1, 8)
     elif feature == "stone":
-        # Hewn anatomy belongs primarily to the shoulders and sternum, matching
-        # the original race silhouette. Facial plates remain shallow and leave
-        # the eyes, mouth, hair line, and human proportions readable.
-        mesh.sphere((0., 1.300, .060), (.310, .245, .070),
-                    spine, 0, 3, 8)
+        # Stoneborn plating is load-bearing anatomy: a sternum slab, stepped
+        # pauldrons, forearm bracers and thigh plates, all seated on the joints
+        # they armour, with crystal seams running between them.
+        mesh.sphere((0., 1.315, .062), (.330, .270, .080), spine, 0, 5, 12)
+        mesh.sphere((0., 1.180, .058), (.280, .200, .070), lower_spine, 0, 4, 12)
         for side in (-1., 1.):
-            mesh.sphere((side * .230, 1.360, -.005), (.160, .120, .140),
-                        clavicles[side], 0, 4, 8)
-            mesh.sphere((side * .105, 1.650, .052), (.065, .095, .045),
-                        head, 0, 4, 9)
-        mesh.sphere((0., 1.704, .096), (.175, .045, .040),
-                    head, 0, 3, 10)
-        mesh.tapered_curve([(-.035, 1.298, .098), (.010, 1.260, .102),
-                            (-.018, 1.220, .088)],
-                           [.006, .005, .003], spine, 1, 6)
+            shoulder = bind.get("clavicle_r" if side > 0 else "clavicle_l")
+            arm = bind.get("upperarm_r" if side > 0 else "upperarm_l")
+            if shoulder is None or arm is None:
+                continue
+            cap = arm + (arm - shoulder) * .10
+            mesh.sphere((float(cap[0]), float(cap[1]) + .045, float(cap[2])),
+                        (.230, .175, .205), clavicles[side], 0, 5, 12)
+            # Two hewn bands stepping down the deltoid, following the arm so
+            # they read as plating rather than boxes hung off the shoulder.
+            elbow = bind.get("lowerarm_r" if side > 0 else "lowerarm_l")
+            if elbow is not None:
+                along = elbow - arm
+                for start, end, radius in ((.02, .17, .118), (.20, .34, .102)):
+                    mesh.tapered_curve([tuple(arm + along * start),
+                                        tuple(arm + along * (start + end) * .5),
+                                        tuple(arm + along * end)],
+                                       [radius, radius * 1.04, radius * .90],
+                                       clavicles[side], 0, 14)
+            forearm = bind.get("lowerarm_r" if side > 0 else "lowerarm_l")
+            hand = bind.get("hand_r" if side > 0 else "hand_l")
+            if forearm is not None and hand is not None:
+                mesh.cylinder(tuple(forearm + (hand - forearm) * .18),
+                              tuple(forearm + (hand - forearm) * .74),
+                              .085, forearms[side], 0, 14)
+                mesh.tapered_curve([tuple(forearm + (hand - forearm) * .20),
+                                    tuple(forearm + (hand - forearm) * .72)],
+                                   [.012, .010], forearms[side], 1, 8)
+            thigh = bind.get("thigh_r" if side > 0 else "thigh_l")
+            knee = bind.get("calf_r" if side > 0 else "calf_l")
+            if thigh is not None and knee is not None:
+                mid = thigh + (knee - thigh) * .40
+                mesh.sphere((float(mid[0]), float(mid[1]), float(mid[2]) + .045),
+                            (.190, .300, .130), thighs[side], 0, 5, 12)
+            # Brow and jaw plates keep eyes, mouth and hairline readable.
+            mesh.sphere((side * .104, 1.652, .054), (.072, .100, .050),
+                        head, 0, 4, 10)
+            mesh.sphere((side * .088, 1.594, .088), (.058, .062, .046),
+                        head, 0, 4, 10)
+        mesh.sphere((0., 1.706, .094), (.190, .050, .046), head, 0, 4, 12)
+        # Crystal seams: thin accent lines along the sternum and the nape.
+        mesh.tapered_curve([(-.038, 1.400, .104), (.014, 1.348, .110),
+                            (-.022, 1.292, .096), (.026, 1.238, .082)],
+                           [.008, .007, .006, .004], spine, 1, 8)
+        mesh.tapered_curve([(0., 1.560, -.072), (0., 1.512, -.086)],
+                           [.010, .007], neck, 1, 8)
     elif feature == "fungal":
-        # Layered, asymmetric caps and shelf growths follow the original race
-        # silhouette. Every growth intersects the scalp or clavicle surface.
-        mesh.tapered_curve([(0., 1.705, -.015), (.010, 1.760, -.020),
-                            (-.012, 1.810, -.020)], [.060, .052, .042],
-                           head, 0, 10)
-        mesh.sphere((-.018, 1.830, -.020), (.420, .180, .340),
-                    head, 0, 6, 18)
-        mesh.sphere((-.018, 1.790, -.012), (.360, .068, .285),
-                    head, 1, 3, 16)
-        for x, y, z, sx, sy, sz in ((-.145, 1.725, -.010, .145, .058, .115),
-                                     (.135, 1.690, -.025, .115, .048, .095)):
-            mesh.tapered_curve([(x * .48, y - .040, z), (x, y, z)],
-                               [.033, .020], head, 0, 7)
-            mesh.sphere((x, y, z), (sx, sy, sz), head, 0, 4, 12)
-            mesh.sphere((x, y - .014, z + .004),
-                        (sx * .82, sy * .35, sz * .82), head, 1, 2, 10)
+        # Mycelari carry a true parasol: a domed cap with a gilled underside,
+        # an annulus collar and a stipe, plus bracket shelves on the shoulders.
+        mesh.tapered_curve([(0., 1.706, -.010), (0., 1.760, -.014),
+                            (0., 1.822, -.016)], [.064, .056, .050],
+                           head, 0, 12)
+        mesh.revolve([(1.968, .038), (1.952, .126), (1.928, .202),
+                      (1.898, .262), (1.868, .298), (1.844, .314),
+                      (1.832, .308), (1.840, .248), (1.852, .172),
+                      (1.864, .096), (1.872, .048)], head, 0, 22)
+        mesh.sphere((0., 1.962, 0.), (.088, .040, .088), head, 0, 3, 16)
+        # Gills: radial blades in the shadow of the cap.
+        for index in range(18):
+            angle = 2. * math.pi * index / 18.
+            cos, sin = math.cos(angle), math.sin(angle)
+            corners = []
+            for radius, height in ((.098, 1.866), (.292, 1.836)):
+                for offset, drop in ((-.004, .0), (.004, .0)):
+                    corners.append((cos * radius - sin * offset, height,
+                                     sin * radius + cos * offset + drop))
+            inner, outer = corners[:2], corners[2:]
+            mesh.prism([inner[0], inner[1], outer[1], outer[0],
+                        (inner[0][0], inner[0][1] - .026, inner[0][2]),
+                        (inner[1][0], inner[1][1] - .026, inner[1][2]),
+                        (outer[1][0], outer[1][1] - .020, outer[1][2]),
+                        (outer[0][0], outer[0][1] - .020, outer[0][2])],
+                       head, 1)
+        # Annulus collar where the cap meets the stipe.
+        mesh.revolve([(1.848, .072), (1.840, .114), (1.830, .106),
+                      (1.824, .074)], head, 1, 18)
+        # Shoulder brackets: layered shelf fungi that intersect the clavicle.
+        for side in (-1., 1.):
+            shoulder = bind.get("clavicle_r" if side > 0 else "clavicle_l")
+            arm = bind.get("upperarm_r" if side > 0 else "upperarm_l")
+            if shoulder is None or arm is None:
+                continue
+            for step, (along, lift, width, depth, thick) in enumerate(
+                    ((.35, .050, .150, .118, .036),
+                     (.62, .014, .126, .098, .030),
+                     (.86, -.020, .092, .074, .024))):
+                centre = shoulder + (arm - shoulder) * along + np.array([0., lift, 0.])
+                mesh.sphere((float(centre[0]), float(centre[1]), float(centre[2]) - .020),
+                            (width, thick, depth), clavicles[side], 0, 4, 12)
+                mesh.sphere((float(centre[0]), float(centre[1]) - thick * .34,
+                             float(centre[2]) - .020),
+                            (width * .84, thick * .40, depth * .84),
+                            clavicles[side], 1, 3, 10)
+        # Mycelial threads down the sternum.
+        mesh.tapered_curve([(0., 1.430, .100), (-.030, 1.372, .104),
+                            (.026, 1.312, .096), (-.014, 1.256, .084)],
+                           [.009, .008, .007, .005], spine, 1, 8)
     return mesh.arrays()
 
 
@@ -680,15 +1178,19 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     for node in glb.doc["nodes"]:
         node.pop("mesh", None); node.pop("skin", None)
     skin = document["skins"][0]
-    inverse = read_accessor(document, binary, skin["inverseBindMatrices"]).astype("float32")
+    joint_by_name = {document["nodes"][node].get("name", ""): index
+                     for index, node in enumerate(skin["joints"])}
+    joint_names = [document["nodes"][node].get("name", "") for node in skin["joints"]]
+    anatomy = ANATOMY.get(race, {})
+    source_bind = np.stack([global_node_matrix(document, node) for node in skin["joints"]])
+    parents = joint_parents(document, skin)
+    leg_scale = solve_leg_scale(source_bind, parents, joint_names, anatomy)
+    target_bind = retarget_bind(source_bind, parents, joint_names, anatomy, leg_scale)
+    transforms = shape_matrices(source_bind, target_bind, parents, joint_names, anatomy)
+    inverse = write_rest_pose(glb.doc["nodes"], list(skin["joints"]), target_bind, parents)
     inverse_accessor = glb.accessor(inverse, "MAT4")
     glb.doc["skins"] = [{"name": "Armature", "joints": list(skin["joints"]),
                          "inverseBindMatrices": inverse_accessor, "skeleton": skin["joints"][0]}]
-    joint_by_name = {document["nodes"][node].get("name", ""): index
-                     for index, node in enumerate(skin["joints"])}
-    body_primitive = document["meshes"][2]["primitives"][0]
-    body_positions = read_accessor(document, binary, body_primitive["attributes"]["POSITION"])
-    bounds = (body_positions.min(axis=0), body_positions.max(axis=0))
     base_uri = document["images"][document["textures"][
         document["materials"][2]["pbrMetallicRoughness"]["baseColorTexture"]["index"]]["source"]]["uri"]
     if config.get("preserve_body"):
@@ -759,13 +1261,12 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
         source_primitive = document["meshes"][mesh_index]["primitives"][0]
         attrs = source_primitive["attributes"]
         source_positions = read_accessor(document, binary, attrs["POSITION"])
-        positions = deform_player(source_positions, bounds, config["shape"], gender)
-        normals = deform_player_normals(
-            read_accessor(document, binary, attrs["NORMAL"]), source_positions,
-            bounds, config["shape"], gender)
+        source_normals = read_accessor(document, binary, attrs["NORMAL"])
         uvs = read_accessor(document, binary, attrs["TEXCOORD_0"]).astype("float32")
         joints = read_accessor(document, binary, attrs["JOINTS_0"]).astype("uint16")
         weights = read_accessor(document, binary, attrs["WEIGHTS_0"]).astype("float32")
+        positions, normals = apply_shape(source_positions, source_normals,
+                                         joints, weights, transforms)
         indices = read_accessor(document, binary, source_primitive["indices"]).astype("uint32")
         material = (materials["eyebrows"], materials["eyes"], materials["body"])[mesh_index]
         primitive = glb.primitive(positions, normals, uvs, indices, material,
@@ -780,13 +1281,19 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
         triangles += len(indices) // 3
         if mesh_index == 2:
             body_arrays = (positions, normals, uvs, joints, weights,
-                           indices.reshape(-1, 3))
+                           indices.reshape(-1, 3), source_positions)
 
     # Default clothing is copied from the original body surface, offset by only
     # millimetres and retaining the exact skin weights. It therefore follows all
     # 65 joints instead of moving as one rigid chest/pelvis attachment.
-    positions, normals, uvs, joints, weights, faces = body_arrays
-    centers = positions[faces].mean(axis=1)
+    positions, normals, uvs, joints, weights, faces, source_body = body_arrays
+    # Garment cuts are selected on the *source* body.  The thresholds below are
+    # absolute heights on the reference skeleton, so reading them off a
+    # retargeted body would move every hem as soon as a race changed
+    # proportions -- a digitigrade Ssarathi would get boots at mid-shin and a
+    # Stoneborn would get a shirt at the collarbone.  Faces are shared between
+    # the two, so the mask stays valid for the deformed geometry.
+    centers = source_body[faces].mean(axis=1)
     y = centers[:, 1]
     x = np.abs(centers[:, 0])
     z = centers[:, 2]
@@ -831,7 +1338,10 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     add_skinned("Wardrobe_Head_Band", head_band, .012, materials["headwear_trim"])
     add_skinned("Wardrobe_Head_Cap", head_cap, .014, materials["headwear"])
 
-    accessory = player_accessory(config["feature"], joint_by_name, config["color"], config["accent"])
+    bind_positions = {name: source_bind[slot][:3, 3]
+                      for slot, name in enumerate(joint_names)}
+    accessory = player_accessory(config["feature"], joint_by_name, bind_positions,
+                                 config["color"], config["accent"])
     if len(accessory[0]):
         primitives = []
         # ShapeMesh emits one consolidated primitive and material selectors as its seventh array.
@@ -839,7 +1349,14 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
             if len(arrays[0]) == 0:
                 continue
             feature_material = (materials["feature"], materials["accent"])[material_index]
-            primitives.append(glb.primitive(*arrays[:4], feature_material,
+            # Race features are authored against the reference skeleton and
+            # then pushed through the same retarget as the body, so horns sit
+            # on the retargeted skull and a tail leaves the retargeted pelvis
+            # instead of floating where the reference joint used to be.
+            shaped, shaped_normals = apply_shape(arrays[0], arrays[1], arrays[4],
+                                                 arrays[5], transforms)
+            primitives.append(glb.primitive(shaped, shaped_normals, arrays[2],
+                                            arrays[3], feature_material,
                                             joints=arrays[4], weights=arrays[5]))
             vertices += len(arrays[0])
             triangles += len(arrays[3]) // 3
@@ -848,19 +1365,39 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     glb.write(output)
     return {"vertices": vertices, "triangles": triangles,
             "joints": len(skin["joints"]), "feature": config["feature"],
-            "wardrobe": "skinned"}
+            "wardrobe": "skinned", "anatomy": "retargeted",
+            "stature": round(anatomy.get("stature", 1.), 4),
+            "legChainScale": round(float(leg_scale), 4),
+            "hipHeight": round(float(target_bind[joint_by_name["pelvis"]][1, 3]), 5),
+            "groundHeight": round(float(min(
+                target_bind[joint_by_name[name]][1, 3] for name in GROUND_JOINTS)), 5)}
 
 
 class ShapeMesh:
     """Small, consistently wound primitive authoring helper."""
     def __init__(self):
         self.groups = [([], [], [], [], [], []), ([], [], [], [], [], [])]
+        # Optional position -> [(joint, weight), ...] callback.  A rigid single
+        # joint is right for a horn or a claw, but a tail or a shoulder shelf
+        # needs to be shared between joints or it swings as one board.
+        self.blend = None
+
+    def _skin(self, position, joint: int):
+        if self.blend is None:
+            return [joint, 0, 0, 0], [1., 0., 0., 0.]
+        pairs = sorted(self.blend(position), key=lambda pair: -pair[1])[:4]
+        total = sum(weight for _, weight in pairs) or 1.
+        joints = [int(bone) for bone, _ in pairs] + [0] * (4 - len(pairs))
+        weights = [weight / total for _, weight in pairs] + [0.] * (4 - len(pairs))
+        return joints, weights
 
     def _append(self, positions, normals, uvs, indices, joint: int, material: int):
         p, n, t, f, j, w = self.groups[material]
         base = len(p); p.extend(positions); n.extend(normals); t.extend(uvs)
         f.extend(base + int(i) for i in indices)
-        j.extend(([joint, 0, 0, 0] for _ in positions)); w.extend(([1., 0., 0., 0.] for _ in positions))
+        for position in positions:
+            joints, weights = self._skin(position, joint)
+            j.append(joints); w.append(weights)
 
     def sphere(self, center, size, joint=0, material=0, rings=10, sides=20):
         cx, cy, cz = center; sx, sy, sz = (v * .5 for v in size)
@@ -884,13 +1421,34 @@ class ShapeMesh:
         cx,cy,cz=center; sx,sy,sz=(v*.5 for v in size)
         corners=[(cx+x*sx,cy+y*sy,cz+z*sz) for x,y,z in
                  ((-1,-1,-1),(1,-1,-1),(1,1,-1),(-1,1,-1),(-1,-1,1),(1,-1,1),(1,1,1),(-1,1,1))]
+        self.prism(corners, joint, material)
+
+    def prism(self, corners, joint=0, material=0):
+        """Six-sided solid through eight arbitrary corners.
+
+        Hewn Stoneborn plating and Mycelari gills are flat forms that do not
+        line up with the world axes, and an axis-aligned box cannot express
+        either without visibly floating off the surface it belongs to.
+        """
+        corners=[np.asarray(corner,dtype=float) for corner in corners]
         quads=((0,3,2,1),(4,5,6,7),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7))
-        norms=((0,0,-1),(0,0,1),(0,-1,0),(1,0,0),(0,1,0),(-1,0,0))
         p=[];n=[];u=[];f=[]
-        for quad,norm in zip(quads,norms):
-            base=len(p);p.extend(corners[i] for i in quad);n.extend([norm]*4);u.extend(((0,0),(1,0),(1,1),(0,1)))
+        for quad in quads:
+            points=[corners[i] for i in quad]
+            normal=np.cross(points[1]-points[0],points[2]-points[0])
+            length=np.linalg.norm(normal)
+            if length<1e-9: continue
+            normal/=length
+            base=len(p);p.extend(tuple(point) for point in points)
+            n.extend([tuple(normal)]*4);u.extend(((0,0),(1,0),(1,1),(0,1)))
             f.extend((base,base+1,base+2,base,base+2,base+3))
         self._append(p,n,u,f,joint,material)
+
+    def revolve(self, profile, joint=0, material=0, sides=20):
+        """Surface of revolution about the Y axis through (height, radius) pairs."""
+        points=[(0.,height,0.) for height,_ in profile]
+        radii=[radius for _,radius in profile]
+        self.tapered_curve(points,radii,joint,material,sides)
 
     def cylinder(self, start, end, radius, joint=0, material=0, sides=16):
         a=np.array(start,dtype=float); b=np.array(end,dtype=float); axis=b-a; length=np.linalg.norm(axis)
@@ -1428,7 +1986,11 @@ def humanoid_model(scene: str, culture: str, gender: str) -> dict:
         # Native source characters face +Z, matching the creation-preview
         # camera.  Keeping this at zero presents the face and culture features
         # by default; the legacy 180-degree correction showed their backs.
-        "import": {"scale": 1, "rotationDegreesX": 0,
+        # Stature is carried here rather than in the rig: the animation clips
+        # write pelvis translation directly, so a taller skeleton would leave
+        # the hips at the reference height with the feet hanging below it.
+        "import": {"scale": round(ANATOMY.get(culture, {}).get("stature", 1.), 4),
+                   "rotationDegreesX": 0,
                    "rotationDegreesY": 0, "rotationDegreesZ": 0},
         "attachments": {
             "right_hand": "hand_r", "left_hand": "hand_l", "head": "Head",
@@ -1567,6 +2129,28 @@ def build_equipment_registry(rig: "equipment_authoring.Rig",
     return equipment_authoring.build_equipment_registry(rig, EQUIPMENT, idle_bases)
 
 
+def carry_forward_ambient(manifest_path: Path, models_path: Path,
+                          manifest: dict, models: dict) -> None:
+    """Preserve ambient scenery entries contributed by regional generators.
+
+    The Sunmane horses are authored by eloria-assets/tools/sunmane/creatures.py
+    and merged into these two registries.  Rebuilding the actor library used to
+    drop them silently, which left every herd on the steppe as a magenta
+    fallback until someone noticed.  Carry them across instead of rewriting
+    them away.
+    """
+    if manifest_path.is_file():
+        previous = json.loads(manifest_path.read_text(encoding="utf-8"))
+        ambient = previous.get("ambientCreatures")
+        if ambient:
+            manifest["ambientCreatures"] = ambient
+    if models_path.is_file():
+        previous = json.loads(models_path.read_text(encoding="utf-8"))
+        for slug, entry in previous.get("models", {}).items():
+            if slug not in models["models"] and entry.get("serverActorType", 0) is None:
+                models["models"][slug] = entry
+
+
 def write_json(path: Path, value: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
@@ -1689,9 +2273,11 @@ def main() -> None:
                     if key in previous or "/equipment/" in key}
         validation={**previous,**validation}
     manifest["validation"]={"files":len(validation),"results":validation}
+    models = build_model_registry()
+    carry_forward_ambient(args.manifest, args.models, manifest, models)
     write_json(args.manifest, manifest)
     if args.only=="all":
-        write_json(args.models, build_model_registry())
+        write_json(args.models, models)
     write_json(args.equipment_registry, build_equipment_registry(rig, idle_bases))
     print(f"validated {len(validation)} native GLBs")
 

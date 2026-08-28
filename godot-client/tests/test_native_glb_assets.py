@@ -116,13 +116,93 @@ class NativeGlbAssetsTest(unittest.TestCase):
             with self.subTest(model=model_id):
                 self.assertEqual(65, entry["joints"])
                 self.assertEqual("skinned", entry["wardrobe"])
+                self.assertEqual("retargeted", entry["anatomy"])
                 self.assertGreaterEqual(entry["vertices"], 13_500)
-                self.assertLess(entry["vertices"], 14_500)
+                # The race features (a Ssarathi tail and claws, Stoneborn
+                # plating, a gilled Mycelari cap) are what sits above the
+                # 13.5k shared body; the ceiling keeps them from growing
+                # without anyone noticing.
+                self.assertLess(entry["vertices"], 15_750)
                 document = glb_document(ROOT / entry["path"])
                 self.assertEqual(65, len(document["skins"][0]["joints"]))
                 mesh_names = {mesh["name"] for mesh in document["meshes"]}
                 self.assertTrue({"Eyebrows", "Eyes", "Body", "Wardrobe_Shirt",
                                  "Wardrobe_Pants", "Wardrobe_Boots"} <= mesh_names)
+
+    def test_race_rigs_stand_on_the_same_ground_plane(self) -> None:
+        """Retargeting must not lift or sink a race relative to the floor.
+
+        The shared animation library writes pelvis translation directly, so a
+        race whose legs got longer would keep the reference hip height and push
+        its feet through the ground.  Every race therefore has to come out of
+        the builder with the same hip and ground heights; only the division of
+        the leg between them is allowed to differ.
+        """
+        by_gender: dict[str, set[tuple[float, float]]] = {}
+        for model_id, entry in self.catalog["races"].items():
+            gender = model_id.rsplit("_", 1)[1]
+            by_gender.setdefault(gender, set()).add(
+                (entry["hipHeight"], entry["groundHeight"]))
+        for gender, heights in by_gender.items():
+            with self.subTest(gender=gender):
+                self.assertEqual(1, len(heights), heights)
+
+    def test_races_have_distinct_bodies(self) -> None:
+        """Eight races must not ship as one silhouette in eight colours."""
+        catalog = self.catalog["races"]
+        for gender in ("female", "male"):
+            with self.subTest(gender=gender):
+                signatures = {
+                    model_id: (entry["legChainScale"], entry["stature"],
+                               entry["vertices"])
+                    for model_id, entry in catalog.items()
+                    if model_id.rsplit("_", 1)[1] == gender}
+                self.assertEqual(8, len(signatures))
+                self.assertGreaterEqual(
+                    len(set(signatures.values())), 8,
+                    "every race body differs from every other")
+        # Stature reaches the client through the model registry, because the
+        # rig itself has to keep the reference hip height.
+        for model_id, entry in catalog.items():
+            with self.subTest(model=model_id):
+                self.assertAlmostEqual(
+                    entry["stature"],
+                    self.models["models"][model_id]["import"]["scale"], places=4)
+
+    def test_race_rigs_keep_the_shared_animation_contract(self) -> None:
+        """Rest rotations stay as authored so the shared clips still apply.
+
+        Anatomy lives in the joint offsets, never in rest rotations: glTF
+        rotation tracks are absolute, so anything stored in a rest rotation is
+        overwritten the instant a clip plays.  Guard that by checking every
+        race rig carries the same rest rotations as the Luminous reference and
+        differs only in translation.
+        """
+        # The male and female source rigs are different files, so the
+        # comparison is per gender.
+        for gender in ("female", "male"):
+            reference = None
+            for model_id, entry in sorted(self.catalog["races"].items()):
+                if model_id.rsplit("_", 1)[1] != gender:
+                    continue
+                document = glb_document(ROOT / entry["path"])
+                joints = document["skins"][0]["joints"]
+                names = [document["nodes"][node].get("name") for node in joints]
+                rotations = [tuple(round(value, 6) for value in
+                                   document["nodes"][node].get("rotation", (0, 0, 0, 1)))
+                             for node in joints]
+                translations = [tuple(round(value, 6) for value in
+                                      document["nodes"][node].get("translation", (0, 0, 0)))
+                                for node in joints]
+                if reference is None:
+                    reference = (names, rotations, translations)
+                    continue
+                with self.subTest(model=model_id):
+                    self.assertEqual(reference[0], names)
+                    self.assertEqual(reference[1], rotations,
+                                     "rest rotations stay as the clips expect")
+                    self.assertNotEqual(reference[2], translations,
+                                        "races differ in bone offsets")
 
     def test_native_hair_is_authored_geometry_in_head_local_space(self) -> None:
         for hair_id, entry in self.catalog["hair"].items():

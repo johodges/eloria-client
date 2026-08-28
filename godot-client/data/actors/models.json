@@ -17,7 +17,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 1.0,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -52,7 +52,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 1.0,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -87,7 +87,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 1.045,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -122,7 +122,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 1.045,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -157,7 +157,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 0.975,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -192,7 +192,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 0.975,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -227,7 +227,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 1.01,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -262,7 +262,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 1.01,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -297,7 +297,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 0.99,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -332,7 +332,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 0.99,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -367,7 +367,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 1.02,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -402,7 +402,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 1.02,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -437,7 +437,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 1.06,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -472,7 +472,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 1.06,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -507,7 +507,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 0.995,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
@@ -542,7 +542,7 @@
         "head": "Head"
       },
       "import": {
-        "scale": 1,
+        "scale": 0.995,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
         "rotationDegreesZ": 0
