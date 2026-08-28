@@ -492,6 +492,106 @@
     },
     "four-gates-deposit-four-keys.elm": {
       "alias": "maps/four-gates-deposit-four-keys.elm"
+    },
+    "maps/nymara/amberwood_motherroot.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_motherroot/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          55.0,
+          95.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/amberwood.elm"
+    },
+    "amberwood_motherroot": {
+      "alias": "maps/nymara/amberwood_motherroot.elm"
+    },
+    "amberwood_motherroot.elm": {
+      "alias": "maps/nymara/amberwood_motherroot.elm"
+    },
+    "maps/nymara/amberwood_gate_undercroft.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_gate_undercroft/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          17.0,
+          81.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/amberwood.elm"
+    },
+    "amberwood_gate_undercroft": {
+      "alias": "maps/nymara/amberwood_gate_undercroft.elm"
+    },
+    "amberwood_gate_undercroft.elm": {
+      "alias": "maps/nymara/amberwood_gate_undercroft.elm"
+    },
+    "maps/nymara/amberwood_amber_hall.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_amber_hall/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          16.0,
+          63.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/amberwood.elm"
+    },
+    "amberwood_amber_hall": {
+      "alias": "maps/nymara/amberwood_amber_hall.elm"
+    },
+    "amberwood_amber_hall.elm": {
+      "alias": "maps/nymara/amberwood_amber_hall.elm"
+    },
+    "maps/nymara/amberwood_cinder_chapel.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amberwood_cinder_chapel/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          16.0,
+          71.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/amberwood.elm"
+    },
+    "amberwood_cinder_chapel": {
+      "alias": "maps/nymara/amberwood_cinder_chapel.elm"
+    },
+    "amberwood_cinder_chapel.elm": {
+      "alias": "maps/nymara/amberwood_cinder_chapel.elm"
     }
   }
 }

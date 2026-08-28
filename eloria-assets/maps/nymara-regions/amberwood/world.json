@@ -2754,6 +2754,82 @@
       "destinationMap": "maps/nymara/crownwater.elm",
       "radius": 3.5,
       "authority": "server"
+    },
+    {
+      "id": "motherroot-mouth",
+      "name": "The Motherroot",
+      "type": "interior-entrance",
+      "position": [
+        78.0,
+        56.28,
+        -264.0
+      ],
+      "serverTile": [
+        252,
+        438
+      ],
+      "landmark": "great-tree",
+      "destinationMap": "maps/nymara/amberwood_motherroot.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "gate-undercroft-stair",
+      "name": "The Gate Undercroft",
+      "type": "interior-entrance",
+      "position": [
+        174.0,
+        37.07,
+        -102.0
+      ],
+      "serverTile": [
+        348,
+        276
+      ],
+      "landmark": "great-arch",
+      "destinationMap": "maps/nymara/amberwood_gate_undercroft.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "amber-hall-door",
+      "name": "The Amber Hall",
+      "type": "interior-entrance",
+      "position": [
+        66.0,
+        41.91,
+        -150.0
+      ],
+      "serverTile": [
+        240,
+        324
+      ],
+      "landmark": "amber-hall",
+      "destinationMap": "maps/nymara/amberwood_amber_hall.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "cinder-chapel-door",
+      "name": "The Cinder Chapel",
+      "type": "interior-entrance",
+      "position": [
+        312.0,
+        51.35,
+        -222.0
+      ],
+      "serverTile": [
+        486,
+        396
+      ],
+      "landmark": "ash-chapel",
+      "destinationMap": "maps/nymara/amberwood_cinder_chapel.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "authority": "server"
     }
   ],
   "roads": [

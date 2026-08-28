@@ -1,0 +1,715 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "amberwood_cinder_chapel",
+    "name": "The Cinder Chapel",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -17.0,
+        -5.2,
+        -6.55
+      ],
+      "max": [
+        34.55,
+        8.49,
+        68.55
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        -13.55,
+        -5.2,
+        -6.55
+      ],
+      "max": [
+        34.55,
+        3.4,
+        68.55
+      ]
+    },
+    "interiorClass": "transition",
+    "parentRegion": "amberwood",
+    "serverCells": 78
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      16.0,
+      71.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0.0,
+        0.05,
+        -1.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "cinder-chapel-door",
+      "position": [
+        0.0,
+        0.05,
+        -1.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 102,
+    "height": 156,
+    "cellMetres": 0.5,
+    "originMetres": [
+      -16.0,
+      71.0
+    ],
+    "heightEncoding": {
+      "origin": -4.934,
+      "step": 0.1344,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
+    },
+    "walkableCells": 6744,
+    "blockedCells": 9168,
+    "walkableFraction": 0.4238,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Interior_amberwood_cinder_chapel",
+      "Build_amberwood_cinder_chapel_amber_resin",
+      "Build_amberwood_cinder_chapel_ashlar",
+      "Build_amberwood_cinder_chapel_bark_dark",
+      "Build_amberwood_cinder_chapel_charred_timber",
+      "Build_amberwood_cinder_chapel_dark_iron",
+      "Build_amberwood_cinder_chapel_scorched_ground",
+      "Build_amberwood_cinder_chapel_sooted_plaster",
+      "Build_amberwood_cinder_chapel_timber_grey",
+      "Build_amberwood_cinder_chapel_timber_warm",
+      "Build_amberwood_cinder_chapel_water_deep"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    },
+    "notes": [
+      "Every standable surface is a Walk_<material> node, matching the region's contract: the client turns navigation.surfaceNodePrefixes into the layer its downward grounding ray tests."
+    ]
+  },
+  "portals": [
+    {
+      "id": "exit-to-amberwood",
+      "name": "Return to Amberwood",
+      "type": "map-transition",
+      "position": [
+        0.0,
+        0.05,
+        -1.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/amberwood.elm",
+      "destinationSpawn": "cinder-chapel-door",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "the-porch",
+      "name": "The Burned Door",
+      "space": "porch",
+      "position": [
+        0.0,
+        1.6,
+        -1.0
+      ]
+    },
+    {
+      "id": "the-nave",
+      "name": "The Open Nave",
+      "space": "nave",
+      "position": [
+        -1.0,
+        1.6,
+        23.0
+      ]
+    },
+    {
+      "id": "the-vestry",
+      "name": "The Vestry",
+      "space": "vestry",
+      "position": [
+        -7.0,
+        1.2,
+        45.0
+      ]
+    },
+    {
+      "id": "the-store",
+      "name": "The Salvage Store",
+      "space": "store",
+      "position": [
+        27.0,
+        0.6,
+        24.0
+      ]
+    },
+    {
+      "id": "the-crypt",
+      "name": "The Flooded Crypt",
+      "space": "crypt",
+      "position": [
+        26.0,
+        -3.6,
+        48.0
+      ]
+    },
+    {
+      "id": "the-belfry",
+      "name": "The Bell Loft",
+      "space": "belfry",
+      "position": [
+        -7.0,
+        5.0,
+        62.0
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "cold-altar",
+      "kind": "lore",
+      "position": [
+        -1.0,
+        0.7,
+        32.0
+      ]
+    },
+    {
+      "id": "vestry-chest",
+      "kind": "container",
+      "position": [
+        -4.0,
+        0.6,
+        41.0
+      ]
+    },
+    {
+      "id": "east-vantage",
+      "kind": "vista",
+      "position": [
+        -7.0,
+        3.6,
+        66.0
+      ]
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "salvage-00",
+      "resource": "moor_peat",
+      "position": [
+        32.0,
+        -0.6,
+        19.0
+      ]
+    },
+    {
+      "id": "salvage-01",
+      "resource": "moor_peat",
+      "position": [
+        32.0,
+        -0.6,
+        23.0
+      ]
+    },
+    {
+      "id": "salvage-02",
+      "resource": "moor_peat",
+      "position": [
+        32.0,
+        -0.6,
+        27.0
+      ]
+    }
+  ],
+  "lights": [
+    {
+      "id": "lantern-00",
+      "kind": "point",
+      "position": [
+        0.0,
+        2.58,
+        -3.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-01",
+      "kind": "point",
+      "position": [
+        0.0,
+        2.18,
+        8.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-02",
+      "kind": "point",
+      "position": [
+        -10.0,
+        5.38,
+        16.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-03",
+      "kind": "point",
+      "position": [
+        8.0,
+        5.38,
+        30.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-04",
+      "kind": "point",
+      "position": [
+        -1.0,
+        5.38,
+        23.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-05",
+      "kind": "point",
+      "position": [
+        -10.5,
+        3.18,
+        41.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-06",
+      "kind": "point",
+      "position": [
+        -3.0,
+        3.18,
+        49.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-07",
+      "kind": "point",
+      "position": [
+        22.0,
+        2.78,
+        18.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-08",
+      "kind": "point",
+      "position": [
+        32.0,
+        2.78,
+        29.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-09",
+      "kind": "point",
+      "position": [
+        27.0,
+        -0.22,
+        36.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-10",
+      "kind": "point",
+      "position": [
+        20.5,
+        -2.22,
+        43.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-11",
+      "kind": "point",
+      "position": [
+        32.0,
+        -2.22,
+        53.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-12",
+      "kind": "point",
+      "position": [
+        26.0,
+        -2.22,
+        48.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-13",
+      "kind": "point",
+      "position": [
+        -10.5,
+        5.78,
+        59.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-14",
+      "kind": "point",
+      "position": [
+        -3.0,
+        5.78,
+        65.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    }
+  ],
+  "environment": {
+    "sky": "overcast",
+    "ambient": {
+      "colour": [
+        0.17,
+        0.17,
+        0.18
+      ],
+      "energy": 0.52
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.13,
+        0.13,
+        0.13
+      ],
+      "begin": 18.0,
+      "end": 60.0
+    },
+    "audio": [
+      {
+        "id": "wind",
+        "space": "nave",
+        "loop": true
+      },
+      {
+        "id": "drip",
+        "space": "crypt",
+        "loop": true
+      }
+    ],
+    "openToSky": [
+      "porch",
+      "nave",
+      "belfry"
+    ]
+  },
+  "spaces": {
+    "porch": {
+      "x0": -5.0,
+      "z0": -6.0,
+      "x1": 5.0,
+      "z1": 4.0,
+      "floor": 0.0,
+      "height": 4.0
+    },
+    "nave": {
+      "x0": -13.0,
+      "z0": 12.0,
+      "x1": 11.0,
+      "z1": 34.0,
+      "floor": 0.0,
+      "height": 7.0
+    },
+    "vestry": {
+      "x0": -13.0,
+      "z0": 38.0,
+      "x1": -1.0,
+      "z1": 52.0,
+      "floor": 0.0,
+      "height": 4.6
+    },
+    "store": {
+      "x0": 20.0,
+      "z0": 16.0,
+      "x1": 34.0,
+      "z1": 32.0,
+      "floor": -0.6,
+      "height": 4.8
+    },
+    "crypt": {
+      "x0": 18.0,
+      "z0": 40.0,
+      "x1": 34.0,
+      "z1": 56.0,
+      "floor": -4.8,
+      "height": 4.4
+    },
+    "belfry": {
+      "x0": -13.0,
+      "z0": 56.0,
+      "x1": -1.0,
+      "z1": 68.0,
+      "floor": 3.4,
+      "height": 3.6
+    },
+    "threshold": {
+      "x0": -1.9,
+      "z0": 2.1,
+      "x1": 1.9,
+      "z1": 13.9,
+      "floor": 0.0,
+      "height": 3.4
+    },
+    "aisle": {
+      "x0": 9.3,
+      "z0": 22.3,
+      "x1": 21.7,
+      "z1": 25.7,
+      "floor": -0.6,
+      "height": 3.4
+    },
+    "cryptstair": {
+      "x0": 25.3,
+      "z0": 30.3,
+      "x1": 28.7,
+      "z1": 41.7,
+      "floor": -4.8,
+      "height": 3.8
+    },
+    "belfrystair": {
+      "x0": -8.7,
+      "z0": 50.3,
+      "x1": -5.3,
+      "z1": 57.7,
+      "floor": 0.0,
+      "height": 3.6
+    }
+  },
+  "conceptArt": {
+    "detailBoard": "../../amberwood/references/00-concept-detail-board.png",
+    "role": "parent-region board; these interiors have no board of their own",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "burned entry",
+      "collapsed nave",
+      "charred beam arch",
+      "ash-choked altar",
+      "abandoned vestry",
+      "floor collapse",
+      "smoke-stained store",
+      "crypt flood",
+      "bell loft",
+      "char ash iron soot materials"
+    ]
+  },
+  "performance": {
+    "nodes": 13,
+    "meshes": 12,
+    "materials": 11,
+    "images": 33,
+    "textures": 33,
+    "accessors": 60,
+    "bufferViews": 93,
+    "uniqueTriangles": 12178,
+    "uniqueVertices": 15643,
+    "glbBytes": 5143772,
+    "nodeNames": [
+      "Interior_amberwood_cinder_chapel",
+      "Build_amberwood_cinder_chapel_amber_resin",
+      "Build_amberwood_cinder_chapel_ashlar",
+      "Build_amberwood_cinder_chapel_bark_dark",
+      "Build_amberwood_cinder_chapel_charred_timber",
+      "Build_amberwood_cinder_chapel_dark_iron",
+      "Build_amberwood_cinder_chapel_scorched_ground",
+      "Build_amberwood_cinder_chapel_sooted_plaster",
+      "Build_amberwood_cinder_chapel_timber_grey",
+      "Build_amberwood_cinder_chapel_timber_warm",
+      "Build_amberwood_cinder_chapel_water_deep",
+      "Walk_rubble_stone",
+      "Walk_scorched_ground"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "source/build_interiors.py",
+      "role": "reproducible-build",
+      "seed": 20260828
+    },
+    {
+      "id": "anchor",
+      "landmark": "ash-chapel",
+      "position": [
+        312.0,
+        51.25,
+        -222.0
+      ],
+      "role": "surface entrance on the Amberwood region map"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the Amberwood region toolkit; no scattered placement",
+    "textures": "procedural, from amberwood/textures.py",
+    "thirdParty": "none"
+  },
+  "notes": [
+    "The nave and the belfry are open to the sky by design: the roof burned off. Both are declared in environment.openToSky so the enclosure check does not read them as leaks."
+  ],
+  "productionStatus": "authored-geometry-materials-population",
+  "knownLimitations": [
+    "Not opened in Godot: no client is installable in the build environment, so collision response, navmesh generation, portal transition, LOD and transparency sorting are unverified.",
+    "eloria-server has not registered these map keys."
+  ]
+}

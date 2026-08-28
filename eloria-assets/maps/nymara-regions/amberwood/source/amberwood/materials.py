@@ -49,6 +49,10 @@ SPECS: tuple[MaterialSpec, ...] = (
     MaterialSpec("shingles", "shingles", roughness=0.96),
     MaterialSpec("thatch_reed", "thatch_reed", roughness=1.0),
     MaterialSpec("ashlar", "ashlar", roughness=0.96),
+    MaterialSpec("lime_plaster", "lime_plaster", roughness=0.94),
+    MaterialSpec("packed_earth", "packed_earth", roughness=1.0),
+    MaterialSpec("sooted_plaster", "sooted_plaster", roughness=0.97),
+    MaterialSpec("charred_timber", "charred_timber", roughness=0.99),
     MaterialSpec("rubble_stone", "rubble_stone", roughness=0.98),
     MaterialSpec("cliff_rock", "cliff_rock", roughness=0.98),
     MaterialSpec("cobble_paving", "cobble_paving", roughness=0.94),
@@ -70,6 +74,9 @@ SPECS: tuple[MaterialSpec, ...] = (
                  base_color=(1.0, 1.0, 1.0, 0.82), alpha_mode="BLEND"),
     MaterialSpec("water_stream", "water_stream", roughness=0.16,
                  base_color=(1.0, 1.0, 1.0, 0.78), alpha_mode="BLEND"),
+    # Standing water underground: the same surface, unlit by any sky.
+    MaterialSpec("water_deep", "water_pool", roughness=0.12,
+                 base_color=(0.20, 0.30, 0.32, 0.90), alpha_mode="BLEND"),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}
@@ -90,6 +97,10 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     sets["shingles"] = T.shingles(512, seed=37)
     sets["thatch_reed"] = T.thatch_reed(512, seed=107)
     sets["ashlar"] = T.ashlar(512, seed=53)
+    sets["lime_plaster"] = T.lime_plaster(512, seed=211)
+    sets["packed_earth"] = T.packed_earth(512, seed=223)
+    sets["sooted_plaster"] = T.sooted_plaster(512, seed=233)
+    sets["charred_timber"] = T.charred_timber(512, seed=241)
     sets["rubble_stone"] = T.rubble_stone(512, seed=61)
     sets["cliff_rock"] = T.cliff_rock(512, seed=67)
     sets["cobble_paving"] = T.cobble_paving(512, seed=83)
@@ -116,10 +127,19 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
 
 
 def register_gltf_materials(builder: "gltf.GltfBuilder",
-                            sets: dict[str, T.TextureSet]) -> dict[str, int]:
-    """Embed every texture and register every material in the GLB."""
+                            sets: dict[str, T.TextureSet],
+                            only: set[str] | None = None) -> dict[str, int]:
+    """Embed textures and register materials in the GLB.
+
+    `only` restricts the set to the materials a package actually uses. A small
+    interior that draws on a dozen materials should not carry the whole region's
+    texture library: embedding all of them costs about ten megabytes of images
+    nothing references.
+    """
     out: dict[str, int] = {}
     for spec in SPECS:
+        if only is not None and spec.name not in only:
+            continue
         texture_set = sets[spec.texture]
         images = texture_set.images()
         for name, blob in images.items():
