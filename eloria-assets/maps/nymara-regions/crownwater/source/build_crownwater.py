@@ -128,6 +128,40 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             "destinationMap": destination, "radius": 3.5,
             "authority": "server"})
 
+    # Interior entrances. Each sits on the landmark it belongs to, so the door a
+    # player walks into is the building they were looking at; the interior
+    # package carries the matching return portal.
+    for portal_id, name, landmark_id, destination, spawn in (
+            # All four lead to the SAME map. Crownwater's insides share one
+            # map with blackspace between them, as Eternal Lands lays out a
+            # region's interiors and as amethyst_barrens_insides already does
+            # here, so the destination is one elm and the section is chosen by
+            # the spawn id.
+            ("basilica-undercroft", "The Drowned Crown", "crownwater-cathedral",
+             "maps/nymara/drowned_crown.elm", "basilica-undercroft"),
+            ("campanile-door", "The Tide Campanile", "crownwater-campanile",
+             "maps/nymara/drowned_crown.elm", "campanile-door"),
+            ("cistern-stair", "The Tide Cistern",
+             "crownwater-pavilion-pavilion_west",
+             "maps/nymara/drowned_crown.elm", "cistern-stair"),
+            ("customs-door", "The Harbour Customs Hall",
+             "crownwater-customs-hall",
+             "maps/nymara/drowned_crown.elm", "customs-door")):
+        anchor = next((l for l in build.landmarks if l.get("id") == landmark_id),
+                      None)
+        if anchor is None:
+            continue
+        x, y, z = anchor["position"]
+        build.portals.append({
+            "id": portal_id, "name": name, "type": "interior-entrance",
+            "position": [round(float(x), 2), round(float(y) + 0.1, 2),
+                         round(float(z), 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "landmark": landmark_id,
+            "destinationMap": destination, "destinationSpawn": spawn,
+            "radius": 2.5, "authority": "server"})
+
 
 def _add_population_markers(build: REG.RegionBuild, seed: int) -> None:
     """Editor/visual markers only - the server owns actual spawning."""

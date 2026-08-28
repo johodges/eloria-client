@@ -157,6 +157,9 @@ _DESIGN_ANCHORS.update({
     # and far enough from the harbour that its terrace does not overwrite the
     # quay - which is exactly the bug an earlier placement caused.
     "sunken_court": (CENTRE[0] - 40.0, CENTRE[1] + 12.0),
+    # the bonded warehouse behind the quay - the door to the customs hall
+    "customs_house": (_DESIGN_ANCHORS["harbour_isle"][0] + 7.4,
+                      _DESIGN_ANCHORS["harbour_isle"][1] - 1.0),
     "watch_tower": _DESIGN_ANCHORS["outer_northeast"],
     "lighthouse": _DESIGN_ANCHORS["outer_southwest"],
 })
@@ -449,6 +452,8 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
     t.rect_terrace(ANCHORS["harbour_lamp_walk"], 12.0 * LOCAL, 3.2 * LOCAL,
                    max(harbour_y - 0.30, 1.20), 0.0, TER.PAVING)
     t.terrace(ANCHORS["harbour_market"], 7.0 * LOCAL, harbour_y, surface=TER.PAVING)
+    t.rect_terrace(ANCHORS["customs_house"], 11.0 * LOCAL, 13.0 * LOCAL,
+                   harbour_y, 0.0, TER.PAVING)
 
     t.terrace(ANCHORS["garden_fountain"], 8.5 * LOCAL,
               float(t.height_at(*ANCHORS["garden_fountain"])), surface=TER.MEADOW)
