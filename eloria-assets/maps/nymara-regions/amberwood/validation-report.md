@@ -1,8 +1,15 @@
 # Amberwood validation report
 
+> **This package was regenerated.** The committed artefacts had drifted from the
+> source that produces them: `world.glb` was last written by `b169ed70`, and
+> both the interiors commit and the later determinism fix changed the code
+> afterwards without a rebuild. Everything below is re-measured on the rebuilt
+> package. See `change-log.md` for what changed and why.
+
+
 ## glTF 2.0
 
-`source/validate_gltf.py` implements the structural and semantic checks that
+`_toolkit/validate_gltf.py` implements the structural and semantic checks that
 matter for Godot's `GLTFDocument` import path — chunk structure, accessor bounds
 against buffer views, declared min/max against actual data, index range against
 vertex count, unit-length normals, tangent handedness, material and texture
@@ -21,7 +28,7 @@ buffer and image, and uses triangles only.
 
 ## Runtime contract
 
-`source/verify_runtime.py` reproduces what the client does at load time rather
+`_toolkit/verify_runtime.py` reproduces what the client does at load time rather
 than trusting that it will work:
 
 * It rebuilds the navigation surface exactly as `WorldLoader` does — every mesh
@@ -73,3 +80,52 @@ here and are the first things a reviewer should do:
 3. **Lore and naming.** The written Amberwood region description named in the
    brief was not available, and `eloria-server` could not be read. Every place
    name in `world.json` is a placeholder — see `modeling-assumptions.md`.
+
+
+## Reproducibility
+
+Two independent cache-cold builds of this package are byte-identical across
+`world.glb`, `world-lod2.glb`, `world.json`, `collision.bin`, `minimap.webp`
+and `performance-summary.md`. The package therefore matches the source that
+produces it, which was not true before this pass.
+
+The cache matters: `preview.py` supplies the build's textures and now keys its
+cache on a digest of `textures.py` and `materials.py`. Before that keying, a
+stale entry silently shipped textures that no longer matched the recipes, which
+is one of the two reasons this package drifted.
+
+## The same contract, in-engine
+
+`_toolkit/region_client_check.gd` loads the package with the project's own
+`WorldLoader.load_world()` and casts `main.gd`'s grounding ray against the real
+physics world:
+
+```
+engine              4.7.2-stable (official)
+tiles sampled       5184 (every 8th server tile in each axis)
+grounding misses    0
+surface height      -20.46 .. 108.02
+spawn default       manifest 17.62, client 17.57, delta 0.05 m
+spawn harbour       manifest 4.16,  client 4.11,  delta 0.05 m
+spawn great-arch    manifest 33.13, client 33.08, delta 0.049 m
+PASS
+```
+
+The single loader warning, `navigation polygons did not produce collision`, is
+structural: `navigation.navmesh` is `surface-prefix-v1` with an empty `polygons`
+list because navigation comes from the surface prefixes. Mirrorhold's manifest
+is identical and produces the same warning.
+
+## Still not verified
+
+The regeneration does not change what this package has never demonstrated: no
+networked client session, no server round-trip, and every place name in
+`world.json` remains an invented placeholder.
+
+Also recorded rather than fixed: **six of the 37 embedded materials are not
+referenced by any mesh in `world.glb`** - `foliage_green`, `lime_plaster`,
+`packed_earth`, `sooted_plaster`, `charred_timber`, `water_deep` - and the 14
+images reachable only from them cost 2.79 MB of the 31.5 MB package. They are
+the materials the interiors commit appended to the shared table, inherited by
+this region's pinned set. Pinning to the 31 actually used would recover the
+space; left alone because this pass was about reproducibility.

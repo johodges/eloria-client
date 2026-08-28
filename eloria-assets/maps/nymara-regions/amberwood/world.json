@@ -19,7 +19,7 @@
     "bounds": {
       "min": [
         -524.0,
-        -28.91,
+        -35.34,
         -691.0
       ],
       "max": [
@@ -31,7 +31,7 @@
     "playableBounds": {
       "min": [
         -174.0,
-        -20.86,
+        -20.89,
         -401.0
       ],
       "max": [
@@ -54,7 +54,7 @@
       0.0,
       0.0
     ],
-    "walkingHeight": 17.54,
+    "walkingHeight": 17.57,
     "invertServerY": true
   },
   "spawnPoints": [
@@ -62,7 +62,7 @@
       "id": "default",
       "position": [
         0.0,
-        17.59,
+        17.62,
         0.0
       ],
       "serverTile": [
@@ -77,7 +77,7 @@
       "id": "harbour",
       "position": [
         -72.0,
-        4.17,
+        4.16,
         24.0
       ],
       "serverTile": [
@@ -308,20 +308,6 @@
       "FallenLog_0156",
       "FallenLog_0157",
       "FallenLog_0158",
-      "FallenLog_0159",
-      "FallenLog_0160",
-      "FallenLog_0161",
-      "FallenLog_0162",
-      "FallenLog_0163",
-      "FallenLog_0164",
-      "FallenLog_0165",
-      "FallenLog_0166",
-      "FallenLog_0167",
-      "FallenLog_0168",
-      "FallenLog_0169",
-      "FallenLog_0170",
-      "FallenLog_0171",
-      "FallenLog_0172",
       "Grove_01_Wood",
       "Grove_02_Wood",
       "Grove_03_Wood",
@@ -845,6 +831,15 @@
       "Rock_0238",
       "Rock_0239",
       "Rock_0240",
+      "Rock_0241",
+      "Rock_0242",
+      "Rock_0243",
+      "Rock_0244",
+      "Rock_0245",
+      "Rock_0246",
+      "Rock_0247",
+      "Rock_0248",
+      "Rock_0249",
       "Stone_RuinFragment_B_ash_chapel_01",
       "Stone_RuinFragment_B_ash_chapel_02",
       "Stone_RuinFragment_B_ash_chapel_03",
@@ -923,156 +918,160 @@
       "Tree_0860_pale_birch_Wood",
       "Tree_0871_pale_birch_Wood",
       "Tree_0886_burnt_snag_Wood",
-      "Tree_0891_dark_pine_Wood",
-      "Tree_0911_pale_birch_Wood",
-      "Tree_0917_amber_oak_Wood",
-      "Tree_0932_gold_oak_Wood",
-      "Tree_0937_dead_snag_Wood",
+      "Tree_0889_dark_pine_Wood",
+      "Tree_0903_amber_oak_Wood",
+      "Tree_0911_amber_oak_Wood",
+      "Tree_0912_gold_oak_Wood",
+      "Tree_0918_gold_oak_Wood",
+      "Tree_0927_amber_oak_Wood",
+      "Tree_0930_rust_maple_Wood",
+      "Tree_0931_gold_oak_Wood",
+      "Tree_0934_amber_oak_Wood",
+      "Tree_0935_amber_oak_Wood",
+      "Tree_0942_gold_oak_Wood",
       "Tree_0943_amber_oak_Wood",
-      "Tree_0944_pale_birch_Wood",
-      "Tree_0945_dark_holly_Wood",
+      "Tree_0944_amber_oak_Wood",
       "Tree_0949_understory_hazel_Wood",
-      "Tree_0955_amber_oak_Wood",
-      "Tree_0969_dark_holly_Wood",
-      "Tree_0992_gold_oak_Wood",
-      "Tree_1017_dark_holly_Wood",
-      "Tree_1026_pale_birch_Wood",
+      "Tree_0954_gold_oak_Wood",
+      "Tree_0969_dead_snag_Wood",
+      "Tree_0990_amber_oak_Wood",
+      "Tree_0991_gold_oak_Wood",
+      "Tree_0992_amber_oak_Wood",
+      "Tree_0993_pale_birch_Wood",
+      "Tree_1016_amber_oak_Wood",
+      "Tree_1018_dark_holly_Wood",
+      "Tree_1025_amber_oak_Wood",
+      "Tree_1026_gold_oak_Wood",
       "Tree_1043_dark_holly_Wood",
-      "Tree_1045_understory_hazel_Wood",
-      "Tree_1046_rust_maple_Wood",
-      "Tree_1049_gold_oak_Wood",
-      "Tree_1050_dark_pine_Wood",
-      "Tree_1055_amber_oak_Wood",
-      "Tree_1074_dead_snag_Wood",
-      "Tree_1075_rust_maple_Wood",
-      "Tree_1077_gold_oak_Wood",
-      "Tree_1078_gold_oak_Wood",
-      "Tree_1097_rust_maple_Wood",
-      "Tree_1106_rust_maple_Wood",
+      "Tree_1044_dark_holly_Wood",
+      "Tree_1045_rust_maple_Wood",
+      "Tree_1048_dark_pine_Wood",
+      "Tree_1049_dark_pine_Wood",
+      "Tree_1050_amber_oak_Wood",
+      "Tree_1072_rust_maple_Wood",
+      "Tree_1076_dark_holly_Wood",
+      "Tree_1095_dark_holly_Wood",
+      "Tree_1105_pale_birch_Wood",
       "Tree_1139_amber_oak_Wood",
+      "Tree_1140_understory_hazel_Wood",
       "Tree_1152_amber_oak_Wood",
-      "Tree_1154_pale_birch_Wood",
-      "Tree_1166_dead_snag_Wood",
       "Tree_1167_dark_holly_Wood",
+      "Tree_1168_rust_maple_Wood",
       "Tree_1180_rust_maple_Wood",
-      "Tree_1181_gold_oak_Wood",
       "Tree_1192_amber_oak_Wood",
-      "Tree_1205_rust_maple_Wood",
+      "Tree_1203_amber_oak_Wood",
+      "Tree_1204_amber_oak_Wood",
       "Tree_1208_rust_maple_Wood",
-      "Tree_1219_understory_hazel_Wood",
-      "Tree_1222_gold_oak_Wood",
-      "Tree_1231_amber_oak_Wood",
-      "Tree_1254_pale_birch_Wood",
-      "Tree_1257_gold_oak_Wood",
+      "Tree_1231_gold_oak_Wood",
+      "Tree_1254_amber_oak_Wood",
+      "Tree_1257_rust_maple_Wood",
+      "Tree_1266_gold_oak_Wood",
       "Tree_1270_rust_maple_Wood",
-      "Tree_1277_pale_birch_Wood",
-      "Tree_1285_gold_oak_Wood",
-      "Tree_1287_rust_maple_Wood",
-      "Tree_1297_amber_oak_Wood",
+      "Tree_1274_burnt_snag_Wood",
+      "Tree_1286_rust_maple_Wood",
+      "Tree_1296_amber_oak_Wood",
+      "Tree_1313_rust_maple_Wood",
       "Tree_1314_gold_oak_Wood",
+      "Tree_1323_amber_oak_Wood",
       "Tree_1325_amber_oak_Wood",
-      "Tree_1326_amber_oak_Wood",
-      "Tree_1372_dark_holly_Wood",
+      "Tree_1351_dark_holly_Wood",
+      "Tree_1372_understory_hazel_Wood",
       "Tree_1374_rust_maple_Wood",
-      "Tree_1402_dark_holly_Wood",
-      "Tree_1410_pale_birch_Wood",
-      "Tree_1414_dark_pine_Wood",
+      "Tree_1401_dark_holly_Wood",
+      "Tree_1414_pale_birch_Wood",
       "Tree_1418_understory_hazel_Wood",
       "Tree_1422_amber_oak_Wood",
       "Tree_1423_rust_maple_Wood",
-      "Tree_1427_amber_oak_Wood",
-      "Tree_1428_amber_oak_Wood",
+      "Tree_1427_dead_snag_Wood",
+      "Tree_1429_dark_holly_Wood",
       "Tree_1440_dark_holly_Wood",
-      "Tree_1452_gold_oak_Wood",
+      "Tree_1451_gold_oak_Wood",
       "Tree_1454_rust_maple_Wood",
-      "Tree_1490_pale_birch_Wood",
-      "Tree_1516_understory_hazel_Wood",
-      "Tree_1549_rust_maple_Wood",
-      "Tree_1550_dark_holly_Wood",
-      "Tree_1566_amber_oak_Wood",
-      "Tree_1568_amber_oak_Wood",
-      "Tree_1571_amber_oak_Wood",
-      "Tree_1572_gold_oak_Wood",
-      "Tree_1582_amber_oak_Wood",
-      "Tree_1584_amber_oak_Wood",
-      "Tree_1585_amber_oak_Wood",
-      "Tree_1597_amber_oak_Wood",
-      "Tree_1600_amber_oak_Wood",
-      "Tree_1603_gold_oak_Wood",
-      "Tree_1615_amber_oak_Wood",
-      "Tree_1635_gold_oak_Wood",
-      "Tree_1636_gold_oak_Wood",
-      "Tree_1641_rust_maple_Wood",
-      "Tree_1659_rust_maple_Wood",
-      "Tree_1665_dark_pine_Wood",
-      "Tree_1667_amber_oak_Wood",
-      "Tree_1668_gold_oak_Wood",
-      "Tree_1695_dark_holly_Wood",
-      "Tree_1696_rust_maple_Wood",
-      "Tree_1708_rust_maple_Wood",
-      "Tree_1709_amber_oak_Wood",
-      "Tree_1725_rust_maple_Wood",
-      "Tree_1739_amber_oak_Wood",
-      "Tree_1740_rust_maple_Wood",
+      "Tree_1463_gold_oak_Wood",
+      "Tree_1474_rust_maple_Wood",
+      "Tree_1475_gold_oak_Wood",
+      "Tree_1476_amber_oak_Wood",
+      "Tree_1490_amber_oak_Wood",
+      "Tree_1491_burnt_snag_Wood",
+      "Tree_1514_amber_oak_Wood",
+      "Tree_1542_dark_pine_Wood",
+      "Tree_1544_amber_oak_Wood",
+      "Tree_1566_gold_oak_Wood",
+      "Tree_1569_understory_hazel_Wood",
+      "Tree_1572_pale_birch_Wood",
+      "Tree_1573_rust_maple_Wood",
+      "Tree_1574_amber_oak_Wood",
+      "Tree_1582_rust_maple_Wood",
+      "Tree_1583_understory_hazel_Wood",
+      "Tree_1595_understory_hazel_Wood",
+      "Tree_1603_amber_oak_Wood",
+      "Tree_1628_dark_holly_Wood",
+      "Tree_1635_amber_oak_Wood",
+      "Tree_1636_rust_maple_Wood",
+      "Tree_1659_amber_oak_Wood",
+      "Tree_1668_pale_birch_Wood",
+      "Tree_1669_gold_oak_Wood",
+      "Tree_1677_understory_hazel_Wood",
+      "Tree_1695_rust_maple_Wood",
+      "Tree_1696_pale_birch_Wood",
+      "Tree_1708_amber_oak_Wood",
+      "Tree_1712_amber_oak_Wood",
+      "Tree_1714_gold_oak_Wood",
       "Tree_1754_pale_birch_Wood",
-      "Tree_1776_pale_birch_Wood",
-      "Tree_1783_amber_oak_Wood",
-      "Tree_1786_understory_hazel_Wood",
-      "Tree_1821_amber_oak_Wood",
-      "Tree_1822_amber_oak_Wood",
+      "Tree_1784_pale_birch_Wood",
+      "Tree_1800_dead_snag_Wood",
+      "Tree_1801_dark_pine_Wood",
+      "Tree_1823_pale_birch_Wood",
       "Tree_1832_rust_maple_Wood",
-      "Tree_1850_dark_pine_Wood",
-      "Tree_1876_pale_birch_Wood",
-      "Tree_1940_pale_birch_Wood",
-      "Tree_1999_amber_oak_Wood",
+      "Tree_1851_dark_pine_Wood",
+      "Tree_1868_amber_oak_Wood",
+      "Tree_1895_pale_birch_Wood",
+      "Tree_1917_amber_oak_Wood",
+      "Tree_1924_amber_oak_Wood",
+      "Tree_1940_dark_pine_Wood",
+      "Tree_1941_understory_hazel_Wood",
+      "Tree_1966_amber_oak_Wood",
+      "Tree_1968_amber_oak_Wood",
+      "Tree_1999_rust_maple_Wood",
+      "Tree_2000_rust_maple_Wood",
       "Tree_2009_rust_maple_Wood",
-      "Tree_2036_amber_oak_Wood",
-      "Tree_2075_amber_oak_Wood",
-      "Tree_2084_pale_birch_Wood",
-      "Tree_2111_amber_oak_Wood",
-      "Tree_2113_amber_oak_Wood",
-      "Tree_2128_pale_birch_Wood",
+      "Tree_2038_rust_maple_Wood",
+      "Tree_2075_understory_hazel_Wood",
+      "Tree_2111_pale_birch_Wood",
       "Tree_2148_amber_oak_Wood",
-      "Tree_2149_pale_birch_Wood",
+      "Tree_2149_understory_hazel_Wood",
       "Tree_2157_amber_oak_Wood",
       "Tree_2166_amber_oak_Wood",
-      "Tree_2167_rust_maple_Wood",
-      "Tree_2194_rust_maple_Wood",
-      "Tree_2195_gold_oak_Wood",
-      "Tree_2200_dark_pine_Wood",
-      "Tree_2201_pale_birch_Wood",
+      "Tree_2167_understory_hazel_Wood",
+      "Tree_2226_rust_maple_Wood",
+      "Tree_2228_gold_oak_Wood",
+      "Tree_2250_pale_birch_Wood",
       "Tree_2255_amber_oak_Wood",
-      "Tree_2279_rust_maple_Wood",
-      "Tree_2280_amber_oak_Wood",
-      "Tree_2296_rust_maple_Wood",
-      "Tree_2298_dead_snag_Wood",
-      "Tree_2299_understory_hazel_Wood",
-      "Tree_2352_pale_birch_Wood",
-      "Tree_2353_understory_hazel_Wood",
-      "Tree_2379_understory_hazel_Wood",
-      "Tree_2380_pale_birch_Wood",
-      "Tree_2385_gold_oak_Wood",
-      "Tree_2388_gold_oak_Wood",
-      "Tree_2389_rust_maple_Wood",
-      "Tree_2396_pale_birch_Wood",
-      "Tree_2430_pale_birch_Wood",
-      "Tree_2435_gold_oak_Wood",
-      "Tree_2436_pale_birch_Wood",
-      "Tree_2447_rust_maple_Wood",
-      "Tree_2449_amber_oak_Wood",
+      "Tree_2257_gold_oak_Wood",
+      "Tree_2295_amber_oak_Wood",
+      "Tree_2296_amber_oak_Wood",
+      "Tree_2297_pale_birch_Wood",
+      "Tree_2319_pale_birch_Wood",
+      "Tree_2320_pale_birch_Wood",
+      "Tree_2340_pale_birch_Wood",
+      "Tree_2379_pale_birch_Wood",
+      "Tree_2429_dark_pine_Wood",
+      "Tree_2433_amber_oak_Wood",
+      "Tree_2447_amber_oak_Wood",
       "Tree_2455_rust_maple_Wood",
-      "Tree_2469_pale_birch_Wood",
-      "Tree_2470_amber_oak_Wood",
-      "Tree_2478_rust_maple_Wood",
-      "Tree_2481_understory_hazel_Wood",
-      "Tree_2482_amber_oak_Wood",
-      "Tree_2483_understory_hazel_Wood",
-      "Tree_2484_gold_oak_Wood",
+      "Tree_2469_rust_maple_Wood",
+      "Tree_2470_gold_oak_Wood",
+      "Tree_2471_pale_birch_Wood",
+      "Tree_2482_pale_birch_Wood",
+      "Tree_2483_pale_birch_Wood",
+      "Tree_2484_rust_maple_Wood",
       "Tree_2497_amber_oak_Wood",
       "Tree_2510_amber_oak_Wood",
-      "Tree_2515_gold_oak_Wood",
-      "Tree_2546_amber_oak_Wood",
-      "Tree_2617_amber_oak_Wood"
+      "Tree_2514_amber_oak_Wood",
+      "Tree_2569_amber_oak_Wood",
+      "Tree_2571_gold_oak_Wood",
+      "Tree_2617_amber_oak_Wood",
+      "Tree_2657_rust_maple_Wood"
     ],
     "binary": "collision.bin",
     "format": "EWCG-v1",
@@ -1089,8 +1088,8 @@
       "zeroMeansBlocked": true,
       "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Amberwood's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 929247,
-    "walkableFraction": 0.7002
+    "walkableCells": 932551,
+    "walkableFraction": 0.7027
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1139,7 +1138,7 @@
       "type": "guild",
       "position": [
         66.0,
-        41.81,
+        41.1,
         -150.0
       ]
     },
@@ -1150,7 +1149,7 @@
       "type": "settlement",
       "position": [
         30.0,
-        43.65,
+        43.57,
         -174.0
       ]
     },
@@ -1166,7 +1165,7 @@
       ],
       "approach": [
         58.0,
-        22.72,
+        22.69,
         -20.0
       ]
     },
@@ -1177,7 +1176,7 @@
       "type": "bridge",
       "position": [
         120.0,
-        38.17,
+        38.02,
         -198.0
       ]
     },
@@ -1188,7 +1187,7 @@
       "type": "bridge",
       "position": [
         30.0,
-        40.79,
+        40.75,
         -132.0
       ]
     },
@@ -1199,7 +1198,7 @@
       "type": "ruin",
       "position": [
         -48.0,
-        -1.74,
+        -1.69,
         -102.0
       ]
     },
@@ -1210,7 +1209,7 @@
       "type": "ruin",
       "position": [
         114.0,
-        59.21,
+        59.2,
         -276.0
       ]
     },
@@ -1243,7 +1242,7 @@
       "type": "ruin",
       "position": [
         -102.0,
-        -0.86,
+        -0.97,
         -300.0
       ]
     },
@@ -1254,7 +1253,7 @@
       "type": "ruin",
       "position": [
         252.0,
-        49.88,
+        49.89,
         -222.0
       ]
     },
@@ -1265,7 +1264,7 @@
       "type": "ruin",
       "position": [
         312.0,
-        38.26,
+        38.25,
         -102.0
       ]
     },
@@ -1276,7 +1275,7 @@
       "type": "gate",
       "position": [
         -18.0,
-        -0.25,
+        -0.27,
         -78.0
       ]
     },
@@ -1287,7 +1286,7 @@
       "type": "gate",
       "position": [
         222.0,
-        41.84,
+        41.83,
         -90.0
       ]
     },
@@ -1298,7 +1297,7 @@
       "type": "tree-hall",
       "position": [
         -78.0,
-        26.04,
+        26.13,
         -258.0
       ]
     },
@@ -1309,7 +1308,7 @@
       "type": "monumental-tree",
       "position": [
         78.0,
-        56.18,
+        56.17,
         -264.0
       ]
     },
@@ -1331,7 +1330,7 @@
       "type": "garden",
       "position": [
         156.0,
-        21.09,
+        21.11,
         30.0
       ]
     },
@@ -1342,7 +1341,7 @@
       "type": "pavilion",
       "position": [
         156.5,
-        21.09,
+        21.11,
         20.5
       ]
     },
@@ -1375,7 +1374,7 @@
       "type": "lookout",
       "position": [
         240.0,
-        57.74,
+        57.76,
         -336.0
       ]
     },
@@ -1386,7 +1385,7 @@
       "type": "lookout",
       "position": [
         138.0,
-        11.85,
+        11.89,
         120.0
       ]
     },
@@ -1397,7 +1396,7 @@
       "type": "lookout",
       "position": [
         72.0,
-        50.6,
+        50.94,
         -312.0
       ]
     },
@@ -1419,7 +1418,7 @@
       "type": "lookout",
       "position": [
         366.0,
-        33.94,
+        33.93,
         36.0
       ]
     },
@@ -1430,7 +1429,7 @@
       "type": "lookout",
       "position": [
         210.0,
-        57.6,
+        57.58,
         -276.0
       ]
     },
@@ -1441,7 +1440,7 @@
       "type": "lookout",
       "position": [
         -126.0,
-        -16.42,
+        -16.33,
         -180.0
       ]
     },
@@ -1463,7 +1462,7 @@
       "type": "industry",
       "position": [
         216.0,
-        23.56,
+        23.57,
         102.0
       ]
     },
@@ -1485,7 +1484,7 @@
       "type": "transition",
       "position": [
         324.0,
-        32.95,
+        32.97,
         -42.0
       ]
     },
@@ -1496,7 +1495,7 @@
       "type": "ruin",
       "position": [
         -90.0,
-        -4.17,
+        -4.15,
         -42.0
       ]
     },
@@ -1507,7 +1506,7 @@
       "type": "sea-stack",
       "position": [
         -43.5,
-        -1.03,
+        -1.01,
         -60.0
       ]
     },
@@ -1529,7 +1528,7 @@
       "type": "agriculture",
       "position": [
         48.0,
-        3.55,
+        3.46,
         138.0
       ]
     },
@@ -1573,7 +1572,7 @@
       "type": "camp",
       "position": [
         222.0,
-        58.04,
+        58.06,
         -330.0
       ]
     },
@@ -1606,7 +1605,7 @@
       "type": "battlefield",
       "position": [
         378.0,
-        51.16,
+        51.15,
         -174.0
       ]
     },
@@ -1617,7 +1616,7 @@
       "type": "transition",
       "position": [
         354.0,
-        35.79,
+        35.78,
         -24.0
       ]
     },
@@ -1650,7 +1649,7 @@
       "type": "old-growth",
       "position": [
         -120.0,
-        -17.66,
+        -17.74,
         -384.0
       ]
     },
@@ -1672,7 +1671,7 @@
       "type": "old-growth",
       "position": [
         -60.0,
-        19.94,
+        19.81,
         -330.0
       ]
     },
@@ -1683,7 +1682,7 @@
       "type": "shrine",
       "position": [
         60.0,
-        52.86,
+        52.71,
         -372.0
       ]
     }
@@ -1695,7 +1694,7 @@
       "type": "well",
       "position": [
         12.0,
-        38.18,
+        38.27,
         -148.8
       ]
     },
@@ -1706,7 +1705,7 @@
       "craft": "amber-working",
       "position": [
         54.75,
-        41.68,
+        41.39,
         -142.5
       ]
     },
@@ -1717,7 +1716,7 @@
       "craft": "amber-working",
       "position": [
         24.0,
-        38.18,
+        38.27,
         -159.75
       ]
     },
@@ -1728,7 +1727,7 @@
       "craft": "amber-working",
       "position": [
         58.5,
-        51.02,
+        51.11,
         -216.0
       ]
     },
@@ -1739,7 +1738,7 @@
       "craft": "amber-working",
       "position": [
         99.0,
-        59.41,
+        59.4,
         -289.5
       ]
     },
@@ -1750,7 +1749,7 @@
       "craft": "amber-working",
       "position": [
         96.0,
-        51.31,
+        50.98,
         -346.5
       ]
     },
@@ -1772,7 +1771,7 @@
       "resource": "timber",
       "position": [
         216.0,
-        23.56,
+        23.57,
         102.0
       ]
     },
@@ -1835,7 +1834,7 @@
       "type": "npc",
       "position": [
         61.01,
-        42.11,
+        41.4,
         -149.68
       ],
       "serverTile": [
@@ -1850,7 +1849,7 @@
       "type": "npc",
       "position": [
         10.07,
-        38.23,
+        38.32,
         -156.73
       ],
       "serverTile": [
@@ -1865,7 +1864,7 @@
       "type": "npc",
       "position": [
         -55.62,
-        5.29,
+        5.28,
         38.42
       ],
       "serverTile": [
@@ -1880,7 +1879,7 @@
       "type": "npc",
       "position": [
         218.21,
-        23.56,
+        23.57,
         96.42
       ],
       "serverTile": [
@@ -1910,7 +1909,7 @@
       "type": "npc",
       "position": [
         68.43,
-        49.21,
+        49.2,
         -213.18
       ],
       "serverTile": [
@@ -1925,7 +1924,7 @@
       "type": "npc",
       "position": [
         -82.93,
-        25.15,
+        25.09,
         -258.86
       ],
       "serverTile": [
@@ -1940,7 +1939,7 @@
       "type": "npc",
       "position": [
         150.95,
-        21.09,
+        21.11,
         33.24
       ],
       "serverTile": [
@@ -1970,7 +1969,7 @@
       "type": "npc",
       "position": [
         236.08,
-        58.04,
+        58.06,
         -336.79
       ],
       "serverTile": [
@@ -1985,7 +1984,7 @@
       "type": "npc",
       "position": [
         327.44,
-        29.13,
+        29.15,
         93.63
       ],
       "serverTile": [
@@ -2000,7 +1999,7 @@
       "type": "npc",
       "position": [
         110.92,
-        28.21,
+        28.22,
         -41.31
       ],
       "serverTile": [
@@ -2015,29 +2014,29 @@
       "group": "forest-fauna",
       "centre": [
         78.0,
-        56.43,
+        56.42,
         -264.0
       ],
       "radius": 22.0,
       "positions": [
         [
           72.99,
-          53.71,
+          53.88,
           -271.69
         ],
         [
           68.86,
-          50.71,
+          50.7,
           -279.43
         ],
         [
           68.01,
-          52.48,
+          52.68,
           -256.81
         ],
         [
           63.2,
-          47.99,
+          48.08,
           -259.97
         ]
       ],
@@ -2056,22 +2055,22 @@
       "positions": [
         [
           65.52,
-          49.4,
+          49.35,
           -216.26
         ],
         [
           63.54,
-          49.77,
+          49.73,
           -222.0
         ],
         [
           64.28,
-          49.55,
+          49.49,
           -214.5
         ],
         [
           67.75,
-          49.14,
+          49.13,
           -214.34
         ],
         [
@@ -2122,19 +2121,19 @@
       "group": "forest-fauna",
       "centre": [
         -78.0,
-        26.24,
+        26.33,
         -258.0
       ],
       "radius": 24.0,
       "positions": [
         [
           -87.9,
-          3.45,
+          3.29,
           -253.72
         ],
         [
           -98.26,
-          -5.02,
+          -5.03,
           -253.95
         ],
         [
@@ -2151,29 +2150,29 @@
       "group": "transition-hostile",
       "centre": [
         324.0,
-        32.95,
+        32.97,
         -42.0
       ],
       "radius": 26.0,
       "positions": [
         [
           324.48,
-          32.1,
+          32.22,
           -33.05
         ],
         [
           335.69,
-          35.79,
+          35.78,
           -33.02
         ],
         [
           341.4,
-          35.79,
+          35.78,
           -39.7
         ],
         [
           304.77,
-          34.94,
+          34.99,
           -53.86
         ],
         [
@@ -2190,29 +2189,29 @@
       "group": "transition-hostile",
       "centre": [
         348.0,
-        51.16,
+        51.15,
         -180.0
       ],
       "radius": 22.0,
       "positions": [
         [
           359.09,
-          51.16,
+          51.15,
           -178.54
         ],
         [
           358.18,
-          51.16,
+          51.15,
           -194.19
         ],
         [
           364.5,
-          51.16,
+          51.15,
           -173.08
         ],
         [
           362.74,
-          51.16,
+          51.15,
           -168.27
         ]
       ],
@@ -2241,7 +2240,7 @@
       "category": "amber",
       "position": [
         88.0,
-        59.46,
+        59.45,
         -280.94
       ],
       "serverTile": [
@@ -2256,7 +2255,7 @@
       "category": "amber",
       "position": [
         66.0,
-        50.23,
+        50.31,
         -263.02
       ],
       "serverTile": [
@@ -2271,7 +2270,7 @@
       "category": "amber",
       "position": [
         81.88,
-        53.48,
+        53.47,
         -248.97
       ],
       "serverTile": [
@@ -2286,7 +2285,7 @@
       "category": "amber",
       "position": [
         64.14,
-        47.78,
+        48.02,
         -249.71
       ],
       "serverTile": [
@@ -2301,7 +2300,7 @@
       "category": "amber",
       "position": [
         93.52,
-        59.46,
+        59.45,
         -268.42
       ],
       "serverTile": [
@@ -2316,7 +2315,7 @@
       "category": "amber",
       "position": [
         54.46,
-        50.12,
+        50.34,
         -211.35
       ],
       "serverTile": [
@@ -2331,7 +2330,7 @@
       "category": "amber",
       "position": [
         60.67,
-        49.82,
+        49.86,
         -211.81
       ],
       "serverTile": [
@@ -2346,7 +2345,7 @@
       "category": "amber",
       "position": [
         70.21,
-        44.55,
+        44.56,
         -200.41
       ],
       "serverTile": [
@@ -2361,7 +2360,7 @@
       "category": "amber",
       "position": [
         61.23,
-        50.69,
+        50.66,
         -216.72
       ],
       "serverTile": [
@@ -2376,7 +2375,7 @@
       "category": "timber",
       "position": [
         217.16,
-        23.56,
+        23.57,
         110.62
       ],
       "serverTile": [
@@ -2391,7 +2390,7 @@
       "category": "timber",
       "position": [
         208.39,
-        23.56,
+        23.57,
         106.28
       ],
       "serverTile": [
@@ -2406,7 +2405,7 @@
       "category": "timber",
       "position": [
         210.87,
-        23.56,
+        23.57,
         96.32
       ],
       "serverTile": [
@@ -2421,7 +2420,7 @@
       "category": "timber",
       "position": [
         209.03,
-        23.56,
+        23.57,
         96.05
       ],
       "serverTile": [
@@ -2436,7 +2435,7 @@
       "category": "timber",
       "position": [
         213.89,
-        23.56,
+        23.57,
         97.57
       ],
       "serverTile": [
@@ -2451,7 +2450,7 @@
       "category": "timber",
       "position": [
         -90.34,
-        14.49,
+        14.45,
         -263.87
       ],
       "serverTile": [
@@ -2466,7 +2465,7 @@
       "category": "timber",
       "position": [
         -77.82,
-        30.95,
+        31.79,
         -264.75
       ],
       "serverTile": [
@@ -2481,7 +2480,7 @@
       "category": "timber",
       "position": [
         -85.56,
-        11.21,
+        11.22,
         -251.77
       ],
       "serverTile": [
@@ -2511,7 +2510,7 @@
       "category": "reagent",
       "position": [
         2.55,
-        36.55,
+        36.49,
         -125.26
       ],
       "serverTile": [
@@ -2526,7 +2525,7 @@
       "category": "reagent",
       "position": [
         -20.7,
-        31.66,
+        31.65,
         -138.81
       ],
       "serverTile": [
@@ -2541,7 +2540,7 @@
       "category": "reagent",
       "position": [
         -0.6,
-        32.88,
+        32.89,
         -127.31
       ],
       "serverTile": [
@@ -2556,7 +2555,7 @@
       "category": "reagent",
       "position": [
         -1.59,
-        32.2,
+        32.15,
         -141.21
       ],
       "serverTile": [
@@ -2631,7 +2630,7 @@
       "category": "reagent",
       "position": [
         333.97,
-        35.79,
+        35.78,
         -39.01
       ],
       "serverTile": [
@@ -2646,7 +2645,7 @@
       "category": "reagent",
       "position": [
         318.51,
-        32.8,
+        32.95,
         -46.75
       ],
       "serverTile": [
@@ -2661,7 +2660,7 @@
       "category": "reagent",
       "position": [
         313.47,
-        33.38,
+        33.46,
         -46.01
       ],
       "serverTile": [
@@ -2676,7 +2675,7 @@
       "category": "reagent",
       "position": [
         344.29,
-        33.99,
+        34.1,
         -47.78
       ],
       "serverTile": [
@@ -2693,7 +2692,7 @@
       "type": "map-transition",
       "position": [
         72.0,
-        68.68,
+        67.64,
         -384.0
       ],
       "serverTile": [
@@ -2727,7 +2726,7 @@
       "type": "map-transition",
       "position": [
         393.0,
-        40.83,
+        40.84,
         -66.0
       ],
       "serverTile": [
@@ -2761,7 +2760,7 @@
       "type": "interior-entrance",
       "position": [
         78.0,
-        56.28,
+        56.27,
         -264.0
       ],
       "serverTile": [
@@ -2799,7 +2798,7 @@
       "type": "interior-entrance",
       "position": [
         66.0,
-        41.91,
+        41.2,
         -150.0
       ],
       "serverTile": [
@@ -2843,22 +2842,22 @@
         ],
         [
           -66.0,
-          3.36,
+          3.28,
           90.0
         ],
         [
           -60.0,
-          5.29,
+          5.28,
           36.0
         ],
         [
           -54.0,
-          12.5,
+          12.49,
           -18.0
         ],
         [
           -54.0,
-          -8.79,
+          -8.73,
           -66.0
         ],
         [
@@ -2868,7 +2867,7 @@
         ],
         [
           -90.0,
-          -4.87,
+          -4.82,
           -156.0
         ]
       ]
@@ -2878,17 +2877,17 @@
       "waypoints": [
         [
           -60.0,
-          5.29,
+          5.28,
           36.0
         ],
         [
           -30.0,
-          12.66,
+          12.65,
           12.0
         ],
         [
           0.0,
-          18.52,
+          18.63,
           -6.0
         ],
         [
@@ -2903,7 +2902,7 @@
       "waypoints": [
         [
           0.0,
-          17.54,
+          17.57,
           0.0
         ],
         [
@@ -2948,27 +2947,27 @@
         ],
         [
           30.0,
-          37.3,
+          37.35,
           -132.0
         ],
         [
           12.0,
-          38.23,
+          38.32,
           -150.0
         ],
         [
           30.0,
-          43.65,
+          43.57,
           -174.0
         ],
         [
           54.0,
-          46.97,
+          46.77,
           -234.0
         ],
         [
           72.0,
-          50.9,
+          51.24,
           -312.0
         ]
       ]
@@ -2978,7 +2977,7 @@
       "waypoints": [
         [
           30.0,
-          43.65,
+          43.57,
           -174.0
         ],
         [
@@ -2988,17 +2987,17 @@
         ],
         [
           78.0,
-          56.43,
+          56.42,
           -264.0
         ],
         [
           102.0,
-          59.46,
+          59.45,
           -294.0
         ],
         [
           240.0,
-          58.04,
+          58.06,
           -336.0
         ]
       ]
@@ -3008,7 +3007,7 @@
       "waypoints": [
         [
           30.0,
-          43.65,
+          43.57,
           -174.0
         ],
         [
@@ -3018,17 +3017,17 @@
         ],
         [
           -42.0,
-          29.0,
+          29.02,
           -234.0
         ],
         [
           -78.0,
-          26.24,
+          26.33,
           -258.0
         ],
         [
           -108.0,
-          1.07,
+          0.98,
           -282.0
         ]
       ]
@@ -3038,7 +3037,7 @@
       "waypoints": [
         [
           54.0,
-          46.97,
+          46.77,
           -234.0
         ],
         [
@@ -3048,7 +3047,7 @@
         ],
         [
           120.0,
-          36.48,
+          36.51,
           -198.0
         ],
         [
@@ -3078,12 +3077,12 @@
         ],
         [
           174.0,
-          41.24,
+          41.23,
           -138.0
         ],
         [
           222.0,
-          42.04,
+          42.03,
           -90.0
         ],
         [
@@ -3108,22 +3107,22 @@
         ],
         [
           168.0,
-          26.64,
+          26.57,
           -12.0
         ],
         [
           156.0,
-          21.09,
+          21.11,
           30.0
         ],
         [
           150.0,
-          17.75,
+          17.76,
           78.0
         ],
         [
           138.0,
-          12.15,
+          12.19,
           120.0
         ],
         [
@@ -3138,27 +3137,27 @@
       "waypoints": [
         [
           138.0,
-          12.15,
+          12.19,
           120.0
         ],
         [
           174.0,
-          17.75,
+          17.76,
           108.0
         ],
         [
           216.0,
-          23.56,
+          23.57,
           102.0
         ],
         [
           252.0,
-          24.66,
+          24.68,
           90.0
         ],
         [
           324.0,
-          29.13,
+          29.15,
           90.0
         ]
       ]
@@ -3168,7 +3167,7 @@
       "waypoints": [
         [
           222.0,
-          42.04,
+          42.03,
           -90.0
         ],
         [
@@ -3178,17 +3177,17 @@
         ],
         [
           324.0,
-          32.95,
+          32.97,
           -42.0
         ],
         [
           360.0,
-          36.73,
+          36.72,
           -54.0
         ],
         [
           393.0,
-          40.73,
+          40.74,
           -66.0
         ]
       ]
@@ -3198,7 +3197,7 @@
       "waypoints": [
         [
           216.0,
-          23.56,
+          23.57,
           102.0
         ],
         [
@@ -3218,7 +3217,7 @@
         ],
         [
           324.0,
-          32.95,
+          32.97,
           -42.0
         ]
       ]
@@ -3233,12 +3232,12 @@
         ],
         [
           294.0,
-          49.55,
+          49.54,
           -168.0
         ],
         [
           348.0,
-          51.16,
+          51.15,
           -180.0
         ],
         [
@@ -3258,27 +3257,27 @@
       "waypoints": [
         [
           -90.0,
-          -4.87,
+          -4.82,
           -156.0
         ],
         [
           -126.0,
-          -16.12,
+          -16.03,
           -180.0
         ],
         [
           -99.0,
-          -5.1,
+          -4.99,
           -174.0
         ],
         [
           -72.0,
-          -1.45,
+          -1.38,
           -198.0
         ],
         [
           -78.0,
-          26.24,
+          26.33,
           -258.0
         ]
       ]
@@ -3288,7 +3287,7 @@
       "waypoints": [
         [
           -78.0,
-          26.24,
+          26.33,
           -258.0
         ],
         [
@@ -3298,17 +3297,17 @@
         ],
         [
           -18.0,
-          36.46,
+          36.48,
           -240.0
         ],
         [
           -24.0,
-          34.95,
+          34.75,
           -276.0
         ],
         [
           -60.0,
-          19.94,
+          19.81,
           -330.0
         ],
         [
@@ -3323,22 +3322,22 @@
       "waypoints": [
         [
           78.0,
-          56.43,
+          56.42,
           -264.0
         ],
         [
           105.0,
-          59.46,
+          59.45,
           -285.0
         ],
         [
           96.0,
-          55.05,
+          55.27,
           -318.0
         ],
         [
           90.0,
-          51.36,
+          51.03,
           -354.0
         ]
       ]
@@ -3348,17 +3347,17 @@
       "waypoints": [
         [
           90.0,
-          51.36,
+          51.03,
           -354.0
         ],
         [
           120.0,
-          54.26,
+          54.18,
           -336.0
         ],
         [
           156.0,
-          52.05,
+          52.0,
           -300.0
         ],
         [
@@ -3368,7 +3367,7 @@
         ],
         [
           210.0,
-          57.9,
+          57.88,
           -276.0
         ],
         [
@@ -3388,17 +3387,17 @@
       "waypoints": [
         [
           156.0,
-          21.09,
+          21.11,
           30.0
         ],
         [
           150.0,
-          19.89,
+          19.93,
           60.0
         ],
         [
           144.0,
-          17.75,
+          17.76,
           90.0
         ],
         [
@@ -3423,7 +3422,7 @@
         ],
         [
           -60.0,
-          -0.57,
+          -0.58,
           150.0
         ],
         [
@@ -3433,17 +3432,17 @@
         ],
         [
           6.0,
-          0.57,
+          0.58,
           162.0
         ],
         [
           72.0,
-          3.55,
+          3.46,
           150.0
         ],
         [
           138.0,
-          12.15,
+          12.19,
           120.0
         ]
       ]
@@ -3463,27 +3462,27 @@
         ],
         [
           300.0,
-          49.55,
+          49.54,
           -180.0
         ],
         [
           330.0,
-          43.21,
+          43.22,
           -150.0
         ],
         [
           345.0,
-          39.46,
+          39.44,
           -120.0
         ],
         [
           372.0,
-          41.6,
+          41.59,
           -90.0
         ],
         [
           324.0,
-          32.95,
+          32.97,
           -42.0
         ]
       ]
@@ -3493,32 +3492,32 @@
       "waypoints": [
         [
           324.0,
-          32.95,
+          32.97,
           -42.0
         ],
         [
           348.0,
-          33.9,
+          33.88,
           0.0
         ],
         [
           366.0,
-          34.24,
+          34.23,
           36.0
         ],
         [
           336.0,
-          29.13,
+          29.15,
           78.0
         ],
         [
           282.0,
-          26.19,
+          26.27,
           90.0
         ],
         [
           324.0,
-          29.13,
+          29.15,
           90.0
         ]
       ]
@@ -3528,17 +3527,17 @@
       "waypoints": [
         [
           -60.0,
-          19.94,
+          19.81,
           -330.0
         ],
         [
           -96.0,
-          -7.67,
+          -7.75,
           -360.0
         ],
         [
           -120.0,
-          -17.66,
+          -17.74,
           -384.0
         ],
         [
@@ -3558,22 +3557,22 @@
       "waypoints": [
         [
           -78.0,
-          26.24,
+          26.33,
           -258.0
         ],
         [
           -102.0,
-          -8.81,
+          -8.75,
           -228.0
         ],
         [
           -114.0,
-          -17.5,
+          -17.53,
           -198.0
         ],
         [
           -126.0,
-          -16.12,
+          -16.03,
           -180.0
         ]
       ]
@@ -3583,7 +3582,7 @@
       "waypoints": [
         [
           -60.0,
-          5.29,
+          5.28,
           36.0
         ],
         [
@@ -3593,17 +3592,17 @@
         ],
         [
           -90.0,
-          -4.17,
+          -4.15,
           -42.0
         ],
         [
           -54.0,
-          -8.79,
+          -8.73,
           -66.0
         ],
         [
           -18.0,
-          -0.05,
+          -0.07,
           -78.0
         ]
       ]
@@ -3613,7 +3612,7 @@
       "waypoints": [
         [
           0.0,
-          17.54,
+          17.57,
           0.0
         ],
         [
@@ -3628,7 +3627,7 @@
         ],
         [
           -93.0,
-          -1.52,
+          -1.55,
           72.0
         ]
       ]
@@ -3638,17 +3637,17 @@
       "waypoints": [
         [
           138.0,
-          12.15,
+          12.19,
           120.0
         ],
         [
           96.0,
-          6.79,
+          6.86,
           132.0
         ],
         [
           48.0,
-          3.55,
+          3.46,
           138.0
         ],
         [
@@ -3658,7 +3657,7 @@
         ],
         [
           156.0,
-          21.09,
+          21.11,
           30.0
         ]
       ]
@@ -3668,12 +3667,12 @@
       "waypoints": [
         [
           72.0,
-          50.9,
+          51.24,
           -312.0
         ],
         [
           54.0,
-          51.46,
+          51.37,
           -372.0
         ],
         [
@@ -3693,7 +3692,7 @@
         ],
         [
           222.0,
-          58.04,
+          58.06,
           -330.0
         ]
       ]
@@ -3728,7 +3727,7 @@
       "waypoints": [
         [
           222.0,
-          58.04,
+          58.06,
           -330.0
         ],
         [
@@ -3743,12 +3742,12 @@
         ],
         [
           336.0,
-          47.98,
+          48.03,
           -198.0
         ],
         [
           378.0,
-          51.16,
+          51.15,
           -174.0
         ]
       ]
@@ -3758,17 +3757,17 @@
       "waypoints": [
         [
           324.0,
-          32.95,
+          32.97,
           -42.0
         ],
         [
           354.0,
-          35.79,
+          35.78,
           -24.0
         ],
         [
           366.0,
-          33.48,
+          33.47,
           60.0
         ],
         [
@@ -3815,37 +3814,37 @@
         "waypoints": [
           [
             108.0,
-            65.49,
+            65.36,
             -378.0
           ],
           [
             90.0,
-            51.36,
+            51.03,
             -336.0
           ],
           [
             72.0,
-            50.47,
+            50.55,
             -288.0
           ],
           [
             54.0,
-            45.78,
+            45.32,
             -240.0
           ],
           [
             36.0,
-            44.0,
+            44.19,
             -198.0
           ],
           [
             18.0,
-            38.23,
+            38.32,
             -162.0
           ],
           [
             -6.0,
-            26.34,
+            26.4,
             -132.0
           ]
         ]
@@ -3855,27 +3854,27 @@
         "waypoints": [
           [
             -6.0,
-            26.34,
+            26.4,
             -132.0
           ],
           [
             -24.0,
-            23.74,
+            23.7,
             -108.0
           ],
           [
             -39.0,
-            -9.81,
+            -9.82,
             -84.0
           ],
           [
             -54.0,
-            -8.79,
+            -8.73,
             -66.0
           ],
           [
             -72.0,
-            -14.05,
+            -14.0,
             -60.0
           ]
         ]
@@ -3885,42 +3884,42 @@
         "waypoints": [
           [
             198.0,
-            64.43,
+            64.48,
             -288.0
           ],
           [
             168.0,
-            48.71,
+            48.7,
             -252.0
           ],
           [
             138.0,
-            30.82,
+            30.76,
             -222.0
           ],
           [
             120.0,
-            36.48,
+            36.51,
             -198.0
           ],
           [
             102.0,
-            24.19,
+            24.17,
             -180.0
           ],
           [
             72.0,
-            40.08,
+            39.76,
             -162.0
           ],
           [
             36.0,
-            38.65,
+            38.68,
             -150.0
           ],
           [
             6.0,
-            38.23,
+            38.32,
             -138.0
           ]
         ]
@@ -3940,32 +3939,32 @@
           ],
           [
             162.0,
-            24.95,
+            25.11,
             -18.0
           ],
           [
             156.0,
-            21.09,
+            21.11,
             30.0
           ],
           [
             144.0,
-            17.92,
+            18.01,
             66.0
           ],
           [
             120.0,
-            17.75,
+            17.76,
             108.0
           ],
           [
             84.0,
-            4.52,
+            4.43,
             138.0
           ],
           [
             30.0,
-            3.55,
+            3.46,
             156.0
           ]
         ]
@@ -3975,32 +3974,32 @@
         "waypoints": [
           [
             -18.0,
-            37.39,
+            37.45,
             -336.0
           ],
           [
             -36.0,
-            35.66,
+            35.46,
             -300.0
           ],
           [
             -45.0,
-            25.94,
+            26.01,
             -255.0
           ],
           [
             -66.0,
-            3.85,
+            3.91,
             -222.0
           ],
           [
             -96.0,
-            -7.08,
+            -7.03,
             -192.0
           ],
           [
             -126.0,
-            -16.12,
+            -16.03,
             -180.0
           ]
         ]
@@ -4010,37 +4009,37 @@
         "waypoints": [
           [
             354.0,
-            51.16,
+            51.15,
             -198.0
           ],
           [
             330.0,
-            43.21,
+            43.22,
             -150.0
           ],
           [
             345.0,
-            39.46,
+            39.44,
             -120.0
           ],
           [
             324.0,
-            30.18,
+            30.17,
             -60.0
           ],
           [
             336.0,
-            26.91,
+            26.9,
             18.0
           ],
           [
             282.0,
-            26.19,
+            26.27,
             90.0
           ],
           [
             264.0,
-            18.36,
+            18.44,
             132.0
           ]
         ]
@@ -4050,12 +4049,12 @@
         "waypoints": [
           [
             78.0,
-            73.52,
+            73.47,
             -414.0
           ],
           [
             54.0,
-            51.46,
+            51.37,
             -372.0
           ],
           [
@@ -4065,12 +4064,12 @@
           ],
           [
             42.0,
-            42.36,
+            42.37,
             -300.0
           ],
           [
             54.0,
-            45.78,
+            45.32,
             -240.0
           ]
         ]
@@ -4085,17 +4084,17 @@
           ],
           [
             -36.0,
-            6.11,
+            6.07,
             42.0
           ],
           [
             -66.0,
-            1.85,
+            1.78,
             60.0
           ],
           [
             -93.0,
-            -1.52,
+            -1.55,
             72.0
           ]
         ]
@@ -4105,27 +4104,27 @@
         "waypoints": [
           [
             -120.0,
-            -17.66,
+            -17.74,
             -384.0
           ],
           [
             -108.0,
-            -16.61,
+            -16.63,
             -342.0
           ],
           [
             -102.0,
-            0.71,
+            0.69,
             -294.0
           ],
           [
             -102.0,
-            -8.81,
+            -8.75,
             -228.0
           ],
           [
             -114.0,
-            -17.5,
+            -17.53,
             -198.0
           ]
         ]
@@ -4337,27 +4336,27 @@
     }
   ],
   "performance": {
-    "nodes": 10063,
+    "nodes": 10069,
     "meshes": 298,
-    "materials": 32,
-    "images": 88,
-    "textures": 88,
+    "materials": 37,
+    "images": 100,
+    "textures": 100,
     "accessors": 1192,
-    "bufferViews": 1280,
-    "uniqueTriangles": 534697,
-    "uniqueVertices": 425164,
-    "glbBytes": 28965536,
-    "instancedTriangles": 3146376,
-    "embeddedTextureBytes": 9495545,
-    "textureMemoryBytesUncompressed": 88866816,
-    "placements": 9377,
+    "bufferViews": 1292,
+    "uniqueTriangles": 535709,
+    "uniqueVertices": 426253,
+    "glbBytes": 31511568,
+    "instancedTriangles": 3123378,
+    "embeddedTextureBytes": 14401265,
+    "textureMemoryBytesUncompressed": 125042688,
+    "placements": 9383,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 929247,
-      "blockedCells": 397857,
-      "walkableFraction": 0.7002,
+      "walkableCells": 932551,
+      "blockedCells": 394553,
+      "walkableFraction": 0.7027,
       "elevatedDecks": 23,
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
@@ -4368,19 +4367,19 @@
       "outland places: 51 landmarks total",
       "forest instances: 2675",
       "undergrowth instances: 2256",
-      "FallenLog instances: 172",
-      "Stump instances: 200",
-      "LeafDrift instances: 538",
-      "Mushrooms instances: 253",
-      "Rock instances: 240"
+      "FallenLog instances: 158",
+      "Stump instances: 198",
+      "LeafDrift instances: 582",
+      "Mushrooms instances: 243",
+      "Rock instances: 249"
     ],
     "lod2": {
-      "glbBytes": 19060340,
-      "nodes": 6392,
-      "uniqueTriangles": 476635,
-      "instancedTriangles": 2198426,
-      "sizeReductionPercent": 34.2,
-      "triangleReductionPercent": 30.1
+      "glbBytes": 19389896,
+      "nodes": 6385,
+      "uniqueTriangles": 477607,
+      "instancedTriangles": 2203752,
+      "sizeReductionPercent": 38.5,
+      "triangleReductionPercent": 29.4
     }
   },
   "sources": [

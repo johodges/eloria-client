@@ -85,11 +85,22 @@ def _load_module(path: Path, name: str):
 
 
 def load_region_plan(package: Path):
-    """Import the region's `source/region.py` - its extents, anchors and routes."""
+    """The region's plan module: extents, anchors, routes, terrain sculpting.
+
+    A region authored after the toolkit extraction keeps this in its own
+    `source/region.py`. Amberwood predates that and still has its plan inside
+    the shared package, reached through its build module's `REG`, so fall back
+    to that rather than failing on the older layout.
+    """
     path = region_source(package) / "region.py"
-    if not path.is_file():
-        raise SystemExit(f"region has no plan module: {path}")
-    return _load_module(path, "region")
+    if path.is_file():
+        return _load_module(path, "region")
+    plan = getattr(load_region_build(package), "REG", None)
+    if plan is None:
+        raise SystemExit(
+            f"region has no plan: expected {path}, and its build module "
+            f"exposes no REG")
+    return plan
 
 
 def load_region_build(package: Path):
