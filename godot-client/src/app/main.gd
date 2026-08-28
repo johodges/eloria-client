@@ -1871,6 +1871,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	map_label.text = "Map: " + _current_map_display_name
 	map_title.text = _current_map_display_name.to_upper()
 	current_map_button.text = "Current: " + _current_map_display_name
+	_apply_world_environment(manifest)
 	_configure_full_map(manifest)
 	_sync_world()
 	_sync_ground_bags()
@@ -2164,6 +2165,17 @@ func _sync_manufacturing_detail() -> void:
 	manufacturing_status.text = manufacturing_server_status
 	manufacturing_mix_one.disabled = not reasons.is_empty()
 	manufacturing_mix_all.disabled = not reasons.is_empty()
+
+func _apply_world_environment(manifest: WorldManifest) -> void:
+	var environment_node: WorldEnvironment = world_root.get_node_or_null(
+		"Environment") as WorldEnvironment
+	var sun_node: DirectionalLight3D = world_root.get_node_or_null(
+		"Sun") as DirectionalLight3D
+	if environment_node == null:
+		return
+	if WorldEnvironmentApplier.apply(manifest, environment_node, sun_node):
+		print_debug("world_environment stage=applied map=", AppState.current_map)
+
 
 func _configure_full_map(manifest: WorldManifest) -> void:
 	var asset_value: Variant = manifest.data.get("asset", {})

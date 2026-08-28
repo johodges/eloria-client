@@ -19,3 +19,9 @@ xcuserdata/
 # CLion workspace files
 .idea/
 cmake-build-*/
+
+# Godot editor/import cache (regenerated on first import)
+godot-client/.godot/
+godot-client/**/*.import
+godot-client/assets/actors/native/races/*Body Atlas.png
+godot-client/**/*.uid
