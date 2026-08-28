@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import struct
+import sys
 import unittest
 
 
@@ -66,9 +67,20 @@ class NativeGlbAssetsTest(unittest.TestCase):
     def test_catalog_is_complete(self) -> None:
         self.assertEqual(16, len(self.catalog["races"]))
         self.assertEqual(8, len(self.catalog["hair"]))
-        self.assertEqual(32, len(self.catalog["creatures"]))
+        # 32 first-pass creatures plus the wider concept-art roster.
+        sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
+        import creature_roster
+        self.assertEqual(32 + len(creature_roster.ROSTER),
+                         len(self.catalog["creatures"]))
         self.assertEqual(66, len(self.catalog["equipment"]))
-        self.assertEqual(123, self.catalog["validation"]["files"])
+        # Compare against what is actually on disk instead of a fixed number:
+        # the catalogue's count had drifted stale when the ambient livestock
+        # were added by a second generator without refreshing this block.
+        on_disk = len(list((CLIENT / "assets/actors/native").rglob("*.glb")))
+        self.assertEqual(on_disk, self.catalog["validation"]["files"])
+        self.assertEqual(sorted(self.catalog["validation"]["results"]),
+                         sorted(str(path.relative_to(ROOT))
+                                for path in (CLIENT / "assets/actors/native").rglob("*.glb")))
 
     def test_ambient_creatures_are_scenery_only(self) -> None:
         """Ambient livestock are client scenery and must not claim actor types.
@@ -91,7 +103,10 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertEqual(
                     7, len(document.get("animations", [])),
                     "ambient creatures carry the shared creature action set")
-                self.assertEqual(21, len(document["skins"][0]["joints"]))
+                ambient_bones = [document["nodes"][j].get("name")
+                                 for j in document["skins"][0]["joints"]]
+                for required in ("root", "body", "neck", "head"):
+                    self.assertIn(required, ambient_bones)
 
     def test_player_rigs_preserve_current_skeleton_and_budget(self) -> None:
         for model_id, entry in self.catalog["races"].items():
@@ -116,15 +131,70 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertLess(entry["bounds"]["max"][1], .31)
 
     def test_creatures_have_new_rigs_and_embedded_clips(self) -> None:
-        expected_actor_types = set(range(204, 236))
+        """Assert the runtime rig contract rather than a fixed bone count.
+
+        The bone count is an authoring detail and grew when the creatures were
+        rebuilt with articulated tails and a chest bone.  What the client
+        actually depends on is the attachment bone names, a single root, and
+        the exact clip names named by data/animations/creature.json - so those
+        are what this test pins.
+        """
+        sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
+        import creature_roster
+        # The concept-art roster occupies one contiguous block after every
+        # range already in models.json; the server adopts these ids.
+        expected_actor_types = set(range(204, 236)) | set(
+            range(428, 428 + len(creature_roster.ROSTER)))
         actual_actor_types = {entry["actor_type"] for entry in self.catalog["creatures"].values()}
         self.assertEqual(expected_actor_types, actual_actor_types)
+        animation_map = json.loads(
+            (CLIENT / "data/animations/creature.json").read_text())
+        required_clips = set(animation_map["actions"].values())
         for slug, entry in self.catalog["creatures"].items():
             with self.subTest(creature=slug):
                 document = glb_document(ROOT / entry["path"])
-                self.assertEqual(21, len(document["skins"][0]["joints"]))
-                self.assertEqual(7, len(document["animations"]))
+                skin = document["skins"][0]
+                bone_names = [document["nodes"][j].get("name") for j in skin["joints"]]
+                self.assertEqual(len(bone_names), len(set(bone_names)),
+                                 "bone names are unique")
+                for required in ("root", "body", "neck", "head", "jaw"):
+                    self.assertIn(required, bone_names)
+                self.assertLessEqual(len(skin["joints"]), 64,
+                                     "creature rigs stay within a sane bone budget")
+                parented = {c for node in document["nodes"]
+                            for c in node.get("children", [])}
+                roots = [j for j in skin["joints"] if j not in parented]
+                self.assertEqual(1, len(roots), "exactly one root bone")
+                clips = {a["name"] for a in document["animations"]}
+                self.assertTrue(required_clips.issubset(clips),
+                                f"missing {sorted(required_clips - clips)}")
                 self.assertEqual(slug, self.models["actorTypes"][str(entry["actor_type"])])
+
+    def test_creature_glbs_pass_structural_validation(self) -> None:
+        """Skinning, grounding and animation checks over the checked-in GLBs."""
+        try:
+            import numpy  # noqa: F401
+        except ImportError:  # pragma: no cover - environment without numpy
+            self.skipTest("numpy is required for skinned animation validation")
+        sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
+        import validate_creature_glbs as validator
+
+        animation_map = json.loads(
+            (CLIENT / "data/animations/creature.json").read_text())
+        required_clips = sorted(set(animation_map["actions"].values()))
+        attachments = sorted({bone for model in self.models["models"].values()
+                              if str(model.get("animationMap", "")).endswith("creature.json")
+                              for bone in model.get("attachments", {}).values()})
+        entries = dict(self.catalog["creatures"])
+        entries.update(self.catalog.get("ambientCreatures", {}))
+        for slug, entry in entries.items():
+            with self.subTest(creature=slug):
+                path = ROOT / entry["path"]
+                document, binary = validator.read_glb(path)
+                problems, _ = validator.check(document, binary, path,
+                                              required_clips, attachments,
+                                              bool(entry.get("hovers")))
+                self.assertEqual([], problems)
 
     def test_nymara_invasion_actor_types_resolve_to_native_models(self) -> None:
         self.assertEqual(set(range(400, 428)), set(NYMARA_INVASION_MODELS))
