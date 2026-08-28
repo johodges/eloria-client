@@ -5,6 +5,8 @@ committed runtime artefacts byte-for-byte.
 """
 from __future__ import annotations
 
+import zlib
+
 import numpy as np
 
 
@@ -15,6 +17,16 @@ def _hash2(ix: np.ndarray, iy: np.ndarray, seed: int) -> np.ndarray:
     h = (h ^ (h >> 13)) * 1274126177
     h = h ^ (h >> 16)
     return (h & 0x7FFFFFFF).astype(np.float64) / float(0x7FFFFFFF)
+
+
+def stable_hash(text: str) -> int:
+    """Process-independent string hash.
+
+    `hash()` on str is salted per interpreter run (PEP 456), so seeds derived
+    from it change on every build. Everything here is meant to be reproducible,
+    so name-derived seeds use CRC-32 instead.
+    """
+    return zlib.crc32(text.encode("utf-8")) & 0x7FFFFFFF
 
 
 def _fade(t: np.ndarray) -> np.ndarray:

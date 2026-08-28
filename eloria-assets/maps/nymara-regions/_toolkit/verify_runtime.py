@@ -28,6 +28,8 @@ from pathlib import Path
 
 import numpy as np
 
+import regionpaths
+
 COMPONENT_DTYPE = {5121: np.uint8, 5123: np.uint16, 5125: np.uint32, 5126: np.float32}
 TYPE_COUNT = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT4": 16}
 
@@ -168,11 +170,11 @@ class VerticalRayIndex:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--package", default=str(Path(__file__).resolve().parent.parent))
+    parser.add_argument("--package", default=None)
     parser.add_argument("--report", default=None)
     parser.add_argument("--step", type=int, default=1)
     args = parser.parse_args()
-    package = Path(args.package)
+    package = regionpaths.package_root(args.package)
 
     manifest = json.loads((package / "world.json").read_text())
     document, binary = load_glb(package / "world.glb")

@@ -22,8 +22,12 @@ from amberwood import render as RENDER
 from amberwood import region as REG
 from build_amberwood import build_region
 
+import regionpaths
+
 HERE = Path(__file__).resolve().parent
-CAPTURES = HERE.parent / "references" / "captures"
+PACKAGE = regionpaths.package_root()
+CAPTURES = PACKAGE / "references" / "captures"
+VIEWS = regionpaths.load_region_views(PACKAGE).VIEWS
 
 DAY = RENDER.Lighting(sun_direction=(-0.46, 0.50, 0.73),
                       sun_color=(1.22, 0.94, 0.60),
@@ -57,57 +61,6 @@ def _v(anchor, dy=0.0, dx=0.0, dz=0.0):
 #               fov, (width, height), shadow_radius, lighting)
 # Heights are relative to the terrain so every camera sits where a player's eye
 # would, and no camera can end up underground when the terrain is re-sculpted.
-VIEWS = [
-    ("00-aerial-overview", "aerial", (-118, 168), 168.0, (52, -54), 0.0, 44,
-     (1400, 900), 190, "day"),
-    ("01-forest-road", 1, (2.0, -6.0), 1.7, (24.0, -22.0), 3.0, 60, (1180, 760), 46, "day"),
-    ("02-moot-hall", 2, (8.0, -50.0), 4.0, (-4.0, -64.0), 8.0, 52, (1180, 900), 40, "day"),
-    ("03-forest-lodge", 3, (-8.0, 18.0), 2.6, (-15.0, 7.0), 4.0, 56, (1180, 800), 28, "day"),
-    ("04-hollow-tree", 4, (-16.0, -78.0), 3.0, (-26.0, -86.0), 7.0, 58, (1080, 920), 32, "day"),
-    ("05-high-bridge", 5, (48.0, -52.0), 6.0, (40.0, -66.0), 7.0, 54, (1180, 780), 40, "day"),
-    ("06-root-arch", 6, (-26.0, -24.0), 2.6, (-16.0, -34.0), 3.6, 55, (1080, 880), 24, "day"),
-    ("07-garden-terrace", 7, (52.0, 30.0), 4.0, (52.0, 8.0), 3.6, 54, (1180, 820), 38, "day"),
-    ("08-canopy-amber", 8, (29.0, -64.0), 12.2, (22.0, -70.0), 11.8, 62, (1080, 880), 24, "day"),
-    ("09-high-overlook", 9, (76.0, -60.0), 6.0, (12.0, -62.0), 20.0, 50, (1400, 800), 130, "day"),
-    ("10-material-study", 10, (6.4, -45.4), 1.2, (4.4, -49.0), 0.9, 40, (1080, 880), 14, "day"),
-    ("11-great-arch", None, (58.0, -2.0), 7.0, (58.0, -34.0), 9.0, 48, (1280, 880), 48, "day"),
-    ("12-harbour", None, (-44.0, 24.0), 9.0, (-28.0, 6.0), 2.0, 54, (1280, 780), 44, "day"),
-    ("13-great-tree", None, (48.0, -76.0), 4.0, (26.0, -88.0), 16.0, 50, (1080, 920), 44, "day"),
-    ("14-market", None, (-12.0, -38.0), 4.6, (4.0, -50.0), 3.0, 55, (1280, 780), 30, "day"),
-    ("15-forest-gate", None, (74.0, -14.0), 2.4, (74.0, -30.0), 3.6, 54, (1080, 820), 26, "day"),
-    ("16-timber-yard", None, (54.0, 48.0), 5.0, (72.0, 34.0), 2.5, 54, (1280, 780), 38, "day"),
-    ("17-ash-transition", None, (84.0, -4.0), 5.0, (116.0, -18.0), 2.0, 54, (1280, 780), 70, "day"),
-    ("18-watchtower", None, (72.0, -54.0), 4.0, (86.0, -70.0), 8.0, 52, (1080, 880), 38, "day"),
-    ("19-coast-waterfall", None, (-34.0, -10.0), 8.0, (-17.5, -22.0), 3.0, 54,
-     (1280, 780), 40, "day"),
-    ("20-north-gate", None, (24.0, -90.0), 3.0, (24.0, -104.0), 6.0, 54, (1080, 820), 30, "day"),
-    ("21-hill-hamlet", None, (90.0, 46.0), 5.0, (108.0, 30.0), 3.0, 54, (1280, 780), 38, "day"),
-    ("22-mill-pool", None, (-18.0, -32.0), 3.4, (-2.0, -44.0), 1.5, 56, (1180, 780), 32, "day"),
-    ("23-old-bridge", None, (-2.0, -36.0), 3.0, (10.0, -44.0), 4.0, 55, (1080, 820), 28, "day"),
-    ("24-canopy-walkway", None, (14.0, -80.0), 13.5, (24.0, -70.0), 12.0, 58,
-     (1180, 780), 36, "day"),
-    ("30-spawn-grounding", None, (-10.0, 10.0), 2.4, (4.0, -6.0), 1.6, 58, (1180, 780), 32, "day"),
-    ("31-arch-stair", None, (66.0, -14.0), 2.2, (58.0, -30.0), 5.0, 56, (1180, 780), 30, "day"),
-    ("32-shore-walk", None, (-38.0, 18.0), 3.0, (-26.0, 6.0), 1.2, 56, (1180, 780), 34, "day"),
-    ("33-ravine-edge", None, (30.0, -54.0), 3.0, (44.0, -72.0), 2.0, 56, (1180, 780), 40, "day"),
-    ("25-forest-lake", None, (-6.0, -72.0), 4.0, (-15.0, -85.0), 1.0, 55,
-     (1280, 780), 40, "day"),
-    ("26-west-cove", None, (-30.0, -50.0), 6.0, (-42.0, -60.0), 1.0, 55,
-     (1280, 780), 40, "day"),
-    ("27-north-hamlet", None, (20.0, -110.0), 4.0, (30.0, -118.0), 3.0, 55,
-     (1280, 780), 36, "day"),
-    ("28-quarry", None, (62.0, 44.0), 5.0, (75.0, 52.0), 2.0, 55, (1280, 780), 36, "day"),
-    ("29-old-battle", None, (100.0, -48.0), 4.0, (115.0, -40.0), 2.0, 55,
-     (1280, 780), 44, "day"),
-    ("34-ridge-bridge", None, (40.0, -94.0), 5.0, (52.0, -100.0), 6.0, 54,
-     (1180, 780), 38, "day"),
-    ("40-golden-settlement", None, (-18.0, -36.0), 7.0, (12.0, -60.0), 6.0, 50,
-     (1400, 820), 70, "golden"),
-    ("41-golden-arch", None, (30.0, -18.0), 5.0, (58.0, -34.0), 10.0, 50,
-     (1400, 820), 56, "golden"),
-    ("42-golden-coast", None, (-8.0, 26.0), 11.0, (-40.0, 2.0), 1.0, 52,
-     (1400, 820), 70, "golden"),
-]
 
 
 def _free_camera(scene, terrain, eye, target, fov, minimum=None):

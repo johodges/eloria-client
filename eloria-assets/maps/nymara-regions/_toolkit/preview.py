@@ -1,9 +1,27 @@
 """Shared preview harness: build a Scene with the full Amberwood material set."""
-import sys, os, pickle, time
+import sys, os, hashlib, pickle, tempfile, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from amberwood import materials as MAT, render as R
 
-_CACHE = "/tmp/amberwood_textures.pkl"
+def _cache_path() -> str:
+    """Cache file keyed by the source that generates the textures.
+
+    This cache is read by the package build, not just by previews, so a stale
+    entry silently ships textures that no longer match the recipes. Keying on a
+    digest of the recipe sources means editing textures.py or materials.py
+    invalidates it, and two regions never share one file.
+    """
+    here = os.path.dirname(os.path.abspath(__file__))
+    digest = hashlib.sha256()
+    for name in ("textures.py", "materials.py"):
+        with open(os.path.join(here, "amberwood", name), "rb") as handle:
+            digest.update(handle.read())
+    region = os.path.basename(os.getcwd())
+    return os.path.join(tempfile.gettempdir(),
+                        f"nymara_textures_{region}_{digest.hexdigest()[:12]}.pkl")
+
+
+_CACHE = _cache_path()
 
 
 def texture_sets(force: bool = False):

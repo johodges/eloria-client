@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
-from . import gltf, textures as T
+from . import gltf, noise as N, textures as T
 
 
 @dataclass(frozen=True)
@@ -86,7 +86,7 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     """Generate every texture set once. Deterministic and seeded."""
     sets: dict[str, T.TextureSet] = {}
     for hue in ("oak", "dark", "pale"):
-        sets[f"bark_{hue}"] = T.bark(512, seed=11 + hash(hue) % 97, hue=hue)
+        sets[f"bark_{hue}"] = T.bark(512, seed=11 + N.stable_hash(hue) % 97, hue=hue)
     for palette, seed in (("amber", 47), ("gold", 149), ("rust", 151),
                           ("green", 157), ("dead", 163)):
         sets[f"foliage_{palette}"] = T.foliage_atlas(512, seed=seed, palette=palette)

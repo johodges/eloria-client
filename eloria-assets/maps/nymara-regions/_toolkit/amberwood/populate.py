@@ -194,7 +194,7 @@ def ensure_tree_meshes(build: RegionBuild, species: str, variant: int,
         profile = TREES.PROFILES[species]
         previous = profile.foliage_material
         profile.foliage_material = VARIANT_PALETTE[variant % len(VARIANT_PALETTE)]
-        seed = 1000 + variant * 97 + abs(hash(species)) % 500
+        seed = 1000 + variant * 97 + N.stable_hash(species) % 500
         wood, leaves = TREES.build_tree(species, seed=seed, detail=detail)
         profile.foliage_material = previous
         build.add_mesh(wood_key, wood)
@@ -301,7 +301,7 @@ def populate_ground_detail(build: RegionBuild, seed: int = 20260827) -> None:
 
     def scatter(field, spacing, keys, kind, scale_range=(0.85, 1.3), sink=0.05,
                 collide=False, limit=None):
-        points = scatter_points(t, field, spacing, seed + abs(hash(kind)) % 500)
+        points = scatter_points(t, field, spacing, seed + N.stable_hash(kind) % 500)
         placed = 0
         for x, z in points:
             if limit is not None and placed >= limit:

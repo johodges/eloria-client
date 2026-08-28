@@ -25,9 +25,8 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import regionpaths
 from amberwood import region as REG
-from build_amberwood import (COLLISION_HEIGHT_ORIGIN, COLLISION_HEIGHT_STEP,
-                             build_collision, build_region)
 
 HEADER_BYTES = 120
 TILE_SIZE = 6  # height cells per ELM tile, per axis
@@ -58,17 +57,48 @@ def write_elm(path: Path, template: Path, heights: np.ndarray) -> int:
     return len(payload)
 
 
+def load_region_build(package: Path):
+    """Import the region's own build module for its collision encoding.
+
+    The ELM is written from the same collision grid the GLB ships, so this has
+    to come from the region's build script rather than the toolkit.
+    """
+    import importlib.util
+
+    source = regionpaths.region_source(package)
+    candidates = sorted(source.glob("build_*.py"))
+    candidates = [c for c in candidates if c.stem != "build_interiors"]
+    if len(candidates) != 1:
+        raise SystemExit(
+            f"expected exactly one build_*.py in {source}, found "
+            f"{[c.name for c in candidates]}; pass --build-module")
+    sys.path.insert(0, str(source))
+    spec = importlib.util.spec_from_file_location(candidates[0].stem,
+                                                  candidates[0])
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[candidates[0].stem] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--package", default=None)
     parser.add_argument("--out", default=None)
     parser.add_argument("--template", default=None)
     args = parser.parse_args()
-    here = Path(__file__).resolve().parent
-    source_elm = here.parent.parent / "source-elm"
-    out = Path(args.out) if args.out else source_elm / "amberwood.elm"
-    template = Path(args.template) if args.template else source_elm / "amberwood.elm"
+    package = regionpaths.package_root(args.package)
+    source_elm = regionpaths.REGIONS / "source-elm"
+    out = Path(args.out) if args.out else source_elm / f"{package.name}.elm"
+    template = (Path(args.template) if args.template
+                else source_elm / f"{package.name}.elm")
 
-    build = build_region()
+    build_module = load_region_build(package)
+    COLLISION_HEIGHT_ORIGIN = build_module.COLLISION_HEIGHT_ORIGIN
+    COLLISION_HEIGHT_STEP = build_module.COLLISION_HEIGHT_STEP
+    build_collision = build_module.build_collision
+
+    build = build_module.build_region()
     payload, width, height, stats = build_collision(build)
     grid = np.frombuffer(payload, dtype=np.uint8, offset=16).reshape(height, width)
 
