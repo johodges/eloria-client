@@ -1,0 +1,13 @@
+{
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-whitehorn-int\\eloria-assets\\maps\\nymara-regions\\interiors\\whitehorn_glacier_temple\\world.glb",
+  "mimeType": "model/gltf-binary",
+  "validatorVersion": "eloria-gltf-validate-1.1.0",
+  "validatedAt": "2026-08-28T20:17:01.299001Z",
+  "issues": {
+    "numErrors": 0,
+    "numWarnings": 0,
+    "numInfos": 0,
+    "numHints": 0,
+    "messages": []
+  }
+}
