@@ -391,7 +391,8 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 		var scene_path: String = str(model_config.get("scene", ""))
 		if str(model_config.get("attach", "socket")) == "skinned":
 			created.append_array(_attach_skinned_equipment(scene_path, part, visual_id,
-				model_config.get("tint", []) as Array))
+				model_config.get("tint", []) as Array,
+				str(model_config.get("authoredFor", ""))))
 		else:
 			var socket: Dictionary = _equipment_socket(part, model_config)
 			var attachment: BoneAttachment3D = _attach_socketed_equipment(
@@ -460,7 +461,35 @@ func _equipment_model_config(part: int, visual_id: int) -> Dictionary:
 	var model_key: String = "%d:%d" % [part, visual_id]
 	model_key = str(aliases.get(model_key, model_key))
 	var models: Dictionary = _equipment_config.get("models", {}) as Dictionary
-	return models.get(model_key, {}) as Dictionary
+	var model: Dictionary = models.get(model_key, {}) as Dictionary
+	return _fit_variant(model)
+
+## The race this actor's body was built as, which is what the registry keys its
+## fit groups and its body measurements on.
+func rig_name() -> String:
+	return str(_model_config.get("scene", "")).get_file().get_basename()
+
+func fit_group() -> String:
+	var groups: Dictionary = _equipment_config.get("fitGroups", {}) as Dictionary
+	return str(groups.get(rig_name(), ""))
+
+func _fit_variant(model: Dictionary) -> Dictionary:
+	# Modified 2026-08-28 for Eloria Client: some builds cannot be reached by
+	# resizing a garment, only by authoring one.  A race in a fit group wears
+	# the copy of the piece built on its own rig where one exists, and the
+	# reference piece everywhere else, so a group only costs the kinds it
+	# actually changes.
+	var group: String = fit_group()
+	if group.is_empty() or model.is_empty():
+		return model
+	var variants: Dictionary = model.get("variants", {}) as Dictionary
+	var variant: Dictionary = variants.get(group, {}) as Dictionary
+	if variant.is_empty():
+		return model
+	var resolved: Dictionary = model.duplicate(true)
+	resolved.erase("variants")
+	resolved.merge(variant, true)
+	return resolved
 
 func _equipment_socket(part: int, model_config: Dictionary) -> Dictionary:
 	# A model may override the shared part socket, which is how a two-handed
@@ -514,7 +543,7 @@ func _attach_socketed_equipment(socket: Dictionary, scene_path: String,
 	return attachment
 
 func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
-		tint: Array = []) -> Array[Node]:
+		tint: Array = [], author_rig: String = "") -> Array[Node]:
 	# The garment ships with the shared joint hierarchy so it is a valid skinned
 	# glTF on its own. Replacing its bind poses with this skeleton's rest poses
 	# retargets the garment and applies the rig fit scale in one step.
@@ -533,7 +562,7 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		if rebound == null:
 			rebound = _rebound_skin(piece.get("bones", PackedStringArray()) as PackedStringArray,
 				piece.get("binds", [] as Array[Transform3D]) as Array[Transform3D],
-				fit_basis)
+				fit_basis, _girth_ratios(author_rig))
 			if rebound != null:
 				_rebound_skins[surface_key] = rebound
 		if rebound == null:
@@ -616,8 +645,33 @@ static func _tint_colour(value: Variant, fallback: Color) -> Color:
 			float(channels[2]) / 255.0, fallback.a)
 	return fallback
 
+## How much wider this actor is than the body a garment was lofted around, bone
+## by bone. Empty when the two are the same rig, or when either is unmeasured -
+## an unknown body is worn as authored rather than guessed at.
+##
+## Only ever a widening. A garment is cut close to the reference body, so
+## letting it out for a broader wearer is safe while taking it in is not: the
+## measurement is one number for a whole bone, and a chest it underestimates
+## would come straight through the shirt.
+func _girth_ratios(author_rig: String) -> Dictionary:
+	var mine: String = rig_name()
+	if author_rig.is_empty() or author_rig == mine:
+		return {}
+	var table: Dictionary = _equipment_config.get("bodyGirth", {}) as Dictionary
+	var author: Dictionary = table.get(author_rig, {}) as Dictionary
+	var wearer: Dictionary = table.get(mine, {}) as Dictionary
+	if author.is_empty() or wearer.is_empty():
+		return {}
+	var ratios: Dictionary = {}
+	for bone: String in author:
+		var from: float = float(author[bone])
+		var to: float = float(wearer.get(bone, 0.0))
+		if from > 0.0005 and to > 0.0005:
+			ratios[bone] = clampf(to / from, 1.0, 2.0)
+	return ratios
+
 func _rebound_skin(bone_names: PackedStringArray, binds: Array[Transform3D],
-		fit: Transform3D) -> Skin:
+		fit: Transform3D, girth: Dictionary = {}) -> Skin:
 	# Modified 2026-08-28 for Eloria Client: this used to hand every bone the
 	# bind `this_rest.inverse() * fit`.  Skinning then evaluates
 	# `pose * bind`, and at rest `pose` *is* `this_rest`, so the whole thing
@@ -647,7 +701,8 @@ func _rebound_skin(bone_names: PackedStringArray, binds: Array[Transform3D],
 			return null
 		if index < binds.size():
 			rebound.add_named_bind(bone_name,
-				_bone_fit(target, bone_name, author_rest, fit) * binds[index])
+				_bone_fit(target, bone_name, author_rest, fit,
+					float(girth.get(bone_name, 1.0))) * binds[index])
 		else:
 			# No authored bind survived the import: fall back to the resize so
 			# the piece still appears rather than collapsing onto the origin.
@@ -656,7 +711,7 @@ func _rebound_skin(bone_names: PackedStringArray, binds: Array[Transform3D],
 	return rebound
 
 func _bone_fit(target: int, bone_name: String, author_rest: Dictionary,
-		fit: Transform3D) -> Transform3D:
+		fit: Transform3D, girth: float = 1.0) -> Transform3D:
 	# Carrying a garment onto another rig by rotation alone leaves it the length
 	# it was authored, which is fine while the two rigs agree and wrong when
 	# they do not: the Ssarathi metatarsal is nearly half again as long as the
@@ -668,26 +723,27 @@ func _bone_fit(target: int, bone_name: String, author_rest: Dictionary,
 	var rest: Transform3D = author_rest.get(bone_name, Transform3D.IDENTITY)
 	var author_tip: Vector3 = _mean_child_origin(target, author_rest, true)
 	var target_tip: Vector3 = _mean_child_origin(target, author_rest, false)
-	if author_tip == Vector3.INF or target_tip == Vector3.INF:
+	var ratio: float = 1.0
+	var axis := Vector3(0.0, 1.0, 0.0)
+	if author_tip != Vector3.INF and target_tip != Vector3.INF:
+		var local: Vector3 = rest.affine_inverse() * author_tip
+		var author_span: float = local.length()
+		var target_span: float = (target_tip
+			- _native_skeleton.get_bone_global_rest(target).origin).length()
+		if author_span > 0.0005 and target_span > 0.0005:
+			ratio = clampf(target_span / author_span, 0.4, 2.5)
+			axis = local / author_span
+	# One uniform factor per bone, deliberately: skinning carries a mesh's
+	# normals through the same matrix as its positions, which is only correct
+	# when that matrix scales evenly.  Stretching along the bone and not around
+	# it fits better on paper and skews every normal on the surface - it put a
+	# black band across the chest of anyone whose spine was not the reference's
+	# length.  The bone that needs the most gets it in every direction, and the
+	# fit groups above carry the cases where a shape, not a size, is wrong.
+	var scale: float = clampf(maxf(ratio, girth), 1.0, 2.0)
+	if absf(scale - 1.0) < 0.02:
 		return fit
-	var local: Vector3 = rest.affine_inverse() * author_tip
-	var author_span: float = local.length()
-	var target_span: float = (target_tip
-		- _native_skeleton.get_bone_global_rest(target).origin).length()
-	if author_span < 0.0005 or target_span < 0.0005:
-		return fit
-	var ratio: float = clampf(target_span / author_span, 0.4, 2.5)
-	if absf(ratio - 1.0) < 0.02:
-		return fit
-	var axis: Vector3 = local / author_span
-	var stretch: float = ratio - 1.0
-	# Identity plus stretch along the bone, expressed in the bone's own frame,
-	# so the garment lengthens without also inflating its girth.
-	var basis := Basis(
-		Vector3(1.0, 0.0, 0.0) + axis * (stretch * axis.x),
-		Vector3(0.0, 1.0, 0.0) + axis * (stretch * axis.y),
-		Vector3(0.0, 0.0, 1.0) + axis * (stretch * axis.z))
-	return Transform3D(fit.basis * basis, Vector3.ZERO)
+	return Transform3D(fit.basis.scaled(Vector3.ONE * scale), Vector3.ZERO)
 
 func _mean_child_origin(target: int, author_rest: Dictionary,
 		authored: bool) -> Vector3:

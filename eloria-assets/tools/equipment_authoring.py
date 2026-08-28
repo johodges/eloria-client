@@ -335,6 +335,73 @@ class RigSet:
         return radius
 
 
+# Races whose build a garment cannot simply be resized onto.  A fit group gets
+# its own authored copy of the garment kinds its anatomy actually changes; every
+# other race wears the reference piece, refitted at runtime from the body
+# measurements below.  Keep this small: a group costs one extra GLB per piece.
+FIT_GROUPS = {
+    "saurian": {
+        "rig": "ssarathi_male",
+        "races": ("ssarathi_male", "ssarathi_female"),
+        # A digitigrade leg is not a longer human one, so anything that wraps it
+        # has to be built on it.  The torso is close enough to share.
+        "kinds": ("pants", "legs", "boots"),
+    },
+    "heavy": {
+        "rig": "stoneborn_male",
+        "races": ("stoneborn_male", "stoneborn_female"),
+        # Stone shoulders are square and set wide where every other race's are
+        # round.  That is a shape the runtime cannot reach by letting a garment
+        # out, so the torso pieces are built on the body that has it.  Their
+        # legs are ordinary, only thicker, and the girth refit covers that.
+        "kinds": ("shirt", "cuirass", "coat", "robe"),
+    },
+}
+
+# Bones a garment is measured around.  Fingers and face bones carry no garment,
+# so they are left out rather than shipped as dead weight in every registry.
+GIRTH_BONES = ("pelvis", "spine_01", "spine_02", "spine_03", "neck_01",
+               "clavicle_l", "clavicle_r", "upperarm_l", "upperarm_r",
+               "lowerarm_l", "lowerarm_r", "hand_l", "hand_r",
+               "thigh_l", "thigh_r", "calf_l", "calf_r",
+               "foot_l", "foot_r", "ball_l", "ball_r")
+
+
+def body_girth(rig: Rig, bones=GIRTH_BONES) -> dict:
+    """How far the body stands off each bone, sampled the way a loft measures.
+
+    Modified 2026-08-28 for Eloria Client.  One authored garment is worn by
+    every race, so it used to be lofted around the widest silhouette in the
+    cast - which fitted the broadest race and hung off everyone else.  Shipping
+    the measurement instead lets a garment be authored close to the body it was
+    built on and let out per wearer at runtime, so nobody wears a tent.
+
+    The samples come from ``surface_radius``, the same probe the lofts use, so
+    the ratio between two races means the same thing to the runtime as a
+    thickness does to the authoring code.
+    """
+    girth: dict[str, float] = {}
+    for bone in bones:
+        if bone not in rig.rest:
+            continue
+        start, end = rig.segment(bone)
+        if float(np.linalg.norm(end - start)) < 1e-6:
+            continue
+        samples = [rig.surface_radius(start, end, travel,
+                                      2 * math.pi * step / 16, bones=[bone],
+                                      slab=.05, default=0.0)
+                   for travel in (.15, .4, .65, .9) for step in range(16)]
+        samples = [value for value in samples if value > 1e-4]
+        if len(samples) < 8:
+            continue
+        # A high quantile rather than a mean: what a garment has to clear is the
+        # silhouette, not the average distance to the bone.  Not the maximum,
+        # so one vertex flung out by a tail or a wing cannot decide how wide the
+        # shirt around the spine has to be.
+        girth[bone] = round(float(np.quantile(samples, .80)), 5)
+    return girth
+
+
 def load_rig(path: Path, body_mesh_names=("Body",)) -> Rig:
     document, binary = read_gltf(path)
     nodes = document["nodes"]
@@ -1318,7 +1385,8 @@ def _shoulder_pads(surface: Surface, rig: Rig, *, drop: float = .085,
                 ring[index] = centre + np.array(
                     [0., math.sin(phi), math.cos(phi)]) * radius * girth
             rings.append(ring)
-        surface.loft(rings, material, cap_start=True, cap_end=True)
+        # Both ends run into the body, so neither is capped.
+        surface.loft(rings, material)
 
 
 def _sleeves(surface: Surface, rig: Rig, *, end: float, material: int,
@@ -1327,7 +1395,9 @@ def _sleeves(surface: Surface, rig: Rig, *, end: float, material: int,
         rings = limb_rings(rig, [f"upperarm_{side}", f"lowerarm_{side}"],
                            rows=8, sides=18, thickness=thickness,
                            start=.02, end=end, floor=.040)
-        surface.loft(rings, material, cap_start=True, cap_end=True)
+        # Open at the shoulder: that end sits inside the body shell, and a cap
+        # there is a disc in the armpit now that caps face the right way.
+        surface.loft(rings, material, cap_end=True)
 
 
 def garment_geometry(kind: str, rig: Rig) -> Garment:
@@ -1346,11 +1416,11 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
         # with a band drawn in around it, which reads as a collar from any angle.
         collar = 1.492
         rings = torso_rings(rig, waist, collar, rows=18, sides=30,
-                            thickness=.026 if kind != "robe" else .032,
+                            thickness=.019 if kind != "robe" else .025,
                             bones=TORSO_BONES + ["thigh_l", "thigh_r"])
         surface.loft(rings, MATERIAL_BASE)
         band = torso_rings(rig, collar, collar + .048, rows=3, sides=30,
-                           thickness=.018, taper=.70, floor=.046,
+                           thickness=.012, taper=.70, floor=.046,
                            bones=["neck_01", "spine_03", "clavicle_l",
                                   "clavicle_r"])
         surface.loft(band, MATERIAL_TRIM, cap_end=True)
@@ -1366,9 +1436,13 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
                                thickness=.030)
             surface.loft(yoke, MATERIAL_TRIM, cap_end=True)
         elif kind == "shirt":
-            _sleeves(surface, rig, end=.38, material=MATERIAL_BASE, thickness=.022)
+            _sleeves(surface, rig, end=.38, material=MATERIAL_BASE, thickness=.023)
+            # The cap is what closes the body-to-sleeve seam, and shoulders are
+            # the one place the cast disagrees on shape rather than on size -
+            # stone shoulders are square where a Luminous one is round - so it
+            # keeps more headroom than the rest of the garment.
             _shoulder_pads(surface, rig, drop=.02, material=MATERIAL_BASE,
-                           girth=.70)
+                           girth=.86)
         elif kind == "coat":
             _sleeves(surface, rig, end=.86, material=MATERIAL_BASE, thickness=.020)
             skirt = torso_rings(rig, .66, waist + .02, rows=10, sides=30,
@@ -1397,25 +1471,29 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
         # right across the seat.  The shell now closes over the seat and the
         # legs start inside it, so the two always overlap.
         hip_low = .902 if kind == "pants" else .914
-        hips = torso_rings(rig, hip_low, 1.075, rows=8, sides=26, thickness=.026,
-                           floor=.070, bones=HIP_BONES)
+        hips = torso_rings(rig, hip_low, 1.075, rows=8, sides=26, thickness=.019,
+                           floor=.064, bones=HIP_BONES)
         surface.loft(hips, MATERIAL_BASE, cap_end=True)
-        _belt(surface, rig, 1.055, thickness=.038)
-        end = .955 if kind == "pants" else .90
+        _belt(surface, rig, 1.055, thickness=.026)
+        end = 1.0 if kind == "pants" else .95
         for side in ("l", "r"):
             measure = LEG_MEASURE_L if side == "l" else LEG_MEASURE_R
+            # The leg flares a little toward the cuff.  A trouser cut straight
+            # to the ankle is the tightest thing on the character exactly where
+            # the knee bends, and under animation it pulled off the calf and
+            # showed the shin above the boot.
             rings = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=16,
-                               sides=22, thickness=.024, start=.018, end=end,
-                               floor=.052, bones=measure)
+                               sides=22, thickness=.019, start=.018, end=end,
+                               floor=.048, taper_end=1.32, bones=measure)
             surface.loft(rings, MATERIAL_BASE, cap_start=True, cap_end=True)
             if kind == "legs":
                 knee = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=4,
-                                  sides=22, thickness=.038, start=.46, end=.60,
-                                  floor=.052, bones=measure)
+                                  sides=22, thickness=.028, start=.46, end=.60,
+                                  floor=.044, bones=measure)
                 surface.loft(knee, MATERIAL_TRIM)
                 cuff = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=3,
-                                  sides=22, thickness=.034, start=.86, end=.90,
-                                  floor=.052, bones=measure)
+                                  sides=22, thickness=.025, start=.86, end=.90,
+                                  floor=.044, bones=measure)
                 surface.loft(cuff, MATERIAL_TRIM)
         return Garment(surface, "legs")
 
@@ -1425,13 +1503,16 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
             # the boot and the foot shell overlap instead of meeting at a seam
             # that opens up the moment the leg it is worn on is not the leg it
             # was measured against.
+            # The shaft starts above where the trouser leg finishes: the two
+            # have to overlap, or a tightened cuff and a tightened boot top meet
+            # at a line the leg shows through.
             shaft = limb_rings(rig, [f"calf_{side}"], rows=10, sides=20,
-                               thickness=.030, start=.50, end=1.06, floor=.050,
+                               thickness=.026, start=.28, end=1.06, floor=.046,
                                bones=[f"calf_{side}", f"foot_{side}"])
             surface.loft(shaft, MATERIAL_BASE, cap_start=True)
             surface.extend(_foot_shell(rig, side))
             cuff = limb_rings(rig, [f"calf_{side}"], rows=3, sides=20,
-                              thickness=.044, start=.48, end=.58, floor=.050,
+                              thickness=.038, start=.26, end=.36, floor=.046,
                               bones=[f"calf_{side}"])
             surface.loft(cuff, MATERIAL_TRIM)
         return Garment(surface, "boots")
@@ -1519,7 +1600,7 @@ def _foot_shell(rig: Rig, side: str) -> Surface:
     # amount, which extends the upper over the bone without moving the sole:
     # a digitigrade metatarsal, whose bone runs through the middle of the foot
     # rather than along the top of it, ends up inside the boot too.
-    lift = [.020, .026, .026, .022, .016, .012]
+    lift = [.014, .018, .018, .015, .011, .008]
     heel = ankle - instep * (arch * .34) + under_arch * .030
     spine = [heel,
              ankle + under_arch * .038 - instep * (arch * .10),
@@ -1528,8 +1609,8 @@ def _foot_shell(rig: Rig, side: str) -> Surface:
              ball + forward * (toe_span * .52) + under_toe * .018,
              ball + forward * (toe_span * 1.18) + under_toe * .010]
     downs = [under_arch, under_arch, under_arch, under_arch, under_toe, under_toe]
-    widths = [.058, .068, .070, .066, .058, .044]
-    heights = [.052, .062, .058, .050, .040, .032]
+    widths = [.050, .059, .061, .057, .050, .038]
+    heights = [.046, .054, .050, .043, .034, .027]
     spine = [point - down * rise for point, down, rise in zip(spine, downs, lift)]
     heights = [height + rise for height, rise in zip(heights, lift)]
     rings = []
@@ -2109,12 +2190,27 @@ def detail_colour(base) -> tuple:
     return tuple(round(channel * .46 + 18) for channel in base)
 
 
+def variant_slug(slug: str, group: str) -> str:
+    return f"{slug}__{group}"
+
+
 def _model_entry(rig: Rig, idle_bases: dict | None, scene_root: str, slug: str,
-                 part: int, kind: str) -> dict:
+                 part: int, kind: str, author_rig: str = "") -> dict:
     model = {"scene": f"{scene_root}/{slug}.glb"}
     if kind in GARMENT_KINDS:
         model["attach"] = "skinned"
         model["skinRegion"] = garment_region(kind)
+        # Which body this piece was lofted around.  The runtime divides the
+        # wearer's measurements by this rig's to refit the garment, so a piece
+        # that forgot to say would be worn at the reference's proportions.
+        if author_rig:
+            model["authoredFor"] = author_rig
+        variants = {group: {
+            "scene": f"{scene_root}/{variant_slug(slug, group)}.glb",
+            "authoredFor": spec["rig"]}
+            for group, spec in FIT_GROUPS.items() if kind in spec["kinds"]}
+        if variants:
+            model["variants"] = variants
     else:
         model["attach"] = "socket"
         socket = build_sockets(rig, idle_bases, kind).get(part)
@@ -2131,7 +2227,8 @@ def _model_entry(rig: Rig, idle_bases: dict | None, scene_root: str, slug: str,
 
 def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
                              scene_root: str = "res://assets/actors/native/equipment",
-                             generic=None) -> dict:
+                             generic=None, author_rig: str = "",
+                             girths: dict | None = None) -> dict:
     """Emit ``data/actors/equipment.json`` for the runtime attachment path."""
     # Resolved here rather than as a default: the generic catalogue is declared
     # further down the module, beside the geometry it describes.
@@ -2140,13 +2237,13 @@ def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
     models: dict[str, dict] = {}
     for slug, _label, part, visual, kind, *_ in entries:
         models[f"{part}:{visual}"] = _model_entry(
-            rig, idle_bases, scene_root, slug, part, kind)
+            rig, idle_bases, scene_root, slug, part, kind, author_rig)
     # The generic tier shares one mesh across a material ladder, so each legacy
     # id is the same scene under a different tint rather than its own asset.
     for piece in generic:
         for visual, name, base, accent in piece.variants:
             model = _model_entry(rig, idle_bases, scene_root, piece.slug,
-                                 piece.part, piece.kind)
+                                 piece.part, piece.kind, author_rig)
             model["name"] = name
             model["tint"] = [list(base), list(accent), list(detail_colour(base))]
             models[f"{piece.part}:{visual}"] = model
@@ -2159,6 +2256,11 @@ def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
         "skinRegions": {name: list(bones) for name, bones in sorted(GARMENT_SKIN.items())},
         "models": models,
         "aliases": dict(ALIASES),
+        # Which races wear an authored variant rather than the reference piece.
+        "fitGroups": {race: group for group, spec in FIT_GROUPS.items()
+                      for race in spec["races"]},
+        # Per-race body measurements the runtime refits garments with.
+        "bodyGirth": girths or {},
     }
 
 

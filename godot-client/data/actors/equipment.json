@@ -370,32 +370,38 @@
     "2:100": {
       "scene": "res://assets/actors/native/equipment/amberwood_leaf_cape.glb",
       "attach": "skinned",
-      "skinRegion": "cape"
+      "skinRegion": "cape",
+      "authoredFor": "luminous_male"
     },
     "2:101": {
       "scene": "res://assets/actors/native/equipment/glasswarden_crystal_cape.glb",
       "attach": "skinned",
-      "skinRegion": "cape"
+      "skinRegion": "cape",
+      "authoredFor": "luminous_male"
     },
     "2:102": {
       "scene": "res://assets/actors/native/equipment/greyhaven_storm_cape.glb",
       "attach": "skinned",
-      "skinRegion": "cape"
+      "skinRegion": "cape",
+      "authoredFor": "luminous_male"
     },
     "2:103": {
       "scene": "res://assets/actors/native/equipment/orun_rider_cape.glb",
       "attach": "skinned",
-      "skinRegion": "cape"
+      "skinRegion": "cape",
+      "authoredFor": "luminous_male"
     },
     "2:104": {
       "scene": "res://assets/actors/native/equipment/ssarathi_frond_cape.glb",
       "attach": "skinned",
-      "skinRegion": "cape"
+      "skinRegion": "cape",
+      "authoredFor": "luminous_male"
     },
     "2:105": {
       "scene": "res://assets/actors/native/equipment/four_gates_guard_cape_native.glb",
       "attach": "skinned",
-      "skinRegion": "cape"
+      "skinRegion": "cape",
+      "authoredFor": "luminous_male"
     },
     "3:100": {
       "scene": "res://assets/actors/native/equipment/amberwood_ranger_hood.glb",
@@ -480,127 +486,302 @@
     "4:100": {
       "scene": "res://assets/actors/native/equipment/amberwood_ranger_legs.glb",
       "attach": "skinned",
-      "skinRegion": "legs"
+      "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/amberwood_ranger_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "4:101": {
       "scene": "res://assets/actors/native/equipment/glasswarden_greaves.glb",
       "attach": "skinned",
-      "skinRegion": "legs"
+      "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/glasswarden_greaves__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "4:102": {
       "scene": "res://assets/actors/native/equipment/greyhaven_trousers.glb",
       "attach": "skinned",
-      "skinRegion": "legs"
+      "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/greyhaven_trousers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "4:103": {
       "scene": "res://assets/actors/native/equipment/orun_rider_legs.glb",
       "attach": "skinned",
-      "skinRegion": "legs"
+      "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/orun_rider_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "4:104": {
       "scene": "res://assets/actors/native/equipment/ssarathi_scale_legs.glb",
       "attach": "skinned",
-      "skinRegion": "legs"
+      "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/ssarathi_scale_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "4:105": {
       "scene": "res://assets/actors/native/equipment/votary_winter_legs.glb",
       "attach": "skinned",
-      "skinRegion": "legs"
+      "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/votary_winter_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "4:106": {
       "scene": "res://assets/actors/native/equipment/luminous_casual_pants.glb",
       "attach": "skinned",
-      "skinRegion": "legs"
+      "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/luminous_casual_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "5:100": {
       "scene": "res://assets/actors/native/equipment/amberwood_ranger_cuirass.glb",
       "attach": "skinned",
-      "skinRegion": "torso"
+      "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/amberwood_ranger_cuirass__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      }
     },
     "5:101": {
       "scene": "res://assets/actors/native/equipment/glasswarden_cuirass.glb",
       "attach": "skinned",
-      "skinRegion": "torso"
+      "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/glasswarden_cuirass__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      }
     },
     "5:102": {
       "scene": "res://assets/actors/native/equipment/greyhaven_coat.glb",
       "attach": "skinned",
-      "skinRegion": "torso"
+      "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/greyhaven_coat__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      }
     },
     "5:103": {
       "scene": "res://assets/actors/native/equipment/orun_sun_cuirass.glb",
       "attach": "skinned",
-      "skinRegion": "torso"
+      "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/orun_sun_cuirass__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      }
     },
     "5:104": {
       "scene": "res://assets/actors/native/equipment/ssarathi_scale_cuirass.glb",
       "attach": "skinned",
-      "skinRegion": "torso"
+      "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/ssarathi_scale_cuirass__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      }
     },
     "5:105": {
       "scene": "res://assets/actors/native/equipment/luminous_turquoise_robe.glb",
       "attach": "skinned",
-      "skinRegion": "torso"
+      "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/luminous_turquoise_robe__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      }
     },
     "5:106": {
       "scene": "res://assets/actors/native/equipment/votary_fur_mantle.glb",
       "attach": "skinned",
-      "skinRegion": "torso"
+      "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/votary_fur_mantle__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      }
     },
     "5:107": {
       "scene": "res://assets/actors/native/equipment/stoneborn_plate.glb",
       "attach": "skinned",
-      "skinRegion": "torso"
+      "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/stoneborn_plate__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      }
     },
     "5:108": {
       "scene": "res://assets/actors/native/equipment/mycelari_mantle.glb",
       "attach": "skinned",
-      "skinRegion": "torso"
+      "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/mycelari_mantle__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      }
     },
     "5:109": {
       "scene": "res://assets/actors/native/equipment/four_gates_guard_cuirass.glb",
       "attach": "skinned",
-      "skinRegion": "torso"
+      "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/four_gates_guard_cuirass__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      }
     },
     "5:110": {
       "scene": "res://assets/actors/native/equipment/luminous_short_sleeve_shirt.glb",
       "attach": "skinned",
-      "skinRegion": "torso"
+      "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/luminous_short_sleeve_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      }
     },
     "6:100": {
       "scene": "res://assets/actors/native/equipment/amberwood_ranger_boots.glb",
       "attach": "skinned",
-      "skinRegion": "boots"
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/amberwood_ranger_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "6:101": {
       "scene": "res://assets/actors/native/equipment/glasswarden_boots.glb",
       "attach": "skinned",
-      "skinRegion": "boots"
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/glasswarden_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "6:102": {
       "scene": "res://assets/actors/native/equipment/greyhaven_boots.glb",
       "attach": "skinned",
-      "skinRegion": "boots"
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/greyhaven_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "6:103": {
       "scene": "res://assets/actors/native/equipment/orun_rider_boots.glb",
       "attach": "skinned",
-      "skinRegion": "boots"
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/orun_rider_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "6:104": {
       "scene": "res://assets/actors/native/equipment/ssarathi_scale_boots.glb",
       "attach": "skinned",
-      "skinRegion": "boots"
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/ssarathi_scale_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "6:105": {
       "scene": "res://assets/actors/native/equipment/votary_winter_boots.glb",
       "attach": "skinned",
-      "skinRegion": "boots"
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/votary_winter_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "6:106": {
       "scene": "res://assets/actors/native/equipment/luminous_casual_boots.glb",
       "attach": "skinned",
-      "skinRegion": "boots"
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/luminous_casual_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      }
     },
     "7:100": {
       "scene": "res://assets/actors/native/equipment/amberwood_amulet.glb",
@@ -2089,6 +2270,7 @@
       "scene": "res://assets/actors/native/equipment/generic_gloves_leather.glb",
       "attach": "skinned",
       "skinRegion": "hands",
+      "authoredFor": "luminous_male",
       "name": "Leather Gloves",
       "tint": [
         [
@@ -2112,6 +2294,7 @@
       "scene": "res://assets/actors/native/equipment/generic_gloves_fur.glb",
       "attach": "skinned",
       "skinRegion": "hands",
+      "authoredFor": "luminous_male",
       "name": "Fur Gloves",
       "tint": [
         [
@@ -2311,6 +2494,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Black Cape",
       "tint": [
         [
@@ -2334,6 +2518,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Blue Cape",
       "tint": [
         [
@@ -2357,6 +2542,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Blue-Gray Cape",
       "tint": [
         [
@@ -2380,6 +2566,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Brown Cape",
       "tint": [
         [
@@ -2403,6 +2590,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Brown-Gray Cape",
       "tint": [
         [
@@ -2426,6 +2614,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Gray Cape",
       "tint": [
         [
@@ -2449,6 +2638,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Green Cape",
       "tint": [
         [
@@ -2472,6 +2662,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Green-Gray Cape",
       "tint": [
         [
@@ -2495,6 +2686,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Purple Cape",
       "tint": [
         [
@@ -2518,6 +2710,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "White Cape",
       "tint": [
         [
@@ -2541,6 +2734,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Gold Cape",
       "tint": [
         [
@@ -2564,6 +2758,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Red Cape",
       "tint": [
         [
@@ -2587,6 +2782,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Orange Cape",
       "tint": [
         [
@@ -2610,6 +2806,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Warden Cape",
       "tint": [
         [
@@ -2633,6 +2830,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Tidewatch Cape",
       "tint": [
         [
@@ -2656,6 +2854,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Nightfall Cape",
       "tint": [
         [
@@ -2679,6 +2878,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Quiet Cape",
       "tint": [
         [
@@ -2702,6 +2902,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Highreach Cape",
       "tint": [
         [
@@ -2725,6 +2926,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Dawnward Cape",
       "tint": [
         [
@@ -2748,6 +2950,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Sunwake Cape",
       "tint": [
         [
@@ -2771,6 +2974,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Farhold Cape",
       "tint": [
         [
@@ -2794,6 +2998,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Learner Cape",
       "tint": [
         [
@@ -2817,6 +3022,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape_fur.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "authoredFor": "luminous_male",
       "name": "Fur Cape",
       "tint": [
         [
@@ -3108,6 +3314,13 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Black Pants",
       "tint": [
         [
@@ -3131,6 +3344,13 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Blue Pants",
       "tint": [
         [
@@ -3154,6 +3374,13 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Brown Pants",
       "tint": [
         [
@@ -3177,6 +3404,13 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Dark Brown Pants",
       "tint": [
         [
@@ -3200,6 +3434,13 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Grey Pants",
       "tint": [
         [
@@ -3223,6 +3464,13 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Green Pants",
       "tint": [
         [
@@ -3246,6 +3494,13 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Light Brown Pants",
       "tint": [
         [
@@ -3269,6 +3524,13 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Red Pants",
       "tint": [
         [
@@ -3292,6 +3554,13 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "White Pants",
       "tint": [
         [
@@ -3315,6 +3584,13 @@
       "scene": "res://assets/actors/native/equipment/generic_legs_leather.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_legs_leather__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Leather Pants",
       "tint": [
         [
@@ -3338,6 +3614,13 @@
       "scene": "res://assets/actors/native/equipment/generic_legs_leather.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_legs_leather__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Augmented Leather Cuisses",
       "tint": [
         [
@@ -3361,6 +3644,13 @@
       "scene": "res://assets/actors/native/equipment/generic_legs_fur.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_legs_fur__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Fur Pants",
       "tint": [
         [
@@ -3384,6 +3674,13 @@
       "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Iron Cuisses",
       "tint": [
         [
@@ -3407,6 +3704,13 @@
       "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Steel Cuisses",
       "tint": [
         [
@@ -3430,6 +3734,13 @@
       "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Titanium Cuisses",
       "tint": [
         [
@@ -3453,6 +3764,13 @@
       "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Bronze Cuisses",
       "tint": [
         [
@@ -3476,6 +3794,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Black Shirt",
       "tint": [
         [
@@ -3499,6 +3824,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Blue Shirt",
       "tint": [
         [
@@ -3522,6 +3854,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Brown Shirt",
       "tint": [
         [
@@ -3545,6 +3884,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Grey Shirt",
       "tint": [
         [
@@ -3568,6 +3914,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Green Shirt",
       "tint": [
         [
@@ -3591,6 +3944,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Light Brown Shirt",
       "tint": [
         [
@@ -3614,6 +3974,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Orange Shirt",
       "tint": [
         [
@@ -3637,6 +4004,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Pink Shirt",
       "tint": [
         [
@@ -3660,6 +4034,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Purple Shirt",
       "tint": [
         [
@@ -3683,6 +4064,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Red Shirt",
       "tint": [
         [
@@ -3706,6 +4094,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "White Shirt",
       "tint": [
         [
@@ -3729,6 +4124,13 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Yellow Shirt",
       "tint": [
         [
@@ -3752,6 +4154,13 @@
       "scene": "res://assets/actors/native/equipment/generic_leather_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_leather_armor__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Leather Armor",
       "tint": [
         [
@@ -3775,6 +4184,13 @@
       "scene": "res://assets/actors/native/equipment/generic_leather_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_leather_armor__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Augmented Leather Armor",
       "tint": [
         [
@@ -3798,6 +4214,13 @@
       "scene": "res://assets/actors/native/equipment/generic_chain_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_chain_armor__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Chain Mail",
       "tint": [
         [
@@ -3821,6 +4244,13 @@
       "scene": "res://assets/actors/native/equipment/generic_chain_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_chain_armor__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Steel Chain Mail",
       "tint": [
         [
@@ -3844,6 +4274,13 @@
       "scene": "res://assets/actors/native/equipment/generic_chain_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_chain_armor__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Titanium Chain Mail",
       "tint": [
         [
@@ -3867,6 +4304,13 @@
       "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Iron Plate Mail",
       "tint": [
         [
@@ -3890,6 +4334,13 @@
       "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Steel Plate Mail",
       "tint": [
         [
@@ -3913,6 +4364,13 @@
       "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Titanium Plate Mail",
       "tint": [
         [
@@ -3936,6 +4394,13 @@
       "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Bronze Plate Mail",
       "tint": [
         [
@@ -3959,6 +4424,13 @@
       "scene": "res://assets/actors/native/equipment/generic_fur_coat.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "heavy": {
+          "scene": "res://assets/actors/native/equipment/generic_fur_coat__heavy.glb",
+          "authoredFor": "stoneborn_male"
+        }
+      },
       "name": "Fur Coat",
       "tint": [
         [
@@ -3982,6 +4454,13 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Black Boots",
       "tint": [
         [
@@ -4005,6 +4484,13 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Brown Boots",
       "tint": [
         [
@@ -4028,6 +4514,13 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Dark Brown Boots",
       "tint": [
         [
@@ -4051,6 +4544,13 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Dull Brown Boots",
       "tint": [
         [
@@ -4074,6 +4574,13 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Light Brown Boots",
       "tint": [
         [
@@ -4097,6 +4604,13 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Orange Boots",
       "tint": [
         [
@@ -4120,6 +4634,13 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Leather Boots",
       "tint": [
         [
@@ -4143,6 +4664,13 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Augmented Leather Greaves",
       "tint": [
         [
@@ -4166,6 +4694,13 @@
       "scene": "res://assets/actors/native/equipment/generic_boots_fur.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_boots_fur__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Fur Boots",
       "tint": [
         [
@@ -4189,6 +4724,13 @@
       "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Iron Greaves",
       "tint": [
         [
@@ -4212,6 +4754,13 @@
       "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Steel Greaves",
       "tint": [
         [
@@ -4235,6 +4784,13 @@
       "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Titanium Greaves",
       "tint": [
         [
@@ -4258,6 +4814,13 @@
       "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
       "name": "Bronze Greaves",
       "tint": [
         [
@@ -4278,5 +4841,381 @@
       ]
     }
   },
-  "aliases": {}
+  "aliases": {},
+  "fitGroups": {
+    "ssarathi_male": "saurian",
+    "ssarathi_female": "saurian",
+    "stoneborn_male": "heavy",
+    "stoneborn_female": "heavy"
+  },
+  "bodyGirth": {
+    "glasswarden_female": {
+      "pelvis": 0.18271,
+      "spine_01": 0.13167,
+      "spine_02": 0.14261,
+      "spine_03": 0.15666,
+      "neck_01": 0.07873,
+      "clavicle_l": 0.09057,
+      "clavicle_r": 0.09057,
+      "upperarm_l": 0.04816,
+      "upperarm_r": 0.04816,
+      "lowerarm_l": 0.04097,
+      "lowerarm_r": 0.04097,
+      "hand_l": 0.04069,
+      "hand_r": 0.04069,
+      "thigh_l": 0.11121,
+      "thigh_r": 0.11121,
+      "calf_l": 0.07326,
+      "calf_r": 0.07326,
+      "foot_l": 0.06643,
+      "foot_r": 0.06643,
+      "ball_l": 0.05406,
+      "ball_r": 0.05406
+    },
+    "glasswarden_male": {
+      "pelvis": 0.17199,
+      "spine_01": 0.14187,
+      "spine_02": 0.18223,
+      "spine_03": 0.22223,
+      "neck_01": 0.11858,
+      "clavicle_l": 0.12022,
+      "clavicle_r": 0.12022,
+      "upperarm_l": 0.07656,
+      "upperarm_r": 0.07656,
+      "lowerarm_l": 0.05639,
+      "lowerarm_r": 0.05639,
+      "hand_l": 0.04449,
+      "hand_r": 0.04449,
+      "thigh_l": 0.10041,
+      "thigh_r": 0.10041,
+      "calf_l": 0.07364,
+      "calf_r": 0.07364,
+      "foot_l": 0.07075,
+      "foot_r": 0.07075,
+      "ball_l": 0.05615,
+      "ball_r": 0.05615
+    },
+    "greyhaven_female": {
+      "pelvis": 0.19435,
+      "spine_01": 0.1408,
+      "spine_02": 0.16671,
+      "spine_03": 0.18064,
+      "neck_01": 0.08137,
+      "clavicle_l": 0.09801,
+      "clavicle_r": 0.09801,
+      "upperarm_l": 0.05795,
+      "upperarm_r": 0.05795,
+      "lowerarm_l": 0.05136,
+      "lowerarm_r": 0.05136,
+      "hand_l": 0.04231,
+      "hand_r": 0.04231,
+      "thigh_l": 0.12081,
+      "thigh_r": 0.12081,
+      "calf_l": 0.0851,
+      "calf_r": 0.0851,
+      "foot_l": 0.06654,
+      "foot_r": 0.06654,
+      "ball_l": 0.04726,
+      "ball_r": 0.04726
+    },
+    "greyhaven_male": {
+      "pelvis": 0.17792,
+      "spine_01": 0.15813,
+      "spine_02": 0.21065,
+      "spine_03": 0.25526,
+      "neck_01": 0.11829,
+      "clavicle_l": 0.12998,
+      "clavicle_r": 0.12998,
+      "upperarm_l": 0.0945,
+      "upperarm_r": 0.0945,
+      "lowerarm_l": 0.07015,
+      "lowerarm_r": 0.07015,
+      "hand_l": 0.04634,
+      "hand_r": 0.04634,
+      "thigh_l": 0.11122,
+      "thigh_r": 0.11122,
+      "calf_l": 0.08561,
+      "calf_r": 0.08561,
+      "foot_l": 0.07075,
+      "foot_r": 0.07075,
+      "ball_l": 0.05399,
+      "ball_r": 0.05399
+    },
+    "luminous_female": {
+      "pelvis": 0.18703,
+      "spine_01": 0.13431,
+      "spine_02": 0.15,
+      "spine_03": 0.16562,
+      "neck_01": 0.07656,
+      "clavicle_l": 0.09336,
+      "clavicle_r": 0.09336,
+      "upperarm_l": 0.05315,
+      "upperarm_r": 0.05315,
+      "lowerarm_l": 0.04504,
+      "lowerarm_r": 0.04504,
+      "hand_l": 0.04077,
+      "hand_r": 0.04077,
+      "thigh_l": 0.11451,
+      "thigh_r": 0.11451,
+      "calf_l": 0.07878,
+      "calf_r": 0.07878,
+      "foot_l": 0.06648,
+      "foot_r": 0.06648,
+      "ball_l": 0.05515,
+      "ball_r": 0.05515
+    },
+    "luminous_male": {
+      "pelvis": 0.17424,
+      "spine_01": 0.14538,
+      "spine_02": 0.19071,
+      "spine_03": 0.23641,
+      "neck_01": 0.11185,
+      "clavicle_l": 0.1261,
+      "clavicle_r": 0.1261,
+      "upperarm_l": 0.08467,
+      "upperarm_r": 0.08467,
+      "lowerarm_l": 0.06205,
+      "lowerarm_r": 0.06205,
+      "hand_l": 0.04449,
+      "hand_r": 0.04449,
+      "thigh_l": 0.10427,
+      "thigh_r": 0.10427,
+      "calf_l": 0.07925,
+      "calf_r": 0.07925,
+      "foot_l": 0.07075,
+      "foot_r": 0.07075,
+      "ball_l": 0.05615,
+      "ball_r": 0.05615
+    },
+    "mycelari_female": {
+      "pelvis": 0.17304,
+      "spine_01": 0.12784,
+      "spine_02": 0.13068,
+      "spine_03": 0.15237,
+      "neck_01": 0.07215,
+      "clavicle_l": 0.08414,
+      "clavicle_r": 0.08414,
+      "upperarm_l": 0.04098,
+      "upperarm_r": 0.04098,
+      "lowerarm_l": 0.03337,
+      "lowerarm_r": 0.03337,
+      "hand_l": 0.03794,
+      "hand_r": 0.03794,
+      "thigh_l": 0.10008,
+      "thigh_r": 0.10008,
+      "calf_l": 0.06122,
+      "calf_r": 0.06122,
+      "foot_l": 0.06695,
+      "foot_r": 0.06695,
+      "ball_l": 0.05935,
+      "ball_r": 0.05935
+    },
+    "mycelari_male": {
+      "pelvis": 0.16593,
+      "spine_01": 0.13409,
+      "spine_02": 0.15994,
+      "spine_03": 0.20244,
+      "neck_01": 0.10097,
+      "clavicle_l": 0.11122,
+      "clavicle_r": 0.11122,
+      "upperarm_l": 0.06423,
+      "upperarm_r": 0.06423,
+      "lowerarm_l": 0.04548,
+      "lowerarm_r": 0.04548,
+      "hand_l": 0.04093,
+      "hand_r": 0.04093,
+      "thigh_l": 0.08997,
+      "thigh_r": 0.08997,
+      "calf_l": 0.0619,
+      "calf_r": 0.0619,
+      "foot_l": 0.07074,
+      "foot_r": 0.07074,
+      "ball_l": 0.06155,
+      "ball_r": 0.06155
+    },
+    "orun_female": {
+      "pelvis": 0.19823,
+      "spine_01": 0.1392,
+      "spine_02": 0.16222,
+      "spine_03": 0.17534,
+      "neck_01": 0.07876,
+      "clavicle_l": 0.09371,
+      "clavicle_r": 0.09371,
+      "upperarm_l": 0.05578,
+      "upperarm_r": 0.05578,
+      "lowerarm_l": 0.046,
+      "lowerarm_r": 0.046,
+      "hand_l": 0.04079,
+      "hand_r": 0.04079,
+      "thigh_l": 0.12705,
+      "thigh_r": 0.12705,
+      "calf_l": 0.10262,
+      "calf_r": 0.10262,
+      "foot_l": 0.07317,
+      "foot_r": 0.07317,
+      "ball_l": 0.05514,
+      "ball_r": 0.05514
+    },
+    "orun_male": {
+      "pelvis": 0.18072,
+      "spine_01": 0.15474,
+      "spine_02": 0.20456,
+      "spine_03": 0.24575,
+      "neck_01": 0.11404,
+      "clavicle_l": 0.12745,
+      "clavicle_r": 0.12745,
+      "upperarm_l": 0.08988,
+      "upperarm_r": 0.08988,
+      "lowerarm_l": 0.0633,
+      "lowerarm_r": 0.0633,
+      "hand_l": 0.04449,
+      "hand_r": 0.04449,
+      "thigh_l": 0.12447,
+      "thigh_r": 0.12447,
+      "calf_l": 0.10388,
+      "calf_r": 0.10388,
+      "foot_l": 0.07573,
+      "foot_r": 0.07573,
+      "ball_l": 0.05614,
+      "ball_r": 0.05614
+    },
+    "ssarathi_female": {
+      "pelvis": 0.18782,
+      "spine_01": 0.13098,
+      "spine_02": 0.13958,
+      "spine_03": 0.16374,
+      "neck_01": 0.0849,
+      "clavicle_l": 0.08609,
+      "clavicle_r": 0.08609,
+      "upperarm_l": 0.04761,
+      "upperarm_r": 0.04761,
+      "lowerarm_l": 0.03878,
+      "lowerarm_r": 0.03878,
+      "hand_l": 0.04188,
+      "hand_r": 0.04188,
+      "thigh_l": 0.15132,
+      "thigh_r": 0.15132,
+      "calf_l": 0.06482,
+      "calf_r": 0.06482,
+      "foot_l": 0.08244,
+      "foot_r": 0.08244,
+      "ball_l": 0.10096,
+      "ball_r": 0.10096
+    },
+    "ssarathi_male": {
+      "pelvis": 0.17514,
+      "spine_01": 0.13999,
+      "spine_02": 0.17839,
+      "spine_03": 0.22401,
+      "neck_01": 0.13112,
+      "clavicle_l": 0.11198,
+      "clavicle_r": 0.11198,
+      "upperarm_l": 0.07374,
+      "upperarm_r": 0.07374,
+      "lowerarm_l": 0.05285,
+      "lowerarm_r": 0.05285,
+      "hand_l": 0.04491,
+      "hand_r": 0.04491,
+      "thigh_l": 0.17358,
+      "thigh_r": 0.17358,
+      "calf_l": 0.06679,
+      "calf_r": 0.06679,
+      "foot_l": 0.08345,
+      "foot_r": 0.08345,
+      "ball_l": 0.10697,
+      "ball_r": 0.10697
+    },
+    "stoneborn_female": {
+      "pelvis": 0.20971,
+      "spine_01": 0.14821,
+      "spine_02": 0.18309,
+      "spine_03": 0.19642,
+      "neck_01": 0.09579,
+      "clavicle_l": 0.11683,
+      "clavicle_r": 0.11683,
+      "upperarm_l": 0.06877,
+      "upperarm_r": 0.06877,
+      "lowerarm_l": 0.05699,
+      "lowerarm_r": 0.05699,
+      "hand_l": 0.04576,
+      "hand_r": 0.04576,
+      "thigh_l": 0.14114,
+      "thigh_r": 0.14114,
+      "calf_l": 0.10339,
+      "calf_r": 0.10339,
+      "foot_l": 0.07705,
+      "foot_r": 0.07705,
+      "ball_l": 0.05116,
+      "ball_r": 0.05116
+    },
+    "stoneborn_male": {
+      "pelvis": 0.18617,
+      "spine_01": 0.17046,
+      "spine_02": 0.23587,
+      "spine_03": 0.2784,
+      "neck_01": 0.14716,
+      "clavicle_l": 0.14279,
+      "clavicle_r": 0.14279,
+      "upperarm_l": 0.1114,
+      "upperarm_r": 0.1114,
+      "lowerarm_l": 0.07825,
+      "lowerarm_r": 0.07825,
+      "hand_l": 0.04905,
+      "hand_r": 0.04905,
+      "thigh_l": 0.1379,
+      "thigh_r": 0.1379,
+      "calf_l": 0.10273,
+      "calf_r": 0.10273,
+      "foot_l": 0.07948,
+      "foot_r": 0.07948,
+      "ball_l": 0.05615,
+      "ball_r": 0.05615
+    },
+    "votary_female": {
+      "pelvis": 0.189,
+      "spine_01": 0.13271,
+      "spine_02": 0.14558,
+      "spine_03": 0.16062,
+      "neck_01": 0.08007,
+      "clavicle_l": 0.09408,
+      "clavicle_r": 0.09408,
+      "upperarm_l": 0.05004,
+      "upperarm_r": 0.05004,
+      "lowerarm_l": 0.0419,
+      "lowerarm_r": 0.0419,
+      "hand_l": 0.0407,
+      "hand_r": 0.0407,
+      "thigh_l": 0.11677,
+      "thigh_r": 0.11677,
+      "calf_l": 0.08828,
+      "calf_r": 0.08828,
+      "foot_l": 0.06695,
+      "foot_r": 0.06695,
+      "ball_l": 0.0551,
+      "ball_r": 0.0551
+    },
+    "votary_male": {
+      "pelvis": 0.17566,
+      "spine_01": 0.14375,
+      "spine_02": 0.18627,
+      "spine_03": 0.22612,
+      "neck_01": 0.11378,
+      "clavicle_l": 0.12864,
+      "clavicle_r": 0.12864,
+      "upperarm_l": 0.07954,
+      "upperarm_r": 0.07954,
+      "lowerarm_l": 0.05763,
+      "lowerarm_r": 0.05763,
+      "hand_l": 0.04449,
+      "hand_r": 0.04449,
+      "thigh_l": 0.1067,
+      "thigh_r": 0.1067,
+      "calf_l": 0.08892,
+      "calf_r": 0.08892,
+      "foot_l": 0.07074,
+      "foot_r": 0.07074,
+      "ball_l": 0.06013,
+      "ball_r": 0.06013
+    }
+  }
 }
