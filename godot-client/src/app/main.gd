@@ -22,6 +22,12 @@ extends Control
 @onready var status_label: Label = %Status
 @onready var world_root: Node3D = %WorldRoot
 @onready var camera_rig: IsometricCameraController = %CameraRig
+
+# Preloaded, and left untyped, so the script resolves without depending on
+# Godot's global class-name cache -- that cache is a build artifact and is
+# stale in a working copy until the editor next scans the project.
+const InteriorCutawayScript := preload("res://src/world/interior_cutaway.gd")
+var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 @onready var gameplay_camera: Camera3D = %Camera
 @onready var world_loader: WorldLoader = %WorldLoader
 @onready var fallback_ground: MeshInstance3D = $GameView/ViewportContainer/Viewport/WorldRoot/Ground
@@ -477,6 +483,7 @@ func _bind_shared_world() -> void:
 		return
 	map_viewport.world_3d = gameplay_world
 	full_map_viewport.world_3d = gameplay_world
+	_sync_map_viewport_activity()
 	print_debug("world_binding stage=shared world=", gameplay_world)
 
 func _process(_delta: float) -> void:
@@ -484,6 +491,7 @@ func _process(_delta: float) -> void:
 	if game_view.visible:
 		_update_map_viewports()
 		_update_local_actor_follow()
+		interior_cutaway.update(camera_rig.yaw_degrees)
 		_update_keyboard_movement()
 		_update_session_distance()
 		_update_legacy_clock_and_compass()
@@ -851,9 +859,22 @@ func _hide_chat_input() -> void:
 	chat_input.release_focus()
 	chat_input.hide()
 
+func _sync_map_viewport_activity() -> void:
+	# The minimap and tab map each re-render the whole world. Keeping them on
+	# UPDATE_ALWAYS drew the map three times per frame even while both panels
+	# were hidden, which is pure waste on any map with real geometry.
+	map_viewport.render_target_update_mode = (
+		SubViewport.UPDATE_ALWAYS if minimap_frame.visible
+		else SubViewport.UPDATE_DISABLED)
+	full_map_viewport.render_target_update_mode = (
+		SubViewport.UPDATE_ALWAYS if full_map.visible
+		else SubViewport.UPDATE_DISABLED)
+
+
 func _toggle_full_map() -> void:
 	if full_map.visible:
 		full_map.hide()
+		_sync_map_viewport_activity()
 		return
 	console_panel.hide()
 	_close_settings()
@@ -2077,16 +2098,18 @@ func _load_server_map() -> void:
 func _on_world_loaded(manifest: WorldManifest) -> void:
 	_bind_shared_world()
 	fallback_ground.hide()
-	# Regions may declare their own sky, sun, fog and tonemap. Maps that do not
-	# keep the client's previous placeholder environment unchanged.
-	WorldEnvironmentBinder.apply(manifest, world_environment, world_sun)
-	_bind_light_markers(manifest)
+	# Regions and interiors may declare their own sky, sun, fog, tonemap, point
+	# lights and camera framing. Maps that do not keep the client's previous
+	# placeholder environment unchanged.
+	WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root)
+	WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
 	_populate_ambient_life(manifest)
 	_current_map_display_name = str(
 		manifest.data.get("asset", {}).get("name", manifest.asset_id()))
 	map_label.text = "Map: " + _current_map_display_name
 	map_title.text = _current_map_display_name.to_upper()
 	current_map_button.text = "Current: " + _current_map_display_name
+	_configure_interior_cutaway(manifest)
 	_configure_full_map(manifest)
 	_request_map_redraw()
 	_sync_world()
@@ -2443,6 +2466,17 @@ func _sync_manufacturing_detail() -> void:
 	manufacturing_status.text = manufacturing_server_status
 	manufacturing_mix_one.disabled = not reasons.is_empty()
 	manufacturing_mix_all.disabled = not reasons.is_empty()
+
+## Interiors are closed boxes, so the isometric rig would render their ceiling
+## and near wall. The manifest names the nodes to cut away; maps without a
+## `cutaway` block (the city) are left exactly as loaded.
+func _configure_interior_cutaway(manifest: WorldManifest) -> void:
+	var count: int = interior_cutaway.configure(manifest, world_root)
+	if count > 0:
+		interior_cutaway.update(camera_rig.yaw_degrees, true)
+		print_debug("interior_cutaway stage=applied map=", AppState.current_map,
+			" nodes=", count)
+
 
 func _configure_full_map(manifest: WorldManifest) -> void:
 	var asset_value: Variant = manifest.data.get("asset", {})

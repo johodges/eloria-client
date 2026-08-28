@@ -1871,6 +1871,7 @@ stretch = true
 tooltip_text = "Drag to rotate; mouse wheel to zoom"
 
 [node name="Viewport" type="SubViewport" parent="CreationPanel/Columns/CharacterPreview"]
+own_world_3d = true
 size = Vector2i(430, 520)
 render_target_update_mode = 0
 

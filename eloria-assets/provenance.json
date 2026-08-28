@@ -224,6 +224,48 @@
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Original steppe horse, dun mare and tacked grey pony authored to equine proportions on the shared Eloria creature rig, with full-colour coat, mane, hoof and tack maps and matching normal maps"
+    },
+    {
+      "path": "maps/four-gates/world.glb",
+      "source": "tools/four_gates/build_four_gates.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original Four Gates production environment: sculpted terrain, modular architecture kits, landmarks, vegetation and props"
+    },
+    {
+      "path": "maps/four-gates/world.json",
+      "source": "tools/four_gates/manifest.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Four Gates world manifest: landmarks, spawns, portals, navigation, environment and gameplay metadata"
+    },
+    {
+      "path": "maps/four-gates/collision.bin",
+      "source": "tools/four_gates/build_four_gates.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Four Gates EWCG walk grid derived from the authored terrain field and collision proxies"
+    },
+    {
+      "path": "maps/four-gates/minimap.webp",
+      "source": "godot-client/tests/integration/rendered_four_gates_minimap.gd",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Four Gates cartography rendered orthographically from the shipped world.glb"
+    },
+    {
+      "path": "maps/four-gates/references/*",
+      "source": "godot-client/tests/integration/rendered_four_gates_views.gd",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Four Gates client comparison screenshots captured from the running Godot client"
+    },
+    {
+      "path": "tools/four_gates/*",
+      "source": "authored for the Eloria project",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Four Gates authoring pipeline: glTF writer, mesh toolkit, procedural PBR synthesis, kits, landmarks, terrain and layout"
     }
   ]
 }

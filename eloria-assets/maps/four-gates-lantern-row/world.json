@@ -1,0 +1,359 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "four-gates-lantern-row",
+    "name": "Lantern Row",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": {
+      "min": [
+        -14.5,
+        -1.0,
+        -9.0
+      ],
+      "max": [
+        14.5,
+        8.1,
+        9.0
+      ]
+    },
+    "interior": true,
+    "parentMap": "maps/startmap.elm",
+    "quarter": "agricultural",
+    "description": "Covered market hall; general goods and Nima Vey's counting desk."
+  },
+  "coordinateTransform": {
+    "metresPerTile": 0.25,
+    "serverOrigin": [
+      512.0,
+      512.0
+    ],
+    "origin": [
+      0.0,
+      0.05,
+      0.0
+    ],
+    "walkingHeight": 0.05,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "entrance",
+      "node": "Spawn_Entrance",
+      "position": [
+        0.0,
+        0.0,
+        5.3
+      ],
+      "facing": [
+        0,
+        0,
+        -1
+      ],
+      "default": true
+    }
+  ],
+  "portals": [
+    {
+      "id": "exit",
+      "position": [
+        0.0,
+        0.0,
+        6.6
+      ],
+      "radius": 1.6,
+      "targetMap": "maps/startmap.elm",
+      "targetPosition": [
+        -38.05,
+        31.0,
+        179.0
+      ],
+      "label": "Out to the street"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "counting-desk",
+      "name": "Nima Vey's counting desk",
+      "node": "Counting_Desk",
+      "type": "vendor",
+      "position": [
+        0.0,
+        0.0,
+        -5.6
+      ]
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "nima-vey-merchant",
+      "actorType": 309,
+      "role": "merchant",
+      "position": [
+        0.0,
+        0.0,
+        -4.4
+      ],
+      "rotationDegrees": 180
+    }
+  ],
+  "interactives": [],
+  "collision": {
+    "nodeNames": [
+      "Shell_Wall_North",
+      "Shell_Wall_South",
+      "Shell_Wall_East",
+      "Shell_Wall_West",
+      "Counting_Desk"
+    ],
+    "note": "The four walls plus solid fittings; the floor is a walk surface and the walls stay solid while cut away."
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Floor_",
+      "Deck_",
+      "Stair_"
+    ],
+    "walkableAreas": [
+      "floor"
+    ],
+    "navmesh": {
+      "format": "inline-convex-polygons-v1",
+      "coordinateSystem": "asset",
+      "agentRadius": 0.4,
+      "agentHeight": 1.9,
+      "maxSlopeDegrees": 30,
+      "polygons": [
+        {
+          "id": "room",
+          "tags": [
+            "interior",
+            "walkable"
+          ],
+          "vertices": [
+            [
+              -12.4,
+              0.02,
+              -6.9
+            ],
+            [
+              12.4,
+              0.02,
+              -6.9
+            ],
+            [
+              12.4,
+              0.02,
+              6.9
+            ],
+            [
+              -12.4,
+              0.02,
+              6.9
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "camera": {
+    "distance": 17.0,
+    "minDistance": 12.0,
+    "maxDistance": 23.0,
+    "pitchDegrees": -48.0,
+    "zoomStep": 1.2,
+    "note": "Framed for the whole room with the ceiling and near wall cut away; closer and shallower than the city rig."
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Shell_Ceiling",
+      "Shell_Beams"
+    ],
+    "walls": [
+      {
+        "node": "Shell_Wall_North",
+        "outward": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "node": "Shell_Wall_South",
+        "outward": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "node": "Shell_Wall_East",
+        "outward": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "node": "Shell_Wall_West",
+        "outward": [
+          -1.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "facingThreshold": 0.2,
+    "note": "Hide the roof, and any wall whose outward normal points back towards the camera, so the room stays visible from an isometric rig. Collision is unaffected."
+  },
+  "environment": {
+    "backgroundColor": [
+      0.04,
+      0.05,
+      0.06
+    ],
+    "ambient": {
+      "color": [
+        0.3,
+        0.29,
+        0.27
+      ],
+      "energy": 0.93,
+      "skyContribution": 0.0
+    },
+    "sun": {
+      "enabled": false
+    },
+    "fog": {
+      "enabled": false
+    },
+    "tonemap": {
+      "mode": "filmic",
+      "exposure": 1.0,
+      "whitePoint": 8.0
+    },
+    "lights": [
+      {
+        "position": [
+          0.0,
+          5.1,
+          -6.25
+        ],
+        "color": [
+          1.0,
+          0.86,
+          0.66
+        ],
+        "energy": 3.4,
+        "range": 11.0
+      },
+      {
+        "position": [
+          0.0,
+          5.1,
+          -3.75
+        ],
+        "color": [
+          1.0,
+          0.86,
+          0.66
+        ],
+        "energy": 3.4,
+        "range": 11.0
+      },
+      {
+        "position": [
+          0.0,
+          5.1,
+          -1.25
+        ],
+        "color": [
+          1.0,
+          0.86,
+          0.66
+        ],
+        "energy": 3.4,
+        "range": 11.0
+      },
+      {
+        "position": [
+          0.0,
+          5.1,
+          1.25
+        ],
+        "color": [
+          1.0,
+          0.86,
+          0.66
+        ],
+        "energy": 3.4,
+        "range": 11.0
+      },
+      {
+        "position": [
+          0.0,
+          5.1,
+          3.75
+        ],
+        "color": [
+          1.0,
+          0.86,
+          0.66
+        ],
+        "energy": 3.4,
+        "range": 11.0
+      },
+      {
+        "position": [
+          0.0,
+          5.1,
+          6.25
+        ],
+        "color": [
+          1.0,
+          0.86,
+          0.66
+        ],
+        "energy": 3.4,
+        "range": 11.0
+      },
+      {
+        "position": [
+          0.0,
+          2.4,
+          -4.9
+        ],
+        "color": [
+          0.72,
+          0.86,
+          1.0
+        ],
+        "energy": 4.0,
+        "range": 9.0
+      }
+    ]
+  },
+  "performance": {
+    "bytes": 3476264,
+    "nodes": 54,
+    "meshes": 14,
+    "materials": 13,
+    "textures": 41,
+    "animations": 0,
+    "uniqueTriangles": 1648,
+    "instances": 49,
+    "visibleTriangles": 7296,
+    "textureMemoryBytes": 26913450
+  }
+}

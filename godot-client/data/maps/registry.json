@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "maps": {
     "maps/startmap.elm": {
-      "manifest": "res://../eloria-assets/maps/four-gates-city/four-gates-city.json",
+      "manifest": "res://../eloria-assets/maps/four-gates/world.json",
       "coordinateTransform": {
         "metresPerTile": 0.4651162791,
         "serverOrigin": [
@@ -17,7 +17,7 @@
         "walkingHeight": 31.15,
         "invertServerY": true
       },
-      "status": "development_server_binding"
+      "status": "production_map_v1"
     },
     "startmap.elm": {
       "alias": "maps/startmap.elm"
@@ -299,6 +299,7 @@
     "manymouth_delta.elm": {
       "alias": "maps/nymara/manymouth_delta.elm"
     },
+<<<<<<< HEAD
     "maps/nymara/sunmane_wind_caves.elm": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_wind_caves/world.json",
       "coordinateTransform": {
@@ -348,6 +349,150 @@
     },
     "sunmane_crystal_hollow.elm": {
       "alias": "maps/nymara/sunmane_crystal_hollow.elm"
+	},
+    "maps/four-gates-lantern-row.elm": {
+      "manifest": "res://../eloria-assets/maps/four-gates-lantern-row/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 0.25,
+        "serverOrigin": [
+          512.0,
+          512.0
+        ],
+        "origin": [
+          0.0,
+          0.05,
+          0.0
+        ],
+        "walkingHeight": 0.05,
+        "invertServerY": true
+      },
+      "status": "interior_v1"
+    },
+    "four-gates-lantern-row": {
+      "alias": "maps/four-gates-lantern-row.elm"
+    },
+    "four-gates-lantern-row.elm": {
+      "alias": "maps/four-gates-lantern-row.elm"
+    },
+    "maps/four-gates-reedworks.elm": {
+      "manifest": "res://../eloria-assets/maps/four-gates-reedworks/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 0.25,
+        "serverOrigin": [
+          512.0,
+          512.0
+        ],
+        "origin": [
+          0.0,
+          0.05,
+          0.0
+        ],
+        "walkingHeight": 0.05,
+        "invertServerY": true
+      },
+      "status": "interior_v1"
+    },
+    "four-gates-reedworks": {
+      "alias": "maps/four-gates-reedworks.elm"
+    },
+    "four-gates-reedworks.elm": {
+      "alias": "maps/four-gates-reedworks.elm"
+    },
+    "maps/four-gates-stormglass-house.elm": {
+      "manifest": "res://../eloria-assets/maps/four-gates-stormglass-house/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 0.25,
+        "serverOrigin": [
+          512.0,
+          512.0
+        ],
+        "origin": [
+          0.0,
+          0.05,
+          0.0
+        ],
+        "walkingHeight": 0.05,
+        "invertServerY": true
+      },
+      "status": "interior_v1"
+    },
+    "four-gates-stormglass-house": {
+      "alias": "maps/four-gates-stormglass-house.elm"
+    },
+    "four-gates-stormglass-house.elm": {
+      "alias": "maps/four-gates-stormglass-house.elm"
+    },
+    "maps/four-gates-mirrorsmith-forge.elm": {
+      "manifest": "res://../eloria-assets/maps/four-gates-mirrorsmith-forge/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 0.25,
+        "serverOrigin": [
+          512.0,
+          512.0
+        ],
+        "origin": [
+          0.0,
+          0.05,
+          0.0
+        ],
+        "walkingHeight": 0.05,
+        "invertServerY": true
+      },
+      "status": "interior_v1"
+    },
+    "four-gates-mirrorsmith-forge": {
+      "alias": "maps/four-gates-mirrorsmith-forge.elm"
+    },
+    "four-gates-mirrorsmith-forge.elm": {
+      "alias": "maps/four-gates-mirrorsmith-forge.elm"
+    },
+    "maps/four-gates-ferrymans-rest.elm": {
+      "manifest": "res://../eloria-assets/maps/four-gates-ferrymans-rest/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 0.25,
+        "serverOrigin": [
+          512.0,
+          512.0
+        ],
+        "origin": [
+          0.0,
+          0.05,
+          0.0
+        ],
+        "walkingHeight": 0.05,
+        "invertServerY": true
+      },
+      "status": "interior_v1"
+    },
+    "four-gates-ferrymans-rest": {
+      "alias": "maps/four-gates-ferrymans-rest.elm"
+    },
+    "four-gates-ferrymans-rest.elm": {
+      "alias": "maps/four-gates-ferrymans-rest.elm"
+    },
+    "maps/four-gates-deposit-four-keys.elm": {
+      "manifest": "res://../eloria-assets/maps/four-gates-deposit-four-keys/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 0.25,
+        "serverOrigin": [
+          512.0,
+          512.0
+        ],
+        "origin": [
+          0.0,
+          0.05,
+          0.0
+        ],
+        "walkingHeight": 0.05,
+        "invertServerY": true
+      },
+      "status": "interior_v1"
+    },
+    "four-gates-deposit-four-keys": {
+      "alias": "maps/four-gates-deposit-four-keys.elm"
+    },
+    "four-gates-deposit-four-keys.elm": {
+      "alias": "maps/four-gates-deposit-four-keys.elm"
     }
   }
 }
