@@ -299,7 +299,6 @@
     "manymouth_delta.elm": {
       "alias": "maps/nymara/manymouth_delta.elm"
     },
-<<<<<<< HEAD
     "maps/nymara/sunmane_wind_caves.elm": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_wind_caves/world.json",
       "coordinateTransform": {
