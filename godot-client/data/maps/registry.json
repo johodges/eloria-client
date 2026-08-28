@@ -85,18 +85,19 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 17.59,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/whitehorn_range.elm"
     },
     "whitehorn_range": {
       "alias": "maps/nymara/whitehorn_range.elm"

@@ -37,12 +37,18 @@
       "title": "Whitehorn Range",
       "sourceSha256": "f6990070514b07b759a9f56fd2387899161f5b055b855434ccfb87f555d21600",
       "conceptViews": 10,
-      "landmarkInstances": 47,
+      "landmarkInstances": 14,
       "terrainHeightRange": [
-        0.0,
-        0.0
+        -37.75,
+        180.07
       ],
-      "water": false
+      "water": false,
+      "status": "production-geometry-materials-population",
+      "serverCells": 576,
+      "requiresServerMap": "96x96 ELM tiles (576 cells)",
+      "uniqueTriangles": 228142,
+      "instancedTriangles": 681510,
+      "glbBytes": 11881000
     },
     {
       "id": "amethyst_barrens",
