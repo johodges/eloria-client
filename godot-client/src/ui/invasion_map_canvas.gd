@@ -18,16 +18,19 @@ var _hover_text := ""
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(520, 470)
+	custom_minimum_size = Vector2(360, 300)
 	mouse_default_cursor_shape = Control.CURSOR_CROSS
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	set_process(false)
 
 
 func set_map_state(value: Dictionary, texture: Texture2D = null) -> void:
+	var previous_map := str((state.get("map", {}) as Dictionary).get("id", ""))
+	var next_map := str((value.get("map", {}) as Dictionary).get("id", ""))
 	state = value.duplicate(true)
 	background = texture
-	selected_tile = Vector2i(-1, -1)
+	if previous_map != next_map:
+		selected_tile = Vector2i(-1, -1)
 	_hover_text = ""
 	tooltip_text = "Click the tactical map to select teleport coordinates."
 	queue_redraw()
