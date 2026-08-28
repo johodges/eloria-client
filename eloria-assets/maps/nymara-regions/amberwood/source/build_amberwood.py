@@ -42,6 +42,22 @@ HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
 SEED = 20260827
 
+# The materials Amberwood embeds, pinned. The shared table grows as other
+# regions add recipes to it, and without this every one of those would be
+# embedded here too - about ten megabytes of images nothing references, and a
+# different world.glb for a change that has nothing to do with Amberwood.
+MATERIALS = frozenset({
+    'bark_oak', 'bark_dark', 'bark_pale', 'foliage_amber', 'foliage_gold',
+    'foliage_rust', 'foliage_green', 'foliage_dead', 'undergrowth',
+    'timber_warm', 'timber_grey', 'timber_dark', 'carved_wood',
+    'shingles', 'thatch_reed', 'ashlar', 'lime_plaster', 'packed_earth',
+    'sooted_plaster', 'charred_timber', 'rubble_stone', 'cliff_rock',
+    'cobble_paving', 'forest_floor', 'leaf_path', 'shore_shingle',
+    'meadow_grass', 'scorched_ground', 'dark_iron', 'woven_cloth',
+    'canvas_awning', 'amber_resin', 'amber_glass', 'water_sea',
+    'water_pool', 'water_stream', 'water_deep',
+})
+
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
 
@@ -238,7 +254,7 @@ def _split_group(key: str, item) -> tuple[dict[str, M.Mesh], dict[str, M.Mesh]]:
 def export_glb(build: REG.RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuilder, dict]:
     builder = GLTF.GltfBuilder(
         generator="Eloria Amberwood builder (original procedural assets)")
-    MAT.register_gltf_materials(builder, sets)
+    MAT.register_gltf_materials(builder, sets, only=MATERIALS)
 
     # Tangents are intentionally omitted: Godot's glTF importer generates them
     # for normal-mapped materials, and shipping them would add sixteen bytes a
