@@ -13,8 +13,8 @@ does not pretend otherwise.
 
 | File | What it is |
 | --- | --- |
-| `world.glb` | self-contained glTF 2.0, 24.4 MB, 587,106 unique / 1,271,396 instanced triangles |
-| `world-lod2.glb` | reduced package, 14.2 MB, 42% smaller |
+| `world.glb` | self-contained glTF 2.0, 23.4 MB, 587,106 unique / 1,271,396 instanced triangles |
+| `world-lod2.glb` | reduced package, 14.0 MB, 42% smaller |
 | `world.json` | schema-1 manifest: bounds, transform, spawns, collision, navigation, landmarks, interactives, NPC and creature markers, harvestables, portals, roads, water, environment, minimap, provenance |
 | `collision.bin` | EWCG v1, 1152 x 1152 half-metre cells, 25.6% walkable |
 | `minimap.webp` | rendered from the final geometry, not drawn |

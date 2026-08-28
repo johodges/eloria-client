@@ -4,11 +4,11 @@ Measured from the shipped package, not estimated.
 
 | Metric | `world.glb` | `world-lod2.glb` |
 | --- | --- | --- |
-| Size | 23.49 MB | 14.01 MB |
+| Size | 23.45 MB | 14.01 MB |
 | Nodes | 1,892 | 1,697 |
 | Unique triangles | 587,040 | 433,888 |
 | Instanced triangles | 1,273,378 | 1,109,698 |
-| Embedded texture bytes | 14.07 MB | - |
+| Embedded texture bytes | 18.95 MB | - |
 
 ## Against the repository guideline
 
