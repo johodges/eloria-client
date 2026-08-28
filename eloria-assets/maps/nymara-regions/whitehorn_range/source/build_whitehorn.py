@@ -364,6 +364,77 @@ def render_minimap(build: RegionBuild, sets, path: Path, size: int = 768) -> dic
 
 
 # --------------------------------------------------------------------------
+def _environment() -> dict:
+    """The manifest's `environment` block, consumed by WorldEnvironmentBinder.
+
+    THE SIGN OF `sun.direction` IS THE DIRECTION THE LIGHT TRAVELS, not the
+    direction of the sun in the sky. `world_environment_binder.gd` aims the key
+    light with `sun.look_at_from_position(Vector3.ZERO, facing, up)`, which
+    points the node's -Z at `facing`, and a DirectionalLight3D emits along its
+    local -Z. So a positive Y component lights the world from underneath.
+
+    The offline preview renderer uses the opposite convention: its
+    `Lighting.sun_direction` points *toward* the sun. The two must therefore be
+    negations of each other, and copying one into the other - which is what
+    Amberwood's manifest does, declaring [-0.46, 0.50, 0.73] - inverts the key
+    light. It has never been caught because no offline preview can show it.
+
+    Whitehorn's preview sun is (-0.38, 0.62, 0.68); this is its negation.
+    """
+    day_sun = (0.38, -0.62, -0.68)
+    golden_sun = (0.80, -0.24, -0.52)
+    return {
+        "biome": "alpine-glacial",
+        "snowLine": REG.SNOW_LINE,
+        "sky": {
+            "type": "gradient",
+            "zenith": [0.24, 0.38, 0.62],
+            "horizon": [0.72, 0.78, 0.86],
+        },
+        # Cool, bright and low-contrast: snow is a high-albedo subject lit
+        # largely by sky bounce, and the warm preset the forest regions use
+        # renders it as sand.
+        "sun": {
+            "direction": list(day_sun),
+            "color": [1.06, 1.06, 1.10],
+            "energy": 1.05,
+            "shadows": True,
+            "angularDiameterDegrees": 0.6,
+        },
+        "ambient": {
+            "skyColor": [0.40, 0.48, 0.62],
+            "groundColor": [0.30, 0.34, 0.40],
+            "energy": 0.52,
+        },
+        "saturation": 0.92,
+        "fog": {
+            "enabled": True,
+            "color": [0.62, 0.68, 0.76],
+            "density": 0.00048,
+            "heightFalloff": 0.0026,
+            "skyAffect": 0.35,
+        },
+        "goldenHour": {
+            "sun": {"direction": list(golden_sun),
+                    "color": [1.44, 1.02, 0.66]},
+            "fog": {"color": [0.68, 0.62, 0.62], "density": 0.0011},
+        },
+        "zones": [
+            {"id": "glacier", "centre": [78.0, 40.0, -132.0], "radius": 150.0},
+            {"id": "temple", "centre": [102.0, 70.0, -300.0], "radius": 90.0},
+            {"id": "gorge", "centre": [90.0, 0.0, -84.0], "radius": 170.0},
+            {"id": "approach", "centre": [0.0, 18.0, 42.0], "radius": 140.0},
+            {"id": "mine", "centre": [282.0, 50.0, -132.0], "radius": 90.0},
+        ],
+        "notes": [
+            "Whitehorn has no sea and no standing water; the watercourses are "
+            "frozen or dry meltwater beds.",
+            "sun.direction is the direction the light travels, so its Y is "
+            "negative. See _environment() in source/build_whitehorn.py.",
+        ],
+    }
+
+
 def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
                    minimap: dict, path: Path) -> dict:
     t = build.terrain
@@ -459,12 +530,7 @@ def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
         "portals": build.portals,
         "roads": [],
         "water": [],
-        "environment": {
-            "biome": "alpine-glacial",
-            "snowLine": REG.SNOW_LINE,
-            "notes": ["Whitehorn has no sea and no standing water; the "
-                      "watercourses are frozen or dry meltwater beds."],
-        },
+        "environment": _environment(),
         "minimap": minimap,
         "lodGroups": [],
         "performance": stats,

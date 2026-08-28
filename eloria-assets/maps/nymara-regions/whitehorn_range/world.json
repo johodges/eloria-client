@@ -1679,8 +1679,131 @@
   "environment": {
     "biome": "alpine-glacial",
     "snowLine": 30.0,
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.24,
+        0.38,
+        0.62
+      ],
+      "horizon": [
+        0.72,
+        0.78,
+        0.86
+      ]
+    },
+    "sun": {
+      "direction": [
+        0.38,
+        -0.62,
+        -0.68
+      ],
+      "color": [
+        1.06,
+        1.06,
+        1.1
+      ],
+      "energy": 1.05,
+      "shadows": true,
+      "angularDiameterDegrees": 0.6
+    },
+    "ambient": {
+      "skyColor": [
+        0.4,
+        0.48,
+        0.62
+      ],
+      "groundColor": [
+        0.3,
+        0.34,
+        0.4
+      ],
+      "energy": 0.52
+    },
+    "saturation": 0.92,
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.62,
+        0.68,
+        0.76
+      ],
+      "density": 0.00048,
+      "heightFalloff": 0.0026,
+      "skyAffect": 0.35
+    },
+    "goldenHour": {
+      "sun": {
+        "direction": [
+          0.8,
+          -0.24,
+          -0.52
+        ],
+        "color": [
+          1.44,
+          1.02,
+          0.66
+        ]
+      },
+      "fog": {
+        "color": [
+          0.68,
+          0.62,
+          0.62
+        ],
+        "density": 0.0011
+      }
+    },
+    "zones": [
+      {
+        "id": "glacier",
+        "centre": [
+          78.0,
+          40.0,
+          -132.0
+        ],
+        "radius": 150.0
+      },
+      {
+        "id": "temple",
+        "centre": [
+          102.0,
+          70.0,
+          -300.0
+        ],
+        "radius": 90.0
+      },
+      {
+        "id": "gorge",
+        "centre": [
+          90.0,
+          0.0,
+          -84.0
+        ],
+        "radius": 170.0
+      },
+      {
+        "id": "approach",
+        "centre": [
+          0.0,
+          18.0,
+          42.0
+        ],
+        "radius": 140.0
+      },
+      {
+        "id": "mine",
+        "centre": [
+          282.0,
+          50.0,
+          -132.0
+        ],
+        "radius": 90.0
+      }
+    ],
     "notes": [
-      "Whitehorn has no sea and no standing water; the watercourses are frozen or dry meltwater beds."
+      "Whitehorn has no sea and no standing water; the watercourses are frozen or dry meltwater beds.",
+      "sun.direction is the direction the light travels, so its Y is negative. See _environment() in source/build_whitehorn.py."
     ]
   },
   "minimap": {
