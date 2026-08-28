@@ -74,7 +74,7 @@
       "ok": true
     },
     {
-      "check": "authored collision proxies block movement through structures (3/4 probes)",
+      "check": "authored collision proxies block movement through structures (4/4 probes)",
       "ok": true
     },
     {
@@ -124,7 +124,7 @@
       261
     ]
   },
-  "collision_probe_hits": 3,
+  "collision_probe_hits": 4,
   "coordinates": {
     "derived": [
       385,
@@ -142,9 +142,9 @@
   },
   "failures": 0,
   "frame_ms_software_gl": {
-    "max": 251.65,
-    "median": 243.708,
-    "min": 231.774,
+    "max": 385.752,
+    "median": 350.38,
+    "min": 344.688,
     "renderer": "OpenGL compatibility on llvmpipe (no GPU)"
   },
   "grounding": [
@@ -158,12 +158,12 @@
       "z": 54.6511611938477
     },
     {
-      "actor_y": 31.0999870300293,
+      "actor_y": 31.5002574920654,
       "arrived": true,
-      "delta": 0.0199699401855469,
+      "delta": 0.0199089050292969,
       "label": "plaza-centre",
       "ok": true,
-      "surface_y": 31.0800170898438,
+      "surface_y": 31.4803485870361,
       "target_tile": [
         384,
         384
@@ -256,12 +256,12 @@
       "z": -344.418609619141
     },
     {
-      "actor_y": 27.3199996948242,
+      "actor_y": 29.0199813842773,
       "arrived": true,
       "delta": 0.0199699401855469,
       "label": "north-bridge-deck",
       "ok": true,
-      "surface_y": 27.3000297546387,
+      "surface_y": 29.0000114440918,
       "target_tile": [
         384,
         1459
@@ -324,12 +324,12 @@
   "tile_field_covers_walled_city": false,
   "traversal": [
     {
-      "actor_y": 31.0999870300293,
+      "actor_y": 31.5002574920654,
       "arrived": true,
-      "delta": 0.0199699401855469,
+      "delta": 0.0199089050292969,
       "label": "plaza-centre",
       "ok": true,
-      "surface_y": 31.0800170898438,
+      "surface_y": 31.4803485870361,
       "target_tile": [
         384,
         384
@@ -422,12 +422,12 @@
       "z": -344.418609619141
     },
     {
-      "actor_y": 27.3199996948242,
+      "actor_y": 29.0199813842773,
       "arrived": true,
       "delta": 0.0199699401855469,
       "label": "north-bridge-deck",
       "ok": true,
-      "surface_y": 27.3000297546387,
+      "surface_y": 29.0000114440918,
       "target_tile": [
         384,
         1459

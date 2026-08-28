@@ -38,6 +38,7 @@ Defects found this way and fixed:
 | Bridge arches sprang above the deck | the arch rings occluded the whole crossing |
 | Bridge deck slab coincident with its fascia | z-fighting bands across the causeway |
 | Waterfall sheets interpolated through the cliff | falls were invisible from every angle |
+| Almost every primitive wound clockwise (1.0.1) | walls rendered inside-out; near faces culled, interiors visible through them |
 
 ## 3. Godot import and runtime
 
@@ -56,6 +57,9 @@ compatibility renderer on llvmpipe (software GL, no GPU).
 `rendered_four_gates_gameplay.gd` drives the production `main.tscn` through the
 real login flow against a local protocol server, creating a temporary character
 (`QA_FourGates_Temp1`). Result: **28 checks, 0 failures.**
+
+Re-run after the 1.0.1 winding correction: still 28 checks, 0 failures, and the
+collision probes went from 3/4 to 4/4.
 
 Verified: TCP session, character creation and login, map load, local actor
 presence, spawn grounding, click-to-move through the genuine ray → navigation
@@ -122,14 +126,14 @@ Measured in the running client, software GL, 1280×720:
 
 | Metric | Value |
 |---|---|
-| Unique mesh triangles | 189,415 |
-| Visible triangles (whole map in frustum) | 879,883 |
+| Unique mesh triangles | 188,383 |
+| Visible triangles (whole map in frustum) | 811,083 |
 | Nodes / instances | 3,030 / 2,992 |
 | Meshes / materials / textures | 154 / 30 / 91 |
 | Draw calls (typical gameplay view) | 288 |
 | Objects in frame | 486 |
 | Texture memory (exported, RGBA8 + mips) | 110.5 MB |
-| GLB size | 22.5 MB |
+| GLB size | 23.5 MB |
 | Frame time, software GL (median) | 244 ms |
 
 Against the budgets recorded for the previous package (desktop LOD1 under 1.5 M

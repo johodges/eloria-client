@@ -187,7 +187,15 @@ class Geo:
 
 # ------------------------------------------------------------------- utilities
 def _quad_indices(a, b, c, d):
-    return [(a, b, c), (a, c, d)]
+    """Two triangles for a quad whose corners are given counter-clockwise as
+    seen from the *outside* of the surface.
+
+    glTF front faces are counter-clockwise, and Godot culls back faces, so a
+    quad listed clockwise renders inside-out: the outward faces are culled and
+    the viewer sees the interior. Builders must therefore list corners in
+    outward-CCW order; `tools/four_gates/test_geometry.py` asserts it.
+    """
+    return [(a, c, b), (a, d, c)]
 
 
 def make(vertices, faces, material=0, uv_scale: float = 2.0,
@@ -261,13 +269,13 @@ def cylinder(radius: float, height: float, sides: int = 16, material: int = 0,
         v.append((0.0, 0.0, 0.0))
         for i in range(limit):
             j = (i + 1) % count
-            f.append((centre, j, i))
+            f.append((centre, i, j))          # faces -Y
     if cap_top:
         centre = len(v)
         v.append((0.0, height, 0.0))
         for i in range(limit):
             j = (i + 1) % count
-            f.append((centre, count + i, count + j))
+            f.append((centre, count + j, count + i))    # faces +Y
     geo = Geo(np.asarray(v, dtype=np.float32), np.zeros((len(v), 3)),
               np.zeros((len(v), 2)), np.asarray(f, dtype=np.uint32),
               np.full(len(f), material))
@@ -292,7 +300,7 @@ def pyramid(sx: float, sz: float, height: float, material: int = 0,
     hx, hz = sx * 0.5, sz * 0.5
     v = [(-hx, 0, -hz), (hx, 0, -hz), (hx, 0, hz), (-hx, 0, hz),
          (apex_offset[0], height, apex_offset[1])]
-    f = [(0, 1, 4), (1, 2, 4), (2, 3, 4), (3, 0, 4), (0, 3, 2), (0, 2, 1)]
+    f = [(0, 4, 1), (1, 4, 2), (2, 4, 3), (3, 4, 0), (0, 2, 3), (0, 1, 2)]
     return make(v, f, material, uv_scale)
 
 
@@ -302,13 +310,13 @@ def gable_roof(sx: float, sz: float, height: float, overhang: float = 0.35,
     if ridge_along_x:
         v = [(-hx, 0, -hz), (hx, 0, -hz), (hx, 0, hz), (-hx, 0, hz),
              (-hx, height, 0.0), (hx, height, 0.0)]
-        f = [(0, 1, 5), (0, 5, 4), (2, 3, 4), (2, 4, 5),
-             (0, 4, 3), (1, 2, 5), (0, 3, 2), (0, 2, 1)]
+        f = [(0, 5, 1), (0, 4, 5), (2, 4, 3), (2, 5, 4),
+             (0, 3, 4), (1, 5, 2), (0, 2, 3), (0, 1, 2)]
     else:
         v = [(-hx, 0, -hz), (hx, 0, -hz), (hx, 0, hz), (-hx, 0, hz),
              (0.0, height, -hz), (0.0, height, hz)]
-        f = [(1, 2, 5), (1, 5, 4), (3, 0, 4), (3, 4, 5),
-             (0, 1, 4), (2, 3, 5), (0, 3, 2), (0, 2, 1)]
+        f = [(1, 5, 2), (1, 4, 5), (3, 4, 0), (3, 5, 4),
+             (0, 4, 1), (2, 5, 3), (0, 2, 3), (0, 1, 2)]
     return make(v, f, material, uv_scale)
 
 
@@ -318,8 +326,8 @@ def hip_roof(sx: float, sz: float, height: float, ridge: float = 0.45,
     rx = hx * ridge
     v = [(-hx, 0, -hz), (hx, 0, -hz), (hx, 0, hz), (-hx, 0, hz),
          (-rx, height, 0.0), (rx, height, 0.0)]
-    f = [(0, 1, 5), (0, 5, 4), (2, 3, 4), (2, 4, 5),
-         (1, 2, 5), (3, 0, 4), (0, 3, 2), (0, 2, 1)]
+    f = [(0, 5, 1), (0, 4, 5), (2, 4, 3), (2, 5, 4),
+         (1, 5, 2), (3, 4, 0), (0, 2, 3), (0, 1, 2)]
     return make(v, f, material, uv_scale)
 
 
@@ -344,8 +352,8 @@ def prism(polygon: Sequence[Sequence[float]], height: float, material: int = 0,
         v.append((centroid[0], base_y, centroid[1]))
         for i in range(n):
             j = (i + 1) % n
-            f.append((top_c, n + i, n + j))
-            f.append((bottom_c, j, i))
+            f.append((top_c, n + j, n + i))    # faces +Y
+            f.append((bottom_c, i, j))         # faces -Y
     return make(v, f, material, uv_scale)
 
 
@@ -366,12 +374,12 @@ def arch_ring(inner: float, outer: float, depth: float, start: float, sweep: flo
     f = []
     for i in range(segments):
         j = i + 1
-        f += _quad_indices(if_ + i, if_ + j, ib + j, ib + i)       # intrados
-        f += _quad_indices(ob + i, ob + j, of + j, of + i)         # extrados
-        f += _quad_indices(if_ + j, of + j, of + i, if_ + i)       # front face
-        f += _quad_indices(ib + i, ob + i, ob + j, ib + j)         # back face
-    f += _quad_indices(ib, if_, of, ob)
-    f += _quad_indices(of + segments, if_ + segments, ib + segments, ob + segments)
+        f += _quad_indices(ib + i, ib + j, if_ + j, if_ + i)       # intrados
+        f += _quad_indices(of + i, of + j, ob + j, ob + i)         # extrados
+        f += _quad_indices(if_ + i, of + i, of + j, if_ + j)       # front face
+        f += _quad_indices(ib + j, ob + j, ob + i, ib + i)         # back face
+    f += _quad_indices(ob, of, if_, ib)
+    f += _quad_indices(ob + segments, ib + segments, if_ + segments, of + segments)
     return make(v, f, material, uv_scale)
 
 
@@ -395,7 +403,7 @@ def torus_arc(radius: float, thickness: float, start: float, sweep: float,
             b = i * sides + k2
             c = (i + 1) * sides + k2
             d = (i + 1) * sides + k
-            f += _quad_indices(a, b, c, d)
+            f += _quad_indices(d, c, b, a)
     geo = make(verts, f, material, uv_scale, smooth=True)
     return geo
 
@@ -549,7 +557,7 @@ def ring_band(inner: float, outer: float, sides: int, y_fn, material: int = 0,
         j = (i + 1) % count
         a0, a1 = i * 2, i * 2 + 1
         b0, b1 = j * 2, j * 2 + 1
-        f += _quad_indices(a0, b0, b1, a1)
+        f += _quad_indices(a1, b1, b0, a0)
     geo = make(verts, f, material, uv_scale, smooth=smooth)
     return geo
 
@@ -614,7 +622,7 @@ def quad_strip(points: Sequence[Sequence[float]], width: float, y_fn,
     for i in range(len(pts) - 1):
         a0, a1 = i * 2, i * 2 + 1
         b0, b1 = (i + 1) * 2, (i + 1) * 2 + 1
-        f += _quad_indices(a0, a1, b1, b0)
+        f += _quad_indices(b0, b1, a1, a0)
     return make(verts, f, material, uv_scale, smooth=True)
 
 

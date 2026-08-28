@@ -27,7 +27,38 @@ First authored production pass, replacing the `four-gates-city` graybox
   navigation surface prefix contract, and 28 convex navigation polygons.
 - Khronos glTF-Validator: **0 errors, 0 warnings**.
 
-### Defects found and fixed during this pass
+## 1.0.1 — face winding correction
+
+Reported after merge: some building walls did not read as solid.
+
+**Cause.** Almost every primitive in `meshlib.py` listed its quad corners
+clockwise as seen from outside. glTF front faces are counter-clockwise and
+Godot culls back faces, so those surfaces rendered inside-out: the outward face
+was culled and the viewer looked through the near wall at the interior of the
+far one. `explode()` derives normals from the winding, so the authored NORMAL
+attribute pointed inward too and agreed with the bad winding — which is why
+lighting looked merely *dark* rather than obviously broken, and why the defect
+survived the earlier visual review. Silhouettes were unaffected; only depth
+ordering and shading were, so it read as an art problem at a distance and as
+see-through walls up close.
+
+**Fix.** `_quad_indices` now emits outward-CCW triangles; `arch_ring`,
+`ring_band`, `quad_strip` and `torus_arc` had their corner order reversed to
+match; the explicit triangle lists in `pyramid`, `gable_roof` and `hip_roof`
+were flipped; and the end caps of `cylinder` and `prism` were corrected
+independently of their sides.
+
+**Guard.** `eloria-assets/tools/four_gates/test_geometry.py` asserts the
+invariant directly — positive signed volume for every closed primitive, no
+inward-facing faces on convex ones, +Y normals on every ground surface, and no
+authored normal pointing into the opposite hemisphere from its winding. It
+fails loudly on any regression.
+
+Side effect: the authored collision proxies now block all four movement probes
+in the gameplay test rather than three; a trimesh built from an inside-out mesh
+was missing rays from one direction.
+
+### Defects found and fixed during the initial pass
 
 These were caught by the validator, the independent viewer and the client:
 
