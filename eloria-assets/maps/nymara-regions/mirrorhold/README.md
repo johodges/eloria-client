@@ -28,6 +28,9 @@ cd source
 python3 build_mirrorhold.py           # world.glb, world.json, collision.bin, minimap, LOD2
 python3 ../../_toolkit/verify_runtime.py --package ..
 python3 ../../_toolkit/validate_gltf.py ../world.glb
+
+# the same grounding contract in-engine, through the real WorldLoader
+cd ../../../../godot-client && Godot --path . --headless   --script ../eloria-assets/maps/nymara-regions/_toolkit/region_client_check.gd   -- --manifest=<abs path>/mirrorhold/world.json
 python3 ../../_toolkit/export_source_elm.py    # regenerates ../source-elm/mirrorhold.elm
 python3 ../../_toolkit/capture_views.py        # offline preview captures
 python3 ../../_toolkit/make_comparison.py      # concept-versus-build sheets
@@ -43,6 +46,10 @@ byte-for-byte. Runtime startup never depends on rerunning any of it.
   **0 grounding misses**, 3 warnings (cliff discontinuities, one
   collision/surface cell, and the armillary, which is meant to stand above its
   drum)
+- `region_client_check.gd`: the same contract in-engine, through the real
+  `WorldLoader` and Godot's physics - **20,736 tiles sampled, 0 misses**, all
+  three spawns within 0.13 m of their manifest height. See
+  `client-check-report.json`.
 - 300,866 unique / 1,246,764 instanced triangles, 2,308 nodes, 16.1 MB.
   That is 3.8 instanced triangles per square metre, inside the repository's
   1.5 M visible-triangle desktop guideline; texture memory is 119 MiB

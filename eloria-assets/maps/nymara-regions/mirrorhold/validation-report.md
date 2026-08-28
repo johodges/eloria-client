@@ -41,6 +41,41 @@ The three warnings, each deliberate:
 | `COLLISION_SURFACE_MISMATCH` | 1 | One sampled cell of 331,776 where the encoded collision height disagrees with the rendered walk surface, at a deck edge. |
 | `LANDMARK_FLOATING` | 1 | The armillary, which is a sphere on a mount above its drum. It is meant to be off the ground. |
 
+### `region_client_check.gd` — the same contract, in-engine
+
+The offline check above reproduces the client's contract in Python. This one
+runs it the other way round: Godot 4.7.2 loads the package with the project's
+own `WorldLoader.load_world()`, lets it build collision and navigation exactly
+as the game does, and casts `main.gd`'s grounding ray - y = 400 down to
+y = -100 on `NAVIGATION_SURFACE_LAYER` - against the real physics world.
+
+```
+[client-check] loader warnings=1
+    warning: navigation polygons did not produce collision
+[client-check] server grid 576x576, sampling every 4 tiles
+[client-check] grounding: 20736 tiles sampled, 0 misses (0.00%)
+[client-check] surface height range: -11.00 .. 257.01
+[client-check] spawn { "id": "default", manifestY 42.68, clientY 42.626, delta 0.054 }
+[client-check] spawn { "id": "harbour", manifestY 4.55, clientY 4.68, delta 0.13 }
+[client-check] spawn { "id": "citadel-gate", manifestY 84.05, clientY 83.999, delta 0.051 }
+[client-check] PASS
+```
+
+So the offline verifier and the engine agree: no reachable tile falls through
+to `walkingHeight`, and every spawn's manifest height is where the client
+actually puts an actor standing there. The full report is in
+`client-check-report.json`.
+
+The one loader warning is structural and shared with Amberwood: this manifest's
+`navigation.navmesh` is `surface-prefix-v1` with an empty `polygons` list,
+because navigation is derived from the surface prefixes rather than from baked
+polygons. The loader warns whenever that list is empty. Amberwood's manifest is
+identical in this respect.
+
+This is a sampled check - every fourth tile in each axis, 20,736 of 331,776 -
+because it runs through the physics server rather than a numpy array.
+`verify_runtime.py` samples all of them.
+
 ### Determinism
 
 A cache-cold rebuild reproduces `world.glb`, `world-lod2.glb`, `world.json`,
@@ -71,11 +106,12 @@ Two independent sets, and **the distinction matters**:
 Stated plainly, because a clean validator report covers less than it looks like
 it covers.
 
-1. **No end-to-end client session.** The Godot captures load and render the
-   package, but nothing here logged in, connected to a server, spawned a
-   character, or walked around. The grounding contract is verified by
-   `verify_runtime.py` reproducing it offline, not by an actor standing on the
-   ground in a running game.
+1. **No end-to-end client session.** The package is loaded, rendered and
+   grounded through the real client path - `WorldLoader` and the engine's own
+   physics - but nothing here logged in, connected to a server, spawned a
+   networked character, or walked around under player control. What is proven
+   is that the world builds and grounds correctly in the engine, not that a
+   session works.
 
 2. **No server round-trip.** The 96 x 96 map generates and the tests pass, but
    no server was started, no client connected to one, and no map transition was
