@@ -47,6 +47,35 @@ So the engine agrees with `verify_runtime.py`: the GLB imports, the navigation
 layer builds from the node-name prefixes, and every sampled tile and every
 declared spawn grounds. Spawn heights agree with the manifest to 0.02 m.
 
+### One loader warning, and the control that explains it
+
+`WorldLoader` accumulates non-fatal findings on the manifest rather than
+printing them, so the harness now reports them explicitly. There is one:
+
+```
+[client-check] loader_warnings=1
+[client-check]   warning: navigation polygons did not produce collision
+```
+
+`world_loader.gd:139` emits this when `navigation.navmesh.polygons` yields no
+collision shapes. Both this package and Amberwood's declare
+`{"format": "surface-prefix-v1", "polygons": []}` — the polygon path is unused
+by design, and the navigation layer is built from the node-name prefixes
+instead, which is what the grounding then succeeds on.
+
+Running the same harness against the **committed Amberwood package as a
+control** produces the identical warning and also passes:
+
+```
+[client-check] loader_warnings=1  warning: navigation polygons did not produce collision
+[client-check] tiles_sampled=2304 step=12 misses=0 surface_y=-19.70..108.04
+[client-check] RESULT ok
+```
+
+So the warning is structural to the `surface-prefix-v1` manifest format and is
+not a finding against this region. It is recorded here rather than filtered out,
+because a harness that only prints what it expects is not a check.
+
 **Scope of that check.** It sampled every 6th tile in each axis (9,216 of
 331,776). The exhaustive 331,776-tile pass is the Python one. It ran windowed on
 an RTX 5080 under the OpenGL compatibility renderer, which is what
