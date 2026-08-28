@@ -31,15 +31,9 @@ func _run() -> void:
 		return
 
 	var environment_node: WorldEnvironment = scene.get_node("Environment") as WorldEnvironment
-	var environment := Environment.new()
-	environment.background_mode = Environment.BG_COLOR
-	environment.background_color = Color("a9cde2")
-	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.ambient_light_color = Color("d9e7ee")
-	environment.ambient_light_energy = 0.40
-	environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	environment_node.environment = environment
-	(scene.get_node("Sun") as DirectionalLight3D).light_energy = 0.92
+	var sun_node: DirectionalLight3D = scene.get_node("Sun") as DirectionalLight3D
+	_expect(WorldEnvironmentApplier.apply(loader.manifest, environment_node, sun_node),
+		"manifest environment applied to the rendered scene")
 	(scene.get_node("UI") as CanvasLayer).visible = false
 
 	var camera: Camera3D = scene.get_node("Camera") as Camera3D
