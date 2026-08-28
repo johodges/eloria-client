@@ -227,7 +227,25 @@ def main() -> int:
                       "fieldOfViewDegrees": fov, "lighting": mode})
         print(f"  {name:26} {time.time() - t0:5.1f}s -> {path.name}")
 
-    (out / "index.json").write_text(json.dumps(index, indent=2) + "\n")
+    # Merge rather than overwrite: with --only, writing just the rendered
+    # views silently drops every other entry, and this index is what the
+    # comparison sheets and the Godot capture read.
+    index_path = out / "index.json"
+    if index_path.exists():
+        try:
+            previous = json.loads(index_path.read_text())
+        except (ValueError, OSError):
+            previous = []
+        if isinstance(previous, list):
+            fresh = {entry["id"] for entry in index}
+            order = [view[0] for view in VIEWS]
+            merged = [e for e in previous
+                      if isinstance(e, dict) and e.get("id") not in fresh]
+            merged.extend(index)
+            merged.sort(key=lambda e: order.index(e["id"])
+                        if e.get("id") in order else len(order))
+            index = merged
+    index_path.write_text(json.dumps(index, indent=2) + chr(10))
     return 0
 
 

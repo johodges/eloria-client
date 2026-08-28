@@ -27,6 +27,7 @@ MARBLE = "veined_marble"
 RUBBLE = "rubble_stone"
 BRASS = "gilt_brass"
 CRYSTAL = "blue_crystal"
+MIRROR = "mirror_glass"
 SLATE = "slate_roof"
 IRON = "dark_iron"
 TIMBER = "timber_grey"
@@ -76,21 +77,32 @@ def crystal_panel(width: float = 0.9, height: float = 2.2,
 
 
 def rose_window(radius: float = 2.6, spokes: int = 12) -> STONE.MeshGroup:
-    """The blue rose window of the gallery: gilt tracery over crystal."""
+    """The blue rose window of the gallery: gilt tracery over crystal.
+
+    Built flat about the Y axis and stood up once at the end - rotating the
+    lathe and the spoke bars separately puts them in different planes.
+    """
     glass = M.lathe([[radius, 0.0], [radius, 0.18], [0.0, 0.18]], 24,
-                    uv_scale=1.0, material=CRYSTAL).rotate_x(math.pi * 0.5)
-    parts = [M.lathe([[radius + 0.34, 0.0], [radius + 0.34, 0.30],
+                    uv_scale=1.0, material=CRYSTAL)
+    brass = [M.lathe([[radius + 0.34, 0.0], [radius + 0.34, 0.30],
                       [radius + 0.02, 0.30], [radius + 0.02, 0.0]], 24,
-                     uv_scale=1.0, material=BRASS).rotate_x(math.pi * 0.5)]
+                     uv_scale=1.0, material=BRASS),
+             M.lathe([[radius * 0.36, 0.0], [radius * 0.36, 0.26],
+                      [radius * 0.30, 0.26], [radius * 0.30, 0.0]], 18,
+                     uv_scale=1.0, material=BRASS)]
     for index in range(spokes):
         angle = math.pi * index / spokes
-        bar = M.box((radius * 2.0, 0.10, 0.22), material=BRASS)
-        parts.append(bar.rotate_z(angle))
-    inner = M.lathe([[radius * 0.36, 0.0], [radius * 0.36, 0.26],
-                     [radius * 0.30, 0.26], [radius * 0.30, 0.0]], 18,
-                    uv_scale=1.0, material=BRASS).rotate_x(math.pi * 0.5)
-    parts.append(inner)
-    return _g(glass, M.merge(parts, BRASS))
+        bar = M.box((radius * 2.0, 0.22, 0.10), center=(0.0, 0.14, 0.0),
+                    material=BRASS)
+        brass.append(bar.rotate_y(angle))
+    out = STONE.MeshGroup()
+    # The lathe grows along +Y and standing it up sends that into -Z, i.e.
+    # into the wall behind. Push the glass back out so it reads through the
+    # tracery instead of disappearing into the masonry.
+    out.add(glass.rotate_x(math.pi * 0.5).translate(0.0, 0.0, 0.20))
+    out.add(M.merge(brass, BRASS).rotate_x(math.pi * 0.5)
+            .translate(0.0, 0.0, 0.20))
+    return out
 
 
 def armillary(radius: float = 4.2, seed: int = 0) -> STONE.MeshGroup:
@@ -114,7 +126,7 @@ def armillary(radius: float = 4.2, seed: int = 0) -> STONE.MeshGroup:
                     [radius + 0.66, 0.22], [radius + 0.42, 0.22]], 44,
                    uv_scale=1.2, material=BRASS)
     parts.append(band)
-    sphere = M.icosphere(radius * 0.56, subdivisions=3, material=CRYSTAL)
+    sphere = M.icosphere(radius * 0.56, subdivisions=3, material=MIRROR)
     mount = M.lathe([[radius * 0.34, -radius - 1.6], [radius * 0.40, -radius - 1.2],
                      [radius * 0.22, -radius * 0.72], [0.16, -radius * 0.60]], 16,
                     uv_scale=1.0, material=BRASS)
@@ -155,11 +167,11 @@ def colonnade_ring(radius: float = 13.0, columns: int = 20,
     not walkable and the ring's foundation is not a separate level.
     """
     out = STONE.MeshGroup()
-    # stepped foundation
-    out.add(M.lathe([[radius + 2.6, -1.6], [radius + 2.6, -0.9],
-                     [radius + 2.1, -0.9], [radius + 2.1, -0.35],
-                     [radius + 1.7, -0.35], [radius + 1.7, 0.0],
-                     [0.0, 0.0]], 40, uv_scale=0.7, material=ASHLAR))
+    # A battered foundation, not a stepped one: read through the water, the
+    # steps break into dark wedges against the lake surface.
+    out.add(M.lathe([[radius + 2.7, -2.4], [radius + 2.3, -1.2],
+                     [radius + 1.9, -0.4], [radius + 1.7, 0.0],
+                     [0.0, 0.0]], 44, uv_scale=0.7, material=ASHLAR))
     # the deck a player walks on
     deck = M.lathe([[radius + 1.7, 0.0], [radius + 1.7, 0.16],
                     [radius * 0.42, 0.16]], 40, uv_scale=0.6, material=MARBLE)
@@ -274,7 +286,7 @@ def cliff_house(seed: int = 0, width: float = 5.0, depth: float = 5.6,
     # timber upper floor jettied out over the street, as the panel shows
     jetty = M.box((width + 0.7, storey * 0.92, depth * 0.55),
                   center=(0.0, total - storey * 0.5, depth * 0.30),
-                  material=TIMBER_WARM)
+                  material=TIMBER)
     out.add(jetty)
     roof = M.gable_roof(width + 0.9, depth + 0.9, 1.9, overhang=0.4,
                         material=SLATE)
@@ -374,7 +386,7 @@ def citadel_block(seed: int = 0, width: float = 26.0, depth: float = 18.0,
 
 
 def pavilion(radius: float = 4.0, height: float = 4.6, columns: int = 10,
-             seed: int = 0) -> STONE.MeshGroup:
+             seed: int = 0, dome: bool = True) -> STONE.MeshGroup:
     """Open colonnaded pavilion under a gilded dome.
 
     The toolkit's `stonework.rotunda` is the same idea in Amberwood's timber
@@ -397,9 +409,10 @@ def pavilion(radius: float = 4.0, height: float = 4.6, columns: int = 10,
     out.add(M.lathe([[radius + 0.55, height + 0.72], [radius + 0.55, height + 1.10],
                      [radius + 0.30, height + 1.16], [radius + 0.30, height + 1.34],
                      [0.0, height + 1.38]], 20, uv_scale=0.8, material=ASHLAR))
-    out.add(gilded_dome(radius * 0.94, radius * 1.05)
-            .translate(0.0, height + 1.34, 0.0))
-    out.add(finial(1.0).translate(0.0, height + 1.34 + radius * 1.05, 0.0))
+    if dome:
+        out.add(gilded_dome(radius * 0.94, radius * 1.05)
+                .translate(0.0, height + 1.34, 0.0))
+        out.add(finial(1.0).translate(0.0, height + 1.34 + radius * 1.05, 0.0))
     return out
 
 

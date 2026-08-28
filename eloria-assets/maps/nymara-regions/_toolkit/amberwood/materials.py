@@ -92,6 +92,11 @@ SPECS: tuple[MaterialSpec, ...] = (
     MaterialSpec("alpine_turf", "alpine_turf", roughness=0.94),
     MaterialSpec("water_lake", "water_lake", roughness=0.13,
                  base_color=(1.0, 1.0, 1.0, 0.84), alpha_mode="BLEND"),
+    # The mirror-sphere: the same crystal, darkened and polished, so it reads
+    # as a polished dark mirror rather than a bright blue ball.
+    MaterialSpec("mirror_glass", "blue_crystal", roughness=0.05, metallic=0.35,
+                 base_color=(0.30, 0.38, 0.50, 1.0),
+                 emissive=(0.012, 0.030, 0.058)),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}

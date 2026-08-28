@@ -32,7 +32,7 @@ TIMBER_MAT = L.TIMBER
 LAKE = REG.LAKE_LEVEL
 
 # Spruce stop well below the snow: an alpine belt, not a forest.
-TREE_LINE = 108.0
+TREE_LINE = 118.0
 
 
 # --------------------------------------------------------------------- water
@@ -114,7 +114,7 @@ def populate_citadel(build: RegionBuild, seed: int = 20260828) -> None:
     # -- the orrery, the region's crowning landmark ------------------------
     build.add_mesh("Mirrorhold_Armillary", L.armillary(4.6 * LOCAL, seed=seed + 3))
     x, z = ANCHORS["orrery"]
-    y = LEVEL["orrery"] + 7.2 * LOCAL
+    y = LEVEL["orrery"] + 6.9 * LOCAL
     build.place(Placement("Landmark_Orrery", "Mirrorhold_Armillary", (x, y, z),
                           0.0, 1.0, collides=True, kind="landmark",
                           landmark="orrery"))
@@ -122,9 +122,9 @@ def populate_citadel(build: RegionBuild, seed: int = 20260828) -> None:
                   (x, y, z))
     # the drum it stands on
     build.add_mesh("Mirrorhold_OrreryDrum", L.pavilion(
-        radius=7.0 * LOCAL, height=5.0, columns=14, seed=seed + 5))
+        radius=6.0 * LOCAL, height=4.6, columns=16, seed=seed + 5, dome=False))
     build.place(Placement("Landmark_OrreryDrum", "Mirrorhold_OrreryDrum",
-                          (x, LEVEL["orrery"], z), 0.0, 1.0, collides=True,
+                          _ground(t, x, z), 0.0, 1.0, collides=True,
                           kind="landmark"))
     t.mark_blocked_disc((x, z), 18.0 * LOCAL)
 
@@ -173,7 +173,7 @@ def populate_citadel(build: RegionBuild, seed: int = 20260828) -> None:
                                                       seed=seed + 17))
     gx, gz = ANCHORS["citadel_gate"]
     build.place(Placement("Landmark_GateWall", "Mirrorhold_GateWall",
-                          (gx, LEVEL["citadel_gate"], gz + 9.0 * LOCAL), 0.0, 1.0,
+                          _ground(t, gx, gz + 9.0 * LOCAL), 0.0, 1.0,
                           collides=True, kind="landmark",
                           landmark="gate"))
     _add_landmark(build, "gate", "The Lens Gate", "Landmark_GateWall", "structure",
@@ -182,8 +182,8 @@ def populate_citadel(build: RegionBuild, seed: int = 20260828) -> None:
     for side in (-1.0, 1.0):
         build.place(Placement(f"Landmark_GateWing_{int(side)}",
                               "Mirrorhold_GateWall",
-                              (gx + side * 26.0 * LOCAL, LEVEL["citadel_gate"],
-                               gz + 9.0 * LOCAL),
+                              _ground(t, gx + side * 26.0 * LOCAL,
+                                      gz + 9.0 * LOCAL),
                               0.0, 0.8, collides=True, 
                               kind="landmark"))
 
@@ -199,7 +199,7 @@ def populate_citadel(build: RegionBuild, seed: int = 20260828) -> None:
                           landmark="rose-gallery"))
     build.place(Placement("Landmark_RoseWindow", "Mirrorhold_RoseWindow",
                           (rx, LEVEL["citadel_court"] + 6.0,
-                           rz + 5.2 * LOCAL), 0.0, 1.0,
+                           rz + 5.9 * LOCAL), 0.0, 1.0,
                           collides=False, kind="landmark"))
     _add_landmark(build, "rose-gallery", "The Rose Gallery", "Landmark_Gallery",
                   "structure", (rx, LEVEL["citadel_court"] + 9.2, rz))
@@ -229,7 +229,7 @@ def populate_city(build: RegionBuild, seed: int = 20260828) -> None:
     build.add_mesh("Mirrorhold_Fountain", STONE.fountain(4.2 * LOCAL, seed + 31))
     px, pz = ANCHORS["fountain_plaza"]
     build.place(Placement("Landmark_Fountain", "Mirrorhold_Fountain",
-                          (px, LEVEL["fountain_plaza"], pz), 0.0, 1.0,
+                          _ground(t, px, pz), 0.0, 1.0,
                           collides=True, kind="landmark", landmark="plaza"))
     _add_landmark(build, "plaza", "The Fountain Plaza", "Landmark_Fountain",
                   "feature", (px, LEVEL["fountain_plaza"], pz))
@@ -240,14 +240,14 @@ def populate_city(build: RegionBuild, seed: int = 20260828) -> None:
         lx = px + math.cos(angle) * 15.0 * LOCAL
         lz = pz + math.sin(angle) * 15.0 * LOCAL
         build.place(Placement(f"Prop_PlazaLamp_{index}", "Mirrorhold_Lamp",
-                              (lx, LEVEL["fountain_plaza"], lz),
+                              _ground(t, lx, lz),
                               0.0, 1.0, collides=True, kind="prop"))
     for index in range(4):
         angle = math.pi * 0.5 * index + math.pi * 0.25
         sx = px + math.cos(angle) * 11.0 * LOCAL
         sz = pz + math.sin(angle) * 11.0 * LOCAL
         build.place(Placement(f"Landmark_PlazaStatue_{index}", "Mirrorhold_Statue",
-                              (sx, LEVEL["fountain_plaza"], sz),
+                              _ground(t, sx, sz),
                               _face((sx, sz), (px, pz)), 1.0,
                               collides=True, kind="landmark"))
     t.mark_blocked_disc((px, pz), 20.0 * LOCAL)
@@ -261,13 +261,13 @@ def populate_city(build: RegionBuild, seed: int = 20260828) -> None:
     for index in range(5):
         chx = cx + (index - 2) * 8.0 * LOCAL
         build.place(Placement(f"Landmark_Channel_{index}", "Mirrorhold_Channel",
-                              (chx, LEVEL["canal_district"] + 0.2, cz),
+                              _ground(t, chx, cz, sink=-0.2),
                               math.pi * 0.5, 1.0, collides=True, kind="landmark"))
     for index in range(3):
         wx = cx + (index - 1) * 12.0 * LOCAL
         wz = cz + 15.0 * LOCAL
         build.place(Placement(f"Landmark_Fall_{index}", "Mirrorhold_Waterfall",
-                              (wx, LEVEL["canal_district"], wz),
+                              _ground(t, wx, wz),
                               0.0, 1.0, collides=False, kind="landmark"))
     _add_landmark(build, "canal-district", "The Canal Terraces",
                   "Landmark_Channel_2", "district",
@@ -285,7 +285,7 @@ def populate_city(build: RegionBuild, seed: int = 20260828) -> None:
              ANCHORS["terrace_overlook"][1] + 13.0 * LOCAL,
              LEVEL["upper_terrace"] - 6.0, 0.0))):
         build.place(Placement(f"Landmark_Retaining_{index}", "Mirrorhold_Retaining",
-                              (wx, level - 6.0, wz), rot, 1.0,
+                              _ground(t, wx, wz, sink=6.0), rot, 1.0,
                               collides=True, kind="landmark"))
 
     # -- the aqueduct ------------------------------------------------------
@@ -293,7 +293,7 @@ def populate_city(build: RegionBuild, seed: int = 20260828) -> None:
                                                          8.0, seed + 43))
     ax, az = ANCHORS["aqueduct"]
     build.place(Placement("Landmark_Aqueduct", "Mirrorhold_Aqueduct",
-                          (ax, LEVEL["canal_district"] - 4.0, az),
+                          _ground(t, ax, az, sink=1.0),
                           math.pi * 0.5, 1.0, collides=True, kind="landmark",
                           landmark="aqueduct"))
     _add_landmark(build, "aqueduct", "The Meltwater Aqueduct",
@@ -306,7 +306,7 @@ def populate_city(build: RegionBuild, seed: int = 20260828) -> None:
                                                      height=4.6, columns=10,
                                                      seed=seed + 47))
     build.place(Placement("Landmark_Overlook", "Mirrorhold_Pavilion",
-                          (ox, LEVEL["upper_terrace"] - 6.0, oz), 0.0, 1.0,
+                          _ground(t, ox, oz), 0.0, 1.0,
                           collides=True, kind="landmark",
                           landmark="overlook"))
     _add_landmark(build, "overlook", "The North Overlook", "Landmark_Overlook",
@@ -316,8 +316,7 @@ def populate_city(build: RegionBuild, seed: int = 20260828) -> None:
     for index in range(3):
         bx = ox + (index - 1) * 18.0 * LOCAL
         build.place(Placement(f"Prop_OverlookRail_{index}", "Mirrorhold_Balustrade",
-                              (bx, LEVEL["upper_terrace"] - 6.0,
-                               oz - 11.0 * LOCAL), 0.0, 1.0,
+                              _ground(t, bx, oz - 11.0 * LOCAL), 0.0, 1.0,
                               collides=True, kind="prop"))
 
     # -- the stepped cliff town -------------------------------------------
@@ -336,10 +335,11 @@ def populate_city(build: RegionBuild, seed: int = 20260828) -> None:
         for slot in range(5):
             hx = sx + (slot - 2) * 5.4 * LOCAL
             hz = sz + (0.6 if slot % 2 else -0.6) * LOCAL
+            gx_, gy_, gz_ = _ground(t, hx, hz, sink=0.35)
             build.place(Placement(
                 f"Building_CliffHouse_{count}",
                 f"Mirrorhold_House_{(shelf + slot) % 4}",
-                (hx, level, hz), float(rng.uniform(-0.10, 0.10)),
+                (gx_, gy_, gz_), float(rng.uniform(-0.10, 0.10)),
                 float(rng.uniform(0.94, 1.06)), collides=True,
                 kind="building"))
             count += 1
@@ -352,7 +352,7 @@ def populate_city(build: RegionBuild, seed: int = 20260828) -> None:
     build.add_mesh("Mirrorhold_Stair", M.stairs(7.0 * LOCAL, 0.19, 0.34, 34,
                                                 material=ASHLAR_MAT))
     build.place(Placement("Landmark_EastStair", "Mirrorhold_Stair",
-                          (ex, LEVEL["mid_town"] - 6.5, ez + 8.0 * LOCAL),
+                          _ground(t, ex, ez + 8.0 * LOCAL),
                           0.0, 1.0, collides=True, walk_surface=True,
                           kind="landmark", landmark="east-stair"))
     _add_landmark(build, "east-stair", "The East Stair", "Landmark_EastStair",
@@ -421,7 +421,7 @@ def populate_lake(build: RegionBuild, seed: int = 20260828) -> None:
     build.add_mesh("Mirrorhold_Watchtower", ARCH.watchtower(15.0, seed + 69,
                                                             2.1 * LOCAL))
     build.place(Placement("Landmark_SouthWatch", "Mirrorhold_Watchtower",
-                          (sx, LEVEL["shore_terrace"] + 3.0, sz), 0.0, 1.0,
+                          _ground(t, sx, sz), 0.0, 1.0,
                           collides=True, kind="landmark", landmark="south-watch"))
     _add_landmark(build, "south-watch", "The South Watch", "Landmark_SouthWatch",
                   "structure", (sx, LEVEL["shore_terrace"] + 3.0, sz))
@@ -434,6 +434,154 @@ def populate_lake(build: RegionBuild, seed: int = 20260828) -> None:
         build.place(Placement(f"Landmark_{name}", "Mirrorhold_IsletRuin",
                               (x, y, z), float(rng.uniform(0.0, 6.28)), 1.0,
                               collides=True, kind="landmark"))
+
+
+# ---------------------------------------------------------------- outlands
+# Design-space sites for the second ring of places. The aerial concept is built
+# right across its middle band, not just at the citadel and the lake, so the
+# space the enlargement opens is filled with more authored places rather than
+# by spreading the same ones thinner.
+SATELLITES = [
+    # (id, label, design x, z, kind)
+    ("west-bench", "The West Bench", -26.0, -40.0, "hamlet"),
+    ("west-shrine", "The Wayside Shrine", -20.0, -2.0, "shrine"),
+    ("gorge-head", "Gorge Head", -30.0, 12.0, "post"),
+    ("lower-terrace", "The Lower Terrace", 6.0, 6.0, "hamlet"),
+    ("mid-bench", "The Mid Bench", 14.0, -26.0, "hamlet"),
+    ("cistern-yard", "The Cistern Yard", 34.0, -14.0, "yard"),
+    ("lens-works", "The Lens Works", 66.0, -26.0, "yard"),
+    ("east-bench", "The East Bench", 88.0, -8.0, "hamlet"),
+    ("east-post", "The East Post", 108.0, -14.0, "post"),
+    ("north-post", "The North Post", 34.0, -62.0, "post"),
+    ("upper-shrine", "The Upper Shrine", 64.0, -58.0, "shrine"),
+    ("quarry-shelf", "The Quarry Shelf", 96.0, -50.0, "yard"),
+    ("lake-north", "North Shore Row", 30.0, -4.0, "hamlet"),
+    ("lake-east", "East Shore Row", 92.0, 16.0, "hamlet"),
+    ("south-shore", "South Shore Row", 24.0, 44.0, "hamlet"),
+    ("west-shore", "West Shore Row", 4.0, 24.0, "hamlet"),
+    ("far-south", "The Far Watch", 62.0, 52.0, "post"),
+    ("far-west", "The West Watch", -34.0, -18.0, "post"),
+]
+
+
+def populate_outlands(build: RegionBuild, seed: int = 20260828) -> None:
+    """The second ring of places: benches, shrines, yards and watch posts.
+
+    Without these the middle band of the region is bare slope between the
+    citadel and the lake, which the aerial concept is not.
+    """
+    t = build.terrain
+    rng = N.Rng(seed + 611)
+
+    for variant in range(4):
+        if f"Mirrorhold_House_{variant}" not in build.meshes:
+            build.add_mesh(f"Mirrorhold_House_{variant}", L.cliff_house(
+                seed=seed + 51 + variant,
+                width=(4.4 + variant * 0.6) * LOCAL,
+                depth=(5.0 + (variant % 2) * 0.8) * LOCAL,
+                storeys=2 + variant % 3))
+
+    build.add_mesh("Mirrorhold_Shrine", L.pavilion(radius=2.6 * LOCAL, height=3.2,
+                                                   columns=8, seed=seed + 91))
+    build.add_mesh("Mirrorhold_Post", ARCH.watchtower(10.5, seed + 93, 1.7 * LOCAL))
+    build.add_mesh("Mirrorhold_YardWall", STONE.retaining_wall(14.0 * LOCAL, 3.6,
+                                                               seed + 95))
+    build.add_mesh("Mirrorhold_Bollard", STONE.column(2.2, 0.28, 8, ASHLAR_MAT))
+
+    for index, (site_id, label, dx, dz, kind) in enumerate(SATELLITES):
+        x, z = dx * SCALE, dz * SCALE
+        gx, gy, gz = _ground(t, x, z)
+        if gy < REG.LAKE_LEVEL + 1.0:
+            continue
+        t.mark_blocked_disc((x, z), 11.0 * LOCAL)
+
+        if kind == "hamlet":
+            for slot in range(4):
+                angle = math.pi * 2.0 * slot / 4 + float(rng.uniform(-0.3, 0.3))
+                radius = float(rng.uniform(6.0, 11.0)) * LOCAL
+                hx = x + math.cos(angle) * radius
+                hz = z + math.sin(angle) * radius
+                px, py, pz = _ground(t, hx, hz, sink=0.3)
+                build.place(Placement(
+                    f"Building_{site_id}_{slot}",
+                    f"Mirrorhold_House_{(index + slot) % 4}",
+                    (px, py, pz), _face((hx, hz), (x, z)),
+                    float(rng.uniform(0.9, 1.1)), collides=True,
+                    kind="building"))
+        elif kind == "shrine":
+            build.place(Placement(f"Landmark_{site_id}", "Mirrorhold_Shrine",
+                                  (gx, gy, gz), 0.0, 1.0, collides=True,
+                                  kind="landmark"))
+        elif kind == "post":
+            build.place(Placement(f"Landmark_{site_id}", "Mirrorhold_Post",
+                                  (gx, gy, gz), 0.0, 1.0, collides=True,
+                                  kind="landmark"))
+        else:  # yard
+            build.place(Placement(f"Landmark_{site_id}", "Mirrorhold_YardWall",
+                                  (gx, gy - 3.6, gz),
+                                  float(rng.uniform(0.0, 3.14)), 1.0,
+                                  collides=True, kind="landmark"))
+            for slot in range(3):
+                bx = x + float(rng.uniform(-8.0, 8.0)) * LOCAL
+                bz = z + float(rng.uniform(-8.0, 8.0)) * LOCAL
+                build.place(Placement(f"Prop_{site_id}_bollard_{slot}",
+                                      "Mirrorhold_Bollard",
+                                      _ground(t, bx, bz), 0.0,
+                                      float(rng.uniform(0.8, 1.2)),
+                                      collides=True, kind="prop"))
+
+        _add_landmark(build, site_id, label,
+                      f"Building_{site_id}_0" if kind == "hamlet"
+                      else f"Landmark_{site_id}",
+                      "settlement" if kind == "hamlet" else "feature",
+                      (gx, gy, gz))
+
+    # Retaining walls along the switchbacks, which is how the concept holds its
+    # roads onto the slope.
+    build.add_mesh("Mirrorhold_RoadWall", STONE.retaining_wall(18.0 * LOCAL, 4.4,
+                                                               seed + 97))
+    wall = 0
+    for name, points in REG.ROUTES.items():
+        pts = np.asarray(points, dtype=np.float64)
+        for index in range(pts.shape[0] - 1):
+            a, b = pts[index], pts[index + 1]
+            length = float(np.linalg.norm(b - a))
+            if length < 30.0:
+                continue
+            for s in range(1, int(length / 46.0) + 1):
+                p = a + (b - a) * (s * 46.0 / length)
+                direction = (b - a) / max(length, 1e-6)
+                # downhill side of the road
+                for side in (-1.0, 1.0):
+                    wx = p[0] - direction[1] * side * 7.5
+                    wz = p[1] + direction[0] * side * 7.5
+                    here = float(t.height_at(wx, wz))
+                    road = float(t.height_at(p[0], p[1]))
+                    if road - here < 2.6:
+                        continue
+                    yaw = math.atan2(direction[0], direction[1])
+                    build.place(Placement(
+                        f"Landmark_RoadWall_{wall}", "Mirrorhold_RoadWall",
+                        (wx, here, wz), yaw, 1.0, collides=True,
+                        kind="landmark"))
+                    wall += 1
+    build.notes.append(f"road retaining walls: {wall}")
+
+    # Waterfalls off the terrace edges, which the concept has everywhere.
+    build.add_mesh("Mirrorhold_CliffFall", STONE.waterfall(5.0 * LOCAL, 14.0,
+                                                           seed + 99))
+    falls = 0
+    for site in ((10.0, -34.0), (-14.0, -24.0), (40.0, -18.0), (72.0, -34.0),
+                 (86.0, -18.0), (58.0, -6.0), (20.0, -8.0), (100.0, -38.0)):
+        fx, fz = site[0] * SCALE, site[1] * SCALE
+        x_, y_, z_ = _ground(t, fx, fz)
+        if y_ < REG.LAKE_LEVEL + 6.0:
+            continue
+        build.place(Placement(f"Landmark_CliffFall_{falls}", "Mirrorhold_CliffFall",
+                              (x_, y_, z_), float(rng.uniform(0.0, 6.28)), 1.0,
+                              collides=False, kind="landmark"))
+        falls += 1
+    build.notes.append(f"cliff waterfalls: {falls}")
 
 
 # ------------------------------------------------------------- vegetation
@@ -455,15 +603,21 @@ def populate_vegetation(build: RegionBuild, seed: int = 20260828,
             if leaves.triangle_count:
                 build.add_mesh(f"Tree_Spruce_{tier}_{variant}_Canopy", leaves)
 
-    # density: turf only, below the tree line, away from built ground
+    # Turf carries the stands, and spruce also take hold on the gentler scree,
+    # which is what the concept shows: dark conifer across the whole middle
+    # band, not a lawn with a tree line drawn on it.
+    gy, gx = np.gradient(t.height, REG.TERRAIN_CELL)
+    slope = np.hypot(gx, gy)
     density = (t.surface == TER.TURF).astype(np.float64)
-    density *= np.clip((TREE_LINE - t.height) / 30.0, 0.0, 1.0)
-    density *= np.clip((t.height - REG.LAKE_LEVEL - 3.0) / 8.0, 0.0, 1.0)
+    density += (t.surface == TER.ROCK) * np.clip(1.0 - slope / 0.55, 0.0, 1.0) * 0.85
+    density = np.clip(density, 0.0, 1.0)
+    density *= np.clip((TREE_LINE - t.height) / 26.0, 0.0, 1.0)
+    density *= np.clip((t.height - REG.LAKE_LEVEL - 2.0) / 6.0, 0.0, 1.0)
     density[t.tree_block] = 0.0
-    grain = REG.region_noise(t, seed + 401, frequency=0.012)
-    density *= np.clip(grain * 1.8 - 0.35, 0.0, 1.0)
+    grain = REG.region_noise(t, seed + 401, frequency=0.010)
+    density *= np.clip(grain * 2.1 - 0.42, 0.0, 1.0)
 
-    points = scatter_points(t, density, spacing=7.4, seed=seed + 403)
+    points = scatter_points(t, density, spacing=6.0, seed=seed + 403)
     rng = N.Rng(seed + 405)
     count = 0
     for x, z in points:
@@ -529,7 +683,7 @@ def populate_dressing(build: RegionBuild, seed: int = 20260828) -> None:
         cz = hz + float(rng.uniform(-3.0, 3.0)) * LOCAL
         mesh = "Mirrorhold_Crate" if index % 2 else "Mirrorhold_Barrel"
         build.place(Placement(f"Prop_HarbourGoods_{index}", mesh,
-                              (cx, LEVEL["quay"], cz),
+                              _ground(t, cx, cz),
                               float(rng.uniform(0.0, 6.28)), 1.0,
                               collides=True, kind="prop"))
 
@@ -545,7 +699,7 @@ def populate_dressing(build: RegionBuild, seed: int = 20260828) -> None:
         for side in (-1.0, 1.0):
             build.place(Placement(
                 f"Prop_Brazier_{index}_{int(side)}", "Mirrorhold_Brazier",
-                (bx + side * 8.0 * LOCAL, level, bz + 6.0 * LOCAL),
+                _ground(t, bx + side * 8.0 * LOCAL, bz + 6.0 * LOCAL),
                 0.0, 1.0, collides=True, kind="prop"))
 
     # signposts where the roads meet

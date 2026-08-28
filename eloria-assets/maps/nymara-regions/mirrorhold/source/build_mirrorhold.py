@@ -57,6 +57,7 @@ MATERIALS = frozenset({
     'pale_ashlar', 'ashlar', 'veined_marble', 'cobble_paving', 'rubble_stone',
     'cliff_rock', 'slate_roof', 'gilt_brass', 'dark_iron', 'blue_crystal',
     'snow_pack', 'glacier_ice', 'alpine_turf', 'shore_shingle',
+    'mirror_glass',
     'timber_warm', 'timber_grey', 'timber_dark', 'carved_wood', 'woven_cloth',
     'bark_dark', 'foliage_green',
     # the braziers' coals: fire is warm even here
@@ -79,6 +80,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     POP.populate_citadel(build, seed)
     POP.populate_city(build, seed)
     POP.populate_lake(build, seed)
+    POP.populate_outlands(build, seed)
     POP.populate_vegetation(build, seed, lod=lod)
     if lod is None:
         POP.populate_dressing(build, seed)

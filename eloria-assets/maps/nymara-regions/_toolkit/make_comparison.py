@@ -6,13 +6,25 @@ import json
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFile
+
+# Every region package except Amberwood and Sunmane ships a detail board
+# truncated to 786,446 bytes, of which only the top row of five panels decodes.
+# Allow the partial decode so the sheet can still be built, and mark the panels
+# that are not really there rather than presenting grey as a comparison.
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 import regionpaths
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = regionpaths.package_root()
-CAPTURES = PACKAGE / "references" / "captures"
+# Prefer real client frames when the package has them: a sheet captioned "the
+# build" should show what the engine draws, not the authoring preview.
+_GODOT = PACKAGE / "references" / "godot-captures"
+_OFFLINE = PACKAGE / "references" / "captures"
+CAPTURES = _GODOT if _GODOT.is_dir() and any(_GODOT.glob("*.png")) else _OFFLINE
+BUILD_LABEL = ("build, real Godot frame" if CAPTURES is _GODOT
+               else "build, offline preview renderer")
 BOARD = PACKAGE / "references" / "00-concept-detail-board.png"
 AERIAL = PACKAGE / "references" / "01-concept-aerial-overview.png"
 OUT = PACKAGE / "references" / "comparisons"
@@ -40,6 +52,22 @@ def main() -> int:
     panel_h = board.height // 2
 
     cell = (560, 380)
+
+    def _decoded_rows(image: Image.Image) -> int:
+        """How many rows of a panel the truncated board actually supplied.
+
+        Beyond the truncation the decoder emits uniform rows, so the last row
+        with any variation is where the real image stops.
+        """
+        grey = image.convert("L")
+        width, height = grey.size
+        last = 0
+        for y in range(height):
+            row = grey.crop((0, y, width, y + 1)).getextrema()
+            if row[1] - row[0] > 6:
+                last = y + 1
+        return last
+
     rows = []
     for number in range(1, 11):
         column = (number - 1) % 5
@@ -56,11 +84,32 @@ def main() -> int:
             capture = capture.resize(cell, Image.LANCZOS)
         else:
             capture = Image.new("RGB", cell, (40, 30, 24))
+        raw = board.crop((column * panel_w, row * panel_h,
+                          (column + 1) * panel_w, (row + 1) * panel_h))
+        decoded = _decoded_rows(raw)
+        fraction = decoded / max(raw.height, 1)
+        if fraction < 0.02:
+            note = "concept UNAVAILABLE - board truncated"
+            concept = Image.new("RGB", cell, (34, 34, 38))
+            ImageDraw.Draw(concept).text(
+                (14, cell[1] // 2 - 6),
+                "this panel is not in the repository", fill=(190, 150, 90))
+        elif fraction < 0.9:
+            # show only what decoded, scaled to fit, rather than a strip of
+            # picture over a field of black that reads as empty concept art
+            note = f"concept {fraction * 100:.0f}% decoded - board truncated"
+            strip = raw.crop((0, 0, raw.width, decoded))
+            scaled_h = max(1, min(cell[1], int(cell[0] * strip.height / strip.width)))
+            strip = strip.resize((cell[0], scaled_h), Image.LANCZOS)
+            concept = Image.new("RGB", cell, (34, 34, 38))
+            concept.paste(strip, (0, (cell[1] - scaled_h) // 2))
+        else:
+            note = "concept"
         pair = Image.new("RGB", (cell[0] * 2 + 12, cell[1]), (16, 16, 18))
         pair.paste(concept, (0, 0))
         pair.paste(capture, (cell[0] + 12, 0))
         rows.append(_label(pair, f"Panel {number} - {caption}   "
-                                 f"[left: concept | right: Amberwood build]"))
+                                 f"[left: {note} | right: {BUILD_LABEL}]"))
 
     sheet_height = sum(r.height + 8 for r in rows)
     sheet = Image.new("RGB", (rows[0].width, sheet_height), (10, 10, 12))
@@ -86,7 +135,7 @@ def main() -> int:
     pair = Image.new("RGB", (width, a.height + b.height + 12), (10, 10, 12))
     pair.paste(a, (0, 0))
     pair.paste(b, (0, a.height + 12))
-    _label(pair, "Aerial overview  [top: concept | bottom: Amberwood build]").save(
+    _label(pair, f"Aerial overview  [top: concept | bottom: {BUILD_LABEL}]").save(
         OUT / "aerial-comparison.png")
     Image.open(OUT / "aerial-comparison.png").convert("RGB").save(
         OUT / "aerial-comparison.webp", "WEBP", quality=88, method=5)

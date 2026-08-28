@@ -1092,8 +1092,8 @@ def veined_marble(size: int = 512, seed: int = 421) -> TextureSet:
                                             * math.pi)) * 12.0, 0.0, 1.0)
     grain = N.tileable_fbm(size, 20, 4, seed=seed + 11)
     body = np.clip(0.62 + grain * 0.28, 0, 1)
-    color = _colorize(body, (0.0, (0.480, 0.512, 0.548)), (0.5, (0.640, 0.672, 0.706)),
-                      (1.0, (0.782, 0.806, 0.834)))
+    color = _colorize(body, (0.0, (0.398, 0.426, 0.462)), (0.5, (0.536, 0.566, 0.602)),
+                      (1.0, (0.664, 0.690, 0.722)))
     color = _mix(color, np.array([0.244, 0.286, 0.348]), vein * 0.62)
     color = _mix(color, np.array([0.352, 0.400, 0.462]), vein_fine * 0.30)
     height = np.clip(0.55 + grain * 0.20 - vein * 0.16, 0.0, 1.0)
@@ -1132,15 +1132,15 @@ def pale_ashlar(size: int = 512, seed: int = 431, courses: int = 6) -> TextureSe
                      0.0, 1.0)
 
     tone = np.clip(0.40 + block_value * 0.42 + grit * 0.18, 0, 1)
-    color = _colorize(tone, (0.0, (0.196, 0.208, 0.226)), (0.45, (0.318, 0.334, 0.356)),
-                      (0.78, (0.428, 0.446, 0.470)), (1.0, (0.528, 0.544, 0.566)))
+    color = _colorize(tone, (0.0, (0.168, 0.180, 0.198)), (0.45, (0.278, 0.294, 0.316)),
+                      (0.78, (0.386, 0.404, 0.428)), (1.0, (0.492, 0.510, 0.534)))
     color = _mix(color, np.array([0.148, 0.156, 0.172]), (1.0 - mortar) * 0.55)
     # pale lichen in the sheltered courses, and snow caught on upward ledges
     lichen = np.clip(N.tileable_fbm(size, 9, 4, seed=seed + 17) * 2.2 - 1.35, 0.0, 1.0)
     color = _mix(color, np.array([0.404, 0.452, 0.376]), lichen * 0.34)
     snow = np.clip(N.tileable_fbm(size, 6, 3, seed=seed + 23) * 2.0 - 1.30, 0.0, 1.0)
     snow = snow * np.clip(1.0 - row_fraction * 3.0, 0.0, 1.0)
-    color = _mix(color, np.array([0.870, 0.892, 0.918]), snow * 0.60)
+    color = _mix(color, np.array([0.780, 0.812, 0.848]), snow * 0.34)
     occlusion = np.clip(0.30 + height * 0.70, 0.0, 1.0)
     roughness = np.clip(0.88 - snow * 0.10 + lichen * 0.06, 0.05, 1.0)
     return TextureSet("pale_ashlar", _u8(color), pack_orm(occlusion, roughness),
@@ -1157,8 +1157,8 @@ def gilt_brass(size: int = 256, seed: int = 433) -> TextureSet:
     color = _colorize(body, (0.0, (0.220, 0.148, 0.052)), (0.45, (0.492, 0.352, 0.116)),
                       (0.8, (0.716, 0.556, 0.212)), (1.0, (0.868, 0.734, 0.372)))
     # verdigris collects where meltwater sits
-    patina = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 13) * 2.3 - 1.55, 0.0, 1.0)
-    color = _mix(color, np.array([0.204, 0.412, 0.348]), patina * 0.52)
+    patina = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 13) * 2.4 - 1.85, 0.0, 1.0)
+    color = _mix(color, np.array([0.246, 0.408, 0.352]), patina * 0.26)
     height = np.clip(0.5 + grain * 0.18 - patina * 0.14, 0.0, 1.0)
     occlusion = np.clip(0.66 + height * 0.34, 0.0, 1.0)
     roughness = np.clip(0.18 + patina * 0.56 + grain * 0.08, 0.04, 1.0)
