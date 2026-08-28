@@ -276,6 +276,18 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
         t.rect_terrace(centre, half_x * LOCAL, half_z * LOCAL,
                        float(t.height_at(*centre)), 0.0, surface)
 
+    # The mine needs a bench cut in front of its portal, not just a yard
+    # 21 m away: the adit sits on the flank of a dome, and a portal built up
+    # from y = 0 and dropped on that ground is swallowed by the hillside. The
+    # bench is centred between the portal and the yard and takes the yard's
+    # height, so the ground in front of the adit is flat while the hill it is
+    # cut into still rises behind it.
+    mine_x, mine_z = ANCHORS["mine"]
+    yard_x, yard_z = ANCHORS["mine_yard"]
+    bench = ((mine_x + yard_x) * 0.5, (mine_z + yard_z) * 0.5)
+    t.plateau(bench, 22.0 * LOCAL, float(t.height_at(yard_x, yard_z)),
+              edge=7.0 * LOCAL, surface=TER.PATH, seed=seed + 57)
+
     # Shrines, the mine yard and the camps: circular cut ground.
     for name, radius, surface in (
             ("gate_shrine", 15.0, TER.PAVING),

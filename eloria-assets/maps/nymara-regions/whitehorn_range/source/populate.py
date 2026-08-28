@@ -34,10 +34,20 @@ def _ground(build: RegionBuild, x: float, z: float) -> float:
 
 
 def _facing(from_xz, to_xz) -> float:
-    """Rotation about Y so a piece built facing -Z looks at `to_xz`."""
+    """Rotation about Y so a piece built facing -Z looks at `to_xz`.
+
+    `mesh.rotation_y(theta)` maps the -Z front normal to (-sin, 0, -cos), as
+    can be checked by rotating (0, 0, -1) through it: at 90 degrees the front
+    points at -X. So aiming the front along (dx, dz) needs
+    -sin = dx and -cos = dz, i.e. atan2(-dx, -dz).
+
+    The sign on dx matters: atan2(dx, -dz) mirrors every piece about the Z
+    axis, which pointed the mine portal, the ice cave and all three shrines
+    away from the things they are supposed to face.
+    """
     dx = to_xz[0] - from_xz[0]
     dz = to_xz[1] - from_xz[1]
-    return math.atan2(dx, -dz)
+    return math.atan2(-dx, -dz)
 
 
 def _place(build: RegionBuild, node: str, mesh_key: str, mesh, x: float,

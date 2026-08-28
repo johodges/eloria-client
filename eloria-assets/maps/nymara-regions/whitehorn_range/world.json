@@ -1010,8 +1010,8 @@
       "zeroMeansBlocked": true,
       "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Whitehorn's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 955837,
-    "walkableFraction": 0.7202
+    "walkableCells": 956433,
+    "walkableFraction": 0.7207
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1072,7 +1072,7 @@
       "type": "mine",
       "position": [
         288.0,
-        54.18,
+        50.33,
         -138.0
       ],
       "authority": "client-visual"
@@ -1707,19 +1707,19 @@
     "textures": 52,
     "accessors": 580,
     "bufferViews": 632,
-    "uniqueTriangles": 228148,
+    "uniqueTriangles": 228142,
     "uniqueVertices": 136782,
-    "glbBytes": 11881152,
-    "instancedTriangles": 681516,
+    "glbBytes": 11881108,
+    "instancedTriangles": 681510,
     "embeddedTextureBytes": 5451447,
     "placements": 1926,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 955837,
-      "blockedCells": 371267,
-      "walkableFraction": 0.7202,
+      "walkableCells": 956433,
+      "blockedCells": 370671,
+      "walkableFraction": 0.7207,
       "elevatedDecks": 3,
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
