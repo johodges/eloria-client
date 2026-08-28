@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema": 2,
   "objects": [
     {
       "id": "mirrorhold_lake_house",
@@ -174,48 +174,6 @@
       "model": "3dobjects/nymara/amberwood_tree.e3d",
       "texture": "3dobjects/nymara/amberwood_tree.png",
       "source": "source-obj/amberwood_tree.obj"
-    },
-    {
-      "id": "mirror_reed",
-      "model": "3dobjects/nymara/mirror_reed.e3d",
-      "texture": "3dobjects/nymara/mirror_reed.png",
-      "source": "source-obj/mirror_reed.obj"
-    },
-    {
-      "id": "crownwater_pearl",
-      "model": "3dobjects/nymara/crownwater_pearl.e3d",
-      "texture": "3dobjects/nymara/crownwater_pearl.png",
-      "source": "source-obj/crownwater_pearl.obj"
-    },
-    {
-      "id": "whitehorn_silverleaf",
-      "model": "3dobjects/nymara/whitehorn_silverleaf.e3d",
-      "texture": "3dobjects/nymara/whitehorn_silverleaf.png",
-      "source": "source-obj/whitehorn_silverleaf.obj"
-    },
-    {
-      "id": "ghost_orchid",
-      "model": "3dobjects/nymara/ghost_orchid.e3d",
-      "texture": "3dobjects/nymara/ghost_orchid.png",
-      "source": "source-obj/ghost_orchid.obj"
-    },
-    {
-      "id": "delta_lotus",
-      "model": "3dobjects/nymara/delta_lotus.e3d",
-      "texture": "3dobjects/nymara/delta_lotus.png",
-      "source": "source-obj/delta_lotus.obj"
-    },
-    {
-      "id": "stormglass_shard",
-      "model": "3dobjects/nymara/stormglass_shard.e3d",
-      "texture": "3dobjects/nymara/stormglass_shard.png",
-      "source": "source-obj/stormglass_shard.obj"
-    },
-    {
-      "id": "deep_lake_clay",
-      "model": "3dobjects/nymara/deep_lake_clay.e3d",
-      "texture": "3dobjects/nymara/deep_lake_clay.png",
-      "source": "source-obj/deep_lake_clay.obj"
     },
     {
       "id": "mirrorhold_market_crate",
@@ -766,166 +724,589 @@
   ],
   "objects_2d": [
     {
-      "id": "crownwater_pearl",
-      "definition": "2dobjects/nymara/crownwater_pearl.2d"
+      "id": "grass_tuft",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/grass_tuft.2d"
     },
     {
-      "id": "mirror_reed",
-      "definition": "2dobjects/nymara/mirror_reed.2d"
+      "id": "tall_grass",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/tall_grass.2d"
     },
     {
-      "id": "glacier_salt",
-      "definition": "2dobjects/nymara/glacier_salt.2d"
+      "id": "fern_frond",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/fern_frond.2d"
     },
     {
-      "id": "whitehorn_silverleaf",
-      "definition": "2dobjects/nymara/whitehorn_silverleaf.2d"
+      "id": "wildflower",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/wildflower.2d"
     },
     {
-      "id": "resonant_crystal",
-      "definition": "2dobjects/nymara/resonant_crystal.2d"
+      "id": "reed_tuft",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/reed_tuft.2d"
     },
     {
-      "id": "stormglass_shard",
-      "definition": "2dobjects/nymara/stormglass_shard.2d"
+      "id": "heather",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/heather.2d"
     },
     {
-      "id": "sunmane_seed",
-      "definition": "2dobjects/nymara/sunmane_seed.2d"
+      "id": "dry_brush",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/dry_brush.2d"
     },
     {
-      "id": "amber_resin",
-      "definition": "2dobjects/nymara/amber_resin.2d"
+      "id": "snow_tuft",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/snow_tuft.2d"
     },
     {
-      "id": "moor_peat",
-      "definition": "2dobjects/nymara/moor_peat.2d"
+      "id": "jungle_frond",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/jungle_frond.2d"
     },
     {
-      "id": "ghost_orchid",
-      "definition": "2dobjects/nymara/ghost_orchid.2d"
+      "id": "cattail",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/cattail.2d"
     },
     {
-      "id": "mangrove_sap",
-      "definition": "2dobjects/nymara/mangrove_sap.2d"
+      "id": "saltgrass",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/saltgrass.2d"
     },
     {
-      "id": "ssarathi_scale_moss",
-      "definition": "2dobjects/nymara/ssarathi_scale_moss.2d"
+      "id": "thistle_tuft",
+      "kind": "plant",
+      "definition": "2dobjects/nymara/flora/thistle_tuft.2d"
     },
     {
-      "id": "verdant_venom_bulb",
-      "definition": "2dobjects/nymara/verdant_venom_bulb.2d"
+      "id": "lily_pad",
+      "kind": "ground",
+      "definition": "2dobjects/nymara/flora/lily_pad.2d"
     },
     {
-      "id": "delta_lotus",
-      "definition": "2dobjects/nymara/delta_lotus.2d"
+      "id": "moss_patch",
+      "kind": "ground",
+      "definition": "2dobjects/nymara/flora/moss_patch.2d"
     },
     {
-      "id": "deep_lake_clay",
-      "definition": "2dobjects/nymara/deep_lake_clay.2d"
+      "id": "pebbles",
+      "kind": "ground",
+      "definition": "2dobjects/nymara/flora/pebbles.2d"
     },
     {
-      "id": "voltaic_geode",
-      "definition": "2dobjects/nymara/voltaic_geode.2d"
+      "id": "crystal_grit",
+      "kind": "ground",
+      "definition": "2dobjects/nymara/flora/crystal_grit.2d"
     }
   ],
-  "items": [
+  "harvestables": [
     {
-      "item_id": 1000,
+      "item_id": 1100,
       "image_id": 85,
-      "name": "crownwater_pearl",
-      "icon": "textures/nymara/icons/crownwater_pearl.png"
-    },
-    {
-      "item_id": 1001,
-      "image_id": 86,
-      "name": "mirror_reed",
+      "id": "mirror_reed",
+      "label": "Mirror Reed",
+      "kind": "fibre",
+      "tier": "common",
+      "regions": [
+        "mirrorhold",
+        "crownwater",
+        "four_gates"
+      ],
+      "model": "3dobjects/nymara/mirror_reed.e3d",
       "icon": "textures/nymara/icons/mirror_reed.png"
     },
     {
-      "item_id": 1002,
+      "item_id": 1101,
+      "image_id": 86,
+      "id": "crownwater_pearl",
+      "label": "Crownwater Pearl",
+      "kind": "aquatic",
+      "tier": "rare",
+      "regions": [
+        "crownwater",
+        "mirrorhold",
+        "manymouth_delta"
+      ],
+      "model": "3dobjects/nymara/crownwater_pearl.e3d",
+      "icon": "textures/nymara/icons/crownwater_pearl.png"
+    },
+    {
+      "item_id": 1102,
       "image_id": 87,
-      "name": "glacier_salt",
-      "icon": "textures/nymara/icons/glacier_salt.png"
-    },
-    {
-      "item_id": 1003,
-      "image_id": 88,
-      "name": "whitehorn_silverleaf",
-      "icon": "textures/nymara/icons/whitehorn_silverleaf.png"
-    },
-    {
-      "item_id": 1004,
-      "image_id": 89,
-      "name": "resonant_crystal",
-      "icon": "textures/nymara/icons/resonant_crystal.png"
-    },
-    {
-      "item_id": 1005,
-      "image_id": 90,
-      "name": "stormglass_shard",
-      "icon": "textures/nymara/icons/stormglass_shard.png"
-    },
-    {
-      "item_id": 1006,
-      "image_id": 91,
-      "name": "sunmane_seed",
-      "icon": "textures/nymara/icons/sunmane_seed.png"
-    },
-    {
-      "item_id": 1007,
-      "image_id": 92,
-      "name": "amber_resin",
-      "icon": "textures/nymara/icons/amber_resin.png"
-    },
-    {
-      "item_id": 1008,
-      "image_id": 93,
-      "name": "moor_peat",
-      "icon": "textures/nymara/icons/moor_peat.png"
-    },
-    {
-      "item_id": 1009,
-      "image_id": 94,
-      "name": "ghost_orchid",
-      "icon": "textures/nymara/icons/ghost_orchid.png"
-    },
-    {
-      "item_id": 1010,
-      "image_id": 95,
-      "name": "mangrove_sap",
-      "icon": "textures/nymara/icons/mangrove_sap.png"
-    },
-    {
-      "item_id": 1011,
-      "image_id": 96,
-      "name": "ssarathi_scale_moss",
-      "icon": "textures/nymara/icons/ssarathi_scale_moss.png"
-    },
-    {
-      "item_id": 1012,
-      "image_id": 97,
-      "name": "verdant_venom_bulb",
-      "icon": "textures/nymara/icons/verdant_venom_bulb.png"
-    },
-    {
-      "item_id": 1013,
-      "image_id": 98,
-      "name": "delta_lotus",
-      "icon": "textures/nymara/icons/delta_lotus.png"
-    },
-    {
-      "item_id": 1014,
-      "image_id": 99,
-      "name": "deep_lake_clay",
+      "id": "deep_lake_clay",
+      "label": "Deep Lake Clay",
+      "kind": "mineral",
+      "tier": "common",
+      "regions": [
+        "mirrorhold",
+        "crownwater",
+        "westhaven",
+        "manymouth_delta",
+        "amethyst_barrens"
+      ],
+      "model": "3dobjects/nymara/deep_lake_clay.e3d",
       "icon": "textures/nymara/icons/deep_lake_clay.png"
     },
     {
-      "item_id": 1015,
-      "image_id": 100,
-      "name": "voltaic_geode",
+      "item_id": 1103,
+      "image_id": 88,
+      "id": "delta_lotus",
+      "label": "Delta Lotus",
+      "kind": "flora",
+      "tier": "uncommon",
+      "regions": [
+        "manymouth_delta",
+        "verdant_stair",
+        "ssarathi_ruins",
+        "westhaven",
+        "mirrorhold"
+      ],
+      "model": "3dobjects/nymara/delta_lotus.e3d",
+      "icon": "textures/nymara/icons/delta_lotus.png"
+    },
+    {
+      "item_id": 1104,
+      "image_id": 89,
+      "id": "ghost_orchid",
+      "label": "Ghost Orchid",
+      "kind": "flora",
+      "tier": "rare",
+      "regions": [
+        "amberwood",
+        "grey_moors",
+        "verdant_stair"
+      ],
+      "model": "3dobjects/nymara/ghost_orchid.e3d",
+      "icon": "textures/nymara/icons/ghost_orchid.png"
+    },
+    {
+      "item_id": 1105,
+      "image_id": 90,
+      "id": "glacier_salt",
+      "label": "Glacier Salt",
+      "kind": "mineral",
+      "tier": "common",
+      "regions": [
+        "whitehorn_range",
+        "crownwater",
+        "westhaven"
+      ],
+      "model": "3dobjects/nymara/glacier_salt.e3d",
+      "icon": "textures/nymara/icons/glacier_salt.png"
+    },
+    {
+      "item_id": 1106,
+      "image_id": 91,
+      "id": "mangrove_sap",
+      "label": "Mangrove Sap",
+      "kind": "resin",
+      "tier": "uncommon",
+      "regions": [
+        "manymouth_delta",
+        "westhaven",
+        "grey_moors"
+      ],
+      "model": "3dobjects/nymara/mangrove_sap.e3d",
+      "icon": "textures/nymara/icons/mangrove_sap.png"
+    },
+    {
+      "item_id": 1107,
+      "image_id": 92,
+      "id": "moor_peat",
+      "label": "Moor Peat",
+      "kind": "fuel",
+      "tier": "common",
+      "regions": [
+        "grey_moors",
+        "amberwood",
+        "westhaven",
+        "whitehorn_range"
+      ],
+      "model": "3dobjects/nymara/moor_peat.e3d",
+      "icon": "textures/nymara/icons/moor_peat.png"
+    },
+    {
+      "item_id": 1108,
+      "image_id": 93,
+      "id": "resonant_crystal",
+      "label": "Resonant Crystal",
+      "kind": "crystal",
+      "tier": "rare",
+      "regions": [
+        "amethyst_barrens",
+        "four_gates",
+        "whitehorn_range"
+      ],
+      "model": "3dobjects/nymara/resonant_crystal.e3d",
+      "icon": "textures/nymara/icons/resonant_crystal.png"
+    },
+    {
+      "item_id": 1109,
+      "image_id": 94,
+      "id": "ssarathi_scale_moss",
+      "label": "Ssarathi Scale Moss",
+      "kind": "flora",
+      "tier": "uncommon",
+      "regions": [
+        "ssarathi_ruins",
+        "verdant_stair",
+        "manymouth_delta"
+      ],
+      "model": "3dobjects/nymara/ssarathi_scale_moss.e3d",
+      "icon": "textures/nymara/icons/ssarathi_scale_moss.png"
+    },
+    {
+      "item_id": 1110,
+      "image_id": 95,
+      "id": "stormglass_shard",
+      "label": "Stormglass Shard",
+      "kind": "crystal",
+      "tier": "uncommon",
+      "regions": [
+        "amethyst_barrens",
+        "sunmane_steppe",
+        "whitehorn_range",
+        "four_gates"
+      ],
+      "model": "3dobjects/nymara/stormglass_shard.e3d",
+      "icon": "textures/nymara/icons/stormglass_shard.png"
+    },
+    {
+      "item_id": 1111,
+      "image_id": 96,
+      "id": "sunmane_seed",
+      "label": "Sunmane Seed",
+      "kind": "crop",
+      "tier": "common",
+      "regions": [
+        "sunmane_steppe",
+        "amberwood",
+        "four_gates"
+      ],
+      "model": "3dobjects/nymara/sunmane_seed.e3d",
+      "icon": "textures/nymara/icons/sunmane_seed.png"
+    },
+    {
+      "item_id": 1112,
+      "image_id": 97,
+      "id": "verdant_venom_bulb",
+      "label": "Verdant Venom Bulb",
+      "kind": "flora",
+      "tier": "rare",
+      "regions": [
+        "verdant_stair",
+        "ssarathi_ruins",
+        "manymouth_delta"
+      ],
+      "model": "3dobjects/nymara/verdant_venom_bulb.e3d",
+      "icon": "textures/nymara/icons/verdant_venom_bulb.png"
+    },
+    {
+      "item_id": 1113,
+      "image_id": 98,
+      "id": "voltaic_geode",
+      "label": "Voltaic Geode",
+      "kind": "crystal",
+      "tier": "rare",
+      "regions": [
+        "amethyst_barrens",
+        "sunmane_steppe",
+        "ssarathi_ruins"
+      ],
+      "model": "3dobjects/nymara/voltaic_geode.e3d",
       "icon": "textures/nymara/icons/voltaic_geode.png"
+    },
+    {
+      "item_id": 1114,
+      "image_id": 99,
+      "id": "whitehorn_silverleaf",
+      "label": "Whitehorn Silverleaf",
+      "kind": "herb",
+      "tier": "uncommon",
+      "regions": [
+        "whitehorn_range",
+        "amethyst_barrens",
+        "grey_moors"
+      ],
+      "model": "3dobjects/nymara/whitehorn_silverleaf.e3d",
+      "icon": "textures/nymara/icons/whitehorn_silverleaf.png"
+    },
+    {
+      "item_id": 1115,
+      "image_id": 100,
+      "id": "amber_resin",
+      "label": "Amber Resin",
+      "kind": "resin",
+      "tier": "uncommon",
+      "regions": [
+        "amberwood",
+        "sunmane_steppe",
+        "grey_moors"
+      ],
+      "model": "3dobjects/nymara/amber_resin.e3d",
+      "icon": "textures/nymara/icons/amber_resin.png"
+    },
+    {
+      "item_id": 1116,
+      "image_id": 101,
+      "id": "wayside_sage",
+      "label": "Wayside Sage",
+      "kind": "herb",
+      "tier": "common",
+      "regions": [
+        "four_gates",
+        "mirrorhold",
+        "crownwater",
+        "amberwood",
+        "grey_moors",
+        "westhaven",
+        "sunmane_steppe",
+        "verdant_stair"
+      ],
+      "model": "3dobjects/nymara/wayside_sage.e3d",
+      "icon": "textures/nymara/icons/wayside_sage.png"
+    },
+    {
+      "item_id": 1117,
+      "image_id": 102,
+      "id": "steppe_wheat",
+      "label": "Steppe Wheat",
+      "kind": "crop",
+      "tier": "common",
+      "regions": [
+        "sunmane_steppe",
+        "amberwood",
+        "four_gates",
+        "westhaven"
+      ],
+      "model": "3dobjects/nymara/steppe_wheat.e3d",
+      "icon": "textures/nymara/icons/steppe_wheat.png"
+    },
+    {
+      "item_id": 1118,
+      "image_id": 103,
+      "id": "riverflax",
+      "label": "Riverflax",
+      "kind": "fibre",
+      "tier": "common",
+      "regions": [
+        "crownwater",
+        "mirrorhold",
+        "manymouth_delta",
+        "four_gates"
+      ],
+      "model": "3dobjects/nymara/riverflax.e3d",
+      "icon": "textures/nymara/icons/riverflax.png"
+    },
+    {
+      "item_id": 1119,
+      "image_id": 104,
+      "id": "moorcotton",
+      "label": "Moorcotton",
+      "kind": "fibre",
+      "tier": "common",
+      "regions": [
+        "grey_moors",
+        "westhaven",
+        "amberwood"
+      ],
+      "model": "3dobjects/nymara/moorcotton.e3d",
+      "icon": "textures/nymara/icons/moorcotton.png"
+    },
+    {
+      "item_id": 1120,
+      "image_id": 105,
+      "id": "hearthroot",
+      "label": "Hearthroot",
+      "kind": "crop",
+      "tier": "common",
+      "regions": [
+        "amberwood",
+        "verdant_stair",
+        "grey_moors",
+        "mirrorhold"
+      ],
+      "model": "3dobjects/nymara/hearthroot.e3d",
+      "icon": "textures/nymara/icons/hearthroot.png"
+    },
+    {
+      "item_id": 1121,
+      "image_id": 106,
+      "id": "barrow_bramble",
+      "label": "Barrow Bramble",
+      "kind": "flora",
+      "tier": "common",
+      "regions": [
+        "grey_moors",
+        "amberwood",
+        "whitehorn_range"
+      ],
+      "model": "3dobjects/nymara/barrow_bramble.e3d",
+      "icon": "textures/nymara/icons/barrow_bramble.png"
+    },
+    {
+      "item_id": 1122,
+      "image_id": 107,
+      "id": "lantern_cap",
+      "label": "Lantern Cap",
+      "kind": "fungus",
+      "tier": "uncommon",
+      "regions": [
+        "verdant_stair",
+        "ssarathi_ruins",
+        "manymouth_delta",
+        "amethyst_barrens",
+        "whitehorn_range"
+      ],
+      "model": "3dobjects/nymara/lantern_cap.e3d",
+      "icon": "textures/nymara/icons/lantern_cap.png"
+    },
+    {
+      "item_id": 1123,
+      "image_id": 108,
+      "id": "tidewrack_kelp",
+      "label": "Tidewrack Kelp",
+      "kind": "aquatic",
+      "tier": "common",
+      "regions": [
+        "westhaven",
+        "crownwater",
+        "manymouth_delta",
+        "mirrorhold"
+      ],
+      "model": "3dobjects/nymara/tidewrack_kelp.e3d",
+      "icon": "textures/nymara/icons/tidewrack_kelp.png"
+    },
+    {
+      "item_id": 1124,
+      "image_id": 109,
+      "id": "shorebank_shell",
+      "label": "Shorebank Shell",
+      "kind": "mineral",
+      "tier": "common",
+      "regions": [
+        "westhaven",
+        "manymouth_delta",
+        "crownwater"
+      ],
+      "model": "3dobjects/nymara/shorebank_shell.e3d",
+      "icon": "textures/nymara/icons/shorebank_shell.png"
+    },
+    {
+      "item_id": 1125,
+      "image_id": 110,
+      "id": "verdigris_bloom",
+      "label": "Verdigris Bloom",
+      "kind": "mineral",
+      "tier": "uncommon",
+      "regions": [
+        "whitehorn_range",
+        "amethyst_barrens",
+        "sunmane_steppe"
+      ],
+      "model": "3dobjects/nymara/verdigris_bloom.e3d",
+      "icon": "textures/nymara/icons/verdigris_bloom.png"
+    },
+    {
+      "item_id": 1126,
+      "image_id": 111,
+      "id": "bogiron_nodule",
+      "label": "Bog Iron Nodule",
+      "kind": "mineral",
+      "tier": "common",
+      "regions": [
+        "grey_moors",
+        "westhaven",
+        "manymouth_delta",
+        "amberwood"
+      ],
+      "model": "3dobjects/nymara/bogiron_nodule.e3d",
+      "icon": "textures/nymara/icons/bogiron_nodule.png"
+    },
+    {
+      "item_id": 1127,
+      "image_id": 112,
+      "id": "emberseam_coal",
+      "label": "Emberseam Coal",
+      "kind": "fuel",
+      "tier": "common",
+      "regions": [
+        "whitehorn_range",
+        "amethyst_barrens",
+        "sunmane_steppe",
+        "grey_moors"
+      ],
+      "model": "3dobjects/nymara/emberseam_coal.e3d",
+      "icon": "textures/nymara/icons/emberseam_coal.png"
+    },
+    {
+      "item_id": 1128,
+      "image_id": 113,
+      "id": "pale_quartz",
+      "label": "Pale Quartz",
+      "kind": "crystal",
+      "tier": "common",
+      "regions": [
+        "whitehorn_range",
+        "amethyst_barrens",
+        "verdant_stair",
+        "four_gates"
+      ],
+      "model": "3dobjects/nymara/pale_quartz.e3d",
+      "icon": "textures/nymara/icons/pale_quartz.png"
+    },
+    {
+      "item_id": 1129,
+      "image_id": 114,
+      "id": "sunstone_flint",
+      "label": "Sunstone Flint",
+      "kind": "mineral",
+      "tier": "common",
+      "regions": [
+        "sunmane_steppe",
+        "whitehorn_range",
+        "grey_moors",
+        "ssarathi_ruins"
+      ],
+      "model": "3dobjects/nymara/sunstone_flint.e3d",
+      "icon": "textures/nymara/icons/sunstone_flint.png"
+    },
+    {
+      "item_id": 1130,
+      "image_id": 115,
+      "id": "indigo_thistle",
+      "label": "Indigo Thistle",
+      "kind": "herb",
+      "tier": "uncommon",
+      "regions": [
+        "mirrorhold",
+        "sunmane_steppe",
+        "grey_moors",
+        "amethyst_barrens"
+      ],
+      "model": "3dobjects/nymara/indigo_thistle.e3d",
+      "icon": "textures/nymara/icons/indigo_thistle.png"
+    },
+    {
+      "item_id": 1131,
+      "image_id": 116,
+      "id": "cenote_watercress",
+      "label": "Cenote Watercress",
+      "kind": "flora",
+      "tier": "common",
+      "regions": [
+        "verdant_stair",
+        "ssarathi_ruins",
+        "crownwater",
+        "manymouth_delta"
+      ],
+      "model": "3dobjects/nymara/cenote_watercress.e3d",
+      "icon": "textures/nymara/icons/cenote_watercress.png"
     }
   ]
 }

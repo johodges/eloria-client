@@ -1,3 +1,5 @@
 newmtl whitehorn_silverleaf
 Kd 1 1 1
-map_Kd ../runtime/3dobjects/nymara/whitehorn_silverleaf.png
+d 1
+map_Kd whitehorn_silverleaf.png
+map_d whitehorn_silverleaf.png

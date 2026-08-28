@@ -27,5 +27,18 @@ Lands Binary Data is included in the Eloria data pack.
 - Replaced the generic essence economy with catalyst, resonant, and anchor materials.
 - Added four item atlases for original magical materials, focuses, charges, and Echoes.
 
+## 2026-08-28
+
+- Audited the harvestable layer and recorded the findings in `docs/harvestable-audit.md`.
+- Added `eloria-assets/tools/harvestables.py` as the single harvestable catalogue.
+- Rebuilt every harvest node model at the fidelity of the surrounding landmark kit.
+- Gave foliage harvestables alpha-tested, double-sided materials.
+- Added sixteen general-purpose harvestables covering the everyday crafting economy.
+- Wrote `harvestable.lst` and `entrable.lst` as the lowercase basenames the client looks up.
+- Scattered harvest nodes across each region instead of repeating four fixed coordinates.
+- Wrote ELM object and light coordinates in world units instead of height-map cells.
+- Added decorative 2D ground flora and the map writer support the client already had.
+- Moved harvestable item ids out of the equipment range and added `validate_harvestables.py`.
+
 Every later modification to an upstream source file must carry a prominent
 dated notice as required by section 3(c) of the client license.

@@ -1,0 +1,5 @@
+newmtl verdant_venom_bulb
+Kd 1 1 1
+d 1
+map_Kd verdant_venom_bulb.png
+map_d verdant_venom_bulb.png
