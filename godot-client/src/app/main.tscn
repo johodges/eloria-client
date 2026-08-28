@@ -248,7 +248,7 @@ unique_name_in_owner = true
 [node name="MapViewport" type="SubViewport" parent="GameView"]
 unique_name_in_owner = true
 size = Vector2i(512, 512)
-render_target_update_mode = 4
+render_target_update_mode = 0
 
 [node name="MapCamera" type="Camera3D" parent="GameView/MapViewport"]
 unique_name_in_owner = true
@@ -263,7 +263,7 @@ cull_mask = 5
 [node name="FullMapViewport" type="SubViewport" parent="GameView"]
 unique_name_in_owner = true
 size = Vector2i(768, 768)
-render_target_update_mode = 4
+render_target_update_mode = 0
 
 [node name="FullMapCamera" type="Camera3D" parent="GameView/FullMapViewport"]
 unique_name_in_owner = true
@@ -1872,7 +1872,7 @@ tooltip_text = "Drag to rotate; mouse wheel to zoom"
 
 [node name="Viewport" type="SubViewport" parent="CreationPanel/Columns/CharacterPreview"]
 size = Vector2i(430, 520)
-render_target_update_mode = 4
+render_target_update_mode = 0
 
 [node name="PreviewRoot" type="Node3D" parent="CreationPanel/Columns/CharacterPreview/Viewport"]
 unique_name_in_owner = true

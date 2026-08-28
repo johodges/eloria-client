@@ -10,6 +10,7 @@ extends Control
 @onready var create_gender: OptionButton = %CreateGender
 @onready var create_status: Label = %CreateStatus
 @onready var preview_container: SubViewportContainer = %CharacterPreview
+@onready var preview_viewport: SubViewport = $CreationPanel/Columns/CharacterPreview/Viewport
 @onready var preview_root: Node3D = %PreviewRoot
 @onready var preview_camera: Camera3D = %PreviewCamera
 @onready var host_edit: LineEdit = %Host
@@ -268,7 +269,14 @@ var _interaction_mode := "walk"
 var _hud_icon_regions: Dictionary = {}
 var _hud_active_atlas: Texture2D
 var _hud_inactive_atlas: Texture2D
-var _hud_button_state_signature := ""
+var _hud_button_state_mask := -1
+var _hud_state_buttons: Array[Button] = []
+var _minimap_refresh_msec := 0
+var _full_map_refresh_msec := 0
+var _preview_updates_enabled := true
+var _world_sync_queued := false
+var _actor_surface_samples: Dictionary = {}
+var _local_placement_logged := false
 var _hud_meter_order: Array[String] = ["mana", "food", "health", "load", "action", "experience"]
 var _hud_meter_visible: Dictionary = {
 	"mana": true, "food": true, "health": true,
@@ -293,6 +301,12 @@ const KEYBOARD_LOOKAHEAD_TILES := 4
 const KEYBOARD_REFRESH_MSEC := 360
 const GROUND_BAG_GET_ALL_TIMEOUT_MSEC := 1000
 const MINIMAP_DRAG_BORDER := 54.0
+# The minimap and the full map are extra renders of the whole 3D world through
+# their own cameras. Both used to redraw every frame, visible or not, which
+# tripled the client's raster and shadow cost for two top-down views that read
+# identically at a fraction of the rate.
+const MINIMAP_REFRESH_MSEC := 66
+const FULL_MAP_REFRESH_MSEC := 200
 const INVENTORY_MIN_SCALE := 0.65
 const INVENTORY_MAX_SCALE := 1.75
 const TILE_DIRECTIONS: Array[Vector2i] = [
@@ -465,7 +479,9 @@ func _bind_shared_world() -> void:
 	print_debug("world_binding stage=shared world=", gameplay_world)
 
 func _process(_delta: float) -> void:
+	_update_preview_viewport()
 	if game_view.visible:
+		_update_map_viewports()
 		_update_local_actor_follow()
 		_update_keyboard_movement()
 		_update_session_distance()
@@ -479,6 +495,32 @@ func _process(_delta: float) -> void:
 			if stats_panel.visible and stats_tabs.current_tab == 3:
 				_sync_session_experience()
 		_sync_hud_button_states()
+
+## Drives the two map SubViewports on demand instead of leaving them on
+## UPDATE_ALWAYS. Each requests a single redraw, so a hidden map costs nothing
+## and a visible one refreshes fast enough to read as live.
+func _update_map_viewports() -> void:
+	var now: int = Time.get_ticks_msec()
+	if minimap_frame.visible and now >= _minimap_refresh_msec:
+		_minimap_refresh_msec = now + MINIMAP_REFRESH_MSEC
+		map_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	if full_map.visible and map_image.visible and now >= _full_map_refresh_msec:
+		_full_map_refresh_msec = now + FULL_MAP_REFRESH_MSEC
+		full_map_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+
+## The character preview renders its own 3D scene. It only needs to run while
+## the creation panel is on screen.
+func _update_preview_viewport() -> void:
+	var wanted: bool = creation_panel.visible
+	if wanted == _preview_updates_enabled:
+		return
+	_preview_updates_enabled = wanted
+	preview_viewport.render_target_update_mode = (SubViewport.UPDATE_ALWAYS
+		if wanted else SubViewport.UPDATE_DISABLED)
+
+func _request_map_redraw() -> void:
+	_minimap_refresh_msec = 0
+	_full_map_refresh_msec = 0
 
 func _text_entry_active() -> bool:
 	var focus: Control = get_viewport().gui_get_focus_owner()
@@ -811,9 +853,11 @@ func _toggle_full_map() -> void:
 	_show_current_map_view()
 	full_map.show()
 	full_map.move_to_front()
+	_request_map_redraw()
 
 func _toggle_minimap() -> void:
 	minimap_frame.visible = not minimap_frame.visible
+	_request_map_redraw()
 
 func _toggle_console() -> void:
 	if console_panel.visible:
@@ -1489,6 +1533,11 @@ func _clear_world_presentation() -> void:
 		if is_instance_valid(bag_node):
 			bag_node.queue_free()
 	ground_bag_nodes.clear()
+	_actor_surface_samples.clear()
+	# The parsed model and animation caches are only worth holding for the
+	# session they were built in.
+	GlbSceneCache.clear()
+	NativeAnimationImporter.clear()
 	world_loader.unload_world()
 	loaded_server_map = ""
 	full_map.hide()
@@ -1928,8 +1977,11 @@ func _on_state_changed(path: StringName) -> void:
 			_load_server_map()
 			_sync_world()
 		&"actors", &"local_actor":
-			_sync_world()
-			_sync_selection()
+			# A busy map emits this once per actor packet. Rebuilding the whole
+			# actor presentation for each of them repeated the same work many
+			# times inside a single frame; coalescing collapses a burst into one
+			# pass without delaying anything past the frame it arrived in.
+			_queue_world_sync()
 		&"chat":
 			_capture_perks_from_chat()
 			_sync_chat()
@@ -1971,6 +2023,19 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_knowledge()
 			_sync_manufacturing()
 
+func _queue_world_sync() -> void:
+	if _world_sync_queued:
+		return
+	_world_sync_queued = true
+	_flush_world_sync.call_deferred()
+
+func _flush_world_sync() -> void:
+	if not _world_sync_queued:
+		return
+	_world_sync_queued = false
+	_sync_world()
+	_sync_selection()
+
 func _load_server_map() -> void:
 	if AppState.current_map.is_empty() or loaded_server_map == AppState.current_map:
 		return
@@ -1982,6 +2047,8 @@ func _load_server_map() -> void:
 			AppState.current_map, normalized_map, map_registry.keys()])
 		return
 	loaded_server_map = AppState.current_map
+	_actor_surface_samples.clear()
+	_local_placement_logged = false
 	_current_map_display_name = _friendly_map_name(AppState.current_map)
 	adapter = CoordinateAdapter.new(entry.get("coordinateTransform", {}))
 	for node in actor_nodes.values():
@@ -2013,6 +2080,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	map_title.text = _current_map_display_name.to_upper()
 	current_map_button.text = "Current: " + _current_map_display_name
 	_configure_full_map(manifest)
+	_request_map_redraw()
 	_sync_world()
 	_sync_ground_bags()
 	_snap_all_actors_to_surface.call_deferred()
@@ -2037,7 +2105,7 @@ func _snap_all_actors_to_surface() -> void:
 	for actor_value: Variant in actor_nodes.values():
 		var actor: ReplicatedActor3D = actor_value as ReplicatedActor3D
 		if is_instance_valid(actor):
-			_place_actor_on_surface(actor)
+			_place_actor_on_surface(actor, true)
 
 func _snap_all_ground_bags_to_surface() -> void:
 	await get_tree().physics_frame
@@ -2056,6 +2124,7 @@ func _sync_world() -> void:
 		if not AppState.actors.has(id):
 			actor_nodes[id].queue_free()
 			actor_nodes.erase(id)
+			_actor_surface_samples.erase(id)
 	for id in AppState.actors:
 		var dto: Dictionary = _presentation_dto(AppState.actors[id])
 		if actor_nodes.has(id):
@@ -2076,7 +2145,7 @@ func _sync_world() -> void:
 			push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 		node.apply_server_state(dto, adapter, true)
 		node.set_nameplate_visible(int(id) != AppState.local_actor_id)
-		_place_actor_on_surface(node)
+		_place_actor_on_surface(node, true)
 	actor_label.text = "Actors: %d" % AppState.actors.size()
 	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id):
 		_update_local_actor_follow()
@@ -2108,16 +2177,28 @@ func _update_local_actor_follow() -> void:
 	elif _minimap_orientation == "viewport_up":
 		minimap_heading = deg_to_rad(camera_rig.yaw_degrees)
 	map_camera.rotation = Vector3(-PI * 0.5, minimap_heading, 0.0)
-	_layout_minimap_cardinals()
+	# Repositioning the four compass letters is only observable while the
+	# minimap is on screen.
+	if minimap_frame.visible:
+		_layout_minimap_cardinals()
 	# Render above the actor and ignore depth so roofs/bridges cannot hide the
 	# local-position dot in either top-down map camera.
 	player_map_marker.global_position = focus_position + Vector3(0, 5.0, 0)
 	player_map_marker.visible = true
 
-func _place_actor_on_surface(actor: ReplicatedActor3D) -> void:
+## The ray sample only changes when the actor stands somewhere else, but this
+## used to fire for every actor on every actor packet - hundreds of physics
+## queries a second on a populated map. The sample is now cached per actor and
+## repeated only when its tile moves, or when the caller forces it after a map
+## load.
+func _place_actor_on_surface(actor: ReplicatedActor3D, force := false) -> void:
 	if not is_instance_valid(actor) or gameplay_world == null:
 		return
 	var actor_position: Vector3 = actor.server_target
+	var sample := Vector2(actor_position.x, actor_position.z)
+	if not force and _actor_surface_samples.get(actor.actor_id) == sample:
+		return
+	_actor_surface_samples[actor.actor_id] = sample
 	var ray_start: Vector3 = Vector3(actor_position.x, 400.0, actor_position.z)
 	var ray_end: Vector3 = Vector3(actor_position.x, -100.0, actor_position.z)
 	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
@@ -2127,7 +2208,11 @@ func _place_actor_on_surface(actor: ReplicatedActor3D) -> void:
 	if hit_position_value is Vector3:
 		var hit_position: Vector3 = hit_position_value as Vector3
 		actor.set_surface_height(hit_position.y + 0.02)
-		if actor.actor_id == AppState.local_actor_id:
+		# render_diagnostics() walks the actor's whole subtree and builds a
+		# dictionary per mesh. Its arguments were evaluated on every placement
+		# even in release builds, so it is now a one-shot per map load.
+		if actor.actor_id == AppState.local_actor_id and not _local_placement_logged:
+			_local_placement_logged = true
 			print_debug("local_actor_placement map=", AppState.current_map,
 				" actor_id=", actor.actor_id, " server_target=", actor_position,
 				" navigation_hit=", hit_position, " render=", actor.render_diagnostics(),
@@ -2976,6 +3061,11 @@ func _update_legacy_clock_and_compass() -> void:
 	compass_needle.rotation = deg_to_rad(-camera_rig.yaw_degrees)
 
 func _update_actor_resource_overlay() -> void:
+	if not (show_overhead_health.button_pressed or show_overhead_ether.button_pressed
+			or show_overhead_food.button_pressed or show_overhead_action.button_pressed):
+		if actor_resource_overlay.visible:
+			actor_resource_overlay.hide()
+		return
 	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	if not actor_value is Node3D or not is_instance_valid(actor_value as Node3D):
 		actor_resource_overlay.hide()
@@ -3059,31 +3149,43 @@ func _on_quickbar_mode_pressed(mode: String) -> void:
 func _sync_hud_button_states(force := false) -> void:
 	if _hud_icon_regions.is_empty():
 		return
+	# Runs every frame. Resolving eleven unique-name nodes and formatting a
+	# dictionary into a signature string each time allocated for nothing; the
+	# buttons are resolved once and the comparison is now a bitmask.
+	if _hud_state_buttons.is_empty():
+		_hud_state_buttons = [%WalkButton, %MapButton, %SitButton, %AttackButton,
+			%TradeButton, %InventoryButton, %StatsButton, %KnowledgeButton,
+			%ManufacturingButton, %ChatButton, %DisconnectButton]
 	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
 	var sitting: bool = bool(local_actor.get("sitting", false))
-	var states: Dictionary = {
-		%WalkButton: _interaction_mode == "walk" and not sitting,
-		%MapButton: full_map.visible,
-		%SitButton: sitting,
-		%AttackButton: _interaction_mode == "attack",
-		%TradeButton: _interaction_mode == "trade" or bool(AppState.trade.get("open", false)),
-		%InventoryButton: inventory_panel.visible,
-		%StatsButton: stats_panel.visible and stats_tabs.current_tab != 1,
-		%KnowledgeButton: stats_panel.visible and stats_tabs.current_tab == 1,
-		%ManufacturingButton: manufacturing_panel.visible,
-		%ChatButton: chat_input.has_focus(),
-		%DisconnectButton: AppState.connection_state == "connected"}
-	var signature: String = str(states.values())
-	if not force and signature == _hud_button_state_signature:
+	var stats_open: bool = stats_panel.visible
+	var stats_tab: int = stats_tabs.current_tab
+	var states: Array[bool] = [
+		_interaction_mode == "walk" and not sitting,
+		full_map.visible,
+		sitting,
+		_interaction_mode == "attack",
+		_interaction_mode == "trade" or bool(AppState.trade.get("open", false)),
+		inventory_panel.visible,
+		stats_open and stats_tab != 1,
+		stats_open and stats_tab == 1,
+		manufacturing_panel.visible,
+		chat_input.has_focus(),
+		AppState.connection_state == "connected"]
+	var mask: int = 0
+	for index: int in states.size():
+		if states[index]:
+			mask |= 1 << index
+	if not force and mask == _hud_button_state_mask:
 		return
-	_hud_button_state_signature = signature
-	for button_value: Variant in states:
-		var button: Button = button_value as Button
-		var active: bool = bool(states[button_value])
+	_hud_button_state_mask = mask
+	for index: int in _hud_state_buttons.size():
+		var button: Button = _hud_state_buttons[index]
+		var active: bool = states[index]
 		button.set_pressed_no_signal(active)
 		var atlas: Texture2D = _hud_active_atlas if active else _hud_inactive_atlas
 		if atlas != null:
-			button.icon = _atlas_region(atlas, _hud_icon_regions[button_value] as Rect2)
+			button.icon = _atlas_region(atlas, _hud_icon_regions[button] as Rect2)
 
 func _build_hud_layout_menu() -> void:
 	_floating_feedback_layer = Control.new()
