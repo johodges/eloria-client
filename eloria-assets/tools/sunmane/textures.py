@@ -293,6 +293,32 @@ def thatch(size: int, seed: int) -> MaterialMaps:
                                           np.zeros((size, size)))), size)
 
 
+# --------------------------------------------------------------------- crystal
+def crystal(size: int, seed: int) -> MaterialMaps:
+    """Amethyst: banded violet quartz with bright cleavage faces.
+
+    The Amethyst Barrens is Sunmane's northern neighbour on the continent
+    concept, so its crystal shows up in the badland spires and the cave the
+    badlands hide. Kept cooler and less saturated than the Barrens' own hero
+    material, because here it is an influence rather than the subject.
+    """
+    rng = np.random.default_rng(seed)
+    facets = 1.0 - worley(size, 9, rng)
+    banding = _stripes(size, 11, 3.2, fbm(size, 5, 3, rng)[:, 0] * 0.4)
+    banding = banding[:, None] * np.ones((1, size))
+    depth = fbm(size, 6, 5, rng)
+    height = normalise(facets * 0.6 + banding * 0.24 + depth * 0.16)
+    color = _tint(normalise(depth * 0.5 + banding * 0.5), (58, 38, 84), (168, 140, 208))
+    color = _blend(color, (214, 198, 240), np.clip((height - 0.72) * 3.6, 0, 1) * 0.7)
+    color = _blend(color, (40, 28, 62), np.clip((0.3 - height) * 3.0, 0, 1) * 0.55)
+    normal = height_to_normal(height, strength=2.2)
+    roughness = np.clip(0.32 - np.clip((height - 0.7) * 2.0, 0, 1) * 0.18
+                        + fbm(size, 18, 3, rng) * 0.14, 0.06, 1)
+    return MaterialMaps("crystal", _encode(color), _encode_normal(normal),
+                        _encode(_pack_orm(_occlusion(height, 3), roughness,
+                                          np.zeros((size, size)))), size)
+
+
 # ------------------------------------------------------------------------ hide
 def hide(size: int, seed: int) -> MaterialMaps:
     """Neutral pale animal hide: short coat hair over soft dappling.
@@ -414,12 +440,43 @@ def bone(size: int, seed: int) -> MaterialMaps:
                                           np.zeros((size, size)))), size)
 
 
+def cavern(size: int, seed: int) -> MaterialMaps:
+    """Damp cave limestone: mottled flowstone with drapery, no pitting.
+
+    Deliberately unlike the surface `stone` family. The mesa map carries worley
+    pitting and hard bedding partings, which on a chamber floor tens of metres
+    across repeat into a spotted pattern. Cave rock instead reads as broad damp
+    mottling with fine vertical drapery where water has run.
+    """
+    rng = np.random.default_rng(seed)
+    broad = fbm(size, 3, 5, rng)                      # damp patches
+    medium = fbm(size, 7, 4, rng)                     # calcite mottling
+    drapery = directional_grain(size, rng, stretch=26)
+    # Flowstone runs are vertical ribs, strongest where the drapery mask is.
+    ribs = np.clip(drapery * 1.5 - 0.35, 0.0, 1.0) * np.clip(broad * 1.4 - 0.2, 0, 1)
+    height = normalise(broad * 0.42 + medium * 0.30 + ribs * 0.28)
+    color = _tint(normalise(broad * 0.55 + medium * 0.45), (96, 88, 80), (206, 196, 180))
+    damp = np.clip(fbm(size, 4, 4, np.random.default_rng(seed + 5)) * 1.7 - 0.85, 0, 1)
+    color = _blend(color, (74, 70, 66), damp * 0.55)          # wet, darker rock
+    color = _blend(color, (226, 219, 203), ribs * 0.50)       # fresh calcite
+    seep = np.clip(fbm(size, 9, 3, np.random.default_rng(seed + 9)) * 1.6 - 0.9, 0, 1)
+    color = _blend(color, (132, 120, 96), seep * 0.35)        # mineral seep stain
+    normal = height_to_normal(height, strength=2.4)
+    # Wet flowstone is the only part that is at all shiny.
+    roughness = np.clip(0.92 - ribs * 0.30 - damp * 0.10, 0.2, 1.0)
+    return MaterialMaps("cavern", _encode(color), _encode_normal(normal),
+                        _encode(_pack_orm(_occlusion(height, 5), roughness,
+                                          np.zeros((size, size)))), size)
+
+
 FAMILIES = {
+    "cavern": (cavern, 512, 1212),
     "canvas": (canvas, 512, 1201),
     "timber": (timber, 512, 1202),
     "ground": (ground, 1024, 1203),
     "stone": (stone, 512, 1204),
     "thatch": (thatch, 512, 1205),
+    "crystal": (crystal, 256, 1211),
     "hide": (hide, 256, 1210),
     "leather": (leather, 256, 1206),
     "textile": (textile, 256, 1207),

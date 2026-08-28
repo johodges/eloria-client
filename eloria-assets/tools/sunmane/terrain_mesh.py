@@ -14,10 +14,16 @@ from __future__ import annotations
 import numpy as np
 
 from glb import Geometry
-from terrain import CELL, HALF_EXTENT, CLASS_TINT, Landform
+from terrain import CELL, CHUNKS, CLASS_TINT, Landform
 from shapes import UV_SCALE
 
-CHUNKS = 8                       # 8 x 8 chunks over the 208 m square
+
+# Height range across one quad, in metres, beyond which the quad is facetted
+# rather than smooth-shaded.
+FLAT_SHADE_RELIEF = 2.2
+# Above this relief across one quad the downward texture projection
+# stretches enough to be visible, so the quad is textured on its face.
+UV_PROJECT_RELIEF = 1.0
 
 
 def _vertex_normals(height: np.ndarray) -> np.ndarray:
@@ -40,7 +46,7 @@ def build_chunks(landform: Landform) -> list[dict]:
     normals = _vertex_normals(height)
     count = height.shape[0]
     span = (count - 1) // CHUNKS
-    axis = landform.x
+    x_axis, z_axis = landform.x, landform.z
     scale = UV_SCALE["ground"]
 
     chunks = []
@@ -66,8 +72,8 @@ def build_chunks(landform: Landform) -> list[dict]:
                     # (back-face culled) and untouchable by the grounding ray,
                     # because ConcavePolygonShape3D ignores back faces.
                     for offset_z, offset_x in ((0, 0), (1, 0), (1, 1), (0, 1)):
-                        world_x = float(axis[gx + offset_x])
-                        world_z = float(axis[gz + offset_z])
+                        world_x = float(x_axis[gx + offset_x])
+                        world_z = float(z_axis[gz + offset_z])
                         positions.append([world_x, float(height[gz + offset_z,
                                                                gx + offset_x]), world_z])
                         vertex_normals.append(normals[gz + offset_z, gx + offset_x])
@@ -78,12 +84,68 @@ def build_chunks(landform: Landform) -> list[dict]:
                     diagonal_b = abs(positions[1][1] - positions[3][1])
                     indices = ([0, 1, 2, 0, 2, 3] if diagonal_a <= diagonal_b
                                else [0, 1, 3, 1, 2, 3])
-                    geometry.add(positions, vertex_normals, uvs, indices)
+                    # One decision, made from the quad's own normal rather than
+                    # from a relief threshold. A threshold on how much a quad
+                    # drops flips neighbouring quads between two treatments all
+                    # along a hillside, and the alternation renders as a
+                    # chequerboard of light and dark ground - the most visible
+                    # procedural artifact this terrain had.
+                    faces = []
+                    for triangle in (indices[:3], indices[3:]):
+                        corners = [np.asarray(positions[i]) for i in triangle]
+                        face = np.cross(corners[1] - corners[0],
+                                        corners[2] - corners[0])
+                        length = float(np.linalg.norm(face))
+                        faces.append(None if length < 1e-12 else face / length)
+                    mean = np.zeros(3)
+                    for face in faces:
+                        if face is not None:
+                            mean = mean + face
+                    mean_length = float(np.linalg.norm(mean))
+                    if mean_length < 1e-9:
+                        continue
+                    shared = mean / mean_length
+                    # The weakest agreement between any corner's smoothed
+                    # normal and either triangle's own face: one corner pulled
+                    # across a break is enough to render a triangle inside-out.
+                    agreement = 1.0
+                    for triangle, face in zip((indices[:3], indices[3:]), faces):
+                        if face is None:
+                            continue
+                        for corner in triangle:
+                            agreement = min(agreement, float(np.dot(
+                                np.asarray(vertex_normals[corner]), face)))
+                    # Below roughly 63 degrees the downward projection is honest
+                    # enough; past it one texel covers metres of rock face, so
+                    # the quad is textured on whichever vertical plane faces it.
+                    if abs(float(shared[1])) < 0.45:
+                        side = abs(float(shared[0])) > abs(float(shared[2]))
+                        quad_uvs = [[(point[2] if side else point[0]) / scale,
+                                     -point[1] / scale] for point in positions]
+                    else:
+                        quad_uvs = uvs
+                    if agreement > 0.55:
+                        # The smoothed normal still describes this face, so the
+                        # quad keeps continuous shading with its neighbours.
+                        geometry.add(positions, vertex_normals, quad_uvs, indices)
+                        continue
+                    # A fold: the averaged normal has been dragged across the
+                    # break and now opposes the face it belongs to, which renders
+                    # the quad inside-out and lets the grounding ray through.
+                    # Facet it - as one facet, so the two halves of the quad are
+                    # not lit differently.
+                    for triangle, face in zip((indices[:3], indices[3:]), faces):
+                        if face is None:
+                            continue
+                        normal = shared if float(np.dot(shared, face)) > 0.2 else face
+                        geometry.add([positions[i] for i in triangle], [normal] * 3,
+                                     [quad_uvs[i] for i in triangle], [0, 1, 2])
+                    continue
             chunks.append({
                 "name": f"Terrain_Chunk_{chunk_x:02d}_{chunk_z:02d}",
                 "geometry": {k: v for k, v in by_class.items() if v.triangle_count},
-                "bounds": (float(axis[x0]), float(axis[z0]),
-                           float(axis[x1]), float(axis[z1])),
+                "bounds": (float(x_axis[x0]), float(z_axis[z0]),
+                           float(x_axis[x1]), float(z_axis[z1])),
             })
     return chunks
 
@@ -92,21 +154,21 @@ def water_surface(landform: Landform, level: float = 0.0) -> Geometry:
     """A single sea plane clipped to the cells the landform floods."""
     geometry = Geometry()
     height = landform.height
-    axis = landform.x
+    x_axis, z_axis = landform.x, landform.z
     scale = UV_SCALE["ground"] * 2.0
     flooded = height < level - 0.05
     normal = [0.0, 1.0, 0.0]
-    for gz in range(len(axis) - 1):
+    for gz in range(len(z_axis) - 1):
         run_start = None
         row = flooded[gz:gz + 2]
-        for gx in range(len(axis) - 1):
+        for gx in range(len(x_axis) - 1):
             wet = bool(row[:, gx:gx + 2].any())
             if wet and run_start is None:
                 run_start = gx
-            if (not wet or gx == len(axis) - 2) and run_start is not None:
+            if (not wet or gx == len(x_axis) - 2) and run_start is not None:
                 run_end = gx + 1 if wet else gx
-                x_start, x_end = float(axis[run_start]), float(axis[run_end])
-                z_start, z_end = float(axis[gz]), float(axis[gz + 1])
+                x_start, x_end = float(x_axis[run_start]), float(x_axis[run_end])
+                z_start, z_end = float(z_axis[gz]), float(z_axis[gz + 1])
                 corners = [[x_start, level, z_start], [x_start, level, z_end],
                            [x_end, level, z_end], [x_end, level, z_start]]
                 uvs = [[x_start / scale, z_start / scale], [x_start / scale, z_end / scale],
@@ -119,7 +181,6 @@ def water_surface(landform: Landform, level: float = 0.0) -> Geometry:
 def pond_surfaces(landform: Landform, ponds) -> Geometry:
     """Inland waterhole surfaces, each level with its own bowl."""
     geometry = Geometry()
-    axis = landform.x
     scale = UV_SCALE["ground"]
     normal = [0.0, 1.0, 0.0]
     for px, pz, radius in ponds:
@@ -156,9 +217,9 @@ def edge_apron(landform: Landform, overhang: float = 6.0) -> Geometry:
     """
     geometry = Geometry()
     height = landform.height
-    axis = landform.x
+    x_axis, z_axis = landform.x, landform.z
     scale = UV_SCALE["ground"]
-    count = len(axis)
+    count = len(x_axis)
     edges = (
         [(0, index) for index in range(count)],                      # -Z edge
         [(count - 1, index) for index in range(count)],              # +Z edge
@@ -170,8 +231,8 @@ def edge_apron(landform: Landform, overhang: float = 6.0) -> Geometry:
         for step in range(len(edge) - 1):
             (z0, x0), (z1, x1) = edge[step], edge[step + 1]
             inner = [
-                [float(axis[x0]), float(height[z0, x0]), float(axis[z0])],
-                [float(axis[x1]), float(height[z1, x1]), float(axis[z1])],
+                [float(x_axis[x0]), float(height[z0, x0]), float(z_axis[z0])],
+                [float(x_axis[x1]), float(height[z1, x1]), float(z_axis[z1])],
             ]
             outer = [[point[0] + out_x * overhang, point[1] - 1.5,
                       point[2] + out_z * overhang] for point in inner]

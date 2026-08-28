@@ -21,7 +21,9 @@ UV_SCALE = {
     "timber": 2.4,
     "ground": 6.0,
     "stone": 3.6,
+    "cavern": 4.4,
     "thatch": 1.8,
+    "crystal": 1.1,
     "hide": 0.9,
     "leather": 0.8,
     "textile": 1.2,
@@ -52,6 +54,38 @@ def add_quad(geometry: Geometry, corners, uvs, *, flip: bool = False,
         uvs = np.asarray(uvs)[::-1]
         normal = -normal
     geometry.add(corners, np.tile(normal, (4, 1)), uvs, _quad_indices())
+
+
+def oriented_quad(geometry: Geometry, corners, uvs, toward) -> None:
+    """Emit a quad whose face normal points the same side as `toward`.
+
+    Winding a surface by hand is where orientation bugs come from: the geometry
+    reads correctly in the authoring code and still ends up inside-out. Stating
+    the direction the surface should face, and letting the winding follow, makes
+    that class of mistake impossible.
+    """
+    corners = np.asarray(corners, dtype="float64").reshape(4, 3)
+    uvs = np.asarray(uvs, dtype="float64").reshape(4, 2)
+    # Emitted as two independently oriented triangles. A warped quad's halves
+    # do not share a face normal, so giving both the same vertex normal leaves
+    # one of them disagreeing with the surface it belongs to.
+    for triangle in ((0, 1, 2), (0, 2, 3)):
+        oriented_triangle(geometry, corners[list(triangle)],
+                          uvs[list(triangle)], toward)
+
+
+def oriented_triangle(geometry: Geometry, corners, uvs, toward) -> None:
+    """Emit a triangle whose face normal points the same side as `toward`."""
+    corners = np.asarray(corners, dtype="float64").reshape(3, 3)
+    normal = np.cross(corners[1] - corners[0], corners[2] - corners[0])
+    length = float(np.linalg.norm(normal))
+    if length < 1e-12:
+        return
+    if float(np.dot(normal, np.asarray(toward, dtype="float64"))) < 0.0:
+        corners = corners[::-1]
+        uvs = np.asarray(uvs)[::-1]
+        normal = -normal
+    geometry.add(corners, np.tile(normal / length, (3, 1)), uvs, [0, 1, 2])
 
 
 def _planar_uv(points: np.ndarray, scale: float) -> np.ndarray:
@@ -220,7 +254,12 @@ def sphere(geometry: Geometry, center, radius: float, *, rings: int = 10,
                                       math.cos(phi) * squash,
                                       math.sin(phi) * math.sin(theta)])
                 point = center + direction * radius
-                normal = direction / max(np.linalg.norm(direction), 1e-9)
+                # An ellipsoid's normal is not its position direction: with a
+                # squash factor the two diverge, which leaves shading wrong and
+                # can flip a coarse polar triangle against its own face.
+                gradient = np.array([direction[0], direction[1] / (squash ** 2),
+                                     direction[2]])
+                normal = gradient / max(np.linalg.norm(gradient), 1e-9)
                 corners.append(point)
                 normals.append(normal)
                 uvs.append([theta / (2.0 * math.pi) * 2.0 * math.pi * radius / uv_scale,
