@@ -27,7 +27,9 @@ extends Control
 # Godot's global class-name cache -- that cache is a build artifact and is
 # stale in a working copy until the editor next scans the project.
 const InteriorCutawayScript := preload("res://src/world/interior_cutaway.gd")
+const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
+var invasion_assistant_window
 @onready var gameplay_camera: Camera3D = %Camera
 @onready var world_loader: WorldLoader = %WorldLoader
 @onready var fallback_ground: MeshInstance3D = $GameView/ViewportContainer/Viewport/WorldRoot/Ground
@@ -346,6 +348,11 @@ func _ready() -> void:
 	animation_config = _json("res://data/animations/luminous.json")
 	animation_configs["res://data/animations/luminous.json"] = animation_config
 	map_registry = _json("res://data/maps/registry.json").get("maps", {})
+	invasion_assistant_window = InvasionAssistantScript.new()
+	add_child(invasion_assistant_window)
+	invasion_assistant_window.configure_registry(map_registry)
+	invasion_assistant_window.command_requested.connect(
+		_on_invasion_assistant_command_requested)
 	cartography = _json("res://data/maps/cartography.json")
 	cartography_regions = cartography.get("regions", []) as Array
 	equipment_config = _json("res://data/actors/equipment.json")
@@ -849,6 +856,12 @@ func _on_trade_button_pressed() -> void:
 
 func _on_chat_button_pressed() -> void:
 	_show_chat_input()
+
+func _on_invasion_assistant_command_requested(command: String) -> void:
+	var error := Network.send_chat(command)
+	if error != OK:
+		AppState.append_local_message(
+			"Invasion assistant request failed: %s" % error_string(error))
 
 func _show_chat_input() -> void:
 	chat_input.show()
@@ -2017,6 +2030,11 @@ func _on_state_changed(path: StringName) -> void:
 			_reveal_chat_messages()
 		&"channels":
 			_sync_channel_tabs()
+		&"invasion_assistant":
+			var kind := str(AppState.invasion_assistant.get("last_kind", ""))
+			var update: Dictionary = AppState.invasion_assistant.get(kind, {}) as Dictionary
+			if not update.is_empty():
+				invasion_assistant_window.apply_update(update)
 		&"stats":
 			_sync_stats()
 			_sync_spells()
