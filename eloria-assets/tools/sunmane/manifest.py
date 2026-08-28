@@ -30,6 +30,9 @@ def world_to_server(world_x: float, world_z: float) -> tuple[int, int]:
 
 def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
     half = terrain.HALF_EXTENT
+    centre = terrain.CENTRE
+    world_min = (centre[0] - half, centre[1] - half)
+    world_max = (centre[0] + half, centre[1] + half)
     lowest = float(landform.height.min())
     highest = float(landform.height.max())
     datum_height = landform.height_at(0.0, 0.0)
@@ -64,9 +67,10 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
             "coordinateSystem": {"handedness": "right", "upAxis": "Y", "northAxis": "-Z"},
             "origin": [0, 0, 0],
             "bounds": {
-                "min": [-half, round(lowest - 1.0, 2), -half],
-                "max": [half, round(highest + 1.0, 2), half]},
+                "min": [world_min[0], round(lowest - 1.0, 2), world_min[1]],
+                "max": [world_max[0], round(highest + 1.0, 2), world_max[1]]},
             "regionSpanMeters": half * 2.0,
+            "worldCentre": [centre[0], 0.0, centre[1]],
             "seaLevel": terrain.SEA_LEVEL,
         },
         "coordinateTransform": {
@@ -105,12 +109,13 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
         "interactives": builder.interactives,
         "terrain": {
             "cellMeters": terrain.CELL,
-            "chunkGrid": [8, 8],
+            "chunkGrid": [terrain.CHUNKS, terrain.CHUNKS],
             "classes": {terrain.CLASS_NAMES[k]: list(v)
                         for k, v in terrain.CLASS_TINT.items()},
             "lowestElevation": round(lowest, 2),
             "highestElevation": round(highest, 2),
-            "worldEdgeBarrier": "raised ridge ring beyond 88 m plus open sea to the west",
+            "worldEdgeBarrier": ("mountain range closing the north and east, "
+                                 "raised ridge to the south, open sea to the west"),
         },
         "materials": {
             "strategy": "shared-tileable-pbr-families-with-world-scale-uvs",
@@ -163,16 +168,16 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
                           "rendered through the client's own WorldLoader"),
             "northAxis": "-Z",
             "imageSize": [1024, 1024],
-            "worldMin": [-half, -half],
-            "worldMax": [half, half],
+            "worldMin": [world_min[0], world_min[1]],
+            "worldMax": [world_max[0], world_max[1]],
             "pixelsPerMetre": round(1024.0 / (half * 2.0), 6),
             # Image +X is world +X and image +Y (downward) is world +Z, so north
             # (-Z) is at the top of the picture.
             "transform": {
                 "pixelX": {"scale": round(1024.0 / (half * 2.0), 6),
-                           "offset": round(half * 1024.0 / (half * 2.0), 4)},
+                           "offset": round(-world_min[0] * 1024.0 / (half * 2.0), 4)},
                 "pixelY": {"scale": round(1024.0 / (half * 2.0), 6),
-                           "offset": round(half * 1024.0 / (half * 2.0), 4)},
+                           "offset": round(-world_min[1] * 1024.0 / (half * 2.0), 4)},
                 "formula": ("pixel_x = world_x * scale + offset; "
                             "pixel_y = world_z * scale + offset"),
             },
@@ -196,7 +201,9 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
 
 
 def _chunk_of(world_x: float, world_z: float) -> tuple[int, int]:
-    span = terrain.HALF_EXTENT * 2.0 / 8.0
-    chunk_x = min(7, max(0, int((world_x + terrain.HALF_EXTENT) / span)))
-    chunk_z = min(7, max(0, int((world_z + terrain.HALF_EXTENT) / span)))
-    return chunk_x, chunk_z
+    span = terrain.HALF_EXTENT * 2.0 / terrain.CHUNKS
+    origin_x = terrain.CENTRE[0] - terrain.HALF_EXTENT
+    origin_z = terrain.CENTRE[1] - terrain.HALF_EXTENT
+    last = terrain.CHUNKS - 1
+    return (min(last, max(0, int((world_x - origin_x) / span))),
+            min(last, max(0, int((world_z - origin_z) / span))))

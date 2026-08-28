@@ -380,9 +380,9 @@
       "id": "emberfox",
       "name": "Emberfox",
       "archetype": "fox",
-      "vertices": 1365,
-      "triangles": 2128,
-      "joints": 21,
+      "vertices": 2097,
+      "triangles": 3622,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/emberfox.glb"
     },
@@ -391,9 +391,9 @@
       "id": "mossback_boar",
       "name": "Mossback Boar",
       "archetype": "boar",
-      "vertices": 1361,
-      "triangles": 2124,
-      "joints": 21,
+      "vertices": 7142,
+      "triangles": 11106,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/mossback_boar.glb"
     },
@@ -402,9 +402,9 @@
       "id": "ridgehorn",
       "name": "Ridgehorn",
       "archetype": "ram",
-      "vertices": 1379,
-      "triangles": 2144,
-      "joints": 21,
+      "vertices": 2715,
+      "triangles": 4598,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/ridgehorn.glb"
     },
@@ -413,9 +413,9 @@
       "id": "miretoad",
       "name": "Miretoad",
       "archetype": "toad",
-      "vertices": 1339,
-      "triangles": 2104,
-      "joints": 21,
+      "vertices": 5086,
+      "triangles": 7968,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/miretoad.glb"
     },
@@ -424,9 +424,9 @@
       "id": "ash_crawler",
       "name": "Ash Crawler",
       "archetype": "lizard",
-      "vertices": 1384,
-      "triangles": 2144,
-      "joints": 21,
+      "vertices": 2669,
+      "triangles": 4614,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/ash_crawler.glb"
     },
@@ -435,9 +435,9 @@
       "id": "frost_maw",
       "name": "Frost Maw",
       "archetype": "wolf",
-      "vertices": 1365,
-      "triangles": 2128,
-      "joints": 21,
+      "vertices": 2926,
+      "triangles": 5080,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/frost_maw.glb"
     },
@@ -446,9 +446,9 @@
       "id": "bog_lurker",
       "name": "Bog Lurker",
       "archetype": "toad",
-      "vertices": 1339,
-      "triangles": 2104,
-      "joints": 21,
+      "vertices": 5107,
+      "triangles": 8004,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/bog_lurker.glb"
     },
@@ -457,9 +457,9 @@
       "id": "sunscale_drake",
       "name": "Sunscale Drake",
       "archetype": "drake",
-      "vertices": 1452,
-      "triangles": 2208,
-      "joints": 21,
+      "vertices": 2925,
+      "triangles": 4854,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/sunscale_drake.glb"
     },
@@ -468,9 +468,9 @@
       "id": "red_fox",
       "name": "Red Fox",
       "archetype": "fox",
-      "vertices": 1365,
-      "triangles": 2128,
-      "joints": 21,
+      "vertices": 2097,
+      "triangles": 3622,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/red_fox.glb"
     },
@@ -479,9 +479,9 @@
       "id": "snow_hare",
       "name": "Snow Hare",
       "archetype": "hare",
-      "vertices": 1365,
-      "triangles": 2128,
-      "joints": 21,
+      "vertices": 2364,
+      "triangles": 4036,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/snow_hare.glb"
     },
@@ -490,9 +490,9 @@
       "id": "mountain_goat",
       "name": "Mountain Goat",
       "archetype": "ram",
-      "vertices": 1379,
-      "triangles": 2144,
-      "joints": 21,
+      "vertices": 3276,
+      "triangles": 5588,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/mountain_goat.glb"
     },
@@ -501,9 +501,9 @@
       "id": "black_bear",
       "name": "Black Bear",
       "archetype": "bear",
-      "vertices": 1339,
-      "triangles": 2104,
-      "joints": 21,
+      "vertices": 2193,
+      "triangles": 3750,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/black_bear.glb"
     },
@@ -512,9 +512,9 @@
       "id": "elk",
       "name": "Elk",
       "archetype": "elk",
-      "vertices": 1433,
-      "triangles": 2192,
-      "joints": 21,
+      "vertices": 3245,
+      "triangles": 5054,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/elk.glb"
     },
@@ -523,9 +523,9 @@
       "id": "wild_boar",
       "name": "Wild Boar",
       "archetype": "boar",
-      "vertices": 1361,
-      "triangles": 2124,
-      "joints": 21,
+      "vertices": 2693,
+      "triangles": 4518,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/wild_boar.glb"
     },
@@ -534,9 +534,9 @@
       "id": "dire_wolf",
       "name": "Dire Wolf",
       "archetype": "wolf",
-      "vertices": 1365,
-      "triangles": 2128,
-      "joints": 21,
+      "vertices": 2059,
+      "triangles": 3550,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/dire_wolf.glb"
     },
@@ -545,9 +545,9 @@
       "id": "frost_tiger",
       "name": "Frost Tiger",
       "archetype": "cat",
-      "vertices": 1365,
-      "triangles": 2128,
-      "joints": 21,
+      "vertices": 2671,
+      "triangles": 4630,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/frost_tiger.glb"
     },
@@ -556,9 +556,9 @@
       "id": "giant_crocodile",
       "name": "Giant Crocodile",
       "archetype": "crocodile",
-      "vertices": 1384,
-      "triangles": 2144,
-      "joints": 21,
+      "vertices": 4839,
+      "triangles": 7662,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/giant_crocodile.glb"
     },
@@ -567,9 +567,9 @@
       "id": "fire_salamander",
       "name": "Fire Salamander",
       "archetype": "lizard",
-      "vertices": 1384,
-      "triangles": 2144,
-      "joints": 21,
+      "vertices": 2057,
+      "triangles": 3534,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/fire_salamander.glb"
     },
@@ -578,9 +578,9 @@
       "id": "thunder_ram",
       "name": "Thunder Ram",
       "archetype": "ram",
-      "vertices": 1379,
-      "triangles": 2144,
-      "joints": 21,
+      "vertices": 2715,
+      "triangles": 4598,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/thunder_ram.glb"
     },
@@ -589,9 +589,9 @@
       "id": "giant_rat",
       "name": "Giant Rat",
       "archetype": "rat",
-      "vertices": 1365,
-      "triangles": 2128,
-      "joints": 21,
+      "vertices": 2193,
+      "triangles": 3750,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/giant_rat.glb"
     },
@@ -600,9 +600,9 @@
       "id": "raccoon",
       "name": "Raccoon",
       "archetype": "fox",
-      "vertices": 1365,
-      "triangles": 2128,
-      "joints": 21,
+      "vertices": 2097,
+      "triangles": 3622,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/raccoon.glb"
     },
@@ -611,9 +611,9 @@
       "id": "river_otter",
       "name": "River Otter",
       "archetype": "otter",
-      "vertices": 1339,
-      "triangles": 2104,
-      "joints": 21,
+      "vertices": 2193,
+      "triangles": 3750,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/river_otter.glb"
     },
@@ -622,9 +622,9 @@
       "id": "porcupine",
       "name": "Porcupine",
       "archetype": "porcupine",
-      "vertices": 1402,
-      "triangles": 2160,
-      "joints": 21,
+      "vertices": 2785,
+      "triangles": 4754,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/porcupine.glb"
     },
@@ -633,9 +633,9 @@
       "id": "moose",
       "name": "Moose",
       "archetype": "elk",
-      "vertices": 1433,
-      "triangles": 2192,
-      "joints": 21,
+      "vertices": 2739,
+      "triangles": 4614,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/moose.glb"
     },
@@ -644,9 +644,9 @@
       "id": "lynx",
       "name": "Lynx",
       "archetype": "cat",
-      "vertices": 1365,
-      "triangles": 2128,
-      "joints": 21,
+      "vertices": 2059,
+      "triangles": 3550,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/lynx.glb"
     },
@@ -655,9 +655,9 @@
       "id": "desert_tortoise",
       "name": "Desert Tortoise",
       "archetype": "tortoise",
-      "vertices": 1614,
-      "triangles": 2584,
-      "joints": 21,
+      "vertices": 2429,
+      "triangles": 4182,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/desert_tortoise.glb"
     },
@@ -665,10 +665,10 @@
       "actor_type": 230,
       "id": "saber_tooth_cat",
       "name": "Saber-Tooth Cat",
-      "archetype": "cat",
-      "vertices": 1365,
-      "triangles": 2128,
-      "joints": 21,
+      "archetype": "saber_cat",
+      "vertices": 2117,
+      "triangles": 3658,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/saber_tooth_cat.glb"
     },
@@ -677,9 +677,9 @@
       "id": "armored_rhino",
       "name": "Armored Rhino",
       "archetype": "rhino",
-      "vertices": 1350,
-      "triangles": 2114,
-      "joints": 21,
+      "vertices": 3593,
+      "triangles": 5910,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/armored_rhino.glb"
     },
@@ -688,9 +688,9 @@
       "id": "giant_komodo",
       "name": "Giant Komodo",
       "archetype": "lizard",
-      "vertices": 1384,
-      "triangles": 2144,
-      "joints": 21,
+      "vertices": 3839,
+      "triangles": 6174,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/giant_komodo.glb"
     },
@@ -699,9 +699,9 @@
       "id": "ice_bear",
       "name": "Ice Bear",
       "archetype": "bear",
-      "vertices": 1339,
-      "triangles": 2104,
-      "joints": 21,
+      "vertices": 3162,
+      "triangles": 5460,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/ice_bear.glb"
     },
@@ -710,9 +710,9 @@
       "id": "lava_hound",
       "name": "Lava Hound",
       "archetype": "wolf",
-      "vertices": 1365,
-      "triangles": 2128,
-      "joints": 21,
+      "vertices": 2059,
+      "triangles": 3550,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/lava_hound.glb"
     },
@@ -721,11 +721,2805 @@
       "id": "two_tailed_fox",
       "name": "Two-Tailed Fox",
       "archetype": "two_tail_fox",
-      "vertices": 1402,
-      "triangles": 2164,
-      "joints": 21,
+      "vertices": 2221,
+      "triangles": 3862,
+      "joints": 24,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/two_tailed_fox.glb"
+    },
+    "amethyst_scorpion": {
+      "actor_type": 428,
+      "id": "amethyst_scorpion",
+      "name": "Amethyst Scorpion",
+      "family": "arachnid",
+      "archetype": "scorpion",
+      "vertices": 2267,
+      "triangles": 3900,
+      "joints": 35,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/amethyst_scorpion.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "geode_scarab": {
+      "actor_type": 429,
+      "id": "geode_scarab",
+      "name": "Geode Scarab",
+      "family": "insect",
+      "archetype": "beetle",
+      "vertices": 1801,
+      "triangles": 3088,
+      "joints": 26,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/geode_scarab.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "prism_drake": {
+      "actor_type": 430,
+      "id": "prism_drake",
+      "name": "Prism Drake",
+      "family": "quadruped",
+      "archetype": "sprawler",
+      "vertices": 3332,
+      "triangles": 5784,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/prism_drake.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "shardling_swarm": {
+      "actor_type": 431,
+      "id": "shardling_swarm",
+      "name": "Shardling Swarm",
+      "family": "amorphous",
+      "archetype": "shards",
+      "vertices": 660,
+      "triangles": 1180,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/shardling_swarm.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          0,
+          3
+        ]
+      },
+      "hovers": true
+    },
+    "barrens_wisp": {
+      "actor_type": 432,
+      "id": "barrens_wisp",
+      "name": "Barrens Wisp",
+      "family": "amorphous",
+      "archetype": "wisp",
+      "vertices": 815,
+      "triangles": 1383,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/barrens_wisp.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          1,
+          0
+        ]
+      },
+      "hovers": true
+    },
+    "amethyst_golem": {
+      "actor_type": 433,
+      "id": "amethyst_golem",
+      "name": "Amethyst Golem",
+      "family": "biped",
+      "archetype": "golem",
+      "vertices": 5233,
+      "triangles": 8872,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/amethyst_golem.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "crystalwing": {
+      "actor_type": 434,
+      "id": "crystalwing",
+      "name": "Crystalwing",
+      "family": "quadruped",
+      "archetype": "drake",
+      "vertices": 3300,
+      "triangles": 5684,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/crystalwing.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "geode_tortoise": {
+      "actor_type": 435,
+      "id": "geode_tortoise",
+      "name": "Geode Tortoise",
+      "family": "quadruped",
+      "archetype": "chelonian",
+      "vertices": 3755,
+      "triangles": 6522,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/geode_tortoise.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "facet_hound": {
+      "actor_type": 436,
+      "id": "facet_hound",
+      "name": "Facet Hound",
+      "family": "quadruped",
+      "archetype": "canid",
+      "vertices": 3130,
+      "triangles": 5440,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/facet_hound.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "prism_moth": {
+      "actor_type": 437,
+      "id": "prism_moth",
+      "name": "Prism Moth",
+      "family": "insect",
+      "archetype": "moth",
+      "vertices": 1653,
+      "triangles": 2708,
+      "joints": 26,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/prism_moth.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    },
+    "lattice_spider": {
+      "actor_type": 438,
+      "id": "lattice_spider",
+      "name": "Lattice Spider",
+      "family": "arachnid",
+      "archetype": "spider",
+      "vertices": 2091,
+      "triangles": 3542,
+      "joints": 35,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/lattice_spider.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    },
+    "orrery_sentinel": {
+      "actor_type": 439,
+      "id": "orrery_sentinel",
+      "name": "Orrery Sentinel",
+      "family": "biped",
+      "archetype": "construct",
+      "vertices": 3603,
+      "triangles": 5802,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/orrery_sentinel.glb",
+      "locale": "amethyst_barrens",
+      "concept": {
+        "sheet": "47a41963",
+        "cell": [
+          2,
+          3
+        ]
+      }
+    },
+    "verdant_crown_king": {
+      "actor_type": 440,
+      "id": "verdant_crown_king",
+      "name": "Verdant Crown King",
+      "family": "biped",
+      "archetype": "monarch",
+      "vertices": 4295,
+      "triangles": 6212,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/verdant_crown_king.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "tidegold_wyrm": {
+      "actor_type": 441,
+      "id": "tidegold_wyrm",
+      "name": "Tidegold Wyrm",
+      "family": "serpent",
+      "archetype": "wyrm",
+      "vertices": 788,
+      "triangles": 1267,
+      "joints": 22,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/tidegold_wyrm.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "rimebound_archmage": {
+      "actor_type": 442,
+      "id": "rimebound_archmage",
+      "name": "Rimebound Archmage",
+      "family": "biped",
+      "archetype": "mage",
+      "vertices": 2492,
+      "triangles": 4038,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/rimebound_archmage.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "glacier_brute": {
+      "actor_type": 443,
+      "id": "glacier_brute",
+      "name": "Glacier Brute",
+      "family": "biped",
+      "archetype": "brute",
+      "vertices": 4729,
+      "triangles": 8072,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/glacier_brute.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "orrery_colossus": {
+      "actor_type": 444,
+      "id": "orrery_colossus",
+      "name": "Orrery Colossus",
+      "family": "biped",
+      "archetype": "construct",
+      "vertices": 3865,
+      "triangles": 6202,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/orrery_colossus.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "amethyst_sibyl": {
+      "actor_type": 445,
+      "id": "amethyst_sibyl",
+      "name": "Amethyst Sibyl",
+      "family": "biped",
+      "archetype": "mage",
+      "vertices": 3828,
+      "triangles": 6332,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/amethyst_sibyl.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "crimson_duelist": {
+      "actor_type": 446,
+      "id": "crimson_duelist",
+      "name": "Crimson Duelist",
+      "family": "biped",
+      "archetype": "duelist",
+      "vertices": 2186,
+      "triangles": 3574,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/crimson_duelist.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "emberwood_matron": {
+      "actor_type": 447,
+      "id": "emberwood_matron",
+      "name": "Emberwood Matron",
+      "family": "biped",
+      "archetype": "treant",
+      "vertices": 4635,
+      "triangles": 6198,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/emberwood_matron.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "barrow_sovereign": {
+      "actor_type": 448,
+      "id": "barrow_sovereign",
+      "name": "Barrow Sovereign",
+      "family": "biped",
+      "archetype": "knight",
+      "vertices": 2701,
+      "triangles": 4400,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/barrow_sovereign.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "gilded_devourer": {
+      "actor_type": 449,
+      "id": "gilded_devourer",
+      "name": "Gilded Devourer",
+      "family": "amorphous",
+      "archetype": "tentacles",
+      "vertices": 2399,
+      "triangles": 3716,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/gilded_devourer.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          2,
+          1
+        ]
+      },
+      "hovers": true
+    },
+    "tidecaller_sorceress": {
+      "actor_type": 450,
+      "id": "tidecaller_sorceress",
+      "name": "Tidecaller Sorceress",
+      "family": "biped",
+      "archetype": "mage",
+      "vertices": 3069,
+      "triangles": 5120,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/tidecaller_sorceress.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    },
+    "mirefather_leviathan": {
+      "actor_type": 451,
+      "id": "mirefather_leviathan",
+      "name": "Mirefather Leviathan",
+      "family": "amorphous",
+      "archetype": "tentacles",
+      "vertices": 2135,
+      "triangles": 3296,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mirefather_leviathan.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          2,
+          3
+        ]
+      },
+      "hovers": true
+    },
+    "goldmane_aurochs": {
+      "actor_type": 452,
+      "id": "goldmane_aurochs",
+      "name": "Goldmane Aurochs",
+      "family": "quadruped",
+      "archetype": "bovine",
+      "vertices": 3249,
+      "triangles": 5374,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/goldmane_aurochs.glb",
+      "locale": "sunmane_steppe",
+      "concept": {
+        "sheet": "93197c59",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "dunburrow_mole": {
+      "actor_type": 453,
+      "id": "dunburrow_mole",
+      "name": "Dunburrow Mole",
+      "family": "quadruped",
+      "archetype": "mustelid",
+      "vertices": 2193,
+      "triangles": 3750,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/dunburrow_mole.glb",
+      "locale": "sunmane_steppe",
+      "concept": {
+        "sheet": "93197c59",
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "plumed_crane": {
+      "actor_type": 454,
+      "id": "plumed_crane",
+      "name": "Plumed Crane",
+      "family": "avian",
+      "archetype": "wader",
+      "vertices": 969,
+      "triangles": 1521,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/plumed_crane.glb",
+      "locale": "sunmane_steppe",
+      "concept": {
+        "sheet": "93197c59",
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "sunmane_minotaur": {
+      "actor_type": 455,
+      "id": "sunmane_minotaur",
+      "name": "Sunmane Minotaur",
+      "family": "biped",
+      "archetype": "brute",
+      "vertices": 2464,
+      "triangles": 4070,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/sunmane_minotaur.glb",
+      "locale": "sunmane_steppe",
+      "concept": {
+        "sheet": "93197c59",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "stormmane_lion": {
+      "actor_type": 456,
+      "id": "stormmane_lion",
+      "name": "Stormmane Lion",
+      "family": "quadruped",
+      "archetype": "felid",
+      "vertices": 2059,
+      "triangles": 3550,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/stormmane_lion.glb",
+      "locale": "sunmane_steppe",
+      "concept": {
+        "sheet": "93197c59",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "grasswing_mantis": {
+      "actor_type": 457,
+      "id": "grasswing_mantis",
+      "name": "Grasswing Mantis",
+      "family": "insect",
+      "archetype": "mantis",
+      "vertices": 899,
+      "triangles": 1492,
+      "joints": 26,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/grasswing_mantis.glb",
+      "locale": "sunmane_steppe",
+      "concept": {
+        "sheet": "93197c59",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "dust_hyena": {
+      "actor_type": 458,
+      "id": "dust_hyena",
+      "name": "Dust Hyena",
+      "family": "quadruped",
+      "archetype": "canid",
+      "vertices": 2059,
+      "triangles": 3550,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/dust_hyena.glb",
+      "locale": "sunmane_steppe",
+      "concept": {
+        "sheet": "93197c59",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    },
+    "steppe_jackrabbit": {
+      "actor_type": 459,
+      "id": "steppe_jackrabbit",
+      "name": "Steppe Jackrabbit",
+      "family": "quadruped",
+      "archetype": "lagomorph",
+      "vertices": 2007,
+      "triangles": 3406,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/steppe_jackrabbit.glb",
+      "locale": "sunmane_steppe",
+      "concept": {
+        "sheet": "93197c59",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    },
+    "sunmane_gryphon": {
+      "actor_type": 460,
+      "id": "sunmane_gryphon",
+      "name": "Sunmane Gryphon",
+      "family": "quadruped",
+      "archetype": "gryphon",
+      "vertices": 3079,
+      "triangles": 4670,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/sunmane_gryphon.glb",
+      "locale": "sunmane_steppe",
+      "concept": {
+        "sheet": "93197c59",
+        "cell": [
+          2,
+          3
+        ]
+      }
+    },
+    "crownwater_turtle": {
+      "actor_type": 461,
+      "id": "crownwater_turtle",
+      "name": "Crownwater Turtle",
+      "family": "quadruped",
+      "archetype": "chelonian",
+      "vertices": 6236,
+      "triangles": 9912,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/crownwater_turtle.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "tidefin_naga": {
+      "actor_type": 462,
+      "id": "tidefin_naga",
+      "name": "Tidefin Naga",
+      "family": "biped",
+      "archetype": "warrior",
+      "vertices": 2555,
+      "triangles": 4324,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/tidefin_naga.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "lanternwyrm": {
+      "actor_type": 463,
+      "id": "lanternwyrm",
+      "name": "Lanternwyrm",
+      "family": "serpent",
+      "archetype": "sea_serpent",
+      "vertices": 730,
+      "triangles": 1177,
+      "joints": 22,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/lanternwyrm.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "crownwater_wyvern": {
+      "actor_type": 464,
+      "id": "crownwater_wyvern",
+      "name": "Crownwater Wyvern",
+      "family": "quadruped",
+      "archetype": "drake",
+      "vertices": 2331,
+      "triangles": 3974,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/crownwater_wyvern.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "cascade_golem": {
+      "actor_type": 465,
+      "id": "cascade_golem",
+      "name": "Cascade Golem",
+      "family": "biped",
+      "archetype": "golem",
+      "vertices": 10288,
+      "triangles": 15822,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/cascade_golem.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "tidecoil_serpent": {
+      "actor_type": 466,
+      "id": "tidecoil_serpent",
+      "name": "Tidecoil Serpent",
+      "family": "serpent",
+      "archetype": "sea_serpent",
+      "vertices": 730,
+      "triangles": 1177,
+      "joints": 22,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/tidecoil_serpent.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "palecrest_crab": {
+      "actor_type": 467,
+      "id": "palecrest_crab",
+      "name": "Palecrest Crab",
+      "family": "arachnid",
+      "archetype": "crab",
+      "vertices": 1264,
+      "triangles": 2112,
+      "joints": 35,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/palecrest_crab.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "riverbank_ibis": {
+      "actor_type": 468,
+      "id": "riverbank_ibis",
+      "name": "Riverbank Ibis",
+      "family": "avian",
+      "archetype": "wader",
+      "vertices": 969,
+      "triangles": 1521,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/riverbank_ibis.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "algae_alligator": {
+      "actor_type": 469,
+      "id": "algae_alligator",
+      "name": "Algae Alligator",
+      "family": "quadruped",
+      "archetype": "sprawler",
+      "vertices": 7214,
+      "triangles": 11284,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/algae_alligator.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "springfly_sprite": {
+      "actor_type": 470,
+      "id": "springfly_sprite",
+      "name": "Springfly Sprite",
+      "family": "amorphous",
+      "archetype": "sprite",
+      "vertices": 743,
+      "triangles": 1145,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/springfly_sprite.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          2,
+          1
+        ]
+      },
+      "hovers": true
+    },
+    "gilded_water_lion": {
+      "actor_type": 471,
+      "id": "gilded_water_lion",
+      "name": "Gilded Water Lion",
+      "family": "quadruped",
+      "archetype": "felid",
+      "vertices": 2059,
+      "triangles": 3550,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/gilded_water_lion.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    },
+    "medusa_tidepriest": {
+      "actor_type": 472,
+      "id": "medusa_tidepriest",
+      "name": "Medusa Tidepriest",
+      "family": "amorphous",
+      "archetype": "tentacles",
+      "vertices": 922,
+      "triangles": 1630,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/medusa_tidepriest.glb",
+      "locale": "crownwater",
+      "concept": {
+        "sheet": "bc78bfcc",
+        "cell": [
+          2,
+          3
+        ]
+      },
+      "hovers": true
+    },
+    "courier_otter": {
+      "actor_type": 473,
+      "id": "courier_otter",
+      "name": "Courier Otter",
+      "family": "quadruped",
+      "archetype": "mustelid",
+      "vertices": 2193,
+      "triangles": 3750,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/courier_otter.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "message_swallow": {
+      "actor_type": 474,
+      "id": "message_swallow",
+      "name": "Message Swallow",
+      "family": "avian",
+      "archetype": "songbird",
+      "vertices": 913,
+      "triangles": 1425,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/message_swallow.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "harborshell_crab": {
+      "actor_type": 475,
+      "id": "harborshell_crab",
+      "name": "Harborshell Crab",
+      "family": "arachnid",
+      "archetype": "crab",
+      "vertices": 3676,
+      "triangles": 5652,
+      "joints": 35,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/harborshell_crab.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "brassband_pike": {
+      "actor_type": 476,
+      "id": "brassband_pike",
+      "name": "Brassband Pike",
+      "family": "fish",
+      "archetype": "pike",
+      "vertices": 523,
+      "triangles": 818,
+      "joints": 14,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/brassband_pike.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "reedhat_fisher": {
+      "actor_type": 477,
+      "id": "reedhat_fisher",
+      "name": "Reedhat Fisher",
+      "family": "biped",
+      "archetype": "warrior",
+      "vertices": 2069,
+      "triangles": 3376,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/reedhat_fisher.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "ratcatcher_tough": {
+      "actor_type": 478,
+      "id": "ratcatcher_tough",
+      "name": "Ratcatcher Tough",
+      "family": "biped",
+      "archetype": "warrior",
+      "vertices": 2191,
+      "triangles": 3586,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/ratcatcher_tough.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "verdigris_beetle": {
+      "actor_type": 479,
+      "id": "verdigris_beetle",
+      "name": "Verdigris Beetle",
+      "family": "insect",
+      "archetype": "beetle",
+      "vertices": 934,
+      "triangles": 1558,
+      "joints": 26,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/verdigris_beetle.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "lanternwake_sprite": {
+      "actor_type": 480,
+      "id": "lanternwake_sprite",
+      "name": "Lanternwake Sprite",
+      "family": "amorphous",
+      "archetype": "sprite",
+      "vertices": 242,
+      "triangles": 420,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/lanternwake_sprite.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          1,
+          3
+        ]
+      },
+      "hovers": true
+    },
+    "millstone_golem": {
+      "actor_type": 481,
+      "id": "millstone_golem",
+      "name": "Millstone Golem",
+      "family": "biped",
+      "archetype": "golem",
+      "vertices": 7002,
+      "triangles": 10766,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/millstone_golem.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "drowned_dockhand": {
+      "actor_type": 482,
+      "id": "drowned_dockhand",
+      "name": "Drowned Dockhand",
+      "family": "biped",
+      "archetype": "revenant",
+      "vertices": 8505,
+      "triangles": 12862,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/drowned_dockhand.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    },
+    "sluice_elemental": {
+      "actor_type": 483,
+      "id": "sluice_elemental",
+      "name": "Sluice Elemental",
+      "family": "amorphous",
+      "archetype": "vortex",
+      "vertices": 899,
+      "triangles": 1508,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/sluice_elemental.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          2,
+          2
+        ]
+      },
+      "hovers": true
+    },
+    "waterwheel_golem": {
+      "actor_type": 484,
+      "id": "waterwheel_golem",
+      "name": "Waterwheel Golem",
+      "family": "biped",
+      "archetype": "construct",
+      "vertices": 7843,
+      "triangles": 12050,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/waterwheel_golem.glb",
+      "locale": "westhaven",
+      "concept": {
+        "sheet": "4cf4bb0e",
+        "cell": [
+          2,
+          3
+        ]
+      }
+    },
+    "harbor_gull": {
+      "actor_type": 485,
+      "id": "harbor_gull",
+      "name": "Harbor Gull",
+      "family": "avian",
+      "archetype": "seabird",
+      "vertices": 817,
+      "triangles": 1241,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/harbor_gull.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "rockshell_crab": {
+      "actor_type": 486,
+      "id": "rockshell_crab",
+      "name": "Rockshell Crab",
+      "family": "arachnid",
+      "archetype": "crab",
+      "vertices": 1978,
+      "triangles": 3132,
+      "joints": 35,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/rockshell_crab.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "harbor_seal": {
+      "actor_type": 487,
+      "id": "harbor_seal",
+      "name": "Harbor Seal",
+      "family": "quadruped",
+      "archetype": "pinniped",
+      "vertices": 1959,
+      "triangles": 3366,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/harbor_seal.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "kelpback_turtle": {
+      "actor_type": 488,
+      "id": "kelpback_turtle",
+      "name": "Kelpback Turtle",
+      "family": "quadruped",
+      "archetype": "chelonian",
+      "vertices": 6965,
+      "triangles": 11022,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/kelpback_turtle.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "bluewater_marlin": {
+      "actor_type": 489,
+      "id": "bluewater_marlin",
+      "name": "Bluewater Marlin",
+      "family": "fish",
+      "archetype": "billfish",
+      "vertices": 519,
+      "triangles": 812,
+      "joints": 14,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/bluewater_marlin.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "saltmarsh_crocodile": {
+      "actor_type": 490,
+      "id": "saltmarsh_crocodile",
+      "name": "Saltmarsh Crocodile",
+      "family": "quadruped",
+      "archetype": "sprawler",
+      "vertices": 5459,
+      "triangles": 8574,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/saltmarsh_crocodile.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "bilge_rat": {
+      "actor_type": 491,
+      "id": "bilge_rat",
+      "name": "Bilge Rat",
+      "family": "quadruped",
+      "archetype": "mustelid",
+      "vertices": 2193,
+      "triangles": 3750,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/bilge_rat.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "spinefin_eel": {
+      "actor_type": 492,
+      "id": "spinefin_eel",
+      "name": "Spinefin Eel",
+      "family": "serpent",
+      "archetype": "eel",
+      "vertices": 658,
+      "triangles": 1073,
+      "joints": 22,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/spinefin_eel.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "barnacle_troll": {
+      "actor_type": 493,
+      "id": "barnacle_troll",
+      "name": "Barnacle Troll",
+      "family": "biped",
+      "archetype": "brute",
+      "vertices": 8757,
+      "triangles": 13232,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/barnacle_troll.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "drowned_captain": {
+      "actor_type": 494,
+      "id": "drowned_captain",
+      "name": "Drowned Captain",
+      "family": "biped",
+      "archetype": "revenant",
+      "vertices": 6398,
+      "triangles": 9830,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/drowned_captain.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    },
+    "glowmantle_ray": {
+      "actor_type": 495,
+      "id": "glowmantle_ray",
+      "name": "Glowmantle Ray",
+      "family": "fish",
+      "archetype": "ray",
+      "vertices": 571,
+      "triangles": 870,
+      "joints": 14,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/glowmantle_ray.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    },
+    "deepplate_coelacanth": {
+      "actor_type": 496,
+      "id": "deepplate_coelacanth",
+      "name": "Deepplate Coelacanth",
+      "family": "fish",
+      "archetype": "armored",
+      "vertices": 523,
+      "triangles": 818,
+      "joints": 14,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/deepplate_coelacanth.glb",
+      "locale": "drowned_crown",
+      "concept": {
+        "sheet": "5b11c39c",
+        "cell": [
+          2,
+          3
+        ]
+      }
+    },
+    "moor_pony": {
+      "actor_type": 497,
+      "id": "moor_pony",
+      "name": "Moor Pony",
+      "family": "quadruped",
+      "archetype": "equine",
+      "vertices": 2545,
+      "triangles": 4294,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/moor_pony.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "moorhorn_ram": {
+      "actor_type": 498,
+      "id": "moorhorn_ram",
+      "name": "Moorhorn Ram",
+      "family": "quadruped",
+      "archetype": "cervid",
+      "vertices": 4391,
+      "triangles": 6950,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/moorhorn_ram.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "moor_heron": {
+      "actor_type": 499,
+      "id": "moor_heron",
+      "name": "Moor Heron",
+      "family": "avian",
+      "archetype": "wader",
+      "vertices": 969,
+      "triangles": 1521,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/moor_heron.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "cairnback_tortoise": {
+      "actor_type": 500,
+      "id": "cairnback_tortoise",
+      "name": "Cairnback Tortoise",
+      "family": "quadruped",
+      "archetype": "chelonian",
+      "vertices": 6479,
+      "triangles": 10182,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/cairnback_tortoise.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "moorfell_wolf": {
+      "actor_type": 501,
+      "id": "moorfell_wolf",
+      "name": "Moorfell Wolf",
+      "family": "quadruped",
+      "archetype": "canid",
+      "vertices": 4813,
+      "triangles": 7630,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/moorfell_wolf.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "reedmask_stalker": {
+      "actor_type": 502,
+      "id": "reedmask_stalker",
+      "name": "Reedmask Stalker",
+      "family": "biped",
+      "archetype": "warrior",
+      "vertices": 2261,
+      "triangles": 3692,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/reedmask_stalker.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "moorlight_wisp": {
+      "actor_type": 503,
+      "id": "moorlight_wisp",
+      "name": "Moorlight Wisp",
+      "family": "amorphous",
+      "archetype": "wisp",
+      "vertices": 946,
+      "triangles": 1600,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/moorlight_wisp.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          1,
+          2
+        ]
+      },
+      "hovers": true
+    },
+    "barrow_knight": {
+      "actor_type": 504,
+      "id": "barrow_knight",
+      "name": "Barrow Knight",
+      "family": "biped",
+      "archetype": "knight",
+      "vertices": 6419,
+      "triangles": 9916,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/barrow_knight.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "cairn_golem": {
+      "actor_type": 505,
+      "id": "cairn_golem",
+      "name": "Cairn Golem",
+      "family": "biped",
+      "archetype": "golem",
+      "vertices": 9256,
+      "triangles": 14102,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/cairn_golem.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "lantern_wraith": {
+      "actor_type": 506,
+      "id": "lantern_wraith",
+      "name": "Lantern Wraith",
+      "family": "biped",
+      "archetype": "revenant",
+      "vertices": 3119,
+      "triangles": 4914,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/lantern_wraith.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    },
+    "spectral_moor_stag": {
+      "actor_type": 507,
+      "id": "spectral_moor_stag",
+      "name": "Spectral Moor Stag",
+      "family": "quadruped",
+      "archetype": "cervid",
+      "vertices": 2832,
+      "triangles": 4598,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/spectral_moor_stag.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    },
+    "barrow_king": {
+      "actor_type": 508,
+      "id": "barrow_king",
+      "name": "Barrow King",
+      "family": "biped",
+      "archetype": "monarch",
+      "vertices": 5574,
+      "triangles": 8634,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/barrow_king.glb",
+      "locale": "grey_moors",
+      "concept": {
+        "sheet": "2dd667c5",
+        "cell": [
+          2,
+          3
+        ]
+      }
+    },
+    "tidelance_construct": {
+      "actor_type": 509,
+      "id": "tidelance_construct",
+      "name": "Tidelance Construct",
+      "family": "amorphous",
+      "archetype": "vortex",
+      "vertices": 611,
+      "triangles": 1069,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/tidelance_construct.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          0,
+          0
+        ]
+      },
+      "hovers": true
+    },
+    "reefplate_golem": {
+      "actor_type": 510,
+      "id": "reefplate_golem",
+      "name": "Reefplate Golem",
+      "family": "quadruped",
+      "archetype": "ursine",
+      "vertices": 3417,
+      "triangles": 5750,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/reefplate_golem.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "mirrorhold_wheelwarden": {
+      "actor_type": 511,
+      "id": "mirrorhold_wheelwarden",
+      "name": "Mirrorhold Wheelwarden",
+      "family": "biped",
+      "archetype": "construct",
+      "vertices": 2896,
+      "triangles": 4952,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mirrorhold_wheelwarden.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "verdigris_warden": {
+      "actor_type": 512,
+      "id": "verdigris_warden",
+      "name": "Verdigris Warden",
+      "family": "biped",
+      "archetype": "construct",
+      "vertices": 3119,
+      "triangles": 5290,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/verdigris_warden.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "palewater_wyrm": {
+      "actor_type": 513,
+      "id": "palewater_wyrm",
+      "name": "Palewater Wyrm",
+      "family": "serpent",
+      "archetype": "sea_serpent",
+      "vertices": 730,
+      "triangles": 1177,
+      "joints": 22,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/palewater_wyrm.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "mirrorwing_swarm": {
+      "actor_type": 514,
+      "id": "mirrorwing_swarm",
+      "name": "Mirrorwing Swarm",
+      "family": "amorphous",
+      "archetype": "shards",
+      "vertices": 1824,
+      "triangles": 1932,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mirrorwing_swarm.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          1,
+          1
+        ]
+      },
+      "hovers": true
+    },
+    "shattered_sentinel": {
+      "actor_type": 515,
+      "id": "shattered_sentinel",
+      "name": "Shattered Sentinel",
+      "family": "biped",
+      "archetype": "golem",
+      "vertices": 4264,
+      "triangles": 7162,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/shattered_sentinel.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "mirrorhold_oracle": {
+      "actor_type": 516,
+      "id": "mirrorhold_oracle",
+      "name": "Mirrorhold Oracle",
+      "family": "biped",
+      "archetype": "mage",
+      "vertices": 2934,
+      "triangles": 4870,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mirrorhold_oracle.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "tideguard_vanguard": {
+      "actor_type": 517,
+      "id": "tideguard_vanguard",
+      "name": "Tideguard Vanguard",
+      "family": "biped",
+      "archetype": "knight",
+      "vertices": 2704,
+      "triangles": 4406,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/tideguard_vanguard.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "mirrorhold_siren": {
+      "actor_type": 518,
+      "id": "mirrorhold_siren",
+      "name": "Mirrorhold Siren",
+      "family": "serpent",
+      "archetype": "naga",
+      "vertices": 714,
+      "triangles": 1163,
+      "joints": 22,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mirrorhold_siren.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    },
+    "shardbound_archivist": {
+      "actor_type": 519,
+      "id": "shardbound_archivist",
+      "name": "Shardbound Archivist",
+      "family": "amorphous",
+      "archetype": "shards",
+      "vertices": 889,
+      "triangles": 1535,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/shardbound_archivist.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          2,
+          2
+        ]
+      },
+      "hovers": true
+    },
+    "mirrorhold_loremaster": {
+      "actor_type": 520,
+      "id": "mirrorhold_loremaster",
+      "name": "Mirrorhold Loremaster",
+      "family": "biped",
+      "archetype": "mage",
+      "vertices": 3067,
+      "triangles": 5090,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mirrorhold_loremaster.glb",
+      "locale": "mirrorhold",
+      "concept": {
+        "sheet": "53a67c51",
+        "cell": [
+          2,
+          3
+        ]
+      }
+    },
+    "mudflat_crab": {
+      "actor_type": 521,
+      "id": "mudflat_crab",
+      "name": "Mudflat Crab",
+      "family": "arachnid",
+      "archetype": "crab",
+      "vertices": 1768,
+      "triangles": 2832,
+      "joints": 35,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mudflat_crab.glb",
+      "locale": "manymouth_delta",
+      "concept": {
+        "sheet": "4bbc1f8e",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "delta_heron": {
+      "actor_type": 522,
+      "id": "delta_heron",
+      "name": "Delta Heron",
+      "family": "avian",
+      "archetype": "wader",
+      "vertices": 969,
+      "triangles": 1521,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/delta_heron.glb",
+      "locale": "manymouth_delta",
+      "concept": {
+        "sheet": "4bbc1f8e",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "voltfin_eel": {
+      "actor_type": 523,
+      "id": "voltfin_eel",
+      "name": "Voltfin Eel",
+      "family": "serpent",
+      "archetype": "eel",
+      "vertices": 658,
+      "triangles": 1073,
+      "joints": 22,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/voltfin_eel.glb",
+      "locale": "manymouth_delta",
+      "concept": {
+        "sheet": "4bbc1f8e",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "reed_stalker": {
+      "actor_type": 524,
+      "id": "reed_stalker",
+      "name": "Reed Stalker",
+      "family": "quadruped",
+      "archetype": "sprawler",
+      "vertices": 2516,
+      "triangles": 4384,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/reed_stalker.glb",
+      "locale": "manymouth_delta",
+      "concept": {
+        "sheet": "4bbc1f8e",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "mangrove_turtle": {
+      "actor_type": 525,
+      "id": "mangrove_turtle",
+      "name": "Mangrove Turtle",
+      "family": "quadruped",
+      "archetype": "chelonian",
+      "vertices": 6020,
+      "triangles": 9692,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mangrove_turtle.glb",
+      "locale": "manymouth_delta",
+      "concept": {
+        "sheet": "4bbc1f8e",
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "bog_warden": {
+      "actor_type": 526,
+      "id": "bog_warden",
+      "name": "Bog Warden",
+      "family": "biped",
+      "archetype": "construct",
+      "vertices": 8261,
+      "triangles": 12662,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/bog_warden.glb",
+      "locale": "manymouth_delta",
+      "concept": {
+        "sheet": "4bbc1f8e",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "frogspear_warrior": {
+      "actor_type": 527,
+      "id": "frogspear_warrior",
+      "name": "Frogspear Warrior",
+      "family": "biped",
+      "archetype": "warrior",
+      "vertices": 4966,
+      "triangles": 7706,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/frogspear_warrior.glb",
+      "locale": "manymouth_delta",
+      "concept": {
+        "sheet": "4bbc1f8e",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    },
+    "reed_drake": {
+      "actor_type": 528,
+      "id": "reed_drake",
+      "name": "Reed Drake",
+      "family": "quadruped",
+      "archetype": "sprawler",
+      "vertices": 4406,
+      "triangles": 7164,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/reed_drake.glb",
+      "locale": "manymouth_delta",
+      "concept": {
+        "sheet": "4bbc1f8e",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    },
+    "manymouth_hydra": {
+      "actor_type": 529,
+      "id": "manymouth_hydra",
+      "name": "Manymouth Hydra",
+      "family": "serpent",
+      "archetype": "hydra",
+      "vertices": 4957,
+      "triangles": 7695,
+      "joints": 22,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/manymouth_hydra.glb",
+      "locale": "manymouth_delta",
+      "concept": {
+        "sheet": "4bbc1f8e",
+        "cell": [
+          2,
+          3
+        ]
+      }
+    },
+    "emerald_basilisk": {
+      "actor_type": 530,
+      "id": "emerald_basilisk",
+      "name": "Emerald Basilisk",
+      "family": "quadruped",
+      "archetype": "sprawler",
+      "vertices": 2563,
+      "triangles": 3974,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/emerald_basilisk.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "leaf_mantis": {
+      "actor_type": 531,
+      "id": "leaf_mantis",
+      "name": "Leaf Mantis",
+      "family": "insect",
+      "archetype": "mantis",
+      "vertices": 899,
+      "triangles": 1492,
+      "joints": 26,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/leaf_mantis.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "dartback_treefrog": {
+      "actor_type": 532,
+      "id": "dartback_treefrog",
+      "name": "Dartback Tree Frog",
+      "family": "quadruped",
+      "archetype": "anuran",
+      "vertices": 2029,
+      "triangles": 3444,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/dartback_treefrog.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "plumefire_hummingbird": {
+      "actor_type": 533,
+      "id": "plumefire_hummingbird",
+      "name": "Plumefire Hummingbird",
+      "family": "avian",
+      "archetype": "songbird",
+      "vertices": 913,
+      "triangles": 1425,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/plumefire_hummingbird.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "vinecoil_snake": {
+      "actor_type": 534,
+      "id": "vinecoil_snake",
+      "name": "Vinecoil Snake",
+      "family": "serpent",
+      "archetype": "snake",
+      "vertices": 588,
+      "triangles": 953,
+      "joints": 22,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/vinecoil_snake.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "canopy_lynx": {
+      "actor_type": 535,
+      "id": "canopy_lynx",
+      "name": "Canopy Lynx",
+      "family": "quadruped",
+      "archetype": "felid",
+      "vertices": 2059,
+      "triangles": 3550,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/canopy_lynx.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "mossback_anteater": {
+      "actor_type": 536,
+      "id": "mossback_anteater",
+      "name": "Mossback Anteater",
+      "family": "quadruped",
+      "archetype": "ursine",
+      "vertices": 6795,
+      "triangles": 10230,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/mossback_anteater.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "bloomtail_axolotl": {
+      "actor_type": 537,
+      "id": "bloomtail_axolotl",
+      "name": "Bloomtail Axolotl",
+      "family": "fish",
+      "archetype": "axolotl",
+      "vertices": 595,
+      "triangles": 938,
+      "joints": 14,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/bloomtail_axolotl.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "canopy_gorilla": {
+      "actor_type": 538,
+      "id": "canopy_gorilla",
+      "name": "Canopy Gorilla",
+      "family": "biped",
+      "archetype": "primate",
+      "vertices": 3116,
+      "triangles": 4332,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/canopy_gorilla.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "vine_treant": {
+      "actor_type": 539,
+      "id": "vine_treant",
+      "name": "Vine Treant",
+      "family": "biped",
+      "archetype": "treant",
+      "vertices": 5016,
+      "triangles": 7358,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/vine_treant.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    },
+    "verdant_naiad": {
+      "actor_type": 540,
+      "id": "verdant_naiad",
+      "name": "Verdant Naiad",
+      "family": "amorphous",
+      "archetype": "vortex",
+      "vertices": 917,
+      "triangles": 1527,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/verdant_naiad.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          2,
+          2
+        ]
+      },
+      "hovers": true
+    },
+    "verdant_stair_dragon": {
+      "actor_type": 541,
+      "id": "verdant_stair_dragon",
+      "name": "Verdant Stair Dragon",
+      "family": "quadruped",
+      "archetype": "drake",
+      "vertices": 3667,
+      "triangles": 5454,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/verdant_stair_dragon.glb",
+      "locale": "verdant_stair",
+      "concept": {
+        "sheet": "66616a1d",
+        "cell": [
+          2,
+          3
+        ]
+      }
+    },
+    "rime_harpy": {
+      "actor_type": 542,
+      "id": "rime_harpy",
+      "name": "Rime Harpy",
+      "family": "avian",
+      "archetype": "harpy",
+      "vertices": 1581,
+      "triangles": 2601,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/rime_harpy.glb",
+      "locale": "whitehorn_range",
+      "concept": {
+        "sheet": "15c7630b",
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "glacier_golem": {
+      "actor_type": 543,
+      "id": "glacier_golem",
+      "name": "Glacier Golem",
+      "family": "biped",
+      "archetype": "golem",
+      "vertices": 4993,
+      "triangles": 8552,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/glacier_golem.glb",
+      "locale": "whitehorn_range",
+      "concept": {
+        "sheet": "15c7630b",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "whitehorn_yak": {
+      "actor_type": 544,
+      "id": "whitehorn_yak",
+      "name": "Whitehorn Yak",
+      "family": "quadruped",
+      "archetype": "bovine",
+      "vertices": 3375,
+      "triangles": 5734,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/whitehorn_yak.glb",
+      "locale": "whitehorn_range",
+      "concept": {
+        "sheet": "15c7630b",
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "rimeshell_crab": {
+      "actor_type": 545,
+      "id": "rimeshell_crab",
+      "name": "Rimeshell Crab",
+      "family": "arachnid",
+      "archetype": "crab",
+      "vertices": 2233,
+      "triangles": 3822,
+      "joints": 35,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/rimeshell_crab.glb",
+      "locale": "whitehorn_range",
+      "concept": {
+        "sheet": "15c7630b",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "hoarfrost_serpent": {
+      "actor_type": 546,
+      "id": "hoarfrost_serpent",
+      "name": "Hoarfrost Serpent",
+      "family": "serpent",
+      "archetype": "snake",
+      "vertices": 1659,
+      "triangles": 2843,
+      "joints": 22,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/hoarfrost_serpent.glb",
+      "locale": "whitehorn_range",
+      "concept": {
+        "sheet": "15c7630b",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    },
+    "glacier_eagle": {
+      "actor_type": 547,
+      "id": "glacier_eagle",
+      "name": "Glacier Eagle",
+      "family": "avian",
+      "archetype": "raptor",
+      "vertices": 969,
+      "triangles": 1521,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/glacier_eagle.glb",
+      "locale": "whitehorn_range",
+      "concept": {
+        "sheet": "15c7630b",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    },
+    "frostplate_knight": {
+      "actor_type": 548,
+      "id": "frostplate_knight",
+      "name": "Frostplate Knight",
+      "family": "biped",
+      "archetype": "knight",
+      "vertices": 4172,
+      "triangles": 7006,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/frostplate_knight.glb",
+      "locale": "whitehorn_range",
+      "concept": {
+        "sheet": "15c7630b",
+        "cell": [
+          2,
+          3
+        ]
+      }
+    },
+    "emberwing_moth": {
+      "actor_type": 549,
+      "id": "emberwing_moth",
+      "name": "Emberwing Moth",
+      "family": "insect",
+      "archetype": "moth",
+      "vertices": 1356,
+      "triangles": 2060,
+      "joints": 26,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/emberwing_moth.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "a5ba7c19",
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "amberwood_owl": {
+      "actor_type": 550,
+      "id": "amberwood_owl",
+      "name": "Amberwood Owl",
+      "family": "avian",
+      "archetype": "owl",
+      "vertices": 1521,
+      "triangles": 2001,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/amberwood_owl.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "a5ba7c19",
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "bramble_wolf": {
+      "actor_type": 551,
+      "id": "bramble_wolf",
+      "name": "Bramble Wolf",
+      "family": "quadruped",
+      "archetype": "canid",
+      "vertices": 3917,
+      "triangles": 6278,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/bramble_wolf.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "a5ba7c19",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "moss_troll": {
+      "actor_type": 552,
+      "id": "moss_troll",
+      "name": "Moss Troll",
+      "family": "biped",
+      "archetype": "brute",
+      "vertices": 11517,
+      "triangles": 17444,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/moss_troll.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "a5ba7c19",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "amberwood_treant": {
+      "actor_type": 553,
+      "id": "amberwood_treant",
+      "name": "Amberwood Treant",
+      "family": "biped",
+      "archetype": "treant",
+      "vertices": 5630,
+      "triangles": 8146,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/amberwood_treant.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "a5ba7c19",
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "ivy_hound": {
+      "actor_type": 554,
+      "id": "ivy_hound",
+      "name": "Ivy Hound",
+      "family": "quadruped",
+      "archetype": "canid",
+      "vertices": 3316,
+      "triangles": 5200,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/ivy_hound.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "a5ba7c19",
+        "cell": [
+          2,
+          0
+        ]
+      }
+    },
+    "thorn_revenant": {
+      "actor_type": 555,
+      "id": "thorn_revenant",
+      "name": "Thorn Revenant",
+      "family": "biped",
+      "archetype": "revenant",
+      "vertices": 4698,
+      "triangles": 7778,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/thorn_revenant.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "a5ba7c19",
+        "cell": [
+          2,
+          1
+        ]
+      }
+    },
+    "spectral_highwayman": {
+      "actor_type": 556,
+      "id": "spectral_highwayman",
+      "name": "Spectral Highwayman",
+      "family": "biped",
+      "archetype": "revenant",
+      "vertices": 2672,
+      "triangles": 4310,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/spectral_highwayman.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "a5ba7c19",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    },
+    "lantern_stag": {
+      "actor_type": 557,
+      "id": "lantern_stag",
+      "name": "Lantern Stag",
+      "family": "quadruped",
+      "archetype": "cervid",
+      "vertices": 3373,
+      "triangles": 5086,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/lantern_stag.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "a5ba7c19",
+        "cell": [
+          2,
+          3
+        ]
+      }
+    },
+    "moss_badger": {
+      "actor_type": 558,
+      "id": "moss_badger",
+      "name": "Moss Badger",
+      "family": "quadruped",
+      "archetype": "mustelid",
+      "vertices": 5994,
+      "triangles": 9378,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/moss_badger.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "c09f0eed",
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "bramble_stag": {
+      "actor_type": 559,
+      "id": "bramble_stag",
+      "name": "Bramble Stag",
+      "family": "quadruped",
+      "archetype": "cervid",
+      "vertices": 4143,
+      "triangles": 6486,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/bramble_stag.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "c09f0eed",
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "leafling_sprite": {
+      "actor_type": 560,
+      "id": "leafling_sprite",
+      "name": "Leafling Sprite",
+      "family": "biped",
+      "archetype": "treant",
+      "vertices": 3544,
+      "triangles": 4858,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/leafling_sprite.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "c09f0eed",
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "ember_wisp": {
+      "actor_type": 561,
+      "id": "ember_wisp",
+      "name": "Ember Wisp",
+      "family": "amorphous",
+      "archetype": "wisp",
+      "vertices": 926,
+      "triangles": 1586,
+      "joints": 36,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/ember_wisp.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "c09f0eed",
+        "cell": [
+          2,
+          0
+        ]
+      },
+      "hovers": true
+    },
+    "ivy_stone_golem": {
+      "actor_type": 562,
+      "id": "ivy_stone_golem",
+      "name": "Ivy Stone Golem",
+      "family": "biped",
+      "archetype": "golem",
+      "vertices": 4920,
+      "triangles": 7282,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/ivy_stone_golem.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "c09f0eed",
+        "cell": [
+          2,
+          2
+        ]
+      }
+    },
+    "amberwood_dryad": {
+      "actor_type": 563,
+      "id": "amberwood_dryad",
+      "name": "Amberwood Dryad",
+      "family": "biped",
+      "archetype": "mage",
+      "vertices": 5152,
+      "triangles": 7046,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/amberwood_dryad.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "c09f0eed",
+        "cell": [
+          2,
+          3
+        ]
+      }
+    },
+    "moss_bear": {
+      "actor_type": 564,
+      "id": "moss_bear",
+      "name": "Moss Bear",
+      "family": "quadruped",
+      "archetype": "ursine",
+      "vertices": 7956,
+      "triangles": 11946,
+      "joints": 24,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/moss_bear.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "4250fde7",
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "amberwood_scarecrow": {
+      "actor_type": 565,
+      "id": "amberwood_scarecrow",
+      "name": "Amberwood Scarecrow",
+      "family": "biped",
+      "archetype": "revenant",
+      "vertices": 3789,
+      "triangles": 6244,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/amberwood_scarecrow.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "4250fde7",
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "amberwood_ghost_knight": {
+      "actor_type": 566,
+      "id": "amberwood_ghost_knight",
+      "name": "Amberwood Ghost Knight",
+      "family": "biped",
+      "archetype": "knight",
+      "vertices": 2825,
+      "triangles": 4616,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/amberwood_ghost_knight.glb",
+      "locale": "amberwood",
+      "concept": {
+        "sheet": "4250fde7",
+        "cell": [
+          2,
+          1
+        ]
+      }
     }
   },
   "equipment": {
@@ -733,8 +3527,13 @@
       "id": "amberwood_longbow",
       "name": "Amberwood Longbow",
       "kind": "bow",
-      "vertices": 96,
-      "triangles": 96,
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 202,
+      "triangles": 264,
+      "joints": 0,
+      "bytes": 49060,
       "part": 0,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_longbow.glb"
@@ -743,8 +3542,13 @@
       "id": "ranger_leafblade",
       "name": "Ranger Leafblade",
       "kind": "sword",
-      "vertices": 59,
-      "triangles": 34,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 57456,
       "part": 0,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/ranger_leafblade.glb"
@@ -753,8 +3557,13 @@
       "id": "glasswarden_staff",
       "name": "Glasswarden Resonance Staff",
       "kind": "staff",
-      "vertices": 177,
-      "triangles": 280,
+      "finish": "crystal",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 898,
+      "triangles": 1556,
+      "joints": 0,
+      "bytes": 75468,
       "part": 0,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_staff.glb"
@@ -763,8 +3572,13 @@
       "id": "glasswarden_pick",
       "name": "Glasswarden Crystal Pick",
       "kind": "pick",
-      "vertices": 39,
-      "triangles": 38,
+      "finish": "crystal",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 600,
+      "triangles": 976,
+      "joints": 0,
+      "bytes": 58940,
       "part": 0,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_pick.glb"
@@ -773,8 +3587,13 @@
       "id": "greyhaven_cutlass",
       "name": "Greyhaven Cutlass",
       "kind": "sword",
-      "vertices": 59,
-      "triangles": 34,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 57460,
       "part": 0,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_cutlass.glb"
@@ -783,8 +3602,13 @@
       "id": "greyhaven_harpoon",
       "name": "Greyhaven Harpoon",
       "kind": "spear",
-      "vertices": 37,
-      "triangles": 36,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 438,
+      "triangles": 704,
+      "joints": 0,
+      "bytes": 52644,
       "part": 0,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_harpoon.glb"
@@ -793,8 +3617,13 @@
       "id": "orun_sun_spear",
       "name": "Orun Sun Spear",
       "kind": "spear",
-      "vertices": 37,
-      "triangles": 36,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 438,
+      "triangles": 704,
+      "joints": 0,
+      "bytes": 52628,
       "part": 0,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/orun_sun_spear.glb"
@@ -803,8 +3632,13 @@
       "id": "ssarathi_glaive",
       "name": "Ssarathi River Glaive",
       "kind": "glaive",
-      "vertices": 72,
-      "triangles": 46,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 580,
+      "triangles": 956,
+      "joints": 0,
+      "bytes": 60244,
       "part": 0,
       "visual": 107,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_glaive.glb"
@@ -813,8 +3647,13 @@
       "id": "luminous_mace",
       "name": "Luminous Compact Mace",
       "kind": "mace",
-      "vertices": 68,
-      "triangles": 64,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 932,
+      "triangles": 1384,
+      "joints": 0,
+      "bytes": 76628,
       "part": 0,
       "visual": 108,
       "path": "godot-client/assets/actors/native/equipment/luminous_mace.glb"
@@ -823,8 +3662,13 @@
       "id": "votary_ice_sword",
       "name": "Votary Ice Sword",
       "kind": "sword",
-      "vertices": 59,
-      "triangles": 34,
+      "finish": "crystal",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 55260,
       "part": 0,
       "visual": 109,
       "path": "godot-client/assets/actors/native/equipment/votary_ice_sword.glb"
@@ -833,8 +3677,13 @@
       "id": "stoneborn_hammer",
       "name": "Stoneborn Memory Hammer",
       "kind": "hammer",
-      "vertices": 48,
-      "triangles": 36,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 492,
+      "triangles": 768,
+      "joints": 0,
+      "bytes": 55172,
       "part": 0,
       "visual": 110,
       "path": "godot-client/assets/actors/native/equipment/stoneborn_hammer.glb"
@@ -843,8 +3692,13 @@
       "id": "mycelari_staff",
       "name": "Mycelari Spore Staff",
       "kind": "staff",
-      "vertices": 177,
-      "triangles": 280,
+      "finish": "spore",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 898,
+      "triangles": 1556,
+      "joints": 0,
+      "bytes": 69324,
       "part": 0,
       "visual": 111,
       "path": "godot-client/assets/actors/native/equipment/mycelari_staff.glb"
@@ -853,8 +3707,13 @@
       "id": "four_gates_guard_spear_native",
       "name": "Four Gates Guardian Spear",
       "kind": "spear",
-      "vertices": 37,
-      "triangles": 36,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 438,
+      "triangles": 704,
+      "joints": 0,
+      "bytes": 52684,
       "part": 0,
       "visual": 112,
       "path": "godot-client/assets/actors/native/equipment/four_gates_guard_spear_native.glb"
@@ -863,8 +3722,13 @@
       "id": "maritime_crossbow",
       "name": "Greyhaven Maritime Crossbow",
       "kind": "crossbow",
-      "vertices": 120,
-      "triangles": 108,
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 254,
+      "triangles": 328,
+      "joints": 0,
+      "bytes": 51540,
       "part": 0,
       "visual": 113,
       "path": "godot-client/assets/actors/native/equipment/maritime_crossbow.glb"
@@ -873,8 +3737,13 @@
       "id": "amberwood_roundshield",
       "name": "Amberwood Roundshield",
       "kind": "roundshield",
-      "vertices": 428,
-      "triangles": 736,
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 765,
+      "triangles": 1192,
+      "joints": 0,
+      "bytes": 78252,
       "part": 1,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_roundshield.glb"
@@ -883,8 +3752,13 @@
       "id": "glasswarden_shield",
       "name": "Glasswarden Crystal Shield",
       "kind": "kite",
-      "vertices": 428,
-      "triangles": 736,
+      "finish": "crystal",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 765,
+      "triangles": 1192,
+      "joints": 0,
+      "bytes": 66832,
       "part": 1,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_shield.glb"
@@ -893,8 +3767,13 @@
       "id": "greyhaven_anchor_shield",
       "name": "Greyhaven Anchor Shield",
       "kind": "roundshield",
-      "vertices": 428,
-      "triangles": 736,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 765,
+      "triangles": 1192,
+      "joints": 0,
+      "bytes": 69008,
       "part": 1,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_anchor_shield.glb"
@@ -903,8 +3782,13 @@
       "id": "orun_sun_shield",
       "name": "Orun Sun Shield",
       "kind": "roundshield",
-      "vertices": 428,
-      "triangles": 736,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 765,
+      "triangles": 1192,
+      "joints": 0,
+      "bytes": 68968,
       "part": 1,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_sun_shield.glb"
@@ -913,8 +3797,13 @@
       "id": "ssarathi_shell_shield",
       "name": "Ssarathi Shell Shield",
       "kind": "shell",
-      "vertices": 428,
-      "triangles": 736,
+      "finish": "shell",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 935,
+      "triangles": 1352,
+      "joints": 0,
+      "bytes": 78156,
       "part": 1,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_shell_shield.glb"
@@ -923,8 +3812,13 @@
       "id": "four_gates_guard_shield_native",
       "name": "Four Gates Guardian Shield",
       "kind": "kite",
-      "vertices": 428,
-      "triangles": 736,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 765,
+      "triangles": 1192,
+      "joints": 0,
+      "bytes": 69016,
       "part": 1,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/four_gates_guard_shield_native.glb"
@@ -933,8 +3827,13 @@
       "id": "amberwood_leaf_cape",
       "name": "Amberwood Leaf Cape",
       "kind": "cape",
-      "vertices": 48,
-      "triangles": 24,
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "vertices": 1146,
+      "triangles": 1900,
+      "joints": 65,
+      "bytes": 116524,
       "part": 2,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_leaf_cape.glb"
@@ -943,8 +3842,13 @@
       "id": "glasswarden_crystal_cape",
       "name": "Glasswarden Crystal Cape",
       "kind": "cape",
-      "vertices": 48,
-      "triangles": 24,
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "vertices": 1146,
+      "triangles": 1900,
+      "joints": 65,
+      "bytes": 116540,
       "part": 2,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_crystal_cape.glb"
@@ -953,8 +3857,13 @@
       "id": "greyhaven_storm_cape",
       "name": "Greyhaven Storm Cape",
       "kind": "cape",
-      "vertices": 48,
-      "triangles": 24,
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "vertices": 1146,
+      "triangles": 1900,
+      "joints": 65,
+      "bytes": 116524,
       "part": 2,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_storm_cape.glb"
@@ -963,8 +3872,13 @@
       "id": "orun_rider_cape",
       "name": "Orun Rider Cape",
       "kind": "cape",
-      "vertices": 48,
-      "triangles": 24,
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "vertices": 1146,
+      "triangles": 1900,
+      "joints": 65,
+      "bytes": 116500,
       "part": 2,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_rider_cape.glb"
@@ -973,8 +3887,13 @@
       "id": "ssarathi_frond_cape",
       "name": "Ssarathi Frond Cape",
       "kind": "cape",
-      "vertices": 48,
-      "triangles": 24,
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "vertices": 1146,
+      "triangles": 1900,
+      "joints": 65,
+      "bytes": 116520,
       "part": 2,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_frond_cape.glb"
@@ -983,8 +3902,13 @@
       "id": "four_gates_guard_cape_native",
       "name": "Four Gates Guardian Cape",
       "kind": "cape",
-      "vertices": 48,
-      "triangles": 24,
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "vertices": 1146,
+      "triangles": 1900,
+      "joints": 65,
+      "bytes": 116544,
       "part": 2,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/four_gates_guard_cape_native.glb"
@@ -993,8 +3917,13 @@
       "id": "amberwood_ranger_hood",
       "name": "Amberwood Ranger Hood",
       "kind": "hood",
-      "vertices": 190,
-      "triangles": 324,
+      "finish": "leather",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 573,
+      "triangles": 1014,
+      "joints": 0,
+      "bytes": 59964,
       "part": 3,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_hood.glb"
@@ -1003,8 +3932,13 @@
       "id": "glasswarden_helm",
       "name": "Glasswarden Crystal Helm",
       "kind": "helm",
-      "vertices": 203,
-      "triangles": 336,
+      "finish": "crystal",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 703,
+      "triangles": 1178,
+      "joints": 0,
+      "bytes": 63916,
       "part": 3,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_helm.glb"
@@ -1013,8 +3947,13 @@
       "id": "greyhaven_helm",
       "name": "Greyhaven League Helm",
       "kind": "helm",
-      "vertices": 203,
-      "triangles": 336,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 703,
+      "triangles": 1178,
+      "joints": 0,
+      "bytes": 66088,
       "part": 3,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_helm.glb"
@@ -1023,8 +3962,13 @@
       "id": "orun_sunmane_helm",
       "name": "Orun Sunmane Helm",
       "kind": "helm",
-      "vertices": 203,
-      "triangles": 336,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 703,
+      "triangles": 1178,
+      "joints": 0,
+      "bytes": 66068,
       "part": 3,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_sunmane_helm.glb"
@@ -1033,8 +3977,13 @@
       "id": "ssarathi_crest_helm",
       "name": "Ssarathi Crest Helm",
       "kind": "crest",
-      "vertices": 203,
-      "triangles": 336,
+      "finish": "shell",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 761,
+      "triangles": 1274,
+      "joints": 0,
+      "bytes": 70884,
       "part": 3,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_crest_helm.glb"
@@ -1043,8 +3992,13 @@
       "id": "luminous_circlet",
       "name": "Luminous Compact Circlet",
       "kind": "circlet",
-      "vertices": 730,
-      "triangles": 1092,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 676,
+      "triangles": 924,
+      "joints": 0,
+      "bytes": 62192,
       "part": 3,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/luminous_circlet.glb"
@@ -1053,8 +4007,13 @@
       "id": "votary_fur_hood",
       "name": "Votary Fur Hood",
       "kind": "hood",
-      "vertices": 190,
-      "triangles": 324,
+      "finish": "fur",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 573,
+      "triangles": 1014,
+      "joints": 0,
+      "bytes": 64048,
       "part": 3,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/votary_fur_hood.glb"
@@ -1063,8 +4022,13 @@
       "id": "stoneborn_crown",
       "name": "Stoneborn Crystal Crown",
       "kind": "crest",
-      "vertices": 203,
-      "triangles": 336,
+      "finish": "crystal",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 761,
+      "triangles": 1274,
+      "joints": 0,
+      "bytes": 66920,
       "part": 3,
       "visual": 107,
       "path": "godot-client/assets/actors/native/equipment/stoneborn_crown.glb"
@@ -1073,8 +4037,13 @@
       "id": "mycelari_cap",
       "name": "Mycelari Spore Cap",
       "kind": "mushroom",
-      "vertices": 379,
-      "triangles": 644,
+      "finish": "spore",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 1560,
+      "triangles": 2752,
+      "joints": 0,
+      "bytes": 104856,
       "part": 3,
       "visual": 108,
       "path": "godot-client/assets/actors/native/equipment/mycelari_cap.glb"
@@ -1083,8 +4052,13 @@
       "id": "amberwood_ranger_legs",
       "name": "Amberwood Ranger Leggings",
       "kind": "legs",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 135908,
       "part": 4,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_legs.glb"
@@ -1093,8 +4067,13 @@
       "id": "glasswarden_greaves",
       "name": "Glasswarden Crystal Greaves",
       "kind": "legs",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "crystal",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 133728,
       "part": 4,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_greaves.glb"
@@ -1103,8 +4082,13 @@
       "id": "greyhaven_trousers",
       "name": "Greyhaven League Trousers",
       "kind": "legs",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 130312,
       "part": 4,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_trousers.glb"
@@ -1113,8 +4097,13 @@
       "id": "orun_rider_legs",
       "name": "Orun Rider Leggings",
       "kind": "legs",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 135880,
       "part": 4,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_rider_legs.glb"
@@ -1123,8 +4112,13 @@
       "id": "ssarathi_scale_legs",
       "name": "Ssarathi Scale Leggings",
       "kind": "legs",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "mail",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 137704,
       "part": 4,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_legs.glb"
@@ -1133,8 +4127,13 @@
       "id": "votary_winter_legs",
       "name": "Votary Winter Leggings",
       "kind": "legs",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 140012,
       "part": 4,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/votary_winter_legs.glb"
@@ -1143,8 +4142,13 @@
       "id": "luminous_casual_pants",
       "name": "Luminous Casual Pants",
       "kind": "pants",
-      "vertices": 275,
-      "triangles": 368,
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 975,
+      "triangles": 1678,
+      "joints": 65,
+      "bytes": 107056,
       "part": 4,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_pants.glb"
@@ -1153,8 +4157,13 @@
       "id": "amberwood_ranger_cuirass",
       "name": "Amberwood Ranger Cuirass",
       "kind": "cuirass",
-      "vertices": 255,
-      "triangles": 412,
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 128328,
       "part": 5,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_cuirass.glb"
@@ -1163,8 +4172,13 @@
       "id": "glasswarden_cuirass",
       "name": "Glasswarden Crystal Cuirass",
       "kind": "cuirass",
-      "vertices": 255,
-      "triangles": 412,
+      "finish": "crystal",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 126152,
       "part": 5,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_cuirass.glb"
@@ -1173,8 +4187,13 @@
       "id": "greyhaven_coat",
       "name": "Greyhaven League Coat",
       "kind": "coat",
-      "vertices": 255,
-      "triangles": 412,
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1563,
+      "triangles": 2706,
+      "joints": 65,
+      "bytes": 142916,
       "part": 5,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_coat.glb"
@@ -1183,8 +4202,13 @@
       "id": "orun_sun_cuirass",
       "name": "Orun Sun Cuirass",
       "kind": "cuirass",
-      "vertices": 255,
-      "triangles": 412,
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 128288,
       "part": 5,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_sun_cuirass.glb"
@@ -1193,8 +4217,13 @@
       "id": "ssarathi_scale_cuirass",
       "name": "Ssarathi Scale Cuirass",
       "kind": "cuirass",
-      "vertices": 255,
-      "triangles": 412,
+      "finish": "mail",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 130116,
       "part": 5,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_cuirass.glb"
@@ -1203,8 +4232,13 @@
       "id": "luminous_turquoise_robe",
       "name": "Luminous Turquoise Robe",
       "kind": "robe",
-      "vertices": 444,
-      "triangles": 732,
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1593,
+      "triangles": 2766,
+      "joints": 65,
+      "bytes": 144844,
       "part": 5,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/luminous_turquoise_robe.glb"
@@ -1213,8 +4247,13 @@
       "id": "votary_fur_mantle",
       "name": "Votary Fur Mantle",
       "kind": "coat",
-      "vertices": 255,
-      "triangles": 412,
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1563,
+      "triangles": 2706,
+      "joints": 65,
+      "bytes": 152612,
       "part": 5,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/votary_fur_mantle.glb"
@@ -1223,8 +4262,13 @@
       "id": "stoneborn_plate",
       "name": "Stoneborn Memory Plate",
       "kind": "cuirass",
-      "vertices": 255,
-      "triangles": 412,
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 128316,
       "part": 5,
       "visual": 107,
       "path": "godot-client/assets/actors/native/equipment/stoneborn_plate.glb"
@@ -1233,8 +4277,13 @@
       "id": "mycelari_mantle",
       "name": "Mycelari Spore Mantle",
       "kind": "robe",
-      "vertices": 444,
-      "triangles": 732,
+      "finish": "spore",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1593,
+      "triangles": 2766,
+      "joints": 65,
+      "bytes": 142136,
       "part": 5,
       "visual": 108,
       "path": "godot-client/assets/actors/native/equipment/mycelari_mantle.glb"
@@ -1243,8 +4292,13 @@
       "id": "four_gates_guard_cuirass",
       "name": "Four Gates Guardian Cuirass",
       "kind": "cuirass",
-      "vertices": 255,
-      "triangles": 412,
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 128340,
       "part": 5,
       "visual": 109,
       "path": "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass.glb"
@@ -1253,8 +4307,13 @@
       "id": "luminous_short_sleeve_shirt",
       "name": "Luminous Short-Sleeve Shirt",
       "kind": "shirt",
-      "vertices": 311,
-      "triangles": 468,
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1309,
+      "triangles": 2166,
+      "joints": 65,
+      "bytes": 126304,
       "part": 5,
       "visual": 110,
       "path": "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt.glb"
@@ -1263,8 +4322,13 @@
       "id": "amberwood_ranger_boots",
       "name": "Amberwood Ranger Boots",
       "kind": "boots",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 121832,
       "part": 6,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_boots.glb"
@@ -1273,8 +4337,13 @@
       "id": "glasswarden_boots",
       "name": "Glasswarden Crystal Boots",
       "kind": "boots",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "crystal",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 119656,
       "part": 6,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_boots.glb"
@@ -1283,8 +4352,13 @@
       "id": "greyhaven_boots",
       "name": "Greyhaven League Boots",
       "kind": "boots",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 121832,
       "part": 6,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_boots.glb"
@@ -1293,8 +4367,13 @@
       "id": "orun_rider_boots",
       "name": "Orun Rider Boots",
       "kind": "boots",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 121804,
       "part": 6,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_rider_boots.glb"
@@ -1303,8 +4382,13 @@
       "id": "ssarathi_scale_boots",
       "name": "Ssarathi Scale Boots",
       "kind": "boots",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "mail",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 123624,
       "part": 6,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_boots.glb"
@@ -1313,8 +4397,13 @@
       "id": "votary_winter_boots",
       "name": "Votary Winter Boots",
       "kind": "boots",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 125928,
       "part": 6,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/votary_winter_boots.glb"
@@ -1323,8 +4412,13 @@
       "id": "luminous_casual_boots",
       "name": "Luminous Casual Boots",
       "kind": "boots",
-      "vertices": 104,
-      "triangles": 80,
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 121828,
       "part": 6,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_boots.glb"
@@ -1333,8 +4427,13 @@
       "id": "amberwood_amulet",
       "name": "Amberwood Leaf Amulet",
       "kind": "amulet",
-      "vertices": 873,
-      "triangles": 1280,
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 728,
+      "triangles": 1328,
+      "joints": 0,
+      "bytes": 78704,
       "part": 7,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_amulet.glb"
@@ -1343,8 +4442,13 @@
       "id": "glasswarden_resonator",
       "name": "Glasswarden Resonator",
       "kind": "amulet",
-      "vertices": 873,
-      "triangles": 1280,
+      "finish": "crystal",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 728,
+      "triangles": 1328,
+      "joints": 0,
+      "bytes": 67264,
       "part": 7,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_resonator.glb"
@@ -1353,8 +4457,13 @@
       "id": "greyhaven_compass",
       "name": "Greyhaven Compass",
       "kind": "amulet",
-      "vertices": 873,
-      "triangles": 1280,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 728,
+      "triangles": 1328,
+      "joints": 0,
+      "bytes": 69436,
       "part": 7,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_compass.glb"
@@ -1363,8 +4472,13 @@
       "id": "orun_sun_amulet",
       "name": "Orun Sun Amulet",
       "kind": "amulet",
-      "vertices": 873,
-      "triangles": 1280,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 728,
+      "triangles": 1328,
+      "joints": 0,
+      "bytes": 69424,
       "part": 7,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_sun_amulet.glb"
@@ -1373,8 +4487,13 @@
       "id": "ssarathi_shell_amulet",
       "name": "Ssarathi Shell Amulet",
       "kind": "amulet",
-      "vertices": 873,
-      "triangles": 1280,
+      "finish": "shell",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 728,
+      "triangles": 1328,
+      "joints": 0,
+      "bytes": 71252,
       "part": 7,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_shell_amulet.glb"
@@ -1383,15 +4502,62 @@
       "id": "luminous_orbit_amulet",
       "name": "Luminous Orbit Amulet",
       "kind": "amulet",
-      "vertices": 873,
-      "triangles": 1280,
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 728,
+      "triangles": 1328,
+      "joints": 0,
+      "bytes": 69452,
       "part": 7,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/luminous_orbit_amulet.glb"
     }
   },
+  "ambientCreatures": {
+    "sunmane_steppe_horse": {
+      "id": "sunmane_steppe_horse",
+      "name": "Sunmane Steppe Horse",
+      "archetype": "equine",
+      "path": "godot-client/assets/actors/native/creatures/sunmane_steppe_horse.glb",
+      "generator": "eloria-assets/tools/sunmane/creatures.py",
+      "tacked": false,
+      "region": "sunmane_steppe",
+      "note": "Authored to equine proportions on the shared creature rig by eloria-assets/tools/sunmane/creatures.py.",
+      "triangles": 2027,
+      "joints": 21,
+      "animations": 7
+    },
+    "sunmane_dun_mare": {
+      "id": "sunmane_dun_mare",
+      "name": "Sunmane Dun Mare",
+      "archetype": "equine",
+      "path": "godot-client/assets/actors/native/creatures/sunmane_dun_mare.glb",
+      "generator": "eloria-assets/tools/sunmane/creatures.py",
+      "tacked": false,
+      "region": "sunmane_steppe",
+      "note": "Authored to equine proportions on the shared creature rig by eloria-assets/tools/sunmane/creatures.py.",
+      "triangles": 2027,
+      "joints": 21,
+      "animations": 7
+    },
+    "sunmane_grey_pony": {
+      "id": "sunmane_grey_pony",
+      "name": "Sunmane Grey Pony",
+      "archetype": "equine",
+      "path": "godot-client/assets/actors/native/creatures/sunmane_grey_pony.glb",
+      "generator": "eloria-assets/tools/sunmane/creatures.py",
+      "tacked": true,
+      "region": "sunmane_steppe",
+      "note": "Authored to equine proportions on the shared creature rig by eloria-assets/tools/sunmane/creatures.py.",
+      "triangles": 2459,
+      "joints": 21,
+      "animations": 7
+    }
+  },
+  "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire.",
   "validation": {
-    "files": 126,
+    "files": 308,
     "results": {
       "godot-client/assets/actors/native/hair/buzzed_male.glb": {
         "nodes": 1,
@@ -1447,44 +4613,164 @@
         "skins": 0,
         "animations": 162
       },
+      "godot-client/assets/actors/native/creatures/cairnback_tortoise.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
       "godot-client/assets/actors/native/creatures/emberfox.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/dust_hyena.glb": {
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/frost_tiger.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/geode_scarab.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/barrens_wisp.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/rockshell_crab.glb": {
+        "nodes": 36,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/leaf_mantis.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/saltmarsh_crocodile.glb": {
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/two_tailed_fox.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/crownwater_wyvern.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/voltfin_eel.glb": {
+        "nodes": 23,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/moorfell_wolf.glb": {
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/snow_hare.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/courier_otter.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/spectral_moor_stag.glb": {
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/desert_tortoise.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/leafling_sprite.glb": {
+        "nodes": 28,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/ash_crawler.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/lantern_wraith.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mossback_anteater.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/plumed_crane.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
-      "godot-client/assets/actors/native/creatures/red_fox.glb": {
+      "godot-client/assets/actors/native/creatures/verdigris_beetle.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/barnacle_troll.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/plumefire_hummingbird.glb": {
         "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/tidegold_wyrm.glb": {
+        "nodes": 23,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/red_fox.glb": {
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -1495,85 +4781,469 @@
         "skins": 1,
         "animations": 7
       },
+      "godot-client/assets/actors/native/creatures/moor_pony.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/deepplate_coelacanth.glb": {
+        "nodes": 15,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
       "godot-client/assets/actors/native/creatures/armored_rhino.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/glacier_eagle.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/tideguard_vanguard.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/lanternwake_sprite.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/hoarfrost_serpent.glb": {
+        "nodes": 23,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/riverbank_ibis.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/moose.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/prism_moth.glb": {
+        "nodes": 27,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/bog_lurker.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/dartback_treefrog.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/crystalwing.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/bloomtail_axolotl.glb": {
+        "nodes": 15,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/facet_hound.glb": {
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/lynx.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/amberwood_owl.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/saber_tooth_cat.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/vine_treant.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/moss_bear.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mirrorhold_oracle.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mirefather_leviathan.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/bog_warden.glb": {
+        "nodes": 28,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/mossback_boar.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/manymouth_hydra.glb": {
+        "nodes": 23,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/brassband_pike.glb": {
+        "nodes": 15,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/sunmane_minotaur.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/verdant_stair_dragon.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/ratcatcher_tough.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mirrorhold_wheelwarden.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/bilge_rat.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/amethyst_scorpion.glb": {
+        "nodes": 36,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mudflat_crab.glb": {
+        "nodes": 36,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/giant_crocodile.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/amberwood_dryad.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/amberwood_ghost_knight.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/moss_troll.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/verdant_crown_king.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/springfly_sprite.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/canopy_lynx.glb": {
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/raccoon.glb": {
-        "nodes": 22,
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/elk.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/harborshell_crab.glb": {
+        "nodes": 36,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mirrorhold_loremaster.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/lanternwyrm.glb": {
+        "nodes": 23,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/emerald_basilisk.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/dunburrow_mole.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/reedmask_stalker.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/cascade_golem.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/frostplate_knight.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/gilded_devourer.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/waterwheel_golem.glb": {
+        "nodes": 28,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/miretoad.glb": {
-        "nodes": 22,
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/ice_bear.glb": {
-        "nodes": 22,
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/dire_wolf.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/reed_stalker.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/thorn_revenant.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/barrow_knight.glb": {
+        "nodes": 28,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/giant_komodo.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/palecrest_crab.glb": {
+        "nodes": 36,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/moss_badger.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/ivy_stone_golem.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/moorhorn_ram.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/prism_drake.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/rimeshell_crab.glb": {
+        "nodes": 36,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/thunder_ram.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/barrow_king.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/tidecoil_serpent.glb": {
+        "nodes": 23,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/drowned_captain.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/grasswing_mantis.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/bramble_stag.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/barrow_sovereign.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/bluewater_marlin.glb": {
+        "nodes": 15,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/tidecaller_sorceress.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/stormmane_lion.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/rime_harpy.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/glacier_golem.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/delta_heron.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,
@@ -1586,55 +5256,313 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/frost_maw.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mirrorwing_swarm.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/glacier_brute.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/canopy_gorilla.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/verdant_naiad.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/algae_alligator.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/reed_drake.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/rimebound_archmage.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/goldmane_aurochs.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/message_swallow.glb": {
         "nodes": 22,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/ridgehorn.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/crownwater_turtle.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mangrove_turtle.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/frogspear_warrior.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/emberwood_matron.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/medusa_tidepriest.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/harbor_gull.glb": {
         "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/tidelance_construct.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/bramble_wolf.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/orrery_colossus.glb": {
+        "nodes": 28,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/river_otter.glb": {
-        "nodes": 22,
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/giant_rat.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/amberwood_scarecrow.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/vinecoil_snake.glb": {
+        "nodes": 23,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/amethyst_sibyl.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/millstone_golem.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/verdigris_warden.glb": {
+        "nodes": 28,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/black_bear.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/gilded_water_lion.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/reedhat_fisher.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/whitehorn_yak.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/sluice_elemental.glb": {
+        "nodes": 37,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/sunscale_drake.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/reefplate_golem.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mirrorhold_siren.glb": {
+        "nodes": 23,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/orrery_sentinel.glb": {
+        "nodes": 28,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/lava_hound.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/amethyst_golem.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/shardling_swarm.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/cairn_golem.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/steppe_jackrabbit.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/kelpback_turtle.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/lantern_stag.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/moorlight_wisp.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/emberwing_moth.glb": {
+        "nodes": 27,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/ivy_hound.glb": {
+        "nodes": 25,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/fire_salamander.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/shattered_sentinel.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/drowned_dockhand.glb": {
+        "nodes": 28,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/porcupine.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/moor_heron.glb": {
         "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/glowmantle_ray.glb": {
+        "nodes": 15,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -1645,14 +5573,86 @@
         "skins": 1,
         "animations": 7
       },
+      "godot-client/assets/actors/native/creatures/amberwood_treant.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
       "godot-client/assets/actors/native/creatures/mountain_goat.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/crimson_duelist.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/palewater_wyrm.glb": {
+        "nodes": 23,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/lattice_spider.glb": {
+        "nodes": 36,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/sunmane_gryphon.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/geode_tortoise.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/spinefin_eel.glb": {
+        "nodes": 23,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/wild_boar.glb": {
-        "nodes": 22,
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/tidefin_naga.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/ember_wisp.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/harbor_seal.glb": {
+        "nodes": 25,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/shardbound_archivist.glb": {
+        "nodes": 37,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/spectral_highwayman.glb": {
+        "nodes": 28,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -1754,9 +5754,9 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/greyhaven_boots.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/luminous_orbit_amulet.glb": {
@@ -1778,9 +5778,9 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/orun_rider_cape.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/votary_fur_hood.glb": {
@@ -1790,9 +5790,9 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/amberwood_ranger_cuirass.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/votary_ice_sword.glb": {
@@ -1808,9 +5808,9 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/stoneborn_plate.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/four_gates_guard_shield_native.glb": {
@@ -1820,9 +5820,9 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/ssarathi_scale_cuirass.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/amberwood_ranger_hood.glb": {
@@ -1838,33 +5838,33 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/ssarathi_scale_boots.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/orun_rider_boots.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/glasswarden_greaves.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/votary_winter_legs.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/four_gates_guard_spear_native.glb": {
@@ -1874,9 +5874,9 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/greyhaven_storm_cape.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/greyhaven_harpoon.glb": {
@@ -1898,9 +5898,9 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/ssarathi_frond_cape.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/greyhaven_cutlass.glb": {
@@ -1910,21 +5910,21 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/glasswarden_cuirass.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/votary_fur_mantle.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/ssarathi_scale_legs.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/glasswarden_staff.glb": {
@@ -1934,21 +5934,21 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/amberwood_ranger_boots.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/votary_winter_boots.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/glasswarden_crystal_cape.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/glasswarden_pick.glb": {
@@ -1958,15 +5958,15 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/amberwood_leaf_cape.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/four_gates_guard_cape_native.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/greyhaven_compass.glb": {
@@ -2000,27 +6000,27 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/mycelari_mantle.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/orun_rider_legs.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/orun_sun_cuirass.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/glasswarden_boots.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/mycelari_cap.glb": {
@@ -2030,15 +6030,15 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/luminous_casual_boots.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/greyhaven_coat.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/mycelari_staff.glb": {
@@ -2048,9 +6048,9 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/luminous_casual_pants.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/orun_sun_spear.glb": {
@@ -2066,15 +6066,15 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/amberwood_ranger_legs.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/ssarathi_glaive.glb": {
@@ -2096,9 +6096,9 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/luminous_turquoise_robe.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/amberwood_roundshield.glb": {
@@ -2138,9 +6138,9 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/greyhaven_trousers.glb": {
-        "nodes": 1,
+        "nodes": 66,
         "meshes": 1,
-        "skins": 0,
+        "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/orun_sun_shield.glb": {
@@ -2148,48 +6148,1110 @@
         "meshes": 1,
         "skins": 0,
         "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_boots.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_sword_magic.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_club_wood.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_helm.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_pants.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_cutlass.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_greaves.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_shield_metal.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_pickaxe_magic.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_boots_fur.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_battleaxe_magic.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_shield_wood.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_fur_coat.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_bow.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_hood_leather.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_rapier.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_pickaxe.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_hammer.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_sword_thermal.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_sword_fire.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_legs_fur.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_hood_fur.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_gloves_leather.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_battleaxe.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_club_bone.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_staff.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_shirt.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_crossbow.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_quiver.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_sword.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_battleaxe_ice.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_crown.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_legs_leather.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_gloves_fur.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_cape_fur.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_greatsword.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_leather_armor.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_sword_ice.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_chain_armor.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_battleaxe_fire.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_plate_armor.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_cuisses.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_cape.glb": {
+        "nodes": 66,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
       }
     }
   },
-  "ambientCreatures": {
-    "sunmane_steppe_horse": {
-      "id": "sunmane_steppe_horse",
-      "name": "Sunmane Steppe Horse",
-      "archetype": "equine",
-      "triangles": 1979,
-      "joints": 21,
-      "animations": 7,
-      "path": "godot-client/assets/actors/native/creatures/sunmane_steppe_horse.glb",
-      "generator": "eloria-assets/tools/sunmane/creatures.py",
-      "tacked": false,
-      "region": "sunmane_steppe",
-      "note": "Authored to equine proportions on the shared creature rig; the generic creature generator's sphere-and-cylinder blank cannot produce a horse."
+  "genericEquipment": {
+    "generic_sword": {
+      "id": "generic_sword",
+      "name": "Sword",
+      "kind": "sword",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 57396,
+      "part": 0,
+      "visuals": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        58
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_sword.glb"
     },
-    "sunmane_dun_mare": {
-      "id": "sunmane_dun_mare",
-      "name": "Sunmane Dun Mare",
-      "archetype": "equine",
-      "triangles": 1979,
-      "joints": 21,
-      "animations": 7,
-      "path": "godot-client/assets/actors/native/creatures/sunmane_dun_mare.glb",
-      "generator": "eloria-assets/tools/sunmane/creatures.py",
-      "tacked": false,
-      "region": "sunmane_steppe",
-      "note": "Authored to equine proportions on the shared creature rig; the generic creature generator's sphere-and-cylinder blank cannot produce a horse."
+    "generic_sword_fire": {
+      "id": "generic_sword_fire",
+      "name": "Sword of Fire",
+      "kind": "sword",
+      "finish": "fire",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 57516,
+      "part": 0,
+      "visuals": [
+        15,
+        16,
+        18,
+        21,
+        25,
+        29,
+        33
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_sword_fire.glb"
     },
-    "sunmane_grey_pony": {
-      "id": "sunmane_grey_pony",
-      "name": "Sunmane Grey Pony",
-      "archetype": "equine",
-      "triangles": 2411,
-      "joints": 21,
-      "animations": 7,
-      "path": "godot-client/assets/actors/native/creatures/sunmane_grey_pony.glb",
-      "generator": "eloria-assets/tools/sunmane/creatures.py",
-      "tacked": true,
-      "region": "sunmane_steppe",
-      "note": "Authored to equine proportions on the shared creature rig; the generic creature generator's sphere-and-cylinder blank cannot produce a horse."
+    "generic_sword_ice": {
+      "id": "generic_sword_ice",
+      "name": "Sword of Ice",
+      "kind": "sword",
+      "finish": "cold",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 69452,
+      "part": 0,
+      "visuals": [
+        17,
+        19,
+        22,
+        26,
+        30,
+        34
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_sword_ice.glb"
+    },
+    "generic_sword_magic": {
+      "id": "generic_sword_magic",
+      "name": "Sword of Magic",
+      "kind": "sword",
+      "finish": "magic",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 56876,
+      "part": 0,
+      "visuals": [
+        20,
+        23,
+        27,
+        31,
+        35
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_sword_magic.glb"
+    },
+    "generic_sword_thermal": {
+      "id": "generic_sword_thermal",
+      "name": "Thermal Sword",
+      "kind": "sword",
+      "finish": "thermal",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 69460,
+      "part": 0,
+      "visuals": [
+        24,
+        28,
+        32,
+        36
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_sword_thermal.glb"
+    },
+    "generic_greatsword": {
+      "id": "generic_greatsword",
+      "name": "Great Sword",
+      "kind": "greatsword",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 522,
+      "triangles": 880,
+      "joints": 0,
+      "bytes": 57420,
+      "part": 0,
+      "visuals": [
+        51,
+        53,
+        54,
+        55
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_greatsword.glb"
+    },
+    "generic_cutlass": {
+      "id": "generic_cutlass",
+      "name": "Cutlass",
+      "kind": "curved_sword",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 584,
+      "triangles": 960,
+      "joints": 0,
+      "bytes": 60352,
+      "part": 0,
+      "visuals": [
+        52,
+        57
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_cutlass.glb"
+    },
+    "generic_rapier": {
+      "id": "generic_rapier",
+      "name": "Rapier",
+      "kind": "rapier",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 602,
+      "triangles": 1000,
+      "joints": 0,
+      "bytes": 61400,
+      "part": 0,
+      "visuals": [
+        56
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_rapier.glb"
+    },
+    "generic_staff": {
+      "id": "generic_staff",
+      "name": "Staff",
+      "kind": "staff",
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 898,
+      "triangles": 1556,
+      "joints": 0,
+      "bytes": 86800,
+      "part": 0,
+      "visuals": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_staff.glb"
+    },
+    "generic_battleaxe": {
+      "id": "generic_battleaxe",
+      "name": "Battle Axe",
+      "kind": "battleaxe",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 526,
+      "triangles": 844,
+      "joints": 0,
+      "bytes": 57116,
+      "part": 0,
+      "visuals": [
+        38,
+        39,
+        40
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_battleaxe.glb"
+    },
+    "generic_battleaxe_fire": {
+      "id": "generic_battleaxe_fire",
+      "name": "Battle Axe of Fire",
+      "kind": "battleaxe",
+      "finish": "fire",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 526,
+      "triangles": 844,
+      "joints": 0,
+      "bytes": 57236,
+      "part": 0,
+      "visuals": [
+        41,
+        43,
+        45
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_battleaxe_fire.glb"
+    },
+    "generic_battleaxe_ice": {
+      "id": "generic_battleaxe_ice",
+      "name": "Battle Axe of Ice",
+      "kind": "battleaxe",
+      "finish": "cold",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 526,
+      "triangles": 844,
+      "joints": 0,
+      "bytes": 69172,
+      "part": 0,
+      "visuals": [
+        42,
+        44
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_battleaxe_ice.glb"
+    },
+    "generic_battleaxe_magic": {
+      "id": "generic_battleaxe_magic",
+      "name": "Battle Axe of Magic",
+      "kind": "battleaxe",
+      "finish": "magic",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 526,
+      "triangles": 844,
+      "joints": 0,
+      "bytes": 56596,
+      "part": 0,
+      "visuals": [
+        46
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_battleaxe_magic.glb"
+    },
+    "generic_club_bone": {
+      "id": "generic_club_bone",
+      "name": "Bone Club",
+      "kind": "club",
+      "finish": "shell",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 766,
+      "triangles": 1340,
+      "joints": 0,
+      "bytes": 71776,
+      "part": 0,
+      "visuals": [
+        49
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_club_bone.glb"
+    },
+    "generic_club_wood": {
+      "id": "generic_club_wood",
+      "name": "Wooden Club",
+      "kind": "club",
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 766,
+      "triangles": 1340,
+      "joints": 0,
+      "bytes": 79248,
+      "part": 0,
+      "visuals": [
+        50
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_club_wood.glb"
+    },
+    "generic_hammer": {
+      "id": "generic_hammer",
+      "name": "War Hammer",
+      "kind": "hammer",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 492,
+      "triangles": 768,
+      "joints": 0,
+      "bytes": 55108,
+      "part": 0,
+      "visuals": [
+        12,
+        13
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_hammer.glb"
+    },
+    "generic_pickaxe": {
+      "id": "generic_pickaxe",
+      "name": "Pickaxe",
+      "kind": "pick",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 600,
+      "triangles": 976,
+      "joints": 0,
+      "bytes": 61040,
+      "part": 0,
+      "visuals": [
+        14
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_pickaxe.glb"
+    },
+    "generic_pickaxe_magic": {
+      "id": "generic_pickaxe_magic",
+      "name": "Magic Pickaxe",
+      "kind": "pick",
+      "finish": "magic",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 600,
+      "triangles": 976,
+      "joints": 0,
+      "bytes": 60504,
+      "part": 0,
+      "visuals": [
+        37
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_pickaxe_magic.glb"
+    },
+    "generic_bow": {
+      "id": "generic_bow",
+      "name": "Bow",
+      "kind": "bow",
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 202,
+      "triangles": 264,
+      "joints": 0,
+      "bytes": 48996,
+      "part": 0,
+      "visuals": [
+        64,
+        65,
+        66,
+        67
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_bow.glb"
+    },
+    "generic_crossbow": {
+      "id": "generic_crossbow",
+      "name": "Crossbow",
+      "kind": "crossbow",
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 254,
+      "triangles": 328,
+      "joints": 0,
+      "bytes": 51444,
+      "part": 0,
+      "visuals": [
+        68
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_crossbow.glb"
+    },
+    "generic_gloves_leather": {
+      "id": "generic_gloves_leather",
+      "name": "Leather Gloves",
+      "kind": "gloves",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "hands",
+      "vertices": 578,
+      "triangles": 816,
+      "joints": 65,
+      "bytes": 86388,
+      "part": 0,
+      "visuals": [
+        48
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_gloves_leather.glb"
+    },
+    "generic_gloves_fur": {
+      "id": "generic_gloves_fur",
+      "name": "Fur Gloves",
+      "kind": "gloves",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "hands",
+      "vertices": 578,
+      "triangles": 816,
+      "joints": 65,
+      "bytes": 90484,
+      "part": 0,
+      "visuals": [
+        47
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_gloves_fur.glb"
+    },
+    "generic_shield_wood": {
+      "id": "generic_shield_wood",
+      "name": "Wooden Shield",
+      "kind": "roundshield",
+      "finish": "wood",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 765,
+      "triangles": 1192,
+      "joints": 0,
+      "bytes": 78212,
+      "part": 1,
+      "visuals": [
+        0,
+        1
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_shield_wood.glb"
+    },
+    "generic_shield_metal": {
+      "id": "generic_shield_metal",
+      "name": "Metal Shield",
+      "kind": "kite",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 765,
+      "triangles": 1192,
+      "joints": 0,
+      "bytes": 68948,
+      "part": 1,
+      "visuals": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_shield_metal.glb"
+    },
+    "generic_quiver": {
+      "id": "generic_quiver",
+      "name": "Quiver",
+      "kind": "quiver",
+      "finish": "leather",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 690,
+      "triangles": 912,
+      "joints": 0,
+      "bytes": 63156,
+      "part": 1,
+      "visuals": [
+        7,
+        13
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_quiver.glb"
+    },
+    "generic_cape": {
+      "id": "generic_cape",
+      "name": "Cape",
+      "kind": "cape",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "vertices": 1146,
+      "triangles": 1900,
+      "joints": 65,
+      "bytes": 116448,
+      "part": 2,
+      "visuals": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_cape.glb"
+    },
+    "generic_cape_fur": {
+      "id": "generic_cape_fur",
+      "name": "Fur Cape",
+      "kind": "cape",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "cape",
+      "vertices": 1146,
+      "triangles": 1900,
+      "joints": 65,
+      "bytes": 126176,
+      "part": 2,
+      "visuals": [
+        10
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_cape_fur.glb"
+    },
+    "generic_helm": {
+      "id": "generic_helm",
+      "name": "Helm",
+      "kind": "helm",
+      "finish": "plate",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 703,
+      "triangles": 1178,
+      "joints": 0,
+      "bytes": 66000,
+      "part": 3,
+      "visuals": [
+        0,
+        7,
+        8,
+        9
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_helm.glb"
+    },
+    "generic_hood_leather": {
+      "id": "generic_hood_leather",
+      "name": "Leather Cap",
+      "kind": "hood",
+      "finish": "leather",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 573,
+      "triangles": 1014,
+      "joints": 0,
+      "bytes": 59912,
+      "part": 3,
+      "visuals": [
+        2
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_hood_leather.glb"
+    },
+    "generic_hood_fur": {
+      "id": "generic_hood_fur",
+      "name": "Fur Cap",
+      "kind": "hood",
+      "finish": "fur",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 573,
+      "triangles": 1014,
+      "joints": 0,
+      "bytes": 64008,
+      "part": 3,
+      "visuals": [
+        1,
+        3,
+        4
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_hood_fur.glb"
+    },
+    "generic_crown": {
+      "id": "generic_crown",
+      "name": "Crown",
+      "kind": "circlet",
+      "finish": "crystal",
+      "attach": "socket",
+      "skinRegion": "",
+      "vertices": 676,
+      "triangles": 924,
+      "joints": 0,
+      "bytes": 59908,
+      "part": 3,
+      "visuals": [
+        5,
+        6
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_crown.glb"
+    },
+    "generic_pants": {
+      "id": "generic_pants",
+      "name": "Pants",
+      "kind": "pants",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 975,
+      "triangles": 1678,
+      "joints": 65,
+      "bytes": 106976,
+      "part": 4,
+      "visuals": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_pants.glb"
+    },
+    "generic_legs_leather": {
+      "id": "generic_legs_leather",
+      "name": "Leather Leggings",
+      "kind": "legs",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 135864,
+      "part": 4,
+      "visuals": [
+        9,
+        15
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_legs_leather.glb"
+    },
+    "generic_legs_fur": {
+      "id": "generic_legs_fur",
+      "name": "Fur Leggings",
+      "kind": "legs",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 139960,
+      "part": 4,
+      "visuals": [
+        11
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_legs_fur.glb"
+    },
+    "generic_cuisses": {
+      "id": "generic_cuisses",
+      "name": "Cuisses",
+      "kind": "legs",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "vertices": 1371,
+      "triangles": 2294,
+      "joints": 65,
+      "bytes": 135816,
+      "part": 4,
+      "visuals": [
+        10,
+        12,
+        13,
+        14
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_cuisses.glb"
+    },
+    "generic_shirt": {
+      "id": "generic_shirt",
+      "name": "Shirt",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1309,
+      "triangles": 2166,
+      "joints": 65,
+      "bytes": 126200,
+      "part": 5,
+      "visuals": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_shirt.glb"
+    },
+    "generic_leather_armor": {
+      "id": "generic_leather_armor",
+      "name": "Leather Armor",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 128272,
+      "part": 5,
+      "visuals": [
+        12,
+        17
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_leather_armor.glb"
+    },
+    "generic_chain_armor": {
+      "id": "generic_chain_armor",
+      "name": "Chain Armor",
+      "kind": "cuirass",
+      "finish": "mail",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 130056,
+      "part": 5,
+      "visuals": [
+        13,
+        14,
+        15
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_chain_armor.glb"
+    },
+    "generic_plate_armor": {
+      "id": "generic_plate_armor",
+      "name": "Plate Armor",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1252,
+      "triangles": 2060,
+      "joints": 65,
+      "bytes": 128256,
+      "part": 5,
+      "visuals": [
+        16,
+        19,
+        20,
+        21
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_plate_armor.glb"
+    },
+    "generic_fur_coat": {
+      "id": "generic_fur_coat",
+      "name": "Fur Coat",
+      "kind": "coat",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 1563,
+      "triangles": 2706,
+      "joints": 65,
+      "bytes": 152568,
+      "part": 5,
+      "visuals": [
+        18
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_fur_coat.glb"
+    },
+    "generic_boots": {
+      "id": "generic_boots",
+      "name": "Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 121748,
+      "part": 6,
+      "visuals": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        12
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_boots.glb"
+    },
+    "generic_boots_fur": {
+      "id": "generic_boots_fur",
+      "name": "Fur Boots",
+      "kind": "boots",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 125880,
+      "part": 6,
+      "visuals": [
+        7
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_boots_fur.glb"
+    },
+    "generic_greaves": {
+      "id": "generic_greaves",
+      "name": "Greaves",
+      "kind": "boots",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1146,
+      "triangles": 1784,
+      "joints": 65,
+      "bytes": 121752,
+      "part": 6,
+      "visuals": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "path": "godot-client/assets/actors/native/equipment/generic_greaves.glb"
     }
   }
 }

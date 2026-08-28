@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.1.0",
+  "assetVersion": "1.0.0",
   "asset": {
     "id": "amberwood",
     "name": "Amberwood",
@@ -18,882 +18,4320 @@
     ],
     "bounds": {
       "min": [
-        -96,
-        0.0,
-        -96
+        -524.0,
+        -28.91,
+        -691.0
       ],
       "max": [
-        96,
-        18.0,
-        96
+        667.0,
+        143.3,
+        461.0
       ]
-    }
+    },
+    "playableBounds": {
+      "min": [
+        -174.0,
+        -20.86,
+        -401.0
+      ],
+      "max": [
+        401.0,
+        143.3,
+        174.0
+      ]
+    },
+    "seaLevel": 0.0,
+    "serverCells": 576
   },
-  "source": {
-    "elm": "../source-elm/amberwood.elm",
-    "sha256": "293da9eb40751e8bfbfba571ea2d5a127cff3fddaa66cd36c4ad7ecfd58bdf7a",
-    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
-    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
-  },
-  "conceptArt": {
-    "macro": "../../../concepts/nymara-regions/amberwood_region_concept.png",
-    "detailBoard": "references/00-concept-detail-board.png",
-    "panelGrid": [
-      5,
-      2
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      174.0,
+      174.0
     ],
-    "viewCount": 10,
-    "generator": "OpenAI ImageGen (built-in)",
-    "checkpoints": [
-      {
-        "panel": 1,
-        "id": "concept-01",
-        "subject": "forest road",
-        "cameraPosition": [
-          0.0,
-          20.0,
-          -72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 2,
-        "id": "concept-02",
-        "subject": "estate terrace",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_amberwood_estate_013"
-        ]
-      },
-      {
-        "panel": 3,
-        "id": "concept-03",
-        "subject": "hunting lodge",
-        "cameraPosition": [
-          68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_amberwood_hunting_lodge_014",
-          "Landmark_amberwood_hunting_lodge_015",
-          "Landmark_amberwood_hunting_lodge_016"
-        ]
-      },
-      {
-        "panel": 4,
-        "id": "concept-04",
-        "subject": "hollow tree",
-        "cameraPosition": [
-          68.48,
-          20.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_amberwood_hollow_tree_020",
-          "Landmark_amberwood_hollow_tree_021",
-          "Landmark_amberwood_hollow_tree_022"
-        ]
-      },
-      {
-        "panel": 5,
-        "id": "concept-05",
-        "subject": "old ravine bridge",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_amethyst_crystal_bridge_002",
-          "Landmark_mirrorhold_canal_stairs_009",
-          "Landmark_amberwood_old_bridge_028"
-        ]
-      },
-      {
-        "panel": 6,
-        "id": "concept-06",
-        "subject": "ruin arch",
-        "cameraPosition": [
-          0.0,
-          16.0,
-          72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_amberwood_ruin_arch_048",
-          "Landmark_amberwood_ruin_arch_049",
-          "Landmark_amberwood_ruin_arch_050"
-        ]
-      },
-      {
-        "panel": 7,
-        "id": "concept-07",
-        "subject": "garden fountain",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_amberwood_garden_fountain_054",
-          "Landmark_amberwood_garden_fountain_055",
-          "Landmark_amberwood_garden_fountain_056"
-        ]
-      },
-      {
-        "panel": 8,
-        "id": "concept-08",
-        "subject": "resin canopy trail",
-        "cameraPosition": [
-          -68.48,
-          24.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 9,
-        "id": "concept-09",
-        "subject": "estate overlook",
-        "cameraPosition": [
-          -68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_amberwood_estate_013"
-        ]
-      },
-      {
-        "panel": 10,
-        "id": "concept-10",
-        "subject": "leaf resin manor materials",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      }
-    ]
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 17.54,
+    "invertServerY": true
   },
-  "landmarks": [
-    {
-      "id": "landmark-000",
-      "name": "Manymouth Flooded Cave",
-      "node": "Landmark_manymouth_flooded_cave_000",
-      "position": [
-        -34.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-001",
-      "name": "Amberwood Orchard Fence",
-      "node": "Landmark_amberwood_orchard_fence_001",
-      "position": [
-        -12.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-002",
-      "name": "Amethyst Crystal Bridge",
-      "node": "Landmark_amethyst_crystal_bridge_002",
-      "position": [
-        10.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-003",
-      "name": "Westhaven Warehouse",
-      "node": "Landmark_westhaven_warehouse_003",
-      "position": [
-        32.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-004",
-      "name": "Manymouth Smuggler Crate",
-      "node": "Landmark_manymouth_smuggler_crate_004",
-      "position": [
-        -34.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-005",
-      "name": "Crownwater Fishing Boat",
-      "node": "Landmark_crownwater_fishing_boat_005",
-      "position": [
-        -12.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-006",
-      "name": "Crownwater Ferry",
-      "node": "Landmark_crownwater_ferry_006",
-      "position": [
-        10.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-007",
-      "name": "Whitehorn Carved Stairs",
-      "node": "Landmark_whitehorn_carved_stairs_007",
-      "position": [
-        32.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-008",
-      "name": "Crownwater Patrol Boat",
-      "node": "Landmark_crownwater_patrol_boat_008",
-      "position": [
-        -34.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-009",
-      "name": "Mirrorhold Canal Stairs",
-      "node": "Landmark_mirrorhold_canal_stairs_009",
-      "position": [
-        -12.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-010",
-      "name": "Ssarathi Curved Wall",
-      "node": "Landmark_ssarathi_curved_wall_010",
-      "position": [
-        10.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-011",
-      "name": "Sunmane Dry Cave",
-      "node": "Landmark_sunmane_dry_cave_011",
-      "position": [
-        32.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-013",
-      "name": "Amberwood Estate",
-      "node": "Landmark_amberwood_estate_013",
-      "position": [
-        0.0,
-        0,
-        16.0
-      ]
-    },
-    {
-      "id": "landmark-014",
-      "name": "Amberwood Hunting Lodge",
-      "node": "Landmark_amberwood_hunting_lodge_014",
-      "position": [
-        -24.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-015",
-      "name": "Amberwood Hunting Lodge",
-      "node": "Landmark_amberwood_hunting_lodge_015",
-      "position": [
-        24.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-016",
-      "name": "Amberwood Hunting Lodge",
-      "node": "Landmark_amberwood_hunting_lodge_016",
-      "position": [
-        -30.0,
-        0,
-        -6.0
-      ]
-    },
-    {
-      "id": "landmark-017",
-      "name": "Amberwood Hunting Lodge",
-      "node": "Landmark_amberwood_hunting_lodge_017",
-      "position": [
-        30.0,
-        0,
-        -6.0
-      ]
-    },
-    {
-      "id": "landmark-018",
-      "name": "Amberwood Hunting Lodge",
-      "node": "Landmark_amberwood_hunting_lodge_018",
-      "position": [
-        -20.0,
-        0,
-        -36.0
-      ]
-    },
-    {
-      "id": "landmark-019",
-      "name": "Amberwood Hunting Lodge",
-      "node": "Landmark_amberwood_hunting_lodge_019",
-      "position": [
-        20.0,
-        0,
-        -36.0
-      ]
-    },
-    {
-      "id": "landmark-020",
-      "name": "Amberwood Hollow Tree",
-      "node": "Landmark_amberwood_hollow_tree_020",
-      "position": [
-        -34.0,
-        0,
-        34.0
-      ]
-    },
-    {
-      "id": "landmark-021",
-      "name": "Amberwood Hollow Tree",
-      "node": "Landmark_amberwood_hollow_tree_021",
-      "position": [
-        34.0,
-        0,
-        34.0
-      ]
-    },
-    {
-      "id": "landmark-022",
-      "name": "Amberwood Hollow Tree",
-      "node": "Landmark_amberwood_hollow_tree_022",
-      "position": [
-        -38.0,
-        0,
-        6.0
-      ]
-    },
-    {
-      "id": "landmark-023",
-      "name": "Amberwood Hollow Tree",
-      "node": "Landmark_amberwood_hollow_tree_023",
-      "position": [
-        38.0,
-        0,
-        6.0
-      ]
-    },
-    {
-      "id": "landmark-024",
-      "name": "Amberwood Hollow Tree",
-      "node": "Landmark_amberwood_hollow_tree_024",
-      "position": [
-        -34.0,
-        0,
-        -26.0
-      ]
-    },
-    {
-      "id": "landmark-025",
-      "name": "Amberwood Hollow Tree",
-      "node": "Landmark_amberwood_hollow_tree_025",
-      "position": [
-        34.0,
-        0,
-        -26.0
-      ]
-    },
-    {
-      "id": "landmark-026",
-      "name": "Amberwood Hollow Tree",
-      "node": "Landmark_amberwood_hollow_tree_026",
-      "position": [
-        -24.0,
-        0,
-        -50.0
-      ]
-    },
-    {
-      "id": "landmark-027",
-      "name": "Amberwood Hollow Tree",
-      "node": "Landmark_amberwood_hollow_tree_027",
-      "position": [
-        24.0,
-        0,
-        -50.0
-      ]
-    },
-    {
-      "id": "landmark-028",
-      "name": "Amberwood Old Bridge",
-      "node": "Landmark_amberwood_old_bridge_028",
-      "position": [
-        0.0,
-        0,
-        28.0
-      ]
-    },
-    {
-      "id": "landmark-029",
-      "name": "Amberwood Old Bridge",
-      "node": "Landmark_amberwood_old_bridge_029",
-      "position": [
-        -28.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-030",
-      "name": "Amberwood Old Bridge",
-      "node": "Landmark_amberwood_old_bridge_030",
-      "position": [
-        28.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-031",
-      "name": "Amberwood Old Bridge",
-      "node": "Landmark_amberwood_old_bridge_031",
-      "position": [
-        0.0,
-        0,
-        -30.0
-      ]
-    },
-    {
-      "id": "landmark-032",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_032",
-      "position": [
-        -28.0,
-        0,
-        28.0
-      ]
-    },
-    {
-      "id": "landmark-033",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_033",
-      "position": [
-        -12.0,
-        0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-034",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_034",
-      "position": [
-        12.0,
-        0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-035",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_035",
-      "position": [
-        28.0,
-        0,
-        28.0
-      ]
-    },
-    {
-      "id": "landmark-036",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_036",
-      "position": [
-        -36.0,
-        0,
-        16.0
-      ]
-    },
-    {
-      "id": "landmark-037",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_037",
-      "position": [
-        36.0,
-        0,
-        16.0
-      ]
-    },
-    {
-      "id": "landmark-038",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_038",
-      "position": [
-        -36.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-039",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_039",
-      "position": [
-        36.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-040",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_040",
-      "position": [
-        -28.0,
-        0,
-        -40.0
-      ]
-    },
-    {
-      "id": "landmark-041",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_041",
-      "position": [
-        -12.0,
-        0,
-        -48.0
-      ]
-    },
-    {
-      "id": "landmark-042",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_042",
-      "position": [
-        12.0,
-        0,
-        -48.0
-      ]
-    },
-    {
-      "id": "landmark-043",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_043",
-      "position": [
-        28.0,
-        0,
-        -40.0
-      ]
-    },
-    {
-      "id": "landmark-044",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_044",
-      "position": [
-        -20.0,
-        0,
-        8.0
-      ]
-    },
-    {
-      "id": "landmark-045",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_045",
-      "position": [
-        20.0,
-        0,
-        8.0
-      ]
-    },
-    {
-      "id": "landmark-046",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_046",
-      "position": [
-        -20.0,
-        0,
-        -20.0
-      ]
-    },
-    {
-      "id": "landmark-047",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_047",
-      "position": [
-        20.0,
-        0,
-        -20.0
-      ]
-    },
-    {
-      "id": "landmark-048",
-      "name": "Amberwood Ruin Arch",
-      "node": "Landmark_amberwood_ruin_arch_048",
-      "position": [
-        -16.0,
-        0,
-        20.0
-      ]
-    },
-    {
-      "id": "landmark-049",
-      "name": "Amberwood Ruin Arch",
-      "node": "Landmark_amberwood_ruin_arch_049",
-      "position": [
-        16.0,
-        0,
-        20.0
-      ]
-    },
-    {
-      "id": "landmark-050",
-      "name": "Amberwood Ruin Arch",
-      "node": "Landmark_amberwood_ruin_arch_050",
-      "position": [
-        -24.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-051",
-      "name": "Amberwood Ruin Arch",
-      "node": "Landmark_amberwood_ruin_arch_051",
-      "position": [
-        24.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-052",
-      "name": "Amberwood Ruin Arch",
-      "node": "Landmark_amberwood_ruin_arch_052",
-      "position": [
-        -12.0,
-        0,
-        -38.0
-      ]
-    },
-    {
-      "id": "landmark-053",
-      "name": "Amberwood Ruin Arch",
-      "node": "Landmark_amberwood_ruin_arch_053",
-      "position": [
-        12.0,
-        0,
-        -38.0
-      ]
-    },
-    {
-      "id": "landmark-054",
-      "name": "Amberwood Garden Fountain",
-      "node": "Landmark_amberwood_garden_fountain_054",
-      "position": [
-        -10.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-055",
-      "name": "Amberwood Garden Fountain",
-      "node": "Landmark_amberwood_garden_fountain_055",
-      "position": [
-        10.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-056",
-      "name": "Amberwood Garden Fountain",
-      "node": "Landmark_amberwood_garden_fountain_056",
-      "position": [
-        -10.0,
-        0,
-        -10.0
-      ]
-    },
-    {
-      "id": "landmark-057",
-      "name": "Amberwood Garden Fountain",
-      "node": "Landmark_amberwood_garden_fountain_057",
-      "position": [
-        10.0,
-        0,
-        -10.0
-      ]
-    }
-  ],
   "spawnPoints": [
     {
       "id": "default",
       "position": [
-        0,
-        1,
-        0
+        0.0,
+        17.59,
+        0.0
       ],
-      "rotationDegrees": 180
+      "serverTile": [
+        174,
+        174
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Trail",
+      "grounded": true
+    },
+    {
+      "id": "harbour",
+      "position": [
+        -72.0,
+        4.17,
+        24.0
+      ],
+      "serverTile": [
+        102,
+        150
+      ],
+      "rotationDegrees": 90.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "great-arch",
+      "position": [
+        174.0,
+        33.13,
+        -66.0
+      ],
+      "serverTile": [
+        348,
+        240
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true
     }
   ],
   "collision": {
     "nodeNames": [
-      "Landmark_manymouth_flooded_cave_000",
-      "Landmark_amberwood_orchard_fence_001",
-      "Landmark_amethyst_crystal_bridge_002",
-      "Landmark_westhaven_warehouse_003",
-      "Landmark_manymouth_smuggler_crate_004",
-      "Landmark_crownwater_fishing_boat_005",
-      "Landmark_crownwater_ferry_006",
-      "Landmark_whitehorn_carved_stairs_007",
-      "Landmark_crownwater_patrol_boat_008",
-      "Landmark_mirrorhold_canal_stairs_009",
-      "Landmark_ssarathi_curved_wall_010",
-      "Landmark_sunmane_dry_cave_011",
-      "Landmark_amberwood_estate_013",
-      "Landmark_amberwood_hunting_lodge_014",
-      "Landmark_amberwood_hunting_lodge_015",
-      "Landmark_amberwood_hunting_lodge_016",
-      "Landmark_amberwood_hunting_lodge_017",
-      "Landmark_amberwood_hunting_lodge_018",
-      "Landmark_amberwood_hunting_lodge_019",
-      "Landmark_amberwood_hollow_tree_020",
-      "Landmark_amberwood_hollow_tree_021",
-      "Landmark_amberwood_hollow_tree_022",
-      "Landmark_amberwood_hollow_tree_023",
-      "Landmark_amberwood_hollow_tree_024",
-      "Landmark_amberwood_hollow_tree_025",
-      "Landmark_amberwood_hollow_tree_026",
-      "Landmark_amberwood_hollow_tree_027",
-      "Landmark_amberwood_old_bridge_028",
-      "Landmark_amberwood_old_bridge_029",
-      "Landmark_amberwood_old_bridge_030",
-      "Landmark_amberwood_old_bridge_031",
-      "Landmark_amberwood_tree_032",
-      "Landmark_amberwood_tree_033",
-      "Landmark_amberwood_tree_034",
-      "Landmark_amberwood_tree_035",
-      "Landmark_amberwood_tree_036",
-      "Landmark_amberwood_tree_037",
-      "Landmark_amberwood_tree_038",
-      "Landmark_amberwood_tree_039",
-      "Landmark_amberwood_tree_040",
-      "Landmark_amberwood_tree_041",
-      "Landmark_amberwood_tree_042",
-      "Landmark_amberwood_tree_043",
-      "Landmark_amberwood_tree_044",
-      "Landmark_amberwood_tree_045",
-      "Landmark_amberwood_tree_046",
-      "Landmark_amberwood_tree_047",
-      "Landmark_amberwood_ruin_arch_048",
-      "Landmark_amberwood_ruin_arch_049",
-      "Landmark_amberwood_ruin_arch_050",
-      "Landmark_amberwood_ruin_arch_051",
-      "Landmark_amberwood_ruin_arch_052",
-      "Landmark_amberwood_ruin_arch_053",
-      "Landmark_amberwood_garden_fountain_054",
-      "Landmark_amberwood_garden_fountain_055",
-      "Landmark_amberwood_garden_fountain_056",
-      "Landmark_amberwood_garden_fountain_057"
-    ]
+      "Boulder_3_smoke_vents_01",
+      "Boulder_3_smoke_vents_02",
+      "Boulder_3_smoke_vents_03",
+      "Boulder_3_smoke_vents_04",
+      "Boulder_3_smoke_vents_05",
+      "Boulder_3_smoke_vents_06",
+      "Boulder_3_smoke_vents_07",
+      "Boulder_3_smoke_vents_08",
+      "Building_Lodge_00",
+      "Building_Lodge_01",
+      "Building_Lodge_02",
+      "Building_Lodge_03",
+      "Building_Lodge_04",
+      "Building_Lodge_05",
+      "Building_Lodge_06",
+      "Building_Lodge_07",
+      "Building_Lodge_08",
+      "Building_Lodge_09",
+      "Building_Lodge_10",
+      "Building_Lodge_11",
+      "Building_Lodge_12",
+      "Building_Lodge_13",
+      "Building_Lodge_14",
+      "Building_Lodge_15",
+      "Building_Lodge_16",
+      "Building_Lodge_17",
+      "Building_Lodge_18",
+      "Building_Lodge_19",
+      "Building_Lodge_20",
+      "Building_Lodge_21",
+      "Building_Lodge_22",
+      "Building_Lodge_23",
+      "Building_Lodge_24",
+      "Building_Lodge_25",
+      "Building_Lodge_26",
+      "Building_Lodge_27",
+      "Building_Lodge_28",
+      "Building_Lodge_29",
+      "Building_Lodge_30",
+      "Cart_coppice_01",
+      "Cart_coppice_02",
+      "Cart_east_quarry_01",
+      "Cart_east_quarry_02",
+      "Cart_east_quarry_03",
+      "FallenLog_0001",
+      "FallenLog_0002",
+      "FallenLog_0003",
+      "FallenLog_0004",
+      "FallenLog_0005",
+      "FallenLog_0006",
+      "FallenLog_0007",
+      "FallenLog_0008",
+      "FallenLog_0009",
+      "FallenLog_0010",
+      "FallenLog_0011",
+      "FallenLog_0012",
+      "FallenLog_0013",
+      "FallenLog_0014",
+      "FallenLog_0015",
+      "FallenLog_0016",
+      "FallenLog_0017",
+      "FallenLog_0018",
+      "FallenLog_0019",
+      "FallenLog_0020",
+      "FallenLog_0021",
+      "FallenLog_0022",
+      "FallenLog_0023",
+      "FallenLog_0024",
+      "FallenLog_0025",
+      "FallenLog_0026",
+      "FallenLog_0027",
+      "FallenLog_0028",
+      "FallenLog_0029",
+      "FallenLog_0030",
+      "FallenLog_0031",
+      "FallenLog_0032",
+      "FallenLog_0033",
+      "FallenLog_0034",
+      "FallenLog_0035",
+      "FallenLog_0036",
+      "FallenLog_0037",
+      "FallenLog_0038",
+      "FallenLog_0039",
+      "FallenLog_0040",
+      "FallenLog_0041",
+      "FallenLog_0042",
+      "FallenLog_0043",
+      "FallenLog_0044",
+      "FallenLog_0045",
+      "FallenLog_0046",
+      "FallenLog_0047",
+      "FallenLog_0048",
+      "FallenLog_0049",
+      "FallenLog_0050",
+      "FallenLog_0051",
+      "FallenLog_0052",
+      "FallenLog_0053",
+      "FallenLog_0054",
+      "FallenLog_0055",
+      "FallenLog_0056",
+      "FallenLog_0057",
+      "FallenLog_0058",
+      "FallenLog_0059",
+      "FallenLog_0060",
+      "FallenLog_0061",
+      "FallenLog_0062",
+      "FallenLog_0063",
+      "FallenLog_0064",
+      "FallenLog_0065",
+      "FallenLog_0066",
+      "FallenLog_0067",
+      "FallenLog_0068",
+      "FallenLog_0069",
+      "FallenLog_0070",
+      "FallenLog_0071",
+      "FallenLog_0072",
+      "FallenLog_0073",
+      "FallenLog_0074",
+      "FallenLog_0075",
+      "FallenLog_0076",
+      "FallenLog_0077",
+      "FallenLog_0078",
+      "FallenLog_0079",
+      "FallenLog_0080",
+      "FallenLog_0081",
+      "FallenLog_0082",
+      "FallenLog_0083",
+      "FallenLog_0084",
+      "FallenLog_0085",
+      "FallenLog_0086",
+      "FallenLog_0087",
+      "FallenLog_0088",
+      "FallenLog_0089",
+      "FallenLog_0090",
+      "FallenLog_0091",
+      "FallenLog_0092",
+      "FallenLog_0093",
+      "FallenLog_0094",
+      "FallenLog_0095",
+      "FallenLog_0096",
+      "FallenLog_0097",
+      "FallenLog_0098",
+      "FallenLog_0099",
+      "FallenLog_0100",
+      "FallenLog_0101",
+      "FallenLog_0102",
+      "FallenLog_0103",
+      "FallenLog_0104",
+      "FallenLog_0105",
+      "FallenLog_0106",
+      "FallenLog_0107",
+      "FallenLog_0108",
+      "FallenLog_0109",
+      "FallenLog_0110",
+      "FallenLog_0111",
+      "FallenLog_0112",
+      "FallenLog_0113",
+      "FallenLog_0114",
+      "FallenLog_0115",
+      "FallenLog_0116",
+      "FallenLog_0117",
+      "FallenLog_0118",
+      "FallenLog_0119",
+      "FallenLog_0120",
+      "FallenLog_0121",
+      "FallenLog_0122",
+      "FallenLog_0123",
+      "FallenLog_0124",
+      "FallenLog_0125",
+      "FallenLog_0126",
+      "FallenLog_0127",
+      "FallenLog_0128",
+      "FallenLog_0129",
+      "FallenLog_0130",
+      "FallenLog_0131",
+      "FallenLog_0132",
+      "FallenLog_0133",
+      "FallenLog_0134",
+      "FallenLog_0135",
+      "FallenLog_0136",
+      "FallenLog_0137",
+      "FallenLog_0138",
+      "FallenLog_0139",
+      "FallenLog_0140",
+      "FallenLog_0141",
+      "FallenLog_0142",
+      "FallenLog_0143",
+      "FallenLog_0144",
+      "FallenLog_0145",
+      "FallenLog_0146",
+      "FallenLog_0147",
+      "FallenLog_0148",
+      "FallenLog_0149",
+      "FallenLog_0150",
+      "FallenLog_0151",
+      "FallenLog_0152",
+      "FallenLog_0153",
+      "FallenLog_0154",
+      "FallenLog_0155",
+      "FallenLog_0156",
+      "FallenLog_0157",
+      "FallenLog_0158",
+      "FallenLog_0159",
+      "FallenLog_0160",
+      "FallenLog_0161",
+      "FallenLog_0162",
+      "FallenLog_0163",
+      "FallenLog_0164",
+      "FallenLog_0165",
+      "FallenLog_0166",
+      "FallenLog_0167",
+      "FallenLog_0168",
+      "FallenLog_0169",
+      "FallenLog_0170",
+      "FallenLog_0171",
+      "FallenLog_0172",
+      "Grove_01_Wood",
+      "Grove_02_Wood",
+      "Grove_03_Wood",
+      "Grove_04_Wood",
+      "Grove_05_Wood",
+      "Grove_06_Wood",
+      "Grove_07_Wood",
+      "Grove_08_Wood",
+      "Grove_09_Wood",
+      "Grove_10_Wood",
+      "Grove_11_Wood",
+      "Grove_12_Wood",
+      "Interact_AmberBench_0",
+      "Interact_AmberBench_1",
+      "Interact_AmberBench_2",
+      "Interact_AmberBench_3",
+      "Interact_AmberBench_4",
+      "Interact_Well_Market",
+      "Interact_Well_Meadow",
+      "Landmark_AmberHall",
+      "Landmark_AncientArch_0",
+      "Landmark_AncientArch_1",
+      "Landmark_AncientArch_2",
+      "Landmark_AncientArch_3",
+      "Landmark_AncientArch_4",
+      "Landmark_AncientArch_5",
+      "Landmark_AncientArch_6",
+      "Landmark_ArchColumn_0",
+      "Landmark_ArchColumn_1",
+      "Landmark_ArchColumn_2",
+      "Landmark_ArchColumn_3",
+      "Landmark_ArchColumn_4",
+      "Landmark_ArchColumn_5",
+      "Landmark_ArchColumn_6",
+      "Landmark_ArchColumn_7",
+      "Landmark_AshChapel",
+      "Landmark_BoundaryStone",
+      "Landmark_CanopyDwelling",
+      "Landmark_CanopyPlatform_0",
+      "Landmark_CanopyPlatform_1",
+      "Landmark_CanopyPlatform_2",
+      "Landmark_CanopyPlatform_3",
+      "Landmark_CanopyPlatform_4",
+      "Landmark_CanopyPlatform_5",
+      "Landmark_CharcoalKiln_0",
+      "Landmark_CharcoalKiln_1",
+      "Landmark_CharcoalKiln_2",
+      "Landmark_EastQuarry",
+      "Landmark_ForestGate_0",
+      "Landmark_ForestGate_1",
+      "Landmark_GardenFountain",
+      "Landmark_GardenRotunda",
+      "Landmark_GardenStatue_0",
+      "Landmark_GardenStatue_1",
+      "Landmark_GardenStatue_2",
+      "Landmark_GardenStatue_3",
+      "Landmark_Giant_0_Wood",
+      "Landmark_Giant_1_Wood",
+      "Landmark_Giant_2_Wood",
+      "Landmark_Giant_3_Wood",
+      "Landmark_Giant_4_Wood",
+      "Landmark_Giant_5_Wood",
+      "Landmark_Giant_6_Wood",
+      "Landmark_Giant_7_Wood",
+      "Landmark_GreatArch",
+      "Landmark_GreatTree_Wood",
+      "Landmark_Harbour_Dock",
+      "Landmark_HighBridge",
+      "Landmark_HollowTreeHall",
+      "Landmark_KelpLanding",
+      "Landmark_MootHall",
+      "Landmark_OldBridge",
+      "Landmark_SeaArch",
+      "Landmark_StandingStone_0",
+      "Landmark_StandingStone_1",
+      "Landmark_StandingStone_2",
+      "Landmark_StandingStone_3",
+      "Landmark_StandingStone_4",
+      "Landmark_StandingStone_5",
+      "Landmark_StandingStone_6",
+      "Landmark_StandingStone_7",
+      "Landmark_StandingStone_8",
+      "Landmark_Tower_far_watch",
+      "Landmark_UpperFallsShrine",
+      "Landmark_Watchtower_0",
+      "Landmark_Watchtower_1",
+      "Landmark_Watchtower_2",
+      "Landmark_Watchtower_3",
+      "Landmark_Watchtower_4",
+      "Landmark_Watchtower_5",
+      "Landmark_Watchtower_6",
+      "Landmark_Watchtower_7",
+      "Landmark_Wayshrine",
+      "LogPile_Large_coppice_01",
+      "LogPile_Large_coppice_02",
+      "LogPile_Large_coppice_03",
+      "LogPile_Large_coppice_04",
+      "LogPile_Large_coppice_05",
+      "LogPile_Large_coppice_06",
+      "LogPile_Large_coppice_07",
+      "Prop_BurntCamp_0",
+      "Prop_BurntCamp_1",
+      "Prop_BurntCamp_2",
+      "Prop_BurntCamp_3",
+      "Prop_BurntCamp_4",
+      "Prop_BurntCamp_5",
+      "Prop_BurntCamp_6",
+      "Prop_BurntCamp_7",
+      "Prop_BurntStack_cinder_field_01",
+      "Prop_BurntStack_cinder_field_02",
+      "Prop_BurntStack_cinder_field_03",
+      "Prop_BurntStack_cinder_field_04",
+      "Prop_BurntStack_cinder_field_05",
+      "Prop_BurntStack_cinder_field_06",
+      "Prop_Cart_175",
+      "Prop_Cart_176",
+      "Prop_Cart_177",
+      "Prop_Cart_178",
+      "Prop_Cart_179",
+      "Prop_Cart_180",
+      "Prop_Cart_181",
+      "Prop_Cart_182",
+      "Prop_Cart_183",
+      "Prop_Cart_184",
+      "Prop_Cart_185",
+      "Prop_Cart_186",
+      "Prop_Cart_187",
+      "Prop_Cart_188",
+      "Prop_Cart_189",
+      "Prop_Dock_Small",
+      "Prop_GardenBalustrade_-1",
+      "Prop_GardenBalustrade_1",
+      "Prop_LogPile_208",
+      "Prop_LogPile_209",
+      "Prop_LogPile_210",
+      "Prop_LogPile_211",
+      "Prop_LogPile_212",
+      "Prop_LogPile_213",
+      "Prop_LogPile_214",
+      "Prop_LogPile_215",
+      "Prop_LogPile_216",
+      "Prop_LogPile_217",
+      "Prop_LogPile_218",
+      "Prop_LogPile_219",
+      "Prop_LogPile_220",
+      "Prop_LogPile_221",
+      "Prop_LogPile_222",
+      "Prop_MarketStall_0",
+      "Prop_MarketStall_1",
+      "Prop_MarketStall_2",
+      "Prop_MarketStall_3",
+      "Prop_MarketStall_4",
+      "Prop_MarketStall_5",
+      "Prop_MarketStall_6",
+      "Prop_MarketStall_7",
+      "Prop_MarketStall_8",
+      "Prop_MarketStall_9",
+      "Prop_RetainingWall_0",
+      "Prop_RetainingWall_1",
+      "Prop_RetainingWall_10",
+      "Prop_RetainingWall_11",
+      "Prop_RetainingWall_12",
+      "Prop_RetainingWall_13",
+      "Prop_RetainingWall_2",
+      "Prop_RetainingWall_3",
+      "Prop_RetainingWall_4",
+      "Prop_RetainingWall_5",
+      "Prop_RetainingWall_6",
+      "Prop_RetainingWall_7",
+      "Prop_RetainingWall_8",
+      "Prop_RetainingWall_9",
+      "Prop_Ruin_001",
+      "Prop_Ruin_002",
+      "Prop_Ruin_003",
+      "Prop_Ruin_004",
+      "Prop_Ruin_005",
+      "Prop_Ruin_006",
+      "Prop_Ruin_007",
+      "Prop_Ruin_008",
+      "Prop_Ruin_009",
+      "Prop_Ruin_010",
+      "Prop_Ruin_011",
+      "Prop_Ruin_012",
+      "Prop_Ruin_013",
+      "Prop_Ruin_014",
+      "Prop_Ruin_015",
+      "Prop_Ruin_016",
+      "Prop_Ruin_017",
+      "Prop_Ruin_018",
+      "Prop_Ruin_019",
+      "Prop_Ruin_020",
+      "Prop_Ruin_021",
+      "Prop_Ruin_022",
+      "Prop_Ruin_023",
+      "Prop_Ruin_024",
+      "Prop_Ruin_025",
+      "Prop_Ruin_026",
+      "Prop_Ruin_027",
+      "Prop_Ruin_028",
+      "Prop_Ruin_029",
+      "Prop_Ruin_030",
+      "Prop_Ruin_031",
+      "Prop_Ruin_032",
+      "Prop_Ruin_033",
+      "Prop_Ruin_034",
+      "Prop_Ruin_035",
+      "Prop_Ruin_036",
+      "Prop_Ruin_037",
+      "Prop_Ruin_038",
+      "Prop_Ruin_039",
+      "Prop_Ruin_040",
+      "Prop_Ruin_041",
+      "Prop_Ruin_042",
+      "Prop_Ruin_043",
+      "Prop_Ruin_044",
+      "Prop_Ruin_045",
+      "Prop_Ruin_046",
+      "Prop_Ruin_047",
+      "Prop_Ruin_048",
+      "Prop_Ruin_049",
+      "Prop_Ruin_050",
+      "Prop_Ruin_051",
+      "Prop_Ruin_052",
+      "Prop_Ruin_053",
+      "Prop_Ruin_054",
+      "Prop_Ruin_055",
+      "Prop_Ruin_056",
+      "Prop_Ruin_057",
+      "Prop_Ruin_058",
+      "Prop_Ruin_059",
+      "Prop_Ruin_060",
+      "Prop_Ruin_061",
+      "Prop_Ruin_062",
+      "Prop_Ruin_063",
+      "Prop_Ruin_064",
+      "Prop_Ruin_065",
+      "Prop_Ruin_066",
+      "Prop_Ruin_067",
+      "Prop_Ruin_068",
+      "Prop_Ruin_069",
+      "Prop_Ruin_070",
+      "Prop_Ruin_071",
+      "Prop_Ruin_072",
+      "Prop_Ruin_073",
+      "Prop_Ruin_074",
+      "Prop_Ruin_075",
+      "Prop_Ruin_076",
+      "Prop_Ruin_077",
+      "Prop_Ruin_078",
+      "Prop_Ruin_079",
+      "Prop_Ruin_080",
+      "Prop_Tent_ridge_camp_01",
+      "Prop_Tent_ridge_camp_02",
+      "Prop_Tent_ridge_camp_03",
+      "Prop_Tent_ridge_camp_04",
+      "Prop_Tent_ridge_camp_05",
+      "Prop_TimberStack_0",
+      "Prop_TimberStack_1",
+      "Prop_TimberStack_2",
+      "Prop_TimberStack_3",
+      "Prop_TimberStack_4",
+      "Prop_TimberStack_5",
+      "Prop_Workbench_190",
+      "Prop_Workbench_191",
+      "Prop_Workbench_192",
+      "Prop_Workbench_193",
+      "Prop_Workbench_194",
+      "Prop_Workbench_195",
+      "Prop_Workbench_196",
+      "Prop_Workbench_197",
+      "Prop_Workbench_198",
+      "Prop_Workbench_199",
+      "Prop_Workbench_200",
+      "Prop_Workbench_201",
+      "Prop_Workbench_202",
+      "Prop_Workbench_203",
+      "Prop_Workbench_204",
+      "Prop_Workbench_205",
+      "Prop_Workbench_206",
+      "Prop_Workbench_207",
+      "RockCluster_2_sea_arch_01",
+      "RockCluster_2_sea_arch_02",
+      "RockCluster_2_sea_arch_03",
+      "Rock_0001",
+      "Rock_0002",
+      "Rock_0003",
+      "Rock_0004",
+      "Rock_0005",
+      "Rock_0006",
+      "Rock_0007",
+      "Rock_0008",
+      "Rock_0009",
+      "Rock_0010",
+      "Rock_0011",
+      "Rock_0012",
+      "Rock_0013",
+      "Rock_0014",
+      "Rock_0015",
+      "Rock_0016",
+      "Rock_0017",
+      "Rock_0018",
+      "Rock_0019",
+      "Rock_0020",
+      "Rock_0021",
+      "Rock_0022",
+      "Rock_0023",
+      "Rock_0024",
+      "Rock_0025",
+      "Rock_0026",
+      "Rock_0027",
+      "Rock_0028",
+      "Rock_0029",
+      "Rock_0030",
+      "Rock_0031",
+      "Rock_0032",
+      "Rock_0033",
+      "Rock_0034",
+      "Rock_0035",
+      "Rock_0036",
+      "Rock_0037",
+      "Rock_0038",
+      "Rock_0039",
+      "Rock_0040",
+      "Rock_0041",
+      "Rock_0042",
+      "Rock_0043",
+      "Rock_0044",
+      "Rock_0045",
+      "Rock_0046",
+      "Rock_0047",
+      "Rock_0048",
+      "Rock_0049",
+      "Rock_0050",
+      "Rock_0051",
+      "Rock_0052",
+      "Rock_0053",
+      "Rock_0054",
+      "Rock_0055",
+      "Rock_0056",
+      "Rock_0057",
+      "Rock_0058",
+      "Rock_0059",
+      "Rock_0060",
+      "Rock_0061",
+      "Rock_0062",
+      "Rock_0063",
+      "Rock_0064",
+      "Rock_0065",
+      "Rock_0066",
+      "Rock_0067",
+      "Rock_0068",
+      "Rock_0069",
+      "Rock_0070",
+      "Rock_0071",
+      "Rock_0072",
+      "Rock_0073",
+      "Rock_0074",
+      "Rock_0075",
+      "Rock_0076",
+      "Rock_0077",
+      "Rock_0078",
+      "Rock_0079",
+      "Rock_0080",
+      "Rock_0081",
+      "Rock_0082",
+      "Rock_0083",
+      "Rock_0084",
+      "Rock_0085",
+      "Rock_0086",
+      "Rock_0087",
+      "Rock_0088",
+      "Rock_0089",
+      "Rock_0090",
+      "Rock_0091",
+      "Rock_0092",
+      "Rock_0093",
+      "Rock_0094",
+      "Rock_0095",
+      "Rock_0096",
+      "Rock_0097",
+      "Rock_0098",
+      "Rock_0099",
+      "Rock_0100",
+      "Rock_0101",
+      "Rock_0102",
+      "Rock_0103",
+      "Rock_0104",
+      "Rock_0105",
+      "Rock_0106",
+      "Rock_0107",
+      "Rock_0108",
+      "Rock_0109",
+      "Rock_0110",
+      "Rock_0111",
+      "Rock_0112",
+      "Rock_0113",
+      "Rock_0114",
+      "Rock_0115",
+      "Rock_0116",
+      "Rock_0117",
+      "Rock_0118",
+      "Rock_0119",
+      "Rock_0120",
+      "Rock_0121",
+      "Rock_0122",
+      "Rock_0123",
+      "Rock_0124",
+      "Rock_0125",
+      "Rock_0126",
+      "Rock_0127",
+      "Rock_0128",
+      "Rock_0129",
+      "Rock_0130",
+      "Rock_0131",
+      "Rock_0132",
+      "Rock_0133",
+      "Rock_0134",
+      "Rock_0135",
+      "Rock_0136",
+      "Rock_0137",
+      "Rock_0138",
+      "Rock_0139",
+      "Rock_0140",
+      "Rock_0141",
+      "Rock_0142",
+      "Rock_0143",
+      "Rock_0144",
+      "Rock_0145",
+      "Rock_0146",
+      "Rock_0147",
+      "Rock_0148",
+      "Rock_0149",
+      "Rock_0150",
+      "Rock_0151",
+      "Rock_0152",
+      "Rock_0153",
+      "Rock_0154",
+      "Rock_0155",
+      "Rock_0156",
+      "Rock_0157",
+      "Rock_0158",
+      "Rock_0159",
+      "Rock_0160",
+      "Rock_0161",
+      "Rock_0162",
+      "Rock_0163",
+      "Rock_0164",
+      "Rock_0165",
+      "Rock_0166",
+      "Rock_0167",
+      "Rock_0168",
+      "Rock_0169",
+      "Rock_0170",
+      "Rock_0171",
+      "Rock_0172",
+      "Rock_0173",
+      "Rock_0174",
+      "Rock_0175",
+      "Rock_0176",
+      "Rock_0177",
+      "Rock_0178",
+      "Rock_0179",
+      "Rock_0180",
+      "Rock_0181",
+      "Rock_0182",
+      "Rock_0183",
+      "Rock_0184",
+      "Rock_0185",
+      "Rock_0186",
+      "Rock_0187",
+      "Rock_0188",
+      "Rock_0189",
+      "Rock_0190",
+      "Rock_0191",
+      "Rock_0192",
+      "Rock_0193",
+      "Rock_0194",
+      "Rock_0195",
+      "Rock_0196",
+      "Rock_0197",
+      "Rock_0198",
+      "Rock_0199",
+      "Rock_0200",
+      "Rock_0201",
+      "Rock_0202",
+      "Rock_0203",
+      "Rock_0204",
+      "Rock_0205",
+      "Rock_0206",
+      "Rock_0207",
+      "Rock_0208",
+      "Rock_0209",
+      "Rock_0210",
+      "Rock_0211",
+      "Rock_0212",
+      "Rock_0213",
+      "Rock_0214",
+      "Rock_0215",
+      "Rock_0216",
+      "Rock_0217",
+      "Rock_0218",
+      "Rock_0219",
+      "Rock_0220",
+      "Rock_0221",
+      "Rock_0222",
+      "Rock_0223",
+      "Rock_0224",
+      "Rock_0225",
+      "Rock_0226",
+      "Rock_0227",
+      "Rock_0228",
+      "Rock_0229",
+      "Rock_0230",
+      "Rock_0231",
+      "Rock_0232",
+      "Rock_0233",
+      "Rock_0234",
+      "Rock_0235",
+      "Rock_0236",
+      "Rock_0237",
+      "Rock_0238",
+      "Rock_0239",
+      "Rock_0240",
+      "Stone_RuinFragment_B_ash_chapel_01",
+      "Stone_RuinFragment_B_ash_chapel_02",
+      "Stone_RuinFragment_B_ash_chapel_03",
+      "Stone_RuinFragment_B_ash_chapel_04",
+      "Stone_RuinFragment_B_ash_chapel_05",
+      "Stone_RuinFragment_B_ash_chapel_06",
+      "Stone_RuinFragment_B_ash_chapel_07",
+      "Stone_RuinFragment_B_ash_chapel_08",
+      "Stone_RuinFragment_C_cinder_field_01",
+      "Stone_RuinFragment_C_cinder_field_02",
+      "Stone_RuinFragment_C_cinder_field_03",
+      "Stone_RuinFragment_C_cinder_field_04",
+      "Stone_RuinFragment_C_cinder_field_05",
+      "Stone_RuinFragment_C_cinder_field_06",
+      "Stone_RuinFragment_C_cinder_field_07",
+      "Stone_RuinFragment_C_cinder_field_08",
+      "Stone_RuinFragment_C_cinder_field_09",
+      "Stone_RuinFragment_C_cinder_field_10",
+      "Stone_RuinFragment_C_cinder_field_11",
+      "Stone_RuinFragment_C_cinder_field_12",
+      "Stone_RuinFragment_C_cinder_field_13",
+      "Stone_RuinFragment_C_cinder_field_14",
+      "Tree_0059_pale_birch_Wood",
+      "Tree_0102_pale_birch_Wood",
+      "Tree_0110_dark_pine_Wood",
+      "Tree_0111_gold_oak_Wood",
+      "Tree_0113_amber_oak_Wood",
+      "Tree_0155_dark_holly_Wood",
+      "Tree_0156_dead_snag_Wood",
+      "Tree_0232_dark_holly_Wood",
+      "Tree_0233_dark_holly_Wood",
+      "Tree_0249_pale_birch_Wood",
+      "Tree_0283_dark_pine_Wood",
+      "Tree_0286_dark_pine_Wood",
+      "Tree_0307_gold_oak_Wood",
+      "Tree_0390_pale_birch_Wood",
+      "Tree_0393_amber_oak_Wood",
+      "Tree_0417_amber_oak_Wood",
+      "Tree_0418_dark_pine_Wood",
+      "Tree_0421_amber_oak_Wood",
+      "Tree_0422_pale_birch_Wood",
+      "Tree_0425_pale_birch_Wood",
+      "Tree_0447_dark_pine_Wood",
+      "Tree_0448_dark_pine_Wood",
+      "Tree_0472_dark_pine_Wood",
+      "Tree_0500_dark_pine_Wood",
+      "Tree_0516_understory_hazel_Wood",
+      "Tree_0526_dark_pine_Wood",
+      "Tree_0548_pale_birch_Wood",
+      "Tree_0556_gold_oak_Wood",
+      "Tree_0559_dark_pine_Wood",
+      "Tree_0561_dark_pine_Wood",
+      "Tree_0577_understory_hazel_Wood",
+      "Tree_0578_understory_hazel_Wood",
+      "Tree_0592_gold_oak_Wood",
+      "Tree_0612_gold_oak_Wood",
+      "Tree_0636_pale_birch_Wood",
+      "Tree_0651_amber_oak_Wood",
+      "Tree_0652_rust_maple_Wood",
+      "Tree_0663_pale_birch_Wood",
+      "Tree_0682_gold_oak_Wood",
+      "Tree_0687_amber_oak_Wood",
+      "Tree_0691_dark_pine_Wood",
+      "Tree_0710_amber_oak_Wood",
+      "Tree_0757_dead_snag_Wood",
+      "Tree_0762_dark_pine_Wood",
+      "Tree_0763_gold_oak_Wood",
+      "Tree_0764_dark_pine_Wood",
+      "Tree_0769_pale_birch_Wood",
+      "Tree_0794_amber_oak_Wood",
+      "Tree_0808_gold_oak_Wood",
+      "Tree_0813_dark_pine_Wood",
+      "Tree_0835_gold_oak_Wood",
+      "Tree_0846_amber_oak_Wood",
+      "Tree_0847_dark_pine_Wood",
+      "Tree_0860_pale_birch_Wood",
+      "Tree_0871_pale_birch_Wood",
+      "Tree_0886_burnt_snag_Wood",
+      "Tree_0891_dark_pine_Wood",
+      "Tree_0911_pale_birch_Wood",
+      "Tree_0917_amber_oak_Wood",
+      "Tree_0932_gold_oak_Wood",
+      "Tree_0937_dead_snag_Wood",
+      "Tree_0943_amber_oak_Wood",
+      "Tree_0944_pale_birch_Wood",
+      "Tree_0945_dark_holly_Wood",
+      "Tree_0949_understory_hazel_Wood",
+      "Tree_0955_amber_oak_Wood",
+      "Tree_0969_dark_holly_Wood",
+      "Tree_0992_gold_oak_Wood",
+      "Tree_1017_dark_holly_Wood",
+      "Tree_1026_pale_birch_Wood",
+      "Tree_1043_dark_holly_Wood",
+      "Tree_1045_understory_hazel_Wood",
+      "Tree_1046_rust_maple_Wood",
+      "Tree_1049_gold_oak_Wood",
+      "Tree_1050_dark_pine_Wood",
+      "Tree_1055_amber_oak_Wood",
+      "Tree_1074_dead_snag_Wood",
+      "Tree_1075_rust_maple_Wood",
+      "Tree_1077_gold_oak_Wood",
+      "Tree_1078_gold_oak_Wood",
+      "Tree_1097_rust_maple_Wood",
+      "Tree_1106_rust_maple_Wood",
+      "Tree_1139_amber_oak_Wood",
+      "Tree_1152_amber_oak_Wood",
+      "Tree_1154_pale_birch_Wood",
+      "Tree_1166_dead_snag_Wood",
+      "Tree_1167_dark_holly_Wood",
+      "Tree_1180_rust_maple_Wood",
+      "Tree_1181_gold_oak_Wood",
+      "Tree_1192_amber_oak_Wood",
+      "Tree_1205_rust_maple_Wood",
+      "Tree_1208_rust_maple_Wood",
+      "Tree_1219_understory_hazel_Wood",
+      "Tree_1222_gold_oak_Wood",
+      "Tree_1231_amber_oak_Wood",
+      "Tree_1254_pale_birch_Wood",
+      "Tree_1257_gold_oak_Wood",
+      "Tree_1270_rust_maple_Wood",
+      "Tree_1277_pale_birch_Wood",
+      "Tree_1285_gold_oak_Wood",
+      "Tree_1287_rust_maple_Wood",
+      "Tree_1297_amber_oak_Wood",
+      "Tree_1314_gold_oak_Wood",
+      "Tree_1325_amber_oak_Wood",
+      "Tree_1326_amber_oak_Wood",
+      "Tree_1372_dark_holly_Wood",
+      "Tree_1374_rust_maple_Wood",
+      "Tree_1402_dark_holly_Wood",
+      "Tree_1410_pale_birch_Wood",
+      "Tree_1414_dark_pine_Wood",
+      "Tree_1418_understory_hazel_Wood",
+      "Tree_1422_amber_oak_Wood",
+      "Tree_1423_rust_maple_Wood",
+      "Tree_1427_amber_oak_Wood",
+      "Tree_1428_amber_oak_Wood",
+      "Tree_1440_dark_holly_Wood",
+      "Tree_1452_gold_oak_Wood",
+      "Tree_1454_rust_maple_Wood",
+      "Tree_1490_pale_birch_Wood",
+      "Tree_1516_understory_hazel_Wood",
+      "Tree_1549_rust_maple_Wood",
+      "Tree_1550_dark_holly_Wood",
+      "Tree_1566_amber_oak_Wood",
+      "Tree_1568_amber_oak_Wood",
+      "Tree_1571_amber_oak_Wood",
+      "Tree_1572_gold_oak_Wood",
+      "Tree_1582_amber_oak_Wood",
+      "Tree_1584_amber_oak_Wood",
+      "Tree_1585_amber_oak_Wood",
+      "Tree_1597_amber_oak_Wood",
+      "Tree_1600_amber_oak_Wood",
+      "Tree_1603_gold_oak_Wood",
+      "Tree_1615_amber_oak_Wood",
+      "Tree_1635_gold_oak_Wood",
+      "Tree_1636_gold_oak_Wood",
+      "Tree_1641_rust_maple_Wood",
+      "Tree_1659_rust_maple_Wood",
+      "Tree_1665_dark_pine_Wood",
+      "Tree_1667_amber_oak_Wood",
+      "Tree_1668_gold_oak_Wood",
+      "Tree_1695_dark_holly_Wood",
+      "Tree_1696_rust_maple_Wood",
+      "Tree_1708_rust_maple_Wood",
+      "Tree_1709_amber_oak_Wood",
+      "Tree_1725_rust_maple_Wood",
+      "Tree_1739_amber_oak_Wood",
+      "Tree_1740_rust_maple_Wood",
+      "Tree_1754_pale_birch_Wood",
+      "Tree_1776_pale_birch_Wood",
+      "Tree_1783_amber_oak_Wood",
+      "Tree_1786_understory_hazel_Wood",
+      "Tree_1821_amber_oak_Wood",
+      "Tree_1822_amber_oak_Wood",
+      "Tree_1832_rust_maple_Wood",
+      "Tree_1850_dark_pine_Wood",
+      "Tree_1876_pale_birch_Wood",
+      "Tree_1940_pale_birch_Wood",
+      "Tree_1999_amber_oak_Wood",
+      "Tree_2009_rust_maple_Wood",
+      "Tree_2036_amber_oak_Wood",
+      "Tree_2075_amber_oak_Wood",
+      "Tree_2084_pale_birch_Wood",
+      "Tree_2111_amber_oak_Wood",
+      "Tree_2113_amber_oak_Wood",
+      "Tree_2128_pale_birch_Wood",
+      "Tree_2148_amber_oak_Wood",
+      "Tree_2149_pale_birch_Wood",
+      "Tree_2157_amber_oak_Wood",
+      "Tree_2166_amber_oak_Wood",
+      "Tree_2167_rust_maple_Wood",
+      "Tree_2194_rust_maple_Wood",
+      "Tree_2195_gold_oak_Wood",
+      "Tree_2200_dark_pine_Wood",
+      "Tree_2201_pale_birch_Wood",
+      "Tree_2255_amber_oak_Wood",
+      "Tree_2279_rust_maple_Wood",
+      "Tree_2280_amber_oak_Wood",
+      "Tree_2296_rust_maple_Wood",
+      "Tree_2298_dead_snag_Wood",
+      "Tree_2299_understory_hazel_Wood",
+      "Tree_2352_pale_birch_Wood",
+      "Tree_2353_understory_hazel_Wood",
+      "Tree_2379_understory_hazel_Wood",
+      "Tree_2380_pale_birch_Wood",
+      "Tree_2385_gold_oak_Wood",
+      "Tree_2388_gold_oak_Wood",
+      "Tree_2389_rust_maple_Wood",
+      "Tree_2396_pale_birch_Wood",
+      "Tree_2430_pale_birch_Wood",
+      "Tree_2435_gold_oak_Wood",
+      "Tree_2436_pale_birch_Wood",
+      "Tree_2447_rust_maple_Wood",
+      "Tree_2449_amber_oak_Wood",
+      "Tree_2455_rust_maple_Wood",
+      "Tree_2469_pale_birch_Wood",
+      "Tree_2470_amber_oak_Wood",
+      "Tree_2478_rust_maple_Wood",
+      "Tree_2481_understory_hazel_Wood",
+      "Tree_2482_amber_oak_Wood",
+      "Tree_2483_understory_hazel_Wood",
+      "Tree_2484_gold_oak_Wood",
+      "Tree_2497_amber_oak_Wood",
+      "Tree_2510_amber_oak_Wood",
+      "Tree_2515_gold_oak_Wood",
+      "Tree_2546_amber_oak_Wood",
+      "Tree_2617_amber_oak_Wood"
+    ],
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "cellMetres": 0.5,
+    "width": 1152,
+    "height": 1152,
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Amberwood's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+    },
+    "walkableCells": 929247,
+    "walkableFraction": 0.7002
   },
   "navigation": {
     "surfaceNodePrefixes": [
-      "Terrain_"
+      "Terrain_",
+      "Walk_"
     ],
+    "walkableAreas": [
+      "forest-floor",
+      "trails",
+      "paving",
+      "shore",
+      "meadow",
+      "bridges",
+      "canopy-platforms",
+      "docks",
+      "stairs"
+    ],
+    "agentRadius": 0.55,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 40,
     "navmesh": {
       "format": "surface-prefix-v1",
       "polygons": []
+    },
+    "notes": [
+      "Every terrain sub-mesh is named Terrain_<class>; every built walkable surface is named Walk_<...>. The client turns both into the navigation collision layer the grounding ray tests.",
+      "Bridges and canopy platforms are walk surfaces, so a downward grounding ray under one resolves onto the deck above; the terrain beneath them is water or ravine and is not walkable."
+    ]
+  },
+  "landmarks": [
+    {
+      "id": "moot-hall",
+      "name": "The Moot Hall",
+      "node": "Landmark_MootHall",
+      "type": "civic",
+      "position": [
+        -12.0,
+        42.92,
+        -192.0
+      ]
+    },
+    {
+      "id": "amber-hall",
+      "name": "The Amber Hall",
+      "node": "Landmark_AmberHall",
+      "type": "guild",
+      "position": [
+        66.0,
+        41.81,
+        -150.0
+      ]
+    },
+    {
+      "id": "amberwood-town",
+      "name": "Amberwood",
+      "node": "Landmark_MootHall",
+      "type": "settlement",
+      "position": [
+        30.0,
+        43.65,
+        -174.0
+      ]
+    },
+    {
+      "id": "great-arch",
+      "name": "The Amber Gate",
+      "node": "Landmark_GreatArch",
+      "type": "monument",
+      "position": [
+        174.0,
+        36.97,
+        -102.0
+      ],
+      "approach": [
+        58.0,
+        22.72,
+        -20.0
+      ]
+    },
+    {
+      "id": "high-bridge",
+      "name": "The Long Span",
+      "node": "Landmark_HighBridge",
+      "type": "bridge",
+      "position": [
+        120.0,
+        38.17,
+        -198.0
+      ]
+    },
+    {
+      "id": "old-bridge",
+      "name": "Millrace Bridge",
+      "node": "Landmark_OldBridge",
+      "type": "bridge",
+      "position": [
+        30.0,
+        40.79,
+        -132.0
+      ]
+    },
+    {
+      "id": "west-forest-arch",
+      "name": "The Weeping Arch",
+      "node": "Landmark_AncientArch_0",
+      "type": "ruin",
+      "position": [
+        -48.0,
+        -1.74,
+        -102.0
+      ]
+    },
+    {
+      "id": "north-forest-arch",
+      "name": "The Kneeling Arch",
+      "node": "Landmark_AncientArch_1",
+      "type": "ruin",
+      "position": [
+        114.0,
+        59.21,
+        -276.0
+      ]
+    },
+    {
+      "id": "axis-arch",
+      "name": "The Broken Arch",
+      "node": "Landmark_AncientArch_2",
+      "type": "ruin",
+      "position": [
+        138.0,
+        32.56,
+        -60.0
+      ]
+    },
+    {
+      "id": "hollow-way-arch",
+      "name": "The Root Arch",
+      "node": "Landmark_AncientArch_3",
+      "type": "ruin",
+      "position": [
+        -48.0,
+        22.2,
+        -186.0
+      ]
+    },
+    {
+      "id": "grove-arch",
+      "name": "The Sleeping Arch",
+      "node": "Landmark_AncientArch_4",
+      "type": "ruin",
+      "position": [
+        -102.0,
+        -0.86,
+        -300.0
+      ]
+    },
+    {
+      "id": "ridge-arch",
+      "name": "The Watcher's Arch",
+      "node": "Landmark_AncientArch_5",
+      "type": "ruin",
+      "position": [
+        252.0,
+        49.88,
+        -222.0
+      ]
+    },
+    {
+      "id": "ash-arch",
+      "name": "The Cinder Arch",
+      "node": "Landmark_AncientArch_6",
+      "type": "ruin",
+      "position": [
+        312.0,
+        38.26,
+        -102.0
+      ]
+    },
+    {
+      "id": "forest-gate-0",
+      "name": "The West Forest Gate",
+      "node": "Landmark_ForestGate_0",
+      "type": "gate",
+      "position": [
+        -18.0,
+        -0.25,
+        -78.0
+      ]
+    },
+    {
+      "id": "forest-gate-1",
+      "name": "The Ash Gate",
+      "node": "Landmark_ForestGate_1",
+      "type": "gate",
+      "position": [
+        222.0,
+        41.84,
+        -90.0
+      ]
+    },
+    {
+      "id": "hollow-tree",
+      "name": "The Hollow Warden",
+      "node": "Landmark_HollowTreeHall",
+      "type": "tree-hall",
+      "position": [
+        -78.0,
+        26.04,
+        -258.0
+      ]
+    },
+    {
+      "id": "great-tree",
+      "name": "The Amberwood Mother",
+      "node": "Landmark_GreatTree_Wood",
+      "type": "monumental-tree",
+      "position": [
+        78.0,
+        56.18,
+        -264.0
+      ]
+    },
+    {
+      "id": "canopy-camp",
+      "name": "The Resin Walk",
+      "node": "Landmark_CanopyPlatform_0",
+      "type": "canopy-works",
+      "position": [
+        66.0,
+        60.35,
+        -210.0
+      ]
+    },
+    {
+      "id": "garden-terrace",
+      "name": "The Sunken Garden",
+      "node": "Landmark_GardenFountain",
+      "type": "garden",
+      "position": [
+        156.0,
+        21.09,
+        30.0
+      ]
+    },
+    {
+      "id": "garden-rotunda",
+      "name": "The Amber Rotunda",
+      "node": "Landmark_GardenRotunda",
+      "type": "pavilion",
+      "position": [
+        156.5,
+        21.09,
+        20.5
+      ]
+    },
+    {
+      "id": "harbour",
+      "name": "Resinlanding",
+      "node": "Landmark_Harbour_Dock",
+      "type": "harbour",
+      "position": [
+        -135.0,
+        1.4,
+        18.0
+      ]
+    },
+    {
+      "id": "lookout-0",
+      "name": "The East Watch",
+      "node": "Landmark_Watchtower_0",
+      "type": "lookout",
+      "position": [
+        258.0,
+        49.32,
+        -210.0
+      ]
+    },
+    {
+      "id": "lookout-1",
+      "name": "The North Watch",
+      "node": "Landmark_Watchtower_1",
+      "type": "lookout",
+      "position": [
+        240.0,
+        57.74,
+        -336.0
+      ]
+    },
+    {
+      "id": "lookout-2",
+      "name": "South Gate Tower",
+      "node": "Landmark_Watchtower_2",
+      "type": "lookout",
+      "position": [
+        138.0,
+        11.85,
+        120.0
+      ]
+    },
+    {
+      "id": "lookout-3",
+      "name": "North Gate Tower",
+      "node": "Landmark_Watchtower_3",
+      "type": "lookout",
+      "position": [
+        72.0,
+        50.6,
+        -312.0
+      ]
+    },
+    {
+      "id": "lookout-4",
+      "name": "The South Watch",
+      "node": "Landmark_Watchtower_4",
+      "type": "lookout",
+      "position": [
+        -48.0,
+        -1.17,
+        156.0
+      ]
+    },
+    {
+      "id": "lookout-5",
+      "name": "The Cinder Tower",
+      "node": "Landmark_Watchtower_5",
+      "type": "lookout",
+      "position": [
+        366.0,
+        33.94,
+        36.0
+      ]
+    },
+    {
+      "id": "lookout-6",
+      "name": "Shrine Hill Tower",
+      "node": "Landmark_Watchtower_6",
+      "type": "lookout",
+      "position": [
+        210.0,
+        57.6,
+        -276.0
+      ]
+    },
+    {
+      "id": "lookout-7",
+      "name": "Cove Watch",
+      "node": "Landmark_Watchtower_7",
+      "type": "lookout",
+      "position": [
+        -126.0,
+        -16.42,
+        -180.0
+      ]
+    },
+    {
+      "id": "wayshrine",
+      "name": "The Amber Wayshrine",
+      "node": "Landmark_Wayshrine",
+      "type": "shrine",
+      "position": [
+        108.0,
+        28.21,
+        -42.0
+      ]
+    },
+    {
+      "id": "timber-yard",
+      "name": "The Long Yard",
+      "node": "Prop_TimberStack_0",
+      "type": "industry",
+      "position": [
+        216.0,
+        23.56,
+        102.0
+      ]
+    },
+    {
+      "id": "charcoal-camp",
+      "name": "The Burner's Camp",
+      "node": "Landmark_CharcoalKiln_0",
+      "type": "industry",
+      "position": [
+        252.0,
+        29.83,
+        24.0
+      ]
+    },
+    {
+      "id": "ash-flats",
+      "name": "The Ashen Reach",
+      "node": "Prop_BurntCamp_1",
+      "type": "transition",
+      "position": [
+        324.0,
+        32.95,
+        -42.0
+      ]
+    },
+    {
+      "id": "stone-ring",
+      "name": "The Nine Watchers",
+      "node": "Landmark_StandingStone_0",
+      "type": "ruin",
+      "position": [
+        -90.0,
+        -4.17,
+        -42.0
+      ]
+    },
+    {
+      "id": "sea-arch",
+      "name": "The Drowned Arch",
+      "node": "Landmark_SeaArch",
+      "type": "sea-stack",
+      "position": [
+        -43.5,
+        -1.03,
+        -60.0
+      ]
+    },
+    {
+      "id": "kelp-landing",
+      "name": "Kelp Landing",
+      "node": "Landmark_KelpLanding",
+      "type": "landing",
+      "position": [
+        -97.5,
+        1.2,
+        72.0
+      ]
+    },
+    {
+      "id": "south-orchard",
+      "name": "The Long Orchard",
+      "node": "Orchard_01_Wood",
+      "type": "agriculture",
+      "position": [
+        48.0,
+        3.55,
+        138.0
+      ]
+    },
+    {
+      "id": "beekeeper",
+      "name": "The Skep Rows",
+      "node": "Prop_Skep_beekeeper_01",
+      "type": "agriculture",
+      "position": [
+        90.0,
+        12.03,
+        102.0
+      ]
+    },
+    {
+      "id": "long-meadow",
+      "name": "The Long Meadow",
+      "node": "Interact_Well_Meadow",
+      "type": "clearing",
+      "position": [
+        -12.0,
+        10.69,
+        24.0
+      ]
+    },
+    {
+      "id": "coppice",
+      "name": "The Coppice",
+      "node": "LogPile_Large_coppice_01",
+      "type": "industry",
+      "position": [
+        156.0,
+        62.85,
+        -366.0
+      ]
+    },
+    {
+      "id": "ridge-camp",
+      "name": "The Ridge Camp",
+      "node": "Prop_Tent_ridge_camp_01",
+      "type": "camp",
+      "position": [
+        222.0,
+        58.04,
+        -330.0
+      ]
+    },
+    {
+      "id": "boundary-stone",
+      "name": "The Marchstone",
+      "node": "Landmark_BoundaryStone",
+      "type": "marker",
+      "position": [
+        288.0,
+        58.49,
+        -288.0
+      ]
+    },
+    {
+      "id": "ash-chapel",
+      "name": "The Cinder Chapel",
+      "node": "Landmark_AshChapel",
+      "type": "ruin",
+      "position": [
+        312.0,
+        51.25,
+        -222.0
+      ]
+    },
+    {
+      "id": "cinder-field",
+      "name": "The Cinder Field",
+      "node": "Stone_RuinFragment_C_cinder_field_01",
+      "type": "battlefield",
+      "position": [
+        378.0,
+        51.16,
+        -174.0
+      ]
+    },
+    {
+      "id": "smoke-vents",
+      "name": "The Smoking Ground",
+      "node": "Brazier_smoke_vents_01",
+      "type": "transition",
+      "position": [
+        354.0,
+        35.79,
+        -24.0
+      ]
+    },
+    {
+      "id": "east-quarry",
+      "name": "The Long Cut",
+      "node": "Landmark_EastQuarry",
+      "type": "industry",
+      "position": [
+        348.0,
+        29.67,
+        132.0
+      ]
+    },
+    {
+      "id": "far-watch",
+      "name": "The Far Watch",
+      "node": "Landmark_Tower_far_watch",
+      "type": "lookout",
+      "position": [
+        384.0,
+        32.81,
+        90.0
+      ]
+    },
+    {
+      "id": "far-grove",
+      "name": "The Far Grove",
+      "node": "Grove_04_Wood",
+      "type": "old-growth",
+      "position": [
+        -120.0,
+        -17.66,
+        -384.0
+      ]
+    },
+    {
+      "id": "east-grove",
+      "name": "The East Grove",
+      "node": "Grove_08_Wood",
+      "type": "old-growth",
+      "position": [
+        198.0,
+        44.91,
+        -180.0
+      ]
+    },
+    {
+      "id": "deep-grove",
+      "name": "The Deep Grove",
+      "node": "Grove_12_Wood",
+      "type": "old-growth",
+      "position": [
+        -60.0,
+        19.94,
+        -330.0
+      ]
+    },
+    {
+      "id": "upper-falls",
+      "name": "The Upper Falls",
+      "node": "Landmark_UpperFallsShrine",
+      "type": "shrine",
+      "position": [
+        60.0,
+        52.86,
+        -372.0
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "market-well",
+      "node": "Interact_Well_Market",
+      "type": "well",
+      "position": [
+        12.0,
+        38.18,
+        -148.8
+      ]
+    },
+    {
+      "id": "amber-bench-0",
+      "node": "Interact_AmberBench_0",
+      "type": "craft-station",
+      "craft": "amber-working",
+      "position": [
+        54.75,
+        41.68,
+        -142.5
+      ]
+    },
+    {
+      "id": "amber-bench-1",
+      "node": "Interact_AmberBench_1",
+      "type": "craft-station",
+      "craft": "amber-working",
+      "position": [
+        24.0,
+        38.18,
+        -159.75
+      ]
+    },
+    {
+      "id": "amber-bench-2",
+      "node": "Interact_AmberBench_2",
+      "type": "craft-station",
+      "craft": "amber-working",
+      "position": [
+        58.5,
+        51.02,
+        -216.0
+      ]
+    },
+    {
+      "id": "amber-bench-3",
+      "node": "Interact_AmberBench_3",
+      "type": "craft-station",
+      "craft": "amber-working",
+      "position": [
+        99.0,
+        59.41,
+        -289.5
+      ]
+    },
+    {
+      "id": "amber-bench-4",
+      "node": "Interact_AmberBench_4",
+      "type": "craft-station",
+      "craft": "amber-working",
+      "position": [
+        96.0,
+        51.31,
+        -346.5
+      ]
+    },
+    {
+      "id": "amber-bench-canopy",
+      "node": "Interact_AmberBench_Canopy",
+      "type": "craft-station",
+      "craft": "amber-working",
+      "position": [
+        68.2,
+        60.51,
+        -211.4
+      ]
+    },
+    {
+      "id": "timber-yard",
+      "node": "Prop_TimberStack_0",
+      "type": "harvest-station",
+      "resource": "timber",
+      "position": [
+        216.0,
+        23.56,
+        102.0
+      ]
+    },
+    {
+      "id": "meadow-well",
+      "node": "Interact_Well_Meadow",
+      "type": "well",
+      "position": [
+        -12.0,
+        10.69,
+        24.0
+      ]
+    },
+    {
+      "id": "east-quarry",
+      "node": "Landmark_EastQuarry",
+      "type": "harvest-station",
+      "resource": "stone",
+      "position": [
+        348.0,
+        29.67,
+        132.0
+      ]
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "amberwood-warden",
+      "name": "Warden of the Amber Gate",
+      "type": "npc",
+      "position": [
+        173.77,
+        37.12,
+        -99.01
+      ],
+      "serverTile": [
+        348,
+        273
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amberwood-steward",
+      "name": "Hall Steward",
+      "type": "npc",
+      "position": [
+        -6.1,
+        43.27,
+        -190.9
+      ],
+      "serverTile": [
+        168,
+        365
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amber-master",
+      "name": "Amber Master",
+      "type": "npc",
+      "position": [
+        61.01,
+        42.11,
+        -149.68
+      ],
+      "serverTile": [
+        235,
+        324
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "market-trader",
+      "name": "Resin Trader",
+      "type": "npc",
+      "position": [
+        10.07,
+        38.23,
+        -156.73
+      ],
+      "serverTile": [
+        184,
+        331
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "harbour-master",
+      "name": "Harbour Master",
+      "type": "npc",
+      "position": [
+        -55.62,
+        5.29,
+        38.42
+      ],
+      "serverTile": [
+        118,
+        136
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "timber-reeve",
+      "name": "Timber Reeve",
+      "type": "npc",
+      "position": [
+        218.21,
+        23.56,
+        96.42
+      ],
+      "serverTile": [
+        392,
+        78
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "charcoal-burner",
+      "name": "Charcoal Burner",
+      "type": "npc",
+      "position": [
+        251.01,
+        29.83,
+        27.88
+      ],
+      "serverTile": [
+        425,
+        146
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "canopy-rigger",
+      "name": "Canopy Rigger",
+      "type": "npc",
+      "position": [
+        68.43,
+        49.21,
+        -213.18
+      ],
+      "serverTile": [
+        242,
+        387
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "hollow-keeper",
+      "name": "Keeper of the Hollow",
+      "type": "npc",
+      "position": [
+        -82.93,
+        25.15,
+        -258.86
+      ],
+      "serverTile": [
+        91,
+        433
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "garden-warden",
+      "name": "Garden Warden",
+      "type": "npc",
+      "position": [
+        150.95,
+        21.09,
+        33.24
+      ],
+      "serverTile": [
+        325,
+        141
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "east-scout",
+      "name": "Ash Scout",
+      "type": "npc",
+      "position": [
+        260.73,
+        44.21,
+        -141.79
+      ],
+      "serverTile": [
+        435,
+        316
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "north-watcher",
+      "name": "North Watcher",
+      "type": "npc",
+      "position": [
+        236.08,
+        58.04,
+        -336.79
+      ],
+      "serverTile": [
+        410,
+        511
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "hamlet-elder",
+      "name": "Hamlet Elder",
+      "type": "npc",
+      "position": [
+        327.44,
+        29.13,
+        93.63
+      ],
+      "serverTile": [
+        501,
+        80
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "wayshrine-hermit",
+      "name": "Wayshrine Hermit",
+      "type": "npc",
+      "position": [
+        110.92,
+        28.21,
+        -41.31
+      ],
+      "serverTile": [
+        285,
+        215
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amberwood-stag",
+      "type": "creature-group",
+      "group": "forest-fauna",
+      "centre": [
+        78.0,
+        56.43,
+        -264.0
+      ],
+      "radius": 22.0,
+      "positions": [
+        [
+          72.99,
+          53.71,
+          -271.69
+        ],
+        [
+          68.86,
+          50.71,
+          -279.43
+        ],
+        [
+          68.01,
+          52.48,
+          -256.81
+        ],
+        [
+          63.2,
+          47.99,
+          -259.97
+        ]
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "resin-beetle",
+      "type": "creature-group",
+      "group": "forest-fauna",
+      "centre": [
+        66.0,
+        48.85,
+        -210.0
+      ],
+      "radius": 18.0,
+      "positions": [
+        [
+          65.52,
+          49.4,
+          -216.26
+        ],
+        [
+          63.54,
+          49.77,
+          -222.0
+        ],
+        [
+          64.28,
+          49.55,
+          -214.5
+        ],
+        [
+          67.75,
+          49.14,
+          -214.34
+        ],
+        [
+          81.48,
+          47.44,
+          -208.77
+        ]
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "coast-gull",
+      "type": "creature-group",
+      "group": "coastal-fauna",
+      "centre": [
+        -135.0,
+        0.09,
+        18.0
+      ],
+      "radius": 20.0,
+      "positions": [
+        [
+          -144.87,
+          -6.06,
+          0.98
+        ],
+        [
+          -142.4,
+          -2.72,
+          18.43
+        ],
+        [
+          -137.87,
+          -6.47,
+          30.76
+        ],
+        [
+          -144.86,
+          -4.22,
+          5.11
+        ]
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "moor-boar",
+      "type": "creature-group",
+      "group": "forest-fauna",
+      "centre": [
+        -78.0,
+        26.24,
+        -258.0
+      ],
+      "radius": 24.0,
+      "positions": [
+        [
+          -87.9,
+          3.45,
+          -253.72
+        ],
+        [
+          -98.26,
+          -5.02,
+          -253.95
+        ],
+        [
+          -79.89,
+          32.6,
+          -274.18
+        ]
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ash-stalker",
+      "type": "creature-group",
+      "group": "transition-hostile",
+      "centre": [
+        324.0,
+        32.95,
+        -42.0
+      ],
+      "radius": 26.0,
+      "positions": [
+        [
+          324.48,
+          32.1,
+          -33.05
+        ],
+        [
+          335.69,
+          35.79,
+          -33.02
+        ],
+        [
+          341.4,
+          35.79,
+          -39.7
+        ],
+        [
+          304.77,
+          34.94,
+          -53.86
+        ],
+        [
+          323.07,
+          29.39,
+          -52.64
+        ]
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "cinder-hound",
+      "type": "creature-group",
+      "group": "transition-hostile",
+      "centre": [
+        348.0,
+        51.16,
+        -180.0
+      ],
+      "radius": 22.0,
+      "positions": [
+        [
+          359.09,
+          51.16,
+          -178.54
+        ],
+        [
+          358.18,
+          51.16,
+          -194.19
+        ],
+        [
+          364.5,
+          51.16,
+          -173.08
+        ],
+        [
+          362.74,
+          51.16,
+          -168.27
+        ]
+      ],
+      "authority": "server"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "amber-seep-01",
+      "resource": "amber-seep",
+      "category": "amber",
+      "position": [
+        87.51,
+        56.04,
+        -253.83
+      ],
+      "serverTile": [
+        262,
+        428
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amber-seep-02",
+      "resource": "amber-seep",
+      "category": "amber",
+      "position": [
+        88.0,
+        59.46,
+        -280.94
+      ],
+      "serverTile": [
+        262,
+        455
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amber-seep-03",
+      "resource": "amber-seep",
+      "category": "amber",
+      "position": [
+        66.0,
+        50.23,
+        -263.02
+      ],
+      "serverTile": [
+        240,
+        437
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amber-seep-04",
+      "resource": "amber-seep",
+      "category": "amber",
+      "position": [
+        81.88,
+        53.48,
+        -248.97
+      ],
+      "serverTile": [
+        256,
+        423
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amber-seep-05",
+      "resource": "amber-seep",
+      "category": "amber",
+      "position": [
+        64.14,
+        47.78,
+        -249.71
+      ],
+      "serverTile": [
+        238,
+        424
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amber-seep-06",
+      "resource": "amber-seep",
+      "category": "amber",
+      "position": [
+        93.52,
+        59.46,
+        -268.42
+      ],
+      "serverTile": [
+        268,
+        442
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amber-seep-07",
+      "resource": "amber-seep",
+      "category": "amber",
+      "position": [
+        54.46,
+        50.12,
+        -211.35
+      ],
+      "serverTile": [
+        228,
+        385
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amber-seep-08",
+      "resource": "amber-seep",
+      "category": "amber",
+      "position": [
+        60.67,
+        49.82,
+        -211.81
+      ],
+      "serverTile": [
+        235,
+        386
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amber-seep-09",
+      "resource": "amber-seep",
+      "category": "amber",
+      "position": [
+        70.21,
+        44.55,
+        -200.41
+      ],
+      "serverTile": [
+        244,
+        374
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "amber-seep-10",
+      "resource": "amber-seep",
+      "category": "amber",
+      "position": [
+        61.23,
+        50.69,
+        -216.72
+      ],
+      "serverTile": [
+        235,
+        391
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "fallen-timber-11",
+      "resource": "fallen-timber",
+      "category": "timber",
+      "position": [
+        217.16,
+        23.56,
+        110.62
+      ],
+      "serverTile": [
+        391,
+        63
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "fallen-timber-12",
+      "resource": "fallen-timber",
+      "category": "timber",
+      "position": [
+        208.39,
+        23.56,
+        106.28
+      ],
+      "serverTile": [
+        382,
+        68
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "fallen-timber-13",
+      "resource": "fallen-timber",
+      "category": "timber",
+      "position": [
+        210.87,
+        23.56,
+        96.32
+      ],
+      "serverTile": [
+        385,
+        78
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "fallen-timber-14",
+      "resource": "fallen-timber",
+      "category": "timber",
+      "position": [
+        209.03,
+        23.56,
+        96.05
+      ],
+      "serverTile": [
+        383,
+        78
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "fallen-timber-15",
+      "resource": "fallen-timber",
+      "category": "timber",
+      "position": [
+        213.89,
+        23.56,
+        97.57
+      ],
+      "serverTile": [
+        388,
+        76
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "fallen-timber-16",
+      "resource": "fallen-timber",
+      "category": "timber",
+      "position": [
+        -90.34,
+        14.49,
+        -263.87
+      ],
+      "serverTile": [
+        84,
+        438
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "fallen-timber-17",
+      "resource": "fallen-timber",
+      "category": "timber",
+      "position": [
+        -77.82,
+        30.95,
+        -264.75
+      ],
+      "serverTile": [
+        96,
+        439
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "fallen-timber-18",
+      "resource": "fallen-timber",
+      "category": "timber",
+      "position": [
+        -85.56,
+        11.21,
+        -251.77
+      ],
+      "serverTile": [
+        88,
+        426
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "forest-fungus-19",
+      "resource": "forest-fungus",
+      "category": "reagent",
+      "position": [
+        -12.67,
+        34.0,
+        -145.72
+      ],
+      "serverTile": [
+        161,
+        320
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "forest-fungus-20",
+      "resource": "forest-fungus",
+      "category": "reagent",
+      "position": [
+        2.55,
+        36.55,
+        -125.26
+      ],
+      "serverTile": [
+        177,
+        299
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "forest-fungus-21",
+      "resource": "forest-fungus",
+      "category": "reagent",
+      "position": [
+        -20.7,
+        31.66,
+        -138.81
+      ],
+      "serverTile": [
+        153,
+        313
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "forest-fungus-22",
+      "resource": "forest-fungus",
+      "category": "reagent",
+      "position": [
+        -0.6,
+        32.88,
+        -127.31
+      ],
+      "serverTile": [
+        173,
+        301
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "forest-fungus-23",
+      "resource": "forest-fungus",
+      "category": "reagent",
+      "position": [
+        -1.59,
+        32.2,
+        -141.21
+      ],
+      "serverTile": [
+        172,
+        315
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "shore-kelp-24",
+      "resource": "shore-kelp",
+      "category": "reagent",
+      "position": [
+        -125.34,
+        2.79,
+        5.99
+      ],
+      "serverTile": [
+        49,
+        168
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "charcoal-25",
+      "resource": "charcoal",
+      "category": "fuel",
+      "position": [
+        247.63,
+        29.83,
+        25.48
+      ],
+      "serverTile": [
+        422,
+        149
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "charcoal-26",
+      "resource": "charcoal",
+      "category": "fuel",
+      "position": [
+        241.31,
+        29.82,
+        22.02
+      ],
+      "serverTile": [
+        415,
+        152
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "charcoal-27",
+      "resource": "charcoal",
+      "category": "fuel",
+      "position": [
+        263.32,
+        29.83,
+        20.58
+      ],
+      "serverTile": [
+        437,
+        153
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ash-glass-28",
+      "resource": "ash-glass",
+      "category": "reagent",
+      "position": [
+        333.97,
+        35.79,
+        -39.01
+      ],
+      "serverTile": [
+        508,
+        213
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ash-glass-29",
+      "resource": "ash-glass",
+      "category": "reagent",
+      "position": [
+        318.51,
+        32.8,
+        -46.75
+      ],
+      "serverTile": [
+        493,
+        221
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ash-glass-30",
+      "resource": "ash-glass",
+      "category": "reagent",
+      "position": [
+        313.47,
+        33.38,
+        -46.01
+      ],
+      "serverTile": [
+        487,
+        220
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ash-glass-31",
+      "resource": "ash-glass",
+      "category": "reagent",
+      "position": [
+        344.29,
+        33.99,
+        -47.78
+      ],
+      "serverTile": [
+        518,
+        222
+      ],
+      "authority": "server"
+    }
+  ],
+  "portals": [
+    {
+      "id": "north-pass",
+      "name": "Whitehorn Pass",
+      "type": "map-transition",
+      "position": [
+        72.0,
+        68.68,
+        -384.0
+      ],
+      "serverTile": [
+        246,
+        558
+      ],
+      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "south-road",
+      "name": "Westhaven Road",
+      "type": "map-transition",
+      "position": [
+        156.0,
+        11.5,
+        162.0
+      ],
+      "serverTile": [
+        330,
+        12
+      ],
+      "destinationMap": "maps/nymara/westhaven.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "east-road",
+      "name": "Amethyst Barrens Road",
+      "type": "map-transition",
+      "position": [
+        393.0,
+        40.83,
+        -66.0
+      ],
+      "serverTile": [
+        567,
+        240
+      ],
+      "destinationMap": "maps/nymara/amethyst_barrens.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "harbour-quay",
+      "name": "Crownwater Packet",
+      "type": "map-transition",
+      "position": [
+        -120.0,
+        2.57,
+        24.0
+      ],
+      "serverTile": [
+        54,
+        150
+      ],
+      "destinationMap": "maps/nymara/crownwater.elm",
+      "radius": 3.5,
+      "authority": "server"
+    }
+  ],
+  "roads": [
+    {
+      "id": "coast_road",
+      "waypoints": [
+        [
+          -72.0,
+          0.67,
+          132.0
+        ],
+        [
+          -66.0,
+          3.36,
+          90.0
+        ],
+        [
+          -60.0,
+          5.29,
+          36.0
+        ],
+        [
+          -54.0,
+          12.5,
+          -18.0
+        ],
+        [
+          -54.0,
+          -8.79,
+          -66.0
+        ],
+        [
+          -66.0,
+          -5.38,
+          -120.0
+        ],
+        [
+          -90.0,
+          -4.87,
+          -156.0
+        ]
+      ]
+    },
+    {
+      "id": "harbour_road",
+      "waypoints": [
+        [
+          -60.0,
+          5.29,
+          36.0
+        ],
+        [
+          -30.0,
+          12.66,
+          12.0
+        ],
+        [
+          0.0,
+          18.52,
+          -6.0
+        ],
+        [
+          108.0,
+          28.31,
+          -42.0
+        ]
+      ]
+    },
+    {
+      "id": "arrival_road",
+      "waypoints": [
+        [
+          0.0,
+          17.54,
+          0.0
+        ],
+        [
+          24.0,
+          21.66,
+          -30.0
+        ],
+        [
+          60.0,
+          25.76,
+          -42.0
+        ],
+        [
+          108.0,
+          28.31,
+          -42.0
+        ],
+        [
+          138.0,
+          31.1,
+          -48.0
+        ],
+        [
+          174.0,
+          32.92,
+          -54.0
+        ]
+      ]
+    },
+    {
+      "id": "settlement_road",
+      "waypoints": [
+        [
+          108.0,
+          28.31,
+          -42.0
+        ],
+        [
+          84.0,
+          30.83,
+          -78.0
+        ],
+        [
+          30.0,
+          37.3,
+          -132.0
+        ],
+        [
+          12.0,
+          38.23,
+          -150.0
+        ],
+        [
+          30.0,
+          43.65,
+          -174.0
+        ],
+        [
+          54.0,
+          46.97,
+          -234.0
+        ],
+        [
+          72.0,
+          50.9,
+          -312.0
+        ]
+      ]
+    },
+    {
+      "id": "canopy_road",
+      "waypoints": [
+        [
+          30.0,
+          43.65,
+          -174.0
+        ],
+        [
+          66.0,
+          48.85,
+          -210.0
+        ],
+        [
+          78.0,
+          56.43,
+          -264.0
+        ],
+        [
+          102.0,
+          59.46,
+          -294.0
+        ],
+        [
+          240.0,
+          58.04,
+          -336.0
+        ]
+      ]
+    },
+    {
+      "id": "hollow_road",
+      "waypoints": [
+        [
+          30.0,
+          43.65,
+          -174.0
+        ],
+        [
+          -6.0,
+          42.61,
+          -210.0
+        ],
+        [
+          -42.0,
+          29.0,
+          -234.0
+        ],
+        [
+          -78.0,
+          26.24,
+          -258.0
+        ],
+        [
+          -108.0,
+          1.07,
+          -282.0
+        ]
+      ]
+    },
+    {
+      "id": "ridge_road",
+      "waypoints": [
+        [
+          54.0,
+          46.97,
+          -234.0
+        ],
+        [
+          90.0,
+          47.83,
+          -216.0
+        ],
+        [
+          120.0,
+          36.48,
+          -198.0
+        ],
+        [
+          156.0,
+          41.0,
+          -180.0
+        ],
+        [
+          258.0,
+          49.62,
+          -210.0
+        ]
+      ]
+    },
+    {
+      "id": "monument_axis",
+      "waypoints": [
+        [
+          174.0,
+          32.92,
+          -54.0
+        ],
+        [
+          174.0,
+          37.12,
+          -102.0
+        ],
+        [
+          174.0,
+          41.24,
+          -138.0
+        ],
+        [
+          222.0,
+          42.04,
+          -90.0
+        ],
+        [
+          240.0,
+          45.18,
+          -114.0
+        ],
+        [
+          264.0,
+          44.21,
+          -138.0
+        ]
+      ]
+    },
+    {
+      "id": "south_road",
+      "waypoints": [
+        [
+          174.0,
+          32.92,
+          -54.0
+        ],
+        [
+          168.0,
+          26.64,
+          -12.0
+        ],
+        [
+          156.0,
+          21.09,
+          30.0
+        ],
+        [
+          150.0,
+          17.75,
+          78.0
+        ],
+        [
+          138.0,
+          12.15,
+          120.0
+        ],
+        [
+          174.0,
+          14.76,
+          144.0
+        ]
+      ]
+    },
+    {
+      "id": "timber_road",
+      "waypoints": [
+        [
+          138.0,
+          12.15,
+          120.0
+        ],
+        [
+          174.0,
+          17.75,
+          108.0
+        ],
+        [
+          216.0,
+          23.56,
+          102.0
+        ],
+        [
+          252.0,
+          24.66,
+          90.0
+        ],
+        [
+          324.0,
+          29.13,
+          90.0
+        ]
+      ]
+    },
+    {
+      "id": "east_road",
+      "waypoints": [
+        [
+          222.0,
+          42.04,
+          -90.0
+        ],
+        [
+          258.0,
+          35.29,
+          -78.0
+        ],
+        [
+          324.0,
+          32.95,
+          -42.0
+        ],
+        [
+          360.0,
+          36.73,
+          -54.0
+        ],
+        [
+          393.0,
+          40.73,
+          -66.0
+        ]
+      ]
+    },
+    {
+      "id": "charcoal_track",
+      "waypoints": [
+        [
+          216.0,
+          23.56,
+          102.0
+        ],
+        [
+          240.0,
+          27.19,
+          60.0
+        ],
+        [
+          252.0,
+          29.83,
+          24.0
+        ],
+        [
+          276.0,
+          32.16,
+          -12.0
+        ],
+        [
+          324.0,
+          32.95,
+          -42.0
+        ]
+      ]
+    },
+    {
+      "id": "burnt_track",
+      "waypoints": [
+        [
+          264.0,
+          44.21,
+          -138.0
+        ],
+        [
+          294.0,
+          49.55,
+          -168.0
+        ],
+        [
+          348.0,
+          51.16,
+          -180.0
+        ],
+        [
+          336.0,
+          51.93,
+          -228.0
+        ],
+        [
+          300.0,
+          55.09,
+          -252.0
+        ]
+      ]
+    },
+    {
+      "id": "cove_road",
+      "waypoints": [
+        [
+          -90.0,
+          -4.87,
+          -156.0
+        ],
+        [
+          -126.0,
+          -16.12,
+          -180.0
+        ],
+        [
+          -99.0,
+          -5.1,
+          -174.0
+        ],
+        [
+          -72.0,
+          -1.45,
+          -198.0
+        ],
+        [
+          -78.0,
+          26.24,
+          -258.0
+        ]
+      ]
+    },
+    {
+      "id": "lake_road",
+      "waypoints": [
+        [
+          -78.0,
+          26.24,
+          -258.0
+        ],
+        [
+          -60.0,
+          24.47,
+          -228.0
+        ],
+        [
+          -18.0,
+          36.46,
+          -240.0
+        ],
+        [
+          -24.0,
+          34.95,
+          -276.0
+        ],
+        [
+          -60.0,
+          19.94,
+          -330.0
+        ],
+        [
+          -78.0,
+          -0.28,
+          -366.0
+        ]
+      ]
+    },
+    {
+      "id": "diggings_road",
+      "waypoints": [
+        [
+          78.0,
+          56.43,
+          -264.0
+        ],
+        [
+          105.0,
+          59.46,
+          -285.0
+        ],
+        [
+          96.0,
+          55.05,
+          -318.0
+        ],
+        [
+          90.0,
+          51.36,
+          -354.0
+        ]
+      ]
+    },
+    {
+      "id": "north_ridge_road",
+      "waypoints": [
+        [
+          90.0,
+          51.36,
+          -354.0
+        ],
+        [
+          120.0,
+          54.26,
+          -336.0
+        ],
+        [
+          156.0,
+          52.05,
+          -300.0
+        ],
+        [
+          186.0,
+          56.48,
+          -288.0
+        ],
+        [
+          210.0,
+          57.9,
+          -276.0
+        ],
+        [
+          240.0,
+          52.51,
+          -252.0
+        ],
+        [
+          258.0,
+          49.62,
+          -210.0
+        ]
+      ]
+    },
+    {
+      "id": "orchard_road",
+      "waypoints": [
+        [
+          156.0,
+          21.09,
+          30.0
+        ],
+        [
+          150.0,
+          19.89,
+          60.0
+        ],
+        [
+          144.0,
+          17.75,
+          90.0
+        ],
+        [
+          186.0,
+          17.78,
+          126.0
+        ],
+        [
+          225.0,
+          16.82,
+          156.0
+        ]
+      ]
+    },
+    {
+      "id": "south_coast_road",
+      "waypoints": [
+        [
+          -72.0,
+          0.67,
+          132.0
+        ],
+        [
+          -60.0,
+          -0.57,
+          150.0
+        ],
+        [
+          -48.0,
+          -0.87,
+          156.0
+        ],
+        [
+          6.0,
+          0.57,
+          162.0
+        ],
+        [
+          72.0,
+          3.55,
+          150.0
+        ],
+        [
+          138.0,
+          12.15,
+          120.0
+        ]
+      ]
+    },
+    {
+      "id": "east_hamlet_road",
+      "waypoints": [
+        [
+          264.0,
+          44.21,
+          -138.0
+        ],
+        [
+          282.0,
+          47.34,
+          -156.0
+        ],
+        [
+          300.0,
+          49.55,
+          -180.0
+        ],
+        [
+          330.0,
+          43.21,
+          -150.0
+        ],
+        [
+          345.0,
+          39.46,
+          -120.0
+        ],
+        [
+          372.0,
+          41.6,
+          -90.0
+        ],
+        [
+          324.0,
+          32.95,
+          -42.0
+        ]
+      ]
+    },
+    {
+      "id": "ash_tower_road",
+      "waypoints": [
+        [
+          324.0,
+          32.95,
+          -42.0
+        ],
+        [
+          348.0,
+          33.9,
+          0.0
+        ],
+        [
+          366.0,
+          34.24,
+          36.0
+        ],
+        [
+          336.0,
+          29.13,
+          78.0
+        ],
+        [
+          282.0,
+          26.19,
+          90.0
+        ],
+        [
+          324.0,
+          29.13,
+          90.0
+        ]
+      ]
+    },
+    {
+      "id": "far_grove_road",
+      "waypoints": [
+        [
+          -60.0,
+          19.94,
+          -330.0
+        ],
+        [
+          -96.0,
+          -7.67,
+          -360.0
+        ],
+        [
+          -120.0,
+          -17.66,
+          -384.0
+        ],
+        [
+          -90.0,
+          -3.75,
+          -402.0
+        ],
+        [
+          -66.0,
+          27.76,
+          -426.0
+        ]
+      ]
+    },
+    {
+      "id": "west_lodge_road",
+      "waypoints": [
+        [
+          -78.0,
+          26.24,
+          -258.0
+        ],
+        [
+          -102.0,
+          -8.81,
+          -228.0
+        ],
+        [
+          -114.0,
+          -17.5,
+          -198.0
+        ],
+        [
+          -126.0,
+          -16.12,
+          -180.0
+        ]
+      ]
+    },
+    {
+      "id": "stone_ring_road",
+      "waypoints": [
+        [
+          -60.0,
+          5.29,
+          36.0
+        ],
+        [
+          -78.0,
+          5.71,
+          -12.0
+        ],
+        [
+          -90.0,
+          -4.17,
+          -42.0
+        ],
+        [
+          -54.0,
+          -8.79,
+          -66.0
+        ],
+        [
+          -18.0,
+          -0.05,
+          -78.0
+        ]
+      ]
+    },
+    {
+      "id": "meadow_road",
+      "waypoints": [
+        [
+          0.0,
+          17.54,
+          0.0
+        ],
+        [
+          -12.0,
+          10.74,
+          24.0
+        ],
+        [
+          -42.0,
+          6.18,
+          66.0
+        ],
+        [
+          -93.0,
+          -1.52,
+          72.0
+        ]
+      ]
+    },
+    {
+      "id": "south_orchard_road",
+      "waypoints": [
+        [
+          138.0,
+          12.15,
+          120.0
+        ],
+        [
+          96.0,
+          6.79,
+          132.0
+        ],
+        [
+          48.0,
+          3.55,
+          138.0
+        ],
+        [
+          90.0,
+          12.03,
+          102.0
+        ],
+        [
+          156.0,
+          21.09,
+          30.0
+        ]
+      ]
+    },
+    {
+      "id": "upper_falls_road",
+      "waypoints": [
+        [
+          72.0,
+          50.9,
+          -312.0
+        ],
+        [
+          54.0,
+          51.46,
+          -372.0
+        ],
+        [
+          90.0,
+          65.71,
+          -384.0
+        ],
+        [
+          156.0,
+          62.85,
+          -366.0
+        ],
+        [
+          198.0,
+          60.33,
+          -348.0
+        ],
+        [
+          222.0,
+          58.04,
+          -330.0
+        ]
+      ]
+    },
+    {
+      "id": "east_grove_road",
+      "waypoints": [
+        [
+          258.0,
+          49.62,
+          -210.0
+        ],
+        [
+          198.0,
+          44.91,
+          -180.0
+        ],
+        [
+          216.0,
+          43.54,
+          -138.0
+        ],
+        [
+          264.0,
+          44.21,
+          -138.0
+        ]
+      ]
+    },
+    {
+      "id": "boundary_road",
+      "waypoints": [
+        [
+          222.0,
+          58.04,
+          -330.0
+        ],
+        [
+          288.0,
+          58.84,
+          -288.0
+        ],
+        [
+          312.0,
+          51.45,
+          -222.0
+        ],
+        [
+          336.0,
+          47.98,
+          -198.0
+        ],
+        [
+          378.0,
+          51.16,
+          -174.0
+        ]
+      ]
+    },
+    {
+      "id": "vent_road",
+      "waypoints": [
+        [
+          324.0,
+          32.95,
+          -42.0
+        ],
+        [
+          354.0,
+          35.79,
+          -24.0
+        ],
+        [
+          366.0,
+          33.48,
+          60.0
+        ],
+        [
+          348.0,
+          30.07,
+          132.0
+        ],
+        [
+          384.0,
+          33.11,
+          90.0
+        ]
+      ]
+    }
+  ],
+  "water": {
+    "seaLevel": 0.0,
+    "serverCells": 576,
+    "bodies": [
+      {
+        "id": "Water_Sea",
+        "node": "Water_Sea",
+        "type": "sea"
+      },
+      {
+        "id": "Water_Streams",
+        "node": "Water_Streams",
+        "type": "stream"
+      },
+      {
+        "id": "Water_Pools",
+        "node": "Water_Pools",
+        "type": "pool"
+      },
+      {
+        "id": "Water_Falls",
+        "node": "Water_Falls",
+        "type": "waterfall"
+      }
+    ],
+    "streams": [
+      {
+        "id": "north_beck",
+        "waypoints": [
+          [
+            108.0,
+            65.49,
+            -378.0
+          ],
+          [
+            90.0,
+            51.36,
+            -336.0
+          ],
+          [
+            72.0,
+            50.47,
+            -288.0
+          ],
+          [
+            54.0,
+            45.78,
+            -240.0
+          ],
+          [
+            36.0,
+            44.0,
+            -198.0
+          ],
+          [
+            18.0,
+            38.23,
+            -162.0
+          ],
+          [
+            -6.0,
+            26.34,
+            -132.0
+          ]
+        ]
+      },
+      {
+        "id": "mill_race",
+        "waypoints": [
+          [
+            -6.0,
+            26.34,
+            -132.0
+          ],
+          [
+            -24.0,
+            23.74,
+            -108.0
+          ],
+          [
+            -39.0,
+            -9.81,
+            -84.0
+          ],
+          [
+            -54.0,
+            -8.79,
+            -66.0
+          ],
+          [
+            -72.0,
+            -14.05,
+            -60.0
+          ]
+        ]
+      },
+      {
+        "id": "east_brook",
+        "waypoints": [
+          [
+            198.0,
+            64.43,
+            -288.0
+          ],
+          [
+            168.0,
+            48.71,
+            -252.0
+          ],
+          [
+            138.0,
+            30.82,
+            -222.0
+          ],
+          [
+            120.0,
+            36.48,
+            -198.0
+          ],
+          [
+            102.0,
+            24.19,
+            -180.0
+          ],
+          [
+            72.0,
+            40.08,
+            -162.0
+          ],
+          [
+            36.0,
+            38.65,
+            -150.0
+          ],
+          [
+            6.0,
+            38.23,
+            -138.0
+          ]
+        ]
+      },
+      {
+        "id": "garden_rill",
+        "waypoints": [
+          [
+            174.0,
+            37.12,
+            -102.0
+          ],
+          [
+            168.0,
+            33.03,
+            -66.0
+          ],
+          [
+            162.0,
+            24.95,
+            -18.0
+          ],
+          [
+            156.0,
+            21.09,
+            30.0
+          ],
+          [
+            144.0,
+            17.92,
+            66.0
+          ],
+          [
+            120.0,
+            17.75,
+            108.0
+          ],
+          [
+            84.0,
+            4.52,
+            138.0
+          ],
+          [
+            30.0,
+            3.55,
+            156.0
+          ]
+        ]
+      },
+      {
+        "id": "lake_outfall",
+        "waypoints": [
+          [
+            -18.0,
+            37.39,
+            -336.0
+          ],
+          [
+            -36.0,
+            35.66,
+            -300.0
+          ],
+          [
+            -45.0,
+            25.94,
+            -255.0
+          ],
+          [
+            -66.0,
+            3.85,
+            -222.0
+          ],
+          [
+            -96.0,
+            -7.08,
+            -192.0
+          ],
+          [
+            -126.0,
+            -16.12,
+            -180.0
+          ]
+        ]
+      },
+      {
+        "id": "ash_burn",
+        "waypoints": [
+          [
+            354.0,
+            51.16,
+            -198.0
+          ],
+          [
+            330.0,
+            43.21,
+            -150.0
+          ],
+          [
+            345.0,
+            39.46,
+            -120.0
+          ],
+          [
+            324.0,
+            30.18,
+            -60.0
+          ],
+          [
+            336.0,
+            26.91,
+            18.0
+          ],
+          [
+            282.0,
+            26.19,
+            90.0
+          ],
+          [
+            264.0,
+            18.36,
+            132.0
+          ]
+        ]
+      },
+      {
+        "id": "upper_beck",
+        "waypoints": [
+          [
+            78.0,
+            73.52,
+            -414.0
+          ],
+          [
+            54.0,
+            51.46,
+            -372.0
+          ],
+          [
+            36.0,
+            43.25,
+            -342.0
+          ],
+          [
+            42.0,
+            42.36,
+            -300.0
+          ],
+          [
+            54.0,
+            45.78,
+            -240.0
+          ]
+        ]
+      },
+      {
+        "id": "meadow_brook",
+        "waypoints": [
+          [
+            -12.0,
+            10.74,
+            24.0
+          ],
+          [
+            -36.0,
+            6.11,
+            42.0
+          ],
+          [
+            -66.0,
+            1.85,
+            60.0
+          ],
+          [
+            -93.0,
+            -1.52,
+            72.0
+          ]
+        ]
+      },
+      {
+        "id": "grove_burn",
+        "waypoints": [
+          [
+            -120.0,
+            -17.66,
+            -384.0
+          ],
+          [
+            -108.0,
+            -16.61,
+            -342.0
+          ],
+          [
+            -102.0,
+            0.71,
+            -294.0
+          ],
+          [
+            -102.0,
+            -8.81,
+            -228.0
+          ],
+          [
+            -114.0,
+            -17.5,
+            -198.0
+          ]
+        ]
+      }
+    ]
+  },
+  "environment": {
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.15,
+        0.25,
+        0.42
+      ],
+      "horizon": [
+        0.58,
+        0.56,
+        0.5
+      ]
+    },
+    "sun": {
+      "direction": [
+        -0.46,
+        0.5,
+        0.73
+      ],
+      "color": [
+        1.22,
+        0.94,
+        0.6
+      ],
+      "energy": 1.15
+    },
+    "ambient": {
+      "skyColor": [
+        0.22,
+        0.3,
+        0.42
+      ],
+      "groundColor": [
+        0.08,
+        0.06,
+        0.04
+      ],
+      "energy": 0.3
+    },
+    "saturation": 1.3,
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.38,
+        0.37,
+        0.35
+      ],
+      "density": 0.0007,
+      "heightFalloff": 0.003
+    },
+    "goldenHour": {
+      "sun": {
+        "direction": [
+          -0.82,
+          0.2,
+          0.53
+        ],
+        "color": [
+          1.55,
+          0.94,
+          0.52
+        ]
+      },
+      "fog": {
+        "color": [
+          0.62,
+          0.5,
+          0.38
+        ],
+        "density": 0.0022
+      }
+    },
+    "presentation": {
+      "fallingLeaves": {
+        "enabled": true,
+        "density": 0.6,
+        "zones": [
+          "forest-core",
+          "settlement"
+        ]
+      },
+      "mist": {
+        "enabled": true,
+        "zones": [
+          "mill-pool",
+          "ravine",
+          "coast"
+        ]
+      },
+      "chimneySmoke": {
+        "enabled": true,
+        "nodes": [
+          "Landmark_MootHall",
+          "Building_Lodge_00",
+          "Building_Lodge_02",
+          "Landmark_CharcoalKiln_0"
+        ]
+      },
+      "waterSpray": {
+        "enabled": true,
+        "nodes": [
+          "Water_Falls"
+        ]
+      },
+      "ambientAudio": [
+        {
+          "id": "forest-day",
+          "zone": "forest-core"
+        },
+        {
+          "id": "surf",
+          "zone": "coast"
+        },
+        {
+          "id": "settlement",
+          "zone": "settlement"
+        },
+        {
+          "id": "wind-barren",
+          "zone": "transition"
+        }
+      ]
+    },
+    "zones": [
+      {
+        "id": "forest-core",
+        "centre": [
+          20.0,
+          32.0,
+          -116.0
+        ],
+        "radius": 124.0
+      },
+      {
+        "id": "coast",
+        "centre": [
+          -60.0,
+          4.0,
+          0.0
+        ],
+        "radius": 104.0
+      },
+      {
+        "id": "settlement",
+        "centre": [
+          16.0,
+          32.0,
+          -112.0
+        ],
+        "radius": 60.0
+      },
+      {
+        "id": "transition",
+        "centre": [
+          216.0,
+          20.0,
+          -40.0
+        ],
+        "radius": 92.0
+      }
+    ]
+  },
+  "minimap": {
+    "file": "minimap.webp",
+    "pixels": 768,
+    "metresPerPixel": 0.7487,
+    "worldMin": [
+      -174.0,
+      -401.0
+    ],
+    "worldMax": [
+      401.0,
+      174.0
+    ],
+    "northAxis": "-Z",
+    "orientation": "north-up"
+  },
+  "lodGroups": [
+    {
+      "id": "forest",
+      "strategy": "authored-detail-tiers",
+      "levels": [
+        {
+          "id": "near",
+          "suffix": "_high"
+        },
+        {
+          "id": "mid",
+          "suffix": "_mid"
+        },
+        {
+          "id": "far",
+          "suffix": "_low"
+        }
+      ]
+    },
+    {
+      "id": "package-lod2",
+      "glb": "world-lod2.glb",
+      "strategy": "reduced-package",
+      "notes": "Far-tier vegetation only, no ground clutter."
+    }
+  ],
+  "performance": {
+    "nodes": 10063,
+    "meshes": 298,
+    "materials": 32,
+    "images": 88,
+    "textures": 88,
+    "accessors": 1192,
+    "bufferViews": 1280,
+    "uniqueTriangles": 534697,
+    "uniqueVertices": 425164,
+    "glbBytes": 28965536,
+    "instancedTriangles": 3146376,
+    "embeddedTextureBytes": 9495545,
+    "textureMemoryBytesUncompressed": 88866816,
+    "placements": 9377,
+    "collision": {
+      "width": 1152,
+      "height": 1152,
+      "cellMetres": 0.5,
+      "walkableCells": 929247,
+      "blockedCells": 397857,
+      "walkableFraction": 0.7002,
+      "elevatedDecks": 23,
+      "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+      "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+    },
+    "notes": [
+      "settlement props: 276, lamps: 37",
+      "ruin fragments: 80",
+      "outland places: 51 landmarks total",
+      "forest instances: 2675",
+      "undergrowth instances: 2256",
+      "FallenLog instances: 172",
+      "Stump instances: 200",
+      "LeafDrift instances: 538",
+      "Mushrooms instances: 253",
+      "Rock instances: 240"
+    ],
+    "lod2": {
+      "glbBytes": 19060340,
+      "nodes": 6392,
+      "uniqueTriangles": 476635,
+      "instancedTriangles": 2198426,
+      "sizeReductionPercent": 34.2,
+      "triangleReductionPercent": 30.1
     }
   },
-  "materials": {
-    "baseColor": "textures/region-basecolor.png",
-    "normal": "textures/region-normal.png",
-    "orm": "textures/region-orm.png"
+  "sources": [
+    {
+      "id": "aerial-concept",
+      "file": "references/01-concept-aerial-overview.png",
+      "role": "authoritative-composition"
+    },
+    {
+      "id": "detail-board",
+      "file": "references/00-concept-detail-board.png",
+      "role": "authoritative-player-scale"
+    },
+    {
+      "id": "generator",
+      "file": "source/build_amberwood.py",
+      "role": "reproducible-build",
+      "seed": 20260827
+    }
+  ],
+  "provenance": {
+    "assets": "original to Eloria/Nymara; generated by source/amberwood/*",
+    "thirdParty": "none",
+    "textures": "procedural (numpy + Pillow), no sampled or traced source",
+    "geometry": "procedural (numpy), no imported models",
+    "license": "same as the Eloria client repository"
   },
-  "productionStatus": "terrain-landmark-material-pass"
+  "productionStatus": "production-geometry-materials-population",
+  "knownLimitations": []
 }

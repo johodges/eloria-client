@@ -18,8 +18,19 @@ import numpy as np
 
 from noise import fbm, normalise
 
-HALF_EXTENT = 104.0          # metres from the datum to the world edge
-CELL = 1.3                   # heightfield spacing in metres (161 x 161)
+# The world is a square, but it is not centred on the arrival datum. Server
+# tiles are non-negative, so with the datum at (58, 58) the addressable band
+# runs Godot X -58..133 and Z -133..58. The world is offset to contain that
+# band and then extended past it, north and east, for the desert basin and the
+# mountain skyline a player can see but never walk into.
+CENTRE = (36.0, -36.0)       # world centre in Godot XZ
+HALF_EXTENT = 140.0          # metres from CENTRE to the world edge
+CELL = 1.4                   # heightfield spacing in metres (201 x 201)
+CHUNKS = 10                  # terrain chunks per axis
+
+# Addressable band, so placement code and validation can both check it.
+ADDRESSABLE_MIN = (-58.0, -133.0)
+ADDRESSABLE_MAX = (133.0, 58.0)
 SEA_LEVEL = 0.0
 BEACH_LEVEL = 0.9
 
@@ -30,6 +41,9 @@ CLASS_ROAD = 2               # caravan roads and riding trails
 CLASS_DRY_GRASS = 3          # sun-bleached dry grass and crop ground
 CLASS_ROCK = 4               # mesa tops, cliffs and shore rock
 CLASS_SAND = 5               # beaches and dry stream beds
+CLASS_DESERT = 6             # the dune field and salt pans north of the steppe
+CLASS_BADLAND = 7            # violet Amethyst-influenced badland rock
+CLASS_MOUNTAIN = 8           # the mountain boundary's scree and bare stone
 
 CLASS_NAMES = {
     CLASS_CLEARING: "clan_clearing",
@@ -38,6 +52,9 @@ CLASS_NAMES = {
     CLASS_DRY_GRASS: "dry_grass",
     CLASS_ROCK: "shore_rock",
     CLASS_SAND: "beach_sand",
+    CLASS_DESERT: "desert_sand",
+    CLASS_BADLAND: "amethyst_badland",
+    CLASS_MOUNTAIN: "mountain_scree",
 }
 
 # Base-colour multipliers applied to the shared ground detail map so each class
@@ -51,6 +68,12 @@ CLASS_TINT = {
     CLASS_DRY_GRASS: (1.00, 0.90, 0.48, 1.0),
     CLASS_ROCK: (0.76, 0.65, 0.50, 1.0),
     CLASS_SAND: (0.98, 0.90, 0.74, 1.0),
+    # The desert reads paler and pinker than the steppe; the badlands carry the
+    # Amethyst Barrens' violet, muted so it stays a neighbour's influence rather
+    # than a second region; the mountains are cool bare stone.
+    CLASS_DESERT: (1.00, 0.86, 0.62, 1.0),
+    CLASS_BADLAND: (0.78, 0.68, 0.74, 1.0),
+    CLASS_MOUNTAIN: (0.60, 0.58, 0.60, 1.0),
 }
 
 
@@ -75,9 +98,9 @@ class Landform:
 
     def sample(self, world_x, world_z) -> np.ndarray:
         """Bilinear height lookup in world space."""
-        fx = np.clip((np.asarray(world_x, dtype="float64") + HALF_EXTENT) / CELL,
+        fx = np.clip((np.asarray(world_x, dtype="float64") - self.x[0]) / CELL,
                      0.0, len(self.x) - 1.001)
-        fz = np.clip((np.asarray(world_z, dtype="float64") + HALF_EXTENT) / CELL,
+        fz = np.clip((np.asarray(world_z, dtype="float64") - self.z[0]) / CELL,
                      0.0, len(self.z) - 1.001)
         x0, z0 = fx.astype(int), fz.astype(int)
         tx, tz = fx - x0, fz - z0
@@ -92,9 +115,14 @@ class Landform:
         return float(self.sample(world_x, world_z))
 
     def class_at(self, world_x: float, world_z: float) -> int:
-        ix = int(np.clip((world_x + HALF_EXTENT) / CELL, 0, len(self.x) - 1))
-        iz = int(np.clip((world_z + HALF_EXTENT) / CELL, 0, len(self.z) - 1))
+        ix = int(np.clip((world_x - self.x[0]) / CELL, 0, len(self.x) - 1))
+        iz = int(np.clip((world_z - self.z[0]) / CELL, 0, len(self.z) - 1))
         return int(self.classes[iz, ix])
+
+    def index_of(self, world_x: float, world_z: float) -> tuple[int, int]:
+        """Nearest grid index for a world position, clamped to the grid."""
+        return (int(np.clip((world_z - self.z[0]) / CELL, 0, len(self.z) - 1)),
+                int(np.clip((world_x - self.x[0]) / CELL, 0, len(self.x) - 1)))
 
 
 # --------------------------------------------------------------------- routes
@@ -119,6 +147,12 @@ FIELDS = ((34.0, 30.0, 15.0, 11.0), (-34.0, -46.0, 13.0, 10.0),
           (52.0, 44.0, 12.0, 9.0), (-52.0, 22.0, 11.0, 9.0),
           (22.0, -58.0, 12.0, 9.0))
 
+# Wind-carved badland spires, placed as instanced rock. Terrain only raises a
+# low plinth under each one.
+SPIRE_SITES = ((118.0, -112.0, 3.4), (126.0, -104.0, 2.8), (100.0, -128.0, 3.0),
+               (148.0, -112.0, 3.2), (86.0, -134.0, 2.6), (138.0, -88.0, 2.9),
+               (110.0, -76.0, 3.1), (152.0, -136.0, 2.7))
+
 # The four Orun clan camps ring the shared market at the ceremonial crossroads.
 CAMP_CLEARINGS = ((-30.0, -40.0, 12.5), (46.0, -26.0, 11.5),
                   (64.0, 20.0, 11.5), (-40.0, 34.0, 11.5))
@@ -135,6 +169,14 @@ TRAILS = {
     "dock_spur": [(-62, 46), (-70, 40), (-78, 36)],
     "east_camp": [(52, 0), (62, 10), (70, 22)],
     "north_camp": [(-1, -30), (-14, -36), (-26, -44)],
+    # Into the desert and the badlands beyond it.
+    "desert_road": [(2, -58), (4, -74), (0, -92), (6, -110), (14, -126)],
+    "salt_pan_spur": [(6, -110), (-14, -118), (-28, -128)],
+    "badland_track": [(14, -126), (44, -122), (74, -112), (96, -104)],
+    "dune_crossing": [(4, -74), (34, -84), (58, -96), (76, -100)],
+    "mountain_approach": [(14, -126), (10, -142), (2, -152)],
+    "east_pass": [(70, 22), (96, 8), (118, -12), (128, -34)],
+    "spire_walk": [(96, -104), (114, -98), (128, -92)],
 }
 
 
@@ -172,9 +214,10 @@ def _blob_distance(gx, gz, cx, cz, radius, lobes, phase, roughness):
 
 def build(seed: int = 20260827, pads=()) -> Landform:
     """Sculpt the region heightfield and assign terrain classes."""
-    count = int(HALF_EXTENT * 2 / CELL) + 1
-    axis = np.linspace(-HALF_EXTENT, HALF_EXTENT, count)
-    gx, gz = np.meshgrid(axis, axis)                 # gz varies down the rows
+    count = int(round(HALF_EXTENT * 2 / CELL)) + 1
+    x_axis = np.linspace(CENTRE[0] - HALF_EXTENT, CENTRE[0] + HALF_EXTENT, count)
+    z_axis = np.linspace(CENTRE[1] - HALF_EXTENT, CENTRE[1] + HALF_EXTENT, count)
+    gx, gz = np.meshgrid(x_axis, z_axis)             # gz varies down the rows
 
     detail = int(2 ** math.ceil(math.log2(count)))
 
@@ -249,6 +292,110 @@ def build(seed: int = 20260827, pads=()) -> Landform:
         height += rise * _falloff(normalised, 0.35, 1.0)
         rock_stamp = np.maximum(rock_stamp, _falloff(normalised, 0.55, 0.95) * 0.8)
 
+    # --- desert basin north of the steppe --------------------------------
+    # The continent master concept puts dry ochre badland between the steppe
+    # and the Amethyst Barrens, so the ground grades from grazing steppe into a
+    # dune field and salt pans before the mountains close it off.
+    desert_front = (-92.0 + (noise(4, 4, 51) - 0.5) * 46.0
+                    + (noise(9, 3, 53) - 0.5) * 20.0
+                    + 14.0 * np.sin(gx * 0.026 + 1.2))
+    into_desert = _smoothstep(0.0, 46.0, desert_front - fz)
+    # Sand runs south down the dry washes and grass climbs north between them,
+    # so the two grounds interlock rather than meeting at a line.
+    for wash in ([(-24, -104), (-18, -86), (-8, -70), (-2, -56)],
+                 [(48, -108), (54, -92), (62, -76), (72, -62)],
+                 [(94, -116), (88, -98), (80, -84)]):
+        into_desert = np.maximum(into_desert, 0.85 * _falloff(
+            _polyline_distance(fx, fz, wash), 5.0, 16.0)
+            * _smoothstep(-70.0, -100.0, fz + 30.0))
+    dunes = np.zeros_like(height)
+    swing = 0.34 * np.sin(gx * 0.012) + 0.18 * np.cos(gz * 0.017)
+    for period, amplitude, angle, offset in ((17.0, 3.1, 0.35, 0.0),
+                                             (31.0, 4.6, 0.22, 1.7),
+                                             (9.0, 1.4, 0.48, 3.1)):
+        bearing = angle + swing
+        along = gx * np.cos(bearing) + gz * np.sin(bearing)
+        # Asymmetric dune profile: a long windward back and a short slip face.
+        phase = (along / period + offset + noise(9, 3, 52) * 0.6) % 1.0
+        dunes += amplitude * np.where(phase < 0.72, (phase / 0.72) ** 1.6,
+                                      1.0 - (phase - 0.72) / 0.28)
+    height = height * (1.0 - into_desert) + (
+        height * 0.35 + 7.0 + dunes) * into_desert
+    # Salt pans: dead-flat bright floors between the dune trains.
+    pan_mask = np.zeros_like(height)
+    for px, pz, radius, lobes, phase in ((6.0, -124.0, 20.0, ((3, 0.24), (5, 0.13)), 1.1),
+                                         (62.0, -110.0, 15.0, ((2, 0.28), (6, 0.11)), 3.4),
+                                         (-30.0, -132.0, 13.0, ((3, 0.22), (7, 0.10)), 5.2)):
+        pan = _falloff(_blob_distance(fx, fz, px, pz, radius, lobes, phase, 0.0),
+                       0.62, 1.0) * into_desert
+        floor = float(height[landform_index(z_axis, pz), landform_index(x_axis, px)])
+        height = height * (1.0 - pan) + (floor - 1.6) * pan
+        pan_mask = np.maximum(pan_mask, pan)
+
+    # --- Amethyst badlands in the north-east ------------------------------
+    badland_mask = _smoothstep(0.0, 40.0, (gx - 74.0)) * _smoothstep(0.0, 34.0, (-52.0 - gz))
+    for bx, bz, radius, top, lobes, phase in (
+            (108.0, -96.0, 21.0, 34.0, ((3, 0.20), (5, 0.11), (8, 0.06)), 0.7),
+            (140.0, -130.0, 24.0, 40.0, ((2, 0.24), (6, 0.10)), 2.9),
+            (96.0, -142.0, 18.0, 33.0, ((3, 0.22), (7, 0.09)), 4.6),
+            (132.0, -64.0, 17.0, 27.0, ((2, 0.26), (5, 0.12)), 1.9),
+            (70.0, -122.0, 14.0, 24.0, ((3, 0.25), (6, 0.12)), 5.5)):
+        normalised = _blob_distance(fx, fz, bx, bz, radius, lobes, phase,
+                                    (noise(23, 3, 61) - 0.5) * 0.20)
+        crown = top + noise(27, 3, 62) * 2.2
+        cap = _falloff(normalised, 0.30, 0.40)
+        cliff = _falloff(normalised, 0.40, 1.0)
+        talus = _falloff(normalised, 1.0, 1.7)
+        benches = np.clip(normalised - 0.30, 0.0, 1.0) / 0.70
+        stepping = (np.floor(benches * 5.0)
+                    + _smoothstep(0.60, 0.96, (benches * 5.0) % 1.0)) / 5.0
+        cliff_height = crown - (crown - height) * stepping
+        blend = np.maximum(cap, cliff)
+        profile = np.where(cap > 0.5, crown, height + (cliff_height - height) * cliff)
+        height = height * (1.0 - blend) + profile * blend
+        height += (crown - height) * 0.20 * talus * (1.0 - blend)
+        rock_stamp = np.maximum(rock_stamp, _falloff(normalised, 1.05, 1.55))
+    # The slender wind-carved spires the Barrens concept repeats are placed as
+    # instanced rock rather than sculpted here: at 1.4 m cells they would be two
+    # cells wide, which folds the surface over instead of making a spire. Their
+    # bases are raised into low plinths so the instances sit on a knoll.
+    for sx, sz, radius in SPIRE_SITES:
+        plinth = _falloff(np.hypot(gx - sx, gz - sz), radius, radius * 3.2)
+        height += 3.2 * plinth
+        rock_stamp = np.maximum(rock_stamp, plinth)
+
+    # --- mountain boundary along the north and east -----------------------
+    # A real range rather than a raised lip: the world edge on these two sides
+    # is the Whitehorn foothills wrapping toward the Barrens, and it is what
+    # stops a player leaving the authored ground.
+    north_front = -134.0 + (noise(4, 4, 71) - 0.5) * 34.0
+    east_front = 128.0 + (noise(4, 4, 72) - 0.5) * 34.0
+    into_mountain = np.maximum(_smoothstep(0.0, 52.0, north_front - fz),
+                               _smoothstep(0.0, 52.0, fx - east_front))
+    # A foothill belt ahead of the range, so the ground climbs into it.
+    foothills = np.maximum(_smoothstep(0.0, 74.0, north_front + 26.0 - fz),
+                           _smoothstep(0.0, 74.0, fx - east_front + 26.0))
+    height += (8.0 + noise(13, 4, 74) * 9.0) * foothills ** 1.7
+    # Named summits give the skyline a silhouette instead of a uniform wall.
+    peaks = np.zeros_like(height)
+    for px, pz, radius, top in ((-52.0, -168.0, 30.0, 66.0), (4.0, -172.0, 34.0, 74.0),
+                                (58.0, -164.0, 28.0, 62.0), (112.0, -170.0, 32.0, 70.0),
+                                (160.0, -150.0, 30.0, 68.0), (168.0, -96.0, 28.0, 60.0),
+                                (166.0, -40.0, 26.0, 54.0), (162.0, 16.0, 24.0, 48.0),
+                                (-30.0, -158.0, 20.0, 52.0), (84.0, -156.0, 22.0, 56.0),
+                                (140.0, -60.0, 20.0, 47.0)):
+        distance = np.hypot(fx - px, fz - pz)
+        cone = _falloff(distance, radius * 0.10, radius)
+        peaks = np.maximum(peaks, top * cone ** 1.5)
+    ridgeline = 24.0 + noise(9, 4, 73) * 20.0
+    mountain = np.maximum(peaks, ridgeline * into_mountain ** 1.4)
+    height = np.maximum(height, height * (1.0 - into_mountain)
+                        + mountain * into_mountain ** 1.2)
+    height = np.maximum(height, peaks * _smoothstep(0.0, 0.15, peaks / 80.0))
+    rock_stamp = np.maximum(rock_stamp, _smoothstep(0.30, 0.75, into_mountain))
+    mountain_mask = np.maximum(_smoothstep(0.30, 0.80, into_mountain),
+                               _smoothstep(20.0, 40.0, peaks))
+
     # --- coastline: western bays and a south-western sound ---------------
     coast_noise = noise(7, 5, 11)
     shore = (-76.0 - 10.0 * np.sin(gz * 0.048 + 0.6) - 7.0 * np.cos(gz * 0.019 + 1.3)
@@ -277,11 +424,14 @@ def build(seed: int = 20260827, pads=()) -> Landform:
         rock_stamp = np.maximum(rock_stamp, stack)
 
     # --- world rim: a ragged ring of highland, not a square wall ---------
-    rim_distance = np.maximum(np.abs(gx), np.abs(gz))
+    # Only the west and south still need the old ridge: the north and east are
+    # closed by the mountain range above.
+    rim_distance = np.maximum(-58.0 - gx, gz - 58.0)
     ragged = (noise(7, 3, 41) - 0.5) * 7.0 + (noise(19, 3, 42) - 0.5) * 3.0
-    rim = _smoothstep(88.0, 101.0, rim_distance + ragged)
+    rim = _smoothstep(18.0, 44.0, rim_distance + ragged)
     # A ridge line rather than a plateau, so the barrier reads as landscape.
-    ridge = 0.70 + 0.30 * np.sin(np.arctan2(gz, gx) * 3.0 + noise(5, 3, 43) * 4.0)
+    ridge = 0.70 + 0.30 * np.sin(np.arctan2(gz - CENTRE[1], gx - CENTRE[0]) * 3.0
+                                 + noise(5, 3, 43) * 4.0)
     height += 26.0 * rim * ridge * (1.0 - into_sea)
     height -= 9.0 * rim * into_sea
     rock_stamp = np.maximum(rock_stamp, _smoothstep(0.35, 0.85, rim) * (1.0 - into_sea))
@@ -292,8 +442,8 @@ def build(seed: int = 20260827, pads=()) -> Landform:
     # footprint has to be sunk to its lowest corner and the building buries
     # itself in the slope.
     for pad_x, pad_z, pad_radius in pads:
-        column = int(np.clip((pad_x + HALF_EXTENT) / CELL, 0, count - 1))
-        row = int(np.clip((pad_z + HALF_EXTENT) / CELL, 0, count - 1))
+        column = int(np.clip((pad_x - x_axis[0]) / CELL, 0, count - 1))
+        row = int(np.clip((pad_z - z_axis[0]) / CELL, 0, count - 1))
         target = float(height[row, column])
         distance = np.hypot(gx - pad_x, gz - pad_z)
         core = _falloff(distance, pad_radius * 0.92, pad_radius * 1.05)
@@ -333,8 +483,8 @@ def build(seed: int = 20260827, pads=()) -> Landform:
     smoothed = height.copy()
     for _ in range(7):
         smoothed = (smoothed * 0.2
-                    + np.roll(smoothed, 1, 0) * 0.2 + np.roll(smoothed, -1, 0) * 0.2
-                    + np.roll(smoothed, 1, 1) * 0.2 + np.roll(smoothed, -1, 1) * 0.2)
+                    + _shift(smoothed, 1, 0) * 0.2 + _shift(smoothed, -1, 0) * 0.2
+                    + _shift(smoothed, 1, 1) * 0.2 + _shift(smoothed, -1, 1) * 0.2)
     height = height * (1.0 - combined_route * 0.88) + smoothed * (combined_route * 0.88)
 
     # --- crop and pasture blocks ----------------------------------------
@@ -345,15 +495,62 @@ def build(seed: int = 20260827, pads=()) -> Landform:
         field_mask = np.maximum(field_mask, block)
         height = height * (1.0 - block * 0.65) + smoothed * (block * 0.65)
 
+    # --- slope limiter -----------------------------------------------------
+    # Cap the step between neighbouring cells. Beyond roughly 62 degrees a quad
+    # can fold past vertical, which makes its face normal disagree with the
+    # smoothed vertex normal: the surface then renders back-to-front and stops
+    # catching the grounding ray. Cliffs stay dramatic, they just stop folding.
+    # 5.5 cells of rise per cell of run is about 80 degrees: still a cliff face,
+    # but comfortably short of folding past vertical.
+    limit = CELL * 5.5
+    for _ in range(60):
+        excess = 0.0
+        for axis, shift in ((0, 1), (0, -1), (1, 1), (1, -1)):
+            neighbour = _shift(height, shift, axis)
+            over = np.clip(height - neighbour - limit, 0.0, None)
+            excess = max(excess, float(over.max()))
+            height -= over * 0.45
+        if excess < 0.05:
+            break
+
     water = (height < SEA_LEVEL) | (pond_mask > 0.5)
 
     # --- terrain classification ------------------------------------------
+    # The masks that decide ground type are smoothed first. Sculpting wants the
+    # sharp wash interlock where the dunes meet the steppe, but thresholding a
+    # cell-scale mask assigns neighbouring quads to different classes and the
+    # boundary renders as a chequerboard of two tints instead of a shoreline.
+    def _settle(mask: np.ndarray, passes: int = 3) -> np.ndarray:
+        settled = mask
+        for _ in range(passes):
+            settled = (settled * 0.36
+                       + _shift(settled, 1, 0) * 0.16 + _shift(settled, -1, 0) * 0.16
+                       + _shift(settled, 1, 1) * 0.16 + _shift(settled, -1, 1) * 0.16)
+        return settled
+
+    into_desert = _settle(into_desert)
+    pan_mask = _settle(pan_mask)
+    badland_mask = _settle(badland_mask)
+    mountain_mask = _settle(mountain_mask)
+    rock_stamp = _settle(rock_stamp, 2)
     classes = np.full(height.shape, CLASS_STEPPE, dtype="int8")
-    dry = noise(6, 4, 21)
-    classes[dry > 0.60] = CLASS_DRY_GRASS
+    # Sun-bleached patches within the grassland. Sampled on the warped grid and
+    # cut against a wandering threshold: a plain value-noise field cut at a fixed
+    # level breaks along its own lattice, which on a hillside reads as a
+    # chequerboard of two tints rather than as dry ground.
+    dry = _settle(_sample(noise(6, 4, 21), fx, fz, x_axis, z_axis)
+                  * 0.72 + noise(13, 3, 22) * 0.28)
+    wander = _settle(noise(9, 2, 23), 4)
+    classes[dry > 0.56 + (wander - 0.5) * 0.12] = CLASS_DRY_GRASS
     classes[field_mask > 0.4] = CLASS_DRY_GRASS
     slope = _slope(height)
     classes[(rock_stamp > 0.62) | (slope > 1.15)] = CLASS_ROCK
+    # The three new grounds, applied in order of how strongly each dominates.
+    classes[into_desert > 0.45] = CLASS_DESERT
+    classes[pan_mask > 0.45] = CLASS_DESERT
+    classes[(badland_mask > 0.45) & (rock_stamp > 0.40)] = CLASS_BADLAND
+    classes[(badland_mask > 0.60) & (slope > 0.95)] = CLASS_BADLAND
+    classes[mountain_mask > 0.45] = CLASS_MOUNTAIN
     classes[camp_distance < 25.0] = CLASS_CLEARING
     for cx, cz, radius in CAMP_CLEARINGS:
         classes[np.hypot(gx - cx, gz - cz) < radius] = CLASS_CLEARING
@@ -363,7 +560,42 @@ def build(seed: int = 20260827, pads=()) -> Landform:
     classes[beach] = CLASS_SAND
     classes[height < SEA_LEVEL - 0.2] = CLASS_SAND
 
-    return Landform(axis, axis, height.astype("float32"), classes, water)
+    return Landform(x_axis, z_axis, height.astype("float32"), classes, water)
+
+
+def landform_index(axis, value: float) -> int:
+    """Nearest grid index on a monotonic axis."""
+    return int(np.clip(round((value - axis[0]) / CELL), 0, len(axis) - 1))
+
+
+def _sample(field: np.ndarray, sx: np.ndarray, sz: np.ndarray,
+            x_axis: np.ndarray, z_axis: np.ndarray) -> np.ndarray:
+    """Read `field` at warped world coordinates, nearest sample."""
+    columns = np.clip(np.round((sx - x_axis[0]) / (x_axis[1] - x_axis[0])),
+                      0, field.shape[1] - 1).astype(int)
+    rows = np.clip(np.round((sz - z_axis[0]) / (z_axis[1] - z_axis[0])),
+                   0, field.shape[0] - 1).astype(int)
+    return field[rows, columns]
+
+
+def _shift(field: np.ndarray, offset: int, axis: int) -> np.ndarray:
+    """Shift by one cell with the edge replicated rather than wrapped.
+
+    `np.roll` wraps, which on a heightfield means the northern edge is averaged
+    and slope-limited against the southern one. On this region that is a 38 m
+    difference, and the result is a trench dragged all the way round the map:
+    the mountain boundary drowned into sea at the very rows that are supposed to
+    close the world.
+    """
+    shifted = np.roll(field, offset, axis=axis)
+    if offset > 0:
+        index = (slice(0, offset), slice(None)) if axis == 0 else (slice(None), slice(0, offset))
+        edge = (slice(offset, offset + 1), slice(None)) if axis == 0 else (slice(None), slice(offset, offset + 1))
+    else:
+        index = (slice(offset, None), slice(None)) if axis == 0 else (slice(None), slice(offset, None))
+        edge = (slice(offset - 1, offset), slice(None)) if axis == 0 else (slice(None), slice(offset - 1, offset))
+    shifted[index] = shifted[edge]
+    return shifted
 
 
 def _slope(height: np.ndarray) -> np.ndarray:

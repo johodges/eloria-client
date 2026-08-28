@@ -1,0 +1,116 @@
+{
+  "summary": {
+    "walkSurfaceNodes": 30,
+    "walkSurfaceTriangles": 222744,
+    "tilesSampled": 331776,
+    "groundingMisses": 0,
+    "groundingMissFraction": 0.0,
+    "surfaceDiscontinuities": 811,
+    "spawnPoints": 3
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "severity": "warning",
+      "code": "GROUNDING_DISCONTINUITY",
+      "message": "811 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
+      "detail": [
+        [
+          205,
+          575,
+          82.07
+        ],
+        [
+          204,
+          575,
+          81.3
+        ],
+        [
+          203,
+          575,
+          80.76
+        ],
+        [
+          202,
+          575,
+          80.16
+        ],
+        [
+          201,
+          575,
+          79.63
+        ],
+        [
+          200,
+          575,
+          79.12
+        ],
+        [
+          199,
+          575,
+          78.65
+        ],
+        [
+          198,
+          575,
+          78.21
+        ],
+        [
+          197,
+          575,
+          77.9
+        ],
+        [
+          196,
+          575,
+          77.43
+        ],
+        [
+          195,
+          575,
+          77.33
+        ],
+        [
+          194,
+          575,
+          77.06
+        ]
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "LANDMARK_BELOW_SURFACE",
+      "message": "landmark 'great-tree' is 12.10 m below the surface",
+      "detail": [
+        78.0,
+        56.18,
+        -264.0
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "LANDMARK_BELOW_SURFACE",
+      "message": "landmark 'deep-grove' is 12.46 m below the surface",
+      "detail": [
+        -60.0,
+        19.94,
+        -330.0
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "COLLISION_SURFACE_MISMATCH",
+      "message": "1 sampled walkable cells disagree with the rendered walk surface",
+      "detail": [
+        {
+          "cell": [
+            204,
+            984
+          ],
+          "encoded": 4.8,
+          "surface": 20.85
+        }
+      ]
+    }
+  ]
+}

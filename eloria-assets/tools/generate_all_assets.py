@@ -138,7 +138,8 @@ def main() -> None:
 
     if not args.skip_validation:
         run_blocker(Task("validation", ("check_provenance.py",
-                                         "validate_generated_assets.py")),
+                                         "validate_generated_assets.py",
+                                         "validate_harvestables.py")),
                     tools_dir, output, repo_root, args.dry_run)
     print(f"Complete independent data pack: {output}", flush=True)
 

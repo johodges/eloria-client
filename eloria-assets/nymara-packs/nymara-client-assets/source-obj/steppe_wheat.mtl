@@ -1,0 +1,5 @@
+newmtl steppe_wheat
+Kd 1 1 1
+d 1
+map_Kd steppe_wheat.png
+map_d steppe_wheat.png

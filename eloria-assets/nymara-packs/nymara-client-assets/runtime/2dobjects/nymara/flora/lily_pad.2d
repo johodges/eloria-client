@@ -1,0 +1,11 @@
+file_x_len: 256
+file_y_len: 256
+u_start: 0
+u_end: 64
+v_start: 192
+v_end: 256
+x_size: 1.6
+y_size: 1.6
+alpha_test: 0.22
+texture: nymara_flora.png
+type: ground

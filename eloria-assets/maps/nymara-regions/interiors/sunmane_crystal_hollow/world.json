@@ -1,0 +1,669 @@
+{
+  "schemaVersion": "1.1.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "sunmane_crystal_hollow",
+    "name": "Amethyst Crystal Hollow",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -30.0,
+        -4.14,
+        -30.0
+      ],
+      "max": [
+        30.0,
+        7.54,
+        30.0
+      ]
+    },
+    "regionSpanMeters": 60.0,
+    "interior": true
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      30.0,
+      30.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.158,
+    "invertServerY": true,
+    "addressableWorldBounds": {
+      "min": [
+        -30.0,
+        -30.0
+      ],
+      "max": [
+        30.0,
+        30.0
+      ]
+    }
+  },
+  "spawnPoints": [
+    {
+      "id": "adit-mouth",
+      "node": "Terrain_CaveFloor_2_3",
+      "serverTile": [
+        30,
+        13
+      ],
+      "position": [
+        0.0,
+        0.158,
+        17.0
+      ],
+      "facing": [
+        0,
+        0,
+        -1
+      ],
+      "groundedBy": "navigation-surface-raycast",
+      "note": "Adit mouth"
+    },
+    {
+      "id": "geode-chamber",
+      "node": "Terrain_CaveFloor_2_1",
+      "serverTile": [
+        30,
+        32
+      ],
+      "position": [
+        0.0,
+        -2.237,
+        -2.0
+      ],
+      "facing": [
+        0,
+        0,
+        -1
+      ],
+      "groundedBy": "navigation-surface-raycast",
+      "note": "The geode chamber"
+    }
+  ],
+  "collision": {
+    "nodeNames": [
+      "Detail_barrel_stack_017",
+      "Detail_cart_016",
+      "Detail_cave_boulder_0_029",
+      "Detail_cave_boulder_0_043",
+      "Detail_cave_boulder_0_080",
+      "Detail_cave_boulder_0_102",
+      "Detail_cave_boulder_0_144",
+      "Detail_cave_boulder_1_025",
+      "Detail_cave_boulder_1_047",
+      "Detail_cave_boulder_1_071",
+      "Detail_cave_boulder_1_098",
+      "Detail_cave_boulder_1_105",
+      "Detail_cave_boulder_1_145",
+      "Detail_cave_boulder_1_154",
+      "Detail_cave_boulder_1_169",
+      "Detail_cave_boulder_2_023",
+      "Detail_cave_boulder_2_027",
+      "Detail_cave_boulder_2_038",
+      "Detail_cave_boulder_2_045",
+      "Detail_cave_boulder_2_058",
+      "Detail_cave_boulder_2_062",
+      "Detail_cave_boulder_2_070",
+      "Detail_cave_boulder_2_089",
+      "Detail_cave_boulder_2_103",
+      "Detail_cave_boulder_2_106",
+      "Detail_cave_boulder_2_121",
+      "Detail_cave_boulder_3_030",
+      "Detail_cave_boulder_3_048",
+      "Detail_cave_boulder_3_087",
+      "Detail_cave_boulder_3_091",
+      "Detail_cave_boulder_3_100",
+      "Detail_cave_boulder_3_164",
+      "Detail_cave_column_0_137",
+      "Detail_cave_column_2_035",
+      "Detail_hay_bale_018",
+      "Detail_pit_props_0_000",
+      "Detail_pit_props_0_001",
+      "Detail_pit_props_0_002",
+      "Detail_pit_props_0_003",
+      "Detail_pit_props_0_006",
+      "Detail_pit_props_0_007",
+      "Detail_pit_props_1_004",
+      "Detail_pit_props_1_005",
+      "Detail_pit_props_1_008",
+      "Detail_pit_props_1_009",
+      "Detail_tool_rack_019",
+      "Landmark_cave_brazier_010",
+      "Landmark_cave_brazier_011",
+      "Landmark_cave_brazier_012",
+      "Landmark_cave_brazier_013",
+      "Landmark_cave_brazier_014",
+      "Structure_CaveRoof_0_0",
+      "Structure_CaveRoof_0_1",
+      "Structure_CaveRoof_0_2",
+      "Structure_CaveRoof_1_0",
+      "Structure_CaveRoof_1_1",
+      "Structure_CaveRoof_1_2",
+      "Structure_CaveRoof_1_3",
+      "Structure_CaveRoof_2_0",
+      "Structure_CaveRoof_2_1",
+      "Structure_CaveRoof_2_2",
+      "Structure_CaveRoof_2_3",
+      "Structure_CaveRoof_3_0",
+      "Structure_CaveRoof_3_1",
+      "Structure_CaveWall_0_0",
+      "Structure_CaveWall_0_1",
+      "Structure_CaveWall_0_2",
+      "Structure_CaveWall_1_0",
+      "Structure_CaveWall_1_1",
+      "Structure_CaveWall_1_2",
+      "Structure_CaveWall_1_3",
+      "Structure_CaveWall_2_0",
+      "Structure_CaveWall_2_1",
+      "Structure_CaveWall_2_2",
+      "Structure_CaveWall_2_3",
+      "Structure_CaveWall_3_0",
+      "Structure_CaveWall_3_1"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Terrain_"
+    ],
+    "walkableAreas": [
+      "cave_floor"
+    ],
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "agentRadius": 0.55,
+      "agentHeight": 1.9,
+      "maxSlopeDegrees": 42,
+      "polygons": []
+    },
+    "note": "The cavern floor carries the Terrain_ prefix so the grounding raycast lands on it; the roof and the wall skirt carry structural collision, which is what keeps a player inside the system."
+  },
+  "landmarks": [
+    {
+      "id": "Landmark_cave_brazier_010",
+      "kind": "brazier",
+      "node": "Landmark_cave_brazier_010",
+      "position": [
+        -2.27,
+        -0.04,
+        17.58
+      ],
+      "serverTile": [
+        28,
+        12
+      ],
+      "reachable": true,
+      "label": "Adit mouth brazier"
+    },
+    {
+      "id": "Landmark_cave_brazier_011",
+      "kind": "brazier",
+      "node": "Landmark_cave_brazier_011",
+      "position": [
+        4.45,
+        -2.23,
+        -3.58
+      ],
+      "serverTile": [
+        34,
+        34
+      ],
+      "reachable": true,
+      "label": "The geode chamber brazier"
+    },
+    {
+      "id": "Landmark_cave_brazier_012",
+      "kind": "brazier",
+      "node": "Landmark_cave_brazier_012",
+      "position": [
+        -13.13,
+        -1.67,
+        -14.29
+      ],
+      "serverTile": [
+        17,
+        44
+      ],
+      "reachable": true,
+      "label": "Prospectors' cut brazier"
+    },
+    {
+      "id": "Landmark_cave_brazier_013",
+      "kind": "brazier",
+      "node": "Landmark_cave_brazier_013",
+      "position": [
+        11.82,
+        -2.94,
+        -9.26
+      ],
+      "serverTile": [
+        42,
+        39
+      ],
+      "reachable": true,
+      "label": "The violet gallery brazier"
+    },
+    {
+      "id": "Landmark_cave_brazier_014",
+      "kind": "brazier",
+      "node": "Landmark_cave_brazier_014",
+      "position": [
+        -14.96,
+        -0.66,
+        5.74
+      ],
+      "serverTile": [
+        15,
+        24
+      ],
+      "reachable": true,
+      "label": "Shard store brazier"
+    },
+    {
+      "id": "Landmark_fire_pit_015",
+      "kind": "camp",
+      "node": "Landmark_fire_pit_015",
+      "position": [
+        -15.5,
+        -1.81,
+        -12.5
+      ],
+      "serverTile": [
+        14,
+        42
+      ],
+      "reachable": true,
+      "label": "Underground camp"
+    }
+  ],
+  "interactives": [],
+  "chambers": [
+    {
+      "id": "adit-mouth",
+      "label": "Adit mouth",
+      "position": [
+        0.0,
+        0.16,
+        17.0
+      ],
+      "radius": 5.2,
+      "headroom": 3.8,
+      "serverTile": [
+        30,
+        13
+      ]
+    },
+    {
+      "id": "geode-chamber",
+      "label": "The geode chamber",
+      "position": [
+        0.0,
+        -2.24,
+        -2.0
+      ],
+      "radius": 10.5,
+      "headroom": 8.4,
+      "serverTile": [
+        30,
+        32
+      ]
+    },
+    {
+      "id": "prospect-cut",
+      "label": "Prospectors' cut",
+      "position": [
+        -15.5,
+        -1.81,
+        -12.5
+      ],
+      "radius": 6.6,
+      "headroom": 4.6,
+      "serverTile": [
+        14,
+        42
+      ]
+    },
+    {
+      "id": "violet-gallery",
+      "label": "The violet gallery",
+      "position": [
+        14.0,
+        -2.85,
+        -11.0
+      ],
+      "radius": 6.2,
+      "headroom": 5.6,
+      "serverTile": [
+        44,
+        41
+      ]
+    },
+    {
+      "id": "shard-store",
+      "label": "Shard store",
+      "position": [
+        -13.0,
+        -0.65,
+        6.0
+      ],
+      "radius": 4.4,
+      "headroom": 3.6,
+      "serverTile": [
+        17,
+        24
+      ]
+    }
+  ],
+  "materials": {
+    "strategy": "shared-tileable-pbr-families-with-world-scale-uvs",
+    "channelPacking": {
+      "orm": "R=occlusion,G=roughness,B=metallic"
+    },
+    "embedded": true
+  },
+  "environment": {
+    "profile": "cave-interior",
+    "sky": {
+      "topColor": "#05060a",
+      "horizonColor": "#0b0d14",
+      "groundHorizonColor": "#08090d",
+      "groundBottomColor": "#05060a",
+      "curve": 0.4,
+      "sunAngleMax": 2.0,
+      "energy": 0.35
+    },
+    "ambient": {
+      "color": "#8a7fa8",
+      "skyContribution": 0.0,
+      "energy": 0.26
+    },
+    "sun": {
+      "rotationDegrees": [
+        -62,
+        8,
+        0
+      ],
+      "color": "#c8b8ff",
+      "energy": 0.22,
+      "indirectEnergy": 0.4,
+      "shadows": false
+    },
+    "fog": {
+      "enabled": true,
+      "color": "#241d33",
+      "density": 0.017,
+      "skyAffect": 0.0,
+      "aerialPerspective": 0.3
+    },
+    "tonemap": {
+      "mode": "filmic",
+      "exposure": 1.2,
+      "white": 2.0
+    },
+    "note": "An interior profile: no sky contribution, dense short fog and a low fill so the brazier and crystal markers carry the lighting."
+  },
+  "lighting": {
+    "markers": [
+      {
+        "id": "Light_Brazier_adit-mouth",
+        "kind": "brazier",
+        "node": "Landmark_cave_brazier_010",
+        "position": [
+          -2.27,
+          1.31,
+          17.58
+        ],
+        "color": [
+          0.78,
+          0.61,
+          1.0
+        ],
+        "energyHint": 2.1,
+        "rangeHint": 10.0
+      },
+      {
+        "id": "Light_Brazier_geode-chamber",
+        "kind": "brazier",
+        "node": "Landmark_cave_brazier_011",
+        "position": [
+          4.45,
+          -0.88,
+          -3.58
+        ],
+        "color": [
+          0.78,
+          0.61,
+          1.0
+        ],
+        "energyHint": 2.1,
+        "rangeHint": 19.95
+      },
+      {
+        "id": "Light_Brazier_prospect-cut",
+        "kind": "brazier",
+        "node": "Landmark_cave_brazier_012",
+        "position": [
+          -13.13,
+          -0.32,
+          -14.29
+        ],
+        "color": [
+          0.78,
+          0.61,
+          1.0
+        ],
+        "energyHint": 2.1,
+        "rangeHint": 12.54
+      },
+      {
+        "id": "Light_Brazier_violet-gallery",
+        "kind": "brazier",
+        "node": "Landmark_cave_brazier_013",
+        "position": [
+          11.82,
+          -1.59,
+          -9.26
+        ],
+        "color": [
+          0.78,
+          0.61,
+          1.0
+        ],
+        "energyHint": 2.1,
+        "rangeHint": 11.78
+      },
+      {
+        "id": "Light_Brazier_shard-store",
+        "kind": "brazier",
+        "node": "Landmark_cave_brazier_014",
+        "position": [
+          -14.96,
+          0.69,
+          5.74
+        ],
+        "color": [
+          0.78,
+          0.61,
+          1.0
+        ],
+        "energyHint": 2.1,
+        "rangeHint": 10.0
+      },
+      {
+        "id": "Light_Amethyst_geode-chamber_1",
+        "kind": "crystal",
+        "position": [
+          -0.32,
+          -0.68,
+          -7.35
+        ],
+        "color": [
+          0.62,
+          0.42,
+          1.0
+        ],
+        "energyHint": 1.4,
+        "rangeHint": 11.55
+      },
+      {
+        "id": "Light_Amethyst_geode-chamber_2",
+        "kind": "crystal",
+        "position": [
+          -5.63,
+          -0.63,
+          0.2
+        ],
+        "color": [
+          0.62,
+          0.42,
+          1.0
+        ],
+        "energyHint": 1.4,
+        "rangeHint": 11.55
+      },
+      {
+        "id": "Light_Amethyst_violet-gallery_1",
+        "kind": "crystal",
+        "position": [
+          13.45,
+          -1.45,
+          -7.36
+        ],
+        "color": [
+          0.62,
+          0.42,
+          1.0
+        ],
+        "energyHint": 1.4,
+        "rangeHint": 6.82
+      },
+      {
+        "id": "Light_Amethyst_shard-store_1",
+        "kind": "crystal",
+        "position": [
+          -13.49,
+          0.96,
+          8.63
+        ],
+        "color": [
+          0.62,
+          0.42,
+          1.0
+        ],
+        "energyHint": 1.4,
+        "rangeHint": 4.84
+      },
+      {
+        "id": "Light_Amethyst_shard-store_2",
+        "kind": "crystal",
+        "position": [
+          -13.05,
+          0.93,
+          3.24
+        ],
+        "color": [
+          0.62,
+          0.42,
+          1.0
+        ],
+        "energyHint": 1.4,
+        "rangeHint": 4.84
+      }
+    ],
+    "note": "Braziers and, in the hollow, the crystal faces are the light sources; they are emitted as named markers so a client lighting pass can bind them without the package depending on a glTF light extension."
+  },
+  "minimap": {
+    "image": "minimap.webp",
+    "projection": "orthographic-top-down",
+    "renderedFrom": "world.glb",
+    "generator": "godot-client/tests/integration/sunmane_cave_minimap.gd, rendered through the client's own WorldLoader",
+    "northAxis": "-Z",
+    "imageSize": [
+      512,
+      512
+    ],
+    "worldMin": [
+      -30.0,
+      -30.0
+    ],
+    "worldMax": [
+      30.0,
+      30.0
+    ],
+    "pixelsPerMetre": 8.533333,
+    "transform": {
+      "pixelX": {
+        "scale": 8.533333,
+        "offset": 256.0
+      },
+      "pixelY": {
+        "scale": 8.533333,
+        "offset": 256.0
+      },
+      "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
+    }
+  },
+  "portals": [
+    {
+      "id": "exit-to-steppe",
+      "kind": "map-transition",
+      "position": [
+        0.0,
+        0.16,
+        18.56
+      ],
+      "serverTile": [
+        30,
+        11
+      ],
+      "destinationMap": "maps/nymara/sunmane_steppe.elm",
+      "destinationTile": [
+        182,
+        154
+      ],
+      "label": "Back out to the Sunmane Steppe"
+    }
+  ],
+  "provenance": {
+    "generator": "eloria-assets/tools/sunmane/caves.py",
+    "surfaceMap": "eloria-assets/maps/nymara-regions/sunmane_steppe",
+    "writtenDescription": [
+      "eloria-assets/qa/regions/sunmane-steppe/README.md",
+      "eloria-assets/NYMARA_ASSET_MANIFEST.md"
+    ],
+    "license": "Original Eloria project work, CC-BY-4.0",
+    "thirdPartyAssets": "none"
+  },
+  "statistics": {
+    "shellTriangles": 13164,
+    "openCells": 3047,
+    "shellChunks": 39,
+    "instances": 184,
+    "kitUniqueTriangles": 4718,
+    "kitAssets": 25,
+    "nodes": 223,
+    "meshes": 64,
+    "materials": 15,
+    "textures": 27,
+    "accessors": 410,
+    "uniqueMeshTriangles": 17882,
+    "glbBytes": 4302312,
+    "buildSeconds": 14.8
+  }
+}

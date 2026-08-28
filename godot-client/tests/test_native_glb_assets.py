@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import struct
+import sys
 import unittest
 
 
@@ -66,11 +67,23 @@ class NativeGlbAssetsTest(unittest.TestCase):
     def test_catalog_is_complete(self) -> None:
         self.assertEqual(16, len(self.catalog["races"]))
         self.assertEqual(8, len(self.catalog["hair"]))
-        self.assertEqual(32, len(self.catalog["creatures"]))
+        # 32 first-pass creatures plus the wider concept-art roster.
+        sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
+        import creature_roster
+        self.assertEqual(32 + len(creature_roster.ROSTER),
+                         len(self.catalog["creatures"]))
         self.assertEqual(66, len(self.catalog["equipment"]))
-        # The three ambient Sunmane horses are real files under the native
-        # asset tree and are validated with everything else.
-        self.assertEqual(126, self.catalog["validation"]["files"])
+        # The generic tier claims the legacy visual-id space with one authored
+        # mesh per material ladder rather than one per id.
+        self.assertEqual(43, len(self.catalog["genericEquipment"]))
+        # Compare against what is actually on disk instead of a fixed number:
+        # the catalogue's count had drifted stale when the ambient livestock
+        # were added by a second generator without refreshing this block.
+        on_disk = len(list((CLIENT / "assets/actors/native").rglob("*.glb")))
+        self.assertEqual(on_disk, self.catalog["validation"]["files"])
+        self.assertEqual(sorted(self.catalog["validation"]["results"]),
+                         sorted(str(path.relative_to(ROOT))
+                                for path in (CLIENT / "assets/actors/native").rglob("*.glb")))
 
     def test_ambient_creatures_are_scenery_only(self) -> None:
         """Ambient livestock are client scenery and must not claim actor types.
@@ -93,7 +106,10 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertEqual(
                     7, len(document.get("animations", [])),
                     "ambient creatures carry the shared creature action set")
-                self.assertEqual(21, len(document["skins"][0]["joints"]))
+                ambient_bones = [document["nodes"][j].get("name")
+                                 for j in document["skins"][0]["joints"]]
+                for required in ("root", "body", "neck", "head"):
+                    self.assertIn(required, ambient_bones)
 
     def test_player_rigs_preserve_current_skeleton_and_budget(self) -> None:
         for model_id, entry in self.catalog["races"].items():
@@ -198,15 +214,70 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 self.assertLess(entry["bounds"]["max"][1], .31)
 
     def test_creatures_have_new_rigs_and_embedded_clips(self) -> None:
-        expected_actor_types = set(range(204, 236))
+        """Assert the runtime rig contract rather than a fixed bone count.
+
+        The bone count is an authoring detail and grew when the creatures were
+        rebuilt with articulated tails and a chest bone.  What the client
+        actually depends on is the attachment bone names, a single root, and
+        the exact clip names named by data/animations/creature.json - so those
+        are what this test pins.
+        """
+        sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
+        import creature_roster
+        # The concept-art roster occupies one contiguous block after every
+        # range already in models.json; the server adopts these ids.
+        expected_actor_types = set(range(204, 236)) | set(
+            range(428, 428 + len(creature_roster.ROSTER)))
         actual_actor_types = {entry["actor_type"] for entry in self.catalog["creatures"].values()}
         self.assertEqual(expected_actor_types, actual_actor_types)
+        animation_map = json.loads(
+            (CLIENT / "data/animations/creature.json").read_text())
+        required_clips = set(animation_map["actions"].values())
         for slug, entry in self.catalog["creatures"].items():
             with self.subTest(creature=slug):
                 document = glb_document(ROOT / entry["path"])
-                self.assertEqual(21, len(document["skins"][0]["joints"]))
-                self.assertEqual(7, len(document["animations"]))
+                skin = document["skins"][0]
+                bone_names = [document["nodes"][j].get("name") for j in skin["joints"]]
+                self.assertEqual(len(bone_names), len(set(bone_names)),
+                                 "bone names are unique")
+                for required in ("root", "body", "neck", "head", "jaw"):
+                    self.assertIn(required, bone_names)
+                self.assertLessEqual(len(skin["joints"]), 64,
+                                     "creature rigs stay within a sane bone budget")
+                parented = {c for node in document["nodes"]
+                            for c in node.get("children", [])}
+                roots = [j for j in skin["joints"] if j not in parented]
+                self.assertEqual(1, len(roots), "exactly one root bone")
+                clips = {a["name"] for a in document["animations"]}
+                self.assertTrue(required_clips.issubset(clips),
+                                f"missing {sorted(required_clips - clips)}")
                 self.assertEqual(slug, self.models["actorTypes"][str(entry["actor_type"])])
+
+    def test_creature_glbs_pass_structural_validation(self) -> None:
+        """Skinning, grounding and animation checks over the checked-in GLBs."""
+        try:
+            import numpy  # noqa: F401
+        except ImportError:  # pragma: no cover - environment without numpy
+            self.skipTest("numpy is required for skinned animation validation")
+        sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
+        import validate_creature_glbs as validator
+
+        animation_map = json.loads(
+            (CLIENT / "data/animations/creature.json").read_text())
+        required_clips = sorted(set(animation_map["actions"].values()))
+        attachments = sorted({bone for model in self.models["models"].values()
+                              if str(model.get("animationMap", "")).endswith("creature.json")
+                              for bone in model.get("attachments", {}).values()})
+        entries = dict(self.catalog["creatures"])
+        entries.update(self.catalog.get("ambientCreatures", {}))
+        for slug, entry in entries.items():
+            with self.subTest(creature=slug):
+                path = ROOT / entry["path"]
+                document, binary = validator.read_glb(path)
+                problems, _ = validator.check(document, binary, path,
+                                              required_clips, attachments,
+                                              bool(entry.get("hovers")))
+                self.assertEqual([], problems)
 
     def test_nymara_invasion_actor_types_resolve_to_native_models(self) -> None:
         self.assertEqual(set(range(400, 428)), set(NYMARA_INVASION_MODELS))
@@ -222,19 +293,145 @@ class NativeGlbAssetsTest(unittest.TestCase):
     def test_every_equipment_visual_is_registered(self) -> None:
         expected = {f"{entry['part']}:{entry['visual']}"
                     for entry in self.catalog["equipment"].values()}
+        for entry in self.catalog["genericEquipment"].values():
+            expected |= {f"{entry['part']}:{visual}" for visual in entry["visuals"]}
         self.assertEqual(expected, set(self.equipment["models"]))
-        for entry in self.catalog["equipment"].values():
+        for entry in self._all_equipment():
             glb_document(ROOT / entry["path"])
 
-    def test_legacy_guard_visuals_alias_to_native_models(self) -> None:
-        expected = {
-            "0:11": "0:112",
-            "1:5": "1:105",
-            "2:11": "2:105",
-        }
-        self.assertEqual(expected, self.equipment["aliases"])
-        for native_visual in expected.values():
-            self.assertIn(native_visual, self.equipment["models"])
+    def _all_equipment(self):
+        return list(self.catalog["equipment"].values()) + list(
+            self.catalog["genericEquipment"].values())
+
+    def test_legacy_visual_ids_render_as_themselves(self) -> None:
+        """The alias table existed only because the legacy tier had no models.
+
+        Weapon 11, shield 5 and cape 11 were redirected to Four Gates guard gear.
+        They are STAFF_4, SHIELD_BRONZE and CAPE_GOLD, so with the generic tier
+        authored an alias would hijack three ids every actor can legitimately
+        wear. Bespoke NPC gear comes from npcLooks, which names native ids.
+        """
+        self.assertEqual({}, self.equipment["aliases"])
+        for legacy in ("0:11", "1:5", "2:11"):
+            self.assertIn(legacy, self.equipment["models"])
+        for native in ("0:112", "1:105", "2:105"):
+            self.assertIn(native, self.equipment["models"])
+        guard_look = self.models["npcLooks"]["301"]["equipmentVisuals"]
+        self.assertEqual({"0": 112, "1": 105, "2": 105}, guard_look)
+
+    def test_equipment_registry_is_schema_three(self) -> None:
+        """Sockets and skinned garments replace the identity bone parenting.
+
+        Schema 2 attached every piece to a raw bone with an identity transform.
+        Bone rest bases are not axis aligned, so that alone put weapons through
+        the actor sideways; the registry now has to carry a socket per rigid
+        part and a skin region per garment.
+        """
+        self.assertEqual(3, self.equipment["schemaVersion"])
+        rig = glb_document(CLIENT / "assets/actors/native/races/luminous_male.glb")
+        joints = {rig["nodes"][node].get("name", "")
+                  for node in rig["skins"][0]["joints"]}
+        head = next(node for node in rig["nodes"] if node.get("name") == "Head")
+        self.assertIn("canonicalHeadRestY", self.equipment)
+        self.assertGreater(float(self.equipment["canonicalHeadRestY"]), 1.0)
+        for part, socket in self.equipment["sockets"].items():
+            with self.subTest(part=part):
+                self.assertIn(socket["bone"], joints)
+                self.assertEqual(3, len(socket["offset"]))
+                self.assertEqual(3, len(socket["rotationDegrees"]))
+        for region, bones in self.equipment["skinRegions"].items():
+            with self.subTest(region=region):
+                self.assertTrue(bones)
+                self.assertTrue(set(bones) <= joints)
+        del head
+
+    def test_boots_follow_both_feet(self) -> None:
+        """Boots used to hang off the pelvis, which parked them at the hips."""
+        self.assertEqual("feet", self.equipment["parts"]["6"]["attachment"])
+        feet = self.models["models"]["luminous_male"]["attachments"]["feet"]
+        self.assertEqual(["foot_l", "foot_r"], feet)
+
+    def test_socketed_props_and_skinned_garments_are_declared(self) -> None:
+        garment_parts = {2, 4, 5, 6}
+        for key, model in self.equipment["models"].items():
+            part = int(key.split(":")[0])
+            with self.subTest(model=key):
+                # Gloves are worn on the weapon part but cover both hands, so
+                # attachment is declared per model, not inferred from the part.
+                if part in garment_parts:
+                    self.assertEqual("skinned", model["attach"])
+                if model["attach"] == "skinned":
+                    self.assertIn(model["skinRegion"], self.equipment["skinRegions"])
+                else:
+                    socket = model.get("socket") or self.equipment["sockets"][str(part)]
+                    self.assertTrue(socket["bone"])
+
+    def test_garments_ship_skinned_to_the_shared_rig(self) -> None:
+        """A garment bolted to one bone cannot bend; these carry skin weights."""
+        rig = glb_document(CLIENT / "assets/actors/native/races/luminous_male.glb")
+        expected = [rig["nodes"][node].get("name", "")
+                    for node in rig["skins"][0]["joints"]]
+        checked = 0
+        for entry in self._all_equipment():
+            if entry["attach"] != "skinned":
+                continue
+            with self.subTest(equipment=entry["id"]):
+                document = glb_document(ROOT / entry["path"])
+                skin = document["skins"][0]
+                names = [document["nodes"][node].get("name", "")
+                         for node in skin["joints"]]
+                self.assertEqual(expected, names)
+                for mesh in document["meshes"]:
+                    for primitive in mesh["primitives"]:
+                        self.assertIn("JOINTS_0", primitive["attributes"])
+                        self.assertIn("WEIGHTS_0", primitive["attributes"])
+                checked += 1
+        self.assertEqual(47, checked)
+
+    def test_equipment_hides_name_real_body_surfaces(self) -> None:
+        """A hide that names nothing would silently fail to cover anything."""
+        rig = glb_document(CLIENT / "assets/actors/native/races/luminous_male.glb")
+        surfaces = {mesh.get("name", "").lower() for mesh in rig["meshes"]}
+        surfaces.add("hair")
+        for part, config in self.equipment["parts"].items():
+            for surface in config.get("hides", []):
+                with self.subTest(part=part, surface=surface):
+                    self.assertIn(surface, surfaces)
+        for key, model in self.equipment["models"].items():
+            for surface in model.get("hides", []):
+                with self.subTest(model=key, surface=surface):
+                    self.assertIn(surface, surfaces)
+        self.assertEqual(["wardrobe_shirt", "wardrobe_shirt_trim"],
+                         self.equipment["parts"]["5"]["hides"])
+
+    def test_equipment_is_authored_at_body_scale(self) -> None:
+        """The first pass shipped helmets and amulets at three to five times
+        body scale, which swallowed the actor wearing them."""
+        limits = {0: (.55, 2.00), 1: (.35, .95), 2: (.80, 1.60), 3: (.18, .60),
+                  4: (.60, 1.30), 5: (.45, 1.60), 6: (.30, .70), 7: (.10, .40)}
+        for entry in self._all_equipment():
+            document = glb_document(ROOT / entry["path"])
+            extents = []
+            for accessor in document["accessors"]:
+                if "min" in accessor and len(accessor["min"]) == 3:
+                    extents.append(max(high - low for low, high
+                                       in zip(accessor["min"], accessor["max"])))
+            low, high = limits[entry["part"]]
+            with self.subTest(equipment=entry["id"]):
+                self.assertTrue(extents, entry["id"])
+                self.assertGreaterEqual(max(extents), low)
+                self.assertLessEqual(max(extents), high)
+
+    def test_equipment_carries_material_detail(self) -> None:
+        """Equipment shipped untextured beside a body with fifteen maps."""
+        for entry in self._all_equipment():
+            document = glb_document(ROOT / entry["path"])
+            with self.subTest(equipment=entry["id"]):
+                self.assertGreaterEqual(len(document.get("materials", [])), 2)
+                self.assertTrue(document.get("images"))
+                for material in document["materials"]:
+                    self.assertIn("normalTexture", material)
+                self.assertGreaterEqual(entry["triangles"], 240)
 
     def test_every_playable_actor_type_has_creation_option(self) -> None:
         options = self.models["creationOptions"]

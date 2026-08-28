@@ -28,7 +28,9 @@ func disconnect_from_server() -> void:
 func send_frame(frame: PackedByteArray, sensitive := false) -> Error:
 	if _peer.get_status() != StreamPeerTCP.STATUS_CONNECTED:
 		return ERR_UNCONFIGURED
-	if not sensitive:
+	# hex_encode() allocates a string for every outgoing packet; print_debug is
+	# a no-op outside debug builds but its arguments were evaluated regardless.
+	if not sensitive and OS.is_debug_build():
 		print_debug("protocol tx bytes=", frame.hex_encode())
 	return _peer.put_data(frame)
 
@@ -158,18 +160,29 @@ func _process(_delta: float) -> void:
 		_drain_packets()
 
 func _drain_packets() -> void:
+	# Slicing the receive buffer after every packet copied the whole remainder
+	# once per packet, which is quadratic across a burst. The buffer is now
+	# trimmed once, after the burst has been decoded.
+	var consumed := 0
 	while true:
-		var decoded := EloriaProtocol.try_decode(_rx)
+		var decoded := EloriaProtocol.try_decode(_rx, consumed)
 		match decoded.status:
 			"incomplete":
+				_trim_receive_buffer(consumed)
 				return
 			"error":
+				_trim_receive_buffer(consumed)
 				protocol_error.emit(decoded.error)
 				disconnect_from_server()
 				return
 			"ok":
-				_rx = _rx.slice(decoded.consumed)
+				consumed += int(decoded.consumed)
 				packet_received.emit(decoded.command, decoded.payload)
+
+func _trim_receive_buffer(consumed: int) -> void:
+	if consumed <= 0:
+		return
+	_rx = _rx.slice(consumed)
 
 func _set_state(value: String) -> void:
 	if _state == value:

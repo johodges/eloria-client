@@ -44,6 +44,33 @@ EXTRA = [
     ("gameplay-zoomed-out", "Maximum zoom-out"),
     ("golden-p09-steppe-overlook", "Overlook, golden hour"),
     ("golden-p08-standing-stones", "Standing stones, golden hour"),
+    # The expansion north and east.
+    ("desert-dunes", "Dune field"), ("salt-pan", "Salt pan"),
+    ("desert-water-station", "Desert water station"),
+    ("desert-camp", "Dune camp"), ("waystone-road", "Waystones on the sand road"),
+    ("badland-spires", "Amethyst badland spires"),
+    ("badland-crystal", "Crystal hollow entrance"),
+    ("cave-mouth-wind", "Wind Caves entrance"),
+    ("mountain-front", "Whitehorn front"),
+    ("mountain-outpost", "Eastern watch"), ("east-pass", "Eastern pass"),
+    ("golden-desert-dunes", "Dune field, golden hour"),
+    ("golden-mountain-front", "Whitehorn front, golden hour"),
+    ("golden-badland-spires", "Badland spires, golden hour"),
+]
+
+# The two cave interiors get their own contact sheet, since they have no panel
+# in the surface concept board to sit beside.
+INTERIORS = [
+    ("sunmane_wind_caves-entrance-hall", "Wind Caves: entrance hall"),
+    ("sunmane_wind_caves-wind-gallery", "Wind Caves: the wind gallery"),
+    ("sunmane_wind_caves-drovers-camp", "Wind Caves: drovers' camp"),
+    ("sunmane_wind_caves-whistle-shaft", "Wind Caves: the whistle shaft"),
+    ("sunmane_wind_caves-still-pool", "Wind Caves: the still pool"),
+    ("sunmane_crystal_hollow-adit-mouth", "Crystal Hollow: adit mouth"),
+    ("sunmane_crystal_hollow-geode-chamber", "Crystal Hollow: geode chamber"),
+    ("sunmane_crystal_hollow-violet-gallery", "Crystal Hollow: violet gallery"),
+    ("sunmane_crystal_hollow-prospect-cut", "Crystal Hollow: prospectors' cut"),
+    ("sunmane_crystal_hollow-shard-store", "Crystal Hollow: shard store"),
 ]
 
 CARD = (760, 428)
@@ -131,6 +158,28 @@ def main() -> int:
         written.append({"panel": None, "subject": "Additional landmarks",
                         "capture": "contact-sheet",
                         "sheet": "comparison/additional-landmarks.webp"})
+
+    # The cave interiors, captured from their own packages.
+    interior_shots = SHOTS.parent / "sunmane-caves"
+    tiles = []
+    for capture_id, subject in INTERIORS:
+        path = interior_shots / f"{capture_id}.png"
+        if path.exists():
+            tiles.append(labelled(fit(Image.open(path)), subject))
+        else:
+            missing.append(capture_id)
+    if tiles:
+        columns = 2
+        rows = (len(tiles) + columns - 1) // columns
+        contact = Image.new("RGB", (columns * (CARD[0] + 8), rows * (CARD[1] + LABEL + 8)),
+                            (22, 22, 24))
+        for index, tile in enumerate(tiles):
+            contact.paste(tile, ((index % columns) * (CARD[0] + 8),
+                                 (index // columns) * (CARD[1] + LABEL + 8)))
+        contact.save(OUTPUT / "cave-interiors.webp", quality=90, method=5)
+        written.append({"panel": None, "subject": "Cave interiors",
+                        "capture": "cave-interiors",
+                        "sheet": "comparison/cave-interiors.webp"})
 
     index_path = OUTPUT / "index.json"
     index_path.write_text(json.dumps(
