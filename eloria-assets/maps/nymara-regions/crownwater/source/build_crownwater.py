@@ -820,9 +820,14 @@ def main() -> int:
             "notes": "Far-tier vegetation only, no ground clutter."})
         (out / "world.json").write_text(json.dumps(manifest, indent=2) + "\n")
 
-    (out / "performance-summary.md").write_text(
-        "# Crownwater performance summary\n\n```json\n"
-        + json.dumps(stats, indent=2) + "\n```\n", encoding="utf-8")
+    # Raw measurements go to performance.json, NOT to performance-summary.md.
+    # Amberwood's build writes its JSON dump straight into the .md the guide
+    # asks for as documentation, so every build clobbers the doc and the package
+    # cannot be reproducible and documented at the same time. Here the
+    # machine-written numbers and the human-written summary are two files, and
+    # the summary quotes the numbers.
+    (out / "performance.json").write_text(
+        json.dumps(stats, indent=2) + chr(10), encoding="utf-8")
     return 0 if counts["numErrors"] == 0 else 1
 
 

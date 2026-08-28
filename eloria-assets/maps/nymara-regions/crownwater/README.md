@@ -19,6 +19,7 @@ does not pretend otherwise.
 | `collision.bin` | EWCG v1, 1152 x 1152 half-metre cells, 25.6% walkable |
 | `minimap.webp` | rendered from the final geometry, not drawn |
 | `camera-views.json` | 23 framings, emitted from `source/views.py` |
+| `performance.json` | raw measurements written by the build |
 | `references/captures/` | **real Godot 4.7.2 client frames**, not offline previews |
 | `references/comparisons/` | aerial and panel comparison sheets, contact sheet |
 | `source/` | the complete, reproducible build |
@@ -31,7 +32,11 @@ python ../../_toolkit/verify_runtime.py --package ..
 python make_sheets.py
 ```
 
-Deterministic: the same seed reproduces the same bytes. The build imports the
+Deterministic: the same seed reproduces the same bytes. Verified - two
+independent runs produce byte-identical `world.glb`, `world-lod2.glb`,
+`world.json`, `collision.bin`, `minimap.webp`, `camera-views.json` and
+`performance.json`. The two `*.validator.json` files differ only in the
+absolute path they record and their timestamp. The build imports the
 shared toolkit at `maps/nymara-regions/_toolkit/` and **modifies nothing in it**.
 
 Real client captures (needs a Godot 4.7.2 binary and a display):
