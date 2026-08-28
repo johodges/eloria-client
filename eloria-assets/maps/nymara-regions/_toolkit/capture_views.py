@@ -25,10 +25,22 @@ import regionpaths
 HERE = Path(__file__).resolve().parent
 PACKAGE = regionpaths.package_root()
 CAPTURES = PACKAGE / "references" / "captures"
-VIEWS = regionpaths.load_region_views(PACKAGE).VIEWS
+_REGION_VIEWS = regionpaths.load_region_views(PACKAGE)
+VIEWS = _REGION_VIEWS.VIEWS
 # The plan and the build script belong to the region, not to the toolkit.
 REG = regionpaths.load_region_plan(PACKAGE)
 build_region = regionpaths.load_region_build(PACKAGE).build_region
+
+# A region may override the capture lighting from its own `views.py`. The
+# presets below are Amberwood's warm afternoon sun, which is wrong for a region
+# under permanent storm - and the captures are the only visual evidence a
+# reviewer has. Two spellings are accepted, a single LIGHTING dict or a pair of
+# DAY_LIGHTING / GOLDEN_LIGHTING constants, because both are in use.
+REGION_LIGHTING = dict(getattr(_REGION_VIEWS, "LIGHTING", {}) or {})
+if getattr(_REGION_VIEWS, "DAY_LIGHTING", None) is not None:
+    REGION_LIGHTING.setdefault("day", _REGION_VIEWS.DAY_LIGHTING)
+if getattr(_REGION_VIEWS, "GOLDEN_LIGHTING", None) is not None:
+    REGION_LIGHTING.setdefault("golden", _REGION_VIEWS.GOLDEN_LIGHTING)
 
 DAY = RENDER.Lighting(sun_direction=(-0.46, 0.50, 0.73),
                       sun_color=(1.22, 0.94, 0.60),
@@ -50,12 +62,17 @@ GOLDEN = RENDER.Lighting(sun_direction=(-0.86, 0.19, 0.47),
                          exposure=1.10, saturation=1.32,
                          sky_zenith=(0.20, 0.24, 0.40), sky_horizon=(0.86, 0.60, 0.34))
 
-A = REG.ANCHORS
-
-
-def _v(anchor, dy=0.0, dx=0.0, dz=0.0):
-    return (anchor[0] + dx, dy, anchor[1] + dz)
-
+# Per-region lighting. The presets above are tuned for Amberwood's warm autumn
+# forest; a snow region under that sun renders brown. A region may override any
+# Lighting field by declaring DAY_LIGHTING / GOLDEN_LIGHTING dicts in its
+# views.py. Regions that declare neither keep the presets exactly as they were.
+_VIEWS_MODULE = regionpaths.load_region_views(PACKAGE)
+_day_overrides = getattr(_VIEWS_MODULE, "DAY_LIGHTING", None)
+if _day_overrides:
+    DAY = RENDER.Lighting(**{**vars(DAY), **_day_overrides})
+_golden_overrides = getattr(_VIEWS_MODULE, "GOLDEN_LIGHTING", None)
+if _golden_overrides:
+    GOLDEN = RENDER.Lighting(**{**vars(GOLDEN), **_golden_overrides})
 
 # Each view is (id, panel, (eye_x, eye_z), eye_height_above_ground,
 #               (target_x, target_z), target_height_above_ground,
@@ -172,7 +189,8 @@ def main() -> int:
                 angle = math.pi * 2.0 * k / 16
                 cx = xz[0] + math.cos(angle) * radius
                 cz = xz[1] + math.sin(angle) * radius
-                if terrain.height_at(cx, cz) < REG.SEA_LEVEL + 0.3:
+                sea_level = getattr(REG, "SEA_LEVEL", None)
+                if sea_level is not None                         and terrain.height_at(cx, cz) < sea_level + 0.3:
                     continue
                 value = clearance(cx, cz)
                 if value > best[0]:
@@ -200,11 +218,12 @@ def main() -> int:
         if eye_h > 40.0:
             eye_h = eye_h * scale
         t0 = time.time()
-        lighting = GOLDEN if mode == "golden" else DAY
+        lighting = REGION_LIGHTING.get(mode, GOLDEN if mode == "golden" else DAY)
         if panel == "aerial":
             # a 576 m region seen from 500 m up is far enough away that the
             # normal ground-level haze would swallow the far half of it
-            lighting = RENDER.Lighting(**{**vars(DAY), "fog_density": 0.00022,
+            base = REGION_LIGHTING.get("day", DAY)
+            lighting = RENDER.Lighting(**{**vars(base), "fog_density": 0.00022,
                                           "fog_height_falloff": 0.0016})
         placed_eye = eye_xz if eye_h > 20.0 else find_clear(eye_xz)
         eye = ground(placed_eye, eye_h)

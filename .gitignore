@@ -41,3 +41,8 @@ godot-client/test-artifacts/
 
 # Validator reports written beside the map packages they describe.
 eloria-assets/maps/*/world.glb.report.json
+
+# The Godot editor/runtime binary. Sessions copy it into godot-client/ to run
+# the capture and client-check harnesses; at 172 MB it is over GitHub's file
+# size limit and must never be committed.
+godot-client/Godot_v*.exe

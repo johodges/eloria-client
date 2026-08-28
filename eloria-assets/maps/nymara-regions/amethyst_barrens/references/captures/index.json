@@ -1,0 +1,512 @@
+[
+  {
+    "id": "00-aerial-overview",
+    "panel": "aerial",
+    "file": "00-aerial-overview.png",
+    "eye": [
+      108.0,
+      340.63,
+      162.0
+    ],
+    "target": [
+      108.0,
+      10.95,
+      -186.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "day"
+  },
+  {
+    "id": "01-barrens-road",
+    "panel": 1,
+    "file": "01-barrens-road.png",
+    "eye": [
+      27.59,
+      17.17,
+      -46.22
+    ],
+    "target": [
+      -48.0,
+      7.55,
+      -102.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "02-observatory",
+    "panel": 2,
+    "file": "02-observatory.png",
+    "eye": [
+      -78.0,
+      12.9,
+      -132.0
+    ],
+    "target": [
+      -78.0,
+      25.4,
+      -204.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "03-crystal-bridge",
+    "panel": 3,
+    "file": "03-crystal-bridge.png",
+    "eye": [
+      111.0,
+      16.03,
+      -198.0
+    ],
+    "target": [
+      138.0,
+      8.26,
+      -174.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "04-geode-cave",
+    "panel": 4,
+    "file": "04-geode-cave.png",
+    "eye": [
+      300.0,
+      14.74,
+      -78.0
+    ],
+    "target": [
+      318.0,
+      9.72,
+      -102.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "05-levitating-shards",
+    "panel": 5,
+    "file": "05-levitating-shards.png",
+    "eye": [
+      96.0,
+      6.81,
+      -96.0
+    ],
+    "target": [
+      120.0,
+      17.01,
+      -120.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "06-storm-ruin",
+    "panel": 6,
+    "file": "06-storm-ruin.png",
+    "eye": [
+      192.0,
+      17.73,
+      -138.0
+    ],
+    "target": [
+      216.0,
+      8.64,
+      -168.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "07-resonant-digging",
+    "panel": 7,
+    "file": "07-resonant-digging.png",
+    "eye": [
+      114.0,
+      14.75,
+      -24.0
+    ],
+    "target": [
+      138.0,
+      5.19,
+      -42.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "08-field-station",
+    "panel": 8,
+    "file": "08-field-station.png",
+    "eye": [
+      -42.0,
+      12.88,
+      -66.0
+    ],
+    "target": [
+      -24.0,
+      5.91,
+      -84.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "09-cliff-overlook",
+    "panel": 9,
+    "file": "09-cliff-overlook.png",
+    "eye": [
+      277.23,
+      27.21,
+      -236.88
+    ],
+    "target": [
+      120.0,
+      9.62,
+      -150.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "day"
+  },
+  {
+    "id": "10-material-study",
+    "panel": 10,
+    "file": "10-material-study.png",
+    "eye": [
+      133.15,
+      6.27,
+      -30.23
+    ],
+    "target": [
+      138.0,
+      3.79,
+      -42.0
+    ],
+    "fieldOfViewDegrees": 40,
+    "lighting": "day"
+  },
+  {
+    "id": "11-massif",
+    "panel": null,
+    "file": "11-massif.png",
+    "eye": [
+      127.01,
+      18.98,
+      -260.07
+    ],
+    "target": [
+      168.0,
+      78.04,
+      -330.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "day"
+  },
+  {
+    "id": "12-observatory-court",
+    "panel": null,
+    "file": "12-observatory-court.png",
+    "eye": [
+      -72.0,
+      15.38,
+      -108.0
+    ],
+    "target": [
+      -72.0,
+      8.4,
+      -144.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "13-arrival",
+    "panel": null,
+    "file": "13-arrival.png",
+    "eye": [
+      24.0,
+      20.45,
+      36.0
+    ],
+    "target": [
+      0.0,
+      6.63,
+      0.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "14-north-east-coast",
+    "panel": null,
+    "file": "14-north-east-coast.png",
+    "eye": [
+      261.81,
+      52.01,
+      -290.06
+    ],
+    "target": [
+      354.0,
+      -22.0,
+      -372.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "15-stone-ring",
+    "panel": null,
+    "file": "15-stone-ring.png",
+    "eye": [
+      282.0,
+      15.27,
+      78.0
+    ],
+    "target": [
+      306.0,
+      8.17,
+      96.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "16-watchtower-east",
+    "panel": null,
+    "file": "16-watchtower-east.png",
+    "eye": [
+      336.0,
+      9.75,
+      -30.0
+    ],
+    "target": [
+      360.0,
+      18.1,
+      -48.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "17-resonant-river",
+    "panel": null,
+    "file": "17-resonant-river.png",
+    "eye": [
+      193.14,
+      18.41,
+      -109.96
+    ],
+    "target": [
+      198.0,
+      2.37,
+      -54.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "18-south-road",
+    "panel": null,
+    "file": "18-south-road.png",
+    "eye": [
+      54.0,
+      16.86,
+      24.0
+    ],
+    "target": [
+      78.0,
+      7.48,
+      42.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "19-ruin-basin",
+    "panel": null,
+    "file": "19-ruin-basin.png",
+    "eye": [
+      135.23,
+      15.44,
+      -55.15
+    ],
+    "target": [
+      162.0,
+      8.12,
+      -72.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "20-massif-foot",
+    "panel": null,
+    "file": "20-massif-foot.png",
+    "eye": [
+      120.0,
+      10.67,
+      -240.0
+    ],
+    "target": [
+      150.0,
+      26.44,
+      -270.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "21-geode-north",
+    "panel": null,
+    "file": "21-geode-north.png",
+    "eye": [
+      -96.0,
+      11.65,
+      -282.0
+    ],
+    "target": [
+      -114.0,
+      5.51,
+      -306.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "22-west-road",
+    "panel": null,
+    "file": "22-west-road.png",
+    "eye": [
+      -102.0,
+      19.41,
+      -42.0
+    ],
+    "target": [
+      -138.0,
+      6.56,
+      -60.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "23-south-east-inlet",
+    "panel": null,
+    "file": "23-south-east-inlet.png",
+    "eye": [
+      302.01,
+      32.01,
+      90.82
+    ],
+    "target": [
+      348.0,
+      -5.01,
+      144.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "30-spawn-grounding",
+    "panel": null,
+    "file": "30-spawn-grounding.png",
+    "eye": [
+      -24.0,
+      19.71,
+      24.0
+    ],
+    "target": [
+      6.0,
+      6.83,
+      -6.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "31-bridge-deck",
+    "panel": null,
+    "file": "31-bridge-deck.png",
+    "eye": [
+      127.01,
+      21.3,
+      -261.93
+    ],
+    "target": [
+      156.0,
+      13.05,
+      -246.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "32-observatory-deck",
+    "panel": null,
+    "file": "32-observatory-deck.png",
+    "eye": [
+      -78.0,
+      14.96,
+      -174.0
+    ],
+    "target": [
+      -78.0,
+      23.4,
+      -204.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "40-golden-massif",
+    "panel": null,
+    "file": "40-golden-massif.png",
+    "eye": [
+      90.0,
+      11.59,
+      -252.0
+    ],
+    "target": [
+      168.0,
+      78.04,
+      -330.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "golden"
+  },
+  {
+    "id": "41-golden-observatory",
+    "panel": null,
+    "file": "41-golden-observatory.png",
+    "eye": [
+      -18.6,
+      16.94,
+      -138.0
+    ],
+    "target": [
+      -78.0,
+      25.4,
+      -204.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "golden"
+  },
+  {
+    "id": "42-golden-barrens",
+    "panel": null,
+    "file": "42-golden-barrens.png",
+    "eye": [
+      -24.89,
+      23.78,
+      3.25
+    ],
+    "target": [
+      138.0,
+      5.19,
+      -42.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "golden"
+  }
+]

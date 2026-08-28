@@ -1,0 +1,2129 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "whitehorn_insides",
+    "name": "Whitehorn Range Insides",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        4.73,
+        -15.2,
+        -23.21
+      ],
+      "max": [
+        177.55,
+        18.55,
+        176.55
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        8.45,
+        -3.6,
+        7.45
+      ],
+      "max": [
+        177.55,
+        7.0,
+        176.55
+      ]
+    },
+    "interiorClass": "insides",
+    "parentRegion": "whitehorn_range",
+    "serverCells": 174
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -6.0,
+      179.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        40.0,
+        0.05,
+        14.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "whitehorn-glacier-temple-door",
+      "name": "The Glacier Temple",
+      "position": [
+        40.0,
+        0.05,
+        14.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "glacier_temple"
+    },
+    {
+      "id": "whitehorn-mine-adit",
+      "name": "The Whitehorn Mine",
+      "position": [
+        124.0,
+        0.05,
+        21.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "whitehorn-ice-cave-mouth",
+      "name": "The Whitehorn Ice Cave",
+      "position": [
+        130.0,
+        0.05,
+        113.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "ice_cave"
+    },
+    {
+      "id": "whitehorn-barrow-door",
+      "name": "The Frost Barrow",
+      "position": [
+        36.0,
+        0.05,
+        147.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "frost_barrow"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 348,
+    "height": 348,
+    "cellMetres": 0.5,
+    "originMetres": [
+      6.0,
+      179.0
+    ],
+    "heightEncoding": {
+      "origin": -3.367,
+      "step": 0.1672,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
+    },
+    "walkableCells": 31816,
+    "blockedCells": 89288,
+    "walkableFraction": 0.2627,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Interior_whitehorn_insides",
+      "Build_whitehorn_insides_amber_resin",
+      "Build_whitehorn_insides_blue_crystal",
+      "Build_whitehorn_insides_cliff_rock",
+      "Build_whitehorn_insides_dark_iron",
+      "Build_whitehorn_insides_gilt_brass",
+      "Build_whitehorn_insides_glacier_ice",
+      "Build_whitehorn_insides_pale_ashlar",
+      "Build_whitehorn_insides_rubble_stone",
+      "Build_whitehorn_insides_snow_pack",
+      "Build_whitehorn_insides_timber_dark",
+      "Build_whitehorn_insides_timber_grey",
+      "Build_whitehorn_insides_timber_warm",
+      "Build_whitehorn_insides_veined_marble",
+      "Build_whitehorn_insides_water_pool",
+      "Build_whitehorn_insides_whitehorn_silver",
+      "Build_whitehorn_insides_woven_cloth"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    },
+    "notes": [
+      "Every standable surface is a Walk_<material> node: the client turns navigation.surfaceNodePrefixes into the layer its downward grounding ray tests, so a floor emitted as ordinary geometry is scenery you fall through."
+    ]
+  },
+  "portals": [
+    {
+      "id": "exit-whitehorn-glacier-temple-door",
+      "name": "Return to the Whitehorn Range",
+      "type": "map-transition",
+      "position": [
+        40.0,
+        0.05,
+        14.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "destinationSpawn": "whitehorn-glacier-temple-door",
+      "section": "glacier_temple",
+      "authority": "server"
+    },
+    {
+      "id": "exit-whitehorn-mine-adit",
+      "name": "Return to the Whitehorn Range",
+      "type": "map-transition",
+      "position": [
+        124.0,
+        0.05,
+        21.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "destinationSpawn": "whitehorn-mine-adit",
+      "section": "whitehorn_mine",
+      "authority": "server"
+    },
+    {
+      "id": "exit-whitehorn-ice-cave-mouth",
+      "name": "Return to the Whitehorn Range",
+      "type": "map-transition",
+      "position": [
+        130.0,
+        0.05,
+        113.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "destinationSpawn": "whitehorn-ice-cave-mouth",
+      "section": "ice_cave",
+      "authority": "server"
+    },
+    {
+      "id": "exit-whitehorn-barrow-door",
+      "name": "Return to the Whitehorn Range",
+      "type": "map-transition",
+      "position": [
+        36.0,
+        0.05,
+        147.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "destinationSpawn": "whitehorn-barrow-door",
+      "section": "frost_barrow",
+      "authority": "server"
+    }
+  ],
+  "sections": [
+    {
+      "id": "glacier_temple",
+      "name": "The Glacier Temple",
+      "class": "temple",
+      "offset": [
+        40.0,
+        0.0,
+        20.0
+      ],
+      "arrival": [
+        40.0,
+        0.05,
+        14.0
+      ],
+      "surfaceLandmark": "whitehorn-glacier-temple",
+      "surfacePosition": [
+        102.0,
+        70.45,
+        -309.0
+      ],
+      "spaces": [
+        "glacier_temple.snow_entry",
+        "glacier_temple.nave",
+        "glacier_temple.colonnade",
+        "glacier_temple.votive",
+        "glacier_temple.upper_sanctuary",
+        "glacier_temple.ice_arch",
+        "glacier_temple.glacier_altar",
+        "glacier_temple.threshold",
+        "glacier_temple.east_arcade",
+        "glacier_temple.votive_door",
+        "glacier_temple.sanctuary_stair",
+        "glacier_temple.north_walk",
+        "glacier_temple.ice_descent"
+      ],
+      "notes": [
+        "The glacier is taking the monastery. The colonnade's east wall is cracked and bulging with ice through the joints; the last built arch is half-swallowed; and the columns in the altar chamber are an older colonnade the ice has carried off its foundations, still in rows and all leaning the same way."
+      ]
+    },
+    {
+      "id": "whitehorn_mine",
+      "name": "The Whitehorn Mine",
+      "class": "dungeon",
+      "offset": [
+        135.0,
+        0.0,
+        20.0
+      ],
+      "arrival": [
+        124.0,
+        0.05,
+        21.0
+      ],
+      "surfaceLandmark": "whitehorn-mine",
+      "surfacePosition": [
+        288.0,
+        52.0,
+        -138.0
+      ],
+      "spaces": [
+        "whitehorn_mine.adit_head",
+        "whitehorn_mine.main_gallery",
+        "whitehorn_mine.crevasse_hall",
+        "whitehorn_mine.pump_room",
+        "whitehorn_mine.adit",
+        "whitehorn_mine.gallery_north",
+        "whitehorn_mine.pump_stair"
+      ],
+      "notes": [
+        "The crevasse span is kit.rope_bridge, the same piece the exterior uses on the gorge: the miners who bridged one bridged the other."
+      ]
+    },
+    {
+      "id": "ice_cave",
+      "name": "The Whitehorn Ice Cave",
+      "class": "cave",
+      "offset": [
+        135.0,
+        0.0,
+        115.0
+      ],
+      "arrival": [
+        130.0,
+        0.05,
+        113.0
+      ],
+      "surfaceLandmark": "whitehorn-ice-cave",
+      "surfacePosition": [
+        -114.0,
+        30.0,
+        -42.0
+      ],
+      "spaces": [
+        "ice_cave.cave_mouth",
+        "ice_cave.blue_chamber",
+        "ice_cave.meltwater_pool",
+        "ice_cave.crystal_vault",
+        "ice_cave.throat",
+        "ice_cave.pool_walk",
+        "ice_cave.vault_descent"
+      ],
+      "notes": [
+        "Nobody built this. The only worked things in it are the hung lamps and the plank walk over the pool."
+      ]
+    },
+    {
+      "id": "frost_barrow",
+      "name": "The Frost Barrow",
+      "class": "barrow",
+      "offset": [
+        40.0,
+        0.0,
+        150.0
+      ],
+      "arrival": [
+        36.0,
+        0.05,
+        147.0
+      ],
+      "surfaceLandmark": "whitehorn-cairn-field-cairn_ridge",
+      "surfacePosition": [
+        -87.0,
+        62.0,
+        -204.0
+      ],
+      "spaces": [
+        "frost_barrow.barrow_entry",
+        "frost_barrow.cist_gallery",
+        "frost_barrow.barrow_chamber",
+        "frost_barrow.creep",
+        "frost_barrow.inner_door"
+      ],
+      "notes": [
+        "Older than the monastery and not of it. The monks walled the end chamber rather than empty it, and left a shrine at the wall."
+      ]
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "temple-narthex",
+      "name": "The Snow Threshold",
+      "space": "glacier_temple.snow_entry",
+      "position": [
+        40.0,
+        1.6,
+        14.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-nave",
+      "name": "The Nave",
+      "space": "glacier_temple.nave",
+      "position": [
+        40.0,
+        1.6,
+        45.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-colonnade",
+      "name": "The Prayer Colonnade",
+      "space": "glacier_temple.colonnade",
+      "position": [
+        64.0,
+        1.6,
+        41.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-votive",
+      "name": "The Votive Chamber",
+      "space": "glacier_temple.votive",
+      "position": [
+        16.0,
+        0.4,
+        40.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-ice-arch",
+      "name": "The Last Arch",
+      "space": "glacier_temple.ice_arch",
+      "position": [
+        40.0,
+        0.1,
+        76.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-altar",
+      "name": "The Glacier Altar",
+      "space": "glacier_temple.glacier_altar",
+      "position": [
+        36.0,
+        -1.4,
+        100.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-sanctuary",
+      "name": "The Upper Sanctuary",
+      "space": "glacier_temple.upper_sanctuary",
+      "position": [
+        67.0,
+        8.6,
+        87.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "mine-adit",
+      "name": "The Adit Head",
+      "space": "whitehorn_mine.adit_head",
+      "position": [
+        124.0,
+        1.6,
+        21.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "mine-gallery",
+      "name": "The Silver Gallery",
+      "space": "whitehorn_mine.main_gallery",
+      "position": [
+        148.0,
+        0.4,
+        24.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "mine-crevasse",
+      "name": "The Crevasse Crossing",
+      "space": "whitehorn_mine.crevasse_hall",
+      "position": [
+        148.0,
+        0.4,
+        48.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "mine-pump",
+      "name": "The Pump Engine",
+      "space": "whitehorn_mine.pump_room",
+      "position": [
+        171.0,
+        -0.8,
+        24.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "cave-mouth",
+      "name": "The Cave Mouth",
+      "space": "ice_cave.cave_mouth",
+      "position": [
+        130.0,
+        1.6,
+        113.0
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "cave-blue",
+      "name": "The Blue Chamber",
+      "space": "ice_cave.blue_chamber",
+      "position": [
+        132.0,
+        0.0,
+        134.0
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "cave-pool",
+      "name": "The Meltwater Pool",
+      "space": "ice_cave.meltwater_pool",
+      "position": [
+        159.0,
+        -0.8,
+        130.0
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "cave-vault",
+      "name": "The Crystal Vault",
+      "space": "ice_cave.crystal_vault",
+      "position": [
+        135.0,
+        -1.6,
+        155.0
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "barrow-entry",
+      "name": "The Barrow Creep",
+      "space": "frost_barrow.barrow_entry",
+      "position": [
+        36.0,
+        1.4,
+        147.0
+      ],
+      "section": "frost_barrow"
+    },
+    {
+      "id": "barrow-gallery",
+      "name": "The Cist Gallery",
+      "space": "frost_barrow.cist_gallery",
+      "position": [
+        36.0,
+        0.2,
+        164.0
+      ],
+      "section": "frost_barrow"
+    },
+    {
+      "id": "barrow-chamber",
+      "name": "The Sealed Chamber",
+      "space": "frost_barrow.barrow_chamber",
+      "position": [
+        59.0,
+        -0.6,
+        167.0
+      ],
+      "section": "frost_barrow"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "temple-gong",
+      "kind": "use",
+      "position": [
+        40.0,
+        1.7,
+        62.4
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-reliquary",
+      "kind": "lore",
+      "position": [
+        67.0,
+        9.0,
+        92.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-altar-crystal",
+      "kind": "lore",
+      "position": [
+        36.0,
+        0.2,
+        104.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-bell",
+      "kind": "use",
+      "position": [
+        60.5,
+        10.0,
+        82.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-votive-shelf",
+      "kind": "use",
+      "position": [
+        16.0,
+        0.2,
+        32.6
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "mine-ore-cart",
+      "kind": "container",
+      "position": [
+        148.0,
+        -0.7,
+        28.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "mine-tally",
+      "kind": "lore",
+      "position": [
+        123.0,
+        0.9,
+        26.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "mine-winch",
+      "kind": "use",
+      "position": [
+        171.0,
+        -0.4,
+        24.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "cave-crystal-core",
+      "kind": "lore",
+      "position": [
+        135.0,
+        -1.2,
+        155.0
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "barrow-wall",
+      "kind": "lore",
+      "position": [
+        59.0,
+        -1.4,
+        173.6
+      ],
+      "section": "frost_barrow"
+    },
+    {
+      "id": "barrow-great-cist",
+      "kind": "container",
+      "position": [
+        59.0,
+        -0.8,
+        166.0
+      ],
+      "section": "frost_barrow"
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "temple-abbot",
+      "name": "The Abbot",
+      "role": "civilian",
+      "position": [
+        67.0,
+        7.0,
+        88.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-cantor",
+      "name": "Cantor",
+      "role": "civilian",
+      "position": [
+        40.0,
+        0.0,
+        58.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "temple-warden",
+      "name": "Ice Warden",
+      "role": "guard",
+      "position": [
+        40.0,
+        -1.5,
+        76.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "mine-foreman",
+      "name": "Mine Foreman",
+      "role": "civilian",
+      "position": [
+        125.0,
+        0.0,
+        22.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "mine-pickman",
+      "name": "Pickman",
+      "role": "civilian",
+      "position": [
+        143.0,
+        -1.2,
+        32.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "cave-watch",
+      "name": "Cave Watch",
+      "role": "guard",
+      "position": [
+        130.0,
+        0.0,
+        115.0
+      ],
+      "section": "ice_cave"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "glacier-ice-00",
+      "resource": "ice",
+      "position": [
+        26.0,
+        -3.0,
+        90.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "glacier-ice-01",
+      "resource": "ice",
+      "position": [
+        31.0,
+        -3.0,
+        94.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "glacier-ice-02",
+      "resource": "ice",
+      "position": [
+        36.0,
+        -3.0,
+        98.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "glacier-ice-03",
+      "resource": "ice",
+      "position": [
+        41.0,
+        -3.0,
+        102.0
+      ],
+      "section": "glacier_temple"
+    },
+    {
+      "id": "silver-ore-00",
+      "resource": "ore",
+      "position": [
+        137.0,
+        0.2,
+        35.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "silver-ore-01",
+      "resource": "ore",
+      "position": [
+        139.0,
+        0.2,
+        35.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "silver-ore-02",
+      "resource": "ore",
+      "position": [
+        141.0,
+        0.2,
+        35.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "silver-ore-03",
+      "resource": "ore",
+      "position": [
+        143.0,
+        0.2,
+        35.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "silver-ore-04",
+      "resource": "ore",
+      "position": [
+        145.0,
+        0.2,
+        35.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "silver-ore-05",
+      "resource": "ore",
+      "position": [
+        147.0,
+        0.2,
+        35.0
+      ],
+      "section": "whitehorn_mine"
+    },
+    {
+      "id": "cave-ice-00",
+      "resource": "ice",
+      "position": [
+        121.0,
+        -1.6,
+        127.0
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "cave-ice-01",
+      "resource": "ice",
+      "position": [
+        126.0,
+        -1.6,
+        130.0
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "cave-ice-02",
+      "resource": "ice",
+      "position": [
+        131.0,
+        -1.6,
+        133.0
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "cave-ice-03",
+      "resource": "ice",
+      "position": [
+        136.0,
+        -1.6,
+        136.0
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "cave-ice-04",
+      "resource": "ice",
+      "position": [
+        141.0,
+        -1.6,
+        139.0
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "cave-crystal-00",
+      "resource": "crystal",
+      "position": [
+        140.5,
+        -3.2,
+        155.0
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "cave-crystal-01",
+      "resource": "crystal",
+      "position": [
+        136.99,
+        -3.2,
+        158.73
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "cave-crystal-02",
+      "resource": "crystal",
+      "position": [
+        130.94,
+        -3.2,
+        157.7
+      ],
+      "section": "ice_cave"
+    },
+    {
+      "id": "cave-crystal-03",
+      "resource": "crystal",
+      "position": [
+        130.07,
+        -3.2,
+        153.23
+      ],
+      "section": "ice_cave"
+    }
+  ],
+  "lights": [
+    {
+      "id": "lantern-00",
+      "kind": "point",
+      "position": [
+        40.0,
+        2.38,
+        14.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-01",
+      "kind": "point",
+      "position": [
+        40.0,
+        2.58,
+        24.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-02",
+      "kind": "point",
+      "position": [
+        29.5,
+        5.78,
+        34.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-03",
+      "kind": "point",
+      "position": [
+        50.5,
+        5.78,
+        34.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-04",
+      "kind": "point",
+      "position": [
+        29.5,
+        5.78,
+        50.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-05",
+      "kind": "point",
+      "position": [
+        50.5,
+        5.78,
+        50.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-06",
+      "kind": "point",
+      "position": [
+        40.0,
+        6.78,
+        42.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-07",
+      "kind": "point",
+      "position": [
+        40.0,
+        6.78,
+        60.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-08",
+      "kind": "point",
+      "position": [
+        64.0,
+        3.98,
+        34.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-09",
+      "kind": "point",
+      "position": [
+        64.0,
+        3.98,
+        46.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-10",
+      "kind": "point",
+      "position": [
+        64.0,
+        3.98,
+        52.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-11",
+      "kind": "point",
+      "position": [
+        16.0,
+        1.98,
+        36.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-12",
+      "kind": "point",
+      "position": [
+        16.0,
+        1.98,
+        44.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-13",
+      "kind": "point",
+      "position": [
+        64.0,
+        10.78,
+        82.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-14",
+      "kind": "point",
+      "position": [
+        67.0,
+        10.78,
+        90.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-15",
+      "kind": "point",
+      "position": [
+        73.0,
+        10.78,
+        94.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-16",
+      "kind": "point",
+      "position": [
+        40.0,
+        3.38,
+        74.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-17",
+      "kind": "point",
+      "position": [
+        40.0,
+        3.38,
+        80.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-18",
+      "kind": "point",
+      "position": [
+        36.0,
+        4.38,
+        96.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-19",
+      "kind": "point",
+      "position": [
+        36.0,
+        4.38,
+        108.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-20",
+      "kind": "point",
+      "position": [
+        26.0,
+        4.38,
+        102.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-21",
+      "kind": "point",
+      "position": [
+        46.0,
+        4.38,
+        102.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-22",
+      "kind": "point",
+      "position": [
+        123.0,
+        1.98,
+        21.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-23",
+      "kind": "point",
+      "position": [
+        127.0,
+        1.98,
+        26.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-24",
+      "kind": "point",
+      "position": [
+        148.0,
+        1.58,
+        16.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-25",
+      "kind": "point",
+      "position": [
+        148.0,
+        1.58,
+        24.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-26",
+      "kind": "point",
+      "position": [
+        148.0,
+        1.58,
+        32.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-27",
+      "kind": "point",
+      "position": [
+        142.0,
+        1.58,
+        44.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-28",
+      "kind": "point",
+      "position": [
+        154.0,
+        1.58,
+        52.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-29",
+      "kind": "point",
+      "position": [
+        148.0,
+        2.78,
+        48.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-30",
+      "kind": "point",
+      "position": [
+        169.0,
+        0.78,
+        22.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-31",
+      "kind": "point",
+      "position": [
+        175.0,
+        0.78,
+        29.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-32",
+      "kind": "point",
+      "position": [
+        130.0,
+        2.38,
+        113.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-33",
+      "kind": "point",
+      "position": [
+        130.0,
+        2.78,
+        121.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-34",
+      "kind": "point",
+      "position": [
+        123.0,
+        4.38,
+        129.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-35",
+      "kind": "point",
+      "position": [
+        141.0,
+        4.38,
+        129.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-36",
+      "kind": "point",
+      "position": [
+        131.0,
+        4.38,
+        141.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-37",
+      "kind": "point",
+      "position": [
+        155.0,
+        1.98,
+        127.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-38",
+      "kind": "point",
+      "position": [
+        163.0,
+        1.98,
+        135.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-39",
+      "kind": "point",
+      "position": [
+        135.0,
+        2.98,
+        153.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-40",
+      "kind": "point",
+      "position": [
+        135.0,
+        2.98,
+        159.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-41",
+      "kind": "point",
+      "position": [
+        36.0,
+        1.58,
+        147.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-42",
+      "kind": "point",
+      "position": [
+        36.0,
+        1.58,
+        160.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-43",
+      "kind": "point",
+      "position": [
+        36.0,
+        1.58,
+        168.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-44",
+      "kind": "point",
+      "position": [
+        59.0,
+        1.98,
+        163.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-45",
+      "kind": "point",
+      "position": [
+        59.0,
+        1.98,
+        171.0
+      ],
+      "colour": [
+        1.0,
+        0.72,
+        0.42
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.3,
+        0.36,
+        0.46
+      ],
+      "energy": 0.46
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.42,
+        0.5,
+        0.6
+      ],
+      "begin": 24.0,
+      "end": 90.0
+    },
+    "audio": [
+      {
+        "id": "wind",
+        "space": "glacier_temple.snow_entry",
+        "loop": true,
+        "section": "glacier_temple"
+      },
+      {
+        "id": "chant",
+        "space": "glacier_temple.nave",
+        "loop": true,
+        "section": "glacier_temple"
+      },
+      {
+        "id": "ice-groan",
+        "space": "glacier_temple.glacier_altar",
+        "loop": true,
+        "section": "glacier_temple"
+      },
+      {
+        "id": "drip",
+        "space": "glacier_temple.ice_arch",
+        "loop": true,
+        "section": "glacier_temple"
+      },
+      {
+        "id": "pick",
+        "space": "whitehorn_mine.main_gallery",
+        "loop": true,
+        "section": "whitehorn_mine"
+      },
+      {
+        "id": "ice-groan",
+        "space": "whitehorn_mine.crevasse_hall",
+        "loop": true,
+        "section": "whitehorn_mine"
+      },
+      {
+        "id": "drip",
+        "space": "ice_cave.blue_chamber",
+        "loop": true,
+        "section": "ice_cave"
+      },
+      {
+        "id": "water",
+        "space": "ice_cave.meltwater_pool",
+        "loop": true,
+        "section": "ice_cave"
+      },
+      {
+        "id": "wind",
+        "space": "frost_barrow.barrow_entry",
+        "loop": true,
+        "section": "frost_barrow"
+      }
+    ],
+    "openToSky": []
+  },
+  "spaces": {
+    "glacier_temple.snow_entry": {
+      "x0": 33.0,
+      "x1": 47.0,
+      "z0": 8.0,
+      "z1": 20.0,
+      "floor": 0.0,
+      "height": 5.0
+    },
+    "glacier_temple.nave": {
+      "x0": 25.0,
+      "x1": 55.0,
+      "z0": 26.0,
+      "z1": 64.0,
+      "floor": 0.0,
+      "height": 10.0
+    },
+    "glacier_temple.colonnade": {
+      "x0": 57.0,
+      "x1": 71.0,
+      "z0": 28.0,
+      "z1": 54.0,
+      "floor": 0.0,
+      "height": 6.5
+    },
+    "glacier_temple.votive": {
+      "x0": 9.0,
+      "x1": 23.0,
+      "z0": 32.0,
+      "z1": 48.0,
+      "floor": -0.8,
+      "height": 4.6
+    },
+    "glacier_temple.upper_sanctuary": {
+      "x0": 55.0,
+      "x1": 79.0,
+      "z0": 76.0,
+      "z1": 98.0,
+      "floor": 7.0,
+      "height": 8.5
+    },
+    "glacier_temple.ice_arch": {
+      "x0": 31.0,
+      "x1": 49.0,
+      "z0": 70.0,
+      "z1": 82.0,
+      "floor": -1.5,
+      "height": 7.5
+    },
+    "glacier_temple.glacier_altar": {
+      "x0": 21.0,
+      "x1": 51.0,
+      "z0": 86.0,
+      "z1": 114.0,
+      "floor": -3.0,
+      "height": 13.0
+    },
+    "glacier_temple.threshold": {
+      "x0": 37.8,
+      "x1": 42.2,
+      "z0": 17.8,
+      "z1": 28.2,
+      "floor": 0.0,
+      "height": 3.6
+    },
+    "glacier_temple.east_arcade": {
+      "x0": 52.8,
+      "x1": 59.2,
+      "z0": 39.8,
+      "z1": 44.2,
+      "floor": 0.0,
+      "height": 4.6
+    },
+    "glacier_temple.votive_door": {
+      "x0": 21.3,
+      "x1": 26.7,
+      "z0": 38.3,
+      "z1": 41.7,
+      "floor": -0.8,
+      "height": 3.6
+    },
+    "glacier_temple.sanctuary_stair": {
+      "x0": 61.8,
+      "x1": 66.2,
+      "z0": 51.8,
+      "z1": 78.2,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "glacier_temple.north_walk": {
+      "x0": 37.7,
+      "x1": 42.3,
+      "z0": 61.7,
+      "z1": 72.3,
+      "floor": -1.5,
+      "height": 4.8
+    },
+    "glacier_temple.ice_descent": {
+      "x0": 37.5,
+      "x1": 42.5,
+      "z0": 79.5,
+      "z1": 88.5,
+      "floor": -3.0,
+      "height": 5.6
+    },
+    "whitehorn_mine.adit_head": {
+      "x0": 117.0,
+      "x1": 131.0,
+      "z0": 14.0,
+      "z1": 28.0,
+      "floor": 0.0,
+      "height": 4.2
+    },
+    "whitehorn_mine.main_gallery": {
+      "x0": 135.0,
+      "x1": 161.0,
+      "z0": 12.0,
+      "z1": 36.0,
+      "floor": -1.2,
+      "height": 5.0
+    },
+    "whitehorn_mine.crevasse_hall": {
+      "x0": 135.0,
+      "x1": 161.0,
+      "z0": 40.0,
+      "z1": 56.0,
+      "floor": -1.2,
+      "height": 9.0
+    },
+    "whitehorn_mine.pump_room": {
+      "x0": 165.0,
+      "x1": 177.0,
+      "z0": 16.0,
+      "z1": 32.0,
+      "floor": -2.4,
+      "height": 4.4
+    },
+    "whitehorn_mine.adit": {
+      "x0": 129.3,
+      "x1": 136.7,
+      "z0": 19.3,
+      "z1": 22.7,
+      "floor": -1.2,
+      "height": 3.6
+    },
+    "whitehorn_mine.gallery_north": {
+      "x0": 145.8,
+      "x1": 150.2,
+      "z0": 33.8,
+      "z1": 42.2,
+      "floor": -1.2,
+      "height": 4.6
+    },
+    "whitehorn_mine.pump_stair": {
+      "x0": 159.3,
+      "x1": 166.7,
+      "z0": 22.3,
+      "z1": 25.7,
+      "floor": -2.4,
+      "height": 3.6
+    },
+    "ice_cave.cave_mouth": {
+      "x0": 123.0,
+      "x1": 137.0,
+      "z0": 107.0,
+      "z1": 119.0,
+      "floor": 0.0,
+      "height": 5.0
+    },
+    "ice_cave.blue_chamber": {
+      "x0": 117.0,
+      "x1": 147.0,
+      "z0": 123.0,
+      "z1": 145.0,
+      "floor": -1.6,
+      "height": 11.0
+    },
+    "ice_cave.meltwater_pool": {
+      "x0": 151.0,
+      "x1": 167.0,
+      "z0": 121.0,
+      "z1": 139.0,
+      "floor": -2.4,
+      "height": 6.0
+    },
+    "ice_cave.crystal_vault": {
+      "x0": 125.0,
+      "x1": 145.0,
+      "z0": 149.0,
+      "z1": 161.0,
+      "floor": -3.2,
+      "height": 8.0
+    },
+    "ice_cave.throat": {
+      "x0": 127.8,
+      "x1": 132.2,
+      "z0": 116.8,
+      "z1": 125.2,
+      "floor": -1.6,
+      "height": 4.6
+    },
+    "ice_cave.pool_walk": {
+      "x0": 145.3,
+      "x1": 152.7,
+      "z0": 128.3,
+      "z1": 131.7,
+      "floor": -2.4,
+      "height": 3.6
+    },
+    "ice_cave.vault_descent": {
+      "x0": 132.8,
+      "x1": 137.2,
+      "z0": 142.8,
+      "z1": 151.2,
+      "floor": -3.2,
+      "height": 4.6
+    },
+    "frost_barrow.barrow_entry": {
+      "x0": 30.0,
+      "x1": 42.0,
+      "z0": 142.0,
+      "z1": 152.0,
+      "floor": 0.0,
+      "height": 3.2
+    },
+    "frost_barrow.cist_gallery": {
+      "x0": 24.0,
+      "x1": 48.0,
+      "z0": 156.0,
+      "z1": 172.0,
+      "floor": -1.2,
+      "height": 3.6
+    },
+    "frost_barrow.barrow_chamber": {
+      "x0": 52.0,
+      "x1": 66.0,
+      "z0": 158.0,
+      "z1": 176.0,
+      "floor": -2.0,
+      "height": 5.0
+    },
+    "frost_barrow.creep": {
+      "x0": 34.3,
+      "x1": 37.7,
+      "z0": 150.3,
+      "z1": 157.7,
+      "floor": -1.2,
+      "height": 2.8
+    },
+    "frost_barrow.inner_door": {
+      "x0": 46.3,
+      "x1": 53.7,
+      "z0": 163.3,
+      "z1": 166.7,
+      "floor": -2.0,
+      "height": 3.2
+    }
+  },
+  "conceptArt": {
+    "detailBoard": "references/00-concept-detail-board.png",
+    "role": "the interior's own board; TRUNCATED to 786,446 bytes in the supplied package and does not decode, so the ten subjects below come from concept.json and the parent region's intact board, not from panel images",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "The Glacier Temple: snow entry",
+      "The Glacier Temple: monastery nave",
+      "The Glacier Temple: prayer columns",
+      "The Glacier Temple: ice arch",
+      "The Glacier Temple: glacier altar",
+      "The Glacier Temple: votive chamber",
+      "The Glacier Temple: upper sanctuary",
+      "The Glacier Temple: ice granite silver materials",
+      "The Whitehorn Mine: mining gallery",
+      "The Whitehorn Mine: chasm bridge",
+      "The Whitehorn Mine: adit head",
+      "The Whitehorn Mine: pump engine",
+      "The Whitehorn Ice Cave: cave mouth",
+      "The Whitehorn Ice Cave: blue chamber",
+      "The Whitehorn Ice Cave: meltwater pool",
+      "The Whitehorn Ice Cave: crystal vault",
+      "The Frost Barrow: barrow entry",
+      "The Frost Barrow: cist gallery",
+      "The Frost Barrow: the sealed chamber"
+    ]
+  },
+  "performance": {
+    "nodes": 23,
+    "meshes": 22,
+    "materials": 17,
+    "images": 50,
+    "textures": 50,
+    "accessors": 110,
+    "bufferViews": 160,
+    "uniqueTriangles": 52505,
+    "uniqueVertices": 55400,
+    "glbBytes": 7983760,
+    "nodeNames": [
+      "Interior_whitehorn_insides",
+      "Build_whitehorn_insides_amber_resin",
+      "Build_whitehorn_insides_blue_crystal",
+      "Build_whitehorn_insides_cliff_rock",
+      "Build_whitehorn_insides_dark_iron",
+      "Build_whitehorn_insides_gilt_brass",
+      "Build_whitehorn_insides_glacier_ice",
+      "Build_whitehorn_insides_pale_ashlar",
+      "Build_whitehorn_insides_rubble_stone",
+      "Build_whitehorn_insides_snow_pack",
+      "Build_whitehorn_insides_timber_dark",
+      "Build_whitehorn_insides_timber_grey",
+      "Build_whitehorn_insides_timber_warm",
+      "Build_whitehorn_insides_veined_marble",
+      "Build_whitehorn_insides_water_pool",
+      "Build_whitehorn_insides_whitehorn_silver",
+      "Build_whitehorn_insides_woven_cloth",
+      "Walk_cobble_paving",
+      "Walk_glacier_ice",
+      "Walk_rubble_stone",
+      "Walk_snow_pack",
+      "Walk_timber_grey",
+      "Walk_veined_marble"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "source/build_interiors.py",
+      "role": "reproducible-build",
+      "seed": 20260901
+    },
+    {
+      "id": "plan",
+      "file": "source/interiors_temple.py",
+      "role": "region-owned interior composition"
+    },
+    {
+      "id": "anchor",
+      "landmark": "whitehorn-glacier-temple",
+      "position": [
+        102.0,
+        70.45,
+        -309.0
+      ],
+      "role": "surface entrance on the Whitehorn Range region map"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the shared Nymara toolkit and this region's own kit.py; no scattered placement",
+    "textures": "procedural, from _toolkit/amberwood/textures.py",
+    "thirdParty": "none"
+  },
+  "notes": [
+    "Four insides on one map with unwalkable void between them, in the Eternal Lands manner: one GLB, one collision grid and one server map key, entered at a different arrival depending on which surface door was used.",
+    "The void is not drawn. The collision grid is built only where a Walk_ surface exists, so the gutters are blocked already, and nothing is rendered in them - walking off a section's edge finds no floor and no geometry.",
+    "Section offsets keep at least 20 m of nothing between any two, checked at build time."
+  ],
+  "productionStatus": "authored-geometry-materials-population",
+  "knownLimitations": []
+}

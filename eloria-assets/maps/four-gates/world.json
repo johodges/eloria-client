@@ -2649,16 +2649,16 @@
     ]
   },
   "performance": {
-    "bytes": 23620808,
+    "bytes": 23503256,
     "nodes": 3073,
     "meshes": 161,
-    "materials": 30,
-    "textures": 91,
+    "materials": 31,
+    "textures": 95,
     "animations": 7,
-    "uniqueTriangles": 189551,
+    "uniqueTriangles": 184175,
     "instances": 3028,
-    "visibleTriangles": 817371,
-    "textureMemoryBytes": 110450005,
+    "visibleTriangles": 811995,
+    "textureMemoryBytes": 111848106,
     "collisionProxies": 428
   },
   "sources": [

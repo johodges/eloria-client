@@ -13,6 +13,9 @@ extends Control
 @onready var preview_viewport: SubViewport = $CreationPanel/Columns/CharacterPreview/Viewport
 @onready var preview_root: Node3D = %PreviewRoot
 @onready var preview_camera: Camera3D = %PreviewCamera
+@onready var preview_key_light: DirectionalLight3D = %KeyLight
+@onready var preview_fill_light: DirectionalLight3D = %FillLight
+@onready var preview_rim_light: DirectionalLight3D = %RimLight
 @onready var host_edit: LineEdit = %Host
 @onready var port_edit: SpinBox = %Port
 @onready var user_edit: LineEdit = %Username
@@ -39,13 +42,13 @@ var invasion_assistant_window
 var ambient_population: AmbientPopulation
 var map_light_root: Node3D
 @onready var main_viewport: SubViewport = $GameView/ViewportContainer/Viewport
-@onready var viewport_container: SubViewportContainer = $GameView/ViewportContainer
+@onready var viewport_container: TextureRect = $GameView/ViewportContainer
 @onready var map_viewport: SubViewport = %MapViewport
 @onready var map_camera: Camera3D = %MapCamera
 @onready var full_map_viewport: SubViewport = %FullMapViewport
 @onready var full_map_camera: Camera3D = %FullMapCamera
 @onready var minimap: TextureRect = %Minimap
-@onready var minimap_frame: PanelContainer = %MinimapFrame
+@onready var minimap_frame: Panel = %MinimapFrame
 @onready var full_map: Control = %FullMap
 @onready var map_image: TextureRect = %MapImage
 @onready var map_title: Label = %MapTitle
@@ -181,6 +184,8 @@ var map_light_root: Node3D
 @onready var settings_panel: PanelContainer = %SettingsPanel
 @onready var minimap_size: HSlider = %MinimapSize
 @onready var minimap_size_value: Label = %MinimapSizeValue
+@onready var ui_scale_slider: HSlider = %UiScale
+@onready var ui_scale_value: Label = %UiScaleValue
 @onready var equipment_side: OptionButton = %EquipmentSide
 @onready var minimap_north: Label = %North
 @onready var minimap_east: Label = %East
@@ -246,6 +251,7 @@ var _inventory_drag_offset := Vector2.ZERO
 var _inventory_resize_start_mouse := Vector2.ZERO
 var _inventory_resize_start_scale := 1.0
 var _equipment_side := "left"
+var _ui_scale := 1.0
 var _bulk_exclusions: Dictionary = {
 	"store": [false, false, false, false],
 	"drop": [false, false, false, false]}
@@ -310,6 +316,8 @@ const KEYBOARD_LOOKAHEAD_TILES := 4
 const KEYBOARD_REFRESH_MSEC := 360
 const GROUND_BAG_GET_ALL_TIMEOUT_MSEC := 1000
 const MINIMAP_DRAG_BORDER := 54.0
+const UI_SCALE_MIN := 0.5
+const UI_SCALE_MAX := 1.5
 # The minimap and the full map are extra renders of the whole 3D world through
 # their own cameras. Both used to redraw every frame, visible or not, which
 # tripled the client's raster and shadow cost for two top-down views that read
@@ -384,6 +392,7 @@ func _ready() -> void:
 	continent_button.pressed.connect(_show_continent_view)
 	current_map_button.pressed.connect(_show_current_map_view)
 	_bind_shared_world()
+	viewport_container.texture = main_viewport.get_texture()
 	minimap.texture = map_viewport.get_texture()
 	map_image.texture = full_map_viewport.get_texture()
 	full_map.hide()
@@ -454,6 +463,7 @@ func _ready() -> void:
 			"GameView/ChatTabs/Channel%d" % (channel_index + 1)) as Button
 		channel_button.pressed.connect(_on_channel_tab_pressed.bind(channel_index))
 	minimap_size.value_changed.connect(_on_minimap_size_changed)
+	ui_scale_slider.value_changed.connect(_on_ui_scale_changed)
 	equipment_side.add_item("Left", 0)
 	equipment_side.add_item("Right", 1)
 	equipment_side.select(1 if _equipment_side == "right" else 0)
@@ -793,6 +803,30 @@ func _update_preview_camera() -> void:
 	preview_camera.position = focus + Vector3(sin(preview_yaw) * horizontal,
 		sin(preview_pitch) * preview_distance, cos(preview_yaw) * horizontal)
 	preview_camera.look_at(focus)
+	_update_preview_lights()
+
+## Modified 2026-08-28 for Eloria Client: the creation preview used to be lit by
+## one fixed shadow-casting sun in a viewport with no environment.  Whatever the
+## sun pointed away from rendered black, so the face was in shadow the moment
+## the panel opened and only the side the player rotated *away* from was ever
+## visible.  The rig now orbits with the camera - key over the viewer's
+## shoulder, fill opposite it, rim behind the model - on top of the ambient the
+## preview environment contributes, so no facing is ever unlit.
+func _update_preview_lights() -> void:
+	_aim_preview_light(preview_key_light, preview_yaw + 0.55,
+		clampf(preview_pitch + 0.50, 0.20, 1.10))
+	_aim_preview_light(preview_fill_light, preview_yaw - 1.95, 0.22)
+	_aim_preview_light(preview_rim_light, preview_yaw + PI, 0.42)
+
+func _aim_preview_light(light: DirectionalLight3D, yaw: float, pitch: float) -> void:
+	# A DirectionalLight3D shines down its own -Z, so aiming it at the focus
+	# from a point on the orbit is the same as choosing a light direction.
+	if light == null:
+		return
+	var horizontal: float = cos(pitch)
+	var source := Vector3(sin(yaw) * horizontal, sin(pitch), cos(yaw) * horizontal)
+	light.look_at_from_position(source * 4.0 + Vector3(0.0, 1.0, 0.0),
+		Vector3(0.0, 1.0, 0.0), Vector3.UP)
 
 func _on_login_pressed() -> void:
 	if AppState.authenticated:
@@ -2591,6 +2625,8 @@ func _load_hud_settings() -> void:
 	if config.load(SETTINGS_PATH) == OK:
 		_minimap_scale = clampf(float(config.get_value(
 			"hud", "minimap_scale", 1.0)), 0.75, 1.75)
+		_ui_scale = clampf(float(config.get_value(
+			"hud", "ui_scale", 1.0)), UI_SCALE_MIN, UI_SCALE_MAX)
 		_minimap_orientation = str(config.get_value(
 			"hud", "minimap_orientation", "north_up"))
 		if _minimap_orientation not in ["north_up", "player_up", "viewport_up"]:
@@ -2620,8 +2656,26 @@ func _load_hud_settings() -> void:
 		if counters_value is Dictionary:
 			_total_counters = (counters_value as Dictionary).duplicate(true)
 	minimap_size.set_value_no_signal(_minimap_scale)
+	ui_scale_slider.set_value_no_signal(_ui_scale)
+	_apply_ui_scale()
 	_apply_minimap_scale()
 	_apply_inventory_scale(_inventory_scale)
+
+func _on_ui_scale_changed(value: float) -> void:
+	_ui_scale = clampf(value, UI_SCALE_MIN, UI_SCALE_MAX)
+	_apply_ui_scale()
+	_save_hud_settings()
+
+## The window already scales the HUD with its size; this factor rides on top of
+## that so players can trade HUD size for screen space. It only moves the canvas
+## the HUD is laid out in - the world render target is resized to match in
+## _on_window_size_changed(), so the world always renders at window resolution.
+func _apply_ui_scale() -> void:
+	var window: Window = get_window()
+	if window != null:
+		window.content_scale_factor = _ui_scale
+	ui_scale_value.text = "%d%%" % roundi(_ui_scale * 100.0)
+	_on_window_size_changed()
 
 func _on_minimap_size_changed(value: float) -> void:
 	_minimap_scale = clampf(value, 0.75, 1.75)
@@ -2632,6 +2686,7 @@ func _save_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	config.load(SETTINGS_PATH)
 	config.set_value("hud", "minimap_scale", _minimap_scale)
+	config.set_value("hud", "ui_scale", _ui_scale)
 	config.set_value("hud", "minimap_orientation", _minimap_orientation)
 	config.set_value("hud", "minimap_position", minimap_frame.position)
 	config.set_value("inventory", "window_scale", _inventory_scale)
@@ -3210,9 +3265,15 @@ func _on_floating_feedback_requested(feedback: Dictionary) -> void:
 
 func _on_window_size_changed() -> void:
 	# Match the render viewport to the actual drawable area so resizing changes
-	# camera aspect instead of stretching a fixed 16:9 render target.
-	var target_size := Vector2i(maxi(1, roundi(viewport_container.size.x)),
-		maxi(1, roundi(viewport_container.size.y)))
+	# camera aspect instead of stretching a fixed 16:9 render target. The
+	# container reports canvas units, which the content-scale system multiplies
+	# onto the screen; rendering at that size would pin the world to the 1280x720
+	# design resolution and upscale it, so the scale factor is applied here to
+	# render at the window's true pixel size.
+	var render_scale: Vector2 = get_viewport().get_final_transform().get_scale()
+	var target_size := Vector2i(
+		maxi(1, roundi(viewport_container.size.x * maxf(render_scale.x, 0.01))),
+		maxi(1, roundi(viewport_container.size.y * maxf(render_scale.y, 0.01))))
 	if main_viewport.size != target_size:
 		main_viewport.size = target_size
 

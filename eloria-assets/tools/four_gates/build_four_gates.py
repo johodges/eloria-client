@@ -56,6 +56,7 @@ COORDINATE_TRANSFORM = {
 WALL_R = T.WALL_RADIUS
 GATE_R = WALL_R
 PLATEAU_Y = T.PLATEAU_Y
+PLAZA_LIFT = 0.06           # paving carried clear of the plateau surface
 WATER_Y = T.WATER_Y
 CAUSEWAY_Y = T.CAUSEWAY_Y
 
@@ -108,6 +109,21 @@ class WorldBuild:
     def ground(self, x: float, z: float) -> float:
         return float(self.field.height(np.array([float(x)]), np.array([float(z)]))[0])
 
+    def plaza_surface(self, x: float, z: float) -> float:
+        """Top of the plaza paving under a point, for standing dressing on it.
+
+        Plaza dressing used to be hung off a flat PLATEAU_Y + 0.96, which is
+        neither the apron nor the terrace nor the ground beyond the disc, so
+        every bench, statue, planter and lamp floated 0.5 to 1.0 m in the air.
+        """
+        radius = math.hypot(x, z)
+        if radius > layout.PLAZA_RADIUS:
+            return self.ground(x, z)
+        surface = PLATEAU_Y + PLAZA_LIFT
+        if radius <= layout.PLAZA_RADIUS * landmarks.PLAZA_TERRACE_FRACTION:
+            surface += landmarks.PLAZA_TERRACE_RISE
+        return surface
+
     def collider(self, name: str, x: float, z: float, sx: float, sy: float,
                  sz: float, yaw: float = 0.0, y: Optional[float] = None) -> None:
         """Add an inset box proxy fully enclosed by its parent geometry."""
@@ -145,8 +161,15 @@ class WorldBuild:
 
     # -------------------------------------------------------------------- roads
     def build_roads(self) -> None:
-        lift = 0.06
+        # Carriageways cross one another, so each class gets its own datum: the
+        # radials and diagonals run just under the plaza apron, which covers
+        # their inner ends, and the ring roads pass just over them.  Authoring
+        # every surface at one height left the plaza, the four avenues and the
+        # rings exactly coplanar wherever they met, and they z-fought.
+        lift = PLAZA_LIFT
         y = PLATEAU_Y + lift
+        radial_y = y - 0.03
+        ring_y = y + 0.03
 
         plaza = self.scene.mesh("Plaza_Disc_Mesh",
                                 landmarks.plaza_disc(self.p, layout.PLAZA_RADIUS),
@@ -155,15 +178,18 @@ class WorldBuild:
 
         for index, radius in enumerate(layout.RING_ROADS):
             band = M.ring_band(radius - layout.RING_HALF, radius + layout.RING_HALF,
-                               192, lambda x, z: y, self.mats["paving_road"], 1.0)
+                               192, lambda x, z: ring_y, self.mats["paving_road"], 1.0)
             mesh = self.scene.mesh(f"Road_Ring_Mesh_{index}", band)
             self.add("Roads", self.scene.instance(f"Road_Ring_{index}", mesh))
 
+        # The avenues stop a little inside the plaza rim so the paving mandala
+        # covers their ends without a gap; they never reach the centre, so the
+        # four of them no longer overlap each other there either.
         for angle in layout.CARDINALS:
             name = CARDINAL_NAMES[angle if angle <= math.pi else angle - TAU]
             pts = [(math.cos(angle) * r, math.sin(angle) * r)
-                   for r in np.linspace(0.0, WALL_R + 26.0, 40)]
-            strip = M.quad_strip(pts, layout.AVENUE_HALF * 2.0, lambda x, z: y,
+                   for r in np.linspace(layout.PLAZA_RADIUS - 4.0, WALL_R + 26.0, 40)]
+            strip = M.quad_strip(pts, layout.AVENUE_HALF * 2.0, lambda x, z: radial_y,
                                  self.mats["paving_ceremonial"], 1.0)
             # map the inlay bands across the carriageway, repeating along it
             span = layout.AVENUE_HALF * 2.0
@@ -178,7 +204,8 @@ class WorldBuild:
         for index, angle in enumerate(layout.DIAGONALS):
             pts = [(math.cos(angle) * r, math.sin(angle) * r)
                    for r in np.linspace(layout.PLAZA_RADIUS - 4.0, WALL_R - 8.0, 24)]
-            strip = M.quad_strip(pts, layout.STREET_HALF * 2.0, lambda x, z: y,
+            strip = M.quad_strip(pts, layout.STREET_HALF * 2.0,
+                                 lambda x, z: radial_y,
                                  self.mats["paving_road"], 1.0)
             mesh = self.scene.mesh(f"Road_Diagonal_Mesh_{index}", strip)
             self.add("Roads", self.scene.instance(f"Road_Diagonal_{index}", mesh))
@@ -328,13 +355,14 @@ class WorldBuild:
                                    lambda: landmarks.plaza_monument(self.p))
         crystal = self.scene.mesh("Plaza_Crystal_Mesh",
                                   lambda: landmarks.plaza_crystal(self.p))
+        monument_y = self.plaza_surface(0.0, 0.0)
         self.add("Plaza", self.scene.instance("Plaza_Monument", monument,
-                                              (0.0, PLATEAU_Y + 0.9, 0.0)))
+                                              (0.0, monument_y, 0.0)))
         crystal_node = self.scene.instance("Plaza_Monument_Crystal", crystal,
-                                           (0.0, PLATEAU_Y + 0.9 + 60.0, 0.0))
+                                           (0.0, monument_y + 60.0, 0.0))
         self.add("Plaza", crystal_node)
         self.collider("Plaza_Monument", 0.0, 0.0, 19.0, 14.0, 19.0,
-                      y=PLATEAU_Y + 0.9)
+                      y=monument_y)
         times = np.array([0.0, 1.6, 3.2], dtype=np.float32)
         values = np.array([[1, 1, 1], [1.14, 1.2, 1.14], [1, 1, 1]], dtype=np.float32)
         self.animations.append({
@@ -354,31 +382,38 @@ class WorldBuild:
             r = 52.0
             self.add("Plaza", self.scene.instance(
                 f"Plaza_Fountain_{i}", fountain,
-                (math.cos(a) * r, PLATEAU_Y + 0.96, math.sin(a) * r)))
+                (math.cos(a) * r, self.plaza_surface(math.cos(a) * r, math.sin(a) * r),
+                 math.sin(a) * r)))
         for i in range(8):
             a = TAU * i / 8 + math.pi / 8
             r = 68.0
             self.add("Plaza", self.scene.instance(
                 f"Plaza_Statue_{i}", statue,
-                (math.cos(a) * r, PLATEAU_Y + 0.96, math.sin(a) * r), _yaw_for(a)))
+                (math.cos(a) * r, self.plaza_surface(math.cos(a) * r, math.sin(a) * r),
+                 math.sin(a) * r),
+                _yaw_for(a)))
         for i in range(24):
             a = TAU * i / 24
             r = 40.0
             self.add("Plaza", self.scene.instance(
                 f"Plaza_Bench_{i:02d}", bench,
-                (math.cos(a) * r, PLATEAU_Y + 1.42, math.sin(a) * r), _yaw_for(a)))
+                (math.cos(a) * r, self.plaza_surface(math.cos(a) * r, math.sin(a) * r),
+                 math.sin(a) * r),
+                _yaw_for(a)))
         for i in range(16):
             a = TAU * i / 16 + 0.2
             r = 76.0
             self.add("Plaza", self.scene.instance(
                 f"Plaza_Planter_{i:02d}", planter,
-                (math.cos(a) * r, PLATEAU_Y + 0.96, math.sin(a) * r)))
+                (math.cos(a) * r, self.plaza_surface(math.cos(a) * r, math.sin(a) * r),
+                 math.sin(a) * r)))
         for i in range(16):
             a = TAU * i / 16 + 0.1
             r = layout.PLAZA_RADIUS - 3.0
             self.add("Plaza", self.scene.instance(
                 f"Plaza_Lamp_{i:02d}", lamp,
-                (math.cos(a) * r, PLATEAU_Y + 0.96, math.sin(a) * r)))
+                (math.cos(a) * r, self.plaza_surface(math.cos(a) * r, math.sin(a) * r),
+                 math.sin(a) * r)))
 
         # arcaded porticos enclosing the plaza between the four avenues
         arcade_radius = layout.PLAZA_RADIUS + 20.0

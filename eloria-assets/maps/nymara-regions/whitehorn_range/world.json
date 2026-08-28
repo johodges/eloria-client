@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.1.0",
+  "assetVersion": "1.0.0",
   "asset": {
     "id": "whitehorn_range",
     "name": "Whitehorn Range",
@@ -18,776 +18,1898 @@
     ],
     "bounds": {
       "min": [
-        -96,
-        0.0,
-        -96
+        -204.0,
+        -37.75,
+        -431.0
       ],
       "max": [
-        96,
-        18.0,
-        96
+        432.0,
+        180.07,
+        205.0
       ]
-    }
+    },
+    "playableBounds": {
+      "min": [
+        -174.0,
+        -37.75,
+        -401.0
+      ],
+      "max": [
+        401.0,
+        180.07,
+        174.0
+      ]
+    },
+    "seaLevel": null,
+    "valleyFloor": 6.0,
+    "serverCells": 576
   },
-  "source": {
-    "elm": "../source-elm/whitehorn_range.elm",
-    "sha256": "f6990070514b07b759a9f56fd2387899161f5b055b855434ccfb87f555d21600",
-    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
-    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
-  },
-  "conceptArt": {
-    "macro": "../../../concepts/nymara-regions/whitehorn_range_region_concept.png",
-    "detailBoard": "references/00-concept-detail-board.png",
-    "panelGrid": [
-      5,
-      2
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      174.0,
+      174.0
     ],
-    "viewCount": 10,
-    "generator": "OpenAI ImageGen (built-in)",
-    "checkpoints": [
-      {
-        "panel": 1,
-        "id": "concept-01",
-        "subject": "glacial approach",
-        "cameraPosition": [
-          0.0,
-          20.0,
-          -72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 2,
-        "id": "concept-02",
-        "subject": "monastery court",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_whitehorn_monastery_013"
-        ]
-      },
-      {
-        "panel": 3,
-        "id": "concept-03",
-        "subject": "rope bridge",
-        "cameraPosition": [
-          68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_whitehorn_rope_bridge_020",
-          "Landmark_whitehorn_rope_bridge_021",
-          "Landmark_whitehorn_rope_bridge_022"
-        ]
-      },
-      {
-        "panel": 4,
-        "id": "concept-04",
-        "subject": "glacier shrine",
-        "cameraPosition": [
-          68.48,
-          20.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_whitehorn_glacier_014",
-          "Landmark_whitehorn_glacier_015",
-          "Landmark_whitehorn_glacier_016"
-        ]
-      },
-      {
-        "panel": 5,
-        "id": "concept-05",
-        "subject": "cairn path",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_whitehorn_cairn_031",
-          "Landmark_whitehorn_cairn_032",
-          "Landmark_whitehorn_cairn_033"
-        ]
-      },
-      {
-        "panel": 6,
-        "id": "concept-06",
-        "subject": "ice cave",
-        "cameraPosition": [
-          0.0,
-          16.0,
-          72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_whitehorn_ice_cave_041",
-          "Landmark_whitehorn_ice_cave_042",
-          "Landmark_whitehorn_ice_cave_043"
-        ]
-      },
-      {
-        "panel": 7,
-        "id": "concept-07",
-        "subject": "silver mine",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_whitehorn_mine_entrance_045",
-          "Landmark_whitehorn_mine_entrance_046",
-          "Landmark_whitehorn_mine_entrance_047"
-        ]
-      },
-      {
-        "panel": 8,
-        "id": "concept-08",
-        "subject": "frozen waterfall",
-        "cameraPosition": [
-          -68.48,
-          24.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 9,
-        "id": "concept-09",
-        "subject": "ridge panorama",
-        "cameraPosition": [
-          -68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_whitehorn_rope_bridge_020",
-          "Landmark_whitehorn_rope_bridge_021",
-          "Landmark_whitehorn_rope_bridge_022"
-        ]
-      },
-      {
-        "panel": 10,
-        "id": "concept-10",
-        "subject": "ice granite rope materials",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_whitehorn_rope_bridge_020",
-          "Landmark_whitehorn_rope_bridge_021",
-          "Landmark_whitehorn_rope_bridge_022"
-        ]
-      }
-    ]
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 17.59,
+    "invertServerY": true
   },
-  "landmarks": [
-    {
-      "id": "landmark-000",
-      "name": "Grey Moor Peat Fence",
-      "node": "Landmark_grey_moor_peat_fence_000",
-      "position": [
-        -34.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-001",
-      "name": "Westhaven Seawall",
-      "node": "Landmark_westhaven_seawall_001",
-      "position": [
-        -12.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-002",
-      "name": "Amethyst Storm Ruin",
-      "node": "Landmark_amethyst_storm_ruin_002",
-      "position": [
-        10.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-003",
-      "name": "Amberwood Tree",
-      "node": "Landmark_amberwood_tree_003",
-      "position": [
-        32.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-004",
-      "name": "Westhaven Fish Market",
-      "node": "Landmark_westhaven_fish_market_004",
-      "position": [
-        -34.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-005",
-      "name": "Ssarathi Archive Waystone",
-      "node": "Landmark_ssarathi_archive_waystone_005",
-      "position": [
-        -12.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-006",
-      "name": "Mirrorhold Canal Wall",
-      "node": "Landmark_mirrorhold_canal_wall_006",
-      "position": [
-        10.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-007",
-      "name": "Sunmane Caravanserai",
-      "node": "Landmark_sunmane_caravanserai_007",
-      "position": [
-        32.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-008",
-      "name": "Manymouth Fishing Trap",
-      "node": "Landmark_manymouth_fishing_trap_008",
-      "position": [
-        -34.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-009",
-      "name": "Orun Round Tent",
-      "node": "Landmark_orun_round_tent_009",
-      "position": [
-        -12.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-010",
-      "name": "Manymouth Market Stall",
-      "node": "Landmark_manymouth_market_stall_010",
-      "position": [
-        10.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-011",
-      "name": "Crownwater Submerged Waystone",
-      "node": "Landmark_crownwater_submerged_waystone_011",
-      "position": [
-        32.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-013",
-      "name": "Whitehorn Monastery",
-      "node": "Landmark_whitehorn_monastery_013",
-      "position": [
-        0.0,
-        0,
-        30.0
-      ]
-    },
-    {
-      "id": "landmark-014",
-      "name": "Whitehorn Glacier",
-      "node": "Landmark_whitehorn_glacier_014",
-      "position": [
-        0.0,
-        0,
-        16.0
-      ]
-    },
-    {
-      "id": "landmark-015",
-      "name": "Whitehorn Glacier",
-      "node": "Landmark_whitehorn_glacier_015",
-      "position": [
-        -6.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-016",
-      "name": "Whitehorn Glacier",
-      "node": "Landmark_whitehorn_glacier_016",
-      "position": [
-        6.0,
-        0,
-        -8.0
-      ]
-    },
-    {
-      "id": "landmark-017",
-      "name": "Whitehorn Glacier",
-      "node": "Landmark_whitehorn_glacier_017",
-      "position": [
-        -4.0,
-        0,
-        -20.0
-      ]
-    },
-    {
-      "id": "landmark-018",
-      "name": "Whitehorn Glacier",
-      "node": "Landmark_whitehorn_glacier_018",
-      "position": [
-        4.0,
-        0,
-        -32.0
-      ]
-    },
-    {
-      "id": "landmark-019",
-      "name": "Whitehorn Glacier",
-      "node": "Landmark_whitehorn_glacier_019",
-      "position": [
-        0.0,
-        0,
-        -44.0
-      ]
-    },
-    {
-      "id": "landmark-020",
-      "name": "Whitehorn Rope Bridge",
-      "node": "Landmark_whitehorn_rope_bridge_020",
-      "position": [
-        0.0,
-        0,
-        8.0
-      ]
-    },
-    {
-      "id": "landmark-021",
-      "name": "Whitehorn Rope Bridge",
-      "node": "Landmark_whitehorn_rope_bridge_021",
-      "position": [
-        -12.0,
-        0,
-        -6.0
-      ]
-    },
-    {
-      "id": "landmark-022",
-      "name": "Whitehorn Rope Bridge",
-      "node": "Landmark_whitehorn_rope_bridge_022",
-      "position": [
-        12.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-023",
-      "name": "Whitehorn Rope Bridge",
-      "node": "Landmark_whitehorn_rope_bridge_023",
-      "position": [
-        -10.0,
-        0,
-        -30.0
-      ]
-    },
-    {
-      "id": "landmark-024",
-      "name": "Whitehorn Rope Bridge",
-      "node": "Landmark_whitehorn_rope_bridge_024",
-      "position": [
-        10.0,
-        0,
-        -40.0
-      ]
-    },
-    {
-      "id": "landmark-025",
-      "name": "Whitehorn Shrine",
-      "node": "Landmark_whitehorn_shrine_025",
-      "position": [
-        -16.0,
-        0,
-        20.0
-      ]
-    },
-    {
-      "id": "landmark-026",
-      "name": "Whitehorn Shrine",
-      "node": "Landmark_whitehorn_shrine_026",
-      "position": [
-        16.0,
-        0,
-        20.0
-      ]
-    },
-    {
-      "id": "landmark-027",
-      "name": "Whitehorn Shrine",
-      "node": "Landmark_whitehorn_shrine_027",
-      "position": [
-        -20.0,
-        0,
-        -4.0
-      ]
-    },
-    {
-      "id": "landmark-028",
-      "name": "Whitehorn Shrine",
-      "node": "Landmark_whitehorn_shrine_028",
-      "position": [
-        20.0,
-        0,
-        -4.0
-      ]
-    },
-    {
-      "id": "landmark-029",
-      "name": "Whitehorn Shrine",
-      "node": "Landmark_whitehorn_shrine_029",
-      "position": [
-        -16.0,
-        0,
-        -34.0
-      ]
-    },
-    {
-      "id": "landmark-030",
-      "name": "Whitehorn Shrine",
-      "node": "Landmark_whitehorn_shrine_030",
-      "position": [
-        16.0,
-        0,
-        -34.0
-      ]
-    },
-    {
-      "id": "landmark-031",
-      "name": "Whitehorn Cairn",
-      "node": "Landmark_whitehorn_cairn_031",
-      "position": [
-        -28.0,
-        0,
-        26.0
-      ]
-    },
-    {
-      "id": "landmark-032",
-      "name": "Whitehorn Cairn",
-      "node": "Landmark_whitehorn_cairn_032",
-      "position": [
-        28.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-033",
-      "name": "Whitehorn Cairn",
-      "node": "Landmark_whitehorn_cairn_033",
-      "position": [
-        -32.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-034",
-      "name": "Whitehorn Cairn",
-      "node": "Landmark_whitehorn_cairn_034",
-      "position": [
-        32.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-035",
-      "name": "Whitehorn Cairn",
-      "node": "Landmark_whitehorn_cairn_035",
-      "position": [
-        -28.0,
-        0,
-        -20.0
-      ]
-    },
-    {
-      "id": "landmark-036",
-      "name": "Whitehorn Cairn",
-      "node": "Landmark_whitehorn_cairn_036",
-      "position": [
-        28.0,
-        0,
-        -22.0
-      ]
-    },
-    {
-      "id": "landmark-037",
-      "name": "Whitehorn Cairn",
-      "node": "Landmark_whitehorn_cairn_037",
-      "position": [
-        -22.0,
-        0,
-        -46.0
-      ]
-    },
-    {
-      "id": "landmark-038",
-      "name": "Whitehorn Cairn",
-      "node": "Landmark_whitehorn_cairn_038",
-      "position": [
-        22.0,
-        0,
-        -46.0
-      ]
-    },
-    {
-      "id": "landmark-039",
-      "name": "Whitehorn Cairn",
-      "node": "Landmark_whitehorn_cairn_039",
-      "position": [
-        -10.0,
-        0,
-        -58.0
-      ]
-    },
-    {
-      "id": "landmark-040",
-      "name": "Whitehorn Cairn",
-      "node": "Landmark_whitehorn_cairn_040",
-      "position": [
-        10.0,
-        0,
-        -58.0
-      ]
-    },
-    {
-      "id": "landmark-041",
-      "name": "Whitehorn Ice Cave",
-      "node": "Landmark_whitehorn_ice_cave_041",
-      "position": [
-        -34.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-042",
-      "name": "Whitehorn Ice Cave",
-      "node": "Landmark_whitehorn_ice_cave_042",
-      "position": [
-        34.0,
-        0,
-        -18.0
-      ]
-    },
-    {
-      "id": "landmark-043",
-      "name": "Whitehorn Ice Cave",
-      "node": "Landmark_whitehorn_ice_cave_043",
-      "position": [
-        -24.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-044",
-      "name": "Whitehorn Ice Cave",
-      "node": "Landmark_whitehorn_ice_cave_044",
-      "position": [
-        24.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-045",
-      "name": "Whitehorn Mine Entrance",
-      "node": "Landmark_whitehorn_mine_entrance_045",
-      "position": [
-        -32.0,
-        0,
-        16.0
-      ]
-    },
-    {
-      "id": "landmark-046",
-      "name": "Whitehorn Mine Entrance",
-      "node": "Landmark_whitehorn_mine_entrance_046",
-      "position": [
-        32.0,
-        0,
-        14.0
-      ]
-    },
-    {
-      "id": "landmark-047",
-      "name": "Whitehorn Mine Entrance",
-      "node": "Landmark_whitehorn_mine_entrance_047",
-      "position": [
-        0.0,
-        0,
-        -60.0
-      ]
-    }
-  ],
   "spawnPoints": [
     {
-      "id": "default",
+      "id": "whitehorn-arrival",
+      "name": "Whitehorn Arrival",
       "position": [
-        0,
-        1,
-        0
+        0.0,
+        17.59,
+        0.0
       ],
-      "rotationDegrees": 180
+      "rotationY": 0.0,
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-temple",
+      "name": "Glacier Temple Forecourt",
+      "position": [
+        102.0,
+        54.06,
+        -264.0
+      ],
+      "rotationY": 0.0,
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-mine",
+      "name": "Mine Yard",
+      "position": [
+        267.0,
+        49.66,
+        -114.0
+      ],
+      "rotationY": 0.0,
+      "authority": "server"
     }
   ],
   "collision": {
     "nodeNames": [
-      "Landmark_grey_moor_peat_fence_000",
-      "Landmark_westhaven_seawall_001",
-      "Landmark_amethyst_storm_ruin_002",
-      "Landmark_amberwood_tree_003",
-      "Landmark_westhaven_fish_market_004",
-      "Landmark_ssarathi_archive_waystone_005",
-      "Landmark_mirrorhold_canal_wall_006",
-      "Landmark_sunmane_caravanserai_007",
-      "Landmark_manymouth_fishing_trap_008",
-      "Landmark_orun_round_tent_009",
-      "Landmark_manymouth_market_stall_010",
-      "Landmark_crownwater_submerged_waystone_011",
-      "Landmark_whitehorn_monastery_013",
-      "Landmark_whitehorn_glacier_014",
-      "Landmark_whitehorn_glacier_015",
-      "Landmark_whitehorn_glacier_016",
-      "Landmark_whitehorn_glacier_017",
-      "Landmark_whitehorn_glacier_018",
-      "Landmark_whitehorn_glacier_019",
-      "Landmark_whitehorn_rope_bridge_020",
-      "Landmark_whitehorn_rope_bridge_021",
-      "Landmark_whitehorn_rope_bridge_022",
-      "Landmark_whitehorn_rope_bridge_023",
-      "Landmark_whitehorn_rope_bridge_024",
-      "Landmark_whitehorn_shrine_025",
-      "Landmark_whitehorn_shrine_026",
-      "Landmark_whitehorn_shrine_027",
-      "Landmark_whitehorn_shrine_028",
-      "Landmark_whitehorn_shrine_029",
-      "Landmark_whitehorn_shrine_030",
-      "Landmark_whitehorn_cairn_031",
-      "Landmark_whitehorn_cairn_032",
-      "Landmark_whitehorn_cairn_033",
-      "Landmark_whitehorn_cairn_034",
-      "Landmark_whitehorn_cairn_035",
-      "Landmark_whitehorn_cairn_036",
-      "Landmark_whitehorn_cairn_037",
-      "Landmark_whitehorn_cairn_038",
-      "Landmark_whitehorn_cairn_039",
-      "Landmark_whitehorn_cairn_040",
-      "Landmark_whitehorn_ice_cave_041",
-      "Landmark_whitehorn_ice_cave_042",
-      "Landmark_whitehorn_ice_cave_043",
-      "Landmark_whitehorn_ice_cave_044",
-      "Landmark_whitehorn_mine_entrance_045",
-      "Landmark_whitehorn_mine_entrance_046",
-      "Landmark_whitehorn_mine_entrance_047"
-    ]
+      "Landmark_frozen_cascade_00",
+      "Landmark_frozen_cascade_01",
+      "Landmark_glacier_temple",
+      "Landmark_ice_cave",
+      "Landmark_mine_portal",
+      "Landmark_shrine_00",
+      "Landmark_shrine_01",
+      "Landmark_shrine_02",
+      "Landmark_south_gate",
+      "Prop_waystone_000",
+      "Prop_waystone_001",
+      "Prop_waystone_002",
+      "Prop_waystone_003",
+      "Prop_waystone_004",
+      "Prop_waystone_005",
+      "Prop_waystone_006",
+      "Prop_waystone_007",
+      "Prop_waystone_008",
+      "Prop_waystone_009",
+      "Prop_waystone_010",
+      "Prop_waystone_011",
+      "Prop_waystone_012",
+      "Prop_waystone_013",
+      "Prop_waystone_014",
+      "Prop_waystone_015",
+      "Prop_waystone_016",
+      "Structure_watch_00",
+      "Structure_watch_01",
+      "Structure_watch_02",
+      "Tree_pine_0000",
+      "Tree_pine_0001",
+      "Tree_pine_0002",
+      "Tree_pine_0003",
+      "Tree_pine_0004",
+      "Tree_pine_0005",
+      "Tree_pine_0006",
+      "Tree_pine_0007",
+      "Tree_pine_0008",
+      "Tree_pine_0009",
+      "Tree_pine_0010",
+      "Tree_pine_0011",
+      "Tree_pine_0012",
+      "Tree_pine_0013",
+      "Tree_pine_0014",
+      "Tree_pine_0015",
+      "Tree_pine_0016",
+      "Tree_pine_0017",
+      "Tree_pine_0018",
+      "Tree_pine_0019",
+      "Tree_pine_0020",
+      "Tree_pine_0021",
+      "Tree_pine_0022",
+      "Tree_pine_0023",
+      "Tree_pine_0024",
+      "Tree_pine_0025",
+      "Tree_pine_0026",
+      "Tree_pine_0027",
+      "Tree_pine_0028",
+      "Tree_pine_0029",
+      "Tree_pine_0030",
+      "Tree_pine_0031",
+      "Tree_pine_0032",
+      "Tree_pine_0033",
+      "Tree_pine_0034",
+      "Tree_pine_0035",
+      "Tree_pine_0036",
+      "Tree_pine_0037",
+      "Tree_pine_0038",
+      "Tree_pine_0039",
+      "Tree_pine_0040",
+      "Tree_pine_0041",
+      "Tree_pine_0042",
+      "Tree_pine_0043",
+      "Tree_pine_0044",
+      "Tree_pine_0045",
+      "Tree_pine_0046",
+      "Tree_pine_0047",
+      "Tree_pine_0048",
+      "Tree_pine_0049",
+      "Tree_pine_0050",
+      "Tree_pine_0051",
+      "Tree_pine_0052",
+      "Tree_pine_0053",
+      "Tree_pine_0054",
+      "Tree_pine_0055",
+      "Tree_pine_0056",
+      "Tree_pine_0057",
+      "Tree_pine_0058",
+      "Tree_pine_0059",
+      "Tree_pine_0060",
+      "Tree_pine_0061",
+      "Tree_pine_0062",
+      "Tree_pine_0063",
+      "Tree_pine_0064",
+      "Tree_pine_0065",
+      "Tree_pine_0066",
+      "Tree_pine_0067",
+      "Tree_pine_0068",
+      "Tree_pine_0069",
+      "Tree_pine_0070",
+      "Tree_pine_0071",
+      "Tree_pine_0072",
+      "Tree_pine_0073",
+      "Tree_pine_0074",
+      "Tree_pine_0075",
+      "Tree_pine_0076",
+      "Tree_pine_0077",
+      "Tree_pine_0078",
+      "Tree_pine_0079",
+      "Tree_pine_0080",
+      "Tree_pine_0081",
+      "Tree_pine_0082",
+      "Tree_pine_0083",
+      "Tree_pine_0084",
+      "Tree_pine_0085",
+      "Tree_pine_0086",
+      "Tree_pine_0087",
+      "Tree_pine_0088",
+      "Tree_pine_0089",
+      "Tree_pine_0090",
+      "Tree_pine_0091",
+      "Tree_pine_0092",
+      "Tree_pine_0093",
+      "Tree_pine_0094",
+      "Tree_pine_0095",
+      "Tree_pine_0096",
+      "Tree_pine_0097",
+      "Tree_pine_0098",
+      "Tree_pine_0099",
+      "Tree_pine_0100",
+      "Tree_pine_0101",
+      "Tree_pine_0102",
+      "Tree_pine_0103",
+      "Tree_pine_0104",
+      "Tree_pine_0105",
+      "Tree_pine_0106",
+      "Tree_pine_0107",
+      "Tree_pine_0108",
+      "Tree_pine_0109",
+      "Tree_pine_0110",
+      "Tree_pine_0111",
+      "Tree_pine_0112",
+      "Tree_pine_0113",
+      "Tree_pine_0114",
+      "Tree_pine_0115",
+      "Tree_pine_0116",
+      "Tree_pine_0117",
+      "Tree_pine_0118",
+      "Tree_pine_0119",
+      "Tree_pine_0120",
+      "Tree_pine_0121",
+      "Tree_pine_0122",
+      "Tree_pine_0123",
+      "Tree_pine_0124",
+      "Tree_pine_0125",
+      "Tree_pine_0126",
+      "Tree_pine_0127",
+      "Tree_pine_0128",
+      "Tree_pine_0129",
+      "Tree_pine_0130",
+      "Tree_pine_0131",
+      "Tree_pine_0132",
+      "Tree_pine_0133",
+      "Tree_pine_0134",
+      "Tree_pine_0135",
+      "Tree_pine_0136",
+      "Tree_pine_0137",
+      "Tree_pine_0138",
+      "Tree_pine_0139",
+      "Tree_pine_0140",
+      "Tree_pine_0141",
+      "Tree_pine_0142",
+      "Tree_pine_0143",
+      "Tree_pine_0144",
+      "Tree_pine_0145",
+      "Tree_pine_0146",
+      "Tree_pine_0147",
+      "Tree_pine_0148",
+      "Tree_pine_0149",
+      "Tree_pine_0150",
+      "Tree_pine_0151",
+      "Tree_pine_0152",
+      "Tree_pine_0153",
+      "Tree_pine_0154",
+      "Tree_pine_0155",
+      "Tree_pine_0156",
+      "Tree_pine_0157",
+      "Tree_pine_0158",
+      "Tree_pine_0159",
+      "Tree_pine_0160",
+      "Tree_pine_0161",
+      "Tree_pine_0162",
+      "Tree_pine_0163",
+      "Tree_pine_0164",
+      "Tree_pine_0165",
+      "Tree_pine_0166",
+      "Tree_pine_0167",
+      "Tree_pine_0168",
+      "Tree_pine_0169",
+      "Tree_pine_0170",
+      "Tree_pine_0171",
+      "Tree_pine_0172",
+      "Tree_pine_0173",
+      "Tree_pine_0174",
+      "Tree_pine_0175",
+      "Tree_pine_0176",
+      "Tree_pine_0177",
+      "Tree_pine_0178",
+      "Tree_pine_0179",
+      "Tree_pine_0180",
+      "Tree_pine_0181",
+      "Tree_pine_0182",
+      "Tree_pine_0183",
+      "Tree_pine_0184",
+      "Tree_pine_0185",
+      "Tree_pine_0186",
+      "Tree_pine_0187",
+      "Tree_pine_0188",
+      "Tree_pine_0189",
+      "Tree_pine_0190",
+      "Tree_pine_0191",
+      "Tree_pine_0192",
+      "Tree_pine_0193",
+      "Tree_pine_0194",
+      "Tree_pine_0195",
+      "Tree_pine_0196",
+      "Tree_pine_0197",
+      "Tree_pine_0198",
+      "Tree_pine_0199",
+      "Tree_pine_0200",
+      "Tree_pine_0201",
+      "Tree_pine_0202",
+      "Tree_pine_0203",
+      "Tree_pine_0204",
+      "Tree_pine_0205",
+      "Tree_pine_0206",
+      "Tree_pine_0207",
+      "Tree_pine_0208",
+      "Tree_pine_0209",
+      "Tree_pine_0210",
+      "Tree_pine_0211",
+      "Tree_pine_0212",
+      "Tree_pine_0213",
+      "Tree_pine_0214",
+      "Tree_pine_0215",
+      "Tree_pine_0216",
+      "Tree_pine_0217",
+      "Tree_pine_0218",
+      "Tree_pine_0219",
+      "Tree_pine_0220",
+      "Tree_pine_0221",
+      "Tree_pine_0222",
+      "Tree_pine_0223",
+      "Tree_pine_0224",
+      "Tree_pine_0225",
+      "Tree_pine_0226",
+      "Tree_pine_0227",
+      "Tree_pine_0228",
+      "Tree_pine_0229",
+      "Tree_pine_0230",
+      "Tree_pine_0231",
+      "Tree_pine_0232",
+      "Tree_pine_0233",
+      "Tree_pine_0234",
+      "Tree_pine_0235",
+      "Tree_pine_0236",
+      "Tree_pine_0237",
+      "Tree_pine_0238",
+      "Tree_pine_0239",
+      "Tree_pine_0240",
+      "Tree_pine_0241",
+      "Tree_pine_0242",
+      "Tree_pine_0243",
+      "Tree_pine_0244",
+      "Tree_pine_0245",
+      "Tree_pine_0246",
+      "Tree_pine_0247",
+      "Tree_pine_0248",
+      "Tree_pine_0249",
+      "Tree_pine_0250",
+      "Tree_pine_0251",
+      "Tree_pine_0252",
+      "Tree_pine_0253",
+      "Tree_pine_0254",
+      "Tree_pine_0255",
+      "Tree_pine_0256",
+      "Tree_pine_0257",
+      "Tree_pine_0258",
+      "Tree_pine_0259",
+      "Tree_pine_0260",
+      "Tree_pine_0261",
+      "Tree_pine_0262",
+      "Tree_pine_0263",
+      "Tree_pine_0264",
+      "Tree_pine_0265",
+      "Tree_pine_0266",
+      "Tree_pine_0267",
+      "Tree_pine_0268",
+      "Tree_pine_0269",
+      "Tree_pine_0270",
+      "Tree_pine_0271",
+      "Tree_pine_0272",
+      "Tree_pine_0273",
+      "Tree_pine_0274",
+      "Tree_pine_0275",
+      "Tree_pine_0276",
+      "Tree_pine_0277",
+      "Tree_pine_0278",
+      "Tree_pine_0279",
+      "Tree_pine_0280",
+      "Tree_pine_0281",
+      "Tree_pine_0282",
+      "Tree_pine_0283",
+      "Tree_pine_0284",
+      "Tree_pine_0285",
+      "Tree_pine_0286",
+      "Tree_pine_0287",
+      "Tree_pine_0288",
+      "Tree_pine_0289",
+      "Tree_pine_0290",
+      "Tree_pine_0291",
+      "Tree_pine_0292",
+      "Tree_pine_0293",
+      "Tree_pine_0294",
+      "Tree_pine_0295",
+      "Tree_pine_0296",
+      "Tree_pine_0297",
+      "Tree_pine_0298",
+      "Tree_pine_0299",
+      "Tree_pine_0300",
+      "Tree_pine_0301",
+      "Tree_pine_0302",
+      "Tree_pine_0303",
+      "Tree_pine_0304",
+      "Tree_pine_0305",
+      "Tree_pine_0306",
+      "Tree_pine_0307",
+      "Tree_pine_0308",
+      "Tree_pine_0309",
+      "Tree_pine_0310",
+      "Tree_pine_0311",
+      "Tree_pine_0312",
+      "Tree_pine_0313",
+      "Tree_pine_0314",
+      "Tree_pine_0315",
+      "Tree_pine_0316",
+      "Tree_pine_0317",
+      "Tree_pine_0318",
+      "Tree_pine_0319",
+      "Tree_pine_0320",
+      "Tree_pine_0321",
+      "Tree_pine_0322",
+      "Tree_pine_0323",
+      "Tree_pine_0324",
+      "Tree_pine_0325",
+      "Tree_pine_0326",
+      "Tree_pine_0327",
+      "Tree_pine_0328",
+      "Tree_pine_0329",
+      "Tree_pine_0330",
+      "Tree_pine_0331",
+      "Tree_pine_0332",
+      "Tree_pine_0333",
+      "Tree_pine_0334",
+      "Tree_pine_0335",
+      "Tree_pine_0336",
+      "Tree_pine_0337",
+      "Tree_pine_0338",
+      "Tree_pine_0339",
+      "Tree_pine_0340",
+      "Tree_pine_0341",
+      "Tree_pine_0342",
+      "Tree_pine_0343",
+      "Tree_pine_0344",
+      "Tree_pine_0345",
+      "Tree_pine_0346",
+      "Tree_pine_0347",
+      "Tree_pine_0348",
+      "Tree_pine_0349",
+      "Tree_pine_0350",
+      "Tree_pine_0351",
+      "Tree_pine_0352",
+      "Tree_pine_0353",
+      "Tree_pine_0354",
+      "Tree_pine_0355",
+      "Tree_pine_0356",
+      "Tree_pine_0357",
+      "Tree_pine_0358",
+      "Tree_pine_0359",
+      "Tree_pine_0360",
+      "Tree_pine_0361",
+      "Tree_pine_0362",
+      "Tree_pine_0363",
+      "Tree_pine_0364",
+      "Tree_pine_0365",
+      "Tree_pine_0366",
+      "Tree_pine_0367",
+      "Tree_pine_0368",
+      "Tree_pine_0369",
+      "Tree_pine_0370",
+      "Tree_pine_0371",
+      "Tree_pine_0372",
+      "Tree_pine_0373",
+      "Tree_pine_0374",
+      "Tree_pine_0375",
+      "Tree_pine_0376",
+      "Tree_pine_0377",
+      "Tree_pine_0378",
+      "Tree_pine_0379",
+      "Tree_pine_0380",
+      "Tree_pine_0381",
+      "Tree_pine_0382",
+      "Tree_pine_0383",
+      "Tree_pine_0384",
+      "Tree_pine_0385",
+      "Tree_pine_0386",
+      "Tree_pine_0387",
+      "Tree_pine_0388",
+      "Tree_pine_0389",
+      "Tree_pine_0390",
+      "Tree_pine_0391",
+      "Tree_pine_0392",
+      "Tree_pine_0393",
+      "Tree_pine_0394",
+      "Tree_pine_0395",
+      "Tree_pine_0396",
+      "Tree_pine_0397",
+      "Tree_pine_0398",
+      "Tree_pine_0399",
+      "Tree_pine_0400",
+      "Tree_pine_0401",
+      "Tree_pine_0402",
+      "Tree_pine_0403",
+      "Tree_pine_0404",
+      "Tree_pine_0405",
+      "Tree_pine_0406",
+      "Tree_pine_0407",
+      "Tree_pine_0408",
+      "Tree_pine_0409",
+      "Tree_pine_0410",
+      "Tree_pine_0411",
+      "Tree_pine_0412",
+      "Tree_pine_0413",
+      "Tree_pine_0414",
+      "Tree_pine_0415",
+      "Tree_pine_0416",
+      "Tree_pine_0417",
+      "Tree_pine_0418",
+      "Tree_pine_0419",
+      "Tree_pine_0420",
+      "Tree_pine_0421",
+      "Tree_pine_0422",
+      "Tree_pine_0423",
+      "Tree_pine_0424",
+      "Tree_pine_0425",
+      "Tree_pine_0426",
+      "Tree_pine_0427",
+      "Tree_pine_0428",
+      "Tree_pine_0429",
+      "Tree_pine_0430",
+      "Tree_pine_0431",
+      "Tree_pine_0432",
+      "Tree_pine_0433",
+      "Tree_pine_0434",
+      "Tree_pine_0435",
+      "Tree_pine_0436",
+      "Tree_pine_0437",
+      "Tree_pine_0438",
+      "Tree_pine_0439",
+      "Tree_pine_0440",
+      "Tree_pine_0441",
+      "Tree_pine_0442",
+      "Tree_pine_0443",
+      "Tree_pine_0444",
+      "Tree_pine_0445",
+      "Tree_pine_0446",
+      "Tree_pine_0447",
+      "Tree_pine_0448",
+      "Tree_pine_0449",
+      "Tree_pine_0450",
+      "Tree_pine_0451",
+      "Tree_pine_0452",
+      "Tree_pine_0453",
+      "Tree_pine_0454",
+      "Tree_pine_0455",
+      "Tree_pine_0456",
+      "Tree_pine_0457",
+      "Tree_pine_0458",
+      "Tree_pine_0459",
+      "Tree_pine_0460",
+      "Tree_pine_0461",
+      "Tree_pine_0462",
+      "Tree_pine_0463",
+      "Tree_pine_0464",
+      "Tree_pine_0465",
+      "Tree_pine_0466",
+      "Tree_pine_0467",
+      "Tree_pine_0468",
+      "Tree_pine_0469",
+      "Tree_pine_0470",
+      "Tree_pine_0471",
+      "Tree_pine_0472",
+      "Tree_pine_0473",
+      "Tree_pine_0474",
+      "Tree_pine_0475",
+      "Tree_pine_0476",
+      "Tree_pine_0477",
+      "Tree_pine_0478",
+      "Tree_pine_0479",
+      "Tree_pine_0480",
+      "Tree_pine_0481",
+      "Tree_pine_0482",
+      "Tree_pine_0483",
+      "Tree_pine_0484",
+      "Tree_pine_0485",
+      "Tree_pine_0486",
+      "Tree_pine_0487",
+      "Tree_pine_0488",
+      "Tree_pine_0489",
+      "Tree_pine_0490",
+      "Tree_pine_0491",
+      "Tree_pine_0492",
+      "Tree_pine_0493",
+      "Tree_pine_0494",
+      "Tree_pine_0495",
+      "Tree_pine_0496",
+      "Tree_pine_0497",
+      "Tree_pine_0498",
+      "Tree_pine_0499",
+      "Tree_pine_0500",
+      "Tree_pine_0501",
+      "Tree_pine_0502",
+      "Tree_pine_0503",
+      "Tree_pine_0504",
+      "Tree_pine_0505",
+      "Tree_pine_0506",
+      "Tree_pine_0507",
+      "Tree_pine_0508",
+      "Tree_pine_0509",
+      "Tree_pine_0510",
+      "Tree_pine_0511",
+      "Tree_pine_0512",
+      "Tree_pine_0513",
+      "Tree_pine_0514",
+      "Tree_pine_0515",
+      "Tree_pine_0516",
+      "Tree_pine_0517",
+      "Tree_pine_0518",
+      "Tree_pine_0519",
+      "Tree_pine_0520",
+      "Tree_pine_0521",
+      "Tree_pine_0522",
+      "Tree_pine_0523",
+      "Tree_pine_0524",
+      "Tree_pine_0525",
+      "Tree_pine_0526",
+      "Tree_pine_0527",
+      "Tree_pine_0528",
+      "Tree_pine_0529",
+      "Tree_pine_0530",
+      "Tree_pine_0531",
+      "Tree_pine_0532",
+      "Tree_pine_0533",
+      "Tree_pine_0534",
+      "Tree_pine_0535",
+      "Tree_pine_0536",
+      "Tree_pine_0537",
+      "Tree_pine_0538",
+      "Tree_pine_0539",
+      "Tree_pine_0540",
+      "Tree_pine_0541",
+      "Tree_pine_0542",
+      "Tree_pine_0543",
+      "Tree_pine_0544",
+      "Tree_pine_0545",
+      "Tree_pine_0546",
+      "Tree_pine_0547",
+      "Tree_pine_0548",
+      "Tree_pine_0549",
+      "Tree_pine_0550",
+      "Tree_pine_0551",
+      "Tree_pine_0552",
+      "Tree_pine_0553",
+      "Tree_pine_0554",
+      "Tree_pine_0555",
+      "Tree_pine_0556",
+      "Tree_pine_0557",
+      "Tree_pine_0558",
+      "Tree_pine_0559",
+      "Tree_pine_0560",
+      "Tree_pine_0561",
+      "Tree_pine_0562",
+      "Tree_pine_0563",
+      "Tree_pine_0564",
+      "Tree_pine_0565",
+      "Tree_pine_0566",
+      "Tree_pine_0567",
+      "Tree_pine_0568",
+      "Tree_pine_0569",
+      "Tree_pine_0570",
+      "Tree_pine_0571",
+      "Tree_pine_0572",
+      "Tree_pine_0573",
+      "Tree_pine_0574",
+      "Tree_pine_0575",
+      "Tree_pine_0576",
+      "Tree_pine_0577",
+      "Tree_pine_0578",
+      "Tree_pine_0579",
+      "Tree_pine_0580",
+      "Tree_pine_0581",
+      "Tree_pine_0582",
+      "Tree_pine_0583",
+      "Tree_pine_0584",
+      "Tree_pine_0585",
+      "Tree_pine_0586",
+      "Tree_pine_0587",
+      "Tree_pine_0588",
+      "Tree_pine_0589",
+      "Tree_pine_0590",
+      "Tree_pine_0591",
+      "Tree_pine_0592",
+      "Tree_pine_0593",
+      "Tree_pine_0594",
+      "Tree_pine_0595",
+      "Tree_pine_0596",
+      "Tree_pine_0597",
+      "Tree_pine_0598",
+      "Tree_pine_0599",
+      "Tree_pine_0600",
+      "Tree_pine_0601",
+      "Tree_pine_0602",
+      "Tree_pine_0603",
+      "Tree_pine_0604",
+      "Tree_pine_0605",
+      "Tree_pine_0606",
+      "Tree_pine_0607",
+      "Tree_pine_0608",
+      "Tree_pine_0609",
+      "Tree_pine_0610",
+      "Tree_pine_0611",
+      "Tree_pine_0612",
+      "Tree_pine_0613",
+      "Tree_pine_0614",
+      "Tree_pine_0615",
+      "Tree_pine_0616",
+      "Tree_pine_0617",
+      "Tree_pine_0618",
+      "Tree_pine_0619",
+      "Tree_pine_0620",
+      "Tree_pine_0621",
+      "Tree_pine_0622",
+      "Tree_pine_0623",
+      "Tree_pine_0624",
+      "Tree_pine_0625",
+      "Tree_pine_0626",
+      "Tree_pine_0627",
+      "Tree_pine_0628",
+      "Tree_pine_0629",
+      "Tree_pine_0630",
+      "Tree_pine_0631",
+      "Tree_pine_0632",
+      "Tree_pine_0633",
+      "Tree_pine_0634",
+      "Tree_pine_0635",
+      "Tree_pine_0636",
+      "Tree_pine_0637",
+      "Tree_pine_0638",
+      "Tree_pine_0639",
+      "Tree_pine_0640",
+      "Tree_pine_0641",
+      "Tree_pine_0642",
+      "Tree_pine_0643",
+      "Tree_pine_0644",
+      "Tree_pine_0645",
+      "Tree_pine_0646",
+      "Tree_pine_0647",
+      "Tree_pine_0648",
+      "Tree_pine_0649",
+      "Tree_pine_0650",
+      "Tree_pine_0651",
+      "Tree_pine_0652",
+      "Tree_pine_0653",
+      "Tree_pine_0654",
+      "Tree_pine_0655",
+      "Tree_pine_0656",
+      "Tree_pine_0657",
+      "Tree_pine_0658",
+      "Tree_pine_0659",
+      "Tree_pine_0660",
+      "Tree_pine_0661",
+      "Tree_pine_0662",
+      "Tree_pine_0663",
+      "Tree_pine_0664",
+      "Tree_pine_0665",
+      "Tree_pine_0666",
+      "Tree_pine_0667",
+      "Tree_pine_0668",
+      "Tree_pine_0669",
+      "Tree_pine_0670",
+      "Tree_pine_0671",
+      "Tree_pine_0672",
+      "Tree_pine_0673",
+      "Tree_pine_0674",
+      "Tree_pine_0675",
+      "Tree_pine_0676",
+      "Tree_pine_0677",
+      "Tree_pine_0678",
+      "Tree_pine_0679",
+      "Tree_pine_0680",
+      "Tree_pine_0681",
+      "Tree_pine_0682",
+      "Tree_pine_0683",
+      "Tree_pine_0684",
+      "Tree_pine_0685",
+      "Tree_pine_0686",
+      "Tree_pine_0687",
+      "Tree_pine_0688",
+      "Tree_pine_0689",
+      "Tree_pine_0690",
+      "Tree_pine_0691",
+      "Tree_pine_0692",
+      "Tree_pine_0693",
+      "Tree_pine_0694",
+      "Tree_pine_0695",
+      "Tree_pine_0696",
+      "Tree_pine_0697",
+      "Tree_pine_0698",
+      "Tree_pine_0699",
+      "Tree_pine_0700",
+      "Tree_pine_0701",
+      "Tree_pine_0702",
+      "Tree_pine_0703",
+      "Tree_pine_0704",
+      "Tree_pine_0705",
+      "Tree_pine_0706",
+      "Tree_pine_0707",
+      "Tree_pine_0708",
+      "Tree_pine_0709",
+      "Tree_pine_0710",
+      "Tree_pine_0711",
+      "Tree_pine_0712",
+      "Tree_pine_0713",
+      "Tree_pine_0714",
+      "Tree_pine_0715",
+      "Tree_pine_0716",
+      "Tree_pine_0717",
+      "Tree_pine_0718",
+      "Tree_pine_0719",
+      "Tree_pine_0720",
+      "Tree_pine_0721",
+      "Tree_pine_0722",
+      "Tree_pine_0723",
+      "Tree_pine_0724",
+      "Tree_pine_0725",
+      "Tree_pine_0726",
+      "Tree_pine_0727",
+      "Tree_pine_0728",
+      "Tree_pine_0729",
+      "Tree_pine_0730",
+      "Tree_pine_0731",
+      "Tree_pine_0732",
+      "Tree_pine_0733",
+      "Tree_pine_0734",
+      "Tree_pine_0735",
+      "Tree_pine_0736",
+      "Tree_pine_0737",
+      "Tree_pine_0738",
+      "Tree_pine_0739",
+      "Tree_pine_0740",
+      "Tree_pine_0741",
+      "Tree_pine_0742",
+      "Tree_pine_0743",
+      "Tree_pine_0744",
+      "Tree_pine_0745",
+      "Tree_pine_0746",
+      "Tree_pine_0747",
+      "Tree_pine_0748",
+      "Tree_pine_0749",
+      "Tree_pine_0750",
+      "Tree_pine_0751",
+      "Tree_pine_0752",
+      "Tree_pine_0753",
+      "Tree_pine_0754",
+      "Tree_pine_0755",
+      "Tree_pine_0756",
+      "Tree_pine_0757",
+      "Tree_pine_0758",
+      "Tree_pine_0759",
+      "Tree_pine_0760",
+      "Tree_pine_0761",
+      "Tree_pine_0762",
+      "Tree_pine_0763",
+      "Tree_pine_0764",
+      "Tree_pine_0765",
+      "Tree_pine_0766",
+      "Tree_pine_0767",
+      "Tree_pine_0768",
+      "Tree_pine_0769",
+      "Tree_pine_0770",
+      "Tree_pine_0771",
+      "Tree_pine_0772",
+      "Tree_pine_0773",
+      "Tree_pine_0774",
+      "Tree_pine_0775",
+      "Tree_pine_0776",
+      "Tree_pine_0777",
+      "Tree_pine_0778",
+      "Tree_pine_0779",
+      "Tree_pine_0780",
+      "Tree_pine_0781",
+      "Tree_pine_0782",
+      "Tree_pine_0783",
+      "Tree_pine_0784",
+      "Tree_pine_0785",
+      "Tree_pine_0786",
+      "Tree_pine_0787",
+      "Tree_pine_0788",
+      "Tree_pine_0789",
+      "Tree_pine_0790",
+      "Tree_pine_0791",
+      "Tree_pine_0792",
+      "Tree_pine_0793",
+      "Tree_pine_0794",
+      "Tree_pine_0795",
+      "Tree_pine_0796",
+      "Tree_pine_0797",
+      "Tree_pine_0798",
+      "Tree_pine_0799",
+      "Tree_pine_0800",
+      "Tree_pine_0801",
+      "Tree_pine_0802",
+      "Tree_pine_0803",
+      "Tree_pine_0804",
+      "Tree_pine_0805",
+      "Tree_pine_0806",
+      "Tree_pine_0807",
+      "Tree_pine_0808",
+      "Tree_pine_0809",
+      "Tree_pine_0810",
+      "Tree_pine_0811",
+      "Tree_pine_0812",
+      "Tree_pine_0813",
+      "Tree_pine_0814",
+      "Tree_pine_0815",
+      "Tree_pine_0816",
+      "Tree_pine_0817",
+      "Tree_pine_0818",
+      "Tree_pine_0819",
+      "Tree_pine_0820",
+      "Tree_pine_0821",
+      "Tree_pine_0822",
+      "Tree_pine_0823",
+      "Tree_pine_0824",
+      "Tree_pine_0825",
+      "Tree_pine_0826",
+      "Tree_pine_0827",
+      "Tree_pine_0828",
+      "Tree_pine_0829",
+      "Tree_pine_0830",
+      "Tree_pine_0831",
+      "Tree_pine_0832",
+      "Tree_pine_0833",
+      "Tree_pine_0834",
+      "Tree_pine_0835",
+      "Tree_pine_0836",
+      "Tree_pine_0837",
+      "Tree_pine_0838",
+      "Tree_pine_0839",
+      "Tree_pine_0840",
+      "Tree_pine_0841",
+      "Tree_pine_0842",
+      "Tree_pine_0843",
+      "Tree_pine_0844",
+      "Tree_pine_0845",
+      "Tree_pine_0846",
+      "Tree_pine_0847",
+      "Tree_pine_0848",
+      "Tree_pine_0849",
+      "Tree_pine_0850",
+      "Tree_pine_0851",
+      "Tree_pine_0852",
+      "Tree_pine_0853",
+      "Tree_pine_0854",
+      "Tree_pine_0855",
+      "Tree_pine_0856",
+      "Tree_pine_0857",
+      "Tree_pine_0858",
+      "Tree_pine_0859",
+      "Tree_pine_0860",
+      "Tree_pine_0861",
+      "Tree_pine_0862",
+      "Tree_pine_0863",
+      "Tree_pine_0864",
+      "Tree_pine_0865",
+      "Tree_pine_0866",
+      "Tree_pine_0867",
+      "Tree_pine_0868",
+      "Tree_pine_0869"
+    ],
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "cellMetres": 0.5,
+    "width": 1152,
+    "height": 1152,
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Whitehorn's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+    },
+    "walkableCells": 956142,
+    "walkableFraction": 0.7205
   },
   "navigation": {
     "surfaceNodePrefixes": [
-      "Terrain_"
+      "Terrain_",
+      "Walk_"
     ],
+    "walkableAreas": [
+      "snow",
+      "ice",
+      "rock",
+      "trails",
+      "paving",
+      "marble",
+      "alpine-turf",
+      "bridges",
+      "stairs"
+    ],
+    "agentRadius": 0.55,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 40,
     "navmesh": {
       "format": "surface-prefix-v1",
       "polygons": []
+    },
+    "notes": [
+      "Every terrain sub-mesh is named Terrain_<class>; every authored walkable deck is named Walk_<name>. Structural geometry is deliberately not a walk surface, so the grounding ray never snaps an actor onto a roof, a gantry or the top of an arch."
+    ]
+  },
+  "landmarks": [
+    {
+      "id": "whitehorn-glacier-temple",
+      "name": "Glacier Temple",
+      "node": "Landmark_glacier_temple",
+      "type": "temple",
+      "position": [
+        102.0,
+        70.07,
+        -309.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-south-gate",
+      "name": "Whitehorn Gate",
+      "node": "Landmark_south_gate",
+      "type": "gate",
+      "position": [
+        -12.0,
+        19.85,
+        84.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-mine",
+      "name": "Whitehorn Mine",
+      "node": "Landmark_mine_portal",
+      "type": "mine",
+      "position": [
+        288.0,
+        50.33,
+        -138.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-ice-cave",
+      "name": "Whitehorn Ice Cave",
+      "node": "Landmark_ice_cave",
+      "type": "cave",
+      "position": [
+        -114.0,
+        29.07,
+        -42.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-frozen-cascade-00",
+      "name": "Frozen Cascade",
+      "node": "Landmark_frozen_cascade_00",
+      "type": "natural",
+      "position": [
+        78.0,
+        33.7,
+        -174.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-frozen-cascade-01",
+      "name": "Frozen Cascade",
+      "node": "Landmark_frozen_cascade_01",
+      "type": "natural",
+      "position": [
+        132.0,
+        51.97,
+        -222.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-rope-bridge-00",
+      "name": "Whitehorn Rope Bridge",
+      "node": "Landmark_rope_bridge_00",
+      "type": "bridge",
+      "position": [
+        51.0,
+        16.86,
+        -75.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-rope-bridge-01",
+      "name": "Whitehorn Rope Bridge",
+      "node": "Landmark_rope_bridge_01",
+      "type": "bridge",
+      "position": [
+        186.0,
+        32.6,
+        -99.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-shrine-00",
+      "name": "Whitehorn Shrine",
+      "node": "Landmark_shrine_00",
+      "type": "shrine",
+      "position": [
+        -33.0,
+        20.7,
+        99.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-shrine-01",
+      "name": "Whitehorn Shrine",
+      "node": "Landmark_shrine_01",
+      "type": "shrine",
+      "position": [
+        27.0,
+        76.76,
+        -357.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-shrine-02",
+      "name": "Whitehorn Shrine",
+      "node": "Landmark_shrine_02",
+      "type": "shrine",
+      "position": [
+        354.0,
+        58.1,
+        -192.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-cairn-field-cairn_ridge",
+      "name": "Whitehorn Cairns",
+      "node": "Prop_cairn_0138",
+      "type": "cairn-field",
+      "position": [
+        -87.0,
+        71.63,
+        -204.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-cairn-field-lower_cairns",
+      "name": "Whitehorn Cairns",
+      "node": "Prop_cairn_0160",
+      "type": "cairn-field",
+      "position": [
+        18.0,
+        18.66,
+        39.0
+      ],
+      "authority": "client-visual"
+    },
+    {
+      "id": "whitehorn-cairn-field-west_watch",
+      "name": "Whitehorn Cairns",
+      "node": "Prop_cairn_0176",
+      "type": "cairn-field",
+      "position": [
+        -132.0,
+        47.64,
+        -132.0
+      ],
+      "authority": "client-visual"
     }
+  ],
+  "interactives": [
+    {
+      "id": "whitehorn-temple-brazier",
+      "name": "Temple Brazier",
+      "type": "use",
+      "position": [
+        102.0,
+        54.06,
+        -273.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-gate-shrine-offering",
+      "name": "Shrine Offering",
+      "type": "use",
+      "position": [
+        -33.0,
+        20.7,
+        99.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-mine-winch",
+      "name": "Mine Winch",
+      "type": "use",
+      "position": [
+        267.0,
+        50.26,
+        -120.0
+      ],
+      "authority": "server"
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "whitehorn-gatekeeper",
+      "name": "Gate Warden",
+      "role": "guard",
+      "position": [
+        -12.0,
+        19.85,
+        84.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-temple-keeper",
+      "name": "Temple Keeper",
+      "role": "civilian",
+      "position": [
+        102.0,
+        54.06,
+        -273.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-pilgrim",
+      "name": "Pilgrim",
+      "role": "civilian",
+      "position": [
+        27.0,
+        76.76,
+        -357.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-mine-foreman",
+      "name": "Mine Foreman",
+      "role": "civilian",
+      "position": [
+        267.0,
+        50.26,
+        -120.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-guide",
+      "name": "Mountain Guide",
+      "role": "guide",
+      "position": [
+        90.0,
+        31.99,
+        -54.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-cave-watch",
+      "name": "Cave Watch",
+      "role": "guard",
+      "position": [
+        -114.0,
+        29.07,
+        -42.0
+      ],
+      "authority": "server"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "whitehorn-ore-00-00",
+      "resource": "ore",
+      "position": [
+        260.19,
+        50.32,
+        -126.79
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ore-00-01",
+      "resource": "ore",
+      "position": [
+        263.65,
+        49.29,
+        -112.58
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ore-00-02",
+      "resource": "ore",
+      "position": [
+        260.99,
+        50.33,
+        -131.5
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ore-00-03",
+      "resource": "ore",
+      "position": [
+        280.32,
+        49.68,
+        -110.6
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ore-00-04",
+      "resource": "ore",
+      "position": [
+        255.69,
+        48.61,
+        -110.73
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ore-00-05",
+      "resource": "ore",
+      "position": [
+        266.61,
+        49.35,
+        -112.22
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ore-00-06",
+      "resource": "ore",
+      "position": [
+        275.17,
+        50.33,
+        -133.12
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ore-00-07",
+      "resource": "ore",
+      "position": [
+        259.58,
+        49.91,
+        -119.37
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-01-00",
+      "resource": "ice",
+      "position": [
+        -108.74,
+        10.45,
+        -50.5
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-01-01",
+      "resource": "ice",
+      "position": [
+        -117.55,
+        33.61,
+        -25.21
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-01-02",
+      "resource": "ice",
+      "position": [
+        -117.63,
+        33.77,
+        -25.82
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-01-03",
+      "resource": "ice",
+      "position": [
+        -112.65,
+        32.99,
+        -35.43
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-01-04",
+      "resource": "ice",
+      "position": [
+        -131.4,
+        35.38,
+        -46.31
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-01-05",
+      "resource": "ice",
+      "position": [
+        -131.54,
+        35.59,
+        -41.3
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-herb-02-00",
+      "resource": "herb",
+      "position": [
+        -94.62,
+        71.12,
+        -202.44
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-herb-02-01",
+      "resource": "herb",
+      "position": [
+        -70.49,
+        80.54,
+        -213.17
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-herb-02-02",
+      "resource": "herb",
+      "position": [
+        -101.37,
+        69.46,
+        -201.88
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-herb-02-03",
+      "resource": "herb",
+      "position": [
+        -77.24,
+        76.23,
+        -206.01
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-herb-02-04",
+      "resource": "herb",
+      "position": [
+        -82.17,
+        75.73,
+        -211.79
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-03-00",
+      "resource": "ice",
+      "position": [
+        78.39,
+        34.49,
+        -181.35
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-03-01",
+      "resource": "ice",
+      "position": [
+        81.9,
+        34.23,
+        -163.08
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-03-02",
+      "resource": "ice",
+      "position": [
+        81.2,
+        34.01,
+        -162.24
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-03-03",
+      "resource": "ice",
+      "position": [
+        72.67,
+        34.36,
+        -173.73
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-wood-04-00",
+      "resource": "wood",
+      "position": [
+        -91.4,
+        21.65,
+        60.1
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-wood-04-01",
+      "resource": "wood",
+      "position": [
+        -75.95,
+        17.61,
+        41.54
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-wood-04-02",
+      "resource": "wood",
+      "position": [
+        -77.19,
+        16.33,
+        47.57
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-wood-04-03",
+      "resource": "wood",
+      "position": [
+        -70.81,
+        15.57,
+        57.84
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-wood-04-04",
+      "resource": "wood",
+      "position": [
+        -70.71,
+        17.3,
+        67.52
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-wood-04-05",
+      "resource": "wood",
+      "position": [
+        -90.93,
+        21.78,
+        61.11
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-wood-04-06",
+      "resource": "wood",
+      "position": [
+        -73.94,
+        15.97,
+        57.84
+      ],
+      "authority": "server"
+    }
+  ],
+  "portals": [
+    {
+      "id": "whitehorn-glacier-temple-door",
+      "name": "Glacier Temple",
+      "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destinationSpawn": "whitehorn-glacier-temple-door",
+      "serverTile": null,
+      "position": [
+        102.0,
+        70.45,
+        -309.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-mine-adit",
+      "name": "Whitehorn Mine",
+      "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destinationSpawn": "whitehorn-mine-adit",
+      "serverTile": null,
+      "position": [
+        288.0,
+        51.73,
+        -138.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-cave-mouth",
+      "name": "Whitehorn Ice Cave",
+      "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destinationSpawn": "whitehorn-ice-cave-mouth",
+      "serverTile": null,
+      "position": [
+        -114.0,
+        30.47,
+        -42.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-barrow-door",
+      "name": "The Frost Barrow",
+      "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destinationSpawn": "whitehorn-barrow-door",
+      "serverTile": null,
+      "position": [
+        -87.0,
+        72.83,
+        -204.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-south-road",
+      "name": "Road to Amberwood",
+      "destination": "maps/nymara/amberwood.elm",
+      "serverTile": [
+        174,
+        330
+      ],
+      "position": [
+        0.0,
+        50.81,
+        -156.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-east-pass",
+      "name": "Pass to the Amethyst Barrens",
+      "destination": "maps/nymara/amethyst_barrens.elm",
+      "serverTile": [
+        330,
+        174
+      ],
+      "position": [
+        156.0,
+        30.85,
+        0.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-west-road",
+      "name": "Road to the Four Gates",
+      "destination": "maps/nymara/four_gates.elm",
+      "serverTile": [
+        18,
+        174
+      ],
+      "position": [
+        -156.0,
+        81.13,
+        0.0
+      ],
+      "authority": "server"
+    }
+  ],
+  "roads": [],
+  "water": [],
+  "environment": {
+    "biome": "alpine-glacial",
+    "snowLine": 30.0,
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.24,
+        0.38,
+        0.62
+      ],
+      "horizon": [
+        0.72,
+        0.78,
+        0.86
+      ]
+    },
+    "sun": {
+      "direction": [
+        0.38,
+        -0.62,
+        -0.68
+      ],
+      "color": [
+        1.06,
+        1.06,
+        1.1
+      ],
+      "energy": 1.05,
+      "shadows": true,
+      "angularDiameterDegrees": 0.6
+    },
+    "ambient": {
+      "skyColor": [
+        0.4,
+        0.48,
+        0.62
+      ],
+      "groundColor": [
+        0.3,
+        0.34,
+        0.4
+      ],
+      "energy": 0.52
+    },
+    "saturation": 0.92,
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.62,
+        0.68,
+        0.76
+      ],
+      "density": 0.00048,
+      "heightFalloff": 0.0026,
+      "skyAffect": 0.35
+    },
+    "goldenHour": {
+      "sun": {
+        "direction": [
+          0.8,
+          -0.24,
+          -0.52
+        ],
+        "color": [
+          1.44,
+          1.02,
+          0.66
+        ]
+      },
+      "fog": {
+        "color": [
+          0.68,
+          0.62,
+          0.62
+        ],
+        "density": 0.0011
+      }
+    },
+    "zones": [
+      {
+        "id": "glacier",
+        "centre": [
+          78.0,
+          40.0,
+          -132.0
+        ],
+        "radius": 150.0
+      },
+      {
+        "id": "temple",
+        "centre": [
+          102.0,
+          70.0,
+          -300.0
+        ],
+        "radius": 90.0
+      },
+      {
+        "id": "gorge",
+        "centre": [
+          90.0,
+          0.0,
+          -84.0
+        ],
+        "radius": 170.0
+      },
+      {
+        "id": "approach",
+        "centre": [
+          0.0,
+          18.0,
+          42.0
+        ],
+        "radius": 140.0
+      },
+      {
+        "id": "mine",
+        "centre": [
+          282.0,
+          50.0,
+          -132.0
+        ],
+        "radius": 90.0
+      }
+    ],
+    "notes": [
+      "Whitehorn has no sea and no standing water; the watercourses are frozen or dry meltwater beds.",
+      "sun.direction is the direction the light travels, so its Y is negative. See _environment() in source/build_whitehorn.py."
+    ]
   },
-  "materials": {
-    "baseColor": "textures/region-basecolor.png",
-    "normal": "textures/region-normal.png",
-    "orm": "textures/region-orm.png"
+  "minimap": {
+    "file": "minimap.webp",
+    "pixels": 768,
+    "metresPerPixel": 0.7487,
+    "worldMin": [
+      -174.0,
+      -401.0
+    ],
+    "worldMax": [
+      401.0,
+      174.0
+    ],
+    "northAxis": "-Z",
+    "orientation": "north-up"
   },
-  "productionStatus": "terrain-landmark-material-pass"
+  "lodGroups": [],
+  "performance": {
+    "nodes": 4676,
+    "meshes": 150,
+    "materials": 18,
+    "images": 52,
+    "textures": 52,
+    "accessors": 600,
+    "bufferViews": 652,
+    "uniqueTriangles": 239686,
+    "uniqueVertices": 143781,
+    "glbBytes": 12163236,
+    "instancedTriangles": 693054,
+    "embeddedTextureBytes": 5435605,
+    "placements": 1926,
+    "collision": {
+      "width": 1152,
+      "height": 1152,
+      "cellMetres": 0.5,
+      "walkableCells": 956142,
+      "blockedCells": 370962,
+      "walkableFraction": 0.7205,
+      "elevatedDecks": 3,
+      "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+      "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+    },
+    "trianglesPerSquareMetre": 2.09
+  },
+  "sources": {
+    "concept": "eloria-assets/concepts/nymara-regions/whitehorn_range_region_concept.png",
+    "detailBoard": "references/00-concept-detail-board.png",
+    "build": "source/build_whitehorn.py"
+  },
+  "provenance": {
+    "generator": "Eloria Whitehorn Range builder",
+    "seed": 20260828,
+    "toolkit": "maps/nymara-regions/_toolkit",
+    "deterministic": true,
+    "assets": "All geometry and textures generated procedurally; no third-party models or images."
+  },
+  "productionStatus": "production-geometry-materials-population",
+  "knownLimitations": [
+    "rope_bridge: 34 m span, gorge floor -26.7 m, landings 17.2 m north / 15.8 m south, deck 16.9 m (44 m of air beneath).",
+    "rope_bridge: deck at y=16.86 m, 34 m span. The deck owns its server cells; the gorge floor beneath it is not separately walkable.",
+    "rope_bridge_upper: 30 m span, gorge floor -12.5 m, landings 32.0 m north / 32.4 m south, deck 32.6 m (45 m of air beneath).",
+    "rope_bridge_upper: deck at y=32.60 m, 30 m span. The deck owns its server cells; the gorge floor beneath it is not separately walkable.",
+    "Roadside markers: 177 cairns, 17 waystones.",
+    "Glacier: 77 seracs along the ice.",
+    "Vegetation: 870 conifers below the snow line.",
+    "Scatter: 759 rock clusters."
+  ]
 }

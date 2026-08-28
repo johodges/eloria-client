@@ -1,0 +1,444 @@
+[
+  {
+    "id": "00-aerial-overview",
+    "panel": "aerial",
+    "file": "00-aerial-overview.webp",
+    "eye": [
+      114.0,
+      524.33,
+      396.0
+    ],
+    "target": [
+      114.0,
+      48.49,
+      -144.0
+    ],
+    "fieldOfViewDegrees": 44,
+    "lighting": "day"
+  },
+  {
+    "id": "01-approach-road",
+    "panel": 1,
+    "file": "01-approach-road.webp",
+    "eye": [
+      15.0,
+      31.42,
+      55.2
+    ],
+    "target": [
+      6.0,
+      23.85,
+      -3.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "02-glacier-temple",
+    "panel": 2,
+    "file": "02-glacier-temple.webp",
+    "eye": [
+      97.01,
+      61.06,
+      -284.07
+    ],
+    "target": [
+      102.0,
+      76.35,
+      -304.5
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "03-rope-bridge",
+    "panel": 3,
+    "file": "03-rope-bridge.webp",
+    "eye": [
+      93.0,
+      10.1,
+      -72.0
+    ],
+    "target": [
+      51.0,
+      17.33,
+      -75.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "04-gate-shrine",
+    "panel": 4,
+    "file": "04-gate-shrine.webp",
+    "eye": [
+      -33.0,
+      22.69,
+      114.0
+    ],
+    "target": [
+      -33.0,
+      23.7,
+      100.5
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "05-cairn-ridge",
+    "panel": 5,
+    "file": "05-cairn-ridge.webp",
+    "eye": [
+      -73.85,
+      75.31,
+      -186.23
+    ],
+    "target": [
+      -87.0,
+      73.03,
+      -204.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "06-ice-cave",
+    "panel": 6,
+    "file": "06-ice-cave.webp",
+    "eye": [
+      -99.0,
+      39.63,
+      -28.5
+    ],
+    "target": [
+      -114.0,
+      32.07,
+      -42.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "07-mine-portal",
+    "panel": 7,
+    "file": "07-mine-portal.webp",
+    "eye": [
+      277.5,
+      53.83,
+      -127.5
+    ],
+    "target": [
+      288.0,
+      52.93,
+      -138.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "08-frozen-cascade",
+    "panel": 8,
+    "file": "08-frozen-cascade.webp",
+    "eye": [
+      73.01,
+      36.41,
+      -147.93
+    ],
+    "target": [
+      78.0,
+      41.62,
+      -172.5
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "09-high-overlook",
+    "panel": 9,
+    "file": "09-high-overlook.webp",
+    "eye": [
+      198.4,
+      52.54,
+      49.11
+    ],
+    "target": [
+      102.0,
+      71.57,
+      -180.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "day"
+  },
+  {
+    "id": "10-material-study",
+    "panel": 10,
+    "file": "10-material-study.webp",
+    "eye": [
+      27.44,
+      40.43,
+      -55.39
+    ],
+    "target": [
+      51.0,
+      -24.43,
+      -75.6
+    ],
+    "fieldOfViewDegrees": 38,
+    "lighting": "day"
+  },
+  {
+    "id": "11-spawn-grounding",
+    "panel": null,
+    "file": "11-spawn-grounding.webp",
+    "eye": [
+      -3.94,
+      34.12,
+      38.24
+    ],
+    "target": [
+      18.0,
+      20.67,
+      -18.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "12-gorge-edge",
+    "panel": null,
+    "file": "12-gorge-edge.webp",
+    "eye": [
+      123.79,
+      68.57,
+      -63.24
+    ],
+    "target": [
+      30.0,
+      -35.17,
+      -78.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "13-upper-bridge",
+    "panel": null,
+    "file": "13-upper-bridge.webp",
+    "eye": [
+      186.0,
+      54.58,
+      -66.0
+    ],
+    "target": [
+      186.0,
+      37.98,
+      -114.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "14-temple-forecourt",
+    "panel": null,
+    "file": "14-temple-forecourt.webp",
+    "eye": [
+      75.0,
+      62.01,
+      -228.1
+    ],
+    "target": [
+      102.0,
+      58.06,
+      -276.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "15-glacier-snout",
+    "panel": null,
+    "file": "15-glacier-snout.webp",
+    "eye": [
+      48.0,
+      35.46,
+      48.0
+    ],
+    "target": [
+      54.0,
+      16.1,
+      -12.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "16-glacier-head",
+    "panel": null,
+    "file": "16-glacier-head.webp",
+    "eye": [
+      107.4,
+      73.06,
+      -276.0
+    ],
+    "target": [
+      102.0,
+      102.04,
+      -342.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "17-mine-yard",
+    "panel": null,
+    "file": "17-mine-yard.webp",
+    "eye": [
+      330.0,
+      51.25,
+      -42.0
+    ],
+    "target": [
+      276.0,
+      53.19,
+      -120.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "18-south-gate",
+    "panel": null,
+    "file": "18-south-gate.webp",
+    "eye": [
+      -12.0,
+      31.23,
+      120.0
+    ],
+    "target": [
+      -12.0,
+      23.83,
+      81.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "19-pine-shelf",
+    "panel": null,
+    "file": "19-pine-shelf.webp",
+    "eye": [
+      -45.82,
+      35.76,
+      81.82
+    ],
+    "target": [
+      -81.0,
+      19.08,
+      51.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "20-north-shrine",
+    "panel": null,
+    "file": "20-north-shrine.webp",
+    "eye": [
+      48.0,
+      92.21,
+      -333.0
+    ],
+    "target": [
+      27.0,
+      79.76,
+      -360.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "21-west-watch",
+    "panel": null,
+    "file": "21-west-watch.webp",
+    "eye": [
+      -108.0,
+      57.66,
+      -108.0
+    ],
+    "target": [
+      -132.0,
+      50.64,
+      -135.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "22-east-camp",
+    "panel": null,
+    "file": "22-east-camp.webp",
+    "eye": [
+      297.0,
+      51.12,
+      -6.0
+    ],
+    "target": [
+      330.0,
+      39.32,
+      -21.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "23-snow-line",
+    "panel": null,
+    "file": "23-snow-line.webp",
+    "eye": [
+      138.54,
+      60.73,
+      -55.63
+    ],
+    "target": [
+      132.0,
+      64.71,
+      -156.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "40-golden-temple",
+    "panel": null,
+    "file": "40-golden-temple.webp",
+    "eye": [
+      102.0,
+      54.79,
+      -228.0
+    ],
+    "target": [
+      102.0,
+      77.85,
+      -303.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "golden"
+  },
+  {
+    "id": "41-golden-glacier",
+    "panel": null,
+    "file": "41-golden-glacier.webp",
+    "eye": [
+      30.44,
+      23.58,
+      1.88
+    ],
+    "target": [
+      90.0,
+      53.3,
+      -186.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "golden"
+  }
+]
