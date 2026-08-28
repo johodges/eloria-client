@@ -212,6 +212,13 @@
       "description": "Side-by-side sheets pairing each concept panel with the matching Godot client capture"
     },
     {
+      "path": "../godot-client/assets/actors/native/creatures/*.glb",
+      "source": "tools/build_native_nymara_glbs.py, tools/creature_anatomy.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Thirty-two original Nymara creatures rebuilt to production anatomy from the supplied Eloria concept art: body-plan driven geometry, a 24-bone quadruped rig with smooth multi-bone skinning, procedurally generated surface textures, and original idle, walk, jog, combat, attack, hit and death clips"
+    },
+    {
       "path": "../godot-client/assets/actors/native/creatures/sunmane_*.glb",
       "source": "tools/sunmane/creatures.py",
       "author": "Eloria project",
