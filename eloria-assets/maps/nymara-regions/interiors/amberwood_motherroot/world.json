@@ -1,0 +1,938 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "amberwood_motherroot",
+    "name": "The Motherroot",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -52.55,
+        -18.4,
+        -9.55
+      ],
+      "max": [
+        38.55,
+        6.0,
+        92.55
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        -52.55,
+        -18.4,
+        -9.55
+      ],
+      "max": [
+        38.55,
+        0.0,
+        92.55
+      ]
+    },
+    "interiorClass": "dungeon",
+    "parentRegion": "amberwood",
+    "serverCells": 105
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      55.0,
+      95.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "motherroot-mouth",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 192,
+    "height": 210,
+    "cellMetres": 0.5,
+    "originMetres": [
+      -55.0,
+      95.0
+    ],
+    "heightEncoding": {
+      "origin": -18.295,
+      "step": 0.2951,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
+    },
+    "walkableCells": 13440,
+    "blockedCells": 26880,
+    "walkableFraction": 0.3333,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Interior_amberwood_motherroot",
+      "Build_amberwood_motherroot_amber_resin",
+      "Build_amberwood_motherroot_ashlar",
+      "Build_amberwood_motherroot_bark_dark",
+      "Build_amberwood_motherroot_bark_oak",
+      "Build_amberwood_motherroot_cliff_rock",
+      "Build_amberwood_motherroot_dark_iron",
+      "Build_amberwood_motherroot_forest_floor",
+      "Build_amberwood_motherroot_packed_earth",
+      "Build_amberwood_motherroot_thatch_reed",
+      "Build_amberwood_motherroot_timber_dark",
+      "Build_amberwood_motherroot_timber_grey",
+      "Build_amberwood_motherroot_timber_warm",
+      "Build_amberwood_motherroot_water_deep",
+      "Build_amberwood_motherroot_water_pool",
+      "Build_amberwood_motherroot_water_stream"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    },
+    "notes": [
+      "Every standable surface is a Walk_<material> node, matching the region's contract: the client turns navigation.surfaceNodePrefixes into the layer its downward grounding ray tests."
+    ]
+  },
+  "portals": [
+    {
+      "id": "exit-to-amberwood",
+      "name": "Return to Amberwood",
+      "type": "map-transition",
+      "position": [
+        0.0,
+        0.05,
+        0.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/amberwood.elm",
+      "destinationSpawn": "motherroot-mouth",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "the-mouth",
+      "name": "The Root Mouth",
+      "space": "mouth",
+      "position": [
+        0.0,
+        1.6,
+        0.0
+      ]
+    },
+    {
+      "id": "the-workings",
+      "name": "The Old Workings",
+      "space": "workings",
+      "position": [
+        -8.5,
+        -4.8,
+        39.0
+      ]
+    },
+    {
+      "id": "the-shrine",
+      "name": "The Resin Shrine",
+      "space": "shrine",
+      "position": [
+        29.0,
+        -7.3,
+        39.0
+      ]
+    },
+    {
+      "id": "the-brood",
+      "name": "The Brood Hollow",
+      "space": "brood",
+      "position": [
+        27.0,
+        -8.8,
+        76.0
+      ]
+    },
+    {
+      "id": "the-sump",
+      "name": "The Sump",
+      "space": "sump",
+      "position": [
+        -7.0,
+        -14.3,
+        77.0
+      ]
+    },
+    {
+      "id": "the-heartwood",
+      "name": "The Heartwood",
+      "space": "heartwood",
+      "position": [
+        -40.0,
+        -16.0,
+        77.0
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "amber-seam",
+      "kind": "harvest-node",
+      "resource": "amber_resin",
+      "position": [
+        2.4,
+        -4.6,
+        38.0
+      ]
+    },
+    {
+      "id": "shrine-basin",
+      "kind": "shrine",
+      "position": [
+        29.0,
+        -7.4,
+        39.0
+      ]
+    },
+    {
+      "id": "founder-marker",
+      "kind": "lore",
+      "position": [
+        -40.0,
+        -16.9,
+        77.0
+      ]
+    }
+  ],
+  "npcMarkers": [],
+  "harvestables": [
+    {
+      "id": "amber-00",
+      "resource": "amber_resin",
+      "position": [
+        1.2,
+        -6.0,
+        32.4
+      ]
+    },
+    {
+      "id": "amber-01",
+      "resource": "amber_resin",
+      "position": [
+        1.2,
+        -6.0,
+        36.0
+      ]
+    },
+    {
+      "id": "amber-02",
+      "resource": "amber_resin",
+      "position": [
+        1.2,
+        -6.0,
+        40.6
+      ]
+    },
+    {
+      "id": "amber-03",
+      "resource": "amber_resin",
+      "position": [
+        1.2,
+        -6.0,
+        45.2
+      ]
+    }
+  ],
+  "lights": [
+    {
+      "id": "lantern-00",
+      "kind": "point",
+      "position": [
+        -6.8,
+        3.58,
+        4.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-01",
+      "kind": "point",
+      "position": [
+        6.8,
+        3.58,
+        -4.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-02",
+      "kind": "point",
+      "position": [
+        0.0,
+        3.58,
+        7.2
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-03",
+      "kind": "point",
+      "position": [
+        0.0,
+        -1.92,
+        15.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-04",
+      "kind": "point",
+      "position": [
+        0.0,
+        -4.22,
+        23.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-05",
+      "kind": "point",
+      "position": [
+        -17.5,
+        -3.22,
+        33.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-06",
+      "kind": "point",
+      "position": [
+        -17.5,
+        -3.22,
+        45.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-07",
+      "kind": "point",
+      "position": [
+        -3.0,
+        -3.22,
+        39.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-08",
+      "kind": "point",
+      "position": [
+        -10.0,
+        -3.22,
+        31.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-09",
+      "kind": "point",
+      "position": [
+        11.5,
+        -6.02,
+        39.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-10",
+      "kind": "point",
+      "position": [
+        22.5,
+        -4.42,
+        32.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-11",
+      "kind": "point",
+      "position": [
+        35.5,
+        -4.42,
+        46.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-12",
+      "kind": "point",
+      "position": [
+        29.0,
+        -4.42,
+        33.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-13",
+      "kind": "point",
+      "position": [
+        29.0,
+        -8.02,
+        52.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-14",
+      "kind": "point",
+      "position": [
+        29.0,
+        -8.42,
+        62.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-15",
+      "kind": "point",
+      "position": [
+        18.5,
+        -6.42,
+        68.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-16",
+      "kind": "point",
+      "position": [
+        35.5,
+        -6.42,
+        84.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-17",
+      "kind": "point",
+      "position": [
+        27.0,
+        -6.42,
+        76.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-18",
+      "kind": "point",
+      "position": [
+        9.0,
+        -8.62,
+        76.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-19",
+      "kind": "point",
+      "position": [
+        -13.5,
+        -12.22,
+        69.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-20",
+      "kind": "point",
+      "position": [
+        -0.5,
+        -12.22,
+        85.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-21",
+      "kind": "point",
+      "position": [
+        -7.0,
+        -12.22,
+        77.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-22",
+      "kind": "point",
+      "position": [
+        -22.0,
+        -15.02,
+        77.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-23",
+      "kind": "point",
+      "position": [
+        -49.0,
+        -9.12,
+        65.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-24",
+      "kind": "point",
+      "position": [
+        -31.0,
+        -9.12,
+        89.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-25",
+      "kind": "point",
+      "position": [
+        -40.0,
+        -9.12,
+        77.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-26",
+      "kind": "point",
+      "position": [
+        -40.0,
+        -9.12,
+        68.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.16,
+        0.13,
+        0.11
+      ],
+      "energy": 0.35
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.07,
+        0.05,
+        0.04
+      ],
+      "begin": 12.0,
+      "end": 48.0
+    },
+    "audio": [
+      {
+        "id": "drip",
+        "space": "sump",
+        "loop": true
+      },
+      {
+        "id": "creak",
+        "space": "heartwood",
+        "loop": true
+      }
+    ],
+    "openToSky": [
+      "mouth"
+    ]
+  },
+  "spaces": {
+    "mouth": {
+      "x0": -9.0,
+      "z0": -9.0,
+      "x1": 9.0,
+      "z1": 9.0,
+      "floor": 0.0,
+      "height": 6.0
+    },
+    "workings": {
+      "x0": -20.0,
+      "z0": 30.0,
+      "x1": 3.0,
+      "z1": 48.0,
+      "floor": -6.0,
+      "height": 5.6
+    },
+    "shrine": {
+      "x0": 20.0,
+      "z0": 30.0,
+      "x1": 38.0,
+      "z1": 48.0,
+      "floor": -8.5,
+      "height": 7.0
+    },
+    "brood": {
+      "x0": 16.0,
+      "z0": 66.0,
+      "x1": 38.0,
+      "z1": 86.0,
+      "floor": -10.0,
+      "height": 6.0
+    },
+    "sump": {
+      "x0": -16.0,
+      "z0": 66.0,
+      "x1": 2.0,
+      "z1": 88.0,
+      "floor": -15.5,
+      "height": 5.5
+    },
+    "heartwood": {
+      "x0": -52.0,
+      "z0": 62.0,
+      "x1": -28.0,
+      "z1": 92.0,
+      "floor": -18.0,
+      "height": 12.0
+    },
+    "hollowway": {
+      "x0": -2.75,
+      "z0": 6.25,
+      "x1": 2.75,
+      "z1": 32.75,
+      "floor": -6.0,
+      "height": 4.0
+    },
+    "archway": {
+      "x0": -0.8,
+      "z0": 35.2,
+      "x1": 23.8,
+      "z1": 42.8,
+      "floor": -8.5,
+      "height": 5.0
+    },
+    "sapway": {
+      "x0": 25.5,
+      "z0": 44.5,
+      "x1": 32.5,
+      "z1": 69.5,
+      "floor": -10.0,
+      "height": 4.0
+    },
+    "descent": {
+      "x0": -0.5,
+      "z0": 73.5,
+      "x1": 18.5,
+      "z1": 78.5,
+      "floor": -15.5,
+      "height": 4.4
+    },
+    "deepway": {
+      "x0": -30.5,
+      "z0": 74.5,
+      "x1": -13.5,
+      "z1": 79.5,
+      "floor": -18.0,
+      "height": 4.6
+    }
+  },
+  "conceptArt": {
+    "detailBoard": "../../amberwood/references/00-concept-detail-board.png",
+    "role": "parent-region board; these interiors have no board of their own",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "root cave entry",
+      "descending root gallery",
+      "amber seam workings",
+      "collapsed stone arch",
+      "resin lantern shrine",
+      "sap flow channel",
+      "brood hollow",
+      "flooded sump",
+      "heartwood chamber",
+      "root amber granite materials"
+    ]
+  },
+  "performance": {
+    "nodes": 22,
+    "meshes": 21,
+    "materials": 18,
+    "images": 51,
+    "textures": 51,
+    "accessors": 105,
+    "bufferViews": 156,
+    "uniqueTriangles": 22669,
+    "uniqueVertices": 24628,
+    "glbBytes": 7404656,
+    "nodeNames": [
+      "Interior_amberwood_motherroot",
+      "Build_amberwood_motherroot_amber_resin",
+      "Build_amberwood_motherroot_ashlar",
+      "Build_amberwood_motherroot_bark_dark",
+      "Build_amberwood_motherroot_bark_oak",
+      "Build_amberwood_motherroot_cliff_rock",
+      "Build_amberwood_motherroot_dark_iron",
+      "Build_amberwood_motherroot_forest_floor",
+      "Build_amberwood_motherroot_packed_earth",
+      "Build_amberwood_motherroot_thatch_reed",
+      "Build_amberwood_motherroot_timber_dark",
+      "Build_amberwood_motherroot_timber_grey",
+      "Build_amberwood_motherroot_timber_warm",
+      "Build_amberwood_motherroot_water_deep",
+      "Build_amberwood_motherroot_water_pool",
+      "Build_amberwood_motherroot_water_stream",
+      "Walk_ashlar",
+      "Walk_bark_oak",
+      "Walk_cobble_paving",
+      "Walk_leaf_path",
+      "Walk_packed_earth",
+      "Walk_rubble_stone"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "source/build_interiors.py",
+      "role": "reproducible-build",
+      "seed": 20260828
+    },
+    {
+      "id": "anchor",
+      "landmark": "great-tree",
+      "position": [
+        78.0,
+        56.18,
+        -264.0
+      ],
+      "role": "surface entrance on the Amberwood region map"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the Amberwood region toolkit; no scattered placement",
+    "textures": "procedural, from amberwood/textures.py",
+    "thirdParty": "none"
+  },
+  "notes": [
+    "One descending route from the root mouth to the heartwood chamber; no branch is a dead end without a reason to be there.",
+    "The sump's water plane is scenery, not a walk surface: navigation.blocked marks it so a grounding ray cannot resolve onto it."
+  ],
+  "productionStatus": "authored-geometry-materials-population",
+  "knownLimitations": [
+    "Not opened in Godot: no client is installable in the build environment, so collision response, navmesh generation, portal transition, LOD and transparency sorting are unverified.",
+    "eloria-server has not registered these map keys."
+  ]
+}

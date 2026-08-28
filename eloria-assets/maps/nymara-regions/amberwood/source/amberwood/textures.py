@@ -888,6 +888,99 @@ def amber_glass(size: int = 256, seed: int = 137) -> TextureSet:
                       normal_from_height(body * 0.3 + bubble * 0.4, 1.2))
 
 
+def lime_plaster(size: int = 512, seed: int = 211) -> TextureSet:
+    """Lime plaster over lath: the pale infill between exposed timbers.
+
+    Interiors built only from timber read as one uniform orange note, which is
+    exactly what the region brief warns against. A cool pale infill gives the
+    framing something to be read against.
+    """
+    coarse = N.tileable_fbm(size, 5, 5, seed=seed)
+    fine = N.tileable_fbm(size, 34, 4, seed=seed + 1)
+    colour = _colorize(coarse, (0.0, (0.690, 0.658, 0.596)), (0.55, (0.772, 0.744, 0.680)),
+                       (1.0, (0.842, 0.815, 0.748)))
+    colour = colour * (0.94 + 0.12 * fine)[..., None]
+    # Hairline crazing, and damp rising from the foot of the panel.
+    # Fine, irregular crazing. A low-frequency sine through smooth noise draws
+    # closed loops that read as contour lines rather than cracked lime, so the
+    # field is driven at high frequency and the contrast kept shallow.
+    craze = N.tileable_fbm(size, 22, 5, seed=seed + 2)
+    crack = np.clip(1.0 - np.abs(np.sin(craze * 62.0)) * 3.4, 0.0, 1.0) ** 1.5
+    crack *= np.clip(N.tileable_fbm(size, 4, 3, seed=seed + 6) * 1.6 - 0.25, 0.0, 1.0)
+    colour = _mix(colour, np.array((0.545, 0.516, 0.462)), crack * 0.42)
+    v = np.linspace(0.0, 1.0, size)[:, None] * np.ones((1, size))
+    damp = np.clip(v * 1.5 - 0.55, 0.0, 1.0) * N.tileable_fbm(size, 3, 4, seed=seed + 3)
+    colour = _mix(colour, np.array((0.588, 0.556, 0.478)), damp * 0.4)
+    height = np.clip(coarse * 0.5 + fine * 0.32 - crack * 0.3, 0.0, 1.0)
+    occlusion = np.clip(0.70 + 0.30 * (1.0 - crack), 0.0, 1.0)
+    roughness = np.clip(0.88 - 0.08 * fine, 0.0, 1.0)
+    return TextureSet("lime_plaster", _u8(np.clip(colour, 0.0, 1.0)),
+                      pack_orm(occlusion, roughness), normal_from_height(height, 1.5))
+
+
+def sooted_plaster(size: int = 512, seed: int = 233) -> TextureSet:
+    """The same lime plaster, smoke-blackened and washed by rain.
+
+    The Cinder Chapel is the Amber Hall after a fire, so it must be built from
+    the same wall - not from a different, paler stone that reads as merely old.
+    """
+    base = lime_plaster(size, seed=seed)
+    colour = np.asarray(base.base_color, dtype=np.float64) / 255.0
+    smoke = N.tileable_fbm(size, 4, 5, seed=seed + 5)
+    soot = np.clip(smoke * 1.5 + 0.30, 0.0, 1.0)
+    # Smoke stains heaviest at the top of a panel, where it rose and pooled, but
+    # a burned building is blackened all over - a stain only at the head reads as
+    # damp, not as fire.
+    v = np.linspace(1.0, 0.0, size)[:, None] * np.ones((1, size))
+    soot = np.clip(soot * (0.72 + 0.42 * v), 0.0, 1.0)
+    colour = _mix(colour, np.array((0.062, 0.055, 0.052)), soot * 0.93)
+    streak = np.clip(N.tileable_fbm(size, 30, 3, seed=seed + 7) - 0.52, 0.0, 1.0) * 2.6
+    colour = _mix(colour, np.array((0.105, 0.096, 0.090)), np.clip(streak, 0, 1) * 0.6)
+    # A few patches where the render fell away to bare, scorched lath.
+    bare = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 11) * 1.7 - 0.95, 0.0, 1.0)
+    colour = _mix(colour, np.array((0.196, 0.145, 0.101)), bare * 0.7)
+    occlusion = np.clip(0.42 + 0.4 * (1.0 - soot), 0.0, 1.0)
+    roughness = np.clip(0.93 + 0.05 * soot, 0.0, 1.0)
+    return TextureSet("sooted_plaster", _u8(np.clip(colour, 0.0, 1.0)),
+                      pack_orm(occlusion, roughness), base.normal)
+
+
+def charred_timber(size: int = 512, seed: int = 241) -> TextureSet:
+    """Structural timber that came through a fire: alligatored char over grain."""
+    base = timber(size, seed=seed, tone="dark")
+    colour = np.asarray(base.base_color, dtype=np.float64) / 255.0
+    cells = N.tileable_fbm(size, 24, 5, seed=seed + 1)
+    crack = np.clip(1.0 - np.abs(np.sin(cells * 30.0)) * 2.6, 0.0, 1.0) ** 1.3
+    colour = _mix(colour, np.array((0.086, 0.074, 0.070)), 0.86)
+    colour = _mix(colour, np.array((0.035, 0.031, 0.031)), crack * 0.75)
+    ember = np.clip(N.tileable_fbm(size, 5, 4, seed=seed + 2) * 1.8 - 1.24, 0.0, 1.0)
+    colour = _mix(colour, np.array((0.352, 0.145, 0.047)), ember * 0.5)
+    height = np.clip(0.55 - crack * 0.5 + cells * 0.25, 0.0, 1.0)
+    occlusion = np.clip(0.34 + 0.5 * (1.0 - crack), 0.0, 1.0)
+    return TextureSet("charred_timber", _u8(np.clip(colour, 0.0, 1.0)),
+                      pack_orm(occlusion, np.full((size, size), 0.95)),
+                      normal_from_height(height, 3.4))
+
+
+def packed_earth(size: int = 512, seed: int = 223) -> TextureSet:
+    """Cut earth with grit, pebbles and root threads - the wall of a dug space."""
+    soil = N.tileable_fbm(size, 6, 6, seed=seed)
+    grit = N.tileable_fbm(size, 48, 4, seed=seed + 1)
+    colour = _colorize(soil, (0.0, (0.166, 0.128, 0.094)), (0.6, (0.254, 0.196, 0.140)),
+                       (1.0, (0.336, 0.264, 0.190)))
+    colour = colour * (0.74 + 0.58 * grit)[..., None]
+    threads = np.clip((N.tileable_fbm(size, 7, 3, seed=seed + 2) - 0.60) * 3.2, 0.0, 1.0)
+    colour = _mix(colour, np.array((0.290, 0.219, 0.141)), threads * 0.55)
+    pebble = _upsample(N.tileable_worley(min(size, 256), 22, seed=seed + 3), size)
+    stones = np.clip(1.0 - pebble * 5.5, 0.0, 1.0)
+    colour = _mix(colour, np.array((0.430, 0.408, 0.372)), stones * 0.72)
+    height = np.clip(soil * 0.42 + grit * 0.34 + stones * 0.5, 0.0, 1.0)
+    occlusion = np.clip(0.50 + 0.50 * soil, 0.0, 1.0)
+    roughness = np.clip(0.95 - 0.05 * grit, 0.0, 1.0)
+    return TextureSet("packed_earth", _u8(np.clip(colour, 0.0, 1.0)),
+                      pack_orm(occlusion, roughness), normal_from_height(height, 2.1))
+
+
 def canvas_awning(size: int = 256, seed: int = 139) -> TextureSet:
     """Striped market canvas, faded and patched."""
     u = np.linspace(0.0, 1.0, size, endpoint=False)
