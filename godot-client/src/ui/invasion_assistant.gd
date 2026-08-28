@@ -4,6 +4,9 @@ extends Window
 signal command_requested(command: String)
 
 const MapCanvasScript := preload("res://src/ui/invasion_map_canvas.gd")
+const MAP_REFRESH_SECONDS := 5.0
+const INDEX_REFRESH_SECONDS := 15.0
+const VIEWPORT_MARGIN := Vector2i(32, 32)
 
 var map_registry: Dictionary = {}
 var index_state: Dictionary = {}
@@ -30,19 +33,83 @@ var group_filter: LineEdit
 var group_list: ItemList
 var group_detail: RichTextLabel
 var group_open_map: Button
+var group_create: Button
+var group_duplicate: Button
+var group_spawn: Button
+var group_clear: Button
+var group_delete: Button
+var group_name: LineEdit
+var group_description: LineEdit
+var group_map: OptionButton
+var group_minimum: SpinBox
+var group_maximum: SpinBox
+var group_health: SpinBox
+var group_boss_type: LineEdit
+var group_boss_name: LineEdit
+var group_save: Button
+var group_composition: ItemList
+var group_remove_quantity: SpinBox
+var group_remove_monster: Button
 var monster_filter: LineEdit
 var monster_list: ItemList
 var monster_detail: RichTextLabel
+var monster_quantity: SpinBox
+var monster_group: OptionButton
+var monster_add_to_group: Button
+var monster_create_group: Button
+var monster_spawn_here: Button
+var create_dialog: ConfirmationDialog
+var create_name: LineEdit
+var create_map: OptionButton
+var create_description: LineEdit
 var status: Label
+var _map_refresh_elapsed := 0.0
+var _index_refresh_elapsed := 0.0
+var _pending_created_group := ""
+var _pending_add_to_created := false
+var _texture_cache: Dictionary = {}
 
 
 func _ready() -> void:
 	title = "Invasion Assistant"
-	size = Vector2i(1120, 720)
-	min_size = Vector2i(900, 600)
+	min_size = Vector2i(680, 460)
 	close_requested.connect(hide)
+	visibility_changed.connect(_on_visibility_changed)
 	_build_ui()
+	get_tree().root.size_changed.connect(_fit_to_viewport)
+	_fit_to_viewport()
 	hide()
+	set_process(true)
+
+
+func _process(delta: float) -> void:
+	if not visible or tabs == null or tabs.current_tab != 0 or selected_map_id.is_empty():
+		return
+	_map_refresh_elapsed += delta
+	_index_refresh_elapsed += delta
+	if _map_refresh_elapsed >= MAP_REFRESH_SECONDS:
+		_map_refresh_elapsed = 0.0
+		command_requested.emit("#invasion_assistant map " + selected_map_id)
+	if _index_refresh_elapsed >= INDEX_REFRESH_SECONDS:
+		_index_refresh_elapsed = 0.0
+		command_requested.emit("#invasion_assistant refresh")
+
+
+func _fit_to_viewport() -> void:
+	var viewport_size := get_tree().root.size
+	var available := Vector2i(maxi(240, viewport_size.x - VIEWPORT_MARGIN.x),
+		maxi(200, viewport_size.y - VIEWPORT_MARGIN.y))
+	min_size = Vector2i(mini(680, available.x), mini(460, available.y))
+	size = Vector2i(mini(1120, available.x), mini(720, available.y))
+	position = Vector2i(maxi(0, (viewport_size.x - size.x) / 2),
+		maxi(0, (viewport_size.y - size.y) / 2))
+
+
+func _on_visibility_changed() -> void:
+	_map_refresh_elapsed = 0.0
+	_index_refresh_elapsed = 0.0
+	if visible:
+		_fit_to_viewport()
 
 
 func configure_registry(value: Dictionary) -> void:
@@ -69,7 +136,10 @@ func apply_update(update: Dictionary) -> void:
 			monsters_state = update.duplicate(true)
 			_rebuild_monsters()
 	if not visible:
-		popup_centered(size)
+		_fit_to_viewport()
+		popup()
+		_fit_to_viewport()
+		call_deferred("_fit_to_viewport")
 
 
 func _build_ui() -> void:
@@ -99,6 +169,12 @@ func _build_ui() -> void:
 	refresh_all.tooltip_text = "Refresh map counts and the current tab from the server"
 	refresh_all.pressed.connect(_refresh_current)
 	header.add_child(refresh_all)
+	var close_button := Button.new()
+	close_button.text = "×"
+	close_button.tooltip_text = "Close invasion assistant"
+	close_button.custom_minimum_size.x = 38
+	close_button.pressed.connect(hide)
+	header.add_child(close_button)
 
 	tabs = TabContainer.new()
 	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -107,6 +183,7 @@ func _build_ui() -> void:
 	_build_maps_tab()
 	_build_groups_tab()
 	_build_monsters_tab()
+	_build_create_dialog()
 
 	status = Label.new()
 	status.text = "Server-authorized invasion masters only. Click the map to stage a teleport."
@@ -199,8 +276,24 @@ func _build_groups_tab() -> void:
 	page.name = "Spawn Groups"
 	tabs.add_child(page)
 	var list_column := VBoxContainer.new()
-	list_column.custom_minimum_size.x = 430
+	list_column.custom_minimum_size.x = 330
 	page.add_child(list_column)
+	var list_actions := HBoxContainer.new()
+	list_column.add_child(list_actions)
+	group_create = Button.new()
+	group_create.text = "Create group"
+	group_create.pressed.connect(_show_create_group)
+	list_actions.add_child(group_create)
+	group_duplicate = Button.new()
+	group_duplicate.text = "Duplicate"
+	group_duplicate.disabled = true
+	group_duplicate.pressed.connect(_duplicate_group)
+	list_actions.add_child(group_duplicate)
+	group_delete = Button.new()
+	group_delete.text = "Delete"
+	group_delete.disabled = true
+	group_delete.pressed.connect(_delete_group)
+	list_actions.add_child(group_delete)
 	group_filter = LineEdit.new()
 	group_filter.placeholder_text = "Filter by group, map, monster, or active…"
 	group_filter.text_changed.connect(func(_value: String) -> void: _rebuild_groups())
@@ -210,19 +303,113 @@ func _build_groups_tab() -> void:
 	group_list.item_selected.connect(_on_group_selected)
 	group_list.item_activated.connect(_on_group_selected)
 	list_column.add_child(group_list)
+	var detail_scroll := ScrollContainer.new()
+	detail_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	detail_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	page.add_child(detail_scroll)
 	var detail_column := VBoxContainer.new()
 	detail_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	page.add_child(detail_column)
+	detail_column.add_theme_constant_override("separation", 7)
+	detail_scroll.add_child(detail_column)
 	group_detail = RichTextLabel.new()
 	group_detail.bbcode_enabled = true
-	group_detail.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	group_detail.fit_content = true
+	group_detail.custom_minimum_size.y = 120
 	group_detail.text = "Select a configured invasion spawn group."
 	detail_column.add_child(group_detail)
+	var runtime_actions := HBoxContainer.new()
+	detail_column.add_child(runtime_actions)
+	group_spawn = Button.new()
+	group_spawn.text = "Spawn selected group"
+	group_spawn.disabled = true
+	group_spawn.tooltip_text = "Activate this defined group on its configured map"
+	group_spawn.pressed.connect(_spawn_group)
+	runtime_actions.add_child(group_spawn)
+	group_clear = Button.new()
+	group_clear.text = "Clear active group"
+	group_clear.disabled = true
+	group_clear.pressed.connect(_clear_group)
+	runtime_actions.add_child(group_clear)
 	group_open_map = Button.new()
 	group_open_map.text = "Open group map"
 	group_open_map.disabled = true
 	group_open_map.pressed.connect(_open_group_map)
-	detail_column.add_child(group_open_map)
+	runtime_actions.add_child(group_open_map)
+
+	var editor_title := Label.new()
+	editor_title.text = "LIVE GROUP BUILDER"
+	editor_title.add_theme_font_size_override("font_size", 16)
+	detail_column.add_child(editor_title)
+	var editor := GridContainer.new()
+	editor.columns = 2
+	detail_column.add_child(editor)
+	_add_form_label(editor, "Name")
+	group_name = LineEdit.new()
+	group_name.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	editor.add_child(group_name)
+	_add_form_label(editor, "Description")
+	group_description = LineEdit.new()
+	editor.add_child(group_description)
+	_add_form_label(editor, "Map")
+	group_map = OptionButton.new()
+	editor.add_child(group_map)
+	_add_form_label(editor, "Population")
+	var population := HBoxContainer.new()
+	group_minimum = SpinBox.new()
+	group_minimum.prefix = "Min "
+	group_minimum.min_value = 0
+	group_minimum.max_value = 500
+	population.add_child(group_minimum)
+	group_maximum = SpinBox.new()
+	group_maximum.prefix = "Max "
+	group_maximum.min_value = 0
+	group_maximum.max_value = 500
+	population.add_child(group_maximum)
+	editor.add_child(population)
+	_add_form_label(editor, "Health")
+	group_health = SpinBox.new()
+	group_health.prefix = "×"
+	group_health.min_value = 0.1
+	group_health.max_value = 100.0
+	group_health.step = 0.1
+	group_health.value = 1.0
+	editor.add_child(group_health)
+	_add_form_label(editor, "Boss type")
+	group_boss_type = LineEdit.new()
+	group_boss_type.placeholder_text = "Optional creature type"
+	editor.add_child(group_boss_type)
+	_add_form_label(editor, "Boss name")
+	group_boss_name = LineEdit.new()
+	group_boss_name.placeholder_text = "Optional display name"
+	editor.add_child(group_boss_name)
+	group_save = Button.new()
+	group_save.text = "Save group settings"
+	group_save.disabled = true
+	group_save.tooltip_text = "Configured groups are read-only; duplicate one to edit it live"
+	group_save.pressed.connect(_save_group)
+	detail_column.add_child(group_save)
+
+	var composition_title := Label.new()
+	composition_title.text = "COMPOSITION"
+	composition_title.add_theme_font_size_override("font_size", 16)
+	detail_column.add_child(composition_title)
+	group_composition = ItemList.new()
+	group_composition.custom_minimum_size.y = 105
+	group_composition.item_selected.connect(_on_composition_selected)
+	detail_column.add_child(group_composition)
+	var remove_row := HBoxContainer.new()
+	detail_column.add_child(remove_row)
+	group_remove_quantity = SpinBox.new()
+	group_remove_quantity.prefix = "Remove "
+	group_remove_quantity.min_value = 1
+	group_remove_quantity.max_value = 100
+	group_remove_quantity.value = 1
+	remove_row.add_child(group_remove_quantity)
+	group_remove_monster = Button.new()
+	group_remove_monster.text = "Remove selected monster"
+	group_remove_monster.disabled = true
+	group_remove_monster.pressed.connect(_remove_group_monster)
+	remove_row.add_child(group_remove_monster)
 
 
 func _build_monsters_tab() -> void:
@@ -230,7 +417,7 @@ func _build_monsters_tab() -> void:
 	page.name = "Monsters"
 	tabs.add_child(page)
 	var list_column := VBoxContainer.new()
-	list_column.custom_minimum_size.x = 470
+	list_column.custom_minimum_size.x = 400
 	page.add_child(list_column)
 	monster_filter = LineEdit.new()
 	monster_filter.placeholder_text = "Filter type, name, tier, or configured…"
@@ -240,11 +427,82 @@ func _build_monsters_tab() -> void:
 	monster_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	monster_list.item_selected.connect(_on_monster_selected)
 	list_column.add_child(monster_list)
+	var detail_column := VBoxContainer.new()
+	detail_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	page.add_child(detail_column)
 	monster_detail = RichTextLabel.new()
 	monster_detail.bbcode_enabled = true
+	monster_detail.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	monster_detail.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	monster_detail.text = "Select an invadable monster to inspect its strength."
-	page.add_child(monster_detail)
+	detail_column.add_child(monster_detail)
+	var builder_title := Label.new()
+	builder_title.text = "ADD TO LIVE SPAWN GROUP"
+	builder_title.add_theme_font_size_override("font_size", 16)
+	detail_column.add_child(builder_title)
+	var builder_row := HBoxContainer.new()
+	detail_column.add_child(builder_row)
+	monster_quantity = SpinBox.new()
+	monster_quantity.prefix = "Quantity "
+	monster_quantity.min_value = 1
+	monster_quantity.max_value = 100
+	monster_quantity.value = 1
+	monster_quantity.value_changed.connect(func(_value: float) -> void: _update_monster_actions())
+	builder_row.add_child(monster_quantity)
+	monster_group = OptionButton.new()
+	monster_group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	monster_group.item_selected.connect(func(_index: int) -> void: _update_monster_actions())
+	builder_row.add_child(monster_group)
+	monster_create_group = Button.new()
+	monster_create_group.text = "Create group…"
+	monster_create_group.tooltip_text = "Create a new live group, then add the selected monster"
+	monster_create_group.pressed.connect(_show_create_group_for_monster)
+	builder_row.add_child(monster_create_group)
+	monster_add_to_group = Button.new()
+	monster_add_to_group.text = "Add monster to group"
+	monster_add_to_group.disabled = true
+	monster_add_to_group.pressed.connect(_add_monster_to_group)
+	detail_column.add_child(monster_add_to_group)
+	monster_spawn_here = Button.new()
+	monster_spawn_here.text = "Spawn X monsters at my location"
+	monster_spawn_here.disabled = true
+	monster_spawn_here.tooltip_text = "Create, activate, and track a quick group at your character's current server location"
+	monster_spawn_here.pressed.connect(_spawn_monster_here)
+	detail_column.add_child(monster_spawn_here)
+
+
+func _build_create_dialog() -> void:
+	create_dialog = ConfirmationDialog.new()
+	create_dialog.title = "Create live spawn group"
+	create_dialog.ok_button_text = "Create group"
+	create_dialog.min_size = Vector2i(520, 240)
+	create_dialog.confirmed.connect(_create_group_confirmed)
+	add_child(create_dialog)
+	var form := GridContainer.new()
+	form.columns = 2
+	form.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	form.offset_left = 18
+	form.offset_top = 18
+	form.offset_right = -18
+	form.offset_bottom = -62
+	create_dialog.add_child(form)
+	_add_form_label(form, "Name")
+	create_name = LineEdit.new()
+	create_name.placeholder_text = "e.g. North Gate Wave"
+	form.add_child(create_name)
+	_add_form_label(form, "Map")
+	create_map = OptionButton.new()
+	form.add_child(create_map)
+	_add_form_label(form, "Description")
+	create_description = LineEdit.new()
+	create_description.placeholder_text = "Optional operational note"
+	form.add_child(create_description)
+
+
+func _add_form_label(parent: Container, text: String) -> void:
+	var label := Label.new()
+	label.text = text
+	parent.add_child(label)
 
 
 func _update_summary() -> void:
@@ -277,6 +535,8 @@ func _rebuild_maps() -> void:
 	if selected_index >= 0:
 		map_list.select(selected_index)
 		map_list.ensure_current_is_visible()
+	_populate_map_picker(group_map, str(selected_group.get("map_id", selected_map_id)))
+	_populate_map_picker(create_map, selected_map_id)
 
 
 func _on_map_selected(index: int) -> void:
@@ -290,7 +550,17 @@ func _show_map_state() -> void:
 	var map: Dictionary = map_state.get("map", {}) as Dictionary
 	var display_state: Dictionary = map_state.duplicate(true)
 	var locations: Array = (display_state.get("locations", []) as Array).duplicate(true)
-	locations.append_array(_local_landmarks(str(map.get("id", ""))))
+	for local: Dictionary in _local_landmarks(str(map.get("id", ""))):
+		var duplicate := false
+		for existing_raw: Variant in locations:
+			var existing := existing_raw as Dictionary
+			if str(existing.get("name", "")).to_lower() == str(local.get("name", "")).to_lower() \
+					or Vector2i(int(existing.get("x", 0)), int(existing.get("y", 0))).distance_to(
+						Vector2i(int(local.get("x", 0)), int(local.get("y", 0)))) < 3.0:
+				duplicate = true
+				break
+		if not duplicate:
+			locations.append(local)
 	display_state["locations"] = locations
 	map_title.text = "%s  —  %s" % [str(map.get("name", "Map")), str(map.get("id", ""))]
 	coordinate_x.max_value = maxi(0, int(map.get("width", 2048)) - 1)
@@ -305,6 +575,15 @@ func _show_map_state() -> void:
 			int(location.get("x", 0)), int(location.get("y", 0))])
 		location_picker.set_item_metadata(location_picker.item_count - 1, location)
 	map_canvas.set_map_state(display_state, _map_texture(str(map.get("id", ""))))
+	if map_canvas.selected_tile.x < 0:
+		var players: Array = map_state.get("players", []) as Array
+		if not players.is_empty():
+			var player := players[0] as Dictionary
+			coordinate_x.value = int(player.get("x", 0))
+			coordinate_y.value = int(player.get("y", 0))
+		else:
+			coordinate_x.value = int(map.get("width", 1)) / 2
+			coordinate_y.value = int(map.get("height", 1)) / 2
 	_rebuild_roster()
 	map_status.text = "%d named locations, %d players, %d invasion creatures. Live markers are server-authoritative." % [
 		locations.size(),
@@ -360,6 +639,8 @@ func _teleport() -> void:
 	var x := int(coordinate_x.value)
 	var y := int(coordinate_y.value)
 	status.text = "Teleporting to %s [%d, %d]…" % [selected_map_id, x, y]
+	_map_refresh_elapsed = 0.0
+	_index_refresh_elapsed = 0.0
 	command_requested.emit("#invasion_assistant teleport %s %d %d" % [selected_map_id, x, y])
 
 
@@ -368,6 +649,7 @@ func _rebuild_groups() -> void:
 		return
 	group_list.clear()
 	var query := group_filter.text.strip_edges().to_lower()
+	var selected_index := -1
 	for raw_group: Variant in groups_state.get("groups", []):
 		var group := raw_group as Dictionary
 		var searchable := "%s %s %s %s %s" % [group.get("name", ""),
@@ -377,37 +659,178 @@ func _rebuild_groups() -> void:
 		if not query.is_empty() and not query in searchable.to_lower():
 			continue
 		var activity := "ACTIVE %d" % int(group.get("alive", 0)) if bool(group.get("active", false)) else "ready"
-		var item := group_list.add_item("%s  ·  %s  ·  %s" % [
+		var dynamic_marker := "LIVE · " if bool(group.get("dynamic", false)) else ""
+		var item := group_list.add_item("%s%s  ·  %s  ·  %s" % [dynamic_marker,
 			group.get("name", "Group"), group.get("map_name", "Map"), activity])
 		group_list.set_item_metadata(item, group)
+		if str(group.get("name", "")).to_lower() == str(selected_group.get("name", "")).to_lower() \
+				or str(group.get("name", "")).to_lower() == _pending_created_group.to_lower():
+			selected_index = item
+	if selected_index >= 0:
+		group_list.select(selected_index)
+		_on_group_selected(selected_index)
+		_pending_created_group = ""
+	_rebuild_monster_group_picker()
+	if selected_index >= 0 and _pending_add_to_created and not selected_monster.is_empty():
+		_pending_add_to_created = false
+		_add_monster_to_group()
 
 
 func _on_group_selected(index: int) -> void:
 	selected_group = (group_list.get_item_metadata(index) as Dictionary).duplicate(true)
+	var dynamic := bool(selected_group.get("dynamic", false))
 	group_open_map.disabled = str(selected_group.get("map_id", "")).is_empty()
-	var creatures: Array = selected_group.get("creatures", []) as Array
-	group_detail.text = ("[font_size=22][b]%s[/b][/font_size]\n%s\n\n"
+	group_duplicate.disabled = false
+	group_delete.disabled = not dynamic or bool(selected_group.get("active", false))
+	group_spawn.disabled = bool(selected_group.get("active", false)) or int(selected_group.get("points", 0)) == 0
+	group_clear.disabled = not bool(selected_group.get("active", false))
+	group_save.disabled = not dynamic
+	group_detail.text = ("[font_size=22][b]%s[/b][/font_size]  %s\n%s\n\n"
 		+ "[b]Map[/b]  %s (%s)\n"
-		+ "[b]Population[/b]  %d–%d across %d authored points\n"
+		+ "[b]Population[/b]  %d–%d across %d points\n"
 		+ "[b]Current state[/b]  %s\n"
-		+ "[b]Creature types[/b]  %s\n"
-		+ "[b]Peak strength rating[/b]  %d\n"
-		+ "[b]Spawn health multiplier[/b]  ×%.2f\n"
-		+ "[b]Boss[/b]  %s") % [
-		selected_group.get("name", "Group"), selected_group.get("description", ""),
+		+ "[b]Peak strength[/b]  %d  ·  [b]Health[/b] ×%.2f  ·  [b]Boss[/b] %s") % [
+		selected_group.get("name", "Group"),
+		("[color=#78dce8]LIVE BUILDER[/color]" if dynamic else "[color=#a9bdc9]CONFIGURED · READ-ONLY[/color]"),
+		selected_group.get("description", ""),
 		selected_group.get("map_name", ""), selected_group.get("map_id", ""),
 		selected_group.get("minimum", 0), selected_group.get("maximum", 0),
 		selected_group.get("points", 0),
 		("ACTIVE — %d alive" % int(selected_group.get("alive", 0))) if bool(selected_group.get("active", false)) else "Ready",
-		", ".join(creatures), selected_group.get("strength", 0),
+		selected_group.get("strength", 0),
 		float(selected_group.get("health_multiplier", 1.0)),
 		selected_group.get("boss", "None") if not str(selected_group.get("boss", "")).is_empty() else "None"]
+	group_name.text = str(selected_group.get("name", ""))
+	group_description.text = str(selected_group.get("description", ""))
+	_populate_map_picker(group_map, str(selected_group.get("map_id", "")))
+	group_minimum.value = int(selected_group.get("minimum", 0))
+	group_maximum.value = int(selected_group.get("maximum", 0))
+	group_health.value = float(selected_group.get("health_multiplier", 1.0))
+	group_boss_type.text = str(selected_group.get("boss_type", ""))
+	group_boss_name.text = str(selected_group.get("boss_name", ""))
+	group_name.editable = dynamic
+	group_description.editable = dynamic
+	group_map.disabled = not dynamic
+	group_minimum.editable = dynamic
+	group_maximum.editable = dynamic
+	group_health.editable = dynamic
+	group_boss_type.editable = dynamic
+	group_boss_name.editable = dynamic
+	group_composition.clear()
+	for raw_entry: Variant in selected_group.get("composition", []):
+		var entry := raw_entry as Dictionary
+		var item := group_composition.add_item("%s  × %d" % [
+			entry.get("name", entry.get("type", "Monster")), entry.get("quantity", 0)])
+		group_composition.set_item_metadata(item, entry)
+	group_remove_monster.disabled = true
 
 
 func _open_group_map() -> void:
 	selected_map_id = str(selected_group.get("map_id", ""))
 	tabs.current_tab = 0
 	command_requested.emit("#invasion_assistant map " + selected_map_id)
+
+
+func _show_create_group() -> void:
+	_pending_add_to_created = false
+	_open_create_dialog()
+
+
+func _show_create_group_for_monster() -> void:
+	_pending_add_to_created = not selected_monster.is_empty()
+	_open_create_dialog()
+
+
+func _open_create_dialog() -> void:
+	_populate_map_picker(create_map, selected_map_id)
+	create_name.text = ""
+	create_description.text = ""
+	create_dialog.popup_centered()
+	create_name.grab_focus()
+
+
+func _create_group_confirmed() -> void:
+	var name := _clean_field(create_name.text)
+	if name.is_empty() or create_map.selected < 0:
+		status.text = "A live spawn group needs a name and map."
+		_pending_add_to_created = false
+		return
+	var map_id := str(create_map.get_item_metadata(create_map.selected))
+	_pending_created_group = name
+	command_requested.emit("#invasion_assistant group create %s|%s|%s" % [
+		name, map_id, _clean_field(create_description.text)])
+	status.text = "Creating live spawn group %s…" % name
+
+
+func _duplicate_group() -> void:
+	if selected_group.is_empty():
+		return
+	var base := str(selected_group.get("name", "Group")) + " Copy"
+	var candidate := base
+	var suffix := 2
+	while _group_name_exists(candidate):
+		candidate = "%s %d" % [base, suffix]
+		suffix += 1
+	_pending_created_group = candidate
+	command_requested.emit("#invasion_assistant group duplicate %s|%s" % [
+		_clean_field(str(selected_group.get("name", ""))), _clean_field(candidate)])
+	status.text = "Duplicating group as %s…" % candidate
+
+
+func _delete_group() -> void:
+	if selected_group.is_empty() or not bool(selected_group.get("dynamic", false)):
+		return
+	command_requested.emit("#invasion_assistant group delete "
+		+ _clean_field(str(selected_group.get("name", ""))))
+	status.text = "Deleting live spawn group…"
+
+
+func _save_group() -> void:
+	if selected_group.is_empty() or not bool(selected_group.get("dynamic", false)) \
+			or group_map.selected < 0:
+		return
+	var old_name := _clean_field(str(selected_group.get("name", "")))
+	var new_name := _clean_field(group_name.text)
+	_pending_created_group = new_name
+	var fields: Array[String] = [old_name, new_name,
+		_clean_field(group_description.text),
+		str(group_map.get_item_metadata(group_map.selected)),
+		str(int(group_minimum.value)), str(int(group_maximum.value)),
+		str(group_health.value), _clean_field(group_boss_type.text),
+		_clean_field(group_boss_name.text)]
+	command_requested.emit("#invasion_assistant group update " + "|".join(fields))
+	status.text = "Saving %s…" % new_name
+
+
+func _spawn_group() -> void:
+	if selected_group.is_empty():
+		return
+	command_requested.emit("#invasion_assistant group activate "
+		+ _clean_field(str(selected_group.get("name", ""))))
+	status.text = "Spawning %s…" % selected_group.get("name", "group")
+
+
+func _clear_group() -> void:
+	if selected_group.is_empty():
+		return
+	command_requested.emit("#invasion_assistant group clear "
+		+ _clean_field(str(selected_group.get("name", ""))))
+	status.text = "Clearing %s…" % selected_group.get("name", "group")
+
+
+func _on_composition_selected(_index: int) -> void:
+	group_remove_monster.disabled = not bool(selected_group.get("dynamic", false))
+
+
+func _remove_group_monster() -> void:
+	var selected := group_composition.get_selected_items()
+	if selected.is_empty() or selected_group.is_empty():
+		return
+	var entry := group_composition.get_item_metadata(selected[0]) as Dictionary
+	command_requested.emit("#invasion_assistant group remove %s|%s|%d" % [
+		_clean_field(str(selected_group.get("name", ""))),
+		entry.get("type", ""), int(group_remove_quantity.value)])
+	status.text = "Updating group composition…"
 
 
 func _rebuild_monsters() -> void:
@@ -448,6 +871,74 @@ func _on_monster_selected(index: int) -> void:
 		("[color=#ffd36a]★ Used by a configured invasion spawn group[/color]"
 		if bool(selected_monster.get("configured", false)) else
 		"Available for ad-hoc invasion spawning")]
+	_update_monster_actions()
+
+
+func _rebuild_monster_group_picker() -> void:
+	if monster_group == null:
+		return
+	var preferred := str(selected_group.get("name", ""))
+	monster_group.clear()
+	for raw_group: Variant in groups_state.get("groups", []):
+		var group := raw_group as Dictionary
+		if not bool(group.get("dynamic", false)):
+			continue
+		monster_group.add_item("%s — %s" % [group.get("name", "Group"),
+			group.get("map_name", "Map")])
+		monster_group.set_item_metadata(monster_group.item_count - 1, group)
+		if str(group.get("name", "")).to_lower() == preferred.to_lower():
+			monster_group.select(monster_group.item_count - 1)
+	_update_monster_actions()
+
+
+func _update_monster_actions() -> void:
+	if monster_add_to_group == null:
+		return
+	var has_monster := not selected_monster.is_empty()
+	monster_add_to_group.disabled = not has_monster or monster_group.item_count == 0
+	monster_spawn_here.disabled = not has_monster
+	if has_monster and monster_group.item_count > 0:
+		var group := monster_group.get_item_metadata(monster_group.selected) as Dictionary
+		monster_add_to_group.text = "Add %d %s to %s" % [int(monster_quantity.value),
+			selected_monster.get("name", "monster"), group.get("name", "group")]
+	else:
+		monster_add_to_group.text = "Add monster to group"
+	monster_spawn_here.text = "Spawn %d %s at my location" % [int(monster_quantity.value),
+		selected_monster.get("name", "monsters") if has_monster else "monsters"]
+
+
+func _add_monster_to_group() -> void:
+	if selected_monster.is_empty() or monster_group.item_count == 0:
+		return
+	var group := monster_group.get_item_metadata(monster_group.selected) as Dictionary
+	var location := _spawn_location_for_group(group)
+	command_requested.emit("#invasion_assistant group add %s|%s|%d|%d|%d" % [
+		_clean_field(str(group.get("name", ""))), selected_monster.get("type", ""),
+		int(monster_quantity.value), location.x, location.y])
+	status.text = "Adding %d %s to %s at [%d, %d]…" % [int(monster_quantity.value),
+		selected_monster.get("name", "monster"), group.get("name", "group"),
+		location.x, location.y]
+
+
+func _spawn_monster_here() -> void:
+	if selected_monster.is_empty():
+		return
+	command_requested.emit("#invasion_assistant monster spawn %s|%d" % [
+		selected_monster.get("type", ""), int(monster_quantity.value)])
+	status.text = "Spawning %d %s at your live server location…" % [
+		int(monster_quantity.value), selected_monster.get("name", "monster")]
+
+
+func _spawn_location_for_group(group: Dictionary) -> Vector2i:
+	if str(group.get("map_id", "")) == selected_map_id and map_canvas.selected_tile.x >= 0:
+		return Vector2i(int(coordinate_x.value), int(coordinate_y.value))
+	var locations: Array = group.get("locations", []) as Array
+	if not locations.is_empty():
+		var first := locations[0] as Dictionary
+		return Vector2i(int(first.get("x", 0)), int(first.get("y", 0)))
+	if str(group.get("map_id", "")) == selected_map_id:
+		return Vector2i(int(coordinate_x.value), int(coordinate_y.value))
+	return Vector2i.ZERO
 
 
 func _on_tab_changed(tab: int) -> void:
@@ -470,19 +961,63 @@ func _refresh_current() -> void:
 		2:
 			command_requested.emit("#invasion_assistant monsters")
 	status.text = "Refreshing server-authoritative data…"
+	_map_refresh_elapsed = 0.0
+	_index_refresh_elapsed = 0.0
+
+
+func _populate_map_picker(picker: OptionButton, preferred: String) -> void:
+	if picker == null:
+		return
+	picker.clear()
+	for raw_map: Variant in index_state.get("maps", []):
+		var map := raw_map as Dictionary
+		var map_id := str(map.get("id", ""))
+		picker.add_item(str(map.get("name", map_id)))
+		picker.set_item_metadata(picker.item_count - 1, map_id)
+		if map_id == preferred:
+			picker.select(picker.item_count - 1)
+
+
+func _group_name_exists(name: String) -> bool:
+	for raw_group: Variant in groups_state.get("groups", []):
+		if str((raw_group as Dictionary).get("name", "")).to_lower() == name.to_lower():
+			return true
+	return false
+
+
+func _clean_field(value: String) -> String:
+	return value.replace("|", "/").strip_edges()
 
 
 func _map_texture(map_id: String) -> Texture2D:
+	if _texture_cache.has(map_id):
+		return _texture_cache[map_id] as Texture2D
 	if map_registry.is_empty():
 		return null
 	var entry: Dictionary = MapRegistry.resolve(map_registry, map_id)
 	var manifest_path := str(entry.get("manifest", ""))
 	if manifest_path.is_empty():
 		return null
-	var minimap_path := manifest_path.get_base_dir().path_join("minimap.webp")
-	if not ResourceLoader.exists(minimap_path):
-		return null
-	return load(minimap_path) as Texture2D
+	var minimap_file := "minimap.webp"
+	if FileAccess.file_exists(manifest_path):
+		var manifest_file := FileAccess.open(manifest_path, FileAccess.READ)
+		if manifest_file != null:
+			var parsed: Variant = JSON.parse_string(manifest_file.get_as_text())
+			if parsed is Dictionary:
+				var minimap: Variant = (parsed as Dictionary).get("minimap", {})
+				if minimap is Dictionary:
+					minimap_file = str((minimap as Dictionary).get("image", minimap_file))
+	var minimap_path := manifest_path.get_base_dir().path_join(minimap_file)
+	var texture: Texture2D = null
+	if ResourceLoader.exists(minimap_path):
+		texture = load(minimap_path) as Texture2D
+	if texture == null:
+		var image := Image.new()
+		if image.load(ProjectSettings.globalize_path(minimap_path)) == OK:
+			texture = ImageTexture.create_from_image(image)
+	if texture != null:
+		_texture_cache[map_id] = texture
+	return texture
 
 
 func _local_landmarks(map_id: String) -> Array[Dictionary]:
