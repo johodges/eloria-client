@@ -71,3 +71,62 @@ These were caught by the validator, the independent viewer and the client:
 - Bridge arches sprang above the deck and occluded the whole crossing.
 - The bridge deck slab and its fascia were exactly coincident, producing
   z-fighting bands across the causeway.
+
+## Interiors — six street-level rooms
+
+Six interiors now open off the Four Gates streets, each shipped as an ordinary
+world package (`world.glb` + `world.json`) under `eloria-assets/maps/`:
+
+| Package | Room | Quarter |
+| --- | --- | --- |
+| `four-gates-lantern-row` | Lantern Row — covered market hall | agricultural |
+| `four-gates-stormglass-house` | The Stormglass House — glazier and alchemist | service |
+| `four-gates-mirrorsmith-forge` | Mirrorsmith's Forge — repair and reforge | service |
+| `four-gates-reedworks` | The Reedworks — reed and cordage works | industrial |
+| `four-gates-ferrymans-rest` | The Ferryman's Rest — tavern | harbour |
+| `four-gates-deposit-four-keys` | The Deposit of Four Keys — storage vault | civic |
+
+They are authored by `eloria-assets/tools/four_gates/build_interiors.py` from
+the interior kit in `interiors.py`, with every door position taken from
+`interior_index.py` so the city shopfronts and the interiors' exit portals can
+never drift apart. Each embeds a ten-to-twelve material subset at interior
+resolution rather than the city's full thirty, which is why a room is under
+3.2 MB against the city's 23.5 MB.
+
+Nothing about the wire protocol changed. A door is a `CHANGE_MAP` to another
+map id exactly like any other map change; the server stays authoritative over
+where the player is.
+
+### The interior camera
+
+The isometric rig is framed for open ground: 26 m back at −60°. Indoors that
+puts the camera above the roof and behind the near wall, and the player sees a
+ceiling and nothing else. Two changes fix it, and both are manifest-driven so
+the city is untouched:
+
+- **`camera` block** — an interior declares its own framing (pitch −48°,
+  distance scaled to the room's long axis, tighter zoom limits).
+  `WorldEnvironmentApplier.apply_camera()` applies it on load.
+- **`cutaway` block** — names the roof nodes to hide outright and the four wall
+  nodes with their outward normals. `InteriorCutaway` hides the roof, and hides
+  any wall whose outward normal points back towards the camera, following the
+  rig as it rotates. Only visibility changes: the static bodies the loader
+  builds from those meshes stay in place, so a cut-away wall is still solid.
+
+The room shell is therefore emitted as six nodes (`Shell_Ceiling`,
+`Shell_Beams`, and one per wall) rather than one fused mesh, which is what
+makes the cutaway addressable at all.
+
+### Verified
+
+- Khronos glTF-Validator 2.0.0-dev.3.10: **0 errors, 0 warnings** on all six.
+- `tests/integration/rendered_interiors.gd` — 66 checks, 0 failures. Each room
+  is rendered twice: once from inside, and once at its own camera profile with
+  the cutaway applied, asserting the roof is hidden, the near wall is hidden,
+  the far wall is still drawn, and all four walls keep their collision.
+- `tests/integration/rendered_map_transition.gd` — 16 checks, 0 failures.
+  City → interior → city through an authoritative `CHANGE_MAP`, with grounding
+  confirmed at both ends. This closes the "portals and map transitions
+  unverified" gap flagged in the original validation report.
+- `tests/integration/rendered_four_gates_gameplay.gd` — 28 checks, 0 failures,
+  confirming the city is unaffected by the client changes.

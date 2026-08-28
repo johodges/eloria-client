@@ -25,6 +25,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import interior_index as INDEX   # noqa: E402
 import kits            # noqa: E402
 import landmarks       # noqa: E402
 import layout          # noqa: E402
@@ -72,6 +73,11 @@ CARDINAL_NAMES = {0.0: "East", math.pi / 2: "South", math.pi: "West",
 def _yaw_for(angle: float) -> float:
     """Rotate a +Z-facing kit so its passage runs radially outward."""
     return -angle + math.pi * 0.5
+
+
+def interiors_kit_sign(p, slots: int) -> Geo:
+    import interiors as interior_kit
+    return interior_kit.sign_board(slots, p, width=1.9)
 
 
 class WorldBuild:
@@ -681,6 +687,60 @@ class WorldBuild:
                 f"Cliff_Boulder_{i:03d}", boulder[i % 3], (x, base, z),
                 float(rng.uniform(0, TAU))))
 
+    # ------------------------------------------------------- interior doorways
+    def build_interior_doors(self) -> None:
+        """A shopfront, a trade sign and a door marker at each interior entry.
+
+        The door marker is what the manifest portal references; the shopfront
+        gives the entrance a silhouette on the street so a player can find it
+        without reading the map.
+        """
+        p = self.p
+        front = self.scene.mesh(
+            "Shopfront_Mesh",
+            lambda: kits.townhouse(p, 11.0, 12.0, 2, 2, p.roof_verdigris))
+        porch = self.scene.mesh("Porch_Mesh", lambda: Geo.concat([
+            M.box(4.6, 0.35, 2.4, self.mats["stone_trim"], 1.5, origin="corner"),
+            M.box(0.5, 3.4, 0.5, self.mats["timber_dark"], 1.0, origin="corner")
+             .translate(-1.9, 0.35, 0.9),
+            M.box(0.5, 3.4, 0.5, self.mats["timber_dark"], 1.0, origin="corner")
+             .translate(1.9, 0.35, 0.9),
+            M.box(4.8, 0.4, 2.8, self.mats["roof_verdigris"], 1.6, origin="corner")
+             .translate(0.0, 3.75, 0.5)]))
+        lamp = self.scene.mesh("Shopfront_Lamp_Mesh",
+                               lambda: kits.crystal_lamp(4.6, p))
+        signs = {}
+        for entry in INDEX.INTERIORS:
+            slots = int(entry["signSlots"])
+            key = f"Trade_Sign_{slots}"
+            if key not in signs:
+                signs[key] = self.scene.mesh(
+                    key, lambda slots=slots: interiors_kit_sign(p, slots))
+            x, _y, z = entry["door"]
+            base = self.ground(x, z)
+            yaw = float(entry["yaw"])
+            ident = entry["id"]
+            # the shopfront sits just behind the threshold
+            bx = x - math.cos(yaw + math.pi * 0.5) * 7.4
+            bz = z + math.sin(yaw + math.pi * 0.5) * 7.4
+            self.add("Interiors", self.scene.instance(
+                f"Shopfront_{ident}", front, (bx, self.ground(bx, bz), bz), yaw))
+            self.collider(f"Shopfront_{ident}", bx, bz, 10.9, 10.0, 11.9, yaw,
+                          y=self.ground(bx, bz))
+            self.add("Interiors", self.scene.instance(
+                f"Porch_{ident}", porch, (x, base, z), yaw))
+            self.add("Interiors", self.scene.instance(
+                f"Sign_{ident}", signs[key], (x, base + 3.6, z), yaw))
+            for side in (-1, 1):
+                lx = x - math.sin(yaw) * 2.6 * side
+                lz = z + math.cos(yaw) * 2.6 * side
+                self.add("Interiors", self.scene.instance(
+                    f"Shopfront_Lamp_{ident}_{'L' if side < 0 else 'R'}", lamp,
+                    (lx, self.ground(lx, lz), lz)))
+            self.add("Markers", self.glb.add_node(
+                f"Door_{ident}", translation=(x, base + 0.02, z),
+                extras={"interior": ident, "quarter": entry["quarter"]}))
+
     # ------------------------------------------------------------------ markers
     def build_markers(self) -> None:
         markers = {
@@ -711,13 +771,14 @@ class WorldBuild:
         self.build_sanctuary()
         self.build_vegetation()
         self.build_props()
+        self.build_interior_doors()
         self.build_markers()
 
         group_nodes = []
         for group in ["Terrain", "Water", "Waterfalls", "Roads", "Plaza", "City_Walls",
                       "Gates", "Bridges", "District_Civic", "District_Residential",
                       "District_Agricultural", "District_Service",
-                      "Sanctuary", "Vegetation", "Props", "Markers",
+                      "Sanctuary", "Vegetation", "Props", "Interiors", "Markers",
                       "Collision"]:
             children = self.groups.get(group, [])
             if children:

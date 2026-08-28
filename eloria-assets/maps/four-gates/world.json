@@ -46,6 +46,13 @@
     "walkingHeight": 31.15,
     "invertServerY": true
   },
+  "camera": {
+    "distance": 26.0,
+    "minDistance": 8.0,
+    "maxDistance": 90.0,
+    "pitchDegrees": -60.0,
+    "zoomStep": 2.5
+  },
   "landmarks": [
     {
       "id": "north",
@@ -157,6 +164,92 @@
         113.6,
         -714.0
       ]
+    }
+  ],
+  "interiors": [
+    {
+      "id": "four-gates-lantern-row",
+      "name": "Lantern Row",
+      "quarter": "agricultural",
+      "trade": "general goods",
+      "door": [
+        -37.01,
+        31.0,
+        174.11
+      ],
+      "doorNode": "Door_four-gates-lantern-row",
+      "map": "maps/four-gates-lantern-row.elm",
+      "description": "Covered market hall; general goods and Nima Vey's counting desk."
+    },
+    {
+      "id": "four-gates-reedworks",
+      "name": "The Reedworks",
+      "quarter": "agricultural",
+      "trade": "tailoring",
+      "door": [
+        100.39,
+        31.0,
+        248.49
+      ],
+      "doorNode": "Door_four-gates-reedworks",
+      "map": "maps/four-gates-reedworks.elm",
+      "description": "Cordage, canvas and cloth from mirror reed; dye vats and looms."
+    },
+    {
+      "id": "four-gates-stormglass-house",
+      "name": "The Stormglass House",
+      "quarter": "service",
+      "trade": "alchemy and glass",
+      "door": [
+        -69.68,
+        31.0,
+        -172.46
+      ],
+      "doorNode": "Door_four-gates-stormglass-house",
+      "map": "maps/four-gates-stormglass-house.elm",
+      "description": "Glazier and alchemist; buys stormglass, sells lenses and reagents."
+    },
+    {
+      "id": "four-gates-mirrorsmith-forge",
+      "name": "Mirrorsmith's Forge",
+      "quarter": "service",
+      "trade": "smithing",
+      "door": [
+        102.64,
+        31.0,
+        -254.05
+      ],
+      "doorNode": "Door_four-gates-mirrorsmith-forge",
+      "map": "maps/four-gates-mirrorsmith-forge.elm",
+      "description": "The smithy behind the civic equipment set; repair and reforge."
+    },
+    {
+      "id": "four-gates-ferrymans-rest",
+      "name": "The Ferryman's Rest",
+      "quarter": "service",
+      "trade": "inn and ferry office",
+      "door": [
+        -21.07,
+        31.0,
+        -301.26
+      ],
+      "doorNode": "Door_four-gates-ferrymans-rest",
+      "map": "maps/four-gates-ferrymans-rest.elm",
+      "description": "Inn, tavern and the Crownwater ferry office at the north dock."
+    },
+    {
+      "id": "four-gates-deposit-four-keys",
+      "name": "The Deposit of Four Keys",
+      "quarter": "civic",
+      "trade": "storage and banking",
+      "door": [
+        -120.81,
+        31.0,
+        16.98
+      ],
+      "doorNode": "Door_four-gates-deposit-four-keys",
+      "map": "maps/four-gates-deposit-four-keys.elm",
+      "description": "Storage and banking; four keyed vault doors and a plastered fifth."
     }
   ],
   "districts": [
@@ -580,6 +673,96 @@
       ],
       "radius": 9.0,
       "targetHook": "nymara.sanctuary"
+    },
+    {
+      "id": "interior-four-gates-lantern-row",
+      "position": [
+        -37.01,
+        31.0,
+        174.11
+      ],
+      "radius": 2.4,
+      "targetMap": "maps/four-gates-lantern-row.elm",
+      "targetSpawn": "entrance",
+      "doorNode": "Door_four-gates-lantern-row",
+      "label": "Lantern Row",
+      "quarter": "agricultural",
+      "trade": "general goods"
+    },
+    {
+      "id": "interior-four-gates-reedworks",
+      "position": [
+        100.39,
+        31.0,
+        248.49
+      ],
+      "radius": 2.4,
+      "targetMap": "maps/four-gates-reedworks.elm",
+      "targetSpawn": "entrance",
+      "doorNode": "Door_four-gates-reedworks",
+      "label": "The Reedworks",
+      "quarter": "agricultural",
+      "trade": "tailoring"
+    },
+    {
+      "id": "interior-four-gates-stormglass-house",
+      "position": [
+        -69.68,
+        31.0,
+        -172.46
+      ],
+      "radius": 2.4,
+      "targetMap": "maps/four-gates-stormglass-house.elm",
+      "targetSpawn": "entrance",
+      "doorNode": "Door_four-gates-stormglass-house",
+      "label": "The Stormglass House",
+      "quarter": "service",
+      "trade": "alchemy and glass"
+    },
+    {
+      "id": "interior-four-gates-mirrorsmith-forge",
+      "position": [
+        102.64,
+        31.0,
+        -254.05
+      ],
+      "radius": 2.4,
+      "targetMap": "maps/four-gates-mirrorsmith-forge.elm",
+      "targetSpawn": "entrance",
+      "doorNode": "Door_four-gates-mirrorsmith-forge",
+      "label": "Mirrorsmith's Forge",
+      "quarter": "service",
+      "trade": "smithing"
+    },
+    {
+      "id": "interior-four-gates-ferrymans-rest",
+      "position": [
+        -21.07,
+        31.0,
+        -301.26
+      ],
+      "radius": 2.4,
+      "targetMap": "maps/four-gates-ferrymans-rest.elm",
+      "targetSpawn": "entrance",
+      "doorNode": "Door_four-gates-ferrymans-rest",
+      "label": "The Ferryman's Rest",
+      "quarter": "service",
+      "trade": "inn and ferry office"
+    },
+    {
+      "id": "interior-four-gates-deposit-four-keys",
+      "position": [
+        -120.81,
+        31.0,
+        16.98
+      ],
+      "radius": 2.4,
+      "targetMap": "maps/four-gates-deposit-four-keys.elm",
+      "targetSpawn": "entrance",
+      "doorNode": "Door_four-gates-deposit-four-keys",
+      "label": "The Deposit of Four Keys",
+      "quarter": "civic",
+      "trade": "storage and banking"
     }
   ],
   "harvestables": [
@@ -1529,6 +1712,12 @@
       "COLLISION_Plaza_Arcade_3_R",
       "COLLISION_Plaza_Monument",
       "COLLISION_Sanctuary_Body",
+      "COLLISION_Shopfront_four-gates-deposit-four-keys",
+      "COLLISION_Shopfront_four-gates-ferrymans-rest",
+      "COLLISION_Shopfront_four-gates-lantern-row",
+      "COLLISION_Shopfront_four-gates-mirrorsmith-forge",
+      "COLLISION_Shopfront_four-gates-reedworks",
+      "COLLISION_Shopfront_four-gates-stormglass-house",
       "COLLISION_Wall_01",
       "COLLISION_Wall_02",
       "COLLISION_Wall_03",
@@ -2460,17 +2649,17 @@
     ]
   },
   "performance": {
-    "bytes": 23464572,
-    "nodes": 3030,
-    "meshes": 154,
+    "bytes": 23620808,
+    "nodes": 3073,
+    "meshes": 161,
     "materials": 30,
     "textures": 91,
     "animations": 7,
-    "uniqueTriangles": 188383,
-    "instances": 2992,
-    "visibleTriangles": 811083,
+    "uniqueTriangles": 189551,
+    "instances": 3028,
+    "visibleTriangles": 817371,
     "textureMemoryBytes": 110450005,
-    "collisionProxies": 422
+    "collisionProxies": 428
   },
   "sources": [
     {

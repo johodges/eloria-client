@@ -7,6 +7,7 @@ from typing import Dict, List
 
 import numpy as np
 
+import interior_index as INDEX
 import layout
 import terrain as T
 
@@ -161,6 +162,19 @@ def build(stats: dict, bounds: dict, landmark_records: List[dict],
             "radius": 9.0, "targetHook": target,
         })
 
+    for entry in INDEX.INTERIORS:
+        portals.append({
+            "id": f"interior-{entry['id']}",
+            "position": entry["door"],
+            "radius": 2.4,
+            "targetMap": f"maps/{entry['id']}.elm",
+            "targetSpawn": "entrance",
+            "doorNode": f"Door_{entry['id']}",
+            "label": entry["name"],
+            "quarter": entry["quarter"],
+            "trade": entry["trade"],
+        })
+
     harvestables = [
         {"id": "resonant-crystal-east", "resource": "resonant_crystal",
          "position": _p(238, y, 120), "radius": 2.5, "respawnSeconds": 90},
@@ -253,7 +267,16 @@ def build(stats: dict, bounds: dict, landmark_records: List[dict],
             "waterLevel": T.WATER_Y,
         },
         "coordinateTransform": coordinate_transform,
+        "camera": {"distance": 26.0, "minDistance": 8.0, "maxDistance": 90.0,
+                   "pitchDegrees": -60.0, "zoomStep": 2.5},
         "landmarks": landmarks,
+        "interiors": [
+            {"id": e["id"], "name": e["name"], "quarter": e["quarter"],
+             "trade": e["trade"], "door": e["door"],
+             "doorNode": f"Door_{e['id']}", "map": f"maps/{e['id']}.elm",
+             "description": e["blurb"]}
+            for e in INDEX.INTERIORS
+        ],
         "districts": [
             {"id": "civic", "name": "Civic Quarter", "node": "District_Civic"},
             {"id": "residential", "name": "Residential Quarter",

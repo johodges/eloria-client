@@ -248,6 +248,28 @@ class LocalServer:
             return
         if command == RAW_TEXT_C:
             text = payload.split(b"\0", 1)[0].decode("utf-8", "ignore")
+            if text.startswith("#goto "):
+                # Test hook: move this player to another map the way a real
+                # server does when a client walks into a portal.
+                parts = text.split(" ", 2)
+                target = parts[1]
+                spawn = self.spawn
+                if len(parts) > 2:
+                    try:
+                        sx, sy = parts[2].split(",")
+                        spawn = (int(sx), int(sy))
+                    except ValueError:
+                        pass
+                self.broadcast(frame(REMOVE_ACTOR,
+                                     struct.pack("<H", player.actor_id)),
+                               skip=player)
+                player.path = []
+                player.x, player.y = spawn
+                self.send(player, frame(CHANGE_MAP, target.encode() + b"\0"))
+                self.send(player, frame(KILL_ALL_ACTORS))
+                self.send(player, self.enhanced_actor(player))
+                self.log(f"{player.name} -> {target} at {spawn}")
+                return
             line = f"\x01{player.name}: {text}"
             self.broadcast(frame(RAW_TEXT, line.encode() + b"\0"))
             return

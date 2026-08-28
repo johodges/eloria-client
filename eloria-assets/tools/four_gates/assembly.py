@@ -34,6 +34,16 @@ MATERIAL_RESOLUTIONS: Dict[str, int] = {
 }
 DEFAULT_RESOLUTION = 256
 
+# Interiors are seen close up but cover little surface, so they export smaller
+# than the city does. Anything not listed falls back to INTERIOR_RESOLUTION.
+INTERIOR_RESOLUTIONS: Dict[str, int] = {
+    "stone_ashlar": 512,
+    "plaster_warm": 512,
+    "timber_dark": 512,
+    "paving_road": 512,
+}
+INTERIOR_RESOLUTION = 256
+
 
 class MaterialLibrary:
     """Registers the procedural PBR library into a GLB and hands back a Palette."""
@@ -41,12 +51,33 @@ class MaterialLibrary:
     CACHE_VERSION = 5
 
     def __init__(self, glb: GLB, size: int = 512, hero: int = 1024,
-                 seed: int = 20260827, cache_dir: Optional[str] = None):
-        self.sets, encoded = self._load_or_build(size, hero, seed, cache_dir)
+                 seed: int = 20260827, cache_dir: Optional[str] = None,
+                 subset: Optional[Sequence[str]] = None,
+                 resolutions: Optional[Dict[str, int]] = None,
+                 default_resolution: Optional[int] = None):
+        """`subset` embeds only the named materials.
+
+        A map pays texture memory for every material it registers, so an
+        interior that uses eleven surfaces must not carry the city's thirty.
+        Referencing a material outside the subset raises, which is the failure
+        we want: loud, at build time, naming the material.
+        """
+        all_sets, encoded = self._load_or_build(size, hero, seed, cache_dir)
+        if subset is not None:
+            missing = [n for n in subset if n not in all_sets]
+            if missing:
+                raise KeyError(f"unknown material(s): {', '.join(sorted(missing))}")
+            self.sets = {n: all_sets[n] for n in subset}
+        else:
+            self.sets = all_sets
+        self.resolutions = dict(MATERIAL_RESOLUTIONS if resolutions is None
+                                else resolutions)
+        self.default_resolution = (DEFAULT_RESOLUTION if default_resolution is None
+                                   else default_resolution)
         self.indices: Dict[str, int] = {}
         self.uv_scales: Dict[str, float] = {}
         for name, material in self.sets.items():
-            maps = encoded[name]
+            maps = self._resize_maps(name, material)
             base = glb.add_texture_bytes(maps["base"], f"{name}_basecolor")
             normal = glb.add_texture_bytes(maps["normal"], f"{name}_normal")
             orm = glb.add_texture_bytes(maps["orm"], f"{name}_orm")
@@ -71,6 +102,34 @@ class MaterialLibrary:
         # convenience: material index -> authored UV scale in metres per tile
         self.scale_by_index = {self.indices[n]: self.uv_scales[n] for n in self.sets}
 
+
+    def target_resolution(self, name: str) -> int:
+        return self.resolutions.get(name, self.default_resolution)
+
+    def _resize_maps(self, name, material) -> dict:
+        from PIL import Image
+        target = self.target_resolution(name)
+
+        def fit(image):
+            if image is None or image.size[0] <= target:
+                return image
+            return image.resize((target, target), Image.LANCZOS)
+
+        out = {"base": GLB.encode_png(fit(material.base)),
+               "normal": GLB.encode_png(fit(material.normal)),
+               "orm": GLB.encode_png(fit(material.orm))}
+        if material.emissive is not None:
+            out["emissive"] = GLB.encode_png(fit(material.emissive))
+        return out
+
+    def texture_memory_bytes(self) -> int:
+        """Uncompressed RGBA8 footprint of the exported maps, including mips."""
+        total = 0
+        for name, material in self.sets.items():
+            side = min(self.target_resolution(name), material.base.size[0])
+            maps = 3 + (1 if material.emissive is not None else 0)
+            total += int(side * side * 4 * maps * 4 / 3)
+        return total
 
     @staticmethod
     def _encode(sets):

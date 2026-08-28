@@ -1,0 +1,301 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "four-gates-stormglass-house",
+    "name": "The Stormglass House",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": {
+      "min": [
+        -8.0,
+        -1.0,
+        -6.75
+      ],
+      "max": [
+        8.0,
+        6.1,
+        6.75
+      ]
+    },
+    "interior": true,
+    "parentMap": "maps/startmap.elm",
+    "quarter": "service",
+    "description": "Glazier and alchemist; buys stormglass, sells lenses and reagents."
+  },
+  "coordinateTransform": {
+    "metresPerTile": 0.25,
+    "serverOrigin": [
+      512.0,
+      512.0
+    ],
+    "origin": [
+      0.0,
+      0.05,
+      0.0
+    ],
+    "walkingHeight": 0.05,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "entrance",
+      "node": "Spawn_Entrance",
+      "position": [
+        0.0,
+        0.0,
+        3.35
+      ],
+      "facing": [
+        0,
+        0,
+        -1
+      ],
+      "default": true
+    }
+  ],
+  "portals": [
+    {
+      "id": "exit",
+      "position": [
+        0.0,
+        0.0,
+        4.35
+      ],
+      "radius": 1.6,
+      "targetMap": "maps/startmap.elm",
+      "targetPosition": [
+        -71.55,
+        31.0,
+        -177.09
+      ],
+      "label": "Out to the street"
+    }
+  ],
+  "landmarks": [],
+  "npcMarkers": [],
+  "interactives": [
+    {
+      "id": "grinding-wheel",
+      "type": "workstation",
+      "node": "Grinding_Wheel",
+      "skill": "crafting"
+    }
+  ],
+  "collision": {
+    "nodeNames": [
+      "Shell_Wall_North",
+      "Shell_Wall_South",
+      "Shell_Wall_East",
+      "Shell_Wall_West",
+      "Sale_Counter",
+      "Grinding_Wheel"
+    ],
+    "note": "The four walls plus solid fittings; the floor is a walk surface and the walls stay solid while cut away."
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Floor_",
+      "Deck_",
+      "Stair_"
+    ],
+    "walkableAreas": [
+      "floor"
+    ],
+    "navmesh": {
+      "format": "inline-convex-polygons-v1",
+      "coordinateSystem": "asset",
+      "agentRadius": 0.4,
+      "agentHeight": 1.9,
+      "maxSlopeDegrees": 30,
+      "polygons": [
+        {
+          "id": "room",
+          "tags": [
+            "interior",
+            "walkable"
+          ],
+          "vertices": [
+            [
+              -5.9,
+              0.02,
+              -4.65
+            ],
+            [
+              5.9,
+              0.02,
+              -4.65
+            ],
+            [
+              5.9,
+              0.02,
+              4.65
+            ],
+            [
+              -5.9,
+              0.02,
+              4.65
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "camera": {
+    "distance": 10.2,
+    "minDistance": 6.0,
+    "maxDistance": 16.1,
+    "pitchDegrees": -48.0,
+    "zoomStep": 1.2,
+    "note": "Framed for the whole room with the ceiling and near wall cut away; closer and shallower than the city rig."
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Shell_Ceiling",
+      "Shell_Beams"
+    ],
+    "walls": [
+      {
+        "node": "Shell_Wall_North",
+        "outward": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "node": "Shell_Wall_South",
+        "outward": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "node": "Shell_Wall_East",
+        "outward": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "node": "Shell_Wall_West",
+        "outward": [
+          -1.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "facingThreshold": 0.2,
+    "note": "Hide the roof, and any wall whose outward normal points back towards the camera, so the room stays visible from an isometric rig. Collision is unaffected."
+  },
+  "environment": {
+    "backgroundColor": [
+      0.04,
+      0.05,
+      0.06
+    ],
+    "ambient": {
+      "color": [
+        0.28,
+        0.31,
+        0.35
+      ],
+      "energy": 1.02,
+      "skyContribution": 0.0
+    },
+    "sun": {
+      "enabled": false
+    },
+    "fog": {
+      "enabled": false
+    },
+    "tonemap": {
+      "mode": "filmic",
+      "exposure": 1.0,
+      "whitePoint": 8.0
+    },
+    "lights": [
+      {
+        "position": [
+          -5.18,
+          2.6,
+          0.0
+        ],
+        "color": [
+          0.68,
+          0.84,
+          1.0
+        ],
+        "energy": 3.0,
+        "range": 9.0
+      },
+      {
+        "position": [
+          5.18,
+          2.6,
+          0.0
+        ],
+        "color": [
+          0.68,
+          0.84,
+          1.0
+        ],
+        "energy": 3.0,
+        "range": 9.0
+      },
+      {
+        "position": [
+          0.0,
+          2.6,
+          -4.12
+        ],
+        "color": [
+          0.68,
+          0.84,
+          1.0
+        ],
+        "energy": 3.0,
+        "range": 9.0
+      },
+      {
+        "position": [
+          0.0,
+          3.6,
+          0.0
+        ],
+        "color": [
+          0.86,
+          0.9,
+          1.0
+        ],
+        "energy": 2.4,
+        "range": 12.0
+      }
+    ]
+  },
+  "performance": {
+    "bytes": 2943924,
+    "nodes": 28,
+    "meshes": 14,
+    "materials": 10,
+    "textures": 31,
+    "animations": 0,
+    "uniqueTriangles": 1096,
+    "instances": 24,
+    "visibleTriangles": 2296,
+    "textureMemoryBytes": 23418197
+  }
+}

@@ -21,6 +21,12 @@ extends Control
 @onready var status_label: Label = %Status
 @onready var world_root: Node3D = %WorldRoot
 @onready var camera_rig: IsometricCameraController = %CameraRig
+
+# Preloaded, and left untyped, so the script resolves without depending on
+# Godot's global class-name cache -- that cache is a build artifact and is
+# stale in a working copy until the editor next scans the project.
+const InteriorCutawayScript := preload("res://src/world/interior_cutaway.gd")
+var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 @onready var gameplay_camera: Camera3D = %Camera
 @onready var world_loader: WorldLoader = %WorldLoader
 @onready var fallback_ground: MeshInstance3D = $GameView/ViewportContainer/Viewport/WorldRoot/Ground
@@ -468,6 +474,7 @@ func _bind_shared_world() -> void:
 func _process(_delta: float) -> void:
 	if game_view.visible:
 		_update_local_actor_follow()
+		interior_cutaway.update(camera_rig.yaw_degrees)
 		_update_keyboard_movement()
 		_update_session_distance()
 		_update_legacy_clock_and_compass()
@@ -2029,6 +2036,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	map_title.text = _current_map_display_name.to_upper()
 	current_map_button.text = "Current: " + _current_map_display_name
 	_apply_world_environment(manifest)
+	_configure_interior_cutaway(manifest)
 	_configure_full_map(manifest)
 	_sync_world()
 	_sync_ground_bags()
@@ -2358,8 +2366,23 @@ func _apply_world_environment(manifest: WorldManifest) -> void:
 		"Sun") as DirectionalLight3D
 	if environment_node == null:
 		return
-	if WorldEnvironmentApplier.apply(manifest, environment_node, sun_node):
+	if WorldEnvironmentApplier.apply(manifest, environment_node, sun_node, world_root):
 		print_debug("world_environment stage=applied map=", AppState.current_map)
+	if WorldEnvironmentApplier.apply_camera(manifest, camera_rig):
+		print_debug("world_camera stage=applied map=", AppState.current_map,
+			" distance=", camera_rig.get("distance"),
+			" pitch=", camera_rig.get("pitch_degrees"))
+
+
+## Interiors are closed boxes, so the isometric rig would render their ceiling
+## and near wall. The manifest names the nodes to cut away; maps without a
+## `cutaway` block (the city) are left exactly as loaded.
+func _configure_interior_cutaway(manifest: WorldManifest) -> void:
+	var count: int = interior_cutaway.configure(manifest, world_root)
+	if count > 0:
+		interior_cutaway.update(camera_rig.yaw_degrees, true)
+		print_debug("interior_cutaway stage=applied map=", AppState.current_map,
+			" nodes=", count)
 
 
 func _configure_full_map(manifest: WorldManifest) -> void:

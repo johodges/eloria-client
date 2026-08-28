@@ -1,0 +1,332 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "four-gates-ferrymans-rest",
+    "name": "The Ferryman's Rest",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "bounds": {
+      "min": [
+        -9.5,
+        -1.0,
+        -7.5
+      ],
+      "max": [
+        9.5,
+        5.7,
+        7.5
+      ]
+    },
+    "interior": true,
+    "parentMap": "maps/startmap.elm",
+    "quarter": "service",
+    "description": "Inn, tavern and the Crownwater ferry office at the north dock."
+  },
+  "coordinateTransform": {
+    "metresPerTile": 0.25,
+    "serverOrigin": [
+      512.0,
+      512.0
+    ],
+    "origin": [
+      0.0,
+      0.05,
+      0.0
+    ],
+    "walkingHeight": 0.05,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "entrance",
+      "node": "Spawn_Entrance",
+      "position": [
+        0.0,
+        0.0,
+        4.2
+      ],
+      "facing": [
+        0,
+        0,
+        -1
+      ],
+      "default": true
+    }
+  ],
+  "portals": [
+    {
+      "id": "exit",
+      "position": [
+        0.0,
+        0.0,
+        5.1
+      ],
+      "radius": 1.6,
+      "targetMap": "maps/startmap.elm",
+      "targetPosition": [
+        -21.42,
+        31.0,
+        -306.25
+      ],
+      "label": "Out to the street"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "work-board",
+      "name": "The ferry crews' board",
+      "node": "Work_Board",
+      "type": "noticeboard",
+      "position": [
+        7.58,
+        1.0,
+        -1.4
+      ]
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "ferry-lantern-bearer",
+      "actorType": 303,
+      "role": "ferryman",
+      "position": [
+        0.0,
+        0.0,
+        -3.1
+      ],
+      "rotationDegrees": 180
+    }
+  ],
+  "interactives": [],
+  "collision": {
+    "nodeNames": [
+      "Shell_Wall_North",
+      "Shell_Wall_South",
+      "Shell_Wall_East",
+      "Shell_Wall_West",
+      "Ferry_Bar",
+      "Tavern_Hearth"
+    ],
+    "note": "The four walls plus solid fittings; the floor is a walk surface and the walls stay solid while cut away."
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Floor_",
+      "Deck_",
+      "Stair_"
+    ],
+    "walkableAreas": [
+      "floor"
+    ],
+    "navmesh": {
+      "format": "inline-convex-polygons-v1",
+      "coordinateSystem": "asset",
+      "agentRadius": 0.4,
+      "agentHeight": 1.9,
+      "maxSlopeDegrees": 30,
+      "polygons": [
+        {
+          "id": "room",
+          "tags": [
+            "interior",
+            "walkable"
+          ],
+          "vertices": [
+            [
+              -7.4,
+              0.02,
+              -5.4
+            ],
+            [
+              7.4,
+              0.02,
+              -5.4
+            ],
+            [
+              7.4,
+              0.02,
+              5.4
+            ],
+            [
+              -7.4,
+              0.02,
+              5.4
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "camera": {
+    "distance": 11.8,
+    "minDistance": 6.8,
+    "maxDistance": 17.8,
+    "pitchDegrees": -48.0,
+    "zoomStep": 1.2,
+    "note": "Framed for the whole room with the ceiling and near wall cut away; closer and shallower than the city rig."
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Shell_Ceiling",
+      "Shell_Beams"
+    ],
+    "walls": [
+      {
+        "node": "Shell_Wall_North",
+        "outward": [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      },
+      {
+        "node": "Shell_Wall_South",
+        "outward": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      {
+        "node": "Shell_Wall_East",
+        "outward": [
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "node": "Shell_Wall_West",
+        "outward": [
+          -1.0,
+          0.0,
+          0.0
+        ]
+      }
+    ],
+    "facingThreshold": 0.2,
+    "note": "Hide the roof, and any wall whose outward normal points back towards the camera, so the room stays visible from an isometric rig. Collision is unaffected."
+  },
+  "environment": {
+    "backgroundColor": [
+      0.04,
+      0.05,
+      0.06
+    ],
+    "ambient": {
+      "color": [
+        0.3,
+        0.27,
+        0.24
+      ],
+      "energy": 0.83,
+      "skyContribution": 0.0
+    },
+    "sun": {
+      "enabled": false
+    },
+    "fog": {
+      "enabled": false
+    },
+    "tonemap": {
+      "mode": "filmic",
+      "exposure": 1.0,
+      "whitePoint": 8.0
+    },
+    "lights": [
+      {
+        "position": [
+          0.0,
+          3.1,
+          -4.5
+        ],
+        "color": [
+          1.0,
+          0.82,
+          0.6
+        ],
+        "energy": 2.6,
+        "range": 8.0
+      },
+      {
+        "position": [
+          0.0,
+          3.1,
+          -1.5
+        ],
+        "color": [
+          1.0,
+          0.82,
+          0.6
+        ],
+        "energy": 2.6,
+        "range": 8.0
+      },
+      {
+        "position": [
+          0.0,
+          3.1,
+          1.5
+        ],
+        "color": [
+          1.0,
+          0.82,
+          0.6
+        ],
+        "energy": 2.6,
+        "range": 8.0
+      },
+      {
+        "position": [
+          0.0,
+          3.1,
+          4.5
+        ],
+        "color": [
+          1.0,
+          0.82,
+          0.6
+        ],
+        "energy": 2.6,
+        "range": 8.0
+      },
+      {
+        "position": [
+          -6.8,
+          1.1,
+          0.0
+        ],
+        "color": [
+          1.0,
+          0.58,
+          0.3
+        ],
+        "energy": 4.4,
+        "range": 10.0
+      }
+    ]
+  },
+  "performance": {
+    "bytes": 2959896,
+    "nodes": 40,
+    "meshes": 15,
+    "materials": 10,
+    "textures": 31,
+    "animations": 0,
+    "uniqueTriangles": 1308,
+    "instances": 35,
+    "visibleTriangles": 3656,
+    "textureMemoryBytes": 23418197
+  }
+}
