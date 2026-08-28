@@ -126,6 +126,9 @@ SPECS: tuple[MaterialSpec, ...] = (
     MaterialSpec("amethyst_brass", "amethyst_brass", roughness=0.36, metallic=0.40),
     MaterialSpec("amethyst_banner", "amethyst_banner", roughness=0.90,
                  double_sided=True),
+    # -- Amethyst Barrens interiors
+    MaterialSpec("amethyst_vault_floor", "amethyst_vault_floor", roughness=0.30,
+                 metallic=0.35),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}
@@ -185,6 +188,7 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     sets["amethyst_verdigris"] = T.amethyst_verdigris(256, seed=557)
     sets["amethyst_brass"] = T.amethyst_brass(256, seed=563)
     sets["amethyst_banner"] = T.amethyst_banner(256, seed=569)
+    sets["amethyst_vault_floor"] = T.amethyst_vault_floor(512, seed=577)
 
     # trim the maps that do not need to ship at full resolution
     alpha_cut = {"foliage_amber", "foliage_gold", "foliage_rust", "foliage_green",

@@ -605,6 +605,46 @@
     },
     "amberwood_cinder_chapel.elm": {
       "alias": "maps/nymara/amberwood_cinder_chapel.elm"
+    },
+    "maps/nymara/resonant_vault.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amethyst_barrens_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -28.0,
+          346.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/amethyst_barrens.elm",
+      "insidesMap": true,
+      "sections": [
+        "resonant_vault",
+        "geode_hollow",
+        "shardworks",
+        "storm_barrow"
+      ],
+      "requiresServerMap": {
+        "tiles": 64,
+        "collisionCells": 384,
+        "note": "four insides on one map with blackspace between them"
+      }
+    },
+    "resonant_vault": {
+      "alias": "maps/nymara/resonant_vault.elm"
+    },
+    "resonant_vault.elm": {
+      "alias": "maps/nymara/resonant_vault.elm"
+    },
+    "amethyst_barrens_insides": {
+      "alias": "maps/nymara/resonant_vault.elm"
     }
   }
 }

@@ -91,17 +91,81 @@
     {
       "id": "massif-camp",
       "position": [
-        132.0,
-        7.03,
-        -252.0
+        133.75,
+        7.08,
+        -253.75
       ],
       "serverTile": [
-        306,
-        426
+        308,
+        428
       ],
       "rotationDegrees": 90.0,
       "surface": "CrystalField",
       "grounded": true
+    },
+    {
+      "id": "resonant-vault-stair",
+      "position": [
+        -78.0,
+        11.45,
+        -204.0
+      ],
+      "serverTile": [
+        96,
+        378
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Barrens",
+      "grounded": true,
+      "note": "return point from the Amethyst Barrens insides map"
+    },
+    {
+      "id": "geode-hollow-mouth",
+      "position": [
+        323.75,
+        5.76,
+        -107.75
+      ],
+      "serverTile": [
+        498,
+        282
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "CrystalField",
+      "grounded": true,
+      "note": "return point from the Amethyst Barrens insides map"
+    },
+    {
+      "id": "shardworks-headframe",
+      "position": [
+        138.0,
+        3.24,
+        -42.0
+      ],
+      "serverTile": [
+        312,
+        216
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "CrystalField",
+      "grounded": true,
+      "note": "return point from the Amethyst Barrens insides map"
+    },
+    {
+      "id": "storm-barrow-stair",
+      "position": [
+        219.75,
+        4.74,
+        -171.25
+      ],
+      "serverTile": [
+        394,
+        345
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "CrystalField",
+      "grounded": true,
+      "note": "return point from the Amethyst Barrens insides map"
     }
   ],
   "collision": {
@@ -2039,13 +2103,13 @@
       "name": "Amberwood Road",
       "type": "map-transition",
       "position": [
-        -156.0,
-        18.28,
-        -252.0
+        -153.75,
+        17.54,
+        -250.25
       ],
       "serverTile": [
-        18,
-        426
+        20,
+        424
       ],
       "destinationMap": "maps/nymara/amberwood.elm",
       "radius": 3.5,
@@ -2117,7 +2181,64 @@
       ],
       "landmark": "glasswarden-observatory",
       "destinationMap": "maps/nymara/resonant_vault.elm",
-      "destinationSpawn": "default",
+      "destinationSpawn": "resonant-vault-stair",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "geode-hollow-mouth",
+      "name": "The Geode Hollow",
+      "type": "interior-entrance",
+      "position": [
+        323.75,
+        5.76,
+        -107.75
+      ],
+      "serverTile": [
+        498,
+        282
+      ],
+      "landmark": "amethyst-geode-cave-1",
+      "destinationMap": "maps/nymara/resonant_vault.elm",
+      "destinationSpawn": "geode-hollow-mouth",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "shardworks-headframe",
+      "name": "The Shardworks",
+      "type": "interior-entrance",
+      "position": [
+        138.0,
+        2.99,
+        -42.0
+      ],
+      "serverTile": [
+        312,
+        216
+      ],
+      "landmark": "resonant-crystal-cluster-0",
+      "destinationMap": "maps/nymara/resonant_vault.elm",
+      "destinationSpawn": "shardworks-headframe",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "storm-barrow-stair",
+      "name": "The Storm Barrow",
+      "type": "interior-entrance",
+      "position": [
+        219.75,
+        4.74,
+        -171.25
+      ],
+      "serverTile": [
+        394,
+        345
+      ],
+      "landmark": "amethyst-storm-ruin-0",
+      "destinationMap": "maps/nymara/resonant_vault.elm",
+      "destinationSpawn": "storm-barrow-stair",
       "radius": 2.5,
       "authority": "server"
     }
@@ -2757,7 +2878,13 @@
     },
     "notes": [
       "crystal outcrops placed: 126",
-      "ground dressing: 101 rock clusters, 201 vein scatters"
+      "ground dressing: 101 rock clusters, 201 vein scatters",
+      "massif-camp moved 2.5 m onto walkable ground",
+      "geode-hollow-mouth moved 8.1 m onto walkable ground",
+      "storm-barrow-stair moved 5.0 m onto walkable ground",
+      "west-road moved 2.9 m onto walkable ground",
+      "geode-hollow-mouth moved 8.1 m onto walkable ground",
+      "storm-barrow-stair moved 5.0 m onto walkable ground"
     ]
   },
   "sources": [
