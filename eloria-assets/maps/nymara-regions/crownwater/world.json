@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.1.0",
+  "assetVersion": "1.0.0",
   "asset": {
     "id": "crownwater",
     "name": "Crownwater",
@@ -18,974 +18,2159 @@
     ],
     "bounds": {
       "min": [
-        -96,
-        0.0,
-        -96
+        -464.0,
+        -16.39,
+        -691.0
       ],
       "max": [
-        96,
-        18.0,
-        96
+        691.0,
+        51.2,
+        464.0
       ]
-    }
+    },
+    "playableBounds": {
+      "min": [
+        -174.0,
+        -16.39,
+        -401.0
+      ],
+      "max": [
+        401.0,
+        18.09,
+        174.0
+      ]
+    },
+    "seaLevel": 0.0,
+    "serverCells": 576
   },
-  "source": {
-    "elm": "../source-elm/crownwater.elm",
-    "sha256": "6a82698d2eb23908aa960b317731ee50b90f0943d4867542f12b679894a1f2ca",
-    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
-    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
-  },
-  "conceptArt": {
-    "macro": "../../../concepts/nymara-regions/crownwater_region_concept.png",
-    "detailBoard": "references/00-concept-detail-board.png",
-    "panelGrid": [
-      5,
-      2
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      174.0,
+      174.0
     ],
-    "viewCount": 10,
-    "generator": "OpenAI ImageGen (built-in)",
-    "checkpoints": [
-      {
-        "panel": 1,
-        "id": "concept-01",
-        "subject": "ferry arrival",
-        "cameraPosition": [
-          0.0,
-          20.0,
-          -72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_crownwater_ferry_dock_038",
-          "Landmark_crownwater_ferry_dock_039",
-          "Landmark_crownwater_ferry_dock_040"
-        ]
-      },
-      {
-        "panel": 2,
-        "id": "concept-02",
-        "subject": "stone quay",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_manymouth_tidal_waystone_004",
-          "Landmark_crownwater_submerged_waystone_055",
-          "Landmark_crownwater_submerged_waystone_056"
-        ]
-      },
-      {
-        "panel": 3,
-        "id": "concept-03",
-        "subject": "domed civic plaza",
-        "cameraPosition": [
-          68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_mirrorhold_civic_tower_013",
-          "Landmark_mirrorhold_civic_tower_014",
-          "Landmark_mirrorhold_civic_tower_015"
-        ]
-      },
-      {
-        "panel": 4,
-        "id": "concept-04",
-        "subject": "radial causeway",
-        "cameraPosition": [
-          68.48,
-          20.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_mirrorhold_radial_bridge_029",
-          "Landmark_mirrorhold_radial_bridge_030",
-          "Landmark_mirrorhold_radial_bridge_031"
-        ]
-      },
-      {
-        "panel": 5,
-        "id": "concept-05",
-        "subject": "satellite island",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 6,
-        "id": "concept-06",
-        "subject": "patrol boat",
-        "cameraPosition": [
-          0.0,
-          16.0,
-          72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_crownwater_fishing_boat_045",
-          "Landmark_crownwater_fishing_boat_046",
-          "Landmark_crownwater_fishing_boat_047"
-        ]
-      },
-      {
-        "panel": 7,
-        "id": "concept-07",
-        "subject": "submerged waystone",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_manymouth_tidal_waystone_004",
-          "Landmark_crownwater_submerged_waystone_055",
-          "Landmark_crownwater_submerged_waystone_056"
-        ]
-      },
-      {
-        "panel": 8,
-        "id": "concept-08",
-        "subject": "fountain garden",
-        "cameraPosition": [
-          -68.48,
-          24.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_mirrorhold_public_fountain_021",
-          "Landmark_mirrorhold_public_fountain_022",
-          "Landmark_mirrorhold_public_fountain_023"
-        ]
-      },
-      {
-        "panel": 9,
-        "id": "concept-09",
-        "subject": "archipelago skyline",
-        "cameraPosition": [
-          -68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 10,
-        "id": "concept-10",
-        "subject": "limestone brass tile materials",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      }
-    ]
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 4.5,
+    "invertServerY": true
   },
-  "landmarks": [
-    {
-      "id": "landmark-000",
-      "name": "Grey Moor Ritual Shrine",
-      "node": "Landmark_grey_moor_ritual_shrine_000",
-      "position": [
-        -34.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-001",
-      "name": "Sunmane Caravan Camp",
-      "node": "Landmark_sunmane_caravan_camp_001",
-      "position": [
-        -12.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-002",
-      "name": "Amberwood Hollow Tree",
-      "node": "Landmark_amberwood_hollow_tree_002",
-      "position": [
-        10.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-003",
-      "name": "Mirrorhold Market Crate",
-      "node": "Landmark_mirrorhold_market_crate_003",
-      "position": [
-        32.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-004",
-      "name": "Manymouth Tidal Waystone",
-      "node": "Landmark_manymouth_tidal_waystone_004",
-      "position": [
-        -34.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-005",
-      "name": "Whitehorn Glacier",
-      "node": "Landmark_whitehorn_glacier_005",
-      "position": [
-        -12.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-006",
-      "name": "Sunmane Burial Mound",
-      "node": "Landmark_sunmane_burial_mound_006",
-      "position": [
-        10.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-007",
-      "name": "Orun Seasonal Market",
-      "node": "Landmark_orun_seasonal_market_007",
-      "position": [
-        32.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-009",
-      "name": "Amberwood Root Cave",
-      "node": "Landmark_amberwood_root_cave_009",
-      "position": [
-        -12.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-010",
-      "name": "Grey Moor Peat Fence",
-      "node": "Landmark_grey_moor_peat_fence_010",
-      "position": [
-        10.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-011",
-      "name": "Westhaven Seawall",
-      "node": "Landmark_westhaven_seawall_011",
-      "position": [
-        32.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-013",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_013",
-      "position": [
-        -16.0,
-        0,
-        16.0
-      ]
-    },
-    {
-      "id": "landmark-014",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_014",
-      "position": [
-        16.0,
-        0,
-        16.0
-      ]
-    },
-    {
-      "id": "landmark-015",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_015",
-      "position": [
-        -16.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-016",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_016",
-      "position": [
-        16.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-017",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_017",
-      "position": [
-        0.0,
-        0,
-        22.0
-      ]
-    },
-    {
-      "id": "landmark-018",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_018",
-      "position": [
-        -22.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-019",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_019",
-      "position": [
-        22.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-020",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_020",
-      "position": [
-        0.0,
-        0,
-        -22.0
-      ]
-    },
-    {
-      "id": "landmark-021",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_021",
-      "position": [
-        -10.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-022",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_022",
-      "position": [
-        10.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-023",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_023",
-      "position": [
-        -10.0,
-        0,
-        -10.0
-      ]
-    },
-    {
-      "id": "landmark-024",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_024",
-      "position": [
-        10.0,
-        0,
-        -10.0
-      ]
-    },
-    {
-      "id": "landmark-025",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_025",
-      "position": [
-        0.0,
-        0,
-        14.0
-      ]
-    },
-    {
-      "id": "landmark-026",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_026",
-      "position": [
-        -14.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-027",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_027",
-      "position": [
-        14.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-028",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_028",
-      "position": [
-        0.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-029",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_029",
-      "position": [
-        0.0,
-        0,
-        34.0
-      ]
-    },
-    {
-      "id": "landmark-030",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_030",
-      "position": [
-        -34.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-031",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_031",
-      "position": [
-        34.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-032",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_032",
-      "position": [
-        0.0,
-        0,
-        -34.0
-      ]
-    },
-    {
-      "id": "landmark-033",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_033",
-      "position": [
-        0.0,
-        0,
-        -52.0
-      ]
-    },
-    {
-      "id": "landmark-034",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_034",
-      "position": [
-        -22.0,
-        0,
-        22.0
-      ]
-    },
-    {
-      "id": "landmark-035",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_035",
-      "position": [
-        22.0,
-        0,
-        22.0
-      ]
-    },
-    {
-      "id": "landmark-036",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_036",
-      "position": [
-        -22.0,
-        0,
-        -22.0
-      ]
-    },
-    {
-      "id": "landmark-037",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_037",
-      "position": [
-        22.0,
-        0,
-        -22.0
-      ]
-    },
-    {
-      "id": "landmark-038",
-      "name": "Crownwater Ferry Dock",
-      "node": "Landmark_crownwater_ferry_dock_038",
-      "position": [
-        -28.0,
-        0,
-        28.0
-      ]
-    },
-    {
-      "id": "landmark-039",
-      "name": "Crownwater Ferry Dock",
-      "node": "Landmark_crownwater_ferry_dock_039",
-      "position": [
-        28.0,
-        0,
-        28.0
-      ]
-    },
-    {
-      "id": "landmark-040",
-      "name": "Crownwater Ferry Dock",
-      "node": "Landmark_crownwater_ferry_dock_040",
-      "position": [
-        -30.0,
-        0,
-        -28.0
-      ]
-    },
-    {
-      "id": "landmark-041",
-      "name": "Crownwater Ferry Dock",
-      "node": "Landmark_crownwater_ferry_dock_041",
-      "position": [
-        30.0,
-        0,
-        -28.0
-      ]
-    },
-    {
-      "id": "landmark-042",
-      "name": "Crownwater Ferry Dock",
-      "node": "Landmark_crownwater_ferry_dock_042",
-      "position": [
-        0.0,
-        0,
-        -48.0
-      ]
-    },
-    {
-      "id": "landmark-043",
-      "name": "Crownwater Ferry Dock",
-      "node": "Landmark_crownwater_ferry_dock_043",
-      "position": [
-        -38.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-044",
-      "name": "Crownwater Ferry Dock",
-      "node": "Landmark_crownwater_ferry_dock_044",
-      "position": [
-        40.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-045",
-      "name": "Crownwater Fishing Boat",
-      "node": "Landmark_crownwater_fishing_boat_045",
-      "position": [
-        -36.0,
-        0,
-        18.0
-      ]
-    },
-    {
-      "id": "landmark-046",
-      "name": "Crownwater Fishing Boat",
-      "node": "Landmark_crownwater_fishing_boat_046",
-      "position": [
-        38.0,
-        0,
-        18.0
-      ]
-    },
-    {
-      "id": "landmark-047",
-      "name": "Crownwater Fishing Boat",
-      "node": "Landmark_crownwater_fishing_boat_047",
-      "position": [
-        -34.0,
-        0,
-        -18.0
-      ]
-    },
-    {
-      "id": "landmark-048",
-      "name": "Crownwater Fishing Boat",
-      "node": "Landmark_crownwater_fishing_boat_048",
-      "position": [
-        36.0,
-        0,
-        -20.0
-      ]
-    },
-    {
-      "id": "landmark-049",
-      "name": "Crownwater Fishing Boat",
-      "node": "Landmark_crownwater_fishing_boat_049",
-      "position": [
-        -12.0,
-        0,
-        -46.0
-      ]
-    },
-    {
-      "id": "landmark-050",
-      "name": "Crownwater Fishing Boat",
-      "node": "Landmark_crownwater_fishing_boat_050",
-      "position": [
-        14.0,
-        0,
-        -48.0
-      ]
-    },
-    {
-      "id": "landmark-051",
-      "name": "Crownwater Patrol Boat",
-      "node": "Landmark_crownwater_patrol_boat_051",
-      "position": [
-        -24.0,
-        0,
-        38.0
-      ]
-    },
-    {
-      "id": "landmark-052",
-      "name": "Crownwater Patrol Boat",
-      "node": "Landmark_crownwater_patrol_boat_052",
-      "position": [
-        24.0,
-        0,
-        36.0
-      ]
-    },
-    {
-      "id": "landmark-053",
-      "name": "Crownwater Patrol Boat",
-      "node": "Landmark_crownwater_patrol_boat_053",
-      "position": [
-        -40.0,
-        0,
-        -4.0
-      ]
-    },
-    {
-      "id": "landmark-054",
-      "name": "Crownwater Patrol Boat",
-      "node": "Landmark_crownwater_patrol_boat_054",
-      "position": [
-        42.0,
-        0,
-        -6.0
-      ]
-    },
-    {
-      "id": "landmark-055",
-      "name": "Crownwater Submerged Waystone",
-      "node": "Landmark_crownwater_submerged_waystone_055",
-      "position": [
-        -30.0,
-        0,
-        12.0
-      ]
-    },
-    {
-      "id": "landmark-056",
-      "name": "Crownwater Submerged Waystone",
-      "node": "Landmark_crownwater_submerged_waystone_056",
-      "position": [
-        30.0,
-        0,
-        12.0
-      ]
-    },
-    {
-      "id": "landmark-057",
-      "name": "Crownwater Submerged Waystone",
-      "node": "Landmark_crownwater_submerged_waystone_057",
-      "position": [
-        -28.0,
-        0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-058",
-      "name": "Crownwater Submerged Waystone",
-      "node": "Landmark_crownwater_submerged_waystone_058",
-      "position": [
-        28.0,
-        0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-059",
-      "name": "Crownwater Submerged Waystone",
-      "node": "Landmark_crownwater_submerged_waystone_059",
-      "position": [
-        -12.0,
-        0,
-        -32.0
-      ]
-    },
-    {
-      "id": "landmark-060",
-      "name": "Crownwater Submerged Waystone",
-      "node": "Landmark_crownwater_submerged_waystone_060",
-      "position": [
-        12.0,
-        0,
-        -32.0
-      ]
-    },
-    {
-      "id": "landmark-061",
-      "name": "Mirrorhold Lake House",
-      "node": "Landmark_mirrorhold_lake_house_061",
-      "position": [
-        -26.0,
-        0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-062",
-      "name": "Mirrorhold Lake House",
-      "node": "Landmark_mirrorhold_lake_house_062",
-      "position": [
-        26.0,
-        0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-063",
-      "name": "Mirrorhold Lake House",
-      "node": "Landmark_mirrorhold_lake_house_063",
-      "position": [
-        -32.0,
-        0,
-        -26.0
-      ]
-    },
-    {
-      "id": "landmark-064",
-      "name": "Mirrorhold Lake House",
-      "node": "Landmark_mirrorhold_lake_house_064",
-      "position": [
-        32.0,
-        0,
-        -26.0
-      ]
-    },
-    {
-      "id": "landmark-065",
-      "name": "Mirrorhold Lake House",
-      "node": "Landmark_mirrorhold_lake_house_065",
-      "position": [
-        -10.0,
-        0,
-        -50.0
-      ]
-    },
-    {
-      "id": "landmark-066",
-      "name": "Mirrorhold Lake House",
-      "node": "Landmark_mirrorhold_lake_house_066",
-      "position": [
-        10.0,
-        0,
-        -50.0
-      ]
-    }
-  ],
   "spawnPoints": [
     {
       "id": "default",
       "position": [
-        0,
-        1,
-        0
+        -0.55,
+        4.55,
+        0.55
       ],
-      "rotationDegrees": 180
+      "serverTile": [
+        173,
+        173
+      ],
+      "rotationDegrees": 45.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "crown-plaza",
+      "position": [
+        114.0,
+        17.39,
+        -87.0
+      ],
+      "serverTile": [
+        288,
+        261
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "garden-isle",
+      "position": [
+        -48.0,
+        4.86,
+        -114.0
+      ],
+      "serverTile": [
+        126,
+        288
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Meadow",
+      "grounded": true
     }
   ],
   "collision": {
     "nodeNames": [
-      "Landmark_grey_moor_ritual_shrine_000",
-      "Landmark_sunmane_caravan_camp_001",
-      "Landmark_amberwood_hollow_tree_002",
-      "Landmark_mirrorhold_market_crate_003",
-      "Landmark_manymouth_tidal_waystone_004",
-      "Landmark_whitehorn_glacier_005",
-      "Landmark_sunmane_burial_mound_006",
-      "Landmark_orun_seasonal_market_007",
-      "Landmark_amberwood_root_cave_009",
-      "Landmark_grey_moor_peat_fence_010",
-      "Landmark_westhaven_seawall_011",
-      "Landmark_mirrorhold_civic_tower_013",
-      "Landmark_mirrorhold_civic_tower_014",
-      "Landmark_mirrorhold_civic_tower_015",
-      "Landmark_mirrorhold_civic_tower_016",
-      "Landmark_mirrorhold_civic_tower_017",
-      "Landmark_mirrorhold_civic_tower_018",
-      "Landmark_mirrorhold_civic_tower_019",
-      "Landmark_mirrorhold_civic_tower_020",
-      "Landmark_mirrorhold_public_fountain_021",
-      "Landmark_mirrorhold_public_fountain_022",
-      "Landmark_mirrorhold_public_fountain_023",
-      "Landmark_mirrorhold_public_fountain_024",
-      "Landmark_mirrorhold_public_fountain_025",
-      "Landmark_mirrorhold_public_fountain_026",
-      "Landmark_mirrorhold_public_fountain_027",
-      "Landmark_mirrorhold_public_fountain_028",
-      "Landmark_mirrorhold_radial_bridge_029",
-      "Landmark_mirrorhold_radial_bridge_030",
-      "Landmark_mirrorhold_radial_bridge_031",
-      "Landmark_mirrorhold_radial_bridge_032",
-      "Landmark_mirrorhold_radial_bridge_033",
-      "Landmark_mirrorhold_radial_bridge_034",
-      "Landmark_mirrorhold_radial_bridge_035",
-      "Landmark_mirrorhold_radial_bridge_036",
-      "Landmark_mirrorhold_radial_bridge_037",
-      "Landmark_crownwater_ferry_dock_038",
-      "Landmark_crownwater_ferry_dock_039",
-      "Landmark_crownwater_ferry_dock_040",
-      "Landmark_crownwater_ferry_dock_041",
-      "Landmark_crownwater_ferry_dock_042",
-      "Landmark_crownwater_ferry_dock_043",
-      "Landmark_crownwater_ferry_dock_044",
-      "Landmark_crownwater_fishing_boat_045",
-      "Landmark_crownwater_fishing_boat_046",
-      "Landmark_crownwater_fishing_boat_047",
-      "Landmark_crownwater_fishing_boat_048",
-      "Landmark_crownwater_fishing_boat_049",
-      "Landmark_crownwater_fishing_boat_050",
-      "Landmark_crownwater_patrol_boat_051",
-      "Landmark_crownwater_patrol_boat_052",
-      "Landmark_crownwater_patrol_boat_053",
-      "Landmark_crownwater_patrol_boat_054",
-      "Landmark_crownwater_submerged_waystone_055",
-      "Landmark_crownwater_submerged_waystone_056",
-      "Landmark_crownwater_submerged_waystone_057",
-      "Landmark_crownwater_submerged_waystone_058",
-      "Landmark_crownwater_submerged_waystone_059",
-      "Landmark_crownwater_submerged_waystone_060",
-      "Landmark_mirrorhold_lake_house_061",
-      "Landmark_mirrorhold_lake_house_062",
-      "Landmark_mirrorhold_lake_house_063",
-      "Landmark_mirrorhold_lake_house_064",
-      "Landmark_mirrorhold_lake_house_065",
-      "Landmark_mirrorhold_lake_house_066"
-    ]
+      "Foliage_Palm_crown_isle_1",
+      "Foliage_Palm_crown_isle_10",
+      "Foliage_Palm_crown_isle_100",
+      "Foliage_Palm_crown_isle_101",
+      "Foliage_Palm_crown_isle_102",
+      "Foliage_Palm_crown_isle_103",
+      "Foliage_Palm_crown_isle_104",
+      "Foliage_Palm_crown_isle_105",
+      "Foliage_Palm_crown_isle_106",
+      "Foliage_Palm_crown_isle_107",
+      "Foliage_Palm_crown_isle_108",
+      "Foliage_Palm_crown_isle_11",
+      "Foliage_Palm_crown_isle_12",
+      "Foliage_Palm_crown_isle_13",
+      "Foliage_Palm_crown_isle_14",
+      "Foliage_Palm_crown_isle_15",
+      "Foliage_Palm_crown_isle_16",
+      "Foliage_Palm_crown_isle_17",
+      "Foliage_Palm_crown_isle_18",
+      "Foliage_Palm_crown_isle_19",
+      "Foliage_Palm_crown_isle_2",
+      "Foliage_Palm_crown_isle_20",
+      "Foliage_Palm_crown_isle_21",
+      "Foliage_Palm_crown_isle_22",
+      "Foliage_Palm_crown_isle_23",
+      "Foliage_Palm_crown_isle_24",
+      "Foliage_Palm_crown_isle_25",
+      "Foliage_Palm_crown_isle_26",
+      "Foliage_Palm_crown_isle_27",
+      "Foliage_Palm_crown_isle_28",
+      "Foliage_Palm_crown_isle_29",
+      "Foliage_Palm_crown_isle_3",
+      "Foliage_Palm_crown_isle_30",
+      "Foliage_Palm_crown_isle_31",
+      "Foliage_Palm_crown_isle_32",
+      "Foliage_Palm_crown_isle_33",
+      "Foliage_Palm_crown_isle_34",
+      "Foliage_Palm_crown_isle_35",
+      "Foliage_Palm_crown_isle_36",
+      "Foliage_Palm_crown_isle_37",
+      "Foliage_Palm_crown_isle_38",
+      "Foliage_Palm_crown_isle_39",
+      "Foliage_Palm_crown_isle_4",
+      "Foliage_Palm_crown_isle_40",
+      "Foliage_Palm_crown_isle_41",
+      "Foliage_Palm_crown_isle_42",
+      "Foliage_Palm_crown_isle_43",
+      "Foliage_Palm_crown_isle_44",
+      "Foliage_Palm_crown_isle_45",
+      "Foliage_Palm_crown_isle_46",
+      "Foliage_Palm_crown_isle_47",
+      "Foliage_Palm_crown_isle_48",
+      "Foliage_Palm_crown_isle_49",
+      "Foliage_Palm_crown_isle_5",
+      "Foliage_Palm_crown_isle_50",
+      "Foliage_Palm_crown_isle_51",
+      "Foliage_Palm_crown_isle_52",
+      "Foliage_Palm_crown_isle_53",
+      "Foliage_Palm_crown_isle_54",
+      "Foliage_Palm_crown_isle_55",
+      "Foliage_Palm_crown_isle_56",
+      "Foliage_Palm_crown_isle_57",
+      "Foliage_Palm_crown_isle_58",
+      "Foliage_Palm_crown_isle_59",
+      "Foliage_Palm_crown_isle_6",
+      "Foliage_Palm_crown_isle_60",
+      "Foliage_Palm_crown_isle_61",
+      "Foliage_Palm_crown_isle_62",
+      "Foliage_Palm_crown_isle_63",
+      "Foliage_Palm_crown_isle_64",
+      "Foliage_Palm_crown_isle_65",
+      "Foliage_Palm_crown_isle_66",
+      "Foliage_Palm_crown_isle_67",
+      "Foliage_Palm_crown_isle_68",
+      "Foliage_Palm_crown_isle_69",
+      "Foliage_Palm_crown_isle_7",
+      "Foliage_Palm_crown_isle_70",
+      "Foliage_Palm_crown_isle_71",
+      "Foliage_Palm_crown_isle_72",
+      "Foliage_Palm_crown_isle_73",
+      "Foliage_Palm_crown_isle_74",
+      "Foliage_Palm_crown_isle_75",
+      "Foliage_Palm_crown_isle_76",
+      "Foliage_Palm_crown_isle_77",
+      "Foliage_Palm_crown_isle_78",
+      "Foliage_Palm_crown_isle_79",
+      "Foliage_Palm_crown_isle_8",
+      "Foliage_Palm_crown_isle_80",
+      "Foliage_Palm_crown_isle_81",
+      "Foliage_Palm_crown_isle_82",
+      "Foliage_Palm_crown_isle_83",
+      "Foliage_Palm_crown_isle_84",
+      "Foliage_Palm_crown_isle_85",
+      "Foliage_Palm_crown_isle_86",
+      "Foliage_Palm_crown_isle_87",
+      "Foliage_Palm_crown_isle_88",
+      "Foliage_Palm_crown_isle_89",
+      "Foliage_Palm_crown_isle_9",
+      "Foliage_Palm_crown_isle_90",
+      "Foliage_Palm_crown_isle_91",
+      "Foliage_Palm_crown_isle_92",
+      "Foliage_Palm_crown_isle_93",
+      "Foliage_Palm_crown_isle_94",
+      "Foliage_Palm_crown_isle_95",
+      "Foliage_Palm_crown_isle_96",
+      "Foliage_Palm_crown_isle_97",
+      "Foliage_Palm_crown_isle_98",
+      "Foliage_Palm_crown_isle_99",
+      "Foliage_Palm_harbour_isle_161",
+      "Foliage_Palm_harbour_isle_162",
+      "Foliage_Palm_harbour_isle_163",
+      "Foliage_Palm_harbour_isle_164",
+      "Foliage_Palm_harbour_isle_165",
+      "Foliage_Palm_harbour_isle_166",
+      "Foliage_Palm_harbour_isle_167",
+      "Foliage_Palm_harbour_isle_168",
+      "Foliage_Palm_harbour_isle_169",
+      "Foliage_Palm_harbour_isle_170",
+      "Foliage_Palm_harbour_isle_171",
+      "Foliage_Palm_harbour_isle_172",
+      "Foliage_Palm_harbour_isle_173",
+      "Foliage_Palm_harbour_isle_174",
+      "Foliage_Palm_outer_east_242",
+      "Foliage_Palm_outer_east_243",
+      "Foliage_Palm_outer_east_244",
+      "Foliage_Palm_outer_east_245",
+      "Foliage_Palm_outer_east_246",
+      "Foliage_Palm_outer_east_247",
+      "Foliage_Palm_outer_east_248",
+      "Foliage_Palm_outer_east_249",
+      "Foliage_Palm_outer_east_250",
+      "Foliage_Palm_outer_east_251",
+      "Foliage_Palm_outer_east_252",
+      "Foliage_Palm_outer_east_253",
+      "Foliage_Palm_outer_north_334",
+      "Foliage_Palm_outer_north_335",
+      "Foliage_Palm_outer_north_336",
+      "Foliage_Palm_outer_north_337",
+      "Foliage_Palm_outer_north_338",
+      "Foliage_Palm_outer_north_339",
+      "Foliage_Palm_outer_north_340",
+      "Foliage_Palm_outer_north_341",
+      "Foliage_Palm_outer_north_342",
+      "Foliage_Palm_outer_north_343",
+      "Foliage_Palm_outer_north_344",
+      "Foliage_Palm_outer_north_345",
+      "Foliage_Palm_outer_north_346",
+      "Foliage_Palm_outer_northeast_347",
+      "Foliage_Palm_outer_northeast_348",
+      "Foliage_Palm_outer_northeast_349",
+      "Foliage_Palm_outer_northeast_350",
+      "Foliage_Palm_outer_northeast_351",
+      "Foliage_Palm_outer_northeast_352",
+      "Foliage_Palm_outer_northeast_353",
+      "Foliage_Palm_outer_northeast_354",
+      "Foliage_Palm_outer_northeast_355",
+      "Foliage_Palm_outer_northeast_356",
+      "Foliage_Palm_outer_northeast_357",
+      "Foliage_Palm_outer_northeast_358",
+      "Foliage_Palm_outer_northeast_359",
+      "Foliage_Palm_outer_northeast_360",
+      "Foliage_Palm_outer_northeast_361",
+      "Foliage_Palm_outer_northeast_362",
+      "Foliage_Palm_outer_northeast_363",
+      "Foliage_Palm_outer_northeast_364",
+      "Foliage_Palm_outer_northeast_365",
+      "Foliage_Palm_outer_northeast_366",
+      "Foliage_Palm_outer_northeast_367",
+      "Foliage_Palm_outer_northeast_368",
+      "Foliage_Palm_outer_northwest_313",
+      "Foliage_Palm_outer_northwest_314",
+      "Foliage_Palm_outer_northwest_315",
+      "Foliage_Palm_outer_northwest_316",
+      "Foliage_Palm_outer_northwest_317",
+      "Foliage_Palm_outer_northwest_318",
+      "Foliage_Palm_outer_northwest_319",
+      "Foliage_Palm_outer_northwest_320",
+      "Foliage_Palm_outer_northwest_321",
+      "Foliage_Palm_outer_northwest_322",
+      "Foliage_Palm_outer_northwest_323",
+      "Foliage_Palm_outer_northwest_324",
+      "Foliage_Palm_outer_northwest_325",
+      "Foliage_Palm_outer_northwest_326",
+      "Foliage_Palm_outer_northwest_327",
+      "Foliage_Palm_outer_northwest_328",
+      "Foliage_Palm_outer_northwest_329",
+      "Foliage_Palm_outer_northwest_330",
+      "Foliage_Palm_outer_northwest_331",
+      "Foliage_Palm_outer_northwest_332",
+      "Foliage_Palm_outer_northwest_333",
+      "Foliage_Palm_outer_south_269",
+      "Foliage_Palm_outer_south_270",
+      "Foliage_Palm_outer_south_271",
+      "Foliage_Palm_outer_south_272",
+      "Foliage_Palm_outer_south_273",
+      "Foliage_Palm_outer_south_274",
+      "Foliage_Palm_outer_south_275",
+      "Foliage_Palm_outer_south_276",
+      "Foliage_Palm_outer_south_277",
+      "Foliage_Palm_outer_south_278",
+      "Foliage_Palm_outer_south_279",
+      "Foliage_Palm_outer_south_280",
+      "Foliage_Palm_outer_south_281",
+      "Foliage_Palm_outer_south_282",
+      "Foliage_Palm_outer_southeast_254",
+      "Foliage_Palm_outer_southeast_255",
+      "Foliage_Palm_outer_southeast_256",
+      "Foliage_Palm_outer_southeast_257",
+      "Foliage_Palm_outer_southeast_258",
+      "Foliage_Palm_outer_southeast_259",
+      "Foliage_Palm_outer_southeast_260",
+      "Foliage_Palm_outer_southeast_261",
+      "Foliage_Palm_outer_southeast_262",
+      "Foliage_Palm_outer_southeast_263",
+      "Foliage_Palm_outer_southeast_264",
+      "Foliage_Palm_outer_southeast_265",
+      "Foliage_Palm_outer_southeast_266",
+      "Foliage_Palm_outer_southeast_267",
+      "Foliage_Palm_outer_southeast_268",
+      "Foliage_Palm_outer_southwest_283",
+      "Foliage_Palm_outer_southwest_284",
+      "Foliage_Palm_outer_southwest_285",
+      "Foliage_Palm_outer_southwest_286",
+      "Foliage_Palm_outer_southwest_287",
+      "Foliage_Palm_outer_southwest_288",
+      "Foliage_Palm_outer_southwest_289",
+      "Foliage_Palm_outer_southwest_290",
+      "Foliage_Palm_outer_southwest_291",
+      "Foliage_Palm_outer_southwest_292",
+      "Foliage_Palm_outer_southwest_293",
+      "Foliage_Palm_outer_southwest_294",
+      "Foliage_Palm_outer_southwest_295",
+      "Foliage_Palm_outer_southwest_296",
+      "Foliage_Palm_outer_southwest_297",
+      "Foliage_Palm_outer_southwest_298",
+      "Foliage_Palm_outer_southwest_299",
+      "Foliage_Palm_outer_southwest_300",
+      "Foliage_Palm_outer_west_301",
+      "Foliage_Palm_outer_west_302",
+      "Foliage_Palm_outer_west_303",
+      "Foliage_Palm_outer_west_304",
+      "Foliage_Palm_outer_west_305",
+      "Foliage_Palm_outer_west_306",
+      "Foliage_Palm_outer_west_307",
+      "Foliage_Palm_outer_west_308",
+      "Foliage_Palm_outer_west_309",
+      "Foliage_Palm_outer_west_310",
+      "Foliage_Palm_outer_west_311",
+      "Foliage_Palm_outer_west_312",
+      "Foliage_Palm_pavilion_east_109",
+      "Foliage_Palm_pavilion_east_110",
+      "Foliage_Palm_pavilion_east_111",
+      "Foliage_Palm_pavilion_east_112",
+      "Foliage_Palm_pavilion_east_113",
+      "Foliage_Palm_pavilion_east_114",
+      "Foliage_Palm_pavilion_east_115",
+      "Foliage_Palm_pavilion_east_116",
+      "Foliage_Palm_pavilion_east_117",
+      "Foliage_Palm_pavilion_east_118",
+      "Foliage_Palm_pavilion_east_119",
+      "Foliage_Palm_pavilion_east_120",
+      "Foliage_Palm_pavilion_east_121",
+      "Foliage_Palm_pavilion_east_122",
+      "Foliage_Palm_pavilion_north_209",
+      "Foliage_Palm_pavilion_north_210",
+      "Foliage_Palm_pavilion_north_211",
+      "Foliage_Palm_pavilion_north_212",
+      "Foliage_Palm_pavilion_north_213",
+      "Foliage_Palm_pavilion_north_214",
+      "Foliage_Palm_pavilion_north_215",
+      "Foliage_Palm_pavilion_north_216",
+      "Foliage_Palm_pavilion_north_217",
+      "Foliage_Palm_pavilion_north_218",
+      "Foliage_Palm_pavilion_north_219",
+      "Foliage_Palm_pavilion_north_220",
+      "Foliage_Palm_pavilion_north_221",
+      "Foliage_Palm_pavilion_north_222",
+      "Foliage_Palm_pavilion_north_223",
+      "Foliage_Palm_pavilion_north_224",
+      "Foliage_Palm_pavilion_north_225",
+      "Foliage_Palm_pavilion_north_226",
+      "Foliage_Palm_pavilion_northeast_227",
+      "Foliage_Palm_pavilion_northeast_228",
+      "Foliage_Palm_pavilion_northeast_229",
+      "Foliage_Palm_pavilion_northeast_230",
+      "Foliage_Palm_pavilion_northeast_231",
+      "Foliage_Palm_pavilion_northeast_232",
+      "Foliage_Palm_pavilion_northeast_233",
+      "Foliage_Palm_pavilion_northeast_234",
+      "Foliage_Palm_pavilion_northeast_235",
+      "Foliage_Palm_pavilion_northeast_236",
+      "Foliage_Palm_pavilion_northeast_237",
+      "Foliage_Palm_pavilion_northeast_238",
+      "Foliage_Palm_pavilion_northeast_239",
+      "Foliage_Palm_pavilion_northeast_240",
+      "Foliage_Palm_pavilion_northeast_241",
+      "Foliage_Palm_pavilion_northwest_193",
+      "Foliage_Palm_pavilion_northwest_194",
+      "Foliage_Palm_pavilion_northwest_195",
+      "Foliage_Palm_pavilion_northwest_196",
+      "Foliage_Palm_pavilion_northwest_197",
+      "Foliage_Palm_pavilion_northwest_198",
+      "Foliage_Palm_pavilion_northwest_199",
+      "Foliage_Palm_pavilion_northwest_200",
+      "Foliage_Palm_pavilion_northwest_201",
+      "Foliage_Palm_pavilion_northwest_202",
+      "Foliage_Palm_pavilion_northwest_203",
+      "Foliage_Palm_pavilion_northwest_204",
+      "Foliage_Palm_pavilion_northwest_205",
+      "Foliage_Palm_pavilion_northwest_206",
+      "Foliage_Palm_pavilion_northwest_207",
+      "Foliage_Palm_pavilion_northwest_208",
+      "Foliage_Palm_pavilion_south_139",
+      "Foliage_Palm_pavilion_south_140",
+      "Foliage_Palm_pavilion_south_141",
+      "Foliage_Palm_pavilion_south_142",
+      "Foliage_Palm_pavilion_south_143",
+      "Foliage_Palm_pavilion_south_144",
+      "Foliage_Palm_pavilion_south_145",
+      "Foliage_Palm_pavilion_south_146",
+      "Foliage_Palm_pavilion_south_147",
+      "Foliage_Palm_pavilion_south_148",
+      "Foliage_Palm_pavilion_south_149",
+      "Foliage_Palm_pavilion_south_150",
+      "Foliage_Palm_pavilion_south_151",
+      "Foliage_Palm_pavilion_south_152",
+      "Foliage_Palm_pavilion_south_153",
+      "Foliage_Palm_pavilion_south_154",
+      "Foliage_Palm_pavilion_south_155",
+      "Foliage_Palm_pavilion_south_156",
+      "Foliage_Palm_pavilion_south_157",
+      "Foliage_Palm_pavilion_south_158",
+      "Foliage_Palm_pavilion_south_159",
+      "Foliage_Palm_pavilion_south_160",
+      "Foliage_Palm_pavilion_southeast_123",
+      "Foliage_Palm_pavilion_southeast_124",
+      "Foliage_Palm_pavilion_southeast_125",
+      "Foliage_Palm_pavilion_southeast_126",
+      "Foliage_Palm_pavilion_southeast_127",
+      "Foliage_Palm_pavilion_southeast_128",
+      "Foliage_Palm_pavilion_southeast_129",
+      "Foliage_Palm_pavilion_southeast_130",
+      "Foliage_Palm_pavilion_southeast_131",
+      "Foliage_Palm_pavilion_southeast_132",
+      "Foliage_Palm_pavilion_southeast_133",
+      "Foliage_Palm_pavilion_southeast_134",
+      "Foliage_Palm_pavilion_southeast_135",
+      "Foliage_Palm_pavilion_southeast_136",
+      "Foliage_Palm_pavilion_southeast_137",
+      "Foliage_Palm_pavilion_southeast_138",
+      "Foliage_Palm_pavilion_west_175",
+      "Foliage_Palm_pavilion_west_176",
+      "Foliage_Palm_pavilion_west_177",
+      "Foliage_Palm_pavilion_west_178",
+      "Foliage_Palm_pavilion_west_179",
+      "Foliage_Palm_pavilion_west_180",
+      "Foliage_Palm_pavilion_west_181",
+      "Foliage_Palm_pavilion_west_182",
+      "Foliage_Palm_pavilion_west_183",
+      "Foliage_Palm_pavilion_west_184",
+      "Foliage_Palm_pavilion_west_185",
+      "Foliage_Palm_pavilion_west_186",
+      "Foliage_Palm_pavilion_west_187",
+      "Foliage_Palm_pavilion_west_188",
+      "Foliage_Palm_pavilion_west_189",
+      "Foliage_Palm_pavilion_west_190",
+      "Foliage_Palm_pavilion_west_191",
+      "Foliage_Palm_pavilion_west_192",
+      "Landmark_Campanile",
+      "Landmark_Cathedral",
+      "Landmark_Outer_outer_east",
+      "Landmark_Outer_outer_north",
+      "Landmark_Outer_outer_northeast",
+      "Landmark_Outer_outer_northwest",
+      "Landmark_Outer_outer_south",
+      "Landmark_Outer_outer_southeast",
+      "Landmark_Outer_outer_southwest",
+      "Landmark_Outer_outer_west",
+      "Landmark_Pavilion_pavilion_east",
+      "Landmark_Pavilion_pavilion_north",
+      "Landmark_Pavilion_pavilion_northeast",
+      "Landmark_Pavilion_pavilion_northwest",
+      "Landmark_Pavilion_pavilion_south",
+      "Landmark_Pavilion_pavilion_southeast",
+      "Landmark_Pavilion_pavilion_west",
+      "Prop_Banner_Harbour_0",
+      "Prop_Banner_Harbour_1",
+      "Prop_Banner_Harbour_2",
+      "Prop_Banner_Harbour_3",
+      "Prop_CrownFountain",
+      "Prop_CrownStatue_0",
+      "Prop_CrownStatue_1",
+      "Prop_CrownStatue_2",
+      "Prop_CrownStatue_3",
+      "Prop_CrownStatue_4",
+      "Prop_CrownStatue_5",
+      "Prop_CrownStatue_6",
+      "Prop_CrownStatue_7",
+      "Prop_GardenFountain",
+      "Prop_Lamp_Harbour_0",
+      "Prop_Lamp_Harbour_1",
+      "Prop_Lamp_Harbour_2",
+      "Prop_Lamp_Harbour_3",
+      "Prop_Lamp_Harbour_4",
+      "Prop_Lamp_Harbour_5",
+      "Prop_Lamp_Harbour_6",
+      "Prop_Lamp_Harbour_7",
+      "Prop_Lamp_harbour_isle_0",
+      "Prop_Lamp_harbour_isle_1",
+      "Prop_Lamp_harbour_isle_2",
+      "Prop_Lamp_harbour_isle_3",
+      "Prop_Lamp_harbour_isle_4",
+      "Prop_Lamp_harbour_isle_5",
+      "Prop_Lamp_pavilion_east_0",
+      "Prop_Lamp_pavilion_east_1",
+      "Prop_Lamp_pavilion_east_2",
+      "Prop_Lamp_pavilion_east_3",
+      "Prop_Lamp_pavilion_east_4",
+      "Prop_Lamp_pavilion_east_5",
+      "Prop_Lamp_pavilion_north_0",
+      "Prop_Lamp_pavilion_north_1",
+      "Prop_Lamp_pavilion_north_2",
+      "Prop_Lamp_pavilion_north_3",
+      "Prop_Lamp_pavilion_north_4",
+      "Prop_Lamp_pavilion_north_5",
+      "Prop_Lamp_pavilion_northeast_0",
+      "Prop_Lamp_pavilion_northeast_1",
+      "Prop_Lamp_pavilion_northeast_2",
+      "Prop_Lamp_pavilion_northeast_3",
+      "Prop_Lamp_pavilion_northeast_4",
+      "Prop_Lamp_pavilion_northeast_5",
+      "Prop_Lamp_pavilion_northwest_0",
+      "Prop_Lamp_pavilion_northwest_1",
+      "Prop_Lamp_pavilion_northwest_2",
+      "Prop_Lamp_pavilion_northwest_3",
+      "Prop_Lamp_pavilion_northwest_4",
+      "Prop_Lamp_pavilion_northwest_5",
+      "Prop_Lamp_pavilion_south_0",
+      "Prop_Lamp_pavilion_south_1",
+      "Prop_Lamp_pavilion_south_2",
+      "Prop_Lamp_pavilion_south_3",
+      "Prop_Lamp_pavilion_south_4",
+      "Prop_Lamp_pavilion_south_5",
+      "Prop_Lamp_pavilion_southeast_0",
+      "Prop_Lamp_pavilion_southeast_1",
+      "Prop_Lamp_pavilion_southeast_2",
+      "Prop_Lamp_pavilion_southeast_3",
+      "Prop_Lamp_pavilion_southeast_4",
+      "Prop_Lamp_pavilion_southeast_5",
+      "Prop_Lamp_pavilion_west_0",
+      "Prop_Lamp_pavilion_west_1",
+      "Prop_Lamp_pavilion_west_2",
+      "Prop_Lamp_pavilion_west_3",
+      "Prop_Lamp_pavilion_west_4",
+      "Prop_Lamp_pavilion_west_5",
+      "Prop_Stall_0",
+      "Prop_Stall_1",
+      "Prop_Stall_2",
+      "Prop_Stall_3",
+      "Prop_Stall_4",
+      "Prop_Stall_5",
+      "Prop_Stall_6"
+    ],
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "cellMetres": 0.5,
+    "width": 1152,
+    "height": 1152,
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Crownwater's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+    },
+    "walkableCells": 338240,
+    "walkableFraction": 0.2549
   },
   "navigation": {
     "surfaceNodePrefixes": [
-      "Terrain_"
+      "Terrain_",
+      "Walk_"
     ],
+    "walkableAreas": [
+      "paving",
+      "shore",
+      "meadow",
+      "causeways",
+      "quays",
+      "stairs",
+      "pavilion-decks"
+    ],
+    "agentRadius": 0.55,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 40,
     "navmesh": {
       "format": "surface-prefix-v1",
       "polygons": []
+    },
+    "notes": [
+      "Every terrain sub-mesh is named Terrain_<class>; every built walkable surface is named Walk_<...>. The client turns both into the navigation collision layer the grounding ray tests.",
+      "Causeway decks and quays are walk surfaces, so a downward grounding ray under one resolves onto the deck above; the lagoon beneath them is water and is not walkable.",
+      "The lagoon floor is terrain and carries the Terrain_ prefix everywhere, including below sea level. That is deliberate: the client casts its grounding ray at every server tile, not only walkable ones, so a region that is mostly water still needs a continuous surface underneath it. Those tiles ground successfully and are marked unwalkable in collision.bin."
+    ]
+  },
+  "landmarks": [
+    {
+      "id": "crownwater-cathedral",
+      "name": "The Drowned Crown",
+      "node": "Landmark_Cathedral",
+      "type": "monument",
+      "position": [
+        114.0,
+        18.09,
+        -132.0
+      ],
+      "serverTile": [
+        288,
+        306
+      ],
+      "note": "placeholder name - see modeling-assumptions.md"
+    },
+    {
+      "id": "crownwater-campanile",
+      "name": "The Tide Campanile",
+      "node": "Landmark_Campanile",
+      "type": "tower",
+      "position": [
+        162.0,
+        17.59,
+        -150.0
+      ],
+      "serverTile": [
+        336,
+        324
+      ],
+      "note": "placeholder name - see modeling-assumptions.md"
+    },
+    {
+      "id": "crownwater-pavilion-pavilion_east",
+      "name": "Pavilion East Pavilion",
+      "node": "Landmark_Pavilion_pavilion_east",
+      "type": "pavilion",
+      "position": [
+        276.0,
+        3.99,
+        -114.0
+      ],
+      "serverTile": [
+        450,
+        288
+      ],
+      "note": "placeholder name - see modeling-assumptions.md"
+    },
+    {
+      "id": "crownwater-pavilion-pavilion_southeast",
+      "name": "Pavilion Southeast Pavilion",
+      "node": "Landmark_Pavilion_pavilion_southeast",
+      "type": "pavilion",
+      "position": [
+        228.55,
+        4.11,
+        0.55
+      ],
+      "serverTile": [
+        403,
+        173
+      ],
+      "note": "placeholder name - see modeling-assumptions.md"
+    },
+    {
+      "id": "crownwater-pavilion-pavilion_south",
+      "name": "Pavilion South Pavilion",
+      "node": "Landmark_Pavilion_pavilion_south",
+      "type": "pavilion",
+      "position": [
+        114.0,
+        4.69,
+        48.0
+      ],
+      "serverTile": [
+        288,
+        126
+      ],
+      "note": "placeholder name - see modeling-assumptions.md"
+    },
+    {
+      "id": "crownwater-pavilion-pavilion_west",
+      "name": "Pavilion West Pavilion",
+      "node": "Landmark_Pavilion_pavilion_west",
+      "type": "pavilion",
+      "position": [
+        -48.0,
+        4.81,
+        -114.0
+      ],
+      "serverTile": [
+        126,
+        288
+      ],
+      "note": "placeholder name - see modeling-assumptions.md"
+    },
+    {
+      "id": "crownwater-pavilion-pavilion_northwest",
+      "name": "Pavilion Northwest Pavilion",
+      "node": "Landmark_Pavilion_pavilion_northwest",
+      "type": "pavilion",
+      "position": [
+        -0.55,
+        4.01,
+        -228.55
+      ],
+      "serverTile": [
+        173,
+        403
+      ],
+      "note": "placeholder name - see modeling-assumptions.md"
+    },
+    {
+      "id": "crownwater-pavilion-pavilion_north",
+      "name": "Pavilion North Pavilion",
+      "node": "Landmark_Pavilion_pavilion_north",
+      "type": "pavilion",
+      "position": [
+        114.0,
+        4.27,
+        -276.0
+      ],
+      "serverTile": [
+        288,
+        450
+      ],
+      "note": "placeholder name - see modeling-assumptions.md"
+    },
+    {
+      "id": "crownwater-pavilion-pavilion_northeast",
+      "name": "Pavilion Northeast Pavilion",
+      "node": "Landmark_Pavilion_pavilion_northeast",
+      "type": "pavilion",
+      "position": [
+        228.55,
+        4.25,
+        -228.55
+      ],
+      "serverTile": [
+        403,
+        403
+      ],
+      "note": "placeholder name - see modeling-assumptions.md"
+    },
+    {
+      "id": "crownwater-sunken-court",
+      "name": "The Sunken Court",
+      "node": "Landmark_SunkenCourt",
+      "type": "ruin",
+      "position": [
+        -6.0,
+        -1.05,
+        -78.0
+      ],
+      "serverTile": [
+        168,
+        252
+      ],
+      "submerged": true,
+      "note": "placeholder name - see modeling-assumptions.md"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "crownwater-cathedral-doors",
+      "name": "Cathedral Doors",
+      "type": "door",
+      "position": [
+        114.0,
+        18.49,
+        -132.0
+      ],
+      "serverTile": [
+        288,
+        306
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-crown-fountain",
+      "name": "Crown Fountain",
+      "type": "fountain",
+      "position": [
+        114.0,
+        17.74,
+        -87.0
+      ],
+      "serverTile": [
+        288,
+        261
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-garden-fountain",
+      "name": "Garden Fountain",
+      "type": "fountain",
+      "position": [
+        -48.0,
+        5.21,
+        -114.0
+      ],
+      "serverTile": [
+        126,
+        288
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harbour-bell",
+      "name": "Harbour Bell",
+      "type": "bell",
+      "position": [
+        26.45,
+        4.35,
+        -20.45
+      ],
+      "serverTile": [
+        200,
+        194
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-sunken-glyph",
+      "name": "Sunken Glyph",
+      "type": "glyph",
+      "position": [
+        -6.0,
+        -0.65,
+        -78.0
+      ],
+      "serverTile": [
+        168,
+        252
+      ],
+      "authority": "server"
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "crownwater-harbourmaster",
+      "name": "Harbour Master",
+      "type": "npc",
+      "position": [
+        26.06,
+        3.95,
+        -15.46
+      ],
+      "serverTile": [
+        200,
+        189
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-ferryman",
+      "name": "Lagoon Ferryman",
+      "type": "npc",
+      "position": [
+        5.35,
+        4.5,
+        1.65
+      ],
+      "serverTile": [
+        179,
+        172
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-market-trader",
+      "name": "Quayside Trader",
+      "type": "npc",
+      "position": [
+        -29.54,
+        4.5,
+        9.87
+      ],
+      "serverTile": [
+        144,
+        164
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-cathedral-warden",
+      "name": "Warden of the Crown",
+      "type": "npc",
+      "position": [
+        111.79,
+        18.09,
+        -139.69
+      ],
+      "serverTile": [
+        286,
+        314
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-plaza-herald",
+      "name": "Plaza Herald",
+      "type": "npc",
+      "position": [
+        120.13,
+        17.34,
+        -83.62
+      ],
+      "serverTile": [
+        294,
+        258
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-garden-keeper",
+      "name": "Garden Keeper",
+      "type": "npc",
+      "position": [
+        -46.16,
+        4.81,
+        -118.65
+      ],
+      "serverTile": [
+        128,
+        293
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-bell-ringer",
+      "name": "Campanile Bell-Ringer",
+      "type": "npc",
+      "position": [
+        161.01,
+        17.59,
+        -146.12
+      ],
+      "serverTile": [
+        335,
+        320
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-quay-steward",
+      "name": "Crown Quay Steward",
+      "type": "npc",
+      "position": [
+        120.03,
+        5.75,
+        -36.97
+      ],
+      "serverTile": [
+        294,
+        211
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-lamplighter",
+      "name": "Lamplighter",
+      "type": "npc",
+      "position": [
+        -0.46,
+        4.2,
+        -33.48
+      ],
+      "serverTile": [
+        174,
+        207
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-watchman",
+      "name": "Outer Watchman",
+      "type": "npc",
+      "position": [
+        354.54,
+        3.75,
+        -212.87
+      ],
+      "serverTile": [
+        529,
+        387
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-lightkeeper",
+      "name": "Lightkeeper",
+      "type": "npc",
+      "position": [
+        -132.52,
+        3.47,
+        -16.0
+      ],
+      "serverTile": [
+        41,
+        190
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-diver",
+      "name": "Court Diver",
+      "type": "npc",
+      "position": [
+        -53.88,
+        4.81,
+        -115.19
+      ],
+      "serverTile": [
+        120,
+        289
+      ],
+      "authority": "server"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "crownwater-harvest-0",
+      "resource": "shellfish",
+      "position": [
+        280.27,
+        3.99,
+        -127.64
+      ],
+      "serverTile": [
+        454,
+        302
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-1",
+      "resource": "reed",
+      "position": [
+        255.59,
+        3.68,
+        5.63
+      ],
+      "serverTile": [
+        430,
+        168
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-2",
+      "resource": "coral",
+      "position": [
+        113.55,
+        4.69,
+        67.8
+      ],
+      "serverTile": [
+        288,
+        106
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-3",
+      "resource": "shellfish",
+      "position": [
+        -19.5,
+        4.5,
+        14.15
+      ],
+      "serverTile": [
+        155,
+        160
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-4",
+      "resource": "reed",
+      "position": [
+        -20.32,
+        5.04,
+        -100.14
+      ],
+      "serverTile": [
+        154,
+        274
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-5",
+      "resource": "coral",
+      "position": [
+        13.5,
+        2.94,
+        -252.76
+      ],
+      "serverTile": [
+        188,
+        427
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-6",
+      "resource": "shellfish",
+      "position": [
+        131.1,
+        4.27,
+        -273.59
+      ],
+      "serverTile": [
+        305,
+        448
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-7",
+      "resource": "reed",
+      "position": [
+        243.59,
+        4.25,
+        -217.44
+      ],
+      "serverTile": [
+        418,
+        391
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-8",
+      "resource": "coral",
+      "position": [
+        277.52,
+        3.99,
+        -102.92
+      ],
+      "serverTile": [
+        452,
+        277
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-9",
+      "resource": "shellfish",
+      "position": [
+        251.68,
+        2.57,
+        -18.44
+      ],
+      "serverTile": [
+        426,
+        192
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-10",
+      "resource": "reed",
+      "position": [
+        90.27,
+        4.68,
+        36.77
+      ],
+      "serverTile": [
+        264,
+        137
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-11",
+      "resource": "coral",
+      "position": [
+        -27.97,
+        4.5,
+        16.09
+      ],
+      "serverTile": [
+        146,
+        158
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-12",
+      "resource": "shellfish",
+      "position": [
+        -44.08,
+        4.81,
+        -122.37
+      ],
+      "serverTile": [
+        130,
+        296
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-13",
+      "resource": "reed",
+      "position": [
+        4.83,
+        4.01,
+        -208.45
+      ],
+      "serverTile": [
+        179,
+        382
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-14",
+      "resource": "coral",
+      "position": [
+        104.45,
+        4.27,
+        -271.28
+      ],
+      "serverTile": [
+        278,
+        445
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-15",
+      "resource": "shellfish",
+      "position": [
+        240.41,
+        4.25,
+        -228.86
+      ],
+      "serverTile": [
+        414,
+        403
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-16",
+      "resource": "reed",
+      "position": [
+        305.21,
+        1.51,
+        -117.18
+      ],
+      "serverTile": [
+        479,
+        291
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-17",
+      "resource": "coral",
+      "position": [
+        257.87,
+        1.17,
+        -10.52
+      ],
+      "serverTile": [
+        432,
+        185
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-18",
+      "resource": "shellfish",
+      "position": [
+        131.87,
+        4.69,
+        47.38
+      ],
+      "serverTile": [
+        306,
+        127
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-19",
+      "resource": "reed",
+      "position": [
+        -14.73,
+        4.49,
+        -19.27
+      ],
+      "serverTile": [
+        159,
+        193
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-20",
+      "resource": "coral",
+      "position": [
+        -70.91,
+        4.8,
+        -99.49
+      ],
+      "serverTile": [
+        103,
+        273
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-21",
+      "resource": "shellfish",
+      "position": [
+        8.21,
+        4.01,
+        -242.72
+      ],
+      "serverTile": [
+        182,
+        417
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-22",
+      "resource": "reed",
+      "position": [
+        89.28,
+        1.95,
+        -255.86
+      ],
+      "serverTile": [
+        263,
+        430
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-23",
+      "resource": "coral",
+      "position": [
+        199.21,
+        2.07,
+        -229.25
+      ],
+      "serverTile": [
+        373,
+        403
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-24",
+      "resource": "shellfish",
+      "position": [
+        279.02,
+        3.99,
+        -131.27
+      ],
+      "serverTile": [
+        453,
+        305
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-harvest-25",
+      "resource": "reed",
+      "position": [
+        257.01,
+        2.82,
+        -6.71
+      ],
+      "serverTile": [
+        431,
+        181
+      ],
+      "authority": "server"
+    }
+  ],
+  "portals": [
+    {
+      "id": "north-quay",
+      "name": "Mirrorhold Packet",
+      "type": "map-transition",
+      "position": [
+        215.03,
+        3.87,
+        -357.9
+      ],
+      "serverTile": [
+        389,
+        532
+      ],
+      "destinationMap": "maps/nymara/mirrorhold.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "east-quay",
+      "name": "Amethyst Barrens Packet",
+      "type": "map-transition",
+      "position": [
+        357.9,
+        3.9,
+        -12.97
+      ],
+      "serverTile": [
+        532,
+        187
+      ],
+      "destinationMap": "maps/nymara/amethyst_barrens.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "south-quay",
+      "name": "Westhaven Packet",
+      "type": "map-transition",
+      "position": [
+        12.97,
+        4.14,
+        129.9
+      ],
+      "serverTile": [
+        187,
+        44
+      ],
+      "destinationMap": "maps/nymara/westhaven.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "west-quay",
+      "name": "Amberwood Packet",
+      "type": "map-transition",
+      "position": [
+        -129.9,
+        2.79,
+        -215.03
+      ],
+      "serverTile": [
+        44,
+        389
+      ],
+      "destinationMap": "maps/nymara/amberwood.elm",
+      "radius": 3.5,
+      "authority": "server"
+    }
+  ],
+  "roads": [
+    {
+      "id": "spoke_pavilion_east",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          16.99,
+          -114.0
+        ],
+        [
+          276.0,
+          16.99,
+          -114.0
+        ]
+      ]
+    },
+    {
+      "id": "spoke_pavilion_southeast",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          16.99,
+          -114.0
+        ],
+        [
+          228.6,
+          16.99,
+          0.6
+        ]
+      ]
+    },
+    {
+      "id": "spoke_pavilion_south",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          16.99,
+          -114.0
+        ],
+        [
+          114.0,
+          16.99,
+          48.0
+        ]
+      ]
+    },
+    {
+      "id": "spoke_harbour_isle",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          16.99,
+          -114.0
+        ],
+        [
+          -0.6,
+          16.99,
+          0.6
+        ]
+      ]
+    },
+    {
+      "id": "spoke_pavilion_west",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          16.99,
+          -114.0
+        ],
+        [
+          -48.0,
+          16.99,
+          -114.0
+        ]
+      ]
+    },
+    {
+      "id": "spoke_pavilion_northwest",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          16.99,
+          -114.0
+        ],
+        [
+          -0.6,
+          16.99,
+          -228.6
+        ]
+      ]
+    },
+    {
+      "id": "spoke_pavilion_north",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          16.99,
+          -114.0
+        ],
+        [
+          114.0,
+          16.99,
+          -276.0
+        ]
+      ]
+    },
+    {
+      "id": "spoke_pavilion_northeast",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          16.99,
+          -114.0
+        ],
+        [
+          228.6,
+          16.99,
+          -228.6
+        ]
+      ]
+    },
+    {
+      "id": "ring_pavilion_east_pavilion_southeast",
+      "type": "causeway",
+      "waypoints": [
+        [
+          276.0,
+          4.11,
+          -114.0
+        ],
+        [
+          228.6,
+          4.11,
+          0.6
+        ]
+      ]
+    },
+    {
+      "id": "ring_pavilion_southeast_pavilion_south",
+      "type": "causeway",
+      "waypoints": [
+        [
+          228.6,
+          4.69,
+          0.6
+        ],
+        [
+          114.0,
+          4.69,
+          48.0
+        ]
+      ]
+    },
+    {
+      "id": "ring_pavilion_south_harbour_isle",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          4.69,
+          48.0
+        ],
+        [
+          -0.6,
+          4.69,
+          0.6
+        ]
+      ]
+    },
+    {
+      "id": "ring_harbour_isle_pavilion_west",
+      "type": "causeway",
+      "waypoints": [
+        [
+          -0.6,
+          4.81,
+          0.6
+        ],
+        [
+          -48.0,
+          4.81,
+          -114.0
+        ]
+      ]
+    },
+    {
+      "id": "ring_pavilion_west_pavilion_northwest",
+      "type": "causeway",
+      "waypoints": [
+        [
+          -48.0,
+          4.81,
+          -114.0
+        ],
+        [
+          -0.6,
+          4.81,
+          -228.6
+        ]
+      ]
+    },
+    {
+      "id": "ring_pavilion_northwest_pavilion_north",
+      "type": "causeway",
+      "waypoints": [
+        [
+          -0.6,
+          4.27,
+          -228.6
+        ],
+        [
+          114.0,
+          4.27,
+          -276.0
+        ]
+      ]
+    },
+    {
+      "id": "ring_pavilion_north_pavilion_northeast",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          4.27,
+          -276.0
+        ],
+        [
+          228.6,
+          4.27,
+          -228.6
+        ]
+      ]
+    },
+    {
+      "id": "ring_pavilion_northeast_pavilion_east",
+      "type": "causeway",
+      "waypoints": [
+        [
+          228.6,
+          4.25,
+          -228.6
+        ],
+        [
+          276.0,
+          4.25,
+          -114.0
+        ]
+      ]
+    },
+    {
+      "id": "reach_outer_east",
+      "type": "causeway",
+      "waypoints": [
+        [
+          276.0,
+          3.99,
+          -114.0
+        ],
+        [
+          357.9,
+          3.99,
+          -13.0
+        ]
+      ]
+    },
+    {
+      "id": "reach_outer_southeast",
+      "type": "causeway",
+      "waypoints": [
+        [
+          228.6,
+          4.11,
+          0.6
+        ],
+        [
+          215.0,
+          4.11,
+          129.9
+        ]
+      ]
+    },
+    {
+      "id": "reach_outer_south",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          4.69,
+          48.0
+        ],
+        [
+          13.0,
+          4.69,
+          129.9
+        ]
+      ]
+    },
+    {
+      "id": "reach_outer_west",
+      "type": "causeway",
+      "waypoints": [
+        [
+          -48.0,
+          4.81,
+          -114.0
+        ],
+        [
+          -129.9,
+          4.81,
+          -215.0
+        ]
+      ]
+    },
+    {
+      "id": "reach_outer_northwest",
+      "type": "causeway",
+      "waypoints": [
+        [
+          -0.6,
+          4.01,
+          -228.6
+        ],
+        [
+          13.0,
+          4.01,
+          -357.9
+        ]
+      ]
+    },
+    {
+      "id": "reach_outer_north",
+      "type": "causeway",
+      "waypoints": [
+        [
+          114.0,
+          4.27,
+          -276.0
+        ],
+        [
+          215.0,
+          4.27,
+          -357.9
+        ]
+      ]
+    },
+    {
+      "id": "reach_outer_southwest",
+      "type": "causeway",
+      "waypoints": [
+        [
+          -0.6,
+          4.5,
+          0.6
+        ],
+        [
+          -129.9,
+          4.5,
+          -13.0
+        ]
+      ]
+    },
+    {
+      "id": "reach_outer_northeast",
+      "type": "causeway",
+      "waypoints": [
+        [
+          228.6,
+          4.25,
+          -228.6
+        ],
+        [
+          357.9,
+          4.25,
+          -215.0
+        ]
+      ]
+    }
+  ],
+  "water": {
+    "seaLevel": 0.0,
+    "serverCells": 576,
+    "bodies": [
+      {
+        "id": "Water_Lagoon",
+        "node": "Water_Lagoon",
+        "type": "lagoon"
+      }
+    ],
+    "streams": [],
+    "channels": [
+      {
+        "id": "moat",
+        "type": "navigable",
+        "note": "the ring of deep water around the crown isle"
+      },
+      {
+        "id": "approach-southwest",
+        "type": "navigable"
+      },
+      {
+        "id": "approach-southeast",
+        "type": "navigable"
+      }
+    ]
+  },
+  "environment": {
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.16,
+        0.42,
+        0.72
+      ],
+      "horizon": [
+        0.72,
+        0.87,
+        0.92
+      ],
+      "curve": 0.14,
+      "groundHorizon": [
+        0.42,
+        0.62,
+        0.66
+      ],
+      "groundBottom": [
+        0.16,
+        0.3,
+        0.38
+      ],
+      "sunAngleMax": 14.0,
+      "energy": 1.16
+    },
+    "sun": {
+      "direction": [
+        -0.3,
+        -0.84,
+        0.45
+      ],
+      "color": [
+        1.12,
+        1.05,
+        0.95
+      ],
+      "energy": 1.08,
+      "indirectEnergy": 1.15,
+      "angularDiameterDegrees": 1.2
+    },
+    "ambient": {
+      "color": [
+        0.52,
+        0.68,
+        0.78
+      ],
+      "energy": 0.52,
+      "skyContribution": 0.75
+    },
+    "saturation": 1.34,
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.62,
+        0.8,
+        0.86
+      ],
+      "density": 0.00035,
+      "heightFalloff": 0.0022
+    },
+    "variants": {
+      "golden-hour": {
+        "sun": {
+          "direction": [
+            -0.8,
+            -0.26,
+            0.54
+          ],
+          "color": [
+            1.52,
+            1.02,
+            0.62
+          ],
+          "energy": 1.25
+        },
+        "fog": {
+          "enabled": true,
+          "color": [
+            0.78,
+            0.66,
+            0.52
+          ],
+          "density": 0.0016
+        }
+      }
+    },
+    "water": {
+      "shallowColor": [
+        0.24,
+        0.74,
+        0.74
+      ],
+      "deepColor": [
+        0.04,
+        0.24,
+        0.44
+      ],
+      "causticsEnabled": true,
+      "note": "Shallow/deep tint and caustics are presentation settings for whoever writes the water shader; the GLB ships a flat lit plane."
+    },
+    "presentation": {
+      "gulls": {
+        "enabled": true,
+        "density": 0.5,
+        "zones": [
+          "open-lagoon",
+          "harbour"
+        ]
+      },
+      "mist": {
+        "enabled": false
+      },
+      "spray": {
+        "enabled": true,
+        "zones": [
+          "reef"
+        ]
+      },
+      "bannerWind": {
+        "enabled": true,
+        "strength": 0.45
+      },
+      "ambientAudio": [
+        {
+          "id": "lagoon-lap",
+          "zone": "open-lagoon"
+        },
+        {
+          "id": "harbour",
+          "zone": "harbour"
+        },
+        {
+          "id": "crowd-plaza",
+          "zone": "crown-isle"
+        },
+        {
+          "id": "gulls",
+          "zone": "reef"
+        }
+      ]
+    },
+    "zones": [
+      {
+        "id": "crown-isle",
+        "centre": [
+          114.0,
+          12.0,
+          -114.0
+        ],
+        "radius": 108.0
+      },
+      {
+        "id": "harbour",
+        "centre": [
+          0.0,
+          8.0,
+          0.0
+        ],
+        "radius": 64.0
+      },
+      {
+        "id": "open-lagoon",
+        "centre": [
+          114.0,
+          0.0,
+          -114.0
+        ],
+        "radius": 280.0
+      },
+      {
+        "id": "reef",
+        "centre": [
+          114.0,
+          0.0,
+          -114.0
+        ],
+        "radius": 400.0
+      }
+    ]
+  },
+  "minimap": {
+    "file": "minimap.webp",
+    "pixels": 768,
+    "metresPerPixel": 0.7487,
+    "worldMin": [
+      -174.0,
+      -401.0
+    ],
+    "worldMax": [
+      401.0,
+      174.0
+    ],
+    "northAxis": "-Z",
+    "orientation": "north-up"
+  },
+  "lodGroups": [
+    {
+      "id": "vegetation",
+      "strategy": "authored-detail-tiers",
+      "levels": [
+        {
+          "id": "near",
+          "suffix": "_high"
+        },
+        {
+          "id": "mid",
+          "suffix": "_mid"
+        },
+        {
+          "id": "far",
+          "suffix": "_low"
+        }
+      ]
+    },
+    {
+      "id": "package-lod2",
+      "glb": "world-lod2.glb",
+      "strategy": "reduced-package",
+      "notes": "Far-tier vegetation only, no ground clutter."
+    }
+  ],
+  "performance": {
+    "nodes": 1892,
+    "meshes": 113,
+    "materials": 20,
+    "images": 58,
+    "textures": 58,
+    "accessors": 452,
+    "bufferViews": 510,
+    "uniqueTriangles": 587040,
+    "uniqueVertices": 347008,
+    "glbBytes": 23446984,
+    "instancedTriangles": 1273378,
+    "embeddedTextureBytes": 18946500,
+    "textureMemoryBytesUncompressed": 160432128,
+    "placements": 613,
+    "collision": {
+      "width": 1152,
+      "height": 1152,
+      "cellMetres": 0.5,
+      "walkableCells": 338240,
+      "blockedCells": 988864,
+      "walkableFraction": 0.2549,
+      "elevatedDecks": 84,
+      "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+      "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+    },
+    "notes": [
+      "48 islet lamp standards placed"
+    ],
+    "lod2": {
+      "glbBytes": 14009336,
+      "nodes": 1697,
+      "uniqueTriangles": 433888,
+      "instancedTriangles": 1109698,
+      "sizeReductionPercent": 40.3,
+      "triangleReductionPercent": 12.9
     }
   },
-  "materials": {
-    "baseColor": "textures/region-basecolor.png",
-    "normal": "textures/region-normal.png",
-    "orm": "textures/region-orm.png"
+  "sources": [
+    {
+      "id": "aerial-concept",
+      "file": "references/01-concept-aerial-overview.png",
+      "role": "authoritative-composition"
+    },
+    {
+      "id": "detail-board",
+      "file": "references/00-concept-detail-board.png",
+      "role": "authoritative-player-scale"
+    },
+    {
+      "id": "generator",
+      "file": "source/build_crownwater.py",
+      "role": "reproducible-build",
+      "seed": 20260827
+    }
+  ],
+  "provenance": {
+    "assets": "original to Eloria/Nymara; generated by source/amberwood/*",
+    "thirdParty": "none",
+    "textures": "procedural (numpy + Pillow), no sampled or traced source",
+    "geometry": "procedural (numpy), no imported models",
+    "license": "same as the Eloria client repository"
   },
-  "productionStatus": "terrain-landmark-material-pass"
+  "productionStatus": "production-geometry-materials-population",
+  "knownLimitations": []
 }
