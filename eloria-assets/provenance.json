@@ -213,17 +213,17 @@
     },
     {
       "path": "../godot-client/assets/actors/native/creatures/*.glb",
-      "source": "tools/build_native_nymara_glbs.py, tools/creature_anatomy.py",
+      "source": "tools/build_native_nymara_glbs.py, tools/creature_anatomy.py, tools/creature_families.py, tools/creature_roster.py, tools/creature_surfaces.py, tools/concept_sheet_index.py, tools/extract_concept_palettes.py, tools/apply_concept_palettes.py, tools/concept_proportions.py",
       "author": "Eloria project",
       "license": "CC-BY-4.0",
-      "description": "Thirty-two original Nymara creatures rebuilt to production anatomy from the supplied Eloria concept art: body-plan driven geometry, a 24-bone quadruped rig with smooth multi-bone skinning, procedurally generated surface textures, and original idle, walk, jog, combat, attack, hit and death clips"
+      "description": "Original Nymara creatures authored to production anatomy from the supplied Eloria concept art: thirty-two quadrupeds plus a further one hundred and thirty-nine covering every distinct design across the sixteen concept sheets, across eight skeleton families, with smooth multi-bone skinning, procedurally generated full-colour albedo and tangent-space normal maps across twenty-six surface kinds, per-creature humanoid equipment, and original idle, walk, jog, combat, attack, hit and death clips; palettes, silhouette proportions and surface-growth placement are measured from the supplied concept sheets rather than authored by hand"
     },
     {
       "path": "../godot-client/assets/actors/native/creatures/sunmane_*.glb",
       "source": "tools/sunmane/creatures.py",
       "author": "Eloria project",
       "license": "CC-BY-4.0",
-      "description": "Original steppe horse, dun mare and tacked grey pony authored to equine proportions on the shared Eloria creature rig"
+      "description": "Original steppe horse, dun mare and tacked grey pony authored to equine proportions on the shared Eloria creature rig, with full-colour coat, mane, hoof and tack maps and matching normal maps"
     }
   ]
 }

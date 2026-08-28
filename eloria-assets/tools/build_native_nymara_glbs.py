@@ -19,6 +19,9 @@ import struct
 import numpy as np
 
 import creature_anatomy as anatomy
+import creature_families as families
+import creature_roster as roster
+import creature_surfaces as surfaces
 from PIL import Image
 
 
@@ -84,24 +87,27 @@ PLAYER_ACTOR_TYPES = {
 
 CREATURES = (
     # Tuple IDs retain the authored sequence; add the four existing upstream
-    # creature slots when registering against eloria-server.
-    (200, "emberfox", "Emberfox", "fox", (190, 82, 37), (236, 152, 61), .82),
-    (201, "mossback_boar", "Mossback Boar", "boar", (69, 91, 54), (151, 120, 58), 1.18),
+    # creature slots when registering against eloria-server.  Palettes for the
+    # creatures that appear in the concept art are sampled from it by
+    # eloria-assets/tools/extract_concept_palettes.py; the rest, which were
+    # invented for this roster, keep their authored colours.
+    (200, "emberfox", "Emberfox", "fox", (205, 123, 10), (143, 84, 25), .82),
+    (201, "mossback_boar", "Mossback Boar", "boar", (111, 63, 29), (224, 154, 91), 1.18),
     (202, "ridgehorn", "Ridgehorn", "ram", (132, 112, 77), (214, 174, 91), 1.05),
-    (203, "miretoad", "Miretoad", "toad", (56, 111, 70), (160, 178, 72), 1.15),
+    (203, "miretoad", "Miretoad", "toad", (137, 82, 18), (224, 185, 109), 1.15),
     (204, "ash_crawler", "Ash Crawler", "lizard", (67, 62, 66), (172, 63, 54), 1.30),
-    (205, "frost_maw", "Frost Maw", "wolf", (136, 183, 198), (224, 245, 247), 1.18),
+    (205, "frost_maw", "Frost Maw", "wolf", (105, 153, 205), (38, 89, 196), 1.18),
     (206, "bog_lurker", "Bog Lurker", "toad", (48, 83, 65), (111, 151, 83), 1.42),
     (207, "sunscale_drake", "Sunscale Drake", "drake", (184, 117, 42), (57, 145, 141), 1.35),
-    (208, "red_fox", "Red Fox", "fox", (179, 74, 41), (237, 166, 91), .74),
-    (209, "snow_hare", "Snow Hare", "hare", (210, 220, 220), (134, 184, 203), .62),
-    (210, "mountain_goat", "Mountain Goat", "ram", (146, 139, 121), (96, 82, 67), .92),
+    (208, "red_fox", "Red Fox", "fox", (185, 75, 19), (224, 165, 116), .74),
+    (209, "snow_hare", "Snow Hare", "hare", (148, 152, 165), (55, 79, 151), .62),
+    (210, "mountain_goat", "Mountain Goat", "ram", (134, 150, 181), (73, 74, 109), .92),
     (211, "black_bear", "Black Bear", "bear", (43, 39, 38), (100, 88, 68), 1.28),
-    (212, "elk", "Elk", "elk", (130, 91, 54), (209, 138, 58), 1.08),
+    (212, "elk", "Elk", "elk", (150, 70, 26), (224, 164, 110), 1.08),
     (213, "wild_boar", "Wild Boar", "boar", (88, 73, 59), (151, 116, 72), 1.04),
     (214, "dire_wolf", "Dire Wolf", "wolf", (70, 80, 89), (132, 155, 166), 1.13),
-    (215, "frost_tiger", "Frost Tiger", "cat", (174, 200, 207), (81, 132, 160), 1.14),
-    (216, "giant_crocodile", "Giant Crocodile", "crocodile", (62, 101, 60), (139, 151, 62), 1.55),
+    (215, "frost_tiger", "Frost Tiger", "cat", (94, 148, 205), (32, 74, 158), 1.14),
+    (216, "giant_crocodile", "Giant Crocodile", "crocodile", (97, 88, 47), (224, 202, 159), 1.55),
     (217, "fire_salamander", "Fire Salamander", "lizard", (184, 69, 33), (245, 153, 48), 1.02),
     (218, "thunder_ram", "Thunder Ram", "ram", (102, 99, 94), (91, 160, 188), 1.24),
     (219, "giant_rat", "Giant Rat", "rat", (105, 85, 70), (179, 138, 92), .84),
@@ -110,11 +116,11 @@ CREATURES = (
     (222, "porcupine", "Porcupine", "porcupine", (107, 82, 55), (48, 44, 38), .82),
     (223, "moose", "Moose", "elk", (91, 70, 48), (171, 133, 77), 1.28),
     (224, "lynx", "Lynx", "cat", (157, 126, 88), (71, 65, 61), .82),
-    (225, "desert_tortoise", "Desert Tortoise", "tortoise", (119, 112, 73), (190, 156, 68), 1.06),
+    (225, "desert_tortoise", "Desert Tortoise", "tortoise", (172, 112, 48), (224, 182, 110), 1.06),
     (226, "saber_tooth_cat", "Saber-Tooth Cat", "saber_cat", (176, 137, 82), (235, 220, 173), 1.20),
     (227, "armored_rhino", "Armored Rhino", "rhino", (104, 105, 99), (62, 118, 128), 1.48),
-    (228, "giant_komodo", "Giant Komodo", "lizard", (88, 109, 63), (183, 140, 54), 1.42),
-    (229, "ice_bear", "Ice Bear", "bear", (188, 210, 218), (87, 151, 190), 1.48),
+    (228, "giant_komodo", "Giant Komodo", "lizard", (96, 82, 50), (224, 193, 112), 1.42),
+    (229, "ice_bear", "Ice Bear", "bear", (122, 155, 188), (56, 97, 171), 1.48),
     (230, "lava_hound", "Lava Hound", "wolf", (154, 55, 30), (246, 119, 38), 1.17),
     (231, "two_tailed_fox", "Two-Tailed Fox", "two_tail_fox", (183, 100, 44), (63, 151, 164), .90),
 )
@@ -123,6 +129,17 @@ CREATURE_ACTOR_TYPE_OFFSET = 4
 # Scenery livestock authored by eloria-assets/tools/sunmane/creatures.py.  They
 # are not built here, but this script owns models.json and the asset catalog, so
 # it has to re-register them or a plain rebuild silently unregisters the herds.
+# The wider concept-art roster occupies one contiguous block after every range
+# already in models.json (which ends at 427).  Server-side actor-type allocation
+# belongs to eloria-server; these ids are reserved here for it to adopt.
+ROSTER_ACTOR_TYPE_BASE = 428
+HOVERING_FAMILIES = {"amorphous"}
+
+
+def roster_actor_type(index: int) -> int:
+    return ROSTER_ACTOR_TYPE_BASE + index
+
+
 AMBIENT_CREATURES = (
     ("sunmane_steppe_horse", "Sunmane Steppe Horse", "equine", 1.25, False),
     ("sunmane_dun_mare", "Sunmane Dun Mare", "equine", 1.2, False),
@@ -274,8 +291,9 @@ class GLB:
                  roughness: float = .78, emissive: tuple[int, int, int] | None = None,
                  texture_png: bytes | None = None, normal_png: bytes | None = None,
                  metallic_roughness_png: bytes | None = None,
-                 double_sided: bool = False) -> int:
-        factor = [c / 255. for c in color] + [1.]
+                 double_sided: bool = False, alpha: float = 1.0,
+                 alpha_mode: str | None = None) -> int:
+        factor = [c / 255. for c in color] + [float(alpha)]
         pbr = {"baseColorFactor": factor, "metallicFactor": metallic,
                "roughnessFactor": roughness}
         if texture_png is not None:
@@ -284,6 +302,8 @@ class GLB:
             pbr["metallicRoughnessTexture"] = {
                 "index": self.texture(name + " Roughness", metallic_roughness_png)}
         material = {"name": name, "pbrMetallicRoughness": pbr, "doubleSided": double_sided}
+        if alpha_mode:
+            material["alphaMode"] = alpha_mode
         if normal_png is not None:
             material["normalTexture"] = {"index": self.texture(name + " Normal", normal_png)}
         if emissive is not None:
@@ -978,6 +998,54 @@ def add_animation(glb: GLB, name: str, channels: dict[int, tuple[str, list[float
     glb.doc.setdefault("animations",[]).append(animation)
 
 
+
+def apply_growth(mesh, slug: str, scale: float) -> None:
+    """Scatter the moss, crystal, barnacles or bramble the art shows.
+
+    The art never scatters growth evenly.  A moss bear carries a mantle over
+    its back and shoulders with the brown hide showing on flank and belly; a
+    moss troll wears the same mantle plus a beard.  Scattering uniformly in
+    every direction — which is what an even radial pass does — turns both into
+    a featureless bush and throws away the silhouette the growth is there to
+    decorate.  So the heavy pass rides the upper surface, and a much lighter
+    pass drapes the flanks.
+    """
+    entries = roster.GROWTH.get(slug)
+    if not entries or not getattr(mesh, "torso", None):
+        return
+    spine, radii, bones = mesh.torso
+    # An upright body is narrower than a quadruped's barrel, so the same count
+    # reads as denser; it needs a size gain to clear a robe, not a count gain.
+    upright = getattr(mesh, "upright", False)
+    density = 1.60 if upright else 1.40
+    gain = 1.32 if upright else 1.22
+    limbs = getattr(mesh, "growth_extra", None) or ()
+    # A standing figure's growth stops at the collar; running it to the end of
+    # the torso spine buries the face, which is the one part a player reads.
+    crown = 0.86 if upright else 0.98
+    for kind, count, size in entries:
+        # Mineral growth erupts in every direction; soft growth settles on the
+        # upper surfaces.  One bias for both gave golems a tidy one-sided fan.
+        bias = .30 if kind in anatomy.SPIKY_GROWTH else .60
+        # Mantle: heaviest over the back and shoulders, thinning as it wraps.
+        anatomy.encrust(mesh, kind, max(int(count * density), 3), spine, radii,
+                        bones, scale, seed=f"{slug}:{kind}", size=size * gain,
+                        span=(0.10, crown), up_bias=bias)
+        # Drape: a sparse fringe further round the barrel, so the mantle has an
+        # edge rather than stopping dead at the waterline.
+        anatomy.encrust(mesh, kind, max(int(count * density * .40), 1), spine,
+                        radii, bones, scale, seed=f"{slug}:{kind}:flank",
+                        size=size * gain * .70, span=(0.14, crown * .96),
+                        up_bias=min(bias, .16))
+        # Limbs: arms and shoulders on the upright families, so growth does not
+        # stop at the shoulder seam.
+        for i, (pts, widths, limb_bones) in enumerate(limbs):
+            anatomy.encrust(mesh, kind, max(int(count * density * .38), 2), pts,
+                            widths, limb_bones, scale,
+                            seed=f"{slug}:{kind}:limb{i}", size=size * gain * .78,
+                            span=(0.05, 0.85), up_bias=.45)
+
+
 def add_baked_animation(glb: GLB, name: str,
                         channels: dict[tuple[int, str], tuple[str, list, list]]) -> None:
     """Write a baked clip that may drive several paths on the same node."""
@@ -991,6 +1059,142 @@ def add_baked_animation(glb: GLB, name: str,
         animation["channels"].append({"sampler": len(animation["samplers"]) - 1,
                                       "target": {"node": node, "path": path}})
     glb.doc.setdefault("animations", []).append(animation)
+
+
+def build_roster_creature(path: Path, actor_type: int, slug: str, label: str,
+                          family: str, plan: str, base: tuple[int, int, int],
+                          accent: tuple[int, int, int], scale: float,
+                          surface: str | None = None) -> dict:
+    """Author one creature from any skeleton family, not just the quadrupeds."""
+    glb = GLB()
+    glb.doc["nodes"] = []
+    bones, mesh, clips = families.build_parts(family, plan, scale, slug)
+    apply_growth(mesh, slug, scale)
+    globals_ = anatomy.global_positions(bones)
+    children: dict[int, list[int]] = {index: [] for index in range(len(bones))}
+    for index, (_, parent, _) in enumerate(bones):
+        if parent >= 0:
+            children[parent].append(index)
+    for index, (name, parent, translation) in enumerate(bones):
+        node = {"name": name, "translation": [float(v) for v in translation]}
+        if children[index]:
+            node["children"] = children[index]
+        glb.doc["nodes"].append(node)
+    glb.doc["scenes"][0]["nodes"] = [0]
+
+    inverse = []
+    for position in globals_:
+        matrix = np.eye(4, dtype="float32")
+        matrix[:3, 3] = -position
+        inverse.append(matrix.T.reshape(-1))
+    glb.doc["skins"] = [{"name": f"Nymara {family.title()} Rig",
+                         "joints": list(range(len(bones))), "skeleton": 0,
+                         "inverseBindMatrices": glb.accessor(
+                             np.asarray(inverse, dtype="float32"), "MAT4")}]
+
+    # Full-colour albedo plus a matching normal map, both derived from one
+    # height field so the relief lines up with the pattern.  The albedo carries
+    # the palette, so the base colour factor stays white and is not applied
+    # twice; the underside shares the grain and tints with a factor.
+    hints = families.material_hints(family, plan, slug)
+    surface_kind = hints.get("surface") or surface or plan
+    albedo_png, _ = surfaces.surface_maps(
+        surface_kind, base, accent, seed=slug, size=256,
+        marking=surfaces.MARKINGS.get(slug))
+    _, normal_png = surfaces.surface_maps(
+        surface_kind, base, accent, seed=slug, size=192)
+    if hints.get("glow"):
+        # Shards, motes, orbs and props on an elemental belong to its own
+        # palette; bone-white keratin turned every crystal swarm grey.
+        horn_albedo, horn_normal = surfaces.surface_maps(
+            surface_kind, accent, base, seed=f"{slug}:feature", size=160)
+    else:
+        horn_albedo, horn_normal = surfaces.keratin_maps(accent, seed=slug, size=160)
+    dark = tuple(max(14, int(c * .26)) for c in base)
+    alpha = float(hints.get("alpha", 1.0))
+    alpha_mode = hints.get("alpha_mode")
+    glow = float(hints.get("glow", 0.0))
+    two_sided = bool(hints.get("double_sided", False))
+    body_glow = tuple(int(c * glow) for c in base) if glow else None
+    accent_glow = tuple(int(c * min(1.0, glow * 1.35)) for c in accent) if glow else None
+    mats = [glb.material(f"{label} Hide", (255, 255, 255), roughness=.86,
+                         texture_png=albedo_png, normal_png=normal_png,
+                         emissive=body_glow, alpha=alpha, alpha_mode=alpha_mode,
+                         double_sided=two_sided)]
+    hide_texture = len(glb.doc["textures"]) - 2
+    hide_normal = len(glb.doc["textures"]) - 1
+    underside = tuple(min(255, int(.46 * a + .54 * b) + 26) for a, b in zip(accent, base))
+    mats.append(glb.material(f"{label} Underside", underside, roughness=.82,
+                             emissive=accent_glow, alpha=alpha,
+                             alpha_mode=alpha_mode, double_sided=two_sided))
+    glb.doc["materials"][mats[1]]["pbrMetallicRoughness"]["baseColorTexture"] = {
+        "index": hide_texture}
+    glb.doc["materials"][mats[1]]["normalTexture"] = {"index": hide_normal}
+    mats.append(glb.material(f"{label} Claw", dark, roughness=.44, metallic=.04))
+    # Motes, shards, orbs and props stay opaque so they read through the body.
+    mats.append(glb.material(f"{label} Keratin", (255, 255, 255), roughness=.56,
+                             metallic=.03, texture_png=horn_albedo,
+                             normal_png=horn_normal, emissive=accent_glow))
+    # Growth carries its own colour and surface: moss is green, rime is pale
+    # ice, crystal keeps the creature's own mineral tint.
+    growth_kinds = [(kind, count) for kind, count, _ in roster.GROWTH.get(slug, [])]
+    growth_rgb = anatomy.growth_colour(growth_kinds, accent, base)
+    growth_surface = {"moss": "moss", "vine": "moss", "leaf": "moss",
+                      "fungus": "hide", "thorn": "bark", "barnacle": "barnacle",
+                      "coral": "barnacle", "rime": "ice", "crystal": "crystal",
+                      "ember": "energy", "plate": "stone", "spine": "bark"}.get(
+        growth_kinds[0][0] if growth_kinds else "moss", "moss")
+    growth_albedo, growth_normal = surfaces.surface_maps(
+        growth_surface, growth_rgb, accent, seed=f"{slug}:growth", size=160)
+    mats.append(glb.material(f"{label} Growth", (255, 255, 255), roughness=.80,
+                             texture_png=growth_albedo, normal_png=growth_normal,
+                             emissive=accent_glow))
+
+    groups = mesh.arrays()
+    # Settle the bind pose: raise the rig and its geometry together so a rest
+    # pose never starts below the floor.  Shifting the root translation moves
+    # every global, and shifting the vertices by the same amount keeps the skin
+    # binding identical.
+    filled = [a for a in groups if len(a[0])]
+    if filled:
+        lowest = float(min(a[0][:, 1].min() for a in filled))
+        if lowest < -0.002:
+            lift = -lowest
+            for arrays in groups:
+                if len(arrays[0]):
+                    arrays[0][:, 1] += lift
+            name, parent, translation = bones[0]
+            bones[0] = (name, parent, (translation[0], translation[1] + lift,
+                                       translation[2]))
+            globals_ = anatomy.global_positions(bones)
+            inverse = []
+            for position in globals_:
+                matrix = np.eye(4, dtype="float32")
+                matrix[:3, 3] = -position
+                inverse.append(matrix.T.reshape(-1))
+            glb.doc["skins"][0]["inverseBindMatrices"] = glb.accessor(
+                np.asarray(inverse, dtype="float32"), "MAT4")
+            glb.doc["nodes"][0]["translation"] = [float(v) for v in bones[0][2]]
+
+    primitives = []
+    vertices = triangles = 0
+    for index, arrays in enumerate(groups):
+        if not len(arrays[0]):
+            continue
+        primitives.append(glb.primitive(*arrays[:4], mats[index],
+                                        joints=arrays[4], weights=arrays[5]))
+        vertices += len(arrays[0])
+        triangles += len(arrays[3]) // 3
+    glb.mesh_node(label, primitives, skin=0, parent=0)
+
+    clips = anatomy.ground_clamp(clips, bones, groups)
+    clips = anatomy.settle_final_pose(clips, bones, groups, "Death_A")
+    for clip in anatomy.REQUIRED_CLIPS:
+        add_baked_animation(glb, clip, clips[clip])
+    glb.write(path)
+    return {"actor_type": actor_type, "id": slug, "name": label, "family": family,
+            "archetype": plan, "vertices": vertices, "triangles": triangles,
+            "joints": len(bones), "animations": len(anatomy.REQUIRED_CLIPS)}
 
 
 def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype: str,
@@ -1023,26 +1227,65 @@ def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype
                          "skeleton": 0, "inverseBindMatrices": inverse_acc}]
 
     # -- materials -------------------------------------------------------
-    hide_png = anatomy.surface_texture(archetype)
-    horn_png = anatomy.keratin_texture()
+    # Full-colour albedo plus a matching normal map, both derived from one
+    # height field so the relief lines up with the pattern.  The albedo carries
+    # the palette, so the base colour factor stays white and is not applied
+    # twice; the underside shares the grain and tints with a factor.
+    hints = families.material_hints("quadruped", archetype, slug)
+    albedo_png, _ = surfaces.surface_maps(
+        archetype, base, accent, seed=slug, size=256,
+        marking=surfaces.MARKINGS.get(slug))
+    _, normal_png = surfaces.surface_maps(
+        archetype, base, accent, seed=slug, size=192)
+    if hints.get("glow"):
+        # Shards, motes, orbs and props on an elemental belong to its own
+        # palette; bone-white keratin turned every crystal swarm grey.
+        horn_albedo, horn_normal = surfaces.surface_maps(
+            surface_kind, accent, base, seed=f"{slug}:feature", size=160)
+    else:
+        horn_albedo, horn_normal = surfaces.keratin_maps(accent, seed=slug, size=160)
     dark = tuple(max(14, int(c * .26)) for c in base)
-    mats = [glb.material(f"{label} Hide", base, roughness=.88, texture_png=hide_png)]
-    hide_texture = len(glb.doc["textures"]) - 1
-    # Counter-shading reads as the same animal: blend the accent toward the
-    # hide and lift it, rather than painting the belly a flat accent colour.
+    alpha = float(hints.get("alpha", 1.0))
+    alpha_mode = hints.get("alpha_mode")
+    glow = float(hints.get("glow", 0.0))
+    two_sided = bool(hints.get("double_sided", False))
+    body_glow = tuple(int(c * glow) for c in base) if glow else None
+    accent_glow = tuple(int(c * min(1.0, glow * 1.35)) for c in accent) if glow else None
+    mats = [glb.material(f"{label} Hide", (255, 255, 255), roughness=.86,
+                         texture_png=albedo_png, normal_png=normal_png,
+                         emissive=body_glow, alpha=alpha, alpha_mode=alpha_mode,
+                         double_sided=two_sided)]
+    hide_texture = len(glb.doc["textures"]) - 2
+    hide_normal = len(glb.doc["textures"]) - 1
     underside = tuple(min(255, int(.46 * a + .54 * b) + 26) for a, b in zip(accent, base))
-    mats.append(glb.material(f"{label} Underside", underside, roughness=.82))
-    # Reuse the authored hide map so the underside keeps matching surface grain.
+    mats.append(glb.material(f"{label} Underside", underside, roughness=.82,
+                             emissive=accent_glow, alpha=alpha,
+                             alpha_mode=alpha_mode, double_sided=two_sided))
     glb.doc["materials"][mats[1]]["pbrMetallicRoughness"]["baseColorTexture"] = {
         "index": hide_texture}
+    glb.doc["materials"][mats[1]]["normalTexture"] = {"index": hide_normal}
     mats.append(glb.material(f"{label} Claw", dark, roughness=.44, metallic=.04))
-    # Horn, antler, hoof, quill and shell keratin: pull the accent toward bone
-    # so a dark palette does not hide a creature's defining silhouette feature.
-    keratin = tuple(min(255, int(c * .62 + 96)) for c in accent)
-    mats.append(glb.material(f"{label} Keratin", keratin, roughness=.58,
-                             metallic=.03, texture_png=horn_png))
+    # Motes, shards, orbs and props stay opaque so they read through the body.
+    mats.append(glb.material(f"{label} Keratin", (255, 255, 255), roughness=.56,
+                             metallic=.03, texture_png=horn_albedo,
+                             normal_png=horn_normal, emissive=accent_glow))
+    # Growth carries its own colour and surface: moss is green, rime is pale
+    # ice, crystal keeps the creature's own mineral tint.
+    growth_kinds = [(kind, count) for kind, count, _ in roster.GROWTH.get(slug, [])]
+    growth_rgb = anatomy.growth_colour(growth_kinds, accent, base)
+    growth_surface = {"moss": "moss", "vine": "moss", "leaf": "moss",
+                      "fungus": "hide", "thorn": "bark", "barnacle": "barnacle",
+                      "coral": "barnacle", "rime": "ice", "crystal": "crystal",
+                      "ember": "energy", "plate": "stone", "spine": "bark"}.get(
+        growth_kinds[0][0] if growth_kinds else "moss", "moss")
+    growth_albedo, growth_normal = surfaces.surface_maps(
+        growth_surface, growth_rgb, accent, seed=f"{slug}:growth", size=160)
+    mats.append(glb.material(f"{label} Growth", (255, 255, 255), roughness=.80,
+                             texture_png=growth_albedo, normal_png=growth_normal,
+                             emissive=accent_glow))
 
     geometry = anatomy.creature_geometry(archetype, scale, bones)
+    apply_growth(geometry, slug, scale)
     groups = geometry.arrays()
     primitives = []
     vertices = triangles = 0
@@ -1295,6 +1538,18 @@ def build_model_registry() -> dict:
         }
         actor_types[str(actor_type)] = slug
 
+    for index, entry in enumerate(roster.ROSTER):
+        slug = entry[0]
+        models[slug] = {
+            "scene": f"res://assets/actors/native/creatures/{slug}.glb",
+            "animationLibrary": f"res://assets/actors/native/creatures/{slug}.glb",
+            "animationMap": "res://data/animations/creature.json",
+            "import": {"scale": 1, "rotationDegreesX": 0,
+                       "rotationDegreesY": 0, "rotationDegreesZ": 0},
+            "attachments": {"head": "head", "body": "body", "neck": "neck"},
+        }
+        actor_types[str(roster_actor_type(index))] = slug
+
     for slug, _label, _archetype, scale, _tacked in AMBIENT_CREATURES:
         models[slug] = {
             "scene": f"res://assets/actors/native/creatures/{slug}.glb",
@@ -1418,6 +1673,18 @@ def main() -> None:
         path=args.output/"creatures"/f"{slug}.glb"
         manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":str(path.relative_to(repo_root))}
         print("creature",slug,manifest["creatures"][slug])
+    for index, entry in enumerate(roster.ROSTER):
+        slug, label, family, plan, base, accent, scale, sheet, row, column = entry
+        path = args.output / "creatures" / f"{slug}.glb"
+        record = build_roster_creature(path, roster_actor_type(index), slug, label,
+                                       family, plan, base, accent, scale)
+        record |= {"path": str(path.relative_to(repo_root)),
+                   "locale": roster.SHEET_LOCALES[sheet],
+                   "concept": {"sheet": sheet, "cell": [row, column]}}
+        if family in HOVERING_FAMILIES:
+            record["hovers"] = True
+        manifest["creatures"][slug] = record
+        print("creature", slug, record["triangles"], "tris")
     for slug,label,part,visual,kind,base,accent in EQUIPMENT:
         path=args.output/"equipment"/f"{slug}.glb"
         manifest["equipment"][slug]=build_equipment(path,slug,label,kind,base,accent)|{

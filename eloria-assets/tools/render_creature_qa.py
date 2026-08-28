@@ -95,23 +95,30 @@ def world_transforms(document: dict) -> dict[int, np.ndarray]:
 
 
 def base_texture(document: dict, binary: bytes, material_index: int):
+    """Return (texture, colour factor, alpha, emissive) for one material."""
     materials = document.get("materials", [])
     if material_index is None or material_index >= len(materials):
-        return None, np.array([.7, .7, .7])
-    pbr = materials[material_index].get("pbrMetallicRoughness", {})
-    factor = np.asarray(pbr.get("baseColorFactor", [1, 1, 1, 1])[:3], dtype=float)
+        return None, np.array([.7, .7, .7]), 1.0, np.zeros(3)
+    material = materials[material_index]
+    pbr = material.get("pbrMetallicRoughness", {})
+    raw = pbr.get("baseColorFactor", [1, 1, 1, 1])
+    factor = np.asarray(raw[:3], dtype=float)
+    alpha = float(raw[3]) if len(raw) > 3 else 1.0
+    if material.get("alphaMode") == "OPAQUE":
+        alpha = 1.0
+    emissive = np.asarray(material.get("emissiveFactor", [0, 0, 0]), dtype=float)
     reference = pbr.get("baseColorTexture", {}).get("index")
     if reference is None:
-        return None, factor
+        return None, factor, alpha, emissive
     source = document["textures"][reference]["source"]
     spec = document["images"][source]
     if "bufferView" not in spec:
-        return None, factor
+        return None, factor, alpha, emissive
     view = document["bufferViews"][spec["bufferView"]]
     start = view.get("byteOffset", 0)
-    raw = binary[start:start + view["byteLength"]]
-    image = Image.open(io.BytesIO(raw)).convert("RGB")
-    return np.asarray(image, dtype=float) / 255.0, factor
+    data = binary[start:start + view["byteLength"]]
+    image = Image.open(io.BytesIO(data)).convert("RGB")
+    return np.asarray(image, dtype=float) / 255.0, factor, alpha, emissive
 
 
 def _quat_matrix(q) -> np.ndarray:
@@ -243,8 +250,10 @@ def gather(document: dict, binary: bytes, clip: str | None = None, time: float =
             uvs = (accessor(document, binary, attributes["TEXCOORD_0"]).astype(float)
                    if "TEXCOORD_0" in attributes else np.zeros((len(positions), 2)))
             indices = accessor(document, binary, primitive["indices"]).astype(int).reshape(-1, 3)
-            texture, factor = base_texture(document, binary, primitive.get("material"))
-            batches.append((positions, normals, uvs, indices, texture, factor))
+            texture, factor, alpha, emissive = base_texture(
+                document, binary, primitive.get("material"))
+            batches.append((positions, normals, uvs, indices, texture, factor,
+                            alpha, emissive))
     return batches
 
 
@@ -274,7 +283,10 @@ def render(batches, size: int, yaw_deg: float, pitch_deg: float,
     key = np.array([.42, .78, .46]); key /= np.linalg.norm(key)
     rim = np.array([-.55, .28, -.72]); rim /= np.linalg.norm(rim)
 
-    for positions, normals, uvs, indices, texture, factor in batches:
+    # Opaque first with depth writes, then blended surfaces back to front:
+    # a translucent elemental has to be judged the way the runtime draws it.
+    ordered = sorted(batches, key=lambda b: b[6] >= .995, reverse=True)
+    for positions, normals, uvs, indices, texture, factor, alpha, emissive in ordered:
         view_positions = (positions - centre) @ view.T
         screen = np.empty_like(view_positions)
         screen[:, 0] = margin + view_positions[:, 0] * scale
@@ -284,6 +296,10 @@ def render(batches, size: int, yaw_deg: float, pitch_deg: float,
         lengths = np.linalg.norm(view_normals, axis=1, keepdims=True)
         view_normals = view_normals / np.maximum(lengths, 1e-8)
 
+        blended = alpha < .995
+        if blended:
+            depths = view_positions[indices].mean(axis=1)[:, 2]
+            indices = indices[np.argsort(-depths)]
         for tri in indices:
             pts = screen[tri]
             min_x = max(int(np.floor(pts[:, 0].min())), 0)
@@ -334,10 +350,14 @@ def render(batches, size: int, yaw_deg: float, pitch_deg: float,
                 albedo = texture[ty, tx] * factor
             else:
                 albedo = np.broadcast_to(factor, normal.shape).copy()
-            shaded = np.clip(albedo * shade, 0, 1)
+            shaded = np.clip(albedo * shade + emissive * .85, 0, 1)
             target = colour[min_y:max_y + 1, min_x:max_x + 1]
-            target[visible] = shaded[visible]
-            window[visible] = z[visible]
+            if blended:
+                target[visible] = (target[visible] * (1.0 - alpha)
+                                   + shaded[visible] * alpha)
+            else:
+                target[visible] = shaded[visible]
+                window[visible] = z[visible]
 
     return Image.fromarray((np.clip(colour, 0, 1) * 255).astype(np.uint8))
 

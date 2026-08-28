@@ -15,8 +15,10 @@ Geometry is authored in bind pose with +Y up and the creature facing -Z.
 """
 from __future__ import annotations
 
+import json as _json
 import math
 import zlib
+from pathlib import Path as _Path
 
 import numpy as np
 
@@ -38,7 +40,7 @@ BONE_TOPOLOGY = (
 )
 BONE_INDEX = {name: index for index, (name, _) in enumerate(BONE_TOPOLOGY)}
 
-MAT_BODY, MAT_ACCENT, MAT_DARK, MAT_FEATURE = 0, 1, 2, 3
+MAT_BODY, MAT_ACCENT, MAT_DARK, MAT_FEATURE, MAT_GROWTH = 0, 1, 2, 3, 4
 
 
 def _plan(**overrides) -> dict:
@@ -63,7 +65,7 @@ def _plan(**overrides) -> dict:
         tail_bush=1.0, tails=1,
         # extras -----------------------------------------------------------
         horn=None, shell=False, spines=None, wings=False, plates=None,
-        dorsal=None, humped=False,
+        dorsal=None, humped=False, mane_ruff=False,
     )
     base.update(overrides)
     return base
@@ -169,6 +171,49 @@ BODY_PLANS = {
         tail_len=.16, tail_r=.055, tail_taper=.40, tail_droop=.40,
         shell=True,
     ),
+    "bovine": _plan(  # aurochs, yak: deep chest, heavy shoulders, low head
+        hip_h=.86, shoulder_h=.94, rump_z=.54, chest_z=-.46,
+        rump=(.38, .40), waist=(.36, .38), chest=(.44, .46), throat=(.30, .30),
+        humped=True,
+        neck_len=.26, neck_rise=.06, neck_r=(.26, .26), head_drop=-.08,
+        skull=(.22, .21, .27), muzzle_len=.26, muzzle_r=(.145, .120), muzzle_drop=.03,
+        ear="round", ear_h=.15, ear_w=.13, ear_spread=.17,
+        stance="unguligrade", front_x=.22, rear_x=.23, upper_r=.115, lower_r=.072,
+        ankle_r=.052, foot_len=.15, foot_r=.078, toes=2,
+        tail_len=.62, tail_r=.052, tail_taper=.22, tail_droop=.66, tail_bush=1.5,
+        horn="bovine",
+    ),
+    "equine": _plan(  # pony, horse: long legs, arched neck, mane
+        hip_h=.92, shoulder_h=.98, rump_z=.52, chest_z=-.46,
+        rump=(.30, .38), waist=(.28, .36), chest=(.32, .44), throat=(.22, .26),
+        neck_len=.44, neck_rise=.30, neck_r=(.19, .24),
+        skull=(.17, .19, .30), muzzle_len=.32, muzzle_r=(.105, .085), muzzle_drop=.07,
+        ear="pointed", ear_h=.17, ear_w=.10, ear_spread=.09,
+        stance="unguligrade", front_x=.18, rear_x=.20, front_z=-.32, rear_z=.36,
+        upper_r=.098, lower_r=.055, ankle_r=.040, foot_len=.14, foot_r=.062, toes=2,
+        tail_len=.70, tail_r=.070, tail_taper=.42, tail_droop=.58, tail_bush=1.7,
+    ),
+    "pinniped": _plan(  # seal: torpedo body, flippers, no real legs
+        hip_h=.26, shoulder_h=.30, rump_z=.62, chest_z=-.44,
+        rump=(.20, .20), waist=(.28, .27), chest=(.30, .29), throat=(.22, .21),
+        neck_len=.14, neck_rise=.10, neck_r=(.19, .19),
+        skull=(.19, .18, .22), muzzle_len=.16, muzzle_r=(.105, .070), muzzle_drop=.03,
+        ear=None, eye_r=.036, eye_spread=.080, eye_fwd=.07,
+        stance="sprawled", front_x=.20, rear_x=.14, front_z=-.26, rear_z=.46,
+        upper_r=.070, lower_r=.058, ankle_r=.050, foot_len=.26, foot_r=.050, toes=4,
+        tail_len=.20, tail_r=.090, tail_taper=.30, tail_droop=.10,
+    ),
+    "gryphon": _plan(  # eagle fore, feline hind, feathered wings
+        hip_h=.80, shoulder_h=.86, rump_z=.50, chest_z=-.44,
+        rump=(.32, .34), waist=(.28, .30), chest=(.36, .38), throat=(.24, .26),
+        neck_len=.32, neck_rise=.24, neck_r=(.19, .20),
+        skull=(.19, .19, .22), muzzle_len=.24, muzzle_r=(.110, .045), muzzle_drop=.10,
+        ear=None, eye_r=.032, eye_spread=.088, eye_fwd=.09, brow=.040,
+        stance="digitigrade", front_x=.20, rear_x=.22, upper_r=.095, lower_r=.066,
+        ankle_r=.050, foot_len=.19, foot_r=.072, toes=4,
+        tail_len=.74, tail_r=.090, tail_taper=.20, tail_droop=.30, tail_bush=1.3,
+        wings=True, mane_ruff=True,
+    ),
     "drake": _plan(  # winged reptile
         hip_h=.62, shoulder_h=.66, rump_z=.52, chest_z=-.44,
         rump=(.30, .30), waist=(.28, .28), chest=(.36, .36), throat=(.22, .22),
@@ -197,6 +242,9 @@ ARCHETYPE_PLANS = {
 
 
 def plan_for(archetype: str) -> dict:
+    """Accept either a concrete archetype ("fox") or a body-plan key ("canid")."""
+    if archetype in BODY_PLANS:
+        return BODY_PLANS[archetype]
     return BODY_PLANS[ARCHETYPE_PLANS.get(archetype, "canid")]
 
 
@@ -232,18 +280,97 @@ ARCHETYPE_TWEAKS = {
 }
 
 
-def resolved_plan(archetype: str) -> dict:
+# ---------------------------------------------------------------------------
+# Concept-derived proportions
+# ---------------------------------------------------------------------------
+# Two creatures built on one body plan are the same model in two palettes, and
+# that is exactly what the roster looked like: every canid was the same wolf.
+# ``concept_proportions.py`` measures each concept figure and writes ratios --
+# how lanky, how top-heavy, how solid, how tapered it is relative to the other
+# creatures on its plan -- and those ratios drive the multipliers below, so the
+# silhouettes diverge from the artwork rather than from invention.
+_PROPORTION_PATH = _Path(__file__).with_name("concept_proportions.json")
+try:
+    CONCEPT_PROPORTIONS = _json.loads(_PROPORTION_PATH.read_text())
+except (OSError, ValueError):     # measuring is optional; plans still build
+    CONCEPT_PROPORTIONS = {}
+
+NEUTRAL_PROPORTIONS = {"tall": 1.0, "girth": 1.0, "shoulder": 1.0, "hip": 1.0,
+                       "limb": 1.0, "head": 1.0, "taper": 1.0}
+
+
+def proportions(variant: str | None) -> dict:
+    """Silhouette multipliers for one creature, from its concept measurements.
+
+    The measured ratios are deliberately damped: the art is stylised and drawn
+    at whatever angle suited the sheet, so they are meant to *nudge* a plan --
+    a hyena higher at the shoulder than the hip -- not to rebuild it.
+    """
+    m = CONCEPT_PROPORTIONS.get(variant or "")
+    if not m:
+        return dict(NEUTRAL_PROPORTIONS)
+    aspect, rake = float(m["aspect"]), float(m["rake"])
+    bulk, taper = float(m["bulk"]), float(m["taper"])
+    return {
+        # Lanky figures grow taller and thin out; squat ones do the reverse.
+        "tall": 1.0 + (aspect - 1.0) * .40,
+        "girth": (1.0 - (aspect - 1.0) * .24) * (1.0 + (bulk - 1.0) * .32),
+        # Top-heavy figures carry it in the shoulders, not the hips.
+        "shoulder": 1.0 + (rake - 1.0) * .34,
+        "hip": 1.0 - (rake - 1.0) * .18,
+        "limb": 1.0 + (aspect - 1.0) * .30 - (bulk - 1.0) * .12,
+        "head": 1.0 + (rake - 1.0) * .16 - (aspect - 1.0) * .12,
+        "taper": 1.0 + (taper - 1.0) * .26,
+    }
+
+
+def scale_plan(plan: dict, mult: dict, rules: dict) -> dict:
+    """Return ``plan`` with the keys named in ``rules`` scaled by ``mult``.
+
+    Values may be scalars or tuples; tuples are scaled component-wise so a
+    ``(width, depth)`` girth stays a girth.
+    """
+    out = dict(plan)
+    for key, name in rules.items():
+        factor = mult.get(name, 1.0)
+        if factor == 1.0 or key not in out:
+            continue
+        value = out[key]
+        if isinstance(value, tuple):
+            out[key] = tuple(v * factor for v in value)
+        elif isinstance(value, (int, float)) and not isinstance(value, bool):
+            out[key] = value * factor
+    return out
+
+
+QUADRUPED_PROPORTION_RULES = {
+    "hip_h": "tall", "shoulder_h": "tall",
+    "rump": "hip", "waist": "girth", "chest": "shoulder", "throat": "girth",
+    "neck_r": "girth", "neck_len": "tall",
+    "upper_r": "girth", "lower_r": "girth", "ankle_r": "girth",
+    "foot_r": "girth", "foot_len": "limb",
+    "front_x": "shoulder", "rear_x": "hip",
+    "skull": "head", "muzzle_len": "head",
+    "tail_len": "limb", "tail_r": "girth",
+}
+
+
+def resolved_plan(archetype: str, variant: str | None = None) -> dict:
     plan = dict(plan_for(archetype))
     plan.update(ARCHETYPE_TWEAKS.get(archetype, {}))
+    if variant:
+        plan = scale_plan(plan, proportions(variant),
+                          QUADRUPED_PROPORTION_RULES)
     return plan
 
 
 # ---------------------------------------------------------------------------
 # Skeleton construction
 # ---------------------------------------------------------------------------
-def skeleton_for(archetype: str, scale: float) -> list[tuple[str, int, tuple[float, float, float]]]:
+def skeleton_for(archetype: str, scale: float, variant: str | None = None
+                 ) -> list[tuple[str, int, tuple[float, float, float]]]:
     """Rest-pose bone table (name, parent, local translation) for a creature."""
-    p = resolved_plan(archetype)
+    p = resolved_plan(archetype, variant)
     s = scale
     hip_h, sho_h = p["hip_h"] * s, p["shoulder_h"] * s
     rump_z, chest_z = p["rump_z"] * s, p["chest_z"] * s
@@ -345,7 +472,7 @@ def global_positions(bones) -> list[np.ndarray]:
 # ---------------------------------------------------------------------------
 # Mesh authoring with smooth skin weights
 # ---------------------------------------------------------------------------
-MATERIAL_SLOTS = 4
+MATERIAL_SLOTS = 5
 
 
 class AnatomyMesh:
@@ -354,6 +481,9 @@ class AnatomyMesh:
     def __init__(self, bone_globals: list[np.ndarray]):
         self.bones = np.asarray(bone_globals, dtype=float)
         self.groups = [([], [], [], [], [], []) for _ in range(MATERIAL_SLOTS)]
+        # (spine points, per-point radii, bones) recorded by whichever family
+        # built the body, so surface growth can be scattered over it later.
+        self.torso = None
 
     # -- skinning ----------------------------------------------------------
     def _weights(self, positions: np.ndarray, candidates: list[int]):
@@ -436,9 +566,19 @@ class AnatomyMesh:
              lower_material=None, lower_threshold=-.32):
         """Swept elliptical tube. ``radii`` is a per-row (width, height) pair."""
         centres = np.asarray(points, dtype=float)
+        radii = [(float(a), float(b)) for a, b in radii]
+        # Coincident control points give a zero-length tangent and therefore a
+        # degenerate frame, so collapse them before sweeping.
+        if len(centres) > 1:
+            keep = [0]
+            for i in range(1, len(centres)):
+                if np.linalg.norm(centres[i] - centres[keep[-1]]) > 1e-5:
+                    keep.append(i)
+            if len(keep) < len(centres):
+                centres = centres[keep]
+                radii = [radii[i] for i in keep]
         if len(centres) < 2:
             return
-        radii = [(float(a), float(b)) for a, b in radii]
         positions, normals, uvs, faces = [], [], [], []
         arc = [0.0]
         for i in range(1, len(centres)):
@@ -584,11 +724,12 @@ def _sheet(mesh: AnatomyMesh, edge_a, edge_b, thickness, candidates,
     mesh._append(positions, normals, uvs, faces, material, candidates)
 
 
-def creature_geometry(archetype: str, scale: float, bones=None) -> AnatomyMesh:
+def creature_geometry(archetype: str, scale: float, bones=None,
+                      variant: str | None = None) -> AnatomyMesh:
     """Author a full production creature body for ``archetype``."""
-    p = resolved_plan(archetype)
+    p = resolved_plan(archetype, variant)
     s = scale
-    bones = bones if bones is not None else skeleton_for(archetype, s)
+    bones = bones if bones is not None else skeleton_for(archetype, s, variant)
     g = global_positions(bones)
     B = BONE_INDEX
     mesh = AnatomyMesh(g)
@@ -625,8 +766,15 @@ def creature_geometry(archetype: str, scale: float, bones=None) -> AnatomyMesh:
         radii.append((rx, ry))
     mesh.tube(spine, radii, torso_bones, MAT_BODY, sides=20, uv_scale=2.0,
               lower_material=MAT_ACCENT, lower_threshold=-.42)
+    # Growth runs from rump to skull, so moss and crystal reach the head rather
+    # than stopping at the shoulders.
+    skull_size = tuple(v * s for v in p["skull"])
+    mesh.torso = (list(spine) + [g[neck_i], g[head_i]],
+                  list(radii) + [(throat[0] * .9, throat[1] * .9),
+                                 (skull_size[0] * .5, skull_size[1] * .5)],
+                  list(torso_bones) + [head_i])
 
-    family = ARCHETYPE_PLANS.get(archetype, "canid")
+    family = archetype if archetype in BODY_PLANS else ARCHETYPE_PLANS.get(archetype, "canid")
     if family == "anuran":
         _anuran_head(mesh, p, s, g, B, spine, radii)
         _features(mesh, p, s, g, B, spine, radii, g[head_i],
@@ -901,6 +1049,16 @@ def _features(mesh: AnatomyMesh, p: dict, s: float, g, B, spine, radii,
                 mesh.tube([base, (base + tip) * .5, tip],
                           [(.034 * s, .032 * s), (.022 * s, .021 * s), (.007 * s, .007 * s)],
                           [head_i], MAT_FEATURE, sides=8)
+    elif horn == "bovine":
+        for side in (-1., 1.):
+            root = head_g + np.array((side * skull[0] * .68, skull[1] * .28, skull[2] * .10))
+            mesh.tube([root,
+                       root + np.array((side * .22 * s, .06 * s, -.02 * s)),
+                       root + np.array((side * .30 * s, .18 * s, -.14 * s)),
+                       root + np.array((side * .26 * s, .28 * s, -.24 * s))],
+                      [(.070 * s, .066 * s), (.050 * s, .048 * s),
+                       (.032 * s, .030 * s), (.009 * s, .009 * s)],
+                      [head_i], MAT_FEATURE, sides=10)
     elif horn == "curl":
         for side in (-1., 1.):
             root = head_g + np.array((side * skull[0] * .58, skull[1] * .34, skull[2] * .10))
@@ -942,6 +1100,13 @@ def _features(mesh: AnatomyMesh, p: dict, s: float, g, B, spine, radii,
         mesh.tube([brow, brow + np.array((0., .13 * s, .02 * s))],
                   [(.055 * s, .050 * s), (.012 * s, .012 * s)],
                   [head_i], MAT_FEATURE, sides=9)
+
+    if p.get("mane_ruff"):
+        collar = g[B["neck"]]
+        mesh.ellipsoid(tuple(collar + np.array((0., 0., .04 * s))),
+                       (p["neck_r"][0] * s * 2.9, p["neck_r"][1] * s * 2.7,
+                        p["neck_r"][0] * s * 2.0),
+                       [B["neck"], chest_i], MAT_ACCENT, rings=9, sides=16)
 
     if p["shell"]:
         top = max(pt[1] + r[1] for pt, r in zip(spine, radii))
@@ -1141,10 +1306,11 @@ def _finalise(tracks) -> dict[int, tuple[str, list[float], list[list[float]]]]:
     return out
 
 
-def animation_set(archetype: str, scale: float, bones) -> dict:
+def animation_set(archetype: str, scale: float, bones,
+                  variant: str | None = None) -> dict:
     """Return {clip_name: {(node, path): (path, times, values)}} for a creature."""
-    plan = resolved_plan(archetype)
-    family = ARCHETYPE_PLANS.get(archetype, "canid")
+    plan = resolved_plan(archetype, variant)
+    family = archetype if archetype in BODY_PLANS else ARCHETYPE_PLANS.get(archetype, "canid")
     gait = GAITS.get(family, "walk")
     B = BONE_INDEX
     clips: dict[str, dict] = {}
@@ -1487,8 +1653,15 @@ def clip_lowest_point(bones, arrays, clip, samples: int = 14, at=None) -> float:
     if not positions:
         return 0.0
     lowest = float("inf")
-    stamps = [at] if at is not None else [duration * step / max(samples, 1)
-                                          for step in range(samples + 1)]
+    if at is not None:
+        stamps = [at]
+    else:
+        # Sample the uniform grid *and* every keyframe time: a clip's lowest
+        # pose is usually exactly on a key, which a coarse grid can step over.
+        stamps = {duration * step / max(samples, 1) for step in range(samples + 1)}
+        for _, times, _ in clip.values():
+            stamps.update(float(t) for t in times)
+        stamps = sorted(stamps)
     for time in stamps:
         pose = _clip_sample(clip, time)
         world = [np.eye(4) for _ in bones]
@@ -1567,15 +1740,249 @@ def ground_clamp(clips: dict, bones, arrays, margin: float = .004) -> dict:
     """
     root = BONE_INDEX["root"]
     for name, clip in clips.items():
-        lowest = clip_lowest_point(bones, arrays, clip)
-        if lowest >= -margin:
-            continue
-        lift = -lowest
-        key = (root, "translation")
-        if key in clip:
-            path, times, values = clip[key]
-            clip[key] = (path, times, [[v[0], v[1] + lift, v[2]] for v in values])
-        else:
-            duration = max((max(t) for (_, t, _) in clip.values()), default=1.)
-            clip[key] = ("translation", [0., duration], [[0., lift, 0.], [0., lift, 0.]])
+        # Iterate: lifting the root can expose a different lowest pose, because
+        # rotation-driven parts do not move rigidly with the offset.
+        for _ in range(4):
+            lowest = clip_lowest_point(bones, arrays, clip)
+            if lowest >= -margin:
+                break
+            lift = -lowest
+            key = (root, "translation")
+            if key in clip:
+                path, times, values = clip[key]
+                clip[key] = (path, times, [[v[0], v[1] + lift, v[2]] for v in values])
+            else:
+                duration = max((max(t) for (_, t, _) in clip.values()), default=1.)
+                clip[key] = ("translation", [0., duration],
+                             [[0., lift, 0.], [0., lift, 0.]])
     return clips
+
+
+# ---------------------------------------------------------------------------
+# Surface growth
+# ---------------------------------------------------------------------------
+# The concept art almost never shows a clean animal: creatures carry moss,
+# crystal, barnacles, thorns, quills, plates, fungus, vines and leaves, and
+# that growth is most of what breaks up their silhouette.  A smooth swept tube
+# reads as a balloon animal no matter how good its proportions are, so every
+# creature the art shows encrusted gets real geometry scattered over it.
+# Mineral growth erupts along the surface normal in every direction; the rest
+# settles on whatever faces the sky.
+SPIKY_GROWTH = frozenset(("crystal", "rime", "spine", "coral"))
+
+GROWTH_KINDS = ("moss", "crystal", "barnacle", "thorn", "plate", "fungus",
+                "vine", "leaf", "spine", "coral", "rime", "ember")
+
+# What each growth is made of.  ``mix`` blends the creature's accent toward the
+# growth's own colour, so a mossy bear carries green moss and a crystal golem
+# carries its own violet, rather than everything taking the hide's tint.
+GROWTH_COLOUR = {
+    "moss": ((86, 122, 52), .78), "vine": ((74, 112, 54), .74),
+    "leaf": ((132, 158, 58), .62), "fungus": ((206, 176, 132), .58),
+    "thorn": ((78, 58, 44), .70), "barnacle": ((206, 198, 178), .62),
+    "coral": ((214, 142, 118), .58), "rime": ((214, 234, 246), .52),
+    "crystal": ((168, 146, 236), .30), "ember": ((246, 156, 52), .46),
+    "plate": ((150, 148, 140), .50), "spine": ((92, 78, 62), .58),
+}
+
+
+def growth_colour(kinds, accent, base):
+    """Blend the creature's accent toward the colour of what grows on it."""
+    if not kinds:
+        return accent
+    total = np.zeros(3, dtype=float)
+    for kind, weight in kinds:
+        tint, mix = GROWTH_COLOUR.get(kind, ((150, 150, 150), .5))
+        blended = np.asarray(accent, dtype=float) * (1 - mix) + np.asarray(tint, dtype=float) * mix
+        total += blended * weight
+    total /= max(sum(w for _, w in kinds), 1e-6)
+    return tuple(int(round(min(255, max(0, v)))) for v in total)
+
+
+# How far each growth is pulled off the surface normal: negative hangs with
+# gravity, positive stands up toward the light.
+_DRAPE = {"moss": -.52, "vine": -.68, "leaf": -.46, "coral": .30,
+          "fungus": .58, "crystal": .30, "rime": .34, "spine": .18,
+          "ember": .40}
+
+
+def _growth_frame(rng, point, radius, up_bias: float, tangent=None):
+    """A point on the shell, its outward normal, and how high up the flank it is.
+
+    Growth sits *on* a surface, so it points along that surface's normal, and
+    the surface here is a tube around the spine -- which means the normal lives
+    in the plane perpendicular to the local spine direction.  Sampling in world
+    space instead works by accident on a quadruped, whose spine is horizontal,
+    and fails completely on a biped, whose spine is vertical: every tuft ends
+    up pointing along the trunk axis and buried inside the torso, which is why
+    a moss troll came out bald.  ``up_bias`` crowds the draw toward the ridge
+    of that tube -- the back of a quadruped, the shoulders and spine of a
+    standing figure -- with 0 spreading evenly all the way round.
+    """
+    axis = np.array((0., 1., 0.)) if tangent is None else np.asarray(tangent, float)
+    norm = float(np.linalg.norm(axis))
+    axis = np.array((0., 0., 1.)) if norm < 1e-6 else axis / norm
+    # "Up" on the tube: world up, less whatever of it runs along the spine.
+    up = np.array((0., 1., 0.)) - axis * float(axis[1])
+    if float(np.linalg.norm(up)) < .25:
+        # A vertical spine has no meaningful up; ride the back instead.
+        up = np.array((0., 0., 1.)) - axis * float(axis[2])
+    up /= max(float(np.linalg.norm(up)), 1e-6)
+    side = np.cross(axis, up)
+    side /= max(float(np.linalg.norm(side)), 1e-6)
+    skew = float(rng.random()) ** (1.0 + 4.0 * max(min(up_bias, 1.0), 0.0))
+    theta = skew * math.pi                      # 0 at the ridge, pi underneath
+    direction = up * math.cos(theta) + side * math.sin(theta) * (
+        1.0 if rng.random() < .5 else -1.0)
+    direction /= max(float(np.linalg.norm(direction)), 1e-6)
+    surface = point + np.array((direction[0] * radius[0],
+                                direction[1] * radius[1],
+                                direction[2] * radius[0]))
+    # 1 at the ridge, 0 underneath: growth is thickest where it catches rain.
+    return surface, direction, .5 + .5 * math.cos(theta)
+
+
+def encrust(mesh, kind: str, count: int, spine, radii, bones, scale: float,
+            seed: str = "", material_body=None, material_feature=None,
+            span=(0.06, 0.94), up_bias: float = .78, size: float = 1.0):
+    """Scatter growth of ``kind`` along a body's spine."""
+    if count <= 0 or len(spine) < 2:
+        return
+    body_mat = MAT_GROWTH if material_body is None else material_body
+    feature_mat = MAT_GROWTH if material_feature is None else material_feature
+    rng = np.random.default_rng(zlib.crc32(f"{kind}:{seed}".encode("utf-8")) % (2 ** 31))
+    s = scale
+    for index in range(count):
+        t = span[0] + (span[1] - span[0]) * (index + .5) / count
+        t += float(rng.uniform(-.4, .4)) * (span[1] - span[0]) / count
+        t = min(max(t, 0.0), 1.0)
+        position = t * (len(spine) - 1)
+        low = min(int(position), len(spine) - 2)
+        frac = position - low
+        point = spine[low] * (1 - frac) + spine[low + 1] * frac
+        radius = (radii[low][0] * (1 - frac) + radii[low + 1][0] * frac,
+                  radii[low][1] * (1 - frac) + radii[low + 1][1] * frac)
+        tangent = spine[low + 1] - spine[low]
+        base, direction, high = _growth_frame(rng, point, radius, up_bias, tangent)
+        # Thick over the back, thinning to a fringe down the flank.
+        grow = float(rng.uniform(.7, 1.35)) * size * s * (.62 + .52 * high)
+        # What grows on a creature does not stand along the surface normal.
+        # Moss and vine hang, fungus caps turn to face the sky, and only the
+        # mineral growths -- crystal, rime, thorn, spine -- actually spike
+        # outward.  Left un-drooped, a mossy flank sprays sideways like quills.
+        pull = _DRAPE.get(kind)
+        if pull is not None:
+            direction = direction * (1.0 - abs(pull)) + np.array(
+                (0., math.copysign(1.0, pull), 0.)) * abs(pull)
+            direction /= max(float(np.linalg.norm(direction)), 1e-6)
+
+        if kind == "moss":
+            # A mat of overlapping clumps hugging the hide, with a few strands
+            # hanging off its lower edge.  One pebble and two bristles read as
+            # scattered flecks at any distance a player sees the model from.
+            for k in range(3):
+                spread = np.array([float(rng.uniform(-.075, .075)) for _ in range(3)])
+                mesh.ellipsoid(tuple(base + direction * .010 * grow + spread * grow),
+                               (.105 * grow * (1 - .18 * k), .042 * grow,
+                                .105 * grow * (1 - .18 * k)),
+                               bones, body_mat, rings=4, sides=7)
+            for _ in range(3):
+                tuft = base + direction * .02 * grow + np.array(
+                    (float(rng.uniform(-.07, .07)), 0.,
+                     float(rng.uniform(-.07, .07)))) * grow
+                mesh.tube([tuft, tuft + direction * .05 * grow,
+                           tuft + direction * .07 * grow
+                           + np.array((0., -.055 * grow, 0.))],
+                          [(.017 * grow, .017 * grow), (.011 * grow, .011 * grow),
+                           (.003 * grow, .003 * grow)],
+                          bones, body_mat, sides=4)
+        elif kind in ("crystal", "rime"):
+            for _ in range(3):
+                jitter = np.array([float(rng.uniform(-.7, .7)) for _ in range(3)])
+                axis = direction + jitter
+                axis /= max(np.linalg.norm(axis), 1e-6)
+                # Wide length spread: a cluster of equal shards reads as a comb.
+                length = .11 * grow * float(rng.uniform(.42, 1.9))
+                mesh.tube([base, base + axis * length * .45, base + axis * length],
+                          [(.040 * grow, .034 * grow), (.030 * grow, .026 * grow),
+                           (.005 * grow, .005 * grow)],
+                          bones, feature_mat, sides=5)
+        elif kind == "barnacle":
+            mesh.tube([base, base + direction * .045 * grow],
+                      [(.055 * grow, .055 * grow), (.030 * grow, .030 * grow)],
+                      bones, feature_mat, sides=6)
+            mesh.ellipsoid(tuple(base + direction * .05 * grow),
+                           (.030 * grow, .012 * grow, .030 * grow),
+                           bones, MAT_DARK, rings=3, sides=6)
+        elif kind in ("thorn", "spine"):
+            if kind == "spine":
+                mesh.spike(base, base + direction * .24 * grow, .026 * grow,
+                           bones, feature_mat, sides=5)
+            else:
+                # Bramble is a runner studded with short barbs, not a fan of
+                # long quills: the quills were reading as a hedgehog from every
+                # angle and swallowing the silhouette underneath.
+                heading = direction.copy()
+                steps = [base]
+                for _ in range(3):
+                    heading = heading + np.array(
+                        [float(rng.uniform(-.55, .55)) for _ in range(3)])
+                    heading[1] -= .22
+                    heading /= max(np.linalg.norm(heading), 1e-6)
+                    steps.append(steps[-1] + heading * .090 * grow)
+                mesh.tube(steps, [(.016 * grow, .016 * grow), (.013 * grow, .013 * grow),
+                                  (.010 * grow, .010 * grow), (.005 * grow, .005 * grow)],
+                          bones, body_mat, sides=5)
+                for point in steps[:3]:
+                    jitter = np.array([float(rng.uniform(-1., 1.)) for _ in range(3)])
+                    axis = direction * .5 + jitter
+                    axis /= max(np.linalg.norm(axis), 1e-6)
+                    mesh.spike(point, point + axis * .070 * grow, .015 * grow,
+                               bones, feature_mat, sides=4)
+        elif kind == "plate":
+            mesh.ellipsoid(tuple(base + direction * .01 * grow),
+                           (.20 * grow, .055 * grow, .15 * grow),
+                           bones, feature_mat, rings=5, sides=8)
+        elif kind == "fungus":
+            stalk = base + direction * .055 * grow
+            mesh.tube([base, stalk], [(.016 * grow, .016 * grow),
+                                      (.013 * grow, .013 * grow)],
+                      bones, body_mat, sides=5)
+            mesh.ellipsoid(tuple(stalk + direction * .012 * grow),
+                           (.098 * grow, .042 * grow, .098 * grow),
+                           bones, feature_mat, rings=4, sides=8, squash=.5)
+        elif kind in ("vine", "coral"):
+            steps = [base]
+            heading = direction.copy()
+            for _ in range(4):
+                heading = heading + np.array([float(rng.uniform(-.5, .5)) for _ in range(3)])
+                heading /= max(np.linalg.norm(heading), 1e-6)
+                steps.append(steps[-1] + heading * .095 * grow)
+            mesh.tube(steps, [(.024 * grow, .024 * grow), (.019 * grow, .019 * grow),
+                              (.015 * grow, .015 * grow), (.010 * grow, .010 * grow),
+                              (.004 * grow, .004 * grow)],
+                      bones, body_mat if kind == "vine" else feature_mat, sides=5)
+        elif kind == "leaf":
+            # A spray of three, each big enough to read: single stamps at the
+            # old size vanished into the hide at any sane viewing distance.
+            stem = base + direction * .05 * grow
+            mesh.tube([base, stem], [(.011 * grow, .011 * grow),
+                                     (.007 * grow, .007 * grow)],
+                      bones, body_mat, sides=4)
+            for k in range(3):
+                jitter = np.array([float(rng.uniform(-.45, .45)) for _ in range(3)])
+                heading = direction + jitter
+                heading /= max(np.linalg.norm(heading), 1e-6)
+                tip = stem + heading * .17 * grow
+                side = np.cross(heading, np.array((0., 1., 0.)))
+                if np.linalg.norm(side) < 1e-6:
+                    side = np.array((1., 0., 0.))
+                side /= np.linalg.norm(side)
+                _sheet(mesh,
+                       [stem, stem + heading * .08 * grow + side * .058 * grow, tip],
+                       [stem, stem + heading * .08 * grow - side * .058 * grow, tip],
+                       .006 * grow, bones, feature_mat)
+        elif kind == "ember":
+            mesh.ellipsoid(tuple(base + direction * .05 * grow),
+                           (.030 * grow, .030 * grow, .030 * grow),
+                           bones, feature_mat, rings=4, sides=6)

@@ -87,16 +87,30 @@ def _local_matrix(node, override):
 
 
 def _sample(document, binary, animation, time):
-    """Step-sample one clip; enough to catch grounding and blow-ups."""
+    """Sample one clip the way the runtime plays it: linear between keys."""
     pose = {}
     for channel in animation["channels"]:
         sampler = animation["samplers"][channel["sampler"]]
         times = accessor(document, binary, sampler["input"]).astype(float).reshape(-1)
         values = accessor(document, binary, sampler["output"]).astype(float)
-        index = int(np.clip(np.searchsorted(times, time, side="right") - 1,
-                            0, len(values) - 1))
-        pose.setdefault(channel["target"]["node"], {})[channel["target"]["path"]] = \
-            values[index].tolist()
+        path = channel["target"]["path"]
+        if len(times) == 1:
+            value = values[0]
+        else:
+            clamped = float(np.clip(time, times[0], times[-1]))
+            index = int(np.clip(np.searchsorted(times, clamped, side="right") - 1,
+                                0, len(times) - 2))
+            span = max(float(times[index + 1] - times[index]), 1e-9)
+            frac = (clamped - float(times[index])) / span
+            a, b = values[index].astype(float), values[index + 1].astype(float)
+            if path == "rotation":
+                if float(np.dot(a, b)) < 0:
+                    b = -b
+                value = a * (1 - frac) + b * frac
+                value = value / max(float(np.linalg.norm(value)), 1e-9)
+            else:
+                value = a * (1 - frac) + b * frac
+        pose.setdefault(channel["target"]["node"], {})[path] = np.asarray(value).tolist()
     return pose
 
 
@@ -122,8 +136,15 @@ def posed_bounds(document, binary, animation, final_only: bool = False):
         duration = max(duration, float(times.max()))
     meshes = document.get("meshes", [])
     lowest, widest = float("inf"), 0.0
-    stamps = ([duration] if final_only
-              else [duration * s / ANIMATION_SAMPLES for s in range(ANIMATION_SAMPLES + 1)])
+    if final_only:
+        stamps = [duration]
+    else:
+        stamps = {duration * s / ANIMATION_SAMPLES for s in range(ANIMATION_SAMPLES + 1)}
+        for channel in animation["channels"]:
+            times = accessor(document, binary,
+                             animation["samplers"][channel["sampler"]]["input"]).astype(float)
+            stamps.update(float(x) for x in times.reshape(-1))
+        stamps = sorted(stamps)
     for time in stamps:
         pose = _sample(document, binary, animation, time)
         world = {}
@@ -164,7 +185,10 @@ def posed_bounds(document, binary, animation, final_only: bool = False):
     return (lowest, widest)
 
 
-def check(document, binary, path: Path, required_clips, attachment_bones):
+def check(document, binary, path: Path, required_clips, attachment_bones,
+          hovers: bool = False):
+    """``hovers`` exempts wisps, elementals and swarms from ground contact:
+    a floating creature legitimately never touches y = 0."""
     problems: list[str] = []
     nodes = document.get("nodes", [])
     names = [n.get("name", "") for n in nodes]
@@ -181,6 +205,30 @@ def check(document, binary, path: Path, required_clips, attachment_bones):
     for extra in ("cameras", "KHR_lights_punctual"):
         if document.get(extra):
             problems.append(f"unexpected {extra} in a creature asset")
+
+    # ---- surfaces --------------------------------------------------------
+    # Every creature carries an embedded colour map and a matching normal map;
+    # a flat, untextured material is the defect this library started with.
+    materials = document.get("materials", [])
+    if not materials:
+        problems.append("no materials")
+    textured = False
+    normalled = False
+    for material in materials:
+        pbr = material.get("pbrMetallicRoughness", {})
+        if "baseColorTexture" in pbr:
+            textured = True
+        if "normalTexture" in material:
+            normalled = True
+        factor = pbr.get("baseColorFactor")
+        if factor and len(factor) >= 3:
+            r, g, b = factor[:3]
+            if r > .9 and b > .9 and g < .2:
+                problems.append(f"material '{material.get('name')}' is magenta")
+    if not textured:
+        problems.append("no material carries a base colour texture")
+    if not normalled:
+        problems.append("no material carries a normal map")
 
     # ---- skin / skeleton -------------------------------------------------
     skins = document.get("skins", [])
@@ -275,7 +323,11 @@ def check(document, binary, path: Path, required_clips, attachment_bones):
             problems.append(f"implausible bounds: {span:.2f}m across")
         if span < .05:
             problems.append(f"degenerate bounds: {span:.3f}m across")
-        if abs(float(low[1])) > GROUND_TOLERANCE:
+        if hovers:
+            if float(low[1]) < -GROUND_TOLERANCE:
+                problems.append(f"hovering creature dips below the floor at "
+                                f"y={float(low[1]):.3f}")
+        elif abs(float(low[1])) > GROUND_TOLERANCE:
             problems.append(f"not grounded: lowest vertex at y={float(low[1]):.3f}")
 
     # ---- animations ------------------------------------------------------
@@ -330,7 +382,7 @@ def check(document, binary, path: Path, required_clips, attachment_bones):
             if lowest == "non-finite":
                 problems.append(f"clip '{name}' produces non-finite skinned vertices")
             else:
-                if lowest < -GROUND_PENETRATION:
+                if lowest < -GROUND_PENETRATION and not (hovers and name != "Death_A"):
                     problems.append(f"clip '{name}' drives the mesh {abs(lowest):.3f}m "
                                     "below the ground plane")
                 if widest > MAX_BOUND:
@@ -387,7 +439,8 @@ def main() -> int:
             print(f"WARN {model_id}: animationLibrary differs from scene ({library})")
         try:
             document, binary = read_glb(path)
-            problems, tris = check(document, binary, path, required_clips, attachment_bones)
+            problems, tris = check(document, binary, path, required_clips,
+                                   attachment_bones, bool(entries[model_id].get("hovers")))
         except Exception as error:  # noqa: BLE001 - report and keep scanning
             print(f"FAIL {model_id}: unreadable ({error})")
             failures += 1
