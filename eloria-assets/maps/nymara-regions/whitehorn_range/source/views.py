@@ -25,11 +25,11 @@ VIEWS = [
     ("01-approach-road", 1, (5.0, 15.0), 1.7, (2.0, -1.0), 6.0, 58,
      (1180, 760), 12, "day"),
     # 2: the temple facade, its glowing arch, statues, braziers and inlay
-    ("02-glacier-temple", 2, (34.0, -93.0), 2.0, (34.0, -101.5), 7.0, 56,
+    ("02-glacier-temple", 2, (34.0, -94.0), 7.0, (34.0, -101.5), 8.5, 52,
      (1180, 900), 10, "day"),
     # 3: the rope bridge over the gorge
-    ("03-rope-bridge", 3, (17.0, -17.5), 2.2, (17.0, -26.0), 2.0, 60,
-     (1180, 780), 8, "day"),
+    ("03-rope-bridge", 3, (31.0, -24.0), 7.0, (17.0, -25.0), 44.0, 54,
+     (1180, 780), 7, "day"),
     # 4: the statue shrine in its arched alcove
     ("04-gate-shrine", 4, (-11.0, 38.0), 2.0, (-11.0, 33.5), 3.0, 54,
      (1080, 920), 7, "day"),

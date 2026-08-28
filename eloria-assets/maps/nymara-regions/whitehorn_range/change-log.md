@@ -108,3 +108,50 @@ stashed. None of the failures are caused by this work.
 
 Both are expected to conflict with the other four region branches; resolve by
 keeping both sides.
+
+## After the intact detail board arrived
+
+The board that shipped in the package was truncated and would not decode, so
+the first panel sheet was a placeholder. An intact copy was found in the main
+working tree and committed, and comparing against real concept art immediately
+showed defects the wide-angle captures had hidden:
+
+- **Panel cameras were 50–90 m back.** The board's panels are intimate; at that
+  distance every subject was a speck in a snowfield. Moved to 7–25 m.
+- **The ice cave was a plain pale ball.** One icosphere with a throat pushed
+  into it: the mass swallowed the opening. Rebuilt as flanking shoulders and a
+  brow with an actual void between them.
+- **The frozen cascades were flat cardboard on open snow.** Rebuilt as many thin
+  overlapping columns on a rock backing, with a frozen pool and ice rubble.
+- **`timber_dark` is not dark.** Both the mine adit and the cave void read as
+  tan boards across their openings. Both now use `dark_iron`.
+- **The cascades faced away**, the same trap the temple hit — built facing -Z
+  and placed unrotated on a valley approached from the south, so the rock
+  backing sat between the camera and the ice.
+- **Panel 3 was aimed into the gorge bed.** The deck sits ~44 m above the floor,
+  so a target taken as "2 m above ground" pointed downward. Now shot in profile
+  from the east.
+
+## Corrections from the other region builds
+
+Running four regions concurrently caught things no single session would have:
+
+- **The rope bridges made their own ropes walkable.** `walk_surface=True` on a
+  MeshGroup placement renames the container node, and every solid child then
+  inherits the `Walk_` prefix. 13 walk-surface nodes where there should have
+  been 2. Found by the Amethyst Barrens build hitting it on an observatory dome.
+- **`environment.sun.direction` is the direction light travels.** A positive Y
+  lights the world from underneath, and no offline preview can show it. Found
+  by the Crownwater build. Whitehorn had no sun block at all and now declares
+  one, with the sign verified in-engine.
+- **`capture_views` imported Amberwood by name**, so it rendered Amberwood's
+  terrain whichever package it was pointed at. Found here, fixed in the shared
+  toolkit, and re-run by the other regions.
+
+## Base
+
+Rebased onto `origin/develop` after the Mirrorhold work and the Amberwood
+regeneration landed there. The toolkit changes this region originally made were
+dropped in favour of the equivalent ones already on develop, except the
+`DAY_LIGHTING`/`GOLDEN_LIGHTING` hooks and the `--check-sun` mode, which are
+this region's contributions to the shared harness.

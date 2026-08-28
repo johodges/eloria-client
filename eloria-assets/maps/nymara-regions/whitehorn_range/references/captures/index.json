@@ -2,7 +2,7 @@
   {
     "id": "00-aerial-overview",
     "panel": "aerial",
-    "file": "00-aerial-overview.png",
+    "file": "00-aerial-overview.webp",
     "eye": [
       114.0,
       524.33,
@@ -19,7 +19,7 @@
   {
     "id": "01-approach-road",
     "panel": 1,
-    "file": "01-approach-road.png",
+    "file": "01-approach-road.webp",
     "eye": [
       15.0,
       31.42,
@@ -36,41 +36,41 @@
   {
     "id": "02-glacier-temple",
     "panel": 2,
-    "file": "02-glacier-temple.png",
+    "file": "02-glacier-temple.webp",
     "eye": [
-      105.82,
-      56.06,
-      -275.18
+      97.01,
+      61.06,
+      -284.07
     ],
     "target": [
       102.0,
-      74.85,
+      76.35,
       -304.5
     ],
-    "fieldOfViewDegrees": 56,
+    "fieldOfViewDegrees": 52,
     "lighting": "day"
   },
   {
     "id": "03-rope-bridge",
     "panel": 3,
-    "file": "03-rope-bridge.png",
+    "file": "03-rope-bridge.webp",
     "eye": [
-      49.34,
-      50.27,
-      -37.18
+      93.0,
+      10.1,
+      -72.0
     ],
     "target": [
       51.0,
-      -17.48,
-      -78.0
+      17.33,
+      -75.0
     ],
-    "fieldOfViewDegrees": 60,
+    "fieldOfViewDegrees": 54,
     "lighting": "day"
   },
   {
     "id": "04-gate-shrine",
     "panel": 4,
-    "file": "04-gate-shrine.png",
+    "file": "04-gate-shrine.webp",
     "eye": [
       -33.0,
       22.69,
@@ -87,7 +87,7 @@
   {
     "id": "05-cairn-ridge",
     "panel": 5,
-    "file": "05-cairn-ridge.png",
+    "file": "05-cairn-ridge.webp",
     "eye": [
       -73.85,
       75.31,
@@ -104,7 +104,7 @@
   {
     "id": "06-ice-cave",
     "panel": 6,
-    "file": "06-ice-cave.png",
+    "file": "06-ice-cave.webp",
     "eye": [
       -99.0,
       39.63,
@@ -121,7 +121,7 @@
   {
     "id": "07-mine-portal",
     "panel": 7,
-    "file": "07-mine-portal.png",
+    "file": "07-mine-portal.webp",
     "eye": [
       277.5,
       53.83,
@@ -138,7 +138,7 @@
   {
     "id": "08-frozen-cascade",
     "panel": 8,
-    "file": "08-frozen-cascade.png",
+    "file": "08-frozen-cascade.webp",
     "eye": [
       73.01,
       36.41,
@@ -155,7 +155,7 @@
   {
     "id": "09-high-overlook",
     "panel": 9,
-    "file": "09-high-overlook.png",
+    "file": "09-high-overlook.webp",
     "eye": [
       198.4,
       52.54,
@@ -172,7 +172,7 @@
   {
     "id": "10-material-study",
     "panel": 10,
-    "file": "10-material-study.png",
+    "file": "10-material-study.webp",
     "eye": [
       27.44,
       40.43,
@@ -189,7 +189,7 @@
   {
     "id": "11-spawn-grounding",
     "panel": null,
-    "file": "11-spawn-grounding.png",
+    "file": "11-spawn-grounding.webp",
     "eye": [
       -3.94,
       34.12,
@@ -206,7 +206,7 @@
   {
     "id": "12-gorge-edge",
     "panel": null,
-    "file": "12-gorge-edge.png",
+    "file": "12-gorge-edge.webp",
     "eye": [
       123.79,
       68.57,
@@ -223,7 +223,7 @@
   {
     "id": "13-upper-bridge",
     "panel": null,
-    "file": "13-upper-bridge.png",
+    "file": "13-upper-bridge.webp",
     "eye": [
       186.0,
       54.58,
@@ -240,7 +240,7 @@
   {
     "id": "14-temple-forecourt",
     "panel": null,
-    "file": "14-temple-forecourt.png",
+    "file": "14-temple-forecourt.webp",
     "eye": [
       75.0,
       62.01,
@@ -257,7 +257,7 @@
   {
     "id": "15-glacier-snout",
     "panel": null,
-    "file": "15-glacier-snout.png",
+    "file": "15-glacier-snout.webp",
     "eye": [
       48.0,
       35.46,
@@ -274,7 +274,7 @@
   {
     "id": "16-glacier-head",
     "panel": null,
-    "file": "16-glacier-head.png",
+    "file": "16-glacier-head.webp",
     "eye": [
       107.4,
       73.06,
@@ -291,7 +291,7 @@
   {
     "id": "17-mine-yard",
     "panel": null,
-    "file": "17-mine-yard.png",
+    "file": "17-mine-yard.webp",
     "eye": [
       330.0,
       51.25,
@@ -308,7 +308,7 @@
   {
     "id": "18-south-gate",
     "panel": null,
-    "file": "18-south-gate.png",
+    "file": "18-south-gate.webp",
     "eye": [
       -12.0,
       31.23,
@@ -325,7 +325,7 @@
   {
     "id": "19-pine-shelf",
     "panel": null,
-    "file": "19-pine-shelf.png",
+    "file": "19-pine-shelf.webp",
     "eye": [
       -45.82,
       35.76,
@@ -342,7 +342,7 @@
   {
     "id": "20-north-shrine",
     "panel": null,
-    "file": "20-north-shrine.png",
+    "file": "20-north-shrine.webp",
     "eye": [
       48.0,
       92.21,
@@ -359,7 +359,7 @@
   {
     "id": "21-west-watch",
     "panel": null,
-    "file": "21-west-watch.png",
+    "file": "21-west-watch.webp",
     "eye": [
       -108.0,
       57.66,
@@ -376,7 +376,7 @@
   {
     "id": "22-east-camp",
     "panel": null,
-    "file": "22-east-camp.png",
+    "file": "22-east-camp.webp",
     "eye": [
       297.0,
       51.12,
@@ -393,7 +393,7 @@
   {
     "id": "23-snow-line",
     "panel": null,
-    "file": "23-snow-line.png",
+    "file": "23-snow-line.webp",
     "eye": [
       138.54,
       60.73,
@@ -410,7 +410,7 @@
   {
     "id": "40-golden-temple",
     "panel": null,
-    "file": "40-golden-temple.png",
+    "file": "40-golden-temple.webp",
     "eye": [
       102.0,
       54.79,
@@ -427,7 +427,7 @@
   {
     "id": "41-golden-glacier",
     "panel": null,
-    "file": "41-golden-glacier.png",
+    "file": "41-golden-glacier.webp",
     "eye": [
       30.44,
       23.58,

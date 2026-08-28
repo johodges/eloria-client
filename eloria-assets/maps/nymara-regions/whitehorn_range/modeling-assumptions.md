@@ -68,7 +68,7 @@ to overrule the build.
    additions by other regions cannot change this package's bytes.
 
 10. **No reduced LOD package.** Amberwood ships `world-lod2.glb` because it is
-    9.5 triangles per square metre. Whitehorn is 2.05, and 11.9 MB in total, so
+    9.5 triangles per square metre. Whitehorn is 2.09, and 12.2 MB in total, so
     a second package would add maintenance for no measurable gain. If the
     region gains a dense settlement later this should be revisited.
 

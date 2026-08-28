@@ -23,7 +23,7 @@ This directory is the runtime package plus everything needed to rebuild it.
 | `world.glb.validator.json` | glTF 2.0 validation report. |
 | `performance-summary.md` | Triangle, node, texture and package budgets. |
 
-There is no `world-lod2.glb`. Whitehorn is 2.05 triangles per square metre
+There is no `world-lod2.glb`. Whitehorn is 2.09 triangles per square metre
 against Amberwood's 9.5, so the reduced package Amberwood needed does not earn
 its place here; see `modeling-assumptions.md`.
 

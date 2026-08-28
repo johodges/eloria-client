@@ -58,37 +58,40 @@ Honest list, in order of how much it matters.
 
 ## Detail board — `comparisons/panel-comparison.webp`
 
-**The concept side of this sheet is a placeholder.** The supplied
-`references/00-concept-detail-board.png` is truncated to 786,445 bytes and does
-not decode at all. The panels below were worked from the board as shown in the
-authoring conversation, so the build follows it — but the sheet cannot prove
-that until an intact board is dropped at that path, after which
-`make_comparison.py` regenerates it unchanged in every other respect.
+The board supplied in the package was truncated to 786,445 bytes and would not
+decode. An intact 3,371,891-byte copy decoding all 793 rows was found in the
+main working tree and is now committed here, so **this sheet compares against
+real concept art**, panel for panel.
 
-| # | Panel | Capture | Built |
+Having actually seen them side by side, the honest grading is below. It is
+harsher than the "nine of ten built" I claimed before the sheet existed, which
+was an inventory check — the pieces are present — rather than a comparison.
+
+| # | Panel | Match | What is actually there |
 | --- | --- | --- | --- |
-| 1 | Cairn-lined approach road | `01-approach-road` | road, cairns, gate, temple visible up-valley |
-| 2 | Temple facade, glowing arch, statues, braziers, inlaid plaza | `02-glacier-temple` | marble facade, blue crystal portal, arch ring, two robed figures on plinths, flanking columns, four brass braziers, circular brass inlay, snow cap and icicle fringe |
-| 3 | Rope-and-plank bridge | `03-rope-bridge` | 34 m span, four cables, hangers, plank deck, timber posts, rubble abutments |
-| 4 | Statue shrine in an arched alcove | `04-gate-shrine` | recessed marble alcove, arch ring, statue, steps, two brazier blocks |
-| 5 | Cairn field on a ridge | `05-cairn-ridge` | 44-cairn cluster plus waystones |
-| 6 | Ice cave mouth | `06-ice-cave` | ice mass, tapered throat, broken-ice rim, icicle fringe |
-| 7 | Timbered mine entrance with rails | `07-mine-portal` | stone surround, timber frame and lintel, dark adit, rails, sleepers, spoil heaps |
-| 8 | Frozen waterfall with waystones | `08-frozen-cascade` | 20 m lobed icefall, icicle fringe, waystones at the foot |
-| 9 | High overlook panorama | `09-high-overlook` | view north across the glacier to the temple |
-| 10 | Material study: rope, brass, ice, stone | `10-material-study` | bridge anchor close-up: rope cable, iron cap, timber, ice, dressed stone |
+| 1 | Cairn-lined approach | **weak** | Road, cairns and conifers are present, but the concept's enclosing gorge walls are not: the build's approach is open snowfield, so the composition reads flat and the temple is not framed by anything. |
+| 2 | Temple facade | **good** | Marble facade, arch ring, glowing blue portal, flanking columns, snow cap and icicle fringe, set into rock. Statues, braziers and the inlaid plaza exist but sit below the camera's rise and are not in frame. |
+| 3 | Rope bridge | **good** | Full span in profile over the gorge: timber anchor posts both ends, sagging deck and handrail cables, plank deck, ice walls either side. |
+| 4 | Shrine alcove | moderate | Recessed marble alcove, arch ring, statue on a plinth, steps. Smaller and plainer than the concept's carved surround. |
+| 5 | Cairn field | moderate | A 44-cairn cluster with waystones on a ridge. The cairns are cruder than the concept's stacked slate. |
+| 6 | Ice cave | moderate | Now a legible mouth — flanking ice shoulders, a brow, a dark void, icicle fringe, lanterns. Rounder and softer than the concept's fractured ice. |
+| 7 | Mine portal | **good** | Stone surround, timber frame and lintel, dark adit, rails and sleepers running out, spoil heaps. No hanging lanterns. |
+| 8 | Frozen cascade | moderate | Ice columns with icicles on a rock backing, frozen pool and ice rubble at the foot, waystones beside. Reads as an icefall, but far coarser than the concept's fine curtain. |
+| 9 | High overlook | moderate | The panorama is there; the peaks behind it are a boundary rim rather than summits. |
+| 10 | Material study | **weak** | Answered with a bridge-anchor study of rope, iron, timber, ice and dressed stone. The concept's hero props — a gem-set clasp and a chalice — are not modelled at all. They are inventory-scale objects and no prop kit entry exists for them. |
 
-### Panel-level gaps
+Two systemic causes account for most of the gap, and both are recorded rather
+than fixed:
 
-- **Panel 10 is the weakest.** The board shows a gem-set clasp and a chalice as
-  hero props; the build answers with a bridge-anchor material study. No
-  jewellery or vessel props were authored — they are inventory-scale objects
-  and there is no prop kit entry for them.
-- **Panel 1's party of travellers** is not represented. Actors are server-owned
-  and never baked into the static mesh.
-- **Panel 7's hanging lanterns** are absent; the mine portal has the frame,
-  rails and spoil but no lighting props.
-- **Panel 2's plaza is smaller** relative to the facade than the board implies.
+1. **The terrain is more open than the concept.** Panels 1, 5 and 9 all want
+   enclosing walls and vertical drama; the build gives rolling snowfield
+   between a rectangular boundary rim. This is the same root cause as the
+   aerial's square-cornered lip, above.
+2. **Kit pieces are simpler than the paintings.** Every landmark is built from
+   boxes, cylinders, lathes and icospheres. That is enough for silhouette and
+   material, not for the carved relief the board shows.
+
+Panels 2, 3 and 7 are the ones that hold up.
 
 ## Other views — `comparisons/landmark-contact-sheet.webp`
 

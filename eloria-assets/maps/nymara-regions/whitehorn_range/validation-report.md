@@ -28,19 +28,21 @@ godot --path godot-client res://tools/region_client_check.tscn -- \
     --manifest res://../eloria-assets/.../whitehorn_range/world.json --step 6
 ```
 
-`tools/region_client_check.gd` calls `WorldLoader.load_world()`, waits for
-physics, and casts the identical ray `main.gd:2250` casts in
+The harness is the shared `_toolkit/region_client_check.gd`, written by the
+Mirrorhold build; this region adopted it rather than keeping a second copy, and
+contributed the `--check-sun` mode below. It calls `WorldLoader.load_world()`,
+waits for physics, and casts the identical ray `main.gd:2250` casts in
 `_place_actor_on_surface` — y = 400 down to y = -100 on
 `NAVIGATION_SURFACE_LAYER`. Results:
 
 ```
-world_load stage=glb_imported        (Godot's own GLTFDocument accepted the GLB)
-world_load stage=static_batching     batches=147 instances=2482
-[client-check] tiles_sampled=9216 step=6 misses=0 surface_y=-32.49..151.26
-[client-check] spawn whitehorn-arrival manifest_y=17.59 client_y=17.59
-[client-check] spawn whitehorn-temple  manifest_y=54.06 client_y=54.06
-[client-check] spawn whitehorn-mine    manifest_y=49.66 client_y=49.64
-[client-check] RESULT ok
+[client-check] server grid 576x576, sampling every 6 tiles
+[client-check] grounding: 9216 tiles sampled, 0 misses (0.00%)
+[client-check] surface height range: -34.20 .. 149.55
+[client-check] spawn { "id": "whitehorn-arrival", "manifestY": 17.59, "clientY": 17.587, "deltaMetres": 0.003 }
+[client-check] spawn { "id": "whitehorn-temple",  "manifestY": 54.06, "clientY": 54.062, "deltaMetres": 0.002 }
+[client-check] spawn { "id": "whitehorn-mine",    "manifestY": 49.66, "clientY": 49.645, "deltaMetres": 0.015 }
+[client-check] PASS
 ```
 
 So the engine agrees with `verify_runtime.py`: the GLB imports, the navigation
@@ -50,36 +52,39 @@ declared spawn grounds. Spawn heights agree with the manifest to 0.02 m.
 ### One loader warning, and the control that explains it
 
 `WorldLoader` accumulates non-fatal findings on the manifest rather than
-printing them, so the harness now reports them explicitly. There is one:
+printing them. There is one:
 
 ```
-[client-check] loader_warnings=1
-[client-check]   warning: navigation polygons did not produce collision
+[client-check] loader warnings=1
+    warning: navigation polygons did not produce collision
 ```
 
-`world_loader.gd:139` emits this when `navigation.navmesh.polygons` yields no
-collision shapes. Both this package and Amberwood's declare
+Both this package and Amberwood's declare
 `{"format": "surface-prefix-v1", "polygons": []}` — the polygon path is unused
-by design, and the navigation layer is built from the node-name prefixes
-instead, which is what the grounding then succeeds on.
+by design and the navigation layer is built from node-name prefixes instead,
+which is what the grounding then succeeds on. Running the same harness against
+the committed Amberwood package as a control produces the identical warning and
+also passes, so it is structural to the manifest format and not a finding
+against this region.
 
-Running the same harness against the **committed Amberwood package as a
-control** produces the identical warning and also passes:
+### The sun is verified to point downward
+
+`--check-sun=1` binds the manifest through the real `WorldEnvironmentBinder`
+and reports the key light's actual travel vector:
 
 ```
-[client-check] loader_warnings=1  warning: navigation polygons did not produce collision
-[client-check] tiles_sampled=2304 step=12 misses=0 surface_y=-19.70..108.04
-[client-check] RESULT ok
+[client-check] sun { "environmentBound": true,
+                     "travelDirection": [0.382, -0.623, -0.683],
+                     "lightsFromBelow": false, "energy": 1.05 }
 ```
 
-So the warning is structural to the `surface-prefix-v1` manifest format and is
-not a finding against this region. It is recorded here rather than filtered out,
-because a harness that only prints what it expects is not a check.
+`environment.sun.direction` is the direction the light **travels**, not where
+the sun sits, so a positive Y lights the world from underneath. Nothing else in
+the pipeline can catch this — the offline renderer uses the opposite convention
+and a capture harness with its own neutral sky never reads the manifest at all.
+Amberwood declares `[-0.46, 0.50, 0.73]` and is in exactly that state.
 
-**Scope of that check.** It sampled every 6th tile in each axis (9,216 of
-331,776). The exhaustive 331,776-tile pass is the Python one. It ran windowed on
-an RTX 5080 under the OpenGL compatibility renderer, which is what
-`project.godot` selects.
+The full report is committed at `references/godot-client-check.json`.
 
 ## What is NOT verified
 
@@ -90,12 +95,12 @@ Stated plainly, because a clean validator report does not cover any of this.
    Python and Godot; actual movement, collision response, and map transitions
    are not.
 
-2. **Appearance in the real client.** `references/captures/90-godot-client-spawn.png`
-   is a genuine Godot frame through the real loader, but it is lit by a bare
-   `DirectionalLight3D` and a procedural sky that my check scene creates — not
-   by the game's environment, post-processing or time-of-day. It demonstrates
-   that the geometry loads and renders. It is **not** evidence of how the region
-   will look in play.
+2. **Appearance in the real client.** No client frame is committed for this
+   region. The in-engine check runs headless, which has no renderer, and the
+   earlier windowed frame was dropped when this region adopted the shared
+   harness. The environment block is verified to bind and to light from above,
+   but nobody has looked at this region rendered by the game with its own art
+   direction. Every image in `references/` is from the offline rasteriser.
 
 3. **Every other capture is an offline preview.** Everything in
    `references/captures/` other than the `90-` frame comes from the toolkit's C
