@@ -25,6 +25,10 @@ SHORE = 3
 ROCK = 4
 SCORCHED = 5
 MEADOW = 6
+SNOW = 7
+ICE = 8
+MARBLE = 9
+TURF = 10
 
 # -- Amethyst Barrens. Appended, never inserted: see the note on materials.SPECS.
 # Classes are allocated in blocks so concurrent region work does not collide:
@@ -37,6 +41,7 @@ STORM_ROCK = 18
 SURFACE_NAMES = {
     FOREST: "ForestFloor", PATH: "Trail", PAVING: "Paving", SHORE: "Shore",
     ROCK: "Rock", SCORCHED: "Ash", MEADOW: "Meadow",
+    SNOW: "Snow", ICE: "Ice", MARBLE: "Marble", TURF: "AlpineTurf",
     BARRENS: "Barrens", CRYSTAL_FIELD: "CrystalField",
     RESONANT_ROAD: "ResonantRoad", STORM_ROCK: "StormRock",
 }
@@ -44,6 +49,8 @@ SURFACE_MATERIALS = {
     FOREST: "forest_floor", PATH: "leaf_path", PAVING: "cobble_paving",
     SHORE: "shore_shingle", ROCK: "cliff_rock", SCORCHED: "scorched_ground",
     MEADOW: "meadow_grass",
+    SNOW: "snow_pack", ICE: "glacier_ice", MARBLE: "veined_marble",
+    TURF: "alpine_turf",
     BARRENS: "amethyst_barrens_dust", CRYSTAL_FIELD: "amethyst_crystal_field",
     RESONANT_ROAD: "amethyst_resonant_road", STORM_ROCK: "amethyst_storm_rock",
 }
@@ -383,8 +390,17 @@ class Terrain:
 
     # -- export -----------------------------------------------------------
     def build_meshes(self, uv_scale: float = 0.30,
-                     name_prefix: str = "Terrain_") -> dict[str, M.Mesh]:
-        """One sub-mesh per surface class; shared vertices means no cracks."""
+                     name_prefix: str = "Terrain_",
+                     materials: dict[int, str] | None = None) -> dict[str, M.Mesh]:
+        """One sub-mesh per surface class; shared vertices means no cracks.
+
+        `materials` overrides the surface-class to material mapping for regions
+        whose ground is not Amberwood's. A snow region's PATH is not a leaf
+        path, and the class itself is what the terrain operators speak in.
+        """
+        table = dict(SURFACE_MATERIALS)
+        if materials:
+            table.update(materials)
         out: dict[str, M.Mesh] = {}
         for surface_id, label in SURFACE_NAMES.items():
             cells = self.surface == surface_id
@@ -398,7 +414,7 @@ class Terrain:
             vertex_mask[1:, 1:] |= cells[:-1, :-1]
             piece = M.heightfield(self.height, self.x0, self.z0, self.cell,
                                   uv_scale=uv_scale,
-                                  material=SURFACE_MATERIALS[surface_id],
+                                  material=table[surface_id],
                                   mask=vertex_mask)
             piece = _compact(piece)
             if piece.triangle_count == 0:
@@ -454,7 +470,8 @@ def water_plane(terrain: Terrain, level: float, x0: float, z0: float, x1: float,
 
 def backdrop(terrain: Terrain, reach: float = 150.0, cell: float = 7.0,
              seed: int = 4242, material: str = "cliff_rock",
-             sea_level: float = 0.0) -> M.Mesh:
+             sea_level: float = 0.0, open_side: str | None = "west",
+             clip_interior: bool = False) -> M.Mesh:
     """Coarse distant land beyond the authored terrain.
 
     The playable region is closed by mountain walls and by the sea; this ring
@@ -478,6 +495,12 @@ def backdrop(terrain: Terrain, reach: float = 150.0, cell: float = 7.0,
     dx = np.maximum(np.maximum(terrain.x0 - gx, gx - inner_x1), 0.0)
     dz = np.maximum(np.maximum(terrain.z0 - gz, gz - inner_z1), 0.0)
     outside = np.hypot(dx, dz)
+    # Signed version: negative inside the authored terrain. `outside` is
+    # clamped at zero, so it cannot express "how far in", which is why the
+    # mask below could never exclude the interior.
+    inset = np.minimum(np.minimum(gx - terrain.x0, inner_x1 - gx),
+                       np.minimum(gz - terrain.z0, inner_z1 - gz))
+    signed = np.where(outside > 0.0, outside, -np.maximum(inset, 0.0))
 
     # nearest point on the authored terrain, clamped just inside its border
     near_x = np.clip(gx, terrain.x0 + 0.5, inner_x1 - 0.5)
@@ -487,8 +510,19 @@ def backdrop(terrain: Terrain, reach: float = 150.0, cell: float = 7.0,
     ridge = N.ridged(gx * 0.011, gz * 0.011, octaves=5, seed=seed)
     rough = N.fbm(gx * 0.030, gz * 0.030, octaves=4, seed=seed + 11)
     distant = 22.0 + ridge * 56.0 + rough * 12.0
-    west = np.clip((terrain.x0 + 20.0 - gx) / 70.0, 0.0, 1.0)
-    distant = distant * (1.0 - west) - 26.0 * west
+    # A region whose world is open on one side - Amberwood's sea - wants the
+    # distant land to fall away there instead of walling the view.
+    if open_side == "west":
+        fall = np.clip((terrain.x0 + 20.0 - gx) / 70.0, 0.0, 1.0)
+    elif open_side == "east":
+        fall = np.clip((gx - inner_x1 + 20.0) / 70.0, 0.0, 1.0)
+    elif open_side == "north":
+        fall = np.clip((terrain.z0 + 20.0 - gz) / 70.0, 0.0, 1.0)
+    elif open_side == "south":
+        fall = np.clip((gz - inner_z1 + 20.0) / 70.0, 0.0, 1.0)
+    else:
+        fall = np.zeros_like(gx)
+    distant = distant * (1.0 - fall) - 26.0 * fall
 
     blend = 1.0 - np.exp(-outside / 42.0)
     height = edge_height * (1.0 - blend) + distant * blend
@@ -496,7 +530,11 @@ def backdrop(terrain: Terrain, reach: float = 150.0, cell: float = 7.0,
     # surfaces overlap instead of leaving a hairline of sky between them
     height -= 1.1 * np.exp(-outside / 9.0)
 
-    mask = outside > -cell * 2.2
+    # Keep a couple of cells of overlap under the authored terrain so the two
+    # surfaces meet without a hairline of sky, and - when asked - nothing
+    # further in. Without clipping, a region whose border stands higher than
+    # its middle has this coarse sheet poking up through its own slopes.
+    mask = signed > -cell * 2.2 if clip_interior else np.ones_like(gx, dtype=bool)
     piece = M.heightfield(height, x0, z0, cell, uv_scale=0.05, material=material,
                           mask=mask)
     piece = _compact(piece)

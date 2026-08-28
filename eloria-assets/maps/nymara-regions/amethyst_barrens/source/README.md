@@ -40,19 +40,19 @@ PYTHONPATH=../_toolkit python ../_toolkit/export_source_elm.py --out ../source-e
 For engine frames, from a Godot 4.7.2 binary:
 
 ```bash
-godot --path ../../../../godot-client --headless --import     # once, or class_name lookups fail
-godot --path ../../../../godot-client --script ../../_toolkit/godot_capture.gd \
-      -- <abs path to world.json> <abs out dir> <abs shots.json>
+godot --path ../../../../godot-client --headless --import   # once, or class_name lookups fail
+godot --path ../../../../godot-client       --script ../../_toolkit/godot_capture.gd --resolution 1280x800 --       --package=<abs path to this package> --out=<abs path to client-captures>
 ```
 
-`shots.json` is a list of `{id, eye, target, fov, width, height}` in absolute
-metres. The caller resolves ground-relative camera heights, because it has the
-terrain and the harness does not.
+The harness loads `world.json` through the client's own
+`WorldLoader.load_world()` and takes its camera set from
+`references/captures/index.json`, so the client frames line up one-for-one with
+the offline previews they are compared against. Run `capture_views.py` first.
 
 ## Material set
 
 `build_amethyst.py` pins `MATERIALS` and passes `only=` when registering glTF
-materials, so this package embeds the 13 materials it uses rather than all 46
+materials, so this package embeds the 13 materials it uses rather than all 56
 in the shared table. Adding a kit piece that introduces a new material means
 adding its name there; an unpinned material is a `KeyError` at export rather
 than a silent omission.

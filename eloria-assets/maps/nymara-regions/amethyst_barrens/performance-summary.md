@@ -6,12 +6,12 @@ Measured from the committed `world.glb`. Region area is 576 m x 576 m
 | | |
 | --- | --- |
 | `world.glb` | 19.53 MB |
-| Nodes | 887 |
+| Nodes | 942 |
 | Meshes | 229 |
 | Materials | 13 |
 | Embedded images | 39 |
-| Unique triangles | 444,492 |
-| Instanced triangles | 601,200 |
+| Unique triangles | 444,452 |
+| Instanced triangles | 601,820 |
 | Placements | 483 |
 | Embedded texture bytes | 4.25 MB |
 | **Unique triangles / m^2** | **1.34** |
@@ -23,7 +23,7 @@ The repository's stated desktop guideline, from
 `four-gates-city/performance-summary.md`, is 1.5 M visible triangles and
 512 MiB of texture.
 
-At 601,200 instanced triangles this region is **40% of the triangle budget**
+At 601,820 instanced triangles this region is **40% of the triangle budget**
 with the whole map resident, and 4.25 MB of embedded texture. Nothing streams
 and nothing switches LOD, so that is the worst case rather than an average.
 

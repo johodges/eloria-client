@@ -11,7 +11,7 @@ Two capture sets exist and they are **not** the same thing:
 | Directory | What it is |
 | --- | --- |
 | `references/captures/` | the offline rasteriser in `_toolkit/native/`. A preview. **Not a client frame.** |
-| `references/client-captures/` | Godot 4.7.2 on an NVIDIA GPU, loading `world.json` through the client's own `WorldLoader.load_world()`. Real engine frames. |
+| `references/client-captures/` | Godot 4.7.2 on an NVIDIA GPU, loading `world.json` through the client's own `WorldLoader.load_world()`. Real engine frames, rendered by the shared `_toolkit/godot_capture.gd`, which lights every region the same way so regions can be compared with each other. |
 
 The comparison sheets are built from the offline set, because that is what
 `make_comparison.py` consumes. The client set is the better evidence and is what

@@ -15,7 +15,9 @@ errors=0 warnings=0 infos=0
 ```
 
 The package is self-contained: no glTF extensions, no external buffers, no
-external images. 13 materials and 39 embedded images, 4.25 MB of texture bytes.
+external images. 13 materials and 39 embedded images, 4.25 MB of texture
+bytes - the shared table holds 56 materials, and the build pins the subset this
+region uses.
 
 ## Runtime contract — `verify_runtime.py`
 
@@ -90,10 +92,10 @@ on `feature/amethyst-barrens-576m-server-map`.
 Two builds run in independent processes:
 
 ```
-IDENTICAL  world.glb      (19,528,680 bytes)
-IDENTICAL  world.json     (54,807 bytes)
+IDENTICAL  world.glb      (19,520,164 bytes)
+IDENTICAL  world.json     (55,539 bytes)
 IDENTICAL  collision.bin  (1,327,120 bytes)
-IDENTICAL  minimap.webp   (176,224 bytes)
+IDENTICAL  minimap.webp   (176,972 bytes)
 DIFFERS    world.glb.validator.json
 ```
 
@@ -114,7 +116,7 @@ Specifically **not** verified:
 - The map running under `main.gd` as an actual game session. The client
   captures in `references/client-captures/` drive the real
   `WorldLoader.load_world()` and render on a GPU, but they are a capture
-  harness, not the game.
+  harness with its own fixed lighting rig, not the game.
 - Whether an actor walks correctly. Grounding is verified geometrically,
   offline, by reproducing the ray; no character was moved.
 - Three place names (see `modeling-assumptions.md`).

@@ -5,14 +5,20 @@
     {
       "id": "mirrorhold",
       "title": "Mirrorhold",
-      "sourceSha256": "c77b67d524f0903283792c0043f001a948cc9a94bfe1272833c37a1fd8b38aee",
+      "sourceSha256": "6826c0b616fce49156d9ec162a02205d4bebfcb9597f4dfc21e2409ecc970e99",
       "conceptViews": 10,
-      "landmarkInstances": 54,
+      "landmarkInstances": 31,
       "terrainHeightRange": [
-        0.0,
-        0.0
+        -11.0,
+        258.59
       ],
-      "water": true
+      "water": true,
+      "status": "production-geometry-materials-population",
+      "serverCells": 576,
+      "requiresServerMap": "96x96 ELM tiles (576 cells)",
+      "uniqueTriangles": 300734,
+      "instancedTriangles": 1246632,
+      "glbBytes": 16092412
     },
     {
       "id": "crownwater",
@@ -41,7 +47,7 @@
     {
       "id": "amethyst_barrens",
       "title": "Amethyst Barrens",
-      "sourceSha256": "e2652d8deb804d7ae044dcbdcdb77399b0174353fc2a854b94a2ae5bf5b47a9c",
+      "sourceSha256": "2eff864b2d4ae14b1b7cd11c24bf6d7053af861ca07cb51e7aed884a75d0b98c",
       "conceptViews": 10,
       "landmarkInstances": 47,
       "terrainHeightRange": [
@@ -50,19 +56,11 @@
       ],
       "water": true,
       "status": "production-geometry-materials-population",
-      "extentMetres": [
-        576,
-        576
-      ],
-      "requiresServerMap": {
-        "tiles": 96,
-        "arrivalTile": [
-          174,
-          174
-        ]
-      },
-      "uniqueTriangles": 444492,
-      "instancedTriangles": 601200
+      "serverCells": 576,
+      "requiresServerMap": "96x96 ELM tiles (576 cells)",
+      "uniqueTriangles": 444452,
+      "instancedTriangles": 601820,
+      "glbBytes": 19520164
     },
     {
       "id": "sunmane_steppe",

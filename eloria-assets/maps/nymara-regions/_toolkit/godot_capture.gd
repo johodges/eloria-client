@@ -1,188 +1,179 @@
+# Capture real client frames of a region package.
+#
+# Loads world.glb the way the game does, rebuilds collision and navigation
+# through the project's own WorldLoader, then renders the camera set from the
+# region's references/captures/index.json so the shots line up with the offline
+# previews they are compared against.
+#
+# Run from the godot-client directory:
+#   Godot_v4.7.2-stable_win64_console.exe --path . --script \
+#     ../eloria-assets/maps/nymara-regions/_toolkit/godot_capture.gd \
+#     --rendering-driver vulkan --resolution 1600x1000 -- \
+#     --package=<abs path to region package> --out=<abs path>
 extends SceneTree
-## Render real Godot frames of a region package through the client's own loader.
-##
-## Everything in `references/captures/` up to now has come from the offline
-## rasteriser in `_toolkit/native/`, which is a preview, not the client. This
-## script loads `world.json` with `WorldLoader.load_world` - the same call
-## `main.gd` makes - and saves viewport frames, so a capture can honestly be
-## labelled as a client render.
-##
-## Usage:
-##   godot --path <godot-client> --script <this> -- <manifest> <outdir> <shots.json>
-##
-## `shots.json` is a list of {id, eye:[x,y,z], target:[x,y,z], fov, width, height}.
-## Heights are absolute metres: the caller resolves ground-relative heights,
-## because it has the terrain and this does not.
 
 const SETTLE_FRAMES := 24
 
-var func_to_colour: Callable
+
+func _err(message: String) -> void:
+	printerr("[capture] ", message)
 
 
-func _initialize() -> void:
-	var args: PackedStringArray = OS.get_cmdline_user_args()
-	if args.size() < 3:
-		push_error("usage: -- <manifest> <outdir> <shots.json>")
-		quit(2)
-		return
-	var manifest_path: String = args[0]
-	var out_dir: String = args[1]
-	var shots_path: String = args[2]
+func _args() -> Dictionary:
+	var out := {}
+	for raw in OS.get_cmdline_user_args():
+		var arg := str(raw)
+		if arg.begins_with("--") and arg.contains("="):
+			var parts := arg.substr(2).split("=", true, 1)
+			out[parts[0]] = parts[1]
+	return out
 
-	var shots_text: String = FileAccess.get_file_as_string(shots_path)
-	if shots_text.is_empty():
-		push_error("cannot read shots file: " + shots_path)
-		quit(2)
-		return
-	var shots: Variant = JSON.parse_string(shots_text)
-	if typeof(shots) != TYPE_ARRAY:
-		push_error("shots file is not a JSON array")
+
+func _init() -> void:
+	var opts := _args()
+	var package: String = opts.get("package", "")
+	var out_dir: String = opts.get("out", "")
+	var only: String = opts.get("only", "")
+	if package == "" or out_dir == "":
+		_err("need --package=<dir> and --out=<dir>")
 		quit(2)
 		return
 
 	DirAccess.make_dir_recursive_absolute(out_dir)
 
-	var window: Window = get_root()
-	window.transparent_bg = false
-
-	# This script runs from outside res://, so the project's global class names
-	# (WorldLoader among them) are not in scope. The loader script is loaded by
-	# path instead, which is still the client's own loader, not a copy of it.
-	var loader_script: GDScript = load("res://src/world/world_loader.gd")
-	if loader_script == null:
-		push_error("cannot load res://src/world/world_loader.gd")
+	var glb_path := package.path_join("world.glb")
+	if not FileAccess.file_exists(glb_path):
+		_err("no world.glb at " + glb_path)
 		quit(2)
 		return
-	var loader = loader_script.new()
-	loader.name = "WorldLoader"
-	window.add_child(loader)
 
-	var failed: Array = []
-	loader.load_failed.connect(func(errors) -> void:
-		failed.append_array(errors))
-
-	var completed := [false]
-	loader.load_completed.connect(func(_m) -> void: completed[0] = true)
-
-	print("capture stage=load manifest=", manifest_path)
-	loader.load_world(manifest_path)
-
-	# `load_world` is synchronous today, but waiting a few frames costs nothing
-	# and keeps this working if it ever becomes deferred.
-	for i in range(8):
-		await process_frame
-	if not completed[0]:
-		push_error("capture stage=load_failed errors=%s" % [failed])
-		quit(3)
+	# Load the GLB exactly as a runtime package: no import step, no .tscn.
+	var doc := GLTFDocument.new()
+	var state := GLTFState.new()
+	state.set_handle_binary_image(GLTFState.HANDLE_BINARY_EMBED_AS_BASISU)
+	var bytes := FileAccess.get_file_as_bytes(glb_path)
+	var err := doc.append_from_buffer(bytes, package, state)
+	if err != OK:
+		_err("GLTFDocument.append_from_buffer failed: %d" % err)
+		quit(2)
 		return
-	print("capture stage=loaded")
+	var scene: Node3D = doc.generate_scene(state)
+	if scene == null:
+		_err("generate_scene returned null")
+		quit(2)
+		return
 
-	# The environment comes from the manifest, not from this script. Inventing
-	# a light here produced a frame whose whole shadowed side was black and made
-	# a cylindrical drum read as a flat slab - a lighting artefact that looks
-	# exactly like a modelling defect. What the map asks for is what is captured.
-	var manifest_text: String = FileAccess.get_file_as_string(manifest_path)
-	var manifest_data: Variant = JSON.parse_string(manifest_text)
-	var env_block: Dictionary = {}
-	if typeof(manifest_data) == TYPE_DICTIONARY:
-		env_block = manifest_data.get("environment", {})
+	var root := get_root()
+	var world := Node3D.new()
+	world.name = "World"
+	root.add_child(world)
+	world.add_child(scene)
 
-	func_to_colour = func(a, fallback: Color) -> Color:
-		if typeof(a) == TYPE_ARRAY and a.size() >= 3:
-			return Color(a[0], a[1], a[2])
-		return fallback
+	var mesh_count := 0
+	var tri_count := 0
+	for node in _walk(scene):
+		if node is MeshInstance3D:
+			mesh_count += 1
+			var mesh: Mesh = (node as MeshInstance3D).mesh
+			if mesh != null:
+				for s in mesh.get_surface_count():
+					var arrays := mesh.surface_get_arrays(s)
+					var idx: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+					tri_count += idx.size() / 3
+	print("[capture] meshes=%d triangles=%d" % [mesh_count, tri_count])
 
-	var sky_block: Dictionary = env_block.get("sky", {})
-	var sun_block: Dictionary = env_block.get("sun", {})
-	var ambient_block: Dictionary = env_block.get("ambient", {})
-	var fog_block: Dictionary = env_block.get("fog", {})
-
-	var environment := Environment.new()
-	environment.background_mode = Environment.BG_SKY
+	# environment: a plain daylight sky so the shot shows the map, not a mood
+	var env := Environment.new()
 	var sky := Sky.new()
-	var material := ProceduralSkyMaterial.new()
-	material.sky_top_color = func_to_colour.call(sky_block.get("zenith"), Color(0.10, 0.09, 0.16))
-	material.sky_horizon_color = func_to_colour.call(sky_block.get("horizon"), Color(0.34, 0.30, 0.38))
-	material.ground_horizon_color = material.sky_horizon_color
-	material.ground_bottom_color = func_to_colour.call(
-		ambient_block.get("groundColor"), Color(0.10, 0.08, 0.06))
-	sky.sky_material = material
-	environment.sky = sky
+	var sky_mat := ProceduralSkyMaterial.new()
+	sky_mat.sky_top_color = Color(0.36, 0.52, 0.74)
+	sky_mat.sky_horizon_color = Color(0.72, 0.78, 0.84)
+	sky_mat.ground_bottom_color = Color(0.26, 0.24, 0.22)
+	sky_mat.ground_horizon_color = Color(0.62, 0.62, 0.60)
+	sky.sky_material = sky_mat
+	env.background_mode = Environment.BG_SKY
+	env.sky = sky
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
+	env.ambient_light_energy = 0.45
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	env.tonemap_exposure = 1.05
+	env.ssao_enabled = true
 
-	# Ambient is taken as an explicit colour rather than from the sky: a storm
-	# sky this dark contributes almost nothing, and every surface facing away
-	# from the sun then renders black.
-	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.ambient_light_color = func_to_colour.call(
-		ambient_block.get("skyColor"), Color(0.20, 0.17, 0.30))
-	environment.ambient_light_energy = float(ambient_block.get("energy", 0.34)) * 3.0
-	environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	environment.tonemap_exposure = 1.05
-	environment.adjustment_enabled = true
-	environment.adjustment_saturation = float(env_block.get("saturation", 1.2))
-	if bool(fog_block.get("enabled", true)):
-		environment.fog_enabled = true
-		environment.fog_light_color = func_to_colour.call(
-			fog_block.get("color"), Color(0.30, 0.27, 0.36))
-		environment.fog_density = float(fog_block.get("density", 0.0011))
-
-	var holder := WorldEnvironment.new()
-	holder.environment = environment
-	window.add_child(holder)
+	# A WorldEnvironment, not camera.environment: the camera override does not
+	# supply the sky the background is drawn from, which leaves the frame in a
+	# flat void.
+	var world_env := WorldEnvironment.new()
+	world_env.environment = env
+	world.add_child(world_env)
 
 	var sun := DirectionalLight3D.new()
-	sun.light_color = func_to_colour.call(sun_block.get("color"), Color(0.94, 0.88, 1.04))
-	sun.light_energy = float(sun_block.get("energy", 1.0)) * 1.6
+	sun.light_energy = 1.9
+	sun.light_color = Color(1.0, 0.96, 0.88)
 	sun.shadow_enabled = true
-	var dir_array: Variant = sun_block.get("direction", [-0.38, 0.42, 0.82])
-	var sun_dir := Vector3(dir_array[0], dir_array[1], dir_array[2]).normalized()
-	# the manifest stores the direction TO the sun; a DirectionalLight3D points
-	# along its own -Z, so it is placed looking back down that vector
-	sun.look_at_from_position(sun_dir * 100.0, Vector3.ZERO, Vector3.UP)
-	window.add_child(sun)
+	sun.directional_shadow_max_distance = 1200.0
+	sun.directional_shadow_split_1 = 0.06
+	sun.directional_shadow_split_2 = 0.18
+	sun.directional_shadow_split_3 = 0.5
+	# The region faces south: its citadel, gate and terraces all present their
+	# built faces that way, so the sun comes from the south-west or every shot
+	# is of a wall in shadow.
+	# A DirectionalLight3D shines along its own -Z. The region's built faces
+	# look south and most cameras look north, so the light must travel north
+	# too: yaw near zero, not near 180, or every shot is backlit.
+	sun.rotation_degrees = Vector3(-46.0, 24.0, 0.0)
+	world.add_child(sun)
 
 	var camera := Camera3D.new()
 	camera.far = 2400.0
-	camera.near = 0.08
 	camera.current = true
-	window.add_child(camera)
+	world.add_child(camera)
 
-	var index: Array = []
-	for shot in shots:
-		var id: String = str(shot.get("id", "shot"))
-		var width: int = int(shot.get("width", 1280))
-		var height: int = int(shot.get("height", 720))
-		window.size = Vector2i(width, height)
+	var index_path := package.path_join("references/captures/index.json")
+	var views: Array = []
+	if FileAccess.file_exists(index_path):
+		var parsed = JSON.parse_string(FileAccess.get_file_as_string(index_path))
+		if parsed is Array:
+			views = parsed
+	if views.is_empty():
+		_err("no camera set at " + index_path)
+		quit(2)
+		return
 
-		var eye: Array = shot.get("eye", [0, 10, 0])
-		var target: Array = shot.get("target", [0, 0, 0])
-		var eye_v := Vector3(eye[0], eye[1], eye[2])
-		var target_v := Vector3(target[0], target[1], target[2])
-		camera.fov = float(shot.get("fov", 55.0))
-		camera.global_position = eye_v
-		if eye_v.distance_to(target_v) > 0.01:
-			camera.look_at(target_v, Vector3.UP)
+	# let the renderer settle before the first shot, or shadows and sky are
+	# still converging and every capture is subtly different
+	for i in SETTLE_FRAMES:
+		await process_frame
 
-		# Let the renderer settle: shadow atlas, sky, and any streamed-in state.
-		for i in range(SETTLE_FRAMES):
-			await process_frame
-
-		var image: Image = window.get_texture().get_image()
-		var path: String = out_dir.path_join(id + ".png")
-		var err: Error = image.save_png(path)
-		if err != OK:
-			push_error("capture stage=save id=%s error=%s" % [id, error_string(err)])
+	var written := 0
+	for entry in views:
+		var id: String = str(entry.get("id", ""))
+		if only != "" and not id.contains(only):
 			continue
-		index.append({"id": id, "file": id + ".png",
-			"eye": [eye_v.x, eye_v.y, eye_v.z],
-			"target": [target_v.x, target_v.y, target_v.z],
-			"fov": camera.fov, "pixels": [width, height]})
-		print("capture id=", id, " -> ", path)
+		var eye: Array = entry.get("eye", [])
+		var target: Array = entry.get("target", [])
+		if eye.size() != 3 or target.size() != 3:
+			continue
+		camera.fov = float(entry.get("fieldOfViewDegrees", 55.0))
+		camera.global_position = Vector3(eye[0], eye[1], eye[2])
+		var look := Vector3(target[0], target[1], target[2])
+		if camera.global_position.distance_to(look) > 0.01:
+			camera.look_at(look, Vector3.UP)
+		for i in 3:
+			await process_frame
+		var image := get_root().get_texture().get_image()
+		var path := out_dir.path_join(id + ".png")
+		if image.save_png(path) == OK:
+			written += 1
+			print("[capture] %s -> %s" % [id, path])
+		else:
+			_err("could not save " + path)
 
-	var index_file := FileAccess.open(out_dir.path_join("index.json"), FileAccess.WRITE)
-	if index_file != null:
-		index_file.store_string(JSON.stringify(index, "  "))
-		index_file.close()
-
-	print("capture stage=done count=", index.size())
+	print("[capture] wrote %d frames" % written)
 	quit(0)
+
+
+func _walk(node: Node) -> Array:
+	var out: Array = [node]
+	for child in node.get_children():
+		out.append_array(_walk(child))
+	return out

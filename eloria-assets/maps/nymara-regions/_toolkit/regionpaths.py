@@ -12,7 +12,6 @@ the nearest enclosing directory that looks like a region package (one holding a
 from __future__ import annotations
 
 import os
-import sys
 from pathlib import Path
 
 TOOLKIT = Path(__file__).resolve().parent
@@ -71,30 +70,51 @@ def load_region_views(package: Path):
     return module
 
 
-def load_region_build(package: Path):
-    """Import the region's build module and return its `build_region`.
-
-    The capture and comparison tools used to `from build_amberwood import
-    build_region`, which meant they could only ever capture Amberwood. Every
-    region package carries exactly one `source/build_<region>.py` exposing
-    `build_region`, so it is found by convention instead of by name.
-    """
+def _load_module(path: Path, name: str):
     import importlib.util
+    import sys
 
-    source = region_source(package)
-    candidates = sorted(source.glob("build_*.py"))
-    # `build_interiors.py` and friends are secondary builds, not the region's
-    candidates = [c for c in candidates if c.stem != "build_interiors"]
-    if not candidates:
-        raise SystemExit(f"no build_<region>.py in {source}")
-    path = candidates[0]
+    source = path.parent
     if str(source) not in sys.path:
         sys.path.insert(0, str(source))
-    spec = importlib.util.spec_from_file_location(
-        f"_region_build_{package.name}", path)
+    spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
+    sys.modules[name] = module
     spec.loader.exec_module(module)
-    if not hasattr(module, "build_region"):
-        raise SystemExit(f"{path} does not define build_region()")
-    return module.build_region
+    return module
+
+
+def load_region_plan(package: Path):
+    """The region's plan module: extents, anchors, routes, terrain sculpting.
+
+    A region authored after the toolkit extraction keeps this in its own
+    `source/region.py`. Amberwood predates that and still has its plan inside
+    the shared package, reached through its build module's `REG`, so fall back
+    to that rather than failing on the older layout.
+    """
+    path = region_source(package) / "region.py"
+    if path.is_file():
+        return _load_module(path, "region")
+    plan = getattr(load_region_build(package), "REG", None)
+    if plan is None:
+        raise SystemExit(
+            f"region has no plan: expected {path}, and its build module "
+            f"exposes no REG")
+    return plan
+
+
+def load_region_build(package: Path):
+    """Import the region's own `build_<region>.py`.
+
+    The toolkit cannot know its name, and a region may carry more than one
+    build script, so the interior builds are excluded and the rest must be
+    unambiguous.
+    """
+    source = region_source(package)
+    candidates = [c for c in sorted(source.glob("build_*.py"))
+                  if not c.stem.startswith("build_interior")]
+    if len(candidates) != 1:
+        raise SystemExit(
+            f"expected exactly one build_*.py in {source}, found "
+            f"{[c.name for c in candidates]}")
+    return _load_module(candidates[0], candidates[0].stem)
