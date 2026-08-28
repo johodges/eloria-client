@@ -1,0 +1,648 @@
+[
+  {
+    "id": "00-aerial-overview",
+    "panel": "aerial",
+    "file": "00-aerial-overview.webp",
+    "eye": [
+      -354.0,
+      520.7,
+      504.0
+    ],
+    "target": [
+      156.0,
+      41.61,
+      -162.0
+    ],
+    "fieldOfViewDegrees": 44,
+    "lighting": "day"
+  },
+  {
+    "id": "01-forest-road",
+    "panel": 1,
+    "file": "01-forest-road.webp",
+    "eye": [
+      -24.96,
+      25.63,
+      30.5
+    ],
+    "target": [
+      72.0,
+      32.38,
+      -66.0
+    ],
+    "fieldOfViewDegrees": 60,
+    "lighting": "day"
+  },
+  {
+    "id": "02-moot-hall",
+    "panel": 2,
+    "file": "02-moot-hall.webp",
+    "eye": [
+      21.84,
+      56.13,
+      -129.16
+    ],
+    "target": [
+      -12.0,
+      51.27,
+      -192.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "03-forest-lodge",
+    "panel": 3,
+    "file": "03-forest-lodge.webp",
+    "eye": [
+      -24.0,
+      16.4,
+      54.0
+    ],
+    "target": [
+      -45.0,
+      13.26,
+      21.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "04-hollow-tree",
+    "panel": 4,
+    "file": "04-hollow-tree.webp",
+    "eye": [
+      -48.0,
+      38.95,
+      -234.0
+    ],
+    "target": [
+      -78.0,
+      33.28,
+      -258.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "05-high-bridge",
+    "panel": 5,
+    "file": "05-high-bridge.webp",
+    "eye": [
+      178.3,
+      59.39,
+      -172.28
+    ],
+    "target": [
+      120.0,
+      43.47,
+      -198.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "06-root-arch",
+    "panel": 6,
+    "file": "06-root-arch.webp",
+    "eye": [
+      -78.0,
+      -9.01,
+      -72.0
+    ],
+    "target": [
+      -48.0,
+      2.21,
+      -102.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "07-garden-terrace",
+    "panel": 7,
+    "file": "07-garden-terrace.webp",
+    "eye": [
+      141.35,
+      34.17,
+      105.97
+    ],
+    "target": [
+      156.0,
+      24.58,
+      24.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "08-canopy-amber",
+    "panel": 8,
+    "file": "08-canopy-amber.webp",
+    "eye": [
+      88.4,
+      54.14,
+      -197.89
+    ],
+    "target": [
+      66.0,
+      60.65,
+      -210.0
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "09-high-overlook",
+    "panel": 9,
+    "file": "09-high-overlook.webp",
+    "eye": [
+      281.17,
+      75.28,
+      -149.72
+    ],
+    "target": [
+      36.0,
+      64.44,
+      -186.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "day"
+  },
+  {
+    "id": "10-material-study",
+    "panel": 10,
+    "file": "10-material-study.webp",
+    "eye": [
+      19.2,
+      49.39,
+      -126.0
+    ],
+    "target": [
+      13.2,
+      39.17,
+      -147.0
+    ],
+    "fieldOfViewDegrees": 40,
+    "lighting": "day"
+  },
+  {
+    "id": "11-great-arch",
+    "panel": null,
+    "file": "11-great-arch.webp",
+    "eye": [
+      156.0,
+      46.01,
+      -6.0
+    ],
+    "target": [
+      174.0,
+      46.17,
+      -102.0
+    ],
+    "fieldOfViewDegrees": 48,
+    "lighting": "day"
+  },
+  {
+    "id": "12-harbour",
+    "panel": null,
+    "file": "12-harbour.webp",
+    "eye": [
+      -159.79,
+      -0.77,
+      103.26
+    ],
+    "target": [
+      -84.0,
+      3.72,
+      18.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "13-great-tree",
+    "panel": null,
+    "file": "13-great-tree.webp",
+    "eye": [
+      139.35,
+      42.02,
+      -201.54
+    ],
+    "target": [
+      78.0,
+      72.45,
+      -264.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "day"
+  },
+  {
+    "id": "14-market",
+    "panel": null,
+    "file": "14-market.webp",
+    "eye": [
+      -55.94,
+      36.31,
+      -95.65
+    ],
+    "target": [
+      12.0,
+      41.27,
+      -150.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "15-forest-gate",
+    "panel": null,
+    "file": "15-forest-gate.webp",
+    "eye": [
+      158.71,
+      44.66,
+      -55.39
+    ],
+    "target": [
+      222.0,
+      45.64,
+      -90.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "16-timber-yard",
+    "panel": null,
+    "file": "16-timber-yard.webp",
+    "eye": [
+      146.62,
+      32.09,
+      129.9
+    ],
+    "target": [
+      216.0,
+      26.06,
+      102.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "17-ash-transition",
+    "panel": null,
+    "file": "17-ash-transition.webp",
+    "eye": [
+      270.38,
+      50.51,
+      1.52
+    ],
+    "target": [
+      348.0,
+      36.68,
+      -54.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "18-watchtower",
+    "panel": null,
+    "file": "18-watchtower.webp",
+    "eye": [
+      202.14,
+      56.23,
+      -118.83
+    ],
+    "target": [
+      258.0,
+      57.62,
+      -210.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "19-coast-waterfall",
+    "panel": null,
+    "file": "19-coast-waterfall.webp",
+    "eye": [
+      -107.29,
+      15.39,
+      -37.28
+    ],
+    "target": [
+      -52.5,
+      -5.64,
+      -66.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "20-north-gate",
+    "panel": null,
+    "file": "20-north-gate.webp",
+    "eye": [
+      63.09,
+      61.74,
+      -278.91
+    ],
+    "target": [
+      72.0,
+      56.76,
+      -312.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "21-hill-hamlet",
+    "panel": null,
+    "file": "21-hill-hamlet.webp",
+    "eye": [
+      260.66,
+      26.31,
+      124.89
+    ],
+    "target": [
+      324.0,
+      32.15,
+      90.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "22-mill-pool",
+    "panel": null,
+    "file": "22-mill-pool.webp",
+    "eye": [
+      -83.5,
+      -6.51,
+      -51.37
+    ],
+    "target": [
+      -6.0,
+      28.07,
+      -132.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "23-old-bridge",
+    "panel": null,
+    "file": "23-old-bridge.webp",
+    "eye": [
+      -18.88,
+      51.15,
+      -129.84
+    ],
+    "target": [
+      30.0,
+      41.31,
+      -132.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "24-canopy-walkway",
+    "panel": null,
+    "file": "24-canopy-walkway.webp",
+    "eye": [
+      42.0,
+      64.95,
+      -240.0
+    ],
+    "target": [
+      72.0,
+      61.62,
+      -210.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "30-spawn-grounding",
+    "panel": null,
+    "file": "30-spawn-grounding.webp",
+    "eye": [
+      -63.07,
+      19.78,
+      40.46
+    ],
+    "target": [
+      12.0,
+      21.23,
+      -18.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "31-arch-stair",
+    "panel": null,
+    "file": "31-arch-stair.webp",
+    "eye": [
+      173.93,
+      44.17,
+      -38.69
+    ],
+    "target": [
+      174.0,
+      42.13,
+      -90.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "32-shore-walk",
+    "panel": null,
+    "file": "32-shore-walk.webp",
+    "eye": [
+      -135.14,
+      9.62,
+      113.32
+    ],
+    "target": [
+      -78.0,
+      3.16,
+      18.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "33-ravine-edge",
+    "panel": null,
+    "file": "33-ravine-edge.webp",
+    "eye": [
+      31.54,
+      56.03,
+      -131.9
+    ],
+    "target": [
+      132.0,
+      32.73,
+      -216.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "25-forest-lake",
+    "panel": null,
+    "file": "25-forest-lake.webp",
+    "eye": [
+      -14.81,
+      60.09,
+      -211.39
+    ],
+    "target": [
+      -45.0,
+      26.91,
+      -255.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "26-west-cove",
+    "panel": null,
+    "file": "26-west-cove.webp",
+    "eye": [
+      -48.57,
+      32.36,
+      -115.47
+    ],
+    "target": [
+      -126.0,
+      -15.11,
+      -180.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "27-north-hamlet",
+    "panel": null,
+    "file": "27-north-hamlet.webp",
+    "eye": [
+      71.24,
+      63.53,
+      -315.94
+    ],
+    "target": [
+      90.0,
+      54.23,
+      -354.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "28-quarry",
+    "panel": null,
+    "file": "28-quarry.webp",
+    "eye": [
+      168.14,
+      28.44,
+      121.01
+    ],
+    "target": [
+      225.0,
+      18.82,
+      156.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "29-old-battle",
+    "panel": null,
+    "file": "29-old-battle.webp",
+    "eye": [
+      301.55,
+      65.06,
+      -177.43
+    ],
+    "target": [
+      345.0,
+      41.53,
+      -120.0
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "34-ridge-bridge",
+    "panel": null,
+    "file": "34-ridge-bridge.webp",
+    "eye": [
+      111.3,
+      77.44,
+      -300.84
+    ],
+    "target": [
+      156.0,
+      58.02,
+      -300.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "40-golden-settlement",
+    "panel": null,
+    "file": "40-golden-settlement.webp",
+    "eye": [
+      -112.45,
+      -1.48,
+      -95.82
+    ],
+    "target": [
+      36.0,
+      49.85,
+      -180.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "golden"
+  },
+  {
+    "id": "41-golden-arch",
+    "panel": null,
+    "file": "41-golden-arch.webp",
+    "eye": [
+      84.3,
+      43.37,
+      -27.92
+    ],
+    "target": [
+      174.0,
+      47.17,
+      -102.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "golden"
+  },
+  {
+    "id": "42-golden-coast",
+    "panel": null,
+    "file": "42-golden-coast.webp",
+    "eye": [
+      -44.26,
+      31.94,
+      102.68
+    ],
+    "target": [
+      -120.0,
+      4.71,
+      6.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "golden"
+  }
+]
