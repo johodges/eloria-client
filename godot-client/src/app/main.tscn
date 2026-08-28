@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-[gd_scene format=3 uid="uid://bfmrbcawfltal"]
-=======
-[gd_scene load_steps=10 format=3]
->>>>>>> fix/character-preview-lighting-and-garment-fit
+[gd_scene load_steps=10 format=3 uid="uid://bfmrbcawfltal"]
 
 [ext_resource type="Script" uid="uid://dbhj8rl6i8dyi" path="res://src/app/main.gd" id="1"]
 [ext_resource type="Script" uid="uid://dbpi40yl6pryr" path="res://src/camera/isometric_camera_controller.gd" id="2"]

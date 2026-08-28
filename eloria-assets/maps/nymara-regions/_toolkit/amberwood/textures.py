@@ -1467,3 +1467,80 @@ def amethyst_banner(size: int = 256, seed: int = 569) -> TextureSet:
     return TextureSet("amethyst_banner", _u8(np.clip(color, 0, 1)),
                       pack_orm(occlusion, roughness),
                       normal_from_height(weave * 0.4, 1.2))
+
+
+def amethyst_vault_floor(size: int = 512, seed: int = 577) -> TextureSet:
+    """The Resonant Vault's floor: dark polished slate inlaid with brass.
+
+    Every panel of the vault's concept board is shot across this surface, so it
+    carries the room. Large slabs rather than small flags, a mirror polish that
+    picks up the crystal light, and a brass line running the joints - the
+    Glasswardens laid a circuit into their own floor.
+    """
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    slabs = 4.0
+    fx = (gx * slabs) % 1.0
+    fy = (gy * slabs) % 1.0
+    joint = np.minimum(np.minimum(fx, 1.0 - fx), np.minimum(fy, 1.0 - fy))
+    seam = np.clip(1.0 - joint * 26.0, 0.0, 1.0)
+
+    grain = N.tileable_fbm(size, 9, 5, seed=seed)
+    swirl = N.tileable_fbm(size, 3, 4, seed=seed + 3)
+    color = _colorize(np.clip(swirl * 0.6 + grain * 0.4, 0, 1),
+                      (0.0, (0.062, 0.066, 0.082)),
+                      (0.45, (0.106, 0.112, 0.136)),
+                      (0.80, (0.152, 0.160, 0.190)),
+                      (1.0, (0.204, 0.212, 0.244)))
+    # the brass inlay sits in the joint, bright and narrow
+    inlay = np.clip(seam * 1.35 - 0.18, 0.0, 1.0)
+    color = _mix(color, np.array([0.612, 0.470, 0.196]), inlay * 0.92)
+    color = _mix(color, np.array([0.816, 0.678, 0.353]),
+                 np.clip(inlay - 0.55, 0, 1) * 1.8)
+    # a violet cast where the crystal light pools in the polish
+    bloom = np.clip(N.tileable_fbm(size, 5, 4, seed=seed + 7) * 1.7 - 0.85, 0.0, 1.0)
+    color = _mix(color, np.array([0.243, 0.145, 0.353]), bloom * 0.30)
+
+    height = (1.0 - seam) * 0.5 + grain * 0.5
+    occlusion = np.clip(0.58 + (1.0 - seam) * 0.40, 0.0, 1.0)
+    # polished stone, but the brass is duller than the slate around it
+    roughness = np.clip(0.20 + grain * 0.10 + inlay * 0.30, 0.0, 1.0)
+    metallic = np.clip(inlay * 0.85, 0.0, 1.0)
+    return TextureSet("amethyst_vault_floor", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness, metallic),
+                      normal_from_height(height, 1.6))
+# --------------------------------------------------------------------------
+# Whitehorn: the silver its monks mined, and the granite they cut it from
+# --------------------------------------------------------------------------
+
+def whitehorn_silver(size: int = 256, seed: int = 601) -> TextureSet:
+    """Worked silver for the temple's reliquary, bell and altar fittings.
+
+    The interior concept names "ice granite silver" as its material study and
+    the shared table had no white metal - only dark iron and warm brass, both
+    of which read as the wrong century for a mountain reliquary.
+
+    Deliberately not fully metallic. With metallic at 1.0 and no reflection
+    probe, a metal has nothing to reflect and renders black in both the offline
+    rasteriser and Godot; the Amethyst build hit this on verdigris and brass.
+    At 0.45 the diffuse term still carries the surface.
+    """
+    grain = N.tileable_fbm(size, 26, 4, seed=seed)
+    # hammered facets, broader than the grain so it reads as beaten sheet
+    beat = N.tileable_worley(min(size, 128), 9, seed=seed + 7)
+    beat = _upsample(beat, size)
+    body = np.clip(0.62 + grain * 0.22 - beat * 0.18, 0.0, 1.0)
+    color = _colorize(body, (0.0, (0.316, 0.330, 0.350)),
+                      (0.45, (0.548, 0.566, 0.586)),
+                      (0.8, (0.736, 0.752, 0.768)),
+                      (1.0, (0.868, 0.878, 0.888)))
+    # tarnish gathers in the hollows of the beating and along engraved lines
+    tarnish = np.clip(N.tileable_fbm(size, 9, 4, seed=seed + 11) * 2.2 - 1.5,
+                      0.0, 1.0)
+    color = _mix(color, np.array([0.212, 0.208, 0.236]), tarnish * 0.45)
+    height = np.clip(0.5 + grain * 0.16 - beat * 0.22, 0.0, 1.0)
+    occlusion = np.clip(0.62 + height * 0.38, 0.0, 1.0)
+    roughness = np.clip(0.22 + tarnish * 0.5 + beat * 0.16, 0.06, 1.0)
+    return TextureSet("whitehorn_silver", _u8(color),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 0.8))

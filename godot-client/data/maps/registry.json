@@ -606,6 +606,80 @@
     "amberwood_cinder_chapel.elm": {
       "alias": "maps/nymara/amberwood_cinder_chapel.elm"
     },
+    "maps/nymara/resonant_vault.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amethyst_barrens_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -28.0,
+          346.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/amethyst_barrens.elm",
+      "insidesMap": true,
+      "sections": [
+        "resonant_vault",
+        "geode_hollow",
+        "shardworks",
+        "storm_barrow"
+      ],
+      "requiresServerMap": {
+        "tiles": 64,
+        "collisionCells": 384,
+        "note": "four insides on one map with blackspace between them"
+      }
+    },
+    "resonant_vault": {
+      "alias": "maps/nymara/resonant_vault.elm"
+    },
+    "resonant_vault.elm": {
+      "alias": "maps/nymara/resonant_vault.elm"
+    },
+    "amethyst_barrens_insides": {
+      "alias": "maps/nymara/resonant_vault.elm"
+    },
+    "maps/nymara/whitehorn_glacier_temple.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/whitehorn_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -6.0,
+          179.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "parentRegion": "whitehorn_range",
+      "sections": [
+        "glacier_temple",
+        "whitehorn_mine",
+        "ice_cave",
+        "frost_barrow"
+      ]
+    },
+    "whitehorn_glacier_temple": {
+      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
+    },
+    "whitehorn_glacier_temple.elm": {
+      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
+    },
+    "whitehorn_insides": {
+      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
+    },
     "maps/nymara/drowned_crown.elm": {
       "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/crownwater_insides/world.json",
       "coordinateTransform": {

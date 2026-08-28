@@ -2207,8 +2207,8 @@
     "uniqueVertices": 347415,
     "glbBytes": 24091236,
     "instancedTriangles": 1272152,
-    "embeddedTextureBytes": 18946500,
-    "textureMemoryBytesUncompressed": 160432128,
+    "embeddedTextureBytes": 19227034,
+    "textureMemoryBytesUncompressed": 164364288,
     "placements": 608,
     "collision": {
       "width": 1152,
