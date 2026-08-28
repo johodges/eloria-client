@@ -1,0 +1,78 @@
+# Crownwater change log
+
+## From placeholder to production
+
+The starting package was `terrain-landmark-material-pass` and carried the
+defects the production guide lists. All were confirmed for Crownwater before any
+work started:
+
+| Defect | Confirmed | Resolution |
+| --- | --- | --- |
+| Terrain flat, `terrainHeightRange: [0, 0]` | yes | sculpted lagoon and archipelago, -16.4 to 42.2 m |
+| Landmarks belong to other regions | yes, **all 65** - Grey Moor Ritual Shrine, Sunmane Caravan Camp, Amberwood Hollow Tree, eight Mirrorhold Civic Towers | discarded entirely; 10 authored landmarks replace them |
+| `world.json` incomplete | worse than stated - **no `bounds`, no `coordinateTransform`** | full schema-1 manifest |
+| Detail board truncated | yes, 786,445 bytes; **only 91 of 793 rows decode** | unresolved - see `comparison-report.md` |
+| `source-elm/crownwater.elm` a 32x32 flat placeholder | yes | regenerated, 96x96 tiles / 576x576 cells, from this build's collision grid |
+
+## Build history, in order
+
+1. **Terrain and water first, grounding proven before any detail work**, as the
+   guide requires. Lagoon floor, deep moat ring, two navigable approaches,
+   seventeen islands. `verify_runtime.py`: 331,776 tiles, 0 misses. Committed on
+   its own.
+2. Material recipes: veined marble, patinated verdigris copper, gilt leaf,
+   mosaic tesserae, lagoon sand, lagoon water.
+3. Architecture kit: domes, pavilions, campanile, cathedral, causeways, quays,
+   bollards, banner poles, boats.
+4. Population: causeways, crown isle, pavilion ring, harbour, sunken court,
+   vegetation, props, metadata.
+5. In-client capture harness and 23 framings.
+6. Colour and lighting corrected against real client frames, iteratively.
+7. Docs, sheets, server ELM.
+
+## Bugs found and fixed during the build
+
+Recorded because each was invisible until something specific caught it.
+
+| Bug | Symptom | Caught by |
+| --- | --- | --- |
+| Deep channel carved through the crown isle | central island at y=0.26, barely above water | height probe before any modelling |
+| Causeways graded as roads | harbour quay 2.5 m under water; a ridge raised under the water each span crosses | anchor height probe |
+| Two anchors overlapping | the sunken court's terrace silently overwrote the harbour quay | anchor proximity check |
+| Islands built as domes | 4.7% walkable; only the tips were inside the slope limit | `COLLISION_TOO_TIGHT` warning |
+| `walk_surface=True` on `MeshGroup` placements | every pavilion grounded 12.8 m up, **on top of its own dome** - the guide's trap 2, exactly | `verify_runtime.py` `SPAWN_HEIGHT_MISMATCH` |
+| Elevated deck footprint was a disc | a 48 x 5.4 m causeway claimed a 2.3 m circle; the rest disagreed with the surface | `COLLISION_SURFACE_MISMATCH` |
+| Deck footprint mirrored about its origin | quay aprons claimed walkable water on their seaward side | same, after the first fix |
+| `environment.sun.direction` sign | the whole region lit from below, reading as night | first real client capture |
+| World-boundary rim | a dark slab floating at the map edge in every elevated view | first real client capture |
+| Whole islands paved | the aerial read as one continuous white slab | first real client capture |
+| Mosaic too bright and too contrasty | islands blew out to white; cyan aliasing from the air | client captures |
+| Water tinted rather than authored | slate blue, not turquoise - a base-colour factor can only darken | client captures |
+| Water plane at 3 m over a 420 m reach | 480,000 triangles, over half the region's unique geometry, for flat water | performance summary |
+| Seven cameras inside or under geometry | panels 1, 2, 4, 6, 10, 13 and 40 framed the inside of a causeway | contact sheet |
+
+## Deviations from the production guide
+
+Both deliberate, both stated where they matter.
+
+1. **Material recipes are registered at build time rather than appended to
+   `_toolkit/amberwood/materials.py`.** Three other sessions were appending to
+   that file concurrently. Nothing in `_toolkit/` is modified by this region.
+   See `modeling-assumptions.md` #7.
+2. **`_toolkit/make_comparison.py` was not used.** Against a truncated board it
+   silently crops garbage and presents it as concept art.
+   `source/make_sheets.py` refuses to fabricate. See `comparison-report.md`.
+
+## Shared files touched
+
+Only this region's entries, so a merge keeps both sides:
+
+- `godot-client/data/maps/registry.json` - the `maps/nymara/crownwater.elm`
+  entry only: `serverOrigin` 58 -> 174, `walkingHeight` 0.0 -> 4.5, status, and
+  `requiresServerMap`.
+- `maps/nymara-regions/production-index.json` - the `crownwater` entry only.
+- `maps/nymara-regions/source-elm/crownwater.elm` - regenerated.
+
+New files outside the package:
+
+- `godot-client/tests/integration/rendered_crownwater.gd`

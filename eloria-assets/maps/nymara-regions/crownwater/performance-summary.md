@@ -1,32 +1,62 @@
 # Crownwater performance summary
 
-```json
-{
-  "nodes": 13,
-  "meshes": 6,
-  "materials": 37,
-  "images": 100,
-  "textures": 100,
-  "accessors": 24,
-  "bufferViews": 124,
-  "uniqueTriangles": 317500,
-  "uniqueVertices": 165705,
-  "glbBytes": 20196268,
-  "instancedTriangles": 317500,
-  "embeddedTextureBytes": 12035570,
-  "textureMemoryBytesUncompressed": 101449728,
-  "placements": 0,
-  "collision": {
-    "width": 1152,
-    "height": 1152,
-    "cellMetres": 0.5,
-    "walkableCells": 315963,
-    "blockedCells": 1011141,
-    "walkableFraction": 0.2381,
-    "elevatedDecks": 0,
-    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
-    "columnOrder": "server-tile-x (column 0 is the -X western edge)"
-  },
-  "notes": []
-}
-```
+Measured from the shipped package, not estimated.
+
+| Metric | `world.glb` | `world-lod2.glb` |
+| --- | --- | --- |
+| Size | 24.45 MB | 14.20 MB |
+| Nodes | 1,868 | 1,673 |
+| Unique triangles | 587,106 | 433,900 |
+| Instanced triangles | 1,271,396 | 1,107,662 |
+| Embedded texture bytes | 14.07 MB | - |
+
+## Against the repository guideline
+
+The stated desktop guideline is **1.5 M visible triangles and 512 MiB of
+texture**, from `four-gates-city/performance-summary.md`.
+
+| | Value |
+| --- | --- |
+| Instanced triangles | **1,271,396 - inside the guideline** |
+| Region area | 331,776 m2 (576 x 576) |
+| Triangles per square metre | **3.83** |
+| Amberwood, for calibration | 3,146,376 triangles, 9.5 per m2, ~2.1x the guideline |
+| Four Gates, for calibration | 4,538 unique triangles, 3.0 MB |
+
+Crownwater comes in at about **40% of Amberwood's triangle load for the same
+576 m extent**. That is not a virtue of the build so much as of the region: 74%
+of the footprint is water, and a water plane is cheap. The built ground carries
+a comparable density to Amberwood's settlement.
+
+## Where the triangles are
+
+| | Triangles | Note |
+| --- | --- | --- |
+| Terrain sub-meshes | ~207,000 | five surface classes, crack-free shared vertices |
+| Lagoon plane | ~110,000 | 3.5 m cells over a 260 m reach past the terrain |
+| Causeways | ~26,000 each | 3 unique meshes instanced across 22 crossings |
+| Cathedral | 9,278 | |
+| Pavilions | 3,744 (large), ~2,600 (small) | 2 unique meshes, 14 instances |
+| Everything else | remainder | quays, boats, lamps, stalls, palms, hedges, props |
+
+## Levers used
+
+1. **Instancing.** 22 causeways from 3 meshes, 14 pavilions from 2. Authoring
+   each uniquely would have added ~500,000 unique triangles on its own.
+2. **The water plane's cell size.** An early pass used 3 m cells over a 420 m
+   reach: 480,000 triangles, more than half the region's unique geometry, for
+   flat water. 3.5 m over 260 m costs a fifth of that and the waterline is
+   indistinguishable at any camera a player can reach.
+3. **The material pin.** `only=crownkit.MATERIALS` drops eleven unreferenced
+   forest and burnt-country materials, worth about 3 MB of embedded textures.
+
+## What is not optimised
+
+- Nothing streams, and nothing selects between `world.glb` and `world-lod2.glb`
+  at runtime. The reduced package is there for low-end machines and for whoever
+  adds streaming.
+- The reduced package saves bytes rather than geometry (41.9% smaller,
+  only 12.9% fewer triangles). The toolkit's LOD strategy drops vegetation
+  detail tiers, and Crownwater is architecture and terrain, not forest.
+- Frame rate was not measured. Triangle and byte counts are facts; performance
+  with actors, NPCs and effects present is not something this build tested.

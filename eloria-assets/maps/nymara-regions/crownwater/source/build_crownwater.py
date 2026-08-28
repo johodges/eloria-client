@@ -42,6 +42,7 @@ from amberwood import render as RENDER
 
 from amberwood import terrain as TER
 
+import crownkit as CK
 import populate as POP
 import region as REG
 
@@ -63,7 +64,16 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     REG.apply_built_ground(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
 
-    POP.build_water(build)
+    POP.build_water(build, lod=lod)
+    POP.populate_causeways(build, seed)
+    POP.populate_crown_isle(build, seed)
+    POP.populate_pavilions(build, seed)
+    POP.populate_harbour(build, seed)
+    POP.populate_sunken_court(build, seed)
+    POP.populate_vegetation(build, seed, lod=lod)
+    if lod is None:
+        POP.populate_props(build, seed)
+    POP.populate_metadata(build, seed)
 
     build.terrain_meshes = terrain.build_meshes(uv_scale=0.28)
     # No landmass backdrop. Amberwood needs one because its mountain walls have
@@ -167,7 +177,28 @@ def _split_group(key: str, item) -> tuple[dict[str, M.Mesh], dict[str, M.Mesh]]:
 def export_glb(build: REG.RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuilder, dict]:
     builder = GLTF.GltfBuilder(
         generator="Eloria Crownwater builder (original procedural assets)")
-    MAT.register_gltf_materials(builder, sets)
+    # Fail loudly and early if a kit piece introduces a material the pin does
+    # not cover. Without this the first sign of trouble is a KeyError from deep
+    # inside the GLB writer, naming a merged sub-mesh rather than the piece that
+    # actually pulled the material in.
+    used = set()
+    for item in list(build.meshes.values()):
+        for piece in (getattr(item, "all_parts", None) or [item]):
+            used.add(piece.material)
+    for table in (build.terrain_meshes, build.water_meshes):
+        for piece in table.values():
+            used.add(piece.material)
+    unpinned = sorted(used - CK.MATERIALS)
+    if unpinned:
+        raise SystemExit(
+            "materials used but not in crownkit.MATERIALS: "
+            + ", ".join(unpinned))
+
+    # Pinned by name to the materials Crownwater actually uses. Without `only=`
+    # the package embeds the whole shared library - about ten megabytes of forest
+    # and burnt-country textures this region never references - and, worse, its
+    # contents would change whenever another region appends to the shared table.
+    MAT.register_gltf_materials(builder, sets, only=CK.MATERIALS)
 
     # Tangents are intentionally omitted: Godot's glTF importer generates them
     # for normal-mapped materials, and shipping them would add sixteen bytes a
@@ -333,11 +364,26 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
         else:
             low, high = walk_bounds
         px, py, pz = placement.position
-        half_x = float(max(abs(low[0]), abs(high[0]))) * placement.scale
-        half_z = float(max(abs(low[2]), abs(high[2]))) * placement.scale
+        # The deck's real extent, not a symmetric half-extent about its origin.
+        # A quay apron sits entirely to one side of its placement point, so
+        # mirroring it claimed walkable ground on the water side where there is
+        # no deck at all - the ray found the lagoon floor 13 m below.
+        x0, x1 = float(low[0]) * placement.scale, float(high[0]) * placement.scale
+        z0, z1 = float(low[2]) * placement.scale, float(high[2]) * placement.scale
+        inset_x = (x1 - x0) * 0.03
+        inset_z = (z1 - z0) * 0.03
         deck_y = py + float(high[1]) * placement.scale
-        radius = max(min(half_x, half_z) * 0.85, 0.4)
-        footprint = np.hypot(gx - px, gz - pz) < radius
+        # An oriented rectangle, not a disc. Amberwood's decks were roughly
+        # square, so a circle inscribed in the bounds covered them; Crownwater's
+        # causeways are 48 m x 5.4 m, and the inscribed circle covers 2.3 m of
+        # a 48 m deck. Everything outside it kept the lagoon floor's height and
+        # showed up as collision-versus-surface disagreement along every span.
+        angle = float(placement.rotation_y or 0.0)
+        c, sn = math.cos(angle), math.sin(angle)
+        local_x = c * (gx - px) - sn * (gz - pz)
+        local_z = sn * (gx - px) + c * (gz - pz)
+        footprint = ((local_x >= x0 + inset_x) & (local_x <= x1 - inset_x)
+                     & (local_z >= z0 + inset_z) & (local_z <= z1 - inset_z))
         if not footprint.any():
             continue
         if deck_y > ground.max() + 200.0:
@@ -392,6 +438,79 @@ def render_minimap(build: REG.RegionBuild, sets, path: Path, size: int = 768) ->
         "northAxis": "-Z",
         "orientation": "north-up",
     }
+
+
+# --------------------------------------------------------------------------
+def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
+    """Emit the Godot capture harness's view table from `source/views.py`.
+
+    The offline renderer and the in-client harness must frame the same shots or
+    the comparison sheets compare two different things. `views.py` is the single
+    source of truth; this converts its design-space, ground-relative entries
+    into the absolute world positions Godot wants, using the terrain that was
+    actually built.
+    """
+    import views as VIEWTABLE
+
+    t = build.terrain
+
+    # Solid world-space boxes the camera must not end up inside or underneath.
+    # Blind design-space framings put seven of the first twenty-three cameras
+    # under a causeway deck or inside a quay wall: the causeways radiate from
+    # the centre along the same diagonals a hand-picked viewpoint tends to fall
+    # on. Checking is cheaper and more reliable than guessing.
+    boxes = []
+    for placement in build.placements:
+        if placement.kind not in ("landmark", "building"):
+            continue
+        item = build.meshes[placement.mesh]
+        low, high = item.bounds()
+        angle = float(placement.rotation_y or 0.0)
+        cosine, sine = math.cos(angle), math.sin(angle)
+        corners = []
+        for lx in (low[0], high[0]):
+            for lz in (low[2], high[2]):
+                corners.append((cosine * lx + sine * lz, -sine * lx + cosine * lz))
+        xs = [c[0] * placement.scale + placement.position[0] for c in corners]
+        zs = [c[1] * placement.scale + placement.position[2] for c in corners]
+        boxes.append((min(xs), max(xs), min(zs), max(zs),
+                      placement.position[1] + float(low[1]) * placement.scale,
+                      placement.position[1] + float(high[1]) * placement.scale))
+
+    def clear_eye(x, y, z):
+        """Lift a camera that sits inside, or directly under, solid geometry."""
+        for x0, x1, z0, z1, y0, y1 in boxes:
+            if not (x0 - 1.2 <= x <= x1 + 1.2 and z0 - 1.2 <= z <= z1 + 1.2):
+                continue
+            if y <= y1 + 1.6:
+                y = y1 + 2.4
+        return y
+
+    entries = []
+    for (name, panel, eye_xz, eye_h, target_xz, target_h, fov, _size,
+         _radius, mode) in VIEWTABLE.VIEWS:
+        ex, ez = eye_xz[0] * REG.SCALE, eye_xz[1] * REG.SCALE
+        tx, tz = target_xz[0] * REG.SCALE, target_xz[1] * REG.SCALE
+        ey = float(t.height_at(ex, ez)) + eye_h
+        ty = float(t.height_at(tx, tz)) + target_h
+        # a camera below the waterline sees nothing but the water plane's
+        # underside; lift any eye that the terrain put under the lagoon
+        if mode != "submerged":
+            ey = max(ey, REG.SEA_LEVEL + 0.6)
+            ey = clear_eye(ex, ey, ez)
+        entries.append({
+            "id": name,
+            "panel": panel if isinstance(panel, int) else None,
+            "position": [round(ex, 2), round(ey, 2), round(ez, 2)],
+            "target": [round(tx, 2), round(ty, 2), round(tz, 2)],
+            "fov": float(fov),
+            "golden": mode == "golden",
+            "note": (VIEWTABLE.PANELS[panel][1]
+                     if isinstance(panel, int) else name.replace("-", " ")),
+        })
+    payload = {"schemaVersion": "1.0.0", "views": entries}
+    path.write_text(json.dumps(payload, indent=2) + chr(10), encoding="utf-8")
+    return payload
 
 
 # --------------------------------------------------------------------------
@@ -519,17 +638,34 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             # sun that drives the turquoise out of shallow water, and very
             # little fog - the painting's distances stay clear and saturated.
             "sky": {"type": "gradient", "zenith": [0.16, 0.42, 0.72],
-                    "horizon": [0.66, 0.84, 0.90]},
-            "sun": {"direction": [-0.28, 0.86, 0.43],
-                    "color": [1.18, 1.08, 0.90], "energy": 1.35},
-            "ambient": {"skyColor": [0.34, 0.56, 0.70],
-                        "groundColor": [0.16, 0.26, 0.28], "energy": 0.42},
+                    "horizon": [0.72, 0.87, 0.92], "curve": 0.14,
+                    "groundHorizon": [0.42, 0.62, 0.66],
+                    "groundBottom": [0.16, 0.30, 0.38],
+                    "sunAngleMax": 14.0, "energy": 1.16},
+            # `direction` is the direction the light TRAVELS, not the direction
+            # of the sun in the sky: the binder does
+            # `sun.look_at_from_position(ZERO, direction)`, and a
+            # DirectionalLight3D emits along its local -Z. A +Y component
+            # therefore lights the world from underneath. The first in-client
+            # capture of this region came back lit from below and reading as
+            # night; Amberwood's manifest still declares +Y and has never been
+            # rendered through this path.
+            "sun": {"direction": [-0.30, -0.84, 0.45],
+                    "color": [1.12, 1.05, 0.95], "energy": 1.08,
+                    "indirectEnergy": 1.15, "angularDiameterDegrees": 1.2},
+            "ambient": {"color": [0.52, 0.68, 0.78], "energy": 0.52,
+                        "skyContribution": 0.75},
             "saturation": 1.34,
             "fog": {"enabled": True, "color": [0.62, 0.80, 0.86],
                     "density": 0.00035, "heightFalloff": 0.0022},
-            "goldenHour": {"sun": {"direction": [-0.80, 0.26, 0.54],
-                                   "color": [1.52, 1.02, 0.62]},
-                           "fog": {"color": [0.78, 0.66, 0.52], "density": 0.0016}},
+            "variants": {
+                "golden-hour": {
+                    "sun": {"direction": [-0.80, -0.26, 0.54],
+                            "color": [1.52, 1.02, 0.62], "energy": 1.25},
+                    "fog": {"enabled": True, "color": [0.78, 0.66, 0.52],
+                            "density": 0.0016},
+                },
+            },
             "water": {
                 "shallowColor": [0.24, 0.74, 0.74],
                 "deepColor": [0.04, 0.24, 0.44],
@@ -600,7 +736,7 @@ def main() -> int:
     out.mkdir(parents=True, exist_ok=True)
 
     import preview
-    sets = preview.texture_sets()
+    sets = CK.register(preview.texture_sets())
 
     build = build_region(args.seed)
 
@@ -630,6 +766,9 @@ def main() -> int:
     stats["collision"] = collision_stats
     stats["notes"] = build.notes
 
+    views = write_camera_views(build, out / "camera-views.json")
+    print(f"[views] {len(views['views'])} camera framings written")
+
     manifest = write_manifest(build, stats, collision_stats, minimap,
                               out / "world.json")
     print(f"[manifest] {len(manifest['landmarks'])} landmarks, "
@@ -653,6 +792,7 @@ def main() -> int:
         # most of a self-contained GLB's bytes actually are
         lod_sets = {name: texture_set.reduced()
                     for name, texture_set in sets.items()}
+        lod_sets = CK.register(lod_sets)
         lod_build = build_region(args.seed, lod="far")
         lod_build.terrain_meshes = lod_build.terrain.build_meshes(uv_scale=0.28)
         _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")

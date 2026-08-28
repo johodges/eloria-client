@@ -1,0 +1,128 @@
+{
+  "summary": {
+    "walkSurfaceNodes": 205,
+    "walkSurfaceTriangles": 206698,
+    "tilesSampled": 331776,
+    "groundingMisses": 0,
+    "groundingMissFraction": 0.0,
+    "surfaceDiscontinuities": 224,
+    "spawnPoints": 3
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "severity": "warning",
+      "code": "GROUNDING_DISCONTINUITY",
+      "message": "224 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
+      "detail": [
+        [
+          92,
+          179,
+          15.26
+        ],
+        [
+          92,
+          179,
+          15.26
+        ],
+        [
+          148,
+          227,
+          14.67
+        ],
+        [
+          148,
+          227,
+          14.67
+        ],
+        [
+          102,
+          178,
+          14.57
+        ],
+        [
+          102,
+          178,
+          14.57
+        ],
+        [
+          146,
+          232,
+          14.45
+        ],
+        [
+          146,
+          232,
+          14.45
+        ],
+        [
+          394,
+          119,
+          13.89
+        ],
+        [
+          394,
+          120,
+          13.89
+        ],
+        [
+          393,
+          109,
+          13.88
+        ],
+        [
+          393,
+          110,
+          13.88
+        ]
+      ]
+    },
+    {
+      "severity": "warning",
+      "code": "COLLISION_SURFACE_MISMATCH",
+      "message": "5 sampled walkable cells disagree with the rendered walk surface",
+      "detail": [
+        {
+          "cell": [
+            276,
+            348
+          ],
+          "encoded": 2.4,
+          "surface": 5.1
+        },
+        {
+          "cell": [
+            396,
+            396
+          ],
+          "encoded": 4.0,
+          "surface": 8.59
+        },
+        {
+          "cell": [
+            108,
+            744
+          ],
+          "encoded": 2.0,
+          "surface": 5.41
+        },
+        {
+          "cell": [
+            744,
+            828
+          ],
+          "encoded": 2.2,
+          "surface": 4.87
+        },
+        {
+          "cell": [
+            744,
+            1032
+          ],
+          "encoded": 0.4,
+          "surface": 4.87
+        }
+      ]
+    }
+  ]
+}

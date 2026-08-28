@@ -69,6 +69,14 @@ TERRAIN_SIZE_Z = (PLAY_MAX_Z - PLAY_MIN_Z) + MARGIN * 2.0
 SEA_LEVEL = 0.0
 TERRAIN_CELL = 2.0
 
+# Crownwater's built ground is mosaic-paved marble, not Amberwood's cobble. The
+# surface-class table is shared, so the region repoints its own entry rather
+# than editing the toolkit - the same build-time extension `crownkit.register`
+# uses for materials, and for the same reason: three sessions are appending to
+# those files right now.
+TER.SURFACE_MATERIALS[TER.PAVING] = "crownwater_mosaic"
+TER.SURFACE_MATERIALS[TER.SHORE] = "crownwater_sand"
+
 # The lagoon floor datum. Everything starts here and islands are lifted out of
 # it, which is the inverse of Amberwood's "land, then cut a sea into it".
 LAGOON_FLOOR = -5.0
@@ -173,19 +181,34 @@ def _design(name: str) -> tuple[float, float]:
 # open water between islands is built in populate.py. The terrain only needs to
 # know where they land, so it can flatten a landing and mark it as built.
 CAUSEWAYS: dict[str, np.ndarray] = {}
-for _name, _point in zip(_INNER_NAMES, _INNER):
-    CAUSEWAYS[f"spoke_{_name}"] = _route(CENTRE, _point)
+CAUSEWAY_ENDS: dict[str, tuple[str, str]] = {}
+"""Which two islands each causeway joins.
+
+Kept beside the routes because the population pass needs the *islands*, not just
+the polyline: a causeway spans the open water between two island edges, so its
+length and its deck level come from the island geometry at each end.
+"""
+
+
+def _causeway(name: str, a: str, b: str) -> None:
+    CAUSEWAYS[name] = _route(_design(a), _design(b))
+    CAUSEWAY_ENDS[name] = (a, b)
+
+
+for _name in _INNER_NAMES:
+    _causeway(f"spoke_{_name}", "crown_isle", _name)
 for _i, _name in enumerate(_INNER_NAMES):
     _next = _INNER_NAMES[(_i + 1) % len(_INNER_NAMES)]
-    CAUSEWAYS[f"ring_{_name}_{_next}"] = _route(_design(_name), _design(_next))
+    _causeway(f"ring_{_name}_{_next}", _name, _next)
 for _inner_name, _outer_name in (("pavilion_east", "outer_east"),
+                                 ("pavilion_southeast", "outer_southeast"),
                                  ("pavilion_south", "outer_south"),
                                  ("pavilion_west", "outer_west"),
+                                 ("pavilion_northwest", "outer_northwest"),
                                  ("pavilion_north", "outer_north"),
                                  ("harbour_isle", "outer_southwest"),
                                  ("pavilion_northeast", "outer_northeast")):
-    CAUSEWAYS[f"reach_{_outer_name}"] = _route(_design(_inner_name),
-                                               _design(_outer_name))
+    _causeway(f"reach_{_outer_name}", _inner_name, _outer_name)
 
 # The ring of open water between the crown isle and its pavilions. Sized to sit
 # outside the crown isle's own radius (30) and inside the pavilion shelves, so
@@ -249,6 +272,23 @@ for _name in _OUTER_NAMES:
     ISLANDS[_name] = (9.0 * SCALE, 3.2, 16.0 * SCALE, 9.0)
 
 
+# Each islet is varied so the ring does not read as eight copies of one disc.
+# Resolved once, here, rather than inside `build_terrain`: the population passes
+# need the *same* radii and levels the terrain was actually built from, and
+# recomputing the jitter in two places is how a pavilion ends up hovering or a
+# causeway lands in the water.
+ISLAND_GEOM: dict[str, dict] = {}
+for _name, (_radius, _level, _shelf, _edge) in ISLANDS.items():
+    _j = N.stable_hash(_name) % 1000 / 1000.0
+    ISLAND_GEOM[_name] = {
+        "centre": ANCHORS[_name],
+        "radius": _radius * (0.86 + 0.28 * _j),
+        "level": _level * (0.90 + 0.22 * _j),
+        "shelf": _shelf * (0.90 + 0.20 * (1.0 - _j)),
+        "edge": _edge * (0.85 + 0.35 * _j),
+    }
+
+
 # ---------------------------------------------------------------- terrain
 def region_noise(t: TER.Terrain, seed: int, frequency: float = 0.035) -> np.ndarray:
     return N.warped_fbm(t.gx * frequency, t.gz * frequency, warp=0.9, octaves=4,
@@ -303,30 +343,29 @@ def build_terrain(seed: int = 20260828) -> TER.Terrain:
                         bank=2.2, seed=seed + N.stable_hash(label) % 71)
 
     # 3. the islands
-    for name, (radius, level, shelf, edge) in ISLANDS.items():
-        # The city islands are built ground - the concept's islets are pale
-        # stone platforms, not beaches with a building on them - while the outer
-        # scatter is still green and largely unbuilt.
-        surface = TER.MEADOW if name in _OUTER_NAMES else TER.PAVING
-        # Vary each islet so the ring does not read as eight copies of one disc.
-        jitter = N.stable_hash(name) % 1000 / 1000.0
-        _island(t, ANCHORS[name],
-                radius * (0.86 + 0.28 * jitter),
-                level * (0.90 + 0.22 * jitter),
-                shelf * (0.90 + 0.20 * (1.0 - jitter)),
-                edge * (0.85 + 0.35 * jitter),
-                seed + N.stable_hash(name) % 211,
-                surface=surface)
+    for name, geom in ISLAND_GEOM.items():
+        # Every island's default ground is planted, not paved. Paving whole
+        # islands made the aerial read as one continuous white slab: in the
+        # concept the pale stone is the *buildings and their plazas*, and the
+        # ground between them is green. Paving is therefore applied by the
+        # terraces in `apply_built_ground`, where there is actually something
+        # built, and nowhere else.
+        surface = TER.MEADOW
+        _island(t, geom["centre"], geom["radius"], geom["level"],
+                geom["shelf"], geom["edge"],
+                seed + N.stable_hash(name) % 211, surface=surface)
 
     # 4. the sunken court of panel 7 sits in its own shallow pan, so the tiled
     #    platform reads through clear water instead of vanishing into the dark.
     t.add_dome(ANCHORS["sunken_court"], 15.0 * SCALE, 2.6, power=1.4)
 
-    # 5. close the world. North and east are distant rocky coast, matching the
-    #    mountains in the top of the aerial; west and south stay open sea, which
-    #    is where the concept's horizon is. The rim sits outside the playable
-    #    footprint, so it is scenery, not a wall a player can walk into.
-    t.clamp_edges(MARGIN * 0.62, 34.0, sides=("north", "east"))
+    # 5. No rim wall. Amberwood closes its world with mountain walls because it
+    #    is land; Crownwater's horizon is open water, and a raised rim outside
+    #    the playable footprint reads from any elevated camera as a dark slab
+    #    floating at the map edge - which is exactly how the first in-client
+    #    aerial came back. The world is closed instead by the collision grid:
+    #    water is not walkable, and the lagoon floor still grounds every tile,
+    #    so nothing reaches a void without a wall being there.
 
     # a barrier reef just under the surface around the outer edge: it breaks the
     # empty water at the map border without putting walkable land there

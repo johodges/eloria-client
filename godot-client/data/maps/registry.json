@@ -60,18 +60,19 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 4.5,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/crownwater.elm"
     },
     "crownwater": {
       "alias": "maps/nymara/crownwater.elm"
@@ -348,7 +349,7 @@
     },
     "sunmane_crystal_hollow.elm": {
       "alias": "maps/nymara/sunmane_crystal_hollow.elm"
-	},
+    },
     "maps/four-gates-lantern-row.elm": {
       "manifest": "res://../eloria-assets/maps/four-gates-lantern-row/world.json",
       "coordinateTransform": {
