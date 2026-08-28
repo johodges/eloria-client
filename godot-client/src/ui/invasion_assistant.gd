@@ -138,6 +138,8 @@ func apply_update(update: Dictionary) -> void:
 	if not visible:
 		_fit_to_viewport()
 		popup()
+		_fit_to_viewport()
+		call_deferred("_fit_to_viewport")
 
 
 func _build_ui() -> void:
