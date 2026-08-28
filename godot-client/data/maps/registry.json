@@ -717,6 +717,32 @@
     },
     "crownwater_insides.elm": {
       "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "maps/nymara/mirrorhold_interiors.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/mirrorhold_interiors/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -0.0,
+          204.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 6.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/mirrorhold.elm",
+      "requiresServerMap": "34x34 ELM tiles (204 cells)"
+    },
+    "mirrorhold_interiors": {
+      "alias": "maps/nymara/mirrorhold_interiors.elm"
+    },
+    "mirrorhold_interiors.elm": {
+      "alias": "maps/nymara/mirrorhold_interiors.elm"
     }
   }
 }

@@ -1712,27 +1712,8 @@
       "authority": "server"
     },
     {
-      "id": "drowned-crown-stair",
-      "name": "The Drowned Crown",
-      "type": "interior-entrance",
-      "position": [
-        156.0,
-        3.6,
-        60.0
-      ],
-      "serverTile": [
-        330,
-        114
-      ],
-      "landmark": "ring",
-      "destinationMap": "maps/nymara/drowned_crown.elm",
-      "destinationSpawn": "default",
-      "radius": 2.5,
-      "authority": "server"
-    },
-    {
-      "id": "resonant-vault-door",
-      "name": "The Resonant Vault",
+      "id": "lens-vault-stair",
+      "name": "The Lens Vault",
       "type": "interior-entrance",
       "position": [
         162.0,
@@ -1744,8 +1725,46 @@
         441
       ],
       "landmark": "orrery",
-      "destinationMap": "maps/nymara/resonant_vault.elm",
-      "destinationSpawn": "default",
+      "destinationMap": "maps/nymara/mirrorhold_interiors.elm",
+      "destinationSpawn": "lens-vault-stair",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "cistern-door",
+      "name": "The Mirror Cistern",
+      "type": "interior-entrance",
+      "position": [
+        132.0,
+        58.1,
+        -90.0
+      ],
+      "serverTile": [
+        306,
+        264
+      ],
+      "landmark": "plaza",
+      "destinationMap": "maps/nymara/mirrorhold_interiors.elm",
+      "destinationSpawn": "cistern-door",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "stair-cellars-door",
+      "name": "The Stair Cellars",
+      "type": "interior-entrance",
+      "position": [
+        -24.0,
+        17.1,
+        -54.0
+      ],
+      "serverTile": [
+        150,
+        228
+      ],
+      "landmark": "cliff-town",
+      "destinationMap": "maps/nymara/mirrorhold_interiors.elm",
+      "destinationSpawn": "stair-cellars-door",
       "radius": 2.5,
       "authority": "server"
     }
@@ -2035,9 +2054,9 @@
     },
     "sun": {
       "direction": [
-        -0.46,
-        0.5,
-        0.73
+        0.46,
+        -0.5,
+        -0.73
       ],
       "color": [
         1.22,
@@ -2073,9 +2092,9 @@
     "goldenHour": {
       "sun": {
         "direction": [
-          -0.82,
-          0.2,
-          0.53
+          0.82,
+          -0.2,
+          -0.53
         ],
         "color": [
           1.55,
@@ -2235,8 +2254,8 @@
     "uniqueVertices": 183149,
     "glbBytes": 16092412,
     "instancedTriangles": 1246632,
-    "embeddedTextureBytes": 14401265,
-    "textureMemoryBytesUncompressed": 125042688,
+    "embeddedTextureBytes": 7810616,
+    "textureMemoryBytesUncompressed": 66846720,
     "placements": 1874,
     "collision": {
       "width": 1152,
