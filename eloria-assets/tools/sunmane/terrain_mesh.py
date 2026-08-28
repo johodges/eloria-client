@@ -1,0 +1,186 @@
+"""Convert the sculpted landform into chunked, class-split render geometry.
+
+Chunking keeps frustum culling and per-chunk collision useful; splitting each
+chunk by terrain class lets the four described ground types tint the shared
+detail texture without splat seams or a second UV set.
+
+Every chunk node is named with the `Terrain_` prefix the client's world loader
+uses to build navigation-surface collision, so grounding covers the whole
+landform including the shallow shelf - an actor can never raycast into empty
+space and fall back to the manifest walking height.
+"""
+from __future__ import annotations
+
+import numpy as np
+
+from glb import Geometry
+from terrain import CELL, HALF_EXTENT, CLASS_TINT, Landform
+from shapes import UV_SCALE
+
+CHUNKS = 8                       # 8 x 8 chunks over the 208 m square
+
+
+def _vertex_normals(height: np.ndarray) -> np.ndarray:
+    """Smooth per-vertex normals from the heightfield's central differences."""
+    dx = (np.roll(height, -1, 1) - np.roll(height, 1, 1)) / (2.0 * CELL)
+    dz = (np.roll(height, -1, 0) - np.roll(height, 1, 0)) / (2.0 * CELL)
+    # Edges use one-sided differences so the border does not fold.
+    dx[:, 0] = (height[:, 1] - height[:, 0]) / CELL
+    dx[:, -1] = (height[:, -1] - height[:, -2]) / CELL
+    dz[0, :] = (height[1, :] - height[0, :]) / CELL
+    dz[-1, :] = (height[-1, :] - height[-2, :]) / CELL
+    normals = np.stack([-dx, np.ones_like(height), -dz], axis=-1)
+    normals /= np.linalg.norm(normals, axis=-1, keepdims=True)
+    return normals
+
+
+def build_chunks(landform: Landform) -> list[dict]:
+    """Return one entry per chunk: name, and per-class Geometry."""
+    height = landform.height.astype("float64")
+    normals = _vertex_normals(height)
+    count = height.shape[0]
+    span = (count - 1) // CHUNKS
+    axis = landform.x
+    scale = UV_SCALE["ground"]
+
+    chunks = []
+    for chunk_z in range(CHUNKS):
+        for chunk_x in range(CHUNKS):
+            x0, x1 = chunk_x * span, (chunk_x + 1) * span
+            z0, z1 = chunk_z * span, (chunk_z + 1) * span
+            by_class: dict[int, Geometry] = {}
+            # Classify each quad by the majority class of its four corners so a
+            # quad never straddles two materials.
+            corner_classes = landform.classes[z0:z1 + 1, x0:x1 + 1]
+            for local_z in range(z1 - z0):
+                for local_x in range(x1 - x0):
+                    quad_classes = corner_classes[local_z:local_z + 2,
+                                                  local_x:local_x + 2].ravel()
+                    values, counts = np.unique(quad_classes, return_counts=True)
+                    terrain_class = int(values[int(np.argmax(counts))])
+                    geometry = by_class.setdefault(terrain_class, Geometry())
+                    gx, gz = x0 + local_x, z0 + local_z
+                    positions, vertex_normals, uvs = [], [], []
+                    # Counter-clockwise seen from above, so the geometric normal
+                    # points +Y. Clockwise here makes the terrain both invisible
+                    # (back-face culled) and untouchable by the grounding ray,
+                    # because ConcavePolygonShape3D ignores back faces.
+                    for offset_z, offset_x in ((0, 0), (1, 0), (1, 1), (0, 1)):
+                        world_x = float(axis[gx + offset_x])
+                        world_z = float(axis[gz + offset_z])
+                        positions.append([world_x, float(height[gz + offset_z,
+                                                               gx + offset_x]), world_z])
+                        vertex_normals.append(normals[gz + offset_z, gx + offset_x])
+                        uvs.append([world_x / scale, world_z / scale])
+                    # Split along the shorter diagonal to avoid sliver triangles
+                    # on saddle quads.
+                    diagonal_a = abs(positions[0][1] - positions[2][1])
+                    diagonal_b = abs(positions[1][1] - positions[3][1])
+                    indices = ([0, 1, 2, 0, 2, 3] if diagonal_a <= diagonal_b
+                               else [0, 1, 3, 1, 2, 3])
+                    geometry.add(positions, vertex_normals, uvs, indices)
+            chunks.append({
+                "name": f"Terrain_Chunk_{chunk_x:02d}_{chunk_z:02d}",
+                "geometry": {k: v for k, v in by_class.items() if v.triangle_count},
+                "bounds": (float(axis[x0]), float(axis[z0]),
+                           float(axis[x1]), float(axis[z1])),
+            })
+    return chunks
+
+
+def water_surface(landform: Landform, level: float = 0.0) -> Geometry:
+    """A single sea plane clipped to the cells the landform floods."""
+    geometry = Geometry()
+    height = landform.height
+    axis = landform.x
+    scale = UV_SCALE["ground"] * 2.0
+    flooded = height < level - 0.05
+    normal = [0.0, 1.0, 0.0]
+    for gz in range(len(axis) - 1):
+        run_start = None
+        row = flooded[gz:gz + 2]
+        for gx in range(len(axis) - 1):
+            wet = bool(row[:, gx:gx + 2].any())
+            if wet and run_start is None:
+                run_start = gx
+            if (not wet or gx == len(axis) - 2) and run_start is not None:
+                run_end = gx + 1 if wet else gx
+                x_start, x_end = float(axis[run_start]), float(axis[run_end])
+                z_start, z_end = float(axis[gz]), float(axis[gz + 1])
+                corners = [[x_start, level, z_start], [x_start, level, z_end],
+                           [x_end, level, z_end], [x_end, level, z_start]]
+                uvs = [[x_start / scale, z_start / scale], [x_start / scale, z_end / scale],
+                       [x_end / scale, z_end / scale], [x_end / scale, z_start / scale]]
+                geometry.add(corners, [normal] * 4, uvs, [0, 1, 2, 0, 2, 3])
+                run_start = None
+    return geometry
+
+
+def pond_surfaces(landform: Landform, ponds) -> Geometry:
+    """Inland waterhole surfaces, each level with its own bowl."""
+    geometry = Geometry()
+    axis = landform.x
+    scale = UV_SCALE["ground"]
+    normal = [0.0, 1.0, 0.0]
+    for px, pz, radius in ponds:
+        # Fill level: a little above the bowl floor so a rim of wet ground shows.
+        floor = landform.height_at(px, pz)
+        level = floor + 1.9
+        steps = 14
+        for step_z in range(steps):
+            for step_x in range(steps):
+                x_start = px - radius + 2.0 * radius * step_x / steps
+                x_end = px - radius + 2.0 * radius * (step_x + 1) / steps
+                z_start = pz - radius + 2.0 * radius * step_z / steps
+                z_end = pz - radius + 2.0 * radius * (step_z + 1) / steps
+                centre_x, centre_z = (x_start + x_end) * 0.5, (z_start + z_end) * 0.5
+                if np.hypot(centre_x - px, centre_z - pz) > radius:
+                    continue
+                if landform.height_at(centre_x, centre_z) > level - 0.05:
+                    continue
+                corners = [[x_start, level, z_start], [x_start, level, z_end],
+                           [x_end, level, z_end], [x_end, level, z_start]]
+                uvs = [[x_start / scale, z_start / scale], [x_start / scale, z_end / scale],
+                       [x_end / scale, z_end / scale], [x_end / scale, z_start / scale]]
+                geometry.add(corners, [normal] * 4, uvs, [0, 1, 2, 0, 2, 3])
+    return geometry
+
+
+def edge_apron(landform: Landform, overhang: float = 6.0) -> Geometry:
+    """A skirt extending the landform past the world bounds.
+
+    Without it a grounding raycast fired exactly on the boundary line can slip
+    between the outermost triangles and miss, which would drop an actor to the
+    manifest fallback height. The apron guarantees the walk surface strictly
+    contains the declared bounds.
+    """
+    geometry = Geometry()
+    height = landform.height
+    axis = landform.x
+    scale = UV_SCALE["ground"]
+    count = len(axis)
+    edges = (
+        [(0, index) for index in range(count)],                      # -Z edge
+        [(count - 1, index) for index in range(count)],              # +Z edge
+        [(index, 0) for index in range(count)],                      # -X edge
+        [(index, count - 1) for index in range(count)],              # +X edge
+    )
+    outward = ((0.0, -1.0), (0.0, 1.0), (-1.0, 0.0), (1.0, 0.0))
+    for edge, (out_x, out_z) in zip(edges, outward):
+        for step in range(len(edge) - 1):
+            (z0, x0), (z1, x1) = edge[step], edge[step + 1]
+            inner = [
+                [float(axis[x0]), float(height[z0, x0]), float(axis[z0])],
+                [float(axis[x1]), float(height[z1, x1]), float(axis[z1])],
+            ]
+            outer = [[point[0] + out_x * overhang, point[1] - 1.5,
+                      point[2] + out_z * overhang] for point in inner]
+            corners = [inner[0], inner[1], outer[1], outer[0]]
+            # Counter-clockwise seen from above requires (edge x outward)_y > 0,
+            # which holds on the -Z and +X edges and is reversed on the others.
+            if (out_z - out_x) > 0:
+                corners = [inner[1], inner[0], outer[0], outer[1]]
+            uvs = [[point[0] / scale, point[2] / scale] for point in corners]
+            normal = [0.0, 1.0, 0.0]
+            geometry.add(corners, [normal] * 4, uvs, [0, 1, 2, 0, 2, 3])
+    return geometry

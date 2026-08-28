@@ -140,10 +140,13 @@
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 9.6,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production",
+      "lodManifests": {
+        "lod2": "res://../eloria-assets/maps/nymara-regions/sunmane_steppe/world-lod2.json"
+      }
     },
     "sunmane_steppe": {
       "alias": "maps/nymara/sunmane_steppe.elm"

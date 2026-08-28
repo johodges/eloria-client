@@ -552,9 +552,15 @@ func _apply_import_adapter(config: Dictionary) -> void:
 	if model == null:
 		return
 	model.scale = Vector3.ONE * float(config.get("scale", 1.0))
+	# Native glTF actors are authored facing +Z, while Godot's logical forward
+	# axis is -Z. Correct only the imported visual root so server yaw, click
+	# targets, keyboard-relative movement, and equipment attachments continue
+	# to share one canonical logical heading.
+	var forward_axis_correction: float = float(
+		config.get("forwardAxisCorrectionDegreesY", 180.0))
 	model.rotation_degrees = Vector3(
 		float(config.get("rotationDegreesX", 0.0)),
-		float(config.get("rotationDegreesY", 0.0)),
+		float(config.get("rotationDegreesY", 0.0)) + forward_axis_correction,
 		float(config.get("rotationDegreesZ", 0.0)))
 	# The protocol position is a foot point. Normalize the imported visual at
 	# its root without flattening or rewriting the glTF hierarchy/skeleton.

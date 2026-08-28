@@ -1072,6 +1072,57 @@
         "body": "body",
         "neck": "neck"
       }
+    },
+    "sunmane_steppe_horse": {
+      "scene": "res://assets/actors/native/creatures/sunmane_steppe_horse.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/sunmane_steppe_horse.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.25,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      },
+      "serverActorType": null
+    },
+    "sunmane_dun_mare": {
+      "scene": "res://assets/actors/native/creatures/sunmane_dun_mare.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/sunmane_dun_mare.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.2,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      },
+      "serverActorType": null
+    },
+    "sunmane_grey_pony": {
+      "scene": "res://assets/actors/native/creatures/sunmane_grey_pony.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/sunmane_grey_pony.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1.1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      },
+      "serverActorType": null
     }
   },
   "actorTypes": {

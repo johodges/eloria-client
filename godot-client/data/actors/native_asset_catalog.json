@@ -2052,5 +2052,47 @@
         "animations": 0
       }
     }
-  }
+  },
+  "ambientCreatures": {
+    "sunmane_steppe_horse": {
+      "id": "sunmane_steppe_horse",
+      "name": "Sunmane Steppe Horse",
+      "archetype": "equine",
+      "triangles": 1979,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/sunmane_steppe_horse.glb",
+      "generator": "eloria-assets/tools/sunmane/creatures.py",
+      "tacked": false,
+      "region": "sunmane_steppe",
+      "note": "Authored to equine proportions on the shared creature rig; the generic creature generator's sphere-and-cylinder blank cannot produce a horse."
+    },
+    "sunmane_dun_mare": {
+      "id": "sunmane_dun_mare",
+      "name": "Sunmane Dun Mare",
+      "archetype": "equine",
+      "triangles": 1979,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/sunmane_dun_mare.glb",
+      "generator": "eloria-assets/tools/sunmane/creatures.py",
+      "tacked": false,
+      "region": "sunmane_steppe",
+      "note": "Authored to equine proportions on the shared creature rig; the generic creature generator's sphere-and-cylinder blank cannot produce a horse."
+    },
+    "sunmane_grey_pony": {
+      "id": "sunmane_grey_pony",
+      "name": "Sunmane Grey Pony",
+      "archetype": "equine",
+      "triangles": 2411,
+      "joints": 21,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/sunmane_grey_pony.glb",
+      "generator": "eloria-assets/tools/sunmane/creatures.py",
+      "tacked": true,
+      "region": "sunmane_steppe",
+      "note": "Authored to equine proportions on the shared creature rig; the generic creature generator's sphere-and-cylinder blank cannot produce a horse."
+    }
+  },
+  "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire."
 }
