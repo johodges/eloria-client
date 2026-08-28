@@ -1990,6 +1990,35 @@
       }
     ]
   },
+  "bounds": {
+    "playable": {
+      "min": [
+        -174.0,
+        -11.0,
+        -401.0
+      ],
+      "max": [
+        401.0,
+        258.59,
+        174.0
+      ]
+    },
+    "terrain": {
+      "min": [
+        -204.0,
+        -11.0,
+        -431.0
+      ],
+      "max": [
+        431.0,
+        258.59,
+        204.0
+      ]
+    },
+    "waterLevel": 0.0,
+    "metresPerServerTile": 1.0,
+    "serverCells": 576
+  },
   "environment": {
     "sky": {
       "type": "gradient",

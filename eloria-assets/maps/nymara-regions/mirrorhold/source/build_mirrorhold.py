@@ -588,6 +588,27 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
                                         round(float(p[1]), 1)] for p in points]}
                         for name, points in REG.STREAMS.items()],
         },
+        # The authored extents, in the frame everything else in this manifest
+        # uses. The playable footprint is the server grid; the terrain is cut
+        # larger so no reachable tile is ever off the mesh.
+        "bounds": {
+            "playable": {
+                "min": [round(float(REG.PLAY_MIN_X), 2), round(float(bounds_min[1]), 2),
+                        round(float(REG.PLAY_MIN_Z), 2)],
+                "max": [round(float(REG.PLAY_MAX_X), 2), round(float(bounds_max[1]), 2),
+                        round(float(REG.PLAY_MAX_Z), 2)],
+            },
+            "terrain": {
+                "min": [round(float(REG.TERRAIN_X0), 2), round(float(bounds_min[1]), 2),
+                        round(float(REG.TERRAIN_Z0), 2)],
+                "max": [round(float(REG.TERRAIN_X0 + REG.TERRAIN_SIZE_X), 2),
+                        round(float(bounds_max[1]), 2),
+                        round(float(REG.TERRAIN_Z0 + REG.TERRAIN_SIZE_Z), 2)],
+            },
+            "waterLevel": REG.LAKE_LEVEL,
+            "metresPerServerTile": REG.METRES_PER_TILE,
+            "serverCells": REG.SERVER_CELLS,
+        },
         "environment": {
             "sky": {"type": "gradient", "zenith": [0.15, 0.25, 0.42],
                     "horizon": [0.58, 0.56, 0.50]},
