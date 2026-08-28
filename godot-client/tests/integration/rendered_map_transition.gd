@@ -85,7 +85,7 @@ func _run() -> void:
 	_expect(_loader.manifest.asset_id() == "four-gates-lantern-row",
 		"the interior package loaded, not a fallback")
 	var lit: Array = _loader.get_tree().get_nodes_in_group(
-		WorldEnvironmentApplier.MANIFEST_LIGHT_GROUP)
+		WorldEnvironmentBinder.MANIFEST_LIGHT_GROUP)
 	var lamps: int = lit.size()
 	_expect(lamps > 0, "interior manifest lights are lit (%d)" % lamps)
 	await _capture("01-interior.png")

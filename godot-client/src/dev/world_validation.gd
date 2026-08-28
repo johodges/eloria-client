@@ -15,7 +15,7 @@ func _ready() -> void:
 
 func _on_loaded(manifest: WorldManifest) -> void:
 	status.text = "LOADED: " + manifest.asset_id()
-	if WorldEnvironmentApplier.apply(manifest, world_environment, sun):
+	if WorldEnvironmentBinder.apply(manifest, world_environment, sun, loader.world_root):
 		print("world validation: manifest environment applied")
 	if not manifest.warnings.is_empty():
 		status.text += "\nWARNINGS:\n" + "\n".join(manifest.warnings)

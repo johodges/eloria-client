@@ -51,12 +51,12 @@ func _render(ident: String, eye: Vector3, look: Vector3, fov: float) -> void:
 		return
 	_expect(loader.manifest.warnings.is_empty(),
 		ident + ": manifest has no warnings")
-	var applied: bool = WorldEnvironmentApplier.apply(loader.manifest,
+	var applied: bool = WorldEnvironmentBinder.apply(loader.manifest,
 		scene.get_node("Environment") as WorldEnvironment,
 		scene.get_node("Sun") as DirectionalLight3D, loader.world_root)
 	_expect(applied, ident + ": manifest environment applied")
 	var lamps: int = loader.world_root.get_tree().get_nodes_in_group(
-		WorldEnvironmentApplier.MANIFEST_LIGHT_GROUP).size()
+		WorldEnvironmentBinder.MANIFEST_LIGHT_GROUP).size()
 	_expect(lamps > 0, "%s: %d manifest lights spawned" % [ident, lamps])
 	var walk: Node = loader.world_root.find_child("Floor_Deck", true, false)
 	_expect(walk != null and walk.get_node_or_null("Floor_Deck_WalkSurfaceCollision") != null,

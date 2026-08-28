@@ -32,7 +32,7 @@ func _run() -> void:
 
 	var environment_node: WorldEnvironment = scene.get_node("Environment") as WorldEnvironment
 	var sun_node: DirectionalLight3D = scene.get_node("Sun") as DirectionalLight3D
-	_expect(WorldEnvironmentApplier.apply(loader.manifest, environment_node, sun_node),
+	_expect(WorldEnvironmentBinder.apply(loader.manifest, environment_node, sun_node),
 		"manifest environment applied to the rendered scene")
 	(scene.get_node("UI") as CanvasLayer).visible = false
 

@@ -2026,16 +2026,17 @@ func _load_server_map() -> void:
 func _on_world_loaded(manifest: WorldManifest) -> void:
 	_bind_shared_world()
 	fallback_ground.hide()
-	# Regions may declare their own sky, sun, fog and tonemap. Maps that do not
-	# keep the client's previous placeholder environment unchanged.
-	WorldEnvironmentBinder.apply(manifest, world_environment, world_sun)
+	# Regions and interiors may declare their own sky, sun, fog, tonemap, point
+	# lights and camera framing. Maps that do not keep the client's previous
+	# placeholder environment unchanged.
+	WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root)
+	WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
 	_populate_ambient_life(manifest)
 	_current_map_display_name = str(
 		manifest.data.get("asset", {}).get("name", manifest.asset_id()))
 	map_label.text = "Map: " + _current_map_display_name
 	map_title.text = _current_map_display_name.to_upper()
 	current_map_button.text = "Current: " + _current_map_display_name
-	_apply_world_environment(manifest)
 	_configure_interior_cutaway(manifest)
 	_configure_full_map(manifest)
 	_sync_world()
@@ -2358,21 +2359,6 @@ func _sync_manufacturing_detail() -> void:
 	manufacturing_status.text = manufacturing_server_status
 	manufacturing_mix_one.disabled = not reasons.is_empty()
 	manufacturing_mix_all.disabled = not reasons.is_empty()
-
-func _apply_world_environment(manifest: WorldManifest) -> void:
-	var environment_node: WorldEnvironment = world_root.get_node_or_null(
-		"Environment") as WorldEnvironment
-	var sun_node: DirectionalLight3D = world_root.get_node_or_null(
-		"Sun") as DirectionalLight3D
-	if environment_node == null:
-		return
-	if WorldEnvironmentApplier.apply(manifest, environment_node, sun_node, world_root):
-		print_debug("world_environment stage=applied map=", AppState.current_map)
-	if WorldEnvironmentApplier.apply_camera(manifest, camera_rig):
-		print_debug("world_camera stage=applied map=", AppState.current_map,
-			" distance=", camera_rig.get("distance"),
-			" pitch=", camera_rig.get("pitch_degrees"))
-
 
 ## Interiors are closed boxes, so the isometric rig would render their ceiling
 ## and near wall. The manifest names the nodes to cut away; maps without a

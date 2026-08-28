@@ -56,7 +56,7 @@ func _run() -> void:
 	if _loader.world_root == null:
 		_finish()
 		return
-	_expect(WorldEnvironmentApplier.apply(_loader.manifest,
+	_expect(WorldEnvironmentBinder.apply(_loader.manifest,
 		scene.get_node("Environment") as WorldEnvironment,
 		scene.get_node("Sun") as DirectionalLight3D),
 		"manifest environment applied")

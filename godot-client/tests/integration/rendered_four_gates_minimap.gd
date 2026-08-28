@@ -26,7 +26,7 @@ func _run() -> void:
 		push_error("minimap: world did not load")
 		quit(1)
 		return
-	WorldEnvironmentApplier.apply(loader.manifest,
+	WorldEnvironmentBinder.apply(loader.manifest,
 		scene.get_node("Environment") as WorldEnvironment,
 		scene.get_node("Sun") as DirectionalLight3D)
 	# flat, shadowless key light so the cartography reads as a map, not a render
