@@ -66,11 +66,25 @@ to `walkingHeight`, and every spawn's manifest height is where the client
 actually puts an actor standing there. The full report is in
 `client-check-report.json`.
 
-The one loader warning is structural and shared with Amberwood: this manifest's
-`navigation.navmesh` is `surface-prefix-v1` with an empty `polygons` list,
-because navigation is derived from the surface prefixes rather than from baked
-polygons. The loader warns whenever that list is empty. Amberwood's manifest is
-identical in this respect.
+The one loader warning is structural and shared, not a Mirrorhold defect. Both
+manifests declare `navigation.navmesh` as `surface-prefix-v1` with an empty
+`polygons` list, because navigation comes from the surface prefixes rather than
+from baked polygons, and the loader warns whenever that list is empty.
+
+Run as a control against Amberwood, the same harness reports:
+
+```
+[client-check] loader warnings=1
+[client-check] grounding: 5184 tiles sampled, 0 misses (0.00%)
+[client-check] surface height range: -20.40 .. 108.02
+[client-check] spawn default / harbour / great-arch, deltas 0.049, 0.044, 0.048 m
+[client-check] PASS
+```
+
+Same warning, same pass. The harness also emits Godot `is_inside_tree` errors
+during the loader's static-batching pass on both regions; that is the loader
+behaving as it does when driven synchronously from a script rather than from a
+running scene, and it does not affect the collision it builds.
 
 This is a sampled check - every fourth tile in each axis, 20,736 of 331,776 -
 because it runs through the physics server rather than a numpy array.
