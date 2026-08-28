@@ -1,0 +1,38 @@
+{
+  "nodes": 1892,
+  "meshes": 113,
+  "materials": 20,
+  "images": 58,
+  "textures": 58,
+  "accessors": 452,
+  "bufferViews": 510,
+  "uniqueTriangles": 587040,
+  "uniqueVertices": 347008,
+  "glbBytes": 23446984,
+  "instancedTriangles": 1273378,
+  "embeddedTextureBytes": 18946500,
+  "textureMemoryBytesUncompressed": 160432128,
+  "placements": 613,
+  "collision": {
+    "width": 1152,
+    "height": 1152,
+    "cellMetres": 0.5,
+    "walkableCells": 338240,
+    "blockedCells": 988864,
+    "walkableFraction": 0.2549,
+    "elevatedDecks": 84,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+  },
+  "notes": [
+    "48 islet lamp standards placed"
+  ],
+  "lod2": {
+    "glbBytes": 14009336,
+    "nodes": 1697,
+    "uniqueTriangles": 433888,
+    "instancedTriangles": 1109698,
+    "sizeReductionPercent": 40.3,
+    "triangleReductionPercent": 12.9
+  }
+}
