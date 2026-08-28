@@ -158,8 +158,15 @@ class WorldBuild:
             pts = [(math.cos(angle) * r, math.sin(angle) * r)
                    for r in np.linspace(0.0, WALL_R + 26.0, 40)]
             strip = M.quad_strip(pts, layout.AVENUE_HALF * 2.0, lambda x, z: y,
-                                 self.mats["paving_road"], 1.0)
-            mesh = self.scene.mesh(f"Road_Radial_Mesh_{name}", strip)
+                                 self.mats["paving_ceremonial"], 1.0)
+            # map the inlay bands across the carriageway, repeating along it
+            span = layout.AVENUE_HALF * 2.0
+            axis = 0 if abs(math.cos(angle)) < 0.5 else 2
+            across = strip.v[:, 0] if axis == 0 else strip.v[:, 2]
+            along = strip.v[:, 2] if axis == 0 else strip.v[:, 0]
+            strip.t = np.stack([across / span + 0.5, along / span],
+                               axis=1).astype(np.float32)
+            mesh = self.scene.mesh(f"Road_Radial_Mesh_{name}", strip, uv_locked=True)
             self.add("Roads", self.scene.instance(f"Road_Radial_{name}", mesh))
 
         for index, angle in enumerate(layout.DIAGONALS):
@@ -186,8 +193,14 @@ class WorldBuild:
                        for r in np.linspace(r0, r1, 44)]
                 strip = M.quad_strip(pts, 26.0,
                                      lambda x, z: self.ground(x, z) + 0.10,
-                                     self.mats["paving_road"], 1.0)
-                mesh = self.scene.mesh(f"Road_Approach_Mesh_{name}_{part}", strip)
+                                     self.mats["paving_ceremonial"], 1.0)
+                axis = 0 if abs(math.cos(angle)) < 0.5 else 2
+                across = strip.v[:, 0] if axis == 0 else strip.v[:, 2]
+                along = strip.v[:, 2] if axis == 0 else strip.v[:, 0]
+                strip.t = np.stack([across / 26.0 + 0.5, along / 26.0],
+                                   axis=1).astype(np.float32)
+                mesh = self.scene.mesh(f"Road_Approach_Mesh_{name}_{part}", strip,
+                                       uv_locked=True)
                 self.add("Roads", self.scene.instance(
                     f"Road_Approach_{name}_{part}", mesh))
 
@@ -276,6 +289,9 @@ class WorldBuild:
         deck_geo = M.box(30.0, 1.7, length, self.mats["paving_road"], 4.0,
                          origin="corner")
         span_mesh = self.scene.mesh("Bridge_Span_Mesh", span)
+        self.bridge_standard_mesh = self.scene.mesh(
+            "Bridge_Crystal_Standard_Mesh",
+            lambda: kits.crystal_standard(self.p, 6.0))
         deck_mesh = self.scene.mesh("Bridge_Deck_Mesh", deck_geo)
         for gate_id, node_name, angle in GATES:
             name = CARDINAL_NAMES[angle if angle <= math.pi else angle - TAU]
@@ -290,6 +306,15 @@ class WorldBuild:
                 oz = math.cos(angle) * side * 14.6
                 self.collider(f"Bridge_{name}_Parapet_{'L' if side < 0 else 'R'}",
                               x + ox, z + oz, 1.6, 2.8, length, yaw, y=CAUSEWAY_Y)
+            for step in range(6):
+                t = (step + 0.5) / 6.0
+                r = near + (far - near) * t
+                for side in (-1, 1):
+                    px = math.cos(angle) * r - math.sin(angle) * side * 13.4
+                    pz = math.sin(angle) * r + math.cos(angle) * side * 13.4
+                    self.add("Bridges", self.scene.instance(
+                        f"Bridge_{name}_Standard_{step}_{'L' if side < 0 else 'R'}",
+                        self.bridge_standard_mesh, (px, CAUSEWAY_Y + 1.5, pz)))
 
     # -------------------------------------------------------------------- plaza
     def build_plaza(self) -> None:
@@ -479,7 +504,30 @@ class WorldBuild:
             for i in range(3)]
         hedge = self.scene.mesh("Hedge_Mesh", lambda: kits.hedge(self.p, 5.0))
         shrub = self.scene.mesh("Shrub_Mesh", lambda: kits.shrub(self.p))
+        cypress = [self.scene.mesh(
+            f"Tree_Cypress_{i}",
+            lambda i=i: kits.cypress_tree(self.p, 11.0 + i * 1.8, 60 + i))
+            for i in range(3)]
         rng = np.random.default_rng(5150)
+        # formal cypress rows down each ceremonial avenue and along the causeways
+        cypress_index = 0
+        for angle in layout.CARDINALS:
+            radii = list(np.arange(layout.PLAZA_RADIUS + 22.0, 348.0, 17.0))
+            radii += list(np.arange(T.PLATEAU_EDGE + 8.0, T.BRIDGE_NEAR, 15.0))
+            radii += list(np.arange(T.BRIDGE_FAR + 6.0, T.RIM_CREST, 15.0))
+            for radius in radii:
+                for side in (-1, 1):
+                    offset = layout.AVENUE_HALF + 4.6
+                    x = math.cos(angle) * radius - math.sin(angle) * offset * side
+                    z = math.sin(angle) * radius + math.cos(angle) * offset * side
+                    base = self.ground(x, z)
+                    if base < WATER_Y + 2.0:
+                        continue
+                    self.add("Vegetation", self.scene.instance(
+                        f"Tree_Cypress_{cypress_index:04d}",
+                        cypress[cypress_index % 3], (x, base, z),
+                        float(rng.uniform(0, TAU))))
+                    cypress_index += 1
         for index, (x, z, height, kind) in enumerate(layout.tree_positions()):
             base = self.ground(x, z)
             if base < WATER_Y + 1.0:
@@ -508,7 +556,8 @@ class WorldBuild:
     # -------------------------------------------------------------------- props
     def build_props(self) -> None:
         p = self.p
-        lamp = self.scene.mesh("Lamp_Mesh", lambda: kits.crystal_lamp(6.2, p))
+        lamp = self.scene.mesh("Crystal_Standard_Mesh",
+                               lambda: kits.crystal_standard(p, 7.4))
         stall = [self.scene.mesh(f"Market_Stall_{i}",
                                  lambda i=i: kits.market_stall(p, i)) for i in range(3)]
         crate = self.scene.mesh("Crate_Mesh", lambda: kits.crate(p))
@@ -692,12 +741,14 @@ class WorldBuild:
 
     # ------------------------------------------------------------------ package
     def _texture_memory(self) -> int:
+        """Uncompressed RGBA8 footprint of the exported maps, including mips."""
+        from assembly import DEFAULT_RESOLUTION, MATERIAL_RESOLUTIONS
         total = 0
         for name, material in self.library.sets.items():
-            for image in (material.base, material.normal, material.orm,
-                          material.emissive):
-                if image is not None:
-                    total += image.size[0] * image.size[1] * 4
+            side = min(MATERIAL_RESOLUTIONS.get(name, DEFAULT_RESOLUTION),
+                       material.base.size[0])
+            maps = 3 + (1 if material.emissive is not None else 0)
+            total += int(side * side * 4 * maps * 4 / 3)
         return total
 
     def world_bounds(self) -> dict:

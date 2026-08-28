@@ -249,60 +249,77 @@ def waterfall_positions() -> list:
 
 
 def build_waterfall(field: TerrainField, mats: Dict[str, int], angle: float,
-                    width: float = 20.0) -> Geo:
-    """A steep sheet of falling water from the plateau lip into a plunge pool."""
+                    width: float = 26.0) -> Geo:
+    """A sheet of falling water clinging to the sculpted cliff face.
+
+    The sheet is placed by sampling the terrain along the radial line and
+    standing it a little proud of the rock, so it never tunnels through the
+    cliff or floats away from it.
+    """
     cos_a, sin_a = math.cos(angle), math.sin(angle)
-    top_r = PLATEAU_EDGE - 2.0
-    foot_r = top_r + 44.0
-    top_y = float(field.height(np.array([cos_a * top_r]), np.array([sin_a * top_r]))[0])
-    parts = []
-    steps = 16
+    top_r = PLATEAU_EDGE - 6.0
+    foot_r = CLIFF_FOOT - 4.0
+    steps = 20
+    radii = np.linspace(top_r, foot_r, steps + 1)
+    heights = field.height(cos_a * radii, sin_a * radii)
+    heights = np.minimum.accumulate(heights)          # water only ever falls
+    heights = np.maximum(heights, WATER_Y + 0.4)
+    proud = 1.6                                        # metres clear of the rock
+
     verts, faces = [], []
     for i in range(steps + 1):
-        t = i / steps
-        # nearly vertical: most of the drop happens over a short run
-        r = top_r + (foot_r - top_r) * (t ** 1.55)
-        y = top_y + (WATER_Y + 0.6 - top_y) * (t ** 0.72)
-        half = width * (0.5 + 0.30 * t)
+        r = float(radii[i]) + proud
+        y = float(heights[i])
+        half = width * (0.5 + 0.34 * (i / steps))
         for side in (-1, 1):
-            px = cos_a * r - sin_a * half * side
-            pz = sin_a * r + cos_a * half * side
-            verts.append((px, y, pz))
+            verts.append((cos_a * r - sin_a * half * side,
+                          y, sin_a * r + cos_a * half * side))
     for i in range(steps):
         a0, a1 = i * 2, i * 2 + 1
         b0, b1 = (i + 1) * 2, (i + 1) * 2 + 1
         faces += [(a0, a1, b1), (a0, b1, b0)]
     sheet = M.make(verts, faces, mats["water_foam"], 1.0, smooth=True)
+    fall = np.cumsum(np.abs(np.diff(np.concatenate([[heights[0]], heights]))))
     sheet.t = np.stack([
-        np.where(np.arange(len(verts)) % 2 == 0, 0.0, 1.4),
-        np.repeat(np.linspace(0.0, 7.0, steps + 1), 2)], axis=1).astype(np.float32)
-    parts.append(sheet)
+        np.where(np.arange(len(verts)) % 2 == 0, 0.0, 1.6),
+        np.repeat(fall / 6.0, 2)], axis=1).astype(np.float32)
+    parts = [sheet]
 
-    # plunge pool: a shallow lens of foam sitting just proud of the water plane
-    pool_r = width * 0.95
+    inner = []
+    for i in range(steps + 1):
+        r = float(radii[i]) + proud * 0.5
+        y = float(heights[i]) + 0.4
+        half = width * (0.22 + 0.10 * (i / steps))
+        for side in (-1, 1):
+            inner.append((cos_a * r - sin_a * half * side,
+                          y, sin_a * r + cos_a * half * side))
+    jet = M.make(inner, faces, mats["water_foam"], 1.0, smooth=True)
+    jet.t = sheet.t.copy()
+    parts.append(jet)
+
+    pool_r = width * 0.9
     pool = M.polar_surface(np.linspace(1.0, pool_r, 5), 20,
                            lambda X, Z: np.full_like(X, 0.0),
-                           material=mats["water_foam"], uv_scale=3.0)
-    pool.translate(cos_a * (foot_r + 3.0), WATER_Y + 0.12, sin_a * (foot_r + 3.0))
+                           material=mats["water_foam"], uv_scale=4.0)
+    pool.translate(cos_a * (foot_r + 6.0), WATER_Y + 0.14,
+                   sin_a * (foot_r + 6.0))
     parts.append(pool)
+    for k in range(3):
+        spray = M.icosphere(5.0 - k * 1.1, 1, mats["water_foam"], 2.0, smooth=True)
+        spray.scale(1.5, 0.5, 1.5)
+        rr = foot_r + 3.0 + k * 6.0
+        parts.append(spray.translate(cos_a * rr, WATER_Y + 0.9, sin_a * rr))
 
-    # rocky lip and toe boulders so the sheet never floats free of the cliff
-    lip = M.box(width * 1.3, 4.0, 10.0, mats["terrain_rock"], 3.0, origin="corner")
+    lip = M.box(width * 1.35, 4.0, 12.0, mats["terrain_rock"], 3.0, origin="corner")
     lip.rotate_y(-angle)
-    lip.translate(cos_a * top_r, top_y - 3.0, sin_a * top_r)
+    lip.translate(cos_a * (top_r + 1.0), float(heights[0]) - 3.2,
+                  sin_a * (top_r + 1.0))
     parts.append(lip)
     for k in (-1, 1):
-        rock = M.icosphere(6.0, 1, mats["terrain_rock"], 3.0, smooth=False)
-        rock.scale(1.1, 0.8, 1.5)
-        rr = foot_r + 1.0
+        rock = M.icosphere(6.5, 1, mats["terrain_rock"], 3.0, smooth=False)
+        rock.scale(1.1, 0.85, 1.5)
+        rr = foot_r + 4.0
         parts.append(rock.translate(
-            cos_a * rr - sin_a * width * 0.8 * k,
-            WATER_Y + 1.2,
-            sin_a * rr + cos_a * width * 0.8 * k))
-    for k in range(3):
-        spray = M.icosphere(4.2 - k * 0.9, 1, mats["water_foam"], 2.0, smooth=True)
-        spray.scale(1.4, 0.55, 1.4)
-        rr = foot_r + 2.0 + k * 5.0
-        parts.append(spray.translate(cos_a * rr, WATER_Y + 1.0 + k * 0.2,
-                                     sin_a * rr))
+            cos_a * rr - sin_a * width * 0.78 * k, WATER_Y + 1.4,
+            sin_a * rr + cos_a * width * 0.78 * k))
     return Geo.concat(parts)

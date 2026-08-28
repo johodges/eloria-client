@@ -25,3 +25,4 @@ godot-client/.godot/
 godot-client/**/*.import
 godot-client/assets/actors/native/races/*Body Atlas.png
 godot-client/**/*.uid
+eloria-assets/maps/*/world.glb.report.json

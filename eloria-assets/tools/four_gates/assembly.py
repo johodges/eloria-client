@@ -13,10 +13,32 @@ from kits import Palette
 from meshlib import Geo
 
 
+# Export resolution per material. Everything is synthesised at the hero size and
+# downsampled on export, so texel density is spent where the player actually
+# looks: monumental masonry and the plaza floor stay large, small props and
+# distant terrain detail do not.
+MATERIAL_RESOLUTIONS: Dict[str, int] = {
+    "stone_ashlar": 1024,
+    "paving_plaza": 1024,
+    "stone_rubble": 512,
+    "stone_trim": 512,
+    "paving_road": 512,
+    "roof_verdigris": 512,
+    "roof_slate": 512,
+    "plaster_warm": 512,
+    "timber_dark": 512,
+    "terrain_grass": 512,
+    "terrain_rock": 512,
+    "cloth_banner": 512,
+    "paving_ceremonial": 1024,
+}
+DEFAULT_RESOLUTION = 256
+
+
 class MaterialLibrary:
     """Registers the procedural PBR library into a GLB and hands back a Palette."""
 
-    CACHE_VERSION = 3
+    CACHE_VERSION = 5
 
     def __init__(self, glb: GLB, size: int = 512, hero: int = 1024,
                  seed: int = 20260827, cache_dir: Optional[str] = None):
@@ -52,13 +74,21 @@ class MaterialLibrary:
 
     @staticmethod
     def _encode(sets):
+        from PIL import Image
         encoded = {}
         for name, material in sets.items():
-            entry = {"base": GLB.encode_png(material.base),
-                     "normal": GLB.encode_png(material.normal),
-                     "orm": GLB.encode_png(material.orm)}
+            target = MATERIAL_RESOLUTIONS.get(name, DEFAULT_RESOLUTION)
+
+            def fit(image):
+                if image.size[0] <= target:
+                    return image
+                return image.resize((target, target), Image.LANCZOS)
+
+            entry = {"base": GLB.encode_png(fit(material.base)),
+                     "normal": GLB.encode_png(fit(material.normal)),
+                     "orm": GLB.encode_png(fit(material.orm))}
             if material.emissive is not None:
-                entry["emissive"] = GLB.encode_png(material.emissive)
+                entry["emissive"] = GLB.encode_png(fit(material.emissive))
             encoded[name] = entry
         return encoded
 

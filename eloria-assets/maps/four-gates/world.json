@@ -1038,14 +1038,14 @@
     "sky": {
       "type": "gradient",
       "horizon": [
-        0.612,
-        0.741,
-        0.855
+        0.678,
+        0.784,
+        0.859
       ],
       "zenith": [
-        0.204,
-        0.412,
-        0.702
+        0.239,
+        0.451,
+        0.729
       ],
       "groundHorizon": [
         0.573,
@@ -1068,20 +1068,20 @@
       "color": [
         1.0,
         0.937,
-        0.816
+        0.812
       ],
-      "energy": 1.22,
+      "energy": 1.1,
       "angularDiameterDegrees": 0.6,
       "shadows": true
     },
     "ambient": {
       "color": [
-        0.545,
-        0.588,
-        0.639
+        0.647,
+        0.667,
+        0.686
       ],
-      "energy": 0.26,
-      "skyContribution": 0.45
+      "energy": 0.46,
+      "skyContribution": 0.6
     },
     "fog": {
       "enabled": true,
@@ -1098,8 +1098,8 @@
     },
     "tonemap": {
       "mode": "filmic",
-      "exposure": 1.02,
-      "whitePoint": 8.0
+      "exposure": 0.94,
+      "whitePoint": 9.0
     },
     "water": {
       "level": -2.0,
@@ -2460,16 +2460,16 @@
     ]
   },
   "performance": {
-    "bytes": 28938356,
-    "nodes": 2783,
-    "meshes": 149,
-    "materials": 29,
-    "textures": 88,
+    "bytes": 23464572,
+    "nodes": 3030,
+    "meshes": 154,
+    "materials": 30,
+    "textures": 91,
     "animations": 7,
-    "uniqueTriangles": 186787,
-    "instances": 2745,
-    "visibleTriangles": 752501,
-    "textureMemoryBytes": 120586240,
+    "uniqueTriangles": 188383,
+    "instances": 2992,
+    "visibleTriangles": 811083,
+    "textureMemoryBytes": 110450005,
     "collisionProxies": 422
   },
   "sources": [

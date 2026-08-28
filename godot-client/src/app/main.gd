@@ -434,6 +434,7 @@ func _bind_shared_world() -> void:
 		return
 	map_viewport.world_3d = gameplay_world
 	full_map_viewport.world_3d = gameplay_world
+	_sync_map_viewport_activity()
 	print_debug("world_binding stage=shared world=", gameplay_world)
 
 func _process(_delta: float) -> void:
@@ -709,18 +710,33 @@ func _hide_chat_input() -> void:
 	chat_input.release_focus()
 	chat_input.hide()
 
+func _sync_map_viewport_activity() -> void:
+	# The minimap and tab map each re-render the whole world. Keeping them on
+	# UPDATE_ALWAYS drew the map three times per frame even while both panels
+	# were hidden, which is pure waste on any map with real geometry.
+	map_viewport.render_target_update_mode = (
+		SubViewport.UPDATE_ALWAYS if minimap_frame.visible
+		else SubViewport.UPDATE_DISABLED)
+	full_map_viewport.render_target_update_mode = (
+		SubViewport.UPDATE_ALWAYS if full_map.visible
+		else SubViewport.UPDATE_DISABLED)
+
+
 func _toggle_full_map() -> void:
 	if full_map.visible:
 		full_map.hide()
+		_sync_map_viewport_activity()
 		return
 	console_panel.hide()
 	_close_settings()
 	_show_current_map_view()
 	full_map.show()
 	full_map.move_to_front()
+	_sync_map_viewport_activity()
 
 func _toggle_minimap() -> void:
 	minimap_frame.visible = not minimap_frame.visible
+	_sync_map_viewport_activity()
 
 func _toggle_console() -> void:
 	if console_panel.visible:
