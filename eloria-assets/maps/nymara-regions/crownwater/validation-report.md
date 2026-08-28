@@ -111,9 +111,10 @@ State it plainly rather than letting the numbers above imply more than they do.
   been through CI.
 - **Every place name.** No authoritative written region description or server
   name data was available. All names are placeholders.
-- **Panel-level visual fidelity against the concept.** The ten-panel detail
-  board is truncated on disk (91 of 793 pixel rows decode), so no side-by-side
-  panel comparison could be produced from files. See `comparison-report.md`.
+- **Panel-level visual fidelity is judged by eye, not measured.** An intact
+  detail board was supplied and the ten panels are now a genuine side-by-side in
+  `panel-comparison.webp`, but "close" and "partial" in `comparison-report.md`
+  are judgements.
 - **Performance under load.** Triangle and byte counts are measured; frame rate
   with actors, NPCs and effects present is not.
 - **Interiors.** Crownwater declares no interior portals. The cathedral,

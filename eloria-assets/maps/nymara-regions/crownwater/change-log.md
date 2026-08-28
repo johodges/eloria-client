@@ -11,7 +11,7 @@ work started:
 | Terrain flat, `terrainHeightRange: [0, 0]` | yes | sculpted lagoon and archipelago, -16.4 to 42.2 m |
 | Landmarks belong to other regions | yes, **all 65** - Grey Moor Ritual Shrine, Sunmane Caravan Camp, Amberwood Hollow Tree, eight Mirrorhold Civic Towers | discarded entirely; 10 authored landmarks replace them |
 | `world.json` incomplete | worse than stated - **no `bounds`, no `coordinateTransform`** | full schema-1 manifest |
-| Detail board truncated | yes, 786,445 bytes; **only 91 of 793 rows decode** | unresolved - see `comparison-report.md` |
+| Detail board truncated | yes, 786,445 bytes; **only 91 of 793 rows decode** | **resolved** - an intact 3,395,261-byte board was supplied and is committed here; all ten panels crop |
 | `source-elm/crownwater.elm` a 32x32 flat placeholder | yes | regenerated, 96x96 tiles / 576x576 cells, from this build's collision grid |
 
 ## Build history, in order
@@ -76,3 +76,18 @@ Only this region's entries, so a merge keeps both sides:
 New files outside the package:
 
 - `godot-client/tests/integration/rendered_crownwater.gd`
+
+## Second pass, after the intact detail board arrived
+
+Seven framings re-aimed against the real panels, and five changes to the map
+that only the panels revealed: the cathedral precinct raised 9 m, lagoon alpha
+0.82 to 0.70, the sunken court raised to -1.05 m, gilt metallic 1.0 to 0.34
+(fully metallic renders near-black with no IBL), and banner cloth changed to
+canvas. A `deck` camera mode was added to the view emitter, snapping an eye to
+the walk surface under it the way the client grounds an actor.
+
+| Bug | Symptom | Caught by |
+| --- | --- | --- |
+| Ground-relative eye height on a causeway | panel 4's camera 7 m above the deck, deck out of frame | the panel sheet |
+| Gilt fully metallic | every finial and the panel-10 bollard rendered near-black | the panel sheet |
+| Banner poles on the quay's seaward edge | four dark slabs across panel 2 | the panel sheet |

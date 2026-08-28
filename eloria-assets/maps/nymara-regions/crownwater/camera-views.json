@@ -11,7 +11,7 @@
       ],
       "target": [
         114.0,
-        15.99,
+        24.99,
         -114.0
       ],
       "fov": 46.0,
@@ -22,16 +22,16 @@
       "id": "01-crown-approach",
       "panel": 1,
       "position": [
-        65.7,
-        7.12,
-        2.4
+        90.0,
+        9.05,
+        -18.0
       ],
       "target": [
         114.0,
-        27.09,
+        40.09,
         -132.0
       ],
-      "fov": 50.0,
+      "fov": 46.0,
       "golden": false,
       "note": "The domed palace complex seen across open water from a barge"
     },
@@ -39,14 +39,14 @@
       "id": "02-harbour-quay",
       "panel": 2,
       "position": [
-        49.5,
-        0.6,
-        1.8
+        3.99,
+        6.1,
+        -12.21
       ],
       "target": [
-        26.4,
-        5.05,
-        -22.2
+        36.3,
+        -2.29,
+        -24.06
       ],
       "fov": 55.0,
       "golden": false,
@@ -57,12 +57,12 @@
       "panel": 3,
       "position": [
         114.0,
-        9.69,
+        12.19,
         -57.0
       ],
       "target": [
         114.0,
-        10.54,
+        19.54,
         -93.0
       ],
       "fov": 56.0,
@@ -73,14 +73,14 @@
       "id": "04-causeway",
       "panel": 4,
       "position": [
-        37.2,
-        13.91,
-        -37.2
+        36.0,
+        19.29,
+        -36.0
       ],
       "target": [
-        114.0,
-        25.09,
-        -132.0
+        48.6,
+        18.79,
+        -48.6
       ],
       "fov": 54.0,
       "golden": false,
@@ -90,16 +90,16 @@
       "id": "05-pavilion-islet",
       "panel": 5,
       "position": [
-        231.0,
-        23.33,
-        -69.0
+        249.0,
+        28.63,
+        -90.0
       ],
       "target": [
         276.0,
-        8.99,
+        7.99,
         -114.0
       ],
-      "fov": 48.0,
+      "fov": 46.0,
       "golden": false,
       "note": "Islet with domed pavilion, planting and stairs down to the water"
     },
@@ -125,15 +125,15 @@
       "panel": 7,
       "position": [
         -6.0,
-        -1.3,
-        -87.0
+        7.95,
+        -88.8
       ],
       "target": [
         -6.0,
-        -3.75,
+        -2.1,
         -78.0
       ],
-      "fov": 46.0,
+      "fov": 40.0,
       "golden": false,
       "note": "Submerged tiled platform with an inlaid glyph, seen through water"
     },
@@ -159,12 +159,12 @@
       "panel": 9,
       "position": [
         156.0,
-        34.59,
+        43.59,
         -147.0
       ],
       "target": [
         114.0,
-        33.09,
+        42.09,
         -132.0
       ],
       "fov": 52.0,
@@ -175,16 +175,16 @@
       "id": "10-bollard-macro",
       "panel": 10,
       "position": [
-        34.8,
+        21.99,
         6.66,
-        -12.0
+        -18.0
       ],
       "target": [
-        27.6,
-        4.45,
+        23.19,
+        4.37,
         -19.2
       ],
-      "fov": 42.0,
+      "fov": 34.0,
       "golden": false,
       "note": "Macro: brass bollard and rope on a stone quay edge"
     },
@@ -193,12 +193,12 @@
       "panel": null,
       "position": [
         114.0,
-        10.34,
+        19.34,
         -66.0
       ],
       "target": [
         114.0,
-        23.09,
+        32.09,
         -120.0
       ],
       "fov": 52.0,
@@ -210,12 +210,12 @@
       "panel": null,
       "position": [
         114.0,
-        10.04,
+        19.04,
         -78.0
       ],
       "target": [
         114.0,
-        14.34,
+        23.34,
         -105.0
       ],
       "fov": 55.0,
@@ -295,12 +295,12 @@
       "panel": null,
       "position": [
         114.0,
-        10.04,
+        19.04,
         -72.0
       ],
       "target": [
         114.0,
-        9.74,
+        18.74,
         -87.0
       ],
       "fov": 55.0,
@@ -317,7 +317,7 @@
       ],
       "target": [
         114.0,
-        25.09,
+        34.09,
         -120.0
       ],
       "fov": 50.0,
@@ -329,12 +329,12 @@
       "panel": null,
       "position": [
         150.0,
-        9.69,
+        18.69,
         -132.0
       ],
       "target": [
         162.0,
-        20.59,
+        29.59,
         -150.0
       ],
       "fov": 55.0,
@@ -362,16 +362,16 @@
       "id": "40-golden-approach",
       "panel": null,
       "position": [
-        65.7,
-        7.12,
-        2.4
+        90.0,
+        9.05,
+        -18.0
       ],
       "target": [
         114.0,
-        27.09,
+        40.09,
         -132.0
       ],
-      "fov": 50.0,
+      "fov": 46.0,
       "golden": true,
       "note": "40 golden approach"
     },
@@ -385,7 +385,7 @@
       ],
       "target": [
         114.0,
-        15.99,
+        24.99,
         -114.0
       ],
       "fov": 46.0,

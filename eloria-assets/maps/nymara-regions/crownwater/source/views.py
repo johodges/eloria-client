@@ -33,34 +33,46 @@ VIEWS = [
     # The eye is 15 m up rather than at barge height because the crown isle
     # rises 8 m out of the water: from 3 m the island's own edge occludes the
     # cathedral standing on it, which is not a framing the concept has.
-    ("01-crown-approach", 1, (21.9, 0.8), 15.0, (38.0, -44.0), 18.0, 50,
+    ("01-crown-approach", 1, (30.0, -6.0), 12.0, (38.0, -44.0), 22.0, 46,
      (1280, 860), 70, "day"),
-    ("02-harbour-quay", 2, (16.5, 0.6), 2.6, (8.8, -7.4), 1.1, 55,
+    # Low and just behind the first bollard, sighting along the line to the
+    # fifth. Standing height rather than the 3.2 m first tried: from higher up
+    # the reach causeway crosses the top of the frame and takes the shot over.
+    ("02-harbour-quay", 2, (1.33, -4.07), 1.6, (12.10, -8.02), 0.40, 55,
      (1180, 800), 26, "day"),
     ("03-crown-plaza", 3, (38.0, -19.0), 1.7, (38.0, -31.0), 2.2, 56,
      (1280, 820), 34, "day"),
-    # standing on the spoke deck itself, which is 8 m above a lagoon floor at
-    # about -6.6, hence the large ground-relative eye height
-    ("04-causeway", 4, (12.4, -12.4), 16.3, (38.0, -44.0), 16.0, 54,
-     (1280, 800), 46, "day"),
-    ("05-pavilion-islet", 5, (77.0, -23.0), 30.0, (92.0, -38.0), 5.0, 48,
+    # On the spoke deck, at its harbour end, looking along it to the crown isle.
+    # The deck is at world y 8.07 over a lagoon floor at about -6.6, so the
+    # ground-relative eye height is 16.4 to stand 1.7 m above the deck. Aimed
+    # at the deck's far end, not at the cathedral: targeting the far landmark
+    # tips the deck out of frame and the shot becomes a distant island.
+    # The eye must also be far enough along the span to be over WATER: the
+    # causeway's first few metres overlap the harbour islet, and a
+    # ground-relative height taken there is measured from the islet, not the
+    # lagoon, which put the camera 10 m above the deck instead of 1.7 m.
+    ("04-causeway", 4, (12.0, -12.0), 1.7, (16.2, -16.2), 1.2, 54,
+     (1280, 800), 46, "deck"),
+    ("05-pavilion-islet", 5, (83.0, -30.0), 30.0, (92.0, -38.0), 4.0, 46,
      (1180, 860), 44, "day"),
     # along the walk's own axis (its quay run faces +X), not across it: framed
     # across, the quay's own back wall fills the shot
     ("06-lamp-walk", 6, (-3.5, -10.8), 1.7, (7.0, -10.8), 1.7, 55,
      (1280, 800), 28, "day"),
-    # Below the surface. The lagoon plane is nearly opaque by design - that is
-    # what makes the water read turquoise - so no camera above it can see the
-    # court through it. The concept panel is an underwater view, so the camera
-    # goes underwater; `submerged` tells the view emitter not to clamp the eye
-    # to sea level. The offline tool treats the mode as ordinary daylight.
-    ("07-sunken-court", 7, (-2.0, -29.0), 0.60, (-2.0, -26.0), -1.85, 46,
-     (1180, 860), 26, "submerged"),
+    # Above the water looking down through it, which is what the concept panel
+    # is. This only works because the lagoon material's alpha was lowered to
+    # 0.70: the concept's water is clear enough to read the seabed everywhere,
+    # and at 0.82 nothing submerged came through at all.
+    ("07-sunken-court", 7, (-2.0, -29.6), 9.0, (-2.0, -26.0), -1.05, 40,
+     (1180, 860), 26, "day"),
     ("08-garden-isle", 8, (-27.0, -25.0), 32.0, (-16.0, -38.0), 4.0, 48,
      (1180, 860), 42, "day"),
     ("09-dome-overlook", 9, (52.0, -49.0), 26.0, (38.0, -44.0), 24.0, 52,
      (1400, 820), 60, "day"),
-    ("10-bollard-macro", 10, (11.6, -4.0), 1.15, (9.2, -6.4), 0.50, 42,
+    # 1.7 m from Prop_Bollard_harbour_quay_2 at world (23.2, 3.95, -19.2),
+    # eye 0.85 m above the apron. The previous framing was a wide quay shot with
+    # the bollards a few pixels tall; this is the macro the panel actually is.
+    ("10-bollard-macro", 10, (7.33, -6.00), 0.85, (7.73, -6.40), 0.42, 34,
      (1080, 880), 12, "day"),
 
     # --- further coverage ----------------------------------------------
@@ -86,7 +98,7 @@ VIEWS = [
      (1180, 800), 28, "day"),
 
     # --- golden hour ----------------------------------------------------
-    ("40-golden-approach", None, (21.9, 0.8), 15.0, (38.0, -44.0), 18.0, 50,
+    ("40-golden-approach", None, (30.0, -6.0), 12.0, (38.0, -44.0), 22.0, 46,
      (1400, 820), 74, "golden"),
     ("41-golden-aerial", None, (38, -122), 170.0, (38, -38), 8.0, 46,
      (1400, 900), 190, "golden"),

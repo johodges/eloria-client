@@ -22,12 +22,12 @@
    "landmarkInstances": 10,
    "terrainHeightRange": [
     -16.39,
-    9.09
+    18.09
    ],
    "water": true,
    "status": "production-geometry-materials-population",
-   "glbBytes": 24448924,
-   "instancedTriangles": 1271396,
+   "glbBytes": 23485812,
+   "instancedTriangles": 1273378,
    "serverCells": 576,
    "extentMetres": 576
   },

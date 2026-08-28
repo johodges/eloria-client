@@ -193,6 +193,13 @@ def export_glb(build: REG.RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuild
         raise SystemExit(
             "materials used but not in crownkit.MATERIALS: "
             + ", ".join(unpinned))
+    # The other direction is not an error but it is not free either: every
+    # pinned material embeds its textures whether or not a mesh references it.
+    # Amberwood's pin carries six such and pays 2.79 MB for them.
+    unused = sorted(CK.MATERIALS - used)
+    if unused:
+        print("[materials] WARNING pinned but unreferenced, costing bytes: "
+              + ", ".join(unused))
 
     # Pinned by name to the materials Crownwater actually uses. Without `only=`
     # the package embeds the whole shared library - about ten megabytes of forest
@@ -477,6 +484,26 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
                       placement.position[1] + float(low[1]) * placement.scale,
                       placement.position[1] + float(high[1]) * placement.scale))
 
+    # Walk-deck boxes, for cameras that stand on a causeway rather than on ground.
+    decks = []
+    for placement in build.placements:
+        item = build.meshes[placement.mesh]
+        bounds = getattr(item, "walk_bounds", lambda: None)()
+        if bounds is None:
+            continue
+        low, high = bounds
+        angle = float(placement.rotation_y or 0.0)
+        cosine, sine = math.cos(angle), math.sin(angle)
+        corners = []
+        for lx in (low[0], high[0]):
+            for lz in (low[2], high[2]):
+                corners.append((cosine * lx + sine * lz, -sine * lx + cosine * lz))
+        xs = [c[0] * placement.scale + placement.position[0] for c in corners]
+        zs = [c[1] * placement.scale + placement.position[2] for c in corners]
+        decks.append((min(xs), max(xs), min(zs), max(zs),
+                      placement.position[1] + float(low[1]) * placement.scale,
+                      placement.position[1] + float(high[1]) * placement.scale))
+
     def clear_eye(x, y, z):
         """Lift a camera that sits inside, or directly under, solid geometry."""
         for x0, x1, z0, z1, y0, y1 in boxes:
@@ -495,7 +522,33 @@ def write_camera_views(build: REG.RegionBuild, path: Path) -> dict:
         ty = float(t.height_at(tx, tz)) + target_h
         # a camera below the waterline sees nothing but the water plane's
         # underside; lift any eye that the terrain put under the lagoon
-        if mode != "submerged":
+        if mode == "deck":
+            # Stand on a causeway deck the way the client grounds an actor:
+            # snap to the highest walk surface under the eye, then add eye
+            # height. A ground-relative height cannot express this - the ground
+            # under a causeway is sometimes the lagoon floor at -6.6 and
+            # sometimes an island shelf at -1.3, and the same declared height
+            # therefore lands 1.7 m above the deck in one place and 7 m above it
+            # in another. Two attempts at panel 4 failed exactly that way.
+            deck = None
+            for x0, x1, z0, z1, y0, y1 in decks:
+                if x0 <= ex <= x1 and z0 <= ez <= z1:
+                    deck = y1 if deck is None else max(deck, y1)
+            if deck is None:
+                raise SystemExit(
+                    f"view {name!r} is mode 'deck' but no walk deck covers "
+                    f"({ex:.1f}, {ez:.1f})")
+            ey = deck + eye_h
+            # The target is snapped to the deck too, so a level look along the
+            # span stays level. Measured against the ground it drifts: the
+            # terrain under the far end of a causeway is not the terrain under
+            # the near end, and the aim tilts by the difference.
+            target_deck = None
+            for x0, x1, z0, z1, y0, y1 in decks:
+                if x0 <= tx <= x1 and z0 <= tz <= z1:
+                    target_deck = y1 if target_deck is None else max(target_deck, y1)
+            ty = (target_deck if target_deck is not None else deck) + target_h
+        elif mode != "submerged":
             ey = max(ey, REG.SEA_LEVEL + 0.6)
             ey = clear_eye(ex, ey, ez)
         entries.append({

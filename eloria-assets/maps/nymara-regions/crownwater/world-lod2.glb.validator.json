@@ -2,11 +2,11 @@
   "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-crownwater\\eloria-assets\\maps\\nymara-regions\\crownwater\\world-lod2.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-08-28T16:33:16.378106Z",
+  "validatedAt": "2026-08-28T17:17:37.602253Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 3,
+    "numInfos": 1,
     "numHints": 0,
     "messages": [
       {
@@ -14,18 +14,6 @@
         "message": "Empty node encountered.",
         "severity": 2,
         "pointer": "/nodes/6"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/9"
-      },
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/15"
       }
     ]
   }

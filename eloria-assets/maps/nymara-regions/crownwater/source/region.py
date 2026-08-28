@@ -84,8 +84,11 @@ CHANNEL_FLOOR = -9.5
 SHALLOWS = -1.35
 
 # The sunken court's floor. Shallow enough that its tiling and glyph read clearly
-# from a boat above it, deep enough that it is unmistakably drowned.
-SUNKEN_COURT_LEVEL = -1.90
+# from a boat above it, deep enough that it is unmistakably drowned. At -1.90 it
+# was invisible in client capture: even at the lagoon's 0.70 alpha, two metres of
+# water washed the mosaic out completely. A metre of clear water is enough to say
+# "submerged" and little enough to see through.
+SUNKEN_COURT_LEVEL = -1.05
 
 # ------------------------------------------------------------ composition
 # The archipelago is centred on the middle of the playable footprint rather than
@@ -407,6 +410,18 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
             t.mark_blocked_disc((float(point[0]), float(point[1])), 3.2 * LOCAL)
 
     crown_y = float(t.height_at(*ANCHORS["crown_isle"]))
+
+    # The cathedral precinct is an acropolis, not a building on a lawn. In the
+    # concept the palace stands on terraces well above the water; here it sat at
+    # island level, 100 m in from a shore that is itself 8 m high, so from any
+    # boat you saw a grassy rise with a dome peeping over it - which is not the
+    # subject of panel 1. Raising the precinct by 9 m lifts the whole silhouette
+    # clear of the island's own horizon. The edge is wide enough (26 m for 9 m
+    # of rise, a gradient of 0.35) to stay comfortably walkable.
+    t.plateau(ANCHORS["cathedral"], 44.0 * LOCAL, crown_y + 9.0, edge=26.0,
+              surface=TER.PAVING, seed=seed + 61, irregular=0.10)
+    crown_y = float(t.height_at(*ANCHORS["crown_isle"]))
+
     t.terrace(ANCHORS["crown_plaza"], 15.0 * LOCAL, crown_y + 0.35,
               surface=TER.PAVING)
     t.rect_terrace(ANCHORS["cathedral"], 13.0 * LOCAL, 11.0 * LOCAL,

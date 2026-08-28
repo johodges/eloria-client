@@ -1,11 +1,11 @@
 {
   "summary": {
     "walkSurfaceNodes": 205,
-    "walkSurfaceTriangles": 206698,
+    "walkSurfaceTriangles": 206696,
     "tilesSampled": 331776,
     "groundingMisses": 0,
     "groundingMissFraction": 0.0,
-    "surfaceDiscontinuities": 224,
+    "surfaceDiscontinuities": 324,
     "spawnPoints": 3
   },
   "errors": [],
@@ -13,67 +13,67 @@
     {
       "severity": "warning",
       "code": "GROUNDING_DISCONTINUITY",
-      "message": "224 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
+      "message": "324 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
       "detail": [
         [
-          92,
+          383,
+          285,
+          17.35
+        ],
+        [
+          171,
+          290,
+          17.3
+        ],
+        [
+          380,
+          287,
+          17.24
+        ],
+        [
+          381,
+          290,
+          17.18
+        ],
+        [
+          226,
+          221,
+          17.17
+        ],
+        [
+          225,
+          221,
+          17.17
+        ],
+        [
           179,
-          15.26
+          285,
+          17.16
         ],
         [
-          92,
-          179,
-          15.26
+          380,
+          290,
+          17.15
         ],
         [
-          148,
-          227,
-          14.67
+          380,
+          288,
+          17.14
         ],
         [
-          148,
-          227,
-          14.67
+          382,
+          290,
+          17.1
         ],
         [
-          102,
-          178,
-          14.57
+          353,
+          223,
+          17.1
         ],
         [
-          102,
-          178,
-          14.57
-        ],
-        [
-          146,
-          232,
-          14.45
-        ],
-        [
-          146,
-          232,
-          14.45
-        ],
-        [
-          394,
-          119,
-          13.89
-        ],
-        [
-          394,
-          120,
-          13.89
-        ],
-        [
-          393,
-          109,
-          13.88
-        ],
-        [
-          393,
-          110,
-          13.88
+          380,
+          289,
+          17.05
         ]
       ]
     },
@@ -96,7 +96,7 @@
             396
           ],
           "encoded": 4.0,
-          "surface": 8.59
+          "surface": 17.59
         },
         {
           "cell": [

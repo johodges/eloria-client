@@ -310,7 +310,10 @@ def populate_harbour(build, seed: int = 0) -> None:
     for k in range(4):
         _add(build, f"Prop_Banner_Harbour_{k}", "BannerPole",
              CA.banner_pole(6.8, seed=seed + k),
-             (hx - 10.0 + k * 7.5, hy, hz + 4.0), 0.0, kind="prop",
+             # landward of the quay, not on its seaward edge: on the edge the
+             # banners stood squarely in the panel-2 sight line and read as
+             # four dark slabs across the shot
+             (hx - 12.0 + k * 8.0, hy, hz - 11.0), 0.0, kind="prop",
              collides=True)
 
     mx, mz = REG.ANCHORS["harbour_market"]

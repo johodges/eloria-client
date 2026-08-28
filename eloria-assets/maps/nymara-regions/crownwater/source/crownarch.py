@@ -289,9 +289,12 @@ def banner_pole(height: float = 6.4, seed: int = 0) -> SW.MeshGroup:
     out = SW.MeshGroup()
     out.add(M.cylinder(0.11, 0.08, height, 10, uv_scale=0.8, material=IRON))
     out.add(finial(0.9, radius=0.14).translate(0.0, height, 0.0))
+    # canvas rather than woven_cloth: the wool is dark enough that a banner
+    # reads as a black slab against a bright sky, and four of them stood across
+    # the harbour panel like shutters
     out.add(M.box((0.06, height * 0.42, 1.5),
                   center=(0.0, height * 0.70, 0.78),
-                  uv_scale=1.0, material="woven_cloth"))
+                  uv_scale=1.0, material="canvas_awning"))
     return out
 
 

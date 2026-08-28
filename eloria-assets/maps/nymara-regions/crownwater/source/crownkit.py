@@ -134,15 +134,21 @@ def gilt_leaf(size: int = 256, seed: int = 313) -> T.TextureSet:
     fine = N.tileable_fbm(size, 34, 3, seed=seed + 3)
     height = beat * 0.62 + fine * 0.24
     colour = _colorize(np.clip(beat * 0.7 + fine * 0.3, 0.0, 1.0),
-                       (0.0, (0.512, 0.352, 0.108)),
-                       (0.55, (0.808, 0.616, 0.208)),
-                       (1.0, (0.948, 0.812, 0.402)))
+                       (0.0, (0.706, 0.512, 0.164)),
+                       (0.55, (0.914, 0.734, 0.288)),
+                       (1.0, (0.986, 0.892, 0.520)))
     tarnish = np.clip(N.tileable_fbm(size, 8, 4, seed=seed + 11) * 1.7 - 0.95,
                       0.0, 1.0)
     colour = _mix(colour, np.array([0.336, 0.288, 0.152]), tarnish * 0.55)
     occlusion = np.clip(0.58 + height * 0.40, 0.0, 1.0)
     roughness = np.clip(0.17 + tarnish * 0.42 + fine * 0.10, 0.0, 1.0)
-    metallic = np.clip(0.98 - tarnish * 0.25, 0.0, 1.0)
+    # Deliberately NOT fully metallic. The client renders through OpenGL 3.3
+    # compatibility with no image-based lighting, so a metallic=1 surface has
+    # nothing to reflect and renders near-black - every gilt finial and the
+    # panel-10 bollard came back as dark blobs. Treating the gold as a bright
+    # dielectric with a little metal in it is wrong physically and right on
+    # screen, until there is an environment map to reflect.
+    metallic = np.clip(0.34 - tarnish * 0.12, 0.0, 1.0)
     return T.TextureSet(GILT, _u8(colour),
                         T.pack_orm(occlusion, roughness, metallic),
                         T.normal_from_height(height, 1.8))
@@ -287,10 +293,10 @@ SPECS_EXTRA = (
     # turquoise is a colour decision, not a new surface, and a second 512px
     # water set would cost bytes for nothing.
     MAT.MaterialSpec(LAGOON, LAGOON_TEX, roughness=0.09,
-                     base_color=(1.0, 1.0, 1.0, 0.82), alpha_mode="BLEND"),
+                     base_color=(1.0, 1.0, 1.0, 0.70), alpha_mode="BLEND"),
     MAT.MaterialSpec(MARBLE, MARBLE, roughness=0.38),
     MAT.MaterialSpec(VERDIGRIS, VERDIGRIS, roughness=0.62, metallic=0.35),
-    MAT.MaterialSpec(GILT, GILT, roughness=0.24, metallic=1.0),
+    MAT.MaterialSpec(GILT, GILT, roughness=0.28, metallic=0.34),
     MAT.MaterialSpec(MOSAIC, MOSAIC, roughness=0.52),
     MAT.MaterialSpec(SAND, SAND, roughness=0.78),
 )
@@ -323,13 +329,13 @@ MATERIALS = frozenset({
     # masonry and metal, from the shared kit
     "ashlar", "cliff_rock", "dark_iron", "cobble_paving",
     # timber, cloth and the lamp glass the toolkit's lamp_post uses
-    "timber_warm", "timber_dark", "carved_wood", "woven_cloth",
+    "timber_warm", "timber_dark", "carved_wood",
     "canvas_awning", "amber_resin",
     # ground and planting
-    "forest_floor", "shore_shingle", "meadow_grass", "foliage_green", SAND,
+    "forest_floor", "meadow_grass", "foliage_green", SAND,
     "bark_pale",
     # water
-    "water_sea", "water_pool", LAGOON,
+    "water_pool", LAGOON,
 })
 """The materials Crownwater actually uses.
 
