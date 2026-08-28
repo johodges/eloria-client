@@ -97,8 +97,9 @@ func _process(delta: float) -> void:
 
 func _fit_to_viewport() -> void:
 	var viewport_size := get_tree().root.size
-	var available := Vector2i(maxi(640, viewport_size.x - VIEWPORT_MARGIN.x),
-		maxi(420, viewport_size.y - VIEWPORT_MARGIN.y))
+	var available := Vector2i(maxi(240, viewport_size.x - VIEWPORT_MARGIN.x),
+		maxi(200, viewport_size.y - VIEWPORT_MARGIN.y))
+	min_size = Vector2i(mini(680, available.x), mini(460, available.y))
 	size = Vector2i(mini(1120, available.x), mini(720, available.y))
 	position = Vector2i(maxi(0, (viewport_size.x - size.x) / 2),
 		maxi(0, (viewport_size.y - size.y) / 2))
