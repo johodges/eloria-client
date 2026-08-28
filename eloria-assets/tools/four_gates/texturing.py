@@ -196,7 +196,7 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
     height = mask * (0.62 + block_variation * 0.16 + grain * 0.2) + (1 - mask) * 0.12
     height += (speckle - 0.5) * 0.05
     weather = np.clip(fbm(H, 5, 4, rng) * 1.25 - 0.15, 0, 1)
-    colour = tint(height, (0.741, 0.702, 0.616), block_variation * 0.35 + grain * 0.65, 0.11)
+    colour = tint(height, (0.702, 0.659, 0.565), block_variation * 0.35 + grain * 0.65, 0.12)
     colour *= (0.88 + 0.12 * weather)[..., None]
     colour = np.clip(colour * (0.94 + 0.10 * mask)[..., None], 0, 1)
     rough = 0.72 + 0.20 * (1 - mask) + 0.10 * grain
@@ -221,7 +221,7 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
     grain = fbm(S, 10, 5, rng)
     vein = np.clip(ridged(S, 4, 4, rng) * 1.3 - 0.55, 0, 1)
     height = 0.55 + grain * 0.28 + vein * 0.10
-    colour = tint(height, (0.792, 0.761, 0.690), grain, 0.12)
+    colour = tint(height, (0.741, 0.706, 0.620), grain, 0.12)
     colour = np.clip(colour - vein[..., None] * 0.06, 0, 1)
     materials["stone_trim"] = _pack("stone_trim", colour, height, 0.55 + 0.18 * grain,
                                     normal_strength=1.1, uv_scale=3.0)
@@ -248,7 +248,7 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
     tiles = ((np.floor(radius * 13.0) * 31.0
               + np.floor((angle + math.pi) / (math.pi / 16.0)) * 17.0) % 89) / 88.0
     height = 0.66 + grain * 0.14 + tiles * 0.08 - joint * 0.50
-    colour = tint(height, (0.706, 0.667, 0.584), tiles * 0.7 + grain * 0.3, 0.20)
+    colour = tint(height, (0.639, 0.596, 0.510), tiles * 0.7 + grain * 0.3, 0.20)
     # sapphire inlay bands and a gilded compass rose at the centre
     inlay = np.clip(1.0 - np.abs(np.sin(radius * math.pi * 6.5)) * 5.0, 0, 1)
     inlay *= (radius > 0.08)
@@ -273,7 +273,7 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
     grain = fbm(S, 16, 4, rng)
     cell_variation = (cell % 53) / 52.0
     height = 0.68 + grain * 0.16 - joint * 0.45
-    colour = tint(height, (0.678, 0.639, 0.553), cell_variation * 0.75 + grain * 0.25, 0.20)
+    colour = tint(height, (0.596, 0.557, 0.467), cell_variation * 0.75 + grain * 0.25, 0.20)
     wear = np.clip(fbm(S, 11, 4, rng) * 1.35 - 0.3, 0, 1)
     colour *= (0.90 + 0.10 * wear)[..., None]
     materials["paving_road"] = _pack("paving_road", np.clip(colour, 0, 1), height,
@@ -355,7 +355,7 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
     stipple = fbm(S, 60, 3, rng)
     stain = np.clip(fbm(S, 4, 4, rng) * 1.5 - 0.55, 0, 1)
     height = 0.6 + grain * 0.2 + stipple * 0.1
-    colour = tint(height, (0.780, 0.727, 0.624), grain * 0.7 + stipple * 0.3, 0.13)
+    colour = tint(height, (0.706, 0.655, 0.557), grain * 0.7 + stipple * 0.3, 0.14)
     colour *= (0.88 + 0.12 * (1 - stain))[..., None]
     materials["plaster_warm"] = _pack("plaster_warm", colour, height,
                                       0.80 + 0.14 * stipple, normal_strength=1.2, uv_scale=3.0)
@@ -369,13 +369,16 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
     du, dv = u - 0.5, v - 0.5
     radius_uv = np.hypot(du, dv)
     theta = np.arctan2(dv, du)
-    # four-pointed gate star: the civic mark of the Four Gates
-    star_radius = 0.055 + 0.215 * np.abs(np.cos(theta * 2.0)) ** 0.55
-    emblem = np.clip((star_radius - radius_uv) * 30.0, 0, 1)
-    ring = np.clip(1.0 - np.abs(radius_uv - 0.335) * 46.0, 0, 1)
-    gold_mask = np.clip(emblem + ring, 0, 1)
+    # eight-pointed compass star: the civic mark of the Four Gates
+    long_points = np.abs(np.cos(theta * 2.0)) ** 4.0
+    short_points = np.abs(np.sin(theta * 2.0)) ** 4.0
+    star_radius = 0.028 + 0.270 * long_points + 0.185 * short_points
+    emblem = np.clip((star_radius - radius_uv) * 42.0, 0, 1)
+    ring = np.clip(1.0 - np.abs(radius_uv - 0.355) * 60.0, 0, 1)
+    inner_ring = np.clip(1.0 - np.abs(radius_uv - 0.315) * 110.0, 0, 1)
+    gold_mask = np.clip(emblem + ring + inner_ring, 0, 1)
     height = 0.55 + weave * 0.14 + fold * 0.2 + gold_mask * 0.08
-    base_blue = np.array([0.078, 0.184, 0.352])
+    base_blue = np.array([0.055, 0.180, 0.271])
     gold = np.array([0.836, 0.672, 0.316])
     colour = base_blue[None, None, :] * (0.75 + 0.5 * (weave * 0.4 + fold * 0.6))[..., None]
     colour = colour * (1 - gold_mask[..., None]) + gold[None, None, :] * gold_mask[..., None]
@@ -402,11 +405,11 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
     edges = np.clip(1.0 - facet * 8.0, 0, 1)
     inner = fbm(S, 8, 5, rng)
     height = 0.5 + (1 - facet) * 0.4 + inner * 0.12
-    core = np.array([0.106, 0.404, 0.930])
-    bright = np.array([0.560, 0.812, 1.0])
+    core = np.array([0.129, 0.522, 0.980])
+    bright = np.array([0.678, 0.898, 1.0])
     blend = np.clip(edges + inner * 0.6, 0, 1)[..., None]
     colour = core[None, None, :] * (1 - blend) + bright[None, None, :] * blend
-    emissive = np.clip(colour * (0.55 + 0.75 * np.clip(inner * 1.5, 0, 1))[..., None], 0, 1)
+    emissive = np.clip(colour * (0.78 + 0.85 * np.clip(inner * 1.5, 0, 1))[..., None], 0, 1)
     materials["crystal_blue"] = _pack("crystal_blue", np.clip(colour, 0, 1), height,
                                       0.16 + 0.2 * inner, metallic=0.0,
                                       emissive=emissive, emissive_factor=(1.0, 1.0, 1.0),
@@ -548,5 +551,33 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
     colour = tint(height, (0.664, 0.548, 0.294), straw * 0.6 + bundle * 0.4, 0.24)
     materials["thatch_straw"] = _pack("thatch_straw", colour, height, 0.95,
                                       normal_strength=2.2, uv_scale=2.0)
+
+    # -- ceremonial avenue paving: gold and teal inlay strips along the road --
+    dist, cell = worley(H, 9, rng)
+    joint = np.clip(1.0 - dist * 12.0, 0, 1)
+    grain = fbm(H, 16, 4, rng)
+    cell_variation = (cell % 53) / 52.0
+    across = np.linspace(0.0, 1.0, H, endpoint=False)[None, :] * np.ones((H, 1))
+    height = 0.68 + grain * 0.14 - joint * 0.42
+    colour = tint(height, (0.612, 0.573, 0.482),
+                  cell_variation * 0.7 + grain * 0.3, 0.18)
+    def band(centre, width_uv):
+        return np.clip(1.0 - np.abs(across - centre) / width_uv, 0, 1)
+    teal_mask = np.clip(band(0.16, 0.022) + band(0.84, 0.022), 0, 1)
+    gold_mask2 = np.clip(band(0.22, 0.010) + band(0.78, 0.010)
+                         + band(0.50, 0.014), 0, 1)
+    lozenge = np.clip(1.0 - (np.abs(across - 0.5) * 6.0
+                             + np.abs(((np.linspace(0, 6, H)[:, None]
+                                        * np.ones((1, H))) % 1.0) - 0.5) * 2.6), 0, 1)
+    gold_mask2 = np.clip(gold_mask2 + lozenge * 0.55, 0, 1)
+    colour = np.clip(colour * (1 - teal_mask[..., None])
+                     + teal_mask[..., None] * np.array([0.106, 0.322, 0.361]), 0, 1)
+    colour = np.clip(colour * (1 - gold_mask2[..., None])
+                     + gold_mask2[..., None] * np.array([0.545, 0.447, 0.239]), 0, 1)
+    height = height + gold_mask2 * 0.05 + teal_mask * 0.03
+    materials["paving_ceremonial"] = _pack(
+        "paving_ceremonial", colour, height,
+        np.clip(0.70 + 0.18 * (1 - joint) - gold_mask2 * 0.16, 0.20, 1.0),
+        metallic=gold_mask2 * 0.12, normal_strength=1.0, uv_scale=30.0)
 
     return materials

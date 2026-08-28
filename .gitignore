@@ -38,3 +38,6 @@ godot-client/**/*.glb.report.json
 
 # Rendered test evidence. CI uploads it as a build artifact.
 godot-client/test-artifacts/
+
+# Validator reports written beside the map packages they describe.
+eloria-assets/maps/*/world.glb.report.json

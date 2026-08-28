@@ -359,9 +359,16 @@ def gatehouse(p: Palette, width: float = 44.0, depth: float = 20.0,
     if banners:
         for side in (-1, 1):
             for z in (-depth * 0.52, depth * 0.52):
-                flag = banner(4.2, 15.0, p, pole=False)
-                flag.translate(side * (opening * 0.5 + 6.5), height * 0.74, z)
+                flag = banner(3.4, 21.0, p, pole=False)
+                flag.translate(side * (opening * 0.5 + 6.2), height * 0.86, z)
                 parts.append(flag)
+            # a second pair hangs from the flanking drums
+            for z in (-depth * 0.30, depth * 0.30):
+                drum_flag = banner(2.6, 16.0, p, pole=False)
+                drum_flag.translate(side * (half + tower_radius * 0.30
+                                            + tower_radius * 0.96),
+                                    height * 0.96, z)
+                parts.append(drum_flag)
 
     # gate-star roundel over the arch: a moulded ring carrying a sapphire boss
     for z in (-depth * 0.52, depth * 0.52):
@@ -898,6 +905,42 @@ def broadleaf_tree(p: Palette, height: float = 9.0, seed: int = 0) -> Geo:
         branch.translate(0.0, height * 0.44, 0.0)
         parts.append(branch)
     return Geo.concat(parts)
+
+
+def cypress_tree(p: Palette, height: float = 12.0, seed: int = 0) -> Geo:
+    """Columnar evergreen, as flanks the causeways and river banks."""
+    rng = np.random.default_rng(seed)
+    trunk = M.revolve([(0.26, 0.0), (0.18, height * 0.5), (0.10, height * 0.9)],
+                      6, p.timber_dark, 1.0)
+    parts = [trunk]
+    profile = []
+    rows = 9
+    for i in range(rows):
+        t = i / (rows - 1)
+        # narrow spindle: wide near the base, tapering to a point
+        radius = height * 0.105 * math.sin(math.pi * (0.12 + 0.85 * t)) ** 0.7
+        radius *= float(rng.uniform(0.94, 1.06))
+        profile.append((max(radius, 0.02), height * (0.10 + 0.90 * t)))
+    profile.append((0.0, height * 1.02))
+    parts.append(M.revolve(profile, 8, p.foliage_pine, 1.4, smooth=False))
+    return Geo.concat(parts)
+
+
+def crystal_standard(p: Palette, height: float = 7.0) -> Geo:
+    """Gilded post carrying a tall sapphire shard -- the signature street light."""
+    plinth = M.revolve([(0.62, 0.0), (0.66, 0.30), (0.48, 0.52), (0.44, 0.66)],
+                       10, p.stone_trim, 1.2)
+    shaft = M.revolve([(0.30, 0.0), (0.24, height * 0.30),
+                       (0.20, height * 0.62), (0.30, height * 0.70),
+                       (0.24, height * 0.76)], 10, p.metal_gold, 1.0)
+    shaft.translate(0.0, 0.66, 0.0)
+    collar = M.revolve([(0.0, 0.0), (0.52, 0.22), (0.40, 0.46), (0.22, 0.56)],
+                       10, p.metal_gold, 0.8)
+    collar.translate(0.0, 0.66 + height * 0.74, 0.0)
+    shard = M.revolve([(0.0, 0.0), (0.34, height * 0.10), (0.26, height * 0.30),
+                       (0.0, height * 0.46)], 6, p.crystal_blue, 0.8)
+    shard.translate(0.0, 0.66 + height * 0.80, 0.0)
+    return Geo.concat([plinth, shaft, collar, shard])
 
 
 def pine_tree(p: Palette, height: float = 13.0, seed: int = 0) -> Geo:
