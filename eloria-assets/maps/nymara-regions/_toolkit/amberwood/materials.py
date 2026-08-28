@@ -77,6 +77,28 @@ SPECS: tuple[MaterialSpec, ...] = (
     # Standing water underground: the same surface, unlit by any sky.
     MaterialSpec("water_deep", "water_pool", roughness=0.12,
                  base_color=(0.20, 0.30, 0.32, 0.90), alpha_mode="BLEND"),
+
+    # -- Amethyst Barrens. Appended, never inserted: a region pins the material
+    # set it embeds by name, and reordering this tuple would rewrite its GLB.
+    # The region's sea reuses `water_sea` rather than adding a fourth water.
+    MaterialSpec("amethyst_barrens_dust", "amethyst_barrens_dust", roughness=0.96),
+    MaterialSpec("amethyst_storm_rock", "amethyst_storm_rock", roughness=0.90,
+                 emissive=(0.020, 0.008, 0.036)),
+    MaterialSpec("amethyst_crystal_field", "amethyst_crystal_field", roughness=0.42,
+                 emissive=(0.088, 0.036, 0.152)),
+    MaterialSpec("amethyst_resonant_road", "amethyst_resonant_road", roughness=0.66,
+                 emissive=(0.072, 0.028, 0.128)),
+    # The crystal itself carries the region's light. Emissive rather than
+    # transmissive: KHR_materials_transmission is an extension, and the package
+    # must load with none.
+    MaterialSpec("amethyst_crystal", "amethyst_crystal", roughness=0.10,
+                 emissive=(0.196, 0.088, 0.320)),
+    MaterialSpec("amethyst_pale_stone", "amethyst_pale_stone", roughness=0.82),
+    MaterialSpec("amethyst_verdigris", "amethyst_verdigris", roughness=0.64,
+                 metallic=1.0),
+    MaterialSpec("amethyst_brass", "amethyst_brass", roughness=0.30, metallic=1.0),
+    MaterialSpec("amethyst_banner", "amethyst_banner", roughness=0.90,
+                 double_sided=True),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}
@@ -116,6 +138,16 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     sets["amber_glass"] = T.amber_glass(256, seed=137)
     for tone, seed in (("sea", 89), ("pool", 181), ("stream", 191)):
         sets[f"water_{tone}"] = T.water_surface(512, seed=seed, tone=tone)
+    # Amethyst Barrens
+    sets["amethyst_barrens_dust"] = T.amethyst_barrens_dust(512, seed=501)
+    sets["amethyst_crystal_field"] = T.amethyst_crystal_field(512, seed=509)
+    sets["amethyst_resonant_road"] = T.amethyst_resonant_road(512, seed=521)
+    sets["amethyst_storm_rock"] = T.amethyst_storm_rock(512, seed=523)
+    sets["amethyst_crystal"] = T.amethyst_crystal(256, seed=541)
+    sets["amethyst_pale_stone"] = T.amethyst_pale_stone(512, seed=547)
+    sets["amethyst_verdigris"] = T.amethyst_verdigris(256, seed=557)
+    sets["amethyst_brass"] = T.amethyst_brass(256, seed=563)
+    sets["amethyst_banner"] = T.amethyst_banner(256, seed=569)
 
     # trim the maps that do not need to ship at full resolution
     alpha_cut = {"foliage_amber", "foliage_gold", "foliage_rust", "foliage_green",

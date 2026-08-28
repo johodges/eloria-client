@@ -1,0 +1,720 @@
+#!/usr/bin/env python3
+"""Build the Amethyst Barrens runtime map package.
+
+Outputs, next to this source tree:
+
+    ../world.glb        self-contained glTF 2.0 (geometry, materials, textures)
+    ../world.json       GLB world manifest, schema version 1
+    ../collision.bin    half-metre walkability grid (EWCG v1)
+    ../minimap.webp     minimap rendered from the final geometry
+    ../world.glb.validator.json
+    ../performance-summary.md
+
+Deterministic: the same seed reproduces the same bytes.
+
+Unlike `build_amberwood.py` this passes `only=` to `register_gltf_materials`,
+so the package embeds only the textures this region actually uses. With four
+regions appending their kits to the shared material table, a build that embeds
+all of them grows by roughly ten megabytes of PNG per kit for no visible gain.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import os
+import struct
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+from PIL import Image
+
+# The authoring toolkit is shared by every region and lives one level up, in
+# `maps/nymara-regions/_toolkit/`. It must be on the path before the toolkit
+# modules below are imported.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "_toolkit"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import validate_gltf
+
+from amberwood import gltf as GLTF
+from amberwood import materials as MAT
+from amberwood import mesh as M
+from amberwood import terrain as TER
+
+import populate as POP
+import region as REG
+
+HERE = Path(__file__).resolve().parent
+PACKAGE = HERE.parent
+SEED = 20260828
+
+ASSET_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.0.0"
+
+# The materials this region embeds. Named explicitly rather than derived, so a
+# kit added by another region cannot silently enlarge this package.
+MATERIALS: frozenset[str] = frozenset({
+    "amethyst_barrens_dust", "amethyst_crystal_field", "amethyst_resonant_road",
+    "amethyst_storm_rock", "amethyst_crystal", "amethyst_pale_stone",
+    "amethyst_verdigris", "amethyst_brass", "amethyst_banner",
+    "cobble_paving", "shore_shingle", "cliff_rock", "rubble_stone",
+    "dark_iron", "timber_warm", "water_sea", "water_stream",
+})
+
+
+# --------------------------------------------------------------------------
+def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
+    """Build the region. `lod="far"` produces the reduced second package."""
+    t0 = time.time()
+    terrain = REG.build_terrain(seed)
+    REG.close_world(terrain)
+    REG.apply_built_ground(terrain, seed)
+    build = REG.RegionBuild(terrain=terrain)
+
+    POP.populate_landmarks(build, seed, lod=lod)
+    POP.populate_stations(build, seed, lod=lod)
+    POP.populate_crystal(build, seed, lod=lod)
+    if lod is None:
+        POP.populate_ground_detail(build, seed)
+
+    # surfaces are painted after the built ground so roads and courts survive
+    REG.assign_surfaces(terrain, seed)
+    POP.build_water(build)
+
+    build.terrain_meshes = terrain.build_meshes(uv_scale=0.28)
+    build.terrain_meshes["Backdrop_Distant"] = TER.backdrop(
+        terrain, reach=240.0, cell=11.0, seed=seed + 909)
+    build.resolve_names()
+    _add_spawns_and_portals(build)
+    _add_population_markers(build, seed)
+    print(f"[region] built in {time.time() - t0:.1f}s")
+    return build
+
+
+def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
+    t = build.terrain
+    for spawn_id, key, facing in (
+            ("default", "arrival", 0.0),
+            ("observatory", "observatory_court", math.pi),
+            ("massif-camp", "station_massif", math.pi * 0.5)):
+        x, z = REG.ANCHORS[key]
+        y = float(t.height_at(x, z))
+        build.spawns.append({
+            "id": spawn_id,
+            "position": [round(float(x), 2), round(y + 0.05, 2), round(float(z), 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "rotationDegrees": round(math.degrees(facing), 1),
+            "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
+            "grounded": True})
+
+    # Edge portals to neighbouring Nymara regions. Destination map ids follow the
+    # client registry; the server remains authoritative for the transition.
+    for portal_id, name, key, destination in (
+            ("west-road", "Amberwood Road", "watchtower_west",
+             "maps/nymara/amberwood.elm"),
+            ("north-pass", "Whitehorn Pass", "shards_north",
+             "maps/nymara/whitehorn_range.elm"),
+            ("east-shore", "Crownwater Landing", "road_end_east",
+             "maps/nymara/crownwater.elm"),
+            ("south-road", "Sunmane Track", "road_end_south",
+             "maps/nymara/sunmane_steppe.elm")):
+        x, z = REG.ANCHORS[key]
+        y = float(t.height_at(x, z))
+        build.portals.append({
+            "id": portal_id, "name": name, "type": "map-transition",
+            "position": [round(float(x), 2), round(y + 0.1, 2), round(float(z), 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "destinationMap": destination, "radius": 3.5,
+            "authority": "server"})
+
+    # Interior entrance. The Resonant Vault is the region's interior in the
+    # server's map table; its package is not part of this region's scope.
+    anchor = next((l for l in build.landmarks
+                   if l.get("id") == "glasswarden-observatory"), None)
+    if anchor is not None:
+        x, y, z = anchor["position"]
+        build.portals.append({
+            "id": "resonant-vault-stair", "name": "The Resonant Vault",
+            "type": "interior-entrance",
+            "position": [round(float(x), 2), round(float(y) + 0.1, 2),
+                         round(float(z), 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "landmark": "glasswarden-observatory",
+            "destinationMap": "maps/nymara/resonant_vault.elm",
+            "destinationSpawn": "default", "radius": 2.5,
+            "authority": "server"})
+
+
+def _add_population_markers(build: REG.RegionBuild, seed: int) -> None:
+    """Editor/visual markers only - the server owns actual spawning."""
+    rng = np.random.default_rng(seed ^ 0x5EED)
+    t = build.terrain
+
+    def marker(collection, entry):
+        collection.append(entry)
+
+    npc_sites = [
+        ("glasswarden-astronomer", "Glasswarden Astronomer", "observatory_court"),
+        ("glasswarden-warden", "Glasswarden of the Gate", "observatory_gate"),
+        ("resonance-surveyor", "Resonance Surveyor", "cluster_court"),
+        ("crystal-factor", "Crystal Factor", "station_river"),
+        ("caravan-assayer", "Caravan Assayer", "station_east"),
+        ("shard-cutter", "Shard Cutter", "cluster_north"),
+        ("storm-watcher", "Storm Watcher", "cliff_overlook"),
+        ("road-warden", "Road Warden", "station_south"),
+        ("coast-factor", "Coast Factor", "station_coast"),
+        ("massif-guide", "Massif Guide", "station_massif"),
+    ]
+    for npc_id, name, key in npc_sites:
+        x, z = REG.ANCHORS[key]
+        marker(build.npc_markers, {
+            "id": npc_id, "name": name,
+            "position": [round(float(x), 2),
+                         round(float(t.height_at(x, z)) + 0.05, 2),
+                         round(float(z), 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "role": "editor-marker", "authority": "server"})
+
+    creature_zones = [
+        ("storm-drake", "Storm Drake", "crystal_massif", 60.0),
+        ("shard-stalker", "Shard Stalker", "shards_basin", 48.0),
+        ("resonant-elemental", "Resonant Elemental", "cluster_deep", 40.0),
+        ("barrens-jackal", "Barrens Jackal", "ruin_south", 56.0),
+        ("geode-crawler", "Geode Crawler", "geode_east", 36.0),
+    ]
+    for creature_id, name, key, radius in creature_zones:
+        x, z = REG.ANCHORS[key]
+        marker(build.npc_markers, {
+            "id": creature_id, "name": name, "kind": "creature-zone",
+            "position": [round(float(x), 2),
+                         round(float(t.height_at(x, z)) + 0.05, 2),
+                         round(float(z), 2)],
+            "radius": radius, "role": "editor-marker", "authority": "server"})
+
+    # harvestables: crystal is the region's resource, scattered over the fields
+    surface = build.terrain.surface
+    crystal_cells = np.argwhere(surface == TER.CRYSTAL_FIELD)
+    if crystal_cells.size:
+        picks = rng.choice(len(crystal_cells), size=min(64, len(crystal_cells)),
+                           replace=False)
+        for index, cell in enumerate(crystal_cells[picks]):
+            cz, cx = int(cell[0]), int(cell[1])
+            x = float(t.x0 + cx * t.cell)
+            z = float(t.z0 + cz * t.cell)
+            if not (REG.PLAY_MIN_X <= x <= REG.PLAY_MAX_X
+                    and REG.PLAY_MIN_Z <= z <= REG.PLAY_MAX_Z):
+                continue
+            build.harvestables.append({
+                "id": f"amethyst-seam-{index:03d}", "resource": "amethyst-shard",
+                "position": [round(x, 2), round(float(t.height_at(x, z)), 2),
+                             round(z, 2)],
+                "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                               int(round(REG.SERVER_ORIGIN[1] - z))],
+                "authority": "server"})
+
+
+# --------------------------------------------------------------------------
+def _split_group(key: str, item) -> tuple[dict[str, M.Mesh], dict[str, M.Mesh]]:
+    """Split a landmark into per-material meshes, keeping walkable decks apart."""
+    if not hasattr(item, "parts"):
+        return {key: item}, {}
+    solid = {f"{key}__{material}": piece
+             for material, piece in item.by_material(False).items()}
+    walk = {f"{key}__walk__{material}": piece
+            for material, piece in item.by_material(True).items()}
+    return solid, walk
+
+
+def export_glb(build: REG.RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuilder, dict]:
+    builder = GLTF.GltfBuilder(
+        generator="Eloria Amethyst Barrens builder (original procedural assets)")
+    MAT.register_gltf_materials(builder, sets, only=set(MATERIALS))
+
+    # Tangents are intentionally omitted: Godot's glTF importer generates them
+    # for normal-mapped materials, and shipping them would add sixteen bytes a
+    # vertex to a package already dominated by vertex data.
+    def prepare(piece: M.Mesh) -> M.Mesh:
+        piece.sanitise_normals()
+        piece.drop_degenerate()
+        piece.weld(1e-4)
+        return piece
+
+    exported: dict[str, tuple[list[str], list[str]]] = {}
+    for key, item in build.meshes.items():
+        solid, walk = _split_group(key, item)
+        solid_names, walk_names = [], []
+        for name, piece in solid.items():
+            if piece.triangle_count == 0:
+                continue
+            builder.add_mesh(name, prepare(piece), with_tangents=False)
+            solid_names.append(name)
+        for name, piece in walk.items():
+            if piece.triangle_count == 0:
+                continue
+            builder.add_mesh(name, prepare(piece), with_tangents=False)
+            walk_names.append(name)
+        exported[key] = (solid_names, walk_names)
+
+    root = GLTF.Node("AmethystBarrens")
+    root_index = builder.add_node(root)
+    groups = {}
+    for group_name in ("Terrain", "Water", "Crystal", "Structures", "Props",
+                       "Boundary"):
+        groups[group_name] = builder.add_node(GLTF.Node(f"Group_{group_name}"),
+                                              root_index)
+
+    for name, piece in build.terrain_meshes.items():
+        if piece.triangle_count == 0:
+            continue
+        builder.add_mesh(name, prepare(piece), with_tangents=False)
+        parent = groups["Boundary"] if name.startswith("Backdrop") else groups["Terrain"]
+        builder.add_node(GLTF.Node(name, mesh=name), parent)
+    for name, piece in build.water_meshes.items():
+        if piece.triangle_count == 0:
+            continue
+        builder.add_mesh(name, prepare(piece), with_tangents=False)
+        builder.add_node(GLTF.Node(name, mesh=name), groups["Water"])
+
+    kind_group = {
+        "crystal": "Crystal", "shards": "Crystal", "rock": "Crystal",
+        "building": "Structures", "landmark": "Structures",
+        "interactive": "Structures", "prop": "Props", "scatter": "Props",
+    }
+    used_names: set[str] = set()
+
+    def unique(name: str) -> str:
+        if name not in used_names:
+            used_names.add(name)
+            return name
+        suffix = 2
+        while f"{name}_{suffix}" in used_names:
+            suffix += 1
+        used_names.add(f"{name}_{suffix}")
+        return f"{name}_{suffix}"
+
+    for placement in build.placements:
+        solid_names, walk_names = exported.get(placement.mesh, ([], []))
+        if not solid_names and not walk_names:
+            continue
+        parent = groups[kind_group.get(placement.kind, "Props")]
+        node_name = unique(placement.node)
+        placement.node = node_name
+        scale = (placement.scale, placement.scale, placement.scale)
+        if len(solid_names) == 1 and not walk_names:
+            builder.add_node(GLTF.Node(node_name, mesh=solid_names[0],
+                                       translation=placement.position,
+                                       rotation_y=placement.rotation_y,
+                                       scale=scale), parent)
+            continue
+        container = builder.add_node(
+            GLTF.Node(node_name, translation=placement.position,
+                      rotation_y=placement.rotation_y, scale=scale), parent)
+        for piece_name in solid_names:
+            material = piece_name.split("__")[-1]
+            builder.add_node(GLTF.Node(unique(f"{node_name}__{material}"),
+                                       mesh=piece_name), container)
+        for piece_name in walk_names:
+            material = piece_name.split("__")[-1]
+            # the navigation prefix has to be on the node the client sees
+            builder.add_node(GLTF.Node(unique(f"Walk_{node_name}__{material}"),
+                                       mesh=piece_name), container)
+
+    size = builder.write_glb(str(path))
+    stats = builder.statistics()
+    stats["glbBytes"] = size
+    stats["instancedTriangles"] = builder.instanced_triangles()
+    return builder, stats
+
+
+# --------------------------------------------------------------------------
+COLLISION_CELL = 0.5
+COLLISION_HEIGHT_STEP = 0.2
+COLLISION_HEIGHT_ORIGIN = -2.2
+
+
+def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
+    """Half-metre walkability grid over the server footprint (EWCG version 1)."""
+    t = build.terrain
+    width = int(round((REG.PLAY_MAX_X - REG.PLAY_MIN_X + REG.METRES_PER_TILE)
+                      / COLLISION_CELL))
+    height = int(round((REG.PLAY_MAX_Z - REG.PLAY_MIN_Z + REG.METRES_PER_TILE)
+                       / COLLISION_CELL))
+    width -= width % 6
+    height -= height % 6
+
+    # Rows are indexed by server tile Y, which runs north to south, so row 0 is
+    # the +Z (southern) edge. Writing the grid the other way round silently
+    # mirrors every walkability decision about the map.
+    xs = REG.PLAY_MIN_X + (np.arange(width) + 0.5) * COLLISION_CELL
+    zs = REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE \
+        - (np.arange(height) + 0.5) * COLLISION_CELL
+    gx, gz = np.meshgrid(xs, zs)
+    ground = t.height_at(gx, gz)
+
+    gradient_z, gradient_x = np.gradient(t.height, t.cell)
+    slope_grid = np.hypot(gradient_x, gradient_z)
+    cx = np.clip(((gx - t.x0) / t.cell).astype(int), 0, t.cols - 1)
+    cz = np.clip(((gz - t.z0) / t.cell).astype(int), 0, t.rows - 1)
+    slope = slope_grid[cz, cx]
+
+    walkable = (ground > REG.SEA_LEVEL + 0.35) & (slope < 1.05)
+    blockers = np.zeros_like(walkable)
+    for placement in build.placements:
+        if not placement.collides:
+            continue
+        item = build.meshes[placement.mesh]
+        low, high = item.bounds()
+        footprint = float(max(abs(low[0]), abs(high[0]), abs(low[2]), abs(high[2]))) \
+            * placement.scale
+        factor = 0.30 if placement.kind in ("crystal", "shards") else 0.62
+        radius = min(max(footprint * factor, 0.40), 11.0)
+        px, _, pz = placement.position
+        blockers |= (np.hypot(gx - px, gz - pz) < radius)
+    walkable &= ~blockers
+
+    surface = ground.copy()
+    # An overhead walk surface owns its footprint: the client grounds an actor on
+    # the highest walk surface below the ray, so a two-level column cannot be
+    # expressed on a flat server grid. Bridge decks therefore take the cell, and
+    # the ground under them is not separately walkable.
+    elevated = 0
+    for placement in build.placements:
+        item = build.meshes[placement.mesh]
+        walk_bounds = getattr(item, "walk_bounds", lambda: None)()
+        if walk_bounds is None and not placement.walk_surface:
+            continue
+        if walk_bounds is None:
+            low, high = item.bounds()
+        else:
+            low, high = walk_bounds
+        px, py, pz = placement.position
+        half_x = float(max(abs(low[0]), abs(high[0]))) * placement.scale
+        half_z = float(max(abs(low[2]), abs(high[2]))) * placement.scale
+        deck_y = py + float(high[1]) * placement.scale
+        radius = max(min(half_x, half_z) * 0.85, 0.4)
+        footprint = np.hypot(gx - px, gz - pz) < radius
+        if not footprint.any():
+            continue
+        if deck_y > ground.max() + 200.0:
+            continue
+        elevated += 1
+        surface = np.where(footprint, deck_y, surface)
+        walkable = np.where(footprint, True, walkable)
+
+    quantised = np.clip(np.round((surface - COLLISION_HEIGHT_ORIGIN)
+                                 / COLLISION_HEIGHT_STEP), 1, 63).astype(np.uint8)
+    grid = np.where(walkable, quantised, 0).astype(np.uint8)
+    saturated = int(((grid == 63) & walkable).sum())
+
+    payload = struct.pack("<4sHHII", b"EWCG", 1, 0, width, height) + grid.tobytes()
+    stats = {
+        "width": width, "height": height, "cellMetres": COLLISION_CELL,
+        "walkableCells": int(walkable.sum()),
+        "blockedCells": int((~walkable).sum()),
+        "walkableFraction": round(float(walkable.mean()), 4),
+        "elevatedDecks": elevated,
+        "saturatedCells": saturated,
+        "saturatedFraction": round(saturated / max(int(walkable.sum()), 1), 4),
+        "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+        "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    }
+    return payload, width, height, stats
+
+
+# --------------------------------------------------------------------------
+def render_minimap(build: REG.RegionBuild, sets, path: Path, size: int = 768) -> dict:
+    """Top-down capture of the finished geometry."""
+    import preview
+    scene = preview.scene_from_build(build, sets)
+    span = max(REG.PLAY_MAX_X - REG.PLAY_MIN_X, REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
+    centre_x = (REG.PLAY_MIN_X + REG.PLAY_MAX_X) * 0.5
+    centre_z = (REG.PLAY_MIN_Z + REG.PLAY_MAX_Z) * 0.5
+    height = span * 1.06
+    image = scene.render(size, size,
+                         eye=(centre_x, height, centre_z + 0.001),
+                         target=(centre_x, 0.0, centre_z),
+                         fov=60.0, sun=(-0.42, 0.72, 0.55))
+    Image.fromarray(image).save(path, "WEBP", quality=88, method=5)
+    return {
+        "file": path.name,
+        "pixels": [size, size],
+        "worldMin": [REG.PLAY_MIN_X, REG.PLAY_MIN_Z],
+        "worldMax": [REG.PLAY_MAX_X, REG.PLAY_MAX_Z],
+        "metresPerPixel": round(span / size, 4),
+        "renderedFrom": "final geometry (offline rasteriser)",
+    }
+
+
+# --------------------------------------------------------------------------
+def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
+                   minimap: dict, path: Path) -> dict:
+    t = build.terrain
+    lows, highs = [], []
+    for piece in list(build.terrain_meshes.values()) + list(build.water_meshes.values()):
+        if piece.triangle_count:
+            low, high = piece.bounds()
+            lows.append(low)
+            highs.append(high)
+    for placement in build.placements:
+        item = build.meshes[placement.mesh]
+        low, high = item.bounds()
+        offset = np.asarray(placement.position)
+        lows.append(low * placement.scale + offset)
+        highs.append(high * placement.scale + offset)
+    bounds_min = np.vstack(lows).min(axis=0)
+    bounds_max = np.vstack(highs).max(axis=0)
+
+    collision_nodes = sorted({p.node for p in build.placements if p.collides})
+
+    manifest = {
+        "schemaVersion": SCHEMA_VERSION,
+        "assetVersion": ASSET_VERSION,
+        "asset": {
+            "id": "amethyst_barrens",
+            "name": "Amethyst Barrens",
+            "glb": "world.glb",
+            "units": "meters",
+            "coordinateSystem": {"handedness": "right", "upAxis": "Y",
+                                 "northAxis": "-Z"},
+            "origin": [0, 0, 0],
+            "bounds": {"min": [round(float(v), 2) for v in bounds_min],
+                       "max": [round(float(v), 2) for v in bounds_max]},
+            "playableBounds": {
+                "min": [REG.PLAY_MIN_X, round(float(t.height.min()), 2), REG.PLAY_MIN_Z],
+                "max": [REG.PLAY_MAX_X, round(float(t.height.max()), 2), REG.PLAY_MAX_Z]},
+            "seaLevel": REG.SEA_LEVEL,
+            "serverCells": REG.SERVER_CELLS,
+        },
+        "coordinateTransform": {
+            "metresPerTile": REG.METRES_PER_TILE,
+            "serverOrigin": list(REG.SERVER_ORIGIN),
+            "origin": [0.0, 0.0, 0.0],
+            "walkingHeight": round(float(t.height_at(*REG.SPAWN)), 2),
+            "invertServerY": True,
+        },
+        "spawnPoints": build.spawns,
+        "collision": {
+            "nodeNames": collision_nodes,
+            "binary": "collision.bin",
+            "format": "EWCG-v1",
+            "cellMetres": COLLISION_CELL,
+            "width": collision_stats["width"],
+            "height": collision_stats["height"],
+            "heightEncoding": {
+                "origin": COLLISION_HEIGHT_ORIGIN,
+                "step": COLLISION_HEIGHT_STEP,
+                "range": [1, 63],
+                "zeroMeansBlocked": True,
+                "note": ("The six-bit field spans -2.0 m to 10.4 m. The barrens "
+                         "basin is authored inside that band on purpose, so "
+                         f"only {collision_stats['saturatedFraction'] * 100:.1f}% "
+                         "of walkable cells saturate - those are the mountain "
+                         "flanks and the massif. Elsewhere the encoded height is "
+                         "the real surface height, and the server has genuine "
+                         "elevation rather than a flat plateau."),
+            },
+            "walkableCells": collision_stats["walkableCells"],
+            "walkableFraction": collision_stats["walkableFraction"],
+            "saturatedCells": collision_stats["saturatedCells"],
+        },
+        "navigation": {
+            "surfaceNodePrefixes": ["Terrain_", "Walk_"],
+            "walkableAreas": ["barrens", "resonant-roads", "paving", "shore",
+                              "crystal-fields", "bridges", "stairs"],
+            "agentRadius": 0.55,
+            "agentHeight": 1.9,
+            "maxSlopeDegrees": 40,
+            "navmesh": {"format": "surface-prefix-v1", "polygons": []},
+            "notes": [
+                "Every terrain sub-mesh is named Terrain_<class>; every built "
+                "walkable surface is named Walk_<...>. The client turns both "
+                "into the navigation collision layer the grounding ray tests.",
+                "Crystal bridge decks are walk surfaces, so a downward grounding "
+                "ray under one resolves onto the deck above; the gully or river "
+                "beneath them is not separately walkable.",
+            ],
+        },
+        "landmarks": build.landmarks,
+        "interactives": build.interactives,
+        "npcMarkers": build.npc_markers,
+        "harvestables": build.harvestables,
+        "portals": build.portals,
+        "roads": [{"id": name,
+                   "waypoints": [[round(float(p[0]), 1),
+                                  round(float(t.height_at(p[0], p[1])), 2),
+                                  round(float(p[1]), 1)] for p in points]}
+                  for name, points in REG.ROUTES.items()],
+        "water": {
+            "seaLevel": REG.SEA_LEVEL,
+            "serverCells": REG.SERVER_CELLS,
+            "bodies": [{"id": name, "node": name,
+                        "type": ("sea" if "Sea" in name
+                                 else "stream" if "River" in name else "pool")}
+                       for name in build.water_meshes],
+            "streams": [{"id": name,
+                         "waypoints": [[round(float(p[0]), 1),
+                                        round(float(t.height_at(p[0], p[1])), 2),
+                                        round(float(p[1]), 1)] for p in points]}
+                        for name, points in REG.STREAMS.items()],
+        },
+        "environment": {
+            # A permanent storm over a violet basin: cold blue-grey sky, a low
+            # bruised sun, and the crystal supplying most of the colour.
+            "sky": {"type": "gradient", "zenith": [0.10, 0.09, 0.16],
+                    "horizon": [0.34, 0.30, 0.38]},
+            "sun": {"direction": [-0.38, 0.42, 0.82],
+                    "color": [0.96, 0.88, 1.02], "energy": 0.82},
+            "ambient": {"skyColor": [0.20, 0.17, 0.30],
+                        "groundColor": [0.10, 0.08, 0.06], "energy": 0.34},
+            "saturation": 1.24,
+            "fog": {"enabled": True, "color": [0.30, 0.27, 0.36],
+                    "density": 0.0011, "heightFalloff": 0.0026},
+            "goldenHour": {"sun": {"direction": [-0.86, 0.16, 0.48],
+                                   "color": [1.35, 0.86, 0.72]},
+                           "fog": {"color": [0.52, 0.40, 0.44], "density": 0.0026}},
+            "presentation": {
+                "stormFlashes": {"enabled": True, "density": 0.7,
+                                 "zones": ["massif", "barrens-core"]},
+                "crystalGlow": {"enabled": True,
+                                "zones": ["massif", "diggings", "roads"]},
+                "duststorm": {"enabled": True, "zones": ["barrens-core", "south"]},
+                "ambientAudio": [
+                    {"id": "storm-distant", "zone": "barrens-core"},
+                    {"id": "crystal-resonance", "zone": "massif"},
+                    {"id": "surf", "zone": "coast"},
+                    {"id": "camp", "zone": "observatory"}],
+            },
+            "zones": [
+                {"id": "barrens-core", "centre": [90.0, 5.0, -30.0], "radius": 220.0},
+                {"id": "massif", "centre": [168.0, 30.0, -330.0], "radius": 130.0},
+                {"id": "observatory", "centre": [-78.0, 12.0, -204.0], "radius": 96.0},
+                {"id": "coast", "centre": [330.0, 2.0, -330.0], "radius": 120.0},
+                {"id": "south", "centre": [60.0, 4.0, 120.0], "radius": 140.0},
+            ],
+        },
+        "minimap": minimap,
+        "lodGroups": [
+            {"id": "crystal", "strategy": "authored-detail-tiers",
+             "levels": [{"id": "near", "suffix": "_high"},
+                        {"id": "mid", "suffix": "_mid"},
+                        {"id": "far", "suffix": "_low"}]}],
+        "performance": stats,
+        "sources": [
+            {"id": "aerial-concept",
+             "file": "references/01-concept-aerial-overview.png",
+             "role": "authoritative-composition"},
+            {"id": "detail-board",
+             "file": "references/00-concept-detail-board.png",
+             "role": "authoritative-player-scale"},
+            {"id": "generator", "file": "source/build_amethyst.py",
+             "role": "reproducible-build", "seed": SEED},
+        ],
+        "provenance": {
+            "assets": "original to Eloria/Nymara; generated by _toolkit/amberwood/*",
+            "thirdParty": "none",
+            "textures": "procedural (numpy + Pillow), no sampled or traced source",
+            "geometry": "procedural (numpy), no imported models",
+            "license": "same as the Eloria client repository",
+        },
+        "productionStatus": "production-geometry-materials-population",
+        "knownLimitations": [],
+    }
+    path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    return manifest
+
+
+# --------------------------------------------------------------------------
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", default=str(PACKAGE))
+    parser.add_argument("--seed", type=int, default=SEED)
+    parser.add_argument("--skip-minimap", action="store_true")
+    parser.add_argument("--skip-lod2", action="store_true")
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+
+    import preview
+    sets = preview.texture_sets()
+
+    build = build_region(args.seed)
+
+    t0 = time.time()
+    builder, stats = export_glb(build, sets, out / "world.glb")
+    print(f"[glb] {stats['glbBytes'] / 1e6:.2f} MB, {stats['nodes']} nodes, "
+          f"{stats['uniqueTriangles']} unique tris, "
+          f"{stats['instancedTriangles']} instanced tris "
+          f"({time.time() - t0:.1f}s)")
+
+    payload, width, height, collision_stats = build_collision(build)
+    (out / "collision.bin").write_bytes(payload)
+    print(f"[collision] {width}x{height} cells, "
+          f"{collision_stats['walkableFraction'] * 100:.1f}% walkable, "
+          f"{collision_stats['saturatedFraction'] * 100:.1f}% saturated")
+
+    minimap = {"file": "minimap.webp"}
+    if not args.skip_minimap:
+        t0 = time.time()
+        minimap = render_minimap(build, sets, out / "minimap.webp")
+        print(f"[minimap] rendered in {time.time() - t0:.1f}s")
+
+    used = {name: ts for name, ts in sets.items()
+            if name in {MAT.BY_NAME[m].texture for m in MATERIALS if m in MAT.BY_NAME}}
+    texture_bytes = sum(sum(len(v) for v in ts.images().values())
+                        for ts in used.values())
+    stats["embeddedTextureBytes"] = texture_bytes
+    stats["textureMemoryBytesUncompressed"] = sum(
+        ts.base_color.shape[0] * ts.base_color.shape[1] * 4 * 3 for ts in used.values())
+    stats["placements"] = len(build.placements)
+    stats["collision"] = collision_stats
+    stats["notes"] = build.notes
+
+    manifest = write_manifest(build, stats, collision_stats, minimap,
+                              out / "world.json")
+    print(f"[manifest] {len(manifest['landmarks'])} landmarks, "
+          f"{len(manifest['interactives'])} interactives, "
+          f"{len(manifest['harvestables'])} harvestables, "
+          f"{len(manifest['portals'])} portals")
+
+    report = validate_gltf.validate(str(out / "world.glb"))
+    payload = report.to_dict()
+    (out / "world.glb.validator.json").write_text(json.dumps(payload, indent=2) + "\n")
+    counts = payload["issues"]
+    print(f"[validate] errors={counts['numErrors']} warnings={counts['numWarnings']} "
+          f"infos={counts['numInfos']}")
+    for message in report.messages:
+        if message["severity"] <= 1:
+            print("   ", message["code"], message["message"], message["pointer"])
+
+    if not args.skip_lod2:
+        t0 = time.time()
+        lod_sets = {name: texture_set.reduced() for name, texture_set in sets.items()}
+        lod_build = build_region(args.seed, lod="far")
+        lod_build.terrain_meshes = lod_build.terrain.build_meshes(uv_scale=0.28)
+        _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
+        stats["lod2"] = {
+            "glbBytes": lod_stats["glbBytes"],
+            "nodes": lod_stats["nodes"],
+            "uniqueTriangles": lod_stats["uniqueTriangles"],
+            "instancedTriangles": lod_stats["instancedTriangles"],
+        }
+        print(f"[lod2] {lod_stats['glbBytes'] / 1e6:.2f} MB, "
+              f"{lod_stats['instancedTriangles']} instanced tris "
+              f"({time.time() - t0:.1f}s)")
+        lod_report = validate_gltf.validate(str(out / "world-lod2.glb"))
+        (out / "world-lod2.glb.validator.json").write_text(
+            json.dumps(lod_report.to_dict(), indent=2) + "\n")
+        write_manifest(build, stats, collision_stats, minimap, out / "world.json")
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

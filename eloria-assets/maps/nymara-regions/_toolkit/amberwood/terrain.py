@@ -26,15 +26,40 @@ ROCK = 4
 SCORCHED = 5
 MEADOW = 6
 
+# -- Amethyst Barrens. Appended, never inserted: see the note on materials.SPECS.
+# Classes are allocated in blocks so concurrent region work does not collide:
+# 7-10 Mirrorhold, 11-14 Whitehorn, 15-18 Amethyst Barrens, 19-22 Crownwater.
+BARRENS = 15
+CRYSTAL_FIELD = 16
+RESONANT_ROAD = 17
+STORM_ROCK = 18
+
 SURFACE_NAMES = {
     FOREST: "ForestFloor", PATH: "Trail", PAVING: "Paving", SHORE: "Shore",
     ROCK: "Rock", SCORCHED: "Ash", MEADOW: "Meadow",
+    BARRENS: "Barrens", CRYSTAL_FIELD: "CrystalField",
+    RESONANT_ROAD: "ResonantRoad", STORM_ROCK: "StormRock",
 }
 SURFACE_MATERIALS = {
     FOREST: "forest_floor", PATH: "leaf_path", PAVING: "cobble_paving",
     SHORE: "shore_shingle", ROCK: "cliff_rock", SCORCHED: "scorched_ground",
     MEADOW: "meadow_grass",
+    BARRENS: "amethyst_barrens_dust", CRYSTAL_FIELD: "amethyst_crystal_field",
+    RESONANT_ROAD: "amethyst_resonant_road", STORM_ROCK: "amethyst_storm_rock",
 }
+
+# Surfaces a region placed deliberately, which the slope and shore rules in
+# `assign_surface_by_rule` must not overwrite. A region adding a class that it
+# authors by hand adds it here too; extending this set is the supported way to
+# do that, so nobody has to edit the rule itself.
+AUTHORED_SURFACES: set[int] = {
+    PATH, PAVING, SCORCHED, MEADOW,
+    CRYSTAL_FIELD, RESONANT_ROAD,
+}
+
+# Surfaces whose border must stay crisp, so `dither_boundaries` leaves them
+# alone. Paving and the resonant roadway read as laid, not grown.
+UNDITHERED_SURFACES: set[int] = {PAVING, RESONANT_ROAD}
 
 
 def _smoothstep(edge0: float, edge1: float, x: np.ndarray) -> np.ndarray:
@@ -224,12 +249,25 @@ class Terrain:
             self.surface = np.where(inside, surface, self.surface)
         self.tree_block |= (np.abs(rx) <= half_x + 1.5) & (np.abs(rz) <= half_z + 1.5)
 
-    def sea_shelf(self, shore_x, depth: float = 14.0, slope: float = 0.22) -> None:
-        """Push everything west of the shoreline below sea level."""
+    def sea_shelf(self, shore_x, depth: float = 14.0, slope: float = 0.22,
+                  side: str = "west") -> None:
+        """Push everything to seaward of the shoreline below sea level.
+
+        `side` names which way the water lies. Amberwood's coast is western;
+        Amethyst Barrens' sea bites into the eastern corners, and mirroring the
+        comparison is the whole of the difference.
+        """
+        if side not in ("west", "east"):
+            raise ValueError(f"side must be 'west' or 'east', not {side!r}")
         shore = shore_x(self.gz) if callable(shore_x) else np.full(self.gz.shape, shore_x)
-        offshore = np.clip(shore - self.gx, 0.0, None)
+        if side == "west":
+            offshore = np.clip(shore - self.gx, 0.0, None)
+            seaward = self.gx < shore
+        else:
+            offshore = np.clip(self.gx - shore, 0.0, None)
+            seaward = self.gx > shore
         self.height = np.where(
-            self.gx < shore,
+            seaward,
             np.minimum(self.height, -offshore * slope * (1.0 + offshore * 0.012)),
             self.height)
         self.height = np.maximum(self.height, -depth)
@@ -319,7 +357,7 @@ class Terrain:
         """Rock on steep ground, shore near the water line, keeping authored classes."""
         gradient_z, gradient_x = np.gradient(self.height, self.cell)
         slope = np.hypot(gradient_x, gradient_z)
-        authored = np.isin(self.surface, [PATH, PAVING, SCORCHED, MEADOW])
+        authored = np.isin(self.surface, sorted(AUTHORED_SURFACES))
         rocky = (slope > 1.05) & ~authored
         self.surface = np.where(rocky, ROCK, self.surface)
         shore_band = (self.height < sea_level + 1.6) & (self.height > sea_level - 6.0) \
@@ -340,7 +378,7 @@ class Terrain:
         candidate = np.where(pick > 0, neighbours[0], neighbours[3])
         swap = boundary & (noise > 0.62)
         # never dither a built surface away from a road or courtyard
-        protect = np.isin(self.surface, [PAVING])
+        protect = np.isin(self.surface, sorted(UNDITHERED_SURFACES))
         self.surface = np.where(swap & ~protect, candidate, self.surface)
 
     # -- export -----------------------------------------------------------
