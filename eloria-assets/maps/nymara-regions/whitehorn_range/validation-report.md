@@ -9,7 +9,7 @@ What was checked, how, and — more importantly — what was not.
 | glTF 2.0 validity | `_toolkit/validate_gltf.py ../world.glb` | **0 errors, 0 warnings, 0 infos** |
 | Runtime contract | `_toolkit/verify_runtime.py --package ..` | **0 errors**, 1 warning |
 | Grounding | same | **331,776 tiles sampled, 0 misses (0.00%)** |
-| Collision grid | same | 1152 x 1152 @ 0.5 m, 72.0% walkable, both dimensions multiples of six (1152 = 6 x 192) |
+| Collision grid | same | 1152 x 1152 @ 0.5 m, 72.1% walkable, both dimensions multiples of six (1152 = 6 x 192) |
 | Server tests | `pytest tests/` in `eloria-server` | 431 passed, 80 failed — **identical to the develop baseline with the change stashed**, so none are caused by this work |
 | Nymara server tests specifically | `pytest tests/test_nymara_*.py tests/test_client_content_sync.py` | 21 passed |
 
