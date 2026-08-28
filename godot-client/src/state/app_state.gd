@@ -41,6 +41,7 @@ var selected_knowledge: int = -1
 var knowledge_text: String = ""
 var unknown_packet_count := 0
 var recent_protocol_errors: Array[String] = []
+var invasion_assistant: Dictionary = {"open": false}
 
 func _ready() -> void:
 	Network.connection_state_changed.connect(_on_connection_state_changed)
@@ -76,11 +77,19 @@ func _on_connection_state_changed(value: String) -> void:
 		known_knowledge.clear()
 		selected_knowledge = -1
 		knowledge_text = ""
+		invasion_assistant = {"open": false}
 	state_changed.emit(&"connection")
 
 func _on_packet(command: int, payload: PackedByteArray) -> void:
 	var event := EloriaProtocol.decode_server(command, payload)
 	match event.type:
+		"invasion_assistant":
+			var update: Dictionary = (event.state as Dictionary).duplicate(true)
+			var kind: String = str(update.get("kind", ""))
+			invasion_assistant["open"] = true
+			invasion_assistant[kind] = update
+			invasion_assistant["last_kind"] = kind
+			state_changed.emit(&"invasion_assistant")
 		"login_ok":
 			authenticated = true
 			login_succeeded.emit()

@@ -1,0 +1,157 @@
+# Whitehorn Range change log
+
+## From placeholder to production
+
+The starting package was the `terrain-landmark-material-pass` placeholder, with
+every defect listed in section 3 of the production guide. All were confirmed
+present before any work started:
+
+| Defect | Confirmed | Resolution |
+| --- | --- | --- |
+| Terrain flat | `Terrain_ELM_Authority` y = 0.0, extent only ±96 m | sculpted heightfield, -37.7 m to 180.1 m, full 576 m footprint |
+| Landmarks belong to other regions | 12 of 20 meshes foreign: Grey Moor, Westhaven, Amethyst, Amberwood, Ssarathi, Mirrorhold, Sunmane, Manymouth, Orun, Crownwater | all discarded; nothing from the placeholder is preserved |
+| No bounds, no coordinate transform | `bounds: null`, `coordinateTransform: null` | both written, arrival datum at server (174, 174) |
+| Navigation prefix incomplete | `["Terrain_"]` only | `["Terrain_", "Walk_"]` |
+| `source-elm` is a flat placeholder | 32 x 32 tiles, height 11 everywhere | regenerated at 96 x 96 tiles / 576 x 576 cells |
+| Detail board truncated | 786,445 bytes, IDAT fails to decode | **not resolved** — see `validation-report.md` §4 |
+
+## Build history
+
+1. **Terrain pass.** Heightfield, built ground, alpine surface classification.
+   Committed on its own once `validate_gltf` reported 0/0 and `verify_runtime`
+   reported 0 errors and 0 grounding misses across all 331,776 tiles, as the
+   guide requires before any detail work.
+
+2. **Population.** Landmarks, crossings, satellites, roadside markers, seracs,
+   vegetation, scatter, metadata markers.
+
+3. **Corrections found by looking at the captures**, in the order they were
+   caught. Each was a real defect that the validators did not and could not
+   catch:
+
+   - *The region rendered brown.* Rock was the default surface and snow a
+     high-altitude band, producing a brown bowl with a white rim against a
+     concept that is white almost everywhere. Snow became the base class and
+     rock what breaks through on steep ground.
+   - *The boundary became a brown apron.* Widening the rim to soften it pushed
+     a 74 m continuously-sloped ramp into playable ground, and a continuous
+     ramp is all slope, so all of it classified as rock. The rim narrowed and
+     the scour threshold became altitude-dependent so high ground keeps snow.
+   - *The lighting was Amberwood's.* `capture_views` hardcoded a warm autumn
+     sun at saturation 1.30, which renders snow as sand. Regions can now
+     declare `DAY_LIGHTING` / `GOLDEN_LIGHTING` overrides.
+   - *The temple showed its back.* Kit pieces are built facing `-Z`; the temple
+     was placed unrotated, so a player approaching from the south met the
+     mountain mass behind it. Rotated a half turn.
+   - *The temple floated.* Its backing mass was sized to the facade, and the
+     shelf falls away behind it. The mass now runs 30 m below grade.
+   - *The glowing portal was invisible.* The crystal sat 0.1 m behind the
+     facade's front face. Pushed proud of it.
+   - *The gorge had been filled in.* `grade_path` levels a road corridor to a
+     smoothed profile, which bridged the 22 m chasm two routes cross. The gorge
+     is now re-cut after the roads so it wins.
+   - *The bridges sat at the bottom of the gorge.* A 26 m span sampled its
+     "rims" from inside a 30 m cut, putting the deck 29 m below the road. Spans
+     are now fixed constants measured from the cut.
+   - *The pine was entirely bark-coloured.* `mesh.merge` collapses every part
+     onto the first part's material. The conifer became a `MeshGroup`.
+   - *Landmark markers sat under their own decks.* The temple and bridge
+     markers recorded raw terrain height, which `verify_runtime` correctly
+     reported as "landmark below surface". They now record deck height.
+   - *The gorge floor disagreed with its collision encoding.* At -26 m it is
+     past what the six-bit height field expresses. It is now explicitly
+     unwalkable, which is also the correct design.
+   - *Two empty group nodes.* The GLB emitted `Group_Ice` and `Group_Boundary`
+     with no children, which the validator reported as `NODE_EMPTY` infos.
+     Group nodes are now created on first use. Report went 2 infos → 0.
+
+## Toolkit changes
+
+Made in `_toolkit/`, additively, because the region genuinely needed
+capabilities that were not there. Announced to the other four concurrent region
+sessions before landing.
+
+| Change | Why |
+| --- | --- |
+| `regionpaths.load_region_build()` / `load_region_module()` | shared module discovery, previously duplicated in `export_source_elm.py` |
+| `capture_views.py` no longer imports `build_amberwood` and `amberwood.region` by name | it rendered Amberwood's terrain whichever package you pointed it at |
+| `capture_views.py` sea-level guard | a region with no sea has no sea level to reject a camera against |
+| `capture_views.py` `DAY_LIGHTING` / `GOLDEN_LIGHTING` hooks | the presets are tuned for an autumn forest; a snow region under them renders brown. Regions that declare neither are unaffected |
+| `make_comparison.py` region-aware labels | sheets said "Amberwood build" for every region |
+| `make_comparison.py` tolerates an undecodable board | nine of eleven region packages ship a truncated board; crashing on it loses the aerial sheet and the contact sheet too |
+
+`export_source_elm.py`'s local `load_region_build` now delegates to
+`regionpaths`, so there is one implementation. Amberwood was re-checked through
+the new path and resolves to the same modules.
+
+No existing toolkit behaviour was changed. Nothing was forked.
+
+## Server change
+
+`eloria-server`, branch `feature/whitehorn-range-576m-server-map`, following the
+shape Amberwood and Mirrorhold used:
+
+- `tools/generate_nymara_maps.py`: `MAP_TILES_WIDE_BY_NAME["whitehorn_range"] = 96`,
+  `ARRIVAL_TILES["whitehorn_range"] = (174, 174)`
+- `config/eloria/client_content_manifest.json`: register the map at 576 cells
+- `config/eloria/maps.txt`: rescale all eight `whitehorn_range` portal endpoints
+  from the 192-tile map to the 576-tile map (x3; 58 → 174)
+- `tests/`: expected dimensions, arrivals and sizes in four test modules
+
+431 passed / 80 failed, identical to the develop baseline with the change
+stashed. None of the failures are caused by this work.
+
+## Shared files touched
+
+- `godot-client/data/maps/registry.json` — Whitehorn's entry only
+- `eloria-assets/maps/nymara-regions/production-index.json` — Whitehorn's entry only
+
+Both are expected to conflict with the other four region branches; resolve by
+keeping both sides.
+
+## After the intact detail board arrived
+
+The board that shipped in the package was truncated and would not decode, so
+the first panel sheet was a placeholder. An intact copy was found in the main
+working tree and committed, and comparing against real concept art immediately
+showed defects the wide-angle captures had hidden:
+
+- **Panel cameras were 50–90 m back.** The board's panels are intimate; at that
+  distance every subject was a speck in a snowfield. Moved to 7–25 m.
+- **The ice cave was a plain pale ball.** One icosphere with a throat pushed
+  into it: the mass swallowed the opening. Rebuilt as flanking shoulders and a
+  brow with an actual void between them.
+- **The frozen cascades were flat cardboard on open snow.** Rebuilt as many thin
+  overlapping columns on a rock backing, with a frozen pool and ice rubble.
+- **`timber_dark` is not dark.** Both the mine adit and the cave void read as
+  tan boards across their openings. Both now use `dark_iron`.
+- **The cascades faced away**, the same trap the temple hit — built facing -Z
+  and placed unrotated on a valley approached from the south, so the rock
+  backing sat between the camera and the ice.
+- **Panel 3 was aimed into the gorge bed.** The deck sits ~44 m above the floor,
+  so a target taken as "2 m above ground" pointed downward. Now shot in profile
+  from the east.
+
+## Corrections from the other region builds
+
+Running four regions concurrently caught things no single session would have:
+
+- **The rope bridges made their own ropes walkable.** `walk_surface=True` on a
+  MeshGroup placement renames the container node, and every solid child then
+  inherits the `Walk_` prefix. 13 walk-surface nodes where there should have
+  been 2. Found by the Amethyst Barrens build hitting it on an observatory dome.
+- **`environment.sun.direction` is the direction light travels.** A positive Y
+  lights the world from underneath, and no offline preview can show it. Found
+  by the Crownwater build. Whitehorn had no sun block at all and now declares
+  one, with the sign verified in-engine.
+- **`capture_views` imported Amberwood by name**, so it rendered Amberwood's
+  terrain whichever package it was pointed at. Found here, fixed in the shared
+  toolkit, and re-run by the other regions.
+
+## Base
+
+Rebased onto `origin/develop` after the Mirrorhold work and the Amberwood
+regeneration landed there. The toolkit changes this region originally made were
+dropped in favour of the equivalent ones already on develop, except the
+`DAY_LIGHTING`/`GOLDEN_LIGHTING` hooks and the `--check-sun` mode, which are
+this region's contributions to the shared harness.

@@ -2,27 +2,27 @@
 
 ```json
 {
-  "nodes": 10063,
+  "nodes": 10069,
   "meshes": 298,
-  "materials": 32,
-  "images": 88,
-  "textures": 88,
+  "materials": 31,
+  "images": 86,
+  "textures": 86,
   "accessors": 1192,
-  "bufferViews": 1280,
-  "uniqueTriangles": 534697,
-  "uniqueVertices": 425164,
-  "glbBytes": 28965536,
-  "instancedTriangles": 3146376,
-  "embeddedTextureBytes": 9495545,
-  "textureMemoryBytesUncompressed": 88866816,
-  "placements": 9377,
+  "bufferViews": 1278,
+  "uniqueTriangles": 535709,
+  "uniqueVertices": 426253,
+  "glbBytes": 28717572,
+  "instancedTriangles": 3123378,
+  "embeddedTextureBytes": 17072436,
+  "textureMemoryBytesUncompressed": 147062784,
+  "placements": 9383,
   "collision": {
     "width": 1152,
     "height": 1152,
     "cellMetres": 0.5,
-    "walkableCells": 929247,
-    "blockedCells": 397857,
-    "walkableFraction": 0.7002,
+    "walkableCells": 932551,
+    "blockedCells": 394553,
+    "walkableFraction": 0.7027,
     "elevatedDecks": 23,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)"
@@ -33,19 +33,19 @@
     "outland places: 51 landmarks total",
     "forest instances: 2675",
     "undergrowth instances: 2256",
-    "FallenLog instances: 172",
-    "Stump instances: 200",
-    "LeafDrift instances: 538",
-    "Mushrooms instances: 253",
-    "Rock instances: 240"
+    "FallenLog instances: 158",
+    "Stump instances: 198",
+    "LeafDrift instances: 582",
+    "Mushrooms instances: 243",
+    "Rock instances: 249"
   ],
   "lod2": {
-    "glbBytes": 19060340,
-    "nodes": 6392,
-    "uniqueTriangles": 476635,
-    "instancedTriangles": 2198426,
-    "sizeReductionPercent": 34.2,
-    "triangleReductionPercent": 30.1
+    "glbBytes": 18993180,
+    "nodes": 6385,
+    "uniqueTriangles": 477607,
+    "instancedTriangles": 2203752,
+    "sizeReductionPercent": 33.9,
+    "triangleReductionPercent": 29.4
   }
 }
 ```

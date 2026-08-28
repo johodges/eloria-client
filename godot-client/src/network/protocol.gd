@@ -44,6 +44,7 @@ enum ServerMessage {
 	GET_ITEMS_COOLDOWN = 77, SEND_BUFFS = 78, SEND_SPECIAL_EFFECT = 79,
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
 	SEND_ACHIEVEMENTS = 95, ADD_NEW_ACTOR_EXTENDED = 247,
+	ELORIA_INVASION_ASSISTANT_STATE = 233,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
 }
@@ -302,6 +303,11 @@ static func actor_command_direction(command: int) -> Vector2i:
 
 static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 	match command:
+		ServerMessage.ELORIA_INVASION_ASSISTANT_STATE:
+			var parsed: Variant = JSON.parse_string(payload.get_string_from_utf8())
+			if not parsed is Dictionary:
+				return {"type": "invalid", "error": "invasion_assistant_json"}
+			return {"type": "invasion_assistant", "state": parsed}
 		ServerMessage.LOG_IN_OK:
 			return {"type": "login_ok"}
 		ServerMessage.LOG_IN_NOT_OK:

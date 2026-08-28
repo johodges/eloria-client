@@ -36,9 +36,9 @@ Ground dressing was re-costed rather than re-counted: leaf drifts drop from 320
 triangles to 80, mushroom clusters from 432 to 224, boulders from 320 to 80, and
 far-tier trunks lose two sides.
 
-Budgets: 29.0 MB GLB, 534,697 unique and
-3,146,376 instanced triangles, 10,063 nodes;
-LOD2 19.1 MB and 2,198,426
+Budgets: 28.7 MB GLB, 535,709 unique and
+3,123,378 instanced triangles, 10,069 nodes;
+LOD2 19.4 MB and 2,203,752
 triangles. The client's grounding ray was cast at all 331,776 reachable tiles
 with zero misses.
 
@@ -127,3 +127,98 @@ Replaces the `terrain-landmark-material-pass` starter package.
   sub-meshes under the `Walk_` prefix.
 * A reversed-edge `smoothstep` raised the entire terrain by the boundary-wall
   height instead of only its rim.
+
+
+## Regeneration — package rebuilt to match its source
+
+The committed package had drifted from the source that produces it. `world.glb`
+was last written by `b169ed70`; `b7e10891` then changed `textures.py` and
+`materials.py` for the interiors without rebuilding, and the later determinism
+fix changed five seeds again. So the shipped artefacts were the output of code
+that no longer existed.
+
+Rebuilt from the current source. Two independent cache-cold builds are
+byte-identical across `world.glb`, `world-lod2.glb`, `world.json`,
+`collision.bin`, `minimap.webp` and `performance-summary.md`, so the package now
+matches its source and reproduces.
+
+What changed, and why:
+
+| | before | after |
+| --- | --- | --- |
+| GLB | 29.0 MB | 31.5 MB, then 28.7 MB once trimmed (below) |
+| unique triangles | 534,697 | 535,709 |
+| instanced triangles | 3,146,376 | 3,123,378 |
+| nodes | 10,063 | 10,069 |
+| materials embedded | 32 | 37 |
+| LOD2 | 19.1 MB / 2,198,426 | 19.4 MB / 2,203,752 |
+
+The geometry differences are the determinism fix: five seeds moved from
+Python's salted `hash()` to `stable_hash()`, so tree variants, scatter
+positions, bark textures and channel noise all resolve differently. The
+composition is unchanged; the dice are.
+
+The 2.5 MB of growth is not geometry. It is the five materials `b7e10891`
+appended to the shared table for the interiors, which the region's pinned set
+inherited. **Six of the 37 embedded materials are not referenced by any mesh in
+`world.glb`** - `foliage_green`, `lime_plaster`, `packed_earth`,
+`sooted_plaster`, `charred_timber`, `water_deep` - and the 14 images reachable
+only from them account for 2.79 MB. Pinning to the 31 actually used would
+recover that. Left alone here because this pass was about reproducibility, not
+about changing what the region ships; it is a one-line change when someone
+wants it.
+
+Verified after the rebuild:
+
+```
+validate_gltf.py        0 errors, 0 warnings, 6 infos
+verify_runtime.py       0 errors, 331776 tiles sampled, 0 grounding misses
+                        5 warnings, the same five as before
+region_client_check.gd  in-engine, through the real WorldLoader
+```
+
+`../source-elm/amberwood.elm` is regenerated from the rebuilt collision grid.
+
+
+## Material pin trimmed to what the package actually references
+
+The pin added with the regeneration was the whole shared table - 37 materials -
+which was exactly right on the day it was written and wrong the moment the
+interiors commit appended five more. Six of the 37 were referenced by no mesh
+in `world.glb`: `foliage_green`, `lime_plaster`, `packed_earth`,
+`sooted_plaster`, `charred_timber`, `water_deep`. The 14 images reachable only
+from them were 2.79 MB of a 31.5 MB package.
+
+Pinned to the 31 the region actually uses, verified against the built GLB
+rather than assumed.
+
+| | before | after |
+| --- | --- | --- |
+| GLB | 31.5 MB | **28.7 MB** |
+| materials embedded | 37 | 31 |
+| images embedded | 100 | 86 |
+| unreferenced materials | 6 | **0** |
+
+Geometry is untouched: 535,709 unique and 3,123,378 instanced triangles across
+10,069 nodes, exactly as before. Only textures nothing pointed at have gone.
+
+The interiors are unaffected. `build_interiors.py` computes its own material
+set per interior from that interior's own parts, so the four Amberwood
+interiors still embed `lime_plaster`, `packed_earth`, `sooted_plaster` and
+`charred_timber` where they use them - which is why those recipes exist.
+
+`export_glb` now warns when a pinned material is unreferenced, because an
+over-broad pin is otherwise completely silent - the package simply carries
+textures nothing points at, and nothing says so. The warning is suppressed for
+the reduced package, which drops ground dressing by design and would otherwise
+report false positives. Suggested by the Crownwater session, which found the
+same class of waste in its own pin.
+
+Re-verified after the trim:
+
+```
+validate_gltf.py   0 errors, 0 warnings, 0 infos
+verify_runtime.py  0 errors, 331776 tiles sampled, 0 grounding misses
+determinism        two independent cache-cold builds byte-identical across
+                   all six artefacts
+```

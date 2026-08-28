@@ -36,18 +36,19 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 42.63,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/mirrorhold.elm"
     },
     "mirrorhold": {
       "alias": "maps/nymara/mirrorhold.elm"
@@ -60,18 +61,19 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 4.5,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/crownwater.elm"
     },
     "crownwater": {
       "alias": "maps/nymara/crownwater.elm"
@@ -84,18 +86,19 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 17.59,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/whitehorn_range.elm"
     },
     "whitehorn_range": {
       "alias": "maps/nymara/whitehorn_range.elm"
@@ -108,18 +111,28 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 5.2,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": {
+        "tiles": 96,
+        "collisionCells": 576,
+        "metresPerTile": 1.0,
+        "arrivalTile": [
+          174,
+          174
+        ],
+        "note": "Amethyst Barrens is authored at 576 m x 576 m. The server map grows from 32x32 to 96x96 ELM tiles; see eloria-server tools/generate_nymara_maps.py and eloria-assets/maps/nymara-regions/source-elm/amethyst_barrens.elm."
+      }
     },
     "amethyst_barrens": {
       "alias": "maps/nymara/amethyst_barrens.elm"
@@ -348,7 +361,7 @@
     },
     "sunmane_crystal_hollow.elm": {
       "alias": "maps/nymara/sunmane_crystal_hollow.elm"
-	},
+    },
     "maps/four-gates-lantern-row.elm": {
       "manifest": "res://../eloria-assets/maps/four-gates-lantern-row/world.json",
       "coordinateTransform": {
@@ -592,6 +605,46 @@
     },
     "amberwood_cinder_chapel.elm": {
       "alias": "maps/nymara/amberwood_cinder_chapel.elm"
+    },
+    "maps/nymara/resonant_vault.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/amethyst_barrens_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -28.0,
+          346.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/amethyst_barrens.elm",
+      "insidesMap": true,
+      "sections": [
+        "resonant_vault",
+        "geode_hollow",
+        "shardworks",
+        "storm_barrow"
+      ],
+      "requiresServerMap": {
+        "tiles": 64,
+        "collisionCells": 384,
+        "note": "four insides on one map with blackspace between them"
+      }
+    },
+    "resonant_vault": {
+      "alias": "maps/nymara/resonant_vault.elm"
+    },
+    "resonant_vault.elm": {
+      "alias": "maps/nymara/resonant_vault.elm"
+    },
+    "amethyst_barrens_insides": {
+      "alias": "maps/nymara/resonant_vault.elm"
     }
   }
 }

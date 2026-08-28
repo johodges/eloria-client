@@ -150,6 +150,17 @@ func _init() -> void:
 	_expect(login_error.type == "login_error" and login_error.message == "Bad login", "login error")
 	var yourself := EloriaProtocol.decode_server(3, PackedByteArray([0x34, 0x12]))
 	_expect(yourself.actor_id == 0x1234, "you are")
+	var assistant_payload: PackedByteArray = JSON.stringify({
+		"kind": "map", "map": {"id": "emberhaven"},
+		"players": [{"name": "Master", "x": 10, "y": 20}],
+		"creatures": [{"name": "Ash Wyrm", "boss": true}]}).to_utf8_buffer()
+	var assistant: Dictionary = EloriaProtocol.decode_server(233, assistant_payload)
+	_expect(assistant.type == "invasion_assistant"
+		and assistant.state.kind == "map"
+		and assistant.state.players[0].name == "Master",
+		"invasion assistant JSON state")
+	_expect(EloriaProtocol.decode_server(233, PackedByteArray([123])).type == "invalid",
+		"malformed invasion assistant state")
 	_expect(EloriaProtocol.decode_server(3, PackedByteArray()).type == "invalid", "short you are")
 	var clock_sync := EloriaProtocol.decode_server(4, PackedByteArray([0x78, 0x56, 0x34, 0x12]))
 	_expect(clock_sync.type == "clock_sync" and clock_sync.server_timestamp == 0x12345678,

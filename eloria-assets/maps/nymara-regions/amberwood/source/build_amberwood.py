@@ -26,9 +26,13 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-import validate_gltf
-
+# The authoring toolkit is shared by every region and lives one level up, in
+# `maps/nymara-regions/_toolkit/`. It must be on the path before the toolkit
+# modules below are imported.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "_toolkit"))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import validate_gltf
 
 from amberwood import gltf as GLTF
 from amberwood import materials as MAT
@@ -41,6 +45,31 @@ from amberwood import terrain as TER
 HERE = Path(__file__).resolve().parent
 PACKAGE = HERE.parent
 SEED = 20260827
+
+# The materials Amberwood embeds, pinned. The shared table grows as other
+# regions add recipes to it, and without this every one of those would be
+# embedded here too - about ten megabytes of images nothing references, and a
+# different world.glb for a change that has nothing to do with Amberwood.
+MATERIALS = frozenset({
+    # Exactly what Amberwood's world.glb references, verified against the built
+    # GLB rather than assumed. The shared table grows as other regions add
+    # recipes, and without a pin every one of those would be embedded here too.
+    #
+    # This list was briefly the whole table, which quietly shipped six
+    # materials no mesh referenced - the ones b7e10891 appended for the
+    # interiors - and 2.79 MB of images reachable only from them. The interiors
+    # are unaffected: build_interiors.py computes its own set per interior.
+    'bark_oak', 'bark_dark', 'bark_pale',
+    'foliage_amber', 'foliage_gold', 'foliage_rust', 'foliage_dead',
+    'undergrowth',
+    'timber_warm', 'timber_grey', 'timber_dark', 'carved_wood',
+    'shingles', 'thatch_reed', 'ashlar', 'rubble_stone', 'cliff_rock',
+    'cobble_paving', 'forest_floor', 'leaf_path', 'shore_shingle',
+    'meadow_grass', 'scorched_ground',
+    'dark_iron', 'woven_cloth', 'canvas_awning',
+    'amber_resin', 'amber_glass',
+    'water_sea', 'water_pool', 'water_stream',
+})
 
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
@@ -235,10 +264,30 @@ def _split_group(key: str, item) -> tuple[dict[str, M.Mesh], dict[str, M.Mesh]]:
     return solid, walk
 
 
-def export_glb(build: REG.RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuilder, dict]:
+def export_glb(build: REG.RegionBuild, sets, path: Path,
+               warn_unreferenced: bool = True) -> tuple[GLTF.GltfBuilder, dict]:
     builder = GLTF.GltfBuilder(
         generator="Eloria Amberwood builder (original procedural assets)")
-    MAT.register_gltf_materials(builder, sets)
+    MAT.register_gltf_materials(builder, sets, only=MATERIALS)
+
+    # An over-broad pin is completely silent: the package simply carries
+    # textures nothing references. Say so, or it happens again.
+    used_materials = set()
+    for bucket in (build.terrain_meshes, build.water_meshes):
+        for piece in bucket.values():
+            for part in (getattr(piece, "parts", None) or [piece]):
+                if part.triangle_count:
+                    used_materials.add(part.material)
+    for item in build.meshes.values():
+        parts = (getattr(item, "parts", []) + getattr(item, "walk_parts", [])
+                 or [item])
+        for part in parts:
+            if part.triangle_count:
+                used_materials.add(part.material)
+    unreferenced = sorted(set(MATERIALS) - used_materials)
+    if warn_unreferenced and unreferenced:
+        print(f"[materials] WARNING: {len(unreferenced)} pinned but unreferenced "
+              f"in {path.name}: " + ", ".join(unreferenced))
 
     # Tangents are intentionally omitted: Godot's glTF importer generates them
     # for normal-mapped materials, and shipping them would add sixteen bytes a
@@ -709,7 +758,8 @@ def main() -> int:
                     for name, texture_set in sets.items()}
         lod_build = build_region(args.seed, lod="far")
         lod_build.terrain_meshes = lod_build.terrain.build_meshes(uv_scale=0.28)
-        _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
+        _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb",
+                                  warn_unreferenced=False)
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],
             "nodes": lod_stats["nodes"],

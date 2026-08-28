@@ -2,7 +2,7 @@
   {
     "id": "00-aerial-overview",
     "panel": "aerial",
-    "file": "00-aerial-overview.webp",
+    "file": "00-aerial-overview.png",
     "eye": [
       -354.0,
       520.7,
@@ -19,11 +19,11 @@
   {
     "id": "01-forest-road",
     "panel": 1,
-    "file": "01-forest-road.webp",
+    "file": "01-forest-road.png",
     "eye": [
-      -24.96,
-      25.63,
-      30.5
+      -29.05,
+      25.62,
+      29.74
     ],
     "target": [
       72.0,
@@ -36,11 +36,11 @@
   {
     "id": "02-moot-hall",
     "panel": 2,
-    "file": "02-moot-hall.webp",
+    "file": "02-moot-hall.png",
     "eye": [
-      21.84,
-      56.13,
-      -129.16
+      18.95,
+      55.77,
+      -129.57
     ],
     "target": [
       -12.0,
@@ -53,10 +53,10 @@
   {
     "id": "03-forest-lodge",
     "panel": 3,
-    "file": "03-forest-lodge.webp",
+    "file": "03-forest-lodge.png",
     "eye": [
       -24.0,
-      16.4,
+      16.38,
       54.0
     ],
     "target": [
@@ -70,15 +70,15 @@
   {
     "id": "04-hollow-tree",
     "panel": 4,
-    "file": "04-hollow-tree.webp",
+    "file": "04-hollow-tree.png",
     "eye": [
       -48.0,
-      38.95,
+      38.9,
       -234.0
     ],
     "target": [
       -78.0,
-      33.28,
+      33.33,
       -258.0
     ],
     "fieldOfViewDegrees": 58,
@@ -87,15 +87,15 @@
   {
     "id": "05-high-bridge",
     "panel": 5,
-    "file": "05-high-bridge.webp",
+    "file": "05-high-bridge.png",
     "eye": [
-      178.3,
-      59.39,
-      -172.28
+      171.62,
+      59.12,
+      -174.77
     ],
     "target": [
       120.0,
-      43.47,
+      43.51,
       -198.0
     ],
     "fieldOfViewDegrees": 54,
@@ -104,15 +104,15 @@
   {
     "id": "06-root-arch",
     "panel": 6,
-    "file": "06-root-arch.webp",
+    "file": "06-root-arch.png",
     "eye": [
       -78.0,
-      -9.01,
+      -9.09,
       -72.0
     ],
     "target": [
       -48.0,
-      2.21,
+      2.16,
       -102.0
     ],
     "fieldOfViewDegrees": 55,
@@ -121,15 +121,15 @@
   {
     "id": "07-garden-terrace",
     "panel": 7,
-    "file": "07-garden-terrace.webp",
+    "file": "07-garden-terrace.png",
     "eye": [
       141.35,
-      34.17,
+      34.23,
       105.97
     ],
     "target": [
       156.0,
-      24.58,
+      24.71,
       24.0
     ],
     "fieldOfViewDegrees": 54,
@@ -138,11 +138,11 @@
   {
     "id": "08-canopy-amber",
     "panel": 8,
-    "file": "08-canopy-amber.webp",
+    "file": "08-canopy-amber.png",
     "eye": [
-      88.4,
-      54.14,
-      -197.89
+      81.6,
+      61.65,
+      -192.0
     ],
     "target": [
       66.0,
@@ -155,15 +155,15 @@
   {
     "id": "09-high-overlook",
     "panel": 9,
-    "file": "09-high-overlook.webp",
+    "file": "09-high-overlook.png",
     "eye": [
-      281.17,
-      75.28,
-      -149.72
+      279.98,
+      71.73,
+      -141.89
     ],
     "target": [
       36.0,
-      64.44,
+      64.38,
       -186.0
     ],
     "fieldOfViewDegrees": 50,
@@ -172,15 +172,15 @@
   {
     "id": "10-material-study",
     "panel": 10,
-    "file": "10-material-study.webp",
+    "file": "10-material-study.png",
     "eye": [
       19.2,
-      49.39,
+      49.35,
       -126.0
     ],
     "target": [
       13.2,
-      39.17,
+      39.22,
       -147.0
     ],
     "fieldOfViewDegrees": 40,
@@ -189,15 +189,15 @@
   {
     "id": "11-great-arch",
     "panel": null,
-    "file": "11-great-arch.webp",
+    "file": "11-great-arch.png",
     "eye": [
-      156.0,
-      46.01,
+      174.0,
+      46.06,
       -6.0
     ],
     "target": [
       174.0,
-      46.17,
+      46.12,
       -102.0
     ],
     "fieldOfViewDegrees": 48,
@@ -206,7 +206,7 @@
   {
     "id": "12-harbour",
     "panel": null,
-    "file": "12-harbour.webp",
+    "file": "12-harbour.png",
     "eye": [
       -159.79,
       -0.77,
@@ -223,15 +223,15 @@
   {
     "id": "13-great-tree",
     "panel": null,
-    "file": "13-great-tree.webp",
+    "file": "13-great-tree.png",
     "eye": [
-      139.35,
-      42.02,
-      -201.54
+      140.56,
+      44.4,
+      -199.12
     ],
     "target": [
       78.0,
-      72.45,
+      72.42,
       -264.0
     ],
     "fieldOfViewDegrees": 50,
@@ -240,15 +240,15 @@
   {
     "id": "14-market",
     "panel": null,
-    "file": "14-market.webp",
+    "file": "14-market.png",
     "eye": [
-      -55.94,
-      36.31,
-      -95.65
+      -62.39,
+      20.13,
+      -82.96
     ],
     "target": [
       12.0,
-      41.27,
+      41.32,
       -150.0
     ],
     "fieldOfViewDegrees": 55,
@@ -257,15 +257,15 @@
   {
     "id": "15-forest-gate",
     "panel": null,
-    "file": "15-forest-gate.webp",
+    "file": "15-forest-gate.png",
     "eye": [
-      158.71,
-      44.66,
-      -55.39
+      222.0,
+      39.06,
+      -73.8
     ],
     "target": [
       222.0,
-      45.64,
+      45.63,
       -90.0
     ],
     "fieldOfViewDegrees": 54,
@@ -274,15 +274,15 @@
   {
     "id": "16-timber-yard",
     "panel": null,
-    "file": "16-timber-yard.webp",
+    "file": "16-timber-yard.png",
     "eye": [
-      146.62,
-      32.09,
-      129.9
+      140.34,
+      31.92,
+      122.69
     ],
     "target": [
       216.0,
-      26.06,
+      26.07,
       102.0
     ],
     "fieldOfViewDegrees": 54,
@@ -291,15 +291,15 @@
   {
     "id": "17-ash-transition",
     "panel": null,
-    "file": "17-ash-transition.webp",
+    "file": "17-ash-transition.png",
     "eye": [
-      270.38,
-      50.51,
-      1.52
+      270.11,
+      50.77,
+      4.17
     ],
     "target": [
       348.0,
-      36.68,
+      36.54,
       -54.0
     ],
     "fieldOfViewDegrees": 54,
@@ -308,7 +308,7 @@
   {
     "id": "18-watchtower",
     "panel": null,
-    "file": "18-watchtower.webp",
+    "file": "18-watchtower.png",
     "eye": [
       202.14,
       56.23,
@@ -325,7 +325,7 @@
   {
     "id": "19-coast-waterfall",
     "panel": null,
-    "file": "19-coast-waterfall.webp",
+    "file": "19-coast-waterfall.png",
     "eye": [
       -107.29,
       15.39,
@@ -333,7 +333,7 @@
     ],
     "target": [
       -52.5,
-      -5.64,
+      -5.49,
       -66.0
     ],
     "fieldOfViewDegrees": 54,
@@ -342,15 +342,15 @@
   {
     "id": "20-north-gate",
     "panel": null,
-    "file": "20-north-gate.webp",
+    "file": "20-north-gate.png",
     "eye": [
       63.09,
-      61.74,
+      61.99,
       -278.91
     ],
     "target": [
       72.0,
-      56.76,
+      57.24,
       -312.0
     ],
     "fieldOfViewDegrees": 54,
@@ -359,10 +359,10 @@
   {
     "id": "21-hill-hamlet",
     "panel": null,
-    "file": "21-hill-hamlet.webp",
+    "file": "21-hill-hamlet.png",
     "eye": [
       260.66,
-      26.31,
+      26.42,
       124.89
     ],
     "target": [
@@ -376,15 +376,15 @@
   {
     "id": "22-mill-pool",
     "panel": null,
-    "file": "22-mill-pool.webp",
+    "file": "22-mill-pool.png",
     "eye": [
-      -83.5,
-      -6.51,
-      -51.37
+      -83.54,
+      -6.7,
+      -51.35
     ],
     "target": [
       -6.0,
-      28.07,
+      27.9,
       -132.0
     ],
     "fieldOfViewDegrees": 56,
@@ -393,15 +393,15 @@
   {
     "id": "23-old-bridge",
     "panel": null,
-    "file": "23-old-bridge.webp",
+    "file": "23-old-bridge.png",
     "eye": [
-      -18.88,
-      51.15,
-      -129.84
+      -35.56,
+      41.26,
+      -130.14
     ],
     "target": [
       30.0,
-      41.31,
+      41.35,
       -132.0
     ],
     "fieldOfViewDegrees": 55,
@@ -410,15 +410,15 @@
   {
     "id": "24-canopy-walkway",
     "panel": null,
-    "file": "24-canopy-walkway.webp",
+    "file": "24-canopy-walkway.png",
     "eye": [
       42.0,
-      64.95,
+      64.96,
       -240.0
     ],
     "target": [
       72.0,
-      61.62,
+      61.61,
       -210.0
     ],
     "fieldOfViewDegrees": 58,
@@ -427,15 +427,15 @@
   {
     "id": "30-spawn-grounding",
     "panel": null,
-    "file": "30-spawn-grounding.webp",
+    "file": "30-spawn-grounding.png",
     "eye": [
-      -63.07,
-      19.78,
-      40.46
+      -49.52,
+      19.79,
+      52.31
     ],
     "target": [
       12.0,
-      21.23,
+      21.2,
       -18.0
     ],
     "fieldOfViewDegrees": 58,
@@ -444,15 +444,15 @@
   {
     "id": "31-arch-stair",
     "panel": null,
-    "file": "31-arch-stair.webp",
+    "file": "31-arch-stair.png",
     "eye": [
-      173.93,
-      44.17,
-      -38.69
+      182.36,
+      48.12,
+      -41.84
     ],
     "target": [
       174.0,
-      42.13,
+      42.09,
       -90.0
     ],
     "fieldOfViewDegrees": 56,
@@ -461,11 +461,11 @@
   {
     "id": "32-shore-walk",
     "panel": null,
-    "file": "32-shore-walk.webp",
+    "file": "32-shore-walk.png",
     "eye": [
-      -135.14,
-      9.62,
-      113.32
+      -116.1,
+      16.71,
+      59.09
     ],
     "target": [
       -78.0,
@@ -478,15 +478,15 @@
   {
     "id": "33-ravine-edge",
     "panel": null,
-    "file": "33-ravine-edge.webp",
+    "file": "33-ravine-edge.png",
     "eye": [
-      31.54,
-      56.03,
-      -131.9
+      79.27,
+      39.1,
+      -168.75
     ],
     "target": [
       132.0,
-      32.73,
+      32.74,
       -216.0
     ],
     "fieldOfViewDegrees": 56,
@@ -495,15 +495,15 @@
   {
     "id": "25-forest-lake",
     "panel": null,
-    "file": "25-forest-lake.webp",
+    "file": "25-forest-lake.png",
     "eye": [
-      -14.81,
-      60.09,
-      -211.39
+      -21.62,
+      65.4,
+      -189.61
     ],
     "target": [
       -45.0,
-      26.91,
+      27.01,
       -255.0
     ],
     "fieldOfViewDegrees": 55,
@@ -512,15 +512,15 @@
   {
     "id": "26-west-cove",
     "panel": null,
-    "file": "26-west-cove.webp",
+    "file": "26-west-cove.png",
     "eye": [
-      -48.57,
-      32.36,
-      -115.47
+      -76.76,
+      23.6,
+      -103.82
     ],
     "target": [
       -126.0,
-      -15.11,
+      -15.03,
       -180.0
     ],
     "fieldOfViewDegrees": 55,
@@ -529,7 +529,7 @@
   {
     "id": "27-north-hamlet",
     "panel": null,
-    "file": "27-north-hamlet.webp",
+    "file": "27-north-hamlet.png",
     "eye": [
       71.24,
       63.53,
@@ -537,7 +537,7 @@
     ],
     "target": [
       90.0,
-      54.23,
+      54.03,
       -354.0
     ],
     "fieldOfViewDegrees": 55,
@@ -546,10 +546,10 @@
   {
     "id": "28-quarry",
     "panel": null,
-    "file": "28-quarry.webp",
+    "file": "28-quarry.png",
     "eye": [
       168.14,
-      28.44,
+      31.48,
       121.01
     ],
     "target": [
@@ -563,15 +563,15 @@
   {
     "id": "29-old-battle",
     "panel": null,
-    "file": "29-old-battle.webp",
+    "file": "29-old-battle.png",
     "eye": [
-      301.55,
-      65.06,
+      301.56,
+      65.07,
       -177.43
     ],
     "target": [
       345.0,
-      41.53,
+      41.44,
       -120.0
     ],
     "fieldOfViewDegrees": 55,
@@ -580,15 +580,15 @@
   {
     "id": "34-ridge-bridge",
     "panel": null,
-    "file": "34-ridge-bridge.webp",
+    "file": "34-ridge-bridge.png",
     "eye": [
-      111.3,
-      77.44,
-      -300.84
+      115.09,
+      77.45,
+      -307.12
     ],
     "target": [
       156.0,
-      58.02,
+      58.0,
       -300.0
     ],
     "fieldOfViewDegrees": 54,
@@ -597,15 +597,15 @@
   {
     "id": "40-golden-settlement",
     "panel": null,
-    "file": "40-golden-settlement.webp",
+    "file": "40-golden-settlement.png",
     "eye": [
-      -112.45,
-      -1.48,
-      -95.82
+      -105.36,
+      2.05,
+      -103.66
     ],
     "target": [
       36.0,
-      49.85,
+      49.57,
       -180.0
     ],
     "fieldOfViewDegrees": 50,
@@ -614,15 +614,15 @@
   {
     "id": "41-golden-arch",
     "panel": null,
-    "file": "41-golden-arch.webp",
+    "file": "41-golden-arch.png",
     "eye": [
       84.3,
-      43.37,
+      43.38,
       -27.92
     ],
     "target": [
       174.0,
-      47.17,
+      47.12,
       -102.0
     ],
     "fieldOfViewDegrees": 50,
@@ -631,11 +631,11 @@
   {
     "id": "42-golden-coast",
     "panel": null,
-    "file": "42-golden-coast.webp",
+    "file": "42-golden-coast.png",
     "eye": [
-      -44.26,
-      31.94,
-      102.68
+      -46.03,
+      31.33,
+      101.01
     ],
     "target": [
       -120.0,

@@ -1,20 +1,13 @@
 {
-  "uri": "world.glb",
+  "uri": "C:\\Users\\User\\AppData\\Local\\Temp\\claude\\awt1\\world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-08-28T06:56:37.050412Z",
+  "validatedAt": "2026-08-28T23:18:59.962644Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,
-    "numInfos": 1,
+    "numInfos": 0,
     "numHints": 0,
-    "messages": [
-      {
-        "code": "UNUSED_OBJECT",
-        "message": "This object may be unused.",
-        "severity": 2,
-        "pointer": "/materials/6"
-      }
-    ]
+    "messages": []
   }
 }
