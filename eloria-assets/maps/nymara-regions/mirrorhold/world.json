@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.1.0",
+  "assetVersion": "1.0.0",
   "asset": {
     "id": "mirrorhold",
     "name": "Mirrorhold",
@@ -18,847 +18,2276 @@
     ],
     "bounds": {
       "min": [
-        -96,
-        0.0,
-        -96
+        -504.0,
+        -11.0,
+        -731.0
       ],
       "max": [
-        96,
-        18.0,
-        96
+        728.0,
+        258.59,
+        501.0
       ]
-    }
+    },
+    "playableBounds": {
+      "min": [
+        -174.0,
+        -11.0,
+        -401.0
+      ],
+      "max": [
+        401.0,
+        258.59,
+        174.0
+      ]
+    },
+    "seaLevel": 0.0,
+    "serverCells": 576
   },
-  "source": {
-    "elm": "../source-elm/mirrorhold.elm",
-    "sha256": "c77b67d524f0903283792c0043f001a948cc9a94bfe1272833c37a1fd8b38aee",
-    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
-    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
-  },
-  "conceptArt": {
-    "macro": "../../../concepts/nymara-regions/mirrorhold_region_concept.png",
-    "detailBoard": "references/00-concept-detail-board.png",
-    "panelGrid": [
-      5,
-      2
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      174.0,
+      174.0
     ],
-    "viewCount": 10,
-    "generator": "OpenAI ImageGen (built-in)",
-    "checkpoints": [
-      {
-        "panel": 1,
-        "id": "concept-01",
-        "subject": "citadel approach",
-        "cameraPosition": [
-          0.0,
-          20.0,
-          -72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 2,
-        "id": "concept-02",
-        "subject": "canal street",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_mirrorhold_canal_wall_026",
-          "Landmark_mirrorhold_canal_wall_027",
-          "Landmark_mirrorhold_canal_wall_028"
-        ]
-      },
-      {
-        "panel": 3,
-        "id": "concept-03",
-        "subject": "civic fountain",
-        "cameraPosition": [
-          68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_mirrorhold_civic_tower_018",
-          "Landmark_mirrorhold_civic_tower_019",
-          "Landmark_mirrorhold_civic_tower_020"
-        ]
-      },
-      {
-        "panel": 4,
-        "id": "concept-04",
-        "subject": "radial bridge",
-        "cameraPosition": [
-          68.48,
-          20.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_mirrorhold_radial_bridge_035",
-          "Landmark_mirrorhold_radial_bridge_036",
-          "Landmark_mirrorhold_radial_bridge_037"
-        ]
-      },
-      {
-        "panel": 5,
-        "id": "concept-05",
-        "subject": "observatory exterior",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_glasswarden_observatory_013"
-        ]
-      },
-      {
-        "panel": 6,
-        "id": "concept-06",
-        "subject": "lens mechanism",
-        "cameraPosition": [
-          0.0,
-          16.0,
-          72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_glasswarden_lens_tower_014",
-          "Landmark_glasswarden_lens_tower_015",
-          "Landmark_glasswarden_lens_tower_016"
-        ]
-      },
-      {
-        "panel": 7,
-        "id": "concept-07",
-        "subject": "cliff terraces",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 8,
-        "id": "concept-08",
-        "subject": "lake dock",
-        "cameraPosition": [
-          -68.48,
-          24.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 9,
-        "id": "concept-09",
-        "subject": "rooftop skyline",
-        "cameraPosition": [
-          -68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 10,
-        "id": "concept-10",
-        "subject": "slate brass crystal materials",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      }
-    ]
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 42.63,
+    "invertServerY": true
   },
-  "landmarks": [
-    {
-      "id": "landmark-000",
-      "name": "Ssarathi Ruin Arch",
-      "node": "Landmark_ssarathi_ruin_arch_000",
-      "position": [
-        -34.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-001",
-      "name": "Westhaven Sea Cave",
-      "node": "Landmark_westhaven_sea_cave_001",
-      "position": [
-        -12.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-002",
-      "name": "Verdant Water Shrine",
-      "node": "Landmark_verdant_water_shrine_002",
-      "position": [
-        10.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-003",
-      "name": "Westhaven Lighthouse",
-      "node": "Landmark_westhaven_lighthouse_003",
-      "position": [
-        32.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-004",
-      "name": "Westhaven Harbor Crane",
-      "node": "Landmark_westhaven_harbor_crane_004",
-      "position": [
-        -34.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-005",
-      "name": "Grey Moor Ritual Shrine",
-      "node": "Landmark_grey_moor_ritual_shrine_005",
-      "position": [
-        -12.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-006",
-      "name": "Sunmane Caravan Camp",
-      "node": "Landmark_sunmane_caravan_camp_006",
-      "position": [
-        10.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-007",
-      "name": "Amberwood Hollow Tree",
-      "node": "Landmark_amberwood_hollow_tree_007",
-      "position": [
-        32.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-008",
-      "name": "Mirrorhold Market Crate",
-      "node": "Landmark_mirrorhold_market_crate_008",
-      "position": [
-        -34.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-009",
-      "name": "Manymouth Tidal Waystone",
-      "node": "Landmark_manymouth_tidal_waystone_009",
-      "position": [
-        -12.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-010",
-      "name": "Whitehorn Glacier",
-      "node": "Landmark_whitehorn_glacier_010",
-      "position": [
-        10.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-011",
-      "name": "Sunmane Burial Mound",
-      "node": "Landmark_sunmane_burial_mound_011",
-      "position": [
-        32.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-013",
-      "name": "Glasswarden Observatory",
-      "node": "Landmark_glasswarden_observatory_013",
-      "position": [
-        0.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-014",
-      "name": "Glasswarden Lens Tower",
-      "node": "Landmark_glasswarden_lens_tower_014",
-      "position": [
-        -16.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-015",
-      "name": "Glasswarden Lens Tower",
-      "node": "Landmark_glasswarden_lens_tower_015",
-      "position": [
-        16.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-016",
-      "name": "Glasswarden Lens Tower",
-      "node": "Landmark_glasswarden_lens_tower_016",
-      "position": [
-        -8.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-017",
-      "name": "Glasswarden Lens Tower",
-      "node": "Landmark_glasswarden_lens_tower_017",
-      "position": [
-        8.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-018",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_018",
-      "position": [
-        -24.0,
-        0,
-        14.0
-      ]
-    },
-    {
-      "id": "landmark-019",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_019",
-      "position": [
-        24.0,
-        0,
-        14.0
-      ]
-    },
-    {
-      "id": "landmark-020",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_020",
-      "position": [
-        -24.0,
-        0,
-        -10.0
-      ]
-    },
-    {
-      "id": "landmark-021",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_021",
-      "position": [
-        24.0,
-        0,
-        -10.0
-      ]
-    },
-    {
-      "id": "landmark-022",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_022",
-      "position": [
-        -12.0,
-        0,
-        -18.0
-      ]
-    },
-    {
-      "id": "landmark-023",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_023",
-      "position": [
-        12.0,
-        0,
-        -18.0
-      ]
-    },
-    {
-      "id": "landmark-024",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_024",
-      "position": [
-        -16.0,
-        0,
-        -40.0
-      ]
-    },
-    {
-      "id": "landmark-025",
-      "name": "Mirrorhold Civic Tower",
-      "node": "Landmark_mirrorhold_civic_tower_025",
-      "position": [
-        16.0,
-        0,
-        -40.0
-      ]
-    },
-    {
-      "id": "landmark-026",
-      "name": "Mirrorhold Canal Wall",
-      "node": "Landmark_mirrorhold_canal_wall_026",
-      "position": [
-        -28.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-027",
-      "name": "Mirrorhold Canal Wall",
-      "node": "Landmark_mirrorhold_canal_wall_027",
-      "position": [
-        28.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-028",
-      "name": "Mirrorhold Canal Wall",
-      "node": "Landmark_mirrorhold_canal_wall_028",
-      "position": [
-        -28.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-029",
-      "name": "Mirrorhold Canal Wall",
-      "node": "Landmark_mirrorhold_canal_wall_029",
-      "position": [
-        28.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-030",
-      "name": "Mirrorhold Canal Wall",
-      "node": "Landmark_mirrorhold_canal_wall_030",
-      "position": [
-        -22.0,
-        0,
-        -26.0
-      ]
-    },
-    {
-      "id": "landmark-031",
-      "name": "Mirrorhold Canal Wall",
-      "node": "Landmark_mirrorhold_canal_wall_031",
-      "position": [
-        22.0,
-        0,
-        -26.0
-      ]
-    },
-    {
-      "id": "landmark-032",
-      "name": "Mirrorhold Canal Wall",
-      "node": "Landmark_mirrorhold_canal_wall_032",
-      "position": [
-        -18.0,
-        0,
-        -46.0
-      ]
-    },
-    {
-      "id": "landmark-033",
-      "name": "Mirrorhold Canal Wall",
-      "node": "Landmark_mirrorhold_canal_wall_033",
-      "position": [
-        -2.0,
-        0,
-        -50.0
-      ]
-    },
-    {
-      "id": "landmark-034",
-      "name": "Mirrorhold Canal Wall",
-      "node": "Landmark_mirrorhold_canal_wall_034",
-      "position": [
-        14.0,
-        0,
-        -46.0
-      ]
-    },
-    {
-      "id": "landmark-035",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_035",
-      "position": [
-        0.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-036",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_036",
-      "position": [
-        -14.0,
-        0,
-        -28.0
-      ]
-    },
-    {
-      "id": "landmark-037",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_037",
-      "position": [
-        14.0,
-        0,
-        -28.0
-      ]
-    },
-    {
-      "id": "landmark-038",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_038",
-      "position": [
-        -12.0,
-        0,
-        -42.0
-      ]
-    },
-    {
-      "id": "landmark-039",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_039",
-      "position": [
-        12.0,
-        0,
-        -42.0
-      ]
-    },
-    {
-      "id": "landmark-040",
-      "name": "Mirrorhold Radial Bridge",
-      "node": "Landmark_mirrorhold_radial_bridge_040",
-      "position": [
-        0.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-041",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_041",
-      "position": [
-        -16.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-042",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_042",
-      "position": [
-        16.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-043",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_043",
-      "position": [
-        0.0,
-        0,
-        12.0
-      ]
-    },
-    {
-      "id": "landmark-044",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_044",
-      "position": [
-        0.0,
-        0,
-        -8.0
-      ]
-    },
-    {
-      "id": "landmark-045",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_045",
-      "position": [
-        -20.0,
-        0,
-        -34.0
-      ]
-    },
-    {
-      "id": "landmark-046",
-      "name": "Mirrorhold Public Fountain",
-      "node": "Landmark_mirrorhold_public_fountain_046",
-      "position": [
-        20.0,
-        0,
-        -34.0
-      ]
-    },
-    {
-      "id": "landmark-047",
-      "name": "Glasswarden Field Station",
-      "node": "Landmark_glasswarden_field_station_047",
-      "position": [
-        -28.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-048",
-      "name": "Glasswarden Field Station",
-      "node": "Landmark_glasswarden_field_station_048",
-      "position": [
-        28.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-049",
-      "name": "Glasswarden Field Station",
-      "node": "Landmark_glasswarden_field_station_049",
-      "position": [
-        -32.0,
-        0,
-        -4.0
-      ]
-    },
-    {
-      "id": "landmark-050",
-      "name": "Glasswarden Field Station",
-      "node": "Landmark_glasswarden_field_station_050",
-      "position": [
-        32.0,
-        0,
-        -4.0
-      ]
-    },
-    {
-      "id": "landmark-051",
-      "name": "Glasswarden Field Station",
-      "node": "Landmark_glasswarden_field_station_051",
-      "position": [
-        -28.0,
-        0,
-        -38.0
-      ]
-    },
-    {
-      "id": "landmark-052",
-      "name": "Glasswarden Field Station",
-      "node": "Landmark_glasswarden_field_station_052",
-      "position": [
-        28.0,
-        0,
-        -38.0
-      ]
-    },
-    {
-      "id": "landmark-053",
-      "name": "Glasswarden Field Station",
-      "node": "Landmark_glasswarden_field_station_053",
-      "position": [
-        -8.0,
-        0,
-        -60.0
-      ]
-    },
-    {
-      "id": "landmark-054",
-      "name": "Glasswarden Field Station",
-      "node": "Landmark_glasswarden_field_station_054",
-      "position": [
-        8.0,
-        0,
-        -60.0
-      ]
-    }
-  ],
   "spawnPoints": [
     {
       "id": "default",
       "position": [
-        0,
-        1,
-        0
+        0.0,
+        42.68,
+        0.0
       ],
-      "rotationDegrees": 180
+      "serverTile": [
+        174,
+        174
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "harbour",
+      "position": [
+        198.0,
+        4.55,
+        -18.0
+      ],
+      "serverTile": [
+        372,
+        192
+      ],
+      "rotationDegrees": 90.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "citadel-gate",
+      "position": [
+        156.0,
+        84.05,
+        -156.0
+      ],
+      "serverTile": [
+        330,
+        330
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true
     }
   ],
   "collision": {
     "nodeNames": [
-      "Landmark_ssarathi_ruin_arch_000",
-      "Landmark_westhaven_sea_cave_001",
-      "Landmark_verdant_water_shrine_002",
-      "Landmark_westhaven_lighthouse_003",
-      "Landmark_westhaven_harbor_crane_004",
-      "Landmark_grey_moor_ritual_shrine_005",
-      "Landmark_sunmane_caravan_camp_006",
-      "Landmark_amberwood_hollow_tree_007",
-      "Landmark_mirrorhold_market_crate_008",
-      "Landmark_manymouth_tidal_waystone_009",
-      "Landmark_whitehorn_glacier_010",
-      "Landmark_sunmane_burial_mound_011",
-      "Landmark_glasswarden_observatory_013",
-      "Landmark_glasswarden_lens_tower_014",
-      "Landmark_glasswarden_lens_tower_015",
-      "Landmark_glasswarden_lens_tower_016",
-      "Landmark_glasswarden_lens_tower_017",
-      "Landmark_mirrorhold_civic_tower_018",
-      "Landmark_mirrorhold_civic_tower_019",
-      "Landmark_mirrorhold_civic_tower_020",
-      "Landmark_mirrorhold_civic_tower_021",
-      "Landmark_mirrorhold_civic_tower_022",
-      "Landmark_mirrorhold_civic_tower_023",
-      "Landmark_mirrorhold_civic_tower_024",
-      "Landmark_mirrorhold_civic_tower_025",
-      "Landmark_mirrorhold_canal_wall_026",
-      "Landmark_mirrorhold_canal_wall_027",
-      "Landmark_mirrorhold_canal_wall_028",
-      "Landmark_mirrorhold_canal_wall_029",
-      "Landmark_mirrorhold_canal_wall_030",
-      "Landmark_mirrorhold_canal_wall_031",
-      "Landmark_mirrorhold_canal_wall_032",
-      "Landmark_mirrorhold_canal_wall_033",
-      "Landmark_mirrorhold_canal_wall_034",
-      "Landmark_mirrorhold_radial_bridge_035",
-      "Landmark_mirrorhold_radial_bridge_036",
-      "Landmark_mirrorhold_radial_bridge_037",
-      "Landmark_mirrorhold_radial_bridge_038",
-      "Landmark_mirrorhold_radial_bridge_039",
-      "Landmark_mirrorhold_radial_bridge_040",
-      "Landmark_mirrorhold_public_fountain_041",
-      "Landmark_mirrorhold_public_fountain_042",
-      "Landmark_mirrorhold_public_fountain_043",
-      "Landmark_mirrorhold_public_fountain_044",
-      "Landmark_mirrorhold_public_fountain_045",
-      "Landmark_mirrorhold_public_fountain_046",
-      "Landmark_glasswarden_field_station_047",
-      "Landmark_glasswarden_field_station_048",
-      "Landmark_glasswarden_field_station_049",
-      "Landmark_glasswarden_field_station_050",
-      "Landmark_glasswarden_field_station_051",
-      "Landmark_glasswarden_field_station_052",
-      "Landmark_glasswarden_field_station_053",
-      "Landmark_glasswarden_field_station_054"
-    ]
+      "Building_CliffHouse_0",
+      "Building_CliffHouse_1",
+      "Building_CliffHouse_10",
+      "Building_CliffHouse_11",
+      "Building_CliffHouse_12",
+      "Building_CliffHouse_13",
+      "Building_CliffHouse_14",
+      "Building_CliffHouse_15",
+      "Building_CliffHouse_16",
+      "Building_CliffHouse_17",
+      "Building_CliffHouse_18",
+      "Building_CliffHouse_19",
+      "Building_CliffHouse_2",
+      "Building_CliffHouse_20",
+      "Building_CliffHouse_21",
+      "Building_CliffHouse_22",
+      "Building_CliffHouse_23",
+      "Building_CliffHouse_24",
+      "Building_CliffHouse_3",
+      "Building_CliffHouse_4",
+      "Building_CliffHouse_5",
+      "Building_CliffHouse_6",
+      "Building_CliffHouse_7",
+      "Building_CliffHouse_8",
+      "Building_CliffHouse_9",
+      "Building_east-bench_0",
+      "Building_east-bench_1",
+      "Building_east-bench_2",
+      "Building_east-bench_3",
+      "Building_lake-north_0",
+      "Building_lake-north_1",
+      "Building_lake-north_2",
+      "Building_lake-north_3",
+      "Building_lower-terrace_0",
+      "Building_lower-terrace_1",
+      "Building_lower-terrace_2",
+      "Building_lower-terrace_3",
+      "Building_mid-bench_0",
+      "Building_mid-bench_1",
+      "Building_mid-bench_2",
+      "Building_mid-bench_3",
+      "Building_west-bench_0",
+      "Building_west-bench_1",
+      "Building_west-bench_2",
+      "Building_west-bench_3",
+      "Building_west-shore_0",
+      "Building_west-shore_1",
+      "Building_west-shore_2",
+      "Building_west-shore_3",
+      "Landmark_Aqueduct",
+      "Landmark_Basin_0",
+      "Landmark_Basin_1",
+      "Landmark_Basin_2",
+      "Landmark_Causeway_0",
+      "Landmark_Causeway_1",
+      "Landmark_Causeway_2",
+      "Landmark_Causeway_3",
+      "Landmark_Channel_0",
+      "Landmark_Channel_1",
+      "Landmark_Channel_2",
+      "Landmark_Channel_3",
+      "Landmark_Channel_4",
+      "Landmark_CitadelCourt",
+      "Landmark_CitadelHigh",
+      "Landmark_Dock_0",
+      "Landmark_Dock_1",
+      "Landmark_Dock_2",
+      "Landmark_Fountain",
+      "Landmark_Gallery",
+      "Landmark_GateWall",
+      "Landmark_GateWing_-1",
+      "Landmark_GateWing_1",
+      "Landmark_Orrery",
+      "Landmark_OrreryDrum",
+      "Landmark_Overlook",
+      "Landmark_PlazaStatue_0",
+      "Landmark_PlazaStatue_1",
+      "Landmark_PlazaStatue_2",
+      "Landmark_PlazaStatue_3",
+      "Landmark_Quay",
+      "Landmark_Retaining_0",
+      "Landmark_Retaining_1",
+      "Landmark_Retaining_2",
+      "Landmark_Retaining_3",
+      "Landmark_Ring",
+      "Landmark_RoadWall_0",
+      "Landmark_RoadWall_1",
+      "Landmark_SouthWatch",
+      "Landmark_cistern-yard",
+      "Landmark_east-post",
+      "Landmark_east_islet",
+      "Landmark_far-west",
+      "Landmark_gorge-head",
+      "Landmark_lens-works",
+      "Landmark_lens_tower_east",
+      "Landmark_lens_tower_west",
+      "Landmark_north-post",
+      "Landmark_quarry-shelf",
+      "Landmark_upper-shrine",
+      "Landmark_west-shrine",
+      "Landmark_west_islet",
+      "Prop_Boat_0",
+      "Prop_Boat_1",
+      "Prop_Boat_2",
+      "Prop_Brazier_0_-1",
+      "Prop_Brazier_0_1",
+      "Prop_Brazier_1_-1",
+      "Prop_Brazier_1_1",
+      "Prop_Brazier_2_-1",
+      "Prop_Brazier_2_1",
+      "Prop_Brazier_3_-1",
+      "Prop_Brazier_3_1",
+      "Prop_Brazier_4_-1",
+      "Prop_Brazier_4_1",
+      "Prop_HarbourGoods_0",
+      "Prop_HarbourGoods_1",
+      "Prop_HarbourGoods_10",
+      "Prop_HarbourGoods_11",
+      "Prop_HarbourGoods_12",
+      "Prop_HarbourGoods_13",
+      "Prop_HarbourGoods_2",
+      "Prop_HarbourGoods_3",
+      "Prop_HarbourGoods_4",
+      "Prop_HarbourGoods_5",
+      "Prop_HarbourGoods_6",
+      "Prop_HarbourGoods_7",
+      "Prop_HarbourGoods_8",
+      "Prop_HarbourGoods_9",
+      "Prop_OverlookRail_0",
+      "Prop_OverlookRail_1",
+      "Prop_OverlookRail_2",
+      "Prop_PlazaLamp_0",
+      "Prop_PlazaLamp_1",
+      "Prop_PlazaLamp_2",
+      "Prop_PlazaLamp_3",
+      "Prop_PlazaLamp_4",
+      "Prop_PlazaLamp_5",
+      "Prop_PlazaLamp_6",
+      "Prop_PlazaLamp_7",
+      "Prop_RoadLamp_0",
+      "Prop_Signpost_0",
+      "Prop_Signpost_1",
+      "Prop_Signpost_2",
+      "Prop_cistern-yard_bollard_0",
+      "Prop_cistern-yard_bollard_1",
+      "Prop_cistern-yard_bollard_2",
+      "Prop_lens-works_bollard_0",
+      "Prop_lens-works_bollard_1",
+      "Prop_lens-works_bollard_2",
+      "Prop_quarry-shelf_bollard_0",
+      "Prop_quarry-shelf_bollard_1",
+      "Prop_quarry-shelf_bollard_2",
+      "Tree_Spruce_341_Wood",
+      "Tree_Spruce_342_Wood",
+      "Tree_Spruce_350_Wood",
+      "Tree_Spruce_351_Wood",
+      "Tree_Spruce_352_Wood",
+      "Tree_Spruce_543_Wood",
+      "Tree_Spruce_544_Wood",
+      "Tree_Spruce_549_Wood",
+      "Tree_Spruce_550_Wood",
+      "Tree_Spruce_551_Wood",
+      "Tree_Spruce_552_Wood",
+      "Tree_Spruce_566_Wood",
+      "Tree_Spruce_567_Wood",
+      "Tree_Spruce_568_Wood",
+      "Tree_Spruce_569_Wood",
+      "Tree_Spruce_587_Wood",
+      "Tree_Spruce_588_Wood",
+      "Tree_Spruce_589_Wood",
+      "Tree_Spruce_590_Wood",
+      "Tree_Spruce_591_Wood",
+      "Tree_Spruce_609_Wood",
+      "Walk_Landmark_EastStair"
+    ],
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "cellMetres": 0.5,
+    "width": 1152,
+    "height": 1152,
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Mirrorhold's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+    },
+    "walkableCells": 666896,
+    "walkableFraction": 0.5025
   },
   "navigation": {
     "surfaceNodePrefixes": [
-      "Terrain_"
+      "Terrain_",
+      "Walk_"
     ],
+    "walkableAreas": [
+      "forest-floor",
+      "trails",
+      "paving",
+      "shore",
+      "meadow",
+      "bridges",
+      "canopy-platforms",
+      "docks",
+      "stairs"
+    ],
+    "agentRadius": 0.55,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 40,
     "navmesh": {
       "format": "surface-prefix-v1",
       "polygons": []
+    },
+    "notes": [
+      "Every terrain sub-mesh is named Terrain_<class>; every built walkable surface is named Walk_<...>. The client turns both into the navigation collision layer the grounding ray tests.",
+      "Bridges and canopy platforms are walk surfaces, so a downward grounding ray under one resolves onto the deck above; the terrain beneath them is water or ravine and is not walkable."
+    ]
+  },
+  "landmarks": [
+    {
+      "id": "orrery",
+      "name": "The Orrery",
+      "node": "Landmark_Orrery",
+      "type": "monument",
+      "position": [
+        162.0,
+        134.35,
+        -267.0
+      ]
+    },
+    {
+      "id": "citadel",
+      "name": "The Observatory Citadel",
+      "node": "Landmark_CitadelHigh",
+      "type": "structure",
+      "position": [
+        162.0,
+        127.2,
+        -228.0
+      ]
+    },
+    {
+      "id": "mirror-basins",
+      "name": "The Mirror Basins",
+      "node": "Landmark_Basin_2",
+      "type": "feature",
+      "position": [
+        156.0,
+        84.0,
+        -147.0
+      ]
+    },
+    {
+      "id": "gate",
+      "name": "The Lens Gate",
+      "node": "Landmark_GateWall",
+      "type": "structure",
+      "position": [
+        156.0,
+        93.7,
+        -142.5
+      ]
+    },
+    {
+      "id": "rose-gallery",
+      "name": "The Rose Gallery",
+      "node": "Landmark_Gallery",
+      "type": "structure",
+      "position": [
+        120.0,
+        107.2,
+        -159.0
+      ]
+    },
+    {
+      "id": "lens-tower-west",
+      "name": "Lens Tower",
+      "node": "Landmark_lens_tower_west",
+      "type": "structure",
+      "position": [
+        102.0,
+        104.0,
+        -228.0
+      ]
+    },
+    {
+      "id": "lens-tower-east",
+      "name": "Lens Tower",
+      "node": "Landmark_lens_tower_east",
+      "type": "structure",
+      "position": [
+        222.0,
+        104.0,
+        -228.0
+      ]
+    },
+    {
+      "id": "plaza",
+      "name": "The Fountain Plaza",
+      "node": "Landmark_Fountain",
+      "type": "feature",
+      "position": [
+        132.0,
+        58.0,
+        -90.0
+      ]
+    },
+    {
+      "id": "canal-district",
+      "name": "The Canal Terraces",
+      "node": "Landmark_Channel_2",
+      "type": "district",
+      "position": [
+        84.0,
+        46.0,
+        -108.0
+      ]
+    },
+    {
+      "id": "aqueduct",
+      "name": "The Meltwater Aqueduct",
+      "node": "Landmark_Aqueduct",
+      "type": "structure",
+      "position": [
+        294.0,
+        42.0,
+        -90.0
+      ]
+    },
+    {
+      "id": "overlook",
+      "name": "The North Overlook",
+      "node": "Landmark_Overlook",
+      "type": "feature",
+      "position": [
+        216.0,
+        64.0,
+        -126.0
+      ]
+    },
+    {
+      "id": "cliff-town",
+      "name": "The Stair Town",
+      "node": "Building_CliffHouse_0",
+      "type": "settlement",
+      "position": [
+        -24.0,
+        17.0,
+        -54.0
+      ]
+    },
+    {
+      "id": "east-stair",
+      "name": "The East Stair",
+      "node": "Walk_Landmark_EastStair",
+      "type": "structure",
+      "position": [
+        240.0,
+        31.0,
+        -60.0
+      ]
+    },
+    {
+      "id": "ring",
+      "name": "The Drowned Crown",
+      "node": "Landmark_Ring",
+      "type": "monument",
+      "position": [
+        156.0,
+        3.5,
+        60.0
+      ]
+    },
+    {
+      "id": "harbour",
+      "name": "The North Quay",
+      "node": "Landmark_Quay",
+      "type": "settlement",
+      "position": [
+        198.0,
+        4.5,
+        -18.0
+      ]
+    },
+    {
+      "id": "south-watch",
+      "name": "The South Watch",
+      "node": "Landmark_SouthWatch",
+      "type": "structure",
+      "position": [
+        108.0,
+        11.0,
+        156.0
+      ]
+    },
+    {
+      "id": "west-bench",
+      "name": "The West Bench",
+      "node": "Building_west-bench_0",
+      "type": "settlement",
+      "position": [
+        -78.0,
+        127.66,
+        -120.0
+      ]
+    },
+    {
+      "id": "west-shrine",
+      "name": "The Wayside Shrine",
+      "node": "Landmark_west-shrine",
+      "type": "feature",
+      "position": [
+        -60.0,
+        68.53,
+        -6.0
+      ]
+    },
+    {
+      "id": "gorge-head",
+      "name": "Gorge Head",
+      "node": "Landmark_gorge-head",
+      "type": "feature",
+      "position": [
+        -90.0,
+        26.51,
+        36.0
+      ]
+    },
+    {
+      "id": "lower-terrace",
+      "name": "The Lower Terrace",
+      "node": "Building_lower-terrace_0",
+      "type": "settlement",
+      "position": [
+        18.0,
+        30.89,
+        18.0
+      ]
+    },
+    {
+      "id": "mid-bench",
+      "name": "The Mid Bench",
+      "node": "Building_mid-bench_0",
+      "type": "settlement",
+      "position": [
+        42.0,
+        40.8,
+        -78.0
+      ]
+    },
+    {
+      "id": "cistern-yard",
+      "name": "The Cistern Yard",
+      "node": "Landmark_cistern-yard",
+      "type": "feature",
+      "position": [
+        102.0,
+        35.33,
+        -42.0
+      ]
+    },
+    {
+      "id": "lens-works",
+      "name": "The Lens Works",
+      "node": "Landmark_lens-works",
+      "type": "feature",
+      "position": [
+        198.0,
+        48.21,
+        -78.0
+      ]
+    },
+    {
+      "id": "east-bench",
+      "name": "The East Bench",
+      "node": "Building_east-bench_0",
+      "type": "settlement",
+      "position": [
+        264.0,
+        25.62,
+        -24.0
+      ]
+    },
+    {
+      "id": "east-post",
+      "name": "The East Post",
+      "node": "Landmark_east-post",
+      "type": "feature",
+      "position": [
+        324.0,
+        30.44,
+        -42.0
+      ]
+    },
+    {
+      "id": "north-post",
+      "name": "The North Post",
+      "node": "Landmark_north-post",
+      "type": "feature",
+      "position": [
+        102.0,
+        85.73,
+        -186.0
+      ]
+    },
+    {
+      "id": "upper-shrine",
+      "name": "The Upper Shrine",
+      "node": "Landmark_upper-shrine",
+      "type": "feature",
+      "position": [
+        192.0,
+        98.0,
+        -174.0
+      ]
+    },
+    {
+      "id": "quarry-shelf",
+      "name": "The Quarry Shelf",
+      "node": "Landmark_quarry-shelf",
+      "type": "feature",
+      "position": [
+        288.0,
+        83.19,
+        -150.0
+      ]
+    },
+    {
+      "id": "lake-north",
+      "name": "North Shore Row",
+      "node": "Building_lake-north_0",
+      "type": "settlement",
+      "position": [
+        90.0,
+        22.27,
+        -12.0
+      ]
+    },
+    {
+      "id": "west-shore",
+      "name": "West Shore Row",
+      "node": "Building_west-shore_0",
+      "type": "settlement",
+      "position": [
+        12.0,
+        3.94,
+        72.0
+      ]
+    },
+    {
+      "id": "far-west",
+      "name": "The West Watch",
+      "node": "Landmark_far-west",
+      "type": "feature",
+      "position": [
+        -102.0,
+        37.61,
+        -54.0
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "orrery-console",
+      "label": "Orrery Console",
+      "type": "interaction-point",
+      "position": [
+        162.0,
+        124.1,
+        -267.0
+      ],
+      "serverTile": [
+        336,
+        441
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "gate-ward",
+      "label": "Gate Ward",
+      "type": "interaction-point",
+      "position": [
+        156.0,
+        84.1,
+        -156.0
+      ],
+      "serverTile": [
+        330,
+        330
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "plaza-well",
+      "label": "Plaza Cistern",
+      "type": "interaction-point",
+      "position": [
+        132.0,
+        58.1,
+        -90.0
+      ],
+      "serverTile": [
+        306,
+        264
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "harbour-crane",
+      "label": "Harbour Crane",
+      "type": "interaction-point",
+      "position": [
+        198.0,
+        4.6,
+        -18.0
+      ],
+      "serverTile": [
+        372,
+        192
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ring-dial",
+      "label": "Ring Dial",
+      "type": "interaction-point",
+      "position": [
+        156.0,
+        3.6,
+        60.0
+      ],
+      "serverTile": [
+        330,
+        114
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "canal-sluice",
+      "label": "Canal Sluice",
+      "type": "interaction-point",
+      "position": [
+        84.0,
+        46.1,
+        -108.0
+      ],
+      "serverTile": [
+        258,
+        282
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "aqueduct-valve",
+      "label": "Aqueduct Valve",
+      "type": "interaction-point",
+      "position": [
+        294.0,
+        42.1,
+        -90.0
+      ],
+      "serverTile": [
+        468,
+        264
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "town-forge",
+      "label": "Stair-town Forge",
+      "type": "interaction-point",
+      "position": [
+        -24.0,
+        17.1,
+        -54.0
+      ],
+      "serverTile": [
+        150,
+        228
+      ],
+      "authority": "server"
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "mirrorhold-warden",
+      "label": "Warden of the Gate",
+      "position": [
+        156.0,
+        84.05,
+        -156.0
+      ],
+      "serverTile": [
+        330,
+        330
+      ],
+      "wanderRadius": 4.0,
+      "authority": "server"
+    },
+    {
+      "id": "lens-keeper",
+      "label": "Keeper of the Lens",
+      "position": [
+        162.0,
+        124.05,
+        -267.0
+      ],
+      "serverTile": [
+        336,
+        441
+      ],
+      "wanderRadius": 4.0,
+      "authority": "server"
+    },
+    {
+      "id": "court-steward",
+      "label": "Court Steward",
+      "position": [
+        162.0,
+        98.05,
+        -204.0
+      ],
+      "serverTile": [
+        336,
+        378
+      ],
+      "wanderRadius": 6.0,
+      "authority": "server"
+    },
+    {
+      "id": "plaza-crier",
+      "label": "Plaza Crier",
+      "position": [
+        132.0,
+        57.98,
+        -90.0
+      ],
+      "serverTile": [
+        306,
+        264
+      ],
+      "wanderRadius": 5.0,
+      "authority": "server"
+    },
+    {
+      "id": "canal-reeve",
+      "label": "Canal Reeve",
+      "position": [
+        84.0,
+        45.95,
+        -108.0
+      ],
+      "serverTile": [
+        258,
+        282
+      ],
+      "wanderRadius": 5.0,
+      "authority": "server"
+    },
+    {
+      "id": "harbour-master",
+      "label": "Harbour Master",
+      "position": [
+        198.0,
+        4.55,
+        -18.0
+      ],
+      "serverTile": [
+        372,
+        192
+      ],
+      "wanderRadius": 5.0,
+      "authority": "server"
+    },
+    {
+      "id": "ring-ferryman",
+      "label": "Ring Ferryman",
+      "position": [
+        156.0,
+        3.55,
+        60.0
+      ],
+      "serverTile": [
+        330,
+        114
+      ],
+      "wanderRadius": 4.0,
+      "authority": "server"
+    },
+    {
+      "id": "town-factor",
+      "label": "Cliff-town Factor",
+      "position": [
+        -24.0,
+        17.07,
+        -54.0
+      ],
+      "serverTile": [
+        150,
+        228
+      ],
+      "wanderRadius": 5.0,
+      "authority": "server"
+    },
+    {
+      "id": "aqueduct-wright",
+      "label": "Aqueduct Wright",
+      "position": [
+        294.0,
+        39.73,
+        -90.0
+      ],
+      "serverTile": [
+        468,
+        264
+      ],
+      "wanderRadius": 4.0,
+      "authority": "server"
+    },
+    {
+      "id": "overlook-sentry",
+      "label": "Overlook Sentry",
+      "position": [
+        216.0,
+        64.05,
+        -126.0
+      ],
+      "serverTile": [
+        390,
+        300
+      ],
+      "wanderRadius": 4.0,
+      "authority": "server"
+    },
+    {
+      "id": "shore-trader",
+      "label": "Shore Trader",
+      "position": [
+        -18.0,
+        8.08,
+        -24.0
+      ],
+      "serverTile": [
+        156,
+        198
+      ],
+      "wanderRadius": 5.0,
+      "authority": "server"
+    },
+    {
+      "id": "south-watchman",
+      "label": "South Watchman",
+      "position": [
+        108.0,
+        11.05,
+        156.0
+      ],
+      "serverTile": [
+        282,
+        18
+      ],
+      "wanderRadius": 4.0,
+      "authority": "server"
+    },
+    {
+      "id": "glacier-drake",
+      "label": "Glacier Drake",
+      "kind": "creature-group",
+      "position": [
+        300.0,
+        137.64,
+        -300.0
+      ],
+      "serverTile": [
+        474,
+        474
+      ],
+      "wanderRadius": 26.0,
+      "authority": "server"
+    },
+    {
+      "id": "ice-warden",
+      "label": "Ice Warden",
+      "kind": "creature-group",
+      "position": [
+        -42.0,
+        86.81,
+        -312.0
+      ],
+      "serverTile": [
+        132,
+        486
+      ],
+      "wanderRadius": 24.0,
+      "authority": "server"
+    },
+    {
+      "id": "crag-goat",
+      "label": "Crag Goat",
+      "kind": "creature-group",
+      "position": [
+        -66.0,
+        200.35,
+        -234.0
+      ],
+      "serverTile": [
+        108,
+        408
+      ],
+      "wanderRadius": 30.0,
+      "authority": "server"
+    },
+    {
+      "id": "mirror-carp",
+      "label": "Mirror Carp",
+      "kind": "creature-group",
+      "position": [
+        156.0,
+        3.55,
+        66.0
+      ],
+      "serverTile": [
+        330,
+        108
+      ],
+      "wanderRadius": 34.0,
+      "authority": "server"
+    },
+    {
+      "id": "scree-lurker",
+      "label": "Scree Lurker",
+      "kind": "creature-group",
+      "position": [
+        336.0,
+        194.58,
+        -228.0
+      ],
+      "serverTile": [
+        510,
+        402
+      ],
+      "wanderRadius": 26.0,
+      "authority": "server"
+    },
+    {
+      "id": "snow-hare",
+      "label": "Snow Hare",
+      "kind": "creature-group",
+      "position": [
+        54.0,
+        67.36,
+        -150.0
+      ],
+      "serverTile": [
+        228,
+        324
+      ],
+      "wanderRadius": 20.0,
+      "authority": "server"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "mirrorhold-lens-quartz-00",
+      "item": "mirrorhold-lens-quartz",
+      "label": "Lens Quartz",
+      "position": [
+        179.9,
+        116.73,
+        -284.08
+      ],
+      "serverTile": [
+        354,
+        458
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-lens-quartz-01",
+      "item": "mirrorhold-lens-quartz",
+      "label": "Lens Quartz",
+      "position": [
+        348.7,
+        119.73,
+        -339.3
+      ],
+      "serverTile": [
+        523,
+        513
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-lens-quartz-02",
+      "item": "mirrorhold-lens-quartz",
+      "label": "Lens Quartz",
+      "position": [
+        -68.72,
+        67.6,
+        -37.93
+      ],
+      "serverTile": [
+        105,
+        212
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-lens-quartz-03",
+      "item": "mirrorhold-lens-quartz",
+      "label": "Lens Quartz",
+      "position": [
+        56.48,
+        64.71,
+        -182.16
+      ],
+      "serverTile": [
+        230,
+        356
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-lens-quartz-04",
+      "item": "mirrorhold-lens-quartz",
+      "label": "Lens Quartz",
+      "position": [
+        -14.51,
+        65.82,
+        -143.13
+      ],
+      "serverTile": [
+        159,
+        317
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-lens-quartz-05",
+      "item": "mirrorhold-lens-quartz",
+      "label": "Lens Quartz",
+      "position": [
+        321.62,
+        34.24,
+        44.93
+      ],
+      "serverTile": [
+        496,
+        129
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-lens-quartz-06",
+      "item": "mirrorhold-lens-quartz",
+      "label": "Lens Quartz",
+      "position": [
+        350.05,
+        23.34,
+        9.17
+      ],
+      "serverTile": [
+        524,
+        165
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-lens-quartz-07",
+      "item": "mirrorhold-lens-quartz",
+      "label": "Lens Quartz",
+      "position": [
+        301.88,
+        56.3,
+        -7.15
+      ],
+      "serverTile": [
+        476,
+        181
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-lens-quartz-08",
+      "item": "mirrorhold-lens-quartz",
+      "label": "Lens Quartz",
+      "position": [
+        -125.08,
+        68.12,
+        -227.88
+      ],
+      "serverTile": [
+        49,
+        402
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-lens-quartz-09",
+      "item": "mirrorhold-lens-quartz",
+      "label": "Lens Quartz",
+      "position": [
+        218.92,
+        82.7,
+        -166.16
+      ],
+      "serverTile": [
+        393,
+        340
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-glacier-rime-00",
+      "item": "mirrorhold-glacier-rime",
+      "label": "Glacier Rime",
+      "position": [
+        330.94,
+        129.75,
+        -324.88
+      ],
+      "serverTile": [
+        505,
+        499
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-glacier-rime-01",
+      "item": "mirrorhold-glacier-rime",
+      "label": "Glacier Rime",
+      "position": [
+        301.1,
+        149.88,
+        -291.03
+      ],
+      "serverTile": [
+        475,
+        465
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-glacier-rime-02",
+      "item": "mirrorhold-glacier-rime",
+      "label": "Glacier Rime",
+      "position": [
+        348.09,
+        150.82,
+        -270.92
+      ],
+      "serverTile": [
+        522,
+        445
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-glacier-rime-03",
+      "item": "mirrorhold-glacier-rime",
+      "label": "Glacier Rime",
+      "position": [
+        269.21,
+        126.17,
+        -272.39
+      ],
+      "serverTile": [
+        443,
+        446
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-glacier-rime-04",
+      "item": "mirrorhold-glacier-rime",
+      "label": "Glacier Rime",
+      "position": [
+        257.6,
+        139.16,
+        -341.8
+      ],
+      "serverTile": [
+        432,
+        516
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-glacier-rime-05",
+      "item": "mirrorhold-glacier-rime",
+      "label": "Glacier Rime",
+      "position": [
+        327.86,
+        154.22,
+        -288.38
+      ],
+      "serverTile": [
+        502,
+        462
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-glacier-rime-06",
+      "item": "mirrorhold-glacier-rime",
+      "label": "Glacier Rime",
+      "position": [
+        -9.3,
+        130.93,
+        -270.4
+      ],
+      "serverTile": [
+        165,
+        444
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-glacier-rime-07",
+      "item": "mirrorhold-glacier-rime",
+      "label": "Glacier Rime",
+      "position": [
+        290.97,
+        145.14,
+        -265.42
+      ],
+      "serverTile": [
+        465,
+        439
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-00",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        -38.39,
+        43.98,
+        -116.86
+      ],
+      "serverTile": [
+        136,
+        291
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-01",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        -77.7,
+        16.13,
+        110.16
+      ],
+      "serverTile": [
+        96,
+        64
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-02",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        -135.49,
+        31.45,
+        -40.24
+      ],
+      "serverTile": [
+        39,
+        214
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-03",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        -123.35,
+        73.22,
+        -319.3
+      ],
+      "serverTile": [
+        51,
+        493
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-04",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        -136.98,
+        48.43,
+        -139.61
+      ],
+      "serverTile": [
+        37,
+        314
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-05",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        -121.9,
+        24.54,
+        45.91
+      ],
+      "serverTile": [
+        52,
+        128
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-06",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        -133.92,
+        55.9,
+        -185.34
+      ],
+      "serverTile": [
+        40,
+        359
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-07",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        -128.16,
+        83.78,
+        -378.56
+      ],
+      "serverTile": [
+        46,
+        553
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-08",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        -58.62,
+        13.72,
+        119.78
+      ],
+      "serverTile": [
+        115,
+        54
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-09",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        -129.81,
+        17.23,
+        87.73
+      ],
+      "serverTile": [
+        44,
+        86
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-10",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        20.73,
+        42.92,
+        -89.33
+      ],
+      "serverTile": [
+        195,
+        263
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-alpine-herb-11",
+      "item": "mirrorhold-alpine-herb",
+      "label": "Alpine Herb",
+      "position": [
+        317.9,
+        8.25,
+        110.2
+      ],
+      "serverTile": [
+        492,
+        64
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-shore-reed-00",
+      "item": "mirrorhold-shore-reed",
+      "label": "Shore Reed",
+      "position": [
+        64.48,
+        -4.16,
+        50.56
+      ],
+      "serverTile": [
+        238,
+        123
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-shore-reed-01",
+      "item": "mirrorhold-shore-reed",
+      "label": "Shore Reed",
+      "position": [
+        28.03,
+        -10.95,
+        90.06
+      ],
+      "serverTile": [
+        202,
+        84
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-shore-reed-02",
+      "item": "mirrorhold-shore-reed",
+      "label": "Shore Reed",
+      "position": [
+        93.46,
+        -4.36,
+        20.9
+      ],
+      "serverTile": [
+        267,
+        153
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-shore-reed-03",
+      "item": "mirrorhold-shore-reed",
+      "label": "Shore Reed",
+      "position": [
+        84.79,
+        -10.95,
+        107.72
+      ],
+      "serverTile": [
+        259,
+        66
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-shore-reed-04",
+      "item": "mirrorhold-shore-reed",
+      "label": "Shore Reed",
+      "position": [
+        117.34,
+        -10.95,
+        80.07
+      ],
+      "serverTile": [
+        291,
+        94
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-shore-reed-05",
+      "item": "mirrorhold-shore-reed",
+      "label": "Shore Reed",
+      "position": [
+        215.65,
+        -10.16,
+        19.94
+      ],
+      "serverTile": [
+        390,
+        154
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-shore-reed-06",
+      "item": "mirrorhold-shore-reed",
+      "label": "Shore Reed",
+      "position": [
+        212.98,
+        -10.95,
+        40.44
+      ],
+      "serverTile": [
+        387,
+        134
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-shore-reed-07",
+      "item": "mirrorhold-shore-reed",
+      "label": "Shore Reed",
+      "position": [
+        229.69,
+        -10.95,
+        77.29
+      ],
+      "serverTile": [
+        404,
+        97
+      ],
+      "authority": "server"
+    }
+  ],
+  "portals": [
+    {
+      "id": "north-pass",
+      "name": "Whitehorn Pass",
+      "type": "map-transition",
+      "position": [
+        162.0,
+        205.22,
+        -384.0
+      ],
+      "serverTile": [
+        336,
+        558
+      ],
+      "destinationMap": "maps/nymara/whitehorn_range.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "south-road",
+      "name": "Westhaven Road",
+      "type": "map-transition",
+      "position": [
+        120.0,
+        5.67,
+        168.0
+      ],
+      "serverTile": [
+        294,
+        6
+      ],
+      "destinationMap": "maps/nymara/westhaven.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "east-road",
+      "name": "Amethyst Barrens Road",
+      "type": "map-transition",
+      "position": [
+        390.0,
+        49.35,
+        -60.0
+      ],
+      "serverTile": [
+        564,
+        234
+      ],
+      "destinationMap": "maps/nymara/amethyst_barrens.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "west-gorge",
+      "name": "Crownwater Gorge",
+      "type": "map-transition",
+      "position": [
+        -156.0,
+        24.36,
+        12.0
+      ],
+      "serverTile": [
+        18,
+        162
+      ],
+      "destinationMap": "maps/nymara/crownwater.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "drowned-crown-stair",
+      "name": "The Drowned Crown",
+      "type": "interior-entrance",
+      "position": [
+        156.0,
+        3.6,
+        60.0
+      ],
+      "serverTile": [
+        330,
+        114
+      ],
+      "landmark": "ring",
+      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "resonant-vault-door",
+      "name": "The Resonant Vault",
+      "type": "interior-entrance",
+      "position": [
+        162.0,
+        134.45,
+        -267.0
+      ],
+      "serverTile": [
+        336,
+        441
+      ],
+      "landmark": "orrery",
+      "destinationMap": "maps/nymara/resonant_vault.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "authority": "server"
+    }
+  ],
+  "roads": [
+    {
+      "id": "great_road",
+      "waypoints": [
+        [
+          0.0,
+          42.63,
+          0.0
+        ],
+        [
+          18.0,
+          35.45,
+          -18.0
+        ],
+        [
+          54.0,
+          39.24,
+          -36.0
+        ],
+        [
+          72.0,
+          52.33,
+          -66.0
+        ],
+        [
+          102.0,
+          55.85,
+          -78.0
+        ],
+        [
+          132.0,
+          57.93,
+          -90.0
+        ],
+        [
+          150.0,
+          67.36,
+          -114.0
+        ],
+        [
+          138.0,
+          80.34,
+          -138.0
+        ],
+        [
+          156.0,
+          84.0,
+          -156.0
+        ]
+      ]
+    },
+    {
+      "id": "shore_road",
+      "waypoints": [
+        [
+          -48.0,
+          28.59,
+          48.0
+        ],
+        [
+          0.0,
+          42.63,
+          0.0
+        ],
+        [
+          42.0,
+          32.47,
+          6.0
+        ],
+        [
+          102.0,
+          15.11,
+          -12.0
+        ],
+        [
+          198.0,
+          4.5,
+          -18.0
+        ]
+      ]
+    },
+    {
+      "id": "town_road",
+      "waypoints": [
+        [
+          -24.0,
+          17.02,
+          -54.0
+        ],
+        [
+          0.0,
+          41.18,
+          -42.0
+        ],
+        [
+          30.0,
+          37.89,
+          -54.0
+        ],
+        [
+          60.0,
+          42.52,
+          -72.0
+        ]
+      ]
+    },
+    {
+      "id": "east_road",
+      "waypoints": [
+        [
+          198.0,
+          4.5,
+          -18.0
+        ],
+        [
+          228.0,
+          11.92,
+          -24.0
+        ],
+        [
+          240.0,
+          32.28,
+          -60.0
+        ],
+        [
+          270.0,
+          44.12,
+          -78.0
+        ],
+        [
+          294.0,
+          39.68,
+          -90.0
+        ],
+        [
+          276.0,
+          51.81,
+          -114.0
+        ],
+        [
+          216.0,
+          64.0,
+          -126.0
+        ]
+      ]
+    }
+  ],
+  "water": {
+    "seaLevel": 0.0,
+    "serverCells": 576,
+    "bodies": [
+      {
+        "id": "Water_Lake",
+        "node": "Water_Lake",
+        "type": "pool"
+      },
+      {
+        "id": "Water_Canal",
+        "node": "Water_Canal",
+        "type": "pool"
+      }
+    ],
+    "streams": [
+      {
+        "id": "upper_cascade",
+        "waypoints": [
+          [
+            54.0,
+            67.31,
+            -150.0
+          ],
+          [
+            66.0,
+            43.22,
+            -120.0
+          ],
+          [
+            78.0,
+            43.26,
+            -96.0
+          ],
+          [
+            90.0,
+            46.59,
+            -60.0
+          ]
+        ]
+      },
+      {
+        "id": "canal_west",
+        "waypoints": [
+          [
+            90.0,
+            46.59,
+            -60.0
+          ],
+          [
+            78.0,
+            42.46,
+            -18.0
+          ],
+          [
+            66.0,
+            17.72,
+            18.0
+          ],
+          [
+            90.0,
+            -11.0,
+            48.0
+          ]
+        ]
+      },
+      {
+        "id": "canal_east",
+        "waypoints": [
+          [
+            294.0,
+            39.68,
+            -90.0
+          ],
+          [
+            282.0,
+            52.62,
+            -54.0
+          ],
+          [
+            252.0,
+            12.38,
+            -12.0
+          ],
+          [
+            216.0,
+            -11.0,
+            30.0
+          ]
+        ]
+      }
+    ]
+  },
+  "bounds": {
+    "playable": {
+      "min": [
+        -174.0,
+        -11.0,
+        -401.0
+      ],
+      "max": [
+        401.0,
+        258.59,
+        174.0
+      ]
+    },
+    "terrain": {
+      "min": [
+        -204.0,
+        -11.0,
+        -431.0
+      ],
+      "max": [
+        431.0,
+        258.59,
+        204.0
+      ]
+    },
+    "waterLevel": 0.0,
+    "metresPerServerTile": 1.0,
+    "serverCells": 576
+  },
+  "environment": {
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.15,
+        0.25,
+        0.42
+      ],
+      "horizon": [
+        0.58,
+        0.56,
+        0.5
+      ]
+    },
+    "sun": {
+      "direction": [
+        -0.46,
+        0.5,
+        0.73
+      ],
+      "color": [
+        1.22,
+        0.94,
+        0.6
+      ],
+      "energy": 1.15
+    },
+    "ambient": {
+      "skyColor": [
+        0.22,
+        0.3,
+        0.42
+      ],
+      "groundColor": [
+        0.08,
+        0.06,
+        0.04
+      ],
+      "energy": 0.3
+    },
+    "saturation": 1.3,
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.38,
+        0.37,
+        0.35
+      ],
+      "density": 0.0007,
+      "heightFalloff": 0.003
+    },
+    "goldenHour": {
+      "sun": {
+        "direction": [
+          -0.82,
+          0.2,
+          0.53
+        ],
+        "color": [
+          1.55,
+          0.94,
+          0.52
+        ]
+      },
+      "fog": {
+        "color": [
+          0.62,
+          0.5,
+          0.38
+        ],
+        "density": 0.0022
+      }
+    },
+    "presentation": {
+      "fallingLeaves": {
+        "enabled": true,
+        "density": 0.6,
+        "zones": [
+          "forest-core",
+          "settlement"
+        ]
+      },
+      "mist": {
+        "enabled": true,
+        "zones": [
+          "mill-pool",
+          "ravine",
+          "coast"
+        ]
+      },
+      "chimneySmoke": {
+        "enabled": true,
+        "nodes": [
+          "Landmark_MootHall",
+          "Building_Lodge_00",
+          "Building_Lodge_02",
+          "Landmark_CharcoalKiln_0"
+        ]
+      },
+      "waterSpray": {
+        "enabled": true,
+        "nodes": [
+          "Water_Falls"
+        ]
+      },
+      "ambientAudio": [
+        {
+          "id": "forest-day",
+          "zone": "forest-core"
+        },
+        {
+          "id": "surf",
+          "zone": "coast"
+        },
+        {
+          "id": "settlement",
+          "zone": "settlement"
+        },
+        {
+          "id": "wind-barren",
+          "zone": "transition"
+        }
+      ]
+    },
+    "zones": [
+      {
+        "id": "forest-core",
+        "centre": [
+          20.0,
+          32.0,
+          -116.0
+        ],
+        "radius": 124.0
+      },
+      {
+        "id": "coast",
+        "centre": [
+          -60.0,
+          4.0,
+          0.0
+        ],
+        "radius": 104.0
+      },
+      {
+        "id": "settlement",
+        "centre": [
+          16.0,
+          32.0,
+          -112.0
+        ],
+        "radius": 60.0
+      },
+      {
+        "id": "transition",
+        "centre": [
+          216.0,
+          20.0,
+          -40.0
+        ],
+        "radius": 92.0
+      }
+    ]
+  },
+  "minimap": {
+    "file": "minimap.webp",
+    "pixels": 768,
+    "metresPerPixel": 0.7487,
+    "worldMin": [
+      -174.0,
+      -401.0
+    ],
+    "worldMax": [
+      401.0,
+      174.0
+    ],
+    "northAxis": "-Z",
+    "orientation": "north-up"
+  },
+  "lodGroups": [
+    {
+      "id": "forest",
+      "strategy": "authored-detail-tiers",
+      "levels": [
+        {
+          "id": "near",
+          "suffix": "_high"
+        },
+        {
+          "id": "mid",
+          "suffix": "_mid"
+        },
+        {
+          "id": "far",
+          "suffix": "_low"
+        }
+      ]
+    },
+    {
+      "id": "package-lod2",
+      "glb": "world-lod2.glb",
+      "strategy": "reduced-package",
+      "notes": "Far-tier vegetation only, no ground clutter."
+    }
+  ],
+  "performance": {
+    "nodes": 2308,
+    "meshes": 131,
+    "materials": 26,
+    "images": 73,
+    "textures": 73,
+    "accessors": 524,
+    "bufferViews": 597,
+    "uniqueTriangles": 300734,
+    "uniqueVertices": 183149,
+    "glbBytes": 16092412,
+    "instancedTriangles": 1246632,
+    "embeddedTextureBytes": 14401265,
+    "textureMemoryBytesUncompressed": 125042688,
+    "placements": 1874,
+    "collision": {
+      "width": 1152,
+      "height": 1152,
+      "cellMetres": 0.5,
+      "walkableCells": 666896,
+      "blockedCells": 660208,
+      "walkableFraction": 0.5025,
+      "elevatedDecks": 23,
+      "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+      "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+    },
+    "notes": [
+      "road retaining walls: 2",
+      "cliff waterfalls: 7",
+      "spruce instances: 855"
+    ],
+    "lod2": {
+      "glbBytes": 9176216,
+      "nodes": 2236,
+      "uniqueTriangles": 273416,
+      "instancedTriangles": 890182,
+      "sizeReductionPercent": 43.0,
+      "triangleReductionPercent": 28.6
     }
   },
-  "materials": {
-    "baseColor": "textures/region-basecolor.png",
-    "normal": "textures/region-normal.png",
-    "orm": "textures/region-orm.png"
+  "sources": [
+    {
+      "id": "aerial-concept",
+      "file": "references/01-concept-aerial-overview.png",
+      "role": "authoritative-composition"
+    },
+    {
+      "id": "detail-board",
+      "file": "references/00-concept-detail-board.png",
+      "role": "authoritative-player-scale"
+    },
+    {
+      "id": "generator",
+      "file": "source/build_mirrorhold.py",
+      "role": "reproducible-build",
+      "seed": 20260828
+    }
+  ],
+  "provenance": {
+    "assets": "original to Eloria/Nymara; generated by _toolkit/amberwood/*",
+    "thirdParty": "none",
+    "textures": "procedural (numpy + Pillow), no sampled or traced source",
+    "geometry": "procedural (numpy), no imported models",
+    "license": "same as the Eloria client repository"
   },
-  "productionStatus": "terrain-landmark-material-pass"
+  "productionStatus": "production-geometry-materials-population",
+  "knownLimitations": []
 }

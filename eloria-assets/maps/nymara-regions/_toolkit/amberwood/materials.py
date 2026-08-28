@@ -77,6 +77,26 @@ SPECS: tuple[MaterialSpec, ...] = (
     # Standing water underground: the same surface, unlit by any sky.
     MaterialSpec("water_deep", "water_pool", roughness=0.12,
                  base_color=(0.20, 0.30, 0.32, 0.90), alpha_mode="BLEND"),
+
+    # -- Mirrorhold. Appended, never inserted: a region pins the material set
+    # it embeds by name, and reordering this tuple would rewrite its GLB.
+    MaterialSpec("snow_pack", "snow_pack", roughness=0.74),
+    MaterialSpec("glacier_ice", "glacier_ice", roughness=0.30,
+                 base_color=(1.0, 1.0, 1.0, 0.94), alpha_mode="BLEND"),
+    MaterialSpec("blue_crystal", "blue_crystal", roughness=0.12,
+                 emissive=(0.048, 0.152, 0.268)),
+    MaterialSpec("veined_marble", "veined_marble", roughness=0.36),
+    MaterialSpec("pale_ashlar", "pale_ashlar", roughness=0.90),
+    MaterialSpec("gilt_brass", "gilt_brass", roughness=0.28, metallic=1.0),
+    MaterialSpec("slate_roof", "slate_roof", roughness=0.84),
+    MaterialSpec("alpine_turf", "alpine_turf", roughness=0.94),
+    MaterialSpec("water_lake", "water_lake", roughness=0.13,
+                 base_color=(1.0, 1.0, 1.0, 0.84), alpha_mode="BLEND"),
+    # The mirror-sphere: the same crystal, darkened and polished, so it reads
+    # as a polished dark mirror rather than a bright blue ball.
+    MaterialSpec("mirror_glass", "blue_crystal", roughness=0.05, metallic=0.35,
+                 base_color=(0.30, 0.38, 0.50, 1.0),
+                 emissive=(0.012, 0.030, 0.058)),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}
@@ -108,6 +128,16 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     sets["leaf_path"] = T.leaf_path(512, seed=79)
     sets["shore_shingle"] = T.shore_shingle(512, seed=113)
     sets["meadow_grass"] = T.meadow_grass(512, seed=131)
+    # Mirrorhold
+    sets["snow_pack"] = T.snow_pack(512, seed=401)
+    sets["glacier_ice"] = T.glacier_ice(512, seed=409)
+    sets["blue_crystal"] = T.blue_crystal(256, seed=419)
+    sets["veined_marble"] = T.veined_marble(512, seed=421)
+    sets["pale_ashlar"] = T.pale_ashlar(512, seed=431)
+    sets["gilt_brass"] = T.gilt_brass(256, seed=433)
+    sets["slate_roof"] = T.slate_roof(512, seed=439)
+    sets["alpine_turf"] = T.alpine_turf(512, seed=443)
+    sets["water_lake"] = T.water_surface(512, seed=449, tone="lake")
     sets["scorched_ground"] = T.scorched_ground(512, seed=109)
     sets["dark_iron"] = T.dark_iron(256, seed=101)
     sets["woven_cloth"] = T.woven_cloth(256, seed=103)
