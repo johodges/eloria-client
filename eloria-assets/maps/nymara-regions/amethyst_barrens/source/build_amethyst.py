@@ -60,8 +60,7 @@ MATERIALS: frozenset[str] = frozenset({
     "amethyst_barrens_dust", "amethyst_crystal_field", "amethyst_resonant_road",
     "amethyst_storm_rock", "amethyst_crystal", "amethyst_pale_stone",
     "amethyst_verdigris", "amethyst_brass", "amethyst_banner",
-    "cobble_paving", "shore_shingle", "cliff_rock", "rubble_stone",
-    "dark_iron", "timber_warm", "water_sea", "water_stream",
+    "shore_shingle", "cobble_paving", "water_sea", "water_stream",
 })
 
 
@@ -74,19 +73,26 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     REG.apply_built_ground(terrain, seed)
     build = REG.RegionBuild(terrain=terrain)
 
+    # Surfaces are painted before the placement passes, not after: the crystal
+    # and ground-dressing passes choose their sites by surface class, and if the
+    # classes are still unpainted they scatter nothing at all.
+    REG.assign_surfaces(terrain, seed)
+
     POP.populate_landmarks(build, seed, lod=lod)
     POP.populate_stations(build, seed, lod=lod)
     POP.populate_crystal(build, seed, lod=lod)
     if lod is None:
         POP.populate_ground_detail(build, seed)
 
-    # surfaces are painted after the built ground so roads and courts survive
-    REG.assign_surfaces(terrain, seed)
     POP.build_water(build)
 
     build.terrain_meshes = terrain.build_meshes(uv_scale=0.28)
-    build.terrain_meshes["Backdrop_Distant"] = TER.backdrop(
-        terrain, reach=240.0, cell=11.0, seed=seed + 909)
+    # The backdrop is the distant mountain ring. It comes out of the toolkit in
+    # Amberwood's cliff rock, so it is retinted into this region's storm rock -
+    # otherwise the horizon is grey while everything in front of it is violet.
+    backdrop = TER.backdrop(terrain, reach=240.0, cell=11.0, seed=seed + 909)
+    backdrop.material = "amethyst_storm_rock"
+    build.terrain_meshes["Backdrop_Distant"] = backdrop
     build.resolve_names()
     _add_spawns_and_portals(build)
     _add_population_markers(build, seed)
@@ -398,8 +404,22 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
         half_x = float(max(abs(low[0]), abs(high[0]))) * placement.scale
         half_z = float(max(abs(low[2]), abs(high[2]))) * placement.scale
         deck_y = py + float(high[1]) * placement.scale
-        radius = max(min(half_x, half_z) * 0.85, 0.4)
-        footprint = np.hypot(gx - px, gz - pz) < radius
+        # A rotated rectangle, not a circle on the smaller half-extent. A bridge
+        # deck is long and narrow, so a circle covers only the middle span and
+        # the rest of the deck keeps the gully floor's encoded height - which is
+        # exactly what COLLISION_SURFACE_MISMATCH catches.
+        cos_r = math.cos(placement.rotation_y)
+        sin_r = math.sin(placement.rotation_y)
+        dx = gx - px
+        dz = gz - pz
+        # inverse of mesh.rotation_y: local = R(-theta) . world
+        local_x = dx * cos_r - dz * sin_r
+        local_z = dx * sin_r + dz * cos_r
+        # The deck is claimed to its full extent plus half a cell: trimming it
+        # back leaves the last metre of each bridge end encoding the gully floor
+        # while the ray overhead still finds the deck.
+        footprint = ((np.abs(local_x) <= max(half_x * 0.96, 0.4))
+                     & (np.abs(local_z) <= max(half_z * 0.96, 0.4)))
         if not footprint.any():
             continue
         if deck_y > ground.max() + 200.0:
@@ -432,22 +452,32 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
 def render_minimap(build: REG.RegionBuild, sets, path: Path, size: int = 768) -> dict:
     """Top-down capture of the finished geometry."""
     import preview
+    from amberwood import render as RENDER
     scene = preview.scene_from_build(build, sets)
-    span = max(REG.PLAY_MAX_X - REG.PLAY_MIN_X, REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
     centre_x = (REG.PLAY_MIN_X + REG.PLAY_MAX_X) * 0.5
     centre_z = (REG.PLAY_MIN_Z + REG.PLAY_MAX_Z) * 0.5
-    height = span * 1.06
-    image = scene.render(size, size,
-                         eye=(centre_x, height, centre_z + 0.001),
+    extent = max(REG.PLAY_MAX_X - REG.PLAY_MIN_X, REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
+    altitude = 900.0
+    fov = 2.0 * math.degrees(math.atan((extent * 0.5) / altitude))
+    # a cold storm key, matching the region's environment block
+    lighting = RENDER.Lighting(sun_direction=(-0.28, 0.92, 0.28),
+                               fog_density=0.0, ambient_strength=0.70,
+                               shadow_strength=0.40, sun_color=(0.98, 0.92, 1.04))
+    image = scene.render(eye=(centre_x, altitude, centre_z + 0.01),
                          target=(centre_x, 0.0, centre_z),
-                         fov=60.0, sun=(-0.42, 0.72, 0.55))
-    Image.fromarray(image).save(path, "WEBP", quality=88, method=5)
+                         width=size, height=size, fov=fov, lighting=lighting,
+                         shadows=True, shadow_size=2048,
+                         shadow_center=(centre_x, 20.0, centre_z),
+                         shadow_radius=extent * 0.62, near=200.0, far=1400.0)
+    image.save(path, "WEBP", quality=88, method=5)
     return {
         "file": path.name,
-        "pixels": [size, size],
+        "pixels": size,
+        "metresPerPixel": round(extent / size, 4),
         "worldMin": [REG.PLAY_MIN_X, REG.PLAY_MIN_Z],
-        "worldMax": [REG.PLAY_MAX_X, REG.PLAY_MAX_Z],
-        "metresPerPixel": round(span / size, 4),
+        "worldMax": [REG.PLAY_MIN_X + extent, REG.PLAY_MIN_Z + extent],
+        "northAxis": "-Z",
+        "orientation": "north-up",
         "renderedFrom": "final geometry (offline rasteriser)",
     }
 

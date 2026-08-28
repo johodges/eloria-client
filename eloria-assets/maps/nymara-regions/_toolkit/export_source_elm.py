@@ -26,7 +26,6 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import regionpaths
-from amberwood import region as REG
 
 HEADER_BYTES = 120
 TILE_SIZE = 6  # height cells per ELM tile, per axis
@@ -104,7 +103,10 @@ def main() -> int:
 
     # the collision grid is half-metre; the ELM height map is one cell per tile
     # sixth, i.e. the same spacing as the server's movement grid
-    cells = REG.SERVER_CELLS
+    # From the region being exported, not from Amberwood: the module-level
+    # `from amberwood import region as REG` here would silently size every
+    # region's ELM to Amberwood's grid.
+    cells = build_module.REG.SERVER_CELLS
     step = max(1, width // cells)
     heights = grid[::step, ::step][:cells, :cells]
     if heights.shape != (cells, cells):

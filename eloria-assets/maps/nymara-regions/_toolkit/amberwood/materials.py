@@ -94,9 +94,17 @@ SPECS: tuple[MaterialSpec, ...] = (
     MaterialSpec("amethyst_crystal", "amethyst_crystal", roughness=0.10,
                  emissive=(0.196, 0.088, 0.320)),
     MaterialSpec("amethyst_pale_stone", "amethyst_pale_stone", roughness=0.82),
-    MaterialSpec("amethyst_verdigris", "amethyst_verdigris", roughness=0.64,
-                 metallic=1.0),
-    MaterialSpec("amethyst_brass", "amethyst_brass", roughness=0.30, metallic=1.0),
+    # Verdigris is a mineral crust, not bare metal, so a low metallic value is
+    # both physically right and what keeps it readable: in a client with no
+    # reflection probe a metallic surface facing away from the sky goes black,
+    # which turned every spire cap into a charcoal cone.
+    MaterialSpec("amethyst_verdigris", "amethyst_verdigris", roughness=0.68,
+                 metallic=0.12),
+    # Not metallic=1.0: a fully metallic surface has no diffuse term, so with
+    # no environment probe it renders black - every brass pole, crane and
+    # tripod came out as a charcoal stick. 0.62 still reads as metal and
+    # survives a renderer without image-based lighting.
+    MaterialSpec("amethyst_brass", "amethyst_brass", roughness=0.36, metallic=0.40),
     MaterialSpec("amethyst_banner", "amethyst_banner", roughness=0.90,
                  double_sided=True),
 )

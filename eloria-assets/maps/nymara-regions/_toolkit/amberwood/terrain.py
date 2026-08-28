@@ -54,7 +54,7 @@ SURFACE_MATERIALS = {
 # do that, so nobody has to edit the rule itself.
 AUTHORED_SURFACES: set[int] = {
     PATH, PAVING, SCORCHED, MEADOW,
-    CRYSTAL_FIELD, RESONANT_ROAD,
+    RESONANT_ROAD,
 }
 
 # Surfaces whose border must stay crisp, so `dither_boundaries` leaves them

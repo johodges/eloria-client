@@ -1065,6 +1065,10 @@ def amethyst_crystal_field(size: int = 512, seed: int = 509) -> TextureSet:
     # ochre dust lies in the gaps, and there is a lot of it
     gap = np.clip(dist * 2.2 - 0.55, 0.0, 1.0)
     color = _mix(color, np.array([0.470, 0.386, 0.222]), gap * 0.85)
+    # Knock the whole patch back toward the barrens it sits in. At full
+    # saturation the crystal fields read as flat pink decals laid over the
+    # ochre rather than as ground with crystal growing through it.
+    color = _mix(color, np.array([0.404, 0.336, 0.212]), 0.34)
     occlusion = np.clip(0.34 + body * 0.64, 0.0, 1.0)
     roughness = np.clip(0.20 + gap * 0.72 + dust * 0.10, 0.0, 1.0)
     return TextureSet("amethyst_crystal_field", _u8(np.clip(color, 0, 1)),
@@ -1119,10 +1123,10 @@ def amethyst_storm_rock(size: int = 512, seed: int = 523) -> TextureSet:
     # Lifted off black: at value 0.10 the rock read as a hole in the map and the
     # violet in its cracks disappeared with it.
     color = _colorize(np.clip(strata * 0.75 + grain * 0.25, 0, 1),
-                      (0.0, (0.180, 0.166, 0.180)),
-                      (0.45, (0.270, 0.252, 0.272)),
-                      (0.80, (0.372, 0.352, 0.372)),
-                      (1.0, (0.462, 0.442, 0.456)))
+                      (0.0, (0.116, 0.106, 0.120)),
+                      (0.45, (0.180, 0.168, 0.186)),
+                      (0.80, (0.256, 0.240, 0.258)),
+                      (1.0, (0.330, 0.314, 0.328)))
     # Crystal has got into some of the cracks, not all of them: an unmasked
     # network covers the rock like leading in a window and stops reading as rock.
     crack = np.clip(1.0 - fracture * 0.95, 0.0, 1.0)

@@ -20,14 +20,18 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import preview
 from amberwood import render as RENDER
 from amberwood import region as REG
-from build_amberwood import build_region
 
 import regionpaths
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = regionpaths.package_root()
 CAPTURES = PACKAGE / "references" / "captures"
-VIEWS = regionpaths.load_region_views(PACKAGE).VIEWS
+_REGION_VIEWS = regionpaths.load_region_views(PACKAGE)
+VIEWS = _REGION_VIEWS.VIEWS
+# A region may supply its own capture lighting as `LIGHTING = {"day": ...}`.
+# Amberwood's warm sunny key is wrong for, say, a region under permanent storm,
+# and the captures are the only visual evidence a reviewer has.
+REGION_LIGHTING = getattr(_REGION_VIEWS, "LIGHTING", {})
 
 DAY = RENDER.Lighting(sun_direction=(-0.46, 0.50, 0.73),
                       sun_color=(1.22, 0.94, 0.60),
@@ -131,7 +135,7 @@ def main() -> int:
     out.mkdir(parents=True, exist_ok=True)
 
     sets = preview.texture_sets()
-    build = build_region()
+    build = regionpaths.load_region_build(PACKAGE)()
     scene = preview.scene_from_build(build, sets)
     print(f"[scene] {scene.triangle_count()} triangles")
 
@@ -200,11 +204,12 @@ def main() -> int:
         if eye_h > 40.0:
             eye_h = eye_h * scale
         t0 = time.time()
-        lighting = GOLDEN if mode == "golden" else DAY
+        lighting = REGION_LIGHTING.get(mode, GOLDEN if mode == "golden" else DAY)
         if panel == "aerial":
             # a 576 m region seen from 500 m up is far enough away that the
             # normal ground-level haze would swallow the far half of it
-            lighting = RENDER.Lighting(**{**vars(DAY), "fog_density": 0.00022,
+            base = REGION_LIGHTING.get("day", DAY)
+            lighting = RENDER.Lighting(**{**vars(base), "fog_density": 0.00022,
                                           "fog_height_falloff": 0.0016})
         placed_eye = eye_xz if eye_h > 20.0 else find_clear(eye_xz)
         eye = ground(placed_eye, eye_h)

@@ -17,6 +17,9 @@ BOARD = PACKAGE / "references" / "00-concept-detail-board.png"
 AERIAL = PACKAGE / "references" / "01-concept-aerial-overview.png"
 OUT = PACKAGE / "references" / "comparisons"
 PANELS = regionpaths.load_region_views(PACKAGE).PANELS
+# The sheets used to say "Amberwood build" whatever region they were made from.
+REGION_LABEL = json.loads((PACKAGE / "world.json").read_text(
+    encoding="utf-8")).get("asset", {}).get("name", PACKAGE.name)
 
 
 
@@ -60,7 +63,7 @@ def main() -> int:
         pair.paste(concept, (0, 0))
         pair.paste(capture, (cell[0] + 12, 0))
         rows.append(_label(pair, f"Panel {number} - {caption}   "
-                                 f"[left: concept | right: Amberwood build]"))
+                                 f"[left: concept | right: {REGION_LABEL} build]"))
 
     sheet_height = sum(r.height + 8 for r in rows)
     sheet = Image.new("RGB", (rows[0].width, sheet_height), (10, 10, 12))
@@ -86,7 +89,7 @@ def main() -> int:
     pair = Image.new("RGB", (width, a.height + b.height + 12), (10, 10, 12))
     pair.paste(a, (0, 0))
     pair.paste(b, (0, a.height + 12))
-    _label(pair, "Aerial overview  [top: concept | bottom: Amberwood build]").save(
+    _label(pair, f"Aerial overview  [top: concept | bottom: {REGION_LABEL} build]").save(
         OUT / "aerial-comparison.png")
     Image.open(OUT / "aerial-comparison.png").convert("RGB").save(
         OUT / "aerial-comparison.webp", "WEBP", quality=88, method=5)

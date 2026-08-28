@@ -358,14 +358,14 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
     # the observatory terrace and its forecourt
     obs_y = float(t.height_at(*ANCHORS["observatory"]))
     t.rect_terrace(ANCHORS["observatory"], 17.0 * LOCAL, 14.0 * LOCAL, obs_y, 0.0,
-                   TER.PAVING)
+                   TER.BARRENS)
     t.rect_terrace(ANCHORS["observatory_court"], 14.0 * LOCAL, 10.0 * LOCAL,
                    obs_y - 5.0, 0.0, TER.PAVING)
     t.grade_path(_route((-25.0, -58.0), (-25.0, -52.0)), 7.0 * LOCAL,
                  heights=[obs_y - 0.6, obs_y - 5.0], shoulder=1.8,
                  surface=TER.PAVING, seed=seed + 41)
     t.rect_terrace(ANCHORS["observatory_annexe"], 8.0 * LOCAL, 7.0 * LOCAL,
-                   obs_y - 2.4, 0.0, TER.PAVING)
+                   obs_y - 2.4, 0.0, TER.BARRENS)
 
     # the arrival apron: flat, clear, and unambiguously walkable
     t.terrace(ANCHORS["arrival"], 13.0 * LOCAL,
@@ -386,16 +386,36 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260828) -> None:
                   surface=TER.CRYSTAL_FIELD)
 
     # ruin platforms
+    # The ruins stand on the barrens, not on paving. Using TER.PAVING put
+    # Amberwood's grey-brown cobble under them, which reads as a dark slab
+    # dropped on the dust; the built stone comes from the ruin meshes.
     for name, half in (("ruin_colonnade", 12.0), ("ruin_east_arch", 9.0),
                        ("ruin_basin", 11.0), ("ruin_south", 9.0),
                        ("ruin_west", 8.0), ("ruin_north", 8.0)):
         centre = ANCHORS[name]
         t.rect_terrace(centre, half * LOCAL, (half - 2.0) * LOCAL,
-                       float(t.height_at(*centre)), 0.0, TER.PAVING)
+                       float(t.height_at(*centre)), 0.0, TER.BARRENS)
 
     t.terrace(ANCHORS["stone_ring"], 10.0 * LOCAL,
               float(t.height_at(*ANCHORS["stone_ring"])), surface=TER.BARRENS)
 
+
+
+def _polyline_distance_xz(t: TER.Terrain, points: np.ndarray) -> np.ndarray:
+    """Distance from every terrain cell to a polyline, in world metres."""
+    best = np.full(t.gx.shape, np.inf)
+    pts = np.asarray(points, dtype=np.float64)
+    for index in range(len(pts) - 1):
+        ax, az = pts[index]
+        bx, bz = pts[index + 1]
+        dx, dz = bx - ax, bz - az
+        length_sq = dx * dx + dz * dz
+        if length_sq < 1e-9:
+            continue
+        u = np.clip(((t.gx - ax) * dx + (t.gz - az) * dz) / length_sq, 0.0, 1.0)
+        best = np.minimum(best, np.hypot(t.gx - (ax + u * dx),
+                                         t.gz - (az + u * dz)))
+    return best
 
 def assign_surfaces(t: TER.Terrain, seed: int = 20260828) -> None:
     """Paint the region's ground classes over everything not authored above."""
@@ -406,20 +426,33 @@ def assign_surfaces(t: TER.Terrain, seed: int = 20260828) -> None:
 
     # crystal grows in fields around the massif, the diggings and the shard
     # sites, and along the resonant river where it has veined the banks
+    # Radii are in design-space metres. They were three times this to begin
+    # with, which put pale crystal continents over about 40% of the map; the
+    # aerial has crystal as scattered accents on an ochre plain, with only the
+    # massif reading as a field. Distances between the sites scale with the
+    # region, but the sites themselves are sized by what stands in them.
     crystal = np.zeros(t.height.shape, dtype=bool)
-    for name, radius in (("crystal_massif", 40.0), ("massif_foot", 22.0),
-                         ("massif_east", 20.0), ("shards_massif", 18.0),
-                         ("shards_basin", 15.0), ("shards_east", 15.0),
-                         ("shards_south", 14.0), ("shards_west", 14.0),
-                         ("shards_north", 16.0), ("shards_gate", 12.0),
-                         ("shards_coast", 14.0), ("geode_north", 14.0),
-                         ("geode_east", 14.0), ("geode_south", 13.0),
-                         ("geode_massif", 15.0)):
+    for name, radius in (("crystal_massif", 10.0), ("massif_foot", 4.5),
+                         ("massif_east", 4.0), ("shards_massif", 3.2),
+                         ("shards_basin", 2.6), ("shards_east", 2.6),
+                         ("shards_south", 2.4), ("shards_west", 2.4),
+                         ("shards_north", 3.0), ("shards_gate", 2.2),
+                         ("shards_coast", 2.4), ("geode_north", 2.8),
+                         ("geode_east", 2.8), ("geode_south", 2.4),
+                         ("geode_massif", 3.0)):
         cx, cz = ANCHORS[name]
         r = radius * SCALE
+        # a strongly modulated edge, so the patch is ragged rather than a disc
         blob = np.hypot(t.gx - cx, t.gz - cz) < r * (
-            0.72 + 0.42 * region_noise(t, seed + N.stable_hash(name) % 61, 0.05))
+            0.55 + 0.85 * region_noise(t, seed + N.stable_hash(name) % 61, 0.09))
         crystal |= blob
+    # the diggings and the roadside are worked ground: crystal follows the river
+    # where it has veined the banks, which is what the painting's bright line is
+    for points in (ROUTES["basin_road"], STREAMS["resonant_river"]):
+        distance = _polyline_distance_xz(t, points)
+        vein = distance < 3.2 * SCALE * (
+            0.25 + 0.85 * region_noise(t, seed + 313, 0.12))
+        crystal |= vein
     t.surface = np.where(crystal & ~authored, TER.CRYSTAL_FIELD, t.surface)
 
     # storm rock on the steep ground and the high ridges
@@ -435,4 +468,10 @@ def assign_surfaces(t: TER.Terrain, seed: int = 20260828) -> None:
     t.surface = np.where(shore_band & (noise > 0.30), TER.SHORE, t.surface)
     t.surface = np.where(t.height < SEA_LEVEL - 1.0, TER.SHORE, t.surface)
 
-    t.dither_boundaries(seed=seed + 7, amount=0.5)
+    # A stronger dither: the surface classes are a hard per-cell choice on a
+    # 2 m grid, so a crystal patch with a clean boundary reads in-client as a
+    # flat pink polygon laid on the dust. Breaking the edge up, and keeping the
+    # patches small, leaves the scattered outcrop meshes to carry the
+    # transition - which is how the concept reads at ground level.
+    t.dither_boundaries(seed=seed + 7, amount=0.85)
+    t.dither_boundaries(seed=seed + 19, amount=0.7)
