@@ -83,12 +83,37 @@ VIEWS = [
      "the client's default isometric gameplay framing"),
     ("gameplay-zoomed-out", (0.0, 8.0, 0.0), -60.0, 0.0, 90.0, 50.0,
      "maximum client zoom-out over the encampment"),
+    # The expansion north and east: the dune field, the salt pans, the Amethyst
+    # badland and the mountain boundary that closes the world.
+    ("desert-dunes", (20.0, 14.0, -92.0), -11.0, 340.0, 52.0, 55.0,
+     "the dune field north of the steppe, with the range on the skyline"),
+    ("desert-water-station", "Landmark_sunmane_desert_station_01", -16.0, 120.0,
+     22.0, 50.0, "water station on the sand road"),
+    ("desert-camp", (-16.0, 13.0, -100.0), -14.0, 150.0, 22.0, 50.0,
+     "a drovers' camp between the dune trains"),
+    ("salt-pan", (6.0, 13.0, -124.0), -9.0, 200.0, 44.0, 55.0,
+     "the bright salt-pan floor between dune trains"),
+    ("badland-spires", "Landmark_sunmane_spire_00", -12.0, 210.0, 34.0, 52.0,
+     "wind-carved spires on the Amethyst badland margin"),
+    ("badland-crystal", "Landmark_sunmane_cave_crystal_hollow", -12.0, 150.0,
+     22.0, 48.0, "the amethyst hollow entrance in the badland"),
+    ("cave-mouth-wind", "Landmark_sunmane_cave_wind_caves", -10.0, 180.0, 20.0,
+     46.0, "the Wind Caves mouth off the desert road"),
+    ("mountain-front", (40.0, 20.0, -120.0), -6.0, 350.0, 70.0, 58.0,
+     "the Whitehorn front closing the north of the region"),
+    ("mountain-outpost", "Landmark_sunmane_outpost_06", -15.0, 200.0, 30.0, 52.0,
+     "the eastern watch under the range"),
+    ("waystone-road", "Landmark_sunmane_waystone_02", -13.0, 150.0, 18.0, 48.0,
+     "waystones marking the sand road"),
+    ("east-pass", (124.0, 12.0, -22.0), -13.0, 250.0, 40.0, 54.0,
+     "the eastern pass out of the steppe toward Amberwood"),
 ]
 
 # Panels 8 and 9 are painted at golden hour, so those two are captured under the
 # declared golden-hour environment variant as well as under daylight.
 GOLDEN = ["p08-standing-stones", "p09-steppe-overlook", "aerial-overview",
-          "p01-caravan-road"]
+          "p01-caravan-road", "desert-dunes", "mountain-front",
+          "badland-spires"]
 
 
 def camera_position(target, pitch_degrees: float, yaw_degrees: float,

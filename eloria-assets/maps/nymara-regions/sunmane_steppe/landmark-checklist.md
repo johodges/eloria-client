@@ -12,7 +12,8 @@ Authority order: written description > aerial composition > player-scale detail 
 |---|---|---|
 | Server arrival datum | `(58, 58)` | region description / `regions-connections.json` |
 | Metres per tile | 1.0 | `godot-client/data/maps/registry.json` |
-| World span | 208 m x 208 m centred on the datum | derived |
+| World span | 280 m x 280 m, centred on godot `(36, -36)` | derived |
+| Addressable band | godot X -58..133, Z -133..58 | server tiles are non-negative |
 | North axis | `-Z` | `world-manifest-1.schema.json` |
 | West walk portal | server `(6, 58)` -> godot `(-52, 0)` | Amethyst Barrens link |
 | East walk portal | server `(110, 58)` -> godot `(+52, 0)` | Amberwood link |
@@ -35,6 +36,47 @@ Authority order: written description > aerial composition > player-scale detail 
 | A11 | Transition lights | 4 | **done** |
 | A12 | Terrain classes: clan clearing, open steppe, caravan road, dry grass | 4 | **done** |
 | A13 | Ceremonial crossroads at the arrival datum | 1 | **done** |
+
+## Expansion inventory (north and east)
+
+Added after the original build, at the user's request: the desert, the cave
+entrances and the mountain boundary. These have no count in the written region
+description - they extend the region toward its neighbours - so the target is
+the continent design rather than a QA number.
+
+| # | Item | Count | Status |
+|---|---|---:|---|
+| D1 | Desert ground: dune trains, salt pans, wash-interlocked margin | 12.2% of the map | **done** |
+| D2 | Amethyst badland ground, carrying the Barrens' violet muted | 6.7% | **done** |
+| D3 | Mountain scree and bare stone closing the north and east | 12.7% | **done** |
+| D4 | Named summits along the Whitehorn front | 11 | **done** |
+| D5 | Wind-carved badland spires | 8 | **done** |
+| D6 | Cave entrances | 4 | **done** |
+| D7 | ...of which lead to explorable interiors | 2 | **done** |
+| D8 | Desert water stations on the sand road | 2 | **done** |
+| D9 | Waystones marking the sand and badland tracks | 8 | **done** |
+| D10 | Additional outposts (desert, mountain, eastern pass) | 3 | **done** |
+| D11 | Desert drovers' camps | 3 | **done** |
+| D12 | New roads: desert road, salt-pan spur, badland track, dune crossing, mountain approach, east pass, spire walk | 7 | **done** |
+| D13 | Amethyst crystal clusters | 12 placed + scatter | **done** |
+| D14 | Desert cover: dead scrub, bleached bone, loose stone, scree fans | scatter | **done** |
+
+### Cave interiors
+
+| # | Item | Wind Caves | Crystal Hollow | Status |
+|---|---|---|---|---|
+| C1 | Chambers | 5 | 5 | **done** |
+| C2 | Connecting passages | 4 | 4 | **done** |
+| C3 | Timbered passage sets | 7 | 10 | **done** |
+| C4 | Brazier light markers | 5 | 5 | **done** |
+| C5 | Crystal light markers | - | 3 | **done** |
+| C6 | Underground camp | 1 | 1 | **done** |
+| C7 | Still-water pool | 1 | - | **done** |
+| C8 | Exit portal back to the steppe | 1 | 1 | **done** |
+
+Both interiors continue the region's material language - pale canvas is absent
+underground, but the timber, iron, leather and bone are the kit the surface
+uses, and the amethyst is the same crystal family as the badland.
 
 ## Aerial-overview composition
 

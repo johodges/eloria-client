@@ -167,49 +167,67 @@ func _test_structural_collision() -> void:
 		"every declared collision node produced a body (%d of %d)"
 		% [bodies, declared.size()])
 
-	# Fan rays through each structure at two heights. A single axis ray is a
-	# poor test: it threads a gateway or passes between a tower's legs and
-	# reports missing collision where there is none.
+	# Sweep a player-sized capsule straight through each structure at two
+	# heights. A bare ray is the wrong instrument: it is infinitely thin, so it
+	# threads between a lookout tower's splayed legs and reports missing
+	# collision where a player would in fact be stopped. The swept capsule is
+	# the same volume the character controller moves, so what it reports is
+	# what a player experiences.
+	var body := CapsuleShape3D.new()
+	body.radius = 0.4
+	body.height = 1.7
 	var solid := 0
 	var probes := 0
-	# `share` is the fraction of fanned rays that must be blocked. Open timber
-	# frames - a lookout tower on splayed legs, a rail corral - are meant to be
-	# walked under and through, so they only have to present their members.
-	for probe: Array in [[0.0, -13.0, 26.0, "great hall", 0.34],
-			[0.0, 0.0, 30.0, "palisade ring", 0.34],
-			[-42.0, 0.0, 12.0, "west caravanserai", 0.34],
-			[42.0, 0.0, 12.0, "east caravanserai", 0.34],
-			[44.0, 36.0, 12.0, "windmill", 0.34],
-			[-33.0, 30.0, 8.0, "well", 0.10],
-			[0.0, -42.0, 10.0, "barrow with archive entrance", 0.34],
-			[-30.0, -30.0, 14.0, "clan paddock (open rails)", 0.10],
-			[-54.0, -60.0, 10.0, "rider outpost (open frame)", 0.10],
-			[-55.0, 46.0, 12.0, "cove landing (open piles)", 0.10]]:
+	# `share` is the fraction of sweeps that must be stopped. Solid buildings
+	# stop every one. Open timber frames - a lookout on splayed legs, a rail
+	# corral, a landing on piles - are meant to be walked under and between, so
+	# they only have to present their members from most approaches.
+	for probe: Array in [[0.0, -13.0, 26.0, "great hall", 1.0],
+			[0.0, 0.0, 30.0, "palisade ring", 1.0],
+			[-42.0, 0.0, 12.0, "west caravanserai", 1.0],
+			[42.0, 0.0, 12.0, "east caravanserai", 1.0],
+			[44.0, 36.0, 12.0, "windmill", 1.0],
+			[-33.0, 30.0, 8.0, "well", 1.0],
+			[0.0, -42.0, 10.0, "barrow with archive entrance", 1.0],
+			[70.0, -117.0, 10.0, "wind caves mouth", 1.0],
+			[124.0, -96.0, 10.0, "crystal hollow mouth", 1.0],
+			[-30.0, -30.0, 14.0, "clan paddock (open rails)", 0.6],
+			[-54.0, -60.0, 10.0, "rider outpost (open frame)", 0.6],
+			[98.0, -92.0, 10.0, "mountain outpost (open frame)", 0.6],
+			[18.0, -118.0, 10.0, "desert outpost (open frame)", 0.6],
+			[-55.0, 46.0, 12.0, "cove landing (open piles)", 0.6]]:
 		probes += 1
 		var centre: Variant = _ground(float(probe[0]), float(probe[1]))
 		if centre == null:
+			push_warning("no ground under probe " + str(probe[3]))
 			continue
 		var reach := float(probe[2])
-		var hits := 0
-		var casts := 0
-		for height in [0.9, 2.2]:
+		var stopped := 0
+		var sweeps := 0
+		for height in [1.0, 2.2]:
 			var level := (centre as Vector3) + Vector3(0.0, height, 0.0)
 			for step in range(12):
 				var angle := PI * float(step) / 12.0
 				var offset := Vector3(cos(angle) * reach, 0.0, sin(angle) * reach)
-				casts += 1
-				var query := PhysicsRayQueryParameters3D.create(
-					level + offset, level - offset, WORLD_LAYER)
-				if not _space.intersect_ray(query).is_empty():
-					hits += 1
-		if float(hits) >= float(casts) * float(probe[4]):
+				var query := PhysicsShapeQueryParameters3D.new()
+				query.shape = body
+				query.collision_mask = WORLD_LAYER
+				query.transform = Transform3D(Basis(), level + offset)
+				query.motion = -offset * 2.0
+				sweeps += 1
+				var travel: Array = _space.cast_motion(query)
+				# cast_motion returns [safe, unsafe] fractions of the motion; an
+				# unsafe fraction below 1 means the sweep met a body.
+				if travel.size() == 2 and float(travel[1]) < 0.999:
+					stopped += 1
+		if float(stopped) >= float(sweeps) * float(probe[4]) - 0.001:
 			solid += 1
 		else:
-			push_warning("thin structural collision at %s: %d of %d rays blocked"
-				% [str(probe[3]), hits, casts])
+			push_warning("thin structural collision at %s: %d of %d sweeps stopped"
+				% [str(probe[3]), stopped, sweeps])
 	_expect(solid == probes,
-		"every probed structure presents the collision its form implies (%d/%d)"
-		% [solid, probes])
+		"every probed structure stops a player-sized body as its form implies "
+		+ "(%d/%d)" % [solid, probes])
 
 func _test_world_boundary() -> void:
 	## The rim must rise well above the playable plateau all the way round, so a
@@ -257,24 +275,46 @@ func _test_portal_approaches() -> void:
 			"portal approach has standing headroom: " + str(entry[2]))
 
 func _test_minimap_accuracy() -> void:
+	## The region is not centred on the world origin - it reaches north and east
+	## into the desert and the range - so the minimap transform is checked
+	## against the declared bounds per axis rather than against a half extent.
 	var minimap: Dictionary = _loader.manifest.data["minimap"]
-	var scale: float = float((minimap["transform"] as Dictionary)["pixelX"]["scale"])
-	var offset: float = float((minimap["transform"] as Dictionary)["pixelX"]["offset"])
-	var size: float = float((minimap["imageSize"] as Array)[0])
+	var transform: Dictionary = minimap["transform"]
+	var size: Array = minimap["imageSize"]
+	var world_min: Array = minimap["worldMin"]
+	var world_max: Array = minimap["worldMax"]
 	var bounds: Dictionary = _loader.manifest.data["asset"]["bounds"]
-	var half: float = float((bounds["max"] as Array)[0])
-	_expect(is_equal_approx(scale, size / (half * 2.0)),
-		"minimap scale matches the image size and world bounds")
-	for check: Array in [[-half, 0.0], [half, size], [0.0, size * 0.5]]:
-		_expect(is_equal_approx(float(check[0]) * scale + offset, float(check[1])),
-			"minimap maps world %.1f m to pixel %.1f" % [check[0], check[1]])
+	for axis: Array in [["pixelX", 0, 0, "east-west"], ["pixelY", 1, 2, "north-south"]]:
+		var key: String = axis[0]
+		var image_axis: int = axis[1]
+		var world_axis: int = axis[2]
+		var scale: float = float((transform[key] as Dictionary)["scale"])
+		var offset: float = float((transform[key] as Dictionary)["offset"])
+		var low: float = float(world_min[image_axis])
+		var high: float = float(world_max[image_axis])
+		var pixels: float = float(size[image_axis])
+		_expect(is_equal_approx(low, float((bounds["min"] as Array)[world_axis]))
+			and is_equal_approx(high, float((bounds["max"] as Array)[world_axis])),
+			"minimap %s span matches the declared world bounds" % axis[3])
+		_expect(is_equal_approx(scale, pixels / (high - low)),
+			"minimap %s scale matches the image size and world span" % axis[3])
+		for check: Array in [[low, 0.0], [high, pixels], [(low + high) * 0.5, pixels * 0.5]]:
+			_expect(abs(float(check[0]) * scale + offset - float(check[1])) < 0.01,
+				"minimap maps %s world %.1f m to pixel %.1f"
+				% [axis[3], check[0], check[1]])
 	# The player marker must land inside the image for every walkable tile.
+	var scale_x: float = float((transform["pixelX"] as Dictionary)["scale"])
+	var offset_x: float = float((transform["pixelX"] as Dictionary)["offset"])
+	var scale_y: float = float((transform["pixelY"] as Dictionary)["scale"])
+	var offset_y: float = float((transform["pixelY"] as Dictionary)["offset"])
 	var outside := 0
-	for tile_x in range(0, 117, 8):
-		for tile_y in range(0, 117, 8):
+	for tile_x in range(0, 192, 4):
+		for tile_y in range(0, 192, 4):
 			var world := _adapter.server_to_godot(float(tile_x), float(tile_y))
-			var pixel := Vector2(world.x * scale + offset, world.z * scale + offset)
-			if pixel.x < 0.0 or pixel.y < 0.0 or pixel.x > size or pixel.y > size:
+			var pixel := Vector2(world.x * scale_x + offset_x,
+				world.z * scale_y + offset_y)
+			if pixel.x < 0.0 or pixel.y < 0.0 \
+					or pixel.x > float(size[0]) or pixel.y > float(size[1]):
 				outside += 1
 	_expect(outside == 0,
 		"every server tile maps inside the minimap image (%d outside)" % outside)

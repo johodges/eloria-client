@@ -77,6 +77,12 @@
       "subject": "Additional landmarks",
       "capture": "contact-sheet",
       "sheet": "comparison/additional-landmarks.webp"
+    },
+    {
+      "panel": null,
+      "subject": "Cave interiors",
+      "capture": "cave-interiors",
+      "sheet": "comparison/cave-interiors.webp"
     }
   ],
   "missing": []

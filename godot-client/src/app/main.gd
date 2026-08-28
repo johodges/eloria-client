@@ -29,6 +29,7 @@ extends Control
 @onready var world_sun: DirectionalLight3D = $GameView/ViewportContainer/Viewport/WorldRoot/Sun
 
 var ambient_population: AmbientPopulation
+var map_light_root: Node3D
 @onready var main_viewport: SubViewport = $GameView/ViewportContainer/Viewport
 @onready var viewport_container: SubViewportContainer = $GameView/ViewportContainer
 @onready var map_viewport: SubViewport = %MapViewport
@@ -2073,6 +2074,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	# Regions may declare their own sky, sun, fog and tonemap. Maps that do not
 	# keep the client's previous placeholder environment unchanged.
 	WorldEnvironmentBinder.apply(manifest, world_environment, world_sun)
+	_bind_light_markers(manifest)
 	_populate_ambient_life(manifest)
 	_current_map_display_name = str(
 		manifest.data.get("asset", {}).get("name", manifest.asset_id()))
@@ -2085,6 +2087,23 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	_sync_ground_bags()
 	_snap_all_actors_to_surface.call_deferred()
 	_snap_all_ground_bags_to_surface.call_deferred()
+
+func _bind_light_markers(manifest: WorldManifest) -> void:
+	# Braziers, hearths and shrine lamps the map declares as markers. Interiors
+	# rely on them for their whole lighting; outdoor maps use them as warm fill
+	# after sundown. Maps that declare none are left alone.
+	if map_light_root != null:
+		map_light_root.queue_free()
+		map_light_root = null
+	var root_node := Node3D.new()
+	root_node.name = "MapLights"
+	world_root.add_child(root_node)
+	var bound: int = LightMarkerBinder.apply(manifest, root_node)
+	if bound == 0:
+		root_node.queue_free()
+		return
+	map_light_root = root_node
+	print_debug("light_markers map=", AppState.current_map, " bound=", bound)
 
 func _populate_ambient_life(manifest: WorldManifest) -> void:
 	# Scenery livestock declared by the map. Networked actors are untouched.

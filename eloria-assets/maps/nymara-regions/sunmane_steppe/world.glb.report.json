@@ -1,5 +1,5 @@
 {
-    "uri": "eloria-assets/maps/nymara-regions/sunmane_steppe/world.glb",
+    "uri": "world.glb",
     "mimeType": "model/gltf-binary",
     "validatorVersion": "2.0.0-dev.3.10",
     "issues": {
@@ -12,73 +12,73 @@
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/735"
+                "pointer": "/nodes/1029"
             },
             {
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/736"
+                "pointer": "/nodes/1030"
             },
             {
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/737"
+                "pointer": "/nodes/1031"
             },
             {
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/738"
+                "pointer": "/nodes/1032"
             },
             {
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/739"
+                "pointer": "/nodes/1033"
             },
             {
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/740"
+                "pointer": "/nodes/1034"
             },
             {
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/741"
+                "pointer": "/nodes/1035"
             },
             {
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/742"
+                "pointer": "/nodes/1036"
             },
             {
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/743"
+                "pointer": "/nodes/1037"
             },
             {
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/744"
+                "pointer": "/nodes/1038"
             },
             {
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/745"
+                "pointer": "/nodes/1039"
             },
             {
                 "code": "NODE_EMPTY",
                 "message": "Empty node encountered.",
                 "severity": 2,
-                "pointer": "/nodes/746"
+                "pointer": "/nodes/1040"
             }
         ],
         "truncated": false
@@ -91,7 +91,7 @@
                 "pointer": "/buffers/0",
                 "mimeType": "application/gltf-buffer",
                 "storage": "glb",
-                "byteLength": 13884188
+                "byteLength": 17601852
             },
             {
                 "pointer": "/images/0",
@@ -443,17 +443,56 @@
                     "transfer": "srgb",
                     "bits": 8
                 }
+            },
+            {
+                "pointer": "/images/27",
+                "mimeType": "image/png",
+                "storage": "buffer-view",
+                "image": {
+                    "width": 256,
+                    "height": 256,
+                    "format": "rgb",
+                    "primaries": "srgb",
+                    "transfer": "srgb",
+                    "bits": 8
+                }
+            },
+            {
+                "pointer": "/images/28",
+                "mimeType": "image/png",
+                "storage": "buffer-view",
+                "image": {
+                    "width": 128,
+                    "height": 128,
+                    "format": "rgb",
+                    "primaries": "srgb",
+                    "transfer": "srgb",
+                    "bits": 8
+                }
+            },
+            {
+                "pointer": "/images/29",
+                "mimeType": "image/png",
+                "storage": "buffer-view",
+                "image": {
+                    "width": 128,
+                    "height": 128,
+                    "format": "rgb",
+                    "primaries": "srgb",
+                    "transfer": "srgb",
+                    "bits": 8
+                }
             }
         ],
         "animationCount": 0,
-        "materialCount": 27,
+        "materialCount": 31,
         "hasMorphTargets": false,
         "hasSkins": false,
         "hasTextures": true,
         "hasDefaultScene": true,
-        "drawCallCount": 458,
-        "totalVertexCount": 230675,
-        "totalTriangleCount": 167779,
+        "drawCallCount": 666,
+        "totalVertexCount": 316489,
+        "totalTriangleCount": 229363,
         "maxUVs": 1,
         "maxInfluences": 0,
         "maxAttributes": 4

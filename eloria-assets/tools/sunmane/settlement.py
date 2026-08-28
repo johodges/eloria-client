@@ -42,6 +42,14 @@ MATERIALS = {
     kit.METAL: ("metal", (1.00, 1.00, 1.00, 1.0), 1.0, 0.44, False),
     kit.GOLD: ("metal", (1.00, 0.80, 0.34, 1.0), 1.0, 0.26, False),
     kit.BONE: ("bone", (1.00, 1.00, 1.00, 1.0), 0.0, 0.52, False),
+    # Amethyst reads as a translucent-looking mineral through a low roughness
+    # and a cool violet tint rather than a transmission extension the client
+    # loader does not support.
+    # Underground limestone: warm but desaturated, so a brazier tints it
+    # rather than the material arriving pre-tinted.
+    kit.CAVE_ROCK_PALE: ("cavern", (0.66, 0.62, 0.56, 1.0), 0.0, 0.93, False),
+    kit.CAVE_ROCK_WARM: ("cavern", (0.56, 0.50, 0.44, 1.0), 0.0, 0.94, False),
+    kit.CRYSTAL: ("crystal", (0.72, 0.56, 0.86, 1.0), 0.0, 0.18, False),
     # Vegetation skips the normal map: at blade and leaf scale it contributes
     # nothing, and dropping it lets those primitives ship without tangents.
     kit.FOLIAGE: ("thatch", (0.50, 0.56, 0.32, 1.0), 0.0, 0.94, False, False),
@@ -71,6 +79,7 @@ class Placement:
     landmark: str | None = None
     interactive: dict | None = None
     footprint: float = 2.0
+    cave: str | None = None
 
 
 class Layout:
@@ -294,6 +303,7 @@ def compose_layout(landform: terrain.Landform) -> Layout:
                        landmark="standing-stones")
         layout.add("fire_pit", "StoneCircle%02d_Hearth" % circle_index, cx, cz,
                    rotation=0.5, footprint=1.2)
+    compose_expansion(layout, rng)
     layout.add("dock", "Landmark_sunmane_landing_00", -55.0, 46.0,
                rotation=0.62, collide=True, footprint=3.0, sink=1.5,
                landmark="landing",
@@ -347,6 +357,28 @@ def _asset_builders() -> dict:
         builders["caravanserai_%d" % index] = (lambda v=index: kit.caravanserai(v))
         builders["animal_pen_%d" % index] = (
             lambda v=index: kit.animal_pen(6.6 + 0.4 * v, 11 + v, 3 + 4 * v))
+    for identifier, framed, crystal in (("framed", True, False),
+                                       ("plain", False, False),
+                                       ("crystal", False, True)):
+        builders["cave_mouth_%s" % identifier] = (
+            lambda f=framed, c=crystal: kit.cave_mouth(
+                5.4, 4.6, 6.8, framed=f, crystal=c, seed=hash(f) % 97))
+    builders["desert_water_station"] = kit.desert_water_station
+    for index in range(3):
+        builders["desert_waystone_%d" % index] = (
+            lambda v=index: kit.desert_waystone(3.0 + 0.4 * v, seed=v))
+        builders["crystal_cluster_%d" % index] = (
+            lambda v=index: kit.crystal_cluster(0.9 + 0.35 * v, seed=v))
+        builders["mountain_scree_%d" % index] = (
+            lambda v=index: kit.mountain_scree(2.6 + 0.7 * v, seed=v))
+        builders["dead_scrub_%d" % index] = (
+            lambda v=index: kit.dead_scrub(0.7 + 0.25 * v, seed=v))
+        builders["bleached_bones_%d" % index] = (
+            lambda v=index: kit.bleached_bones(seed=v))
+    for index in range(4):
+        builders["badland_spire_%d" % index] = (
+            lambda v=index: kit.badland_spire(9.0 + 2.4 * v, 2.0 + 0.5 * v,
+                                              seed=v, crystal=v % 2 == 1))
     for index in range(3):
         builders["wheat_stand_%d" % index] = prop(
             kit.wheat_stand, (0.0, 0.0), 0.95 + 0.12 * index, stems=6 + index,
@@ -581,7 +613,7 @@ def _road_dressing(layout: Layout) -> dict[str, Geometry]:
 
 
 # --------------------------------------------------------------- scatter pass
-SCATTER_CHUNKS = 8
+SCATTER_CHUNKS = 10
 GRASS_PER_CHUNK = 300
 
 
@@ -596,6 +628,8 @@ def _scatter(layout: Layout) -> tuple[list[dict], list[tuple[str, float, float, 
     landform = layout.landform
     rng = np.random.default_rng(90210)
     span = terrain.HALF_EXTENT * 2.0 / SCATTER_CHUNKS
+    origin_x = terrain.CENTRE[0] - terrain.HALF_EXTENT
+    origin_z = terrain.CENTRE[1] - terrain.HALF_EXTENT
     slope = terrain.slope_field(landform)
 
     keep_out = [(placement.x, placement.z, placement.footprint + 1.6)
@@ -608,13 +642,13 @@ def _scatter(layout: Layout) -> tuple[list[dict], list[tuple[str, float, float, 
                 return True
         return False
 
-    def plantable(x: float, z: float) -> tuple[int, float] | None:
+    def plantable(x: float, z: float,
+                  max_slope: float = 1.05) -> tuple[int, float] | None:
         height = landform.height_at(x, z)
         if height < 0.5 or blocked(x, z):
             return None
-        ix = int(np.clip((x + terrain.HALF_EXTENT) / terrain.CELL, 0, slope.shape[1] - 1))
-        iz = int(np.clip((z + terrain.HALF_EXTENT) / terrain.CELL, 0, slope.shape[0] - 1))
-        if slope[iz, ix] > 1.05:
+        iz, ix = landform.index_of(x, z)
+        if slope[iz, ix] > max_slope:
             return None
         return landform.class_at(x, z), height
 
@@ -622,8 +656,8 @@ def _scatter(layout: Layout) -> tuple[list[dict], list[tuple[str, float, float, 
     instances: list[tuple[str, float, float, float, float]] = []
     for chunk_z in range(SCATTER_CHUNKS):
         for chunk_x in range(SCATTER_CHUNKS):
-            x0 = -terrain.HALF_EXTENT + chunk_x * span
-            z0 = -terrain.HALF_EXTENT + chunk_z * span
+            x0 = origin_x + chunk_x * span
+            z0 = origin_z + chunk_z * span
             parts = kit.Parts()
             for _ in range(GRASS_PER_CHUNK):
                 x = x0 + float(rng.random()) * span
@@ -632,7 +666,13 @@ def _scatter(layout: Layout) -> tuple[list[dict], list[tuple[str, float, float, 
                 if found is None:
                     continue
                 terrain_class, height = found
-                if terrain_class in (terrain.CLASS_ROCK, terrain.CLASS_SAND):
+                if terrain_class in (terrain.CLASS_ROCK, terrain.CLASS_SAND,
+                                     terrain.CLASS_DESERT,
+                                     terrain.CLASS_MOUNTAIN):
+                    continue
+                # The badland carries a thin, stressed fringe of grass rather
+                # than the steppe's cover, so most tufts there are dropped.
+                if terrain_class == terrain.CLASS_BADLAND and rng.random() < 0.82:
                     continue
                 staging = kit.Parts()
                 kit.grass_tuft(staging, (0.0, 0.0),
@@ -662,8 +702,8 @@ def _scatter(layout: Layout) -> tuple[list[dict], list[tuple[str, float, float, 
 
     # Shrubs and boulders, thinned so they read as accents rather than noise.
     for _ in range(1400):
-        x = float(rng.uniform(-terrain.HALF_EXTENT, terrain.HALF_EXTENT))
-        z = float(rng.uniform(-terrain.HALF_EXTENT, terrain.HALF_EXTENT))
+        x = float(rng.uniform(origin_x, origin_x + terrain.HALF_EXTENT * 2.0))
+        z = float(rng.uniform(origin_z, origin_z + terrain.HALF_EXTENT * 2.0))
         found = plantable(x, z)
         if found is None:
             continue
@@ -680,6 +720,53 @@ def _scatter(layout: Layout) -> tuple[list[dict], list[tuple[str, float, float, 
             if roll < 0.34:
                 instances.append(("shore_rock_%d" % int(rng.integers(0, 3)), x,
                                   height - 0.24, z, float(rng.random()) * TAU))
+
+    # The new ground north and east reads as desert, badland and scree, so it
+    # gets its own cover: dead scrub and sun-bleached bone in the dunes, crystal
+    # shards and scrub on the badland, loose stone on the mountain slopes. It is
+    # sampled separately from the steppe pass so the density can be tuned for
+    # ground that should feel sparse without thinning the steppe as well.
+    for _ in range(7200):
+        x = float(rng.uniform(origin_x, origin_x + terrain.HALF_EXTENT * 2.0))
+        z = float(rng.uniform(origin_z, origin_z + terrain.HALF_EXTENT * 2.0))
+        # Loose stone belongs on ground the steppe pass rejects, so this pass
+        # accepts a steeper slope; nothing planted here needs a flat footing.
+        found = plantable(x, z, max_slope=1.8)
+        if found is None:
+            continue
+        terrain_class, height = found
+        roll = float(rng.random())
+        rotation = float(rng.random()) * TAU
+        if terrain_class == terrain.CLASS_DESERT:
+            if roll < 0.16:
+                instances.append(("dead_scrub_%d" % int(rng.integers(0, 3)), x,
+                                  height - 0.06, z, rotation))
+            elif roll < 0.21:
+                instances.append(("bleached_bones_%d" % int(rng.integers(0, 3)),
+                                  x, height - 0.04, z, rotation))
+            elif roll < 0.25:
+                instances.append(("shore_rock_%d" % int(rng.integers(0, 3)), x,
+                                  height - 0.30, z, rotation))
+        elif terrain_class == terrain.CLASS_BADLAND:
+            if roll < 0.22:
+                instances.append(("shore_rock_%d" % int(rng.integers(0, 3)), x,
+                                  height - 0.26, z, rotation))
+            elif roll < 0.34:
+                instances.append(("dead_scrub_%d" % int(rng.integers(0, 3)), x,
+                                  height - 0.06, z, rotation))
+            elif roll < 0.40:
+                instances.append(("crystal_cluster_%d" % int(rng.integers(0, 3)),
+                                  x, height - 0.18, z, rotation))
+        elif terrain_class == terrain.CLASS_MOUNTAIN:
+            if roll < 0.30:
+                instances.append(("shore_rock_%d" % int(rng.integers(0, 3)), x,
+                                  height - 0.28, z, rotation))
+            elif roll < 0.36:
+                instances.append(("mountain_scree_%d" % int(rng.integers(0, 3)),
+                                  x, height - 0.34, z, rotation))
+            elif roll < 0.40:
+                instances.append(("bleached_bones_%d" % int(rng.integers(0, 3)),
+                                  x, height - 0.04, z, rotation))
     return chunks, instances
 
 
@@ -756,13 +843,23 @@ def populate(builder, landform: terrain.Landform, layout: Layout | None = None,
         builder.instance(placement.name, mesh, matrix, collide=placement.collide)
         instance_count += 1
         if placement.landmark:
+            tile = _server_tile(placement.x, placement.z)
+            # Content past the addressable tile band is scenery that closes the
+            # horizon - far spires, the range itself - and is declared as such
+            # so nothing downstream mistakes it for somewhere a player can go.
+            reachable = _addressable(tile)
+            if placement.interactive and not reachable:
+                raise ValueError(
+                    "%s carries an interaction but sits outside the server's "
+                    "addressable band at tile %s" % (placement.name, tile))
             builder.landmarks.append({
                 "id": placement.name,
                 "kind": placement.landmark,
                 "node": placement.name,
                 "position": [round(placement.x, 2), round(ground, 2),
                              round(placement.z, 2)],
-                "serverTile": _server_tile(placement.x, placement.z),
+                "serverTile": tile,
+                "reachable": reachable,
                 "rotationDegrees": round(math.degrees(placement.rotation), 1)})
         if placement.interactive:
             entry = dict(placement.interactive)
@@ -789,7 +886,8 @@ def populate(builder, landform: terrain.Landform, layout: Layout | None = None,
             "id": "Structure_Bridge_%02d" % index, "kind": "bridge",
             "node": "Structure_Bridge_%02d" % index,
             "position": [x, round(landform.height_at(x, z), 2), z],
-            "serverTile": _server_tile(x, z)})
+            "serverTile": _server_tile(x, z),
+            "reachable": _addressable(_server_tile(x, z))})
 
     dressing = _road_dressing(layout) if lod == 1 else {}
     builder.emit("Detail_RoadDressing",
@@ -845,6 +943,11 @@ def _server_tile(x: float, z: float) -> list[int]:
     return [int(round(x + 58.0)), int(round(58.0 - z))]
 
 
+def _addressable(tile: list[int]) -> bool:
+    """Whether a server tile exists: tiles are non-negative and 192 to a side."""
+    return 0 <= tile[0] <= 191 and 0 <= tile[1] <= 191
+
+
 def _lighting(builder, layout: Layout) -> None:
     """Warm landmark lights and transition lights, as described by the region QA.
 
@@ -897,6 +1000,15 @@ HERDS = (
     ("mounts-west-caravanserai", "sunmane_grey_pony", 4, (-42.0, 4.0), 3.2, "Idle_A"),
     ("mounts-east-caravanserai", "sunmane_grey_pony", 4, (42.0, 4.0), 3.2, "Idle_A"),
     ("mounts-market", "sunmane_steppe_horse", 3, (0.0, 22.0), 3.0, "Idle_A"),
+    # The desert road: strings of ponies waiting out the heat at the two water
+    # stations, and the picket lines of the three dune camps.
+    ("mounts-dune-station-west", "sunmane_grey_pony", 3, (4.0, -88.0), 2.8, "Idle_A"),
+    ("mounts-dune-station-east", "sunmane_grey_pony", 3, (64.0, -96.0), 2.8, "Idle_A"),
+    ("mounts-dune-camp-north", "sunmane_dun_mare", 3, (-16.0, -95.0), 3.0, "Idle_A"),
+    ("mounts-dune-camp-mid", "sunmane_grey_pony", 3, (46.0, -99.0), 3.0, "Idle_A"),
+    ("mounts-dune-camp-east", "sunmane_dun_mare", 3, (86.0, -79.0), 3.0, "Idle_A"),
+    ("herd-dune-margin", "sunmane_dun_mare", 6, (30.0, -78.0), 11.0, "Idle_A"),
+    ("herd-foothill-pasture", "sunmane_steppe_horse", 6, (104.0, -60.0), 11.0, "Idle_A"),
 )
 
 # Server-owned population: NPCs, harvestables and hostile spawns the server
@@ -913,6 +1025,11 @@ NPC_POSTS = (
     ("well-keeper", "Crossroads well keeper", (0.0, 21.0), "service"),
     ("barrow-warden", "Barrow warden", (0.0, -38.0), "quest"),
     ("cove-factor", "Cove landing factor", (-53.0, 44.0), "trade"),
+    ("dune-well-keeper", "Dune well keeper", (4.0, -90.0), "service"),
+    ("salt-factor", "Salt-pan factor", (64.0, -98.0), "trade"),
+    ("wind-cave-watch", "Wind caves watch", (70.0, -112.0), "quest"),
+    ("amethyst-prospector", "Amethyst prospector", (122.0, -92.0), "trade"),
+    ("range-warden", "Whitehorn range warden", (98.0, -88.0), "quest"),
 )
 
 HARVESTABLES = (
@@ -923,6 +1040,14 @@ HARVESTABLES = (
      ((-54.0, 48.0, 6.0, 6.0), (-52.0, -46.0, 6.0, 6.0))),
     ("mesa-flint", "Mesa flint", "mineral",
      ((-20.0, -74.0, 7.0, 7.0), (60.0, -62.0, 7.0, 7.0))),
+    ("amethyst-shard", "Amethyst shard", "mineral",
+     ((110.0, -96.0, 8.0, 8.0), (126.0, -70.0, 7.0, 7.0))),
+    ("pan-salt", "Pan salt", "mineral",
+     ((6.0, -124.0, 9.0, 9.0), (62.0, -110.0, 7.0, 7.0))),
+    ("dune-sage", "Dune sage", "herb",
+     ((-20.0, -108.0, 8.0, 8.0), (40.0, -96.0, 8.0, 8.0))),
+    ("scree-ore", "Scree iron ore", "mineral",
+     ((124.0, -40.0, 6.0, 6.0), (-46.0, -126.0, 6.0, 6.0))),
 )
 
 CREATURE_SPAWNS = (
@@ -932,6 +1057,10 @@ CREATURE_SPAWNS = (
     ("red_fox", "open steppe", (30.0, -50.0), 14.0, 4),
     ("elk", "northern pasture", (-52.0, -50.0), 12.0, 4),
     ("mountain_goat", "coastal cliffs", (-52.0, 12.0), 9.0, 3),
+    ("mountain_goat", "Whitehorn foothills", (92.0, -120.0), 12.0, 3),
+    ("dire_wolf", "wind cave approach", (56.0, -108.0), 11.0, 3),
+    ("red_fox", "amethyst badland", (114.0, -78.0), 12.0, 3),
+    ("wild_boar", "dune margin scrub", (-24.0, -92.0), 12.0, 4),
 )
 
 
@@ -986,3 +1115,133 @@ def population_records(layout: Layout) -> dict:
                       "harvest": "harvest.nymara.sunmane_steppe"},
         },
     }
+
+
+# ---------------------------------------------------------- expansion layout
+# The desert basin, the Amethyst-influenced badlands and the mountain boundary
+# that closes the region's north and east. Placement follows the continent
+# master concept, which puts dry ochre badland and the Barrens' violet rock
+# between the steppe and the northern ranges.
+
+# Where the interior package puts an arriving player, so the two sides of each
+# transition are declared together rather than inferred at runtime. The tiles
+# come from `caves.py`, which places its entrance chamber on these coordinates.
+CAVE_ARRIVALS = {
+    "wind_caves": ("entrance-hall", (30, 12)),
+    "crystal_hollow": ("adit-mouth", (30, 13)),
+}
+
+CAVE_SITES = (
+    # id, x, z, facing (radians, the direction the mouth looks out toward),
+    # width, height, depth, framed, crystal, destination map, label
+    # Set into the south face of the eastern butte, a few metres off the desert
+    # road, so the entrance is inside the server's addressable tile band and a
+    # player can actually walk to the portal.
+    ("wind_caves", 70.0, -117.0, 0.0, 5.6, 4.8, 7.0, True, False,
+     "maps/nymara/sunmane_wind_caves.elm", "Sunmane Wind Caves"),
+    ("crystal_hollow", 124.0, -96.0, -math.pi * 0.62, 5.0, 4.4, 6.4, False, True,
+     "maps/nymara/sunmane_crystal_hollow.elm", "Amethyst Crystal Hollow"),
+    ("drovers_shelter", -34.0, -126.0, math.pi * 0.15, 4.4, 3.8, 5.4, True, False,
+     None, "Drovers' shelter"),
+    ("east_adit", 132.0, -30.0, -math.pi * 0.5, 4.6, 4.0, 5.8, True, False,
+     None, "Eastern adit"),
+)
+
+DESERT_STATIONS = ((4.0, -92.0, 0.2), (64.0, -100.0, 2.6))
+
+WAYSTONE_SITES = ((2.0, -70.0, 0.4), (5.0, -104.0, 1.7), (30.0, -86.0, 3.0),
+                  (56.0, -96.0, 5.1), (92.0, -106.0, 0.9), (12.0, -130.0, 2.2),
+                  (120.0, -18.0, 4.4), (104.0, 0.0, 1.1))
+
+
+def compose_expansion(layout: Layout, rng) -> None:
+    """Add the desert, badland and mountain content to an existing layout."""
+    # --- cave entrances ---------------------------------------------------
+    for (identifier, x, z, facing, width, height, depth, framed, crystal,
+         destination, label) in CAVE_SITES:
+        asset = "cave_mouth_%s" % ("crystal" if crystal
+                                   else ("framed" if framed else "plain"))
+        placement = layout.add(
+            asset, "Landmark_sunmane_cave_%s" % identifier, x, z,
+            rotation=facing, collide=True, footprint=5.0, sink=0.20,
+            landmark="cave-entrance",
+            interactive={"id": "cave-%s" % identifier,
+                         "kind": "portal" if destination else "shelter",
+                         "label": label,
+                         **({"destinationMap": destination,
+                             "destinationSpawn": CAVE_ARRIVALS[identifier][0],
+                             "destinationTile": list(
+                                 CAVE_ARRIVALS[identifier][1])}
+                            if destination else {})})
+        placement.cave = identifier
+
+    # --- desert water stations on the sand road ---------------------------
+    for index, (x, z, spin) in enumerate(DESERT_STATIONS):
+        layout.add("desert_water_station",
+                   "Landmark_sunmane_desert_station_%02d" % index, x, z,
+                   rotation=spin, collide=True, footprint=4.0, sink=0.25,
+                   landmark="water-station",
+                   interactive={"id": "desert-station-%02d" % index,
+                                "kind": "water",
+                                "label": "Desert water station"})
+
+    # --- waystones marking the sand and badland tracks --------------------
+    for index, (x, z, spin) in enumerate(WAYSTONE_SITES):
+        layout.add("desert_waystone_%d" % (index % 3),
+                   "Landmark_sunmane_waystone_%02d" % index, x, z, rotation=spin,
+                   collide=True, footprint=1.4, landmark="waystone")
+
+    # --- badland spires ----------------------------------------------------
+    for index, (x, z, radius) in enumerate(terrain.SPIRE_SITES):
+        layout.add("badland_spire_%d" % (index % 4),
+                   "Landmark_sunmane_spire_%02d" % index, x, z,
+                   rotation=float(rng.random()) * TAU, collide=True,
+                   footprint=radius, sink=0.5, landmark="badland-spire")
+
+    # --- amethyst crystal clusters through the badlands -------------------
+    for index, (x, z) in enumerate((
+            (112.0, -88.0), (120.0, -104.0), (104.0, -120.0), (134.0, -118.0),
+            (96.0, -96.0), (142.0, -100.0), (128.0, -76.0), (88.0, -126.0),
+            (116.0, -132.0), (150.0, -128.0), (108.0, -66.0), (140.0, -142.0))):
+        layout.add("crystal_cluster_%d" % (index % 3),
+                   "Detail_Amethyst_%02d" % index, x, z,
+                   rotation=float(rng.random()) * TAU, footprint=1.0, sink=0.3)
+
+    # --- outposts watching the new ground ---------------------------------
+    for index, (x, z, spin) in enumerate((
+            (18.0, -118.0, 0.3), (98.0, -92.0, 2.4), (124.0, -22.0, 4.0))):
+        layout.add("watchtower", "Landmark_sunmane_outpost_%02d" % (5 + index),
+                   x, z, rotation=spin, collide=True, footprint=3.0, sink=0.35,
+                   landmark="outpost",
+                   interactive={"id": "outpost-%02d" % (5 + index),
+                                "kind": "lookout", "label": "Desert watch"})
+
+    # --- desert camps ------------------------------------------------------
+    for index, (cx, cz, facing) in enumerate(((-16.0, -100.0, 1.1),
+                                              (46.0, -104.0, 3.9),
+                                              (86.0, -84.0, 5.4))):
+        for slot in range(2):
+            angle = facing + (slot - 0.5) * 1.5
+            layout.add("camp_pavilion_%d" % (slot % 2),
+                       "Detail_DesertCamp_%02d_Pavilion_%d" % (index, slot),
+                       cx + math.cos(angle) * 4.4, cz + math.sin(angle) * 4.4,
+                       rotation=angle + math.pi, collide=True, footprint=3.4)
+        layout.add("fire_pit", "Detail_DesertCamp_%02d_Fire" % index, cx, cz,
+                   rotation=float(rng.random()) * TAU, footprint=1.2)
+        layout.add("cart", "Detail_DesertCamp_%02d_Cart" % index,
+                   cx + math.cos(facing + 2.3) * 5.2,
+                   cz + math.sin(facing + 2.3) * 5.2,
+                   rotation=facing + 2.3, collide=True, footprint=1.6)
+        layout.add("hitching_post", "Detail_DesertCamp_%02d_Picket" % index,
+                   cx + math.cos(facing - 1.8) * 5.4,
+                   cz + math.sin(facing - 1.8) * 5.4,
+                   rotation=facing - 1.8, footprint=1.8)
+
+    # --- scree fans at the mountain foot -----------------------------------
+    for index, (x, z) in enumerate((
+            (-40.0, -146.0), (-6.0, -152.0), (36.0, -148.0), (74.0, -144.0),
+            (114.0, -150.0), (146.0, -132.0), (152.0, -86.0), (150.0, -44.0),
+            (146.0, 4.0), (-64.0, -140.0), (96.0, -156.0), (24.0, -158.0))):
+        layout.add("mountain_scree_%d" % (index % 3),
+                   "Detail_Scree_%02d" % index, x, z,
+                   rotation=float(rng.random()) * TAU, footprint=2.4, sink=0.4)
