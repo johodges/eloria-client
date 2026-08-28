@@ -532,6 +532,7 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		var rebound: Skin = _rebound_skins.get(surface_key) as Skin
 		if rebound == null:
 			rebound = _rebound_skin(piece.get("bones", PackedStringArray()) as PackedStringArray,
+				piece.get("binds", [] as Array[Transform3D]) as Array[Transform3D],
 				fit_basis)
 			if rebound != null:
 				_rebound_skins[surface_key] = rebound
@@ -615,20 +616,94 @@ static func _tint_colour(value: Variant, fallback: Color) -> Color:
 			float(channels[2]) / 255.0, fallback.a)
 	return fallback
 
-func _rebound_skin(bone_names: PackedStringArray, fit: Transform3D) -> Skin:
+func _rebound_skin(bone_names: PackedStringArray, binds: Array[Transform3D],
+		fit: Transform3D) -> Skin:
+	# Modified 2026-08-28 for Eloria Client: this used to hand every bone the
+	# bind `this_rest.inverse() * fit`.  Skinning then evaluates
+	# `pose * bind`, and at rest `pose` *is* `this_rest`, so the whole thing
+	# collapsed to `fit` - a uniform scale about the floor.  A garment was never
+	# retargeted at all, only resized, which is why boots authored on a
+	# plantigrade leg stayed at ankle height on the Ssarathi's digitigrade one
+	# and left their feet outside the boot.  Keeping the garment's *authored*
+	# bind instead makes `pose * bind` carry each vertex from the bone it was
+	# modelled on to the same bone here, so the piece follows this rig's rest
+	# pose.  The fit scale stays, applied in bone space, so a shorter race still
+	# wears a proportionally slimmer garment.
+	#
 	# The mesh's JOINTS_0 values index this bind array, so a bind may never be
 	# skipped: dropping one would shift every later bone by a slot. A garment
 	# whose rig this actor does not carry is refused outright instead.
 	if bone_names.is_empty():
 		return null
+	var author_rest: Dictionary = {}
+	for index: int in range(bone_names.size()):
+		if index < binds.size():
+			author_rest[bone_names[index]] = binds[index].affine_inverse()
 	var rebound: Skin = Skin.new()
-	for bone_name: String in bone_names:
+	for index: int in range(bone_names.size()):
+		var bone_name: String = bone_names[index]
 		var target: int = _native_skeleton.find_bone(bone_name)
 		if bone_name.is_empty() or target < 0:
 			return null
-		rebound.add_named_bind(bone_name,
-			_native_skeleton.get_bone_global_rest(target).affine_inverse() * fit)
+		if index < binds.size():
+			rebound.add_named_bind(bone_name,
+				_bone_fit(target, bone_name, author_rest, fit) * binds[index])
+		else:
+			# No authored bind survived the import: fall back to the resize so
+			# the piece still appears rather than collapsing onto the origin.
+			rebound.add_named_bind(bone_name,
+				_native_skeleton.get_bone_global_rest(target).affine_inverse() * fit)
 	return rebound
+
+func _bone_fit(target: int, bone_name: String, author_rest: Dictionary,
+		fit: Transform3D) -> Transform3D:
+	# Carrying a garment onto another rig by rotation alone leaves it the length
+	# it was authored, which is fine while the two rigs agree and wrong when
+	# they do not: the Ssarathi metatarsal is nearly half again as long as the
+	# one the boots were built on, so the boot ran out partway along the foot
+	# and the rest of it - toes and claws - came out the front.  Each bone's
+	# span is compared against the span it was authored with and the garment is
+	# stretched along that bone to match.  Bones the two rigs agree on get a
+	# ratio of one and are left exactly as authored.
+	var rest: Transform3D = author_rest.get(bone_name, Transform3D.IDENTITY)
+	var author_tip: Vector3 = _mean_child_origin(target, author_rest, true)
+	var target_tip: Vector3 = _mean_child_origin(target, author_rest, false)
+	if author_tip == Vector3.INF or target_tip == Vector3.INF:
+		return fit
+	var local: Vector3 = rest.affine_inverse() * author_tip
+	var author_span: float = local.length()
+	var target_span: float = (target_tip
+		- _native_skeleton.get_bone_global_rest(target).origin).length()
+	if author_span < 0.0005 or target_span < 0.0005:
+		return fit
+	var ratio: float = clampf(target_span / author_span, 0.4, 2.5)
+	if absf(ratio - 1.0) < 0.02:
+		return fit
+	var axis: Vector3 = local / author_span
+	var stretch: float = ratio - 1.0
+	# Identity plus stretch along the bone, expressed in the bone's own frame,
+	# so the garment lengthens without also inflating its girth.
+	var basis := Basis(
+		Vector3(1.0, 0.0, 0.0) + axis * (stretch * axis.x),
+		Vector3(0.0, 1.0, 0.0) + axis * (stretch * axis.y),
+		Vector3(0.0, 0.0, 1.0) + axis * (stretch * axis.z))
+	return Transform3D(fit.basis * basis, Vector3.ZERO)
+
+func _mean_child_origin(target: int, author_rest: Dictionary,
+		authored: bool) -> Vector3:
+	# The bone's tip: where its children sit, on whichever rig was asked for.
+	# Vector3.INF means the bone is a leaf on one of the two rigs, and a leaf
+	# has no span to compare.
+	var total := Vector3.ZERO
+	var found: int = 0
+	for child: int in _native_skeleton.get_bone_children(target):
+		var child_name: String = _native_skeleton.get_bone_name(child)
+		if not author_rest.has(child_name):
+			continue
+		total += ((author_rest[child_name] as Transform3D).origin if authored
+			else _native_skeleton.get_bone_global_rest(child).origin)
+		found += 1
+	return total / float(found) if found > 0 else Vector3.INF
 
 func _attach_fallback_equipment(part: int, visual_id: int,
 		part_config: Dictionary) -> Array[Node]:
@@ -860,6 +935,7 @@ static func _equipment_pieces(path: String) -> Array:
 					"name": str(mesh_node.name),
 					"transform": _relative_transform(mesh_node, root),
 					"bones": _skin_bone_names(mesh_node.skin, skeleton),
+					"binds": _skin_bind_poses(mesh_node.skin),
 				})
 		if generated != null:
 			generated.free()
@@ -876,6 +952,17 @@ static func _relative_transform(node: Node3D, root: Node3D) -> Transform3D:
 		accumulated = walker.transform * accumulated
 		walker = walker.get_parent() as Node3D
 	return accumulated
+
+static func _skin_bind_poses(skin: Skin) -> Array[Transform3D]:
+	# The garment's own inverse bind poses: where each bone stood on the rig the
+	# garment was authored against.  Retargeting needs them; the old rebind threw
+	# them away and so could only ever scale the garment.
+	var poses: Array[Transform3D] = []
+	if skin == null:
+		return poses
+	for index: int in range(skin.get_bind_count()):
+		poses.append(skin.get_bind_pose(index))
+	return poses
 
 static func _skin_bone_names(skin: Skin, skeleton: Skeleton3D) -> PackedStringArray:
 	var names: PackedStringArray = PackedStringArray()

@@ -13,6 +13,9 @@ extends Control
 @onready var preview_viewport: SubViewport = $CreationPanel/Columns/CharacterPreview/Viewport
 @onready var preview_root: Node3D = %PreviewRoot
 @onready var preview_camera: Camera3D = %PreviewCamera
+@onready var preview_key_light: DirectionalLight3D = %KeyLight
+@onready var preview_fill_light: DirectionalLight3D = %FillLight
+@onready var preview_rim_light: DirectionalLight3D = %RimLight
 @onready var host_edit: LineEdit = %Host
 @onready var port_edit: SpinBox = %Port
 @onready var user_edit: LineEdit = %Username
@@ -786,6 +789,30 @@ func _update_preview_camera() -> void:
 	preview_camera.position = focus + Vector3(sin(preview_yaw) * horizontal,
 		sin(preview_pitch) * preview_distance, cos(preview_yaw) * horizontal)
 	preview_camera.look_at(focus)
+	_update_preview_lights()
+
+## Modified 2026-08-28 for Eloria Client: the creation preview used to be lit by
+## one fixed shadow-casting sun in a viewport with no environment.  Whatever the
+## sun pointed away from rendered black, so the face was in shadow the moment
+## the panel opened and only the side the player rotated *away* from was ever
+## visible.  The rig now orbits with the camera - key over the viewer's
+## shoulder, fill opposite it, rim behind the model - on top of the ambient the
+## preview environment contributes, so no facing is ever unlit.
+func _update_preview_lights() -> void:
+	_aim_preview_light(preview_key_light, preview_yaw + 0.55,
+		clampf(preview_pitch + 0.50, 0.20, 1.10))
+	_aim_preview_light(preview_fill_light, preview_yaw - 1.95, 0.22)
+	_aim_preview_light(preview_rim_light, preview_yaw + PI, 0.42)
+
+func _aim_preview_light(light: DirectionalLight3D, yaw: float, pitch: float) -> void:
+	# A DirectionalLight3D shines down its own -Z, so aiming it at the focus
+	# from a point on the orbit is the same as choosing a light direction.
+	if light == null:
+		return
+	var horizontal: float = cos(pitch)
+	var source := Vector3(sin(yaw) * horizontal, sin(pitch), cos(yaw) * horizontal)
+	light.look_at_from_position(source * 4.0 + Vector3(0.0, 1.0, 0.0),
+		Vector3(0.0, 1.0, 0.0), Vector3.UP)
 
 func _on_login_pressed() -> void:
 	if AppState.authenticated:

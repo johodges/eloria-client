@@ -2229,6 +2229,22 @@ def main() -> None:
     # pose. Loading the rig here also keeps a clean tree bootstrappable.
     rig_source=args.output/"races/luminous_male.glb"
     rig=equipment_authoring.load_rig(rig_source)
+    # Modified 2026-08-28 for Eloria Client: one garment is worn by every race,
+    # so it has to clear every race.  Measuring against the reference body alone
+    # left the wider silhouettes - the female hip above all - poking through the
+    # shell.  The Ssarathi are left out on purpose: their digitigrade leg is not
+    # a wider version of this one, it is somewhere else entirely, and the
+    # runtime retarget is what carries a garment onto it.
+    cast=[rig]
+    for extra in sorted((args.output/"races").glob("*.glb")):
+        if extra==rig_source or extra.stem.startswith("ssarathi"):
+            continue
+        try:
+            cast.append(equipment_authoring.load_rig(extra))
+        except Exception as error:  # a race still being authored must not stop a build
+            print("skip garment cast member",extra.name,error)
+    rig=equipment_authoring.RigSet(rig,cast[1:])
+    print(f"garment cast: {len(cast)} race silhouettes")
     idle_bases=None
     if args.animation_library.is_file():
         idle_bases=equipment_authoring._idle_hand_bases(
