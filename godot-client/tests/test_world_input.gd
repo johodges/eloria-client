@@ -173,12 +173,25 @@ func _run() -> void:
 		"actor faces the authoritative movement direction")
 	_expect(float(actor_height_fixture.get("_presentation_speed")) >= 6.0,
 		"walk presentation closes authoritative steps promptly")
-	actor_height_fixture.turn_by(PI / 4.0)
+	# A predicted turn holds the facing only until the server answers it.
+	actor_height_fixture.predict_turn(PI / 4.0)
 	var held_facing: float = actor_height_fixture.desired_facing_yaw()
 	actor_height_fixture.apply_server_state({
 		"x": 4, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
 	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), held_facing),
 		"keyboard facing override prevents strafe/back packets from rotating the actor")
+	# CMD_TURN_E. The authoritative turn confirms the prediction and replaces
+	# it, so a rejected or differently-resolved turn cannot stick locally.
+	actor_height_fixture.apply_server_state({
+		"x": 4, "y": 3, "rotation": 16384, "command": 40},
+		CoordinateAdapter.new(), false)
+	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), -PI / 2.0)
+		and not bool(actor_height_fixture.get("_facing_override_active")),
+		"an authoritative turn command clears the local turn prediction")
+	actor_height_fixture.apply_server_state({
+		"x": 4, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
+	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), -PI / 2.0),
+		"movement after a confirmed turn follows authoritative facing again")
 	actor_height_fixture.set_facing_override(false)
 	actor_height_fixture.apply_server_state({
 		"x": 5, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)

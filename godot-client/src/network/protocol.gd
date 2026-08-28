@@ -7,6 +7,7 @@ const MAX_PAYLOAD := 65532
 enum ClientMessage {
 	RAW_TEXT = 0, MOVE_TO = 1, SEND_PM = 2, GET_PLAYER_INFO = 5, RUN_TO = 6,
 	SIT_DOWN = 7, SEND_ME_MY_ACTORS = 8, SEND_OPENING_SCREEN = 9, SEND_VERSION = 10,
+	TURN_LEFT = 11, TURN_RIGHT = 12,
 	PING = 13, HEART_BEAT = 14, LOCATE_ME = 15, USE_MAP_OBJECT = 16,
 	SEND_MY_STATS = 17, SEND_MY_INVENTORY = 18, LOOK_AT_INVENTORY_ITEM = 19,
 	MOVE_INVENTORY_ITEM = 20, HARVEST = 21, DROP_ITEM = 22, PICK_UP_ITEM = 23,
@@ -111,6 +112,12 @@ static func move_to(x: int, y: int, run := false) -> PackedByteArray:
 
 static func set_sitting(sitting: bool) -> PackedByteArray:
 	return encode(ClientMessage.SIT_DOWN, PackedByteArray([1 if sitting else 0]))
+
+## One 45 degree facing step. The command carries no payload; the server
+## answers with the matching CMD_TURN_* actor command, which is what actually
+## changes the rendered facing for every client including this one.
+static func turn(left: bool) -> PackedByteArray:
+	return encode(ClientMessage.TURN_LEFT if left else ClientMessage.TURN_RIGHT)
 
 static func chat(text: String) -> PackedByteArray:
 	var payload: PackedByteArray = text.to_utf8_buffer()
@@ -283,6 +290,11 @@ static func actor_command_step(command: int) -> Vector2i:
 		26: return Vector2i(-1, 0)
 		27: return Vector2i(-1, 1)
 		_: return Vector2i.ZERO
+
+## True for the eight CMD_TURN_* facing commands. A turn command is the
+## server's confirmation of a local turn prediction.
+static func is_turn_command(command: int) -> bool:
+	return command >= 38 and command <= 45
 
 static func actor_command_direction(command: int) -> Vector2i:
 	var direction: int = command

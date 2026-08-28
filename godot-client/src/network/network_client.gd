@@ -43,6 +43,9 @@ func move_to(tile: Vector2i, run := false) -> Error:
 func set_sitting(sitting: bool) -> Error:
 	return send_frame(EloriaProtocol.set_sitting(sitting))
 
+func turn(left: bool) -> Error:
+	return send_frame(EloriaProtocol.turn(left))
+
 func send_chat(text: String) -> Error:
 	return send_frame(EloriaProtocol.chat(text))
 

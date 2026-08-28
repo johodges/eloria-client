@@ -648,10 +648,18 @@ func _release_local_facing_override() -> void:
 	if actor_value is ReplicatedActor3D and is_instance_valid(actor_value as ReplicatedActor3D):
 		(actor_value as ReplicatedActor3D).set_facing_override(false)
 
-func _turn_local_actor(step: int) -> void:
+## Q and E ask the server to turn. The rendered facing comes from the actor
+## command the server broadcasts in reply, which is also what makes the turn
+## visible to every other player; the local rotation below is only a prediction
+## that reply confirms. Nothing is decided here.
+func _turn_local_actor(left: bool) -> void:
+	var error: Error = Network.turn(left)
+	if error != OK:
+		push_warning("turn failed: " + error_string(error))
+		return
 	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	if actor_value is ReplicatedActor3D and is_instance_valid(actor_value as ReplicatedActor3D):
-		(actor_value as ReplicatedActor3D).turn_by(float(step) * PI / 4.0)
+		(actor_value as ReplicatedActor3D).predict_turn(PI / 4.0 if left else -PI / 4.0)
 
 func _on_connect_pressed() -> void:
 	if AppState.connection_state != "disconnected":
@@ -1679,10 +1687,10 @@ func _handle_bound_action(event: InputEvent) -> bool:
 		_recenter_viewport_on_player()
 		return true
 	if event.is_action_pressed("turn_left"):
-		_turn_local_actor(1)
+		_turn_local_actor(true)
 		return true
 	if event.is_action_pressed("turn_right"):
-		_turn_local_actor(-1)
+		_turn_local_actor(false)
 		return true
 	if event.is_action_pressed("cancel") and console_panel.visible:
 		console_panel.hide()

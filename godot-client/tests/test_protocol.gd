@@ -10,6 +10,18 @@ func _init() -> void:
 		PackedByteArray([7, 2, 0, 1]))
 	_expect_bytes("stand fixture", EloriaProtocol.set_sitting(false),
 		PackedByteArray([7, 2, 0, 0]))
+	_expect_bytes("turn left fixture", EloriaProtocol.turn(true),
+		PackedByteArray([11, 1, 0]))
+	_expect_bytes("turn right fixture", EloriaProtocol.turn(false),
+		PackedByteArray([12, 1, 0]))
+	_expect(EloriaProtocol.is_turn_command(38) and EloriaProtocol.is_turn_command(45)
+		and not EloriaProtocol.is_turn_command(37)
+		and not EloriaProtocol.is_turn_command(46),
+		"the eight CMD_TURN_* commands are the authoritative facing confirmations")
+	_expect(EloriaProtocol.actor_command_direction(40) == Vector2i(1, 0)
+		and EloriaProtocol.actor_command_direction(38) == Vector2i(0, 1)
+		and EloriaProtocol.actor_command_step(40) == Vector2i.ZERO,
+		"a turn command changes facing without moving the actor")
 	_expect_bytes("chat fixture", EloriaProtocol.chat("Hello"),
 		PackedByteArray([0, 7, 0, 72, 101, 108, 108, 111, 0]))
 	_expect_bytes("active channel fixture", EloriaProtocol.set_active_channel(1),

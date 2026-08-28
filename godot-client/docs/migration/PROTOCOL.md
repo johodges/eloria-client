@@ -14,7 +14,7 @@ Endpoint is configurable (legacy `servers.lst` behavior will become a data resou
 
 ## Verified identifiers
 
-Client: RAW_TEXT 0, MOVE_TO 1, SEND_PM 2, GET_PLAYER_INFO 5, RUN_TO 6, SIT_DOWN 7, SEND_ME_MY_ACTORS 8, SEND_VERSION 10, PING 13, HEART_BEAT 14, LOCATE_ME 15, USE_MAP_OBJECT 16, stats 17, inventory 18, harvest 21, drop 22, pickup 23, inspect bag 25, NPC response 29, manufacture 30, item use 31, trade 32–38, cast 39, attack 40, storage 44–47, login 140, create 141, date/time 230/231.
+Client: RAW_TEXT 0, MOVE_TO 1, SEND_PM 2, GET_PLAYER_INFO 5, RUN_TO 6, SIT_DOWN 7, SEND_ME_MY_ACTORS 8, SEND_VERSION 10, TURN_LEFT 11, TURN_RIGHT 12, PING 13, HEART_BEAT 14, LOCATE_ME 15, USE_MAP_OBJECT 16, stats 17, inventory 18, harvest 21, drop 22, pickup 23, inspect bag 25, NPC response 29, manufacture 30, item use 31, trade 32–38, cast 39, attack 40, storage 44–47, login 140, create 141, date/time 230/231.
 
 Server: RAW_TEXT 0, actor spawn 1/51, actor command 2, YOU_ARE 3, clock 4/5, actor removal 6, map change 7, combat mode 8, clear actors 9, stats 18, inventory 19–22, ground/bags 23–29, NPC 30–33, trade 35–41, equipment 52/53, ping 60, storage 67–69, spell 70, channels 71, actor health 73, cooldowns 77, buffs 78, effects 79, popup 83, map markers 90/91, achievements 95, login results 250/251, creation results 252/253.
 
@@ -30,6 +30,19 @@ Actor movement is advanced by server `ADD_ACTOR_COMMAND` frames: commands 20–2
 are one-tile walk steps and 30–37 are the equivalent run steps. `SIT_DOWN(7)`
 carries one desired-state byte (`1` sit, `0` stand); the server broadcasts actor
 commands 13/14 after accepting the state change. The legacy default is Alt+S.
+
+Facing is server-owned. `TURN_LEFT(11)` and `TURN_RIGHT(12)` carry no payload
+and each request one 45° step; left is counter-clockwise seen from above. The
+server rotates the character and broadcasts the matching turn actor command
+38–45 (`CMD_TURN_N` … `CMD_TURN_NW`, clockwise from north) to everyone on the
+map, so a turn is visible to other players. A turn command changes facing
+without moving the actor. The same facing is stored in the actor packet's
+signed 16-bit `rotation` field as `direction_index × 8192`, wrapped into
+−32768…32767, so a client that spawns the actor later sees the direction a
+client that watched the turn sees. Walking also updates that field from the
+step direction. A seated player does not turn; the server ignores the request,
+because the turn animation would break the seated pose. The client may render
+one predicted step while the reply is in flight, but the reply replaces it.
 
 Chat sends `RAW_TEXT(0)` as UTF-8 plus NUL. A private message sends
 `SEND_PM(2)` as `recipient ASCII-space message NUL`, omitting the leading slash
