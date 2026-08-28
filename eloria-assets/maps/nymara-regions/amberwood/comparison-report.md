@@ -25,7 +25,7 @@ authored asset, **not** a Godot frame — see `validation-report.md`.
 | Lighting and atmosphere | **Partial.** Directional sun with PCF shadows, hemispheric ambient and height fog are authored into `world.json`. Falling leaves, mist, chimney smoke and water spray are declared as presentation settings, not yet emitters. |
 | Navigation readability | **Good.** Roads are graded into the terrain, cleared of trees, lamp-lit on the main axes, and every landmark has an authored clearance. |
 | Repetition and procedural artefacts | **Acceptable.** Palette, species, scale and rotation vary per instance; terrain material boundaries are dithered. Visible repeats remain in shingle and paving tiling at grazing angles. |
-| Performance and LOD | **Measured, well over the desktop guideline.** 3.15 M instanced triangles for a region nine times the original area — about 9.5 triangles per square metre — against the repository's stated 1.5 M desktop guideline. A reduced package (`world-lod2.glb`, 2.20 M triangles, 19.1 MB) ships alongside; nothing in the current loader selects between them. |
+| Performance and LOD | **Measured, well over the desktop guideline.** 3.12 M instanced triangles for a region nine times the original area — about 9.4 triangles per square metre — against the repository's stated 1.5 M desktop guideline. A reduced package (`world-lod2.glb`, 2.20 M triangles, 19.4 MB) ships alongside; nothing in the current loader selects between them. |
 
 ## The honest headline
 
@@ -46,7 +46,7 @@ as a claim to have matched the paintings.
    coverage pass. Raising it further costs triangles the package can no longer
    afford at this extent.
 2. **Instanced triangle count exceeds the desktop budget** by roughly 2.1x at
-   LOD1 (3.15 M against 1.5 M) for nine times the original ground
+   LOD1 (3.12 M against 1.5 M) for nine times the original ground
    area. LOD2 is 2.20 M, still above it. Nothing switches between
    the two yet, and neither is streamed.
 3. **The coastline is under-detailed**: no sea stacks, no wave foam geometry, and
