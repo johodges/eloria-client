@@ -1,0 +1,508 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "mirrorhold_stair_cellars",
+    "name": "The Stair Cellars",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        -26.55,
+        -8.8,
+        -11.55
+      ],
+      "max": [
+        28.55,
+        4.65,
+        44.55
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        -26.55,
+        -8.8,
+        -11.55
+      ],
+      "max": [
+        28.55,
+        0.0,
+        44.55
+      ]
+    },
+    "interiorClass": "cellar",
+    "parentRegion": "mirrorhold",
+    "serverCells": 60
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      29.0,
+      47.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        0.0,
+        0.05,
+        -6.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "stair-cellars-door",
+      "position": [
+        0.0,
+        0.05,
+        -6.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 120,
+    "height": 120,
+    "cellMetres": 0.5,
+    "originMetres": [
+      -29.0,
+      47.0
+    ],
+    "heightEncoding": {
+      "origin": -8.538,
+      "step": 0.1377,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
+    },
+    "walkableCells": 4384,
+    "blockedCells": 10016,
+    "walkableFraction": 0.3044,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Interior_mirrorhold_stair_cellars",
+      "Build_mirrorhold_stair_cellars_amber_resin",
+      "Build_mirrorhold_stair_cellars_blue_crystal",
+      "Build_mirrorhold_stair_cellars_cliff_rock",
+      "Build_mirrorhold_stair_cellars_dark_iron",
+      "Build_mirrorhold_stair_cellars_gilt_brass",
+      "Build_mirrorhold_stair_cellars_glacier_ice",
+      "Build_mirrorhold_stair_cellars_mirror_glass",
+      "Build_mirrorhold_stair_cellars_rubble_stone",
+      "Build_mirrorhold_stair_cellars_timber_grey",
+      "Build_mirrorhold_stair_cellars_timber_warm",
+      "Build_mirrorhold_stair_cellars_veined_marble",
+      "Build_mirrorhold_stair_cellars_water_lake",
+      "Build_mirrorhold_stair_cellars_woven_cloth"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    },
+    "notes": [
+      "Every standable surface is a Walk_<material> node, matching the region's contract: the client turns navigation.surfaceNodePrefixes into the layer its downward grounding ray tests."
+    ]
+  },
+  "portals": [
+    {
+      "id": "exit-to-amberwood",
+      "name": "Return to Amberwood",
+      "type": "map-transition",
+      "position": [
+        0.0,
+        0.05,
+        -6.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/amberwood.elm",
+      "destinationSpawn": "stair-cellars-door",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "the-water-gate",
+      "name": "The Water Gate",
+      "space": "water_gate",
+      "position": [
+        -3.0,
+        -7.2,
+        37.0
+      ]
+    },
+    {
+      "id": "the-rock-shrine",
+      "name": "The Rock Shrine",
+      "space": "rock_shrine",
+      "position": [
+        -20.0,
+        0.2,
+        12.0
+      ]
+    },
+    {
+      "id": "cold-larder",
+      "name": "The Cold Larder",
+      "space": "cold_larder",
+      "position": [
+        22.0,
+        -0.4,
+        12.0
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "cellar-hatch",
+      "label": "Cellar Hatch",
+      "space": "cellar_head"
+    },
+    {
+      "id": "store-table",
+      "label": "Store Table",
+      "space": "common_cellar"
+    },
+    {
+      "id": "shrine-niche",
+      "label": "Shrine Niche",
+      "space": "rock_shrine"
+    },
+    {
+      "id": "water-gate-bars",
+      "label": "Water Gate Bars",
+      "space": "water_gate"
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "cellar-keeper",
+      "label": "Cellar Keeper",
+      "space": "common_cellar"
+    },
+    {
+      "id": "ice-cutter",
+      "label": "Ice Cutter",
+      "space": "cold_larder"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "stored-glacier-ice",
+      "label": "Stored Glacier Ice",
+      "space": "cold_larder"
+    },
+    {
+      "id": "cellar-moss",
+      "label": "Cellar Moss",
+      "space": "water_gate"
+    }
+  ],
+  "lights": [
+    {
+      "id": "lantern-00",
+      "kind": "point",
+      "position": [
+        0.0,
+        2.6,
+        -6.0
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-01",
+      "kind": "point",
+      "position": [
+        0.0,
+        2.0,
+        12.0
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-02",
+      "kind": "point",
+      "position": [
+        22.0,
+        1.6,
+        12.0
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-03",
+      "kind": "point",
+      "position": [
+        -20.0,
+        2.2,
+        12.0
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-04",
+      "kind": "point",
+      "position": [
+        -3.0,
+        -6.0,
+        34.0
+      ],
+      "colour": [
+        0.52,
+        0.72,
+        1.0
+      ],
+      "range": 10.0,
+      "energy": 1.7
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.12,
+        0.12,
+        0.14
+      ],
+      "energy": 0.3
+    },
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.07,
+        0.07,
+        0.09
+      ],
+      "begin": 10.0,
+      "end": 40.0
+    },
+    "audio": [
+      {
+        "id": "lap",
+        "space": "water_gate",
+        "loop": true
+      },
+      {
+        "id": "settle",
+        "space": "common_cellar",
+        "loop": true
+      }
+    ],
+    "openToSky": []
+  },
+  "spaces": {
+    "cellar_head": {
+      "x0": -6.0,
+      "z0": -11.0,
+      "x1": 6.0,
+      "z1": -1.0,
+      "floor": 0.0,
+      "height": 3.8
+    },
+    "common_cellar": {
+      "x0": -10.0,
+      "z0": 4.0,
+      "x1": 10.0,
+      "z1": 20.0,
+      "floor": -1.4,
+      "height": 4.0
+    },
+    "cold_larder": {
+      "x0": 16.0,
+      "z0": 6.0,
+      "x1": 28.0,
+      "z1": 18.0,
+      "floor": -1.4,
+      "height": 3.4
+    },
+    "rock_shrine": {
+      "x0": -26.0,
+      "z0": 6.0,
+      "x1": -14.0,
+      "z1": 18.0,
+      "floor": -1.0,
+      "height": 4.4
+    },
+    "water_gate": {
+      "x0": -9.0,
+      "z0": 30.0,
+      "x1": 3.0,
+      "z1": 44.0,
+      "floor": -8.4,
+      "height": 4.6
+    },
+    "head_stair": {
+      "x0": -1.4,
+      "z0": -2.4,
+      "x1": 1.4,
+      "z1": 5.4,
+      "floor": -1.4,
+      "height": 3.0
+    },
+    "larder_aisle": {
+      "x0": 8.7,
+      "z0": 10.7,
+      "x1": 17.3,
+      "z1": 13.3,
+      "floor": -1.4,
+      "height": 3.0
+    },
+    "shrine_aisle": {
+      "x0": -15.3,
+      "z0": 10.7,
+      "x1": -8.7,
+      "z1": 13.3,
+      "floor": -1.4,
+      "height": 3.0
+    },
+    "smugglers_stair": {
+      "x0": -4.3,
+      "z0": 18.7,
+      "x1": -1.7,
+      "z1": 31.3,
+      "floor": -8.4,
+      "height": 3.2
+    }
+  },
+  "conceptArt": {
+    "detailBoard": "../../amberwood/references/00-concept-detail-board.png",
+    "role": "parent-region board; these interiors have no board of their own",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "cellar head under the trap door",
+      "stair into the common cellar",
+      "the town's stores and long table",
+      "glacier ice bedded in sawdust",
+      "hung stores on the iron rail",
+      "the niche shrine cut in rock",
+      "mirror offerings at the plinth",
+      "the long stair down to the water",
+      "the barred water gate and its boat",
+      "rubble ice timber iron materials"
+    ]
+  },
+  "performance": {
+    "nodes": 17,
+    "meshes": 16,
+    "materials": 14,
+    "images": 38,
+    "textures": 38,
+    "accessors": 80,
+    "bufferViews": 118,
+    "uniqueTriangles": 6620,
+    "uniqueVertices": 9651,
+    "glbBytes": 4506808,
+    "nodeNames": [
+      "Interior_mirrorhold_stair_cellars",
+      "Build_mirrorhold_stair_cellars_amber_resin",
+      "Build_mirrorhold_stair_cellars_blue_crystal",
+      "Build_mirrorhold_stair_cellars_cliff_rock",
+      "Build_mirrorhold_stair_cellars_dark_iron",
+      "Build_mirrorhold_stair_cellars_gilt_brass",
+      "Build_mirrorhold_stair_cellars_glacier_ice",
+      "Build_mirrorhold_stair_cellars_mirror_glass",
+      "Build_mirrorhold_stair_cellars_rubble_stone",
+      "Build_mirrorhold_stair_cellars_timber_grey",
+      "Build_mirrorhold_stair_cellars_timber_warm",
+      "Build_mirrorhold_stair_cellars_veined_marble",
+      "Build_mirrorhold_stair_cellars_water_lake",
+      "Build_mirrorhold_stair_cellars_woven_cloth",
+      "Walk_cliff_rock",
+      "Walk_cobble_paving",
+      "Walk_rubble_stone"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "source/build_interiors.py",
+      "role": "reproducible-build",
+      "seed": 20260828
+    },
+    {
+      "id": "anchor",
+      "landmark": "cliff-town",
+      "position": [
+        -24.0,
+        17.0,
+        -54.0
+      ],
+      "role": "surface entrance on the Amberwood region map"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the Amberwood region toolkit; no scattered placement",
+    "textures": "procedural, from amberwood/textures.py",
+    "thirdParty": "none"
+  },
+  "notes": [
+    "A branch, not a loop: the common cellar is the hub and the larder, shrine and water stair are dead ends off it.",
+    "The water gate is at -8.4 m, roughly lake level relative to the cliff town's terrace. Its water is a mesh, not a walk surface."
+  ],
+  "productionStatus": "authored-geometry-materials-population",
+  "knownLimitations": [
+    "Not opened in Godot: no client is installable in the build environment, so collision response, navmesh generation, portal transition, LOD and transparency sorting are unverified.",
+    "eloria-server has not registered these map keys."
+  ]
+}

@@ -593,6 +593,81 @@
     },
     "amberwood_cinder_chapel.elm": {
       "alias": "maps/nymara/amberwood_cinder_chapel.elm"
+    },
+    "maps/nymara/mirrorhold_lens_vault.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/mirrorhold_lens_vault/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          37.0,
+          35.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 6.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/mirrorhold.elm"
+    },
+    "mirrorhold_lens_vault": {
+      "alias": "maps/nymara/mirrorhold_lens_vault.elm"
+    },
+    "mirrorhold_lens_vault.elm": {
+      "alias": "maps/nymara/mirrorhold_lens_vault.elm"
+    },
+    "maps/nymara/mirrorhold_cistern.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/mirrorhold_cistern/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          41.0,
+          29.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/mirrorhold.elm"
+    },
+    "mirrorhold_cistern": {
+      "alias": "maps/nymara/mirrorhold_cistern.elm"
+    },
+    "mirrorhold_cistern.elm": {
+      "alias": "maps/nymara/mirrorhold_cistern.elm"
+    },
+    "maps/nymara/mirrorhold_stair_cellars.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/mirrorhold_stair_cellars/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          29.0,
+          47.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/mirrorhold.elm"
+    },
+    "mirrorhold_stair_cellars": {
+      "alias": "maps/nymara/mirrorhold_stair_cellars.elm"
+    },
+    "mirrorhold_stair_cellars.elm": {
+      "alias": "maps/nymara/mirrorhold_stair_cellars.elm"
     }
   }
 }

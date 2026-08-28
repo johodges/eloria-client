@@ -1,8 +1,8 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-mirrorhold-interiors\\eloria-assets\\maps\\nymara-regions\\mirrorhold\\world.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-mirrorhold-interiors\\eloria-assets\\maps\\nymara-regions\\interiors\\mirrorhold_cistern\\world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-08-28T17:39:46.209920Z",
+  "validatedAt": "2026-08-28T17:29:44.233311Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,

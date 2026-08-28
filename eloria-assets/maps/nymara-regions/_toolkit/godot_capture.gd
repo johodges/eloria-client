@@ -82,7 +82,19 @@ func _init() -> void:
 					tri_count += idx.size() / 3
 	print("[capture] meshes=%d triangles=%d" % [mesh_count, tri_count])
 
-	# environment: a plain daylight sky so the shot shows the map, not a mood
+	# What the package asks to be lit by. An interior declares sky "none", its
+	# own ambient and fog, and the point lights standing in its lamps; lighting
+	# it with an outdoor sun and sky instead shows a room that will never exist.
+	var declared: Dictionary = {}
+	var manifest_path := package.path_join("world.json")
+	if FileAccess.file_exists(manifest_path):
+		var parsed_manifest = JSON.parse_string(
+			FileAccess.get_file_as_string(manifest_path))
+		if parsed_manifest is Dictionary:
+			declared = parsed_manifest
+	var declared_env: Dictionary = declared.get("environment", {})
+	var interior := str(declared_env.get("sky", "")) == "none"
+
 	var env := Environment.new()
 	var sky := Sky.new()
 	var sky_mat := ProceduralSkyMaterial.new()
@@ -98,6 +110,24 @@ func _init() -> void:
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	env.tonemap_exposure = 1.05
 	env.ssao_enabled = true
+
+	if interior:
+		env.background_mode = Environment.BG_COLOR
+		env.background_color = Color(0.02, 0.02, 0.03)
+		env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		var amb: Dictionary = declared_env.get("ambient", {})
+		var amb_c: Array = amb.get("colour", [0.13, 0.15, 0.19])
+		env.ambient_light_color = Color(float(amb_c[0]), float(amb_c[1]),
+										float(amb_c[2]))
+		env.ambient_light_energy = float(amb.get("energy", 0.35))
+		var fog: Dictionary = declared_env.get("fog", {})
+		if bool(fog.get("enabled", false)):
+			var fog_c: Array = fog.get("colour", [0.08, 0.09, 0.11])
+			env.fog_enabled = true
+			env.fog_light_color = Color(float(fog_c[0]), float(fog_c[1]),
+										float(fog_c[2]))
+			env.fog_density = 0.012
+		env.tonemap_exposure = 1.5
 
 	# A WorldEnvironment, not camera.environment: the camera override does not
 	# supply the sky the background is drawn from, which leaves the frame in a
@@ -121,7 +151,31 @@ func _init() -> void:
 	# look south and most cameras look north, so the light must travel north
 	# too: yaw near zero, not near 180, or every shot is backlit.
 	sun.rotation_degrees = Vector3(-46.0, 24.0, 0.0)
+	if interior:
+		# A sealed interior gets a trace of directional light only, so the
+		# declared lamps are what actually reads.
+		sun.light_energy = 0.12
+		sun.shadow_enabled = false
 	world.add_child(sun)
+
+	# The lamps the package declares, as real lights.
+	var lamp_count := 0
+	for entry in declared.get("lights", []):
+		var lamp: Dictionary = entry
+		var at: Array = lamp.get("position", [])
+		if at.size() != 3:
+			continue
+		var point := OmniLight3D.new()
+		point.position = Vector3(float(at[0]), float(at[1]), float(at[2]))
+		var col: Array = lamp.get("colour", [1.0, 1.0, 1.0])
+		point.light_color = Color(float(col[0]), float(col[1]), float(col[2]))
+		point.light_energy = float(lamp.get("energy", 1.5))
+		point.omni_range = float(lamp.get("range", 9.0))
+		point.shadow_enabled = false
+		world.add_child(point)
+		lamp_count += 1
+	if lamp_count:
+		print("[capture] %d declared lamps" % lamp_count)
 
 	var camera := Camera3D.new()
 	camera.far = 2400.0

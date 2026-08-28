@@ -56,6 +56,24 @@ byte-for-byte. Runtime startup never depends on rerunning any of it.
   1.5 M visible-triangle desktop guideline; texture memory is 119 MiB
   uncompressed against a 512 MiB guideline.
 
+## Interiors
+
+Three, authored on the shared interiors toolkit and documented in
+`../interiors/MIRRORHOLD_INTERIORS.md`:
+
+| id | name | entered from |
+| --- | --- | --- |
+| `mirrorhold_lens_vault` | The Lens Vault | the orrery drum |
+| `mirrorhold_cistern` | The Mirror Cistern | the fountain plaza |
+| `mirrorhold_stair_cellars` | The Stair Cellars | the cliff town |
+
+```sh
+cd source && python3 build_interiors.py
+```
+
+All three pass the in-engine check with zero walkable cells lacking a surface.
+They still need server map entries before they are reachable in play.
+
 ## Server dependency
 
 This package needs a 96 x 96 ELM server map with its arrival at tile

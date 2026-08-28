@@ -1,0 +1,162 @@
+[
+  {
+    "id": "00-plan-overview",
+    "space": null,
+    "eye": [
+      1.0,
+      45.05,
+      74.25
+    ],
+    "target": [
+      1.0,
+      0.0,
+      16.5
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "01-cellar-head",
+    "space": "cellar_head",
+    "eye": [
+      4.2,
+      1.7,
+      -9.5
+    ],
+    "target": [
+      -4.92,
+      1.36,
+      -1.9
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "02-cold-larder",
+    "space": "cold_larder",
+    "eye": [
+      17.8,
+      0.3,
+      7.8
+    ],
+    "target": [
+      26.92,
+      -0.04,
+      16.92
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "03-common-cellar",
+    "space": "common_cellar",
+    "eye": [
+      7.0,
+      0.3,
+      6.4
+    ],
+    "target": [
+      -8.2,
+      -0.04,
+      18.56
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "04-head-stair",
+    "space": "head_stair",
+    "eye": [
+      -0.5,
+      0.3,
+      -1.23
+    ],
+    "target": [
+      0.86,
+      -0.04,
+      4.7
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "05-larder-aisle",
+    "space": "larder_aisle",
+    "eye": [
+      16.01,
+      0.3,
+      11.6
+    ],
+    "target": [
+      9.47,
+      -0.04,
+      12.76
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "06-rock-shrine",
+    "space": "rock_shrine",
+    "eye": [
+      -24.2,
+      0.7,
+      7.8
+    ],
+    "target": [
+      -15.08,
+      0.36,
+      16.92
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "07-shrine-aisle",
+    "space": "shrine_aisle",
+    "eye": [
+      -9.69,
+      0.3,
+      11.6
+    ],
+    "target": [
+      -14.71,
+      -0.04,
+      12.76
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "08-smugglers-stair",
+    "space": "smugglers_stair",
+    "eye": [
+      -3.4,
+      -6.7,
+      20.59
+    ],
+    "target": [
+      -2.24,
+      -7.04,
+      30.17
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "09-water-gate",
+    "space": "water_gate",
+    "eye": [
+      1.2,
+      -6.7,
+      32.1
+    ],
+    "target": [
+      -7.92,
+      -7.04,
+      42.74
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  }
+]

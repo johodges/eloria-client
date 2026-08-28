@@ -1,0 +1,32 @@
+{
+  "cellsSampled": 17280,
+  "engine": "4.7.2-stable (official)",
+  "loaderWarnings": [
+    "navigation polygons did not produce collision"
+  ],
+  "manifest": "C:/Users/User/Desktop/eloria-project/wt-mirrorhold-interiors/eloria-assets/maps/nymara-regions/interiors/mirrorhold_lens_vault/world.json",
+  "missExamples": [],
+  "pass": true,
+  "renderingDriver": "headless",
+  "sampleStep": 1,
+  "spawns": [
+    {
+      "clientY": 6.0,
+      "deltaMetres": 0.05,
+      "id": "default",
+      "manifestY": 6.05
+    },
+    {
+      "clientY": 6.0,
+      "deltaMetres": 0.05,
+      "id": "lens-vault-stair",
+      "manifestY": 6.05
+    }
+  ],
+  "surfaceHeightRange": [
+    -7.20010375976563,
+    6.0
+  ],
+  "walkableCellsTested": 7652,
+  "walkableCellsWithNoSurface": 0
+}

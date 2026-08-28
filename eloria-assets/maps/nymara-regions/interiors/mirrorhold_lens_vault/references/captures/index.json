@@ -1,0 +1,178 @@
+[
+  {
+    "id": "00-plan-overview",
+    "space": null,
+    "eye": [
+      0.0,
+      61.0,
+      69.4
+    ],
+    "target": [
+      0.0,
+      0.0,
+      4.5
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "01-annealing-ice",
+    "space": "annealing_ice",
+    "eye": [
+      29.9,
+      0.9,
+      16.1
+    ],
+    "target": [
+      19.26,
+      0.56,
+      26.74
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "02-chart-aisle",
+    "space": "chart_aisle",
+    "eye": [
+      -6.3,
+      1.7,
+      20.1
+    ],
+    "target": [
+      7.38,
+      1.36,
+      30.74
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "03-chart-link",
+    "space": "chart_link",
+    "eye": [
+      -1.4,
+      1.7,
+      11.85
+    ],
+    "target": [
+      -2.96,
+      1.36,
+      18.69
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "04-descent",
+    "space": "descent",
+    "eye": [
+      -0.7,
+      1.7,
+      -15.67
+    ],
+    "target": [
+      1.06,
+      1.36,
+      -10.96
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "05-grind-aisle",
+    "space": "grind_aisle",
+    "eye": [
+      18.15,
+      0.9,
+      -0.6
+    ],
+    "target": [
+      11.31,
+      0.56,
+      0.96
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "06-grinding-room",
+    "space": "grinding_room",
+    "eye": [
+      20.4,
+      0.9,
+      -7.3
+    ],
+    "target": [
+      32.56,
+      0.56,
+      6.38
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "07-mirror-well",
+    "space": "mirror_well",
+    "eye": [
+      -20.4,
+      -5.5,
+      -6.3
+    ],
+    "target": [
+      -32.56,
+      -5.84,
+      7.38
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "08-sighting-floor",
+    "space": "sighting_floor",
+    "eye": [
+      -8.4,
+      1.7,
+      -8.4
+    ],
+    "target": [
+      9.84,
+      1.36,
+      9.84
+    ],
+    "fieldOfViewDegrees": 55,
+    "lighting": "day"
+  },
+  {
+    "id": "09-stairhead",
+    "space": "stairhead",
+    "eye": [
+      2.8,
+      7.7,
+      -21.8
+    ],
+    "target": [
+      -3.28,
+      7.36,
+      -15.72
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "10-well-stair",
+    "space": "well_stair",
+    "eye": [
+      -18.15,
+      -5.5,
+      -0.6
+    ],
+    "target": [
+      -11.31,
+      -5.84,
+      0.96
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  }
+]

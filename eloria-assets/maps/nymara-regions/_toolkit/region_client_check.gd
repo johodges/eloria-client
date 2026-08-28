@@ -67,31 +67,63 @@ func _init() -> void:
 
 	var transform: Dictionary = manifest.get("coordinateTransform", {})
 	var adapter := CoordinateAdapter.new(transform)
-	var cells: int = int(manifest.get("bounds", {}).get("serverCells", 0))
-	if cells <= 0:
-		var collision: Dictionary = manifest.get("collision", {})
-		cells = int(round(float(collision.get("width", 0))
-			* float(collision.get("cellMetres", 0.5))))
-	if cells <= 0:
-		printerr("[client-check] cannot determine the server grid size")
+
+	# The contract is not "every tile in the bounding box has floor" - that is
+	# only true of a region, whose terrain covers everything. An interior is
+	# rooms inside solid rock, and most of its box legitimately has no floor.
+	# What must hold for both is that every cell the collision grid calls
+	# walkable has a surface the ray can find.
+	var collision: Dictionary = manifest.get("collision", {})
+	var grid := PackedByteArray()
+	var grid_w := int(collision.get("width", 0))
+	var grid_h := int(collision.get("height", 0))
+	var cell_m := float(collision.get("cellMetres", 0.5))
+	var bin_path := manifest_path.get_base_dir().path_join(
+		str(collision.get("binary", "collision.bin")))
+	if FileAccess.file_exists(bin_path):
+		var raw := FileAccess.get_file_as_bytes(bin_path)
+		if raw.size() >= 16 + grid_w * grid_h:
+			grid = raw.slice(16, 16 + grid_w * grid_h)
+	if grid.is_empty():
+		printerr("[client-check] could not read the collision grid at ", bin_path)
 		quit(2)
 		return
-	print("[client-check] server grid %dx%d, sampling every %d tiles" % [cells, cells, step])
+
+	# Cell (0,0) is the north-west corner: column 0 is the -X edge and row 0 is
+	# the +Z edge. Interiors record that corner directly; a region's grid is
+	# anchored on its server origin instead.
+	var origin_value: Variant = collision.get("originMetres")
+	var origin_x := 0.0
+	var origin_z := 0.0
+	if origin_value is Array and (origin_value as Array).size() == 2:
+		origin_x = float((origin_value as Array)[0])
+		origin_z = float((origin_value as Array)[1])
+	else:
+		var corner: Vector3 = adapter.server_to_godot(0.0, 0.0)
+		origin_x = corner.x
+		origin_z = corner.z
+	print("[client-check] collision grid %dx%d at %.2f m, origin (%.1f, %.1f)"
+		% [grid_w, grid_h, cell_m, origin_x, origin_z])
 
 	var sampled := 0
+	var walkable := 0
 	var misses := 0
 	var miss_examples: Array = []
 	var lowest := INF
 	var highest := -INF
-	for ty in range(0, cells, step):
-		for tx in range(0, cells, step):
-			var world_position: Vector3 = adapter.server_to_godot(float(tx), float(ty))
-			var from := Vector3(world_position.x, RAY_TOP, world_position.z)
-			var to := Vector3(world_position.x, RAY_BOTTOM, world_position.z)
+	for row in range(0, grid_h, step):
+		for col in range(0, grid_w, step):
+			sampled += 1
+			if grid[row * grid_w + col] == 0:
+				continue          # blocked: no floor is expected here
+			walkable += 1
+			var wx := origin_x + (float(col) + 0.5) * cell_m
+			var wz := origin_z - (float(row) + 0.5) * cell_m
+			var from := Vector3(wx, RAY_TOP, wz)
+			var to := Vector3(wx, RAY_BOTTOM, wz)
 			var query := PhysicsRayQueryParameters3D.create(
 				from, to, WorldLoader.NAVIGATION_SURFACE_LAYER)
 			var hit: Dictionary = space.intersect_ray(query)
-			sampled += 1
 			var position_value: Variant = hit.get("position")
 			if position_value is Vector3:
 				var y: float = (position_value as Vector3).y
@@ -100,13 +132,13 @@ func _init() -> void:
 			else:
 				misses += 1
 				if miss_examples.size() < 12:
-					miss_examples.append([tx, ty,
-						snappedf(world_position.x, 0.1), snappedf(world_position.z, 0.1)])
+					miss_examples.append([col, row, snappedf(wx, 0.1), snappedf(wz, 0.1)])
 
-	print("[client-check] grounding: %d tiles sampled, %d misses (%.2f%%)"
-		% [sampled, misses, 100.0 * float(misses) / maxf(1.0, float(sampled))])
+	print("[client-check] %d cells sampled, %d walkable, %d with no surface (%.2f%%)"
+		% [sampled, walkable, misses,
+		   100.0 * float(misses) / maxf(1.0, float(walkable))])
 	if misses > 0:
-		print("[client-check] miss examples (tile_x, tile_y, x, z): ", miss_examples)
+		print("[client-check] miss examples (col, row, x, z): ", miss_examples)
 	else:
 		print("[client-check] surface height range: %.2f .. %.2f" % [lowest, highest])
 
@@ -150,10 +182,10 @@ func _init() -> void:
 			"renderingDriver": "headless" if DisplayServer.get_name() == "headless"
 				else RenderingServer.get_video_adapter_name(),
 			"loaderWarnings": warnings,
-			"serverCells": cells,
 			"sampleStep": step,
-			"tilesSampled": sampled,
-			"groundingMisses": misses,
+			"cellsSampled": sampled,
+			"walkableCellsTested": walkable,
+			"walkableCellsWithNoSurface": misses,
 			"missExamples": miss_examples,
 			"surfaceHeightRange": [lowest, highest],
 			"spawns": spawn_rows,

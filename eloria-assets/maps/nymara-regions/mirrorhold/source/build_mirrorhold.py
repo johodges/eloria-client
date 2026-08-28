@@ -136,11 +136,18 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
             "authority": "server"})
 
     # Interior entrances sit on the landmark they belong to.
+    # Interior entrances. `resonant_vault` used to be listed here and was
+    # wrong: its concept declares amethyst_barrens as its parent and the server
+    # links it to four_gates. Mirrorhold's own interiors replace it.
     for portal_id, name, landmark_id, destination, spawn in (
             ("drowned-crown-stair", "The Drowned Crown", "ring",
              "maps/nymara/drowned_crown.elm", "default"),
-            ("resonant-vault-door", "The Resonant Vault", "orrery",
-             "maps/nymara/resonant_vault.elm", "default")):
+            ("lens-vault-stair", "The Lens Vault", "orrery",
+             "maps/nymara/mirrorhold_lens_vault.elm", "default"),
+            ("cistern-door", "The Mirror Cistern", "plaza",
+             "maps/nymara/mirrorhold_cistern.elm", "default"),
+            ("stair-cellars-door", "The Stair Cellars", "cliff-town",
+             "maps/nymara/mirrorhold_stair_cellars.elm", "default")):
         anchor = next((l for l in build.landmarks if l.get("id") == landmark_id), None)
         if anchor is None:
             continue
@@ -246,10 +253,33 @@ def _split_group(key: str, item) -> tuple[dict[str, M.Mesh], dict[str, M.Mesh]]:
     return solid, walk
 
 
-def export_glb(build: REG.RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuilder, dict]:
+def export_glb(build: REG.RegionBuild, sets, path: Path,
+               warn_unreferenced: bool = True) -> tuple[GLTF.GltfBuilder, dict]:
     builder = GLTF.GltfBuilder(
         generator="Eloria Mirrorhold builder (original procedural assets)")
     MAT.register_gltf_materials(builder, sets, only=MATERIALS)
+
+    # An over-broad pin is completely silent: the package just carries textures
+    # nothing references. Amberwood shipped 2.79 MB that way. Say so.
+    used_materials = set()
+    for bucket in (build.terrain_meshes, build.water_meshes):
+        for piece in bucket.values():
+            for part in (getattr(piece, "parts", None) or [piece]):
+                if part.triangle_count:
+                    used_materials.add(part.material)
+    for item in build.meshes.values():
+        parts = (getattr(item, "parts", []) + getattr(item, "walk_parts", [])
+                 or [item])
+        for part in parts:
+            if part.triangle_count:
+                used_materials.add(part.material)
+    # Only meaningful for the full package: the reduced one deliberately drops
+    # ground dressing, so materials only that dressing uses are absent by
+    # design and warning about them would be noise.
+    unreferenced = sorted(set(MATERIALS) - used_materials)
+    if warn_unreferenced and unreferenced:
+        print(f"[materials] WARNING: {len(unreferenced)} pinned but unreferenced "
+              f"in {path.name}: " + ", ".join(unreferenced))
 
     # Tangents are intentionally omitted: Godot's glTF importer generates them
     # for normal-mapped materials, and shipping them would add sixteen bytes a
@@ -612,14 +642,21 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "environment": {
             "sky": {"type": "gradient", "zenith": [0.15, 0.25, 0.42],
                     "horizon": [0.58, 0.56, 0.50]},
-            "sun": {"direction": [-0.46, 0.50, 0.73],
+            # The direction the light TRAVELS, which is what the client's
+            # WorldEnvironmentBinder applies: it does
+            # look_at_from_position(ZERO, direction), and a DirectionalLight3D
+            # shines along its own -Z. The offline rasteriser's sun_direction
+            # is the opposite convention - "points from surface toward the
+            # sun" - so this is that vector negated. Declaring the offline one
+            # here lights the whole region from underneath.
+            "sun": {"direction": [0.46, -0.50, -0.73],
                     "color": [1.22, 0.94, 0.60], "energy": 1.15},
             "ambient": {"skyColor": [0.22, 0.30, 0.42],
                         "groundColor": [0.08, 0.06, 0.04], "energy": 0.30},
             "saturation": 1.30,
             "fog": {"enabled": True, "color": [0.38, 0.37, 0.35],
                     "density": 0.0007, "heightFalloff": 0.003},
-            "goldenHour": {"sun": {"direction": [-0.82, 0.20, 0.53],
+            "goldenHour": {"sun": {"direction": [0.82, -0.20, -0.53],
                                    "color": [1.55, 0.94, 0.52]},
                            "fog": {"color": [0.62, 0.50, 0.38], "density": 0.0022}},
             "presentation": {
@@ -741,7 +778,8 @@ def main() -> int:
                     for name, texture_set in sets.items()}
         lod_build = build_region(args.seed, lod="far")
         lod_build.terrain_meshes = lod_build.terrain.build_meshes(uv_scale=0.28)
-        _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
+        _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb",
+                                  warn_unreferenced=False)
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],
             "nodes": lod_stats["nodes"],
