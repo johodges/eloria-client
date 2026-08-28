@@ -210,6 +210,53 @@
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Four Gates authoring pipeline: glTF writer, mesh toolkit, procedural PBR synthesis, kits, landmarks, terrain and layout"
+      "path": "maps/nymara-regions/sunmane_steppe/world.glb",
+      "source": "tools/sunmane/build.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Sunmane Steppe production region: sculpted terrain, coastline, encampment, kit architecture, props and vegetation, exported as self-contained glTF 2.0"
+    },
+    {
+      "path": "maps/nymara-regions/sunmane_steppe/world-lod2.glb",
+      "source": "tools/sunmane/build.py --lod 2",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Reduced Sunmane Steppe package: ground clutter and road dressing removed, textures at half resolution"
+    },
+    {
+      "path": "maps/nymara-regions/sunmane_steppe/textures/*.png",
+      "source": "tools/sunmane/textures.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original tileable PBR kit generated from periodic noise: canvas, timber, ground, stone, thatch, hide, leather, textile, metal and bone"
+    },
+    {
+      "path": "maps/nymara-regions/sunmane_steppe/minimap.webp",
+      "source": "godot-client/tests/integration/sunmane_minimap.gd",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Minimap and full-map images rendered orthographically from the exported world.glb through the client's own world loader"
+    },
+    {
+      "path": "maps/nymara-regions/sunmane_steppe/references/*.png",
+      "source": "supplied regional concept art",
+      "author": "Eloria project (OpenAI ImageGen)",
+      "license": "CC-BY-4.0",
+      "description": "Aerial overview and ten-panel player-scale detail board used as the visual authority for this region"
+    },
+    {
+      "path": "maps/nymara-regions/sunmane_steppe/comparison/*.png",
+      "source": "tools/sunmane/comparison.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Side-by-side sheets pairing each concept panel with the matching Godot client capture"
+    },
+    {
+      "path": "../godot-client/assets/actors/native/creatures/sunmane_*.glb",
+      "source": "tools/sunmane/creatures.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original steppe horse, dun mare and tacked grey pony authored to equine proportions on the shared Eloria creature rig"
     }
   ]
 }

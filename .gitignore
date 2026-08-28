@@ -1,6 +1,12 @@
 *.o
 __pycache__/
 *.py[cod]
+godot-client/.godot/
+godot-client/test-artifacts/
+godot-client/**/*.import
+godot-client/**/*.uid
+godot-client/assets/actors/native/races/* *.png
+godot-client/assets/actors/native/hair/* *.png
 .deps/
 make.conf
 el.linux.bin
@@ -26,3 +32,15 @@ godot-client/**/*.import
 godot-client/assets/actors/native/races/*Body Atlas.png
 godot-client/**/*.uid
 eloria-assets/maps/*/world.glb.report.json
+# Godot editor artefacts. The godot-client project is imported by CI
+# ("godot --headless --path godot-client --editor --quit"), which regenerates
+# all of these, so none of them belong in the tree.
+godot-client/.godot/
+*.import
+*.uid
+godot-client/assets/actors/native/creatures/*-basecolor.png
+godot-client/assets/actors/native/races/*Atlas.png
+godot-client/**/*.glb.report.json
+
+# Rendered test evidence. CI uploads it as a build artifact.
+godot-client/test-artifacts/

@@ -64,11 +64,21 @@ func _run() -> void:
 		and main.get_node("GameView/MinimapFrame/South") is Label
 		and main.get_node("GameView/MinimapFrame/West") is Label,
 		"minimap compass border exposes cardinal labels and drag/context input")
-	_expect(main.get("_minimap_menu") is PopupMenu,
-		"minimap right-click orientation menu is configured")
+	var minimap_menu: PopupMenu = main.get("_minimap_menu") as PopupMenu
+	var minimap_border_style: StyleBoxFlat = minimap_frame.get_theme_stylebox(
+		"panel") as StyleBoxFlat
+	_expect(minimap_menu != null and minimap_menu.item_count == 3,
+		"minimap right-click menu exposes north, player, and viewport orientation")
+	_expect(minimap_border_style != null
+		and minimap_border_style.get_border_width(SIDE_LEFT) == 6
+		and is_equal_approx(minimap_image.offset_left, 54.0),
+		"minimap compass ring and outline are three times their previous thickness")
 	main.call("_on_minimap_orientation_selected", 1)
 	_expect(str(main.get("_minimap_orientation")) == "player_up",
 		"minimap can rotate with the player")
+	main.call("_on_minimap_orientation_selected", 2)
+	_expect(str(main.get("_minimap_orientation")) == "viewport_up",
+		"minimap can rotate with the viewport")
 	main.call("_on_minimap_orientation_selected", 0)
 	var resolved_world: World3D = world_viewport.find_world_3d()
 	_expect(resolved_world != null, "gameplay World3D resolves from the world viewport")
@@ -140,6 +150,12 @@ func _run() -> void:
 		"default camera keeps the actor readable from a steep isometric angle")
 	var actor_height_fixture: ReplicatedActor3D = ReplicatedActor3D.new()
 	root.add_child(actor_height_fixture)
+	var imported_visual := Node3D.new()
+	imported_visual.name = "NativeModel"
+	actor_height_fixture.add_child(imported_visual)
+	actor_height_fixture.call("_apply_import_adapter", {})
+	_expect(is_equal_approx(absf(imported_visual.rotation.y), PI),
+		"native visual forward is corrected from glTF +Z to Godot -Z")
 	actor_height_fixture.server_target = Vector3(2.0, 31.15, 3.0)
 	actor_height_fixture.global_position = actor_height_fixture.server_target
 	actor_height_fixture.set_surface_height(42.08)
@@ -156,7 +172,25 @@ func _run() -> void:
 		"actor faces the authoritative movement direction")
 	_expect(float(actor_height_fixture.get("_presentation_speed")) >= 6.0,
 		"walk presentation closes authoritative steps promptly")
+	actor_height_fixture.turn_by(PI / 4.0)
+	var held_facing: float = actor_height_fixture.desired_facing_yaw()
+	actor_height_fixture.apply_server_state({
+		"x": 4, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
+	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), held_facing),
+		"keyboard facing override prevents strafe/back packets from rotating the actor")
+	actor_height_fixture.set_facing_override(false)
+	actor_height_fixture.apply_server_state({
+		"x": 5, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
+	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), -PI / 2.0),
+		"click-style movement can restore authoritative movement facing")
 	actor_height_fixture.free()
+	var north_yaw: float = CoordinateAdapter.new().direction_to_godot(Vector2i(0, -1))
+	_expect(main.call("_facing_relative_tile_direction", north_yaw, 1, 0) == Vector2i(0, -1)
+		and main.call("_facing_relative_tile_direction", north_yaw, -1, 0) == Vector2i(0, 1)
+		and main.call("_facing_relative_tile_direction", north_yaw, 0, -1) == Vector2i(-1, 0)
+		and main.call("_facing_relative_tile_direction", north_yaw, 0, 1) == Vector2i(1, 0)
+		and main.call("_facing_relative_tile_direction", north_yaw, 1, -1) == Vector2i(-1, -1),
+		"WASD is facing-relative with non-rotating strafe/back and 45-degree diagonals")
 	var lower_hud: Control = main.get_node("GameView/Quickbar") as Control
 	var chat_panel: Control = main.get_node("GameView/ChatPanel") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
@@ -236,12 +270,29 @@ func _run() -> void:
 		"clock, compass, and top-right Eloria logo are interactive/present")
 	_expect(InputMap.has_action("toggle_console")
 		and InputMap.has_action("toggle_inventory")
+		and InputMap.has_action("recenter_viewport")
 		and InputMap.has_action("move_north") and InputMap.has_action("move_south")
 		and InputMap.has_action("move_west") and InputMap.has_action("move_east")
 		and InputMap.has_action("turn_left") and InputMap.has_action("turn_right")
 		and main.get_node("GameView/ConsolePanel/Content/ConsoleOutput") is RichTextLabel
 		and chat_input.anchor_left > 0.5,
-		"console, Ctrl+I inventory, WASD/QE, and bottom-right chat controls are available")
+		"console, Ctrl+I inventory, WASD/QE/Space, and bottom-right chat controls are available")
+	_expect(main.call("_movement_axes_for_actions", true, false, false, false)
+		== Vector2i(1, 0)
+		and main.call("_movement_axes_for_actions", false, true, false, false)
+		== Vector2i(-1, 0)
+		and main.call("_movement_axes_for_actions", false, false, true, false)
+		== Vector2i(0, 1)
+		and main.call("_movement_axes_for_actions", false, false, false, true)
+		== Vector2i(0, -1),
+		"W/S move forward/backward and A/D use the requested swapped strafe directions")
+	var q_turn := InputEventKey.new()
+	q_turn.physical_keycode = KEY_Q
+	var e_turn := InputEventKey.new()
+	e_turn.physical_keycode = KEY_E
+	_expect(int(main.call("_turn_step_for_key_event", q_turn)) == 1
+		and int(main.call("_turn_step_for_key_event", e_turn)) == -1,
+		"Q and E use the corrected opposite rotation directions")
 	_expect(stats_tabs.get_tab_count() == 4
 		and stats_tabs.get_tab_title(0) == "Statistics"
 		and stats_tabs.get_tab_title(1) == "Knowledge"
@@ -333,8 +384,14 @@ func _run() -> void:
 		and main.get_node("GameView/InventoryPanel/Content/InventoryBody/SideActions/InventoryGetAll") is Button
 		and main.get_node("GameView/InventoryPanel/Content/InventoryBody/SideActions/InventoryDropAll") is Button
 		and main.get_node("GameView/InventoryPanel/Content/InventoryBody/SideActions/InventoryMixAll") is Button
-		and main.get_node("GameView/InventoryPanel/Content/InventoryBody/SideActions/InventoryItemLists") is Button,
-		"inventory exposes close and all EL-style side actions")
+		and main.get_node("GameView/InventoryPanel/Content/InventoryBody/SideActions/InventoryItemLists") is Button
+		and main.get_node("GameView/InventoryPanel/Content/InventoryFooter/InventoryResizeGrip") is Button,
+		"inventory exposes close, all EL-style side actions, and a resize grip")
+	main.call("_apply_inventory_scale", 0.75)
+	_expect(is_equal_approx(inventory_panel.scale.x, 0.75)
+		and is_equal_approx(inventory_panel.scale.y, 0.75),
+		"inventory resizing uniformly scales boxes, icons, and text without changing aspect")
+	main.call("_apply_inventory_scale", 1.0)
 	_expect((main.call("_parse_item_list", "1158:20\n189:1") as Array).size() == 2,
 		"custom storage item lists parse image IDs and quantities")
 	var inventory_body: HBoxContainer = main.get_node(
@@ -576,6 +633,14 @@ func _run() -> void:
 	main.call("_on_manufacturing_close_pressed")
 	app_state_inventory.call("_on_packet", 28,
 		PackedByteArray([1, 10, 0, 20, 0, 7]))
+	app_state_inventory.set("local_actor_id", 77)
+	app_state_inventory.set("actors", {77: {"actor_id": 77, "x": 10, "y": 20}})
+	_expect(int(main.call("_ground_bag_below_player")) == 7,
+		"Get All resolves only the ground bag on the player's exact tile")
+	app_state_inventory.set("actors", {77: {"actor_id": 77, "x": 10, "y": 21}})
+	_expect(int(main.call("_ground_bag_below_player")) == -1,
+		"Get All does not take items from a nearby but non-overlapping bag")
+	app_state_inventory.set("actors", {77: {"actor_id": 77, "x": 10, "y": 20}})
 	main.call("_sync_ground_bags")
 	var ground_bag_nodes: Dictionary = main.get("ground_bag_nodes") as Dictionary
 	_expect(ground_bag_nodes.has(7) and ground_bag_nodes.get(7) is GroundBag3D,
@@ -629,16 +694,20 @@ func _run() -> void:
 		"GameView/ItemSpellQuickbar/QuickContent/ItemSlots/Slot1") as Button
 	var first_equipment_slot: Button = main.get_node(
 		"GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn/EquipmentGrid").get_child(0) as Button
-	_expect(first_inventory_slot.text.contains("×9") and first_inventory_slot.icon != null
-		and not first_inventory_slot.disabled,
-		"inventory snapshot populates its server slot")
+	var first_quantity: Label = first_inventory_slot.get_node("Quantity") as Label
+	_expect(first_inventory_slot.text.is_empty() and first_quantity.text == "9"
+		and first_quantity.anchor_left == 1.0 and first_quantity.anchor_top == 1.0
+		and first_inventory_slot.icon != null and not first_inventory_slot.disabled
+		and first_inventory_slot.custom_minimum_size.x >= 64.0,
+		"large inventory icon uses an overlaid bottom-right quantity")
 	_expect(first_quick_slot.text.is_empty() and first_quick_slot.icon != null
 		and first_quick_slot.tooltip_text.contains("Quantity: 9")
 		and not first_quick_slot.disabled,
 		"usable inventory slot populates the icon-only vertical quick slot")
-	_expect(first_equipment_slot.text.contains("×1") and first_equipment_slot.icon != null
-		and not first_equipment_slot.disabled,
-		"authoritative wear slot populates the equipment grid")
+	_expect(first_equipment_slot.text.is_empty() and first_equipment_slot.icon != null
+		and not first_equipment_slot.disabled
+		and first_equipment_slot.custom_minimum_size.x >= 64.0,
+		"large equipment icon renders without a slot or quantity number")
 	main.set("selected_inventory_slot", 0)
 	main.call("_sync_inventory")
 	var empty_inventory_slot: Button = main.get_node(
@@ -760,6 +829,19 @@ func _run() -> void:
 		"camera continuously follows the rendered local actor")
 	_expect(camera_rig.pan_offset.is_equal_approx(saved_pan),
 		"camera follow preserves the user pan offset")
+	main.set("_minimap_orientation", "viewport_up")
+	camera_rig.yaw_degrees = 37.0
+	main.call("_update_local_actor_follow")
+	_expect(is_equal_approx(map_camera.rotation.y, deg_to_rad(37.0)),
+		"viewport-up minimap tracks camera yaw independently of actor facing")
+	chat_input.release_focus()
+	var recenter_key: InputEventKey = InputEventKey.new()
+	recenter_key.pressed = true
+	recenter_key.physical_keycode = KEY_SPACE
+	main.call("_input", recenter_key)
+	_expect(camera_rig.pan_offset.is_zero_approx(),
+		"Space recenters the viewport on the local player when chat is inactive")
+	main.set("_minimap_orientation", "north_up")
 	app_state.set("local_actor_id", previous_local_actor_id)
 	follow_actor.queue_free()
 

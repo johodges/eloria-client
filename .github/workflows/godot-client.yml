@@ -7,7 +7,9 @@ on:
       - "eloria-assets/tools/build_native_nymara_glbs.py"
       - "eloria-assets/tools/render_native_glb_preview.py"
       - "eloria-assets/maps/four-gates-city/**"
+      - "eloria-assets/maps/nymara-regions/sunmane_steppe/**"
       - "eloria-assets/tools/*four_gates*.py"
+      - "eloria-assets/tools/sunmane/**"
       - ".github/workflows/godot-client.yml"
   push:
     branches: [develop, feature/godot-client-migration]
@@ -49,6 +51,18 @@ jobs:
         run: |
           godot --headless --path godot-client res://src/dev/model_validation.tscn --quit-after 12 2>&1 | tee model-scene.log
           ! grep -E "SCRIPT ERROR|Parse Error" model-scene.log
+      - name: Sunmane Steppe package validation
+        run: python3 eloria-assets/tools/sunmane/validate_package.py
+      - name: Asset provenance
+        run: python3 eloria-assets/tools/check_provenance.py
+      - name: Sunmane Steppe grounding
+        run: |
+          godot --headless --path godot-client --script res://tests/integration/sunmane_grounding.gd 2>&1 | tee sunmane-grounding.log
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL" sunmane-grounding.log
+      - name: Sunmane Steppe traversal
+        run: |
+          godot --headless --path godot-client --script res://tests/integration/sunmane_traversal.gd 2>&1 | tee sunmane-traversal.log
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL" sunmane-traversal.log
 
   rendered-four-gates-map:
     runs-on: ubuntu-latest
@@ -90,12 +104,73 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/legacy-region-preview.png"
           test -s "$ELORIA_ARTIFACT_DIR/legacy-chat-console.png"
           test -s "$ELORIA_ARTIFACT_DIR/legacy-hud-settings.png"
+      - name: Render all character-creation models
+        run: |
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_character_creation_models.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/character-models.log"
+          if grep -E "SCRIPT ERROR|Parse Error|FAIL:|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/character-models.log"; then
+            echo "Character-model render validation reported an error."
+            exit 1
+          fi
+          grep -q "rendered character creation models: PASS" "$ELORIA_ARTIFACT_DIR/character-models.log"
+          test -s "$ELORIA_ARTIFACT_DIR/default-00-luminous-female.png"
+          test -s "$ELORIA_ARTIFACT_DIR/default-15-mycelari-male.png"
+          test -s "$ELORIA_ARTIFACT_DIR/appearance-variant-3.png"
+          test -s "$ELORIA_ARTIFACT_DIR/character-creation-ui.png"
+          test -s "$ELORIA_ARTIFACT_DIR/validation.json"
       - name: Upload Four Gates rendered evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: rendered-four-gates-map
           path: godot-client/test-artifacts/four-gates
+          if-no-files-found: error
+
+  rendered-sunmane-steppe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: barichello/godot-ci:4.7.2
+    env:
+      ELORIA_ARTIFACT_DIR: ${{ github.workspace }}/godot-client/test-artifacts/sunmane-steppe
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install virtual display and software rendering
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            xvfb xauth libgl1-mesa-dri libfontconfig1 libxcursor1 libxinerama1 \
+            libxrandr2 libxi6 libxkbcommon0 libasound2t64 libpulse0 libudev1 python3-pil
+      - name: Import project
+        run: godot --headless --path godot-client --editor --quit
+      - name: Render Sunmane Steppe concept views
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_sunmane_steppe.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/render.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|Unable to create DisplayServer|all display drivers failed|FAIL" "$ELORIA_ARTIFACT_DIR/render.log"
+          for view in aerial-overview p01-caravan-road p02-round-tent-camp \
+              p03-seasonal-market p04-banner-shrine p05-caravanserai-gate \
+              p06-windmill p07-well-and-pens p08-standing-stones \
+              p09-steppe-overlook p10-market-props great-hall coast-southwest \
+              mesa-north animal-pens gameplay-default; do
+            test -s "$ELORIA_ARTIFACT_DIR/$view.png"
+          done
+      - name: Render minimap from the exported geometry
+        run: |
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/sunmane_minimap.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/minimap.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL" "$ELORIA_ARTIFACT_DIR/minimap.log"
+      - name: Measure package performance
+        run: |
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/sunmane_performance.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/performance.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL" "$ELORIA_ARTIFACT_DIR/performance.log"
+          test -s "$ELORIA_ARTIFACT_DIR/performance.json"
+      - name: Build concept comparison sheets
+        run: python3 eloria-assets/tools/sunmane/comparison.py
+      - name: Upload Sunmane Steppe rendered evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-sunmane-steppe
+          path: godot-client/test-artifacts/sunmane-steppe
           if-no-files-found: error
 
   rendered-server-session:

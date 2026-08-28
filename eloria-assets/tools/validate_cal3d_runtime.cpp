@@ -11,8 +11,13 @@ bool validate_playable_race(const std::string& root, const std::string& race,
 	const std::string& gender)
 {
 	const std::string model_name = race + "_" + gender;
+	// Luminous assets are deliberately versioned so an existing client cache
+	// cannot satisfy the actor definition with the superseded procedural model.
+	// Keep this runtime validation on the same paths written to actor_defs.xml.
+	const std::string runtime_name = race == "luminous"
+		? model_name + "_quaternius_v2" : model_name;
 	CalCoreModel model(model_name);
-	if (!model.loadCoreSkeleton(root + "/actors/playable/" + model_name + ".csf"))
+	if (!model.loadCoreSkeleton(root + "/actors/playable/" + runtime_name + ".csf"))
 	{
 		std::cerr << model_name << " skeleton: "
 			<< CalError::getLastErrorDescription() << '\n';
@@ -20,7 +25,7 @@ bool validate_playable_race(const std::string& root, const std::string& race,
 	}
 	for (const char *part: { "shirt", "legs", "boots", "head_0" })
 	{
-		if (model.loadCoreMesh(root + "/actors/playable/" + model_name +
+		if (model.loadCoreMesh(root + "/actors/playable/" + runtime_name +
 			"_" + part + ".cmf") < 0)
 		{
 			std::cerr << model_name << ' ' << part << ": "
@@ -32,7 +37,7 @@ bool validate_playable_race(const std::string& root, const std::string& race,
 		"run", "attack", "cast", "pain", "die", "harvest", "pick", "drop",
 		"sit_down", "sit", "stand_up" })
 	{
-		if (model.loadCoreAnimation(root + "/animations/playable/" + model_name +
+		if (model.loadCoreAnimation(root + "/animations/playable/" + runtime_name +
 			"/" + animation + ".caf") < 0)
 		{
 			std::cerr << model_name << ' ' << animation << ": "

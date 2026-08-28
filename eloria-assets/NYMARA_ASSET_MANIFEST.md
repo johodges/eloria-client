@@ -26,7 +26,7 @@ concept-comparison, overhead, and representative topology QA under
 | Four Gates | `four_gates_region_concept.png` | Gatehouses, radial bridges, civic towers, segmented walls, fountains and park belt | Fortified circular civic island, four monumental approaches, concentric districts, turquoise waterways and unobstructed central arrival plaza |
 | Whitehorn Range | `whitehorn_range_region_concept.png` | Glacier, monastery, rope bridge | Glacial valley, caves, passes and temple approach |
 | Amethyst Barrens | `amethyst_barrens_region_concept.png` | Crystal bridges, geodes and observatory | Violet badlands and celestial instrument |
-| Sunmane Steppe | `sunmane_steppe_region_concept.png` | Orun tents and Sunmane camps | Rider roads, circular tent city and watering holes |
+| Sunmane Steppe | `sunmane_steppe_region_concept.png`, region `references/` | Orun round tents, great hall, gate bays, caravanserais, windmills, wells, banner shrines, barrows and steppe horses | Rider roads radiating from a palisaded crossroads, clan camps, paddocks, watering holes, mesas and a rugged west coast |
 | Amberwood | `amberwood_region_concept.png` | Estate, lodge, ruins and autumn trees | Layered autumn forest and overgrown estate |
 | Grey Moors | `grey_moors_region_concept.png` | Barrows, boardwalks and standing stones | Heather, peat bogs and readable causeways |
 | Westhaven | `westhaven_region_concept.png` | Harbor, shipyard, lighthouse and seawalls | Dense maritime city and rocky coast |
@@ -43,7 +43,7 @@ concept-comparison, overhead, and representative topology QA under
 | Four Gates | Yes | Yes | Yes | `qa/four-gates/` |
 | Whitehorn Range | Yes | Yes | Yes | `qa/regions/whitehorn-range/` |
 | Amethyst Barrens | Yes | Yes | Yes | `qa/regions/amethyst-barrens/` |
-| Sunmane Steppe | Yes | Yes | Yes | `qa/regions/sunmane-steppe/` |
+| Sunmane Steppe | Yes (production GLB) | Yes (six classes) | Yes | `qa/regions/sunmane-steppe/` |
 | Amberwood | Yes | Yes | Yes | `qa/regions/amberwood/` |
 | Grey Moors | Yes | Yes | Yes | `qa/regions/grey-moors/` |
 | Westhaven | Yes | Yes | Yes | `qa/regions/westhaven/` |

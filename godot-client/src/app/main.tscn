@@ -310,9 +310,9 @@ z_index = 4
 layout_mode = 1
 offset_left = 16.0
 offset_top = 42.0
-offset_right = 208.0
-offset_bottom = 234.0
-tooltip_text = "Floating minimap [Alt+M] — drag its compass border; right-click for orientation"
+offset_right = 280.0
+offset_bottom = 306.0
+tooltip_text = "Floating minimap [Alt+M] — drag its thick compass border; right-click for north/player/viewport orientation"
 
 [node name="Minimap" type="TextureRect" parent="GameView/MinimapFrame"]
 unique_name_in_owner = true
@@ -320,10 +320,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 18.0
-offset_top = 18.0
-offset_right = -18.0
-offset_bottom = -18.0
+offset_left = 54.0
+offset_top = 54.0
+offset_right = -54.0
+offset_bottom = -54.0
 expand_mode = 1
 stretch_mode = 5
 mouse_filter = 1
@@ -1265,11 +1265,15 @@ offset_bottom = 270.0
 theme_override_constants/separation = 4
 
 [node name="Header" type="HBoxContainer" parent="GameView/InventoryPanel/Content"]
+unique_name_in_owner = true
+mouse_filter = 1
+mouse_default_cursor_shape = 13
 
 [node name="Title" type="Label" parent="GameView/InventoryPanel/Content/Header"]
 size_flags_horizontal = 3
 text = "INVENTORY"
 horizontal_alignment = 1
+mouse_filter = 1
 
 [node name="InventoryClose" type="Button" parent="GameView/InventoryPanel/Content/Header"]
 unique_name_in_owner = true
@@ -1283,7 +1287,7 @@ theme_override_constants/separation = 8
 
 [node name="EquipmentColumn" type="VBoxContainer" parent="GameView/InventoryPanel/Content/InventoryBody"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(126, 0)
+custom_minimum_size = Vector2(136, 0)
 
 [node name="EquipmentTitle" type="Label" parent="GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn"]
 text = "EQUIPMENT"
@@ -1300,7 +1304,7 @@ unique_name_in_owner = true
 size_flags_horizontal = 3
 
 [node name="Scroll" type="ScrollContainer" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn"]
-custom_minimum_size = Vector2(390, 350)
+custom_minimum_size = Vector2(408, 360)
 horizontal_scroll_mode = 0
 
 [node name="InventoryGrid" type="GridContainer" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Scroll"]
@@ -1350,7 +1354,7 @@ tooltip_text = "Deposit all eligible backpack items. Right-click to set protecte
 [node name="InventoryGetAll" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/SideActions"]
 unique_name_in_owner = true
 text = "Get\nAll"
-tooltip_text = "Withdraw every item in the current storage category"
+tooltip_text = "Open the ground bag below you and request every stack; free slots and load are server-validated"
 
 [node name="InventoryDropAll" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/SideActions"]
 unique_name_in_owner = true
@@ -1367,9 +1371,20 @@ unique_name_in_owner = true
 text = "Item\nLists"
 tooltip_text = "Define reusable item-id and quantity lists for storage"
 
-[node name="InventoryLoad" type="Label" parent="GameView/InventoryPanel/Content"]
+[node name="InventoryFooter" type="HBoxContainer" parent="GameView/InventoryPanel/Content"]
+
+[node name="InventoryLoad" type="Label" parent="GameView/InventoryPanel/Content/InventoryFooter"]
 unique_name_in_owner = true
+size_flags_horizontal = 3
 text = "Load: 0 / 0"
+
+[node name="InventoryResizeGrip" type="Button" parent="GameView/InventoryPanel/Content/InventoryFooter"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 26)
+focus_mode = 0
+mouse_default_cursor_shape = 12
+text = "◢"
+tooltip_text = "Drag to resize the inventory proportionally"
 
 [node name="ItemListsPanel" type="PanelContainer" parent="GameView"]
 unique_name_in_owner = true
@@ -1869,7 +1884,8 @@ current = true
 
 [node name="Sun" type="DirectionalLight3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot"]
 rotation_degrees = Vector3(-45, -35, 0)
-light_energy = 1.25
+light_energy = 0.9
+shadow_enabled = true
 
 [node name="Form" type="VBoxContainer" parent="CreationPanel/Columns"]
 custom_minimum_size = Vector2(440, 0)
