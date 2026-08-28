@@ -1,4 +1,4 @@
-# Whitehorn Glacier Temple validation report
+# Whitehorn Range insides validation report
 
 What was checked, and what was not.
 
@@ -8,18 +8,20 @@ What was checked, and what was not.
 | --- | --- | --- |
 | glTF 2.0 validity | `_toolkit/validate_gltf.py world.glb` | **0 errors, 0 warnings** |
 | Runtime contract | `_toolkit/verify_runtime.py --package .` | **0 errors**, 1 warning |
-| In-engine grounding | `_toolkit/region_client_check.gd` | **PASS**, 15,129 tiles, 0 misses on walkable cells |
+| In-engine grounding | `_toolkit/region_client_check.gd` | **PASS**, 30,276 tiles, 0 misses on walkable cells, all five arrivals ground |
 | Determinism | two builds | `world.glb`, `world.json`, `collision.bin` byte-identical |
-| Collision dimensions | — | 246 × 222, both multiples of six |
+| Collision dimensions | — | 348 × 348, both multiples of six |
+| Section separation | `interiors._assert_gutters` | at least 20 m of void between every pair, checked at build time |
 
 ## The one warning, and why it is not a defect
 
 ```
-[warning] GROUNDING_RAY_MISS: 9892 server tiles have no walk surface under them
+[warning] GROUNDING_RAY_MISS: 22286 server tiles have no walk surface under them
 ```
 
-An interior is rooms inside rock. `verify_runtime` samples the whole bounding
-square, and 65% of this one is legitimately not floor. Amberwood's four
+On a combined insides map that is two things at once: the rock around each
+section, and the **void between them**, which is the whole point of the layout.
+74% of the bounding square is deliberately not floor. Amberwood's and Amethyst's
 interiors carry the same warning for the same reason.
 
 The check that distinguishes a real defect from expected rock is whether the
@@ -27,9 +29,9 @@ misses land on cells the package's **own** collision grid marks walkable. They
 do not:
 
 ```
-[client-check] grounding: 15129 tiles sampled, 9892 misses (65.38%)
+[client-check] grounding: 30276 tiles sampled, 22286 misses (73.61%)
 [client-check]   of those, 0 are on cells collision.bin marks walkable;
-                 9892 are blocked cells and expected
+                 22286 are blocked cells and expected
 [client-check] PASS
 ```
 
@@ -96,10 +98,15 @@ strict criterion exactly, so nothing regresses there.
    the mine at player scale. A panel-by-panel comparison sheet is therefore not
    possible for this package; the preview sheet is one frame per room instead.
 4. **Every name is invented**, as with the region above.
-5. **The server has not registered this map key** beyond the existing
-   `whitehorn_glacier_temple` interior entry, which is a 32-tile procedural
-   placeholder. This package fits inside it — 123 × 123 m against the 192 m the
-   interior maps allow — so no server change is needed for extent, but the
-   server's own generated collision for that key does not match this geometry.
+5. **The server's generated collision for this key does not match this
+   geometry.** `export_insides_elm.py` writes
+   `source-elm/whitehorn_glacier_temple.elm` from this package's own
+   `collision.bin` — 192 × 192 cells, 21.6% walkable, the rest void and rock —
+   and it fits the 32 tiles an interior map already allows, so no server change
+   is needed for extent. But `tools/generate_nymara_maps.py` still generates its
+   own fully-walkable placeholder for that key and does not ingest this ELM.
+   Until it does, the server will let a player walk across the void between
+   sections while the client drops them. That is the same gap the region above
+   has, and it is the most important open item on this package.
 6. **Performance is measured, not profiled.** 38,929 triangles and 7.2 MB;
    frame rate untested.

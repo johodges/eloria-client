@@ -42,11 +42,14 @@ import preview
 import validate_gltf
 from amberwood import gltf as GLTF, interiors as I, materials as MAT, mesh as M
 
-import interiors_temple as IT
+import interiors as IT
 
 ROOT = Path(__file__).resolve().parents[1]           # .../whitehorn_range
 INTERIOR_ROOT = ROOT.parent / "interiors"
 SEED = 20260901
+PARENT_REGION_ID = "whitehorn_range"
+PARENT_REGION_NAME = "the Whitehorn Range"
+PARENT_REGION_MAP = "maps/nymara/whitehorn_range.elm"
 CELL = 1.0                                            # collision cell, metres
 
 
@@ -191,6 +194,12 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
     spawn = [round((space["x0"] + space["x1"]) * 0.5, 2),
              round(space["floor"] + 0.05, 2),
              round((space["z0"] + space["z1"]) * 0.5, 2)]
+    # One arrival per surface door. A combined insides map is entered at a
+    # different point depending on which door was used, so the spawn list is
+    # the point of it rather than a formality.
+    arrivals = getattr(interior, "arrivals", None) or [
+        {"id": interior.destination_spawn, "name": interior.name,
+         "section": interior.ident, "position": spawn}]
     doc = {
         "schemaVersion": "1.0.0",
         "assetVersion": "1.0.0",
@@ -207,7 +216,7 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
             "playableBounds": {"min": [round(float(v), 2) for v in walk_lo],
                                "max": [round(float(v), 2) for v in walk_hi]},
             "interiorClass": interior.klass,
-            "parentRegion": "whitehorn_range",
+            "parentRegion": PARENT_REGION_ID,
             "serverCells": int(max(collision_stats["width"],
                                    collision_stats["height"]) * COLLISION_CELL),
         },
@@ -219,12 +228,12 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
             "walkingHeight": round(float(space["floor"]), 2),
             "invertServerY": True,
         },
-        "spawnPoints": [
-            {"id": "default", "position": spawn, "rotationDegrees": 0,
-             "surface": "Walk"},
-            {"id": interior.destination_spawn, "position": spawn,
-             "rotationDegrees": 0, "surface": "Walk"},
-        ],
+        "spawnPoints": ([{"id": "default", "position": spawn,
+                          "rotationDegrees": 0, "surface": "Walk"}]
+                        + [{"id": a["id"], "name": a["name"],
+                            "position": a["position"], "rotationDegrees": 0,
+                            "surface": "Walk", "section": a["section"]}
+                           for a in arrivals]),
         "collision": dict(collision_stats,
                           nodeNames=[n for n in stats["nodeNames"]
                                      if not n.startswith("Walk_")]),
@@ -240,16 +249,20 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
                       "emitted as ordinary geometry is scenery you fall "
                       "through."],
         },
+        # A return portal standing on each arrival, sending the player back to
+        # the surface door they came in by rather than to one shared exit.
         "portals": [{
-            "id": "exit-to-whitehorn",
-            "name": "Return to the Whitehorn Range",
+            "id": "exit-%s" % a["id"],
+            "name": "Return to %s" % PARENT_REGION_NAME,
             "type": "map-transition",
-            "position": spawn,
+            "position": a["position"],
             "radius": 3.0,
-            "destinationMap": "maps/nymara/whitehorn_range.elm",
-            "destinationSpawn": interior.destination_spawn,
+            "destinationMap": PARENT_REGION_MAP,
+            "destinationSpawn": a["id"],
+            "section": a["section"],
             "authority": "server",
-        }],
+        } for a in arrivals],
+        "sections": getattr(interior, "sections", []),
         "landmarks": interior.landmarks,
         "interactives": interior.interactives,
         "npcMarkers": interior.npc_markers,
@@ -301,7 +314,8 @@ def main() -> int:
     args = ap.parse_args()
     sets = preview.texture_sets()
     summary = []
-    for key, builder_fn in IT.ALL.items():
+    # One combined map, not four packages: see interiors.combine().
+    for key, builder_fn in (("whitehorn_insides", IT.combine),):
         if args.only and key not in args.only:
             continue
         t0 = time.time()

@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import preview
 from amberwood import interiors as I, render as R
 
-import interiors_temple as IT
+import interiors as IT
 
 # Lamplight on ice: a dim warm key for the hung lanterns, a strong cold ambient
 # for everything the ice bounces, and no shadow pass - shadow-mapping a sealed
@@ -50,28 +50,45 @@ GLACIER_LIGHT = R.Lighting(
 # The generic "stand back along the room's mid-line" rule puts the eye inside a
 # column in the altar chamber and against a wall in the ice arch, and lands it
 # on top of a brazier at the entry. These rooms name their own camera.
+# Keyed "section.space" and written in each section's OWN local coordinates;
+# combine() then shifts them by that section's layout offset, exactly as it
+# shifts the geometry. Writing them in combined coordinates would mean
+# rewriting every camera the next time a section moves on the map.
 CAMERAS = {
-    "snow_entry":       ((0.0, 1.7, -10.5), (0.0, 1.5, 3.0)),
-    "votive":           ((-29.5, 0.9, 13.5), (-21.0, 0.6, 26.0)),
-    "ice_arch":         ((0.0, 0.2, 50.5), (0.0, 0.1, 61.0)),
-    "glacier_altar":    ((-4.0, -1.3, 69.0), (-4.0, -1.6, 86.0)),
-    "chasm_bridge":     ((-45.0, -1.3, 80.0), (-26.0, -1.6, 80.0)),
-    "upper_sanctuary":  ((27.0, 8.7, 58.5), (27.0, 8.5, 75.0)),
+    "glacier_temple.snow_entry":      ((0.0, 1.7, -10.5), (0.0, 1.5, 3.0)),
+    "glacier_temple.votive":          ((-29.5, 0.9, 13.5), (-21.0, 0.6, 26.0)),
+    "glacier_temple.ice_arch":        ((0.0, 0.2, 50.5), (0.0, 0.1, 61.0)),
+    "glacier_temple.glacier_altar":   ((-4.0, -1.3, 69.0), (-4.0, -1.6, 86.0)),
+    "glacier_temple.upper_sanctuary": ((27.0, 8.7, 58.5), (27.0, 8.5, 75.0)),
+    "whitehorn_mine.crevasse_hall":   ((13.0, 0.6, 21.5), (13.0, 0.3, 35.0)),
+    "whitehorn_mine.main_gallery":    ((2.0, 0.5, -6.0), (24.0, 0.2, 14.0)),
+    "ice_cave.blue_chamber":          ((-14.0, 0.1, 9.5), (8.0, -0.2, 28.0)),
+    "ice_cave.crystal_vault":         ((0.0, -1.5, 35.0), (0.0, -1.8, 44.0)),
+    "ice_cave.meltwater_pool":        ((17.5, -0.7, 15.0), (31.0, -1.0, 15.0)),
+    "frost_barrow.cist_gallery":      ((-4.0, 0.5, 6.5), (-4.0, 0.3, 21.0)),
+    "frost_barrow.barrow_chamber":    ((13.0, -0.3, 9.5), (20.0, -0.6, 24.0)),
 }
+
+
+def _offset_for(space_key):
+    """The layout shift combine() applied to the section this space belongs to."""
+    section = space_key.split(".", 1)[0]
+    dx, dz = IT.LAYOUT.get(section, (0.0, 0.0))
+    return dx + IT.LAYOUT_ORIGIN[0], dz + IT.LAYOUT_ORIGIN[1]
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("interior", nargs="?", default="glacier_temple",
-                    choices=sorted(IT.ALL))
+    ap.add_argument("interior", nargs="?", default="insides",
+                    choices=sorted(IT.ALL) + ["insides"])
     ap.add_argument("out")
     ap.add_argument("--width", type=int, default=460)
     ap.add_argument("--height", type=int, default=290)
-    ap.add_argument("--cols", type=int, default=3)
+    ap.add_argument("--cols", type=int, default=4)
     args = ap.parse_args()
 
     sets = preview.texture_sets()
-    interior = IT.ALL[args.interior]()
+    interior = IT.combine() if args.interior == "insides"         else IT.ALL[args.interior]()
     scene = preview.new_scene(sets)
     for part in interior.group.all_parts:
         scene.add_mesh(part)
@@ -92,6 +109,9 @@ def main() -> int:
     for i, (ident, subject, space) in enumerate(views):
         if space in CAMERAS:
             eye, target = CAMERAS[space]
+            dx, dz = _offset_for(space)
+            eye = (eye[0] + dx, eye[1], eye[2] + dz)
+            target = (target[0] + dx, target[1], target[2] + dz)
         elif space in interior.passages:
             eye, target = _passage_camera(interior.passages[space])
         else:

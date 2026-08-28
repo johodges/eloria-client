@@ -647,12 +647,12 @@
       "alias": "maps/nymara/resonant_vault.elm"
     },
     "maps/nymara/whitehorn_glacier_temple.elm": {
-      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/whitehorn_glacier_temple/world.json",
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/whitehorn_insides/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          82.0,
-          97.0
+          -6.0,
+          179.0
         ],
         "origin": [
           0.0,
@@ -663,12 +663,21 @@
         "invertServerY": true
       },
       "status": "authored-geometry-materials-population",
-      "parentRegion": "whitehorn_range"
+      "parentRegion": "whitehorn_range",
+      "sections": [
+        "glacier_temple",
+        "whitehorn_mine",
+        "ice_cave",
+        "frost_barrow"
+      ]
     },
     "whitehorn_glacier_temple": {
       "alias": "maps/nymara/whitehorn_glacier_temple.elm"
     },
     "whitehorn_glacier_temple.elm": {
+      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
+    },
+    "whitehorn_insides": {
       "alias": "maps/nymara/whitehorn_glacier_temple.elm"
     }
   }
