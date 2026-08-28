@@ -31,6 +31,15 @@ Status: NOT_STARTED, FOUNDATION, IMPLEMENTED, VERIFIED, BLOCKED.
 | Quest journal | legacy `questlog.c`, `quest_journal.c`, `multiplayer.c`, server command 224 contract | server-owned journal reducer/window | legacy decoder is audited, but the unmodified server does not emit command 224 or another complete journal snapshot; dialogue inference is intentionally rejected | BLOCKED |
 | Hotkeys/settings | keys.c/elconfig.c | InputMap/settings | viewport routing fixture verifies rotate/pan/zoom; live click-to-move recheck pending | FOUNDATION |
 
+## Phase 0 repairs
+
+Code that already existed and did not work, so each item read as done from the
+outside. Status here is per repair, not per legacy feature.
+
+| Item | Defect | Fix | Test/evidence | Status |
+|---|---|---|---|---|
+| 0.1 Marker lights never bind | `_bind_light_markers()` had no call site; `map_light_root` stayed null for the whole session and every manifest `lighting.markers` block was dropped. `LightMarkerBinder` was exercised only from a rendered integration script, so CI stayed green. | `_on_world_loaded()` now binds the rig between the environment binder and ambient life; `_clear_world_presentation()` frees it. | `tests/test_world_lighting.gd` drives the real `_on_world_loaded()` entry point: two declared markers bind with their declared name/position/energy/range/colour, an unhinted marker takes the documented defaults, a second load replaces the rig, and a manifest with no markers leaves nothing parked in the world. Added to CI alongside the previously unwired `test_runtime_performance.gd`. Structural assertion only; rendered before/after capture pending. | IMPLEMENTED |
+
 ## Rendered development-server evidence gate
 
 `tests/integration/rendered_server_session.gd` drives the real login and character-creation UI against the authorized development endpoint from an opt-in Xvfb GitHub Actions job. It generates a disposable name and strong password in memory, never prints either value, and records credentials only as `REDACTED`.

@@ -50,6 +50,10 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_invasion_assistant.gd
       - name: World input routing fixtures
         run: godot --headless --path godot-client --script res://tests/test_world_input.gd
+      - name: Manifest lighting rig fixtures
+        run: godot --headless --path godot-client --script res://tests/test_world_lighting.gd
+      - name: Runtime cost fixtures
+        run: godot --headless --path godot-client --script res://tests/test_runtime_performance.gd
       - name: Main scene smoke test
         run: |
           godot --headless --path godot-client --quit-after 3 2>&1 | tee main-scene.log

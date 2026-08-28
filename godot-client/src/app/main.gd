@@ -1608,6 +1608,9 @@ func _clear_world_presentation() -> void:
 		if is_instance_valid(bag_node):
 			bag_node.queue_free()
 	ground_bag_nodes.clear()
+	if is_instance_valid(map_light_root):
+		map_light_root.queue_free()
+	map_light_root = null
 	_actor_surface_samples.clear()
 	# The parsed model and animation caches are only worth holding for the
 	# session they were built in.
@@ -2155,6 +2158,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	# placeholder environment unchanged.
 	WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root)
 	WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
+	_bind_light_markers(manifest)
 	_populate_ambient_life(manifest)
 	_current_map_display_name = str(
 		manifest.data.get("asset", {}).get("name", manifest.asset_id()))
@@ -2173,9 +2177,9 @@ func _bind_light_markers(manifest: WorldManifest) -> void:
 	# Braziers, hearths and shrine lamps the map declares as markers. Interiors
 	# rely on them for their whole lighting; outdoor maps use them as warm fill
 	# after sundown. Maps that declare none are left alone.
-	if map_light_root != null:
+	if is_instance_valid(map_light_root):
 		map_light_root.queue_free()
-		map_light_root = null
+	map_light_root = null
 	var root_node := Node3D.new()
 	root_node.name = "MapLights"
 	world_root.add_child(root_node)
