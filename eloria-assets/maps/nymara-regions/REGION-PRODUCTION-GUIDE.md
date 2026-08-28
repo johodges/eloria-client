@@ -36,10 +36,31 @@ routes, watercourses, terrain sculpting) and `populate.py` (placement passes).
 Those two files are the map. Everything else should need at most a new texture
 recipe or a new kit piece.
 
-Suggested layout: `<region>/source/` with `amberwood/` copied in as a shared
-package (or symlinked / imported via a path entry — decide with the maintainer;
-duplicating eleven copies of the toolkit is worse than factoring it out to
-`maps/nymara-regions/_toolkit/`, and that refactor is worth proposing early).
+### Where the toolkit lives
+
+The shared toolkit belongs at `maps/nymara-regions/_toolkit/`, imported by every
+region's `source/`. Ten divergent copies of it is a worse problem than the
+refactor that avoids them.
+
+**If `_toolkit/` does not exist yet, creating it is your first task**, as its own
+commit, before any region work:
+
+1. `git mv amberwood/source/amberwood _toolkit/amberwood`, and move
+   `native/`, `validate_gltf.py`, `verify_runtime.py`, `capture_views.py`,
+   `make_comparison.py`, `compress_captures.py`, `export_source_elm.py` and
+   `preview.py` with it.
+2. Leave `build_amberwood.py` in `amberwood/source/` — it is the region's build,
+   not toolkit — and point it at the new location.
+3. **Rebuild Amberwood and diff the result.** The build is deterministic, so a
+   correct refactor produces a byte-identical `world.glb`. If it does not, you
+   have changed behaviour, not just location. Re-run `validate_gltf.py` and
+   `verify_runtime.py` and confirm both still report zero errors and zero
+   grounding misses.
+4. Commit that on its own, then start your region.
+
+If `_toolkit/` already exists, import from it and change nothing there unless
+your region genuinely needs a new capability — in which case add to it rather
+than forking it, and say so in your report.
 
 ---
 
