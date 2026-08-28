@@ -62,10 +62,12 @@ See `validation-report.md` for what those numbers do and do not cover, and
 
 ## Interiors
 
-Four interiors open off this map: The Drowned Crown (under the basilica), The
+Four insides open off this map - The Drowned Crown (under the basilica), The
 Tide Cistern (under the garden islet), The Harbour Customs Hall and The Tide
-Campanile. Built by `source/build_interiors.py`, verified by
-`source/verify_interiors.py`, documented in
+Campanile - and they share **one map with unwalkable blackspace between them**,
+as Eternal Lands lays out a region's interiors. Built by
+`source/build_insides.py`, verified by `source/verify_interiors.py`, server map
+written by `source/export_insides_elm.py`, documented in
 `../interiors/CROWNWATER_INTERIORS.md`.
 
 ## Server

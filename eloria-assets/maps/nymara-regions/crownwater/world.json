@@ -1497,7 +1497,7 @@
       ],
       "landmark": "crownwater-cathedral",
       "destinationMap": "maps/nymara/drowned_crown.elm",
-      "destinationSpawn": "default",
+      "destinationSpawn": "basilica-undercroft",
       "radius": 2.5,
       "authority": "server"
     },
@@ -1515,8 +1515,8 @@
         324
       ],
       "landmark": "crownwater-campanile",
-      "destinationMap": "maps/nymara/crownwater_tide_campanile.elm",
-      "destinationSpawn": "default",
+      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationSpawn": "campanile-door",
       "radius": 2.5,
       "authority": "server"
     },
@@ -1534,8 +1534,8 @@
         288
       ],
       "landmark": "crownwater-pavilion-pavilion_west",
-      "destinationMap": "maps/nymara/crownwater_tide_cistern.elm",
-      "destinationSpawn": "default",
+      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationSpawn": "cistern-stair",
       "radius": 2.5,
       "authority": "server"
     },
@@ -1553,8 +1553,8 @@
         176
       ],
       "landmark": "crownwater-customs-hall",
-      "destinationMap": "maps/nymara/crownwater_customs_hall.elm",
-      "destinationSpawn": "default",
+      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationSpawn": "customs-door",
       "radius": 2.5,
       "authority": "server"
     }

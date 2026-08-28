@@ -45,8 +45,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import verify_runtime as VR
 
 INTERIOR_ROOT = Path(__file__).resolve().parents[1].parent / "interiors"
-IDS = ["drowned_crown", "crownwater_tide_campanile", "crownwater_tide_cistern",
-       "crownwater_customs_hall"]
+# One package: the four insides share a single map with blackspace between them.
+IDS = ["crownwater_insides"]
 
 # A cell is half a metre; a tread is 0.30 m thick. Anything inside this of the
 # encoded height is the surface the player will actually stand on.
@@ -112,8 +112,23 @@ def check(package: Path) -> dict:
             portal_problems.append({"id": portal["id"], "declared": round(y, 2),
                                     "surface": round(hit, 2)})
 
+    # Per-section walkable counts, so a section that lost its floor entirely is
+    # visible rather than averaged away across a map that is 89% blackspace.
+    per_section = []
+    for section in manifest.get("sections", []):
+        sx0, sz0 = section["bounds"]["min"]
+        sx1, sz1 = section["bounds"]["max"]
+        c0 = max(int((sx0 - origin[0]) / cell) - 4, 0)
+        c1 = min(int((sx1 - origin[0]) / cell) + 4, width - 1)
+        r0 = max(int((origin[1] - sz1) / cell) - 4, 0)
+        r1 = min(int((origin[1] - sz0) / cell) + 4, height - 1)
+        per_section.append({
+            "id": section["id"],
+            "walkableCells": int(walkable[r0:r1 + 1, c0:c1 + 1].sum())})
+
     total = int(walkable.sum())
     return {
+        "sections": per_section,
         "id": manifest["asset"]["id"],
         "walkSurfaceNodes": len(matched),
         "walkableCells": total,
@@ -149,6 +164,8 @@ def main() -> int:
               f"{result['walkableCellsWithoutSurface']} without a surface, "
               f"{result['heightDisagreements']} height disagreements, "
               f"{len(result['spawnProblems'])} spawn problems  {status}")
+        for section in result.get("sections", []):
+            print(f"     {section['id']:<18} {section['walkableCells']:>7} walkable cells")
         for entry in result["spawnProblems"] + result["portalProblems"]:
             print("    ", json.dumps(entry))
         if not result["ok"]:

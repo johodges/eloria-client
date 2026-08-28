@@ -105,7 +105,11 @@ to overrule the build.
     marble is for its monuments and a bonded warehouse is built to keep rain off
     crates.
 
-17. **Four interior entrances are declared on this manifest.** They are portals
-    of type `interior-entrance` sitting on the landmark each belongs to. The
-    server owns the actual transition; these are alignment metadata, as the edge
-    portals are. See `../interiors/CROWNWATER_INTERIORS.md`.
+17. **Four interior entrances are declared on this manifest, and all four lead
+    to the same map.** Crownwater's insides share one map with unwalkable
+    blackspace between them, as Eternal Lands lays out a region's interiors and
+    as `amethyst_barrens_insides` already does here, so the destination is one
+    elm and the section is chosen by the spawn id. They are portals of type
+    `interior-entrance` sitting on the landmark each belongs to. The server owns
+    the actual transition; these are alignment metadata, as the edge portals
+    are. See `../interiors/CROWNWATER_INTERIORS.md`.

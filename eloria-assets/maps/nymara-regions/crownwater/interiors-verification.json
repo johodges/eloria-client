@@ -5,45 +5,27 @@
   },
   "interiors": [
     {
-      "id": "drowned_crown",
-      "walkSurfaceNodes": 4,
-      "walkableCells": 17100,
-      "walkableCellsWithoutSurface": 0,
-      "misses": [],
-      "heightDisagreements": 0,
-      "disagreementSamples": [],
-      "spawnProblems": [],
-      "portalProblems": [],
-      "ok": true
-    },
-    {
-      "id": "crownwater_tide_campanile",
-      "walkSurfaceNodes": 3,
-      "walkableCells": 536,
-      "walkableCellsWithoutSurface": 0,
-      "misses": [],
-      "heightDisagreements": 0,
-      "disagreementSamples": [],
-      "spawnProblems": [],
-      "portalProblems": [],
-      "ok": true
-    },
-    {
-      "id": "crownwater_tide_cistern",
-      "walkSurfaceNodes": 2,
-      "walkableCells": 11784,
-      "walkableCellsWithoutSurface": 0,
-      "misses": [],
-      "heightDisagreements": 0,
-      "disagreementSamples": [],
-      "spawnProblems": [],
-      "portalProblems": [],
-      "ok": true
-    },
-    {
-      "id": "crownwater_customs_hall",
-      "walkSurfaceNodes": 2,
-      "walkableCells": 9304,
+      "sections": [
+        {
+          "id": "drowned_crown",
+          "walkableCells": 17100
+        },
+        {
+          "id": "tide_cistern",
+          "walkableCells": 11784
+        },
+        {
+          "id": "customs_hall",
+          "walkableCells": 9304
+        },
+        {
+          "id": "tide_campanile",
+          "walkableCells": 536
+        }
+      ],
+      "id": "crownwater_insides",
+      "walkSurfaceNodes": 6,
+      "walkableCells": 38724,
       "walkableCellsWithoutSurface": 0,
       "misses": [],
       "heightDisagreements": 0,

@@ -132,16 +132,21 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
     # player walks into is the building they were looking at; the interior
     # package carries the matching return portal.
     for portal_id, name, landmark_id, destination, spawn in (
+            # All four lead to the SAME map. Crownwater's insides share one
+            # map with blackspace between them, as Eternal Lands lays out a
+            # region's interiors and as amethyst_barrens_insides already does
+            # here, so the destination is one elm and the section is chosen by
+            # the spawn id.
             ("basilica-undercroft", "The Drowned Crown", "crownwater-cathedral",
-             "maps/nymara/drowned_crown.elm", "default"),
+             "maps/nymara/drowned_crown.elm", "basilica-undercroft"),
             ("campanile-door", "The Tide Campanile", "crownwater-campanile",
-             "maps/nymara/crownwater_tide_campanile.elm", "default"),
+             "maps/nymara/drowned_crown.elm", "campanile-door"),
             ("cistern-stair", "The Tide Cistern",
              "crownwater-pavilion-pavilion_west",
-             "maps/nymara/crownwater_tide_cistern.elm", "default"),
+             "maps/nymara/drowned_crown.elm", "cistern-stair"),
             ("customs-door", "The Harbour Customs Hall",
              "crownwater-customs-hall",
-             "maps/nymara/crownwater_customs_hall.elm", "default")):
+             "maps/nymara/drowned_crown.elm", "customs-door")):
         anchor = next((l for l in build.landmarks if l.get("id") == landmark_id),
                       None)
         if anchor is None:

@@ -10,12 +10,9 @@ extends SceneTree
 ##
 ## Every image these produce is a real client frame, not an offline preview.
 
-const PACKAGES := [
-	"drowned_crown",
-	"crownwater_tide_campanile",
-	"crownwater_tide_cistern",
-	"crownwater_customs_hall",
-]
+## The four insides now share ONE map with blackspace between them, so there is
+## one package and its sections are read from the manifest.
+const PACKAGES := ["crownwater_insides"]
 const ROOT := "res://../eloria-assets/maps/nymara-regions/interiors/"
 const SCREEN_SIZE := Vector2i(1280, 720)
 const EYE := 1.7
@@ -91,6 +88,19 @@ func _render_package(package: String) -> void:
 		_stage.queue_free()
 		return
 
+	# Every section's arrival, so a section that failed to place is visible as a
+	# black frame rather than being lost among the rooms.
+	var sections: Variant = loader.manifest.data.get("sections", [])
+	if sections is Array:
+		for raw: Variant in sections as Array:
+			var section: Dictionary = raw as Dictionary
+			var arrival: Array = section["arrival"] as Array
+			var at := Vector3(float(arrival[0]), float(arrival[1]),
+				float(arrival[2]))
+			await _capture_at("section-" + str(section["id"]),
+				at + Vector3(0.0, EYE, 0.0),
+				at + Vector3(6.0, EYE + 1.0, 6.0), 66.0)
+
 	var count := 0
 	for key: Variant in (spaces as Dictionary).keys():
 		var space: Dictionary = (spaces as Dictionary)[key] as Dictionary
@@ -105,11 +115,11 @@ func _render_package(package: String) -> void:
 
 	# A tower is not described by one waist-height shot. Three explicit extra
 	# framings walk it: the foot of the stair, the ringing floor and the belfry.
-	if package == "crownwater_tide_campanile":
+	if package == "crownwater_insides":
 		for entry: Array in [
-				["foot", Vector3(-3.2, 1.7, -3.2), Vector3(2.4, 6.0, 2.4), 66.0],
-				["ringing-floor", Vector3(-3.0, 21.2, -3.0), Vector3(0.0, 24.0, 0.0), 62.0],
-				["belfry", Vector3(-3.2, 27.4, -3.2), Vector3(0.6, 23.5, 0.6), 70.0]]:
+				["campanile-foot", Vector3(56.8, 1.7, 296.8), Vector3(62.4, 6.0, 302.4), 66.0],
+				["campanile-ringing-floor", Vector3(57.0, 21.2, 297.0), Vector3(60.0, 24.0, 300.0), 62.0],
+				["campanile-belfry", Vector3(56.8, 27.4, 296.8), Vector3(60.6, 23.5, 300.6), 70.0]]:
 			await _capture_at(package + "-" + str(entry[0]),
 				entry[1] as Vector3, entry[2] as Vector3, float(entry[3]))
 	_stage.queue_free()
