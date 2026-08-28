@@ -906,15 +906,17 @@ func _hide_chat_input() -> void:
 	chat_input.release_focus()
 	chat_input.hide()
 
+## Reacts to a map panel opening or closing. _update_map_viewports() owns the
+## redraw schedule; this only ever idles a hidden viewport or asks a freshly
+## shown one for its first frame. Setting UPDATE_ALWAYS here put a visible
+## minimap back on full-rate world rendering for up to a whole throttle
+## interval, which is exactly the cost the throttle exists to remove.
 func _sync_map_viewport_activity() -> void:
-	# The minimap and tab map each re-render the whole world. Keeping them on
-	# UPDATE_ALWAYS drew the map three times per frame even while both panels
-	# were hidden, which is pure waste on any map with real geometry.
 	map_viewport.render_target_update_mode = (
-		SubViewport.UPDATE_ALWAYS if minimap_frame.visible
+		SubViewport.UPDATE_ONCE if minimap_frame.visible
 		else SubViewport.UPDATE_DISABLED)
 	full_map_viewport.render_target_update_mode = (
-		SubViewport.UPDATE_ALWAYS if full_map.visible
+		SubViewport.UPDATE_ONCE if full_map.visible and map_image.visible
 		else SubViewport.UPDATE_DISABLED)
 
 
@@ -929,10 +931,12 @@ func _toggle_full_map() -> void:
 	full_map.show()
 	full_map.move_to_front()
 	_request_map_redraw()
+	_sync_map_viewport_activity()
 
 func _toggle_minimap() -> void:
 	minimap_frame.visible = not minimap_frame.visible
 	_request_map_redraw()
+	_sync_map_viewport_activity()
 
 func _toggle_console() -> void:
 	if console_panel.visible:
@@ -2588,11 +2592,13 @@ func _show_current_map_view() -> void:
 	continent_view.hide()
 	region_preview.hide()
 	map_image.show()
+	_sync_map_viewport_activity()
 	map_title.text = _current_map_display_name.to_upper()
 	map_coordinates.text = "Coordinates: —"
 
 func _show_continent_view() -> void:
 	map_image.hide()
+	_sync_map_viewport_activity()
 	region_preview.hide()
 	continent_view.show()
 	var continent: Dictionary = cartography.get("continent", {}) as Dictionary

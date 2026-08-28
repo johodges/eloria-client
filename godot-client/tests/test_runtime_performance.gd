@@ -56,6 +56,50 @@ func _run() -> void:
 	minimap_frame.hide()
 	full_map.hide()
 
+	# _sync_map_viewport_activity() runs on every map load and every full-map
+	# toggle. It used to set UPDATE_ALWAYS for a visible panel, which put the
+	# world back on full-rate rendering for up to one throttle interval and
+	# undid the throttle it shares the file with. It may only ever idle a
+	# viewport or request its single first frame.
+	minimap_frame.show()
+	full_map.show()
+	map_image.show()
+	scene.call("_sync_map_viewport_activity")
+	_expect(map_viewport.render_target_update_mode == SubViewport.UPDATE_ONCE
+		and full_map_viewport.render_target_update_mode == SubViewport.UPDATE_ONCE,
+		"a map load with both panels visible requests one frame, not continuous redraw")
+	minimap_frame.hide()
+	full_map.hide()
+	scene.call("_sync_map_viewport_activity")
+	_expect(map_viewport.render_target_update_mode == SubViewport.UPDATE_DISABLED
+		and full_map_viewport.render_target_update_mode == SubViewport.UPDATE_DISABLED,
+		"a map load with both panels hidden idles both viewports")
+
+	# The toggle paths themselves: opening the tab map or the minimap must not
+	# reach UPDATE_ALWAYS either, and closing them must idle immediately.
+	scene.call("_toggle_full_map")
+	_expect(full_map.visible
+		and full_map_viewport.render_target_update_mode == SubViewport.UPDATE_ONCE,
+		"opening the tab map requests one redraw")
+	scene.call("_show_continent_view")
+	_expect(full_map_viewport.render_target_update_mode == SubViewport.UPDATE_DISABLED,
+		"switching the tab map to the continent view idles the world render")
+	scene.call("_show_current_map_view")
+	_expect(full_map_viewport.render_target_update_mode == SubViewport.UPDATE_ONCE,
+		"switching back to the live map requests one redraw")
+	scene.call("_toggle_full_map")
+	_expect(not full_map.visible
+		and full_map_viewport.render_target_update_mode == SubViewport.UPDATE_DISABLED,
+		"closing the tab map idles its viewport")
+	scene.call("_toggle_minimap")
+	_expect(minimap_frame.visible
+		and map_viewport.render_target_update_mode == SubViewport.UPDATE_ONCE,
+		"showing the minimap requests one redraw")
+	scene.call("_toggle_minimap")
+	_expect(not minimap_frame.visible
+		and map_viewport.render_target_update_mode == SubViewport.UPDATE_DISABLED,
+		"hiding the minimap idles its viewport")
+
 	# The surface sampler is the per-actor physics query; it must be skipped for
 	# an actor that has not moved since the last sample.
 	var actor := ReplicatedActor3D.new()
