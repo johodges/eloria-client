@@ -1,0 +1,5 @@
+newmtl lantern_cap
+Kd 1 1 1
+d 1
+map_Kd lantern_cap.png
+map_d lantern_cap.png

@@ -50,8 +50,18 @@ def panel(x: int, y: int) -> tuple[int, int, int, int]:
 def make_map(path: Path, width: int = 32, height: int = 32, *,
              tile_id: int = 0, placements=None,
              ambient=(0.55, 0.58, 0.62), height_value: int = 11,
-             lights=None, tile_at=None, height_at=None) -> None:
-    """Write an original ELM settlement with a fully walkable height field."""
+             lights=None, tile_at=None, height_at=None, objects_2d=None,
+             placement_scale: float = 0.5) -> None:
+    """Write an original ELM settlement with a fully walkable height field.
+
+    Placement and light coordinates are authored in height-map cells, the same
+    grid the tile and height callbacks and the server tile coordinates use.
+    ELM object records store world units instead, and the client's own
+    conversion is `world = 0.5 * cell` (map.c), so `placement_scale` converts
+    them on write.  Writing cell coordinates straight into the record put
+    every object at twice its intended distance from the map origin, which
+    pushed most of a 32x32 map's content off the 96x96 unit terrain.
+    """
     # map_header is 124 bytes in the current client.  The final reserved word
     # is still part of the on-disk structure even though it has no semantics.
     header_size = 124
@@ -96,18 +106,29 @@ def make_map(path: Path, width: int = 32, height: int = 32, *,
     for filename, x, y, z, rotation in placements:
         encoded = filename.encode()[:79] + b"\0"
         records.extend(struct.pack("<80s6fBB2x4f20s", encoded.ljust(80, b"\0"),
-            x, y, z, 0.0, 0.0, rotation, 0, 0, 1.0, 1.0, 1.0, 1.0, b""))
+            x * placement_scale, y * placement_scale, z, 0.0, 0.0, rotation,
+            0, 0, 1.0, 1.0, 1.0, 1.0, b""))
     objects_end = object_offset + len(records)
+    objects_2d = [] if objects_2d is None else objects_2d
+    records_2d = bytearray()
+    for filename, x, y, z, rotation in objects_2d:
+        encoded = filename.encode()[:79] + b"\0"
+        records_2d.extend(struct.pack("<80s6f24s", encoded.ljust(80, b"\0"),
+            x * placement_scale, y * placement_scale, z, 0.0, 0.0, rotation,
+            b""))
+    objects_2d_end = objects_end + len(records_2d)
     lights = [] if lights is None else lights
     light_records = bytearray()
     for x, y, z, red, green, blue in lights:
         light_records.extend(struct.pack(
-            "<7f12s", x, y, z, red, green, blue, 0.0, b""))
-    lights_offset = objects_end
+            "<7f12s", x * placement_scale, y * placement_scale, z,
+            red, green, blue, 0.0, b""))
+    lights_offset = objects_2d_end
     particles_offset = lights_offset + len(light_records)
     # ELM map_header: magic, 13 ints, four bytes, 3 floats, then 13 ints.
     ints_a = [width, height, header_size, height_offset,
-              144, len(placements), object_offset, 128, 0, objects_end,
+              144, len(placements), object_offset,
+              128, len(objects_2d), objects_end,
               40, len(lights), lights_offset]
     header = bytearray(b"elmf")
     header.extend(struct.pack("<13i", *ints_a))
@@ -118,7 +139,8 @@ def make_map(path: Path, width: int = 32, height: int = 32, *,
     if len(header) != header_size:
         raise AssertionError(f"unexpected ELM header size: {len(header)}")
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(header + tiles + heights + records + light_records)
+    path.write_bytes(header + tiles + heights + records + records_2d
+                     + light_records)
 
 
 def main() -> None:
@@ -134,23 +156,28 @@ def main() -> None:
     make_map(root / "maps/emberhaven.elm")
     (root / "servers.lst").write_text(
         "main eloria 127.0.0.1 2000 plain Eloria local server\n", encoding="utf-8")
-    (root / "harvestable.lst").write_text("\n".join([
-        "3dobjects/harvestables/sunleaf.e3d",
-        "3dobjects/harvestables/frost_reed.e3d",
-        "3dobjects/harvestables/copper_bloom.e3d",
-        "3dobjects/harvestables/ember_crystal.e3d",
-        "3dobjects/harvestables/slate_outcrop.e3d",
-    ]) + "\n", encoding="utf-8")
-    (root / "entrable.lst").write_text("\n".join([
-        "3dobjects/interactives/portal_obelisk.e3d",
-        "3dobjects/interactives/storage_chest.e3d",
-        "3dobjects/interactives/forge.e3d",
-        "3dobjects/interactives/anvil.e3d",
-        "3dobjects/interactives/workbench.e3d",
-        "3dobjects/interactives/alchemy_table.e3d",
-        "3dobjects/interactives/notice_board.e3d",
-        "3dobjects/interactives/well.e3d",
-    ]) + "\n", encoding="utf-8")
+    # cursors.c binary-searches these lists with an exact strcmp against the
+    # lowercased *basename* of the object file (3d_objects.c), so relative
+    # paths never match and leave the world unharvestable and unentrable.
+    # generate_nymara_complete.py rewrites harvestable.lst with the full
+    # Nymara catalogue once the region models exist.
+    (root / "harvestable.lst").write_text("\n".join(sorted([
+        "sunleaf.e3d",
+        "frost_reed.e3d",
+        "copper_bloom.e3d",
+        "ember_crystal.e3d",
+        "slate_outcrop.e3d",
+    ])) + "\n", encoding="utf-8")
+    (root / "entrable.lst").write_text("\n".join(sorted([
+        "portal_obelisk.e3d",
+        "storage_chest.e3d",
+        "forge.e3d",
+        "anvil.e3d",
+        "workbench.e3d",
+        "alchemy_table.e3d",
+        "notice_board.e3d",
+        "well.e3d",
+    ])) + "\n", encoding="utf-8")
     (root / "ASSET_MANIFEST.json").write_text(json.dumps({
         "name": "Eloria bootstrap data",
         "license": "CC-BY-4.0",

@@ -1,0 +1,5 @@
+newmtl pale_quartz
+Kd 1 1 1
+d 1
+map_Kd pale_quartz.png
+map_d pale_quartz.png

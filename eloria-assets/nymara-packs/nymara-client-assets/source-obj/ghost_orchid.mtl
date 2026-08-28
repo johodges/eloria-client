@@ -1,3 +1,5 @@
 newmtl ghost_orchid
 Kd 1 1 1
-map_Kd ../runtime/3dobjects/nymara/ghost_orchid.png
+d 1
+map_Kd ghost_orchid.png
+map_d ghost_orchid.png

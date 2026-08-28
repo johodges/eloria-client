@@ -14,8 +14,12 @@ from generate_characters import skeleton as humanoid_skeleton
 from generate_humanoid_enemies import animation as humanoid_animation, enemy_mesh, material_pixel
 from generate_creatures import skeleton as creature_skeleton, creature_mesh, creature_material
 from generate_scenery import e3d, texture, face, box, tapered, crossed_leaves
+import harvestables
 
 NPC_BASE, CREATURE_BASE, ITEM_BASE = 300, 400, 1000
+# Harvestable items previously shared the 1000+ range with equipment in the
+# client asset pack, so the two catalogues collided on ids 1000-1015.
+HARVESTABLE_ITEM_BASE = 1100
 
 CULTURES = {
  "luminous": ((77,155,162), (213,205,168), ["official","guard","merchant","ferryman","scholar","lake_priest","civilian"]),
@@ -71,20 +75,16 @@ for culture, names in {
 REGIONS = ["mirrorhold","crownwater","four_gates","whitehorn_range","amethyst_barrens","sunmane_steppe","amberwood","grey_moors","westhaven","verdant_stair","ssarathi_ruins","manymouth_delta"]
 DUNGEONS = ["drowned_crown","whitehorn_glacier_temple","resonant_vault","amberwood_estate","grey_moor_barrows","ssarathi_royal_archive","manymouth_flooded_labyrinth"]
 
-REGION_HARVESTS = {
- "mirrorhold":["mirror_reed","crownwater_pearl","deep_lake_clay","delta_lotus"],
- "crownwater":["crownwater_pearl","mirror_reed","deep_lake_clay","glacier_salt"],
- "four_gates":["resonant_crystal","stormglass_shard","mirror_reed","sunmane_seed"],
- "whitehorn_range":["glacier_salt","whitehorn_silverleaf","resonant_crystal","stormglass_shard"],
- "amethyst_barrens":["resonant_crystal","stormglass_shard","voltaic_geode","deep_lake_clay"],
- "sunmane_steppe":["sunmane_seed","amber_resin","voltaic_geode","stormglass_shard"],
- "amberwood":["amber_resin","ghost_orchid","moor_peat","sunmane_seed"],
- "grey_moors":["moor_peat","ghost_orchid","amber_resin","mangrove_sap"],
- "westhaven":["mangrove_sap","moor_peat","deep_lake_clay","delta_lotus"],
- "verdant_stair":["verdant_venom_bulb","ghost_orchid","ssarathi_scale_moss","delta_lotus"],
- "ssarathi_ruins":["ssarathi_scale_moss","verdant_venom_bulb","delta_lotus","voltaic_geode"],
- "manymouth_delta":["delta_lotus","mangrove_sap","deep_lake_clay","crownwater_pearl"],
-}
+# Region -> harvestable ids.  Derived from the shared catalogue in
+# harvestables.py so the models, the icons, the harvestable.lst entries and
+# the placements can never drift apart again; the catalogue records which
+# regions each resource belongs to.
+REGION_HARVESTS = {region: harvestables.region_resources(region)
+                   for region in
+                   ("mirrorhold", "crownwater", "four_gates",
+                    "whitehorn_range", "amethyst_barrens", "sunmane_steppe",
+                    "amberwood", "grey_moors", "westhaven", "verdant_stair",
+                    "ssarathi_ruins", "manymouth_delta")}
 
 REGION_ART = {
  "mirrorhold":{"palette":((47,70,73),(92,111,104),(174,151,92)),"objects":["glasswarden_observatory","glasswarden_lens_tower","glasswarden_field_station","mirrorhold_civic_tower","mirrorhold_canal_wall","mirrorhold_radial_bridge","mirrorhold_public_fountain"],"water":True,"ambient":(.48,.55,.60)},
@@ -1126,6 +1126,85 @@ def generate_interactives_effects(root):
  manifest={"schema":1,"interactives":out,"particles":[{"effect_id":2100+i,"id":n,"atlas":f"textures/nymara/effects/{n}.png"} for i,n in enumerate(particles)],"missiles":[{"missile_id":2200+i,"id":n,"mesh":f"3dobjects/nymara/projectiles/{n}.e3d","speed":12.0,"effect":particles[i%len(particles)]} for i,n in enumerate(projectiles)]}
  (root/"nymara_effects_interactives.json").write_text(json.dumps(manifest,indent=2)+"\n"); return manifest
 
+def _sequence(seed):
+ """Deterministic 31-bit LCG; the whole data pack has to stay reproducible."""
+ value=seed & 0x7fffffff
+ while True:
+  value=(value*1103515245+12345)&0x7fffffff
+  yield value
+
+def _footprint(name):
+ # Authored map content occupies roughly these height-map cells.  Four Gates
+ # is a much larger composition centred on the walled island; its harvest work
+ # belongs to the outer wards and the agricultural belt, not the civic core.
+ return (24,168,24,168) if name=='four_gates' else (14,104,12,100)
+
+def _reserved(name,x,y):
+ """Cells a harvest node must stay out of: the Four Gates civic core."""
+ return name=='four_gates' and math.hypot(x-96,y-96)<46
+
+def _is_water(tile_function,x,y,name):
+ tile=tile_function(min(31,x//6),min(31,y//6))
+ return tile==7 if name=='four_gates' else tile==3
+
+def _near_water(tile_function,x,y,name):
+ return any(_is_water(tile_function,x+dx,y+dy,name)
+            for dx,dy in ((0,0),(6,0),(-6,0),(0,6),(0,-6),(6,6),(-6,-6)))
+
+def harvest_scatter(name,placements,tile_function):
+ """Spread a region's catalogue resources over its walkable footprint."""
+ x0,x1,y0,y1=_footprint(name)
+ occupied=[(p[1],p[2]) for p in placements]
+ chosen=set()
+ result=[]
+ rng=_sequence(sum((i+3)*ord(c) for i,c in enumerate(name))+7919)
+ for resource in REGION_HARVESTS[name]:
+  entry=harvestables.BY_ID[resource]
+  wants_water=entry[2]=='aquatic'
+  for _ in range(harvestables.NODES_PER_REGION[entry[3]]):
+   spot=None
+   relaxed=None
+   for attempt in range(96):
+    x=x0+next(rng)%(x1-x0)
+    y=y0+next(rng)%(y1-y0)
+    if (x,y) in chosen: continue
+    if _reserved(name,x,y): continue
+    if _is_water(tile_function,x,y,name) and not wants_water: continue
+    if wants_water and not _near_water(tile_function,x,y,name): continue
+    if any(abs(x-ox)<5 and abs(y-oy)<5 for ox,oy in occupied): continue
+    if relaxed is None: relaxed=(x,y)
+    if any(abs(x-cx)<9 and abs(y-cy)<9 for cx,cy in chosen): continue
+    spot=(x,y); break
+   if spot is None: spot=relaxed
+   while spot is None or spot in chosen:
+    spot=(x0+next(rng)%(x1-x0),y0+next(rng)%(y1-y0))
+   chosen.add(spot)
+   result.append((resource,spot[0],spot[1],next(rng)%360))
+ return result
+
+def flora_scatter(name,placements,tile_function,count=96):
+ """Scatter decorative 2D ground flora between the authored landmarks."""
+ x0,x1,y0,y1=_footprint(name)
+ occupied=[(p[1],p[2]) for p in placements]
+ palette=harvestables.flora_for(name)
+ aquatic={'lily_pad','reed_tuft','cattail'}
+ result=[]
+ rng=_sequence(sum((i+5)*ord(c) for i,c in enumerate(name))+104729)
+ for index in range(count):
+  sprite=palette[index%len(palette)]
+  for attempt in range(24):
+   x=x0+next(rng)%(x1-x0)
+   y=y0+next(rng)%(y1-y0)
+   if _reserved(name,x,y): continue
+   water=_is_water(tile_function,x,y,name)
+   if sprite in aquatic:
+    if not _near_water(tile_function,x,y,name): continue
+   elif water: continue
+   if any(abs(x-ox)<3 and abs(y-oy)<3 for ox,oy in occupied): continue
+   result.append((f"{harvestables.FLORA_DIR}/{sprite}.2d",x,y,0,next(rng)%360))
+   break
+ return result
+
 def generate_maps(root):
  # Stable object IDs belong to the manifest, while ELM records carry native paths.
  generate_four_gates_detail_assets(root)
@@ -1141,35 +1220,15 @@ def generate_maps(root):
  interior=[p for p in (nymara3d/"interiors").rglob("*.e3d")]
  exterior=[p for p in nymara3d.glob("*.e3d")]
  harvest_manifest=[]
- harvestables=sorted({resource for resources in REGION_HARVESTS.values() for resource in resources})
- for resource_index,resource in enumerate(harvestables):
-  path=root/f"3dobjects/nymara/{resource}.e3d"
-  color=((55+resource_index*23)%150+55,(79+resource_index*31)%130+65,(91+resource_index*17)%120+70)
-  accent=tuple(min(255,c+65) for c in color)
-  texture(path.with_suffix('.png'),(color,accent))
-  def harvest_shape(vertices,indices,name=resource):
-   if name=='mirror_reed':
-    for x,y,height in ((0,0,1.5),(.18,.08,1.2),(-.18,.06,1.35),(.10,-.16,1.05),(-.12,-.15,1.18)):
-     tapered(vertices,indices,0,height,.035,.018,7,center=(x,y))
-    crossed_leaves(vertices,indices,.18,1.12,.82,6)
-   elif name in ('resonant_crystal','stormglass_shard'):
-    for x,y,height,radius in ((0,0,1.5,.28),(.34,.12,1.0,.20),(-.31,.10,1.18,.22),(.12,-.30,.82,.18),(-.18,-.25,.72,.16)):
-     tapered(vertices,indices,0,height,radius,0,8,center=(x,y))
-   elif name=='sunmane_seed':
-    tapered(vertices,indices,0,1.25,.055,.025,8)
-    crossed_leaves(vertices,indices,.10,.95,.68,5)
-    for x,y,z in ((.20,0,.88),(-.18,.04,.98),(.12,-.16,1.10),(-.10,-.15,.78)):
-     tapered(vertices,indices,z-.15,z+.18,.14,.06,8,center=(x,y))
-   elif any(word in name for word in ("reed","orchid","lotus","moss","bulb","silverleaf")):
-    crossed_leaves(vertices,indices,0,1.15,.72,4)
-   elif any(word in name for word in ("crystal","shard","geode","salt","pearl")):
-    tapered(vertices,indices,0,1.05,.42,.08,7)
-    tapered(vertices,indices,0,.72,.28,.04,6,center=(.35,.08))
-   else:
-    box(vertices,indices,(0,0,.25),(.72,.62,.50))
-    tapered(vertices,indices,.42,.88,.25,.06,7)
-  e3d(path,path.with_suffix('.png').name,harvest_shape)
- mapinfo=[]
+ # Harvest nodes are authored in harvestables.py so that geometry, materials,
+ # icons, harvestable.lst and placement all come from one catalogue.  They are
+ # written after the landmark pool is captured above, and filtered out of it
+ # below, so a harvest node is never reused as random scenery.
+ harvest_records=harvestables.write_models(root)
+ flora_records=harvestables.write_flora(root)
+ harvest_ids={record['id'] for record in harvest_records}
+ exterior=[p for p in exterior if p.stem not in harvest_ids]
+ mapinfo=[]; flora_manifest=[]
  concept_root=Path(__file__).resolve().parents[1]/"concepts/nymara-regions"
  for idx,name in enumerate(allmaps):
   pool=interior if name in DUNGEONS else exterior
@@ -1228,12 +1287,24 @@ def generate_maps(root):
    for j,(x,y) in enumerate(((34,34),(82,34),(34,82),(82,82),(58,40),(58,58),(58,78),(42,58),(74,58))):
     asset=kit[2+j%(len(kit)-2)]
     placements.append((f"3dobjects/nymara/interiors/{asset}.e3d",x,y,0,(j*45)%360))
+  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold' else crownwater_tile if name=='crownwater' else whitehorn_tile if name=='whitehorn_range' else amethyst_tile if name=='amethyst_barrens' else sunmane_tile if name=='sunmane_steppe' else amberwood_tile if name=='amberwood' else grey_moors_tile if name=='grey_moors' else westhaven_tile if name=='westhaven' else verdant_tile if name=='verdant_stair' else ssarathi_tile if name=='ssarathi_ruins' else manymouth_tile if name=='manymouth_delta'
+                 else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
+  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold' else crownwater_height if name=='crownwater' else whitehorn_height if name=='whitehorn_range' else amethyst_height if name=='amethyst_barrens' else sunmane_height if name=='sunmane_steppe' else amberwood_height if name=='amberwood' else grey_moors_height if name=='grey_moors' else westhaven_height if name=='westhaven' else verdant_height if name=='verdant_stair' else ssarathi_height if name=='ssarathi_ruins' else manymouth_height if name=='manymouth_delta'
+                   else lambda x,y,p=profile,n=name:region_height(p,n,x,y))
   if name in REGION_HARVESTS:
-   harvest_positions=((60,68),(132,68),(60,124),(132,124)) if name=='four_gates' else ((26,82),(48,84),(78,82),(98,76))
-   for offset,resource in enumerate(REGION_HARVESTS[name]):
-    x,y=harvest_positions[offset]
-    placements.append((f"3dobjects/nymara/{resource}.e3d",x,y,0,(offset*41)%360))
-    harvest_manifest.append({"map_id":name,"object_id":8+offset,"x":x,"y":y,"resource":resource})
+   # Every region used to receive the same four resources at the same four
+   # coordinates, in a near-straight line, for 48 nodes in the whole world.
+   # The scatter below spreads each region's catalogue resources over its own
+   # walkable footprint, keeps them off water (or on the shoreline for aquatic
+   # resources), and records the real ELM object index for the server.
+   for resource,x,y,rotation in harvest_scatter(name,placements,tile_function):
+    harvest_manifest.append({"map_id":name,"object_id":len(placements),
+      "x":x,"y":y,"resource":resource,
+      "kind":harvestables.BY_ID[resource][2],
+      "tier":harvestables.BY_ID[resource][3],
+      "respawn_seconds":harvestables.RESPAWN_SECONDS[harvestables.BY_ID[resource][3]],
+      "model":harvestables.model_path(resource)})
+    placements.append((harvestables.model_path(resource),x,y,0,rotation))
   else:
    placements += [(str(pool[(idx*5+8+j)%len(pool)].relative_to(root)).replace('\\','/'),26+j*22,82,0,j*41) for j in range(4)]
   if name == 'four_gates':
@@ -1318,12 +1389,11 @@ def generate_maps(root):
   elif name=='manymouth_flooded_labyrinth':
    lights += [(x,y,2.6,.24,.58,.48) for x,y in
               ((34,34),(58,34),(82,34),(34,58),(82,58),(34,82),(58,82),(82,82))]
-  tile_function=(four_gates_tile if name=='four_gates' else mirrorhold_tile if name=='mirrorhold' else crownwater_tile if name=='crownwater' else whitehorn_tile if name=='whitehorn_range' else amethyst_tile if name=='amethyst_barrens' else sunmane_tile if name=='sunmane_steppe' else amberwood_tile if name=='amberwood' else grey_moors_tile if name=='grey_moors' else westhaven_tile if name=='westhaven' else verdant_tile if name=='verdant_stair' else ssarathi_tile if name=='ssarathi_ruins' else manymouth_tile if name=='manymouth_delta'
-                 else lambda x,y,p=profile,n=name:region_tile(p,n,x,y))
-  height_function=(four_gates_height if name=='four_gates' else mirrorhold_height if name=='mirrorhold' else crownwater_height if name=='crownwater' else whitehorn_height if name=='whitehorn_range' else amethyst_height if name=='amethyst_barrens' else sunmane_height if name=='sunmane_steppe' else amberwood_height if name=='amberwood' else grey_moors_height if name=='grey_moors' else westhaven_height if name=='westhaven' else verdant_height if name=='verdant_stair' else ssarathi_height if name=='ssarathi_ruins' else manymouth_height if name=='manymouth_delta'
-                   else lambda x,y,p=profile,n=name:region_height(p,n,x,y))
+  ground_flora=flora_scatter(name,placements,tile_function) if name in REGION_HARVESTS else []
+  if name in REGION_HARVESTS:
+   flora_manifest.append({"map_id":name,"sprites":len(ground_flora)})
   make_map(root/f"maps/nymara/{name}.elm",width=32,height=32,placements=placements,
-   ambient=profile['ambient'],lights=lights,
+   ambient=profile['ambient'],lights=lights,objects_2d=ground_flora,
    tile_at=tile_function,height_at=height_function)
   concept=concept_root/f"{name}_region_concept.png"
   if name == 'four_gates': dds_mipped(root/f"maps/nymara/{name}.dds",512,512,four_gates_cartography_pixel)
@@ -1349,7 +1419,14 @@ def generate_maps(root):
   connections.append({"from":source,"to":d,"from_xy":from_xy,"to_xy":[58,10],"type":"entrance"})
  data={"schema":1,"regions":regions,"connections":connections,"ferries":[{"from":"crownwater","to":"four_gates","service":"crownwater_ferry"},{"from":"manymouth_delta","to":"westhaven","service":"delta_ferry"}]}
  (root/"nymara_regions_connections.json").write_text(json.dumps(data,indent=2)+"\n")
- (root/"nymara_harvesting.json").write_text(json.dumps({"schema":1,"nodes":harvest_manifest},indent=2)+"\n")
+ entries=harvestables.write_harvest_list(root)
+ (root/"nymara_harvesting.json").write_text(json.dumps({
+   "schema":2,
+   "harvestable_list":"harvestable.lst",
+   "harvestable_list_entries":entries,
+   "catalogue":harvest_records,
+   "ground_flora":{"definitions":flora_records,"maps":flora_manifest},
+   "nodes":harvest_manifest},indent=2)+"\n")
  # Every Nymara local map is already included above; interior maps use their
  # parent region's overview rectangle.
  configured=list(mapinfo)
@@ -1393,7 +1470,7 @@ def main():
   if 300 <= int(old.attrib.get("id", "-1")) < 500: actors.remove(old)
  npcs=generate_npcs(root,actors); creatures=generate_creatures(root,actors); equipment=generate_equipment(root); effects=generate_interactives_effects(root); regions=generate_maps(root)
  actor_file.write_text('<?xml version="1.0"?>\n'+ET.tostring(actors,encoding="unicode")+'\n')
- allocation={"schema":1,"frozen":True,"actor_ranges":{"nymara_npcs":[NPC_BASE,NPC_BASE+len(npcs)-1],"nymara_creatures":[CREATURE_BASE,CREATURE_BASE+len(creatures)-1]},"item_ranges":{"nymara_equipment":[ITEM_BASE,ITEM_BASE+len(equipment)-1]},"interactive_ranges":{"nymara_interactives":[2000,2000+len(effects['interactives'])-1]},"effect_ranges":{"nymara_particles":[2100,2100+len(effects['particles'])-1]},"missile_ranges":{"nymara_projectiles":[2200,2200+len(effects['missiles'])-1]}}
+ allocation={"schema":1,"frozen":True,"actor_ranges":{"nymara_npcs":[NPC_BASE,NPC_BASE+len(npcs)-1],"nymara_creatures":[CREATURE_BASE,CREATURE_BASE+len(creatures)-1]},"item_ranges":{"nymara_equipment":[ITEM_BASE,ITEM_BASE+len(equipment)-1],"nymara_harvestables":[HARVESTABLE_ITEM_BASE,HARVESTABLE_ITEM_BASE+len(harvestables.CATALOGUE)-1]},"interactive_ranges":{"nymara_interactives":[2000,2000+len(effects['interactives'])-1]},"effect_ranges":{"nymara_particles":[2100,2100+len(effects['particles'])-1]},"missile_ranges":{"nymara_projectiles":[2200,2200+len(effects['missiles'])-1]}}
  (root/"nymara_id_allocations.json").write_text(json.dumps(allocation,indent=2)+"\n")
  manifest={"schema":1,"name":"Nymara complete independent client pack","license":"CC-BY-4.0","contains_eternal_lands_binary_data":False,"counts":{"npcs":len(npcs),"creatures":len(creatures),"equipment":len(equipment),"interactives":len(effects['interactives']),"particles":len(effects['particles']),"projectiles":len(effects['missiles']),"regions":len(REGIONS),"dungeons":len(DUNGEONS)},"generators":["eloria-assets/tools/generate_nymara_complete.py"],"functional_proxy":True}
  (root/"NYMARA_MANIFEST.json").write_text(json.dumps(manifest,indent=2)+"\n")
