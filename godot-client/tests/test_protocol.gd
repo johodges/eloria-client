@@ -520,9 +520,20 @@ func _init() -> void:
 		PackedByteArray([5, 0, 0, 0, 3, 0]))
 	_expect(trade_remove.type == "trade_remove" and trade_remove.quantity == 5
 		and trade_remove.slot == 3 and not trade_remove.other, "trade removal fields")
-	var trade_accept: Dictionary = EloriaProtocol.decode_server(36, PackedByteArray([1]))
-	_expect(trade_accept.type == "trade_accept" and trade_accept.other,
-		"trade partner acceptance field")
+	var trade_accept: Dictionary = EloriaProtocol.decode_server(36, PackedByteArray([1, 2]))
+	_expect(trade_accept.type == "trade_accept" and trade_accept.other
+		and int(trade_accept.phase) == 2,
+		"trade acceptance carries the authoritative phase, not a packet count")
+	var trade_accept_first: Dictionary = EloriaProtocol.decode_server(36,
+		PackedByteArray([0, 1]))
+	_expect(trade_accept_first.type == "trade_accept" and not trade_accept_first.other
+		and int(trade_accept_first.phase) == 1,
+		"own first-stage acceptance decodes phase 1")
+	_expect(EloriaProtocol.decode_server(36, PackedByteArray([0])).error
+			== "trade_accept_length"
+		and EloriaProtocol.decode_server(36, PackedByteArray([0, 3])).error
+			== "trade_accept_phase",
+		"a legacy one-byte accept and an out-of-range phase are both rejected")
 	var trade_reject: Dictionary = EloriaProtocol.decode_server(37, PackedByteArray([0]))
 	_expect(trade_reject.type == "trade_reject" and not trade_reject.other,
 		"trade own rejection field")

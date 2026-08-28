@@ -423,9 +423,15 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "trade_remove", "quantity": u32(payload),
 				"slot": int(payload[4]), "other": bool(payload[5])}
 		ServerMessage.GET_TRADE_ACCEPT:
-			if payload.size() != 1:
+			# The phase is on the wire. Counting accept packets desynchronised
+			# the two-phase state machine from the server's view of the trade
+			# the moment one was duplicated, dropped or reordered.
+			if payload.size() != 2:
 				return {"type": "invalid", "error": "trade_accept_length"}
-			return {"type": "trade_accept", "other": bool(payload[0])}
+			if int(payload[1]) > 2:
+				return {"type": "invalid", "error": "trade_accept_phase"}
+			return {"type": "trade_accept", "other": bool(payload[0]),
+				"phase": int(payload[1])}
 		ServerMessage.GET_TRADE_REJECT:
 			if payload.size() != 1:
 				return {"type": "invalid", "error": "trade_reject_length"}

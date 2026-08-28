@@ -89,9 +89,15 @@ other:u8`. Removal sends `REMOVE_OBJECT_FROM_TRADE(37)` as
 `offer_slot:u8 | quantity:u32le`; server command 39 returns
 `quantity:u32le | offer_slot:u8 | other:u8`. `ACCEPT_TRADE(33)` carries sixteen
 destination bytes (1 inventory, or 2 storage where allowed). Acceptance is a
-server-authoritative two-phase sequence reported by command 36; command 37
-resets the indicated side, and command 38 closes the trade. `REJECT_TRADE(34)`
-only resets acceptance. `EXIT_TRADE(35)` cancels and restores all offers.
+server-authoritative two-phase sequence reported by `GET_TRADE_ACCEPT(36)` as
+`other:u8 | phase:u8`. Phase 0 is not accepted, 1 is the first stage, and 2 is
+the second stage that completes the trade; `other` names the side the phase
+belongs to. The client reads the phase and never infers it by counting accept
+packets, because a duplicated, dropped or reordered accept would otherwise
+desynchronise the two-phase state machine from the server. The server clamps
+the phase to 0-2 and the client rejects any other value. Command 37 resets the
+indicated side, and command 38 closes the trade. `REJECT_TRADE(34)` only
+resets acceptance. `EXIT_TRADE(35)` cancels and restores all offers.
 
 Storage is opened only through a nearby storage NPC dialogue response. Server
 command `STORAGE_LIST(67)` carries `count:u8` followed by repeated

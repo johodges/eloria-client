@@ -318,8 +318,11 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			trade[remove_key] = remove_offers
 			state_changed.emit(&"trade")
 		"trade_accept":
+			# The server reports the phase; the client does not infer it by
+			# counting packets. A duplicate or reordered accept therefore
+			# cannot leave the two sides disagreeing about the trade.
 			var accept_key: String = "other_accepts" if bool(event.other) else "own_accepts"
-			trade[accept_key] = mini(2, int(trade.get(accept_key, 0)) + 1)
+			trade[accept_key] = clampi(int(event.phase), 0, 2)
 			state_changed.emit(&"trade")
 		"trade_reject":
 			var reject_key: String = "other_accepts" if bool(event.other) else "own_accepts"

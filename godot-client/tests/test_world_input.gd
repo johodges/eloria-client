@@ -549,8 +549,8 @@ func _run() -> void:
 		PackedByteArray([3, 0, 2, 0, 0, 0, 1, 2, 0]))
 	app_state_inventory.call("_on_packet", 35,
 		PackedByteArray([3, 0, 1, 0, 0, 0, 1, 2, 1]))
-	app_state_inventory.call("_on_packet", 36, PackedByteArray([0]))
-	app_state_inventory.call("_on_packet", 36, PackedByteArray([1]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 1]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([1, 1]))
 	main.call("_sync_trade")
 	var trade_state: Dictionary = app_state_inventory.get("trade") as Dictionary
 	var own_offers: Dictionary = trade_state.get("own_offers", {}) as Dictionary
@@ -591,6 +591,20 @@ func _run() -> void:
 	accumulated_offer = own_offers.get(2, {}) as Dictionary
 	_expect(int(accumulated_offer.get("quantity", 0)) == 1,
 		"partial offer removal preserves the remaining quantity")
+	# The acceptance phase is read off the wire, not counted. A duplicate accept
+	# must not advance the state machine, and a reordered pair must leave the
+	# client agreeing with the last phase the server actually reported.
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 1]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 1]))
+	_expect(int((app_state_inventory.get("trade") as Dictionary).get("own_accepts", -1)) == 1,
+		"a duplicated accept packet does not advance the acceptance phase")
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 2]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 1]))
+	_expect(int((app_state_inventory.get("trade") as Dictionary).get("own_accepts", -1)) == 1,
+		"an out-of-order accept leaves the client on the phase the server last reported")
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 2]))
+	_expect(int((app_state_inventory.get("trade") as Dictionary).get("own_accepts", -1)) == 2,
+		"the second acceptance phase is taken from the packet")
 	app_state_inventory.call("_on_packet", 37, PackedByteArray([0]))
 	_expect(int((app_state_inventory.get("trade") as Dictionary).get("own_accepts", -1)) == 0,
 		"trade rejection resets the correct acceptance side")
