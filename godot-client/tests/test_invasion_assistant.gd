@@ -39,6 +39,8 @@ func _run() -> void:
 	_expect(not assistant.teleport_button.disabled, "teleport enables for a loaded map")
 	_expect(assistant._map_texture("four_gates") != null,
 		"minimap loads directly from the external asset workspace")
+	root.size = Vector2i(960, 540)
+	assistant._fit_to_viewport()
 	_expect(assistant.size.x <= root.size.x and assistant.size.y <= root.size.y,
 		"assistant stays within the viewport")
 
