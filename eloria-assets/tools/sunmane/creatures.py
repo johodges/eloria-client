@@ -41,13 +41,13 @@ CREATURE_BONES = (
     ("jaw", 3, (0.0, -0.08, -0.13)),
     ("tail_1", 1, (0.0, 0.02, 0.48)), ("tail_2", 5, (0.0, 0.0, 0.43)),
     ("front_leg_l", 1, (-0.25, -0.18, -0.32)), ("front_shin_l", 7, (0.0, -0.34, 0.0)),
-    ("front_paw_l", 8, (0.0, -0.30, -0.08)),
+    ("front_paw_l", 8, (0.0, -0.233, -0.08)),
     ("front_leg_r", 1, (0.25, -0.18, -0.32)), ("front_shin_r", 10, (0.0, -0.34, 0.0)),
-    ("front_paw_r", 11, (0.0, -0.30, -0.08)),
+    ("front_paw_r", 11, (0.0, -0.233, -0.08)),
     ("rear_leg_l", 1, (-0.27, -0.13, 0.33)), ("rear_shin_l", 13, (0.0, -0.38, 0.0)),
-    ("rear_paw_l", 14, (0.0, -0.28, -0.04)),
+    ("rear_paw_l", 14, (0.0, -0.243, -0.04)),
     ("rear_leg_r", 1, (0.27, -0.13, 0.33)), ("rear_shin_r", 16, (0.0, -0.38, 0.0)),
-    ("rear_paw_r", 17, (0.0, -0.28, -0.04)),
+    ("rear_paw_r", 17, (0.0, -0.243, -0.04)),
     ("wing_l", 1, (-0.22, 0.13, 0.0)), ("wing_r", 1, (0.22, 0.13, 0.0)),
 )
 
@@ -357,11 +357,27 @@ def _horse_animations(writer: GLBWriter, joint_nodes: list[int]) -> None:
         node("neck"): ("rotation", [0.0, 0.16, 0.42],
                        [rotate("x", 0.0), rotate("x", -0.30), rotate("x", 0.0)]),
     })
+    # Roll about the body, not the root: rotating the root pivots the whole
+    # horse about the ground point and drives it through the floor.  The root
+    # only drops far enough for the carcass to rest on the surface.
     writer.animation("Death_A", {
-        node("root"): ("rotation", [0.0, 0.8, 1.4],
-                       [rotate("z", 0.0), rotate("z", 1.05), rotate("z", 1.52)]),
+        node("root"): ("translation", [0.0, 0.4, 0.8, 1.4],
+                       [[0.0, 0.0, 0.0], [0.0, -0.0, 0.0],
+                        [0.0, -0.02, 0.0], [0.0, -0.16, 0.0]]),
+        node("body"): ("rotation", [0.0, 0.4, 0.8, 1.4],
+                       [rotate("z", 0.0), rotate("z", 0.22),
+                        rotate("z", 0.55), rotate("z", 0.86)]),
         node("neck"): ("rotation", [0.0, 0.8, 1.4],
                        [rotate("x", 0.0), rotate("x", 0.4), rotate("x", 0.55)]),
+        node("front_leg_l"): ("rotation", [0.0, 0.4, 0.8, 1.4],
+                              [rotate("x", 0.0), rotate("x", 0.341),
+                               rotate("x", 0.62), rotate("x", 0.86)]),
+        node("front_leg_r"): ("rotation", [0.0, 0.8, 1.4],
+                              [rotate("x", 0.0), rotate("x", 0.55), rotate("x", 0.80)]),
+        node("rear_leg_l"): ("rotation", [0.0, 0.8, 1.4],
+                             [rotate("x", 0.0), rotate("x", 0.70), rotate("x", 0.94)]),
+        node("rear_leg_r"): ("rotation", [0.0, 0.8, 1.4],
+                             [rotate("x", 0.0), rotate("x", 0.64), rotate("x", 0.90)]),
     })
 
 
