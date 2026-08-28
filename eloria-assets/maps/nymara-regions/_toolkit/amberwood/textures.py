@@ -392,7 +392,7 @@ def carved_wood(size: int = 512, seed: int = 29) -> TextureSet:
     occlusion = np.clip(0.6 - carve * 0.45, 0.0, 1.0)
     roughness = np.clip(0.7 + carve * 0.12, 0.0, 1.0)
     return TextureSet("carved_wood", _u8(color), pack_orm(occlusion, roughness),
-                      normal_from_height(height, 3.4))
+                      normal_from_height(height, 2.2))
 
 
 def shingles(size: int = 512, seed: int = 37, rows: int = 12) -> TextureSet:
@@ -646,6 +646,10 @@ def water_surface(size: int = 512, seed: int = 89, tone: str = "sea") -> Texture
     elif tone == "pool":
         stops = ((0.0, (0.030, 0.128, 0.132)), (0.55, (0.062, 0.212, 0.204)),
                  (1.0, (0.132, 0.300, 0.276)))
+    elif tone == "lake":
+        # Mirrorhold's glacier-fed water: rock flour makes it opaque turquoise
+        stops = ((0.0, (0.026, 0.156, 0.190)), (0.55, (0.068, 0.324, 0.356)),
+                 (1.0, (0.180, 0.520, 0.532)))
     else:  # fast stream
         stops = ((0.0, (0.078, 0.176, 0.190)), (0.55, (0.148, 0.276, 0.286)),
                  (1.0, (0.320, 0.420, 0.418)))
@@ -998,3 +1002,468 @@ def canvas_awning(size: int = 256, seed: int = 139) -> TextureSet:
     roughness = np.full((size, size), 0.90)
     return TextureSet("canvas_awning", _u8(np.clip(color, 0, 1)),
                       pack_orm(occlusion, roughness), normal_from_height(weave * 0.4, 1.2))
+
+
+# --------------------------------------------------------------------------
+# Mirrorhold: alpine stone, ice and the blue crystal the region is named for
+# --------------------------------------------------------------------------
+
+def snow_pack(size: int = 512, seed: int = 401) -> TextureSet:
+    """Wind-packed snow: sastrugi ripples, a crust that catches light, blue shade."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    # sastrugi run with the prevailing wind, so the ripple is strongly anisotropic
+    drift = (N.tileable_value_noise(gx * 3.0, gy * 14.0, 3, 14, seed)
+             + 0.45 * N.tileable_value_noise(gx * 7.0, gy * 29.0, 7, 29, seed + 3))
+    drift /= 1.45
+    grain = N.tileable_fbm(size, 22, 4, seed=seed + 7)
+    height = np.clip(drift * 0.78 + grain * 0.22, 0.0, 1.0)
+
+    # snow is almost white; what reads is the shadow colour, which is blue
+    color = _colorize(height, (0.0, (0.560, 0.610, 0.700)),
+                      (0.45, (0.760, 0.800, 0.860)),
+                      (0.78, (0.880, 0.906, 0.940)),
+                      (1.0, (0.950, 0.962, 0.975)))
+    sparkle = np.clip(_upsample(N.tileable_worley(min(size, 256), 46, seed=seed + 11), size)
+                      * 2.4 - 1.7, 0.0, 1.0)
+    color = _mix(color, np.array([1.0, 1.0, 1.0]), sparkle * 0.55)
+    occlusion = np.clip(0.44 + height * 0.56, 0.0, 1.0)
+    roughness = np.clip(0.74 - sparkle * 0.34 - height * 0.10, 0.05, 1.0)
+    return TextureSet("snow_pack", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.6))
+
+
+def glacier_ice(size: int = 512, seed: int = 409) -> TextureSet:
+    """Glacier ice: compressed blue banding, crevasse fracture, meltwater polish."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    warp = (N.tileable_fbm(size, 3, 4, seed=seed + 5) - 0.5) * 1.6
+    banding = gy * 9.0 + warp * 2.4
+    band = banding - np.floor(banding)
+    # dense old ice reads as a deep blue band between paler bubble-rich layers
+    depth = np.clip(np.sin(band * math.pi) ** 1.6, 0.0, 1.0)
+    bubbles = N.tileable_fbm(size, 18, 4, seed=seed + 9)
+
+    fracture_near = _upsample(N.tileable_worley(min(size, 256), 6, seed=seed + 13), size)
+    fracture_far = _upsample(N.tileable_worley(min(size, 256), 6, seed=seed + 13, order=1), size)
+    # a few hairline crevasses, not a cell net: bias hard toward 1 and keep
+    # only the deepest seams
+    fracture = np.clip((fracture_far - fracture_near) * 90.0, 0.0, 1.0)
+    seam = np.clip(1.0 - fracture, 0.0, 1.0) ** 2.2
+
+    height = np.clip(0.46 + depth * 0.12 + bubbles * 0.16 - seam * 0.30, 0.0, 1.0)
+    color = _colorize(np.clip(depth * 0.55 + bubbles * 0.45, 0, 1),
+                      (0.0, (0.788, 0.856, 0.884)), (0.45, (0.618, 0.744, 0.804)),
+                      (0.78, (0.442, 0.616, 0.712)), (1.0, (0.310, 0.512, 0.628)))
+    color = _mix(color, np.array([0.868, 0.918, 0.940]), seam * 0.30)
+    rime = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 19) * 2.1 - 1.25, 0.0, 1.0)
+    color = _mix(color, np.array([0.930, 0.950, 0.965]), rime * 0.50)
+    occlusion = np.clip(0.34 + height * 0.66, 0.0, 1.0)
+    roughness = np.clip(0.34 + rime * 0.40 - depth * 0.08, 0.05, 1.0)
+    return TextureSet("glacier_ice", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 3.4))
+
+
+def blue_crystal(size: int = 256, seed: int = 419) -> TextureSet:
+    """The lens glass: a cool internally-lit blue with facet planes."""
+    swirl = N.tileable_fbm(size, 3, 5, seed=seed)
+    facet_near = _upsample(N.tileable_worley(min(size, 192), 5, seed=seed + 3), size)
+    facet_far = _upsample(N.tileable_worley(min(size, 192), 5, seed=seed + 3, order=1), size)
+    facet = np.clip((facet_far - facet_near) * 5.0, 0.0, 1.0) ** 0.55
+    body = np.clip(swirl * 0.6 + facet * 0.4, 0, 1)
+    color = _colorize(body, (0.0, (0.020, 0.098, 0.190)), (0.45, (0.055, 0.230, 0.400)),
+                      (0.8, (0.130, 0.420, 0.640)), (1.0, (0.300, 0.640, 0.850)))
+    height = np.clip(facet * 0.7 + swirl * 0.3, 0.0, 1.0)
+    occlusion = np.full((size, size), 1.0)
+    roughness = np.clip(0.10 + (1.0 - facet) * 0.16, 0.03, 1.0)
+    return TextureSet("blue_crystal", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.0))
+
+
+def veined_marble(size: int = 512, seed: int = 421) -> TextureSet:
+    """Pale blue-grey marble with darker veining: Mirrorhold's civic paving."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    warp = (N.tileable_fbm(size, 4, 5, seed=seed + 3) - 0.5) * 3.2
+    # veins are a thin ridge in a warped coordinate, which is what marble does
+    field = np.sin((gx * 5.0 + gy * 2.2 + warp) * math.pi)
+    vein = np.clip(1.0 - np.abs(field) * 6.0, 0.0, 1.0) ** 1.4
+    vein_fine = np.clip(1.0 - np.abs(np.sin((gx * 13.0 - gy * 6.0 + warp * 1.7)
+                                            * math.pi)) * 12.0, 0.0, 1.0)
+    grain = N.tileable_fbm(size, 20, 4, seed=seed + 11)
+    body = np.clip(0.62 + grain * 0.28, 0, 1)
+    color = _colorize(body, (0.0, (0.398, 0.426, 0.462)), (0.5, (0.536, 0.566, 0.602)),
+                      (1.0, (0.664, 0.690, 0.722)))
+    color = _mix(color, np.array([0.244, 0.286, 0.348]), vein * 0.62)
+    color = _mix(color, np.array([0.352, 0.400, 0.462]), vein_fine * 0.30)
+    height = np.clip(0.55 + grain * 0.20 - vein * 0.16, 0.0, 1.0)
+    occlusion = np.clip(0.62 + height * 0.38 - vein * 0.14, 0.0, 1.0)
+    roughness = np.clip(0.34 + grain * 0.16 + vein * 0.10, 0.05, 1.0)
+    return TextureSet("veined_marble", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 1.5))
+
+
+def pale_ashlar(size: int = 512, seed: int = 431, courses: int = 6) -> TextureSet:
+    """Mirrorhold's masonry: cold grey granite ashlar, snow-bleached, lichened."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    row = gy * courses
+    row_index = np.floor(row)
+    row_fraction = row - row_index
+    blocks = courses * 2
+    offset = (row_index % 2) * 0.5
+    col = gx * blocks + offset
+    col_index = np.floor(col)
+    col_fraction = col - col_index
+
+    rng = np.random.default_rng(seed)
+    per_block = rng.uniform(0.0, 1.0, size=(courses + 1, blocks + 1))
+    block_value = per_block[row_index.astype(int) % (courses + 1),
+                            col_index.astype(int) % (blocks + 1)]
+
+    mortar_x = np.clip(np.minimum(col_fraction, 1.0 - col_fraction) * 30.0, 0.0, 1.0)
+    mortar_y = np.clip(np.minimum(row_fraction, 1.0 - row_fraction) * 26.0, 0.0, 1.0)
+    mortar = np.minimum(mortar_x, mortar_y)
+
+    grit = N.tileable_fbm(size, 12, 5, seed=seed + 2)
+    chips = np.clip(_upsample(N.tileable_worley(min(size, 256), 26, seed=seed + 8), size)
+                    * 1.7 - 1.0, 0.0, 1.0)
+    height = np.clip(mortar * (0.66 + block_value * 0.20) + grit * 0.13 - chips * 0.20,
+                     0.0, 1.0)
+
+    tone = np.clip(0.40 + block_value * 0.42 + grit * 0.18, 0, 1)
+    color = _colorize(tone, (0.0, (0.168, 0.180, 0.198)), (0.45, (0.278, 0.294, 0.316)),
+                      (0.78, (0.386, 0.404, 0.428)), (1.0, (0.492, 0.510, 0.534)))
+    color = _mix(color, np.array([0.148, 0.156, 0.172]), (1.0 - mortar) * 0.55)
+    # pale lichen in the sheltered courses, and snow caught on upward ledges
+    lichen = np.clip(N.tileable_fbm(size, 9, 4, seed=seed + 17) * 2.2 - 1.35, 0.0, 1.0)
+    color = _mix(color, np.array([0.404, 0.452, 0.376]), lichen * 0.34)
+    snow = np.clip(N.tileable_fbm(size, 6, 3, seed=seed + 23) * 2.0 - 1.30, 0.0, 1.0)
+    snow = snow * np.clip(1.0 - row_fraction * 3.0, 0.0, 1.0)
+    color = _mix(color, np.array([0.780, 0.812, 0.848]), snow * 0.34)
+    occlusion = np.clip(0.30 + height * 0.70, 0.0, 1.0)
+    roughness = np.clip(0.88 - snow * 0.10 + lichen * 0.06, 0.05, 1.0)
+    return TextureSet("pale_ashlar", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 5.0))
+
+
+def gilt_brass(size: int = 256, seed: int = 433) -> TextureSet:
+    """Gilded brass for the domes and the armillary: warm metal, wind-polished."""
+    grain = N.tileable_fbm(size, 20, 4, seed=seed)
+    # broad soft lustre bands, the way a beaten dome catches light - low
+    # frequency, or it reads as corrugated iron
+    sweep = N.tileable_fbm(size, 3, 3, seed=seed + 5)
+    body = np.clip(sweep * 0.74 + grain * 0.26, 0, 1)
+    color = _colorize(body, (0.0, (0.220, 0.148, 0.052)), (0.45, (0.492, 0.352, 0.116)),
+                      (0.8, (0.716, 0.556, 0.212)), (1.0, (0.868, 0.734, 0.372)))
+    # verdigris collects where meltwater sits
+    patina = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 13) * 2.4 - 1.85, 0.0, 1.0)
+    color = _mix(color, np.array([0.246, 0.408, 0.352]), patina * 0.26)
+    height = np.clip(0.5 + grain * 0.18 - patina * 0.14, 0.0, 1.0)
+    occlusion = np.clip(0.66 + height * 0.34, 0.0, 1.0)
+    roughness = np.clip(0.18 + patina * 0.56 + grain * 0.08, 0.04, 1.0)
+    return TextureSet("gilt_brass", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 0.9))
+
+
+def slate_roof(size: int = 512, seed: int = 439, rows: int = 16) -> TextureSet:
+    """Blue-grey slate courses for the cliff-town roofs."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    row = gy * rows
+    row_index = np.floor(row)
+    row_fraction = row - row_index
+    per_row_offset = (row_index % 2) * 0.5
+    col = gx * (rows // 2) + per_row_offset
+    col_index = np.floor(col)
+    col_fraction = col - col_index
+
+    rng = np.random.default_rng(seed)
+    tile_value = rng.uniform(0.0, 1.0, size=(rows + 1, rows))[
+        row_index.astype(int) % (rows + 1), col_index.astype(int) % rows]
+
+    lip = np.clip((1.0 - row_fraction) * 7.0, 0.0, 1.0)
+    gap = np.clip(np.minimum(col_fraction, 1.0 - col_fraction) * 34.0, 0.0, 1.0)
+    grain = N.tileable_fbm(size, 24, 4, seed=seed + 3)
+    height = np.clip(0.30 + lip * 0.44 + tile_value * 0.10 + grain * 0.12
+                     - (1.0 - gap) * 0.34, 0.0, 1.0)
+    color = _colorize(np.clip(tile_value * 0.6 + grain * 0.4, 0, 1),
+                      (0.0, (0.062, 0.072, 0.090)), (0.5, (0.116, 0.130, 0.156)),
+                      (1.0, (0.186, 0.202, 0.230)))
+    color = _mix(color, np.array([0.040, 0.046, 0.058]), (1.0 - gap) * 0.60)
+    wet = np.clip(N.tileable_fbm(size, 5, 3, seed=seed + 21) * 1.9 - 1.05, 0.0, 1.0)
+    occlusion = np.clip(0.34 + height * 0.66, 0.0, 1.0)
+    roughness = np.clip(0.82 - wet * 0.36, 0.05, 1.0)
+    return TextureSet("slate_roof", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 4.2))
+
+
+def alpine_turf(size: int = 512, seed: int = 443) -> TextureSet:
+    """Thin high-altitude turf over scree: the ground between the terraces."""
+    loam = N.tileable_fbm(size, 9, 5, seed=seed)
+    turf = N.tileable_fbm(size, 26, 4, seed=seed + 5)
+    scree = np.clip(_upsample(N.tileable_worley(min(size, 256), 22, seed=seed + 9), size)
+                    * 1.8 - 0.95, 0.0, 1.0)
+    body = np.clip(loam * 0.55 + turf * 0.45, 0, 1)
+    color = _colorize(body, (0.0, (0.078, 0.096, 0.062)), (0.4, (0.132, 0.158, 0.092)),
+                      (0.72, (0.186, 0.212, 0.124)), (1.0, (0.244, 0.262, 0.164)))
+    # bare stone comes through wherever the turf thins
+    color = _mix(color, np.array([0.238, 0.238, 0.232]), scree * 0.66)
+    frost = np.clip(N.tileable_fbm(size, 6, 3, seed=seed + 27) * 2.1 - 1.45, 0.0, 1.0)
+    color = _mix(color, np.array([0.760, 0.790, 0.820]), frost * 0.34)
+    height = np.clip(0.40 + turf * 0.34 + scree * 0.22, 0.0, 1.0)
+    occlusion = np.clip(0.40 + height * 0.60, 0.0, 1.0)
+    roughness = np.clip(0.94 - frost * 0.10, 0.05, 1.0)
+    return TextureSet("alpine_turf", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.8))
+# Amethyst Barrens kit
+#
+# A storm-scoured crystal basin: ochre dust and gravel over dark scoured rock,
+# shot through with violet amethyst that grows out of the ground and glows.
+# The built work is pale warm limestone with verdigris copper roofs and brass
+# instruments, after the Glasswarden observatory in panel 2.
+#
+# Appended, never inserted, and every name carries the `amethyst_` prefix so
+# the four regions in flight cannot collide on a material name.
+# --------------------------------------------------------------------------
+
+_AMETHYST_DEEP = (0.180, 0.086, 0.286)
+_AMETHYST_MID = (0.392, 0.184, 0.588)
+_AMETHYST_BRIGHT = (0.612, 0.352, 0.824)
+_AMETHYST_PALE = (0.808, 0.678, 0.941)
+
+
+def amethyst_barrens_dust(size: int = 512, seed: int = 501) -> TextureSet:
+    """The basin floor: ochre dust, gravel, and chips of shed crystal."""
+    grain = N.tileable_fbm(size, 26, 5, seed=seed)
+    drift = N.tileable_fbm(size, 5, 4, seed=seed + 3)
+    gravel = _upsample(N.tileable_worley(min(size, 256), 34, seed=seed + 7), size)
+    height = grain * 0.4 + gravel * 0.45 + drift * 0.15
+    color = _colorize(np.clip(drift * 0.7 + grain * 0.3, 0, 1),
+                      (0.0, (0.286, 0.226, 0.132)),
+                      (0.40, (0.470, 0.382, 0.204)),
+                      (0.72, (0.612, 0.508, 0.286)),
+                      (1.0, (0.714, 0.618, 0.392)))
+    # stones sitting proud of the dust read cooler and greyer
+    stone = np.clip(gravel * 1.7 - 0.85, 0.0, 1.0)
+    color = _mix(color, np.array([0.352, 0.330, 0.318]), stone * 0.55)
+    # scattered crystal chips, sparse enough to read as litter not as a field
+    chip = np.clip(_upsample(N.tileable_worley(min(size, 256), 15, seed=seed + 11), size)
+                   * 2.4 - 1.75, 0.0, 1.0)
+    color = _mix(color, np.array(_AMETHYST_MID), chip * 0.78)
+    occlusion = np.clip(0.46 + height * 0.52, 0.0, 1.0)
+    roughness = np.clip(0.94 - chip * 0.55 - stone * 0.06, 0.0, 1.0)
+    return TextureSet("amethyst_barrens_dust", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.4))
+
+
+def amethyst_crystal_field(size: int = 512, seed: int = 509) -> TextureSet:
+    """Ground given over to crystal: shards packed close, dust in the gaps."""
+    # Few, large cells: the shards in panel 4 are hand-sized and bigger, so a
+    # high cell count reads as violet noise rather than as broken crystal.
+    # Worley distance is 0 at a cell's seed point and rises toward its boundary,
+    # so the shard BODY is the low ground and the gap between shards is the high
+    # ground. Reading it the other way puts the dust in the middle of each shard.
+    dist = _upsample(N.tileable_worley(min(size, 256), 9, seed=seed), size)
+    edge = _upsample(N.tileable_worley(min(size, 256), 9, seed=seed, order=1), size)
+    facet = _upsample(N.tileable_worley(min(size, 256), 20, seed=seed + 5), size)
+    dust = N.tileable_fbm(size, 18, 4, seed=seed + 9)
+    shard = 1.0 - dist
+    body = np.clip(shard * 0.66 + (1.0 - facet) * 0.34, 0, 1)
+    height = body * 0.78 + dust * 0.22
+    color = _colorize(body, (0.0, _AMETHYST_DEEP), (0.42, _AMETHYST_MID),
+                      (0.78, _AMETHYST_BRIGHT), (1.0, _AMETHYST_PALE))
+    # a bright crease along the shared boundary of two shards
+    rim = np.clip(1.0 - (edge - dist) * 6.0, 0.0, 1.0)
+    color = _mix(color, np.array(_AMETHYST_PALE), rim * 0.42)
+    # ochre dust lies in the gaps, and there is a lot of it
+    gap = np.clip(dist * 2.2 - 0.55, 0.0, 1.0)
+    color = _mix(color, np.array([0.470, 0.386, 0.222]), gap * 0.85)
+    # Knock the whole patch back toward the barrens it sits in. At full
+    # saturation the crystal fields read as flat pink decals laid over the
+    # ochre rather than as ground with crystal growing through it.
+    color = _mix(color, np.array([0.404, 0.336, 0.212]), 0.34)
+    occlusion = np.clip(0.34 + body * 0.64, 0.0, 1.0)
+    roughness = np.clip(0.20 + gap * 0.72 + dust * 0.10, 0.0, 1.0)
+    return TextureSet("amethyst_crystal_field", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 3.4))
+
+
+def amethyst_resonant_road(size: int = 512, seed: int = 521) -> TextureSet:
+    """The resonant roadway: pale flags with lit crystal running the joints.
+
+    Panel 3's bridge deck and the roads on the aerial are the same surface —
+    laid stone whose seams have been filled with growing amethyst.
+    """
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    # staggered flagstones
+    row = np.floor(gy * 6.0)
+    offset = (row % 2) * 0.5
+    fx = (gx * 6.0 + offset) % 1.0
+    fy = (gy * 6.0) % 1.0
+    joint = np.minimum(np.minimum(fx, 1.0 - fx), np.minimum(fy, 1.0 - fy))
+    seam = np.clip(1.0 - joint * 14.0, 0.0, 1.0)
+    wear = N.tileable_fbm(size, 14, 4, seed=seed)
+    # Darker than the observatory's ashlar: this is roadway laid on the barrens,
+    # and it has to let the vein read as the bright thing in the surface.
+    stone = _colorize(np.clip(wear, 0, 1), (0.0, (0.196, 0.186, 0.184)),
+                      (0.5, (0.310, 0.296, 0.288)), (1.0, (0.412, 0.396, 0.380)))
+    # the vein itself, brightest at the centre of the joint
+    vein = seam ** 1.6
+    color = _mix(stone, np.array(_AMETHYST_MID), vein * 0.95)
+    color = _mix(color, np.array(_AMETHYST_BRIGHT), np.clip(vein - 0.45, 0, 1) * 1.6)
+    color = _mix(color, np.array(_AMETHYST_PALE), np.clip(vein - 0.80, 0, 1) * 3.4)
+    height = (1.0 - seam) * 0.7 + wear * 0.3
+    occlusion = np.clip(0.50 + (1.0 - seam) * 0.46, 0.0, 1.0)
+    roughness = np.clip(0.82 - vein * 0.62, 0.0, 1.0)
+    return TextureSet("amethyst_resonant_road", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.0))
+
+
+def amethyst_storm_rock(size: int = 512, seed: int = 523) -> TextureSet:
+    """Dark basalt scoured by the storms, cracked and veined with violet."""
+    strata = N.tileable_fbm(size, 7, 5, seed=seed)
+    # The difference between the first and second Worley orders is small only
+    # along a cell boundary, which is what draws a connected crack network
+    # instead of the isolated specks a single order gives.
+    near = _upsample(N.tileable_worley(min(size, 256), 12, seed=seed + 3), size)
+    second = _upsample(N.tileable_worley(min(size, 256), 12, seed=seed + 3, order=1), size)
+    fracture = np.clip((second - near) * 3.2, 0.0, 1.0)
+    grain = N.tileable_fbm(size, 30, 4, seed=seed + 7)
+    height = strata * 0.5 + fracture * 0.36 + grain * 0.14
+    # Lifted off black: at value 0.10 the rock read as a hole in the map and the
+    # violet in its cracks disappeared with it.
+    color = _colorize(np.clip(strata * 0.75 + grain * 0.25, 0, 1),
+                      (0.0, (0.116, 0.106, 0.120)),
+                      (0.45, (0.180, 0.168, 0.186)),
+                      (0.80, (0.256, 0.240, 0.258)),
+                      (1.0, (0.330, 0.314, 0.328)))
+    # Crystal has got into some of the cracks, not all of them: an unmasked
+    # network covers the rock like leading in a window and stops reading as rock.
+    crack = np.clip(1.0 - fracture * 0.95, 0.0, 1.0)
+    seam_mask = np.clip(N.tileable_fbm(size, 4, 4, seed=seed + 13) * 2.0 - 0.62, 0.0, 1.0)
+    lit = crack * seam_mask
+    color = _mix(color, np.array(_AMETHYST_MID), lit * 0.78)
+    color = _mix(color, np.array(_AMETHYST_BRIGHT), np.clip(lit - 0.55, 0, 1) * 1.5)
+    occlusion = np.clip(0.36 + height * 0.60, 0.0, 1.0)
+    roughness = np.clip(0.88 - lit * 0.50, 0.0, 1.0)
+    return TextureSet("amethyst_storm_rock", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 3.0))
+
+
+def amethyst_crystal(size: int = 256, seed: int = 541) -> TextureSet:
+    """The crystal itself: banded violet body, polished facets, lit from within."""
+    band = N.tileable_fbm(size, 4, 5, seed=seed)
+    facet = _upsample(N.tileable_worley(min(size, 256), 7, seed=seed + 5), size)
+    facet_edge = _upsample(N.tileable_worley(min(size, 256), 7, seed=seed + 5, order=1), size)
+    body = np.clip(band * 0.42 + facet * 0.58, 0, 1)
+    color = _colorize(body, (0.0, _AMETHYST_DEEP), (0.38, _AMETHYST_MID),
+                      (0.74, _AMETHYST_BRIGHT), (1.0, _AMETHYST_PALE))
+    # crisp facet boundaries: a crystal is planes meeting at edges, not clouds
+    crease = np.clip(1.0 - (facet_edge - facet) * 7.0, 0.0, 1.0)
+    color = _mix(color, np.array(_AMETHYST_DEEP), crease * 0.42)
+    # milky inclusions near the base of a shard
+    milk = np.clip(N.tileable_fbm(size, 9, 4, seed=seed + 11) * 1.7 - 0.95, 0.0, 1.0)
+    color = _mix(color, np.array([0.878, 0.824, 0.941]), milk * 0.45)
+    occlusion = np.full((size, size), 1.0)
+    roughness = np.clip(0.06 + band * 0.14, 0.0, 1.0)
+    return TextureSet("amethyst_crystal", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(body * 0.5, 1.8))
+
+
+def amethyst_pale_stone(size: int = 512, seed: int = 547, courses: int = 9) -> TextureSet:
+    """Warm pale limestone ashlar, the Glasswarden building stone."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    row = np.floor(gy * courses)
+    offset = (row % 2) * 0.5
+    fx = (gx * (courses + 1) + offset) % 1.0
+    fy = (gy * courses) % 1.0
+    joint = np.minimum(np.minimum(fx, 1.0 - fx), np.minimum(fy, 1.0 - fy))
+    seam = np.clip(1.0 - joint * 18.0, 0.0, 1.0)
+    grain = N.tileable_fbm(size, 22, 5, seed=seed)
+    blotch = N.tileable_fbm(size, 6, 4, seed=seed + 3)
+    color = _colorize(np.clip(blotch * 0.6 + grain * 0.4, 0, 1),
+                      (0.0, (0.560, 0.520, 0.446)),
+                      (0.45, (0.706, 0.664, 0.578)),
+                      (0.80, (0.812, 0.774, 0.686)),
+                      (1.0, (0.878, 0.846, 0.766)))
+    # storm staining runs down from the joints
+    stain = np.clip(N.tileable_fbm(size, 10, 4, seed=seed + 9) * 1.5 - 0.75, 0, 1)
+    color = _mix(color, np.array([0.412, 0.386, 0.368]), stain * 0.38)
+    color = _mix(color, np.array([0.352, 0.322, 0.286]), seam * 0.72)
+    height = (1.0 - seam) * 0.72 + grain * 0.28
+    occlusion = np.clip(0.44 + (1.0 - seam) * 0.54, 0.0, 1.0)
+    roughness = np.clip(0.74 + grain * 0.16, 0.0, 1.0)
+    return TextureSet("amethyst_pale_stone", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.6))
+
+
+def amethyst_verdigris(size: int = 256, seed: int = 557) -> TextureSet:
+    """Oxidised copper roofing: the teal domes and spire caps of the concept."""
+    seam = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, _gy = np.meshgrid(seam, seam)
+    standing = np.clip(1.0 - np.abs(((gx * 10.0) % 1.0) - 0.5) * 5.0, 0.0, 1.0)
+    patina = N.tileable_fbm(size, 8, 5, seed=seed)
+    grime = N.tileable_fbm(size, 20, 4, seed=seed + 5)
+    color = _colorize(np.clip(patina, 0, 1), (0.0, (0.086, 0.216, 0.212)),
+                      (0.42, (0.157, 0.392, 0.365)),
+                      (0.76, (0.259, 0.541, 0.494)),
+                      (1.0, (0.400, 0.678, 0.612)))
+    # copper showing through where rain keeps the metal clean
+    bare = np.clip(grime * 1.9 - 1.35, 0.0, 1.0)
+    color = _mix(color, np.array([0.478, 0.294, 0.157]), bare * 0.6)
+    height = standing * 0.6 + patina * 0.4
+    occlusion = np.clip(0.52 + height * 0.44, 0.0, 1.0)
+    roughness = np.clip(0.62 + patina * 0.26 - bare * 0.3, 0.0, 1.0)
+    metallic = np.clip(0.25 + bare * 0.7, 0.0, 1.0)
+    return TextureSet("amethyst_verdigris", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness, metallic),
+                      normal_from_height(height, 2.2))
+
+
+def amethyst_brass(size: int = 256, seed: int = 563) -> TextureSet:
+    """Instrument brass: the orrery ring, the scales, the field-station fittings."""
+    turn = _upsample(N.tileable_worley(min(size, 256), 20, seed=seed), size)
+    grain = N.tileable_fbm(size, 34, 4, seed=seed + 3)
+    tarnish = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 7) * 1.8 - 0.9, 0.0, 1.0)
+    height = turn * 0.5 + grain * 0.5
+    color = _colorize(np.clip(turn * 0.6 + grain * 0.4, 0, 1),
+                      (0.0, (0.376, 0.276, 0.106)),
+                      (0.5, (0.635, 0.486, 0.196)),
+                      (0.85, (0.792, 0.639, 0.290)),
+                      (1.0, (0.878, 0.749, 0.404)))
+    color = _mix(color, np.array([0.216, 0.196, 0.129]), tarnish * 0.55)
+    occlusion = np.clip(0.58 + height * 0.40, 0.0, 1.0)
+    roughness = np.clip(0.24 + tarnish * 0.44 + grain * 0.08, 0.0, 1.0)
+    metallic = np.clip(0.96 - tarnish * 0.28, 0.0, 1.0)
+    return TextureSet("amethyst_brass", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness, metallic),
+                      normal_from_height(height, 1.8))
+
+
+def amethyst_banner(size: int = 256, seed: int = 569) -> TextureSet:
+    """Glasswarden purple: banners, tent canopies, the storm-ruin standards."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    weave = (0.5 + 0.5 * np.sin(gx * math.pi * 2.0 * 80.0)) \
+        * (0.5 + 0.5 * np.sin(gy * math.pi * 2.0 * 80.0))
+    fade = N.tileable_fbm(size, 5, 4, seed=seed)
+    wear = np.clip(N.tileable_fbm(size, 16, 4, seed=seed + 5) * 1.7 - 0.95, 0.0, 1.0)
+    deep = np.array([0.204, 0.098, 0.267])
+    lit = np.array([0.365, 0.196, 0.447])
+    color = _mix(deep[None, None, :] * np.ones((size, size, 1)), lit, fade * 0.7)
+    color = color * (0.76 + 0.36 * weave)[..., None]
+    color = _mix(color, np.array([0.478, 0.412, 0.372]), wear * 0.42)
+    occlusion = np.clip(0.60 + weave * 0.32, 0.0, 1.0)
+    roughness = np.full((size, size), 0.88)
+    return TextureSet("amethyst_banner", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(weave * 0.4, 1.2))

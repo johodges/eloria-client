@@ -33,7 +33,8 @@ def convert(directory: Path, quality: int = 88) -> tuple[int, int]:
 
 def main() -> int:
     total_before = total_after = 0
-    for directory in (ROOT / "captures", ROOT / "comparisons"):
+    for directory in (ROOT / "captures", ROOT / "godot-captures",
+                      ROOT / "comparisons"):
         if not directory.exists():
             continue
         before, after = convert(directory)

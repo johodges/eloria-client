@@ -68,3 +68,53 @@ def load_region_views(package: Path):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def _load_module(path: Path, name: str):
+    import importlib.util
+    import sys
+
+    source = path.parent
+    if str(source) not in sys.path:
+        sys.path.insert(0, str(source))
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def load_region_plan(package: Path):
+    """The region's plan module: extents, anchors, routes, terrain sculpting.
+
+    A region authored after the toolkit extraction keeps this in its own
+    `source/region.py`. Amberwood predates that and still has its plan inside
+    the shared package, reached through its build module's `REG`, so fall back
+    to that rather than failing on the older layout.
+    """
+    path = region_source(package) / "region.py"
+    if path.is_file():
+        return _load_module(path, "region")
+    plan = getattr(load_region_build(package), "REG", None)
+    if plan is None:
+        raise SystemExit(
+            f"region has no plan: expected {path}, and its build module "
+            f"exposes no REG")
+    return plan
+
+
+def load_region_build(package: Path):
+    """Import the region's own `build_<region>.py`.
+
+    The toolkit cannot know its name, and a region may carry more than one
+    build script, so the interior builds are excluded and the rest must be
+    unambiguous.
+    """
+    source = region_source(package)
+    candidates = [c for c in sorted(source.glob("build_*.py"))
+                  if not c.stem.startswith("build_interior")]
+    if len(candidates) != 1:
+        raise SystemExit(
+            f"expected exactly one build_*.py in {source}, found "
+            f"{[c.name for c in candidates]}")
+    return _load_module(candidates[0], candidates[0].stem)

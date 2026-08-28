@@ -77,6 +77,55 @@ SPECS: tuple[MaterialSpec, ...] = (
     # Standing water underground: the same surface, unlit by any sky.
     MaterialSpec("water_deep", "water_pool", roughness=0.12,
                  base_color=(0.20, 0.30, 0.32, 0.90), alpha_mode="BLEND"),
+
+    # -- Mirrorhold. Appended, never inserted: a region pins the material set
+    # it embeds by name, and reordering this tuple would rewrite its GLB.
+    MaterialSpec("snow_pack", "snow_pack", roughness=0.74),
+    MaterialSpec("glacier_ice", "glacier_ice", roughness=0.30,
+                 base_color=(1.0, 1.0, 1.0, 0.94), alpha_mode="BLEND"),
+    MaterialSpec("blue_crystal", "blue_crystal", roughness=0.12,
+                 emissive=(0.048, 0.152, 0.268)),
+    MaterialSpec("veined_marble", "veined_marble", roughness=0.36),
+    MaterialSpec("pale_ashlar", "pale_ashlar", roughness=0.90),
+    MaterialSpec("gilt_brass", "gilt_brass", roughness=0.28, metallic=1.0),
+    MaterialSpec("slate_roof", "slate_roof", roughness=0.84),
+    MaterialSpec("alpine_turf", "alpine_turf", roughness=0.94),
+    MaterialSpec("water_lake", "water_lake", roughness=0.13,
+                 base_color=(1.0, 1.0, 1.0, 0.84), alpha_mode="BLEND"),
+    # The mirror-sphere: the same crystal, darkened and polished, so it reads
+    # as a polished dark mirror rather than a bright blue ball.
+    MaterialSpec("mirror_glass", "blue_crystal", roughness=0.05, metallic=0.35,
+                 base_color=(0.30, 0.38, 0.50, 1.0),
+                 emissive=(0.012, 0.030, 0.058)),
+    # -- Amethyst Barrens. Appended, never inserted: a region pins the material
+    # set it embeds by name, and reordering this tuple would rewrite its GLB.
+    # The region's sea reuses `water_sea` rather than adding a fourth water.
+    MaterialSpec("amethyst_barrens_dust", "amethyst_barrens_dust", roughness=0.96),
+    MaterialSpec("amethyst_storm_rock", "amethyst_storm_rock", roughness=0.90,
+                 emissive=(0.020, 0.008, 0.036)),
+    MaterialSpec("amethyst_crystal_field", "amethyst_crystal_field", roughness=0.42,
+                 emissive=(0.088, 0.036, 0.152)),
+    MaterialSpec("amethyst_resonant_road", "amethyst_resonant_road", roughness=0.66,
+                 emissive=(0.072, 0.028, 0.128)),
+    # The crystal itself carries the region's light. Emissive rather than
+    # transmissive: KHR_materials_transmission is an extension, and the package
+    # must load with none.
+    MaterialSpec("amethyst_crystal", "amethyst_crystal", roughness=0.10,
+                 emissive=(0.196, 0.088, 0.320)),
+    MaterialSpec("amethyst_pale_stone", "amethyst_pale_stone", roughness=0.82),
+    # Verdigris is a mineral crust, not bare metal, so a low metallic value is
+    # both physically right and what keeps it readable: in a client with no
+    # reflection probe a metallic surface facing away from the sky goes black,
+    # which turned every spire cap into a charcoal cone.
+    MaterialSpec("amethyst_verdigris", "amethyst_verdigris", roughness=0.68,
+                 metallic=0.12),
+    # Not metallic=1.0: a fully metallic surface has no diffuse term, so with
+    # no environment probe it renders black - every brass pole, crane and
+    # tripod came out as a charcoal stick. 0.62 still reads as metal and
+    # survives a renderer without image-based lighting.
+    MaterialSpec("amethyst_brass", "amethyst_brass", roughness=0.36, metallic=0.40),
+    MaterialSpec("amethyst_banner", "amethyst_banner", roughness=0.90,
+                 double_sided=True),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}
@@ -108,6 +157,16 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     sets["leaf_path"] = T.leaf_path(512, seed=79)
     sets["shore_shingle"] = T.shore_shingle(512, seed=113)
     sets["meadow_grass"] = T.meadow_grass(512, seed=131)
+    # Mirrorhold
+    sets["snow_pack"] = T.snow_pack(512, seed=401)
+    sets["glacier_ice"] = T.glacier_ice(512, seed=409)
+    sets["blue_crystal"] = T.blue_crystal(256, seed=419)
+    sets["veined_marble"] = T.veined_marble(512, seed=421)
+    sets["pale_ashlar"] = T.pale_ashlar(512, seed=431)
+    sets["gilt_brass"] = T.gilt_brass(256, seed=433)
+    sets["slate_roof"] = T.slate_roof(512, seed=439)
+    sets["alpine_turf"] = T.alpine_turf(512, seed=443)
+    sets["water_lake"] = T.water_surface(512, seed=449, tone="lake")
     sets["scorched_ground"] = T.scorched_ground(512, seed=109)
     sets["dark_iron"] = T.dark_iron(256, seed=101)
     sets["woven_cloth"] = T.woven_cloth(256, seed=103)
@@ -116,6 +175,16 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     sets["amber_glass"] = T.amber_glass(256, seed=137)
     for tone, seed in (("sea", 89), ("pool", 181), ("stream", 191)):
         sets[f"water_{tone}"] = T.water_surface(512, seed=seed, tone=tone)
+    # Amethyst Barrens
+    sets["amethyst_barrens_dust"] = T.amethyst_barrens_dust(512, seed=501)
+    sets["amethyst_crystal_field"] = T.amethyst_crystal_field(512, seed=509)
+    sets["amethyst_resonant_road"] = T.amethyst_resonant_road(512, seed=521)
+    sets["amethyst_storm_rock"] = T.amethyst_storm_rock(512, seed=523)
+    sets["amethyst_crystal"] = T.amethyst_crystal(256, seed=541)
+    sets["amethyst_pale_stone"] = T.amethyst_pale_stone(512, seed=547)
+    sets["amethyst_verdigris"] = T.amethyst_verdigris(256, seed=557)
+    sets["amethyst_brass"] = T.amethyst_brass(256, seed=563)
+    sets["amethyst_banner"] = T.amethyst_banner(256, seed=569)
 
     # trim the maps that do not need to ship at full resolution
     alpha_cut = {"foliage_amber", "foliage_gold", "foliage_rust", "foliage_green",

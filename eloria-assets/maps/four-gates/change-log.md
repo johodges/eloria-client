@@ -130,3 +130,54 @@ makes the cutaway addressable at all.
   unverified" gap flagged in the original validation report.
 - `tests/integration/rendered_four_gates_gameplay.gd` — 28 checks, 0 failures,
   confirming the city is unaffected by the client changes.
+
+## 1.0.2 — plaza grounding and coplanar paving
+
+Reported from a client screenshot of the plaza: the benches float, and the
+paving is shot through with shimmering stripes.
+
+**Cause — floating dressing.** `build_plaza()` hung every prop off a literal
+`PLATEAU_Y + 0.96` (benches off `PLATEAU_Y + 1.42`), a datum that matches no
+surface in the map. The paving apron sits at `PLATEAU_Y + 0.06` and the raised
+inner terrace at `PLATEAU_Y + 0.48`, so the whole plaza set stood in the air:
+benches by 0.94 m, planters by 0.96 m, statues and lamps by 0.90 m, fountains
+by 0.48 m, and the monument by 0.42 m. Every other prop in the city is placed
+with `self.ground()` and was unaffected, which is why only the plaza showed it.
+
+**Cause — striped paving.** Two independent sets of exactly coplanar faces.
+`plaza_disc()` built its two steps as full-radius cylinders that kept their top
+caps, then laid an overlapping inner disc over each, putting up to four
+identical surfaces at the same height across the middle of the plaza. Separately
+`build_roads()` authored the plaza disc, the three ring roads, the four
+ceremonial avenues and the four diagonal streets all at one height, and the
+avenues ran from `r = 0`, so they paved over the mandala and over each other at
+the centre. A sampled sweep of the walking surfaces found 443 coplanar hits in
+900 probes; the depth test then picked a winner per pixel and the plaza
+shimmered.
+
+**Fix.**
+
+- `plaza_disc()` is now one apron annulus, one capless riser and three abutting
+  terrace annuli (the middle one in `stone_trim`, so the step ring still reads).
+  No two paving faces share a plane. The profile is unchanged — apron at the
+  plateau datum, terrace 0.42 m above it — so nothing else moves.
+- `build_roads()` gives each carriageway class its own datum: radials and
+  diagonals 3 cm under the apron, ring roads 3 cm over them. The avenues now
+  start at `PLAZA_RADIUS - 4`, so the mandala covers their inner ends without a
+  gap and the four of them no longer overlap at the centre.
+- `WorldBuild.plaza_surface(x, z)` returns the real top of the paving — terrace,
+  apron or `ground()` beyond the disc — and the monument, fountains, statues,
+  benches, planters and lamps all stand on it.
+
+### Verified
+
+- Coplanar sweep over the walking surfaces: **443 → 0** overlapping hits in the
+  same 900 probes.
+- Prop grounding audit (mesh base against the highest surface beneath it):
+  benches, fountains, statues and lamps all at **0.00 m**; the four planters
+  that sit on an avenue are 3 cm into the paving, the same convention as every
+  `ground()`-placed prop.
+- `collision.bin` is byte-identical to 1.0.1 — the walk grid is derived from the
+  terrain field, so none of this touches collision or `walkingHeight`.
+- 5,376 fewer unique triangles (189,551 → 184,175); the duplicates were the
+  hidden mandala surfaces.

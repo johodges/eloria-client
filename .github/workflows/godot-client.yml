@@ -44,6 +44,8 @@ jobs:
             --animations godot-client/data/animations/creature.json
       - name: Protocol and reducer fixtures
         run: godot --headless --path godot-client --script res://tests/test_protocol.gd
+      - name: Invasion assistant UI fixtures
+        run: godot --headless --path godot-client --script res://tests/test_invasion_assistant.gd
       - name: World input routing fixtures
         run: godot --headless --path godot-client --script res://tests/test_world_input.gd
       - name: Main scene smoke test

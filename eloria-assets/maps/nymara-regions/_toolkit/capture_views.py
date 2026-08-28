@@ -19,15 +19,28 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import preview
 from amberwood import render as RENDER
-from amberwood import region as REG
-from build_amberwood import build_region
 
 import regionpaths
 
 HERE = Path(__file__).resolve().parent
 PACKAGE = regionpaths.package_root()
 CAPTURES = PACKAGE / "references" / "captures"
-VIEWS = regionpaths.load_region_views(PACKAGE).VIEWS
+_REGION_VIEWS = regionpaths.load_region_views(PACKAGE)
+VIEWS = _REGION_VIEWS.VIEWS
+# The plan and the build script belong to the region, not to the toolkit.
+REG = regionpaths.load_region_plan(PACKAGE)
+build_region = regionpaths.load_region_build(PACKAGE).build_region
+
+# A region may override the capture lighting from its own `views.py`. The
+# presets below are Amberwood's warm afternoon sun, which is wrong for a region
+# under permanent storm - and the captures are the only visual evidence a
+# reviewer has. Two spellings are accepted, a single LIGHTING dict or a pair of
+# DAY_LIGHTING / GOLDEN_LIGHTING constants, because both are in use.
+REGION_LIGHTING = dict(getattr(_REGION_VIEWS, "LIGHTING", {}) or {})
+if getattr(_REGION_VIEWS, "DAY_LIGHTING", None) is not None:
+    REGION_LIGHTING.setdefault("day", _REGION_VIEWS.DAY_LIGHTING)
+if getattr(_REGION_VIEWS, "GOLDEN_LIGHTING", None) is not None:
+    REGION_LIGHTING.setdefault("golden", _REGION_VIEWS.GOLDEN_LIGHTING)
 
 DAY = RENDER.Lighting(sun_direction=(-0.46, 0.50, 0.73),
                       sun_color=(1.22, 0.94, 0.60),
@@ -102,8 +115,7 @@ def _free_camera(scene, terrain, eye, target, fov, minimum=None):
         return sight * 2.0 + open_fraction - probe["near_fraction"] * 0.6
 
     best = (-1.0, tuple(eye))
-    import amberwood.region as _reg
-    scale = _reg.SCALE
+    scale = REG.SCALE
     for back in (0.0, 2.0 * scale, 4.0 * scale, 7.0 * scale, 10.0 * scale,
                  14.0 * scale, 19.0 * scale):
         for lateral in (0.0, -3.0 * scale, 3.0 * scale, -6.0 * scale, 6.0 * scale,
@@ -200,11 +212,12 @@ def main() -> int:
         if eye_h > 40.0:
             eye_h = eye_h * scale
         t0 = time.time()
-        lighting = GOLDEN if mode == "golden" else DAY
+        lighting = REGION_LIGHTING.get(mode, GOLDEN if mode == "golden" else DAY)
         if panel == "aerial":
             # a 576 m region seen from 500 m up is far enough away that the
             # normal ground-level haze would swallow the far half of it
-            lighting = RENDER.Lighting(**{**vars(DAY), "fog_density": 0.00022,
+            base = REGION_LIGHTING.get("day", DAY)
+            lighting = RENDER.Lighting(**{**vars(base), "fog_density": 0.00022,
                                           "fog_height_falloff": 0.0016})
         placed_eye = eye_xz if eye_h > 20.0 else find_clear(eye_xz)
         eye = ground(placed_eye, eye_h)
@@ -227,7 +240,25 @@ def main() -> int:
                       "fieldOfViewDegrees": fov, "lighting": mode})
         print(f"  {name:26} {time.time() - t0:5.1f}s -> {path.name}")
 
-    (out / "index.json").write_text(json.dumps(index, indent=2) + "\n")
+    # Merge rather than overwrite: with --only, writing just the rendered
+    # views silently drops every other entry, and this index is what the
+    # comparison sheets and the Godot capture read.
+    index_path = out / "index.json"
+    if index_path.exists():
+        try:
+            previous = json.loads(index_path.read_text())
+        except (ValueError, OSError):
+            previous = []
+        if isinstance(previous, list):
+            fresh = {entry["id"] for entry in index}
+            order = [view[0] for view in VIEWS]
+            merged = [e for e in previous
+                      if isinstance(e, dict) and e.get("id") not in fresh]
+            merged.extend(index)
+            merged.sort(key=lambda e: order.index(e["id"])
+                        if e.get("id") in order else len(order))
+            index = merged
+    index_path.write_text(json.dumps(index, indent=2) + chr(10))
     return 0
 
 

@@ -15,26 +15,41 @@ from meshlib import Geo
 TAU = math.pi * 2.0
 
 
+# The plaza paving is one apron ring at the plateau datum and one raised
+# terrace inside PLAZA_TERRACE_FRACTION of the radius, joined by a riser.  The
+# builder places the plaza props on these same numbers, so keep them here.
+PLAZA_TERRACE_FRACTION = 0.78
+PLAZA_TERRACE_RISE = 0.42
+PLAZA_TRIM_FRACTIONS = (0.44, 0.48)
+
+
 def plaza_disc(p: Palette, radius: float = 70.0) -> Geo:
-    """Radial paving mandala with stepped rings, as in the plaza reference.
+    """Radial paving mandala with a stepped terrace, as in the plaza reference.
 
     The paving UVs are authored so the concentric-and-spoke pattern maps exactly
     once across the plaza, centred on the monument, instead of tiling.
+
+    Every paving face is a distinct annulus and the riser is capless, so no two
+    surfaces of the mandala are ever coplanar.  Building the steps as capped
+    full-radius cylinders stacked over overlapping inner discs put up to four
+    identical surfaces at the same height and z-fought across the whole plaza.
     """
-    parts = []
-    disc = M.polar_surface(np.linspace(1.5, radius, 30), 128,
-                           lambda X, Z: np.full_like(X, 0.0),
-                           material=p.paving_plaza, uv_scale=1.0)
-    parts.append(disc)
-    for r_in, r_out, rise in ((radius * 0.44, radius * 0.48, 0.42),
-                              (radius * 0.74, radius * 0.78, 0.42)):
-        step = M.cylinder(r_out, rise, 128, p.stone_trim, 3.0, cap_bottom=False)
-        step.scale_uv(1.0 / 3.0, 1.0 / 3.0)
-        parts.append(step)
-        inner = M.polar_surface(np.linspace(0.5, r_in, 8), 128,
-                                lambda X, Z, rise=rise: np.full_like(X, rise),
-                                material=p.paving_plaza, uv_scale=1.0)
-        parts.append(inner)
+    terrace_r = radius * PLAZA_TERRACE_FRACTION
+    trim_in, trim_out = (radius * f for f in PLAZA_TRIM_FRACTIONS)
+    rings = ((1.5, trim_in, p.paving_plaza),
+             (trim_in, trim_out, p.stone_trim),
+             (trim_out, terrace_r, p.paving_plaza))
+    parts = [M.polar_surface(np.linspace(terrace_r, radius, 6), 128,
+                             lambda X, Z: np.full_like(X, 0.0),
+                             material=p.paving_plaza, uv_scale=1.0),
+             M.cylinder(terrace_r, PLAZA_TERRACE_RISE, 128, p.stone_trim, 3.0,
+                        cap_top=False, cap_bottom=False)]
+    for r_in, r_out, material in rings:
+        steps = max(2, int((r_out - r_in) / 3.0) + 2)
+        parts.append(M.polar_surface(
+            np.linspace(r_in, r_out, steps), 128,
+            lambda X, Z: np.full_like(X, PLAZA_TERRACE_RISE),
+            material=material, uv_scale=1.0))
     plaza = Geo.concat(parts)
     # map the mandala once across the disc
     span = radius * 2.02

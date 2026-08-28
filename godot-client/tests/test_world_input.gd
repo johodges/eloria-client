@@ -18,7 +18,7 @@ func _run() -> void:
 	var login_panel: Control = main.get_node("LoginPanel") as Control
 	var new_character: Button = main.get_node("LoginPanel/Content/NewCharacter") as Button
 	var status: Label = main.get_node("LoginPanel/Content/Status") as Label
-	var container: SubViewportContainer = main.get_node("GameView/ViewportContainer") as SubViewportContainer
+	var container: TextureRect = main.get_node("GameView/ViewportContainer") as TextureRect
 	var world_viewport: SubViewport = main.get_node("GameView/ViewportContainer/Viewport") as SubViewport
 	var minimap_viewport: SubViewport = main.get_node("GameView/MapViewport") as SubViewport
 	var full_map_viewport: SubViewport = main.get_node("GameView/FullMapViewport") as SubViewport
@@ -39,9 +39,10 @@ func _run() -> void:
 	root.size = Vector2i(1100, 720)
 	await process_frame
 	main.call("_on_window_size_changed")
-	_expect(world_viewport.size == Vector2i(container.size)
-		and world_viewport.size.x != roundi(float(world_viewport.size.y) * 16.0 / 9.0),
+	_expect(world_viewport.size.x != roundi(float(world_viewport.size.y) * 16.0 / 9.0),
 		"resizing changes the gameplay viewport aspect without stretching 16:9")
+	_expect(world_viewport.size == Vector2i(1100, 720),
+		"the world renders at the window pixel size, not the 1280x720 design canvas")
 	root.size = original_window_size
 	await process_frame
 	_expect(container.mouse_filter == Control.MOUSE_FILTER_STOP,
@@ -844,6 +845,51 @@ func _run() -> void:
 	main.set("_minimap_orientation", "north_up")
 	app_state.set("local_actor_id", previous_local_actor_id)
 	follow_actor.queue_free()
+
+	# The minimap frame holds absolutely positioned children: the map inset by the
+	# compass border, and four cardinal labels that main.gd places on a ring.
+	# A Container parent re-sorts those children over that layout the moment the
+	# frame is shown, so the frame must not be one.
+	_expect(not (minimap_frame is Container),
+		"the minimap frame does not re-sort its absolutely positioned children")
+	minimap_frame.show()
+	for _frame: int in range(3):
+		await process_frame
+	var minimap_border: float = roundf(54.0 * float(main.get("_minimap_scale")))
+	_expect(minimap_image.position.is_equal_approx(Vector2.ONE * minimap_border)
+		and minimap_image.size.is_equal_approx(
+			minimap_frame.size - Vector2.ONE * minimap_border * 2.0),
+		"showing the minimap keeps the map inset inside the compass border")
+	var north_label: Control = main.get_node("GameView/MinimapFrame/North") as Control
+	var east_label: Control = main.get_node("GameView/MinimapFrame/East") as Control
+	_expect(north_label.size.x < minimap_frame.size.x * 0.5
+		and not north_label.position.is_equal_approx(east_label.position),
+		"showing the minimap keeps the cardinal labels on the compass ring")
+	var shown_centre: Vector2 = main.call("_control_to_viewport_position",
+		minimap_image.size * 0.5, minimap_image.size, minimap_viewport.size) as Vector2
+	_expect(shown_centre.is_equal_approx(Vector2(minimap_viewport.size) * 0.5),
+		"a visible minimap still converts clicks into minimap viewport pixels")
+	minimap_frame.hide()
+	await process_frame
+
+	_expect(container.texture == world_viewport.get_texture(),
+		"the gameplay view draws the world render target")
+	root.size = Vector2i(2560, 1440)
+	await process_frame
+	main.call("_on_window_size_changed")
+	_expect(world_viewport.size == Vector2i(2560, 1440),
+		"enlarging the window raises the world render resolution instead of upscaling")
+	main.call("_on_ui_scale_changed", 0.5)
+	await process_frame
+	_expect(is_equal_approx(root.content_scale_factor, 0.5)
+		and container.size.is_equal_approx(Vector2(2560, 1440)),
+		"UI scale trades HUD size for canvas space")
+	_expect(world_viewport.size == Vector2i(2560, 1440),
+		"UI scale leaves the world render resolution at the window pixel size")
+	main.call("_on_ui_scale_changed", 1.0)
+	await process_frame
+	root.size = original_window_size
+	await process_frame
 
 	print("world input tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()

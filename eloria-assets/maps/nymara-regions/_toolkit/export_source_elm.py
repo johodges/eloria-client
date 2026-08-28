@@ -26,7 +26,6 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import regionpaths
-from amberwood import region as REG
 
 HEADER_BYTES = 120
 TILE_SIZE = 6  # height cells per ELM tile, per axis
@@ -57,30 +56,6 @@ def write_elm(path: Path, template: Path, heights: np.ndarray) -> int:
     return len(payload)
 
 
-def load_region_build(package: Path):
-    """Import the region's own build module for its collision encoding.
-
-    The ELM is written from the same collision grid the GLB ships, so this has
-    to come from the region's build script rather than the toolkit.
-    """
-    import importlib.util
-
-    source = regionpaths.region_source(package)
-    candidates = sorted(source.glob("build_*.py"))
-    candidates = [c for c in candidates if c.stem != "build_interiors"]
-    if len(candidates) != 1:
-        raise SystemExit(
-            f"expected exactly one build_*.py in {source}, found "
-            f"{[c.name for c in candidates]}; pass --build-module")
-    sys.path.insert(0, str(source))
-    spec = importlib.util.spec_from_file_location(candidates[0].stem,
-                                                  candidates[0])
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[candidates[0].stem] = module
-    spec.loader.exec_module(module)
-    return module
-
-
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--package", default=None)
@@ -93,7 +68,7 @@ def main() -> int:
     template = (Path(args.template) if args.template
                 else source_elm / f"{package.name}.elm")
 
-    build_module = load_region_build(package)
+    build_module = regionpaths.load_region_build(package)
     COLLISION_HEIGHT_ORIGIN = build_module.COLLISION_HEIGHT_ORIGIN
     COLLISION_HEIGHT_STEP = build_module.COLLISION_HEIGHT_STEP
     build_collision = build_module.build_collision
@@ -104,7 +79,7 @@ def main() -> int:
 
     # the collision grid is half-metre; the ELM height map is one cell per tile
     # sixth, i.e. the same spacing as the server's movement grid
-    cells = REG.SERVER_CELLS
+    cells = regionpaths.load_region_plan(package).SERVER_CELLS
     step = max(1, width // cells)
     heights = grid[::step, ::step][:cells, :cells]
     if heights.shape != (cells, cells):
