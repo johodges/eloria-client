@@ -25,15 +25,22 @@ SHORE = 3
 ROCK = 4
 SCORCHED = 5
 MEADOW = 6
+SNOW = 7
+ICE = 8
+MARBLE = 9
+TURF = 10
 
 SURFACE_NAMES = {
     FOREST: "ForestFloor", PATH: "Trail", PAVING: "Paving", SHORE: "Shore",
     ROCK: "Rock", SCORCHED: "Ash", MEADOW: "Meadow",
+    SNOW: "Snow", ICE: "Ice", MARBLE: "Marble", TURF: "AlpineTurf",
 }
 SURFACE_MATERIALS = {
     FOREST: "forest_floor", PATH: "leaf_path", PAVING: "cobble_paving",
     SHORE: "shore_shingle", ROCK: "cliff_rock", SCORCHED: "scorched_ground",
     MEADOW: "meadow_grass",
+    SNOW: "snow_pack", ICE: "glacier_ice", MARBLE: "veined_marble",
+    TURF: "alpine_turf",
 }
 
 
@@ -345,8 +352,17 @@ class Terrain:
 
     # -- export -----------------------------------------------------------
     def build_meshes(self, uv_scale: float = 0.30,
-                     name_prefix: str = "Terrain_") -> dict[str, M.Mesh]:
-        """One sub-mesh per surface class; shared vertices means no cracks."""
+                     name_prefix: str = "Terrain_",
+                     materials: dict[int, str] | None = None) -> dict[str, M.Mesh]:
+        """One sub-mesh per surface class; shared vertices means no cracks.
+
+        `materials` overrides the surface-class to material mapping for regions
+        whose ground is not Amberwood's. A snow region's PATH is not a leaf
+        path, and the class itself is what the terrain operators speak in.
+        """
+        table = dict(SURFACE_MATERIALS)
+        if materials:
+            table.update(materials)
         out: dict[str, M.Mesh] = {}
         for surface_id, label in SURFACE_NAMES.items():
             cells = self.surface == surface_id
@@ -360,7 +376,7 @@ class Terrain:
             vertex_mask[1:, 1:] |= cells[:-1, :-1]
             piece = M.heightfield(self.height, self.x0, self.z0, self.cell,
                                   uv_scale=uv_scale,
-                                  material=SURFACE_MATERIALS[surface_id],
+                                  material=table[surface_id],
                                   mask=vertex_mask)
             piece = _compact(piece)
             if piece.triangle_count == 0:

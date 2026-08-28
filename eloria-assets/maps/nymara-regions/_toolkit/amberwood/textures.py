@@ -392,7 +392,7 @@ def carved_wood(size: int = 512, seed: int = 29) -> TextureSet:
     occlusion = np.clip(0.6 - carve * 0.45, 0.0, 1.0)
     roughness = np.clip(0.7 + carve * 0.12, 0.0, 1.0)
     return TextureSet("carved_wood", _u8(color), pack_orm(occlusion, roughness),
-                      normal_from_height(height, 3.4))
+                      normal_from_height(height, 2.2))
 
 
 def shingles(size: int = 512, seed: int = 37, rows: int = 12) -> TextureSet:
@@ -646,6 +646,10 @@ def water_surface(size: int = 512, seed: int = 89, tone: str = "sea") -> Texture
     elif tone == "pool":
         stops = ((0.0, (0.030, 0.128, 0.132)), (0.55, (0.062, 0.212, 0.204)),
                  (1.0, (0.132, 0.300, 0.276)))
+    elif tone == "lake":
+        # Mirrorhold's glacier-fed water: rock flour makes it opaque turquoise
+        stops = ((0.0, (0.026, 0.156, 0.190)), (0.55, (0.068, 0.324, 0.356)),
+                 (1.0, (0.180, 0.520, 0.532)))
     else:  # fast stream
         stops = ((0.0, (0.078, 0.176, 0.190)), (0.55, (0.148, 0.276, 0.286)),
                  (1.0, (0.320, 0.420, 0.418)))
@@ -998,3 +1002,217 @@ def canvas_awning(size: int = 256, seed: int = 139) -> TextureSet:
     roughness = np.full((size, size), 0.90)
     return TextureSet("canvas_awning", _u8(np.clip(color, 0, 1)),
                       pack_orm(occlusion, roughness), normal_from_height(weave * 0.4, 1.2))
+
+
+# --------------------------------------------------------------------------
+# Mirrorhold: alpine stone, ice and the blue crystal the region is named for
+# --------------------------------------------------------------------------
+
+def snow_pack(size: int = 512, seed: int = 401) -> TextureSet:
+    """Wind-packed snow: sastrugi ripples, a crust that catches light, blue shade."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    # sastrugi run with the prevailing wind, so the ripple is strongly anisotropic
+    drift = (N.tileable_value_noise(gx * 3.0, gy * 14.0, 3, 14, seed)
+             + 0.45 * N.tileable_value_noise(gx * 7.0, gy * 29.0, 7, 29, seed + 3))
+    drift /= 1.45
+    grain = N.tileable_fbm(size, 22, 4, seed=seed + 7)
+    height = np.clip(drift * 0.78 + grain * 0.22, 0.0, 1.0)
+
+    # snow is almost white; what reads is the shadow colour, which is blue
+    color = _colorize(height, (0.0, (0.560, 0.610, 0.700)),
+                      (0.45, (0.760, 0.800, 0.860)),
+                      (0.78, (0.880, 0.906, 0.940)),
+                      (1.0, (0.950, 0.962, 0.975)))
+    sparkle = np.clip(_upsample(N.tileable_worley(min(size, 256), 46, seed=seed + 11), size)
+                      * 2.4 - 1.7, 0.0, 1.0)
+    color = _mix(color, np.array([1.0, 1.0, 1.0]), sparkle * 0.55)
+    occlusion = np.clip(0.44 + height * 0.56, 0.0, 1.0)
+    roughness = np.clip(0.74 - sparkle * 0.34 - height * 0.10, 0.05, 1.0)
+    return TextureSet("snow_pack", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.6))
+
+
+def glacier_ice(size: int = 512, seed: int = 409) -> TextureSet:
+    """Glacier ice: compressed blue banding, crevasse fracture, meltwater polish."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    warp = (N.tileable_fbm(size, 3, 4, seed=seed + 5) - 0.5) * 1.6
+    banding = gy * 9.0 + warp * 2.4
+    band = banding - np.floor(banding)
+    # dense old ice reads as a deep blue band between paler bubble-rich layers
+    depth = np.clip(np.sin(band * math.pi) ** 1.6, 0.0, 1.0)
+    bubbles = N.tileable_fbm(size, 18, 4, seed=seed + 9)
+
+    fracture_near = _upsample(N.tileable_worley(min(size, 256), 6, seed=seed + 13), size)
+    fracture_far = _upsample(N.tileable_worley(min(size, 256), 6, seed=seed + 13, order=1), size)
+    # a few hairline crevasses, not a cell net: bias hard toward 1 and keep
+    # only the deepest seams
+    fracture = np.clip((fracture_far - fracture_near) * 90.0, 0.0, 1.0)
+    seam = np.clip(1.0 - fracture, 0.0, 1.0) ** 2.2
+
+    height = np.clip(0.46 + depth * 0.12 + bubbles * 0.16 - seam * 0.30, 0.0, 1.0)
+    color = _colorize(np.clip(depth * 0.55 + bubbles * 0.45, 0, 1),
+                      (0.0, (0.788, 0.856, 0.884)), (0.45, (0.618, 0.744, 0.804)),
+                      (0.78, (0.442, 0.616, 0.712)), (1.0, (0.310, 0.512, 0.628)))
+    color = _mix(color, np.array([0.868, 0.918, 0.940]), seam * 0.30)
+    rime = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 19) * 2.1 - 1.25, 0.0, 1.0)
+    color = _mix(color, np.array([0.930, 0.950, 0.965]), rime * 0.50)
+    occlusion = np.clip(0.34 + height * 0.66, 0.0, 1.0)
+    roughness = np.clip(0.34 + rime * 0.40 - depth * 0.08, 0.05, 1.0)
+    return TextureSet("glacier_ice", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 3.4))
+
+
+def blue_crystal(size: int = 256, seed: int = 419) -> TextureSet:
+    """The lens glass: a cool internally-lit blue with facet planes."""
+    swirl = N.tileable_fbm(size, 3, 5, seed=seed)
+    facet_near = _upsample(N.tileable_worley(min(size, 192), 5, seed=seed + 3), size)
+    facet_far = _upsample(N.tileable_worley(min(size, 192), 5, seed=seed + 3, order=1), size)
+    facet = np.clip((facet_far - facet_near) * 5.0, 0.0, 1.0) ** 0.55
+    body = np.clip(swirl * 0.6 + facet * 0.4, 0, 1)
+    color = _colorize(body, (0.0, (0.020, 0.098, 0.190)), (0.45, (0.055, 0.230, 0.400)),
+                      (0.8, (0.130, 0.420, 0.640)), (1.0, (0.300, 0.640, 0.850)))
+    height = np.clip(facet * 0.7 + swirl * 0.3, 0.0, 1.0)
+    occlusion = np.full((size, size), 1.0)
+    roughness = np.clip(0.10 + (1.0 - facet) * 0.16, 0.03, 1.0)
+    return TextureSet("blue_crystal", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.0))
+
+
+def veined_marble(size: int = 512, seed: int = 421) -> TextureSet:
+    """Pale blue-grey marble with darker veining: Mirrorhold's civic paving."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    warp = (N.tileable_fbm(size, 4, 5, seed=seed + 3) - 0.5) * 3.2
+    # veins are a thin ridge in a warped coordinate, which is what marble does
+    field = np.sin((gx * 5.0 + gy * 2.2 + warp) * math.pi)
+    vein = np.clip(1.0 - np.abs(field) * 6.0, 0.0, 1.0) ** 1.4
+    vein_fine = np.clip(1.0 - np.abs(np.sin((gx * 13.0 - gy * 6.0 + warp * 1.7)
+                                            * math.pi)) * 12.0, 0.0, 1.0)
+    grain = N.tileable_fbm(size, 20, 4, seed=seed + 11)
+    body = np.clip(0.62 + grain * 0.28, 0, 1)
+    color = _colorize(body, (0.0, (0.480, 0.512, 0.548)), (0.5, (0.640, 0.672, 0.706)),
+                      (1.0, (0.782, 0.806, 0.834)))
+    color = _mix(color, np.array([0.244, 0.286, 0.348]), vein * 0.62)
+    color = _mix(color, np.array([0.352, 0.400, 0.462]), vein_fine * 0.30)
+    height = np.clip(0.55 + grain * 0.20 - vein * 0.16, 0.0, 1.0)
+    occlusion = np.clip(0.62 + height * 0.38 - vein * 0.14, 0.0, 1.0)
+    roughness = np.clip(0.34 + grain * 0.16 + vein * 0.10, 0.05, 1.0)
+    return TextureSet("veined_marble", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 1.5))
+
+
+def pale_ashlar(size: int = 512, seed: int = 431, courses: int = 6) -> TextureSet:
+    """Mirrorhold's masonry: cold grey granite ashlar, snow-bleached, lichened."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    row = gy * courses
+    row_index = np.floor(row)
+    row_fraction = row - row_index
+    blocks = courses * 2
+    offset = (row_index % 2) * 0.5
+    col = gx * blocks + offset
+    col_index = np.floor(col)
+    col_fraction = col - col_index
+
+    rng = np.random.default_rng(seed)
+    per_block = rng.uniform(0.0, 1.0, size=(courses + 1, blocks + 1))
+    block_value = per_block[row_index.astype(int) % (courses + 1),
+                            col_index.astype(int) % (blocks + 1)]
+
+    mortar_x = np.clip(np.minimum(col_fraction, 1.0 - col_fraction) * 30.0, 0.0, 1.0)
+    mortar_y = np.clip(np.minimum(row_fraction, 1.0 - row_fraction) * 26.0, 0.0, 1.0)
+    mortar = np.minimum(mortar_x, mortar_y)
+
+    grit = N.tileable_fbm(size, 12, 5, seed=seed + 2)
+    chips = np.clip(_upsample(N.tileable_worley(min(size, 256), 26, seed=seed + 8), size)
+                    * 1.7 - 1.0, 0.0, 1.0)
+    height = np.clip(mortar * (0.66 + block_value * 0.20) + grit * 0.13 - chips * 0.20,
+                     0.0, 1.0)
+
+    tone = np.clip(0.40 + block_value * 0.42 + grit * 0.18, 0, 1)
+    color = _colorize(tone, (0.0, (0.196, 0.208, 0.226)), (0.45, (0.318, 0.334, 0.356)),
+                      (0.78, (0.428, 0.446, 0.470)), (1.0, (0.528, 0.544, 0.566)))
+    color = _mix(color, np.array([0.148, 0.156, 0.172]), (1.0 - mortar) * 0.55)
+    # pale lichen in the sheltered courses, and snow caught on upward ledges
+    lichen = np.clip(N.tileable_fbm(size, 9, 4, seed=seed + 17) * 2.2 - 1.35, 0.0, 1.0)
+    color = _mix(color, np.array([0.404, 0.452, 0.376]), lichen * 0.34)
+    snow = np.clip(N.tileable_fbm(size, 6, 3, seed=seed + 23) * 2.0 - 1.30, 0.0, 1.0)
+    snow = snow * np.clip(1.0 - row_fraction * 3.0, 0.0, 1.0)
+    color = _mix(color, np.array([0.870, 0.892, 0.918]), snow * 0.60)
+    occlusion = np.clip(0.30 + height * 0.70, 0.0, 1.0)
+    roughness = np.clip(0.88 - snow * 0.10 + lichen * 0.06, 0.05, 1.0)
+    return TextureSet("pale_ashlar", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 5.0))
+
+
+def gilt_brass(size: int = 256, seed: int = 433) -> TextureSet:
+    """Gilded brass for the domes and the armillary: warm metal, wind-polished."""
+    grain = N.tileable_fbm(size, 20, 4, seed=seed)
+    # broad soft lustre bands, the way a beaten dome catches light - low
+    # frequency, or it reads as corrugated iron
+    sweep = N.tileable_fbm(size, 3, 3, seed=seed + 5)
+    body = np.clip(sweep * 0.74 + grain * 0.26, 0, 1)
+    color = _colorize(body, (0.0, (0.220, 0.148, 0.052)), (0.45, (0.492, 0.352, 0.116)),
+                      (0.8, (0.716, 0.556, 0.212)), (1.0, (0.868, 0.734, 0.372)))
+    # verdigris collects where meltwater sits
+    patina = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 13) * 2.3 - 1.55, 0.0, 1.0)
+    color = _mix(color, np.array([0.204, 0.412, 0.348]), patina * 0.52)
+    height = np.clip(0.5 + grain * 0.18 - patina * 0.14, 0.0, 1.0)
+    occlusion = np.clip(0.66 + height * 0.34, 0.0, 1.0)
+    roughness = np.clip(0.18 + patina * 0.56 + grain * 0.08, 0.04, 1.0)
+    return TextureSet("gilt_brass", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 0.9))
+
+
+def slate_roof(size: int = 512, seed: int = 439, rows: int = 16) -> TextureSet:
+    """Blue-grey slate courses for the cliff-town roofs."""
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    row = gy * rows
+    row_index = np.floor(row)
+    row_fraction = row - row_index
+    per_row_offset = (row_index % 2) * 0.5
+    col = gx * (rows // 2) + per_row_offset
+    col_index = np.floor(col)
+    col_fraction = col - col_index
+
+    rng = np.random.default_rng(seed)
+    tile_value = rng.uniform(0.0, 1.0, size=(rows + 1, rows))[
+        row_index.astype(int) % (rows + 1), col_index.astype(int) % rows]
+
+    lip = np.clip((1.0 - row_fraction) * 7.0, 0.0, 1.0)
+    gap = np.clip(np.minimum(col_fraction, 1.0 - col_fraction) * 34.0, 0.0, 1.0)
+    grain = N.tileable_fbm(size, 24, 4, seed=seed + 3)
+    height = np.clip(0.30 + lip * 0.44 + tile_value * 0.10 + grain * 0.12
+                     - (1.0 - gap) * 0.34, 0.0, 1.0)
+    color = _colorize(np.clip(tile_value * 0.6 + grain * 0.4, 0, 1),
+                      (0.0, (0.062, 0.072, 0.090)), (0.5, (0.116, 0.130, 0.156)),
+                      (1.0, (0.186, 0.202, 0.230)))
+    color = _mix(color, np.array([0.040, 0.046, 0.058]), (1.0 - gap) * 0.60)
+    wet = np.clip(N.tileable_fbm(size, 5, 3, seed=seed + 21) * 1.9 - 1.05, 0.0, 1.0)
+    occlusion = np.clip(0.34 + height * 0.66, 0.0, 1.0)
+    roughness = np.clip(0.82 - wet * 0.36, 0.05, 1.0)
+    return TextureSet("slate_roof", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 4.2))
+
+
+def alpine_turf(size: int = 512, seed: int = 443) -> TextureSet:
+    """Thin high-altitude turf over scree: the ground between the terraces."""
+    loam = N.tileable_fbm(size, 9, 5, seed=seed)
+    turf = N.tileable_fbm(size, 26, 4, seed=seed + 5)
+    scree = np.clip(_upsample(N.tileable_worley(min(size, 256), 22, seed=seed + 9), size)
+                    * 1.8 - 0.95, 0.0, 1.0)
+    body = np.clip(loam * 0.55 + turf * 0.45, 0, 1)
+    color = _colorize(body, (0.0, (0.078, 0.096, 0.062)), (0.4, (0.132, 0.158, 0.092)),
+                      (0.72, (0.186, 0.212, 0.124)), (1.0, (0.244, 0.262, 0.164)))
+    # bare stone comes through wherever the turf thins
+    color = _mix(color, np.array([0.238, 0.238, 0.232]), scree * 0.66)
+    frost = np.clip(N.tileable_fbm(size, 6, 3, seed=seed + 27) * 2.1 - 1.45, 0.0, 1.0)
+    color = _mix(color, np.array([0.760, 0.790, 0.820]), frost * 0.34)
+    height = np.clip(0.40 + turf * 0.34 + scree * 0.22, 0.0, 1.0)
+    occlusion = np.clip(0.40 + height * 0.60, 0.0, 1.0)
+    roughness = np.clip(0.94 - frost * 0.10, 0.05, 1.0)
+    return TextureSet("alpine_turf", _u8(color), pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.8))
