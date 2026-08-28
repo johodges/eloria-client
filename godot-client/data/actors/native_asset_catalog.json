@@ -4,131 +4,211 @@
   "pipeline": "build_native_nymara_glbs.py",
   "races": {
     "luminous_female": {
-      "vertices": 13727,
-      "triangles": 23038,
+      "vertices": 13721,
+      "triangles": 23022,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 1.0,
+      "legChainScale": 1.0,
+      "hipHeight": 0.9318,
+      "groundHeight": 0.0148,
       "path": "godot-client/assets/actors/native/races/luminous_female.glb"
     },
     "luminous_male": {
-      "vertices": 13658,
-      "triangles": 22706,
+      "vertices": 13650,
+      "triangles": 22682,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 1.0,
+      "legChainScale": 1.0,
+      "hipHeight": 0.9491,
+      "groundHeight": 0.0152,
       "path": "godot-client/assets/actors/native/races/luminous_male.glb"
     },
     "votary_female": {
-      "vertices": 14495,
-      "triangles": 24304,
+      "vertices": 14413,
+      "triangles": 24070,
       "joints": 65,
       "feature": "horns",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 1.045,
+      "legChainScale": 0.9632,
+      "hipHeight": 0.9318,
+      "groundHeight": 0.0148,
       "path": "godot-client/assets/actors/native/races/votary_female.glb"
     },
     "votary_male": {
-      "vertices": 13803,
-      "triangles": 22848,
+      "vertices": 14342,
+      "triangles": 23730,
       "joints": 65,
       "feature": "horns",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 1.045,
+      "legChainScale": 0.964,
+      "hipHeight": 0.9491,
+      "groundHeight": 0.0152,
       "path": "godot-client/assets/actors/native/races/votary_male.glb"
     },
     "glasswarden_female": {
-      "vertices": 13895,
-      "triangles": 23214,
+      "vertices": 14191,
+      "triangles": 23690,
       "joints": 65,
       "feature": "crystal",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 0.975,
+      "legChainScale": 1.0044,
+      "hipHeight": 0.9318,
+      "groundHeight": 0.0148,
       "path": "godot-client/assets/actors/native/races/glasswarden_female.glb"
     },
     "glasswarden_male": {
-      "vertices": 13815,
-      "triangles": 22874,
+      "vertices": 14120,
+      "triangles": 23350,
       "joints": 65,
       "feature": "crystal",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 0.975,
+      "legChainScale": 1.0045,
+      "hipHeight": 0.9491,
+      "groundHeight": 0.0152,
       "path": "godot-client/assets/actors/native/races/glasswarden_male.glb"
     },
     "orun_female": {
-      "vertices": 14115,
-      "triangles": 23764,
+      "vertices": 13721,
+      "triangles": 23022,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 1.01,
+      "legChainScale": 1.0021,
+      "hipHeight": 0.9318,
+      "groundHeight": 0.0148,
       "path": "godot-client/assets/actors/native/races/orun_female.glb"
     },
     "orun_male": {
-      "vertices": 13633,
-      "triangles": 22600,
+      "vertices": 13650,
+      "triangles": 22682,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 1.01,
+      "legChainScale": 1.0017,
+      "hipHeight": 0.9491,
+      "groundHeight": 0.0152,
       "path": "godot-client/assets/actors/native/races/orun_male.glb"
     },
     "greyhaven_female": {
-      "vertices": 14262,
-      "triangles": 24010,
+      "vertices": 13721,
+      "triangles": 23022,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 0.99,
+      "legChainScale": 1.0391,
+      "hipHeight": 0.9318,
+      "groundHeight": 0.0148,
       "path": "godot-client/assets/actors/native/races/greyhaven_female.glb"
     },
     "greyhaven_male": {
-      "vertices": 13577,
-      "triangles": 22558,
+      "vertices": 13650,
+      "triangles": 22682,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 0.99,
+      "legChainScale": 1.0384,
+      "hipHeight": 0.9491,
+      "groundHeight": 0.0152,
       "path": "godot-client/assets/actors/native/races/greyhaven_male.glb"
     },
     "ssarathi_female": {
-      "vertices": 14496,
-      "triangles": 24250,
+      "vertices": 15033,
+      "triangles": 24858,
       "joints": 65,
       "feature": "scaled",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 1.02,
+      "legChainScale": 0.9005,
+      "hipHeight": 0.9318,
+      "groundHeight": 0.0148,
       "path": "godot-client/assets/actors/native/races/ssarathi_female.glb"
     },
     "ssarathi_male": {
-      "vertices": 13558,
-      "triangles": 22502,
+      "vertices": 14962,
+      "triangles": 24518,
       "joints": 65,
       "feature": "scaled",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 1.02,
+      "legChainScale": 0.8957,
+      "hipHeight": 0.9491,
+      "groundHeight": 0.0152,
       "path": "godot-client/assets/actors/native/races/ssarathi_male.glb"
     },
     "stoneborn_female": {
-      "vertices": 14471,
-      "triangles": 24268,
+      "vertices": 14765,
+      "triangles": 24510,
       "joints": 65,
       "feature": "stone",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 1.06,
+      "legChainScale": 1.067,
+      "hipHeight": 0.9318,
+      "groundHeight": 0.0148,
       "path": "godot-client/assets/actors/native/races/stoneborn_female.glb"
     },
     "stoneborn_male": {
-      "vertices": 13780,
-      "triangles": 22812,
+      "vertices": 14694,
+      "triangles": 24170,
       "joints": 65,
       "feature": "stone",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 1.06,
+      "legChainScale": 1.0657,
+      "hipHeight": 0.9491,
+      "groundHeight": 0.0152,
       "path": "godot-client/assets/actors/native/races/stoneborn_male.glb"
     },
     "mycelari_female": {
-      "vertices": 14192,
-      "triangles": 23696,
+      "vertices": 15257,
+      "triangles": 24914,
       "joints": 65,
       "feature": "fungal",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 0.995,
+      "legChainScale": 0.9215,
+      "hipHeight": 0.9318,
+      "groundHeight": 0.0148,
       "path": "godot-client/assets/actors/native/races/mycelari_female.glb"
     },
     "mycelari_male": {
-      "vertices": 14125,
-      "triangles": 23370,
+      "vertices": 15186,
+      "triangles": 24574,
       "joints": 65,
       "feature": "fungal",
       "wardrobe": "skinned",
+      "anatomy": "retargeted",
+      "stature": 0.995,
+      "legChainScale": 0.9229,
+      "hipHeight": 0.9491,
+      "groundHeight": 0.0152,
       "path": "godot-client/assets/actors/native/races/mycelari_male.glb"
     }
   },
@@ -1311,705 +1391,9 @@
     }
   },
   "validation": {
-    "files": 123,
+    "files": 126,
     "results": {
-      "godot-client/assets/actors/native/races/mycelari_female.glb": {
-        "nodes": 78,
-        "meshes": 12,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/luminous_male.glb": {
-        "nodes": 77,
-        "meshes": 11,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/votary_female.glb": {
-        "nodes": 78,
-        "meshes": 12,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/ssarathi_female.glb": {
-        "nodes": 78,
-        "meshes": 12,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/stoneborn_male.glb": {
-        "nodes": 78,
-        "meshes": 12,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/glasswarden_male.glb": {
-        "nodes": 78,
-        "meshes": 12,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/votary_male.glb": {
-        "nodes": 78,
-        "meshes": 12,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/greyhaven_female.glb": {
-        "nodes": 77,
-        "meshes": 11,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/luminous_female.glb": {
-        "nodes": 77,
-        "meshes": 11,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/glasswarden_female.glb": {
-        "nodes": 78,
-        "meshes": 12,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/ssarathi_male.glb": {
-        "nodes": 78,
-        "meshes": 12,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/mycelari_male.glb": {
-        "nodes": 78,
-        "meshes": 12,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/orun_male.glb": {
-        "nodes": 77,
-        "meshes": 11,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/greyhaven_male.glb": {
-        "nodes": 77,
-        "meshes": 11,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/orun_female.glb": {
-        "nodes": 77,
-        "meshes": 11,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/races/stoneborn_female.glb": {
-        "nodes": 78,
-        "meshes": 12,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/shared/Universal_Animation_Library.glb": {
-        "nodes": 66,
-        "meshes": 0,
-        "skins": 0,
-        "animations": 162
-      },
-      "godot-client/assets/actors/native/creatures/miretoad.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/porcupine.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/fire_salamander.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/bog_lurker.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/lynx.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/red_fox.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/elk.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/wild_boar.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/giant_rat.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/mossback_boar.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/black_bear.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/saber_tooth_cat.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/armored_rhino.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/giant_komodo.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/ash_crawler.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/moose.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/ridgehorn.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/river_otter.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/lava_hound.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/dire_wolf.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/frost_maw.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/ice_bear.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/desert_tortoise.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/mountain_goat.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/frost_tiger.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/thunder_ram.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/two_tailed_fox.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/snow_hare.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/emberfox.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/sunscale_drake.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/giant_crocodile.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/creatures/raccoon.glb": {
-        "nodes": 22,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 7
-      },
-      "godot-client/assets/actors/native/equipment/votary_ice_sword.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/amberwood_amulet.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/luminous_mace.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/glasswarden_crystal_cape.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/votary_fur_hood.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/votary_winter_legs.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/amberwood_roundshield.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/votary_winter_boots.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/greyhaven_boots.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/amberwood_ranger_legs.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ssarathi_frond_cape.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/glasswarden_helm.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/glasswarden_boots.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/greyhaven_harpoon.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/greyhaven_trousers.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/luminous_casual_boots.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/glasswarden_greaves.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/greyhaven_coat.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/four_gates_guard_cape_native.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/orun_sun_amulet.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/amberwood_ranger_boots.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/maritime_crossbow.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/stoneborn_crown.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/amberwood_ranger_hood.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/greyhaven_storm_cape.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/amberwood_longbow.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/stoneborn_hammer.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/luminous_casual_pants.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/four_gates_guard_spear_native.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/glasswarden_shield.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/luminous_orbit_amulet.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/orun_sun_shield.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/glasswarden_cuirass.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/orun_sunmane_helm.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/orun_sun_spear.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/amberwood_leaf_cape.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ssarathi_scale_cuirass.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/four_gates_guard_shield_native.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ssarathi_crest_helm.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/votary_fur_mantle.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/orun_sun_cuirass.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/luminous_circlet.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/stoneborn_plate.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ssarathi_scale_legs.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ssarathi_shell_amulet.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/greyhaven_anchor_shield.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/amberwood_ranger_cuirass.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ranger_leafblade.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/greyhaven_cutlass.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/luminous_turquoise_robe.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ssarathi_glaive.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/glasswarden_resonator.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/greyhaven_compass.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/orun_rider_boots.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/greyhaven_helm.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ssarathi_shell_shield.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mycelari_mantle.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/orun_rider_cape.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mycelari_cap.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/glasswarden_staff.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/glasswarden_pick.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/orun_rider_legs.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mycelari_staff.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ssarathi_scale_boots.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/hair/buns_male.glb": {
-        "nodes": 1,
-        "meshes": 1,
-        "skins": 0,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/hair/buns_female.glb": {
+      "godot-client/assets/actors/native/hair/buzzed_male.glb": {
         "nodes": 1,
         "meshes": 1,
         "skins": 0,
@@ -2027,7 +1411,19 @@
         "skins": 0,
         "animations": 0
       },
-      "godot-client/assets/actors/native/hair/buzzed_male.glb": {
+      "godot-client/assets/actors/native/hair/long_male.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/buzzed_female.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/hair/buns_female.glb": {
         "nodes": 1,
         "meshes": 1,
         "skins": 0,
@@ -2039,13 +1435,715 @@
         "skins": 0,
         "animations": 0
       },
-      "godot-client/assets/actors/native/hair/long_male.glb": {
+      "godot-client/assets/actors/native/hair/buns_male.glb": {
         "nodes": 1,
         "meshes": 1,
         "skins": 0,
         "animations": 0
       },
-      "godot-client/assets/actors/native/hair/buzzed_female.glb": {
+      "godot-client/assets/actors/native/shared/Universal_Animation_Library.glb": {
+        "nodes": 66,
+        "meshes": 0,
+        "skins": 0,
+        "animations": 162
+      },
+      "godot-client/assets/actors/native/creatures/emberfox.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/frost_tiger.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/two_tailed_fox.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/snow_hare.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/desert_tortoise.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/ash_crawler.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/red_fox.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/sunmane_dun_mare.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/armored_rhino.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/moose.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/bog_lurker.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/lynx.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/saber_tooth_cat.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mossback_boar.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/giant_crocodile.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/raccoon.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/elk.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/miretoad.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/ice_bear.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/dire_wolf.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/giant_komodo.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/thunder_ram.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/sunmane_steppe_horse.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/frost_maw.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/ridgehorn.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/river_otter.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/giant_rat.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/black_bear.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/sunscale_drake.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/lava_hound.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/fire_salamander.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/porcupine.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/sunmane_grey_pony.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/mountain_goat.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/wild_boar.glb": {
+        "nodes": 22,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/races/luminous_female.glb": {
+        "nodes": 77,
+        "meshes": 11,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/mycelari_male.glb": {
+        "nodes": 78,
+        "meshes": 12,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/greyhaven_male.glb": {
+        "nodes": 77,
+        "meshes": 11,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/ssarathi_female.glb": {
+        "nodes": 78,
+        "meshes": 12,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/mycelari_female.glb": {
+        "nodes": 78,
+        "meshes": 12,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/votary_female.glb": {
+        "nodes": 78,
+        "meshes": 12,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/votary_male.glb": {
+        "nodes": 78,
+        "meshes": 12,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/stoneborn_male.glb": {
+        "nodes": 78,
+        "meshes": 12,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/greyhaven_female.glb": {
+        "nodes": 77,
+        "meshes": 11,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/glasswarden_male.glb": {
+        "nodes": 78,
+        "meshes": 12,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/orun_male.glb": {
+        "nodes": 77,
+        "meshes": 11,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/ssarathi_male.glb": {
+        "nodes": 78,
+        "meshes": 12,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/stoneborn_female.glb": {
+        "nodes": 78,
+        "meshes": 12,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/luminous_male.glb": {
+        "nodes": 77,
+        "meshes": 11,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/orun_female.glb": {
+        "nodes": 77,
+        "meshes": 11,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/glasswarden_female.glb": {
+        "nodes": 78,
+        "meshes": 12,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_boots.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_orbit_amulet.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_sun_amulet.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/stoneborn_hammer.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_rider_cape.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/votary_fur_hood.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/amberwood_ranger_cuirass.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/votary_ice_sword.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ssarathi_shell_shield.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/stoneborn_plate.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/four_gates_guard_shield_native.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ssarathi_scale_cuirass.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/amberwood_ranger_hood.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_anchor_shield.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ssarathi_scale_boots.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_rider_boots.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_greaves.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/votary_winter_legs.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/four_gates_guard_spear_native.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_storm_cape.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_harpoon.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/maritime_crossbow.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_helm.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ssarathi_frond_cape.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_cutlass.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_cuirass.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/votary_fur_mantle.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ssarathi_scale_legs.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_staff.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/amberwood_ranger_boots.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/votary_winter_boots.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_crystal_cape.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_pick.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/amberwood_leaf_cape.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/four_gates_guard_cape_native.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_compass.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_resonator.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ranger_leafblade.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/amberwood_amulet.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/amberwood_longbow.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/mycelari_mantle.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_rider_legs.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_sun_cuirass.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_boots.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/mycelari_cap.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_casual_boots.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_coat.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/mycelari_staff.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_casual_pants.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_sun_spear.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_shield.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/amberwood_ranger_legs.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ssarathi_glaive.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_mace.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_helm.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_turquoise_robe.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/amberwood_roundshield.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_circlet.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_sunmane_helm.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ssarathi_crest_helm.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/stoneborn_crown.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ssarathi_shell_amulet.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_trousers.glb": {
+        "nodes": 1,
+        "meshes": 1,
+        "skins": 0,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_sun_shield.glb": {
         "nodes": 1,
         "meshes": 1,
         "skins": 0,
@@ -2093,6 +2191,5 @@
       "region": "sunmane_steppe",
       "note": "Authored to equine proportions on the shared creature rig; the generic creature generator's sphere-and-cylinder blank cannot produce a horse."
     }
-  },
-  "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire."
+  }
 }

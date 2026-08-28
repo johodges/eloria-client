@@ -59,8 +59,20 @@ def material_color(document: dict, binary: bytes, index: int) -> tuple[int, int,
     return tuple(int(255 * value) for value in factor[:3])
 
 
-def render(path: Path, size: int = 480, *, wireframe: bool = True) -> Image.Image:
+def render(path: Path, size: int = 480, *, wireframe: bool = True,
+           yaw: float = 0.) -> Image.Image:
+    """Draw one model.  ``yaw`` turns it about its own vertical axis, in
+    degrees, which is the only way to review anatomy that lives in profile --
+    a digitigrade leg, a tail, or the depth of a chest all vanish head-on."""
     document, binary = read_glb(path)
+    turn = math.radians(yaw)
+    spin_cos, spin_sin = math.cos(turn), math.sin(turn)
+
+    def spin(values: np.ndarray) -> np.ndarray:
+        x = values[..., 0] * spin_cos - values[..., 2] * spin_sin
+        z = values[..., 0] * spin_sin + values[..., 2] * spin_cos
+        return np.stack((x, values[..., 1], z), axis=-1)
+
     triangles = []
     all_positions = []
     for mesh in document.get("meshes", []):
@@ -68,7 +80,8 @@ def render(path: Path, size: int = 480, *, wireframe: bool = True) -> Image.Imag
         if mesh.get("name", "").startswith("Wardrobe_Head_"):
             continue
         for primitive in mesh.get("primitives", []):
-            positions = accessor(document, binary, primitive["attributes"]["POSITION"])
+            positions = spin(accessor(document, binary,
+                                      primitive["attributes"]["POSITION"]))
             indices = accessor(document, binary, primitive["indices"]).reshape(-1, 3)
             color = material_color(document, binary, primitive.get("material", 0))
             all_positions.append(positions)
@@ -112,6 +125,8 @@ def main() -> None:
     parser.add_argument("--columns", type=int, default=4)
     parser.add_argument("--solid", action="store_true",
                         help="omit topology edges for a material/silhouette review")
+    parser.add_argument("--yaw", type=float, default=0.,
+                        help="turn each model about its vertical axis, in degrees")
     args = parser.parse_args()
     columns = max(1, args.columns)
     rows = math.ceil(len(args.models) / columns)
@@ -122,7 +137,8 @@ def main() -> None:
     for index, path in enumerate(args.models):
         x = index % columns * tile
         y = index // columns * (tile + label_height)
-        sheet.paste(render(path, tile, wireframe=not args.solid), (x, y))
+        sheet.paste(render(path, tile, wireframe=not args.solid, yaw=args.yaw),
+                    (x, y))
         label = path.stem.replace("_", " ").title()
         draw.text((x + 10, y + tile + 8), label, fill=(215, 224, 220), font=font)
     args.output.parent.mkdir(parents=True, exist_ok=True)

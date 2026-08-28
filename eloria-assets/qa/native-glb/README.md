@@ -7,25 +7,76 @@ creature generators.
 
 | Library | Coverage | Runtime contract |
 | --- | ---: | --- |
-| Player cultures | 16 race/gender variants | Original 65-joint player rig, skinned default wardrobe, and Universal animation library; 13.5k-14.5k vertices |
+| Player cultures | 16 race/gender variants | Original 65-joint player rig, skinned default wardrobe, and Universal animation library; per-race retargeted anatomy; 13.5k-15.7k vertices |
 | Hairstyles | 8 gender-localized assets | Four original Quaternius styles with authored topology and texture detail |
 | Creatures | 32 species | New 21-joint rig with 7 embedded clips per GLB |
 | Equipment | 66 items across 8 parts | Independent GLBs attached through `BoneAttachment3D` |
 | Concept NPC looks | 62 actor types | Skinned culture wardrobe plus role-specific held and back props |
 
+## Per-race anatomy
+
+The eight races used to be one Quaternius body scaled by three hard width bands
+keyed off absolute height, which pinched at the waist and neck, stretched arms
+lengthwise rather than thickening them, and left every race the same human
+silhouette with a small prop attached. They are now built by retargeting the
+rest pose: `ANATOMY` in the builder gives each race segment lengths, a girth
+scale applied perpendicular to the bone, and a stance, and the mesh follows
+through the same linear blend skinning the renderer uses.
+
+Two invariants keep the one shared animation library usable for all sixteen
+rigs, and `test_native_glb_assets.py` enforces both:
+
+* **Anatomy lives in bone offsets, never in rest rotations.** glTF rotation
+  tracks are absolute, so anything stored in a rest rotation is overwritten the
+  instant a clip plays. Offsets below the pelvis are never animated, so a
+  race's own segment directions survive every clip. Every race rig therefore
+  ships the same rest rotations as the Luminous reference and differs only in
+  translation.
+* **Hip and ground heights are identical across races.** The clips write pelvis
+  translation directly, so a longer leg cannot raise the hips; it would push
+  the feet through the floor. The leg chain is rescaled by a solved factor that
+  restores the reference ground contact, and overall stature is carried by the
+  model registry's import scale instead. Sampling real Idle, Walk, Run and
+  Crouch clips on the retargeted rigs keeps every race's toe contact inside the
+  same +/-0.02 m band the unmodified reference already had.
+
+What that buys per race:
+
+* **Ssarathi** are reptilian rather than humans in scale paint: a digitigrade
+  leg solved so the ankle stands 0.23 m clear of the ground on a long
+  metatarsal with flat toes, a longer forward-carried neck, a joined muzzle and
+  jaw, a dorsal crest running from brow to mid-back, claws placed from the rig
+  on all ten fingers and both feet, and a tapered scuted tail shared between the
+  pelvis and lower spine so it tracks the hips instead of swinging as one board.
+* **Stoneborn** carry mineral mass: thicker everywhere, a short neck sunk
+  between raised shoulders, a wide stance, a sternum slab, banded pauldrons and
+  forearm bracers that follow the limb, thigh plates, and crystal seams.
+* **Mycelari** grow rather than build muscle: thin stipe limbs, a narrow chest,
+  longer legs, a small skull, and a true parasol with a gilled underside, an
+  annulus collar and layered shoulder brackets.
+* **Votary** are tall, long-limbed and lean with a heavy neck and loaded
+  calves; **Greyhaven** are stocky and broad through shoulders and forearms;
+  **Orun** have a deep chest, heavy thighs and a rider's bowed legs;
+  **Glasswarden** are shorter and lighter with the head carried forward. The
+  **Luminous** body is the untouched reference every other race is described
+  against.
+
+Garment cuts are selected on the source body rather than the retargeted one, so
+a hem cannot wander when a race changes proportions.
+
 The palettes and integrated silhouette features were reviewed against the named
 Nymara character, armor, wildlife, guardian, and regional creature sheets. The
 human culture defaults retain the concept sheets' natural skin range instead of
-using culture accent colors as skin. Glasswardens use compact lens gear;
-Ssarathi use a joined muzzle, dorsal crest, and tail; Stoneborn mass is
-concentrated in shallow shoulder and sternum plates; and Mycelari caps use
-layered, surface-rooted growths.
+using culture accent colors as skin.
 
 The software contact sheets provide a dependency-free review surface, while the
 Godot rendered-character test drives the real creation menu and rejects rigid
 default equipment, missing native hair, and oversized placeholder geometry.
 `races.png` exposes topology edges; `races-solid.png` provides the companion
-material and silhouette review without wireframe noise.
+material and silhouette review without wireframe noise; `races-profile.png`
+turns every model 90 degrees, which is the only view that shows a digitigrade
+leg, a tail, or the depth of a chest; and `races-before-after.png` puts the
+previous develop bodies beside the retargeted ones in both views.
 
 Regenerate and validate with:
 
@@ -38,6 +89,9 @@ python3 eloria-assets/tools/render_native_glb_preview.py \
 python3 eloria-assets/tools/render_native_glb_preview.py \
   godot-client/assets/actors/native/races/*.glb --solid \
   --output eloria-assets/qa/native-glb/races-solid.png --columns 4
+python3 eloria-assets/tools/render_native_glb_preview.py \
+  godot-client/assets/actors/native/races/*.glb --solid --yaw 90 \
+  --output eloria-assets/qa/native-glb/races-profile.png --columns 4
 godot --path godot-client --script \
   res://tests/integration/rendered_character_creation_models.gd
 ```
