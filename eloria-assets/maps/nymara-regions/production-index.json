@@ -23,26 +23,37 @@
     {
       "id": "crownwater",
       "title": "Crownwater",
-      "sourceSha256": "6a82698d2eb23908aa960b317731ee50b90f0943d4867542f12b679894a1f2ca",
+      "sourceSha256": "c5aa45c1c0ffc1386b7e9ee187c0f44af90f9d1d967fcddbab45c2622a297db8",
       "conceptViews": 10,
-      "landmarkInstances": 65,
+      "landmarkInstances": 10,
       "terrainHeightRange": [
-        0.0,
-        0.0
+        -16.39,
+        18.09
       ],
-      "water": true
+      "water": true,
+      "status": "production-geometry-materials-population",
+      "glbBytes": 23446984,
+      "instancedTriangles": 1273378,
+      "serverCells": 576,
+      "extentMetres": 576
     },
     {
       "id": "whitehorn_range",
       "title": "Whitehorn Range",
       "sourceSha256": "f6990070514b07b759a9f56fd2387899161f5b055b855434ccfb87f555d21600",
       "conceptViews": 10,
-      "landmarkInstances": 47,
+      "landmarkInstances": 14,
       "terrainHeightRange": [
-        0.0,
-        0.0
+        -37.75,
+        180.07
       ],
-      "water": false
+      "water": false,
+      "status": "production-geometry-materials-population",
+      "serverCells": 576,
+      "requiresServerMap": "96x96 ELM tiles (576 cells)",
+      "uniqueTriangles": 228142,
+      "instancedTriangles": 681510,
+      "glbBytes": 11881000
     },
     {
       "id": "amethyst_barrens",

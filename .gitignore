@@ -7,6 +7,10 @@ godot-client/**/*.import
 godot-client/**/*.uid
 godot-client/assets/actors/native/races/* *.png
 godot-client/assets/actors/native/hair/* *.png
+# Godot's glTF importer writes every embedded texture back out beside the GLB.
+# They are build output, not source, and the GLB already carries them.
+godot-client/assets/actors/native/equipment/*.png
+godot-client/assets/actors/native/creatures/*.png
 .deps/
 make.conf
 el.linux.bin
