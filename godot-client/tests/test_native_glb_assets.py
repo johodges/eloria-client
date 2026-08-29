@@ -101,7 +101,12 @@ class NativeGlbAssetsTest(unittest.TestCase):
         import creature_roster
         self.assertEqual(32 + len(creature_roster.ROSTER),
                          len(self.catalog["creatures"]))
-        self.assertEqual(66, len(self.catalog["equipment"]))
+        # 66 culture and guard pieces, plus the rebuilt legwear set.  Derived
+        # from the roster for the same reason the creature count is: a literal
+        # here goes stale the moment a second generator adds to the catalogue.
+        import legwear_roster
+        self.assertEqual(66 + len(legwear_roster.ROSTER),
+                         len(self.catalog["equipment"]))
         # The generic tier claims the legacy visual-id space with one authored
         # mesh per material ladder rather than one per id.
         self.assertEqual(43, len(self.catalog["genericEquipment"]))
@@ -601,7 +606,8 @@ class NativeGlbAssetsTest(unittest.TestCase):
                         self.assertIn("JOINTS_0", primitive["attributes"])
                         self.assertIn("WEIGHTS_0", primitive["attributes"])
                 checked += 1
-        self.assertEqual(47, checked)
+        import legwear_roster
+        self.assertEqual(47 + len(legwear_roster.ROSTER), checked)
 
     def test_equipment_hides_name_real_body_surfaces(self) -> None:
         """A hide that names nothing would silently fail to cover anything."""
