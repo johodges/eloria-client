@@ -1,0 +1,29 @@
+keys,en
+ELORIA_SETTINGS_TITLE,Settings
+ELORIA_SETTINGS_CLOSE,Close
+ELORIA_SETTINGS_GRAPHICS,Graphics
+ELORIA_SETTINGS_CAMERA,Camera
+ELORIA_SETTINGS_GAMEPLAY,Gameplay
+ELORIA_SETTINGS_CONTROLS,Controls
+ELORIA_SETTINGS_SHADOWS,Directional shadows
+ELORIA_SETTINGS_PARTICLES,Spell and world effects
+ELORIA_SETTINGS_NAMEPLATES,Names above other players
+ELORIA_SETTINGS_ROTATION,Rotation sensitivity
+ELORIA_SETTINGS_PAN,Pan sensitivity
+ELORIA_SETTINGS_FOLLOW,Keep the camera on the player
+ELORIA_SETTINGS_SERVER_HINT,These are the server's settings. Choosing one sends the command; the server decides.
+ELORIA_SETTINGS_TARGET_STRONG,Target the strongest attacker
+ELORIA_SETTINGS_TARGET_WEAK,Target the weakest attacker
+ELORIA_SETTINGS_AUTOGATHER,Toggle automatic drop collection
+ELORIA_SETTINGS_CAPTURE,"Press a key for {action}, or Escape to keep it."
+ELORIA_SETTINGS_UNBOUND,unbound
+ELORIA_SIGILS_TITLE,Sigils
+ELORIA_SIGILS_COUNT,{owned} of {total} sigils
+ELORIA_SIGILS_FOR,"Sigils for: {spells}"
+ELORIA_SIGILS_NOTHING,nothing yet
+ELORIA_SIGILS_NEEDED,Still needed:
+ELORIA_PLAYER_INFO_NONE,No achievements earned yet.
+ELORIA_QUEST_NONE,No active quests.
+ELORIA_QUEST_READY,Ready to turn in.
+ELORIA_SCREENSHOT_SAVED,Screenshot saved to {path}
+ELORIA_SCREENSHOT_FAILED,Screenshot could not be saved: {reason}

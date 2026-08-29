@@ -1986,6 +1986,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			_cast_spell_slot(spell_slot)
 			get_viewport().set_input_as_handled()
 			return
+	if event.is_action_pressed("screenshot"):
+		_save_screenshot()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("attack_selected"):
 		_attack_selected_actor()
 		get_viewport().set_input_as_handled()
@@ -4378,6 +4382,29 @@ func _sync_spell_power_controls() -> void:
 	spell_power_value.text = "P%d" % requested_spell_power
 	spell_power_down.disabled = requested_spell_power <= 1
 	spell_power_up.disabled = requested_spell_power >= ceiling
+
+## Saves what is on screen. The legacy client bound this to a dedicated key
+## and so does this one; the file goes to the user directory, because a client
+## may be installed somewhere it cannot write.
+func _save_screenshot() -> String:
+	var image: Image = get_viewport().get_texture().get_image()
+	if image == null:
+		AppState.append_local_line(tr("ELORIA_SCREENSHOT_FAILED").format(
+			{"reason": "there is nothing rendered yet"}))
+		return ""
+	var directory := "user://screenshots"
+	DirAccess.make_dir_recursive_absolute(directory)
+	var path: String = "%s/eloria-%s.png" % [directory,
+		Time.get_datetime_string_from_system(false, true).replace(":", "-")]
+	var error: Error = image.save_png(path)
+	if error != OK:
+		AppState.append_local_line(tr("ELORIA_SCREENSHOT_FAILED").format(
+			{"reason": error_string(error)}))
+		return ""
+	AppState.append_local_line(tr("ELORIA_SCREENSHOT_SAVED").format(
+		{"path": ProjectSettings.globalize_path(path)}))
+	audio_director.play("ui_click")
+	return path
 
 ## A client setting the player changed. Everything under Graphics and Camera
 ## is about this machine; everything under Gameplay is a command the server
