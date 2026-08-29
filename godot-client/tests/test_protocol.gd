@@ -29,6 +29,7 @@ func _init() -> void:
 	# Nothing may be advertised whose packet this client does not decode.
 	var decoded_extensions: Dictionary = {
 		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED,
+		"almanac_v1": EloriaProtocol.ServerMessage.ELORIA_ALMANAC_STATE,
 		"combat_hud_v1": EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE,
 		"inventory_window_v1": EloriaProtocol.ServerMessage.ELORIA_INVENTORY_STATE,
 		"item_detail_v1": EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL,
@@ -58,7 +59,8 @@ func _init() -> void:
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
-		EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE: "00"}
+		EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE: "00",
+		EloriaProtocol.ServerMessage.ELORIA_ALMANAC_STATE: "010101000064004f7264696e61727920446179004e6f7468696e6720697320696e20666f7263652e0000000000"}
 	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
 		_expect(decoded_extensions.has(capability),
 			"advertised capability %s is one this suite knows the client decodes"
@@ -499,6 +501,25 @@ func _init() -> void:
 	_expect(is_equal_approx(transition_resolver.playback_speed_for_action(&"sit"), 2.0)
 		and is_equal_approx(transition_resolver.playback_speed_for_action(&"stand"), 2.0),
 		"sit and stand transitions play at twice speed")
+	# Emote actions the server can name. Each has to reach a distinct clip: two
+	# emotes sharing one would look identical, and an action with no clip is
+	# silently not animated, which is a thing to notice here rather than in
+	# play. An action this client does not know at all is not an error - the
+	# emote's words still arrive - but every one it claims must resolve.
+	var emote_actions: Array[String] = []
+	var emote_clips: Dictionary = {}
+	for action: Variant in (animation_data.get("actions", {}) as Dictionary):
+		if str(action).begins_with("emote_"):
+			emote_actions.append(str(action))
+			emote_clips[str(transition_resolver.clip_for_action(
+				StringName(str(action))))] = true
+	_expect(emote_actions.size() >= 12,
+		"the client knows how to play the server's emotes: %d" % emote_actions.size())
+	_expect(emote_clips.size() == emote_actions.size(),
+		"every emote reaches a clip of its own: %d clips for %d actions"
+			% [emote_clips.size(), emote_actions.size()])
+	_expect(not emote_clips.has(""),
+		"and no emote action falls through to an empty clip")
 	reduced_actor = ActorReducer.apply_command(reduced_actor, 18)
 	_expect(bool(reduced_actor.get("in_combat", false)), "actor enters combat")
 	reduced_actor = ActorReducer.apply_command(reduced_actor, 19)
@@ -713,6 +734,109 @@ func _init() -> void:
 		and active_spell.duration_seconds == 90, "active spell duration fields")
 	_expect(EloriaProtocol.decode_server(19, PackedByteArray([1, 0])).type == "invalid",
 		"malformed inventory snapshot rejected")
+	# Command 238: the almanac. A client that shows the date or the day in
+	# force used to have to read them out of chat lines.
+	var almanac_payload := PackedByteArray([4, 4, 132, 0, 1, 100, 0])
+	almanac_payload.append_array(_nul_bytes("Day of Sun Tzu"))
+	almanac_payload.append_array(_nul_bytes("Attack and defense are doubled."))
+	almanac_payload.append(1)
+	almanac_payload.append_array(_nul_bytes("armor"))
+	almanac_payload.append(1)
+	almanac_payload.append_array(_nul_bytes("attack"))
+	almanac_payload.append_array(PackedByteArray([200, 0]))
+	almanac_payload.append_array(PackedByteArray([1, 0]))
+	almanac_payload.append(0)
+	almanac_payload.append_array(_nul_bytes("Ordinary Day"))
+	almanac_payload.append_array(_nul_bytes("Nothing is in force."))
+	var almanac: Dictionary = EloriaProtocol.decode_server(238, almanac_payload)
+	_expect(almanac.type == "almanac" and almanac.day == 4 and almanac.month == 4
+		and almanac.year == 132 and almanac.kind == "good"
+		and str(almanac.name) == "Day of Sun Tzu"
+		and (almanac.effects as Array) == ["armor"]
+		and is_equal_approx(float((almanac.multipliers as Dictionary)["attack"]), 2.0)
+		and (almanac.catalogue as Array).size() == 1
+		and is_equal_approx(float(almanac.experience_bonus), 1.0),
+		"almanac decodes the date, the day, its effects and the catalogue")
+	_expect(EloriaProtocol.decode_server(238, PackedByteArray([1, 1, 0])).type
+			== "invalid",
+		"a truncated almanac is rejected rather than half-read")
+	var short_catalogue := almanac_payload.slice(0, almanac_payload.size() - 4)
+	_expect(EloriaProtocol.decode_server(238, short_catalogue).type == "invalid",
+		"an almanac whose catalogue is cut short is rejected")
+	var kind_out_of_range := almanac_payload.duplicate()
+	kind_out_of_range[4] = 9
+	_expect(EloriaProtocol.decode_server(238, kind_out_of_range).type == "invalid",
+		"an unknown day kind is rejected rather than indexed past the end")
+
+	# Commands 92, 93 and 94: which quest a piece of dialogue belongs to.
+	_expect(EloriaProtocol.decode_server(92, PackedByteArray([])).type
+			== "quest_dialogue_next",
+		"the quest flag carries nothing and means the next line is one")
+	_expect(EloriaProtocol.decode_server(92, PackedByteArray([1])).type
+			== "invalid",
+		"a quest flag with a payload is rejected")
+	var quest_here: Dictionary = EloriaProtocol.decode_server(93,
+		PackedByteArray([2, 0]))
+	_expect(quest_here.type == "quest_id" and quest_here.quest_id == 2
+		and not bool(quest_here.finished),
+		"a quest id decodes and is not a completion")
+	var quest_done: Dictionary = EloriaProtocol.decode_server(94,
+		PackedByteArray([2, 0]))
+	_expect(quest_done.type == "quest_id" and bool(quest_done.finished),
+		"and the same id on 94 is one")
+	_expect(EloriaProtocol.decode_server(93, PackedByteArray([1])).type
+			== "invalid",
+		"a truncated quest id is rejected")
+	_expect_bytes("quest question fixture",
+		EloriaProtocol.what_quest_is_this_id(2),
+		PackedByteArray([63, 3, 0, 2, 0]))
+
+	# Commands 85 and 87: an arrow going to a place rather than into somebody.
+	# A miss used to be drawn as a shot at the target it missed.
+	var ground_aim: Dictionary = EloriaProtocol.decode_server(85,
+		PackedByteArray([0x5b, 0x00, 0xbc, 0x02, 0xe0, 0x01]))
+	_expect(ground_aim.type == "ground_missile" and not bool(ground_aim.fired)
+		and ground_aim.source_actor_id == 91 and ground_aim.x == 700
+		and ground_aim.y == 480,
+		"aiming at a tile decodes the shooter and the place")
+	var ground_shot: Dictionary = EloriaProtocol.decode_server(87,
+		PackedByteArray([0x5b, 0x00, 0xbc, 0x02, 0xe0, 0x01]))
+	_expect(ground_shot.type == "ground_missile" and bool(ground_shot.fired)
+		and ground_shot.x == 700 and ground_shot.y == 480,
+		"and loosing at a tile decodes the same way, marked as fired")
+	_expect(EloriaProtocol.decode_server(87, PackedByteArray([1, 0, 2, 0])).type
+			== "invalid",
+		"a ground missile of the wrong length is rejected")
+	_expect_bytes("fire at object fixture",
+		EloriaProtocol.fire_missile_at_object(700, 480),
+		PackedByteArray([51, 5, 0, 0xbc, 0x02, 0xe0, 0x01]))
+
+	# Command 89: an actor plays a named animation action. An emote's words are
+	# sent separately, so an action this client has no clip for costs nothing.
+	var animation_payload := PackedByteArray([0x5b, 0x00])
+	animation_payload.append_array(_nul_bytes("emote_bow"))
+	var animation: Dictionary = EloriaProtocol.decode_server(89, animation_payload)
+	_expect(animation.type == "actor_animation" and animation.actor_id == 91
+		and str(animation.action) == "emote_bow",
+		"actor animation decodes the actor and the action it should play")
+	_expect(EloriaProtocol.decode_server(89, PackedByteArray([1, 0])).type
+			== "invalid",
+		"an animation with no action name is rejected")
+	var unterminated := PackedByteArray([1, 0])
+	unterminated.append_array("emote_bow".to_utf8_buffer())
+	_expect(EloriaProtocol.decode_server(89, unterminated).type == "invalid",
+		"an unterminated action name is rejected rather than read past its end")
+	var empty_action := PackedByteArray([1, 0, 0])
+	_expect(EloriaProtocol.decode_server(89, empty_action).type == "invalid",
+		"an empty action name is rejected")
+
+	# The two client commands that had nothing behind them. Both share their
+	# number with a server-to-client command, which the direction tells apart.
+	_expect_bytes("emote fixture", EloriaProtocol.do_emote("bow"),
+		PackedByteArray([70, 5, 0, 0x62, 0x6f, 0x77, 0]))
+	_expect_bytes("item on item fixture", EloriaProtocol.item_on_item(3, 9),
+		PackedByteArray([42, 3, 0, 3, 9]))
+
 	var knowledge_entry_count := 0
 	var knowledge_catalog_file: FileAccess = FileAccess.open(
 		"res://data/knowledge/catalog.json", FileAccess.READ)

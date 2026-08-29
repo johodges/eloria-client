@@ -29,8 +29,8 @@ func _run() -> void:
 	await process_frame
 	_expect(panel.visible, "the button opens it")
 	_expect((window.call("tab_titles") as Array)
-			== ["Help", "Notes", "Links", "Encyclopedia"],
-		"it carries the four pages: %s" % str(window.call("tab_titles")))
+			== ["Help", "Notes", "Links", "Encyclopedia", "Almanac", "Buddies"],
+		"it carries the six pages: %s" % str(window.call("tab_titles")))
 	var rect: Rect2 = panel.get_global_rect()
 	_expect(rect.position.x >= 0.0 and rect.position.y >= 0.0
 		and rect.end.x <= 1280.0 and rect.end.y <= 720.0
@@ -100,6 +100,59 @@ func _run() -> void:
 	_expect(body.text != "" and body.text.length() > 80,
 		"selecting another entry shows its text")
 
+	# The almanac. Everything on the page is what command 238 said; before it
+	# arrives the page says so rather than guessing at today's date.
+	var almanac_text: RichTextLabel = window.get_node(
+		"ReferenceWindow/ReferenceBody/ReferenceTabs/Almanac/AlmanacScroll/AlmanacText"
+		) as RichTextLabel
+	_expect(int(window.call("almanac_day_count")) == 0
+		and almanac_text.text.contains("not sent the almanac"),
+		"before the packet arrives the page says so rather than inventing a date")
+	app_state.call("_on_packet", 238, _almanac_bytes())
+	await process_frame
+	_expect(int(window.call("almanac_day_count")) == 2,
+		"the catalogue the server sent is the one shown: %d"
+			% int(window.call("almanac_day_count")))
+	_expect(almanac_text.text.contains("4 Zartia, Year 132"),
+		"the date is rendered from its numbers: " + almanac_text.text)
+	_expect(almanac_text.text.contains("Day of Sun Tzu")
+		and almanac_text.text.contains("Attack experience x2")
+		and almanac_text.text.contains("Defense experience x2"),
+		"the day in force and its multipliers are stated, not read out of prose")
+	_expect(almanac_text.text.contains("Ordinary Day")
+		and almanac_text.text.contains("Day of Sun Tzu"),
+		"and the whole catalogue is listed under it")
+	_expect(not almanac_text.text.contains("x1.00"),
+		"a bonus of exactly one is not printed as a multiplier")
+
+	# The buddy list. It belongs to the server, which states all of it, so this
+	# page shows what arrived rather than a list the client keeps.
+	var buddy_list: ItemList = window.get_node(
+		"ReferenceWindow/ReferenceBody/ReferenceTabs/Buddies/BuddyList") as ItemList
+	_expect((window.call("buddy_names") as Array).is_empty()
+		and buddy_list.item_count == 1
+		and buddy_list.get_item_text(0).contains("#add_buddy"),
+		"an empty list says how to start one rather than showing nothing")
+	app_state.call("_on_packet", 59, _buddy_bytes(2, "Bo"))
+	app_state.call("_on_packet", 59, _buddy_bytes(2, "Cass"))
+	app_state.call("_on_packet", 59, _buddy_bytes(1, "Cass"))
+	await process_frame
+	_expect((window.call("buddy_names") as Array) == ["Bo", "Cass"],
+		"both names are listed: %s" % str(window.call("buddy_names")))
+	_expect(buddy_list.get_item_text(0).contains("away")
+		and buddy_list.get_item_text(1).contains("here now"),
+		"and each says whether they are here: "
+			+ buddy_list.get_item_text(0) + " / " + buddy_list.get_item_text(1))
+	app_state.call("_on_packet", 59, _buddy_bytes(0, "Cass"))
+	await process_frame
+	_expect(buddy_list.get_item_text(1).contains("away"),
+		"somebody leaving is shown as away rather than removed")
+	app_state.call("_on_packet", 59, _buddy_bytes(3, "Bo"))
+	await process_frame
+	_expect((window.call("buddy_names") as Array) == ["Cass"],
+		"and a name taken off the list is gone: %s"
+			% str(window.call("buddy_names")))
+
 	InputMap.action_erase_events("toggle_inventory")
 	for event: InputEvent in original:
 		InputMap.action_add_event("toggle_inventory", event)
@@ -120,6 +173,38 @@ func _run() -> void:
 	await process_frame
 	quit(failures)
 
+## One almanac payload, built here the way the server builds it: 4 Zartia of
+## year 132, the Day of Sun Tzu in force, and a two-entry catalogue.
+func _almanac_bytes() -> PackedByteArray:
+	var payload := PackedByteArray([4, 4])
+	payload.append_array(_u16(132))
+	payload.append(1)               # kind: good
+	payload.append_array(_u16(100))  # experience bonus x1.00
+	payload.append_array(_nul("Day of Sun Tzu"))
+	payload.append_array(_nul("Attack and defense experience are doubled."))
+	payload.append(0)               # no tagged effects
+	payload.append(2)               # two multipliers
+	payload.append_array(_nul("attack"))
+	payload.append_array(_u16(200))
+	payload.append_array(_nul("defense"))
+	payload.append_array(_u16(200))
+	payload.append_array(_u16(2))   # catalogue of two
+	payload.append(0)
+	payload.append_array(_nul("Ordinary Day"))
+	payload.append_array(_nul("There are no special day effects."))
+	payload.append(1)
+	payload.append_array(_nul("Day of Sun Tzu"))
+	payload.append_array(_nul("Attack and defense experience are doubled."))
+	return payload
+
+func _u16(value: int) -> PackedByteArray:
+	return PackedByteArray([value & 0xFF, (value >> 8) & 0xFF])
+
+func _nul(text: String) -> PackedByteArray:
+	var bytes: PackedByteArray = text.to_utf8_buffer()
+	bytes.append(0)
+	return bytes
+
 func _line(text: String) -> PackedByteArray:
 	var bytes := PackedByteArray([0])
 	bytes.append_array(text.to_utf8_buffer())
@@ -131,3 +216,8 @@ func _expect(value: bool, label: String) -> bool:
 		failures += 1
 		push_error("FAIL: " + label)
 	return value
+
+func _buddy_bytes(event: int, name: String) -> PackedByteArray:
+	var payload := PackedByteArray([event])
+	payload.append_array(_nul(name))
+	return payload
