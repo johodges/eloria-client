@@ -73,6 +73,8 @@ SETT = "westhaven_sett"
 PLANK = "westhaven_quay_plank"
 SHINGLE = "westhaven_tide_shingle"
 TURF = "westhaven_salt_turf"
+DRY_TURF = "westhaven_dry_pasture"
+TRACK = "westhaven_track"
 SEA_ROCK = "westhaven_sea_rock"
 HARBOUR = "westhaven_harbour_water"
 HARBOUR_TEX = "westhaven_harbour_tex"
@@ -226,6 +228,83 @@ def salt_turf(size: int = 512, seed: int = 431) -> T.TextureSet:
     roughness = np.clip(0.96 - bare * 0.06, 0.0, 1.0)
     return T.TextureSet(TURF, _u8(color), T.pack_orm(occlusion, roughness),
                         T.normal_from_height(height, 2.2))
+
+
+def track(size: int = 512, seed: int = 491) -> T.TextureSet:
+    """A country cart track: packed earth, stones, wheel ruts, weedy centre.
+
+    The upland roads used to be surfaced in `westhaven_quay_plank`, because the
+    terrain class the road operator marks is PATH and PATH was pointed at the
+    pier decking. A cart track over open grazing came out planked like a ship's
+    deck, which is visible from the road and absurd from the air. PATH is now
+    this, and the shipyard slipway - the one place decking on the ground was
+    right - is authored as PAVING instead.
+    """
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    grit = N.tileable_fbm(size, 38, 4, seed=seed)
+    clod = N.tileable_fbm(size, 11, 4, seed=seed + 7)
+    stone_near = _upsample(N.tileable_worley(min(size, 256), 30, seed=seed + 13), size)
+    stone_far = _upsample(N.tileable_worley(min(size, 256), 30, seed=seed + 13,
+                                            order=1), size)
+    stones = np.clip(1.0 - stone_near / np.maximum(stone_far, 1e-6), 0.0, 1.0) ** 0.7
+    embedded = np.clip(stones * 1.5 - 0.85, 0.0, 1.0)
+
+    # two wheel ruts with a weedy crown between them, running along the track
+    rut = (np.exp(-((gx - 0.31) * 9.0) ** 2) + np.exp(-((gx - 0.69) * 9.0) ** 2))
+    rut = np.clip(rut, 0.0, 1.0)
+    crown = np.exp(-((gx - 0.5) * 11.0) ** 2)
+
+    height = np.clip(0.52 + clod * 0.22 + embedded * 0.24 + grit * 0.10
+                     - rut * 0.30, 0.0, 1.0)
+    color = _colorize(np.clip(clod * 0.6 + grit * 0.4, 0, 1),
+                      (0.0, (0.126, 0.104, 0.076)), (0.4, (0.186, 0.156, 0.114)),
+                      (0.75, (0.246, 0.212, 0.158)), (1.0, (0.300, 0.264, 0.200)))
+    color = _mix(color, np.array([0.150, 0.124, 0.090]), rut * 0.44)
+    color = _mix(color, np.array([0.212, 0.196, 0.176]), embedded * 0.62)
+    weed = np.clip(N.tileable_fbm(size, 16, 3, seed=seed + 23) * 1.9 - 0.86, 0.0, 1.0)
+    color = _mix(color, np.array([0.116, 0.140, 0.070]), crown * weed * 0.66)
+
+    occlusion = np.clip(0.44 + (1.0 - rut) * 0.40, 0.0, 1.0)
+    roughness = np.full((size, size), 0.98)
+    return T.TextureSet(TRACK, _u8(color), T.pack_orm(occlusion, roughness),
+                        T.normal_from_height(height, 2.6))
+
+
+def dry_pasture(size: int = 512, seed: int = 487) -> T.TextureSet:
+    """Sun-bleached grazing: dry gold and ochre, bare earth, thistle.
+
+    The painting's upland is a patchwork of three or four tones - ochre, olive,
+    dry gold, and the darker green of the tree belts. The build had one salt-turf
+    recipe with noise over the whole of it, which reads uniform from any
+    distance. This is the dry half of that patchwork; `assign_upland_ground`
+    lays the two against each other on a long-wavelength field so the boundary
+    is field-sized rather than noise-sized.
+    """
+    blades = (N.tileable_value_noise(
+        np.linspace(0, 52, size)[None, :].repeat(size, 0),
+        np.linspace(0, 52, size)[:, None].repeat(size, 1), 52, 52, seed) * 0.58
+        + N.tileable_fbm(size, 104, 3, seed=seed + 5) * 0.42)
+    clump = N.tileable_fbm(size, 8, 4, seed=seed + 11)
+    height = np.clip(blades * 0.58 + clump * 0.42, 0.0, 1.0)
+
+    color = _colorize(np.clip(clump * 0.56 + blades * 0.44, 0, 1),
+                      (0.0, (0.146, 0.122, 0.062)), (0.35, (0.216, 0.184, 0.090)),
+                      (0.7, (0.292, 0.252, 0.124)), (1.0, (0.356, 0.318, 0.166)))
+    # bare earth showing through where the grazing is hardest
+    bare = np.clip(N.tileable_fbm(size, 10, 4, seed=seed + 23) * 2.2 - 1.30, 0.0, 1.0)
+    color = _mix(color, np.array([0.176, 0.140, 0.100]), bare * 0.72)
+    # a little surviving green in the hollows
+    green = np.clip(N.tileable_fbm(size, 6, 4, seed=seed + 31) * 1.9 - 1.02, 0.0, 1.0)
+    color = _mix(color, np.array([0.126, 0.152, 0.080]), green * 0.52)
+    thistle = np.clip(N.tileable_fbm(size, 26, 3, seed=seed + 41) * 2.6 - 2.02,
+                      0.0, 1.0)
+    color = _mix(color, np.array([0.204, 0.196, 0.150]), thistle * 0.50)
+
+    occlusion = np.clip(0.46 + clump * 0.48, 0.0, 1.0)
+    roughness = np.clip(0.97 - bare * 0.05, 0.0, 1.0)
+    return T.TextureSet(DRY_TURF, _u8(color), T.pack_orm(occlusion, roughness),
+                        T.normal_from_height(height, 2.0))
 
 
 def sea_rock(size: int = 512, seed: int = 443) -> T.TextureSet:
@@ -422,6 +501,8 @@ TEXTURE_FACTORIES = {
     PLANK: quay_plank,
     SHINGLE: tide_shingle,
     TURF: salt_turf,
+    DRY_TURF: dry_pasture,
+    TRACK: track,
     SEA_ROCK: sea_rock,
     HARBOUR_TEX: harbour_water,
     SURF: surf,
@@ -435,6 +516,8 @@ SPECS_EXTRA = (
     MAT.MaterialSpec(SHINGLE, SHINGLE, roughness=0.66),
     MAT.MaterialSpec(TURF, TURF, roughness=0.98),
     MAT.MaterialSpec(SEA_ROCK, SEA_ROCK, roughness=0.92),
+    MAT.MaterialSpec(DRY_TURF, DRY_TURF, roughness=0.97),
+    MAT.MaterialSpec(TRACK, TRACK, roughness=0.98),
     MAT.MaterialSpec(SAILCLOTH, SAILCLOTH, roughness=0.94, double_sided=True),
     MAT.MaterialSpec(PANTILE, PANTILE, roughness=0.88),
     MAT.MaterialSpec(SURF, SURF, roughness=0.62, alpha_mode="MASK",
@@ -474,8 +557,8 @@ def register(sets: dict) -> dict:
 
 MATERIALS = frozenset({
     # Westhaven's own six
-    SETT, PLANK, SHINGLE, TURF, SEA_ROCK, HARBOUR, SAILCLOTH, PANTILE,
-    BRASS, SURF,
+    SETT, PLANK, SHINGLE, TURF, DRY_TURF, TRACK, SEA_ROCK, HARBOUR,
+    SAILCLOTH, PANTILE, BRASS, SURF,
     # masonry, from the shared kit
     "ashlar", "rubble_stone", "lime_plaster",
     # timber, roofing and metal - a port is built out of these

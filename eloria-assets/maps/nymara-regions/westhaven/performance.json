@@ -1,26 +1,26 @@
 {
-  "nodes": 5248,
-  "meshes": 278,
-  "materials": 25,
-  "images": 68,
-  "textures": 68,
-  "accessors": 1112,
-  "bufferViews": 1180,
-  "uniqueTriangles": 469200,
-  "uniqueVertices": 355594,
-  "glbBytes": 22567704,
-  "instancedTriangles": 1169846,
-  "embeddedTextureBytes": 20208347,
-  "textureMemoryBytesUncompressed": 175374336,
-  "placements": 2652,
+  "nodes": 5250,
+  "meshes": 279,
+  "materials": 27,
+  "images": 74,
+  "textures": 74,
+  "accessors": 1116,
+  "bufferViews": 1190,
+  "uniqueTriangles": 469418,
+  "uniqueVertices": 356459,
+  "glbBytes": 23451316,
+  "instancedTriangles": 1170802,
+  "embeddedTextureBytes": 21059984,
+  "textureMemoryBytesUncompressed": 181665792,
+  "placements": 2653,
   "collision": {
     "width": 1152,
     "height": 1152,
     "cellMetres": 0.5,
-    "walkableCells": 742589,
-    "blockedCells": 584515,
+    "walkableCells": 742630,
+    "blockedCells": 584474,
     "walkableFraction": 0.5596,
-    "elevatedDecks": 28,
+    "elevatedDecks": 29,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nudgedEntries": [
@@ -37,8 +37,8 @@
         "metres": 6.67
       },
       {
-        "id": "crownwater-berth",
-        "metres": 16.41
+        "id": "mirrorhold-berth",
+        "metres": 1.45
       },
       {
         "id": "custom-house-door",
@@ -51,7 +51,7 @@
     ]
   },
   "notes": [
-    "surf cards placed: 719",
+    "surf cards placed: 720",
     "surf breakers placed: 7",
     "jetties placed: 8",
     "city houses placed: 385",
@@ -59,11 +59,11 @@
     "ground dressing placed: 536"
   ],
   "lod2": {
-    "glbBytes": 14250288,
-    "nodes": 3886,
-    "uniqueTriangles": 382924,
-    "instancedTriangles": 980782,
-    "sizeReductionPercent": 36.9,
-    "triangleReductionPercent": 16.2
+    "glbBytes": 14396044,
+    "nodes": 3888,
+    "uniqueTriangles": 383148,
+    "instancedTriangles": 981744,
+    "sizeReductionPercent": 38.6,
+    "triangleReductionPercent": 16.1
   }
 }

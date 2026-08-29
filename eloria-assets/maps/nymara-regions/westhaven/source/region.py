@@ -111,16 +111,18 @@ TERRAIN_CELL = 2.0
 # rather than editing the toolkit - the same reason `havenkit.register` extends
 # the material table in memory instead of appending to `materials.SPECS`.
 TER.SURFACE_MATERIALS[TER.PAVING] = "westhaven_sett"
-TER.SURFACE_MATERIALS[TER.PATH] = "westhaven_quay_plank"
+TER.SURFACE_MATERIALS[TER.PATH] = "westhaven_track"
 TER.SURFACE_MATERIALS[TER.SHORE] = "westhaven_tide_shingle"
-TER.SURFACE_MATERIALS[TER.MEADOW] = "westhaven_salt_turf"
+TER.SURFACE_MATERIALS[TER.MEADOW] = "westhaven_dry_pasture"
 TER.SURFACE_MATERIALS[TER.FOREST] = "westhaven_salt_turf"
 TER.SURFACE_MATERIALS[TER.ROCK] = "westhaven_sea_rock"
 
-# PATH is Westhaven's timber decking - the plank aprons on the piers and the
-# shipyard slipway. It is laid, not grown, so `dither_boundaries` must leave its
-# border crisp the way it leaves paving alone.
-TER.UNDITHERED_SURFACES.add(TER.PATH)
+# PATH is Westhaven's country cart track - the upland roads and the shore track
+# round the east bay. It used to be pointed at the pier decking, which planked
+# every road on the map like a ship's deck; the one place decking on the ground
+# was right is the shipyard slipway, and that is authored as PAVING now. A track
+# is worn, not laid, so it is left out of UNDITHERED_SURFACES and its edge gets
+# to break up like the ground it is worn into.
 
 # --------------------------------------------------------------- levels
 # The five terrace bands of the city, plus the water and the outworks. Authored
@@ -246,7 +248,14 @@ CITY = _poly(_CITY_CELLS)
 _ANCHOR_CELLS: dict[str, tuple[float, float]] = {
     # --- the waterfront, west to east (panels 3, 4, 5, 6, 7, 10)
     "harbour_gate": (0.98, 4.02),      # panel 1: the arched span over the west inlet
-    "west_quay": (0.72, 4.28),         # aerial D0/E0: the big moored ship
+    # On the quay, at 3.40 m. This anchor was at (0.72, 4.28) from the first
+    # build and had been sitting in sixteen metres of water the whole time -
+    # the coast at that v runs through u = 1.11, and everything west of it is
+    # sea. Nothing caught it until the walkable-cell check was added, and even
+    # then the nudge quietly relocated the berth portal 16 m each build rather
+    # than reporting the anchor as wrong. Probed against the built terrain
+    # rather than guessed a second time.
+    "west_quay": (1.34, 4.34),         # aerial D0/E0: the big moored ship
     "custom_house": (1.42, 4.34),
     "fish_market": (2.34, 4.42),       # panel 7: stalls under awnings
     "market_stair": (2.30, 4.18),      # panel 3: the cobbled street and its arch
@@ -638,7 +647,20 @@ def build_terrain(seed: int = 20260829) -> TER.Terrain:
     # to stand on.
     t.height = t.height * (1.0 - basin_ramp) + LEVEL["harbour_floor"] * basin_ramp
 
-    # 7. the lighthouse neck: a low saddle joining Lamp Rock to the east shore,
+    # 7. The west inlet under the harbour gate. Panel 1 is a gate with ships
+    #    passing beneath it, and the build's stood with its feet on dry ground
+    #    at the edge of a bay - a gatehouse rather than a water gate. This cuts
+    #    a short channel north from the harbour through the gate line so there
+    #    is actually water under the arch.
+    #
+    #    The gate's own roadway is a walk surface, so the route west along the
+    #    quay crosses on top of it instead of being severed. Without that the
+    #    west quay becomes an island.
+    t.carve_channel(_route_cells((0.98, 4.74), (0.98, 3.80)),
+                    7.0 * LOCAL, 9.0, bank=1.9, seed=seed + 79,
+                    floor_height=[-4.2, -3.4])
+
+    # 8. the lighthouse neck: a low saddle joining Lamp Rock to the east shore,
     #    high enough to walk and low enough that the surf breaks over it.
     neck = _route_cells(*_LAMP_NECK)
     t.grade_path(neck, 9.0 * LOCAL, heights=[1.6, 2.4], shoulder=2.0,
@@ -710,7 +732,7 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260829) -> None:
     slip = np.asarray([ANCHORS["shipyard"], ANCHORS["shipyard_slip"]],
                       dtype=np.float64)
     t.grade_path(slip, 9.0 * LOCAL, heights=[LEVEL["quay"], LEVEL["slip"]],
-                 shoulder=1.6, surface=TER.PATH, seed=seed + 101, flatten=0.96)
+                 shoulder=1.6, surface=TER.PAVING, seed=seed + 101, flatten=0.96)
 
     # 6. the upland's built places, read from the ground rather than authored,
     #    because out here the ground is the subject and the buildings sit on it.
@@ -733,13 +755,14 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260829) -> None:
 
     t.assign_surface_by_rule(sea_level=SEA_LEVEL)
 
-    # 8. Gullstone and Lamp Rock are bare stone. The slope rule only calls
+    # 9. Gullstone and Lamp Rock are bare stone. The slope rule only calls
     #    ground rock above a gradient of 1.05, so their gentler crowns came out
     #    as salt turf and the two of them read from the air as green pancakes
     #    floating in the sea - which is the opposite of panel 2, where the whole
     #    subject is a lighthouse standing on naked rock. Forced to ROCK here,
     #    with turf left only in the hollows where noise says soil could collect.
     masks = land_masks(t, seed)
+    mainland = masks["mainland"]
     rocks = masks["gullstone"] | masks["lamp_rock"]
     soil = N.fbm(t.gx * 0.030, t.gz * 0.030, octaves=4, seed=seed + 131)
     authored = np.isin(t.surface, sorted(TER.AUTHORED_SURFACES))
@@ -749,10 +772,25 @@ def apply_built_ground(t: TER.Terrain, seed: int = 20260829) -> None:
     t.surface = np.where(rocks & (t.height < SEA_LEVEL + 2.2), TER.SHORE,
                          t.surface)
 
-    # 9. The north-west headland is the same story: a cliff mass, not pasture.
+    # 10. The north-west headland is the same story: a cliff mass, not pasture.
     headland = mainland_headland(t)
     t.surface = np.where(headland & ~authored & (t.height > 30.0)
                          & (soil <= 0.52), TER.ROCK, t.surface)
+
+    # 11. The upland patchwork. FOREST and MEADOW both used to point at the one
+    #     salt-turf recipe, so the whole of the north-east was a single texture
+    #     with noise on it and read uniform from any distance. MEADOW now carries
+    #     a dry, bleached pasture, laid against the turf on a long-wavelength
+    #     field so the boundary between them is field-sized rather than
+    #     noise-sized - which is what the painting's ochre-and-olive patchwork
+    #     actually is. Applied last so it cannot overwrite an authored surface.
+    pasture = N.warped_fbm(t.gx * 0.0042, t.gz * 0.0042, warp=0.7, octaves=3,
+                           seed=seed + 137)
+    grain = N.fbm(t.gx * 0.016, t.gz * 0.016, octaves=3, seed=seed + 139)
+    dry = (pasture * 0.76 + grain * 0.24) > 0.52
+    open_ground = (t.surface == TER.FOREST) & mainland & ~masks["city"]
+    t.surface = np.where(open_ground & dry & (t.height > SEA_LEVEL + 3.0),
+                         TER.MEADOW, t.surface)
 
     t.dither_boundaries(seed=seed + 99, amount=0.5)
 

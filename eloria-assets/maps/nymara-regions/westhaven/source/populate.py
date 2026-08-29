@@ -498,8 +498,11 @@ def populate_waterfront(build, seed: int = 0) -> None:
     node = _place(build, "Landmark_Harbour_Gate", "Harbour_Gate",
                   gx, gz + 6.0, y=REG.SEA_LEVEL, rotation=math.radians(28.0),
                   collides=False, kind="landmark").node
+    # Recorded at its roadway, not at the water it spans: the roadway is a walk
+    # surface, so the grounding ray finds the deck and a landmark logged at the
+    # channel below reads as fourteen metres underground.
     _landmark(build, "harbour-gate", "The Harbour Gate", "gate", node,
-              gx, gz + 6.0, REG.SEA_LEVEL + 3.4)
+              gx, gz + 6.0, REG.SEA_LEVEL + 17.75)
 
     # -- the custom house and the chandlery --------------------------------
     build.add_mesh("Custom_House", HA.town_house(width=9.0, depth=8.0,

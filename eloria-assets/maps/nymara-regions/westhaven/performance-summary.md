@@ -22,24 +22,30 @@ calibration and Amberwood (9.4) is not.
 
 | | `world.glb` | `world-lod2.glb` |
 | --- | --- | --- |
-| file size | 22.57 MB | 14.25 MB |
-| nodes | 5,248 | 4,306 |
-| unique triangles | 469,200 | 383,900 |
-| instanced triangles | 1,169,846 | 980,782 |
+| file size | 23.45 MB | 14.40 MB |
+| nodes | 5,250 | 4,308 |
+| unique triangles | 469,418 | 384,060 |
+| instanced triangles | 1,170,802 | 981,744 |
 | unique meshes | 262 | 250 |
-| materials | 25 | 24 |
+| materials | 27 | 26 |
 | placements | 2,600 | 2,180 |
-| embedded texture bytes | 20.8 MB | 12.9 MB |
+| embedded texture bytes | 21.7 MB | 13.1 MB |
 
 **3.53 instanced triangles per square metre** over the 576 m x 576 m playable
 square. Inside the target, inside the guideline, and just under Mirrorhold's
 3.8 — which is the right neighbourhood for a stone region.
 
-The second pass — surf, seven more towers, eight jetties, seven more hulls, a
-street arch, rope and chain — added 32,000 instanced triangles, 0.1 tris/m².
-Surf is 719 two-triangle cards and seven twelve-triangle breakers: 1,522
-triangles for the single largest improvement in the concept match, which is the
-cheapest thing in this table by a wide margin.
+The second and third passes together — surf, seven more towers, eight jetties,
+seven more hulls, a street arch, rope and chain, full rigging, the gate's
+channel — added 33,000 instanced triangles, 0.1 tris/m². Surf is 719
+two-triangle cards and seven twelve-triangle breakers: 1,522 triangles for the
+single largest improvement in the concept match, which is the cheapest thing in
+this table by a wide margin.
+
+The bytes moved more than the triangles did. Three new texture recipes — surf,
+a dry pasture and a cart track — cost about 1.4 MB between them, which is the
+price of the upland reading as a patchwork instead of one tiled recipe and of
+the roads not being planked.
 
 For calibration against the two regions that bracket the range:
 
@@ -47,7 +53,7 @@ For calibration against the two regions that bracket the range:
 | --- | --- | --- | --- |
 | Amberwood | 3,123,378 | 9.4 | 28.7 MB |
 | Mirrorhold | 1,246,632 | 3.8 | 16.1 MB |
-| **Westhaven** | **1,169,846** | **3.53** | **22.6 MB** |
+| **Westhaven** | **1,170,802** | **3.53** | **23.5 MB** |
 | Four Gates | 4,538 | — | 3.0 MB |
 
 Westhaven is denser in bytes than Mirrorhold at fewer triangles because it
@@ -93,7 +99,7 @@ In the order the guide recommends, cheapest first:
    records Amberwood making at a cost of 2.79 MB, and the build's own
    unreferenced-material warning is what caught it.
 
-Texture bytes dominate: 20.8 MB of the 22.57 MB package is embedded imagery.
+Texture bytes dominate: 21.7 MB of the 23.45 MB package is embedded imagery.
 ORM maps are compacted to 256 px; base colour and normals stay at 512.
 
 ## LOD2

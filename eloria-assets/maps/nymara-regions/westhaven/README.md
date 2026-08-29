@@ -28,8 +28,8 @@ material recipes.
 | extent | 576 m x 576 m, one metre per tile |
 | server map | 96 x 96 ELM tiles, arrival datum at **(174, 250)** |
 | elevation | -18.7 m (sea floor) to +124.8 m (north-east rim) |
-| `world.glb` | 22.6 MB, 5,248 nodes, 469,200 unique / 1,169,846 instanced triangles |
-| `world-lod2.glb` | 14.3 MB, 4,306 nodes, 980,782 instanced triangles |
+| `world.glb` | 23.5 MB, 5,250 nodes, 469,418 unique / 1,170,802 instanced triangles |
+| `world-lod2.glb` | 14.4 MB, 4,308 nodes, 981,744 instanced triangles |
 | density | 3.53 instanced triangles per square metre |
 | collision | 56.0% walkable, 27 elevated decks |
 | population | 29 landmarks, 10 interactives, 39 harvestables, 20 NPC markers, 8 portals, 8 spawns |
