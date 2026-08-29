@@ -42,10 +42,12 @@ func _build_visual() -> void:
 	material.no_depth_test = true
 	# Sized to read on the full map, which covers a whole map at once: a pin
 	# scaled for the gameplay view is a single pixel there.
+	# A full map frames 1600 metres in under a thousand pixels, so 2.6 metres
+	# of pin was a pixel and a half and read as nothing at all.
 	var pin_mesh := CylinderMesh.new()
 	pin_mesh.top_radius = 0.0
-	pin_mesh.bottom_radius = 2.6
-	pin_mesh.height = 2.0
+	pin_mesh.bottom_radius = 9.0
+	pin_mesh.height = 6.0
 	pin_mesh.radial_segments = 4
 	pin_mesh.material = material
 	var pin := MeshInstance3D.new()

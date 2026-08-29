@@ -8,6 +8,9 @@ ELORIA_SETTINGS_CONTROLS,Controls
 ELORIA_SETTINGS_SHADOWS,Directional shadows
 ELORIA_SETTINGS_PARTICLES,Spell and world effects
 ELORIA_SETTINGS_NAMEPLATES,Names above other players
+ELORIA_SETTINGS_COMBAT_HUD,Combat box while fighting
+ELORIA_COMBAT_HUD_PIN,Keep the combat box on screen
+ELORIA_COMBAT_HUD_HIDE,Hide the combat box
 ELORIA_SETTINGS_ROTATION,Rotation sensitivity
 ELORIA_SETTINGS_PAN,Pan sensitivity
 ELORIA_SETTINGS_FOLLOW,Keep the camera on the player

@@ -51,3 +51,6 @@ eloria-assets/maps/*/world.glb.report.json
 # the capture and client-check harnesses; at 172 MB it is over GitHub's file
 # size limit and must never be committed.
 godot-client/Godot_v*.exe
+
+# Generated beside strings.csv by the CSV translation importer.
+godot-client/**/*.translation

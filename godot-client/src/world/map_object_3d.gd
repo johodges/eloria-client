@@ -80,9 +80,11 @@ func _build_visual() -> void:
 	marker_material.albedo_color = _ring_colour()
 	marker_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	marker_material.no_depth_test = true
+	# Sized for the map cameras, not the world: 0.6 metres was a third of a
+	# pixel on the full map.
 	var marker_mesh := CylinderMesh.new()
-	marker_mesh.top_radius = 0.6
-	marker_mesh.bottom_radius = 0.6
+	marker_mesh.top_radius = 4.0
+	marker_mesh.bottom_radius = 4.0
 	marker_mesh.height = 0.08
 	marker_mesh.material = marker_material
 	var map_marker := MeshInstance3D.new()
