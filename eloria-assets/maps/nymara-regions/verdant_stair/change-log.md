@@ -199,20 +199,34 @@ convention the other regions use. See `../interiors/VERDANT_STAIR_INTERIORS.md`
 for the package itself; what follows is what building it found in the region and
 in the shared code.
 
-13. **A walk surface wound the wrong way is invisible to the client, and every
-    validator says it is fine.** Godot builds the navigation layer as concave
-    collision, which is one-sided for raycasts, so a floor whose triangles face
-    down lets the grounding ray straight through. `validate_gltf` is happy - the
-    mesh is well formed. `verify_runtime` agrees with the client that the
-    surface is not there, because it casts against the same one-sided geometry.
-    Only `region_client_check.gd` caught it, as a 0.59 m spawn discrepancy.
+13. **The arrival platform had a pinhole exactly where the player lands, and
+    fixing it introduced a worse bug.** Two defects in sequence, and I first
+    wrote them up as if each were the whole story.
 
-    The cause was `mesh.cylinder` with a radius that tapers *inward*: it winds
-    its cap the other way round, so the waygate's arrival platform had no
-    upward-facing triangle on it at all. Both builds now refuse to ship such a
-    surface - `ensure_walk_faces_up` flips it and says so. The test is "no
-    upward triangle", not "any downward one", because a box floor legitimately
-    has an underside.
+    The waygate's platform was `M.lathe` on a profile ending at radius zero.
+    A lathe's pole is a fan of slivers, `drop_degenerate` removes them on
+    export, and what is left is a hole on the axis — which is precisely where
+    the default spawn stands. The client's grounding ray went through it to the
+    terrain and put the player 0.54 m inside their own platform.
+
+    Nothing caught it. `validate_gltf` was happy, `verify_runtime` cast against
+    the same geometry and agreed the surface was not there, and
+    `region_client_check.gd` passed because the manifest read its spawn height
+    from the terrain too — client and manifest agreeing on the same wrong
+    number. A check that derives the expected value the same way the subject
+    does cannot find this class of defect.
+
+    Replacing the lathe with a capped cylinder then made it worse: `M.cylinder`
+    tapering inward winds its cap the other way round, and Godot's navigation
+    collision is one-sided for raycasts, so the whole platform became invisible
+    to the ray rather than just its centre. Three changes were needed together —
+    the capped cylinder, `ensure_walk_faces_up` refusing to export a walk
+    surface with no upward-facing triangle, and spawn heights taken by casting
+    against the real `Walk_` geometry instead of read off the terrain.
+
+    The default spawn now reads 24.59 in the manifest and grounds at 24.54 in
+    the running client, against 24.05 agreed by both before. A scan of all
+    15,060 walk triangles found the waygate was the only surface affected.
 
 14. **`build_collision` stamps an elevated walk surface as a filled disc.**
     Correct for a bridge deck, wrong for a ring: the cenote's spiral stair
