@@ -98,6 +98,7 @@ var map_light_root: Node3D
 @onready var compass_needle: Line2D = %CompassNeedle
 @onready var compass_face: TextureRect = %CompassFace
 @onready var hud_logo: TextureRect = %HudLogo
+@onready var right_rail: Panel = %RightRail
 @onready var actor_resource_overlay: PanelContainer = %ActorResourceOverlay
 @onready var actor_hud_menu: PanelContainer = %ActorHudMenu
 @onready var overhead_player_name: Label = %OverheadPlayerName
@@ -314,6 +315,7 @@ var _current_map_display_name := "Unknown map"
 var _minimap_scale := 1.0
 var _minimap_orientation := "north_up"
 var _minimap_zoom := MINIMAP_ZOOM_DEFAULT
+var _map_environment: Environment
 var _minimap_dragging := false
 var _minimap_drag_offset := Vector2.ZERO
 var _inventory_scale := 1.0
@@ -496,9 +498,12 @@ const INVENTORY_TOOL_LABELS := {
 ## drags the window. 54 left more empty frame than map; half of it still
 ## grabs comfortably and hands the render the rest.
 const MINIMAP_DRAG_BORDER := 27.0
+## The floor under the ambient light the two map cameras render with, so a
+## minimap at midnight is still a map.
+const MAP_MINIMUM_AMBIENT := 0.9
 ## Breathing room inside each bottom-rail icon button, so the painted frame the
 ## icon carries does not touch its neighbour or the panel border.
-const HUD_ICON_PADDING := 3.0
+const HUD_ICON_PADDING := 6.0
 ## How many metres of ground the minimap camera covers, and the bounds the
 ## scroll wheel moves it between.
 const MINIMAP_ZOOM_DEFAULT := 180.0
@@ -569,6 +574,7 @@ func _ready() -> void:
 	extension_windows = ExtensionWindowsScript.new()
 	game_view.add_child(extension_windows)
 	extension_windows.configure(item_atlas)
+	extension_windows.combat_hud_preference_changed.connect(_save_hud_settings)
 	invasion_assistant_window = InvasionAssistantScript.new()
 	add_child(invasion_assistant_window)
 	invasion_assistant_window.configure_registry(map_registry)
@@ -2785,6 +2791,12 @@ func _load_server_map() -> void:
 	_local_placement_logged = false
 	_current_map_display_name = _friendly_map_name(AppState.current_map)
 	adapter = CoordinateAdapter.new(entry.get("coordinateTransform", {}))
+	# The overlay was handed the placeholder adapter _ready() builds before any
+	# map exists - one metre per tile from a (0, 0) origin - and never heard
+	# about the real one, so every marker projected as though its server tile
+	# were a position in metres. The plaza at (768, 768) drew in the far corner
+	# of the map instead of the middle of it.
+	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
 	for raw_actor_node: Variant in actor_nodes.values():
 		if is_instance_valid(raw_actor_node):
 			(raw_actor_node as Node).queue_free()
@@ -2873,6 +2885,30 @@ func _apply_day_night() -> void:
 		return
 	_day_night_active = DayNightBinder.apply(world_loader.manifest,
 		world_environment, world_sun, AppState.continuous_game_minute())
+	_sync_map_environment()
+
+## The maps are navigation aids, not scenery. Rendered through the world's own
+## environment they went as dark as the world did, and a minimap nobody can
+## read at night is a minimap that only works half the time. Both map cameras
+## get their own copy of the environment with a floor under the ambient, so
+## night still reads as night on them but the streets stay legible.
+func _sync_map_environment() -> void:
+	var source: Environment = world_environment.environment
+	if source == null:
+		for uncovered: Camera3D in [map_camera, full_map_camera]:
+			uncovered.environment = null
+		return
+	if _map_environment == null or _map_environment.sky != source.sky:
+		_map_environment = source.duplicate() as Environment
+	_map_environment.background_mode = source.background_mode
+	_map_environment.sky = source.sky
+	_map_environment.ambient_light_source = source.ambient_light_source
+	_map_environment.ambient_light_color = source.ambient_light_color
+	_map_environment.ambient_light_energy = maxf(
+		source.ambient_light_energy, MAP_MINIMUM_AMBIENT)
+	_map_environment.fog_enabled = false
+	for lit: Camera3D in [map_camera, full_map_camera]:
+		lit.environment = _map_environment
 
 ## The ambience a package declares for itself. Four Gates has named a civic
 ## murmur and its waterfalls since it was authored and nothing played them.
@@ -3453,6 +3489,15 @@ func _load_hud_settings() -> void:
 		_minimap_zoom = clampf(float(config.get_value(
 			"hud", "minimap_zoom", MINIMAP_ZOOM_DEFAULT)),
 			MINIMAP_ZOOM_MIN, MINIMAP_ZOOM_MAX)
+		extension_windows.call("set_combat_hud_enabled",
+			bool(config.get_value("hud", "combat_hud", true)))
+		extension_windows.call("set_combat_hud_pinned",
+			bool(config.get_value("hud", "combat_hud_pinned", false)))
+		var combat_hud_where: Variant = config.get_value(
+			"hud", "combat_hud_position", null)
+		if combat_hud_where is Vector2:
+			extension_windows.call("set_combat_hud_position",
+				combat_hud_where as Vector2)
 		var position_value: Variant = config.get_value(
 			"hud", "minimap_position", Vector2(16.0, 42.0))
 		if position_value is Vector2:
@@ -3537,6 +3582,8 @@ func _load_hud_settings() -> void:
 	minimap_size.set_value_no_signal(_minimap_scale)
 	ui_scale_slider.set_value_no_signal(_ui_scale)
 	show_through_obstacles.set_pressed_no_signal(_show_through_obstacles)
+	settings_window.call("restore_toggle", "combat_hud",
+		bool(extension_windows.get("combat_hud_enabled")))
 	_apply_ui_scale()
 	_apply_minimap_scale()
 	_apply_minimap_zoom()
@@ -3607,6 +3654,12 @@ func _save_hud_settings() -> void:
 	config.set_value("graphics", "shadows", _shadows_enabled)
 	config.set_value("graphics", "particles", _effects_enabled)
 	config.set_value("graphics", "nameplates", _nameplates_enabled)
+	config.set_value("hud", "combat_hud",
+		bool(extension_windows.get("combat_hud_enabled")))
+	config.set_value("hud", "combat_hud_pinned",
+		bool(extension_windows.get("combat_hud_pinned")))
+	config.set_value("hud", "combat_hud_position",
+		extension_windows.call("combat_hud_position"))
 	config.set_value("camera", "rotation_sensitivity",
 		float(camera_rig.rotation_sensitivity))
 	config.set_value("camera", "pan_sensitivity",
@@ -5105,6 +5158,8 @@ func _on_client_setting_changed(section: String, key: String,
 		"nameplates":
 			_nameplates_enabled = bool(value)
 			_apply_banner_options()
+		"combat_hud":
+			extension_windows.call("set_combat_hud_enabled", bool(value))
 		"rotation_sensitivity":
 			camera_rig.rotation_sensitivity = float(value)
 		"pan_sensitivity":
@@ -6356,6 +6411,7 @@ func _apply_eloria_theme() -> void:
 	eloria_theme.set_color("font_color", "Label", Color(0.91, 0.86, 0.70))
 	eloria_theme.set_color("font_color", "Button", Color(0.96, 0.88, 0.66))
 	theme = eloria_theme
+	_style_right_rail(panel)
 	var minimap_panel_style: StyleBoxFlat = panel.duplicate() as StyleBoxFlat
 	minimap_panel_style.set_border_width_all(6)
 	minimap_panel_style.border_color = Color(0.86, 0.64, 0.25, 1.0)
@@ -6392,6 +6448,38 @@ func _apply_eloria_theme() -> void:
 	for row_spec: Array in BANNER_ROWS:
 		_style_banner_meter(_banner_row(str(row_spec[0])).get_node("Bar") as ProgressBar)
 	_style_actor_hud_menu(panel)
+
+## The right rail used to be six separate boxes with gaps between them, so its
+## left edge was six short lines rather than one. One panel now spans the whole
+## height behind them and owns the only border; everything sitting in it is
+## given a flat, marginless box so the rail reads as a single connected bar and
+## the offsets in the scene place content exactly.
+func _style_right_rail(panel: StyleBoxFlat) -> void:
+	var rail_style: StyleBoxFlat = panel.duplicate() as StyleBoxFlat
+	rail_style.set_content_margin_all(4.0)
+	right_rail.add_theme_stylebox_override("panel", rail_style)
+	var seamless: StyleBoxEmpty = StyleBoxEmpty.new()
+	for framed: Control in [$GameView/EloriaLogoFrame as Control,
+			$GameView/SpellQuickbar as Control, $GameView/ItemQuickbar as Control,
+			$GameView/ResourceHud as Control, $GameView/ClockFrame as Control,
+			$GameView/CompassFrame as Control]:
+		framed.add_theme_stylebox_override("panel", seamless)
+	# A rail 62 pixels wide has no room for the theme's 4-pixel button padding
+	# four times over: the power row measured 67 and pushed the whole spell
+	# column back out of the rail it is supposed to sit in.
+	var tight: StyleBoxEmpty = StyleBoxEmpty.new()
+	tight.set_content_margin_all(1.0)
+	for control: Button in [%SigilButton as Button, %SpellPowerDown as Button,
+			%SpellPowerUp as Button]:
+		for state: String in ["normal", "hover", "pressed", "disabled", "focus"]:
+			control.add_theme_stylebox_override(state, tight)
+	# The slot placeholders are "S12" and "8", not labels anyone reads. At the
+	# theme size they filled a 26-pixel cell on their own. Read off the scene
+	# rather than the bound arrays, which are filled after the theme is applied.
+	for column: Node in [quick_slot_container as Node, spell_slot_container as Node]:
+		for slot: Node in column.get_children():
+			if slot is Button:
+				(slot as Button).add_theme_font_size_override("font_size", 9)
 
 ## The overhead bars are not the HUD's bars. Eternal Lands draws only the
 ## filled part and a one-pixel black frame, leaving the world visible through

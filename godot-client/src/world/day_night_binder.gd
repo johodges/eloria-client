@@ -20,16 +20,22 @@ extends RefCounted
 ## hour outside would be wrong.
 
 const MINUTES_PER_DAY := 360.0
-## How far the sun's key light falls at midnight, as a fraction of noon.
-const NIGHT_SUN_ENERGY := 0.06
+## How far the sun's key light falls at midnight, as a fraction of noon. At
+## 0.06 the moon lit nothing and the world read as flat shapes in the dark;
+## this leaves enough of a key for surfaces to keep their form.
+const NIGHT_SUN_ENERGY := 0.18
 ## Ambient never reaches zero: a pitch-black world is unplayable and the
-## legacy client never went there either.
-const NIGHT_AMBIENT_ENERGY := 0.22
-const NIGHT_SUN_COLOUR := Color(0.42, 0.52, 0.78)
+## legacy client never went there either. 0.22 was still too near it to play
+## in - the ground, the walls and the actors all fell into one silhouette.
+const NIGHT_AMBIENT_ENERGY := 0.42
+const NIGHT_SUN_COLOUR := Color(0.46, 0.56, 0.82)
 const DAWN_SUN_COLOUR := Color(1.0, 0.72, 0.46)
-const NIGHT_SKY_TOP := Color(0.05, 0.07, 0.14)
-const NIGHT_SKY_HORIZON := Color(0.12, 0.15, 0.24)
-const NIGHT_FOG := Color(0.10, 0.13, 0.20)
+## The night sky and fog are lifted with the rest: they are most of what the
+## far half of an outdoor scene is made of, so leaving them near black would
+## undo the ambient the ground just gained.
+const NIGHT_SKY_TOP := Color(0.09, 0.12, 0.22)
+const NIGHT_SKY_HORIZON := Color(0.19, 0.23, 0.34)
+const NIGHT_FOG := Color(0.16, 0.20, 0.29)
 ## The sun's arc, in degrees of elevation at noon and below the horizon at
 ## midnight.
 const NOON_ELEVATION := -62.0
