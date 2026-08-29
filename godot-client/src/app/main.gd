@@ -603,6 +603,7 @@ func _ready() -> void:
 	AppState.special_effect_requested.connect(_on_special_effect_requested)
 	AppState.actor_animation_requested.connect(_on_actor_animation_requested)
 	AppState.missile_fired.connect(_on_missile_fired)
+	AppState.ground_missile_fired.connect(_on_ground_missile_fired)
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
 	viewport_container.gui_input.connect(_on_world_gui_input)
@@ -4435,6 +4436,29 @@ func _on_missile_fired(shot: Dictionary) -> void:
 	var missile := MissileFlight3D.new()
 	world_root.add_child(missile)
 	missile.configure(from_value as Vector3, to_value as Vector3)
+	world_effects.append(missile)
+	world_effects = world_effects.filter(func(node: Variant) -> bool:
+		return is_instance_valid(node))
+
+## An arrow on its way to a tile rather than into an actor: a practice shot,
+## or a miss.
+##
+## A miss used to be drawn as a shot at the target it missed, which is the one
+## thing it was not - so every miss looked like a hit. The tile is the server's
+## decision, arriving on the wire, so two clients watching one shot draw the
+## same arrow instead of each inventing a scatter.
+func _on_ground_missile_fired(shot: Dictionary) -> void:
+	if not _effects_enabled:
+		return
+	var from_value: Variant = _actor_effect_position(
+		int(shot.get("source_actor_id", -1)))
+	if not from_value is Vector3:
+		return
+	var landing: Vector3 = adapter.server_to_godot(
+		int(shot.get("x", 0)), int(shot.get("y", 0)))
+	var missile := MissileFlight3D.new()
+	world_root.add_child(missile)
+	missile.configure(from_value as Vector3, landing)
 	world_effects.append(missile)
 	world_effects = world_effects.filter(func(node: Variant) -> bool:
 		return is_instance_valid(node))

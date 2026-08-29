@@ -1851,10 +1851,44 @@ func _run() -> void:
 	shooter = (app_state_inventory.get("actors") as Dictionary).get(91, {}) as Dictionary
 	_expect(int(shooter.get("aiming_at", -1)) == -1,
 		"loosing ends the aim the server stated before it")
+	# An arrow going to a place rather than into somebody: a practice shot, or
+	# a miss. Where it lands is the server's decision arriving on the wire, so
+	# two clients watching one shot draw the same arrow.
+	var before_ground: int = (main.get("world_effects") as Array).size()
+	app_state_inventory.call("_on_packet", 85,
+		PackedByteArray([0x5b, 0, 0x3c, 0, 0x3c, 0]))
+	await process_frame
+	shooter = (app_state_inventory.get("actors") as Dictionary).get(91, {}) as Dictionary
+	_expect(int(shooter.get("aiming_at", 0)) == -1
+		and (shooter.get("aiming_at_tile", Vector2i.ZERO) as Vector2i)
+			== Vector2i(60, 60),
+		"aiming at a place is kept on the shooter and names the tile: %s"
+			% str(shooter.get("aiming_at_tile")))
+	_expect((main.get("world_effects") as Array).size() == before_ground,
+		"and draws no arrow, because nothing has been loosed")
+	app_state_inventory.call("_on_packet", 87,
+		PackedByteArray([0x5b, 0, 0x3c, 0, 0x3c, 0]))
+	await process_frame
+	var ground_effects: Array = main.get("world_effects") as Array
+	_expect(ground_effects.size() == before_ground + 1
+		and ground_effects[ground_effects.size() - 1] is MissileFlight3D,
+		"loosing at a place draws an arrow to it")
+	shooter = (app_state_inventory.get("actors") as Dictionary).get(91, {}) as Dictionary
+	_expect((shooter.get("aiming_at_tile", Vector2i.ZERO) as Vector2i)
+			== Vector2i(-1, -1),
+		"and the aim at that place ends with it")
+	# A shot from an actor the client has never been told about draws nothing.
+	app_state_inventory.call("_on_packet", 87,
+		PackedByteArray([0xff, 0x7f, 0x3c, 0, 0x3c, 0]))
+	await process_frame
+	_expect((main.get("world_effects") as Array).size() == before_ground + 1,
+		"a ground shot from an unknown actor draws nothing")
+
 	# An arrow at an actor the client has never been told about is not guessed.
+	var before_unknown: int = (main.get("world_effects") as Array).size()
 	app_state_inventory.call("_on_packet", 86, PackedByteArray([0x5b, 0, 0xff, 0x7f]))
 	await process_frame
-	_expect((main.get("world_effects") as Array).size() == missiles_before + 1,
+	_expect((main.get("world_effects") as Array).size() == before_unknown,
 		"a shot at an unknown actor draws nothing")
 	app_state_inventory.call("_on_packet", 6, PackedByteArray([0x5b, 0]))
 	app_state_inventory.call("_on_packet", 6, PackedByteArray([0x4d, 0]))

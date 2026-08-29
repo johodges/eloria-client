@@ -768,6 +768,26 @@ func _init() -> void:
 	_expect(EloriaProtocol.decode_server(238, kind_out_of_range).type == "invalid",
 		"an unknown day kind is rejected rather than indexed past the end")
 
+	# Commands 85 and 87: an arrow going to a place rather than into somebody.
+	# A miss used to be drawn as a shot at the target it missed.
+	var ground_aim: Dictionary = EloriaProtocol.decode_server(85,
+		PackedByteArray([0x5b, 0x00, 0xbc, 0x02, 0xe0, 0x01]))
+	_expect(ground_aim.type == "ground_missile" and not bool(ground_aim.fired)
+		and ground_aim.source_actor_id == 91 and ground_aim.x == 700
+		and ground_aim.y == 480,
+		"aiming at a tile decodes the shooter and the place")
+	var ground_shot: Dictionary = EloriaProtocol.decode_server(87,
+		PackedByteArray([0x5b, 0x00, 0xbc, 0x02, 0xe0, 0x01]))
+	_expect(ground_shot.type == "ground_missile" and bool(ground_shot.fired)
+		and ground_shot.x == 700 and ground_shot.y == 480,
+		"and loosing at a tile decodes the same way, marked as fired")
+	_expect(EloriaProtocol.decode_server(87, PackedByteArray([1, 0, 2, 0])).type
+			== "invalid",
+		"a ground missile of the wrong length is rejected")
+	_expect_bytes("fire at object fixture",
+		EloriaProtocol.fire_missile_at_object(700, 480),
+		PackedByteArray([51, 5, 0, 0xbc, 0x02, 0xe0, 0x01]))
+
 	# Command 89: an actor plays a named animation action. An emote's words are
 	# sent separately, so an action this client has no clip for costs nothing.
 	var animation_payload := PackedByteArray([0x5b, 0x00])

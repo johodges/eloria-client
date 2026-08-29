@@ -25,7 +25,7 @@ enum ClientMessage {
 	GET_KNOWLEDGE_INFO = 41,
 	# Client-to-server; 42 and 70 are also server-to-client numbers, the way
 	# the storage commands below share 44-46. The direction tells them apart.
-	ITEM_ON_ITEM = 42, DO_EMOTE = 70,
+	ITEM_ON_ITEM = 42, DO_EMOTE = 70, FIRE_MISSILE_AT_OBJECT = 51,
 	GET_STORAGE_CATEGORY = 44, DEPOSIT_ITEM = 45,
 	WITHDRAW_ITEM = 46, LOOK_AT_STORAGE_ITEM = 47, POPUP_REPLY = 50,
 	PING_RESPONSE = 60, SET_ACTIVE_CHANNEL = 61, LOG_IN = 140,
@@ -54,6 +54,7 @@ enum ServerMessage {
 	PING_REQUEST = 60, SPELL_CAST = 70, GET_ACTIVE_CHANNELS = 71, GET_ACTOR_HEALTH = 73,
 	GET_ITEMS_COOLDOWN = 77, SEND_BUFFS = 78, SEND_SPECIAL_EFFECT = 79,
 	MISSILE_AIM_A_AT_B = 84, MISSILE_FIRE_A_TO_B = 86,
+	MISSILE_AIM_A_AT_XYZ = 85, MISSILE_FIRE_A_TO_XYZ = 87,
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
 	SEND_ACHIEVEMENTS = 95, ADD_NEW_ACTOR_EXTENDED = 247,
 	ELORIA_INVASION_ASSISTANT_STATE = 233,
@@ -173,6 +174,15 @@ static func client_capabilities() -> PackedByteArray:
 ## Ask the server to play an emote. The name rather than a legacy numeric id:
 ## this server has no such id namespace, and mirroring one here would be a
 ## second copy of a list the server owns.
+## Loose an arrow at a place rather than at somebody. The server decides
+## whether the shot is allowed and what it costs.
+static func fire_missile_at_object(x: int, y: int) -> PackedByteArray:
+	var payload := PackedByteArray()
+	payload.resize(4)
+	payload.encode_u16(0, x)
+	payload.encode_u16(2, y)
+	return encode(ClientMessage.FIRE_MISSILE_AT_OBJECT, payload)
+
 static func do_emote(name: String) -> PackedByteArray:
 	var payload: PackedByteArray = name.to_utf8_buffer()
 	payload.append(0)
@@ -628,6 +638,17 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				"fired": command == ServerMessage.MISSILE_FIRE_A_TO_B,
 				"source_actor_id": u16(payload),
 				"target_actor_id": u16(payload, 2)}
+		ServerMessage.MISSILE_AIM_A_AT_XYZ, ServerMessage.MISSILE_FIRE_A_TO_XYZ:
+			# An arrow going to a place rather than into somebody: a practice
+			# shot, or a miss. The server decides where it lands, because the
+			# server decided it was a miss - a client inventing its own
+			# scatter would draw something that never happened.
+			if payload.size() != 6:
+				return {"type": "invalid", "error": "ground_missile_length"}
+			return {"type": "ground_missile",
+				"fired": command == ServerMessage.MISSILE_FIRE_A_TO_XYZ,
+				"source_actor_id": u16(payload),
+				"x": u16(payload, 2), "y": u16(payload, 4)}
 		ServerMessage.SEND_SPECIAL_EFFECT:
 			# Three or five bytes: the effect, the actor it happened to, and a
 			# second actor when the effect travelled between two.

@@ -495,8 +495,20 @@ UTF-8.
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+| 85 | Missile aim at a place | `actor_id:u16 \| x:u16 \| y:u16` |
+| 87 | Missile loosed at a place | `actor_id:u16 \| x:u16 \| y:u16` |
 | 89 | Actor animation | `actor_id:u16 \| action` - an action name, never a clip |
 | 238 | Almanac | `day:u8 \| month:u8 \| year:u16 \| kind:u8 \| experience_bonus:u16 \| name \| description \| effect_count:u8` then that many effect tags, `multiplier_count:u8` then that many `skill \| multiplier:u16`, `catalogue_count:u16` then that many `kind:u8 \| name \| description` |
+
+Commands 85 and 87 draw an arrow going to a place rather than into somebody.
+Two things use them: a practice shot at a tile, sent by the client as
+`FIRE_MISSILE_AT_OBJECT(51)`, and a **miss**. A miss used to be drawn as a shot
+at the target it missed - the shot was broadcast before the hit was rolled, so
+every miss looked exactly like a hit. Where a stray arrow lands is the server's
+decision, computed from the two positions rather than rolled, so two clients
+watching one shot draw the same arrow instead of each inventing a scatter.
+`MISSILE_FIRE_XYZ_TO_B(88)` stays unallocated: nothing on this server shoots at
+an actor from a place.
 
 Command 89 asks an actor to play a named animation action - an emote, or
 anything else that is not one of the actor commands. It carries an action name

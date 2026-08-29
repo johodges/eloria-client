@@ -38,6 +38,9 @@ ADD_NEW_ACTOR = 1
 ADD_NEW_ACTOR_EXTENDED = 247
 HERE_YOUR_INVENTORY = 19
 MISSILE_AIM_A_AT_B = 84
+MISSILE_AIM_A_AT_XYZ = 85
+MISSILE_FIRE_A_TO_XYZ = 87
+FIRE_MISSILE_AT_OBJECT = 51
 MISSILE_FIRE_A_TO_B = 86
 
 BOW = "Hunting Bow"
@@ -162,13 +165,26 @@ async def probe(port: int) -> None:
                     if command == MISSILE_AIM_A_AT_B]
             shots = [payload for command, payload in frames
                      if command == MISSILE_FIRE_A_TO_B]
-            if aims and shots:
+            strays = [payload for command, payload in frames
+                      if command == MISSILE_FIRE_A_TO_XYZ]
+            if aims and (shots or strays):
                 break
         check("the server states an aim before the shot", bool(aims),
               str(sorted({command for command, _ in frames})) + " "
               + texts(frames)[:140])
-        check("and states the shot itself", bool(shots),
-              "%d aim(s), %d shot(s)" % (len(aims), len(shots)))
+        check("and states the shot itself", bool(shots or strays),
+              "%d aim(s), %d hit(s), %d stray(s)"
+              % (len(aims), len(shots), len(strays)))
+        # A miss is drawn as an arrow landing on the ground rather than as a
+        # shot at the target it missed. Which of the two arrives is a dice
+        # roll, so both are accepted here and each is checked for what it is.
+        if strays:
+            stray_source, stray_x, stray_y = struct.unpack_from("<HHH", strays[0])
+            check("a miss names the shooter and where the arrow landed",
+                  stray_source == actor_id
+                  and (stray_x, stray_y) != (target_x, target_y),
+                  "%d -> (%d, %d), target was (%d, %d)"
+                  % (stray_source, stray_x, stray_y, target_x, target_y))
         if aims and shots:
             aim_source, aim_target = struct.unpack_from("<HH", aims[0])
             fire_source, fire_target = struct.unpack_from("<HH", shots[0])
@@ -177,6 +193,36 @@ async def probe(port: int) -> None:
                   and fire_source == actor_id and fire_target == target_id,
                   "aim %d->%d, fire %d->%d" % (aim_source, aim_target,
                                                fire_source, fire_target))
+        # Shooting at a place rather than at somebody: the arrow is spent
+        # and lands where it was aimed, and nothing is earned.
+        await ask(writer, reader, "#tp 160 168", 2.0)
+        await drain(reader, 0.5)
+        writer.write(packet(FIRE_MISSILE_AT_OBJECT,
+                            struct.pack("<HH", 160, 168 + 8)))
+        await writer.drain()
+        frames = await drain(reader, 3.0)
+        ground_aims = [payload for command, payload in frames
+                       if command == MISSILE_AIM_A_AT_XYZ]
+        ground_shots = [payload for command, payload in frames
+                        if command == MISSILE_FIRE_A_TO_XYZ]
+        check("a shot at a place is aimed and loosed like any other",
+              bool(ground_aims) and bool(ground_shots),
+              "%d aim(s), %d shot(s)" % (len(ground_aims), len(ground_shots)))
+        if ground_aims and ground_shots:
+            aimed = struct.unpack_from("<HHH", ground_aims[0])
+            loosed = struct.unpack_from("<HHH", ground_shots[0])
+            check("both name the shooter and the tile that was aimed at",
+                  aimed == (actor_id, 160, 176) and loosed == aimed,
+                  "aim %s, shot %s" % (str(aimed), str(loosed)))
+
+        writer.write(packet(FIRE_MISSILE_AT_OBJECT, struct.pack("<HH", 160, 169)))
+        await writer.drain()
+        frames = await drain(reader, 2.0)
+        check("a place too close is refused the way a target is",
+              not any(command == MISSILE_FIRE_A_TO_XYZ
+                      for command, _payload in frames)
+              and "too close" in texts(frames),
+              texts(frames)[:90])
     finally:
         await close_client(writer)
 

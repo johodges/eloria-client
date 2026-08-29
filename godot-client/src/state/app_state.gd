@@ -18,6 +18,9 @@ signal actor_animation_requested(animation: Dictionary)
 ## an effect it is an event rather than state: the shot is already resolved by
 ## the time it arrives, and the damage comes in its own packet.
 signal missile_fired(shot: Dictionary)
+## An arrow on its way to a tile rather than to an actor - a practice shot, or
+## a miss the server placed. Carries the tile because that is where it lands.
+signal ground_missile_fired(shot: Dictionary)
 
 var connection_state := "disconnected"
 var authenticated := false
@@ -545,6 +548,22 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			if bool(event.fired):
 				missile_fired.emit({"source_actor_id": shooter_id,
 					"target_actor_id": int(event.target_actor_id)})
+		"ground_missile":
+			# Aiming at a place is state on the shooter, the same as aiming at
+			# an actor, so it clears the same way and disappears with them.
+			var ground_shooter_id: int = int(event.source_actor_id)
+			if actors.has(ground_shooter_id):
+				var ground_shooter: Dictionary = actors[ground_shooter_id] as Dictionary
+				ground_shooter["aiming_at"] = -1
+				ground_shooter["aiming_at_tile"] = (Vector2i(-1, -1)
+					if bool(event.fired)
+					else Vector2i(int(event.x), int(event.y)))
+				actors[ground_shooter_id] = ground_shooter
+				state_changed.emit(&"actors")
+			if bool(event.fired):
+				ground_missile_fired.emit({
+					"source_actor_id": ground_shooter_id,
+					"x": int(event.x), "y": int(event.y)})
 		"actor_animation":
 			actor_animation_requested.emit({"actor_id": int(event.actor_id),
 				"action": str(event.action)})
