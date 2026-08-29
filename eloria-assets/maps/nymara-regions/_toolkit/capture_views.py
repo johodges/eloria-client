@@ -147,7 +147,7 @@ def main() -> int:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
 
-    sets = preview.texture_sets()
+    sets = regionpaths.region_material_sets(PACKAGE, preview.texture_sets())
     build = build_region()
     scene = preview.scene_from_build(build, sets)
     print(f"[scene] {scene.triangle_count()} triangles")

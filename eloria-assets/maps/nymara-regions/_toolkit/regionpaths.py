@@ -118,3 +118,27 @@ def load_region_build(package: Path):
             f"expected exactly one build_*.py in {source}, found "
             f"{[c.name for c in candidates]}")
     return _load_module(candidates[0], candidates[0].stem)
+
+
+def region_material_sets(package: Path, sets: dict) -> dict:
+    """Add the region's own material recipes to a shared texture-set table.
+
+    A region that needs materials the shared table has not got registers them at
+    build time rather than editing `materials.SPECS`, because that tuple is a
+    merge conflict waiting to happen between concurrent regions. Its build
+    module owns that step, so the toolkit has to ask for it rather than assume
+    the shared table is complete.
+
+    Without this, `capture_views.py` renders a region's own surfaces through
+    whatever the material lookup falls back to. For a region whose *terrain*
+    materials are all its own - Westhaven's quay setts, salt turf and sea rock -
+    that means every offline preview comes back as one flat sand colour with no
+    water in it, and nothing says so.
+
+    Regions that use only shared materials define nothing and are unaffected.
+    """
+    module = load_region_build(package)
+    register = getattr(module, "register_materials", None)
+    if register is None:
+        return sets
+    return register(sets)
