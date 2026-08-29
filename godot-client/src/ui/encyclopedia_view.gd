@@ -14,8 +14,6 @@ extends VBoxContainer
 ## It is the Encyclopedia tab of the reference window, and it is also what the
 ## HUD's encyclopedia icon and Ctrl+E open.
 
-## Two columns of twenty, which is what fits the panel before it scrolls.
-const ENTRIES_PER_PAGE := 40
 const LINK_COLOUR := "#7fb4ff"
 const HEADING_COLOUR := "#e8b552"
 const NOTE_COLOUR := "#9fb3c8"
@@ -41,6 +39,12 @@ var entry_body: RichTextLabel
 var status_line: Label
 var menu: PopupMenu
 
+## How many links a category page holds before it is split in two. Two
+## columns of twelve is what the panel shows without scrolling; it is a
+## variable rather than a constant so a window of another size, and the suite
+## that exercises the paging controls, can say otherwise.
+var entries_per_page := 24
+
 var _document: Dictionary = {}
 var _categories: Array[Dictionary] = []
 var _by_id: Dictionary = {}
@@ -48,6 +52,9 @@ var _flat: Array[Dictionary] = []
 var _catalogues: Dictionary = {}
 var _bookmarks: Array[Dictionary] = []
 var _books_category := ""
+## Book name to the recipe pages it opens, filled while the recipe pages are
+## built so both sides of the link agree on what a page is called.
+var _recipes_by_book: Dictionary = {}
 ## Item image id to the name the recipe table gives it. A spell states its
 ## reagents by image id alone, and this is the only place in the client that
 ## names one, so a reagent can be read rather than looked up.
@@ -89,6 +96,12 @@ func category_ids() -> Array[String]:
 
 func entry_count_in(category_id: String) -> int:
 	return (_category(category_id).get("entries", []) as Array).size()
+
+func entry_ids_in(category_id: String) -> Array[String]:
+	var ids: Array[String] = []
+	for entry_value: Variant in _category(category_id).get("entries", []) as Array:
+		ids.append(str((entry_value as Dictionary).get("id", "")))
+	return ids
 
 func entry_count() -> int:
 	return _flat.size()
@@ -254,7 +267,7 @@ func _rebuild_content() -> void:
 		elif generate == "spells":
 			entries.append_array(_spell_entries(category_id))
 		elif generate == "books":
-			entries.append_array(_book_entries(category_id, skill_categories))
+			entries.append_array(_book_entries(category_id))
 		elif generate == "maps":
 			entries.append_array(_map_entries(category_id))
 		elif generate == "skills":
@@ -290,18 +303,33 @@ func _entry_record(id: String, title: String, summary: String, body: String,
 func _recipe_entries(skill_categories: Dictionary) -> Dictionary:
 	var by_skill: Dictionary = {}
 	_item_names.clear()
+	_recipes_by_book.clear()
 	var catalogue: ManufacturingCatalog = _catalogues.get("manufacturing") as ManufacturingCatalog
 	if catalogue == null:
 		return by_skill
+	# The table can hold two ways of making the same thing. Both are real
+	# recipes and both get a page, so a name used twice is qualified by what
+	# actually differs: the level, then the first material, then the recipe's
+	# own place in the table. Two pages may not answer to one name.
+	var repeated: Dictionary = {}
+	for index: int in range(catalogue.count()):
+		for key: String in _naming_keys(catalogue.recipe(index)):
+			repeated[key] = int(repeated.get(key, 0)) + 1
+	var used: Dictionary = {}
 	for index: int in range(catalogue.count()):
 		var recipe: Dictionary = catalogue.recipe(index)
 		var skill: String = str(recipe.get("skill", ""))
 		var category_id: String = str(skill_categories.get(skill, ""))
 		if category_id.is_empty():
 			continue
-		var title: String = str(recipe.get("output", ""))
-		_remember_name(int(recipe.get("outputImageId", -1)), title)
+		var output: String = str(recipe.get("output", ""))
+		_remember_name(int(recipe.get("outputImageId", -1)), output)
 		var readable_skill: String = skill.capitalize()
+		var title: String = _recipe_title(recipe, repeated)
+		var entry_id: String = _slug(title)
+		if used.has("%s/%s" % [category_id, entry_id]):
+			entry_id = "%s-%d" % [entry_id, int(recipe.get("id", index))]
+		used["%s/%s" % [category_id, entry_id]] = true
 		var facts: Array[Array] = []
 		var materials: String = _ingredient_lines(recipe.get("ingredients", []))
 		facts.append(["Required materials",
@@ -325,14 +353,48 @@ func _recipe_entries(skill_categories: Dictionary) -> Dictionary:
 			+ " line below before it lets the mix start, and refuses the mix"
 			+ " rather than half-making it.") % readable_skill
 		var image: Dictionary = _item_image(int(recipe.get("outputImageId", -1)))
-		var entry: Dictionary = _entry_record(_slug(title), title, "", body, facts,
+		var entry: Dictionary = _entry_record(entry_id, title, "", body, facts,
 			image, category_id)
 		if not by_skill.has(skill):
 			by_skill[skill] = []
 		(by_skill[skill] as Array).append(entry)
+		if not book.is_empty():
+			if not _recipes_by_book.has(book):
+				_recipes_by_book[book] = []
+			(_recipes_by_book[book] as Array).append({"category": category_id,
+				"id": entry_id, "title": title})
 	for skill: Variant in by_skill:
 		(by_skill[skill] as Array).sort_custom(_title_before)
 	return by_skill
+
+## The three names a recipe could be filed under, narrowest last. Counting all
+## three in one pass is what lets the next pass tell which of them is enough.
+func _naming_keys(recipe: Dictionary) -> Array[String]:
+	var output: String = str(recipe.get("output", ""))
+	var with_level: String = "%s|%d" % [output, int(recipe.get("level", 0))]
+	return [output, with_level,
+		"%s|%s" % [with_level, _first_ingredient(recipe)]]
+
+func _recipe_title(recipe: Dictionary, repeated: Dictionary) -> String:
+	var keys: Array[String] = _naming_keys(recipe)
+	if int(repeated.get(keys[0], 0)) <= 1:
+		return keys[0]
+	var qualifiers: Array[String] = ["level %d" % int(recipe.get("level", 0))]
+	if int(repeated.get(keys[1], 0)) > 1:
+		var first: String = _first_ingredient(recipe)
+		qualifiers.append("from %s" % first if not first.is_empty()
+			else "recipe %d" % int(recipe.get("id", 0)))
+		if int(repeated.get(keys[2], 0)) > 1:
+			qualifiers.append("recipe %d" % int(recipe.get("id", 0)))
+	return "%s (%s)" % [keys[0], ", ".join(qualifiers)]
+
+func _first_ingredient(recipe: Dictionary) -> String:
+	var ingredients: Variant = recipe.get("ingredients", [])
+	if ingredients is Array and not (ingredients as Array).is_empty():
+		var first: Variant = (ingredients as Array)[0]
+		if first is Dictionary:
+			return str((first as Dictionary).get("name", ""))
+	return ""
 
 func _spell_entries(category_id: String) -> Array[Dictionary]:
 	var entries: Array[Dictionary] = []
@@ -371,19 +433,18 @@ func _spell_entries(category_id: String) -> Array[Dictionary]:
 
 ## A book is a name and a lock. What makes its page worth reading is the list
 ## of recipes the lock opens, which is read back out of the recipe table.
-func _book_entries(category_id: String, skill_categories: Dictionary) -> Array[Dictionary]:
+func _book_entries(category_id: String) -> Array[Dictionary]:
 	var entries: Array[Dictionary] = []
 	var books_value: Variant = _catalogues.get("books", [])
 	if not books_value is Array:
 		return entries
-	var taught: Dictionary = _recipes_by_book(skill_categories)
 	for raw_name: Variant in books_value as Array:
 		var title: String = str(raw_name)
 		if title.is_empty():
 			continue
 		var facts: Array[Array] = []
 		var links: Array[String] = []
-		var rows_value: Variant = taught.get(title, [])
+		var rows_value: Variant = _recipes_by_book.get(title, [])
 		if rows_value is Array:
 			for row_value: Variant in rows_value as Array:
 				var row: Dictionary = row_value as Dictionary
@@ -398,26 +459,6 @@ func _book_entries(category_id: String, skill_categories: Dictionary) -> Array[D
 		entries.append(_entry_record(_slug(title), title, "", body, facts, {},
 			category_id))
 	return entries
-
-func _recipes_by_book(skill_categories: Dictionary) -> Dictionary:
-	var taught: Dictionary = {}
-	var catalogue: ManufacturingCatalog = _catalogues.get("manufacturing") as ManufacturingCatalog
-	if catalogue == null:
-		return taught
-	for index: int in range(catalogue.count()):
-		var recipe: Dictionary = catalogue.recipe(index)
-		var book: String = str(recipe.get("knowledge", ""))
-		if book.is_empty():
-			continue
-		var category_id: String = str(skill_categories.get(str(recipe.get("skill", "")), ""))
-		if category_id.is_empty():
-			continue
-		if not taught.has(book):
-			taught[book] = []
-		(taught[book] as Array).append({"category": category_id,
-			"id": _slug(str(recipe.get("output", ""))),
-			"title": str(recipe.get("output", ""))})
-	return taught
 
 func _map_entries(category_id: String) -> Array[Dictionary]:
 	var entries: Array[Dictionary] = []
@@ -529,7 +570,7 @@ func _render() -> void:
 		"category":
 			var category: Dictionary = _category(str(_page.get("id", "")))
 			var entries: Array = category.get("entries", []) as Array
-			pages = maxi(1, ceili(float(entries.size()) / float(ENTRIES_PER_PAGE)))
+			pages = maxi(1, ceili(float(entries.size()) / float(entries_per_page)))
 			page_number = clampi(int(_page.get("page", 0)), 0, pages - 1)
 			_page["page"] = page_number
 			entry_body.text = _render_category(category, page_number, pages)
@@ -573,8 +614,8 @@ func _render_category(category: Dictionary, page_number: int, pages: int) -> Str
 		lines.append("[i]Nothing here yet. This category is filled from a"
 			+ " catalogue the client has not loaded.[/i]")
 		return "\n".join(lines)
-	var first: int = page_number * ENTRIES_PER_PAGE
-	var last: int = mini(first + ENTRIES_PER_PAGE, entries.size())
+	var first: int = page_number * entries_per_page
+	var last: int = mini(first + entries_per_page, entries.size())
 	var cells: Array[String] = []
 	for index: int in range(first, last):
 		var entry: Dictionary = entries[index] as Dictionary

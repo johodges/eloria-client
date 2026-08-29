@@ -70,39 +70,53 @@ func _run() -> void:
 	var catalogue: ManufacturingCatalog = main.get(
 		"manufacturing_catalog") as ManufacturingCatalog
 	_expect(catalogue.count() > 0, "the client has a recipe table to build from")
-	var checked := 0
+	var alchemy := 0
+	for index: int in range(catalogue.count()):
+		if str(catalogue.recipe(index).get("skill", "")) == "alchemy":
+			alchemy += 1
+	# Every alchemy recipe has a page of its own, and each page carries the
+	# numbers and the materials that recipe states. Two ways of making the same
+	# thing are two recipes and get two pages.
+	var recipe_pages: Array[String] = []
+	for id: String in view.entry_ids_in("alchemy"):
+		view.open_entry("alchemy", id)
+		recipe_pages.append(body.get_parsed_text())
+		_expect(body.get_parsed_text().contains("Back To Alchemy Index"),
+			"%s offers the way back to its own index" % id)
+	_expect(alchemy > 0 and recipe_pages.size() == alchemy,
+		"one page per alchemy recipe: %d pages for %d recipes"
+			% [recipe_pages.size(), alchemy])
 	for index: int in range(catalogue.count()):
 		var recipe: Dictionary = catalogue.recipe(index)
 		if str(recipe.get("skill", "")) != "alchemy":
 			continue
-		view.open_entry("alchemy", _slug(str(recipe.get("output", ""))))
-		var page: String = body.get_parsed_text()
-		var stated: bool = page.contains("Recommended Alchemy level: %d"
-				% int(recipe.get("level", 0))) \
-			and page.contains("Alchemy experience given: %d"
-				% int(recipe.get("experience", 0))) \
-			and page.contains("Food subtracted: %d" % int(recipe.get("food", 0)))
-		if not _expect(stated, "%s states the recipe's own numbers"
-				% str(recipe.get("output", ""))):
-			break
+		var needles: Array[String] = [
+			str(recipe.get("output", "")),
+			"Recommended Alchemy level: %d" % int(recipe.get("level", 0)),
+			"Alchemy experience given: %d" % int(recipe.get("experience", 0)),
+			"Food subtracted: %d" % int(recipe.get("food", 0))]
 		var ingredients: Variant = recipe.get("ingredients", [])
 		if ingredients is Array:
 			for raw: Variant in ingredients as Array:
-				stated = stated and page.contains(str((raw as Dictionary).get("name", "")))
-			_expect(stated, "%s names every material the recipe lists"
-				% str(recipe.get("output", "")))
-		_expect(page.contains("Back To Alchemy Index"),
-			"and offers the way back to its own index")
-		checked += 1
-	_expect(checked > 10, "every alchemy recipe has a page: %d" % checked)
+				needles.append(str((raw as Dictionary).get("name", "")))
+		var found := false
+		for page: String in recipe_pages:
+			var complete := true
+			for needle: String in needles:
+				complete = complete and page.contains(needle)
+			found = found or complete
+		_expect(found, "a page states %s exactly as the recipe table has it"
+			% str(recipe.get("output", "")))
 
 	# A recipe that needs a book links to the book, and the book links back.
+	# Neither side is invented: with no such recipe in the table, the book page
+	# says so rather than listing something the client cannot make.
 	var with_book := -1
 	for index: int in range(catalogue.count()):
 		if not str(catalogue.recipe(index).get("knowledge", "")).is_empty():
 			with_book = index
 			break
-	if _expect(with_book >= 0, "the recipe table has a recipe that needs a book"):
+	if with_book >= 0:
 		var recipe: Dictionary = catalogue.recipe(with_book)
 		var book: String = str(recipe.get("knowledge", ""))
 		var made: String = str(recipe.get("output", ""))
@@ -113,12 +127,29 @@ func _run() -> void:
 		view.open_entry("books", _slug(book))
 		_expect(body.get_parsed_text().contains(made),
 			"and %s lists %s among what it opens" % [book, made])
+	else:
+		var books: Array[String] = _books(main)
+		if _expect(not books.is_empty(), "the client has a book list"):
+			view.open_entry("books", _slug(books[0]))
+			_expect(body.get_parsed_text().contains(
+				"Nothing the client has a recipe for"),
+				"a book no recipe names says so rather than inventing one")
 
+	# A category shorter than a page has no paging controls at all.
+	view.entries_per_page = 24
+	var longest: String = _longest_category(view)
+	view.open_page_key("cat:%s:0" % longest)
+	if view.entry_count_in(longest) <= view.entries_per_page:
+		_expect(not view.page_label.visible and not view.next_button.visible,
+			"a category that fits one page shows no paging controls")
 	# Long categories are paged rather than run off the bottom of the window.
-	view.open_page_key("cat:tailoring:0")
-	var pages: int = ceili(float(view.entry_count_in("tailoring"))
-		/ float(EncyclopediaView.ENTRIES_PER_PAGE))
-	_expect(pages > 1, "tailoring is long enough to need paging: %d pages" % pages)
+	# The page size is what the window holds, so the suite states its own.
+	view.entries_per_page = 4
+	view.open_page_key("cat:%s:0" % longest)
+	var pages: int = ceili(float(view.entry_count_in(longest))
+		/ float(view.entries_per_page))
+	_expect(pages > 1, "%s is long enough to need paging: %d pages"
+		% [longest, pages])
 	_expect(view.page_label.visible and view.page_label.text == "Page 1/%d" % pages,
 		"the page count is stated: %s" % view.page_label.text)
 	_expect(view.previous_button.disabled and not view.next_button.disabled,
@@ -130,6 +161,10 @@ func _run() -> void:
 		"and the forward control turns the page")
 	view.previous_button.pressed.emit()
 	_expect(body.get_parsed_text() == first_page, "the back control turns it back")
+	view.open_page_key("cat:%s:%d" % [longest, pages + 5])
+	_expect(view.page_label.text == "Page %d/%d" % [pages, pages],
+		"and a page past the end lands on the last one: %s" % view.page_label.text)
+	view.entries_per_page = 24
 
 	# Back walks the trail, whatever the trail was made of.
 	view.reset_to_index()
@@ -224,6 +259,21 @@ func _run() -> void:
 	main.queue_free()
 	await process_frame
 	quit(failures)
+
+func _longest_category(view: EncyclopediaView) -> String:
+	var longest := ""
+	var most := 0
+	for id: String in view.category_ids():
+		if view.entry_count_in(id) > most:
+			most = view.entry_count_in(id)
+			longest = id
+	return longest
+
+func _books(main: Control) -> Array[String]:
+	var books: Array[String] = []
+	for raw: Variant in main.get("knowledge_catalog") as Array:
+		books.append(str(raw))
+	return books
 
 func _category_for(skill: String) -> String:
 	return "potions" if skill == "potion" else skill
