@@ -112,21 +112,13 @@ func _init() -> void:
 			"actor_type": 0, "head": 2, "eyes": 6}),
 		PackedByteArray([141, 21, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114,
 			101, 116, 0, 1, 2, 3, 4, 5, 0, 2, 6]))
-	var appearance_visuals: Dictionary = AppearanceVariants.equipment_visuals(2, {
-		"head": 1, "pants": 1, "shirt": 1, "boots": 1})
-	_expect(appearance_visuals.is_empty(),
-		"creation choices use skinned actor surfaces instead of rigid equipment")
-	var luminous_outfit: Dictionary = AppearanceVariants.equipment_visuals(0, {
-		"head": 0, "pants": 1, "shirt": 1, "boots": 1})
-	_expect(luminous_outfit.is_empty(),
-		"Luminous defaults do not spawn placeholder attachment geometry")
-	var legacy_luminous_outfit: Dictionary = AppearanceVariants.equipment_visuals(1, {
-		"head": 0, "pants": 0, "shirt": 0, "boots": 0})
-	_expect(legacy_luminous_outfit == luminous_outfit,
-		"legacy zero-valued Luminous characters use the integrated wardrobe")
-	_expect(AppearanceVariants.equipment_visuals(2, {
-		"head": 0, "pants": 0, "shirt": 0, "boots": 0}).is_empty(),
-		"zero appearance choices leave optional wearables hidden")
+	# Creation choices are skinned actor surfaces, never rigid attachments.
+	# AppearanceVariants no longer exposes a function that says so by returning
+	# an empty dictionary; the refusal lives at the one call site that built
+	# actor presentation, so these fixtures pin the behaviour there instead.
+	_expect(not ("equipment_visuals" in AppearanceVariants.new().get_method_list()
+			.map(func(entry: Dictionary) -> String: return str(entry.get("name", "")))),
+		"the unconditionally empty appearance-to-equipment function is gone")
 	_expect(AppearanceVariants.skin_tint(0) != AppearanceVariants.skin_tint(1)
 		and AppearanceVariants.eye_color(0) != AppearanceVariants.eye_color(1)
 		and AppearanceVariants.hair_style(6) == 2

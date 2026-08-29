@@ -52,6 +52,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_world_input.gd
       - name: Manifest lighting rig fixtures
         run: godot --headless --path godot-client --script res://tests/test_world_lighting.gd
+      - name: HUD persistence fixtures
+        run: godot --headless --path godot-client --script res://tests/test_hud_persistence.gd
       - name: Runtime cost fixtures
         run: godot --headless --path godot-client --script res://tests/test_runtime_performance.gd
       - name: Main scene smoke test

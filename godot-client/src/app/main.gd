@@ -261,6 +261,7 @@ var _item_lists: Dictionary = {}
 var _store_options_menu: PopupMenu
 var _drop_options_menu: PopupMenu
 var _minimap_menu: PopupMenu
+var _minimap_visible := false
 var _session_started_msec := 0
 var _experience_snapshot: Dictionary = {}
 var _session_xp_gain: Dictionary = {}
@@ -922,9 +923,11 @@ func _toggle_full_map() -> void:
 	_sync_map_viewport_activity()
 
 func _toggle_minimap() -> void:
-	minimap_frame.visible = not minimap_frame.visible
+	_minimap_visible = not minimap_frame.visible
+	minimap_frame.visible = _minimap_visible
 	_request_map_redraw()
 	_sync_map_viewport_activity()
+	_save_hud_settings()
 
 func _toggle_console() -> void:
 	if console_panel.visible:
@@ -1614,6 +1617,12 @@ func _on_login_succeeded() -> void:
 	login_panel.hide()
 	creation_panel.hide()
 	game_view.show()
+	# Restore the saved minimap visibility. _clear_world_presentation() hides
+	# the frame on disconnect, so this is what brings it back for the next
+	# session rather than leaving the player to press Alt+M every time.
+	minimap_frame.visible = _minimap_visible
+	_request_map_redraw()
+	_sync_map_viewport_activity()
 	map_label.text = "Entering world…"
 	_load_server_map()
 	_sync_world()
@@ -2702,6 +2711,10 @@ func _load_hud_settings() -> void:
 			"hud", "minimap_position", Vector2(16.0, 42.0))
 		if position_value is Vector2:
 			minimap_frame.position = position_value as Vector2
+		# The minimap's position and scale persisted but its visibility did
+		# not, so every session started with the map hidden and nothing but
+		# Alt+M would show it again.
+		_minimap_visible = bool(config.get_value("hud", "minimap_visible", false))
 		_inventory_scale = clampf(float(config.get_value(
 			"inventory", "window_scale", 1.0)),
 			INVENTORY_MIN_SCALE, INVENTORY_MAX_SCALE)
@@ -2753,6 +2766,7 @@ func _save_hud_settings() -> void:
 	config.set_value("hud", "ui_scale", _ui_scale)
 	config.set_value("hud", "minimap_orientation", _minimap_orientation)
 	config.set_value("hud", "minimap_position", minimap_frame.position)
+	config.set_value("hud", "minimap_visible", _minimap_visible)
 	config.set_value("inventory", "window_scale", _inventory_scale)
 	config.set_value("inventory", "window_position", inventory_panel.position)
 	config.set_value("inventory", "equipment_side", _equipment_side)
@@ -4338,15 +4352,19 @@ func _model_for_actor(dto: Dictionary) -> String:
 
 func _presentation_dto(dto: Dictionary) -> Dictionary:
 	var result: Dictionary = dto.duplicate(true)
-	var actor_type: int = int(dto.get("actor_type", -1))
-	var appearance: Dictionary = dto.get("appearance", {}) as Dictionary
-	# Modified 2026-08-28 for Eloria Client: the legacy visual ids below 100 are
-	# real equipment now, not creation leftovers, so they are no longer dropped.
-	# An authored NPC look is applied last and outranks the server's appearance
-	# bytes, which is how a Four Gates guard keeps its guard gear without an
-	# alias hijacking the shared legacy id for every other actor.
-	var visuals: Dictionary = AppearanceVariants.equipment_visuals(
-		actor_type, appearance)
+	# Creation bytes (skin, hair, shirt, pants, boots, head, eyes) select skinned
+	# surfaces already authored into each actor GLB, so they are deliberately
+	# never reinterpreted as rigid BoneAttachment3D equipment and contribute
+	# nothing here. AppearanceVariants used to expose a function for that which
+	# returned {} unconditionally and was still called on every actor build; the
+	# refusal is stated here instead of hidden behind a call.
+	#
+	# The legacy visual ids below 100 are real equipment, not creation
+	# leftovers, so they are not dropped. An authored NPC look is applied last
+	# and outranks the server's appearance bytes, which is how a Four Gates
+	# guard keeps its guard gear without an alias hijacking the shared legacy id
+	# for every other actor.
+	var visuals: Dictionary = {}
 	var server_visuals: Dictionary = dto.get("equipment_visuals", {}) as Dictionary
 	for raw_part: Variant in server_visuals:
 		visuals[int(raw_part)] = int(server_visuals[raw_part])
