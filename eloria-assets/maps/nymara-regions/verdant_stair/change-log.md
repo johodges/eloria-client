@@ -220,3 +220,49 @@ validators and `verify_runtime` without a murmur.
     The default spawn now reads 24.59 in the manifest and grounds at 24.54 in
     the running client, against 24.05 agreed by both before. A scan of all
     15,060 walk triangles found the waygate was the only surface affected.
+
+14. **An elevated walk surface was stamped as a filled disc.** `build_collision`
+    took each of the 77 walk surfaces, measured `min(half_x, half_z) * 0.85` of
+    its bounds, and marked that circle walkable at the height of the top of the
+    surface. That is right for a solid square deck and wrong twice over.
+
+    Wrong for anything with a hole in it: the cenote's spiral stair winds around
+    an open eighteen-metre shaft, so the disc laid a floor straight across the
+    shaft — cells the server would let a player walk onto and the client would
+    drop them through. Wrong for anything long and thin, in the other direction:
+    the Quay's walkway is 13 m by 2.2 m, so `min(half_x, half_z)` gave it a
+    1.9 m disc and most of the quay was never marked at all. And wrong in the
+    small for every stair, because a disc is flat and takes the height of the
+    top of the flight, so a whole staircase read as its own top landing.
+
+    Now rasterised triangle by triangle against the cell centre, the way the
+    interiors' own `build_collision` already did it, with risers excluded by
+    normal and the height interpolated across each triangle.
+
+        walkable  79.6% -> 73.5%   (-83,661 cells, +3,327)
+        cenote, 18 m box     100% -> 78.2% walkable
+        Grand Stair, 18 m box    100% -> 100%   (a solid deck is unchanged)
+
+    Every one of the 83,661 cells that stopped being walkable was inside an old
+    disc, and none lay outside one — so the change removes over-marking and does
+    nothing else. Those cells are where the terrain rules had said blocked, for
+    slope or for being under the sea, and the disc had overridden them.
+
+    Re-verified: `validate_gltf` 0/0, `verify_runtime` 0 errors and 0 grounding
+    misses, in-engine PASS, and the exported server ELM agrees at 73.5%.
+
+15. **The check that should have caught item 14 is inert on this region.**
+    `verify_runtime` does cross-check every walkable cell against the rendered
+    surface, and both of its arms miss this. "No surface under this cell" never
+    fires, because the cenote is a shaft cut through terrain and a ray down its
+    middle still hits the terrain at the bottom — there *is* a surface, it is
+    just eighteen metres below what the grid claims. The height comparison is
+    guarded by `if grid < 63`, and the six-bit field ceilings at 10.4 m while
+    this region spans −21 m to 128 m: **98.1% of its walkable cells encode 63**,
+    so the comparison is skipped for almost the whole map.
+
+    Not fixed here. It is a shared-toolkit change affecting every region, the
+    fix is not obviously a one-liner — the honest options are widening the
+    encoding, which is a format change, or comparing against something other
+    than the encoded height — and it wants its own commit and its own
+    verification rather than riding along with a region's collision fix.

@@ -19,9 +19,9 @@
     "width": 1152,
     "height": 1152,
     "cellMetres": 0.5,
-    "walkableCells": 1055911,
-    "blockedCells": 271193,
-    "walkableFraction": 0.7957,
+    "walkableCells": 975577,
+    "blockedCells": 351527,
+    "walkableFraction": 0.7351,
     "elevatedDecks": 77,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)"
