@@ -57,7 +57,24 @@ def scene_from_build(build, sets=None, include_kinds=None):
                      @ M.rotation_y(placement.rotation_y)
                      @ M.scaling(placement.scale))
         target = build.meshes[placement.mesh]
-        parts = getattr(target, "parts", None)
+        # `all_parts`, not `parts`. Two bugs, one line:
+        #
+        # 1. `parts` omits `walk_parts`, so every walkable deck a landmark
+        #    carries - a causeway deck, a quay, a canopy platform floor,
+        #    a boardwalk - was missing from every offline preview in every
+        #    region. The previews were of the structure without its floor.
+        # 2. A MeshGroup that has *only* walk parts (a flight of steps, say)
+        #    has an empty `parts`, which is falsy, so the group itself was
+        #    passed to `add_mesh`. `MeshGroup.triangle_count` reports its parts'
+        #    total while the group's own index buffer is empty, so the packed
+        #    geometry claimed triangles it had no indices for and the C
+        #    rasteriser read past the end of the buffer. On Manymouth, whose
+        #    walkway landings are exactly that shape, this segfaulted the
+        #    preview and the minimap render.
+        #
+        # `MeshGroup.all_parts` is parts + walk_parts and is already the
+        # property `export_glb` uses for its material scan.
+        parts = getattr(target, "all_parts", None)
         if parts:
             for part in parts:
                 scene.add_mesh(part, transform)

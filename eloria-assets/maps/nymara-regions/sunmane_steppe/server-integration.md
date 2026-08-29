@@ -42,23 +42,29 @@ outside it - the far spires, the summits, the open sea - is scenery a
 player can see but never stand on, and it is marked
 `"reachable": false` in the manifest. The server needs no record of it.
 
-## New interior maps
+## The interior map
 
-Two cave interiors ship as their own packages under
-`maps/nymara-regions/interiors/` and are registered client-side in
-`godot-client/data/maps/registry.json`. They need server map ids and the
-matching transition records:
+Sunmane's two cave systems share **one** interior map, the way
+Crownwater's and Ssarathi's insides do: one package, one server map id,
+one collision grid, and unwalkable blackspace between the systems. Which
+system a player gets is decided by the mouth they entered, so there is
+one portal pair per door rather than one per system:
 
-| Server map id | Name | Datum | Entrance on the steppe | Arrival inside | Exit back to |
-|---|---|---|---|---|---|
-| `maps/nymara/sunmane_wind_caves.elm` | Sunmane Wind Caves | `(30, 30)` | `(128, 175)` | `(30, 12)` | `(128, 175)` |
-| `maps/nymara/sunmane_crystal_hollow.elm` | Amethyst Crystal Hollow | `(30, 30)` | `(182, 154)` | `(30, 13)` | `(182, 154)` |
+| Section | Mouth on the steppe | Arrival inside | Exit back to |
+|---|---|---|---|
+| Sunmane Wind Caves | `(128, 175)` | `(43, 27)` | `(128, 175)` |
+| Amethyst Crystal Hollow | `(182, 154)` | `(169, 28)` | `(182, 154)` |
 
-Both interiors are one metre per tile like the surface map, use
-`invertServerY`, and place their datum at the centre of a 60 m square, so
-every walkable tile is in 0..60 on both axes. The other two cave mouths on
-the surface - the drovers' shelter and the eastern adit - are modelled
-shelters with no interior and need no registration.
+Both doors go to `maps/nymara/sunmane_wind_caves.elm`, which is one metre
+per tile like the surface map, uses `invertServerY`, and puts its datum
+at the map corner rather than the centre of a square, so a section's
+tiles are simply its metres. The package is 192 m across, so the map needs
+32 server tiles where the wind caves alone needed 10.
+
+`maps/nymara/sunmane_crystal_hollow.elm` is **retired** as a served map.
+The other two cave mouths on the surface - the drovers' shelter and the
+eastern adit - are modelled shelters with no interior and need no
+registration.
 
 ## Safe spawn surfaces
 
@@ -72,10 +78,9 @@ a safe spawn. The positions the manifests name explicitly:
 | west-caravanserai | `(6, 58)` | sunmane_steppe | arrival from Amethyst Barrens |
 | east-caravanserai | `(110, 58)` | sunmane_steppe | departure toward Amberwood |
 | north-barrowfield | `(58, 100)` | sunmane_steppe | Ssarathi Royal Archive entrance approach |
-| entrance-hall | `(30, 12)` | sunmane_wind_caves | Entrance hall |
-| wind-gallery | `(30, 28)` | sunmane_wind_caves | The wind gallery |
-| adit-mouth | `(30, 13)` | sunmane_crystal_hollow | Adit mouth |
-| geode-chamber | `(30, 32)` | sunmane_crystal_hollow | The geode chamber |
+| default | `(43, 27)` | sunmane_wind_caves | Arrival for the wind caves mouth, and the map default. |
+| wind-caves-mouth | `(43, 27)` | sunmane_wind_caves | Arrival for Sunmane Wind Caves. |
+| crystal-hollow-adit | `(169, 28)` | sunmane_wind_caves | Arrival for Amethyst Crystal Hollow. |
 
 ## NPC posts (15)
 

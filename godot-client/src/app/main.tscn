@@ -1535,6 +1535,13 @@ layout_mode = 2
 text = "70%"
 horizontal_alignment = 2
 
+[node name="ShowThroughObstacles" type="CheckButton" parent="GameView/SettingsPanel/Content" unique_id=1502773650]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Draws your own character over anything hiding it from the camera - trees, roofs, cliffs. Only your character, never anyone else's. Toggle with Alt+V."
+button_pressed = true
+text = "Show my character through obstacles"
+
 [node name="UiScaleRow" type="HBoxContainer" parent="GameView/SettingsPanel/Content" unique_id=1502773641]
 layout_mode = 2
 theme_override_constants/separation = 10

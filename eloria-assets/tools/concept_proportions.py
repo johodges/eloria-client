@@ -44,7 +44,7 @@ HERE = Path(__file__).resolve().parent
 
 
 def _boxes():
-    sheets = sorted({e[7] for e in RO.ROSTER})
+    sheets = sorted({e[7] for e in RO.ROSTER} & set(RO.CONCEPT_SHEETS))
     proc = subprocess.run([sys.executable, str(HERE / "concept_sheet_index.py"),
                            "--json"] + sheets, capture_output=True, text=True)
     return json.loads(proc.stdout)

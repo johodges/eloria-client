@@ -258,3 +258,333 @@ python3 eloria-assets/tools/apply_concept_palettes.py
 ELORIA_CONCEPT_DIR=/path/to/sheets \
     python3 eloria-assets/tools/build_creature_qa_sheets.py
 ```
+
+
+## Second concept fidelity pass: geometry the generators could not express
+
+The library validated and animated correctly, and its palettes and proportions
+were measured rather than guessed, but many models still did not *read* as the
+creature in the art. Rendering each GLB beside the artist's own cut figure and
+naming the disagreement in words, the same answer came back over and over: the
+missing thing was not a parameter, it was a kind of geometry the toolchain had
+no way to make. A swept tube cannot have a hole in it, and a smooth-shaded
+sphere cannot have a flat facet.
+
+`concept_figures.py` keys every creature slug to the artist's cut figure for
+its cell, and `concept_compare.py` puts model and art side by side at matched
+height. That pair is the instrument the whole pass was worked against, and it
+is how each of these was found and each fix confirmed.
+
+### New primitives
+
+| Primitive | In `creature_anatomy.py` | What it makes possible |
+| --- | --- | --- |
+| `branch_system` | recursive forking limb, returning its tips | crowns, twig hands, antler racks; foliage hangs on branch ends rather than being scattered over the whole shape |
+| `woven_trunk` | a trunk of separate twisting strands | daylight through a treant's bole -- the one thing surface detail cannot fake |
+| `root_flare` | buttress roots off the foot of a trunk | treants stand on roots rather than on feet |
+| `foliage_cluster` | leaf mass built from overlapping lobes | canopies that are not one smooth blob |
+| `swirl_ribbon` | a band that coils around the line it follows | flame, spirit-hair, running water and kraken arms |
+| `facet_shell` | flat-shaded plates over a lit inner shell | crystal carapaces with the glow leaking out of the seams |
+| `plated_shell` | overlapping oriented slabs around a limb | golems and constructs built from discrete blocks, staggered like masonry |
+| `orbit_plates` | curved armour plates floating in a ring | arcane constructs whose armour hangs off a lit core, nothing touching |
+| `debris_field` | broken pieces hanging in the air | a body that has come apart and not finished falling |
+| `metal_band` | a banding ring around a limb | the bronze trim the art puts at every wrist and ankle |
+| `feather_row` | overlapping flight feathers along an edge | wings with a serrated outline instead of a coloured triangle |
+
+`MAT_CORE`, a sixth material slot, carries whatever is lit from inside: a
+treant's heart-hollow, the light in a geode carapace, the centre of a wisp, the
+sockets of a spirit. It has to be its own material because the shell around it
+stays dark, and that contrast is the entire effect -- a whole-body emissive
+destroys it.
+
+### What each group disagreed about
+
+* **Treants, dryads and sprites** were smooth barrels with three bone-white
+  spurs on top. They are now braided boles with gaps through them, forking bark
+  crowns spreading wide and low, twig hands, root feet and a lit heart at the
+  front of the chest where the art puts it.
+* **Wisps and elementals** were cones with a ring of straight triangular spikes
+  -- an upturned insect. The spikes are coiling ribbons now, the plume is a body
+  rather than a spear rooted at the floor, and every one of them has the bright
+  centre the art draws it around.
+* **Crystal fauna** were smooth ellipsoids in a crystal colour, and the beetle's
+  elytra were routed through the keratin material, so the one creature whose
+  shell is made of amethyst had a bone-white back. They are faceted mosaics over
+  a lit interior.
+* **Moths** held their wings almost flat, so they vanished to a line in profile.
+  `wing_lift` opens them, the hind pair follows the fore pair up, and the crystal
+  moth's veins are drawn in the core material as leaded glass.
+* **Humanoids** had ball heads, closed-egg hoods that sealed the face away, and
+  robes that were one straight tube with a disc on the bottom. They now have
+  brow, sockets, nose, cheekbone and mouth; open cowls with an overhanging peak;
+  and robes that flare, fold and end in a shaped hem.
+* **Quadrupeds** shared a silhouette because `ARCHETYPE_TWEAKS` is keyed by
+  archetype and the roster names body plans, so none of it ever applied.
+  `QUADRUPED_DETAIL` is where per-creature features from the art live now, and
+  the mane was rebuilt as a mass of hanging locks rather than a smooth collar.
+* **Krakens and oozes** were a table on stilts and a smooth green tent. The arms
+  coil at varied lengths; the slime carries its mass high and hangs runnels with
+  a bead on the end of each.
+
+### A second sweep, after looking at the whole library at once
+
+Rebuilding the roster comparison sheet and reading all 139 pairs together
+turned up four more problems that only show at library scale.
+
+* **Crabs were spiders.** The crab plan inherited the spider's narrow body and
+  projecting head, so six crabs across four regions read as pale spiders. A
+  crab's carapace is half again as wide as it is long, it has no projecting
+  head at all, its abdomen folds flat underneath rather than trailing behind,
+  and it holds its claws folded in front. All of that is in the plan now, with
+  eyestalks, which are the one feature that reads as "crab" from any angle.
+* **Wings were coloured triangles.** A membrane stretched between two curves
+  has no edge to catch light and no serration in its outline. `feather_row`
+  lays overlapping flight feathers along the trailing edge, longest toward the
+  tip, and the same primitive fans the tail.
+* **`upright` was only tilting the neck.** Applied there alone, an owl and a
+  heron kept a duck's horizontal teardrop with a tall neck stuck on the front.
+  It tilts the body now, and the art stands both of them on their tails.
+* **Growth was sized against the wrong thing.** Surface growth scaled with the
+  creature's nominal `scale`, which is near 1 for a songbird and a bear alike,
+  so an owl was wearing leaves a bear's size and vanished underneath them.
+  Growth is sized against the local girth of the body it grows on. This is the
+  change with the widest reach in the pass -- it moves every creature in the
+  `GROWTH` table, and the mossy bear and mossy troll are the clearest wins.
+* **Swarms were laid out on a lattice.** The regular helix the motes walked
+  spaced them so evenly that a swarm read as confetti on a grid. They turn
+  around the core now, tighter at the middle and ragged at the edge, jittered
+  from the same seeded generator so the cloud stays reproducible.
+
+Averaging every bright coloured pixel together blended the glow with whatever
+metal trim shared the highlights, and the trim usually won on volume -- a river
+stone golem came back gold when its core and its runes are plainly cyan.  The
+bright band is clustered by hue now and the most *saturated* cluster is taken
+rather than the largest, because emitted light is the purest colour on a figure
+even when it is not the most abundant.
+
+### Golems and constructs
+
+Thirteen creatures across two body plans, and every one of them was a smooth
+capsule in a stone colour with a small pad on each shoulder.  The art draws
+them as *stacks of discrete blocks* -- you can count the boulders in a cairn
+golem's forearm -- with a lit gem set in the chest and bronze banding at the
+joints.  A swept limb with a rock texture on it is a sausage, and no normal map
+fixes a silhouette.
+
+`plated_shell` is the stone counterpart of `woven_trunk`: each plate is a short
+oriented puck standing proud of the surface along its own outward normal, so it
+catches its own highlight and casts its own shadow line, and rows are staggered
+like masonry so the joints do not line up into stripes.  A scattering of plates
+carries a lit glyph, which is what the art carves into them.  The smooth tube
+stays underneath as the body the plates are bolted to, so the gaps read as
+shadowed joints rather than as holes -- and the plates use the body's own stone
+rather than the keratin material, because routing them through keratin made
+them read as bones strapped on rather than as the creature itself.
+
+The proportions moved with it: a small head clear of enormous shoulders, a
+narrower pelvis than chest, and the plating held off the crotch so two legs
+read as two legs.  Four numbers were wrong on the way and each was found by
+measuring rather than squinting -- the socket ring was built at the gem's
+radius scale and came out four times the width of the core it framed; widening
+`hip_w` to part the legs also inflated the pelvis, because `hip_r` derives from
+it, until the hips were wider than the chest; and `arm_splay` at .20 threw the
+hands out to two-thirds of the figure's height on each side.
+
+Two attachments in the same group were thin hoops where the art has machinery.
+The orrery rings are an armillary now -- broad banded rings of unequal size,
+each tilted off the others, with crystals set into the bands and a lit sphere
+at the centre -- and the waterwheel has two rims, an axle, spokes and paddle
+boards, mounted behind the shoulder rather than standing beside the head.
+
+**Block size matters as much as block shape.** The first pass put six rows of
+seven plates round a torso, and forty-two segments at that scale reads as
+gravel rather than as masonry -- the art's cairn golem is built from perhaps a
+dozen boulders you can count. Twelve round the torso and six down a limb,
+each standing further proud and cut with fewer facets, gives the countable
+stacked-stone silhouette the art has.
+
+**The thirteen do not share a build.** `plate_shape` cuts the plates five
+ways -- rounded boulders for the cairn and ivy golems, angular scale for the
+frost and crownwater guardians, big flat slabs for the temple and tide
+wardens, erupting shards for the amethyst golem, and smooth banded drums for
+the river stone golem, whose limbs the art draws as stacked cylinders rather
+than as rock at all. On top of that: the wheelwarden crouches on its knuckles
+under the wheel on its back, the millstone golem carries a timber yoke with a
+stone slung off each end, the shattered sentinel is coming apart with its
+pieces still in the air, and the two arcane constructs are built round a core
+with their armour floating off it -- the colossus has no legs the art shows at
+all, so it wears a banner instead.
+
+Plating reaches the quadrupeds too, which is what the coral shell golem
+needed: it was a plain bear where the art gives it a plated carapace and a lit
+gem over the shoulder. The crystal-backed lizard, the geode tortoise and the
+cairnback tortoise take the same treatment.
+
+The halberd and the staff were rebuilt while they were in frame -- a dark
+triangle a tenth of a scale unit across read as a small black flag tied to a
+pole, and the wardens' staves ended in a plain ball. They are a crescent axe
+head with a back hook and a spear point, and a ring finial holding a lit
+stone.
+
+The core measurement had to be fixed to serve them.  Sampling the top three per
+cent of luminance caught mostly specular bloom, and on the golems the near-grey
+average that came back had a hue that was pure noise, which the emissive
+saturation then amplified into a confident acid yellow.  The band is the top
+tenth now, with a higher saturation floor, and `_saturate` refuses to amplify a
+colour that is already neutral.  The frost golem measures cyan and the amethyst
+golem violet, which is what the art draws.
+
+### Serpents, fish, and four that were on the wrong body
+
+The serpent and fish families had not been touched at all, and between them
+they are fifteen creatures.
+
+**Ten serpents were ten lengths of hose.** The rig held the body at a constant
+height in a shallow horizontal wiggle, which is not a pose any serpent in the
+art holds: it coils all of them, the body looping up off the ground and the
+head carried above it. The body is a spiral now, its radius set from its own
+length so about one turn uses it up -- a serpent in the art occupies a compact
+coil roughly as wide as it is tall. Getting it to the floor took care:
+descending only as far as the rear height left the whole family hovering,
+because the spine stops at body height while the tube around it has already
+tapered to nothing. They also gained the two things the art gives every one of
+them and the models had neither of -- a ridge of dorsal spines down the back,
+which is what makes the coils read as coils from the side, and a head plainly
+bigger than the body behind it with a crown of fins sweeping off the skull.
+
+The naga was half a person with nothing in the person half, so a coral
+priestess came out as a snowman on a coil. It has a ribcage, a shoulder
+girdle, arms with hands and a face now, and no longer wears the serpent snout
+over that face.
+
+**Five fish were five torpedoes with a paddle on the back.** A rectangle on
+the end of a tube is the most model-looking thing a fish can have. The caudal
+fin is two swept lobes with a notch between them, the dorsal runs most of the
+back with an anal fin to match, and the pectorals sweep back at half again
+their old reach. The manta was not a manta -- at .42 girth against .70 length
+it was a torpedo with a bulge, against an art figure half again as wide as it
+is long -- so its wing is a swept diamond with the tip carried back and the
+trailing edge cut concave, plus the cephalic lobes that say "manta" before
+anything else does. The axolotl's external gills were three spikes that read
+as whiskers; they are three stalks a side carrying a fan of filaments, which
+is the biggest thing on its head in the art.
+
+**Four were simply on the wrong body.** The Verdant Naiad was the worst pair
+in the library: cell 11 of the Verdant Stair sheet is a river *naga*, and the
+roster had it on the amorphous vortex plan, so it came out as a cloud of
+acid-green shards with two floating orbs. The jungle gorilla's head sat a
+tenth of a unit proud of its shoulders and was swallowed whole. The bronze
+diving beetle wore its shell in the keratin material -- a white ribbed loaf --
+over three segments far enough apart to read as three eggs. The hummingbird
+was a finch, with a short bill and legs to stand on.
+
+### Two kings, and a creature with no art
+
+Cell 0,0 of the elemental-lords sheet is a *drowned lich king* -- teal and
+gold, spiked crown, gemmed staff, an orb of cold light -- and the roster had
+that cell keyed to an entry named "Verdant Crown King".  The name said forest
+monarch while the art, and therefore the sampled palette, said drowned king.
+
+`drowned_lich_king` is a new roster entry that takes the cell and the palette
+that was always measured from it, and is built to what the figure shows: skull
+face under a tall spiked crown, layered pauldrons, a lit core, the orb in the
+off hand and a ragged robe stopping above the ankle.  `verdant_crown_king`
+keeps its actor type and becomes what its name says -- a branch crown carrying
+leaf mass, bark shoulders, a seed of green light at the breast.
+
+The roster grows to 140 and the actor-type block to 428-567.  Nothing pinned
+the old upper bound: the test derives the range from the roster's own length.
+
+**The forest king has no concept art, and is marked as having none.**  The
+sentinel sheet stem `authored` means "no figure to be compared against", and
+such a creature shows a placeholder in the comparison sheets rather than a
+match.  It would have been easy to render the finished model into the concept
+delivery and let the tool find it, and that would be worse than useless: the
+whole method here is to put the model beside an *independent* picture of what
+it should look like and read off the disagreement.  A model compared against a
+picture of itself always agrees, which would turn these sheets from evidence
+into decoration.  Its design brief is in
+`eloria-assets/concepts/creatures/README.md` for a real concept pass to work
+from, and its palette is the one number in the roster that is chosen rather
+than sampled.
+
+Finding this also turned up a real defect in the resolver: an unknown sheet
+stem fell through to `root / ""` and globbed the delivery root, which matched
+whatever stray file happened to share the cell index -- it had silently keyed
+the forest king to a river otter merchant.  Unknown stems return no figure now.
+
+### The four gaps left open by the golem pass
+
+The waterwheel guardian has the stone arch in its chest with water falling
+through it into a pool; the temple guardian carries a little pillared shrine on
+its shoulder; the arcane colossus reaches with talon clusters below its halo
+rather than having no hands at all.  And where a figure carries two bright inks
+-- lit water and metal trim -- the core sampler picks the more saturated
+cluster, which on the cascade golem and the wheelwarden is the brass rather
+than the water.  Both clusters are measured; `CORE_TINT_OVERRIDE` names the one
+that is actually the light.
+
+### Colour and value, measured
+
+* `concept_growth_tints.py` samples what is *growing* on each creature from its
+  own figure. Deriving it from the kind alone made every leaf green, which is
+  right for the Verdant Stair and wrong for the Amberwood, an autumn wood whose
+  foliage measures amber (127, 92, 41), and badly wrong for the thornwood dryad,
+  whose canopy is crimson. Only vegetation is corrected; mineral crusts already
+  take the creature's own palette.
+* The same tool reports the hue of each figure's brightest lit feature, which is
+  where the treant's amber heart and the barrens wisp's blue centre come from.
+* `concept_value_gains.py` found the systemic colour problem. The sampled *hues*
+  are good -- the median hue error against the concept figures is about two
+  degrees -- but the *values* were compressed: a whitehorn yak and a coastal
+  gull, both painted nearly white, rendered within a few points of a black iron
+  death knight. Gains only lift, and lifting blends toward white rather than
+  multiplying, because multiplying clips and the creatures that needed it most
+  were exactly the ones that could not move.
+
+  The correction is capped at 1.55 and deliberately does not close the whole
+  gap. It cannot: the shading falloff in `render_creature_qa.py` puts even a
+  pure white albedo near 90 against the 128 a pale concept figure measures, so
+  the remainder is only reachable by washing every pale creature out to white.
+  What is left is a renderer exposure question rather than a palette one.
+
+### Fixed on the way
+
+The builders wrote backslash paths into the asset catalogue on Windows, which
+Godot does not resolve and which made the catalogue completeness test fail on
+Windows builds alone. Paths are POSIX-form on every platform now, in both
+`build_native_nymara_glbs.py` and `sunmane/creatures.py`, and the test compares
+in that form rather than the host's.
+
+### Budget
+
+171 creatures, mean 6,287 triangles, 84 MB on disk, with the woody and plated
+hero creatures between 12,000 and 30,000 -- up from a mean of 4,945 and 74 MB. The
+mean is well under the ceiling this pass was allowed, because the triangles
+went into features the art shows and the models lacked rather than into
+tessellating smooth shapes more finely; most creatures simply did not need
+more geometry than they had.
+
+### Reproducing this pass
+
+`ELORIA_CONCEPT_FIGURES` points at the directory of per-creature cut figures;
+the tools fall back to segmenting whole sheets from `ELORIA_CONCEPT_DIR` when
+only those are available.
+
+```
+ELORIA_CONCEPT_FIGURES=/path/to/figures \
+    python3 eloria-assets/tools/concept_growth_tints.py --table
+ELORIA_CONCEPT_FIGURES=/path/to/figures \
+    python3 eloria-assets/tools/concept_growth_tints.py --core
+ELORIA_CONCEPT_FIGURES=/path/to/figures \
+    python3 eloria-assets/tools/concept_value_gains.py --table
+python3 eloria-assets/tools/sunmane/creatures.py
+python3 eloria-assets/tools/build_native_nymara_glbs.py
+ELORIA_CONCEPT_FIGURES=/path/to/figures \
+    python3 eloria-assets/tools/concept_compare.py <slug...>
+ELORIA_CONCEPT_FIGURES=/path/to/figures \
+    python3 eloria-assets/tools/build_creature_qa_sheets.py
+```
+
+Run `sunmane/creatures.py` before `build_native_nymara_glbs.py`: the ambient
+livestock GLBs come from the former and are catalogued by the latter.

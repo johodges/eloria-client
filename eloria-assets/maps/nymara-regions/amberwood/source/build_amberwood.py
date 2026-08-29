@@ -51,15 +51,24 @@ SEED = 20260827
 # embedded here too - about ten megabytes of images nothing references, and a
 # different world.glb for a change that has nothing to do with Amberwood.
 MATERIALS = frozenset({
-    'bark_oak', 'bark_dark', 'bark_pale', 'foliage_amber', 'foliage_gold',
-    'foliage_rust', 'foliage_green', 'foliage_dead', 'undergrowth',
+    # Exactly what Amberwood's world.glb references, verified against the built
+    # GLB rather than assumed. The shared table grows as other regions add
+    # recipes, and without a pin every one of those would be embedded here too.
+    #
+    # This list was briefly the whole table, which quietly shipped six
+    # materials no mesh referenced - the ones b7e10891 appended for the
+    # interiors - and 2.79 MB of images reachable only from them. The interiors
+    # are unaffected: build_interiors.py computes its own set per interior.
+    'bark_oak', 'bark_dark', 'bark_pale',
+    'foliage_amber', 'foliage_gold', 'foliage_rust', 'foliage_dead',
+    'undergrowth',
     'timber_warm', 'timber_grey', 'timber_dark', 'carved_wood',
-    'shingles', 'thatch_reed', 'ashlar', 'lime_plaster', 'packed_earth',
-    'sooted_plaster', 'charred_timber', 'rubble_stone', 'cliff_rock',
+    'shingles', 'thatch_reed', 'ashlar', 'rubble_stone', 'cliff_rock',
     'cobble_paving', 'forest_floor', 'leaf_path', 'shore_shingle',
-    'meadow_grass', 'scorched_ground', 'dark_iron', 'woven_cloth',
-    'canvas_awning', 'amber_resin', 'amber_glass', 'water_sea',
-    'water_pool', 'water_stream', 'water_deep',
+    'meadow_grass', 'scorched_ground',
+    'dark_iron', 'woven_cloth', 'canvas_awning',
+    'amber_resin', 'amber_glass',
+    'water_sea', 'water_pool', 'water_stream',
 })
 
 ASSET_VERSION = "1.0.0"
@@ -255,10 +264,30 @@ def _split_group(key: str, item) -> tuple[dict[str, M.Mesh], dict[str, M.Mesh]]:
     return solid, walk
 
 
-def export_glb(build: REG.RegionBuild, sets, path: Path) -> tuple[GLTF.GltfBuilder, dict]:
+def export_glb(build: REG.RegionBuild, sets, path: Path,
+               warn_unreferenced: bool = True) -> tuple[GLTF.GltfBuilder, dict]:
     builder = GLTF.GltfBuilder(
         generator="Eloria Amberwood builder (original procedural assets)")
     MAT.register_gltf_materials(builder, sets, only=MATERIALS)
+
+    # An over-broad pin is completely silent: the package simply carries
+    # textures nothing references. Say so, or it happens again.
+    used_materials = set()
+    for bucket in (build.terrain_meshes, build.water_meshes):
+        for piece in bucket.values():
+            for part in (getattr(piece, "parts", None) or [piece]):
+                if part.triangle_count:
+                    used_materials.add(part.material)
+    for item in build.meshes.values():
+        parts = (getattr(item, "parts", []) + getattr(item, "walk_parts", [])
+                 or [item])
+        for part in parts:
+            if part.triangle_count:
+                used_materials.add(part.material)
+    unreferenced = sorted(set(MATERIALS) - used_materials)
+    if warn_unreferenced and unreferenced:
+        print(f"[materials] WARNING: {len(unreferenced)} pinned but unreferenced "
+              f"in {path.name}: " + ", ".join(unreferenced))
 
     # Tangents are intentionally omitted: Godot's glTF importer generates them
     # for normal-mapped materials, and shipping them would add sixteen bytes a
@@ -600,14 +629,21 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "environment": {
             "sky": {"type": "gradient", "zenith": [0.15, 0.25, 0.42],
                     "horizon": [0.58, 0.56, 0.50]},
-            "sun": {"direction": [-0.46, 0.50, 0.73],
+            # The direction the light TRAVELS, which is what the client's
+            # WorldEnvironmentBinder applies: look_at_from_position(ZERO,
+            # direction), and a DirectionalLight3D shines along its own -Z.
+            # The offline rasteriser's sun_direction is the opposite
+            # convention - native/raster.c documents it as "points from surface
+            # toward the sun" - and this shipped that vector, whose +Y lit the
+            # region from underneath.
+            "sun": {"direction": [0.46, -0.50, -0.73],
                     "color": [1.22, 0.94, 0.60], "energy": 1.15},
             "ambient": {"skyColor": [0.22, 0.30, 0.42],
                         "groundColor": [0.08, 0.06, 0.04], "energy": 0.30},
             "saturation": 1.30,
             "fog": {"enabled": True, "color": [0.38, 0.37, 0.35],
                     "density": 0.0007, "heightFalloff": 0.003},
-            "goldenHour": {"sun": {"direction": [-0.82, 0.20, 0.53],
+            "goldenHour": {"sun": {"direction": [0.82, -0.20, -0.53],
                                    "color": [1.55, 0.94, 0.52]},
                            "fog": {"color": [0.62, 0.50, 0.38], "density": 0.0022}},
             "presentation": {
@@ -696,10 +732,20 @@ def main() -> int:
         minimap = render_minimap(build, sets, out / "minimap.webp")
         print(f"[minimap] rendered in {time.time() - t0:.1f}s")
 
-    texture_bytes = sum(sum(len(v) for v in ts.images().values()) for ts in sets.values())
-    stats["embeddedTextureBytes"] = texture_bytes
+    # Only the sets this package embeds. Summing every generated set reports
+    # the size of the whole shared texture table, which is the same number for
+    # every region and grows whenever any region adds a recipe - so it measured
+    # the toolkit rather than the package. It was also plainly wrong on its
+    # face: it claimed 17.1 MB of texture inside a GLB whose textures are a
+    # fraction of that.
+    embedded = {MAT.BY_NAME[name].texture for name in MATERIALS
+                if name in MAT.BY_NAME}
+    embedded_sets = [ts for key, ts in sets.items() if key in embedded]
+    stats["embeddedTextureBytes"] = sum(
+        sum(len(v) for v in ts.images().values()) for ts in embedded_sets)
     stats["textureMemoryBytesUncompressed"] = sum(
-        ts.base_color.shape[0] * ts.base_color.shape[1] * 4 * 3 for ts in sets.values())
+        ts.base_color.shape[0] * ts.base_color.shape[1] * 4 * 3
+        for ts in embedded_sets)
     stats["placements"] = len(build.placements)
     stats["collision"] = collision_stats
     stats["notes"] = build.notes
@@ -729,7 +775,8 @@ def main() -> int:
                     for name, texture_set in sets.items()}
         lod_build = build_region(args.seed, lod="far")
         lod_build.terrain_meshes = lod_build.terrain.build_meshes(uv_scale=0.28)
-        _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb")
+        _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb",
+                                  warn_unreferenced=False)
         stats["lod2"] = {
             "glbBytes": lod_stats["glbBytes"],
             "nodes": lod_stats["nodes"],

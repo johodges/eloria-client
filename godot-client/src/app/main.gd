@@ -217,6 +217,7 @@ var map_light_root: Node3D
 @onready var sound_volume_value: Label = %SoundVolumeValue
 @onready var minimap_size: HSlider = %MinimapSize
 @onready var minimap_size_value: Label = %MinimapSizeValue
+@onready var show_through_obstacles: CheckButton = %ShowThroughObstacles
 @onready var ui_scale_slider: HSlider = %UiScale
 @onready var ui_scale_value: Label = %UiScaleValue
 @onready var equipment_side: OptionButton = %EquipmentSide
@@ -318,6 +319,7 @@ var _inventory_resize_start_mouse := Vector2.ZERO
 var _inventory_resize_start_scale := 1.0
 var _equipment_side := "left"
 var _ui_scale := 1.0
+var _show_through_obstacles := true
 var _bulk_exclusions: Dictionary = {
 	"store": [false, false, false, false],
 	"drop": [false, false, false, false]}
@@ -565,6 +567,7 @@ func _ready() -> void:
 	sound_volume.value_changed.connect(_on_sound_volume_changed)
 	minimap_size.value_changed.connect(_on_minimap_size_changed)
 	ui_scale_slider.value_changed.connect(_on_ui_scale_changed)
+	show_through_obstacles.toggled.connect(_on_show_through_obstacles_toggled)
 	equipment_side.add_item("Left", 0)
 	equipment_side.add_item("Right", 1)
 	equipment_side.select(1 if _equipment_side == "right" else 0)
@@ -1994,6 +1997,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			_use_inventory_slot(slot)
 			get_viewport().set_input_as_handled()
 			return
+	# toggle_map, toggle_minimap and toggle_console are deliberately absent:
+	# _handle_bound_action() owns them so they can be rebound. Seeing through
+	# obstacles is not offered for rebinding, so it is still resolved here.
+	if event.is_action_pressed("toggle_show_through_obstacles"):
+		_toggle_show_through_obstacles()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("chat_focus"):
 		_show_chat_input()
 		get_viewport().set_input_as_handled()
@@ -2653,6 +2663,10 @@ func _sync_world() -> void:
 		node.set_nameplate_visible(int(id) != AppState.local_actor_id)
 		_place_actor_on_surface(node, true)
 	actor_label.text = "Actors: %d" % AppState.actors.size()
+	# The local actor is not necessarily the first one to arrive, and it is
+	# rebuilt on a map change, so the setting is reapplied here rather than once
+	# at login.
+	_apply_show_through_obstacles()
 	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id):
 		_update_local_actor_follow()
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
@@ -3110,6 +3124,8 @@ func _load_hud_settings() -> void:
 			"hud", "minimap_scale", 1.0)), 0.75, 1.75)
 		_ui_scale = clampf(float(config.get_value(
 			"hud", "ui_scale", 1.0)), UI_SCALE_MIN, UI_SCALE_MAX)
+		_show_through_obstacles = bool(config.get_value(
+			"hud", "show_through_obstacles", true))
 		_minimap_orientation = str(config.get_value(
 			"hud", "minimap_orientation", "north_up"))
 		if _minimap_orientation not in ["north_up", "player_up", "viewport_up"]:
@@ -3176,6 +3192,7 @@ func _load_hud_settings() -> void:
 		float(audio_director.volume_linear) * 100.0)
 	minimap_size.set_value_no_signal(_minimap_scale)
 	ui_scale_slider.set_value_no_signal(_ui_scale)
+	show_through_obstacles.set_pressed_no_signal(_show_through_obstacles)
 	_apply_ui_scale()
 	_apply_minimap_scale()
 	_apply_inventory_scale(_inventory_scale)
@@ -3189,6 +3206,23 @@ func _on_ui_scale_changed(value: float) -> void:
 ## that so players can trade HUD size for screen space. It only moves the canvas
 ## the HUD is laid out in - the world render target is resized to match in
 ## _on_window_size_changed(), so the world always renders at window resolution.
+func _on_show_through_obstacles_toggled(pressed: bool) -> void:
+	_show_through_obstacles = pressed
+	_apply_show_through_obstacles()
+	_save_hud_settings()
+
+func _toggle_show_through_obstacles() -> void:
+	show_through_obstacles.button_pressed = not show_through_obstacles.button_pressed
+
+## The local player only. Every actor silhouetted through every wall would be a
+## wallhack rather than a convenience, so this is deliberately not applied to
+## the rest of `actor_nodes`.
+func _apply_show_through_obstacles() -> void:
+	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	if actor_value is ReplicatedActor3D:
+		(actor_value as ReplicatedActor3D).set_occlusion_silhouette_enabled(
+			_show_through_obstacles)
+
 func _apply_ui_scale() -> void:
 	var window: Window = get_window()
 	if window != null:
@@ -3242,6 +3276,7 @@ func _save_hud_settings() -> void:
 	config.set_value("audio", "volume", float(audio_director.volume_linear))
 	config.set_value("hud", "minimap_scale", _minimap_scale)
 	config.set_value("hud", "ui_scale", _ui_scale)
+	config.set_value("hud", "show_through_obstacles", _show_through_obstacles)
 	config.set_value("hud", "minimap_orientation", _minimap_orientation)
 	config.set_value("hud", "minimap_position", minimap_frame.position)
 	config.set_value("hud", "minimap_visible", _minimap_visible)

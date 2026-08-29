@@ -1,0 +1,1806 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "verdant_stair_insides",
+    "name": "Verdant Stair Insides",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        15.45,
+        -8.8,
+        18.92
+      ],
+      "max": [
+        284.55,
+        21.4,
+        313.55
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        15.45,
+        -8.8,
+        20.45
+      ],
+      "max": [
+        284.55,
+        15.11,
+        313.55
+      ]
+    },
+    "interiorClass": "insides",
+    "parentRegion": "verdant_stair",
+    "serverCells": 297
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -13.0,
+      316.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        60.0,
+        0.05,
+        32.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk"
+    },
+    {
+      "id": "temple-sanctum-door",
+      "name": "The Green Sanctum",
+      "position": [
+        60.0,
+        0.05,
+        32.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "temple_sanctum"
+    },
+    {
+      "id": "cenote-deeps-stair",
+      "name": "The Cenote Deeps",
+      "position": [
+        210.0,
+        0.05,
+        34.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "cenote_deeps"
+    },
+    {
+      "id": "banyan-hollow-arch",
+      "name": "The Banyan Hollow",
+      "position": [
+        60.0,
+        0.05,
+        207.5
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "banyan_hollow"
+    },
+    {
+      "id": "stair-quarry-adit",
+      "name": "The Stair Quarry",
+      "position": [
+        180.0,
+        0.05,
+        210.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "stair_quarry"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 546,
+    "height": 594,
+    "cellMetres": 0.5,
+    "originMetres": [
+      13.0,
+      316.0
+    ],
+    "heightEncoding": {
+      "origin": -8.785,
+      "step": 0.3854,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
+    },
+    "walkableCells": 60332,
+    "blockedCells": 263992,
+    "walkableFraction": 0.186,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Interior_verdant_stair_insides",
+      "Build_verdant_stair_insides_amber_resin",
+      "Build_verdant_stair_insides_ashlar",
+      "Build_verdant_stair_insides_bark_dark",
+      "Build_verdant_stair_insides_bark_pale",
+      "Build_verdant_stair_insides_dark_iron",
+      "Build_verdant_stair_insides_gilt_brass",
+      "Build_verdant_stair_insides_rubble_stone",
+      "Build_verdant_stair_insides_thatch_reed",
+      "Build_verdant_stair_insides_timber_dark",
+      "Build_verdant_stair_insides_timber_grey",
+      "Build_verdant_stair_insides_timber_warm",
+      "Build_verdant_stair_insides_verdant_carved_jade",
+      "Build_verdant_stair_insides_verdant_frond",
+      "Build_verdant_stair_insides_verdant_jade",
+      "Build_verdant_stair_insides_verdant_limestone_cliff",
+      "Build_verdant_stair_insides_verdant_mossy_stone",
+      "Build_verdant_stair_insides_verdant_terrace_stone",
+      "Build_verdant_stair_insides_verdant_vine",
+      "Build_verdant_stair_insides_verdant_wet_limestone",
+      "Build_verdant_stair_insides_water_cenote",
+      "Build_verdant_stair_insides_water_pool",
+      "Build_verdant_stair_insides_water_stream",
+      "Build_verdant_stair_insides_woven_cloth"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    },
+    "notes": [
+      "Every standable surface is a Walk_<material> node, matching the region's contract: the client turns navigation.surfaceNodePrefixes into the layer its downward grounding ray tests."
+    ]
+  },
+  "portals": [
+    {
+      "id": "exit-temple-sanctum-door",
+      "name": "Return to Verdant Stair",
+      "type": "map-transition",
+      "position": [
+        60.0,
+        0.05,
+        32.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/verdant_stair.elm",
+      "destinationSpawn": "temple-sanctum-door",
+      "section": "temple_sanctum",
+      "authority": "server"
+    },
+    {
+      "id": "exit-cenote-deeps-stair",
+      "name": "Return to Verdant Stair",
+      "type": "map-transition",
+      "position": [
+        210.0,
+        0.05,
+        34.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/verdant_stair.elm",
+      "destinationSpawn": "cenote-deeps-stair",
+      "section": "cenote_deeps",
+      "authority": "server"
+    },
+    {
+      "id": "exit-banyan-hollow-arch",
+      "name": "Return to Verdant Stair",
+      "type": "map-transition",
+      "position": [
+        60.0,
+        0.05,
+        207.5
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/verdant_stair.elm",
+      "destinationSpawn": "banyan-hollow-arch",
+      "section": "banyan_hollow",
+      "authority": "server"
+    },
+    {
+      "id": "exit-stair-quarry-adit",
+      "name": "Return to Verdant Stair",
+      "type": "map-transition",
+      "position": [
+        180.0,
+        0.05,
+        210.0
+      ],
+      "radius": 3.0,
+      "destinationMap": "maps/nymara/verdant_stair.elm",
+      "destinationSpawn": "stair-quarry-adit",
+      "section": "stair_quarry",
+      "authority": "server"
+    }
+  ],
+  "sections": [
+    {
+      "id": "temple_sanctum",
+      "name": "The Green Sanctum",
+      "class": "temple",
+      "offset": [
+        60.0,
+        0.0,
+        34.0
+      ],
+      "arrival": [
+        60.0,
+        0.05,
+        32.0
+      ],
+      "spaces": [
+        "temple_sanctum.narthex",
+        "temple_sanctum.processional",
+        "temple_sanctum.sanctum",
+        "temple_sanctum.basin",
+        "temple_sanctum.relics",
+        "temple_sanctum.approach",
+        "temple_sanctum.axis",
+        "temple_sanctum.basinway",
+        "temple_sanctum.relicway"
+      ],
+      "notes": [
+        "The only section with a straight axis. Everything else in this map is cut by water or grown.",
+        "The runnel down the processional is the aqueduct's water brought indoors; it feeds the basin off the east side."
+      ]
+    },
+    {
+      "id": "cenote_deeps",
+      "name": "The Cenote Deeps",
+      "class": "cave",
+      "offset": [
+        210.0,
+        0.0,
+        34.0
+      ],
+      "arrival": [
+        210.0,
+        0.05,
+        34.0
+      ],
+      "spaces": [
+        "cenote_deeps.shaftfoot",
+        "cenote_deeps.gallery",
+        "cenote_deeps.drowned",
+        "cenote_deeps.roothall",
+        "cenote_deeps.throat",
+        "cenote_deeps.gullet",
+        "cenote_deeps.rootway"
+      ],
+      "notes": [
+        "The shaft foot is declared open to the sky: it is the bottom of the cenote the surface package cuts, and light down that shaft is the only daylight in this map.",
+        "Nothing in this section is dressed. The only built object is the foot of the spiral stair, which is the same kit piece the surface uses."
+      ]
+    },
+    {
+      "id": "banyan_hollow",
+      "name": "The Banyan Hollow",
+      "class": "tree-hall",
+      "offset": [
+        60.0,
+        0.0,
+        209.0
+      ],
+      "arrival": [
+        60.0,
+        0.05,
+        207.5
+      ],
+      "spaces": [
+        "banyan_hollow.rootarch",
+        "banyan_hollow.hollow",
+        "banyan_hollow.store",
+        "banyan_hollow.loft",
+        "banyan_hollow.archway",
+        "banyan_hollow.storeway",
+        "banyan_hollow.loftstair"
+      ],
+      "notes": [
+        "The hollow is declared open to the sky: the trunk is open at the top, which is where its daylight comes from and why the rope walkways read.",
+        "The only section with a floor above another floor. The loft stair is a 24-step run, so it is walkable rather than a ladder the client cannot ground an actor on."
+      ]
+    },
+    {
+      "id": "stair_quarry",
+      "name": "The Stair Quarry",
+      "class": "workings",
+      "offset": [
+        180.0,
+        0.0,
+        209.0
+      ],
+      "arrival": [
+        180.0,
+        0.05,
+        210.0
+      ],
+      "spaces": [
+        "stair_quarry.adit",
+        "stair_quarry.cutting",
+        "stair_quarry.sorting",
+        "stair_quarry.sump",
+        "stair_quarry.driftway",
+        "stair_quarry.sortway",
+        "stair_quarry.winze"
+      ],
+      "notes": [
+        "The face is a working one: blocks are still keyed into it with the wedge channels cut round them, rather than the room being a finished cavity.",
+        "The sump is the only water in this section and it is not walkable; the shelf around it is."
+      ]
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "the-green-figure",
+      "name": "The Green Figure",
+      "space": "temple_sanctum.sanctum",
+      "position": [
+        60.0,
+        -1.0,
+        121.0
+      ],
+      "section": "temple_sanctum"
+    },
+    {
+      "id": "the-processional",
+      "name": "The Processional",
+      "space": "temple_sanctum.processional",
+      "position": [
+        60.0,
+        0.4,
+        71.0
+      ],
+      "section": "temple_sanctum"
+    },
+    {
+      "id": "the-still-basin",
+      "name": "The Still Basin",
+      "space": "temple_sanctum.basin",
+      "position": [
+        96.0,
+        -1.6,
+        80.0
+      ],
+      "section": "temple_sanctum"
+    },
+    {
+      "id": "the-relief-aisle",
+      "name": "The Relief Aisle",
+      "space": "temple_sanctum.relics",
+      "position": [
+        25.5,
+        -1.6,
+        123.0
+      ],
+      "section": "temple_sanctum"
+    },
+    {
+      "id": "the-shaft-foot",
+      "name": "The Shaft Foot",
+      "space": "cenote_deeps.shaftfoot",
+      "position": [
+        210.0,
+        1.6,
+        34.0
+      ],
+      "section": "cenote_deeps"
+    },
+    {
+      "id": "the-drowned-hall",
+      "name": "The Drowned Hall",
+      "space": "cenote_deeps.drowned",
+      "position": [
+        210.0,
+        -3.6,
+        130.0
+      ],
+      "section": "cenote_deeps"
+    },
+    {
+      "id": "the-root-hall",
+      "name": "The Root Hall",
+      "space": "cenote_deeps.roothall",
+      "position": [
+        267.0,
+        -2.2,
+        134.0
+      ],
+      "section": "cenote_deeps"
+    },
+    {
+      "id": "the-hollow",
+      "name": "The Hollow",
+      "space": "banyan_hollow.hollow",
+      "position": [
+        60.0,
+        2.4,
+        242.0
+      ],
+      "section": "banyan_hollow"
+    },
+    {
+      "id": "the-loft",
+      "name": "The Loft",
+      "space": "banyan_hollow.loft",
+      "position": [
+        95.0,
+        11.0,
+        250.0
+      ],
+      "section": "banyan_hollow"
+    },
+    {
+      "id": "the-root-store",
+      "name": "The Root Store",
+      "space": "banyan_hollow.store",
+      "position": [
+        32.0,
+        0.6,
+        236.0
+      ],
+      "section": "banyan_hollow"
+    },
+    {
+      "id": "the-working-face",
+      "name": "The Working Face",
+      "space": "stair_quarry.cutting",
+      "position": [
+        180.0,
+        0.4,
+        248.0
+      ],
+      "section": "stair_quarry"
+    },
+    {
+      "id": "the-sorting-floor",
+      "name": "The Sorting Floor",
+      "space": "stair_quarry.sorting",
+      "position": [
+        141.5,
+        -0.6,
+        255.0
+      ],
+      "section": "stair_quarry"
+    },
+    {
+      "id": "the-sump",
+      "name": "The Sump",
+      "space": "stair_quarry.sump",
+      "position": [
+        180.0,
+        -7.0,
+        297.0
+      ],
+      "section": "stair_quarry"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "sanctum-offering",
+      "type": "information",
+      "name": "Offering table",
+      "position": [
+        60.0,
+        -3.0,
+        114.0
+      ],
+      "radius": 2.0,
+      "authority": "server",
+      "section": "temple_sanctum"
+    },
+    {
+      "id": "relic-bench",
+      "type": "crafting_station",
+      "name": "Relic bench",
+      "position": [
+        25.5,
+        -3.0,
+        132.0
+      ],
+      "radius": 2.0,
+      "authority": "server",
+      "section": "temple_sanctum"
+    },
+    {
+      "id": "hollow-storage",
+      "type": "storage",
+      "name": "Village cache",
+      "position": [
+        36.0,
+        -0.4,
+        240.0
+      ],
+      "radius": 2.0,
+      "authority": "server",
+      "section": "banyan_hollow"
+    },
+    {
+      "id": "hollow-hearth",
+      "type": "crafting_station",
+      "name": "Hollow hearth",
+      "position": [
+        95.0,
+        9.6,
+        250.0
+      ],
+      "radius": 2.0,
+      "authority": "server",
+      "section": "banyan_hollow"
+    },
+    {
+      "id": "quarry-bench",
+      "type": "crafting_station",
+      "name": "Mason's bench",
+      "position": [
+        192.0,
+        -1.8,
+        234.0
+      ],
+      "radius": 2.0,
+      "authority": "server",
+      "section": "stair_quarry"
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "sanctum-keeper",
+      "name": "Keeper of the Green Sanctum",
+      "type": "npc",
+      "role": "dialogue",
+      "position": [
+        56.0,
+        -3.2,
+        115.0
+      ],
+      "authority": "server",
+      "section": "temple_sanctum"
+    },
+    {
+      "id": "hollow-elder",
+      "name": "Hollow Elder",
+      "type": "npc",
+      "role": "dialogue",
+      "position": [
+        55.0,
+        -0.6,
+        250.0
+      ],
+      "authority": "server",
+      "section": "banyan_hollow"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "cenote-watercress-00",
+      "resource": "Cenote Watercress",
+      "category": "reagent",
+      "position": [
+        202.04,
+        0.0,
+        35.34
+      ],
+      "authority": "server",
+      "section": "cenote_deeps"
+    },
+    {
+      "id": "cenote-watercress-01",
+      "resource": "Cenote Watercress",
+      "category": "reagent",
+      "position": [
+        207.84,
+        0.0,
+        30.41
+      ],
+      "authority": "server",
+      "section": "cenote_deeps"
+    },
+    {
+      "id": "cenote-watercress-02",
+      "resource": "Cenote Watercress",
+      "category": "reagent",
+      "position": [
+        217.68,
+        0.0,
+        37.03
+      ],
+      "authority": "server",
+      "section": "cenote_deeps"
+    },
+    {
+      "id": "pale-quartz-00",
+      "resource": "Pale Quartz",
+      "category": "mineral",
+      "position": [
+        193.7,
+        -2.0,
+        260.41
+      ],
+      "authority": "server",
+      "section": "stair_quarry"
+    },
+    {
+      "id": "pale-quartz-01",
+      "resource": "Pale Quartz",
+      "category": "mineral",
+      "position": [
+        173.73,
+        -2.0,
+        239.45
+      ],
+      "authority": "server",
+      "section": "stair_quarry"
+    },
+    {
+      "id": "pale-quartz-02",
+      "resource": "Pale Quartz",
+      "category": "mineral",
+      "position": [
+        184.6,
+        -2.0,
+        246.52
+      ],
+      "authority": "server",
+      "section": "stair_quarry"
+    },
+    {
+      "id": "pale-quartz-03",
+      "resource": "Pale Quartz",
+      "category": "mineral",
+      "position": [
+        183.79,
+        -2.0,
+        252.74
+      ],
+      "authority": "server",
+      "section": "stair_quarry"
+    }
+  ],
+  "lights": [
+    {
+      "id": "lantern-00",
+      "kind": "point",
+      "position": [
+        60.0,
+        2.98,
+        31.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-01",
+      "kind": "point",
+      "position": [
+        60.0,
+        2.98,
+        37.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-02",
+      "kind": "point",
+      "position": [
+        52.0,
+        3.78,
+        56.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-03",
+      "kind": "point",
+      "position": [
+        68.0,
+        3.78,
+        56.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-04",
+      "kind": "point",
+      "position": [
+        52.0,
+        3.78,
+        72.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-05",
+      "kind": "point",
+      "position": [
+        68.0,
+        3.78,
+        72.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-06",
+      "kind": "point",
+      "position": [
+        52.0,
+        3.78,
+        88.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-07",
+      "kind": "point",
+      "position": [
+        68.0,
+        3.78,
+        88.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-08",
+      "kind": "point",
+      "position": [
+        49.0,
+        4.98,
+        111.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-09",
+      "kind": "point",
+      "position": [
+        71.0,
+        4.98,
+        111.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-10",
+      "kind": "point",
+      "position": [
+        49.0,
+        4.98,
+        131.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-11",
+      "kind": "point",
+      "position": [
+        71.0,
+        4.98,
+        131.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-12",
+      "kind": "point",
+      "position": [
+        96.0,
+        1.78,
+        80.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-13",
+      "kind": "point",
+      "position": [
+        25.5,
+        0.98,
+        117.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-14",
+      "kind": "point",
+      "position": [
+        25.5,
+        0.98,
+        129.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-15",
+      "kind": "point",
+      "position": [
+        210.0,
+        3.38,
+        64.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-16",
+      "kind": "point",
+      "position": [
+        210.0,
+        3.38,
+        76.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-17",
+      "kind": "point",
+      "position": [
+        210.0,
+        3.38,
+        88.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-18",
+      "kind": "point",
+      "position": [
+        196.0,
+        0.38,
+        142.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-19",
+      "kind": "point",
+      "position": [
+        224.0,
+        0.38,
+        142.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-20",
+      "kind": "point",
+      "position": [
+        210.0,
+        0.38,
+        146.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-21",
+      "kind": "point",
+      "position": [
+        259.0,
+        1.38,
+        134.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-22",
+      "kind": "point",
+      "position": [
+        275.0,
+        1.38,
+        134.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-23",
+      "kind": "point",
+      "position": [
+        60.0,
+        2.58,
+        209.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-24",
+      "kind": "point",
+      "position": [
+        52.0,
+        3.78,
+        234.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-25",
+      "kind": "point",
+      "position": [
+        68.0,
+        3.78,
+        234.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-26",
+      "kind": "point",
+      "position": [
+        52.0,
+        3.78,
+        252.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-27",
+      "kind": "point",
+      "position": [
+        68.0,
+        3.78,
+        252.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-28",
+      "kind": "point",
+      "position": [
+        60.0,
+        8.38,
+        242.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-29",
+      "kind": "point",
+      "position": [
+        60.0,
+        14.38,
+        242.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-30",
+      "kind": "point",
+      "position": [
+        32.0,
+        1.98,
+        236.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-31",
+      "kind": "point",
+      "position": [
+        90.0,
+        12.38,
+        250.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-32",
+      "kind": "point",
+      "position": [
+        100.0,
+        12.38,
+        250.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-33",
+      "kind": "point",
+      "position": [
+        180.0,
+        2.38,
+        211.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-34",
+      "kind": "point",
+      "position": [
+        168.0,
+        3.38,
+        236.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-35",
+      "kind": "point",
+      "position": [
+        192.0,
+        3.38,
+        236.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-36",
+      "kind": "point",
+      "position": [
+        168.0,
+        3.38,
+        256.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-37",
+      "kind": "point",
+      "position": [
+        192.0,
+        3.38,
+        256.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-38",
+      "kind": "point",
+      "position": [
+        180.0,
+        3.38,
+        248.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-39",
+      "kind": "point",
+      "position": [
+        141.5,
+        1.98,
+        249.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-40",
+      "kind": "point",
+      "position": [
+        141.5,
+        1.98,
+        261.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-41",
+      "kind": "point",
+      "position": [
+        172.0,
+        -5.02,
+        297.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-42",
+      "kind": "point",
+      "position": [
+        188.0,
+        -5.02,
+        297.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 9.0,
+      "energy": 1.5
+    }
+  ],
+  "environment": {
+    "sky": "none",
+    "ambient": {
+      "colour": [
+        0.32,
+        0.38,
+        0.34
+      ],
+      "energy": 0.62
+    },
+    "exposure": 1.85,
+    "fog": {
+      "enabled": true,
+      "colour": [
+        0.06,
+        0.09,
+        0.08
+      ],
+      "begin": 14.0,
+      "end": 56.0
+    },
+    "audio": [
+      {
+        "id": "temple-hush",
+        "space": "temple_sanctum.sanctum",
+        "loop": true
+      },
+      {
+        "id": "water-runnel",
+        "space": "temple_sanctum.processional",
+        "loop": true
+      },
+      {
+        "id": "drip",
+        "space": "cenote_deeps.gallery",
+        "loop": true
+      },
+      {
+        "id": "water-hollow",
+        "space": "cenote_deeps.drowned",
+        "loop": true
+      },
+      {
+        "id": "village-inside",
+        "space": "banyan_hollow.hollow",
+        "loop": true
+      },
+      {
+        "id": "creaking-timber",
+        "space": "banyan_hollow.loft",
+        "loop": true
+      },
+      {
+        "id": "pick-work",
+        "space": "stair_quarry.cutting",
+        "loop": true
+      },
+      {
+        "id": "drip",
+        "space": "stair_quarry.sump",
+        "loop": true
+      }
+    ],
+    "openToSky": [
+      "cenote_deeps.shaftfoot",
+      "banyan_hollow.hollow"
+    ]
+  },
+  "spaces": {
+    "temple_sanctum.narthex": {
+      "x0": 49.0,
+      "x1": 71.0,
+      "z0": 25.0,
+      "z1": 39.0,
+      "floor": 0.0,
+      "height": 6.0
+    },
+    "temple_sanctum.processional": {
+      "x0": 47.0,
+      "x1": 73.0,
+      "z0": 51.0,
+      "z1": 91.0,
+      "floor": -1.6,
+      "height": 9.0
+    },
+    "temple_sanctum.sanctum": {
+      "x0": 42.0,
+      "x1": 78.0,
+      "z0": 103.0,
+      "z1": 139.0,
+      "floor": -3.2,
+      "height": 14.0
+    },
+    "temple_sanctum.basin": {
+      "x0": 85.0,
+      "x1": 107.0,
+      "z0": 68.0,
+      "z1": 92.0,
+      "floor": -2.6,
+      "height": 7.5
+    },
+    "temple_sanctum.relics": {
+      "x0": 16.0,
+      "x1": 35.0,
+      "z0": 112.0,
+      "z1": 134.0,
+      "floor": -3.2,
+      "height": 6.5
+    },
+    "temple_sanctum.approach": {
+      "x0": 57.8,
+      "x1": 62.2,
+      "z0": 36.8,
+      "z1": 53.2,
+      "floor": -1.6,
+      "height": 4.2
+    },
+    "temple_sanctum.axis": {
+      "x0": 57.5,
+      "x1": 62.5,
+      "z0": 88.5,
+      "z1": 105.5,
+      "floor": -3.2,
+      "height": 5.0
+    },
+    "temple_sanctum.basinway": {
+      "x0": 71.3,
+      "x1": 86.7,
+      "z0": 78.3,
+      "z1": 81.7,
+      "floor": -2.6,
+      "height": 3.6
+    },
+    "temple_sanctum.relicway": {
+      "x0": 33.4,
+      "x1": 43.6,
+      "z0": 119.4,
+      "z1": 122.6,
+      "floor": -3.2,
+      "height": 3.4
+    },
+    "cenote_deeps.shaftfoot": {
+      "x0": 197.0,
+      "x1": 223.0,
+      "z0": 21.0,
+      "z1": 47.0,
+      "floor": 0.0,
+      "height": 18.0
+    },
+    "cenote_deeps.gallery": {
+      "x0": 202.0,
+      "x1": 218.0,
+      "z0": 60.0,
+      "z1": 96.0,
+      "floor": -2.4,
+      "height": 7.0
+    },
+    "cenote_deeps.drowned": {
+      "x0": 184.0,
+      "x1": 236.0,
+      "z0": 108.0,
+      "z1": 152.0,
+      "floor": -6.0,
+      "height": 13.0
+    },
+    "cenote_deeps.roothall": {
+      "x0": 250.0,
+      "x1": 284.0,
+      "z0": 118.0,
+      "z1": 150.0,
+      "floor": -5.2,
+      "height": 16.0
+    },
+    "cenote_deeps.throat": {
+      "x0": 207.3,
+      "x1": 212.7,
+      "z0": 44.3,
+      "z1": 62.7,
+      "floor": -2.4,
+      "height": 5.0
+    },
+    "cenote_deeps.gullet": {
+      "x0": 207.5,
+      "x1": 212.5,
+      "z0": 93.5,
+      "z1": 110.5,
+      "floor": -6.0,
+      "height": 4.6
+    },
+    "cenote_deeps.rootway": {
+      "x0": 233.8,
+      "x1": 252.2,
+      "z0": 131.8,
+      "z1": 136.2,
+      "floor": -6.0,
+      "height": 4.4
+    },
+    "banyan_hollow.rootarch": {
+      "x0": 52.0,
+      "x1": 68.0,
+      "z0": 202.0,
+      "z1": 213.0,
+      "floor": 0.0,
+      "height": 5.0
+    },
+    "banyan_hollow.hollow": {
+      "x0": 43.0,
+      "x1": 77.0,
+      "z0": 225.0,
+      "z1": 259.0,
+      "floor": -0.6,
+      "height": 22.0
+    },
+    "banyan_hollow.store": {
+      "x0": 24.0,
+      "x1": 40.0,
+      "z0": 229.0,
+      "z1": 243.0,
+      "floor": -0.6,
+      "height": 4.4
+    },
+    "banyan_hollow.loft": {
+      "x0": 85.0,
+      "x1": 105.0,
+      "z0": 241.0,
+      "z1": 259.0,
+      "floor": 9.4,
+      "height": 6.0
+    },
+    "banyan_hollow.archway": {
+      "x0": 57.7,
+      "x1": 62.3,
+      "z0": 210.7,
+      "z1": 227.3,
+      "floor": -0.6,
+      "height": 4.4
+    },
+    "banyan_hollow.storeway": {
+      "x0": 38.5,
+      "x1": 44.5,
+      "z0": 233.5,
+      "z1": 236.5,
+      "floor": -0.6,
+      "height": 3.0
+    },
+    "banyan_hollow.loftstair": {
+      "x0": 75.4,
+      "x1": 86.6,
+      "z0": 247.4,
+      "z1": 250.6,
+      "floor": -0.6,
+      "height": 3.6
+    },
+    "stair_quarry.adit": {
+      "x0": 173.0,
+      "x1": 187.0,
+      "z0": 203.0,
+      "z1": 217.0,
+      "floor": 0.0,
+      "height": 5.0
+    },
+    "stair_quarry.cutting": {
+      "x0": 159.0,
+      "x1": 201.0,
+      "z0": 229.0,
+      "z1": 267.0,
+      "floor": -2.0,
+      "height": 11.0
+    },
+    "stair_quarry.sorting": {
+      "x0": 130.0,
+      "x1": 153.0,
+      "z0": 243.0,
+      "z1": 267.0,
+      "floor": -2.0,
+      "height": 7.0
+    },
+    "stair_quarry.sump": {
+      "x0": 162.0,
+      "x1": 198.0,
+      "z0": 281.0,
+      "z1": 313.0,
+      "floor": -8.4,
+      "height": 10.0
+    },
+    "stair_quarry.driftway": {
+      "x0": 177.8,
+      "x1": 182.2,
+      "z0": 214.8,
+      "z1": 231.2,
+      "floor": -2.0,
+      "height": 4.2
+    },
+    "stair_quarry.sortway": {
+      "x0": 151.3,
+      "x1": 160.7,
+      "z0": 253.3,
+      "z1": 256.7,
+      "floor": -2.0,
+      "height": 3.4
+    },
+    "stair_quarry.winze": {
+      "x0": 177.7,
+      "x1": 182.3,
+      "z0": 264.7,
+      "z1": 283.3,
+      "floor": -8.4,
+      "height": 4.4
+    }
+  },
+  "conceptArt": {
+    "detailBoard": "../../verdant_stair/references/00-concept-detail-board.png",
+    "role": "parent-region board; these interiors have no board of their own",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "The Green Sanctum: the screen at the door",
+      "The Green Sanctum: the processional colonnade",
+      "The Green Sanctum: the axis runnel",
+      "The Green Sanctum: the seated figure",
+      "The Green Sanctum: the sanctum colonnade",
+      "The Green Sanctum: the reflecting basin",
+      "The Green Sanctum: the relief aisle",
+      "The Cenote Deeps: the shaft foot, looking up",
+      "The Cenote Deeps: the water-cut gallery",
+      "The Cenote Deeps: the gullet down",
+      "The Cenote Deeps: the drowned hall",
+      "The Cenote Deeps: flowstone and pillars",
+      "The Cenote Deeps: the root hall",
+      "The Banyan Hollow: the root arch",
+      "The Banyan Hollow: the hollow from the floor",
+      "The Banyan Hollow: the stair up the trunk",
+      "The Banyan Hollow: rope walkways overhead",
+      "The Banyan Hollow: the store among the roots",
+      "The Banyan Hollow: the loft and its hearth",
+      "The Stair Quarry: the adit and its props",
+      "The Stair Quarry: the working face",
+      "The Stair Quarry: blocks keyed into the face",
+      "The Stair Quarry: the sorting floor",
+      "The Stair Quarry: the winze down",
+      "The Stair Quarry: the flooded sump"
+    ]
+  },
+  "performance": {
+    "nodes": 30,
+    "meshes": 29,
+    "materials": 25,
+    "images": 72,
+    "textures": 72,
+    "accessors": 145,
+    "bufferViews": 217,
+    "uniqueTriangles": 62717,
+    "uniqueVertices": 71687,
+    "glbBytes": 10530224,
+    "nodeNames": [
+      "Interior_verdant_stair_insides",
+      "Build_verdant_stair_insides_amber_resin",
+      "Build_verdant_stair_insides_ashlar",
+      "Build_verdant_stair_insides_bark_dark",
+      "Build_verdant_stair_insides_bark_pale",
+      "Build_verdant_stair_insides_dark_iron",
+      "Build_verdant_stair_insides_gilt_brass",
+      "Build_verdant_stair_insides_rubble_stone",
+      "Build_verdant_stair_insides_thatch_reed",
+      "Build_verdant_stair_insides_timber_dark",
+      "Build_verdant_stair_insides_timber_grey",
+      "Build_verdant_stair_insides_timber_warm",
+      "Build_verdant_stair_insides_verdant_carved_jade",
+      "Build_verdant_stair_insides_verdant_frond",
+      "Build_verdant_stair_insides_verdant_jade",
+      "Build_verdant_stair_insides_verdant_limestone_cliff",
+      "Build_verdant_stair_insides_verdant_mossy_stone",
+      "Build_verdant_stair_insides_verdant_terrace_stone",
+      "Build_verdant_stair_insides_verdant_vine",
+      "Build_verdant_stair_insides_verdant_wet_limestone",
+      "Build_verdant_stair_insides_water_cenote",
+      "Build_verdant_stair_insides_water_pool",
+      "Build_verdant_stair_insides_water_stream",
+      "Build_verdant_stair_insides_woven_cloth",
+      "Walk_packed_earth",
+      "Walk_timber_warm",
+      "Walk_verdant_jungle_floor",
+      "Walk_verdant_mossy_stone",
+      "Walk_verdant_terrace_stone",
+      "Walk_verdant_wet_limestone"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "source/build_interiors.py",
+      "role": "reproducible-build",
+      "seed": 20260901
+    },
+    {
+      "id": "anchor",
+      "landmark": "great-temple",
+      "position": [
+        204.0,
+        100.0,
+        -198.0
+      ],
+      "role": "surface entrance on the Verdant Stair region map"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the shared Nymara toolkit; no scattered placement",
+    "textures": "procedural, from _toolkit/amberwood/textures.py",
+    "thirdParty": "none"
+  },
+  "notes": [
+    "Four interiors on one map with blackspace between them, in the Eternal Lands convention: one GLB, one manifest, one collision grid, one server map key, and an arrival point per surface door.",
+    "The blackspace is not drawn. The collision grid is built only where a Walk_ surface exists, so the gutters between sections are blocked by construction rather than by a mask that could drift out of step.",
+    "Sections are spaced so no two come within about forty metres, which is what keeps one section's lamps and cameras out of the next.",
+    "None of the four has a concept package: Verdant Stair has an aerial and a ten-panel board and no interior brief, so all four are authored from the region's surface landmarks and that board. Every place name is the author's."
+  ],
+  "productionStatus": "authored-geometry-materials-population",
+  "knownLimitations": [
+    "Not opened in Godot: no client is installable in the build environment, so collision response, navmesh generation, portal transition, LOD and transparency sorting are unverified.",
+    "eloria-server has not registered these map keys."
+  ]
+}

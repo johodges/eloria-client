@@ -334,12 +334,24 @@ def _leaf_cluster(center: np.ndarray, radius: float, normal: np.ndarray, rng: Rn
 
 
 def build_tree(profile: TreeProfile | str, seed: int = 0,
-               detail: str = "high") -> tuple[M.Mesh, M.Mesh]:
-    """Return (wood, foliage) meshes for one tree, origin at the ground contact."""
+               detail: str = "high",
+               canopy_floor: float = 0.0) -> tuple[M.Mesh, M.Mesh]:
+    """Return (wood, foliage) meshes for one tree, origin at the ground contact.
+
+    `canopy_floor` is the height, as a fraction of the tree's own height, below
+    which no leaf cluster is emitted. The lowest branches droop and their tips
+    carry clusters, so foliage settles well below where the branch attaches -
+    on a 17 m oak whose first branch is at 5.4 m, leaves reach the floor and
+    the stand reads as hedge rather than woodland. Raising this clears the
+    trunk without touching the crown. Default 0.0 leaves the tree unchanged.
+    """
     if isinstance(profile, str):
         profile = PROFILES[profile]
     rng = Rng(seed)
     branches = _grow_trunk(profile, rng)
+    # Same expression `_grow_trunk` uses, so the floor is a fraction of the
+    # trunk actually built rather than of the nominal profile height.
+    tree_height = profile.height * (0.72 if profile.broken_top else 1.0)
 
     detail_scale = {"high": 1.0, "mid": 0.55, "low": 0.28}[detail]
     wood_parts = []
@@ -401,6 +413,8 @@ def build_tree(profile: TreeProfile | str, seed: int = 0,
                 jitter = rng.normal(0.0, branch.tip_length * 0.20, 3)
                 outward = branch.tip_direction * branch.tip_length * 0.25 * profile.canopy_bias
                 center = base + jitter + outward
+                if canopy_floor > 0.0 and center[1] < canopy_floor * tree_height:
+                    continue
                 radius = float(rng.uniform(*profile.cluster_size)) * radius_gain
                 clusters.append(_leaf_cluster(center, radius, branch.tip_direction, rng,
                                               planes, profile.foliage_material))

@@ -22,7 +22,7 @@ import creature_roster as RO
 
 U = Path(os.environ.get('ELORIA_CONCEPT_DIR', 'concept-art'))
 os.environ["ELORIA_CONCEPT_DIR"] = str(U)
-sheets = sorted({e[7] for e in RO.ROSTER})
+sheets = sorted({e[7] for e in RO.ROSTER} & set(RO.CONCEPT_SHEETS))
 boxes = json.loads(subprocess.run([sys.executable, str(Path(__file__).resolve().parent
                                               / "concept_sheet_index.py"), "--json"] + sheets,
                                   capture_output=True, text=True).stdout)

@@ -52,6 +52,18 @@ class Builder:
         self.textures: dict[str, dict[str, int]] = {}
         self.materials: dict[str, int] = {}
         self.collision_nodes: list[str] = []
+        # Appended to every node name this builder emits. Empty by default, so
+        # nothing that builds one map is affected. A build that puts several
+        # systems on one map sets it per system, because glTF node names must be
+        # unique and the client resolves collision and navigation nodes by name -
+        # two systems each numbering their boulders from zero collide.
+        #
+        # A *suffix*, not a prefix. `navigation.surfaceNodePrefixes` matches on
+        # the start of the name, so tagging the front turns every
+        # `Terrain_CaveFloor_*` into something the client does not recognise as
+        # a walk surface - the first attempt at this built no navigation
+        # surface at all and grounded nothing on the whole map.
+        self.name_suffix: str = ""
         self.landmarks: list[dict] = []
         self.interactives: list[dict] = []
         self.notes: list[str] = []
@@ -103,6 +115,7 @@ class Builder:
         for index, (geometry, _) in enumerate(prepared):
             report = checks.assert_well_formed(geometry, f"{name}[{index}]")
             self.geometry_reports.append(report)
+        name = name + self.name_suffix
         mesh = self.glb.mesh(name, prepared)
         if mesh is None:
             return None
@@ -114,6 +127,7 @@ class Builder:
     def instance(self, name: str, mesh: int, matrix, *, parent: int | None = None,
                  collide: bool = False) -> int:
         """Reuse an existing mesh at a new transform - true glTF instancing."""
+        name = name + self.name_suffix
         node = self.glb.node(name, mesh=mesh, matrix=matrix, parent=parent)
         if collide:
             self.collision_nodes.append(name)

@@ -28,6 +28,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 from PIL import Image, ImageDraw, ImageFont
 
+import concept_figures as CF
 import creature_roster as RO
 import render_creature_qa as R
 
@@ -49,20 +50,65 @@ def sheet_image(stem: str) -> Image.Image:
 
 
 def boxes_for(stems) -> dict:
-    """Figure bounding boxes per sheet, from the segmenting indexer."""
+    """Figure bounding boxes per sheet, from the segmenting indexer.
+
+    Only needed when working from whole sheets; the cut-figure delivery already
+    carries the artist's bounds, and the segmenter cannot run without the
+    sheets themselves.
+    """
+    if CF._root() is not None:
+        return {}
     proc = subprocess.run([sys.executable, str(HERE / "concept_sheet_index.py"),
                            "--json"] + sorted(stems),
                           capture_output=True, text=True)
     return json.loads(proc.stdout)
 
 
+def cut_figure(stem: str, row: int, col: int):
+    """The artist's own cut figure for a cell, when that delivery is present."""
+    root = CF._root()
+    if root is None:
+        return None
+    directory = root / CF.SHEET_DIRS.get(stem, "")
+    if not directory.is_dir():
+        return None
+    found = sorted(directory.glob(f"*__{row * 4 + col + 1:02d}__*.png"))
+    if not found:
+        return None
+    image = Image.open(found[0])
+    if image.mode == "RGBA":
+        bounds = image.getchannel("A").point(
+            lambda v: 255 if v > 12 else 0).getbbox()
+        if bounds:
+            image = image.crop(bounds)
+    return image
+
+
+def placeholder_tile(caption: str) -> Image.Image:
+    """Stands in for a creature the supplied art has no figure for."""
+    pad = Image.new("RGB", (TILE, TILE), (34, 30, 30))
+    draw = ImageDraw.Draw(pad)
+    draw.rectangle((6, 6, TILE - 7, TILE - 7), outline=(96, 78, 62))
+    for y, line in enumerate(("no concept figure", "", caption)):
+        draw.text((14, TILE // 2 - 16 + y * 14), line, fill=(168, 146, 120),
+                  font=FONT)
+    return pad
+
+
 def concept_tile(stem: str, row: int, col: int, box=None) -> Image.Image:
-    im = sheet_image(stem)
-    if box:
-        crop = im.crop(tuple(box))
-    else:                       # fall back to the nominal 4x3 grid
-        cw, ch = im.width // 4, im.height // 3
-        crop = im.crop((col * cw, row * ch, (col + 1) * cw, (row + 1) * ch))
+    if stem not in RO.CONCEPT_SHEETS:
+        return placeholder_tile("authored, not measured")
+    # Prefer the cut figures: they are the artist's own bounds rather than a
+    # segmentation guess, and they are what the fidelity pass was worked
+    # against.  Segmenting a whole sheet stays as the fallback.
+    crop = cut_figure(stem, row, col)
+    if crop is None:
+        im = sheet_image(stem)
+        if box:
+            crop = im.crop(tuple(box))
+        else:                   # fall back to the nominal 4x3 grid
+            cw, ch = im.width // 4, im.height // 3
+            crop = im.crop((col * cw, row * ch, (col + 1) * cw, (row + 1) * ch))
     pad = Image.new("RGB", (TILE, TILE), (40, 44, 50))
     ratio = min(TILE / crop.width, TILE / crop.height)
     thumb = crop.resize((max(1, int(crop.width * ratio)),
@@ -92,7 +138,7 @@ def compose(rows, cols=4):
 
 def build_roster() -> None:
     entries = sorted(RO.ROSTER, key=lambda e: (RO.SHEET_LOCALES[e[7]], e[7], e[8], e[9]))
-    boxes = boxes_for({e[7] for e in RO.ROSTER})
+    boxes = boxes_for({e[7] for e in RO.ROSTER} & set(RO.CONCEPT_SHEETS))
     rows, manifest = [], []
     for slug, name, family, plan, _b, _a, _s, stem, row, col in entries:
         cell = boxes.get(stem, [])
@@ -108,11 +154,13 @@ def build_roster() -> None:
     compose(rows).save(QA / "roster_concept_comparison.png", optimize=True)
     (QA / "roster_concept_comparison.json").write_text(json.dumps({
         "note": "Bind-pose renders of the checked-in GLBs beside the concept "
-                "figure each creature was authored from. Concept crops use the "
-                "true figure bounds found by concept_sheet_index.py, not a "
-                "uniform grid, so wings, antlers and tails are not clipped.",
+                "figure each creature was authored from. Concept crops are the "
+                "artist's own cut figures where that delivery is available, "
+                "resolved by concept_figures.py; otherwise the true figure "
+                "bounds found by concept_sheet_index.py, never a uniform grid, "
+                "so wings, antlers and tails are not clipped.",
         "renderer": "eloria-assets/tools/render_creature_qa.py",
-        "index": "eloria-assets/tools/concept_sheet_index.py",
+        "index": "eloria-assets/tools/concept_figures.py",
         "view": {"yaw": YAW, "pitch": PITCH},
         "creatures": manifest}, indent=1) + "\n")
     print(f"roster sheet: {len(rows)} creatures")

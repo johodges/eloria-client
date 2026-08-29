@@ -19,12 +19,12 @@
     "bounds": {
       "min": [
         -30.0,
-        -4.14,
+        -4.08,
         -30.0
       ],
       "max": [
         30.0,
-        7.54,
+        7.63,
         30.0
       ]
     },
@@ -42,7 +42,7 @@
       0.0,
       0.0
     ],
-    "walkingHeight": 0.158,
+    "walkingHeight": 0.195,
     "invertServerY": true,
     "addressableWorldBounds": {
       "min": [
@@ -65,7 +65,7 @@
       ],
       "position": [
         0.0,
-        0.158,
+        0.195,
         17.0
       ],
       "facing": [
@@ -85,7 +85,7 @@
       ],
       "position": [
         0.0,
-        -2.237,
+        -2.037,
         -2.0
       ],
       "facing": [
@@ -101,38 +101,51 @@
     "nodeNames": [
       "Detail_barrel_stack_017",
       "Detail_cart_016",
-      "Detail_cave_boulder_0_029",
-      "Detail_cave_boulder_0_043",
-      "Detail_cave_boulder_0_080",
-      "Detail_cave_boulder_0_102",
-      "Detail_cave_boulder_0_144",
-      "Detail_cave_boulder_1_025",
-      "Detail_cave_boulder_1_047",
-      "Detail_cave_boulder_1_071",
-      "Detail_cave_boulder_1_098",
-      "Detail_cave_boulder_1_105",
-      "Detail_cave_boulder_1_145",
-      "Detail_cave_boulder_1_154",
-      "Detail_cave_boulder_1_169",
+      "Detail_cave_boulder_0_053",
+      "Detail_cave_boulder_0_064",
+      "Detail_cave_boulder_0_084",
+      "Detail_cave_boulder_0_090",
+      "Detail_cave_boulder_0_120",
+      "Detail_cave_boulder_0_125",
+      "Detail_cave_boulder_0_129",
+      "Detail_cave_boulder_1_022",
+      "Detail_cave_boulder_1_063",
+      "Detail_cave_boulder_1_080",
+      "Detail_cave_boulder_1_094",
+      "Detail_cave_boulder_1_100",
+      "Detail_cave_boulder_1_101",
+      "Detail_cave_boulder_1_111",
+      "Detail_cave_boulder_1_119",
+      "Detail_cave_boulder_1_134",
+      "Detail_cave_boulder_1_135",
       "Detail_cave_boulder_2_023",
-      "Detail_cave_boulder_2_027",
-      "Detail_cave_boulder_2_038",
-      "Detail_cave_boulder_2_045",
-      "Detail_cave_boulder_2_058",
-      "Detail_cave_boulder_2_062",
-      "Detail_cave_boulder_2_070",
-      "Detail_cave_boulder_2_089",
-      "Detail_cave_boulder_2_103",
-      "Detail_cave_boulder_2_106",
-      "Detail_cave_boulder_2_121",
-      "Detail_cave_boulder_3_030",
-      "Detail_cave_boulder_3_048",
-      "Detail_cave_boulder_3_087",
-      "Detail_cave_boulder_3_091",
-      "Detail_cave_boulder_3_100",
-      "Detail_cave_boulder_3_164",
-      "Detail_cave_column_0_137",
-      "Detail_cave_column_2_035",
+      "Detail_cave_boulder_2_028",
+      "Detail_cave_boulder_2_037",
+      "Detail_cave_boulder_2_047",
+      "Detail_cave_boulder_2_048",
+      "Detail_cave_boulder_2_056",
+      "Detail_cave_boulder_2_076",
+      "Detail_cave_boulder_2_097",
+      "Detail_cave_boulder_2_113",
+      "Detail_cave_boulder_2_114",
+      "Detail_cave_boulder_2_139",
+      "Detail_cave_boulder_2_140",
+      "Detail_cave_boulder_2_149",
+      "Detail_cave_boulder_2_167",
+      "Detail_cave_boulder_3_020",
+      "Detail_cave_boulder_3_032",
+      "Detail_cave_boulder_3_054",
+      "Detail_cave_boulder_3_071",
+      "Detail_cave_boulder_3_073",
+      "Detail_cave_boulder_3_075",
+      "Detail_cave_boulder_3_077",
+      "Detail_cave_boulder_3_082",
+      "Detail_cave_boulder_3_096",
+      "Detail_cave_boulder_3_123",
+      "Detail_cave_boulder_3_130",
+      "Detail_cave_boulder_3_138",
+      "Detail_cave_column_1_154",
+      "Detail_cave_column_2_072",
       "Detail_hay_bale_018",
       "Detail_pit_props_0_000",
       "Detail_pit_props_0_001",
@@ -201,7 +214,7 @@
       "node": "Landmark_cave_brazier_010",
       "position": [
         -2.27,
-        -0.04,
+        0.09,
         17.58
       ],
       "serverTile": [
@@ -217,7 +230,7 @@
       "node": "Landmark_cave_brazier_011",
       "position": [
         4.45,
-        -2.23,
+        -2.28,
         -3.58
       ],
       "serverTile": [
@@ -233,7 +246,7 @@
       "node": "Landmark_cave_brazier_012",
       "position": [
         -13.13,
-        -1.67,
+        -1.68,
         -14.29
       ],
       "serverTile": [
@@ -249,7 +262,7 @@
       "node": "Landmark_cave_brazier_013",
       "position": [
         11.82,
-        -2.94,
+        -2.67,
         -9.26
       ],
       "serverTile": [
@@ -265,7 +278,7 @@
       "node": "Landmark_cave_brazier_014",
       "position": [
         -14.96,
-        -0.66,
+        -0.93,
         5.74
       ],
       "serverTile": [
@@ -281,7 +294,7 @@
       "node": "Landmark_fire_pit_015",
       "position": [
         -15.5,
-        -1.81,
+        -1.7,
         -12.5
       ],
       "serverTile": [
@@ -299,7 +312,7 @@
       "label": "Adit mouth",
       "position": [
         0.0,
-        0.16,
+        0.2,
         17.0
       ],
       "radius": 5.2,
@@ -314,7 +327,7 @@
       "label": "The geode chamber",
       "position": [
         0.0,
-        -2.24,
+        -2.04,
         -2.0
       ],
       "radius": 10.5,
@@ -329,7 +342,7 @@
       "label": "Prospectors' cut",
       "position": [
         -15.5,
-        -1.81,
+        -1.7,
         -12.5
       ],
       "radius": 6.6,
@@ -344,7 +357,7 @@
       "label": "The violet gallery",
       "position": [
         14.0,
-        -2.85,
+        -2.65,
         -11.0
       ],
       "radius": 6.2,
@@ -359,7 +372,7 @@
       "label": "Shard store",
       "position": [
         -13.0,
-        -0.65,
+        -0.74,
         6.0
       ],
       "radius": 4.4,
@@ -426,7 +439,7 @@
         "node": "Landmark_cave_brazier_010",
         "position": [
           -2.27,
-          1.31,
+          1.44,
           17.58
         ],
         "color": [
@@ -443,7 +456,7 @@
         "node": "Landmark_cave_brazier_011",
         "position": [
           4.45,
-          -0.88,
+          -0.93,
           -3.58
         ],
         "color": [
@@ -460,7 +473,7 @@
         "node": "Landmark_cave_brazier_012",
         "position": [
           -13.13,
-          -0.32,
+          -0.33,
           -14.29
         ],
         "color": [
@@ -477,7 +490,7 @@
         "node": "Landmark_cave_brazier_013",
         "position": [
           11.82,
-          -1.59,
+          -1.32,
           -9.26
         ],
         "color": [
@@ -494,7 +507,7 @@
         "node": "Landmark_cave_brazier_014",
         "position": [
           -14.96,
-          0.69,
+          0.42,
           5.74
         ],
         "color": [
@@ -509,25 +522,9 @@
         "id": "Light_Amethyst_geode-chamber_1",
         "kind": "crystal",
         "position": [
-          -0.32,
-          -0.68,
-          -7.35
-        ],
-        "color": [
-          0.62,
-          0.42,
-          1.0
-        ],
-        "energyHint": 1.4,
-        "rangeHint": 11.55
-      },
-      {
-        "id": "Light_Amethyst_geode-chamber_2",
-        "kind": "crystal",
-        "position": [
-          -5.63,
-          -0.63,
-          0.2
+          4.02,
+          -0.7,
+          1.76
         ],
         "color": [
           0.62,
@@ -541,9 +538,25 @@
         "id": "Light_Amethyst_violet-gallery_1",
         "kind": "crystal",
         "position": [
-          13.45,
-          -1.45,
-          -7.36
+          10.31,
+          -1.35,
+          -12.44
+        ],
+        "color": [
+          0.62,
+          0.42,
+          1.0
+        ],
+        "energyHint": 1.4,
+        "rangeHint": 6.82
+      },
+      {
+        "id": "Light_Amethyst_violet-gallery_2",
+        "kind": "crystal",
+        "position": [
+          14.49,
+          -1.42,
+          -14.64
         ],
         "color": [
           0.62,
@@ -557,25 +570,9 @@
         "id": "Light_Amethyst_shard-store_1",
         "kind": "crystal",
         "position": [
-          -13.49,
-          0.96,
-          8.63
-        ],
-        "color": [
-          0.62,
-          0.42,
-          1.0
-        ],
-        "energyHint": 1.4,
-        "rangeHint": 4.84
-      },
-      {
-        "id": "Light_Amethyst_shard-store_2",
-        "kind": "crystal",
-        "position": [
-          -13.05,
-          0.93,
-          3.24
+          -14.24,
+          0.54,
+          3.42
         ],
         "color": [
           0.62,
@@ -625,7 +622,7 @@
       "kind": "map-transition",
       "position": [
         0.0,
-        0.16,
+        0.2,
         18.56
       ],
       "serverTile": [
@@ -654,16 +651,16 @@
     "shellTriangles": 13164,
     "openCells": 3047,
     "shellChunks": 39,
-    "instances": 184,
+    "instances": 178,
     "kitUniqueTriangles": 4718,
     "kitAssets": 25,
-    "nodes": 223,
+    "nodes": 217,
     "meshes": 64,
     "materials": 15,
     "textures": 27,
     "accessors": 410,
     "uniqueMeshTriangles": 17882,
-    "glbBytes": 4302312,
-    "buildSeconds": 14.8
+    "glbBytes": 4295676,
+    "buildSeconds": 8.1
   }
 }
