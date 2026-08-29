@@ -1,0 +1,48 @@
+{
+  "engine": "4.7.2-stable (official)",
+  "groundingMisses": 0,
+  "loaderWarnings": [
+    "navigation polygons did not produce collision"
+  ],
+  "manifest": "C:\\Users\\User\\Desktop\\eloria-project\\wt-ssarathi\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world.json",
+  "missExamples": [],
+  "pass": true,
+  "renderingDriver": "headless",
+  "sampleStep": 4,
+  "serverCells": 576,
+  "spawns": [
+    {
+      "clientY": 1.45,
+      "deltaMetres": 0.05,
+      "id": "default",
+      "manifestY": 1.5
+    },
+    {
+      "clientY": 1.8,
+      "deltaMetres": 0.05,
+      "id": "great-causeway",
+      "manifestY": 1.85
+    },
+    {
+      "clientY": 2.2,
+      "deltaMetres": 0.05,
+      "id": "temple-terrace",
+      "manifestY": 2.25
+    }
+  ],
+  "sun": {
+    "energy": 2.34999990463257,
+    "environmentBound": true,
+    "lightsFromBelow": false,
+    "travelDirection": [
+      -0.381,
+      -0.763,
+      0.522
+    ]
+  },
+  "surfaceHeightRange": [
+    -9.43878173828125,
+    56.8083190917969
+  ],
+  "tilesSampled": 20736
+}
