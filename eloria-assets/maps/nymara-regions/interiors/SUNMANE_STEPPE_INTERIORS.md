@@ -6,7 +6,7 @@ between them**, the way Eternal Lands lays out a region's interiors, and the way
 do in this repository. One package, one GLB, one collision grid, two sections,
 one spawn and one exit portal each.
 
-Package: `interiors/sunmane_insides/`. Not yet routed - see below.
+Package: `interiors/sunmane_insides/`. Routed - see below.
 
 | section | name | class | walkable cells | surface door on the steppe |
 |---|---|---|---:|---|
@@ -105,43 +105,49 @@ because it is a continuous rim rather than one hole. The grid now requires the
 agent the manifest itself declares to fit: clearance ≥ `agentRadius` 0.55 and
 headroom ≥ `agentHeight` 1.9. That took the in-engine result to zero misses.
 
-## It is not wired up yet, and that is deliberate
+## It is wired up
 
-**The combined package is built and verified but nothing routes to it.** The
-steppe's two doors still go to the two separate maps, exactly as before, and the
-client registry is unchanged.
-
-Wiring it needs a decision that is not a layout refactor:
-
-Sunmane is the first region whose interiors are *already two served server maps*
-(`sunmane_wind_caves.elm` and `sunmane_crystal_hollow.elm`). Crownwater's,
-Amethyst's and Ssarathi's absorbed rooms never were - each of those regions only
-ever had one interior map key, so combining cost nothing server-side.
-
-Serving Sunmane's two systems as one map therefore means **retiring
-`sunmane_crystal_hollow` as a served map**, which touches:
-
-| | |
-|---|---|
-| `config/eloria/maps.txt` | the map declaration and both portal pairs |
-| `tools/generate_nymara_maps.py` | the interiors tuple, tile count and arrival |
-| `config/eloria/client_content_manifest.json` | the map entry |
-| `Dockerfile` | an assertion that the ELM ships in the image |
-| four test files | `SUNMANE_CAVE_CONNECTIONS`, `INTERIOR_CONNECTIONS`, `NYMARA_INTERIORS`, `EXPECTED_SIZES`, `ARRIVALS`, and the Docker collision test |
-
-That is a deployment change - it alters what ships in the container - so it is
-left for the map's owner rather than taken unilaterally. The alternative is to
-leave both systems served separately and treat this package as the client-side
-option, which is the state as merged.
-
-When it is wired, the shape is:
+Both of the steppe's cave mouths now go to this package.
 
 | door | on the steppe | arrives at | section |
 |---|---|---|---|
 | `wind-caves-mouth` | tile (128, 175) | tile (43, 27) | wind caves |
 | `crystal-hollow-adit` | tile (182, 154) | tile (169, 28) | crystal hollow |
 
-The package already carries both arrivals and both return portals.
+Arrival and exit share a tile, which is what the other combined insides maps
+do (`drowned_crown`, `resonant_vault`, `ssarathi_royal_archive`): the package
+puts each return portal in its own arrival chamber.
+
+**`sunmane_crystal_hollow` is retired as a served map.** Sunmane was the first
+region whose interiors were already *two* served server maps, so unlike
+Crownwater's, Amethyst's and Ssarathi's absorbed rooms, combining them cost
+something server-side. The hollow is now the eastern half of
+`sunmane_wind_caves.elm`, which grows from 10 server tiles to 32.
+
+| where | what changed |
+|---|---|
+| `config/eloria/maps.txt` | one map line, and four portal lines routing both doors to the one map |
+| `tools/generate_nymara_maps.py` | interiors tuple, tile count, arrival tile |
+| `tools/generate_nymara_invasion_spawns.py` | the hollow's groups spawn into the combined map, at points on it |
+| `config/eloria/client_content_manifest.json` | one map entry with two `blocks` |
+| `Dockerfile` | the retired ELM is no longer asserted into the image |
+| five test files | connections, sizes, arrivals, content sync, Docker, invasion counts |
+| `godot-client/data/maps/registry.json` | the map key points at this package; the hollow's keys become aliases |
+
+The client registry keys `sunmane_crystal_hollow` and
+`sunmane_crystal_hollow.elm` are kept as aliases onto the combined map rather
+than deleted, so anything still asking for the hollow by name resolves instead
+of failing.
+
+### A defect the wiring found
+
+The invasion spawn generator placed all of Sunmane's cave monsters on a single
+shared 3x3 grid of tiles inherited from the old 60-tile maps. Checked against
+this package's `collision.bin`, **six of the nine wind-cave points are inside
+solid rock** - and always were. Neither standalone cave map shipped a collision
+grid, so there was nothing to check them against. Both systems now get nine
+points each, every one verified as a tile whose four half-metre cells are all
+walkable.
 
 ## Known limitations
 
@@ -155,8 +161,17 @@ The package already carries both arrivals and both return portals.
   transitions are unverified. The in-engine check proves the map loads through
   the real `WorldLoader` and that every walkable cell has floor under it; it
   does not prove an actor can walk it or that a portal fires.
-* **No server has loaded the map.** The registry entry and the routing are in
-  place, but end-to-end play was not exercised.
+* **No server has loaded the map.** The registry entry, the portals, the ELM
+  and the invasion spawns are all in place and the ELM regenerates at 32
+  tiles, but no running server has served it and no client has walked
+  through a door into it. End-to-end play is unexercised.
+* **The retirement has no data migration.** A character row persisted with
+  `map_id = sunmane_crystal_hollow` refers to a map that no longer exists,
+  and the server looks maps up directly (`eloria/world.py`, the `CHANGE_MAP`
+  send on login) with no fallback, so such a login would raise `KeyError`.
+  Nothing here migrates those rows, and no live database was inspected to
+  see whether any exist. On a fresh deployment this is moot; on a live one
+  it needs an `UPDATE characters SET map_id=...` first.
 * **No client frames.** The two standalone packages have their own rendered
   minimaps; this combined package ships neither a minimap nor capture frames.
   The manifest declares `minimap.webp` and the file is not there yet.

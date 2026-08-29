@@ -13,7 +13,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2] / "maps" / "nymara-regions"
 PACKAGE = ROOT / "sunmane_steppe"
-INTERIORS = ("sunmane_wind_caves", "sunmane_crystal_hollow")
+# Sunmane's two cave systems used to be two packages and two served maps.
+# They now share one package and one map with unwalkable blackspace between
+# them, so this reads the combined manifest and describes its sections. The
+# standalone packages are still built and kept for iterating on one system,
+# but they are no longer what the server registers.
+INSIDES = "sunmane_insides"
 
 
 def table(header: list[str], rows: list[list[str]]) -> list[str]:
@@ -29,8 +34,7 @@ def tile(entry) -> str:
 
 def main() -> int:
     manifest = json.loads((PACKAGE / "world.json").read_text())
-    interiors = {name: json.loads((ROOT / "interiors" / name / "world.json").read_text())
-                 for name in INTERIORS}
+    insides = json.loads((ROOT / "interiors" / INSIDES / "world.json").read_text())
     population = manifest["runtimePopulation"]
     out: list[str] = []
     add = out.append
@@ -77,31 +81,39 @@ def main() -> int:
     add("player can see but never stand on, and it is marked")
     add('`"reachable": false` in the manifest. The server needs no record of it.\n')
 
-    add("## New interior maps\n")
-    add("Two cave interiors ship as their own packages under")
-    add("`maps/nymara-regions/interiors/` and are registered client-side in")
-    add("`godot-client/data/maps/registry.json`. They need server map ids and the")
-    add("matching transition records:\n")
+    add("## The interior map\n")
+    add("Sunmane's two cave systems share **one** interior map, the way")
+    add("Crownwater's and Ssarathi's insides do: one package, one server map id,")
+    add("one collision grid, and unwalkable blackspace between the systems. Which")
+    add("system a player gets is decided by the mouth they entered, so there is")
+    add("one portal pair per door rather than one per system:\n")
     rows = []
-    for name, data in interiors.items():
+    for section in insides["sections"]:
+        portal = next(entry for entry in insides["portals"]
+                      if entry["section"] == section["id"])
         entrance = next(entry for entry in manifest["interactives"]
-                        if entry.get("destinationMap", "").endswith(name + ".elm"))
-        exit_portal = data["portals"][0]
+                        if entry.get("destinationMap", "")
+                        .endswith(section["id"] + ".elm"))
         rows.append([
-            "`maps/nymara/%s.elm`" % name,
-            data["asset"]["name"],
-            "`(%d, %d)`" % tuple(int(v) for v in data["coordinateTransform"]["serverOrigin"]),
+            section["name"],
             tile(entrance["serverTile"]),
-            tile(entrance["destinationTile"]),
-            tile(exit_portal["destinationTile"])])
-    out.extend(table(["Server map id", "Name", "Datum", "Entrance on the steppe",
-                      "Arrival inside", "Exit back to"], rows))
+            tile(section["arrivalServerTile"]),
+            tile(portal["destinationTile"])])
+    out.extend(table(["Section", "Mouth on the steppe", "Arrival inside",
+                      "Exit back to"], rows))
     add("")
-    add("Both interiors are one metre per tile like the surface map, use")
-    add("`invertServerY`, and place their datum at the centre of a 60 m square, so")
-    add("every walkable tile is in 0..60 on both axes. The other two cave mouths on")
-    add("the surface - the drovers' shelter and the eastern adit - are modelled")
-    add("shelters with no interior and need no registration.\n")
+    span = int(insides["collision"]["width"] * insides["collision"]["cellMetres"])
+    add("Both doors go to `maps/nymara/sunmane_wind_caves.elm`, which is one metre")
+    add("per tile like the surface map, uses `invertServerY`, and puts its datum")
+    add("at the map corner rather than the centre of a square, so a section's")
+    add("tiles are simply its metres. The package is %d m across, so the map needs"
+        % span)
+    add("%d server tiles where the wind caves alone needed 10." % (span // 6))
+    add("")
+    add("`maps/nymara/sunmane_crystal_hollow.elm` is **retired** as a served map.")
+    add("The other two cave mouths on the surface - the drovers' shelter and the")
+    add("eastern adit - are modelled shelters with no interior and need no")
+    add("registration.\n")
 
     add("## Safe spawn surfaces\n")
     add("The client grounds actors by raycasting the navigation surface, and every")
@@ -109,9 +121,8 @@ def main() -> int:
     add("a safe spawn. The positions the manifests name explicitly:\n")
     rows = [[entry["id"], tile(entry["serverTile"]), "sunmane_steppe", entry["note"]]
             for entry in manifest["spawnPoints"]]
-    for name, data in interiors.items():
-        rows += [[entry["id"], tile(entry["serverTile"]), name, entry["note"]]
-                 for entry in data["spawnPoints"]]
+    rows += [[entry["id"], tile(entry["serverTile"]), "sunmane_wind_caves",
+              entry["note"]] for entry in insides["spawnPoints"]]
     out.extend(table(["Spawn id", "Server tile", "Map", "Note"], rows))
     add("")
 
