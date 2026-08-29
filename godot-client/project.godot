@@ -33,6 +33,7 @@ disconnect={ "deadzone": 0.5, "events": [] }
 chat_focus={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":84)] }
 toggle_map={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":9)] }
 toggle_minimap={ "deadzone": 0.5, "events": [Object(InputEventKey,"alt_pressed":true,"physical_keycode":77)] }
+toggle_show_through_obstacles={ "deadzone": 0.5, "events": [Object(InputEventKey,"alt_pressed":true,"physical_keycode":86)] }
 toggle_console={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":96)] }
 toggle_inventory={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":73,"ctrl_pressed":true)] }
 recenter_viewport={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":32)] }
