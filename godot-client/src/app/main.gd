@@ -360,6 +360,9 @@ var _keyboard_running := false
 var _keyboard_direction := Vector2i.ZERO
 var _keyboard_goal_tile := Vector2i(-99999, -99999)
 var _keyboard_refresh_msec := 0
+## The heading WASD resolves against, latched when a keyboard burst begins and
+## held until it ends.
+var _keyboard_reference_yaw := 0.0
 var _ground_bag_get_all_requested_msec := -1
 var _ground_bag_get_all_bag_id := -1
 ## The inventory slot riding on the cursor in walk mode, or -1. Eternal Lands
@@ -831,12 +834,16 @@ func _update_keyboard_movement() -> void:
 	if forward_input == 0 and right_input == 0:
 		_stop_keyboard_movement()
 		return
+	# WASD is resolved against the heading the burst started from, not against
+	# the actor's live facing: the actor turns to face each step it takes, and
+	# reading a turning actor back would swing a held diagonal round on itself.
+	if not _keyboard_moving:
+		_keyboard_reference_yaw = actor_node.desired_facing_yaw()
 	var direction: Vector2i = _facing_relative_tile_direction(
-		actor_node.desired_facing_yaw(), forward_input, right_input)
+		_keyboard_reference_yaw, forward_input, right_input)
 	if direction == Vector2i.ZERO:
 		_stop_keyboard_movement()
 		return
-	actor_node.set_facing_override(true)
 	var origin := Vector2i(int(dto.get("x", 0)), int(dto.get("y", 0)))
 	var now: int = Time.get_ticks_msec()
 	var run: bool = Input.is_key_pressed(KEY_SHIFT)
@@ -897,10 +904,10 @@ func _clear_keyboard_movement_tracking() -> void:
 	_keyboard_goal_tile = Vector2i(-99999, -99999)
 	_keyboard_refresh_msec = 0
 
-func _release_local_facing_override() -> void:
+func _clear_local_turn_prediction() -> void:
 	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	if actor_value is ReplicatedActor3D and is_instance_valid(actor_value as ReplicatedActor3D):
-		(actor_value as ReplicatedActor3D).set_facing_override(false)
+		(actor_value as ReplicatedActor3D).clear_turn_prediction()
 
 ## Q and E ask the server to turn. The rendered facing comes from the actor
 ## command the server broadcasts in reply, which is also what makes the turn
@@ -2600,7 +2607,7 @@ func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 		" command=", "RUN_TO" if mouse_button.shift_pressed else "MOVE_TO")
 	if target_value is Vector2i:
 		_clear_keyboard_movement_tracking()
-		_release_local_facing_override()
+		_clear_local_turn_prediction()
 		var move_error: Error = Network.move_to(target_value as Vector2i,
 			mouse_button.shift_pressed)
 		if move_error != OK:
@@ -2710,7 +2717,7 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 		print_debug("world_input godot=", point, " server_tile=", tile,
 			" command=", "RUN_TO" if event.shift_pressed else "MOVE_TO")
 		_clear_keyboard_movement_tracking()
-		_release_local_facing_override()
+		_clear_local_turn_prediction()
 		var move_error: Error = Network.move_to(tile, event.shift_pressed)
 		if move_error != OK:
 			push_warning("MOVE_TO failed: " + error_string(move_error))
