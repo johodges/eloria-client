@@ -445,7 +445,17 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 		ServerMessage.CHANGE_MAP:
 			return {"type": "change_map", "map_name": nul_string(payload)}
 		ServerMessage.REMOVE_ACTOR:
-			return {"type": "remove_actor", "actor_id": u16(payload)} if payload.size() >= 2 else {"type": "invalid", "error": "short_payload"}
+			# The server batches every actor that left view into one packet -
+			# a pack of creatures dying together, or a whole screen of them
+			# falling out of visibility range at once. Reading only the first
+			# id left the rest standing on the map for good, because the
+			# server considers them gone and never repeats the removal.
+			if payload.size() < 2:
+				return {"type": "invalid", "error": "short_payload"}
+			var removed_actor_ids: Array[int] = []
+			for offset: int in range(0, payload.size() - 1, 2):
+				removed_actor_ids.append(u16(payload, offset))
+			return {"type": "remove_actor", "actor_ids": removed_actor_ids}
 		ServerMessage.KILL_ALL_ACTORS:
 			return {"type": "clear_actors"}
 		ServerMessage.ADD_ACTOR_COMMAND:
@@ -1493,8 +1503,10 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		var plain_name: PackedByteArray = payload.slice(
 			17 + shift, min(payload.size(), 47 + shift))
 		var plain_end: int = plain_name.find(0)
+		# A plain actor packet is a creature or a scenery NPC. Neither has a
+		# guild, and their names routinely contain spaces.
 		actor.merge(decode_actor_name(plain_name if plain_end < 0
-			else plain_name.slice(0, plain_end)))
+			else plain_name.slice(0, plain_end), false))
 	actor["alive"] = int(actor.get("health", 0)) > 0
 	# The frame byte is the actor's current animation state. FRAME_COMBAT_IDLE
 	# is the only value that carries gameplay meaning at spawn: an actor
@@ -1512,7 +1524,8 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 ## the whole thing as a name renders the colour bytes as mojibake and the tag
 ## as part of the player's name. Both colours are the server's choice, so they
 ## are decoded rather than dropped, and neither is ever chosen here.
-static func decode_actor_name(bytes: PackedByteArray) -> Dictionary:
+static func decode_actor_name(bytes: PackedByteArray,
+		space_separates_tag := true) -> Dictionary:
 	var name_colour: int = 0
 	var body: PackedByteArray = bytes
 	if not body.is_empty() and body[0] > 127:
@@ -1520,8 +1533,19 @@ static func decode_actor_name(bytes: PackedByteArray) -> Dictionary:
 		body = body.slice(1)
 	var guild_colour: int = 0
 	var guild_tag: String = ""
-	var space: int = body.rfind(32)
-	if space > 0:
+	# The tag's own colour marker is the reliable separator, because it cannot
+	# occur inside a name. The trailing space is only a fallback for a server
+	# that sent an uncoloured tag, and it is never used for a creature or NPC:
+	# "Mirrorfin Otter" is one name, and splitting it on the space turns every
+	# two-word creature into "Mirrorfin [Otter]".
+	var marker: int = -1
+	for offset: int in range(body.size()):
+		if body[offset] > 127:
+			marker = offset
+			break
+	var space: int = marker - 1 if marker > 0 else (
+		body.rfind(32) if space_separates_tag else -1)
+	if space > 0 and body[space] == 32:
 		var tag_bytes: PackedByteArray = body.slice(space + 1)
 		if not tag_bytes.is_empty():
 			if tag_bytes[0] > 127:

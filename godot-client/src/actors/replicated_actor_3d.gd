@@ -35,12 +35,27 @@ var _equipment_nodes: Dictionary = {}
 var _equipment_hides: Dictionary = {}
 var _hidden_body_surfaces: Dictionary = {}
 var _nameplate: Label3D
+var _health_bar_background: MeshInstance3D
+var _health_bar_fill: MeshInstance3D
+var _health_label: Label3D
+var _health_current := -1
+var _health_maximum := -1
+var _overhead_visible := true
 var _settled := false
 
 # Visual layer 2. The gameplay camera renders layers 1 and 2; the minimap and
 # full-map cameras render layers 1 and 3.
 const GAMEPLAY_ONLY_VISUAL_LAYER := 2
 const SETTLED_YAW_EPSILON := 0.0005
+
+# Overhead health bar geometry, in world units, measured downwards from the
+# nameplate so the name, the bar and the numbers read as one block.
+const NAMEPLATE_HEIGHT := 2.15
+const HEALTH_BAR_HEIGHT := 2.0
+const HEALTH_LABEL_HEIGHT := 1.85
+const HEALTH_BAR_WIDTH := 0.9
+const HEALTH_BAR_THICKNESS := 0.085
+const HEALTH_BAR_BORDER := 0.02
 
 func configure(dto: Dictionary, adapter: CoordinateAdapter,
 		model_config: Dictionary, animation_config: Dictionary,
@@ -262,7 +277,7 @@ func _add_nameplate(dto: Dictionary) -> void:
 	var guild_tag: String = str(dto.get("guild_tag", ""))
 	label.text = (str(dto.get("name", "Unknown actor"))
 		+ ("  [%s]" % guild_tag if not guild_tag.is_empty() else ""))
-	label.position.y = 2.15
+	label.position.y = NAMEPLATE_HEIGHT
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
 	label.font_size = 28
@@ -271,10 +286,120 @@ func _add_nameplate(dto: Dictionary) -> void:
 	label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(label)
 	_nameplate = label
+	_add_health_bar()
+	apply_vitals(int(dto.get("health", 0)), int(dto.get("max_health", 0)))
+
+## The overhead health bar and its numbers. Every actor packet already carries
+## the pair, so a creature's condition is knowable without selecting it: the
+## combat HUD only ever describes the one target the player is fighting.
+func _add_health_bar() -> void:
+	var background: MeshInstance3D = MeshInstance3D.new()
+	background.name = "HealthBarBackground"
+	var background_quad: QuadMesh = QuadMesh.new()
+	background_quad.size = Vector2(HEALTH_BAR_WIDTH + HEALTH_BAR_BORDER,
+		HEALTH_BAR_THICKNESS + HEALTH_BAR_BORDER)
+	background_quad.material = _overhead_material(Color(0.05, 0.04, 0.03, 0.78), 1)
+	background.mesh = background_quad
+	background.position.y = HEALTH_BAR_HEIGHT
+	background.layers = GAMEPLAY_ONLY_VISUAL_LAYER
+	add_child(background)
+	_health_bar_background = background
+	var fill: MeshInstance3D = MeshInstance3D.new()
+	fill.name = "HealthBarFill"
+	var fill_quad: QuadMesh = QuadMesh.new()
+	fill_quad.size = Vector2(HEALTH_BAR_WIDTH, HEALTH_BAR_THICKNESS)
+	fill_quad.material = _overhead_material(Color(0.24, 0.78, 0.29, 1.0), 2)
+	fill.mesh = fill_quad
+	fill.position.y = HEALTH_BAR_HEIGHT
+	fill.layers = GAMEPLAY_ONLY_VISUAL_LAYER
+	add_child(fill)
+	_health_bar_fill = fill
+	var numbers: Label3D = Label3D.new()
+	numbers.name = "HealthNumbers"
+	numbers.position.y = HEALTH_LABEL_HEIGHT
+	numbers.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	numbers.no_depth_test = true
+	numbers.render_priority = 3
+	numbers.outline_render_priority = 2
+	numbers.font_size = 24
+	numbers.outline_size = 6
+	numbers.layers = GAMEPLAY_ONLY_VISUAL_LAYER
+	add_child(numbers)
+	_health_label = numbers
+
+## Billboarded, unshaded and depth-test free, so the bar reads the same against
+## terrain, water and another actor standing in front of it. Draw order is the
+## render priority rather than a depth offset: the quads share a plane and a
+## z nudge would swap sides as the camera orbits.
+func _overhead_material(colour: Color, priority: int) -> StandardMaterial3D:
+	var material: StandardMaterial3D = StandardMaterial3D.new()
+	material.albedo_color = colour
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	material.billboard_keep_scale = true
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	material.no_depth_test = true
+	material.disable_receive_shadows = true
+	material.render_priority = priority
+	return material
+
+## Redraws the bar for a health pair the server sent. An actor the server gives
+## no maximum for - most scenery NPCs - has nothing to draw, so it keeps the
+## bare name rather than an empty bar that would read as "about to die".
+func apply_vitals(current: int, maximum: int) -> void:
+	if current == _health_current and maximum == _health_maximum:
+		return
+	_health_current = current
+	_health_maximum = maximum
+	if not is_instance_valid(_health_bar_background) or not is_instance_valid(_health_bar_fill) \
+			or not is_instance_valid(_health_label):
+		return
+	if maximum <= 0:
+		_health_bar_background.visible = false
+		_health_bar_fill.visible = false
+		_health_label.visible = false
+		return
+	var clamped: int = clampi(current, 0, maximum)
+	var ratio: float = float(clamped) / float(maximum)
+	_health_bar_background.visible = _overhead_visible
+	_health_label.visible = _overhead_visible
+	_health_label.text = "%d/%d" % [clamped, maximum]
+	var fill_quad: QuadMesh = _health_bar_fill.mesh as QuadMesh
+	if clamped <= 0:
+		_health_bar_fill.visible = false
+	else:
+		_health_bar_fill.visible = _overhead_visible
+		var width: float = HEALTH_BAR_WIDTH * ratio
+		fill_quad.size = Vector2(width, HEALTH_BAR_THICKNESS)
+		# A QuadMesh is centred on its origin, so a shrinking bar would drain
+		# from both ends. The offset pins the left edge instead, and it is a
+		# mesh offset rather than a node position because the billboard shader
+		# discards the node basis and would leave the nudge pointing at the
+		# world axis the camera happened to start on.
+		fill_quad.center_offset = Vector3(
+			-(HEALTH_BAR_WIDTH - width) * 0.5, 0.0, 0.0)
+		var material: StandardMaterial3D = fill_quad.material as StandardMaterial3D
+		material.albedo_color = _health_colour(ratio)
+
+static func _health_colour(ratio: float) -> Color:
+	if ratio > 0.6:
+		return Color(0.24, 0.78, 0.29, 1.0)
+	if ratio > 0.3:
+		return Color(0.93, 0.76, 0.16, 1.0)
+	return Color(0.86, 0.21, 0.16, 1.0)
 
 func set_nameplate_visible(enabled: bool) -> void:
+	_overhead_visible = enabled
 	if is_instance_valid(_nameplate):
 		_nameplate.visible = enabled
+	var has_health: bool = _health_maximum > 0
+	if is_instance_valid(_health_bar_background):
+		_health_bar_background.visible = enabled and has_health
+	if is_instance_valid(_health_bar_fill):
+		_health_bar_fill.visible = enabled and has_health and _health_current > 0
+	if is_instance_valid(_health_label):
+		_health_label.visible = enabled and has_health
 
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
 	var next_target: Vector3 = adapter.tile_center(int(dto.x), int(dto.y))

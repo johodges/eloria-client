@@ -262,10 +262,12 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			actors[event.actor_id] = event
 			state_changed.emit(&"actors")
 		"remove_actor":
-			actors.erase(event.actor_id)
-			if selected_actor_id == int(event.actor_id):
-				selected_actor_id = -1
-				state_changed.emit(&"selection")
+			for removed_actor_value: Variant in event.actor_ids:
+				var removed_actor_id: int = int(removed_actor_value)
+				actors.erase(removed_actor_id)
+				if selected_actor_id == removed_actor_id:
+					selected_actor_id = -1
+					state_changed.emit(&"selection")
 			state_changed.emit(&"actors")
 		"clear_actors":
 			actors.clear()

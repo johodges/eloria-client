@@ -2634,6 +2634,8 @@ func _sync_world() -> void:
 		if actor_nodes.has(id):
 			var existing_actor: ReplicatedActor3D = actor_nodes[id] as ReplicatedActor3D
 			existing_actor.apply_server_state(dto, adapter)
+			existing_actor.apply_vitals(int(dto.get("health", 0)),
+				int(dto.get("max_health", 0)))
 			existing_actor.set_nameplate_visible(int(id) != AppState.local_actor_id)
 			_place_actor_on_surface(existing_actor)
 			continue

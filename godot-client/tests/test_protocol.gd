@@ -276,6 +276,23 @@ func _init() -> void:
 		PackedByteArray([0x34, 0x12, 20, 0x78, 0x56, 7]))
 	_expect(commands.commands.size() == 2 and commands.commands[1].actor_id == 0x5678,
 		"batched actor commands")
+	# The server batches removals into one packet. Dropping every id after the
+	# first left dead creatures standing on the map for good.
+	var removed_actors: Dictionary = EloriaProtocol.decode_server(6,
+		PackedByteArray([0x34, 0x12, 0x78, 0x56, 0x02, 0x00]))
+	_expect(removed_actors.type == "remove_actor"
+		and removed_actors.actor_ids.size() == 3
+		and removed_actors.actor_ids[0] == 0x1234
+		and removed_actors.actor_ids[1] == 0x5678
+		and removed_actors.actor_ids[2] == 2,
+		"every actor in a batched removal packet is removed")
+	var removed_actor: Dictionary = EloriaProtocol.decode_server(6,
+		PackedByteArray([0x34, 0x12]))
+	_expect(removed_actor.type == "remove_actor"
+		and removed_actor.actor_ids == ([0x1234] as Array[int]),
+		"a single-actor removal still decodes")
+	_expect(EloriaProtocol.decode_server(6, PackedByteArray([1])).type == "invalid",
+		"a truncated removal packet is rejected")
 	var actor_wear: Dictionary = EloriaProtocol.decode_server(52,
 		PackedByteArray([0x34, 0x12, 2, 25]))
 	_expect(actor_wear.type == "actor_wear" and actor_wear.actor_id == 0x1234
@@ -1016,6 +1033,21 @@ func _init() -> void:
 		_hex("89416c696365"))
 	_expect(str(coloured.name) == "Alice" and int(coloured.name_colour) == 10,
 		"a name the server coloured keeps the colour and loses the marker byte")
+	# Creatures have no guild, and their names have spaces in them. The plain
+	# actor packet is the one they arrive in.
+	var creature: Dictionary = EloriaProtocol.decode_server(1, _actor_named(
+		"Mirrorfin Otter"))
+	_expect(str(creature.name) == "Mirrorfin Otter"
+		and str(creature.guild_tag).is_empty(),
+		"a two-word creature name is not split into a name and a guild tag: %s / %s"
+			% [str(creature.name), str(creature.guild_tag)])
+	var summoned: Dictionary = EloriaProtocol.decode_server(1, _actor_named(
+		"Mirrorfin Otter", 4))
+	_expect(str(summoned.name) == "Mirrorfin Otter"
+		and int(summoned.name_colour) == 4
+		and str(summoned.guild_tag).is_empty(),
+		"a summoned creature keeps its whole name and loses the colour marker: %s"
+			% str(summoned.name))
 
 	# Asking what is lying on the ground. The bag packet carries an image id
 	# and a quantity, so the name can only come from the server.
@@ -1298,6 +1330,18 @@ func _init() -> void:
 
 func _expect_bytes(label: String, actual: PackedByteArray, expected: PackedByteArray) -> void:
 	_expect(actual == expected, label + ": " + actual.hex_encode())
+
+## The same body as _actor_bytes(), for a caller that cares about the name
+## rather than the frame.
+func _actor_named(display_name: String, name_colour := 0) -> PackedByteArray:
+	var payload: PackedByteArray = PackedByteArray([
+		5, 0, 10, 0, 12, 0, 0, 0, 0, 0, 3, 0, 20, 0, 20, 0, 3])
+	# The colour marker is one raw byte above the ASCII range, not a character
+	# that survives a UTF-8 encode.
+	if name_colour > 0:
+		payload.append(127 + name_colour)
+	payload.append_array(_nul_bytes(display_name))
+	return payload
 
 ## A minimal legacy ADD_NEW_ACTOR body: id, x, y, unused z, rotation, type,
 ## frame, max health, health, kind, then a NUL-terminated name.
