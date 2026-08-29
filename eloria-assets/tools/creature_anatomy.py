@@ -2079,6 +2079,58 @@ def _geodesic(subdivisions: int = 2):
     return verts, faces
 
 
+def feather_row(mesh, lead, trail, bones, material, seed: str, count: int = 9,
+                overhang: float = .55, width: float = .30, tip_material=None,
+                splay: float = .18, sides: int = 4):
+    """Overlapping flight feathers laid along a wing's trailing edge.
+
+    A wing drawn as one membrane between two curves is a coloured triangle: it
+    has no edge to catch light and no serration in its outline, and at any
+    distance it reads as a fin rather than as a wing.  Real flight feathers
+    overlap in a row, each one a little longer than the last toward the tip,
+    and their staggered ends are what the eye reads as feathering.
+
+    ``lead`` and ``trail`` are the two edge curves already used for the
+    membrane; the feathers hinge on the leading edge and reach ``overhang``
+    past the trailing one.
+    """
+    lead = [np.asarray(point, dtype=float) for point in lead]
+    trail = [np.asarray(point, dtype=float) for point in trail]
+    if len(lead) < 2 or len(lead) != len(trail) or count < 1:
+        return
+    rng = np.random.default_rng(
+        zlib.crc32(("feather:" + seed).encode("utf-8")) % (2 ** 31))
+    for index in range(count):
+        t = (index + .5) / count
+        root = _bezier(lead, t)
+        edge = _bezier(trail, t)
+        chord = edge - root
+        span = float(np.linalg.norm(chord))
+        if span < 1e-6:
+            continue
+        # Primaries at the wing tip are the longest; coverts near the shoulder
+        # are short.  The gradient is what gives the wing its swept outline.
+        reach = 1.0 + overhang * (.35 + .95 * t) * float(rng.uniform(.88, 1.12))
+        # Fan each quill slightly off the chord so they overlap rather than
+        # stacking exactly on one another.
+        drift = np.cross(chord, np.array((0., 1., 0.)))
+        norm = float(np.linalg.norm(drift))
+        if norm > 1e-9:
+            drift = drift / norm * span * splay * (t - .5)
+        else:
+            drift = np.zeros(3)
+        tip = root + chord * reach + drift
+        quill = span * width * (.55 + .60 * (1.0 - abs(t - .55)))
+        mesh.tube([root, root + chord * .45, tip],
+                  [(quill * .34, quill * .12), (quill * .30, quill * .10),
+                   (quill * .07, quill * .04)],
+                  bones, material, sides=sides)
+        if tip_material is not None and t > .35:
+            mesh.tube([root + chord * reach * .74 + drift * .74, tip],
+                      [(quill * .17, quill * .06), (quill * .06, quill * .03)],
+                      bones, tip_material, sides=sides)
+
+
 def facet_shell(mesh, centre, size, bones, material, seed: str,
                 subdivisions: int = 2, relief: float = .10, gap: float = .16,
                 core_material=None, core_scale: float = .90, squash=None):
@@ -2284,8 +2336,14 @@ def encrust(mesh, kind: str, count: int, spine, radii, bones, scale: float,
                   radii[low][1] * (1 - frac) + radii[low + 1][1] * frac)
         tangent = spine[low + 1] - spine[low]
         base, direction, high = _growth_frame(rng, point, radius, up_bias, tangent)
-        # Thick over the back, thinning to a fringe down the flank.
-        grow = float(rng.uniform(.7, 1.35)) * size * s * (.62 + .52 * high)
+        # Thick over the back, thinning to a fringe down the flank, and sized
+        # against the body it is growing on rather than against the creature's
+        # nominal scale.  Scale alone is near 1 for a songbird and a bear
+        # alike, so an owl was wearing leaves a bear's size and disappeared
+        # under them.
+        girth = (radius[0] + radius[1]) * .5
+        grow = (float(rng.uniform(.7, 1.35)) * size * (.62 + .52 * high)
+                * max(girth * 2.9, s * .22))
         # What grows on a creature does not stand along the surface normal.
         # Moss and vine hang, fungus caps turn to face the sky, and only the
         # mineral growths -- crystal, rime, thorn, spine -- actually spike

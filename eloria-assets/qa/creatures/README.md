@@ -321,6 +321,35 @@ destroys it.
   coil at varied lengths; the slime carries its mass high and hangs runnels with
   a bead on the end of each.
 
+### A second sweep, after looking at the whole library at once
+
+Rebuilding the roster comparison sheet and reading all 139 pairs together
+turned up four more problems that only show at library scale.
+
+* **Crabs were spiders.** The crab plan inherited the spider's narrow body and
+  projecting head, so six crabs across four regions read as pale spiders. A
+  crab's carapace is half again as wide as it is long, it has no projecting
+  head at all, its abdomen folds flat underneath rather than trailing behind,
+  and it holds its claws folded in front. All of that is in the plan now, with
+  eyestalks, which are the one feature that reads as "crab" from any angle.
+* **Wings were coloured triangles.** A membrane stretched between two curves
+  has no edge to catch light and no serration in its outline. `feather_row`
+  lays overlapping flight feathers along the trailing edge, longest toward the
+  tip, and the same primitive fans the tail.
+* **`upright` was only tilting the neck.** Applied there alone, an owl and a
+  heron kept a duck's horizontal teardrop with a tall neck stuck on the front.
+  It tilts the body now, and the art stands both of them on their tails.
+* **Growth was sized against the wrong thing.** Surface growth scaled with the
+  creature's nominal `scale`, which is near 1 for a songbird and a bear alike,
+  so an owl was wearing leaves a bear's size and vanished underneath them.
+  Growth is sized against the local girth of the body it grows on. This is the
+  change with the widest reach in the pass -- it moves every creature in the
+  `GROWTH` table, and the mossy bear and mossy troll are the clearest wins.
+* **Swarms were laid out on a lattice.** The regular helix the motes walked
+  spaced them so evenly that a swarm read as confetti on a grid. They turn
+  around the core now, tighter at the middle and ragged at the edge, jittered
+  from the same seeded generator so the cloud stays reproducible.
+
 ### Colour and value, measured
 
 * `concept_growth_tints.py` samples what is *growing* on each creature from its
@@ -355,7 +384,7 @@ in that form rather than the host's.
 
 ### Budget
 
-171 creatures, mean 5,767 triangles, 80 MB on disk, with the woody hero
+171 creatures, mean 5,831 triangles, 81 MB on disk, with the woody hero
 creatures between 15,000 and 30,000 -- up from a mean of 4,945 and 74 MB. The
 mean is well under the ceiling this pass was allowed, because the triangles
 went into features the art shows and the models lacked rather than into

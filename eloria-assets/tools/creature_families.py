@@ -24,8 +24,9 @@ import numpy as np
 from creature_anatomy import (AnatomyMesh, MAT_ACCENT, MAT_BODY, MAT_CORE,
                               MAT_DARK, MAT_FEATURE, MAT_GROWTH, _bezier,
                               _sheet, _euler, qaxis, branch_system,
-                              facet_shell, foliage_cluster, global_positions,
-                              root_flare, swirl_ribbon, woven_trunk)
+                              facet_shell, feather_row, foliage_cluster,
+                              global_positions, root_flare, swirl_ribbon,
+                              woven_trunk)
 
 # ---------------------------------------------------------------------------
 # Biped
@@ -1456,6 +1457,9 @@ def minor_config(plans: dict, plan_key: str, variant: str | None = None) -> dict
     plan.setdefault("dome", 1.0)
     plan.setdefault("wing_facets", False)
     plan.setdefault("wing_lift", .0)
+    plan.setdefault("eyestalks", False)
+    plan.setdefault("shell", False)
+    plan.setdefault("claw_size", 1.0)
     if variant:
         plan.update(MINOR_DETAIL.get(variant, {}))
         plan = anatomy.scale_plan(plan, anatomy.proportions(variant),
@@ -1476,9 +1480,12 @@ AVIAN_PLANS = {
     "raptor": dict(body_h=.44, body=(.16, .18, .34), neck_len=.14, neck_r=.058,
                    skull=(.090, .095, .12), beak=.14, beak_r=.038, leg=.26,
                    leg_r=.028, wing=.62, tail=.26, crest=.05, upright=.55, webbed=False),
+    # A perched owl's folded wing reaches about the length of its body; at .50
+    # against a body .28 long the wing chain ran half again past the tail and
+    # the bird disappeared inside its own plumage.
     "owl": dict(body_h=.40, body=(.19, .20, .28), neck_len=.06, neck_r=.070,
                 skull=(.115, .110, .12), beak=.07, beak_r=.026, leg=.20,
-                leg_r=.026, wing=.50, tail=.18, crest=.06, upright=.60, webbed=False),
+                leg_r=.026, wing=.33, tail=.18, crest=.06, upright=.60, webbed=False),
     "harpy": dict(body_h=.62, body=(.15, .22, .20), neck_len=.16, neck_r=.052,
                   skull=(.090, .105, .10), beak=.08, beak_r=.022, leg=.42,
                   leg_r=.030, wing=.66, tail=.22, crest=.10, upright=.95, webbed=False),
@@ -1491,7 +1498,12 @@ def avian_skeleton(plan_key: str, scale: float, variant=None):
     body_y = p["body_h"] * s
     tilt = p["upright"]
     body = np.array((0., body_y, 0.))
-    chest = body + np.array((0., .04 * s * tilt, -p["body"][2] * s * .34))
+    # ``upright`` has to tilt the *body*, not just lift the neck out of it.
+    # Applied to the neck alone, an owl and a heron kept a duck's horizontal
+    # teardrop with a tall neck stuck on the front of it; the art stands both
+    # of them up on their tails.
+    chest = body + np.array((0., p["body"][2] * s * .62 * tilt,
+                             -p["body"][2] * s * .34 * (1. - tilt * .55)))
     neck = chest + np.array((0., p["neck_len"] * s * .35 * tilt,
                              -p["neck_len"] * s * .28 * (1 - tilt * .5)))
     neck2 = neck + np.array((0., p["neck_len"] * s * .40 * tilt,
@@ -1501,7 +1513,8 @@ def avian_skeleton(plan_key: str, scale: float, variant=None):
     g = {"root": np.zeros(3), "body": body, "chest": chest, "neck": neck,
          "neck_2": neck2, "head": head,
          "jaw": head + np.array((0., -p["skull"][1] * s * .34, -p["skull"][2] * s * .5))}
-    g["tail_1"] = body + np.array((0., .01 * s, p["body"][2] * s * .52))
+    g["tail_1"] = body + np.array((0., .01 * s - p["body"][2] * s * .40 * tilt,
+                                   p["body"][2] * s * .52 * (1. - tilt * .45)))
     g["tail_2"] = g["tail_1"] + np.array((0., -.02 * s, p["tail"] * s * .7))
     for side, sign in (("l", -1.), ("r", 1.)):
         shoulder = chest + np.array((sign * p["body"][0] * s * .78, .04 * s, 0.))
@@ -1594,12 +1607,25 @@ def avian_geometry(plan_key: str, scale: float, bones, variant=None) -> AnatomyM
         edge_a = [_bezier(lead, t) for t in np.linspace(0, 1, 8)]
         edge_b = [_bezier(trail, t) for t in np.linspace(0, 1, 8)]
         _sheet(mesh, edge_a, edge_b, .012 * s, wb, MAT_ACCENT)
+        # Flight feathers over the membrane.  Without them a wing is a
+        # coloured triangle with no edge and no serration in its outline.
+        feather_row(mesh, edge_a, edge_b, wb, MAT_ACCENT,
+                    seed=f"{variant or plan_key}:wing:{side}", count=10,
+                    overhang=.26, width=.30, splay=.12, tip_material=MAT_DARK)
 
     # Tail fan.
     t1, t2 = g[B["tail_1"]], g[B["tail_2"]]
     fan_a = [t1 + np.array((-bw * .5, 0., 0.)), t2 + np.array((-bw * .8, 0., 0.))]
     fan_b = [t1 + np.array((bw * .5, 0., 0.)), t2 + np.array((bw * .8, 0., 0.))]
-    _sheet(mesh, fan_a, fan_b, .012 * s, [body_i, B["tail_1"], B["tail_2"]], MAT_ACCENT)
+    tail_bones = [body_i, B["tail_1"], B["tail_2"]]
+    _sheet(mesh, fan_a, fan_b, .012 * s, tail_bones, MAT_ACCENT)
+    # Tail feathers, spread across the fan rather than a single flat plate.
+    root_line = [t1 + np.array((-bw * .46, 0., 0.)), t1 + np.array((bw * .46, 0., 0.))]
+    tip_line = [t2 + np.array((-bw * .92, 0., bl * .22)),
+                t2 + np.array((bw * .92, 0., bl * .22))]
+    feather_row(mesh, root_line, tip_line, tail_bones, MAT_ACCENT,
+                seed=f"{variant or plan_key}:tail", count=7, overhang=.14,
+                width=.40, splay=.0, tip_material=MAT_DARK)
 
     # Legs and feet.
     for side, sign in (("l", -1.), ("r", 1.)):
@@ -2045,9 +2071,13 @@ ARACHNID_PLANS = {
     "scorpion": dict(cephalo=(.26, .14, .34), abdomen=(.24, .18, .34), stand=.22,
                      leg=.34, leg_r=.028, sting=True, claws=True, shell=True,
                      eyes=2, abdomen_back=.30, fang=.04),
-    "crab": dict(cephalo=(.40, .20, .34), abdomen=(.16, .10, .14), stand=.22,
-                 leg=.36, leg_r=.030, sting=False, claws=True, shell=True,
-                 eyes=2, abdomen_back=.18, fang=.03),
+    # A crab's carapace is half again as wide as it is long and it carries no
+    # projecting head at all: the spider proportions and the spider head were
+    # why every crab in the library read as a pale spider.
+    "crab": dict(cephalo=(.62, .17, .40), abdomen=(.20, .09, .16), stand=.20,
+                 leg=.38, leg_r=.030, sting=False, claws=True, shell=True,
+                 eyes=2, abdomen_back=.14, fang=.0, eyestalks=True,
+                 carapace="dome", claw_size=1.15),
 }
 
 
@@ -2062,7 +2092,9 @@ def arachnid_skeleton(plan_key: str, scale: float, variant=None):
          "head": chest + np.array((0., .01 * s, -p["cephalo"][2] * s * .75))}
     g["jaw"] = g["head"] + np.array((0., -p["cephalo"][1] * s * .30,
                                      -p["cephalo"][2] * s * .22))
-    back = p["abdomen_back"] * s
+    # A crab's abdomen is folded flat under the carapace; trailing it behind
+    # gave every crab a lobster's tail.
+    back = p["abdomen_back"] * s * (-.35 if p.get("carapace") == "dome" else 1.0)
     for i in range(3):
         t = (i + 1) / 3
         lift = stand + (.10 * s if p["sting"] else 0.) * t ** 2
@@ -2080,9 +2112,13 @@ def arachnid_skeleton(plan_key: str, scale: float, variant=None):
             g[f"leg_{side}{i}a"] = base
             g[f"leg_{side}{i}b"] = knee
             g[f"leg_{side}{i}c"] = foot
-        g[f"claw_{side}"] = chest + np.array((sign * p["cephalo"][0] * s * .8,
+        # Held folded in front of the shell.  Out at .8 of a widened carapace
+        # and .7 of its length forward, a crab's claws sat on long arms and the
+        # animal read as a lobster.
+        reach = .52 if p.get("carapace") == "dome" else .8
+        g[f"claw_{side}"] = chest + np.array((sign * p["cephalo"][0] * s * reach,
                                               -.02 * s,
-                                              -p["cephalo"][2] * s * .7))
+                                              -p["cephalo"][2] * s * reach * .78))
     return _bones_from(g, ARACHNID_TABLE)
 
 
@@ -2101,7 +2137,23 @@ def arachnid_geometry(plan_key: str, scale: float, bones, variant=None) -> Anato
     mesh.torso = ([g[chest_i], g[body_i]],
                   [(ce[0] * .5, ce[1] * .5), (ab[0] * .5, ab[1] * .5)],
                   [chest_i, body_i])
-    if p["shell"]:
+    if p["carapace"] == "dome":
+        # One broad shell over the whole animal, with a lip around it: what
+        # separates a crab's silhouette from a spider's is that the body is a
+        # single plate and the legs come out from under its edge.
+        mesh.ellipsoid(tuple(g[chest_i] + np.array((0., ce[1] * .30, 0.))),
+                       (ce[0] * 1.34, ce[1] * 1.70, ce[2] * 1.46),
+                       [chest_i, body_i], MAT_FEATURE, rings=10, sides=20,
+                       squash=.80)
+        rim = []
+        for k in range(21):
+            angle = 2 * math.pi * k / 20
+            rim.append(g[chest_i] + np.array((math.cos(angle) * ce[0] * .58,
+                                              ce[1] * .12,
+                                              math.sin(angle) * ce[2] * .56)))
+        mesh.tube(rim, [(ce[1] * .13, ce[1] * .10)] * 21, [chest_i, body_i],
+                  MAT_FEATURE, sides=5, cap_start=False, cap_end=False)
+    elif p["shell"]:
         mesh.ellipsoid(tuple(g[chest_i] + np.array((0., ce[1] * .22, 0.))),
                        (ce[0] * 1.10, ce[1] * .90, ce[2] * 1.05),
                        [chest_i, body_i], MAT_FEATURE, rings=9, sides=16)
@@ -2117,13 +2169,28 @@ def arachnid_geometry(plan_key: str, scale: float, bones, variant=None) -> Anato
         mesh.ellipsoid(tuple((pts[1] + pts[3]) * .5),
                        (ab[0], ab[1], ab[2]), seg_bones, MAT_BODY,
                        rings=10, sides=16)
-    for k in range(p["eyes"]):
-        row = k // 4
-        col = (k % 4) - 1.5
-        mesh.ellipsoid(tuple(g[head_i] + np.array((col * ce[0] * .16,
-                                                   ce[1] * (.22 - .16 * row),
-                                                   -ce[2] * .30))),
-                       (ce[0] * .09,) * 3, [head_i], MAT_DARK, rings=5, sides=8)
+    if p["eyestalks"]:
+        # Short stalks standing off the front of the shell, which is the one
+        # feature that reads as "crab" from any angle at all.
+        for side in (-1., 1.):
+            base = g[chest_i] + np.array((side * ce[0] * .17, ce[1] * .34,
+                                          -ce[2] * .46))
+            top = base + np.array((side * .012 * s, ce[1] * .62, -ce[2] * .10))
+            mesh.tube([base, top], [(ce[1] * .085, ce[1] * .085),
+                                    (ce[1] * .065, ce[1] * .065)],
+                      [chest_i, head_i], MAT_BODY, sides=6)
+            mesh.ellipsoid(tuple(top + np.array((0., ce[1] * .06, 0.))),
+                           (ce[1] * .13,) * 3, [chest_i, head_i], MAT_DARK,
+                           rings=5, sides=8)
+    else:
+        for k in range(p["eyes"]):
+            row = k // 4
+            col = (k % 4) - 1.5
+            mesh.ellipsoid(tuple(g[head_i] + np.array((col * ce[0] * .16,
+                                                       ce[1] * (.22 - .16 * row),
+                                                       -ce[2] * .30))),
+                           (ce[0] * .09,) * 3, [head_i], MAT_DARK,
+                           rings=5, sides=8)
     if p["fang"]:
         for side in (-1., 1.):
             base = g[head_i] + np.array((side * ce[0] * .20, -ce[1] * .28, -ce[2] * .28))
@@ -2145,21 +2212,35 @@ def arachnid_geometry(plan_key: str, scale: float, bones, variant=None) -> Anato
         if p["claws"]:
             root = g[B[f"claw_{side}"]]
             inside = g[chest_i] + np.array((sign * ce[0] * .28, 0., -ce[2] * .18))
-            elbow = root + np.array((sign * .05 * s, -.01 * s, -.10 * s))
+            elbow = root + np.array((sign * .03 * s, -.01 * s,
+                                     -.10 * s * (.55 if p["carapace"] == "dome"
+                                                 else 1.0)))
             r = p["leg_r"] * s
             mesh.tube([inside, (inside + root) * .5, root, elbow],
                       [(r * 2.4, r * 2.4), (r * 2.1, r * 2.1),
                        (r * 1.8, r * 1.8), (r * 1.5, r * 1.5)],
                       [chest_i, B[f"claw_{side}"]], MAT_BODY, sides=8,
                       cap_start=False, cap_end=False)
-            pincer = elbow + np.array((sign * .03 * s, 0., -.10 * s))
-            mesh.ellipsoid(tuple(pincer), (.11 * s, .07 * s, .18 * s),
+            claw = p["claw_size"]
+            pincer = elbow + np.array((sign * .03 * s, 0., -.075 * s * claw))
+            # The palm of the pincer, then the two fingers, one fixed and one
+            # opposed.  At the old scale a crab's claws were smaller than its
+            # walking legs, which is backwards.
+            mesh.ellipsoid(tuple(pincer),
+                           (.11 * s * claw, .07 * s * claw, .18 * s * claw),
                            [B[f"claw_{side}"]], MAT_FEATURE, rings=7, sides=10)
             for jaw in (-1., 1.):
-                tipbase = pincer + np.array((0., jaw * .028 * s, -.08 * s))
-                mesh.spike(tipbase, tipbase + np.array((sign * .01 * s, jaw * .012 * s,
-                                                        -.10 * s)),
-                           .026 * s, [B[f"claw_{side}"]], MAT_FEATURE, sides=6)
+                tipbase = pincer + np.array((0., jaw * .028 * s * claw,
+                                             -.08 * s * claw))
+                mesh.tube([tipbase,
+                           tipbase + np.array((sign * .006 * s, jaw * .010 * s * claw,
+                                               -.07 * s * claw)),
+                           tipbase + np.array((sign * .010 * s, jaw * .004 * s * claw,
+                                               -.13 * s * claw))],
+                          [(.030 * s * claw, .030 * s * claw),
+                           (.021 * s * claw, .021 * s * claw),
+                           (.005 * s * claw, .005 * s * claw)],
+                          [B[f"claw_{side}"]], MAT_FEATURE, sides=6)
     return mesh
 
 
@@ -3283,11 +3364,19 @@ def amorphous_geometry(plan_key: str, scale: float, bones,
         kind = "wing" if (p["wings"] and form == "swarm") else "shard"
         for k in range(int(p["motes"])):
             if form == "swarm":
-                # Arrange the cloud as a loose upright figure, as the art does.
+                # A vortex, not a lattice.  The regular helix this used to walk
+                # spaced the motes so evenly that a swarm read as confetti on a
+                # grid; the art turns them around a core, tighter at the middle
+                # and ragged at the edge.  Jitter is drawn from the same seeded
+                # generator, so the cloud stays reproducible.
                 t = k / max(p["motes"] - 1, 1)
-                angle = 2 * math.pi * (t * 2.6 + .13 * k)
-                radius = core * (1.9 + 3.4 * abs(math.sin(t * math.pi * 1.15))) * p["spread"]
-                height = (t - .5) * p["tendril"] * s * 6.4
+                turn = t * 3.4 + float(rng.uniform(-.22, .22))
+                angle = 2 * math.pi * turn
+                swell = abs(math.sin(t * math.pi * 1.15))
+                radius = (core * (1.35 + 3.9 * swell) * p["spread"]
+                          * float(rng.uniform(.62, 1.34)))
+                height = ((t - .5) * p["tendril"] * s * 6.4
+                          + float(rng.uniform(-.5, .5)) * core * 1.6)
                 centre = g[body_i] + np.array((math.cos(angle) * radius, height,
                                                math.sin(angle) * radius * .7))
             elif form == "ooze":
