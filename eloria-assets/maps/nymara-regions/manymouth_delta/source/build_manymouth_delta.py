@@ -220,10 +220,56 @@ def _add_spawns_and_portals(build: REG.RegionBuild, network: dict) -> None:
                      "the network is a few metres away"),
         })
 
-    # Edge portals to the neighbouring Nymara regions, plus the one interior.
-    # Destination map ids follow the client registry; the server remains
-    # authoritative for the transition. Every land route out of a delta is a
-    # boat, so these are landings rather than roads.
+    # --- the four doors into the insides map ---------------------------
+    # Every door targets the SAME destinationMap and differs only in
+    # destinationSpawn, which is the whole point of putting a region's
+    # interiors on one map: one load, four arrivals. Each door also gains a
+    # region spawn of the same name so the insides map's return portal has
+    # somewhere to land - without it a player leaving the Underdeck reappears
+    # at the default spawn on the other side of the town.
+    #
+    # The return spawn is sited by `spawn_point`, not at the door itself: the
+    # door is on a deck, and a spawn declared on a deck is a spawn the client's
+    # ray may fall straight through between two planks.
+    for door_id, name, anchor, facing in (
+            ("labyrinth-mouth", "Mouth of the Flooded Labyrinth", "cave_mouth",
+             math.radians(20.0)),
+            ("underdeck-hatch", "The Underdeck Hatch", "town_quay",
+             math.radians(34.0)),
+            ("tide-hall-door", "The Tide Hall", "town_hall",
+             math.radians(18.0)),
+            ("temple-sanctum-door", "The Sanctum Stair", "green_temple",
+             math.radians(-104.0)),
+            # The fifth door, and the one worth having: the ring standing out
+            # of the whirlpool is the top of the Submerged Gate, so going down
+            # through it lands under it. Both ends of that transition are
+            # geometry that already existed - this only admits that the arch on
+            # the surface and the gate below are the same object.
+            ("gate-descent", "The Manymouth Arch", "arch_stair",
+             math.radians(-140.0))):
+        x, y, z = spawn_point(build, anchor)
+        build.spawns.append({
+            "id": door_id,
+            "position": [round(float(x), 2), round(y + 0.05, 2), round(float(z), 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "rotationDegrees": round(math.degrees(facing), 1),
+            "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
+            "grounded": True,
+            "note": "return landing for the insides map's exit portal"})
+        build.portals.append({
+            "id": door_id, "name": name, "type": "map-transition",
+            "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+            "destinationSpawn": door_id,
+            "radius": 3.5, "authority": "server"})
+
+    # Edge portals to the neighbouring Nymara regions. Destination map ids follow
+    # the client registry; the server remains authoritative for the transition.
+    # Every land route out of a delta is a boat, so these are landings rather
+    # than roads.
     for portal_id, name, anchor, destination in (
             ("north-landing", "Verdant Stair Packet", "north_fishing",
              "maps/nymara/verdant_stair.elm"),
@@ -232,9 +278,7 @@ def _add_spawns_and_portals(build: REG.RegionBuild, network: dict) -> None:
             ("south-landing", "Westhaven Packet", "far_bar",
              "maps/nymara/westhaven.elm"),
             ("west-landing", "Crownwater Packet", "sea_landing",
-             "maps/nymara/crownwater.elm"),
-            ("labyrinth-mouth", "The Flooded Labyrinth", "cave_mouth",
-             "maps/nymara/manymouth_flooded_labyrinth.elm")):
+             "maps/nymara/crownwater.elm")):
         x, z = REG.ANCHORS[anchor]
         y = walk_surface_at(build, x, z)
         build.portals.append({

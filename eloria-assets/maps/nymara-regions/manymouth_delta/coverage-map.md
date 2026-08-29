@@ -100,8 +100,10 @@ document.
   finds water.
 * **The jungle head in the south-east corner is scenery, not a place.** It has
   ground, trees and a horizon, and no authored content at all.
-* **Interiors: none.** Every building in this region is exterior-only. The
-  Flooded Labyrinth is a separate map and still a placeholder.
+* **Interiors: four, on one map.** The Flooded Labyrinth, the Underdeck, the
+  Tide Hall and the Sanctum, at `../interiors/manymouth_delta_insides/`. Every
+  *other* building in this region is exterior-only: the twenty-two houses of the
+  stilt town, the market hall, the hamlets and the watchtowers have no insides.
 * **No sailing craft.** The region has dugouts and awning boats. Panel 4's
   lateen-rigged boats do not exist as a kit piece.
 * **No pink.** Two panels use blossom as their accent colour and the region has

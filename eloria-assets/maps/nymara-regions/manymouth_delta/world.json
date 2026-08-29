@@ -105,6 +105,86 @@
       "surface": "Paving",
       "grounded": true,
       "note": "grounded on the bar itself, clear of every walkway deck; the network is a few metres away"
+    },
+    {
+      "id": "labyrinth-mouth",
+      "position": [
+        218.37,
+        8.78,
+        -18.49
+      ],
+      "serverTile": [
+        392,
+        192
+      ],
+      "rotationDegrees": 20.0,
+      "surface": "Paving",
+      "grounded": true,
+      "note": "return landing for the insides map's exit portal"
+    },
+    {
+      "id": "underdeck-hatch",
+      "position": [
+        49.94,
+        0.93,
+        -42.14
+      ],
+      "serverTile": [
+        224,
+        216
+      ],
+      "rotationDegrees": 34.0,
+      "surface": "Shore",
+      "grounded": true,
+      "note": "return landing for the insides map's exit portal"
+    },
+    {
+      "id": "tide-hall-door",
+      "position": [
+        34.3,
+        1.36,
+        -57.31
+      ],
+      "serverTile": [
+        208,
+        231
+      ],
+      "rotationDegrees": 18.0,
+      "surface": "ForestFloor",
+      "grounded": true,
+      "note": "return landing for the insides map's exit portal"
+    },
+    {
+      "id": "temple-sanctum-door",
+      "position": [
+        300.93,
+        14.66,
+        -308.24
+      ],
+      "serverTile": [
+        475,
+        482
+      ],
+      "rotationDegrees": -104.0,
+      "surface": "Paving",
+      "grounded": true,
+      "note": "return landing for the insides map's exit portal"
+    },
+    {
+      "id": "gate-descent",
+      "position": [
+        79.15,
+        1.3,
+        -92.23
+      ],
+      "serverTile": [
+        253,
+        266
+      ],
+      "rotationDegrees": -140.0,
+      "surface": "Paving",
+      "grounded": true,
+      "note": "return landing for the insides map's exit portal"
     }
   ],
   "collision": {
@@ -3608,6 +3688,96 @@
   ],
   "portals": [
     {
+      "id": "labyrinth-mouth",
+      "name": "Mouth of the Flooded Labyrinth",
+      "type": "map-transition",
+      "position": [
+        218.37,
+        8.83,
+        -18.49
+      ],
+      "serverTile": [
+        392,
+        192
+      ],
+      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "destinationSpawn": "labyrinth-mouth",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "underdeck-hatch",
+      "name": "The Underdeck Hatch",
+      "type": "map-transition",
+      "position": [
+        49.94,
+        0.98,
+        -42.14
+      ],
+      "serverTile": [
+        224,
+        216
+      ],
+      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "destinationSpawn": "underdeck-hatch",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "tide-hall-door",
+      "name": "The Tide Hall",
+      "type": "map-transition",
+      "position": [
+        34.3,
+        1.41,
+        -57.31
+      ],
+      "serverTile": [
+        208,
+        231
+      ],
+      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "destinationSpawn": "tide-hall-door",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "temple-sanctum-door",
+      "name": "The Sanctum Stair",
+      "type": "map-transition",
+      "position": [
+        300.93,
+        14.71,
+        -308.24
+      ],
+      "serverTile": [
+        475,
+        482
+      ],
+      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "destinationSpawn": "temple-sanctum-door",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "gate-descent",
+      "name": "The Manymouth Arch",
+      "type": "map-transition",
+      "position": [
+        79.15,
+        1.35,
+        -92.23
+      ],
+      "serverTile": [
+        253,
+        266
+      ],
+      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "destinationSpawn": "gate-descent",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
       "id": "north-landing",
       "name": "Verdant Stair Packet",
       "type": "map-transition",
@@ -3672,23 +3842,6 @@
         504
       ],
       "destinationMap": "maps/nymara/crownwater.elm",
-      "radius": 3.5,
-      "authority": "server"
-    },
-    {
-      "id": "labyrinth-mouth",
-      "name": "The Flooded Labyrinth",
-      "type": "map-transition",
-      "position": [
-        216.0,
-        9.32,
-        -24.0
-      ],
-      "serverTile": [
-        390,
-        198
-      ],
-      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
       "radius": 3.5,
       "authority": "server"
     }
@@ -4710,10 +4863,10 @@
     "bufferViews": 2338,
     "uniqueTriangles": 486653,
     "uniqueVertices": 413565,
-    "glbBytes": 26403304,
+    "glbBytes": 26406684,
     "instancedTriangles": 2458407,
-    "embeddedTextureBytes": 24555232,
-    "textureMemoryBytesUncompressed": 220987392,
+    "embeddedTextureBytes": 30430804,
+    "textureMemoryBytesUncompressed": 262275072,
     "placements": 6275,
     "collision": {
       "width": 1152,
@@ -4751,11 +4904,11 @@
       "props: 31 moored boats, 113 deck gear"
     ],
     "lod2": {
-      "glbBytes": 18708176,
+      "glbBytes": 18707836,
       "nodes": 7317,
       "uniqueTriangles": 451473,
       "instancedTriangles": 1559927,
-      "sizeReductionPercent": 29.1,
+      "sizeReductionPercent": 29.2,
       "triangleReductionPercent": 36.5
     }
   },

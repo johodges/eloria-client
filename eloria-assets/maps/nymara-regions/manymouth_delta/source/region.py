@@ -84,23 +84,14 @@ SEA_LEVEL = 0.0
 TERRAIN_CELL = 2.0
 
 # ------------------------------------------------------- surface classes
-# Classes are allocated in blocks so concurrent region work does not collide:
-# 7-10 Mirrorhold, 11-14 Whitehorn, 15-18 Amethyst Barrens, 19-22 Crownwater,
-# 23-26 Manymouth Delta. Appended to the shared tables at import time, never
-# inserted, for the reason `materials.SPECS` documents.
-MM_SILT = 23
-MM_PADDY = 24
-
-TER.SURFACE_NAMES[MM_SILT] = "DeltaSilt"
-TER.SURFACE_NAMES[MM_PADDY] = "Paddy"
-TER.SURFACE_MATERIALS[MM_SILT] = DK.SILT
-TER.SURFACE_MATERIALS[MM_PADDY] = DK.PADDY
-
-# Both are placed deliberately and sit within a metre of the water line, which
-# is exactly the band `assign_surface_by_rule` rewrites to SHORE. Without this
-# every paddy terrace and every mangrove flat comes back as sand.
-TER.AUTHORED_SURFACES.add(MM_SILT)
-TER.AUTHORED_SURFACES.add(MM_PADDY)
+# These two now live in the shared table as `TER.DELTA_SILT` (30) and
+# `TER.DELTA_PADDY` (31). They were allocated privately here as 23 and 24, which
+# collided head-on with Grey Moors the moment both landed: it claimed 23-27 in
+# the toolkit, this claimed 23-24 in a file nobody else reads, and each was
+# correct alone and wrong together. Every other region's classes are in the
+# toolkit; these are too now.
+MM_SILT = TER.DELTA_SILT
+MM_PADDY = TER.DELTA_PADDY
 
 # The delta's default ground is jungle litter, and its water-line ground is
 # shell sand. Repointed rather than added: the *class* is what the terrain

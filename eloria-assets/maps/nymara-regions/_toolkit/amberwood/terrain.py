@@ -60,6 +60,14 @@ MOOR_TRACK = 27
 TERRACE_MOSS = 28
 WET_ROCK = 29
 
+# -- Manymouth Delta. Promoted out of the region's own region.py, where it had
+# claimed 23 and 24 privately and collided head-on with Grey Moors the moment
+# both landed: two regions writing different names and materials into the same
+# two slots of a shared table, each correct in isolation and wrong together.
+# Every other region's classes live here for exactly that reason.
+DELTA_SILT = 30
+DELTA_PADDY = 31
+
 SURFACE_NAMES = {
     FOREST: "ForestFloor", PATH: "Trail", PAVING: "Paving", SHORE: "Shore",
     ROCK: "Rock", SCORCHED: "Ash", MEADOW: "Meadow",
@@ -69,6 +77,7 @@ SURFACE_NAMES = {
     HEATHER_MOOR: "HeatherMoor", PEAT_BOG: "PeatBog",
     CAUSEWAY: "Causeway", BARROW_TURF: "BarrowTurf",
     MOOR_TRACK: "MoorTrack",
+    DELTA_SILT: "DeltaSilt", DELTA_PADDY: "Paddy",
     TERRACE_MOSS: "TerraceMoss", WET_ROCK: "WetRock",
 }
 SURFACE_MATERIALS = {
@@ -84,6 +93,9 @@ SURFACE_MATERIALS = {
     # A worn track is bare wet earth; the toolkit already has that texture, so
     # this class needs no new recipe - only a cooled, darkened material over it.
     MOOR_TRACK: "grey_moor_track",
+    # Recipes live in manymouth_delta/source/deltakit.py, as Grey Moors' do in
+    # its own kit; the shared table only needs the name.
+    DELTA_SILT: "manymouth_silt", DELTA_PADDY: "manymouth_paddy",
     TERRACE_MOSS: "verdant_mossy_stone", WET_ROCK: "verdant_wet_limestone",
 }
 
@@ -102,6 +114,10 @@ AUTHORED_SURFACES: set[int] = {
     # and the wet rock is placed where a fall actually lands, not wherever the
     # slope rule happens to think the ground is steep.
     TERRACE_MOSS, WET_ROCK,
+    # Both sit within a metre of the water line, which is exactly the band the
+    # shore rule rewrites; without this every paddy terrace and mangrove flat
+    # comes back as sand.
+    DELTA_SILT, DELTA_PADDY,
 }
 
 # Surfaces whose border must stay crisp, so `dither_boundaries` leaves them

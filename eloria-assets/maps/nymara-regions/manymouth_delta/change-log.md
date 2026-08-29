@@ -139,3 +139,98 @@ arrival at (174, 174); the five Nymara/content test modules pass (21 passed).
 On the wider suite, 81 of 513 tests fail on this branch — the suite was run with
 the change and again with it stashed and the two failure lists are byte-for-byte
 identical, so none are introduced and none fixed. Pre-existing and unrelated.
+
+
+## Interiors pass
+
+Four authored insides on one map with unwalkable blackspace between them, in the
+Eternal Lands convention Amethyst Barrens and Crownwater already use: one GLB,
+one manifest, one collision grid, one server map key, one arrival per door.
+
+    flooded_labyrinth   drowned ruin        the cave mouth in the headland
+    smugglers_warren    working warren      a hatch under the town quay
+    tide_hall           inhabited hall      the Tide Hall door
+    temple_sanctum      monumental sanctum  the Sanctum stair
+
+79,438 triangles, 11.4 MB, collision 366 x 702 at half a metre, 21.4% walkable,
+spanning x 38..219 and z 32..381 - a 64x64 tile server map with margin.
+glTF 0 errors 0 warnings; `verify_runtime` 0 errors and two documented warnings.
+
+The region gained four doors and four return spawns. Every door targets the same
+`destinationMap` and differs only in `destinationSpawn`; the return spawn is
+sited by `spawn_point` rather than at the door, because a door is on a deck and
+a spawn declared on a deck is a spawn the grounding ray may fall through between
+two planks.
+
+The strongest idea in the four is the labyrinth's gate chamber: the ring-arch
+that stands out of the whirlpool on the region map is the *top* of a gate whose
+lower half is down here. You row past it on the surface and then walk in under
+it.
+
+### Found and fixed in this pass
+
+* **The glyph stone tiled into dots.** `manymouth_glyph_stone` carries an
+  inlaid band of teal strokes - right on an arch or a stele, and completely
+  wrong tiled ten times across a 28 m floor. The first render of these rooms had
+  cyan dashes over every surface. Bulk stone is `cliff_rock` now and the glyph
+  stone is reserved for things actually cut with glyphs.
+* **The boardwalk maze rendered as a black frame.** The generic "stand in a
+  corner, look at the middle" camera put the eye inside a plank deck. Four
+  subjects now carry explicit cameras.
+* **Capture filenames contained colons.** A combined map's subject is
+  "<Section>: <subject>", Windows will not take ':' in a filename, and Godot's
+  `save_png` produced four zero-byte files named up to the colon and lost the
+  rest. `preview_interior.py` sanitises the id now. This would have hit any
+  region's combined insides map on Windows.
+
+### Fixed in the shared toolkit
+
+* **`godot_capture.gd` instantiated none of the manifest's lights.** It builds a
+  sky and a sun, which is right for an exterior and useless for an interior: the
+  frames came back with the lanterns visible as small orange discs illuminating
+  nothing, and a reviewer would have concluded the interior was unlit when what
+  shipped was 126 declared lights. It now reads `world.json`'s `lights` and adds
+  an `OmniLight3D` per entry, taking range, energy and colour from the manifest.
+  Every region's interiors benefit.
+
+### Server side
+
+`manymouth_flooded_labyrinth` grows from 32 to 64 tiles with its arrival at
+(23, 344), and its single 32-scale portal pair is replaced by four bidirectional
+pairs, one per door - the same shape `drowned_crown` and `resonant_vault` have.
+
+
+## Interiors, second pass: the board, the map and the portals
+
+**The portals.** A fifth door, and the one that justifies the convention: the
+ring-arch standing out of the whirlpool on the region map is the top of the
+Submerged Gate in the labyrinth's last chamber, so descending through it lands
+underneath it and a drowned stair on the far side comes back up. Both ends were
+already geometry. The labyrinth now has two ways in; the other three sections
+have one.
+
+Every arrival gained **built exit geometry** - a root-hung arch, a ladder and
+hatch, a carved doorway, a columned stair head, a drowned flight - because an
+arrival used to be a bare point in a room, and on a map with four sections and
+no connecting corridors there is no wrong door to find by accident, so an
+invisible right one leaves nothing at all. Arrivals also carry a facing now, so
+a player is not dropped looking at the wall they came through.
+
+**`build_interiors.py` now fails the build** unless every region door names an
+arrival that exists, every arrival is reachable from a door, and every return
+portal names a region spawn that exists. Nothing had ever checked that the two
+halves of a transition agree; it caught the fifth door's missing arrival on its
+first run.
+
+**The map.** Roughly 8,000 more triangles of the things that make a room look
+used rather than built: votive niches with offerings and a wrecked dugout in the
+labyrinth's wading hall, offerings around the gate, a moored boat at the foot of
+the Underdeck's ladder and drying lines strung between its piles, sleeping mats,
+a loom and fish on a line in the Tide Hall, and a relic niche with a figure in
+the Sanctum's core so the ambulatory has something to walk around.
+
+**The board.** `references/00-detail-board.png`, a ten-panel 5x2 board answering
+the exact ten subjects `concept.json` names, composed from real client frames by
+`source/make_interior_board.py`. The concept board cannot be opened; this one
+can. It is labelled on its face as a build reference rather than concept art,
+and the truncated original is left untouched where it is.
