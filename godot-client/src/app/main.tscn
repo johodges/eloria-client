@@ -1575,6 +1575,12 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Choose which side of the backpack holds equipped items"
 
+[node name="MoreSettings" type="Button" parent="GameView/SettingsPanel/Content" unique_id=1997232257]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Graphics, camera, gameplay and key bindings"
+text = "More settings and key bindings"
+
 [node name="SettingsClose" type="Button" parent="GameView/SettingsPanel/Content" unique_id=1997232256]
 unique_name_in_owner = true
 layout_mode = 2
@@ -2771,6 +2777,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/AttackButton" to="." method="_on_attack_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/TradeButton" to="." method="_on_trade_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/LookButton" to="." method="_on_look_button_pressed"]
+[connection signal="pressed" from="GameView/SettingsPanel/Content/MoreSettings" to="." method="_on_more_settings_pressed"]
 [connection signal="pressed" from="GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SigilButton" to="." method="_on_sigil_button_pressed"]
 [connection signal="pressed" from="GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerDown" to="." method="_on_spell_power_down_pressed"]
 [connection signal="pressed" from="GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerUp" to="." method="_on_spell_power_up_pressed"]

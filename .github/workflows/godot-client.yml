@@ -59,6 +59,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_connection_lifecycle.gd
       - name: HUD persistence fixtures
         run: godot --headless --path godot-client --script res://tests/test_hud_persistence.gd
+      - name: Settings window and key binding fixtures
+        run: godot --headless --path godot-client --script res://tests/test_settings_window.gd
       - name: Console command fixtures
         run: godot --headless --path godot-client --script res://tests/test_console_commands.gd
       - name: Day and night cycle fixtures

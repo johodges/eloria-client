@@ -36,6 +36,7 @@ const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
 const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
 const AudioDirectorScript := preload("res://src/audio/audio_director.gd")
 const SigilWindowScript := preload("res://src/ui/sigil_window.gd")
+const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 var invasion_assistant_window
@@ -243,6 +244,13 @@ var world_effects: Array = []
 var audio_director: Node
 var map_ambience_root: Node3D
 var sigil_window: Control
+var settings_window: Control
+## Client-side presentation switches. None of them changes what the server
+## decides; they change what this machine draws.
+var _shadows_enabled := true
+var _effects_enabled := true
+var _nameplates_enabled := true
+var _camera_follows_player := true
 ## True while the loaded package lets the hour drive its environment. An
 ## interior does not, and neither does a package that opts out.
 var console_commands := ConsoleCommands.new()
@@ -435,6 +443,10 @@ func _ready() -> void:
 	sigil_window = SigilWindowScript.new()
 	game_view.add_child(sigil_window)
 	sigil_window.configure(spell_catalog)
+	settings_window = SettingsWindowScript.new()
+	game_view.add_child(settings_window)
+	settings_window.setting_changed.connect(_on_client_setting_changed)
+	settings_window.binding_changed.connect(_on_binding_changed)
 	active_buff_bar = ActiveBuffBarScript.new()
 	game_view.add_child(active_buff_bar)
 	active_buff_bar.configure(spell_catalog)
@@ -1144,7 +1156,15 @@ func _on_options_pressed() -> void:
 	if settings_panel.visible:
 		console_panel.hide()
 		settings_panel.move_to_front()
+	else:
+		settings_window.close()
 	$GameView/ChatTabs/Options.button_pressed = settings_panel.visible
+
+## The tabbed window: graphics, camera, gameplay and the key bindings. The
+## small panel keeps the settings that were already there.
+func _on_more_settings_pressed() -> void:
+	settings_window.toggle()
+	audio_director.play("ui_click" if settings_window.is_open() else "ui_close")
 
 func _close_settings() -> void:
 	settings_panel.hide()
@@ -1953,6 +1973,13 @@ func _recenter_viewport_on_player() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not game_view.visible:
 		return
+	# While the settings window is waiting for a key, every key press belongs
+	# to it: otherwise rebinding "attack" would attack.
+	if settings_window != null and not str(settings_window.get("capturing")).is_empty():
+		if event is InputEventKey and (event as InputEventKey).pressed:
+			settings_window.call("apply_capture", event)
+			get_viewport().set_input_as_handled()
+		return
 	for spell_slot: int in range(SPELL_QUICK_SLOTS):
 		if event.is_action_pressed("quick_spell_%d" % (spell_slot + 1)):
 			_cast_spell_slot(spell_slot)
@@ -1981,6 +2008,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			player_info_panel.close()
 		elif sigil_window != null and sigil_window.is_open():
 			sigil_window.close()
+		elif settings_window != null and settings_window.is_open():
+			settings_window.close()
 		elif chat_input.has_focus():
 			_hide_chat_input()
 		elif settings_panel.visible:
@@ -3108,6 +3137,19 @@ func _load_hud_settings() -> void:
 		var lists_value: Variant = config.get_value("inventory", "item_lists", {})
 		if lists_value is Dictionary:
 			_item_lists = (lists_value as Dictionary).duplicate(true)
+		_shadows_enabled = bool(config.get_value("graphics", "shadows", true))
+		_effects_enabled = bool(config.get_value("graphics", "particles", true))
+		_nameplates_enabled = bool(
+			config.get_value("graphics", "nameplates", true))
+		camera_rig.rotation_sensitivity = float(config.get_value(
+			"camera", "rotation_sensitivity", camera_rig.rotation_sensitivity))
+		camera_rig.pan_sensitivity = float(config.get_value(
+			"camera", "pan_sensitivity", camera_rig.pan_sensitivity))
+		_camera_follows_player = bool(
+			config.get_value("camera", "follow_player", true))
+		var stored_bindings: Variant = config.get_value("controls", "bindings", {})
+		if stored_bindings is Dictionary:
+			settings_window.call("restore_bindings", stored_bindings)
 		var stored_marks: Variant = config.get_value("console", "marks", [])
 		if stored_marks is Array:
 			for raw_mark: Variant in stored_marks as Array:
@@ -3180,6 +3222,16 @@ func _on_sound_volume_changed(value: float) -> void:
 func _save_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	config.load(SETTINGS_PATH)
+	config.set_value("graphics", "shadows", _shadows_enabled)
+	config.set_value("graphics", "particles", _effects_enabled)
+	config.set_value("graphics", "nameplates", _nameplates_enabled)
+	config.set_value("camera", "rotation_sensitivity",
+		float(camera_rig.rotation_sensitivity))
+	config.set_value("camera", "pan_sensitivity",
+		float(camera_rig.pan_sensitivity))
+	config.set_value("camera", "follow_player", _camera_follows_player)
+	config.set_value("controls", "bindings",
+		settings_window.call("stored_bindings"))
 	config.set_value("console", "marks", console_commands.marks)
 	config.set_value("console", "ignored", console_commands.ignored)
 	config.set_value("console", "filters", console_commands.filters)
@@ -3771,6 +3823,8 @@ func _on_special_effect_requested(effect: Dictionary) -> void:
 	if not origin_value is Vector3:
 		return
 	var target_value: Variant = _actor_effect_position(int(effect.get("target_id", -1)))
+	if not _effects_enabled:
+		return
 	var world_effect := WorldEffect3D.new()
 	world_root.add_child(world_effect)
 	world_effect.configure(int(effect.get("effect", -1)),
@@ -4302,6 +4356,41 @@ func _sync_spell_power_controls() -> void:
 	spell_power_value.text = "P%d" % requested_spell_power
 	spell_power_down.disabled = requested_spell_power <= 1
 	spell_power_up.disabled = requested_spell_power >= ceiling
+
+## A client setting the player changed. Everything under Graphics and Camera
+## is about this machine; everything under Gameplay is a command the server
+## owns, sent as the player's own words rather than applied here.
+func _on_client_setting_changed(section: String, key: String,
+		value: Variant) -> void:
+	match key:
+		"shadows":
+			_shadows_enabled = bool(value)
+			world_sun.shadow_enabled = _shadows_enabled and world_sun.visible
+		"particles":
+			_effects_enabled = bool(value)
+		"nameplates":
+			_nameplates_enabled = bool(value)
+			for raw_actor: Variant in actor_nodes.values():
+				if is_instance_valid(raw_actor):
+					(raw_actor as ReplicatedActor3D).set_nameplate_visible(
+						_nameplates_enabled)
+		"rotation_sensitivity":
+			camera_rig.rotation_sensitivity = float(value)
+		"pan_sensitivity":
+			camera_rig.pan_sensitivity = float(value)
+		"follow_player":
+			_camera_follows_player = bool(value)
+		"target_mode_strong":
+			Network.send_chat("#targetmode strong")
+		"target_mode_weak":
+			Network.send_chat("#targetmode weak")
+		"autogather":
+			Network.send_chat("#autogather")
+	if section != "Gameplay":
+		_save_hud_settings()
+
+func _on_binding_changed(_action: String) -> void:
+	_save_hud_settings()
 
 ## The sigils window. It is opened from the spell quickbar because that is
 ## where a player finds out they are missing one.
