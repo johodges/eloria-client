@@ -1,0 +1,71 @@
+{
+  "schema": "eloria.sounds/1",
+  "sampleRate": 44100,
+  "sounds": [
+    {
+      "name": "civic_crowd",
+      "file": "civic_crowd.wav",
+      "seconds": 11.6
+    },
+    {
+      "name": "combat_hit",
+      "file": "combat_hit.wav",
+      "seconds": 0.26
+    },
+    {
+      "name": "combat_miss",
+      "file": "combat_miss.wav",
+      "seconds": 0.24
+    },
+    {
+      "name": "footstep",
+      "file": "footstep.wav",
+      "seconds": 0.16
+    },
+    {
+      "name": "harvest_gather",
+      "file": "harvest_gather.wav",
+      "seconds": 0.22
+    },
+    {
+      "name": "harvest_start",
+      "file": "harvest_start.wav",
+      "seconds": 0.42
+    },
+    {
+      "name": "item_pickup",
+      "file": "item_pickup.wav",
+      "seconds": 0.3
+    },
+    {
+      "name": "level_up",
+      "file": "level_up.wav",
+      "seconds": 0.95
+    },
+    {
+      "name": "spell_cast",
+      "file": "spell_cast.wav",
+      "seconds": 0.75
+    },
+    {
+      "name": "ui_click",
+      "file": "ui_click.wav",
+      "seconds": 0.09
+    },
+    {
+      "name": "ui_close",
+      "file": "ui_close.wav",
+      "seconds": 0.14
+    },
+    {
+      "name": "waterfall",
+      "file": "waterfall.wav",
+      "seconds": 9.6
+    },
+    {
+      "name": "world_effect",
+      "file": "world_effect.wav",
+      "seconds": 0.5
+    }
+  ]
+}

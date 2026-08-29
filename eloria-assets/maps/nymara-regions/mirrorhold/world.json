@@ -2250,10 +2250,10 @@
     "textures": 73,
     "accessors": 524,
     "bufferViews": 597,
-    "uniqueTriangles": 300734,
+    "uniqueTriangles": 297964,
     "uniqueVertices": 183149,
-    "glbBytes": 16092412,
-    "instancedTriangles": 1246632,
+    "glbBytes": 16075788,
+    "instancedTriangles": 1243862,
     "embeddedTextureBytes": 7810616,
     "textureMemoryBytesUncompressed": 66846720,
     "placements": 1874,
@@ -2274,12 +2274,12 @@
       "spruce instances: 855"
     ],
     "lod2": {
-      "glbBytes": 9176216,
+      "glbBytes": 9159592,
       "nodes": 2236,
-      "uniqueTriangles": 273416,
-      "instancedTriangles": 890182,
+      "uniqueTriangles": 270646,
+      "instancedTriangles": 887412,
       "sizeReductionPercent": 43.0,
-      "triangleReductionPercent": 28.6
+      "triangleReductionPercent": 28.7
     }
   },
   "sources": [

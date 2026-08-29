@@ -137,6 +137,9 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_mirrorhold_interiors",
+      "Roof_mirrorhold_interiors_cliff_rock",
+      "Roof_mirrorhold_interiors_glacier_ice",
+      "Roof_mirrorhold_interiors_pale_ashlar",
       "Build_mirrorhold_interiors_amber_resin",
       "Build_mirrorhold_interiors_ashlar",
       "Build_mirrorhold_interiors_blue_crystal",
@@ -157,6 +160,14 @@
       "Build_mirrorhold_interiors_water_stream",
       "Build_mirrorhold_interiors_woven_cloth"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_mirrorhold_interiors_cliff_rock",
+      "Roof_mirrorhold_interiors_glacier_ice",
+      "Roof_mirrorhold_interiors_pale_ashlar"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1012,18 +1023,21 @@
     ]
   },
   "performance": {
-    "nodes": 24,
-    "meshes": 23,
+    "nodes": 27,
+    "meshes": 26,
     "materials": 19,
     "images": 53,
     "textures": 53,
-    "accessors": 115,
-    "bufferViews": 168,
-    "uniqueTriangles": 26030,
-    "uniqueVertices": 33658,
-    "glbBytes": 7014608,
+    "accessors": 130,
+    "bufferViews": 183,
+    "uniqueTriangles": 25022,
+    "uniqueVertices": 31642,
+    "glbBytes": 6915308,
     "nodeNames": [
       "Interior_mirrorhold_interiors",
+      "Roof_mirrorhold_interiors_cliff_rock",
+      "Roof_mirrorhold_interiors_glacier_ice",
+      "Roof_mirrorhold_interiors_pale_ashlar",
       "Build_mirrorhold_interiors_amber_resin",
       "Build_mirrorhold_interiors_ashlar",
       "Build_mirrorhold_interiors_blue_crystal",

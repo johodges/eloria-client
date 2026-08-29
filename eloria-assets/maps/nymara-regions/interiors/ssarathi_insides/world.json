@@ -142,6 +142,9 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_ssarathi_insides",
+      "Roof_ssarathi_insides_cliff_rock",
+      "Roof_ssarathi_insides_rubble_stone",
+      "Roof_ssarathi_insides_ssarathi_jade_ashlar",
       "Build_ssarathi_insides_amber_resin",
       "Build_ssarathi_insides_ashlar",
       "Build_ssarathi_insides_bark_dark",
@@ -157,6 +160,14 @@
       "Build_ssarathi_insides_ssarathi_vine",
       "Build_ssarathi_insides_timber_grey"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_ssarathi_insides_cliff_rock",
+      "Roof_ssarathi_insides_rubble_stone",
+      "Roof_ssarathi_insides_ssarathi_jade_ashlar"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1267,18 +1278,21 @@
     ]
   },
   "performance": {
-    "nodes": 19,
-    "meshes": 18,
+    "nodes": 22,
+    "meshes": 21,
     "materials": 16,
     "images": 47,
     "textures": 47,
-    "accessors": 90,
-    "bufferViews": 137,
-    "uniqueTriangles": 115294,
-    "uniqueVertices": 124059,
-    "glbBytes": 11093404,
+    "accessors": 105,
+    "bufferViews": 152,
+    "uniqueTriangles": 114358,
+    "uniqueVertices": 122187,
+    "glbBytes": 11001364,
     "nodeNames": [
       "Interior_ssarathi_insides",
+      "Roof_ssarathi_insides_cliff_rock",
+      "Roof_ssarathi_insides_rubble_stone",
+      "Roof_ssarathi_insides_ssarathi_jade_ashlar",
       "Build_ssarathi_insides_amber_resin",
       "Build_ssarathi_insides_ashlar",
       "Build_ssarathi_insides_bark_dark",

@@ -78,6 +78,13 @@ func _apply_collision_declarations() -> void:
 	var declared: Array = collision.get("nodeNames", [])
 	if declared.is_empty():
 		return
+	# A map may declare collision on the geometry the player sees, or on separate
+	# proxy boxes tucked inside it. A proxy is a physics volume, never a surface:
+	# drawn, it sits millimetres inside the wall it stands for and the two fight
+	# for the same pixels. The shape is still built from the proxy's mesh, and
+	# CollisionShape3D is not a VisualInstance3D, so hiding the node it hangs off
+	# costs nothing in physics.
+	var proxies: bool = bool(collision.get("nodesAreProxies", false))
 	# One walk of a 1700-node import instead of one walk per declared name.
 	var by_name: Dictionary = {}
 	for node_value: Node in world_root.find_children("*", "", true, false):
@@ -87,6 +94,8 @@ func _apply_collision_declarations() -> void:
 		var node: Node = by_name.get(str(node_name)) as Node
 		if node is MeshInstance3D:
 			_create_static_collision(node as MeshInstance3D)
+			if proxies:
+				(node as MeshInstance3D).visible = false
 		elif node == null:
 			manifest.warnings.append("collision node not found: " + str(node_name))
 

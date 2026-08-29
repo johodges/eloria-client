@@ -5,6 +5,7 @@ on:
     paths:
       - "godot-client/**"
       - "eloria-assets/tools/build_native_nymara_glbs.py"
+      - "eloria-assets/tools/build_native_sounds.py"
       - "eloria-assets/tools/render_native_glb_preview.py"
       - "eloria-assets/maps/four-gates-city/**"
       - "eloria-assets/maps/nymara-regions/sunmane_steppe/**"
@@ -36,6 +37,8 @@ jobs:
             python3 python3-numpy
       - name: Validate native Nymara GLB catalog
         run: python3 godot-client/tests/test_native_glb_assets.py -v
+      - name: Validate the generated sound set
+        run: python3 godot-client/tests/test_native_sounds.py -v
       - name: Validate garment fit registry
         run: python3 godot-client/tests/test_equipment_fit.py -v
       - name: Validate creature rigs, skinning and animation
@@ -50,6 +53,26 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_invasion_assistant.gd
       - name: World input routing fixtures
         run: godot --headless --path godot-client --script res://tests/test_world_input.gd
+      - name: Manifest lighting rig fixtures
+        run: godot --headless --path godot-client --script res://tests/test_world_lighting.gd
+      - name: Connection lifecycle fixtures
+        run: godot --headless --path godot-client --script res://tests/test_connection_lifecycle.gd
+      - name: HUD persistence fixtures
+        run: godot --headless --path godot-client --script res://tests/test_hud_persistence.gd
+      - name: Settings window and key binding fixtures
+        run: godot --headless --path godot-client --script res://tests/test_settings_window.gd
+      - name: Console command fixtures
+        run: godot --headless --path godot-client --script res://tests/test_console_commands.gd
+      - name: Day and night cycle fixtures
+        run: godot --headless --path godot-client --script res://tests/test_day_night.gd
+      - name: Ambient audio binder fixtures
+        run: godot --headless --path godot-client --script res://tests/test_ambient_audio.gd
+      - name: Audio director fixtures
+        run: godot --headless --path godot-client --script res://tests/test_audio_director.gd
+      - name: Eloria extension window fixtures
+        run: godot --headless --path godot-client --script res://tests/test_extension_windows.gd
+      - name: Runtime cost fixtures
+        run: godot --headless --path godot-client --script res://tests/test_runtime_performance.gd
       - name: Main scene smoke test
         run: |
           godot --headless --path godot-client --quit-after 3 2>&1 | tee main-scene.log
@@ -134,6 +157,104 @@ jobs:
         with:
           name: rendered-four-gates-map
           path: godot-client/test-artifacts/four-gates
+          if-no-files-found: error
+
+  rendered-phase0-repairs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: barichello/godot-ci:4.7.2
+    env:
+      ELORIA_ARTIFACT_DIR: ${{ github.workspace }}/godot-client/test-artifacts/phase0
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install virtual display and software rendering
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends             xvfb xauth libgl1-mesa-dri libfontconfig1 libxcursor1 libxinerama1             libxrandr2 libxi6 libxkbcommon0 libasound2t64 libpulse0 libudev1
+      - name: Import project
+        run: godot --headless --path godot-client --editor --quit
+      - name: Render Phase 0 repair before/after pairs
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_phase0_repairs.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/render.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/render.log"
+          grep -q "rendered phase 0 repairs: PASS" "$ELORIA_ARTIFACT_DIR/render.log"
+          test -s "$ELORIA_ARTIFACT_DIR/marker-lights-before.png"
+          test -s "$ELORIA_ARTIFACT_DIR/marker-lights-after.png"
+          test -s "$ELORIA_ARTIFACT_DIR/console-history.png"
+          test -s "$ELORIA_ARTIFACT_DIR/console-diagnostics.png"
+          test -s "$ELORIA_ARTIFACT_DIR/server-popup.png"
+          test -s "$ELORIA_ARTIFACT_DIR/harvest-targets-idle.png"
+          test -s "$ELORIA_ARTIFACT_DIR/harvest-targets-active.png"
+          test -s "$ELORIA_ARTIFACT_DIR/reading-progress.png"
+          test -s "$ELORIA_ARTIFACT_DIR/reading-complete.png"
+      - name: Render the Eloria extension windows
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_extension_windows.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/extension-windows.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/extension-windows.log"
+          grep -q "rendered extension windows: PASS" "$ELORIA_ARTIFACT_DIR/extension-windows.log"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-windows-before.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-hud-readouts.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-quest-journal.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-mail.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-item-detail.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-merchant.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-player-info.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-quest-tracked.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-marketplace.png"
+      - name: Render server-placed map markers
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_map_markers.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/map-markers.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/map-markers.log"
+          grep -q "rendered map markers: PASS" "$ELORIA_ARTIFACT_DIR/map-markers.log"
+          test -s "$ELORIA_ARTIFACT_DIR/map-marker-before.png"
+          test -s "$ELORIA_ARTIFACT_DIR/map-marker-full-map.png"
+          test -s "$ELORIA_ARTIFACT_DIR/map-marker-gameplay-view.png"
+      - name: Render the active-effect strip
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_active_buffs.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/active-buffs.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/active-buffs.log"
+          grep -q "rendered active buffs: PASS" "$ELORIA_ARTIFACT_DIR/active-buffs.log"
+          test -s "$ELORIA_ARTIFACT_DIR/active-buffs-before.png"
+          test -s "$ELORIA_ARTIFACT_DIR/active-buffs-after.png"
+          test -s "$ELORIA_ARTIFACT_DIR/active-buffs-removed.png"
+      - name: Render the day and night cycle
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_day_night.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/day-night.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/day-night.log"
+          grep -q "rendered day night: PASS" "$ELORIA_ARTIFACT_DIR/day-night.log"
+          test -s "$ELORIA_ARTIFACT_DIR/day-night-before.png"
+          test -s "$ELORIA_ARTIFACT_DIR/day-night-noon.png"
+          test -s "$ELORIA_ARTIFACT_DIR/day-night-sunrise.png"
+          test -s "$ELORIA_ARTIFACT_DIR/day-night-sunset.png"
+          test -s "$ELORIA_ARTIFACT_DIR/day-night-midnight.png"
+      - name: Render world effects
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_world_effects.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/world-effects.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/world-effects.log"
+          grep -q "rendered world effects: PASS" "$ELORIA_ARTIFACT_DIR/world-effects.log"
+          test -s "$ELORIA_ARTIFACT_DIR/world-effect-before.png"
+          test -s "$ELORIA_ARTIFACT_DIR/world-effect-at-actor.png"
+          test -s "$ELORIA_ARTIFACT_DIR/world-effect-between-actors.png"
+      - name: Render 16-bit actor native models
+        run: |
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_actor16_creature.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/actor16.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/actor16.log"
+          grep -q "rendered 16-bit actor evidence: PASS" "$ELORIA_ARTIFACT_DIR/actor16.log"
+          test -s "$ELORIA_ARTIFACT_DIR/actor16-native.png"
+          test -s "$ELORIA_ARTIFACT_DIR/actor16-fallback.png"
+      - name: Upload Phase 0 rendered evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-phase0-repairs
+          path: godot-client/test-artifacts/phase0
           if-no-files-found: error
 
   rendered-sunmane-steppe:

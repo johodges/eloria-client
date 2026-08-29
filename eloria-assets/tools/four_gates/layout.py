@@ -215,13 +215,20 @@ def farm_plots(seed: int = 77) -> List[Tuple[float, float, float, float, float]]
     """Cropped field strips in the southern agricultural quarter."""
     rng = np.random.default_rng(seed)
     plots = []
+    # A plot is a flat crop plane laid on flat ground, so two of them that
+    # overlap are coplanar and fight. The first size runs radially and the
+    # second along the ring, so each is a fraction of that plot's own cell in
+    # the ring-and-row grid and a headland is left between neighbours.
+    ring_step = 18.0
     for i in range(26):
         angle = math.pi * 0.30 + (math.pi * 0.40) * (i % 13) / 12.0
-        radius = 272.0 + 18.0 * (i // 13)
+        radius = 272.0 + ring_step * (i // 13)
         if not clear_of_roads(radius, angle, margin=10.0):
             continue
+        arc = radius * (math.pi * 0.40) / 12.0
         plots.append((math.cos(angle) * radius, math.sin(angle) * radius,
-                      float(rng.uniform(22.0, 34.0)), float(rng.uniform(14.0, 20.0)),
+                      float(rng.uniform(0.62, 0.82)) * ring_step,
+                      float(rng.uniform(0.66, 0.86)) * arc,
                       -angle))
     # outer-rim smallholdings beyond the south causeway
     for i in range(14):
