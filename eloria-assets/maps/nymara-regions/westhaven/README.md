@@ -32,7 +32,7 @@ material recipes.
 | `world-lod2.glb` | 14.4 MB, 4,308 nodes, 981,744 instanced triangles |
 | density | 3.53 instanced triangles per square metre |
 | collision | 56.0% walkable, 27 elevated decks |
-| population | 29 landmarks, 10 interactives, 39 harvestables, 20 NPC markers, 4 portals, 4 spawns |
+| population | 29 landmarks, 10 interactives, 39 harvestables, 20 NPC markers, 8 portals, 8 spawns |
 
 ## Verification
 
@@ -43,6 +43,11 @@ material recipes.
   cliffs and the map rim - all deliberate)
 - `region_client_check.gd` through Godot 4.7.2 and the project's own
   `WorldLoader` - see `client-check-report.json`
+
+Four of the eight portals are **doors into the insides map** — see
+`../interiors/WESTHAVEN_INTERIORS.md`. Each targets `westhaven_insides` and
+differs only in `destinationSpawn`, and the region carries a spawn of the same
+name so the return portal on each arrival has somewhere to land.
 
 Read `validation-report.md` for what those numbers do and do not cover, and
 `modeling-assumptions.md` for what had to be decided without an authority.

@@ -117,6 +117,72 @@
       "rotationDegrees": 315.0,
       "surface": "Paving",
       "grounded": true
+    },
+    {
+      "id": "custom-house-hall",
+      "name": "Return from The Custom House",
+      "position": [
+        -72.75,
+        3.45,
+        -9.25
+      ],
+      "serverTile": [
+        101,
+        259
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true,
+      "nudgedMetres": 3.15
+    },
+    {
+      "id": "bonded-vaults-tunnel",
+      "name": "Return from The Bonded Vaults",
+      "position": [
+        -40.08,
+        9.55,
+        -35.28
+      ],
+      "serverTile": [
+        134,
+        285
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "lamp-rock-foot",
+      "name": "Return from The Lamp Rock Light",
+      "position": [
+        295.44,
+        18.0,
+        120.24
+      ],
+      "serverTile": [
+        469,
+        130
+      ],
+      "rotationDegrees": 315.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "gullstone-cleft",
+      "name": "Return from The Gullstone Undertow",
+      "position": [
+        -79.75,
+        32.98,
+        100.75
+      ],
+      "serverTile": [
+        94,
+        149
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Paving",
+      "grounded": true,
+      "nudgedMetres": 3.14
     }
   ],
   "collision": {
@@ -2146,6 +2212,84 @@
       "radius": 3.5,
       "authority": "server",
       "nudgedMetres": 1.45
+    },
+    {
+      "id": "custom-house-door",
+      "name": "The Custom House",
+      "type": "map-transition",
+      "transport": "door",
+      "position": [
+        -72.75,
+        3.5,
+        -9.25
+      ],
+      "serverTile": [
+        101,
+        259
+      ],
+      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationSpawn": "custom-house-hall",
+      "radius": 3.0,
+      "authority": "server",
+      "nudgedMetres": 3.15
+    },
+    {
+      "id": "bonded-vaults-door",
+      "name": "The Bonded Vaults",
+      "type": "map-transition",
+      "transport": "door",
+      "position": [
+        -40.08,
+        9.6,
+        -35.28
+      ],
+      "serverTile": [
+        134,
+        285
+      ],
+      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationSpawn": "bonded-vaults-tunnel",
+      "radius": 3.0,
+      "authority": "server"
+    },
+    {
+      "id": "lamp-rock-door",
+      "name": "The Lamp Rock Light",
+      "type": "map-transition",
+      "transport": "door",
+      "position": [
+        295.44,
+        18.05,
+        120.24
+      ],
+      "serverTile": [
+        469,
+        130
+      ],
+      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationSpawn": "lamp-rock-foot",
+      "radius": 3.0,
+      "authority": "server"
+    },
+    {
+      "id": "gullstone-door",
+      "name": "The Gullstone Undertow",
+      "type": "map-transition",
+      "transport": "door",
+      "position": [
+        -79.75,
+        33.03,
+        100.75
+      ],
+      "serverTile": [
+        94,
+        149
+      ],
+      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationSpawn": "gullstone-cleft",
+      "radius": 3.0,
+      "authority": "server",
+      "nudgedMetres": 3.14
     }
   ],
   "roads": [
@@ -2750,8 +2894,8 @@
     "uniqueVertices": 356459,
     "glbBytes": 23451316,
     "instancedTriangles": 1170802,
-    "embeddedTextureBytes": 21181927,
-    "textureMemoryBytesUncompressed": 182452224,
+    "embeddedTextureBytes": 24628897,
+    "textureMemoryBytesUncompressed": 227278848,
     "placements": 2653,
     "collision": {
       "width": 1152,
@@ -2765,12 +2909,28 @@
       "columnOrder": "server-tile-x (column 0 is the -X western edge)",
       "nudgedEntries": [
         {
+          "id": "custom-house-hall",
+          "metres": 3.15
+        },
+        {
+          "id": "gullstone-cleft",
+          "metres": 3.14
+        },
+        {
           "id": "east-road",
           "metres": 6.67
         },
         {
           "id": "mirrorhold-berth",
           "metres": 1.45
+        },
+        {
+          "id": "custom-house-door",
+          "metres": 3.15
+        },
+        {
+          "id": "gullstone-door",
+          "metres": 3.14
         }
       ]
     },

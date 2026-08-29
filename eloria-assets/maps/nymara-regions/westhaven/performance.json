@@ -10,8 +10,8 @@
   "uniqueVertices": 356459,
   "glbBytes": 23451316,
   "instancedTriangles": 1170802,
-  "embeddedTextureBytes": 21181927,
-  "textureMemoryBytesUncompressed": 182452224,
+  "embeddedTextureBytes": 24628897,
+  "textureMemoryBytesUncompressed": 227278848,
   "placements": 2653,
   "collision": {
     "width": 1152,
@@ -25,12 +25,28 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nudgedEntries": [
       {
+        "id": "custom-house-hall",
+        "metres": 3.15
+      },
+      {
+        "id": "gullstone-cleft",
+        "metres": 3.14
+      },
+      {
         "id": "east-road",
         "metres": 6.67
       },
       {
         "id": "mirrorhold-berth",
         "metres": 1.45
+      },
+      {
+        "id": "custom-house-door",
+        "metres": 3.15
+      },
+      {
+        "id": "gullstone-door",
+        "metres": 3.14
       }
     ]
   },

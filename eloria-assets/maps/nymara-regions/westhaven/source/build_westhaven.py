@@ -59,6 +59,11 @@ SEED = 20260829
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
 
+# The combined insides map every door on this region opens onto. One map key
+# for all four interiors, per the Eternal Lands convention: see
+# `interiors/westhaven_insides/` and `source/interiors.py`.
+INSIDES_MAP = "maps/nymara/westhaven_insides.elm"
+
 
 # --------------------------------------------------------------------------
 def register_materials(sets: dict) -> dict:
@@ -157,6 +162,44 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
                            int(round(REG.SERVER_ORIGIN[1] - z))],
             "destinationMap": destination, "radius": 3.5,
             "authority": "server"})
+
+    # Doors into the insides map. Four doors, one destination map, and a
+    # different `destinationSpawn` for each - the Eternal Lands convention the
+    # interiors package follows. Each also gets a *spawn* of the same name on
+    # this map, so the return portal standing on that arrival has somewhere to
+    # land: without it the round trip resolves one way only.
+    for door_id, name, anchor, spawn_id, facing in (
+            ("custom-house-door", "The Custom House", "custom_house",
+             "custom-house-hall", 180.0),
+            ("bonded-vaults-door", "The Bonded Vaults", "warehouse_row",
+             "bonded-vaults-tunnel", 180.0),
+            # `lighthouse_yard`, not `lighthouse`: the tower's gallery is a
+            # walk surface 28 m up, so a door on the tower's own centre has the
+            # grounding ray snap it onto the gallery instead of the rock.
+            ("lamp-rock-door", "The Lamp Rock Light", "lighthouse_yard",
+             "lamp-rock-foot", 315.0),
+            ("gullstone-door", "The Gullstone Undertow", "gullstone_watch",
+             "gullstone-cleft", 0.0)):
+        x, z = REG.ANCHORS[anchor]
+        y = float(t.height_at(x, z))
+        build.portals.append({
+            "id": door_id, "name": name, "type": "map-transition",
+            "transport": "door",
+            "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "destinationMap": INSIDES_MAP,
+            "destinationSpawn": spawn_id,
+            "radius": 3.0, "authority": "server"})
+        build.spawns.append({
+            "id": spawn_id,
+            "name": f"Return from {name}",
+            "position": [round(x, 2), round(y + 0.05, 2), round(z, 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "rotationDegrees": facing,
+            "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
+            "grounded": True})
 
 
 def _add_population_markers(build: REG.RegionBuild, seed: int) -> None:

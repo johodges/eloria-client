@@ -115,9 +115,12 @@ For that, see `comparison-report.md` and the sheets in
   frame. No profiling was done, and nothing streams or switches LOD yet.
 - **The LOD2 package in the engine.** It validates and loads through the
   offline path; it was not swapped in and rendered.
-- **Portal destinations.** The four portals name neighbouring region maps by
-  registry key. Whether those transitions work is the server's business and was
-  not exercised.
+- **Portal destinations.** Eight portals: four naming neighbouring region maps
+  by registry key, and four doors into `westhaven_insides`. Every one of the
+  eight, and every spawn, was checked against the finished collision grid and
+  stands on a walkable cell — six had to be moved onto one, and the build
+  reports each. Whether the transitions actually *fire* is the server's business
+  and was not exercised.
 - **Water shading.** The GLB ships a flat lit plane. `environment.water`
   declares shallow/deep tint and caustics as presentation settings for whoever
   writes the shader; none of that is implemented or verified.
