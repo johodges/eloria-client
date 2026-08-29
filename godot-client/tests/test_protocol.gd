@@ -768,6 +768,29 @@ func _init() -> void:
 	_expect(EloriaProtocol.decode_server(238, kind_out_of_range).type == "invalid",
 		"an unknown day kind is rejected rather than indexed past the end")
 
+	# Commands 92, 93 and 94: which quest a piece of dialogue belongs to.
+	_expect(EloriaProtocol.decode_server(92, PackedByteArray([])).type
+			== "quest_dialogue_next",
+		"the quest flag carries nothing and means the next line is one")
+	_expect(EloriaProtocol.decode_server(92, PackedByteArray([1])).type
+			== "invalid",
+		"a quest flag with a payload is rejected")
+	var quest_here: Dictionary = EloriaProtocol.decode_server(93,
+		PackedByteArray([2, 0]))
+	_expect(quest_here.type == "quest_id" and quest_here.quest_id == 2
+		and not bool(quest_here.finished),
+		"a quest id decodes and is not a completion")
+	var quest_done: Dictionary = EloriaProtocol.decode_server(94,
+		PackedByteArray([2, 0]))
+	_expect(quest_done.type == "quest_id" and bool(quest_done.finished),
+		"and the same id on 94 is one")
+	_expect(EloriaProtocol.decode_server(93, PackedByteArray([1])).type
+			== "invalid",
+		"a truncated quest id is rejected")
+	_expect_bytes("quest question fixture",
+		EloriaProtocol.what_quest_is_this_id(2),
+		PackedByteArray([63, 3, 0, 2, 0]))
+
 	# Commands 85 and 87: an arrow going to a place rather than into somebody.
 	# A miss used to be drawn as a shot at the target it missed.
 	var ground_aim: Dictionary = EloriaProtocol.decode_server(85,

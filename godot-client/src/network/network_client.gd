@@ -149,6 +149,9 @@ func use_inventory_item(slot: int) -> Error:
 func fire_missile_at_object(x: int, y: int) -> Error:
 	return send_frame(EloriaProtocol.fire_missile_at_object(x, y))
 
+func what_quest_is_this_id(quest_id: int) -> Error:
+	return send_frame(EloriaProtocol.what_quest_is_this_id(quest_id))
+
 func do_emote(name: String) -> Error:
 	return send_frame(EloriaProtocol.do_emote(name))
 

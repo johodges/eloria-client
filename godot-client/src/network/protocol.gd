@@ -26,6 +26,7 @@ enum ClientMessage {
 	# Client-to-server; 42 and 70 are also server-to-client numbers, the way
 	# the storage commands below share 44-46. The direction tells them apart.
 	ITEM_ON_ITEM = 42, DO_EMOTE = 70, FIRE_MISSILE_AT_OBJECT = 51,
+	WHAT_QUEST_IS_THIS_ID = 63,
 	GET_STORAGE_CATEGORY = 44, DEPOSIT_ITEM = 45,
 	WITHDRAW_ITEM = 46, LOOK_AT_STORAGE_ITEM = 47, POPUP_REPLY = 50,
 	PING_RESPONSE = 60, SET_ACTIVE_CHANNEL = 61, LOG_IN = 140,
@@ -58,6 +59,7 @@ enum ServerMessage {
 	PLAY_SOUND = 14, PLAY_MUSIC = 54,
 	START_RAIN = 15, STOP_RAIN = 16, THUNDER = 17,
 	FIRE_PARTICLES = 61, REMOVE_FIRE_AT = 62, SEND_WEATHER = 100,
+	NEXT_NPC_MESSAGE_IS_QUEST = 92, HERE_IS_QUEST_ID = 93, QUEST_FINISHED = 94,
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
 	SEND_ACHIEVEMENTS = 95, ADD_NEW_ACTOR_EXTENDED = 247,
 	ELORIA_INVASION_ASSISTANT_STATE = 233,
@@ -185,6 +187,14 @@ static func fire_missile_at_object(x: int, y: int) -> PackedByteArray:
 	payload.encode_u16(0, x)
 	payload.encode_u16(2, y)
 	return encode(ClientMessage.FIRE_MISSILE_AT_OBJECT, payload)
+
+## Ask the server what a quest id is. The client never invents a title for an
+## id it has not been told about.
+static func what_quest_is_this_id(quest_id: int) -> PackedByteArray:
+	var payload := PackedByteArray()
+	payload.resize(2)
+	payload.encode_u16(0, quest_id)
+	return encode(ClientMessage.WHAT_QUEST_IS_THIS_ID, payload)
 
 static func do_emote(name: String) -> PackedByteArray:
 	var payload: PackedByteArray = name.to_utf8_buffer()
@@ -641,6 +651,18 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				"fired": command == ServerMessage.MISSILE_FIRE_A_TO_B,
 				"source_actor_id": u16(payload),
 				"target_actor_id": u16(payload, 2)}
+		ServerMessage.NEXT_NPC_MESSAGE_IS_QUEST:
+			# A flag with no payload: the NPC text after it is quest dialogue
+			# rather than small talk. It comes first because it describes what
+			# follows it.
+			if payload.size() != 0:
+				return {"type": "invalid", "error": "quest_flag_trailing"}
+			return {"type": "quest_dialogue_next"}
+		ServerMessage.HERE_IS_QUEST_ID, ServerMessage.QUEST_FINISHED:
+			if payload.size() != 2:
+				return {"type": "invalid", "error": "quest_id_length"}
+			return {"type": "quest_id", "quest_id": u16(payload),
+				"finished": command == ServerMessage.QUEST_FINISHED}
 		ServerMessage.SEND_WEATHER:
 			# The whole sky in one frame. Weather is the server's because two
 			# players standing together have to see the same one.

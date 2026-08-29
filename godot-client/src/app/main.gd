@@ -6184,7 +6184,13 @@ func _sync_dialogue() -> void:
 	dialogue_panel.visible = bool(dialogue.get("open", false))
 	if not dialogue_panel.visible:
 		return
-	dialogue_name.text = str(dialogue.get("name", "NPC"))
+	# Dialogue the server flagged as belonging to a quest is marked as such,
+	# which is the whole point of the flag: a player could not previously tell
+	# a quest line from small talk, and neither could this client.
+	var quest_id: int = int(dialogue.get("quest_id", 0))
+	dialogue_name.text = ("%s  [Quest %d]" % [str(dialogue.get("name", "NPC")),
+		quest_id] if bool(dialogue.get("quest", false)) and quest_id > 0
+		else str(dialogue.get("name", "NPC")))
 	dialogue_text.text = str(dialogue.get("text", ""))
 	for child: Node in dialogue_options.get_children():
 		child.queue_free()

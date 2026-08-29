@@ -495,6 +495,9 @@ UTF-8.
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+| 92 | Next NPC message is a quest | empty; describes the frame after it |
+| 93 | Here is the quest id | `quest_id:u16` |
+| 94 | Quest finished | `quest_id:u16` |
 | 100 | Weather | `kind:u8 \| intensity:u8` - kind indexes `clear, rain, storm`, intensity 0-100 |
 | 15 | Start rain | `intensity:u8` - the legacy signal, sent alongside |
 | 16 | Stop rain | empty |
@@ -507,6 +510,17 @@ UTF-8.
 | 87 | Missile loosed at a place | `actor_id:u16 \| x:u16 \| y:u16` |
 | 89 | Actor animation | `actor_id:u16 \| action` - an action name, never a clip |
 | 238 | Almanac | `day:u8 \| month:u8 \| year:u16 \| kind:u8 \| experience_bonus:u16 \| name \| description \| effect_count:u8` then that many effect tags, `multiplier_count:u8` then that many `skill \| multiplier:u16`, `catalogue_count:u16` then that many `kind:u8 \| name \| description` |
+
+Commands 92, 93 and 94 say which quest a piece of NPC dialogue belongs to. The
+fork's own journal already carried what a player was doing, but nothing marked
+a line of dialogue as part of a quest, so it could not be told from small talk.
+The flag comes first because it describes the frame after it, and it describes
+exactly one line: the next thing an NPC says is small talk again unless the
+server flags that too. A quest with no id sends nothing rather than zero.
+
+`WHAT_QUEST_IS_THIS_ID(63)` asks for a quest's name. An id the server does not
+know is answered with a plain refusal rather than silence, so a client is never
+left waiting on a reply that is not coming.
 
 Command 100 carries the whole sky in one frame, with 15, 16 and 17 as the
 legacy signals sent alongside it so an older client still sees weather. The sky

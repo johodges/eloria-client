@@ -1851,6 +1851,40 @@ func _run() -> void:
 	shooter = (app_state_inventory.get("actors") as Dictionary).get(91, {}) as Dictionary
 	_expect(int(shooter.get("aiming_at", -1)) == -1,
 		"loosing ends the aim the server stated before it")
+	# Which quest a piece of NPC dialogue belongs to. Before this the client
+	# could not tell a quest line from small talk, so neither could a player.
+	var dialogue_panel: Control = main.get("dialogue_panel") as Control
+	var dialogue_name: Label = main.get("dialogue_name") as Label
+	app_state_inventory.call("_on_packet", 30, _nul_bytes("Just passing through."))
+	await process_frame
+	_expect(dialogue_panel.visible
+		and not bool((app_state_inventory.get("npc_dialogue") as Dictionary).get(
+			"quest", true))
+		and not dialogue_name.text.contains("Quest"),
+		"unflagged dialogue is small talk: " + dialogue_name.text)
+	app_state_inventory.call("_on_packet", 92, PackedByteArray([]))
+	app_state_inventory.call("_on_packet", 93, PackedByteArray([2, 0]))
+	app_state_inventory.call("_on_packet", 30, _nul_bytes("Find the reed bank."))
+	await process_frame
+	var flagged: Dictionary = app_state_inventory.get("npc_dialogue") as Dictionary
+	_expect(bool(flagged.get("quest", false)) and int(flagged.get("quest_id", 0)) == 2
+		and dialogue_name.text.contains("Quest 2"),
+		"flagged dialogue names the quest it belongs to: " + dialogue_name.text)
+	app_state_inventory.call("_on_packet", 30, _nul_bytes("Anyway, good day."))
+	await process_frame
+	_expect(not bool((app_state_inventory.get("npc_dialogue") as Dictionary).get(
+			"quest", true)),
+		"the flag describes one line, so the next line is small talk again")
+	app_state_inventory.call("_on_packet", 94, PackedByteArray([2, 0]))
+	await process_frame
+	_expect((app_state_inventory.get("finished_quests") as Array).has(2)
+		and int(app_state_inventory.get("current_quest_id")) == 0,
+		"a finished quest is recorded and stops being the current one")
+	app_state_inventory.call("_on_packet", 94, PackedByteArray([2, 0]))
+	await process_frame
+	_expect((app_state_inventory.get("finished_quests") as Array).size() == 1,
+		"and finishing it twice records it once")
+
 	# An arrow going to a place rather than into somebody: a practice shot, or
 	# a miss. Where it lands is the server's decision arriving on the wire, so
 	# two clients watching one shot draw the same arrow.

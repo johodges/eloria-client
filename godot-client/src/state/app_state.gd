@@ -31,6 +31,13 @@ var fires: Dictionary = {}
 ## The sky over this map, as {"kind": int, "intensity": int}.
 var weather: Dictionary = {"kind": 0, "intensity": 0}
 
+## Which quest the NPC is talking about, and which quests have been finished
+## this session. `quest_dialogue` is true only while the server has flagged the
+## next line and not yet sent it.
+var quest_dialogue := false
+var current_quest_id := 0
+var finished_quests: Array[int] = []
+
 ## One clap of thunder. An event: it happens once and is over.
 signal thunder_struck(severity: int)
 signal sound_requested(sound: Dictionary)
@@ -61,7 +68,7 @@ var active_channels: Array[int] = [0, 0, 0]
 var active_channel_index := 0
 var selected_actor_id := -1
 var npc_dialogue: Dictionary = {"open": false, "name": "", "text": "",
-	"options": []}
+	"options": [], "quest": false, "quest_id": 0}
 var trade: Dictionary = {"open": false, "partner": "", "storage_available": false,
 	"source_inventory": {}, "own_offers": {}, "other_offers": {},
 	"own_accepts": 0, "other_accepts": 0}
@@ -195,7 +202,8 @@ func _on_connection_state_changed(value: String) -> void:
 		active_channel_index = 0
 		current_map = ""
 		selected_actor_id = -1
-		npc_dialogue = {"open": false, "name": "", "text": "", "options": []}
+		npc_dialogue = {"open": false, "name": "", "text": "", "options": [],
+			"quest": false, "quest_id": 0}
 		trade = _empty_trade_state()
 		storage = _empty_storage_state()
 		ground_bags.clear()
@@ -211,6 +219,9 @@ func _on_connection_state_changed(value: String) -> void:
 		almanac = {}
 		fires = {}
 		weather = {"kind": 0, "intensity": 0}
+		quest_dialogue = false
+		current_quest_id = 0
+		finished_quests = []
 		inventory_state = {"gold": 0, "carried": 0, "capacity": 0, "items": []}
 		combat_state = _empty_combat_state()
 		mail.clear()
@@ -277,7 +288,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			actors.clear()
 			selected_actor_id = -1
 			npc_dialogue = {"open": false, "name": "", "text": "",
-				"options": []}
+				"options": [], "quest": false, "quest_id": 0}
 			pending_spell_target = ""
 			trade = _empty_trade_state()
 			storage = _empty_storage_state()
@@ -564,6 +575,20 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			if bool(event.fired):
 				missile_fired.emit({"source_actor_id": shooter_id,
 					"target_actor_id": int(event.target_actor_id)})
+		"quest_dialogue_next":
+			quest_dialogue = true
+			state_changed.emit(&"quest_dialogue")
+		"quest_id":
+			if bool(event.finished):
+				var done: int = int(event.quest_id)
+				if not finished_quests.has(done):
+					finished_quests.append(done)
+				if current_quest_id == done:
+					current_quest_id = 0
+				state_changed.emit(&"quest_dialogue")
+			else:
+				current_quest_id = int(event.quest_id)
+				state_changed.emit(&"quest_dialogue")
 		"weather":
 			weather = {"kind": int(event.kind),
 				"intensity": int(event.intensity)}
@@ -656,6 +681,12 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"npc_text":
 			npc_dialogue["open"] = true
 			npc_dialogue["text"] = event.text
+			# The flag describes exactly one line, so it is spent here rather
+			# than left set: the next thing the NPC says is small talk again
+			# unless the server flags that too.
+			npc_dialogue["quest"] = quest_dialogue
+			npc_dialogue["quest_id"] = current_quest_id if quest_dialogue else 0
+			quest_dialogue = false
 			state_changed.emit(&"npc_dialogue")
 		"npc_options":
 			npc_dialogue["open"] = true
