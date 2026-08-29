@@ -166,6 +166,8 @@ SPECS: tuple[MaterialSpec, ...] = (
     # what `base_color` is for.
     MaterialSpec("grey_moor_track", "packed_earth", roughness=0.97,
                  base_color=(0.52, 0.53, 0.50, 1.0)),
+    # Added for the barrows insides: an ossuary needs bone.
+    MaterialSpec("grey_bone", "grey_bone", roughness=0.86),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}
@@ -240,6 +242,7 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     sets["grey_dead_bark"] = T.grey_dead_bark(512, seed=653)
     sets["grey_bog_water"] = T.grey_bog_water(512, seed=659)
     sets["grey_moor_scrub"] = T.grey_moor_scrub(512, seed=661)
+    sets["grey_bone"] = T.grey_bone(512, seed=683)
     sets["grey_wisp"] = T.grey_wisp(128, seed=673)
     sets["grey_votive_flame"] = T.grey_votive_flame(128, seed=677)
 
