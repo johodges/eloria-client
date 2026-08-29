@@ -380,6 +380,223 @@ SHEET_LOCALES = {
 }
 
 
+# The colour of the brightest lit feature on each concept figure: the ember in
+# a treant's chest, the light inside a geode carapace, the centre of a wisp.
+# Measured by ``concept_growth_tints.py --core``.  Used for the MAT_CORE
+# material, which is why a treant's heart is amber and a barrens wisp's is
+# blue rather than both being a generic white glow.
+CORE_TINT = {
+    "amethyst_scorpion": (190, 248, 253),
+    "geode_scarab": (244, 250, 253),
+    "prism_drake": (179, 233, 252),
+    "shardling_swarm": (187, 243, 252),
+    "barrens_wisp": (113, 153, 239),
+    "amethyst_golem": (188, 198, 246),
+    "crystalwing": (173, 216, 250),
+    "geode_tortoise": (189, 249, 250),
+    "facet_hound": (169, 202, 248),
+    "prism_moth": (181, 245, 253),
+    "lattice_spider": (176, 232, 252),
+    "orrery_sentinel": (182, 238, 236),
+    "verdant_crown_king": (140, 189, 175),
+    "tidegold_wyrm": (156, 192, 182),
+    "rimebound_archmage": (153, 209, 228),
+    "glacier_brute": (179, 230, 243),
+    "orrery_colossus": (192, 185, 162),
+    "amethyst_sibyl": (149, 154, 209),
+    "crimson_duelist": (167, 143, 107),
+    "emberwood_matron": (172, 154, 89),
+    "barrow_sovereign": (85, 147, 139),
+    "gilded_devourer": (207, 177, 122),
+    "tidecaller_sorceress": (128, 192, 196),
+    "mirefather_leviathan": (152, 177, 124),
+    "goldmane_aurochs": (254, 243, 191),
+    "dunburrow_mole": (213, 163, 113),
+    "plumed_crane": (245, 224, 172),
+    "sunmane_minotaur": (240, 206, 136),
+    "stormmane_lion": (246, 206, 117),
+    "grasswing_mantis": (242, 233, 113),
+    "dust_hyena": (244, 180, 101),
+    "steppe_jackrabbit": (246, 224, 168),
+    "sunmane_gryphon": (246, 221, 160),
+    "crownwater_turtle": (244, 218, 150),
+    "tidefin_naga": (236, 219, 154),
+    "lanternwyrm": (235, 218, 99),
+    "crownwater_wyvern": (222, 222, 181),
+    "cascade_golem": (226, 220, 164),
+    "tidecoil_serpent": (220, 235, 197),
+    "palecrest_crab": (252, 245, 185),
+    "riverbank_ibis": (253, 242, 183),
+    "algae_alligator": (221, 203, 123),
+    "springfly_sprite": (226, 236, 192),
+    "gilded_water_lion": (222, 234, 196),
+    "medusa_tidepriest": (193, 208, 150),
+    "courier_otter": (222, 196, 153),
+    "message_swallow": (218, 194, 160),
+    "harborshell_crab": (213, 182, 121),
+    "brassband_pike": (202, 201, 158),
+    "reedhat_fisher": (214, 176, 127),
+    "ratcatcher_tough": (146, 144, 117),
+    "verdigris_beetle": (163, 203, 174),
+    "lanternwake_sprite": (137, 218, 210),
+    "millstone_golem": (206, 198, 159),
+    "drowned_dockhand": (104, 183, 184),
+    "sluice_elemental": (133, 229, 239),
+    "waterwheel_golem": (178, 233, 223),
+    "harbor_gull": (234, 235, 234),
+    "rockshell_crab": (221, 181, 121),
+    "harbor_seal": (203, 202, 197),
+    "kelpback_turtle": (212, 189, 142),
+    "bluewater_marlin": (184, 196, 171),
+    "saltmarsh_crocodile": (197, 177, 129),
+    "bilge_rat": (186, 147, 129),
+    "spinefin_eel": (113, 182, 177),
+    "barnacle_troll": (175, 165, 130),
+    "drowned_captain": (171, 152, 115),
+    "glowmantle_ray": (63, 221, 237),
+    "deepplate_coelacanth": (88, 179, 201),
+    "moor_pony": (187, 165, 133),
+    "moorhorn_ram": (145, 128, 87),
+    "moor_heron": (227, 201, 143),
+    "cairnback_tortoise": (173, 154, 105),
+    "moorfell_wolf": (148, 124, 83),
+    "reedmask_stalker": (175, 145, 104),
+    "moorlight_wisp": (155, 246, 238),
+    "barrow_knight": (119, 204, 191),
+    "cairn_golem": (151, 180, 159),
+    "lantern_wraith": (112, 202, 194),
+    "spectral_moor_stag": (135, 219, 210),
+    "barrow_king": (130, 197, 186),
+    "tidelance_construct": (137, 236, 232),
+    "reefplate_golem": (238, 223, 186),
+    "mirrorhold_wheelwarden": (168, 203, 191),
+    "verdigris_warden": (160, 197, 175),
+    "palewater_wyrm": (161, 221, 210),
+    "mirrorwing_swarm": (220, 228, 199),
+    "shattered_sentinel": (131, 214, 216),
+    "mirrorhold_oracle": (130, 207, 213),
+    "tideguard_vanguard": (123, 195, 187),
+    "mirrorhold_siren": (201, 202, 168),
+    "shardbound_archivist": (141, 239, 243),
+    "mirrorhold_loremaster": (146, 228, 226),
+    "mudflat_crab": (207, 185, 133),
+    "delta_heron": (226, 204, 165),
+    "voltfin_eel": (105, 202, 205),
+    "reed_stalker": (210, 183, 126),
+    "mangrove_turtle": (193, 170, 113),
+    "bog_warden": (178, 184, 146),
+    "frogspear_warrior": (188, 161, 111),
+    "reed_drake": (196, 172, 126),
+    "manymouth_hydra": (179, 182, 142),
+    "emerald_basilisk": (161, 194, 91),
+    "leaf_mantis": (169, 207, 98),
+    "dartback_treefrog": (172, 222, 92),
+    "plumefire_hummingbird": (244, 195, 104),
+    "vinecoil_snake": (194, 189, 72),
+    "canopy_lynx": (226, 185, 103),
+    "mossback_anteater": (192, 171, 102),
+    "bloomtail_axolotl": (56, 224, 238),
+    "canopy_gorilla": (195, 151, 85),
+    "vine_treant": (187, 175, 76),
+    "verdant_naiad": (166, 237, 243),
+    "verdant_stair_dragon": (183, 213, 107),
+    "rime_harpy": (247, 247, 243),
+    "glacier_golem": (191, 254, 254),
+    "whitehorn_yak": (250, 245, 235),
+    "rimeshell_crab": (171, 241, 246),
+    "hoarfrost_serpent": (191, 250, 254),
+    "glacier_eagle": (251, 249, 242),
+    "frostplate_knight": (186, 227, 218),
+    "emberwing_moth": (246, 188, 64),
+    "amberwood_owl": (196, 153, 97),
+    "bramble_wolf": (181, 135, 95),
+    "moss_troll": (196, 158, 94),
+    "amberwood_treant": (195, 152, 85),
+    "ivy_hound": (179, 165, 138),
+    "thorn_revenant": (111, 137, 138),
+    "spectral_highwayman": (130, 169, 186),
+    "lantern_stag": (192, 131, 66),
+    "moss_badger": (214, 191, 128),
+    "bramble_stag": (191, 156, 111),
+    "leafling_sprite": (190, 150, 57),
+    "ember_wisp": (252, 237, 147),
+    "ivy_stone_golem": (178, 155, 102),
+    "amberwood_dryad": (196, 157, 116),
+    "moss_bear": (242, 208, 99),
+    "amberwood_scarecrow": (245, 197, 102),
+    "amberwood_ghost_knight": (214, 231, 182),
+    "elk": (199, 162, 136),
+    "emberfox": (244, 209, 183),
+    "frost_maw": (190, 250, 254),
+    "frost_tiger": (179, 242, 252),
+    "giant_crocodile": (199, 179, 117),
+    "giant_komodo": (206, 182, 109),
+    "giant_tortoise": (247, 216, 150),
+    "horse": (244, 208, 151),
+    "ice_bear": (248, 247, 242),
+    "miretoad": (236, 206, 136),
+    "mossback_boar": (185, 144, 94),
+    "mountain_goat": (249, 245, 238),
+    "red_fox": (247, 226, 177),
+    "snow_hare": (252, 251, 249),
+}
+
+
+# What colour that growth actually is in the artwork, measured by
+# ``eloria-assets/tools/concept_growth_tints.py`` from the cut concept figures.
+# Deriving it from the kind alone made every leaf green, which is right for the
+# Verdant Stair and wrong for the Amberwood -- an autumn wood whose foliage
+# measures amber -- and badly wrong for the thornwood dryad, whose canopy is
+# crimson.  Only vegetation is listed: mineral crusts already take the
+# creature's own palette.
+GROWTH_TINT = {
+    "algae_alligator": (153, 129, 50),              # 45% of the ink
+    "amberwood_dryad": (127, 73, 50),               # 72% of the ink
+    "amberwood_owl": (127, 79, 44),                 # 68% of the ink
+    "amberwood_scarecrow": (143, 59, 12),           # 69% of the ink
+    "amberwood_treant": (127, 92, 41),              # 50% of the ink
+    # barrow_king: dominant hue (78, 147, 141) is not foliage
+    # barrow_knight: dominant hue (81, 149, 137) is not foliage
+    # bog_lurker: no figure
+    "bog_warden": (129, 109, 71),                   # 54% of the ink
+    "bramble_stag": (122, 71, 44),                  # 77% of the ink
+    "bramble_wolf": (123, 82, 58),                  # 92% of the ink
+    "cairn_golem": (113, 100, 50),                  # 75% of the ink
+    "canopy_gorilla": (135, 82, 55),                # 60% of the ink
+    "drowned_captain": (113, 77, 56),               # 39% of the ink
+    "elk": (143, 71, 46),                           # 100% of the ink
+    "emerald_basilisk": (112, 134, 40),             # 27% of the ink
+    "frogspear_warrior": (132, 104, 60),            # 52% of the ink
+    "giant_crocodile": (127, 103, 54),              # 59% of the ink
+    "giant_komodo": (135, 114, 57),                 # 88% of the ink
+    "ivy_hound": (112, 96, 52),                     # 73% of the ink
+    "ivy_stone_golem": (123, 105, 61),              # 49% of the ink
+    "kelpback_turtle": (132, 111, 64),              # 62% of the ink
+    "leafling_sprite": (120, 92, 22),               # 58% of the ink
+    "mangrove_turtle": (129, 107, 59),              # 45% of the ink
+    "manymouth_hydra": (136, 113, 58),              # 36% of the ink
+    "millstone_golem": (133, 110, 68),              # 73% of the ink
+    "mirefather_leviathan": (126, 110, 52),         # 38% of the ink
+    "miretoad": (150, 115, 46),                     # 56% of the ink
+    "moorfell_wolf": (115, 95, 54),                 # 78% of the ink
+    "moorhorn_ram": (117, 100, 57),                 # 78% of the ink
+    "moss_badger": (128, 109, 45),                  # 64% of the ink
+    "moss_bear": (159, 122, 35),                    # 77% of the ink
+    "moss_troll": (127, 97, 36),                    # 68% of the ink
+    "mossback_anteater": (134, 109, 44),            # 46% of the ink
+    "mossback_boar": (126, 80, 59),                 # 74% of the ink
+    "red_fox": (186, 121, 38),                      # 89% of the ink
+    "reed_drake": (126, 103, 58),                   # 64% of the ink
+    "reed_stalker": (134, 104, 49),                 # 89% of the ink
+    "saltmarsh_crocodile": (125, 107, 61),          # 81% of the ink
+    "sunmane_gryphon": (170, 122, 62),              # 76% of the ink
+    # thorn_revenant: dominant hue (63, 107, 122) is not foliage
+    # verdant_stair_dragon: dominant hue (29, 122, 95) is not foliage
+    "vine_treant": (133, 104, 42),                  # 42% of the ink
+    "waterwheel_golem": (143, 117, 67),             # 45% of the ink
+}
+
+
 # What the concept art shows growing on each creature.  This is most of what
 # breaks up a silhouette: a clean swept tube reads as a balloon animal however
 # good its proportions are.  (kind, count, size) per entry.
@@ -433,7 +650,7 @@ GROWTH = {
     "manymouth_hydra": [("vine", 9, 1.0), ("moss", 9, 1.0)],
     "frogspear_warrior": [("moss", 6, .8)],
     "mossback_anteater": [("moss", 13, 1.05), ("leaf", 7, .8)],
-    "vine_treant": [("vine", 14, 1.1), ("leaf", 10, .9)],
+    "vine_treant": [("vine", 10, .85), ("leaf", 4, .7)],
     "verdant_stair_dragon": [("leaf", 12, .9), ("vine", 7, .9)],
     "emerald_basilisk": [("leaf", 6, .7)],
     "canopy_gorilla": [("leaf", 7, .8)],
@@ -453,16 +670,16 @@ GROWTH = {
     "bramble_stag": [("thorn", 12, 1.0), ("leaf", 7, .85)],
     "ivy_hound": [("vine", 11, 1.0), ("leaf", 8, .85)],
     "ivy_stone_golem": [("vine", 13, 1.05), ("leaf", 9, .9)],
-    "amberwood_treant": [("vine", 12, 1.0), ("leaf", 11, .95), ("fungus", 4, .85)],
-    "leafling_sprite": [("leaf", 9, .9)],
-    "amberwood_dryad": [("leaf", 12, .95), ("thorn", 6, .8)],
+    "amberwood_treant": [("vine", 7, .8), ("leaf", 4, .7), ("fungus", 4, .85)],
+    "leafling_sprite": [("leaf", 4, .7)],
+    "amberwood_dryad": [("leaf", 6, .8), ("thorn", 6, .8)],
     "thorn_revenant": [("thorn", 13, 1.0)],
     "amberwood_scarecrow": [("thorn", 8, .9)],
     "lantern_stag": [("ember", 7, .85), ("leaf", 6, .8)],
     "amberwood_owl": [("leaf", 7, .8)],
     "emberwing_moth": [("ember", 5, .7)],
     # Elemental lords
-    "emberwood_matron": [("leaf", 11, .95), ("ember", 5, .8)],
+    "emberwood_matron": [("leaf", 5, .8), ("ember", 5, .8)],
     "mirefather_leviathan": [("moss", 16, 1.15), ("vine", 8, 1.0)],
     "amethyst_sibyl": [("crystal", 9, .95)],
     "shattered_sentinel": [("crystal", 10, 1.0)],

@@ -41,6 +41,12 @@ BONE_TOPOLOGY = (
 BONE_INDEX = {name: index for index, (name, _) in enumerate(BONE_TOPOLOGY)}
 
 MAT_BODY, MAT_ACCENT, MAT_DARK, MAT_FEATURE, MAT_GROWTH = 0, 1, 2, 3, 4
+# A sixth slot for whatever is lit from inside: the heart-hollow burning in a
+# treant, the glow trapped in a geode carapace, the core a wisp swirls around.
+# The concept art draws these as the brightest thing on the creature, and a
+# whole-body emissive cannot express them because the shell around them has to
+# stay dark for the core to read as a core.
+MAT_CORE = 5
 
 
 def _plan(**overrides) -> dict:
@@ -472,7 +478,7 @@ def global_positions(bones) -> list[np.ndarray]:
 # ---------------------------------------------------------------------------
 # Mesh authoring with smooth skin weights
 # ---------------------------------------------------------------------------
-MATERIAL_SLOTS = 5
+MATERIAL_SLOTS = 6
 
 
 class AnatomyMesh:
@@ -1776,6 +1782,10 @@ GROWTH_KINDS = ("moss", "crystal", "barnacle", "thorn", "plate", "fungus",
 # What each growth is made of.  ``mix`` blends the creature's accent toward the
 # growth's own colour, so a mossy bear carries green moss and a crystal golem
 # carries its own violet, rather than everything taking the hide's tint.
+# Growth that is vegetation, and so takes its colour from the artwork rather
+# than from the kind.  Mineral crusts keep the creature's own mineral tint.
+PLANT_GROWTH = {"leaf", "vine", "moss", "thorn", "fungus"}
+
 GROWTH_COLOUR = {
     "moss": ((86, 122, 52), .78), "vine": ((74, 112, 54), .74),
     "leaf": ((132, 158, 58), .62), "fungus": ((206, 176, 132), .58),
@@ -1786,13 +1796,206 @@ GROWTH_COLOUR = {
 }
 
 
-def growth_colour(kinds, accent, base):
-    """Blend the creature's accent toward the colour of what grows on it."""
+# ---------------------------------------------------------------------------
+# Woody structure: forking limbs and trunks you can see through
+# ---------------------------------------------------------------------------
+# A tree is not a cylinder with leaves glued on.  What makes bark read as bark
+# at gameplay distance is that the silhouette forks, tapers and has holes in
+# it, and neither a swept tube nor a scattering of surface growth can produce a
+# hole.  These are the missing primitives: one grows a limb that splits, one
+# builds a trunk out of separate strands so daylight gets through the gaps.
+
+
+def _rotate_toward(direction, axis, angle: float):
+    """Rodrigues rotation of ``direction`` about a unit ``axis``."""
+    d = np.asarray(direction, dtype=float)
+    a = np.asarray(axis, dtype=float)
+    a = a / max(float(np.linalg.norm(a)), 1e-9)
+    c, sn = math.cos(angle), math.sin(angle)
+    return d * c + np.cross(a, d) * sn + a * float(np.dot(a, d)) * (1 - c)
+
+
+def _perp(direction):
+    """Any unit vector perpendicular to ``direction``."""
+    d = np.asarray(direction, dtype=float)
+    reference = np.array((0., 1., 0.))
+    if abs(float(np.dot(d / max(np.linalg.norm(d), 1e-9), reference))) > .90:
+        reference = np.array((0., 0., 1.))
+    out = np.cross(d, reference)
+    return out / max(float(np.linalg.norm(out)), 1e-9)
+
+
+def branch_system(mesh, root, direction, length: float, radius: float, bones,
+                  material, seed: str, depth: int = 3, splits: int = 2,
+                  spread: float = .62, gnarl: float = .30, taper: float = .58,
+                  shorten: float = .70, up_bias: float = .28,
+                  segments: int = 3, sides: int = 6, tips=None):
+    """Grow a forking, tapering, gnarled limb and return where it ended.
+
+    Returns ``(tip, radius, depth)`` triples so foliage, lanterns or crystal can
+    be hung on the ends rather than scattered over the whole shape.  The branch
+    kinks at every segment (``gnarl``) and each fork leans away from its parent
+    (``spread``) while being pulled back toward the sky (``up_bias``), which is
+    what stops a recursive limb from looking like a radio antenna.
+    """
+    if tips is None:
+        tips = []
+    if depth < 0 or length <= 1e-5 or radius <= 1e-6:
+        return tips
+    rng = np.random.default_rng(zlib.crc32(seed.encode("utf-8")) % (2 ** 31))
+    root = np.asarray(root, dtype=float)
+    direction = np.asarray(direction, dtype=float)
+    direction = direction / max(float(np.linalg.norm(direction)), 1e-9)
+
+    points, radii = [root], [(radius, radius)]
+    here, heading = root, direction
+    for step in range(segments):
+        # Kink about a random perpendicular axis, then bend back toward up so
+        # the limb reaches rather than wanders.
+        axis = _rotate_toward(_perp(heading), heading,
+                              float(rng.uniform(0, 2 * math.pi)))
+        heading = _rotate_toward(heading, axis, float(rng.uniform(-gnarl, gnarl)))
+        heading = heading + np.array((0., up_bias * .5, 0.))
+        heading = heading / max(float(np.linalg.norm(heading)), 1e-9)
+        here = here + heading * (length / segments)
+        grade = radius * (taper ** ((step + 1) / segments))
+        # Slight ovality reads as woody rather than machined.
+        points.append(here)
+        radii.append((grade, grade * float(rng.uniform(.86, 1.14))))
+    mesh.tube(points, radii, bones, material, sides=sides)
+
+    end_radius = radii[-1][0]
+    if depth == 0:
+        tips.append((here, end_radius, depth))
+        return tips
+    # Fork.  One child continues the parent's line so the limb keeps a leader;
+    # the rest peel off around it.
+    for index in range(splits):
+        axis = _rotate_toward(_perp(heading), heading,
+                              2 * math.pi * index / max(splits, 1)
+                              + float(rng.uniform(-.4, .4)))
+        lean = spread * (0.0 if index == 0 and splits > 2
+                         else float(rng.uniform(.55, 1.25)))
+        child = _rotate_toward(heading, axis, lean)
+        child = child + np.array((0., up_bias, 0.))
+        child = child / max(float(np.linalg.norm(child)), 1e-9)
+        branch_system(mesh, here, child,
+                      length * shorten * float(rng.uniform(.82, 1.12)),
+                      end_radius * float(rng.uniform(.72, .94)), bones, material,
+                      seed + ":" + str(index), depth - 1, splits, spread, gnarl,
+                      taper, shorten, up_bias, segments, max(4, sides - 1), tips)
+    return tips
+
+
+def woven_trunk(mesh, spine, radii, bones, material, seed: str, strands: int = 7,
+                twist: float = 1.15, inset: float = .30, bulge: float = 1.24,
+                sides: int = 5, material_inner=None, thickness: float = 1.0,
+                inner_scale: float = .78):
+    """A trunk built from separate twisting strands instead of one closed tube.
+
+    The gaps between strands are the point: they are what makes a treant read
+    as grown rather than turned on a lathe, and they are the one thing surface
+    detail cannot fake.  ``material_inner``, if given, lines the hollow so the
+    inside of the trunk is not the same shade as the outside.
+    """
+    spine = [np.asarray(point, dtype=float) for point in spine]
+    if len(spine) < 2 or strands < 3:
+        return
+    rng = np.random.default_rng(
+        zlib.crc32(("trunk:" + seed).encode("utf-8")) % (2 ** 31))
+    rows = len(spine)
+    if material_inner is not None:
+        # A darker core stops the gaps showing straight through to the far side
+        # of the model, which reads as a hole rather than a hollow.
+        mesh.tube(spine, [(rx * (1 - inset) * inner_scale,
+                           ry * (1 - inset) * inner_scale)
+                          for rx, ry in radii], bones, material_inner, sides=10)
+    # Strands have to ring the spine in the plane *perpendicular to it*, not in
+    # world XZ.  Offsetting in XZ is right by accident for a vertical trunk and
+    # wrong for everything else: on a shoulder yoke, which runs left to right,
+    # the offsets lie along the yoke itself and the weave opens into a trumpet.
+    frames = []
+    for row in range(rows):
+        if row == 0:
+            tangent = spine[1] - spine[0]
+        elif row == rows - 1:
+            tangent = spine[-1] - spine[-2]
+        else:
+            tangent = spine[row + 1] - spine[row - 1]
+        if float(np.linalg.norm(tangent)) < 1e-9:
+            tangent = np.array((0., 1., 0.))
+        frames.append(AnatomyMesh._frame(tangent))
+
+    for strand in range(strands):
+        phase = 2 * math.pi * strand / strands
+        wobble = float(rng.uniform(.82, 1.18))
+        girth = float(rng.uniform(.78, 1.26))
+        points, thick = [], []
+        for row in range(rows):
+            t = row / (rows - 1)
+            rx, ry = radii[row]
+            # Strands converge at the ends and bow out across the middle, so
+            # the trunk swells at the waist the way a braided bole does.
+            swell = 1.0 + (bulge - 1.0) * math.sin(math.pi * t) ** .8
+            angle = phase + twist * t * wobble
+            right, up = frames[row]
+            offset = (right * (math.cos(angle) * rx * (1 - inset) * swell)
+                      + up * (math.sin(angle) * ry * (1 - inset) * swell))
+            points.append(spine[row] + offset)
+            span = (rx + ry) * .5 * (1 - inset)
+            thick.append((span * .40 * girth * thickness
+                          * (0.62 + .55 * math.sin(math.pi * t)),) * 2)
+        mesh.tube(points, thick, bones, material, sides=sides)
+
+
+def root_flare(mesh, base, radius: float, bones, material, seed: str,
+               count: int = 5, reach: float = 1.5, drop: float = .0):
+    """Buttress roots splaying off the foot of a trunk."""
+    rng = np.random.default_rng(
+        zlib.crc32(("roots:" + seed).encode("utf-8")) % (2 ** 31))
+    base = np.asarray(base, dtype=float)
+    for index in range(count):
+        angle = 2 * math.pi * index / count + float(rng.uniform(-.28, .28))
+        out = np.array((math.cos(angle), 0., math.sin(angle)))
+        # Roots reach outward and only just down: dropping them a full radius
+        # put the toes under the floor, and the builder then lifted the whole
+        # creature to clear them, so every treant appeared to hover.
+        fall = min(radius * .34, base[1] * .62)
+        knee = base + out * radius * .85 + np.array((0., -fall * .70, 0.))
+        toe = base + out * radius * reach + np.array((0., -fall - drop, 0.))
+        mesh.tube([base + np.array((0., radius * .30, 0.)), knee, toe],
+                  [(radius * .17, radius * .20), (radius * .11, radius * .12),
+                   (radius * .035, radius * .035)], bones, material, sides=6)
+
+
+def foliage_cluster(mesh, centre, size: float, bones, material, seed: str,
+                    count: int = 5, flatten: float = .62):
+    """A puff of leaf mass, built from overlapping lobes rather than one blob."""
+    rng = np.random.default_rng(
+        zlib.crc32(("leaf:" + seed).encode("utf-8")) % (2 ** 31))
+    centre = np.asarray(centre, dtype=float)
+    for _ in range(count):
+        offset = np.array([float(rng.uniform(-.55, .55)) for _ in range(3)]) * size
+        lobe = size * float(rng.uniform(.44, .80))
+        mesh.ellipsoid(tuple(centre + offset), (lobe, lobe * flatten, lobe),
+                       bones, material, rings=4, sides=7)
+
+
+def growth_colour(kinds, accent, base, measured=None):
+    """Blend the creature's accent toward the colour of what grows on it.
+
+    ``measured`` is the tint sampled from that creature's own concept figure.
+    Where it exists it replaces the per-kind guess, because the kind only says
+    *what* is growing and the art says what colour it is -- the difference
+    between a green Verdant Stair leaf and an amber Amberwood one.
+    """
     if not kinds:
         return accent
     total = np.zeros(3, dtype=float)
     for kind, weight in kinds:
         tint, mix = GROWTH_COLOUR.get(kind, ((150, 150, 150), .5))
+        if measured is not None and kind in PLANT_GROWTH:
+            tint, mix = measured, min(.92, mix + .22)
         blended = np.asarray(accent, dtype=float) * (1 - mix) + np.asarray(tint, dtype=float) * mix
         total += blended * weight
     total /= max(sum(w for _, w in kinds), 1e-6)

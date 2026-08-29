@@ -21,9 +21,11 @@ import math
 
 import numpy as np
 
-from creature_anatomy import (AnatomyMesh, MAT_ACCENT, MAT_BODY, MAT_DARK,
-                              MAT_FEATURE, _bezier, _sheet, _euler, qaxis,
-                              global_positions)
+from creature_anatomy import (AnatomyMesh, MAT_ACCENT, MAT_BODY, MAT_CORE,
+                              MAT_DARK, MAT_FEATURE, MAT_GROWTH, _bezier,
+                              _sheet, _euler, qaxis, branch_system,
+                              foliage_cluster, global_positions, root_flare,
+                              woven_trunk)
 
 # ---------------------------------------------------------------------------
 # Biped
@@ -56,6 +58,11 @@ def _biped(**over) -> dict:
         digit=4, eye_r=.019, shoulder_pad=.0, weapon=None, ragged=.0,
         cloak=.0, hood=False, beard=.0, tabard=False, belt=True,
         shield=None, gaunt=.0, surface="fur",
+        # Woody construction.  ``wood`` builds the torso out of separate
+        # twisting strands instead of one closed tube and turns the limbs into
+        # branches; ``crown`` grows a forking rack off the skull; ``heart`` is
+        # the lit hollow the concept art puts in every treant's chest.
+        wood=.0, crown=.0, heart=.0, canopy=.0, arm_splay=.0,
     )
     base.update(over)
     return base
@@ -96,9 +103,10 @@ BIPED_PLANS = {
                       muzzle=.10, mane=.06, foot_len=.24, belt=False),
     "treant": _biped(hip_h=.54, waist_h=.70, chest_h=.82, shoulder_h=.90, head_h=1.02,
                      shoulder_w=.265, hip_w=.175, chest=(.235, .215),
-                     waist=(.195, .185), arm_len=.62, arm_r=.080, leg_len=.50,
-                     leg_r=.112, bark=True, crest="branches", skull=(.18, .20, .19),
-                     foot_len=.28, belt=False, surface="bark"),
+                     waist=(.195, .185), arm_len=.44, arm_r=.108, leg_len=.50,
+                     leg_r=.112, bark=True, crest=None, skull=(.18, .20, .19),
+                     foot_len=.28, belt=False, surface="bark",
+                     wood=1.0, crown=1.0, heart=.85, canopy=.9, arm_splay=.22),
     "duelist": _biped(shoulder_w=.195, chest=(.175, .155), waist=(.132, .125),
                       arm_r=.049, leg_r=.063, weapon="rapier", crest="hat",
                       cloak=.36, surface="cloth"),
@@ -117,8 +125,9 @@ BIPED_DETAIL = {
                             surface="metal", gaunt=.03),
     "amethyst_sibyl": dict(weapon=None, crest="shards", cloak=.42, hood=False),
     "crimson_duelist": dict(weapon="rapier", crest="hat", cloak=.44),
-    "emberwood_matron": dict(crest="branches", weapon="lantern_staff", cloak=.40,
-                             bark=True),
+    "emberwood_matron": dict(crest=None, weapon="lantern_staff", cloak=.40,
+                             bark=True, wood=.85, crown=1.15, heart=.70,
+                             canopy=1.15),
     "barrow_sovereign": dict(weapon="greatsword", crest="helm", cloak=.50,
                              shoulder_pad=.12, armor="plate", tabard=True),
     "tidecaller_sorceress": dict(weapon="staff", crest="coral", cloak=.46),
@@ -156,15 +165,19 @@ BIPED_DETAIL = {
     "frogspear_warrior": dict(weapon="spear", muzzle=.11, crest="fin",
                               surface="scale"),
     "canopy_gorilla": dict(mane=.08, muzzle=.12),
-    "vine_treant": dict(crest="branches", bark=True, surface="bark"),
+    "vine_treant": dict(crest=None, bark=True, surface="bark",
+                        wood=1.0, crown=.85, heart=.70, canopy=1.25),
     "moss_troll": dict(hunch=.10, horns="crag", surface="moss", muzzle=.10),
-    "amberwood_treant": dict(crest="branches", bark=True, surface="bark"),
+    "amberwood_treant": dict(crest=None, bark=True, surface="bark",
+                             wood=1.0, crown=1.10, heart=1.0, canopy=1.0),
     "thorn_revenant": dict(ragged=.26, crest="thorns", cloak=.34, weapon=None),
     "spectral_highwayman": dict(weapon="rapier", crest="tricorn", cloak=.46,
                                 ragged=.16),
-    "leafling_sprite": dict(crest="branches", bark=True, surface="bark"),
+    "leafling_sprite": dict(crest=None, bark=True, surface="bark",
+                            wood=.75, crown=.55, heart=.60, canopy=.75),
     "ivy_stone_golem": dict(surface="stone", crest="cairn", shoulder_pad=.12),
-    "amberwood_dryad": dict(crest="antlers", cloak=.44, weapon=None),
+    "amberwood_dryad": dict(crest=None, cloak=.44, weapon=None,
+                            wood=.45, crown=1.45, heart=.55, canopy=1.0),
     "amberwood_scarecrow": dict(crest="strawhat", weapon="hook", ragged=.28,
                                 cloak=.22, surface="cloth"),
     "amberwood_ghost_knight": dict(weapon="greatsword", crest="helm", cloak=.42,
@@ -218,10 +231,14 @@ def biped_skeleton(plan_key: str, scale: float, variant: str | None = None):
         sw = p["shoulder_w"] * s * sign
         g[f"shoulder_{side}"] = neck + np.array((sw * .45, -.02 * s, 0.))
         g[f"upper_arm_{side}"] = neck + np.array((sw, -.03 * s, 0.))
-        elbow = g[f"upper_arm_{side}"] + np.array((sign * .04 * s,
+        # ``arm_splay`` swings the arm out from the ribs.  A treant whose arms
+        # hang plumb merges into its own trunk and loses the limbs entirely,
+        # which is not what any of the concept art shows.
+        splay = p["arm_splay"] * s
+        elbow = g[f"upper_arm_{side}"] + np.array((sign * (.04 * s + splay),
                                                    -p["arm_len"] * s * .52, .01 * s))
         g[f"forearm_{side}"] = elbow
-        g[f"hand_{side}"] = elbow + np.array((sign * .03 * s,
+        g[f"hand_{side}"] = elbow + np.array((sign * (.03 * s + splay * .85),
                                               -p["arm_len"] * s * .48, .02 * s))
         g[f"prop_{side}"] = g[f"hand_{side}"] + np.array((sign * .02 * s,
                                                           -p["arm_r"] * s * 1.6, 0.))
@@ -510,15 +527,65 @@ def biped_geometry(plan_key: str, scale: float, bones,
             point = g[spine_i] * (1 - k) + g[neck_i] * k
         spine_pts.append(point)
         radii.append((rx, ry))
-    mesh.tube(spine_pts, radii, torso_bones, MAT_BODY, sides=20, uv_scale=1.8,
-              lower_material=MAT_ACCENT, lower_threshold=-.74)
+    if p["wood"]:
+        # A treant's bole is braided, and the gaps between the strands are what
+        # separate it from a barrel with bark painted on.  A narrow inner tube
+        # keeps the hollow from reading straight through to the far side.
+        woven_trunk(mesh, spine_pts, radii, torso_bones, MAT_BODY,
+                    seed=variant or plan_key,
+                    strands=int(11 + 5 * p["wood"]), twist=1.55 * p["wood"],
+                    inset=.10, bulge=1.06, thickness=.44,
+                    material_inner=MAT_DARK, inner_scale=.66)
+    else:
+        mesh.tube(spine_pts, radii, torso_bones, MAT_BODY, sides=20, uv_scale=1.8,
+                  lower_material=MAT_ACCENT, lower_threshold=-.74)
     mesh.upright = True
     mesh.torso = (list(spine_pts) + [g[head_i]],
                   list(radii) + [(p["skull"][0] * s * .5, p["skull"][1] * s * .5)],
                   list(torso_bones) + [head_i])
-    mesh.ellipsoid(tuple(g[body_i] + np.array((0., -hip_r[1] * .20, 0.))),
-                   (hip_r[0] * 1.52, hip_r[1] * 1.62, hip_r[0] * 1.35),
-                   [body_i, B["thigh_l"], B["thigh_r"]], MAT_BODY, rings=9, sides=14)
+    if not p["wood"]:
+        mesh.ellipsoid(tuple(g[body_i] + np.array((0., -hip_r[1] * .20, 0.))),
+                       (hip_r[0] * 1.52, hip_r[1] * 1.62, hip_r[0] * 1.35),
+                       [body_i, B["thigh_l"], B["thigh_r"]], MAT_BODY,
+                       rings=9, sides=14)
+    else:
+        # The bole divides into two leg-boles.  A closed pelvis would seal the
+        # weave shut, so the join is a short stranded saddle instead.
+        for sign in (-1., 1.):
+            hip_top = g[body_i] + np.array((0., hip_r[1] * .32, 0.))
+            hip_low = g[B["thigh_l" if sign < 0 else "thigh_r"]]
+            woven_trunk(mesh, [hip_top, (hip_top + hip_low) * .5, hip_low],
+                        [(hip_r[0] * .78, hip_r[1] * .78),
+                         (hip_r[0] * .70, hip_r[1] * .70),
+                         (hip_r[0] * .60, hip_r[1] * .60)],
+                        [body_i, B["thigh_l"], B["thigh_r"]], MAT_BODY,
+                        seed=f"{variant or plan_key}:hip:{sign:+.0f}", strands=6,
+                        twist=.55, inset=.12, bulge=1.04, thickness=.48)
+    if p["heart"]:
+        # The lit hollow.  A ring of bark shades it so the glow sits *inside*
+        # the trunk rather than floating on the front of it.
+        # The heart has to sit at the *front face* of the bole.  Buried at the
+        # spine it was occluded by its own trunk from every angle a player sees,
+        # which is the one thing the concept art will not tolerate: the glow is
+        # the creature's whole identity.
+        heart = p["heart"] * s
+        core = (spine_pts[2] * .38 + spine_pts[3] * .62
+                + np.array((0., 0., -chest_r[1] * .80)))
+        mesh.ellipsoid(tuple(core), (heart * .20, heart * .25, heart * .15),
+                       [chest_i, spine_i], MAT_CORE, rings=8, sides=13)
+        # A ring of bark staves around it, so the light reads as coming out of
+        # a split in the wood rather than sitting on top of it.
+        for k in range(11):
+            angle = 2 * math.pi * k / 11
+            rim = core + np.array((math.cos(angle) * heart * .19,
+                                   math.sin(angle) * heart * .24,
+                                   chest_r[1] * .12))
+            out = core + np.array((math.cos(angle) * heart * .34,
+                                   math.sin(angle) * heart * .42,
+                                   chest_r[1] * .30))
+            mesh.tube([rim, out],
+                      [(heart * .055, heart * .055), (heart * .034, heart * .034)],
+                      [chest_i, spine_i], MAT_BODY, sides=5)
     if p["belt"]:
         belt = g[spine_i] + np.array((0., -waist_r[1] * .30, 0.))
         mesh.tube([belt - np.array((0., .018 * s, 0.)), belt + np.array((0., .018 * s, 0.))],
@@ -537,14 +604,20 @@ def biped_geometry(plan_key: str, scale: float, bones,
     # ---- shoulder girdle -------------------------------------------------
     girdle_l, girdle_r = g[B["upper_arm_l"]], g[B["upper_arm_r"]]
     gr = p["arm_r"] * s * 1.55
-    mesh.tube([girdle_l + np.array((0., .01 * s, 0.)),
-               (girdle_l + spine_pts[-1]) * .5, spine_pts[-1],
-               (girdle_r + spine_pts[-1]) * .5,
-               girdle_r + np.array((0., .01 * s, 0.))],
-              [(gr * .78, gr * .78), (chest_r[0] * .58, chest_r[1] * .62),
-               (chest_r[0] * .86, chest_r[1] * .90),
-               (chest_r[0] * .58, chest_r[1] * .62), (gr * .78, gr * .78)],
-              [chest_i, B["shoulder_l"], B["shoulder_r"], neck_i], MAT_BODY, sides=12)
+    yoke = [girdle_l + np.array((0., .01 * s, 0.)),
+            (girdle_l + spine_pts[-1]) * .5, spine_pts[-1],
+            (girdle_r + spine_pts[-1]) * .5,
+            girdle_r + np.array((0., .01 * s, 0.))]
+    yoke_r = [(gr * .78, gr * .78), (chest_r[0] * .58, chest_r[1] * .62),
+              (chest_r[0] * .86, chest_r[1] * .90),
+              (chest_r[0] * .58, chest_r[1] * .62), (gr * .78, gr * .78)]
+    yoke_bones = [chest_i, B["shoulder_l"], B["shoulder_r"], neck_i]
+    if p["wood"]:
+        woven_trunk(mesh, yoke, yoke_r, yoke_bones, MAT_BODY,
+                    seed=f"{variant or plan_key}:yoke", strands=6, twist=.85,
+                    inset=.18, bulge=1.08, thickness=.66)
+    else:
+        mesh.tube(yoke, yoke_r, yoke_bones, MAT_BODY, sides=12)
 
     # ---- neck and head ---------------------------------------------------
     neck_r = p["neck_r"] * s
@@ -581,6 +654,41 @@ def biped_geometry(plan_key: str, scale: float, bones,
                                        -skull[2] * .46))
         mesh.ellipsoid(tuple(socket), (eye * 2.3, eye * 2.0, eye * 1.6),
                        [head_i], MAT_DARK, rings=6, sides=10)
+        if p["wood"]:
+            # Sunk into a bark socket and lit, which is the whole read of a
+            # treant's face at any distance a player sees it from.
+            mesh.ellipsoid(tuple(socket + np.array((0., 0., -eye * .55))),
+                           (eye * 1.5, eye * 1.3, eye * 1.0),
+                           [head_i], MAT_CORE, rings=6, sides=10)
+            brow_ridge = socket + np.array((0., eye * 2.0, -eye * .30))
+            mesh.tube([brow_ridge + np.array((-eye * 2.0, -eye * .5, 0.)),
+                       brow_ridge, brow_ridge + np.array((eye * 2.0, -eye * .9, 0.))],
+                      [(eye * .40, eye * .40), (eye * .70, eye * .70),
+                       (eye * .40, eye * .40)], [head_i], MAT_BODY, sides=5)
+    if p["wood"]:
+        # A gash of a mouth, and bark strands running down over the skull so
+        # the head belongs to the same grown thing as the trunk.
+        jawline = g[head_i] + np.array((0., -skull[1] * .44, -skull[2] * .52))
+        mesh.tube([jawline + np.array((-skull[0] * .46, 0., 0.)),
+                   jawline + np.array((0., -skull[1] * .10, -skull[2] * .06)),
+                   jawline + np.array((skull[0] * .46, 0., 0.))],
+                  [(skull[0] * .05, skull[1] * .05),
+                   (skull[0] * .10, skull[1] * .09),
+                   (skull[0] * .05, skull[1] * .05)],
+                  [head_i, jaw_i], MAT_DARK, sides=5)
+        for k in range(7):
+            angle = 2 * math.pi * k / 7 + .22
+            top = g[head_i] + np.array((math.cos(angle) * skull[0] * .70,
+                                        skull[1] * .72,
+                                        math.sin(angle) * skull[2] * .70))
+            low = g[head_i] + np.array((math.cos(angle) * skull[0] * .96,
+                                        -skull[1] * .62,
+                                        math.sin(angle) * skull[2] * .96))
+            mesh.tube([top, (top + low) * .5, low],
+                      [(skull[0] * .07, skull[0] * .07),
+                       (skull[0] * .11, skull[0] * .11),
+                       (skull[0] * .06, skull[0] * .06)],
+                      [head_i, neck_i], MAT_BODY, sides=5)
     if p["beard"]:
         mesh.ellipsoid(tuple(g[jaw_i] + np.array((0., -p["beard"] * s * .5,
                                                   -skull[2] * .30))),
@@ -603,12 +711,23 @@ def biped_geometry(plan_key: str, scale: float, bones,
             [(r * 2.0, r * 2.0), (r * 1.15, r * 1.15), (r * 1.0, r * 1.0),
              (r * .86, r * .86)], arm_bones))
         inboard = sh + np.array((-sign * r * 1.1, .03 * s, 0.))
-        mesh.tube([inboard, sh, sh * .55 + el * .45, el, el * .45 + hd * .55, hd],
-                  [(r * 1.34, r * 1.34), (r * 1.24, r * 1.24), (r * 1.02, r * 1.02),
-                   (r * .90, r * .90), (r * .82, r * .82), (r * .78, r * .78)],
-                  arm_bones, MAT_BODY, sides=10, cap_start=False, cap_end=False)
+        arm_line = [inboard, sh, sh * .55 + el * .45, el, el * .45 + hd * .55, hd]
+        arm_radii = [(r * 1.34, r * 1.34), (r * 1.24, r * 1.24), (r * 1.02, r * 1.02),
+                     (r * .90, r * .90), (r * .82, r * .82), (r * .78, r * .78)]
+        if p["wood"]:
+            # Thicker, and stranded like the trunk, so the arm belongs to the
+            # same grown mass instead of being a pipe screwed into it.
+            heavy = [(rx * 1.46, ry * 1.46) for rx, ry in arm_radii]
+            woven_trunk(mesh, arm_line, heavy, arm_bones, MAT_BODY,
+                        seed=f"{variant or plan_key}:arm:{side}", strands=7,
+                        twist=1.10, inset=.10, bulge=1.05, thickness=1.30,
+                        material_inner=MAT_BODY, inner_scale=.76)
+        else:
+            mesh.tube(arm_line, arm_radii, arm_bones, MAT_BODY, sides=10,
+                      cap_start=False, cap_end=False)
+        ball = 2.9 * (1.30 if p["wood"] else 1.0)
         mesh.ellipsoid(tuple(sh + np.array((0., .02 * s, 0.))),
-                       (r * 2.9, r * 2.7, r * 2.7),
+                       (r * ball, r * ball * .93, r * ball * .93),
                        [B[f"shoulder_{side}"], B[f"upper_arm_{side}"], chest_i],
                        MAT_BODY, rings=8, sides=12)
         palm = hd + np.array((0., -r * 1.1, 0.))
@@ -617,13 +736,30 @@ def biped_geometry(plan_key: str, scale: float, bones,
         mesh.ellipsoid(tuple(palm), (r * 1.9, r * 2.2, r * 1.5),
                        [B[f"hand_{side}"], B[f"forearm_{side}"]], MAT_BODY,
                        rings=7, sides=10)
-        # Fingers read as a hand rather than a mitten.
-        for k in range(min(int(p["digit"]), 4)):
-            offset = (k - 1.5) * r * .58
-            base = palm + np.array((offset, -r * 1.1, -r * .2))
-            mesh.tube([palm + np.array((offset, -r * .5, -r * .1)), base],
-                      [(r * .30, r * .30), (r * .22, r * .22)],
-                      [B[f"hand_{side}"]], MAT_BODY, sides=5)
+        if p["wood"]:
+            # A treant has twigs, not fingers: the hand keeps forking until it
+            # runs out, which is most of what reads as "tree" in silhouette.
+            twigs = branch_system(
+                mesh, palm + np.array((0., -r * .8, 0.)),
+                np.array((sign * .48, -.78, -.34)), r * 1.9, r * .34,
+                [B[f"hand_{side}"], B[f"forearm_{side}"]], MAT_BODY,
+                seed=f"{variant or plan_key}:twig:{side}", depth=2, splits=3,
+                spread=.74, gnarl=.34, up_bias=-.30, segments=2, sides=5)
+            if p["canopy"]:
+                for index, (tip, tip_r, _) in enumerate(twigs[::2]):
+                    foliage_cluster(mesh, tip, r * 1.3 * p["canopy"],
+                                    [B[f"hand_{side}"], B[f"forearm_{side}"]],
+                                    MAT_GROWTH,
+                                    seed=f"{variant or plan_key}:hand:{side}:{index}",
+                                    count=4)
+        else:
+            # Fingers read as a hand rather than a mitten.
+            for k in range(min(int(p["digit"]), 4)):
+                offset = (k - 1.5) * r * .58
+                base = palm + np.array((offset, -r * 1.1, -r * .2))
+                mesh.tube([palm + np.array((offset, -r * .5, -r * .1)), base],
+                          [(r * .30, r * .30), (r * .22, r * .22)],
+                          [B[f"hand_{side}"]], MAT_BODY, sides=5)
         if p["shoulder_pad"]:
             pad = p["shoulder_pad"] * s
             mesh.ellipsoid(tuple(sh + np.array((sign * pad * .18, pad * .34, 0.))),
@@ -656,6 +792,22 @@ def biped_geometry(plan_key: str, scale: float, bones,
                   [(lr * .92, foot_len * .26), (lr * 1.02, foot_len * .22),
                    (lr * .80, foot_len * .16)],
                   [B[f"foot_{side}"], B[f"shin_{side}"]], MAT_BODY, sides=10)
+        if p["wood"]:
+            # Roots splay where a foot would have toes, and the shin is a
+            # bundle of strands rather than one turned column.
+            root_flare(mesh, np.array((foot[0], foot_len * .40, foot[2])),
+                       lr * 2.4, [B[f"foot_{side}"], B[f"shin_{side}"]],
+                       MAT_BODY, seed=f"{variant or plan_key}:root:{side}",
+                       count=7, reach=1.15)
+            shin = [hip + np.array((0., .05 * s, 0.)), hip * .5 + knee * .5, knee,
+                    np.array((foot[0], foot_len * .40, foot[2]))]
+            woven_trunk(mesh, shin,
+                        [(lr * 1.72, lr * 1.72), (lr * 1.44, lr * 1.44),
+                         (lr * 1.28, lr * 1.28), (lr * 1.18, lr * 1.18)],
+                        leg_bones, MAT_BODY,
+                        seed=f"{variant or plan_key}:leg:{side}",
+                        strands=7, twist=.85, inset=.10, bulge=1.05,
+                        thickness=1.05, material_inner=MAT_BODY, inner_scale=.74)
 
     # ---- garments ---------------------------------------------------------
     if p["robe"]:
@@ -705,7 +857,7 @@ def biped_geometry(plan_key: str, scale: float, bones,
         mesh.ellipsoid(tuple(spine_pts[-1] + np.array((0., .03 * s, .02 * s))),
                        (chest_r[0] * 2.0, p["mane"] * s * 2.4, chest_r[1] * 1.9),
                        [chest_i, neck_i], MAT_ACCENT, rings=8, sides=14)
-    if p["bark"]:
+    if p["bark"] and not p["wood"]:
         for k in range(7):
             t = .12 + .74 * k / 6
             index = min(int(t * (len(spine_pts) - 1)), len(spine_pts) - 2)
@@ -731,6 +883,34 @@ def biped_geometry(plan_key: str, scale: float, bones,
                     mesh.spike(base, base + np.array((side * .09 * s, .13 * s,
                                                       -.03 * s)),
                                .026 * s, [head_i], MAT_FEATURE, sides=5)
+    if p["crown"]:
+        # A real rack.  The art's crown is *wide and low* -- it spreads to about
+        # twice the shoulder span while rising barely half a head -- so the
+        # limbs lean hard outward and are only gently lifted.  They are bark,
+        # not keratin: routing them through MAT_FEATURE painted every treant a
+        # set of bone-white antlers.
+        crown = p["crown"]
+        crown_bones = [head_i, neck_i]
+        for side in (-1., 1.):
+            for index, (out, back, lift) in enumerate(
+                    ((1.00, .34, .62), (1.00, -.30, .48), (.62, -.70, .55),
+                     (.54, .62, .70))):
+                base = g[head_i] + np.array((side * skull[0] * .46,
+                                             skull[1] * .52,
+                                             back * skull[2] * .55))
+                tips = branch_system(
+                    mesh, base, np.array((side * out, lift, back)),
+                    .27 * s * crown, .040 * s * crown, crown_bones, MAT_BODY,
+                    seed=f"{variant or plan_key}:crown:{side:+.0f}:{index}",
+                    depth=2, splits=3, spread=.72, gnarl=.34, taper=.52,
+                    shorten=.72, up_bias=.06, segments=3, sides=6)
+                if p["canopy"]:
+                    for k, (tip, tip_r, _) in enumerate(tips):
+                        foliage_cluster(
+                            mesh, tip, .085 * s * p["canopy"], crown_bones,
+                            MAT_GROWTH,
+                            seed=f"{variant or plan_key}:crownleaf:{side:+.0f}:{index}:{k}",
+                            count=5)
     _headgear(mesh, p["crest"], g[head_i], skull, head_i, s, p)
     if p["hood"]:
         _headgear(mesh, "hood", g[head_i], skull, head_i, s, p)
