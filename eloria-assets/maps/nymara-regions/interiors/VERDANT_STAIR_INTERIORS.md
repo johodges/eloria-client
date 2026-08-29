@@ -135,11 +135,22 @@ tiles, `GROUNDING_DISCONTINUITY` at the Banyan Hollow's loft over its own floor,
 and one landmark note. The first is the blackspace being measured: the harness
 samples the whole square footprint and most of this map is deliberately void.
 
-`region_client_check.gd` used to report that as **FAIL**, because it was written
-for a region where every tile should ground. It now reads
-`environment.sky == "none"` and judges a sealed package on its spawns instead,
-reporting the miss rate rather than failing on it. That is a shared-toolkit
-change and it affects every insides package, Amethyst's included.
+In-engine, develop's `region_client_check.gd` measures the same thing far more
+usefully. It reads this package's own `collision.bin` through the
+`originMetres` the manifest publishes and splits the misses in two:
+
+```
+grounding: 18769 tiles sampled, 15283 misses (81.43%)
+  of those, 0 are on cells collision.bin marks walkable;
+            15283 are blocked cells and expected
+```
+
+**Zero misses on walkable cells** is the criterion that matters, and it is the
+one this package is judged on. It says every cell the grid invites a player to
+stand on has floor under it in the running client - which is a stronger claim
+than the miss rate, and not one the raw 81% can make either way. The same check
+finds eleven such tiles in Whitehorn's interior and more in two of Amberwood's,
+so it is a criterion with teeth rather than a formality.
 
 ## Three defects this pass found in code that was already shipped
 

@@ -174,6 +174,12 @@ own results, and the three defects building it exposed in already-shipped code,
 are in `../interiors/VERDANT_STAIR_INTERIORS.md`. One of those defects is in
 this package and is only worked around, not fixed — see item 2 below.
 
+It is judged in-engine by develop's own criterion — zero grounding misses on
+cells `collision.bin` marks walkable — and meets it exactly, with all 15,283
+misses falling on blocked cells. An earlier version of this branch carried a
+weaker rule of my own for the same problem; it is gone, and this branch no
+longer modifies the shared check at all. See items 16 and 17 of the change log.
+
 ## What was not verified
 
 Stated plainly, because a clean report above should not be read as covering
