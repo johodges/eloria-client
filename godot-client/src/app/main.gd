@@ -3875,56 +3875,107 @@ func _sync_stats() -> void:
 		_sync_session_experience()
 		_sync_counters()
 		return
-	var basic_lines: Array[String] = ["[b]Basic Attributes[/b]"]
+	# Each section is its own table with the values in their own cells. Space
+	# padding cannot line these up: the client ships one proportional font, so
+	# "%-14s" is fourteen spaces of varying width and every number lands
+	# wherever its label happened to end.
+	var basic_lines: Array[String] = [_stat_heading("[b]Basic Attributes[/b]")]
 	for label_and_key: Array in [["Physique", "physique"],
 			["Coordination", "coordination"], ["Reasoning", "reasoning"],
 			["Will", "will"], ["Instinct", "instinct"], ["Vitality", "vitality"]]:
-		basic_lines.append("%-14s %s" % [label_and_key[0],
-			_stat_pair(stats, str(label_and_key[1]))])
-	basic_lines.append("\n[color=yellow][b]Cross Attributes[/b][/color]")
+		basic_lines.append(_stat_row(str(label_and_key[0]),
+			_stat_pair(stats, str(label_and_key[1]))))
+	basic_lines.append(_stat_heading(
+		"[color=yellow][b]Cross Attributes[/b][/color]", true))
 	for cross: Array in [["Might", "physique", "coordination"],
 			["Matter", "physique", "will"], ["Toughness", "physique", "vitality"],
 			["Charm", "instinct", "vitality"], ["Reaction", "instinct", "coordination"],
 			["Perception", "instinct", "reasoning"], ["Rationality", "will", "reasoning"],
 			["Dexterity", "coordination", "reasoning"], ["Ethereality", "will", "vitality"]]:
-		basic_lines.append("%-14s %s" % [cross[0],
-			_cross_pair(stats, str(cross[1]), str(cross[2]))])
-	var nexus_lines: Array[String] = ["[b]Nexus[/b]"]
+		basic_lines.append(_stat_row(str(cross[0]),
+			_cross_pair(stats, str(cross[1]), str(cross[2]))))
+	var nexus_lines: Array[String] = [_stat_heading("[b]Nexus[/b]")]
 	for label_and_key: Array in [["Human", "human_nexus"], ["Animal", "animal_nexus"],
 			["Vegetal", "vegetal_nexus"], ["Inorganic", "inorganic_nexus"],
 			["Artificial", "artificial_nexus"], ["Magic", "magic_nexus"]]:
-		nexus_lines.append("%-12s %s" % [label_and_key[0],
-			_stat_pair(stats, str(label_and_key[1]))])
+		nexus_lines.append(_stat_row(str(label_and_key[0]),
+			_stat_pair(stats, str(label_and_key[1]))))
 	var pickpoints: int = int(stats.get("pickpoints_earned", stats.get("overall", 0))) \
 		- int(stats.get("pickpoints_spent", 0))
-	nexus_lines.append("\nPickpoints       %d" % pickpoints)
-	nexus_lines.append("\n[color=#d7a85b][b]Perks[/b][/color]")
+	nexus_lines.append(_stat_row("Pickpoints", _grouped(pickpoints), true))
+	nexus_lines.append(_stat_heading("[color=#d7a85b][b]Perks[/b][/color]", true))
 	if AppState.perks.is_empty():
-		nexus_lines.append("None")
+		nexus_lines.append(_stat_row("None", ""))
 	else:
 		for raw_perk: Variant in AppState.perks:
 			var perk: Dictionary = raw_perk as Dictionary
 			var suffix: String = " (from equipment)" if bool(
 				perk.get("from_gear", false)) else ""
-			nexus_lines.append("• %s%s" % [str(perk.get("name", "")), suffix])
-	nexus_lines.append("\n[color=#9999ff]Material Points  %d/%d[/color]" % [health, max_health])
-	nexus_lines.append("[color=#9999ff]Ethereal Points  %d/%d[/color]" % [ether, max_ether])
-	nexus_lines.append("[color=#9999ff]Action Points    %d/%d[/color]" % [action, max_action])
-	nexus_lines.append("Food Level       %d" % int(stats.get("food", 0)))
-	nexus_lines.append(_research_line(stats))
-	var skill_lines: Array[String] = ["[color=#ff8a28][b]Levels and Experience[/b][/color]"]
+			nexus_lines.append(_stat_row(
+				"• %s%s" % [str(perk.get("name", "")), suffix], ""))
+	nexus_lines.append(_stat_row("[color=#9999ff]Material Points[/color]",
+		"[color=#9999ff]%d/%d[/color]" % [health, max_health], true))
+	nexus_lines.append(_stat_row("[color=#9999ff]Ethereal Points[/color]",
+		"[color=#9999ff]%d/%d[/color]" % [ether, max_ether]))
+	nexus_lines.append(_stat_row("[color=#9999ff]Action Points[/color]",
+		"[color=#9999ff]%d/%d[/color]" % [action, max_action]))
+	nexus_lines.append(_stat_row("Food Level", str(int(stats.get("food", 0)))))
+	nexus_lines.append_array(_research_rows(stats))
+	var skill_lines: Array[String] = [_stat_heading(
+		"[color=#ff8a28][b]Levels and Experience[/b][/color]", false, 3)]
 	for skill: String in EXPERIENCE_SKILLS:
 		var current_level: int = int(stats.get("overall_level", 0)) \
 			if skill == "overall" else int(stats.get(skill, 0))
 		var base_level: int = current_level if skill == "overall" else int(
 			stats.get(skill + "_base", current_level))
-		skill_lines.append("%-15s %3d/%-3d  %d / %d" % [skill.capitalize(),
-			current_level, base_level,
-			int(stats.get(skill + "_exp", 0)), int(stats.get(skill + "_exp_next", 0))])
-	stats_text.text = "[table=3][cell]%s[/cell][cell]%s[/cell][cell]%s[/cell][/table]" % [
-		"\n".join(basic_lines), "\n".join(nexus_lines), "\n".join(skill_lines)]
+		skill_lines.append("[cell]%s[/cell][cell]%s[/cell][cell]%s[/cell]" % [
+			skill.capitalize(),
+			"[right]%d/%d[/right]" % [current_level, base_level],
+			"[right]%s / %s[/right]" % [
+				_grouped(int(stats.get(skill + "_exp", 0))),
+				_grouped(int(stats.get(skill + "_exp_next", 0)))]])
+	# Each section opens with a heading, so its inner table starts closed and
+	# the heading tag reopens it; the leading "[table=2]" here is the one the
+	# first heading closes. The skills column is given the larger share of the
+	# width because its rows carry two number pairs rather than one.
+	stats_text.text = ("[table=3][cell expand=2]%s[/table][/cell]"
+		+ "[cell expand=2]%s[/table][/cell][cell expand=3]%s[/table][/cell][/table]") % [
+			"[table=2]" + "".join(basic_lines),
+			"[table=2]" + "".join(nexus_lines),
+			"[table=3]" + "".join(skill_lines)]
 	_sync_session_experience()
 	_sync_counters()
+
+## One row of a statistics section: the label on the left and the value right
+## aligned in its own cell, so every value in that section lines up whatever
+## the labels happen to measure.
+static func _stat_row(label: String, value: String, spaced := false) -> String:
+	var gap: String = "\n" if spaced else ""
+	# Cells are left to size themselves to their contents. Fixed expand ratios
+	# were tried and made it worse: they narrow the value column until
+	# "1000/1000" wraps mid-number.
+	return "[cell]%s%s[/cell][cell]%s[/cell]" % [gap, label,
+		"[right]%s[/right]" % value if not value.is_empty() else ""]
+
+## A heading across a section's columns.
+static func _stat_heading(text: String, spaced := false,
+		columns := 2) -> String:
+	var gap: String = "\n" if spaced else ""
+	var cells: String = "[cell]%s%s[/cell]" % [gap, text]
+	for _column: int in range(columns - 1):
+		cells += "[cell] [/cell]"
+	return cells
+
+## Thousands separators. A seven-figure experience total is unreadable as a
+## bare run of digits, and these columns now carry several of them.
+static func _grouped(value: int) -> String:
+	var digits: String = str(absi(value))
+	var grouped: String = ""
+	while digits.length() > 3:
+		grouped = "," + digits.substr(digits.length() - 3) + grouped
+		digits = digits.substr(0, digits.length() - 3)
+	grouped = digits + grouped
+	return ("-" + grouped) if value < 0 else grouped
 
 static func _stat_pair(stats: Dictionary, key: String) -> String:
 	return "%d/%d" % [int(stats.get(key, 0)), int(stats.get(key + "_base", stats.get(key, 0)))]
@@ -4064,16 +4115,20 @@ Distance this session: %d tiles") % [
 ## open, 1024 meaning none; `research_completed` and `research_total` are pages.
 ## All three were decoded into the statistics slice and read by nothing, so a
 ## player researching a book had no way to see how far through it they were.
-func _research_line(stats: Dictionary) -> String:
+## What the server says is being read, as statistics-table rows. The title can
+## be long, so it gets a row of its own rather than being squeezed into the
+## value column beside the page count.
+func _research_rows(stats: Dictionary) -> Array[String]:
 	var index: int = int(stats.get("researching", 1024))
 	var total: int = int(stats.get("research_total", 0))
 	if index >= 1024 or total <= 0:
-		return "Researching      nothing"
+		return [_stat_row("Researching", "nothing")]
 	var completed: int = clampi(int(stats.get("research_completed", 0)), 0, total)
 	var title: String = (knowledge_catalog[index]
 		if index >= 0 and index < knowledge_catalog.size() else "knowledge #%d" % index)
-	return "Researching      %s  %d/%d pages (%d%%)" % [title, completed, total,
-		roundi(100.0 * float(completed) / float(total))]
+	return [_stat_row("Researching", "%d%%" % roundi(
+			100.0 * float(completed) / float(total))),
+		_stat_row("  " + title, "%d/%d pages" % [completed, total])]
 
 func _sync_experience_meter(stats: Dictionary) -> void:
 	var skill: String = _selected_experience_skill
