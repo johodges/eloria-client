@@ -764,6 +764,17 @@ func _run() -> void:
 	_expect(ground_bag_panel.visible and ground_bag_items.item_count == 1
 		and root.get_visible_rect().encloses(ground_bag_panel.get_global_rect()),
 		"authoritative bag contents open within the reference viewport")
+	# Asking what is on the ground. The bag row carries an image id and a
+	# quantity, so the Look action is the only way to learn what it is.
+	var ground_look: Button = main.get_node(
+		"GameView/GroundBagPanel/Content/Actions/GroundBagLook") as Button
+	main.call("_sync_ground_bag_actions")
+	_expect(ground_look.disabled,
+		"the ground Look action needs something selected first")
+	ground_bag_items.select(0)
+	main.call("_on_ground_bag_item_selected", 0)
+	_expect(not ground_look.disabled,
+		"selecting a ground item offers to ask what it is")
 	app_state_inventory.call("_on_packet", 24,
 		PackedByteArray([4, 0, 9, 0, 0, 0, 5]))
 	var ground_bag_state: Dictionary = app_state_inventory.get("ground_bag") as Dictionary

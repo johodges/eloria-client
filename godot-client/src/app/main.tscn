@@ -2388,6 +2388,13 @@ tooltip_text = "Pick the selected quantity into your inventory"
 disabled = true
 text = "Pick selected"
 
+[node name="GroundBagLook" type="Button" parent="GameView/GroundBagPanel/Content/Actions" unique_id=546010300]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Ask the server what the selected ground item is"
+disabled = true
+text = "Look"
+
 [node name="GroundBagPickAll" type="Button" parent="GameView/GroundBagPanel/Content/Actions" unique_id=1878723392]
 layout_mode = 2
 tooltip_text = "Ask the server to pick every available stack"
@@ -2694,6 +2701,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/LookButton" to="." method="_on_look_button_pressed"]
 [connection signal="pressed" from="GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerDown" to="." method="_on_spell_power_down_pressed"]
 [connection signal="pressed" from="GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerUp" to="." method="_on_spell_power_up_pressed"]
+[connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagLook" to="." method="_on_ground_bag_look_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/KnowledgeButton" to="." method="_on_knowledge_button_pressed"]

@@ -17,7 +17,7 @@ enum ClientMessage {
 	PING = 13, HEART_BEAT = 14, LOCATE_ME = 15, USE_MAP_OBJECT = 16,
 	SEND_MY_STATS = 17, SEND_MY_INVENTORY = 18, LOOK_AT_INVENTORY_ITEM = 19,
 	MOVE_INVENTORY_ITEM = 20, HARVEST = 21, DROP_ITEM = 22, PICK_UP_ITEM = 23,
-	INSPECT_BAG = 25, CLOSE_BAG = 26, LOOK_AT_MAP_OBJECT = 27, TOUCH_PLAYER = 28,
+	LOOK_AT_GROUND_ITEM = 24, INSPECT_BAG = 25, CLOSE_BAG = 26, LOOK_AT_MAP_OBJECT = 27, TOUCH_PLAYER = 28,
 	RESPOND_TO_NPC = 29, MANUFACTURE_THIS = 30, USE_INVENTORY_ITEM = 31,
 	TRADE_WITH = 32, ACCEPT_TRADE = 33, REJECT_TRADE = 34, EXIT_TRADE = 35,
 	PUT_OBJECT_ON_TRADE = 36, REMOVE_OBJECT_FROM_TRADE = 37,
@@ -255,6 +255,13 @@ static func popup_reply(popup_id: int, answers: Dictionary) -> PackedByteArray:
 static func harvest(object_id: int) -> PackedByteArray:
 	return encode(ClientMessage.HARVEST, PackedByteArray([
 		object_id & 0xff, (object_id >> 8) & 0xff]))
+
+## Asks the server to describe an item lying in the open bag. The bag packet
+## carries an image id, a quantity and a slot and nothing else, so this is the
+## only way to learn what is on the ground.
+static func look_at_ground_item(slot: int) -> PackedByteArray:
+	return encode(ClientMessage.LOOK_AT_GROUND_ITEM,
+		PackedByteArray([slot & 0xff]))
 
 ## Asks the server to describe another player. The reply is command 228 for a
 ## client with `player_info_v1`, and the legacy text plus `SEND_ACHIEVEMENTS`

@@ -171,6 +171,7 @@ var map_light_root: Node3D
 @onready var ground_bag_quantity: SpinBox = %GroundBagQuantity
 @onready var ground_bag_pick_button: Button = %GroundBagPick
 @onready var ground_bag_drop_button: Button = %GroundBagDrop
+@onready var ground_bag_look_button: Button = %GroundBagLook
 @onready var knowledge_list: ItemList = %KnowledgeList
 @onready var knowledge_detail: RichTextLabel = %KnowledgeDetail
 @onready var knowledge_known_only: CheckBox = %KnowledgeKnownOnly
@@ -2694,7 +2695,19 @@ func _sync_ground_bag() -> void:
 
 func _sync_ground_bag_actions() -> void:
 	ground_bag_pick_button.disabled = ground_bag_items.get_selected_items().is_empty()
+	ground_bag_look_button.disabled = ground_bag_items.get_selected_items().is_empty()
 	ground_bag_drop_button.disabled = ground_bag_inventory.get_selected_items().is_empty()
+
+## Asks the server what the selected ground item is. The bag packet carries an
+## image id and a quantity, so the description can only come from the server.
+func _on_ground_bag_look_pressed() -> void:
+	var selected: PackedInt32Array = ground_bag_items.get_selected_items()
+	if selected.is_empty():
+		return
+	var slot: int = _list_metadata_int(ground_bag_items, int(selected[0]))
+	var error: Error = Network.look_at_ground_item(slot)
+	if error != OK:
+		push_warning("LOOK_AT_GROUND_ITEM failed: " + error_string(error))
 
 ## The reading window. The server models a book as research rather than as
 ## pages of text: using a book from the backpack consumes it and starts a

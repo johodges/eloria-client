@@ -981,6 +981,12 @@ func _init() -> void:
 	_expect(EloriaProtocol.decode_server(78, _hex("4d000004")).type == "invalid",
 		"a truncated actor buff mask is rejected")
 
+	# Asking what is lying on the ground. The bag packet carries an image id
+	# and a quantity, so the name can only come from the server.
+	_expect_bytes("look at ground item fixture",
+		EloriaProtocol.look_at_ground_item(3),
+		PackedByteArray([24, 2, 0, 3]))
+
 	# Spell power. The trailing byte is the fork's addition to the legacy cast
 	# frame; without a power the frame is exactly the legacy one.
 	_expect_bytes("legacy cast fixture", EloriaProtocol.cast_spell([19, 15, 21]),

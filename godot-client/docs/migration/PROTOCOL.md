@@ -243,6 +243,21 @@ type of 401 arrives on the extended packet for a client that has advertised
 nothing at all. The capability is advertised because the client does implement
 the packet, not because anything is withheld without it.
 
+## Looking at things
+
+`LOOK_AT_INVENTORY_ITEM(19)`, `LOOK_AT_STORAGE_ITEM(47)`, `LOOK_AT_TRADE_ITEM(38)`
+and `LOOK_AT_GROUND_ITEM(24)` all take a single slot byte and are answered the
+same way: the fork's `ELORIA_ITEM_DETAIL(225)` for a client with
+`item_detail_v1`, and `INVENTORY_ITEM_TEXT(20)` for any other. The ground-item
+case had no handler at all until 2.7; the bag packet carries an image id, a
+quantity and a slot, so nothing else could say what an item on the ground was.
+
+`ITEM_ON_ITEM(42)` and `DO_EMOTE(70)` are **not implemented on either side and
+have no concept behind them**: no client-command constant, no dispatch branch,
+no item-on-item combination in the world model and no emote catalog, state or
+broadcast. An encoder for either would put bytes on the wire that nothing
+reads.
+
 ## Spell power
 
 `CAST_SPELL(39)` is `count:u8 | sigil...`, and the fork accepts an optional
