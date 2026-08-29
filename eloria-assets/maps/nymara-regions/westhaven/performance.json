@@ -1,40 +1,53 @@
 {
-  "nodes": 4419,
-  "meshes": 252,
-  "materials": 24,
-  "images": 65,
-  "textures": 65,
-  "accessors": 1008,
-  "bufferViews": 1073,
-  "uniqueTriangles": 452652,
-  "uniqueVertices": 342424,
-  "glbBytes": 21598004,
-  "instancedTriangles": 1137392,
-  "embeddedTextureBytes": 19964003,
-  "textureMemoryBytesUncompressed": 172228608,
-  "placements": 1900,
+  "nodes": 5248,
+  "meshes": 278,
+  "materials": 25,
+  "images": 68,
+  "textures": 68,
+  "accessors": 1112,
+  "bufferViews": 1180,
+  "uniqueTriangles": 469200,
+  "uniqueVertices": 355594,
+  "glbBytes": 22567704,
+  "instancedTriangles": 1169846,
+  "embeddedTextureBytes": 20208347,
+  "textureMemoryBytesUncompressed": 175374336,
+  "placements": 2652,
   "collision": {
     "width": 1152,
     "height": 1152,
     "cellMetres": 0.5,
-    "walkableCells": 742398,
-    "blockedCells": 584706,
-    "walkableFraction": 0.5594,
-    "elevatedDecks": 19,
+    "walkableCells": 742589,
+    "blockedCells": 584515,
+    "walkableFraction": 0.5596,
+    "elevatedDecks": 28,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
-    "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nudgedEntries": [
+      {
+        "id": "east-road",
+        "metres": 6.67
+      },
+      {
+        "id": "crownwater-berth",
+        "metres": 16.41
+      }
+    ]
   },
   "notes": [
+    "surf cards placed: 719",
+    "surf breakers placed: 7",
+    "jetties placed: 8",
     "city houses placed: 385",
     "trees placed: 257",
     "ground dressing placed: 536"
   ],
   "lod2": {
-    "glbBytes": 13668048,
-    "nodes": 3629,
-    "uniqueTriangles": 369474,
-    "instancedTriangles": 955676,
-    "sizeReductionPercent": 36.7,
-    "triangleReductionPercent": 16.0
+    "glbBytes": 14250288,
+    "nodes": 3886,
+    "uniqueTriangles": 382924,
+    "instancedTriangles": 980782,
+    "sizeReductionPercent": 36.9,
+    "triangleReductionPercent": 16.2
   }
 }

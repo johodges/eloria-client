@@ -87,13 +87,15 @@ func _init() -> void:
 	# puts a sun through its ceiling, which is not a moody frame but a wrong one:
 	# the reviewer sees daylight in a vault that has none. Such a package is lit
 	# from its own manifest instead.
+	var manifest: Dictionary = {}
 	var manifest_env: Dictionary = {}
 	var manifest_file := FileAccess.open(package.path_join("world.json"), FileAccess.READ)
 	if manifest_file != null:
 		var parsed: Variant = JSON.parse_string(manifest_file.get_as_text())
 		manifest_file.close()
 		if typeof(parsed) == TYPE_DICTIONARY:
-			manifest_env = parsed.get("environment", {})
+			manifest = parsed
+			manifest_env = manifest.get("environment", {})
 	var sealed := str(manifest_env.get("sky", "")) == "none"
 
 	# environment: a plain daylight sky so the shot shows the map, not a mood
@@ -161,6 +163,33 @@ func _init() -> void:
 		sun.rotation_degrees = Vector3(-88.0, 0.0, 0.0)
 	world.add_child(sun)
 
+	# The manifest's own lamps. An interior package declares a `lights` array -
+	# one entry per lantern, brazier or burner it authored - and without them a
+	# sealed map is lit by nothing but the lifted ambient above, so every client
+	# frame of it comes back near black. The Westhaven insides' first capture
+	# run averaged 7 to 25 out of 255.
+	#
+	# These are the manifest's declared values, not invented ones: this harness
+	# is supposed to show what the package asks for.
+	var lamps := 0
+	for entry in manifest.get("lights", []):
+		var lamp: Dictionary = entry
+		var position: Array = lamp.get("position", [])
+		if position.size() != 3:
+			continue
+		var light := OmniLight3D.new()
+		light.position = Vector3(float(position[0]), float(position[1]),
+			float(position[2]))
+		var colour: Variant = lamp.get("colour", [1.0, 0.66, 0.32])
+		light.light_color = Color(colour[0], colour[1], colour[2])
+		light.light_energy = float(lamp.get("energy", 1.5))
+		light.omni_range = float(lamp.get("range", 9.0))
+		light.shadow_enabled = false
+		world.add_child(light)
+		lamps += 1
+	if lamps:
+		print("[capture] bound %d manifest lights" % lamps)
+
 	var camera := Camera3D.new()
 	camera.far = 2400.0
 	camera.current = true
@@ -196,7 +225,11 @@ func _init() -> void:
 		var target: Array = entry.get("target", [])
 		if eye.size() != 3 or target.size() != 3:
 			continue
-		camera.fov = float(entry.get("fieldOfViewDegrees", 55.0))
+		# The region capture index writes `fieldOfViewDegrees`; the interior
+		# preview writes `fov`. Accept either, or an interior comes back at
+		# the 55-degree default instead of the framing it was authored with.
+		camera.fov = float(entry.get("fieldOfViewDegrees",
+			entry.get("fov", 55.0)))
 		camera.global_position = Vector3(eye[0], eye[1], eye[2])
 		var look := Vector3(target[0], target[1], target[2])
 		if camera.global_position.distance_to(look) > 0.01:

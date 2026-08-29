@@ -44,11 +44,11 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      265.2,
-      30.43,
-      111.0
+      264.0,
+      26.16,
+      144.0
     ],
-    "fieldOfViewDegrees": 50.0,
+    "fieldOfViewDegrees": 46.0,
     "file": "02-lighthouse.webp",
     "id": "02-lighthouse",
     "lighting": "day",
@@ -58,7 +58,7 @@
     "source": "godot",
     "target": [
       302.7,
-      41.95,
+      33.95,
       120.3
     ]
   },
@@ -170,11 +170,11 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      -84.0,
-      15.47,
-      47.7
+      -108.02,
+      18.9,
+      -13.56
     ],
-    "fieldOfViewDegrees": 50.0,
+    "fieldOfViewDegrees": 54.0,
     "file": "08-mole-bastion.webp",
     "id": "08-mole-bastion",
     "lighting": "deck",
@@ -184,8 +184,8 @@
     "source": "godot",
     "target": [
       -57.3,
-      0.5,
-      36.6
+      -3.01,
+      37.2
     ]
   },
   {
@@ -233,9 +233,9 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      4.99,
+      3.82,
       14.7,
-      -2.07
+      -3.82
     ],
     "fieldOfViewDegrees": 58.0,
     "file": "11-spawn-grounding.webp",
@@ -254,9 +254,9 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      -34.85,
-      21.04,
-      14.29
+      -80.78,
+      20.01,
+      10.55
     ],
     "fieldOfViewDegrees": 54.0,
     "file": "12-quayside-run.webp",
@@ -359,9 +359,9 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      60.0,
-      18.71,
-      110.22
+      69.0,
+      18.44,
+      118.89
     ],
     "fieldOfViewDegrees": 50.0,
     "file": "17-harbour-from-water.webp",
@@ -443,9 +443,9 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      60.0,
-      18.71,
-      110.22
+      69.0,
+      18.44,
+      118.89
     ],
     "fieldOfViewDegrees": 50.0,
     "file": "40-golden-harbour.webp",

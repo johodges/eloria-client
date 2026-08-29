@@ -83,6 +83,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     build = REG.RegionBuild(terrain=terrain)
 
     POP.build_water(build, lod=lod)
+    POP.populate_surf(build, seed, lod=lod)
     POP.populate_seawall(build, seed)
     POP.populate_waterfront(build, seed)
     POP.populate_shipyard(build, seed)
@@ -455,6 +456,54 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     return payload, width, height, stats
 
 
+def nudge_onto_walkable(build: REG.RegionBuild, payload: bytes,
+                        width: int, height: int) -> list[dict]:
+    """Move any spawn or portal that landed on a blocked cell onto a walkable one.
+
+    A landmark that collides blocks its own footprint, and a doorway is attached
+    to the landmark - so the natural place to put a door is exactly the place
+    the collision grid has just marked unwalkable. The Amethyst Barrens session
+    found two of its four doors sitting on blocked tiles this way. Rather than
+    hand-tune coordinates that will drift the next time the geometry moves, this
+    finds the nearest walkable cell and reports how far it had to go.
+
+    Runs after `build_collision`, because the grid it tests against has to be
+    the finished one.
+    """
+    grid = np.frombuffer(payload, dtype=np.uint8, offset=16).reshape(height, width)
+    walkable = grid > 0
+    if not walkable.any():
+        return []
+    rows, cols = np.nonzero(walkable)
+    cell_x = REG.PLAY_MIN_X + (cols + 0.5) * COLLISION_CELL
+    cell_z = REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - (rows + 0.5) * COLLISION_CELL
+
+    moved = []
+    for entry in build.spawns + build.portals:
+        x, y, z = entry["position"]
+        col = int(np.clip((x - REG.PLAY_MIN_X) / COLLISION_CELL - 0.5, 0, width - 1))
+        row = int(np.clip((REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - z)
+                          / COLLISION_CELL - 0.5, 0, height - 1))
+        if walkable[row, col]:
+            continue
+        distances = np.hypot(cell_x - x, cell_z - z)
+        best = int(np.argmin(distances))
+        nx, nz = float(cell_x[best]), float(cell_z[best])
+        ny = float(build.terrain.height_at(nx, nz))
+        offset = round(float(distances[best]), 2)
+        entry["position"] = [round(nx, 2), round(ny + (y - _ground_of(build, x, z)), 2),
+                             round(nz, 2)]
+        entry["serverTile"] = [int(round(nx + REG.SERVER_ORIGIN[0])),
+                               int(round(REG.SERVER_ORIGIN[1] - nz))]
+        entry["nudgedMetres"] = offset
+        moved.append({"id": entry["id"], "metres": offset})
+    return moved
+
+
+def _ground_of(build: REG.RegionBuild, x: float, z: float) -> float:
+    return float(build.terrain.height_at(x, z))
+
+
 # --------------------------------------------------------------------------
 def render_minimap(build: REG.RegionBuild, sets, path: Path, size: int = 768) -> dict:
     """Top-down orthographic-ish capture of the finished geometry."""
@@ -746,25 +795,31 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             # out. Westhaven's palette is warmer than Crownwater's: terracotta
             # and salt-bleached stone over green-blue water, not marble over
             # turquoise.
-            "sky": {"type": "gradient", "zenith": [0.20, 0.44, 0.70],
-                    "horizon": [0.78, 0.86, 0.88], "curve": 0.17,
-                    "groundHorizon": [0.46, 0.56, 0.58],
-                    "groundBottom": [0.18, 0.26, 0.30],
-                    "sunAngleMax": 16.0, "energy": 1.12},
+            "sky": {"type": "gradient", "zenith": [0.17, 0.41, 0.72],
+                    "horizon": [0.86, 0.88, 0.84], "curve": 0.20,
+                    "groundHorizon": [0.52, 0.56, 0.52],
+                    "groundBottom": [0.20, 0.26, 0.28],
+                    "sunAngleMax": 16.0, "energy": 1.20},
             # `direction` is the direction the light TRAVELS, not the direction
             # of the sun in the sky: the binder does
             # `sun.look_at_from_position(ZERO, direction)`, and a
             # DirectionalLight3D emits along its local -Z, so a +Y component
             # lights the world from underneath. Crownwater's session found this
             # the hard way and the sign is copied from its corrected value.
-            "sun": {"direction": [-0.42, -0.80, 0.43],
-                    "color": [1.14, 1.06, 0.94], "energy": 1.10,
-                    "indirectEnergy": 1.12, "angularDiameterDegrees": 1.2},
-            "ambient": {"color": [0.54, 0.66, 0.74], "energy": 0.50,
-                        "skyContribution": 0.72},
-            "saturation": 1.22,
-            "fog": {"enabled": True, "color": [0.68, 0.78, 0.82],
-                    "density": 0.00042, "heightFalloff": 0.0024},
+            # Warmer and lower than the first pass. The concept is a golden
+            # afternoon, not noon: its shadows are long enough to model the
+            # terrace risers, its stone is cream rather than grey, and its water
+            # keeps its colour to the horizon. The first pass was reasoned from
+            # "a clear maritime sky" rather than art-directed against the
+            # painting, and came back cooler and flatter than the painting is.
+            "sun": {"direction": [-0.48, -0.66, 0.58],
+                    "color": [1.22, 1.08, 0.88], "energy": 1.22,
+                    "indirectEnergy": 1.18, "angularDiameterDegrees": 1.2},
+            "ambient": {"color": [0.50, 0.62, 0.74], "energy": 0.46,
+                        "skyContribution": 0.70},
+            "saturation": 1.34,
+            "fog": {"enabled": True, "color": [0.76, 0.80, 0.78],
+                    "density": 0.00030, "heightFalloff": 0.0020},
             "variants": {
                 "golden-hour": {
                     "sun": {"direction": [-0.84, -0.24, 0.48],
@@ -909,6 +964,13 @@ def main() -> int:
     (out / "collision.bin").write_bytes(payload)
     print(f"[collision] {width}x{height} cells, "
           f"{collision_stats['walkableFraction'] * 100:.1f}% walkable")
+
+    moved = nudge_onto_walkable(build, payload, width, height)
+    for entry in moved:
+        print(f"[nudge] {entry['id']} moved {entry['metres']} m onto a walkable cell")
+    if not moved:
+        print("[nudge] every spawn and portal already stands on a walkable cell")
+    collision_stats["nudgedEntries"] = moved
 
     minimap = {"file": "minimap.webp"}
     if not args.skip_minimap:

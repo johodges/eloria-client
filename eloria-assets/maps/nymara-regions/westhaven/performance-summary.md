@@ -22,18 +22,24 @@ calibration and Amberwood (9.4) is not.
 
 | | `world.glb` | `world-lod2.glb` |
 | --- | --- | --- |
-| file size | 21.60 MB | 13.67 MB |
-| nodes | 4,419 | 3,629 |
-| unique triangles | 452,652 | 369,474 |
-| instanced triangles | 1,137,392 | 955,676 |
-| unique meshes | 252 | 240 |
-| materials | 24 | 23 |
-| placements | 1,900 | 1,594 |
-| embedded texture bytes | 19.96 MB | 12.4 MB |
+| file size | 22.57 MB | 14.25 MB |
+| nodes | 5,248 | 4,306 |
+| unique triangles | 469,200 | 383,900 |
+| instanced triangles | 1,169,846 | 980,782 |
+| unique meshes | 262 | 250 |
+| materials | 25 | 24 |
+| placements | 2,600 | 2,180 |
+| embedded texture bytes | 20.8 MB | 12.9 MB |
 
-**3.43 instanced triangles per square metre** over the 576 m x 576 m playable
+**3.53 instanced triangles per square metre** over the 576 m x 576 m playable
 square. Inside the target, inside the guideline, and just under Mirrorhold's
 3.8 — which is the right neighbourhood for a stone region.
+
+The second pass — surf, seven more towers, eight jetties, seven more hulls, a
+street arch, rope and chain — added 32,000 instanced triangles, 0.1 tris/m².
+Surf is 719 two-triangle cards and seven twelve-triangle breakers: 1,522
+triangles for the single largest improvement in the concept match, which is the
+cheapest thing in this table by a wide margin.
 
 For calibration against the two regions that bracket the range:
 
@@ -41,7 +47,7 @@ For calibration against the two regions that bracket the range:
 | --- | --- | --- | --- |
 | Amberwood | 3,123,378 | 9.4 | 28.7 MB |
 | Mirrorhold | 1,246,632 | 3.8 | 16.1 MB |
-| **Westhaven** | **1,137,392** | **3.43** | **21.6 MB** |
+| **Westhaven** | **1,169,846** | **3.53** | **22.6 MB** |
 | Four Gates | 4,538 | — | 3.0 MB |
 
 Westhaven is denser in bytes than Mirrorhold at fewer triangles because it
@@ -52,12 +58,13 @@ mostly-stone palette.
 
 | | instanced triangles | share |
 | --- | --- | --- |
-| terrain (7 surface sub-meshes) | ~206,600 | 18% |
+| terrain (7 surface sub-meshes) | ~206,800 | 18% |
 | water (one sea plane) | ~90,000 | 8% |
-| city houses (385 instances, 12 variants) | ~430,000 | 38% |
-| trees (257 instances, 3 species x 3 tiers) | ~180,000 | 16% |
-| ground dressing (536 instances) | ~64,000 | 6% |
-| harbour works, ships, landmarks, props | ~166,000 | 14% |
+| city houses (385 instances, 12 variants) | ~430,000 | 37% |
+| trees (257 instances, 3 species x 3 tiers) | ~180,000 | 15% |
+| ground dressing (536 instances) | ~64,000 | 5% |
+| surf (719 cards, 7 breakers) | ~1,500 | 0.1% |
+| harbour works, ships, towers, landmarks, props | ~197,000 | 17% |
 
 Instancing is what makes this affordable. 385 houses draw from 12 meshes and
 257 trees from 9, so the city and the tree belt together are 21 unique meshes
@@ -86,12 +93,12 @@ In the order the guide recommends, cheapest first:
    records Amberwood making at a cost of 2.79 MB, and the build's own
    unreferenced-material warning is what caught it.
 
-Texture bytes dominate: 19.96 MB of the 21.60 MB package is embedded imagery.
+Texture bytes dominate: 20.8 MB of the 22.57 MB package is embedded imagery.
 ORM maps are compacted to 256 px; base colour and normals stay at 512.
 
 ## LOD2
 
-`world-lod2.glb` is 36.7% smaller and carries 16.0% fewer instanced triangles.
+`world-lod2.glb` is 36.9% smaller and carries 16.2% fewer instanced triangles.
 The size reduction is much larger than the triangle reduction because the
 reduced package also halves texture resolution, and textures are where the
 bytes are.
