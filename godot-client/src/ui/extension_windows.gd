@@ -34,6 +34,9 @@ var events_text: RichTextLabel
 var quest_panel: PanelContainer
 var quest_list: ItemList
 var quest_detail: RichTextLabel
+var quest_track_button: Button
+var tracked_quest: PanelContainer
+var tracked_quest_text: RichTextLabel
 var mail_panel: PanelContainer
 var mail_list: ItemList
 var mail_body: RichTextLabel
@@ -59,6 +62,12 @@ const SHOP_QUANTITY := 3300
 const SHOP_MAX := SHOP_QUANTITY + 9
 
 var _merchant_mode := "buy"
+## The quest the player asked to keep on screen, by its title. Which quest to
+## watch is the player's choice about their own screen, so it is kept here;
+## everything shown about it is the server's own journal entry, restated on
+## every 224, and a tracked quest the server stops sending simply stops being
+## tracked.
+var _tracked_quest_title := ""
 
 func _ready() -> void:
 	name = "ExtensionWindows"
@@ -111,6 +120,8 @@ func toggle_mail() -> void:
 ## Cancel order: the windows the server opened come first, because they are the
 ## ones the player did not choose to have on screen.
 func _cascade() -> Array[PanelContainer]:
+	# The tracked-quest readout is deliberately absent: it is a HUD element the
+	# player pinned, not a window covering the screen, so cancel leaves it be.
 	return [merchant_panel, market_panel, detail_panel, mail_panel, quest_panel]
 
 func _toggle(panel: PanelContainer) -> void:
@@ -220,10 +231,55 @@ func _sync_quests() -> void:
 		quest_list.add_item("%s  [%s]" % [str(entry.get("title", "")), status])
 	if AppState.quest_journal.is_empty():
 		quest_detail.text = "[center]No active quests.[/center]"
+		quest_track_button.disabled = true
+		_sync_tracked_quest()
 		return
+	quest_track_button.disabled = false
 	var index: int = clampi(selected, 0, AppState.quest_journal.size() - 1)
 	quest_list.select(index)
 	_show_quest(index)
+	_sync_tracked_quest()
+	quest_track_button.text = ("Untrack"
+		if str((AppState.quest_journal[index] as Dictionary).get("title", ""))
+			== _tracked_quest_title else "Track")
+
+## Pins the selected quest to the screen, or unpins it when it is already the
+## tracked one.
+func _on_quest_track_pressed() -> void:
+	var index: int = _selected_index(quest_list)
+	if index < 0 or index >= AppState.quest_journal.size():
+		return
+	var title: String = str(
+		(AppState.quest_journal[index] as Dictionary).get("title", ""))
+	_tracked_quest_title = "" if title == _tracked_quest_title else title
+	_sync_quests()
+
+## The tracked quest as the server last stated it. Nothing is remembered from
+## an earlier journal: if the server stops listing the quest, the readout goes.
+func _sync_tracked_quest() -> void:
+	var tracked: Dictionary = {}
+	for entry: Dictionary in AppState.quest_journal:
+		if str(entry.get("title", "")) == _tracked_quest_title:
+			tracked = entry
+			break
+	if tracked.is_empty():
+		_tracked_quest_title = ""
+		tracked_quest.hide()
+		quest_track_button.text = "Track"
+		return
+	var target: int = int(tracked.get("target", 0))
+	var lines: Array[String] = ["[b]%s[/b]" % str(tracked.get("title", ""))]
+	lines.append(str(tracked.get("objective", "")))
+	if bool(tracked.get("ready", false)):
+		lines.append("[color=#8fdc8f]Ready to turn in at %s[/color]"
+			% str(tracked.get("location", "unknown")))
+	elif target > 0:
+		lines.append("%d of %d  -  %s" % [int(tracked.get("current", 0)),
+			target, str(tracked.get("location", "unknown"))])
+	else:
+		lines.append(str(tracked.get("location", "unknown")))
+	tracked_quest_text.text = "\n".join(lines)
+	tracked_quest.show()
 
 func _show_quest(index: int) -> void:
 	if index < 0 or index >= AppState.quest_journal.size():
@@ -466,10 +522,26 @@ func _build() -> void:
 	quest_list.custom_minimum_size = Vector2(240.0, 0.0)
 	quest_list.item_selected.connect(_show_quest)
 	quest_columns.add_child(quest_list)
+	var quest_side := VBoxContainer.new()
+	quest_columns.add_child(quest_side)
 	quest_detail = RichTextLabel.new()
 	quest_detail.name = "QuestDetail"
 	quest_detail.bbcode_enabled = true
-	quest_columns.add_child(quest_detail)
+	quest_detail.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	quest_side.add_child(quest_detail)
+	quest_track_button = Button.new()
+	quest_track_button.name = "QuestTrack"
+	quest_track_button.text = "Track"
+	quest_track_button.pressed.connect(_on_quest_track_pressed)
+	quest_side.add_child(quest_track_button)
+
+	tracked_quest = _panel("TrackedQuest", Vector2(12.0, 250.0),
+		Vector2(300.0, 96.0), Control.PRESET_TOP_LEFT)
+	tracked_quest_text = RichTextLabel.new()
+	tracked_quest_text.name = "TrackedQuestText"
+	tracked_quest_text.bbcode_enabled = true
+	tracked_quest_text.fit_content = true
+	tracked_quest.add_child(tracked_quest_text)
 
 	mail_panel = _window("MailWindow", "Mail")
 	var mail_columns := HSplitContainer.new()

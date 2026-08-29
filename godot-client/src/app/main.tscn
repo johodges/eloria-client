@@ -1074,14 +1074,15 @@ text = "S"
 
 [node name="SpellPowerDown" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ModeButtons" unique_id=1170753186]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(22, 20)
 layout_mode = 2
 tooltip_text = "Cast at a lower power"
 text = "-"
 
 [node name="SpellPowerValue" type="Label" parent="GameView/ItemSpellQuickbar/QuickContent/ModeButtons" unique_id=1170753187]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(34, 24)
+custom_minimum_size = Vector2(30, 20)
+theme_override_font_sizes/font_size = 12
 layout_mode = 2
 tooltip_text = "The power the next cast asks for"
 text = "P1"
@@ -1090,7 +1091,7 @@ vertical_alignment = 1
 
 [node name="SpellPowerUp" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ModeButtons" unique_id=1170753188]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(24, 24)
+custom_minimum_size = Vector2(22, 20)
 layout_mode = 2
 tooltip_text = "Cast at a higher power"
 text = "+"

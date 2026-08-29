@@ -54,6 +54,16 @@ func _run() -> void:
 		"the quest journal: progress, objective and location, all from the"
 			+ " server's own entry")
 
+	# Tracking pins the server's own journal entry to the HUD.
+	_windows._on_quest_track_pressed()
+	_windows.toggle_quest_journal()
+	await _settle()
+	_expect(_windows.tracked_quest.visible and not _windows.quest_panel.visible,
+		"the tracked readout stays when the journal closes")
+	await _capture("extension-quest-tracked.png",
+		"the tracked quest pinned to the HUD, restated from the server's"
+			+ " journal rather than remembered from when it was pinned")
+
 	_send(229, "01000300000000f1536500416c6963650048656c6c6f004d656574206d6520"
 		+ "61742074686520676174652e00")
 	await _settle()

@@ -96,6 +96,42 @@ func _run() -> void:
 		and windows.quest_detail.text.contains("Four Gates"),
 		"selecting a quest shows its objective and location")
 
+	# Tracking a quest. Which quest to watch is the player's own choice about
+	# their screen; everything shown about it is the server's journal entry.
+	_expect(not windows.tracked_quest.visible,
+		"nothing is tracked until the player asks for it")
+	windows._on_quest_track_pressed()
+	await process_frame
+	_expect(windows.tracked_quest.visible
+		and windows.tracked_quest_text.text.contains("Kill Them All")
+		and windows.tracked_quest_text.text.contains("Defeat 3 rats")
+		and windows.tracked_quest_text.text.contains("1 of 3")
+		and windows.tracked_quest_text.text.contains("Four Gates"),
+		"the tracked readout states the quest, the objective and the progress")
+	var tracked_rect: Rect2 = windows.tracked_quest.get_global_rect()
+	_expect(tracked_rect.position.x >= 0.0 and tracked_rect.end.y <= 720.0
+		and not tracked_rect.intersects(resource_rail.get_global_rect()),
+		"the tracked readout fits 1280x720 clear of the resource rail")
+	# The server restates the journal with the quest ready to turn in.
+	app_state.call("_on_packet", 224, _hex(
+		"01000103000000030000004b696c6c205468656d20416c6c00446566656174203"
+		+ "3207261747300466f757220476174657300"))
+	await process_frame
+	_expect(windows.tracked_quest.visible
+		and windows.tracked_quest_text.text.contains("Ready to turn in"),
+		"the readout follows the server rather than the moment it was pinned")
+	# A quest the server stops listing stops being tracked.
+	app_state.call("_on_packet", 224, _hex("0000"))
+	await process_frame
+	_expect(not windows.tracked_quest.visible,
+		"a quest the server no longer lists is no longer tracked")
+	app_state.call("_on_packet", 224, _hex(
+		"01000001000000030000004b696c6c205468656d20416c6c0044656665617420332"
+		+ "07261747300466f757220476174657300"))
+	await process_frame
+	_expect(not windows.tracked_quest.visible,
+		"the readout does not come back on its own when the quest returns")
+
 	# 229 mail.
 	app_state.call("_on_packet", 229, _hex(
 		"01000300000000f1536500416c6963650048656c6c6f004d656574206d6520617420"
