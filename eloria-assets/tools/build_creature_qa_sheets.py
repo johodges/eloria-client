@@ -84,7 +84,20 @@ def cut_figure(stem: str, row: int, col: int):
     return image
 
 
+def placeholder_tile(caption: str) -> Image.Image:
+    """Stands in for a creature the supplied art has no figure for."""
+    pad = Image.new("RGB", (TILE, TILE), (34, 30, 30))
+    draw = ImageDraw.Draw(pad)
+    draw.rectangle((6, 6, TILE - 7, TILE - 7), outline=(96, 78, 62))
+    for y, line in enumerate(("no concept figure", "", caption)):
+        draw.text((14, TILE // 2 - 16 + y * 14), line, fill=(168, 146, 120),
+                  font=FONT)
+    return pad
+
+
 def concept_tile(stem: str, row: int, col: int, box=None) -> Image.Image:
+    if stem not in RO.CONCEPT_SHEETS:
+        return placeholder_tile("authored, not measured")
     # Prefer the cut figures: they are the artist's own bounds rather than a
     # segmentation guess, and they are what the fidelity pass was worked
     # against.  Segmenting a whole sheet stays as the fallback.
@@ -125,7 +138,7 @@ def compose(rows, cols=4):
 
 def build_roster() -> None:
     entries = sorted(RO.ROSTER, key=lambda e: (RO.SHEET_LOCALES[e[7]], e[7], e[8], e[9]))
-    boxes = boxes_for({e[7] for e in RO.ROSTER})
+    boxes = boxes_for({e[7] for e in RO.ROSTER} & set(RO.CONCEPT_SHEETS))
     rows, manifest = [], []
     for slug, name, family, plan, _b, _a, _s, stem, row, col in entries:
         cell = boxes.get(stem, [])

@@ -478,6 +478,52 @@ diving beetle wore its shell in the keratin material -- a white ribbed loaf --
 over three segments far enough apart to read as three eggs. The hummingbird
 was a finch, with a short bill and legs to stand on.
 
+### Two kings, and a creature with no art
+
+Cell 0,0 of the elemental-lords sheet is a *drowned lich king* -- teal and
+gold, spiked crown, gemmed staff, an orb of cold light -- and the roster had
+that cell keyed to an entry named "Verdant Crown King".  The name said forest
+monarch while the art, and therefore the sampled palette, said drowned king.
+
+`drowned_lich_king` is a new roster entry that takes the cell and the palette
+that was always measured from it, and is built to what the figure shows: skull
+face under a tall spiked crown, layered pauldrons, a lit core, the orb in the
+off hand and a ragged robe stopping above the ankle.  `verdant_crown_king`
+keeps its actor type and becomes what its name says -- a branch crown carrying
+leaf mass, bark shoulders, a seed of green light at the breast.
+
+The roster grows to 140 and the actor-type block to 428-567.  Nothing pinned
+the old upper bound: the test derives the range from the roster's own length.
+
+**The forest king has no concept art, and is marked as having none.**  The
+sentinel sheet stem `authored` means "no figure to be compared against", and
+such a creature shows a placeholder in the comparison sheets rather than a
+match.  It would have been easy to render the finished model into the concept
+delivery and let the tool find it, and that would be worse than useless: the
+whole method here is to put the model beside an *independent* picture of what
+it should look like and read off the disagreement.  A model compared against a
+picture of itself always agrees, which would turn these sheets from evidence
+into decoration.  Its design brief is in
+`eloria-assets/concepts/creatures/README.md` for a real concept pass to work
+from, and its palette is the one number in the roster that is chosen rather
+than sampled.
+
+Finding this also turned up a real defect in the resolver: an unknown sheet
+stem fell through to `root / ""` and globbed the delivery root, which matched
+whatever stray file happened to share the cell index -- it had silently keyed
+the forest king to a river otter merchant.  Unknown stems return no figure now.
+
+### The four gaps left open by the golem pass
+
+The waterwheel guardian has the stone arch in its chest with water falling
+through it into a pool; the temple guardian carries a little pillared shrine on
+its shoulder; the arcane colossus reaches with talon clusters below its halo
+rather than having no hands at all.  And where a figure carries two bright inks
+-- lit water and metal trim -- the core sampler picks the more saturated
+cluster, which on the cascade golem and the wheelwarden is the brass rather
+than the water.  Both clusters are measured; `CORE_TINT_OVERRIDE` names the one
+that is actually the light.
+
 ### Colour and value, measured
 
 * `concept_growth_tints.py` samples what is *growing* on each creature from its

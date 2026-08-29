@@ -64,7 +64,7 @@ def _biped(**over) -> dict:
         # twisting strands instead of one closed tube and turns the limbs into
         # branches; ``crown`` grows a forking rack off the skull; ``heart`` is
         # the lit hollow the concept art puts in every treant's chest.
-        wood=.0, crown=.0, heart=.0, canopy=.0, arm_splay=.0,
+        wood=.0, crown=.0, heart=.0, canopy=.0, arm_splay=.0, orb=.0,
         # Plated construction, the stone-and-metal counterpart of ``wood``.
         # ``plated`` clads the body in discrete overlapping slabs, ``bands``
         # rings the joints in metal, and ``heart_style`` picks what surrounds
@@ -80,6 +80,14 @@ def _biped(**over) -> dict:
         # of detached plates, ``blades`` the crystal wings that flank it, and
         # ``debris`` the pieces of a body that has come apart.
         halo=.0, blades=.0, debris=.0,
+        # ``gate`` builds an arch into the chest with water falling through it,
+        # ``shrine`` sets a little building on one shoulder, and ``claws`` hangs
+        # a cluster of grasping talons below an armature.
+        gate=.0, shrine=.0, claws=.0,
+        # How far down the legs a robe reaches, and how wide it opens.  Taken
+        # to the floor at full flare it is a bell with a head on it, and the
+        # art's kings both show their shins.
+        robe_len=1.0, robe_flare=1.0,
         # ``face`` decides what is under the brow: "flesh" is the default,
         # "skull" is the pale bone the art gives every revenant and barrow
         # knight, "ember" the lit sockets of a spirit.  ``hem`` shapes the
@@ -154,8 +162,24 @@ BIPED_PLANS = {
 # Per-creature identity: the concept art gives these humanoids distinct
 # silhouettes, so each one overrides the shared plan where it matters.
 BIPED_DETAIL = {
-    "verdant_crown_king": dict(weapon="scepter", crest="crown", cloak=.52,
-                               beard=.09, shoulder_pad=.12, tabard=True),
+    # Authored, not measured: no cell in the supplied art shows this creature.
+    # A forest monarch -- a rack of living branches for a crown, bark over the
+    # shoulders, a long mantle, and a seed of green light at the breast.
+    "verdant_crown_king": dict(weapon="scepter", crest=None, cloak=.56,
+                               beard=.11, shoulder_pad=.13, tabard=True,
+                               crown=1.15, canopy=.75, heart=.58,
+                               heart_style="socket", bark=True, pauldron=3,
+                               hem="ragged", surface="bark",
+                               robe_len=.72, robe_flare=.74, head_h=1.10,
+                               skull=(.195, .225, .215), eye_r=.024),
+    # The drowned king the artwork actually shows.
+    "drowned_lich_king": dict(weapon="staff", crest="crown", cloak=.58,
+                              beard=.0, shoulder_pad=.15, tabard=True,
+                              armor="plate", pauldron=4, hem="ragged",
+                              face="skull", heart=.52, heart_style="socket",
+                              surface="metal", orb=.34, ragged=.16,
+                              robe_len=.70, robe_flare=.72, head_h=1.12,
+                              skull=(.195, .225, .215), eye_r=.024),
     "rimebound_archmage": dict(hem="ragged", face="ember", weapon="staff", hood=True, cloak=.40, beard=.10,
                                crest=None),
     "glacier_brute": dict(shoulder_pad=.11, horns="crag", surface="ice",
@@ -163,7 +187,7 @@ BIPED_DETAIL = {
     "orrery_colossus": dict(crest=None, weapon=None, shoulder_pad=.16,
                             surface="metal", gaunt=.03, halo=1.55, robe=True,
                             hem="ragged", heart=1.35, plate_shape="slab",
-                            pauldron=3, arm_splay=.10),
+                            pauldron=3, arm_splay=.10, claws=.62),
     "amethyst_sibyl": dict(hem="ragged", weapon=None, crest="shards", cloak=.42, hood=False),
     "crimson_duelist": dict(weapon="rapier", crest="hat", cloak=.44),
     "emberwood_matron": dict(face="ember", crest=None, weapon="lantern_staff", cloak=.40,
@@ -188,7 +212,7 @@ BIPED_DETAIL = {
                            plate_shape="drum", pauldron=3, bands=1.35),
     "drowned_dockhand": dict(hem="ragged", face="skull", ragged=.22, hood=False, weapon=None, hunch=.09),
     "waterwheel_golem": dict(surface="stone", crest="wheel", shoulder_pad=.12,
-                            plate_shape="slab", pauldron=4),
+                             plate_shape="slab", pauldron=4, gate=.62),
     "barnacle_troll": dict(surface="barnacle", hunch=.10, horns="crag",
                            shoulder_pad=.08),
     "drowned_captain": dict(face="skull", weapon="cutlass", crest="tricorn", cloak=.38,
@@ -215,7 +239,7 @@ BIPED_DETAIL = {
     "mirrorhold_loremaster": dict(weapon="book", crest="crown", cloak=.46,
                                   beard=.09),
     "bog_warden": dict(weapon="halberd", crest="helm", surface="stone",
-                      plate_shape="slab", pauldron=4),
+                       plate_shape="slab", pauldron=4, shrine=.30),
     "frogspear_warrior": dict(weapon="spear", muzzle=.11, crest="fin",
                               surface="scale"),
     "canopy_gorilla": dict(mane=.08, muzzle=.12),
@@ -447,12 +471,19 @@ def _headgear(mesh, kind, head_g, skull, head_i, s, p, neck_i=None):
                 for k in range(13)]
         mesh.tube(ring, [(skull[0] * .10, skull[0] * .12)] * 13, [head_i],
                   MAT_FEATURE, sides=5, cap_start=False, cap_end=False)
-        for k in range(7):
-            a = 2 * math.pi * k / 7
-            point = base + np.array((math.cos(a) * skull[0] * .70, skull[0] * .06,
-                                     math.sin(a) * skull[2] * .70))
-            mesh.spike(point, point + np.array((0., .12 * s * (1 if k % 2 else .7), 0.)),
-                       .022 * s, [head_i], MAT_FEATURE, sides=5)
+        # Tall, uneven spikes swept slightly outward: at .12 of a scale unit
+        # they were studs on a hatband, and the art makes the crown the tallest
+        # thing on the figure.
+        for k in range(9):
+            a = 2 * math.pi * k / 9
+            out = np.array((math.cos(a), 0., math.sin(a)))
+            point = base + out * np.array((skull[0] * .74, 0., skull[2] * .74))
+            reach = .30 * s * (1.0 if k % 2 else .66)
+            mesh.tube([point, point + out * reach * .16
+                       + np.array((0., reach * .55, 0.)),
+                       point + out * reach * .30 + np.array((0., reach, 0.))],
+                      [(.030 * s, .030 * s), (.018 * s, .018 * s),
+                       (.004 * s, .004 * s)], [head_i], MAT_FEATURE, sides=5)
     elif kind == "helm":
         mesh.ellipsoid(tuple(head_g + np.array((0., skull[1] * .09, skull[2] * .03))),
                        (skull[0] * 1.16, skull[1] * 1.14, skull[2] * 1.14),
@@ -849,6 +880,90 @@ def biped_geometry(plan_key: str, scale: float, bones,
                 mesh.tube([rim, out],
                           [(heart * .055, heart * .055), (heart * .034, heart * .034)],
                           [chest_i, spine_i], MAT_BODY, sides=5)
+    if p["gate"]:
+        # The fountain guardian is built round a stone arch with water pouring
+        # out of it; the chest was closed and the water was nowhere.
+        gate = p["gate"] * s
+        face = spine_pts[3] + np.array((0., 0., -chest_r[1] * .74))
+        for sign in (-1., 1.):
+            jamb = face + np.array((sign * gate * .34, 0., 0.))
+            mesh.tube([jamb + np.array((0., -gate * .62, 0.)),
+                       jamb + np.array((0., gate * .46, 0.))],
+                      [(gate * .11, gate * .10), (gate * .10, gate * .09)],
+                      [chest_i, spine_i], MAT_FEATURE, sides=6)
+        arch = []
+        for k in range(9):
+            a = math.pi * k / 8
+            arch.append(face + np.array((math.cos(a) * gate * .34,
+                                         gate * .46 + math.sin(a) * gate * .30,
+                                         0.)))
+        mesh.tube(arch, [(gate * .10, gate * .09)] * 9, [chest_i, spine_i],
+                  MAT_FEATURE, sides=6, cap_start=False, cap_end=False)
+        # The dark of the opening, then the fall.
+        mesh.ellipsoid(tuple(face + np.array((0., gate * .02, chest_r[1] * .10))),
+                       (gate * .58, gate * .96, gate * .22),
+                       [chest_i, spine_i], MAT_DARK, rings=7, sides=11)
+        for k in range(5):
+            offset = (k - 2) * gate * .12
+            top = face + np.array((offset, gate * .30, -gate * .06))
+            foot = np.array((face[0] + offset * 1.25, hip_r[1] * .10,
+                             face[2] - gate * .30))
+            mesh.tube([top, (top + foot) * .5 + np.array((0., 0., -gate * .10)),
+                       foot],
+                      [(gate * .085, gate * .060), (gate * .105, gate * .075),
+                       (gate * .070, gate * .050)],
+                      [chest_i, spine_i, body_i], MAT_CORE, sides=5)
+        mesh.ellipsoid((face[0], hip_r[1] * .06, face[2] - gate * .30),
+                       (gate * .92, gate * .16, gate * .62),
+                       [body_i], MAT_CORE, rings=5, sides=12)
+    if p["shrine"]:
+        # A little temple riding one shoulder, as the art gives the sunken
+        # temple guardian: a plinth, four columns and a pediment.
+        shrine = p["shrine"] * s
+        seat = g[B["upper_arm_l"]] + np.array((-shrine * .10, shrine * .78,
+                                               -shrine * .10))
+        bones = [B["shoulder_l"], B["upper_arm_l"], chest_i]
+        mesh.tube([seat - np.array((0., shrine * .10, 0.)),
+                   seat + np.array((0., shrine * .04, 0.))],
+                  [(shrine * .60, shrine * .48), (shrine * .54, shrine * .43)],
+                  bones, MAT_FEATURE, sides=4)
+        for cx in (-.34, -.11, .11, .34):
+            for cz in (-.28, .28):
+                foot = seat + np.array((cx * shrine, shrine * .06, cz * shrine))
+                mesh.tube([foot, foot + np.array((0., shrine * .62, 0.))],
+                          [(shrine * .075, shrine * .075),
+                           (shrine * .065, shrine * .065)],
+                          bones, MAT_FEATURE, sides=6)
+        lintel = seat + np.array((0., shrine * .70, 0.))
+        mesh.tube([lintel, lintel + np.array((0., shrine * .10, 0.))],
+                  [(shrine * .58, shrine * .46), (shrine * .50, shrine * .40)],
+                  bones, MAT_FEATURE, sides=4)
+        mesh.tube([lintel + np.array((0., shrine * .12, 0.)),
+                   lintel + np.array((0., shrine * .42, 0.))],
+                  [(shrine * .48, shrine * .38), (shrine * .06, shrine * .05)],
+                  bones, MAT_FEATURE, sides=4)
+    if p["claws"]:
+        # Grasping talon clusters hanging below the armature.  The colossus in
+        # the art reaches with these; hidden behind the halo it had no hands.
+        claw = p["claws"] * s
+        for sign in (-1., 1.):
+            wrist = (spine_pts[2] + np.array((sign * chest_r[0] * 1.55,
+                                              -chest_r[1] * .30,
+                                              -chest_r[1] * .35)))
+            bones = [chest_i, spine_i, B[f"upper_arm_{'l' if sign < 0 else 'r'}"]]
+            mesh.ellipsoid(tuple(wrist), (claw * .30, claw * .26, claw * .30),
+                           bones, MAT_FEATURE, rings=6, sides=9)
+            for k in range(4):
+                a = 2 * math.pi * k / 4 + .5
+                out = np.array((math.cos(a) * .55 + sign * .35, -1.0,
+                                math.sin(a) * .55))
+                out = out / float(np.linalg.norm(out))
+                knuckle = wrist + out * claw * .34
+                tip = wrist + out * claw * .92 + np.array((0., -claw * .18, 0.))
+                mesh.tube([wrist, knuckle, tip],
+                          [(claw * .13, claw * .13), (claw * .10, claw * .10),
+                           (claw * .025, claw * .025)],
+                          bones, MAT_FEATURE, sides=5)
     if p["halo"]:
         # Armour hanging off the core rather than bolted to a body.  Two rings
         # at different radii and tilts, so the arc reads as depth rather than
@@ -1231,9 +1346,10 @@ def biped_geometry(plan_key: str, scale: float, bones,
         # and ends in a shaped hem.  Swept as one straight tube with a disc on
         # the bottom it read as a lampshade, which is what every mage, monarch
         # and revenant in the library was standing in.
-        hem = np.array((0., p["foot_len"] * s * .16, 0.))
+        drop = p["hip_h"] * s * (1.0 - p["robe_len"]) * .78
+        hem = np.array((0., p["foot_len"] * s * .16 + drop, 0.))
         waist = g[body_i] + np.array((0., hip_r[1] * .55, 0.))
-        flare = 1.62 if p["hem"] != "straight" else 1.46
+        flare = (1.62 if p["hem"] != "straight" else 1.46) * p["robe_flare"]
         skirt = [waist, waist * .62 + hem * .38, waist * .28 + hem * .72, hem]
         mesh.tube(skirt,
                   [(hip_r[0] * .98, hip_r[1] * .98),
@@ -1389,6 +1505,25 @@ def biped_geometry(plan_key: str, scale: float, bones,
         up = np.array((0., 1., 0.))
         _weapon(mesh, p["weapon"], grip, forward, up, 1.0, s,
                 [B["prop_r"], B["hand_r"], B["forearm_r"]])
+    if p["orb"]:
+        # A sphere of cold light cupped in the off hand, which is half of what
+        # the drowned king is doing in the art.
+        orb = p["orb"] * s
+        centre = g[B["hand_l"]] + np.array((0., -orb * .55, -orb * .30))
+        bones = [B["prop_l"], B["hand_l"], B["forearm_l"]]
+        mesh.ellipsoid(tuple(centre), (orb * .82,) * 3, bones, MAT_CORE,
+                       rings=9, sides=13)
+        for k in range(6):
+            angle = 2 * math.pi * k / 6
+            arc = []
+            for j in range(9):
+                t = j / 8.0
+                arc.append(centre + np.array((
+                    math.cos(angle) * math.sin(math.pi * t) * orb * .62,
+                    math.cos(math.pi * t) * orb * .62,
+                    math.sin(angle) * math.sin(math.pi * t) * orb * .62)))
+            mesh.tube(arc, [(orb * .045, orb * .045)] * 9, bones, MAT_ACCENT,
+                      sides=4, cap_start=False, cap_end=False)
     if p["shield"]:
         centre = g[B["hand_l"]] + np.array((0., -p["arm_r"] * s * 1.2,
                                             -p["arm_r"] * s * 2.2))

@@ -2798,7 +2798,8 @@ def build_roster_creature(path: Path, actor_type: int, slug: str, label: str,
     # the bright centre a wisp swirls around.  It has to be its own material
     # because the shell around it stays dark -- that contrast is the whole
     # effect, and a whole-body emissive destroys it.
-    core_rgb = hints.get("core") or roster.CORE_TINT.get(slug)
+    core_rgb = (hints.get("core") or roster.CORE_TINT_OVERRIDE.get(slug)
+                or roster.CORE_TINT.get(slug))
     if core_rgb is None:
         core_rgb = tuple(min(255, int(c * .45 + 150)) for c in accent)
     core_rgb = _saturate(core_rgb)
@@ -2982,7 +2983,8 @@ def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype
     # the bright centre a wisp swirls around.  It has to be its own material
     # because the shell around it stays dark -- that contrast is the whole
     # effect, and a whole-body emissive destroys it.
-    core_rgb = hints.get("core") or roster.CORE_TINT.get(slug)
+    core_rgb = (hints.get("core") or roster.CORE_TINT_OVERRIDE.get(slug)
+                or roster.CORE_TINT.get(slug))
     if core_rgb is None:
         core_rgb = tuple(min(255, int(c * .45 + 150)) for c in accent)
     core_rgb = _saturate(core_rgb)

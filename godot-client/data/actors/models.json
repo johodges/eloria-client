@@ -3297,6 +3297,22 @@
         "neck": "neck"
       }
     },
+    "drowned_lich_king": {
+      "scene": "res://assets/actors/native/creatures/drowned_lich_king.glb",
+      "animationLibrary": "res://assets/actors/native/creatures/drowned_lich_king.glb",
+      "animationMap": "res://data/animations/creature.json",
+      "import": {
+        "scale": 1,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0
+      },
+      "attachments": {
+        "head": "head",
+        "body": "body",
+        "neck": "neck"
+      }
+    },
     "sunmane_steppe_horse": {
       "scene": "res://assets/actors/native/creatures/sunmane_steppe_horse.glb",
       "animationLibrary": "res://assets/actors/native/creatures/sunmane_steppe_horse.glb",
@@ -3537,6 +3553,7 @@
     "564": "moss_bear",
     "565": "amberwood_scarecrow",
     "566": "amberwood_ghost_knight",
+    "567": "drowned_lich_king",
     "236": "luminous_male",
     "237": "luminous_male",
     "238": "stoneborn_male",

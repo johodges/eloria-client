@@ -46,8 +46,17 @@ ROSTER = (
      (91, 94, 139), (73, 107, 224), 1.42, "47a41963", 2, 3),
 
     # ---- Elemental lords: regional boss tier ---------------------------
+    # Cell 0,0 of the elemental-lords sheet is the *drowned lich king*, and
+    # this entry had been keyed to it: the name said forest monarch while the
+    # art -- and therefore the sampled palette -- was a teal-and-gold drowned
+    # king.  The lich now has its own entry at the end of the roster and keeps
+    # that cell and that palette.  This one keeps its actor type and becomes
+    # what its name says, authored rather than measured: no cell in the
+    # supplied art shows a verdant crown king, so ``authored`` marks it as
+    # having no concept figure to be compared against.  Its palette is a
+    # choice, not a measurement -- deep forest green under old gold.
     ("verdant_crown_king", "Verdant Crown King", "biped", "monarch",
-     (51, 86, 86), (156, 222, 209), 1.72, "f1bb1663", 0, 0),
+     (54, 92, 58), (198, 166, 84), 1.72, "authored", 0, 0),
     ("tidegold_wyrm", "Tidegold Wyrm", "serpent", "wyrm",
      (67, 98, 104), (73, 191, 224), 1.85, "f1bb1663", 0, 1),
     ("rimebound_archmage", "Rimebound Archmage", "biped", "mage",
@@ -325,6 +334,15 @@ ROSTER = (
      (142, 80, 30), (213, 198, 177), 1.42, "4250fde7", 1, 3),
     ("amberwood_ghost_knight", "Amberwood Ghost Knight", "biped", "knight",
      (98, 104, 79), (188, 207, 193), 1.52, "4250fde7", 2, 1),
+
+    # Appended last on purpose.  Actor types are assigned by roster position,
+    # so inserting anywhere earlier renumbers every creature after it and
+    # changes what an existing actor id means -- placed one line higher, this
+    # entry moved the Amberwood Ghost Knight from 566 to 567.  Last, it takes
+    # 567 and nothing else moves.  Keyed to the cell the artwork actually
+    # occupies, with the palette already sampled from that figure.
+    ("drowned_lich_king", "Drowned Lich King", "biped", "monarch",
+     (51, 86, 86), (156, 222, 209), 1.76, "f1bb1663", 0, 0),
 )
 
 # Concept cells already represented by an existing or listed model.
@@ -373,7 +391,17 @@ ALIAS_CELLS = {
     ("4cf4bb0e", 0, 0): "courier_otter",
 }
 
+# Stems that are real concept sheets.  ``authored`` is the sentinel for a
+# creature with no figure in the supplied art; tools that iterate the sheets to
+# sample or segment them must skip it.
+CONCEPT_SHEETS = frozenset((
+    "47a41963", "4dc46727", "f1bb1663", "93197c59", "1e840e1e", "bc78bfcc",
+    "4cf4bb0e", "5b11c39c", "2dd667c5", "53a67c51", "4bbc1f8e", "66616a1d",
+    "15c7630b", "a5ba7c19", "c09f0eed", "4250fde7",
+))
+
 SHEET_LOCALES = {
+    "authored": "elemental_lords",
     "47a41963": "amethyst_barrens", "4dc46727": "amethyst_barrens",
     "f1bb1663": "elemental_lords",
     "93197c59": "sunmane_steppe", "1e840e1e": "sunmane_steppe",
@@ -483,6 +511,17 @@ VALUE_GAIN = {
 # Measured by ``concept_growth_tints.py --core``.  Used for the MAT_CORE
 # material, which is why a treant's heart is amber and a barrens wisp's is
 # blue rather than both being a generic white glow.
+# Where a figure carries two bright inks -- lit water and metal trim, say --
+# ``concept_growth_tints.py --core`` picks the more saturated cluster, and on a
+# couple of figures that is the trim rather than the light.  Both clusters are
+# measured; these name the one that is actually the glow, and the value is the
+# cluster mean, not a guess.  Applied over CORE_TINT below.
+CORE_TINT_OVERRIDE = {
+    "cascade_golem": (119, 190, 220),           # cyan falls, not the gold trim
+    "mirrorhold_wheelwarden": (102, 180, 200),  # cyan wheelwater, not the brass
+}
+
+
 CORE_TINT = {
     "amethyst_scorpion": (123, 211, 248),
     "geode_scarab": (126, 241, 253),
@@ -774,7 +813,8 @@ GROWTH = {
     "amethyst_sibyl": [("crystal", 9, .95)],
     "shattered_sentinel": [("crystal", 10, 1.0)],
     "shardbound_archivist": [("crystal", 8, .95)],
-    "verdant_crown_king": [("leaf", 8, .85), ("coral", 5, .8)],
+    "verdant_crown_king": [("leaf", 10, .90), ("vine", 7, .85)],
+    "drowned_lich_king": [("moss", 7, .80), ("barnacle", 5, .75)],
     "tidecaller_sorceress": [("coral", 7, .85)],
     "mirrorhold_oracle": [("coral", 6, .8)],
     "mirrorhold_loremaster": [("coral", 6, .8)],
