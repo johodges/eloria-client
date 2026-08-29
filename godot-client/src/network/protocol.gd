@@ -1834,6 +1834,33 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 	actor["in_combat"] = int(actor.get("frame", FRAME_IDLE)) == FRAME_COMBAT_IDLE
 	return actor
 
+## Eternal Lands' text palette (colors.c), in the server's own index order:
+## the four shades of a hue are 7 apart, not adjacent. Only the first of each
+## entry's four shades is a text colour, so only that one is kept here.
+##
+## Index 0 is EL's c_red1, but a colour reaches us as the byte `127 + index`
+## and a leading 127 is not read as a marker, so 0 never arrives from the wire
+## and doubles as "the server chose no colour for this name".
+const EL_TEXT_COLOURS: Array[Color] = [
+	Color("ffb3c1"), Color("f7c49f"), Color("fbfabe"), Color("c9fecb"),
+	Color("a9effa"), Color("d2b4fb"), Color("ffffff"),
+	Color("fa5a5a"), Color("fc7a3a"), Color("fcec38"), Color("05fa9b"),
+	Color("7697f8"), Color("d95df4"), Color("999999"),
+	Color("dd0202"), Color("bf6610"), Color("e7ae14"), Color("25c400"),
+	Color("4448d2"), Color("8254f6"), Color("9e9e9e"),
+	Color("7e0303"), Color("833003"), Color("826f06"), Color("149504"),
+	Color("0f0fba"), Color("6a01ac"), Color("282828"),
+]
+
+## The colour a decoded `name_colour` or `guild_colour` asks for. Returns
+## `fallback` for 0 - the server named no colour - and for anything outside the
+## palette, so an unknown index degrades to the plain nameplate rather than to
+## black.
+static func el_text_colour(colour_index: int, fallback := Color.WHITE) -> Color:
+	if colour_index <= 0 or colour_index >= EL_TEXT_COLOURS.size():
+		return fallback
+	return EL_TEXT_COLOURS[colour_index]
+
 ## Splits the display name an actor packet carries into the parts it is really
 ## made of: the name, the colour the server chose for it, and the guild tag
 ## with its own colour.

@@ -3084,6 +3084,11 @@ func _sync_world() -> void:
 		_update_local_actor_follow()
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
 		overhead_player_name.text = str(local_dto.get("name", "Player"))
+		# You get no nameplate of your own - _nameplate_visible_for skips the
+		# local actor - so this banner is the only place your own name colour
+		# can show. Demigod mode is the one that turns it green.
+		overhead_player_name.add_theme_color_override("font_color",
+			EloriaProtocol.el_text_colour(int(local_dto.get("name_colour", 0))))
 		var current_health := int(local_dto.get("health", 0))
 		var maximum_health := maxi(1, int(local_dto.get("max_health", 1)))
 		if AppState.stats.is_empty():
