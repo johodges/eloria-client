@@ -841,10 +841,14 @@ func _run() -> void:
 	main.call("_on_knowledge_button_pressed")
 	var knowledge_list: ItemList = main.get_node(
 		"GameView/StatsPanel/Content/StatsTabs/Knowledge/KnowledgeContent/Columns/KnowledgeList") as ItemList
-	_expect(knowledge_panel.visible and knowledge_list.item_count == 385
+	# The catalog is compiled from the profile this server runs, which has one
+	# book. It used to be compiled from the unmodified Eternal Lands data the
+	# fork was built on, and listed 385 the server has never heard of.
+	_expect(knowledge_panel.visible and knowledge_list.item_count == 1
 		and (main.get_node("GameView/StatsPanel/Content/StatsTabs") as TabContainer).current_tab == 1
 		and root.get_visible_rect().encloses(knowledge_panel.get_global_rect()),
-		"knowledge tab opens the complete server catalog within the statistics frame")
+		"knowledge tab opens the served catalog within the statistics frame: %d"
+			% knowledge_list.item_count)
 	app_state_inventory.call("select_knowledge", 0)
 	app_state_inventory.call("_on_packet", 57,
 		PackedByteArray([77, 101, 116, 97, 108, 108, 117, 114, 103, 121, 0]))
@@ -863,10 +867,12 @@ func _run() -> void:
 		"GameView/Quickbar/QuickRows/Buttons/ManufacturingButton") as Button
 	_expect(not manufacturing_panel.visible and not manufacturing_button.disabled,
 		"manufacturing window starts closed with its real HUD action enabled")
+	# Recipe 0 on this profile is a Torch: a Wood Plank (39) and a Cloth Roll
+	# (40), held with a Hatchet (7), which is checked but never consumed.
 	app_state_inventory.set("inventory", {
-		4: {"image_id": 42, "quantity": 1, "slot": 4, "flags": 6},
-		5: {"image_id": 31, "quantity": 1, "slot": 5, "flags": 6},
-		6: {"image_id": 35, "quantity": 1, "slot": 6, "flags": 6}})
+		4: {"image_id": 39, "quantity": 1, "slot": 4, "flags": 6},
+		5: {"image_id": 40, "quantity": 1, "slot": 5, "flags": 6},
+		6: {"image_id": 7, "quantity": 1, "slot": 6, "flags": 6}})
 	app_state_inventory.set("stats", {"food": 45, "ether": 0})
 	main.call("_on_manufacturing_button_pressed")
 	var manufacturing_list: ItemList = main.get_node(
@@ -875,19 +881,22 @@ func _run() -> void:
 		"GameView/ManufacturingPanel/Content/Columns/ManufacturingDetail") as RichTextLabel
 	var manufacturing_mix_one: Button = main.get_node(
 		"GameView/ManufacturingPanel/Content/Actions/ManufacturingMixOne") as Button
-	_expect(manufacturing_panel.visible and manufacturing_list.item_count == 389
+	_expect(manufacturing_panel.visible and manufacturing_list.item_count == 32
 		and root.get_visible_rect().encloses(manufacturing_panel.get_global_rect()),
-		"complete server recipe catalog opens within the reference viewport")
+		"the served recipe catalog opens within the reference viewport: %d"
+			% manufacturing_list.item_count)
 	main.call("_on_manufacturing_selected", 0)
 	_expect(not manufacturing_mix_one.disabled
-		and manufacturing_detail.text.contains("Fire Essence")
-		and manufacturing_detail.text.contains("Sulfur ×1"),
-		"available recipe resolves ingredients and enables the real server action")
+		and manufacturing_detail.text.contains("Torch")
+		and manufacturing_detail.text.contains("Wood Plank ×1"),
+		"available recipe resolves ingredients and enables the real server"
+			+ " action: " + manufacturing_detail.text)
 	app_state_inventory.set("inventory", {})
 	main.call("_sync_manufacturing")
 	_expect(manufacturing_mix_one.disabled
-		and manufacturing_detail.text.contains("Missing Sulfur ×1"),
-		"inventory reconciliation disables a recipe with explicit missing ingredients")
+		and manufacturing_detail.text.contains("Missing Wood Plank ×1"),
+		"inventory reconciliation disables a recipe with explicit missing"
+			+ " ingredients: " + manufacturing_detail.text)
 	main.call("_on_manufacturing_close_pressed")
 	app_state_inventory.call("_on_packet", 28,
 		PackedByteArray([1, 10, 0, 20, 0, 7]))
