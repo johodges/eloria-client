@@ -4863,10 +4863,10 @@
     "bufferViews": 2338,
     "uniqueTriangles": 486653,
     "uniqueVertices": 413565,
-    "glbBytes": 26403304,
+    "glbBytes": 26406684,
     "instancedTriangles": 2458407,
-    "embeddedTextureBytes": 24555232,
-    "textureMemoryBytesUncompressed": 220987392,
+    "embeddedTextureBytes": 30430804,
+    "textureMemoryBytesUncompressed": 262275072,
     "placements": 6275,
     "collision": {
       "width": 1152,
@@ -4904,11 +4904,11 @@
       "props: 31 moored boats, 113 deck gear"
     ],
     "lod2": {
-      "glbBytes": 18708176,
+      "glbBytes": 18707836,
       "nodes": 7317,
       "uniqueTriangles": 451473,
       "instancedTriangles": 1559927,
-      "sizeReductionPercent": 29.1,
+      "sizeReductionPercent": 29.2,
       "triangleReductionPercent": 36.5
     }
   },
