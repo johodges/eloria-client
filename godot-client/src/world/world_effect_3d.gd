@@ -4,17 +4,23 @@ extends Node3D
 ##
 ## `SEND_SPECIAL_EFFECT(79)` names an effect id and the actor it happened to,
 ## plus a second actor when the effect travels between two. The client had no
-## decoder for it at all, so a swarm of bees interrupting a harvest, a lucky
-## find, or a spell landing on someone all happened with nothing on screen.
+## decoder for it and no particle system of any kind, so a swarm of bees
+## interrupting a harvest, a lucky find, or a spell landing on someone all
+## happened with nothing on screen.
 ##
-## The visual is generated here rather than drawn from artwork: an expanding
-## unshaded ring, and a beam when the server named a second actor. It is
-## deliberately abstract - it says something happened here, and where it went -
-## because the effect ids are a legacy namespace and inventing a distinct piece
-## of art per id would be inventing meaning the server never sent.
+## The effect ids are a legacy namespace with no names on the wire, so this
+## does not invent a distinct piece of art per id. It sorts them into the three
+## classes the server actually uses - something harmful, something beneficial,
+## anything else - and gives each a generated burst: particles rising from the
+## actor, a ground ring, and a beam when the server named a second actor.
+## Everything is built from primitives and shaded colour; nothing is imported.
 
-const LIFETIME_SECONDS := 0.9
+## The visual layer the gameplay camera renders. Effects are not navigation
+## aids, so unlike map markers they belong in the world view.
+const GAMEPLAY_LAYER := 1
+const LIFETIME_SECONDS := 1.1
 const RING_RADIUS := 1.4
+const PARTICLE_COUNT := 48
 
 ## The effect classes the server actually uses, by the palette they draw in.
 ## Everything else is neutral rather than guessed at.
@@ -26,13 +32,15 @@ var elapsed: float = 0.0
 
 var _ring: MeshInstance3D
 var _beam: MeshInstance3D
+var _burst: GPUParticles3D
 var _material: StandardMaterial3D
 
 func configure(effect: int, origin: Vector3, target: Variant = null) -> void:
 	effect_id = effect
 	global_position = origin
+	var palette: Color = _palette()
 	_material = StandardMaterial3D.new()
-	_material.albedo_color = _palette()
+	_material.albedo_color = palette
 	_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	var ring_mesh := TorusMesh.new()
@@ -44,8 +52,69 @@ func configure(effect: int, origin: Vector3, target: Variant = null) -> void:
 	_ring.mesh = ring_mesh
 	_ring.position.y = 0.2
 	add_child(_ring)
+	_add_burst(palette)
 	if target is Vector3:
 		_add_beam(target as Vector3)
+
+## The particles themselves. A harmful effect falls inwards and a beneficial
+## one rises, which is the one piece of meaning the server's own grouping
+## supports; everything else drifts.
+func _add_burst(palette: Color) -> void:
+	var process := ParticleProcessMaterial.new()
+	process.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	process.emission_sphere_radius = 0.55
+	process.direction = Vector3(0.0, 1.0, 0.0)
+	process.spread = 32.0
+	process.initial_velocity_min = 1.4
+	process.initial_velocity_max = 3.1
+	process.gravity = Vector3(0.0, 3.6 if effect_id in HARM_EFFECTS else -1.1, 0.0)
+	process.scale_min = 0.35
+	process.scale_max = 0.85
+	process.color = palette
+	var fade := Gradient.new()
+	fade.set_color(0, Color(palette.r, palette.g, palette.b, 1.0))
+	fade.set_color(1, Color(palette.r, palette.g, palette.b, 0.0))
+	var ramp := GradientTexture1D.new()
+	ramp.gradient = fade
+	process.color_ramp = ramp
+
+	# A soft radial dot, generated rather than imported: a bare quad reads as a
+	# hard square at any camera distance.
+	var glow := Gradient.new()
+	glow.set_color(0, Color(1.0, 1.0, 1.0, 1.0))
+	glow.set_color(1, Color(1.0, 1.0, 1.0, 0.0))
+	var dot_texture := GradientTexture2D.new()
+	dot_texture.gradient = glow
+	dot_texture.fill = GradientTexture2D.FILL_RADIAL
+	dot_texture.fill_from = Vector2(0.5, 0.5)
+	dot_texture.fill_to = Vector2(1.0, 0.5)
+	dot_texture.width = 32
+	dot_texture.height = 32
+
+	var dot := StandardMaterial3D.new()
+	dot.albedo_color = palette
+	dot.albedo_texture = dot_texture
+	dot.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	dot.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	dot.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	dot.vertex_color_use_as_albedo = true
+	dot.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	var quad := QuadMesh.new()
+	quad.size = Vector2(0.42, 0.42)
+	quad.material = dot
+
+	_burst = GPUParticles3D.new()
+	_burst.name = "EffectBurst"
+	_burst.amount = PARTICLE_COUNT
+	_burst.lifetime = LIFETIME_SECONDS * 0.8
+	_burst.one_shot = true
+	_burst.explosiveness = 0.85
+	_burst.process_material = process
+	_burst.draw_pass_1 = quad
+	_burst.layers = GAMEPLAY_LAYER
+	_burst.position.y = 0.9
+	add_child(_burst)
+	_burst.emitting = true
 
 ## A beam only exists when the server named a second actor: the effect went
 ## from one to the other, and that is the server's statement, not a guess.

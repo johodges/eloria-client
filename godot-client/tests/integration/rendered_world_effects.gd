@@ -86,6 +86,13 @@ func _run() -> void:
 	var travelled: WorldEffect3D = effects[effects.size() - 1] as WorldEffect3D
 	_expect(travelled.get_node_or_null("EffectBeam") != null,
 		"an effect the server said travelled draws its path")
+	# `emitting` is a one-shot trigger that clears as soon as the burst is
+	# dispatched, so what is asserted is the burst itself, not the flag.
+	var burst: GPUParticles3D = travelled.get_node_or_null(
+		"EffectBurst") as GPUParticles3D
+	_expect(burst != null and burst.amount > 0 and burst.one_shot
+		and burst.process_material != null and burst.draw_pass_1 != null,
+		"the effect carries a real particle burst, not only a ring")
 	camera.global_position = Vector3(4.0, 5.5, 6.0)
 	camera.look_at(Vector3(4.0, 1.0, -4.0), Vector3.UP)
 	await _capture("world-effect-between-actors.png",

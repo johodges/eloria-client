@@ -1330,10 +1330,32 @@ func _run() -> void:
 		"the effect the server announced is drawn")
 	_expect((effects[0] as WorldEffect3D).get_node_or_null("EffectBeam") == null,
 		"an effect with no second actor draws no beam")
+	var effect_burst: GPUParticles3D = (effects[0] as WorldEffect3D
+		).get_node_or_null("EffectBurst") as GPUParticles3D
+	_expect(effect_burst != null and effect_burst.amount > 0
+		and effect_burst.one_shot and effect_burst.process_material != null
+		and effect_burst.draw_pass_1 != null,
+		"the effect is a particle burst, not a bare ring")
+	# A harmful effect falls and a beneficial one rises: the one distinction
+	# the server's own grouping supports.
+	app_state_inventory.call("_on_packet", 79, PackedByteArray([1, 0x5b, 0]))
+	await process_frame
+	var blessing: Array = main.get("world_effects") as Array
+	var blessing_burst: GPUParticles3D = (blessing[blessing.size() - 1]
+		as WorldEffect3D).get_node_or_null("EffectBurst") as GPUParticles3D
+	var harm_material: ParticleProcessMaterial = (effect_burst.process_material
+		as ParticleProcessMaterial)
+	var blessing_material: ParticleProcessMaterial = (
+		blessing_burst.process_material as ParticleProcessMaterial)
+	_expect(harm_material.gravity.y > 0.0 and blessing_material.gravity.y < 0.0,
+		"the two classes move differently rather than sharing one burst")
+	_expect(not harm_material.color.is_equal_approx(blessing_material.color),
+		"and they are told apart by colour")
 	# An actor the client has never been told about has no position.
+	var known_effects: int = (main.get("world_effects") as Array).size()
 	app_state_inventory.call("_on_packet", 79, PackedByteArray([2, 0xff, 0x7f]))
 	await process_frame
-	_expect((main.get("world_effects") as Array).size() == 1,
+	_expect((main.get("world_effects") as Array).size() == known_effects,
 		"an effect at an unknown actor is not guessed at a position")
 	app_state_inventory.call("_on_packet", 6, PackedByteArray([0x5b, 0]))
 	await process_frame
