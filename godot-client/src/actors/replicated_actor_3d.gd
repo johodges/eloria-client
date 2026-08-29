@@ -91,7 +91,10 @@ const GAMEPLAY_ONLY_VISUAL_LAYER := 2
 ## it needs a dot sized for the map rather than for the world.
 const MAP_MARKER_LAYER := 4
 const MAP_DOT_RADIUS := 3.5
-const MAP_DOT_COLOUR := Color(0.62, 0.82, 1.0)
+## The light blue the full map's legend calls NPC, written the way the legend
+## writes it so a reader comparing the swatch to the map is comparing one
+## colour to itself rather than to a rounding of it.
+const MAP_DOT_COLOUR := Color("9fd2ff")
 const SETTLED_YAW_EPSILON := 0.0005
 
 # Overhead health bar geometry, in world units, measured downwards from the

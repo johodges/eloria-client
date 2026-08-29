@@ -238,6 +238,7 @@ func _run() -> void:
 		"a step off the ordered heading turns the actor onto the step")
 	actor_height_fixture.free()
 	_check_travel_facing()
+	_check_map_dot()
 	var north_yaw: float = CoordinateAdapter.new().direction_to_godot(Vector2i(0, -1))
 	_expect(main.call("_facing_relative_tile_direction", north_yaw, 1, 0) == Vector2i(0, -1)
 		and main.call("_facing_relative_tile_direction", north_yaw, -1, 0) == Vector2i(0, 1)
@@ -1809,6 +1810,16 @@ func _run() -> void:
 		and map_legend.text.contains("Interactive")
 		and map_legend.text.contains("NPC"),
 		"the legend names every colour the map draws")
+	# Each of the three is the colour the legend's own swatch is written in, so
+	# a reader comparing the sidebar to the map is comparing like with like.
+	_expect(map_legend != null
+		and map_legend.text.contains("[color=#%s]●[/color] NPC" % (
+			ReplicatedActor3D.MAP_DOT_COLOUR.to_html(false)))
+		and map_legend.text.contains("[color=#%s]●[/color] Harvest node" % (
+			MapObject3D.HARVEST_COLOUR.to_html(false)))
+		and map_legend.text.contains("[color=#%s]●[/color] Interactive" % (
+			MapObject3D.INTERACTIVE_COLOUR.to_html(false))),
+		"every legend swatch is the colour the map actually draws")
 	_expect(harvest_node != null and harvest_node.server_tile == Vector2i(770, 481),
 		"the pick target sits on the tile the server named")
 
@@ -2428,4 +2439,25 @@ func _check_travel_facing() -> void:
 		actor._physics_process(1.0 / 60.0)
 	_expect(is_equal_approx(actor.rotation.y, actor.desired_facing_yaw()),
 		"the actor comes to rest on the authoritative facing")
+	actor.free()
+
+## Everyone the server replicates carries the light blue dot the full map's
+## legend calls NPC. The local player draws its own white mark over the top of
+## its dot; nobody else has one, so without this an NPC standing in a town is
+## on the map only for as long as somebody is looking at the world.
+func _check_map_dot() -> void:
+	var actor := ReplicatedActor3D.new()
+	root.add_child(actor)
+	# Gate Warden Ilyon's wire record: an Eloria NPC actor type, kind 20.
+	actor.configure({"actor_id": 30014, "x": 704, "y": 816, "rotation": 0,
+		"actor_type": 308, "kind": 20, "name": "Gate Warden Ilyon"},
+		CoordinateAdapter.new(), {}, {})
+	var dot: MeshInstance3D = actor.get_node_or_null("MapDot") as MeshInstance3D
+	_expect(dot != null and dot.layers == ReplicatedActor3D.MAP_MARKER_LAYER,
+		"a replicated actor carries a dot only the map cameras render")
+	var material: StandardMaterial3D = (dot.mesh.surface_get_material(0)
+		as StandardMaterial3D) if dot != null else null
+	_expect(material != null
+		and material.albedo_color.is_equal_approx(ReplicatedActor3D.MAP_DOT_COLOUR),
+		"the dot is the light blue the legend names")
 	actor.free()
