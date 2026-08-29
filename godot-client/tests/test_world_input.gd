@@ -1372,6 +1372,24 @@ func _run() -> void:
 	_expect(not reading_panel.visible, "the reading window can be dismissed")
 	app_state_inventory.set("authenticated", false)
 
+	# The world-load path is safe while actors are being torn down. Anything
+	# that frees an actor node outside the actor map leaves a dangling entry,
+	# and calling queue_free() on that crashed the engine rather than raising -
+	# which is what made a late _on_world_loaded call in this suite segfault.
+	var dangling_actor := ReplicatedActor3D.new()
+	dangling_actor.actor_id = 5150
+	main.get_node("GameView/ViewportContainer/Viewport/WorldRoot").add_child(
+		dangling_actor)
+	var actor_nodes: Dictionary = main.get("actor_nodes") as Dictionary
+	actor_nodes[5150] = dangling_actor
+	dangling_actor.free()
+	(app_state_inventory.get("actors") as Dictionary).clear()
+	main.call("_sync_world")
+	_expect(not actor_nodes.has(5150),
+		"a dangling actor entry is dropped rather than freed a second time")
+	main.call("_load_server_map")
+	_expect(true, "the world-load path survives a dangling actor entry")
+
 	print("world input tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()
 	await process_frame

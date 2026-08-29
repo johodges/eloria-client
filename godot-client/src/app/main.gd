@@ -1758,19 +1758,16 @@ func _on_reconnect_progress(attempt: int, total: int, delay_msec: int) -> void:
 
 func _clear_world_presentation() -> void:
 	for raw_node: Variant in actor_nodes.values():
-		var actor_node: Node = raw_node as Node
-		if is_instance_valid(actor_node):
-			actor_node.queue_free()
+		if is_instance_valid(raw_node):
+			(raw_node as Node).queue_free()
 	actor_nodes.clear()
 	for raw_bag_node: Variant in ground_bag_nodes.values():
-		var bag_node: Node = raw_bag_node as Node
-		if is_instance_valid(bag_node):
-			bag_node.queue_free()
+		if is_instance_valid(raw_bag_node):
+			(raw_bag_node as Node).queue_free()
 	ground_bag_nodes.clear()
 	for raw_object_node: Variant in map_object_nodes.values():
-		var stale_object: Node = raw_object_node as Node
-		if is_instance_valid(stale_object):
-			stale_object.queue_free()
+		if is_instance_valid(raw_object_node):
+			(raw_object_node as Node).queue_free()
 	map_object_nodes.clear()
 	_ungrounded_map_objects.clear()
 	if is_instance_valid(map_light_root):
@@ -2340,18 +2337,17 @@ func _load_server_map() -> void:
 	_local_placement_logged = false
 	_current_map_display_name = _friendly_map_name(AppState.current_map)
 	adapter = CoordinateAdapter.new(entry.get("coordinateTransform", {}))
-	for node in actor_nodes.values():
-		node.queue_free()
+	for raw_actor_node: Variant in actor_nodes.values():
+		if is_instance_valid(raw_actor_node):
+			(raw_actor_node as Node).queue_free()
 	actor_nodes.clear()
 	for bag_node_value: Variant in ground_bag_nodes.values():
-		var bag_node: Node = bag_node_value as Node
-		if is_instance_valid(bag_node):
-			bag_node.queue_free()
+		if is_instance_valid(bag_node_value):
+			(bag_node_value as Node).queue_free()
 	ground_bag_nodes.clear()
 	for object_node_value: Variant in map_object_nodes.values():
-		var object_node: Node = object_node_value as Node
-		if is_instance_valid(object_node):
-			object_node.queue_free()
+		if is_instance_valid(object_node_value):
+			(object_node_value as Node).queue_free()
 	map_object_nodes.clear()
 	_ungrounded_map_objects.clear()
 	var manifest_resource: String = str(entry.get("manifest", ""))
@@ -2438,11 +2434,21 @@ func _on_world_load_failed(errors: Array[String]) -> void:
 
 func _sync_world() -> void:
 	map_label.text = "Map: " + (AppState.current_map if not AppState.current_map.is_empty() else "loading")
-	for id in actor_nodes.keys():
-		if not AppState.actors.has(id):
-			actor_nodes[id].queue_free()
-			actor_nodes.erase(id)
-			_actor_surface_samples.erase(id)
+	for id: Variant in actor_nodes.keys():
+		if AppState.actors.has(id):
+			continue
+		# An entry can already be dangling: anything that frees an actor node
+		# without going through this map leaves the dictionary holding a freed
+		# object, and calling queue_free() on that crashes the engine rather
+		# than raising. Guarding here is what makes a map change safe while
+		# actors are still being torn down.
+		# Casting first is not safe: `as Node` on a freed object raises and
+		# aborts the whole function, so the entry would never be erased.
+		var stale_actor: Variant = actor_nodes[id]
+		if is_instance_valid(stale_actor):
+			(stale_actor as Node).queue_free()
+		actor_nodes.erase(id)
+		_actor_surface_samples.erase(id)
 	for id in AppState.actors:
 		var dto: Dictionary = _presentation_dto(AppState.actors[id])
 		if actor_nodes.has(id):
@@ -2555,7 +2561,7 @@ func _sync_ground_bags() -> void:
 		var bag_id: int = int(raw_id)
 		if not AppState.ground_bags.has(bag_id):
 			var stale_value: Variant = ground_bag_nodes.get(bag_id)
-			if stale_value is Node:
+			if is_instance_valid(stale_value):
 				(stale_value as Node).queue_free()
 			ground_bag_nodes.erase(bag_id)
 	for raw_id: Variant in AppState.ground_bags:
@@ -4428,7 +4434,8 @@ func _send_attack(actor_id: int) -> void:
 ## closes, because each option *is* the action.
 func _sync_popup() -> void:
 	for child: Node in popup_options.get_children():
-		child.queue_free()
+		if is_instance_valid(child):
+			child.queue_free()
 	_popup_radio_groups.clear()
 	_popup_entries.clear()
 	if not bool(AppState.popup.get("open", false)):
@@ -4638,7 +4645,7 @@ func _sync_map_objects() -> void:
 		var object_id: int = int(raw_id)
 		if not AppState.map_objects.has(object_id):
 			var stale: Variant = map_object_nodes.get(object_id)
-			if stale is Node and is_instance_valid(stale as Node):
+			if is_instance_valid(stale):
 				(stale as Node).queue_free()
 			map_object_nodes.erase(object_id)
 	for raw_id: Variant in AppState.map_objects:
