@@ -233,9 +233,9 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      4.99,
+      3.82,
       14.7,
-      -2.07
+      -3.82
     ],
     "fieldOfViewDegrees": 58.0,
     "file": "11-spawn-grounding.webp",

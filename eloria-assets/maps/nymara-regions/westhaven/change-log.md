@@ -102,7 +102,25 @@ Recorded because each cost time and each would cost the next region the same.
 10. **Aerial camera rolled 45 degrees and then mirrored.** `capture_views` nudges
     a target coincident with the eye diagonally, and the offset has to be to the
     *south* for north to come out at the top.
-11. **Four pinned but unreferenced materials** — `shingles`, `cobble_paving`,
+11. **A transform composed the wrong way round.** `rotation @ translation`
+    rotates an *already placed* piece about the world origin and flings it
+    somewhere else on a circle; the order that means "face that way, then go
+    there" is `translation @ rotation`. Nothing in the shared toolkit ever
+    writes the first form, and fourteen sites in `havenarch.py` did. The crane's
+    treadwheels ended up below the quay, the bastion's merlons bunched at double
+    their intended angle, the pier rails had their X and Z swapped, and the
+    ship's sterncastle roof was mirrored across the hull. There is now one
+    `havenarch.at(x, y, z, yaw, pitch, roll)` helper and no bare composition.
+12. **Six spawns and portals standing on blocked cells.** A landmark that
+    collides blocks its own footprint, and a doorway is attached to the
+    landmark, so the natural place for a door is exactly the place the collision
+    grid has just marked unwalkable. `build_westhaven.py` now checks every spawn
+    and portal against the finished grid and moves any that landed on one onto
+    the nearest walkable cell, reporting the distance. It caught the Custom
+    House and Gullstone doors and their return spawns, and two portals that had
+    already shipped: the Grey Moors road at 6.67 m and the Crownwater berth at
+    16.41 m.
+13. **Four pinned but unreferenced materials** — `shingles`, `cobble_paving`,
     `bark_pale`, `water_sea` — each superseded by a Westhaven recipe and each
     embedding its textures for nothing. 1.4 MB. The build's own warning caught
     them. `undergrowth` likewise in the LOD package.

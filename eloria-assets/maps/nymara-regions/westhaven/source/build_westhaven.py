@@ -59,6 +59,11 @@ SEED = 20260829
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
 
+# The combined insides map every door on this region opens onto. One map key
+# for all four interiors, per the Eternal Lands convention: see
+# `interiors/westhaven_insides/` and `source/interiors.py`.
+INSIDES_MAP = "maps/nymara/westhaven_insides.elm"
+
 
 # --------------------------------------------------------------------------
 def register_materials(sets: dict) -> dict:
@@ -156,6 +161,44 @@ def _add_spawns_and_portals(build: REG.RegionBuild) -> None:
                            int(round(REG.SERVER_ORIGIN[1] - z))],
             "destinationMap": destination, "radius": 3.5,
             "authority": "server"})
+
+    # Doors into the insides map. Four doors, one destination map, and a
+    # different `destinationSpawn` for each - the Eternal Lands convention the
+    # interiors package follows. Each also gets a *spawn* of the same name on
+    # this map, so the return portal standing on that arrival has somewhere to
+    # land: without it the round trip resolves one way only.
+    for door_id, name, anchor, spawn_id, facing in (
+            ("custom-house-door", "The Custom House", "custom_house",
+             "custom-house-hall", 180.0),
+            ("bonded-vaults-door", "The Bonded Vaults", "warehouse_row",
+             "bonded-vaults-tunnel", 180.0),
+            # `lighthouse_yard`, not `lighthouse`: the tower's gallery is a
+            # walk surface 28 m up, so a door on the tower's own centre has the
+            # grounding ray snap it onto the gallery instead of the rock.
+            ("lamp-rock-door", "The Lamp Rock Light", "lighthouse_yard",
+             "lamp-rock-foot", 315.0),
+            ("gullstone-door", "The Gullstone Undertow", "gullstone_watch",
+             "gullstone-cleft", 0.0)):
+        x, z = REG.ANCHORS[anchor]
+        y = float(t.height_at(x, z))
+        build.portals.append({
+            "id": door_id, "name": name, "type": "map-transition",
+            "transport": "door",
+            "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "destinationMap": INSIDES_MAP,
+            "destinationSpawn": spawn_id,
+            "radius": 3.0, "authority": "server"})
+        build.spawns.append({
+            "id": spawn_id,
+            "name": f"Return from {name}",
+            "position": [round(x, 2), round(y + 0.05, 2), round(z, 2)],
+            "serverTile": [int(round(x + REG.SERVER_ORIGIN[0])),
+                           int(round(REG.SERVER_ORIGIN[1] - z))],
+            "rotationDegrees": facing,
+            "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
+            "grounded": True})
 
 
 def _add_population_markers(build: REG.RegionBuild, seed: int) -> None:
@@ -453,6 +496,54 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
         "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     }
     return payload, width, height, stats
+
+
+def nudge_onto_walkable(build: REG.RegionBuild, payload: bytes,
+                        width: int, height: int) -> list[dict]:
+    """Move any spawn or portal that landed on a blocked cell onto a walkable one.
+
+    A landmark that collides blocks its own footprint, and a doorway is attached
+    to the landmark - so the natural place to put a door is exactly the place
+    the collision grid has just marked unwalkable. The Amethyst Barrens session
+    found two of its four doors sitting on blocked tiles this way. Rather than
+    hand-tune coordinates that will drift the next time the geometry moves, this
+    finds the nearest walkable cell and reports how far it had to go.
+
+    Runs after `build_collision`, because the grid it tests against has to be
+    the finished one.
+    """
+    grid = np.frombuffer(payload, dtype=np.uint8, offset=16).reshape(height, width)
+    walkable = grid > 0
+    if not walkable.any():
+        return []
+    rows, cols = np.nonzero(walkable)
+    cell_x = REG.PLAY_MIN_X + (cols + 0.5) * COLLISION_CELL
+    cell_z = REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - (rows + 0.5) * COLLISION_CELL
+
+    moved = []
+    for entry in build.spawns + build.portals:
+        x, y, z = entry["position"]
+        col = int(np.clip((x - REG.PLAY_MIN_X) / COLLISION_CELL - 0.5, 0, width - 1))
+        row = int(np.clip((REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - z)
+                          / COLLISION_CELL - 0.5, 0, height - 1))
+        if walkable[row, col]:
+            continue
+        distances = np.hypot(cell_x - x, cell_z - z)
+        best = int(np.argmin(distances))
+        nx, nz = float(cell_x[best]), float(cell_z[best])
+        ny = float(build.terrain.height_at(nx, nz))
+        offset = round(float(distances[best]), 2)
+        entry["position"] = [round(nx, 2), round(ny + (y - _ground_of(build, x, z)), 2),
+                             round(nz, 2)]
+        entry["serverTile"] = [int(round(nx + REG.SERVER_ORIGIN[0])),
+                               int(round(REG.SERVER_ORIGIN[1] - nz))]
+        entry["nudgedMetres"] = offset
+        moved.append({"id": entry["id"], "metres": offset})
+    return moved
+
+
+def _ground_of(build: REG.RegionBuild, x: float, z: float) -> float:
+    return float(build.terrain.height_at(x, z))
 
 
 # --------------------------------------------------------------------------
@@ -909,6 +1000,13 @@ def main() -> int:
     (out / "collision.bin").write_bytes(payload)
     print(f"[collision] {width}x{height} cells, "
           f"{collision_stats['walkableFraction'] * 100:.1f}% walkable")
+
+    moved = nudge_onto_walkable(build, payload, width, height)
+    for entry in moved:
+        print(f"[nudge] {entry['id']} moved {entry['metres']} m onto a walkable cell")
+    if not moved:
+        print("[nudge] every spawn and portal already stands on a walkable cell")
+    collision_stats["nudgedEntries"] = moved
 
     minimap = {"file": "minimap.webp"}
     if not args.skip_minimap:

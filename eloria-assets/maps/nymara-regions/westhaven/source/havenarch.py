@@ -56,6 +56,28 @@ CLOTH = "woven_cloth"
 GLASS = "amber_resin"
 
 
+def at(x: float, y: float, z: float, yaw: float = 0.0,
+       pitch: float = 0.0, roll: float = 0.0):
+    """Place a piece: rotate it about its own origin, then move it.
+
+    Matrix composition here is `A @ B` applied as A(B(v)), so
+    `rotation @ translation` rotates the *already moved* piece about the world
+    origin and flings it somewhere else on a circle. That is not "put it there
+    facing that way", and it is the bug this helper exists to stop repeating:
+    the crane's treadwheels ended up below the quay, the bastion's merlons
+    bunched at double their intended angle, and the pier rails swapped their X
+    and Z. Nothing in the shared toolkit ever writes that order.
+    """
+    matrix = M.translation(x, y, z)
+    if yaw:
+        matrix = matrix @ M.rotation_y(yaw)
+    if pitch:
+        matrix = matrix @ M.rotation_x(pitch)
+    if roll:
+        matrix = matrix @ M.rotation_z(roll)
+    return matrix
+
+
 def _jitter(seed: int, index: int, spread: float) -> float:
     """Deterministic small offset. `stable_hash`, never the builtin `hash`."""
     return (N.stable_hash(f"{seed}:{index}") % 1000 / 1000.0 - 0.5) * 2.0 * spread
@@ -201,9 +223,9 @@ def bastion(radius: float = 8.0, height: float = 7.0, deck_y: float = 0.0,
         angle = math.radians(-118.0 + 236.0 * i / (merlons - 1))
         x = math.cos(angle) * (radius - 0.42)
         z = math.sin(angle) * (radius - 0.42)
-        out.add(M.box((0.9, 1.25, 0.62), center=(x, platform_y + 0.62, z),
+        out.add(M.box((0.9, 1.25, 0.62), center=(0.0, 0.0, 0.0),
                       uv_scale=0.7, material=STONE).transformed(
-            M.rotation_y(-angle)))
+            at(x, platform_y + 0.62, z, yaw=-angle)))
     # the string course where the batter stops
     out.add(M.cylinder(radius + 0.34, radius + 0.34, 0.30, segments=24,
                        uv_scale=0.6, material=STONE).transformed(
@@ -260,9 +282,8 @@ def pier(length: float, width: float = 5.0, deck_y: float = 0.0,
                 continue        # the gap a gangway lands in
             out.add(A.railing(length / bays - 0.8, height=0.92,
                               material=TIMBER_GREY).transformed(
-                M.rotation_y(math.pi * 0.5)
-                @ M.translation(side * (width * 0.5 - 0.2), deck_y,
-                                z0 + (length / bays - 0.8) * 0.5)))
+                at(side * (width * 0.5 - 0.2), deck_y,
+                   z0 + (length / bays - 0.8) * 0.5, yaw=math.pi * 0.5)))
     return out
 
 
@@ -295,22 +316,19 @@ def harbour_crane(height: float = 9.0, reach: float = 6.5,
                     [0.0, height + 1.1, -reach]])
     out.add(M.tube(jib, [0.26, 0.22, 0.17], segments=6, material=TIMBER))
     # the treadwheel: rim, hub and spokes, on the axle between the frames
+    axle_y = height * 0.42
     for z in (-0.55, 0.55):
         out.add(M.cylinder(1.9, 1.9, 0.14, segments=20, uv_scale=0.6,
                            material=TIMBER).transformed(
-            M.rotation_x(math.pi * 0.5)
-            @ M.translation(0.0, height * 0.42, z)))
+            at(0.0, axle_y, z, pitch=math.pi * 0.5)))
     for i in range(10):
         angle = math.pi * 2.0 * i / 10.0
-        out.add(M.box((0.13, 3.6, 0.13),
-                      center=(0.0, height * 0.42, 0.0),
+        out.add(M.box((0.13, 3.6, 0.13), center=(0.0, 0.0, 0.0),
                       uv_scale=0.8, material=TIMBER).transformed(
-            M.translation(0.0, -height * 0.42, 0.0)
-            @ M.rotation_z(angle) @ M.translation(0.0, height * 0.42, 0.0)))
+            at(0.0, axle_y, 0.0, roll=angle)))
     out.add(M.cylinder(0.22, 0.22, 1.5, segments=10, uv_scale=0.7,
                        material=IRON).transformed(
-        M.rotation_x(math.pi * 0.5)
-        @ M.translation(0.0, height * 0.42, 0.75)))
+        at(0.0, axle_y, -0.75, pitch=math.pi * 0.5)))
 
     # fall, hook and a laden cargo net under the jib head
     drop = height * 0.62
@@ -396,7 +414,7 @@ def ship_hull(length: float = 22.0, beam: float = 6.0, seed: int = 0,
                   material=TIMBER))
     out.add(M.gable_roof(beam * 0.70, length * 0.21, 0.9, overhang=0.20,
                          material=ROOF).transformed(
-        M.rotation_y(math.pi * 0.5) @ M.translation(length * 0.34, 5.15, 0.0)))
+        at(length * 0.34, 5.15, 0.0, yaw=math.pi * 0.5)))
     for i in range(masts):
         mx = length * (-0.24 + 0.42 * i / max(masts - 1, 1))
         mh = length * (0.92 - 0.10 * i)
@@ -524,9 +542,9 @@ def warehouse(width: float = 8.0, depth: float = 11.0, storeys: int = 3,
             z = -depth * 0.5 + (i + 0.7) * (depth / max(int(depth / 3.0), 1))
             for side in (-1, 1):
                 out.add(A.window(width=0.72, height=1.0, material=TIMBER_GREY)
-                        .transformed(M.rotation_y(math.pi * 0.5)
-                                     @ M.translation(side * (width * 0.5 + 0.06),
-                                                     storey * storey_h + 1.5, z)))
+                        .transformed(at(side * (width * 0.5 + 0.06),
+                                        storey * storey_h + 1.5, z,
+                                        yaw=math.pi * 0.5)))
     if hoist:
         # the hoist beam projecting from the gable peak, with its block
         out.add(M.box((0.24, 0.24, 1.9),
@@ -620,8 +638,7 @@ def arcade_range(bays: int = 7, span: float = 3.4, height: float = 4.6,
             M.translation(0.0, height + 0.52, 0.0)))
         out.add(M.gable_roof(depth * 1.05, length, 1.9, overhang=0.4,
                              material=ROOF).transformed(
-            M.rotation_y(math.pi * 0.5) @ M.translation(0.0, height + 3.0,
-                                                        depth * 0.28)))
+            at(0.0, height + 3.0, depth * 0.28, yaw=math.pi * 0.5)))
     return out
 
 
@@ -649,7 +666,7 @@ def gate_arch(span: float = 11.0, height: float = 17.0, depth: float = 5.0,
         # the cutwater, so the pier reads as standing in moving water
         out.add(M.extrude([(-0.9, 0.0), (0.9, 0.0), (0.0, 2.1)], springing * 0.7,
                           uv_scale=0.4, material=RUBBLE).transformed(
-            M.rotation_y(math.pi) @ M.translation(x, 0.0, -depth * 0.5)))
+            at(x, 0.0, -depth * 0.5, yaw=math.pi)))
     out.add(M.arch(span, span * 0.5, 1.5, depth, segments=18, uv_scale=0.38,
                    material=STONE).transformed(
         M.translation(0.0, springing, -depth * 0.5)))
@@ -781,10 +798,10 @@ def domed_hall(radius: float = 7.0, drum_height: float = 8.0,
             M.translation(math.cos(angle) * (radius + 0.62), 0.0,
                           math.sin(angle) * (radius + 0.62))))
         out.add(A.window(width=0.9, height=2.0, material=TIMBER_GREY)
-                .transformed(M.rotation_y(-angle)
-                             @ M.translation(math.cos(angle) * (radius + 0.02),
-                                             drum_height * 0.42,
-                                             math.sin(angle) * (radius + 0.02))))
+                .transformed(at(math.cos(angle) * (radius + 0.02),
+                                drum_height * 0.42,
+                                math.sin(angle) * (radius + 0.02),
+                                yaw=-angle)))
     out.add(M.cylinder(radius + 0.95, radius + 0.95, 0.55, segments=24,
                        uv_scale=0.55, material=STONE).transformed(
         M.translation(0.0, drum_height - 0.55, 0.0)))
@@ -834,20 +851,20 @@ def campanile(height: float = 34.0, width: float = 5.2,
                 out.add(M.arch(1.15, 0.58, 0.22, 0.30, segments=8, uv_scale=0.6,
                                material=STONE).transformed(
                     M.rotation_y(rot)
-                    @ M.translation(k * width * 0.24, y, -width * 0.5 - 0.02)))
+                    @ at(k * width * 0.24, y, -width * 0.5 - 0.02)))
     # the belfry: open arches on all four faces
     belfry_y = height - 6.6
     for rot in (0.0, math.pi * 0.5, math.pi, math.pi * 1.5):
         out.add(M.arch(2.4, 1.2, 0.4, 0.5, segments=12, uv_scale=0.5,
                        material=STONE).transformed(
             M.rotation_y(rot)
-            @ M.translation(0.0, belfry_y + 2.0, -width * 0.5 - 0.05)))
+            @ at(0.0, belfry_y + 2.0, -width * 0.5 - 0.05)))
     out.add(M.box((width + 0.9, 0.55, width + 0.9),
                   center=(0.0, height - 0.9, 0.0), uv_scale=0.5, material=STONE))
     # a pyramidal cap
     out.add(M.cylinder(width * 0.80, 0.0, 5.4, segments=4, uv_scale=0.5,
                        material=ROOF).transformed(
-        M.rotation_y(math.pi * 0.25) @ M.translation(0.0, height - 0.35, 0.0)))
+        at(0.0, height - 0.35, 0.0, yaw=math.pi * 0.25)))
     return out
 
 
@@ -885,17 +902,15 @@ def cathedral(seed: int = 0, length: float = 34.0, width: float = 16.0,
         for i in range(6):
             z = (i / 5.0 - 0.5) * length * 0.7
             out.add(A.window(width=1.1, height=2.6, material=TIMBER_GREY)
-                    .transformed(M.rotation_y(math.pi * 0.5)
-                                 @ M.translation(side * (nave_w * 0.5 + 0.03),
-                                                 height * 0.62, z)))
+                    .transformed(at(side * (nave_w * 0.5 + 0.03),
+                                    height * 0.62, z, yaw=math.pi * 0.5)))
     # crossing tower
     out.add(M.box((nave_w * 1.25, height * 0.62, nave_w * 1.25),
                   center=(0.0, height + height * 0.31, -length * 0.10),
                   uv_scale=0.3, material=STONE))
     out.add(M.cylinder(nave_w * 0.92, 0.0, 8.0, segments=4, uv_scale=0.5,
                        material=ROOF).transformed(
-        M.rotation_y(math.pi * 0.25)
-        @ M.translation(0.0, height * 1.62, -length * 0.10)))
+        at(0.0, height * 1.62, -length * 0.10, yaw=math.pi * 0.25)))
     # the apse at the east end
     # `cylinder` has no arc parameter, so the apse is a half-drum lathed
     # through pi. `lathe` does take one, and revolving a straight profile is
@@ -914,8 +929,7 @@ def cathedral(seed: int = 0, length: float = 34.0, width: float = 16.0,
         M.translation(0.0, 3.4, -length * 0.5 - 0.5)))
     out.add(M.cylinder(2.3, 2.3, 0.5, segments=16, uv_scale=0.5,
                        material=GLASS).transformed(
-        M.rotation_x(math.pi * 0.5)
-        @ M.translation(0.0, height * 0.66, -length * 0.5 - 0.2)))
+        at(0.0, height * 0.66, -length * 0.5 - 0.2, pitch=math.pi * 0.5)))
     for side in (-1, 1):
         out.add(M.cylinder(1.5, 1.35, height * 1.16, segments=12, uv_scale=0.34,
                            material=STONE).transformed(
@@ -948,8 +962,7 @@ def fish_stall(seed: int = 0) -> SW.MeshGroup:
         fish = M.icosphere(radius=0.20, subdivisions=1, material=IRON)
         fish.transform(M.scaling(1.55, 0.42, 0.55))
         out.add(fish.transformed(
-            M.rotation_y(_jitter(seed + 3, i, 0.8))
-            @ M.translation(x, 0.92, z)))
+            at(x, 0.92, z, yaw=_jitter(seed + 3, i, 0.8))))
     out.add(P.basket(radius=0.34, height=0.44, seed=seed + 7).transformed(
         M.translation(1.15, 0.0, 0.55)))
     return out

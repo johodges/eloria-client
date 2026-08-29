@@ -117,6 +117,72 @@
       "rotationDegrees": 315.0,
       "surface": "Paving",
       "grounded": true
+    },
+    {
+      "id": "custom-house-hall",
+      "name": "Return from The Custom House",
+      "position": [
+        -72.75,
+        3.45,
+        -9.25
+      ],
+      "serverTile": [
+        101,
+        259
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true,
+      "nudgedMetres": 3.15
+    },
+    {
+      "id": "bonded-vaults-tunnel",
+      "name": "Return from The Bonded Vaults",
+      "position": [
+        -40.08,
+        9.55,
+        -35.28
+      ],
+      "serverTile": [
+        134,
+        285
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "lamp-rock-foot",
+      "name": "Return from The Lamp Rock Light",
+      "position": [
+        295.44,
+        18.0,
+        120.24
+      ],
+      "serverTile": [
+        469,
+        130
+      ],
+      "rotationDegrees": 315.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "gullstone-cleft",
+      "name": "Return from The Gullstone Undertow",
+      "position": [
+        -79.75,
+        32.98,
+        100.75
+      ],
+      "serverTile": [
+        94,
+        149
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Paving",
+      "grounded": true,
+      "nudgedMetres": 3.14
     }
   ],
   "collision": {
@@ -2076,17 +2142,18 @@
       "type": "map-transition",
       "transport": "road",
       "position": [
-        342.96,
+        340.75,
         22.68,
-        -66.96
+        -73.25
       ],
       "serverTile": [
-        517,
-        317
+        515,
+        323
       ],
       "destinationMap": "maps/nymara/grey_moors.elm",
       "radius": 3.5,
-      "authority": "server"
+      "authority": "server",
+      "nudgedMetres": 6.67
     },
     {
       "id": "crownwater-berth",
@@ -2094,17 +2161,18 @@
       "type": "map-transition",
       "transport": "berth",
       "position": [
-        -122.16,
-        -15.61,
-        -16.56
+        -111.75,
+        3.5,
+        -29.25
       ],
       "serverTile": [
-        52,
-        267
+        62,
+        279
       ],
       "destinationMap": "maps/nymara/crownwater.elm",
       "radius": 3.5,
-      "authority": "server"
+      "authority": "server",
+      "nudgedMetres": 16.41
     },
     {
       "id": "mirrorhold-berth",
@@ -2123,6 +2191,84 @@
       "destinationMap": "maps/nymara/mirrorhold.elm",
       "radius": 3.5,
       "authority": "server"
+    },
+    {
+      "id": "custom-house-door",
+      "name": "The Custom House",
+      "type": "map-transition",
+      "transport": "door",
+      "position": [
+        -72.75,
+        3.5,
+        -9.25
+      ],
+      "serverTile": [
+        101,
+        259
+      ],
+      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationSpawn": "custom-house-hall",
+      "radius": 3.0,
+      "authority": "server",
+      "nudgedMetres": 3.15
+    },
+    {
+      "id": "bonded-vaults-door",
+      "name": "The Bonded Vaults",
+      "type": "map-transition",
+      "transport": "door",
+      "position": [
+        -40.08,
+        9.6,
+        -35.28
+      ],
+      "serverTile": [
+        134,
+        285
+      ],
+      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationSpawn": "bonded-vaults-tunnel",
+      "radius": 3.0,
+      "authority": "server"
+    },
+    {
+      "id": "lamp-rock-door",
+      "name": "The Lamp Rock Light",
+      "type": "map-transition",
+      "transport": "door",
+      "position": [
+        295.44,
+        18.05,
+        120.24
+      ],
+      "serverTile": [
+        469,
+        130
+      ],
+      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationSpawn": "lamp-rock-foot",
+      "radius": 3.0,
+      "authority": "server"
+    },
+    {
+      "id": "gullstone-door",
+      "name": "The Gullstone Undertow",
+      "type": "map-transition",
+      "transport": "door",
+      "position": [
+        -79.75,
+        33.03,
+        100.75
+      ],
+      "serverTile": [
+        94,
+        149
+      ],
+      "destinationMap": "maps/nymara/westhaven_insides.elm",
+      "destinationSpawn": "gullstone-cleft",
+      "radius": 3.0,
+      "authority": "server",
+      "nudgedMetres": 3.14
     }
   ],
   "roads": [
@@ -2724,8 +2870,8 @@
     "accessors": 1008,
     "bufferViews": 1073,
     "uniqueTriangles": 452652,
-    "uniqueVertices": 342424,
-    "glbBytes": 21598004,
+    "uniqueVertices": 343144,
+    "glbBytes": 21620920,
     "instancedTriangles": 1137392,
     "embeddedTextureBytes": 19964003,
     "textureMemoryBytesUncompressed": 172228608,
@@ -2739,7 +2885,33 @@
       "walkableFraction": 0.5594,
       "elevatedDecks": 19,
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
-      "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+      "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+      "nudgedEntries": [
+        {
+          "id": "custom-house-hall",
+          "metres": 3.15
+        },
+        {
+          "id": "gullstone-cleft",
+          "metres": 3.14
+        },
+        {
+          "id": "east-road",
+          "metres": 6.67
+        },
+        {
+          "id": "crownwater-berth",
+          "metres": 16.41
+        },
+        {
+          "id": "custom-house-door",
+          "metres": 3.15
+        },
+        {
+          "id": "gullstone-door",
+          "metres": 3.14
+        }
+      ]
     },
     "notes": [
       "city houses placed: 385",
@@ -2747,7 +2919,7 @@
       "ground dressing placed: 536"
     ],
     "lod2": {
-      "glbBytes": 13668048,
+      "glbBytes": 13690968,
       "nodes": 3629,
       "uniqueTriangles": 369474,
       "instancedTriangles": 955676,

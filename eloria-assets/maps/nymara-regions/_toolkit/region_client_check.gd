@@ -78,8 +78,31 @@ func _init() -> void:
 		return
 	print("[client-check] server grid %dx%d, sampling every %d tiles" % [cells, cells, step])
 
+	# A combined insides map is mostly deliberate void: several interiors on one
+	# map with blackspace between them, in the Eternal Lands convention. "Every
+	# tile must ground" is the right test for a region and the wrong one for
+	# that - it reports 85% misses and fails a map that is correct.
+	#
+	# So when the manifest declares `spaces`, which only an interior package
+	# does, the criterion becomes "every tile *inside an authored space* must
+	# ground". That is the part that matters, it is precise, and it reads data
+	# already in the manifest rather than a flag somebody has to remember to
+	# pass.
+	var spaces: Array = []
+	for value in (manifest.get("spaces", {}) as Dictionary).values():
+		var entry := value as Dictionary
+		spaces.append(Rect2(float(entry["x0"]), float(entry["z0"]),
+			float(entry["x1"]) - float(entry["x0"]),
+			float(entry["z1"]) - float(entry["z0"])))
+	var void_expected := not spaces.is_empty()
+	if void_expected:
+		print("[client-check] interior package: %d authored spaces, "
+			% spaces.size() + "tiles outside them are expected void")
+
 	var sampled := 0
 	var misses := 0
+	var in_space := 0
+	var in_space_misses := 0
 	var miss_examples: Array = []
 	var lowest := INF
 	var highest := -INF
@@ -92,6 +115,15 @@ func _init() -> void:
 				from, to, WorldLoader.NAVIGATION_SURFACE_LAYER)
 			var hit: Dictionary = space.intersect_ray(query)
 			sampled += 1
+			var inside := false
+			if void_expected:
+				var point := Vector2(world_position.x, world_position.z)
+				for rect in spaces:
+					if (rect as Rect2).has_point(point):
+						inside = true
+						break
+				if inside:
+					in_space += 1
 			var position_value: Variant = hit.get("position")
 			if position_value is Vector3:
 				var y: float = (position_value as Vector3).y
@@ -99,9 +131,18 @@ func _init() -> void:
 				highest = maxf(highest, y)
 			else:
 				misses += 1
-				if miss_examples.size() < 12:
+				if inside:
+					in_space_misses += 1
+					if miss_examples.size() < 12:
+						miss_examples.append([tx, ty,
+							snappedf(world_position.x, 0.1),
+							snappedf(world_position.z, 0.1)])
+				elif not void_expected and miss_examples.size() < 12:
 					miss_examples.append([tx, ty,
 						snappedf(world_position.x, 0.1), snappedf(world_position.z, 0.1)])
+	if void_expected:
+		print("[client-check] inside authored spaces: %d sampled, %d misses"
+			% [in_space, in_space_misses])
 
 	print("[client-check] grounding: %d tiles sampled, %d misses (%.2f%%)"
 		% [sampled, misses, 100.0 * float(misses) / maxf(1.0, float(sampled))])
@@ -171,7 +212,8 @@ func _init() -> void:
 			printerr("[client-check] sun.direction has a positive Y: this "
 				+ "manifest lights the world from underneath")
 
-	var ok := misses == 0 and spawn_errors == 0
+	var grounding_ok := in_space_misses == 0 if void_expected else misses == 0
+	var ok := grounding_ok and spawn_errors == 0
 	print("[client-check] %s" % ("PASS" if ok else "FAIL"))
 
 	if report_path != "":
@@ -185,6 +227,9 @@ func _init() -> void:
 			"sampleStep": step,
 			"tilesSampled": sampled,
 			"groundingMisses": misses,
+			"voidExpected": void_expected,
+			"tilesInsideAuthoredSpaces": in_space,
+			"missesInsideAuthoredSpaces": in_space_misses,
 			"missExamples": miss_examples,
 			"surfaceHeightRange": [lowest, highest],
 			"spawns": spawn_rows,

@@ -7,8 +7,8 @@
   "accessors": 1008,
   "bufferViews": 1073,
   "uniqueTriangles": 452652,
-  "uniqueVertices": 342424,
-  "glbBytes": 21598004,
+  "uniqueVertices": 343144,
+  "glbBytes": 21620920,
   "instancedTriangles": 1137392,
   "embeddedTextureBytes": 19964003,
   "textureMemoryBytesUncompressed": 172228608,
@@ -22,7 +22,33 @@
     "walkableFraction": 0.5594,
     "elevatedDecks": 19,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
-    "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nudgedEntries": [
+      {
+        "id": "custom-house-hall",
+        "metres": 3.15
+      },
+      {
+        "id": "gullstone-cleft",
+        "metres": 3.14
+      },
+      {
+        "id": "east-road",
+        "metres": 6.67
+      },
+      {
+        "id": "crownwater-berth",
+        "metres": 16.41
+      },
+      {
+        "id": "custom-house-door",
+        "metres": 3.15
+      },
+      {
+        "id": "gullstone-door",
+        "metres": 3.14
+      }
+    ]
   },
   "notes": [
     "city houses placed: 385",
@@ -30,7 +56,7 @@
     "ground dressing placed: 536"
   ],
   "lod2": {
-    "glbBytes": 13668048,
+    "glbBytes": 13690968,
     "nodes": 3629,
     "uniqueTriangles": 369474,
     "instancedTriangles": 955676,
