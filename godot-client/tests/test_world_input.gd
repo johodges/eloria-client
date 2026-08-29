@@ -237,6 +237,7 @@ func _run() -> void:
 			CoordinateAdapter.new().direction_to_godot(Vector2i(1, 1))),
 		"a step off the ordered heading turns the actor onto the step")
 	actor_height_fixture.free()
+	_check_travel_facing()
 	var north_yaw: float = CoordinateAdapter.new().direction_to_godot(Vector2i(0, -1))
 	_expect(main.call("_facing_relative_tile_direction", north_yaw, 1, 0) == Vector2i(0, -1)
 		and main.call("_facing_relative_tile_direction", north_yaw, -1, 0) == Vector2i(0, 1)
@@ -2333,3 +2334,64 @@ func _hex_bytes(value: String) -> PackedByteArray:
 	for index: int in range(0, value.length(), 2):
 		bytes.append(value.substr(index, 2).hex_to_int())
 	return bytes
+
+## The rendered facing has to be the direction the body crosses the ground in,
+## not the tile direction that arrived with the packet. The two differ by
+## design: the presentation runs a fraction of a tile behind the authoritative
+## position, and every step that lands in the same frame as another is folded
+## into a single segment before the actor node ever sees it.
+func _check_travel_facing() -> void:
+	var adapter := CoordinateAdapter.new()
+	var actor := ReplicatedActor3D.new()
+	root.add_child(actor)
+	actor.apply_server_state({"actor_id": 1, "x": 10, "y": 10, "rotation": 0,
+		"command": -1}, adapter, true)
+	actor._physics_process(1.0 / 60.0)
+	_expect(is_equal_approx(actor.call("_rendered_target_yaw"),
+		actor.desired_facing_yaw()),
+		"a resting actor is drawn facing exactly where the server says it does")
+
+	# CMD_MOVE_E, taken only part way before the next packet arrives.
+	actor.apply_server_state({"actor_id": 1, "x": 11, "y": 10, "rotation": 0,
+		"command": 22}, adapter, false)
+	for frame: int in range(9):
+		actor._physics_process(1.0 / 60.0)
+	# CMD_MOVE_N from a body that has not finished travelling east yet, so the
+	# ground it is about to cross runs north-east and it must face north-east.
+	actor.apply_server_state({"actor_id": 1, "x": 11, "y": 11, "rotation": 0,
+		"command": 20}, adapter, false)
+	var lagging_travel: float = ReplicatedActor3D.travel_yaw(
+		actor.get("_segment_start") as Vector3, actor.server_target, 0.0)
+	_expect(is_equal_approx(actor.call("_rendered_target_yaw"), lagging_travel)
+		and not is_equal_approx(lagging_travel, actor.desired_facing_yaw()),
+		"a step taken before the last one finished is faced along the ground crossed")
+
+	# Four steps folded into one world sync, as happens on any frame slower
+	# than the server's movement cadence. The straight slide covers all four.
+	actor.apply_server_state({"actor_id": 1, "x": 11, "y": 10, "rotation": 0,
+		"command": 24}, adapter, true)
+	actor._physics_process(1.0 / 60.0)
+	actor.apply_server_state({"actor_id": 1, "x": 15, "y": 14, "rotation": 0,
+		"command": 20}, adapter, false)
+	var folded_travel: float = ReplicatedActor3D.travel_yaw(
+		actor.get("_segment_start") as Vector3, actor.server_target, 0.0)
+	_expect(is_equal_approx(actor.call("_rendered_target_yaw"), folded_travel)
+		and is_equal_approx(folded_travel, adapter.direction_to_godot(Vector2i(1, 1))),
+		"a burst folded into one segment is faced along the whole slide")
+
+	# Authority is untouched: the facing the server named is still what the
+	# actor settles on once it stops, and a turn shown while its answer is in
+	# flight still outranks travel, because that actor is turning, not walking.
+	_expect(is_equal_approx(actor.desired_facing_yaw(),
+		adapter.direction_to_godot(Vector2i(0, 1))),
+		"the authoritative facing survives a segment travelled in another direction")
+	actor.predict_turn(PI / 4.0)
+	_expect(is_equal_approx(actor.call("_rendered_target_yaw"),
+		actor.desired_facing_yaw()),
+		"a predicted turn still outranks the direction of travel")
+	actor.clear_turn_prediction()
+	for frame: int in range(240):
+		actor._physics_process(1.0 / 60.0)
+	_expect(is_equal_approx(actor.rotation.y, actor.desired_facing_yaw()),
+		"the actor comes to rest on the authoritative facing")
+	actor.free()
