@@ -1343,6 +1343,25 @@ func _run() -> void:
 	await process_frame
 	_expect(viewport_rect.encloses(creation_panel.get_global_rect()),
 		"character-creation panel fits the reference viewport")
+	# The preview renders one character, not the map furniture bolted to it.
+	# Its camera had no cull mask, so it drew every layer, and the dot an actor
+	# carries for the two map cameras - three and a half metres across, three
+	# metres up - hung over the model as a pale blue band.
+	var preview_camera: Camera3D = main.get_node(
+		"CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot/PreviewCamera"
+		) as Camera3D
+	var preview_ground: MeshInstance3D = main.get_node(
+		"CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot/PreviewGround"
+		) as MeshInstance3D
+	var world_camera: Camera3D = camera_rig.get_node("Camera") as Camera3D
+	_expect(preview_camera.cull_mask == world_camera.cull_mask
+		and (preview_camera.cull_mask & ReplicatedActor3D.MAP_MARKER_LAYER) == 0,
+		"the creation preview renders what the gameplay camera renders,"
+			+ " and not the map layer")
+	_expect(preview_ground.mesh != null
+		and (preview_ground.layers & preview_camera.cull_mask) != 0
+		and preview_ground.position.y < 0.0,
+		"the creation preview stands its character on a piece of ground")
 	_expect(viewport_rect.encloses(create_button.get_global_rect()),
 		"create-character submit action is visible")
 	_expect(viewport_rect.encloses(back_button.get_global_rect()),
