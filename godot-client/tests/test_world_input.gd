@@ -315,11 +315,18 @@ func _run() -> void:
 			"bottom HUD exposes %s" % meter_path.get_file())
 	var actor_menu: Control = main.get_node("GameView/ActorHudMenu") as Control
 	main.call("_open_actor_hud_menu", Vector2(640.0, 360.0))
-	_expect(actor_menu.visible and main.get_node("GameView/ActorHudMenu/Options/ShowHealth") is CheckButton
-		and main.get_node("GameView/ActorHudMenu/Options/ShowEther") is CheckButton
-		and main.get_node("GameView/ActorHudMenu/Options/ShowFood") is CheckButton
-		and main.get_node("GameView/ActorHudMenu/Options/ShowAction") is CheckButton,
-		"character context menu exposes all overhead bar-and-number options")
+	var banner_menu_entries: Array[String] = ["ShowNames",
+		"ShowHealthBar", "ShowHealthNumbers", "ShowEtherBar", "ShowEtherNumbers",
+		"ShowFoodBar", "ShowFoodNumbers", "ShowActionBar", "ShowActionNumbers",
+		"InstanceMode", "SpeechBubbles", "BannerBackground", "SitLock",
+		"RangingLock", "DisableMenu"]
+	var banner_menu_complete: bool = actor_menu.visible
+	for entry_name: String in banner_menu_entries:
+		if not (main.get_node_or_null(
+				"GameView/ActorHudMenu/Options/" + entry_name) is CheckBox):
+			banner_menu_complete = false
+	_expect(banner_menu_complete,
+		"banner context menu carries the Eternal Lands option set")
 	app_state_inventory.set("stats", {"health": 72, "max_health": 100,
 		"ether": 33, "max_ether": 50, "action_points": 18,
 		"max_action_points": 30, "food": 42, "carried": 205, "capacity": 320,
@@ -332,10 +339,18 @@ func _run() -> void:
 	var overhead_health_label: Label = main.get_node(
 		"GameView/ActorResourceOverlay/Rows/HealthRow/Number") as Label
 	var overhead_fill: StyleBoxFlat = overhead_health_bar.get_theme_stylebox("fill") as StyleBoxFlat
-	_expect(overhead_fill != null and overhead_fill.bg_color.r > overhead_fill.bg_color.g
-		and overhead_health_label.get_theme_color("font_color").r
-			> overhead_health_label.get_theme_color("font_color").g,
-		"overhead health bar and numbers render red")
+	var overhead_background: StyleBoxFlat = overhead_health_bar.get_theme_stylebox(
+		"background") as StyleBoxFlat
+	# 72/100 health sits in the green half of the EL ramp; the bar keeps only a
+	# black frame so the world shows through whatever health is missing.
+	_expect(overhead_fill != null and overhead_fill.bg_color.g > overhead_fill.bg_color.r
+		and overhead_health_label.get_theme_color("font_color").g
+			> overhead_health_label.get_theme_color("font_color").r
+		and overhead_background != null and overhead_background.bg_color.a == 0.0,
+		"overhead health bar follows the Eternal Lands drain colour")
+	var drained: Color = main.call("_banner_colour", "health", 0.15)
+	_expect(drained.r > drained.g,
+		"the health ramp turns red as it empties")
 	_expect(is_equal_approx((main.get_node(
 		"GameView/Quickbar/QuickRows/BottomMeters/HealthMeter/HealthBottom") as ProgressBar).value, 72.0)
 		and is_equal_approx((main.get_node(
@@ -353,15 +368,76 @@ func _run() -> void:
 		and int(floating_feedback[0].amount) == 12
 		and floating_feedback[1].kind == "level",
 		"partial experience and level updates request EL-style floating feedback")
-	var show_ether: CheckButton = main.get_node(
-		"GameView/ActorHudMenu/Options/ShowEther") as CheckButton
-	show_ether.button_pressed = false
-	main.call("_on_overhead_option_toggled", false)
-	_expect(not (main.get_node("GameView/ActorResourceOverlay/Rows/EtherRow") as Control).visible,
-		"character menu independently toggles the overhead ethereality copy")
-	show_ether.button_pressed = true
-	main.call("_on_overhead_option_toggled", true)
+	var ether_row: Control = main.get_node(
+		"GameView/ActorResourceOverlay/Rows/EtherRow") as Control
+	var ether_bar_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/ShowEtherBar") as CheckBox
+	var ether_numbers_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/ShowEtherNumbers") as CheckBox
+	var overlay: Control = main.get_node("GameView/ActorResourceOverlay") as Control
+	var full_banner_height: float = overlay.size.y
+	ether_bar_box.set_pressed_no_signal(false)
+	main.call("_apply_banner_options")
+	_expect(ether_row.visible
+		and not (ether_row.get_node("Bar") as Control).visible
+		and (ether_row.get_node("Number") as Control).visible,
+		"the ether bar switch leaves the ether numbers behind")
+	ether_numbers_box.set_pressed_no_signal(false)
+	main.call("_apply_banner_options")
+	_expect(not ether_row.visible and overlay.size.y < full_banner_height,
+		"a row that is fully switched off shrinks the banner")
+	ether_bar_box.set_pressed_no_signal(true)
+	ether_numbers_box.set_pressed_no_signal(true)
+	main.call("_apply_banner_options")
+	_expect(is_equal_approx(overlay.size.y, full_banner_height),
+		"restoring the row grows the banner back")
+	var banner_background_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/BannerBackground") as CheckBox
+	banner_background_box.set_pressed_no_signal(true)
+	main.call("_apply_banner_options")
+	var banner_panel: StyleBoxFlat = overlay.get_theme_stylebox("panel") as StyleBoxFlat
+	banner_background_box.set_pressed_no_signal(false)
+	main.call("_apply_banner_options")
+	_expect(banner_panel != null and banner_panel.bg_color.a > 0.0
+		and overlay.get_theme_stylebox("panel") is StyleBoxEmpty,
+		"the banner background switch swaps the panel behind the banner")
+	var disable_menu_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/DisableMenu") as CheckBox
+	disable_menu_box.set_pressed_no_signal(true)
+	main.call("_apply_banner_options")
+	main.call("_open_actor_hud_menu", Vector2(640.0, 360.0))
+	var stayed_closed: bool = not actor_menu.visible
+	main.call("_on_banner_menu_enabled_toggled", true)
+	main.call("_open_actor_hud_menu", Vector2(640.0, 360.0))
+	_expect(stayed_closed and not disable_menu_box.button_pressed and actor_menu.visible,
+		"Disable This Menu is honoured and reversible from HUD settings")
 	actor_menu.hide()
+	var sit_lock_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/SitLock") as CheckBox
+	var ranging_lock_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/RangingLock") as CheckBox
+	var previous_actors: Dictionary = app_state_inventory.get("actors") as Dictionary
+	var previous_local_id: int = int(app_state_inventory.get("local_actor_id"))
+	app_state_inventory.set("local_actor_id", 91)
+	app_state_inventory.set("actors", {91: {"actor_id": 91, "x": 10, "y": 20,
+		"sitting": true, "appearance": {"weapon": 0}}})
+	sit_lock_box.set_pressed_no_signal(true)
+	var sit_locked: bool = bool(main.call("_movement_locked", false))
+	var ctrl_overrides: bool = not bool(main.call("_movement_locked", true))
+	sit_lock_box.set_pressed_no_signal(false)
+	_expect(sit_locked and ctrl_overrides,
+		"Sit Lock holds a seated character in place until Ctrl is held")
+	ranging_lock_box.set_pressed_no_signal(true)
+	var unarmed_free: bool = not bool(main.call("_movement_locked", false))
+	# client_serv.h BOW_RECURVE, inside the ranged span Ranging Lock covers.
+	app_state_inventory.set("actors", {91: {"actor_id": 91, "x": 10, "y": 20,
+		"sitting": false, "appearance": {"weapon": 66}}})
+	var bow_locked: bool = bool(main.call("_movement_locked", false))
+	ranging_lock_box.set_pressed_no_signal(false)
+	_expect(unarmed_free and bow_locked,
+		"Ranging Lock only holds a character carrying a ranged weapon")
+	app_state_inventory.set("actors", previous_actors)
+	app_state_inventory.set("local_actor_id", previous_local_id)
 	_expect(not stats_panel.visible, "statistics window starts closed")
 	main.call("_on_stats_button_pressed")
 	_expect(stats_panel.visible and not stats_panel.get_global_rect().intersects(
