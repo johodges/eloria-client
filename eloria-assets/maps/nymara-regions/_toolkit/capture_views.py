@@ -29,7 +29,61 @@ _REGION_VIEWS = regionpaths.load_region_views(PACKAGE)
 VIEWS = _REGION_VIEWS.VIEWS
 # The plan and the build script belong to the region, not to the toolkit.
 REG = regionpaths.load_region_plan(PACKAGE)
-build_region = regionpaths.load_region_build(PACKAGE).build_region
+_REGION_BUILD = regionpaths.load_region_build(PACKAGE)
+build_region = _REGION_BUILD.build_region
+
+
+def _resolved_views() -> dict:
+    """The build's own resolved camera table, keyed by view id.
+
+    `views.py` is written in design space with ground-relative heights, and two
+    different pieces of code turned that into world space: this script, and the
+    region build's `write_camera_views`. They did not agree. The build resolves
+    a `deck` camera by snapping it to the walk surface under it, which is the
+    only way to stand on a bridge or a quay; this script only ever knew about
+    ground-relative heights and additionally nudged every eye below 20 m up to
+    33 m sideways looking for standing room.
+
+    The consequence was silent and bad: a region could author a camera on a
+    walkway, see it resolved correctly into `camera-views.json`, and still get
+    captures shot from somewhere else entirely - and because `godot_capture.gd`
+    reads *this* script's index, the real client frames inherited the wrong
+    framing too. Manymouth's macro camera was authored 2 m from its subject and
+    photographed the village rooftops 30 m away.
+
+    So the build's table wins where it exists. One resolution, three consumers.
+    """
+    path = PACKAGE / "camera-views.json"
+    if not path.is_file():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return {}
+    return {str(v.get("id", "")): v for v in data.get("views", [])}
+
+
+def _region_texture_sets():
+    """The shared texture table, extended with the region's own recipes.
+
+    A region that adds materials registers them at build time by appending to
+    `materials.SPECS` in memory - the pattern Crownwater established so that
+    concurrent region work does not have to edit the shared table. That
+    registration happens inside the region's `main()`, which this script never
+    calls, so without a hook every region-specific material resolves to index 0
+    (`bark_oak`) in the preview renderer and the captures silently show the
+    wrong surface everywhere.
+
+    Manymouth found this the obvious way: its water, decking, silt, sand and
+    paddy all came back as bark, so a delta rendered as a dry sand flat with no
+    water in it at all. A region opts in by exposing
+    `register_materials(sets) -> sets` from its build module.
+    """
+    sets = preview.texture_sets()
+    hook = getattr(_REGION_BUILD, "register_materials", None)
+    if hook is not None:
+        sets = hook(sets)
+    return sets
 
 # A region may override the capture lighting from its own `views.py`. The
 # presets below are Amberwood's warm afternoon sun, which is wrong for a region
@@ -147,7 +201,11 @@ def main() -> int:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
 
-    sets = preview.texture_sets()
+    sets = _region_texture_sets()
+    RESOLVED = _resolved_views()
+    if RESOLVED:
+        print(f"[views] using the build's resolved camera table "
+              f"({len(RESOLVED)} views) from camera-views.json")
     build = build_region()
     scene = preview.scene_from_build(build, sets)
     print(f"[scene] {scene.triangle_count()} triangles")
@@ -225,9 +283,26 @@ def main() -> int:
             base = REGION_LIGHTING.get("day", DAY)
             lighting = RENDER.Lighting(**{**vars(base), "fog_density": 0.00022,
                                           "fog_height_falloff": 0.0016})
-        placed_eye = eye_xz if eye_h > 20.0 else find_clear(eye_xz)
-        eye = ground(placed_eye, eye_h)
-        target = ground(target_xz, target_h)
+        # A trailing "!" on the mode pins the eye exactly where the region put
+        # it. `find_clear` searches up to 11 design metres - 33 world metres -
+        # for standing room, which is right for a wide shot placed by hand in a
+        # forest and fatal for any close framing: Manymouth's macro camera was
+        # authored 2 m from its subject and came back 30 m away and 15 m up,
+        # looking over the rooftops of the village it was standing in. A region
+        # that has chosen an exact viewpoint needs a way to say so.
+        pinned = mode.endswith("!")
+        if pinned:
+            mode = mode[:-1]
+            lighting = REGION_LIGHTING.get(mode,
+                                           GOLDEN if mode == "golden" else DAY)
+        resolved = RESOLVED.get(name)
+        if resolved and len(resolved.get("position", [])) == 3                 and len(resolved.get("target", [])) == 3:
+            eye = tuple(float(v) for v in resolved["position"])
+            target = tuple(float(v) for v in resolved["target"])
+        else:
+            placed_eye = eye_xz if (pinned or eye_h > 20.0)                 else find_clear(eye_xz)
+            eye = ground(placed_eye, eye_h)
+            target = ground(target_xz, target_h)
         if abs(eye[0] - target[0]) < 0.05 and abs(eye[2] - target[2]) < 0.05:
             target = (target[0] + 0.4, target[1], target[2] + 0.4)
         if eye_h < 40.0:

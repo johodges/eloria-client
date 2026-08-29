@@ -183,6 +183,20 @@ func _init() -> void:
 		await process_frame
 
 	var written := 0
+	# The frames this run produces, described the same way the offline set
+	# describes its own. Without it `make_comparison.py` finds real client
+	# frames but no index beside them and falls back to the preview renderer,
+	# so the sheets say "offline preview" while a better set sits unused in the
+	# next directory. Written even for a partial `--only` run, merged over any
+	# existing index so one shot re-taken does not drop the other twenty-six.
+	var index: Array = []
+	var existing := FileAccess.open(out_dir.path_join("index.json"), FileAccess.READ)
+	if existing != null:
+		var previous: Variant = JSON.parse_string(existing.get_as_text())
+		existing.close()
+		if typeof(previous) == TYPE_ARRAY:
+			index = previous
+
 	for entry in views:
 		var id: String = str(entry.get("id", ""))
 		if only != "" and not id.contains(only):
@@ -203,8 +217,33 @@ func _init() -> void:
 		if image.save_png(path) == OK:
 			written += 1
 			print("[capture] %s -> %s" % [id, path])
+			var record := {
+				"id": id,
+				"panel": entry.get("panel", null),
+				"file": id + ".png",
+				"eye": eye,
+				"target": target,
+				"fieldOfViewDegrees": entry.get("fieldOfViewDegrees", 55.0),
+				"lighting": entry.get("lighting", "day"),
+				"source": "godot-" + Engine.get_version_info().get("string", ""),
+			}
+			var replaced := false
+			for i in index.size():
+				if str((index[i] as Dictionary).get("id", "")) == id:
+					index[i] = record
+					replaced = true
+					break
+			if not replaced:
+				index.append(record)
 		else:
 			_err("could not save " + path)
+
+	var index_file := FileAccess.open(out_dir.path_join("index.json"),
+			FileAccess.WRITE)
+	if index_file != null:
+		index_file.store_string(JSON.stringify(index, "  ") + "
+")
+		index_file.close()
 
 	print("[capture] wrote %d frames" % written)
 	quit(0)

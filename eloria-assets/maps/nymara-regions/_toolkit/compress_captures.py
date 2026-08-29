@@ -40,12 +40,19 @@ def main() -> int:
         before, after = convert(directory)
         total_before += before
         total_after += after
-    index_path = ROOT / "captures" / "index.json"
-    if index_path.exists():
+    # Both indexes, not just the offline one. `godot_capture.gd` writes an
+    # index beside its own frames, and leaving it naming .png files after the
+    # PNGs have been converted and deleted makes the real client frames
+    # unresolvable by name - which is exactly the set the comparison sheets
+    # prefer over the offline ones.
+    for index_path in (ROOT / "captures" / "index.json",
+                       ROOT / "godot-captures" / "index.json"):
+        if not index_path.exists():
+            continue
         index = json.loads(index_path.read_text())
         for entry in index:
             entry["file"] = entry["file"].replace(".png", ".webp")
-        index_path.write_text(json.dumps(index, indent=2) + "\n")
+        index_path.write_text(json.dumps(index, indent=2) + chr(10))
     print(f"[captures] {total_before / 1e6:.1f} MB PNG -> "
           f"{total_after / 1e6:.1f} MB WebP")
     return 0
