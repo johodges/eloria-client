@@ -925,6 +925,68 @@ func _run() -> void:
 	main.call("_sync_inventory")
 	_expect(not empty_inventory_slot.disabled,
 		"selected equipment can move to a chosen empty inventory slot")
+	# Carrying an item on the cursor, the way the legacy client moves things.
+	# The placing click is an authoritative move, so these assertions read the
+	# client-side state machine rather than the wire.
+	main.set("selected_inventory_slot", -1)
+	main.set("_interaction_mode", "walk")
+	app_state_inventory.set("inventory", {0: {
+		"image_id": 3, "quantity": 9, "slot": 0, "flags": 12,
+		"inventory_usable": true, "stackable": true}, 36: {
+		"image_id": 8, "quantity": 1, "slot": 36, "flags": 0,
+		"inventory_usable": false, "stackable": false}})
+	main.call("_sync_inventory")
+	var carried: TextureRect = main.get_node("GameView/CarriedItem") as TextureRect
+	var carried_quantity: Label = carried.get_node("Quantity") as Label
+	main.call("_on_inventory_slot_pressed", 0)
+	_expect(int(main.get("_carried_slot")) == 0 and carried.visible
+		and carried.texture != null and carried_quantity.text == "9",
+		"walk mode lifts a clicked backpack item onto the cursor")
+	main.call("_sync_inventory")
+	_expect(not empty_inventory_slot.disabled and not empty_equipment_slot.disabled,
+		"a carried item makes every empty inventory and wear slot a target")
+	main.call("_on_inventory_slot_pressed", 0)
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"clicking the slot it came from puts a carried item back")
+	main.call("_on_inventory_slot_pressed", 0)
+	main.call("_on_equipment_slot_pressed", 37)
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"placing a carried backpack item on a wear slot equips and clears the cursor")
+	main.call("_on_equipment_slot_pressed", 36)
+	_expect(int(main.get("_carried_slot")) == 36 and carried.visible
+		and carried_quantity.text.is_empty(),
+		"equipped items lift too, and a single item shows no quantity")
+	main.call("_on_inventory_slot_pressed", 1)
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"placing a carried equipped item in the backpack unequips it")
+	main.call("_on_inventory_slot_pressed", 0)
+	_expect(int(main.get("_carried_slot")) == 0, "item back on the cursor to be dropped")
+	main.call("_drop_carry")
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"dropping a carried item to the world clears the cursor")
+	main.call("_on_inventory_slot_pressed", 0)
+	main.call("_cancel_carry")
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"cancelling returns a carried item without moving it")
+	# A stack the server empties underneath the cursor must not stay attached.
+	main.call("_on_inventory_slot_pressed", 0)
+	app_state_inventory.set("inventory", {36: {
+		"image_id": 8, "quantity": 1, "slot": 36, "flags": 0}})
+	main.call("_update_carried_item")
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"a carried slot the server empties drops off the cursor")
+	app_state_inventory.set("inventory", {0: {
+		"image_id": 3, "quantity": 9, "slot": 0, "flags": 12,
+		"inventory_usable": true, "stackable": true}, 36: {
+		"image_id": 8, "quantity": 1, "slot": 36, "flags": 0}})
+	main.set("_interaction_mode", "attack")
+	main.set("selected_inventory_slot", -1)
+	main.call("_on_inventory_slot_pressed", 0)
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible
+		and int(main.get("selected_inventory_slot")) == 0,
+		"outside walk mode a click still only selects the item")
+	main.set("_interaction_mode", "walk")
+	main.call("_cancel_carry")
 	app_state_inventory.set("inventory_cooldowns", {0: {
 		"maximum_msec": 30000, "end_msec": Time.get_ticks_msec() + 12000}})
 	main.call("_sync_quick_slots")

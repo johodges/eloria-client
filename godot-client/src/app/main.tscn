@@ -2548,6 +2548,37 @@ offset_right = 520.0
 offset_bottom = 126.0
 text = "LMB move  •  RMB drag rotate  •  MMB drag pan  •  Wheel zoom  •  Tab map"
 
+[node name="CarriedItem" type="TextureRect" parent="GameView" unique_id=311420778]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 44.0
+offset_bottom = 44.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Quantity" type="Label" parent="GameView/CarriedItem" unique_id=311420779]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -34.0
+offset_top = -17.0
+offset_right = -3.0
+offset_bottom = -2.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.02, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 2
+vertical_alignment = 2
+
 [node name="CreationPanel" type="PanelContainer" parent="." unique_id=1808525772]
 unique_name_in_owner = true
 layout_mode = 1

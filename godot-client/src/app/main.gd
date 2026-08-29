@@ -166,6 +166,7 @@ var map_light_root: Node3D
 @onready var storage_withdraw_button: Button = %StorageWithdraw
 @onready var storage_inspect_button: Button = %StorageInspect
 @onready var ground_bag_panel: Control = %GroundBagPanel
+@onready var carried_item: TextureRect = %CarriedItem
 @onready var ground_bag_header: Control = %GroundBagHeader
 @onready var ground_bag_grid: GridContainer = %GroundBagGrid
 @onready var ground_bag_quantity: SpinBox = %GroundBagQuantity
@@ -350,6 +351,11 @@ var _keyboard_goal_tile := Vector2i(-99999, -99999)
 var _keyboard_refresh_msec := 0
 var _ground_bag_get_all_requested_msec := -1
 var _ground_bag_get_all_bag_id := -1
+## The inventory slot riding on the cursor in walk mode, or -1. Eternal Lands
+## picks an item up on the first click and puts it down on the second; the
+## slot number is the whole of the state, because the item itself never leaves
+## the server's inventory until the placing click is answered.
+var _carried_slot := -1
 var ground_bag_slot_buttons: Array[Button] = []
 var ground_bag_quantity_labels: Array[Label] = []
 var _ground_bag_dragging := false
@@ -663,6 +669,7 @@ func _bind_shared_world() -> void:
 func _process(_delta: float) -> void:
 	_update_preview_viewport()
 	if game_view.visible:
+		_update_carried_item()
 		_update_map_viewports()
 		_update_local_actor_follow()
 		interior_cutaway.update(camera_rig.yaw_degrees)
@@ -2062,6 +2069,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			sigil_window.close()
 		elif settings_window != null and settings_window.is_open():
 			settings_window.close()
+		elif _carried_slot >= 0:
+			_cancel_carry()
 		elif chat_input.has_focus():
 			_hide_chat_input()
 		elif settings_panel.visible:
@@ -2497,6 +2506,9 @@ static func _texture_to_viewport_position(local_position: Vector2,
 	return _control_to_viewport_position(local_position, control_size, target_size)
 
 func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector2) -> void:
+	if _carried_slot >= 0:
+		_drop_carry()
+		return
 	var picked_actor_id: int = _pick_actor(viewport_position)
 	if picked_actor_id >= 0:
 		AppState.select_actor(picked_actor_id)
@@ -3705,6 +3717,7 @@ func _configure_window_layers() -> void:
 	for panel: Control in [full_map, stats_panel, inventory_panel, dialogue_panel,
 		trade_panel, storage_panel, ground_bag_panel, manufacturing_panel]:
 		panel.z_index = 20
+	carried_item.z_index = 40
 	item_lists_panel.z_index = 25
 	console_panel.z_index = 25
 	settings_panel.z_index = 30
@@ -4662,9 +4675,10 @@ func _sync_inventory() -> void:
 			button.icon = null
 			button.text = ""
 			inventory_quantity_labels[slot].text = ""
-			var can_place: bool = (selected_inventory_slot >= 0
+			var can_place: bool = (_carried_slot >= 0
+				or (selected_inventory_slot >= 0
 				and selected_inventory_slot < 44
-				and AppState.inventory.has(selected_inventory_slot))
+				and AppState.inventory.has(selected_inventory_slot)))
 			button.tooltip_text = ("Move selected item to slot %d" % (slot + 1)
 				if can_place else "Empty inventory slot %d" % (slot + 1))
 			button.disabled = not can_place
@@ -4698,9 +4712,10 @@ func _sync_equipment_slots() -> void:
 		else:
 			button.icon = null
 			button.text = ""
-			var can_equip_here: bool = (selected_inventory_slot >= 0
+			var can_equip_here: bool = (_carried_slot >= 0
+				or (selected_inventory_slot >= 0
 				and selected_inventory_slot < 36
-				and AppState.inventory.has(selected_inventory_slot))
+				and AppState.inventory.has(selected_inventory_slot)))
 			button.tooltip_text = ("Equip selected item in generic wear position %d" % (index + 1)
 				if can_equip_here else "Empty generic equipment position %d" % (index + 1))
 			button.disabled = not can_equip_here
@@ -4980,13 +4995,87 @@ func _inventory_description_for(slot: int) -> Dictionary:
 			return described
 	return {}
 
+## Walk mode is Eternal Lands' move action, so a click there lifts the item
+## onto the cursor instead of only selecting it. Every other mode keeps the
+## select-and-inspect behaviour.
+func _carry_enabled() -> bool:
+	return _interaction_mode == "walk"
+
+func _begin_carry(slot: int) -> void:
+	var item_value: Variant = AppState.inventory.get(slot)
+	if not item_value is Dictionary:
+		return
+	var item: Dictionary = item_value as Dictionary
+	_carried_slot = slot
+	carried_item.texture = item_atlas.icon_for(int(item.get("image_id", 0)))
+	var quantity: int = int(item.get("quantity", 0))
+	(carried_item.get_node("Quantity") as Label).text = (str(quantity)
+		if quantity > 1 else "")
+	carried_item.visible = true
+	_update_carried_item()
+
+func _cancel_carry() -> void:
+	_carried_slot = -1
+	carried_item.visible = false
+	carried_item.texture = null
+	_sync_inventory()
+
+func _update_carried_item() -> void:
+	if _carried_slot < 0:
+		return
+	# The server may empty the slot underneath us - a stack consumed, a trade
+	# settled - and a cursor still holding a phantom would place nothing.
+	if not AppState.inventory.has(_carried_slot):
+		_cancel_carry()
+		return
+	carried_item.global_position = (get_viewport().get_mouse_position()
+		- carried_item.size * 0.5)
+
+## Answers the placing click. Equipping, unequipping and reordering are all the
+## same authoritative move; only the destination slot differs, and the server
+## decides whether it is allowed.
+func _place_carry(destination: int) -> void:
+	var source: int = _carried_slot
+	if source < 0 or source == destination:
+		_cancel_carry()
+		return
+	_carried_slot = -1
+	carried_item.visible = false
+	carried_item.texture = null
+	_move_inventory_item(source, destination)
+	_sync_inventory()
+
+## Clicking the world puts the stack down. The server answers by creating a
+## bag on the tile, or by adding to the bag already standing there.
+func _drop_carry() -> void:
+	var source: int = _carried_slot
+	if source < 0:
+		return
+	var item_value: Variant = AppState.inventory.get(source)
+	_carried_slot = -1
+	carried_item.visible = false
+	carried_item.texture = null
+	if not item_value is Dictionary:
+		_sync_inventory()
+		return
+	var quantity: int = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
+	var error: Error = Network.drop_inventory_item(source, quantity)
+	if error != OK:
+		push_warning("DROP_ITEM failed: " + error_string(error))
+	_sync_inventory()
+
 func _on_inventory_slot_pressed(slot: int) -> void:
+	if _carried_slot >= 0:
+		_place_carry(slot)
+		return
 	if not AppState.inventory.has(slot):
 		if (selected_inventory_slot >= 0 and selected_inventory_slot < 44
 				and AppState.inventory.has(selected_inventory_slot)):
 			_move_inventory_item(selected_inventory_slot, slot)
 		return
 	selected_inventory_slot = slot
+	if _carry_enabled():
+		_begin_carry(slot)
 	var item: Dictionary = AppState.inventory.get(slot, {}) as Dictionary
 	inventory_use_button.disabled = not bool(item.get("inventory_usable", false))
 	_sync_equipment_slots()
@@ -4997,12 +5086,17 @@ func _on_inventory_slot_pressed(slot: int) -> void:
 	_sync_inventory()
 
 func _on_equipment_slot_pressed(slot: int) -> void:
+	if _carried_slot >= 0:
+		_place_carry(slot)
+		return
 	if not AppState.inventory.has(slot):
 		if (selected_inventory_slot >= 0 and selected_inventory_slot < 36
 				and AppState.inventory.has(selected_inventory_slot)):
 			_move_inventory_item(selected_inventory_slot, slot)
 		return
 	selected_inventory_slot = slot
+	if _carry_enabled():
+		_begin_carry(slot)
 	inventory_use_button.disabled = true
 	_sync_equipment_slots()
 	var error: Error = Network.look_at_inventory_item(slot)
