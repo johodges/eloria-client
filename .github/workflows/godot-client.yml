@@ -56,6 +56,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_connection_lifecycle.gd
       - name: HUD persistence fixtures
         run: godot --headless --path godot-client --script res://tests/test_hud_persistence.gd
+      - name: Eloria extension window fixtures
+        run: godot --headless --path godot-client --script res://tests/test_extension_windows.gd
       - name: Runtime cost fixtures
         run: godot --headless --path godot-client --script res://tests/test_runtime_performance.gd
       - name: Main scene smoke test

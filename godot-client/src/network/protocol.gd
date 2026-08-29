@@ -141,6 +141,14 @@ static func turn(left: bool) -> PackedByteArray:
 ## packet, never before.
 const CLIENT_CAPABILITIES: Array[String] = [
 	"actor16_v1",
+	"combat_hud_v1",
+	"item_detail_v1",
+	"mail_window_v1",
+	"market_window_v1",
+	"merchant_window_v1",
+	"navigation_hud_v1",
+	"quest_journal_v1",
+	"special_events_v1",
 ]
 
 ## `#clientcaps` is an ordinary chat command; the server parses it out of

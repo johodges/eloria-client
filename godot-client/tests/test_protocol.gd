@@ -15,7 +15,10 @@ func _init() -> void:
 	# advertised list is pinned to what is actually implemented.
 	_expect_bytes("client capabilities fixture",
 		EloriaProtocol.client_capabilities(),
-		EloriaProtocol.chat("#clientcaps actor16_v1"))
+		EloriaProtocol.chat("#clientcaps "
+			+ ",".join(PackedStringArray(EloriaProtocol.CLIENT_CAPABILITIES))))
+	_expect(EloriaProtocol.CLIENT_CAPABILITIES.has("actor16_v1"),
+		"the 16-bit actor capability stays advertised")
 	_expect(EloriaProtocol.CLIENT_CAPABILITIES.size() > 0
 		and not EloriaProtocol.CLIENT_CAPABILITIES.has(""),
 		"the advertised capability list is non-empty and has no blank entries")
@@ -25,16 +28,42 @@ func _init() -> void:
 			"capability %s survives the server's comma split" % capability)
 	# Nothing may be advertised whose packet this client does not decode.
 	var decoded_extensions: Dictionary = {
-		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED}
+		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED,
+		"combat_hud_v1": EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE,
+		"item_detail_v1": EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL,
+		"mail_window_v1": EloriaProtocol.ServerMessage.ELORIA_MAIL_STATE,
+		"market_window_v1": EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE,
+		"merchant_window_v1": EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE,
+		"navigation_hud_v1": EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE,
+		"quest_journal_v1": EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE,
+		"special_events_v1": EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE}
+	var capability_probes: Dictionary = {
+		EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE:
+			"016600120014001e002c00050052656564686f726e205374616700",
+		EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL:
+			"a0000200000000410042004300440045004600470"
+			+ "0",
+		EloriaProtocol.ServerMessage.ELORIA_MAIL_STATE: "0000",
+		EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE:
+			"00fa0000000300000000 00".replace(" ", ""),
+		EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE:
+			"5b00fa000000140000005000000000005300",
+		EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE:
+			"000000000000000000",
+		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
+		EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE: "00"}
 	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
 		_expect(decoded_extensions.has(capability),
 			"advertised capability %s is one this suite knows the client decodes"
 				% capability)
 		if decoded_extensions.has(capability):
-			var probe: Dictionary = EloriaProtocol.decode_server(
-				int(decoded_extensions[capability]), _actor_bytes_extended())
-			_expect(probe.type != "unknown",
-				"the packet behind %s actually decodes" % capability)
+			var command: int = int(decoded_extensions[capability])
+			var body: PackedByteArray = (_hex(str(capability_probes[command]))
+				if capability_probes.has(command) else _actor_bytes_extended())
+			var probe: Dictionary = EloriaProtocol.decode_server(command, body)
+			_expect(probe.type != "unknown" and probe.type != "invalid",
+				"the packet behind %s actually decodes (%s)" % [capability,
+					str(probe.get("error", probe.type))])
 	_expect_bytes("turn left fixture", EloriaProtocol.turn(true),
 		PackedByteArray([11, 1, 0]))
 	_expect_bytes("turn right fixture", EloriaProtocol.turn(false),

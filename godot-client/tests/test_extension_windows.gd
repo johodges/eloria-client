@@ -1,0 +1,226 @@
+extends SceneTree
+## Guards the nine Eloria extension windows.
+##
+## Each is driven by one server-push state packet and renders that snapshot and
+## nothing else. Every payload below is the exact output of the server's own
+## builder in eloria/protocol.py, so a window can only pass here if it is
+## reading what the real server sends.
+
+var failures := 0
+
+func _init() -> void:
+	call_deferred("_run")
+
+func _run() -> void:
+	root.size = Vector2i(1280, 720)
+	var main: Control = (load("res://src/app/main.tscn") as PackedScene).instantiate() as Control
+	root.add_child(main)
+	await process_frame
+	var game_view: Control = main.get_node("GameView") as Control
+	game_view.show()
+	(main.get_node("LoginPanel") as Control).hide()
+	var app_state: Node = root.get_node("/root/AppState")
+	app_state.set("authenticated", true)
+	var windows: Control = main.get("extension_windows") as Control
+	var resource_rail: Control = main.get_node("GameView/ResourceHud") as Control
+	if not _expect(windows != null, "the extension windows are built"):
+		quit(failures)
+		return
+	await process_frame
+
+	# Nothing is on screen until the server sends something.
+	_expect(not windows.has_open_window(),
+		"no extension window opens itself")
+	_expect(not windows.navigation_label.visible
+		and not windows.combat_panel.visible and not windows.events_panel.visible,
+		"the always-on readouts stay hidden until the server reports state")
+
+	# 230 navigation HUD.
+	app_state.call("_on_packet", 230, _hex(
+		"010203e1010c00666f75725f676174657300526565642062616e6b00"))
+	await process_frame
+	_expect(windows.navigation_label.visible
+		and windows.navigation_label.text.contains("Reed bank")
+		and windows.navigation_label.text.contains("770")
+		and windows.navigation_label.text.contains("12"),
+		"the navigation HUD names the waypoint, its tile and the distance: "
+			+ windows.navigation_label.text)
+	app_state.call("_on_packet", 230, _hex("000000000000000000"))
+	await process_frame
+	_expect(not windows.navigation_label.visible,
+		"clearing the waypoint hides the navigation HUD rather than freezing it")
+
+	# 227 combat HUD, including the defeat that ends the engagement.
+	app_state.call("_on_packet", 227, _hex(
+		"016600120014001e002c00050052656564686f726e205374616700"))
+	await process_frame
+	_expect(windows.combat_panel.visible
+		and windows.combat_target.text == "Reedhorn Stag"
+		and is_equal_approx(windows.combat_player_bar.value, 18.0)
+		and is_equal_approx(windows.combat_player_bar.max_value, 20.0)
+		and is_equal_approx(windows.combat_target_bar.value, 30.0)
+		and is_equal_approx(windows.combat_target_bar.max_value, 44.0)
+		and windows.combat_event.text.contains("5"),
+		"the combat HUD shows both health bars and the outcome")
+	app_state.call("_on_packet", 227, _hex(
+		"046600120014000000 2c00000052656564686f726e205374616700".replace(" ", "")))
+	await process_frame
+	_expect(not windows.combat_panel.visible,
+		"a defeat ends the engagement instead of leaving the last frame up")
+
+	# 232 special events.
+	app_state.call("_on_packet", 232, _hex(
+		"4861727665737420666573746976616c0050686173652032206f66203300"))
+	await process_frame
+	_expect(windows.events_panel.visible
+		and windows.events_text.text.contains("Harvest festival")
+		and windows.events_text.text.contains("Phase 2 of 3"),
+		"the special-event panel shows every line the server sent")
+	app_state.call("_on_packet", 232, PackedByteArray([0]))
+	await process_frame
+	_expect(not windows.events_panel.visible,
+		"an empty payload clears the panel rather than leaving stale text")
+
+	# 224 quest journal.
+	app_state.call("_on_packet", 224, _hex(
+		"01000001000000030000004b696c6c205468656d20416c6c0044656665617420332"
+		+ "07261747300466f757220476174657300"))
+	await process_frame
+	windows.toggle_quest_journal()
+	await process_frame
+	_expect(windows.quest_panel.visible and windows.quest_list.item_count == 1
+		and windows.quest_list.get_item_text(0).contains("Kill Them All")
+		and windows.quest_list.get_item_text(0).contains("1/3"),
+		"the quest journal lists the entry with its progress")
+	_expect(windows.quest_detail.text.contains("Defeat 3 rats")
+		and windows.quest_detail.text.contains("Four Gates"),
+		"selecting a quest shows its objective and location")
+
+	# 229 mail.
+	app_state.call("_on_packet", 229, _hex(
+		"01000300000000f1536500416c6963650048656c6c6f004d656574206d6520617420"
+		+ "74686520676174652e00"))
+	await process_frame
+	windows.toggle_mail()
+	await process_frame
+	_expect(windows.mail_panel.visible and not windows.quest_panel.visible,
+		"opening one window closes the other: they are mutually exclusive")
+	_expect(windows.mail_list.item_count == 1
+		and windows.mail_list.get_item_text(0).begins_with("*")
+		and windows.mail_body.text.contains("Meet me at the gate."),
+		"the inbox marks unread mail and shows the selected body")
+
+	# 225 item detail, which the server opens rather than the player.
+	app_state.call("_on_packet", 225, _hex(
+		"a000020000000053756e6c656166005265736f75726365730000412070616c65206c"
+		+ "6561662e00454d55203100477561726420436170650041726d6f757220322"
+		+ "02d3e203000"))
+	await process_frame
+	_expect(windows.detail_panel.visible
+		and windows.detail_text.text.contains("Sunleaf")
+		and windows.detail_text.text.contains("A pale leaf.")
+		and windows.detail_text.text.contains("Guard Cape")
+		and windows.detail_text.text.contains("Armour 2 -> 0"),
+		"item detail shows the description and the equipped-item comparison")
+
+	# 223 merchant.
+	app_state.call("_on_packet", 223, _hex(
+		"5b00fa0000001400000050000000010053616c696e61000000280000000c00000005"
+		+ "000000140053756e6c65616600"))
+	await process_frame
+	_expect(windows.merchant_panel.visible
+		and windows.merchant_header.text.contains("Salina")
+		and windows.merchant_header.text.contains("250")
+		and windows.merchant_list.item_count == 1
+		and windows.merchant_list.get_item_text(0).contains("40"),
+		"the merchant window shows the NPC, the purse and the buy price")
+	windows._on_merchant_mode("sell")
+	await process_frame
+	_expect(windows.merchant_list.get_item_text(0).contains("12"),
+		"switching to sell shows the sell price instead")
+	windows._on_merchant_mode("buy")
+
+	# 222 marketplace.
+	app_state.call("_on_packet", 222, _hex(
+		"00fa000000030000000100070000000c0000002300000058020000140053756e6c65"
+		+ "616600416c69636500"))
+	await process_frame
+	_expect(windows.market_panel.visible
+		and windows.market_header.text.contains("250")
+		and windows.market_header.text.contains("3")
+		and windows.market_list.item_count == 1
+		and windows.market_list.get_item_text(0).contains("Sunleaf")
+		and windows.market_list.get_item_text(0).contains("Alice"),
+		"the exchange shows gold, escrow and the listing")
+	_expect(int(windows.market_list.get_item_metadata(0)) == 7,
+		"a listing row carries the server's listing id, not its row index")
+
+	# Bounds and the fixed resource rail, for every window at once.
+	for panel: PanelContainer in [windows.combat_panel, windows.events_panel,
+			windows.quest_panel, windows.mail_panel, windows.detail_panel,
+			windows.merchant_panel, windows.market_panel]:
+		var was_visible: bool = panel.visible
+		panel.show()
+		await process_frame
+		var rect: Rect2 = panel.get_global_rect()
+		_expect(rect.position.x >= 0.0 and rect.position.y >= 0.0
+			and rect.end.x <= 1280.0 and rect.end.y <= 720.0,
+			"%s fits within 1280x720 (%s)" % [panel.name, rect])
+		_expect(not rect.intersects(resource_rail.get_global_rect()),
+			"%s does not cover the fixed resource rail" % panel.name)
+		panel.visible = was_visible
+	var navigation_rect: Rect2 = windows.navigation_label.get_global_rect()
+	_expect(navigation_rect.end.x <= 1280.0
+		and not navigation_rect.intersects(resource_rail.get_global_rect()),
+		"the navigation readout stays clear of the resource rail")
+
+	# The cancel cascade: server-opened windows first, then the player's own.
+	windows.close_all()
+	app_state.call("_on_packet", 224, _hex("0000"))
+	windows.toggle_quest_journal()
+	app_state.call("_on_packet", 225, _hex("00000000000000410042004300440045004600470"
+		+ "0"))
+	await process_frame
+	_expect(windows.detail_panel.visible and windows.quest_panel.visible,
+		"a server-opened window does not close one the player opened")
+	var escape: InputEventKey = InputMap.action_get_events(
+		"cancel")[0].duplicate() as InputEventKey
+	escape.pressed = true
+	main.call("_unhandled_input", escape)
+	await process_frame
+	_expect(not windows.detail_panel.visible and windows.quest_panel.visible,
+		"cancel closes the server-opened window first")
+	main.call("_unhandled_input", escape)
+	await process_frame
+	_expect(not windows.quest_panel.visible,
+		"a second cancel closes the window the player opened")
+
+	# Disconnecting clears every window rather than leaving another session's
+	# state on screen.
+	app_state.call("_on_packet", 223, _hex(
+		"5b00fa0000001400000050000000010053616c696e61000000280000000c00000005"
+		+ "000000140053756e6c65616600"))
+	await process_frame
+	_expect(windows.merchant_panel.visible, "the merchant window is open")
+	app_state.call("_on_connection_state_changed", "disconnected")
+	await process_frame
+	_expect(not windows.has_open_window() and not windows.navigation_label.visible
+		and not windows.combat_panel.visible and not windows.events_panel.visible,
+		"a disconnect clears every extension window")
+
+	print("extension window tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
+	main.queue_free()
+	await process_frame
+	quit(failures)
+
+func _hex(value: String) -> PackedByteArray:
+	var bytes := PackedByteArray()
+	for index: int in range(0, value.length(), 2):
+		bytes.append(value.substr(index, 2).hex_to_int())
+	return bytes
+
+func _expect(value: bool, label: String) -> bool:
+	if not value:
+		failures += 1
+		push_error("FAIL: " + label)
+	return value

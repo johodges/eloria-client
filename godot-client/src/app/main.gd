@@ -31,8 +31,10 @@ extends Control
 # stale in a working copy until the editor next scans the project.
 const InteriorCutawayScript := preload("res://src/world/interior_cutaway.gd")
 const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
+const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 var invasion_assistant_window
+var extension_windows: Control
 @onready var gameplay_camera: Camera3D = %Camera
 @onready var world_loader: WorldLoader = %WorldLoader
 @onready var fallback_ground: MeshInstance3D = $GameView/ViewportContainer/Viewport/WorldRoot/Ground
@@ -373,6 +375,12 @@ func _ready() -> void:
 	animation_config = _json("res://data/animations/luminous.json")
 	animation_configs["res://data/animations/luminous.json"] = animation_config
 	map_registry = _json("res://data/maps/registry.json").get("maps", {})
+	# The nine Eloria extension windows live in their own script: main.gd is
+	# already long enough that nine more windows would make it unreadable, and
+	# they share one seam - the fork's extension protocol.
+	extension_windows = ExtensionWindowsScript.new()
+	game_view.add_child(extension_windows)
+	extension_windows.configure(item_atlas)
 	invasion_assistant_window = InvasionAssistantScript.new()
 	add_child(invasion_assistant_window)
 	invasion_assistant_window.configure_registry(map_registry)
@@ -1883,6 +1891,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if popup_panel.visible:
 			# The popup is modal: it takes the cancel before anything under it.
 			_on_popup_dismiss_pressed()
+		elif extension_windows != null and extension_windows.close_top():
+			pass
 		elif chat_input.has_focus():
 			_hide_chat_input()
 		elif settings_panel.visible:
