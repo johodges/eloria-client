@@ -1911,6 +1911,44 @@ func _run() -> void:
 	_expect((app_state_inventory.get("map_objects") as Dictionary).is_empty()
 		and not bool((app_state_inventory.get("harvest") as Dictionary).get("active", true)),
 		"a map change clears the world objects and the harvesting state")
+	# GLTFDocument builds runtime textures with no mip chain, which is what made
+	# distant roofs and ground swim as the camera moved.
+	var loaded_world: Node3D = (main.get_node(
+		"GameView/ViewportContainer/Viewport/WorldRoot/WorldLoader")
+		as Node).get("world_root") as Node3D
+	var mipped_textures := 0
+	var flat_textures := 0
+	var anisotropic := 0
+	var plain_filter := 0
+	if loaded_world != null:
+		for node_value: Node in loaded_world.find_children(
+				"*", "MeshInstance3D", true, false):
+			var world_mesh: Mesh = (node_value as MeshInstance3D).mesh
+			if world_mesh == null:
+				continue
+			for surface: int in range(world_mesh.get_surface_count()):
+				var surface_material: BaseMaterial3D = world_mesh.surface_get_material(
+					surface) as BaseMaterial3D
+				if surface_material == null:
+					continue
+				if surface_material.texture_filter == 						BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC:
+					anisotropic += 1
+				else:
+					plain_filter += 1
+				var albedo: Texture2D = surface_material.albedo_texture
+				if albedo == null:
+					continue
+				var albedo_image: Image = albedo.get_image()
+				if albedo_image == null:
+					continue
+				if albedo_image.has_mipmaps():
+					mipped_textures += 1
+				else:
+					flat_textures += 1
+	_expect(anisotropic > 0 and plain_filter == 0,
+		"every imported world material samples its textures anisotropically")
+	_expect(mipped_textures > 0 and flat_textures == 0,
+		"every imported world texture carries a mip chain")
 	app_state_inventory.set("authenticated", false)
 
 	# Books. Reading is the other half of the knowledge loop: the catalog, the
