@@ -129,6 +129,76 @@ GROUND_JOINTS = ("ball_leaf_l", "ball_leaf_r")
 LEG_GROUPS = ("thigh", "calf", "foot", "ball")
 
 
+# ---------------------------------------------------------------------------
+# Cape bones
+#
+# A cape skinned to the spine cannot avoid a leg: measured against the shared
+# clips the body passes 254 mm behind the cape in a walk and 858 mm in a run.
+# Weighting the hem to the thighs does not fix it either -- one cape spanning
+# both legs follows their average, which is precisely where neither leg is, so
+# it helps some poses and hurts others.
+#
+# The cape therefore needs bones of its own that a solver can move.  They hang
+# off spine_03 and are carried by every race, so a cape stays an ordinary
+# skinned garment and keeps the per-race rebind and girth fit; the runtime
+# simulates them when a cape is worn and leaves them at rest otherwise.
+#
+# Three chains rather than one: a single column cannot twist, and the left and
+# right halves of a cape have to part around a leg independently.  The shared
+# animation library names no cape bone, so no clip touches them -- which is
+# what makes them safe to add and available to own.
+CAPE_CHAINS = ("l", "c", "r")
+CAPE_LINKS = 4
+# Where each chain leaves spine_03, in that joint's own bind frame.
+CAPE_ROOTS = {"l": (-.150, .150, -.105), "c": (0., .162, -.098),
+              "r": (.150, .150, -.105)}
+# Every link below the first drops by this much and drifts a little further
+# back, so the rest pose matches the hang of the authored cape.
+CAPE_LINK_DROP = (0., -.293, -.012)
+
+
+def cape_bone_names() -> list[str]:
+    return [f"cape_{chain}_{index + 1:02d}"
+            for chain in CAPE_CHAINS for index in range(CAPE_LINKS)]
+
+
+def append_cape_bones(nodes: list[dict], joint_nodes: list[int],
+                      source_bind: np.ndarray, parents: dict[int, int | None],
+                      names: list[str]):
+    """Hang the cape chains off spine_03, extending the rig in place.
+
+    Returns the extended (joint_nodes, source_bind, parents, names).  The new
+    joints carry spine_03's rotation basis and differ only in translation, so
+    the retarget treats them exactly as it treats every other bone.
+    """
+    if "spine_03" not in names:
+        return joint_nodes, source_bind, parents, names
+    anchor = names.index("spine_03")
+    basis = source_bind[anchor][:3, :3]
+    binds = [source_bind[slot] for slot in range(len(source_bind))]
+    joint_nodes = list(joint_nodes)
+    names = list(names)
+    parents = dict(parents)
+    for chain in CAPE_CHAINS:
+        parent_slot = anchor
+        offset = np.asarray(CAPE_ROOTS[chain], dtype=float)
+        for index in range(CAPE_LINKS):
+            matrix = np.eye(4, dtype=np.float64)
+            matrix[:3, :3] = basis
+            matrix[:3, 3] = binds[parent_slot][:3, 3] + basis @ offset
+            node = {"name": f"cape_{chain}_{index + 1:02d}"}
+            nodes.append(node)
+            nodes[joint_nodes[parent_slot]].setdefault("children", []).append(
+                len(nodes) - 1)
+            joint_nodes.append(len(nodes) - 1)
+            binds.append(matrix)
+            parents[len(binds) - 1] = parent_slot
+            names.append(node["name"])
+            parent_slot = len(binds) - 1
+            offset = np.asarray(CAPE_LINK_DROP, dtype=float)
+    return joint_nodes, np.stack(binds), parents, names
+
+
 def joint_group(name: str) -> str:
     """Coarse anatomical group for a rig joint, used to key the race specs."""
     if name == "root":
@@ -137,6 +207,8 @@ def joint_group(name: str) -> str:
         return "pelvis"
     if name == "Head":
         return "head"
+    if name.startswith("cape_"):
+        return "cape"
     for prefix in ("spine", "neck", "clavicle", "upperarm", "lowerarm",
                    "hand", "thigh", "calf", "foot", "ball"):
         if name.startswith(prefix):
@@ -1957,13 +2029,19 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     base_body = BASE_BODIES.get(config.get("base", "heroic"), {})
     source_bind = np.stack([global_node_matrix(document, node) for node in skin["joints"]])
     parents = joint_parents(document, skin)
+    # The cape chains join the rig here, before anything measures, solves or
+    # retargets it, so they are ordinary joints to every step that follows.
+    joint_nodes, source_bind, parents, joint_names = append_cape_bones(
+        glb.doc["nodes"], list(skin["joints"]), source_bind, parents, joint_names)
+    joint_by_name = {name: slot for slot, name in enumerate(joint_names)}
     leg_scale = solve_leg_scale(source_bind, parents, joint_names, anatomy)
     target_bind = retarget_bind(source_bind, parents, joint_names, anatomy, leg_scale)
     transforms = shape_matrices(source_bind, target_bind, parents, joint_names, anatomy)
-    inverse = write_rest_pose(glb.doc["nodes"], list(skin["joints"]), target_bind, parents)
+    inverse = write_rest_pose(glb.doc["nodes"], joint_nodes, target_bind, parents)
     inverse_accessor = glb.accessor(inverse, "MAT4")
-    glb.doc["skins"] = [{"name": "Armature", "joints": list(skin["joints"]),
-                         "inverseBindMatrices": inverse_accessor, "skeleton": skin["joints"][0]}]
+    glb.doc["skins"] = [{"name": "Armature", "joints": joint_nodes,
+                         "inverseBindMatrices": inverse_accessor,
+                         "skeleton": joint_nodes[0]}]
     base_uri = document["images"][document["textures"][
         document["materials"][2]["pbrMetallicRoughness"]["baseColorTexture"]["index"]]["source"]]["uri"]
     if config.get("preserve_body"):
@@ -2215,8 +2293,9 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
                       primitives, skin=0, parent=68)
     glb.write(output)
     return {"vertices": vertices, "triangles": triangles,
-            "joints": len(skin["joints"]), "feature": config["feature"],
+            "joints": len(joint_nodes), "feature": config["feature"],
             "wardrobe": "skinned", "anatomy": "retargeted",
+            "capeBones": len(cape_bone_names()),
             "baseBody": config.get("base", "heroic"),
             "stature": round(anatomy.get("stature", 1.), 4),
             "legChainScale": round(float(leg_scale), 4),

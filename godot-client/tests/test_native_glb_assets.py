@@ -135,10 +135,19 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 for required in ("root", "body", "neck", "head"):
                     self.assertIn(required, ambient_bones)
 
-    def test_player_rigs_preserve_current_skeleton_and_budget(self) -> None:
+    def test_player_rigs_share_one_skeleton_and_budget(self) -> None:
+        """The sixteen races carry one rig, and no body rides a cape bone.
+
+        This used to assert a joint count of 65.  The count was never the
+        invariant: nothing in the client indexes a joint positionally -- every
+        lookup is `find_bone` or `add_named_bind` by name -- and freezing it
+        blocked the cape chains the cloth solver drives.  What has to hold is
+        that the rigs are *one* rig, so the shared animation library and every
+        skinned garment mean the same thing on all of them.
+        """
+        skeletons: dict[str, tuple] = {}
         for model_id, entry in self.catalog["races"].items():
             with self.subTest(model=model_id):
-                self.assertEqual(65, entry["joints"])
                 self.assertEqual("skinned", entry["wardrobe"])
                 self.assertEqual("retargeted", entry["anatomy"])
                 self.assertGreaterEqual(entry["vertices"], 13_500)
@@ -148,10 +157,41 @@ class NativeGlbAssetsTest(unittest.TestCase):
                 # without anyone noticing.
                 self.assertLess(entry["vertices"], 15_750)
                 document = glb_document(ROOT / entry["path"])
-                self.assertEqual(65, len(document["skins"][0]["joints"]))
+                joints = document["skins"][0]["joints"]
+                self.assertEqual(entry["joints"], len(joints))
+                skeletons[model_id] = tuple(
+                    document["nodes"][node].get("name") for node in joints)
                 mesh_names = {mesh["name"] for mesh in document["meshes"]}
                 self.assertTrue({"Eyebrows", "Eyes", "Body", "Wardrobe_Shirt",
                                  "Wardrobe_Pants", "Wardrobe_Boots"} <= mesh_names)
+        self.assertEqual(1, len(set(skeletons.values())),
+                         "every race has to carry the same skeleton")
+        names = list(next(iter(skeletons.values())))
+        # The chains the cloth solver owns.  No clip in the shared library
+        # names one, which is what makes them safe for a solver to drive.
+        for chain in ("l", "c", "r"):
+            self.assertEqual(
+                [f"cape_{chain}_{link:02d}" for link in range(1, 5)],
+                [name for name in names if name.startswith(f"cape_{chain}_")])
+        # A cape bone may never move the body: it is driven by a solver, not
+        # by a clip, so anything skinned to it would jitter free of the rig.
+        first_cape = min(index for index, name in enumerate(names)
+                         if name.startswith("cape_"))
+        for model_id, entry in self.catalog["races"].items():
+            document, binary = glb_chunks(ROOT / entry["path"])
+            for mesh in document["meshes"]:
+                if mesh["name"].startswith("Integrated_"):
+                    continue
+                for primitive in mesh["primitives"]:
+                    spec = document["accessors"][primitive["attributes"]["JOINTS_0"]]
+                    view = document["bufferViews"][spec["bufferView"]]
+                    start = view.get("byteOffset", 0) + spec.get("byteOffset", 0)
+                    width = 2 if spec["componentType"] == 5123 else 1
+                    raw = binary[start:start + spec["count"] * 4 * width]
+                    highest = max(int.from_bytes(raw[i:i + width], "little")
+                                  for i in range(0, len(raw), width))
+                    with self.subTest(model=model_id, mesh=mesh["name"]):
+                        self.assertLess(highest, first_cape)
 
     def test_race_rigs_stand_on_the_same_ground_plane(self) -> None:
         """Retargeting must not lift or sink a race relative to the floor.
