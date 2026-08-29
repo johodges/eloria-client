@@ -120,6 +120,12 @@ func _run() -> void:
 		float((main.get("camera_rig") as Node).get("rotation_sensitivity")), 0.5),
 		"a camera slider reaches the camera")
 
+	# Put the key back and save, so the next suite starts where this one did.
+	InputMap.action_erase_events("toggle_sit")
+	for event: InputEvent in original:
+		InputMap.action_add_event("toggle_sit", event)
+	main.call("_save_hud_settings")
+
 	# Cancel closes it like every other window.
 	var cancel: InputEventKey = InputMap.action_get_events(
 		"cancel")[0].duplicate() as InputEventKey

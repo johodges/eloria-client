@@ -37,6 +37,7 @@ const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
 const AudioDirectorScript := preload("res://src/audio/audio_director.gd")
 const SigilWindowScript := preload("res://src/ui/sigil_window.gd")
 const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
+const ReferenceWindowScript := preload("res://src/ui/reference_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 var invasion_assistant_window
@@ -245,12 +246,14 @@ var audio_director: Node
 var map_ambience_root: Node3D
 var sigil_window: Control
 var settings_window: Control
+var reference_window: Control
 ## Client-side presentation switches. None of them changes what the server
 ## decides; they change what this machine draws.
 var _shadows_enabled := true
 var _effects_enabled := true
 var _nameplates_enabled := true
 var _camera_follows_player := true
+var _player_notes := ""
 ## True while the loaded package lets the hour drive its environment. An
 ## interior does not, and neither does a package that opts out.
 var console_commands := ConsoleCommands.new()
@@ -447,6 +450,9 @@ func _ready() -> void:
 	game_view.add_child(settings_window)
 	settings_window.setting_changed.connect(_on_client_setting_changed)
 	settings_window.binding_changed.connect(_on_binding_changed)
+	reference_window = ReferenceWindowScript.new()
+	game_view.add_child(reference_window)
+	reference_window.notes_changed.connect(_on_notes_changed)
 	active_buff_bar = ActiveBuffBarScript.new()
 	game_view.add_child(active_buff_bar)
 	active_buff_bar.configure(spell_catalog)
@@ -2015,6 +2021,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			sigil_window.close()
 		elif settings_window != null and settings_window.is_open():
 			settings_window.close()
+		elif reference_window != null and reference_window.is_open():
+			reference_window.close()
 		elif chat_input.has_focus():
 			_hide_chat_input()
 		elif settings_panel.visible:
@@ -3144,6 +3152,7 @@ func _load_hud_settings() -> void:
 		var lists_value: Variant = config.get_value("inventory", "item_lists", {})
 		if lists_value is Dictionary:
 			_item_lists = (lists_value as Dictionary).duplicate(true)
+		_player_notes = str(config.get_value("notes", "text", ""))
 		_shadows_enabled = bool(config.get_value("graphics", "shadows", true))
 		_effects_enabled = bool(config.get_value("graphics", "particles", true))
 		_nameplates_enabled = bool(
@@ -3175,6 +3184,8 @@ func _load_hud_settings() -> void:
 		audio_director.enabled = bool(config.get_value("audio", "enabled", true))
 		audio_director.volume_linear = clampf(float(config.get_value(
 			"audio", "volume", 0.7)), 0.0, 1.0)
+	reference_window.call("configure", console_commands,
+		settings_window.get("BINDABLE"), _player_notes)
 	sound_enabled.set_pressed_no_signal(bool(audio_director.enabled))
 	sound_volume.set_value_no_signal(float(audio_director.volume_linear))
 	sound_volume_value.text = "%d%%" % roundi(
@@ -3229,6 +3240,7 @@ func _on_sound_volume_changed(value: float) -> void:
 func _save_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	config.load(SETTINGS_PATH)
+	config.set_value("notes", "text", _player_notes)
 	config.set_value("graphics", "shadows", _shadows_enabled)
 	config.set_value("graphics", "particles", _effects_enabled)
 	config.set_value("graphics", "nameplates", _nameplates_enabled)
@@ -4440,6 +4452,18 @@ func _on_client_setting_changed(section: String, key: String,
 
 func _on_binding_changed(_action: String) -> void:
 	_save_hud_settings()
+	# The help page is generated from the bindings, so it follows a rebind.
+	reference_window.call("_refresh_help")
+
+func _on_notes_changed(text: String) -> void:
+	_player_notes = text
+	_save_hud_settings()
+
+## Help, the player's notes, the addresses the server has linked, and the
+## encyclopedia. Opened from the settings panel beside the other windows.
+func _on_reference_pressed() -> void:
+	reference_window.toggle()
+	audio_director.play("ui_click" if reference_window.is_open() else "ui_close")
 
 ## The sigils window. It is opened from the spell quickbar because that is
 ## where a player finds out they are missing one.

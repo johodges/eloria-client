@@ -65,6 +65,18 @@ var afk_reason := ""
 var current_map := ""
 var current_tile := Vector2i(-1, -1)
 
+## Every address in a line the server said. Detection only: nothing is opened,
+## nothing is fetched, and the text is left exactly as it arrived.
+static func urls_in(text: String) -> Array[String]:
+	var found: Array[String] = []
+	for word: String in text.replace("	", " ").split(" ", false):
+		var candidate: String = word.strip_edges().trim_suffix(".").trim_suffix(",")
+		var lowered: String = candidate.to_lower()
+		if (lowered.begins_with("http://") or lowered.begins_with("https://")
+				or lowered.begins_with("www.")) and candidate.length() > 8:
+			found.append(candidate)
+	return found
+
 ## Whether a chat line survives the player's own ignore and filter lists.
 func allows(speaker: String, text: String) -> bool:
 	var lowered_speaker: String = speaker.to_lower()

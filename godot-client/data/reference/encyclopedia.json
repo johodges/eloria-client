@@ -1,0 +1,41 @@
+{
+  "schema": "eloria.encyclopedia/1",
+  "note": "Original Eloria reference text. Nothing here is copied from another game; every entry describes this server's own rules, and each one names where in the client you can see the same thing happen.",
+  "entries": [
+    {
+      "id": "harvesting",
+      "title": "Harvesting",
+      "body": "Resource nodes belong to the server, not to the scenery. It tells the client which objects on the map can be gathered, what each one yields and what level it needs, so a node you can see is a node the server knows about.\n\nClick a node to start. The server reports that harvesting has begun and reports again when it stops - because you moved, because your backpack filled, or because something interrupted you. The client never decides that you have stopped."
+    },
+    {
+      "id": "magic",
+      "title": "Sigils and spells",
+      "body": "A spell is a combination of sigils. You must own every sigil a spell names before it can be cast; the Sigils window lists what you own and what each remaining spell still needs.\n\nPower scales a spell's effect and its cost. The server states the power you have chosen and the highest your Magic level and nexus allow, and refuses anything above it."
+    },
+    {
+      "id": "effects",
+      "title": "Effects on you",
+      "body": "Protective spells and some draughts leave an effect that lasts a while. The strip on the left shows each one with the time the server said it has left.\n\nWhen an effect ends the server says so. The strip does not guess."
+    },
+    {
+      "id": "ranging",
+      "title": "Ranging",
+      "body": "A bow and matching ammunition let you attack from a distance. The server refuses a shot at a target standing too close - move away and try again.\n\nEach shot is announced twice: once as an aim, once as the arrow leaving. The damage is resolved by the server and arrives separately."
+    },
+    {
+      "id": "time",
+      "title": "Day and night",
+      "body": "A full day is 360 game minutes and one game minute is one real minute, so the world turns through dawn, noon, dusk and night over six hours.\n\nThe light you see follows the same curve the server uses to decide how far creatures can be seen, so a dark night is dark for both of you."
+    },
+    {
+      "id": "trade",
+      "title": "Trading and the exchange",
+      "body": "A direct trade is between two players, and both must accept before anything moves. The server owns every step; the window shows what it has confirmed.\n\nThe Nymara Exchange takes listings and holds both goods and proceeds in escrow until they are collected."
+    },
+    {
+      "id": "markers",
+      "title": "Marks and waypoints",
+      "body": "A waypoint is the server's: it appears on your map and reports the distance as you move.\n\nA mark is your own. It never leaves this client, and it is drawn in a different colour so you can tell your own note from something the world told you."
+    }
+  ]
+}

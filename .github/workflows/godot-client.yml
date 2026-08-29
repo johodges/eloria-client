@@ -59,6 +59,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_connection_lifecycle.gd
       - name: HUD persistence fixtures
         run: godot --headless --path godot-client --script res://tests/test_hud_persistence.gd
+      - name: Reference window fixtures
+        run: godot --headless --path godot-client --script res://tests/test_reference_window.gd
       - name: Localization and screenshot fixtures
         run: godot --headless --path godot-client --script res://tests/test_localization.gd
       - name: Settings window and key binding fixtures
