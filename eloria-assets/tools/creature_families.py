@@ -2876,9 +2876,20 @@ def amorphous_skeleton(plan_key: str, scale: float, variant: str | None = None):
         length = reach * (1.0 if active else .12)
         spread = p["spread"]
         if form in ("jelly", "kraken"):
+            # Eight identical legs at eight even angles is a table, which is
+            # what these were.  The art coils them: different lengths, some
+            # lifted and curling back, none of them straight.  Deterministic
+            # per index so the build stays reproducible.
+            wobble = ((i * 2654435761) % 1000) / 1000.0
+            reach = length * (.72 + .62 * wobble)
+            lift = 1.0 if (i % 3 == 0) else -1.0
             start = body + radial * p["core"] * s * (.72 if form == "jelly" else .86)
-            mid = start + radial * length * .24 * spread + np.array((0., -length * .46, 0.))
-            tip = start + radial * length * .40 * spread + np.array((0., -length * .90, 0.))
+            mid = (start + radial * reach * (.30 + .22 * wobble) * spread
+                   + swirl * reach * .26 * lift
+                   + np.array((0., -reach * (.44 - .30 * max(lift, 0.)), 0.)))
+            tip = (start + radial * reach * (.52 + .30 * wobble) * spread
+                   + swirl * reach * .58 * lift
+                   + np.array((0., -reach * (.92 - .96 * max(lift, 0.)), 0.)))
         elif form == "spectre":
             # Flame licks upward; spirit-hair drapes outward and falls.  The
             # same chain does both, switched by the plan's drape weight.
@@ -3112,13 +3123,43 @@ def amorphous_geometry(plan_key: str, scale: float, bones,
                        (core * .13, core * .13), (core * .09, core * .09)],
                       [chest_i, B[f"wing_{side}"]], MAT_BODY, sides=8, cap_start=False)
     elif form == "ooze":
-        # A settled translucent mound with things suspended inside it.
+        # A settled translucent mound with things suspended inside it.  Swept
+        # as a single tapering tube it came out a smooth cone -- a tent, with
+        # nothing about it reading as liquid.  A slime sags: it domes over,
+        # spreads where it meets the floor, and hangs runnels off the rim.
+        rng = np.random.default_rng(zlib_crc((variant or plan_key) + ":ooze"))
+        # Taller than wide, with the mass carried high: the art's slime bulges
+        # over and narrows to the floor, rather than spreading like a puddle.
         mound = [np.array((0., core * .04, 0.)),
-                 g[body_i] + np.array((0., -core * .40, 0.)),
-                 g[body_i] + np.array((0., core * .60, 0.))]
-        mesh.tube(mound, [(core * 2.5, core * 2.3), (core * 2.0, core * 1.9),
-                          (core * .70, core * .70)],
+                 g[body_i] + np.array((0., core * .10, 0.)),
+                 g[body_i] + np.array((0., core * .95, 0.)),
+                 g[body_i] + np.array((0., core * 1.62, 0.))]
+        mesh.tube(mound, [(core * 2.30, core * 2.10), (core * 2.05, core * 1.95),
+                          (core * 1.90, core * 1.80), (core * .50, core * .50)],
                   [body_i, chest_i], MAT_BODY, sides=18, uv_scale=1.4)
+        mesh.ellipsoid(tuple(g[body_i] + np.array((0., core * .95, 0.))),
+                       (core * 2.05, core * 1.75, core * 2.05),
+                       [body_i, chest_i], MAT_BODY, rings=10, sides=18)
+        # The puddle it is standing in, and the drips coming off its shoulders.
+        mesh.ellipsoid((0., core * .16, 0.),
+                       (core * 3.15, core * .34, core * 3.15),
+                       [body_i], MAT_BODY, rings=6, sides=20)
+        for k in range(9):
+            angle = 2 * math.pi * k / 9 + float(rng.uniform(-.18, .18))
+            out = np.array((math.cos(angle), 0., math.sin(angle)))
+            top = g[body_i] + out * core * 1.85 + np.array((0., core * 1.05, 0.))
+            fall = core * float(rng.uniform(.80, 1.70))
+            mesh.tube([top,
+                       top + out * core * .16 - np.array((0., fall * .55, 0.)),
+                       top + out * core * .20 - np.array((0., fall, 0.))],
+                      [(core * .22, core * .22), (core * .15, core * .15),
+                       (core * .07, core * .07)],
+                      [body_i, chest_i], MAT_BODY, sides=6)
+            # A bead about to drop, which is most of what makes a surface wet.
+            mesh.ellipsoid(tuple(top + out * core * .26
+                                 - np.array((0., fall * 1.14, 0.))),
+                           (core * .155,) * 3, [body_i], MAT_BODY,
+                           rings=5, sides=7)
         # Salvage suspended inside the slime: a lantern, a mill wheel, a plank.
         lantern = g[body_i] + np.array((-core * .70, core * .52, -core * .20))
         mesh.tube([lantern + np.array((0., core * .40, 0.)),
@@ -3197,6 +3238,13 @@ def amorphous_geometry(plan_key: str, scale: float, bones,
                          turns=1.35 if form == "spectre" else .95,
                          curl=.20 if form == "spectre" else .15,
                          flatten=.22, taper=.04,
+                         phase=2 * math.pi * index / max(p["count"], 1))
+        elif form in ("kraken", "jelly"):
+            tip_pt = g[c] + (g[c] - g[b]) * .45
+            swirl_ribbon(mesh, [g[a], g[b], g[c], tip_pt], radius * 1.45,
+                         [body_i, a, b, c], strand_material,
+                         seed=f"{variant or plan_key}:arm:{index}",
+                         turns=.55, curl=.10, flatten=.86, taper=.10, sides=8,
                          phase=2 * math.pi * index / max(p["count"], 1))
         else:
             strand(a, b, c, radius, strand_material,
