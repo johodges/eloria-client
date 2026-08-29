@@ -26,7 +26,7 @@ const BINDABLE := {
 	"Movement": ["move_north", "move_south", "move_west", "move_east",
 		"turn_left", "turn_right", "recenter_viewport"],
 	"Windows": ["toggle_inventory", "toggle_map", "toggle_minimap",
-		"toggle_console", "chat_focus"],
+		"toggle_console", "toggle_encyclopedia", "chat_focus"],
 	"Actions": ["attack_selected", "toggle_sit", "cancel", "connect",
 		"disconnect"],
 	"Items": ["quick_item_1", "quick_item_2", "quick_item_3", "quick_item_4",

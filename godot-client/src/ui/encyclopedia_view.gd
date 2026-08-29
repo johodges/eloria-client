@@ -1,0 +1,818 @@
+class_name EncyclopediaView
+extends VBoxContainer
+## The Eloria encyclopedia, laid out the way Eternal Lands lays its own out:
+## an index of categories, a page of links per category, and a page per entry
+## with a Back To Index link at the foot of it.
+##
+## Half of it is written and half of it is built. The written half is original
+## Eloria reference text in `data/reference/encyclopedia.json`. The built half
+## comes from the catalogues the client already loads to play the game - the
+## recipe table, the spell catalogue, the book list, the region list and the
+## skill table - so a recipe that changes in the data changes on its page too,
+## and a page can never claim a recipe the client does not have.
+##
+## It is the Encyclopedia tab of the reference window, and it is also what the
+## HUD's encyclopedia icon and Ctrl+E open.
+
+## Two columns of twenty, which is what fits the panel before it scrolls.
+const ENTRIES_PER_PAGE := 40
+const LINK_COLOUR := "#7fb4ff"
+const HEADING_COLOUR := "#e8b552"
+const NOTE_COLOUR := "#9fb3c8"
+const FACT_COLOUR := "#8fd0c8"
+
+## A page the player can be looking at. Bookmarks are these, written down.
+const PAGE_INDEX := "index"
+## How far Back can walk. Long enough for any real trail through the pages,
+## short enough that a session cannot grow it without bound.
+const HISTORY_LIMIT := 64
+
+signal bookmarks_changed(bookmarks: Array)
+
+var navigation: HBoxContainer
+var back_button: Button
+var page_label: Label
+var previous_button: Button
+var next_button: Button
+var index_button: Button
+var search_row: HBoxContainer
+var search_edit: LineEdit
+var entry_body: RichTextLabel
+var status_line: Label
+var menu: PopupMenu
+
+var _document: Dictionary = {}
+var _categories: Array[Dictionary] = []
+var _by_id: Dictionary = {}
+var _flat: Array[Dictionary] = []
+var _catalogues: Dictionary = {}
+var _bookmarks: Array[Dictionary] = []
+var _books_category := ""
+## Item image id to the name the recipe table gives it. A spell states its
+## reagents by image id alone, and this is the only place in the client that
+## names one, so a reagent can be read rather than looked up.
+var _item_names: Dictionary = {}
+var _page: Dictionary = {"kind": PAGE_INDEX}
+var _history: Array[Dictionary] = []
+
+const SOURCE := "res://data/reference/encyclopedia.json"
+
+func _ready() -> void:
+	name = "Encyclopedia"
+	_build()
+	_load_document()
+	_rebuild_content()
+	reset_to_index()
+
+## The catalogues the generated half is built from. They are configured after
+## this window exists, so the content is built twice: once from the written
+## half alone, and again the moment the client has read its data files.
+func configure_catalogues(catalogues: Dictionary) -> void:
+	_catalogues = catalogues
+	_rebuild_content()
+	reset_to_index()
+
+func category_count() -> int:
+	return _categories.size()
+
+func category_titles() -> Array[String]:
+	var titles: Array[String] = []
+	for category: Dictionary in _categories:
+		titles.append(str(category.get("title", "")))
+	return titles
+
+func category_ids() -> Array[String]:
+	var ids: Array[String] = []
+	for category: Dictionary in _categories:
+		ids.append(str(category.get("id", "")))
+	return ids
+
+func entry_count_in(category_id: String) -> int:
+	return (_category(category_id).get("entries", []) as Array).size()
+
+func entry_count() -> int:
+	return _flat.size()
+
+## Opens the nth entry across every category, in the order the index lists
+## them. The reference window's flat list used to be the whole encyclopedia,
+## and this is what is left of that view of it.
+func show_entry_at(index: int) -> void:
+	if index < 0 or index >= _flat.size():
+		return
+	var entry: Dictionary = _flat[index]
+	open_entry(str(entry.get("category", "")), str(entry.get("id", "")))
+
+func show_index() -> void:
+	_navigate({"kind": PAGE_INDEX})
+
+## Back to the front page with nothing behind it. Opening the window does this
+## rather than show_index(), so Back is not lit on a page nobody came from.
+func reset_to_index() -> void:
+	_history.clear()
+	_navigate({"kind": PAGE_INDEX}, false)
+
+func open_category(category_id: String, page := 0) -> void:
+	_navigate({"kind": "category", "id": category_id, "page": page})
+
+func open_entry(category_id: String, entry_id: String) -> void:
+	_navigate({"kind": "entry", "category": category_id, "id": entry_id})
+
+## Every entry whose title, summary or text contains the words asked for.
+func search(query: String) -> void:
+	_navigate({"kind": "search", "query": query})
+
+func matches(query: String) -> Array[Dictionary]:
+	var needle: String = query.strip_edges().to_lower()
+	var found: Array[Dictionary] = []
+	if needle.is_empty():
+		return found
+	for entry: Dictionary in _flat:
+		if str(entry.get("search", "")).contains(needle):
+			found.append(entry)
+	return found
+
+func page_key() -> String:
+	match str(_page.get("kind", PAGE_INDEX)):
+		"category":
+			return "cat:%s:%d" % [str(_page.get("id", "")), int(_page.get("page", 0))]
+		"entry":
+			return "entry:%s:%s" % [str(_page.get("category", "")),
+				str(_page.get("id", ""))]
+		"search":
+			return "search:%s" % str(_page.get("query", ""))
+	return PAGE_INDEX
+
+func page_title() -> String:
+	match str(_page.get("kind", PAGE_INDEX)):
+		"category":
+			return str(_category(str(_page.get("id", ""))).get("title", "Index"))
+		"entry":
+			return str(_entry(str(_page.get("category", "")),
+				str(_page.get("id", ""))).get("title", "Index"))
+		"search":
+			return "Search: %s" % str(_page.get("query", ""))
+	return "Index"
+
+func open_page_key(key: String) -> void:
+	if key.begins_with("cat:"):
+		var parts: PackedStringArray = key.substr(4).split(":")
+		open_category(parts[0], int(parts[1]) if parts.size() > 1 else 0)
+	elif key.begins_with("entry:"):
+		var parts: PackedStringArray = key.substr(6).split(":")
+		if parts.size() > 1:
+			open_entry(parts[0], parts[1])
+	elif key.begins_with("search:"):
+		search(key.substr(7))
+	else:
+		show_index()
+
+func bookmarks() -> Array:
+	return _bookmarks.duplicate(true)
+
+func set_bookmarks(stored: Array) -> void:
+	_bookmarks.clear()
+	for raw: Variant in stored:
+		if raw is Dictionary:
+			var bookmark: Dictionary = raw as Dictionary
+			_bookmarks.append({"key": str(bookmark.get("key", PAGE_INDEX)),
+				"label": str(bookmark.get("label", "Index"))})
+
+func go_back() -> void:
+	if _history.is_empty():
+		return
+	_page = _history.pop_back()
+	_render()
+
+func _navigate(page: Dictionary, remember := true) -> void:
+	if remember:
+		_history.append(_page.duplicate())
+		if _history.size() > HISTORY_LIMIT:
+			_history.remove_at(0)
+	_page = page
+	_render()
+
+func _category(category_id: String) -> Dictionary:
+	for category: Dictionary in _categories:
+		if str(category.get("id", "")) == category_id:
+			return category
+	return {}
+
+func _entry(category_id: String, entry_id: String) -> Dictionary:
+	var value: Variant = _by_id.get("%s/%s" % [category_id, entry_id])
+	return value as Dictionary if value is Dictionary else {}
+
+# --- content -----------------------------------------------------------------
+
+func _load_document() -> void:
+	var file: FileAccess = FileAccess.open(SOURCE, FileAccess.READ)
+	if file == null:
+		push_warning("Encyclopedia source missing: " + SOURCE)
+		return
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	if parsed is Dictionary:
+		_document = parsed as Dictionary
+
+func _rebuild_content() -> void:
+	_categories.clear()
+	_by_id.clear()
+	_flat.clear()
+	var raw_categories: Variant = _document.get("categories", [])
+	if not raw_categories is Array:
+		return
+	# Which category a skill's recipes land in, and where the books live, both
+	# have to be known before any page is built: a recipe page links to the
+	# book it needs, and a book page links back to every recipe it opens.
+	var skill_categories: Dictionary = {}
+	_books_category = ""
+	for raw_value: Variant in raw_categories as Array:
+		if not raw_value is Dictionary:
+			continue
+		var generate: String = str((raw_value as Dictionary).get("generate", ""))
+		if generate.begins_with("recipes:"):
+			skill_categories[generate.substr(8)] = str(
+				(raw_value as Dictionary).get("id", ""))
+		elif generate == "books":
+			_books_category = str((raw_value as Dictionary).get("id", ""))
+	var recipes_by_skill: Dictionary = _recipe_entries(skill_categories)
+	for raw_value: Variant in raw_categories as Array:
+		if not raw_value is Dictionary:
+			continue
+		var raw: Dictionary = raw_value as Dictionary
+		var category_id: String = str(raw.get("id", ""))
+		var entries: Array[Dictionary] = []
+		var authored: Variant = raw.get("entries", [])
+		if authored is Array:
+			for entry_value: Variant in authored as Array:
+				if entry_value is Dictionary:
+					entries.append(_written_entry(entry_value as Dictionary, category_id))
+		var generate: String = str(raw.get("generate", ""))
+		if generate.begins_with("recipes:"):
+			var generated: Variant = recipes_by_skill.get(generate.substr(8), [])
+			if generated is Array:
+				for entry_value: Variant in generated as Array:
+					entries.append(entry_value as Dictionary)
+		elif generate == "spells":
+			entries.append_array(_spell_entries(category_id))
+		elif generate == "books":
+			entries.append_array(_book_entries(category_id, skill_categories))
+		elif generate == "maps":
+			entries.append_array(_map_entries(category_id))
+		elif generate == "skills":
+			entries.append_array(_skill_entries(category_id))
+		_categories.append({"id": category_id, "title": str(raw.get("title", "")),
+			"summary": str(raw.get("summary", "")), "intro": str(raw.get("intro", "")),
+			"entries": entries})
+		for entry: Dictionary in entries:
+			_by_id["%s/%s" % [category_id, str(entry.get("id", ""))]] = entry
+			_flat.append(entry)
+
+func _written_entry(raw: Dictionary, category_id: String) -> Dictionary:
+	var body: String = str(raw.get("body", ""))
+	var facts: Array[Array] = []
+	var raw_facts: Variant = raw.get("facts", [])
+	if raw_facts is Array:
+		for fact_value: Variant in raw_facts as Array:
+			if fact_value is Array and (fact_value as Array).size() >= 2:
+				facts.append([str((fact_value as Array)[0]),
+					str((fact_value as Array)[1])])
+	return _entry_record(str(raw.get("id", "")), str(raw.get("title", "")),
+		str(raw.get("summary", "")), body, facts, {}, category_id)
+
+func _entry_record(id: String, title: String, summary: String, body: String,
+		facts: Array[Array], image: Dictionary, category_id: String) -> Dictionary:
+	return {"id": id, "title": title, "summary": summary, "body": body,
+		"facts": facts, "image": image, "category": category_id,
+		"search": ("%s %s %s" % [title, summary, body]).to_lower()}
+
+## One entry per recipe, grouped by the skill that mixes it. The fields are the
+## recipe's own: what it takes, what it wants you to have read, and what it
+## gives back.
+func _recipe_entries(skill_categories: Dictionary) -> Dictionary:
+	var by_skill: Dictionary = {}
+	_item_names.clear()
+	var catalogue: ManufacturingCatalog = _catalogues.get("manufacturing") as ManufacturingCatalog
+	if catalogue == null:
+		return by_skill
+	for index: int in range(catalogue.count()):
+		var recipe: Dictionary = catalogue.recipe(index)
+		var skill: String = str(recipe.get("skill", ""))
+		var category_id: String = str(skill_categories.get(skill, ""))
+		if category_id.is_empty():
+			continue
+		var title: String = str(recipe.get("output", ""))
+		_remember_name(int(recipe.get("outputImageId", -1)), title)
+		var readable_skill: String = skill.capitalize()
+		var facts: Array[Array] = []
+		var materials: String = _ingredient_lines(recipe.get("ingredients", []))
+		facts.append(["Required materials",
+			materials if not materials.is_empty() else "None"])
+		var tools: String = _ingredient_lines(recipe.get("tools", []))
+		if not tools.is_empty():
+			facts.append(["Tools required to have", tools])
+		var book: String = str(recipe.get("knowledge", ""))
+		if not book.is_empty():
+			facts.append(["Knowledge needed", _link("entry:%s:%s" % [
+				_books_category, _slug(book)], book)])
+		facts.append(["Recommended %s level" % readable_skill,
+			str(int(recipe.get("level", 0)))])
+		facts.append(["%s experience given" % readable_skill,
+			str(int(recipe.get("experience", 0)))])
+		facts.append(["Food subtracted", str(int(recipe.get("food", 0)))])
+		var mana: int = int(recipe.get("mana", 0))
+		if mana > 0:
+			facts.append(["Ether required", str(mana)])
+		var body: String = ("Mixed with the %s skill. The server checks every"
+			+ " line below before it lets the mix start, and refuses the mix"
+			+ " rather than half-making it.") % readable_skill
+		var image: Dictionary = _item_image(int(recipe.get("outputImageId", -1)))
+		var entry: Dictionary = _entry_record(_slug(title), title, "", body, facts,
+			image, category_id)
+		if not by_skill.has(skill):
+			by_skill[skill] = []
+		(by_skill[skill] as Array).append(entry)
+	for skill: Variant in by_skill:
+		(by_skill[skill] as Array).sort_custom(_title_before)
+	return by_skill
+
+func _spell_entries(category_id: String) -> Array[Dictionary]:
+	var entries: Array[Dictionary] = []
+	var catalogue: SpellCatalog = _catalogues.get("spells") as SpellCatalog
+	if catalogue == null:
+		return entries
+	for spell_id: int in catalogue.spell_ids():
+		var spell: Dictionary = catalogue.spell(spell_id)
+		var title: String = str(spell.get("name", ""))
+		if title.is_empty():
+			continue
+		var facts: Array[Array] = []
+		var sigil_names: Array[String] = []
+		var sigils_value: Variant = spell.get("sigils", [])
+		if sigils_value is Array:
+			for raw_sigil: Variant in sigils_value as Array:
+				var sigil_name: String = catalogue.sigil_name(int(raw_sigil))
+				sigil_names.append(sigil_name if not sigil_name.is_empty()
+					else "sigil %d" % int(raw_sigil))
+		facts.append(["Sigils", ", ".join(sigil_names) if not sigil_names.is_empty()
+			else "None"])
+		facts.append(["Ether", str(int(spell.get("mana", 0)))])
+		facts.append(["Magic level", str(int(spell.get("level", 0)))])
+		var effect: String = str(spell.get("effect", ""))
+		if not effect.is_empty():
+			facts.append(["Effect the server names", effect])
+		var reagents: String = _reagent_lines(spell.get("reagents", []))
+		facts.append(["Reagents", reagents if not reagents.is_empty() else "None"])
+		var body: String = ("%s\n\nYou must own every sigil listed before this"
+			+ " can be cast. The server checks the sigils, the level and the"
+			+ " reagents, in that order.") % str(spell.get("description", ""))
+		entries.append(_entry_record(_slug(title), title, "", body, facts,
+			catalogue.icon_source(spell_id), category_id))
+	entries.sort_custom(_title_before)
+	return entries
+
+## A book is a name and a lock. What makes its page worth reading is the list
+## of recipes the lock opens, which is read back out of the recipe table.
+func _book_entries(category_id: String, skill_categories: Dictionary) -> Array[Dictionary]:
+	var entries: Array[Dictionary] = []
+	var books_value: Variant = _catalogues.get("books", [])
+	if not books_value is Array:
+		return entries
+	var taught: Dictionary = _recipes_by_book(skill_categories)
+	for raw_name: Variant in books_value as Array:
+		var title: String = str(raw_name)
+		if title.is_empty():
+			continue
+		var facts: Array[Array] = []
+		var links: Array[String] = []
+		var rows_value: Variant = taught.get(title, [])
+		if rows_value is Array:
+			for row_value: Variant in rows_value as Array:
+				var row: Dictionary = row_value as Dictionary
+				links.append(_link("entry:%s:%s" % [str(row.get("category", "")),
+					str(row.get("id", ""))], str(row.get("title", ""))))
+		facts.append(["Opens", "\n".join(links) if not links.is_empty()
+			else "Nothing the client has a recipe for"])
+		var body: String = ("A book the server can teach you from. Reading it"
+			+ " takes time and it is read once; until the server records that"
+			+ " you have read it, what it teaches is refused however high your"
+			+ " level is.")
+		entries.append(_entry_record(_slug(title), title, "", body, facts, {},
+			category_id))
+	return entries
+
+func _recipes_by_book(skill_categories: Dictionary) -> Dictionary:
+	var taught: Dictionary = {}
+	var catalogue: ManufacturingCatalog = _catalogues.get("manufacturing") as ManufacturingCatalog
+	if catalogue == null:
+		return taught
+	for index: int in range(catalogue.count()):
+		var recipe: Dictionary = catalogue.recipe(index)
+		var book: String = str(recipe.get("knowledge", ""))
+		if book.is_empty():
+			continue
+		var category_id: String = str(skill_categories.get(str(recipe.get("skill", "")), ""))
+		if category_id.is_empty():
+			continue
+		if not taught.has(book):
+			taught[book] = []
+		(taught[book] as Array).append({"category": category_id,
+			"id": _slug(str(recipe.get("output", ""))),
+			"title": str(recipe.get("output", ""))})
+	return taught
+
+func _map_entries(category_id: String) -> Array[Dictionary]:
+	var entries: Array[Dictionary] = []
+	var regions_value: Variant = _catalogues.get("regions", [])
+	if not regions_value is Array:
+		return entries
+	for region_value: Variant in regions_value as Array:
+		if not region_value is Dictionary:
+			continue
+		var region: Dictionary = region_value as Dictionary
+		var title: String = str(region.get("name", ""))
+		if title.is_empty():
+			continue
+		var facts: Array[Array] = [["The server's map file",
+			str(region.get("serverMap", "unstated"))]]
+		var body: String = ("A region of Nymara. It is its own map on the"
+			+ " server, so arriving here is a change of map rather than a walk"
+			+ " across a seam, and the world around you is rebuilt as you"
+			+ " arrive.")
+		entries.append(_entry_record(_slug(title), title, "", body, facts, {},
+			category_id))
+	return entries
+
+func _skill_entries(category_id: String) -> Array[Dictionary]:
+	var entries: Array[Dictionary] = []
+	var skills_value: Variant = _catalogues.get("skills", [])
+	if not skills_value is Array:
+		return entries
+	var notes_value: Variant = _document.get("skillNotes", {})
+	var notes: Dictionary = notes_value as Dictionary if notes_value is Dictionary else {}
+	for raw_skill: Variant in skills_value as Array:
+		var skill: String = str(raw_skill)
+		if skill.is_empty():
+			continue
+		var body: String = str(notes.get(skill, ""))
+		if body.is_empty():
+			body = "The server keeps a level and an experience total for this."
+		var facts: Array[Array] = [["Reported as", skill]]
+		entries.append(_entry_record(_slug(skill), skill.capitalize(), "", body,
+			facts, {}, category_id))
+	return entries
+
+func _ingredient_lines(value: Variant) -> String:
+	if not value is Array:
+		return ""
+	var lines: Array[String] = []
+	for raw: Variant in value as Array:
+		if not raw is Dictionary:
+			continue
+		var ingredient: Dictionary = raw as Dictionary
+		_remember_name(int(ingredient.get("imageId", -1)),
+			str(ingredient.get("name", "")))
+		var image: Dictionary = _item_image(int(ingredient.get("imageId", -1)))
+		lines.append("%s%d %s" % [_image_tag(image, 22),
+			maxi(1, int(ingredient.get("quantity", 1))),
+			_escape(str(ingredient.get("name", "")))])
+	return "\n".join(lines)
+
+func _reagent_lines(value: Variant) -> String:
+	if not value is Array:
+		return ""
+	var lines: Array[String] = []
+	for raw: Variant in value as Array:
+		if not raw is Dictionary:
+			continue
+		var reagent: Dictionary = raw as Dictionary
+		var image_id: int = int(reagent.get("image_id", -1))
+		var named: String = str(_item_names.get(image_id, ""))
+		lines.append("%s%d %s" % [_image_tag(_item_image(image_id), 22),
+			maxi(1, int(reagent.get("quantity", 1))),
+			_escape(named) if not named.is_empty()
+				else "of the server's item %d" % image_id])
+	return "\n".join(lines)
+
+## Only the first name wins. Several recipes share one image and the recipe
+## table is read in its own order, so this stays stable between runs.
+func _remember_name(image_id: int, name: String) -> void:
+	if image_id >= 0 and not name.is_empty() and not _item_names.has(image_id):
+		_item_names[image_id] = name
+
+func _item_image(image_id: int) -> Dictionary:
+	var atlas: ItemAtlas = _catalogues.get("items") as ItemAtlas
+	if atlas == null:
+		return {}
+	return atlas.icon_source(image_id)
+
+func _title_before(first: Dictionary, second: Dictionary) -> bool:
+	return str(first.get("title", "")).naturalnocasecmp_to(
+		str(second.get("title", ""))) < 0
+
+## A page name that survives being written into a link and into the settings
+## file: lower case, letters and digits, everything else a single dash.
+static func _slug(text: String) -> String:
+	var slug := ""
+	for unit: int in text.to_lower().to_utf8_buffer():
+		if (unit >= 97 and unit <= 122) or (unit >= 48 and unit <= 57):
+			slug += char(unit)
+		elif not slug.ends_with("-"):
+			slug += "-"
+	return slug.trim_suffix("-")
+
+# --- rendering ---------------------------------------------------------------
+
+func _render() -> void:
+	var kind: String = str(_page.get("kind", PAGE_INDEX))
+	var pages := 1
+	var page_number := 0
+	match kind:
+		"category":
+			var category: Dictionary = _category(str(_page.get("id", "")))
+			var entries: Array = category.get("entries", []) as Array
+			pages = maxi(1, ceili(float(entries.size()) / float(ENTRIES_PER_PAGE)))
+			page_number = clampi(int(_page.get("page", 0)), 0, pages - 1)
+			_page["page"] = page_number
+			entry_body.text = _render_category(category, page_number, pages)
+		"entry":
+			entry_body.text = _render_entry(str(_page.get("category", "")),
+				str(_page.get("id", "")))
+		"search":
+			entry_body.text = _render_search(str(_page.get("query", "")))
+		_:
+			entry_body.text = _render_index()
+	entry_body.scroll_to_line(0)
+	back_button.disabled = _history.is_empty()
+	index_button.disabled = kind == PAGE_INDEX
+	page_label.text = "Page %d/%d" % [page_number + 1, pages] if pages > 1 else ""
+	page_label.visible = pages > 1
+	previous_button.visible = pages > 1
+	next_button.visible = pages > 1
+	previous_button.disabled = page_number <= 0
+	next_button.disabled = page_number >= pages - 1
+
+func _render_index() -> String:
+	var lines: Array[String] = [_title_block("")]
+	lines.append("[color=%s]%s[/color]\n" % [NOTE_COLOUR,
+		_escape(str(_document.get("note", "")))])
+	var cells: Array[String] = []
+	for category: Dictionary in _categories:
+		cells.append("[cell]%s[/cell][cell]  -  %s[/cell]" % [
+			_link("cat:%s:0" % str(category.get("id", "")),
+				str(category.get("title", ""))),
+			_escape(str(category.get("summary", "")))])
+	lines.append("[table=2]%s[/table]" % "".join(cells))
+	return "\n".join(lines)
+
+func _render_category(category: Dictionary, page_number: int, pages: int) -> String:
+	var lines: Array[String] = [_title_block(str(category.get("title", "")).to_upper())]
+	var intro: String = str(category.get("intro", ""))
+	if not intro.is_empty():
+		lines.append("[color=%s]%s[/color]\n" % [NOTE_COLOUR, _escape(intro)])
+	var entries: Array = category.get("entries", []) as Array
+	if entries.is_empty():
+		lines.append("[i]Nothing here yet. This category is filled from a"
+			+ " catalogue the client has not loaded.[/i]")
+		return "\n".join(lines)
+	var first: int = page_number * ENTRIES_PER_PAGE
+	var last: int = mini(first + ENTRIES_PER_PAGE, entries.size())
+	var cells: Array[String] = []
+	for index: int in range(first, last):
+		var entry: Dictionary = entries[index] as Dictionary
+		cells.append("[cell]%s[/cell]" % _link("entry:%s:%s" % [
+			str(category.get("id", "")), str(entry.get("id", ""))],
+			str(entry.get("title", ""))))
+	if cells.size() % 2 == 1:
+		cells.append("[cell] [/cell]")
+	lines.append("[table=2]%s[/table]" % "".join(cells))
+	if pages > 1:
+		lines.append("\n[color=%s]%d entries over %d pages.[/color]" % [
+			NOTE_COLOUR, entries.size(), pages])
+	return "\n".join(lines)
+
+func _render_entry(category_id: String, entry_id: String) -> String:
+	var entry: Dictionary = _entry(category_id, entry_id)
+	if entry.is_empty():
+		return "[i]That page is not in the encyclopedia.[/i]"
+	var category: Dictionary = _category(category_id)
+	var lines: Array[String] = [_title_block(str(category.get("title", "")).to_upper())]
+	var image: Dictionary = entry.get("image", {}) as Dictionary
+	lines.append("[center]%s[color=%s][b]%s[/b][/color][/center]\n" % [
+		_image_tag(image, 40), HEADING_COLOUR, _escape(str(entry.get("title", "")))])
+	var summary: String = str(entry.get("summary", ""))
+	if not summary.is_empty():
+		lines.append("[color=%s][i]%s[/i][/color]\n" % [NOTE_COLOUR, _escape(summary)])
+	for paragraph: String in str(entry.get("body", "")).split("\n\n", false):
+		lines.append(_escape(paragraph) + "\n")
+	var facts: Array = entry.get("facts", []) as Array
+	for fact_value: Variant in facts:
+		var fact: Array = fact_value as Array
+		var label: String = "[color=%s]%s:[/color]" % [FACT_COLOUR,
+			_escape(str(fact[0]))]
+		var text: String = str(fact[1])
+		if text.contains("\n"):
+			lines.append(label)
+			for line: String in text.split("\n", false):
+				lines.append("    " + line)
+		else:
+			lines.append("%s %s" % [label, text])
+	lines.append("\n[center]%s[/center]" % _link("cat:%s:0" % category_id,
+		"Back To %s Index" % str(category.get("title", ""))))
+	return "\n".join(lines)
+
+func _render_search(query: String) -> String:
+	var lines: Array[String] = [_title_block("SEARCH")]
+	var found: Array[Dictionary] = matches(query)
+	lines.append("[color=%s]%d %s for \"%s\".[/color]\n" % [NOTE_COLOUR, found.size(),
+		"page" if found.size() == 1 else "pages", _escape(query)])
+	for entry: Dictionary in found:
+		var category: Dictionary = _category(str(entry.get("category", "")))
+		lines.append("%s  [color=%s]- in %s[/color]" % [
+			_link("entry:%s:%s" % [str(entry.get("category", "")),
+				str(entry.get("id", ""))], str(entry.get("title", ""))),
+			NOTE_COLOUR, _escape(str(category.get("title", "")))])
+	if found.is_empty():
+		lines.append("[i]Nothing here says that.[/i]")
+	return "\n".join(lines)
+
+func _title_block(subtitle: String) -> String:
+	var block: String = "[center][color=%s]%s[/color]" % [HEADING_COLOUR,
+		_escape(str(_document.get("title", "The Eloria Encyclopedia")))]
+	if not subtitle.is_empty():
+		block += "\n[color=%s]%s[/color]" % [HEADING_COLOUR, _escape(subtitle)]
+	return block + "[/center]\n"
+
+func _link(meta: String, text: String) -> String:
+	return "[url=%s][color=%s]%s[/color][/url]" % [meta, LINK_COLOUR, _escape(text)]
+
+## bbcode takes an atlas as a path and a rectangle, never as a texture, which
+## is why ItemAtlas and SpellCatalog hand out their sources as well as their
+## AtlasTextures.
+static func _image_tag(source: Dictionary, size: int) -> String:
+	if source.is_empty():
+		return ""
+	var region: Rect2 = source.get("region", Rect2()) as Rect2
+	return "[img region=%d,%d,%d,%d width=%d height=%d]%s[/img] " % [
+		int(region.position.x), int(region.position.y),
+		int(region.size.x), int(region.size.y), size, size,
+		str(source.get("path", ""))]
+
+static func _escape(text: String) -> String:
+	return text.replace("[", "[lb]")
+
+# --- the window --------------------------------------------------------------
+
+func _build() -> void:
+	navigation = HBoxContainer.new()
+	navigation.name = "EncyclopediaNavigation"
+	add_child(navigation)
+	back_button = _navigation_button("EncyclopediaBack", "Back",
+		"Back to the page before this one")
+	back_button.pressed.connect(go_back)
+	page_label = Label.new()
+	page_label.name = "EncyclopediaPage"
+	navigation.add_child(page_label)
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	navigation.add_child(spacer)
+	previous_button = _navigation_button("EncyclopediaPrevious", "<<<",
+		"The page before this one")
+	previous_button.pressed.connect(_on_previous_pressed)
+	next_button = _navigation_button("EncyclopediaNext", ">>>",
+		"The page after this one")
+	next_button.pressed.connect(_on_next_pressed)
+	index_button = _navigation_button("EncyclopediaIndex", "Index",
+		"Back to the list of categories")
+	index_button.pressed.connect(show_index)
+
+	search_row = HBoxContainer.new()
+	search_row.name = "EncyclopediaSearchRow"
+	search_row.hide()
+	add_child(search_row)
+	search_edit = LineEdit.new()
+	search_edit.name = "EncyclopediaSearch"
+	search_edit.placeholder_text = "Search the encyclopedia"
+	search_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	search_edit.text_submitted.connect(_on_search_submitted)
+	search_row.add_child(search_edit)
+	var search_button := Button.new()
+	search_button.name = "EncyclopediaSearchGo"
+	search_button.text = "Find"
+	search_button.pressed.connect(_on_search_pressed)
+	search_row.add_child(search_button)
+	var hide_button := Button.new()
+	hide_button.name = "EncyclopediaSearchHide"
+	hide_button.text = "x"
+	hide_button.pressed.connect(search_row.hide)
+	search_row.add_child(hide_button)
+
+	entry_body = RichTextLabel.new()
+	entry_body.name = "EntryBody"
+	entry_body.bbcode_enabled = true
+	entry_body.scroll_active = true
+	entry_body.selection_enabled = true
+	entry_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	entry_body.meta_clicked.connect(_on_meta_clicked)
+	entry_body.gui_input.connect(_on_body_gui_input)
+	add_child(entry_body)
+
+	status_line = Label.new()
+	status_line.name = "EncyclopediaStatus"
+	status_line.text = "Right-click for search and bookmark options"
+	add_child(status_line)
+
+	menu = PopupMenu.new()
+	menu.name = "EncyclopediaMenu"
+	menu.id_pressed.connect(_on_menu_id_pressed)
+	add_child(menu)
+
+func _navigation_button(node_name: String, label: String, tooltip: String) -> Button:
+	var button := Button.new()
+	button.name = node_name
+	button.text = label
+	button.tooltip_text = tooltip
+	button.focus_mode = Control.FOCUS_NONE
+	navigation.add_child(button)
+	return button
+
+func _on_previous_pressed() -> void:
+	if str(_page.get("kind", "")) == "category":
+		open_category(str(_page.get("id", "")), int(_page.get("page", 0)) - 1)
+
+func _on_next_pressed() -> void:
+	if str(_page.get("kind", "")) == "category":
+		open_category(str(_page.get("id", "")), int(_page.get("page", 0)) + 1)
+
+func _on_meta_clicked(meta: Variant) -> void:
+	open_page_key(str(meta))
+
+func _on_search_pressed() -> void:
+	_on_search_submitted(search_edit.text)
+
+func _on_search_submitted(query: String) -> void:
+	if not query.strip_edges().is_empty():
+		search(query.strip_edges())
+
+func _on_body_gui_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse: InputEventMouseButton = event as InputEventMouseButton
+	if mouse.button_index != MOUSE_BUTTON_RIGHT or not mouse.pressed:
+		return
+	entry_body.accept_event()
+	open_menu(entry_body.get_screen_position() + mouse.position)
+
+func open_menu(where: Vector2) -> void:
+	menu.clear()
+	menu.add_item("Search...", 0)
+	var key: String = page_key()
+	if _bookmark_index(key) >= 0:
+		menu.add_item("Remove this bookmark", 2)
+	else:
+		menu.add_item("Bookmark this page", 1)
+	if not _bookmarks.is_empty():
+		menu.add_separator("Bookmarks")
+		for index: int in range(_bookmarks.size()):
+			menu.add_item(str(_bookmarks[index].get("label", "")), 100 + index)
+		menu.add_separator()
+		menu.add_item("Clear every bookmark", 3)
+	menu.position = Vector2i(where)
+	menu.reset_size()
+	menu.popup()
+
+func _bookmark_index(key: String) -> int:
+	for index: int in range(_bookmarks.size()):
+		if str(_bookmarks[index].get("key", "")) == key:
+			return index
+	return -1
+
+func _on_menu_id_pressed(id: int) -> void:
+	if id >= 100:
+		var index: int = id - 100
+		if index < _bookmarks.size():
+			open_page_key(str(_bookmarks[index].get("key", PAGE_INDEX)))
+		return
+	match id:
+		0:
+			search_row.show()
+			search_edit.grab_focus()
+		1:
+			add_bookmark()
+		2:
+			remove_bookmark(page_key())
+		3:
+			_bookmarks.clear()
+			bookmarks_changed.emit(bookmarks())
+
+func add_bookmark() -> void:
+	var key: String = page_key()
+	if _bookmark_index(key) >= 0:
+		return
+	_bookmarks.append({"key": key, "label": page_title()})
+	bookmarks_changed.emit(bookmarks())
+
+func remove_bookmark(key: String) -> void:
+	var index: int = _bookmark_index(key)
+	if index < 0:
+		return
+	_bookmarks.remove_at(index)
+	bookmarks_changed.emit(bookmarks())

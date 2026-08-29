@@ -47,6 +47,10 @@ toggle_minimap={ "deadzone": 0.5, "events": [Object(InputEventKey,"alt_pressed":
 toggle_show_through_obstacles={ "deadzone": 0.5, "events": [Object(InputEventKey,"alt_pressed":true,"physical_keycode":86)] }
 toggle_console={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":96)] }
 toggle_inventory={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":73,"ctrl_pressed":true)] }
+; Ctrl+E. Turning right is a bare E, so this is resolved with an exact
+; modifier match and ahead of turn_right, which is otherwise happy to take a
+; key event that carries a Ctrl it was never bound with.
+toggle_encyclopedia={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":69,"ctrl_pressed":true)] }
 recenter_viewport={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":32)] }
 move_north={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":87)] }
 move_south={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":83)] }

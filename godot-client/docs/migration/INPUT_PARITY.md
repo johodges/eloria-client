@@ -36,6 +36,8 @@ World input must be suppressed when a Control consumes the pointer event. Debug 
 | Alt+S | Send the authoritative desired sit/stand state |
 | T / Enter | Focus chat; Enter submits RAW_TEXT |
 | Click NPC | Select actor and send TOUCH_PLAYER |
+| Ctrl+E | Open the reference window on the encyclopedia, or close it from there |
+| Hold Alt | The move icon shows the attack icon: a click attacks what it lands on |
 
 The full-screen `SubViewportContainer` owns world mouse input through its `gui_input`
 signal. HUD controls render above it and consume their own events, preventing click-through.
@@ -74,6 +76,25 @@ dismisses the chat entry from a focused field.
 | `toggle_console` | ` | `_toggle_console()` |
 | `recenter_viewport` | Space | `_recenter_viewport_on_player()` |
 | `turn_left` / `turn_right` | Q / E | `_turn_local_actor()` |
+| `toggle_encyclopedia` | Ctrl+E | `_on_encyclopedia_button_pressed()` |
+
+`toggle_encyclopedia` is the one action resolved with an exact modifier match.
+Godot compares an action's modifiers only when asked to, so `turn_right` - a
+bare E - takes a key event carrying a Ctrl it was never bound with. The
+encyclopedia is therefore checked ahead of turning, and checked exactly, so
+Ctrl+E opens a window without also turning the player and a bare E turns the
+player without also opening a window.
+
+## The move icon and Alt
+
+Holding Alt makes an ordinary click an attack, and the move icon on the lower
+HUD says so by wearing the attack icon while Alt is down. It is a preview and
+not a mode: letting Alt go puts the icon back, and neither pressing nor
+releasing Alt changes the interaction mode. An attack mode the player chose by
+clicking the attack icon is therefore untouched by Alt - it was their decision,
+and it stays until they choose the move icon again. Pressing the move icon
+while it is showing the attack icon does what the attack icon does, because
+that is what it is showing.
 
 `connect` keeps its declared Ctrl+C default, which collides with copy on any
 focused text surface other than a `LineEdit`/`TextEdit`. The rebinding UI in
