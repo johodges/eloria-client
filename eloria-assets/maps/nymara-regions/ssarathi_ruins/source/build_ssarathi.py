@@ -483,6 +483,13 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     payload = struct.pack("<4sHHII", b"EWCG", 1, 0, width, height) + grid.tobytes()
     stats = {
         "width": width, "height": height, "cellMetres": COLLISION_CELL,
+        # The world coordinate of cell (0, 0)'s outer corner: the -X edge and
+        # the +Z edge, because rows run north to south. region_client_check.gd
+        # needs this to judge grounding on walkable cells rather than on every
+        # tile of the bounding square, which is the rule interiors need and
+        # regions are merely stricter under.
+        "originMetres": [float(REG.PLAY_MIN_X),
+                         float(REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE)],
         "walkableCells": int(walkable.sum()),
         "blockedCells": int((~walkable).sum()),
         "walkableFraction": round(float(walkable.mean()), 4),
@@ -698,6 +705,7 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             "binary": "collision.bin",
             "format": "EWCG-v1",
             "cellMetres": COLLISION_CELL,
+            "originMetres": collision_stats["originMetres"],
             "width": collision_stats["width"],
             "height": collision_stats["height"],
             "heightEncoding": {

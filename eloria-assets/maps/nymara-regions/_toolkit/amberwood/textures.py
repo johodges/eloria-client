@@ -1509,3 +1509,38 @@ def amethyst_vault_floor(size: int = 512, seed: int = 577) -> TextureSet:
     return TextureSet("amethyst_vault_floor", _u8(np.clip(color, 0, 1)),
                       pack_orm(occlusion, roughness, metallic),
                       normal_from_height(height, 1.6))
+# --------------------------------------------------------------------------
+# Whitehorn: the silver its monks mined, and the granite they cut it from
+# --------------------------------------------------------------------------
+
+def whitehorn_silver(size: int = 256, seed: int = 601) -> TextureSet:
+    """Worked silver for the temple's reliquary, bell and altar fittings.
+
+    The interior concept names "ice granite silver" as its material study and
+    the shared table had no white metal - only dark iron and warm brass, both
+    of which read as the wrong century for a mountain reliquary.
+
+    Deliberately not fully metallic. With metallic at 1.0 and no reflection
+    probe, a metal has nothing to reflect and renders black in both the offline
+    rasteriser and Godot; the Amethyst build hit this on verdigris and brass.
+    At 0.45 the diffuse term still carries the surface.
+    """
+    grain = N.tileable_fbm(size, 26, 4, seed=seed)
+    # hammered facets, broader than the grain so it reads as beaten sheet
+    beat = N.tileable_worley(min(size, 128), 9, seed=seed + 7)
+    beat = _upsample(beat, size)
+    body = np.clip(0.62 + grain * 0.22 - beat * 0.18, 0.0, 1.0)
+    color = _colorize(body, (0.0, (0.316, 0.330, 0.350)),
+                      (0.45, (0.548, 0.566, 0.586)),
+                      (0.8, (0.736, 0.752, 0.768)),
+                      (1.0, (0.868, 0.878, 0.888)))
+    # tarnish gathers in the hollows of the beating and along engraved lines
+    tarnish = np.clip(N.tileable_fbm(size, 9, 4, seed=seed + 11) * 2.2 - 1.5,
+                      0.0, 1.0)
+    color = _mix(color, np.array([0.212, 0.208, 0.236]), tarnish * 0.45)
+    height = np.clip(0.5 + grain * 0.16 - beat * 0.22, 0.0, 1.0)
+    occlusion = np.clip(0.62 + height * 0.38, 0.0, 1.0)
+    roughness = np.clip(0.22 + tarnish * 0.5 + beat * 0.16, 0.06, 1.0)
+    return TextureSet("whitehorn_silver", _u8(color),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 0.8))

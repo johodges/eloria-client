@@ -10,13 +10,17 @@
   "uniqueVertices": 310617,
   "glbBytes": 19428968,
   "instancedTriangles": 1879571,
-  "embeddedTextureBytes": 19485246,
-  "textureMemoryBytesUncompressed": 182452224,
+  "embeddedTextureBytes": 19607189,
+  "textureMemoryBytesUncompressed": 183238656,
   "placements": 2895,
   "collision": {
     "width": 1152,
     "height": 1152,
     "cellMetres": 0.5,
+    "originMetres": [
+      -174.0,
+      174.0
+    ],
     "walkableCells": 563351,
     "blockedCells": 763753,
     "walkableFraction": 0.4245,

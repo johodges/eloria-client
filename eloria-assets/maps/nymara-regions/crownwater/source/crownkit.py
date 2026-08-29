@@ -328,6 +328,7 @@ MATERIALS = frozenset({
     MARBLE, VERDIGRIS, GILT, MOSAIC,
     # masonry and metal, from the shared kit
     "ashlar", "cliff_rock", "dark_iron", "cobble_paving",
+    "lime_plaster",
     # timber, cloth and the lamp glass the toolkit's lamp_post uses
     "timber_warm", "timber_dark", "carved_wood",
     "canvas_awning", "amber_resin",

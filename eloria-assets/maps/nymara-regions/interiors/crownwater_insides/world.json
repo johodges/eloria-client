@@ -1,0 +1,1367 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "crownwater_insides",
+    "name": "Crownwater Insides",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    },
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "bounds": {
+      "min": [
+        9.45,
+        -10.13,
+        5.65
+      ],
+      "max": [
+        316.26,
+        27.17,
+        339.4
+      ]
+    },
+    "playableBounds": {
+      "min": [
+        9.45,
+        -8.4,
+        53.45
+      ],
+      "max": [
+        304.55,
+        26.0,
+        334.55
+      ]
+    },
+    "interiorClass": "insides",
+    "parentRegion": "amberwood",
+    "serverCells": 300
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      -7.0,
+      337.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "spawnPoints": [
+    {
+      "id": "default",
+      "position": [
+        50.0,
+        0.05,
+        60.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "drowned_crown"
+    },
+    {
+      "id": "basilica-undercroft",
+      "position": [
+        50.0,
+        0.05,
+        60.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "drowned_crown"
+    },
+    {
+      "id": "cistern-stair",
+      "position": [
+        260.0,
+        0.05,
+        60.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "tide_cistern"
+    },
+    {
+      "id": "customs-door",
+      "position": [
+        250.0,
+        0.05,
+        261.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "customs_hall"
+    },
+    {
+      "id": "campanile-door",
+      "position": [
+        60.0,
+        0.05,
+        300.0
+      ],
+      "rotationDegrees": 0,
+      "surface": "Walk",
+      "section": "tide_campanile"
+    }
+  ],
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "width": 600,
+    "height": 570,
+    "cellMetres": 0.5,
+    "originMetres": [
+      7.0,
+      337.0
+    ],
+    "heightEncoding": {
+      "origin": -8.557,
+      "step": 0.5574,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Step is fitted to this interior's own vertical range, so the six-bit field spans it without clamping. The Godot loader still takes elevation from the rendered Walk_ surfaces; this grid is authoritative only for walkability."
+    },
+    "walkableCells": 38724,
+    "blockedCells": 303276,
+    "walkableFraction": 0.1132,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nodeNames": [
+      "Interior_crownwater_insides",
+      "Build_crownwater_insides_amber_resin",
+      "Build_crownwater_insides_ashlar",
+      "Build_crownwater_insides_canvas_awning",
+      "Build_crownwater_insides_carved_wood",
+      "Build_crownwater_insides_crownwater_gilt",
+      "Build_crownwater_insides_crownwater_marble",
+      "Build_crownwater_insides_crownwater_mosaic",
+      "Build_crownwater_insides_crownwater_verdigris",
+      "Build_crownwater_insides_dark_iron",
+      "Build_crownwater_insides_lime_plaster",
+      "Build_crownwater_insides_rubble_stone",
+      "Build_crownwater_insides_timber_dark",
+      "Build_crownwater_insides_timber_grey",
+      "Build_crownwater_insides_timber_warm",
+      "Build_crownwater_insides_water_deep",
+      "Build_crownwater_insides_water_pool"
+    ]
+  },
+  "navigation": {
+    "surfaceNodePrefixes": [
+      "Walk_"
+    ],
+    "agentRadius": 0.4,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 45,
+    "navmesh": {
+      "format": "surface-prefix-v1",
+      "polygons": []
+    },
+    "notes": [
+      "Every standable surface is a Walk_<material> node, matching the region's contract: the client turns navigation.surfaceNodePrefixes into the layer its downward grounding ray tests."
+    ]
+  },
+  "portals": [
+    {
+      "id": "exit-basilica-undercroft",
+      "name": "Return to Crownwater (The Drowned Crown)",
+      "type": "map-transition",
+      "position": [
+        50.0,
+        0.05,
+        60.0
+      ],
+      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "section": "drowned_crown",
+      "authority": "server"
+    },
+    {
+      "id": "exit-cistern-stair",
+      "name": "Return to Crownwater (The Tide Cistern)",
+      "type": "map-transition",
+      "position": [
+        260.0,
+        0.05,
+        60.0
+      ],
+      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "section": "tide_cistern",
+      "authority": "server"
+    },
+    {
+      "id": "exit-customs-door",
+      "name": "Return to Crownwater (The Harbour Customs Hall)",
+      "type": "map-transition",
+      "position": [
+        250.0,
+        0.05,
+        261.0
+      ],
+      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "section": "customs_hall",
+      "authority": "server"
+    },
+    {
+      "id": "exit-campanile-door",
+      "name": "Return to Crownwater (The Tide Campanile)",
+      "type": "map-transition",
+      "position": [
+        60.0,
+        0.05,
+        300.0
+      ],
+      "destinationMap": "maps/nymara/crownwater.elm",
+      "destinationSpawn": "default",
+      "radius": 2.5,
+      "section": "tide_campanile",
+      "authority": "server"
+    }
+  ],
+  "landmarks": [
+    {
+      "id": "drowned_crown-drowned-crown-throne",
+      "name": "The Drowned Throne",
+      "space": "drowned_crown.crown_hall",
+      "position": [
+        86.0,
+        -6.2,
+        165.0
+      ]
+    },
+    {
+      "id": "drowned_crown-drowned-crown-altar",
+      "name": "The Shell Altar",
+      "space": "drowned_crown.shell_altar",
+      "position": [
+        47.0,
+        -6.6,
+        126.0
+      ]
+    },
+    {
+      "id": "drowned_crown-drowned-crown-oculus",
+      "name": "The Fallen Dome",
+      "space": "drowned_crown.collapsed_dome",
+      "position": [
+        21.0,
+        -6.0,
+        126.0
+      ]
+    },
+    {
+      "id": "tide_cistern-cistern-sluice",
+      "name": "The Sluice Gear",
+      "space": "tide_cistern.sluice_room",
+      "position": [
+        297.0,
+        -2.8,
+        99.0
+      ]
+    },
+    {
+      "id": "tide_cistern-cistern-basin",
+      "name": "The Tide Basin",
+      "space": "tide_cistern.basin",
+      "position": [
+        260.0,
+        -2.2,
+        99.0
+      ]
+    },
+    {
+      "id": "customs_hall-customs-ledger",
+      "name": "The Ledger Hall",
+      "space": "customs_hall.ledger_hall",
+      "position": [
+        250.0,
+        1.4,
+        261.0
+      ]
+    },
+    {
+      "id": "customs_hall-customs-strongroom",
+      "name": "The Bonded Strongroom",
+      "space": "customs_hall.strongroom",
+      "position": [
+        276.0,
+        0.4,
+        293.0
+      ]
+    },
+    {
+      "id": "customs_hall-customs-water-gate",
+      "name": "The Water Gate",
+      "space": "customs_hall.water_gate",
+      "position": [
+        250.0,
+        -1.0,
+        323.0
+      ]
+    },
+    {
+      "id": "tide_campanile-campanile-bell",
+      "name": "The Tide Bell",
+      "space": "tide_campanile.shaft",
+      "position": [
+        60.0,
+        22.0,
+        300.0
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "drowned-crown-shell-altar",
+      "name": "Shell Altar",
+      "type": "altar",
+      "position": [
+        47.0,
+        -6.6,
+        126.0
+      ],
+      "authority": "server",
+      "section": "drowned_crown"
+    },
+    {
+      "id": "drowned-crown-sluice",
+      "name": "Palace Sluice",
+      "type": "mechanism",
+      "position": [
+        85.0,
+        -6.4,
+        107.0
+      ],
+      "authority": "server",
+      "section": "drowned_crown"
+    },
+    {
+      "id": "cistern-sluice-wheel",
+      "name": "Sluice Wheel",
+      "type": "mechanism",
+      "position": [
+        297.0,
+        -1.4,
+        99.0
+      ],
+      "authority": "server",
+      "section": "tide_cistern"
+    },
+    {
+      "id": "customs-ledger-desk",
+      "name": "Customs Ledger",
+      "type": "desk",
+      "position": [
+        245.0,
+        1.2,
+        260.0
+      ],
+      "authority": "server",
+      "section": "customs_hall"
+    },
+    {
+      "id": "customs-strongroom-door",
+      "name": "Strongroom Door",
+      "type": "door",
+      "position": [
+        270.3,
+        0.6,
+        293.0
+      ],
+      "authority": "server",
+      "section": "customs_hall"
+    },
+    {
+      "id": "campanile-bell-rope",
+      "name": "Bell Rope",
+      "type": "mechanism",
+      "position": [
+        61.6,
+        1.4,
+        300.0
+      ],
+      "authority": "server",
+      "section": "tide_campanile"
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "customs-officer",
+      "name": "Customs Officer",
+      "type": "npc",
+      "position": [
+        245.0,
+        0.0,
+        264.0
+      ],
+      "authority": "server",
+      "section": "customs_hall"
+    },
+    {
+      "id": "customs-lighterman",
+      "name": "Lighterman",
+      "type": "npc",
+      "position": [
+        260.0,
+        -1.6,
+        320.0
+      ],
+      "authority": "server",
+      "section": "customs_hall"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "cistern-freshwater",
+      "resource": "freshwater",
+      "position": [
+        260.0,
+        -3.35,
+        99.0
+      ],
+      "authority": "server",
+      "section": "tide_cistern"
+    }
+  ],
+  "environment": {
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.1,
+        0.2,
+        0.26
+      ],
+      "horizon": [
+        0.24,
+        0.36,
+        0.4
+      ]
+    },
+    "sun": {
+      "enabled": true,
+      "direction": [
+        -0.14,
+        -0.94,
+        0.31
+      ],
+      "color": [
+        0.92,
+        0.96,
+        0.96
+      ],
+      "energy": 0.95
+    },
+    "ambient": {
+      "color": [
+        0.34,
+        0.44,
+        0.48
+      ],
+      "energy": 0.88,
+      "skyContribution": 0.35
+    },
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.2,
+        0.3,
+        0.34
+      ],
+      "density": 0.009
+    },
+    "openToSky": [
+      "drowned_crown.collapsed_dome"
+    ],
+    "lights": [
+      {
+        "id": "lantern-00",
+        "kind": "point",
+        "position": [
+          50.0,
+          2.98,
+          60.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-01",
+        "kind": "point",
+        "position": [
+          50.0,
+          -3.62,
+          87.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-02",
+        "kind": "point",
+        "position": [
+          85.0,
+          -4.22,
+          88.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-03",
+        "kind": "point",
+        "position": [
+          86.0,
+          -4.22,
+          126.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-04",
+        "kind": "point",
+        "position": [
+          47.0,
+          -5.02,
+          126.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-05",
+        "kind": "point",
+        "position": [
+          21.0,
+          -2.42,
+          97.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-06",
+        "kind": "point",
+        "position": [
+          86.0,
+          -4.62,
+          165.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-07",
+        "kind": "point",
+        "position": [
+          249.0,
+          3.0,
+          87.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-08",
+        "kind": "point",
+        "position": [
+          271.0,
+          3.0,
+          99.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-09",
+        "kind": "point",
+        "position": [
+          249.0,
+          3.0,
+          111.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-10",
+        "kind": "point",
+        "position": [
+          260.0,
+          -2.02,
+          82.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-11",
+        "kind": "point",
+        "position": [
+          260.0,
+          -2.02,
+          99.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-12",
+        "kind": "point",
+        "position": [
+          260.0,
+          -2.02,
+          116.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-13",
+        "kind": "point",
+        "position": [
+          297.0,
+          -2.22,
+          99.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-14",
+        "kind": "point",
+        "position": [
+          250.0,
+          3.98,
+          260.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-15",
+        "kind": "point",
+        "position": [
+          256.5,
+          4.78,
+          264.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-16",
+        "kind": "point",
+        "position": [
+          250.0,
+          4.18,
+          292.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-17",
+        "kind": "point",
+        "position": [
+          250.0,
+          3.58,
+          323.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-18",
+        "kind": "point",
+        "position": [
+          261.0,
+          2.58,
+          318.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-19",
+        "kind": "point",
+        "position": [
+          60.0,
+          8.08,
+          300.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-20",
+        "kind": "point",
+        "position": [
+          60.0,
+          17.83,
+          300.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      },
+      {
+        "id": "lantern-21",
+        "kind": "point",
+        "position": [
+          60.0,
+          21.28,
+          300.0
+        ],
+        "color": [
+          1.0,
+          0.66,
+          0.32
+        ],
+        "range": 15.0,
+        "energy": 3.4,
+        "attenuation": 1.2
+      }
+    ]
+  },
+  "spaces": {
+    "drowned_crown.stairhead": {
+      "x0": 44.0,
+      "z0": 54.0,
+      "x1": 56.0,
+      "z1": 66.0,
+      "floor": 0.0,
+      "height": 5.0
+    },
+    "drowned_crown.flooded_vestibule": {
+      "x0": 40.0,
+      "z0": 78.0,
+      "x1": 60.0,
+      "z1": 96.0,
+      "floor": -6.5,
+      "height": 6.0
+    },
+    "drowned_crown.water_gallery": {
+      "x0": 74.0,
+      "z0": 76.0,
+      "x1": 96.0,
+      "z1": 100.0,
+      "floor": -7.2,
+      "height": 7.0
+    },
+    "drowned_crown.statue_court": {
+      "x0": 72.0,
+      "z0": 114.0,
+      "x1": 100.0,
+      "z1": 138.0,
+      "floor": -7.2,
+      "height": 8.5
+    },
+    "drowned_crown.shell_altar": {
+      "x0": 38.0,
+      "z0": 116.0,
+      "x1": 56.0,
+      "z1": 136.0,
+      "floor": -8.0,
+      "height": 6.5
+    },
+    "drowned_crown.collapsed_dome": {
+      "x0": 10.0,
+      "z0": 114.0,
+      "x1": 32.0,
+      "z1": 138.0,
+      "floor": -8.0,
+      "height": 13.0
+    },
+    "drowned_crown.air_pocket": {
+      "x0": 15.0,
+      "z0": 90.0,
+      "x1": 27.0,
+      "z1": 104.0,
+      "floor": -5.2,
+      "height": 4.4
+    },
+    "drowned_crown.crown_hall": {
+      "x0": 70.0,
+      "z0": 152.0,
+      "x1": 102.0,
+      "z1": 178.0,
+      "floor": -7.8,
+      "height": 10.0
+    },
+    "drowned_crown.descent": {
+      "x0": 47.8,
+      "z0": 63.8,
+      "x1": 52.2,
+      "z1": 80.2,
+      "floor": -6.5,
+      "height": 4.4
+    },
+    "drowned_crown.gallery_run": {
+      "x0": 57.9,
+      "z0": 84.9,
+      "x1": 76.1,
+      "z1": 89.1,
+      "floor": -7.2,
+      "height": 4.2
+    },
+    "drowned_crown.submerged_arch": {
+      "x0": 82.7,
+      "z0": 97.7,
+      "x1": 87.3,
+      "z1": 116.3,
+      "floor": -7.2,
+      "height": 4.6
+    },
+    "drowned_crown.altar_run": {
+      "x0": 54.0,
+      "z0": 124.0,
+      "x1": 74.0,
+      "z1": 128.0,
+      "floor": -8.0,
+      "height": 4.0
+    },
+    "drowned_crown.dome_run": {
+      "x0": 29.7,
+      "z0": 123.7,
+      "x1": 40.3,
+      "z1": 128.3,
+      "floor": -8.0,
+      "height": 4.4
+    },
+    "drowned_crown.air_stair": {
+      "x0": 19.0,
+      "z0": 102.0,
+      "x1": 23.0,
+      "z1": 116.0,
+      "floor": -8.0,
+      "height": 4.0
+    },
+    "drowned_crown.hall_run": {
+      "x0": 83.6,
+      "z0": 135.6,
+      "x1": 88.4,
+      "z1": 154.4,
+      "floor": -7.8,
+      "height": 5.0
+    },
+    "tide_cistern.wellhouse": {
+      "x0": 255.0,
+      "z0": 55.0,
+      "x1": 265.0,
+      "z1": 65.0,
+      "floor": 0.0,
+      "height": 4.4
+    },
+    "tide_cistern.basin": {
+      "x0": 234.0,
+      "z0": 76.0,
+      "x1": 286.0,
+      "z1": 122.0,
+      "floor": -4.0,
+      "height": 7.5
+    },
+    "tide_cistern.sluice_room": {
+      "x0": 290.0,
+      "z0": 90.0,
+      "x1": 304.0,
+      "z1": 108.0,
+      "floor": -4.0,
+      "height": 5.4
+    },
+    "tide_cistern.cistern_stair": {
+      "x0": 258.2,
+      "z0": 63.2,
+      "x1": 261.8,
+      "z1": 77.8,
+      "floor": -4.0,
+      "height": 3.6
+    },
+    "tide_cistern.sluice_run": {
+      "x0": 284.3,
+      "z0": 97.3,
+      "x1": 291.7,
+      "z1": 100.7,
+      "floor": -4.0,
+      "height": 3.4
+    },
+    "customs_hall.ledger_hall": {
+      "x0": 238.0,
+      "z0": 251.0,
+      "x1": 262.0,
+      "z1": 271.0,
+      "floor": 0.0,
+      "height": 6.4
+    },
+    "customs_hall.bonded_store": {
+      "x0": 236.0,
+      "z0": 280.0,
+      "x1": 264.0,
+      "z1": 306.0,
+      "floor": -0.8,
+      "height": 7.2
+    },
+    "customs_hall.strongroom": {
+      "x0": 270.0,
+      "z0": 286.0,
+      "x1": 282.0,
+      "z1": 300.0,
+      "floor": -0.8,
+      "height": 4.4
+    },
+    "customs_hall.water_gate": {
+      "x0": 234.0,
+      "z0": 312.0,
+      "x1": 266.0,
+      "z1": 334.0,
+      "floor": -2.6,
+      "height": 8.0
+    },
+    "customs_hall.store_run": {
+      "x0": 252.4,
+      "z0": 269.4,
+      "x1": 255.6,
+      "z1": 281.6,
+      "floor": -0.8,
+      "height": 3.6
+    },
+    "customs_hall.strong_run": {
+      "x0": 262.6,
+      "z0": 291.6,
+      "x1": 271.4,
+      "z1": 294.4,
+      "floor": -0.8,
+      "height": 3.0
+    },
+    "customs_hall.gate_run": {
+      "x0": 247.5,
+      "z0": 303.5,
+      "x1": 252.5,
+      "z1": 314.5,
+      "floor": -2.6,
+      "height": 4.6
+    },
+    "tide_campanile.shaft": {
+      "x0": 55.0,
+      "z0": 295.0,
+      "x1": 65.0,
+      "z1": 305.0,
+      "floor": 0.0,
+      "height": 26.0
+    }
+  },
+  "conceptArt": {
+    "detailBoard": "../../crownwater/references/00-concept-detail-board.png",
+    "role": "parent-region board; only drowned_crown has its own concept",
+    "panelGrid": [
+      5,
+      2
+    ],
+    "viewCount": 10,
+    "subjects": [
+      "drowned_crown.flooded_vestibule",
+      "drowned_crown.water_gallery",
+      "drowned_crown.submerged_arch",
+      "drowned_crown.shell_altar",
+      "drowned_crown.statue_court",
+      "drowned_crown.gallery_run",
+      "drowned_crown.collapsed_dome",
+      "drowned_crown.air_pocket",
+      "drowned_crown.crown_hall",
+      "drowned_crown.shell_altar",
+      "tide_cistern.basin",
+      "tide_cistern.basin",
+      "tide_cistern.basin",
+      "tide_cistern.sluice_room",
+      "customs_hall.ledger_hall",
+      "customs_hall.bonded_store",
+      "customs_hall.strongroom",
+      "customs_hall.water_gate",
+      "tide_campanile.shaft",
+      "tide_campanile.shaft",
+      "tide_campanile.shaft"
+    ]
+  },
+  "performance": {
+    "nodes": 23,
+    "meshes": 22,
+    "materials": 18,
+    "images": 50,
+    "textures": 50,
+    "accessors": 110,
+    "bufferViews": 160,
+    "uniqueTriangles": 76526,
+    "uniqueVertices": 77053,
+    "glbBytes": 9976664,
+    "nodeNames": [
+      "Interior_crownwater_insides",
+      "Build_crownwater_insides_amber_resin",
+      "Build_crownwater_insides_ashlar",
+      "Build_crownwater_insides_canvas_awning",
+      "Build_crownwater_insides_carved_wood",
+      "Build_crownwater_insides_crownwater_gilt",
+      "Build_crownwater_insides_crownwater_marble",
+      "Build_crownwater_insides_crownwater_mosaic",
+      "Build_crownwater_insides_crownwater_verdigris",
+      "Build_crownwater_insides_dark_iron",
+      "Build_crownwater_insides_lime_plaster",
+      "Build_crownwater_insides_rubble_stone",
+      "Build_crownwater_insides_timber_dark",
+      "Build_crownwater_insides_timber_grey",
+      "Build_crownwater_insides_timber_warm",
+      "Build_crownwater_insides_water_deep",
+      "Build_crownwater_insides_water_pool",
+      "Walk_cobble_paving",
+      "Walk_crownwater_marble",
+      "Walk_crownwater_mosaic",
+      "Walk_crownwater_sand",
+      "Walk_rubble_stone",
+      "Walk_timber_warm"
+    ]
+  },
+  "sources": [
+    {
+      "id": "generator",
+      "file": "source/build_interiors.py",
+      "role": "reproducible-build",
+      "seed": 20260901
+    },
+    {
+      "id": "anchor",
+      "landmark": "crownwater-cathedral",
+      "position": [
+        114.0,
+        18.09,
+        -132.0
+      ],
+      "role": "surface entrance on the Crownwater region map"
+    }
+  ],
+  "provenance": {
+    "geometry": "authored with the Crownwater region kit over the shared toolkit; no scattered placement",
+    "textures": "procedural, from amberwood/textures.py",
+    "thirdParty": "none"
+  },
+  "notes": [
+    "[drowned_crown] Water level is held at y = -6.05 throughout; rooms step down beneath it rather than the water rising to meet them.",
+    "[tide_campanile] Modelled as one 26 m shaft with flights and landings added as walk geometry, not as stacked chambers.",
+    "[tide_campanile] The ringing floor and belfry gallery are annular. The client places an actor on the first surface a downward ray meets, so a full-footprint deck would ground every placement in the tower on the topmost floor. A player can still WALK the stair normally - only placement is single-layer - but no spawn or portal may sit beneath a deck.",
+    "Four insides on one map with blackspace between them, following amethyst_barrens_insides. Cells between sections are zero in collision.bin because no Walk_ surface covers them - the void is not drawn, it is simply the absence of floor."
+  ],
+  "productionStatus": "authored-geometry-materials-population",
+  "knownLimitations": [
+    "Not opened in Godot: no client is installable in the build environment, so collision response, navmesh generation, portal transition, LOD and transparency sorting are unverified.",
+    "eloria-server has not registered these map keys.",
+    "One environment block serves four sections of different character; the per-section lamps carry most of the lighting difference."
+  ],
+  "sections": [
+    {
+      "id": "drowned_crown",
+      "name": "The Drowned Crown",
+      "class": "dungeon",
+      "spawn": "basilica-undercroft",
+      "entrance": "drowned_crown.stairhead",
+      "offset": [
+        50.0,
+        60.0
+      ],
+      "arrival": [
+        50.0,
+        0.05,
+        60.0
+      ],
+      "bounds": {
+        "min": [
+          10.0,
+          54.0
+        ],
+        "max": [
+          102.0,
+          178.0
+        ]
+      },
+      "entranceBounds": {
+        "min": [
+          44.0,
+          54.0
+        ],
+        "max": [
+          56.0,
+          66.0
+        ]
+      },
+      "surfaceLandmark": "crownwater-cathedral",
+      "serverTile": [
+        43,
+        277
+      ]
+    },
+    {
+      "id": "tide_cistern",
+      "name": "The Tide Cistern",
+      "class": "utility",
+      "spawn": "cistern-stair",
+      "entrance": "tide_cistern.wellhouse",
+      "offset": [
+        260.0,
+        60.0
+      ],
+      "arrival": [
+        260.0,
+        0.05,
+        60.0
+      ],
+      "bounds": {
+        "min": [
+          234.0,
+          55.0
+        ],
+        "max": [
+          304.0,
+          122.0
+        ]
+      },
+      "entranceBounds": {
+        "min": [
+          255.0,
+          55.0
+        ],
+        "max": [
+          265.0,
+          65.0
+        ]
+      },
+      "surfaceLandmark": "crownwater-pavilion-pavilion_west",
+      "serverTile": [
+        253,
+        277
+      ]
+    },
+    {
+      "id": "customs_hall",
+      "name": "The Harbour Customs Hall",
+      "class": "settlement",
+      "spawn": "customs-door",
+      "entrance": "customs_hall.ledger_hall",
+      "offset": [
+        250.0,
+        260.0
+      ],
+      "arrival": [
+        250.0,
+        0.05,
+        261.0
+      ],
+      "bounds": {
+        "min": [
+          234.0,
+          251.0
+        ],
+        "max": [
+          282.0,
+          334.0
+        ]
+      },
+      "entranceBounds": {
+        "min": [
+          238.0,
+          251.0
+        ],
+        "max": [
+          262.0,
+          271.0
+        ]
+      },
+      "surfaceLandmark": "crownwater-customs-hall",
+      "serverTile": [
+        243,
+        76
+      ]
+    },
+    {
+      "id": "tide_campanile",
+      "name": "The Tide Campanile",
+      "class": "tower",
+      "spawn": "campanile-door",
+      "entrance": "tide_campanile.shaft",
+      "offset": [
+        60.0,
+        300.0
+      ],
+      "arrival": [
+        60.0,
+        0.05,
+        300.0
+      ],
+      "bounds": {
+        "min": [
+          55.0,
+          295.0
+        ],
+        "max": [
+          65.0,
+          305.0
+        ]
+      },
+      "entranceBounds": {
+        "min": [
+          55.0,
+          295.0
+        ],
+        "max": [
+          65.0,
+          305.0
+        ]
+      },
+      "surfaceLandmark": "crownwater-campanile",
+      "serverTile": [
+        53,
+        37
+      ]
+    }
+  ]
+}
