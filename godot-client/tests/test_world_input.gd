@@ -208,7 +208,8 @@ func _run() -> void:
 	var lower_hud: Control = main.get_node("GameView/Quickbar") as Control
 	var chat_panel: Control = main.get_node("GameView/ChatPanel") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
-	var right_quickbar: Control = main.get_node("GameView/ItemSpellQuickbar") as Control
+	var right_quickbar: Control = main.get_node("GameView/ItemQuickbar") as Control
+	var left_quickspells: Control = main.get_node("GameView/SpellQuickbar") as Control
 	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
 	var inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
 	var stats_tabs: TabContainer = main.get_node(
@@ -264,16 +265,15 @@ func _run() -> void:
 		and chat_panel.anchor_bottom < 0.3
 		and chat_input.offset_bottom <= lower_hud.offset_top,
 		"legacy chat tabs sit at upper left while entry remains above the lower rail")
-	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
-		"stats and item/spell quickbar occupy the right HUD rail")
+	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0
+		and left_quickspells.anchor_left == 0.0 and left_quickspells.anchor_right == 0.0
+		and left_quickspells.offset_left >= 0.0,
+		"items keep the right HUD rail while spells sit on the left, as the legacy client has them")
 	var item_slots: GridContainer = main.get_node("%ItemSlots") as GridContainer
 	var spell_slots: GridContainer = main.get_node("%SpellSlots") as GridContainer
-	_expect(item_slots.columns == 1 and item_slots.visible and not spell_slots.visible,
-		"right rail presents compact single-column item and spell modes")
-	main.call("_on_quickbar_mode_pressed", "spells")
-	_expect(not item_slots.visible and spell_slots.visible,
-		"right rail switches between item and spell quick slots")
-	main.call("_on_quickbar_mode_pressed", "items")
+	_expect(item_slots.columns == 1 and spell_slots.columns == 1
+		and item_slots.visible and spell_slots.visible,
+		"both quick slot columns stay visible without a mode toggle")
 	var clock_face: TextureRect = main.get_node("GameView/ClockFrame/ClockFace") as TextureRect
 	var compass_face: TextureRect = main.get_node("GameView/CompassFrame/CompassFace") as TextureRect
 	_expect(clock_face.texture != null and compass_face.texture != null,
@@ -807,7 +807,7 @@ func _run() -> void:
 	var first_inventory_slot: Button = main.get_node(
 		"GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Scroll/InventoryGrid").get_child(0) as Button
 	var first_quick_slot: Button = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/ItemSlots/Slot1") as Button
+		"GameView/ItemQuickbar/ItemSlots/Slot1") as Button
 	var first_equipment_slot: Button = main.get_node(
 		"GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn/EquipmentGrid").get_child(0) as Button
 	var first_quantity: Label = first_inventory_slot.get_node("Quantity") as Label
@@ -857,7 +857,7 @@ func _run() -> void:
 		"image_id": 59, "quantity": 1, "slot": 0, "flags": 6}})
 	main.call("_sync_spells")
 	var first_spell_slot: Button = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/SpellSlots/Spell1") as Button
+		"GameView/SpellQuickbar/SpellContent/SpellSlots/Spell1") as Button
 	_expect(not first_spell_slot.disabled,
 		"owned castable spell is enabled; tooltip=" + first_spell_slot.tooltip_text)
 	_expect(first_spell_slot.icon != null, "owned castable spell has its legacy icon")
@@ -1430,11 +1430,11 @@ func _run() -> void:
 	# Spell power. Both the preferred power and the ceiling are the server's;
 	# the client asks for a power and never works a limit out from a level.
 	var power_value: Label = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerValue") as Label
+		"GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerValue") as Label
 	var power_up: Button = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerUp") as Button
+		"GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerUp") as Button
 	var power_down: Button = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerDown") as Button
+		"GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerDown") as Button
 	main.call("_sync_spells")
 	await process_frame
 	_expect(power_value.text == "P1" and power_up.disabled and power_down.disabled,
