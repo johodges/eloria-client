@@ -269,8 +269,8 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
@@ -280,7 +280,8 @@
         "walkingHeight": 0.0,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells)"
     },
     "ssarathi_ruins": {
       "alias": "maps/nymara/ssarathi_ruins.elm"
@@ -645,6 +646,141 @@
     },
     "amethyst_barrens_insides": {
       "alias": "maps/nymara/resonant_vault.elm"
+    },
+    "maps/nymara/whitehorn_glacier_temple.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/whitehorn_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -6.0,
+          179.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "parentRegion": "whitehorn_range",
+      "sections": [
+        "glacier_temple",
+        "whitehorn_mine",
+        "ice_cave",
+        "frost_barrow"
+      ]
+    },
+    "whitehorn_glacier_temple": {
+      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
+    },
+    "whitehorn_glacier_temple.elm": {
+      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
+    },
+    "whitehorn_insides": {
+      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
+    },
+    "maps/nymara/drowned_crown.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/crownwater_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -7.0,
+          337.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/crownwater.elm",
+      "insidesOf": "maps/nymara/crownwater.elm",
+      "sections": [
+        "drowned_crown",
+        "tide_cistern",
+        "customs_hall",
+        "tide_campanile"
+      ]
+    },
+    "drowned_crown": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "drowned_crown.elm": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "crownwater_insides": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "crownwater_insides.elm": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "maps/nymara/mirrorhold_interiors.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/mirrorhold_interiors/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -0.0,
+          204.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 6.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/mirrorhold.elm",
+      "requiresServerMap": "34x34 ELM tiles (204 cells)"
+    },
+    "mirrorhold_interiors": {
+      "alias": "maps/nymara/mirrorhold_interiors.elm"
+    },
+    "mirrorhold_interiors.elm": {
+      "alias": "maps/nymara/mirrorhold_interiors.elm"
+    },
+    "maps/nymara/ssarathi_royal_archive.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/ssarathi_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -28.0,
+          327.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": -1.9,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/ssarathi_ruins.elm",
+      "insidesOf": "maps/nymara/ssarathi_ruins.elm",
+      "sections": [
+        "royal_archive",
+        "serpent_hatchery",
+        "drowned_cistern",
+        "root_undercroft"
+      ],
+      "requiresServerMap": {
+        "tiles": 64,
+        "collisionCells": 384,
+        "note": "four insides on one map with blackspace between them"
+      }
+    },
+    "ssarathi_royal_archive": {
+      "alias": "maps/nymara/ssarathi_royal_archive.elm"
+    },
+    "ssarathi_royal_archive.elm": {
+      "alias": "maps/nymara/ssarathi_royal_archive.elm"
     }
   }
 }

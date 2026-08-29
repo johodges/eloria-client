@@ -242,8 +242,13 @@ The repository's stated desktop guideline is **1.5 M visible triangles and
 itself is 4,538 unique triangles across 1,750 nodes at 3.0 MB.
 
 Amberwood at 576 m x 576 m came out at 535,709 unique / 3,123,378 instanced
-triangles, 10,069 nodes, 31.5 MB, with a reduced `world-lod2.glb` at 2.20 M and
-19.4 MB. That is ~9.4 triangles per square metre and about 2.1x the guideline.
+triangles, 10,069 nodes, 28.7 MB, with a reduced `world-lod2.glb` at 2.20 M and
+19.0 MB. That is ~9.4 triangles per square metre and about 2.1x the guideline.
+
+Pin the material set a region embeds, and pin it to what the region actually
+references rather than to the whole shared table. Amberwood shipped 2.79 MB of
+textures no mesh pointed at for exactly that reason, and nothing said so until
+`export_glb` was taught to warn about it.
 
 Mirrorhold, the same extent, came out at 300,734 unique / 1,246,632 instanced
 triangles, 2,308 nodes, 16.1 MB - ~3.8 triangles per square metre, inside the

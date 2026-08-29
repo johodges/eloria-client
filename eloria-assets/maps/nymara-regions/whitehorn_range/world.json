@@ -1620,11 +1620,51 @@
       "id": "whitehorn-glacier-temple-door",
       "name": "Glacier Temple",
       "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destinationSpawn": "whitehorn-glacier-temple-door",
       "serverTile": null,
       "position": [
         102.0,
         70.45,
         -309.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-mine-adit",
+      "name": "Whitehorn Mine",
+      "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destinationSpawn": "whitehorn-mine-adit",
+      "serverTile": null,
+      "position": [
+        288.0,
+        51.73,
+        -138.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-ice-cave-mouth",
+      "name": "Whitehorn Ice Cave",
+      "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destinationSpawn": "whitehorn-ice-cave-mouth",
+      "serverTile": null,
+      "position": [
+        -114.0,
+        30.47,
+        -42.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "whitehorn-barrow-door",
+      "name": "The Frost Barrow",
+      "destination": "maps/nymara/whitehorn_glacier_temple.elm",
+      "destinationSpawn": "whitehorn-barrow-door",
+      "serverTile": null,
+      "position": [
+        -87.0,
+        72.83,
+        -204.0
       ],
       "authority": "server"
     },

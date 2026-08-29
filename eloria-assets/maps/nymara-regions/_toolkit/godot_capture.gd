@@ -10,6 +10,12 @@
 #     ../eloria-assets/maps/nymara-regions/_toolkit/godot_capture.gd \
 #     --rendering-driver vulkan --resolution 1600x1000 -- \
 #     --package=<abs path to region package> --out=<abs path>
+#     [--only=<substring>] [--environment=manifest]
+#
+# `--environment=manifest` lights the shots from the package's own
+# `environment` block through the project's `WorldEnvironmentBinder`, instead of
+# this file's neutral studio sun. Use it when the captures are meant to be
+# evidence about the region's declared lighting and not only about its geometry.
 extends SceneTree
 
 const SETTLE_FRAMES := 24
@@ -88,10 +94,13 @@ func _init() -> void:
 	# the reviewer sees daylight in a vault that has none. Such a package is lit
 	# from its own manifest instead.
 	var manifest_env: Dictionary = {}
+	var manifest_env_root: Dictionary = {}
 	var manifest_file := FileAccess.open(package.path_join("world.json"), FileAccess.READ)
 	if manifest_file != null:
 		var parsed: Variant = JSON.parse_string(manifest_file.get_as_text())
 		manifest_file.close()
+		if parsed is Dictionary:
+			manifest_env_root = parsed as Dictionary
 		if typeof(parsed) == TYPE_DICTIONARY:
 			manifest_env = parsed.get("environment", {})
 	var sealed := str(manifest_env.get("sky", "")) == "none"
@@ -160,6 +169,66 @@ func _init() -> void:
 		sun.shadow_enabled = false
 		sun.rotation_degrees = Vector3(-88.0, 0.0, 0.0)
 	world.add_child(sun)
+
+	# The lamps the package declares, as real lights. A sealed package's manifest
+	# carries a `lights` array standing in for its lanterns and braziers; without
+	# these the ambient block alone lights every surface identically and the
+	# frame shows no source for its own light.
+	var manifest_lights: Array = []
+	var lights_file := FileAccess.open(package.path_join("world.json"),
+		FileAccess.READ)
+	if lights_file != null:
+		var lights_parsed: Variant = JSON.parse_string(lights_file.get_as_text())
+		lights_file.close()
+		if typeof(lights_parsed) == TYPE_DICTIONARY:
+			manifest_lights = (lights_parsed as Dictionary).get("lights", [])
+	var lamp_count := 0
+	for entry in manifest_lights:
+		var lamp: Dictionary = entry
+		var at: Array = lamp.get("position", [])
+		if at.size() != 3:
+			continue
+		var point := OmniLight3D.new()
+		point.position = Vector3(float(at[0]), float(at[1]), float(at[2]))
+		var col: Array = lamp.get("colour", lamp.get("color", [1.0, 1.0, 1.0]))
+		point.light_color = Color(float(col[0]), float(col[1]), float(col[2]))
+		point.light_energy = float(lamp.get("energy", 1.5))
+		point.omni_range = float(lamp.get("range", 9.0))
+		point.shadow_enabled = false
+		world.add_child(point)
+		lamp_count += 1
+	if lamp_count:
+		print("[capture] %d declared lamps" % lamp_count)
+
+	# Bind the manifest's own environment, through the same
+	# `WorldEnvironmentBinder` the game uses, so a capture shows the light the
+	# region actually ships rather than this harness's neutral studio sun.
+	#
+	# Without this the frames are evidence about geometry only: a manifest can
+	# declare a sun that lights the world from underneath, or omit `tonemap`
+	# and render flat, and the captures look identical either way. Off by
+	# default so existing regions' capture sets do not change under them; pass
+	# `--environment=manifest` to use it.
+	# Note the two light sources are different manifest keys and do not
+	# collide: the loop above reads top-level `lights`, and the binder below
+	# spawns `environment.lights`. A package declaring both gets both.
+	if str(opts.get("environment", "harness")) == "manifest" and not sealed:
+		var bind_manifest := WorldManifest.new()
+		bind_manifest.data = manifest_env_root
+		var bound: bool = WorldEnvironmentBinder.apply(
+			bind_manifest, world_env, sun, world)
+		if bound and sun.is_inside_tree():
+			var travel: Vector3 = -sun.global_transform.basis.z
+			print("[capture] environment: manifest (sun travels %.2f, %.2f, %.2f%s)"
+				% [travel.x, travel.y, travel.z,
+				   "  WARNING: lights from below" if travel.y > 0.0 else ""])
+		elif bound:
+			print("[capture] environment: manifest (sun direction bound)")
+		else:
+			print("[capture] environment: manifest requested but not bound; "
+				+ "keeping harness lighting")
+	else:
+		print("[capture] environment: harness studio lighting")
 
 	var camera := Camera3D.new()
 	camera.far = 2400.0

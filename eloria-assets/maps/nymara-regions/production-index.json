@@ -141,14 +141,21 @@
     {
       "id": "ssarathi_ruins",
       "title": "Ssarathi Ruins",
-      "sourceSha256": "47b63f92b73ceaefd6bc73af8a86e878e6d34e0f780bf254ead37c57dcb08410",
+      "sourceSha256": "1b9100d437749caf1b9ad979d3d6c7f794b57ea60d7632dcbb33e37831116a21",
       "conceptViews": 10,
-      "landmarkInstances": 47,
+      "landmarkInstances": 14,
       "terrainHeightRange": [
-        0.0,
-        0.0
+        -9.92,
+        104.7
       ],
-      "water": true
+      "water": true,
+      "status": "production-geometry-materials-population",
+      "serverCells": 576,
+      "extentMetres": 576,
+      "requiresServerMap": "96x96 ELM tiles (576 cells)",
+      "uniqueTriangles": 394853,
+      "instancedTriangles": 1879571,
+      "glbBytes": 19428968
     },
     {
       "id": "manymouth_delta",

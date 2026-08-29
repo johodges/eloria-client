@@ -4338,17 +4338,17 @@
   "performance": {
     "nodes": 10069,
     "meshes": 298,
-    "materials": 37,
-    "images": 100,
-    "textures": 100,
+    "materials": 31,
+    "images": 86,
+    "textures": 86,
     "accessors": 1192,
-    "bufferViews": 1292,
+    "bufferViews": 1278,
     "uniqueTriangles": 535709,
     "uniqueVertices": 426253,
-    "glbBytes": 31511568,
+    "glbBytes": 28717572,
     "instancedTriangles": 3123378,
-    "embeddedTextureBytes": 14401265,
-    "textureMemoryBytesUncompressed": 125042688,
+    "embeddedTextureBytes": 17072436,
+    "textureMemoryBytesUncompressed": 147062784,
     "placements": 9383,
     "collision": {
       "width": 1152,
@@ -4374,11 +4374,11 @@
       "Rock instances: 249"
     ],
     "lod2": {
-      "glbBytes": 19389896,
+      "glbBytes": 18993180,
       "nodes": 6385,
       "uniqueTriangles": 477607,
       "instancedTriangles": 2203752,
-      "sizeReductionPercent": 38.5,
+      "sizeReductionPercent": 33.9,
       "triangleReductionPercent": 29.4
     }
   },

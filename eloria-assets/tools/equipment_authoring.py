@@ -180,7 +180,96 @@ class Rig:
 
     def weights_for(self, points: np.ndarray, candidates: list[str],
                     falloff: float = 2.6) -> tuple[np.ndarray, np.ndarray]:
-        """Inverse-distance skin weights against a candidate bone subset.
+        """Skin weights for garment vertices, taken from the body beneath them.
+
+        Modified 2026-08-28 for Eloria Client.  These used to be solved from the
+        distance to each bone's segment, which is a different rule from the one
+        the body itself was weighted with.  At rest the two agree; the moment a
+        knee bends they do not, and the leg comes through the trouser it is
+        supposed to be inside - the thinner the garment, the worse it is.  A
+        garment vertex now inherits the blend of the body surface nearest to it,
+        so cloth and skin bend as one and the shell can be cut close.
+
+        ``candidates`` still scopes the search: a boot looks only at the parts
+        of the body a boot covers, so a cuff near the knee cannot pick up
+        weights from the other leg standing beside it.
+        """
+        inherited = self._weights_from_body(points, candidates)
+        if inherited is not None:
+            return inherited
+        return self._weights_by_distance(points, candidates, falloff)
+
+    def _weights_from_body(self, points: np.ndarray, candidates: list[str],
+                           neighbours: int = 2):
+        """Blend the weights of the nearest body vertices under each point.
+
+        Two neighbours, sharply weighted, rather than a wide average: a boot's
+        instep sits a centimetre above skin that belongs to the foot and skin
+        that belongs to the shin, and averaging across that crease bound half of
+        it to the calf.  The ankle then flexed and tore the boot open along the
+        top of the foot.  The body's own weights are already smooth, so sampling
+        them closely is enough.
+        """
+        indices = {self.joint_names.index(bone) for bone in candidates
+                   if bone in self.joint_names}
+        if not indices:
+            return None
+        dominant = self.joints[np.arange(len(self.joints)),
+                               np.argmax(self.weights, axis=1)]
+        region = np.isin(dominant, list(indices))
+        if region.sum() < neighbours * 4:
+            return None
+        source = self.positions[region]
+        source_joints = self.joints[region]
+        source_weights = self.weights[region]
+        count = min(neighbours, len(source))
+        # Chunked brute force rather than a tree: the body is a few thousand
+        # vertices and a garment a couple of thousand, and the authoring tools
+        # deliberately depend on nothing beyond numpy.
+        nearest = np.empty((len(points), count), dtype=np.int64)
+        distance = np.empty((len(points), count))
+        for start in range(0, len(points), 512):
+            block = points[start:start + 512]
+            gaps = np.linalg.norm(block[:, None, :] - source[None, :, :], axis=2)
+            picked = np.argpartition(gaps, count - 1, axis=1)[:, :count]
+            rows = np.arange(len(block))[:, None]
+            nearest[start:start + 512] = picked
+            distance[start:start + 512] = gaps[rows, picked]
+        share = 1.0 / np.maximum(distance, 1e-4) ** 6
+        share /= share.sum(axis=1, keepdims=True)
+        # Accumulate the neighbours' bone weights into one blend per point.
+        pooled: dict[int, np.ndarray] = {}
+        for column in range(count):
+            picked = nearest[:, column]
+            for slot in range(source_joints.shape[1]):
+                bones = source_joints[picked, slot]
+                values = source_weights[picked, slot] * share[:, column]
+                for bone in np.unique(bones):
+                    if bone not in indices:
+                        continue
+                    mask = bones == bone
+                    total = pooled.setdefault(int(bone), np.zeros(len(points)))
+                    total[mask] += values[mask]
+        if not pooled:
+            return None
+        bones = np.array(sorted(pooled))
+        stacked = np.stack([pooled[int(bone)] for bone in bones], axis=1)
+        order = np.argsort(-stacked, axis=1)[:, :SKIN_BONE_LIMIT]
+        rows = np.arange(len(points))[:, None]
+        best = stacked[rows, order]
+        totals = best.sum(axis=1, keepdims=True)
+        if not np.all(totals > 1e-6):
+            return None
+        best = best / totals
+        joints = np.zeros((len(points), SKIN_BONE_LIMIT), dtype=np.uint16)
+        values = np.zeros((len(points), SKIN_BONE_LIMIT), dtype=np.float32)
+        joints[:, :order.shape[1]] = bones[order]
+        values[:, :order.shape[1]] = best
+        return joints, values
+
+    def _weights_by_distance(self, points: np.ndarray, candidates: list[str],
+                             falloff: float = 2.6) -> tuple[np.ndarray, np.ndarray]:
+        """Fallback: inverse-distance weights against a candidate bone subset.
 
         Distance is measured to the bone *segment*, not its origin, so a vertex
         beside the middle of a thigh binds to the thigh rather than to whichever
@@ -1416,15 +1505,15 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
         # with a band drawn in around it, which reads as a collar from any angle.
         collar = 1.492
         rings = torso_rings(rig, waist, collar, rows=18, sides=30,
-                            thickness=.019 if kind != "robe" else .025,
+                            thickness=.011 if kind != "robe" else .016,
                             bones=TORSO_BONES + ["thigh_l", "thigh_r"])
         surface.loft(rings, MATERIAL_BASE)
         band = torso_rings(rig, collar, collar + .048, rows=3, sides=30,
-                           thickness=.012, taper=.70, floor=.046,
+                           thickness=.008, taper=.70, floor=.046,
                            bones=["neck_01", "spine_03", "clavicle_l",
                                   "clavicle_r"])
         surface.loft(band, MATERIAL_TRIM, cap_end=True)
-        _belt(surface, rig, waist + .085)
+        _belt(surface, rig, waist + .085, thickness=.020)
         if kind == "cuirass":
             _shoulder_pads(surface, rig)
             # A raised breastplate over the front of the shell, so the armour
@@ -1436,19 +1525,19 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
                                thickness=.030)
             surface.loft(yoke, MATERIAL_TRIM, cap_end=True)
         elif kind == "shirt":
-            _sleeves(surface, rig, end=.38, material=MATERIAL_BASE, thickness=.023)
+            _sleeves(surface, rig, end=.38, material=MATERIAL_BASE, thickness=.013)
             # The cap is what closes the body-to-sleeve seam, and shoulders are
             # the one place the cast disagrees on shape rather than on size -
             # stone shoulders are square where a Luminous one is round - so it
             # keeps more headroom than the rest of the garment.
             _shoulder_pads(surface, rig, drop=.02, material=MATERIAL_BASE,
-                           girth=.86)
+                           girth=.82)
         elif kind == "coat":
             _sleeves(surface, rig, end=.86, material=MATERIAL_BASE, thickness=.020)
             skirt = torso_rings(rig, .66, waist + .02, rows=10, sides=30,
                                 thickness=.034, flare_low=.070,
                                 bones=HIP_BONES + ["calf_l", "calf_r"])
-            surface.loft(skirt[::-1], MATERIAL_BASE)
+            surface.loft(skirt, MATERIAL_BASE, v_start=1.0, v_end=0.0)
             lapel = torso_rings(rig, 1.14, collar - .02, rows=5, sides=30,
                                 thickness=.042)
             surface.loft(lapel, MATERIAL_TRIM)
@@ -1457,7 +1546,7 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
             skirt = torso_rings(rig, .28, waist + .02, rows=14, sides=30,
                                 thickness=.038, flare_low=.150,
                                 bones=HIP_BONES + ["calf_l", "calf_r"])
-            surface.loft(skirt[::-1], MATERIAL_BASE)
+            surface.loft(skirt, MATERIAL_BASE, v_start=1.0, v_end=0.0)
             hem = torso_rings(rig, .28, .34, rows=2, sides=30,
                               thickness=.034, flare_low=.150)
             surface.loft(hem, MATERIAL_TRIM)
@@ -1471,29 +1560,25 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
         # right across the seat.  The shell now closes over the seat and the
         # legs start inside it, so the two always overlap.
         hip_low = .902 if kind == "pants" else .914
-        hips = torso_rings(rig, hip_low, 1.075, rows=8, sides=26, thickness=.019,
-                           floor=.064, bones=HIP_BONES)
+        hips = torso_rings(rig, hip_low, 1.075, rows=8, sides=26, thickness=.012,
+                           floor=.058, bones=HIP_BONES)
         surface.loft(hips, MATERIAL_BASE, cap_end=True)
-        _belt(surface, rig, 1.055, thickness=.026)
-        end = 1.0 if kind == "pants" else .95
+        _belt(surface, rig, 1.055, thickness=.019)
+        end = .93 if kind == "pants" else .89
         for side in ("l", "r"):
             measure = LEG_MEASURE_L if side == "l" else LEG_MEASURE_R
-            # The leg flares a little toward the cuff.  A trouser cut straight
-            # to the ankle is the tightest thing on the character exactly where
-            # the knee bends, and under animation it pulled off the calf and
-            # showed the shin above the boot.
             rings = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=16,
-                               sides=22, thickness=.019, start=.018, end=end,
-                               floor=.048, taper_end=1.32, bones=measure)
+                               sides=22, thickness=.011, start=.018, end=end,
+                               floor=.040, bones=measure)
             surface.loft(rings, MATERIAL_BASE, cap_start=True, cap_end=True)
             if kind == "legs":
                 knee = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=4,
-                                  sides=22, thickness=.028, start=.46, end=.60,
-                                  floor=.044, bones=measure)
+                                  sides=22, thickness=.020, start=.46, end=.60,
+                                  floor=.040, bones=measure)
                 surface.loft(knee, MATERIAL_TRIM)
                 cuff = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=3,
-                                  sides=22, thickness=.025, start=.86, end=.90,
-                                  floor=.044, bones=measure)
+                                  sides=22, thickness=.018, start=.86, end=.90,
+                                  floor=.040, bones=measure)
                 surface.loft(cuff, MATERIAL_TRIM)
         return Garment(surface, "legs")
 
@@ -1503,16 +1588,17 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
             # the boot and the foot shell overlap instead of meeting at a seam
             # that opens up the moment the leg it is worn on is not the leg it
             # was measured against.
-            # The shaft starts above where the trouser leg finishes: the two
-            # have to overlap, or a tightened cuff and a tightened boot top meet
-            # at a line the leg shows through.
+            # A boot's shaft is the outer layer: the trouser tucks into it, so
+            # it is deliberately thicker than the trouser leg at every height
+            # they share.  It also stops well short of the knee - reaching up
+            # to meet a flared cuff only put the boot through the trouser.
             shaft = limb_rings(rig, [f"calf_{side}"], rows=10, sides=20,
-                               thickness=.026, start=.28, end=1.06, floor=.046,
+                               thickness=.024, start=.54, end=1.08, floor=.044,
                                bones=[f"calf_{side}", f"foot_{side}"])
             surface.loft(shaft, MATERIAL_BASE, cap_start=True)
             surface.extend(_foot_shell(rig, side))
             cuff = limb_rings(rig, [f"calf_{side}"], rows=3, sides=20,
-                              thickness=.038, start=.26, end=.36, floor=.046,
+                              thickness=.032, start=.52, end=.62, floor=.044,
                               bones=[f"calf_{side}"])
             surface.loft(cuff, MATERIAL_TRIM)
         return Garment(surface, "boots")
@@ -1600,35 +1686,117 @@ def _foot_shell(rig: Rig, side: str) -> Surface:
     # amount, which extends the upper over the bone without moving the sole:
     # a digitigrade metatarsal, whose bone runs through the middle of the foot
     # rather than along the top of it, ends up inside the boot too.
-    lift = [.014, .018, .018, .015, .011, .008]
-    heel = ankle - instep * (arch * .34) + under_arch * .030
+    lift = [.018, .024, .024, .020, .015, .011]
+    # How far the heel actually reaches behind the ankle, measured rather than
+    # assumed: a plantigrade heel runs back nearly four tenths of the arch and a
+    # digitigrade one barely two, and a fixed fraction leaves one of them either
+    # sticking out through the back of the boot or trailing a spur behind it.
+    heel_reach = arch * .38
+    # Measured off the body itself rather than off the skin weights: the heel
+    # is largely bound to the calf, so a bone-scoped region misses exactly the
+    # part of the foot the back of the boot has to contain.
+    span = toe_tip - ankle
+    length = float(np.linalg.norm(span)) or 1.0
+    axis = span / length
+    offsets = rig.positions - ankle
+    along = np.clip(offsets @ axis, 0.0, length)
+    aside = np.linalg.norm(offsets - np.outer(along, axis), axis=1)
+    same_side = np.sign(rig.positions[:, 0]) == np.sign(ankle[0] or 1.0)
+    foot_flesh = same_side & (aside < .085)
+    rear = rig.positions[foot_flesh & (along < length * .45)]
+    if len(rear) > 16:
+        behind = -((rear - ankle) @ instep)
+        heel_reach = float(np.clip(np.quantile(behind, .995),
+                                   arch * .16, arch * .60))
+    # And the same for the front: toe length varies far more between races than
+    # any multiple of the last joint's span predicts, and a toe box guessed from
+    # one leaves the others' toes out in front of the boot.
+    toe_reach = toe_span * 1.18
+    front = rig.positions[foot_flesh & (along > length * .5)]
+    if len(front) > 16:
+        ahead = (front - ball) @ forward
+        toe_reach = float(np.clip(np.quantile(ahead, .995) + .022,
+                                  toe_span * .8, toe_span * 2.4))
+    heel = ankle - instep * (heel_reach + .026) + under_arch * .030
     spine = [heel,
-             ankle + under_arch * .038 - instep * (arch * .10),
+             ankle + under_arch * .038 - instep * (heel_reach * .42),
              ankle + instep * (arch * .46) + under_arch * .044,
              ball + under_arch * .026,
-             ball + forward * (toe_span * .52) + under_toe * .018,
-             ball + forward * (toe_span * 1.18) + under_toe * .010]
+             ball + forward * (toe_reach * .46) + under_toe * .018,
+             ball + forward * toe_reach + under_toe * .010]
     downs = [under_arch, under_arch, under_arch, under_arch, under_toe, under_toe]
-    widths = [.050, .059, .061, .057, .050, .038]
-    heights = [.046, .054, .050, .043, .034, .027]
-    spine = [point - down * rise for point, down, rise in zip(spine, downs, lift)]
-    heights = [height + rise for height, rise in zip(heights, lift)]
+    # Floors, not the answer.  A boot has a minimum heft whatever it is worn on,
+    # but the foot inside decides how big it has to be, and the two directions
+    # are not the same: the spine these rings hang off runs under the foot, so a
+    # ring centred on it and sized symmetrically covers the sole twice over and
+    # stops short on the instep.  That gap along the top of the foot is what
+    # showed skin through a boot that looked closed from every other angle.
+    # Up and down are therefore measured separately and the ring is recentred
+    # on the flesh it has to contain.
+    widths = [.050, .058, .060, .056, .050, .038]
+    heights = [.046, .054, .050, .044, .034, .028]
+    flesh = rig.positions[foot_flesh]
+    if len(flesh) > 24:
+        seats, sized = [], []
+        for point, down, floor_w, floor_h in zip(spine, downs, widths, heights):
+            seat = float((point - ankle) @ axis)
+            near = flesh[np.abs((flesh - ankle) @ axis - seat) < .030]
+            if len(near) < 8:
+                # Past the last toe there is no flesh to measure.  Carry the
+                # previous ring forward, tapered, rather than dropping to a
+                # floor value: a tip built to a small constant left the
+                # undersides of the toes below the sole that was meant to cap
+                # them.
+                if sized:
+                    last_w, last_h = sized[-1]
+                    seats.append(point + down * (seats[-1] - spine[len(sized) - 1])
+                                 @ down)
+                    sized.append((max(floor_w, last_w * .82),
+                                  max(floor_h, last_h * .82)))
+                else:
+                    seats.append(point)
+                    sized.append((floor_w, floor_h))
+                continue
+            offset = near - point
+            side = float(np.quantile(np.abs(offset @ lateral), .99)) + .013
+            reach = offset @ down
+            below = float(np.quantile(reach, .99)) + .011
+            above = -float(np.quantile(reach, .01)) + .011
+            # Recentre between the two, then take the larger half-height.
+            seats.append(point + down * (below - above) * .5)
+            sized.append((max(floor_w, side),
+                          max(floor_h, (below + above) * .5)))
+        spine = seats
+        widths = [value for value, _ in sized]
+        heights = [value for _, value in sized]
+    else:
+        spine = [point - down * rise for point, down, rise in zip(spine, downs, lift)]
+        heights = [height + rise for height, rise in zip(heights, lift)]
     rings = []
     for point, down, width, height in zip(spine, downs, widths, heights):
         ring = np.empty((18, 3))
         for index in range(18):
+            # Traversed so that the loft's winding faces outwards.  Sweeping the
+            # other way builds the same ellipse inside out, and the renderer
+            # culls the near wall - which is what made a closed boot look like
+            # an open-toed sandal with the foot showing through it.
             phi = 2 * math.pi * index / 18
             ring[index] = (point + lateral * math.cos(phi) * width
-                           - down * math.sin(phi) * height)
+                           + down * math.sin(phi) * height)
         rings.append(ring)
     surface.loft(rings, MATERIAL_BASE, cap_start=True, cap_end=True)
+    # The sole hangs off the bottom of the upper rather than a fixed distance
+    # under the spine.  Once the rings were recentred on the flesh, a fixed
+    # offset put the sole up inside the foot and the underside of the heel came
+    # out beneath it.
     sole = []
-    for point, down, width in zip(spine, downs, widths):
+    for point, down, width, height in zip(spine, downs, widths, heights):
+        seat = point + down * (height - .006)
         ring = np.empty((18, 3))
         for index in range(18):
             phi = 2 * math.pi * index / 18
-            ring[index] = (point + lateral * math.cos(phi) * (width + .008)
-                           + down * (.018 - math.sin(phi) * .012))
+            ring[index] = (seat + lateral * math.cos(phi) * (width + .008)
+                           + down * (.010 + math.sin(phi) * .012))
         sole.append(ring)
     surface.loft(sole, MATERIAL_DETAIL, cap_start=True, cap_end=True)
     return surface
