@@ -130,11 +130,16 @@ BIPED_PLANS = {
                     waist=(.225, .205), arm_len=.61, arm_r=.094, leg_len=.46,
                     leg_r=.110, hunch=.07, skull=(.19, .19, .21), muzzle=.09,
                     shoulder_pad=.06, foot_len=.25, belt=False, surface="hide"),
-    "primate": _biped(hip_h=.44, waist_h=.58, chest_h=.74, shoulder_h=.82, head_h=.94,
+    # An ape's head sits *clear* of its shoulders in the art, and it wears a
+    # heavy ruff.  At .94 head height against .82 shoulders the skull was only
+    # a tenth of a unit proud, and the shoulder mass swallowed it whole: the
+    # jungle gorilla came out as a brown barrel with no face at all.
+    "primate": _biped(hip_h=.44, waist_h=.58, chest_h=.74, shoulder_h=.82, head_h=1.06,
                       shoulder_w=.295, hip_w=.15, chest=(.265, .235),
                       waist=(.215, .195), arm_len=.69, arm_r=.090, leg_len=.40,
-                      leg_r=.100, hunch=.12, knuckle=True, skull=(.18, .17, .20),
-                      muzzle=.10, mane=.06, foot_len=.24, belt=False),
+                      leg_r=.100, hunch=.12, knuckle=True, skull=(.20, .19, .22),
+                      muzzle=.14, mane=.15, foot_len=.24, belt=False,
+                      neck_r=.070, brow=.055),
     "treant": _biped(hip_h=.54, waist_h=.70, chest_h=.82, shoulder_h=.90, head_h=1.02,
                      shoulder_w=.265, hip_w=.175, chest=(.235, .215),
                      waist=(.195, .185), arm_len=.44, arm_r=.108, leg_len=.50,
@@ -1299,8 +1304,16 @@ def biped_geometry(plan_key: str, scale: float, bones,
                       [(.030 * s, .014 * s), (.014 * s, .007 * s)],
                       [body_i, spine_i], MAT_ACCENT, sides=5)
     if p["mane"]:
-        mesh.ellipsoid(tuple(spine_pts[-1] + np.array((0., .03 * s, .02 * s))),
+        seat = spine_pts[-1] + np.array((0., .03 * s, .02 * s))
+        mesh.ellipsoid(tuple(seat),
                        (chest_r[0] * 2.0, p["mane"] * s * 2.4, chest_r[1] * 1.9),
+                       [chest_i, neck_i], MAT_ACCENT, rings=8, sides=14)
+        # A second, deeper lobe behind the first rather than a fringe of
+        # hanging locks: on an upright chest those radiate off the shoulders
+        # as dark spikes instead of hanging, which is what they do on a neck.
+        mane = p["mane"] * s
+        mesh.ellipsoid(tuple(seat + np.array((0., -mane * .55, mane * .30))),
+                       (chest_r[0] * 2.25, mane * 1.9, chest_r[1] * 2.05),
                        [chest_i, neck_i], MAT_ACCENT, rings=8, sides=14)
     if p["bark"] and not p["wood"]:
         for k in range(7):
@@ -1779,7 +1792,18 @@ MINOR_DETAIL = {
     "amethyst_scorpion": dict(carapace="crystal", carapace_relief=.24),
     "crystal_cave_spider": dict(carapace="crystal"),
     # Mirrorhold's swarm is the same trick in glass.
-    "verdigris_beetle": dict(carapace="plate", dome=1.12),
+    "verdigris_beetle": dict(carapace="plate", dome=1.55,
+                             thorax=(.26, .20, .20), abdomen=(.30, .23, .26),
+                             head=(.10, .085, .095), wing=.44),
+    # A hummingbird has almost no legs, a bill as long as its head and body
+    # together, and a tail it fans.  On the shared songbird plan it came out
+    # long-legged and short-billed, which is a finch.
+    "plumefire_hummingbird": dict(leg=.045, leg_r=.008, beak=.30, beak_r=.012,
+                                  wing=.46, tail=.34, crest=.05, upright=.50,
+                                  body=(.075, .085, .145)),
+    # The great owl and the heron want their necks and bills back after the
+    # body tilt; the harpy stands nearly upright.
+    "amberwood_owl": dict(crest=.11),
 }
 
 
@@ -2852,9 +2876,9 @@ INSECT_TABLE, INSECT_INDEX = _assemble(
     + [("antenna_l", "head"), ("antenna_r", "head")])
 
 INSECT_PLANS = {
-    "beetle": dict(thorax=(.24, .18, .22), abdomen=(.30, .22, .34), stand=.16,
-                   leg=.26, leg_r=.022, wings="shell", wing=.30, antenna=.12,
-                   raptorial=False, head=(.13, .11, .12), horn=.10),
+    "beetle": dict(thorax=(.30, .23, .24), abdomen=(.34, .26, .32), stand=.14,
+                   leg=.24, leg_r=.022, wings="shell", wing=.34, antenna=.12,
+                   raptorial=False, head=(.12, .10, .11), horn=.10),
     "moth": dict(thorax=(.20, .19, .24), abdomen=(.16, .15, .32), stand=.16,
                  leg=.22, leg_r=.016, wings="broad", wing=.78, antenna=.22,
                  raptorial=False, head=(.12, .12, .12), horn=.0, wing_lift=.62),
@@ -2869,15 +2893,15 @@ def insect_skeleton(plan_key: str, scale: float, variant=None):
     s = scale
     stand = p["stand"] * s
     body = np.array((0., stand, 0.))
-    chest = body + np.array((0., .01 * s, -p["thorax"][2] * s * .55))
-    head = chest + np.array((0., .02 * s, -p["thorax"][2] * s * .55
-                             - p["head"][2] * s * .8))
+    chest = body + np.array((0., .01 * s, -p["thorax"][2] * s * .38))
+    head = chest + np.array((0., .02 * s, -p["thorax"][2] * s * .40
+                             - p["head"][2] * s * .55))
     g = {"root": np.zeros(3), "body": body, "chest": chest,
          "neck": (chest + head) * .5, "head": head,
          "jaw": head + np.array((0., -p["head"][1] * s * .5, -p["head"][2] * s * .4))}
     for i in range(2):
         g[f"abdomen_{i + 1}"] = body + np.array((0., -.01 * s * (i + 1),
-                                                 p["abdomen"][2] * s * (.45 + .45 * i)))
+                                                 p["abdomen"][2] * s * (.28 + .30 * i)))
     for side, sign in (("l", -1.), ("r", 1.)):
         g[f"wing_{side}"] = chest + np.array((sign * p["thorax"][0] * s * .5,
                                               p["thorax"][1] * s * .5, .02 * s))
@@ -3055,6 +3079,15 @@ def insect_geometry(plan_key: str, scale: float, bones, variant=None) -> Anatomy
                             seed=f"{variant or plan_key}:elytra:{sign:+.0f}",
                             subdivisions=2, relief=p["carapace_relief"],
                             gap=.055, core_material=MAT_CORE, core_scale=.94)
+            elif p["carapace"]:
+                # A bronze diving beetle's shell is bronze.  Through the
+                # keratin material it came out as a white ribbed loaf sitting
+                # on the abdomen, which is not a colour any beetle is.
+                mesh.ellipsoid(tuple(seat), size, bones, MAT_BODY,
+                               rings=9, sides=14)
+                mesh.ellipsoid(tuple(seat + np.array((0., size[1] * .10, 0.))),
+                               (size[0] * .84, size[1] * .86, size[2] * .90),
+                               bones, MAT_ACCENT, rings=7, sides=12)
             else:
                 mesh.ellipsoid(tuple(seat), size, bones,
                                MAT_FEATURE if p["wings"] == "shell" else MAT_ACCENT,
