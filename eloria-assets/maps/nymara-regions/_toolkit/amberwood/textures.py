@@ -2548,6 +2548,37 @@ def grey_moor_scrub(size: int = 512, seed: int = 661) -> TextureSet:
                       alpha_array)
 
 
+def grey_bone(size: int = 512, seed: int = 683) -> TextureSet:
+    """Old bone: the ossuary walls and the skulls in the barrows.
+
+    Panel 8 stacks it and panel 10 puts a skull in close-up. Ivory going grey
+    and green where it has lain in peat water, with the fine longitudinal
+    cracking that tells old bone from new stone.
+    """
+    grain = N.tileable_fbm(size, 40, 4, seed=seed)
+    body = N.tileable_fbm(size, 9, 4, seed=seed + 3)
+    face = np.clip(body * 0.62 + grain * 0.38, 0, 1)
+    color = _colorize(face, (0.0, (0.284, 0.268, 0.226)), (0.42, (0.436, 0.414, 0.348)),
+                      (0.76, (0.596, 0.570, 0.482)), (1.0, (0.724, 0.700, 0.606)))
+    u = np.linspace(0.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    # fine cracks running the length of the bone
+    crack = np.clip(np.abs(np.sin((gy * 22.0 + body * 3.4) * np.pi)) * -7.0 + 1.0,
+                    0.0, 1.0)
+    color = _mix(color, np.array([0.156, 0.146, 0.122]), crack * 0.66)
+    # peat stain: bone that has lain in this ground comes out brown, not white
+    stain = np.clip(N.tileable_fbm(size, 5, 4, seed=seed + 9) * 2.0 - 0.92, 0.0, 1.0)
+    color = _mix(color, np.array([0.300, 0.246, 0.152]), stain * 0.60)
+    algae = np.clip(N.tileable_fbm(size, 14, 3, seed=seed + 13) * 2.3 - 1.52, 0.0, 1.0)
+    color = _mix(color, np.array([0.244, 0.268, 0.176]), algae * 0.48)
+    height = np.clip(0.62 + grain * 0.26 - crack * 0.52, 0.0, 1.0)
+    occlusion = np.clip(0.36 + height * 0.60, 0.0, 1.0)
+    roughness = np.clip(0.86 - stain * 0.10, 0.05, 1.0)
+    return TextureSet("grey_bone", _u8(np.clip(color, 0, 1)),
+                      pack_orm(occlusion, roughness),
+                      normal_from_height(height, 2.8))
+
+
 def grey_wisp(size: int = 128, seed: int = 673) -> TextureSet:
     """The blue-white marsh lights of panel 7. Emissive, no surface detail."""
     body = np.clip(N.tileable_fbm(size, 6, 3, seed=seed) * 0.4 + 0.72, 0, 1)
