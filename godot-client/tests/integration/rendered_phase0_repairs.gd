@@ -33,6 +33,7 @@ func _run() -> void:
 	await _render_diagnostics_panel()
 	await _render_server_popup()
 	await _render_harvest_targets()
+	await _render_reading_window()
 	print("rendered phase 0 repairs: ", "PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)
 
@@ -236,6 +237,38 @@ func _render_harvest_targets() -> void:
 	await _capture("harvest-targets-active.png",
 		"the same view while the server reports harvesting the first node")
 	app_state.call("_on_packet", 237, PackedByteArray([0, 0, 0, 0]))
+	app_state.set("authenticated", false)
+	main.queue_free()
+	await process_frame
+
+## The reading window. Reading a book had no presentation at all: the three
+## research statistics arrived and nothing read them, so a player researching a
+## book could not see that they were.
+func _render_reading_window() -> void:
+	var main: Control = (load("res://src/app/main.tscn") as PackedScene).instantiate() as Control
+	root.add_child(main)
+	await process_frame
+	(main.get_node("GameView") as Control).show()
+	(main.get_node("LoginPanel") as Control).hide()
+	var app_state: Node = root.get_node("/root/AppState")
+	app_state.set("authenticated", true)
+	# Partial statistics 47/65/66: the book, pages done, pages total.
+	app_state.call("_on_packet", 49, PackedByteArray([
+		47, 0, 0, 0, 0, 65, 150, 0, 0, 0, 66, 88, 2, 0, 0]))
+	for _settle: int in range(4):
+		await process_frame
+	var panel: Control = main.get_node("GameView/ReadingPanel") as Control
+	_expect(panel.visible, "the reading window is on screen")
+	await _capture("reading-progress.png",
+		"reading a book, driven by the authoritative research statistics")
+	app_state.call("_on_packet", 56, PackedByteArray([0, 0]))
+	app_state.call("_on_packet", 49, PackedByteArray([
+		47, 0, 4, 0, 0, 65, 0, 0, 0, 0, 66, 0, 0, 0, 0]))
+	for _settle: int in range(4):
+		await process_frame
+	_expect(panel.visible, "the completed window is on screen")
+	await _capture("reading-complete.png",
+		"the same window once the server grants the knowledge")
 	app_state.set("authenticated", false)
 	main.queue_free()
 	await process_frame

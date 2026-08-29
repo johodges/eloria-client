@@ -328,3 +328,26 @@ full backpack, entering combat, a map change, or the toggle. The stock client
 matched an exact English phrase out of the chat stream to drive this state,
 which is not a contract: it breaks on any rewording and on any translation.
 The client renders the indicator from this packet only.
+
+## Books and reading
+
+The Eloria server models a book as **research**, not as pages of text. Using a
+book from the backpack consumes it and sets `reading_book`, `reading_pages` and
+`reading_total`; pages tick down while the character has food, and the
+knowledge bit is set on completion with `GET_NEW_KNOWLEDGE(56)`. Progress is
+reported through ordinary partial statistics: slot 47 is the knowledge index
+being read (1024 means nothing), 65 is pages completed and 66 is the total.
+The full statistics packet carries the same three facts at word offsets 47, 81
+and 82.
+
+`OPEN_BOOK(64)`, `READ_BOOK(65)`, `CLOSE_BOOK(66)` and `SEND_BOOK(43)` are the
+legacy page-content protocol and are **deliberately not implemented**. This
+server has no book text: `config/books.txt` is a two-setting tuning file, and
+`load_books` derives a `BookDefinition` from each book *item* with a page count
+and nothing else. Implementing a page-turning window against it would be a
+window with nothing behind it. If page content is ever wanted, the server needs
+book text first, and those four opcodes become the way to carry it.
+
+Reading is presented from the three statistics above plus the client's hashed
+knowledge catalog for the title. There is no command to stop reading; hiding
+the window does not interrupt it, and the client does not pretend otherwise.

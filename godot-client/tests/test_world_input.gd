@@ -1287,6 +1287,91 @@ func _run() -> void:
 		"a map change clears the world objects and the harvesting state")
 	app_state_inventory.set("authenticated", false)
 
+	# Books. Reading is the other half of the knowledge loop: the catalog, the
+	# ownership bitset and the detail pane all worked, but a player could not
+	# see that they were reading anything, and the manufacturing resolver
+	# reported "unread knowledge" as a blocking reason it had no way to clear.
+	var reading_panel: PanelContainer = main.get_node(
+		"GameView/ReadingPanel") as PanelContainer
+	var reading_title: Label = main.get_node(
+		"GameView/ReadingPanel/ReadingContent/ReadingHeader/ReadingTitle") as Label
+	var reading_progress: ProgressBar = main.get_node(
+		"GameView/ReadingPanel/ReadingContent/ReadingProgress") as ProgressBar
+	var reading_detail: RichTextLabel = main.get_node(
+		"GameView/ReadingPanel/ReadingContent/ReadingDetail") as RichTextLabel
+	app_state_inventory.set("authenticated", true)
+	_expect(not reading_panel.visible, "the reading window starts closed")
+	# Partial statistics 47/65/66: the book being read, pages done, pages total.
+	app_state_inventory.call("_on_packet", 49, PackedByteArray([
+		47, 0, 0, 0, 0, 65, 150, 0, 0, 0, 66, 88, 2, 0, 0]))
+	await process_frame
+	var reading_state: Dictionary = app_state_inventory.get("reading") as Dictionary
+	_expect(bool(reading_state.get("active", false))
+		and int(reading_state.get("index", -1)) == 0
+		and int(reading_state.get("pages_read", 0)) == 150
+		and int(reading_state.get("pages_total", 0)) == 600,
+		"reading progress is reduced from the authoritative research statistics")
+	_expect(reading_panel.visible and reading_title.text.begins_with("Reading ")
+		and reading_detail.text.contains("150 of 600")
+		and reading_detail.text.contains("25%"),
+		"the reading window names the book and its progress: " + reading_title.text)
+	_expect(is_equal_approx(reading_progress.value, 150.0)
+		and is_equal_approx(reading_progress.max_value, 600.0),
+		"the progress bar is driven by the server's page counts")
+	var reading_rect: Rect2 = reading_panel.get_global_rect()
+	_expect(reading_rect.position.x >= 0.0 and reading_rect.position.y >= 0.0
+		and reading_rect.end.x <= 1280.0 and reading_rect.end.y <= 720.0,
+		"the reading window fits within 1280x720")
+	_expect(not reading_rect.intersects(right_stats.get_global_rect()),
+		"the reading window does not cover the fixed resource rail")
+
+	# A recipe gated on that knowledge is blocked until the bit arrives.
+	var manufacturing: RefCounted = main.get("manufacturing_catalog") as RefCounted
+	var gated_index: int = -1
+	for recipe_index: int in range(200):
+		var definition: Dictionary = manufacturing.call("recipe", recipe_index) as Dictionary
+		if definition.is_empty():
+			break
+		if int(definition.get("knowledgeIndex", -1)) == 0:
+			gated_index = recipe_index
+			break
+	if gated_index >= 0:
+		var known: Array[int] = []
+		var blocked: Dictionary = manufacturing.call("availability", gated_index,
+			{}, known, {"food": 10, "ether": 10}) as Dictionary
+		var unblocked_known: Array[int] = [0]
+		var unblocked: Dictionary = manufacturing.call("availability", gated_index,
+			{}, unblocked_known, {"food": 10, "ether": 10}) as Dictionary
+		var blocked_reasons: Array = blocked.get("reasons", []) as Array
+		var unblocked_reasons: Array = unblocked.get("reasons", []) as Array
+		var had_knowledge_reason := false
+		for reason: Variant in blocked_reasons:
+			if str(reason).begins_with("Unread knowledge"):
+				had_knowledge_reason = true
+		var still_has_knowledge_reason := false
+		for reason: Variant in unblocked_reasons:
+			if str(reason).begins_with("Unread knowledge"):
+				still_has_knowledge_reason = true
+		_expect(had_knowledge_reason and not still_has_knowledge_reason,
+			"the knowledge that finishing a book grants clears the recipe's block")
+
+	# Finishing: the server reports reading nothing, and the knowledge bit
+	# arrives as its own packet rather than being assumed from completion.
+	app_state_inventory.call("_on_packet", 56, PackedByteArray([0, 0]))
+	app_state_inventory.call("_on_packet", 49, PackedByteArray([
+		47, 0, 4, 0, 0, 65, 0, 0, 0, 0, 66, 0, 0, 0, 0]))
+	await process_frame
+	_expect(not bool((app_state_inventory.get("reading") as Dictionary).get("active", true)),
+		"the reading state clears when the server reports reading nothing")
+	_expect(reading_panel.visible and reading_title.text.begins_with("Finished ")
+		and reading_detail.text.contains("Knowledge gained"),
+		"finishing a book reports the knowledge it granted")
+	_expect((app_state_inventory.get("known_knowledge") as Array).has(0),
+		"the knowledge bit is set from the server packet, not inferred")
+	main.call("_on_reading_close_pressed")
+	_expect(not reading_panel.visible, "the reading window can be dismissed")
+	app_state_inventory.set("authenticated", false)
+
 	print("world input tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()
 	await process_frame

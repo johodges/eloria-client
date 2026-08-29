@@ -172,6 +172,8 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/server-popup.png"
           test -s "$ELORIA_ARTIFACT_DIR/harvest-targets-idle.png"
           test -s "$ELORIA_ARTIFACT_DIR/harvest-targets-active.png"
+          test -s "$ELORIA_ARTIFACT_DIR/reading-progress.png"
+          test -s "$ELORIA_ARTIFACT_DIR/reading-complete.png"
       - name: Render 16-bit actor native models
         run: |
           xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_actor16_creature.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/actor16.log"

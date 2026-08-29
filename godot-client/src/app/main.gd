@@ -182,6 +182,11 @@ var map_light_root: Node3D
 @onready var console_panel: PanelContainer = %ConsolePanel
 @onready var connection_banner: Label = %ConnectionBanner
 @onready var harvest_banner: Label = %HarvestBanner
+@onready var reading_panel: PanelContainer = %ReadingPanel
+@onready var reading_title: Label = %ReadingTitle
+@onready var reading_close: Button = %ReadingClose
+@onready var reading_progress: ProgressBar = %ReadingProgress
+@onready var reading_detail: RichTextLabel = %ReadingDetail
 @onready var popup_panel: PanelContainer = %PopupPanel
 @onready var popup_title: Label = %PopupTitle
 @onready var popup_text: RichTextLabel = %PopupText
@@ -278,6 +283,9 @@ var _minimap_visible := false
 ## Set when the socket dropped without the player asking. The next successful
 ## login resynchronises rather than trusting anything from before the drop.
 var _resync_after_reconnect := false
+var _reading_completed_index := -1
+var _reading_shown_index := -1
+var _reading_hidden := false
 var _popup_radio_groups: Dictionary = {}
 var _popup_radio_buttons: Dictionary = {}
 var _popup_entries: Dictionary = {}
@@ -499,6 +507,8 @@ func _ready() -> void:
 	popup_dismiss.pressed.connect(_on_popup_dismiss_pressed)
 	popup_panel.hide()
 	harvest_banner.hide()
+	reading_panel.hide()
+	reading_close.pressed.connect(_on_reading_close_pressed)
 	_session_started_msec = Time.get_ticks_msec()
 	_apply_equipment_side()
 	_sync_saved_item_lists()
@@ -2291,6 +2301,8 @@ func _on_state_changed(path: StringName) -> void:
 			_snap_all_map_objects_to_surface.call_deferred()
 		&"harvest":
 			_sync_harvest_indicator()
+		&"reading":
+			_sync_reading()
 		&"ground_bags":
 			_sync_ground_bags()
 		&"ground_bag":
@@ -2298,6 +2310,7 @@ func _on_state_changed(path: StringName) -> void:
 		&"knowledge":
 			_sync_knowledge()
 			_sync_manufacturing()
+			_sync_reading()
 
 func _queue_world_sync() -> void:
 	if _world_sync_queued:
@@ -2612,6 +2625,69 @@ func _sync_ground_bag() -> void:
 func _sync_ground_bag_actions() -> void:
 	ground_bag_pick_button.disabled = ground_bag_items.get_selected_items().is_empty()
 	ground_bag_drop_button.disabled = ground_bag_inventory.get_selected_items().is_empty()
+
+## The reading window. The server models a book as research rather than as
+## pages of text: using a book from the backpack consumes it and starts a
+## timer, pages tick down, and the knowledge bit is set on completion. There is
+## no page content on the wire to turn through, so this reports the thing that
+## actually exists - which book, how far through, and what it unlocks - instead
+## of a page-turning window with nothing behind it.
+func _sync_reading() -> void:
+	if reading_panel == null:
+		return
+	var active: bool = bool(AppState.reading.get("active", false))
+	var index: int = int(AppState.reading.get("index", -1))
+	if not active:
+		if _reading_completed_index >= 0:
+			_present_completed_reading()
+			return
+		reading_panel.hide()
+		return
+	_reading_completed_index = index
+	_reading_hidden = _reading_hidden and index == _reading_shown_index
+	_reading_shown_index = index
+	if _reading_hidden:
+		reading_panel.hide()
+		return
+	var total: int = maxi(1, int(AppState.reading.get("pages_total", 1)))
+	var read: int = clampi(int(AppState.reading.get("pages_read", 0)), 0, total)
+	reading_title.text = "Reading %s" % _knowledge_title(index)
+	reading_progress.max_value = total
+	reading_progress.value = read
+	reading_detail.text = ("%d of %d pages read (%d%%)
+"
+		+ "Reading finishes on its own; food keeps it going.") % [
+		read, total, roundi(100.0 * float(read) / float(total))]
+	reading_panel.show()
+
+## Reading finished. The knowledge bit arrives as its own packet, so this shows
+## what was actually gained rather than assuming completion implies it.
+func _present_completed_reading() -> void:
+	var index: int = _reading_completed_index
+	_reading_completed_index = -1
+	_reading_shown_index = -1
+	_reading_hidden = false
+	if not AppState.known_knowledge.has(index):
+		reading_panel.hide()
+		return
+	reading_title.text = "Finished %s" % _knowledge_title(index)
+	reading_progress.max_value = 1
+	reading_progress.value = 1
+	reading_detail.text = ("[color=#8fdc8f]Knowledge gained.[/color]
+"
+		+ "Recipes that needed it are now available.")
+	reading_panel.show()
+
+func _knowledge_title(index: int) -> String:
+	if index >= 0 and index < knowledge_catalog.size():
+		return knowledge_catalog[index]
+	return "knowledge #%d" % index
+
+func _on_reading_close_pressed() -> void:
+	# Hiding the window does not stop the reading: the server owns that, and
+	# there is no command to interrupt research.
+	_reading_hidden = true
+	reading_panel.hide()
 
 func _sync_knowledge() -> void:
 	if not stats_panel.visible or stats_tabs.current_tab != 1:

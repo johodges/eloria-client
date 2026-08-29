@@ -329,6 +329,52 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Dismiss"
 
+[node name="ReadingPanel" type="PanelContainer" parent="GameView" unique_id=1935572846]
+unique_name_in_owner = true
+visible = false
+z_index = 22
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -418.0
+offset_top = 44.0
+offset_right = -102.0
+offset_bottom = 168.0
+grow_horizontal = 0
+
+[node name="ReadingContent" type="VBoxContainer" parent="GameView/ReadingPanel" unique_id=1046512775]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ReadingHeader" type="HBoxContainer" parent="GameView/ReadingPanel/ReadingContent" unique_id=1287669550]
+layout_mode = 2
+
+[node name="ReadingTitle" type="Label" parent="GameView/ReadingPanel/ReadingContent/ReadingHeader" unique_id=1725105723]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+text = "Reading"
+
+[node name="ReadingClose" type="Button" parent="GameView/ReadingPanel/ReadingContent/ReadingHeader" unique_id=1156297325]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Hide"
+
+[node name="ReadingProgress" type="ProgressBar" parent="GameView/ReadingPanel/ReadingContent" unique_id=1622030129]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+show_percentage = false
+
+[node name="ReadingDetail" type="RichTextLabel" parent="GameView/ReadingPanel/ReadingContent" unique_id=1859364713]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+
 [node name="MapViewport" type="SubViewport" parent="GameView" unique_id=891640277]
 unique_name_in_owner = true
 render_target_update_mode = 0

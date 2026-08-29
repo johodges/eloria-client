@@ -36,6 +36,12 @@ var storage: Dictionary = {"open": false, "categories": [], "category_id": -1,
 	"items": {}, "text": ""}
 var ground_bags: Dictionary = {}
 var ground_bag: Dictionary = {"open": false, "bag_id": -1, "items": {}}
+## What the character is currently reading. The server models a book as
+## research: pages remaining tick down and the knowledge bit is set on
+## completion, so this is derived from the authoritative statistics rather than
+## from a page-turning protocol the server has no content for.
+var reading: Dictionary = {"active": false, "index": -1, "pages_read": 0,
+	"pages_total": 0}
 var known_knowledge: Array[int] = []
 var selected_knowledge: int = -1
 var knowledge_text: String = ""
@@ -98,6 +104,7 @@ func _on_connection_state_changed(value: String) -> void:
 		storage = _empty_storage_state()
 		ground_bags.clear()
 		ground_bag = _empty_ground_bag_state()
+		reading = _empty_reading_state()
 		known_knowledge.clear()
 		selected_knowledge = -1
 		knowledge_text = ""
@@ -226,6 +233,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 					state_changed.emit(&"stats")
 		"stats":
 			stats = (event.values as Dictionary).duplicate(true)
+			_refresh_reading()
 			state_changed.emit(&"stats")
 		"partial_stats":
 			for stat_key_value: Variant in event.values:
@@ -236,6 +244,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				stats[stat_key] = next_value
 				if had_previous:
 					_emit_stat_feedback(stat_key, previous_value, next_value)
+			_refresh_reading()
 			state_changed.emit(&"stats")
 		"inventory":
 			inventory.clear()
@@ -571,6 +580,24 @@ func _emit_stat_feedback(stat_key: String, previous_value: int,
 func close_popup() -> void:
 	popup = _empty_popup_state()
 	state_changed.emit(&"popup")
+
+## The reading slice is a typed reduction of the three research statistics, so
+## the window never re-reads raw slot numbers. Index 1024 is the server's
+## "reading nothing" value.
+func _refresh_reading() -> void:
+	var index: int = int(stats.get("researching", 1024))
+	var total: int = maxi(0, int(stats.get("research_total", 0)))
+	var completed: int = clampi(int(stats.get("research_completed", 0)), 0, total)
+	var next_reading: Dictionary = {
+		"active": index >= 0 and index < 1024 and total > 0,
+		"index": index, "pages_read": completed, "pages_total": total}
+	if next_reading == reading:
+		return
+	reading = next_reading
+	state_changed.emit(&"reading")
+
+func _empty_reading_state() -> Dictionary:
+	return {"active": false, "index": -1, "pages_read": 0, "pages_total": 0}
 
 func _empty_harvest_state() -> Dictionary:
 	return {"active": false, "object_id": -1, "resource": ""}
