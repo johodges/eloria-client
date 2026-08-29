@@ -629,14 +629,21 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "environment": {
             "sky": {"type": "gradient", "zenith": [0.15, 0.25, 0.42],
                     "horizon": [0.58, 0.56, 0.50]},
-            "sun": {"direction": [-0.46, 0.50, 0.73],
+            # The direction the light TRAVELS, which is what the client's
+            # WorldEnvironmentBinder applies: look_at_from_position(ZERO,
+            # direction), and a DirectionalLight3D shines along its own -Z.
+            # The offline rasteriser's sun_direction is the opposite
+            # convention - native/raster.c documents it as "points from surface
+            # toward the sun" - and this shipped that vector, whose +Y lit the
+            # region from underneath.
+            "sun": {"direction": [0.46, -0.50, -0.73],
                     "color": [1.22, 0.94, 0.60], "energy": 1.15},
             "ambient": {"skyColor": [0.22, 0.30, 0.42],
                         "groundColor": [0.08, 0.06, 0.04], "energy": 0.30},
             "saturation": 1.30,
             "fog": {"enabled": True, "color": [0.38, 0.37, 0.35],
                     "density": 0.0007, "heightFalloff": 0.003},
-            "goldenHour": {"sun": {"direction": [-0.82, 0.20, 0.53],
+            "goldenHour": {"sun": {"direction": [0.82, -0.20, -0.53],
                                    "color": [1.55, 0.94, 0.52]},
                            "fog": {"color": [0.62, 0.50, 0.38], "density": 0.0022}},
             "presentation": {
@@ -725,10 +732,20 @@ def main() -> int:
         minimap = render_minimap(build, sets, out / "minimap.webp")
         print(f"[minimap] rendered in {time.time() - t0:.1f}s")
 
-    texture_bytes = sum(sum(len(v) for v in ts.images().values()) for ts in sets.values())
-    stats["embeddedTextureBytes"] = texture_bytes
+    # Only the sets this package embeds. Summing every generated set reports
+    # the size of the whole shared texture table, which is the same number for
+    # every region and grows whenever any region adds a recipe - so it measured
+    # the toolkit rather than the package. It was also plainly wrong on its
+    # face: it claimed 17.1 MB of texture inside a GLB whose textures are a
+    # fraction of that.
+    embedded = {MAT.BY_NAME[name].texture for name in MATERIALS
+                if name in MAT.BY_NAME}
+    embedded_sets = [ts for key, ts in sets.items() if key in embedded]
+    stats["embeddedTextureBytes"] = sum(
+        sum(len(v) for v in ts.images().values()) for ts in embedded_sets)
     stats["textureMemoryBytesUncompressed"] = sum(
-        ts.base_color.shape[0] * ts.base_color.shape[1] * 4 * 3 for ts in sets.values())
+        ts.base_color.shape[0] * ts.base_color.shape[1] * 4 * 3
+        for ts in embedded_sets)
     stats["placements"] = len(build.placements)
     stats["collision"] = collision_stats
     stats["notes"] = build.notes

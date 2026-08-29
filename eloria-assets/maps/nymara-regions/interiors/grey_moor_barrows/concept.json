@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "grey_moor_barrows",
   "name": "Grey Moor Barrows",
-  "status": "concept-complete-production-queued",
+  "status": "production-geometry-materials-population",
   "parentRegion": "grey_moors",
   "source": {
     "elm": "../../source-elm/grey_moor_barrows.elm",
@@ -28,5 +28,6 @@
       "royal tomb",
       "peat stone bone materials"
     ]
-  }
+  },
+  "builtPackage": "../grey_moors_insides/"
 }
