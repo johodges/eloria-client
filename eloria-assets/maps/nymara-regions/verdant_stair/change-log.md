@@ -174,6 +174,23 @@ validators and `verify_runtime` without a murmur.
     into the existing index, which is what makes iterating on framing
     affordable.
 
+12. **Two regions claimed the same surface classes.** Grey Moors (#196) and
+    this branch both cut from a develop where class 23 was free, and both took
+    it — this one 23-24, Grey Moors 23-27. Because both blocks append to the
+    same table in the same place, git could have merged them without raising a
+    conflict, leaving two constants with the same value, `SURFACE_NAMES`
+    holding only one, and the losing region's terrain quietly mislabelled in
+    its own package. Nothing would have crashed.
+
+    Verdant Stair moved to 28-29, being the side that needs two classes rather
+    than five. Confirmed inert by rebuilding on the new numbers: `world.glb`
+    byte-identical, `world.json` and `collision.bin` unchanged, `validate_gltf`
+    still 0/0. No server change either — nothing outside `terrain.py` uses the
+    integers, `world.json` records surfaces by name, and the ELM export reads
+    `collision.bin`, whose cell byte is a height code and not a class.
+
+    Found by reading a sibling PR before opening this one, not by any check in
+    the pipeline. Nothing in the toolkit would catch it.
 
 ## The insides pass
 
@@ -182,7 +199,7 @@ convention the other regions use. See `../interiors/VERDANT_STAIR_INTERIORS.md`
 for the package itself; what follows is what building it found in the region and
 in the shared code.
 
-12. **A walk surface wound the wrong way is invisible to the client, and every
+13. **A walk surface wound the wrong way is invisible to the client, and every
     validator says it is fine.** Godot builds the navigation layer as concave
     collision, which is one-sided for raycasts, so a floor whose triangles face
     down lets the grounding ray straight through. `validate_gltf` is happy - the
@@ -197,7 +214,7 @@ in the shared code.
     upward triangle", not "any downward one", because a box floor legitimately
     has an underside.
 
-13. **`build_collision` stamps an elevated walk surface as a filled disc.**
+14. **`build_collision` stamps an elevated walk surface as a filled disc.**
     Correct for a bridge deck, wrong for a ring: the cenote's spiral stair
     winds around an open shaft, so the grid claims a floor across the middle of
     an eighteen-metre hole. Spawn and portal heights are now taken by casting
@@ -206,13 +223,32 @@ in the shared code.
     limitation rather than quietly fixed, because fixing it means rasterising
     walk triangles the way the interiors' own `build_collision` already does.
 
-14. **An interior doorway stands on its landmark, not on the terrain.** A
+15. **An interior doorway stands on its landmark, not on the terrain.** A
     landmark that collides blocks its own footprint and usually has a plinth or
     a deck; the temple door read 0.61 m low until its height came from the walk
     surface. All four doors and all four return spawns are checked against the
     finished collision grid and moved onto a walkable cell if they need it.
 
-15. **Prose reaching the filesystem.** `preview_interior.py` builds a capture
+16. **Prose reaching the filesystem.** `preview_interior.py` builds a capture
     file name out of the subject text, and "The Green Sanctum: the seated
     figure" contains a colon - a drive separator on Windows. The Godot capture
     pass silently wrote directories instead of PNGs. Names are sanitised now.
+
+17. **A weaker fix for a problem develop had already solved properly.**
+    `region_client_check.gd` fails a package on any grounding miss, which is
+    right for a region and wrong for an interior that is rooms inside rock, so
+    it failed this insides package at 81% misses. I added a rule that read
+    `environment.sky == "none"` and stopped judging misses on a sealed map,
+    judging it on its spawns instead.
+
+    develop already had `3a15663f`, which is better: it reads the package's own
+    `collision.bin` through the `originMetres` interior manifests publish and
+    splits misses into blocked cells and walkable cells, failing only on the
+    latter. Mine could never find a defect in an interior. develop's finds
+    eleven tiles in Whitehorn's and more in two of Amberwood's.
+
+    Mine is dropped and develop's taken verbatim, so this branch no longer
+    touches the shared check. The insides re-verified under the stricter rule
+    and came out better than before: **0 misses on walkable cells**, all 15,283
+    misses on blocked cells. The lesson is the cheap one - the branch was
+    seventeen commits behind develop and I did not look before writing a fix.
