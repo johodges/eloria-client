@@ -1314,6 +1314,30 @@ func _run() -> void:
 	_expect(not harvest_banner.visible,
 		"a server stop - moving, a full backpack, combat - clears the indicator")
 
+	# Guild tags. The tag arrives inside the actor's display name, so a client
+	# that takes the whole string as a name shows the tag as part of it.
+	app_state_inventory.call("_on_packet", 51, _hex_bytes(
+		"5b000203e1010000000001000001020304050b001e14071400120001416c6963652083"
+		+ "454c4f000040ff0600"))
+	await process_frame
+	main.call("_sync_world")
+	await process_frame
+	var tagged_actor: Dictionary = (app_state_inventory.get("actors")
+		as Dictionary).get(91, {}) as Dictionary
+	_expect(str(tagged_actor.get("name", "")) == "Alice"
+		and str(tagged_actor.get("guild_tag", "")) == "ELO",
+		"the reducer keeps the name and the tag apart")
+	var tagged_node: Node3D = (main.get("actor_nodes")
+		as Dictionary).get(91) as Node3D
+	var plate: Label3D = (tagged_node.get_node_or_null("Nameplate")
+		as Label3D) if tagged_node != null else null
+	_expect(plate != null and plate.text.contains("Alice")
+		and plate.text.contains("[ELO]"),
+		"the nameplate draws the tag as a tag: "
+			+ (plate.text if plate != null else "no nameplate"))
+	app_state_inventory.call("_on_packet", 6, PackedByteArray([91, 0]))
+	await process_frame
+
 	# Spell power. Both the preferred power and the ceiling are the server's;
 	# the client asks for a power and never works a limit out from a level.
 	var power_value: Label = main.get_node(

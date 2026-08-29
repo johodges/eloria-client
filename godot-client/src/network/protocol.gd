@@ -1463,7 +1463,7 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		var name_end: int = payload.find(0, 28)
 		if name_end < 0:
 			name_end = min(payload.size(), 58)
-		actor["name"] = payload.slice(28, name_end).get_string_from_utf8()
+		actor.merge(decode_actor_name(payload.slice(28, name_end)))
 		# The enhanced-actor trailer follows the variable-length name: attached
 		# actor id, mount type, eye style, and neck visual. Preserve eye choices
 		# across the real server round trip instead of silently reverting to 0.
@@ -1482,7 +1482,11 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		actor["max_health"] = u16(payload, 12 + shift)
 		actor["health"] = u16(payload, 14 + shift)
 		actor["kind"] = int(payload[16 + shift])
-		actor["name"] = nul_string(payload.slice(17 + shift, min(payload.size(), 47 + shift)))
+		var plain_name: PackedByteArray = payload.slice(
+			17 + shift, min(payload.size(), 47 + shift))
+		var plain_end: int = plain_name.find(0)
+		actor.merge(decode_actor_name(plain_name if plain_end < 0
+			else plain_name.slice(0, plain_end)))
 	actor["alive"] = int(actor.get("health", 0)) > 0
 	# The frame byte is the actor's current animation state. FRAME_COMBAT_IDLE
 	# is the only value that carries gameplay meaning at spawn: an actor
@@ -1490,6 +1494,35 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 	# until the next enter-combat command, which may never arrive.
 	actor["in_combat"] = int(actor.get("frame", FRAME_IDLE)) == FRAME_COMBAT_IDLE
 	return actor
+
+## Splits the display name an actor packet carries into the parts it is really
+## made of: the name, the colour the server chose for it, and the guild tag
+## with its own colour.
+##
+## The server builds one string - an optional colour byte, the name, then a
+## space, an optional colour byte and the guild tag - and a client that takes
+## the whole thing as a name renders the colour bytes as mojibake and the tag
+## as part of the player's name. Both colours are the server's choice, so they
+## are decoded rather than dropped, and neither is ever chosen here.
+static func decode_actor_name(bytes: PackedByteArray) -> Dictionary:
+	var name_colour: int = 0
+	var body: PackedByteArray = bytes
+	if not body.is_empty() and body[0] > 127:
+		name_colour = int(body[0]) - 127
+		body = body.slice(1)
+	var guild_colour: int = 0
+	var guild_tag: String = ""
+	var space: int = body.rfind(32)
+	if space > 0:
+		var tag_bytes: PackedByteArray = body.slice(space + 1)
+		if not tag_bytes.is_empty():
+			if tag_bytes[0] > 127:
+				guild_colour = int(tag_bytes[0]) - 127
+				tag_bytes = tag_bytes.slice(1)
+			guild_tag = tag_bytes.get_string_from_ascii()
+			body = body.slice(0, space)
+	return {"name": body.get_string_from_ascii(), "name_colour": name_colour,
+		"guild_tag": guild_tag, "guild_colour": guild_colour}
 
 static func nul_string(bytes: PackedByteArray) -> String:
 	var end := bytes.find(0)

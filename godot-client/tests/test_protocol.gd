@@ -981,6 +981,29 @@ func _init() -> void:
 	_expect(EloriaProtocol.decode_server(78, _hex("4d000004")).type == "invalid",
 		"a truncated actor buff mask is rejected")
 
+	# Guild tags. The server builds one display string - an optional colour
+	# byte, the name, a space, an optional colour byte and the tag - and both
+	# fixtures below are that builder's exact output.
+	var tagged: Dictionary = EloriaProtocol.decode_server(51, _hex(
+		"5b000203e1010000000001000001020304050b001e14071400120001416c6963652083"
+		+ "454c4f000040ff0600"))
+	_expect(tagged.type == "actor_spawn" and str(tagged.name) == "Alice"
+		and str(tagged.guild_tag) == "ELO" and int(tagged.guild_colour) == 4
+		and int(tagged.name_colour) == 0,
+		"a display name splits into the name and the tag, with their colours:"
+			+ " %s / %s" % [str(tagged.name), str(tagged.guild_tag)])
+	var untagged: Dictionary = EloriaProtocol.decode_server(51, _hex(
+		"5b000203e1010000000001000001020304050b001e14071400120001416c696365"
+		+ "000040ff0600"))
+	_expect(str(untagged.name) == "Alice" and str(untagged.guild_tag).is_empty()
+		and int(untagged.guild_colour) == 0,
+		"a player in no guild has no tag rather than an empty-looking one")
+	# The server writes a colour as chr(127 + colour); 0x89 is colour 10.
+	var coloured: Dictionary = EloriaProtocol.decode_actor_name(
+		_hex("89416c696365"))
+	_expect(str(coloured.name) == "Alice" and int(coloured.name_colour) == 10,
+		"a name the server coloured keeps the colour and loses the marker byte")
+
 	# Asking what is lying on the ground. The bag packet carries an image id
 	# and a quantity, so the name can only come from the server.
 	_expect_bytes("look at ground item fixture",

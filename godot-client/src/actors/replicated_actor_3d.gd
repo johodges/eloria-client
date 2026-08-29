@@ -252,10 +252,16 @@ func _add_fallback_visual(dto: Dictionary) -> void:
 	mesh_instance.position.y = 0.85
 	add_child(mesh_instance)
 
+## The nameplate. A guild tag arrives as part of the display name in the actor
+## packet - "Alice ELO" - so a client that takes the whole string as a
+## name renders the colour byte as mojibake and the tag as part of the player's
+## name. The decoder splits them; this draws the tag as a tag.
 func _add_nameplate(dto: Dictionary) -> void:
 	var label: Label3D = Label3D.new()
 	label.name = "Nameplate"
-	label.text = str(dto.get("name", "Unknown actor"))
+	var guild_tag: String = str(dto.get("guild_tag", ""))
+	label.text = (str(dto.get("name", "Unknown actor"))
+		+ ("  [%s]" % guild_tag if not guild_tag.is_empty() else ""))
 	label.position.y = 2.15
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true

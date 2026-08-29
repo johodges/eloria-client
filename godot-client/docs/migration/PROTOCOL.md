@@ -243,6 +243,19 @@ type of 401 arrives on the extended packet for a client that has advertised
 nothing at all. The capability is advertised because the client does implement
 the packet, not because anything is withheld without it.
 
+## Player names, colours and guild tags
+
+An actor packet carries one display-name string, not three fields: an optional
+name-colour byte, the name, then - for a player in a guild - a space, an
+optional tag-colour byte and the tag. Both colour bytes are `chr(127 + colour)`
+and the tag colour is chosen per viewer, so the same player can arrive with
+different tag colours for different clients. `decode_actor_name` splits all
+four parts; a client that does not is showing the colour byte as mojibake and
+the tag as part of the player's name.
+
+There is **no buddy list** on this server: no table, no command, no
+notification and nothing on the wire. Guilds are the social structure it has.
+
 ## Looking at things
 
 `LOOK_AT_INVENTORY_ITEM(19)`, `LOOK_AT_STORAGE_ITEM(47)`, `LOOK_AT_TRADE_ITEM(38)`
