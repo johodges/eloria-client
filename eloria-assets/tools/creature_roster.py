@@ -380,6 +380,99 @@ SHEET_LOCALES = {
 }
 
 
+# How much each creature's albedo has to be lifted for it to sit at the same
+# value, relative to the rest of the library, that it sits at in the artwork.
+# The sampled hues are accurate -- the median hue error against the concept
+# figures is about two degrees -- but the values were compressed: rendered and
+# measured, a whitehorn yak and a coastal gull, which the art paints nearly
+# white, came out within a few points of a black iron death knight.  Range is
+# what tells one silhouette from another in a lineup, so it is restored here.
+# Measured by ``concept_value_gains.py --table``; gains only ever lift, since
+# the creatures the art paints dark were already right.
+VALUE_GAIN = {
+    "amethyst_scorpion": 1.12,          # art  83.4, model  50.5
+    "geode_scarab": 1.29,               # art  94.2, model  49.6
+    "shardling_swarm": 1.14,            # art  89.5, model  53.5
+    "geode_tortoise": 1.15,             # art  86.5, model  51.2
+    "prism_moth": 1.33,                 # art  90.0, model  46.0
+    "orrery_sentinel": 1.02,            # art  80.7, model  53.6
+    "tidegold_wyrm": 1.02,              # art  74.9, model  50.1
+    "rimebound_archmage": 1.21,         # art  89.0, model  49.8
+    "glacier_brute": 1.07,              # art  97.8, model  62.2
+    "amethyst_sibyl": 1.02,             # art  68.1, model  45.5
+    "tidecaller_sorceress": 1.11,       # art  81.7, model  50.2
+    "goldmane_aurochs": 1.34,           # art  97.1, model  49.1
+    "plumed_crane": 1.38,               # art 105.1, model  51.7
+    "sunmane_minotaur": 1.03,           # art  79.4, model  52.5
+    "stormmane_lion": 1.40,             # art 101.0, model  48.9
+    "grasswing_mantis": 1.36,           # art 111.8, model  56.0
+    "dust_hyena": 1.22,                 # art  87.2, model  48.6
+    "steppe_jackrabbit": 1.44,          # art 115.5, model  54.7
+    "sunmane_gryphon": 1.30,            # art  98.1, model  51.2
+    "crownwater_turtle": 1.22,          # art  92.7, model  51.6
+    "tidefin_naga": 1.40,               # art 109.9, model  53.3
+    "lanternwyrm": 1.15,                # art  85.2, model  50.6
+    "crownwater_wyvern": 1.39,          # art 105.6, model  51.5
+    "cascade_golem": 1.06,              # art  84.3, model  54.2
+    "tidecoil_serpent": 1.40,           # art 104.5, model  50.6
+    "palecrest_crab": 1.42,             # art 118.9, model  56.8
+    "riverbank_ibis": 1.40,             # art 105.9, model  51.6
+    "algae_alligator": 1.11,            # art  82.5, model  50.3
+    "springfly_sprite": 1.46,           # art 128.9, model  60.2
+    "gilded_water_lion": 1.36,          # art  99.0, model  49.4
+    "courier_otter": 1.06,              # art  77.1, model  49.6
+    "message_swallow": 1.12,            # art  79.9, model  48.6
+    "brassband_pike": 1.27,             # art  92.2, model  49.2
+    "verdigris_beetle": 1.03,           # art  84.0, model  55.2
+    "drowned_dockhand": 1.02,           # art  70.4, model  46.7
+    "sluice_elemental": 1.13,           # art 112.1, model  67.4
+    "waterwheel_golem": 1.19,           # art  93.3, model  53.1
+    "harbor_gull": 1.55,                # art 128.5, model  54.8
+    "harbor_seal": 1.31,                # art  98.1, model  51.1
+    "kelpback_turtle": 1.15,            # art  84.6, model  50.0
+    "bluewater_marlin": 1.21,           # art  87.1, model  49.1
+    "saltmarsh_crocodile": 1.06,        # art  78.3, model  50.1
+    "glowmantle_ray": 1.21,             # art  92.2, model  51.8
+    "deepplate_coelacanth": 1.06,       # art  74.2, model  47.5
+    "moor_heron": 1.07,                 # art  77.9, model  49.7
+    "moorlight_wisp": 1.42,             # art 144.0, model  68.7
+    "spectral_moor_stag": 1.26,         # art 101.8, model  54.7
+    "tidelance_construct": 1.12,        # art  96.4, model  58.7
+    "reefplate_golem": 1.30,            # art 106.0, model  55.4
+    "mirrorhold_wheelwarden": 1.03,     # art  80.5, model  53.2
+    "verdigris_warden": 1.07,           # art  84.4, model  53.8
+    "palewater_wyrm": 1.55,             # art 121.1, model  51.4
+    "mirrorwing_swarm": 1.55,           # art 144.3, model  59.0
+    "shattered_sentinel": 1.06,         # art  85.8, model  55.0
+    "mirrorhold_oracle": 1.27,          # art  96.6, model  51.7
+    "tideguard_vanguard": 1.08,         # art  82.1, model  51.9
+    "mirrorhold_siren": 1.33,           # art  99.5, model  50.8
+    "mirrorhold_loremaster": 1.30,      # art  97.0, model  50.8
+    "delta_heron": 1.01,                # art  74.5, model  50.0
+    "emerald_basilisk": 1.16,           # art  84.7, model  49.7
+    "leaf_mantis": 1.22,                # art  96.1, model  53.4
+    "dartback_treefrog": 1.40,          # art  96.7, model  47.0
+    "plumefire_hummingbird": 1.36,      # art 102.0, model  51.1
+    "vinecoil_snake": 1.01,             # art  74.7, model  50.2
+    "canopy_lynx": 1.14,                # art  80.5, model  48.1
+    "mossback_anteater": 1.05,          # art  74.5, model  48.3
+    "bloomtail_axolotl": 1.16,          # art  82.6, model  48.5
+    "verdant_stair_dragon": 1.31,       # art  99.1, model  51.5
+    "rime_harpy": 1.55,                 # art 123.9, model  52.5
+    "glacier_golem": 1.19,              # art 107.4, model  61.2
+    "whitehorn_yak": 1.55,              # art 128.1, model  48.0
+    "rimeshell_crab": 1.25,             # art  93.5, model  51.0
+    "hoarfrost_serpent": 1.55,          # art 133.2, model  50.9
+    "glacier_eagle": 1.51,              # art 114.0, model  51.3
+    "frostplate_knight": 1.12,          # art  93.7, model  56.7
+    "emberwing_moth": 1.21,             # art  88.9, model  50.1
+    "ivy_hound": 1.04,                  # art  74.8, model  49.2
+    "spectral_highwayman": 1.08,        # art  72.0, model  45.5
+    "moss_bear": 1.08,                  # art  74.9, model  47.2
+    "amberwood_ghost_knight": 1.11,     # art  88.7, model  54.5
+}
+
+
 # The colour of the brightest lit feature on each concept figure: the ember in
 # a treant's chest, the light inside a geode carapace, the centre of a wisp.
 # Measured by ``concept_growth_tints.py --core``.  Used for the MAT_CORE

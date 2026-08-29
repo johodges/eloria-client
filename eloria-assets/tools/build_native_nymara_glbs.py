@@ -1664,6 +1664,8 @@ def build_roster_creature(path: Path, actor_type: int, slug: str, label: str,
     # the palette, so the base colour factor stays white and is not applied
     # twice; the underside shares the grain and tints with a factor.
     hints = families.material_hints(family, plan, slug)
+    gain = roster.VALUE_GAIN.get(slug, 1.0)
+    base, accent = _lift(base, gain), _lift(accent, gain)
     surface_kind = hints.get("surface") or surface or plan
     albedo_png, _ = surfaces.surface_maps(
         surface_kind, base, accent, seed=slug, size=256,
@@ -1775,6 +1777,24 @@ def build_roster_creature(path: Path, actor_type: int, slug: str, label: str,
             "joints": len(bones), "animations": len(anatomy.REQUIRED_CLIPS)}
 
 
+def _lift(rgb, gain: float):
+    """Raise a colour's value by ``gain``, by blending it toward white.
+
+    Multiplying clips: a colour with a channel already near 255 cannot get any
+    brighter that way, so the creatures that needed lifting most -- the pale
+    ones -- barely moved.  Blending toward white hits the requested mean
+    exactly, never clips, and desaturates as it lightens, which is what a
+    nearly-white gull or yak looks like in the artwork anyway.
+    """
+    if gain <= 1.0:
+        return tuple(int(round(c)) for c in rgb)
+    mean = sum(rgb) / 3.0
+    if mean >= 254.0:
+        return tuple(int(round(c)) for c in rgb)
+    blend = min(1.0, mean * (gain - 1.0) / (255.0 - mean))
+    return tuple(int(round(c + (255.0 - c) * blend)) for c in rgb)
+
+
 def _saturate(rgb, floor: float = .58):
     """Push a colour sampled off the artwork back up to emissive strength.
 
@@ -1824,6 +1844,8 @@ def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype
     # the palette, so the base colour factor stays white and is not applied
     # twice; the underside shares the grain and tints with a factor.
     hints = families.material_hints("quadruped", archetype, slug)
+    gain = roster.VALUE_GAIN.get(slug, 1.0)
+    base, accent = _lift(base, gain), _lift(accent, gain)
     albedo_png, _ = surfaces.surface_maps(
         archetype, base, accent, seed=slug, size=256,
         marking=surfaces.MARKINGS.get(slug))
