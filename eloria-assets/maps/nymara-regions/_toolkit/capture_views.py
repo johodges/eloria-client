@@ -36,11 +36,10 @@ build_region = regionpaths.load_region_build(PACKAGE).build_region
 # under permanent storm - and the captures are the only visual evidence a
 # reviewer has. Two spellings are accepted, a single LIGHTING dict or a pair of
 # DAY_LIGHTING / GOLDEN_LIGHTING constants, because both are in use.
+# `LIGHTING` may hold either finished Lighting objects or override dicts;
+# DAY_LIGHTING / GOLDEN_LIGHTING are always override dicts. Both are normalised
+# to Lighting objects below, once DAY and GOLDEN exist to override.
 REGION_LIGHTING = dict(getattr(_REGION_VIEWS, "LIGHTING", {}) or {})
-if getattr(_REGION_VIEWS, "DAY_LIGHTING", None) is not None:
-    REGION_LIGHTING.setdefault("day", _REGION_VIEWS.DAY_LIGHTING)
-if getattr(_REGION_VIEWS, "GOLDEN_LIGHTING", None) is not None:
-    REGION_LIGHTING.setdefault("golden", _REGION_VIEWS.GOLDEN_LIGHTING)
 
 DAY = RENDER.Lighting(sun_direction=(-0.46, 0.50, 0.73),
                       sun_color=(1.22, 0.94, 0.60),
@@ -73,6 +72,20 @@ if _day_overrides:
 _golden_overrides = getattr(_VIEWS_MODULE, "GOLDEN_LIGHTING", None)
 if _golden_overrides:
     GOLDEN = RENDER.Lighting(**{**vars(GOLDEN), **_golden_overrides})
+
+# Normalise REGION_LIGHTING to Lighting objects. Before this, a region that
+# declared DAY_LIGHTING had the raw override *dict* put into REGION_LIGHTING,
+# and the aerial branch below does `vars(base)` on whatever it finds - so the
+# first region to use the documented DAY_LIGHTING hook crashed with
+# "vars() argument must have __dict__ attribute" after a full texture and
+# region build. The overrides are already folded into DAY and GOLDEN above;
+# these entries only need to agree with them.
+for _mode, _base in (("day", DAY), ("golden", GOLDEN)):
+    _value = REGION_LIGHTING.get(_mode)
+    if isinstance(_value, dict):
+        REGION_LIGHTING[_mode] = RENDER.Lighting(**{**vars(_base), **_value})
+REGION_LIGHTING.setdefault("day", DAY)
+REGION_LIGHTING.setdefault("golden", GOLDEN)
 
 # Each view is (id, panel, (eye_x, eye_z), eye_height_above_ground,
 #               (target_x, target_z), target_height_above_ground,

@@ -1648,8 +1648,8 @@ def verdant_terrace_stone(size: int = 512, seed: int = 613) -> TextureSet:
     """Laid limestone flags: pale, sun-bleached on the faces, moss in the joints."""
     _, _, joint, flag, wear, height = _limestone_flags(size, seed)
     color = _colorize(np.clip(flag * 0.55 + wear * 0.45, 0, 1),
-                      (0.0, (0.268, 0.262, 0.232)), (0.45, (0.352, 0.344, 0.308)),
-                      (0.8, (0.428, 0.418, 0.376)), (1.0, (0.492, 0.482, 0.436)))
+                      (0.0, (0.176, 0.172, 0.152)), (0.45, (0.240, 0.234, 0.208)),
+                      (0.8, (0.300, 0.292, 0.262)), (1.0, (0.354, 0.346, 0.310)))
     color = _mix(color, np.array([0.176, 0.174, 0.152]), (1.0 - joint) * 0.72)
     moss = np.clip(N.tileable_fbm(size, 8, 4, seed=seed + 9) * 1.9 - 0.92, 0.0, 1.0)
     moss = np.maximum(moss * 0.7, (1.0 - joint) * 0.55)
@@ -1695,13 +1695,14 @@ def verdant_wet_limestone(size: int = 512, seed: int = 619) -> TextureSet:
     channel = np.clip(1.0 - runnel, 0.0, 1.0) ** 1.8
     height = np.clip(0.42 + flow * 0.26 - channel * 0.40, 0.0, 1.0)
     color = _colorize(np.clip(flow * 0.6 + (1.0 - channel) * 0.4, 0, 1),
-                      (0.0, (0.108, 0.116, 0.112)), (0.5, (0.208, 0.216, 0.206)),
-                      (1.0, (0.316, 0.322, 0.302)))
-    color = _mix(color, np.array([0.052, 0.062, 0.058]), channel * 0.72)
-    algae = np.clip(N.tileable_fbm(size, 9, 4, seed=seed + 13) * 1.8 - 0.78, 0.0, 1.0)
-    color = _mix(color, np.array([0.056, 0.112, 0.066]), algae * 0.60)
-    bloom = np.clip(N.tileable_fbm(size, 4, 4, seed=seed + 21) * 2.1 - 1.32, 0.0, 1.0)
-    color = _mix(color, np.array([0.428, 0.436, 0.408]), bloom * 0.52)
+                      (0.0, (0.048, 0.056, 0.052)), (0.5, (0.098, 0.110, 0.100)),
+                      (1.0, (0.166, 0.178, 0.162)))
+    color = _mix(color, np.array([0.022, 0.030, 0.028]), channel * 0.76)
+    algae = np.clip(N.tileable_fbm(size, 9, 4, seed=seed + 13) * 1.8 - 0.62, 0.0, 1.0)
+    color = _mix(color, np.array([0.042, 0.092, 0.050]), algae * 0.74)
+    # the mineral crust is a highlight, not the body of the rock
+    bloom = np.clip(N.tileable_fbm(size, 4, 4, seed=seed + 21) * 2.1 - 1.58, 0.0, 1.0)
+    color = _mix(color, np.array([0.242, 0.250, 0.232]), bloom * 0.44)
     occlusion = np.clip(0.30 + height * 0.66, 0.0, 1.0)
     # wet rock is the least rough surface in the region, which is what sells it
     roughness = np.clip(0.44 + bloom * 0.34 - channel * 0.18, 0.0, 1.0)
@@ -1737,14 +1738,14 @@ def verdant_limestone_cliff(size: int = 512, seed: int = 631) -> TextureSet:
                      + detail * 0.12 + grit * 0.07, 0.0, 1.0)
 
     color = _colorize(np.clip(face * 0.62 + detail * 0.38, 0, 1),
-                      (0.0, (0.104, 0.106, 0.094)), (0.35, (0.172, 0.172, 0.152)),
-                      (0.7, (0.244, 0.242, 0.214)), (1.0, (0.322, 0.316, 0.280)))
-    color = _mix(color, np.array([0.096, 0.094, 0.084]), pit * 0.50)
+                      (0.0, (0.062, 0.066, 0.058)), (0.35, (0.108, 0.110, 0.096)),
+                      (0.7, (0.158, 0.158, 0.138)), (1.0, (0.216, 0.212, 0.186)))
+    color = _mix(color, np.array([0.054, 0.054, 0.048]), pit * 0.54)
     # the shadow under each course is the thing that says "rock in beds"
     color = _mix(color, np.array([0.058, 0.058, 0.052]), ledge * 0.88)
     # the cliff is never bare: moss on the wet ledges, vines down the cracks
     moss = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 27) * 2.0 - 0.96, 0.0, 1.0)
-    color = _mix(color, np.array([0.062, 0.110, 0.044]), moss * 0.84)
+    color = _mix(color, np.array([0.050, 0.096, 0.036]), moss * 0.92)
     # vines hang straight down the face and are the region's signature on rock
     vine = np.clip(N.tileable_value_noise(gx * 23.0, gy * 2.0, 23, 2, seed + 33) * 2.6 - 1.62,
                    0.0, 1.0)

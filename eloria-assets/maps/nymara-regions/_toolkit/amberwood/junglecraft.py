@@ -76,9 +76,14 @@ def terrace_wall(length: float, height: float, seed: int = 0,
         y = index * course_height
         inset = batter * (y / max(height, 1e-6)) * height * 0.25
         depth = 1.05 - inset * 0.5
+        # uv_scale here is texture tiles per metre. At 0.8 a 0.85 m course
+        # shows two thirds of a tile vertically against nineteen repeats along
+        # a 24 m wall, and the stone reads as vertical stripes. 0.25 puts one
+        # tile - five drawn courses - across four metres, which lines the
+        # drawn coursing up with the built one.
         block = M.box((length, course_height * 0.97, depth),
                       center=(0.0, y + course_height * 0.5, -inset),
-                      uv_scale=0.8, material=material)
+                      uv_scale=0.25, material=material)
         stone_parts.append(block)
         # weep holes: a terrace this wet has to drain, and the dark slots are
         # most of what makes the face read as built rather than as extruded
@@ -94,7 +99,7 @@ def terrace_wall(length: float, height: float, seed: int = 0,
     if coping:
         stone_parts.append(M.box((length + 0.5, 0.30, 1.35),
                                  center=(0.0, height + 0.15, -batter * height * 0.12),
-                                 uv_scale=0.9, material=STONE))
+                                 uv_scale=0.45, material=STONE))
     result = group(_weather(M.merge(stone_parts, material), 0.012, seed))
     if vines > 0.0:
         result.add(vine_curtain(length, height * 0.80, seed=seed + 3,
@@ -153,11 +158,23 @@ def grand_stair(width: float = 9.0, height: float = 22.0, seed: int = 0,
                          center=(0.0, y - 0.17, z + landing_depth * 0.5),
                          uv_scale=1.3, material=material)
             walk_parts.append(deck)
-            # the landing needs a mass under it or the stair floats
-            stone_parts.append(M.box((width + 1.0, max(y - 0.5, 0.4), landing_depth + 0.4),
-                                     center=(0.0, (y - 0.5) * 0.5,
-                                             z + landing_depth * 0.5),
-                                     uv_scale=0.7, material=material))
+            # The landing needs a mass under it or the stair floats - a 22 m
+            # flight at this pitch runs nearly forty metres out from the cliff
+            # foot, so that mass is tall. Built as courses rather than as one
+            # block: a fourteen-metre blank slab is what filled half the first
+            # capture pass, and it is the single largest surface a player sees
+            # standing at the foot of the stair.
+            support = max(y - 0.5, 0.4)
+            courses = max(2, int(support / 0.95))
+            course_height = support / courses
+            for course in range(courses):
+                inset = 0.16 * (1.0 - course / courses)
+                stone_parts.append(M.box(
+                    (width + 1.0 + inset * 2.0, course_height * 0.97,
+                     landing_depth + 0.4 + inset * 2.0),
+                    center=(0.0, course * course_height + course_height * 0.5,
+                            z + landing_depth * 0.5),
+                    uv_scale=0.30, material=balustrade_material))
             z += landing_depth
 
     result = group(_weather(M.merge(stone_parts, balustrade_material), 0.010, seed))
@@ -859,3 +876,105 @@ def banyan_roots(radius: float = 3.2, count: int = 9, height: float = 5.5,
     piece = M.merge(parts, material)
     piece.recompute_normals(66.0)
     return piece
+
+
+def terrace_house(seed: int = 0, width: float = 6.4, depth: float = 5.2,
+                  storeys: int = 2, material: str = STONE,
+                  upper: str = TIMBER, roof_material: str = JADE,
+                  trim: str = GILT) -> MeshGroup:
+    """A town house for a terrace city: stone below, timber above, tiered roof.
+
+    Amberwood's `forest_lodge` and `manor` are steep-shingled temperate timber
+    buildings, and a street of them in a jade jungle reads as the wrong region
+    entirely. This is the same idea in this region's vocabulary: a coursed
+    stone ground floor that matches the terrace it stands on, a lighter timber
+    upper storey set back behind a verandah, and the flared tiered roof that
+    repeats across the whole concept.
+    """
+    rng = Rng(seed)
+    from .architecture import door, framed_wall, window
+
+    half_x, half_z = width * 0.5, depth * 0.5
+    parts: list[M.Mesh] = []
+    trim_parts: list[M.Mesh] = []
+    walk: list[M.Mesh] = []
+
+    # plinth and ground-floor mass, built as a solid with a doorway recess
+    plinth = M.box((width + 0.9, 0.45, depth + 0.9), center=(0.0, 0.22, 0.0),
+                   uv_scale=0.5, material=MOSSY)
+    parts.append(plinth)
+    walk.append(M.box((width + 0.9, 0.10, depth + 0.9),
+                      center=(0.0, 0.45, 0.0), uv_scale=0.9, material=MOSSY))
+    ground_height = 2.6
+    for sign in (-1.0, 1.0):
+        parts.append(M.box((width, ground_height, 0.36),
+                           center=(0.0, 0.45 + ground_height * 0.5,
+                                   sign * half_z),
+                           uv_scale=0.45, material=material))
+        parts.append(M.box((0.36, ground_height, depth),
+                           center=(sign * half_x, 0.45 + ground_height * 0.5,
+                                   0.0),
+                           uv_scale=0.45, material=material))
+    parts.append(door(1.00, 2.05, 0.12).translate(0.0, 0.45, -half_z - 0.10))
+    for sign in (-1.0, 1.0):
+        parts.append(window(0.85, 1.00, 0.14)
+                     .translate(sign * width * 0.28, 1.35, half_z + 0.10))
+    # a carved jade band at the head of the ground floor
+    trim_parts.append(M.box((width + 0.5, 0.26, depth + 0.5),
+                            center=(0.0, 0.45 + ground_height + 0.13, 0.0),
+                            uv_scale=0.7, material=CARVED_JADE))
+
+    eave = 0.45 + ground_height + 0.26
+    if storeys > 1:
+        upper_height = 2.15
+        inset = 0.45
+        for sign in (-1.0, 1.0):
+            wall = framed_wall(width - inset * 2.0, upper_height, 0.20,
+                               TIMBER_DARK, upper, studs=3, seed=seed + 1)
+            parts.append(wall.translate(0.0, eave, sign * (half_z - inset)))
+            side = framed_wall(depth - inset * 2.0, upper_height, 0.20,
+                               TIMBER_DARK, upper, studs=3, seed=seed + 2)
+            side.rotate_y(math.pi * 0.5)
+            parts.append(side.translate(sign * (half_x - inset), eave, 0.0))
+        # the verandah the upper storey is set back behind
+        walk.append(M.box((width + 0.2, 0.12, depth + 0.2),
+                          center=(0.0, eave + 0.06, 0.0), uv_scale=1.2,
+                          material=upper))
+        for sx in (-1.0, 1.0):
+            for sz in (-1.0, 1.0):
+                # post() is (x, z, base_y, height): passing eave as the third
+                # argument put the verandah posts underground
+                parts.append(post(sx * (half_x - 0.10), sz * (half_z - 0.10),
+                                  eave, upper_height + 0.30, 0.16,
+                                  TIMBER_DARK))
+        eave += upper_height + 0.30
+
+    # the tiered flared roof: two rings, the eave turning up at the corners
+    for tier in range(2):
+        spread_x = (half_x + 1.15) * (1.0 - 0.28 * tier)
+        spread_z = (half_z + 1.15) * (1.0 - 0.28 * tier)
+        lift = 1.05 - 0.20 * tier
+        rings = [
+            np.array([[sx * spread_x, eave + 0.30, sz * spread_z]
+                      for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1))]),
+            np.array([[sx * spread_x * 0.94, eave - 0.14, sz * spread_z * 0.94]
+                      for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1))]),
+            np.array([[sx * spread_x * 0.42, eave + lift, sz * spread_z * 0.42]
+                      for sx, sz in ((-1, -1), (1, -1), (1, 1), (-1, 1))]),
+        ]
+        parts.append(M.loft(rings, closed_rings=True, uv_scale=1.2,
+                            material=roof_material))
+        for sx in (-1.0, 1.0):
+            for sz in (-1.0, 1.0):
+                trim_parts.append(M.tube(np.array([
+                    [sx * spread_x, eave + 0.30, sz * spread_z],
+                    [sx * (spread_x + 0.40), eave + 0.58, sz * (spread_z + 0.40)],
+                    [sx * (spread_x + 0.52), eave + 0.92, sz * (spread_z + 0.52)]]),
+                    [0.085, 0.06, 0.038], segments=5, uv_scale=1.4,
+                    material=trim))
+        eave += lift + 0.42
+
+    result = group(_weather(M.merge(parts, material), 0.006, seed),
+                   M.merge(trim_parts, trim))
+    result.add_walk(M.merge(walk, MOSSY))
+    return result

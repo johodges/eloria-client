@@ -13,7 +13,7 @@ gain a recipe here, not a private copy of the module.
 
 | Lives here | Lives in `<region>/source/` |
 | --- | --- |
-| noise, mesh, textures, materials, gltf, terrain, trees, architecture, stonework, treecraft, props, render | `region.py`-equivalent composition, `populate.py`-equivalent placement |
+| noise, mesh, textures, materials, gltf, terrain, trees, architecture, stonework, treecraft, crystalcraft, junglecraft, props, render | `region.py`-equivalent composition, `populate.py`-equivalent placement |
 | `validate_gltf.py`, `verify_runtime.py` | `build_<region>.py` |
 | `capture_views.py`, `make_comparison.py`, `compress_captures.py` | `views.py` (the `VIEWS` camera set and `PANELS` board mapping) |
 | `export_source_elm.py`, `preview.py` | |
@@ -21,6 +21,24 @@ gain a recipe here, not a private copy of the module.
 The Python package is still named `amberwood` because that is where it grew and
 renaming it would have touched every import in the same commit that moved the
 files. It is shared, not Amberwood-specific.
+
+The region-flavoured kit modules follow the same rule as everything else here:
+they are parameterised on material and live in the shared package rather than
+in the region that first needed them. `crystalcraft` grew for Amethyst Barrens
+and serves any region with crystal in it; `junglecraft` grew for Verdant Stair
+and carries the pieces a terraced stone region needs - monumental and helical
+stairs, a retaining wall, a root bridge, a railed plank walkway, a stilt hut, a
+tiered pagoda roof, a carved gateway and a relief panel. Neither duplicates
+what `stonework` and `treecraft` already have.
+
+## Surface-class blocks
+
+`terrain.py`'s surface classes are allocated in blocks so two regions being
+authored at the same time cannot collide, and are **appended, never inserted** -
+a region pins the material set it embeds by name, and renumbering would rewrite
+its GLB. 0-6 are the original set; 7-10 Mirrorhold, 11-14 Whitehorn, 15-18
+Amethyst Barrens, 19-22 Crownwater, 23-26 Verdant Stair. Take the next free
+block.
 
 ## Finding the region package
 
