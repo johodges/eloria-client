@@ -81,3 +81,55 @@ Changes made in `../_toolkit/` for this region, all additive:
   footprint.
 - The snow line at 104 m put snow across the civic terraces.
 - The orrery's dome hid the armillary it was built to display.
+
+
+## Interiors pass
+
+Three Mirrorhold interiors added - the Lens Vault under the orrery, the Mirror
+Cistern under the fountain plaza, and the Stair Cellars behind the cliff town -
+with sixteen rooms and nine passages between them, on **one map** in the
+Eternal Lands manner: separate blocks on a 204 m square with unreachable ground
+between them, entered at three arrivals. Full account in
+`../interiors/MIRRORHOLD_INTERIORS.md`.
+
+The first layout put the blocks in a row, 296 x 56 m. That could never have
+been served: the server's ELM validator requires width == height, and a map is
+a whole number of six-metre tiles. Blocks are now on a grid and the map squared
+up to the next tile boundary, with the fourth quarter left free.
+
+Region changes this required:
+
+- **The `resonant_vault` portal was wrong and is removed.** That interior
+  declares `parentRegion: amethyst_barrens` and the server links it to
+  `four_gates`; Mirrorhold never had a claim on it. It was an error in the
+  first production pass of this region, not a data conflict.
+- Three interior entrances added, at the orrery, the plaza and the cliff town.
+- The `drowned_crown` portal is removed. Its concept declares Crownwater as
+  parent and the user has settled it as Crownwater's, against a `maps.txt` link
+  that had pointed it here since before this region was authored. The
+  pre-existing 192-scale server pair is left for whoever repoints it.
+- **The declared sun direction was inverted.** `environment.sun.direction` is
+  read by the client's `WorldEnvironmentBinder` as the direction light
+  *travels* - it does `look_at_from_position(ZERO, direction)` and a
+  `DirectionalLight3D` shines along its own `-Z`. The value shipped was the
+  offline rasteriser's convention, whose `sun_direction` is documented in
+  `native/raster.c` as "points from surface toward the sun", i.e. the exact
+  opposite. A `+Y` component lights the region from underneath. Both the day
+  and golden-hour suns are negated. **Amberwood and Four Gates still declare
+  the uncorrected vector.**
+- `build_mirrorhold.py` now warns when a pinned material is unreferenced, so an
+  over-broad pin cannot be silent. Mirrorhold's pin is exact: 26 pinned, 26
+  embedded, 26 referenced. The warning is suppressed for the reduced package,
+  which drops ground dressing by design.
+
+Toolkit changes, all additive:
+
+- `region_client_check.gd` now tests the contract that holds for interiors as
+  well as regions - every cell the collision grid marks walkable has a surface
+  - instead of requiring floor under every tile in the bounding box, which only
+  a region satisfies.
+- `godot_capture.gd` honours a package's declared `environment` and `lights`
+  when it declares `sky: "none"`, so an interior is captured under its own
+  lamps rather than an outdoor sun.
+- `interior_views.py` derives an interior's camera set from its manifest's own
+  space list.

@@ -36,7 +36,7 @@ Ground dressing was re-costed rather than re-counted: leaf drifts drop from 320
 triangles to 80, mushroom clusters from 432 to 224, boulders from 320 to 80, and
 far-tier trunks lose two sides.
 
-Budgets: 31.5 MB GLB, 535,709 unique and
+Budgets: 28.7 MB GLB, 535,709 unique and
 3,123,378 instanced triangles, 10,069 nodes;
 LOD2 19.4 MB and 2,203,752
 triangles. The client's grounding ray was cast at all 331,776 reachable tiles
@@ -146,7 +146,7 @@ What changed, and why:
 
 | | before | after |
 | --- | --- | --- |
-| GLB | 29.0 MB | 31.5 MB |
+| GLB | 29.0 MB | 31.5 MB, then 28.7 MB once trimmed (below) |
 | unique triangles | 534,697 | 535,709 |
 | instanced triangles | 3,146,376 | 3,123,378 |
 | nodes | 10,063 | 10,069 |
@@ -178,3 +178,47 @@ region_client_check.gd  in-engine, through the real WorldLoader
 ```
 
 `../source-elm/amberwood.elm` is regenerated from the rebuilt collision grid.
+
+
+## Material pin trimmed to what the package actually references
+
+The pin added with the regeneration was the whole shared table - 37 materials -
+which was exactly right on the day it was written and wrong the moment the
+interiors commit appended five more. Six of the 37 were referenced by no mesh
+in `world.glb`: `foliage_green`, `lime_plaster`, `packed_earth`,
+`sooted_plaster`, `charred_timber`, `water_deep`. The 14 images reachable only
+from them were 2.79 MB of a 31.5 MB package.
+
+Pinned to the 31 the region actually uses, verified against the built GLB
+rather than assumed.
+
+| | before | after |
+| --- | --- | --- |
+| GLB | 31.5 MB | **28.7 MB** |
+| materials embedded | 37 | 31 |
+| images embedded | 100 | 86 |
+| unreferenced materials | 6 | **0** |
+
+Geometry is untouched: 535,709 unique and 3,123,378 instanced triangles across
+10,069 nodes, exactly as before. Only textures nothing pointed at have gone.
+
+The interiors are unaffected. `build_interiors.py` computes its own material
+set per interior from that interior's own parts, so the four Amberwood
+interiors still embed `lime_plaster`, `packed_earth`, `sooted_plaster` and
+`charred_timber` where they use them - which is why those recipes exist.
+
+`export_glb` now warns when a pinned material is unreferenced, because an
+over-broad pin is otherwise completely silent - the package simply carries
+textures nothing points at, and nothing says so. The warning is suppressed for
+the reduced package, which drops ground dressing by design and would otherwise
+report false positives. Suggested by the Crownwater session, which found the
+same class of waste in its own pin.
+
+Re-verified after the trim:
+
+```
+validate_gltf.py   0 errors, 0 warnings, 0 infos
+verify_runtime.py  0 errors, 331776 tiles sampled, 0 grounding misses
+determinism        two independent cache-cold builds byte-identical across
+                   all six artefacts
+```

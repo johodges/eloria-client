@@ -131,12 +131,21 @@ The build is deterministic and seeded. `source/` is committed complete;
 `performance.json` and both validator reports from nothing but the toolkit and
 this region's five source modules. Runtime startup never depends on rerunning it.
 
-One caveat, and it is a real one: **a full byte-for-byte double-build was not
-run for this package.** Amberwood's report is able to claim two independent
-cache-cold builds are byte-identical; that check was not repeated here, so
-determinism is asserted from construction (every seed fixed, `noise.stable_hash`
-used throughout, no `hash()`, no wall-clock) rather than demonstrated. It should
-be the first thing a reviewer runs.
+**Demonstrated, not just asserted.** Merging `develop` into this branch and
+rebuilding produced `world.glb`, `world-lod2.glb`, `collision.bin` and
+`minimap.webp` **byte-for-byte identical** to the committed artefacts - a second
+build, hours later, against a toolkit that had moved on underneath it. Only
+`world.json`, `performance.json` and the two validator reports differ, and only
+in fields that are meant to move: the validators' `validatedAt` timestamps, and
+`performance.embeddedTextureBytes` / `textureMemoryBytesUncompressed`.
+
+Those last two are worth a note, because they are misleading and not only here.
+They sum **every generated texture set**, not the ones the package actually
+embeds, so they grew from 20,986,319 to 24,555,232 bytes when `develop` brought
+in three more regions' recipes - while `world.glb` did not change by one byte.
+The pinned set is what ships; that stat measures the workshop, not the package.
+It is inherited from the shared build shape and every region reports it the same
+way.
 
 ## Environment limits that shaped this build
 
