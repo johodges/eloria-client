@@ -975,14 +975,14 @@
       "name": "Verdant Crown King",
       "family": "biped",
       "archetype": "monarch",
-      "vertices": 4773,
-      "triangles": 6992,
+      "vertices": 18836,
+      "triangles": 26188,
       "joints": 27,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/verdant_crown_king.glb",
       "locale": "elemental_lords",
       "concept": {
-        "sheet": "f1bb1663",
+        "sheet": "authored",
         "cell": [
           0,
           0
@@ -1055,8 +1055,8 @@
       "name": "Orrery Colossus",
       "family": "biped",
       "archetype": "construct",
-      "vertices": 6998,
-      "triangles": 11310,
+      "vertices": 7274,
+      "triangles": 11766,
       "joints": 27,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/orrery_colossus.glb",
@@ -1861,8 +1861,8 @@
       "name": "Waterwheel Golem",
       "family": "biped",
       "archetype": "construct",
-      "vertices": 10514,
-      "triangles": 16218,
+      "vertices": 10855,
+      "triangles": 16786,
       "joints": 27,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/waterwheel_golem.glb",
@@ -2342,8 +2342,8 @@
       "name": "Barrow King",
       "family": "biped",
       "archetype": "monarch",
-      "vertices": 6192,
-      "triangles": 9648,
+      "vertices": 6261,
+      "triangles": 9778,
       "joints": 27,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/barrow_king.glb",
@@ -2585,8 +2585,8 @@
       "name": "Mirrorhold Loremaster",
       "family": "biped",
       "archetype": "mage",
-      "vertices": 3460,
-      "triangles": 5682,
+      "vertices": 3529,
+      "triangles": 5812,
       "joints": 27,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/mirrorhold_loremaster.glb",
@@ -2705,8 +2705,8 @@
       "name": "Bog Warden",
       "family": "biped",
       "archetype": "construct",
-      "vertices": 10649,
-      "triangles": 16388,
+      "vertices": 10791,
+      "triangles": 16628,
       "joints": 27,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/bog_warden.glb",
@@ -3517,6 +3517,26 @@
         "cell": [
           2,
           1
+        ]
+      }
+    },
+    "drowned_lich_king": {
+      "actor_type": 567,
+      "id": "drowned_lich_king",
+      "name": "Drowned Lich King",
+      "family": "biped",
+      "archetype": "monarch",
+      "vertices": 9158,
+      "triangles": 14236,
+      "joints": 27,
+      "animations": 7,
+      "path": "godot-client/assets/actors/native/creatures/drowned_lich_king.glb",
+      "locale": "elemental_lords",
+      "concept": {
+        "sheet": "f1bb1663",
+        "cell": [
+          0,
+          0
         ]
       }
     }
@@ -5958,7 +5978,7 @@
   },
   "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire.",
   "validation": {
-    "files": 345,
+    "files": 346,
     "results": {
       "godot-client/assets/actors/native/creatures/algae_alligator.glb": {
         "nodes": 25,
@@ -6207,6 +6227,12 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/drowned_dockhand.glb": {
+        "nodes": 28,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 7
+      },
+      "godot-client/assets/actors/native/creatures/drowned_lich_king.glb": {
         "nodes": 28,
         "meshes": 1,
         "skins": 1,

@@ -878,7 +878,7 @@
    "family": "biped",
    "plan": "monarch",
    "concept": {
-    "sheet": "f1bb1663",
+    "sheet": "authored",
     "cell": [
      0,
      0
@@ -886,6 +886,22 @@
     "box": null
    },
    "glb": "godot-client\\assets\\actors\\native\\creatures\\verdant_crown_king.glb"
+  },
+  {
+   "creature": "drowned_lich_king",
+   "name": "Drowned Lich King",
+   "locale": "elemental_lords",
+   "family": "biped",
+   "plan": "monarch",
+   "concept": {
+    "sheet": "f1bb1663",
+    "cell": [
+     0,
+     0
+    ],
+    "box": null
+   },
+   "glb": "godot-client\\assets\\actors\\native\\creatures\\drowned_lich_king.glb"
   },
   {
    "creature": "tidegold_wyrm",

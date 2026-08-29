@@ -106,7 +106,13 @@ def figure_path(slug: str) -> Path | None:
     if root is None or cell is None:
         return None
     stem, row, col = cell
-    directory = root / SHEET_DIRS.get(stem, "")
+    if stem not in SHEET_DIRS:
+        # An unknown stem is a creature with no concept figure -- authored
+        # rather than measured.  Falling through to ``root / ""`` searched the
+        # delivery root and matched whatever stray file shared the cell index,
+        # which silently keyed a creature to a completely unrelated subject.
+        return None
+    directory = root / SHEET_DIRS[stem]
     if not directory.is_dir():
         return None
     matches = sorted(directory.glob(f"*__{row * 4 + col + 1:02d}__*.png"))
