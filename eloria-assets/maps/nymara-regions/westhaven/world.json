@@ -562,7 +562,7 @@
       "zeroMeansBlocked": true,
       "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Westhaven's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 742589,
+    "walkableCells": 742630,
     "walkableFraction": 0.5596
   },
   "navigation": {
@@ -767,7 +767,7 @@
       "node": "Landmark_Harbour_Gate",
       "position": [
         -103.44,
-        3.4,
+        17.75,
         -29.28
       ],
       "serverTile": [
@@ -2116,18 +2116,17 @@
       "type": "map-transition",
       "transport": "berth",
       "position": [
-        -111.75,
+        -77.52,
         3.5,
-        -29.25
+        -12.24
       ],
       "serverTile": [
-        62,
-        279
+        96,
+        262
       ],
       "destinationMap": "maps/nymara/crownwater.elm",
       "radius": 3.5,
-      "authority": "server",
-      "nudgedMetres": 16.41
+      "authority": "server"
     },
     {
       "id": "mirrorhold-berth",
@@ -2135,17 +2134,18 @@
       "type": "map-transition",
       "transport": "berth",
       "position": [
-        86.64,
-        2.44,
-        25.2
+        86.75,
+        3.5,
+        23.75
       ],
       "serverTile": [
         261,
-        225
+        226
       ],
       "destinationMap": "maps/nymara/mirrorhold.elm",
       "radius": 3.5,
-      "authority": "server"
+      "authority": "server",
+      "nudgedMetres": 1.45
     }
   ],
   "roads": [
@@ -2739,28 +2739,28 @@
     }
   ],
   "performance": {
-    "nodes": 5248,
-    "meshes": 278,
-    "materials": 25,
-    "images": 68,
-    "textures": 68,
-    "accessors": 1112,
-    "bufferViews": 1180,
-    "uniqueTriangles": 469200,
-    "uniqueVertices": 355594,
-    "glbBytes": 22567704,
-    "instancedTriangles": 1169846,
-    "embeddedTextureBytes": 20208347,
-    "textureMemoryBytesUncompressed": 175374336,
-    "placements": 2652,
+    "nodes": 5250,
+    "meshes": 279,
+    "materials": 27,
+    "images": 74,
+    "textures": 74,
+    "accessors": 1116,
+    "bufferViews": 1190,
+    "uniqueTriangles": 469418,
+    "uniqueVertices": 356459,
+    "glbBytes": 23451316,
+    "instancedTriangles": 1170802,
+    "embeddedTextureBytes": 21059984,
+    "textureMemoryBytesUncompressed": 181665792,
+    "placements": 2653,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 742589,
-      "blockedCells": 584515,
+      "walkableCells": 742630,
+      "blockedCells": 584474,
       "walkableFraction": 0.5596,
-      "elevatedDecks": 28,
+      "elevatedDecks": 29,
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)",
       "nudgedEntries": [
@@ -2769,13 +2769,13 @@
           "metres": 6.67
         },
         {
-          "id": "crownwater-berth",
-          "metres": 16.41
+          "id": "mirrorhold-berth",
+          "metres": 1.45
         }
       ]
     },
     "notes": [
-      "surf cards placed: 719",
+      "surf cards placed: 720",
       "surf breakers placed: 7",
       "jetties placed: 8",
       "city houses placed: 385",
@@ -2783,12 +2783,12 @@
       "ground dressing placed: 536"
     ],
     "lod2": {
-      "glbBytes": 14250288,
-      "nodes": 3886,
-      "uniqueTriangles": 382924,
-      "instancedTriangles": 980782,
-      "sizeReductionPercent": 36.9,
-      "triangleReductionPercent": 16.2
+      "glbBytes": 14396044,
+      "nodes": 3888,
+      "uniqueTriangles": 383148,
+      "instancedTriangles": 981744,
+      "sizeReductionPercent": 38.6,
+      "triangleReductionPercent": 16.1
     }
   },
   "sources": [

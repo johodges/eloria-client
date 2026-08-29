@@ -149,9 +149,9 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      8.35,
-      15.08,
-      -3.74
+      -5.49,
+      17.2,
+      -6.6
     ],
     "fieldOfViewDegrees": 56.0,
     "file": "07-fish-market.webp",
@@ -212,8 +212,8 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      102.0,
-      8.1,
+      112.2,
+      5.2,
       -6.9
     ],
     "fieldOfViewDegrees": 38.0,
@@ -254,9 +254,9 @@
   {
     "engine": "4.7.2-stable (official)",
     "eye": [
-      -80.78,
+      -79.47,
       20.01,
-      10.55
+      1.64
     ],
     "fieldOfViewDegrees": 54.0,
     "file": "12-quayside-run.webp",

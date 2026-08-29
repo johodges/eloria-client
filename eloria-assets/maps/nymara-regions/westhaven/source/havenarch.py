@@ -423,21 +423,39 @@ def ship_hull(length: float = 22.0, beam: float = 6.0, seed: int = 0,
             M.translation(mx, 3.0, 0.0)))
         if not rigged:
             continue
-        # a yard, and shrouds down to the rail
-        out.add(M.box((0.20, 0.20, beam * 1.25),
-                      center=(mx, 3.0 + mh * 0.68, 0.0), uv_scale=0.6,
-                      material=TIMBER))
-        out.add(M.quad([(mx - 0.05, 3.0 + mh * 0.66, -beam * 0.60),
-                        (mx - 0.05, 3.0 + mh * 0.66, beam * 0.60),
-                        (mx - 0.05, 3.0 + mh * 0.22, beam * 0.48),
-                        (mx - 0.05, 3.0 + mh * 0.22, -beam * 0.48)],
-                       uv_scale=0.35, material=SAIL))
+        # Two yards a mast, each with its sail, plus shrouds, backstays and a
+        # forestay. One yard and three shrouds read as a mast with a sheet on
+        # it; the painting's ships carry courses and topsails and a web of
+        # standing rigging, and this is the cheapest half of that difference.
+        for tier, (height_fraction, spread, drop) in enumerate(
+                ((0.66, 1.25, 0.44), (0.86, 0.86, 0.16))):
+            yard_y = 3.0 + mh * height_fraction
+            out.add(M.box((0.20, 0.20, beam * spread),
+                          center=(mx, yard_y, 0.0), uv_scale=0.6,
+                          material=TIMBER))
+            foot = yard_y - mh * drop
+            half_top = beam * spread * 0.48
+            half_foot = beam * spread * 0.40
+            out.add(M.quad([(mx - 0.05, yard_y, -half_top),
+                            (mx - 0.05, yard_y, half_top),
+                            (mx - 0.05, foot, half_foot),
+                            (mx - 0.05, foot, -half_foot)],
+                           uv_scale=0.35, material=SAIL))
+        # shrouds: a fan each side from the masthead down to the channels
         for side in (-1, 1):
-            for k in range(3):
+            for k in range(4):
                 out.add(M.tube(np.array(
-                    [[mx, 3.0 + mh * 0.66, 0.0],
-                     [mx + (k - 1) * 1.4, 3.05, side * beam * 0.34]]),
-                    [0.035, 0.035], segments=4, material=IRON))
+                    [[mx, 3.0 + mh * 0.72, 0.0],
+                     [mx + (k - 1.5) * 1.15, 3.05, side * beam * 0.36]]),
+                    [0.032, 0.032], segments=4, material=IRON))
+        # a forestay forward and a backstay aft, which is what stops a mast
+        # reading as a pole standing loose in a deck
+        out.add(M.tube(np.array([[mx, 3.0 + mh * 0.92, 0.0],
+                                 [mx - length * 0.20, 3.4, 0.0]]),
+                       [0.030, 0.030], segments=4, material=IRON))
+        out.add(M.tube(np.array([[mx, 3.0 + mh * 0.92, 0.0],
+                                 [mx + length * 0.22, 3.4, 0.0]]),
+                       [0.030, 0.030], segments=4, material=IRON))
     return out
 
 
@@ -676,8 +694,13 @@ def gate_arch(span: float = 11.0, height: float = 17.0, depth: float = 5.0,
                   center=(0.0, springing + span * 0.5 + 1.5
                           + (height - springing - span * 0.5 - 1.5) * 0.5, 0.0),
                   uv_scale=0.32, material=RUBBLE))
-    out.add(M.box((span + pier_w * 2.0 + 0.6, 0.5, depth + 0.6),
-                  center=(0.0, height + 0.25, 0.0), uv_scale=0.5, material=STONE))
+    # The roadway over the arch is a walk surface: the gate spans a channel,
+    # and the quay route west has to cross on it. Per the runtime contract the
+    # deck then owns its footprint on the server grid and the water beneath is
+    # not separately walkable, which is correct here.
+    out.add_walk(M.box((span + pier_w * 2.0 + 0.6, 0.5, depth + 0.6),
+                       center=(0.0, height + 0.25, 0.0), uv_scale=0.5,
+                       material=SETT))
     if towers:
         for side in (-1, 1):
             x = side * (span * 0.5 + pier_w * 0.5)

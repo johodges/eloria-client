@@ -55,7 +55,7 @@ reading grid maps 1:1.
 
 | # | subject | verdict |
 | --- | --- | --- |
-| 1 | arched harbour gate | **Partial.** The arch, piers, cutwaters and flanking towers are there and the proportion is close. The panel's gate spans open water with ships passing under it; the build's stands at the mouth of the west inlet with its feet nearer the shore, so it reads as a gatehouse more than a water gate. |
+| 1 | arched harbour gate | **Good.** A channel is now cut north from the harbour through the gate line, so there is open water under the arch and a boat can pass beneath it, which was the one thing separating this from the panel. The gate's roadway is a walk surface, so the quay route west crosses on top of it rather than being severed by the cut. |
 | 2 | lighthouse on a wave-battered rock | **Good.** Battered tower, string courses, corbelled gallery with an iron rail, glazed lantern, lead dome, keeper's house, and the rock reads as rock. The region now has surf and there is foam at the rock's foot, but three framings were tried and none puts the tower and its breaking water in one frame the way the panel does. The sea is present rather than the subject. |
 | 3 | cobbled street climbing through an arch | **Good.** The climb now runs *through* an arch with two jettied storeys carried over it, which was the panel's defining feature and the thing the build had no equivalent of. Granite setts, warehouse frontage, lamps. |
 | 4 | ship alongside with a gantry | **Good.** Pier on piles with a planked deck, shear-legs gantry with a crate on the fall, a two-masted hull alongside. Rigging is much simpler than the panel's. |
@@ -64,9 +64,11 @@ reading grid maps 1:1.
 | 7 | fish stalls under awnings in an arcade | **Good.** Arcade with arches and a tiled roof, nine stalls with striped awnings, catch on the trestles, baskets. |
 | 8 | sea wall bastion with a banner | **Good.** The mole now runs out with surf breaking along its whole weather face, which is most of what the panel is, and the bastion stands at the bend with its merlons and banner. Framed along the mole rather than up at it from the water. |
 | 9 | rooftop terrace over a brass dome | **Good.** Colonnaded drum, ribbed brass dome, lantern and finial, balustraded terrace, city and sea beyond. |
-| 10 | dockside still-life | **Partial.** The cluster now has the two props it was missing — a rope flaked down in a coil, and chain with alternate links turned — beside crates, barrels, sacks and fishing gear, and the random quay scatter is excluded within 7 m of it. It is a composed arrangement rather than a junk pile. It still reads wider than the panel's macro. |
+| 10 | dockside still-life | **Good.** A macro at last. The rope coils, chain runs, crates, barrels and fishing gear fill the foreground at the scale the panel has them, with the crane and the moored ships behind. The framing was authored correctly from the start; what kept it wide was the capture harness, whose camera-placement search demanded 4.8 m of standing room and stepped back up to 57 m to find it. Both are now scaled to the shot. |
 
-**Seven of ten are good, three partial, none weak.** The first pass was four good, five partial and one weak; the difference is surf, the street arch, the rope and chain, and the transform fix.
+**Nine of ten are good, one partial, none weak.** The first pass was four good, five partial and one weak.
+
+The one still partial is panel 2: the lighthouse reads and the rock now has foam at its foot, but four framings have been tried — from the crown, from the shoulder, from 114 m out on the water, and low on the south-west shore — and none holds the tower and its breaking water in one frame the way the panel does. Lamp Rock is 180 m across with the light near its middle, so any camera far enough out to see the surf line is too far out for the tower to be the subject. Moving the lighthouse toward the rock's seaward edge would fix the shot and would move a landmark away from where the aerial puts it, which is the wrong trade.
 
 ## What the second pass changed
 
@@ -98,17 +100,51 @@ The recipe is now isotropic — jointing, fracture, lichen and weed as blotches 
 and the tide is told by the surf geometry, which is correct at every
 orientation.
 
+## The third pass
+
+The rest of the previous list, and one thing it had not noticed.
+
+- **The harbour gate stands in water.** A channel cut north from the harbour
+  through the gate line, with the gate's roadway made a walk surface so the
+  quay route crosses on it instead of being severed.
+- **Rigging.** Two yards a mast, each with its sail, four shrouds a side, and a
+  forestay and backstay. A mast with one sheet on it read as a pole standing
+  loose in a deck.
+- **The panel-10 macro**, by scaling the capture harness's two camera searches
+  to the shot rather than to the region.
+- **Upland ground variety.** A second, drier pasture recipe laid against the
+  salt turf on a long-wavelength field, so the north-east is a patchwork rather
+  than one texture with noise on it.
+- **The upland roads were surfaced in ship decking.** Not on any list: the
+  terrain class the road operator marks is PATH, and PATH was pointed at
+  `westhaven_quay_plank` because the shipyard slipway needed decking. Every cart
+  track on the map was planked like a deck. PATH is now a proper cart track —
+  packed earth, embedded stones, wheel ruts, a weedy crown — and the slipway,
+  the one place decking on the ground was right, is authored as paving.
+
+Two placement bugs surfaced with the inlet, and one of them had been there from
+the first build:
+
+- **`west_quay` had been sitting in sixteen metres of water since day one.** The
+  coast at that v runs through u = 1.11 and the anchor was at 0.72. Nothing
+  caught it, and once the walkable-cell check existed it quietly relocated the
+  Crownwater berth 16 m every build rather than reporting the anchor as wrong.
+  The anchor is now probed against the built terrain, not guessed.
+- **The nudge could relocate a portal under a deck.** An elevated deck makes its
+  footprint walkable at deck height, and the harbour gate's piers stand on dry
+  ground, so "nearest walkable cell with dry ground" could land under the gate
+  roadway and then take its Y from the terrain sixteen metres below.
+  `build_collision` now records which cells a deck claims and the nudge excludes
+  them.
+
 ## What would most improve it next
 
-1. **A framing for panel 2 that holds the tower and its breaking water
-   together.** Three were tried and none does; it may want a camera out on the
-   water with a longer lens than the harness's fixed field allows.
-2. **The harbour gate standing in open water**, with the inlet cut back so ships
-   pass under it.
-3. **Rigging.** Ships carry one yard, one sail and three shrouds each.
-4. **A tighter macro rig for panel 10** — the harness's minimum framing distance
-   is what keeps it reading wide.
-5. **Ground-texture variety on the upland.**
+1. **Panel 2's framing**, which needs the lighthouse nearer the seaward edge of
+   Lamp Rock, or a longer lens than the harness's fixed field allows.
+2. **The aerial's projection.** The concept is a three-quarter oblique and the
+   build's aerial is near-vertical, so the two cannot be overlaid.
+3. **Interiors for the rest of the region.** Four are built; the guild hall, the
+   cathedral and the arcade are all doors nobody can open.
 
 ## What this report does not say
 

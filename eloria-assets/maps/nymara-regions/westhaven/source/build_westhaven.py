@@ -396,6 +396,12 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
     walkable &= ~blockers
 
     surface = ground.copy()
+    # Cells an elevated deck claims. A spawn or a door must never be relocated
+    # under one: the cell is walkable, and its *ground* can be dry - the harbour
+    # gate's piers stand on land - but what the client's ray finds there is the
+    # deck overhead, so anything placed on the ground reads as buried. Recorded
+    # on the build so `nudge_onto_walkable` can exclude them.
+    deck_mask = np.zeros_like(walkable)
     # An overhead walk surface owns its footprint: the client grounds an actor
     # on the highest walk surface below the ray, so a two-level column cannot be
     # expressed on a flat server grid. Bridges, decks and platforms therefore
@@ -436,6 +442,7 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
         if deck_y > ground.max() + 200.0:
             continue
         elevated += 1
+        deck_mask |= footprint
         surface = np.where(footprint, deck_y, surface)
         walkable = np.where(footprint, True, walkable)
 
@@ -443,6 +450,7 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
                                  / COLLISION_HEIGHT_STEP), 1, 63).astype(np.uint8)
     grid = np.where(walkable, quantised, 0).astype(np.uint8)
 
+    build.deck_mask = deck_mask
     payload = struct.pack("<4sHHII", b"EWCG", 1, 0, width, height) + grid.tobytes()
     stats = {
         "width": width, "height": height, "cellMetres": COLLISION_CELL,
@@ -472,6 +480,21 @@ def nudge_onto_walkable(build: REG.RegionBuild, payload: bytes,
     """
     grid = np.frombuffer(payload, dtype=np.uint8, offset=16).reshape(height, width)
     walkable = grid > 0
+    if not walkable.any():
+        return []
+    # An elevated deck makes its footprint walkable at deck height, so a naive
+    # nearest-walkable search can move a portal onto a bridge over open water
+    # and then record its Y from the terrain twenty metres below. Candidates are
+    # restricted to cells whose *ground* is above the water line, which is what
+    # "somewhere to stand" means for a spawn or a door.
+    ground_all = build.terrain.height_at(
+        REG.PLAY_MIN_X + (np.arange(width)[None, :] + 0.5) * COLLISION_CELL,
+        REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE
+        - (np.arange(height)[:, None] + 0.5) * COLLISION_CELL)
+    walkable = walkable & (ground_all > REG.SEA_LEVEL + 0.35)
+    deck_mask = getattr(build, "deck_mask", None)
+    if deck_mask is not None and deck_mask.shape == walkable.shape:
+        walkable = walkable & ~deck_mask
     if not walkable.any():
         return []
     rows, cols = np.nonzero(walkable)

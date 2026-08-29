@@ -123,9 +123,9 @@
     "panel": 7,
     "file": "07-fish-market.webp",
     "eye": [
-      8.35,
-      15.08,
-      -3.74
+      -5.49,
+      17.2,
+      -6.6
     ],
     "target": [
       -5.49,
@@ -174,8 +174,8 @@
     "panel": 10,
     "file": "10-chandlery-macro.webp",
     "eye": [
-      102.0,
-      8.1,
+      112.2,
+      5.2,
       -6.9
     ],
     "target": [
@@ -208,9 +208,9 @@
     "panel": null,
     "file": "12-quayside-run.webp",
     "eye": [
-      -80.78,
+      -79.47,
       20.01,
-      10.55
+      1.64
     ],
     "target": [
       156.0,

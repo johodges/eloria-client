@@ -126,7 +126,23 @@ Recorded because each cost time and each would cost the next region the same.
     rocks and the headland, which are terrain: at terrain UV scale the bands
     tiled into hard stripes every three and a half metres. The recipe is now
     isotropic and the tide is told by the surf geometry instead.
-14. **Four pinned but unreferenced materials** — `shingles`, `cobble_paving`,
+14. **The upland roads were surfaced in ship decking.** The terrain class the
+    road operator marks is PATH, and PATH was pointed at
+    `westhaven_quay_plank` because the shipyard slipway needed decking on the
+    ground. Every cart track over the open grazing was therefore planked like a
+    deck. PATH is now a proper cart track and the slipway is authored as paving.
+15. **`west_quay` had been in sixteen metres of water since the first build.**
+    The coast at that v runs through u = 1.11 and the anchor was at 0.72.
+    Nothing caught it; once the walkable-cell check existed it quietly
+    relocated the Crownwater berth 16 m every build rather than reporting the
+    anchor as wrong. Probed against the built terrain now, not guessed.
+16. **The nudge could relocate a portal under a deck.** An elevated deck makes
+    its footprint walkable at deck height, and the harbour gate's piers stand
+    on dry ground, so "nearest walkable cell with dry ground" could land under
+    the gate roadway and take its Y from the terrain sixteen metres below.
+    `build_collision` records which cells a deck claims and the nudge excludes
+    them.
+17. **Four pinned but unreferenced materials** — `shingles`, `cobble_paving`,
     `bark_pale`, `water_sea` — each superseded by a Westhaven recipe and each
     embedding its textures for nothing. 1.4 MB. The build's own warning caught
     them. `undergrowth` likewise in the LOD package.
