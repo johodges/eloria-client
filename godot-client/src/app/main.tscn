@@ -119,6 +119,7 @@ unique_name_in_owner = true
 cull_mask = 3
 current = true
 fov = 50.0
+near = 1.0
 far = 1800.0
 
 [node name="PlayerMapMarker" type="MeshInstance3D" parent="GameView/ViewportContainer/Viewport/WorldRoot" unique_id=113081557]

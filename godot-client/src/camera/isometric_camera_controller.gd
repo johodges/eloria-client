@@ -7,6 +7,13 @@ extends Node3D
 @export var zoom_step := 2.5
 @export var rotation_sensitivity := 0.25
 @export var pan_sensitivity := 0.012
+# The rig never brings the camera nearer than this to its focus, which is what
+# lets `main.tscn` carry a 1 m near plane. That matters: the client renders
+# through GL Compatibility, whose depth buffer is fixed-point, so the resolvable
+# depth step at distance z is about z^2 / (near * 2^24) metres. At the engine
+# default near of 0.05 that is 12 mm at 100 m and 48 mm at 200 m, and every
+# authored 5 mm clearance in the map kits shimmers; at 1 m it is 0.6 mm and
+# 2.4 mm. Lowering `min_distance` below a couple of metres means revisiting it.
 @export var min_distance := 8.0
 @export var max_distance := 90.0
 
