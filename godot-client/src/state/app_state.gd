@@ -6,6 +6,10 @@ signal login_failed(message: String)
 signal character_created
 signal character_creation_failed(message: String)
 signal floating_feedback_requested(feedback: Dictionary)
+## Something the server said happened in the world, at an actor and sometimes
+## towards another. It is an event rather than state - there is nothing to be
+## true a moment later - so it is announced and not stored.
+signal special_effect_requested(effect: Dictionary)
 
 var connection_state := "disconnected"
 var authenticated := false
@@ -27,8 +31,8 @@ var chat_lines: Array[Dictionary] = []
 var active_channels: Array[int] = [0, 0, 0]
 var active_channel_index := 0
 var selected_actor_id := -1
-var npc_dialogue: Dictionary = {"open": false, "name": "", "portrait": 0,
-	"text": "", "options": []}
+var npc_dialogue: Dictionary = {"open": false, "name": "", "text": "",
+	"options": []}
 var trade: Dictionary = {"open": false, "partner": "", "storage_available": false,
 	"source_inventory": {}, "own_offers": {}, "other_offers": {},
 	"own_accepts": 0, "other_accepts": 0}
@@ -36,11 +40,73 @@ var storage: Dictionary = {"open": false, "categories": [], "category_id": -1,
 	"items": {}, "text": ""}
 var ground_bags: Dictionary = {}
 var ground_bag: Dictionary = {"open": false, "bag_id": -1, "items": {}}
+## What the character is currently reading. The server models a book as
+## research: pages remaining tick down and the knowledge bit is set on
+## completion, so this is derived from the authoritative statistics rather than
+## from a page-turning protocol the server has no content for.
+var reading: Dictionary = {"active": false, "index": -1, "pages_read": 0,
+	"pages_total": 0}
 var known_knowledge: Array[int] = []
 var selected_knowledge: int = -1
 var knowledge_text: String = ""
+## The nine Eloria extension windows. Each is a server-push snapshot: the
+## server states the whole window and the client renders it, so none of these
+## is merged with a previous value or reconstructed from anything else.
+var marketplace: Dictionary = {"open": false, "gold": 0, "returned_items": 0,
+	"listings": []}
+var merchant: Dictionary = {"open": false, "actor_id": -1, "npc_name": "",
+	"gold": 0, "carried": 0, "capacity": 0, "items": []}
+var quest_journal: Array[Dictionary] = []
+var item_detail: Dictionary = {"open": false}
+var inventory_state: Dictionary = {"gold": 0, "carried": 0, "capacity": 0,
+	"items": []}
+var combat_state: Dictionary = {"active": false, "event": 0, "target_id": -1,
+	"target_name": "", "player_health": 0, "player_max_health": 0,
+	"target_health": 0, "target_max_health": 0, "recent_damage": 0,
+	"updated_msec": 0}
+var mail: Array[Dictionary] = []
+var navigation: Dictionary = {"active": false, "x": 0, "y": 0, "distance": 0,
+	"map_id": "", "label": ""}
+var special_events: Array[String] = []
+
+## What power each spell effect will be cast at, and the highest the server
+## allows, keyed by the server's effect name. Entirely server-stated: the
+## client never works a limit out from a level.
+var spell_power: Dictionary = {}
+
+## The player the server last described, in its own words: who was inspected
+## and what they have earned. Never assembled from a request the client
+## remembers making.
+var player_info: Dictionary = {"open": false, "actor_id": -1, "name": "",
+	"achievements": []}
+
+## Map markers the server placed, keyed by its marker id. Purely server-stated:
+## the client never invents one and never removes one the server still holds.
+var map_markers: Dictionary = {}
+
+## Clickable world objects on the current map, keyed by server object id, and
+## the authoritative harvesting state. Both are server-declared: nothing here
+## is matched by filename or scraped out of chat.
+var map_objects: Dictionary = {}
+var harvest: Dictionary = {"active": false, "object_id": -1, "resource": ""}
+
+## A server-driven modal question. The server had no way to ask the player
+## anything: DISPLAY_POPUP(83) fell through to {"type":"unknown"} and
+## POPUP_REPLY(50) had no encoder.
+var popup: Dictionary = {"open": false, "popup_id": -1, "title": "", "text": "",
+	"options": []}
+var perks: Array[Dictionary] = []
+## Lifetime activity totals keyed by the server's own category name, plus the
+## order the server listed them in so the window needs no local table.
+var activity_counters: Dictionary = {}
+var activity_counter_order: Array[String] = []
+## Protocol diagnostics. Every undecoded packet and every decode failure used
+## to be reduced here and emitted with no listener, so a gap in the client's
+## coverage was completely silent. The diagnostics panel reads these.
 var unknown_packet_count := 0
-var recent_protocol_errors: Array[String] = []
+var unknown_packets: Dictionary = {}
+var recent_protocol_errors: Array[Dictionary] = []
+var last_clock_sync_msec := 0
 var invasion_assistant: Dictionary = {"open": false}
 
 func _ready() -> void:
@@ -49,6 +115,9 @@ func _ready() -> void:
 
 func _on_connection_state_changed(value: String) -> void:
 	connection_state = value
+	# "reconnecting" is a waiting state between a drop and the next attempt.
+	# The world was already cleared by the "disconnected" that preceded it, so
+	# it must not clear anything a second time.
 	if value == "disconnected":
 		authenticated = false
 		local_actor_id = -1
@@ -69,14 +138,33 @@ func _on_connection_state_changed(value: String) -> void:
 		active_channel_index = 0
 		current_map = ""
 		selected_actor_id = -1
-		npc_dialogue = {"open": false, "name": "", "portrait": 0, "text": "", "options": []}
+		npc_dialogue = {"open": false, "name": "", "text": "", "options": []}
 		trade = _empty_trade_state()
 		storage = _empty_storage_state()
 		ground_bags.clear()
 		ground_bag = _empty_ground_bag_state()
+		reading = _empty_reading_state()
 		known_knowledge.clear()
 		selected_knowledge = -1
 		knowledge_text = ""
+		marketplace = _empty_marketplace_state()
+		merchant = _empty_merchant_state()
+		quest_journal.clear()
+		item_detail = {"open": false}
+		inventory_state = {"gold": 0, "carried": 0, "capacity": 0, "items": []}
+		combat_state = _empty_combat_state()
+		mail.clear()
+		navigation = _empty_navigation_state()
+		special_events.clear()
+		map_objects.clear()
+		map_markers.clear()
+		player_info = _empty_player_info()
+		spell_power.clear()
+		harvest = _empty_harvest_state()
+		popup = _empty_popup_state()
+		perks.clear()
+		activity_counters.clear()
+		activity_counter_order.clear()
 		invasion_assistant = {"open": false}
 	state_changed.emit(&"connection")
 
@@ -107,6 +195,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"local_actor")
 		"clock_sync":
 			server_timestamp = int(event.server_timestamp)
+			last_clock_sync_msec = Time.get_ticks_msec()
 			state_changed.emit(&"clock")
 		"new_minute":
 			game_minute = int(event.minute)
@@ -114,15 +203,27 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"clock")
 		"change_map":
 			current_map = event.map_name
+			# The new map's objects arrive in their own packet; anything held
+			# for the old map is stale the moment the change lands.
+			map_objects.clear()
+			harvest = _empty_harvest_state()
+			marketplace = _empty_marketplace_state()
+			merchant = _empty_merchant_state()
+			combat_state = _empty_combat_state()
 			actors.clear()
 			selected_actor_id = -1
-			npc_dialogue = {"open": false, "name": "", "portrait": 0,
-				"text": "", "options": []}
+			npc_dialogue = {"open": false, "name": "", "text": "",
+				"options": []}
 			pending_spell_target = ""
 			trade = _empty_trade_state()
 			storage = _empty_storage_state()
 			ground_bags.clear()
 			ground_bag = _empty_ground_bag_state()
+			state_changed.emit(&"map_objects")
+			state_changed.emit(&"harvest")
+			state_changed.emit(&"marketplace")
+			state_changed.emit(&"merchant")
+			state_changed.emit(&"combat_state")
 			state_changed.emit(&"map")
 		"actor_spawn":
 			actors[event.actor_id] = event
@@ -189,6 +290,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 					state_changed.emit(&"stats")
 		"stats":
 			stats = (event.values as Dictionary).duplicate(true)
+			_refresh_reading()
 			state_changed.emit(&"stats")
 		"partial_stats":
 			for stat_key_value: Variant in event.values:
@@ -199,6 +301,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				stats[stat_key] = next_value
 				if had_previous:
 					_emit_stat_feedback(stat_key, previous_value, next_value)
+			_refresh_reading()
 			state_changed.emit(&"stats")
 		"inventory":
 			inventory.clear()
@@ -318,8 +421,11 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			trade[remove_key] = remove_offers
 			state_changed.emit(&"trade")
 		"trade_accept":
+			# The server reports the phase; the client does not infer it by
+			# counting packets. A duplicate or reordered accept therefore
+			# cannot leave the two sides disagreeing about the trade.
 			var accept_key: String = "other_accepts" if bool(event.other) else "own_accepts"
-			trade[accept_key] = mini(2, int(trade.get(accept_key, 0)) + 1)
+			trade[accept_key] = clampi(int(event.phase), 0, 2)
 			state_changed.emit(&"trade")
 		"trade_reject":
 			var reject_key: String = "other_accepts" if bool(event.other) else "own_accepts"
@@ -378,6 +484,20 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				_:
 					pending_spell_target = ""
 			state_changed.emit(&"spells")
+		"special_effect":
+			special_effect_requested.emit({"effect": int(event.effect),
+				"actor_id": int(event.actor_id),
+				"target_id": int(event.target_id)})
+		"actor_buffs":
+			# Which visible effects an actor is under, stated per actor. Kept on
+			# the actor rather than in a table of its own, so it disappears with
+			# the actor it describes.
+			var buffed_id: int = int(event.actor_id)
+			if actors.has(buffed_id):
+				var buffed: Dictionary = actors[buffed_id] as Dictionary
+				buffed["buffs"] = int(event.buffs)
+				actors[buffed_id] = buffed
+				state_changed.emit(&"actors")
 		"active_spell":
 			active_spells[int(event.buff_id)] = {
 				"end_msec": Time.get_ticks_msec() + int(event.duration_seconds) * 1000}
@@ -405,7 +525,6 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"npc_info":
 			npc_dialogue["open"] = true
 			npc_dialogue["name"] = event.name
-			npc_dialogue["portrait"] = event.portrait
 			state_changed.emit(&"npc_dialogue")
 		"npc_text":
 			npc_dialogue["open"] = true
@@ -419,15 +538,142 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			npc_dialogue["open"] = false
 			npc_dialogue["options"] = []
 			state_changed.emit(&"npc_dialogue")
+		"marketplace":
+			marketplace = {"open": true, "gold": int(event.gold),
+				"returned_items": int(event.returned_items),
+				"listings": (event.listings as Array).duplicate(true)}
+			state_changed.emit(&"marketplace")
+		"merchant":
+			merchant = {"open": true, "actor_id": int(event.actor_id),
+				"npc_name": str(event.npc_name), "gold": int(event.gold),
+				"carried": int(event.carried), "capacity": int(event.capacity),
+				"items": (event.items as Array).duplicate(true)}
+			state_changed.emit(&"merchant")
+		"quest_journal":
+			quest_journal.clear()
+			for raw_quest: Variant in event.entries:
+				quest_journal.append((raw_quest as Dictionary).duplicate(true))
+			state_changed.emit(&"quest_journal")
+		"item_detail":
+			item_detail = (event as Dictionary).duplicate(true)
+			item_detail["open"] = true
+			item_detail.erase("type")
+			state_changed.emit(&"item_detail")
+		"inventory_state":
+			inventory_state = {"gold": int(event.gold),
+				"carried": int(event.carried), "capacity": int(event.capacity),
+				"items": (event.items as Array).duplicate(true)}
+			state_changed.emit(&"inventory_state")
+		"combat_state":
+			# A defeat ends the engagement; every other event refreshes it.
+			var defeated: bool = (int(event.event)
+				== EloriaProtocol.COMBAT_EVENT_DEFEAT)
+			combat_state = {"active": not defeated, "event": int(event.event),
+				"target_id": int(event.target_id),
+				"target_name": str(event.target_name),
+				"player_health": int(event.player_health),
+				"player_max_health": int(event.player_max_health),
+				"target_health": int(event.target_health),
+				"target_max_health": int(event.target_max_health),
+				"recent_damage": int(event.recent_damage),
+				"updated_msec": Time.get_ticks_msec()}
+			state_changed.emit(&"combat_state")
+		"mail":
+			mail.clear()
+			for raw_message: Variant in event.messages:
+				mail.append((raw_message as Dictionary).duplicate(true))
+			state_changed.emit(&"mail")
+		"navigation":
+			navigation = {"active": bool(event.active), "x": int(event.x),
+				"y": int(event.y), "distance": int(event.distance),
+				"map_id": str(event.map_id), "label": str(event.label)}
+			state_changed.emit(&"navigation")
+		"special_events":
+			special_events.clear()
+			for raw_line: Variant in event.lines:
+				special_events.append(str(raw_line))
+			state_changed.emit(&"special_events")
+		"spell_power":
+			spell_power.clear()
+			for raw_effect: Variant in event.effects:
+				var described: Dictionary = raw_effect as Dictionary
+				spell_power[str(described.get("effect", ""))] = {
+					"preferred": int(described.get("preferred", 1)),
+					"limit": int(described.get("limit", 1))}
+			state_changed.emit(&"spell_power")
+		"player_info":
+			player_info = {"open": true, "actor_id": int(event.actor_id),
+				"name": str(event.name),
+				"achievements": (event.achievements as Array).duplicate()}
+			state_changed.emit(&"player_info")
+		"map_marker":
+			map_markers[int(event.marker_id)] = {
+				"marker_id": int(event.marker_id), "x": int(event.x),
+				"y": int(event.y), "map_id": str(event.map_id),
+				"label": str(event.label)}
+			state_changed.emit(&"map_markers")
+		"remove_map_marker":
+			# Removing one the server never placed is not an error: the server
+			# clears a range of ids whenever it resyncs quest markers.
+			if map_markers.erase(int(event.marker_id)):
+				state_changed.emit(&"map_markers")
+		"map_objects":
+			# The list arrives in chunks; only the first clears what was there.
+			if bool(event.first):
+				map_objects.clear()
+			for raw_object: Variant in event.objects:
+				var map_object: Dictionary = (raw_object as Dictionary).duplicate(true)
+				map_objects[int(map_object.get("object_id", -1))] = map_object
+			state_changed.emit(&"map_objects")
+		"harvest_state":
+			harvest = {"active": bool(event.active),
+				"object_id": int(event.object_id), "resource": str(event.resource)}
+			state_changed.emit(&"harvest")
+		"popup":
+			# Only one popup at a time, matching the legacy client's refusal to
+			# open a second window for an id it is already showing.
+			var same_popup: bool = (bool(popup.get("open", false))
+				and int(popup.get("popup_id", -1)) == int(event.popup_id))
+			if not same_popup:
+				popup = {"open": true, "popup_id": int(event.popup_id),
+					"title": str(event.title), "text": str(event.text),
+					"options": (event.options as Array).duplicate(true)}
+				state_changed.emit(&"popup")
+		"perks":
+			perks.clear()
+			for raw_perk: Variant in event.perks:
+				perks.append((raw_perk as Dictionary).duplicate(true))
+			state_changed.emit(&"perks")
+		"activity_counters":
+			if bool(event.full):
+				activity_counters.clear()
+				activity_counter_order.clear()
+			for raw_counter: Variant in event.counters:
+				var counter: Dictionary = raw_counter as Dictionary
+				var counter_name: String = str(counter.get("name", ""))
+				if counter_name.is_empty():
+					continue
+				if not activity_counters.has(counter_name):
+					activity_counter_order.append(counter_name)
+				activity_counters[counter_name] = int(counter.get("total", 0))
+			state_changed.emit(&"counters")
 		"ping_request":
 			Network.send_frame(EloriaProtocol.encode(EloriaProtocol.ClientMessage.PING_RESPONSE))
 		"invalid":
-			recent_protocol_errors.append(event.error)
+			recent_protocol_errors.append({"command": command,
+				"error": str(event.error), "size": payload.size(),
+				"msec": Time.get_ticks_msec()})
 			if recent_protocol_errors.size() > 50:
 				recent_protocol_errors.pop_front()
 			state_changed.emit(&"protocol_errors")
 		"unknown":
 			unknown_packet_count += 1
+			var record: Dictionary = unknown_packets.get(command,
+				{"count": 0, "size": 0, "msec": 0})
+			record["count"] = int(record.get("count", 0)) + 1
+			record["size"] = payload.size()
+			record["msec"] = Time.get_ticks_msec()
+			unknown_packets[command] = record
 			state_changed.emit(&"protocol_unknown")
 
 func append_local_message(text: String, channel: int = 255) -> void:
@@ -478,6 +724,71 @@ func _emit_stat_feedback(stat_key: String, previous_value: int,
 			return
 		floating_feedback_requested.emit({
 			"kind": "level", "skill": skill_key, "level": next_value})
+
+## The popup is closed by the client once its answer is on the wire, or when
+## the player dismisses it. The server does not send a close packet.
+func close_popup() -> void:
+	popup = _empty_popup_state()
+	state_changed.emit(&"popup")
+
+## The reading slice is a typed reduction of the three research statistics, so
+## the window never re-reads raw slot numbers. Index 1024 is the server's
+## "reading nothing" value.
+func _refresh_reading() -> void:
+	var index: int = int(stats.get("researching", 1024))
+	var total: int = maxi(0, int(stats.get("research_total", 0)))
+	var completed: int = clampi(int(stats.get("research_completed", 0)), 0, total)
+	var next_reading: Dictionary = {
+		"active": index >= 0 and index < 1024 and total > 0,
+		"index": index, "pages_read": completed, "pages_total": total}
+	if next_reading == reading:
+		return
+	reading = next_reading
+	state_changed.emit(&"reading")
+
+func _empty_reading_state() -> Dictionary:
+	return {"active": false, "index": -1, "pages_read": 0, "pages_total": 0}
+
+func close_marketplace() -> void:
+	marketplace = _empty_marketplace_state()
+	state_changed.emit(&"marketplace")
+
+func close_merchant() -> void:
+	merchant = _empty_merchant_state()
+	state_changed.emit(&"merchant")
+
+func close_item_detail() -> void:
+	item_detail = {"open": false}
+	state_changed.emit(&"item_detail")
+
+func close_player_info() -> void:
+	player_info = _empty_player_info()
+	state_changed.emit(&"player_info")
+
+func _empty_player_info() -> Dictionary:
+	return {"open": false, "actor_id": -1, "name": "", "achievements": []}
+
+func _empty_marketplace_state() -> Dictionary:
+	return {"open": false, "gold": 0, "returned_items": 0, "listings": []}
+
+func _empty_merchant_state() -> Dictionary:
+	return {"open": false, "actor_id": -1, "npc_name": "", "gold": 0,
+		"carried": 0, "capacity": 0, "items": []}
+
+func _empty_combat_state() -> Dictionary:
+	return {"active": false, "event": 0, "target_id": -1, "target_name": "",
+		"player_health": 0, "player_max_health": 0, "target_health": 0,
+		"target_max_health": 0, "recent_damage": 0, "updated_msec": 0}
+
+func _empty_navigation_state() -> Dictionary:
+	return {"active": false, "x": 0, "y": 0, "distance": 0, "map_id": "",
+		"label": ""}
+
+func _empty_harvest_state() -> Dictionary:
+	return {"active": false, "object_id": -1, "resource": ""}
+
+func _empty_popup_state() -> Dictionary:
+	return {"open": false, "popup_id": -1, "title": "", "text": "", "options": []}
 
 func close_dialogue() -> void:
 	npc_dialogue["open"] = false

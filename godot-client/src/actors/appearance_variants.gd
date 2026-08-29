@@ -6,11 +6,6 @@ const PART_PANTS := 4
 const PART_SHIRT := 5
 const PART_BOOTS := 6
 
-static func equipment_visuals(_actor_type: int, _appearance: Dictionary) -> Dictionary:
-	# Creation bytes select skinned surfaces already authored into each actor GLB.
-	# They must never be reinterpreted as rigid BoneAttachment3D equipment.
-	return {}
-
 static func wardrobe_color(culture: String, part: int, index: int) -> Color:
 	var palettes: Dictionary = {
 		"luminous": {PART_SHIRT: Color8(42, 126, 142), PART_PANTS: Color8(42, 55, 72),

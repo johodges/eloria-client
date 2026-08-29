@@ -14,7 +14,7 @@ Endpoint is configurable (legacy `servers.lst` behavior will become a data resou
 
 ## Verified identifiers
 
-Client: RAW_TEXT 0, MOVE_TO 1, SEND_PM 2, GET_PLAYER_INFO 5, RUN_TO 6, SIT_DOWN 7, SEND_ME_MY_ACTORS 8, SEND_VERSION 10, PING 13, HEART_BEAT 14, LOCATE_ME 15, USE_MAP_OBJECT 16, stats 17, inventory 18, harvest 21, drop 22, pickup 23, inspect bag 25, NPC response 29, manufacture 30, item use 31, trade 32–38, cast 39, attack 40, storage 44–47, login 140, create 141, date/time 230/231.
+Client: RAW_TEXT 0, MOVE_TO 1, SEND_PM 2, GET_PLAYER_INFO 5, RUN_TO 6, SIT_DOWN 7, SEND_ME_MY_ACTORS 8, SEND_VERSION 10, TURN_LEFT 11, TURN_RIGHT 12, PING 13, HEART_BEAT 14, LOCATE_ME 15, USE_MAP_OBJECT 16, stats 17, inventory 18, harvest 21, drop 22, pickup 23, inspect bag 25, NPC response 29, manufacture 30, item use 31, trade 32–38, cast 39, attack 40, storage 44–47, login 140, create 141, date/time 230/231.
 
 Server: RAW_TEXT 0, actor spawn 1/51, actor command 2, YOU_ARE 3, clock 4/5, actor removal 6, map change 7, combat mode 8, clear actors 9, stats 18, inventory 19–22, ground/bags 23–29, NPC 30–33, trade 35–41, equipment 52/53, ping 60, storage 67–69, spell 70, channels 71, actor health 73, cooldowns 77, buffs 78, effects 79, popup 83, map markers 90/91, achievements 95, login results 250/251, creation results 252/253.
 
@@ -26,10 +26,34 @@ LOG_IN(140) is username, one ASCII space, password, then NUL. This matches legac
 
 Movement payload is `x:u16le, y:u16le`. Actor packets use 11-bit tile coordinates in server serialization. Godot conversion is centralized and will be finalized from map/client inspection; no scene may implement its own conversion.
 
+An actor packet's `frame` byte is its current animation state. Only
+`FRAME_COMBAT_IDLE`(15) carries gameplay meaning at spawn: it marks an actor
+that is already fighting when it comes into view, which must not be presented
+as idle until an enter-combat command that may never arrive.
+
+Partial statistic slots are the legacy incremental-update identifiers and are a
+different namespace from the word offsets in the full statistics packet:
+research progress is 47/65/66 (index, pages read, total pages) in a partial
+update and 47/81/82 (pages read, index, total pages) in the full packet. The
+server writes both from the same character fields.
+
 Actor movement is advanced by server `ADD_ACTOR_COMMAND` frames: commands 20–27
 are one-tile walk steps and 30–37 are the equivalent run steps. `SIT_DOWN(7)`
 carries one desired-state byte (`1` sit, `0` stand); the server broadcasts actor
 commands 13/14 after accepting the state change. The legacy default is Alt+S.
+
+Facing is server-owned. `TURN_LEFT(11)` and `TURN_RIGHT(12)` carry no payload
+and each request one 45° step; left is counter-clockwise seen from above. The
+server rotates the character and broadcasts the matching turn actor command
+38–45 (`CMD_TURN_N` … `CMD_TURN_NW`, clockwise from north) to everyone on the
+map, so a turn is visible to other players. A turn command changes facing
+without moving the actor. The same facing is stored in the actor packet's
+signed 16-bit `rotation` field as `direction_index × 8192`, wrapped into
+−32768…32767, so a client that spawns the actor later sees the direction a
+client that watched the turn sees. Walking also updates that field from the
+step direction. A seated player does not turn; the server ignores the request,
+because the turn animation would break the seated pose. The client may render
+one predicted step while the reply is in flight, but the reply replaces it.
 
 Chat sends `RAW_TEXT(0)` as UTF-8 plus NUL. A private message sends
 `SEND_PM(2)` as `recipient ASCII-space message NUL`, omitting the leading slash
@@ -43,11 +67,16 @@ NPC activation sends
 `TOUCH_PLAYER(28)` with `actor_id:u32le`. Dialogue uses `SEND_NPC_INFO(33)`,
 `NPC_TEXT(30)`, and a repeated `NPC_OPTIONS_LIST(31)` entry layout of
 `text_size:u16le | NUL text | response_id:u16le | actor_id:u16le`; replies send
-`RESPOND_TO_NPC(29)` as `actor_id:u16le | response_id:u16le`.
+`RESPOND_TO_NPC(29)` as `actor_id:u16le | response_id:u16le`. `SEND_NPC_INFO`
+carries a trailing legacy portrait index after the 20-byte name; Eloria has no
+portrait artwork and will not convert the Eternal Lands set, so that byte is
+deliberately not carried into the dialogue DTO.
 
 Inventory snapshots use `HERE_YOUR_INVENTORY(19)` with a count byte followed
-by `image_id:u16le | quantity:u32le | slot:u8 | flags:u8` entries. The optional
-legacy UID capability extends each entry with `uid:u16le`. Incremental updates
+by `image_id:u16le | quantity:u32le | slot:u8 | flags:u8` entries. Entries are
+eight bytes; the optional legacy ten-byte form carrying `uid:u16le` is not
+emitted by this server and is rejected rather than half-decoded. When unique
+item identity goes on the wire it will be added with a consumer. Incremental updates
 use the same entry in `GET_NEW_INVENTORY_ITEM(21)`; removals are one or more
 slot bytes in `REMOVE_ITEM_FROM_INVENTORY(22)`. Inspect and use send one slot
 byte with commands 19 and 31. Moving/equipping sends
@@ -62,7 +91,8 @@ IDs are distinct from the eight generic inventory wear positions.
 
 Spell casting sends `CAST_SPELL(39)` as `count:u8 | sigil_id:u8[count]`; the
 ordered sigil sequence, not the local spell ID, identifies the spell. The
-server publishes ownership with `GET_YOUR_SIGILS(42)` as two `u32le` masks and
+server publishes ownership with `GET_YOUR_SIGILS(42)` as two `u32le` masks (the client's DTO carries the
+decoded ownership list only, not the list and its raw masks) and
 returns `SPELL_CAST(70)` as `status:u8 | spell_id:u8`. Status 1 succeeds, 2
 fails validation or the cast roll, 3 rejects an invalid/unknown spell, 4 asks
 for an actor selected through `TOUCH_PLAYER(28)`, and 5 asks for a location
@@ -89,9 +119,15 @@ other:u8`. Removal sends `REMOVE_OBJECT_FROM_TRADE(37)` as
 `offer_slot:u8 | quantity:u32le`; server command 39 returns
 `quantity:u32le | offer_slot:u8 | other:u8`. `ACCEPT_TRADE(33)` carries sixteen
 destination bytes (1 inventory, or 2 storage where allowed). Acceptance is a
-server-authoritative two-phase sequence reported by command 36; command 37
-resets the indicated side, and command 38 closes the trade. `REJECT_TRADE(34)`
-only resets acceptance. `EXIT_TRADE(35)` cancels and restores all offers.
+server-authoritative two-phase sequence reported by `GET_TRADE_ACCEPT(36)` as
+`other:u8 | phase:u8`. Phase 0 is not accepted, 1 is the first stage, and 2 is
+the second stage that completes the trade; `other` names the side the phase
+belongs to. The client reads the phase and never infers it by counting accept
+packets, because a duplicated, dropped or reordered accept would otherwise
+desynchronise the two-phase state machine from the server. The server clamps
+the phase to 0-2 and the client rejects any other value. Command 37 resets the
+indicated side, and command 38 closes the trade. `REJECT_TRADE(34)` only
+resets acceptance. `EXIT_TRADE(35)` cancels and restores all offers.
 
 Storage is opened only through a nearby storage NPC dialogue response. Server
 command `STORAGE_LIST(67)` carries `count:u8` followed by repeated
@@ -146,3 +182,355 @@ default inventory wire format transmits neither an item name nor UID.
 ## Open verification items
 
 Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; storage-backed trade positions and storage lifecycle; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.
+
+## Eloria extension packets
+
+Perks are server state, not chat. `ELORIA_PERKS(234)` carries `count:u16le`
+followed by `count` entries of
+`from_gear:u8 | pickpoints:i16le | name NUL | description NUL`, all UTF-8. The
+`from_gear` flag marks a perk granted by equipped gear rather than a permanent
+one, and `pickpoints` is signed because negative perks give pick points back.
+Names and descriptions are on the wire so the client keeps no perk table: the
+previous client asked `#list_perks` and pattern-matched the chat reply against
+a hardcoded 33-name array inside an eight-second window, which silently dropped
+every renamed, added or reworded perk and dropped all of them on a slow server.
+The server pushes the packet at login and whenever the effective perk set
+changes: a perk purchase, a removal stone, a quest reward, and any equipment
+change, because a cape can carry a perk. The client never requests it.
+
+`ELORIA_ACTIVITY_COUNTERS(235)` carries lifetime activity totals as
+`full:u8 | count:u8` followed by `count` entries of `total:u32le | name NUL`.
+`full` marks a complete snapshot, sent once at login and listing all seventeen
+categories; otherwise the packet is a delta carrying only the categories that
+just changed. Totals saturate at `0xffffffff` rather than wrapping. The
+category name travels with its total so the client keeps no parallel table.
+The seventeen categories are Kills, Deaths, Breakages, Crit Fails, Used Items,
+Events, Harvests, Alchemy, Crafting, Manufacturing, Potions, Spells, Summons,
+Engineering, Tailoring, Storage and Drops. Every increment is made after the
+server has committed the outcome, never when a request arrives, so a rejected
+deposit or a failed mix does not count. The client presents the totals and
+derives its "this session" column as a difference against the totals as they
+stood when the session started; it increments nothing.
+
+## Capability handshake
+
+On login the client sends `#clientcaps a,b,c` as an ordinary `RAW_TEXT(0)`
+chat command; the server parses it out and stores the set on the session. Every
+Eloria extension window is gated on its capability, and a client that has not
+claimed one is served a legacy fallback instead - raw text for the quest
+journal, NPC dialogue menus for the merchant and the marketplace, a plain item
+description instead of the item-detail packet - or, for the navigation and
+combat HUDs, nothing at all. Those fallbacks are the only way a client without
+the windows can use those features, so they are load-bearing until the windows
+exist.
+
+The client advertises only capabilities whose packets it actually decodes
+(`EloriaProtocol.CLIENT_CAPABILITIES`). Claiming one it cannot decode is worse
+than claiming nothing: it replaces a working dialogue with a packet that lands
+in the protocol diagnostics panel and nowhere else. The list grows in the same
+commit that lands each window.
+
+The client advertises thirteen capabilities: `actor16_v1`, `combat_hud_v1`,
+`inventory_window_v1`, `item_detail_v1`, `mail_window_v1`, `market_window_v1`,
+`merchant_window_v1`, `navigation_hud_v1`, `player_info_v1`,
+`quest_journal_v1`, `spell_power_v1` and `special_events_v1`. `tests/test_protocol.gd` decodes a real payload behind
+each one, so the list cannot outrun the decoders.
+
+`actor16_v1` does **not** gate the 16-bit actor packet. Measured against the
+real server: `actor_packet()` selects `ADD_NEW_ACTOR_EXTENDED(247)` purely from
+`actor_type > 0xFF`, with no capability check anywhere, so a creature with a
+type of 401 arrives on the extended packet for a client that has advertised
+nothing at all. The capability is advertised because the client does implement
+the packet, not because anything is withheld without it.
+
+## Audio
+
+Nothing about audio is on the wire. Every sound the client plays is answered to
+a packet that already exists - the harvest state, the inventory snapshot, the
+combat state, `SEND_SPECIAL_EFFECT` - or to the player's own click. A snapshot
+that restates what was already true is not a new event and is silent, which is
+the same rule the rest of the client follows for a restated state.
+
+## World effects
+
+`SEND_SPECIAL_EFFECT(79)` is `effect:u8 | actor_id:u16`, with a second
+`target_id:u16` when the effect travelled between two actors. It is an event,
+not state - there is nothing to still be true a moment later - so the client
+announces it and stores nothing.
+
+The effect ids are a legacy namespace with no names on the wire. This server
+uses 17 for a harvest interrupted by bees, 14 for a lucky harvest, and a
+spell-to-effect table for the rest, four of which (0, 1, 2, 10) carry a second
+actor. The client draws an abstract generated burst - a ring, and a beam when
+the server named a second actor - rather than inventing a distinct piece of
+art per id, which would be inventing meaning the server never sent. An effect
+at an actor the client has not been told about is not drawn at all rather than
+placed at a guess.
+
+## Player names, colours and guild tags
+
+An actor packet carries one display-name string, not three fields: an optional
+name-colour byte, the name, then - for a player in a guild - a space, an
+optional tag-colour byte and the tag. Both colour bytes are `chr(127 + colour)`
+and the tag colour is chosen per viewer, so the same player can arrive with
+different tag colours for different clients. `decode_actor_name` splits all
+four parts; a client that does not is showing the colour byte as mojibake and
+the tag as part of the player's name.
+
+There is **no buddy list** on this server: no table, no command, no
+notification and nothing on the wire. Guilds are the social structure it has.
+
+## Looking at things
+
+`LOOK_AT_INVENTORY_ITEM(19)`, `LOOK_AT_STORAGE_ITEM(47)`, `LOOK_AT_TRADE_ITEM(38)`
+and `LOOK_AT_GROUND_ITEM(24)` all take a single slot byte and are answered the
+same way: the fork's `ELORIA_ITEM_DETAIL(225)` for a client with
+`item_detail_v1`, and `INVENTORY_ITEM_TEXT(20)` for any other. The ground-item
+case had no handler at all until 2.7; the bag packet carries an image id, a
+quantity and a slot, so nothing else could say what an item on the ground was.
+
+`ITEM_ON_ITEM(42)` and `DO_EMOTE(70)` are **not implemented on either side and
+have no concept behind them**: no client-command constant, no dispatch branch,
+no item-on-item combination in the world model and no emote catalog, state or
+broadcast. An encoder for either would put bytes on the wire that nothing
+reads.
+
+## Spell power
+
+`CAST_SPELL(39)` is `count:u8 | sigil...`, and the fork accepts an optional
+trailing `power:u8`. Without that byte the frame is exactly the legacy one and
+the server uses the stored preference; with it, the server sets the preference
+to that power and casts at it, refusing anything above the limit.
+
+Command 231 states both numbers per standardized effect, because both are the
+server's: the preference is stored on the character and the limit comes from
+its Magic level and nexus. An effect the character cannot cast at all is left
+out rather than sent with a limit of zero. The client's stepper is bounded by
+the highest stated limit and each cast is clamped to the limit stated for that
+effect, so no progression rule is duplicated client-side.
+
+**Content defect:** no NPC in the Eloria roster sells a sigil - the roster
+format has no column for it - so `buy_sigil` can never find a seller and
+`CAST_SPELL(39)` always answers "you do not have these sigils". The client's
+spell quickbar is therefore unusable against this content profile, and the
+standardized `#cast` framework is the only working route.
+
+## Active effects
+
+`GET_ACTIVE_SPELL(44)` is `buff_id:u8 | seconds:u8`, `REMOVE_ACTIVE_SPELL(46)`
+is `buff_id:u8`, and `GET_ACTIVE_SPELL_LIST(45)` is ten buff ids with 255 for
+an empty slot. All three share their command numbers with client-to-server
+storage commands; the direction tells them apart.
+
+Two server defects sat behind this and are fixed in 2.3. `protocol.active_spell`
+referenced a `GET_ACTIVE_SPELL` constant that was never defined, so every
+buff-granting cast raised `NameError` inside the connection handler and killed
+that client's connection silently. And nothing announced an expiry: `has_buff`
+drops an expired effect the next time something asks, so the server was right
+and the client was never told. A two-second sweep now sends
+`REMOVE_ACTIVE_SPELL` when one runs out.
+
+The buff id namespace is the server's; the names are not on the wire. The
+client's spell catalog carries a name and an icon per buff id, the same way it
+already carries spell names and sigil art. Ids this server sets: 0 shield, 1
+magic protection, 3 invisibility, 17/23 cold protection, 18/24 heat
+protection, 19/25 radiation protection, 22 true sight - the duplicate pairs
+are the potion and the spell routes to the same protection.
+
+`SEND_BUFFS(78)` is `actor_id:u16 | buffs:u32`, the visible effects on one
+actor. The only bit this server sets is 1024, doubled movement speed, and it
+states the whole mask each time rather than a change.
+
+## Map markers
+
+`SEND_MAP_MARKER(90)` is `marker_id:u16 | x:u16 | y:u16 | map_reference |
+label`, and `REMOVE_MAP_MARKER(91)` is `marker_id:u16`. The map reference is
+the server's own file name for the map (`./maps/four_gates.elm`); the client
+reduces it to the map id it already knows rather than matching a path it never
+renders from.
+
+The server owns markers completely. It places the waypoint marker (id 490) when
+`#waypoint` sets one and removes that id when the waypoint is cleared, and it
+maintains the tutorial and quest markers (ids 500-506) by clearing the whole
+range and re-sending what still applies. A marker for another map is kept
+rather than dropped, because the server does not withdraw one when the player
+walks away; the client draws only the markers whose map is the one it is
+standing on.
+
+## Keepalive, idle eviction and resync
+
+The client sends `HEART_BEAT(14)` - a zero-payload frame - every 25 seconds
+while connected, matching the legacy cadence. The server records the arrival
+time of every inbound packet and closes a *logged-in* connection that has sent
+nothing for `client_idle_timeout_seconds` (default 90, zero disables the
+sweep). A connection that has not authenticated is not swept.
+
+This exists because a client that vanishes without closing its socket produces
+no FIN: its character would otherwise stay in the server's logged-in set and
+its actor in the world until the kernel gave up, and the player could not
+reconnect to their own character in the meantime. Eviction releases both, so a
+re-login succeeds immediately.
+
+Resync is `SEND_ME_MY_ACTORS(8)`, `SEND_MY_STATS(17)` and
+`SEND_MY_INVENTORY(18)`, which return `ADD_NEW_ENHANCED_ACTOR(51)` for every
+visible actor, `HERE_YOUR_STATS(18)` and `HERE_YOUR_INVENTORY(19)`. Everything
+else the client holds is derived from those three, so they are what a
+connection of doubtful continuity asks for. The client sends all three after
+re-authenticating following a dropped socket.
+
+Reconnection is client-side only and never involves stored credentials. An
+unexpected drop schedules a socket reconnect with backoff (1s, 2s, 4s, 8s,
+15s, then it stops); a disconnect the player asked for schedules nothing. The
+password is cleared from the client the moment it is sent and is never
+retained, so a recovered socket returns the player to the login panel with
+their username preserved rather than signing in on their behalf.
+
+## Server popups
+
+`DISPLAY_POPUP(83)` is a modal question. Its payload is
+`popup_id:u16le | flags:u8 | title | size_hint:u16le | text` followed by zero
+or more options, where each string is length-prefixed: one count byte then that
+many UTF-8 bytes. `flags` must be zero; the client rejects anything else rather
+than guessing. Each option is `option_type:u8 | group:u8 | label`, and the two
+selectable types carry a trailing `value:u8`:
+
+| Type | Meaning | Value byte |
+|---|---|---|
+| 0 | text entry - a field the player types into | no |
+| 1 | display text - a static line | no |
+| 8 | text option - a button that answers immediately | yes |
+| 9 | radio option - a choice confirmed with the send button | yes |
+
+Options are grouped by `group`, and exactly one answer is returned per group.
+A popup containing a radio option or a text entry gets a send button and
+answers when it is pressed; a popup built only from text options answers the
+moment one is clicked, because each option *is* the action. That is the legacy
+rule (`popup.c` sets `has_send_button` when a radio option or text entry is
+added) and the Godot client follows it.
+
+`POPUP_REPLY(50)` carries `popup_id:u16le` then, per answered group,
+`group:u8 | value:u8` for a choice or `group:u8 | 0:u8 | length:u8 | text` for
+an entry. A group the player left unanswered is absent. Dismissing a popup
+sends nothing at all: declining to answer is a legitimate outcome and must not
+be reported as a choice. The server does not send a close packet - the client
+closes the window once its answer is on the wire, and keeps it open if the
+send failed.
+
+Only one popup is shown at a time; a repeat of an id already on screen is
+ignored, matching the legacy client's refusal to open a second window for it.
+
+## World objects and harvesting
+
+The client cannot tell which rendered prop is a resource. A world package draws
+harvestable props and buildings as ordinary geometry, and the legacy client
+matched object basenames against a lowercase `harvestable.lst` while the packs
+wrote relative paths, so nothing ever matched and no object was harvestable in
+the C client either. Object identity is therefore server state.
+
+`ELORIA_MAP_OBJECTS(236)` lists the clickable objects on the player's current
+map. It is sent unasked at login and again on every map change, and it is
+chunked because a busy map has thousands of harvest nodes: each frame is
+`first:u8 | count:u16le` followed by `count` entries of
+`object_id:u16le | kind:u8 | x:u16le | y:u16le | label NUL | detail NUL`. Only
+the frame with `first` set begins a new list; the rest continue it. Kind 1 is a
+harvest node and kind 2 is an interactive; any other kind is rejected. `label`
+is the resource name or the interactive's role, and `detail` is the harvesting
+level and tool requirement, or the interactive's text - so a requirement is
+stated rather than discovered by failing.
+
+`HARVEST(21)` carries `object_id:u16le` and is a toggle: sending it for the
+node already being harvested stops the run. `USE_MAP_OBJECT(16)` and
+`LOOK_AT_MAP_OBJECT(27)` both carry `object_id:u32le`, the legacy widths.
+
+`ELORIA_HARVEST_STATE(237)` is `active:u8 | object_id:u16le | resource NUL`,
+sent when a run starts and on every path that ends one - the player moving, a
+full backpack, entering combat, a map change, or the toggle. The stock client
+matched an exact English phrase out of the chat stream to drive this state,
+which is not a contract: it breaks on any rewording and on any translation.
+The client renders the indicator from this packet only.
+
+## Books and reading
+
+The Eloria server models a book as **research**, not as pages of text. Using a
+book from the backpack consumes it and sets `reading_book`, `reading_pages` and
+`reading_total`; pages tick down while the character has food, and the
+knowledge bit is set on completion with `GET_NEW_KNOWLEDGE(56)`. Progress is
+reported through ordinary partial statistics: slot 47 is the knowledge index
+being read (1024 means nothing), 65 is pages completed and 66 is the total.
+The full statistics packet carries the same three facts at word offsets 47, 81
+and 82.
+
+`OPEN_BOOK(64)`, `READ_BOOK(65)`, `CLOSE_BOOK(66)` and `SEND_BOOK(43)` are the
+legacy page-content protocol and are **deliberately not implemented**. This
+server has no book text: `config/books.txt` is a two-setting tuning file, and
+`load_books` derives a `BookDefinition` from each book *item* with a page count
+and nothing else. Implementing a page-turning window against it would be a
+window with nothing behind it. If page content is ever wanted, the server needs
+book text first, and those four opcodes become the way to carry it.
+
+Reading is presented from the three statistics above plus the client's hashed
+knowledge catalog for the title. There is no command to stop reading; hiding
+the window does not interrupt it, and the client does not pretend otherwise.
+
+## The nine Eloria extension windows
+
+Fork additions rather than upstream Eternal Lands. Each is a server-push
+snapshot driving one window: the server states the whole window and the client
+renders it, so none of them is merged with a previous value. Every one is
+withheld from a client that has not claimed the matching capability in
+`#clientcaps`, and the server falls back to legacy dialogue or raw text
+instead. All integers are little-endian and all strings are NUL-terminated
+UTF-8.
+
+| Cmd | Window | Payload |
+|---|---|---|
+| 222 | Marketplace | `view:u8 \| gold:u32 \| returned_items:u32 \| count:u16`, then per listing `listing_id:u32 \| quantity:u32 \| unit_price:u32 \| seconds_left:u32 \| image_id:u16 \| item_name \| seller` |
+| 223 | Merchant | `actor_id:u16 \| gold:u32 \| carried:u32 \| capacity:u32 \| count:u16 \| npc_name`, then per row `index:u16 \| buy_price:u32 \| sell_price:u32 \| owned:u32 \| image_id:u16 \| name` |
+| 224 | Quest journal | `count:u16`, then per entry `ready:u8 \| current:u32 \| target:u32 \| title \| objective \| location` |
+| 225 | Item detail | `image_id:u16 \| quantity:u32 \| equipped:u8 \| name \| category \| equip_type \| description \| stats \| comparison_name \| comparison` |
+| 226 | Inventory state | `gold:u32 \| carried:u32 \| capacity:u32 \| count:u16`, then per row `slot:u8 \| image_id:u16 \| quantity:u32 \| emu:u32 \| flags:u8 \| name \| category` |
+| 227 | Combat HUD | `event:u8 \| target_id:u16 \| player_health:u16 \| player_max:u16 \| target_health:u16 \| target_max:u16 \| recent_damage:u16 \| target_name` |
+| 228 | Player info | `actor_id:u16 \| count:u16 \| name`, then one achievement name per row |
+| 231 | Spell power | `count:u16`, then per effect `preferred:u8 \| limit:u8 \| effect_name` |
+| 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
+| 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
+| 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+
+Command 228 replaces a reply a client could not read on its own. The legacy
+answer to `GET_PLAYER_INFO(5)` is a `You see: <name>` chat line plus
+`SEND_ACHIEVEMENTS(95)`, a 160-bit set with no actor id and no names: a client
+had to pair the bitset with a request it remembered making, and keep its own
+copy of the server's achievement catalog to name the bits. 228 states the
+actor, the name and the achievements together, so the client does neither. A
+client without `player_info_v1` still gets the chat line and the bitset.
+
+`COMBAT_MODE(8)` is defined on both sides and **sent by nothing**: the Eloria
+server has no call site for it. The client does not decode it, because combat
+presentation is already driven by two things the server does send - the actor
+frame, which says whether an actor arrives already in combat, and command 227,
+which states both health bars and the outcome of each exchange.
+
+Command 226 is **enrichment, not inventory**. The authoritative inventory
+packet still owns which slot holds what and how much; 226 adds only the names,
+categories and per-unit weights that packet has no room for, and the client
+uses it for nothing else. Where the two disagree about a quantity, the
+authoritative packet wins - the client never adopts 226's number - so the
+enrichment cannot become a second, contradictory source of inventory truth.
+The server sends it only in answer to `#inventory`.
+
+A client advertising `merchant_window_v1` sends the legacy shop response ids
+(`3100 + index` to choose an item, `3300 + n` or `3309` to choose a quantity)
+without the dialogue ever being drawn, so no new client-to-server command
+exists for shop trade. The server answers those ids with a refreshed command
+223 rather than the NPC text and options menu a legacy client gets, including
+when it refuses the trade.
+
+Combat event 0 is a state refresh; 1 hit, 2 miss, 3 dodge, 4 defeat. A defeat
+ends the engagement, so the client clears the HUD on it rather than leaving the
+last frame on screen. Navigation `active` false means no waypoint is set and
+the remaining fields are meaningless rather than stale. A special-event payload
+of a single NUL clears the panel.
+
+Each decoder rejects a truncated payload and any trailing bytes rather than
+half-decoding, so a layout change on the server surfaces in the protocol
+diagnostics panel instead of producing a half-filled window.

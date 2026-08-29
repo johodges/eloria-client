@@ -10,10 +10,95 @@ func _init() -> void:
 		PackedByteArray([7, 2, 0, 1]))
 	_expect_bytes("stand fixture", EloriaProtocol.set_sitting(false),
 		PackedByteArray([7, 2, 0, 0]))
+	# The capability handshake. Claiming a capability the client cannot decode
+	# replaces a working dialogue fallback with a packet nothing reads, so the
+	# advertised list is pinned to what is actually implemented.
+	_expect_bytes("client capabilities fixture",
+		EloriaProtocol.client_capabilities(),
+		EloriaProtocol.chat("#clientcaps "
+			+ ",".join(PackedStringArray(EloriaProtocol.CLIENT_CAPABILITIES))))
+	_expect(EloriaProtocol.CLIENT_CAPABILITIES.has("actor16_v1"),
+		"the 16-bit actor capability stays advertised")
+	_expect(EloriaProtocol.CLIENT_CAPABILITIES.size() > 0
+		and not EloriaProtocol.CLIENT_CAPABILITIES.has(""),
+		"the advertised capability list is non-empty and has no blank entries")
+	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
+		_expect(not capability.contains(",") and not capability.contains(" ")
+			and capability == capability.strip_edges(),
+			"capability %s survives the server's comma split" % capability)
+	# Nothing may be advertised whose packet this client does not decode.
+	var decoded_extensions: Dictionary = {
+		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED,
+		"combat_hud_v1": EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE,
+		"inventory_window_v1": EloriaProtocol.ServerMessage.ELORIA_INVENTORY_STATE,
+		"item_detail_v1": EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL,
+		"mail_window_v1": EloriaProtocol.ServerMessage.ELORIA_MAIL_STATE,
+		"market_window_v1": EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE,
+		"merchant_window_v1": EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE,
+		"navigation_hud_v1": EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE,
+		"player_info_v1": EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO,
+		"quest_journal_v1": EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE,
+		"spell_power_v1": EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER,
+		"special_events_v1": EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE}
+	var capability_probes: Dictionary = {
+		EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE:
+			"016600120014001e002c00050052656564686f726e205374616700",
+		EloriaProtocol.ServerMessage.ELORIA_INVENTORY_STATE:
+			"fa00000014000000500000000000",
+		EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL:
+			"a0000200000000410042004300440045004600470"
+			+ "0",
+		EloriaProtocol.ServerMessage.ELORIA_MAIL_STATE: "0000",
+		EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE:
+			"00fa0000000300000000 00".replace(" ", ""),
+		EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE:
+			"5b00fa000000140000005000000000005300",
+		EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE:
+			"000000000000000000",
+		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
+		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
+		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
+		EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE: "00"}
+	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
+		_expect(decoded_extensions.has(capability),
+			"advertised capability %s is one this suite knows the client decodes"
+				% capability)
+		if decoded_extensions.has(capability):
+			var command: int = int(decoded_extensions[capability])
+			var body: PackedByteArray = (_hex(str(capability_probes[command]))
+				if capability_probes.has(command) else _actor_bytes_extended())
+			var probe: Dictionary = EloriaProtocol.decode_server(command, body)
+			_expect(probe.type != "unknown" and probe.type != "invalid",
+				"the packet behind %s actually decodes (%s)" % [capability,
+					str(probe.get("error", probe.type))])
+	_expect_bytes("turn left fixture", EloriaProtocol.turn(true),
+		PackedByteArray([11, 1, 0]))
+	_expect_bytes("turn right fixture", EloriaProtocol.turn(false),
+		PackedByteArray([12, 1, 0]))
+	_expect(EloriaProtocol.is_turn_command(38) and EloriaProtocol.is_turn_command(45)
+		and not EloriaProtocol.is_turn_command(37)
+		and not EloriaProtocol.is_turn_command(46),
+		"the eight CMD_TURN_* commands are the authoritative facing confirmations")
+	_expect(EloriaProtocol.actor_command_direction(40) == Vector2i(1, 0)
+		and EloriaProtocol.actor_command_direction(38) == Vector2i(0, 1)
+		and EloriaProtocol.actor_command_step(40) == Vector2i.ZERO,
+		"a turn command changes facing without moving the actor")
 	_expect_bytes("chat fixture", EloriaProtocol.chat("Hello"),
 		PackedByteArray([0, 7, 0, 72, 101, 108, 108, 111, 0]))
 	_expect_bytes("active channel fixture", EloriaProtocol.set_active_channel(1),
 		PackedByteArray([61, 2, 0, 6]))
+	_expect_bytes("heartbeat fixture",
+		EloriaProtocol.encode(EloriaProtocol.ClientMessage.HEART_BEAT),
+		PackedByteArray([14, 1, 0]))
+	_expect_bytes("resync actors fixture",
+		EloriaProtocol.encode(EloriaProtocol.ClientMessage.SEND_ME_MY_ACTORS),
+		PackedByteArray([8, 1, 0]))
+	_expect_bytes("resync stats fixture",
+		EloriaProtocol.encode(EloriaProtocol.ClientMessage.SEND_MY_STATS),
+		PackedByteArray([17, 1, 0]))
+	_expect_bytes("resync inventory fixture",
+		EloriaProtocol.encode(EloriaProtocol.ClientMessage.SEND_MY_INVENTORY),
+		PackedByteArray([18, 1, 0]))
 	_expect_bytes("locate fixture", EloriaProtocol.locate_me(),
 		PackedByteArray([15, 1, 0]))
 	_expect_bytes("date fixture", EloriaProtocol.get_date(),
@@ -100,21 +185,13 @@ func _init() -> void:
 			"actor_type": 0, "head": 2, "eyes": 6}),
 		PackedByteArray([141, 21, 0, 84, 101, 115, 116, 32, 115, 101, 99, 114,
 			101, 116, 0, 1, 2, 3, 4, 5, 0, 2, 6]))
-	var appearance_visuals: Dictionary = AppearanceVariants.equipment_visuals(2, {
-		"head": 1, "pants": 1, "shirt": 1, "boots": 1})
-	_expect(appearance_visuals.is_empty(),
-		"creation choices use skinned actor surfaces instead of rigid equipment")
-	var luminous_outfit: Dictionary = AppearanceVariants.equipment_visuals(0, {
-		"head": 0, "pants": 1, "shirt": 1, "boots": 1})
-	_expect(luminous_outfit.is_empty(),
-		"Luminous defaults do not spawn placeholder attachment geometry")
-	var legacy_luminous_outfit: Dictionary = AppearanceVariants.equipment_visuals(1, {
-		"head": 0, "pants": 0, "shirt": 0, "boots": 0})
-	_expect(legacy_luminous_outfit == luminous_outfit,
-		"legacy zero-valued Luminous characters use the integrated wardrobe")
-	_expect(AppearanceVariants.equipment_visuals(2, {
-		"head": 0, "pants": 0, "shirt": 0, "boots": 0}).is_empty(),
-		"zero appearance choices leave optional wearables hidden")
+	# Creation choices are skinned actor surfaces, never rigid attachments.
+	# AppearanceVariants no longer exposes a function that says so by returning
+	# an empty dictionary; the refusal lives at the one call site that built
+	# actor presentation, so these fixtures pin the behaviour there instead.
+	_expect(not ("equipment_visuals" in AppearanceVariants.new().get_method_list()
+			.map(func(entry: Dictionary) -> String: return str(entry.get("name", "")))),
+		"the unconditionally empty appearance-to-equipment function is gone")
 	_expect(AppearanceVariants.skin_tint(0) != AppearanceVariants.skin_tint(1)
 		and AppearanceVariants.eye_color(0) != AppearanceVariants.eye_color(1)
 		and AppearanceVariants.hair_style(6) == 2
@@ -520,9 +597,20 @@ func _init() -> void:
 		PackedByteArray([5, 0, 0, 0, 3, 0]))
 	_expect(trade_remove.type == "trade_remove" and trade_remove.quantity == 5
 		and trade_remove.slot == 3 and not trade_remove.other, "trade removal fields")
-	var trade_accept: Dictionary = EloriaProtocol.decode_server(36, PackedByteArray([1]))
-	_expect(trade_accept.type == "trade_accept" and trade_accept.other,
-		"trade partner acceptance field")
+	var trade_accept: Dictionary = EloriaProtocol.decode_server(36, PackedByteArray([1, 2]))
+	_expect(trade_accept.type == "trade_accept" and trade_accept.other
+		and int(trade_accept.phase) == 2,
+		"trade acceptance carries the authoritative phase, not a packet count")
+	var trade_accept_first: Dictionary = EloriaProtocol.decode_server(36,
+		PackedByteArray([0, 1]))
+	_expect(trade_accept_first.type == "trade_accept" and not trade_accept_first.other
+		and int(trade_accept_first.phase) == 1,
+		"own first-stage acceptance decodes phase 1")
+	_expect(EloriaProtocol.decode_server(36, PackedByteArray([0])).error
+			== "trade_accept_length"
+		and EloriaProtocol.decode_server(36, PackedByteArray([0, 3])).error
+			== "trade_accept_phase",
+		"a legacy one-byte accept and an out-of-range phase are both rejected")
 	var trade_reject: Dictionary = EloriaProtocol.decode_server(37, PackedByteArray([0]))
 	_expect(trade_reject.type == "trade_reject" and not trade_reject.other,
 		"trade own rejection field")
@@ -685,11 +773,568 @@ func _init() -> void:
 				[3], {"magic": 0, "ether": 4}, {})
 			_expect(blocked_reasons.size() == 3, "missing sigil, mana, and reagent are explicit")
 
+	# Perks are server state. The client keeps no perk table: the names and
+	# descriptions arrive on the wire, which is what makes a renamed or newly
+	# added perk survive instead of being dropped by a hardcoded array.
+	var perks_payload: PackedByteArray = PackedByteArray([2, 0])
+	perks_payload.append_array(PackedByteArray([0, 5, 0]))
+	perks_payload.append_array(_nul_bytes("Excavator"))
+	perks_payload.append_array(_nul_bytes("Twice as many items."))
+	perks_payload.append_array(PackedByteArray([1, 0xfd, 0xff]))
+	perks_payload.append_array(_nul_bytes("Power Hungry"))
+	perks_payload.append_array(_nul_bytes("Lose 3 food per minute."))
+	var perks: Dictionary = EloriaProtocol.decode_server(234, perks_payload)
+	_expect(perks.type == "perks" and (perks.perks as Array).size() == 2,
+		"the perks packet decodes every entry")
+	var first_perk: Dictionary = (perks.perks as Array)[0]
+	var second_perk: Dictionary = (perks.perks as Array)[1]
+	_expect(str(first_perk.name) == "Excavator"
+		and str(first_perk.description) == "Twice as many items."
+		and int(first_perk.pickpoints) == 5 and not bool(first_perk.from_gear),
+		"a permanent perk carries its name, description and pick-point cost")
+	_expect(str(second_perk.name) == "Power Hungry"
+		and int(second_perk.pickpoints) == -3 and bool(second_perk.from_gear),
+		"a negative pick-point cost is signed and a gear-granted perk is flagged")
+	_expect(EloriaProtocol.decode_server(234, PackedByteArray([0, 0])).perks.is_empty(),
+		"an empty perk list decodes as no perks rather than an error")
+	_expect(EloriaProtocol.decode_server(234, PackedByteArray([1])).error
+			== "perks_length"
+		and EloriaProtocol.decode_server(234, PackedByteArray([1, 0, 0, 0, 0])).error
+			== "perks_name_terminator"
+		and EloriaProtocol.decode_server(234, perks_payload.slice(0,
+			perks_payload.size() - 1)).type == "invalid",
+		"short, unterminated and truncated perk packets are rejected")
+
+	# Lifetime activity totals, with the category name beside each total.
+	var counters_payload: PackedByteArray = PackedByteArray([1, 2])
+	counters_payload.append_array(PackedByteArray([4, 0, 0, 0]))
+	counters_payload.append_array(_nul_bytes("Kills"))
+	counters_payload.append_array(PackedByteArray([0xff, 0xff, 0xff, 0xff]))
+	counters_payload.append_array(_nul_bytes("Harvests"))
+	var counters: Dictionary = EloriaProtocol.decode_server(235, counters_payload)
+	_expect(counters.type == "activity_counters" and bool(counters.full)
+		and (counters.counters as Array).size() == 2,
+		"a full counter snapshot decodes every category")
+	var kills_counter: Dictionary = (counters.counters as Array)[0]
+	var harvest_counter: Dictionary = (counters.counters as Array)[1]
+	_expect(str(kills_counter.name) == "Kills" and int(kills_counter.total) == 4
+		and str(harvest_counter.name) == "Harvests"
+		and int(harvest_counter.total) == 0xffffffff,
+		"totals are unsigned 32-bit and keep their server category name")
+	var delta_payload: PackedByteArray = PackedByteArray([0, 1, 9, 0, 0, 0])
+	delta_payload.append_array(_nul_bytes("Drops"))
+	var delta: Dictionary = EloriaProtocol.decode_server(235, delta_payload)
+	_expect(delta.type == "activity_counters" and not bool(delta.full)
+		and (delta.counters as Array).size() == 1
+		and int((delta.counters as Array)[0].total) == 9,
+		"a single changed counter decodes as a delta rather than a snapshot")
+	_expect(EloriaProtocol.decode_server(235, PackedByteArray([1])).error
+			== "activity_counters_length"
+		and EloriaProtocol.decode_server(235, PackedByteArray([1, 1, 0, 0])).error
+			== "activity_counter_entry_length"
+		and EloriaProtocol.decode_server(235,
+			PackedByteArray([1, 1, 0, 0, 0, 0, 65])).error
+			== "activity_counter_terminator",
+		"short, truncated and unterminated counter packets are rejected")
+
+	# The nine Eloria extension windows. Every fixture below is the exact
+	# output of the server's own builder in eloria/protocol.py, captured from
+	# the independent Eloria configuration, so a change to either side of one
+	# of these contracts breaks this suite rather than a window.
+	var marketplace: Dictionary = EloriaProtocol.decode_server(222, _hex(
+		"00fa000000030000000100070000000c0000002300000058020000140053756e6c65"
+		+ "616600416c69636500"))
+	_expect(marketplace.type == "marketplace" and int(marketplace.gold) == 250
+		and int(marketplace.returned_items) == 3
+		and (marketplace.listings as Array).size() == 1,
+		"the marketplace state decodes gold, escrow and its listings")
+	var listing: Dictionary = (marketplace.listings as Array)[0]
+	_expect(int(listing.listing_id) == 7 and int(listing.quantity) == 12
+		and int(listing.unit_price) == 35 and int(listing.seconds_left) == 600
+		and int(listing.image_id) == 20 and str(listing.item_name) == "Sunleaf"
+		and str(listing.seller) == "Alice",
+		"a listing carries its id, quantity, unit price, time left and seller")
+
+	var merchant: Dictionary = EloriaProtocol.decode_server(223, _hex(
+		"5b00fa0000001400000050000000010053616c696e61000000280000000c00000005"
+		+ "000000140053756e6c65616600"))
+	_expect(merchant.type == "merchant" and int(merchant.actor_id) == 91
+		and str(merchant.npc_name) == "Salina" and int(merchant.gold) == 250
+		and int(merchant.carried) == 20 and int(merchant.capacity) == 80
+		and (merchant.items as Array).size() == 1,
+		"the merchant state decodes the NPC, the purse and the load")
+	var stock: Dictionary = (merchant.items as Array)[0]
+	_expect(int(stock.index) == 0 and int(stock.buy_price) == 40
+		and int(stock.sell_price) == 12 and int(stock.owned) == 5
+		and str(stock.name) == "Sunleaf",
+		"a merchant row carries both prices and how many the player already has")
+
+	var journal: Dictionary = EloriaProtocol.decode_server(224, _hex(
+		"01000001000000030000004b696c6c205468656d20416c6c00446566656174203320"
+		+ "7261747300466f757220476174657300"))
+	_expect(journal.type == "quest_journal"
+		and (journal.entries as Array).size() == 1,
+		"the quest journal decodes its entries")
+	var quest: Dictionary = (journal.entries as Array)[0]
+	_expect(not bool(quest.ready) and int(quest.current) == 1
+		and int(quest.target) == 3 and str(quest.title) == "Kill Them All"
+		and str(quest.objective) == "Defeat 3 rats"
+		and str(quest.location) == "Four Gates",
+		"a quest entry carries progress, readiness, objective and location")
+
+	var detail: Dictionary = EloriaProtocol.decode_server(225, _hex(
+		"a000020000000053756e6c656166005265736f75726365730000412070616c65206c"
+		+ "6561662e00454d55203100477561726420436170650041726d6f7572203220"
+		+ "2d3e203000"))
+	_expect(detail.type == "item_detail" and int(detail.image_id) == 160
+		and int(detail.quantity) == 2 and not bool(detail.equipped)
+		and str(detail.name) == "Sunleaf" and str(detail.category) == "Resources"
+		and str(detail.equip_type).is_empty()
+		and str(detail.description) == "A pale leaf."
+		and str(detail.stats) == "EMU 1"
+		and str(detail.comparison_name) == "Guard Cape"
+		and str(detail.comparison) == "Armour 2 -> 0",
+		"item detail decodes every field including the empty equip type")
+
+	var inventory_state: Dictionary = EloriaProtocol.decode_server(226, _hex(
+		"fa000000140000005000000001000014000c00000001000000065375"
+		+ "6e6c65616600466c6f7765727300"))
+	_expect(inventory_state.type == "inventory_state"
+		and int(inventory_state.gold) == 250
+		and int(inventory_state.carried) == 20
+		and int(inventory_state.capacity) == 80
+		and (inventory_state.items as Array).size() == 1,
+		"the inventory state decodes gold, carried weight and capacity")
+	var organised: Dictionary = (inventory_state.items as Array)[0]
+	_expect(int(organised.slot) == 0 and int(organised.image_id) == 20
+		and int(organised.quantity) == 12 and int(organised.emu) == 1
+		and str(organised.name) == "Sunleaf"
+		and str(organised.category) == "Flowers",
+		"an inventory entry carries the item name and category the ordinary"
+			+ " inventory packet cannot")
+
+	var combat: Dictionary = EloriaProtocol.decode_server(227, _hex(
+		"016600120014001e002c00050052656564686f726e205374616700"))
+	_expect(combat.type == "combat_state"
+		and int(combat.event) == EloriaProtocol.COMBAT_EVENT_HIT
+		and int(combat.target_id) == 102 and int(combat.player_health) == 18
+		and int(combat.player_max_health) == 20
+		and int(combat.target_health) == 30
+		and int(combat.target_max_health) == 44
+		and int(combat.recent_damage) == 5
+		and str(combat.target_name) == "Reedhorn Stag",
+		"the combat state decodes both health bars and the outcome")
+
+	var mail: Dictionary = EloriaProtocol.decode_server(229, _hex(
+		"01000300000000f1536500416c6963650048656c6c6f004d656574206d6520617420"
+		+ "74686520676174652e00"))
+	_expect(mail.type == "mail" and (mail.messages as Array).size() == 1,
+		"the mail inbox decodes its messages")
+	var message: Dictionary = (mail.messages as Array)[0]
+	_expect(int(message.mail_id) == 3 and not bool(message.read)
+		and str(message.sender) == "Alice" and str(message.subject) == "Hello"
+		and str(message.body) == "Meet me at the gate.",
+		"a mail message carries its id, read flag, sender, subject and body")
+
+	var navigation: Dictionary = EloriaProtocol.decode_server(230, _hex(
+		"010203e1010c00666f75725f676174657300526565642062616e6b00"))
+	_expect(navigation.type == "navigation" and bool(navigation.active)
+		and int(navigation.x) == 770 and int(navigation.y) == 481
+		and int(navigation.distance) == 12
+		and str(navigation.map_id) == "four_gates"
+		and str(navigation.label) == "Reed bank",
+		"the navigation state decodes the waypoint tile, distance and label")
+
+	var events: Dictionary = EloriaProtocol.decode_server(232, _hex(
+		"4861727665737420666573746976616c0050686173652032206f66203300"))
+	_expect(events.type == "special_events"
+		and (events.lines as Array) == ["Harvest festival", "Phase 2 of 3"],
+		"the special-event panel decodes its NUL-delimited lines")
+	_expect((EloriaProtocol.decode_server(232, PackedByteArray([0])).lines
+			as Array).is_empty(),
+		"a single empty line clears the panel rather than showing a blank row")
+
+	# Every one of these rejects a truncated payload rather than half-decoding.
+	for truncated: Array in [[222, "00fa0000000300000001000700"],
+			[223, "5b00fa000000140000005000000001005361"],
+			[224, "010000010000000300000041"],
+			[225, "a00002000000005375"],
+			[226, "fa0000001400000050000000010000140002"],
+			[227, "016600120014001e002c000500"],
+			[229, "01000300000000f153650041"],
+			[230, "010203e1010c00666f75725f6761746573"]]:
+		var rejected: Dictionary = EloriaProtocol.decode_server(
+			int(truncated[0]), _hex(str(truncated[1])))
+		_expect(rejected.type == "invalid",
+			"a truncated command %d payload is rejected" % int(truncated[0]))
+
+	# Which visible effects an actor is under. The only bit this server sets is
+	# doubled movement speed, and it states the whole mask each time.
+	var hastened: Dictionary = EloriaProtocol.decode_server(78, _hex(
+		"4d00000400 00".replace(" ", "")))
+	_expect(hastened.type == "actor_buffs" and int(hastened.actor_id) == 77
+		and int(hastened.buffs) == EloriaProtocol.ACTOR_BUFF_DOUBLE_SPEED,
+		"an actor buff mask decodes its actor and its bits")
+	_expect(int(EloriaProtocol.decode_server(78,
+			_hex("4d0000000000")).buffs) == 0,
+		"the mask going empty is stated, not implied by silence")
+	_expect(EloriaProtocol.decode_server(78, _hex("4d000004")).type == "invalid",
+		"a truncated actor buff mask is rejected")
+
+	# Effects the server says happened in the world.
+	var swarm: Dictionary = EloriaProtocol.decode_server(79, _hex("115b00"))
+	_expect(swarm.type == "special_effect" and int(swarm.effect) == 17
+		and int(swarm.actor_id) == 91 and int(swarm.target_id) == -1,
+		"an effect at one actor decodes without inventing a target")
+	var thrown: Dictionary = EloriaProtocol.decode_server(79, _hex("025b004d00"))
+	_expect(thrown.type == "special_effect" and int(thrown.effect) == 2
+		and int(thrown.actor_id) == 91 and int(thrown.target_id) == 77,
+		"an effect between two actors decodes both of them")
+	for malformed: String in ["11", "115b0000", "115b004d0000"]:
+		_expect(EloriaProtocol.decode_server(79, _hex(malformed)).type == "invalid",
+			"a malformed special effect is rejected (%s)" % malformed)
+
+	# Guild tags. The server builds one display string - an optional colour
+	# byte, the name, a space, an optional colour byte and the tag - and both
+	# fixtures below are that builder's exact output.
+	var tagged: Dictionary = EloriaProtocol.decode_server(51, _hex(
+		"5b000203e1010000000001000001020304050b001e14071400120001416c6963652083"
+		+ "454c4f000040ff0600"))
+	_expect(tagged.type == "actor_spawn" and str(tagged.name) == "Alice"
+		and str(tagged.guild_tag) == "ELO" and int(tagged.guild_colour) == 4
+		and int(tagged.name_colour) == 0,
+		"a display name splits into the name and the tag, with their colours:"
+			+ " %s / %s" % [str(tagged.name), str(tagged.guild_tag)])
+	var untagged: Dictionary = EloriaProtocol.decode_server(51, _hex(
+		"5b000203e1010000000001000001020304050b001e14071400120001416c696365"
+		+ "000040ff0600"))
+	_expect(str(untagged.name) == "Alice" and str(untagged.guild_tag).is_empty()
+		and int(untagged.guild_colour) == 0,
+		"a player in no guild has no tag rather than an empty-looking one")
+	# The server writes a colour as chr(127 + colour); 0x89 is colour 10.
+	var coloured: Dictionary = EloriaProtocol.decode_actor_name(
+		_hex("89416c696365"))
+	_expect(str(coloured.name) == "Alice" and int(coloured.name_colour) == 10,
+		"a name the server coloured keeps the colour and loses the marker byte")
+
+	# Asking what is lying on the ground. The bag packet carries an image id
+	# and a quantity, so the name can only come from the server.
+	_expect_bytes("look at ground item fixture",
+		EloriaProtocol.look_at_ground_item(3),
+		PackedByteArray([24, 2, 0, 3]))
+
+	# Spell power. The trailing byte is the fork's addition to the legacy cast
+	# frame; without a power the frame is exactly the legacy one.
+	_expect_bytes("legacy cast fixture", EloriaProtocol.cast_spell([19, 15, 21]),
+		PackedByteArray([39, 5, 0, 3, 19, 15, 21]))
+	_expect_bytes("powered cast fixture",
+		EloriaProtocol.cast_spell([19, 15, 21], 4),
+		PackedByteArray([39, 6, 0, 3, 19, 15, 21, 4]))
+	var powers: Dictionary = EloriaProtocol.decode_server(231, _hex(
+		"0200 0104 736869656c6400 0301 6865616c00".replace(" ", "")))
+	_expect(powers.type == "spell_power"
+		and (powers.effects as Array).size() == 2,
+		"the spell-power state decodes one row per effect")
+	var shield_power: Dictionary = (powers.effects as Array)[0]
+	var heal_power: Dictionary = (powers.effects as Array)[1]
+	_expect(str(shield_power.effect) == "shield"
+		and int(shield_power.preferred) == 1 and int(shield_power.limit) == 4
+		and str(heal_power.effect) == "heal"
+		and int(heal_power.preferred) == 3 and int(heal_power.limit) == 1,
+		"each row carries the effect, the preferred power and the limit")
+	for broken: String in ["02000104", "01000104", "010001047368690000"]:
+		_expect(EloriaProtocol.decode_server(231, _hex(broken)).type == "invalid",
+			"a malformed spell-power payload is rejected (%s)" % broken)
+
+	# Looking at a player. The reply states the actor, the name and the
+	# achievements, so nothing is paired with a remembered request and no
+	# achievement catalog is duplicated in the client.
+	_expect_bytes("look at player fixture", EloriaProtocol.look_at_player(91),
+		PackedByteArray([5, 5, 0, 91, 0, 0, 0]))
+	var described: Dictionary = EloriaProtocol.decode_server(228, _hex(
+		"5b000100416c69636500426567696e6e6572205475746f7269616c00"))
+	_expect(described.type == "player_info" and int(described.actor_id) == 91
+		and str(described.name) == "Alice"
+		and (described.achievements as Array) == ["Beginner Tutorial"],
+		"the player-info reply names the actor and its achievements")
+	var bare: Dictionary = EloriaProtocol.decode_server(228, _hex(
+		"5b000000416c69636500"))
+	_expect(bare.type == "player_info"
+		and (bare.achievements as Array).is_empty(),
+		"a player with nothing earned decodes to an empty list, not a failure")
+	for malformed: Array in [[228, "5b0001"], [228, "5b000200416c69636500"],
+			[228, "5b000000416c6963650000"]]:
+		_expect(EloriaProtocol.decode_server(int(malformed[0]),
+				_hex(str(malformed[1]))).type == "invalid",
+			"a malformed player-info payload is rejected (%s)" % str(malformed[1]))
+
+	# Map markers. The server owns them entirely: 90 places one, 91 takes it
+	# away, and the map is named by the server's own file reference.
+	var marker: Dictionary = EloriaProtocol.decode_server(90, _hex(
+		"ea010c03e1012e2f6d6170732f666f75725f67617465732e656c6d00"
+		+ "526565642062616e6b00"))
+	_expect(marker.type == "map_marker" and int(marker.marker_id) == 490
+		and int(marker.x) == 780 and int(marker.y) == 481
+		and str(marker.map_id) == "four_gates"
+		and str(marker.label) == "Reed bank",
+		"a map marker decodes its id, tile, map and label")
+	_expect(EloriaProtocol.map_id_from_reference("./maps/four_gates.elm")
+			== "four_gates"
+		and EloriaProtocol.map_id_from_reference("four_gates") == "four_gates",
+		"the map reference reduces to the map id the client already knows")
+	var removed: Dictionary = EloriaProtocol.decode_server(91, _hex("ea01"))
+	_expect(removed.type == "remove_map_marker"
+		and int(removed.marker_id) == 490,
+		"removing a marker names the id and nothing else")
+	for broken: Array in [[90, "ea010c03"], [90, "ea010c03e1012e2f6d6170"],
+			[91, "ea0100"]]:
+		_expect(EloriaProtocol.decode_server(int(broken[0]),
+				_hex(str(broken[1]))).type == "invalid",
+			"a malformed command %d payload is rejected" % int(broken[0]))
+
+	# Harvesting and world objects. HARVEST(21), USE_MAP_OBJECT(16) and
+	# LOOK_AT_MAP_OBJECT(27) were enum values with no encoder, and there was no
+	# world-object pick path at all.
+	_expect_bytes("harvest fixture", EloriaProtocol.harvest(0x0201),
+		PackedByteArray([21, 3, 0, 0x01, 0x02]))
+	_expect_bytes("use map object fixture", EloriaProtocol.use_map_object(0x04030201),
+		PackedByteArray([16, 5, 0, 0x01, 0x02, 0x03, 0x04]))
+	_expect_bytes("look at map object fixture",
+		EloriaProtocol.look_at_map_object(0x04030201),
+		PackedByteArray([27, 5, 0, 0x01, 0x02, 0x03, 0x04]))
+	var map_objects_payload: PackedByteArray = PackedByteArray([1, 2, 0])
+	map_objects_payload.append_array(PackedByteArray([
+		0xf0, 0x01, EloriaProtocol.MAP_OBJECT_HARVEST, 0x02, 0x03, 0xe1, 0x01]))
+	map_objects_payload.append_array(_nul_bytes("Mirror Reed"))
+	map_objects_payload.append_array(_nul_bytes("Harvesting level 0"))
+	map_objects_payload.append_array(PackedByteArray([
+		0x0e, 0x00, EloriaProtocol.MAP_OBJECT_INTERACTIVE, 0x00, 0x03, 0x90, 0x05]))
+	map_objects_payload.append_array(_nul_bytes("Storage"))
+	map_objects_payload.append_array(_nul_bytes("A wayfarer's cache."))
+	var map_objects: Dictionary = EloriaProtocol.decode_server(236, map_objects_payload)
+	_expect(map_objects.type == "map_objects" and bool(map_objects.first)
+		and (map_objects.objects as Array).size() == 2,
+		"the map-object list decodes every entry and flags the first chunk")
+	var harvest_object: Dictionary = (map_objects.objects as Array)[0]
+	var interactive_object: Dictionary = (map_objects.objects as Array)[1]
+	_expect(int(harvest_object.object_id) == 496
+		and int(harvest_object.kind) == EloriaProtocol.MAP_OBJECT_HARVEST
+		and int(harvest_object.x) == 770 and int(harvest_object.y) == 481
+		and str(harvest_object.label) == "Mirror Reed"
+		and str(harvest_object.detail) == "Harvesting level 0",
+		"a harvest node carries its id, tile, resource name and requirement")
+	_expect(int(interactive_object.object_id) == 14
+		and int(interactive_object.kind) == EloriaProtocol.MAP_OBJECT_INTERACTIVE
+		and int(interactive_object.y) == 1424,
+		"an interactive carries its id and tile in the same list")
+	_expect(EloriaProtocol.decode_server(236, PackedByteArray([1, 1])).error
+			== "map_objects_length"
+		and EloriaProtocol.decode_server(236,
+			PackedByteArray([1, 1, 0, 1, 0, 9, 1, 0, 1, 0, 0, 0])).error
+			== "map_object_kind"
+		and EloriaProtocol.decode_server(236,
+			map_objects_payload.slice(0, map_objects_payload.size() - 1)).type
+			== "invalid",
+		"short, unknown-kind and truncated map-object lists are rejected")
+	var harvest_started: PackedByteArray = PackedByteArray([1, 0xf0, 0x01])
+	harvest_started.append_array(_nul_bytes("Mirror Reed"))
+	var harvest_state: Dictionary = EloriaProtocol.decode_server(237, harvest_started)
+	_expect(harvest_state.type == "harvest_state" and bool(harvest_state.active)
+		and int(harvest_state.object_id) == 496
+		and str(harvest_state.resource) == "Mirror Reed",
+		"the harvest state names the node and resource rather than a chat phrase")
+	var harvest_stopped: Dictionary = EloriaProtocol.decode_server(237,
+		PackedByteArray([0, 0, 0, 0]))
+	_expect(harvest_stopped.type == "harvest_state" and not bool(harvest_stopped.active)
+		and str(harvest_stopped.resource).is_empty(),
+		"a stop is explicit, not the absence of a message")
+	_expect(EloriaProtocol.decode_server(237, PackedByteArray([1, 0, 0])).error
+			== "harvest_state_length"
+		and EloriaProtocol.decode_server(237, PackedByteArray([1, 0, 0, 65])).error
+			== "harvest_state_resource",
+		"a short or unterminated harvest state is rejected")
+
+	# Server popups. The server had no way to ask the player a question:
+	# DISPLAY_POPUP(83) fell through to an unknown packet and POPUP_REPLY(50)
+	# had no encoder at all.
+	var popup_payload: PackedByteArray = PackedByteArray([0, 0, 0])
+	popup_payload.append_array(_sized("Summon Behavior"))
+	popup_payload.append_array(PackedByteArray([0x68, 0x01]))
+	popup_payload.append_array(_sized("Choose how your summons pick targets."))
+	popup_payload.append_array(PackedByteArray([9, 1]))
+	popup_payload.append_array(_sized("Weakest first"))
+	popup_payload.append(0)
+	popup_payload.append_array(PackedByteArray([9, 1]))
+	popup_payload.append_array(_sized("Strongest first"))
+	popup_payload.append(1)
+	popup_payload.append_array(PackedByteArray([1, 2]))
+	popup_payload.append_array(_sized("This applies to every summon."))
+	var popup: Dictionary = EloriaProtocol.decode_server(83, popup_payload)
+	_expect(popup.type == "popup" and int(popup.popup_id) == 0
+		and str(popup.title) == "Summon Behavior" and int(popup.size_hint) == 360
+		and str(popup.text) == "Choose how your summons pick targets."
+		and (popup.options as Array).size() == 3,
+		"a real server popup decodes its id, title, size hint, text and options")
+	var first_option: Dictionary = (popup.options as Array)[0]
+	var third_option: Dictionary = (popup.options as Array)[2]
+	_expect(int(first_option.option_type) == EloriaProtocol.POPUP_RADIO_OPTION
+		and int(first_option.group) == 1 and int(first_option.value) == 0
+		and str(first_option.label) == "Weakest first",
+		"a radio option carries its group and its wire value")
+	_expect(int(third_option.option_type) == EloriaProtocol.POPUP_DISPLAY_TEXT
+		and not third_option.has("value"),
+		"a display-text option carries no value byte")
+	var entry_payload: PackedByteArray = PackedByteArray([7, 0, 0])
+	entry_payload.append_array(_sized("Name"))
+	entry_payload.append_array(PackedByteArray([0, 1]))
+	entry_payload.append_array(_sized("Body"))
+	entry_payload.append_array(PackedByteArray([0, 4]))
+	entry_payload.append_array(_sized("Your answer"))
+	var entry_popup: Dictionary = EloriaProtocol.decode_server(83, entry_payload)
+	_expect(entry_popup.type == "popup" and int(entry_popup.popup_id) == 7
+		and int((entry_popup.options as Array)[0].option_type)
+			== EloriaProtocol.POPUP_TEXT_ENTRY
+		and int((entry_popup.options as Array)[0].group) == 4,
+		"a text-entry option decodes without a value byte")
+	_expect(EloriaProtocol.decode_server(83, PackedByteArray([0, 0, 0, 1, 65])).error
+			== "popup_length"
+		and EloriaProtocol.decode_server(83,
+			PackedByteArray([0, 0, 9, 1, 65, 1, 0, 1, 66])).error == "popup_flags",
+		"a truncated popup and a popup with unsupported flags are both rejected")
+	var bad_option: PackedByteArray = PackedByteArray([0, 0, 0])
+	bad_option.append_array(_sized("T"))
+	bad_option.append_array(PackedByteArray([0, 0]))
+	bad_option.append_array(_sized("B"))
+	bad_option.append_array(PackedByteArray([7, 1]))
+	bad_option.append_array(_sized("X"))
+	_expect(EloriaProtocol.decode_server(83, bad_option).error == "popup_option_type",
+		"an option type the client does not implement is rejected, not guessed")
+	_expect_bytes("popup reply fixture",
+		EloriaProtocol.popup_reply(0, {1: 2}),
+		PackedByteArray([50, 5, 0, 0, 0, 1, 2]))
+	_expect_bytes("popup reply text-entry fixture",
+		EloriaProtocol.popup_reply(7, {4: "Hi"}),
+		PackedByteArray([50, 8, 0, 7, 0, 4, 0, 2, 72, 105]))
+	_expect_bytes("popup reply multi-group fixture",
+		EloriaProtocol.popup_reply(3, {2: 9, 1: 5}),
+		PackedByteArray([50, 7, 0, 3, 0, 1, 5, 2, 9]))
+	_expect_bytes("popup reply with no answer fixture",
+		EloriaProtocol.popup_reply(3, {}),
+		PackedByteArray([50, 3, 0, 3, 0]))
+
+	# The one popup the real server sends today, byte for byte as
+	# protocol.summon_behavior_popup() builds it. The reply this client
+	# produces for it is fed back into the server's own POPUP_REPLY handler by
+	# tests/test_popup_round_trip.py in the server repository.
+	var summon_popup: Dictionary = EloriaProtocol.decode_server(83, _hex(
+		"0000000f53756d6d6f6e204265686176696f7268013943686f6f736520686f7720796f7572"
+		+ "2073756d6d6f6e6564206372656174757265732073686f756c642073656c6563742074617267"
+		+ "6574732e09010d446f206e6f742061747461636b0109011241747461636b206d79206f70706f"
+		+ "6e656e7400090119446f206e6f742061747461636b206d79206f70706f6e656e740209011e41"
+		+ "747461636b206f6e6c792073756d6d6f6e65642063726561747572657303090120446f206e6f"
+		+ "742061747461636b2073756d6d6f6e6564206372656174757265730409010e41747461636b20"
+		+ "61742077696c6c05"))
+	_expect(summon_popup.type == "popup" and int(summon_popup.popup_id) == 0
+		and str(summon_popup.title) == "Summon Behavior"
+		and (summon_popup.options as Array).size() == 6,
+		"the real server's summon-behaviour popup decodes completely")
+	var summon_values: Array[int] = []
+	var summon_groups: Dictionary = {}
+	for raw_summon_option: Variant in summon_popup.options as Array:
+		var summon_option: Dictionary = raw_summon_option as Dictionary
+		_expect(int(summon_option.option_type) == EloriaProtocol.POPUP_RADIO_OPTION,
+			"every summon-behaviour option is a radio option")
+		summon_values.append(int(summon_option.value))
+		summon_groups[int(summon_option.group)] = true
+	_expect(summon_values == [1, 0, 2, 3, 4, 5] and summon_groups.size() == 1,
+		"the six behaviour values arrive in the server's order in one group")
+	_expect_bytes("summon behaviour reply fixture",
+		EloriaProtocol.popup_reply(0, {1: 5}),
+		PackedByteArray([50, 5, 0, 0, 0, 1, 5]))
+
+	# Decoded fields must have a consumer or not be decoded at all.
+	var idle_actor: Dictionary = EloriaProtocol.decode_server(1, _actor_bytes(
+		EloriaProtocol.FRAME_IDLE))
+	var fighting_actor: Dictionary = EloriaProtocol.decode_server(1, _actor_bytes(
+		EloriaProtocol.FRAME_COMBAT_IDLE))
+	_expect(idle_actor.type == "actor_spawn" and not bool(idle_actor.in_combat)
+		and fighting_actor.type == "actor_spawn" and bool(fighting_actor.in_combat),
+		"the actor frame decides whether an actor arrives already in combat")
+	var npc_info: Dictionary = EloriaProtocol.decode_server(33,
+		_padded_name("Ferryman", 20) + PackedByteArray([7]))
+	_expect(npc_info.type == "npc_info" and str(npc_info.name) == "Ferryman"
+		and not npc_info.has("portrait"),
+		"the NPC portrait byte is not carried into a DTO with no artwork to render it")
+	var owned_sigils: Dictionary = EloriaProtocol.decode_server(42,
+		PackedByteArray([0b1001, 0, 0, 0, 0, 0, 0, 0]))
+	_expect(owned_sigils.type == "sigils" and owned_sigils.owned == [0, 3]
+		and not owned_sigils.has("low_mask") and not owned_sigils.has("high_mask"),
+		"sigil ownership is the decoded list, not the list plus its raw masks")
+	var inventory_entry: PackedByteArray = PackedByteArray([
+		1, 0x12, 0x34, 4, 0, 0, 0, 5, 8])
+	var uid_free_inventory: Dictionary = EloriaProtocol.decode_server(19, inventory_entry)
+	_expect(uid_free_inventory.type == "inventory"
+		and not (uid_free_inventory.items as Array)[0].has("uid"),
+		"inventory entries are eight bytes with no UID this server ever sends")
+	var uid_entry: PackedByteArray = inventory_entry.duplicate()
+	uid_entry.append_array(PackedByteArray([9, 0]))
+	_expect(EloriaProtocol.decode_server(19, uid_entry).error == "inventory_length"
+		and EloriaProtocol.decode_server(21,
+			uid_entry.slice(1)).error == "inventory_update_length",
+		"the ten-byte legacy entry is rejected rather than half-decoded")
+	var storage_offer: Dictionary = EloriaProtocol.decode_server(35,
+		PackedByteArray([3, 0, 4, 0, 0, 0, 2, 1, 0]))
+	_expect(int(storage_offer.source_type) == 2,
+		"a trade offer states whether it came from the backpack or from storage")
+	var cooldown_frame: Dictionary = EloriaProtocol.decode_server(77,
+		PackedByteArray([2, 0x2c, 0x01, 0x0e, 0x00]))
+	var first_cooldown: Dictionary = (cooldown_frame.cooldowns as Array)[0]
+	_expect(int(first_cooldown.maximum_seconds) == 300
+		and int(first_cooldown.remaining_seconds) == 14,
+		"a cooldown carries the full duration, which is what makes progress drawable")
+
 	print("protocol tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)
 
 func _expect_bytes(label: String, actual: PackedByteArray, expected: PackedByteArray) -> void:
 	_expect(actual == expected, label + ": " + actual.hex_encode())
+
+## A minimal legacy ADD_NEW_ACTOR body: id, x, y, unused z, rotation, type,
+## frame, max health, health, kind, then a NUL-terminated name.
+func _actor_bytes(frame: int) -> PackedByteArray:
+	var payload: PackedByteArray = PackedByteArray([
+		5, 0, 10, 0, 12, 0, 0, 0, 0, 0, 3, frame, 20, 0, 20, 0, 3])
+	payload.append_array(_nul_bytes("Rat"))
+	return payload
+
+## An ADD_NEW_ACTOR_EXTENDED body with a 16-bit actor type, as captured from
+## the real server for a Lakeglass Drake.
+func _actor_bytes_extended() -> PackedByteArray:
+	var payload: PackedByteArray = PackedByteArray([
+		0x65, 0x00, 0x02, 0x03, 0xe1, 0x01, 0x00, 0x00, 0x00, 0x00,
+		0x93, 0x01, 0x07, 0x84, 0x00, 0x84, 0x00, 0x05])
+	payload.append_array(_nul_bytes("Lakeglass Drake"))
+	return payload
+
+## The legacy length-prefixed string: one count byte then that many bytes.
+func _hex(value: String) -> PackedByteArray:
+	var bytes := PackedByteArray()
+	for index: int in range(0, value.length(), 2):
+		bytes.append(value.substr(index, 2).hex_to_int())
+	return bytes
+
+## The legacy length-prefixed string: one count byte then that many bytes.
+func _sized(value: String) -> PackedByteArray:
+	var bytes: PackedByteArray = value.to_utf8_buffer()
+	var sized: PackedByteArray = PackedByteArray([bytes.size()])
+	sized.append_array(bytes)
+	return sized
+
+func _padded_name(value: String, size: int) -> PackedByteArray:
+	var bytes: PackedByteArray = value.to_utf8_buffer()
+	while bytes.size() < size:
+		bytes.append(0)
+	return bytes.slice(0, size)
 
 func _nul_bytes(value: String) -> PackedByteArray:
 	var bytes: PackedByteArray = value.to_utf8_buffer()

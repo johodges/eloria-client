@@ -25,6 +25,7 @@ var _last_movement_update_msec := -1
 var _smoothed_server_interval := 0.25
 var _facing_override_active := false
 var _facing_override_yaw := 0.0
+var _predicted_turn_pending := false
 var _native_skeleton: Skeleton3D
 var _attachment_bones: Dictionary = {}
 var _model_config: Dictionary = {}
@@ -251,10 +252,16 @@ func _add_fallback_visual(dto: Dictionary) -> void:
 	mesh_instance.position.y = 0.85
 	add_child(mesh_instance)
 
+## The nameplate. A guild tag arrives as part of the display name in the actor
+## packet - "Alice ELO" - so a client that takes the whole string as a
+## name renders the colour byte as mojibake and the tag as part of the player's
+## name. The decoder splits them; this draws the tag as a tag.
 func _add_nameplate(dto: Dictionary) -> void:
 	var label: Label3D = Label3D.new()
 	label.name = "Nameplate"
-	label.text = str(dto.get("name", "Unknown actor"))
+	var guild_tag: String = str(dto.get("guild_tag", ""))
+	label.text = (str(dto.get("name", "Unknown actor"))
+		+ ("  [%s]" % guild_tag if not guild_tag.is_empty() else ""))
 	label.position.y = 2.15
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.no_depth_test = true
@@ -279,6 +286,11 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	var target_changed: bool = server_target.distance_squared_to(next_target) > 0.000001
 	server_target = next_target
 	var actor_command: int = int(dto.get("command", -1))
+	# The server has answered a predicted turn. Drop the prediction so the
+	# rendered facing is the authoritative one from here on.
+	if _predicted_turn_pending and EloriaProtocol.is_turn_command(actor_command):
+		_predicted_turn_pending = false
+		_facing_override_active = false
 	var authoritative_yaw: float = target_yaw_for_state(
 		_target_yaw, actor_command, int(dto.rotation), adapter)
 	_target_yaw = _facing_override_yaw if _facing_override_active else authoritative_yaw
@@ -856,11 +868,16 @@ func _on_animation_finished(_animation_name: StringName) -> void:
 	elif current_action == &"stand":
 		play_action(&"idle")
 
-func turn_by(radians: float) -> void:
+## Shows one 45 degree step immediately while the server's answer to
+## TURN_LEFT/TURN_RIGHT is in flight. This is prediction, not authority: the
+## first turn actor command the server broadcasts clears it and the
+## authoritative facing takes over. Nothing here decides an outcome.
+func predict_turn(radians: float) -> void:
 	_wake()
 	_target_yaw = wrapf(_target_yaw + radians, -PI, PI)
 	_facing_override_active = true
 	_facing_override_yaw = _target_yaw
+	_predicted_turn_pending = true
 	play_action(&"turn")
 
 func desired_facing_yaw() -> float:
@@ -870,6 +887,8 @@ func set_facing_override(enabled: bool) -> void:
 	_facing_override_active = enabled
 	if enabled:
 		_facing_override_yaw = _target_yaw
+	else:
+		_predicted_turn_pending = false
 
 static func target_yaw_for_state(current_yaw: float, actor_command: int,
 		server_rotation: int, adapter: CoordinateAdapter) -> float:

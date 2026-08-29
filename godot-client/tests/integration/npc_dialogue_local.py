@@ -13,6 +13,10 @@ import sys
 import tempfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from local_server import LocalServer
+
 
 ADD_NEW_ENHANCED_ACTOR = 51
 CLOSE_NPC_MENU = 32
@@ -210,29 +214,17 @@ async def wait_for_server(port: int) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--server-root", type=Path, required=True)
-    args = parser.parse_args()
-    server_root = args.server_root.resolve()
-    with socket.socket() as probe:
-        probe.bind(("127.0.0.1", 0))
-        port = probe.getsockname()[1]
-    with tempfile.TemporaryDirectory(prefix="eloria-npc-") as work:
-        server = subprocess.Popen(
-            [sys.executable, "-m", "eloria.server", "--host", "127.0.0.1",
-             "--port", str(port), "--database", str(Path(work) / "eloria.sqlite3")],
-            cwd=server_root,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-        )
+    arguments = parser.parse_args()
+    # LocalServer starts the server with config/eloria and drains its stdout.
+    # Both matter: the default config set has no four_gates map, and an
+    # undrained pipe blocks the server's own event loop on the packet
+    # diagnostic dump it writes when an authenticated client disconnects.
+    with LocalServer(arguments.server_root, prefix="eloria-npc-") as server:
         try:
-            asyncio.run(wait_for_server(port))
-            asyncio.run(scenario(port))
-        finally:
-            server.terminate()
-            try:
-                server.wait(timeout=5)
-            except subprocess.TimeoutExpired:
-                server.kill()
+            asyncio.run(scenario(server.port))
+        except BaseException:
+            sys.stderr.write(server.recent_log() + chr(10))
+            raise
     return 0
 
 

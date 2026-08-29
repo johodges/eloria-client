@@ -53,7 +53,8 @@ CROSS_SCRIPT_API = {
     "src/actors/replicated_actor_3d.gd": {
         "configure", "apply_server_state", "apply_appearance_variants",
         "apply_equipment_visuals", "equipment_diagnostics", "render_diagnostics",
-        "play_action", "turn_by", "desired_facing_yaw", "set_facing_override",
+        "play_action", "predict_turn", "desired_facing_yaw",
+        "set_facing_override",
         "set_selected", "set_surface_height", "set_nameplate_visible",
         "target_yaw_for_state", "presentation_segment_duration",
         "rig_fit_scale",

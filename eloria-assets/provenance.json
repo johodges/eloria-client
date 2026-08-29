@@ -266,6 +266,20 @@
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Four Gates authoring pipeline: glTF writer, mesh toolkit, procedural PBR synthesis, kits, landmarks, terrain and layout"
+    },
+    {
+      "path": "tools/build_native_sounds.py",
+      "source": "authored",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Deterministic synthesizer for the client's sound set"
+    },
+    {
+      "path": "../godot-client/assets/audio/*.wav",
+      "source": "tools/build_native_sounds.py",
+      "author": "Eloria project",
+      "license": "CC-BY-4.0",
+      "description": "Original Eloria sound set synthesized from noise and sine partials; no sampled, converted or third-party audio"
     }
   ]
 }

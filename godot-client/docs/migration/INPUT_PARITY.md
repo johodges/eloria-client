@@ -46,3 +46,36 @@ The camera focus is updated every rendered frame from the local actor's presenta
 transform. Server reconciliation, interpolation, and terrain-height projection therefore
 cannot leave the camera at a stale position. Focus updates preserve yaw, pitch, zoom, and
 the explicit user pan offset.
+
+## Binding resolution
+
+Every keyboard binding is resolved through the InputMap. `main.gd` contains no
+raw keycode comparison for a bound action: `_input()` delegates to
+`_handle_bound_action()`, which is a list of `is_action_pressed()` branches, and
+`_unhandled_input()` owns the gameplay actions a focused control is allowed to
+swallow. Before this, `toggle_inventory`, `turn_left` and `turn_right` were
+declared as actions but resolved by keycode, so rebinding them appeared to work
+and changed nothing, and `toggle_map`, `toggle_minimap` and `toggle_console`
+were resolved twice - once by keycode and once by action.
+
+`_handle_bound_action()` returns early while a `LineEdit` or `TextEdit` has
+focus. Several actions default to bare printable keys, so without that a
+backtick typed into chat would open the console at the same time, and `Ctrl+C`
+would connect instead of copying. `cancel` is the one exception: it still
+dismisses the chat entry from a focused field.
+
+| Action | Default | Handler |
+|---|---|---|
+| `connect` | Ctrl+C | `_on_connect_pressed()` - available before the world exists |
+| `disconnect` | Ctrl+D | `_on_disconnect_pressed()` - the action shipped with an empty event list and no handler |
+| `toggle_inventory` | Ctrl+I | `_on_inventory_button_pressed()` |
+| `toggle_map` | Tab | `_toggle_full_map()` |
+| `toggle_minimap` | Alt+M | `_toggle_minimap()` |
+| `toggle_console` | ` | `_toggle_console()` |
+| `recenter_viewport` | Space | `_recenter_viewport_on_player()` |
+| `turn_left` / `turn_right` | Q / E | `_turn_local_actor()` |
+
+`connect` keeps its declared Ctrl+C default, which collides with copy on any
+focused text surface other than a `LineEdit`/`TextEdit`. The rebinding UI in
+Phase 3.3 is where a player resolves that; it is recorded here rather than
+silently changed.
