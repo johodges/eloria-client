@@ -211,3 +211,28 @@ server has committed the outcome, never when a request arrives, so a rejected
 deposit or a failed mix does not count. The client presents the totals and
 derives its "this session" column as a difference against the totals as they
 stood when the session started; it increments nothing.
+
+## Capability handshake
+
+On login the client sends `#clientcaps a,b,c` as an ordinary `RAW_TEXT(0)`
+chat command; the server parses it out and stores the set on the session. Every
+Eloria extension window is gated on its capability, and a client that has not
+claimed one is served a legacy fallback instead - raw text for the quest
+journal, NPC dialogue menus for the merchant and the marketplace, a plain item
+description instead of the item-detail packet - or, for the navigation and
+combat HUDs, nothing at all. Those fallbacks are the only way a client without
+the windows can use those features, so they are load-bearing until the windows
+exist.
+
+The client advertises only capabilities whose packets it actually decodes
+(`EloriaProtocol.CLIENT_CAPABILITIES`). Claiming one it cannot decode is worse
+than claiming nothing: it replaces a working dialogue with a packet that lands
+in the protocol diagnostics panel and nowhere else. The list grows in the same
+commit that lands each window.
+
+`actor16_v1` does **not** gate the 16-bit actor packet. Measured against the
+real server: `actor_packet()` selects `ADD_NEW_ACTOR_EXTENDED(247)` purely from
+`actor_type > 0xFF`, with no capability check anywhere, so a creature with a
+type of 401 arrives on the extended packet for a client that has advertised
+nothing at all. The capability is advertised because the client does implement
+the packet, not because anything is withheld without it.

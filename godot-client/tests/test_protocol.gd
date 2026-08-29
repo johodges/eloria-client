@@ -10,6 +10,31 @@ func _init() -> void:
 		PackedByteArray([7, 2, 0, 1]))
 	_expect_bytes("stand fixture", EloriaProtocol.set_sitting(false),
 		PackedByteArray([7, 2, 0, 0]))
+	# The capability handshake. Claiming a capability the client cannot decode
+	# replaces a working dialogue fallback with a packet nothing reads, so the
+	# advertised list is pinned to what is actually implemented.
+	_expect_bytes("client capabilities fixture",
+		EloriaProtocol.client_capabilities(),
+		EloriaProtocol.chat("#clientcaps actor16_v1"))
+	_expect(EloriaProtocol.CLIENT_CAPABILITIES.size() > 0
+		and not EloriaProtocol.CLIENT_CAPABILITIES.has(""),
+		"the advertised capability list is non-empty and has no blank entries")
+	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
+		_expect(not capability.contains(",") and not capability.contains(" ")
+			and capability == capability.strip_edges(),
+			"capability %s survives the server's comma split" % capability)
+	# Nothing may be advertised whose packet this client does not decode.
+	var decoded_extensions: Dictionary = {
+		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED}
+	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
+		_expect(decoded_extensions.has(capability),
+			"advertised capability %s is one this suite knows the client decodes"
+				% capability)
+		if decoded_extensions.has(capability):
+			var probe: Dictionary = EloriaProtocol.decode_server(
+				int(decoded_extensions[capability]), _actor_bytes_extended())
+			_expect(probe.type != "unknown",
+				"the packet behind %s actually decodes" % capability)
 	_expect_bytes("turn left fixture", EloriaProtocol.turn(true),
 		PackedByteArray([11, 1, 0]))
 	_expect_bytes("turn right fixture", EloriaProtocol.turn(false),
@@ -817,6 +842,15 @@ func _actor_bytes(frame: int) -> PackedByteArray:
 	var payload: PackedByteArray = PackedByteArray([
 		5, 0, 10, 0, 12, 0, 0, 0, 0, 0, 3, frame, 20, 0, 20, 0, 3])
 	payload.append_array(_nul_bytes("Rat"))
+	return payload
+
+## An ADD_NEW_ACTOR_EXTENDED body with a 16-bit actor type, as captured from
+## the real server for a Lakeglass Drake.
+func _actor_bytes_extended() -> PackedByteArray:
+	var payload: PackedByteArray = PackedByteArray([
+		0x65, 0x00, 0x02, 0x03, 0xe1, 0x01, 0x00, 0x00, 0x00, 0x00,
+		0x93, 0x01, 0x07, 0x84, 0x00, 0x84, 0x00, 0x05])
+	payload.append_array(_nul_bytes("Lakeglass Drake"))
 	return payload
 
 func _padded_name(value: String, size: int) -> PackedByteArray:

@@ -46,6 +46,9 @@ func set_sitting(sitting: bool) -> Error:
 func turn(left: bool) -> Error:
 	return send_frame(EloriaProtocol.turn(left))
 
+func send_client_capabilities() -> Error:
+	return send_frame(EloriaProtocol.client_capabilities())
+
 func send_chat(text: String) -> Error:
 	return send_frame(EloriaProtocol.chat(text))
 

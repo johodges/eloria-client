@@ -1615,6 +1615,13 @@ func _on_disconnect_pressed() -> void:
 	Network.disconnect_from_server()
 
 func _on_login_succeeded() -> void:
+	# Tell the server which Eloria extensions this client implements. Without
+	# it the server serves the legacy dialogue and raw-text fallback for every
+	# extension, which is what it had been doing for this client since it was
+	# written.
+	var capabilities_error: Error = Network.send_client_capabilities()
+	if capabilities_error != OK:
+		push_warning("#clientcaps failed: " + error_string(capabilities_error))
 	login_panel.hide()
 	creation_panel.hide()
 	game_view.show()

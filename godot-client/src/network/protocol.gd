@@ -124,6 +124,24 @@ static func set_sitting(sitting: bool) -> PackedByteArray:
 static func turn(left: bool) -> PackedByteArray:
 	return encode(ClientMessage.TURN_LEFT if left else ClientMessage.TURN_RIGHT)
 
+## Extensions this client actually implements, sent to the server on login as
+## `#clientcaps a,b,c`. The server withholds each Eloria extension packet from
+## a client that has not claimed it and falls back to legacy dialogue or raw
+## text instead, so an inaccurate list here is worse than a short one: claiming
+## a capability the client cannot decode turns a working dialogue into a packet
+## that lands in the protocol diagnostics panel and nowhere else.
+##
+## Grow this list in the same commit that lands the window which decodes the
+## packet, never before.
+const CLIENT_CAPABILITIES: Array[String] = [
+	"actor16_v1",
+]
+
+## `#clientcaps` is an ordinary chat command; the server parses it out of
+## RAW_TEXT and stores the set on the session.
+static func client_capabilities() -> PackedByteArray:
+	return chat("#clientcaps " + ",".join(PackedStringArray(CLIENT_CAPABILITIES)))
+
 static func chat(text: String) -> PackedByteArray:
 	var payload: PackedByteArray = text.to_utf8_buffer()
 	payload.append(0)
