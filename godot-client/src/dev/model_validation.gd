@@ -20,6 +20,11 @@ func _ready() -> void:
 	for raw_option: Variant in registry.get("creationOptions", []):
 		if raw_option is Dictionary:
 			model_ids.append(str((raw_option as Dictionary).get("model", "")))
+	# Races the client can build but the server has no actor type for yet, so
+	# they never appear in creationOptions.  Listing them here is what makes a
+	# client-local race reachable in the viewer.
+	for raw_preview: Variant in registry.get("previewModels", []):
+		model_ids.append(str(raw_preview))
 	model_ids.append_array(["emberfox", "sunscale_drake", "armored_rhino", "two_tailed_fox"])
 	equipment_config = _json("res://data/actors/equipment.json")
 	_load_model(model_id)

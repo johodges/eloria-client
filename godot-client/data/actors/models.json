@@ -577,6 +577,80 @@
         "neck": "neck_01"
       }
     },
+    "human_female": {
+      "scene": "res://assets/actors/native/races/human_female.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/human.json",
+      "culture": "human",
+      "gender": "female",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_female.glb",
+        "res://assets/actors/native/hair/parted_female.glb",
+        "res://assets/actors/native/hair/long_female.glb",
+        "res://assets/actors/native/hair/buns_female.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      },
+      "serverActorType": null
+    },
+    "human_male": {
+      "scene": "res://assets/actors/native/races/human_male.glb",
+      "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
+      "animationMap": "res://data/animations/human.json",
+      "culture": "human",
+      "gender": "male",
+      "hairStyles": [
+        "res://assets/actors/native/hair/buzzed_male.glb",
+        "res://assets/actors/native/hair/parted_male.glb",
+        "res://assets/actors/native/hair/long_male.glb",
+        "res://assets/actors/native/hair/buns_male.glb"
+      ],
+      "boneAliases": {
+        "head": "Head"
+      },
+      "import": {
+        "scale": 1.0,
+        "rotationDegreesX": 0,
+        "rotationDegreesY": 0,
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
+      },
+      "attachments": {
+        "right_hand": "hand_r",
+        "left_hand": "hand_l",
+        "head": "Head",
+        "back": "spine_03",
+        "body": "spine_02",
+        "pelvis": "pelvis",
+        "feet": [
+          "foot_l",
+          "foot_r"
+        ],
+        "neck": "neck_01"
+      },
+      "serverActorType": null
+    },
     "emberfox": {
       "scene": "res://assets/actors/native/creatures/emberfox.glb",
       "animationLibrary": "res://assets/actors/native/creatures/emberfox.glb",
@@ -3941,6 +4015,10 @@
       "model": "mycelari_male",
       "label": "Mycelari Male"
     }
+  ],
+  "previewModels": [
+    "human_female",
+    "human_male"
   ],
   "npcLooks": {
     "300": {

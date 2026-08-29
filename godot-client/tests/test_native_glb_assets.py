@@ -94,7 +94,8 @@ class NativeGlbAssetsTest(unittest.TestCase):
         cls.equipment = json.loads((CLIENT / "data/actors/equipment.json").read_text())
 
     def test_catalog_is_complete(self) -> None:
-        self.assertEqual(16, len(self.catalog["races"]))
+        # Eight retargeted races plus the from-scratch Human, two builds each.
+        self.assertEqual(18, len(self.catalog["races"]))
         self.assertEqual(8, len(self.catalog["hair"]))
         # 32 first-pass creatures plus the wider concept-art roster.
         sys.path.insert(0, str(ROOT / "eloria-assets" / "tools"))
@@ -157,7 +158,11 @@ class NativeGlbAssetsTest(unittest.TestCase):
         for model_id, entry in self.catalog["races"].items():
             with self.subTest(model=model_id):
                 self.assertEqual("skinned", entry["wardrobe"])
-                self.assertEqual("retargeted", entry["anatomy"])
+                # "retargeted" is the shared base body re-proportioned;
+                # "authored" is a race whose geometry was built from nothing.
+                # What has to hold is that the race says which it is, because
+                # the two are fitted and reviewed differently.
+                self.assertIn(entry["anatomy"], {"retargeted", "authored"})
                 self.assertGreaterEqual(entry["vertices"], 13_500)
                 # The race features (a Ssarathi tail and claws, Stoneborn
                 # plating, a gilled Mycelari cap) are what sits above the
@@ -229,9 +234,9 @@ class NativeGlbAssetsTest(unittest.TestCase):
                                entry["vertices"])
                     for model_id, entry in catalog.items()
                     if model_id.rsplit("_", 1)[1] == gender}
-                self.assertEqual(8, len(signatures))
+                self.assertEqual(9, len(signatures))
                 self.assertGreaterEqual(
-                    len(set(signatures.values())), 8,
+                    len(set(signatures.values())), 9,
                     "every race body differs from every other")
         # Stature reaches the client through the model registry, because the
         # rig itself has to keep the reference hip height.
@@ -328,15 +333,18 @@ class NativeGlbAssetsTest(unittest.TestCase):
         the human cultures differed in stature and tint but were the same
         heroic build underneath.
         """
-        human = {"luminous", "votary", "glasswarden", "orun", "greyhaven"}
+        human = {"luminous", "votary", "glasswarden", "orun", "greyhaven",
+                 "human"}
         bases = {model_id: entry["baseBody"]
                  for model_id, entry in self.catalog["races"].items()
                  if model_id.rsplit("_", 1)[0] in human}
-        self.assertEqual(10, len(bases))
-        self.assertGreaterEqual(len(set(bases.values())), 2, bases)
+        self.assertEqual(12, len(bases))
+        self.assertGreaterEqual(len(set(bases.values())), 3, bases)
         for gender in ("female", "male"):
             self.assertEqual("slim", bases[f"glasswarden_{gender}"])
             self.assertEqual("heroic", bases[f"luminous_{gender}"])
+            # The scratch-built race shares no geometry with the others at all.
+            self.assertEqual("human-scratch", bases[f"human_{gender}"])
 
     def test_slim_base_body_is_a_reproportioning_not_a_scale(self) -> None:
         """The slim body thins different places by different amounts.
@@ -410,7 +418,8 @@ class NativeGlbAssetsTest(unittest.TestCase):
                     "greyhaven": {"Wardrobe_Head_Band", "Wardrobe_Head_Cap"},
                     "votary": {"Wardrobe_Head_Band"},
                     "glasswarden": {"Wardrobe_Head_Cap"},
-                    "ssarathi": set(), "stoneborn": set(), "mycelari": set()}
+                    "ssarathi": set(), "stoneborn": set(), "mycelari": set(),
+                    "human": {"Wardrobe_Head_Band", "Wardrobe_Head_Cap"}}
         for model_id, entry in self.catalog["races"].items():
             race = model_id.rsplit("_", 1)[0]
             document = glb_document(ROOT / entry["path"])

@@ -242,6 +242,36 @@
       "hipHeight": 0.9491,
       "groundHeight": 0.0152,
       "path": "godot-client/assets/actors/native/races/mycelari_male.glb"
+    },
+    "human_female": {
+      "vertices": 13836,
+      "triangles": 26482,
+      "joints": 77,
+      "feature": "none",
+      "wardrobe": "skinned",
+      "anatomy": "authored",
+      "capeBones": 12,
+      "baseBody": "human-scratch",
+      "stature": 1.0,
+      "legChainScale": 0.9858,
+      "hipHeight": 0.9318,
+      "groundHeight": 0.0148,
+      "path": "godot-client/assets/actors/native/races/human_female.glb"
+    },
+    "human_male": {
+      "vertices": 13953,
+      "triangles": 26623,
+      "joints": 77,
+      "feature": "none",
+      "wardrobe": "skinned",
+      "anatomy": "authored",
+      "capeBones": 12,
+      "baseBody": "human-scratch",
+      "stature": 1.0,
+      "legChainScale": 0.991,
+      "hipHeight": 0.9491,
+      "groundHeight": 0.0152,
+      "path": "godot-client/assets/actors/native/races/human_male.glb"
     }
   },
   "hair": {
@@ -6010,7 +6040,7 @@
   },
   "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire.",
   "validation": {
-    "files": 346,
+    "files": 348,
     "results": {
       "godot-client/assets/actors/native/creatures/algae_alligator.glb": {
         "nodes": 25,
@@ -8005,6 +8035,18 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/races/greyhaven_male.glb": {
+        "nodes": 89,
+        "meshes": 11,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/human_female.glb": {
+        "nodes": 89,
+        "meshes": 11,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/races/human_male.glb": {
         "nodes": 89,
         "meshes": 11,
         "skins": 1,

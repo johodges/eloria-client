@@ -2,9 +2,16 @@
 """Build the Godot-native Nymara actor library from clean glTF 2.0 sources.
 
 This pipeline deliberately does not consume the legacy Cal3D humanoid or creature
-generators.  Playable races retain the proven Quaternius 65-joint skin, topology,
-weights, and animation bone names.  Creature meshes, rigs, and clips are authored
-here from scratch.
+generators.  Most playable races retain the proven Quaternius 65-joint skin,
+topology, weights, and animation bone names.  Creature meshes, rigs, and clips are
+authored here from scratch.
+
+Modified 2026-08-30 for Eloria Client: the Human race is authored from scratch
+too.  ``RACES["human"]["scratch"]`` sends it to ``human_race.py``, which builds
+its skeleton offsets, mesh, unwrap, skin weights and every texture from
+measurements rather than retargeting the shared base body.  It shares the
+animation contract -- joint names, order, parents, rest rotations, and the hip
+and ground planes -- and nothing else.
 
 Modified 2026-08-28 for Eloria Client: equipment is no longer a set of primitive
 blobs bolted to a bone with an identity transform.  ``equipment_authoring``
@@ -32,6 +39,7 @@ import creature_surfaces as surfaces
 from PIL import Image
 
 import equipment_authoring
+import human_race
 
 
 COMPONENT_DTYPES = {5121: "<u1", 5122: "<i2", 5123: "<u2", 5125: "<u4", 5126: "<f4"}
@@ -85,7 +93,29 @@ RACES = {
                   "feature": "fungal",
                   "wardrobe": ((88, 112, 70), (62, 75, 53), (71, 54, 39),
                                 (207, 143, 89))},
+    # The one race in this library that is not the shared base body wearing a
+    # different silhouette.  ``scratch`` sends it to eloria-assets/tools/
+    # human_race.py, which authors its skeleton offsets, mesh, unwrap, skin
+    # weights and every texture from measurements rather than retargeting
+    # anything; nothing about it is derived from another player model.  It
+    # carries the same 77 joints, the same rest rotations and the same hip and
+    # ground planes, because those are the animation contract rather than the
+    # body.
+    "human": {"label": "Human", "color": (233, 196, 170),
+               "accent": (198, 166, 96), "feature": "none", "scratch": True,
+               "wardrobe": ((226, 218, 198), (62, 104, 114), (96, 64, 42),
+                             (198, 166, 96))},
 }
+
+# Races the client can build and preview but the server has no actor type for.
+# Actor-type allocation belongs to eloria-server: inventing an id here would
+# collide with a real one the moment the server allocated it.  These are
+# registered as models with a null serverActorType and listed under
+# ``previewModels`` so the in-client model viewer can reach them.
+PREVIEW_RACES = ("human",)
+
+# Races with their own action map.  Everything else shares the reference one.
+RACE_ANIMATION_MAP = {"human": "human"}
 
 # --- race anatomy ---------------------------------------------------------
 #
@@ -228,6 +258,10 @@ ANATOMY = {
     # Reference proportions.  The Luminous are the baseline every other race
     # is described against, so their body is left exactly as authored.
     "luminous": {},
+    # The Human race is not retargeted at all: its proportions live in
+    # human_race.PROPORTIONS.  Only the stature belongs here, because the
+    # model registry reads it from this table.
+    "human": {"stature": human_race.STATURE},
     # Whitehorn highlanders: tall, long-limbed and lean, with the heavy neck
     # and loaded calves of people who walk mountains carrying horns.
     "votary": {
@@ -357,6 +391,8 @@ RACE_FACE = {
                   "brow": (86, 80, 74), "headwear": ()},
     "mycelari": {"pupil": "none", "iris": (74, 52, 34),
                  "brow": (96, 72, 46), "headwear": ()},
+    # Nothing on a human scalp for a band or a cap to run through.
+    "human": {},
 }
 DEFAULT_IRIS = (104, 78, 52)
 
@@ -3223,7 +3259,8 @@ def humanoid_model(scene: str, culture: str, gender: str) -> dict:
     return {
         "scene": scene,
         "animationLibrary": "res://assets/actors/native/shared/Universal_Animation_Library.glb",
-        "animationMap": "res://data/animations/luminous.json",
+        "animationMap": "res://data/animations/%s.json"
+                        % RACE_ANIMATION_MAP.get(culture, "luminous"),
         "culture": culture,
         "gender": gender,
         "hairStyles": [
@@ -3289,6 +3326,14 @@ def build_model_registry() -> dict:
         actor_types[str(actor_type)] = model_id
         creation.append({"actorType": actor_type, "model": model_id,
                          "label": f"{RACES[race]['label']} {gender.title()}"})
+    preview = []
+    for race in PREVIEW_RACES:
+        for gender in ("female", "male"):
+            model_id = f"{race}_{gender}"
+            models[model_id] = humanoid_model(
+                f"res://assets/actors/native/races/{model_id}.glb", race,
+                gender) | {"serverActorType": None}
+            preview.append(model_id)
     for actor_type, slug, *_ in CREATURES:
         actor_type += CREATURE_ACTOR_TYPE_OFFSET
         models[slug] = {
@@ -3386,7 +3431,8 @@ def build_model_registry() -> dict:
                 actor_type += 1
     actor_types.update({str(key): value for key, value in invasion_models.items()})
     return {"schemaVersion": 2, "models": models, "actorTypes": actor_types,
-            "creationOptions": creation, "npcLooks": npc_looks}
+            "creationOptions": creation, "previewModels": preview,
+            "npcLooks": npc_looks}
 
 
 def build_equipment_registry(rig: "equipment_authoring.Rig",
@@ -3462,7 +3508,12 @@ def main() -> None:
         for race in RACES:
             for gender in ("female","male"):
                 model=f"{race}_{gender}";path=args.output/"races"/f"{model}.glb"
-                manifest["races"][model]=build_player(args.source,path,race,gender)|{"path":path.relative_to(repo_root).as_posix()}
+                if RACES[race].get("scratch"):
+                    record = human_race.build_human_player(
+                        GLB, path, gender, RACES[race]["label"])
+                else:
+                    record = build_player(args.source, path, race, gender)
+                manifest["races"][model]=record|{"path":path.relative_to(repo_root).as_posix()}
                 print("race",model,manifest["races"][model])
     if args.only in ("all","creatures"):
         for actor_type,slug,label,archetype,base,accent,scale in CREATURES:

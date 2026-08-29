@@ -7,7 +7,7 @@ creature generators.
 
 | Library | Coverage | Runtime contract |
 | --- | ---: | --- |
-| Player cultures | 16 race/gender variants | Original 65-joint player rig, skinned default wardrobe, and Universal animation library; two base bodies, per-race retargeted anatomy; 13.5k-15.7k vertices |
+| Player cultures | 18 race/gender variants | Shared 77-joint player rig, skinned default wardrobe, and Universal animation library; two retargeted base bodies plus one authored from scratch; 13.5k-15.7k vertices |
 | Hairstyles | 8 gender-localized assets | Four original Quaternius styles with authored topology and texture detail |
 | Creatures | 32 species | New 21-joint rig with 7 embedded clips per GLB |
 | Equipment | 66 items across 8 parts | Independent GLBs attached through `BoneAttachment3D` |
@@ -74,6 +74,42 @@ What that buys per race:
   **Glasswarden** are shorter and lighter with the head carried forward. The
   **Luminous** body is the untouched reference every other race is described
   against.
+
+## The Human race: authored rather than retargeted
+
+Every race above is the one Quaternius base body re-proportioned. The **Human**
+race is the control arm of an experiment in whether authoring a race from
+scratch produces a better result than editing that base, and it shares no
+geometry with it at all. `eloria-assets/tools/human_race.py` builds the whole
+thing:
+
+* **Skeleton.** The same 77 joints, in the same order, with the same parents
+  and the same rest rotations -- those four things are the animation contract,
+  exported on their own to `tools/human_rig_contract.json`, and a race that
+  changed them would not animate. Every *offset* is solved here from a table of
+  measurements, and the leg chain is scaled by one factor so the ball joint
+  lands on the shared ground plane. Hip and ground heights come out identical
+  to the other races by construction, and are asserted after the solve.
+* **Mesh.** The trunk, neck and head are one tube swept through a superellipse
+  whose half width, half depth, centre and squareness are read off a table of
+  measured heights. Arms are grafted into a hole cut in the side of that tube,
+  the two legs fork out of its lowest ring across three shared crotch vertices,
+  and each hand's fingers are grafted into a grid capping the palm. Grafting
+  rather than intersecting is what makes a shoulder one continuous sheet; a
+  Taubin pass then relaxes the seams, anatomical relief is added as smooth
+  bumps placed by height and angle on the surface, and a second, lighter pass
+  settles it.
+* **Unwrap and skin.** Five cylindrical regions in one atlas, folded rather
+  than wrapped so there is no seam down the back, with the head's texels
+  crowded onto the face. Weights are solved from distance to the bone segment
+  inside a per-region bone set, four influences, normalised.
+* **Textures.** Albedo, normal and metallic-roughness for skin, eyes,
+  eyebrows, cloth, leather and trim, all synthesised from value noise and
+  painted features placed by inverting the same unwrap the geometry uses.
+
+The race has no server actor type: allocation belongs to eloria-server, so it
+is registered as a model with a null `serverActorType` and listed under
+`previewModels`, which is what puts it in the in-client model viewer.
 
 ## Base bodies
 
@@ -159,9 +195,16 @@ same GLBs with per-pixel shading from the actual maps, and
 `races-before-after.png` puts the previous develop assets beside these ones in
 front and profile under that same lighting.
 
+`races-human-vs-derived.png` is the direct comparison the Human race exists to
+support: the two authored builds beside a human-derived race (Luminous) and a
+non-human one (Ssarathi), lit from the same maps.
+
 Regenerate and validate with:
 
 ```sh
+# one race, without rewriting the other sixteen
+python3 eloria-assets/tools/build_human_race.py
+# or the whole library
 python3 eloria-assets/tools/build_native_nymara_glbs.py
 python3 godot-client/tests/test_native_glb_assets.py -v
 python3 eloria-assets/tools/check_race_motion.py

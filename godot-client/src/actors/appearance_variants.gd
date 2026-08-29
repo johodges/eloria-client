@@ -24,6 +24,8 @@ static func wardrobe_color(culture: String, part: int, index: int) -> Color:
 			PART_BOOTS: Color8(62, 55, 48), "accent": Color8(84, 189, 199)},
 		"mycelari": {PART_SHIRT: Color8(88, 112, 70), PART_PANTS: Color8(62, 75, 53),
 			PART_BOOTS: Color8(71, 54, 39), "accent": Color8(207, 143, 89)},
+		"human": {PART_SHIRT: Color8(226, 218, 198), PART_PANTS: Color8(62, 104, 114),
+			PART_BOOTS: Color8(96, 64, 42), "accent": Color8(198, 166, 96)},
 	}
 	var palette: Dictionary = palettes.get(culture, palettes["luminous"]) as Dictionary
 	var wardrobe_part: int = PART_SHIRT if part == PART_HEAD else part
