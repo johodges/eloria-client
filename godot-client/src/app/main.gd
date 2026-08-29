@@ -1091,6 +1091,10 @@ func _on_inventory_button_pressed() -> void:
 	if inventory_panel.visible:
 		stats_panel.hide()
 		manufacturing_panel.hide()
+		# Ask for the enriched view of what the ordinary inventory packet
+		# already told us. Command 226 never replaces that inventory: it only
+		# names the items the icon ids stand for.
+		Network.send_chat("#inventory")
 		_sync_inventory()
 	_sync_hud_button_states(true)
 
@@ -3920,7 +3924,7 @@ func _sync_inventory() -> void:
 			button.icon = item_atlas.icon_for(image_id)
 			button.text = ""
 			inventory_quantity_labels[slot].text = str(int(item.get("quantity", 0)))
-			button.tooltip_text = _inventory_tooltip(item)
+			button.tooltip_text = _inventory_tooltip(item, slot)
 			button.disabled = false
 		else:
 			button.icon = null
@@ -3955,7 +3959,7 @@ func _sync_equipment_slots() -> void:
 			var item: Dictionary = item_value as Dictionary
 			button.icon = item_atlas.icon_for(int(item.get("image_id", 0)))
 			button.text = ""
-			button.tooltip_text = _inventory_tooltip(item) + "\nEquipped position %d" % (index + 1)
+			button.tooltip_text = _inventory_tooltip(item, slot) + "\nEquipped position %d" % (index + 1)
 			button.disabled = false
 		else:
 			button.icon = null
@@ -3983,7 +3987,7 @@ func _sync_quick_slots() -> void:
 			quick_button.expand_icon = true
 			quick_button.text = ""
 			quick_button.disabled = not usable or cooldown_seconds > 0
-			var quick_tooltip: String = (_inventory_tooltip(quick_item)
+			var quick_tooltip: String = (_inventory_tooltip(quick_item, slot)
 				+ "\nQuick slot: %d  Quantity: %d" % [slot + 1,
 					int(quick_item.get("quantity", 0))])
 			if cooldown_seconds > 0:
@@ -4131,7 +4135,11 @@ func _inventory_cooldown_remaining(slot: int) -> int:
 	var remaining_msec: int = int(cooldown.get("end_msec", 0)) - Time.get_ticks_msec()
 	return maxi(0, ceili(float(remaining_msec) / 1000.0))
 
-func _inventory_tooltip(item: Dictionary) -> String:
+## Builds a slot tooltip. The quantity and the traits always come from the
+## authoritative inventory packet; command 226 only adds the names, categories
+## and weights that packet has no room for, and is ignored where the two
+## disagree about how much is in the slot.
+func _inventory_tooltip(item: Dictionary, slot: int) -> String:
 	var traits: Array[String] = []
 	for flag_and_label: Array in [
 		["inventory_usable", "usable"], ["stackable", "stackable"],
@@ -4139,11 +4147,28 @@ func _inventory_tooltip(item: Dictionary) -> String:
 		if bool(item.get(flag_and_label[0], false)):
 			traits.append(str(flag_and_label[1]))
 	var image_id: int = int(item.get("image_id", 0))
-	var tooltip: String = "Item image #%d — quantity %d%s" % [image_id,
+	var described: Dictionary = _inventory_description_for(slot)
+	var heading: String = (str(described.get("name", ""))
+		if not str(described.get("name", "")).is_empty()
+		else "Item image #%d" % image_id)
+	var tooltip: String = "%s — quantity %d%s" % [heading,
 		int(item.get("quantity", 0)), " — " + ", ".join(traits) if not traits.is_empty() else ""]
+	if not str(described.get("category", "")).is_empty():
+		tooltip += "
+%s — %d EMU each" % [str(described.get("category", "")),
+			int(described.get("emu", 0))]
 	if item_atlas.uses_substitute(image_id):
 		tooltip += "\nIndependent Eloria icon substitute for legacy image #%d." % image_id
 	return tooltip
+
+## The command 226 entry for a slot, or an empty dictionary when the server has
+## not described that slot.
+func _inventory_description_for(slot: int) -> Dictionary:
+	for entry: Variant in AppState.inventory_state.get("items", []):
+		var described: Dictionary = entry as Dictionary
+		if int(described.get("slot", -1)) == slot:
+			return described
+	return {}
 
 func _on_inventory_slot_pressed(slot: int) -> void:
 	if not AppState.inventory.has(slot):

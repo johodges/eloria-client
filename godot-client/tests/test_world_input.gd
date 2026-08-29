@@ -458,6 +458,31 @@ func _run() -> void:
 		and is_equal_approx(inventory_panel.scale.y, 0.75),
 		"inventory resizing uniformly scales boxes, icons, and text without changing aspect")
 	main.call("_apply_inventory_scale", 1.0)
+	# Command 226 enriches the inventory; it never replaces it. The two
+	# fixtures below deliberately disagree about the quantity in slot 0, and
+	# the tooltip has to keep the authoritative one.
+	app_state_inventory.call("_on_packet", 19, PackedByteArray([
+		1, 20, 0, 12, 0, 0, 0, 0, 4]))
+	app_state_inventory.call("_on_packet", 226, _hex_bytes(
+		"fa00000014000000500000000100001400990000000100000000"
+		+ "53756e6c65616600466c6f7765727300"))
+	var enriched_tooltip: String = str(main.call("_inventory_tooltip",
+		app_state_inventory.get("inventory").get(0, {}), 0))
+	_expect(enriched_tooltip.contains("Sunleaf")
+		and enriched_tooltip.contains("Flowers")
+		and enriched_tooltip.contains("1 EMU"),
+		"the inventory tooltip names the item the server described: "
+			+ enriched_tooltip)
+	_expect(enriched_tooltip.contains("quantity 12")
+		and not enriched_tooltip.contains("quantity 153"),
+		"the enriched tooltip keeps the authoritative quantity, not the"
+			+ " enrichment packet's: " + enriched_tooltip)
+	app_state_inventory.call("_on_packet", 226, _hex_bytes(
+		"fa000000140000005000000000 00".replace(" ", "")))
+	_expect(str(main.call("_inventory_tooltip", app_state_inventory.get("inventory").get(0, {}), 0))
+		.contains("Item image #20"),
+		"without an enrichment entry the tooltip falls back to the image id")
+
 	_expect((main.call("_parse_item_list", "1158:20\n189:1") as Array).size() == 2,
 		"custom storage item lists parse image IDs and quantities")
 	var inventory_body: HBoxContainer = main.get_node(
@@ -1411,3 +1436,9 @@ func _expect(value: bool, label: String) -> void:
 		return
 	failures += 1
 	push_error("FAIL: " + label)
+
+func _hex_bytes(value: String) -> PackedByteArray:
+	var bytes := PackedByteArray()
+	for index: int in range(0, value.length(), 2):
+		bytes.append(value.substr(index, 2).hex_to_int())
+	return bytes

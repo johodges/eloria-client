@@ -230,6 +230,12 @@ than claiming nothing: it replaces a working dialogue with a packet that lands
 in the protocol diagnostics panel and nowhere else. The list grows in the same
 commit that lands each window.
 
+The client advertises ten capabilities: `actor16_v1`, `combat_hud_v1`,
+`inventory_window_v1`, `item_detail_v1`, `mail_window_v1`, `market_window_v1`,
+`merchant_window_v1`, `navigation_hud_v1`, `quest_journal_v1` and
+`special_events_v1`. `tests/test_protocol.gd` decodes a real payload behind
+each one, so the list cannot outrun the decoders.
+
 `actor16_v1` does **not** gate the 16-bit actor packet. Measured against the
 real server: `actor_packet()` selects `ADD_NEW_ACTOR_EXTENDED(247)` purely from
 `actor_type > 0xFF`, with no capability check anywhere, so a creature with a
@@ -373,6 +379,21 @@ UTF-8.
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+
+Command 226 is **enrichment, not inventory**. The authoritative inventory
+packet still owns which slot holds what and how much; 226 adds only the names,
+categories and per-unit weights that packet has no room for, and the client
+uses it for nothing else. Where the two disagree about a quantity, the
+authoritative packet wins - the client never adopts 226's number - so the
+enrichment cannot become a second, contradictory source of inventory truth.
+The server sends it only in answer to `#inventory`.
+
+A client advertising `merchant_window_v1` sends the legacy shop response ids
+(`3100 + index` to choose an item, `3300 + n` or `3309` to choose a quantity)
+without the dialogue ever being drawn, so no new client-to-server command
+exists for shop trade. The server answers those ids with a refreshed command
+223 rather than the NPC text and options menu a legacy client gets, including
+when it refuses the trade.
 
 Combat event 0 is a state refresh; 1 hit, 2 miss, 3 dodge, 4 defeat. A defeat
 ends the engagement, so the client clears the HUD on it rather than leaving the

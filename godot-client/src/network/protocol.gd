@@ -142,6 +142,7 @@ static func turn(left: bool) -> PackedByteArray:
 const CLIENT_CAPABILITIES: Array[String] = [
 	"actor16_v1",
 	"combat_hud_v1",
+	"inventory_window_v1",
 	"item_detail_v1",
 	"mail_window_v1",
 	"market_window_v1",

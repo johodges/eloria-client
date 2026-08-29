@@ -176,6 +176,19 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/harvest-targets-active.png"
           test -s "$ELORIA_ARTIFACT_DIR/reading-progress.png"
           test -s "$ELORIA_ARTIFACT_DIR/reading-complete.png"
+      - name: Render the Eloria extension windows
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_extension_windows.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/extension-windows.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/extension-windows.log"
+          grep -q "rendered extension windows: PASS" "$ELORIA_ARTIFACT_DIR/extension-windows.log"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-windows-before.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-hud-readouts.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-quest-journal.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-mail.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-item-detail.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-merchant.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-marketplace.png"
       - name: Render 16-bit actor native models
         run: |
           xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_actor16_creature.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/actor16.log"

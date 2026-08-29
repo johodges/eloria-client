@@ -30,6 +30,7 @@ func _init() -> void:
 	var decoded_extensions: Dictionary = {
 		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED,
 		"combat_hud_v1": EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE,
+		"inventory_window_v1": EloriaProtocol.ServerMessage.ELORIA_INVENTORY_STATE,
 		"item_detail_v1": EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL,
 		"mail_window_v1": EloriaProtocol.ServerMessage.ELORIA_MAIL_STATE,
 		"market_window_v1": EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE,
@@ -40,6 +41,8 @@ func _init() -> void:
 	var capability_probes: Dictionary = {
 		EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE:
 			"016600120014001e002c00050052656564686f726e205374616700",
+		EloriaProtocol.ServerMessage.ELORIA_INVENTORY_STATE:
+			"fa00000014000000500000000000",
 		EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL:
 			"a0000200000000410042004300440045004600470"
 			+ "0",
