@@ -1763,7 +1763,8 @@
       "COLLISION_Wall_46",
       "COLLISION_Wall_47"
     ],
-    "note": "Low-poly proxies inset inside their parent geometry; they are fully enclosed and never visible."
+    "nodesAreProxies": true,
+    "note": "Low-poly proxies inset inside their parent geometry. They carry no surface the player should see, so the client hides them and keeps only the shape built from them: inset by a few millimetres they are coplanar with the wall they stand for at any distance the depth buffer can still resolve."
   },
   "navigation": {
     "nodeNames": [
@@ -2649,13 +2650,13 @@
     ]
   },
   "performance": {
-    "bytes": 23503256,
+    "bytes": 23545448,
     "nodes": 3073,
-    "meshes": 161,
+    "meshes": 184,
     "materials": 31,
     "textures": 95,
     "animations": 7,
-    "uniqueTriangles": 184175,
+    "uniqueTriangles": 184589,
     "instances": 3028,
     "visibleTriangles": 811995,
     "textureMemoryBytes": 111848106,

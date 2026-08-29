@@ -31,8 +31,16 @@ extends Control
 # stale in a working copy until the editor next scans the project.
 const InteriorCutawayScript := preload("res://src/world/interior_cutaway.gd")
 const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
+const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
+const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
+const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
+const AudioDirectorScript := preload("res://src/audio/audio_director.gd")
+const SigilWindowScript := preload("res://src/ui/sigil_window.gd")
+const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
+const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 var invasion_assistant_window
+var extension_windows: Control
 @onready var gameplay_camera: Camera3D = %Camera
 @onready var world_loader: WorldLoader = %WorldLoader
 @onready var fallback_ground: MeshInstance3D = $GameView/ViewportContainer/Viewport/WorldRoot/Ground
@@ -47,6 +55,8 @@ var map_light_root: Node3D
 @onready var map_camera: Camera3D = %MapCamera
 @onready var full_map_viewport: SubViewport = %FullMapViewport
 @onready var full_map_camera: Camera3D = %FullMapCamera
+@onready var map_marker_title: Label = %MapMarkerTitle
+@onready var map_marker_list: RichTextLabel = %MapMarkerList
 @onready var minimap: TextureRect = %Minimap
 @onready var minimap_frame: Panel = %MinimapFrame
 @onready var full_map: Control = %FullMap
@@ -133,6 +143,10 @@ var map_light_root: Node3D
 @onready var item_lists_close: Button = %ItemListsClose
 @onready var attack_button: Button = %AttackButton
 @onready var trade_button: Button = %TradeButton
+@onready var look_button: Button = %LookButton
+@onready var spell_power_down: Button = %SpellPowerDown
+@onready var spell_power_value: Label = %SpellPowerValue
+@onready var spell_power_up: Button = %SpellPowerUp
 @onready var trade_panel: Control = %TradePanel
 @onready var trade_partner: Label = %TradePartner
 @onready var trade_source: ItemList = %TradeSource
@@ -160,6 +174,7 @@ var map_light_root: Node3D
 @onready var ground_bag_quantity: SpinBox = %GroundBagQuantity
 @onready var ground_bag_pick_button: Button = %GroundBagPick
 @onready var ground_bag_drop_button: Button = %GroundBagDrop
+@onready var ground_bag_look_button: Button = %GroundBagLook
 @onready var knowledge_list: ItemList = %KnowledgeList
 @onready var knowledge_detail: RichTextLabel = %KnowledgeDetail
 @onready var knowledge_known_only: CheckBox = %KnowledgeKnownOnly
@@ -180,8 +195,26 @@ var map_light_root: Node3D
 @onready var chat_input: LineEdit = %ChatInput
 @onready var chat_panel: PanelContainer = $GameView/ChatPanel
 @onready var console_panel: PanelContainer = %ConsolePanel
+@onready var connection_banner: Label = %ConnectionBanner
+@onready var harvest_banner: Label = %HarvestBanner
+@onready var reading_panel: PanelContainer = %ReadingPanel
+@onready var reading_title: Label = %ReadingTitle
+@onready var reading_close: Button = %ReadingClose
+@onready var reading_progress: ProgressBar = %ReadingProgress
+@onready var reading_detail: RichTextLabel = %ReadingDetail
+@onready var popup_panel: PanelContainer = %PopupPanel
+@onready var popup_title: Label = %PopupTitle
+@onready var popup_text: RichTextLabel = %PopupText
+@onready var popup_options: VBoxContainer = %PopupOptions
+@onready var popup_confirm: Button = %PopupConfirm
+@onready var popup_dismiss: Button = %PopupDismiss
 @onready var console_output: RichTextLabel = %ConsoleOutput
+@onready var console_diagnostics_button: Button = %ConsoleDiagnostics
+@onready var diagnostics_output: RichTextLabel = %DiagnosticsOutput
 @onready var settings_panel: PanelContainer = %SettingsPanel
+@onready var sound_enabled: CheckButton = %SoundEnabled
+@onready var sound_volume: HSlider = %SoundVolume
+@onready var sound_volume_value: Label = %SoundVolumeValue
 @onready var minimap_size: HSlider = %MinimapSize
 @onready var minimap_size_value: Label = %MinimapSizeValue
 @onready var show_through_obstacles: CheckButton = %ShowThroughObstacles
@@ -202,6 +235,39 @@ var map_light_root: Node3D
 
 var actor_nodes: Dictionary = {}
 var ground_bag_nodes: Dictionary = {}
+var map_object_nodes: Dictionary = {}
+## Server-placed map markers on the current map, keyed by the server's marker id.
+var map_marker_nodes: Dictionary = {}
+var map_marker_overlay: Control
+## Short-lived world effects the server announced. Kept only so a test can see
+## what is on screen; each one frees itself when it finishes.
+var world_effects: Array = []
+var audio_director: Node
+var map_ambience_root: Node3D
+var sigil_window: Control
+var settings_window: Control
+## Client-side presentation switches. None of them changes what the server
+## decides; they change what this machine draws.
+var _shadows_enabled := true
+var _effects_enabled := true
+var _nameplates_enabled := true
+var _camera_follows_player := true
+## True while the loaded package lets the hour drive its environment. An
+## interior does not, and neither does a package that opts out.
+var console_commands := ConsoleCommands.new()
+var _console_history: Array[String] = []
+var _console_history_index := 0
+var _day_night_active := false
+var _day_night_refresh_msec := 0
+## The power the next cast asks for. Presentational: the server states what
+## each effect may reach and refuses anything it will not allow.
+var requested_spell_power := 1
+var player_info_panel: Control
+var active_buff_bar: Control
+## Server map objects whose tile has no navigation surface beneath it on the
+## rendered map. Misplaced content rather than a client fault, but silent
+## unless somebody counts it.
+var _ungrounded_map_objects: Dictionary = {}
 var models: Dictionary = {}
 var actor_type_models: Dictionary = {}
 var npc_looks: Dictionary = {}
@@ -261,6 +327,16 @@ var _item_lists: Dictionary = {}
 var _store_options_menu: PopupMenu
 var _drop_options_menu: PopupMenu
 var _minimap_menu: PopupMenu
+var _minimap_visible := false
+## Set when the socket dropped without the player asking. The next successful
+## login resynchronises rather than trusting anything from before the drop.
+var _resync_after_reconnect := false
+var _reading_completed_index := -1
+var _reading_shown_index := -1
+var _reading_hidden := false
+var _popup_radio_groups: Dictionary = {}
+var _popup_radio_buttons: Dictionary = {}
+var _popup_entries: Dictionary = {}
 var _session_started_msec := 0
 var _experience_snapshot: Dictionary = {}
 var _session_xp_gain: Dictionary = {}
@@ -268,8 +344,10 @@ var _session_xp_max: Dictionary = {}
 var _session_xp_last: Dictionary = {}
 var _session_distance := 0
 var _last_distance_tile := Vector2i(-99999, -99999)
-var _session_counters: Dictionary = {}
-var _total_counters: Dictionary = {}
+## The server owns every lifetime total. The "this session" column is the
+## difference against the totals as they stood when the session or the reset
+## started, which is presentation of authoritative numbers, not a second count.
+var _counter_session_baseline: Dictionary = {}
 var _keyboard_moving := false
 var _keyboard_running := false
 var _keyboard_direction := Vector2i.ZERO
@@ -277,9 +355,7 @@ var _keyboard_goal_tile := Vector2i(-99999, -99999)
 var _keyboard_refresh_msec := 0
 var _ground_bag_get_all_requested_msec := -1
 var _ground_bag_get_all_bag_id := -1
-var _selected_counter_category := "Kills"
-var _known_perks: Array[String] = []
-var _perk_capture_until_msec := 0
+var _selected_counter_category := ""
 var _right_mouse_down := false
 var _right_mouse_dragged := false
 var _interaction_mode := "walk"
@@ -304,7 +380,18 @@ var _hud_layout_list: ItemList
 var _hud_layout_visible: CheckButton
 var _hud_skill_selector: OptionButton
 var _floating_feedback_layer: Control
-var _floating_feedback_offset := 0
+var _pending_floating_feedback: Array[Dictionary] = []
+var _floating_feedback_flush_queued := false
+var _active_floating_labels: Array[Label] = []
+var _last_skill_experience_msec := -100000
+
+const FLOATING_FEEDBACK_BASE_OFFSET := 78.0
+const FLOATING_FEEDBACK_ROW_HEIGHT := 21.0
+const FLOATING_FEEDBACK_MAX_ROWS := 4
+const FLOATING_FEEDBACK_RISE := 58.0
+const FLOATING_FEEDBACK_LIFETIME := 1.5
+const FLOATING_FEEDBACK_FADE_DELAY := 0.5
+const FLOATING_FEEDBACK_OVERALL_GRACE_MSEC := 250
 
 const HUD_SKILLS: Array[String] = [
 	"attack", "defense", "harvesting", "alchemy", "magic", "potion",
@@ -326,6 +413,14 @@ const UI_SCALE_MAX := 1.5
 # identically at a fraction of the rate.
 const MINIMAP_REFRESH_MSEC := 66
 const FULL_MAP_REFRESH_MSEC := 200
+## The sky only has to keep up with a six-hour day; twice a second is already
+## finer than the eye can follow and costs a handful of property writes.
+const DAY_NIGHT_REFRESH_MSEC := 500
+## How many submitted lines the console remembers for its up/down history.
+const CONSOLE_HISTORY_LIMIT := 60
+## The fork's spell quickbar. Twelve slots, shifted 1-0 then Ctrl+1/Ctrl+2 -
+## the legacy client's six were never enough for the catalog's 22 spells.
+const SPELL_QUICK_SLOTS := 12
 const INVENTORY_MIN_SCALE := 0.65
 const INVENTORY_MAX_SCALE := 1.75
 const TILE_DIRECTIONS: Array[Vector2i] = [
@@ -335,19 +430,6 @@ const EXPERIENCE_SKILLS: Array[String] = [
 	"attack", "defense", "harvesting", "alchemy", "magic", "potion",
 	"summoning", "manufacturing", "crafting", "engineering", "tailoring",
 	"ranging", "overall"]
-const COUNTER_CATEGORIES: Array[String] = [
-	"Kills", "Deaths", "Breakages", "Crit Fails", "Used Items", "Events",
-	"Harvests", "Alchemy", "Crafting", "Manufacturing", "Potions", "Spells",
-	"Summons", "Engineering", "Tailoring", "Storage", "Drops"]
-const PERK_NAMES: Array[String] = [
-	"Power Saving", "Self Destruct", "There is no Fork", "Excavator", "Conjurer",
-	"I Glow in the Dark", "Body Piercing", "Artificer", "I Eat Dead People",
-	"Fatal Man", "Monster Magnetism", "Careful Guy", "Fast Regeneration",
-	"Evanescence", "Mirror Skin", "Sharp Shooter", "Power Hungry", "I can't dance",
-	"No More Tears", "Ethereal Ranger", "Wilhelm Hood", "Antisocial",
-	"Gelatine Bones", "Godless", "Harvester of Sorrow", "One", "Underworlder",
-	"Summoner", "Skeptic", "Collateral Damage", "Dedicated Harvester", "Hellspawn",
-	"Scotty Died"]
 
 func _ready() -> void:
 	var model_registry: Dictionary = _json("res://data/actors/models.json")
@@ -358,6 +440,32 @@ func _ready() -> void:
 	animation_config = _json("res://data/animations/luminous.json")
 	animation_configs["res://data/animations/luminous.json"] = animation_config
 	map_registry = _json("res://data/maps/registry.json").get("maps", {})
+	# The nine Eloria extension windows live in their own script: main.gd is
+	# already long enough that nine more windows would make it unreadable, and
+	# they share one seam - the fork's extension protocol.
+	map_marker_overlay = MapMarkerOverlayScript.new()
+	map_marker_overlay.name = "MapMarkerOverlay"
+	map_marker_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	map_image.add_child(map_marker_overlay)
+	map_marker_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
+	audio_director = AudioDirectorScript.new()
+	add_child(audio_director)
+	player_info_panel = PlayerInfoPanelScript.new()
+	game_view.add_child(player_info_panel)
+	sigil_window = SigilWindowScript.new()
+	game_view.add_child(sigil_window)
+	sigil_window.configure(spell_catalog)
+	settings_window = SettingsWindowScript.new()
+	game_view.add_child(settings_window)
+	settings_window.setting_changed.connect(_on_client_setting_changed)
+	settings_window.binding_changed.connect(_on_binding_changed)
+	active_buff_bar = ActiveBuffBarScript.new()
+	game_view.add_child(active_buff_bar)
+	active_buff_bar.configure(spell_catalog)
+	extension_windows = ExtensionWindowsScript.new()
+	game_view.add_child(extension_windows)
+	extension_windows.configure(item_atlas)
 	invasion_assistant_window = InvasionAssistantScript.new()
 	add_child(invasion_assistant_window)
 	invasion_assistant_window.configure_registry(map_registry)
@@ -376,12 +484,14 @@ func _ready() -> void:
 			knowledge_catalog.append(str(raw_knowledge_name))
 	Network.connection_state_changed.connect(_on_connection_state_changed)
 	Network.protocol_error.connect(func(message: String): status_label.text = "Protocol error: " + message)
+	Network.reconnect_progress.connect(_on_reconnect_progress)
 	AppState.login_succeeded.connect(_on_login_succeeded)
 	AppState.login_failed.connect(_on_login_failed)
 	AppState.character_created.connect(_on_character_created)
 	AppState.character_creation_failed.connect(_on_character_creation_failed)
 	AppState.state_changed.connect(_on_state_changed)
 	AppState.floating_feedback_requested.connect(_on_floating_feedback_requested)
+	AppState.special_effect_requested.connect(_on_special_effect_requested)
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
 	viewport_container.gui_input.connect(_on_world_gui_input)
@@ -452,18 +562,17 @@ func _ready() -> void:
 	$GameView/ChatTabs/All.pressed.connect(_on_chat_tab_pressed.bind("all"))
 	$GameView/ChatTabs/History.pressed.connect(_on_chat_tab_pressed.bind("history"))
 	$GameView/ChatTabs/Options.pressed.connect(_on_options_pressed)
-	%ItemMode.pressed.connect(_on_quickbar_mode_pressed.bind("items"))
-	%SpellMode.pressed.connect(_on_quickbar_mode_pressed.bind("spells"))
 	_build_hud_layout_menu()
 	_load_hud_layout()
 	_connect_hud_context_inputs(%Quickbar)
 	get_viewport().size_changed.connect(_on_window_size_changed)
 	call_deferred("_on_window_size_changed")
-	_on_quickbar_mode_pressed("items")
 	for channel_index: int in range(3):
 		var channel_button: Button = get_node(
 			"GameView/ChatTabs/Channel%d" % (channel_index + 1)) as Button
 		channel_button.pressed.connect(_on_channel_tab_pressed.bind(channel_index))
+	sound_enabled.toggled.connect(_on_sound_enabled_toggled)
+	sound_volume.value_changed.connect(_on_sound_volume_changed)
 	minimap_size.value_changed.connect(_on_minimap_size_changed)
 	ui_scale_slider.value_changed.connect(_on_ui_scale_changed)
 	show_through_obstacles.toggled.connect(_on_show_through_obstacles_toggled)
@@ -487,10 +596,14 @@ func _ready() -> void:
 	item_lists_close.pressed.connect(func() -> void: item_lists_panel.hide())
 	%SettingsClose.pressed.connect(_close_settings)
 	%ConsoleClose.pressed.connect(_toggle_console)
+	console_diagnostics_button.toggled.connect(_on_console_diagnostics_toggled)
+	popup_confirm.pressed.connect(_on_popup_confirm_pressed)
+	popup_dismiss.pressed.connect(_on_popup_dismiss_pressed)
+	popup_panel.hide()
+	harvest_banner.hide()
+	reading_panel.hide()
+	reading_close.pressed.connect(_on_reading_close_pressed)
 	_session_started_msec = Time.get_ticks_msec()
-	for category: String in COUNTER_CATEGORIES:
-		counter_categories.add_item(category)
-	counter_categories.select(0)
 	_apply_equipment_side()
 	_sync_saved_item_lists()
 	_sync_channel_tabs()
@@ -516,6 +629,7 @@ func _process(_delta: float) -> void:
 		_update_session_distance()
 		_update_legacy_clock_and_compass()
 		_update_actor_resource_overlay()
+		_update_cooldown_overlays()
 		_update_chat_fade()
 		var display_second: int = floori(float(Time.get_ticks_msec()) / 1000.0)
 		if display_second != cooldown_display_second:
@@ -533,9 +647,15 @@ func _update_map_viewports() -> void:
 	if minimap_frame.visible and now >= _minimap_refresh_msec:
 		_minimap_refresh_msec = now + MINIMAP_REFRESH_MSEC
 		map_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	if _day_night_active and now >= _day_night_refresh_msec:
+		_day_night_refresh_msec = now + DAY_NIGHT_REFRESH_MSEC
+		_apply_day_night()
 	if full_map.visible and map_image.visible and now >= _full_map_refresh_msec:
 		_full_map_refresh_msec = now + FULL_MAP_REFRESH_MSEC
 		full_map_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+		# The map camera follows the player, so the marker overlay is projected
+		# again whenever the image beneath it is - and never while it is hidden.
+		map_marker_overlay.queue_redraw()
 
 ## The character preview renders its own 3D scene. It only needs to run while
 ## the creation panel is on screen.
@@ -651,17 +771,18 @@ func _release_local_facing_override() -> void:
 	if actor_value is ReplicatedActor3D and is_instance_valid(actor_value as ReplicatedActor3D):
 		(actor_value as ReplicatedActor3D).set_facing_override(false)
 
-func _turn_local_actor(step: int) -> void:
+## Q and E ask the server to turn. The rendered facing comes from the actor
+## command the server broadcasts in reply, which is also what makes the turn
+## visible to every other player; the local rotation below is only a prediction
+## that reply confirms. Nothing is decided here.
+func _turn_local_actor(left: bool) -> void:
+	var error: Error = Network.turn(left)
+	if error != OK:
+		push_warning("turn failed: " + error_string(error))
+		return
 	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	if actor_value is ReplicatedActor3D and is_instance_valid(actor_value as ReplicatedActor3D):
-		(actor_value as ReplicatedActor3D).turn_by(float(step) * PI / 4.0)
-
-func _turn_step_for_key_event(key_event: InputEventKey) -> int:
-	if key_event.keycode == KEY_Q or key_event.physical_keycode == KEY_Q:
-		return 1
-	if key_event.keycode == KEY_E or key_event.physical_keycode == KEY_E:
-		return -1
-	return 0
+		(actor_value as ReplicatedActor3D).predict_turn(PI / 4.0 if left else -PI / 4.0)
 
 func _on_connect_pressed() -> void:
 	if AppState.connection_state != "disconnected":
@@ -878,6 +999,17 @@ func _on_attack_button_pressed() -> void:
 	_attack_selected_actor()
 	_sync_hud_button_states(true)
 
+## Asks the server to describe the selected player. The window that opens is
+## the server's reply and nothing else: the client does not remember what it
+## asked about, because the reply names the actor itself.
+func _on_look_button_pressed() -> void:
+	var actor_id: int = AppState.selected_actor_id
+	if not _is_tradeable_player(actor_id, AppState.actors.get(actor_id, {})):
+		return
+	var error: Error = Network.look_at_player(actor_id)
+	if error != OK:
+		push_warning("GET_PLAYER_INFO failed: " + error_string(error))
+
 func _on_trade_button_pressed() -> void:
 	_interaction_mode = "trade"
 	var actor_id: int = AppState.selected_actor_id
@@ -909,15 +1041,17 @@ func _hide_chat_input() -> void:
 	chat_input.release_focus()
 	chat_input.hide()
 
+## Reacts to a map panel opening or closing. _update_map_viewports() owns the
+## redraw schedule; this only ever idles a hidden viewport or asks a freshly
+## shown one for its first frame. Setting UPDATE_ALWAYS here put a visible
+## minimap back on full-rate world rendering for up to a whole throttle
+## interval, which is exactly the cost the throttle exists to remove.
 func _sync_map_viewport_activity() -> void:
-	# The minimap and tab map each re-render the whole world. Keeping them on
-	# UPDATE_ALWAYS drew the map three times per frame even while both panels
-	# were hidden, which is pure waste on any map with real geometry.
 	map_viewport.render_target_update_mode = (
-		SubViewport.UPDATE_ALWAYS if minimap_frame.visible
+		SubViewport.UPDATE_ONCE if minimap_frame.visible
 		else SubViewport.UPDATE_DISABLED)
 	full_map_viewport.render_target_update_mode = (
-		SubViewport.UPDATE_ALWAYS if full_map.visible
+		SubViewport.UPDATE_ONCE if full_map.visible and map_image.visible
 		else SubViewport.UPDATE_DISABLED)
 
 
@@ -932,10 +1066,14 @@ func _toggle_full_map() -> void:
 	full_map.show()
 	full_map.move_to_front()
 	_request_map_redraw()
+	_sync_map_viewport_activity()
 
 func _toggle_minimap() -> void:
-	minimap_frame.visible = not minimap_frame.visible
+	_minimap_visible = not minimap_frame.visible
+	minimap_frame.visible = _minimap_visible
 	_request_map_redraw()
+	_sync_map_viewport_activity()
+	_save_hud_settings()
 
 func _toggle_console() -> void:
 	if console_panel.visible:
@@ -944,15 +1082,100 @@ func _toggle_console() -> void:
 	full_map.hide()
 	_close_settings()
 	_sync_console()
+	_sync_diagnostics()
 	console_panel.show()
 	console_panel.move_to_front()
+
+## The console panel shows either the session message history or the protocol
+## diagnostics. Undecoded packets and decode errors were reduced into AppState
+## and emitted with no listener at all, so every gap in the client's protocol
+## coverage failed completely silently; this is where they surface.
+func _on_console_diagnostics_toggled(enabled: bool) -> void:
+	console_output.visible = not enabled
+	diagnostics_output.visible = enabled
+	if enabled:
+		_sync_diagnostics()
+
+func _sync_diagnostics() -> void:
+	if diagnostics_output == null or not diagnostics_output.visible:
+		return
+	var lines: Array[String] = []
+	lines.append("[b]Undecoded server opcodes this session[/b]")
+	if AppState.unknown_packets.is_empty():
+		lines.append("  none")
+	else:
+		var opcodes: Array = AppState.unknown_packets.keys()
+		opcodes.sort()
+		for raw_opcode: Variant in opcodes:
+			var record: Dictionary = AppState.unknown_packets[raw_opcode] as Dictionary
+			lines.append("  %3d  x%-5d  last payload %d bytes, %s ago" % [
+				int(raw_opcode), int(record.get("count", 0)),
+				int(record.get("size", 0)),
+				_elapsed_text(int(record.get("msec", 0)))])
+		lines.append("  total undecoded packets: %d" % AppState.unknown_packet_count)
+	lines.append("
+[b]Recent decode errors[/b]")
+	if AppState.recent_protocol_errors.is_empty():
+		lines.append("  none")
+	else:
+		for index: int in range(AppState.recent_protocol_errors.size() - 1, -1, -1):
+			var failure: Dictionary = AppState.recent_protocol_errors[index]
+			lines.append("  %3d  %s  (%d bytes, %s ago)" % [
+				int(failure.get("command", -1)), str(failure.get("error", "")),
+				int(failure.get("size", 0)),
+				_elapsed_text(int(failure.get("msec", 0)))])
+	lines.append("
+[b]World objects[/b]")
+	lines.append("  server objects on this map: %d" % AppState.map_objects.size())
+	if _ungrounded_map_objects.is_empty():
+		lines.append("  all of them sit on the rendered navigation surface")
+	else:
+		lines.append("  [color=#ffb066]%d have no navigation surface beneath them[/color]"
+			% _ungrounded_map_objects.size())
+		var listed: int = 0
+		for raw_object_id: Variant in _ungrounded_map_objects:
+			if listed >= 8:
+				lines.append("    …")
+				break
+			lines.append("    %d  %s" % [int(raw_object_id),
+				str(_ungrounded_map_objects[raw_object_id])])
+			listed += 1
+	lines.append("
+[b]Connection[/b]")
+	lines.append("  state: %s%s" % [AppState.connection_state,
+		"  (reconnect attempt %d)" % Network.reconnect_attempt()
+		if Network.is_reconnecting() else ""])
+	lines.append("  server clock: %s" % (
+		"%d (synchronised %s ago)" % [AppState.server_timestamp,
+			_elapsed_text(AppState.last_clock_sync_msec)]
+		if AppState.last_clock_sync_msec > 0 else "never synchronised"))
+	lines.append("  game minute: %d (%02d:%02d)" % [AppState.game_minute,
+		AppState.game_minute / 60, AppState.game_minute % 60])
+	diagnostics_output.text = "
+".join(lines)
+
+func _elapsed_text(msec: int) -> String:
+	if msec <= 0:
+		return "unknown"
+	var seconds: int = maxi(0, (Time.get_ticks_msec() - msec) / 1000)
+	if seconds < 60:
+		return "%ds" % seconds
+	return "%dm%02ds" % [seconds / 60, seconds % 60]
 
 func _on_options_pressed() -> void:
 	settings_panel.visible = not settings_panel.visible
 	if settings_panel.visible:
 		console_panel.hide()
 		settings_panel.move_to_front()
+	else:
+		settings_window.close()
 	$GameView/ChatTabs/Options.button_pressed = settings_panel.visible
+
+## The tabbed window: graphics, camera, gameplay and the key bindings. The
+## small panel keeps the settings that were already there.
+func _on_more_settings_pressed() -> void:
+	settings_window.toggle()
+	audio_director.play("ui_click" if settings_window.is_open() else "ui_close")
 
 func _close_settings() -> void:
 	settings_panel.hide()
@@ -968,7 +1191,6 @@ func _on_stats_button_pressed() -> void:
 		inventory_panel.hide()
 		manufacturing_panel.hide()
 		stats_tabs.current_tab = 0
-		_request_perks()
 		_sync_stats()
 	_sync_hud_button_states(true)
 
@@ -980,6 +1202,10 @@ func _on_inventory_button_pressed() -> void:
 	if inventory_panel.visible:
 		stats_panel.hide()
 		manufacturing_panel.hide()
+		# Ask for the enriched view of what the ordinary inventory packet
+		# already told us. Command 226 never replaces that inventory: it only
+		# names the items the icon ids stand for.
+		Network.send_chat("#inventory")
 		_sync_inventory()
 	_sync_hud_button_states(true)
 
@@ -1045,7 +1271,6 @@ func _send_manufacturing_request(wanted: int) -> void:
 		" ingredients=", typed_selection, " redacted_bytes=not_sensitive")
 	var error: Error = Network.manufacture(typed_selection, wanted)
 	if error == OK:
-		_increment_counter("Manufacturing", 1)
 		manufacturing_server_status = ("Mix-all request sent; awaiting the server."
 			if wanted == 255 else "Mix request sent; awaiting the server.")
 	else:
@@ -1155,8 +1380,6 @@ func _on_inventory_store_all_pressed() -> void:
 		if not item.is_empty() and Network.deposit_storage(slot,
 				int(item.get("quantity", 0))) == OK:
 			sent += 1
-	if sent > 0:
-		_increment_counter("Storage", sent)
 	inventory_description.text = "Sto All sent %d stack%s to the server." % [
 		sent, "" if sent == 1 else "s"]
 
@@ -1219,8 +1442,6 @@ func _on_inventory_drop_all_pressed() -> void:
 		if not item.is_empty() and Network.drop_inventory_item(slot,
 				int(item.get("quantity", 0))) == OK:
 			sent += 1
-	if sent > 0:
-		_increment_counter("Drops", sent)
 	inventory_description.text = "Drop All sent %d stack%s to the server." % [
 		sent, "" if sent == 1 else "s"]
 
@@ -1323,8 +1544,6 @@ func _on_item_list_get_pressed() -> void:
 				break
 		if remaining > 0:
 			missing.append("#%d ×%d" % [int(request.get("image_id", 0)), remaining])
-	if request_count > 0:
-		_increment_counter("Storage", request_count)
 	item_list_status.text = ("Requested %d stack%s." % [request_count,
 		"" if request_count == 1 else "s"]
 		+ (" Missing " + ", ".join(missing) + "." if not missing.is_empty() else ""))
@@ -1457,9 +1676,7 @@ func _on_storage_deposit_pressed() -> void:
 	var quantity: int = clampi(int(storage_quantity.value), 1,
 		int((item_value as Dictionary).get("quantity", 1)))
 	var error: Error = Network.deposit_storage(slot, quantity)
-	if error == OK:
-		_increment_counter("Storage", 1)
-	else:
+	if error != OK:
 		push_warning("DEPOSIT_ITEM failed: " + error_string(error))
 
 func _on_storage_withdraw_pressed() -> void:
@@ -1474,9 +1691,7 @@ func _on_storage_withdraw_pressed() -> void:
 	var quantity: int = clampi(int(storage_quantity.value), 1,
 		int((item_value as Dictionary).get("quantity", 1)))
 	var error: Error = Network.withdraw_storage(position, quantity)
-	if error == OK:
-		_increment_counter("Storage", 1)
-	else:
+	if error != OK:
 		push_warning("WITHDRAW_ITEM failed: " + error_string(error))
 
 func _on_storage_inspect_pressed() -> void:
@@ -1559,9 +1774,7 @@ func _on_ground_bag_drop_pressed() -> void:
 	var quantity: int = clampi(int(ground_bag_quantity.value), 1,
 		int((item_value as Dictionary).get("quantity", 1)))
 	var error: Error = Network.drop_inventory_item(slot, quantity)
-	if error == OK:
-		_increment_counter("Drops", 1)
-	else:
+	if error != OK:
 		push_warning("DROP_ITEM failed: " + error_string(error))
 
 func _on_ground_bag_close_pressed() -> void:
@@ -1577,9 +1790,34 @@ func _on_disconnect_pressed() -> void:
 	Network.disconnect_from_server()
 
 func _on_login_succeeded() -> void:
+	# Tell the server which Eloria extensions this client implements. Without
+	# it the server serves the legacy dialogue and raw-text fallback for every
+	# extension, which is what it had been doing for this client since it was
+	# written.
+	var capabilities_error: Error = Network.send_client_capabilities()
+	if capabilities_error != OK:
+		push_warning("#clientcaps failed: " + error_string(capabilities_error))
+	if _resync_after_reconnect:
+		# This session follows a dropped connection, so nothing that arrived
+		# before the drop can be trusted. Ask for the three authoritative
+		# snapshots everything else is derived from.
+		_resync_after_reconnect = false
+		var resync_error: Error = Network.request_resync()
+		if resync_error != OK:
+			push_warning("resync failed: " + error_string(resync_error))
+		else:
+			AppState.append_local_message(
+				"Reconnected. Rebuilding world state from the server.", 3)
 	login_panel.hide()
 	creation_panel.hide()
 	game_view.show()
+	_sync_connection_banner()
+	# Restore the saved minimap visibility. _clear_world_presentation() hides
+	# the frame on disconnect, so this is what brings it back for the next
+	# session rather than leaving the player to press Alt+M every time.
+	minimap_frame.visible = _minimap_visible
+	_request_map_redraw()
+	_sync_map_viewport_activity()
 	map_label.text = "Entering world…"
 	_load_server_map()
 	_sync_world()
@@ -1594,23 +1832,70 @@ func _on_connection_state_changed(value: String) -> void:
 	connect_button.disabled = value == "connecting"
 	login_button.disabled = value != "connected" or AppState.authenticated
 	new_character_button.disabled = value != "connected" or AppState.authenticated
-	if value == "disconnected" and game_view.visible:
+	var was_in_world: bool = game_view.visible
+	if value == "disconnected" and was_in_world:
 		_clear_world_presentation()
 		game_view.hide()
 		login_panel.show()
 		status_label.text = "Disconnected"
+	if value == "connected" and _resync_after_reconnect:
+		# The socket came back on its own. The password was never retained, so
+		# the player authenticates again; the resync happens once they are back
+		# in the world.
+		status_label.text = "Reconnected. Enter your password to resume."
+		password_edit.grab_focus()
+	_sync_connection_banner()
+
+## The connection state, wherever the player is looking. Anything other than a
+## live authenticated session is worth saying out loud: a silently dead socket
+## looks exactly like a quiet server.
+func _sync_connection_banner() -> void:
+	if connection_banner == null:
+		return
+	var state: String = AppState.connection_state
+	if state == "connected" and AppState.authenticated:
+		connection_banner.hide()
+		return
+	var text: String = ""
+	match state:
+		"reconnecting":
+			text = "Connection lost - reconnecting (attempt %d of %d)…" % [
+				Network.reconnect_attempt(), Network.RECONNECT_DELAYS_MSEC.size()]
+		"connecting":
+			text = "Connecting…"
+		"connected":
+			text = "Connected - not signed in"
+		_:
+			text = "Disconnected"
+	connection_banner.text = text
+	connection_banner.show()
+
+func _on_reconnect_progress(attempt: int, total: int, delay_msec: int) -> void:
+	_resync_after_reconnect = true
+	status_label.text = "Connection lost. Reconnecting in %.1fs (attempt %d of %d)…" % [
+		float(delay_msec) / 1000.0, attempt, total]
+	AppState.append_local_message(
+		"Connection lost. Reconnecting in %.1f seconds (attempt %d of %d)."
+			% [float(delay_msec) / 1000.0, attempt, total], 3)
+	_sync_connection_banner()
 
 func _clear_world_presentation() -> void:
 	for raw_node: Variant in actor_nodes.values():
-		var actor_node: Node = raw_node as Node
-		if is_instance_valid(actor_node):
-			actor_node.queue_free()
+		if is_instance_valid(raw_node):
+			(raw_node as Node).queue_free()
 	actor_nodes.clear()
 	for raw_bag_node: Variant in ground_bag_nodes.values():
-		var bag_node: Node = raw_bag_node as Node
-		if is_instance_valid(bag_node):
-			bag_node.queue_free()
+		if is_instance_valid(raw_bag_node):
+			(raw_bag_node as Node).queue_free()
 	ground_bag_nodes.clear()
+	for raw_object_node: Variant in map_object_nodes.values():
+		if is_instance_valid(raw_object_node):
+			(raw_object_node as Node).queue_free()
+	map_object_nodes.clear()
+	_ungrounded_map_objects.clear()
+	if is_instance_valid(map_light_root):
+		map_light_root.queue_free()
+	map_light_root = null
 	_actor_surface_samples.clear()
 	# The parsed model and animation caches are only worth holding for the
 	# session they were built in.
@@ -1634,40 +1919,63 @@ func _clear_world_presentation() -> void:
 	selected_target.text = "Target: none"
 
 func _input(event: InputEvent) -> void:
-	if not game_view.visible or not event is InputEventKey:
+	if event is InputEventKey and (event as InputEventKey).echo:
 		return
-	var key_event: InputEventKey = event as InputEventKey
-	if not key_event.pressed or key_event.echo:
-		return
-	if key_event.ctrl_pressed and (key_event.keycode == KEY_I
-			or key_event.physical_keycode == KEY_I):
+	if _handle_bound_action(event):
+		get_viewport().set_input_as_handled()
+
+## Bindings that have to beat a focused HUD control, which is why they are
+## resolved here instead of in _unhandled_input().
+##
+## Every branch is an InputMap action. Raw keycode comparisons used to shadow
+## `toggle_inventory`, `turn_left` and `turn_right`, so rebinding those actions
+## appeared to work and changed nothing, while `toggle_map`, `toggle_minimap`
+## and `toggle_console` were resolved twice - once by keycode here and once by
+## action in _unhandled_input(). Returns true when the event was consumed.
+func _handle_bound_action(event: InputEvent) -> bool:
+	# A focused text field owns its own characters and its own clipboard
+	# shortcuts. Several of these actions default to bare printable keys, so
+	# without this a backtick typed into chat would also open the console.
+	if _text_entry_active():
+		if event.is_action_pressed("cancel") and chat_input.has_focus():
+			_hide_chat_input()
+			return true
+		return false
+	# Connection control is reachable before the world exists, so it is
+	# resolved ahead of the game-view gate below.
+	if event.is_action_pressed("connect"):
+		_on_connect_pressed()
+		return true
+	if event.is_action_pressed("disconnect"):
+		_on_disconnect_pressed()
+		return true
+	if not game_view.visible:
+		return false
+	if event.is_action_pressed("toggle_inventory"):
 		_on_inventory_button_pressed()
-		get_viewport().set_input_as_handled()
-	elif not _text_entry_active() and key_event.is_action_pressed("recenter_viewport"):
-		_recenter_viewport_on_player()
-		get_viewport().set_input_as_handled()
-	elif (not _text_entry_active() and not key_event.ctrl_pressed and not key_event.alt_pressed
-			and (key_event.keycode in [KEY_Q, KEY_E]
-			or key_event.physical_keycode in [KEY_Q, KEY_E])):
-		_turn_local_actor(_turn_step_for_key_event(key_event))
-		get_viewport().set_input_as_handled()
-	elif key_event.keycode == KEY_TAB or key_event.physical_keycode == KEY_TAB:
+		return true
+	if event.is_action_pressed("toggle_map"):
 		_toggle_full_map()
-		get_viewport().set_input_as_handled()
-	elif (key_event.alt_pressed and (key_event.keycode == KEY_M
-			or key_event.physical_keycode == KEY_M)):
+		return true
+	if event.is_action_pressed("toggle_minimap"):
 		_toggle_minimap()
-		get_viewport().set_input_as_handled()
-	elif (key_event.keycode in [96, 126]
-			or key_event.physical_keycode == 96 or key_event.unicode in [96, 126]):
+		return true
+	if event.is_action_pressed("toggle_console"):
 		_toggle_console()
-		get_viewport().set_input_as_handled()
-	elif key_event.keycode == KEY_ESCAPE and console_panel.visible:
+		return true
+	if event.is_action_pressed("recenter_viewport"):
+		_recenter_viewport_on_player()
+		return true
+	if event.is_action_pressed("turn_left"):
+		_turn_local_actor(true)
+		return true
+	if event.is_action_pressed("turn_right"):
+		_turn_local_actor(false)
+		return true
+	if event.is_action_pressed("cancel") and console_panel.visible:
 		console_panel.hide()
-		get_viewport().set_input_as_handled()
-	elif key_event.keycode == KEY_ESCAPE and chat_input.has_focus():
-		_hide_chat_input()
-		get_viewport().set_input_as_handled()
+		return true
+	return false
 
 func _recenter_viewport_on_player() -> void:
 	camera_rig.reset_pan()
@@ -1676,7 +1984,14 @@ func _recenter_viewport_on_player() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not game_view.visible:
 		return
-	for spell_slot: int in range(6):
+	# While the settings window is waiting for a key, every key press belongs
+	# to it: otherwise rebinding "attack" would attack.
+	if settings_window != null and not str(settings_window.get("capturing")).is_empty():
+		if event is InputEventKey and (event as InputEventKey).pressed:
+			settings_window.call("apply_capture", event)
+			get_viewport().set_input_as_handled()
+		return
+	for spell_slot: int in range(SPELL_QUICK_SLOTS):
 		if event.is_action_pressed("quick_spell_%d" % (spell_slot + 1)):
 			_cast_spell_slot(spell_slot)
 			get_viewport().set_input_as_handled()
@@ -1690,20 +2005,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			_use_inventory_slot(slot)
 			get_viewport().set_input_as_handled()
 			return
-	if event.is_action_pressed("toggle_map"):
-		_toggle_full_map()
-		get_viewport().set_input_as_handled()
-		return
-	if event.is_action_pressed("toggle_minimap"):
-		_toggle_minimap()
-		get_viewport().set_input_as_handled()
-		return
+	# toggle_map, toggle_minimap and toggle_console are deliberately absent:
+	# _handle_bound_action() owns them so they can be rebound. Seeing through
+	# obstacles is not offered for rebinding, so it is still resolved here.
 	if event.is_action_pressed("toggle_show_through_obstacles"):
 		_toggle_show_through_obstacles()
-		get_viewport().set_input_as_handled()
-		return
-	if event.is_action_pressed("toggle_console"):
-		_toggle_console()
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("chat_focus"):
@@ -1711,7 +2017,18 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("cancel"):
-		if chat_input.has_focus():
+		if popup_panel.visible:
+			# The popup is modal: it takes the cancel before anything under it.
+			_on_popup_dismiss_pressed()
+		elif extension_windows != null and extension_windows.close_top():
+			pass
+		elif player_info_panel != null and player_info_panel.is_open():
+			player_info_panel.close()
+		elif sigil_window != null and sigil_window.is_open():
+			sigil_window.close()
+		elif settings_window != null and settings_window.is_open():
+			settings_window.close()
+		elif chat_input.has_focus():
 			_hide_chat_input()
 		elif settings_panel.visible:
 			_close_settings()
@@ -2029,6 +2346,10 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 		if inspect_error != OK:
 			push_warning("INSPECT_BAG failed: " + error_string(inspect_error))
 		return
+	var picked_object: MapObject3D = _pick_map_object(viewport_position)
+	if picked_object != null:
+		_activate_map_object(picked_object, event.alt_pressed)
+		return
 	var ray_origin: Vector3 = camera_rig.ray_origin(viewport_position)
 	var ray_direction: Vector3 = camera_rig.ray_direction(viewport_position)
 	var point: Variant = _navigation_ray_position(ray_origin, ray_direction)
@@ -2052,12 +2373,21 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 			push_warning("MOVE_TO failed: " + error_string(move_error))
 
 func _on_state_changed(path: StringName) -> void:
+	# Protocol diagnostics are the one path that must work before login: a
+	# decode failure during the handshake is exactly what the panel exists to
+	# show, and the session is not authenticated when it happens.
+	if path == &"protocol_unknown" or path == &"protocol_errors":
+		_sync_diagnostics()
+		return
 	if not AppState.authenticated:
 		return
 	match path:
 		&"map":
 			_load_server_map()
 			_sync_world()
+			_update_console_location()
+			# Markers survive a map change; which of them belong here does not.
+			_sync_map_markers()
 		&"actors", &"local_actor":
 			# A busy map emits this once per actor packet. Rebuilding the whole
 			# actor presentation for each of them repeated the same work many
@@ -2065,7 +2395,6 @@ func _on_state_changed(path: StringName) -> void:
 			# pass without delaying anything past the frame it arrived in.
 			_queue_world_sync()
 		&"chat":
-			_capture_perks_from_chat()
 			_sync_chat()
 			_sync_console()
 			_reveal_chat_messages()
@@ -2076,6 +2405,15 @@ func _on_state_changed(path: StringName) -> void:
 			var update: Dictionary = AppState.invasion_assistant.get(kind, {}) as Dictionary
 			if not update.is_empty():
 				invasion_assistant_window.apply_update(update)
+		&"clock":
+			_update_legacy_clock_and_compass()
+			_apply_day_night()
+			_sync_diagnostics()
+		&"perks":
+			_sync_stats()
+		&"counters":
+			_sync_counter_categories()
+			_sync_counters()
 		&"stats":
 			_sync_stats()
 			_sync_spells()
@@ -2098,10 +2436,23 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_selection()
 		&"npc_dialogue":
 			_sync_dialogue()
+		&"popup":
+			_sync_popup()
 		&"trade":
 			_sync_trade()
 		&"storage":
 			_sync_storage()
+		&"map_objects":
+			_sync_map_objects()
+			_snap_all_map_objects_to_surface.call_deferred()
+		&"map_markers":
+			_sync_map_markers()
+		&"spell_power":
+			_sync_spells()
+		&"harvest":
+			_sync_harvest_indicator()
+		&"reading":
+			_sync_reading()
 		&"ground_bags":
 			_sync_ground_bags()
 		&"ground_bag":
@@ -2109,6 +2460,7 @@ func _on_state_changed(path: StringName) -> void:
 		&"knowledge":
 			_sync_knowledge()
 			_sync_manufacturing()
+			_sync_reading()
 
 func _queue_world_sync() -> void:
 	if _world_sync_queued:
@@ -2138,14 +2490,19 @@ func _load_server_map() -> void:
 	_local_placement_logged = false
 	_current_map_display_name = _friendly_map_name(AppState.current_map)
 	adapter = CoordinateAdapter.new(entry.get("coordinateTransform", {}))
-	for node in actor_nodes.values():
-		node.queue_free()
+	for raw_actor_node: Variant in actor_nodes.values():
+		if is_instance_valid(raw_actor_node):
+			(raw_actor_node as Node).queue_free()
 	actor_nodes.clear()
 	for bag_node_value: Variant in ground_bag_nodes.values():
-		var bag_node: Node = bag_node_value as Node
-		if is_instance_valid(bag_node):
-			bag_node.queue_free()
+		if is_instance_valid(bag_node_value):
+			(bag_node_value as Node).queue_free()
 	ground_bag_nodes.clear()
+	for object_node_value: Variant in map_object_nodes.values():
+		if is_instance_valid(object_node_value):
+			(object_node_value as Node).queue_free()
+	map_object_nodes.clear()
+	_ungrounded_map_objects.clear()
 	var manifest_resource: String = str(entry.get("manifest", ""))
 	var manifest_path: String = ProjectSettings.globalize_path(manifest_resource)
 	print_debug("map_resolved server_id=", AppState.current_map,
@@ -2162,6 +2519,9 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	# placeholder environment unchanged.
 	WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root)
 	WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
+	_bind_light_markers(manifest)
+	_apply_day_night()
+	_bind_ambient_audio(manifest)
 	_populate_ambient_life(manifest)
 	_current_map_display_name = str(
 		manifest.data.get("asset", {}).get("name", manifest.asset_id()))
@@ -2173,16 +2533,18 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	_request_map_redraw()
 	_sync_world()
 	_sync_ground_bags()
+	_sync_map_objects()
 	_snap_all_actors_to_surface.call_deferred()
 	_snap_all_ground_bags_to_surface.call_deferred()
+	_snap_all_map_objects_to_surface.call_deferred()
 
 func _bind_light_markers(manifest: WorldManifest) -> void:
 	# Braziers, hearths and shrine lamps the map declares as markers. Interiors
 	# rely on them for their whole lighting; outdoor maps use them as warm fill
 	# after sundown. Maps that declare none are left alone.
-	if map_light_root != null:
+	if is_instance_valid(map_light_root):
 		map_light_root.queue_free()
-		map_light_root = null
+	map_light_root = null
 	var root_node := Node3D.new()
 	root_node.name = "MapLights"
 	world_root.add_child(root_node)
@@ -2192,6 +2554,49 @@ func _bind_light_markers(manifest: WorldManifest) -> void:
 		return
 	map_light_root = root_node
 	print_debug("light_markers map=", AppState.current_map, " bound=", bound)
+
+## Moves the environment to the hour the server is keeping. The manifest is
+## the noon reference and the daylight curve is the server's own, so the sky
+## the player sees and the visibility the server acts on cannot drift apart.
+##
+## Runs on every clock packet and on a slow timer between them, because the
+## server states a whole minute at a time and one minute of real time is a
+## visible jump if nothing carries it forward.
+## Tells the console where the player is, so `#mark` has a tile to record.
+func _update_console_location() -> void:
+	console_commands.current_map = EloriaProtocol.map_id_from_reference(
+		AppState.current_map)
+	var actor: Variant = AppState.actors.get(AppState.local_actor_id)
+	console_commands.current_tile = (Vector2i(
+		int((actor as Dictionary).get("x", 0)),
+		int((actor as Dictionary).get("y", 0)))
+		if actor is Dictionary else Vector2i(-1, -1))
+
+func _apply_day_night() -> void:
+	if world_loader.manifest == null:
+		return
+	_day_night_active = DayNightBinder.apply(world_loader.manifest,
+		world_environment, world_sun, AppState.continuous_game_minute())
+
+## The ambience a package declares for itself. Four Gates has named a civic
+## murmur and its waterfalls since it was authored and nothing played them.
+func _bind_ambient_audio(manifest: WorldManifest) -> void:
+	if is_instance_valid(map_ambience_root):
+		map_ambience_root.queue_free()
+	map_ambience_root = null
+	if not bool(audio_director.enabled):
+		return
+	var root_node := Node3D.new()
+	root_node.name = "MapAmbience"
+	world_root.add_child(root_node)
+	var bound: int = AmbientAudioBinder.apply(manifest, root_node,
+		world_loader.world_root, PackedStringArray(
+			audio_director.call("sound_names") as Array))
+	if bound == 0:
+		root_node.queue_free()
+		return
+	map_ambience_root = root_node
+	print_debug("ambient_audio map=", AppState.current_map, " bound=", bound)
 
 func _populate_ambient_life(manifest: WorldManifest) -> void:
 	# Scenery livestock declared by the map. Networked actors are untouched.
@@ -2227,16 +2632,28 @@ func _on_world_load_failed(errors: Array[String]) -> void:
 
 func _sync_world() -> void:
 	map_label.text = "Map: " + (AppState.current_map if not AppState.current_map.is_empty() else "loading")
-	for id in actor_nodes.keys():
-		if not AppState.actors.has(id):
-			actor_nodes[id].queue_free()
-			actor_nodes.erase(id)
-			_actor_surface_samples.erase(id)
+	for id: Variant in actor_nodes.keys():
+		if AppState.actors.has(id):
+			continue
+		# An entry can already be dangling: anything that frees an actor node
+		# without going through this map leaves the dictionary holding a freed
+		# object, and calling queue_free() on that crashes the engine rather
+		# than raising. Guarding here is what makes a map change safe while
+		# actors are still being torn down.
+		# Casting first is not safe: `as Node` on a freed object raises and
+		# aborts the whole function, so the entry would never be erased.
+		var stale_actor: Variant = actor_nodes[id]
+		if is_instance_valid(stale_actor):
+			(stale_actor as Node).queue_free()
+		actor_nodes.erase(id)
+		_actor_surface_samples.erase(id)
 	for id in AppState.actors:
 		var dto: Dictionary = _presentation_dto(AppState.actors[id])
 		if actor_nodes.has(id):
 			var existing_actor: ReplicatedActor3D = actor_nodes[id] as ReplicatedActor3D
 			existing_actor.apply_server_state(dto, adapter)
+			existing_actor.apply_vitals(int(dto.get("health", 0)),
+				int(dto.get("max_health", 0)))
 			existing_actor.set_nameplate_visible(int(id) != AppState.local_actor_id)
 			_place_actor_on_surface(existing_actor)
 			continue
@@ -2348,7 +2765,7 @@ func _sync_ground_bags() -> void:
 		var bag_id: int = int(raw_id)
 		if not AppState.ground_bags.has(bag_id):
 			var stale_value: Variant = ground_bag_nodes.get(bag_id)
-			if stale_value is Node:
+			if is_instance_valid(stale_value):
 				(stale_value as Node).queue_free()
 			ground_bag_nodes.erase(bag_id)
 	for raw_id: Variant in AppState.ground_bags:
@@ -2417,7 +2834,82 @@ func _sync_ground_bag() -> void:
 
 func _sync_ground_bag_actions() -> void:
 	ground_bag_pick_button.disabled = ground_bag_items.get_selected_items().is_empty()
+	ground_bag_look_button.disabled = ground_bag_items.get_selected_items().is_empty()
 	ground_bag_drop_button.disabled = ground_bag_inventory.get_selected_items().is_empty()
+
+## Asks the server what the selected ground item is. The bag packet carries an
+## image id and a quantity, so the description can only come from the server.
+func _on_ground_bag_look_pressed() -> void:
+	var selected: PackedInt32Array = ground_bag_items.get_selected_items()
+	if selected.is_empty():
+		return
+	var slot: int = _list_metadata_int(ground_bag_items, int(selected[0]))
+	var error: Error = Network.look_at_ground_item(slot)
+	if error != OK:
+		push_warning("LOOK_AT_GROUND_ITEM failed: " + error_string(error))
+
+## The reading window. The server models a book as research rather than as
+## pages of text: using a book from the backpack consumes it and starts a
+## timer, pages tick down, and the knowledge bit is set on completion. There is
+## no page content on the wire to turn through, so this reports the thing that
+## actually exists - which book, how far through, and what it unlocks - instead
+## of a page-turning window with nothing behind it.
+func _sync_reading() -> void:
+	if reading_panel == null:
+		return
+	var active: bool = bool(AppState.reading.get("active", false))
+	var index: int = int(AppState.reading.get("index", -1))
+	if not active:
+		if _reading_completed_index >= 0:
+			_present_completed_reading()
+			return
+		reading_panel.hide()
+		return
+	_reading_completed_index = index
+	_reading_hidden = _reading_hidden and index == _reading_shown_index
+	_reading_shown_index = index
+	if _reading_hidden:
+		reading_panel.hide()
+		return
+	var total: int = maxi(1, int(AppState.reading.get("pages_total", 1)))
+	var read: int = clampi(int(AppState.reading.get("pages_read", 0)), 0, total)
+	reading_title.text = "Reading %s" % _knowledge_title(index)
+	reading_progress.max_value = total
+	reading_progress.value = read
+	reading_detail.text = ("%d of %d pages read (%d%%)
+"
+		+ "Reading finishes on its own; food keeps it going.") % [
+		read, total, roundi(100.0 * float(read) / float(total))]
+	reading_panel.show()
+
+## Reading finished. The knowledge bit arrives as its own packet, so this shows
+## what was actually gained rather than assuming completion implies it.
+func _present_completed_reading() -> void:
+	var index: int = _reading_completed_index
+	_reading_completed_index = -1
+	_reading_shown_index = -1
+	_reading_hidden = false
+	if not AppState.known_knowledge.has(index):
+		reading_panel.hide()
+		return
+	reading_title.text = "Finished %s" % _knowledge_title(index)
+	reading_progress.max_value = 1
+	reading_progress.value = 1
+	reading_detail.text = ("[color=#8fdc8f]Knowledge gained.[/color]
+"
+		+ "Recipes that needed it are now available.")
+	reading_panel.show()
+
+func _knowledge_title(index: int) -> String:
+	if index >= 0 and index < knowledge_catalog.size():
+		return knowledge_catalog[index]
+	return "knowledge #%d" % index
+
+func _on_reading_close_pressed() -> void:
+	# Hiding the window does not stop the reading: the server owns that, and
+	# there is no command to interrupt research.
+	_reading_hidden = true
+	reading_panel.hide()
 
 func _sync_knowledge() -> void:
 	if not stats_panel.visible or stats_tabs.current_tab != 1:
@@ -2595,11 +3087,13 @@ func _show_current_map_view() -> void:
 	continent_view.hide()
 	region_preview.hide()
 	map_image.show()
+	_sync_map_viewport_activity()
 	map_title.text = _current_map_display_name.to_upper()
 	map_coordinates.text = "Coordinates: —"
 
 func _show_continent_view() -> void:
 	map_image.hide()
+	_sync_map_viewport_activity()
 	region_preview.hide()
 	continent_view.show()
 	var continent: Dictionary = cartography.get("continent", {}) as Dictionary
@@ -2648,6 +3142,10 @@ func _load_hud_settings() -> void:
 			"hud", "minimap_position", Vector2(16.0, 42.0))
 		if position_value is Vector2:
 			minimap_frame.position = position_value as Vector2
+		# The minimap's position and scale persisted but its visibility did
+		# not, so every session started with the map hidden and nothing but
+		# Alt+M would show it again.
+		_minimap_visible = bool(config.get_value("hud", "minimap_visible", false))
 		_inventory_scale = clampf(float(config.get_value(
 			"inventory", "window_scale", 1.0)),
 			INVENTORY_MIN_SCALE, INVENTORY_MAX_SCALE)
@@ -2665,9 +3163,41 @@ func _load_hud_settings() -> void:
 		var lists_value: Variant = config.get_value("inventory", "item_lists", {})
 		if lists_value is Dictionary:
 			_item_lists = (lists_value as Dictionary).duplicate(true)
-		var counters_value: Variant = config.get_value("statistics", "counters", {})
-		if counters_value is Dictionary:
-			_total_counters = (counters_value as Dictionary).duplicate(true)
+		_shadows_enabled = bool(config.get_value("graphics", "shadows", true))
+		_effects_enabled = bool(config.get_value("graphics", "particles", true))
+		_nameplates_enabled = bool(
+			config.get_value("graphics", "nameplates", true))
+		camera_rig.rotation_sensitivity = float(config.get_value(
+			"camera", "rotation_sensitivity", camera_rig.rotation_sensitivity))
+		camera_rig.pan_sensitivity = float(config.get_value(
+			"camera", "pan_sensitivity", camera_rig.pan_sensitivity))
+		_camera_follows_player = bool(
+			config.get_value("camera", "follow_player", true))
+		var stored_bindings: Variant = config.get_value("controls", "bindings", {})
+		if stored_bindings is Dictionary:
+			settings_window.call("restore_bindings", stored_bindings)
+		var stored_marks: Variant = config.get_value("console", "marks", [])
+		if stored_marks is Array:
+			for raw_mark: Variant in stored_marks as Array:
+				if raw_mark is Dictionary:
+					console_commands.marks.append(raw_mark as Dictionary)
+		for key_and_list: Array in [["ignored", console_commands.ignored],
+				["filters", console_commands.filters]]:
+			var stored: Variant = config.get_value("console",
+				str(key_and_list[0]), [])
+			if stored is Array:
+				for entry: Variant in stored as Array:
+					(key_and_list[1] as Array[String]).append(str(entry))
+		var stored_aliases: Variant = config.get_value("console", "aliases", {})
+		if stored_aliases is Dictionary:
+			console_commands.aliases = (stored_aliases as Dictionary).duplicate()
+		audio_director.enabled = bool(config.get_value("audio", "enabled", true))
+		audio_director.volume_linear = clampf(float(config.get_value(
+			"audio", "volume", 0.7)), 0.0, 1.0)
+	sound_enabled.set_pressed_no_signal(bool(audio_director.enabled))
+	sound_volume.set_value_no_signal(float(audio_director.volume_linear))
+	sound_volume_value.text = "%d%%" % roundi(
+		float(audio_director.volume_linear) * 100.0)
 	minimap_size.set_value_no_signal(_minimap_scale)
 	ui_scale_slider.set_value_no_signal(_ui_scale)
 	show_through_obstacles.set_pressed_no_signal(_show_through_obstacles)
@@ -2713,20 +3243,56 @@ func _on_minimap_size_changed(value: float) -> void:
 	_apply_minimap_scale()
 	_save_hud_settings()
 
+## Sound is the player's own choice about their own machine, so it is kept in
+## the same settings file as the rest of the HUD preferences.
+func _on_sound_enabled_toggled(pressed: bool) -> void:
+	audio_director.enabled = pressed
+	if is_instance_valid(map_ambience_root):
+		# Ambience is a scene node rather than a voice on the director, so it
+		# has to be silenced here as well.
+		map_ambience_root.queue_free()
+		map_ambience_root = null
+	if pressed:
+		audio_director.play("ui_click")
+		if world_loader.manifest != null:
+			_bind_ambient_audio(world_loader.manifest)
+	_save_hud_settings()
+
+func _on_sound_volume_changed(value: float) -> void:
+	audio_director.volume_linear = value
+	sound_volume_value.text = "%d%%" % roundi(value * 100.0)
+	_save_hud_settings()
+
 func _save_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	config.load(SETTINGS_PATH)
+	config.set_value("graphics", "shadows", _shadows_enabled)
+	config.set_value("graphics", "particles", _effects_enabled)
+	config.set_value("graphics", "nameplates", _nameplates_enabled)
+	config.set_value("camera", "rotation_sensitivity",
+		float(camera_rig.rotation_sensitivity))
+	config.set_value("camera", "pan_sensitivity",
+		float(camera_rig.pan_sensitivity))
+	config.set_value("camera", "follow_player", _camera_follows_player)
+	config.set_value("controls", "bindings",
+		settings_window.call("stored_bindings"))
+	config.set_value("console", "marks", console_commands.marks)
+	config.set_value("console", "ignored", console_commands.ignored)
+	config.set_value("console", "filters", console_commands.filters)
+	config.set_value("console", "aliases", console_commands.aliases)
+	config.set_value("audio", "enabled", bool(audio_director.enabled))
+	config.set_value("audio", "volume", float(audio_director.volume_linear))
 	config.set_value("hud", "minimap_scale", _minimap_scale)
 	config.set_value("hud", "ui_scale", _ui_scale)
 	config.set_value("hud", "show_through_obstacles", _show_through_obstacles)
 	config.set_value("hud", "minimap_orientation", _minimap_orientation)
 	config.set_value("hud", "minimap_position", minimap_frame.position)
+	config.set_value("hud", "minimap_visible", _minimap_visible)
 	config.set_value("inventory", "window_scale", _inventory_scale)
 	config.set_value("inventory", "window_position", inventory_panel.position)
 	config.set_value("inventory", "equipment_side", _equipment_side)
 	config.set_value("inventory", "bulk_exclusions", _bulk_exclusions)
 	config.set_value("inventory", "item_lists", _item_lists)
-	config.set_value("statistics", "counters", _total_counters)
 	var error: Error = config.save(SETTINGS_PATH)
 	if error != OK:
 		push_warning("HUD settings save failed: " + error_string(error))
@@ -2915,6 +3481,8 @@ func _sync_chat() -> void:
 		var channel: int = int(line.get("channel", 0))
 		if not _chat_line_visible(channel):
 			continue
+		if not _chat_line_allowed(line):
+			continue
 		chat_output.append_text(_formatted_chat_line(line) + "\n")
 	chat_output.scroll_to_line(maxi(0, chat_output.get_line_count() - 1))
 
@@ -2922,6 +3490,16 @@ func _sync_console() -> void:
 	console_output.clear()
 	for line_value: Variant in AppState.chat_lines:
 		console_output.append_text(_formatted_chat_line(line_value as Dictionary) + "\n")
+
+## The player's own ignore and filter lists. The line still arrived and is
+## still in state - this only decides whether they are shown it - so nothing
+## the server said is lost, and the console tab still shows everything.
+func _chat_line_allowed(line: Dictionary) -> bool:
+	if int(line.get("channel", 0)) == AppState.LOCAL_CHAT_CHANNEL:
+		return true
+	var text: String = str(line.get("text", ""))
+	var speaker: String = text.split(":", false, 1)[0] if text.contains(":") else ""
+	return console_commands.allows(speaker, text)
 
 func _chat_line_visible(channel: int) -> bool:
 	if not _chat_tab.begins_with("channel:"):
@@ -2935,6 +3513,7 @@ func _formatted_chat_line(line: Dictionary) -> String:
 	match channel:
 		1: prefix = "[PM] "
 		3, 255: prefix = "[System] "
+		AppState.LOCAL_CHAT_CHANNEL: prefix = "[Client] "
 		5, 6, 7:
 			var slot: int = channel - 5
 			var channel_number: int = (int(AppState.active_channels[slot])
@@ -3014,15 +3593,19 @@ func _sync_stats() -> void:
 		- int(stats.get("pickpoints_spent", 0))
 	nexus_lines.append("\nPickpoints       %d" % pickpoints)
 	nexus_lines.append("\n[color=#d7a85b][b]Perks[/b][/color]")
-	if _known_perks.is_empty():
-		nexus_lines.append("None reported")
+	if AppState.perks.is_empty():
+		nexus_lines.append("None")
 	else:
-		for perk: String in _known_perks:
-			nexus_lines.append("• " + perk)
+		for raw_perk: Variant in AppState.perks:
+			var perk: Dictionary = raw_perk as Dictionary
+			var suffix: String = " (from equipment)" if bool(
+				perk.get("from_gear", false)) else ""
+			nexus_lines.append("• %s%s" % [str(perk.get("name", "")), suffix])
 	nexus_lines.append("\n[color=#9999ff]Material Points  %d/%d[/color]" % [health, max_health])
 	nexus_lines.append("[color=#9999ff]Ethereal Points  %d/%d[/color]" % [ether, max_ether])
 	nexus_lines.append("[color=#9999ff]Action Points    %d/%d[/color]" % [action, max_action])
 	nexus_lines.append("Food Level       %d" % int(stats.get("food", 0)))
+	nexus_lines.append(_research_line(stats))
 	var skill_lines: Array[String] = ["[color=#ff8a28][b]Levels and Experience[/b][/color]"]
 	for skill: String in EXPERIENCE_SKILLS:
 		var current_level: int = int(stats.get("overall_level", 0)) \
@@ -3097,7 +3680,7 @@ func _reset_session_tracking() -> void:
 	_session_xp_max.clear()
 	_session_xp_last.clear()
 	_experience_snapshot.clear()
-	_session_counters.clear()
+	_counter_session_baseline = AppState.activity_counters.duplicate()
 	_session_distance = 0
 	_last_distance_tile = Vector2i(-99999, -99999)
 	_track_experience()
@@ -3124,47 +3707,67 @@ func _on_counter_category_selected(index: int) -> void:
 		_selected_counter_category = counter_categories.get_item_text(index)
 		_sync_counters()
 
-func _increment_counter(category: String, amount := 1) -> void:
-	_session_counters[category] = int(_session_counters.get(category, 0)) + amount
-	_total_counters[category] = int(_total_counters.get(category, 0)) + amount
-	_save_hud_settings()
-	if stats_panel.visible and stats_tabs.current_tab == 2:
-		_sync_counters()
+## The category list is whatever the server sent, in the server's order. The
+## client used to keep its own 17-name constant and increment it when a request
+## was sent, so a rejected deposit or a failed mix still counted and seven of
+## the categories were never incremented at all.
+func _sync_counter_categories() -> void:
+	if counter_categories == null:
+		return
+	var names: Array[String] = AppState.activity_counter_order
+	var unchanged: bool = counter_categories.item_count == names.size()
+	if unchanged:
+		for index: int in range(names.size()):
+			if counter_categories.get_item_text(index) != names[index]:
+				unchanged = false
+				break
+	if unchanged:
+		return
+	counter_categories.clear()
+	for counter_name: String in names:
+		counter_categories.add_item(counter_name)
+	var selected: int = names.find(_selected_counter_category)
+	if selected < 0 and not names.is_empty():
+		selected = 0
+		_selected_counter_category = names[0]
+	if selected >= 0:
+		counter_categories.select(selected)
 
 func _sync_counters() -> void:
 	if counter_text == null:
 		return
+	if _selected_counter_category.is_empty():
+		counter_text.text = "[center]Waiting for server counters[/center]"
+		return
+	var total: int = int(AppState.activity_counters.get(_selected_counter_category, 0))
+	var session_total: int = maxi(0, total - int(
+		_counter_session_baseline.get(_selected_counter_category, 0)))
 	counter_text.text = ("[table=3][cell][b]Name[/b][/cell]"
 		+ "[cell][right][b]This Session[/b][/right][/cell]"
 		+ "[cell][right][b]Total[/b][/right][/cell]"
 		+ "[cell]%s[/cell][cell][right]%d[/right][/cell]"
-		+ "[cell][right]%d[/right][/cell][/table]\n\n"
-		+ "Totals reflect actions observed by this client.\nDistance this session: %d tiles") % [
-		_selected_counter_category, int(_session_counters.get(_selected_counter_category, 0)),
-		int(_total_counters.get(_selected_counter_category, 0)), _session_distance]
+		+ "[cell][right]%d[/right][/cell][/table]
 
-func _request_perks() -> void:
-	var now: int = Time.get_ticks_msec()
-	if now < _perk_capture_until_msec:
-		return
-	_known_perks.clear()
-	_perk_capture_until_msec = now + 8000
-	var error: Error = Network.send_chat("#list_perks")
-	if error != OK:
-		_perk_capture_until_msec = 0
+"
+		+ "Totals are the server's confirmed events.
+Distance this session: %d tiles") % [
+		_selected_counter_category, session_total, total, _session_distance]
 
-func _capture_perks_from_chat() -> void:
-	if Time.get_ticks_msec() > _perk_capture_until_msec or AppState.chat_lines.is_empty():
-		return
-	var line: Dictionary = AppState.chat_lines.back() as Dictionary
-	var text: String = str(line.get("text", "")).strip_edges()
-	if text == "You have no perks.":
-		_known_perks.clear()
-	elif PERK_NAMES.has(text) and not _known_perks.has(text):
-		_known_perks.append(text)
-		_known_perks.sort()
-	if stats_panel.visible and stats_tabs.current_tab == 0:
-		_sync_stats()
+
+## Reading progress. `researching` is the knowledge index the character has
+## open, 1024 meaning none; `research_completed` and `research_total` are pages.
+## All three were decoded into the statistics slice and read by nothing, so a
+## player researching a book had no way to see how far through it they were.
+func _research_line(stats: Dictionary) -> String:
+	var index: int = int(stats.get("researching", 1024))
+	var total: int = int(stats.get("research_total", 0))
+	if index >= 1024 or total <= 0:
+		return "Researching      nothing"
+	var completed: int = clampi(int(stats.get("research_completed", 0)), 0, total)
+	var title: String = (knowledge_catalog[index]
+		if index >= 0 and index < knowledge_catalog.size() else "knowledge #%d" % index)
+	return "Researching      %s  %d/%d pages (%d%%)" % [title, completed, total,
+		roundi(100.0 * float(completed) / float(total))]
 
 func _sync_experience_meter(stats: Dictionary) -> void:
 	var skill: String = _selected_experience_skill
@@ -3255,7 +3858,73 @@ func _update_actor_resource_overlay() -> void:
 		or show_overhead_ether.button_pressed or show_overhead_food.button_pressed
 		or show_overhead_action.button_pressed)
 
+## Draws what the server said just happened, where it happened.
+##
+## Nothing is inferred about the effect: an actor the client has never been
+## told about has no position, so nothing is drawn for it rather than a guess
+## at the middle of the map.
+func _on_special_effect_requested(effect: Dictionary) -> void:
+	var origin_value: Variant = _actor_effect_position(int(effect.get("actor_id", -1)))
+	if not origin_value is Vector3:
+		return
+	var target_value: Variant = _actor_effect_position(int(effect.get("target_id", -1)))
+	if not _effects_enabled:
+		return
+	var world_effect := WorldEffect3D.new()
+	world_root.add_child(world_effect)
+	world_effect.configure(int(effect.get("effect", -1)),
+		origin_value as Vector3, target_value)
+	world_effects.append(world_effect)
+	world_effects = world_effects.filter(func(node: Variant) -> bool:
+		return is_instance_valid(node))
+
+func _actor_effect_position(actor_id: int) -> Variant:
+	if actor_id < 0:
+		return null
+	var node: Variant = actor_nodes.get(actor_id)
+	if not is_instance_valid(node):
+		return null
+	return (node as Node3D).global_position
+
 func _on_floating_feedback_requested(feedback: Dictionary) -> void:
+	# Gains that land together (a skill plus the overall total, or several stats
+	# in one partial stats packet) are collected for the frame so the group can
+	# be filtered and stacked instead of every entry spawning on its own.
+	_pending_floating_feedback.append(feedback)
+	if _floating_feedback_flush_queued:
+		return
+	_floating_feedback_flush_queued = true
+	_flush_floating_feedback.call_deferred()
+
+func _flush_floating_feedback() -> void:
+	_floating_feedback_flush_queued = false
+	var pending: Array[Dictionary] = _pending_floating_feedback
+	_pending_floating_feedback = []
+	var has_skill_experience := false
+	for feedback: Dictionary in pending:
+		if _is_skill_experience(feedback):
+			has_skill_experience = true
+			break
+	if has_skill_experience:
+		_last_skill_experience_msec = Time.get_ticks_msec()
+	for feedback: Dictionary in pending:
+		# Overall experience is the sum of the skill gains, so repeating it next
+		# to the skill that produced it says nothing new. The timestamp covers
+		# the case where the server splits the two gains across frames.
+		if str(feedback.get("kind", "")) == "experience" \
+				and str(feedback.get("skill", "")) == "overall":
+			if has_skill_experience:
+				continue
+			if Time.get_ticks_msec() - _last_skill_experience_msec \
+					< FLOATING_FEEDBACK_OVERALL_GRACE_MSEC:
+				continue
+		_spawn_floating_feedback(feedback)
+
+static func _is_skill_experience(feedback: Dictionary) -> bool:
+	return str(feedback.get("kind", "")) == "experience" \
+		and str(feedback.get("skill", "")) != "overall"
+
+func _spawn_floating_feedback(feedback: Dictionary) -> void:
 	if not game_view.visible or AppState.local_actor_id < 0:
 		return
 	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
@@ -3275,25 +3944,51 @@ func _on_floating_feedback_requested(feedback: Dictionary) -> void:
 	var label: Label = Label.new()
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.custom_minimum_size = Vector2(190.0, 26.0)
-	label.add_theme_font_size_override("font_size", 17 if kind == "level" else 15)
+	label.add_theme_font_size_override("font_size", 17 if kind == "level" else 14)
 	label.add_theme_color_override("font_outline_color", Color(0.015, 0.02, 0.025, 0.98))
-	label.add_theme_constant_override("outline_size", 5)
+	label.add_theme_constant_override("outline_size", 4)
 	if kind == "level":
 		label.text = "Level %d %s" % [int(feedback.get("level", 0)), skill.capitalize()]
 		label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.22, 1.0))
 	else:
-		label.text = "+%d %s experience" % [
-			int(feedback.get("amount", 0)), skill.capitalize()]
+		label.text = "+%d %s" % [int(feedback.get("amount", 0)), skill.capitalize()]
 		label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.38, 1.0))
-	_floating_feedback_offset = (_floating_feedback_offset + 1) % 4
-	label.position = screen_position - Vector2(95.0,
-		84.0 + float(_floating_feedback_offset) * 20.0)
 	_floating_feedback_layer.add_child(label)
+	label.reset_size()
+	label.position = Vector2(screen_position.x - label.size.x * 0.5,
+		_floating_feedback_row(screen_position.y - FLOATING_FEEDBACK_BASE_OFFSET))
+	_active_floating_labels.append(label)
 	var tween: Tween = create_tween().set_parallel(true)
-	tween.tween_property(label, "position", label.position - Vector2(0.0, 76.0), 1.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property(label, "modulate:a", 0.0, 1.8).set_delay(0.55)
-	tween.finished.connect(label.queue_free)
+	tween.tween_property(label, "position",
+		label.position - Vector2(0.0, FLOATING_FEEDBACK_RISE),
+		FLOATING_FEEDBACK_LIFETIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0,
+		FLOATING_FEEDBACK_LIFETIME - FLOATING_FEEDBACK_FADE_DELAY).set_delay(
+		FLOATING_FEEDBACK_FADE_DELAY)
+	tween.finished.connect(func() -> void:
+		_active_floating_labels.erase(label)
+		label.queue_free())
+
+func _floating_feedback_row(preferred_y: float) -> float:
+	# Messages drift upwards, so a new one takes the first free row at or below
+	# the preferred height rather than landing on top of one still on screen.
+	var occupied: Array[float] = []
+	for index: int in range(_active_floating_labels.size() - 1, -1, -1):
+		var other: Label = _active_floating_labels[index]
+		if is_instance_valid(other):
+			occupied.append(other.position.y)
+		else:
+			_active_floating_labels.remove_at(index)
+	occupied.sort()
+	var row_y: float = preferred_y
+	var lowest_row: float = preferred_y + FLOATING_FEEDBACK_ROW_HEIGHT * float(
+		FLOATING_FEEDBACK_MAX_ROWS)
+	for y: float in occupied:
+		if row_y > lowest_row:
+			break
+		if absf(y - row_y) < FLOATING_FEEDBACK_ROW_HEIGHT:
+			row_y = y + FLOATING_FEEDBACK_ROW_HEIGHT
+	return minf(row_y, lowest_row)
 
 func _on_window_size_changed() -> void:
 	# Match the render viewport to the actual drawable area so resizing changes
@@ -3309,13 +4004,6 @@ func _on_window_size_changed() -> void:
 	if main_viewport.size != target_size:
 		main_viewport.size = target_size
 
-func _on_quickbar_mode_pressed(mode: String) -> void:
-	var showing_items: bool = mode == "items"
-	quick_slot_container.visible = showing_items
-	spell_slot_container.visible = not showing_items
-	%ItemMode.set_pressed_no_signal(showing_items)
-	%SpellMode.set_pressed_no_signal(not showing_items)
-
 func _sync_hud_button_states(force := false) -> void:
 	if _hud_icon_regions.is_empty():
 		return
@@ -3324,8 +4012,8 @@ func _sync_hud_button_states(force := false) -> void:
 	# buttons are resolved once and the comparison is now a bitmask.
 	if _hud_state_buttons.is_empty():
 		_hud_state_buttons = [%WalkButton, %MapButton, %SitButton, %AttackButton,
-			%TradeButton, %InventoryButton, %StatsButton, %KnowledgeButton,
-			%ManufacturingButton, %ChatButton, %DisconnectButton]
+			%TradeButton, %LookButton, %InventoryButton, %StatsButton,
+			%KnowledgeButton, %ManufacturingButton, %ChatButton, %DisconnectButton]
 	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
 	var sitting: bool = bool(local_actor.get("sitting", false))
 	var stats_open: bool = stats_panel.visible
@@ -3336,6 +4024,7 @@ func _sync_hud_button_states(force := false) -> void:
 		sitting,
 		_interaction_mode == "attack",
 		_interaction_mode == "trade" or bool(AppState.trade.get("open", false)),
+		bool(AppState.player_info.get("open", false)),
 		inventory_panel.visible,
 		stats_open and stats_tab != 1,
 		stats_open and stats_tab == 1,
@@ -3628,7 +4317,7 @@ func _sync_inventory() -> void:
 			button.icon = item_atlas.icon_for(image_id)
 			button.text = ""
 			inventory_quantity_labels[slot].text = str(int(item.get("quantity", 0)))
-			button.tooltip_text = _inventory_tooltip(item)
+			button.tooltip_text = _inventory_tooltip(item, slot)
 			button.disabled = false
 		else:
 			button.icon = null
@@ -3663,7 +4352,7 @@ func _sync_equipment_slots() -> void:
 			var item: Dictionary = item_value as Dictionary
 			button.icon = item_atlas.icon_for(int(item.get("image_id", 0)))
 			button.text = ""
-			button.tooltip_text = _inventory_tooltip(item) + "\nEquipped position %d" % (index + 1)
+			button.tooltip_text = _inventory_tooltip(item, slot) + "\nEquipped position %d" % (index + 1)
 			button.disabled = false
 		else:
 			button.icon = null
@@ -3691,7 +4380,7 @@ func _sync_quick_slots() -> void:
 			quick_button.expand_icon = true
 			quick_button.text = ""
 			quick_button.disabled = not usable or cooldown_seconds > 0
-			var quick_tooltip: String = (_inventory_tooltip(quick_item)
+			var quick_tooltip: String = (_inventory_tooltip(quick_item, slot)
 				+ "\nQuick slot: %d  Quantity: %d" % [slot + 1,
 					int(quick_item.get("quantity", 0))])
 			if cooldown_seconds > 0:
@@ -3731,6 +4420,7 @@ func _sync_spells() -> void:
 		button.text = ""
 		button.disabled = not reasons.is_empty()
 		button.tooltip_text = _spell_tooltip(definition, reasons, slot)
+	_sync_spell_power_controls()
 	match AppState.pending_spell_target:
 		"actor":
 			spell_status.text = "Select an actor for the spell"
@@ -3744,11 +4434,89 @@ func _spell_tooltip(definition: Dictionary, reasons: Array[String], slot: int) -
 		str(definition.get("description", "")), "Mana: %d  Magic: %d" % [
 			int(definition.get("mana", 0)), int(definition.get("level", 0))],
 		"Shortcut: Shift+%d" % (slot + 1)]
+	var effect: String = str(definition.get("effect", ""))
+	if AppState.spell_power.has(effect):
+		var stated: Dictionary = AppState.spell_power[effect] as Dictionary
+		lines.append("Power %d of %d allowed" % [
+			mini(requested_spell_power, int(stated.get("limit", 1))),
+			int(stated.get("limit", 1))])
 	if reasons.is_empty():
 		lines.append("Ready; the server validates the cast")
 	else:
 		lines.append_array(reasons)
 	return "\n".join(lines)
+
+## The power stepper. Its ceiling is the highest limit the server stated for
+## any effect: the client never works a limit out from a Magic level, and a
+## cast is clamped to the limit the server stated for that effect.
+func _sync_spell_power_controls() -> void:
+	var ceiling: int = 1
+	for raw_effect: Variant in AppState.spell_power:
+		var stated: Dictionary = AppState.spell_power[raw_effect] as Dictionary
+		ceiling = maxi(ceiling, int(stated.get("limit", 1)))
+	requested_spell_power = clampi(requested_spell_power, 1, ceiling)
+	spell_power_value.text = "P%d" % requested_spell_power
+	spell_power_down.disabled = requested_spell_power <= 1
+	spell_power_up.disabled = requested_spell_power >= ceiling
+
+## A client setting the player changed. Everything under Graphics and Camera
+## is about this machine; everything under Gameplay is a command the server
+## owns, sent as the player's own words rather than applied here.
+func _on_client_setting_changed(section: String, key: String,
+		value: Variant) -> void:
+	match key:
+		"shadows":
+			_shadows_enabled = bool(value)
+			world_sun.shadow_enabled = _shadows_enabled and world_sun.visible
+		"particles":
+			_effects_enabled = bool(value)
+		"nameplates":
+			_nameplates_enabled = bool(value)
+			for raw_actor: Variant in actor_nodes.values():
+				if is_instance_valid(raw_actor):
+					(raw_actor as ReplicatedActor3D).set_nameplate_visible(
+						_nameplates_enabled)
+		"rotation_sensitivity":
+			camera_rig.rotation_sensitivity = float(value)
+		"pan_sensitivity":
+			camera_rig.pan_sensitivity = float(value)
+		"follow_player":
+			_camera_follows_player = bool(value)
+		"target_mode_strong":
+			Network.send_chat("#targetmode strong")
+		"target_mode_weak":
+			Network.send_chat("#targetmode weak")
+		"autogather":
+			Network.send_chat("#autogather")
+	if section != "Gameplay":
+		_save_hud_settings()
+
+func _on_binding_changed(_action: String) -> void:
+	_save_hud_settings()
+
+## The sigils window. It is opened from the spell quickbar because that is
+## where a player finds out they are missing one.
+func _on_sigil_button_pressed() -> void:
+	sigil_window.toggle()
+	audio_director.play("ui_click" if sigil_window.is_open() else "ui_close")
+
+func _on_spell_power_down_pressed() -> void:
+	requested_spell_power = maxi(1, requested_spell_power - 1)
+	_sync_spells()
+
+func _on_spell_power_up_pressed() -> void:
+	requested_spell_power += 1
+	_sync_spells()
+
+## The power this cast asks for: the stepper, clamped to what the server said
+## this effect may reach. With no stated limit the legacy frame is sent, which
+## is the frame without a power byte at all.
+func _cast_power_for(spell_id: int) -> int:
+	var effect: String = spell_catalog.effect_for(spell_id)
+	if not AppState.spell_power.has(effect):
+		return 0
+	var stated: Dictionary = AppState.spell_power[effect] as Dictionary
+	return mini(requested_spell_power, maxi(1, int(stated.get("limit", 1))))
 
 func _spell_result_text(result: Dictionary) -> String:
 	if result.is_empty():
@@ -3779,11 +4547,57 @@ func _cast_spell_slot(slot: int) -> void:
 	var sigils: Array[int] = []
 	for raw_sigil: Variant in sigils_value:
 		sigils.append(int(raw_sigil))
-	var error: Error = Network.cast_spell(sigils)
+	var error: Error = Network.cast_spell(sigils, _cast_power_for(spell_id))
 	if error != OK:
 		push_warning("CAST_SPELL failed: " + error_string(error))
 	else:
 		spell_status.text = "Casting %s…" % str(definition.get("name", "spell"))
+
+## Draws each item cooldown as a proportional drain over its quick slot.
+## `maximum_msec` came off the wire in every cooldown packet and was stored and
+## never read, so a cooldown was a disabled button with a number in a tooltip
+## and no sense of how far through it was. Runs every frame: it only moves an
+## anchor and sets a label, and a chunky one-second step would defeat the
+## point of showing progress at all.
+func _update_cooldown_overlays() -> void:
+	for slot: int in range(quick_slot_buttons.size()):
+		var overlay: Control = _cooldown_overlay(quick_slot_buttons[slot])
+		var cooldown_value: Variant = AppState.inventory_cooldowns.get(slot)
+		if not cooldown_value is Dictionary:
+			overlay.visible = false
+			continue
+		var cooldown: Dictionary = cooldown_value as Dictionary
+		var remaining_msec: int = int(cooldown.get("end_msec", 0)) - Time.get_ticks_msec()
+		var maximum_msec: int = maxi(1, int(cooldown.get("maximum_msec", 0)))
+		if remaining_msec <= 0:
+			overlay.visible = false
+			continue
+		overlay.visible = true
+		# The shade drains from full to empty as the cooldown runs out.
+		overlay.anchor_top = 1.0 - clampf(float(remaining_msec) / float(maximum_msec),
+			0.0, 1.0)
+		var seconds_label: Label = overlay.get_node("Seconds") as Label
+		seconds_label.text = str(maxi(1, ceili(float(remaining_msec) / 1000.0)))
+
+func _cooldown_overlay(button: Button) -> Control:
+	var existing: Control = button.get_node_or_null("Cooldown") as Control
+	if existing != null:
+		return existing
+	var overlay := ColorRect.new()
+	overlay.name = "Cooldown"
+	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.color = Color(0.05, 0.06, 0.09, 0.66)
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.visible = false
+	button.add_child(overlay)
+	var seconds := Label.new()
+	seconds.name = "Seconds"
+	seconds.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	seconds.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	seconds.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	seconds.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(seconds)
+	return overlay
 
 func _inventory_cooldown_remaining(slot: int) -> int:
 	var cooldown_value: Variant = AppState.inventory_cooldowns.get(slot)
@@ -3793,7 +4607,11 @@ func _inventory_cooldown_remaining(slot: int) -> int:
 	var remaining_msec: int = int(cooldown.get("end_msec", 0)) - Time.get_ticks_msec()
 	return maxi(0, ceili(float(remaining_msec) / 1000.0))
 
-func _inventory_tooltip(item: Dictionary) -> String:
+## Builds a slot tooltip. The quantity and the traits always come from the
+## authoritative inventory packet; command 226 only adds the names, categories
+## and weights that packet has no room for, and is ignored where the two
+## disagree about how much is in the slot.
+func _inventory_tooltip(item: Dictionary, slot: int) -> String:
 	var traits: Array[String] = []
 	for flag_and_label: Array in [
 		["inventory_usable", "usable"], ["stackable", "stackable"],
@@ -3801,11 +4619,28 @@ func _inventory_tooltip(item: Dictionary) -> String:
 		if bool(item.get(flag_and_label[0], false)):
 			traits.append(str(flag_and_label[1]))
 	var image_id: int = int(item.get("image_id", 0))
-	var tooltip: String = "Item image #%d — quantity %d%s" % [image_id,
+	var described: Dictionary = _inventory_description_for(slot)
+	var heading: String = (str(described.get("name", ""))
+		if not str(described.get("name", "")).is_empty()
+		else "Item image #%d" % image_id)
+	var tooltip: String = "%s — quantity %d%s" % [heading,
 		int(item.get("quantity", 0)), " — " + ", ".join(traits) if not traits.is_empty() else ""]
+	if not str(described.get("category", "")).is_empty():
+		tooltip += "
+%s — %d EMU each" % [str(described.get("category", "")),
+			int(described.get("emu", 0))]
 	if item_atlas.uses_substitute(image_id):
 		tooltip += "\nIndependent Eloria icon substitute for legacy image #%d." % image_id
 	return tooltip
+
+## The command 226 entry for a slot, or an empty dictionary when the server has
+## not described that slot.
+func _inventory_description_for(slot: int) -> Dictionary:
+	for entry: Variant in AppState.inventory_state.get("items", []):
+		var described: Dictionary = entry as Dictionary
+		if int(described.get("slot", -1)) == slot:
+			return described
+	return {}
 
 func _on_inventory_slot_pressed(slot: int) -> void:
 	if not AppState.inventory.has(slot):
@@ -3859,15 +4694,77 @@ func _use_inventory_slot(slot: int) -> void:
 	if not bool(item.get("inventory_usable", false)) or _inventory_cooldown_remaining(slot) > 0:
 		return
 	var error: Error = Network.use_inventory_item(slot)
-	if error == OK:
-		_increment_counter("Used Items", 1)
-	else:
+	if error != OK:
 		push_warning("USE_INVENTORY_ITEM failed: " + error_string(error))
+
+## Console history and tab completion. Up and down walk what has been sent,
+## Tab completes a command this client answers itself - a name the server owns
+## is not completed here, because the client does not have that list.
+func _on_chat_input_gui_input(event: InputEvent) -> void:
+	if not event is InputEventKey or not (event as InputEventKey).pressed:
+		return
+	var key: InputEventKey = event as InputEventKey
+	match key.physical_keycode:
+		KEY_UP:
+			_recall_console_history(-1)
+		KEY_DOWN:
+			_recall_console_history(1)
+		KEY_TAB:
+			_complete_console_command()
+		_:
+			return
+	chat_input.accept_event()
+
+func _recall_console_history(step: int) -> void:
+	if _console_history.is_empty():
+		return
+	_console_history_index = clampi(_console_history_index + step, 0,
+		_console_history.size())
+	chat_input.text = ("" if _console_history_index >= _console_history.size()
+		else _console_history[_console_history_index])
+	chat_input.caret_column = chat_input.text.length()
+
+func _complete_console_command() -> void:
+	var typed: String = chat_input.text.strip_edges()
+	if not typed.begins_with("#") or typed.contains(" "):
+		return
+	var matches: Array[String] = console_commands.completions(typed)
+	if matches.is_empty():
+		return
+	if matches.size() == 1:
+		chat_input.text = matches[0] + " "
+		chat_input.caret_column = chat_input.text.length()
+		return
+	# More than one: complete as far as they agree and show the choices.
+	var shared: String = matches[0]
+	for candidate: String in matches:
+		while not candidate.begins_with(shared) and shared.length() > typed.length():
+			shared = shared.substr(0, shared.length() - 1)
+	chat_input.text = shared
+	chat_input.caret_column = shared.length()
+	AppState.append_local_line("  ".join(matches))
 
 func _on_chat_submitted(text: String) -> void:
 	var message: String = text.strip_edges()
 	if message.is_empty():
 		chat_input.release_focus()
+		return
+	_console_history.append(message)
+	if _console_history.size() > CONSOLE_HISTORY_LIMIT:
+		_console_history.remove_at(0)
+	_console_history_index = _console_history.size()
+	message = console_commands.expand(message)
+	# A command this client answers itself never reaches the server: the
+	# server has no opinion about who the player is ignoring.
+	var local: ConsoleCommands.Result = console_commands.run(
+		message, AppState.chat_lines)
+	if local.handled:
+		for line: String in local.lines:
+			AppState.append_local_line(line)
+		if local.changed:
+			_save_hud_settings()
+			_sync_map_markers()
+		chat_input.clear()
 		return
 	var is_private: bool = message.begins_with("/") and message.length() > 1
 	if not is_private and _chat_tab.begins_with("channel:") and not message.begins_with("@"):
@@ -3940,8 +4837,13 @@ func _fill_trade_list(list_control: ItemList, items: Dictionary, prefix: String)
 		var item: Dictionary = item_value as Dictionary
 		var image_id: int = int(item.get("image_id", 0))
 		var index: int = list_control.item_count
-		list_control.add_item("%s %d  •  item #%d  ×%d" % [
-			prefix, slot + 1, image_id, int(item.get("quantity", 0))])
+		# Source type 1 is the offering player's backpack and 2 is their
+		# storage, which is only offered where a storage NPC is in range for
+		# both sides. Saying which it came from is the whole point of the
+		# server sending it.
+		var source: String = "  (storage)" if int(item.get("source_type", 1)) == 2 else ""
+		list_control.add_item("%s %d  •  item #%d  ×%d%s" % [
+			prefix, slot + 1, image_id, int(item.get("quantity", 0)), source])
 		list_control.set_item_metadata(index, slot)
 		var icon: Texture2D = item_atlas.icon_for(image_id)
 		if icon != null:
@@ -4053,12 +4955,17 @@ func _sync_selection() -> void:
 		selected_target.text = "Target: %s  Health: %d / %d%s" % [
 			str(dto.get("name", "Actor %d" % AppState.selected_actor_id)),
 			int(dto.get("health", 0)), int(dto.get("max_health", 0)),
-			"  [combat]" if bool(dto.get("in_combat", false)) else ""]
+			("  [combat]" if bool(dto.get("in_combat", false)) else "")
+				+ ("  [hastened]" if (int(dto.get("buffs", 0))
+					& EloriaProtocol.ACTOR_BUFF_DOUBLE_SPEED) != 0 else "")]
 	var can_attack: bool = _is_attackable_actor(AppState.selected_actor_id, dto)
 	attack_button.disabled = not can_attack
 	attack_button.tooltip_text = ("Attack selected target [A] or Alt-click; the server approaches and validates combat"
 		if can_attack else "Select a living player or creature to attack")
 	var can_trade: bool = _is_tradeable_player(AppState.selected_actor_id, dto)
+	look_button.disabled = not can_trade
+	look_button.tooltip_text = ("Ask the server to describe the selected player"
+		if can_trade else "Select a player to look at")
 	trade_button.disabled = not can_trade
 	trade_button.tooltip_text = ("Request or accept trade with the selected player; both players must be within four tiles"
 		if can_trade else "Select a living player to trade")
@@ -4092,6 +4999,137 @@ func _send_attack(actor_id: int) -> void:
 	var error: Error = Network.attack_actor(actor_id)
 	if error != OK:
 		push_warning("ATTACK_SOMEONE failed: " + error_string(error))
+
+## A server-driven modal question. The server had no way to ask the player
+## anything at all: DISPLAY_POPUP(83) fell through to an unknown packet and
+## POPUP_REPLY(50) had no encoder.
+##
+## The legacy contract decides the shape: a popup that contains a radio option
+## or a text entry gets a send button and answers when it is pressed; one
+## built only from text options answers the moment a button is clicked and
+## closes, because each option *is* the action.
+func _sync_popup() -> void:
+	for child: Node in popup_options.get_children():
+		if is_instance_valid(child):
+			child.queue_free()
+	_popup_radio_groups.clear()
+	_popup_entries.clear()
+	if not bool(AppState.popup.get("open", false)):
+		popup_panel.hide()
+		return
+	popup_title.text = str(AppState.popup.get("title", "")).strip_edges()
+	popup_text.text = str(AppState.popup.get("text", ""))
+	var needs_confirm := false
+	var radio_buttons: Dictionary = {}
+	for raw_option: Variant in AppState.popup.get("options", []) as Array:
+		var option: Dictionary = raw_option as Dictionary
+		var option_type: int = int(option.get("option_type", -1))
+		var group: int = int(option.get("group", 0))
+		var label: String = str(option.get("label", ""))
+		match option_type:
+			EloriaProtocol.POPUP_DISPLAY_TEXT:
+				var display := Label.new()
+				display.text = label
+				display.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				popup_options.add_child(display)
+			EloriaProtocol.POPUP_TEXT_OPTION:
+				var action := Button.new()
+				action.text = label
+				action.pressed.connect(_on_popup_option_pressed.bind(
+					group, int(option.get("value", 0))))
+				popup_options.add_child(action)
+			EloriaProtocol.POPUP_RADIO_OPTION:
+				needs_confirm = true
+				var choice := CheckBox.new()
+				choice.text = label
+				choice.toggled.connect(_on_popup_radio_toggled.bind(
+					group, int(option.get("value", 0))))
+				popup_options.add_child(choice)
+				var siblings: Array = radio_buttons.get(group, []) as Array
+				siblings.append(choice)
+				radio_buttons[group] = siblings
+			EloriaProtocol.POPUP_TEXT_ENTRY:
+				needs_confirm = true
+				var prompt := Label.new()
+				prompt.text = label
+				popup_options.add_child(prompt)
+				var entry := LineEdit.new()
+				entry.max_length = 255
+				popup_options.add_child(entry)
+				_popup_entries[group] = entry
+	_popup_radio_buttons = radio_buttons
+	popup_confirm.visible = needs_confirm
+	# A dismissable popup is not the same as an answered one: dismissing sends
+	# nothing, which is what the legacy client does when a popup is closed.
+	popup_dismiss.visible = true
+	_close_panels_for_popup()
+	popup_panel.show()
+	popup_panel.move_to_front()
+
+## The popup is modal, so the windows that own the keyboard or the pointer are
+## closed underneath it rather than left fighting for input.
+func _close_panels_for_popup() -> void:
+	full_map.hide()
+	console_panel.hide()
+	_close_settings()
+	item_lists_panel.hide()
+	_sync_map_viewport_activity()
+
+func _on_popup_radio_toggled(pressed: bool, group: int, value: int) -> void:
+	if not pressed:
+		if int(_popup_radio_groups.get(group, -1)) == value:
+			_popup_radio_groups.erase(group)
+		return
+	_popup_radio_groups[group] = value
+	# One selection per group: the wire carries exactly one answer per group.
+	var index := 0
+	for raw_button: Variant in _popup_radio_buttons.get(group, []) as Array:
+		var button: CheckBox = raw_button as CheckBox
+		var option_value: int = _popup_radio_value(group, index)
+		if option_value != value and button.button_pressed:
+			button.set_pressed_no_signal(false)
+		index += 1
+
+func _popup_radio_value(group: int, index: int) -> int:
+	var seen := 0
+	for raw_option: Variant in AppState.popup.get("options", []) as Array:
+		var option: Dictionary = raw_option as Dictionary
+		if int(option.get("option_type", -1)) != EloriaProtocol.POPUP_RADIO_OPTION:
+			continue
+		if int(option.get("group", 0)) != group:
+			continue
+		if seen == index:
+			return int(option.get("value", 0))
+		seen += 1
+	return -1
+
+func _on_popup_option_pressed(group: int, value: int) -> void:
+	_send_popup_reply({group: value})
+
+func _on_popup_confirm_pressed() -> void:
+	var answers: Dictionary = {}
+	for raw_group: Variant in _popup_radio_groups:
+		answers[int(raw_group)] = int(_popup_radio_groups[raw_group])
+	for raw_group: Variant in _popup_entries:
+		var entry: LineEdit = _popup_entries[raw_group] as LineEdit
+		if is_instance_valid(entry):
+			answers[int(raw_group)] = entry.text
+	_send_popup_reply(answers)
+
+## Dismissing answers nothing. The server asked; declining to answer is a
+## legitimate outcome and must not be reported as a choice.
+func _on_popup_dismiss_pressed() -> void:
+	AppState.close_popup()
+
+func _send_popup_reply(answers: Dictionary) -> void:
+	var popup_id: int = int(AppState.popup.get("popup_id", -1))
+	if popup_id < 0:
+		return
+	var error: Error = Network.popup_reply(popup_id, answers)
+	if error != OK:
+		push_warning("POPUP_REPLY failed: " + error_string(error))
+		return
+	AppState.close_popup()
 
 func _sync_dialogue() -> void:
 	var dialogue: Dictionary = AppState.npc_dialogue
@@ -4143,6 +5181,205 @@ func _pick_actor(viewport_position: Vector2) -> int:
 		return (collider_value as ReplicatedActor3D).actor_id
 	return -1
 
+## World objects the server declared for this map. This is the pick layer the
+## client never had: the world click handler tried actors, then ground bags,
+## then the navigation surface, and stopped, so no rendered prop was ever
+## clickable and the whole harvestable layer was unreachable.
+func _pick_map_object(viewport_position: Vector2) -> MapObject3D:
+	if gameplay_world == null:
+		return null
+	var origin: Vector3 = camera_rig.ray_origin(viewport_position)
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
+		origin, origin + camera_rig.ray_direction(viewport_position) * 2000.0,
+		MapObject3D.PICK_LAYER)
+	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
+	var collider_value: Variant = hit.get("collider")
+	return collider_value as MapObject3D if collider_value is MapObject3D else null
+
+## A plain click acts on the object; Alt inspects it instead. Every outcome is
+## a request: the server decides range, tools, level and whether anything
+## happens at all.
+func _activate_map_object(map_object: MapObject3D, inspect: bool) -> void:
+	if inspect:
+		var look_error: Error = Network.look_at_map_object(map_object.object_id)
+		if look_error != OK:
+			push_warning("LOOK_AT_MAP_OBJECT failed: " + error_string(look_error))
+		return
+	if map_object.is_harvestable():
+		# HARVEST is a toggle on the server: sending it for the node already
+		# being harvested stops the run.
+		var harvest_error: Error = Network.harvest(map_object.object_id)
+		if harvest_error != OK:
+			push_warning("HARVEST failed: " + error_string(harvest_error))
+		return
+	var use_error: Error = Network.use_map_object(map_object.object_id)
+	if use_error != OK:
+		push_warning("USE_MAP_OBJECT failed: " + error_string(use_error))
+
+func _sync_map_objects() -> void:
+	for raw_id: Variant in map_object_nodes.keys():
+		var object_id: int = int(raw_id)
+		if not AppState.map_objects.has(object_id):
+			var stale: Variant = map_object_nodes.get(object_id)
+			if is_instance_valid(stale):
+				(stale as Node).queue_free()
+			map_object_nodes.erase(object_id)
+	for raw_id: Variant in AppState.map_objects:
+		var object_id: int = int(raw_id)
+		var dto_value: Variant = AppState.map_objects.get(object_id)
+		if not dto_value is Dictionary:
+			continue
+		if map_object_nodes.has(object_id):
+			continue
+		var map_object := MapObject3D.new()
+		map_object.configure(dto_value as Dictionary, adapter)
+		world_root.add_child(map_object)
+		map_object_nodes[object_id] = map_object
+		_place_map_object_on_surface(map_object)
+	_sync_harvest_indicator()
+
+## Draws the markers the server placed for the map the player is standing on.
+##
+## A marker keeps its map: the server states which map each belongs to and never
+## withdraws one because the player walked elsewhere, so a marker for another
+## map is held and hidden rather than discarded and guessed at again later.
+func _sync_map_markers() -> void:
+	# Both sides are reduced the same way: the marker names its map as the
+	# server's own file reference, and CHANGE_MAP names the current one the
+	# same way, so neither is compared to a path the other never uses.
+	var here: String = EloriaProtocol.map_id_from_reference(AppState.current_map)
+	for raw_id: Variant in map_marker_nodes.keys():
+		var marker_id: int = int(raw_id)
+		var marker_value: Variant = AppState.map_markers.get(marker_id)
+		var still_here: bool = (marker_value is Dictionary
+			and str((marker_value as Dictionary).get("map_id", "")) == here)
+		if still_here:
+			continue
+		var stale: Variant = map_marker_nodes.get(marker_id)
+		if is_instance_valid(stale):
+			(stale as Node).queue_free()
+		map_marker_nodes.erase(marker_id)
+	for raw_id: Variant in AppState.map_markers:
+		var marker_id: int = int(raw_id)
+		if map_marker_nodes.has(marker_id):
+			continue
+		var dto_value: Variant = AppState.map_markers.get(marker_id)
+		if not dto_value is Dictionary:
+			continue
+		var dto: Dictionary = dto_value as Dictionary
+		if str(dto.get("map_id", "")) != here:
+			continue
+		var marker := MapMarker3D.new()
+		marker.configure(dto, adapter)
+		world_root.add_child(marker)
+		map_marker_nodes[marker_id] = marker
+		_place_map_marker_on_surface(marker)
+	_sync_map_marker_list()
+
+## The pins are readable as shapes on both map cameras, but a full map covers a
+## whole map: no label drawn at that scale can be read. The sidebar lists what
+## each pin is, in the server's own words, beside the legend that explains the
+## rest of the map.
+func _sync_map_marker_list() -> void:
+	var lines: Array[String] = []
+	for raw_id: Variant in map_marker_nodes:
+		var marker: Variant = map_marker_nodes[raw_id]
+		if not is_instance_valid(marker):
+			continue
+		var pin: MapMarker3D = marker as MapMarker3D
+		lines.append("[color=#fac638]◆[/color] %s  (%d, %d)" % [
+			pin.label if not pin.label.is_empty() else "Marker",
+			pin.server_tile.x, pin.server_tile.y])
+	for mark: Dictionary in console_commands.marks:
+		if str(mark.get("map", "")) != EloriaProtocol.map_id_from_reference(
+				AppState.current_map):
+			continue
+		lines.append("[color=#7fd4ff]*[/color] %s  (%d, %d)" % [
+			str(mark.get("label", "Mark")), int(mark.get("x", 0)),
+			int(mark.get("y", 0))])
+	map_marker_list.text = "
+".join(lines)
+	map_marker_title.visible = not lines.is_empty()
+	map_marker_list.visible = not lines.is_empty()
+	map_marker_overlay.set_markers(_current_map_markers())
+	map_marker_overlay.set_player_marks(_current_player_marks())
+
+## The marks the player made for themselves on this map. Presentational: they
+## are the player's own annotation of their own screen, they never leave the
+## client, and the server is not told about them.
+func _current_player_marks() -> Array[Dictionary]:
+	var here: String = EloriaProtocol.map_id_from_reference(AppState.current_map)
+	var mine: Array[Dictionary] = []
+	for mark: Dictionary in console_commands.marks:
+		if str(mark.get("map", "")) == here:
+			mine.append(mark)
+	return mine
+
+## The markers the server placed on the map the player is standing on.
+func _current_map_markers() -> Array[Dictionary]:
+	var here: String = EloriaProtocol.map_id_from_reference(AppState.current_map)
+	var markers: Array[Dictionary] = []
+	for raw_id: Variant in AppState.map_markers:
+		var marker_value: Variant = AppState.map_markers[raw_id]
+		if not marker_value is Dictionary:
+			continue
+		var marker: Dictionary = marker_value as Dictionary
+		if str(marker.get("map_id", "")) == here:
+			markers.append(marker)
+	return markers
+
+func _place_map_marker_on_surface(marker: MapMarker3D) -> void:
+	if not is_instance_valid(marker):
+		return
+	var sampled: Variant = _navigation_ray_position(
+		marker.global_position + Vector3(0.0, 200.0, 0.0), Vector3.DOWN)
+	if sampled is Vector3:
+		marker.set_surface_height((sampled as Vector3).y)
+
+## Grounds one world object, and notices when it cannot be grounded at all.
+##
+## A server object whose tile has no navigation surface under it is misplaced
+## content: the server is describing somewhere the rendered map does not have.
+## That is worth counting rather than leaving as an invisible marker hanging in
+## the air, so it appears in the protocol diagnostics panel.
+func _place_map_object_on_surface(map_object: MapObject3D) -> void:
+	if not is_instance_valid(map_object):
+		return
+	var sampled: Variant = _navigation_ray_position(
+		map_object.global_position + Vector3(0.0, 200.0, 0.0), Vector3.DOWN)
+	if sampled is Vector3:
+		map_object.set_surface_height((sampled as Vector3).y)
+		_ungrounded_map_objects.erase(map_object.object_id)
+		return
+	_ungrounded_map_objects[map_object.object_id] = map_object.label
+
+func _snap_all_map_objects_to_surface() -> void:
+	await get_tree().physics_frame
+	for raw_object: Variant in map_object_nodes.values():
+		_place_map_object_on_surface(raw_object as MapObject3D)
+	for raw_marker: Variant in map_marker_nodes.values():
+		_place_map_marker_on_surface(raw_marker as MapMarker3D)
+
+## The "now harvesting" indicator. The stock client drove this by matching an
+## exact English phrase out of the chat stream; this reads the authoritative
+## harvest-state packet instead, so it survives a reworded message and cannot
+## be left stuck on when the server stops the run for its own reasons - moving,
+## a full backpack, or combat.
+func _sync_harvest_indicator() -> void:
+	var active: bool = bool(AppState.harvest.get("active", false))
+	var active_object: int = int(AppState.harvest.get("object_id", -1))
+	for raw_object: Variant in map_object_nodes.values():
+		var map_object: MapObject3D = raw_object as MapObject3D
+		if is_instance_valid(map_object):
+			map_object.set_active(active and map_object.object_id == active_object)
+	if harvest_banner == null:
+		return
+	if not active:
+		harvest_banner.hide()
+		return
+	harvest_banner.text = "Harvesting %s" % str(AppState.harvest.get("resource", ""))
+	harvest_banner.show()
+
 func _pick_ground_bag(viewport_position: Vector2) -> int:
 	if gameplay_world == null:
 		return -1
@@ -4169,6 +5406,7 @@ func _apply_eloria_art() -> void:
 			%KnowledgeButton: Rect2(96, 0, 32, 32), %AttackButton: Rect2(160, 0, 32, 32),
 			%StatsButton: Rect2(192, 0, 32, 32), %SitButton: Rect2(0, 32, 32, 32),
 			%TradeButton: Rect2(64, 32, 32, 32), %InventoryButton: Rect2(96, 32, 32, 32),
+			%LookButton: Rect2(64, 0, 32, 32),
 			%ManufacturingButton: Rect2(128, 32, 32, 32),
 			%DisconnectButton: Rect2(224, 0, 32, 32), %MapButton: Rect2(128, 128, 32, 32)}
 		for button_value: Variant in _hud_icon_regions:
@@ -4301,15 +5539,19 @@ func _model_for_actor(dto: Dictionary) -> String:
 
 func _presentation_dto(dto: Dictionary) -> Dictionary:
 	var result: Dictionary = dto.duplicate(true)
-	var actor_type: int = int(dto.get("actor_type", -1))
-	var appearance: Dictionary = dto.get("appearance", {}) as Dictionary
-	# Modified 2026-08-28 for Eloria Client: the legacy visual ids below 100 are
-	# real equipment now, not creation leftovers, so they are no longer dropped.
-	# An authored NPC look is applied last and outranks the server's appearance
-	# bytes, which is how a Four Gates guard keeps its guard gear without an
-	# alias hijacking the shared legacy id for every other actor.
-	var visuals: Dictionary = AppearanceVariants.equipment_visuals(
-		actor_type, appearance)
+	# Creation bytes (skin, hair, shirt, pants, boots, head, eyes) select skinned
+	# surfaces already authored into each actor GLB, so they are deliberately
+	# never reinterpreted as rigid BoneAttachment3D equipment and contribute
+	# nothing here. AppearanceVariants used to expose a function for that which
+	# returned {} unconditionally and was still called on every actor build; the
+	# refusal is stated here instead of hidden behind a call.
+	#
+	# The legacy visual ids below 100 are real equipment, not creation
+	# leftovers, so they are not dropped. An authored NPC look is applied last
+	# and outranks the server's appearance bytes, which is how a Four Gates
+	# guard keeps its guard gear without an alias hijacking the shared legacy id
+	# for every other actor.
+	var visuals: Dictionary = {}
 	var server_visuals: Dictionary = dto.get("equipment_visuals", {}) as Dictionary
 	for raw_part: Variant in server_visuals:
 		visuals[int(raw_part)] = int(server_visuals[raw_part])

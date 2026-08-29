@@ -153,10 +153,14 @@ def wall_segment(length: float, height: float, thickness: float, p: Palette,
     plinth = M.tapered_box(thickness * 1.45, length * 1.005, thickness * 1.24,
                            length * 1.005, 2.2, p.stone_rubble, 3.0)
     parts.append(plinth)
-    band = M.box(thickness * 1.16, 0.85, length, p.stone_trim, 2.0, origin="corner")
+    # Band and parapet run a little past the bay so their end caps clear the
+    # body's. Cut to the bay length exactly, all three sat in one plane at each
+    # joint and fought over the strip where they overlap.
+    cap_length = length + 0.24
+    band = M.box(thickness * 1.16, 0.85, cap_length, p.stone_trim, 2.0, origin="corner")
     band.translate(0.0, height - 1.5, 0.0)
     parts.append(band)
-    walk = M.box(thickness * 1.10, 0.5, length, p.paving_road, 2.0, origin="corner")
+    walk = M.box(thickness * 1.10, 0.5, cap_length, p.paving_road, 2.0, origin="corner")
     walk.translate(0.0, height - 0.65, 0.0)
     parts.append(walk)
     if crenellations:
@@ -414,22 +418,29 @@ def townhouse(p: Palette, width: float, depth: float, storeys: int = 3,
     storey_height = 3.6
     body_height = storey_height * storeys
     roof_material = p.roof_verdigris if roof_material is None else roof_material
+    # The cornice is the last course of the elevation, not a band laid over it:
+    # the wall it caps stops at its soffit. Running the wall to the cornice's own
+    # top instead left two up-facing surfaces in the same plane on every house in
+    # the city, and they fought.
+    cornice_height = 0.5
     parts = []
     plinth = M.box(width + 0.5, 0.7, depth + 0.5, p.stone_rubble, 2.0, origin="corner")
     parts.append(plinth)
-    ground = M.box(width, storey_height, depth, p.stone_ashlar, 3.0, origin="corner")
+    ground_height = storey_height if storeys > 1 else storey_height - cornice_height
+    ground = M.box(width, ground_height, depth, p.stone_ashlar, 3.0, origin="corner")
     ground.translate(0.0, 0.7, 0.0)
     parts.append(ground)
     if storeys > 1:
-        upper = M.box(width * 0.99, body_height - storey_height, depth * 0.99,
-                      p.plaster_warm, 3.0, origin="corner")
+        upper = M.box(width * 0.99, body_height - storey_height - cornice_height,
+                      depth * 0.99, p.plaster_warm, 3.0, origin="corner")
         upper.translate(0.0, 0.7 + storey_height, 0.0)
         parts.append(upper)
         band = M.box(width + 0.35, 0.35, depth + 0.35, p.stone_trim, 1.5, origin="corner")
         band.translate(0.0, 0.7 + storey_height - 0.18, 0.0)
         parts.append(band)
-    cornice = M.box(width + 0.6, 0.5, depth + 0.6, p.stone_trim, 1.5, origin="corner")
-    cornice.translate(0.0, 0.7 + body_height - 0.5, 0.0)
+    cornice = M.box(width + 0.6, cornice_height, depth + 0.6, p.stone_trim, 1.5,
+                    origin="corner")
+    cornice.translate(0.0, 0.7 + body_height - cornice_height, 0.0)
     parts.append(cornice)
 
     # windows: recessed reveals, never floating decals

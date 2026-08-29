@@ -148,7 +148,10 @@ def bridge_span(p: Palette, length: float, deck_y: float, water_y: float,
                 nose = M.cone(pier_span * 0.16, depth_to_water * 0.75, 6,
                               p.stone_rubble, 3.0)
                 nose.rotate_x(math.pi)
-                nose.translate(0.0, -3.0, z + side * pier_span * 0.16)
+                # Springs from inside the soffit, not off the pier top: an
+                # inverted cone's base cap faces up, and at the pier's own top
+                # the cap and the pier crown were one plane over half the cap.
+                nose.translate(0.0, -2.6, z + side * pier_span * 0.16)
                 parts.append(nose)
     # segmental arches spring low enough that their crowns stay under the deck
     soffit_bottom = -4.4
@@ -162,10 +165,12 @@ def bridge_span(p: Palette, length: float, deck_y: float, water_y: float,
         arch.rotate_y(math.pi / 2)
         arch.translate(0.0, springing, z)
         parts.append(arch)
-        # spandrel walls fill between the arch back and the deck soffit
+        # Spandrel walls fill between the arch back and the deck soffit. They
+        # stop just short of meeting over the pier: sized to overlap, the two
+        # that share a pier had their tops in one plane and fought there.
         for side in (-1, 1):
             spandrel = M.box(width * 0.86, abs(springing) - abs(soffit_bottom),
-                             pier_span * 0.5 - radius * 0.9, p.stone_ashlar, 3.2,
+                             pier_span * 0.5 - radius * 1.02, p.stone_ashlar, 3.2,
                              origin="corner")
             spandrel.translate(0.0, springing,
                                z + side * (radius + (pier_span * 0.5 - radius) * 0.5))
@@ -400,7 +405,9 @@ def plaza_arcade(p: Palette, radius: float, sweep: float, bays: int = 7) -> Geo:
     podium = M.ring_band(radius - depth * 0.5, radius + depth * 0.5, bays * 4,
                          lambda x, z: 0.0, p.stone_trim, 2.0,
                          start=-sweep * 0.5, sweep=sweep)
-    base = M.cylinder(radius + depth * 0.5, 1.2, bays * 4, p.stone_trim, 3.0,
+    # A plinth projects past the wall it carries. At the back wall's own radius
+    # the two open cylinders were the same surface over the plinth's height.
+    base = M.cylinder(radius + depth * 0.5 + 0.35, 1.2, bays * 4, p.stone_trim, 3.0,
                       start_angle=-sweep * 0.5, sweep=sweep, cap_top=False,
                       cap_bottom=False)
     parts += [podium, base]

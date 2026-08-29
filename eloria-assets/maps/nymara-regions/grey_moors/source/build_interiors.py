@@ -62,7 +62,9 @@ def export_glb(interior: I.Interior, sets, path: Path):
             builder.add_mesh(name, piece, with_tangents=True)
             parent.add(GLTF.Node(name=name, mesh=name))
 
-    # Walk surfaces carry the navigation prefix the client's grounding ray tests.
+    # Walk surfaces carry the navigation prefix the client's grounding ray tests,
+    # and lids go out under Roof_ so the manifest's cutaway block can name them.
+    emit(interior.group.by_material(overhead=True), f"Roof_{interior.ident}", root)
     emit(interior.group.by_material(walk=False), f"Build_{interior.ident}", root)
     emit(interior.group.by_material(walk=True), "Walk", root)
 
@@ -229,6 +231,14 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
         "collision": dict(collision_stats,
                           nodeNames=[n for n in stats["nodeNames"]
                                      if not n.startswith("Walk_")]),
+        # Every lid in the map. An interior is a closed box under a camera that
+        # looks down into it, so the client hides these outright and the player
+        # sees the room they are standing in. Collision built from the same
+        # nodes stays, so a hidden vault is still solid overhead.
+        "cutaway": {
+            "hideNodes": [n for n in stats["nodeNames"] if n.startswith("Roof_")],
+            "reason": "interior lids; the isometric rig frames the floor, not the roof",
+        },
         "navigation": {
             "surfaceNodePrefixes": ["Walk_"],
             "agentRadius": 0.4,

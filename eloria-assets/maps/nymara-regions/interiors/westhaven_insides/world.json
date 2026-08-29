@@ -145,6 +145,12 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_westhaven_insides",
+      "Roof_westhaven_insides_ashlar",
+      "Roof_westhaven_insides_dark_iron",
+      "Roof_westhaven_insides_lime_plaster",
+      "Roof_westhaven_insides_rubble_stone",
+      "Roof_westhaven_insides_timber_dark",
+      "Roof_westhaven_insides_westhaven_sea_rock",
       "Build_westhaven_insides_amber_resin",
       "Build_westhaven_insides_ashlar",
       "Build_westhaven_insides_canvas_awning",
@@ -162,6 +168,17 @@
       "Build_westhaven_insides_westhaven_sea_rock",
       "Build_westhaven_insides_woven_cloth"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_westhaven_insides_ashlar",
+      "Roof_westhaven_insides_dark_iron",
+      "Roof_westhaven_insides_lime_plaster",
+      "Roof_westhaven_insides_rubble_stone",
+      "Roof_westhaven_insides_timber_dark",
+      "Roof_westhaven_insides_westhaven_sea_rock"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1922,18 +1939,24 @@
     ]
   },
   "performance": {
-    "nodes": 24,
-    "meshes": 23,
+    "nodes": 30,
+    "meshes": 29,
     "materials": 19,
     "images": 52,
     "textures": 52,
-    "accessors": 115,
-    "bufferViews": 167,
-    "uniqueTriangles": 51432,
-    "uniqueVertices": 71454,
-    "glbBytes": 9807120,
+    "accessors": 145,
+    "bufferViews": 197,
+    "uniqueTriangles": 50028,
+    "uniqueVertices": 68646,
+    "glbBytes": 9670668,
     "nodeNames": [
       "Interior_westhaven_insides",
+      "Roof_westhaven_insides_ashlar",
+      "Roof_westhaven_insides_dark_iron",
+      "Roof_westhaven_insides_lime_plaster",
+      "Roof_westhaven_insides_rubble_stone",
+      "Roof_westhaven_insides_timber_dark",
+      "Roof_westhaven_insides_westhaven_sea_rock",
       "Build_westhaven_insides_amber_resin",
       "Build_westhaven_insides_ashlar",
       "Build_westhaven_insides_canvas_awning",

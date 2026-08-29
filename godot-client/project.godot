@@ -29,7 +29,7 @@ toggle_sit={
 "events": [Object(InputEventKey,"alt_pressed":true,"physical_keycode":83,"unicode":115)]
 }
 connect={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":67,"ctrl_pressed":true)] }
-disconnect={ "deadzone": 0.5, "events": [] }
+disconnect={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":68,"ctrl_pressed":true)] }
 chat_focus={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":84)] }
 toggle_map={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":9)] }
 toggle_minimap={ "deadzone": 0.5, "events": [Object(InputEventKey,"alt_pressed":true,"physical_keycode":77)] }
@@ -59,3 +59,9 @@ quick_spell_3={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed"
 quick_spell_4={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":52)] }
 quick_spell_5={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":53)] }
 quick_spell_6={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":54)] }
+quick_spell_7={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":55)] }
+quick_spell_8={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":56)] }
+quick_spell_9={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":57)] }
+quick_spell_10={ "deadzone": 0.5, "events": [Object(InputEventKey,"shift_pressed":true,"physical_keycode":48)] }
+quick_spell_11={ "deadzone": 0.5, "events": [] }
+quick_spell_12={ "deadzone": 0.5, "events": [] }

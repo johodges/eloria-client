@@ -91,6 +91,34 @@ Without it the captures are evidence about geometry only: a manifest can declare
 a sun that lights the world from underneath, or omit `tonemap` and render flat,
 and the frames look identical either way.
 
+## Two surfaces must never share a plane
+
+The client renders through Godot's GL Compatibility backend, whose depth buffer
+is fixed point. Two surfaces that face the same way and sit in the same plane
+have no stable winner, so they shimmer; and because the resolvable depth step at
+distance `z` is about `z^2 / (near * 2^24)` metres, a near-miss fights too once
+it is far enough away. `eloria-assets/tools/check_zfighting.py <glb>` reports the
+real overlap area between coplanar same-facing surfaces in a package, ignoring
+whatever the manifest declares hidden, and is the check to run after touching
+geometry.
+
+Two rules this toolkit now enforces rather than leaving to the author:
+
+- **Splitting one field into sub-meshes selects quads, not vertices.**
+  `mesh.heightfield` takes `cells` (a per-quad predicate) as well as `mask` (a
+  per-vertex one). `Terrain.build_meshes` uses `cells`: a quad belongs to the
+  class of its low corner and to no other. Expressed as a vertex mask instead,
+  every quad whose four corners merely touched a class landed in that class's
+  sub-mesh as well as its own - most of a dithered class edge - and the two
+  copies fought.
+- **A room's lid is `add_overhead`, not `add`.** `MeshGroup` keeps ceilings,
+  vaults and roofs in their own bucket; the interior exporters emit it as
+  `Roof_<interior>_<material>` nodes and name those in the manifest's `cutaway`
+  block, which the client hides. An interior is a closed box under a camera that
+  looks down into it, so a lid the player can see is a lid in the way. Anything
+  overhead that is meant to be seen from inside the room - a lamp, a truss, a
+  boss - stays `add`.
+
 ## Determinism
 
 Every build is seeded and reproduces its artefacts byte-for-byte. Name-derived

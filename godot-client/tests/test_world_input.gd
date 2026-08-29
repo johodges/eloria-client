@@ -173,12 +173,25 @@ func _run() -> void:
 		"actor faces the authoritative movement direction")
 	_expect(float(actor_height_fixture.get("_presentation_speed")) >= 6.0,
 		"walk presentation closes authoritative steps promptly")
-	actor_height_fixture.turn_by(PI / 4.0)
+	# A predicted turn holds the facing only until the server answers it.
+	actor_height_fixture.predict_turn(PI / 4.0)
 	var held_facing: float = actor_height_fixture.desired_facing_yaw()
 	actor_height_fixture.apply_server_state({
 		"x": 4, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
 	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), held_facing),
 		"keyboard facing override prevents strafe/back packets from rotating the actor")
+	# CMD_TURN_E. The authoritative turn confirms the prediction and replaces
+	# it, so a rejected or differently-resolved turn cannot stick locally.
+	actor_height_fixture.apply_server_state({
+		"x": 4, "y": 3, "rotation": 16384, "command": 40},
+		CoordinateAdapter.new(), false)
+	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), -PI / 2.0)
+		and not bool(actor_height_fixture.get("_facing_override_active")),
+		"an authoritative turn command clears the local turn prediction")
+	actor_height_fixture.apply_server_state({
+		"x": 4, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
+	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), -PI / 2.0),
+		"movement after a confirmed turn follows authoritative facing again")
 	actor_height_fixture.set_facing_override(false)
 	actor_height_fixture.apply_server_state({
 		"x": 5, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
@@ -195,7 +208,8 @@ func _run() -> void:
 	var lower_hud: Control = main.get_node("GameView/Quickbar") as Control
 	var chat_panel: Control = main.get_node("GameView/ChatPanel") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
-	var right_quickbar: Control = main.get_node("GameView/ItemSpellQuickbar") as Control
+	var right_quickbar: Control = main.get_node("GameView/ItemQuickbar") as Control
+	var left_quickspells: Control = main.get_node("GameView/SpellQuickbar") as Control
 	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
 	var inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
 	var stats_tabs: TabContainer = main.get_node(
@@ -251,16 +265,15 @@ func _run() -> void:
 		and chat_panel.anchor_bottom < 0.3
 		and chat_input.offset_bottom <= lower_hud.offset_top,
 		"legacy chat tabs sit at upper left while entry remains above the lower rail")
-	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
-		"stats and item/spell quickbar occupy the right HUD rail")
+	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0
+		and left_quickspells.anchor_left == 0.0 and left_quickspells.anchor_right == 0.0
+		and left_quickspells.offset_left >= 0.0,
+		"items keep the right HUD rail while spells sit on the left, as the legacy client has them")
 	var item_slots: GridContainer = main.get_node("%ItemSlots") as GridContainer
 	var spell_slots: GridContainer = main.get_node("%SpellSlots") as GridContainer
-	_expect(item_slots.columns == 1 and item_slots.visible and not spell_slots.visible,
-		"right rail presents compact single-column item and spell modes")
-	main.call("_on_quickbar_mode_pressed", "spells")
-	_expect(not item_slots.visible and spell_slots.visible,
-		"right rail switches between item and spell quick slots")
-	main.call("_on_quickbar_mode_pressed", "items")
+	_expect(item_slots.columns == 1 and spell_slots.columns == 1
+		and item_slots.visible and spell_slots.visible,
+		"both quick slot columns stay visible without a mode toggle")
 	var clock_face: TextureRect = main.get_node("GameView/ClockFrame/ClockFace") as TextureRect
 	var compass_face: TextureRect = main.get_node("GameView/CompassFrame/CompassFace") as TextureRect
 	_expect(clock_face.texture != null and compass_face.texture != null,
@@ -287,13 +300,65 @@ func _run() -> void:
 		and main.call("_movement_axes_for_actions", false, false, false, true)
 		== Vector2i(0, -1),
 		"W/S move forward/backward and A/D use the requested swapped strafe directions")
-	var q_turn := InputEventKey.new()
-	q_turn.physical_keycode = KEY_Q
-	var e_turn := InputEventKey.new()
-	e_turn.physical_keycode = KEY_E
-	_expect(int(main.call("_turn_step_for_key_event", q_turn)) == 1
-		and int(main.call("_turn_step_for_key_event", e_turn)) == -1,
-		"Q and E use the corrected opposite rotation directions")
+	# The chat entry above kept keyboard focus. Release it: bound printable keys
+	# are deliberately inert while a text field is focused.
+	main.call("_hide_chat_input")
+	await process_frame
+	# Every keyboard binding is resolved through the InputMap. Raw keycode
+	# comparisons used to shadow toggle_inventory, turn_left and turn_right, so
+	# rebinding them appeared to work and changed nothing. Rebinding an action
+	# and pressing both the old and the new key is what proves that is gone.
+	for rebindable: String in ["turn_left", "turn_right", "toggle_inventory",
+			"toggle_map", "toggle_minimap", "toggle_console",
+			"recenter_viewport", "connect", "disconnect"]:
+		_expect(InputMap.has_action(rebindable)
+			and InputMap.action_get_events(rebindable).size() > 0,
+			"%s is a declared action with at least one real event" % rebindable)
+	for rebindable: String in ["turn_left", "turn_right", "toggle_map",
+			"toggle_minimap", "toggle_console"]:
+		var defaults: Array[InputEvent] = InputMap.action_get_events(rebindable)
+		var original_key: InputEventKey = defaults[0].duplicate() as InputEventKey
+		original_key.pressed = true
+		var moved := InputEventKey.new()
+		moved.physical_keycode = KEY_F9
+		moved.pressed = true
+		InputMap.action_erase_events(rebindable)
+		InputMap.action_add_event(rebindable, moved)
+		_expect(not bool(main.call("_handle_bound_action", original_key)),
+			"rebinding %s releases its previous key" % rebindable)
+		_expect(bool(main.call("_handle_bound_action", moved)),
+			"rebinding %s moves the behaviour onto the new key" % rebindable)
+		InputMap.action_erase_events(rebindable)
+		for restored: InputEvent in defaults:
+			InputMap.action_add_event(rebindable, restored)
+		_expect(bool(main.call("_handle_bound_action", original_key)),
+			"restoring the %s binding restores its default key" % rebindable)
+	# Both connection actions reach a handler. connect() is driven from the
+	# already-connected branch so the assertion opens no socket.
+	app_state_inventory.set("connection_state", "connected")
+	var connect_key: InputEventKey = InputMap.action_get_events(
+		"connect")[0].duplicate() as InputEventKey
+	connect_key.pressed = true
+	_expect(bool(main.call("_handle_bound_action", connect_key)),
+		"the connect binding reaches a handler")
+	var disconnect_key: InputEventKey = InputMap.action_get_events(
+		"disconnect")[0].duplicate() as InputEventKey
+	disconnect_key.pressed = true
+	_expect(bool(main.call("_handle_bound_action", disconnect_key)),
+		"the disconnect binding reaches a handler")
+	app_state_inventory.set("connection_state", "disconnected")
+	# A focused text field keeps its own characters and clipboard shortcuts.
+	chat_input.show()
+	chat_input.grab_focus()
+	await process_frame
+	var console_key: InputEventKey = InputMap.action_get_events(
+		"toggle_console")[0].duplicate() as InputEventKey
+	console_key.pressed = true
+	_expect(not bool(main.call("_handle_bound_action", console_key)),
+		"a bound printable key typed into chat does not also toggle a window")
+	chat_input.release_focus()
+	chat_input.hide()
+	await process_frame
 	_expect(stats_tabs.get_tab_count() == 4
 		and stats_tabs.get_tab_title(0) == "Statistics"
 		and stats_tabs.get_tab_title(1) == "Knowledge"
@@ -393,6 +458,31 @@ func _run() -> void:
 		and is_equal_approx(inventory_panel.scale.y, 0.75),
 		"inventory resizing uniformly scales boxes, icons, and text without changing aspect")
 	main.call("_apply_inventory_scale", 1.0)
+	# Command 226 enriches the inventory; it never replaces it. The two
+	# fixtures below deliberately disagree about the quantity in slot 0, and
+	# the tooltip has to keep the authoritative one.
+	app_state_inventory.call("_on_packet", 19, PackedByteArray([
+		1, 20, 0, 12, 0, 0, 0, 0, 4]))
+	app_state_inventory.call("_on_packet", 226, _hex_bytes(
+		"fa00000014000000500000000100001400990000000100000000"
+		+ "53756e6c65616600466c6f7765727300"))
+	var enriched_tooltip: String = str(main.call("_inventory_tooltip",
+		app_state_inventory.get("inventory").get(0, {}), 0))
+	_expect(enriched_tooltip.contains("Sunleaf")
+		and enriched_tooltip.contains("Flowers")
+		and enriched_tooltip.contains("1 EMU"),
+		"the inventory tooltip names the item the server described: "
+			+ enriched_tooltip)
+	_expect(enriched_tooltip.contains("quantity 12")
+		and not enriched_tooltip.contains("quantity 153"),
+		"the enriched tooltip keeps the authoritative quantity, not the"
+			+ " enrichment packet's: " + enriched_tooltip)
+	app_state_inventory.call("_on_packet", 226, _hex_bytes(
+		"fa000000140000005000000000 00".replace(" ", "")))
+	_expect(str(main.call("_inventory_tooltip", app_state_inventory.get("inventory").get(0, {}), 0))
+		.contains("Item image #20"),
+		"without an enrichment entry the tooltip falls back to the image id")
+
 	_expect((main.call("_parse_item_list", "1158:20\n189:1") as Array).size() == 2,
 		"custom storage item lists parse image IDs and quantities")
 	var inventory_body: HBoxContainer = main.get_node(
@@ -497,8 +587,8 @@ func _run() -> void:
 		PackedByteArray([3, 0, 2, 0, 0, 0, 1, 2, 0]))
 	app_state_inventory.call("_on_packet", 35,
 		PackedByteArray([3, 0, 1, 0, 0, 0, 1, 2, 1]))
-	app_state_inventory.call("_on_packet", 36, PackedByteArray([0]))
-	app_state_inventory.call("_on_packet", 36, PackedByteArray([1]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 1]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([1, 1]))
 	main.call("_sync_trade")
 	var trade_state: Dictionary = app_state_inventory.get("trade") as Dictionary
 	var own_offers: Dictionary = trade_state.get("own_offers", {}) as Dictionary
@@ -539,6 +629,20 @@ func _run() -> void:
 	accumulated_offer = own_offers.get(2, {}) as Dictionary
 	_expect(int(accumulated_offer.get("quantity", 0)) == 1,
 		"partial offer removal preserves the remaining quantity")
+	# The acceptance phase is read off the wire, not counted. A duplicate accept
+	# must not advance the state machine, and a reordered pair must leave the
+	# client agreeing with the last phase the server actually reported.
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 1]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 1]))
+	_expect(int((app_state_inventory.get("trade") as Dictionary).get("own_accepts", -1)) == 1,
+		"a duplicated accept packet does not advance the acceptance phase")
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 2]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 1]))
+	_expect(int((app_state_inventory.get("trade") as Dictionary).get("own_accepts", -1)) == 1,
+		"an out-of-order accept leaves the client on the phase the server last reported")
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0, 2]))
+	_expect(int((app_state_inventory.get("trade") as Dictionary).get("own_accepts", -1)) == 2,
+		"the second acceptance phase is taken from the packet")
 	app_state_inventory.call("_on_packet", 37, PackedByteArray([0]))
 	_expect(int((app_state_inventory.get("trade") as Dictionary).get("own_accepts", -1)) == 0,
 		"trade rejection resets the correct acceptance side")
@@ -660,6 +764,17 @@ func _run() -> void:
 	_expect(ground_bag_panel.visible and ground_bag_items.item_count == 1
 		and root.get_visible_rect().encloses(ground_bag_panel.get_global_rect()),
 		"authoritative bag contents open within the reference viewport")
+	# Asking what is on the ground. The bag row carries an image id and a
+	# quantity, so the Look action is the only way to learn what it is.
+	var ground_look: Button = main.get_node(
+		"GameView/GroundBagPanel/Content/Actions/GroundBagLook") as Button
+	main.call("_sync_ground_bag_actions")
+	_expect(ground_look.disabled,
+		"the ground Look action needs something selected first")
+	ground_bag_items.select(0)
+	main.call("_on_ground_bag_item_selected", 0)
+	_expect(not ground_look.disabled,
+		"selecting a ground item offers to ask what it is")
 	app_state_inventory.call("_on_packet", 24,
 		PackedByteArray([4, 0, 9, 0, 0, 0, 5]))
 	var ground_bag_state: Dictionary = app_state_inventory.get("ground_bag") as Dictionary
@@ -692,7 +807,7 @@ func _run() -> void:
 	var first_inventory_slot: Button = main.get_node(
 		"GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Scroll/InventoryGrid").get_child(0) as Button
 	var first_quick_slot: Button = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/ItemSlots/Slot1") as Button
+		"GameView/ItemQuickbar/ItemSlots/Slot1") as Button
 	var first_equipment_slot: Button = main.get_node(
 		"GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn/EquipmentGrid").get_child(0) as Button
 	var first_quantity: Label = first_inventory_slot.get_node("Quantity") as Label
@@ -742,7 +857,7 @@ func _run() -> void:
 		"image_id": 59, "quantity": 1, "slot": 0, "flags": 6}})
 	main.call("_sync_spells")
 	var first_spell_slot: Button = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/SpellSlots/Spell1") as Button
+		"GameView/SpellQuickbar/SpellContent/SpellSlots/Spell1") as Button
 	_expect(not first_spell_slot.disabled,
 		"owned castable spell is enabled; tooltip=" + first_spell_slot.tooltip_text)
 	_expect(first_spell_slot.icon != null, "owned castable spell has its legacy icon")
@@ -891,13 +1006,763 @@ func _run() -> void:
 	root.size = original_window_size
 	await process_frame
 
+	# Perks and lifetime counters are authoritative server state. The client
+	# keeps no perk name table and no counter of its own.
+	var counter_categories: ItemList = main.get_node(
+		"GameView/StatsPanel/Content/StatsTabs/Counters/CounterColumns/CounterCategories") as ItemList
+	var counter_text: RichTextLabel = main.get_node(
+		"GameView/StatsPanel/Content/StatsTabs/Counters/CounterColumns/CounterText") as RichTextLabel
+	_expect(counter_categories.item_count == 0,
+		"the counter window ships with no locally invented categories")
+	var stats_text: RichTextLabel = main.get_node(
+		"GameView/StatsPanel/Content/StatsTabs/Statistics/StatsText") as RichTextLabel
+	# Drive the real signal path rather than calling the sync helpers directly,
+	# so a missing state_changed case would fail here.
+	var previously_authenticated: bool = bool(app_state_inventory.get("authenticated"))
+	app_state_inventory.set("authenticated", true)
+	app_state_inventory.set("stats", {"health": 10, "max_health": 10})
+	var perks_payload: PackedByteArray = PackedByteArray([1, 0, 1, 0xfb, 0xff])
+	perks_payload.append_array(_nul_bytes("Power Hungry"))
+	perks_payload.append_array(_nul_bytes("Lose 3 food per minute."))
+	app_state_inventory.call("_on_packet", 234, perks_payload)
+	var reduced_perks: Array = app_state_inventory.get("perks") as Array
+	_expect(reduced_perks.size() == 1
+		and str((reduced_perks[0] as Dictionary).get("name", "")) == "Power Hungry"
+		and bool((reduced_perks[0] as Dictionary).get("from_gear", false)),
+		"a perk the client has never heard of is still reduced and flagged")
+	_expect(stats_text.text.contains("Power Hungry")
+		and stats_text.text.contains("from equipment"),
+		"the statistics window presents the server's perks, not a scraped list")
+	app_state_inventory.call("_on_packet", 234, PackedByteArray([0, 0]))
+	_expect((app_state_inventory.get("perks") as Array).is_empty()
+		and not stats_text.text.contains("Power Hungry"),
+		"an empty perk packet clears the presented perks")
+
+	var counters_snapshot: PackedByteArray = PackedByteArray([1, 2, 4, 0, 0, 0])
+	counters_snapshot.append_array(_nul_bytes("Kills"))
+	counters_snapshot.append_array(PackedByteArray([7, 0, 0, 0]))
+	counters_snapshot.append_array(_nul_bytes("Harvests"))
+	app_state_inventory.call("_on_packet", 235, counters_snapshot)
+	_expect(counter_categories.item_count == 2
+		and counter_categories.get_item_text(0) == "Kills"
+		and counter_categories.get_item_text(1) == "Harvests",
+		"the counter category list is built from the server snapshot in its order")
+	main.call("_on_counter_category_selected", 1)
+	_expect(counter_text.text.contains("Harvests") and counter_text.text.contains("7"),
+		"selecting a category presents the server total")
+	var counter_delta: PackedByteArray = PackedByteArray([0, 1, 9, 0, 0, 0])
+	counter_delta.append_array(_nul_bytes("Harvests"))
+	app_state_inventory.call("_on_packet", 235, counter_delta)
+	_expect(int((app_state_inventory.get("activity_counters") as Dictionary).get(
+		"Harvests", -1)) == 9 and counter_categories.item_count == 2,
+		"a delta updates one total without disturbing the category list")
+	main.call("_reset_session_tracking")
+	main.call("_on_counter_category_selected", 1)
+	_expect(counter_text.text.contains("9"),
+		"resetting the session keeps the authoritative lifetime total")
+	var counter_after_reset: PackedByteArray = PackedByteArray([0, 1, 11, 0, 0, 0])
+	counter_after_reset.append_array(_nul_bytes("Harvests"))
+	app_state_inventory.call("_on_packet", 235, counter_after_reset)
+	_expect(counter_text.text.contains("11"),
+		"the session column is a difference against the server total, not a second count")
+	app_state_inventory.set("authenticated", previously_authenticated)
+
+	# Protocol diagnostics. Every undecoded packet and decode error used to be
+	# reduced into AppState and emitted with no listener at all, which is how
+	# most of the gaps in this client went unnoticed.
+	var console_panel: Control = main.get_node("GameView/ConsolePanel") as Control
+	var console_output: RichTextLabel = main.get_node(
+		"GameView/ConsolePanel/Content/ConsoleOutput") as RichTextLabel
+	var diagnostics_button: Button = main.get_node(
+		"GameView/ConsolePanel/Content/Header/ConsoleDiagnostics") as Button
+	var diagnostics_output: RichTextLabel = main.get_node(
+		"GameView/ConsolePanel/Content/DiagnosticsOutput") as RichTextLabel
+	_expect(diagnostics_button.toggle_mode and not diagnostics_output.visible
+		and console_output.visible,
+		"the console opens on its message history with diagnostics one click away")
+	main.call("_toggle_console")
+	diagnostics_button.button_pressed = true
+	await process_frame
+	_expect(diagnostics_output.visible and not console_output.visible,
+		"the diagnostics view replaces the message history in the console panel")
+	_expect(diagnostics_output.text.contains("none"),
+		"a clean session reports no undecoded opcodes and no decode errors")
+	# 199 is not a server opcode this client knows; 36 with a one-byte payload
+	# is the pre-0.6 trade accept, which must now fail to decode.
+	app_state_inventory.call("_on_packet", 199, PackedByteArray([1, 2, 3]))
+	app_state_inventory.call("_on_packet", 199, PackedByteArray([4]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0]))
+	await process_frame
+	_expect(diagnostics_output.text.contains("199")
+		and diagnostics_output.text.contains("x2"),
+		"an undecoded opcode is listed once with the number of times it arrived")
+	_expect(diagnostics_output.text.contains("trade_accept_length"),
+		"a decode error names the packet and the failure")
+	_expect(int(app_state_inventory.get("unknown_packet_count")) == 2
+		and (app_state_inventory.get("unknown_packets") as Dictionary).size() == 1,
+		"the same unknown opcode is counted, not re-listed")
+	# The panel has to work before login: a handshake decode failure is exactly
+	# what it exists to show, and the state-changed handler gates everything else on
+	# an authenticated session.
+	_expect(not bool(app_state_inventory.get("authenticated")),
+		"the diagnostics assertions above ran on an unauthenticated session")
+	root.size = Vector2i(1280, 720)
+	await process_frame
+	main.call("_on_window_size_changed")
+	await process_frame
+	var console_rect: Rect2 = console_panel.get_global_rect()
+	_expect(console_rect.position.x >= 0.0 and console_rect.position.y >= 0.0
+		and console_rect.end.x <= 1280.0 and console_rect.end.y <= 720.0,
+		"the console panel with diagnostics still fits within 1280x720")
+	_expect(not console_rect.intersects(right_stats.get_global_rect()),
+		"the console panel with diagnostics does not cover the fixed resource rail")
+	var console_escape: InputEventKey = InputMap.action_get_events(
+		"cancel")[0].duplicate() as InputEventKey
+	console_escape.pressed = true
+	main.call("_input", console_escape)
+	_expect(not console_panel.visible,
+		"the console panel with diagnostics open still answers the cancel cascade")
+	diagnostics_button.button_pressed = false
+	await process_frame
+
+	# Decoded fields with a consumer: research progress and cooldown art.
+	app_state_inventory.set("stats", {"health": 10, "max_health": 10,
+		"researching": 1024, "research_completed": 0, "research_total": 0})
+	main.call("_sync_stats")
+	_expect(stats_text.text.contains("Researching")
+		and stats_text.text.contains("nothing"),
+		"a character reading nothing says so instead of hiding the field")
+	app_state_inventory.set("stats", {"health": 10, "max_health": 10,
+		"researching": 0, "research_completed": 30, "research_total": 120})
+	main.call("_sync_stats")
+	_expect(stats_text.text.contains("30/120") and stats_text.text.contains("25%"),
+		"reading progress is presented from the authoritative research statistics")
+
+	var cooldown_slot: Button = (main.get("quick_slot_buttons") as Array)[0] as Button
+	var cooldowns: Dictionary = app_state_inventory.get("inventory_cooldowns") as Dictionary
+	cooldowns.clear()
+	main.call("_update_cooldown_overlays")
+	var cooldown_overlay: Control = cooldown_slot.get_node_or_null("Cooldown") as Control
+	_expect(cooldown_overlay != null and not cooldown_overlay.visible,
+		"a slot with no cooldown draws no cooldown art")
+	cooldowns[0] = {"maximum_msec": 10000,
+		"end_msec": Time.get_ticks_msec() + 10000}
+	main.call("_update_cooldown_overlays")
+	_expect(cooldown_overlay.visible
+		and is_equal_approx(snappedf(cooldown_overlay.anchor_top, 0.05), 0.0),
+		"a cooldown at its full duration covers the whole slot")
+	cooldowns[0] = {"maximum_msec": 10000,
+		"end_msec": Time.get_ticks_msec() + 2500}
+	main.call("_update_cooldown_overlays")
+	_expect(is_equal_approx(snappedf(cooldown_overlay.anchor_top, 0.05), 0.75),
+		"a quarter-remaining cooldown draws a quarter of the slot")
+	_expect((cooldown_overlay.get_node("Seconds") as Label).text == "3",
+		"the cooldown art also states the seconds remaining")
+	cooldowns[0] = {"maximum_msec": 10000, "end_msec": Time.get_ticks_msec() - 1}
+	main.call("_update_cooldown_overlays")
+	_expect(not cooldown_overlay.visible, "an expired cooldown clears its art")
+	cooldowns.clear()
+
+	# Server popups. The server had no way to ask the player anything: the
+	# packet fell through to "unknown" and the reply had no encoder.
+	var popup_panel: PanelContainer = main.get_node(
+		"GameView/PopupPanel") as PanelContainer
+	var popup_options: VBoxContainer = main.get_node(
+		"GameView/PopupPanel/PopupContent/PopupOptions") as VBoxContainer
+	var popup_confirm: Button = main.get_node(
+		"GameView/PopupPanel/PopupContent/PopupActions/PopupConfirm") as Button
+	var full_map: Control = main.get_node("GameView/FullMap") as Control
+	_expect(not popup_panel.visible, "the popup window starts closed")
+	var radio_popup: PackedByteArray = PackedByteArray([0, 0, 0])
+	radio_popup.append_array(_sized_bytes("Summon Behavior"))
+	radio_popup.append_array(PackedByteArray([0x68, 0x01]))
+	radio_popup.append_array(_sized_bytes("Choose how your summons pick targets."))
+	radio_popup.append_array(PackedByteArray([9, 1]))
+	radio_popup.append_array(_sized_bytes("Weakest first"))
+	radio_popup.append(0)
+	radio_popup.append_array(PackedByteArray([9, 1]))
+	radio_popup.append_array(_sized_bytes("Strongest first"))
+	radio_popup.append(1)
+	app_state_inventory.set("authenticated", true)
+	console_panel.show()
+	full_map.show()
+	app_state_inventory.call("_on_packet", 83, radio_popup)
+	await process_frame
+	_expect(popup_panel.visible and not console_panel.visible and not full_map.visible,
+		"a popup is modal: it opens and closes the panels underneath it")
+	_expect(popup_confirm.visible,
+		"a popup with radio options gets a send button, as the legacy contract requires")
+	var checkboxes: Array[CheckBox] = []
+	for child: Node in popup_options.get_children():
+		if child is CheckBox:
+			checkboxes.append(child as CheckBox)
+	_expect(checkboxes.size() == 2
+		and checkboxes[0].text == "Weakest first"
+		and checkboxes[1].text == "Strongest first",
+		"both radio options are presented with their server labels")
+	checkboxes[0].button_pressed = true
+	checkboxes[1].button_pressed = true
+	await process_frame
+	_expect(not checkboxes[0].button_pressed and checkboxes[1].button_pressed,
+		"one selection per group: the wire carries exactly one answer per group")
+	_expect(int((main.get("_popup_radio_groups") as Dictionary).get(1, -1)) == 1,
+		"the selected radio value is the server's value, not the button index")
+	var popup_rect: Rect2 = popup_panel.get_global_rect()
+	_expect(popup_rect.position.x >= 0.0 and popup_rect.position.y >= 0.0
+		and popup_rect.end.x <= 1280.0 and popup_rect.end.y <= 720.0,
+		"the popup fits within 1280x720")
+	_expect(not popup_rect.intersects(right_stats.get_global_rect()),
+		"the popup does not cover the fixed resource rail")
+	# The cancel cascade: a modal popup answers Escape before anything under it.
+	var popup_escape: InputEventKey = InputMap.action_get_events(
+		"cancel")[0].duplicate() as InputEventKey
+	popup_escape.pressed = true
+	main.call("_unhandled_input", popup_escape)
+	await process_frame
+	_expect(not popup_panel.visible
+		and not bool((app_state_inventory.get("popup") as Dictionary).get("open", true)),
+		"cancel dismisses the popup")
+
+	# A popup built only from text options answers on the click itself.
+	var action_popup: PackedByteArray = PackedByteArray([5, 0, 0])
+	action_popup.append_array(_sized_bytes("Confirm"))
+	action_popup.append_array(PackedByteArray([0x2c, 0x01]))
+	action_popup.append_array(_sized_bytes("Really?"))
+	action_popup.append_array(PackedByteArray([8, 3]))
+	action_popup.append_array(_sized_bytes("Yes"))
+	action_popup.append(1)
+	app_state_inventory.call("_on_packet", 83, action_popup)
+	await process_frame
+	_expect(popup_panel.visible and not popup_confirm.visible,
+		"a popup of text options only needs no send button")
+	# The same popup arriving twice must not reopen or duplicate its options.
+	var option_count: int = popup_options.get_child_count()
+	app_state_inventory.call("_on_packet", 83, action_popup)
+	await process_frame
+	_expect(popup_options.get_child_count() == option_count,
+		"a repeated popup for an id already on screen is ignored")
+	for child: Node in popup_options.get_children():
+		if child is Button:
+			(child as Button).pressed.emit()
+			break
+	await process_frame
+	# There is no connection in this suite, so the reply could not be sent. The
+	# popup must stay open rather than pretending the server was answered; the
+	# close-on-success path is proved against a real server in
+	# tests/integration/popup_local.py.
+	_expect(popup_panel.visible
+		and bool((app_state_inventory.get("popup") as Dictionary).get("open", false)),
+		"an answer that could not be sent leaves the popup open")
+	app_state_inventory.call("close_popup")
+	await process_frame
+	_expect(not popup_panel.visible, "closing the popup state closes the window")
+	app_state_inventory.set("authenticated", false)
+	console_panel.hide()
+	full_map.hide()
+
+	# Harvesting and world-object interaction. The world click handler tried
+	# actors, then ground bags, then the navigation surface, and stopped: no
+	# rendered prop was ever clickable, so the whole harvestable layer and
+	# every interactive were unreachable.
+	var harvest_banner: Label = main.get_node("GameView/HarvestBanner") as Label
+	_expect(not harvest_banner.visible, "the harvesting indicator starts hidden")
+	var objects_payload: PackedByteArray = PackedByteArray([1, 2, 0])
+	objects_payload.append_array(PackedByteArray([
+		0xf0, 0x01, EloriaProtocol.MAP_OBJECT_HARVEST, 0x02, 0x03, 0xe1, 0x01]))
+	objects_payload.append_array(_nul_bytes("Mirror Reed"))
+	objects_payload.append_array(_nul_bytes("Harvesting level 0"))
+	objects_payload.append_array(PackedByteArray([
+		0x0e, 0x00, EloriaProtocol.MAP_OBJECT_INTERACTIVE, 0x00, 0x03, 0x90, 0x05]))
+	objects_payload.append_array(_nul_bytes("Storage"))
+	objects_payload.append_array(_nul_bytes("A wayfarer's cache."))
+	app_state_inventory.set("authenticated", true)
+	app_state_inventory.call("_on_packet", 236, objects_payload)
+	await process_frame
+	var object_nodes: Dictionary = main.get("map_object_nodes") as Dictionary
+	_expect(object_nodes.size() == 2,
+		"every server world object becomes a pick target in the scene")
+	var harvest_node: MapObject3D = object_nodes.get(496) as MapObject3D
+	var interactive_node: MapObject3D = object_nodes.get(14) as MapObject3D
+	_expect(harvest_node != null and harvest_node.is_harvestable()
+		and interactive_node != null and not interactive_node.is_harvestable(),
+		"harvest nodes and interactives are told apart by the server's kind")
+	_expect(harvest_node != null
+		and harvest_node.collision_layer == MapObject3D.PICK_LAYER
+		and harvest_node.collision_layer != GroundBag3D.PICK_LAYER,
+		"world objects pick on their own layer, not the ground-bag layer")
+	_expect(harvest_node != null
+		and harvest_node.get_node_or_null("MapMarker") != null,
+		"a world object is visible on both map cameras")
+	_expect(harvest_node != null and harvest_node.server_tile == Vector2i(770, 481),
+		"the pick target sits on the tile the server named")
+
+	# The harvest indicator follows the authoritative state, not a chat phrase.
+	var started: PackedByteArray = PackedByteArray([1, 0xf0, 0x01])
+	started.append_array(_nul_bytes("Mirror Reed"))
+	app_state_inventory.call("_on_packet", 237, started)
+	await process_frame
+	_expect(harvest_banner.visible and harvest_banner.text.contains("Mirror Reed"),
+		"the harvesting indicator names the resource the server reported")
+	_expect(harvest_banner.get_global_rect().end.y <= 720.0
+		and harvest_banner.get_global_rect().position.y >= 0.0,
+		"the harvesting indicator fits within 1280x720")
+	_expect(not harvest_banner.get_global_rect().intersects(
+		right_stats.get_global_rect()),
+		"the harvesting indicator does not cover the fixed resource rail")
+	app_state_inventory.call("_on_packet", 237, PackedByteArray([0, 0, 0, 0]))
+	await process_frame
+	_expect(not harvest_banner.visible,
+		"a server stop - moving, a full backpack, combat - clears the indicator")
+
+	# Effects the server announced. They are events, not state: each draws
+	# itself where the actor stands and frees itself when it finishes.
+	app_state_inventory.call("_on_packet", 51, _hex_bytes(
+		"5b000203e1010000000001000001020304050b001e14071400120001416c696365"
+		+ "000040ff0600"))
+	await process_frame
+	main.call("_sync_world")
+	await process_frame
+	app_state_inventory.call("_on_packet", 79, PackedByteArray([17, 0x5b, 0]))
+	await process_frame
+	var effects: Array = main.get("world_effects") as Array
+	_expect(effects.size() == 1
+		and (effects[0] as WorldEffect3D).effect_id == 17,
+		"the effect the server announced is drawn")
+	_expect((effects[0] as WorldEffect3D).get_node_or_null("EffectBeam") == null,
+		"an effect with no second actor draws no beam")
+	var effect_burst: GPUParticles3D = (effects[0] as WorldEffect3D
+		).get_node_or_null("EffectBurst") as GPUParticles3D
+	_expect(effect_burst != null and effect_burst.amount > 0
+		and effect_burst.one_shot and effect_burst.process_material != null
+		and effect_burst.draw_pass_1 != null,
+		"the effect is a particle burst, not a bare ring")
+	# A harmful effect falls and a beneficial one rises: the one distinction
+	# the server's own grouping supports.
+	app_state_inventory.call("_on_packet", 79, PackedByteArray([1, 0x5b, 0]))
+	await process_frame
+	var blessing: Array = main.get("world_effects") as Array
+	var blessing_burst: GPUParticles3D = (blessing[blessing.size() - 1]
+		as WorldEffect3D).get_node_or_null("EffectBurst") as GPUParticles3D
+	var harm_material: ParticleProcessMaterial = (effect_burst.process_material
+		as ParticleProcessMaterial)
+	var blessing_material: ParticleProcessMaterial = (
+		blessing_burst.process_material as ParticleProcessMaterial)
+	_expect(harm_material.gravity.y > 0.0 and blessing_material.gravity.y < 0.0,
+		"the two classes move differently rather than sharing one burst")
+	_expect(not harm_material.color.is_equal_approx(blessing_material.color),
+		"and they are told apart by colour")
+	# An actor the client has never been told about has no position.
+	var known_effects: int = (main.get("world_effects") as Array).size()
+	app_state_inventory.call("_on_packet", 79, PackedByteArray([2, 0xff, 0x7f]))
+	await process_frame
+	_expect((main.get("world_effects") as Array).size() == known_effects,
+		"an effect at an unknown actor is not guessed at a position")
+	app_state_inventory.call("_on_packet", 6, PackedByteArray([0x5b, 0]))
+	await process_frame
+
+	# Guild tags. The tag arrives inside the actor's display name, so a client
+	# that takes the whole string as a name shows the tag as part of it.
+	app_state_inventory.call("_on_packet", 51, _hex_bytes(
+		"5b000203e1010000000001000001020304050b001e14071400120001416c6963652083"
+		+ "454c4f000040ff0600"))
+	await process_frame
+	main.call("_sync_world")
+	await process_frame
+	var tagged_actor: Dictionary = (app_state_inventory.get("actors")
+		as Dictionary).get(91, {}) as Dictionary
+	_expect(str(tagged_actor.get("name", "")) == "Alice"
+		and str(tagged_actor.get("guild_tag", "")) == "ELO",
+		"the reducer keeps the name and the tag apart")
+	var tagged_node: Node3D = (main.get("actor_nodes")
+		as Dictionary).get(91) as Node3D
+	var plate: Label3D = (tagged_node.get_node_or_null("Nameplate")
+		as Label3D) if tagged_node != null else null
+	_expect(plate != null and plate.text.contains("Alice")
+		and plate.text.contains("[ELO]"),
+		"the nameplate draws the tag as a tag: "
+			+ (plate.text if plate != null else "no nameplate"))
+	app_state_inventory.call("_on_packet", 6, PackedByteArray([91, 0]))
+	await process_frame
+
+	# Twelve spell quick slots, and the sigils window that says why a spell is
+	# out of reach. Ownership is the server's; the names are the catalog's.
+	_expect((main.get("spell_slot_buttons") as Array).size() == 12,
+		"the quickbar has twelve spell slots, not six")
+	for slot: int in range(1, 13):
+		_expect(InputMap.has_action("quick_spell_%d" % slot),
+			"quick_spell_%d is a rebindable action" % slot)
+	var sigils: Control = main.get("sigil_window") as Control
+	var sigil_panel: PanelContainer = sigils.get_node("SigilWindow") as PanelContainer
+	_expect(not sigil_panel.visible, "the sigils window starts closed")
+	# The server states the owned set; two sigils here, from a real packet.
+	app_state_inventory.call("_on_packet", 42, PackedByteArray([
+		0x0a, 0x00, 0x08, 0x00, 0, 0, 0, 0]))
+	main.call("_on_sigil_button_pressed")
+	await process_frame
+	_expect(sigil_panel.visible, "the button opens it")
+	var sigil_list: ItemList = sigils.get_node(
+		"SigilWindow/SigilBody/SigilColumns/SigilList") as ItemList
+	_expect(sigil_list.item_count == 26,
+		"every sigil the catalog names is listed: %d" % sigil_list.item_count)
+	var owned_rows: Array[String] = []
+	for index: int in range(sigil_list.item_count):
+		if not sigil_list.is_item_disabled(index):
+			owned_rows.append(sigil_list.get_item_text(index))
+	_expect(owned_rows.size() == 3,
+		"exactly the sigils the server sent are marked owned: %s" % str(owned_rows))
+	var sigil_summary: RichTextLabel = sigils.get_node(
+		"SigilWindow/SigilBody/SigilColumns/SigilSummary") as RichTextLabel
+	_expect(sigil_summary.text.contains("3 of 26")
+		and sigil_summary.text.contains("needs"),
+		"the summary counts what is owned and names what each spell still needs")
+	var sigil_rect: Rect2 = sigil_panel.get_global_rect()
+	_expect(sigil_rect.position.x >= 0.0 and sigil_rect.end.x <= 1280.0
+		and sigil_rect.end.y <= 720.0
+		and not sigil_rect.intersects(right_stats.get_global_rect()),
+		"the sigils window fits 1280x720 clear of the resource rail")
+	var sigil_cancel: InputEventKey = InputMap.action_get_events(
+		"cancel")[0].duplicate() as InputEventKey
+	sigil_cancel.pressed = true
+	main.call("_unhandled_input", sigil_cancel)
+	await process_frame
+	_expect(not sigil_panel.visible, "cancel closes the sigils window")
+
+	# Spell power. Both the preferred power and the ceiling are the server's;
+	# the client asks for a power and never works a limit out from a level.
+	var power_value: Label = main.get_node(
+		"GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerValue") as Label
+	var power_up: Button = main.get_node(
+		"GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerUp") as Button
+	var power_down: Button = main.get_node(
+		"GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerDown") as Button
+	main.call("_sync_spells")
+	await process_frame
+	_expect(power_value.text == "P1" and power_up.disabled and power_down.disabled,
+		"with no stated limit the stepper offers nothing to choose")
+	_expect(int(main.call("_cast_power_for", 3)) == 0,
+		"a cast with no stated limit sends the legacy frame, with no power byte")
+	# shield: preferred 1 of 4; heal: preferred 3 of 3.
+	var power_payload := PackedByteArray([2, 0, 1, 4])
+	power_payload.append_array(_nul_bytes("shield"))
+	power_payload.append_array(PackedByteArray([3, 3]))
+	power_payload.append_array(_nul_bytes("heal"))
+	app_state_inventory.call("_on_packet", 231, power_payload)
+	await process_frame
+	_expect(not power_up.disabled and power_down.disabled,
+		"the stepper opens up to the highest limit the server stated")
+	main.call("_on_spell_power_up_pressed")
+	main.call("_on_spell_power_up_pressed")
+	main.call("_on_spell_power_up_pressed")
+	main.call("_on_spell_power_up_pressed")
+	await process_frame
+	_expect(power_value.text == "P4" and power_up.disabled,
+		"the stepper stops at the server's ceiling: " + power_value.text)
+	_expect(int(main.call("_cast_power_for", 3)) == 4
+		and int(main.call("_cast_power_for", 0)) == 3,
+		"each cast is clamped to the limit the server stated for its effect")
+	var shield_tooltip: String = str(main.call("_spell_tooltip",
+		main.get("spell_catalog").call("spell", 3), [] as Array[String], 0))
+	_expect(shield_tooltip.contains("Power 4 of 4"),
+		"the spell tooltip states the power and the ceiling: " + shield_tooltip)
+	main.call("_on_spell_power_down_pressed")
+	main.call("_on_spell_power_down_pressed")
+	main.call("_on_spell_power_down_pressed")
+	await process_frame
+	_expect(power_value.text == "P1" and power_down.disabled,
+		"the stepper stops at one")
+
+	# Active effects. The server states which buffs are on and for how long;
+	# the strip counts down to the moment it stated and shows nothing else.
+	var buff_bar: Control = main.get("active_buff_bar") as Control
+	var buff_row: HBoxContainer = buff_bar.get_node("ActiveBuffRow") as HBoxContainer
+	_expect(buff_row.get_child_count() == 0, "the effect strip starts empty")
+	# Buff 0 for 128 seconds, then buff 22 for 90.
+	app_state_inventory.call("_on_packet", 44, PackedByteArray([0, 128]))
+	app_state_inventory.call("_on_packet", 44, PackedByteArray([22, 90]))
+	await process_frame
+	_expect((buff_bar.call("shown_buff_ids") as Array) == [0, 22],
+		"both effects the server reported are on the strip")
+	var first: Control = buff_row.get_child(0) as Control
+	_expect((first.get_node("BuffName") as Label).text == "Shield"
+		and (first.get_node("BuffRemaining") as Label).text == "128s"
+		and (first.get_node("BuffIcon") as TextureRect).texture != null,
+		"an effect is named, iconned and counted down from the server's duration")
+	var strip_rect: Rect2 = buff_row.get_global_rect()
+	_expect(strip_rect.position.x >= 0.0 and strip_rect.position.y >= 0.0
+		and strip_rect.end.x <= 1280.0 and strip_rect.end.y <= 720.0
+		and not strip_rect.intersects(right_stats.get_global_rect()),
+		"the effect strip fits 1280x720 clear of the resource rail: %s" % strip_rect)
+	app_state_inventory.call("_on_packet", 46, PackedByteArray([0]))
+	await process_frame
+	_expect((buff_bar.call("shown_buff_ids") as Array) == [22],
+		"the server removing an effect takes it off the strip")
+	# A resync list restates the whole set without durations.
+	app_state_inventory.call("_on_packet", 45, PackedByteArray([
+		1, 3, 255, 255, 255, 255, 255, 255, 255, 255]))
+	await process_frame
+	_expect((buff_bar.call("shown_buff_ids") as Array) == [1, 3]
+		and (buff_row.get_child(0).get_node("BuffRemaining") as Label).text.is_empty(),
+		"a resync replaces the set, and states no time to count down")
+	# An effect whose stated time has run out leaves without another packet.
+	app_state_inventory.call("_on_packet", 46, PackedByteArray([1]))
+	app_state_inventory.call("_on_packet", 46, PackedByteArray([3]))
+	app_state_inventory.call("_on_packet", 44, PackedByteArray([0, 0]))
+	await process_frame
+	await process_frame
+	_expect((buff_bar.call("shown_buff_ids") as Array).is_empty(),
+		"an effect the server said would last no time is not shown as active")
+
+	# Looking at another player. The reply is one packet that names the actor,
+	# so the window is the server's answer rather than a request the client
+	# remembered making.
+	var info_layer: Control = main.get("player_info_panel") as Control
+	var info_panel: PanelContainer = info_layer.get_node("PlayerInfo") as PanelContainer
+	_expect(not info_panel.visible, "the player-info window starts closed")
+	var described := PackedByteArray([0x5b, 0x00, 0x01, 0x00])
+	described.append_array(_nul_bytes("Alice"))
+	described.append_array(_nul_bytes("Beginner Tutorial"))
+	app_state_inventory.call("_on_packet", 228, described)
+	await process_frame
+	_expect(info_panel.visible
+		and (info_layer.get("title") as Label).text == "Alice"
+		and (info_layer.get("body") as RichTextLabel).text.contains(
+			"Beginner Tutorial"),
+		"the window names the player the server described and what they earned")
+	var info_rect: Rect2 = info_panel.get_global_rect()
+	_expect(info_rect.position.x >= 0.0 and info_rect.position.y >= 0.0
+		and info_rect.end.x <= 1280.0 and info_rect.end.y <= 720.0
+		and not info_rect.intersects(right_stats.get_global_rect()),
+		"the player-info window fits 1280x720 clear of the resource rail: %s"
+			% info_rect)
+	var cancel_event: InputEventKey = InputMap.action_get_events(
+		"cancel")[0].duplicate() as InputEventKey
+	cancel_event.pressed = true
+	main.call("_unhandled_input", cancel_event)
+	await process_frame
+	_expect(not info_panel.visible,
+		"cancel closes the player-info window like every other panel")
+	var empty := PackedByteArray([0x5b, 0x00, 0x00, 0x00])
+	empty.append_array(_nul_bytes("Alice"))
+	app_state_inventory.call("_on_packet", 228, empty)
+	await process_frame
+	_expect(info_panel.visible
+		and not (info_layer.get("body") as RichTextLabel).text.contains(
+			"Beginner Tutorial"),
+		"a player with nothing earned is described as such, not left stale")
+	app_state_inventory.call("close_player_info")
+	await process_frame
+
+	# The console's own commands, routed through the real chat submit path.
+	var chat_input_line: LineEdit = main.get_node("GameView/ChatInput") as LineEdit
+	var chat_lines_before: int = (app_state_inventory.get("chat_lines") as Array).size()
+	main.call("_on_chat_submitted", "#help")
+	await process_frame
+	_expect((app_state_inventory.get("chat_lines") as Array).size()
+			> chat_lines_before
+		and chat_input_line.text.is_empty(),
+		"a command the client answers writes its reply locally and clears the box")
+	main.call("_on_chat_submitted", "#markpos 770 481 Reed bank")
+	await process_frame
+	var console: ConsoleCommands = main.get("console_commands") as ConsoleCommands
+	_expect(console.marks.size() == 1,
+		"the mark the player made is kept by the client")
+	var overlay_marks: Array = (main.get("map_marker_overlay")
+		as Control).get("_player_marks") as Array
+	_expect(overlay_marks.size() <= 1,
+		"the player's marks reach the map overlay, filtered by map")
+	# History and completion.
+	chat_input_line.text = "#mar"
+	main.call("_complete_console_command")
+	_expect(chat_input_line.text == "#mark",
+		"tab completes as far as the commands agree: " + chat_input_line.text)
+	main.call("_recall_console_history", -1)
+	_expect(chat_input_line.text == "#markpos 770 481 Reed bank",
+		"up recalls the last line sent: " + chat_input_line.text)
+	main.call("_recall_console_history", 1)
+	_expect(chat_input_line.text.is_empty(),
+		"and down returns to an empty box")
+	main.call("_on_chat_submitted", "#unmark Reed bank")
+	await process_frame
+
+	# Map markers. The server places every one of them and takes every one of
+	# them away; nothing here decides a marker has been reached.
+	var here: String = EloriaProtocol.map_id_from_reference(
+		str(app_state_inventory.get("current_map")))
+	var marker_payload := PackedByteArray([0xea, 0x01, 0x0c, 0x03, 0xe1, 0x01])
+	marker_payload.append_array(_nul_bytes("./maps/%s.elm" % here))
+	marker_payload.append_array(_nul_bytes("Reed bank"))
+	app_state_inventory.call("_on_packet", 90, marker_payload)
+	var elsewhere := PackedByteArray([0xeb, 0x01, 0x10, 0x00, 0x20, 0x00])
+	elsewhere.append_array(_nul_bytes("./maps/somewhere_else.elm"))
+	elsewhere.append_array(_nul_bytes("Another map"))
+	app_state_inventory.call("_on_packet", 90, elsewhere)
+	await process_frame
+	var marker_nodes: Dictionary = main.get("map_marker_nodes") as Dictionary
+	_expect((app_state_inventory.get("map_markers") as Dictionary).size() == 2
+		and marker_nodes.size() == 1 and marker_nodes.has(490),
+		"a marker for another map is held but not drawn here")
+	var placed: MapMarker3D = marker_nodes.get(490) as MapMarker3D
+	_expect(placed != null and placed.server_tile == Vector2i(780, 481)
+		and placed.label == "Reed bank",
+		"the marker sits on the tile the server named, with its label")
+	var pin: MeshInstance3D = (placed.get_node_or_null("Pin")
+		as MeshInstance3D) if placed != null else null
+	_expect(pin != null and pin.layers == MapMarker3D.MAP_MARKER_LAYER,
+		"a marker draws on the map cameras rather than over the gameplay view")
+	var marker_sidebar: RichTextLabel = main.get_node(
+		"GameView/FullMap/MapLayout/Sidebar/SidebarContent/MapMarkerList") as RichTextLabel
+	_expect(marker_sidebar.visible and marker_sidebar.text.contains("Reed bank")
+		and marker_sidebar.text.contains("780") and marker_sidebar.text.contains("481"),
+		"the map sidebar names the marker and its tile, which no pin drawn at"
+			+ " full-map scale could: " + marker_sidebar.text)
+	var overlay: Control = main.get("map_marker_overlay") as Control
+	_expect((overlay.get("_markers") as Array).size() == 1,
+		"the full-map overlay is given the markers for this map and no others")
+	app_state_inventory.call("_on_packet", 91, PackedByteArray([0xea, 0x01]))
+	await process_frame
+	_expect((app_state_inventory.get("map_markers") as Dictionary).size() == 1
+		and (main.get("map_marker_nodes") as Dictionary).is_empty()
+		and not marker_sidebar.visible
+		and (overlay.get("_markers") as Array).is_empty(),
+		"the server takes a marker away and the pin, the list and the overlay"
+			+ " entry all go with it")
+
+	# A map change discards the previous map's objects rather than leaving
+	# pick targets from somewhere else standing in the new world.
+	app_state_inventory.call("_on_packet", 7, _nul_bytes("maps/nymara/mirrorhold.elm"))
+	await process_frame
+	_expect((app_state_inventory.get("map_objects") as Dictionary).is_empty()
+		and not bool((app_state_inventory.get("harvest") as Dictionary).get("active", true)),
+		"a map change clears the world objects and the harvesting state")
+	app_state_inventory.set("authenticated", false)
+
+	# Books. Reading is the other half of the knowledge loop: the catalog, the
+	# ownership bitset and the detail pane all worked, but a player could not
+	# see that they were reading anything, and the manufacturing resolver
+	# reported "unread knowledge" as a blocking reason it had no way to clear.
+	var reading_panel: PanelContainer = main.get_node(
+		"GameView/ReadingPanel") as PanelContainer
+	var reading_title: Label = main.get_node(
+		"GameView/ReadingPanel/ReadingContent/ReadingHeader/ReadingTitle") as Label
+	var reading_progress: ProgressBar = main.get_node(
+		"GameView/ReadingPanel/ReadingContent/ReadingProgress") as ProgressBar
+	var reading_detail: RichTextLabel = main.get_node(
+		"GameView/ReadingPanel/ReadingContent/ReadingDetail") as RichTextLabel
+	app_state_inventory.set("authenticated", true)
+	_expect(not reading_panel.visible, "the reading window starts closed")
+	# Partial statistics 47/65/66: the book being read, pages done, pages total.
+	app_state_inventory.call("_on_packet", 49, PackedByteArray([
+		47, 0, 0, 0, 0, 65, 150, 0, 0, 0, 66, 88, 2, 0, 0]))
+	await process_frame
+	var reading_state: Dictionary = app_state_inventory.get("reading") as Dictionary
+	_expect(bool(reading_state.get("active", false))
+		and int(reading_state.get("index", -1)) == 0
+		and int(reading_state.get("pages_read", 0)) == 150
+		and int(reading_state.get("pages_total", 0)) == 600,
+		"reading progress is reduced from the authoritative research statistics")
+	_expect(reading_panel.visible and reading_title.text.begins_with("Reading ")
+		and reading_detail.text.contains("150 of 600")
+		and reading_detail.text.contains("25%"),
+		"the reading window names the book and its progress: " + reading_title.text)
+	_expect(is_equal_approx(reading_progress.value, 150.0)
+		and is_equal_approx(reading_progress.max_value, 600.0),
+		"the progress bar is driven by the server's page counts")
+	var reading_rect: Rect2 = reading_panel.get_global_rect()
+	_expect(reading_rect.position.x >= 0.0 and reading_rect.position.y >= 0.0
+		and reading_rect.end.x <= 1280.0 and reading_rect.end.y <= 720.0,
+		"the reading window fits within 1280x720")
+	_expect(not reading_rect.intersects(right_stats.get_global_rect()),
+		"the reading window does not cover the fixed resource rail")
+
+	# A recipe gated on that knowledge is blocked until the bit arrives.
+	var manufacturing: RefCounted = main.get("manufacturing_catalog") as RefCounted
+	var gated_index: int = -1
+	for recipe_index: int in range(200):
+		var definition: Dictionary = manufacturing.call("recipe", recipe_index) as Dictionary
+		if definition.is_empty():
+			break
+		if int(definition.get("knowledgeIndex", -1)) == 0:
+			gated_index = recipe_index
+			break
+	if gated_index >= 0:
+		var known: Array[int] = []
+		var blocked: Dictionary = manufacturing.call("availability", gated_index,
+			{}, known, {"food": 10, "ether": 10}) as Dictionary
+		var unblocked_known: Array[int] = [0]
+		var unblocked: Dictionary = manufacturing.call("availability", gated_index,
+			{}, unblocked_known, {"food": 10, "ether": 10}) as Dictionary
+		var blocked_reasons: Array = blocked.get("reasons", []) as Array
+		var unblocked_reasons: Array = unblocked.get("reasons", []) as Array
+		var had_knowledge_reason := false
+		for reason: Variant in blocked_reasons:
+			if str(reason).begins_with("Unread knowledge"):
+				had_knowledge_reason = true
+		var still_has_knowledge_reason := false
+		for reason: Variant in unblocked_reasons:
+			if str(reason).begins_with("Unread knowledge"):
+				still_has_knowledge_reason = true
+		_expect(had_knowledge_reason and not still_has_knowledge_reason,
+			"the knowledge that finishing a book grants clears the recipe's block")
+
+	# Finishing: the server reports reading nothing, and the knowledge bit
+	# arrives as its own packet rather than being assumed from completion.
+	app_state_inventory.call("_on_packet", 56, PackedByteArray([0, 0]))
+	app_state_inventory.call("_on_packet", 49, PackedByteArray([
+		47, 0, 4, 0, 0, 65, 0, 0, 0, 0, 66, 0, 0, 0, 0]))
+	await process_frame
+	_expect(not bool((app_state_inventory.get("reading") as Dictionary).get("active", true)),
+		"the reading state clears when the server reports reading nothing")
+	_expect(reading_panel.visible and reading_title.text.begins_with("Finished ")
+		and reading_detail.text.contains("Knowledge gained"),
+		"finishing a book reports the knowledge it granted")
+	_expect((app_state_inventory.get("known_knowledge") as Array).has(0),
+		"the knowledge bit is set from the server packet, not inferred")
+	main.call("_on_reading_close_pressed")
+	_expect(not reading_panel.visible, "the reading window can be dismissed")
+	app_state_inventory.set("authenticated", false)
+
+	# The world-load path is safe while actors are being torn down. Anything
+	# that frees an actor node outside the actor map leaves a dangling entry,
+	# and calling queue_free() on that crashed the engine rather than raising -
+	# which is what made a late _on_world_loaded call in this suite segfault.
+	var dangling_actor := ReplicatedActor3D.new()
+	dangling_actor.actor_id = 5150
+	main.get_node("GameView/ViewportContainer/Viewport/WorldRoot").add_child(
+		dangling_actor)
+	var actor_nodes: Dictionary = main.get("actor_nodes") as Dictionary
+	actor_nodes[5150] = dangling_actor
+	dangling_actor.free()
+	(app_state_inventory.get("actors") as Dictionary).clear()
+	main.call("_sync_world")
+	_expect(not actor_nodes.has(5150),
+		"a dangling actor entry is dropped rather than freed a second time")
+	main.call("_load_server_map")
+	_expect(true, "the world-load path survives a dangling actor entry")
+
 	print("world input tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()
 	await process_frame
 	quit(failures)
+
+func _sized_bytes(value: String) -> PackedByteArray:
+	var bytes: PackedByteArray = value.to_utf8_buffer()
+	var sized: PackedByteArray = PackedByteArray([bytes.size()])
+	sized.append_array(bytes)
+	return sized
+
+func _nul_bytes(value: String) -> PackedByteArray:
+	var bytes: PackedByteArray = value.to_utf8_buffer()
+	bytes.append(0)
+	return bytes
 
 func _expect(value: bool, label: String) -> void:
 	if value:
 		return
 	failures += 1
 	push_error("FAIL: " + label)
+
+func _hex_bytes(value: String) -> PackedByteArray:
+	var bytes := PackedByteArray()
+	for index: int in range(0, value.length(), 2):
+		bytes.append(value.substr(index, 2).hex_to_int())
+	return bytes

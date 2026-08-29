@@ -26,6 +26,11 @@ xcuserdata/
 .idea/
 cmake-build-*/
 
+# The Godot editor/runtime binary, kept beside the project for local runs. It
+# is 180 MB and must never enter a commit.
+godot-client/Godot_v*.exe
+godot-client/Godot_v*
+
 # Godot editor artefacts. The godot-client project is imported by CI
 # ("godot --headless --path godot-client --editor --quit"), which regenerates
 # all of these, so none of them belong in the tree.
