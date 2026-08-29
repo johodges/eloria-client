@@ -44,8 +44,13 @@ var perks: Array[Dictionary] = []
 ## order the server listed them in so the window needs no local table.
 var activity_counters: Dictionary = {}
 var activity_counter_order: Array[String] = []
+## Protocol diagnostics. Every undecoded packet and every decode failure used
+## to be reduced here and emitted with no listener, so a gap in the client's
+## coverage was completely silent. The diagnostics panel reads these.
 var unknown_packet_count := 0
-var recent_protocol_errors: Array[String] = []
+var unknown_packets: Dictionary = {}
+var recent_protocol_errors: Array[Dictionary] = []
+var last_clock_sync_msec := 0
 var invasion_assistant: Dictionary = {"open": false}
 
 func _ready() -> void:
@@ -115,6 +120,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"local_actor")
 		"clock_sync":
 			server_timestamp = int(event.server_timestamp)
+			last_clock_sync_msec = Time.get_ticks_msec()
 			state_changed.emit(&"clock")
 		"new_minute":
 			game_minute = int(event.minute)
@@ -451,12 +457,20 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"ping_request":
 			Network.send_frame(EloriaProtocol.encode(EloriaProtocol.ClientMessage.PING_RESPONSE))
 		"invalid":
-			recent_protocol_errors.append(event.error)
+			recent_protocol_errors.append({"command": command,
+				"error": str(event.error), "size": payload.size(),
+				"msec": Time.get_ticks_msec()})
 			if recent_protocol_errors.size() > 50:
 				recent_protocol_errors.pop_front()
 			state_changed.emit(&"protocol_errors")
 		"unknown":
 			unknown_packet_count += 1
+			var record: Dictionary = unknown_packets.get(command,
+				{"count": 0, "size": 0, "msec": 0})
+			record["count"] = int(record.get("count", 0)) + 1
+			record["size"] = payload.size()
+			record["msec"] = Time.get_ticks_msec()
+			unknown_packets[command] = record
 			state_changed.emit(&"protocol_unknown")
 
 func append_local_message(text: String, channel: int = 255) -> void:

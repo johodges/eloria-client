@@ -1351,6 +1351,13 @@ size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 16
 text = "MESSAGE CONSOLE  •  full session history  •  ~ to close"
 
+[node name="ConsoleDiagnostics" type="Button" parent="GameView/ConsolePanel/Content/Header" unique_id=411902733]
+unique_name_in_owner = true
+layout_mode = 2
+toggle_mode = true
+tooltip_text = "Protocol diagnostics: undecoded opcodes seen this session and recent decode errors"
+text = "Protocol"
+
 [node name="ConsoleClose" type="Button" parent="GameView/ConsolePanel/Content/Header" unique_id=233814864]
 unique_name_in_owner = true
 layout_mode = 2
@@ -1361,6 +1368,15 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 focus_mode = 2
+selection_enabled = true
+
+[node name="DiagnosticsOutput" type="RichTextLabel" parent="GameView/ConsolePanel/Content" unique_id=1205877344]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 2
+bbcode_enabled = true
 selection_enabled = true
 
 [node name="StatsPanel" type="PanelContainer" parent="GameView" unique_id=839039862]

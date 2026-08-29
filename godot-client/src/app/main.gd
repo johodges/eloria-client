@@ -181,6 +181,8 @@ var map_light_root: Node3D
 @onready var chat_panel: PanelContainer = $GameView/ChatPanel
 @onready var console_panel: PanelContainer = %ConsolePanel
 @onready var console_output: RichTextLabel = %ConsoleOutput
+@onready var console_diagnostics_button: Button = %ConsoleDiagnostics
+@onready var diagnostics_output: RichTextLabel = %DiagnosticsOutput
 @onready var settings_panel: PanelContainer = %SettingsPanel
 @onready var minimap_size: HSlider = %MinimapSize
 @onready var minimap_size_value: Label = %MinimapSizeValue
@@ -471,6 +473,7 @@ func _ready() -> void:
 	item_lists_close.pressed.connect(func() -> void: item_lists_panel.hide())
 	%SettingsClose.pressed.connect(_close_settings)
 	%ConsoleClose.pressed.connect(_toggle_console)
+	console_diagnostics_button.toggled.connect(_on_console_diagnostics_toggled)
 	_session_started_msec = Time.get_ticks_msec()
 	_apply_equipment_side()
 	_sync_saved_item_lists()
@@ -930,8 +933,67 @@ func _toggle_console() -> void:
 	full_map.hide()
 	_close_settings()
 	_sync_console()
+	_sync_diagnostics()
 	console_panel.show()
 	console_panel.move_to_front()
+
+## The console panel shows either the session message history or the protocol
+## diagnostics. Undecoded packets and decode errors were reduced into AppState
+## and emitted with no listener at all, so every gap in the client's protocol
+## coverage failed completely silently; this is where they surface.
+func _on_console_diagnostics_toggled(enabled: bool) -> void:
+	console_output.visible = not enabled
+	diagnostics_output.visible = enabled
+	if enabled:
+		_sync_diagnostics()
+
+func _sync_diagnostics() -> void:
+	if diagnostics_output == null or not diagnostics_output.visible:
+		return
+	var lines: Array[String] = []
+	lines.append("[b]Undecoded server opcodes this session[/b]")
+	if AppState.unknown_packets.is_empty():
+		lines.append("  none")
+	else:
+		var opcodes: Array = AppState.unknown_packets.keys()
+		opcodes.sort()
+		for raw_opcode: Variant in opcodes:
+			var record: Dictionary = AppState.unknown_packets[raw_opcode] as Dictionary
+			lines.append("  %3d  x%-5d  last payload %d bytes, %s ago" % [
+				int(raw_opcode), int(record.get("count", 0)),
+				int(record.get("size", 0)),
+				_elapsed_text(int(record.get("msec", 0)))])
+		lines.append("  total undecoded packets: %d" % AppState.unknown_packet_count)
+	lines.append("
+[b]Recent decode errors[/b]")
+	if AppState.recent_protocol_errors.is_empty():
+		lines.append("  none")
+	else:
+		for index: int in range(AppState.recent_protocol_errors.size() - 1, -1, -1):
+			var failure: Dictionary = AppState.recent_protocol_errors[index]
+			lines.append("  %3d  %s  (%d bytes, %s ago)" % [
+				int(failure.get("command", -1)), str(failure.get("error", "")),
+				int(failure.get("size", 0)),
+				_elapsed_text(int(failure.get("msec", 0)))])
+	lines.append("
+[b]Connection[/b]")
+	lines.append("  state: %s" % AppState.connection_state)
+	lines.append("  server clock: %s" % (
+		"%d (synchronised %s ago)" % [AppState.server_timestamp,
+			_elapsed_text(AppState.last_clock_sync_msec)]
+		if AppState.last_clock_sync_msec > 0 else "never synchronised"))
+	lines.append("  game minute: %d (%02d:%02d)" % [AppState.game_minute,
+		AppState.game_minute / 60, AppState.game_minute % 60])
+	diagnostics_output.text = "
+".join(lines)
+
+func _elapsed_text(msec: int) -> String:
+	if msec <= 0:
+		return "unknown"
+	var seconds: int = maxi(0, (Time.get_ticks_msec() - msec) / 1000)
+	if seconds < 60:
+		return "%ds" % seconds
+	return "%dm%02ds" % [seconds / 60, seconds % 60]
 
 func _on_options_pressed() -> void:
 	settings_panel.visible = not settings_panel.visible
@@ -2034,6 +2096,12 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 			push_warning("MOVE_TO failed: " + error_string(move_error))
 
 func _on_state_changed(path: StringName) -> void:
+	# Protocol diagnostics are the one path that must work before login: a
+	# decode failure during the handshake is exactly what the panel exists to
+	# show, and the session is not authenticated when it happens.
+	if path == &"protocol_unknown" or path == &"protocol_errors":
+		_sync_diagnostics()
+		return
 	if not AppState.authenticated:
 		return
 	match path:
@@ -2057,6 +2125,9 @@ func _on_state_changed(path: StringName) -> void:
 			var update: Dictionary = AppState.invasion_assistant.get(kind, {}) as Dictionary
 			if not update.is_empty():
 				invasion_assistant_window.apply_update(update)
+		&"clock":
+			_update_legacy_clock_and_compass()
+			_sync_diagnostics()
 		&"perks":
 			_sync_stats()
 		&"counters":

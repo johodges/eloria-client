@@ -1031,6 +1031,64 @@ func _run() -> void:
 		"the session column is a difference against the server total, not a second count")
 	app_state_inventory.set("authenticated", previously_authenticated)
 
+	# Protocol diagnostics. Every undecoded packet and decode error used to be
+	# reduced into AppState and emitted with no listener at all, which is how
+	# most of the gaps in this client went unnoticed.
+	var console_panel: Control = main.get_node("GameView/ConsolePanel") as Control
+	var console_output: RichTextLabel = main.get_node(
+		"GameView/ConsolePanel/Content/ConsoleOutput") as RichTextLabel
+	var diagnostics_button: Button = main.get_node(
+		"GameView/ConsolePanel/Content/Header/ConsoleDiagnostics") as Button
+	var diagnostics_output: RichTextLabel = main.get_node(
+		"GameView/ConsolePanel/Content/DiagnosticsOutput") as RichTextLabel
+	_expect(diagnostics_button.toggle_mode and not diagnostics_output.visible
+		and console_output.visible,
+		"the console opens on its message history with diagnostics one click away")
+	main.call("_toggle_console")
+	diagnostics_button.button_pressed = true
+	await process_frame
+	_expect(diagnostics_output.visible and not console_output.visible,
+		"the diagnostics view replaces the message history in the console panel")
+	_expect(diagnostics_output.text.contains("none"),
+		"a clean session reports no undecoded opcodes and no decode errors")
+	# 199 is not a server opcode this client knows; 36 with a one-byte payload
+	# is the pre-0.6 trade accept, which must now fail to decode.
+	app_state_inventory.call("_on_packet", 199, PackedByteArray([1, 2, 3]))
+	app_state_inventory.call("_on_packet", 199, PackedByteArray([4]))
+	app_state_inventory.call("_on_packet", 36, PackedByteArray([0]))
+	await process_frame
+	_expect(diagnostics_output.text.contains("199")
+		and diagnostics_output.text.contains("x2"),
+		"an undecoded opcode is listed once with the number of times it arrived")
+	_expect(diagnostics_output.text.contains("trade_accept_length"),
+		"a decode error names the packet and the failure")
+	_expect(int(app_state_inventory.get("unknown_packet_count")) == 2
+		and (app_state_inventory.get("unknown_packets") as Dictionary).size() == 1,
+		"the same unknown opcode is counted, not re-listed")
+	# The panel has to work before login: a handshake decode failure is exactly
+	# what it exists to show, and the state-changed handler gates everything else on
+	# an authenticated session.
+	_expect(not bool(app_state_inventory.get("authenticated")),
+		"the diagnostics assertions above ran on an unauthenticated session")
+	root.size = Vector2i(1280, 720)
+	await process_frame
+	main.call("_on_window_size_changed")
+	await process_frame
+	var console_rect: Rect2 = console_panel.get_global_rect()
+	_expect(console_rect.position.x >= 0.0 and console_rect.position.y >= 0.0
+		and console_rect.end.x <= 1280.0 and console_rect.end.y <= 720.0,
+		"the console panel with diagnostics still fits within 1280x720")
+	_expect(not console_rect.intersects(right_stats.get_global_rect()),
+		"the console panel with diagnostics does not cover the fixed resource rail")
+	var console_escape: InputEventKey = InputMap.action_get_events(
+		"cancel")[0].duplicate() as InputEventKey
+	console_escape.pressed = true
+	main.call("_input", console_escape)
+	_expect(not console_panel.visible,
+		"the console panel with diagnostics open still answers the cancel cascade")
+	diagnostics_button.button_pressed = false
+	await process_frame
+
 	print("world input tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()
 	await process_frame
