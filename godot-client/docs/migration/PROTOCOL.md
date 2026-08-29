@@ -495,10 +495,23 @@ UTF-8.
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+| 14 | Play a sound | `x:u16 \| y:u16 \| gain:u8 \| sound_name` - gain is a percentage, 0-200 |
+| 54 | Play music | `track_name`, empty for silence |
 | 85 | Missile aim at a place | `actor_id:u16 \| x:u16 \| y:u16` |
 | 87 | Missile loosed at a place | `actor_id:u16 \| x:u16 \| y:u16` |
 | 89 | Actor animation | `actor_id:u16 \| action` - an action name, never a clip |
 | 238 | Almanac | `day:u8 \| month:u8 \| year:u16 \| kind:u8 \| experience_bonus:u16 \| name \| description \| effect_count:u8` then that many effect tags, `multiplier_count:u8` then that many `skill \| multiplier:u16`, `catalogue_count:u16` then that many `kind:u8 \| name \| description` |
+
+Commands 14 and 54 carry the audio a client cannot work out for itself. This
+client answers its own harvest, its own combat and its own pick-ups from state
+it already has, so the server never sends a sound for those - the client that
+caused a sound is left out of the broadcast, or it would hear everything twice.
+What is left is what somebody else is doing, and what a map sounds like.
+
+Both name rather than number. A numeric table would have to be mirrored in the
+client and would go stale the first time a sound was added; a name the client
+has no sound for is simply not heard, and an empty music track is the server
+saying the map is quiet, which is an answer rather than an omission.
 
 Commands 85 and 87 draw an arrow going to a place rather than into somebody.
 Two things use them: a practice shot at a tile, sent by the client as

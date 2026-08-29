@@ -55,6 +55,7 @@ enum ServerMessage {
 	GET_ITEMS_COOLDOWN = 77, SEND_BUFFS = 78, SEND_SPECIAL_EFFECT = 79,
 	MISSILE_AIM_A_AT_B = 84, MISSILE_FIRE_A_TO_B = 86,
 	MISSILE_AIM_A_AT_XYZ = 85, MISSILE_FIRE_A_TO_XYZ = 87,
+	PLAY_SOUND = 14, PLAY_MUSIC = 54,
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
 	SEND_ACHIEVEMENTS = 95, ADD_NEW_ACTOR_EXTENDED = 247,
 	ELORIA_INVASION_ASSISTANT_STATE = 233,
@@ -638,6 +639,32 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				"fired": command == ServerMessage.MISSILE_FIRE_A_TO_B,
 				"source_actor_id": u16(payload),
 				"target_actor_id": u16(payload, 2)}
+		ServerMessage.PLAY_SOUND:
+			# A sound the client could not have worked out for itself: what
+			# somebody else is doing. It is named rather than numbered, so
+			# there is no id table to keep in step, and a name this client has
+			# no sound for is simply not heard.
+			if payload.size() < 6:
+				return {"type": "invalid", "error": "play_sound_length"}
+			var sound_field: Dictionary = _nul_at(payload, 5)
+			if sound_field.is_empty():
+				return {"type": "invalid", "error": "play_sound_text"}
+			if int(sound_field.offset) != payload.size():
+				return {"type": "invalid", "error": "play_sound_trailing"}
+			if str(sound_field.value).is_empty():
+				return {"type": "invalid", "error": "play_sound_empty"}
+			return {"type": "play_sound", "name": str(sound_field.value),
+				"x": u16(payload), "y": u16(payload, 2),
+				"gain": float(int(payload[4])) / 100.0}
+		ServerMessage.PLAY_MUSIC:
+			# An empty track name is the server saying "nothing here", which is
+			# an answer rather than an omission.
+			var track_field: Dictionary = _nul_at(payload, 0)
+			if track_field.is_empty():
+				return {"type": "invalid", "error": "play_music_text"}
+			if int(track_field.offset) != payload.size():
+				return {"type": "invalid", "error": "play_music_trailing"}
+			return {"type": "play_music", "track": str(track_field.value)}
 		ServerMessage.MISSILE_AIM_A_AT_XYZ, ServerMessage.MISSILE_FIRE_A_TO_XYZ:
 			# An arrow going to a place rather than into somebody: a practice
 			# shot, or a miss. The server decides where it lands, because the

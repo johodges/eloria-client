@@ -21,6 +21,11 @@ signal missile_fired(shot: Dictionary)
 ## An arrow on its way to a tile rather than to an actor - a practice shot, or
 ## a miss the server placed. Carries the tile because that is where it lands.
 signal ground_missile_fired(shot: Dictionary)
+## A sound the server placed somewhere on the map, and the music bed it wants
+## under the map the player is standing on. Both are events, not state: the
+## client owns what is currently sounding.
+signal sound_requested(sound: Dictionary)
+signal music_requested(track: String)
 
 var connection_state := "disconnected"
 var authenticated := false
@@ -548,6 +553,11 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			if bool(event.fired):
 				missile_fired.emit({"source_actor_id": shooter_id,
 					"target_actor_id": int(event.target_actor_id)})
+		"play_sound":
+			sound_requested.emit({"name": str(event.name), "x": int(event.x),
+				"y": int(event.y), "gain": float(event.gain)})
+		"play_music":
+			music_requested.emit(str(event.track))
 		"ground_missile":
 			# Aiming at a place is state on the shooter, the same as aiming at
 			# an actor, so it clears the same way and disappears with them.
