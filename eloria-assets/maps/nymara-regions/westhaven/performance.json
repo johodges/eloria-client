@@ -1,0 +1,40 @@
+{
+  "nodes": 4419,
+  "meshes": 252,
+  "materials": 24,
+  "images": 65,
+  "textures": 65,
+  "accessors": 1008,
+  "bufferViews": 1073,
+  "uniqueTriangles": 452652,
+  "uniqueVertices": 342424,
+  "glbBytes": 21598004,
+  "instancedTriangles": 1137392,
+  "embeddedTextureBytes": 19964003,
+  "textureMemoryBytesUncompressed": 172228608,
+  "placements": 1900,
+  "collision": {
+    "width": 1152,
+    "height": 1152,
+    "cellMetres": 0.5,
+    "walkableCells": 742398,
+    "blockedCells": 584706,
+    "walkableFraction": 0.5594,
+    "elevatedDecks": 19,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+  },
+  "notes": [
+    "city houses placed: 385",
+    "trees placed: 257",
+    "ground dressing placed: 536"
+  ],
+  "lod2": {
+    "glbBytes": 13668048,
+    "nodes": 3629,
+    "uniqueTriangles": 369474,
+    "instancedTriangles": 955676,
+    "sizeReductionPercent": 36.7,
+    "triangleReductionPercent": 16.0
+  }
+}

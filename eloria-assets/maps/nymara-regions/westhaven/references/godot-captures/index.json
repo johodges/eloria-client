@@ -1,0 +1,485 @@
+[
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      114.0,
+      608.89,
+      -35.7
+    ],
+    "fieldOfViewDegrees": 52.0,
+    "file": "00-aerial-overview.webp",
+    "id": "00-aerial-overview",
+    "lighting": "day",
+    "panel": "aerial",
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      114.0,
+      9.0,
+      -36.0
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      -71.81,
+      5.12,
+      -26.93
+    ],
+    "fieldOfViewDegrees": 52.0,
+    "file": "01-harbour-gate.webp",
+    "id": "01-harbour-gate",
+    "lighting": "day",
+    "panel": 1.0,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      -102.0,
+      17.4,
+      -33.0
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      265.2,
+      30.43,
+      111.0
+    ],
+    "fieldOfViewDegrees": 50.0,
+    "file": "02-lighthouse.webp",
+    "id": "02-lighthouse",
+    "lighting": "day",
+    "panel": 2.0,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      302.7,
+      41.95,
+      120.3
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      22.07,
+      18.1,
+      23.21
+    ],
+    "fieldOfViewDegrees": 55.0,
+    "file": "03-quay-street.webp",
+    "id": "03-quay-street",
+    "lighting": "day",
+    "panel": 3.0,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      -8.4,
+      12.66,
+      -23.7
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      63.6,
+      18.1,
+      -2.4
+    ],
+    "fieldOfViewDegrees": 54.0,
+    "file": "04-cargo-pier.webp",
+    "id": "04-cargo-pier",
+    "lighting": "day",
+    "panel": 4.0,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      86.7,
+      -1.26,
+      28.2
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      100.21,
+      18.1,
+      -2.39
+    ],
+    "fieldOfViewDegrees": 52.0,
+    "file": "05-harbour-crane.webp",
+    "id": "05-harbour-crane",
+    "lighting": "day",
+    "panel": 5.0,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      138.6,
+      3.29,
+      26.7
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      146.04,
+      19.4,
+      -0.35
+    ],
+    "fieldOfViewDegrees": 42.0,
+    "file": "06-shipyard.webp",
+    "id": "06-shipyard",
+    "lighting": "day",
+    "panel": 6.0,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      214.5,
+      6.93,
+      14.4
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      8.35,
+      15.08,
+      -3.74
+    ],
+    "fieldOfViewDegrees": 56.0,
+    "file": "07-fish-market.webp",
+    "id": "07-fish-market",
+    "lighting": "day",
+    "panel": 7.0,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      -5.49,
+      12.5,
+      -19.5
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      -84.0,
+      15.47,
+      47.7
+    ],
+    "fieldOfViewDegrees": 50.0,
+    "file": "08-mole-bastion.webp",
+    "id": "08-mole-bastion",
+    "lighting": "deck",
+    "panel": 8.0,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      -57.3,
+      0.5,
+      36.6
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      51.0,
+      55.0,
+      -222.0
+    ],
+    "fieldOfViewDegrees": 52.0,
+    "file": "09-crown-terrace.webp",
+    "id": "09-crown-terrace",
+    "lighting": "day",
+    "panel": 9.0,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      79.5,
+      64.0,
+      -193.8
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      102.0,
+      8.1,
+      -6.9
+    ],
+    "fieldOfViewDegrees": 38.0,
+    "file": "10-chandlery-macro.webp",
+    "id": "10-chandlery-macro",
+    "lighting": "day",
+    "panel": 10.0,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      118.2,
+      3.9,
+      -0.6
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      4.99,
+      14.7,
+      -2.07
+    ],
+    "fieldOfViewDegrees": 58.0,
+    "file": "11-spawn-grounding.webp",
+    "id": "11-spawn-grounding",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      18.0,
+      11.2,
+      -24.0
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      -34.85,
+      21.04,
+      14.29
+    ],
+    "fieldOfViewDegrees": 54.0,
+    "file": "12-quayside-run.webp",
+    "id": "12-quayside-run",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      156.0,
+      -3.41,
+      18.0
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      16.57,
+      48.53,
+      -149.13
+    ],
+    "fieldOfViewDegrees": 55.0,
+    "file": "13-city-gate.webp",
+    "id": "13-city-gate",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      -21.0,
+      48.51,
+      -246.0
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      -4.99,
+      39.2,
+      -147.93
+    ],
+    "fieldOfViewDegrees": 54.0,
+    "file": "14-arcade.webp",
+    "id": "14-arcade",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      14.7,
+      52.42,
+      -193.8
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      44.96,
+      21.27,
+      -286.79
+    ],
+    "fieldOfViewDegrees": 52.0,
+    "file": "15-cathedral-front.webp",
+    "id": "15-cathedral-front",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      59.4,
+      96.28,
+      -376.2
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      -11.4,
+      42.79,
+      -198.0
+    ],
+    "fieldOfViewDegrees": 55.0,
+    "file": "16-campanile-base.webp",
+    "id": "16-campanile-base",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      -8.4,
+      67.0,
+      -208.2
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      60.0,
+      18.71,
+      110.22
+    ],
+    "fieldOfViewDegrees": 50.0,
+    "file": "17-harbour-from-water.webp",
+    "id": "17-harbour-from-water",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      60.0,
+      27.5,
+      -60.0
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      -95.78,
+      47.54,
+      96.9
+    ],
+    "fieldOfViewDegrees": 50.0,
+    "file": "18-gullstone.webp",
+    "id": "18-gullstone",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      -40.2,
+      51.34,
+      131.7
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      243.31,
+      12.9,
+      49.62
+    ],
+    "fieldOfViewDegrees": 52.0,
+    "file": "19-east-bay.webp",
+    "id": "19-east-bay",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      310.2,
+      3.9,
+      29.4
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      210.55,
+      59.0,
+      -252.24
+    ],
+    "fieldOfViewDegrees": 52.0,
+    "file": "20-upland-road.webp",
+    "id": "20-upland-road",
+    "lighting": "day",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      278.1,
+      55.49,
+      -282.9
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      60.0,
+      18.71,
+      110.22
+    ],
+    "fieldOfViewDegrees": 50.0,
+    "file": "40-golden-harbour.webp",
+    "id": "40-golden-harbour",
+    "lighting": "golden",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      60.0,
+      27.5,
+      -60.0
+    ]
+  },
+  {
+    "engine": "4.7.2-stable (official)",
+    "eye": [
+      114.0,
+      608.89,
+      -35.7
+    ],
+    "fieldOfViewDegrees": 52.0,
+    "file": "41-golden-aerial.webp",
+    "id": "41-golden-aerial",
+    "lighting": "golden",
+    "panel": null,
+    "renderingDriver": "vulkan",
+    "renderingMethod": "forward_plus",
+    "source": "godot",
+    "target": [
+      114.0,
+      9.0,
+      -36.0
+    ]
+  }
+]

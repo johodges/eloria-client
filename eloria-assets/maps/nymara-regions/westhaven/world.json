@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.1.0",
+  "assetVersion": "1.0.0",
   "asset": {
     "id": "westhaven",
     "name": "Westhaven",
@@ -18,833 +18,2783 @@
     ],
     "bounds": {
       "min": [
-        -96,
-        0.0,
-        -96
+        -444.0,
+        -18.71,
+        -595.0
       ],
       "max": [
-        96,
-        18.0,
-        96
+        672.0,
+        124.83,
+        521.0
       ]
-    }
+    },
+    "playableBounds": {
+      "min": [
+        -174.0,
+        -18.71,
+        -325.0
+      ],
+      "max": [
+        401.0,
+        124.83,
+        250.0
+      ]
+    },
+    "seaLevel": 0.0,
+    "serverCells": 576
   },
-  "source": {
-    "elm": "../source-elm/westhaven.elm",
-    "sha256": "981babd39d16b44d44023bef406659d255dc697dc5b887db6036c71d14943435",
-    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
-    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
-  },
-  "conceptArt": {
-    "macro": "../../../concepts/nymara-regions/westhaven_region_concept.png",
-    "detailBoard": "references/00-concept-detail-board.png",
-    "panelGrid": [
-      5,
-      2
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      174.0,
+      250.0
     ],
-    "viewCount": 10,
-    "generator": "OpenAI ImageGen (built-in)",
-    "checkpoints": [
-      {
-        "panel": 1,
-        "id": "concept-01",
-        "subject": "harbor approach",
-        "cameraPosition": [
-          0.0,
-          20.0,
-          -72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_westhaven_harbor_crane_027",
-          "Landmark_westhaven_harbor_crane_028",
-          "Landmark_westhaven_harbor_crane_029"
-        ]
-      },
-      {
-        "panel": 2,
-        "id": "concept-02",
-        "subject": "lighthouse",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_westhaven_lighthouse_013"
-        ]
-      },
-      {
-        "panel": 3,
-        "id": "concept-03",
-        "subject": "warehouse quay",
-        "cameraPosition": [
-          68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_westhaven_warehouse_014",
-          "Landmark_westhaven_warehouse_015",
-          "Landmark_westhaven_warehouse_016"
-        ]
-      },
-      {
-        "panel": 4,
-        "id": "concept-04",
-        "subject": "dry dock",
-        "cameraPosition": [
-          68.48,
-          20.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_sunmane_dry_cave_001",
-          "Landmark_crownwater_ferry_dock_007",
-          "Landmark_westhaven_dry_dock_009"
-        ]
-      },
-      {
-        "panel": 5,
-        "id": "concept-05",
-        "subject": "harbor crane",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_westhaven_harbor_crane_027",
-          "Landmark_westhaven_harbor_crane_028",
-          "Landmark_westhaven_harbor_crane_029"
-        ]
-      },
-      {
-        "panel": 6,
-        "id": "concept-06",
-        "subject": "shipyard frame",
-        "cameraPosition": [
-          0.0,
-          16.0,
-          72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_westhaven_shipyard_frame_034",
-          "Landmark_westhaven_shipyard_frame_035",
-          "Landmark_westhaven_shipyard_frame_036"
-        ]
-      },
-      {
-        "panel": 7,
-        "id": "concept-07",
-        "subject": "fish market",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_mirrorhold_floating_market_010",
-          "Landmark_westhaven_fish_market_039",
-          "Landmark_westhaven_fish_market_040"
-        ]
-      },
-      {
-        "panel": 8,
-        "id": "concept-08",
-        "subject": "seawall surf",
-        "cameraPosition": [
-          -68.48,
-          24.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_westhaven_seawall_045",
-          "Landmark_westhaven_seawall_046",
-          "Landmark_westhaven_seawall_047"
-        ]
-      },
-      {
-        "panel": 9,
-        "id": "concept-09",
-        "subject": "harbor skyline",
-        "cameraPosition": [
-          -68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_westhaven_harbor_crane_027",
-          "Landmark_westhaven_harbor_crane_028",
-          "Landmark_westhaven_harbor_crane_029"
-        ]
-      },
-      {
-        "panel": 10,
-        "id": "concept-10",
-        "subject": "stone timber copper materials",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      }
-    ]
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 3.4,
+    "invertServerY": true
   },
-  "landmarks": [
-    {
-      "id": "landmark-000",
-      "name": "Ssarathi Curved Wall",
-      "node": "Landmark_ssarathi_curved_wall_000",
-      "position": [
-        -34.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-001",
-      "name": "Sunmane Dry Cave",
-      "node": "Landmark_sunmane_dry_cave_001",
-      "position": [
-        -12.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-002",
-      "name": "Grey Moor Cairn",
-      "node": "Landmark_grey_moor_cairn_002",
-      "position": [
-        10.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-003",
-      "name": "Grey Moor Boardwalk",
-      "node": "Landmark_grey_moor_boardwalk_003",
-      "position": [
-        32.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-004",
-      "name": "Mirrorhold Lake House",
-      "node": "Landmark_mirrorhold_lake_house_004",
-      "position": [
-        -34.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-006",
-      "name": "Amberwood Estate",
-      "node": "Landmark_amberwood_estate_006",
-      "position": [
-        10.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-007",
-      "name": "Crownwater Ferry Dock",
-      "node": "Landmark_crownwater_ferry_dock_007",
-      "position": [
-        32.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-008",
-      "name": "Four Gates Gatehouse",
-      "node": "Landmark_four_gates_gatehouse_008",
-      "position": [
-        -34.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-009",
-      "name": "Westhaven Dry Dock",
-      "node": "Landmark_westhaven_dry_dock_009",
-      "position": [
-        -12.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-010",
-      "name": "Mirrorhold Floating Market",
-      "node": "Landmark_mirrorhold_floating_market_010",
-      "position": [
-        10.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-011",
-      "name": "Ssarathi Water Gate",
-      "node": "Landmark_ssarathi_water_gate_011",
-      "position": [
-        32.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-013",
-      "name": "Westhaven Lighthouse",
-      "node": "Landmark_westhaven_lighthouse_013",
-      "position": [
-        -34.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-014",
-      "name": "Westhaven Warehouse",
-      "node": "Landmark_westhaven_warehouse_014",
-      "position": [
-        -20.0,
-        0,
-        20.0
-      ]
-    },
-    {
-      "id": "landmark-015",
-      "name": "Westhaven Warehouse",
-      "node": "Landmark_westhaven_warehouse_015",
-      "position": [
-        -4.0,
-        0,
-        20.0
-      ]
-    },
-    {
-      "id": "landmark-016",
-      "name": "Westhaven Warehouse",
-      "node": "Landmark_westhaven_warehouse_016",
-      "position": [
-        12.0,
-        0,
-        20.0
-      ]
-    },
-    {
-      "id": "landmark-017",
-      "name": "Westhaven Warehouse",
-      "node": "Landmark_westhaven_warehouse_017",
-      "position": [
-        28.0,
-        0,
-        20.0
-      ]
-    },
-    {
-      "id": "landmark-018",
-      "name": "Westhaven Warehouse",
-      "node": "Landmark_westhaven_warehouse_018",
-      "position": [
-        -16.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-019",
-      "name": "Westhaven Warehouse",
-      "node": "Landmark_westhaven_warehouse_019",
-      "position": [
-        0.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-020",
-      "name": "Westhaven Warehouse",
-      "node": "Landmark_westhaven_warehouse_020",
-      "position": [
-        16.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-021",
-      "name": "Westhaven Warehouse",
-      "node": "Landmark_westhaven_warehouse_021",
-      "position": [
-        32.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-022",
-      "name": "Westhaven Dry Dock",
-      "node": "Landmark_westhaven_dry_dock_022",
-      "position": [
-        -24.0,
-        0,
-        -20.0
-      ]
-    },
-    {
-      "id": "landmark-023",
-      "name": "Westhaven Dry Dock",
-      "node": "Landmark_westhaven_dry_dock_023",
-      "position": [
-        0.0,
-        0,
-        -20.0
-      ]
-    },
-    {
-      "id": "landmark-024",
-      "name": "Westhaven Dry Dock",
-      "node": "Landmark_westhaven_dry_dock_024",
-      "position": [
-        24.0,
-        0,
-        -20.0
-      ]
-    },
-    {
-      "id": "landmark-025",
-      "name": "Westhaven Dry Dock",
-      "node": "Landmark_westhaven_dry_dock_025",
-      "position": [
-        -12.0,
-        0,
-        -36.0
-      ]
-    },
-    {
-      "id": "landmark-026",
-      "name": "Westhaven Dry Dock",
-      "node": "Landmark_westhaven_dry_dock_026",
-      "position": [
-        12.0,
-        0,
-        -36.0
-      ]
-    },
-    {
-      "id": "landmark-027",
-      "name": "Westhaven Harbor Crane",
-      "node": "Landmark_westhaven_harbor_crane_027",
-      "position": [
-        -28.0,
-        0,
-        -8.0
-      ]
-    },
-    {
-      "id": "landmark-028",
-      "name": "Westhaven Harbor Crane",
-      "node": "Landmark_westhaven_harbor_crane_028",
-      "position": [
-        -12.0,
-        0,
-        -8.0
-      ]
-    },
-    {
-      "id": "landmark-029",
-      "name": "Westhaven Harbor Crane",
-      "node": "Landmark_westhaven_harbor_crane_029",
-      "position": [
-        4.0,
-        0,
-        -8.0
-      ]
-    },
-    {
-      "id": "landmark-030",
-      "name": "Westhaven Harbor Crane",
-      "node": "Landmark_westhaven_harbor_crane_030",
-      "position": [
-        20.0,
-        0,
-        -8.0
-      ]
-    },
-    {
-      "id": "landmark-031",
-      "name": "Westhaven Harbor Crane",
-      "node": "Landmark_westhaven_harbor_crane_031",
-      "position": [
-        36.0,
-        0,
-        -8.0
-      ]
-    },
-    {
-      "id": "landmark-032",
-      "name": "Westhaven Harbor Crane",
-      "node": "Landmark_westhaven_harbor_crane_032",
-      "position": [
-        -16.0,
-        0,
-        -30.0
-      ]
-    },
-    {
-      "id": "landmark-033",
-      "name": "Westhaven Harbor Crane",
-      "node": "Landmark_westhaven_harbor_crane_033",
-      "position": [
-        16.0,
-        0,
-        -30.0
-      ]
-    },
-    {
-      "id": "landmark-034",
-      "name": "Westhaven Shipyard Frame",
-      "node": "Landmark_westhaven_shipyard_frame_034",
-      "position": [
-        -20.0,
-        0,
-        -46.0
-      ]
-    },
-    {
-      "id": "landmark-035",
-      "name": "Westhaven Shipyard Frame",
-      "node": "Landmark_westhaven_shipyard_frame_035",
-      "position": [
-        0.0,
-        0,
-        -48.0
-      ]
-    },
-    {
-      "id": "landmark-036",
-      "name": "Westhaven Shipyard Frame",
-      "node": "Landmark_westhaven_shipyard_frame_036",
-      "position": [
-        20.0,
-        0,
-        -46.0
-      ]
-    },
-    {
-      "id": "landmark-037",
-      "name": "Westhaven Shipyard Frame",
-      "node": "Landmark_westhaven_shipyard_frame_037",
-      "position": [
-        -30.0,
-        0,
-        -34.0
-      ]
-    },
-    {
-      "id": "landmark-038",
-      "name": "Westhaven Shipyard Frame",
-      "node": "Landmark_westhaven_shipyard_frame_038",
-      "position": [
-        30.0,
-        0,
-        -34.0
-      ]
-    },
-    {
-      "id": "landmark-039",
-      "name": "Westhaven Fish Market",
-      "node": "Landmark_westhaven_fish_market_039",
-      "position": [
-        -16.0,
-        0,
-        12.0
-      ]
-    },
-    {
-      "id": "landmark-040",
-      "name": "Westhaven Fish Market",
-      "node": "Landmark_westhaven_fish_market_040",
-      "position": [
-        0.0,
-        0,
-        12.0
-      ]
-    },
-    {
-      "id": "landmark-041",
-      "name": "Westhaven Fish Market",
-      "node": "Landmark_westhaven_fish_market_041",
-      "position": [
-        16.0,
-        0,
-        12.0
-      ]
-    },
-    {
-      "id": "landmark-042",
-      "name": "Westhaven Fish Market",
-      "node": "Landmark_westhaven_fish_market_042",
-      "position": [
-        -8.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-043",
-      "name": "Westhaven Fish Market",
-      "node": "Landmark_westhaven_fish_market_043",
-      "position": [
-        8.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-044",
-      "name": "Westhaven Fish Market",
-      "node": "Landmark_westhaven_fish_market_044",
-      "position": [
-        24.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-045",
-      "name": "Westhaven Seawall",
-      "node": "Landmark_westhaven_seawall_045",
-      "position": [
-        -36.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-046",
-      "name": "Westhaven Seawall",
-      "node": "Landmark_westhaven_seawall_046",
-      "position": [
-        -36.0,
-        0,
-        -32.0
-      ]
-    },
-    {
-      "id": "landmark-047",
-      "name": "Westhaven Seawall",
-      "node": "Landmark_westhaven_seawall_047",
-      "position": [
-        36.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-048",
-      "name": "Westhaven Seawall",
-      "node": "Landmark_westhaven_seawall_048",
-      "position": [
-        36.0,
-        0,
-        -32.0
-      ]
-    },
-    {
-      "id": "landmark-049",
-      "name": "Westhaven Seawall",
-      "node": "Landmark_westhaven_seawall_049",
-      "position": [
-        -28.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-050",
-      "name": "Westhaven Seawall",
-      "node": "Landmark_westhaven_seawall_050",
-      "position": [
-        -12.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-051",
-      "name": "Westhaven Seawall",
-      "node": "Landmark_westhaven_seawall_051",
-      "position": [
-        4.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-052",
-      "name": "Westhaven Seawall",
-      "node": "Landmark_westhaven_seawall_052",
-      "position": [
-        20.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-053",
-      "name": "Westhaven Seawall",
-      "node": "Landmark_westhaven_seawall_053",
-      "position": [
-        36.0,
-        0,
-        -54.0
-      ]
-    }
-  ],
   "spawnPoints": [
     {
       "id": "default",
       "position": [
-        0,
-        1,
-        0
+        34.8,
+        3.45,
+        6.48
       ],
-      "rotationDegrees": 180
+      "serverTile": [
+        209,
+        244
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "fish-market",
+      "position": [
+        -5.52,
+        9.55,
+        -6.48
+      ],
+      "serverTile": [
+        168,
+        256
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "crown-terrace",
+      "position": [
+        63.6,
+        52.05,
+        -215.28
+      ],
+      "serverTile": [
+        238,
+        465
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "lighthouse",
+      "position": [
+        295.44,
+        18.0,
+        120.24
+      ],
+      "serverTile": [
+        469,
+        130
+      ],
+      "rotationDegrees": 315.0,
+      "surface": "Paving",
+      "grounded": true
     }
   ],
   "collision": {
     "nodeNames": [
-      "Landmark_ssarathi_curved_wall_000",
-      "Landmark_sunmane_dry_cave_001",
-      "Landmark_grey_moor_cairn_002",
-      "Landmark_grey_moor_boardwalk_003",
-      "Landmark_mirrorhold_lake_house_004",
-      "Landmark_amberwood_estate_006",
-      "Landmark_crownwater_ferry_dock_007",
-      "Landmark_four_gates_gatehouse_008",
-      "Landmark_westhaven_dry_dock_009",
-      "Landmark_mirrorhold_floating_market_010",
-      "Landmark_ssarathi_water_gate_011",
-      "Landmark_westhaven_lighthouse_013",
-      "Landmark_westhaven_warehouse_014",
-      "Landmark_westhaven_warehouse_015",
-      "Landmark_westhaven_warehouse_016",
-      "Landmark_westhaven_warehouse_017",
-      "Landmark_westhaven_warehouse_018",
-      "Landmark_westhaven_warehouse_019",
-      "Landmark_westhaven_warehouse_020",
-      "Landmark_westhaven_warehouse_021",
-      "Landmark_westhaven_dry_dock_022",
-      "Landmark_westhaven_dry_dock_023",
-      "Landmark_westhaven_dry_dock_024",
-      "Landmark_westhaven_dry_dock_025",
-      "Landmark_westhaven_dry_dock_026",
-      "Landmark_westhaven_harbor_crane_027",
-      "Landmark_westhaven_harbor_crane_028",
-      "Landmark_westhaven_harbor_crane_029",
-      "Landmark_westhaven_harbor_crane_030",
-      "Landmark_westhaven_harbor_crane_031",
-      "Landmark_westhaven_harbor_crane_032",
-      "Landmark_westhaven_harbor_crane_033",
-      "Landmark_westhaven_shipyard_frame_034",
-      "Landmark_westhaven_shipyard_frame_035",
-      "Landmark_westhaven_shipyard_frame_036",
-      "Landmark_westhaven_shipyard_frame_037",
-      "Landmark_westhaven_shipyard_frame_038",
-      "Landmark_westhaven_fish_market_039",
-      "Landmark_westhaven_fish_market_040",
-      "Landmark_westhaven_fish_market_041",
-      "Landmark_westhaven_fish_market_042",
-      "Landmark_westhaven_fish_market_043",
-      "Landmark_westhaven_fish_market_044",
-      "Landmark_westhaven_seawall_045",
-      "Landmark_westhaven_seawall_046",
-      "Landmark_westhaven_seawall_047",
-      "Landmark_westhaven_seawall_048",
-      "Landmark_westhaven_seawall_049",
-      "Landmark_westhaven_seawall_050",
-      "Landmark_westhaven_seawall_051",
-      "Landmark_westhaven_seawall_052",
-      "Landmark_westhaven_seawall_053"
-    ]
+      "House_01_15",
+      "House_01_16",
+      "House_02_15",
+      "House_02_17",
+      "House_03_12",
+      "House_03_13",
+      "House_03_15",
+      "House_03_16",
+      "House_03_17",
+      "House_03_18",
+      "House_03_19",
+      "House_03_20",
+      "House_03_21",
+      "House_04_10",
+      "House_04_12",
+      "House_04_13",
+      "House_04_15",
+      "House_04_16",
+      "House_04_17",
+      "House_04_18",
+      "House_04_19",
+      "House_05_09",
+      "House_05_10",
+      "House_05_11",
+      "House_05_12",
+      "House_05_15",
+      "House_05_16",
+      "House_05_17",
+      "House_05_18",
+      "House_05_20",
+      "House_06_09",
+      "House_06_10",
+      "House_06_11",
+      "House_06_12",
+      "House_06_13",
+      "House_06_15",
+      "House_06_16",
+      "House_06_17",
+      "House_06_18",
+      "House_06_19",
+      "House_07_07",
+      "House_07_10",
+      "House_07_11",
+      "House_07_12",
+      "House_07_15",
+      "House_07_16",
+      "House_07_17",
+      "House_07_18",
+      "House_07_19",
+      "House_07_20",
+      "House_08_06",
+      "House_08_07",
+      "House_08_09",
+      "House_08_10",
+      "House_08_11",
+      "House_08_12",
+      "House_08_13",
+      "House_08_15",
+      "House_08_16",
+      "House_08_17",
+      "House_08_18",
+      "House_08_20",
+      "House_09_05",
+      "House_09_06",
+      "House_09_07",
+      "House_09_10",
+      "House_09_12",
+      "House_09_13",
+      "House_09_16",
+      "House_09_17",
+      "House_09_18",
+      "House_09_20",
+      "House_09_21",
+      "House_09_22",
+      "House_10_04",
+      "House_10_05",
+      "House_10_07",
+      "House_10_09",
+      "House_10_10",
+      "House_10_11",
+      "House_10_12",
+      "House_10_13",
+      "House_10_15",
+      "House_10_16",
+      "House_10_17",
+      "House_10_18",
+      "House_10_20",
+      "House_10_21",
+      "House_10_22",
+      "House_11_04",
+      "House_11_05",
+      "House_11_06",
+      "House_11_07",
+      "House_11_09",
+      "House_11_10",
+      "House_11_11",
+      "House_11_14",
+      "House_11_15",
+      "House_11_16",
+      "House_11_17",
+      "House_11_18",
+      "House_11_19",
+      "House_11_20",
+      "House_11_21",
+      "House_11_22",
+      "House_12_03",
+      "House_12_04",
+      "House_12_05",
+      "House_12_09",
+      "House_12_10",
+      "House_12_11",
+      "House_12_12",
+      "House_12_13",
+      "House_12_16",
+      "House_12_17",
+      "House_12_18",
+      "House_12_19",
+      "House_12_20",
+      "House_12_21",
+      "House_12_22",
+      "House_13_03",
+      "House_13_04",
+      "House_13_05",
+      "House_13_06",
+      "House_13_09",
+      "House_13_10",
+      "House_13_11",
+      "House_13_12",
+      "House_13_13",
+      "House_13_15",
+      "House_13_17",
+      "House_13_18",
+      "House_13_20",
+      "House_13_21",
+      "House_13_22",
+      "House_13_23",
+      "House_14_02",
+      "House_14_03",
+      "House_14_05",
+      "House_14_06",
+      "House_14_07",
+      "House_14_09",
+      "House_14_10",
+      "House_14_11",
+      "House_14_12",
+      "House_14_13",
+      "House_14_15",
+      "House_14_16",
+      "House_14_17",
+      "House_14_18",
+      "House_14_19",
+      "House_14_21",
+      "House_14_23",
+      "House_15_07",
+      "House_15_09",
+      "House_15_10",
+      "House_15_11",
+      "House_15_12",
+      "House_15_13",
+      "House_15_17",
+      "House_15_23",
+      "House_16_01",
+      "House_16_02",
+      "House_16_09",
+      "House_16_15",
+      "House_16_16",
+      "House_16_17",
+      "House_17_01",
+      "House_17_02",
+      "House_17_09",
+      "House_17_15",
+      "House_17_16",
+      "House_18_02",
+      "House_18_16",
+      "House_18_17",
+      "House_19_01",
+      "House_19_02",
+      "House_20_01",
+      "House_20_02",
+      "House_21_01",
+      "House_21_02",
+      "House_21_22",
+      "House_22_01",
+      "House_22_09",
+      "House_22_21",
+      "House_22_22",
+      "House_22_24",
+      "House_23_01",
+      "House_23_09",
+      "House_23_10",
+      "House_23_16",
+      "House_23_21",
+      "House_23_22",
+      "House_23_23",
+      "House_24_01",
+      "House_24_09",
+      "House_24_10",
+      "House_24_16",
+      "House_24_17",
+      "House_24_18",
+      "House_24_20",
+      "House_24_21",
+      "House_24_22",
+      "House_25_01",
+      "House_25_09",
+      "House_25_10",
+      "House_25_11",
+      "House_25_15",
+      "House_25_16",
+      "House_25_17",
+      "House_25_18",
+      "House_25_19",
+      "House_25_20",
+      "House_25_21",
+      "House_26_00",
+      "House_26_01",
+      "House_26_04",
+      "House_26_05",
+      "House_26_09",
+      "House_26_10",
+      "House_26_11",
+      "House_26_12",
+      "House_26_14",
+      "House_26_15",
+      "House_26_16",
+      "House_26_17",
+      "House_26_18",
+      "House_26_19",
+      "House_26_20",
+      "House_26_21",
+      "House_26_22",
+      "House_27_00",
+      "House_27_01",
+      "House_27_02",
+      "House_27_03",
+      "House_27_04",
+      "House_27_05",
+      "House_27_06",
+      "House_27_09",
+      "House_27_10",
+      "House_27_11",
+      "House_27_12",
+      "House_27_14",
+      "House_27_15",
+      "House_27_16",
+      "House_27_17",
+      "House_27_18",
+      "House_27_20",
+      "House_27_21",
+      "House_27_22",
+      "House_28_00",
+      "House_28_01",
+      "House_28_04",
+      "House_28_05",
+      "House_28_06",
+      "House_28_07",
+      "House_28_09",
+      "House_28_10",
+      "House_28_11",
+      "House_28_12",
+      "House_28_15",
+      "House_28_16",
+      "House_28_17",
+      "House_28_18",
+      "House_28_19",
+      "House_28_21",
+      "House_28_23",
+      "House_28_24",
+      "House_29_01",
+      "House_29_05",
+      "House_29_06",
+      "House_29_07",
+      "House_29_09",
+      "House_29_11",
+      "House_29_12",
+      "House_29_14",
+      "House_29_15",
+      "House_29_16",
+      "House_29_17",
+      "House_29_18",
+      "House_29_19",
+      "House_29_20",
+      "House_29_21",
+      "House_29_22",
+      "House_29_23",
+      "House_29_24",
+      "House_30_01",
+      "House_30_04",
+      "House_30_05",
+      "House_30_06",
+      "House_30_08",
+      "House_30_09",
+      "House_30_14",
+      "House_30_15",
+      "House_30_16",
+      "House_30_17",
+      "House_30_20",
+      "House_30_21",
+      "House_30_22",
+      "House_30_23",
+      "House_30_24",
+      "House_31_03",
+      "House_31_12",
+      "House_31_14",
+      "House_31_15",
+      "House_31_16",
+      "House_31_17",
+      "House_31_20",
+      "House_31_21",
+      "House_31_22",
+      "House_31_23",
+      "House_31_24",
+      "House_32_09",
+      "House_32_10",
+      "House_32_11",
+      "House_32_12",
+      "House_32_13",
+      "House_32_15",
+      "House_32_16",
+      "House_32_17",
+      "House_32_18",
+      "House_32_19",
+      "House_32_20",
+      "House_32_21",
+      "House_32_22",
+      "House_32_23",
+      "House_33_09",
+      "House_33_10",
+      "House_33_11",
+      "House_33_12",
+      "House_33_13",
+      "House_33_15",
+      "House_33_16",
+      "House_33_17",
+      "House_33_18",
+      "House_33_20",
+      "House_33_21",
+      "House_33_22",
+      "House_33_23",
+      "House_34_09",
+      "House_34_10",
+      "House_34_11",
+      "House_34_12",
+      "House_34_15",
+      "House_34_16",
+      "House_34_18",
+      "House_34_20",
+      "House_34_21",
+      "House_34_22",
+      "House_34_23",
+      "House_35_11",
+      "House_35_12",
+      "House_35_13",
+      "House_35_15",
+      "House_35_16",
+      "House_35_17",
+      "House_35_18",
+      "House_35_20",
+      "House_35_21",
+      "House_35_22",
+      "House_35_23",
+      "House_36_13",
+      "House_36_15",
+      "House_36_16",
+      "House_36_18",
+      "House_36_20",
+      "House_36_21",
+      "House_36_22",
+      "House_36_23",
+      "House_37_16",
+      "House_37_20",
+      "House_37_21",
+      "House_37_22",
+      "House_37_23",
+      "House_38_18",
+      "House_38_19",
+      "House_38_20",
+      "House_38_21",
+      "House_39_20",
+      "House_39_21",
+      "House_39_22",
+      "House_39_23",
+      "House_39_24",
+      "House_40_23",
+      "House_40_24",
+      "Landmark_Custom_House",
+      "Landmark_East_Watch",
+      "Landmark_Guild_Hall",
+      "Landmark_Gullstone_Watch",
+      "Landmark_High_Spire",
+      "Landmark_Hill_Estate",
+      "Landmark_Upland_Farm",
+      "Landmark_Warehouse_00",
+      "Landmark_Warehouse_01",
+      "Landmark_Warehouse_02",
+      "Landmark_Warehouse_07",
+      "Landmark_Warehouse_08",
+      "Landmark_Warehouse_09",
+      "Landmark_Warehouse_10",
+      "Landmark_Warehouse_11",
+      "Landmark_Warehouse_12",
+      "Landmark_Warehouse_13",
+      "Landmark_Warehouse_14",
+      "Landmark_Warehouse_15",
+      "Landmark_Warehouse_16",
+      "Landmark_Yard_Shed_0",
+      "Landmark_Yard_Shed_1",
+      "Prop_Cistern_crown_terrace",
+      "Prop_Cistern_lower_square",
+      "Prop_Cistern_mid_street",
+      "Prop_Signpost",
+      "Prop_Timber_Stack_00",
+      "Prop_Timber_Stack_01",
+      "Prop_Timber_Stack_02",
+      "Prop_Timber_Stack_03",
+      "Prop_Timber_Stack_04",
+      "Prop_Timber_Stack_05",
+      "Prop_Timber_Stack_07",
+      "Prop_Timber_Stack_08"
+    ],
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "cellMetres": 0.5,
+    "width": 1152,
+    "height": 1152,
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Westhaven's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+    },
+    "walkableCells": 742398,
+    "walkableFraction": 0.5594
   },
   "navigation": {
     "surfaceNodePrefixes": [
-      "Terrain_"
+      "Terrain_",
+      "Walk_"
     ],
+    "walkableAreas": [
+      "paving",
+      "quays",
+      "pier-decks",
+      "mole-deck",
+      "shore",
+      "salt-turf",
+      "ramp-streets",
+      "stairs"
+    ],
+    "agentRadius": 0.55,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 40,
     "navmesh": {
       "format": "surface-prefix-v1",
       "polygons": []
+    },
+    "notes": [
+      "Every terrain sub-mesh is named Terrain_<class>; every built walkable surface is named Walk_<...>. The client turns both into the navigation collision layer the grounding ray tests.",
+      "Pier decks and the harbour mole are walk surfaces, so a downward grounding ray under one resolves onto the deck above; the harbour beneath them is water and is not walkable.",
+      "The sea floor is terrain and carries the Terrain_ prefix everywhere, including below sea level. That is deliberate: the client casts its grounding ray at every server tile, not only walkable ones, so a region that is 30% open water still needs a continuous surface underneath it. Those tiles ground successfully and are marked unwalkable in collision.bin.",
+      "The city's terrace risers are retaining walls and are not walkable; the ramp streets graded between the bands are the connections, and every terrace is reachable along them."
+    ]
+  },
+  "landmarks": [
+    {
+      "id": "mole-bastion",
+      "name": "The Gullstone Bastion",
+      "type": "fortification",
+      "node": "Landmark_Mole_Bastion",
+      "position": [
+        -57.36,
+        8.35,
+        36.72
+      ],
+      "serverTile": [
+        117,
+        213
+      ]
+    },
+    {
+      "id": "mole-light",
+      "name": "The Mole Light",
+      "type": "lighthouse",
+      "node": "Landmark_Mole_Light",
+      "position": [
+        158.64,
+        16.2,
+        48.24
+      ],
+      "serverTile": [
+        333,
+        202
+      ]
+    },
+    {
+      "id": "warehouse-00",
+      "name": "Harbour Warehouse",
+      "type": "warehouse",
+      "node": "Landmark_Warehouse_00",
+      "position": [
+        -74.17,
+        3.4,
+        -15.25
+      ],
+      "serverTile": [
+        100,
+        265
+      ]
+    },
+    {
+      "id": "warehouse-08",
+      "name": "Harbour Warehouse",
+      "type": "warehouse",
+      "node": "Landmark_Warehouse_08",
+      "position": [
+        48.48,
+        3.4,
+        -18.23
+      ],
+      "serverTile": [
+        222,
+        268
+      ]
+    },
+    {
+      "id": "warehouse-12",
+      "name": "Harbour Warehouse",
+      "type": "warehouse",
+      "node": "Landmark_Warehouse_12",
+      "position": [
+        109.81,
+        3.4,
+        -15.49
+      ],
+      "serverTile": [
+        284,
+        265
+      ]
+    },
+    {
+      "id": "warehouse-16",
+      "name": "Harbour Warehouse",
+      "type": "warehouse",
+      "node": "Landmark_Warehouse_16",
+      "position": [
+        171.13,
+        3.4,
+        -12.2
+      ],
+      "serverTile": [
+        345,
+        262
+      ]
+    },
+    {
+      "id": "fish-market",
+      "name": "The Fish Market",
+      "type": "market",
+      "node": "Landmark_Fish_Market",
+      "position": [
+        -5.52,
+        9.5,
+        -6.48
+      ],
+      "serverTile": [
+        168,
+        256
+      ]
+    },
+    {
+      "id": "pier-a",
+      "name": "Cargo Pier",
+      "type": "pier",
+      "node": "Landmark_Pier_A",
+      "position": [
+        86.64,
+        3.4,
+        25.2
+      ],
+      "serverTile": [
+        261,
+        225
+      ]
+    },
+    {
+      "id": "pier-b",
+      "name": "Crane Pier",
+      "type": "pier",
+      "node": "Landmark_Pier_B",
+      "position": [
+        138.48,
+        3.4,
+        26.64
+      ],
+      "serverTile": [
+        312,
+        223
+      ]
+    },
+    {
+      "id": "harbour-crane",
+      "name": "The Great Crane",
+      "type": "crane",
+      "node": "Landmark_Harbour_Crane",
+      "position": [
+        138.48,
+        3.4,
+        38.64
+      ],
+      "serverTile": [
+        312,
+        211
+      ]
+    },
+    {
+      "id": "harbour-gate",
+      "name": "The Harbour Gate",
+      "type": "gate",
+      "node": "Landmark_Harbour_Gate",
+      "position": [
+        -103.44,
+        3.4,
+        -29.28
+      ],
+      "serverTile": [
+        71,
+        279
+      ]
+    },
+    {
+      "id": "custom-house",
+      "name": "The Custom House",
+      "type": "civic",
+      "node": "Landmark_Custom_House",
+      "position": [
+        -71.76,
+        3.4,
+        -12.24
+      ],
+      "serverTile": [
+        102,
+        262
+      ]
+    },
+    {
+      "id": "shipyard",
+      "name": "The Westhaven Yard",
+      "type": "shipyard",
+      "node": "Landmark_Shipyard_Hull",
+      "position": [
+        210.48,
+        3.4,
+        10.8
+      ],
+      "serverTile": [
+        384,
+        239
+      ]
+    },
+    {
+      "id": "ropewalk",
+      "name": "The Ropewalk",
+      "type": "workshop",
+      "node": "Landmark_Ropewalk",
+      "position": [
+        187.44,
+        3.4,
+        -5.04
+      ],
+      "serverTile": [
+        361,
+        255
+      ]
+    },
+    {
+      "id": "city-gate",
+      "name": "The Sea Gate",
+      "type": "gate",
+      "node": "Landmark_City_Gate",
+      "position": [
+        -6.96,
+        14.76,
+        -78.48
+      ],
+      "serverTile": [
+        167,
+        328
+      ]
+    },
+    {
+      "id": "great-arcade",
+      "name": "The Long Arcade",
+      "type": "civic",
+      "node": "Landmark_Great_Arcade",
+      "position": [
+        14.64,
+        28.5,
+        -147.6
+      ],
+      "serverTile": [
+        189,
+        398
+      ]
+    },
+    {
+      "id": "cathedral",
+      "name": "The Haven Church",
+      "type": "temple",
+      "node": "Landmark_Cathedral",
+      "position": [
+        59.28,
+        41.0,
+        -136.08
+      ],
+      "serverTile": [
+        233,
+        386
+      ]
+    },
+    {
+      "id": "campanile",
+      "name": "The Bell Tower",
+      "type": "tower",
+      "node": "Landmark_Campanile",
+      "position": [
+        -8.4,
+        41.0,
+        -208.08
+      ],
+      "serverTile": [
+        166,
+        458
+      ]
+    },
+    {
+      "id": "brass-dome",
+      "name": "The Astronomers' Hall",
+      "type": "civic",
+      "node": "Landmark_Domed_Hall",
+      "position": [
+        79.44,
+        52.0,
+        -193.68
+      ],
+      "serverTile": [
+        253,
+        444
+      ]
+    },
+    {
+      "id": "high-spire",
+      "name": "The Watch Spire",
+      "type": "tower",
+      "node": "Landmark_High_Spire",
+      "position": [
+        128.4,
+        28.5,
+        -151.92
+      ],
+      "serverTile": [
+        302,
+        402
+      ]
+    },
+    {
+      "id": "guild-hall",
+      "name": "The Mariners' Guild",
+      "type": "civic",
+      "node": "Landmark_Guild_Hall",
+      "position": [
+        72.24,
+        9.5,
+        -41.04
+      ],
+      "serverTile": [
+        246,
+        291
+      ]
+    },
+    {
+      "id": "great-lighthouse",
+      "name": "The Lamp Rock Light",
+      "type": "lighthouse",
+      "node": "Landmark_Great_Lighthouse",
+      "position": [
+        302.64,
+        45.95,
+        120.24
+      ],
+      "serverTile": [
+        477,
+        130
+      ]
+    },
+    {
+      "id": "gullstone-watch",
+      "name": "The Gullstone Watch",
+      "type": "tower",
+      "node": "Landmark_Gullstone_Watch",
+      "position": [
+        -77.52,
+        32.93,
+        102.96
+      ],
+      "serverTile": [
+        96,
+        147
+      ]
+    },
+    {
+      "id": "sea-arch",
+      "name": "The Gullstone Arch",
+      "type": "natural",
+      "node": "Landmark_Sea_Arch",
+      "position": [
+        39.12,
+        19.93,
+        137.52
+      ],
+      "serverTile": [
+        213,
+        112
+      ]
+    },
+    {
+      "id": "upland-chapel",
+      "name": "The Wayside Chapel",
+      "type": "temple",
+      "node": "Landmark_Upland_Chapel",
+      "position": [
+        278.16,
+        43.49,
+        -282.96
+      ],
+      "serverTile": [
+        452,
+        533
+      ]
+    },
+    {
+      "id": "upland-farm",
+      "name": "Gullscar Farm",
+      "type": "settlement",
+      "node": "Landmark_Upland_Farm",
+      "position": [
+        216.24,
+        38.22,
+        -255.6
+      ],
+      "serverTile": [
+        390,
+        506
+      ]
+    },
+    {
+      "id": "hill-estate",
+      "name": "The Factor's House",
+      "type": "estate",
+      "node": "Landmark_Hill_Estate",
+      "position": [
+        342.96,
+        22.58,
+        -66.96
+      ],
+      "serverTile": [
+        517,
+        317
+      ]
+    },
+    {
+      "id": "east-watch",
+      "name": "The East Watch",
+      "type": "tower",
+      "node": "Landmark_East_Watch",
+      "position": [
+        319.92,
+        56.62,
+        -156.24
+      ],
+      "serverTile": [
+        494,
+        406
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "westhaven-harbour-bell",
+      "name": "Harbour Bell",
+      "type": "bell",
+      "position": [
+        36.51,
+        3.4,
+        8.95
+      ],
+      "serverTile": [
+        211,
+        241
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-tide-board",
+      "name": "Tide Board",
+      "type": "notice",
+      "position": [
+        -72.99,
+        3.4,
+        -8.43
+      ],
+      "serverTile": [
+        101,
+        258
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-market-scales",
+      "name": "Market Scales",
+      "type": "workstation",
+      "position": [
+        -4.09,
+        9.5,
+        -3.84
+      ],
+      "serverTile": [
+        170,
+        254
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-crane-winch",
+      "name": "Crane Winch",
+      "type": "workstation",
+      "position": [
+        121.31,
+        3.4,
+        -0.48
+      ],
+      "serverTile": [
+        295,
+        250
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-yard-forge",
+      "name": "Yard Forge",
+      "type": "forge",
+      "position": [
+        214.35,
+        3.39,
+        7.63
+      ],
+      "serverTile": [
+        388,
+        242
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-ropewalk-wheel",
+      "name": "Ropewalk Wheel",
+      "type": "workstation",
+      "position": [
+        190.08,
+        3.4,
+        -3.62
+      ],
+      "serverTile": [
+        364,
+        254
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-guild-ledger",
+      "name": "Guild Ledger",
+      "type": "notice",
+      "position": [
+        69.26,
+        9.5,
+        -40.71
+      ],
+      "serverTile": [
+        243,
+        291
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-lamp-store",
+      "name": "Lamp Store",
+      "type": "container",
+      "position": [
+        296.52,
+        17.95,
+        123.04
+      ],
+      "serverTile": [
+        471,
+        127
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-cistern",
+      "name": "Street Cistern",
+      "type": "water",
+      "position": [
+        23.17,
+        9.5,
+        -39.05
+      ],
+      "serverTile": [
+        197,
+        289
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-chapel-font",
+      "name": "Chapel Font",
+      "type": "shrine",
+      "position": [
+        279.41,
+        43.49,
+        -285.12
+      ],
+      "serverTile": [
+        453,
+        535
+      ],
+      "authority": "server"
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "westhaven-harbourmaster",
+      "name": "Harbour Master",
+      "type": "npc",
+      "position": [
+        -66.84,
+        3.4,
+        -11.34
+      ],
+      "serverTile": [
+        107,
+        261
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-tide-clerk",
+      "name": "Tide Clerk",
+      "type": "npc",
+      "position": [
+        -70.94,
+        3.4,
+        -19.19
+      ],
+      "serverTile": [
+        103,
+        269
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-fishwife",
+      "name": "Fishwife",
+      "type": "npc",
+      "position": [
+        -1.25,
+        9.5,
+        -3.87
+      ],
+      "serverTile": [
+        173,
+        254
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-fish-crier",
+      "name": "Fish Crier",
+      "type": "npc",
+      "position": [
+        0.97,
+        9.5,
+        -11.16
+      ],
+      "serverTile": [
+        175,
+        261
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-stevedore",
+      "name": "Stevedore",
+      "type": "npc",
+      "position": [
+        86.12,
+        -7.28,
+        30.17
+      ],
+      "serverTile": [
+        260,
+        220
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-crane-hand",
+      "name": "Crane Hand",
+      "type": "npc",
+      "position": [
+        139.98,
+        -7.4,
+        30.35
+      ],
+      "serverTile": [
+        314,
+        220
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-shipwright",
+      "name": "Shipwright",
+      "type": "npc",
+      "position": [
+        216.47,
+        2.76,
+        11.06
+      ],
+      "serverTile": [
+        390,
+        239
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-caulker",
+      "name": "Caulker",
+      "type": "npc",
+      "position": [
+        224.1,
+        -4.64,
+        30.56
+      ],
+      "serverTile": [
+        398,
+        219
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-ropemaker",
+      "name": "Ropemaker",
+      "type": "npc",
+      "position": [
+        189.41,
+        3.4,
+        -9.64
+      ],
+      "serverTile": [
+        363,
+        260
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-chandler",
+      "name": "Ship's Chandler",
+      "type": "npc",
+      "position": [
+        118.27,
+        3.4,
+        -4.72
+      ],
+      "serverTile": [
+        292,
+        255
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-gate-serjeant",
+      "name": "Gate Serjeant",
+      "type": "npc",
+      "position": [
+        -4.37,
+        14.35,
+        -75.43
+      ],
+      "serverTile": [
+        170,
+        325
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-guild-factor",
+      "name": "Guild Factor",
+      "type": "npc",
+      "position": [
+        77.24,
+        9.5,
+        -41.23
+      ],
+      "serverTile": [
+        251,
+        291
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-arcade-scribe",
+      "name": "Arcade Scribe",
+      "type": "npc",
+      "position": [
+        15.7,
+        28.5,
+        -153.51
+      ],
+      "serverTile": [
+        190,
+        404
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-cathedral-warden",
+      "name": "Warden of the Haven",
+      "type": "npc",
+      "position": [
+        67.12,
+        41.0,
+        -137.69
+      ],
+      "serverTile": [
+        241,
+        388
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-bell-ringer",
+      "name": "Campanile Bell-Ringer",
+      "type": "npc",
+      "position": [
+        -9.06,
+        41.0,
+        -212.03
+      ],
+      "serverTile": [
+        165,
+        462
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-astronomer",
+      "name": "Dome Astronomer",
+      "type": "npc",
+      "position": [
+        84.34,
+        52.0,
+        -192.69
+      ],
+      "serverTile": [
+        258,
+        443
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-lightkeeper",
+      "name": "Lightkeeper",
+      "type": "npc",
+      "position": [
+        306.61,
+        17.95,
+        119.73
+      ],
+      "serverTile": [
+        481,
+        130
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-mole-watch",
+      "name": "Mole Watchman",
+      "type": "npc",
+      "position": [
+        -56.6,
+        -7.9,
+        40.65
+      ],
+      "serverTile": [
+        117,
+        209
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-drover",
+      "name": "Upland Drover",
+      "type": "npc",
+      "position": [
+        209.24,
+        38.22,
+        -255.83
+      ],
+      "serverTile": [
+        383,
+        506
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-chapel-warden",
+      "name": "Chapel Warden",
+      "type": "npc",
+      "position": [
+        279.78,
+        43.49,
+        -279.3
+      ],
+      "serverTile": [
+        454,
+        529
+      ],
+      "authority": "server"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "westhaven-mussel-bed-0",
+      "name": "Mussel Bed",
+      "type": "shellfish",
+      "position": [
+        304.29,
+        1.9,
+        30.0
+      ],
+      "serverTile": [
+        478,
+        220
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-mussel-bed-1",
+      "name": "Mussel Bed",
+      "type": "shellfish",
+      "position": [
+        298.25,
+        1.9,
+        23.88
+      ],
+      "serverTile": [
+        472,
+        226
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-mussel-bed-2",
+      "name": "Mussel Bed",
+      "type": "shellfish",
+      "position": [
+        315.51,
+        1.9,
+        37.91
+      ],
+      "serverTile": [
+        490,
+        212
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-mussel-bed-3",
+      "name": "Mussel Bed",
+      "type": "shellfish",
+      "position": [
+        306.93,
+        1.9,
+        44.72
+      ],
+      "serverTile": [
+        481,
+        205
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-mussel-bed-4",
+      "name": "Mussel Bed",
+      "type": "shellfish",
+      "position": [
+        302.39,
+        -16.58,
+        53.44
+      ],
+      "serverTile": [
+        476,
+        197
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-crab-pots-0",
+      "name": "Crab Pots",
+      "type": "shellfish",
+      "position": [
+        233.9,
+        -15.22,
+        20.93
+      ],
+      "serverTile": [
+        408,
+        229
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-crab-pots-1",
+      "name": "Crab Pots",
+      "type": "shellfish",
+      "position": [
+        241.75,
+        -12.26,
+        20.57
+      ],
+      "serverTile": [
+        416,
+        229
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-crab-pots-2",
+      "name": "Crab Pots",
+      "type": "shellfish",
+      "position": [
+        243.85,
+        3.92,
+        11.79
+      ],
+      "serverTile": [
+        418,
+        238
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-crab-pots-3",
+      "name": "Crab Pots",
+      "type": "shellfish",
+      "position": [
+        242.2,
+        1.62,
+        13.67
+      ],
+      "serverTile": [
+        416,
+        236
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-kelp-shallows-0",
+      "name": "Kelp Shallows",
+      "type": "plant",
+      "position": [
+        333.97,
+        -15.77,
+        54.6
+      ],
+      "serverTile": [
+        508,
+        195
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-kelp-shallows-1",
+      "name": "Kelp Shallows",
+      "type": "plant",
+      "position": [
+        346.53,
+        -16.59,
+        39.33
+      ],
+      "serverTile": [
+        521,
+        211
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-kelp-shallows-2",
+      "name": "Kelp Shallows",
+      "type": "plant",
+      "position": [
+        340.1,
+        -16.84,
+        57.48
+      ],
+      "serverTile": [
+        514,
+        193
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-kelp-shallows-3",
+      "name": "Kelp Shallows",
+      "type": "plant",
+      "position": [
+        331.68,
+        -16.15,
+        45.72
+      ],
+      "serverTile": [
+        506,
+        204
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-kelp-shallows-4",
+      "name": "Kelp Shallows",
+      "type": "plant",
+      "position": [
+        338.44,
+        -15.64,
+        51.56
+      ],
+      "serverTile": [
+        512,
+        198
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-kelp-shallows-5",
+      "name": "Kelp Shallows",
+      "type": "plant",
+      "position": [
+        339.32,
+        -15.87,
+        43.6
+      ],
+      "serverTile": [
+        513,
+        206
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-salt-pans-0",
+      "name": "Salt Pans",
+      "type": "mineral",
+      "position": [
+        279.17,
+        20.91,
+        15.01
+      ],
+      "serverTile": [
+        453,
+        235
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-salt-pans-1",
+      "name": "Salt Pans",
+      "type": "mineral",
+      "position": [
+        287.1,
+        22.13,
+        16.11
+      ],
+      "serverTile": [
+        461,
+        234
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-salt-pans-2",
+      "name": "Salt Pans",
+      "type": "mineral",
+      "position": [
+        257.81,
+        16.63,
+        9.45
+      ],
+      "serverTile": [
+        432,
+        241
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-salt-pans-3",
+      "name": "Salt Pans",
+      "type": "mineral",
+      "position": [
+        273.25,
+        4.61,
+        24.87
+      ],
+      "serverTile": [
+        447,
+        225
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-thrift-turf-0",
+      "name": "Sea Thrift",
+      "type": "plant",
+      "position": [
+        -95.04,
+        27.43,
+        -196.87
+      ],
+      "serverTile": [
+        79,
+        447
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-thrift-turf-1",
+      "name": "Sea Thrift",
+      "type": "plant",
+      "position": [
+        -100.2,
+        26.04,
+        -197.56
+      ],
+      "serverTile": [
+        74,
+        448
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-thrift-turf-2",
+      "name": "Sea Thrift",
+      "type": "plant",
+      "position": [
+        -91.45,
+        31.01,
+        -208.34
+      ],
+      "serverTile": [
+        83,
+        458
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-thrift-turf-3",
+      "name": "Sea Thrift",
+      "type": "plant",
+      "position": [
+        -99.97,
+        25.83,
+        -196.67
+      ],
+      "serverTile": [
+        74,
+        447
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-thrift-turf-4",
+      "name": "Sea Thrift",
+      "type": "plant",
+      "position": [
+        -84.25,
+        35.01,
+        -203.81
+      ],
+      "serverTile": [
+        90,
+        454
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-thrift-turf-5",
+      "name": "Sea Thrift",
+      "type": "plant",
+      "position": [
+        -85.99,
+        25.67,
+        -216.47
+      ],
+      "serverTile": [
+        88,
+        466
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-gull-eggs-0",
+      "name": "Gull Eggs",
+      "type": "forage",
+      "position": [
+        -39.28,
+        44.6,
+        118.38
+      ],
+      "serverTile": [
+        135,
+        132
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-gull-eggs-1",
+      "name": "Gull Eggs",
+      "type": "forage",
+      "position": [
+        -46.92,
+        32.0,
+        136.97
+      ],
+      "serverTile": [
+        127,
+        113
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-gull-eggs-2",
+      "name": "Gull Eggs",
+      "type": "forage",
+      "position": [
+        -52.0,
+        42.61,
+        115.09
+      ],
+      "serverTile": [
+        122,
+        135
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-gull-eggs-3",
+      "name": "Gull Eggs",
+      "type": "forage",
+      "position": [
+        -39.8,
+        37.57,
+        131.37
+      ],
+      "serverTile": [
+        134,
+        119
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-driftwood-0",
+      "name": "Driftwood",
+      "type": "wood",
+      "position": [
+        15.71,
+        17.97,
+        181.19
+      ],
+      "serverTile": [
+        190,
+        69
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-driftwood-1",
+      "name": "Driftwood",
+      "type": "wood",
+      "position": [
+        22.34,
+        25.33,
+        167.07
+      ],
+      "serverTile": [
+        196,
+        83
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-driftwood-2",
+      "name": "Driftwood",
+      "type": "wood",
+      "position": [
+        4.98,
+        17.05,
+        184.12
+      ],
+      "serverTile": [
+        179,
+        66
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-driftwood-3",
+      "name": "Driftwood",
+      "type": "wood",
+      "position": [
+        18.48,
+        24.31,
+        165.68
+      ],
+      "serverTile": [
+        192,
+        84
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-driftwood-4",
+      "name": "Driftwood",
+      "type": "wood",
+      "position": [
+        4.39,
+        18.73,
+        170.13
+      ],
+      "serverTile": [
+        178,
+        80
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-limpet-rocks-0",
+      "name": "Limpet Rocks",
+      "type": "shellfish",
+      "position": [
+        284.12,
+        19.64,
+        159.51
+      ],
+      "serverTile": [
+        458,
+        90
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-limpet-rocks-1",
+      "name": "Limpet Rocks",
+      "type": "shellfish",
+      "position": [
+        298.72,
+        21.71,
+        173.42
+      ],
+      "serverTile": [
+        473,
+        77
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-limpet-rocks-2",
+      "name": "Limpet Rocks",
+      "type": "shellfish",
+      "position": [
+        309.64,
+        22.15,
+        168.95
+      ],
+      "serverTile": [
+        484,
+        81
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-limpet-rocks-3",
+      "name": "Limpet Rocks",
+      "type": "shellfish",
+      "position": [
+        301.3,
+        18.97,
+        166.46
+      ],
+      "serverTile": [
+        475,
+        84
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "westhaven-limpet-rocks-4",
+      "name": "Limpet Rocks",
+      "type": "shellfish",
+      "position": [
+        302.98,
+        18.67,
+        161.15
+      ],
+      "serverTile": [
+        477,
+        89
+      ],
+      "authority": "server"
+    }
+  ],
+  "portals": [
+    {
+      "id": "north-road",
+      "name": "North Road to Amberwood",
+      "type": "map-transition",
+      "transport": "road",
+      "position": [
+        278.16,
+        43.59,
+        -282.96
+      ],
+      "serverTile": [
+        452,
+        533
+      ],
+      "destinationMap": "maps/nymara/amberwood.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "east-road",
+      "name": "Coast Road to the Grey Moors",
+      "type": "map-transition",
+      "transport": "road",
+      "position": [
+        342.96,
+        22.68,
+        -66.96
+      ],
+      "serverTile": [
+        517,
+        317
+      ],
+      "destinationMap": "maps/nymara/grey_moors.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "crownwater-berth",
+      "name": "Crownwater Packet",
+      "type": "map-transition",
+      "transport": "berth",
+      "position": [
+        -122.16,
+        -15.61,
+        -16.56
+      ],
+      "serverTile": [
+        52,
+        267
+      ],
+      "destinationMap": "maps/nymara/crownwater.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "mirrorhold-berth",
+      "name": "Mirrorhold Packet",
+      "type": "map-transition",
+      "transport": "berth",
+      "position": [
+        86.64,
+        2.44,
+        25.2
+      ],
+      "serverTile": [
+        261,
+        225
+      ],
+      "destinationMap": "maps/nymara/mirrorhold.elm",
+      "radius": 3.5,
+      "authority": "server"
+    }
+  ],
+  "roads": [
+    {
+      "id": "quayside",
+      "type": "quay",
+      "widthMetres": 21.0,
+      "waypoints": [
+        [
+          -103.4,
+          3.4,
+          -35.3
+        ],
+        [
+          -71.8,
+          3.4,
+          -12.2
+        ],
+        [
+          34.8,
+          3.4,
+          6.5
+        ],
+        [
+          118.3,
+          3.4,
+          -0.7
+        ],
+        [
+          187.4,
+          3.4,
+          -5.0
+        ],
+        [
+          210.5,
+          3.35,
+          10.8
+        ]
+      ]
+    },
+    {
+      "id": "market_climb",
+      "type": "street",
+      "widthMetres": 10.2,
+      "waypoints": [
+        [
+          34.8,
+          3.4,
+          6.5
+        ],
+        [
+          -25.7,
+          7.63,
+          -19.4
+        ],
+        [
+          -8.4,
+          8.66,
+          -23.8
+        ],
+        [
+          21.8,
+          9.5,
+          -35.3
+        ]
+      ]
+    },
+    {
+      "id": "gate_climb",
+      "type": "street",
+      "widthMetres": 11.4,
+      "waypoints": [
+        [
+          21.8,
+          9.5,
+          -35.3
+        ],
+        [
+          -7.0,
+          14.76,
+          -78.5
+        ],
+        [
+          49.2,
+          18.0,
+          -87.1
+        ]
+      ]
+    },
+    {
+      "id": "arcade_walk",
+      "type": "street",
+      "widthMetres": 10.2,
+      "waypoints": [
+        [
+          49.2,
+          18.0,
+          -87.1
+        ],
+        [
+          14.6,
+          28.5,
+          -147.6
+        ],
+        [
+          59.3,
+          41.0,
+          -136.1
+        ]
+      ]
+    },
+    {
+      "id": "crown_climb",
+      "type": "street",
+      "widthMetres": 8.4,
+      "waypoints": [
+        [
+          59.3,
+          41.0,
+          -136.1
+        ],
+        [
+          -8.4,
+          41.0,
+          -208.1
+        ],
+        [
+          63.6,
+          52.0,
+          -215.3
+        ]
+      ]
+    },
+    {
+      "id": "north_road",
+      "type": "track",
+      "widthMetres": 9.0,
+      "waypoints": [
+        [
+          138.5,
+          47.95,
+          -205.2
+        ],
+        [
+          158.6,
+          45.42,
+          -239.8
+        ],
+        [
+          196.1,
+          39.4,
+          -262.8
+        ],
+        [
+          216.2,
+          38.22,
+          -255.6
+        ],
+        [
+          253.7,
+          42.03,
+          -272.9
+        ],
+        [
+          278.2,
+          43.49,
+          -283.0
+        ],
+        [
+          322.8,
+          49.92,
+          -293.0
+        ]
+      ]
+    },
+    {
+      "id": "east_road",
+      "type": "track",
+      "widthMetres": 9.0,
+      "waypoints": [
+        [
+          138.5,
+          47.95,
+          -205.2
+        ],
+        [
+          187.4,
+          39.32,
+          -176.4
+        ],
+        [
+          227.8,
+          34.62,
+          -136.1
+        ],
+        [
+          272.4,
+          30.36,
+          -110.2
+        ],
+        [
+          319.9,
+          26.54,
+          -88.6
+        ],
+        [
+          343.0,
+          22.58,
+          -67.0
+        ],
+        [
+          361.7,
+          7.14,
+          -29.5
+        ]
+      ]
+    },
+    {
+      "id": "bay_track",
+      "type": "track",
+      "widthMetres": 7.2,
+      "waypoints": [
+        [
+          232.1,
+          3.4,
+          5.0
+        ],
+        [
+          262.3,
+          4.77,
+          19.4
+        ],
+        [
+          299.8,
+          1.9,
+          35.3
+        ],
+        [
+          334.3,
+          2.6,
+          29.5
+        ],
+        [
+          364.6,
+          4.13,
+          15.1
+        ],
+        [
+          391.9,
+          4.31,
+          29.5
+        ],
+        [
+          381.8,
+          2.52,
+          79.9
+        ],
+        [
+          322.8,
+          15.04,
+          108.7
+        ],
+        [
+          302.6,
+          17.95,
+          120.2
+        ]
+      ]
+    }
+  ],
+  "water": {
+    "seaLevel": 0.0,
+    "serverCells": 576,
+    "bodies": [
+      {
+        "id": "Water_Sea",
+        "node": "Water_Sea",
+        "type": "sea"
+      }
+    ],
+    "streams": [],
+    "channels": [
+      {
+        "id": "harbour-mouth",
+        "type": "navigable",
+        "note": "the gap between the mole head and the shipyard point"
+      },
+      {
+        "id": "west-inlet",
+        "type": "navigable",
+        "note": "the sheltered arm under the harbour gate"
+      },
+      {
+        "id": "lamp-sound",
+        "type": "navigable",
+        "note": "the deep water between Gullstone and Lamp Rock"
+      }
+    ],
+    "harbourFloor": -7.5,
+    "seaFloor": -17.0
+  },
+  "environment": {
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.2,
+        0.44,
+        0.7
+      ],
+      "horizon": [
+        0.78,
+        0.86,
+        0.88
+      ],
+      "curve": 0.17,
+      "groundHorizon": [
+        0.46,
+        0.56,
+        0.58
+      ],
+      "groundBottom": [
+        0.18,
+        0.26,
+        0.3
+      ],
+      "sunAngleMax": 16.0,
+      "energy": 1.12
+    },
+    "sun": {
+      "direction": [
+        -0.42,
+        -0.8,
+        0.43
+      ],
+      "color": [
+        1.14,
+        1.06,
+        0.94
+      ],
+      "energy": 1.1,
+      "indirectEnergy": 1.12,
+      "angularDiameterDegrees": 1.2
+    },
+    "ambient": {
+      "color": [
+        0.54,
+        0.66,
+        0.74
+      ],
+      "energy": 0.5,
+      "skyContribution": 0.72
+    },
+    "saturation": 1.22,
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.68,
+        0.78,
+        0.82
+      ],
+      "density": 0.00042,
+      "heightFalloff": 0.0024
+    },
+    "variants": {
+      "golden-hour": {
+        "sun": {
+          "direction": [
+            -0.84,
+            -0.24,
+            0.48
+          ],
+          "color": [
+            1.54,
+            1.06,
+            0.64
+          ],
+          "energy": 1.28
+        },
+        "fog": {
+          "enabled": true,
+          "color": [
+            0.8,
+            0.68,
+            0.54
+          ],
+          "density": 0.0017
+        }
+      },
+      "sea-fret": {
+        "sun": {
+          "direction": [
+            -0.3,
+            -0.9,
+            0.32
+          ],
+          "color": [
+            0.92,
+            0.94,
+            0.98
+          ],
+          "energy": 0.72
+        },
+        "fog": {
+          "enabled": true,
+          "color": [
+            0.74,
+            0.78,
+            0.8
+          ],
+          "density": 0.0034,
+          "heightFalloff": 0.01
+        }
+      }
+    },
+    "water": {
+      "shallowColor": [
+        0.2,
+        0.58,
+        0.6
+      ],
+      "deepColor": [
+        0.03,
+        0.16,
+        0.3
+      ],
+      "causticsEnabled": true,
+      "note": "Shallow/deep tint and caustics are presentation settings for whoever writes the water shader; the GLB ships a flat lit plane."
+    },
+    "presentation": {
+      "gulls": {
+        "enabled": true,
+        "density": 0.8,
+        "zones": [
+          "harbour",
+          "open-sea",
+          "lamp-rock"
+        ]
+      },
+      "mist": {
+        "enabled": false
+      },
+      "spray": {
+        "enabled": true,
+        "zones": [
+          "mole",
+          "gullstone",
+          "lamp-rock"
+        ]
+      },
+      "bannerWind": {
+        "enabled": true,
+        "strength": 0.62
+      },
+      "ambientAudio": [
+        {
+          "id": "harbour-work",
+          "zone": "waterfront"
+        },
+        {
+          "id": "market-crowd",
+          "zone": "lower-town"
+        },
+        {
+          "id": "bells",
+          "zone": "citadel"
+        },
+        {
+          "id": "surf",
+          "zone": "mole"
+        },
+        {
+          "id": "gulls",
+          "zone": "open-sea"
+        }
+      ]
+    },
+    "zones": [
+      {
+        "id": "waterfront",
+        "centre": [
+          60.0,
+          3.4,
+          8.0
+        ],
+        "radius": 230.0
+      },
+      {
+        "id": "lower-town",
+        "centre": [
+          30.0,
+          9.5,
+          -30.0
+        ],
+        "radius": 150.0
+      },
+      {
+        "id": "citadel",
+        "centre": [
+          60.0,
+          41.0,
+          -140.0
+        ],
+        "radius": 120.0
+      },
+      {
+        "id": "upland",
+        "centre": [
+          250.0,
+          34.0,
+          -150.0
+        ],
+        "radius": 240.0
+      },
+      {
+        "id": "mole",
+        "centre": [
+          -40.0,
+          5.2,
+          30.0
+        ],
+        "radius": 140.0
+      },
+      {
+        "id": "gullstone",
+        "centre": [
+          -40.0,
+          20.0,
+          105.0
+        ],
+        "radius": 110.0
+      },
+      {
+        "id": "lamp-rock",
+        "centre": [
+          300.0,
+          18.0,
+          120.0
+        ],
+        "radius": 110.0
+      },
+      {
+        "id": "open-sea",
+        "centre": [
+          110.0,
+          0.0,
+          160.0
+        ],
+        "radius": 420.0
+      }
+    ]
+  },
+  "minimap": {
+    "file": "minimap.webp",
+    "pixels": 768,
+    "metresPerPixel": 0.7487,
+    "worldMin": [
+      -174.0,
+      -325.0
+    ],
+    "worldMax": [
+      401.0,
+      250.0
+    ],
+    "northAxis": "-Z",
+    "orientation": "north-up"
+  },
+  "lodGroups": [
+    {
+      "id": "vegetation",
+      "strategy": "authored-detail-tiers",
+      "levels": [
+        {
+          "id": "near",
+          "suffix": "_high"
+        },
+        {
+          "id": "mid",
+          "suffix": "_mid"
+        },
+        {
+          "id": "far",
+          "suffix": "_low"
+        }
+      ]
+    },
+    {
+      "id": "package-lod2",
+      "glb": "world-lod2.glb",
+      "strategy": "reduced-package",
+      "notes": "Far-tier vegetation only, no ground clutter."
+    }
+  ],
+  "performance": {
+    "nodes": 4419,
+    "meshes": 252,
+    "materials": 24,
+    "images": 65,
+    "textures": 65,
+    "accessors": 1008,
+    "bufferViews": 1073,
+    "uniqueTriangles": 452652,
+    "uniqueVertices": 342424,
+    "glbBytes": 21598004,
+    "instancedTriangles": 1137392,
+    "embeddedTextureBytes": 19964003,
+    "textureMemoryBytesUncompressed": 172228608,
+    "placements": 1900,
+    "collision": {
+      "width": 1152,
+      "height": 1152,
+      "cellMetres": 0.5,
+      "walkableCells": 742398,
+      "blockedCells": 584706,
+      "walkableFraction": 0.5594,
+      "elevatedDecks": 19,
+      "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+      "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+    },
+    "notes": [
+      "city houses placed: 385",
+      "trees placed: 257",
+      "ground dressing placed: 536"
+    ],
+    "lod2": {
+      "glbBytes": 13668048,
+      "nodes": 3629,
+      "uniqueTriangles": 369474,
+      "instancedTriangles": 955676,
+      "sizeReductionPercent": 36.7,
+      "triangleReductionPercent": 16.0
     }
   },
-  "materials": {
-    "baseColor": "textures/region-basecolor.png",
-    "normal": "textures/region-normal.png",
-    "orm": "textures/region-orm.png"
+  "sources": [
+    {
+      "id": "aerial-concept",
+      "file": "references/01-concept-aerial-overview.png",
+      "role": "authoritative-composition"
+    },
+    {
+      "id": "detail-board",
+      "file": "references/00-concept-detail-board.png",
+      "role": "authoritative-player-scale"
+    },
+    {
+      "id": "generator",
+      "file": "source/build_westhaven.py",
+      "role": "reproducible-build",
+      "seed": 20260829
+    }
+  ],
+  "provenance": {
+    "assets": "original to Eloria/Nymara; generated by source/amberwood/*",
+    "thirdParty": "none",
+    "textures": "procedural (numpy + Pillow), no sampled or traced source",
+    "geometry": "procedural (numpy), no imported models",
+    "license": "same as the Eloria client repository"
   },
-  "productionStatus": "terrain-landmark-material-pass"
+  "productionStatus": "production-geometry-materials-population",
+  "requiresServerMap": {
+    "tiles": 96,
+    "metresPerTile": 1.0,
+    "arrivalTile": [
+      174.0,
+      250.0
+    ],
+    "note": "Westhaven needs a 96x96 server map and, unlike the other 576 m regions, an arrival datum at (174, 250) rather than (174, 174). Both are added by eloria-server tools/generate_nymara_maps.py on branch feature/westhaven-576m-server-map."
+  },
+  "knownLimitations": [
+    "Place names are invented. No authoritative written description of Westhaven was available, so every name in this package - Gullstone, Lamp Rock, the Mariners' Guild, Gullscar Farm - is a placeholder chosen to fit the concept art, not lore.",
+    "The server ELM cannot express water as blocked. generate_nymara_maps.py's validator rejects any exterior map containing a zero height, and zero is what blocked means, so the server map carries Westhaven's elevation only and collision.bin remains authoritative for walkability. This is true of every region, not new here.",
+    "collision.bin height bytes saturate at 63, which is 10.4 m. Westhaven's terraces run to 52 m and its ridge to 88, so every walkable cell above 10.4 m encodes as 63. The client takes elevation from the rendered walk surfaces, not from this file, and verify_runtime exempts saturated cells from its cross-check.",
+    "The city's terrace risers are deliberately not walkable. Every terrace is reachable along the graded ramp streets, but a player cannot climb a retaining wall, and the 202 grounding discontinuities verify_runtime reports are those risers, the sea cliffs and the map's north and east rim.",
+    "Gullstone island has no bridge or ferry geometry. Its tiles are grounded and walkable but form an isolated component reachable only by boat, which the client does not yet model."
+  ]
 }
