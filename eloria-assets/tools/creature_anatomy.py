@@ -41,6 +41,12 @@ BONE_TOPOLOGY = (
 BONE_INDEX = {name: index for index, (name, _) in enumerate(BONE_TOPOLOGY)}
 
 MAT_BODY, MAT_ACCENT, MAT_DARK, MAT_FEATURE, MAT_GROWTH = 0, 1, 2, 3, 4
+# A sixth slot for whatever is lit from inside: the heart-hollow burning in a
+# treant, the glow trapped in a geode carapace, the core a wisp swirls around.
+# The concept art draws these as the brightest thing on the creature, and a
+# whole-body emissive cannot express them because the shell around them has to
+# stay dark for the core to read as a core.
+MAT_CORE = 5
 
 
 def _plan(**overrides) -> dict:
@@ -66,6 +72,10 @@ def _plan(**overrides) -> dict:
         # extras -----------------------------------------------------------
         horn=None, shell=False, spines=None, wings=False, plates=None,
         dorsal=None, humped=False, mane_ruff=False,
+        # Plated construction, as on the bipedal golems: the stone beasts in
+        # the art are clad in overlapping slabs, not smooth hide in a stone
+        # colour.  ``core`` sets a lit gem in the shoulder.
+        plated=.0, plate_shape="boulder", runes=.0, core=.0,
     )
     base.update(overrides)
     return base
@@ -355,12 +365,69 @@ QUADRUPED_PROPORTION_RULES = {
 }
 
 
+# ``ARCHETYPE_TWEAKS`` is keyed by concrete archetype ("wolf", "fox").  The
+# roster names body plans instead ("canid", "felid"), so none of it ever
+# applied to a roster creature: every roster canid was the bare canid baseline
+# in a different palette, and measured proportions were the only thing telling
+# them apart.  This is where per-creature features from the art live -- the
+# ruff on a dire wolf, the mane on a lion, the sloping back of a hyena.
+QUADRUPED_DETAIL = {
+    # Canids.  The art gives all of them a heavy shoulder ruff and a longer,
+    # deeper muzzle than the baseline; the dire wolves are big-headed.
+    "moorfell_wolf": dict(mane_ruff=1.15, muzzle_len=.32, ear_h=.26,
+                          skull=(.23, .23, .28), tail_bush=1.35),
+    "bramble_wolf": dict(mane_ruff=1.05, muzzle_len=.31, ear_h=.25,
+                         skull=(.22, .22, .27), tail_bush=1.25),
+    "facet_hound": dict(muzzle_len=.30, ear_h=.27, skull=(.22, .21, .27),
+                        tail_bush=.85),
+    "ivy_hound": dict(mane_ruff=.85, muzzle_len=.29, ear_h=.24),
+    "dust_hyena": dict(shoulder_h=.90, hip_h=.70, mane_ruff=.95, ear="round",
+                       ear_h=.20, ear_w=.17, skull=(.22, .22, .26),
+                       muzzle_len=.26, tail_bush=1.15),
+    # Felids.  A lion is mostly mane in the art, and it is the one thing that
+    # separated the two lions from the two wolves.
+    "stormmane_lion": dict(mane_ruff=1.95, tail_bush=1.5, skull=(.23, .21, .24),
+                           muzzle_len=.21),
+    "gilded_water_lion": dict(mane_ruff=1.70, tail_bush=1.4,
+                              skull=(.23, .21, .24)),
+    "canopy_lynx": dict(ear_h=.30, ear_w=.13, tail_bush=1.1, tail_len=.42),
+    # Equines and bovines: a standing mane along the crest of the neck.
+    "moor_pony": dict(mane_ruff=1.25, tail_bush=1.6, muzzle_len=.34,
+                      skull=(.19, .21, .30)),
+    "goldmane_aurochs": dict(mane_ruff=1.45, horn="curl"),
+    "whitehorn_yak": dict(mane_ruff=1.60, horn="curl", tail_bush=1.3),
+    "moorhorn_ram": dict(horn="curl", mane_ruff=1.05),
+    # Cervids keep their antlers and gain the throat ruff the art shows.
+    "spectral_moor_stag": dict(horn="antlers", mane_ruff=.90),
+    "bramble_stag": dict(horn="antlers", mane_ruff=.85),
+    "lantern_stag": dict(horn="antlers", mane_ruff=.85),
+    "moss_bear": dict(mane_ruff=.80),
+    "mossback_anteater": dict(muzzle_len=.52, muzzle_r=(.085, .060),
+                              tail_bush=1.7),
+    # Stone beasts: the art clads these in overlapping plate the same way it
+    # clads the bipedal golems, and sets a lit gem over the shoulder.
+    "reefplate_golem": dict(plated=1.0, plate_shape="scale", runes=.25,
+                            core=.62, shell=True, mane_ruff=.0,
+                            skull=(.24, .22, .24)),
+    "cairnback_tortoise": dict(plated=.75, plate_shape="slab", runes=.20),
+    "geode_tortoise": dict(plated=.85, plate_shape="shard", runes=.35,
+                           core=.46),
+    "crystalwing": dict(plated=.70, plate_shape="shard", runes=.30),
+    "prism_drake": dict(plated=.65, plate_shape="shard", runes=.30),
+    "facet_hound": dict(plated=.60, plate_shape="shard", runes=.25),
+}
+
+
 def resolved_plan(archetype: str, variant: str | None = None) -> dict:
     plan = dict(plan_for(archetype))
     plan.update(ARCHETYPE_TWEAKS.get(archetype, {}))
     if variant:
+        plan.update(QUADRUPED_DETAIL.get(variant, {}))
         plan = scale_plan(plan, proportions(variant),
                           QUADRUPED_PROPORTION_RULES)
+    # Stamped so feature code can seed deterministically off the creature
+    # without every helper having to carry the slug through its arguments.
+    plan["_variant"] = variant or archetype
     return plan
 
 
@@ -472,7 +539,7 @@ def global_positions(bones) -> list[np.ndarray]:
 # ---------------------------------------------------------------------------
 # Mesh authoring with smooth skin weights
 # ---------------------------------------------------------------------------
-MATERIAL_SLOTS = 5
+MATERIAL_SLOTS = 6
 
 
 class AnatomyMesh:
@@ -1101,12 +1168,78 @@ def _features(mesh: AnatomyMesh, p: dict, s: float, g, B, spine, radii,
                   [(.055 * s, .050 * s), (.012 * s, .012 * s)],
                   [head_i], MAT_FEATURE, sides=9)
 
-    if p.get("mane_ruff"):
+    if p.get("plated"):
+        plated = float(p["plated"])
+        seed = str(p.get("_variant", ""))
+        plated_shell(mesh, spine, radii, [body_i, chest_i, B["neck"]], MAT_BODY,
+                     seed=seed + ":back", rows=int(2 + 2 * plated), around=5,
+                     relief=.38 * plated, gap=.11, dome=.60,
+                     shape=p.get("plate_shape", "boulder"),
+                     rune_material=MAT_CORE if p.get("runes") else None,
+                     rune_chance=float(p.get("runes") or 0.) * .5,
+                     span=(.08, .92))
+        for key in ("front_leg_l", "front_leg_r", "rear_leg_l", "rear_leg_r"):
+            if key not in B:
+                continue
+            shin = key.replace("_leg_", "_shin_")
+            paw = key.replace("_leg_", "_paw_")
+            if shin not in B or paw not in B:
+                continue
+            chain = [g[B[key]], (g[B[key]] + g[B[shin]]) * .5, g[B[shin]],
+                     g[B[paw]]]
+            thick = p["upper_r"] * s
+            widths = [(thick * 1.05, thick * 1.05), (thick * .92, thick * .92),
+                      (thick * .80, thick * .80), (thick * .66, thick * .66)]
+            plated_shell(mesh, chain, widths,
+                         [body_i, B[key], B[shin], B[paw]], MAT_BODY,
+                         seed=f"{seed}:{key}", rows=3, around=4,
+                         relief=.38 * plated, gap=.13, dome=.60,
+                         shape=p.get("plate_shape", "boulder"),
+                         span=(.10, .90))
+    if p.get("core"):
+        # A gem set over the shoulder, where the art puts it on these beasts.
+        gem = float(p["core"]) * s
+        seat = spine[max(len(spine) - 3, 0)] + np.array((0., radii[-1][1] * .55, 0.))
+        mesh.ellipsoid(tuple(seat), (gem * .30, gem * .26, gem * .30),
+                       [chest_i, B["neck"]], MAT_CORE, rings=7, sides=11)
+        for k in range(9):
+            angle = 2 * math.pi * k / 9
+            mesh.ellipsoid(tuple(seat + np.array((math.cos(angle) * gem * .24,
+                                                  -gem * .04,
+                                                  math.sin(angle) * gem * .24))),
+                           (gem * .075,) * 3, [chest_i, B["neck"]],
+                           MAT_FEATURE, rings=4, sides=6)
+    ruff = float(p.get("mane_ruff") or 0.0)
+    if ruff:
+        # One smooth ellipsoid reads as a scarf.  A mane is a mass of hanging
+        # locks, and its outline is what separates a lion from a big cat and a
+        # dire wolf from a dog at any distance worth modelling for.
         collar = g[B["neck"]]
+        span = p["neck_r"][0] * s
         mesh.ellipsoid(tuple(collar + np.array((0., 0., .04 * s))),
-                       (p["neck_r"][0] * s * 2.9, p["neck_r"][1] * s * 2.7,
-                        p["neck_r"][0] * s * 2.0),
+                       (span * 2.6 * ruff, p["neck_r"][1] * s * 2.5 * ruff,
+                        span * 1.9 * ruff),
                        [B["neck"], chest_i], MAT_ACCENT, rings=9, sides=16)
+        rng = np.random.default_rng(
+            zlib.crc32(("mane:" + str(p.get("_variant", ""))).encode("utf-8"))
+            % (2 ** 31))
+        locks = int(11 + 7 * min(ruff, 2.0))
+        for k in range(locks):
+            angle = 2 * math.pi * k / locks + float(rng.uniform(-.12, .12))
+            out = np.array((math.cos(angle), math.sin(angle) * .82, 0.))
+            root = collar + np.array((out[0] * span * 1.5 * ruff,
+                                       out[1] * span * 1.5 * ruff, .02 * s))
+            # Locks lie along the mass and hang; radiating them straight out
+            # made a sunburst collar rather than a head of fur.
+            reach = span * ruff * float(rng.uniform(.62, 1.05))
+            tip = root + np.array((out[0] * reach * .34,
+                                   out[1] * reach * .22 - reach * .74,
+                                   reach * float(rng.uniform(.10, .52))))
+            mesh.tube([root, (root + tip) * .5, tip],
+                      [(span * .26 * ruff, span * .26 * ruff),
+                       (span * .20 * ruff, span * .20 * ruff),
+                       (span * .08 * ruff, span * .08 * ruff)],
+                      [B["neck"], chest_i], MAT_ACCENT, sides=5)
 
     if p["shell"]:
         top = max(pt[1] + r[1] for pt, r in zip(spine, radii))
@@ -1776,6 +1909,10 @@ GROWTH_KINDS = ("moss", "crystal", "barnacle", "thorn", "plate", "fungus",
 # What each growth is made of.  ``mix`` blends the creature's accent toward the
 # growth's own colour, so a mossy bear carries green moss and a crystal golem
 # carries its own violet, rather than everything taking the hide's tint.
+# Growth that is vegetation, and so takes its colour from the artwork rather
+# than from the kind.  Mineral crusts keep the creature's own mineral tint.
+PLANT_GROWTH = {"leaf", "vine", "moss", "thorn", "fungus"}
+
 GROWTH_COLOUR = {
     "moss": ((86, 122, 52), .78), "vine": ((74, 112, 54), .74),
     "leaf": ((132, 158, 58), .62), "fungus": ((206, 176, 132), .58),
@@ -1786,13 +1923,570 @@ GROWTH_COLOUR = {
 }
 
 
-def growth_colour(kinds, accent, base):
-    """Blend the creature's accent toward the colour of what grows on it."""
+# ---------------------------------------------------------------------------
+# Woody structure: forking limbs and trunks you can see through
+# ---------------------------------------------------------------------------
+# A tree is not a cylinder with leaves glued on.  What makes bark read as bark
+# at gameplay distance is that the silhouette forks, tapers and has holes in
+# it, and neither a swept tube nor a scattering of surface growth can produce a
+# hole.  These are the missing primitives: one grows a limb that splits, one
+# builds a trunk out of separate strands so daylight gets through the gaps.
+
+
+def _rotate_toward(direction, axis, angle: float):
+    """Rodrigues rotation of ``direction`` about a unit ``axis``."""
+    d = np.asarray(direction, dtype=float)
+    a = np.asarray(axis, dtype=float)
+    a = a / max(float(np.linalg.norm(a)), 1e-9)
+    c, sn = math.cos(angle), math.sin(angle)
+    return d * c + np.cross(a, d) * sn + a * float(np.dot(a, d)) * (1 - c)
+
+
+def _perp(direction):
+    """Any unit vector perpendicular to ``direction``."""
+    d = np.asarray(direction, dtype=float)
+    reference = np.array((0., 1., 0.))
+    if abs(float(np.dot(d / max(np.linalg.norm(d), 1e-9), reference))) > .90:
+        reference = np.array((0., 0., 1.))
+    out = np.cross(d, reference)
+    return out / max(float(np.linalg.norm(out)), 1e-9)
+
+
+def branch_system(mesh, root, direction, length: float, radius: float, bones,
+                  material, seed: str, depth: int = 3, splits: int = 2,
+                  spread: float = .62, gnarl: float = .30, taper: float = .58,
+                  shorten: float = .70, up_bias: float = .28,
+                  segments: int = 3, sides: int = 6, tips=None):
+    """Grow a forking, tapering, gnarled limb and return where it ended.
+
+    Returns ``(tip, radius, depth)`` triples so foliage, lanterns or crystal can
+    be hung on the ends rather than scattered over the whole shape.  The branch
+    kinks at every segment (``gnarl``) and each fork leans away from its parent
+    (``spread``) while being pulled back toward the sky (``up_bias``), which is
+    what stops a recursive limb from looking like a radio antenna.
+    """
+    if tips is None:
+        tips = []
+    if depth < 0 or length <= 1e-5 or radius <= 1e-6:
+        return tips
+    rng = np.random.default_rng(zlib.crc32(seed.encode("utf-8")) % (2 ** 31))
+    root = np.asarray(root, dtype=float)
+    direction = np.asarray(direction, dtype=float)
+    direction = direction / max(float(np.linalg.norm(direction)), 1e-9)
+
+    points, radii = [root], [(radius, radius)]
+    here, heading = root, direction
+    for step in range(segments):
+        # Kink about a random perpendicular axis, then bend back toward up so
+        # the limb reaches rather than wanders.
+        axis = _rotate_toward(_perp(heading), heading,
+                              float(rng.uniform(0, 2 * math.pi)))
+        heading = _rotate_toward(heading, axis, float(rng.uniform(-gnarl, gnarl)))
+        heading = heading + np.array((0., up_bias * .5, 0.))
+        heading = heading / max(float(np.linalg.norm(heading)), 1e-9)
+        here = here + heading * (length / segments)
+        grade = radius * (taper ** ((step + 1) / segments))
+        # Slight ovality reads as woody rather than machined.
+        points.append(here)
+        radii.append((grade, grade * float(rng.uniform(.86, 1.14))))
+    mesh.tube(points, radii, bones, material, sides=sides)
+
+    end_radius = radii[-1][0]
+    if depth == 0:
+        tips.append((here, end_radius, depth))
+        return tips
+    # Fork.  One child continues the parent's line so the limb keeps a leader;
+    # the rest peel off around it.
+    for index in range(splits):
+        axis = _rotate_toward(_perp(heading), heading,
+                              2 * math.pi * index / max(splits, 1)
+                              + float(rng.uniform(-.4, .4)))
+        lean = spread * (0.0 if index == 0 and splits > 2
+                         else float(rng.uniform(.55, 1.25)))
+        child = _rotate_toward(heading, axis, lean)
+        child = child + np.array((0., up_bias, 0.))
+        child = child / max(float(np.linalg.norm(child)), 1e-9)
+        branch_system(mesh, here, child,
+                      length * shorten * float(rng.uniform(.82, 1.12)),
+                      end_radius * float(rng.uniform(.72, .94)), bones, material,
+                      seed + ":" + str(index), depth - 1, splits, spread, gnarl,
+                      taper, shorten, up_bias, segments, max(4, sides - 1), tips)
+    return tips
+
+
+def woven_trunk(mesh, spine, radii, bones, material, seed: str, strands: int = 7,
+                twist: float = 1.15, inset: float = .30, bulge: float = 1.24,
+                sides: int = 5, material_inner=None, thickness: float = 1.0,
+                inner_scale: float = .78):
+    """A trunk built from separate twisting strands instead of one closed tube.
+
+    The gaps between strands are the point: they are what makes a treant read
+    as grown rather than turned on a lathe, and they are the one thing surface
+    detail cannot fake.  ``material_inner``, if given, lines the hollow so the
+    inside of the trunk is not the same shade as the outside.
+    """
+    spine = [np.asarray(point, dtype=float) for point in spine]
+    if len(spine) < 2 or strands < 3:
+        return
+    rng = np.random.default_rng(
+        zlib.crc32(("trunk:" + seed).encode("utf-8")) % (2 ** 31))
+    rows = len(spine)
+    if material_inner is not None:
+        # A darker core stops the gaps showing straight through to the far side
+        # of the model, which reads as a hole rather than a hollow.
+        mesh.tube(spine, [(rx * (1 - inset) * inner_scale,
+                           ry * (1 - inset) * inner_scale)
+                          for rx, ry in radii], bones, material_inner, sides=10)
+    # Strands have to ring the spine in the plane *perpendicular to it*, not in
+    # world XZ.  Offsetting in XZ is right by accident for a vertical trunk and
+    # wrong for everything else: on a shoulder yoke, which runs left to right,
+    # the offsets lie along the yoke itself and the weave opens into a trumpet.
+    frames = []
+    for row in range(rows):
+        if row == 0:
+            tangent = spine[1] - spine[0]
+        elif row == rows - 1:
+            tangent = spine[-1] - spine[-2]
+        else:
+            tangent = spine[row + 1] - spine[row - 1]
+        if float(np.linalg.norm(tangent)) < 1e-9:
+            tangent = np.array((0., 1., 0.))
+        frames.append(AnatomyMesh._frame(tangent))
+
+    for strand in range(strands):
+        phase = 2 * math.pi * strand / strands
+        wobble = float(rng.uniform(.82, 1.18))
+        girth = float(rng.uniform(.78, 1.26))
+        points, thick = [], []
+        for row in range(rows):
+            t = row / (rows - 1)
+            rx, ry = radii[row]
+            # Strands converge at the ends and bow out across the middle, so
+            # the trunk swells at the waist the way a braided bole does.
+            swell = 1.0 + (bulge - 1.0) * math.sin(math.pi * t) ** .8
+            angle = phase + twist * t * wobble
+            right, up = frames[row]
+            offset = (right * (math.cos(angle) * rx * (1 - inset) * swell)
+                      + up * (math.sin(angle) * ry * (1 - inset) * swell))
+            points.append(spine[row] + offset)
+            span = (rx + ry) * .5 * (1 - inset)
+            thick.append((span * .40 * girth * thickness
+                          * (0.62 + .55 * math.sin(math.pi * t)),) * 2)
+        mesh.tube(points, thick, bones, material, sides=sides)
+
+
+# What a plate is cut like.  The concept art does not give these creatures one
+# armour: a cairn golem is stacked river boulders, a frost golem is angular
+# scale, a temple guardian wears big flat slabs and an amethyst golem erupts
+# crystal.  (cross-section sides, relief x, footprint x, crown x, tilt down)
+PLATE_SHAPES = {
+    "boulder": (6, 1.00, 1.00, .70, .00),
+    "scale":   (5, 0.80, 1.20, .52, .34),
+    "slab":    (4, 0.86, 1.30, .78, .12),
+    "shard":   (5, 1.85, 0.74, .10, -.18),
+    "drum":    (10, 0.34, 1.34, .90, .00),
+}
+
+
+def plated_shell(mesh, spine, radii, bones, material, seed: str, rows: int = 4,
+                 around: int = 6, relief: float = .26, gap: float = .16,
+                 dome: float = .55, sides: int = 7, rune_material=None,
+                 rune_chance: float = .22, span=(0.0, 1.0), shape: str = "boulder"):
+    """Clad a limb in overlapping slabs, the way a cairn or a suit of plate is.
+
+    The golems and constructs are drawn as a *stack of discrete blocks* -- you
+    can count the boulders in a cairn golem's forearm -- and that is the whole
+    read.  A smooth swept limb in a stone colour is a sausage with a rock
+    texture on it, and no amount of normal map fixes a silhouette.
+
+    Each plate is a short oriented puck standing proud of the surface along its
+    own outward normal, so it catches its own highlight and casts its own
+    shadow line; rows are staggered like masonry so the joints do not line up
+    into stripes.  ``rune_material`` marks a scattering of plates with a lit
+    glyph, which is what the art carves into them.
+    """
+    spine = [np.asarray(point, dtype=float) for point in spine]
+    if len(spine) < 2 or rows < 1 or around < 3:
+        return
+    rng = np.random.default_rng(
+        zlib.crc32(("plate:" + seed).encode("utf-8")) % (2 ** 31))
+    cut, relief_x, foot_x, crown_x, tilt = PLATE_SHAPES.get(
+        shape, PLATE_SHAPES["boulder"])
+    sides = cut
+    relief = relief * relief_x
+    dome = dome * crown_x
+
+    def sample(t):
+        position = t * (len(spine) - 1)
+        low = min(int(position), len(spine) - 2)
+        frac = position - low
+        point = spine[low] * (1 - frac) + spine[low + 1] * frac
+        rx = radii[low][0] * (1 - frac) + radii[low + 1][0] * frac
+        ry = radii[low][1] * (1 - frac) + radii[low + 1][1] * frac
+        tangent = spine[low + 1] - spine[low]
+        if float(np.linalg.norm(tangent)) < 1e-9:
+            tangent = np.array((0., 1., 0.))
+        return point, (rx, ry), tangent
+
+    for row in range(rows):
+        t = span[0] + (span[1] - span[0]) * (row + .5) / rows
+        point, (rx, ry), tangent = sample(t)
+        right, up = AnatomyMesh._frame(tangent)
+        # Brick bond: every other row is offset by half a plate.
+        phase = math.pi / around * (row % 2)
+        girth = (rx + ry) * .5
+        # Plate half-width from the arc it has to cover, less the joint gap.
+        half = (math.pi * girth / around) * (1.0 - gap) * foot_x
+        depth = girth * relief
+        for k in range(around):
+            angle = phase + 2 * math.pi * k / around
+            outward = right * math.cos(angle) + up * math.sin(angle)
+            outward = outward / max(float(np.linalg.norm(outward)), 1e-9)
+            seat = point + right * (math.cos(angle) * rx) + up * (math.sin(angle) * ry)
+            lift = float(rng.uniform(.72, 1.28))
+            wobble = float(rng.uniform(.86, 1.16))
+            lean = -tangent / max(float(np.linalg.norm(tangent)), 1e-9) * (
+                girth * tilt)
+            inner = seat - outward * depth * .55
+            crest = seat + outward * depth * .34 * lift + lean * .35
+            outer = seat + outward * depth * lift + lean
+            mesh.tube([inner, crest, outer],
+                      [(half * .80 * wobble, half * .72 * wobble),
+                       (half * wobble, half * .90 * wobble),
+                       (half * dome * wobble, half * dome * .90 * wobble)],
+                      bones, material, sides=sides)
+            if rune_material is not None and rng.random() < rune_chance:
+                # A glyph cut into the face of the plate, lit from inside it.
+                mesh.tube([outer - outward * depth * .10,
+                           outer + outward * depth * .16],
+                          [(half * .30, half * .26), (half * .22, half * .19)],
+                          bones, rune_material, sides=5)
+
+
+def orbit_plates(mesh, centre, radius: float, bones, material, seed: str,
+                 count: int = 8, arc: float = .62, width: float = .34,
+                 thickness: float = .12, axis=(0., 0., 1.), tilt: float = .0,
+                 sides: int = 5, jitter: float = .14):
+    """Curved armour plates floating in a ring, detached from the body.
+
+    The arcane constructs are not built like anything else in the library: the
+    art gives them a lit core with its armour hanging *off* it in an arc,
+    nothing touching.  Each plate here is a swept arc of a circle with a broad
+    flat section, so it reads as a curved slab rather than as a bent pipe.
+    """
+    centre = np.asarray(centre, dtype=float)
+    axis = np.asarray(axis, dtype=float)
+    axis = axis / max(float(np.linalg.norm(axis)), 1e-9)
+    right, up = AnatomyMesh._frame(axis)
+    rng = np.random.default_rng(
+        zlib.crc32(("orbit:" + seed).encode("utf-8")) % (2 ** 31))
+    for index in range(count):
+        base = 2 * math.pi * index / count
+        reach = radius * (1.0 + float(rng.uniform(-jitter, jitter)))
+        lift = float(rng.uniform(-jitter, jitter)) * radius * .5
+        points, radii = [], []
+        steps = 5
+        for step in range(steps):
+            t = step / (steps - 1)
+            angle = base + arc * (t - .5)
+            here = (centre + right * (math.cos(angle) * reach)
+                    + up * (math.sin(angle) * reach)
+                    + axis * (lift + tilt * math.sin(angle) * radius))
+            # Broad in the plane of the ring, thin through it, tapering to
+            # both ends so the plate has a point rather than a cut-off.
+            taper = math.sin(math.pi * (.18 + .64 * t))
+            points.append(here)
+            radii.append((radius * width * taper,
+                          radius * thickness * taper))
+        mesh.tube(points, radii, bones, material, sides=sides)
+
+
+def debris_field(mesh, centre, extent, bones, material, seed: str,
+                 count: int = 9, size: float = .16, drift: float = 1.0):
+    """Broken pieces hanging in the air around a shattered body."""
+    centre = np.asarray(centre, dtype=float)
+    extent = np.asarray(extent, dtype=float)
+    rng = np.random.default_rng(
+        zlib.crc32(("debris:" + seed).encode("utf-8")) % (2 ** 31))
+    for index in range(count):
+        offset = np.array([float(rng.uniform(-1., 1.)) for _ in range(3)])
+        # Pieces drift outward and upward, as though still coming apart.
+        offset[1] = abs(offset[1]) * .8 + .12
+        here = centre + offset * extent * drift
+        chunk = size * float(rng.uniform(.55, 1.35))
+        axis = np.array([float(rng.uniform(-1., 1.)) for _ in range(3)])
+        axis = axis / max(float(np.linalg.norm(axis)), 1e-9) * chunk
+        # Blocky rather than bladed: these are pieces of a wall, and a thin
+        # tapered spindle reads as a shard of glass instead.
+        mesh.tube([here - axis, here + axis * .2, here + axis],
+                  [(chunk * .50, chunk * .42), (chunk * .66, chunk * .58),
+                   (chunk * .44, chunk * .36)],
+                  bones, material, sides=4)
+
+
+def metal_band(mesh, centre, direction, radius, bones, material,
+               thickness: float = .10, flare: float = 1.18, sides: int = 12):
+    """A banding ring around a limb, as the art puts at every wrist and ankle."""
+    centre = np.asarray(centre, dtype=float)
+    direction = np.asarray(direction, dtype=float)
+    length = float(np.linalg.norm(direction))
+    if length < 1e-9 or radius <= 0:
+        return
+    axis = direction / length
+    half = axis * radius * thickness
+    mesh.tube([centre - half, centre, centre + half],
+              [(radius * flare * .94, radius * flare * .94),
+               (radius * flare, radius * flare),
+               (radius * flare * .94, radius * flare * .94)],
+              bones, material, sides=sides, cap_start=False, cap_end=False)
+
+
+def root_flare(mesh, base, radius: float, bones, material, seed: str,
+               count: int = 5, reach: float = 1.5, drop: float = .0):
+    """Buttress roots splaying off the foot of a trunk."""
+    rng = np.random.default_rng(
+        zlib.crc32(("roots:" + seed).encode("utf-8")) % (2 ** 31))
+    base = np.asarray(base, dtype=float)
+    for index in range(count):
+        angle = 2 * math.pi * index / count + float(rng.uniform(-.28, .28))
+        out = np.array((math.cos(angle), 0., math.sin(angle)))
+        # Roots reach outward and only just down: dropping them a full radius
+        # put the toes under the floor, and the builder then lifted the whole
+        # creature to clear them, so every treant appeared to hover.
+        fall = min(radius * .34, base[1] * .62)
+        knee = base + out * radius * .85 + np.array((0., -fall * .70, 0.))
+        toe = base + out * radius * reach + np.array((0., -fall - drop, 0.))
+        mesh.tube([base + np.array((0., radius * .30, 0.)), knee, toe],
+                  [(radius * .17, radius * .20), (radius * .11, radius * .12),
+                   (radius * .035, radius * .035)], bones, material, sides=6)
+
+
+def _geodesic(subdivisions: int = 2):
+    """Unit icosphere as (vertices, triangles).  Even facets, no poles."""
+    phi = (1.0 + math.sqrt(5.0)) * .5
+    verts = []
+    for a, b in ((1.0, phi), (-1.0, phi), (1.0, -phi), (-1.0, -phi)):
+        verts += [(0.0, a, b), (b, 0.0, a), (a, b, 0.0)]
+    verts = [np.asarray(v, dtype=float) / math.sqrt(1 + phi * phi) for v in verts]
+    # Rebuild the icosahedron's faces from proximity: every vertex pair at the
+    # shortest edge length is an edge, and every triangle of mutual edges is a
+    # face.  Cheaper to derive than to spell out and impossible to mistype.
+    edge = min(float(np.linalg.norm(a - b))
+               for i, a in enumerate(verts) for b in verts[i + 1:])
+    near = [[j for j, b in enumerate(verts)
+             if j != i and abs(float(np.linalg.norm(a - b)) - edge) < 1e-6]
+            for i, a in enumerate(verts)]
+    faces = set()
+    for i, neighbours in enumerate(near):
+        for j in neighbours:
+            for k in near[j]:
+                if k in neighbours:
+                    faces.add(tuple(sorted((i, j, k))))
+    faces = sorted(faces)
+    for _ in range(max(0, subdivisions)):
+        midpoint, split = {}, []
+
+        def middle(a, b):
+            key = (min(a, b), max(a, b))
+            if key not in midpoint:
+                point = verts[a] + verts[b]
+                verts.append(point / max(float(np.linalg.norm(point)), 1e-9))
+                midpoint[key] = len(verts) - 1
+            return midpoint[key]
+
+        for a, b, c in faces:
+            ab, bc, ca = middle(a, b), middle(b, c), middle(c, a)
+            split += [(a, ab, ca), (b, bc, ab), (c, ca, bc), (ab, bc, ca)]
+        faces = split
+    return verts, faces
+
+
+def feather_row(mesh, lead, trail, bones, material, seed: str, count: int = 9,
+                overhang: float = .55, width: float = .30, tip_material=None,
+                splay: float = .18, sides: int = 4):
+    """Overlapping flight feathers laid along a wing's trailing edge.
+
+    A wing drawn as one membrane between two curves is a coloured triangle: it
+    has no edge to catch light and no serration in its outline, and at any
+    distance it reads as a fin rather than as a wing.  Real flight feathers
+    overlap in a row, each one a little longer than the last toward the tip,
+    and their staggered ends are what the eye reads as feathering.
+
+    ``lead`` and ``trail`` are the two edge curves already used for the
+    membrane; the feathers hinge on the leading edge and reach ``overhang``
+    past the trailing one.
+    """
+    lead = [np.asarray(point, dtype=float) for point in lead]
+    trail = [np.asarray(point, dtype=float) for point in trail]
+    if len(lead) < 2 or len(lead) != len(trail) or count < 1:
+        return
+    rng = np.random.default_rng(
+        zlib.crc32(("feather:" + seed).encode("utf-8")) % (2 ** 31))
+    for index in range(count):
+        t = (index + .5) / count
+        root = _bezier(lead, t)
+        edge = _bezier(trail, t)
+        chord = edge - root
+        span = float(np.linalg.norm(chord))
+        if span < 1e-6:
+            continue
+        # Primaries at the wing tip are the longest; coverts near the shoulder
+        # are short.  The gradient is what gives the wing its swept outline.
+        reach = 1.0 + overhang * (.35 + .95 * t) * float(rng.uniform(.88, 1.12))
+        # Fan each quill slightly off the chord so they overlap rather than
+        # stacking exactly on one another.
+        drift = np.cross(chord, np.array((0., 1., 0.)))
+        norm = float(np.linalg.norm(drift))
+        if norm > 1e-9:
+            drift = drift / norm * span * splay * (t - .5)
+        else:
+            drift = np.zeros(3)
+        tip = root + chord * reach + drift
+        quill = span * width * (.55 + .60 * (1.0 - abs(t - .55)))
+        mesh.tube([root, root + chord * .45, tip],
+                  [(quill * .34, quill * .12), (quill * .30, quill * .10),
+                   (quill * .07, quill * .04)],
+                  bones, material, sides=sides)
+        if tip_material is not None and t > .35:
+            mesh.tube([root + chord * reach * .74 + drift * .74, tip],
+                      [(quill * .17, quill * .06), (quill * .06, quill * .03)],
+                      bones, tip_material, sides=sides)
+
+
+def facet_shell(mesh, centre, size, bones, material, seed: str,
+                subdivisions: int = 2, relief: float = .10, gap: float = .16,
+                core_material=None, core_scale: float = .90, squash=None):
+    """A shell of flat crystal plates with light showing between them.
+
+    The crystal fauna were smooth ellipsoids in a crystal colour, which reads
+    as painted plastic; what the art actually draws is a mosaic of hard flat
+    facets with the glow trapped inside leaking out of the seams.  Neither half
+    of that survives a smooth-shaded sphere, so this emits every plate as its
+    own flat-shaded triangle -- shrunk toward its centroid by ``gap`` so the
+    seams are real openings -- over an optional lit inner shell.
+    """
+    centre = np.asarray(centre, dtype=float)
+    half = np.asarray(size, dtype=float) * .5
+    rng = np.random.default_rng(
+        zlib.crc32(("facet:" + seed).encode("utf-8")) % (2 ** 31))
+    verts, faces = _geodesic(subdivisions)
+
+    if core_material is not None:
+        mesh.ellipsoid(tuple(centre), tuple(np.asarray(size) * core_scale),
+                       bones, core_material, rings=9, sides=14, squash=squash)
+
+    positions, normals, uvs, indices = [], [], [], []
+    for a, b, c in faces:
+        plate = [verts[a], verts[b], verts[c]]
+        # Each plate stands a little proud of the sphere, by its own amount,
+        # so the shell has the irregular crystal relief the art shows.
+        lift = 1.0 + relief * float(rng.uniform(.35, 1.0))
+        corners = []
+        centroid = (plate[0] + plate[1] + plate[2]) / 3.0
+        for point in plate:
+            pulled = centroid + (point - centroid) * (1.0 - gap)
+            local = pulled * lift * half
+            if squash is not None and local[2] < 0:
+                local = np.array((local[0], local[1] * squash, local[2]))
+            corners.append(centre + local)
+        normal = np.cross(corners[1] - corners[0], corners[2] - corners[0])
+        length = float(np.linalg.norm(normal))
+        if length < 1e-12:
+            continue
+        normal = normal / length
+        if float(np.dot(normal, centroid)) < 0:
+            corners = [corners[0], corners[2], corners[1]]
+            normal = -normal
+        base = len(positions)
+        for point in corners:
+            positions.append(point)
+            normals.append(normal)
+        uvs += [(.5 + centroid[0] * .5, .5 + centroid[1] * .5),
+                (.5 + centroid[2] * .5, .5 + centroid[1] * .5),
+                (.5 + centroid[0] * .5, .5 + centroid[2] * .5)]
+        indices += [base, base + 1, base + 2]
+    if indices:
+        mesh._append(positions, normals, uvs, indices, material, bones)
+
+
+def swirl_ribbon(mesh, points, width: float, bones, material, seed: str,
+                 samples: int = 15, turns: float = 1.15, curl: float = .30,
+                 flatten: float = .34, taper: float = .06, sides: int = 7,
+                 phase: float = 0.0):
+    """A long curling band that winds around the line it follows.
+
+    Flame, spirit-hair and running water are drawn in the concept art as
+    ribbons that coil: they wrap, cross in front of the body and taper away.
+    Sweeping a fat three-point tube down the same path instead produces a
+    straight wedge, and a ring of straight wedges reads as an upturned insect
+    rather than as a wisp.  This resamples the path finely, winds it round its
+    own axis, and sweeps a flattened section so the band has an edge.
+
+    ``curl`` is the coil radius as a fraction of the path length; ``turns`` is
+    how many times it goes round on the way out; ``flatten`` is the ribbon's
+    thickness relative to its width.
+    """
+    points = [np.asarray(point, dtype=float) for point in points]
+    if len(points) < 2 or width <= 0:
+        return
+    rng = np.random.default_rng(
+        zlib.crc32(("ribbon:" + seed).encode("utf-8")) % (2 ** 31))
+    span = float(np.linalg.norm(points[-1] - points[0]))
+    lean = float(rng.uniform(.82, 1.18))
+
+    centres, radii = [], []
+    for index in range(samples):
+        t = index / (samples - 1)
+        here = _bezier(points, t)
+        # Wind about the local direction of travel.
+        ahead = _bezier(points, min(1.0, t + .04))
+        behind = _bezier(points, max(0.0, t - .04))
+        tangent = ahead - behind
+        if float(np.linalg.norm(tangent)) < 1e-9:
+            tangent = np.array((0., 1., 0.))
+        right, up = AnatomyMesh._frame(tangent)
+        angle = phase + 2 * math.pi * turns * t * lean
+        # The coil opens up as the ribbon runs out, the way a flame's tip
+        # loosens; holding it constant reads as a drill bit.
+        swing = curl * span * (.35 + .85 * t)
+        centres.append(here + right * (math.cos(angle) * swing)
+                       + up * (math.sin(angle) * swing))
+        # Wide at the root, drawn to nothing at the tip.
+        grade = width * (1.0 - (1.0 - taper) * t ** 1.35)
+        radii.append((grade, max(grade * flatten, width * .02)))
+    mesh.tube(centres, radii, bones, material, sides=sides, cap_start=False)
+
+
+def foliage_cluster(mesh, centre, size: float, bones, material, seed: str,
+                    count: int = 5, flatten: float = .62):
+    """A puff of leaf mass, built from overlapping lobes rather than one blob."""
+    rng = np.random.default_rng(
+        zlib.crc32(("leaf:" + seed).encode("utf-8")) % (2 ** 31))
+    centre = np.asarray(centre, dtype=float)
+    for _ in range(count):
+        offset = np.array([float(rng.uniform(-.55, .55)) for _ in range(3)]) * size
+        lobe = size * float(rng.uniform(.44, .80))
+        # Four rings by seven sides was fifty-six triangles a lobe and hundreds
+        # a cluster; at the size a leaf clump is drawn none of that is visible.
+        mesh.ellipsoid(tuple(centre + offset), (lobe, lobe * flatten, lobe),
+                       bones, material, rings=3, sides=6)
+
+
+def growth_colour(kinds, accent, base, measured=None):
+    """Blend the creature's accent toward the colour of what grows on it.
+
+    ``measured`` is the tint sampled from that creature's own concept figure.
+    Where it exists it replaces the per-kind guess, because the kind only says
+    *what* is growing and the art says what colour it is -- the difference
+    between a green Verdant Stair leaf and an amber Amberwood one.
+    """
     if not kinds:
         return accent
     total = np.zeros(3, dtype=float)
     for kind, weight in kinds:
         tint, mix = GROWTH_COLOUR.get(kind, ((150, 150, 150), .5))
+        if measured is not None and kind in PLANT_GROWTH:
+            tint, mix = measured, min(.92, mix + .22)
         blended = np.asarray(accent, dtype=float) * (1 - mix) + np.asarray(tint, dtype=float) * mix
         total += blended * weight
     total /= max(sum(w for _, w in kinds), 1e-6)
@@ -1864,8 +2558,14 @@ def encrust(mesh, kind: str, count: int, spine, radii, bones, scale: float,
                   radii[low][1] * (1 - frac) + radii[low + 1][1] * frac)
         tangent = spine[low + 1] - spine[low]
         base, direction, high = _growth_frame(rng, point, radius, up_bias, tangent)
-        # Thick over the back, thinning to a fringe down the flank.
-        grow = float(rng.uniform(.7, 1.35)) * size * s * (.62 + .52 * high)
+        # Thick over the back, thinning to a fringe down the flank, and sized
+        # against the body it is growing on rather than against the creature's
+        # nominal scale.  Scale alone is near 1 for a songbird and a bear
+        # alike, so an owl was wearing leaves a bear's size and disappeared
+        # under them.
+        girth = (radius[0] + radius[1]) * .5
+        grow = (float(rng.uniform(.7, 1.35)) * size * (.62 + .52 * high)
+                * max(girth * 2.9, s * .22))
         # What grows on a creature does not stand along the surface normal.
         # Moss and vine hang, fungus caps turn to face the sky, and only the
         # mineral growths -- crystal, rime, thorn, spine -- actually spike

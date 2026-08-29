@@ -36,11 +36,27 @@ build_region = regionpaths.load_region_build(PACKAGE).build_region
 # under permanent storm - and the captures are the only visual evidence a
 # reviewer has. Two spellings are accepted, a single LIGHTING dict or a pair of
 # DAY_LIGHTING / GOLDEN_LIGHTING constants, because both are in use.
+FIXED_VIEWS = frozenset(getattr(_REGION_VIEWS, "FIXED_VIEWS", ()) or ())
+
+# `LIGHTING` may hold either finished Lighting objects or override dicts;
+# DAY_LIGHTING / GOLDEN_LIGHTING are always override dicts. Both are normalised
+# to Lighting objects below, once DAY and GOLDEN exist to override.
 REGION_LIGHTING = dict(getattr(_REGION_VIEWS, "LIGHTING", {}) or {})
-if getattr(_REGION_VIEWS, "DAY_LIGHTING", None) is not None:
-    REGION_LIGHTING.setdefault("day", _REGION_VIEWS.DAY_LIGHTING)
-if getattr(_REGION_VIEWS, "GOLDEN_LIGHTING", None) is not None:
-    REGION_LIGHTING.setdefault("golden", _REGION_VIEWS.GOLDEN_LIGHTING)
+
+
+def _as_lighting(value, base):
+    """Accept either a `Lighting` or a dict of overrides on the preset.
+
+    `DAY_LIGHTING` / `GOLDEN_LIGHTING` are documented as dicts of field
+    overrides, and that is how they are applied to the presets below - but the
+    same raw dicts also land in `REGION_LIGHTING`, which is read as if it held
+    `Lighting` objects. The aerial view then does `vars(base)` on a dict and
+    dies. Normalising here fixes it for every region that declares either
+    constant, and is a no-op for the ones that declare a `Lighting` directly.
+    """
+    if isinstance(value, dict):
+        return RENDER.Lighting(**{**vars(base), **value})
+    return value
 
 DAY = RENDER.Lighting(sun_direction=(-0.46, 0.50, 0.73),
                       sun_color=(1.22, 0.94, 0.60),
@@ -73,6 +89,20 @@ if _day_overrides:
 _golden_overrides = getattr(_VIEWS_MODULE, "GOLDEN_LIGHTING", None)
 if _golden_overrides:
     GOLDEN = RENDER.Lighting(**{**vars(GOLDEN), **_golden_overrides})
+
+# Normalise REGION_LIGHTING to Lighting objects. Before this, a region that
+# declared DAY_LIGHTING had the raw override *dict* put into REGION_LIGHTING,
+# and the aerial branch below does `vars(base)` on whatever it finds - so the
+# first region to use the documented DAY_LIGHTING hook crashed with
+# "vars() argument must have __dict__ attribute" after a full texture and
+# region build. The overrides are already folded into DAY and GOLDEN above;
+# these entries only need to agree with them.
+for _mode, _base in (("day", DAY), ("golden", GOLDEN)):
+    _value = REGION_LIGHTING.get(_mode)
+    if isinstance(_value, dict):
+        REGION_LIGHTING[_mode] = RENDER.Lighting(**{**vars(_base), **_value})
+REGION_LIGHTING.setdefault("day", DAY)
+REGION_LIGHTING.setdefault("golden", GOLDEN)
 
 # Each view is (id, panel, (eye_x, eye_z), eye_height_above_ground,
 #               (target_x, target_z), target_height_above_ground,
@@ -121,15 +151,30 @@ def _free_camera(scene, terrain, eye, target, fov, minimum=None):
 
     best = (-1.0, tuple(eye))
     scale = REG.SCALE
-    for back in (0.0, 2.0 * scale, 4.0 * scale, 7.0 * scale, 10.0 * scale,
-                 14.0 * scale, 19.0 * scale):
-        for lateral in (0.0, -3.0 * scale, 3.0 * scale, -6.0 * scale, 6.0 * scale,
-                        -9.0 * scale, 9.0 * scale):
-            for lift in (0.0, 1.5, 3.5, 6.0, 9.0, 13.0):
+    # The search offsets have to be proportional to the shot. At region scale
+    # stepping back 57 m to find an open frame is right; on a macro framed at
+    # three metres it is the difference between the still-life the panel asks
+    # for and a wide shot of the quay with some props in it, which is exactly
+    # what Westhaven's panel 10 kept coming back as. Under twelve metres the
+    # search keeps its job - not standing inside a barrel - on a scale that
+    # cannot destroy the framing.
+    if distance < 12.0:
+        backs = (0.0, 0.4, 0.9)
+        laterals = (0.0, -0.5, 0.5, -1.0, 1.0)
+        lifts = (0.0, 0.25, 0.6)
+    else:
+        backs = (0.0, 2.0 * scale, 4.0 * scale, 7.0 * scale, 10.0 * scale,
+                 14.0 * scale, 19.0 * scale)
+        laterals = (0.0, -3.0 * scale, 3.0 * scale, -6.0 * scale, 6.0 * scale,
+                    -9.0 * scale, 9.0 * scale)
+        lifts = (0.0, 1.5, 3.5, 6.0, 9.0, 13.0)
+    for back in backs:
+        for lateral in laterals:
+            for lift in lifts:
                 candidate = eye + axis * back + side * lateral \
                     + np.array([0.0, lift, 0.0])
                 floor = float(terrain.height_at(candidate[0], candidate[2]))
-                if candidate[1] < floor + 1.2:
+                if candidate[1] < floor + (0.35 if distance < 12.0 else 1.2):
                     candidate[1] = floor + 1.7
                 value = score(candidate)
                 if value > best[0]:
@@ -147,7 +192,18 @@ def main() -> int:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
 
+    # A region whose materials are not in the shared table must be able to add
+    # them here, or every capture of it renders in fallback grey-tan. The
+    # build-time `register()` extension is how Crownwater, Amethyst Barrens and
+    # Ssarathi Ruins all add theirs, so the region's build module is the right
+    # place to look for it: any module exposing `register_materials(sets)` gets
+    # called before the scene is built. Regions that expose nothing are
+    # unaffected.
     sets = preview.texture_sets()
+    _registrar = getattr(regionpaths.load_region_build(PACKAGE),
+                         "register_materials", None)
+    if _registrar is not None:
+        sets = _registrar(sets)
     build = build_region()
     scene = preview.scene_from_build(build, sets)
     print(f"[scene] {scene.triangle_count()} triangles")
@@ -218,19 +274,34 @@ def main() -> int:
         if eye_h > 40.0:
             eye_h = eye_h * scale
         t0 = time.time()
-        lighting = REGION_LIGHTING.get(mode, GOLDEN if mode == "golden" else DAY)
+        _preset = GOLDEN if mode == "golden" else DAY
+        lighting = _as_lighting(REGION_LIGHTING.get(mode, _preset), _preset)
         if panel == "aerial":
             # a 576 m region seen from 500 m up is far enough away that the
             # normal ground-level haze would swallow the far half of it
-            base = REGION_LIGHTING.get("day", DAY)
+            base = _as_lighting(REGION_LIGHTING.get("day", DAY), DAY)
             lighting = RENDER.Lighting(**{**vars(base), "fog_density": 0.00022,
                                           "fog_height_falloff": 0.0016})
-        placed_eye = eye_xz if eye_h > 20.0 else find_clear(eye_xz)
+        # `find_clear` demands 4.8 m of standing room, which a macro framed at
+        # three metres from a crate can never have: it searches out to 33 m and
+        # returns the most open spot it can find, which is how a still-life
+        # keeps coming back as a wide shot of the quay. Scale its demand to the
+        # shot, the same way the free-camera search below is scaled.
+        shot = math.hypot(eye_xz[0] - target_xz[0], eye_xz[1] - target_xz[1])
+        placed_eye = eye_xz if eye_h > 20.0 else (
+            find_clear(eye_xz, minimum=0.2, reach=2.0) if shot < 12.0
+            else find_clear(eye_xz))
         eye = ground(placed_eye, eye_h)
         target = ground(target_xz, target_h)
         if abs(eye[0] - target[0]) < 0.05 and abs(eye[2] - target[2]) < 0.05:
             target = (target[0] + 0.4, target[1], target[2] + 0.4)
-        if eye_h < 40.0:
+        # A region may pin a framing it has verified by listing its id in
+        # `views.FIXED_VIEWS`. The search below exists to keep a camera out of
+        # a trunk or an eave, but on a long axial street through a dense city
+        # no ground-level candidate ever reaches its openness threshold, so it
+        # falls back to the best it found - which is metres in the air. An
+        # author who has checked a framing should be able to keep it.
+        if eye_h < 40.0 and name not in FIXED_VIEWS:
             eye = _free_camera(scene, terrain, eye, target, fov)
         centre = ((eye[0] + target[0]) * 0.5, target[1], (eye[2] + target[2]) * 0.5)
         image = scene.render(eye=eye, target=target, width=size[0], height=size[1],

@@ -33,18 +33,34 @@ def convert(directory: Path, quality: int = 88) -> tuple[int, int]:
 
 def main() -> int:
     total_before = total_after = 0
+    # `client-captures` too: that is where an interior package's real client
+    # frames go - `interiors/amethyst_barrens_insides/references/client-captures`
+    # is the precedent - and leaving it out left 19 MB of PNG in the Westhaven
+    # insides package after a run that reported having compressed everything.
     for directory in (ROOT / "captures", ROOT / "godot-captures",
-                      ROOT / "comparisons"):
+                      ROOT / "client-captures", ROOT / "comparisons"):
         if not directory.exists():
             continue
         before, after = convert(directory)
         total_before += before
         total_after += after
-    index_path = ROOT / "captures" / "index.json"
-    if index_path.exists():
+    # Both indexes, not just the offline one. `godot_capture.gd` writes its own
+    # index beside its frames, and `make_comparison.py` reads whichever
+    # directory it picks - so rewriting only `captures/index.json` leaves the
+    # real client frames indexed under filenames that no longer exist.
+    for index_path in (ROOT / "captures" / "index.json",
+                       ROOT / "godot-captures" / "index.json",
+                       ROOT / "client-captures" / "index.json"):
+        if not index_path.exists():
+            continue
         index = json.loads(index_path.read_text())
         for entry in index:
-            entry["file"] = entry["file"].replace(".png", ".webp")
+            # An index may legitimately omit "file" - the interior camera
+            # sets are generated from a manifest and name their output by id.
+            # Crashing here would leave the images converted and the index
+            # stale, which is worse than skipping the rewrite.
+            if "file" in entry:
+                entry["file"] = entry["file"].replace(".png", ".webp")
         index_path.write_text(json.dumps(index, indent=2) + "\n")
     print(f"[captures] {total_before / 1e6:.1f} MB PNG -> "
           f"{total_after / 1e6:.1f} MB WebP")

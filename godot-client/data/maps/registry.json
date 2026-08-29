@@ -222,18 +222,19 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          250.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 3.4,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells) with the arrival datum at (174, 250), not the (174, 174) the other 576 m regions share; see maps/nymara-regions/source-elm/westhaven.elm"
     },
     "westhaven": {
       "alias": "maps/nymara/westhaven.elm"
@@ -246,18 +247,19 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 24.0,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/verdant_stair.elm"
     },
     "verdant_stair": {
       "alias": "maps/nymara/verdant_stair.elm"
@@ -270,8 +272,8 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
@@ -281,7 +283,8 @@
         "walkingHeight": 0.0,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells)"
     },
     "ssarathi_ruins": {
       "alias": "maps/nymara/ssarathi_ruins.elm"
@@ -314,23 +317,33 @@
       "alias": "maps/nymara/manymouth_delta.elm"
     },
     "maps/nymara/sunmane_wind_caves.elm": {
-      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_wind_caves/world.json",
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_insides/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          30.0,
-          30.0
+          0.0,
+          0.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.125,
+        "walkingHeight": -0.22,
         "invertServerY": true
       },
       "status": "production",
-      "interiorOf": "maps/nymara/sunmane_steppe.elm"
+      "interiorOf": "maps/nymara/sunmane_steppe.elm",
+      "insidesOf": "maps/nymara/sunmane_steppe.elm",
+      "sections": [
+        "sunmane_wind_caves",
+        "sunmane_crystal_hollow"
+      ],
+      "requiresServerMap": {
+        "tiles": 32,
+        "collisionCells": 384,
+        "note": "both cave systems on one map with blackspace between them"
+      }
     },
     "sunmane_wind_caves": {
       "alias": "maps/nymara/sunmane_wind_caves.elm"
@@ -338,30 +351,11 @@
     "sunmane_wind_caves.elm": {
       "alias": "maps/nymara/sunmane_wind_caves.elm"
     },
-    "maps/nymara/sunmane_crystal_hollow.elm": {
-      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_crystal_hollow/world.json",
-      "coordinateTransform": {
-        "metresPerTile": 1.0,
-        "serverOrigin": [
-          30.0,
-          30.0
-        ],
-        "origin": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "walkingHeight": -0.123,
-        "invertServerY": true
-      },
-      "status": "production",
-      "interiorOf": "maps/nymara/sunmane_steppe.elm"
-    },
     "sunmane_crystal_hollow": {
-      "alias": "maps/nymara/sunmane_crystal_hollow.elm"
+      "alias": "maps/nymara/sunmane_wind_caves.elm"
     },
     "sunmane_crystal_hollow.elm": {
-      "alias": "maps/nymara/sunmane_crystal_hollow.elm"
+      "alias": "maps/nymara/sunmane_wind_caves.elm"
     },
     "maps/four-gates-lantern-row.elm": {
       "manifest": "res://../eloria-assets/maps/four-gates-lantern-row/world.json",
@@ -646,6 +640,144 @@
     },
     "amethyst_barrens_insides": {
       "alias": "maps/nymara/resonant_vault.elm"
+    },
+    "maps/nymara/whitehorn_glacier_temple.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/whitehorn_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -6.0,
+          179.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "parentRegion": "whitehorn_range",
+      "sections": [
+        "glacier_temple",
+        "whitehorn_mine",
+        "ice_cave",
+        "frost_barrow"
+      ]
+    },
+    "whitehorn_glacier_temple": {
+      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
+    },
+    "whitehorn_glacier_temple.elm": {
+      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
+    },
+    "whitehorn_insides": {
+      "alias": "maps/nymara/whitehorn_glacier_temple.elm"
+    },
+    "maps/nymara/drowned_crown.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/crownwater_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -7.0,
+          337.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 0.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/crownwater.elm",
+      "insidesOf": "maps/nymara/crownwater.elm",
+      "sections": [
+        "drowned_crown",
+        "tide_cistern",
+        "customs_hall",
+        "tide_campanile"
+      ]
+    },
+    "drowned_crown": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "drowned_crown.elm": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "crownwater_insides": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "crownwater_insides.elm": {
+      "alias": "maps/nymara/drowned_crown.elm"
+    },
+    "maps/nymara/mirrorhold_interiors.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/mirrorhold_interiors/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -0.0,
+          204.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": 6.0,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/mirrorhold.elm",
+      "requiresServerMap": "34x34 ELM tiles (204 cells)"
+    },
+    "mirrorhold_interiors": {
+      "alias": "maps/nymara/mirrorhold_interiors.elm"
+    },
+    "mirrorhold_interiors.elm": {
+      "alias": "maps/nymara/mirrorhold_interiors.elm"
+    },
+    "maps/nymara/ssarathi_royal_archive.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/ssarathi_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -28.0,
+          327.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": -1.9,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/ssarathi_ruins.elm",
+      "insidesOf": "maps/nymara/ssarathi_ruins.elm",
+      "sections": [
+        "royal_archive",
+        "serpent_hatchery",
+        "drowned_cistern",
+        "root_undercroft"
+      ],
+      "requiresServerMap": {
+        "tiles": 64,
+        "collisionCells": 384,
+        "note": "four insides on one map with blackspace between them"
+      }
+    },
+    "ssarathi_royal_archive": {
+      "alias": "maps/nymara/ssarathi_royal_archive.elm"
+    },
+    "ssarathi_royal_archive.elm": {
+      "alias": "maps/nymara/ssarathi_royal_archive.elm"
+    },
+    "maps/nymara/sunmane_crystal_hollow.elm": {
+      "alias": "maps/nymara/sunmane_wind_caves.elm"
     }
   }
 }
