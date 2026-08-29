@@ -243,6 +243,14 @@ type of 401 arrives on the extended packet for a client that has advertised
 nothing at all. The capability is advertised because the client does implement
 the packet, not because anything is withheld without it.
 
+## Audio
+
+Nothing about audio is on the wire. Every sound the client plays is answered to
+a packet that already exists - the harvest state, the inventory snapshot, the
+combat state, `SEND_SPECIAL_EFFECT` - or to the player's own click. A snapshot
+that restates what was already true is not a new event and is silent, which is
+the same rule the rest of the client follows for a restated state.
+
 ## World effects
 
 `SEND_SPECIAL_EFFECT(79)` is `effect:u8 | actor_id:u16`, with a second

@@ -34,6 +34,7 @@ const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
 const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
 const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
+const AudioDirectorScript := preload("res://src/audio/audio_director.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 var invasion_assistant_window
@@ -209,6 +210,9 @@ var map_light_root: Node3D
 @onready var console_diagnostics_button: Button = %ConsoleDiagnostics
 @onready var diagnostics_output: RichTextLabel = %DiagnosticsOutput
 @onready var settings_panel: PanelContainer = %SettingsPanel
+@onready var sound_enabled: CheckButton = %SoundEnabled
+@onready var sound_volume: HSlider = %SoundVolume
+@onready var sound_volume_value: Label = %SoundVolumeValue
 @onready var minimap_size: HSlider = %MinimapSize
 @onready var minimap_size_value: Label = %MinimapSizeValue
 @onready var ui_scale_slider: HSlider = %UiScale
@@ -235,6 +239,7 @@ var map_marker_overlay: Control
 ## Short-lived world effects the server announced. Kept only so a test can see
 ## what is on screen; each one frees itself when it finishes.
 var world_effects: Array = []
+var audio_director: Node
 ## The power the next cast asks for. Presentational: the server states what
 ## each effect may reach and refuses anything it will not allow.
 var requested_spell_power := 1
@@ -405,6 +410,8 @@ func _ready() -> void:
 	map_image.add_child(map_marker_overlay)
 	map_marker_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
+	audio_director = AudioDirectorScript.new()
+	add_child(audio_director)
 	player_info_panel = PlayerInfoPanelScript.new()
 	game_view.add_child(player_info_panel)
 	active_buff_bar = ActiveBuffBarScript.new()
@@ -521,6 +528,8 @@ func _ready() -> void:
 		var channel_button: Button = get_node(
 			"GameView/ChatTabs/Channel%d" % (channel_index + 1)) as Button
 		channel_button.pressed.connect(_on_channel_tab_pressed.bind(channel_index))
+	sound_enabled.toggled.connect(_on_sound_enabled_toggled)
+	sound_volume.value_changed.connect(_on_sound_volume_changed)
 	minimap_size.value_changed.connect(_on_minimap_size_changed)
 	ui_scale_slider.value_changed.connect(_on_ui_scale_changed)
 	equipment_side.add_item("Left", 0)
@@ -3026,6 +3035,13 @@ func _load_hud_settings() -> void:
 		var lists_value: Variant = config.get_value("inventory", "item_lists", {})
 		if lists_value is Dictionary:
 			_item_lists = (lists_value as Dictionary).duplicate(true)
+		audio_director.enabled = bool(config.get_value("audio", "enabled", true))
+		audio_director.volume_linear = clampf(float(config.get_value(
+			"audio", "volume", 0.7)), 0.0, 1.0)
+	sound_enabled.set_pressed_no_signal(bool(audio_director.enabled))
+	sound_volume.set_value_no_signal(float(audio_director.volume_linear))
+	sound_volume_value.text = "%d%%" % roundi(
+		float(audio_director.volume_linear) * 100.0)
 	minimap_size.set_value_no_signal(_minimap_scale)
 	ui_scale_slider.set_value_no_signal(_ui_scale)
 	_apply_ui_scale()
@@ -3053,9 +3069,24 @@ func _on_minimap_size_changed(value: float) -> void:
 	_apply_minimap_scale()
 	_save_hud_settings()
 
+## Sound is the player's own choice about their own machine, so it is kept in
+## the same settings file as the rest of the HUD preferences.
+func _on_sound_enabled_toggled(pressed: bool) -> void:
+	audio_director.enabled = pressed
+	if pressed:
+		audio_director.play("ui_click")
+	_save_hud_settings()
+
+func _on_sound_volume_changed(value: float) -> void:
+	audio_director.volume_linear = value
+	sound_volume_value.text = "%d%%" % roundi(value * 100.0)
+	_save_hud_settings()
+
 func _save_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	config.load(SETTINGS_PATH)
+	config.set_value("audio", "enabled", bool(audio_director.enabled))
+	config.set_value("audio", "volume", float(audio_director.volume_linear))
 	config.set_value("hud", "minimap_scale", _minimap_scale)
 	config.set_value("hud", "ui_scale", _ui_scale)
 	config.set_value("hud", "minimap_orientation", _minimap_orientation)

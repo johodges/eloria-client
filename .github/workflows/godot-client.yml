@@ -5,6 +5,7 @@ on:
     paths:
       - "godot-client/**"
       - "eloria-assets/tools/build_native_nymara_glbs.py"
+      - "eloria-assets/tools/build_native_sounds.py"
       - "eloria-assets/tools/render_native_glb_preview.py"
       - "eloria-assets/maps/four-gates-city/**"
       - "eloria-assets/maps/nymara-regions/sunmane_steppe/**"
@@ -36,6 +37,8 @@ jobs:
             python3 python3-numpy
       - name: Validate native Nymara GLB catalog
         run: python3 godot-client/tests/test_native_glb_assets.py -v
+      - name: Validate the generated sound set
+        run: python3 godot-client/tests/test_native_sounds.py -v
       - name: Validate garment fit registry
         run: python3 godot-client/tests/test_equipment_fit.py -v
       - name: Validate creature rigs, skinning and animation
@@ -56,6 +59,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_connection_lifecycle.gd
       - name: HUD persistence fixtures
         run: godot --headless --path godot-client --script res://tests/test_hud_persistence.gd
+      - name: Audio director fixtures
+        run: godot --headless --path godot-client --script res://tests/test_audio_director.gd
       - name: Eloria extension window fixtures
         run: godot --headless --path godot-client --script res://tests/test_extension_windows.gd
       - name: Runtime cost fixtures
