@@ -3239,9 +3239,13 @@ def humanoid_model(scene: str, culture: str, gender: str) -> dict:
         # Stature is carried here rather than in the rig: the animation clips
         # write pelvis translation directly, so a taller skeleton would leave
         # the hips at the reference height with the feet hanging below it.
+        # The race rigs are authored facing +Z, so the visual root takes a half
+        # turn onto Godot's -Z forward.  Stated per model rather than left to
+        # the runtime default: the creature rigs are authored the other way.
         "import": {"scale": round(ANATOMY.get(culture, {}).get("stature", 1.), 4),
                    "rotationDegreesX": 0,
-                   "rotationDegreesY": 0, "rotationDegreesZ": 0},
+                   "rotationDegreesY": 0, "rotationDegreesZ": 0,
+                   "forwardAxisCorrectionDegreesY": 180},
         "attachments": {
             "right_hand": "hand_r", "left_hand": "hand_l", "head": "Head",
             "back": "spine_03", "body": "spine_02", "pelvis": "pelvis",
@@ -3291,8 +3295,12 @@ def build_model_registry() -> dict:
             "scene": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationLibrary": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationMap": "res://data/animations/creature.json",
+            # ``creature_anatomy`` builds the muzzle and jaw down -Z, so
+            # these rigs already face Godot's forward axis.  Correcting them
+            # again would turn every creature round and walk it backwards.
             "import": {"scale": 1, "rotationDegreesX": 0,
-                       "rotationDegreesY": 0, "rotationDegreesZ": 0},
+                       "rotationDegreesY": 0, "rotationDegreesZ": 0,
+                       "forwardAxisCorrectionDegreesY": 0},
             "attachments": {"head": "head", "body": "body", "neck": "neck"},
         }
         actor_types[str(actor_type)] = slug
@@ -3303,8 +3311,12 @@ def build_model_registry() -> dict:
             "scene": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationLibrary": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationMap": "res://data/animations/creature.json",
+            # ``creature_anatomy`` builds the muzzle and jaw down -Z, so
+            # these rigs already face Godot's forward axis.  Correcting them
+            # again would turn every creature round and walk it backwards.
             "import": {"scale": 1, "rotationDegreesX": 0,
-                       "rotationDegreesY": 0, "rotationDegreesZ": 0},
+                       "rotationDegreesY": 0, "rotationDegreesZ": 0,
+                       "forwardAxisCorrectionDegreesY": 0},
             "attachments": {"head": "head", "body": "body", "neck": "neck"},
         }
         actor_types[str(roster_actor_type(index))] = slug
@@ -3314,8 +3326,12 @@ def build_model_registry() -> dict:
             "scene": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationLibrary": f"res://assets/actors/native/creatures/{slug}.glb",
             "animationMap": "res://data/animations/creature.json",
+            # ``creature_anatomy`` builds the muzzle and jaw down -Z, so
+            # these rigs already face Godot's forward axis.  Correcting them
+            # again would turn every creature round and walk it backwards.
             "import": {"scale": scale, "rotationDegreesX": 0,
-                       "rotationDegreesY": 0, "rotationDegreesZ": 0},
+                       "rotationDegreesY": 0, "rotationDegreesZ": 0,
+                       "forwardAxisCorrectionDegreesY": 0},
             "attachments": {"head": "head", "body": "body", "neck": "neck"},
             "serverActorType": None,
         }

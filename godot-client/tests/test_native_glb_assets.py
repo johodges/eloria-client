@@ -78,6 +78,14 @@ def glb_document(path: Path) -> dict:
     return json.loads(raw[20:20 + size])
 
 
+def bone_translations(path: Path) -> dict[str, list[float]]:
+    """Every skinned bone's rest translation, by name."""
+    document = glb_document(path)
+    return {document["nodes"][joint].get("name"):
+            document["nodes"][joint].get("translation") or [0.0, 0.0, 0.0]
+            for joint in document["skins"][0]["joints"]}
+
+
 class NativeGlbAssetsTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
@@ -687,6 +695,35 @@ class NativeGlbAssetsTest(unittest.TestCase):
             self.assertEqual(
                 option["model"],
                 self.models["actorTypes"][str(option["actorType"])])
+
+    def test_every_rig_declares_the_correction_its_facing_needs(self) -> None:
+        """A model's forward-axis correction must match how its rig is built.
+
+        The two families are authored facing opposite ways.  The race rigs
+        look down +Z, at the creation-preview camera, so their visual root
+        needs a half turn onto Godot's -Z forward.  The creature rigs are
+        built muzzle-first down -Z and already face that way, so the same
+        half turn would spin every creature round and walk it backwards --
+        which is exactly what a blanket 180 default did to all 175 of them.
+
+        Neither family may rely on that default, so the direction is read
+        back off the rig itself: a cape hangs behind a race, and a jaw sits
+        in front of a creature.
+        """
+        for model_id, entry in self.models["models"].items():
+            scene = entry["scene"].removeprefix("res://")
+            with self.subTest(model=model_id):
+                bones = bone_translations(CLIENT / scene)
+                if "/races/" in scene:
+                    # The cape hangs off the back, so the back is whichever
+                    # way its anchor points and the face is the other way.
+                    facing = -bones["cape_c_01"][2]
+                else:
+                    facing = bones["jaw"][2]
+                self.assertNotEqual(0.0, facing, "the rig states a facing")
+                correction = entry["import"]["forwardAxisCorrectionDegreesY"]
+                self.assertEqual(180 if facing > 0 else 0, correction,
+                                 "a rig already facing -Z must not be turned")
 
     def test_concept_npc_roster_uses_player_models_and_native_gear(self) -> None:
         self.assertEqual(62, len(self.models["npcLooks"]))

@@ -20,7 +20,8 @@
         "scale": 1.0,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -55,7 +56,8 @@
         "scale": 1.0,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -90,7 +92,8 @@
         "scale": 1.045,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -125,7 +128,8 @@
         "scale": 1.045,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -160,7 +164,8 @@
         "scale": 0.975,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -195,7 +200,8 @@
         "scale": 0.975,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -230,7 +236,8 @@
         "scale": 1.01,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -265,7 +272,8 @@
         "scale": 1.01,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -300,7 +308,8 @@
         "scale": 0.99,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -335,7 +344,8 @@
         "scale": 0.99,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -370,7 +380,8 @@
         "scale": 1.02,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -405,7 +416,8 @@
         "scale": 1.02,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -440,7 +452,8 @@
         "scale": 1.06,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -475,7 +488,8 @@
         "scale": 1.06,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -510,7 +524,8 @@
         "scale": 0.995,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -545,7 +560,8 @@
         "scale": 0.995,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 180
       },
       "attachments": {
         "right_hand": "hand_r",
@@ -569,7 +585,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -585,7 +602,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -601,7 +619,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -617,7 +636,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -633,7 +653,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -649,7 +670,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -665,7 +687,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -681,7 +704,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -697,7 +721,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -713,7 +738,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -729,7 +755,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -745,7 +772,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -761,7 +789,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -777,7 +806,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -793,7 +823,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -809,7 +840,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -825,7 +857,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -841,7 +874,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -857,7 +891,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -873,7 +908,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -889,7 +925,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -905,7 +942,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -921,7 +959,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -937,7 +976,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -953,7 +993,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -969,7 +1010,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -985,7 +1027,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1001,7 +1044,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1017,7 +1061,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1033,7 +1078,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1049,7 +1095,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1065,7 +1112,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1081,7 +1129,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1097,7 +1146,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1113,7 +1163,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1129,7 +1180,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1145,7 +1197,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1161,7 +1214,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1177,7 +1231,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1193,7 +1248,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1209,7 +1265,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1225,7 +1282,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1241,7 +1299,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1257,7 +1316,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1273,7 +1333,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1289,7 +1350,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1305,7 +1367,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1321,7 +1384,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1337,7 +1401,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1353,7 +1418,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1369,7 +1435,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1385,7 +1452,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1401,7 +1469,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1417,7 +1486,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1433,7 +1503,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1449,7 +1520,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1465,7 +1537,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1481,7 +1554,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1497,7 +1571,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1513,7 +1588,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1529,7 +1605,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1545,7 +1622,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1561,7 +1639,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1577,7 +1656,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1593,7 +1673,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1609,7 +1690,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1625,7 +1707,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1641,7 +1724,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1657,7 +1741,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1673,7 +1758,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1689,7 +1775,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1705,7 +1792,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1721,7 +1809,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1737,7 +1826,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1753,7 +1843,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1769,7 +1860,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1785,7 +1877,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1801,7 +1894,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1817,7 +1911,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1833,7 +1928,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1849,7 +1945,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1865,7 +1962,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1881,7 +1979,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1897,7 +1996,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1913,7 +2013,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1929,7 +2030,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1945,7 +2047,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1961,7 +2064,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1977,7 +2081,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -1993,7 +2098,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2009,7 +2115,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2025,7 +2132,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2041,7 +2149,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2057,7 +2166,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2073,7 +2183,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2089,7 +2200,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2105,7 +2217,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2121,7 +2234,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2137,7 +2251,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2153,7 +2268,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2169,7 +2285,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2185,7 +2302,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2201,7 +2319,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2217,7 +2336,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2233,7 +2353,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2249,7 +2370,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2265,7 +2387,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2281,7 +2404,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2297,7 +2421,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2313,7 +2438,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2329,7 +2455,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2345,7 +2472,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2361,7 +2489,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2377,7 +2506,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2393,7 +2523,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2409,7 +2540,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2425,7 +2557,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2441,7 +2574,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2457,7 +2591,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2473,7 +2608,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2489,7 +2625,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2505,7 +2642,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2521,7 +2659,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2537,7 +2676,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2553,7 +2693,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2569,7 +2710,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2585,7 +2727,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2601,7 +2744,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2617,7 +2761,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2633,7 +2778,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2649,7 +2795,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2665,7 +2812,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2681,7 +2829,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2697,7 +2846,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2713,7 +2863,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2729,7 +2880,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2745,7 +2897,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2761,7 +2914,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2777,7 +2931,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2793,7 +2948,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2809,7 +2965,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2825,7 +2982,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2841,7 +2999,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2857,7 +3016,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2873,7 +3033,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2889,7 +3050,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2905,7 +3067,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2921,7 +3084,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2937,7 +3101,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2953,7 +3118,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2969,7 +3135,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -2985,7 +3152,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3001,7 +3169,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3017,7 +3186,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3033,7 +3203,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3049,7 +3220,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3065,7 +3237,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3081,7 +3254,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3097,7 +3271,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3113,7 +3288,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3129,7 +3305,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3145,7 +3322,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3161,7 +3339,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3177,7 +3356,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3193,7 +3373,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3209,7 +3390,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3225,7 +3407,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3241,7 +3424,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3257,7 +3441,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3273,7 +3458,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3289,7 +3475,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3305,7 +3492,8 @@
         "scale": 1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3321,7 +3509,8 @@
         "scale": 1.25,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3338,7 +3527,8 @@
         "scale": 1.2,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",
@@ -3355,7 +3545,8 @@
         "scale": 1.1,
         "rotationDegreesX": 0,
         "rotationDegreesY": 0,
-        "rotationDegreesZ": 0
+        "rotationDegreesZ": 0,
+        "forwardAxisCorrectionDegreesY": 0
       },
       "attachments": {
         "head": "head",

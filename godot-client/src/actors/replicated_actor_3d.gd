@@ -1382,10 +1382,14 @@ func _apply_import_adapter(config: Dictionary) -> void:
 	if model == null:
 		return
 	model.scale = Vector3.ONE * float(config.get("scale", 1.0))
-	# Native glTF actors are authored facing +Z, while Godot's logical forward
-	# axis is -Z. Correct only the imported visual root so server yaw, click
-	# targets, keyboard-relative movement, and equipment attachments continue
-	# to share one canonical logical heading.
+	# The two rig families are authored facing opposite ways: the race rigs
+	# down +Z to face the creation-preview camera, the creature rigs down -Z,
+	# which is already Godot's logical forward axis. Each model states its own
+	# correction, so a creature is not turned round and walked backwards. The
+	# 180 fallback is only for a model that predates the key. Correct only the
+	# imported visual root so server yaw, click targets, keyboard-relative
+	# movement, and equipment attachments continue to share one canonical
+	# logical heading.
 	var forward_axis_correction: float = float(
 		config.get("forwardAxisCorrectionDegreesY", 180.0))
 	model.rotation_degrees = Vector3(
