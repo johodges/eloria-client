@@ -14,6 +14,16 @@ Two thirds of it is water. That is not a gap in the map; it is the map. See
 `modeling-assumptions.md` for what follows from it, and `traversal-modes.md`
 for the swim/dive/shapeshift design the package is authored to support.
 
+## Interiors
+
+Four insides on one map with blackspace between them, at
+`../interiors/manymouth_delta_insides/`: the Flooded Labyrinth, the Underdeck,
+the Tide Hall and the Sanctum. Built by `source/build_interiors.py` and
+`source/interiors.py`; the server map key is `manymouth_flooded_labyrinth`,
+grown from 32 to 64 ELM tiles. Four doors on this map target it, differing only
+in `destinationSpawn`, and each has a matching return spawn here so both
+directions resolve. See that package's README.
+
 ## Runtime files
 
 | File | What it is |

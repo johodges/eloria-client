@@ -139,3 +139,62 @@ arrival at (174, 174); the five Nymara/content test modules pass (21 passed).
 On the wider suite, 81 of 513 tests fail on this branch — the suite was run with
 the change and again with it stashed and the two failure lists are byte-for-byte
 identical, so none are introduced and none fixed. Pre-existing and unrelated.
+
+
+## Interiors pass
+
+Four authored insides on one map with unwalkable blackspace between them, in the
+Eternal Lands convention Amethyst Barrens and Crownwater already use: one GLB,
+one manifest, one collision grid, one server map key, one arrival per door.
+
+    flooded_labyrinth   drowned ruin        the cave mouth in the headland
+    smugglers_warren    working warren      a hatch under the town quay
+    tide_hall           inhabited hall      the Tide Hall door
+    temple_sanctum      monumental sanctum  the Sanctum stair
+
+79,438 triangles, 11.4 MB, collision 366 x 702 at half a metre, 21.4% walkable,
+spanning x 38..219 and z 32..381 - a 64x64 tile server map with margin.
+glTF 0 errors 0 warnings; `verify_runtime` 0 errors and two documented warnings.
+
+The region gained four doors and four return spawns. Every door targets the same
+`destinationMap` and differs only in `destinationSpawn`; the return spawn is
+sited by `spawn_point` rather than at the door, because a door is on a deck and
+a spawn declared on a deck is a spawn the grounding ray may fall through between
+two planks.
+
+The strongest idea in the four is the labyrinth's gate chamber: the ring-arch
+that stands out of the whirlpool on the region map is the *top* of a gate whose
+lower half is down here. You row past it on the surface and then walk in under
+it.
+
+### Found and fixed in this pass
+
+* **The glyph stone tiled into dots.** `manymouth_glyph_stone` carries an
+  inlaid band of teal strokes - right on an arch or a stele, and completely
+  wrong tiled ten times across a 28 m floor. The first render of these rooms had
+  cyan dashes over every surface. Bulk stone is `cliff_rock` now and the glyph
+  stone is reserved for things actually cut with glyphs.
+* **The boardwalk maze rendered as a black frame.** The generic "stand in a
+  corner, look at the middle" camera put the eye inside a plank deck. Four
+  subjects now carry explicit cameras.
+* **Capture filenames contained colons.** A combined map's subject is
+  "<Section>: <subject>", Windows will not take ':' in a filename, and Godot's
+  `save_png` produced four zero-byte files named up to the colon and lost the
+  rest. `preview_interior.py` sanitises the id now. This would have hit any
+  region's combined insides map on Windows.
+
+### Fixed in the shared toolkit
+
+* **`godot_capture.gd` instantiated none of the manifest's lights.** It builds a
+  sky and a sun, which is right for an exterior and useless for an interior: the
+  frames came back with the lanterns visible as small orange discs illuminating
+  nothing, and a reviewer would have concluded the interior was unlit when what
+  shipped was 126 declared lights. It now reads `world.json`'s `lights` and adds
+  an `OmniLight3D` per entry, taking range, energy and colour from the manifest.
+  Every region's interiors benefit.
+
+### Server side
+
+`manymouth_flooded_labyrinth` grows from 32 to 64 tiles with its arrival at
+(23, 344), and its single 32-scale portal pair is replaced by four bidirectional
+pairs, one per door - the same shape `drowned_crown` and `resonant_vault` have.
