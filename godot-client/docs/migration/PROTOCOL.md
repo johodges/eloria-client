@@ -243,6 +243,22 @@ type of 401 arrives on the extended packet for a client that has advertised
 nothing at all. The capability is advertised because the client does implement
 the packet, not because anything is withheld without it.
 
+## Map markers
+
+`SEND_MAP_MARKER(90)` is `marker_id:u16 | x:u16 | y:u16 | map_reference |
+label`, and `REMOVE_MAP_MARKER(91)` is `marker_id:u16`. The map reference is
+the server's own file name for the map (`./maps/four_gates.elm`); the client
+reduces it to the map id it already knows rather than matching a path it never
+renders from.
+
+The server owns markers completely. It places the waypoint marker (id 490) when
+`#waypoint` sets one and removes that id when the waypoint is cleared, and it
+maintains the tutorial and quest markers (ids 500-506) by clearing the whole
+range and re-sending what still applies. A marker for another map is kept
+rather than dropped, because the server does not withdraw one when the player
+walks away; the client draws only the markers whose map is the one it is
+standing on.
+
 ## Keepalive, idle eviction and resync
 
 The client sends `HEART_BEAT(14)` - a zero-payload frame - every 25 seconds

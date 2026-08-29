@@ -189,6 +189,15 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/extension-item-detail.png"
           test -s "$ELORIA_ARTIFACT_DIR/extension-merchant.png"
           test -s "$ELORIA_ARTIFACT_DIR/extension-marketplace.png"
+      - name: Render server-placed map markers
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_map_markers.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/map-markers.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/map-markers.log"
+          grep -q "rendered map markers: PASS" "$ELORIA_ARTIFACT_DIR/map-markers.log"
+          test -s "$ELORIA_ARTIFACT_DIR/map-marker-before.png"
+          test -s "$ELORIA_ARTIFACT_DIR/map-marker-full-map.png"
+          test -s "$ELORIA_ARTIFACT_DIR/map-marker-gameplay-view.png"
       - name: Render 16-bit actor native models
         run: |
           xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_actor16_creature.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/actor16.log"

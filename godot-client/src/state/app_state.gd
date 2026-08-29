@@ -65,6 +65,10 @@ var navigation: Dictionary = {"active": false, "x": 0, "y": 0, "distance": 0,
 	"map_id": "", "label": ""}
 var special_events: Array[String] = []
 
+## Map markers the server placed, keyed by its marker id. Purely server-stated:
+## the client never invents one and never removes one the server still holds.
+var map_markers: Dictionary = {}
+
 ## Clickable world objects on the current map, keyed by server object id, and
 ## the authoritative harvesting state. Both are server-declared: nothing here
 ## is matched by filename or scraped out of chat.
@@ -138,6 +142,7 @@ func _on_connection_state_changed(value: String) -> void:
 		navigation = _empty_navigation_state()
 		special_events.clear()
 		map_objects.clear()
+		map_markers.clear()
 		harvest = _empty_harvest_state()
 		popup = _empty_popup_state()
 		perks.clear()
@@ -557,6 +562,17 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			for raw_line: Variant in event.lines:
 				special_events.append(str(raw_line))
 			state_changed.emit(&"special_events")
+		"map_marker":
+			map_markers[int(event.marker_id)] = {
+				"marker_id": int(event.marker_id), "x": int(event.x),
+				"y": int(event.y), "map_id": str(event.map_id),
+				"label": str(event.label)}
+			state_changed.emit(&"map_markers")
+		"remove_map_marker":
+			# Removing one the server never placed is not an error: the server
+			# clears a range of ids whenever it resyncs quest markers.
+			if map_markers.erase(int(event.marker_id)):
+				state_changed.emit(&"map_markers")
 		"map_objects":
 			# The list arrives in chunks; only the first clears what was there.
 			if bool(event.first):

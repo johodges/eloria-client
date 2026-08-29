@@ -964,6 +964,30 @@ func _init() -> void:
 		_expect(rejected.type == "invalid",
 			"a truncated command %d payload is rejected" % int(truncated[0]))
 
+	# Map markers. The server owns them entirely: 90 places one, 91 takes it
+	# away, and the map is named by the server's own file reference.
+	var marker: Dictionary = EloriaProtocol.decode_server(90, _hex(
+		"ea010c03e1012e2f6d6170732f666f75725f67617465732e656c6d00"
+		+ "526565642062616e6b00"))
+	_expect(marker.type == "map_marker" and int(marker.marker_id) == 490
+		and int(marker.x) == 780 and int(marker.y) == 481
+		and str(marker.map_id) == "four_gates"
+		and str(marker.label) == "Reed bank",
+		"a map marker decodes its id, tile, map and label")
+	_expect(EloriaProtocol.map_id_from_reference("./maps/four_gates.elm")
+			== "four_gates"
+		and EloriaProtocol.map_id_from_reference("four_gates") == "four_gates",
+		"the map reference reduces to the map id the client already knows")
+	var removed: Dictionary = EloriaProtocol.decode_server(91, _hex("ea01"))
+	_expect(removed.type == "remove_map_marker"
+		and int(removed.marker_id) == 490,
+		"removing a marker names the id and nothing else")
+	for broken: Array in [[90, "ea010c03"], [90, "ea010c03e1012e2f6d6170"],
+			[91, "ea0100"]]:
+		_expect(EloriaProtocol.decode_server(int(broken[0]),
+				_hex(str(broken[1]))).type == "invalid",
+			"a malformed command %d payload is rejected" % int(broken[0]))
+
 	# Harvesting and world objects. HARVEST(21), USE_MAP_OBJECT(16) and
 	# LOOK_AT_MAP_OBJECT(27) were enum values with no encoder, and there was no
 	# world-object pick path at all.

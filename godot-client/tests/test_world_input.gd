@@ -1303,6 +1303,49 @@ func _run() -> void:
 	_expect(not harvest_banner.visible,
 		"a server stop - moving, a full backpack, combat - clears the indicator")
 
+	# Map markers. The server places every one of them and takes every one of
+	# them away; nothing here decides a marker has been reached.
+	var here: String = EloriaProtocol.map_id_from_reference(
+		str(app_state_inventory.get("current_map")))
+	var marker_payload := PackedByteArray([0xea, 0x01, 0x0c, 0x03, 0xe1, 0x01])
+	marker_payload.append_array(_nul_bytes("./maps/%s.elm" % here))
+	marker_payload.append_array(_nul_bytes("Reed bank"))
+	app_state_inventory.call("_on_packet", 90, marker_payload)
+	var elsewhere := PackedByteArray([0xeb, 0x01, 0x10, 0x00, 0x20, 0x00])
+	elsewhere.append_array(_nul_bytes("./maps/somewhere_else.elm"))
+	elsewhere.append_array(_nul_bytes("Another map"))
+	app_state_inventory.call("_on_packet", 90, elsewhere)
+	await process_frame
+	var marker_nodes: Dictionary = main.get("map_marker_nodes") as Dictionary
+	_expect((app_state_inventory.get("map_markers") as Dictionary).size() == 2
+		and marker_nodes.size() == 1 and marker_nodes.has(490),
+		"a marker for another map is held but not drawn here")
+	var placed: MapMarker3D = marker_nodes.get(490) as MapMarker3D
+	_expect(placed != null and placed.server_tile == Vector2i(780, 481)
+		and placed.label == "Reed bank",
+		"the marker sits on the tile the server named, with its label")
+	var pin: MeshInstance3D = (placed.get_node_or_null("Pin")
+		as MeshInstance3D) if placed != null else null
+	_expect(pin != null and pin.layers == MapMarker3D.MAP_MARKER_LAYER,
+		"a marker draws on the map cameras rather than over the gameplay view")
+	var marker_sidebar: RichTextLabel = main.get_node(
+		"GameView/FullMap/MapLayout/Sidebar/SidebarContent/MapMarkerList") as RichTextLabel
+	_expect(marker_sidebar.visible and marker_sidebar.text.contains("Reed bank")
+		and marker_sidebar.text.contains("780") and marker_sidebar.text.contains("481"),
+		"the map sidebar names the marker and its tile, which no pin drawn at"
+			+ " full-map scale could: " + marker_sidebar.text)
+	var overlay: Control = main.get("map_marker_overlay") as Control
+	_expect((overlay.get("_markers") as Array).size() == 1,
+		"the full-map overlay is given the markers for this map and no others")
+	app_state_inventory.call("_on_packet", 91, PackedByteArray([0xea, 0x01]))
+	await process_frame
+	_expect((app_state_inventory.get("map_markers") as Dictionary).size() == 1
+		and (main.get("map_marker_nodes") as Dictionary).is_empty()
+		and not marker_sidebar.visible
+		and (overlay.get("_markers") as Array).is_empty(),
+		"the server takes a marker away and the pin, the list and the overlay"
+			+ " entry all go with it")
+
 	# A map change discards the previous map's objects rather than leaving
 	# pick targets from somewhere else standing in the new world.
 	app_state_inventory.call("_on_packet", 7, _nul_bytes("maps/nymara/mirrorhold.elm"))

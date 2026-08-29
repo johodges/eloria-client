@@ -32,6 +32,7 @@ extends Control
 const InteriorCutawayScript := preload("res://src/world/interior_cutaway.gd")
 const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
+const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 var invasion_assistant_window
 var extension_windows: Control
@@ -49,6 +50,8 @@ var map_light_root: Node3D
 @onready var map_camera: Camera3D = %MapCamera
 @onready var full_map_viewport: SubViewport = %FullMapViewport
 @onready var full_map_camera: Camera3D = %FullMapCamera
+@onready var map_marker_title: Label = %MapMarkerTitle
+@onready var map_marker_list: RichTextLabel = %MapMarkerList
 @onready var minimap: TextureRect = %Minimap
 @onready var minimap_frame: Panel = %MinimapFrame
 @onready var full_map: Control = %FullMap
@@ -219,6 +222,9 @@ var map_light_root: Node3D
 var actor_nodes: Dictionary = {}
 var ground_bag_nodes: Dictionary = {}
 var map_object_nodes: Dictionary = {}
+## Server-placed map markers on the current map, keyed by the server's marker id.
+var map_marker_nodes: Dictionary = {}
+var map_marker_overlay: Control
 ## Server map objects whose tile has no navigation surface beneath it on the
 ## rendered map. Misplaced content rather than a client fault, but silent
 ## unless somebody counts it.
@@ -378,6 +384,12 @@ func _ready() -> void:
 	# The nine Eloria extension windows live in their own script: main.gd is
 	# already long enough that nine more windows would make it unreadable, and
 	# they share one seam - the fork's extension protocol.
+	map_marker_overlay = MapMarkerOverlayScript.new()
+	map_marker_overlay.name = "MapMarkerOverlay"
+	map_marker_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	map_image.add_child(map_marker_overlay)
+	map_marker_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
 	extension_windows = ExtensionWindowsScript.new()
 	game_view.add_child(extension_windows)
 	extension_windows.configure(item_atlas)
@@ -564,6 +576,9 @@ func _update_map_viewports() -> void:
 	if full_map.visible and map_image.visible and now >= _full_map_refresh_msec:
 		_full_map_refresh_msec = now + FULL_MAP_REFRESH_MSEC
 		full_map_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+		# The map camera follows the player, so the marker overlay is projected
+		# again whenever the image beneath it is - and never while it is hidden.
+		map_marker_overlay.queue_redraw()
 
 ## The character preview renders its own 3D scene. It only needs to run while
 ## the creation panel is on screen.
@@ -2254,6 +2269,8 @@ func _on_state_changed(path: StringName) -> void:
 		&"map":
 			_load_server_map()
 			_sync_world()
+			# Markers survive a map change; which of them belong here does not.
+			_sync_map_markers()
 		&"actors", &"local_actor":
 			# A busy map emits this once per actor packet. Rebuilding the whole
 			# actor presentation for each of them repeated the same work many
@@ -2310,6 +2327,8 @@ func _on_state_changed(path: StringName) -> void:
 		&"map_objects":
 			_sync_map_objects()
 			_snap_all_map_objects_to_surface.call_deferred()
+		&"map_markers":
+			_sync_map_markers()
 		&"harvest":
 			_sync_harvest_indicator()
 		&"reading":
@@ -4697,6 +4716,85 @@ func _sync_map_objects() -> void:
 		_place_map_object_on_surface(map_object)
 	_sync_harvest_indicator()
 
+## Draws the markers the server placed for the map the player is standing on.
+##
+## A marker keeps its map: the server states which map each belongs to and never
+## withdraws one because the player walked elsewhere, so a marker for another
+## map is held and hidden rather than discarded and guessed at again later.
+func _sync_map_markers() -> void:
+	# Both sides are reduced the same way: the marker names its map as the
+	# server's own file reference, and CHANGE_MAP names the current one the
+	# same way, so neither is compared to a path the other never uses.
+	var here: String = EloriaProtocol.map_id_from_reference(AppState.current_map)
+	for raw_id: Variant in map_marker_nodes.keys():
+		var marker_id: int = int(raw_id)
+		var marker_value: Variant = AppState.map_markers.get(marker_id)
+		var still_here: bool = (marker_value is Dictionary
+			and str((marker_value as Dictionary).get("map_id", "")) == here)
+		if still_here:
+			continue
+		var stale: Variant = map_marker_nodes.get(marker_id)
+		if is_instance_valid(stale):
+			(stale as Node).queue_free()
+		map_marker_nodes.erase(marker_id)
+	for raw_id: Variant in AppState.map_markers:
+		var marker_id: int = int(raw_id)
+		if map_marker_nodes.has(marker_id):
+			continue
+		var dto_value: Variant = AppState.map_markers.get(marker_id)
+		if not dto_value is Dictionary:
+			continue
+		var dto: Dictionary = dto_value as Dictionary
+		if str(dto.get("map_id", "")) != here:
+			continue
+		var marker := MapMarker3D.new()
+		marker.configure(dto, adapter)
+		world_root.add_child(marker)
+		map_marker_nodes[marker_id] = marker
+		_place_map_marker_on_surface(marker)
+	_sync_map_marker_list()
+
+## The pins are readable as shapes on both map cameras, but a full map covers a
+## whole map: no label drawn at that scale can be read. The sidebar lists what
+## each pin is, in the server's own words, beside the legend that explains the
+## rest of the map.
+func _sync_map_marker_list() -> void:
+	var lines: Array[String] = []
+	for raw_id: Variant in map_marker_nodes:
+		var marker: Variant = map_marker_nodes[raw_id]
+		if not is_instance_valid(marker):
+			continue
+		var pin: MapMarker3D = marker as MapMarker3D
+		lines.append("[color=#fac638]◆[/color] %s  (%d, %d)" % [
+			pin.label if not pin.label.is_empty() else "Marker",
+			pin.server_tile.x, pin.server_tile.y])
+	map_marker_list.text = "
+".join(lines)
+	map_marker_title.visible = not lines.is_empty()
+	map_marker_list.visible = not lines.is_empty()
+	map_marker_overlay.set_markers(_current_map_markers())
+
+## The markers the server placed on the map the player is standing on.
+func _current_map_markers() -> Array[Dictionary]:
+	var here: String = EloriaProtocol.map_id_from_reference(AppState.current_map)
+	var markers: Array[Dictionary] = []
+	for raw_id: Variant in AppState.map_markers:
+		var marker_value: Variant = AppState.map_markers[raw_id]
+		if not marker_value is Dictionary:
+			continue
+		var marker: Dictionary = marker_value as Dictionary
+		if str(marker.get("map_id", "")) == here:
+			markers.append(marker)
+	return markers
+
+func _place_map_marker_on_surface(marker: MapMarker3D) -> void:
+	if not is_instance_valid(marker):
+		return
+	var sampled: Variant = _navigation_ray_position(
+		marker.global_position + Vector3(0.0, 200.0, 0.0), Vector3.DOWN)
+	if sampled is Vector3:
+		marker.set_surface_height((sampled as Vector3).y)
+
 ## Grounds one world object, and notices when it cannot be grounded at all.
 ##
 ## A server object whose tile has no navigation surface under it is misplaced
@@ -4718,6 +4816,8 @@ func _snap_all_map_objects_to_surface() -> void:
 	await get_tree().physics_frame
 	for raw_object: Variant in map_object_nodes.values():
 		_place_map_object_on_surface(raw_object as MapObject3D)
+	for raw_marker: Variant in map_marker_nodes.values():
+		_place_map_marker_on_surface(raw_marker as MapMarker3D)
 
 ## The "now harvesting" indicator. The stock client drove this by matching an
 ## exact English phrase out of the chat stream; this reads the authoritative

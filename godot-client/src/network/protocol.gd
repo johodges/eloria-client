@@ -631,6 +631,12 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "npc_close"}
 		ServerMessage.DISPLAY_POPUP:
 			return decode_popup(payload)
+		ServerMessage.SEND_MAP_MARKER:
+			return decode_map_marker(payload)
+		ServerMessage.REMOVE_MAP_MARKER:
+			if payload.size() != 2:
+				return {"type": "invalid", "error": "remove_map_marker_length"}
+			return {"type": "remove_map_marker", "marker_id": u16(payload)}
 		ServerMessage.ELORIA_MARKETPLACE_STATE:
 			return decode_marketplace(payload)
 		ServerMessage.ELORIA_MERCHANT_STATE:
@@ -979,6 +985,28 @@ const POPUP_TEXT_ENTRY := 0
 const POPUP_DISPLAY_TEXT := 1
 const POPUP_TEXT_OPTION := 8
 const POPUP_RADIO_OPTION := 9
+
+## Command 90. One map marker the server placed: a waypoint, a quest target or
+## a tutorial pointer. The map name arrives as the server's own file reference
+## (`./maps/four_gates.elm`); the marker belongs to that map and no other.
+static func decode_map_marker(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 6:
+		return {"type": "invalid", "error": "map_marker_length"}
+	var text: Dictionary = _nul_run(payload, 6, 2)
+	if text.is_empty():
+		return {"type": "invalid", "error": "map_marker_text"}
+	if int(text.offset) != payload.size():
+		return {"type": "invalid", "error": "map_marker_trailing"}
+	var values: Array = text.values as Array
+	return {"type": "map_marker", "marker_id": u16(payload),
+		"x": u16(payload, 2), "y": u16(payload, 4),
+		"map_id": map_id_from_reference(str(values[0])), "label": str(values[1])}
+
+## `./maps/four_gates.elm` is the map id `four_gates`. The server names its own
+## maps this way in every marker; matching on the reference itself would tie the
+## client to a path layout that has nothing to do with what it renders.
+static func map_id_from_reference(reference: String) -> String:
+	return reference.get_file().get_basename()
 
 static func decode_popup(payload: PackedByteArray) -> Dictionary:
 	# The legacy client rejects anything too short to hold a one-character
