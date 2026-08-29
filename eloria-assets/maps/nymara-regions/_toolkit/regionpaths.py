@@ -109,10 +109,18 @@ def load_region_build(package: Path):
     The toolkit cannot know its name, and a region may carry more than one
     build script, so the interior builds are excluded and the rest must be
     unambiguous.
+
+    `build_insides` as well as `build_interior`: the single-map interiors layout
+    added a third script per region, and excluding only the older name leaves
+    two candidates and makes every toolkit script that resolves a region fail.
+    Crownwater is in that state on develop - `export_source_elm.py` cannot run
+    against it - and Ssarathi Ruins would have been the moment it gained its own
+    insides build.
     """
     source = region_source(package)
+    interior_prefixes = ("build_interior", "build_insides")
     candidates = [c for c in sorted(source.glob("build_*.py"))
-                  if not c.stem.startswith("build_interior")]
+                  if not c.stem.startswith(interior_prefixes)]
     if len(candidates) != 1:
         raise SystemExit(
             f"expected exactly one build_*.py in {source}, found "

@@ -61,6 +61,24 @@ python3 ../../_toolkit/verify_runtime.py
 python3 ../../_toolkit/validate_gltf.py ../world.glb
 ```
 
+## Per-region hooks
+
+Three opt-in extension points, all defaulting to the previous behaviour so a
+region that declares none is unaffected.
+
+| Hook | Where | What it does |
+| --- | --- | --- |
+| `register_materials(sets)` | the region's `build_<region>.py` | `capture_views.py` calls it before building the preview scene, so a region whose materials are not in the shared table renders in its own materials instead of fallback grey. |
+| `DAY_LIGHTING` / `GOLDEN_LIGHTING` | the region's `views.py` | dicts of `render.Lighting` field overrides on the capture presets, which are Amberwood's warm autumn sun. |
+| `FIXED_VIEWS` | the region's `views.py` | a set of view ids to pin against `_free_camera`. That search keeps a camera out of a trunk or an eave by requiring most of the frame to sit beyond 55% of the subject distance - a test no ground-level camera on a long axial street through a dense city can pass, so it falls back to the best it found, metres in the air. An author who has checked a framing can keep it. |
+
+`godot_capture.gd` additionally accepts `--environment=manifest`, which lights
+the frames from the package's own `environment` block through the project's
+`WorldEnvironmentBinder` rather than from the harness's neutral studio sun.
+Without it the captures are evidence about geometry only: a manifest can declare
+a sun that lights the world from underneath, or omit `tonemap` and render flat,
+and the frames look identical either way.
+
 ## Determinism
 
 Every build is seeded and reproduces its artefacts byte-for-byte. Name-derived
