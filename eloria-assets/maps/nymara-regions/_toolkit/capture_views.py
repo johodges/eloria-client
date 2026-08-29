@@ -36,11 +36,28 @@ build_region = regionpaths.load_region_build(PACKAGE).build_region
 # under permanent storm - and the captures are the only visual evidence a
 # reviewer has. Two spellings are accepted, a single LIGHTING dict or a pair of
 # DAY_LIGHTING / GOLDEN_LIGHTING constants, because both are in use.
+FIXED_VIEWS = frozenset(getattr(_REGION_VIEWS, "FIXED_VIEWS", ()) or ())
+
 REGION_LIGHTING = dict(getattr(_REGION_VIEWS, "LIGHTING", {}) or {})
 if getattr(_REGION_VIEWS, "DAY_LIGHTING", None) is not None:
     REGION_LIGHTING.setdefault("day", _REGION_VIEWS.DAY_LIGHTING)
 if getattr(_REGION_VIEWS, "GOLDEN_LIGHTING", None) is not None:
     REGION_LIGHTING.setdefault("golden", _REGION_VIEWS.GOLDEN_LIGHTING)
+
+
+def _as_lighting(value, base):
+    """Accept either a `Lighting` or a dict of overrides on the preset.
+
+    `DAY_LIGHTING` / `GOLDEN_LIGHTING` are documented as dicts of field
+    overrides, and that is how they are applied to the presets below - but the
+    same raw dicts also land in `REGION_LIGHTING`, which is read as if it held
+    `Lighting` objects. The aerial view then does `vars(base)` on a dict and
+    dies. Normalising here fixes it for every region that declares either
+    constant, and is a no-op for the ones that declare a `Lighting` directly.
+    """
+    if isinstance(value, dict):
+        return RENDER.Lighting(**{**vars(base), **value})
+    return value
 
 DAY = RENDER.Lighting(sun_direction=(-0.46, 0.50, 0.73),
                       sun_color=(1.22, 0.94, 0.60),
@@ -147,7 +164,18 @@ def main() -> int:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
 
+    # A region whose materials are not in the shared table must be able to add
+    # them here, or every capture of it renders in fallback grey-tan. The
+    # build-time `register()` extension is how Crownwater, Amethyst Barrens and
+    # Ssarathi Ruins all add theirs, so the region's build module is the right
+    # place to look for it: any module exposing `register_materials(sets)` gets
+    # called before the scene is built. Regions that expose nothing are
+    # unaffected.
     sets = preview.texture_sets()
+    _registrar = getattr(regionpaths.load_region_build(PACKAGE),
+                         "register_materials", None)
+    if _registrar is not None:
+        sets = _registrar(sets)
     build = build_region()
     scene = preview.scene_from_build(build, sets)
     print(f"[scene] {scene.triangle_count()} triangles")
@@ -218,11 +246,12 @@ def main() -> int:
         if eye_h > 40.0:
             eye_h = eye_h * scale
         t0 = time.time()
-        lighting = REGION_LIGHTING.get(mode, GOLDEN if mode == "golden" else DAY)
+        _preset = GOLDEN if mode == "golden" else DAY
+        lighting = _as_lighting(REGION_LIGHTING.get(mode, _preset), _preset)
         if panel == "aerial":
             # a 576 m region seen from 500 m up is far enough away that the
             # normal ground-level haze would swallow the far half of it
-            base = REGION_LIGHTING.get("day", DAY)
+            base = _as_lighting(REGION_LIGHTING.get("day", DAY), DAY)
             lighting = RENDER.Lighting(**{**vars(base), "fog_density": 0.00022,
                                           "fog_height_falloff": 0.0016})
         placed_eye = eye_xz if eye_h > 20.0 else find_clear(eye_xz)
@@ -230,7 +259,13 @@ def main() -> int:
         target = ground(target_xz, target_h)
         if abs(eye[0] - target[0]) < 0.05 and abs(eye[2] - target[2]) < 0.05:
             target = (target[0] + 0.4, target[1], target[2] + 0.4)
-        if eye_h < 40.0:
+        # A region may pin a framing it has verified by listing its id in
+        # `views.FIXED_VIEWS`. The search below exists to keep a camera out of
+        # a trunk or an eave, but on a long axial street through a dense city
+        # no ground-level candidate ever reaches its openness threshold, so it
+        # falls back to the best it found - which is metres in the air. An
+        # author who has checked a framing should be able to keep it.
+        if eye_h < 40.0 and name not in FIXED_VIEWS:
             eye = _free_camera(scene, terrain, eye, target, fov)
         centre = ((eye[0] + target[0]) * 0.5, target[1], (eye[2] + target[2]) * 0.5)
         image = scene.render(eye=eye, target=target, width=size[0], height=size[1],

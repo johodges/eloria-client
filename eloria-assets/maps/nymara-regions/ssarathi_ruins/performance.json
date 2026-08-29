@@ -1,0 +1,40 @@
+{
+  "nodes": 7717,
+  "meshes": 400,
+  "materials": 24,
+  "images": 66,
+  "textures": 66,
+  "accessors": 1600,
+  "bufferViews": 1666,
+  "uniqueTriangles": 394853,
+  "uniqueVertices": 310617,
+  "glbBytes": 19428968,
+  "instancedTriangles": 1879571,
+  "embeddedTextureBytes": 19607189,
+  "textureMemoryBytesUncompressed": 183238656,
+  "placements": 2895,
+  "collision": {
+    "width": 1152,
+    "height": 1152,
+    "cellMetres": 0.5,
+    "originMetres": [
+      -174.0,
+      174.0
+    ],
+    "walkableCells": 563351,
+    "blockedCells": 763753,
+    "walkableFraction": 0.4245,
+    "elevatedDecks": 24,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+  },
+  "notes": [],
+  "lod2": {
+    "glbBytes": 12610800,
+    "nodes": 3189,
+    "uniqueTriangles": 337798,
+    "instancedTriangles": 854588,
+    "sizeReductionPercent": 35.1,
+    "triangleReductionPercent": 54.5
+  }
+}

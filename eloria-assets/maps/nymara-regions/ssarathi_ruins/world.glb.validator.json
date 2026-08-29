@@ -1,0 +1,20 @@
+{
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-ssarathi\\eloria-assets\\maps\\nymara-regions\\ssarathi_ruins\\world.glb",
+  "mimeType": "model/gltf-binary",
+  "validatorVersion": "eloria-gltf-validate-1.1.0",
+  "validatedAt": "2026-08-29T07:32:36.999789Z",
+  "issues": {
+    "numErrors": 0,
+    "numWarnings": 0,
+    "numInfos": 1,
+    "numHints": 0,
+    "messages": [
+      {
+        "code": "NODE_EMPTY",
+        "message": "Empty node encountered.",
+        "severity": 2,
+        "pointer": "/nodes/6"
+      }
+    ]
+  }
+}
