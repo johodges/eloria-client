@@ -981,6 +981,19 @@ func _init() -> void:
 	_expect(EloriaProtocol.decode_server(78, _hex("4d000004")).type == "invalid",
 		"a truncated actor buff mask is rejected")
 
+	# Effects the server says happened in the world.
+	var swarm: Dictionary = EloriaProtocol.decode_server(79, _hex("115b00"))
+	_expect(swarm.type == "special_effect" and int(swarm.effect) == 17
+		and int(swarm.actor_id) == 91 and int(swarm.target_id) == -1,
+		"an effect at one actor decodes without inventing a target")
+	var thrown: Dictionary = EloriaProtocol.decode_server(79, _hex("025b004d00"))
+	_expect(thrown.type == "special_effect" and int(thrown.effect) == 2
+		and int(thrown.actor_id) == 91 and int(thrown.target_id) == 77,
+		"an effect between two actors decodes both of them")
+	for malformed: String in ["11", "115b0000", "115b004d0000"]:
+		_expect(EloriaProtocol.decode_server(79, _hex(malformed)).type == "invalid",
+			"a malformed special effect is rejected (%s)" % malformed)
+
 	# Guild tags. The server builds one display string - an optional colour
 	# byte, the name, a space, an optional colour byte and the tag - and both
 	# fixtures below are that builder's exact output.

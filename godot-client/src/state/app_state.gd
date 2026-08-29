@@ -6,6 +6,10 @@ signal login_failed(message: String)
 signal character_created
 signal character_creation_failed(message: String)
 signal floating_feedback_requested(feedback: Dictionary)
+## Something the server said happened in the world, at an actor and sometimes
+## towards another. It is an event rather than state - there is nothing to be
+## true a moment later - so it is announced and not stored.
+signal special_effect_requested(effect: Dictionary)
 
 var connection_state := "disconnected"
 var authenticated := false
@@ -480,6 +484,10 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				_:
 					pending_spell_target = ""
 			state_changed.emit(&"spells")
+		"special_effect":
+			special_effect_requested.emit({"effect": int(event.effect),
+				"actor_id": int(event.actor_id),
+				"target_id": int(event.target_id)})
 		"actor_buffs":
 			# Which visible effects an actor is under, stated per actor. Kept on
 			# the actor rather than in a table of its own, so it disappears with

@@ -243,6 +243,22 @@ type of 401 arrives on the extended packet for a client that has advertised
 nothing at all. The capability is advertised because the client does implement
 the packet, not because anything is withheld without it.
 
+## World effects
+
+`SEND_SPECIAL_EFFECT(79)` is `effect:u8 | actor_id:u16`, with a second
+`target_id:u16` when the effect travelled between two actors. It is an event,
+not state - there is nothing to still be true a moment later - so the client
+announces it and stores nothing.
+
+The effect ids are a legacy namespace with no names on the wire. This server
+uses 17 for a harvest interrupted by bees, 14 for a lucky harvest, and a
+spell-to-effect table for the rest, four of which (0, 1, 2, 10) carry a second
+actor. The client draws an abstract generated burst - a ring, and a beam when
+the server named a second actor - rather than inventing a distinct piece of
+art per id, which would be inventing meaning the server never sent. An effect
+at an actor the client has not been told about is not drawn at all rather than
+placed at a guess.
+
 ## Player names, colours and guild tags
 
 An actor packet carries one display-name string, not three fields: an optional

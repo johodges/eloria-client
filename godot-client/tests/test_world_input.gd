@@ -1314,6 +1314,30 @@ func _run() -> void:
 	_expect(not harvest_banner.visible,
 		"a server stop - moving, a full backpack, combat - clears the indicator")
 
+	# Effects the server announced. They are events, not state: each draws
+	# itself where the actor stands and frees itself when it finishes.
+	app_state_inventory.call("_on_packet", 51, _hex_bytes(
+		"5b000203e1010000000001000001020304050b001e14071400120001416c696365"
+		+ "000040ff0600"))
+	await process_frame
+	main.call("_sync_world")
+	await process_frame
+	app_state_inventory.call("_on_packet", 79, PackedByteArray([17, 0x5b, 0]))
+	await process_frame
+	var effects: Array = main.get("world_effects") as Array
+	_expect(effects.size() == 1
+		and (effects[0] as WorldEffect3D).effect_id == 17,
+		"the effect the server announced is drawn")
+	_expect((effects[0] as WorldEffect3D).get_node_or_null("EffectBeam") == null,
+		"an effect with no second actor draws no beam")
+	# An actor the client has never been told about has no position.
+	app_state_inventory.call("_on_packet", 79, PackedByteArray([2, 0xff, 0x7f]))
+	await process_frame
+	_expect((main.get("world_effects") as Array).size() == 1,
+		"an effect at an unknown actor is not guessed at a position")
+	app_state_inventory.call("_on_packet", 6, PackedByteArray([0x5b, 0]))
+	await process_frame
+
 	# Guild tags. The tag arrives inside the actor's display name, so a client
 	# that takes the whole string as a name shows the tag as part of it.
 	app_state_inventory.call("_on_packet", 51, _hex_bytes(

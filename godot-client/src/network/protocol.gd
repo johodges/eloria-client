@@ -586,6 +586,14 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				return {"type": "invalid", "error": "spell_result_length"}
 			return {"type": "spell_result", "status": int(payload[0]),
 				"spell_id": int(payload[1])}
+		ServerMessage.SEND_SPECIAL_EFFECT:
+			# Three or five bytes: the effect, the actor it happened to, and a
+			# second actor when the effect travelled between two.
+			if payload.size() != 3 and payload.size() != 5:
+				return {"type": "invalid", "error": "special_effect_length"}
+			return {"type": "special_effect", "effect": int(payload[0]),
+				"actor_id": u16(payload, 1),
+				"target_id": u16(payload, 3) if payload.size() == 5 else -1}
 		ServerMessage.SEND_BUFFS:
 			if payload.size() != 6:
 				return {"type": "invalid", "error": "actor_buffs_length"}

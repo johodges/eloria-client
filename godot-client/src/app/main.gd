@@ -232,6 +232,9 @@ var map_object_nodes: Dictionary = {}
 ## Server-placed map markers on the current map, keyed by the server's marker id.
 var map_marker_nodes: Dictionary = {}
 var map_marker_overlay: Control
+## Short-lived world effects the server announced. Kept only so a test can see
+## what is on screen; each one frees itself when it finishes.
+var world_effects: Array = []
 ## The power the next cast asks for. Presentational: the server states what
 ## each effect may reach and refuses anything it will not allow.
 var requested_spell_power := 1
@@ -435,6 +438,7 @@ func _ready() -> void:
 	AppState.character_creation_failed.connect(_on_character_creation_failed)
 	AppState.state_changed.connect(_on_state_changed)
 	AppState.floating_feedback_requested.connect(_on_floating_feedback_requested)
+	AppState.special_effect_requested.connect(_on_special_effect_requested)
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
 	viewport_container.gui_input.connect(_on_world_gui_input)
@@ -3613,6 +3617,32 @@ func _update_actor_resource_overlay() -> void:
 	actor_resource_overlay.visible = (show_overhead_health.button_pressed
 		or show_overhead_ether.button_pressed or show_overhead_food.button_pressed
 		or show_overhead_action.button_pressed)
+
+## Draws what the server said just happened, where it happened.
+##
+## Nothing is inferred about the effect: an actor the client has never been
+## told about has no position, so nothing is drawn for it rather than a guess
+## at the middle of the map.
+func _on_special_effect_requested(effect: Dictionary) -> void:
+	var origin_value: Variant = _actor_effect_position(int(effect.get("actor_id", -1)))
+	if not origin_value is Vector3:
+		return
+	var target_value: Variant = _actor_effect_position(int(effect.get("target_id", -1)))
+	var world_effect := WorldEffect3D.new()
+	world_root.add_child(world_effect)
+	world_effect.configure(int(effect.get("effect", -1)),
+		origin_value as Vector3, target_value)
+	world_effects.append(world_effect)
+	world_effects = world_effects.filter(func(node: Variant) -> bool:
+		return is_instance_valid(node))
+
+func _actor_effect_position(actor_id: int) -> Variant:
+	if actor_id < 0:
+		return null
+	var node: Variant = actor_nodes.get(actor_id)
+	if not is_instance_valid(node):
+		return null
+	return (node as Node3D).global_position
 
 func _on_floating_feedback_requested(feedback: Dictionary) -> void:
 	if not game_view.visible or AppState.local_actor_id < 0:
