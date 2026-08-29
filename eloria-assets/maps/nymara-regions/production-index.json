@@ -218,10 +218,27 @@
       "sourceSha256": "3115f4d8dcacd649955f80caa483a2044086346112e332f4c305f51f7cf2c9f9",
       "conceptViews": 10,
       "productionStatus": "queued"
+    },
+    {
+      "id": "verdant_stair_insides",
+      "title": "Verdant Stair Insides",
+      "sourceSha256": "5d7f1cd08f91d8742c1f2f04a4212d0563e11e5fd834c3d125bee26cfb8f8cd7",
+      "conceptViews": 0,
+      "productionStatus": "authored-geometry-materials-population",
+      "parentRegion": "verdant_stair",
+      "sections": [
+        "temple_sanctum",
+        "cenote_deeps",
+        "banyan_hollow",
+        "stair_quarry"
+      ],
+      "serverCells": 297,
+      "uniqueTriangles": 62717,
+      "glbBytes": 10530224
     }
   ],
   "totals": {
-    "maps": 18,
+    "maps": 19,
     "productionRegions": 11,
     "conceptViews": 180,
     "landmarkInstances": 600

@@ -173,3 +173,46 @@ validators and `verify_runtime` without a murmur.
     `capture_views.py --only <ids>` re-shoots a subset in seconds and merges
     into the existing index, which is what makes iterating on framing
     affordable.
+
+
+## The insides pass
+
+Four interiors on one map with blackspace between them, in the Eternal Lands
+convention the other regions use. See `../interiors/VERDANT_STAIR_INTERIORS.md`
+for the package itself; what follows is what building it found in the region and
+in the shared code.
+
+12. **A walk surface wound the wrong way is invisible to the client, and every
+    validator says it is fine.** Godot builds the navigation layer as concave
+    collision, which is one-sided for raycasts, so a floor whose triangles face
+    down lets the grounding ray straight through. `validate_gltf` is happy - the
+    mesh is well formed. `verify_runtime` agrees with the client that the
+    surface is not there, because it casts against the same one-sided geometry.
+    Only `region_client_check.gd` caught it, as a 0.59 m spawn discrepancy.
+
+    The cause was `mesh.cylinder` with a radius that tapers *inward*: it winds
+    its cap the other way round, so the waygate's arrival platform had no
+    upward-facing triangle on it at all. Both builds now refuse to ship such a
+    surface - `ensure_walk_faces_up` flips it and says so. The test is "no
+    upward triangle", not "any downward one", because a box floor legitimately
+    has an underside.
+
+13. **`build_collision` stamps an elevated walk surface as a filled disc.**
+    Correct for a bridge deck, wrong for a ring: the cenote's spiral stair
+    winds around an open shaft, so the grid claims a floor across the middle of
+    an eighteen-metre hole. Spawn and portal heights are now taken by casting
+    the client's own ray against the `Walk_` geometry instead of reading the
+    grid. **The grid itself is still wrong there** and is recorded as a known
+    limitation rather than quietly fixed, because fixing it means rasterising
+    walk triangles the way the interiors' own `build_collision` already does.
+
+14. **An interior doorway stands on its landmark, not on the terrain.** A
+    landmark that collides blocks its own footprint and usually has a plinth or
+    a deck; the temple door read 0.61 m low until its height came from the walk
+    surface. All four doors and all four return spawns are checked against the
+    finished collision grid and moved onto a walkable cell if they need it.
+
+15. **Prose reaching the filesystem.** `preview_interior.py` builds a capture
+    file name out of the subject text, and "The Green Sanctum: the seated
+    figure" contains a colon - a drive separator on Windows. The Godot capture
+    pass silently wrote directories instead of PNGs. Names are sanitised now.

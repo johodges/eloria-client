@@ -684,8 +684,12 @@ def populate_landmarks(build: RegionBuild, seed: int) -> None:
     level = REG.terrace_level("lower")
     gate = SW.group()
     gate.add(JC.jade_gate(span=5.4, height=6.4, seed=seed + 101))
-    ring = M.lathe([[3.4, 0.0], [3.9, 0.22], [3.9, 0.46], [3.4, 0.52],
-                    [0.0, 0.54]], 24, uv_scale=0.9, material=JC.MOSSY)
+    # A capped cylinder, not a lathe closing at radius zero. A lathe's pole is a
+    # fan of slivers that `drop_degenerate` removes on export, which leaves a
+    # pinhole exactly on the axis - and the axis is where the default spawn
+    # stands, so the client grounded it 0.54 m below its own platform.
+    ring = M.cylinder(3.9, 3.7, 0.54, 24, cap_bottom=False, cap_top=True,
+                      uv_scale=0.9, material=JC.MOSSY)
     gate.add_walk(ring)
     _add_mesh(build, "Waygate", gate)
     _place(build, "Landmark_Waygate", "Waygate", x, z, y=level,

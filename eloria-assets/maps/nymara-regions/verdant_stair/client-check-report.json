@@ -4,18 +4,19 @@
   "loaderWarnings": [
     "navigation polygons did not produce collision"
   ],
-  "manifest": "C:/Users/User/Desktop/eloria-project/wt-verdant-stair/eloria-assets/maps/nymara-regions/verdant_stair/world.json",
+  "manifest": "C:/Users/User/Desktop/eloria-project/wt-verdant-int/eloria-assets/maps/nymara-regions/verdant_stair/world.json",
   "missExamples": [],
   "pass": true,
   "renderingDriver": "headless",
   "sampleStep": 4,
+  "sealedPackage": false,
   "serverCells": 576,
   "spawns": [
     {
-      "clientY": 24.0,
+      "clientY": 24.54,
       "deltaMetres": 0.05,
       "id": "default",
-      "manifestY": 24.05
+      "manifestY": 24.59
     },
     {
       "clientY": 6.999,
@@ -28,6 +29,30 @@
       "deltaMetres": 0.051,
       "id": "temple-court",
       "manifestY": 98.25
+    },
+    {
+      "clientY": 100.66,
+      "deltaMetres": 0.17,
+      "id": "temple-sanctum-door",
+      "manifestY": 100.83
+    },
+    {
+      "clientY": 27.25,
+      "deltaMetres": 0.05,
+      "id": "cenote-deeps-stair",
+      "manifestY": 27.3
+    },
+    {
+      "clientY": 45.998,
+      "deltaMetres": 0.052,
+      "id": "banyan-hollow-arch",
+      "manifestY": 46.05
+    },
+    {
+      "clientY": 123.999,
+      "deltaMetres": 0.051,
+      "id": "stair-quarry-adit",
+      "manifestY": 124.05
     }
   ],
   "sun": {},
