@@ -708,6 +708,70 @@ func _init() -> void:
 				[3], {"magic": 0, "ether": 4}, {})
 			_expect(blocked_reasons.size() == 3, "missing sigil, mana, and reagent are explicit")
 
+	# Perks are server state. The client keeps no perk table: the names and
+	# descriptions arrive on the wire, which is what makes a renamed or newly
+	# added perk survive instead of being dropped by a hardcoded array.
+	var perks_payload: PackedByteArray = PackedByteArray([2, 0])
+	perks_payload.append_array(PackedByteArray([0, 5, 0]))
+	perks_payload.append_array(_nul_bytes("Excavator"))
+	perks_payload.append_array(_nul_bytes("Twice as many items."))
+	perks_payload.append_array(PackedByteArray([1, 0xfd, 0xff]))
+	perks_payload.append_array(_nul_bytes("Power Hungry"))
+	perks_payload.append_array(_nul_bytes("Lose 3 food per minute."))
+	var perks: Dictionary = EloriaProtocol.decode_server(234, perks_payload)
+	_expect(perks.type == "perks" and (perks.perks as Array).size() == 2,
+		"the perks packet decodes every entry")
+	var first_perk: Dictionary = (perks.perks as Array)[0]
+	var second_perk: Dictionary = (perks.perks as Array)[1]
+	_expect(str(first_perk.name) == "Excavator"
+		and str(first_perk.description) == "Twice as many items."
+		and int(first_perk.pickpoints) == 5 and not bool(first_perk.from_gear),
+		"a permanent perk carries its name, description and pick-point cost")
+	_expect(str(second_perk.name) == "Power Hungry"
+		and int(second_perk.pickpoints) == -3 and bool(second_perk.from_gear),
+		"a negative pick-point cost is signed and a gear-granted perk is flagged")
+	_expect(EloriaProtocol.decode_server(234, PackedByteArray([0, 0])).perks.is_empty(),
+		"an empty perk list decodes as no perks rather than an error")
+	_expect(EloriaProtocol.decode_server(234, PackedByteArray([1])).error
+			== "perks_length"
+		and EloriaProtocol.decode_server(234, PackedByteArray([1, 0, 0, 0, 0])).error
+			== "perks_name_terminator"
+		and EloriaProtocol.decode_server(234, perks_payload.slice(0,
+			perks_payload.size() - 1)).type == "invalid",
+		"short, unterminated and truncated perk packets are rejected")
+
+	# Lifetime activity totals, with the category name beside each total.
+	var counters_payload: PackedByteArray = PackedByteArray([1, 2])
+	counters_payload.append_array(PackedByteArray([4, 0, 0, 0]))
+	counters_payload.append_array(_nul_bytes("Kills"))
+	counters_payload.append_array(PackedByteArray([0xff, 0xff, 0xff, 0xff]))
+	counters_payload.append_array(_nul_bytes("Harvests"))
+	var counters: Dictionary = EloriaProtocol.decode_server(235, counters_payload)
+	_expect(counters.type == "activity_counters" and bool(counters.full)
+		and (counters.counters as Array).size() == 2,
+		"a full counter snapshot decodes every category")
+	var kills_counter: Dictionary = (counters.counters as Array)[0]
+	var harvest_counter: Dictionary = (counters.counters as Array)[1]
+	_expect(str(kills_counter.name) == "Kills" and int(kills_counter.total) == 4
+		and str(harvest_counter.name) == "Harvests"
+		and int(harvest_counter.total) == 0xffffffff,
+		"totals are unsigned 32-bit and keep their server category name")
+	var delta_payload: PackedByteArray = PackedByteArray([0, 1, 9, 0, 0, 0])
+	delta_payload.append_array(_nul_bytes("Drops"))
+	var delta: Dictionary = EloriaProtocol.decode_server(235, delta_payload)
+	_expect(delta.type == "activity_counters" and not bool(delta.full)
+		and (delta.counters as Array).size() == 1
+		and int((delta.counters as Array)[0].total) == 9,
+		"a single changed counter decodes as a delta rather than a snapshot")
+	_expect(EloriaProtocol.decode_server(235, PackedByteArray([1])).error
+			== "activity_counters_length"
+		and EloriaProtocol.decode_server(235, PackedByteArray([1, 1, 0, 0])).error
+			== "activity_counter_entry_length"
+		and EloriaProtocol.decode_server(235,
+			PackedByteArray([1, 1, 0, 0, 0, 0, 65])).error
+			== "activity_counter_terminator",
+		"short, truncated and unterminated counter packets are rejected")
+
 	print("protocol tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)
 

@@ -46,6 +46,7 @@ enum ServerMessage {
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
 	SEND_ACHIEVEMENTS = 95, ADD_NEW_ACTOR_EXTENDED = 247,
 	ELORIA_INVASION_ASSISTANT_STATE = 233,
+	ELORIA_PERKS = 234, ELORIA_ACTIVITY_COUNTERS = 235,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
 }
@@ -543,10 +544,74 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_npc_options(payload)
 		ServerMessage.CLOSE_NPC_MENU:
 			return {"type": "npc_close"}
+		ServerMessage.ELORIA_PERKS:
+			return decode_perks(payload)
+		ServerMessage.ELORIA_ACTIVITY_COUNTERS:
+			return decode_activity_counters(payload)
 		ServerMessage.PING_REQUEST:
 			return {"type": "ping_request"}
 		_:
 			return {"type": "unknown", "command": command, "payload": payload}
+
+## The player's perks as server state. Names and descriptions are on the wire,
+## so the client keeps no perk table: the previous implementation asked
+## `#list_perks` and pattern-matched the chat reply against a hardcoded
+## 33-name array inside an 8-second window, which dropped every renamed, added
+## or reworded perk and dropped all of them on a slow server.
+static func decode_perks(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "perks_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var perks: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 3 > payload.size():
+			return {"type": "invalid", "error": "perks_entry_length"}
+		var from_gear: bool = int(payload[offset]) != 0
+		var pickpoints: int = s16(payload, offset + 1)
+		offset += 3
+		var name_end: int = payload.find(0, offset)
+		if name_end < 0:
+			return {"type": "invalid", "error": "perks_name_terminator"}
+		var perk_name: String = payload.slice(offset, name_end).get_string_from_utf8()
+		offset = name_end + 1
+		var description_end: int = payload.find(0, offset)
+		if description_end < 0:
+			return {"type": "invalid", "error": "perks_description_terminator"}
+		var description: String = payload.slice(offset, description_end).get_string_from_utf8()
+		offset = description_end + 1
+		perks.append({"name": perk_name, "description": description,
+			"pickpoints": pickpoints, "from_gear": from_gear})
+	if offset != payload.size():
+		return {"type": "invalid", "error": "perks_trailing"}
+	return {"type": "perks", "perks": perks}
+
+## Lifetime activity totals. `full` marks a complete snapshot; otherwise the
+## packet carries only the categories that just changed. The category name
+## travels with its total, so the client keeps no parallel table and the totals
+## are the server's confirmed events rather than client-side guesses made when
+## a request was sent.
+static func decode_activity_counters(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "activity_counters_length"}
+	var full: bool = int(payload[0]) != 0
+	var count: int = int(payload[1])
+	var offset: int = 2
+	var counters: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 4 > payload.size():
+			return {"type": "invalid", "error": "activity_counter_entry_length"}
+		var total: int = u32(payload, offset)
+		offset += 4
+		var name_end: int = payload.find(0, offset)
+		if name_end < 0:
+			return {"type": "invalid", "error": "activity_counter_terminator"}
+		counters.append({"name": payload.slice(offset, name_end).get_string_from_utf8(),
+			"total": total})
+		offset = name_end + 1
+	if offset != payload.size():
+		return {"type": "invalid", "error": "activity_counters_trailing"}
+	return {"type": "activity_counters", "full": full, "counters": counters}
 
 static func decode_npc_options(payload: PackedByteArray) -> Dictionary:
 	var options: Array[Dictionary] = []

@@ -39,6 +39,11 @@ var ground_bag: Dictionary = {"open": false, "bag_id": -1, "items": {}}
 var known_knowledge: Array[int] = []
 var selected_knowledge: int = -1
 var knowledge_text: String = ""
+var perks: Array[Dictionary] = []
+## Lifetime activity totals keyed by the server's own category name, plus the
+## order the server listed them in so the window needs no local table.
+var activity_counters: Dictionary = {}
+var activity_counter_order: Array[String] = []
 var unknown_packet_count := 0
 var recent_protocol_errors: Array[String] = []
 var invasion_assistant: Dictionary = {"open": false}
@@ -77,6 +82,9 @@ func _on_connection_state_changed(value: String) -> void:
 		known_knowledge.clear()
 		selected_knowledge = -1
 		knowledge_text = ""
+		perks.clear()
+		activity_counters.clear()
+		activity_counter_order.clear()
 		invasion_assistant = {"open": false}
 	state_changed.emit(&"connection")
 
@@ -422,6 +430,24 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			npc_dialogue["open"] = false
 			npc_dialogue["options"] = []
 			state_changed.emit(&"npc_dialogue")
+		"perks":
+			perks.clear()
+			for raw_perk: Variant in event.perks:
+				perks.append((raw_perk as Dictionary).duplicate(true))
+			state_changed.emit(&"perks")
+		"activity_counters":
+			if bool(event.full):
+				activity_counters.clear()
+				activity_counter_order.clear()
+			for raw_counter: Variant in event.counters:
+				var counter: Dictionary = raw_counter as Dictionary
+				var counter_name: String = str(counter.get("name", ""))
+				if counter_name.is_empty():
+					continue
+				if not activity_counters.has(counter_name):
+					activity_counter_order.append(counter_name)
+				activity_counters[counter_name] = int(counter.get("total", 0))
+			state_changed.emit(&"counters")
 		"ping_request":
 			Network.send_frame(EloriaProtocol.encode(EloriaProtocol.ClientMessage.PING_RESPONSE))
 		"invalid":

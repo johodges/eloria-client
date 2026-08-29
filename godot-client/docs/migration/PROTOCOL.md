@@ -165,3 +165,32 @@ default inventory wire format transmits neither an item name nor UID.
 ## Open verification items
 
 Full field tables for every identifier; version sequence and capability behavior; keepalive cadence; map-change filename encoding; enhanced actor optional tail; storage-backed trade positions and storage lifecycle; reconnect policy. These remain explicit blockers in traceability rather than assumed behavior.
+
+## Eloria extension packets
+
+Perks are server state, not chat. `ELORIA_PERKS(234)` carries `count:u16le`
+followed by `count` entries of
+`from_gear:u8 | pickpoints:i16le | name NUL | description NUL`, all UTF-8. The
+`from_gear` flag marks a perk granted by equipped gear rather than a permanent
+one, and `pickpoints` is signed because negative perks give pick points back.
+Names and descriptions are on the wire so the client keeps no perk table: the
+previous client asked `#list_perks` and pattern-matched the chat reply against
+a hardcoded 33-name array inside an eight-second window, which silently dropped
+every renamed, added or reworded perk and dropped all of them on a slow server.
+The server pushes the packet at login and whenever the effective perk set
+changes: a perk purchase, a removal stone, a quest reward, and any equipment
+change, because a cape can carry a perk. The client never requests it.
+
+`ELORIA_ACTIVITY_COUNTERS(235)` carries lifetime activity totals as
+`full:u8 | count:u8` followed by `count` entries of `total:u32le | name NUL`.
+`full` marks a complete snapshot, sent once at login and listing all seventeen
+categories; otherwise the packet is a delta carrying only the categories that
+just changed. Totals saturate at `0xffffffff` rather than wrapping. The
+category name travels with its total so the client keeps no parallel table.
+The seventeen categories are Kills, Deaths, Breakages, Crit Fails, Used Items,
+Events, Harvests, Alchemy, Crafting, Manufacturing, Potions, Spells, Summons,
+Engineering, Tailoring, Storage and Drops. Every increment is made after the
+server has committed the outcome, never when a request arrives, so a rejected
+deposit or a failed mix does not count. The client presents the totals and
+derives its "this session" column as a difference against the totals as they
+stood when the session started; it increments nothing.

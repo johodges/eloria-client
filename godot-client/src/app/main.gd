@@ -266,8 +266,10 @@ var _session_xp_max: Dictionary = {}
 var _session_xp_last: Dictionary = {}
 var _session_distance := 0
 var _last_distance_tile := Vector2i(-99999, -99999)
-var _session_counters: Dictionary = {}
-var _total_counters: Dictionary = {}
+## The server owns every lifetime total. The "this session" column is the
+## difference against the totals as they stood when the session or the reset
+## started, which is presentation of authoritative numbers, not a second count.
+var _counter_session_baseline: Dictionary = {}
 var _keyboard_moving := false
 var _keyboard_running := false
 var _keyboard_direction := Vector2i.ZERO
@@ -275,9 +277,7 @@ var _keyboard_goal_tile := Vector2i(-99999, -99999)
 var _keyboard_refresh_msec := 0
 var _ground_bag_get_all_requested_msec := -1
 var _ground_bag_get_all_bag_id := -1
-var _selected_counter_category := "Kills"
-var _known_perks: Array[String] = []
-var _perk_capture_until_msec := 0
+var _selected_counter_category := ""
 var _right_mouse_down := false
 var _right_mouse_dragged := false
 var _interaction_mode := "walk"
@@ -333,19 +333,6 @@ const EXPERIENCE_SKILLS: Array[String] = [
 	"attack", "defense", "harvesting", "alchemy", "magic", "potion",
 	"summoning", "manufacturing", "crafting", "engineering", "tailoring",
 	"ranging", "overall"]
-const COUNTER_CATEGORIES: Array[String] = [
-	"Kills", "Deaths", "Breakages", "Crit Fails", "Used Items", "Events",
-	"Harvests", "Alchemy", "Crafting", "Manufacturing", "Potions", "Spells",
-	"Summons", "Engineering", "Tailoring", "Storage", "Drops"]
-const PERK_NAMES: Array[String] = [
-	"Power Saving", "Self Destruct", "There is no Fork", "Excavator", "Conjurer",
-	"I Glow in the Dark", "Body Piercing", "Artificer", "I Eat Dead People",
-	"Fatal Man", "Monster Magnetism", "Careful Guy", "Fast Regeneration",
-	"Evanescence", "Mirror Skin", "Sharp Shooter", "Power Hungry", "I can't dance",
-	"No More Tears", "Ethereal Ranger", "Wilhelm Hood", "Antisocial",
-	"Gelatine Bones", "Godless", "Harvester of Sorrow", "One", "Underworlder",
-	"Summoner", "Skeptic", "Collateral Damage", "Dedicated Harvester", "Hellspawn",
-	"Scotty Died"]
 
 func _ready() -> void:
 	var model_registry: Dictionary = _json("res://data/actors/models.json")
@@ -485,9 +472,6 @@ func _ready() -> void:
 	%SettingsClose.pressed.connect(_close_settings)
 	%ConsoleClose.pressed.connect(_toggle_console)
 	_session_started_msec = Time.get_ticks_msec()
-	for category: String in COUNTER_CATEGORIES:
-		counter_categories.add_item(category)
-	counter_categories.select(0)
 	_apply_equipment_side()
 	_sync_saved_item_lists()
 	_sync_channel_tabs()
@@ -970,7 +954,6 @@ func _on_stats_button_pressed() -> void:
 		inventory_panel.hide()
 		manufacturing_panel.hide()
 		stats_tabs.current_tab = 0
-		_request_perks()
 		_sync_stats()
 	_sync_hud_button_states(true)
 
@@ -1047,7 +1030,6 @@ func _send_manufacturing_request(wanted: int) -> void:
 		" ingredients=", typed_selection, " redacted_bytes=not_sensitive")
 	var error: Error = Network.manufacture(typed_selection, wanted)
 	if error == OK:
-		_increment_counter("Manufacturing", 1)
 		manufacturing_server_status = ("Mix-all request sent; awaiting the server."
 			if wanted == 255 else "Mix request sent; awaiting the server.")
 	else:
@@ -1157,8 +1139,6 @@ func _on_inventory_store_all_pressed() -> void:
 		if not item.is_empty() and Network.deposit_storage(slot,
 				int(item.get("quantity", 0))) == OK:
 			sent += 1
-	if sent > 0:
-		_increment_counter("Storage", sent)
 	inventory_description.text = "Sto All sent %d stack%s to the server." % [
 		sent, "" if sent == 1 else "s"]
 
@@ -1221,8 +1201,6 @@ func _on_inventory_drop_all_pressed() -> void:
 		if not item.is_empty() and Network.drop_inventory_item(slot,
 				int(item.get("quantity", 0))) == OK:
 			sent += 1
-	if sent > 0:
-		_increment_counter("Drops", sent)
 	inventory_description.text = "Drop All sent %d stack%s to the server." % [
 		sent, "" if sent == 1 else "s"]
 
@@ -1325,8 +1303,6 @@ func _on_item_list_get_pressed() -> void:
 				break
 		if remaining > 0:
 			missing.append("#%d ×%d" % [int(request.get("image_id", 0)), remaining])
-	if request_count > 0:
-		_increment_counter("Storage", request_count)
 	item_list_status.text = ("Requested %d stack%s." % [request_count,
 		"" if request_count == 1 else "s"]
 		+ (" Missing " + ", ".join(missing) + "." if not missing.is_empty() else ""))
@@ -1459,9 +1435,7 @@ func _on_storage_deposit_pressed() -> void:
 	var quantity: int = clampi(int(storage_quantity.value), 1,
 		int((item_value as Dictionary).get("quantity", 1)))
 	var error: Error = Network.deposit_storage(slot, quantity)
-	if error == OK:
-		_increment_counter("Storage", 1)
-	else:
+	if error != OK:
 		push_warning("DEPOSIT_ITEM failed: " + error_string(error))
 
 func _on_storage_withdraw_pressed() -> void:
@@ -1476,9 +1450,7 @@ func _on_storage_withdraw_pressed() -> void:
 	var quantity: int = clampi(int(storage_quantity.value), 1,
 		int((item_value as Dictionary).get("quantity", 1)))
 	var error: Error = Network.withdraw_storage(position, quantity)
-	if error == OK:
-		_increment_counter("Storage", 1)
-	else:
+	if error != OK:
 		push_warning("WITHDRAW_ITEM failed: " + error_string(error))
 
 func _on_storage_inspect_pressed() -> void:
@@ -1561,9 +1533,7 @@ func _on_ground_bag_drop_pressed() -> void:
 	var quantity: int = clampi(int(ground_bag_quantity.value), 1,
 		int((item_value as Dictionary).get("quantity", 1)))
 	var error: Error = Network.drop_inventory_item(slot, quantity)
-	if error == OK:
-		_increment_counter("Drops", 1)
-	else:
+	if error != OK:
 		push_warning("DROP_ITEM failed: " + error_string(error))
 
 func _on_ground_bag_close_pressed() -> void:
@@ -2077,7 +2047,6 @@ func _on_state_changed(path: StringName) -> void:
 			# pass without delaying anything past the frame it arrived in.
 			_queue_world_sync()
 		&"chat":
-			_capture_perks_from_chat()
 			_sync_chat()
 			_sync_console()
 			_reveal_chat_messages()
@@ -2088,6 +2057,11 @@ func _on_state_changed(path: StringName) -> void:
 			var update: Dictionary = AppState.invasion_assistant.get(kind, {}) as Dictionary
 			if not update.is_empty():
 				invasion_assistant_window.apply_update(update)
+		&"perks":
+			_sync_stats()
+		&"counters":
+			_sync_counter_categories()
+			_sync_counters()
 		&"stats":
 			_sync_stats()
 			_sync_spells()
@@ -2674,9 +2648,6 @@ func _load_hud_settings() -> void:
 		var lists_value: Variant = config.get_value("inventory", "item_lists", {})
 		if lists_value is Dictionary:
 			_item_lists = (lists_value as Dictionary).duplicate(true)
-		var counters_value: Variant = config.get_value("statistics", "counters", {})
-		if counters_value is Dictionary:
-			_total_counters = (counters_value as Dictionary).duplicate(true)
 	minimap_size.set_value_no_signal(_minimap_scale)
 	ui_scale_slider.set_value_no_signal(_ui_scale)
 	_apply_ui_scale()
@@ -2716,7 +2687,6 @@ func _save_hud_settings() -> void:
 	config.set_value("inventory", "equipment_side", _equipment_side)
 	config.set_value("inventory", "bulk_exclusions", _bulk_exclusions)
 	config.set_value("inventory", "item_lists", _item_lists)
-	config.set_value("statistics", "counters", _total_counters)
 	var error: Error = config.save(SETTINGS_PATH)
 	if error != OK:
 		push_warning("HUD settings save failed: " + error_string(error))
@@ -3004,11 +2974,14 @@ func _sync_stats() -> void:
 		- int(stats.get("pickpoints_spent", 0))
 	nexus_lines.append("\nPickpoints       %d" % pickpoints)
 	nexus_lines.append("\n[color=#d7a85b][b]Perks[/b][/color]")
-	if _known_perks.is_empty():
-		nexus_lines.append("None reported")
+	if AppState.perks.is_empty():
+		nexus_lines.append("None")
 	else:
-		for perk: String in _known_perks:
-			nexus_lines.append("• " + perk)
+		for raw_perk: Variant in AppState.perks:
+			var perk: Dictionary = raw_perk as Dictionary
+			var suffix: String = " (from equipment)" if bool(
+				perk.get("from_gear", false)) else ""
+			nexus_lines.append("• %s%s" % [str(perk.get("name", "")), suffix])
 	nexus_lines.append("\n[color=#9999ff]Material Points  %d/%d[/color]" % [health, max_health])
 	nexus_lines.append("[color=#9999ff]Ethereal Points  %d/%d[/color]" % [ether, max_ether])
 	nexus_lines.append("[color=#9999ff]Action Points    %d/%d[/color]" % [action, max_action])
@@ -3087,7 +3060,7 @@ func _reset_session_tracking() -> void:
 	_session_xp_max.clear()
 	_session_xp_last.clear()
 	_experience_snapshot.clear()
-	_session_counters.clear()
+	_counter_session_baseline = AppState.activity_counters.duplicate()
 	_session_distance = 0
 	_last_distance_tile = Vector2i(-99999, -99999)
 	_track_experience()
@@ -3114,47 +3087,52 @@ func _on_counter_category_selected(index: int) -> void:
 		_selected_counter_category = counter_categories.get_item_text(index)
 		_sync_counters()
 
-func _increment_counter(category: String, amount := 1) -> void:
-	_session_counters[category] = int(_session_counters.get(category, 0)) + amount
-	_total_counters[category] = int(_total_counters.get(category, 0)) + amount
-	_save_hud_settings()
-	if stats_panel.visible and stats_tabs.current_tab == 2:
-		_sync_counters()
+## The category list is whatever the server sent, in the server's order. The
+## client used to keep its own 17-name constant and increment it when a request
+## was sent, so a rejected deposit or a failed mix still counted and seven of
+## the categories were never incremented at all.
+func _sync_counter_categories() -> void:
+	if counter_categories == null:
+		return
+	var names: Array[String] = AppState.activity_counter_order
+	var unchanged: bool = counter_categories.item_count == names.size()
+	if unchanged:
+		for index: int in range(names.size()):
+			if counter_categories.get_item_text(index) != names[index]:
+				unchanged = false
+				break
+	if unchanged:
+		return
+	counter_categories.clear()
+	for counter_name: String in names:
+		counter_categories.add_item(counter_name)
+	var selected: int = names.find(_selected_counter_category)
+	if selected < 0 and not names.is_empty():
+		selected = 0
+		_selected_counter_category = names[0]
+	if selected >= 0:
+		counter_categories.select(selected)
 
 func _sync_counters() -> void:
 	if counter_text == null:
 		return
+	if _selected_counter_category.is_empty():
+		counter_text.text = "[center]Waiting for server counters[/center]"
+		return
+	var total: int = int(AppState.activity_counters.get(_selected_counter_category, 0))
+	var session_total: int = maxi(0, total - int(
+		_counter_session_baseline.get(_selected_counter_category, 0)))
 	counter_text.text = ("[table=3][cell][b]Name[/b][/cell]"
 		+ "[cell][right][b]This Session[/b][/right][/cell]"
 		+ "[cell][right][b]Total[/b][/right][/cell]"
 		+ "[cell]%s[/cell][cell][right]%d[/right][/cell]"
-		+ "[cell][right]%d[/right][/cell][/table]\n\n"
-		+ "Totals reflect actions observed by this client.\nDistance this session: %d tiles") % [
-		_selected_counter_category, int(_session_counters.get(_selected_counter_category, 0)),
-		int(_total_counters.get(_selected_counter_category, 0)), _session_distance]
+		+ "[cell][right]%d[/right][/cell][/table]
 
-func _request_perks() -> void:
-	var now: int = Time.get_ticks_msec()
-	if now < _perk_capture_until_msec:
-		return
-	_known_perks.clear()
-	_perk_capture_until_msec = now + 8000
-	var error: Error = Network.send_chat("#list_perks")
-	if error != OK:
-		_perk_capture_until_msec = 0
+"
+		+ "Totals are the server's confirmed events.
+Distance this session: %d tiles") % [
+		_selected_counter_category, session_total, total, _session_distance]
 
-func _capture_perks_from_chat() -> void:
-	if Time.get_ticks_msec() > _perk_capture_until_msec or AppState.chat_lines.is_empty():
-		return
-	var line: Dictionary = AppState.chat_lines.back() as Dictionary
-	var text: String = str(line.get("text", "")).strip_edges()
-	if text == "You have no perks.":
-		_known_perks.clear()
-	elif PERK_NAMES.has(text) and not _known_perks.has(text):
-		_known_perks.append(text)
-		_known_perks.sort()
-	if stats_panel.visible and stats_tabs.current_tab == 0:
-		_sync_stats()
 
 func _sync_experience_meter(stats: Dictionary) -> void:
 	var skill: String = _selected_experience_skill
@@ -3849,9 +3827,7 @@ func _use_inventory_slot(slot: int) -> void:
 	if not bool(item.get("inventory_usable", false)) or _inventory_cooldown_remaining(slot) > 0:
 		return
 	var error: Error = Network.use_inventory_item(slot)
-	if error == OK:
-		_increment_counter("Used Items", 1)
-	else:
+	if error != OK:
 		push_warning("USE_INVENTORY_ITEM failed: " + error_string(error))
 
 func _on_chat_submitted(text: String) -> void:

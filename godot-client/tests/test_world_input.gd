@@ -970,10 +970,76 @@ func _run() -> void:
 	root.size = original_window_size
 	await process_frame
 
+	# Perks and lifetime counters are authoritative server state. The client
+	# keeps no perk name table and no counter of its own.
+	var counter_categories: ItemList = main.get_node(
+		"GameView/StatsPanel/Content/StatsTabs/Counters/CounterColumns/CounterCategories") as ItemList
+	var counter_text: RichTextLabel = main.get_node(
+		"GameView/StatsPanel/Content/StatsTabs/Counters/CounterColumns/CounterText") as RichTextLabel
+	_expect(counter_categories.item_count == 0,
+		"the counter window ships with no locally invented categories")
+	var stats_text: RichTextLabel = main.get_node(
+		"GameView/StatsPanel/Content/StatsTabs/Statistics/StatsText") as RichTextLabel
+	# Drive the real signal path rather than calling the sync helpers directly,
+	# so a missing state_changed case would fail here.
+	var previously_authenticated: bool = bool(app_state_inventory.get("authenticated"))
+	app_state_inventory.set("authenticated", true)
+	app_state_inventory.set("stats", {"health": 10, "max_health": 10})
+	var perks_payload: PackedByteArray = PackedByteArray([1, 0, 1, 0xfb, 0xff])
+	perks_payload.append_array(_nul_bytes("Power Hungry"))
+	perks_payload.append_array(_nul_bytes("Lose 3 food per minute."))
+	app_state_inventory.call("_on_packet", 234, perks_payload)
+	var reduced_perks: Array = app_state_inventory.get("perks") as Array
+	_expect(reduced_perks.size() == 1
+		and str((reduced_perks[0] as Dictionary).get("name", "")) == "Power Hungry"
+		and bool((reduced_perks[0] as Dictionary).get("from_gear", false)),
+		"a perk the client has never heard of is still reduced and flagged")
+	_expect(stats_text.text.contains("Power Hungry")
+		and stats_text.text.contains("from equipment"),
+		"the statistics window presents the server's perks, not a scraped list")
+	app_state_inventory.call("_on_packet", 234, PackedByteArray([0, 0]))
+	_expect((app_state_inventory.get("perks") as Array).is_empty()
+		and not stats_text.text.contains("Power Hungry"),
+		"an empty perk packet clears the presented perks")
+
+	var counters_snapshot: PackedByteArray = PackedByteArray([1, 2, 4, 0, 0, 0])
+	counters_snapshot.append_array(_nul_bytes("Kills"))
+	counters_snapshot.append_array(PackedByteArray([7, 0, 0, 0]))
+	counters_snapshot.append_array(_nul_bytes("Harvests"))
+	app_state_inventory.call("_on_packet", 235, counters_snapshot)
+	_expect(counter_categories.item_count == 2
+		and counter_categories.get_item_text(0) == "Kills"
+		and counter_categories.get_item_text(1) == "Harvests",
+		"the counter category list is built from the server snapshot in its order")
+	main.call("_on_counter_category_selected", 1)
+	_expect(counter_text.text.contains("Harvests") and counter_text.text.contains("7"),
+		"selecting a category presents the server total")
+	var counter_delta: PackedByteArray = PackedByteArray([0, 1, 9, 0, 0, 0])
+	counter_delta.append_array(_nul_bytes("Harvests"))
+	app_state_inventory.call("_on_packet", 235, counter_delta)
+	_expect(int((app_state_inventory.get("activity_counters") as Dictionary).get(
+		"Harvests", -1)) == 9 and counter_categories.item_count == 2,
+		"a delta updates one total without disturbing the category list")
+	main.call("_reset_session_tracking")
+	main.call("_on_counter_category_selected", 1)
+	_expect(counter_text.text.contains("9"),
+		"resetting the session keeps the authoritative lifetime total")
+	var counter_after_reset: PackedByteArray = PackedByteArray([0, 1, 11, 0, 0, 0])
+	counter_after_reset.append_array(_nul_bytes("Harvests"))
+	app_state_inventory.call("_on_packet", 235, counter_after_reset)
+	_expect(counter_text.text.contains("11"),
+		"the session column is a difference against the server total, not a second count")
+	app_state_inventory.set("authenticated", previously_authenticated)
+
 	print("world input tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()
 	await process_frame
 	quit(failures)
+
+func _nul_bytes(value: String) -> PackedByteArray:
+	var bytes: PackedByteArray = value.to_utf8_buffer()
+	bytes.append(0)
+	return bytes
 
 func _expect(value: bool, label: String) -> void:
 	if value:
