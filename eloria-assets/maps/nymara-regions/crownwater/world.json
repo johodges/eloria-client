@@ -225,9 +225,7 @@
       "Foliage_Palm_harbour_isle_169",
       "Foliage_Palm_harbour_isle_170",
       "Foliage_Palm_harbour_isle_171",
-      "Foliage_Palm_harbour_isle_172",
-      "Foliage_Palm_harbour_isle_173",
-      "Foliage_Palm_harbour_isle_174",
+      "Foliage_Palm_outer_east_241",
       "Foliage_Palm_outer_east_242",
       "Foliage_Palm_outer_east_243",
       "Foliage_Palm_outer_east_244",
@@ -239,7 +237,11 @@
       "Foliage_Palm_outer_east_250",
       "Foliage_Palm_outer_east_251",
       "Foliage_Palm_outer_east_252",
-      "Foliage_Palm_outer_east_253",
+      "Foliage_Palm_outer_north_329",
+      "Foliage_Palm_outer_north_330",
+      "Foliage_Palm_outer_north_331",
+      "Foliage_Palm_outer_north_332",
+      "Foliage_Palm_outer_north_333",
       "Foliage_Palm_outer_north_334",
       "Foliage_Palm_outer_north_335",
       "Foliage_Palm_outer_north_336",
@@ -248,11 +250,11 @@
       "Foliage_Palm_outer_north_339",
       "Foliage_Palm_outer_north_340",
       "Foliage_Palm_outer_north_341",
-      "Foliage_Palm_outer_north_342",
-      "Foliage_Palm_outer_north_343",
-      "Foliage_Palm_outer_north_344",
-      "Foliage_Palm_outer_north_345",
-      "Foliage_Palm_outer_north_346",
+      "Foliage_Palm_outer_northeast_342",
+      "Foliage_Palm_outer_northeast_343",
+      "Foliage_Palm_outer_northeast_344",
+      "Foliage_Palm_outer_northeast_345",
+      "Foliage_Palm_outer_northeast_346",
       "Foliage_Palm_outer_northeast_347",
       "Foliage_Palm_outer_northeast_348",
       "Foliage_Palm_outer_northeast_349",
@@ -269,12 +271,10 @@
       "Foliage_Palm_outer_northeast_360",
       "Foliage_Palm_outer_northeast_361",
       "Foliage_Palm_outer_northeast_362",
-      "Foliage_Palm_outer_northeast_363",
-      "Foliage_Palm_outer_northeast_364",
-      "Foliage_Palm_outer_northeast_365",
-      "Foliage_Palm_outer_northeast_366",
-      "Foliage_Palm_outer_northeast_367",
-      "Foliage_Palm_outer_northeast_368",
+      "Foliage_Palm_outer_northwest_309",
+      "Foliage_Palm_outer_northwest_310",
+      "Foliage_Palm_outer_northwest_311",
+      "Foliage_Palm_outer_northwest_312",
       "Foliage_Palm_outer_northwest_313",
       "Foliage_Palm_outer_northwest_314",
       "Foliage_Palm_outer_northwest_315",
@@ -291,11 +291,7 @@
       "Foliage_Palm_outer_northwest_326",
       "Foliage_Palm_outer_northwest_327",
       "Foliage_Palm_outer_northwest_328",
-      "Foliage_Palm_outer_northwest_329",
-      "Foliage_Palm_outer_northwest_330",
-      "Foliage_Palm_outer_northwest_331",
-      "Foliage_Palm_outer_northwest_332",
-      "Foliage_Palm_outer_northwest_333",
+      "Foliage_Palm_outer_south_268",
       "Foliage_Palm_outer_south_269",
       "Foliage_Palm_outer_south_270",
       "Foliage_Palm_outer_south_271",
@@ -308,8 +304,7 @@
       "Foliage_Palm_outer_south_278",
       "Foliage_Palm_outer_south_279",
       "Foliage_Palm_outer_south_280",
-      "Foliage_Palm_outer_south_281",
-      "Foliage_Palm_outer_south_282",
+      "Foliage_Palm_outer_southeast_253",
       "Foliage_Palm_outer_southeast_254",
       "Foliage_Palm_outer_southeast_255",
       "Foliage_Palm_outer_southeast_256",
@@ -324,7 +319,8 @@
       "Foliage_Palm_outer_southeast_265",
       "Foliage_Palm_outer_southeast_266",
       "Foliage_Palm_outer_southeast_267",
-      "Foliage_Palm_outer_southeast_268",
+      "Foliage_Palm_outer_southwest_281",
+      "Foliage_Palm_outer_southwest_282",
       "Foliage_Palm_outer_southwest_283",
       "Foliage_Palm_outer_southwest_284",
       "Foliage_Palm_outer_southwest_285",
@@ -341,8 +337,8 @@
       "Foliage_Palm_outer_southwest_296",
       "Foliage_Palm_outer_southwest_297",
       "Foliage_Palm_outer_southwest_298",
-      "Foliage_Palm_outer_southwest_299",
-      "Foliage_Palm_outer_southwest_300",
+      "Foliage_Palm_outer_west_299",
+      "Foliage_Palm_outer_west_300",
       "Foliage_Palm_outer_west_301",
       "Foliage_Palm_outer_west_302",
       "Foliage_Palm_outer_west_303",
@@ -351,10 +347,6 @@
       "Foliage_Palm_outer_west_306",
       "Foliage_Palm_outer_west_307",
       "Foliage_Palm_outer_west_308",
-      "Foliage_Palm_outer_west_309",
-      "Foliage_Palm_outer_west_310",
-      "Foliage_Palm_outer_west_311",
-      "Foliage_Palm_outer_west_312",
       "Foliage_Palm_pavilion_east_109",
       "Foliage_Palm_pavilion_east_110",
       "Foliage_Palm_pavilion_east_111",
@@ -369,6 +361,8 @@
       "Foliage_Palm_pavilion_east_120",
       "Foliage_Palm_pavilion_east_121",
       "Foliage_Palm_pavilion_east_122",
+      "Foliage_Palm_pavilion_north_207",
+      "Foliage_Palm_pavilion_north_208",
       "Foliage_Palm_pavilion_north_209",
       "Foliage_Palm_pavilion_north_210",
       "Foliage_Palm_pavilion_north_211",
@@ -386,7 +380,7 @@
       "Foliage_Palm_pavilion_north_223",
       "Foliage_Palm_pavilion_north_224",
       "Foliage_Palm_pavilion_north_225",
-      "Foliage_Palm_pavilion_north_226",
+      "Foliage_Palm_pavilion_northeast_226",
       "Foliage_Palm_pavilion_northeast_227",
       "Foliage_Palm_pavilion_northeast_228",
       "Foliage_Palm_pavilion_northeast_229",
@@ -401,7 +395,8 @@
       "Foliage_Palm_pavilion_northeast_238",
       "Foliage_Palm_pavilion_northeast_239",
       "Foliage_Palm_pavilion_northeast_240",
-      "Foliage_Palm_pavilion_northeast_241",
+      "Foliage_Palm_pavilion_northwest_191",
+      "Foliage_Palm_pavilion_northwest_192",
       "Foliage_Palm_pavilion_northwest_193",
       "Foliage_Palm_pavilion_northwest_194",
       "Foliage_Palm_pavilion_northwest_195",
@@ -416,8 +411,6 @@
       "Foliage_Palm_pavilion_northwest_204",
       "Foliage_Palm_pavilion_northwest_205",
       "Foliage_Palm_pavilion_northwest_206",
-      "Foliage_Palm_pavilion_northwest_207",
-      "Foliage_Palm_pavilion_northwest_208",
       "Foliage_Palm_pavilion_south_139",
       "Foliage_Palm_pavilion_south_140",
       "Foliage_Palm_pavilion_south_141",
@@ -456,6 +449,9 @@
       "Foliage_Palm_pavilion_southeast_136",
       "Foliage_Palm_pavilion_southeast_137",
       "Foliage_Palm_pavilion_southeast_138",
+      "Foliage_Palm_pavilion_west_172",
+      "Foliage_Palm_pavilion_west_173",
+      "Foliage_Palm_pavilion_west_174",
       "Foliage_Palm_pavilion_west_175",
       "Foliage_Palm_pavilion_west_176",
       "Foliage_Palm_pavilion_west_177",
@@ -472,10 +468,9 @@
       "Foliage_Palm_pavilion_west_188",
       "Foliage_Palm_pavilion_west_189",
       "Foliage_Palm_pavilion_west_190",
-      "Foliage_Palm_pavilion_west_191",
-      "Foliage_Palm_pavilion_west_192",
       "Landmark_Campanile",
       "Landmark_Cathedral",
+      "Landmark_CustomsHouse",
       "Landmark_Outer_outer_east",
       "Landmark_Outer_outer_north",
       "Landmark_Outer_outer_northeast",
@@ -584,8 +579,8 @@
       "zeroMeansBlocked": true,
       "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Crownwater's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 338240,
-    "walkableFraction": 0.2549
+    "walkableCells": 337422,
+    "walkableFraction": 0.2543
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -617,7 +612,7 @@
   "landmarks": [
     {
       "id": "crownwater-cathedral",
-      "name": "The Drowned Crown",
+      "name": "The Crown Basilica",
       "node": "Landmark_Cathedral",
       "type": "monument",
       "position": [
@@ -760,6 +755,22 @@
       "note": "placeholder name - see modeling-assumptions.md"
     },
     {
+      "id": "crownwater-customs-hall",
+      "name": "The Harbour Customs Hall",
+      "node": "Landmark_CustomsHouse",
+      "type": "building",
+      "position": [
+        21.65,
+        4.5,
+        -2.45
+      ],
+      "serverTile": [
+        196,
+        176
+      ],
+      "note": "placeholder name - see modeling-assumptions.md"
+    },
+    {
       "id": "crownwater-sunken-court",
       "name": "The Sunken Court",
       "node": "Landmark_SunkenCourt",
@@ -829,7 +840,7 @@
       "type": "bell",
       "position": [
         26.45,
-        4.35,
+        4.9,
         -20.45
       ],
       "serverTile": [
@@ -861,7 +872,7 @@
       "type": "npc",
       "position": [
         26.06,
-        3.95,
+        4.5,
         -15.46
       ],
       "serverTile": [
@@ -1469,6 +1480,82 @@
       ],
       "destinationMap": "maps/nymara/amberwood.elm",
       "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "basilica-undercroft",
+      "name": "The Drowned Crown",
+      "type": "interior-entrance",
+      "position": [
+        114.0,
+        18.19,
+        -132.0
+      ],
+      "serverTile": [
+        288,
+        306
+      ],
+      "landmark": "crownwater-cathedral",
+      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationSpawn": "basilica-undercroft",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "campanile-door",
+      "name": "The Tide Campanile",
+      "type": "interior-entrance",
+      "position": [
+        162.0,
+        17.69,
+        -150.0
+      ],
+      "serverTile": [
+        336,
+        324
+      ],
+      "landmark": "crownwater-campanile",
+      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationSpawn": "campanile-door",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "cistern-stair",
+      "name": "The Tide Cistern",
+      "type": "interior-entrance",
+      "position": [
+        -48.0,
+        4.91,
+        -114.0
+      ],
+      "serverTile": [
+        126,
+        288
+      ],
+      "landmark": "crownwater-pavilion-pavilion_west",
+      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationSpawn": "cistern-stair",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "customs-door",
+      "name": "The Harbour Customs Hall",
+      "type": "interior-entrance",
+      "position": [
+        21.65,
+        4.6,
+        -2.45
+      ],
+      "serverTile": [
+        196,
+        176
+      ],
+      "landmark": "crownwater-customs-hall",
+      "destinationMap": "maps/nymara/drowned_crown.elm",
+      "destinationSpawn": "customs-door",
+      "radius": 2.5,
       "authority": "server"
     }
   ],
@@ -2109,27 +2196,27 @@
     }
   ],
   "performance": {
-    "nodes": 1892,
-    "meshes": 113,
-    "materials": 20,
-    "images": 58,
-    "textures": 58,
-    "accessors": 452,
-    "bufferViews": 510,
-    "uniqueTriangles": 587040,
-    "uniqueVertices": 347008,
-    "glbBytes": 23446984,
-    "instancedTriangles": 1273378,
-    "embeddedTextureBytes": 18946500,
-    "textureMemoryBytesUncompressed": 160432128,
-    "placements": 613,
+    "nodes": 1881,
+    "meshes": 119,
+    "materials": 21,
+    "images": 61,
+    "textures": 61,
+    "accessors": 476,
+    "bufferViews": 537,
+    "uniqueTriangles": 587350,
+    "uniqueVertices": 347415,
+    "glbBytes": 24091236,
+    "instancedTriangles": 1272152,
+    "embeddedTextureBytes": 19227034,
+    "textureMemoryBytesUncompressed": 164364288,
+    "placements": 608,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 338240,
-      "blockedCells": 988864,
-      "walkableFraction": 0.2549,
+      "walkableCells": 337422,
+      "blockedCells": 989682,
+      "walkableFraction": 0.2543,
       "elevatedDecks": 84,
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)"
@@ -2138,11 +2225,11 @@
       "48 islet lamp standards placed"
     ],
     "lod2": {
-      "glbBytes": 14009336,
-      "nodes": 1697,
-      "uniqueTriangles": 433888,
-      "instancedTriangles": 1109698,
-      "sizeReductionPercent": 40.3,
+      "glbBytes": 14106060,
+      "nodes": 1686,
+      "uniqueTriangles": 434198,
+      "instancedTriangles": 1108472,
+      "sizeReductionPercent": 41.4,
       "triangleReductionPercent": 12.9
     }
   },

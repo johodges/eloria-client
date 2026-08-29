@@ -55,6 +55,10 @@ def main() -> int:
             continue
         index = json.loads(index_path.read_text())
         for entry in index:
+            # An index may legitimately omit "file" - the interior camera
+            # sets are generated from a manifest and name their output by id.
+            # Crashing here would leave the images converted and the index
+            # stale, which is worse than skipping the rewrite.
             if "file" in entry:
                 entry["file"] = entry["file"].replace(".png", ".webp")
         index_path.write_text(json.dumps(index, indent=2) + "\n")
