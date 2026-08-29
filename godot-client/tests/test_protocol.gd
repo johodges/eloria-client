@@ -456,10 +456,38 @@ func _init() -> void:
 	animation_actor.call("_on_animation_finished", &"Stand")
 	_expect(animation_actor.current_action == &"idle",
 		"completed stand transition returns to idle")
+	# A finished step coasts before it idles, so a late packet cannot flick the
+	# pose to idle and straight back to walk on every tile.
 	animation_actor.current_action = &"walk"
 	animation_actor.call("_finish_movement_presentation")
+	_expect(animation_actor.current_action == &"walk"
+		and float(animation_actor.get("_movement_coast_remaining")) > 0.0,
+		"a completed movement segment keeps walking through its coast")
+	animation_actor.set("_movement_coast_remaining", 0.01)
+	animation_actor.set("_snap_pending", false)
+	animation_actor.set("_segment_duration", 0.0)
+	animation_actor.call("_physics_process", 0.5)
 	_expect(animation_actor.current_action == &"idle",
-		"completed movement segment switches from walk to idle")
+		"a movement segment idles once its coast runs out")
+	animation_actor.set("_movement_coast_remaining", 0.0)
+	animation_actor.set("_segment_duration", 0.0)
+	_expect(animation_actor.call("_movement_aware_action", &"walk", true) == &"walk"
+		and animation_actor.call("_movement_aware_action", &"walk", false) == &"idle"
+		and animation_actor.call("_movement_aware_action", &"sit", false) == &"sit",
+		"a walk command that moves the actor nowhere resolves to idle")
+	var walk_stride := AnimationResolver.new({
+		"actions": {"walk": "Walk"}, "playbackSpeeds": {"walk": 1.45},
+		"strideMetresPerSecond": {"walk": 2.0}})
+	_expect(is_equal_approx(walk_stride.stride_speed_for_action(&"walk"), 2.0)
+		and is_equal_approx(walk_stride.stride_speed_for_action(&"idle"), 0.0),
+		"stride speeds are read per action and absent for still poses")
+	animation_actor.resolver = walk_stride
+	animation_actor.set("_segment_start", Vector3.ZERO)
+	animation_actor.server_target = Vector3(0.0, 0.0, 3.0)
+	animation_actor.set("_segment_duration", 1.0)
+	_expect(is_equal_approx(
+		float(animation_actor.call("_playback_speed_for", &"walk")), 1.5),
+		"a locomotion clip plays at the speed the actor is really travelling")
 	var seated_yaw: float = ReplicatedActor3D.target_yaw_for_state(
 		1.25, 13, 0, CoordinateAdapter.new())
 	_expect(is_equal_approx(seated_yaw, 1.25),

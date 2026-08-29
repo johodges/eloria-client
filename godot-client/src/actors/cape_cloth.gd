@@ -18,10 +18,15 @@ extends SkeletonModifier3D
 
 const CHAINS: Array[String] = ["l", "c", "r"]
 const LINKS := 4
-const GRAVITY := Vector3(0.0, -9.0, 0.0)
+## Heavier than the real 9.8: a cape driven by a skeleton has no air to push
+## against, so weighting it down is what keeps the hem from flying up behind a
+## moving actor.
+const GRAVITY := Vector3(0.0, -14.0, 0.0)
 ## Fraction of velocity carried between steps. Cloth that keeps everything
-## oscillates forever; this settles in about half a second.
-const DAMPING := 0.84
+## oscillates forever. 0.84 carried enough momentum to lift the hem well past
+## the waist in motion and hold it there; this settles in about a quarter of a
+## second and trails lower while travelling.
+const DAMPING := 0.72
 ## Two passes is enough for a four-link chain and is the whole reason this is
 ## affordable. More iterations buy stiffness nobody can see on a cape.
 const RELAX_PASSES := 2
