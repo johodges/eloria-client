@@ -405,6 +405,26 @@ grow_horizontal = 2
 theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 
+[node name="HarvestBanner" type="Label" parent="GameView" unique_id=1477203964]
+unique_name_in_owner = true
+visible = false
+z_index = 20
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -180.0
+offset_top = -150.0
+offset_right = 180.0
+offset_bottom = -124.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 17
+text = "Harvesting"
+horizontal_alignment = 1
+
 [node name="MinimapFrame" type="Panel" parent="GameView" unique_id=860838546]
 unique_name_in_owner = true
 visible = false

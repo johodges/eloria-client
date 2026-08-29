@@ -155,6 +155,15 @@ func cast_spell(sigils: Array[int]) -> Error:
 func popup_reply(popup_id: int, answers: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.popup_reply(popup_id, answers))
 
+func harvest(object_id: int) -> Error:
+	return send_frame(EloriaProtocol.harvest(object_id))
+
+func use_map_object(object_id: int) -> Error:
+	return send_frame(EloriaProtocol.use_map_object(object_id))
+
+func look_at_map_object(object_id: int) -> Error:
+	return send_frame(EloriaProtocol.look_at_map_object(object_id))
+
 func attack_actor(actor_id: int) -> Error:
 	return send_frame(EloriaProtocol.attack_actor(actor_id))
 

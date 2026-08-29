@@ -51,6 +51,7 @@ enum ServerMessage {
 	SEND_ACHIEVEMENTS = 95, ADD_NEW_ACTOR_EXTENDED = 247,
 	ELORIA_INVASION_ASSISTANT_STATE = 233,
 	ELORIA_PERKS = 234, ELORIA_ACTIVITY_COUNTERS = 235,
+	ELORIA_MAP_OBJECTS = 236, ELORIA_HARVEST_STATE = 237,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
 }
@@ -224,6 +225,24 @@ static func popup_reply(popup_id: int, answers: Dictionary) -> PackedByteArray:
 			payload.append(group)
 			payload.append(int(answer) & 0xff)
 	return encode(ClientMessage.POPUP_REPLY, payload)
+
+## Starts, or stops, harvesting one world object. The command is a toggle: the
+## server cancels a run already in progress for the same request.
+static func harvest(object_id: int) -> PackedByteArray:
+	return encode(ClientMessage.HARVEST, PackedByteArray([
+		object_id & 0xff, (object_id >> 8) & 0xff]))
+
+## Uses a world object - a waygate, a storage cache, a crafting station. The
+## legacy width for both map-object commands is 32 bits.
+static func use_map_object(object_id: int) -> PackedByteArray:
+	return encode(ClientMessage.USE_MAP_OBJECT, PackedByteArray([
+		object_id & 0xff, (object_id >> 8) & 0xff,
+		(object_id >> 16) & 0xff, (object_id >> 24) & 0xff]))
+
+static func look_at_map_object(object_id: int) -> PackedByteArray:
+	return encode(ClientMessage.LOOK_AT_MAP_OBJECT, PackedByteArray([
+		object_id & 0xff, (object_id >> 8) & 0xff,
+		(object_id >> 16) & 0xff, (object_id >> 24) & 0xff]))
 
 static func attack_actor(actor_id: int) -> PackedByteArray:
 	return encode(ClientMessage.ATTACK_SOMEONE, PackedByteArray([
@@ -598,6 +617,10 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "npc_close"}
 		ServerMessage.DISPLAY_POPUP:
 			return decode_popup(payload)
+		ServerMessage.ELORIA_MAP_OBJECTS:
+			return decode_map_objects(payload)
+		ServerMessage.ELORIA_HARVEST_STATE:
+			return decode_harvest_state(payload)
 		ServerMessage.ELORIA_PERKS:
 			return decode_perks(payload)
 		ServerMessage.ELORIA_ACTIVITY_COUNTERS:
@@ -606,6 +629,63 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "ping_request"}
 		_:
 			return {"type": "unknown", "command": command, "payload": payload}
+
+## Clickable world objects on the current map. The client cannot infer any of
+## this: a world package renders harvestable props and buildings as ordinary
+## geometry, and the legacy client matched object basenames against a lowercase
+## harvestable list, a lookup that never matched anything because the packs
+## wrote relative paths. Object identity is server state.
+const MAP_OBJECT_HARVEST := 1
+const MAP_OBJECT_INTERACTIVE := 2
+
+static func decode_map_objects(payload: PackedByteArray) -> Dictionary:
+	# A busy map has thousands of harvest nodes, which does not fit in one
+	# frame, so the list arrives in chunks. The leading flag says whether a
+	# chunk begins a new list or continues the one already being built.
+	if payload.size() < 3:
+		return {"type": "invalid", "error": "map_objects_length"}
+	var first: bool = int(payload[0]) != 0
+	var count: int = u16(payload, 1)
+	var offset: int = 3
+	var objects: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 7 > payload.size():
+			return {"type": "invalid", "error": "map_object_entry_length"}
+		var object_id: int = u16(payload, offset)
+		var kind: int = int(payload[offset + 2])
+		var x: int = u16(payload, offset + 3)
+		var y: int = u16(payload, offset + 5)
+		offset += 7
+		var label_end: int = payload.find(0, offset)
+		if label_end < 0:
+			return {"type": "invalid", "error": "map_object_label"}
+		var label: String = payload.slice(offset, label_end).get_string_from_utf8()
+		offset = label_end + 1
+		var detail_end: int = payload.find(0, offset)
+		if detail_end < 0:
+			return {"type": "invalid", "error": "map_object_detail"}
+		var detail: String = payload.slice(offset, detail_end).get_string_from_utf8()
+		offset = detail_end + 1
+		if kind not in [MAP_OBJECT_HARVEST, MAP_OBJECT_INTERACTIVE]:
+			return {"type": "invalid", "error": "map_object_kind"}
+		objects.append({"object_id": object_id, "kind": kind, "x": x, "y": y,
+			"label": label, "detail": detail})
+	if offset != payload.size():
+		return {"type": "invalid", "error": "map_objects_trailing"}
+	return {"type": "map_objects", "first": first, "objects": objects}
+
+## Whether the player is harvesting, and what. The stock client matched an
+## exact English phrase out of the chat stream to drive this, which breaks on
+## any rewording and on any translation.
+static func decode_harvest_state(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 4:
+		return {"type": "invalid", "error": "harvest_state_length"}
+	var terminator: int = payload.find(0, 3)
+	if terminator < 0 or terminator != payload.size() - 1:
+		return {"type": "invalid", "error": "harvest_state_resource"}
+	return {"type": "harvest_state", "active": int(payload[0]) != 0,
+		"object_id": u16(payload, 1),
+		"resource": payload.slice(3, terminator).get_string_from_utf8()}
 
 ## A server-driven modal question. Option types are the legacy popup contract:
 ## 0 text entry, 1 display text, 8 text option (a button that answers at once),

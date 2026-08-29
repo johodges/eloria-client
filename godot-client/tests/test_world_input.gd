@@ -1224,6 +1224,69 @@ func _run() -> void:
 	console_panel.hide()
 	full_map.hide()
 
+	# Harvesting and world-object interaction. The world click handler tried
+	# actors, then ground bags, then the navigation surface, and stopped: no
+	# rendered prop was ever clickable, so the whole harvestable layer and
+	# every interactive were unreachable.
+	var harvest_banner: Label = main.get_node("GameView/HarvestBanner") as Label
+	_expect(not harvest_banner.visible, "the harvesting indicator starts hidden")
+	var objects_payload: PackedByteArray = PackedByteArray([1, 2, 0])
+	objects_payload.append_array(PackedByteArray([
+		0xf0, 0x01, EloriaProtocol.MAP_OBJECT_HARVEST, 0x02, 0x03, 0xe1, 0x01]))
+	objects_payload.append_array(_nul_bytes("Mirror Reed"))
+	objects_payload.append_array(_nul_bytes("Harvesting level 0"))
+	objects_payload.append_array(PackedByteArray([
+		0x0e, 0x00, EloriaProtocol.MAP_OBJECT_INTERACTIVE, 0x00, 0x03, 0x90, 0x05]))
+	objects_payload.append_array(_nul_bytes("Storage"))
+	objects_payload.append_array(_nul_bytes("A wayfarer's cache."))
+	app_state_inventory.set("authenticated", true)
+	app_state_inventory.call("_on_packet", 236, objects_payload)
+	await process_frame
+	var object_nodes: Dictionary = main.get("map_object_nodes") as Dictionary
+	_expect(object_nodes.size() == 2,
+		"every server world object becomes a pick target in the scene")
+	var harvest_node: MapObject3D = object_nodes.get(496) as MapObject3D
+	var interactive_node: MapObject3D = object_nodes.get(14) as MapObject3D
+	_expect(harvest_node != null and harvest_node.is_harvestable()
+		and interactive_node != null and not interactive_node.is_harvestable(),
+		"harvest nodes and interactives are told apart by the server's kind")
+	_expect(harvest_node != null
+		and harvest_node.collision_layer == MapObject3D.PICK_LAYER
+		and harvest_node.collision_layer != GroundBag3D.PICK_LAYER,
+		"world objects pick on their own layer, not the ground-bag layer")
+	_expect(harvest_node != null
+		and harvest_node.get_node_or_null("MapMarker") != null,
+		"a world object is visible on both map cameras")
+	_expect(harvest_node != null and harvest_node.server_tile == Vector2i(770, 481),
+		"the pick target sits on the tile the server named")
+
+	# The harvest indicator follows the authoritative state, not a chat phrase.
+	var started: PackedByteArray = PackedByteArray([1, 0xf0, 0x01])
+	started.append_array(_nul_bytes("Mirror Reed"))
+	app_state_inventory.call("_on_packet", 237, started)
+	await process_frame
+	_expect(harvest_banner.visible and harvest_banner.text.contains("Mirror Reed"),
+		"the harvesting indicator names the resource the server reported")
+	_expect(harvest_banner.get_global_rect().end.y <= 720.0
+		and harvest_banner.get_global_rect().position.y >= 0.0,
+		"the harvesting indicator fits within 1280x720")
+	_expect(not harvest_banner.get_global_rect().intersects(
+		right_stats.get_global_rect()),
+		"the harvesting indicator does not cover the fixed resource rail")
+	app_state_inventory.call("_on_packet", 237, PackedByteArray([0, 0, 0, 0]))
+	await process_frame
+	_expect(not harvest_banner.visible,
+		"a server stop - moving, a full backpack, combat - clears the indicator")
+
+	# A map change discards the previous map's objects rather than leaving
+	# pick targets from somewhere else standing in the new world.
+	app_state_inventory.call("_on_packet", 7, _nul_bytes("maps/nymara/mirrorhold.elm"))
+	await process_frame
+	_expect((app_state_inventory.get("map_objects") as Dictionary).is_empty()
+		and not bool((app_state_inventory.get("harvest") as Dictionary).get("active", true)),
+		"a map change clears the world objects and the harvesting state")
+	app_state_inventory.set("authenticated", false)
+
 	print("world input tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()
 	await process_frame

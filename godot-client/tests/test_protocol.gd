@@ -801,6 +801,68 @@ func _init() -> void:
 			== "activity_counter_terminator",
 		"short, truncated and unterminated counter packets are rejected")
 
+	# Harvesting and world objects. HARVEST(21), USE_MAP_OBJECT(16) and
+	# LOOK_AT_MAP_OBJECT(27) were enum values with no encoder, and there was no
+	# world-object pick path at all.
+	_expect_bytes("harvest fixture", EloriaProtocol.harvest(0x0201),
+		PackedByteArray([21, 3, 0, 0x01, 0x02]))
+	_expect_bytes("use map object fixture", EloriaProtocol.use_map_object(0x04030201),
+		PackedByteArray([16, 5, 0, 0x01, 0x02, 0x03, 0x04]))
+	_expect_bytes("look at map object fixture",
+		EloriaProtocol.look_at_map_object(0x04030201),
+		PackedByteArray([27, 5, 0, 0x01, 0x02, 0x03, 0x04]))
+	var map_objects_payload: PackedByteArray = PackedByteArray([1, 2, 0])
+	map_objects_payload.append_array(PackedByteArray([
+		0xf0, 0x01, EloriaProtocol.MAP_OBJECT_HARVEST, 0x02, 0x03, 0xe1, 0x01]))
+	map_objects_payload.append_array(_nul_bytes("Mirror Reed"))
+	map_objects_payload.append_array(_nul_bytes("Harvesting level 0"))
+	map_objects_payload.append_array(PackedByteArray([
+		0x0e, 0x00, EloriaProtocol.MAP_OBJECT_INTERACTIVE, 0x00, 0x03, 0x90, 0x05]))
+	map_objects_payload.append_array(_nul_bytes("Storage"))
+	map_objects_payload.append_array(_nul_bytes("A wayfarer's cache."))
+	var map_objects: Dictionary = EloriaProtocol.decode_server(236, map_objects_payload)
+	_expect(map_objects.type == "map_objects" and bool(map_objects.first)
+		and (map_objects.objects as Array).size() == 2,
+		"the map-object list decodes every entry and flags the first chunk")
+	var harvest_object: Dictionary = (map_objects.objects as Array)[0]
+	var interactive_object: Dictionary = (map_objects.objects as Array)[1]
+	_expect(int(harvest_object.object_id) == 496
+		and int(harvest_object.kind) == EloriaProtocol.MAP_OBJECT_HARVEST
+		and int(harvest_object.x) == 770 and int(harvest_object.y) == 481
+		and str(harvest_object.label) == "Mirror Reed"
+		and str(harvest_object.detail) == "Harvesting level 0",
+		"a harvest node carries its id, tile, resource name and requirement")
+	_expect(int(interactive_object.object_id) == 14
+		and int(interactive_object.kind) == EloriaProtocol.MAP_OBJECT_INTERACTIVE
+		and int(interactive_object.y) == 1424,
+		"an interactive carries its id and tile in the same list")
+	_expect(EloriaProtocol.decode_server(236, PackedByteArray([1, 1])).error
+			== "map_objects_length"
+		and EloriaProtocol.decode_server(236,
+			PackedByteArray([1, 1, 0, 1, 0, 9, 1, 0, 1, 0, 0, 0])).error
+			== "map_object_kind"
+		and EloriaProtocol.decode_server(236,
+			map_objects_payload.slice(0, map_objects_payload.size() - 1)).type
+			== "invalid",
+		"short, unknown-kind and truncated map-object lists are rejected")
+	var harvest_started: PackedByteArray = PackedByteArray([1, 0xf0, 0x01])
+	harvest_started.append_array(_nul_bytes("Mirror Reed"))
+	var harvest_state: Dictionary = EloriaProtocol.decode_server(237, harvest_started)
+	_expect(harvest_state.type == "harvest_state" and bool(harvest_state.active)
+		and int(harvest_state.object_id) == 496
+		and str(harvest_state.resource) == "Mirror Reed",
+		"the harvest state names the node and resource rather than a chat phrase")
+	var harvest_stopped: Dictionary = EloriaProtocol.decode_server(237,
+		PackedByteArray([0, 0, 0, 0]))
+	_expect(harvest_stopped.type == "harvest_state" and not bool(harvest_stopped.active)
+		and str(harvest_stopped.resource).is_empty(),
+		"a stop is explicit, not the absence of a message")
+	_expect(EloriaProtocol.decode_server(237, PackedByteArray([1, 0, 0])).error
+			== "harvest_state_length"
+		and EloriaProtocol.decode_server(237, PackedByteArray([1, 0, 0, 65])).error
+			== "harvest_state_resource",
+		"a short or unterminated harvest state is rejected")
+
 	# Server popups. The server had no way to ask the player a question:
 	# DISPLAY_POPUP(83) fell through to an unknown packet and POPUP_REPLY(50)
 	# had no encoder at all.

@@ -32,6 +32,7 @@ func _run() -> void:
 	await _render_marker_lights()
 	await _render_diagnostics_panel()
 	await _render_server_popup()
+	await _render_harvest_targets()
 	print("rendered phase 0 repairs: ", "PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)
 
@@ -167,6 +168,82 @@ func _render_server_popup() -> void:
 	app_state.set("authenticated", false)
 	main.queue_free()
 	await process_frame
+
+## The world-object pick layer. Before this the client had no pick path for
+## rendered props at all, so the "before" half is the same view with the layer
+## suppressed: no ring, nothing clickable, no indicator.
+func _render_harvest_targets() -> void:
+	var main: Control = (load("res://src/app/main.tscn") as PackedScene).instantiate() as Control
+	root.add_child(main)
+	await process_frame
+	(main.get_node("GameView") as Control).show()
+	(main.get_node("LoginPanel") as Control).hide()
+	var app_state: Node = root.get_node("/root/AppState")
+	app_state.set("authenticated", true)
+
+	var stage: Node3D = main.get_node(
+		"GameView/ViewportContainer/Viewport/WorldRoot") as Node3D
+	var ground := MeshInstance3D.new()
+	var ground_mesh := PlaneMesh.new()
+	ground_mesh.size = Vector2(30.0, 30.0)
+	var ground_material := StandardMaterial3D.new()
+	ground_material.albedo_color = Color(0.29, 0.35, 0.24)
+	ground_mesh.material = ground_material
+	ground.mesh = ground_mesh
+	stage.add_child(ground)
+	var sun := DirectionalLight3D.new()
+	sun.rotation_degrees = Vector3(-52.0, 38.0, 0.0)
+	stage.add_child(sun)
+	var camera: Camera3D = main.get_node(
+		"GameView/ViewportContainer/Viewport/WorldRoot/CameraRig/Camera") as Camera3D
+
+	# Two harvest nodes and one interactive, on the tiles the server named.
+	var payload := PackedByteArray([1, 3, 0])
+	payload.append_array(PackedByteArray([0xf0, 0x01, 1, 0x02, 0x03, 0xe1, 0x01]))
+	payload.append_array(_nul("Sunleaf"))
+	payload.append_array(_nul("Harvesting level 0"))
+	payload.append_array(PackedByteArray([0xf1, 0x01, 1, 0x05, 0x03, 0xe4, 0x01]))
+	payload.append_array(_nul("Mirror Reed"))
+	payload.append_array(_nul("Harvesting level 4"))
+	payload.append_array(PackedByteArray([0x0e, 0x00, 2, 0x00, 0x03, 0xdf, 0x01]))
+	payload.append_array(_nul("Storage"))
+	payload.append_array(_nul("A wayfarer's cache."))
+	app_state.call("_on_packet", 236, payload)
+	for _settle: int in range(6):
+		await process_frame
+
+	var nodes: Dictionary = main.get("map_object_nodes") as Dictionary
+	_expect(nodes.size() == 3, "three world objects became pick targets")
+	var centre := Vector3.ZERO
+	for raw: Variant in nodes.values():
+		centre += (raw as Node3D).global_position
+	centre /= maxf(1.0, float(nodes.size()))
+	camera.global_position = centre + Vector3(0.0, 4.4, 6.4)
+	camera.look_at(centre, Vector3.UP)
+	for _settle: int in range(4):
+		await process_frame
+	await _capture("harvest-targets-idle.png",
+		"the server's world objects as pick targets: harvest nodes and an interactive")
+
+	var started := PackedByteArray([1, 0xf0, 0x01])
+	started.append_array(_nul("Sunleaf"))
+	app_state.call("_on_packet", 237, started)
+	for _settle: int in range(4):
+		await process_frame
+	var banner: Label = main.get_node("GameView/HarvestBanner") as Label
+	_expect(banner.visible and banner.text.contains("Sunleaf"),
+		"the harvesting indicator names the resource")
+	await _capture("harvest-targets-active.png",
+		"the same view while the server reports harvesting the first node")
+	app_state.call("_on_packet", 237, PackedByteArray([0, 0, 0, 0]))
+	app_state.set("authenticated", false)
+	main.queue_free()
+	await process_frame
+
+func _nul(value: String) -> PackedByteArray:
+	var bytes: PackedByteArray = value.to_utf8_buffer()
+	bytes.append(0)
+	return bytes
 
 func _hex_bytes(value: String) -> PackedByteArray:
 	var bytes := PackedByteArray()

@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import asyncio
 import secrets
+import shutil
 import socket
 import struct
 import subprocess
@@ -98,13 +99,9 @@ class LocalServer:
             sys.executable, "-m", "eloria.server", "--host", "127.0.0.1",
             "--port", str(self.port), "--database",
             str(Path(self._workdir.name) / "eloria.sqlite3")]
+        config_root = self._prepare_config()
         for flag, name in ELORIA_CONFIG:
-            if flag in self._overrides:
-                override_path = Path(self._workdir.name) / name.replace("/", "_")
-                override_path.write_text(self._overrides[flag], encoding="utf-8")
-                arguments += [flag, str(override_path)]
-            else:
-                arguments += [flag, str(Path("config") / "eloria" / name)]
+            arguments += [flag, str(config_root / name)]
         self._process = subprocess.Popen(
             arguments, cwd=self.server_root, stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, text=True, bufsize=1)
@@ -130,6 +127,28 @@ class LocalServer:
                 # The server may still hold the SQLite file on Windows. The
                 # temporary directory is disposable either way.
                 pass
+
+    def _prepare_config(self) -> Path:
+        """Return a config directory for this run.
+
+        Without an override the shipped `config/eloria` is used directly. With
+        one, the whole directory is copied and the override written over the
+        top, because the server derives sibling paths from the ones it is
+        given: `interactives.txt` and `rare_harvest.txt` are resolved from the
+        *harvesting* path's directory, so pointing one flag at a lone temporary
+        file silently loses the others and falls back to a legacy config that
+        names items the Eloria profile does not have.
+        """
+        shipped = self.server_root / "config" / "eloria"
+        if not self._overrides:
+            return Path("config") / "eloria"
+        assert self._workdir is not None
+        copied = Path(self._workdir.name) / "config"
+        shutil.copytree(shipped, copied)
+        for flag, text in self._overrides.items():
+            name = dict(ELORIA_CONFIG)[flag]
+            (copied / name).write_text(text, encoding="utf-8")
+        return copied
 
     def _drain_output(self) -> None:
         assert self._process is not None and self._process.stdout is not None

@@ -39,6 +39,12 @@ var ground_bag: Dictionary = {"open": false, "bag_id": -1, "items": {}}
 var known_knowledge: Array[int] = []
 var selected_knowledge: int = -1
 var knowledge_text: String = ""
+## Clickable world objects on the current map, keyed by server object id, and
+## the authoritative harvesting state. Both are server-declared: nothing here
+## is matched by filename or scraped out of chat.
+var map_objects: Dictionary = {}
+var harvest: Dictionary = {"active": false, "object_id": -1, "resource": ""}
+
 ## A server-driven modal question. The server had no way to ask the player
 ## anything: DISPLAY_POPUP(83) fell through to {"type":"unknown"} and
 ## POPUP_REPLY(50) had no encoder.
@@ -95,6 +101,8 @@ func _on_connection_state_changed(value: String) -> void:
 		known_knowledge.clear()
 		selected_knowledge = -1
 		knowledge_text = ""
+		map_objects.clear()
+		harvest = _empty_harvest_state()
 		popup = _empty_popup_state()
 		perks.clear()
 		activity_counters.clear()
@@ -137,6 +145,10 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"clock")
 		"change_map":
 			current_map = event.map_name
+			# The new map's objects arrive in their own packet; anything held
+			# for the old map is stale the moment the change lands.
+			map_objects.clear()
+			harvest = _empty_harvest_state()
 			actors.clear()
 			selected_actor_id = -1
 			npc_dialogue = {"open": false, "name": "", "text": "",
@@ -146,6 +158,8 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			storage = _empty_storage_state()
 			ground_bags.clear()
 			ground_bag = _empty_ground_bag_state()
+			state_changed.emit(&"map_objects")
+			state_changed.emit(&"harvest")
 			state_changed.emit(&"map")
 		"actor_spawn":
 			actors[event.actor_id] = event
@@ -444,6 +458,18 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			npc_dialogue["open"] = false
 			npc_dialogue["options"] = []
 			state_changed.emit(&"npc_dialogue")
+		"map_objects":
+			# The list arrives in chunks; only the first clears what was there.
+			if bool(event.first):
+				map_objects.clear()
+			for raw_object: Variant in event.objects:
+				var map_object: Dictionary = (raw_object as Dictionary).duplicate(true)
+				map_objects[int(map_object.get("object_id", -1))] = map_object
+			state_changed.emit(&"map_objects")
+		"harvest_state":
+			harvest = {"active": bool(event.active),
+				"object_id": int(event.object_id), "resource": str(event.resource)}
+			state_changed.emit(&"harvest")
 		"popup":
 			# Only one popup at a time, matching the legacy client's refusal to
 			# open a second window for an id it is already showing.
@@ -545,6 +571,9 @@ func _emit_stat_feedback(stat_key: String, previous_value: int,
 func close_popup() -> void:
 	popup = _empty_popup_state()
 	state_changed.emit(&"popup")
+
+func _empty_harvest_state() -> Dictionary:
+	return {"active": false, "object_id": -1, "resource": ""}
 
 func _empty_popup_state() -> Dictionary:
 	return {"open": false, "popup_id": -1, "title": "", "text": "", "options": []}

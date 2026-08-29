@@ -181,6 +181,7 @@ var map_light_root: Node3D
 @onready var chat_panel: PanelContainer = $GameView/ChatPanel
 @onready var console_panel: PanelContainer = %ConsolePanel
 @onready var connection_banner: Label = %ConnectionBanner
+@onready var harvest_banner: Label = %HarvestBanner
 @onready var popup_panel: PanelContainer = %PopupPanel
 @onready var popup_title: Label = %PopupTitle
 @onready var popup_text: RichTextLabel = %PopupText
@@ -210,6 +211,11 @@ var map_light_root: Node3D
 
 var actor_nodes: Dictionary = {}
 var ground_bag_nodes: Dictionary = {}
+var map_object_nodes: Dictionary = {}
+## Server map objects whose tile has no navigation surface beneath it on the
+## rendered map. Misplaced content rather than a client fault, but silent
+## unless somebody counts it.
+var _ungrounded_map_objects: Dictionary = {}
 var models: Dictionary = {}
 var actor_type_models: Dictionary = {}
 var npc_looks: Dictionary = {}
@@ -492,6 +498,7 @@ func _ready() -> void:
 	popup_confirm.pressed.connect(_on_popup_confirm_pressed)
 	popup_dismiss.pressed.connect(_on_popup_dismiss_pressed)
 	popup_panel.hide()
+	harvest_banner.hide()
 	_session_started_msec = Time.get_ticks_msec()
 	_apply_equipment_side()
 	_sync_saved_item_lists()
@@ -996,6 +1003,22 @@ func _sync_diagnostics() -> void:
 				int(failure.get("command", -1)), str(failure.get("error", "")),
 				int(failure.get("size", 0)),
 				_elapsed_text(int(failure.get("msec", 0)))])
+	lines.append("
+[b]World objects[/b]")
+	lines.append("  server objects on this map: %d" % AppState.map_objects.size())
+	if _ungrounded_map_objects.is_empty():
+		lines.append("  all of them sit on the rendered navigation surface")
+	else:
+		lines.append("  [color=#ffb066]%d have no navigation surface beneath them[/color]"
+			% _ungrounded_map_objects.size())
+		var listed: int = 0
+		for raw_object_id: Variant in _ungrounded_map_objects:
+			if listed >= 8:
+				lines.append("    …")
+				break
+			lines.append("    %d  %s" % [int(raw_object_id),
+				str(_ungrounded_map_objects[raw_object_id])])
+			listed += 1
 	lines.append("
 [b]Connection[/b]")
 	lines.append("  state: %s%s" % [AppState.connection_state,
@@ -1734,6 +1757,12 @@ func _clear_world_presentation() -> void:
 		if is_instance_valid(bag_node):
 			bag_node.queue_free()
 	ground_bag_nodes.clear()
+	for raw_object_node: Variant in map_object_nodes.values():
+		var stale_object: Node = raw_object_node as Node
+		if is_instance_valid(stale_object):
+			stale_object.queue_free()
+	map_object_nodes.clear()
+	_ungrounded_map_objects.clear()
 	if is_instance_valid(map_light_root):
 		map_light_root.queue_free()
 	map_light_root = null
@@ -2165,6 +2194,10 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 		if inspect_error != OK:
 			push_warning("INSPECT_BAG failed: " + error_string(inspect_error))
 		return
+	var picked_object: MapObject3D = _pick_map_object(viewport_position)
+	if picked_object != null:
+		_activate_map_object(picked_object, event.alt_pressed)
+		return
 	var ray_origin: Vector3 = camera_rig.ray_origin(viewport_position)
 	var ray_direction: Vector3 = camera_rig.ray_direction(viewport_position)
 	var point: Variant = _navigation_ray_position(ray_origin, ray_direction)
@@ -2253,6 +2286,11 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_trade()
 		&"storage":
 			_sync_storage()
+		&"map_objects":
+			_sync_map_objects()
+			_snap_all_map_objects_to_surface.call_deferred()
+		&"harvest":
+			_sync_harvest_indicator()
 		&"ground_bags":
 			_sync_ground_bags()
 		&"ground_bag":
@@ -2297,6 +2335,12 @@ func _load_server_map() -> void:
 		if is_instance_valid(bag_node):
 			bag_node.queue_free()
 	ground_bag_nodes.clear()
+	for object_node_value: Variant in map_object_nodes.values():
+		var object_node: Node = object_node_value as Node
+		if is_instance_valid(object_node):
+			object_node.queue_free()
+	map_object_nodes.clear()
+	_ungrounded_map_objects.clear()
 	var manifest_resource: String = str(entry.get("manifest", ""))
 	var manifest_path: String = ProjectSettings.globalize_path(manifest_resource)
 	print_debug("map_resolved server_id=", AppState.current_map,
@@ -2325,8 +2369,10 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	_request_map_redraw()
 	_sync_world()
 	_sync_ground_bags()
+	_sync_map_objects()
 	_snap_all_actors_to_surface.call_deferred()
 	_snap_all_ground_bags_to_surface.call_deferred()
+	_snap_all_map_objects_to_surface.call_deferred()
 
 func _bind_light_markers(manifest: WorldManifest) -> void:
 	# Braziers, hearths and shrine lamps the map declares as markers. Interiors
@@ -4475,6 +4521,105 @@ func _pick_actor(viewport_position: Vector2) -> int:
 	if collider_value is ReplicatedActor3D:
 		return (collider_value as ReplicatedActor3D).actor_id
 	return -1
+
+## World objects the server declared for this map. This is the pick layer the
+## client never had: the world click handler tried actors, then ground bags,
+## then the navigation surface, and stopped, so no rendered prop was ever
+## clickable and the whole harvestable layer was unreachable.
+func _pick_map_object(viewport_position: Vector2) -> MapObject3D:
+	if gameplay_world == null:
+		return null
+	var origin: Vector3 = camera_rig.ray_origin(viewport_position)
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
+		origin, origin + camera_rig.ray_direction(viewport_position) * 2000.0,
+		MapObject3D.PICK_LAYER)
+	var hit: Dictionary = gameplay_world.direct_space_state.intersect_ray(query)
+	var collider_value: Variant = hit.get("collider")
+	return collider_value as MapObject3D if collider_value is MapObject3D else null
+
+## A plain click acts on the object; Alt inspects it instead. Every outcome is
+## a request: the server decides range, tools, level and whether anything
+## happens at all.
+func _activate_map_object(map_object: MapObject3D, inspect: bool) -> void:
+	if inspect:
+		var look_error: Error = Network.look_at_map_object(map_object.object_id)
+		if look_error != OK:
+			push_warning("LOOK_AT_MAP_OBJECT failed: " + error_string(look_error))
+		return
+	if map_object.is_harvestable():
+		# HARVEST is a toggle on the server: sending it for the node already
+		# being harvested stops the run.
+		var harvest_error: Error = Network.harvest(map_object.object_id)
+		if harvest_error != OK:
+			push_warning("HARVEST failed: " + error_string(harvest_error))
+		return
+	var use_error: Error = Network.use_map_object(map_object.object_id)
+	if use_error != OK:
+		push_warning("USE_MAP_OBJECT failed: " + error_string(use_error))
+
+func _sync_map_objects() -> void:
+	for raw_id: Variant in map_object_nodes.keys():
+		var object_id: int = int(raw_id)
+		if not AppState.map_objects.has(object_id):
+			var stale: Variant = map_object_nodes.get(object_id)
+			if stale is Node and is_instance_valid(stale as Node):
+				(stale as Node).queue_free()
+			map_object_nodes.erase(object_id)
+	for raw_id: Variant in AppState.map_objects:
+		var object_id: int = int(raw_id)
+		var dto_value: Variant = AppState.map_objects.get(object_id)
+		if not dto_value is Dictionary:
+			continue
+		if map_object_nodes.has(object_id):
+			continue
+		var map_object := MapObject3D.new()
+		map_object.configure(dto_value as Dictionary, adapter)
+		world_root.add_child(map_object)
+		map_object_nodes[object_id] = map_object
+		_place_map_object_on_surface(map_object)
+	_sync_harvest_indicator()
+
+## Grounds one world object, and notices when it cannot be grounded at all.
+##
+## A server object whose tile has no navigation surface under it is misplaced
+## content: the server is describing somewhere the rendered map does not have.
+## That is worth counting rather than leaving as an invisible marker hanging in
+## the air, so it appears in the protocol diagnostics panel.
+func _place_map_object_on_surface(map_object: MapObject3D) -> void:
+	if not is_instance_valid(map_object):
+		return
+	var sampled: Variant = _navigation_ray_position(
+		map_object.global_position + Vector3(0.0, 200.0, 0.0), Vector3.DOWN)
+	if sampled is Vector3:
+		map_object.set_surface_height((sampled as Vector3).y)
+		_ungrounded_map_objects.erase(map_object.object_id)
+		return
+	_ungrounded_map_objects[map_object.object_id] = map_object.label
+
+func _snap_all_map_objects_to_surface() -> void:
+	await get_tree().physics_frame
+	for raw_object: Variant in map_object_nodes.values():
+		_place_map_object_on_surface(raw_object as MapObject3D)
+
+## The "now harvesting" indicator. The stock client drove this by matching an
+## exact English phrase out of the chat stream; this reads the authoritative
+## harvest-state packet instead, so it survives a reworded message and cannot
+## be left stuck on when the server stops the run for its own reasons - moving,
+## a full backpack, or combat.
+func _sync_harvest_indicator() -> void:
+	var active: bool = bool(AppState.harvest.get("active", false))
+	var active_object: int = int(AppState.harvest.get("object_id", -1))
+	for raw_object: Variant in map_object_nodes.values():
+		var map_object: MapObject3D = raw_object as MapObject3D
+		if is_instance_valid(map_object):
+			map_object.set_active(active and map_object.object_id == active_object)
+	if harvest_banner == null:
+		return
+	if not active:
+		harvest_banner.hide()
+		return
+	harvest_banner.text = "Harvesting %s" % str(AppState.harvest.get("resource", ""))
+	harvest_banner.show()
 
 func _pick_ground_bag(viewport_position: Vector2) -> int:
 	if gameplay_world == null:

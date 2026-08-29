@@ -298,3 +298,33 @@ send failed.
 
 Only one popup is shown at a time; a repeat of an id already on screen is
 ignored, matching the legacy client's refusal to open a second window for it.
+
+## World objects and harvesting
+
+The client cannot tell which rendered prop is a resource. A world package draws
+harvestable props and buildings as ordinary geometry, and the legacy client
+matched object basenames against a lowercase `harvestable.lst` while the packs
+wrote relative paths, so nothing ever matched and no object was harvestable in
+the C client either. Object identity is therefore server state.
+
+`ELORIA_MAP_OBJECTS(236)` lists the clickable objects on the player's current
+map. It is sent unasked at login and again on every map change, and it is
+chunked because a busy map has thousands of harvest nodes: each frame is
+`first:u8 | count:u16le` followed by `count` entries of
+`object_id:u16le | kind:u8 | x:u16le | y:u16le | label NUL | detail NUL`. Only
+the frame with `first` set begins a new list; the rest continue it. Kind 1 is a
+harvest node and kind 2 is an interactive; any other kind is rejected. `label`
+is the resource name or the interactive's role, and `detail` is the harvesting
+level and tool requirement, or the interactive's text - so a requirement is
+stated rather than discovered by failing.
+
+`HARVEST(21)` carries `object_id:u16le` and is a toggle: sending it for the
+node already being harvested stops the run. `USE_MAP_OBJECT(16)` and
+`LOOK_AT_MAP_OBJECT(27)` both carry `object_id:u32le`, the legacy widths.
+
+`ELORIA_HARVEST_STATE(237)` is `active:u8 | object_id:u16le | resource NUL`,
+sent when a run starts and on every path that ends one - the player moving, a
+full backpack, entering combat, a map change, or the toggle. The stock client
+matched an exact English phrase out of the chat stream to drive this state,
+which is not a contract: it breaks on any rewording and on any translation.
+The client renders the indicator from this packet only.
