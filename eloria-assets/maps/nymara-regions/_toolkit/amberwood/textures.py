@@ -553,8 +553,11 @@ def forest_floor(size: int = 512, seed: int = 71) -> TextureSet:
     """Leaf litter over dark loam, with twigs, moss patches and exposed roots."""
     rng = np.random.default_rng(seed)
     loam = N.tileable_fbm(size, 8, 5, seed=seed)
-    color = _colorize(loam, (0.0, (0.030, 0.023, 0.017)), (0.5, (0.058, 0.044, 0.030)),
-                      (1.0, (0.092, 0.072, 0.049)))
+    # Litter over loam, not loam with litter on it. The old ramp bottomed at
+    # 0.030 - near black - so every gap between leaves read as mud and the
+    # whole floor went dark under canopy shadow.
+    color = _colorize(loam, (0.0, (0.140, 0.108, 0.070)), (0.5, (0.212, 0.166, 0.108)),
+                      (1.0, (0.296, 0.238, 0.156)))
     height = loam * 0.3
 
     # scattered fallen leaves drawn as real silhouettes
@@ -562,8 +565,8 @@ def forest_floor(size: int = 512, seed: int = 71) -> TextureSet:
     leaf_alpha = Image.new("L", (size, size), 0)
     cd = ImageDraw.Draw(leaf_color)
     ad = ImageDraw.Draw(leaf_alpha)
-    palette = [(126, 70, 24), (150, 92, 32), (104, 50, 20), (168, 118, 44),
-               (86, 40, 18), (138, 100, 40), (72, 46, 22)]
+    palette = [(158, 96, 36), (186, 124, 48), (134, 74, 30), (204, 152, 64),
+               (116, 60, 26), (172, 130, 56), (100, 66, 32)]
     for _ in range(900):
         cx, cy = rng.uniform(0, size, 2)
         length = rng.uniform(size * 0.020, size * 0.052)
@@ -584,9 +587,14 @@ def forest_floor(size: int = 512, seed: int = 71) -> TextureSet:
     color = _mix(color, leaves, mask * 0.92)
     height = height + mask * 0.35
 
+    # Moss fills the gaps between leaves, so its colour sets how dark the floor
+    # reads overall - at 0.108 it was the darkest thing in the texture and it
+    # covered most of what the litter did not.
     moss = np.clip(N.tileable_fbm(size, 5, 5, seed=seed + 17) * 2.0 - 1.05, 0.0, 1.0)
-    color = _mix(color, np.array([0.108, 0.166, 0.078]), moss * (1.0 - mask) * 0.85)
-    occlusion = np.clip(0.44 + height * 0.5 - moss * 0.1, 0.0, 1.0)
+    color = _mix(color, np.array([0.194, 0.246, 0.126]), moss * (1.0 - mask) * 0.70)
+    # A forest floor is shadowed by its canopy, which the renderer already does.
+    # Baking a 0.44 floor into the texture as well darkened it twice.
+    occlusion = np.clip(0.62 + height * 0.36 - moss * 0.08, 0.0, 1.0)
     roughness = np.full((size, size), 0.93) - moss * 0.05
     return TextureSet("forest_floor", _u8(color), pack_orm(occlusion, roughness),
                       normal_from_height(height, 2.6))
@@ -596,15 +604,15 @@ def leaf_path(size: int = 512, seed: int = 79) -> TextureSet:
     """Packed earth track showing through a thin leaf cover, with pebbles."""
     base = forest_floor(size, seed + 3)
     earth = N.tileable_fbm(size, 10, 5, seed=seed)
-    packed = _colorize(earth, (0.0, (0.098, 0.078, 0.058)), (0.5, (0.156, 0.128, 0.096)),
-                       (1.0, (0.216, 0.184, 0.142)))
+    packed = _colorize(earth, (0.0, (0.156, 0.128, 0.096)), (0.5, (0.232, 0.196, 0.152)),
+                       (1.0, (0.308, 0.268, 0.212)))
     cover = np.clip(N.tileable_fbm(size, 4, 4, seed=seed + 11) * 1.6 - 0.45, 0.0, 1.0)
     color = _mix(packed, np.asarray(base.base_color).astype(np.float64) / 255.0, cover * 0.72)
     pebbles = np.clip(_upsample(N.tileable_worley(min(size, 256), 34, seed=seed + 5), size) * 2.0 - 1.25,
                       0.0, 1.0)
     color = _mix(color, np.array([0.222, 0.214, 0.200]), pebbles * 0.7)
     height = earth * 0.35 + cover * 0.25 + pebbles * 0.4
-    occlusion = np.clip(0.52 + height * 0.42, 0.0, 1.0)
+    occlusion = np.clip(0.68 + height * 0.30, 0.0, 1.0)
     roughness = np.full((size, size), 0.94)
     return TextureSet("leaf_path", _u8(color), pack_orm(occlusion, roughness),
                       normal_from_height(height, 2.2))
