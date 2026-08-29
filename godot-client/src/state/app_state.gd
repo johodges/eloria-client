@@ -81,6 +81,9 @@ var special_events: Array[String] = []
 ## allows, keyed by the server's effect name. Entirely server-stated: the
 ## client never works a limit out from a level.
 var spell_power: Dictionary = {}
+## The game date, the special day in force and what it does, and the whole
+## catalogue of days the server can roll. Command 238; empty until it arrives.
+var almanac: Dictionary = {}
 
 ## The player the server last described, in its own words: who was inspected
 ## and what they have earned. Never assembled from a request the client
@@ -184,6 +187,7 @@ func _on_connection_state_changed(value: String) -> void:
 		merchant = _empty_merchant_state()
 		quest_journal.clear()
 		item_detail = {"open": false}
+		almanac = {}
 		inventory_state = {"gold": 0, "carried": 0, "capacity": 0, "items": []}
 		combat_state = _empty_combat_state()
 		mail.clear()
@@ -607,6 +611,10 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			for raw_quest: Variant in event.entries:
 				quest_journal.append((raw_quest as Dictionary).duplicate(true))
 			state_changed.emit(&"quest_journal")
+		"almanac":
+			almanac = (event as Dictionary).duplicate(true)
+			almanac.erase("type")
+			state_changed.emit(&"almanac")
 		"item_detail":
 			item_detail = (event as Dictionary).duplicate(true)
 			item_detail["open"] = true

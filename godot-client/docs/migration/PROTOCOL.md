@@ -495,6 +495,21 @@ UTF-8.
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+| 238 | Almanac | `day:u8 \| month:u8 \| year:u16 \| kind:u8 \| experience_bonus:u16 \| name \| description \| effect_count:u8` then that many effect tags, `multiplier_count:u8` then that many `skill \| multiplier:u16`, `catalogue_count:u16` then that many `kind:u8 \| name \| description` |
+
+Command 238 replaces two chat lines. The game date was only ever a `GET_DATE`
+reply reading "Game Date 4/7/132", and the special day in force was only ever a
+broadcast announcement, so a client that wanted to show either had to parse
+prose off the chat stream. Both are numbers here. `kind` is an index into
+`ordinary, good, neutral, bad`; `experience_bonus` and each skill `multiplier`
+are hundredths, so 200 is a doubling and 123 is the 1.23 that Scholars Day
+rolls at random and no client could derive.
+
+The catalogue of every day the world can bring travels with the packet rather
+than being shipped inside the client. Which days exist and what each one does
+is the server's to decide, and a copy in the client is a second source of truth
+that goes stale without anyone noticing. Both chat lines still go out unchanged
+for the legacy client.
 
 Command 228 replaces a reply a client could not read on its own. The legacy
 answer to `GET_PLAYER_INFO(5)` is a `You see: <name>` chat line plus

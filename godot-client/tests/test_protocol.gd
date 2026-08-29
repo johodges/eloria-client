@@ -29,6 +29,7 @@ func _init() -> void:
 	# Nothing may be advertised whose packet this client does not decode.
 	var decoded_extensions: Dictionary = {
 		"actor16_v1": EloriaProtocol.ServerMessage.ADD_NEW_ACTOR_EXTENDED,
+		"almanac_v1": EloriaProtocol.ServerMessage.ELORIA_ALMANAC_STATE,
 		"combat_hud_v1": EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE,
 		"inventory_window_v1": EloriaProtocol.ServerMessage.ELORIA_INVENTORY_STATE,
 		"item_detail_v1": EloriaProtocol.ServerMessage.ELORIA_ITEM_DETAIL,
@@ -58,7 +59,8 @@ func _init() -> void:
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
-		EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE: "00"}
+		EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE: "00",
+		EloriaProtocol.ServerMessage.ELORIA_ALMANAC_STATE: "010101000064004f7264696e61727920446179004e6f7468696e6720697320696e20666f7263652e0000000000"}
 	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
 		_expect(decoded_extensions.has(capability),
 			"advertised capability %s is one this suite knows the client decodes"
@@ -713,6 +715,40 @@ func _init() -> void:
 		and active_spell.duration_seconds == 90, "active spell duration fields")
 	_expect(EloriaProtocol.decode_server(19, PackedByteArray([1, 0])).type == "invalid",
 		"malformed inventory snapshot rejected")
+	# Command 238: the almanac. A client that shows the date or the day in
+	# force used to have to read them out of chat lines.
+	var almanac_payload := PackedByteArray([4, 4, 132, 0, 1, 100, 0])
+	almanac_payload.append_array(_nul_bytes("Day of Sun Tzu"))
+	almanac_payload.append_array(_nul_bytes("Attack and defense are doubled."))
+	almanac_payload.append(1)
+	almanac_payload.append_array(_nul_bytes("armor"))
+	almanac_payload.append(1)
+	almanac_payload.append_array(_nul_bytes("attack"))
+	almanac_payload.append_array(PackedByteArray([200, 0]))
+	almanac_payload.append_array(PackedByteArray([1, 0]))
+	almanac_payload.append(0)
+	almanac_payload.append_array(_nul_bytes("Ordinary Day"))
+	almanac_payload.append_array(_nul_bytes("Nothing is in force."))
+	var almanac: Dictionary = EloriaProtocol.decode_server(238, almanac_payload)
+	_expect(almanac.type == "almanac" and almanac.day == 4 and almanac.month == 4
+		and almanac.year == 132 and almanac.kind == "good"
+		and str(almanac.name) == "Day of Sun Tzu"
+		and (almanac.effects as Array) == ["armor"]
+		and is_equal_approx(float((almanac.multipliers as Dictionary)["attack"]), 2.0)
+		and (almanac.catalogue as Array).size() == 1
+		and is_equal_approx(float(almanac.experience_bonus), 1.0),
+		"almanac decodes the date, the day, its effects and the catalogue")
+	_expect(EloriaProtocol.decode_server(238, PackedByteArray([1, 1, 0])).type
+			== "invalid",
+		"a truncated almanac is rejected rather than half-read")
+	var short_catalogue := almanac_payload.slice(0, almanac_payload.size() - 4)
+	_expect(EloriaProtocol.decode_server(238, short_catalogue).type == "invalid",
+		"an almanac whose catalogue is cut short is rejected")
+	var kind_out_of_range := almanac_payload.duplicate()
+	kind_out_of_range[4] = 9
+	_expect(EloriaProtocol.decode_server(238, kind_out_of_range).type == "invalid",
+		"an unknown day kind is rejected rather than indexed past the end")
+
 	var knowledge_entry_count := 0
 	var knowledge_catalog_file: FileAccess = FileAccess.open(
 		"res://data/knowledge/catalog.json", FileAccess.READ)

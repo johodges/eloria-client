@@ -61,6 +61,7 @@ enum ServerMessage {
 	ELORIA_MAIL_STATE = 229, ELORIA_NAVIGATION_STATE = 230,
 	ELORIA_SPECIAL_EVENT_STATE = 232, ELORIA_PLAYER_INFO = 228,
 	ELORIA_SPELL_POWER = 231,
+	ELORIA_ALMANAC_STATE = 238,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
 }
@@ -145,6 +146,7 @@ static func turn(left: bool) -> PackedByteArray:
 ## packet, never before.
 const CLIENT_CAPABILITIES: Array[String] = [
 	"actor16_v1",
+	"almanac_v1",
 	"combat_hud_v1",
 	"inventory_window_v1",
 	"item_detail_v1",
@@ -693,6 +695,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_popup(payload)
 		ServerMessage.ELORIA_SPELL_POWER:
 			return decode_spell_power(payload)
+		ServerMessage.ELORIA_ALMANAC_STATE:
+			return decode_almanac(payload)
 		ServerMessage.ELORIA_PLAYER_INFO:
 			return decode_player_info(payload)
 		ServerMessage.SEND_MAP_MARKER:
@@ -1076,6 +1080,80 @@ static func decode_spell_power(payload: PackedByteArray) -> Dictionary:
 	if offset != payload.size():
 		return {"type": "invalid", "error": "spell_power_trailing"}
 	return {"type": "spell_power", "effects": effects}
+
+## The four kinds a day can be, in the order the server numbers them.
+const ALMANAC_KINDS: Array[String] = ["ordinary", "good", "neutral", "bad"]
+
+## Command 238. The game date, the day in force and what it does, and the whole
+## catalogue of days this server can roll.
+##
+## Both halves used to be chat lines - a `GET_DATE` reply and a broadcast
+## announcement - so showing either meant reading prose off the chat stream.
+## The catalogue arrives with them because which days exist is the server's to
+## decide; a copy shipped here would be a second source of truth.
+static func decode_almanac(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 7:
+		return {"type": "invalid", "error": "almanac_length"}
+	var kind_index: int = int(payload[4])
+	if kind_index >= ALMANAC_KINDS.size():
+		return {"type": "invalid", "error": "almanac_kind"}
+	var names: Dictionary = _nul_run(payload, 7, 2)
+	if names.is_empty():
+		return {"type": "invalid", "error": "almanac_text"}
+	var offset: int = int(names.offset)
+	var texts: Array = names.values as Array
+
+	if offset >= payload.size():
+		return {"type": "invalid", "error": "almanac_effect_count"}
+	var effect_count: int = int(payload[offset])
+	var effect_fields: Dictionary = _nul_run(payload, offset + 1, effect_count)
+	if effect_fields.is_empty() and effect_count > 0:
+		return {"type": "invalid", "error": "almanac_effects"}
+	offset = int(effect_fields.offset) if effect_count > 0 else offset + 1
+	var effects: Array[String] = []
+	if effect_count > 0:
+		for value: Variant in effect_fields.values as Array:
+			effects.append(str(value))
+
+	if offset >= payload.size():
+		return {"type": "invalid", "error": "almanac_multiplier_count"}
+	var multiplier_count: int = int(payload[offset])
+	offset += 1
+	var multipliers: Dictionary = {}
+	for _index: int in range(multiplier_count):
+		var skill: Dictionary = _nul_at(payload, offset)
+		if skill.is_empty() or int(skill.offset) + 2 > payload.size():
+			return {"type": "invalid", "error": "almanac_multiplier"}
+		offset = int(skill.offset)
+		multipliers[str(skill.value)] = float(u16(payload, offset)) / 100.0
+		offset += 2
+
+	if offset + 2 > payload.size():
+		return {"type": "invalid", "error": "almanac_catalogue_count"}
+	var catalogue_count: int = u16(payload, offset)
+	offset += 2
+	var catalogue: Array[Dictionary] = []
+	for _index: int in range(catalogue_count):
+		if offset >= payload.size():
+			return {"type": "invalid", "error": "almanac_catalogue_kind"}
+		var entry_kind: int = int(payload[offset])
+		if entry_kind >= ALMANAC_KINDS.size():
+			return {"type": "invalid", "error": "almanac_catalogue_kind"}
+		var entry: Dictionary = _nul_run(payload, offset + 1, 2)
+		if entry.is_empty():
+			return {"type": "invalid", "error": "almanac_catalogue_text"}
+		offset = int(entry.offset)
+		var entry_values: Array = entry.values as Array
+		catalogue.append({"kind": ALMANAC_KINDS[entry_kind],
+			"name": str(entry_values[0]), "description": str(entry_values[1])})
+	if offset != payload.size():
+		return {"type": "invalid", "error": "almanac_trailing"}
+	return {"type": "almanac",
+		"day": int(payload[0]), "month": int(payload[1]), "year": u16(payload, 2),
+		"kind": ALMANAC_KINDS[kind_index],
+		"experience_bonus": float(u16(payload, 5)) / 100.0,
+		"name": str(texts[0]), "description": str(texts[1]),
+		"effects": effects, "multipliers": multipliers, "catalogue": catalogue}
 
 ## Command 228. Who the player just looked at, and what they have earned.
 ##
