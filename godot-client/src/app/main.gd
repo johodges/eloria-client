@@ -276,9 +276,6 @@ var _ungrounded_map_objects: Dictionary = {}
 var models: Dictionary = {}
 var actor_type_models: Dictionary = {}
 var npc_looks: Dictionary = {}
-## The models the server's world objects stand as: one per harvest resource and
-## one per interactive role. See `MapObject3D`.
-var world_object_catalog: Dictionary = {}
 var creation_options: Array = []
 var animation_config: Dictionary = {}
 var animation_configs: Dictionary = {}
@@ -553,7 +550,6 @@ func _ready() -> void:
 	models = model_registry.get("models", {})
 	actor_type_models = model_registry.get("actorTypes", {})
 	npc_looks = model_registry.get("npcLooks", {})
-	world_object_catalog = _json("res://data/world/objects.json")
 	creation_options = model_registry.get("creationOptions", [])
 	animation_config = _json("res://data/animations/luminous.json")
 	animation_configs["res://data/animations/luminous.json"] = animation_config
@@ -6288,8 +6284,7 @@ func _sync_map_objects() -> void:
 		if map_object_nodes.has(object_id):
 			continue
 		var map_object := MapObject3D.new()
-		map_object.configure(dto_value as Dictionary, adapter,
-			world_object_catalog)
+		map_object.configure(dto_value as Dictionary, adapter)
 		world_root.add_child(map_object)
 		map_object_nodes[object_id] = map_object
 		_place_map_object_on_surface(map_object)
@@ -6458,15 +6453,19 @@ func _apply_eloria_art() -> void:
 	_hud_active_atlas = _external_texture("res://assets/ui/eloria_gamebuttons.png")
 	_hud_inactive_atlas = _external_texture("res://assets/ui/eloria_gamebuttons_inactive.png")
 	if _hud_active_atlas != null:
+		# The Godot HUD atlas uses one canonical row-major icon order.  Keeping
+		# these regions contiguous makes the art easy to audit and prevents the
+		# legacy atlas's highlighted-state pairs from being mistaken for actions.
 		_hud_icon_regions = {
 			%WalkButton: Rect2(0, 0, 32, 32), %ChatButton: Rect2(32, 0, 32, 32),
-			%KnowledgeButton: Rect2(96, 0, 32, 32), %AttackButton: Rect2(160, 0, 32, 32),
-			%StatsButton: Rect2(192, 0, 32, 32), %SitButton: Rect2(0, 32, 32, 32),
-			%EncyclopediaButton: Rect2(192, 128, 32, 32),
-			%TradeButton: Rect2(64, 32, 32, 32), %InventoryButton: Rect2(96, 32, 32, 32),
 			%LookButton: Rect2(64, 0, 32, 32),
-			%ManufacturingButton: Rect2(128, 32, 32, 32),
-			%DisconnectButton: Rect2(224, 0, 32, 32), %MapButton: Rect2(128, 128, 32, 32)}
+			%KnowledgeButton: Rect2(96, 0, 32, 32), %AttackButton: Rect2(128, 0, 32, 32),
+			%StatsButton: Rect2(160, 0, 32, 32),
+			%DisconnectButton: Rect2(192, 0, 32, 32), %SitButton: Rect2(224, 0, 32, 32),
+			%TradeButton: Rect2(0, 32, 32, 32), %InventoryButton: Rect2(32, 32, 32, 32),
+			%ManufacturingButton: Rect2(64, 32, 32, 32),
+			%EncyclopediaButton: Rect2(96, 32, 32, 32),
+			%MapButton: Rect2(128, 32, 32, 32)}
 		for button_value: Variant in _hud_icon_regions:
 			var icon_button: Button = button_value as Button
 			icon_button.icon = _atlas_region(_hud_active_atlas,
