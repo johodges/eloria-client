@@ -1285,3 +1285,126 @@ def ruin_building(half_x: float, half_z: float, seed: int = 0,
             .translate(float(rng.uniform(-half_x * 0.5, half_x * 0.5)), 0.0,
                        float(rng.uniform(-half_z * 0.5, half_z * 0.5))))
     return out
+
+# ------------------------------------------------------------------ doors
+def well_head(radius: float = 3.4, height: float = 3.0,
+              seed: int = 0) -> SW.MeshGroup:
+    """A drum well-head over a shaft: the way down into the cistern.
+
+    The rim is a walk surface and the mouth is left open, so the piece reads as
+    somewhere you can stand and look down rather than as a solid plinth. The
+    ring is annular for the reason every deck in this region is: placement is
+    single-layer, and a solid lid would ground an actor on the lid.
+    """
+    rng = _rng(seed)
+    out = SW.MeshGroup()
+    # the drum, as a ring of ashlar blocks
+    blocks = 16
+    for i in range(blocks):
+        angle = 2.0 * math.pi * i / blocks
+        block = M.box((radius * 0.44, height * float(rng.uniform(0.82, 1.0)),
+                       radius * 0.34),
+                      center=(radius, 0.0, 0.0), uv_scale=0.7, material=JADE)
+        block.transform(M.rotation_y(-angle))
+        out.add(block)
+    # a walkable kerb around the mouth, annular
+    steps = 20
+    for i in range(steps):
+        a0 = 2.0 * math.pi * i / steps
+        plank = M.box((radius * 0.42, 0.30, radius * 0.52),
+                      center=(radius * 1.26, height * 0.5 - 0.15, 0.0),
+                      uv_scale=0.6, material=PAVING)
+        plank.transform(M.rotation_y(-a0))
+        out.add_walk(plank)
+    # the head-frame and its bucket
+    for sign in (-1.0, 1.0):
+        out.add(M.cylinder(0.16, 0.13, height * 1.5,
+                           segments=6, material=TIMBER)
+                .translate(sign * radius * 0.9, height * 0.5, 0.0))
+    out.add(M.cylinder(0.11, 0.11, radius * 1.9, segments=6, material=TIMBER)
+            .transformed(M.rotation_z(math.pi * 0.5))
+            .translate(0.0, height * 2.0, 0.0))
+    out.add(shell_boss(radius * 0.22)
+            .translate(0.0, height * 0.52, radius * 1.15))
+    out.add(vine_curtain(radius * 0.8, height * 0.9, seed=seed + 3, sheets=2)
+            .translate(0.0, height * 0.5, -radius * 1.1))
+    return out
+
+
+def stair_mouth(width: float = 5.2, drop: float = 3.2,
+                seed: int = 0) -> SW.MeshGroup:
+    """A stepped opening in a plaza floor: the way down to the hatchery.
+
+    Built along +Z with its top at y = 0 so it places on the plaza surface. The
+    treads descend into the ground and are walk surfaces; the cheek walls and
+    the lintel are not.
+    """
+    out = SW.MeshGroup()
+    steps = 8
+    rise = drop / steps
+    run = width * 0.22
+    for i in range(steps):
+        y = -rise * (i + 1)
+        out.add_walk(M.box((width * 0.62, 0.30, run),
+                           center=(0.0, y + 0.15, run * (i + 0.5)),
+                           uv_scale=0.6, material=PAVING))
+    for sign in (-1.0, 1.0):
+        out.add(M.box((width * 0.20, drop * 1.1, run * steps * 1.05),
+                      center=(sign * width * 0.41, -drop * 0.45,
+                              run * steps * 0.5),
+                      uv_scale=0.6, material=JADE))
+        out.add(M.box((width * 0.22, 0.36, width * 0.30),
+                      center=(sign * width * 0.41, 0.18, -width * 0.10),
+                      uv_scale=0.7, material=CARVED))
+    # the lintel and its sun disc, so the mouth reads as a doorway
+    out.add(M.box((width * 1.02, 0.42, width * 0.34),
+                  center=(0.0, 1.9, -width * 0.06), uv_scale=0.6,
+                  material=JADE))
+    disc = sun_disc(width * 0.16, seed=seed)
+    disc.transform(M.rotation_x(math.pi / 2.0))
+    disc.translate(0.0, 1.5, -width * 0.22)
+    out.add(disc)
+    for sign in (-1.0, 1.0):
+        out.add(M.box((width * 0.12, 1.9, width * 0.28),
+                      center=(sign * width * 0.45, 0.95, -width * 0.06),
+                      uv_scale=0.7, material=JADE))
+    return out
+
+
+def broken_mouth(width: float = 4.6, drop: float = 2.8,
+                 seed: int = 0) -> SW.MeshGroup:
+    """A collapsed opening into the root undercroft.
+
+    Not a built door: a hole where a vault came down, edged in rubble with roots
+    across it. Its ramp is walkable so the way in is real.
+    """
+    rng = _rng(seed)
+    out = SW.MeshGroup()
+    steps = 7
+    for i in range(steps):
+        y = -drop * (i + 1) / steps
+        out.add_walk(M.box((width * 0.58, 0.30, width * 0.26),
+                           center=(float(rng.uniform(-0.3, 0.3)), y + 0.15,
+                                   width * 0.26 * (i + 0.5)),
+                           uv_scale=0.6, material=RUBBLE))
+    for i in range(9):
+        angle = math.pi * float(rng.uniform(0.05, 0.95))
+        chunk = SW.ruin_fragment(seed=seed + i,
+                                 scale=float(rng.uniform(0.4, 1.0)))
+        chunk.translate(math.cos(angle) * width * 0.62,
+                        float(rng.uniform(-0.2, 0.4)),
+                        math.sin(angle) * width * 0.62 - width * 0.1)
+        out.add(chunk)
+    # roots across the opening
+    for i in range(5):
+        path, radii = [], []
+        for k in range(12):
+            t = k / 11.0
+            path.append((-width * 0.6 + width * 1.2 * t,
+                         0.9 - math.sin(t * math.pi) * 0.7,
+                         float(rng.uniform(-0.4, 0.4)) + width * 0.25 * i * 0.2))
+            radii.append(float(rng.uniform(0.14, 0.26)))
+        out.add(M.tube(np.asarray(path), radii, segments=6, material=SK.BARK))
+    out.add(vine_curtain(width * 0.9, 2.2, seed=seed + 11, sheets=3)
+            .translate(0.0, 1.1, -width * 0.2))
+    return out
