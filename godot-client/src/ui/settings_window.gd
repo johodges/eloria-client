@@ -230,6 +230,9 @@ func _build_graphics() -> void:
 	_add_toggle(page, "shadows", tr("ELORIA_SETTINGS_SHADOWS"), true)
 	_add_toggle(page, "particles", tr("ELORIA_SETTINGS_PARTICLES"), true)
 	_add_toggle(page, "nameplates", tr("ELORIA_SETTINGS_NAMEPLATES"), true)
+	# The combat box can also be dismissed from its own right-click menu, so
+	# this is the way back once a player has done that.
+	_add_toggle(page, "combat_hud", tr("ELORIA_SETTINGS_COMBAT_HUD"), true)
 
 func _build_camera() -> void:
 	var page := VBoxContainer.new()
@@ -280,6 +283,16 @@ func _build_controls() -> void:
 			button.pressed.connect(begin_capture.bind(name))
 			row.add_child(button)
 			binding_rows[name] = button
+
+## Pushes a stored value back onto a toggle without re-emitting it, so the
+## panel opens showing what the client actually has rather than the default it
+## was built with.
+func restore_toggle(key: String, value: bool) -> bool:
+	var toggle: CheckButton = find_child(key, true, false) as CheckButton
+	if toggle == null:
+		return false
+	toggle.set_pressed_no_signal(value)
+	return true
 
 func _add_toggle(page: VBoxContainer, key: String, label: String,
 		value: bool) -> void:

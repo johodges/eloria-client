@@ -42,11 +42,17 @@ const CAPE_PART := 2
 ## few millimetres along its own normals puts the skin behind it for good
 ## without changing the silhouette. Trims and seams grow slightly more so they
 ## stay on top of the garment they edge.
+## Four millimetres closed the flat panels but not the shoulders, where the
+## deltoid swings furthest from the shell it was fitted to, nor the waist,
+## where the shirt hem and the pants waistband meet over the same skin. The
+## shirt is given the most room, the waistband enough more than the shirt hem
+## to read as a separate garment over it, and the boots enough to swallow the
+## foot they are pulled over.
 const WARDROBE_GROW := {
-	"wardrobe_shirt": 0.004, "wardrobe_shirt_trim": 0.006,
-	"wardrobe_pants": 0.004, "wardrobe_pants_seam": 0.006,
-	"wardrobe_boots": 0.004, "wardrobe_boots_seam": 0.006,
-	"wardrobe_head_band": 0.004, "wardrobe_head_cap": 0.006,
+	"wardrobe_shirt": 0.011, "wardrobe_shirt_trim": 0.013,
+	"wardrobe_pants": 0.009, "wardrobe_pants_seam": 0.016,
+	"wardrobe_boots": 0.014, "wardrobe_boots_seam": 0.017,
+	"wardrobe_head_band": 0.006, "wardrobe_head_cap": 0.009,
 }
 
 var _predicted_turn_pending := false
@@ -75,6 +81,12 @@ var _silhouette: OccludedSilhouette
 # Visual layer 2. The gameplay camera renders layers 1 and 2; the minimap and
 # full-map cameras render layers 1 and 3.
 const GAMEPLAY_ONLY_VISUAL_LAYER := 2
+## Layer 3, which only the two map cameras render. An actor's own body is a
+## third of a pixel on a map that frames 1600 metres, so everyone standing on
+## it needs a dot sized for the map rather than for the world.
+const MAP_MARKER_LAYER := 4
+const MAP_DOT_RADIUS := 3.5
+const MAP_DOT_COLOUR := Color(0.62, 0.82, 1.0)
 const SETTLED_YAW_EPSILON := 0.0005
 
 # Overhead health bar geometry, in world units, measured downwards from the
@@ -125,6 +137,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	selection_ring.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(selection_ring)
 	_add_nameplate(dto)
+	_add_map_dot()
 	resolver = AnimationResolver.new(animation_config)
 	_model_config = model_config.duplicate(true)
 	_attachment_bones = (model_config.get("attachments", {}) as Dictionary).duplicate(true)
@@ -318,6 +331,27 @@ func _add_fallback_visual(dto: Dictionary) -> void:
 	mesh_instance.mesh = capsule
 	mesh_instance.position.y = 0.85
 	add_child(mesh_instance)
+
+## The dot this actor shows on the minimap and the full map. The legend calls
+## it NPC, but every actor gets one: a player standing somewhere is the same
+## kind of thing to read off a map as an NPC is, and the local player already
+## has its own white mark drawn over the top of this one.
+func _add_map_dot() -> void:
+	var material: StandardMaterial3D = StandardMaterial3D.new()
+	material.albedo_color = MAP_DOT_COLOUR
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.no_depth_test = true
+	var dot_mesh: CylinderMesh = CylinderMesh.new()
+	dot_mesh.top_radius = MAP_DOT_RADIUS
+	dot_mesh.bottom_radius = MAP_DOT_RADIUS
+	dot_mesh.height = 0.08
+	dot_mesh.material = material
+	var dot: MeshInstance3D = MeshInstance3D.new()
+	dot.name = "MapDot"
+	dot.mesh = dot_mesh
+	dot.layers = MAP_MARKER_LAYER
+	dot.position.y = 3.0
+	add_child(dot)
 
 ## The nameplate. A guild tag arrives as part of the display name in the actor
 ## packet - "Alice ELO" - so a client that takes the whole string as a
@@ -1348,10 +1382,14 @@ func _apply_import_adapter(config: Dictionary) -> void:
 	if model == null:
 		return
 	model.scale = Vector3.ONE * float(config.get("scale", 1.0))
-	# Native glTF actors are authored facing +Z, while Godot's logical forward
-	# axis is -Z. Correct only the imported visual root so server yaw, click
-	# targets, keyboard-relative movement, and equipment attachments continue
-	# to share one canonical logical heading.
+	# The two rig families are authored facing opposite ways: the race rigs
+	# down +Z to face the creation-preview camera, the creature rigs down -Z,
+	# which is already Godot's logical forward axis. Each model states its own
+	# correction, so a creature is not turned round and walked backwards. The
+	# 180 fallback is only for a model that predates the key. Correct only the
+	# imported visual root so server yaw, click targets, keyboard-relative
+	# movement, and equipment attachments continue to share one canonical
+	# logical heading.
 	var forward_axis_correction: float = float(
 		config.get("forwardAxisCorrectionDegreesY", 180.0))
 	model.rotation_degrees = Vector3(

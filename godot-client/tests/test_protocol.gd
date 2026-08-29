@@ -713,6 +713,7 @@ func _init() -> void:
 		and active_spell.duration_seconds == 90, "active spell duration fields")
 	_expect(EloriaProtocol.decode_server(19, PackedByteArray([1, 0])).type == "invalid",
 		"malformed inventory snapshot rejected")
+	var knowledge_entry_count := 0
 	var knowledge_catalog_file: FileAccess = FileAccess.open(
 		"res://data/knowledge/catalog.json", FileAccess.READ)
 	_expect(knowledge_catalog_file != null, "knowledge catalog opens")
@@ -723,10 +724,20 @@ func _init() -> void:
 		if knowledge_catalog_value is Dictionary:
 			var knowledge_entries: Array = (knowledge_catalog_value as Dictionary).get(
 				"entries", []) as Array
-			_expect(knowledge_entries.size() == 385
-				and str(knowledge_entries[0]) == "Metallurgy"
-				and str(knowledge_entries[1]) == "Metal Smelting",
-				"knowledge catalog matches the audited server insertion order")
+			knowledge_entry_count = knowledge_entries.size()
+			# The catalog is compiled from the profile the server actually
+			# runs, not from the unmodified Eternal Lands data the fork was
+			# built on. That profile has one book; the legacy one has 385, and
+			# shipping those listed knowledge the server has never heard of.
+			var knowledge_source: Dictionary = (knowledge_catalog_value
+				as Dictionary).get("source", {}) as Dictionary
+			_expect(str(knowledge_source.get("profile", "")) == "eloria",
+				"knowledge catalog names the profile it was compiled from: "
+					+ str(knowledge_source.get("profile", "")))
+			_expect(knowledge_entries.size() == 1
+				and str(knowledge_entries[0]) == "Beginnings",
+				"knowledge catalog matches the served profile's own books: %s"
+					% str(knowledge_entries))
 	var manufacturing_catalog_file: FileAccess = FileAccess.open(
 		"res://data/manufacturing/recipes.json", FileAccess.READ)
 	_expect(manufacturing_catalog_file != null, "manufacturing catalog opens")
@@ -738,32 +749,59 @@ func _init() -> void:
 			var manufacturing_data: Dictionary = manufacturing_value as Dictionary
 			var manufacturing_recipes: Array = manufacturing_data.get("recipes", []) as Array
 			var sources: Dictionary = manufacturing_data.get("sources", {}) as Dictionary
-			_expect(manufacturing_recipes.size() == 389
-				and str((manufacturing_recipes[0] as Dictionary).get("output", "")) == "Fire Essence"
+			_expect(str(sources.get("profile", "")) == "eloria"
+				and manufacturing_recipes.size() == 32
+				and str((manufacturing_recipes[0] as Dictionary).get("output", "")) == "Torch"
 				and str(sources.get("recipesSha256", "")) ==
-					"e6d3c8988effb22f11cce1dcb553097860e066b0ca85eaa7bb01390809160d4e",
-				"manufacturing catalog matches the audited unmodified server data")
+					"b2a224cba0f90d34fa6958db3892c763fbd48355affacfc2a5211477eb41a949",
+				"manufacturing catalog matches the served profile's own recipes")
+			# Both catalogs come out of one generator run, so an index into the
+			# knowledge catalog cannot point past its end.
+			var dangling: Array[int] = []
+			for recipe_value: Variant in manufacturing_recipes:
+				var index: int = int((recipe_value as Dictionary).get(
+					"knowledgeIndex", -1))
+				if index >= knowledge_entry_count:
+					dangling.append(index)
+			_expect(dangling.is_empty(),
+				"every recipe's knowledge index resolves in the knowledge"
+					+ " catalog: %s" % str(dangling))
 			var catalog: ManufacturingCatalog = ManufacturingCatalog.new()
 			catalog.configure(manufacturing_data)
+			# Recipe 0 is a Torch: a Wood Plank and a Cloth Roll, held with a
+			# Hatchet. The tool is checked but never consumed, so it is not one
+			# of the selected slots.
 			var ready: Dictionary = catalog.availability(0, {
-				4: {"image_id": 42, "quantity": 1},
-				5: {"image_id": 31, "quantity": 1},
-				6: {"image_id": 35, "quantity": 1}}, [], {"food": 45, "ether": 0})
+				4: {"image_id": 39, "quantity": 1},
+				5: {"image_id": 40, "quantity": 1},
+				6: {"image_id": 7, "quantity": 1}}, [], {"food": 45, "ether": 0})
 			var ready_selection: Array = ready.get("selection", []) as Array
 			_expect((ready.get("reasons", []) as Array).is_empty()
-				and ready_selection.size() == 3
+				and ready_selection.size() == 2
 				and int((ready_selection[0] as Dictionary).get("slot", -1)) == 4,
-				"recipe resolves authoritative inventory slots and quantities")
+				"recipe resolves authoritative inventory slots and quantities: "
+					+ str(ready))
 			var missing: Dictionary = catalog.availability(0, {}, [],
 				{"food": 45, "ether": 0})
 			_expect((missing.get("reasons", []) as Array).size() == 3,
-				"missing ingredients explicitly block manufacturing")
-			var ambiguous: Dictionary = catalog.availability(173, {
-				0: {"image_id": 50, "quantity": 1},
-				1: {"image_id": 140, "quantity": 3}}, [], {"food": 45, "ether": 0})
-			_expect(str((ambiguous.get("reasons", []) as Array)[0]).contains(
-				"automatic selection is unavailable"),
-				"ambiguous legacy item artwork never guesses an authoritative item")
+				"missing ingredients and the absent tool each block"
+					+ " manufacturing explicitly: %s" % str(missing))
+			# Recipe 18 is the Gloam Focus, whose Memory of Rain shares its
+			# artwork with seven pieces of armour. The client cannot tell them
+			# apart from an image id, so it says so rather than picking one.
+			var ambiguous: Dictionary = catalog.availability(18, {
+				0: {"image_id": 68, "quantity": 2},
+				1: {"image_id": 73, "quantity": 3},
+				2: {"image_id": 80, "quantity": 1},
+				3: {"image_id": 37, "quantity": 5},
+				4: {"image_id": 9, "quantity": 1}}, [],
+				{"food": 45, "ether": 40})
+			var ambiguous_reasons: Array = ambiguous.get("reasons", []) as Array
+			_expect(ambiguous_reasons.size() == 1
+				and str(ambiguous_reasons[0]).contains(
+					"automatic selection is unavailable"),
+				"ambiguous item artwork never guesses an authoritative item: "
+					+ str(ambiguous_reasons))
 	var atlas_config_file: FileAccess = FileAccess.open(
 		"res://data/items/atlases.json", FileAccess.READ)
 	_expect(atlas_config_file != null, "legacy item atlas registry opens")

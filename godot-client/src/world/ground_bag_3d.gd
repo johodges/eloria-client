@@ -57,8 +57,8 @@ func _build_visual() -> void:
 	marker_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	marker_material.no_depth_test = true
 	var marker_mesh: CylinderMesh = CylinderMesh.new()
-	marker_mesh.top_radius = 0.7
-	marker_mesh.bottom_radius = 0.7
+	marker_mesh.top_radius = 4.0
+	marker_mesh.bottom_radius = 4.0
 	marker_mesh.height = 0.08
 	marker_mesh.material = marker_material
 	var map_marker: MeshInstance3D = MeshInstance3D.new()

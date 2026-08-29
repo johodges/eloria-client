@@ -767,48 +767,356 @@
   ],
   "harvestables": [
     {
-      "id": "resonant-crystal-east",
-      "resource": "resonant_crystal",
+      "id": "mirror-reed-01",
+      "resource": "mirror-reed",
       "position": [
-        238.0,
-        31.0,
+        -68.84,
+        31.15,
+        131.16
+      ],
+      "serverTile": [
+        620,
+        486
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "mirror-reed-02",
+      "resource": "mirror-reed",
+      "position": [
+        -59.53,
+        31.15,
+        98.6
+      ],
+      "serverTile": [
+        640,
+        556
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "mirror-reed-03",
+      "resource": "mirror-reed",
+      "position": [
+        -38.14,
+        31.15,
         120.0
       ],
-      "radius": 2.5,
-      "respawnSeconds": 90
-    },
-    {
-      "id": "stormglass-west",
-      "resource": "stormglass_shard",
-      "position": [
-        -242.0,
-        31.0,
-        116.0
+      "serverTile": [
+        686,
+        510
       ],
       "radius": 2.5,
-      "respawnSeconds": 90
+      "respawnSeconds": 90,
+      "authority": "server"
     },
     {
-      "id": "mirror-reed-south",
-      "resource": "mirror_reed",
+      "id": "pale-quartz-01",
+      "resource": "pale-quartz",
       "position": [
-        -82.0,
-        31.0,
-        258.0
+        -52.09,
+        31.15,
+        -154.42
+      ],
+      "serverTile": [
+        656,
+        1100
       ],
       "radius": 2.5,
-      "respawnSeconds": 90
+      "respawnSeconds": 90,
+      "authority": "server"
     },
     {
-      "id": "sunmane-seed-north",
-      "resource": "sunmane_seed",
+      "id": "pale-quartz-02",
+      "resource": "pale-quartz",
       "position": [
-        92.0,
-        31.0,
-        -252.0
+        -31.63,
+        31.15,
+        -126.51
+      ],
+      "serverTile": [
+        700,
+        1040
       ],
       "radius": 2.5,
-      "respawnSeconds": 90
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "pale-quartz-03",
+      "resource": "pale-quartz",
+      "position": [
+        -11.16,
+        31.15,
+        -167.44
+      ],
+      "serverTile": [
+        744,
+        1128
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "resonant-crystal-01",
+      "resource": "resonant-crystal",
+      "position": [
+        110.7,
+        31.15,
+        55.81
+      ],
+      "serverTile": [
+        1006,
+        648
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "resonant-crystal-02",
+      "resource": "resonant-crystal",
+      "position": [
+        130.23,
+        31.15,
+        31.63
+      ],
+      "serverTile": [
+        1048,
+        700
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "riverflax-01",
+      "resource": "riverflax",
+      "position": [
+        -48.37,
+        31.15,
+        131.16
+      ],
+      "serverTile": [
+        664,
+        486
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "riverflax-02",
+      "resource": "riverflax",
+      "position": [
+        -3.72,
+        31.15,
+        146.98
+      ],
+      "serverTile": [
+        760,
+        452
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "riverflax-03",
+      "resource": "riverflax",
+      "position": [
+        48.37,
+        31.15,
+        127.44
+      ],
+      "serverTile": [
+        872,
+        494
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "steppe-wheat-01",
+      "resource": "steppe-wheat",
+      "position": [
+        -29.77,
+        31.15,
+        80.0
+      ],
+      "serverTile": [
+        704,
+        596
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "steppe-wheat-02",
+      "resource": "steppe-wheat",
+      "position": [
+        0.0,
+        31.15,
+        78.14
+      ],
+      "serverTile": [
+        768,
+        600
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "steppe-wheat-03",
+      "resource": "steppe-wheat",
+      "position": [
+        26.05,
+        31.15,
+        83.72
+      ],
+      "serverTile": [
+        824,
+        588
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "stormglass-shard-01",
+      "resource": "stormglass-shard",
+      "position": [
+        -112.56,
+        31.15,
+        53.95
+      ],
+      "serverTile": [
+        526,
+        652
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "stormglass-shard-02",
+      "resource": "stormglass-shard",
+      "position": [
+        -96.74,
+        31.15,
+        31.63
+      ],
+      "serverTile": [
+        560,
+        700
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "sunmane-seed-01",
+      "resource": "sunmane-seed",
+      "position": [
+        18.6,
+        31.15,
+        -145.12
+      ],
+      "serverTile": [
+        808,
+        1080
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "sunmane-seed-02",
+      "resource": "sunmane-seed",
+      "position": [
+        42.79,
+        31.15,
+        -117.21
+      ],
+      "serverTile": [
+        860,
+        1020
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "sunmane-seed-03",
+      "resource": "sunmane-seed",
+      "position": [
+        66.98,
+        31.15,
+        -137.67
+      ],
+      "serverTile": [
+        912,
+        1064
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-01",
+      "resource": "wayside-sage",
+      "position": [
+        -26.05,
+        31.15,
+        96.74
+      ],
+      "serverTile": [
+        712,
+        560
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-02",
+      "resource": "wayside-sage",
+      "position": [
+        -11.16,
+        31.15,
+        111.63
+      ],
+      "serverTile": [
+        744,
+        528
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-03",
+      "resource": "wayside-sage",
+      "position": [
+        14.88,
+        31.15,
+        104.19
+      ],
+      "serverTile": [
+        800,
+        544
+      ],
+      "radius": 2.5,
+      "respawnSeconds": 90,
+      "authority": "server"
     }
   ],
   "npcMarkers": [

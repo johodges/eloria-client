@@ -13,7 +13,7 @@ extends Control
 ## map underneath it.
 
 const MARKER_COLOUR := Color(0.98, 0.78, 0.22)
-const MARKER_RADIUS := 7.0
+const MARKER_RADIUS := 10.0
 
 var _camera: Camera3D
 var _adapter: CoordinateAdapter

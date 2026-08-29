@@ -305,11 +305,55 @@ func _run() -> void:
 		and chat_panel.anchor_bottom < 0.3
 		and chat_input.offset_bottom <= lower_hud.offset_top,
 		"legacy chat tabs sit at upper left while entry remains above the lower rail")
-	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0
-		and spell_quickbar.anchor_left == 1.0 and spell_quickbar.anchor_right == 1.0
-		and spell_quickbar.offset_right <= right_quickbar.offset_left
-		and spell_quickbar.offset_right >= right_quickbar.offset_left - 16.0,
-		"spells and items sit side by side on the right HUD rail")
+	# One rail, two columns: spells down its left half and items down its
+	# right, with the rail itself owning the only border so its left edge is a
+	# single line rather than one per box.
+	var right_rail: Panel = main.get_node("GameView/RightRail") as Panel
+	var rail_children: Array[Control] = [right_stats, right_quickbar,
+		spell_quickbar,
+		main.get_node("GameView/EloriaLogoFrame") as Control,
+		main.get_node("GameView/ClockFrame") as Control,
+		main.get_node("GameView/CompassFrame") as Control]
+	var strays := 0
+	for railed: Control in rail_children:
+		if railed.anchor_left != 1.0 or railed.anchor_right != 1.0:
+			strays += 1
+		elif railed.offset_left < right_rail.offset_left 				or railed.offset_right > right_rail.offset_right:
+			strays += 1
+		elif railed.get_theme_stylebox("panel") is not StyleBoxEmpty:
+			strays += 1
+	_expect(strays == 0 and right_rail.anchor_left == 1.0
+		and right_rail.anchor_bottom == 1.0 and right_rail.offset_top == 0.0
+		and right_rail.get_theme_stylebox("panel") is StyleBoxFlat,
+		"the right rail is one bordered bar from the top of the client down"
+			+ " and everything in it is drawn without a box of its own")
+	# Offsets are only a request: a container whose contents need more room
+	# grows past them, which is how the spell column ended up outside the rail
+	# and the stats panel ended up under the clock. Assert the resolved rects.
+	var rail_rect := Rect2(right_rail.global_position, right_rail.size)
+	var stacked: Array[Control] = [
+		main.get_node("GameView/EloriaLogoFrame") as Control, spell_quickbar,
+		right_stats, main.get_node("GameView/ClockFrame") as Control,
+		main.get_node("GameView/CompassFrame") as Control]
+	var spilled := 0
+	var collided := 0
+	var previous_bottom: float = rail_rect.position.y
+	for boxed: Control in stacked + [right_quickbar] as Array[Control]:
+		var box := Rect2(boxed.global_position, boxed.size)
+		if not rail_rect.encloses(box):
+			spilled += 1
+	for boxed: Control in stacked:
+		if boxed.global_position.y < previous_bottom:
+			collided += 1
+		previous_bottom = boxed.global_position.y + boxed.size.y
+	_expect(spilled == 0 and collided == 0,
+		"the rail's contents all fit inside it and none sits on top of another")
+	var spell_middle: float = (spell_quickbar.offset_left
+		+ spell_quickbar.offset_right) * 0.5
+	_expect(right_quickbar.offset_left >= spell_middle
+		and right_quickbar.offset_right <= spell_quickbar.offset_right
+		and spell_quickbar.offset_left <= spell_middle,
+		"spells run down the left of the rail and items down its right")
 	var item_slots: GridContainer = main.get_node("%ItemSlots") as GridContainer
 	var spell_slots: GridContainer = main.get_node("%SpellSlots") as GridContainer
 	_expect(item_slots.columns == 1 and spell_slots.columns == 1
@@ -841,10 +885,14 @@ func _run() -> void:
 	main.call("_on_knowledge_button_pressed")
 	var knowledge_list: ItemList = main.get_node(
 		"GameView/StatsPanel/Content/StatsTabs/Knowledge/KnowledgeContent/Columns/KnowledgeList") as ItemList
-	_expect(knowledge_panel.visible and knowledge_list.item_count == 385
+	# The catalog is compiled from the profile this server runs, which has one
+	# book. It used to be compiled from the unmodified Eternal Lands data the
+	# fork was built on, and listed 385 the server has never heard of.
+	_expect(knowledge_panel.visible and knowledge_list.item_count == 1
 		and (main.get_node("GameView/StatsPanel/Content/StatsTabs") as TabContainer).current_tab == 1
 		and root.get_visible_rect().encloses(knowledge_panel.get_global_rect()),
-		"knowledge tab opens the complete server catalog within the statistics frame")
+		"knowledge tab opens the served catalog within the statistics frame: %d"
+			% knowledge_list.item_count)
 	app_state_inventory.call("select_knowledge", 0)
 	app_state_inventory.call("_on_packet", 57,
 		PackedByteArray([77, 101, 116, 97, 108, 108, 117, 114, 103, 121, 0]))
@@ -863,10 +911,12 @@ func _run() -> void:
 		"GameView/Quickbar/QuickRows/Buttons/ManufacturingButton") as Button
 	_expect(not manufacturing_panel.visible and not manufacturing_button.disabled,
 		"manufacturing window starts closed with its real HUD action enabled")
+	# Recipe 0 on this profile is a Torch: a Wood Plank (39) and a Cloth Roll
+	# (40), held with a Hatchet (7), which is checked but never consumed.
 	app_state_inventory.set("inventory", {
-		4: {"image_id": 42, "quantity": 1, "slot": 4, "flags": 6},
-		5: {"image_id": 31, "quantity": 1, "slot": 5, "flags": 6},
-		6: {"image_id": 35, "quantity": 1, "slot": 6, "flags": 6}})
+		4: {"image_id": 39, "quantity": 1, "slot": 4, "flags": 6},
+		5: {"image_id": 40, "quantity": 1, "slot": 5, "flags": 6},
+		6: {"image_id": 7, "quantity": 1, "slot": 6, "flags": 6}})
 	app_state_inventory.set("stats", {"food": 45, "ether": 0})
 	main.call("_on_manufacturing_button_pressed")
 	var manufacturing_list: ItemList = main.get_node(
@@ -875,19 +925,22 @@ func _run() -> void:
 		"GameView/ManufacturingPanel/Content/Columns/ManufacturingDetail") as RichTextLabel
 	var manufacturing_mix_one: Button = main.get_node(
 		"GameView/ManufacturingPanel/Content/Actions/ManufacturingMixOne") as Button
-	_expect(manufacturing_panel.visible and manufacturing_list.item_count == 389
+	_expect(manufacturing_panel.visible and manufacturing_list.item_count == 32
 		and root.get_visible_rect().encloses(manufacturing_panel.get_global_rect()),
-		"complete server recipe catalog opens within the reference viewport")
+		"the served recipe catalog opens within the reference viewport: %d"
+			% manufacturing_list.item_count)
 	main.call("_on_manufacturing_selected", 0)
 	_expect(not manufacturing_mix_one.disabled
-		and manufacturing_detail.text.contains("Fire Essence")
-		and manufacturing_detail.text.contains("Sulfur ×1"),
-		"available recipe resolves ingredients and enables the real server action")
+		and manufacturing_detail.text.contains("Torch")
+		and manufacturing_detail.text.contains("Wood Plank ×1"),
+		"available recipe resolves ingredients and enables the real server"
+			+ " action: " + manufacturing_detail.text)
 	app_state_inventory.set("inventory", {})
 	main.call("_sync_manufacturing")
 	_expect(manufacturing_mix_one.disabled
-		and manufacturing_detail.text.contains("Missing Sulfur ×1"),
-		"inventory reconciliation disables a recipe with explicit missing ingredients")
+		and manufacturing_detail.text.contains("Missing Wood Plank ×1"),
+		"inventory reconciliation disables a recipe with explicit missing"
+			+ " ingredients: " + manufacturing_detail.text)
 	main.call("_on_manufacturing_close_pressed")
 	app_state_inventory.call("_on_packet", 28,
 		PackedByteArray([1, 10, 0, 20, 0, 7]))
