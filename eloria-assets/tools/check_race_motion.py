@@ -11,9 +11,10 @@ This poses each race with Idle, Walk, Run and Crouch out of
 Universal_Animation_Library.glb, skins the mesh through that rig's own inverse
 bind matrices, and reports:
 
-  * ground contact -- the lowest body vertex over the clip.  Every race must
-    plant at the same depth within one clip, or a race whose leg chain was
-    divided differently is punching through the floor or hovering over it.
+  * ground contact -- the lowest body vertex over the clip.  Every race has to
+    reach the floor at some point in every clip, and within a planted clip the
+    races have to reach it at the same depth.  A race whose leg chain was
+    divided differently otherwise punches through the floor or hangs over it.
   * shoulder plate ride -- how far a Stoneborn pauldron or a Mycelari shelf
     moves relative to the upper-arm bone it sits on.  A plate bound rigidly to
     the clavicle holds still while the arm swings out from under it; measured
@@ -49,6 +50,12 @@ CLIPS = {"Idle": ("Idle_A", True), "Walk": ("Walk", True),
 FRAMES = 12
 # Ground contact within one clip must agree across the eight races to here.
 GROUND_BAND = .03
+# Every race must get at least this far below the floor at some point in every
+# clip.  This is the check a bind pose cannot make: a race can plant perfectly
+# in the A-pose and then hang in the air for a whole run cycle, because
+# `solve_leg_scale` solves the rest pose and the clips move the leg somewhere
+# the rest pose never goes.  The first digitigrade Ssarathi did exactly that.
+PLANT_LIMIT = -.004
 DEFAULT_RACES = Path("godot-client/assets/actors/native/races")
 DEFAULT_LIBRARY = Path(
     "godot-client/assets/actors/native/shared/Universal_Animation_Library.glb")
@@ -244,6 +251,14 @@ def main() -> int:
 
     print()
     failed = False
+    floating = [(label, model, low) for label in CLIPS
+                for model, low in ground[label] if low > PLANT_LIMIT]
+    for label, model, low in floating:
+        failed = True
+        print(f"FLOATS: {model} never reaches the floor during {label} "
+              f"(closest approach {low:+.4f} m)")
+    if floating:
+        print()
     for label, (_, planted) in CLIPS.items():
         values = [value for _, value in ground[label]]
         spread = max(values) - min(values)
@@ -258,7 +273,8 @@ def main() -> int:
               f"min {min(values):+.4f}  max {max(values):+.4f}  "
               f"spread {spread:.4f} m  [{status}]")
     if failed:
-        print(f"\nA planted clip's ground contact varies by more than "
+        print("\nA race either hangs above the floor for a whole clip, or a "
+              "planted clip's\nground contact varies by more than "
               f"{GROUND_BAND} m between races.", file=sys.stderr)
     return 1 if failed else 0
 

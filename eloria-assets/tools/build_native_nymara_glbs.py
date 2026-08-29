@@ -200,17 +200,36 @@ ANATOMY = {
     # neck is longer and carried forward, counterweighted by the tail.
     "ssarathi": {
         "stature": 1.02,
-        "segment": {"thigh": .86, "calf": 1.12, "foot": 1.55, "ball": 1.30,
+        # The shin is shorter than the first pass gave it.  Length here and
+        # fold at the knee trade against each other -- both lift the ankle --
+        # but a long shin folded hard needs a heavily shortened chain to plant
+        # at rest, and that chain cannot reach the floor once a clip extends
+        # the leg.  This pair puts the ankle 0.235 m up, slightly more
+        # clearance than the original, and plants in every clip.
+        "segment": {"thigh": .86, "calf": 1.06, "foot": 1.55, "ball": 1.30,
                     "neck": 1.32, "spine": .97, "lowerarm": 1.10,
                     "hand": 1.12, "finger": 1.15},
         "girth": {"spine": .93, "upperarm": .88, "lowerarm": .86,
                   "thigh": 1.02, "calf": .88, "foot": .82, "neck": .90},
         "swell": {"hand": .96},
-        # Solved so the ankle sits 0.23 m clear of the ground with the ball
-        # and toe planted: femur forward, shin near vertical, a long
-        # metatarsal dropping steeply, and flat toes.
-        "stance": {"calf_r": (-29., 0., 0.), "foot_r": (6., 0., 0.),
-                   "ball_r": (45., 0., 0.), "ball_leaf_r": (5., 0., 0.),
+        # The ankle stands 0.23 m clear of the ground on a long metatarsal
+        # with the ball and toe planted: femur forward, shin back, a steep
+        # metatarsal, flat toes.
+        #
+        # These angles are solved against the animation library rather than
+        # against the bind pose alone.  `solve_leg_scale` re-solves the chain
+        # for whatever stance it is given, so every stance in this family
+        # already lands the toe correctly in the A-pose -- which is exactly
+        # why the bind pose could not show that the first one was wrong.  A
+        # deeper knee fold needs a shorter chain to plant at rest, and a
+        # shorter chain cannot reach the floor once a run cycle extends the
+        # leg: the previous -29 degrees left the Ssarathi hanging 0.035 m in
+        # the air for the whole of Run_Anime while every other race planted.
+        # Sampled across Idle, Walk, Run, Crouch, Run_Female and
+        # Walk_Backwards, this stance plants in all six and never comes
+        # closer than 0.018 m to the floor from above.
+        "stance": {"calf_r": (-20., 0., 0.), "foot_r": (-6., 0., 0.),
+                   "ball_r": (50., 0., 0.), "ball_leaf_r": (5., 0., 0.),
                    "neck_01": (18., 0., 0.), "Head": (-14., 0., 0.)},
     },
     # Stoneborn carry mineral mass.  Everything is thicker, and the neck is
@@ -2083,8 +2102,31 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     shirt_mask = ((shirt_score[faces].mean(axis=1) > .30) & (y > .900) & (y < 1.550))
     pants_mask = ((pants_score[faces].mean(axis=1) > .30) & (y > .245) & (y < 1.120))
     boots_mask = ((boots_score[faces].mean(axis=1) > .24) & (y < .320))
-    shirt_trim = shirt_mask & (((x > .285) & (y > 1.345)) |
-                               ((y > 1.435) & (x < .145) & (z > .045)))
+    def garment_edge(mask, values, depth, upper=True):
+        """Faces within `depth` of a garment's own extent along `values`.
+
+        Measuring the band from the cut itself rather than from an absolute
+        coordinate means one number describes the hem on both skeletons; the
+        male and female arms differ by 50 mm at the shoulder alone.
+        """
+        if not mask.any():
+            return np.zeros_like(mask)
+        if upper:
+            return mask & (values > float(values[mask].max()) - depth)
+        return mask & (values < float(values[mask].min()) + depth)
+
+    # Trim used to take the whole outer deltoid plus a slab of upper chest,
+    # which read as a rectangle stencilled onto the shirt rather than as
+    # tailoring -- the loudest thing on a Stoneborn or a Mycelari once the
+    # materials underneath started behaving.  It is now the three edges a
+    # shirt actually has: a cuff at the sleeve, a collar at the neck, and a
+    # placket down the centre front.
+    sleeve_cuff = garment_edge(shirt_mask, x, .055)
+    collar = garment_edge(shirt_mask, y, .028)
+    # The placket stops above the waistband: a shirt front that carried on
+    # under the belt read as a stripe painted down the whole figure.
+    placket = shirt_mask & (x < .016) & (z > .030) & (y > 1.130)
+    shirt_trim = sleeve_cuff | collar | placket
     pants_trim = pants_mask & (y > 1.015) & (y < 1.110)
     boots_trim = boots_mask & (y > .270) & (y < .325)
     head_band = ((head_score[faces].mean(axis=1) > .45) &

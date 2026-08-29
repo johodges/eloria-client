@@ -37,12 +37,23 @@ rigs, and `test_native_glb_assets.py` enforces both:
   the feet through the floor. The leg chain is rescaled by a solved factor that
   restores the reference ground contact, and overall stature is carried by the
   model registry's import scale instead.
+* **A race that plants in the bind pose has not been shown to plant at all.**
+  `solve_leg_scale` re-solves the chain for whatever stance it is given, so
+  *every* stance lands the toe correctly in the A-pose -- which is exactly why
+  the A-pose cannot tell a good one from a bad one. A deeper knee fold needs a
+  shorter chain to plant at rest, and a shorter chain cannot reach the floor
+  once a clip extends the leg. The first digitigrade Ssarathi hung 0.035 m in
+  the air for the whole of `Run_Anime` while every other race planted, and it
+  looked perfect in bind pose the entire time. `check_race_motion.py` is the
+  check that catches this; it is not optional.
 
 What that buys per race:
 
 * **Ssarathi** are reptilian rather than humans in scale paint: a digitigrade
-  leg solved so the ankle stands 0.23 m clear of the ground on a long
-  metatarsal with flat toes, a longer forward-carried neck, a continuous swept
+  leg that stands the ankle 0.235 m clear of the ground on a long metatarsal
+  with flat toes -- solved against the animation library rather than against
+  the bind pose, so it plants in Idle, Walk, Run and Crouch instead of only in
+  the A-pose -- a longer forward-carried neck, a continuous swept
   muzzle and lower jaw meeting at a real mouth line, a webbed and serrated
   dorsal crest running unbroken from brow to mid-back, curved flattened claws
   placed from the rig on all ten fingers and both feet, and a laterally
@@ -112,6 +123,15 @@ over whatever primitive it landed on. The default wardrobe was given the same
 treatment the equipment library already had: cloth, leather and metal trim now
 answer a light differently from each other.
 
+Garment trim is cut as the edges a garment actually has -- a cuff at the
+sleeve, a collar at the neck, a placket down the centre front stopping above
+the waistband -- rather than as the whole outer deltoid plus a slab of upper
+chest, which read as a rectangle stencilled onto the shirt and was the loudest
+thing on a Stoneborn or a Mycelari once the materials underneath started
+behaving. Each band is measured from the garment's own extent rather than from
+an absolute coordinate, so one number describes the hem on both skeletons; the
+male and female arms differ by 50 mm at the shoulder alone.
+
 Every race also shipped the same greyscaled human eye, so a round mammalian
 pupil sat inside a reptile muzzle and under a mushroom cap. The sclera, lids
 and lashes are kept from the authored Quaternius texture and only the iris disc
@@ -164,8 +184,10 @@ godot --path godot-client --script \
 `check_race_motion.py` samples Idle, Walk, Run and Crouch out of the shared
 animation library onto every race rig and reports where the feet land and how
 far a shoulder plate rides off the arm it sits on. A bind-pose contact sheet
-cannot show either, and the first digitigrade Ssarathi looked perfect in a
-viewer while storing its stance somewhere the clips would have overwritten.
+cannot show either. It fails the build if any race never reaches the floor
+during a clip, or if a planted clip's ground contact varies by more than 0.03 m
+between races; `Run_Anime` leaves the ground, so its spread is reported and not
+enforced, but every race still has to touch down somewhere inside it.
 
 The palettes and integrated silhouette features were reviewed against the named
 Nymara character, armor, wildlife, guardian, and regional creature sheets. The
