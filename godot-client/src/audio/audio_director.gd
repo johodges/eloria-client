@@ -34,6 +34,9 @@ var volume_linear := 0.7:
 			player.volume_db = linear_to_db(maxf(0.0001, volume_linear))
 
 var _streams: Dictionary = {}
+var _music_streams: Dictionary = {}
+var _music_player: AudioStreamPlayer = null
+var _music_track := ""
 var _voices: Array[AudioStreamPlayer] = []
 var _next_voice := 0
 ## What the last authoritative snapshot said, so a restatement is not an event.
@@ -48,6 +51,8 @@ var _last_step_msec := 0
 func _ready() -> void:
 	name = "AudioDirector"
 	_load_catalog()
+	AppState.sound_requested.connect(_on_sound_requested)
+	AppState.music_requested.connect(_on_music_requested)
 	for index: int in range(VOICE_COUNT):
 		var player := AudioStreamPlayer.new()
 		player.name = "Voice%d" % index
@@ -76,9 +81,49 @@ func play(name: String) -> bool:
 	player.play()
 	return true
 
+## The music beds this client knows about, by name.
+func music_names() -> Array[String]:
+	var names: Array[String] = []
+	for key: Variant in _music_streams:
+		names.append(str(key))
+	names.sort()
+	return names
+
+## What is playing under the map, or "" for silence.
+func current_music() -> String:
+	return _music_track
+
+## Plays the named music bed, looping, or stops the music for "". A track this
+## client does not have is silence rather than a guess at a substitute, and it
+## says so by returning false.
+func play_music(track: String) -> bool:
+	if track == _music_track:
+		return not track.is_empty()
+	_music_track = ""
+	if _music_player != null:
+		_music_player.stop()
+	if track.is_empty() or not enabled:
+		return false
+	if not _music_streams.has(track):
+		return false
+	if _music_player == null:
+		_music_player = AudioStreamPlayer.new()
+		_music_player.name = "Music"
+		_music_player.bus = "Master"
+		add_child(_music_player)
+	_music_player.stream = _music_streams[track] as AudioStream
+	# Music sits under everything else rather than competing with it.
+	_music_player.volume_db = linear_to_db(maxf(0.0001, volume_linear * 0.35))
+	_music_player.play()
+	_music_track = track
+	return true
+
 func stop_all() -> void:
 	for player: AudioStreamPlayer in _voices:
 		player.stop()
+	if _music_player != null:
+		_music_player.stop()
+	_music_track = ""
 
 ## True while any voice is sounding. Used by the tests rather than by the game.
 func is_playing() -> bool:
@@ -100,6 +145,22 @@ func _load_catalog() -> void:
 			AUDIO_DIRECTORY + str(sound.get("file", "")))
 		if stream is AudioStream:
 			_streams[str(sound.get("name", ""))] = stream as AudioStream
+	for raw_bed: Variant in (parsed as Dictionary).get("music", []):
+		var bed: Dictionary = raw_bed as Dictionary
+		var music: Resource = load(AUDIO_DIRECTORY + str(bed.get("file", "")))
+		if music is AudioStream:
+			(music as AudioStream).set("loop", true)
+			_music_streams[str(bed.get("name", ""))] = music as AudioStream
+
+## Sounds and music the server placed. Everything else this director plays is
+## its own answer to authoritative state; these two are things the client had
+## no way of knowing - what somebody else is doing, and what the map sounds
+## like - so they arrive on the wire instead.
+func _on_sound_requested(sound: Dictionary) -> void:
+	play(str(sound.get("name", "")))
+
+func _on_music_requested(track: String) -> void:
+	play_music(track)
 
 func _on_state_changed(path: StringName) -> void:
 	match path:

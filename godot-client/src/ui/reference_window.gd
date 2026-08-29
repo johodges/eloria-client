@@ -14,10 +14,22 @@ extends Control
 ##   index of categories, a page of links per category and a page per entry -
 ##   and lives in its own script. Half of it is original Eloria reference text
 ##   and half is built from the client's own catalogues.
+## * **Almanac** is the game date, the special day in force and what it does,
+##   and the catalogue of days the server can roll - all of it read from
+##   `ELORIA_ALMANAC_STATE(238)`. This is the rules-and-astrology page the
+##   traceability matrix recorded as blocked: the server used to state both
+##   only as chat lines, so the page could not be built without parsing prose.
+##   Nothing on it is shipped in the client, because which days exist and what
+##   each does is the server's to decide.
 ##
-## The rest are recorded in the traceability matrix rather than faked: skills
-## already have a window, and rules and astrology are server policy this
-## server states only as chat text, which this client must not parse.
+## * **Buddies** is who the player has asked to be told about, and who of them
+##   is here now. The list belongs to the server - it states all of it at
+##   login - so this page is a view of what arrived rather than a copy the
+##   client keeps. Adding somebody does not tell them and does not need their
+##   agreement: it is a bookmark, not a friendship.
+##
+## Skills are still not a page here: the statistics panel already shows every
+## skill and its experience, so a second one would be a duplicate.
 ##
 ## The script declares no `class_name`: a global class is parsed before the
 ## autoload singletons are registered, and this reads `AppState` directly.
@@ -37,6 +49,8 @@ var help_text: RichTextLabel
 var notes_edit: TextEdit
 var links_list: ItemList
 var encyclopedia: EncyclopediaView
+var almanac_text: RichTextLabel
+var buddy_list: ItemList
 
 var console_commands: ConsoleCommands
 var bindable: Dictionary = {}
@@ -89,6 +103,8 @@ func toggle() -> void:
 		panel.move_to_front()
 		_refresh_help()
 		_refresh_links()
+		_refresh_almanac()
+		_refresh_buddies()
 
 func close() -> void:
 	panel.hide()
@@ -101,6 +117,10 @@ func tab_titles() -> Array[String]:
 
 func entry_count() -> int:
 	return encyclopedia.entry_count()
+
+## How many days the server said it can roll. Zero before the packet arrives.
+func almanac_day_count() -> int:
+	return (AppState.almanac.get("catalogue", []) as Array).size()
 
 ## Every address the server has said, oldest first and each one only once.
 func known_links() -> Array[String]:
@@ -115,6 +135,10 @@ func known_links() -> Array[String]:
 func _on_state_changed(path: StringName) -> void:
 	if path == &"chat" and panel.visible:
 		_refresh_links()
+	elif path == &"almanac":
+		_refresh_almanac()
+	elif path == &"buddies":
+		_refresh_buddies()
 
 ## Built from the input map and the console table rather than written out, so
 ## a rebound key or a new command is in the help the moment it exists.
@@ -150,6 +174,87 @@ func _refresh_help() -> void:
 	lines.append("Anything else you type beginning with # is sent to the"
 		+ " server exactly as written.")
 	help_text.text = "\n".join(lines)
+
+## Who is on the player's list, and who of them is here. Everything shown is
+## what the server stated; the client keeps no list of its own.
+func _refresh_buddies() -> void:
+	if buddy_list == null:
+		return
+	buddy_list.clear()
+	var names: Array = AppState.buddies.keys()
+	names.sort()
+	for name: Variant in names:
+		var here: bool = bool(AppState.buddies[name])
+		buddy_list.add_item("%s  -  %s" % [str(name),
+			"here now" if here else "away"])
+		buddy_list.set_item_custom_fg_color(buddy_list.item_count - 1,
+			Color(0.62, 0.88, 0.62) if here else Color(0.66, 0.66, 0.70))
+	if names.is_empty():
+		buddy_list.add_item("Nobody is on your list."
+			+ "  Add one with #add_buddy <name>.")
+		buddy_list.set_item_disabled(0, true)
+
+## The names the player is watching, in the order shown.
+func buddy_names() -> Array[String]:
+	var found: Array[String] = []
+	for name: Variant in AppState.buddies:
+		found.append(str(name))
+	found.sort()
+	return found
+
+## Everything here is what arrived in command 238. Before it arrives the page
+## says so rather than showing an empty frame or a guess at today's date.
+func _refresh_almanac() -> void:
+	if almanac_text == null:
+		return
+	var almanac: Dictionary = AppState.almanac
+	if almanac.is_empty():
+		almanac_text.text = "[i]The server has not sent the almanac yet.[/i]"
+		return
+	var lines: Array[String] = []
+	lines.append("[b]%d %s, Year %d[/b]" % [int(almanac.get("day", 0)),
+		_month_name(int(almanac.get("month", 0))), int(almanac.get("year", 0))])
+	lines.append("")
+	var kind: String = str(almanac.get("kind", "ordinary"))
+	lines.append("[b]%s[/b]  [i](%s)[/i]" % [str(almanac.get("name", "")), kind])
+	lines.append(str(almanac.get("description", "")))
+	var multipliers: Dictionary = almanac.get("multipliers", {}) as Dictionary
+	if not multipliers.is_empty():
+		lines.append("")
+		for skill: Variant in multipliers:
+			lines.append("  %s experience x%s" % [str(skill).capitalize(),
+				_trimmed(float(multipliers[skill]))])
+	var bonus: float = float(almanac.get("experience_bonus", 1.0))
+	if not is_equal_approx(bonus, 1.0):
+		lines.append("  All experience x%s today" % _trimmed(bonus))
+	var effects: Array = almanac.get("effects", []) as Array
+	if not effects.is_empty():
+		lines.append("")
+		lines.append("Effects in force: %s" % ", ".join(
+			PackedStringArray(effects)))
+	lines.append("")
+	lines.append("[b]Days this world can bring[/b]")
+	for entry_value: Variant in almanac.get("catalogue", []) as Array:
+		var entry: Dictionary = entry_value as Dictionary
+		lines.append("  [b]%s[/b] (%s) - %s" % [str(entry.get("name", "")),
+			str(entry.get("kind", "")), str(entry.get("description", ""))])
+	almanac_text.text = "\n".join(lines)
+
+## The Calendar of the Elders. The server sends the month as a number and this
+## is the only place the names live, because they never change.
+static func _month_name(month: int) -> String:
+	const MONTHS: Array[String] = ["Aluwia", "Seedar", "Akbar", "Zartia",
+		"Elandra", "Viasia", "Fruitfall", "Mortia", "Carnelar", "Nimlos",
+		"Chimar", "Vesepia"]
+	if month < 1 or month > MONTHS.size():
+		return "?"
+	return MONTHS[month - 1]
+
+## "2" rather than "2.0", but "1.23" kept whole.
+static func _trimmed(value: float) -> String:
+	if is_equal_approx(value, roundf(value)):
+		return str(int(roundf(value)))
+	return "%.2f" % value
 
 func _refresh_links() -> void:
 	var links: Array[String] = known_links()
@@ -243,3 +348,27 @@ func _build() -> void:
 	encyclopedia.name = "Encyclopedia"
 	tabs.add_child(encyclopedia)
 	encyclopedia.bookmarks_changed.connect(_on_bookmarks_changed)
+
+	var almanac_page := VBoxContainer.new()
+	almanac_page.name = "Almanac"
+	tabs.add_child(almanac_page)
+	var almanac_scroll := ScrollContainer.new()
+	almanac_scroll.name = "AlmanacScroll"
+	almanac_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	almanac_page.add_child(almanac_scroll)
+	almanac_text = RichTextLabel.new()
+	almanac_text.name = "AlmanacText"
+	almanac_text.bbcode_enabled = true
+	almanac_text.fit_content = true
+	almanac_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	almanac_scroll.add_child(almanac_text)
+	_refresh_almanac()
+
+	var buddy_page := VBoxContainer.new()
+	buddy_page.name = "Buddies"
+	tabs.add_child(buddy_page)
+	buddy_list = ItemList.new()
+	buddy_list.name = "BuddyList"
+	buddy_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	buddy_page.add_child(buddy_list)
+	_refresh_buddies()

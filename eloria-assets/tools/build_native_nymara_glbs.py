@@ -434,6 +434,7 @@ AMBIENT_NOTE = ("Scenery livestock instanced by the client's ambient population 
 AMBIENT_SOURCE_NOTE = ("Authored to equine proportions on the shared creature rig "
                        "by eloria-assets/tools/sunmane/creatures.py.")
 
+import torso_designs
 from legwear_pieces import LEGWEAR_EQUIPMENT
 
 EQUIPMENT = (
@@ -511,7 +512,20 @@ EQUIPMENT = (
     ("orun_sun_amulet", "Orun Sun Amulet", 7, 103, "amulet", (146, 73, 34), (220, 166, 66)),
     ("ssarathi_shell_amulet", "Ssarathi Shell Amulet", 7, 104, "amulet", (41, 101, 82), (186, 151, 68)),
     ("luminous_orbit_amulet", "Luminous Orbit Amulet", 7, 105, "amulet", (42, 120, 133), (222, 198, 109)),
-) + LEGWEAR_EQUIPMENT
+    # part 5 continues: the sixty-four concept designs, appended below rather
+    # than written out here so a sheet cell, a visual id and a construction stay
+    # in one place.  See eloria-assets/tools/torso_designs.py.
+) + torso_designs.entries() + LEGWEAR_EQUIPMENT
+
+# Each design's finish and construction, registered the way the pieces that
+# predate them are.  The authoring tool reads both by slug, which is also how a
+# fit variant picks up the construction of the piece it is a variant of.
+equipment_authoring.EQUIPMENT_FINISH.update(
+    {slug: finish for slug, _label, _kind, finish, _base, _accent, _style
+     in torso_designs.DESIGNS})
+equipment_authoring.GARMENT_STYLES.update(
+    {slug: style for slug, _label, _kind, _finish, _base, _accent, style
+     in torso_designs.DESIGNS})
 
 
 def align4(value: int) -> int:
@@ -3396,12 +3410,10 @@ def build_model_registry() -> dict:
 
 def build_equipment_registry(rig: "equipment_authoring.Rig",
                              idle_bases: dict | None, author_rig: str = "",
-                             girths: dict | None = None,
-                             sole_drops: dict | None = None) -> dict:
+                             girths: dict | None = None) -> dict:
     """Equipment registry v3: character-space sockets and skinned garments."""
     return equipment_authoring.build_equipment_registry(
-        rig, EQUIPMENT, idle_bases, author_rig=author_rig, girths=girths,
-        sole_drops=sole_drops)
+        rig, EQUIPMENT, idle_bases, author_rig=author_rig, girths=girths)
 
 
 def carry_forward_ambient(manifest_path: Path, models_path: Path,
@@ -3431,18 +3443,24 @@ def write_json(path: Path, value: dict) -> None:
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
 
 
-def _catalog_root(output: Path, fallback: Path) -> Path:
-    """The tree catalogue paths are written relative to.
+def catalogue_path(path: Path, repo_root: Path) -> str:
+    """The path a manifest records, relative to whichever checkout owns it.
 
-    Manifest entries read ``godot-client/assets/...`` whichever checkout they
-    were built in, so the anchor is the directory holding ``godot-client`` on
-    the way to ``--output`` rather than the directory holding this script.
+    Modified 2026-08-29 for Eloria Client.  These paths used to be taken with
+    ``relative_to(repo_root)`` against the checkout the *builder* lives in, so
+    pointing ``--output`` at a git worktree raised ValueError and the build died
+    after writing its GLBs but before writing the registry.  Asset work happens
+    in worktrees, so the root is now the tree the output actually sits in - the
+    parent of the ``godot-client`` directory on the way down to the file - and
+    the builder's own repo is only the fallback for an output somewhere else.
     """
-    resolved = Path(output).resolve()
-    for parent in (resolved, *resolved.parents):
+    for parent in path.parents:
         if parent.name == "godot-client":
-            return parent.parent
-    return Path(fallback).resolve()
+            return path.relative_to(parent.parent).as_posix()
+    try:
+        return path.relative_to(repo_root).as_posix()
+    except ValueError:
+        return path.name
 
 
 def main() -> None:
@@ -3461,22 +3479,6 @@ def main() -> None:
     parser.add_argument("--only",choices=("all","equipment","creatures"),default="all",
                         help="rebuild a single section instead of the whole library")
     args=parser.parse_args()
-    # Modified 2026-08-29 for Eloria Client: catalogue paths used to be written
-    # as ``path.relative_to(repo_root)``, where ``repo_root`` came from this
-    # script's own location.  Pointing ``--output`` at a git worktree - the
-    # ordinary way to build a change without disturbing the main checkout -
-    # therefore crashed on the first asset written, because a worktree is not
-    # under the checkout the tool was launched from.  The anchor is now taken
-    # from where the assets are actually going.
-    catalog_root=_catalog_root(args.output,repo_root)
-    def catalog_path(path:Path)->str:
-        target=Path(path).resolve()
-        for root in (catalog_root,repo_root):
-            try:
-                return target.relative_to(root).as_posix()
-            except ValueError:
-                continue
-        return target.name
     if args.only in ("equipment","creatures") and args.manifest.is_file():
         manifest=json.loads(args.manifest.read_text(encoding="utf-8"))
         if args.only=="equipment":
@@ -3494,18 +3496,18 @@ def main() -> None:
                 hair_id = f"{style}_{gender}"
                 path = args.output / "hair" / f"{hair_id}.glb"
                 manifest["hair"][hair_id] = build_hair(args.source, path, style, gender) | {
-                    "path": catalog_path(path)}
+                    "path": catalogue_path(path, repo_root)}
                 print("hair", hair_id, manifest["hair"][hair_id])
         for race in RACES:
             for gender in ("female","male"):
                 model=f"{race}_{gender}";path=args.output/"races"/f"{model}.glb"
-                manifest["races"][model]=build_player(args.source,path,race,gender)|{"path":catalog_path(path)}
+                manifest["races"][model]=build_player(args.source,path,race,gender)|{"path":catalogue_path(path, repo_root)}
                 print("race",model,manifest["races"][model])
     if args.only in ("all","creatures"):
         for actor_type,slug,label,archetype,base,accent,scale in CREATURES:
             actor_type += CREATURE_ACTOR_TYPE_OFFSET
             path=args.output/"creatures"/f"{slug}.glb"
-            manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":catalog_path(path)}
+            manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":catalogue_path(path, repo_root)}
             print("creature",slug,manifest["creatures"][slug])
     if args.only in ("all","creatures"):
         for index, entry in enumerate(roster.ROSTER):
@@ -3513,7 +3515,7 @@ def main() -> None:
             path = args.output / "creatures" / f"{slug}.glb"
             record = build_roster_creature(path, roster_actor_type(index), slug, label,
                                            family, plan, base, accent, scale)
-            record |= {"path": catalog_path(path),
+            record |= {"path": catalogue_path(path, repo_root),
                        "locale": roster.SHEET_LOCALES[sheet],
                        "concept": {"sheet": sheet, "cell": [row, column]}}
             if family in HOVERING_FAMILIES:
@@ -3522,7 +3524,7 @@ def main() -> None:
             print("creature", slug, record["triangles"], "tris")
     if args.only=="creatures":
         previous=manifest.get("validation",{}).get("results",{})
-        rebuilt={catalog_path(path):validate_glb(path)
+        rebuilt={catalogue_path(path, repo_root):validate_glb(path)
                  for path in (args.output/"creatures").rglob("*.glb")}
         merged={**previous,**{k:v for k,v in rebuilt.items() if k in previous}}
         manifest["validation"]={"files":len(merged),"results":merged}
@@ -3542,7 +3544,6 @@ def main() -> None:
     # measurements are shipped in the registry instead and the runtime refits
     # the garment per wearer, so the authored piece can stay close to the body.
     girths={}
-    sole_drops={}
     race_rigs={}
     for race_path in sorted((args.output/"races").glob("*.glb")):
         try:
@@ -3551,7 +3552,6 @@ def main() -> None:
             print("skip race measurement",race_path.name,error)
             continue
         girths[race_path.stem]=equipment_authoring.body_girth(race_rigs[race_path.stem])
-        sole_drops[race_path.stem]=equipment_authoring.sole_drop(race_rigs[race_path.stem])
     print(f"measured {len(girths)} race silhouettes")
     # Male and female bodies differ in shape, not only in size - a bust and a
     # hip flare are not a scaled chest - and a per-bone radius cannot express
@@ -3583,13 +3583,13 @@ def main() -> None:
                 vpath,group_rig,vslug,label,kind,base,accent,finish=finish,
                 features=features)
             built.append(info|{"group":group,"authoredFor":spec["rig"],
-                               "path":catalog_path(vpath)})
+                               "path":catalogue_path(vpath, repo_root)})
         return built
 
     manifest["fitVariants"]={}
-    # The legwear rows carry two extra fields the culture pieces do not - the
-    # feature list their silhouette is lofted from, and an explicit finish -
-    # so the row is unpacked by length rather than by shape.
+    # The legwear rows carry two fields the others do not - the feature list a
+    # silhouette is lofted from, and an explicit finish - so a row is unpacked
+    # by length rather than by shape.
     for row in EQUIPMENT:
         slug,label,part,visual,kind,base,accent=row[:7]
         features=row[7] if len(row)>7 else ()
@@ -3597,7 +3597,7 @@ def main() -> None:
         path=args.output/"equipment"/f"{slug}.glb"
         manifest["equipment"][slug]=build_equipment(
             path,slug,label,kind,base,accent,rig,features=features,finish=finish)|{
-            "part":part,"visual":visual,"path":catalog_path(path)}
+            "part":part,"visual":visual,"path":catalogue_path(path, repo_root)}
         print("equipment",slug,manifest["equipment"][slug])
         for info in fit_variants(slug,label,kind,base,accent,finish,features):
             manifest["fitVariants"][info["id"]]=info
@@ -3613,7 +3613,7 @@ def main() -> None:
         manifest["genericEquipment"][piece.slug]=info|{
             "part":piece.part,
             "visuals":[visual for visual,_n,_b,_a in piece.variants],
-            "path":catalog_path(path)}
+            "path":catalogue_path(path, repo_root)}
         print("generic",piece.slug,manifest["genericEquipment"][piece.slug])
         for variant in fit_variants(piece.slug,piece.label,piece.kind,
                                     piece.base,piece.accent,finish=piece.finish):
@@ -3623,7 +3623,7 @@ def main() -> None:
     for slug, label, archetype, _scale, tacked in AMBIENT_CREATURES:
         path = args.output / "creatures" / f"{slug}.glb"
         record = {"id": slug, "name": label, "archetype": archetype,
-                  "path": catalog_path(path),
+                  "path": catalogue_path(path, repo_root),
                   "generator": "eloria-assets/tools/sunmane/creatures.py",
                   "tacked": tacked, "region": "sunmane_steppe",
                   "note": AMBIENT_SOURCE_NOTE}
@@ -3634,7 +3634,7 @@ def main() -> None:
     # Catalogue paths are POSIX-form on every platform.  str() on a Windows
     # PurePath yields backslashes, which the Godot side does not resolve and
     # which made the catalogue completeness test fail on Windows builds only.
-    validation={catalog_path(path):validate_glb(path) for path in args.output.rglob("*.glb")}
+    validation={catalogue_path(path, repo_root):validate_glb(path) for path in args.output.rglob("*.glb")}
     if args.only=="equipment":
         # Only revalidate what this run rebuilt.  Ambient scenery GLBs are
         # authored by a different generator and are not part of this manifest's
@@ -3651,8 +3651,7 @@ def main() -> None:
         write_json(args.models, models)
     write_json(args.equipment_registry,
                build_equipment_registry(rig, idle_bases,
-                                        author_rig=reference_rig, girths=girths,
-                                        sole_drops=sole_drops))
+                                        author_rig=reference_rig, girths=girths))
     print(f"validated {len(validation)} native GLBs")
 
 

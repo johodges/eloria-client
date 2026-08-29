@@ -136,6 +136,46 @@ func _run() -> void:
 	_expect(toggle != null and slider != null,
 		"the settings panel exposes both controls")
 
+	# Sounds and music the server placed. Everything else this director plays
+	# is its own answer to authoritative state; these two are things the
+	# client could not have known - what somebody else is doing, and what the
+	# map sounds like.
+	_expect(director.call("sound_names").has("harvest_start"),
+		"the catalog carries the sounds the server can name")
+	var beds: Array = director.call("music_names") as Array
+	_expect(beds.size() >= 3 and beds.has("settlement") and beds.has("wilds")
+		and beds.has("depths"),
+		"and the music beds the server can name: %s" % str(beds))
+
+	app_state.call("_on_packet", 14, _sound_bytes("harvest_start", 60, 70, 100))
+	await process_frame
+	_expect(bool(director.call("is_playing")),
+		"a sound the server placed is played")
+	director.call("stop_all")
+	app_state.call("_on_packet", 14, _sound_bytes("no_such_sound", 1, 1, 100))
+	await process_frame
+	_expect(not bool(director.call("is_playing")),
+		"a sound this client does not have is silence, not a substitute")
+
+	_expect(str(director.call("current_music")).is_empty(),
+		"no music is playing before the server says any")
+	app_state.call("_on_packet", 54, _nul("settlement"))
+	await process_frame
+	_expect(str(director.call("current_music")) == "settlement",
+		"the map's music bed plays: " + str(director.call("current_music")))
+	app_state.call("_on_packet", 54, _nul("settlement"))
+	await process_frame
+	_expect(str(director.call("current_music")) == "settlement",
+		"the same bed restated does not restart it")
+	app_state.call("_on_packet", 54, _nul(""))
+	await process_frame
+	_expect(str(director.call("current_music")).is_empty(),
+		"an empty track is the server saying the map is quiet")
+	app_state.call("_on_packet", 54, _nul("no_such_bed"))
+	await process_frame
+	_expect(str(director.call("current_music")).is_empty(),
+		"and a bed this client does not have stays quiet rather than guessing")
+
 	print("audio director tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()
 	await process_frame
@@ -157,3 +197,9 @@ func _expect(value: bool, label: String) -> bool:
 		failures += 1
 		push_error("FAIL: " + label)
 	return value
+
+func _sound_bytes(name: String, x: int, y: int, gain: int) -> PackedByteArray:
+	var payload := PackedByteArray([x & 0xFF, (x >> 8) & 0xFF,
+		y & 0xFF, (y >> 8) & 0xFF, gain])
+	payload.append_array(_nul(name))
+	return payload

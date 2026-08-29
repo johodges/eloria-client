@@ -615,9 +615,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/amberwood_ranger_cuirass__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/amberwood_ranger_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -628,9 +628,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/glasswarden_cuirass__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/glasswarden_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -641,9 +641,9 @@
       "kind": "coat",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/greyhaven_coat__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/greyhaven_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -654,9 +654,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/orun_sun_cuirass__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_sun_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -667,9 +667,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/ssarathi_scale_cuirass__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/ssarathi_scale_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -680,9 +680,9 @@
       "kind": "robe",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/luminous_turquoise_robe__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_turquoise_robe__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -693,9 +693,9 @@
       "kind": "coat",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/votary_fur_mantle__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/votary_fur_mantle__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -706,9 +706,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/stoneborn_plate__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/stoneborn_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -719,9 +719,9 @@
       "kind": "robe",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/mycelari_mantle__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/mycelari_mantle__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -732,9 +732,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/four_gates_guard_cuirass__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/four_gates_guard_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -745,9 +745,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/luminous_short_sleeve_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_short_sleeve_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -865,6 +865,838 @@
     "7:105": {
       "scene": "res://assets/actors/native/equipment/luminous_orbit_amulet.glb",
       "attach": "socket"
+    },
+    "5:120": {
+      "scene": "res://assets/actors/native/equipment/outrider_ranger_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_ranger_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:121": {
+      "scene": "res://assets/actors/native/equipment/outrider_laced_jerkin.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_laced_jerkin__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:122": {
+      "scene": "res://assets/actors/native/equipment/outrider_oxblood_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_oxblood_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:123": {
+      "scene": "res://assets/actors/native/equipment/outrider_buckled_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_buckled_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:124": {
+      "scene": "res://assets/actors/native/equipment/outrider_scout_jerkin.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_scout_jerkin__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:125": {
+      "scene": "res://assets/actors/native/equipment/outrider_rope_jerkin.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_rope_jerkin__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:126": {
+      "scene": "res://assets/actors/native/equipment/outrider_brigandine.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_brigandine__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:127": {
+      "scene": "res://assets/actors/native/equipment/outrider_fur_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_fur_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:128": {
+      "scene": "res://assets/actors/native/equipment/knight_fluted_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_fluted_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:129": {
+      "scene": "res://assets/actors/native/equipment/knight_etched_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_etched_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:130": {
+      "scene": "res://assets/actors/native/equipment/knight_gilded_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_gilded_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:131": {
+      "scene": "res://assets/actors/native/equipment/knight_scale_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_scale_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:132": {
+      "scene": "res://assets/actors/native/equipment/knight_chased_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_chased_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:133": {
+      "scene": "res://assets/actors/native/equipment/knight_tourney_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_tourney_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:134": {
+      "scene": "res://assets/actors/native/equipment/knight_herald_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_herald_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:135": {
+      "scene": "res://assets/actors/native/equipment/knight_warden_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_warden_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:136": {
+      "scene": "res://assets/actors/native/equipment/orun_linen_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_linen_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:137": {
+      "scene": "res://assets/actors/native/equipment/orun_wrap_robe.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "robe",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_wrap_robe__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:138": {
+      "scene": "res://assets/actors/native/equipment/orun_rider_jerkin.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_rider_jerkin__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:139": {
+      "scene": "res://assets/actors/native/equipment/orun_toggle_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_toggle_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:140": {
+      "scene": "res://assets/actors/native/equipment/orun_sunplate_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_sunplate_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:141": {
+      "scene": "res://assets/actors/native/equipment/orun_sash_robe.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "robe",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_sash_robe__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:142": {
+      "scene": "res://assets/actors/native/equipment/orun_ochre_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_ochre_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:143": {
+      "scene": "res://assets/actors/native/equipment/orun_ceremonial_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_ceremonial_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:144": {
+      "scene": "res://assets/actors/native/equipment/verdant_leafscale_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_leafscale_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:145": {
+      "scene": "res://assets/actors/native/equipment/verdant_mantle_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_mantle_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:146": {
+      "scene": "res://assets/actors/native/equipment/verdant_bough_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_bough_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:147": {
+      "scene": "res://assets/actors/native/equipment/verdant_leaf_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_leaf_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:148": {
+      "scene": "res://assets/actors/native/equipment/verdant_bark_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_bark_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:149": {
+      "scene": "res://assets/actors/native/equipment/verdant_toggle_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_toggle_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:150": {
+      "scene": "res://assets/actors/native/equipment/verdant_amber_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_amber_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:151": {
+      "scene": "res://assets/actors/native/equipment/verdant_warden_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_warden_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:152": {
+      "scene": "res://assets/actors/native/equipment/luminous_tabard_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_tabard_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:153": {
+      "scene": "res://assets/actors/native/equipment/luminous_rune_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_rune_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:154": {
+      "scene": "res://assets/actors/native/equipment/luminous_silver_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_silver_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:155": {
+      "scene": "res://assets/actors/native/equipment/luminous_crystal_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_crystal_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:156": {
+      "scene": "res://assets/actors/native/equipment/luminous_violet_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_violet_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:157": {
+      "scene": "res://assets/actors/native/equipment/luminous_feather_robe.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "robe",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_feather_robe__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:158": {
+      "scene": "res://assets/actors/native/equipment/luminous_gilt_robe.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "robe",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_gilt_robe__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:159": {
+      "scene": "res://assets/actors/native/equipment/luminous_winged_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_winged_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:160": {
+      "scene": "res://assets/actors/native/equipment/legend_phoenix_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_phoenix_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:161": {
+      "scene": "res://assets/actors/native/equipment/legend_frost_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_frost_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:162": {
+      "scene": "res://assets/actors/native/equipment/legend_storm_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_storm_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:163": {
+      "scene": "res://assets/actors/native/equipment/legend_drake_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_drake_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:164": {
+      "scene": "res://assets/actors/native/equipment/legend_radiant_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_radiant_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:165": {
+      "scene": "res://assets/actors/native/equipment/legend_void_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_void_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:166": {
+      "scene": "res://assets/actors/native/equipment/legend_runestone_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_runestone_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:167": {
+      "scene": "res://assets/actors/native/equipment/legend_lion_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_lion_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:168": {
+      "scene": "res://assets/actors/native/equipment/peasant_linen_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_linen_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:169": {
+      "scene": "res://assets/actors/native/equipment/peasant_short_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_short_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:170": {
+      "scene": "res://assets/actors/native/equipment/peasant_patched_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_patched_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:171": {
+      "scene": "res://assets/actors/native/equipment/peasant_button_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_button_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:172": {
+      "scene": "res://assets/actors/native/equipment/peasant_wrap_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_wrap_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:173": {
+      "scene": "res://assets/actors/native/equipment/peasant_laced_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_laced_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:174": {
+      "scene": "res://assets/actors/native/equipment/peasant_ragged_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_ragged_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:175": {
+      "scene": "res://assets/actors/native/equipment/peasant_wool_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_wool_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:176": {
+      "scene": "res://assets/actors/native/equipment/levy_quilted_gambeson.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_quilted_gambeson__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:177": {
+      "scene": "res://assets/actors/native/equipment/levy_studded_brigandine.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_studded_brigandine__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:178": {
+      "scene": "res://assets/actors/native/equipment/levy_splinted_corselet.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_splinted_corselet__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:179": {
+      "scene": "res://assets/actors/native/equipment/levy_mail_hauberk.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_mail_hauberk__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:180": {
+      "scene": "res://assets/actors/native/equipment/levy_lamellar_corselet.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_lamellar_corselet__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:181": {
+      "scene": "res://assets/actors/native/equipment/levy_steel_breastplate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_steel_breastplate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:182": {
+      "scene": "res://assets/actors/native/equipment/levy_bronze_breastplate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_bronze_breastplate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:183": {
+      "scene": "res://assets/actors/native/equipment/levy_spauldered_breastplate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_spauldered_breastplate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
     },
     "4:107": {
       "scene": "res://assets/actors/native/equipment/emberforge_cuisses.glb",
@@ -5049,9 +5881,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Black Shirt",
@@ -5080,9 +5912,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Blue Shirt",
@@ -5111,9 +5943,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Brown Shirt",
@@ -5142,9 +5974,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Grey Shirt",
@@ -5173,9 +6005,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Green Shirt",
@@ -5204,9 +6036,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Light Brown Shirt",
@@ -5235,9 +6067,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Orange Shirt",
@@ -5266,9 +6098,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Pink Shirt",
@@ -5297,9 +6129,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Purple Shirt",
@@ -5328,9 +6160,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Red Shirt",
@@ -5359,9 +6191,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "White Shirt",
@@ -5390,9 +6222,9 @@
       "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Yellow Shirt",
@@ -5421,9 +6253,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_leather_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_leather_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Leather Armor",
@@ -5452,9 +6284,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_leather_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_leather_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Augmented Leather Armor",
@@ -5483,9 +6315,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_chain_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_chain_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Chain Mail",
@@ -5514,9 +6346,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_chain_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_chain_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Steel Chain Mail",
@@ -5545,9 +6377,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_chain_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_chain_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Titanium Chain Mail",
@@ -5576,9 +6408,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Iron Plate Mail",
@@ -5607,9 +6439,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Steel Plate Mail",
@@ -5638,9 +6470,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Titanium Plate Mail",
@@ -5669,9 +6501,9 @@
       "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Bronze Plate Mail",
@@ -5700,9 +6532,9 @@
       "kind": "coat",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_fur_coat__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_fur_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Fur Coat",
@@ -6130,16 +6962,40 @@
   },
   "aliases": {},
   "fitGroups": {
-    "ssarathi_male": "saurian",
-    "ssarathi_female": "saurian",
-    "glasswarden_female": "feminine",
-    "greyhaven_female": "feminine",
-    "luminous_female": "feminine",
-    "mycelari_female": "feminine",
-    "orun_female": "feminine",
-    "votary_female": "feminine",
-    "stoneborn_male": "heavy",
-    "stoneborn_female": "heavy"
+    "glasswarden_female": [
+      "feminine",
+      "bust"
+    ],
+    "greyhaven_female": [
+      "feminine",
+      "bust"
+    ],
+    "luminous_female": [
+      "feminine",
+      "bust"
+    ],
+    "mycelari_female": [
+      "feminine",
+      "bust"
+    ],
+    "orun_female": [
+      "feminine",
+      "bust"
+    ],
+    "ssarathi_female": [
+      "saurian",
+      "bust"
+    ],
+    "ssarathi_male": [
+      "saurian"
+    ],
+    "stoneborn_female": [
+      "bust"
+    ],
+    "votary_female": [
+      "feminine",
+      "bust"
+    ]
   },
   "bodyGirth": {
     "glasswarden_female": {
@@ -6511,102 +7367,5 @@
       "ball_r": 0.06013
     }
   },
-  "soleDrop": {
-    "glasswarden_female": {
-      "foot_l": 0.07913,
-      "foot_r": 0.07913,
-      "ball_l": 0.02299,
-      "ball_r": 0.02299
-    },
-    "glasswarden_male": {
-      "foot_l": 0.09627,
-      "foot_r": 0.09627,
-      "ball_l": 0.02465,
-      "ball_r": 0.02465
-    },
-    "greyhaven_female": {
-      "foot_l": 0.07934,
-      "foot_r": 0.07934,
-      "ball_l": 0.02125,
-      "ball_r": 0.02125
-    },
-    "greyhaven_male": {
-      "foot_l": 0.09826,
-      "foot_r": 0.09826,
-      "ball_l": 0.02421,
-      "ball_r": 0.02421
-    },
-    "luminous_female": {
-      "foot_l": 0.07911,
-      "foot_r": 0.07911,
-      "ball_l": 0.02321,
-      "ball_r": 0.02321
-    },
-    "luminous_male": {
-      "foot_l": 0.09601,
-      "foot_r": 0.09601,
-      "ball_l": 0.02471,
-      "ball_r": 0.02471
-    },
-    "mycelari_female": {
-      "foot_l": 0.07865,
-      "foot_r": 0.07865,
-      "ball_l": 0.02713,
-      "ball_r": 0.02713
-    },
-    "mycelari_male": {
-      "foot_l": 0.09159,
-      "foot_r": 0.09159,
-      "ball_l": 0.02579,
-      "ball_r": 0.02579
-    },
-    "orun_female": {
-      "foot_l": 0.07912,
-      "foot_r": 0.07912,
-      "ball_l": 0.0231,
-      "ball_r": 0.0231
-    },
-    "orun_male": {
-      "foot_l": 0.09611,
-      "foot_r": 0.09611,
-      "ball_l": 0.02469,
-      "ball_r": 0.02469
-    },
-    "ssarathi_female": {
-      "foot_l": 0.21394,
-      "foot_r": 0.21394,
-      "ball_l": 0.01871,
-      "ball_r": 0.01871
-    },
-    "ssarathi_male": {
-      "foot_l": 0.23462,
-      "foot_r": 0.23462,
-      "ball_l": 0.02261,
-      "ball_r": 0.02261
-    },
-    "stoneborn_female": {
-      "foot_l": 0.08338,
-      "foot_r": 0.08338,
-      "ball_l": 0.02373,
-      "ball_r": 0.02373
-    },
-    "stoneborn_male": {
-      "foot_l": 0.10286,
-      "foot_r": 0.10286,
-      "ball_l": 0.02688,
-      "ball_r": 0.02688
-    },
-    "votary_female": {
-      "foot_l": 0.07889,
-      "foot_r": 0.07889,
-      "ball_l": 0.02505,
-      "ball_r": 0.02505
-    },
-    "votary_male": {
-      "foot_l": 0.09391,
-      "foot_r": 0.09391,
-      "ball_l": 0.02517,
-      "ball_r": 0.02517
-    }
-  }
+  "soleDrop": {}
 }

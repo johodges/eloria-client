@@ -59,8 +59,8 @@ class ItemIconAtlasTest(unittest.TestCase):
                                    column * self.cell:(column + 1) * self.cell]
 
     def test_atlas_declares_its_painted_range(self) -> None:
-        self.assertEqual(117, self.config["imageCount"])
-        self.assertEqual(101, self.config["fallbackImageId"])
+        self.assertEqual(118, self.config["imageCount"])
+        self.assertEqual(117, self.config["fallbackImageId"])
         capacity = len(self.config["atlases"]) * self.per_atlas
         self.assertLessEqual(self.config["imageCount"], capacity)
 
@@ -93,7 +93,7 @@ class ItemIconAtlasTest(unittest.TestCase):
     def test_nymara_materials_are_no_longer_flat_placeholders(self) -> None:
         """The placeholders were single-colour polygons on an empty cell."""
         import numpy as np
-        for image_id in range(FIRST_NYMARA_IMAGE_ID, self.config["imageCount"]):
+        for image_id in range(FIRST_NYMARA_IMAGE_ID, self.config["fallbackImageId"]):
             cell = self.cell_for(image_id)
             with self.subTest(image_id=image_id):
                 colours = len(np.unique(cell.reshape(-1, 4), axis=0))

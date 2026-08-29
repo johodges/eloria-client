@@ -1926,10 +1926,151 @@ func _run() -> void:
 	shooter = (app_state_inventory.get("actors") as Dictionary).get(91, {}) as Dictionary
 	_expect(int(shooter.get("aiming_at", -1)) == -1,
 		"loosing ends the aim the server stated before it")
+	# Objects the server puts into a map that is already being played in.
+	# Everything the client knew about a map used to arrive with the map.
+	var placed_before: int = (main.get("placed_object_nodes") as Dictionary).size()
+	var totem := PackedByteArray([7, 0, 0x00, 0x03, 0xe6, 0x01, 0, 0])
+	totem.append_array(_nul_bytes("boss_totem"))
+	app_state_inventory.call("_on_packet", 75, totem)
+	await process_frame
+	var placed_nodes: Dictionary = main.get("placed_object_nodes") as Dictionary
+	_expect(placed_nodes.size() == placed_before + 1 and placed_nodes.has(7)
+		and placed_nodes[7] is PlacedObject3D,
+		"an object raised mid-game is drawn: %d" % placed_nodes.size())
+	_expect(str((placed_nodes[7] as PlacedObject3D).model) == "boss_totem"
+		and PlacedObject3D.shape_name_for("boss_totem") == "totem",
+		"and a name that says what it is gets the shape it names")
+	_expect(PlacedObject3D.shape_name_for("3dobjects/misc/unknowable.e3d")
+			== "marker",
+		"a name this client has no shape for is still something visible")
+	app_state_inventory.call("_on_packet", 76, PackedByteArray([7, 0]))
+	await process_frame
+	_expect(not (main.get("placed_object_nodes") as Dictionary).has(7),
+		"and an object the server takes away goes")
+
+	# A list is the whole truth about a map, so it replaces rather than adds.
+	var listed := PackedByteArray([2, 0, 1, 0, 0x00, 0x03, 0xe6, 0x01, 0, 0])
+	listed.append_array(_nul_bytes("totem"))
+	listed.append_array(PackedByteArray([2, 0, 0x04, 0x03, 0xe6, 0x01, 0, 0]))
+	listed.append_array(_nul_bytes("banner"))
+	app_state_inventory.call("_on_packet", 74, listed)
+	await process_frame
+	_expect((app_state_inventory.get("world_objects") as Dictionary).size() == 2,
+		"a list states everything already standing on the map")
+	var single := PackedByteArray([9, 0, 0x00, 0x03, 0xe6, 0x01, 0, 0])
+	single.append_array(_nul_bytes("stone"))
+	app_state_inventory.call("_on_packet", 74, PackedByteArray([1, 0])
+		+ single)
+	await process_frame
+	_expect((app_state_inventory.get("world_objects") as Dictionary).size() == 1
+		and (app_state_inventory.get("world_objects") as Dictionary).has(9),
+		"and a later list replaces it rather than adding to it")
+	app_state_inventory.call("_on_packet", 74, PackedByteArray([0, 0]))
+	await process_frame
+	_expect((main.get("placed_object_nodes") as Dictionary).is_empty(),
+		"an empty list clears the map")
+	_expect(EloriaProtocol.decode_server(74, PackedByteArray([9, 0])).type
+			== "invalid",
+		"a list that promises more objects than it carries is rejected")
+
+	# Where the ways off this map are, and both ends of a teleport.
+	var ways := PackedByteArray([2, 0, 0x00, 0x03, 0xe6, 0x01,
+		0x04, 0x03, 0xe6, 0x01])
+	app_state_inventory.call("_on_packet", 10, ways)
+	await process_frame
+	_expect((app_state_inventory.get("teleporters") as Array).size() == 2,
+		"the map says where its portals are")
+	app_state_inventory.call("_on_packet", 10, PackedByteArray([0, 0]))
+	await process_frame
+	_expect((app_state_inventory.get("teleporters") as Array).is_empty(),
+		"and a map with none says that too")
+	_expect(EloriaProtocol.decode_server(10, PackedByteArray([1, 0, 2, 0])).type
+			== "invalid",
+		"a teleporter list of the wrong length is rejected")
+	var before_teleport: int = (main.get("world_effects") as Array).size()
+	app_state_inventory.call("_on_packet", 12,
+		PackedByteArray([0x00, 0x03, 0xe6, 0x01]))
+	await process_frame
+	_expect((main.get("world_effects") as Array).size() == before_teleport + 1,
+		"an arrival is drawn where it happened")
+	app_state_inventory.call("_on_packet", 13,
+		PackedByteArray([0x00, 0x03, 0xe6, 0x01]))
+	await process_frame
+	_expect((main.get("world_effects") as Array).size() == before_teleport + 2,
+		"and so is a departure")
+
+	# Which quest a piece of NPC dialogue belongs to. Before this the client
+	# could not tell a quest line from small talk, so neither could a player.
+	var dialogue_panel: Control = main.get("dialogue_panel") as Control
+	var dialogue_name: Label = main.get("dialogue_name") as Label
+	app_state_inventory.call("_on_packet", 30, _nul_bytes("Just passing through."))
+	await process_frame
+	_expect(dialogue_panel.visible
+		and not bool((app_state_inventory.get("npc_dialogue") as Dictionary).get(
+			"quest", true))
+		and not dialogue_name.text.contains("Quest"),
+		"unflagged dialogue is small talk: " + dialogue_name.text)
+	app_state_inventory.call("_on_packet", 92, PackedByteArray([]))
+	app_state_inventory.call("_on_packet", 93, PackedByteArray([2, 0]))
+	app_state_inventory.call("_on_packet", 30, _nul_bytes("Find the reed bank."))
+	await process_frame
+	var flagged: Dictionary = app_state_inventory.get("npc_dialogue") as Dictionary
+	_expect(bool(flagged.get("quest", false)) and int(flagged.get("quest_id", 0)) == 2
+		and dialogue_name.text.contains("Quest 2"),
+		"flagged dialogue names the quest it belongs to: " + dialogue_name.text)
+	app_state_inventory.call("_on_packet", 30, _nul_bytes("Anyway, good day."))
+	await process_frame
+	_expect(not bool((app_state_inventory.get("npc_dialogue") as Dictionary).get(
+			"quest", true)),
+		"the flag describes one line, so the next line is small talk again")
+	app_state_inventory.call("_on_packet", 94, PackedByteArray([2, 0]))
+	await process_frame
+	_expect((app_state_inventory.get("finished_quests") as Array).has(2)
+		and int(app_state_inventory.get("current_quest_id")) == 0,
+		"a finished quest is recorded and stops being the current one")
+	app_state_inventory.call("_on_packet", 94, PackedByteArray([2, 0]))
+	await process_frame
+	_expect((app_state_inventory.get("finished_quests") as Array).size() == 1,
+		"and finishing it twice records it once")
+
+	# An arrow going to a place rather than into somebody: a practice shot, or
+	# a miss. Where it lands is the server's decision arriving on the wire, so
+	# two clients watching one shot draw the same arrow.
+	var before_ground: int = (main.get("world_effects") as Array).size()
+	app_state_inventory.call("_on_packet", 85,
+		PackedByteArray([0x5b, 0, 0x3c, 0, 0x3c, 0]))
+	await process_frame
+	shooter = (app_state_inventory.get("actors") as Dictionary).get(91, {}) as Dictionary
+	_expect(int(shooter.get("aiming_at", 0)) == -1
+		and (shooter.get("aiming_at_tile", Vector2i.ZERO) as Vector2i)
+			== Vector2i(60, 60),
+		"aiming at a place is kept on the shooter and names the tile: %s"
+			% str(shooter.get("aiming_at_tile")))
+	_expect((main.get("world_effects") as Array).size() == before_ground,
+		"and draws no arrow, because nothing has been loosed")
+	app_state_inventory.call("_on_packet", 87,
+		PackedByteArray([0x5b, 0, 0x3c, 0, 0x3c, 0]))
+	await process_frame
+	var ground_effects: Array = main.get("world_effects") as Array
+	_expect(ground_effects.size() == before_ground + 1
+		and ground_effects[ground_effects.size() - 1] is MissileFlight3D,
+		"loosing at a place draws an arrow to it")
+	shooter = (app_state_inventory.get("actors") as Dictionary).get(91, {}) as Dictionary
+	_expect((shooter.get("aiming_at_tile", Vector2i.ZERO) as Vector2i)
+			== Vector2i(-1, -1),
+		"and the aim at that place ends with it")
+	# A shot from an actor the client has never been told about draws nothing.
+	app_state_inventory.call("_on_packet", 87,
+		PackedByteArray([0xff, 0x7f, 0x3c, 0, 0x3c, 0]))
+	await process_frame
+	_expect((main.get("world_effects") as Array).size() == before_ground + 1,
+		"a ground shot from an unknown actor draws nothing")
+
 	# An arrow at an actor the client has never been told about is not guessed.
+	var before_unknown: int = (main.get("world_effects") as Array).size()
 	app_state_inventory.call("_on_packet", 86, PackedByteArray([0x5b, 0, 0xff, 0x7f]))
 	await process_frame
-	_expect((main.get("world_effects") as Array).size() == missiles_before + 1,
+	_expect((main.get("world_effects") as Array).size() == before_unknown,
 		"a shot at an unknown actor draws nothing")
 	app_state_inventory.call("_on_packet", 6, PackedByteArray([0x5b, 0]))
 	app_state_inventory.call("_on_packet", 6, PackedByteArray([0x4d, 0]))
@@ -1956,7 +2097,48 @@ func _run() -> void:
 		and plate.text.contains("[ELO]"),
 		"the nameplate draws the tag as a tag: "
 			+ (plate.text if plate != null else "no nameplate"))
+	# The server coloured Alice's tag but not her name, so the plate is left
+	# white rather than taking the palette's index 0.
+	_expect(plate != null and plate.modulate.is_equal_approx(Color.WHITE),
+		"a name the server did not colour stays white")
 	app_state_inventory.call("_on_packet", 6, PackedByteArray([91, 0]))
+	await process_frame
+
+	# Name colours. The server puts them in front of the name as `127 + index`
+	# and they are the only thing that says, without a click, that a player is
+	# a demigod (c_green3) or that a creature belongs to an invasion (c_red3).
+	app_state_inventory.call("_on_packet", 51, _hex_bytes(
+		"5c000203e1010000000001000001020304050b001e14071400"
+		+ "12000190426f62000040ff0600"))
+	app_state_inventory.call("_on_packet", 1, _hex_bytes(
+		"5d000203e10100000000cc0720002000018d456d626572666f7800"))
+	await process_frame
+	main.call("_sync_world")
+	await process_frame
+	var demigod_plate: Label3D = _nameplate_of(main, 92)
+	_expect(demigod_plate != null and demigod_plate.text == "Bob"
+		and demigod_plate.modulate.is_equal_approx(EloriaProtocol.EL_TEXT_COLOURS[17]),
+		"a demigod's nameplate is green, and the colour byte is not in the name")
+	var invasion_plate: Label3D = _nameplate_of(main, 93)
+	_expect(invasion_plate != null and invasion_plate.text == "Emberfox"
+		and invasion_plate.modulate.is_equal_approx(EloriaProtocol.EL_TEXT_COLOURS[14]),
+		"an invasion creature's nameplate is red")
+	# You are given no nameplate of your own, so your own name colour has only
+	# the overhead banner to show in.
+	var before_colour_local: int = int(app_state_inventory.get("local_actor_id"))
+	app_state_inventory.set("local_actor_id", 92)
+	main.call("_sync_world")
+	await process_frame
+	var banner_name: Label = main.get("overhead_player_name") as Label
+	_expect(banner_name != null and banner_name.text == "Bob"
+		and banner_name.get_theme_color("font_color").is_equal_approx(
+			EloriaProtocol.EL_TEXT_COLOURS[17]),
+		"your own demigod name is green on the overhead banner")
+	app_state_inventory.set("local_actor_id", before_colour_local)
+	main.call("_sync_world")
+	await process_frame
+	app_state_inventory.call("_on_packet", 6, PackedByteArray([92, 0]))
+	app_state_inventory.call("_on_packet", 6, PackedByteArray([93, 0]))
 	await process_frame
 
 	# Twelve spell quick slots, and the sigils window that says why a spell is
@@ -2373,6 +2555,12 @@ func _expect(value: bool, label: String) -> void:
 		return
 	failures += 1
 	push_error("FAIL: " + label)
+
+func _nameplate_of(main: Node, actor_id: int) -> Label3D:
+	var node: Node3D = (main.get("actor_nodes") as Dictionary).get(actor_id) as Node3D
+	if node == null:
+		return null
+	return node.get_node_or_null("Nameplate") as Label3D
 
 func _hex_bytes(value: String) -> PackedByteArray:
 	var bytes := PackedByteArray()

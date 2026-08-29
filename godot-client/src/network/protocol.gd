@@ -22,7 +22,12 @@ enum ClientMessage {
 	TRADE_WITH = 32, ACCEPT_TRADE = 33, REJECT_TRADE = 34, EXIT_TRADE = 35,
 	PUT_OBJECT_ON_TRADE = 36, REMOVE_OBJECT_FROM_TRADE = 37,
 	LOOK_AT_TRADE_ITEM = 38, CAST_SPELL = 39, ATTACK_SOMEONE = 40,
-	GET_KNOWLEDGE_INFO = 41, GET_STORAGE_CATEGORY = 44, DEPOSIT_ITEM = 45,
+	GET_KNOWLEDGE_INFO = 41,
+	# Client-to-server; 42 and 70 are also server-to-client numbers, the way
+	# the storage commands below share 44-46. The direction tells them apart.
+	ITEM_ON_ITEM = 42, DO_EMOTE = 70, FIRE_MISSILE_AT_OBJECT = 51,
+	WHAT_QUEST_IS_THIS_ID = 63,
+	GET_STORAGE_CATEGORY = 44, DEPOSIT_ITEM = 45,
 	WITHDRAW_ITEM = 46, LOOK_AT_STORAGE_ITEM = 47, POPUP_REPLY = 50,
 	PING_RESPONSE = 60, SET_ACTIVE_CHANNEL = 61, LOG_IN = 140,
 	CREATE_CHAR = 141, GET_DATE = 230, GET_TIME = 231
@@ -50,6 +55,14 @@ enum ServerMessage {
 	PING_REQUEST = 60, SPELL_CAST = 70, GET_ACTIVE_CHANNELS = 71, GET_ACTOR_HEALTH = 73,
 	GET_ITEMS_COOLDOWN = 77, SEND_BUFFS = 78, SEND_SPECIAL_EFFECT = 79,
 	MISSILE_AIM_A_AT_B = 84, MISSILE_FIRE_A_TO_B = 86,
+	MISSILE_AIM_A_AT_XYZ = 85, MISSILE_FIRE_A_TO_XYZ = 87,
+	PLAY_SOUND = 14, PLAY_MUSIC = 54,
+	START_RAIN = 15, STOP_RAIN = 16, THUNDER = 17,
+	FIRE_PARTICLES = 61, REMOVE_FIRE_AT = 62, SEND_WEATHER = 100,
+	NEXT_NPC_MESSAGE_IS_QUEST = 92, HERE_IS_QUEST_ID = 93, QUEST_FINISHED = 94,
+	BUDDY_EVENT = 59,
+	GET_TELEPORTERS_LIST = 10, TELEPORT_IN = 12, TELEPORT_OUT = 13,
+	GET_3D_OBJ_LIST = 74, GET_3D_OBJ = 75, REMOVE_3D_OBJ = 76,
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
 	SEND_ACHIEVEMENTS = 95, ADD_NEW_ACTOR_EXTENDED = 247,
 	ELORIA_INVASION_ASSISTANT_STATE = 233,
@@ -61,6 +74,8 @@ enum ServerMessage {
 	ELORIA_MAIL_STATE = 229, ELORIA_NAVIGATION_STATE = 230,
 	ELORIA_SPECIAL_EVENT_STATE = 232, ELORIA_PLAYER_INFO = 228,
 	ELORIA_SPELL_POWER = 231,
+	ELORIA_ALMANAC_STATE = 238,
+	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
 }
@@ -145,6 +160,7 @@ static func turn(left: bool) -> PackedByteArray:
 ## packet, never before.
 const CLIENT_CAPABILITIES: Array[String] = [
 	"actor16_v1",
+	"almanac_v1",
 	"combat_hud_v1",
 	"inventory_window_v1",
 	"item_detail_v1",
@@ -162,6 +178,37 @@ const CLIENT_CAPABILITIES: Array[String] = [
 ## RAW_TEXT and stores the set on the session.
 static func client_capabilities() -> PackedByteArray:
 	return chat("#clientcaps " + ",".join(PackedStringArray(CLIENT_CAPABILITIES)))
+
+## Ask the server to play an emote. The name rather than a legacy numeric id:
+## this server has no such id namespace, and mirroring one here would be a
+## second copy of a list the server owns.
+## Loose an arrow at a place rather than at somebody. The server decides
+## whether the shot is allowed and what it costs.
+static func fire_missile_at_object(x: int, y: int) -> PackedByteArray:
+	var payload := PackedByteArray()
+	payload.resize(4)
+	payload.encode_u16(0, x)
+	payload.encode_u16(2, y)
+	return encode(ClientMessage.FIRE_MISSILE_AT_OBJECT, payload)
+
+## Ask the server what a quest id is. The client never invents a title for an
+## id it has not been told about.
+static func what_quest_is_this_id(quest_id: int) -> PackedByteArray:
+	var payload := PackedByteArray()
+	payload.resize(2)
+	payload.encode_u16(0, quest_id)
+	return encode(ClientMessage.WHAT_QUEST_IS_THIS_ID, payload)
+
+static func do_emote(name: String) -> PackedByteArray:
+	var payload: PackedByteArray = name.to_utf8_buffer()
+	payload.append(0)
+	return encode(ClientMessage.DO_EMOTE, payload)
+
+## Put one carried item onto another. The server decides what, if anything,
+## comes of it.
+static func item_on_item(source_slot: int, target_slot: int) -> PackedByteArray:
+	return encode(ClientMessage.ITEM_ON_ITEM,
+		PackedByteArray([source_slot & 0xFF, target_slot & 0xFF]))
 
 static func chat(text: String) -> PackedByteArray:
 	var payload: PackedByteArray = text.to_utf8_buffer()
@@ -607,6 +654,154 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				"fired": command == ServerMessage.MISSILE_FIRE_A_TO_B,
 				"source_actor_id": u16(payload),
 				"target_actor_id": u16(payload, 2)}
+		ServerMessage.GET_3D_OBJ:
+			# An object placed into a map that is already being played in.
+			# Everything the client knew about a map used to arrive with the
+			# map, so nothing could change while anybody was looking at it.
+			var placed: Dictionary = _world_object_at(payload, 0)
+			if placed.is_empty() or int(placed.offset) != payload.size():
+				return {"type": "invalid", "error": "world_object"}
+			return {"type": "world_object", "objects": [placed.value],
+				"replace": false}
+		ServerMessage.GET_3D_OBJ_LIST:
+			if payload.size() < 2:
+				return {"type": "invalid", "error": "world_object_list_length"}
+			var wanted: int = u16(payload)
+			var listed: Array[Dictionary] = []
+			var at: int = 2
+			for _index: int in range(wanted):
+				var entry: Dictionary = _world_object_at(payload, at)
+				if entry.is_empty():
+					return {"type": "invalid", "error": "world_object_list"}
+				listed.append(entry.value as Dictionary)
+				at = int(entry.offset)
+			if at != payload.size():
+				return {"type": "invalid", "error": "world_object_list_trailing"}
+			# A list is the whole truth about a map, so it replaces what was
+			# there rather than adding to it.
+			return {"type": "world_object", "objects": listed, "replace": true}
+		ServerMessage.REMOVE_3D_OBJ:
+			if payload.size() != 2:
+				return {"type": "invalid", "error": "remove_world_object"}
+			return {"type": "world_object_removed", "object_id": u16(payload)}
+		ServerMessage.GET_TELEPORTERS_LIST:
+			if payload.size() < 2:
+				return {"type": "invalid", "error": "teleporters_length"}
+			var teleporter_count: int = u16(payload)
+			if payload.size() != 2 + teleporter_count * 4:
+				return {"type": "invalid", "error": "teleporters_trailing"}
+			var tiles: Array[Vector2i] = []
+			for index: int in range(teleporter_count):
+				tiles.append(Vector2i(u16(payload, 2 + index * 4),
+					u16(payload, 4 + index * 4)))
+			return {"type": "teleporters", "tiles": tiles}
+		ServerMessage.TELEPORT_IN, ServerMessage.TELEPORT_OUT:
+			if payload.size() != 4:
+				return {"type": "invalid", "error": "teleport_length"}
+			return {"type": "teleport", "arriving":
+				command == ServerMessage.TELEPORT_IN,
+				"x": u16(payload), "y": u16(payload, 2)}
+		ServerMessage.BUDDY_EVENT:
+			# What happened, and to whom. The name travels with the event
+			# because a client that had to keep its own list to read one would
+			# be keeping a second copy of a list the server owns.
+			if payload.size() < 2:
+				return {"type": "invalid", "error": "buddy_length"}
+			if int(payload[0]) >= BUDDY_EVENTS.size():
+				return {"type": "invalid", "error": "buddy_event"}
+			var buddy_field: Dictionary = _nul_at(payload, 1)
+			if buddy_field.is_empty():
+				return {"type": "invalid", "error": "buddy_text"}
+			if int(buddy_field.offset) != payload.size():
+				return {"type": "invalid", "error": "buddy_trailing"}
+			if str(buddy_field.value).is_empty():
+				return {"type": "invalid", "error": "buddy_empty"}
+			return {"type": "buddy", "event": BUDDY_EVENTS[int(payload[0])],
+				"name": str(buddy_field.value)}
+		ServerMessage.NEXT_NPC_MESSAGE_IS_QUEST:
+			# A flag with no payload: the NPC text after it is quest dialogue
+			# rather than small talk. It comes first because it describes what
+			# follows it.
+			if payload.size() != 0:
+				return {"type": "invalid", "error": "quest_flag_trailing"}
+			return {"type": "quest_dialogue_next"}
+		ServerMessage.HERE_IS_QUEST_ID, ServerMessage.QUEST_FINISHED:
+			if payload.size() != 2:
+				return {"type": "invalid", "error": "quest_id_length"}
+			return {"type": "quest_id", "quest_id": u16(payload),
+				"finished": command == ServerMessage.QUEST_FINISHED}
+		ServerMessage.SEND_WEATHER:
+			# The whole sky in one frame. Weather is the server's because two
+			# players standing together have to see the same one.
+			if payload.size() != 2:
+				return {"type": "invalid", "error": "weather_length"}
+			if int(payload[1]) > 100:
+				return {"type": "invalid", "error": "weather_intensity"}
+			return {"type": "weather", "kind": int(payload[0]),
+				"intensity": int(payload[1])}
+		ServerMessage.START_RAIN, ServerMessage.STOP_RAIN:
+			# The legacy client's own rain signals, sent alongside the sky
+			# frame. This client reads the sky frame and takes these as
+			# confirmation, so an older server that sends only these still
+			# makes it rain.
+			var starting: bool = command == ServerMessage.START_RAIN
+			if starting and payload.size() != 1:
+				return {"type": "invalid", "error": "rain_length"}
+			if not starting and payload.size() != 0:
+				return {"type": "invalid", "error": "rain_trailing"}
+			return {"type": "rain", "falling": starting,
+				"intensity": int(payload[0]) if starting else 0}
+		ServerMessage.THUNDER:
+			if payload.size() != 1:
+				return {"type": "invalid", "error": "thunder_length"}
+			return {"type": "thunder", "severity": int(payload[0])}
+		ServerMessage.FIRE_PARTICLES:
+			if payload.size() != 5:
+				return {"type": "invalid", "error": "fire_length"}
+			return {"type": "fire", "x": u16(payload), "y": u16(payload, 2),
+				"kind": int(payload[4]), "burning": true}
+		ServerMessage.REMOVE_FIRE_AT:
+			if payload.size() != 4:
+				return {"type": "invalid", "error": "remove_fire_length"}
+			return {"type": "fire", "x": u16(payload), "y": u16(payload, 2),
+				"kind": -1, "burning": false}
+		ServerMessage.PLAY_SOUND:
+			# A sound the client could not have worked out for itself: what
+			# somebody else is doing. It is named rather than numbered, so
+			# there is no id table to keep in step, and a name this client has
+			# no sound for is simply not heard.
+			if payload.size() < 6:
+				return {"type": "invalid", "error": "play_sound_length"}
+			var sound_field: Dictionary = _nul_at(payload, 5)
+			if sound_field.is_empty():
+				return {"type": "invalid", "error": "play_sound_text"}
+			if int(sound_field.offset) != payload.size():
+				return {"type": "invalid", "error": "play_sound_trailing"}
+			if str(sound_field.value).is_empty():
+				return {"type": "invalid", "error": "play_sound_empty"}
+			return {"type": "play_sound", "name": str(sound_field.value),
+				"x": u16(payload), "y": u16(payload, 2),
+				"gain": float(int(payload[4])) / 100.0}
+		ServerMessage.PLAY_MUSIC:
+			# An empty track name is the server saying "nothing here", which is
+			# an answer rather than an omission.
+			var track_field: Dictionary = _nul_at(payload, 0)
+			if track_field.is_empty():
+				return {"type": "invalid", "error": "play_music_text"}
+			if int(track_field.offset) != payload.size():
+				return {"type": "invalid", "error": "play_music_trailing"}
+			return {"type": "play_music", "track": str(track_field.value)}
+		ServerMessage.MISSILE_AIM_A_AT_XYZ, ServerMessage.MISSILE_FIRE_A_TO_XYZ:
+			# An arrow going to a place rather than into somebody: a practice
+			# shot, or a miss. The server decides where it lands, because the
+			# server decided it was a miss - a client inventing its own
+			# scatter would draw something that never happened.
+			if payload.size() != 6:
+				return {"type": "invalid", "error": "ground_missile_length"}
+			return {"type": "ground_missile",
+				"fired": command == ServerMessage.MISSILE_FIRE_A_TO_XYZ,
+				"source_actor_id": u16(payload),
+				"x": u16(payload, 2), "y": u16(payload, 4)}
 		ServerMessage.SEND_SPECIAL_EFFECT:
 			# Three or five bytes: the effect, the actor it happened to, and a
 			# second actor when the effect travelled between two.
@@ -693,6 +888,10 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_popup(payload)
 		ServerMessage.ELORIA_SPELL_POWER:
 			return decode_spell_power(payload)
+		ServerMessage.ELORIA_ALMANAC_STATE:
+			return decode_almanac(payload)
+		ServerMessage.ADD_ACTOR_ANIMATION:
+			return decode_actor_animation(payload)
 		ServerMessage.ELORIA_PLAYER_INFO:
 			return decode_player_info(payload)
 		ServerMessage.SEND_MAP_MARKER:
@@ -1076,6 +1275,115 @@ static func decode_spell_power(payload: PackedByteArray) -> Dictionary:
 	if offset != payload.size():
 		return {"type": "invalid", "error": "spell_power_trailing"}
 	return {"type": "spell_power", "effects": effects}
+
+## Command 89. An actor is playing a named animation action.
+##
+## The action is a name, not a clip: which piece of art plays is this client's
+## to decide from its own animation map, and an action it has no clip for is
+## simply not played. The server sends the words separately and always, so an
+## emote reaches the player either way.
+static func decode_actor_animation(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 3:
+		return {"type": "invalid", "error": "actor_animation_length"}
+	var field: Dictionary = _nul_at(payload, 2)
+	if field.is_empty():
+		return {"type": "invalid", "error": "actor_animation_text"}
+	if int(field.offset) != payload.size():
+		return {"type": "invalid", "error": "actor_animation_trailing"}
+	var action: String = str(field.value)
+	if action.is_empty():
+		return {"type": "invalid", "error": "actor_animation_empty"}
+	return {"type": "actor_animation", "actor_id": u16(payload),
+		"action": action}
+
+## One object out of a placement frame: id, tile, facing and model name.
+static func _world_object_at(payload: PackedByteArray, offset: int) -> Dictionary:
+	if offset + 8 > payload.size():
+		return {}
+	var field: Dictionary = _nul_at(payload, offset + 8)
+	if field.is_empty() or str(field.value).is_empty():
+		return {}
+	return {"value": {"object_id": u16(payload, offset),
+		"x": u16(payload, offset + 2), "y": u16(payload, offset + 4),
+		"rotation": u16(payload, offset + 6), "model": str(field.value)},
+		"offset": int(field.offset)}
+
+## What a buddy event says happened, in the order the server numbers them.
+const BUDDY_EVENTS: Array[String] = ["offline", "online", "added", "removed"]
+
+## The four kinds a day can be, in the order the server numbers them.
+const ALMANAC_KINDS: Array[String] = ["ordinary", "good", "neutral", "bad"]
+
+## Command 238. The game date, the day in force and what it does, and the whole
+## catalogue of days this server can roll.
+##
+## Both halves used to be chat lines - a `GET_DATE` reply and a broadcast
+## announcement - so showing either meant reading prose off the chat stream.
+## The catalogue arrives with them because which days exist is the server's to
+## decide; a copy shipped here would be a second source of truth.
+static func decode_almanac(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 7:
+		return {"type": "invalid", "error": "almanac_length"}
+	var kind_index: int = int(payload[4])
+	if kind_index >= ALMANAC_KINDS.size():
+		return {"type": "invalid", "error": "almanac_kind"}
+	var names: Dictionary = _nul_run(payload, 7, 2)
+	if names.is_empty():
+		return {"type": "invalid", "error": "almanac_text"}
+	var offset: int = int(names.offset)
+	var texts: Array = names.values as Array
+
+	if offset >= payload.size():
+		return {"type": "invalid", "error": "almanac_effect_count"}
+	var effect_count: int = int(payload[offset])
+	var effect_fields: Dictionary = _nul_run(payload, offset + 1, effect_count)
+	if effect_fields.is_empty() and effect_count > 0:
+		return {"type": "invalid", "error": "almanac_effects"}
+	offset = int(effect_fields.offset) if effect_count > 0 else offset + 1
+	var effects: Array[String] = []
+	if effect_count > 0:
+		for value: Variant in effect_fields.values as Array:
+			effects.append(str(value))
+
+	if offset >= payload.size():
+		return {"type": "invalid", "error": "almanac_multiplier_count"}
+	var multiplier_count: int = int(payload[offset])
+	offset += 1
+	var multipliers: Dictionary = {}
+	for _index: int in range(multiplier_count):
+		var skill: Dictionary = _nul_at(payload, offset)
+		if skill.is_empty() or int(skill.offset) + 2 > payload.size():
+			return {"type": "invalid", "error": "almanac_multiplier"}
+		offset = int(skill.offset)
+		multipliers[str(skill.value)] = float(u16(payload, offset)) / 100.0
+		offset += 2
+
+	if offset + 2 > payload.size():
+		return {"type": "invalid", "error": "almanac_catalogue_count"}
+	var catalogue_count: int = u16(payload, offset)
+	offset += 2
+	var catalogue: Array[Dictionary] = []
+	for _index: int in range(catalogue_count):
+		if offset >= payload.size():
+			return {"type": "invalid", "error": "almanac_catalogue_kind"}
+		var entry_kind: int = int(payload[offset])
+		if entry_kind >= ALMANAC_KINDS.size():
+			return {"type": "invalid", "error": "almanac_catalogue_kind"}
+		var entry: Dictionary = _nul_run(payload, offset + 1, 2)
+		if entry.is_empty():
+			return {"type": "invalid", "error": "almanac_catalogue_text"}
+		offset = int(entry.offset)
+		var entry_values: Array = entry.values as Array
+		catalogue.append({"kind": ALMANAC_KINDS[entry_kind],
+			"name": str(entry_values[0]), "description": str(entry_values[1])})
+	if offset != payload.size():
+		return {"type": "invalid", "error": "almanac_trailing"}
+	return {"type": "almanac",
+		"day": int(payload[0]), "month": int(payload[1]), "year": u16(payload, 2),
+		"kind": ALMANAC_KINDS[kind_index],
+		"experience_bonus": float(u16(payload, 5)) / 100.0,
+		"name": str(texts[0]), "description": str(texts[1]),
+		"effects": effects, "multipliers": multipliers, "catalogue": catalogue}
 
 ## Command 228. Who the player just looked at, and what they have earned.
 ##
@@ -1525,6 +1833,33 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 	# until the next enter-combat command, which may never arrive.
 	actor["in_combat"] = int(actor.get("frame", FRAME_IDLE)) == FRAME_COMBAT_IDLE
 	return actor
+
+## Eternal Lands' text palette (colors.c), in the server's own index order:
+## the four shades of a hue are 7 apart, not adjacent. Only the first of each
+## entry's four shades is a text colour, so only that one is kept here.
+##
+## Index 0 is EL's c_red1, but a colour reaches us as the byte `127 + index`
+## and a leading 127 is not read as a marker, so 0 never arrives from the wire
+## and doubles as "the server chose no colour for this name".
+const EL_TEXT_COLOURS: Array[Color] = [
+	Color("ffb3c1"), Color("f7c49f"), Color("fbfabe"), Color("c9fecb"),
+	Color("a9effa"), Color("d2b4fb"), Color("ffffff"),
+	Color("fa5a5a"), Color("fc7a3a"), Color("fcec38"), Color("05fa9b"),
+	Color("7697f8"), Color("d95df4"), Color("999999"),
+	Color("dd0202"), Color("bf6610"), Color("e7ae14"), Color("25c400"),
+	Color("4448d2"), Color("8254f6"), Color("9e9e9e"),
+	Color("7e0303"), Color("833003"), Color("826f06"), Color("149504"),
+	Color("0f0fba"), Color("6a01ac"), Color("282828"),
+]
+
+## The colour a decoded `name_colour` or `guild_colour` asks for. Returns
+## `fallback` for 0 - the server named no colour - and for anything outside the
+## palette, so an unknown index degrades to the plain nameplate rather than to
+## black.
+static func el_text_colour(colour_index: int, fallback := Color.WHITE) -> Color:
+	if colour_index <= 0 or colour_index >= EL_TEXT_COLOURS.size():
+		return fallback
+	return EL_TEXT_COLOURS[colour_index]
 
 ## Splits the display name an actor packet carries into the parts it is really
 ## made of: the name, the colour the server chose for it, and the guild tag

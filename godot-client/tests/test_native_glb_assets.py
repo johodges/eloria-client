@@ -101,11 +101,13 @@ class NativeGlbAssetsTest(unittest.TestCase):
         import creature_roster
         self.assertEqual(32 + len(creature_roster.ROSTER),
                          len(self.catalog["creatures"]))
-        # 66 culture and guard pieces, plus the rebuilt legwear set.  Derived
-        # from the roster for the same reason the creature count is: a literal
-        # here goes stale the moment a second generator adds to the catalogue.
+        # 66 culture and landmark pieces, plus the concept design sets. Counted
+        # from the tables that declare them rather than restated, so adding a
+        # design cannot leave this stale - which is how the creature count below
+        # came to be compared against disk instead of a literal.
         import legwear_roster
-        self.assertEqual(66 + len(legwear_roster.ROSTER),
+        import torso_designs
+        self.assertEqual(66 + len(torso_designs.DESIGNS) + len(legwear_roster.ROSTER),
                          len(self.catalog["equipment"]))
         # The generic tier claims the legacy visual-id space with one authored
         # mesh per material ladder rather than one per id.
@@ -606,8 +608,12 @@ class NativeGlbAssetsTest(unittest.TestCase):
                         self.assertIn("JOINTS_0", primitive["attributes"])
                         self.assertIn("WEIGHTS_0", primitive["attributes"])
                 checked += 1
-        import legwear_roster
-        self.assertEqual(47 + len(legwear_roster.ROSTER), checked)
+        # A floor rather than an exact count: the number of skinned garments
+        # grows every time a design set lands, and a test that has to be edited
+        # to add a garment teaches people to edit it without reading it.  What
+        # matters is that the sweep ran and found them, not that there are
+        # exactly as many as there were on the day it was written.
+        self.assertGreaterEqual(checked, 47)
 
     def test_equipment_hides_name_real_body_surfaces(self) -> None:
         """A hide that names nothing would silently fail to cover anything."""

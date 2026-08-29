@@ -4211,10 +4211,10 @@
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 138016,
+      "bytes": 223060,
       "part": 5,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_cuirass.glb"
@@ -4226,10 +4226,10 @@
       "finish": "crystal",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 135844,
+      "bytes": 220884,
       "part": 5,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_cuirass.glb"
@@ -4241,10 +4241,10 @@
       "finish": "cloth",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1705,
-      "triangles": 2970,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 154556,
+      "bytes": 217444,
       "part": 5,
       "visual": 102,
       "path": "godot-client/assets/actors/native/equipment/greyhaven_coat.glb"
@@ -4256,10 +4256,10 @@
       "finish": "plate",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 137976,
+      "bytes": 223020,
       "part": 5,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_sun_cuirass.glb"
@@ -4271,10 +4271,10 @@
       "finish": "mail",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 139804,
+      "bytes": 224848,
       "part": 5,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_cuirass.glb"
@@ -4286,10 +4286,10 @@
       "finish": "cloth",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1735,
-      "triangles": 3030,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 156488,
+      "bytes": 217452,
       "part": 5,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/luminous_turquoise_robe.glb"
@@ -4301,10 +4301,10 @@
       "finish": "fur",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1705,
-      "triangles": 2970,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 164252,
+      "bytes": 227136,
       "part": 5,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/votary_fur_mantle.glb"
@@ -4316,10 +4316,10 @@
       "finish": "plate",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 138004,
+      "bytes": 223048,
       "part": 5,
       "visual": 107,
       "path": "godot-client/assets/actors/native/equipment/stoneborn_plate.glb"
@@ -4331,10 +4331,10 @@
       "finish": "spore",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1735,
-      "triangles": 3030,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 153780,
+      "bytes": 214748,
       "part": 5,
       "visual": 108,
       "path": "godot-client/assets/actors/native/equipment/mycelari_mantle.glb"
@@ -4346,10 +4346,10 @@
       "finish": "plate",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 138032,
+      "bytes": 223072,
       "part": 5,
       "visual": 109,
       "path": "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass.glb"
@@ -4361,10 +4361,10 @@
       "finish": "cloth",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1375,
-      "triangles": 2358,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 134040,
+      "bytes": 217472,
       "part": 5,
       "visual": 110,
       "path": "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt.glb"
@@ -4563,6 +4563,966 @@
       "part": 7,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/luminous_orbit_amulet.glb"
+    },
+    "outrider_ranger_coat": {
+      "id": "outrider_ranger_coat",
+      "name": "Outrider Ranger Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3314,
+      "triangles": 5500,
+      "joints": 77,
+      "bytes": 254880,
+      "part": 5,
+      "visual": 120,
+      "path": "godot-client/assets/actors/native/equipment/outrider_ranger_coat.glb"
+    },
+    "outrider_laced_jerkin": {
+      "id": "outrider_laced_jerkin",
+      "name": "Outrider Laced Jerkin",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2770,
+      "triangles": 4660,
+      "joints": 77,
+      "bytes": 223036,
+      "part": 5,
+      "visual": 121,
+      "path": "godot-client/assets/actors/native/equipment/outrider_laced_jerkin.glb"
+    },
+    "outrider_oxblood_coat": {
+      "id": "outrider_oxblood_coat",
+      "name": "Outrider Oxblood Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 252972,
+      "part": 5,
+      "visual": 122,
+      "path": "godot-client/assets/actors/native/equipment/outrider_oxblood_coat.glb"
+    },
+    "outrider_buckled_coat": {
+      "id": "outrider_buckled_coat",
+      "name": "Outrider Buckled Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3426,
+      "triangles": 5668,
+      "joints": 77,
+      "bytes": 261380,
+      "part": 5,
+      "visual": 123,
+      "path": "godot-client/assets/actors/native/equipment/outrider_buckled_coat.glb"
+    },
+    "outrider_scout_jerkin": {
+      "id": "outrider_scout_jerkin",
+      "name": "Outrider Scout Jerkin",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 252968,
+      "part": 5,
+      "visual": 124,
+      "path": "godot-client/assets/actors/native/equipment/outrider_scout_jerkin.glb"
+    },
+    "outrider_rope_jerkin": {
+      "id": "outrider_rope_jerkin",
+      "name": "Outrider Rope Jerkin",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3042,
+      "triangles": 5080,
+      "joints": 77,
+      "bytes": 238960,
+      "part": 5,
+      "visual": 125,
+      "path": "godot-client/assets/actors/native/equipment/outrider_rope_jerkin.glb"
+    },
+    "outrider_brigandine": {
+      "id": "outrider_brigandine",
+      "name": "Outrider Brigandine",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3204,
+      "triangles": 5352,
+      "joints": 77,
+      "bytes": 248704,
+      "part": 5,
+      "visual": 126,
+      "path": "godot-client/assets/actors/native/equipment/outrider_brigandine.glb"
+    },
+    "outrider_fur_coat": {
+      "id": "outrider_fur_coat",
+      "name": "Outrider Fur-Collar Coat",
+      "kind": "coat",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 257100,
+      "part": 5,
+      "visual": 127,
+      "path": "godot-client/assets/actors/native/equipment/outrider_fur_coat.glb"
+    },
+    "knight_fluted_cuirass": {
+      "id": "knight_fluted_cuirass",
+      "name": "Fluted Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260788,
+      "part": 5,
+      "visual": 128,
+      "path": "godot-client/assets/actors/native/equipment/knight_fluted_cuirass.glb"
+    },
+    "knight_etched_cuirass": {
+      "id": "knight_etched_cuirass",
+      "name": "Etched Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260788,
+      "part": 5,
+      "visual": 129,
+      "path": "godot-client/assets/actors/native/equipment/knight_etched_cuirass.glb"
+    },
+    "knight_gilded_cuirass": {
+      "id": "knight_gilded_cuirass",
+      "name": "Gilded Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260788,
+      "part": 5,
+      "visual": 130,
+      "path": "godot-client/assets/actors/native/equipment/knight_gilded_cuirass.glb"
+    },
+    "knight_scale_cuirass": {
+      "id": "knight_scale_cuirass",
+      "name": "Scaled Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3204,
+      "triangles": 5352,
+      "joints": 77,
+      "bytes": 248708,
+      "part": 5,
+      "visual": 131,
+      "path": "godot-client/assets/actors/native/equipment/knight_scale_cuirass.glb"
+    },
+    "knight_chased_cuirass": {
+      "id": "knight_chased_cuirass",
+      "name": "Chased Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260784,
+      "part": 5,
+      "visual": 132,
+      "path": "godot-client/assets/actors/native/equipment/knight_chased_cuirass.glb"
+    },
+    "knight_tourney_cuirass": {
+      "id": "knight_tourney_cuirass",
+      "name": "Tourney Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260796,
+      "part": 5,
+      "visual": 133,
+      "path": "godot-client/assets/actors/native/equipment/knight_tourney_cuirass.glb"
+    },
+    "knight_herald_cuirass": {
+      "id": "knight_herald_cuirass",
+      "name": "Herald Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260792,
+      "part": 5,
+      "visual": 134,
+      "path": "godot-client/assets/actors/native/equipment/knight_herald_cuirass.glb"
+    },
+    "knight_warden_cuirass": {
+      "id": "knight_warden_cuirass",
+      "name": "Warden Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260792,
+      "part": 5,
+      "visual": 135,
+      "path": "godot-client/assets/actors/native/equipment/knight_warden_cuirass.glb"
+    },
+    "orun_linen_tunic": {
+      "id": "orun_linen_tunic",
+      "name": "Orun Linen Tunic",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223916,
+      "part": 5,
+      "visual": 136,
+      "path": "godot-client/assets/actors/native/equipment/orun_linen_tunic.glb"
+    },
+    "orun_wrap_robe": {
+      "id": "orun_wrap_robe",
+      "name": "Orun Wrap Robe",
+      "kind": "robe",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3396,
+      "triangles": 5608,
+      "joints": 77,
+      "bytes": 253824,
+      "part": 5,
+      "visual": 137,
+      "path": "godot-client/assets/actors/native/equipment/orun_wrap_robe.glb"
+    },
+    "orun_rider_jerkin": {
+      "id": "orun_rider_jerkin",
+      "name": "Orun Rider Jerkin",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3042,
+      "triangles": 5080,
+      "joints": 77,
+      "bytes": 238940,
+      "part": 5,
+      "visual": 138,
+      "path": "godot-client/assets/actors/native/equipment/orun_rider_jerkin.glb"
+    },
+    "orun_toggle_tunic": {
+      "id": "orun_toggle_tunic",
+      "name": "Orun Toggle Tunic",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223924,
+      "part": 5,
+      "visual": 139,
+      "path": "godot-client/assets/actors/native/equipment/orun_toggle_tunic.glb"
+    },
+    "orun_sunplate_cuirass": {
+      "id": "orun_sunplate_cuirass",
+      "name": "Orun Sunplate Cuirass",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260788,
+      "part": 5,
+      "visual": 140,
+      "path": "godot-client/assets/actors/native/equipment/orun_sunplate_cuirass.glb"
+    },
+    "orun_sash_robe": {
+      "id": "orun_sash_robe",
+      "name": "Orun Sash Robe",
+      "kind": "robe",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3426,
+      "triangles": 5668,
+      "joints": 77,
+      "bytes": 255748,
+      "part": 5,
+      "visual": 141,
+      "path": "godot-client/assets/actors/native/equipment/orun_sash_robe.glb"
+    },
+    "orun_ochre_coat": {
+      "id": "orun_ochre_coat",
+      "name": "Orun Ochre Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 252932,
+      "part": 5,
+      "visual": 142,
+      "path": "godot-client/assets/actors/native/equipment/orun_ochre_coat.glb"
+    },
+    "orun_ceremonial_tunic": {
+      "id": "orun_ceremonial_tunic",
+      "name": "Orun Ceremonial Tunic",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223936,
+      "part": 5,
+      "visual": 143,
+      "path": "godot-client/assets/actors/native/equipment/orun_ceremonial_tunic.glb"
+    },
+    "verdant_leafscale_coat": {
+      "id": "verdant_leafscale_coat",
+      "name": "Verdant Leafscale Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 252968,
+      "part": 5,
+      "visual": 144,
+      "path": "godot-client/assets/actors/native/equipment/verdant_leafscale_coat.glb"
+    },
+    "verdant_mantle_coat": {
+      "id": "verdant_mantle_coat",
+      "name": "Verdant Mantle Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3314,
+      "triangles": 5500,
+      "joints": 77,
+      "bytes": 254880,
+      "part": 5,
+      "visual": 145,
+      "path": "godot-client/assets/actors/native/equipment/verdant_mantle_coat.glb"
+    },
+    "verdant_bough_tunic": {
+      "id": "verdant_bough_tunic",
+      "name": "Verdant Bough Tunic",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223924,
+      "part": 5,
+      "visual": 146,
+      "path": "godot-client/assets/actors/native/equipment/verdant_bough_tunic.glb"
+    },
+    "verdant_leaf_cuirass": {
+      "id": "verdant_leaf_cuirass",
+      "name": "Verdant Leaf Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3204,
+      "triangles": 5352,
+      "joints": 77,
+      "bytes": 248704,
+      "part": 5,
+      "visual": 147,
+      "path": "godot-client/assets/actors/native/equipment/verdant_leaf_cuirass.glb"
+    },
+    "verdant_bark_cuirass": {
+      "id": "verdant_bark_cuirass",
+      "name": "Verdant Bark Cuirass",
+      "kind": "cuirass",
+      "finish": "wood",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 270040,
+      "part": 5,
+      "visual": 148,
+      "path": "godot-client/assets/actors/native/equipment/verdant_bark_cuirass.glb"
+    },
+    "verdant_toggle_coat": {
+      "id": "verdant_toggle_coat",
+      "name": "Verdant Toggle Coat",
+      "kind": "coat",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 257076,
+      "part": 5,
+      "visual": 149,
+      "path": "godot-client/assets/actors/native/equipment/verdant_toggle_coat.glb"
+    },
+    "verdant_amber_cuirass": {
+      "id": "verdant_amber_cuirass",
+      "name": "Verdant Amber Cuirass",
+      "kind": "cuirass",
+      "finish": "crystal",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 258600,
+      "part": 5,
+      "visual": 150,
+      "path": "godot-client/assets/actors/native/equipment/verdant_amber_cuirass.glb"
+    },
+    "verdant_warden_cuirass": {
+      "id": "verdant_warden_cuirass",
+      "name": "Verdant Warden Cuirass",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260792,
+      "part": 5,
+      "visual": 151,
+      "path": "godot-client/assets/actors/native/equipment/verdant_warden_cuirass.glb"
+    },
+    "luminous_tabard_coat": {
+      "id": "luminous_tabard_coat",
+      "name": "Luminous Tabard Coat",
+      "kind": "coat",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3314,
+      "triangles": 5500,
+      "joints": 77,
+      "bytes": 249280,
+      "part": 5,
+      "visual": 152,
+      "path": "godot-client/assets/actors/native/equipment/luminous_tabard_coat.glb"
+    },
+    "luminous_rune_coat": {
+      "id": "luminous_rune_coat",
+      "name": "Luminous Rune Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 252952,
+      "part": 5,
+      "visual": 153,
+      "path": "godot-client/assets/actors/native/equipment/luminous_rune_coat.glb"
+    },
+    "luminous_silver_cuirass": {
+      "id": "luminous_silver_cuirass",
+      "name": "Luminous Silver Cuirass",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260796,
+      "part": 5,
+      "visual": 154,
+      "path": "godot-client/assets/actors/native/equipment/luminous_silver_cuirass.glb"
+    },
+    "luminous_crystal_cuirass": {
+      "id": "luminous_crystal_cuirass",
+      "name": "Luminous Crystal Cuirass",
+      "kind": "cuirass",
+      "finish": "crystal",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 258620,
+      "part": 5,
+      "visual": 155,
+      "path": "godot-client/assets/actors/native/equipment/luminous_crystal_cuirass.glb"
+    },
+    "luminous_violet_coat": {
+      "id": "luminous_violet_coat",
+      "name": "Luminous Violet Coat",
+      "kind": "coat",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3314,
+      "triangles": 5500,
+      "joints": 77,
+      "bytes": 249288,
+      "part": 5,
+      "visual": 156,
+      "path": "godot-client/assets/actors/native/equipment/luminous_violet_coat.glb"
+    },
+    "luminous_feather_robe": {
+      "id": "luminous_feather_robe",
+      "name": "Luminous Feather Robe",
+      "kind": "robe",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3434,
+      "triangles": 5740,
+      "joints": 77,
+      "bytes": 256968,
+      "part": 5,
+      "visual": 157,
+      "path": "godot-client/assets/actors/native/equipment/luminous_feather_robe.glb"
+    },
+    "luminous_gilt_robe": {
+      "id": "luminous_gilt_robe",
+      "name": "Luminous Gilt Robe",
+      "kind": "robe",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3434,
+      "triangles": 5740,
+      "joints": 77,
+      "bytes": 256952,
+      "part": 5,
+      "visual": 158,
+      "path": "godot-client/assets/actors/native/equipment/luminous_gilt_robe.glb"
+    },
+    "luminous_winged_cuirass": {
+      "id": "luminous_winged_cuirass",
+      "name": "Luminous Winged Cuirass",
+      "kind": "cuirass",
+      "finish": "crystal",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 258612,
+      "part": 5,
+      "visual": 159,
+      "path": "godot-client/assets/actors/native/equipment/luminous_winged_cuirass.glb"
+    },
+    "legend_phoenix_plate": {
+      "id": "legend_phoenix_plate",
+      "name": "Phoenix Plate",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260752,
+      "part": 5,
+      "visual": 160,
+      "path": "godot-client/assets/actors/native/equipment/legend_phoenix_plate.glb"
+    },
+    "legend_frost_plate": {
+      "id": "legend_frost_plate",
+      "name": "Rimeguard Plate",
+      "kind": "cuirass",
+      "finish": "crystal",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 258568,
+      "part": 5,
+      "visual": 161,
+      "path": "godot-client/assets/actors/native/equipment/legend_frost_plate.glb"
+    },
+    "legend_storm_plate": {
+      "id": "legend_storm_plate",
+      "name": "Stormcall Plate",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260768,
+      "part": 5,
+      "visual": 162,
+      "path": "godot-client/assets/actors/native/equipment/legend_storm_plate.glb"
+    },
+    "legend_drake_plate": {
+      "id": "legend_drake_plate",
+      "name": "Bonedrake Plate",
+      "kind": "cuirass",
+      "finish": "shell",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262556,
+      "part": 5,
+      "visual": 163,
+      "path": "godot-client/assets/actors/native/equipment/legend_drake_plate.glb"
+    },
+    "legend_radiant_plate": {
+      "id": "legend_radiant_plate",
+      "name": "Radiant Plate",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260748,
+      "part": 5,
+      "visual": 164,
+      "path": "godot-client/assets/actors/native/equipment/legend_radiant_plate.glb"
+    },
+    "legend_void_plate": {
+      "id": "legend_void_plate",
+      "name": "Voidsworn Plate",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260764,
+      "part": 5,
+      "visual": 165,
+      "path": "godot-client/assets/actors/native/equipment/legend_void_plate.glb"
+    },
+    "legend_runestone_plate": {
+      "id": "legend_runestone_plate",
+      "name": "Runestone Plate",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260764,
+      "part": 5,
+      "visual": 166,
+      "path": "godot-client/assets/actors/native/equipment/legend_runestone_plate.glb"
+    },
+    "legend_lion_plate": {
+      "id": "legend_lion_plate",
+      "name": "Lionheart Plate",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260768,
+      "part": 5,
+      "visual": 167,
+      "path": "godot-client/assets/actors/native/equipment/legend_lion_plate.glb"
+    },
+    "peasant_linen_shirt": {
+      "id": "peasant_linen_shirt",
+      "name": "Linen Shirt",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223888,
+      "part": 5,
+      "visual": 168,
+      "path": "godot-client/assets/actors/native/equipment/peasant_linen_shirt.glb"
+    },
+    "peasant_short_tunic": {
+      "id": "peasant_short_tunic",
+      "name": "Short-Sleeve Tunic",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223928,
+      "part": 5,
+      "visual": 169,
+      "path": "godot-client/assets/actors/native/equipment/peasant_short_tunic.glb"
+    },
+    "peasant_patched_tunic": {
+      "id": "peasant_patched_tunic",
+      "name": "Patched Tunic",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223900,
+      "part": 5,
+      "visual": 170,
+      "path": "godot-client/assets/actors/native/equipment/peasant_patched_tunic.glb"
+    },
+    "peasant_button_tunic": {
+      "id": "peasant_button_tunic",
+      "name": "Buttoned Tunic",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223908,
+      "part": 5,
+      "visual": 171,
+      "path": "godot-client/assets/actors/native/equipment/peasant_button_tunic.glb"
+    },
+    "peasant_wrap_tunic": {
+      "id": "peasant_wrap_tunic",
+      "name": "Wrap Tunic",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223888,
+      "part": 5,
+      "visual": 172,
+      "path": "godot-client/assets/actors/native/equipment/peasant_wrap_tunic.glb"
+    },
+    "peasant_laced_tunic": {
+      "id": "peasant_laced_tunic",
+      "name": "Laced Work Tunic",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223920,
+      "part": 5,
+      "visual": 173,
+      "path": "godot-client/assets/actors/native/equipment/peasant_laced_tunic.glb"
+    },
+    "peasant_ragged_tunic": {
+      "id": "peasant_ragged_tunic",
+      "name": "Ragged Tunic",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223896,
+      "part": 5,
+      "visual": 174,
+      "path": "godot-client/assets/actors/native/equipment/peasant_ragged_tunic.glb"
+    },
+    "peasant_wool_tunic": {
+      "id": "peasant_wool_tunic",
+      "name": "Wool Tunic",
+      "kind": "shirt",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 223888,
+      "part": 5,
+      "visual": 175,
+      "path": "godot-client/assets/actors/native/equipment/peasant_wool_tunic.glb"
+    },
+    "levy_quilted_gambeson": {
+      "id": "levy_quilted_gambeson",
+      "name": "Quilted Gambeson",
+      "kind": "coat",
+      "finish": "cloth",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3042,
+      "triangles": 5080,
+      "joints": 77,
+      "bytes": 233340,
+      "part": 5,
+      "visual": 176,
+      "path": "godot-client/assets/actors/native/equipment/levy_quilted_gambeson.glb"
+    },
+    "levy_studded_brigandine": {
+      "id": "levy_studded_brigandine",
+      "name": "Studded Brigandine",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 252956,
+      "part": 5,
+      "visual": 177,
+      "path": "godot-client/assets/actors/native/equipment/levy_studded_brigandine.glb"
+    },
+    "levy_splinted_corselet": {
+      "id": "levy_splinted_corselet",
+      "name": "Splinted Corselet",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3204,
+      "triangles": 5352,
+      "joints": 77,
+      "bytes": 248688,
+      "part": 5,
+      "visual": 178,
+      "path": "godot-client/assets/actors/native/equipment/levy_splinted_corselet.glb"
+    },
+    "levy_mail_hauberk": {
+      "id": "levy_mail_hauberk",
+      "name": "Mail Hauberk",
+      "kind": "cuirass",
+      "finish": "mail",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3042,
+      "triangles": 5080,
+      "joints": 77,
+      "bytes": 240720,
+      "part": 5,
+      "visual": 179,
+      "path": "godot-client/assets/actors/native/equipment/levy_mail_hauberk.glb"
+    },
+    "levy_lamellar_corselet": {
+      "id": "levy_lamellar_corselet",
+      "name": "Lamellar Corselet",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3204,
+      "triangles": 5352,
+      "joints": 77,
+      "bytes": 248688,
+      "part": 5,
+      "visual": 180,
+      "path": "godot-client/assets/actors/native/equipment/levy_lamellar_corselet.glb"
+    },
+    "levy_steel_breastplate": {
+      "id": "levy_steel_breastplate",
+      "name": "Steel Breastplate",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260764,
+      "part": 5,
+      "visual": 181,
+      "path": "godot-client/assets/actors/native/equipment/levy_steel_breastplate.glb"
+    },
+    "levy_bronze_breastplate": {
+      "id": "levy_bronze_breastplate",
+      "name": "Bronze Breastplate",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260776,
+      "part": 5,
+      "visual": 182,
+      "path": "godot-client/assets/actors/native/equipment/levy_bronze_breastplate.glb"
+    },
+    "levy_spauldered_breastplate": {
+      "id": "levy_spauldered_breastplate",
+      "name": "Spauldered Breastplate",
+      "kind": "cuirass",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 260792,
+      "part": 5,
+      "visual": 183,
+      "path": "godot-client/assets/actors/native/equipment/levy_spauldered_breastplate.glb"
     },
     "emberforge_cuisses": {
       "id": "emberforge_cuisses",
@@ -6213,10 +7173,10 @@
       "finish": "cloth",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1375,
-      "triangles": 2358,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 133936,
+      "bytes": 217368,
       "part": 5,
       "visuals": [
         0,
@@ -6241,10 +7201,10 @@
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 137960,
+      "bytes": 223004,
       "part": 5,
       "visuals": [
         12,
@@ -6259,10 +7219,10 @@
       "finish": "mail",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 139748,
+      "bytes": 224788,
       "part": 5,
       "visuals": [
         13,
@@ -6278,10 +7238,10 @@
       "finish": "plate",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 137948,
+      "bytes": 222988,
       "part": 5,
       "visuals": [
         16,
@@ -6298,10 +7258,10 @@
       "finish": "fur",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1705,
-      "triangles": 2970,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 164208,
+      "bytes": 227092,
       "part": 5,
       "visuals": [
         18
@@ -6581,170 +7541,170 @@
       "authoredFor": "luminous_female",
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_pants__feminine.glb"
     },
-    "amberwood_ranger_cuirass__heavy": {
-      "id": "amberwood_ranger_cuirass__heavy",
+    "amberwood_ranger_cuirass__bust": {
+      "id": "amberwood_ranger_cuirass__bust",
       "name": "Amberwood Ranger Cuirass",
       "kind": "cuirass",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 138052,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_cuirass__heavy.glb"
+      "bytes": 224312,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_cuirass__bust.glb"
     },
-    "glasswarden_cuirass__heavy": {
-      "id": "glasswarden_cuirass__heavy",
+    "glasswarden_cuirass__bust": {
+      "id": "glasswarden_cuirass__bust",
       "name": "Glasswarden Crystal Cuirass",
       "kind": "cuirass",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 138064,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/glasswarden_cuirass__heavy.glb"
+      "bytes": 224324,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/glasswarden_cuirass__bust.glb"
     },
-    "greyhaven_coat__heavy": {
-      "id": "greyhaven_coat__heavy",
+    "greyhaven_coat__bust": {
+      "id": "greyhaven_coat__bust",
       "name": "Greyhaven League Coat",
       "kind": "coat",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1705,
-      "triangles": 2970,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 160188,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/greyhaven_coat__heavy.glb"
+      "bytes": 224292,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/greyhaven_coat__bust.glb"
     },
-    "orun_sun_cuirass__heavy": {
-      "id": "orun_sun_cuirass__heavy",
+    "orun_sun_cuirass__bust": {
+      "id": "orun_sun_cuirass__bust",
       "name": "Orun Sun Cuirass",
       "kind": "cuirass",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 138008,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/orun_sun_cuirass__heavy.glb"
+      "bytes": 224268,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/orun_sun_cuirass__bust.glb"
     },
-    "ssarathi_scale_cuirass__heavy": {
-      "id": "ssarathi_scale_cuirass__heavy",
+    "ssarathi_scale_cuirass__bust": {
+      "id": "ssarathi_scale_cuirass__bust",
       "name": "Ssarathi Scale Cuirass",
       "kind": "cuirass",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 138040,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_cuirass__heavy.glb"
+      "bytes": 224300,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_cuirass__bust.glb"
     },
-    "luminous_turquoise_robe__heavy": {
-      "id": "luminous_turquoise_robe__heavy",
+    "luminous_turquoise_robe__bust": {
+      "id": "luminous_turquoise_robe__bust",
       "name": "Luminous Turquoise Robe",
       "kind": "robe",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1735,
-      "triangles": 3030,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 162112,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/luminous_turquoise_robe__heavy.glb"
+      "bytes": 224304,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/luminous_turquoise_robe__bust.glb"
     },
-    "votary_fur_mantle__heavy": {
-      "id": "votary_fur_mantle__heavy",
+    "votary_fur_mantle__bust": {
+      "id": "votary_fur_mantle__bust",
       "name": "Votary Fur Mantle",
       "kind": "coat",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1705,
-      "triangles": 2970,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 160168,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/votary_fur_mantle__heavy.glb"
+      "bytes": 224272,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/votary_fur_mantle__bust.glb"
     },
-    "stoneborn_plate__heavy": {
-      "id": "stoneborn_plate__heavy",
+    "stoneborn_plate__bust": {
+      "id": "stoneborn_plate__bust",
       "name": "Stoneborn Memory Plate",
       "kind": "cuirass",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 138040,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/stoneborn_plate__heavy.glb"
+      "bytes": 224300,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/stoneborn_plate__bust.glb"
     },
-    "mycelari_mantle__heavy": {
-      "id": "mycelari_mantle__heavy",
+    "mycelari_mantle__bust": {
+      "id": "mycelari_mantle__bust",
       "name": "Mycelari Spore Mantle",
       "kind": "robe",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1735,
-      "triangles": 3030,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 162104,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/mycelari_mantle__heavy.glb"
+      "bytes": 224292,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/mycelari_mantle__bust.glb"
     },
-    "four_gates_guard_cuirass__heavy": {
-      "id": "four_gates_guard_cuirass__heavy",
+    "four_gates_guard_cuirass__bust": {
+      "id": "four_gates_guard_cuirass__bust",
       "name": "Four Gates Guardian Cuirass",
       "kind": "cuirass",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 138064,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass__heavy.glb"
+      "bytes": 224324,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass__bust.glb"
     },
-    "luminous_short_sleeve_shirt__heavy": {
-      "id": "luminous_short_sleeve_shirt__heavy",
+    "luminous_short_sleeve_shirt__bust": {
+      "id": "luminous_short_sleeve_shirt__bust",
       "name": "Luminous Short-Sleeve Shirt",
       "kind": "shirt",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1375,
-      "triangles": 2358,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 139672,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt__heavy.glb"
+      "bytes": 224320,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt__bust.glb"
     },
     "amberwood_ranger_boots__saurian": {
       "id": "amberwood_ranger_boots__saurian",
@@ -6850,6 +7810,966 @@
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_boots__saurian.glb"
+    },
+    "outrider_ranger_coat__bust": {
+      "id": "outrider_ranger_coat__bust",
+      "name": "Outrider Ranger Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3314,
+      "triangles": 5500,
+      "joints": 77,
+      "bytes": 256132,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/outrider_ranger_coat__bust.glb"
+    },
+    "outrider_laced_jerkin__bust": {
+      "id": "outrider_laced_jerkin__bust",
+      "name": "Outrider Laced Jerkin",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2770,
+      "triangles": 4660,
+      "joints": 77,
+      "bytes": 224288,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/outrider_laced_jerkin__bust.glb"
+    },
+    "outrider_oxblood_coat__bust": {
+      "id": "outrider_oxblood_coat__bust",
+      "name": "Outrider Oxblood Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 254220,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/outrider_oxblood_coat__bust.glb"
+    },
+    "outrider_buckled_coat__bust": {
+      "id": "outrider_buckled_coat__bust",
+      "name": "Outrider Buckled Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3426,
+      "triangles": 5668,
+      "joints": 77,
+      "bytes": 262636,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/outrider_buckled_coat__bust.glb"
+    },
+    "outrider_scout_jerkin__bust": {
+      "id": "outrider_scout_jerkin__bust",
+      "name": "Outrider Scout Jerkin",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 254220,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/outrider_scout_jerkin__bust.glb"
+    },
+    "outrider_rope_jerkin__bust": {
+      "id": "outrider_rope_jerkin__bust",
+      "name": "Outrider Rope Jerkin",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3042,
+      "triangles": 5080,
+      "joints": 77,
+      "bytes": 240212,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/outrider_rope_jerkin__bust.glb"
+    },
+    "outrider_brigandine__bust": {
+      "id": "outrider_brigandine__bust",
+      "name": "Outrider Brigandine",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3204,
+      "triangles": 5352,
+      "joints": 77,
+      "bytes": 249960,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/outrider_brigandine__bust.glb"
+    },
+    "outrider_fur_coat__bust": {
+      "id": "outrider_fur_coat__bust",
+      "name": "Outrider Fur-Collar Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 254232,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/outrider_fur_coat__bust.glb"
+    },
+    "knight_fluted_cuirass__bust": {
+      "id": "knight_fluted_cuirass__bust",
+      "name": "Fluted Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262040,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/knight_fluted_cuirass__bust.glb"
+    },
+    "knight_etched_cuirass__bust": {
+      "id": "knight_etched_cuirass__bust",
+      "name": "Etched Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262044,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/knight_etched_cuirass__bust.glb"
+    },
+    "knight_gilded_cuirass__bust": {
+      "id": "knight_gilded_cuirass__bust",
+      "name": "Gilded Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262044,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/knight_gilded_cuirass__bust.glb"
+    },
+    "knight_scale_cuirass__bust": {
+      "id": "knight_scale_cuirass__bust",
+      "name": "Scaled Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3204,
+      "triangles": 5352,
+      "joints": 77,
+      "bytes": 249960,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/knight_scale_cuirass__bust.glb"
+    },
+    "knight_chased_cuirass__bust": {
+      "id": "knight_chased_cuirass__bust",
+      "name": "Chased Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262040,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/knight_chased_cuirass__bust.glb"
+    },
+    "knight_tourney_cuirass__bust": {
+      "id": "knight_tourney_cuirass__bust",
+      "name": "Tourney Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262048,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/knight_tourney_cuirass__bust.glb"
+    },
+    "knight_herald_cuirass__bust": {
+      "id": "knight_herald_cuirass__bust",
+      "name": "Herald Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262040,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/knight_herald_cuirass__bust.glb"
+    },
+    "knight_warden_cuirass__bust": {
+      "id": "knight_warden_cuirass__bust",
+      "name": "Warden Knight Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262048,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/knight_warden_cuirass__bust.glb"
+    },
+    "orun_linen_tunic__bust": {
+      "id": "orun_linen_tunic__bust",
+      "name": "Orun Linen Tunic",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230760,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/orun_linen_tunic__bust.glb"
+    },
+    "orun_wrap_robe__bust": {
+      "id": "orun_wrap_robe__bust",
+      "name": "Orun Wrap Robe",
+      "kind": "robe",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3396,
+      "triangles": 5608,
+      "joints": 77,
+      "bytes": 260672,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/orun_wrap_robe__bust.glb"
+    },
+    "orun_rider_jerkin__bust": {
+      "id": "orun_rider_jerkin__bust",
+      "name": "Orun Rider Jerkin",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3042,
+      "triangles": 5080,
+      "joints": 77,
+      "bytes": 240196,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/orun_rider_jerkin__bust.glb"
+    },
+    "orun_toggle_tunic__bust": {
+      "id": "orun_toggle_tunic__bust",
+      "name": "Orun Toggle Tunic",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230768,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/orun_toggle_tunic__bust.glb"
+    },
+    "orun_sunplate_cuirass__bust": {
+      "id": "orun_sunplate_cuirass__bust",
+      "name": "Orun Sunplate Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262040,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/orun_sunplate_cuirass__bust.glb"
+    },
+    "orun_sash_robe__bust": {
+      "id": "orun_sash_robe__bust",
+      "name": "Orun Sash Robe",
+      "kind": "robe",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3426,
+      "triangles": 5668,
+      "joints": 77,
+      "bytes": 262596,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/orun_sash_robe__bust.glb"
+    },
+    "orun_ochre_coat__bust": {
+      "id": "orun_ochre_coat__bust",
+      "name": "Orun Ochre Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 254188,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/orun_ochre_coat__bust.glb"
+    },
+    "orun_ceremonial_tunic__bust": {
+      "id": "orun_ceremonial_tunic__bust",
+      "name": "Orun Ceremonial Tunic",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230784,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/orun_ceremonial_tunic__bust.glb"
+    },
+    "verdant_leafscale_coat__bust": {
+      "id": "verdant_leafscale_coat__bust",
+      "name": "Verdant Leafscale Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 254224,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/verdant_leafscale_coat__bust.glb"
+    },
+    "verdant_mantle_coat__bust": {
+      "id": "verdant_mantle_coat__bust",
+      "name": "Verdant Mantle Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3314,
+      "triangles": 5500,
+      "joints": 77,
+      "bytes": 256132,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/verdant_mantle_coat__bust.glb"
+    },
+    "verdant_bough_tunic__bust": {
+      "id": "verdant_bough_tunic__bust",
+      "name": "Verdant Bough Tunic",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230772,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/verdant_bough_tunic__bust.glb"
+    },
+    "verdant_leaf_cuirass__bust": {
+      "id": "verdant_leaf_cuirass__bust",
+      "name": "Verdant Leaf Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3204,
+      "triangles": 5352,
+      "joints": 77,
+      "bytes": 249956,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/verdant_leaf_cuirass__bust.glb"
+    },
+    "verdant_bark_cuirass__bust": {
+      "id": "verdant_bark_cuirass__bust",
+      "name": "Verdant Bark Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262040,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/verdant_bark_cuirass__bust.glb"
+    },
+    "verdant_toggle_coat__bust": {
+      "id": "verdant_toggle_coat__bust",
+      "name": "Verdant Toggle Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 254208,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/verdant_toggle_coat__bust.glb"
+    },
+    "verdant_amber_cuirass__bust": {
+      "id": "verdant_amber_cuirass__bust",
+      "name": "Verdant Amber Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262044,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/verdant_amber_cuirass__bust.glb"
+    },
+    "verdant_warden_cuirass__bust": {
+      "id": "verdant_warden_cuirass__bust",
+      "name": "Verdant Warden Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262044,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/verdant_warden_cuirass__bust.glb"
+    },
+    "luminous_tabard_coat__bust": {
+      "id": "luminous_tabard_coat__bust",
+      "name": "Luminous Tabard Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3314,
+      "triangles": 5500,
+      "joints": 77,
+      "bytes": 256132,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/luminous_tabard_coat__bust.glb"
+    },
+    "luminous_rune_coat__bust": {
+      "id": "luminous_rune_coat__bust",
+      "name": "Luminous Rune Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 254204,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/luminous_rune_coat__bust.glb"
+    },
+    "luminous_silver_cuirass__bust": {
+      "id": "luminous_silver_cuirass__bust",
+      "name": "Luminous Silver Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262052,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/luminous_silver_cuirass__bust.glb"
+    },
+    "luminous_crystal_cuirass__bust": {
+      "id": "luminous_crystal_cuirass__bust",
+      "name": "Luminous Crystal Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262060,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/luminous_crystal_cuirass__bust.glb"
+    },
+    "luminous_violet_coat__bust": {
+      "id": "luminous_violet_coat__bust",
+      "name": "Luminous Violet Coat",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3314,
+      "triangles": 5500,
+      "joints": 77,
+      "bytes": 256136,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/luminous_violet_coat__bust.glb"
+    },
+    "luminous_feather_robe__bust": {
+      "id": "luminous_feather_robe__bust",
+      "name": "Luminous Feather Robe",
+      "kind": "robe",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3434,
+      "triangles": 5740,
+      "joints": 77,
+      "bytes": 263816,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/luminous_feather_robe__bust.glb"
+    },
+    "luminous_gilt_robe__bust": {
+      "id": "luminous_gilt_robe__bust",
+      "name": "Luminous Gilt Robe",
+      "kind": "robe",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3434,
+      "triangles": 5740,
+      "joints": 77,
+      "bytes": 263800,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/luminous_gilt_robe__bust.glb"
+    },
+    "luminous_winged_cuirass__bust": {
+      "id": "luminous_winged_cuirass__bust",
+      "name": "Luminous Winged Cuirass",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262048,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/luminous_winged_cuirass__bust.glb"
+    },
+    "legend_phoenix_plate__bust": {
+      "id": "legend_phoenix_plate__bust",
+      "name": "Phoenix Plate",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262004,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/legend_phoenix_plate__bust.glb"
+    },
+    "legend_frost_plate__bust": {
+      "id": "legend_frost_plate__bust",
+      "name": "Rimeguard Plate",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262008,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/legend_frost_plate__bust.glb"
+    },
+    "legend_storm_plate__bust": {
+      "id": "legend_storm_plate__bust",
+      "name": "Stormcall Plate",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262016,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/legend_storm_plate__bust.glb"
+    },
+    "legend_drake_plate__bust": {
+      "id": "legend_drake_plate__bust",
+      "name": "Bonedrake Plate",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262008,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/legend_drake_plate__bust.glb"
+    },
+    "legend_radiant_plate__bust": {
+      "id": "legend_radiant_plate__bust",
+      "name": "Radiant Plate",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262000,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/legend_radiant_plate__bust.glb"
+    },
+    "legend_void_plate__bust": {
+      "id": "legend_void_plate__bust",
+      "name": "Voidsworn Plate",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262016,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/legend_void_plate__bust.glb"
+    },
+    "legend_runestone_plate__bust": {
+      "id": "legend_runestone_plate__bust",
+      "name": "Runestone Plate",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262016,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/legend_runestone_plate__bust.glb"
+    },
+    "legend_lion_plate__bust": {
+      "id": "legend_lion_plate__bust",
+      "name": "Lionheart Plate",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262016,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/legend_lion_plate__bust.glb"
+    },
+    "peasant_linen_shirt__bust": {
+      "id": "peasant_linen_shirt__bust",
+      "name": "Linen Shirt",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230732,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/peasant_linen_shirt__bust.glb"
+    },
+    "peasant_short_tunic__bust": {
+      "id": "peasant_short_tunic__bust",
+      "name": "Short-Sleeve Tunic",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230776,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/peasant_short_tunic__bust.glb"
+    },
+    "peasant_patched_tunic__bust": {
+      "id": "peasant_patched_tunic__bust",
+      "name": "Patched Tunic",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230748,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/peasant_patched_tunic__bust.glb"
+    },
+    "peasant_button_tunic__bust": {
+      "id": "peasant_button_tunic__bust",
+      "name": "Buttoned Tunic",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230756,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/peasant_button_tunic__bust.glb"
+    },
+    "peasant_wrap_tunic__bust": {
+      "id": "peasant_wrap_tunic__bust",
+      "name": "Wrap Tunic",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230732,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/peasant_wrap_tunic__bust.glb"
+    },
+    "peasant_laced_tunic__bust": {
+      "id": "peasant_laced_tunic__bust",
+      "name": "Laced Work Tunic",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230764,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/peasant_laced_tunic__bust.glb"
+    },
+    "peasant_ragged_tunic__bust": {
+      "id": "peasant_ragged_tunic__bust",
+      "name": "Ragged Tunic",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230744,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/peasant_ragged_tunic__bust.glb"
+    },
+    "peasant_wool_tunic__bust": {
+      "id": "peasant_wool_tunic__bust",
+      "name": "Wool Tunic",
+      "kind": "shirt",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 2882,
+      "triangles": 4828,
+      "joints": 77,
+      "bytes": 230736,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/peasant_wool_tunic__bust.glb"
+    },
+    "levy_quilted_gambeson__bust": {
+      "id": "levy_quilted_gambeson__bust",
+      "name": "Quilted Gambeson",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3042,
+      "triangles": 5080,
+      "joints": 77,
+      "bytes": 240188,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/levy_quilted_gambeson__bust.glb"
+    },
+    "levy_studded_brigandine__bust": {
+      "id": "levy_studded_brigandine__bust",
+      "name": "Studded Brigandine",
+      "kind": "coat",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3284,
+      "triangles": 5440,
+      "joints": 77,
+      "bytes": 254204,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/levy_studded_brigandine__bust.glb"
+    },
+    "levy_splinted_corselet__bust": {
+      "id": "levy_splinted_corselet__bust",
+      "name": "Splinted Corselet",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3204,
+      "triangles": 5352,
+      "joints": 77,
+      "bytes": 249940,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/levy_splinted_corselet__bust.glb"
+    },
+    "levy_mail_hauberk__bust": {
+      "id": "levy_mail_hauberk__bust",
+      "name": "Mail Hauberk",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3042,
+      "triangles": 5080,
+      "joints": 77,
+      "bytes": 240172,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/levy_mail_hauberk__bust.glb"
+    },
+    "levy_lamellar_corselet__bust": {
+      "id": "levy_lamellar_corselet__bust",
+      "name": "Lamellar Corselet",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3204,
+      "triangles": 5352,
+      "joints": 77,
+      "bytes": 249940,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/levy_lamellar_corselet__bust.glb"
+    },
+    "levy_steel_breastplate__bust": {
+      "id": "levy_steel_breastplate__bust",
+      "name": "Steel Breastplate",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262020,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/levy_steel_breastplate__bust.glb"
+    },
+    "levy_bronze_breastplate__bust": {
+      "id": "levy_bronze_breastplate__bust",
+      "name": "Bronze Breastplate",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262028,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/levy_bronze_breastplate__bust.glb"
+    },
+    "levy_spauldered_breastplate__bust": {
+      "id": "levy_spauldered_breastplate__bust",
+      "name": "Spauldered Breastplate",
+      "kind": "cuirass",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "vertices": 3416,
+      "triangles": 5652,
+      "joints": 77,
+      "bytes": 262048,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/levy_spauldered_breastplate__bust.glb"
     },
     "emberforge_cuisses__saurian": {
       "id": "emberforge_cuisses__saurian",
@@ -8891,80 +10811,80 @@
       "authoredFor": "luminous_female",
       "path": "godot-client/assets/actors/native/equipment/generic_cuisses__feminine.glb"
     },
-    "generic_shirt__heavy": {
-      "id": "generic_shirt__heavy",
+    "generic_shirt__bust": {
+      "id": "generic_shirt__bust",
       "name": "Shirt",
       "kind": "shirt",
       "finish": "cloth",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1375,
-      "triangles": 2358,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 133968,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/generic_shirt__heavy.glb"
+      "bytes": 218620,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/generic_shirt__bust.glb"
     },
-    "generic_leather_armor__heavy": {
-      "id": "generic_leather_armor__heavy",
+    "generic_leather_armor__bust": {
+      "id": "generic_leather_armor__bust",
       "name": "Leather Armor",
       "kind": "cuirass",
       "finish": "leather",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 137996,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/generic_leather_armor__heavy.glb"
+      "bytes": 224256,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/generic_leather_armor__bust.glb"
     },
-    "generic_chain_armor__heavy": {
-      "id": "generic_chain_armor__heavy",
+    "generic_chain_armor__bust": {
+      "id": "generic_chain_armor__bust",
       "name": "Chain Armor",
       "kind": "cuirass",
       "finish": "mail",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 139780,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/generic_chain_armor__heavy.glb"
+      "bytes": 226040,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/generic_chain_armor__bust.glb"
     },
-    "generic_plate_armor__heavy": {
-      "id": "generic_plate_armor__heavy",
+    "generic_plate_armor__bust": {
+      "id": "generic_plate_armor__bust",
       "name": "Plate Armor",
       "kind": "cuirass",
       "finish": "plate",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1356,
-      "triangles": 2288,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 137980,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/generic_plate_armor__heavy.glb"
+      "bytes": 224240,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/generic_plate_armor__bust.glb"
     },
-    "generic_fur_coat__heavy": {
-      "id": "generic_fur_coat__heavy",
+    "generic_fur_coat__bust": {
+      "id": "generic_fur_coat__bust",
       "name": "Fur Coat",
       "kind": "coat",
       "finish": "fur",
       "attach": "skinned",
       "skinRegion": "torso",
-      "vertices": 1705,
-      "triangles": 2970,
+      "vertices": 2770,
+      "triangles": 4660,
       "joints": 77,
-      "bytes": 164240,
-      "group": "heavy",
-      "authoredFor": "stoneborn_male",
-      "path": "godot-client/assets/actors/native/equipment/generic_fur_coat__heavy.glb"
+      "bytes": 228344,
+      "group": "bust",
+      "authoredFor": "stoneborn_female",
+      "path": "godot-client/assets/actors/native/equipment/generic_fur_coat__bust.glb"
     },
     "generic_boots__saurian": {
       "id": "generic_boots__saurian",
@@ -9055,7 +10975,7 @@
   },
   "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire.",
   "validation": {
-    "files": 549,
+    "files": 677,
     "results": {
       "godot-client/assets/actors/native/creatures/algae_alligator.glb": {
         "nodes": 25,
@@ -10143,12 +12063,6 @@
         "skins": 1,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/amberwood_ranger_cuirass__heavy.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/amberwood_ranger_hood.glb": {
         "nodes": 1,
         "meshes": 1,
@@ -10180,12 +12094,6 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass__heavy.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -10275,12 +12183,6 @@
         "skins": 1,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/generic_chain_armor__heavy.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/generic_club_bone.glb": {
         "nodes": 1,
         "meshes": 1,
@@ -10324,12 +12226,6 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/generic_fur_coat.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/generic_fur_coat__heavy.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -10395,12 +12291,6 @@
         "skins": 1,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/generic_leather_armor__heavy.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/generic_legs_fur.glb": {
         "nodes": 78,
         "meshes": 1,
@@ -10455,12 +12345,6 @@
         "skins": 1,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/generic_plate_armor__heavy.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/generic_quiver.glb": {
         "nodes": 1,
         "meshes": 1,
@@ -10486,12 +12370,6 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/generic_shirt.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/generic_shirt__heavy.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -10552,12 +12430,6 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/glasswarden_cuirass.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/glasswarden_cuirass__heavy.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -10624,12 +12496,6 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/greyhaven_coat.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/greyhaven_coat__heavy.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -10725,19 +12591,7 @@
         "skins": 1,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt__heavy.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/luminous_turquoise_robe.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/luminous_turquoise_robe__heavy.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -10756,12 +12610,6 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/mycelari_mantle.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mycelari_mantle__heavy.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -10821,12 +12669,6 @@
         "skins": 1,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/orun_sun_cuirass__heavy.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/orun_sun_shield.glb": {
         "nodes": 1,
         "meshes": 1,
@@ -10881,12 +12723,6 @@
         "skins": 1,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/ssarathi_scale_cuirass__heavy.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/ssarathi_scale_legs.glb": {
         "nodes": 78,
         "meshes": 1,
@@ -10929,12 +12765,6 @@
         "skins": 1,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/stoneborn_plate__heavy.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/votary_fur_hood.glb": {
         "nodes": 1,
         "meshes": 1,
@@ -10942,12 +12772,6 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/votary_fur_mantle.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/votary_fur_mantle__heavy.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -11133,7 +12957,877 @@
         "skins": 0,
         "animations": 162
       },
+      "godot-client/assets/actors/native/equipment/amberwood_ranger_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/four_gates_guard_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_chain_armor__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_fur_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_leather_armor__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_plate_armor__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_shirt__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_chased_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_chased_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_etched_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_etched_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_fluted_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_fluted_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_gilded_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_gilded_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_herald_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_herald_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_scale_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_scale_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_tourney_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_tourney_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_warden_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/knight_warden_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_drake_plate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_drake_plate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_frost_plate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_frost_plate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_lion_plate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_lion_plate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_phoenix_plate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_phoenix_plate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_radiant_plate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_radiant_plate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_runestone_plate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_runestone_plate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_storm_plate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_storm_plate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_void_plate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/legend_void_plate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_bronze_breastplate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_bronze_breastplate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_lamellar_corselet.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_lamellar_corselet__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_mail_hauberk.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_mail_hauberk__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_quilted_gambeson.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_quilted_gambeson__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_spauldered_breastplate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_spauldered_breastplate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_splinted_corselet.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_splinted_corselet__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_steel_breastplate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_steel_breastplate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_studded_brigandine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_studded_brigandine__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_crystal_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_crystal_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_feather_robe.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_feather_robe__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_gilt_robe.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_gilt_robe__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_rune_coat.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_rune_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_silver_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_silver_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_tabard_coat.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_tabard_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_turquoise_robe__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_violet_coat.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_violet_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_winged_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_winged_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/mycelari_mantle__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_ceremonial_tunic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_ceremonial_tunic__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_linen_tunic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_linen_tunic__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_ochre_coat.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_ochre_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_rider_jerkin.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_rider_jerkin__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_sash_robe.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_sash_robe__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_sunplate_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_sunplate_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_sun_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_toggle_tunic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_toggle_tunic__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_wrap_robe.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_wrap_robe__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_brigandine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_brigandine__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_buckled_coat.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_buckled_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_fur_coat.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_fur_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_laced_jerkin.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_laced_jerkin__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_oxblood_coat.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_oxblood_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_ranger_coat.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_ranger_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_rope_jerkin.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_rope_jerkin__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_scout_jerkin.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_scout_jerkin__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_button_tunic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_button_tunic__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_laced_tunic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_laced_tunic__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_linen_shirt.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_linen_shirt__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_patched_tunic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_patched_tunic__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_ragged_tunic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_ragged_tunic__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_short_tunic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_short_tunic__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_wool_tunic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_wool_tunic__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_wrap_tunic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/peasant_wrap_tunic__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ssarathi_scale_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/stoneborn_plate__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_amber_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_amber_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_bark_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_bark_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_bough_tunic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_bough_tunic__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_leafscale_coat.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_leafscale_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_leaf_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_leaf_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_mantle_coat.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_mantle_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_toggle_coat.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_toggle_coat__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_warden_cuirass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/verdant_warden_cuirass__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/votary_fur_mantle__bust.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/amberglass_legs.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/amberglass_legs__feminine.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -11145,13 +13839,37 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/amberwood_ranger_legs__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/antlerward_legs.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/antlerward_legs__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/antlerward_legs__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/argent_cuisses.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/argent_cuisses__feminine.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -11169,7 +13887,25 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/astral_robe_legs__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/astral_robe_legs__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/barkplate_legs.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/barkplate_legs__feminine.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -11187,6 +13923,12 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/bonetoggle_breeches__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/bonetoggle_breeches__saurian.glb": {
         "nodes": 78,
         "meshes": 1,
@@ -11194,6 +13936,12 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/bramblebound_pants.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/bramblebound_pants__feminine.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -11211,6 +13959,12 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/brass_cuisses__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/brass_cuisses__saurian.glb": {
         "nodes": 78,
         "meshes": 1,
@@ -11218,6 +13972,12 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/brigandine_legs.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/brigandine_legs__feminine.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -11235,7 +13995,25 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/caravan_wrap__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/caravan_wrap__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/cathedral_cuisses.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/cathedral_cuisses__feminine.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -11253,6 +14031,12 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/chapel_cuisses__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/chapel_cuisses__saurian.glb": {
         "nodes": 78,
         "meshes": 1,
@@ -11265,7 +14049,25 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/crimson_guard_legs__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/crimson_guard_legs__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/crofter_trousers.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/crofter_trousers__feminine.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -11283,7 +14085,25 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/dawnward_cuisses__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/dawnward_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/drover_trousers.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/drover_trousers__feminine.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -11301,6 +14121,12 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/dyer_trousers__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/dyer_trousers__saurian.glb": {
         "nodes": 78,
         "meshes": 1,
@@ -11308,6 +14134,12 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/equipment/emberforge_cuisses.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/emberforge_cuisses__feminine.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -11325,6 +14157,12 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/forager_leathers__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/forager_leathers__saurian.glb": {
         "nodes": 78,
         "meshes": 1,
@@ -11337,691 +14175,13 @@
         "skins": 1,
         "animations": 0
       },
-      "godot-client/assets/actors/native/equipment/fringed_chaps__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/heartwood_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/heartwood_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/homespun_trousers.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/homespun_trousers__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/kneepatch_trousers.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/kneepatch_trousers__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/leafmail_legs.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/leafmail_legs__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/levy_breeches.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/levy_breeches__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/linen_trousers.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/linen_trousers__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/lionheart_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/longcoat_leathers.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mail_chausses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mail_chausses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mended_trousers.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mended_trousers__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mooncast_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mooncast_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mosswarden_legs.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/mosswarden_legs__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/nightwatch_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/nightwatch_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/oracle_drapes.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ossuary_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ossuary_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/outrider_canvas.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/outrider_canvas__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/padded_leathers.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/padded_leathers__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/pilgrim_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/pilgrim_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/poacher_breeches.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/poacher_breeches__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/prismscale_legs.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/prismscale_legs__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/quilted_chausses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/quilted_chausses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/rimeguard_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/rimeguard_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ropewalker_leathers.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/ropewalker_leathers__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/runebound_breeches.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/runebound_breeches__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/sashed_trousers.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/sashed_trousers__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/scout_leathers.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/scout_leathers__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/sergeant_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/sergeant_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/splinted_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/splinted_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/stalker_leathers.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/stalker_leathers__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/standard_bearer_legs.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/starfall_drapes.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/steppe_riding_pants.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/steppe_riding_pants__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/sundisc_tassets.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/sunmane_sarong.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/sunplate_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/sunplate_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/thicket_breeches.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/thicket_breeches__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/tidesilk_wrap.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/tidewarden_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/trapper_breeches.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/trapper_breeches__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/umbral_drapes.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/vigil_cuisses.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/vigil_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/voidplate_legs.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/voidplate_legs__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/waylayer_breeches.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/waylayer_breeches__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/winterhide_breeches.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/winterhide_breeches__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/antlerward_legs__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/astral_robe_legs__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/caravan_wrap__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/crimson_guard_legs__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/dawnward_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/lionheart_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/longcoat_leathers__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/oracle_drapes__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/standard_bearer_legs__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/starfall_drapes__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/sundisc_tassets__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/sunmane_sarong__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/tidesilk_wrap__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/tidewarden_cuisses__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/umbral_drapes__saurian.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/amberglass_legs__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/amberwood_ranger_legs__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/antlerward_legs__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/argent_cuisses__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/astral_robe_legs__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/barkplate_legs__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/bonetoggle_breeches__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/bramblebound_pants__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/brass_cuisses__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/brigandine_legs__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/caravan_wrap__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/cathedral_cuisses__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/chapel_cuisses__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/crimson_guard_legs__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/crofter_trousers__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/dawnward_cuisses__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/drover_trousers__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/dyer_trousers__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/emberforge_cuisses__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
-      "godot-client/assets/actors/native/equipment/forager_leathers__feminine.glb": {
-        "nodes": 78,
-        "meshes": 1,
-        "skins": 1,
-        "animations": 0
-      },
       "godot-client/assets/actors/native/equipment/fringed_chaps__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/fringed_chaps__saurian.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12063,7 +14223,25 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/heartwood_cuisses.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/heartwood_cuisses__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/heartwood_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/homespun_trousers.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12075,7 +14253,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/homespun_trousers__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/kneepatch_trousers.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/kneepatch_trousers__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/kneepatch_trousers__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/leafmail_legs.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12087,7 +14289,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/leafmail_legs__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_breeches.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/levy_breeches__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/levy_breeches__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/linen_trousers.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12099,7 +14325,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/linen_trousers__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/lionheart_cuisses.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/lionheart_cuisses__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/lionheart_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/longcoat_leathers.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12111,7 +14361,19 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/longcoat_leathers__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/luminous_casual_pants__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/mail_chausses.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12123,7 +14385,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/mail_chausses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/mended_trousers.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/mended_trousers__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/mended_trousers__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/mooncast_cuisses.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12135,7 +14421,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/mooncast_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/mosswarden_legs.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/mosswarden_legs__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/mosswarden_legs__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nightwatch_cuisses.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12147,7 +14457,25 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/nightwatch_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/oracle_drapes.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/oracle_drapes__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/oracle_drapes__saurian.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12159,7 +14487,25 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/ossuary_cuisses.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/ossuary_cuisses__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ossuary_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/outrider_canvas.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12171,7 +14517,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/outrider_canvas__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/padded_leathers.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/padded_leathers__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/padded_leathers__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/pilgrim_cuisses.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12183,7 +14553,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/pilgrim_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/poacher_breeches.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/poacher_breeches__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/poacher_breeches__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/prismscale_legs.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12195,7 +14589,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/prismscale_legs__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/quilted_chausses.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/quilted_chausses__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/quilted_chausses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/rimeguard_cuisses.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12207,7 +14625,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/rimeguard_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ropewalker_leathers.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/ropewalker_leathers__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ropewalker_leathers__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/runebound_breeches.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12219,7 +14661,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/runebound_breeches__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/sashed_trousers.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/sashed_trousers__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/sashed_trousers__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/scout_leathers.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12231,7 +14697,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/scout_leathers__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/sergeant_cuisses.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/sergeant_cuisses__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/sergeant_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/splinted_cuisses.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12243,7 +14733,19 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/splinted_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/ssarathi_scale_legs__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/stalker_leathers.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12255,7 +14757,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/stalker_leathers__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/standard_bearer_legs.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/standard_bearer_legs__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/standard_bearer_legs__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/starfall_drapes.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12267,7 +14793,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/starfall_drapes__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/steppe_riding_pants.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/steppe_riding_pants__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/steppe_riding_pants__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/sundisc_tassets.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12279,7 +14829,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/sundisc_tassets__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/sunmane_sarong.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/sunmane_sarong__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/sunmane_sarong__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/sunplate_cuisses.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12291,7 +14865,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/sunplate_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/thicket_breeches.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/thicket_breeches__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/thicket_breeches__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/tidesilk_wrap.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12303,7 +14901,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/tidesilk_wrap__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/tidewarden_cuisses.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/tidewarden_cuisses__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/tidewarden_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/trapper_breeches.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12315,7 +14937,31 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/trapper_breeches__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/umbral_drapes.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/umbral_drapes__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/umbral_drapes__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/vigil_cuisses.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12327,7 +14973,25 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/vigil_cuisses__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/voidplate_legs.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/voidplate_legs__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/voidplate_legs__saurian.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
@@ -12339,13 +15003,37 @@
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/waylayer_breeches.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/waylayer_breeches__feminine.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,
         "animations": 0
       },
+      "godot-client/assets/actors/native/equipment/waylayer_breeches__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/winterhide_breeches.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
       "godot-client/assets/actors/native/equipment/winterhide_breeches__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/winterhide_breeches__saurian.glb": {
         "nodes": 78,
         "meshes": 1,
         "skins": 1,

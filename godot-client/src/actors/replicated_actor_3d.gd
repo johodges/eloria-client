@@ -365,6 +365,11 @@ func _add_map_dot() -> void:
 ## packet - "Alice ELO" - so a client that takes the whole string as a
 ## name renders the colour byte as mojibake and the tag as part of the player's
 ## name. The decoder splits them; this draws the tag as a tag.
+##
+## The name's colour is the server's, and it is how a field is read without
+## selecting anything: a demigod's name is green, an invasion creature's red, a
+## summon's light blue. A Label3D tints as one piece, so a guild tag takes the
+## name's colour rather than its own.
 func _add_nameplate(dto: Dictionary) -> void:
 	var label: Label3D = Label3D.new()
 	label.name = "Nameplate"
@@ -376,7 +381,7 @@ func _add_nameplate(dto: Dictionary) -> void:
 	label.no_depth_test = true
 	label.font_size = 28
 	label.outline_size = 6
-	label.modulate = Color(1.0, 1.0, 1.0, 1.0)
+	label.modulate = EloriaProtocol.el_text_colour(int(dto.get("name_colour", 0)))
 	label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(label)
 	_nameplate = label
@@ -792,9 +797,24 @@ func _equipment_model_config(part: int, visual_id: int) -> Dictionary:
 func rig_name() -> String:
 	return str(_model_config.get("scene", "")).get_file().get_basename()
 
-func fit_group() -> String:
+## The fit groups this actor's race belongs to, in precedence order.
+##
+## Modified 2026-08-29 for Eloria Client: this used to be a single name. A race
+## can differ from the reference body in more than one way - a Ssarathi female
+## has both a digitigrade leg and a bust, and the two are authored on different
+## rigs - so a race now names every group it is in and a garment resolves the
+## first one it actually ships a variant for. A registry written the old way,
+## with one name per race, still reads correctly.
+func fit_groups() -> PackedStringArray:
 	var groups: Dictionary = _equipment_config.get("fitGroups", {}) as Dictionary
-	return str(groups.get(rig_name(), ""))
+	var mine: Variant = groups.get(rig_name(), "")
+	if mine is Array:
+		var names := PackedStringArray()
+		for value: Variant in mine as Array:
+			names.append(str(value))
+		return names
+	var single := str(mine)
+	return PackedStringArray() if single.is_empty() else PackedStringArray([single])
 
 func _fit_variant(model: Dictionary) -> Dictionary:
 	# Modified 2026-08-28 for Eloria Client: some builds cannot be reached by
@@ -802,17 +822,18 @@ func _fit_variant(model: Dictionary) -> Dictionary:
 	# the copy of the piece built on its own rig where one exists, and the
 	# reference piece everywhere else, so a group only costs the kinds it
 	# actually changes.
-	var group: String = fit_group()
-	if group.is_empty() or model.is_empty():
+	if model.is_empty():
 		return model
 	var variants: Dictionary = model.get("variants", {}) as Dictionary
-	var variant: Dictionary = variants.get(group, {}) as Dictionary
-	if variant.is_empty():
-		return model
-	var resolved: Dictionary = model.duplicate(true)
-	resolved.erase("variants")
-	resolved.merge(variant, true)
-	return resolved
+	for group: String in fit_groups():
+		var variant: Dictionary = variants.get(group, {}) as Dictionary
+		if variant.is_empty():
+			continue
+		var resolved: Dictionary = model.duplicate(true)
+		resolved.erase("variants")
+		resolved.merge(variant, true)
+		return resolved
+	return model
 
 func _equipment_socket(part: int, model_config: Dictionary) -> Dictionary:
 	# A model may override the shared part socket, which is how a two-handed
