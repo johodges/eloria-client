@@ -129,23 +129,35 @@ def _waistband(surface: Surface, rig: Rig) -> None:
     surface.loft(belt, MATERIAL_TRIM)
 
 
-#: How far the last rings of the tube are carried backwards, in metres.  The
-#: heel is not on the calf axis - it juts behind it - so a ring centred on that
-#: axis leaves the back of the ankle outside the trouser however wide it is
-#: grown.  Widening was the first thing tried and it fails twice over: the
-#: garment has to balloon to reach the heel, and past about 1.10 the ring stops
-#: being convex and the parity test through it stops meaning anything.  Moving
-#: the ring costs nothing and is what a trouser leg actually does.
-HEEL_BIAS = .026
-#: Fraction of the tube, measured from the hem, over which the bias is blended
-#: in.  Blended rather than stepped, or the cuff kinks where it starts.
-HEEL_BLEND = .22
+#: How far the cuff is stretched fore-and-aft, and over what fraction of the
+#: tube, measured from the hem.  An ankle is not round: the heel stands well
+#: behind the calf axis and the instep in front of it, and a circle drawn about
+#: that axis misses both.
+#:
+#: Both terms are needed and neither alone is enough, which was not the guess.
+#: Growing the ring uniformly has to balloon the whole cuff to reach the heel,
+#: and past about 1.10 the ring stops being convex and parity through it stops
+#: meaning anything - a flare of 1.34 measured worse than no flare at all.
+#: Sliding the ring backwards reaches the heel and gives up the instep; the
+#: reasonable-sounding conclusion from that was to stop sliding and stretch
+#: fore-and-aft instead, and measured against the fourteen plantigrade rigs it
+#: was worse than the slide it replaced - 222 exposed against 172.  Swept as a
+#: pair, a small stretch on top of a slightly larger slide beats either.
+HEEL_STRETCH = 1.15
+HEEL_BIAS = .034
+HEEL_BLEND = .24
+#: How many of the bottom rings are levelled off into a flat hem.
+LEVEL_ROWS = 3
 
 
 def _leg_tube(rig: Rig, side: str, kind: str, *, thickness: float,
               sides: int, start: float = .018,
               taper_end: float = 1.0) -> list[np.ndarray]:
-    measure = LEG_MEASURE_L if side == "l" else LEG_MEASURE_R
+    # `LEG_MEASURE_*` is thigh, calf and pelvis - it does not name the foot.
+    # The hem sits below the ankle joint, so the bottom rings are measured
+    # against the foot as well; without it every ray cast that way found no bone
+    # it was allowed to measure and fell back to the floor radius.
+    measure = (LEG_MEASURE_L if side == "l" else LEG_MEASURE_R) + [f"foot_{side}"]
     rings = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=18,
                        sides=sides, thickness=thickness, start=start,
                        end=HEM[kind], floor=.040, bones=measure,
@@ -153,8 +165,23 @@ def _leg_tube(rig: Rig, side: str, kind: str, *, thickness: float,
     rows = len(rings)
     for index, ring in enumerate(rings):
         depth = (index / (rows - 1) - (1.0 - HEEL_BLEND)) / HEEL_BLEND
-        if depth > 0.0:
-            ring[:, 2] -= HEEL_BIAS * depth ** 1.5
+        if depth <= 0.0:
+            continue
+        grow = 1.0 + (HEEL_STRETCH - 1.0) * depth ** 1.5
+        centre = ring[:, 2].mean()
+        ring[:, 2] = centre + (ring[:, 2] - centre) * grow
+        ring[:, 2] -= HEEL_BIAS * depth ** 1.5
+    # A hem is cut level, and on this rig it has to be.  The rings are built
+    # perpendicular to the bone and then grown and slid, which leaves the last
+    # one spanning 12 mm of height; the cap fanned across it is a tilted disc,
+    # and a body vertex inside that band sits below the cap on one side of the
+    # leg and above it on the other.  Levelling the last rings makes the cap
+    # planar, which is both what a trouser hem looks like and the only way the
+    # boundary is unambiguous enough to be measured.
+    for index in range(rows - LEVEL_ROWS, rows):
+        ring = rings[index]
+        blend = (index - (rows - LEVEL_ROWS - 1)) / LEVEL_ROWS
+        ring[:, 1] += (ring[:, 1].mean() - ring[:, 1]) * min(blend, 1.0)
     return rings
 
 
@@ -346,6 +373,21 @@ PANELS = {
 }
 
 
+def _clamp(low: float, high: float, kind: str) -> tuple[float, float]:
+    """Keep a feature above the hem it shares a garment with.
+
+    The hem is a contract with the footwear brief, not a stylistic choice, and
+    the fractions in the tables below are written once for all three kinds.
+    `flare` runs to .90 of the chain, which is past a rigid `legs` hem at .89 -
+    so `emberforge_cuisses` shipped a cuff plate hanging 13 mm below its own
+    trouser, and the seam test caught it at Y .1651 against a datum of .178.
+    Every feature is trimmed to the hem rather than each table being written
+    out three times, because the next feature added would have the same trap.
+    """
+    limit = HEM[kind]
+    return min(low, limit), min(high, limit)
+
+
 def _apply(surface: Surface, rig: Rig, kind: str, feature: str, sides: int,
            seed: int) -> None:
     """Loft one named feature onto both legs, or once about the hips."""
@@ -358,24 +400,29 @@ def _apply(surface: Surface, rig: Rig, kind: str, feature: str, sides: int,
     for side in ("l", "r"):
         if feature in PLATES:
             low, high, thickness, material, arc, face = PLATES[feature]
+            low, high = _clamp(low, high, kind)
             _plate(surface, rig, side, kind, low=low, high=high,
                    thickness=thickness, material=material, arc=arc,
                    face=face if side == "l" else 1.0 - face, sides=sides)
         elif feature in BANDS:
             low, high, thickness, material = BANDS[feature]
+            low, high = _clamp(low, high, kind)
             _band(surface, rig, side, kind, low=low, high=high,
                   thickness=thickness, material=material, sides=sides)
         elif feature in BOSSES:
             travel, count, radius, material = BOSSES[feature]
+            travel = _clamp(travel, travel, kind)[0]
             _studs(surface, rig, side, travel=travel, count=count,
                    radius=radius, material=material, kind=kind)
         elif feature in STRANDS:
             travel, count, length, thickness = STRANDS[feature]
+            travel = _clamp(travel, travel, kind)[0]
             _strands(surface, rig, side, travel=travel, count=count,
                      length=length, thickness=thickness)
         elif feature in POUCHES:
             travel, size = POUCHES[feature]
-            _pouch(surface, rig, side, travel=travel, size=size)
+            _pouch(surface, rig, side, travel=_clamp(travel, travel, kind)[0],
+                   size=size)
 
 
 # --------------------------------------------------------------------------

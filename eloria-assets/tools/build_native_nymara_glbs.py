@@ -434,6 +434,8 @@ AMBIENT_NOTE = ("Scenery livestock instanced by the client's ambient population 
 AMBIENT_SOURCE_NOTE = ("Authored to equine proportions on the shared creature rig "
                        "by eloria-assets/tools/sunmane/creatures.py.")
 
+from legwear_pieces import LEGWEAR_EQUIPMENT
+
 EQUIPMENT = (
     # part 0: weapons
     ("amberwood_longbow", "Amberwood Longbow", 0, 100, "bow", (74, 111, 61), (210, 145, 57)),
@@ -509,7 +511,7 @@ EQUIPMENT = (
     ("orun_sun_amulet", "Orun Sun Amulet", 7, 103, "amulet", (146, 73, 34), (220, 166, 66)),
     ("ssarathi_shell_amulet", "Ssarathi Shell Amulet", 7, 104, "amulet", (41, 101, 82), (186, 151, 68)),
     ("luminous_orbit_amulet", "Luminous Orbit Amulet", 7, 105, "amulet", (42, 120, 133), (222, 198, 109)),
-)
+) + LEGWEAR_EQUIPMENT
 
 
 def align4(value: int) -> int:
@@ -3128,10 +3130,13 @@ def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype
 
 def build_equipment(path: Path, slug: str, label: str, kind: str,
                     base: tuple[int,int,int], accent: tuple[int,int,int],
-                    rig: "equipment_authoring.Rig") -> dict:
+                    rig: "equipment_authoring.Rig", *,
+                    features: tuple[str, ...] = (),
+                    finish: str | None = None) -> dict:
     """Author one equipment GLB through the body-conforming pipeline."""
     return equipment_authoring.build_equipment_piece(
-        path, rig, slug, label, kind, base, accent)
+        path, rig, slug, label, kind, base, accent, finish=finish,
+        features=features)
 
 
 HAIR_SOURCES = {
@@ -3391,10 +3396,12 @@ def build_model_registry() -> dict:
 
 def build_equipment_registry(rig: "equipment_authoring.Rig",
                              idle_bases: dict | None, author_rig: str = "",
-                             girths: dict | None = None) -> dict:
+                             girths: dict | None = None,
+                             sole_drops: dict | None = None) -> dict:
     """Equipment registry v3: character-space sockets and skinned garments."""
     return equipment_authoring.build_equipment_registry(
-        rig, EQUIPMENT, idle_bases, author_rig=author_rig, girths=girths)
+        rig, EQUIPMENT, idle_bases, author_rig=author_rig, girths=girths,
+        sole_drops=sole_drops)
 
 
 def carry_forward_ambient(manifest_path: Path, models_path: Path,
@@ -3560,7 +3567,7 @@ def main() -> None:
     if args.animation_library.is_file():
         idle_bases=equipment_authoring._idle_hand_bases(
             str(rig_source), str(args.animation_library))
-    def fit_variants(slug,label,kind,base,accent,finish=None):
+    def fit_variants(slug,label,kind,base,accent,finish=None,features=()):
         """Author the extra copies a race whose build differs needs."""
         built=[]
         for group,spec in equipment_authoring.FIT_GROUPS.items():
@@ -3573,18 +3580,26 @@ def main() -> None:
             vslug=equipment_authoring.variant_slug(slug,group)
             vpath=args.output/"equipment"/f"{vslug}.glb"
             info=equipment_authoring.build_equipment_piece(
-                vpath,group_rig,vslug,label,kind,base,accent,finish=finish)
+                vpath,group_rig,vslug,label,kind,base,accent,finish=finish,
+                features=features)
             built.append(info|{"group":group,"authoredFor":spec["rig"],
-                               "path":vcatalog_path(path)})
+                               "path":catalog_path(vpath)})
         return built
 
     manifest["fitVariants"]={}
-    for slug,label,part,visual,kind,base,accent in EQUIPMENT:
+    # The legwear rows carry two extra fields the culture pieces do not - the
+    # feature list their silhouette is lofted from, and an explicit finish -
+    # so the row is unpacked by length rather than by shape.
+    for row in EQUIPMENT:
+        slug,label,part,visual,kind,base,accent=row[:7]
+        features=row[7] if len(row)>7 else ()
+        finish=row[8] if len(row)>8 else None
         path=args.output/"equipment"/f"{slug}.glb"
-        manifest["equipment"][slug]=build_equipment(path,slug,label,kind,base,accent,rig)|{
+        manifest["equipment"][slug]=build_equipment(
+            path,slug,label,kind,base,accent,rig,features=features,finish=finish)|{
             "part":part,"visual":visual,"path":catalog_path(path)}
         print("equipment",slug,manifest["equipment"][slug])
-        for info in fit_variants(slug,label,kind,base,accent):
+        for info in fit_variants(slug,label,kind,base,accent,finish,features):
             manifest["fitVariants"][info["id"]]=info
             print("variant",info["id"],info["triangles"],"tris")
     # The generic tier claims the legacy visual ids directly. One authored mesh

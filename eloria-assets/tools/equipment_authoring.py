@@ -435,7 +435,30 @@ FIT_GROUPS = {
         "races": ("ssarathi_male", "ssarathi_female"),
         # A digitigrade leg is not a longer human one, so anything that wraps it
         # has to be built on it.  The torso is close enough to share.
-        "kinds": ("pants", "legs", "boots"),
+        # `kilt` joins them for the same reason: the panel is lofted from the
+        # hip measurement and hangs to a fraction of the leg chain, and that
+        # chain is a different length and a different shape on this rig.
+        "kinds": ("pants", "legs", "kilt", "boots"),
+    },
+    "feminine": {
+        "rig": "luminous_female",
+        # Every female build except the two the other groups already claim:
+        # ssarathi_female is saurian, and stoneborn_female measures *better* on
+        # the reference piece than on a female-authored one, so it stays there.
+        "races": ("glasswarden_female", "greyhaven_female", "luminous_female",
+                  "mycelari_female", "orun_female", "votary_female"),
+        # A female pelvis is not a male one let out.  The refit widens a garment
+        # by a single ratio about the bone origin, which reaches a hip that is
+        # bigger and not one that is a different shape, and the iliac crest sits
+        # both wider and further forward than any uniform scale of the reference
+        # can follow.  With the hem levelled every male rig in the cast measures
+        # clean and every female rig does not - 79% of all remaining exposed
+        # vertices were on female bodies, at Y .84-1.05, which is the hip.
+        # Authored on the female rig instead, the six races here fall from 85
+        # exposed vertices to 9 across a soft and a rigid prototype.
+        # Legs only.  Whether the torso and the boots want the same group is a
+        # question for those briefs, measured their own way.
+        "kinds": ("pants", "legs", "kilt"),
     },
     "heavy": {
         "rig": "stoneborn_male",
@@ -2649,6 +2672,11 @@ def _model_entry(rig: Rig, idle_bases: dict | None, scene_root: str, slug: str,
     if kind in GARMENT_KINDS:
         model["attach"] = "skinned"
         model["skinRegion"] = garment_region(kind)
+        # The kind as well as the region.  `skinRegion` says which bones a
+        # piece is bound to and several kinds share one - `pants` and `legs`
+        # are both `legs` - but they are cut to different hems and are checked
+        # against different seams, so the tests need to tell them apart.
+        model["kind"] = kind
         # Which body this piece was lofted around.  The runtime divides the
         # wearer's measurements by this rig's to refit the garment, so a piece
         # that forgot to say would be worn at the reference's proportions.
