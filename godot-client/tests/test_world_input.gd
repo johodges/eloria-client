@@ -2097,7 +2097,48 @@ func _run() -> void:
 		and plate.text.contains("[ELO]"),
 		"the nameplate draws the tag as a tag: "
 			+ (plate.text if plate != null else "no nameplate"))
+	# The server coloured Alice's tag but not her name, so the plate is left
+	# white rather than taking the palette's index 0.
+	_expect(plate != null and plate.modulate.is_equal_approx(Color.WHITE),
+		"a name the server did not colour stays white")
 	app_state_inventory.call("_on_packet", 6, PackedByteArray([91, 0]))
+	await process_frame
+
+	# Name colours. The server puts them in front of the name as `127 + index`
+	# and they are the only thing that says, without a click, that a player is
+	# a demigod (c_green3) or that a creature belongs to an invasion (c_red3).
+	app_state_inventory.call("_on_packet", 51, _hex_bytes(
+		"5c000203e1010000000001000001020304050b001e14071400"
+		+ "12000190426f62000040ff0600"))
+	app_state_inventory.call("_on_packet", 1, _hex_bytes(
+		"5d000203e10100000000cc0720002000018d456d626572666f7800"))
+	await process_frame
+	main.call("_sync_world")
+	await process_frame
+	var demigod_plate: Label3D = _nameplate_of(main, 92)
+	_expect(demigod_plate != null and demigod_plate.text == "Bob"
+		and demigod_plate.modulate.is_equal_approx(EloriaProtocol.EL_TEXT_COLOURS[17]),
+		"a demigod's nameplate is green, and the colour byte is not in the name")
+	var invasion_plate: Label3D = _nameplate_of(main, 93)
+	_expect(invasion_plate != null and invasion_plate.text == "Emberfox"
+		and invasion_plate.modulate.is_equal_approx(EloriaProtocol.EL_TEXT_COLOURS[14]),
+		"an invasion creature's nameplate is red")
+	# You are given no nameplate of your own, so your own name colour has only
+	# the overhead banner to show in.
+	var before_colour_local: int = int(app_state_inventory.get("local_actor_id"))
+	app_state_inventory.set("local_actor_id", 92)
+	main.call("_sync_world")
+	await process_frame
+	var banner_name: Label = main.get("overhead_player_name") as Label
+	_expect(banner_name != null and banner_name.text == "Bob"
+		and banner_name.get_theme_color("font_color").is_equal_approx(
+			EloriaProtocol.EL_TEXT_COLOURS[17]),
+		"your own demigod name is green on the overhead banner")
+	app_state_inventory.set("local_actor_id", before_colour_local)
+	main.call("_sync_world")
+	await process_frame
+	app_state_inventory.call("_on_packet", 6, PackedByteArray([92, 0]))
+	app_state_inventory.call("_on_packet", 6, PackedByteArray([93, 0]))
 	await process_frame
 
 	# Twelve spell quick slots, and the sigils window that says why a spell is
@@ -2514,6 +2555,12 @@ func _expect(value: bool, label: String) -> void:
 		return
 	failures += 1
 	push_error("FAIL: " + label)
+
+func _nameplate_of(main: Node, actor_id: int) -> Label3D:
+	var node: Node3D = (main.get("actor_nodes") as Dictionary).get(actor_id) as Node3D
+	if node == null:
+		return null
+	return node.get_node_or_null("Nameplate") as Label3D
 
 func _hex_bytes(value: String) -> PackedByteArray:
 	var bytes := PackedByteArray()
