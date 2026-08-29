@@ -1320,127 +1320,200 @@ mouse_filter = 2
 
 [node name="Rows" type="VBoxContainer" parent="GameView/ActorResourceOverlay" unique_id=369393993]
 layout_mode = 2
-theme_override_constants/separation = 1
+theme_override_constants/separation = 0
 
 [node name="OverheadPlayerName" type="Label" parent="GameView/ActorResourceOverlay/Rows" unique_id=1088233333]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.9, 0.78, 1)
-theme_override_colors/font_outline_color = Color(0.015, 0.02, 0.025, 1)
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 12
 text = "Player"
 horizontal_alignment = 1
 
 [node name="HealthRow" type="HBoxContainer" parent="GameView/ActorResourceOverlay/Rows" unique_id=2104241967]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/separation = 5
 
 [node name="Bar" type="ProgressBar" parent="GameView/ActorResourceOverlay/Rows/HealthRow" unique_id=1575428599]
-custom_minimum_size = Vector2(90, 13)
+custom_minimum_size = Vector2(56, 7)
 layout_mode = 2
+size_flags_vertical = 4
 show_percentage = false
 
 [node name="Number" type="Label" parent="GameView/ActorResourceOverlay/Rows/HealthRow" unique_id=2084256219]
-custom_minimum_size = Vector2(52, 13)
+custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.24, 0.2, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 11
 text = "0/0"
+horizontal_alignment = 1
 
 [node name="EtherRow" type="HBoxContainer" parent="GameView/ActorResourceOverlay/Rows" unique_id=176712075]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/separation = 5
 
 [node name="Bar" type="ProgressBar" parent="GameView/ActorResourceOverlay/Rows/EtherRow" unique_id=680916082]
-custom_minimum_size = Vector2(90, 13)
+custom_minimum_size = Vector2(56, 7)
 layout_mode = 2
+size_flags_vertical = 4
 show_percentage = false
 
 [node name="Number" type="Label" parent="GameView/ActorResourceOverlay/Rows/EtherRow" unique_id=921509039]
-custom_minimum_size = Vector2(52, 13)
+custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.35, 0.45, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 11
 text = "0/0"
+horizontal_alignment = 1
 
 [node name="FoodRow" type="HBoxContainer" parent="GameView/ActorResourceOverlay/Rows" unique_id=1103548980]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/separation = 5
 
 [node name="Bar" type="ProgressBar" parent="GameView/ActorResourceOverlay/Rows/FoodRow" unique_id=1860915691]
-custom_minimum_size = Vector2(90, 13)
+custom_minimum_size = Vector2(56, 7)
 layout_mode = 2
+size_flags_vertical = 4
 show_percentage = false
 
 [node name="Number" type="Label" parent="GameView/ActorResourceOverlay/Rows/FoodRow" unique_id=1053885112]
-custom_minimum_size = Vector2(52, 13)
+custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.82, 0.18, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 11
 text = "0/45"
+horizontal_alignment = 1
 
 [node name="ActionRow" type="HBoxContainer" parent="GameView/ActorResourceOverlay/Rows" unique_id=356194824]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/separation = 5
 
 [node name="Bar" type="ProgressBar" parent="GameView/ActorResourceOverlay/Rows/ActionRow" unique_id=1497610989]
-custom_minimum_size = Vector2(90, 13)
+custom_minimum_size = Vector2(56, 7)
 layout_mode = 2
+size_flags_vertical = 4
 show_percentage = false
 
 [node name="Number" type="Label" parent="GameView/ActorResourceOverlay/Rows/ActionRow" unique_id=535032641]
-custom_minimum_size = Vector2(52, 13)
+custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.9, 0.48, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 11
 text = "0/0"
+horizontal_alignment = 1
 
 [node name="ActorHudMenu" type="PanelContainer" parent="GameView" unique_id=80465671]
 unique_name_in_owner = true
 visible = false
 z_index = 20
 layout_mode = 0
-offset_right = 248.0
-offset_bottom = 190.0
+offset_right = 196.0
+offset_bottom = 248.0
 
 [node name="Options" type="VBoxContainer" parent="GameView/ActorHudMenu" unique_id=1995381659]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 0
 
-[node name="Title" type="Label" parent="GameView/ActorHudMenu/Options" unique_id=1238760242]
-layout_mode = 2
-text = "OVERHEAD DISPLAY"
-horizontal_alignment = 1
-
-[node name="ShowHealth" type="CheckButton" parent="GameView/ActorHudMenu/Options" unique_id=838209454]
+[node name="ShowNames" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000001]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
-text = "Health bar and numbers"
+text = "Show Names"
 
-[node name="ShowEther" type="CheckButton" parent="GameView/ActorHudMenu/Options" unique_id=374210414]
+[node name="ShowHealthBar" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000002]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
-text = "Ethereality bar and numbers"
+text = "Show Health Bars"
 
-[node name="ShowFood" type="CheckButton" parent="GameView/ActorHudMenu/Options" unique_id=1795957354]
+[node name="ShowHealthNumbers" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000003]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
-text = "Food bar and numbers"
+text = "Show Health Numbers"
 
-[node name="ShowAction" type="CheckButton" parent="GameView/ActorHudMenu/Options" unique_id=110509918]
+[node name="ShowEtherBar" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000004]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
-text = "Action points bar and numbers"
+text = "Show Ether Bar"
 
-[node name="Close" type="Button" parent="GameView/ActorHudMenu/Options" unique_id=2086579016]
+[node name="ShowEtherNumbers" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000005]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Close"
+button_pressed = true
+text = "Show Ether Numbers"
+
+[node name="ShowFoodBar" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000006]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Show Food Bar"
+
+[node name="ShowFoodNumbers" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000007]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Show Food Numbers"
+
+[node name="ShowActionBar" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000008]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Show Action Point Bar"
+
+[node name="ShowActionNumbers" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000009]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+text = "Show Action Point Numbers"
+
+[node name="InstanceMode" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000010]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Enable Instance Mode"
+
+[node name="SpeechBubbles" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000011]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Show Speech Bubbles"
+
+[node name="BannerBackground" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000012]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Enable Banner Background"
+
+[node name="SitLock" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000013]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Sit Lock"
+
+[node name="RangingLock" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000014]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Ranging Lock"
+
+[node name="MenuSeparator" type="HSeparator" parent="GameView/ActorHudMenu/Options" unique_id=1810000015]
+layout_mode = 2
+
+[node name="DisableMenu" type="CheckBox" parent="GameView/ActorHudMenu/Options" unique_id=1810000016]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Disable This Menu"
 
 [node name="SettingsPanel" type="PanelContainer" parent="GameView" unique_id=1883968079]
 unique_name_in_owner = true
@@ -1534,6 +1607,13 @@ layout_mode = 2
 tooltip_text = "Draws your own character over anything hiding it from the camera - trees, roofs, cliffs. Only your character, never anyone else's. Toggle with Alt+V."
 button_pressed = true
 text = "Show my character through obstacles"
+
+[node name="BannerMenuEnabled" type="CheckButton" parent="GameView/SettingsPanel/Content" unique_id=1810000017]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Right-clicking your own character opens the overhead banner menu. Turning this off is the same as the menu's own \"Disable This Menu\" entry."
+button_pressed = true
+text = "Right-click banner menu"
 
 [node name="UiScaleRow" type="HBoxContainer" parent="GameView/SettingsPanel/Content" unique_id=1502773641]
 layout_mode = 2

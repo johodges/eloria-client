@@ -102,10 +102,7 @@ var map_light_root: Node3D
 @onready var overhead_ether_row: HBoxContainer = %EtherRow
 @onready var overhead_food_row: HBoxContainer = %FoodRow
 @onready var overhead_action_row: HBoxContainer = %ActionRow
-@onready var show_overhead_health: CheckButton = %ShowHealth
-@onready var show_overhead_ether: CheckButton = %ShowEther
-@onready var show_overhead_food: CheckButton = %ShowFood
-@onready var show_overhead_action: CheckButton = %ShowAction
+@onready var banner_menu_enabled: CheckButton = %BannerMenuEnabled
 @onready var stats_panel: Control = %StatsPanel
 @onready var stats_text: RichTextLabel = %StatsText
 @onready var stats_tabs: TabContainer = %StatsTabs
@@ -386,6 +383,9 @@ var _pending_floating_feedback: Array[Dictionary] = []
 var _floating_feedback_flush_queued := false
 var _active_floating_labels: Array[Label] = []
 var _last_skill_experience_msec := -100000
+## Config key -> CheckBox on the right-click banner menu, filled in _ready().
+var _banner_option_boxes: Dictionary = {}
+var _banner_background_style: StyleBoxFlat
 
 const FLOATING_FEEDBACK_BASE_OFFSET := 78.0
 const FLOATING_FEEDBACK_ROW_HEIGHT := 21.0
@@ -399,6 +399,47 @@ const HUD_SKILLS: Array[String] = [
 	"attack", "defense", "harvesting", "alchemy", "magic", "potion",
 	"summoning", "manufacturing", "crafting", "engineering", "tailoring",
 	"ranging", "overall"]
+
+## Eternal Lands drives its overhead banner from the right-click menu built in
+## gamewin.c, and every entry there is its own switch. The menu keeps EL's
+## wording and order, with the action-point pair Eloria adds appended to the
+## bar/number block. Keys are what eloria_hud.cfg stores.
+const BANNER_OPTION_NODES := {
+	"show_names": "ShowNames",
+	"health_bar": "ShowHealthBar", "health_numbers": "ShowHealthNumbers",
+	"ether_bar": "ShowEtherBar", "ether_numbers": "ShowEtherNumbers",
+	"food_bar": "ShowFoodBar", "food_numbers": "ShowFoodNumbers",
+	"action_bar": "ShowActionBar", "action_numbers": "ShowActionNumbers",
+	"instance_mode": "InstanceMode", "speech_bubbles": "SpeechBubbles",
+	"banner_background": "BannerBackground", "sit_lock": "SitLock",
+	"ranging_lock": "RangingLock", "menu_disabled": "DisableMenu"}
+
+const BANNER_OPTION_DEFAULTS := {
+	"show_names": true,
+	"health_bar": true, "health_numbers": true,
+	"ether_bar": true, "ether_numbers": true,
+	"food_bar": true, "food_numbers": true,
+	"action_bar": true, "action_numbers": true,
+	"instance_mode": false, "speech_bubbles": false,
+	"banner_background": false, "sit_lock": false,
+	"ranging_lock": false, "menu_disabled": false}
+
+## Row name, the switch that shows its bar, the switch that shows its numbers,
+## and the colour ramp actors.c uses for it.
+const BANNER_ROWS := [
+	["HealthRow", "health_bar", "health_numbers", "health"],
+	["EtherRow", "ether_bar", "ether_numbers", "ether"],
+	["FoodRow", "food_bar", "food_numbers", "food"],
+	["ActionRow", "action_bar", "action_numbers", "action"]]
+
+const BANNER_BAR_MIN_WIDTH := 46.0
+## client_serv.h: BOW_LONG through BOW_CROSS are the ranged weapon visuals, and
+## gamewin.c gates Ranging Lock on exactly that span.
+const RANGE_WEAPON_FIRST := 64
+const RANGE_WEAPON_LAST := 68
+## interface.c defaults instance_mode_banner_height to five banner lines.
+const BANNER_INSTANCE_LIFT_ROWS := 5.0
+const SPEECH_BUBBLE_MSEC := 6000
 
 const CHAT_FADE_DELAY_MSEC := 7000
 const CHAT_FADE_DURATION_MSEC := 1800
@@ -530,6 +571,7 @@ func _ready() -> void:
 			int(option.get("actorType", 1)))
 	_update_preview_camera()
 	_apply_eloria_art()
+	_configure_banner_menu()
 	_apply_eloria_theme()
 	_configure_window_layers()
 	_configure_cartography()
@@ -557,11 +599,7 @@ func _ready() -> void:
 	session_reset.pressed.connect(_reset_session_tracking)
 	manufacturing_list.item_selected.connect(_on_manufacturing_selected)
 	manufacturing_filter.text_changed.connect(_on_manufacturing_filter_changed)
-	show_overhead_health.toggled.connect(_on_overhead_option_toggled)
-	show_overhead_ether.toggled.connect(_on_overhead_option_toggled)
-	show_overhead_food.toggled.connect(_on_overhead_option_toggled)
-	show_overhead_action.toggled.connect(_on_overhead_option_toggled)
-	%Close.pressed.connect(func() -> void: actor_hud_menu.hide())
+	banner_menu_enabled.toggled.connect(_on_banner_menu_enabled_toggled)
 	$GameView/ChatTabs/All.pressed.connect(_on_chat_tab_pressed.bind("all"))
 	$GameView/ChatTabs/History.pressed.connect(_on_chat_tab_pressed.bind("history"))
 	$GameView/ChatTabs/Options.pressed.connect(_on_options_pressed)
@@ -689,6 +727,9 @@ func _update_keyboard_movement() -> void:
 	var actor_node_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	if not actor_value is Dictionary or not actor_node_value is ReplicatedActor3D \
 			or not is_instance_valid(actor_node_value as ReplicatedActor3D):
+		_stop_keyboard_movement()
+		return
+	if _movement_locked(Input.is_key_pressed(KEY_CTRL)):
 		_stop_keyboard_movement()
 		return
 	var dto: Dictionary = actor_value as Dictionary
@@ -2065,11 +2106,12 @@ func _on_world_gui_input(event: InputEvent) -> void:
 		return
 	if event is InputEventMouseButton:
 		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
+		if mouse_button.pressed and actor_hud_menu.visible:
+			actor_hud_menu.hide()
 		if mouse_button.button_index == MOUSE_BUTTON_RIGHT:
 			if mouse_button.pressed:
 				_right_mouse_down = true
 				_right_mouse_dragged = false
-				actor_hud_menu.hide()
 			camera_rig.handle_mouse_button(mouse_button)
 			if not mouse_button.pressed:
 				_right_mouse_down = false
@@ -2093,6 +2135,8 @@ func _on_world_gui_input(event: InputEvent) -> void:
 			viewport_container.accept_event()
 
 func _open_actor_hud_menu(position: Vector2) -> void:
+	if _banner_option("menu_disabled"):
+		return
 	actor_hud_menu.show()
 	actor_hud_menu.reset_size()
 	var menu_size: Vector2 = actor_hud_menu.size
@@ -2102,12 +2146,162 @@ func _open_actor_hud_menu(position: Vector2) -> void:
 		clampf(position.y, 8.0, maxf(8.0, boundary.y)))
 	actor_hud_menu.move_to_front()
 
-func _on_overhead_option_toggled(_enabled: bool) -> void:
-	overhead_health_row.visible = show_overhead_health.button_pressed
-	overhead_ether_row.visible = show_overhead_ether.button_pressed
-	overhead_food_row.visible = show_overhead_food.button_pressed
-	overhead_action_row.visible = show_overhead_action.button_pressed
+func _configure_banner_menu() -> void:
+	for key: String in BANNER_OPTION_NODES:
+		var box: CheckBox = get_node("%" + str(BANNER_OPTION_NODES[key])) as CheckBox
+		box.set_pressed_no_signal(bool(BANNER_OPTION_DEFAULTS[key]))
+		box.toggled.connect(_on_banner_option_toggled)
+		_banner_option_boxes[key] = box
+
+func _banner_option(key: String) -> bool:
+	var box_value: Variant = _banner_option_boxes.get(key)
+	if box_value is CheckBox:
+		return (box_value as CheckBox).button_pressed
+	return bool(BANNER_OPTION_DEFAULTS.get(key, false))
+
+func _on_banner_option_toggled(_enabled: bool) -> void:
+	_apply_banner_options()
+	_save_hud_settings()
+
+## Kept so the HUD settings window can undo the menu's own "Disable This Menu"
+## entry, which would otherwise lock the menu away for good.
+func _on_banner_menu_enabled_toggled(pressed: bool) -> void:
+	var box: CheckBox = _banner_option_boxes["menu_disabled"] as CheckBox
+	box.set_pressed_no_signal(not pressed)
+	_apply_banner_options()
+	_save_hud_settings()
+
+## Called for every switch on the banner menu because EL's options are not
+## independent of one another: a row disappears once both its bar and its
+## numbers are off, the panel is only as tall as the rows left standing, and
+## instance mode overrides what other actors show regardless of "Show Names".
+func _apply_banner_options() -> void:
+	banner_menu_enabled.set_pressed_no_signal(not _banner_option("menu_disabled"))
+	if _banner_option("menu_disabled"):
+		actor_hud_menu.hide()
+	overhead_player_name.visible = _banner_option("show_names")
+	for row_spec: Array in BANNER_ROWS:
+		var row: HBoxContainer = _banner_row(str(row_spec[0]))
+		var show_bar: bool = _banner_option(str(row_spec[1]))
+		var show_numbers: bool = _banner_option(str(row_spec[2]))
+		(row.get_node("Bar") as ProgressBar).visible = show_bar
+		(row.get_node("Number") as Label).visible = show_numbers
+		row.visible = show_bar or show_numbers
+	_apply_banner_background()
+	for id: Variant in actor_nodes:
+		var node_value: Variant = actor_nodes[id]
+		if node_value is ReplicatedActor3D and is_instance_valid(node_value as ReplicatedActor3D):
+			var actor: ReplicatedActor3D = node_value as ReplicatedActor3D
+			actor.set_nameplate_visible(_nameplate_visible_for(int(id)))
+			if not _banner_option("speech_bubbles"):
+				actor.clear_speech_bubble()
+	_layout_actor_resource_overlay()
 	_update_actor_resource_overlay()
+
+## EL draws a flat black rectangle behind the banner when the alpha background
+## is on (actors.c) and nothing at all when it is off, so the switch swaps the
+## panel style rather than hiding the panel.
+func _apply_banner_background() -> void:
+	if _banner_background_style == null:
+		var style := StyleBoxFlat.new()
+		style.bg_color = Color(0.0, 0.0, 0.0, 0.6)
+		style.set_content_margin_all(2.0)
+		style.content_margin_left = 6.0
+		style.content_margin_right = 6.0
+		_banner_background_style = style
+	if _banner_option("banner_background"):
+		actor_resource_overlay.add_theme_stylebox_override(
+			"panel", _banner_background_style)
+		return
+	var empty := StyleBoxEmpty.new()
+	empty.set_content_margin_all(2.0)
+	empty.content_margin_left = 6.0
+	empty.content_margin_right = 6.0
+	actor_resource_overlay.add_theme_stylebox_override("panel", empty)
+
+## Local chat arrives already formatted as "Speaker: what they said", which is
+## the same shape EL parses in text.c before handing the remainder to the
+## speaker's overtext. Anything without a name that matches a visible actor is
+## left in the chat log alone.
+func _capture_speech_bubble_from_chat() -> void:
+	if not _banner_option("speech_bubbles") or AppState.chat_lines.is_empty():
+		return
+	var line: Dictionary = AppState.chat_lines.back() as Dictionary
+	if int(line.get("channel", -1)) != 0:
+		return
+	var text: String = str(line.get("text", ""))
+	var separator: int = text.find(": ")
+	if separator <= 0:
+		return
+	var speaker: String = text.substr(0, separator).strip_edges()
+	var spoken: String = text.substr(separator + 2).strip_edges()
+	if spoken.is_empty():
+		return
+	for id: Variant in AppState.actors:
+		var dto: Dictionary = AppState.actors[id] as Dictionary
+		if str(dto.get("name", "")) != speaker:
+			continue
+		var node_value: Variant = actor_nodes.get(id)
+		if node_value is ReplicatedActor3D and is_instance_valid(
+				node_value as ReplicatedActor3D):
+			(node_value as ReplicatedActor3D).show_speech_bubble(
+				spoken, SPEECH_BUBBLE_MSEC)
+		return
+
+## Eternal Lands drops the click rather than walking you out of position when
+## either lock applies: Sit Lock while you are actually sitting, with Ctrl as
+## the deliberate override, and Ranging Lock while a bow is in hand
+## (gamewin.c, CURSOR_WALK and CURSOR_ATTACK).
+func _movement_locked(ctrl_pressed: bool) -> bool:
+	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
+	if (_banner_option("sit_lock") and not ctrl_pressed
+			and bool(local_actor.get("sitting", false))):
+		return true
+	return _banner_option("ranging_lock") and _range_weapon_equipped()
+
+func _range_weapon_equipped() -> bool:
+	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
+	var appearance: Dictionary = local_actor.get("appearance", {}) as Dictionary
+	var weapon: int = int(appearance.get("weapon", 0))
+	return weapon >= RANGE_WEAPON_FIRST and weapon <= RANGE_WEAPON_LAST
+
+func _banner_row(row_name: String) -> HBoxContainer:
+	return actor_resource_overlay.get_node("Rows/" + row_name) as HBoxContainer
+
+## Every visible actor except you, and only while instance mode is off - EL
+## blanks other actors' banners in instance mode so a crowded fight stays
+## readable (im_other_player_view_names and friends all default off).
+func _nameplate_visible_for(actor_id: int) -> bool:
+	if actor_id == AppState.local_actor_id:
+		return false
+	if not _nameplates_enabled:
+		return false
+	if _banner_option("instance_mode"):
+		return false
+	return _banner_option("show_names")
+
+## Eternal Lands makes every bar as long as the widest number string beside it
+## so the rows line up, then sizes the banner to whatever is left switched on.
+## Godot keeps a container at whatever size it was last given, so the explicit
+## reset_size() is what actually shrinks the box when a row goes away.
+func _layout_actor_resource_overlay() -> void:
+	var widest := BANNER_BAR_MIN_WIDTH
+	for row_spec: Array in BANNER_ROWS:
+		var row: HBoxContainer = _banner_row(str(row_spec[0]))
+		if not row.visible:
+			continue
+		var number: Label = row.get_node("Number") as Label
+		widest = maxf(widest, number.get_theme_font("font").get_string_size(
+			number.text, HORIZONTAL_ALIGNMENT_LEFT, -1.0,
+			number.get_theme_font_size("font_size")).x)
+	var bar_width: float = ceilf(widest)
+	for row_spec: Array in BANNER_ROWS:
+		var row: HBoxContainer = _banner_row(str(row_spec[0]))
+		var bar: ProgressBar = row.get_node("Bar") as ProgressBar
+		var number: Label = row.get_node("Number") as Label
+		bar.custom_minimum_size.x = bar_width
+		number.custom_minimum_size.x = bar_width
+	actor_resource_overlay.reset_size()
 
 func _on_chat_tab_pressed(tab: String) -> void:
 	_chat_tab = tab
@@ -2314,6 +2508,8 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 			return
 		if _interaction_mode == "attack" and _is_attackable_actor(
 				picked_actor_id, selected_dto):
+			if _movement_locked(event.ctrl_pressed):
+				return
 			_send_attack(picked_actor_id)
 			return
 		if _interaction_mode == "trade" and _is_tradeable_player(
@@ -2323,6 +2519,8 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 				push_warning("TRADE_WITH failed: " + error_string(trade_error))
 			return
 		if event.alt_pressed and _is_attackable_actor(picked_actor_id, selected_dto):
+			if _movement_locked(event.ctrl_pressed):
+				return
 			_send_attack(picked_actor_id)
 			return
 		if int(selected_dto.get("kind", 0)) == 2:
@@ -2356,6 +2554,8 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 	print_debug("world_input local_click=", event.position, " viewport=", viewport_position,
 		" ray_origin=", ray_origin, " ray_direction=", ray_direction, " intersection=", point)
 	if point is Vector3:
+		if _movement_locked(event.ctrl_pressed):
+			return
 		var tile: Vector2i = adapter.godot_to_server(point as Vector3)
 		print_debug("world_input godot=", point, " server_tile=", tile,
 			" command=", "RUN_TO" if event.shift_pressed else "MOVE_TO")
@@ -2388,6 +2588,7 @@ func _on_state_changed(path: StringName) -> void:
 			# pass without delaying anything past the frame it arrived in.
 			_queue_world_sync()
 		&"chat":
+			_capture_speech_bubble_from_chat()
 			_sync_chat()
 			_sync_console()
 			_reveal_chat_messages()
@@ -2647,7 +2848,7 @@ func _sync_world() -> void:
 			existing_actor.apply_server_state(dto, adapter)
 			existing_actor.apply_vitals(int(dto.get("health", 0)),
 				int(dto.get("max_health", 0)))
-			existing_actor.set_nameplate_visible(int(id) != AppState.local_actor_id)
+			existing_actor.set_nameplate_visible(_nameplate_visible_for(int(id)))
 			_place_actor_on_surface(existing_actor)
 			continue
 		var node := ReplicatedActor3D.new()
@@ -2661,7 +2862,7 @@ func _sync_world() -> void:
 		if not errors.is_empty():
 			push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 		node.apply_server_state(dto, adapter, true)
-		node.set_nameplate_visible(int(id) != AppState.local_actor_id)
+		node.set_nameplate_visible(_nameplate_visible_for(int(id)))
 		_place_actor_on_surface(node, true)
 	actor_label.text = "Actors: %d" % AppState.actors.size()
 	# The local actor is not necessarily the first one to arrive, and it is
@@ -2678,7 +2879,9 @@ func _sync_world() -> void:
 			_set_meter(health_bar, health_text, current_health, maximum_health, "Health")
 			_set_meter(health_bottom, health_bottom_text,
 				current_health, maximum_health, "Health")
-			_set_overhead_meter(overhead_health_row, current_health, maximum_health)
+			_set_overhead_meter(overhead_health_row, current_health,
+				maximum_health, "health")
+			_layout_actor_resource_overlay()
 
 func _update_local_actor_follow() -> void:
 	if AppState.local_actor_id < 0:
@@ -3191,6 +3394,10 @@ func _load_hud_settings() -> void:
 		audio_director.enabled = bool(config.get_value("audio", "enabled", true))
 		audio_director.volume_linear = clampf(float(config.get_value(
 			"audio", "volume", 0.7)), 0.0, 1.0)
+		for banner_key: String in BANNER_OPTION_NODES:
+			var box: CheckBox = _banner_option_boxes[banner_key] as CheckBox
+			box.set_pressed_no_signal(bool(config.get_value(
+				"banner", banner_key, BANNER_OPTION_DEFAULTS[banner_key])))
 	sound_enabled.set_pressed_no_signal(bool(audio_director.enabled))
 	sound_volume.set_value_no_signal(float(audio_director.volume_linear))
 	sound_volume_value.text = "%d%%" % roundi(
@@ -3201,6 +3408,7 @@ func _load_hud_settings() -> void:
 	_apply_ui_scale()
 	_apply_minimap_scale()
 	_apply_inventory_scale(_inventory_scale)
+	_apply_banner_options()
 
 func _on_ui_scale_changed(value: float) -> void:
 	_ui_scale = clampf(value, UI_SCALE_MIN, UI_SCALE_MAX)
@@ -3291,6 +3499,8 @@ func _save_hud_settings() -> void:
 	config.set_value("inventory", "bag_window_position", ground_bag_panel.position)
 	config.set_value("inventory", "bulk_exclusions", _bulk_exclusions)
 	config.set_value("inventory", "item_lists", _item_lists)
+	for banner_key: String in BANNER_OPTION_NODES:
+		config.set_value("banner", banner_key, _banner_option(banner_key))
 	var error: Error = config.save(SETTINGS_PATH)
 	if error != OK:
 		push_warning("HUD settings save failed: " + error_string(error))
@@ -3572,10 +3782,11 @@ func _sync_stats() -> void:
 	_set_meter(load_bottom, load_bottom_text, carried, capacity, "Load")
 	_set_meter(action_bottom, action_bottom_text, action, max_action, "Action")
 	_sync_experience_meter(stats)
-	_set_overhead_meter(overhead_health_row, health, max_health)
-	_set_overhead_meter(overhead_ether_row, ether, max_ether)
-	_set_overhead_meter(overhead_food_row, food, max_food)
-	_set_overhead_meter(overhead_action_row, action, max_action)
+	_set_overhead_meter(overhead_health_row, health, max_health, "health")
+	_set_overhead_meter(overhead_ether_row, ether, max_ether, "ether")
+	_set_overhead_meter(overhead_food_row, food, max_food, "food")
+	_set_overhead_meter(overhead_action_row, action, max_action, "action")
+	_layout_actor_resource_overlay()
 	if inventory_load != null:
 		inventory_load.text = "Load: %d / %d" % [int(stats.get("carried", 0)),
 			int(stats.get("capacity", 0))]
@@ -3837,12 +4048,37 @@ static func _set_meter(bar: ProgressBar, label: Label, value: int,
 	bar.value = clampi(value, 0, maxi(1, maximum))
 	label.text = "%s %d / %d" % [title, value, maximum]
 
-static func _set_overhead_meter(row: HBoxContainer, value: int, maximum: int) -> void:
+static func _set_overhead_meter(row: HBoxContainer, value: int, maximum: int,
+		colour_kind: String) -> void:
 	var bar: ProgressBar = row.get_node("Bar") as ProgressBar
 	var label: Label = row.get_node("Number") as Label
-	bar.max_value = maxi(1, maximum)
-	bar.value = clampi(value, 0, maxi(1, maximum))
+	var safe_maximum: int = maxi(1, maximum)
+	bar.max_value = safe_maximum
+	bar.value = clampi(value, 0, safe_maximum)
 	label.text = "%d/%d" % [value, maximum]
+	var colour: Color = _banner_colour(colour_kind,
+		float(value) / float(safe_maximum))
+	var fill: StyleBoxFlat = bar.get_theme_stylebox("fill") as StyleBoxFlat
+	if fill != null:
+		fill.bg_color = colour
+	label.add_theme_color_override("font_color", colour)
+
+## Eternal Lands recolours a banner meter as it drains rather than fixing one
+## colour per stat: actors.c set_health_color() ramps green to red, and
+## set_banner_colour_general() walks ether and food between the named
+## banner.*.zero and banner.*.full colours. Action points are Eloria's own, so
+## they follow the same shape between the two ends of the HUD purple.
+static func _banner_colour(kind: String, percent: float) -> Color:
+	var fraction: float = clampf(percent, 0.0, 1.0)
+	match kind:
+		"health":
+			return Color(clampf((1.0 - fraction) * 2.0, 0.0, 1.0),
+				clampf(fraction / 1.25 * 2.0, 0.0, 1.0), 0.0)
+		"ether":
+			return Color(0.7, 0.7, 1.0).lerp(Color(0.4, 0.4, 1.0), fraction)
+		"food":
+			return Color(1.0, 0.5, 0.0).lerp(Color(1.0, 1.0, 0.0), fraction)
+	return Color(1.0, 0.55, 0.9).lerp(Color(0.73, 0.28, 0.86), fraction)
 
 func _update_legacy_clock_and_compass() -> void:
 	var elapsed_seconds := 0.0
@@ -3856,8 +4092,7 @@ func _update_legacy_clock_and_compass() -> void:
 	compass_needle.rotation = deg_to_rad(-camera_rig.yaw_degrees)
 
 func _update_actor_resource_overlay() -> void:
-	if not (show_overhead_health.button_pressed or show_overhead_ether.button_pressed
-			or show_overhead_food.button_pressed or show_overhead_action.button_pressed):
+	if not _banner_has_content():
 		if actor_resource_overlay.visible:
 			actor_resource_overlay.hide()
 		return
@@ -3875,16 +4110,30 @@ func _update_actor_resource_overlay() -> void:
 	if main_viewport.size.x > 0 and main_viewport.size.y > 0:
 		viewport_scale = viewport_container.size / Vector2(main_viewport.size)
 	var screen_position: Vector2 = viewport_container.position + viewport_position * viewport_scale
+	# Instance mode lifts your own banner clear of the melee so it stays legible
+	# in a crowd, the way EL raises it by instance_mode_banner_height lines.
+	var instance_lift: float = (BANNER_INSTANCE_LIFT_ROWS * _banner_row_height()
+		if _banner_option("instance_mode") else 0.0)
 	var overlay_position: Vector2 = screen_position - Vector2(
-		actor_resource_overlay.size.x * 0.5, actor_resource_overlay.size.y + 8.0)
+		actor_resource_overlay.size.x * 0.5,
+		actor_resource_overlay.size.y + 8.0 + instance_lift)
 	actor_resource_overlay.position = Vector2(
 		clampf(overlay_position.x, 4.0,
 			maxf(4.0, game_view.size.x - actor_resource_overlay.size.x - 90.0)),
 		clampf(overlay_position.y, 34.0,
 			maxf(34.0, game_view.size.y - actor_resource_overlay.size.y - 86.0)))
-	actor_resource_overlay.visible = (show_overhead_health.button_pressed
-		or show_overhead_ether.button_pressed or show_overhead_food.button_pressed
-		or show_overhead_action.button_pressed)
+	actor_resource_overlay.show()
+
+func _banner_has_content() -> bool:
+	if _banner_option("show_names"):
+		return true
+	for row_spec: Array in BANNER_ROWS:
+		if _banner_option(str(row_spec[1])) or _banner_option(str(row_spec[2])):
+			return true
+	return false
+
+func _banner_row_height() -> float:
+	return maxf(1.0, _banner_row("HealthRow").get_combined_minimum_size().y)
 
 ## Draws what the server said just happened, where it happened.
 ##
@@ -4564,10 +4813,7 @@ func _on_client_setting_changed(section: String, key: String,
 			_effects_enabled = bool(value)
 		"nameplates":
 			_nameplates_enabled = bool(value)
-			for raw_actor: Variant in actor_nodes.values():
-				if is_instance_valid(raw_actor):
-					(raw_actor as ReplicatedActor3D).set_nameplate_visible(
-						_nameplates_enabled)
+			_apply_banner_options()
 		"rotation_sensitivity":
 			camera_rig.rotation_sensitivity = float(value)
 		"pan_sensitivity":
@@ -5571,16 +5817,63 @@ func _apply_eloria_theme() -> void:
 	_style_meter(food_bottom, Color(0.96, 0.78, 0.16, 1.0))
 	_style_meter(load_bottom, Color(0.62, 0.43, 0.34, 1.0))
 	_style_meter(experience_bottom, Color(0.18, 0.76, 0.22, 1.0))
-	_style_meter(overhead_health_row.get_node("Bar") as ProgressBar,
-		Color(0.9, 0.16, 0.14, 1.0))
-	for ether_bar: ProgressBar in [mana_bar, ether_bottom,
-		overhead_ether_row.get_node("Bar") as ProgressBar]:
+	for ether_bar: ProgressBar in [mana_bar, ether_bottom]:
 		_style_meter(ether_bar, Color(0.24, 0.31, 1.0, 1.0))
-	_style_meter(overhead_food_row.get_node("Bar") as ProgressBar,
-		Color(0.96, 0.78, 0.16, 1.0))
-	for points_bar: ProgressBar in [action_bar, action_bottom,
-		overhead_action_row.get_node("Bar") as ProgressBar]:
+	for points_bar: ProgressBar in [action_bar, action_bottom]:
 		_style_meter(points_bar, Color(0.73, 0.28, 0.86, 1.0))
+	for row_spec: Array in BANNER_ROWS:
+		_style_banner_meter(_banner_row(str(row_spec[0])).get_node("Bar") as ProgressBar)
+	_style_actor_hud_menu(panel)
+
+## The overhead bars are not the HUD's bars. Eternal Lands draws only the
+## filled part and a one-pixel black frame, leaving the world visible through
+## whatever is missing, so these get their own transparent-backed style instead
+## of the bordered wells the bottom meters use. The fill colour is repainted
+## per update by _set_overhead_meter().
+static func _style_banner_meter(bar: ProgressBar) -> void:
+	var background := StyleBoxFlat.new()
+	background.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+	background.border_color = Color(0.0, 0.0, 0.0, 0.95)
+	background.set_border_width_all(1)
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = Color(0.17, 0.82, 0.22, 1.0)
+	bar.add_theme_stylebox_override("background", background)
+	bar.add_theme_stylebox_override("fill", fill)
+
+## Eternal Lands' banner menu is a plain dark strip of single-line entries with
+## barely any padding around them. Godot's stock CheckBox is roughly twice as
+## tall, so the menu carries its own compact styling rather than inheriting the
+## window chrome the rest of the HUD uses.
+func _style_actor_hud_menu(panel_style: StyleBoxFlat) -> void:
+	var menu_style: StyleBoxFlat = panel_style.duplicate() as StyleBoxFlat
+	menu_style.bg_color = Color(0.02, 0.03, 0.035, 0.95)
+	menu_style.set_border_width_all(1)
+	menu_style.set_content_margin_all(2.0)
+	actor_hud_menu.add_theme_stylebox_override("panel", menu_style)
+	var entry_style := StyleBoxEmpty.new()
+	entry_style.content_margin_top = 1.0
+	entry_style.content_margin_bottom = 1.0
+	entry_style.content_margin_left = 3.0
+	entry_style.content_margin_right = 8.0
+	var hover_style := StyleBoxFlat.new()
+	hover_style.bg_color = Color(0.16, 0.24, 0.23, 0.95)
+	hover_style.content_margin_top = 1.0
+	hover_style.content_margin_bottom = 1.0
+	hover_style.content_margin_left = 3.0
+	hover_style.content_margin_right = 8.0
+	for box_value: Variant in _banner_option_boxes.values():
+		var box: CheckBox = box_value as CheckBox
+		box.focus_mode = Control.FOCUS_NONE
+		box.add_theme_font_size_override("font_size", 13)
+		box.add_theme_constant_override("h_separation", 4)
+		box.add_theme_color_override("font_color", Color(0.91, 0.86, 0.70))
+		box.add_theme_color_override("font_hover_color", Color(1.0, 0.94, 0.76))
+		box.add_theme_color_override("font_pressed_color", Color(0.91, 0.86, 0.70))
+		box.add_theme_color_override("font_hover_pressed_color", Color(1.0, 0.94, 0.76))
+		for state: String in ["normal", "pressed", "disabled", "focus"]:
+			box.add_theme_stylebox_override(state, entry_style)
+		for state: String in ["hover", "hover_pressed"]:
+			box.add_theme_stylebox_override(state, hover_style)
 
 static func _style_meter(bar: ProgressBar, color: Color) -> void:
 	var background := StyleBoxFlat.new()

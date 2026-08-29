@@ -39,6 +39,8 @@ var _equipment_nodes: Dictionary = {}
 var _equipment_hides: Dictionary = {}
 var _hidden_body_surfaces: Dictionary = {}
 var _nameplate: Label3D
+var _speech_bubble: Label3D
+var _speech_bubble_expiry_msec := 0
 var _health_bar_background: MeshInstance3D
 var _health_bar_fill: MeshInstance3D
 var _health_label: Label3D
@@ -410,6 +412,33 @@ func set_nameplate_visible(enabled: bool) -> void:
 		_health_bar_fill.visible = enabled and has_health and _health_current > 0
 	if is_instance_valid(_health_label):
 		_health_label.visible = enabled and has_health
+
+## Eternal Lands repeats local chat over the speaker's head while "Show Speech
+## Bubbles" is on (text.c check_chat_text_to_overtext), sitting above the
+## banner rather than replacing it.
+func show_speech_bubble(speech: String, duration_msec: int) -> void:
+	if not is_instance_valid(_speech_bubble):
+		var label: Label3D = Label3D.new()
+		label.name = "SpeechBubble"
+		label.position.y = 2.62
+		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		label.no_depth_test = true
+		label.font_size = 24
+		label.outline_size = 8
+		label.width = 760.0
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		label.modulate = Color(0.86, 1.0, 0.86, 1.0)
+		label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
+		add_child(label)
+		_speech_bubble = label
+	_speech_bubble.text = speech
+	_speech_bubble.show()
+	_speech_bubble_expiry_msec = Time.get_ticks_msec() + duration_msec
+
+func clear_speech_bubble() -> void:
+	_speech_bubble_expiry_msec = 0
+	if is_instance_valid(_speech_bubble):
+		_speech_bubble.hide()
 
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
 	var next_target: Vector3 = adapter.tile_center(int(dto.x), int(dto.y))
@@ -1110,6 +1139,9 @@ static func presentation_segment_duration(distance: float, nominal_speed: float,
 		minimum_duration, maximum_duration)
 
 func _physics_process(delta: float) -> void:
+	if (_speech_bubble_expiry_msec > 0
+			and Time.get_ticks_msec() >= _speech_bubble_expiry_msec):
+		clear_speech_bubble()
 	if _snap_pending:
 		global_position = server_target
 		rotation.y = _target_yaw
