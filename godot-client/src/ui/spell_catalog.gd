@@ -6,6 +6,9 @@ var _spells: Dictionary = {}
 ## Buff ids are a separate namespace from spell ids: the server reports an
 ## active effect by buff id, and several spells and potions share one.
 var _buffs: Dictionary = {}
+## Sigil id to name. The server owns which sigils a character has - it sends
+## the 64-bit ownership set - and this is only the label for each bit.
+var _sigils: Dictionary = {}
 var _atlas_path := ""
 var _atlas_texture: Texture2D
 var _columns := 8
@@ -15,6 +18,7 @@ func configure(config: Dictionary) -> void:
 	default_quick_slots.clear()
 	_spells.clear()
 	_buffs.clear()
+	_sigils.clear()
 	_atlas_texture = null
 	_atlas_path = str(config.get("atlas", ""))
 	_columns = maxi(1, int(config.get("columns", 8)))
@@ -41,6 +45,20 @@ func configure(config: Dictionary) -> void:
 				var buff: Dictionary = raw_buff as Dictionary
 				_buffs[int(buff.get("id", -1))] = buff
 
+	var sigils_value: Variant = config.get("sigils", [])
+	if sigils_value is Array:
+		for raw_sigil: Variant in sigils_value:
+			if raw_sigil is Dictionary:
+				var sigil: Dictionary = raw_sigil as Dictionary
+				_sigils[int(sigil.get("id", -1))] = str(sigil.get("name", ""))
+
+## The name for one of the server's sigil bits, or an empty string.
+func sigil_name(sigil_id: int) -> String:
+	return str(_sigils.get(sigil_id, ""))
+
+func sigil_count() -> int:
+	return _sigils.size()
+
 ## The name and icon for one of the server's buff ids. The server states which
 ## buffs are active and for how long; only the label lives here, the same way
 ## the spell names and sigil icons already do.
@@ -55,6 +73,13 @@ func buff_icon(buff_id: int) -> Texture2D:
 ## stated per effect rather than per spell, because several spells share one.
 func effect_for(spell_id: int) -> String:
 	return str(spell(spell_id).get("effect", ""))
+
+## Every catalogued spell id, in catalog order.
+func spell_ids() -> Array[int]:
+	var ids: Array[int] = []
+	for key: Variant in _spells:
+		ids.append(int(key))
+	return ids
 
 func spell(spell_id: int) -> Dictionary:
 	var value: Variant = _spells.get(spell_id)

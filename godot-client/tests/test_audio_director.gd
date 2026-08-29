@@ -70,24 +70,27 @@ func _run() -> void:
 	# Footsteps. A step is heard when the server says the player is standing
 	# somewhere else, and the first sighting after login is not a step.
 	director.call("stop_all")
-	app_state.set("local_actor_id", 91)
-	app_state.set("actors", {91: {"actor_id": 91, "x": 10, "y": 10,
-		"name": "Alice", "health": 20, "max_health": 20, "alive": true}})
-	app_state.call("emit_signal", "state_changed", &"actors")
+	# The server's own actor packet, then its own movement command: nothing
+	# here pokes state directly.
+	app_state.call("_on_packet", 3, PackedByteArray([0x5b, 0]))
+	app_state.call("_on_packet", 51, _hex(
+		"5b00020004000000000001000001020304050b001e14071400120001416c696365"
+		+ "000040ff0600"))
 	await process_frame
 	_expect(not bool(director.call("is_playing")),
 		"seeing the player for the first time is not a step")
-	app_state.set("actors", {91: {"actor_id": 91, "x": 11, "y": 10,
-		"name": "Alice", "health": 20, "max_health": 20, "alive": true}})
-	app_state.call("emit_signal", "state_changed", &"actors")
+	# Command 22 is the east one-tile move in the legacy actor-command table.
+	app_state.call("_on_packet", 2, PackedByteArray([0x5b, 0, 22]))
 	await process_frame
 	_expect(bool(director.call("is_playing")),
 		"the server moving the player a tile is heard")
 	director.call("stop_all")
-	app_state.call("emit_signal", "state_changed", &"actors")
+	app_state.call("_on_packet", 51, _hex(
+		"5b00030004000000000001000001020304050b001e14071400120001416c696365"
+		+ "000040ff0600"))
 	await process_frame
 	_expect(not bool(director.call("is_playing")),
-		"restating the same tile is not another step")
+		"restating the tile the player already stands on is not another step")
 
 	# An effect the server announced.
 	director.call("stop_all")

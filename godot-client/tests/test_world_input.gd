@@ -1362,6 +1362,49 @@ func _run() -> void:
 	app_state_inventory.call("_on_packet", 6, PackedByteArray([91, 0]))
 	await process_frame
 
+	# Twelve spell quick slots, and the sigils window that says why a spell is
+	# out of reach. Ownership is the server's; the names are the catalog's.
+	_expect((main.get("spell_slot_buttons") as Array).size() == 12,
+		"the quickbar has twelve spell slots, not six")
+	for slot: int in range(1, 13):
+		_expect(InputMap.has_action("quick_spell_%d" % slot),
+			"quick_spell_%d is a rebindable action" % slot)
+	var sigils: Control = main.get("sigil_window") as Control
+	var sigil_panel: PanelContainer = sigils.get_node("SigilWindow") as PanelContainer
+	_expect(not sigil_panel.visible, "the sigils window starts closed")
+	# The server states the owned set; two sigils here, from a real packet.
+	app_state_inventory.call("_on_packet", 42, PackedByteArray([
+		0x0a, 0x00, 0x08, 0x00, 0, 0, 0, 0]))
+	main.call("_on_sigil_button_pressed")
+	await process_frame
+	_expect(sigil_panel.visible, "the button opens it")
+	var sigil_list: ItemList = sigils.get_node(
+		"SigilWindow/SigilBody/SigilColumns/SigilList") as ItemList
+	_expect(sigil_list.item_count == 26,
+		"every sigil the catalog names is listed: %d" % sigil_list.item_count)
+	var owned_rows: Array[String] = []
+	for index: int in range(sigil_list.item_count):
+		if not sigil_list.is_item_disabled(index):
+			owned_rows.append(sigil_list.get_item_text(index))
+	_expect(owned_rows.size() == 3,
+		"exactly the sigils the server sent are marked owned: %s" % str(owned_rows))
+	var sigil_summary: RichTextLabel = sigils.get_node(
+		"SigilWindow/SigilBody/SigilColumns/SigilSummary") as RichTextLabel
+	_expect(sigil_summary.text.contains("3 of 26")
+		and sigil_summary.text.contains("needs"),
+		"the summary counts what is owned and names what each spell still needs")
+	var sigil_rect: Rect2 = sigil_panel.get_global_rect()
+	_expect(sigil_rect.position.x >= 0.0 and sigil_rect.end.x <= 1280.0
+		and sigil_rect.end.y <= 720.0
+		and not sigil_rect.intersects(right_stats.get_global_rect()),
+		"the sigils window fits 1280x720 clear of the resource rail")
+	var sigil_cancel: InputEventKey = InputMap.action_get_events(
+		"cancel")[0].duplicate() as InputEventKey
+	sigil_cancel.pressed = true
+	main.call("_unhandled_input", sigil_cancel)
+	await process_frame
+	_expect(not sigil_panel.visible, "cancel closes the sigils window")
+
 	# Spell power. Both the preferred power and the ceiling are the server's;
 	# the client asks for a power and never works a limit out from a level.
 	var power_value: Label = main.get_node(

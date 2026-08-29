@@ -35,6 +35,7 @@ const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
 const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
 const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
 const AudioDirectorScript := preload("res://src/audio/audio_director.gd")
+const SigilWindowScript := preload("res://src/ui/sigil_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 var invasion_assistant_window
@@ -241,6 +242,7 @@ var map_marker_overlay: Control
 var world_effects: Array = []
 var audio_director: Node
 var map_ambience_root: Node3D
+var sigil_window: Control
 ## The power the next cast asks for. Presentational: the server states what
 ## each effect may reach and refuses anything it will not allow.
 var requested_spell_power := 1
@@ -383,6 +385,9 @@ const UI_SCALE_MAX := 1.5
 # identically at a fraction of the rate.
 const MINIMAP_REFRESH_MSEC := 66
 const FULL_MAP_REFRESH_MSEC := 200
+## The fork's spell quickbar. Twelve slots, shifted 1-0 then Ctrl+1/Ctrl+2 -
+## the legacy client's six were never enough for the catalog's 22 spells.
+const SPELL_QUICK_SLOTS := 12
 const INVENTORY_MIN_SCALE := 0.65
 const INVENTORY_MAX_SCALE := 1.75
 const TILE_DIRECTIONS: Array[Vector2i] = [
@@ -415,6 +420,9 @@ func _ready() -> void:
 	add_child(audio_director)
 	player_info_panel = PlayerInfoPanelScript.new()
 	game_view.add_child(player_info_panel)
+	sigil_window = SigilWindowScript.new()
+	game_view.add_child(sigil_window)
+	sigil_window.configure(spell_catalog)
 	active_buff_bar = ActiveBuffBarScript.new()
 	game_view.add_child(active_buff_bar)
 	active_buff_bar.configure(spell_catalog)
@@ -1930,7 +1938,7 @@ func _recenter_viewport_on_player() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not game_view.visible:
 		return
-	for spell_slot: int in range(6):
+	for spell_slot: int in range(SPELL_QUICK_SLOTS):
 		if event.is_action_pressed("quick_spell_%d" % (spell_slot + 1)):
 			_cast_spell_slot(spell_slot)
 			get_viewport().set_input_as_handled()
@@ -1956,6 +1964,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			pass
 		elif player_info_panel != null and player_info_panel.is_open():
 			player_info_panel.close()
+		elif sigil_window != null and sigil_window.is_open():
+			sigil_window.close()
 		elif chat_input.has_focus():
 			_hide_chat_input()
 		elif settings_panel.visible:
@@ -4219,6 +4229,12 @@ func _sync_spell_power_controls() -> void:
 	spell_power_value.text = "P%d" % requested_spell_power
 	spell_power_down.disabled = requested_spell_power <= 1
 	spell_power_up.disabled = requested_spell_power >= ceiling
+
+## The sigils window. It is opened from the spell quickbar because that is
+## where a player finds out they are missing one.
+func _on_sigil_button_pressed() -> void:
+	sigil_window.toggle()
+	audio_director.play("ui_click" if sigil_window.is_open() else "ui_close")
 
 func _on_spell_power_down_pressed() -> void:
 	requested_spell_power = maxi(1, requested_spell_power - 1)

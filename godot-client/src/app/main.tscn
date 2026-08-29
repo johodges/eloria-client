@@ -1072,6 +1072,13 @@ tooltip_text = "Spell quick slots [Shift+1-6]"
 toggle_mode = true
 text = "S"
 
+[node name="SigilButton" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ModeButtons" unique_id=1170753189]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(26, 20)
+layout_mode = 2
+tooltip_text = "Which sigils you own, and what they unlock"
+text = "Sg"
+
 [node name="SpellPowerDown" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ModeButtons" unique_id=1170753186]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(22, 20)
@@ -1188,6 +1195,42 @@ custom_minimum_size = Vector2(62, 28)
 layout_mode = 2
 disabled = true
 text = "S6"
+
+[node name="Spell7" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots" unique_id=1998188673]
+custom_minimum_size = Vector2(62, 28)
+layout_mode = 2
+disabled = true
+text = "S7"
+
+[node name="Spell8" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots" unique_id=1998188674]
+custom_minimum_size = Vector2(62, 28)
+layout_mode = 2
+disabled = true
+text = "S8"
+
+[node name="Spell9" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots" unique_id=1998188675]
+custom_minimum_size = Vector2(62, 28)
+layout_mode = 2
+disabled = true
+text = "S9"
+
+[node name="Spell10" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots" unique_id=1998188676]
+custom_minimum_size = Vector2(62, 28)
+layout_mode = 2
+disabled = true
+text = "S10"
+
+[node name="Spell11" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots" unique_id=1998188677]
+custom_minimum_size = Vector2(62, 28)
+layout_mode = 2
+disabled = true
+text = "S11"
+
+[node name="Spell12" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/SpellSlots" unique_id=1998188678]
+custom_minimum_size = Vector2(62, 28)
+layout_mode = 2
+disabled = true
+text = "S12"
 
 [node name="SpellStatus" type="Label" parent="GameView/ItemSpellQuickbar/QuickContent" unique_id=1099053680]
 unique_name_in_owner = true
@@ -2727,6 +2770,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/AttackButton" to="." method="_on_attack_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/TradeButton" to="." method="_on_trade_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/LookButton" to="." method="_on_look_button_pressed"]
+[connection signal="pressed" from="GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SigilButton" to="." method="_on_sigil_button_pressed"]
 [connection signal="pressed" from="GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerDown" to="." method="_on_spell_power_down_pressed"]
 [connection signal="pressed" from="GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerUp" to="." method="_on_spell_power_up_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagLook" to="." method="_on_ground_bag_look_pressed"]
