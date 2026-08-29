@@ -10,6 +10,12 @@
 #     ../eloria-assets/maps/nymara-regions/_toolkit/godot_capture.gd \
 #     --rendering-driver vulkan --resolution 1600x1000 -- \
 #     --package=<abs path to region package> --out=<abs path>
+#     [--only=<substring>] [--environment=manifest]
+#
+# `--environment=manifest` lights the shots from the package's own
+# `environment` block through the project's `WorldEnvironmentBinder`, instead of
+# this file's neutral studio sun. Use it when the captures are meant to be
+# evidence about the region's declared lighting and not only about its geometry.
 extends SceneTree
 
 const SETTLE_FRAMES := 24
@@ -87,15 +93,16 @@ func _init() -> void:
 	# puts a sun through its ceiling, which is not a moody frame but a wrong one:
 	# the reviewer sees daylight in a vault that has none. Such a package is lit
 	# from its own manifest instead.
-	var manifest: Dictionary = {}
 	var manifest_env: Dictionary = {}
+	var manifest_env_root: Dictionary = {}
 	var manifest_file := FileAccess.open(package.path_join("world.json"), FileAccess.READ)
 	if manifest_file != null:
 		var parsed: Variant = JSON.parse_string(manifest_file.get_as_text())
 		manifest_file.close()
+		if parsed is Dictionary:
+			manifest_env_root = parsed as Dictionary
 		if typeof(parsed) == TYPE_DICTIONARY:
-			manifest = parsed
-			manifest_env = manifest.get("environment", {})
+			manifest_env = manifest_env_root.get("environment", {})
 	var sealed := str(manifest_env.get("sky", "")) == "none"
 
 	# environment: a plain daylight sky so the shot shows the map, not a mood
@@ -112,7 +119,10 @@ func _init() -> void:
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 	env.ambient_light_energy = 0.45
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	env.tonemap_exposure = 1.05
+	# A package may declare its own exposure. The default suits a region whose
+	# albedos sit in the middle of the range; a wet jungle under closed canopy
+	# is painted much darker than that and renders as a silhouette at 1.05.
+	env.tonemap_exposure = float(manifest_env.get("exposure", 1.05))
 	env.ssao_enabled = true
 
 	# A WorldEnvironment, not camera.environment: the camera override does not
@@ -154,6 +164,32 @@ func _init() -> void:
 	# look south and most cameras look north, so the light must travel north
 	# too: yaw near zero, not near 180, or every shot is backlit.
 	sun.rotation_degrees = Vector3(-46.0, 24.0, 0.0)
+
+	# ...but a region that declares its own sun in the manifest gets that one.
+	# The fixed rig above is Amberwood's art direction - its built faces look
+	# south, so the light travels north - and it is simply wrong for a region
+	# laid out on a different axis. Verdant Stair's terraces present south-west
+	# and every frame came back backlit and near-black until this read the
+	# manifest. `environment.sun.direction` points *toward* the sun, and a
+	# DirectionalLight3D shines along its own -Z, so the node looks at -d.
+	var sun_cfg: Dictionary = manifest_env.get("sun", {})
+	var dir_raw: Variant = sun_cfg.get("direction", null)
+	if not sealed and dir_raw is Array and (dir_raw as Array).size() == 3:
+		var d := Vector3(float(dir_raw[0]), float(dir_raw[1]),
+						 float(dir_raw[2])).normalized()
+		if d.length() > 0.5 and absf(d.dot(Vector3.UP)) < 0.985:
+			sun.look_at_from_position(Vector3.ZERO, -d, Vector3.UP)
+		var sun_colour: Variant = sun_cfg.get("color", sun_cfg.get("colour", null))
+		if sun_colour is Array and (sun_colour as Array).size() >= 3:
+			sun.light_color = Color(float(sun_colour[0]), float(sun_colour[1]),
+									float(sun_colour[2]))
+		sun.light_energy = float(sun_cfg.get("energy", 1.2)) * 1.55
+		# Ambient too: a closed jungle canopy is mostly bounce, and a rig with
+		# 0.45 of sky and nothing else renders it as a silhouette.
+		var open_amb: Dictionary = manifest_env.get("ambient", {})
+		env.ambient_light_energy = maxf(
+			0.45, float(open_amb.get("energy", 0.45)) * 2.6)
+
 	if sealed:
 		# straight down and weak: a sealed package has no sun, and this only
 		# keeps surfaces from reading as flat unlit colour
@@ -163,32 +199,65 @@ func _init() -> void:
 		sun.rotation_degrees = Vector3(-88.0, 0.0, 0.0)
 	world.add_child(sun)
 
-	# The manifest's own lamps. An interior package declares a `lights` array -
-	# one entry per lantern, brazier or burner it authored - and without them a
-	# sealed map is lit by nothing but the lifted ambient above, so every client
-	# frame of it comes back near black. The Westhaven insides' first capture
-	# run averaged 7 to 25 out of 255.
-	#
-	# These are the manifest's declared values, not invented ones: this harness
-	# is supposed to show what the package asks for.
-	var lamps := 0
-	for entry in manifest.get("lights", []):
+	# The lamps the package declares, as real lights. A sealed package's manifest
+	# carries a `lights` array standing in for its lanterns and braziers; without
+	# these the ambient block alone lights every surface identically and the
+	# frame shows no source for its own light.
+	var manifest_lights: Array = []
+	var lights_file := FileAccess.open(package.path_join("world.json"),
+		FileAccess.READ)
+	if lights_file != null:
+		var lights_parsed: Variant = JSON.parse_string(lights_file.get_as_text())
+		lights_file.close()
+		if typeof(lights_parsed) == TYPE_DICTIONARY:
+			manifest_lights = (lights_parsed as Dictionary).get("lights", [])
+	var lamp_count := 0
+	for entry in manifest_lights:
 		var lamp: Dictionary = entry
-		var position: Array = lamp.get("position", [])
-		if position.size() != 3:
+		var at: Array = lamp.get("position", [])
+		if at.size() != 3:
 			continue
-		var light := OmniLight3D.new()
-		light.position = Vector3(float(position[0]), float(position[1]),
-			float(position[2]))
-		var colour: Variant = lamp.get("colour", [1.0, 0.66, 0.32])
-		light.light_color = Color(colour[0], colour[1], colour[2])
-		light.light_energy = float(lamp.get("energy", 1.5))
-		light.omni_range = float(lamp.get("range", 9.0))
-		light.shadow_enabled = false
-		world.add_child(light)
-		lamps += 1
-	if lamps:
-		print("[capture] bound %d manifest lights" % lamps)
+		var point := OmniLight3D.new()
+		point.position = Vector3(float(at[0]), float(at[1]), float(at[2]))
+		var col: Array = lamp.get("colour", lamp.get("color", [1.0, 1.0, 1.0]))
+		point.light_color = Color(float(col[0]), float(col[1]), float(col[2]))
+		point.light_energy = float(lamp.get("energy", 1.5))
+		point.omni_range = float(lamp.get("range", 9.0))
+		point.shadow_enabled = false
+		world.add_child(point)
+		lamp_count += 1
+	if lamp_count:
+		print("[capture] %d declared lamps" % lamp_count)
+
+	# Bind the manifest's own environment, through the same
+	# `WorldEnvironmentBinder` the game uses, so a capture shows the light the
+	# region actually ships rather than this harness's neutral studio sun.
+	#
+	# Without this the frames are evidence about geometry only: a manifest can
+	# declare a sun that lights the world from underneath, or omit `tonemap`
+	# and render flat, and the captures look identical either way. Off by
+	# default so existing regions' capture sets do not change under them; pass
+	# `--environment=manifest` to use it.
+	# Note the two light sources are different manifest keys and do not
+	# collide: the loop above reads top-level `lights`, and the binder below
+	# spawns `environment.lights`. A package declaring both gets both.
+	if str(opts.get("environment", "harness")) == "manifest" and not sealed:
+		var bind_manifest := WorldManifest.new()
+		bind_manifest.data = manifest_env_root
+		var bound: bool = WorldEnvironmentBinder.apply(
+			bind_manifest, world_env, sun, world)
+		if bound and sun.is_inside_tree():
+			var travel: Vector3 = -sun.global_transform.basis.z
+			print("[capture] environment: manifest (sun travels %.2f, %.2f, %.2f%s)"
+				% [travel.x, travel.y, travel.z,
+				   "  WARNING: lights from below" if travel.y > 0.0 else ""])
+		elif bound:
+			print("[capture] environment: manifest (sun direction bound)")
+		else:
+			print("[capture] environment: manifest requested but not bound; "
+				+ "keeping harness lighting")
+	else:
+		print("[capture] environment: harness studio lighting")
 
 	var camera := Camera3D.new()
 	camera.far = 2400.0

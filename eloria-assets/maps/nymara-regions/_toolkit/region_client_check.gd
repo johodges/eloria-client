@@ -17,6 +17,51 @@ const RAY_TOP := 400.0
 const RAY_BOTTOM := -100.0
 
 
+func _load_collision(manifest: Dictionary, manifest_path: String) -> Dictionary:
+	"""The package's own walkability grid, or {} when it publishes no origin.
+
+	EWCG v1: magic, u16 version, u16 reserved, u32 width, u32 height, then one
+	byte per half-metre cell. Zero means blocked; 1..63 is a height code.
+	"""
+	var collision: Dictionary = manifest.get("collision", {})
+	var origin: Variant = collision.get("originMetres")
+	if origin is not Array or (origin as Array).size() < 2:
+		return {}
+	var binary := str(collision.get("binary", "collision.bin"))
+	var path := manifest_path.get_base_dir().path_join(binary)
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return {}
+	var bytes := file.get_buffer(file.get_length())
+	file.close()
+	if bytes.size() < 16 or bytes.slice(0, 4).get_string_from_ascii() != "EWCG":
+		return {}
+	var width := bytes.decode_u32(8)
+	var height := bytes.decode_u32(12)
+	if width <= 0 or height <= 0 or bytes.size() < 16 + width * height:
+		return {}
+	return {
+		"data": bytes.slice(16),
+		"width": width,
+		"height": height,
+		"cell": float(collision.get("cellMetres", 0.5)),
+		"x0": float((origin as Array)[0]),
+		"z1": float((origin as Array)[1]),
+	}
+
+
+func _cell_walkable(grid: Dictionary, world_position: Vector3) -> bool:
+	if grid.is_empty():
+		return true
+	var cell: float = grid["cell"]
+	var column := int(floor((world_position.x - float(grid["x0"])) / cell))
+	var row := int(floor((float(grid["z1"]) - world_position.z) / cell))
+	if column < 0 or row < 0 or column >= int(grid["width"]) 			or row >= int(grid["height"]):
+		return false
+	var data: PackedByteArray = grid["data"]
+	return data[row * int(grid["width"]) + column] != 0
+
+
 func _args() -> Dictionary:
 	var out := {}
 	for raw in OS.get_cmdline_user_args():
@@ -78,31 +123,17 @@ func _init() -> void:
 		return
 	print("[client-check] server grid %dx%d, sampling every %d tiles" % [cells, cells, step])
 
-	# A combined insides map is mostly deliberate void: several interiors on one
-	# map with blackspace between them, in the Eternal Lands convention. "Every
-	# tile must ground" is the right test for a region and the wrong one for
-	# that - it reports 85% misses and fails a map that is correct.
-	#
-	# So when the manifest declares `spaces`, which only an interior package
-	# does, the criterion becomes "every tile *inside an authored space* must
-	# ground". That is the part that matters, it is precise, and it reads data
-	# already in the manifest rather than a flag somebody has to remember to
-	# pass.
-	var spaces: Array = []
-	for value in (manifest.get("spaces", {}) as Dictionary).values():
-		var entry := value as Dictionary
-		spaces.append(Rect2(float(entry["x0"]), float(entry["z0"]),
-			float(entry["x1"]) - float(entry["x0"]),
-			float(entry["z1"]) - float(entry["z0"])))
-	var void_expected := not spaces.is_empty()
-	if void_expected:
-		print("[client-check] interior package: %d authored spaces, "
-			% spaces.size() + "tiles outside them are expected void")
-
+	# A miss is only a defect where the package says a player can stand. A
+	# region has ground under every tile, so its criterion is "no misses at
+	# all". An interior is rooms inside rock: most of its bounding square is
+	# legitimately not floor, and judging it by a region's rule fails every
+	# correctly-built interior. Where the package publishes a grid origin -
+	# interiors do - misses are split into blocked cells (expected) and
+	# walkable cells (real), and only the latter fail the run.
+	var grid := _load_collision(manifest, manifest_path)
 	var sampled := 0
 	var misses := 0
-	var in_space := 0
-	var in_space_misses := 0
+	var misses_on_walkable := 0
 	var miss_examples: Array = []
 	var lowest := INF
 	var highest := -INF
@@ -115,15 +146,6 @@ func _init() -> void:
 				from, to, WorldLoader.NAVIGATION_SURFACE_LAYER)
 			var hit: Dictionary = space.intersect_ray(query)
 			sampled += 1
-			var inside := false
-			if void_expected:
-				var point := Vector2(world_position.x, world_position.z)
-				for rect in spaces:
-					if (rect as Rect2).has_point(point):
-						inside = true
-						break
-				if inside:
-					in_space += 1
 			var position_value: Variant = hit.get("position")
 			if position_value is Vector3:
 				var y: float = (position_value as Vector3).y
@@ -131,24 +153,26 @@ func _init() -> void:
 				highest = maxf(highest, y)
 			else:
 				misses += 1
-				if inside:
-					in_space_misses += 1
+				var standable: bool = _cell_walkable(grid, world_position)
+				if standable:
+					misses_on_walkable += 1
 					if miss_examples.size() < 12:
 						miss_examples.append([tx, ty,
 							snappedf(world_position.x, 0.1),
 							snappedf(world_position.z, 0.1)])
-				elif not void_expected and miss_examples.size() < 12:
-					miss_examples.append([tx, ty,
-						snappedf(world_position.x, 0.1), snappedf(world_position.z, 0.1)])
-	if void_expected:
-		print("[client-check] inside authored spaces: %d sampled, %d misses"
-			% [in_space, in_space_misses])
 
 	print("[client-check] grounding: %d tiles sampled, %d misses (%.2f%%)"
 		% [sampled, misses, 100.0 * float(misses) / maxf(1.0, float(sampled))])
-	if misses > 0:
-		print("[client-check] miss examples (tile_x, tile_y, x, z): ", miss_examples)
+	if grid.is_empty():
+		misses_on_walkable = misses
 	else:
+		print("[client-check]   of those, %d are on cells collision.bin marks "
+			% misses_on_walkable
+			+ "walkable; %d are blocked cells and expected"
+			% (misses - misses_on_walkable))
+	if misses_on_walkable > 0:
+		print("[client-check] miss examples (tile_x, tile_y, x, z): ", miss_examples)
+	if lowest < INF:
 		print("[client-check] surface height range: %.2f .. %.2f" % [lowest, highest])
 
 	# Spawns: the manifest's stated Y should be where the client actually puts
@@ -212,8 +236,7 @@ func _init() -> void:
 			printerr("[client-check] sun.direction has a positive Y: this "
 				+ "manifest lights the world from underneath")
 
-	var grounding_ok := in_space_misses == 0 if void_expected else misses == 0
-	var ok := grounding_ok and spawn_errors == 0
+	var ok := misses_on_walkable == 0 and spawn_errors == 0
 	print("[client-check] %s" % ("PASS" if ok else "FAIL"))
 
 	if report_path != "":
@@ -227,9 +250,10 @@ func _init() -> void:
 			"sampleStep": step,
 			"tilesSampled": sampled,
 			"groundingMisses": misses,
-			"voidExpected": void_expected,
-			"tilesInsideAuthoredSpaces": in_space,
-			"missesInsideAuthoredSpaces": in_space_misses,
+			"groundingMissesOnWalkableCells": misses_on_walkable,
+			"missCriterion": ("walkable cells only (collision grid available)"
+				if not grid.is_empty()
+				else "every sampled tile (no grid origin published)"),
 			"missExamples": miss_examples,
 			"surfaceHeightRange": [lowest, highest],
 			"spawns": spawn_rows,

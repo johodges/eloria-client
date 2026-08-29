@@ -1,14 +1,16 @@
 {
   "engine": "4.7.2-stable (official)",
   "groundingMisses": 0,
+  "groundingMissesOnWalkableCells": 0,
   "loaderWarnings": [
     "navigation polygons did not produce collision"
   ],
   "manifest": "C:/Users/User/Desktop/eloria-project/wt-westhaven/eloria-assets/maps/nymara-regions/westhaven/world.json",
+  "missCriterion": "every sampled tile (no grid origin published)",
   "missExamples": [],
   "pass": true,
   "renderingDriver": "headless",
-  "sampleStep": 4,
+  "sampleStep": 8,
   "serverCells": 576,
   "spawns": [
     {
@@ -38,8 +40,8 @@
   ],
   "sun": {},
   "surfaceHeightRange": [
-    -18.5958862304688,
+    -18.5445556640625,
     99.9546203613281
   ],
-  "tilesSampled": 20736
+  "tilesSampled": 5184
 }

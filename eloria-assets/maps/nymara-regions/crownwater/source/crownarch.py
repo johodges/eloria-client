@@ -320,3 +320,40 @@ def moored_boat(length: float = 6.4, seed: int = 0) -> SW.MeshGroup:
     out.add(M.cylinder(0.07, 0.05, length * 0.62, 8, uv_scale=0.8,
                        material="timber_warm").translate(0.0, 0.44, 0.0))
     return out
+
+
+def customs_house(width: float = 17.0, depth: float = 22.0, seed: int = 0
+                  ) -> SW.MeshGroup:
+    """The harbour islet's bonded warehouse - the door to the customs hall.
+
+    Deliberately the plainest building in the region: ashlar base, plastered
+    upper wall, slate roof, one wide cargo door and a row of shuttered windows.
+    Crownwater's marble is for its monuments; a warehouse is built to keep rain
+    off crates.
+    """
+    out = SW.MeshGroup()
+    base_h, wall_h = 1.4, 6.2
+    out.add(M.box((width, base_h, depth), center=(0.0, base_h * 0.5, 0.0),
+                  uv_scale=0.5, material=STONE))
+    out.add(M.box((width - 0.6, wall_h, depth - 0.6),
+                  center=(0.0, base_h + wall_h * 0.5, 0.0),
+                  uv_scale=0.4, material="lime_plaster"))
+    out.add(M.box((width + 0.5, 0.4, depth + 0.5),
+                  center=(0.0, base_h + wall_h, 0.0), uv_scale=0.5,
+                  material=MARBLE))
+    out.add(M.gable_roof(width + 1.0, depth + 1.0, 3.6, overhang=0.5,
+                         material=VERDIGRIS)
+            .translate(0.0, base_h + wall_h + 0.4, 0.0))
+    # cargo door on the quay face, and a loading beam over it
+    out.add(M.box((4.4, 4.6, 0.5), center=(0.0, base_h + 2.3, depth * 0.5),
+                  uv_scale=0.6, material="timber_dark"))
+    out.add(M.box((0.35, 0.35, 2.2), center=(0.0, base_h + 5.6, depth * 0.5 + 0.9),
+                  uv_scale=0.8, material="timber_dark"))
+    for side in (-1.0, 1.0):
+        for k in range(3):
+            out.add(M.box((0.4, 1.5, 1.2),
+                          center=(side * (width * 0.5 - 0.1), base_h + 3.4,
+                                  -6.0 + k * 6.0),
+                          uv_scale=0.8, material="timber_dark"))
+    out.add(finial(1.6).translate(0.0, base_h + wall_h + 4.0, 0.0))
+    return out

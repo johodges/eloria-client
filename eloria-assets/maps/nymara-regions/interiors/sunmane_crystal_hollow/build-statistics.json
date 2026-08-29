@@ -2,15 +2,15 @@
   "shellTriangles": 13164,
   "openCells": 3047,
   "shellChunks": 39,
-  "instances": 184,
+  "instances": 178,
   "kitUniqueTriangles": 4718,
   "kitAssets": 25,
-  "nodes": 223,
+  "nodes": 217,
   "meshes": 64,
   "materials": 15,
   "textures": 27,
   "accessors": 410,
   "uniqueMeshTriangles": 17882,
-  "glbBytes": 4302312,
-  "buildSeconds": 14.8
+  "glbBytes": 4295676,
+  "buildSeconds": 8.1
 }

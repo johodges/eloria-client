@@ -1,12 +1,13 @@
 {
   "engine": "4.7.2-stable (official)",
   "groundingMisses": 6865,
+  "groundingMissesOnWalkableCells": 0,
   "loaderWarnings": [
     "navigation polygons did not produce collision"
   ],
   "manifest": "C:/Users/User/Desktop/eloria-project/wt-westhaven-int/eloria-assets/maps/nymara-regions/interiors/westhaven_insides/world.json",
+  "missCriterion": "walkable cells only (collision grid available)",
   "missExamples": [],
-  "missesInsideAuthoredSpaces": 0,
   "pass": true,
   "renderingDriver": "headless",
   "sampleStep": 2,
@@ -48,7 +49,5 @@
     -8.40008544921875,
     18.3999938964844
   ],
-  "tilesInsideAuthoredSpaces": 1216,
-  "tilesSampled": 8100,
-  "voidExpected": true
+  "tilesSampled": 8100
 }

@@ -455,7 +455,9 @@ def build(slug: str, *, tacked: bool = False, scale: float = 1.0) -> dict:
     size = writer.write(path)
     statistics = writer.statistics()
     return {"id": slug, "name": palette["label"], "archetype": "equine",
-            "path": str(path.relative_to(ASSET_ROOT.parent)),
+            # POSIX form on every platform; str() on a Windows path yields
+            # backslashes, which the Godot side does not resolve.
+            "path": path.relative_to(ASSET_ROOT.parent).as_posix(),
             "triangles": statistics["uniqueMeshTriangles"],
             "joints": len(CREATURE_BONES), "animations": 7,
             "glbBytes": size, "tacked": tacked, "importScale": scale}
