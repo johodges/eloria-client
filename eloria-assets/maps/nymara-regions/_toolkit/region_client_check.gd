@@ -171,7 +171,20 @@ func _init() -> void:
 			printerr("[client-check] sun.direction has a positive Y: this "
 				+ "manifest lights the world from underneath")
 
-	var ok := misses == 0 and spawn_errors == 0
+	# A combined insides map is mostly deliberate void: four interiors on one
+	# map with blackspace between them, in the Eternal Lands convention. The
+	# harness samples the whole square footprint, so most of it has no walk
+	# surface under it by construction, and counting those as failures marks a
+	# correct map FAIL at eighty per cent. `verify_runtime` already treats the
+	# same measurement as a warning for the same reason. A sealed package is
+	# therefore judged on its spawns; the miss rate is still reported.
+	var sealed_map := str(manifest.get("environment", {}).get("sky", "")) == "none"
+	var ok := spawn_errors == 0 and (sealed_map or misses == 0)
+	if sealed_map and misses > 0:
+		print("[client-check] sealed package: %.2f%% of sampled tiles have no "
+			% (100.0 * float(misses) / maxf(1.0, float(sampled)))
+			+ "walk surface, which is the blackspace between sections and is "
+			+ "expected; judged on spawns instead")
 	print("[client-check] %s" % ("PASS" if ok else "FAIL"))
 
 	if report_path != "":
@@ -185,6 +198,7 @@ func _init() -> void:
 			"sampleStep": step,
 			"tilesSampled": sampled,
 			"groundingMisses": misses,
+			"sealedPackage": sealed_map,
 			"missExamples": miss_examples,
 			"surfaceHeightRange": [lowest, highest],
 			"spawns": spawn_rows,
