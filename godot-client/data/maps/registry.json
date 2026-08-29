@@ -744,6 +744,43 @@
     },
     "mirrorhold_interiors.elm": {
       "alias": "maps/nymara/mirrorhold_interiors.elm"
+    },
+    "maps/nymara/ssarathi_royal_archive.elm": {
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/ssarathi_insides/world.json",
+      "coordinateTransform": {
+        "metresPerTile": 1.0,
+        "serverOrigin": [
+          -28.0,
+          327.0
+        ],
+        "origin": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "walkingHeight": -1.9,
+        "invertServerY": true
+      },
+      "status": "authored-geometry-materials-population",
+      "interiorOf": "maps/nymara/ssarathi_ruins.elm",
+      "insidesOf": "maps/nymara/ssarathi_ruins.elm",
+      "sections": [
+        "royal_archive",
+        "serpent_hatchery",
+        "drowned_cistern",
+        "root_undercroft"
+      ],
+      "requiresServerMap": {
+        "tiles": 64,
+        "collisionCells": 384,
+        "note": "four insides on one map with blackspace between them"
+      }
+    },
+    "ssarathi_royal_archive": {
+      "alias": "maps/nymara/ssarathi_royal_archive.elm"
+    },
+    "ssarathi_royal_archive.elm": {
+      "alias": "maps/nymara/ssarathi_royal_archive.elm"
     }
   }
 }

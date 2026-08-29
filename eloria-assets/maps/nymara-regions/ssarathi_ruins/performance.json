@@ -1,18 +1,18 @@
 {
-  "nodes": 7717,
-  "meshes": 400,
+  "nodes": 7741,
+  "meshes": 413,
   "materials": 24,
   "images": 66,
   "textures": 66,
-  "accessors": 1600,
-  "bufferViews": 1666,
-  "uniqueTriangles": 394853,
-  "uniqueVertices": 310617,
-  "glbBytes": 19428968,
-  "instancedTriangles": 1879571,
+  "accessors": 1652,
+  "bufferViews": 1718,
+  "uniqueTriangles": 398025,
+  "uniqueVertices": 314454,
+  "glbBytes": 19585108,
+  "instancedTriangles": 1885865,
   "embeddedTextureBytes": 19607189,
   "textureMemoryBytesUncompressed": 183238656,
-  "placements": 2895,
+  "placements": 2900,
   "collision": {
     "width": 1152,
     "height": 1152,
@@ -21,20 +21,20 @@
       -174.0,
       174.0
     ],
-    "walkableCells": 563351,
-    "blockedCells": 763753,
-    "walkableFraction": 0.4245,
-    "elevatedDecks": 24,
+    "walkableCells": 563131,
+    "blockedCells": 763973,
+    "walkableFraction": 0.4243,
+    "elevatedDecks": 27,
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)"
   },
   "notes": [],
   "lod2": {
-    "glbBytes": 12610800,
-    "nodes": 3189,
-    "uniqueTriangles": 337798,
-    "instancedTriangles": 854588,
-    "sizeReductionPercent": 35.1,
-    "triangleReductionPercent": 54.5
+    "glbBytes": 12766884,
+    "nodes": 3213,
+    "uniqueTriangles": 340970,
+    "instancedTriangles": 860882,
+    "sizeReductionPercent": 34.8,
+    "triangleReductionPercent": 54.4
   }
 }

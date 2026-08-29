@@ -86,6 +86,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     POP.populate_vegetation(build, seed, lod=lod)
     if lod is None:
         POP.populate_props(build, seed)
+    POP.populate_interior_doors(build, seed)
     POP.populate_metadata(build, seed)
 
     build.terrain_meshes = terrain.build_meshes(uv_scale=0.30)
@@ -108,6 +109,9 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
 LANDMARK_INFO: dict[str, tuple[str, str]] = {
     "great-temple": ("Temple of the Coiled Sun", "monument"),
     "channel-bridge": ("The Coil Bridge", "bridge"),
+    "cistern-shaft": ("The Cistern Shaft", "entrance"),
+    "hatchery-descent": ("The Hatchery Descent", "entrance"),
+    "undercroft-mouth": ("The Undercroft Mouth", "entrance"),
     "sun-vault": ("The Sun Vault", "gate"),
     "sun-stela": ("The Sun Stela", "monument"),
     "root-arch": ("The Strangled Arch", "ruin"),
@@ -498,6 +502,97 @@ def build_collision(build: REG.RegionBuild) -> tuple[bytes, int, int, dict]:
         "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     }
     return payload, width, height, stats
+
+
+# --------------------------------------------------------------------------
+INSIDES_MAP = "maps/nymara/ssarathi_royal_archive.elm"
+
+# door id -> (display name, landmark it hangs on, the anchor to place it at)
+INTERIOR_DOORS = (
+    ("archive-vault-door", "The Sun Vault", "sun-vault", "vault_door"),
+    ("hatchery-descent", "The Hatchery Descent", "hatchery-descent",
+     "ritual_plaza"),
+    ("cistern-shaft", "The Cistern Shaft", "cistern-shaft", "drowned_quarter"),
+    ("undercroft-mouth", "The Undercroft Mouth", "undercroft-mouth",
+     "root_arch"),
+)
+
+
+def _nearest_walkable(payload: bytes, width: int, height: int,
+                      x: float, z: float) -> tuple[float, float, float]:
+    """Move a point onto the nearest cell `collision.bin` calls walkable.
+
+    A landmark that collides blocks its own footprint, and a doorway is attached
+    to a landmark - so a door placed at a landmark's centre lands on a blocked
+    cell and the player arrives inside a wall. Amethyst Barrens found two of its
+    four doors in exactly that state; this checks all four rather than trusting
+    them, and reports how far each moved.
+    """
+    grid = np.frombuffer(payload[16:], dtype=np.uint8).reshape(height, width)
+    col = int(round((x - REG.PLAY_MIN_X) / COLLISION_CELL - 0.5))
+    row = int(round((REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - z)
+                    / COLLISION_CELL - 0.5))
+    col = min(max(col, 0), width - 1)
+    row = min(max(row, 0), height - 1)
+    if grid[row, col]:
+        return x, z, 0.0
+    for radius in range(1, 121):
+        r0, r1 = max(row - radius, 0), min(row + radius + 1, height)
+        c0, c1 = max(col - radius, 0), min(col + radius + 1, width)
+        window = grid[r0:r1, c0:c1]
+        hits = np.argwhere(window > 0)
+        if hits.size == 0:
+            continue
+        rows_, cols_ = hits[:, 0] + r0, hits[:, 1] + c0
+        distances = (rows_ - row) ** 2 + (cols_ - col) ** 2
+        best = int(np.argmin(distances))
+        nx = REG.PLAY_MIN_X + (cols_[best] + 0.5) * COLLISION_CELL
+        nz = REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE \
+            - (rows_[best] + 0.5) * COLLISION_CELL
+        return float(nx), float(nz), float(math.hypot(nx - x, nz - z))
+    return x, z, -1.0
+
+
+def _add_interior_doors(build: REG.RegionBuild, payload: bytes,
+                        width: int, height: int) -> None:
+    """The four ways into `ssarathi_insides`, and the four returns.
+
+    Every door is an `interior-entrance` portal on this map pointing at the one
+    insides map and choosing its section by spawn id, plus a matching spawn of
+    the same name here so the return portal on the insides map has somewhere to
+    land. Both directions resolve.
+    """
+    t = build.terrain
+    for door_id, name, landmark_id, anchor in INTERIOR_DOORS:
+        x, z = REG.ANCHORS[anchor]
+        if anchor == "ritual_plaza":
+            # the descent is on the court's north rim, not at its centre
+            z = z - REG.COURTS["ritual_plaza"]["radius"] * 0.80
+        elif anchor == "root_arch":
+            x, z = x - 14.0, z + 12.0
+        x, z, moved = _nearest_walkable(payload, width, height, x, z)
+        y = float(t.height_at(x, z))
+        if moved > 0.05:
+            print(f"[door] {door_id} moved {moved:.1f} m onto walkable ground")
+        elif moved < 0.0:
+            print(f"[door] {door_id} FOUND NO WALKABLE CELL")
+        tile = [int(round(x + REG.SERVER_ORIGIN[0])),
+                int(round(REG.SERVER_ORIGIN[1] - z))]
+        build.portals.append({
+            "id": door_id, "name": name, "type": "interior-entrance",
+            "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
+            "serverTile": tile,
+            "landmark": landmark_id,
+            "destinationMap": INSIDES_MAP,
+            "destinationSpawn": door_id,
+            "radius": 2.5, "authority": "server"})
+        build.spawns.append({
+            "id": door_id,
+            "position": [round(x, 2), round(y + 0.05, 2), round(z, 2)],
+            "serverTile": tile,
+            "rotationDegrees": 180.0,
+            "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
+            "grounded": True})
 
 
 # --------------------------------------------------------------------------
@@ -948,6 +1043,8 @@ def main() -> int:
     (out / "collision.bin").write_bytes(payload)
     print(f"[collision] {width}x{height} cells, "
           f"{collision_stats['walkableFraction'] * 100:.1f}% walkable")
+
+    _add_interior_doors(build, payload, width, height)
 
     minimap = {"file": "minimap.webp"}
     if not args.skip_minimap:

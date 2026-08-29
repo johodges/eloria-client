@@ -692,6 +692,53 @@ def populate_props(build, seed: int = 0) -> None:
              0.0, kind="prop", collides=True)
 
 
+# ------------------------------------------------------------------ doors
+# The three interior entrances that are not the Sun Vault need something on the
+# surface to be. A portal floating over open paving is not a door, and the
+# region's own landmarks do not happen to sit where the insides are.
+def populate_interior_doors(build, seed: int = 0) -> None:
+    """Well-head, stair-head and broken mouth: the three lesser ways in.
+
+    The Royal Archive is entered through the Sun Vault, which is already built
+    and already a landmark, so it needs nothing here.
+    """
+    t = build.terrain
+
+    # The cistern shaft, in the drowned quarter: a well-head standing in the
+    # shallow water with a stair going down inside it.
+    qx, qz = REG.ANCHORS["drowned_quarter"]
+    qy = float(t.height_at(qx, qz))
+    _add(build, "CisternShaft", "CisternShaft",
+         A.well_head(3.4, 3.0, seed=seed + 301), (qx, qy, qz), 0.0,
+         kind="landmark", collides=True, landmark="cistern-shaft")
+
+    # The hatchery descent, on the ritual plaza's north rim: a stepped mouth
+    # between two serpent columns, so it reads as a way in and not a drain.
+    px, pz = REG.ANCHORS["ritual_plaza"]
+    court = REG.COURTS["ritual_plaza"]
+    hx, hz = px, pz - court["radius"] * 0.80
+    hy = float(t.height_at(hx, hz))
+    _add(build, "HatcheryDescent", "HatcheryDescent",
+         A.stair_mouth(5.2, 3.2, seed=seed + 302), (hx, hy, hz), math.pi,
+         kind="landmark", collides=True, landmark="hatchery-descent")
+    for sign in (-1.0, 1.0):
+        cx2 = hx + sign * 5.0
+        _add(build, f"HatcheryColumn_{int(sign)}", "SerpentColumn_0",
+             A.serpent_column(6.4, seed=seed + 0),
+             (cx2, float(t.height_at(cx2, hz)), hz), 0.0,
+             kind="structure", collides=True)
+
+    # The undercroft mouth, at the root arch: a collapsed opening rather than a
+    # built door, because nothing down there was built by the same people.
+    rx, rz = REG.ANCHORS["root_arch"]
+    ux, uz = rx - 14.0, rz + 12.0
+    uy = float(t.height_at(ux, uz))
+    _add(build, "UndercroftMouth", "UndercroftMouth",
+         A.broken_mouth(4.6, 2.8, seed=seed + 303), (ux, uy, uz),
+         math.radians(24.0), kind="landmark", collides=True,
+         landmark="undercroft-mouth")
+
+
 # ---------------------------------------------------------------- metadata
 def populate_metadata(build, seed: int = 0) -> None:
     """Interactives and harvestables - editor metadata, server authoritative."""
