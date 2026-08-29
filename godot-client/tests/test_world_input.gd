@@ -1552,6 +1552,38 @@ func _run() -> void:
 	app_state_inventory.call("close_player_info")
 	await process_frame
 
+	# The console's own commands, routed through the real chat submit path.
+	var chat_input_line: LineEdit = main.get_node("GameView/ChatInput") as LineEdit
+	var chat_lines_before: int = (app_state_inventory.get("chat_lines") as Array).size()
+	main.call("_on_chat_submitted", "#help")
+	await process_frame
+	_expect((app_state_inventory.get("chat_lines") as Array).size()
+			> chat_lines_before
+		and chat_input_line.text.is_empty(),
+		"a command the client answers writes its reply locally and clears the box")
+	main.call("_on_chat_submitted", "#markpos 770 481 Reed bank")
+	await process_frame
+	var console: ConsoleCommands = main.get("console_commands") as ConsoleCommands
+	_expect(console.marks.size() == 1,
+		"the mark the player made is kept by the client")
+	var overlay_marks: Array = (main.get("map_marker_overlay")
+		as Control).get("_player_marks") as Array
+	_expect(overlay_marks.size() <= 1,
+		"the player's marks reach the map overlay, filtered by map")
+	# History and completion.
+	chat_input_line.text = "#mar"
+	main.call("_complete_console_command")
+	_expect(chat_input_line.text == "#mark",
+		"tab completes as far as the commands agree: " + chat_input_line.text)
+	main.call("_recall_console_history", -1)
+	_expect(chat_input_line.text == "#markpos 770 481 Reed bank",
+		"up recalls the last line sent: " + chat_input_line.text)
+	main.call("_recall_console_history", 1)
+	_expect(chat_input_line.text.is_empty(),
+		"and down returns to an empty box")
+	main.call("_on_chat_submitted", "#unmark Reed bank")
+	await process_frame
+
 	# Map markers. The server places every one of them and takes every one of
 	# them away; nothing here decides a marker has been reached.
 	var here: String = EloriaProtocol.map_id_from_reference(

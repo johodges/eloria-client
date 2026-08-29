@@ -59,6 +59,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_connection_lifecycle.gd
       - name: HUD persistence fixtures
         run: godot --headless --path godot-client --script res://tests/test_hud_persistence.gd
+      - name: Console command fixtures
+        run: godot --headless --path godot-client --script res://tests/test_console_commands.gd
       - name: Day and night cycle fixtures
         run: godot --headless --path godot-client --script res://tests/test_day_night.gd
       - name: Ambient audio binder fixtures

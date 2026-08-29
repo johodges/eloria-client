@@ -245,6 +245,9 @@ var map_ambience_root: Node3D
 var sigil_window: Control
 ## True while the loaded package lets the hour drive its environment. An
 ## interior does not, and neither does a package that opts out.
+var console_commands := ConsoleCommands.new()
+var _console_history: Array[String] = []
+var _console_history_index := 0
 var _day_night_active := false
 var _day_night_refresh_msec := 0
 ## The power the next cast asks for. Presentational: the server states what
@@ -392,6 +395,8 @@ const FULL_MAP_REFRESH_MSEC := 200
 ## The sky only has to keep up with a six-hour day; twice a second is already
 ## finer than the eye can follow and costs a handful of property writes.
 const DAY_NIGHT_REFRESH_MSEC := 500
+## How many submitted lines the console remembers for its up/down history.
+const CONSOLE_HISTORY_LIMIT := 60
 ## The fork's spell quickbar. Twelve slots, shifted 1-0 then Ctrl+1/Ctrl+2 -
 ## the legacy client's six were never enough for the catalog's 22 spells.
 const SPELL_QUICK_SLOTS := 12
@@ -2333,6 +2338,7 @@ func _on_state_changed(path: StringName) -> void:
 		&"map":
 			_load_server_map()
 			_sync_world()
+			_update_console_location()
 			# Markers survive a map change; which of them belong here does not.
 			_sync_map_markers()
 		&"actors", &"local_actor":
@@ -2509,6 +2515,16 @@ func _bind_light_markers(manifest: WorldManifest) -> void:
 ## Runs on every clock packet and on a slow timer between them, because the
 ## server states a whole minute at a time and one minute of real time is a
 ## visible jump if nothing carries it forward.
+## Tells the console where the player is, so `#mark` has a tile to record.
+func _update_console_location() -> void:
+	console_commands.current_map = EloriaProtocol.map_id_from_reference(
+		AppState.current_map)
+	var actor: Variant = AppState.actors.get(AppState.local_actor_id)
+	console_commands.current_tile = (Vector2i(
+		int((actor as Dictionary).get("x", 0)),
+		int((actor as Dictionary).get("y", 0)))
+		if actor is Dictionary else Vector2i(-1, -1))
+
 func _apply_day_night() -> void:
 	if world_loader.manifest == null:
 		return
@@ -3092,6 +3108,21 @@ func _load_hud_settings() -> void:
 		var lists_value: Variant = config.get_value("inventory", "item_lists", {})
 		if lists_value is Dictionary:
 			_item_lists = (lists_value as Dictionary).duplicate(true)
+		var stored_marks: Variant = config.get_value("console", "marks", [])
+		if stored_marks is Array:
+			for raw_mark: Variant in stored_marks as Array:
+				if raw_mark is Dictionary:
+					console_commands.marks.append(raw_mark as Dictionary)
+		for key_and_list: Array in [["ignored", console_commands.ignored],
+				["filters", console_commands.filters]]:
+			var stored: Variant = config.get_value("console",
+				str(key_and_list[0]), [])
+			if stored is Array:
+				for entry: Variant in stored as Array:
+					(key_and_list[1] as Array[String]).append(str(entry))
+		var stored_aliases: Variant = config.get_value("console", "aliases", {})
+		if stored_aliases is Dictionary:
+			console_commands.aliases = (stored_aliases as Dictionary).duplicate()
 		audio_director.enabled = bool(config.get_value("audio", "enabled", true))
 		audio_director.volume_linear = clampf(float(config.get_value(
 			"audio", "volume", 0.7)), 0.0, 1.0)
@@ -3149,6 +3180,10 @@ func _on_sound_volume_changed(value: float) -> void:
 func _save_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	config.load(SETTINGS_PATH)
+	config.set_value("console", "marks", console_commands.marks)
+	config.set_value("console", "ignored", console_commands.ignored)
+	config.set_value("console", "filters", console_commands.filters)
+	config.set_value("console", "aliases", console_commands.aliases)
 	config.set_value("audio", "enabled", bool(audio_director.enabled))
 	config.set_value("audio", "volume", float(audio_director.volume_linear))
 	config.set_value("hud", "minimap_scale", _minimap_scale)
@@ -3349,6 +3384,8 @@ func _sync_chat() -> void:
 		var channel: int = int(line.get("channel", 0))
 		if not _chat_line_visible(channel):
 			continue
+		if not _chat_line_allowed(line):
+			continue
 		chat_output.append_text(_formatted_chat_line(line) + "\n")
 	chat_output.scroll_to_line(maxi(0, chat_output.get_line_count() - 1))
 
@@ -3356,6 +3393,16 @@ func _sync_console() -> void:
 	console_output.clear()
 	for line_value: Variant in AppState.chat_lines:
 		console_output.append_text(_formatted_chat_line(line_value as Dictionary) + "\n")
+
+## The player's own ignore and filter lists. The line still arrived and is
+## still in state - this only decides whether they are shown it - so nothing
+## the server said is lost, and the console tab still shows everything.
+func _chat_line_allowed(line: Dictionary) -> bool:
+	if int(line.get("channel", 0)) == AppState.LOCAL_CHAT_CHANNEL:
+		return true
+	var text: String = str(line.get("text", ""))
+	var speaker: String = text.split(":", false, 1)[0] if text.contains(":") else ""
+	return console_commands.allows(speaker, text)
 
 func _chat_line_visible(channel: int) -> bool:
 	if not _chat_tab.begins_with("channel:"):
@@ -3369,6 +3416,7 @@ func _formatted_chat_line(line: Dictionary) -> String:
 	match channel:
 		1: prefix = "[PM] "
 		3, 255: prefix = "[System] "
+		AppState.LOCAL_CHAT_CHANNEL: prefix = "[Client] "
 		5, 6, 7:
 			var slot: int = channel - 5
 			var channel_number: int = (int(AppState.active_channels[slot])
@@ -4458,10 +4506,74 @@ func _use_inventory_slot(slot: int) -> void:
 	if error != OK:
 		push_warning("USE_INVENTORY_ITEM failed: " + error_string(error))
 
+## Console history and tab completion. Up and down walk what has been sent,
+## Tab completes a command this client answers itself - a name the server owns
+## is not completed here, because the client does not have that list.
+func _on_chat_input_gui_input(event: InputEvent) -> void:
+	if not event is InputEventKey or not (event as InputEventKey).pressed:
+		return
+	var key: InputEventKey = event as InputEventKey
+	match key.physical_keycode:
+		KEY_UP:
+			_recall_console_history(-1)
+		KEY_DOWN:
+			_recall_console_history(1)
+		KEY_TAB:
+			_complete_console_command()
+		_:
+			return
+	chat_input.accept_event()
+
+func _recall_console_history(step: int) -> void:
+	if _console_history.is_empty():
+		return
+	_console_history_index = clampi(_console_history_index + step, 0,
+		_console_history.size())
+	chat_input.text = ("" if _console_history_index >= _console_history.size()
+		else _console_history[_console_history_index])
+	chat_input.caret_column = chat_input.text.length()
+
+func _complete_console_command() -> void:
+	var typed: String = chat_input.text.strip_edges()
+	if not typed.begins_with("#") or typed.contains(" "):
+		return
+	var matches: Array[String] = console_commands.completions(typed)
+	if matches.is_empty():
+		return
+	if matches.size() == 1:
+		chat_input.text = matches[0] + " "
+		chat_input.caret_column = chat_input.text.length()
+		return
+	# More than one: complete as far as they agree and show the choices.
+	var shared: String = matches[0]
+	for candidate: String in matches:
+		while not candidate.begins_with(shared) and shared.length() > typed.length():
+			shared = shared.substr(0, shared.length() - 1)
+	chat_input.text = shared
+	chat_input.caret_column = shared.length()
+	AppState.append_local_line("  ".join(matches))
+
 func _on_chat_submitted(text: String) -> void:
 	var message: String = text.strip_edges()
 	if message.is_empty():
 		chat_input.release_focus()
+		return
+	_console_history.append(message)
+	if _console_history.size() > CONSOLE_HISTORY_LIMIT:
+		_console_history.remove_at(0)
+	_console_history_index = _console_history.size()
+	message = console_commands.expand(message)
+	# A command this client answers itself never reaches the server: the
+	# server has no opinion about who the player is ignoring.
+	var local: ConsoleCommands.Result = console_commands.run(
+		message, AppState.chat_lines)
+	if local.handled:
+		for line: String in local.lines:
+			AppState.append_local_line(line)
+		if local.changed:
+			_save_hud_settings()
+			_sync_map_markers()
+		chat_input.clear()
 		return
 	var is_private: bool = message.begins_with("/") and message.length() > 1
 	if not is_private and _chat_tab.begins_with("channel:") and not message.begins_with("@"):
@@ -4987,11 +5099,30 @@ func _sync_map_marker_list() -> void:
 		lines.append("[color=#fac638]◆[/color] %s  (%d, %d)" % [
 			pin.label if not pin.label.is_empty() else "Marker",
 			pin.server_tile.x, pin.server_tile.y])
+	for mark: Dictionary in console_commands.marks:
+		if str(mark.get("map", "")) != EloriaProtocol.map_id_from_reference(
+				AppState.current_map):
+			continue
+		lines.append("[color=#7fd4ff]*[/color] %s  (%d, %d)" % [
+			str(mark.get("label", "Mark")), int(mark.get("x", 0)),
+			int(mark.get("y", 0))])
 	map_marker_list.text = "
 ".join(lines)
 	map_marker_title.visible = not lines.is_empty()
 	map_marker_list.visible = not lines.is_empty()
 	map_marker_overlay.set_markers(_current_map_markers())
+	map_marker_overlay.set_player_marks(_current_player_marks())
+
+## The marks the player made for themselves on this map. Presentational: they
+## are the player's own annotation of their own screen, they never leave the
+## client, and the server is not told about them.
+func _current_player_marks() -> Array[Dictionary]:
+	var here: String = EloriaProtocol.map_id_from_reference(AppState.current_map)
+	var mine: Array[Dictionary] = []
+	for mark: Dictionary in console_commands.marks:
+		if str(mark.get("map", "")) == here:
+			mine.append(mark)
+	return mine
 
 ## The markers the server placed on the map the player is standing on.
 func _current_map_markers() -> Array[Dictionary]:

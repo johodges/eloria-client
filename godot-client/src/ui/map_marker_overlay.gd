@@ -19,6 +19,9 @@ var _camera: Camera3D
 var _adapter: CoordinateAdapter
 var _viewport_size := Vector2i.ZERO
 var _markers: Array[Dictionary] = []
+## The player's own marks. Drawn in a different colour from the server's, so
+## nobody mistakes their own annotation for something the world told them.
+var _player_marks: Array[Dictionary] = []
 
 func configure(camera: Camera3D, adapter: CoordinateAdapter,
 		viewport_size: Vector2i) -> void:
@@ -32,12 +35,25 @@ func set_markers(markers: Array[Dictionary]) -> void:
 	_markers = markers
 	queue_redraw()
 
+func set_player_marks(marks: Array[Dictionary]) -> void:
+	_player_marks = marks
+	queue_redraw()
+
+const PLAYER_MARK_COLOUR := Color(0.50, 0.83, 1.0)
+
 func _draw() -> void:
-	if _markers.is_empty() or not is_instance_valid(_camera) or _adapter == null:
+	if not is_instance_valid(_camera) or _adapter == null:
+		return
+	if _markers.is_empty() and _player_marks.is_empty():
 		return
 	var font: Font = get_theme_default_font()
 	var font_size: int = get_theme_default_font_size()
-	for marker: Dictionary in _markers:
+	_draw_set(_markers, MARKER_COLOUR, font, font_size)
+	_draw_set(_player_marks, PLAYER_MARK_COLOUR, font, font_size)
+
+func _draw_set(marks: Array[Dictionary], colour: Color, font: Font,
+		font_size: int) -> void:
+	for marker: Dictionary in marks:
 		var world: Vector3 = _adapter.server_to_godot(
 			int(marker.get("x", 0)), int(marker.get("y", 0)))
 		if _camera.is_position_behind(world):
@@ -51,11 +67,11 @@ func _draw() -> void:
 			point + Vector2(0.0, -MARKER_RADIUS),
 			point + Vector2(MARKER_RADIUS, 0.0),
 			point + Vector2(0.0, MARKER_RADIUS),
-			point + Vector2(-MARKER_RADIUS, 0.0)]), MARKER_COLOUR)
+			point + Vector2(-MARKER_RADIUS, 0.0)]), colour)
 		var label: String = str(marker.get("label", ""))
 		if not label.is_empty() and font != null:
 			draw_string(font, point + Vector2(MARKER_RADIUS + 4.0, 5.0), label,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, MARKER_COLOUR)
+				HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, colour)
 
 ## Viewport pixels to a position on this control, matching the map image's
 ## keep-aspect-centred stretch. Returns null for a point off the drawn image.

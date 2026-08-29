@@ -88,6 +88,17 @@ var player_info: Dictionary = {"open": false, "actor_id": -1, "name": "",
 ## the client never invents one and never removes one the server still holds.
 var map_markers: Dictionary = {}
 
+## Adds a line the client wrote for itself - a console command's answer, not
+## something the server said. Channel 254 keeps it out of the channel tabs and
+## marks it as local wherever chat is rendered.
+const LOCAL_CHAT_CHANNEL := 254
+
+func append_local_line(text: String) -> void:
+	chat_lines.append({"channel": LOCAL_CHAT_CHANNEL, "text": text})
+	if chat_lines.size() > 1000:
+		chat_lines.pop_front()
+	state_changed.emit(&"chat")
+
 ## The game minute carried forward to now. The server states a whole minute at
 ## a time; this is the same minute plus however far through it the client is,
 ## measured against the observed interval between two of them, so the sky moves
