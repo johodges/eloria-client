@@ -65,8 +65,27 @@ func _run() -> void:
 	app_state.call("_on_packet", 227, _hex(
 		"046600120014000000 2c00000052656564686f726e205374616700".replace(" ", "")))
 	await process_frame
+	# The box reports a fight and then has nothing left to say, so a defeat
+	# leaves it up for its hold and fades it rather than vanishing mid-blow.
+	_expect(windows.combat_panel.visible,
+		"a defeat leaves the last frame up for the box's hold")
+	windows.set("_combat_expiry_msec",
+		Time.get_ticks_msec() - windows.COMBAT_FADE_MSEC - 1)
+	windows.call("_process", 0.0)
+	_expect(not windows.combat_panel.visible
+		and is_equal_approx(windows.combat_panel.modulate.a, 1.0),
+		"the combat box fades out once its hold has run out")
+	# Pinned, it stays regardless; dismissed, it does not come back until the
+	# settings panel puts it back.
+	windows.call("set_combat_hud_pinned", true)
+	_expect(windows.combat_panel.visible,
+		"pinning the combat box keeps it on screen")
+	windows.call("set_combat_hud_enabled", false)
 	_expect(not windows.combat_panel.visible,
-		"a defeat ends the engagement instead of leaving the last frame up")
+		"dismissing the combat box from its own menu hides it")
+	windows.call("set_combat_hud_enabled", true)
+	windows.call("set_combat_hud_pinned", false)
+	windows.combat_panel.hide()
 
 	# 232 special events.
 	app_state.call("_on_packet", 232, _hex(

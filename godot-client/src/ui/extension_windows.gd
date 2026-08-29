@@ -17,6 +17,15 @@ extends Control
 
 const RESERVED_RIGHT_RAIL := 96.0
 const PANEL_SIZE := Vector2(560.0, 380.0)
+## The combat box. It reports one fight and then has nothing to say, so it
+## holds for this long after the last thing that happened and fades out - it
+## used to sit there after the target was already dead.
+const COMBAT_HOLD_MSEC := 5000
+const COMBAT_FADE_MSEC := 700
+const COMBAT_PANEL_SIZE := Vector2(208.0, 64.0)
+const COMBAT_FONT_SIZE := 11
+
+signal combat_hud_preference_changed()
 
 var item_atlas: ItemAtlas
 
@@ -27,6 +36,15 @@ var combat_target: Label
 var combat_player_bar: ProgressBar
 var combat_target_bar: ProgressBar
 var combat_event: Label
+var combat_menu: PopupMenu
+## Off entirely: the player dismissed it from its own menu and gets it back
+## from the settings panel.
+var combat_hud_enabled := true
+## Pinned boxes never fade; they stay put until combat says otherwise.
+var combat_hud_pinned := false
+var _combat_expiry_msec := 0
+var _combat_dragging := false
+var _combat_drag_offset := Vector2.ZERO
 var events_panel: PanelContainer
 var events_text: RichTextLabel
 
@@ -154,6 +172,10 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_marketplace()
 		&"connection":
 			if AppState.connection_state == "disconnected":
+				# A dropped session is not a fight that just ended: nothing
+				# from it should linger, pinned or not.
+				combat_panel.hide()
+				combat_panel.modulate.a = 1.0
 				sync_all()
 
 func sync_all() -> void:
@@ -181,8 +203,10 @@ func _sync_navigation() -> void:
 # --- combat ------------------------------------------------------------------
 
 func _sync_combat() -> void:
-	if not bool(AppState.combat_state.get("active", false)):
+	if not combat_hud_enabled:
 		combat_panel.hide()
+		return
+	if not bool(AppState.combat_state.get("active", false)):
 		return
 	var target_name: String = str(AppState.combat_state.get("target_name", ""))
 	combat_target.text = target_name if not target_name.is_empty() else "Target"
@@ -193,7 +217,82 @@ func _sync_combat() -> void:
 		AppState.combat_state.get("target_max_health", 1)))
 	combat_target_bar.value = int(AppState.combat_state.get("target_health", 0))
 	combat_event.text = _combat_event_text()
+	combat_panel.modulate.a = 1.0
 	combat_panel.show()
+	_combat_expiry_msec = Time.get_ticks_msec() + COMBAT_HOLD_MSEC
+
+## The box holds for five seconds after the last thing combat said and then
+## fades. A pinned one is left alone, and a dismissed one is already hidden.
+func _process(_delta: float) -> void:
+	if not combat_panel.visible or combat_hud_pinned or _combat_dragging:
+		return
+	var past: int = Time.get_ticks_msec() - _combat_expiry_msec
+	if past < 0:
+		return
+	if past >= COMBAT_FADE_MSEC:
+		combat_panel.hide()
+		combat_panel.modulate.a = 1.0
+		return
+	combat_panel.modulate.a = 1.0 - float(past) / float(COMBAT_FADE_MSEC)
+
+## Left drag moves the box; right click offers to pin or dismiss it.
+func _on_combat_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var button: InputEventMouseButton = event as InputEventMouseButton
+		if button.button_index == MOUSE_BUTTON_RIGHT and button.pressed:
+			combat_menu.set_item_checked(0, combat_hud_pinned)
+			combat_menu.position = Vector2i(get_viewport().get_mouse_position())
+			combat_menu.popup()
+			combat_panel.accept_event()
+			return
+		if button.button_index != MOUSE_BUTTON_LEFT:
+			return
+		_combat_dragging = button.pressed
+		if button.pressed:
+			_combat_drag_offset = (get_viewport().get_mouse_position()
+				- combat_panel.position)
+			combat_panel.modulate.a = 1.0
+		else:
+			_combat_expiry_msec = Time.get_ticks_msec() + COMBAT_HOLD_MSEC
+			combat_hud_preference_changed.emit()
+		combat_panel.accept_event()
+	elif event is InputEventMouseMotion and _combat_dragging:
+		var wanted: Vector2 = get_viewport().get_mouse_position() - _combat_drag_offset
+		# The panel is anchored to the top centre, so its position is an offset
+		# from there rather than a screen coordinate; keeping it on screen is a
+		# clamp against half the width either side.
+		var half: float = size.x * 0.5
+		combat_panel.position = Vector2(
+			clampf(wanted.x, -half, maxf(-half, half - combat_panel.size.x)),
+			clampf(wanted.y, 0.0, maxf(0.0, size.y - combat_panel.size.y)))
+		combat_panel.accept_event()
+
+func _on_combat_menu_pressed(id: int) -> void:
+	if id == 0:
+		set_combat_hud_pinned(not combat_hud_pinned)
+	else:
+		set_combat_hud_enabled(false)
+	combat_hud_preference_changed.emit()
+
+func set_combat_hud_enabled(enabled: bool) -> void:
+	combat_hud_enabled = enabled
+	if not enabled:
+		combat_panel.hide()
+		return
+	combat_panel.modulate.a = 1.0
+	_sync_combat()
+
+func set_combat_hud_pinned(pinned: bool) -> void:
+	combat_hud_pinned = pinned
+	if pinned and combat_hud_enabled:
+		combat_panel.modulate.a = 1.0
+		combat_panel.show()
+
+func combat_hud_position() -> Vector2:
+	return combat_panel.position
+
+func set_combat_hud_position(where: Vector2) -> void:
+	combat_panel.position = where
 
 func _combat_event_text() -> String:
 	var damage: int = int(AppState.combat_state.get("recent_damage", 0))
@@ -495,22 +594,40 @@ func _build() -> void:
 	navigation_label.hide()
 	add_child(navigation_label)
 
-	combat_panel = _panel("CombatHud", Vector2(-190.0, 64.0), Vector2(300.0, 96.0),
+	combat_panel = _panel("CombatHud",
+		Vector2(-COMBAT_PANEL_SIZE.x * 0.5, 64.0), COMBAT_PANEL_SIZE,
 		Control.PRESET_CENTER_TOP)
+	combat_panel.gui_input.connect(_on_combat_gui_input)
 	var combat_box := VBoxContainer.new()
+	combat_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	combat_box.add_theme_constant_override("separation", 1)
 	combat_panel.add_child(combat_box)
 	combat_target = Label.new()
 	combat_target.name = "CombatTarget"
+	combat_target.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	combat_target.add_theme_font_size_override("font_size", COMBAT_FONT_SIZE)
 	combat_target.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	combat_box.add_child(combat_target)
 	combat_target_bar = _bar("CombatTargetBar", Color(0.82, 0.32, 0.28))
+	combat_target_bar.custom_minimum_size = Vector2(0.0, 9.0)
+	combat_target_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	combat_box.add_child(combat_target_bar)
 	combat_player_bar = _bar("CombatPlayerBar", Color(0.36, 0.72, 0.42))
+	combat_player_bar.custom_minimum_size = Vector2(0.0, 9.0)
+	combat_player_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	combat_box.add_child(combat_player_bar)
 	combat_event = Label.new()
 	combat_event.name = "CombatEvent"
+	combat_event.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	combat_event.add_theme_font_size_override("font_size", COMBAT_FONT_SIZE)
 	combat_event.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	combat_box.add_child(combat_event)
+	combat_menu = PopupMenu.new()
+	combat_menu.name = "CombatHudMenu"
+	combat_menu.add_check_item(tr("ELORIA_COMBAT_HUD_PIN"), 0)
+	combat_menu.add_item(tr("ELORIA_COMBAT_HUD_HIDE"), 1)
+	combat_menu.id_pressed.connect(_on_combat_menu_pressed)
+	combat_panel.add_child(combat_menu)
 
 	events_panel = _panel("SpecialEvents", Vector2(12.0, 120.0),
 		Vector2(300.0, 120.0), Control.PRESET_TOP_LEFT)

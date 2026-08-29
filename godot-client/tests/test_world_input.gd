@@ -305,11 +305,34 @@ func _run() -> void:
 		and chat_panel.anchor_bottom < 0.3
 		and chat_input.offset_bottom <= lower_hud.offset_top,
 		"legacy chat tabs sit at upper left while entry remains above the lower rail")
-	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0
-		and spell_quickbar.anchor_left == 1.0 and spell_quickbar.anchor_right == 1.0
-		and spell_quickbar.offset_right <= right_quickbar.offset_left
-		and spell_quickbar.offset_right >= right_quickbar.offset_left - 16.0,
-		"spells and items sit side by side on the right HUD rail")
+	# One rail, two columns: spells down its left half and items down its
+	# right, with the rail itself owning the only border so its left edge is a
+	# single line rather than one per box.
+	var right_rail: Panel = main.get_node("GameView/RightRail") as Panel
+	var rail_children: Array[Control] = [right_stats, right_quickbar,
+		spell_quickbar,
+		main.get_node("GameView/EloriaLogoFrame") as Control,
+		main.get_node("GameView/ClockFrame") as Control,
+		main.get_node("GameView/CompassFrame") as Control]
+	var strays := 0
+	for railed: Control in rail_children:
+		if railed.anchor_left != 1.0 or railed.anchor_right != 1.0:
+			strays += 1
+		elif railed.offset_left < right_rail.offset_left 				or railed.offset_right > right_rail.offset_right:
+			strays += 1
+		elif railed.get_theme_stylebox("panel") is not StyleBoxEmpty:
+			strays += 1
+	_expect(strays == 0 and right_rail.anchor_left == 1.0
+		and right_rail.anchor_bottom == 1.0 and right_rail.offset_top == 0.0
+		and right_rail.get_theme_stylebox("panel") is StyleBoxFlat,
+		"the right rail is one bordered bar from the top of the client down"
+			+ " and everything in it is drawn without a box of its own")
+	var spell_middle: float = (spell_quickbar.offset_left
+		+ spell_quickbar.offset_right) * 0.5
+	_expect(right_quickbar.offset_left >= spell_middle
+		and right_quickbar.offset_right <= spell_quickbar.offset_right
+		and spell_quickbar.offset_left <= spell_middle,
+		"spells run down the left of the rail and items down its right")
 	var item_slots: GridContainer = main.get_node("%ItemSlots") as GridContainer
 	var spell_slots: GridContainer = main.get_node("%SpellSlots") as GridContainer
 	_expect(item_slots.columns == 1 and spell_slots.columns == 1
