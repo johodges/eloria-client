@@ -495,6 +495,7 @@ UTF-8.
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+| 59 | Buddy event | `event:u8 \| name` - event indexes `offline, online, added, removed` |
 | 92 | Next NPC message is a quest | empty; describes the frame after it |
 | 93 | Here is the quest id | `quest_id:u16` |
 | 94 | Quest finished | `quest_id:u16` |
@@ -510,6 +511,15 @@ UTF-8.
 | 87 | Missile loosed at a place | `actor_id:u16 \| x:u16 \| y:u16` |
 | 89 | Actor animation | `actor_id:u16 \| action` - an action name, never a clip |
 | 238 | Almanac | `day:u8 \| month:u8 \| year:u16 \| kind:u8 \| experience_bonus:u16 \| name \| description \| effect_count:u8` then that many effect tags, `multiplier_count:u8` then that many `skill \| multiplier:u16`, `catalogue_count:u16` then that many `kind:u8 \| name \| description` |
+
+Command 59 carries the buddy list. The server owns the list and states all of
+it at login, so no client keeps a copy, and the name travels with every event
+because a client that had to consult its own list to read one would be keeping
+a second copy of a list it does not own.
+
+Adding somebody is a bookmark, not a friendship: it does not tell them, does
+not need their agreement, and gives no way to reach a person who has not asked
+to hear from you. `#add_buddy`, `#remove_buddy` and `#buddies` drive it.
 
 Commands 92, 93 and 94 say which quest a piece of NPC dialogue belongs to. The
 fork's own journal already carried what a player was doing, but nothing marked

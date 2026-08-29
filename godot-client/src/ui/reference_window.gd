@@ -20,6 +20,12 @@ extends Control
 ##   Nothing on it is shipped in the client, because which days exist and what
 ##   each does is the server's to decide.
 ##
+## * **Buddies** is who the player has asked to be told about, and who of them
+##   is here now. The list belongs to the server - it states all of it at
+##   login - so this page is a view of what arrived rather than a copy the
+##   client keeps. Adding somebody does not tell them and does not need their
+##   agreement: it is a bookmark, not a friendship.
+##
 ## Skills are still not a page here: the statistics panel already shows every
 ## skill and its experience, so a second one would be a duplicate.
 ##
@@ -41,6 +47,7 @@ var links_list: ItemList
 var entry_list: ItemList
 var entry_body: RichTextLabel
 var almanac_text: RichTextLabel
+var buddy_list: ItemList
 
 var console_commands: ConsoleCommands
 var bindable: Dictionary = {}
@@ -71,6 +78,7 @@ func toggle() -> void:
 		_refresh_help()
 		_refresh_links()
 		_refresh_almanac()
+		_refresh_buddies()
 
 func close() -> void:
 	panel.hide()
@@ -103,6 +111,8 @@ func _on_state_changed(path: StringName) -> void:
 		_refresh_links()
 	elif path == &"almanac":
 		_refresh_almanac()
+	elif path == &"buddies":
+		_refresh_buddies()
 
 ## Built from the input map and the console table rather than written out, so
 ## a rebound key or a new command is in the help the moment it exists.
@@ -138,6 +148,33 @@ func _refresh_help() -> void:
 	lines.append("Anything else you type beginning with # is sent to the"
 		+ " server exactly as written.")
 	help_text.text = "\n".join(lines)
+
+## Who is on the player's list, and who of them is here. Everything shown is
+## what the server stated; the client keeps no list of its own.
+func _refresh_buddies() -> void:
+	if buddy_list == null:
+		return
+	buddy_list.clear()
+	var names: Array = AppState.buddies.keys()
+	names.sort()
+	for name: Variant in names:
+		var here: bool = bool(AppState.buddies[name])
+		buddy_list.add_item("%s  -  %s" % [str(name),
+			"here now" if here else "away"])
+		buddy_list.set_item_custom_fg_color(buddy_list.item_count - 1,
+			Color(0.62, 0.88, 0.62) if here else Color(0.66, 0.66, 0.70))
+	if names.is_empty():
+		buddy_list.add_item("Nobody is on your list."
+			+ "  Add one with #add_buddy <name>.")
+		buddy_list.set_item_disabled(0, true)
+
+## The names the player is watching, in the order shown.
+func buddy_names() -> Array[String]:
+	var found: Array[String] = []
+	for name: Variant in AppState.buddies:
+		found.append(str(name))
+	found.sort()
+	return found
 
 ## Everything here is what arrived in command 238. Before it arrives the page
 ## says so rather than showing an empty frame or a guess at today's date.
@@ -321,3 +358,12 @@ func _build() -> void:
 	almanac_text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	almanac_scroll.add_child(almanac_text)
 	_refresh_almanac()
+
+	var buddy_page := VBoxContainer.new()
+	buddy_page.name = "Buddies"
+	tabs.add_child(buddy_page)
+	buddy_list = ItemList.new()
+	buddy_list.name = "BuddyList"
+	buddy_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	buddy_page.add_child(buddy_list)
+	_refresh_buddies()

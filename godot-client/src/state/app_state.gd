@@ -38,6 +38,11 @@ var quest_dialogue := false
 var current_quest_id := 0
 var finished_quests: Array[int] = []
 
+## The player's buddy list, as {name: online}. The server owns the list and
+## states all of it at login, so this is a view of what arrived rather than a
+## copy the client maintains.
+var buddies: Dictionary = {}
+
 ## One clap of thunder. An event: it happens once and is over.
 signal thunder_struck(severity: int)
 signal sound_requested(sound: Dictionary)
@@ -222,6 +227,7 @@ func _on_connection_state_changed(value: String) -> void:
 		quest_dialogue = false
 		current_quest_id = 0
 		finished_quests = []
+		buddies = {}
 		inventory_state = {"gold": 0, "carried": 0, "capacity": 0, "items": []}
 		combat_state = _empty_combat_state()
 		mail.clear()
@@ -575,6 +581,22 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			if bool(event.fired):
 				missile_fired.emit({"source_actor_id": shooter_id,
 					"target_actor_id": int(event.target_actor_id)})
+		"buddy":
+			var buddy_name: String = str(event.name)
+			match str(event.event):
+				"added":
+					if not buddies.has(buddy_name):
+						buddies[buddy_name] = false
+				"removed":
+					buddies.erase(buddy_name)
+				"online":
+					buddies[buddy_name] = true
+				"offline":
+					# Somebody can go offline before this client was told they
+					# were on the list at all, if the list arrived in pieces.
+					if buddies.has(buddy_name):
+						buddies[buddy_name] = false
+			state_changed.emit(&"buddies")
 		"quest_dialogue_next":
 			quest_dialogue = true
 			state_changed.emit(&"quest_dialogue")

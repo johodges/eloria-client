@@ -29,8 +29,8 @@ func _run() -> void:
 	await process_frame
 	_expect(panel.visible, "the button opens it")
 	_expect((window.call("tab_titles") as Array)
-			== ["Help", "Notes", "Links", "Encyclopedia", "Almanac"],
-		"it carries the five pages: %s" % str(window.call("tab_titles")))
+			== ["Help", "Notes", "Links", "Encyclopedia", "Almanac", "Buddies"],
+		"it carries the six pages: %s" % str(window.call("tab_titles")))
 	var rect: Rect2 = panel.get_global_rect()
 	_expect(rect.position.x >= 0.0 and rect.position.y >= 0.0
 		and rect.end.x <= 1280.0 and rect.end.y <= 720.0
@@ -125,6 +125,34 @@ func _run() -> void:
 	_expect(not almanac_text.text.contains("x1.00"),
 		"a bonus of exactly one is not printed as a multiplier")
 
+	# The buddy list. It belongs to the server, which states all of it, so this
+	# page shows what arrived rather than a list the client keeps.
+	var buddy_list: ItemList = window.get_node(
+		"ReferenceWindow/ReferenceBody/ReferenceTabs/Buddies/BuddyList") as ItemList
+	_expect((window.call("buddy_names") as Array).is_empty()
+		and buddy_list.item_count == 1
+		and buddy_list.get_item_text(0).contains("#add_buddy"),
+		"an empty list says how to start one rather than showing nothing")
+	app_state.call("_on_packet", 59, _buddy_bytes(2, "Bo"))
+	app_state.call("_on_packet", 59, _buddy_bytes(2, "Cass"))
+	app_state.call("_on_packet", 59, _buddy_bytes(1, "Cass"))
+	await process_frame
+	_expect((window.call("buddy_names") as Array) == ["Bo", "Cass"],
+		"both names are listed: %s" % str(window.call("buddy_names")))
+	_expect(buddy_list.get_item_text(0).contains("away")
+		and buddy_list.get_item_text(1).contains("here now"),
+		"and each says whether they are here: "
+			+ buddy_list.get_item_text(0) + " / " + buddy_list.get_item_text(1))
+	app_state.call("_on_packet", 59, _buddy_bytes(0, "Cass"))
+	await process_frame
+	_expect(buddy_list.get_item_text(1).contains("away"),
+		"somebody leaving is shown as away rather than removed")
+	app_state.call("_on_packet", 59, _buddy_bytes(3, "Bo"))
+	await process_frame
+	_expect((window.call("buddy_names") as Array) == ["Cass"],
+		"and a name taken off the list is gone: %s"
+			% str(window.call("buddy_names")))
+
 	InputMap.action_erase_events("toggle_inventory")
 	for event: InputEvent in original:
 		InputMap.action_add_event("toggle_inventory", event)
@@ -188,3 +216,8 @@ func _expect(value: bool, label: String) -> bool:
 		failures += 1
 		push_error("FAIL: " + label)
 	return value
+
+func _buddy_bytes(event: int, name: String) -> PackedByteArray:
+	var payload := PackedByteArray([event])
+	payload.append_array(_nul(name))
+	return payload
