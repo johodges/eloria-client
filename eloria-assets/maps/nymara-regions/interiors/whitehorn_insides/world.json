@@ -145,6 +145,11 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_whitehorn_insides",
+      "Roof_whitehorn_insides_cliff_rock",
+      "Roof_whitehorn_insides_glacier_ice",
+      "Roof_whitehorn_insides_pale_ashlar",
+      "Roof_whitehorn_insides_rubble_stone",
+      "Roof_whitehorn_insides_timber_dark",
       "Build_whitehorn_insides_amber_resin",
       "Build_whitehorn_insides_blue_crystal",
       "Build_whitehorn_insides_cliff_rock",
@@ -162,6 +167,16 @@
       "Build_whitehorn_insides_whitehorn_silver",
       "Build_whitehorn_insides_woven_cloth"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_whitehorn_insides_cliff_rock",
+      "Roof_whitehorn_insides_glacier_ice",
+      "Roof_whitehorn_insides_pale_ashlar",
+      "Roof_whitehorn_insides_rubble_stone",
+      "Roof_whitehorn_insides_timber_dark"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -2055,18 +2070,23 @@
     ]
   },
   "performance": {
-    "nodes": 23,
-    "meshes": 22,
+    "nodes": 28,
+    "meshes": 27,
     "materials": 17,
     "images": 50,
     "textures": 50,
-    "accessors": 110,
-    "bufferViews": 160,
-    "uniqueTriangles": 52505,
-    "uniqueVertices": 55400,
-    "glbBytes": 7983760,
+    "accessors": 135,
+    "bufferViews": 185,
+    "uniqueTriangles": 51497,
+    "uniqueVertices": 53384,
+    "glbBytes": 7886652,
     "nodeNames": [
       "Interior_whitehorn_insides",
+      "Roof_whitehorn_insides_cliff_rock",
+      "Roof_whitehorn_insides_glacier_ice",
+      "Roof_whitehorn_insides_pale_ashlar",
+      "Roof_whitehorn_insides_rubble_stone",
+      "Roof_whitehorn_insides_timber_dark",
       "Build_whitehorn_insides_amber_resin",
       "Build_whitehorn_insides_blue_crystal",
       "Build_whitehorn_insides_cliff_rock",

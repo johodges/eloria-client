@@ -173,6 +173,7 @@ class MeshGroup(M.Mesh):
         super().__init__()
         self.parts: list[M.Mesh] = []
         self.walk_parts: list[M.Mesh] = []
+        self.overhead_parts: list[M.Mesh] = []
 
     def add(self, piece: M.Mesh) -> "MeshGroup":
         if isinstance(piece, MeshGroup):
@@ -180,8 +181,27 @@ class MeshGroup(M.Mesh):
                 self.parts.append(sub)
             for sub in piece.walk_parts:
                 self.walk_parts.append(sub)
+            for sub in piece.overhead_parts:
+                self.overhead_parts.append(sub)
         elif piece is not None and piece.triangle_count:
             self.parts.append(piece)
+        return self
+
+    def add_overhead(self, piece: M.Mesh) -> "MeshGroup":
+        """Register a lid: a ceiling, a vault or a roof over a walkable space.
+
+        An interior is a closed box seen from a camera above it, so its lids are
+        exported as their own nodes and named for the client's cutaway block,
+        which hides them. Anything the player is meant to see from inside the
+        room - a hanging lamp, a truss, a boss - is `add`, not this.
+        """
+        if isinstance(piece, MeshGroup):
+            for sub in piece.parts + piece.overhead_parts:
+                self.overhead_parts.append(sub)
+            for sub in piece.walk_parts:
+                self.walk_parts.append(sub)
+        elif piece is not None and piece.triangle_count:
+            self.overhead_parts.append(piece)
         return self
 
     def add_walk(self, piece: M.Mesh) -> "MeshGroup":
@@ -192,7 +212,7 @@ class MeshGroup(M.Mesh):
         floor and never to the top of an arch or a roof.
         """
         if isinstance(piece, MeshGroup):
-            for sub in piece.parts + piece.walk_parts:
+            for sub in piece.parts + piece.walk_parts + piece.overhead_parts:
                 self.walk_parts.append(sub)
         elif piece is not None and piece.triangle_count:
             self.walk_parts.append(piece)
@@ -201,7 +221,7 @@ class MeshGroup(M.Mesh):
     # -- Mesh-compatible surface ------------------------------------------
     @property
     def all_parts(self) -> list[M.Mesh]:
-        return self.parts + self.walk_parts
+        return self.parts + self.walk_parts + self.overhead_parts
 
     @property
     def triangle_count(self) -> int:  # type: ignore[override]
@@ -222,6 +242,7 @@ class MeshGroup(M.Mesh):
         out = MeshGroup()
         out.parts = [p.copy() for p in self.parts]
         out.walk_parts = [p.copy() for p in self.walk_parts]
+        out.overhead_parts = [p.copy() for p in self.overhead_parts]
         return out
 
     def transform(self, matrix) -> "MeshGroup":
@@ -248,9 +269,14 @@ class MeshGroup(M.Mesh):
     def scale(self, x, y=None, z=None) -> "MeshGroup":
         return self.transform(M.scaling(x, y, z))
 
-    def by_material(self, walk: bool = False) -> dict[str, M.Mesh]:
+    def by_material(self, walk: bool = False,
+                    overhead: bool = False) -> dict[str, M.Mesh]:
+        if overhead:
+            source = self.overhead_parts
+        else:
+            source = self.walk_parts if walk else self.parts
         buckets: dict[str, list[M.Mesh]] = {}
-        for p in (self.walk_parts if walk else self.parts):
+        for p in source:
             buckets.setdefault(p.material, []).append(p)
         return {name: M.merge(items, name) for name, items in buckets.items()}
 

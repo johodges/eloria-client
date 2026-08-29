@@ -142,6 +142,10 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_crownwater_insides",
+      "Roof_crownwater_insides_ashlar",
+      "Roof_crownwater_insides_crownwater_marble",
+      "Roof_crownwater_insides_rubble_stone",
+      "Roof_crownwater_insides_timber_dark",
       "Build_crownwater_insides_amber_resin",
       "Build_crownwater_insides_ashlar",
       "Build_crownwater_insides_canvas_awning",
@@ -159,6 +163,15 @@
       "Build_crownwater_insides_water_deep",
       "Build_crownwater_insides_water_pool"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_crownwater_insides_ashlar",
+      "Roof_crownwater_insides_crownwater_marble",
+      "Roof_crownwater_insides_rubble_stone",
+      "Roof_crownwater_insides_timber_dark"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1127,18 +1140,22 @@
     ]
   },
   "performance": {
-    "nodes": 23,
-    "meshes": 22,
+    "nodes": 27,
+    "meshes": 26,
     "materials": 18,
     "images": 50,
     "textures": 50,
-    "accessors": 110,
-    "bufferViews": 160,
-    "uniqueTriangles": 76526,
-    "uniqueVertices": 77053,
-    "glbBytes": 9976664,
+    "accessors": 130,
+    "bufferViews": 180,
+    "uniqueTriangles": 75590,
+    "uniqueVertices": 75181,
+    "glbBytes": 9885780,
     "nodeNames": [
       "Interior_crownwater_insides",
+      "Roof_crownwater_insides_ashlar",
+      "Roof_crownwater_insides_crownwater_marble",
+      "Roof_crownwater_insides_rubble_stone",
+      "Roof_crownwater_insides_timber_dark",
       "Build_crownwater_insides_amber_resin",
       "Build_crownwater_insides_ashlar",
       "Build_crownwater_insides_canvas_awning",
@@ -1234,11 +1251,7 @@
           66.0
         ]
       },
-      "surfaceLandmark": "crownwater-cathedral",
-      "serverTile": [
-        43,
-        277
-      ]
+      "surfaceLandmark": "crownwater-cathedral"
     },
     {
       "id": "tide_cistern",
@@ -1275,11 +1288,7 @@
           65.0
         ]
       },
-      "surfaceLandmark": "crownwater-pavilion-pavilion_west",
-      "serverTile": [
-        253,
-        277
-      ]
+      "surfaceLandmark": "crownwater-pavilion-pavilion_west"
     },
     {
       "id": "customs_hall",
@@ -1316,11 +1325,7 @@
           271.0
         ]
       },
-      "surfaceLandmark": "crownwater-customs-hall",
-      "serverTile": [
-        243,
-        76
-      ]
+      "surfaceLandmark": "crownwater-customs-hall"
     },
     {
       "id": "tide_campanile",
@@ -1357,11 +1362,7 @@
           305.0
         ]
       },
-      "surfaceLandmark": "crownwater-campanile",
-      "serverTile": [
-        53,
-        37
-      ]
+      "surfaceLandmark": "crownwater-campanile"
     }
   ]
 }

@@ -358,8 +358,12 @@ def build(stats: dict, bounds: dict, landmark_records: List[dict],
         },
         "collision": {
             "nodeNames": collision_nodes,
-            "note": ("Low-poly proxies inset inside their parent geometry; they are "
-                     "fully enclosed and never visible."),
+            "nodesAreProxies": True,
+            "note": ("Low-poly proxies inset inside their parent geometry. They "
+                     "carry no surface the player should see, so the client hides "
+                     "them and keeps only the shape built from them: inset by a "
+                     "few millimetres they are coplanar with the wall they stand "
+                     "for at any distance the depth buffer can still resolve."),
         },
         "navigation": {
             "nodeNames": ["Navigation"],
