@@ -3424,6 +3424,20 @@ def write_json(path: Path, value: dict) -> None:
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
 
 
+def _catalog_root(output: Path, fallback: Path) -> Path:
+    """The tree catalogue paths are written relative to.
+
+    Manifest entries read ``godot-client/assets/...`` whichever checkout they
+    were built in, so the anchor is the directory holding ``godot-client`` on
+    the way to ``--output`` rather than the directory holding this script.
+    """
+    resolved = Path(output).resolve()
+    for parent in (resolved, *resolved.parents):
+        if parent.name == "godot-client":
+            return parent.parent
+    return Path(fallback).resolve()
+
+
 def main() -> None:
     parser=argparse.ArgumentParser(description=__doc__)
     assets_root=Path(__file__).resolve().parents[1]
@@ -3440,6 +3454,22 @@ def main() -> None:
     parser.add_argument("--only",choices=("all","equipment","creatures"),default="all",
                         help="rebuild a single section instead of the whole library")
     args=parser.parse_args()
+    # Modified 2026-08-29 for Eloria Client: catalogue paths used to be written
+    # as ``path.relative_to(repo_root)``, where ``repo_root`` came from this
+    # script's own location.  Pointing ``--output`` at a git worktree - the
+    # ordinary way to build a change without disturbing the main checkout -
+    # therefore crashed on the first asset written, because a worktree is not
+    # under the checkout the tool was launched from.  The anchor is now taken
+    # from where the assets are actually going.
+    catalog_root=_catalog_root(args.output,repo_root)
+    def catalog_path(path:Path)->str:
+        target=Path(path).resolve()
+        for root in (catalog_root,repo_root):
+            try:
+                return target.relative_to(root).as_posix()
+            except ValueError:
+                continue
+        return target.name
     if args.only in ("equipment","creatures") and args.manifest.is_file():
         manifest=json.loads(args.manifest.read_text(encoding="utf-8"))
         if args.only=="equipment":
@@ -3457,18 +3487,18 @@ def main() -> None:
                 hair_id = f"{style}_{gender}"
                 path = args.output / "hair" / f"{hair_id}.glb"
                 manifest["hair"][hair_id] = build_hair(args.source, path, style, gender) | {
-                    "path": path.relative_to(repo_root).as_posix()}
+                    "path": catalog_path(path)}
                 print("hair", hair_id, manifest["hair"][hair_id])
         for race in RACES:
             for gender in ("female","male"):
                 model=f"{race}_{gender}";path=args.output/"races"/f"{model}.glb"
-                manifest["races"][model]=build_player(args.source,path,race,gender)|{"path":path.relative_to(repo_root).as_posix()}
+                manifest["races"][model]=build_player(args.source,path,race,gender)|{"path":catalog_path(path)}
                 print("race",model,manifest["races"][model])
     if args.only in ("all","creatures"):
         for actor_type,slug,label,archetype,base,accent,scale in CREATURES:
             actor_type += CREATURE_ACTOR_TYPE_OFFSET
             path=args.output/"creatures"/f"{slug}.glb"
-            manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":path.relative_to(repo_root).as_posix()}
+            manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":catalog_path(path)}
             print("creature",slug,manifest["creatures"][slug])
     if args.only in ("all","creatures"):
         for index, entry in enumerate(roster.ROSTER):
@@ -3476,7 +3506,7 @@ def main() -> None:
             path = args.output / "creatures" / f"{slug}.glb"
             record = build_roster_creature(path, roster_actor_type(index), slug, label,
                                            family, plan, base, accent, scale)
-            record |= {"path": path.relative_to(repo_root).as_posix(),
+            record |= {"path": catalog_path(path),
                        "locale": roster.SHEET_LOCALES[sheet],
                        "concept": {"sheet": sheet, "cell": [row, column]}}
             if family in HOVERING_FAMILIES:
@@ -3485,7 +3515,7 @@ def main() -> None:
             print("creature", slug, record["triangles"], "tris")
     if args.only=="creatures":
         previous=manifest.get("validation",{}).get("results",{})
-        rebuilt={path.relative_to(repo_root).as_posix():validate_glb(path)
+        rebuilt={catalog_path(path):validate_glb(path)
                  for path in (args.output/"creatures").rglob("*.glb")}
         merged={**previous,**{k:v for k,v in rebuilt.items() if k in previous}}
         manifest["validation"]={"files":len(merged),"results":merged}
@@ -3543,14 +3573,14 @@ def main() -> None:
             info=equipment_authoring.build_equipment_piece(
                 vpath,group_rig,vslug,label,kind,base,accent,finish=finish)
             built.append(info|{"group":group,"authoredFor":spec["rig"],
-                               "path":vpath.relative_to(repo_root).as_posix()})
+                               "path":vcatalog_path(path)})
         return built
 
     manifest["fitVariants"]={}
     for slug,label,part,visual,kind,base,accent in EQUIPMENT:
         path=args.output/"equipment"/f"{slug}.glb"
         manifest["equipment"][slug]=build_equipment(path,slug,label,kind,base,accent,rig)|{
-            "part":part,"visual":visual,"path":path.relative_to(repo_root).as_posix()}
+            "part":part,"visual":visual,"path":catalog_path(path)}
         print("equipment",slug,manifest["equipment"][slug])
         for info in fit_variants(slug,label,kind,base,accent):
             manifest["fitVariants"][info["id"]]=info
@@ -3566,7 +3596,7 @@ def main() -> None:
         manifest["genericEquipment"][piece.slug]=info|{
             "part":piece.part,
             "visuals":[visual for visual,_n,_b,_a in piece.variants],
-            "path":path.relative_to(repo_root).as_posix()}
+            "path":catalog_path(path)}
         print("generic",piece.slug,manifest["genericEquipment"][piece.slug])
         for variant in fit_variants(piece.slug,piece.label,piece.kind,
                                     piece.base,piece.accent,finish=piece.finish):
@@ -3576,7 +3606,7 @@ def main() -> None:
     for slug, label, archetype, _scale, tacked in AMBIENT_CREATURES:
         path = args.output / "creatures" / f"{slug}.glb"
         record = {"id": slug, "name": label, "archetype": archetype,
-                  "path": path.relative_to(repo_root).as_posix(),
+                  "path": catalog_path(path),
                   "generator": "eloria-assets/tools/sunmane/creatures.py",
                   "tacked": tacked, "region": "sunmane_steppe",
                   "note": AMBIENT_SOURCE_NOTE}
@@ -3587,7 +3617,7 @@ def main() -> None:
     # Catalogue paths are POSIX-form on every platform.  str() on a Windows
     # PurePath yields backslashes, which the Godot side does not resolve and
     # which made the catalogue completeness test fail on Windows builds only.
-    validation={path.relative_to(repo_root).as_posix():validate_glb(path) for path in args.output.rglob("*.glb")}
+    validation={catalog_path(path):validate_glb(path) for path in args.output.rglob("*.glb")}
     if args.only=="equipment":
         # Only revalidate what this run rebuilt.  Ambient scenery GLBs are
         # authored by a different generator and are not part of this manifest's
