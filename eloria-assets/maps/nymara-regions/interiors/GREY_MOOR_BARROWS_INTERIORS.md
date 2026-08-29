@@ -87,7 +87,9 @@ grid rather than assumed — and checked with the grid's own
 `collision.originMetres` anchor, not the world origin, which is what makes the
 first attempt at this check report every one of them blocked.
 
-The server side is in `eloria-server` on `feature/grey-moors-interiors-server-map`.
+The server side is in `eloria-server` on `feature/grey-moors-96-server-map`,
+alongside the region's own 96x96 change: both touch the same six files, so
+keeping them on one branch avoids a conflict between two of my own PRs.
 `config/eloria/maps.txt` had a single portal pair between `amethyst_barrens` and
 `grey_moor_barrows` — the same shape of error the Resonant Vault had when it
 routed to `four_gates`. The barrows are Grey Moors' own insides:
