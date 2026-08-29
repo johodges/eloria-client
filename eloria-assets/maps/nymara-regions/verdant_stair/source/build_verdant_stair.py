@@ -80,6 +80,22 @@ MATERIALS = frozenset({
 ASSET_VERSION = "1.0.0"
 SCHEMA_VERSION = "1.0.0"
 
+# The region's four insides live on one map with blackspace between them, so
+# every door targets the same map key and differs only in which arrival it asks
+# for. See `source/interiors.py` and `interiors/verdant_stair_insides/`.
+INTERIOR_MAP = "maps/nymara/verdant_stair_insides.elm"
+INTERIOR_DOORS = (
+    # portal id, name, landmark it belongs to, anchor, arrival on the insides map
+    ("temple-sanctum-door", "The Green Sanctum", "great-temple", "great_temple",
+     "temple-sanctum-door"),
+    ("cenote-deeps-stair", "The Cenote Deeps", "cenote", "cenote",
+     "cenote-deeps-stair"),
+    ("banyan-hollow-arch", "The Banyan Hollow", "canopy-village",
+     "canopy_village", "banyan-hollow-arch"),
+    ("stair-quarry-adit", "The Stair Quarry", "quarry", "quarry",
+     "stair-quarry-adit"),
+)
+
 
 # --------------------------------------------------------------------------
 def build_region(seed: int = SEED, lod: str | None = None,
@@ -235,6 +251,31 @@ def _add_spawns_and_portals(build: RegionBuild) -> None:
             "serverTile": _server_tile(x, z),
             "destinationMap": destination, "radius": 3.5,
             "authority": "server"})
+
+    # The four doors into the insides map. All four target the same
+    # `destinationMap` and differ only in `destinationSpawn`, because the four
+    # interiors share one map with blackspace between them in the Eternal Lands
+    # convention. Each door also gets a return spawn of the same name here, so
+    # the trip back out of the insides lands where the player went in and both
+    # directions resolve.
+    for portal_id, name, landmark_id, anchor, spawn_id in INTERIOR_DOORS:
+        x, z = REG.ANCHORS[anchor]
+        y = float(t.height_at(x, z))
+        build.portals.append({
+            "id": portal_id, "name": name, "type": "interior-entrance",
+            "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
+            "serverTile": _server_tile(x, z),
+            "landmark": landmark_id,
+            "destinationMap": INTERIOR_MAP, "destinationSpawn": spawn_id,
+            "radius": 2.5, "authority": "server"})
+        build.spawns.append({
+            "id": spawn_id,
+            "name": f"Return from {name}",
+            "position": [round(x, 2), round(y + 0.05, 2), round(z, 2)],
+            "serverTile": _server_tile(x, z),
+            "rotationDegrees": 45.0,
+            "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
+            "grounded": True})
 
 
 def _add_population_markers(build: RegionBuild, seed: int) -> None:
@@ -658,6 +699,10 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
     grid = np.where(walkable, quantised, 0).astype(np.uint8)
 
     payload = struct.pack("<4sHHII", b"EWCG", 1, 0, width, height) + grid.tobytes()
+    # The un-quantised surface, kept for `snap_to_walkable`: a doorway attached
+    # to a landmark stands on that landmark's own deck, and the manifest Y has
+    # to be the surface the client's grounding ray will actually hit.
+    build.collision_surface = surface
     stats = {
         "width": width, "height": height, "cellMetres": COLLISION_CELL,
         "walkableCells": int(walkable.sum()),
@@ -668,6 +713,137 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
         "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     }
     return payload, width, height, stats
+
+
+def _walk_surface_at(build: RegionBuild, x: float, z: float) -> float:
+    """The highest Walk_ surface under (x, z), else the terrain.
+
+    A brute-force point-in-triangle test over the walk geometry. It is only ever
+    called for the dozen or so spawns and portals in the manifest, so the cost
+    does not matter and the exactness does: this is the number the client's
+    grounding ray will produce, and the manifest claiming anything else is what
+    `region_client_check.gd` reports as a spawn error.
+    """
+    best = float(build.terrain.height_at(x, z))
+    point = np.array([x, z])
+    for placement in build.placements:
+        item = build.meshes[placement.mesh]
+        walk_parts = getattr(item, "walk_parts", None)
+        if not walk_parts:
+            continue
+        low, high = item.bounds()
+        scale = placement.scale
+        px, py, pz = placement.position
+        reach = float(max(abs(low[0]), abs(high[0]), abs(low[2]), abs(high[2]))) * scale
+        if abs(x - px) > reach + 1.0 or abs(z - pz) > reach + 1.0:
+            continue
+        cos_y, sin_y = math.cos(placement.rotation_y), math.sin(placement.rotation_y)
+        for piece in walk_parts:
+            if piece.triangle_count == 0:
+                continue
+            vertices = piece.positions * scale
+            # the placement's own rotation about Y, then its translation
+            rx = vertices[:, 0] * cos_y + vertices[:, 2] * sin_y + px
+            rz = -vertices[:, 0] * sin_y + vertices[:, 2] * cos_y + pz
+            ry = vertices[:, 1] + py
+            tri = np.stack([rx, ry, rz], axis=-1)[piece.indices].reshape(-1, 3, 3)
+            ax, az = tri[:, 0, 0], tri[:, 0, 2]
+            bx, bz = tri[:, 1, 0], tri[:, 1, 2]
+            cx, cz = tri[:, 2, 0], tri[:, 2, 2]
+            denominator = (bz - cz) * (ax - cx) + (cx - bx) * (az - cz)
+            good = np.abs(denominator) > 1e-12
+            if not good.any():
+                continue
+            w0 = np.where(good, ((bz - cz) * (point[0] - cx)
+                                 + (cx - bx) * (point[1] - cz)) / np.where(good, denominator, 1.0), -1.0)
+            w1 = np.where(good, ((cz - az) * (point[0] - cx)
+                                 + (ax - cx) * (point[1] - cz)) / np.where(good, denominator, 1.0), -1.0)
+            inside = (w0 >= -1e-6) & (w1 >= -1e-6) & (w0 + w1 <= 1.0 + 1e-6)
+            if not inside.any():
+                continue
+            w2 = 1.0 - w0 - w1
+            ys = w0 * tri[:, 0, 1] + w1 * tri[:, 1, 1] + w2 * tri[:, 2, 1]
+            best = max(best, float(ys[inside].max()))
+    return best
+
+
+def snap_to_walkable(build: RegionBuild, payload: bytes, width: int,
+                     height: int) -> list[str]:
+    """Move any spawn or portal that landed on a blocked collision cell.
+
+    A landmark that collides blocks its own footprint, and an interior doorway
+    is attached to the landmark it belongs to - so a door placed at a landmark's
+    anchor lands on a blocked cell more often than not. Amethyst Barrens found
+    two of its four that way. Checking here rather than trusting the placement
+    means the failure is a printed line at build time instead of a player
+    standing in a wall.
+    """
+    grid = np.frombuffer(payload, dtype=np.uint8, offset=16).reshape(height, width)
+    surface = getattr(build, "collision_surface", None)
+    moved: list[str] = []
+
+    def cell_of(x: float, z: float) -> tuple[int, int]:
+        column = int(round((x - REG.PLAY_MIN_X) / COLLISION_CELL - 0.5))
+        row = int(round((REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE - z)
+                        / COLLISION_CELL - 0.5))
+        return column, row
+
+    def walkable(x: float, z: float) -> bool:
+        column, row = cell_of(x, z)
+        if not (0 <= column < width and 0 <= row < height):
+            return False
+        return bool(grid[row, column])
+
+    def lift(entry) -> None:
+        """Set the entry's Y to the walk surface the client will ground on.
+
+        Not read out of the collision grid. `build_collision` stamps an
+        elevated walk surface as a filled disc over its own footprint, which is
+        right for a bridge deck and wrong for a ring: the cenote stair spirals
+        around an open shaft, so the grid claims a floor across the middle of a
+        hole and a door read eighteen metres high off it. This casts the same
+        downward ray `Main._place_actor_on_surface` casts, against the same
+        Walk_ geometry, over the handful of points that need it.
+        """
+        x, _, z = entry["position"]
+        clearance = 0.1 if "destinationMap" in entry else 0.05
+        entry["position"][1] = round(_walk_surface_at(build, x, z) + clearance, 2)
+
+    for entry in list(build.spawns) + list(build.portals):
+        x, _, z = entry["position"]
+        if walkable(x, z):
+            # An interior doorway is attached to the landmark it belongs to, and
+            # that landmark usually has a walkable plinth or deck of its own. The
+            # terrain height under it is therefore not where a character stands:
+            # the temple door read 0.61 m low against the client's own grounding
+            # ray until this took the height from the walk surface instead.
+            lift(entry)
+            continue
+        best = None
+        for radius in np.arange(1.0, 26.0, 1.0):
+            for k in range(24):
+                angle = math.pi * 2.0 * k / 24
+                px = x + math.cos(angle) * float(radius)
+                pz = z + math.sin(angle) * float(radius)
+                if walkable(px, pz):
+                    best = (px, pz, float(radius))
+                    break
+            if best:
+                break
+        if best is None:
+            moved.append(f"{entry['id']}: on a blocked cell and no walkable cell "
+                         f"within 25 m; left where it is")
+            continue
+        px, pz, distance = best
+        entry["position"] = [round(px, 2),
+                             round(float(build.terrain.height_at(px, pz))
+                                   + (0.1 if "destinationMap" in entry else 0.05), 2),
+                             round(pz, 2)]
+        entry["serverTile"] = _server_tile(px, pz)
+        lift(entry)
+        moved.append(f"{entry['id']}: landed on a blocked collision cell; "
+                     f"moved {distance:.1f} m to {entry['serverTile']}")
+    return moved
 
 
 # --------------------------------------------------------------------------
@@ -944,6 +1120,10 @@ def main() -> int:
     print(f"[collision] {width}x{height} cells, "
           f"{collision_stats['walkableFraction'] * 100:.1f}% walkable, "
           f"{collision_stats['elevatedDecks']} elevated decks")
+
+    for line in snap_to_walkable(build, payload, width, height):
+        print(f"[walkable] {line}")
+        build.notes.append(line)
 
     minimap = {"file": "minimap.webp"}
     if not args.skip_minimap:

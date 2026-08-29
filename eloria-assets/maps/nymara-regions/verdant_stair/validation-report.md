@@ -172,6 +172,20 @@ The build is seeded. Rebuilding the package from a clean run reproduces
 byte-for-byte; the checksums are compared as part of the final pass rather than
 asserted. `source/` is committed and the runtime never depends on rerunning it.
 
+## The insides
+
+`../interiors/verdant_stair_insides/` is four interiors on one map with
+blackspace between them, reached from four doors on this region's surface. Its
+own results, and the three defects building it exposed in already-shipped code,
+are in `../interiors/VERDANT_STAIR_INTERIORS.md`. One of those defects is in
+this package and is only worked around, not fixed — see item 2 below.
+
+It is judged in-engine by develop's own criterion — zero grounding misses on
+cells `collision.bin` marks walkable — and meets it exactly, with all 15,283
+misses falling on blocked cells. An earlier version of this branch carried a
+weaker rule of my own for the same problem; it is gone, and this branch no
+longer modifies the shared check at all. See items 12 and 18 of the change log.
+
 ## What was not verified
 
 Stated plainly, because a clean report above should not be read as covering
@@ -199,3 +213,12 @@ more than it does.
    Those scripts were not run against it.
 6. **Frame rate.** The in-engine check runs headless; it proves the map loads
    and grounds in the real engine, not that it renders at a playable rate.
+7. **`collision.bin` is wrong over the cenote.** `build_collision` stamps every
+   elevated walk surface as a filled disc over its own footprint. That is right
+   for a bridge deck and wrong for a ring, and the cenote's spiral stair winds
+   around an open shaft — so the grid marks a disc of walkable cells across the
+   top of an eighteen-metre hole, at rim height. Spawns and portals no longer
+   read their height from it, but the grid itself still says this. The
+   cell-to-surface cross-check in `verify_runtime` did not surface it. Fixing it
+   properly means rasterising walk triangles the way the interiors' own
+   `build_collision` already does.

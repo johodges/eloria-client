@@ -102,6 +102,70 @@
       "rotationDegrees": 225.0,
       "surface": "Paving",
       "grounded": true
+    },
+    {
+      "id": "temple-sanctum-door",
+      "name": "Return from The Green Sanctum",
+      "position": [
+        210.0,
+        100.83,
+        -198.0
+      ],
+      "serverTile": [
+        384,
+        372
+      ],
+      "rotationDegrees": 45.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "cenote-deeps-stair",
+      "name": "Return from The Cenote Deeps",
+      "position": [
+        -18.0,
+        27.3,
+        -102.0
+      ],
+      "serverTile": [
+        156,
+        276
+      ],
+      "rotationDegrees": 45.0,
+      "surface": "Trail",
+      "grounded": true
+    },
+    {
+      "id": "banyan-hollow-arch",
+      "name": "Return from The Banyan Hollow",
+      "position": [
+        -66.0,
+        46.05,
+        -126.0
+      ],
+      "serverTile": [
+        108,
+        300
+      ],
+      "rotationDegrees": 45.0,
+      "surface": "Trail",
+      "grounded": true
+    },
+    {
+      "id": "stair-quarry-adit",
+      "name": "Return from The Stair Quarry",
+      "position": [
+        354.0,
+        124.05,
+        -174.0
+      ],
+      "serverTile": [
+        528,
+        348
+      ],
+      "rotationDegrees": 45.0,
+      "surface": "Rock",
+      "grounded": true
     }
   ],
   "collision": {
@@ -4435,6 +4499,82 @@
       ],
       "destinationMap": "maps/nymara/ssarathi_ruins.elm",
       "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "temple-sanctum-door",
+      "name": "The Green Sanctum",
+      "type": "interior-entrance",
+      "position": [
+        210.0,
+        100.88,
+        -198.0
+      ],
+      "serverTile": [
+        384,
+        372
+      ],
+      "landmark": "great-temple",
+      "destinationMap": "maps/nymara/verdant_stair_insides.elm",
+      "destinationSpawn": "temple-sanctum-door",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "cenote-deeps-stair",
+      "name": "The Cenote Deeps",
+      "type": "interior-entrance",
+      "position": [
+        -18.0,
+        27.35,
+        -102.0
+      ],
+      "serverTile": [
+        156,
+        276
+      ],
+      "landmark": "cenote",
+      "destinationMap": "maps/nymara/verdant_stair_insides.elm",
+      "destinationSpawn": "cenote-deeps-stair",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "banyan-hollow-arch",
+      "name": "The Banyan Hollow",
+      "type": "interior-entrance",
+      "position": [
+        -66.0,
+        46.1,
+        -126.0
+      ],
+      "serverTile": [
+        108,
+        300
+      ],
+      "landmark": "canopy-village",
+      "destinationMap": "maps/nymara/verdant_stair_insides.elm",
+      "destinationSpawn": "banyan-hollow-arch",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "stair-quarry-adit",
+      "name": "The Stair Quarry",
+      "type": "interior-entrance",
+      "position": [
+        354.0,
+        124.1,
+        -174.0
+      ],
+      "serverTile": [
+        528,
+        348
+      ],
+      "landmark": "quarry",
+      "destinationMap": "maps/nymara/verdant_stair_insides.elm",
+      "destinationSpawn": "stair-quarry-adit",
+      "radius": 2.5,
       "authority": "server"
     }
   ],

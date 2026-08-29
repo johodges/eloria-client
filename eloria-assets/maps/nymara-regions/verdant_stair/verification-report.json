@@ -1,12 +1,12 @@
 {
   "summary": {
     "walkSurfaceNodes": 85,
-    "walkSurfaceTriangles": 223738,
+    "walkSurfaceTriangles": 223642,
     "tilesSampled": 331776,
     "groundingMisses": 0,
     "groundingMissFraction": 0.0,
     "surfaceDiscontinuities": 1412,
-    "spawnPoints": 3
+    "spawnPoints": 7
   },
   "errors": [],
   "warnings": [
