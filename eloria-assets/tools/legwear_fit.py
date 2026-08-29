@@ -32,19 +32,34 @@ HEM_MARGIN = .001
 
 
 def leg_region(body: np.ndarray, shells: list[Component]) -> np.ndarray:
-    """Body vertices a leg garment must contain: inside its plan, above its hem.
+    """Body vertices a leg garment must contain: the band between hem and waist.
 
-    ``covered_region`` stops at the rim above and runs to the floor below, which
-    is right for a boot.  Here the same footprint is cut off at the lowest point
-    of the garment as well, so the bare ankle under a trouser hem is not counted
-    against the trouser.
+    Deliberately *not* ``covered_region``.  That masks against each shell's own
+    bounding box, which is right for a boot: a boot is answerable for the foot
+    beneath it and for nothing else in the same horizontal slice.  A leg garment
+    spans the whole body at every height it covers, so the plan mask can only
+    ever be a no-op or a way of quietly excusing a gap - and a mask that moves
+    when the garment moves is one that cannot be tuned against, because widening
+    a hem would widen the box and change the population being counted.
+
+    Measured on this cast the two definitions agree exactly, so this is not a
+    correction of any number: it is the same answer expressed in terms that
+    cannot drift.
+
+    The region is therefore defined by the *body* and the garment's two
+    horizontal edges, and by nothing else that geometry can move.  Between the
+    hem and the top of the waistband a humanoid body is legs, seat and hips and
+    nothing else - the arms rest at Y 1.41 on every rig in the cast, well clear
+    of the 1.09 the waistband reaches - so no plan mask is needed to exclude
+    them.  This is the stricter reading as well as the stable one: everything
+    between the two edges is the garment's problem, with nowhere to hide.
     """
-    mask = covered_region(body, shells, below_rim=True)
     closed = [s for s in shells if s.closed]
-    if not closed:
-        return mask
-    hem = min(float(s.vertices().reshape(-1, 3)[:, 1].min()) for s in closed)
-    return mask & (body[:, 1] >= hem + HEM_MARGIN)
+    pool = closed or shells
+    flat = [s.vertices().reshape(-1, 3) for s in pool]
+    hem = min(float(v[:, 1].min()) for v in flat)
+    top = max(float(v[:, 1].max()) for v in flat)
+    return (body[:, 1] >= hem + HEM_MARGIN) & (body[:, 1] <= top - HEM_MARGIN)
 
 
 def worn_shells(piece: Path, wearer: Path, registry: dict,

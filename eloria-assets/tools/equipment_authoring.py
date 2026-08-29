@@ -1716,7 +1716,8 @@ def _sleeves(surface: Surface, rig: Rig, *, end: float, material: int,
         surface.loft(rings, material, cap_end=True)
 
 
-def garment_geometry(kind: str, rig: Rig) -> Garment:
+def garment_geometry(kind: str, rig: Rig,
+                     features: tuple[str, ...] = ()) -> Garment:
     """Body-conforming wearables, lofted from the measured rest silhouette."""
     surface = Surface()
     if kind in {"cuirass", "coat", "robe", "shirt"}:
@@ -1779,35 +1780,14 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
             surface.loft(hem, MATERIAL_TRIM)
         return Garment(surface, "torso")
 
-    if kind in {"legs", "pants"}:
-        # The seat runs from the waist down to the crotch, so the hip shell has
-        # to reach the crotch line before the legs take over.  It used to stop
-        # at .96 - above the widest part of the backside - and the two leg tubes
-        # below it measured the thigh chain only, which left an unclothed band
-        # right across the seat.  The shell now closes over the seat and the
-        # legs start inside it, so the two always overlap.
-        hip_low = .902 if kind == "pants" else .914
-        hips = torso_rings(rig, hip_low, 1.075, rows=8, sides=26, thickness=.012,
-                           floor=.058, bones=HIP_BONES)
-        surface.loft(hips, MATERIAL_BASE, cap_end=True)
-        _belt(surface, rig, 1.055, thickness=.014)
-        end = .93 if kind == "pants" else .89
-        for side in ("l", "r"):
-            measure = LEG_MEASURE_L if side == "l" else LEG_MEASURE_R
-            rings = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=16,
-                               sides=22, thickness=.011, start=.018, end=end,
-                               floor=.040, bones=measure)
-            surface.loft(rings, MATERIAL_BASE, cap_start=True, cap_end=True)
-            if kind == "legs":
-                knee = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=4,
-                                  sides=22, thickness=.020, start=.46, end=.60,
-                                  floor=.040, bones=measure)
-                surface.loft(knee, MATERIAL_TRIM)
-                cuff = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=3,
-                                  sides=22, thickness=.018, start=.86, end=.90,
-                                  floor=.040, bones=measure)
-                surface.loft(cuff, MATERIAL_TRIM)
-        return Garment(surface, "legs")
+    if kind in {"legs", "pants", "kilt"}:
+        # Modified 2026-08-29 for Eloria Client: the sixty-four rebuilt leg
+        # garments are recipes rather than one shape, so the geometry moved to
+        # `legwear_geometry` and this branch is the seam between them.  The
+        # import is deferred because that module lofts through the primitives
+        # defined here and importing it at module scope would be circular.
+        from legwear_geometry import legwear_geometry
+        return legwear_geometry(kind, rig, features or ())
 
     if kind == "boots":
         for side in ("l", "r"):
@@ -2563,19 +2543,20 @@ EQUIPMENT_FINISH = {
     "ssarathi_shell_amulet": "shell", "luminous_orbit_amulet": "plate",
 }
 
-GARMENT_KINDS = {"cuirass", "coat", "robe", "shirt", "legs", "pants", "boots",
-                 "cape", "gloves"}
+GARMENT_KINDS = {"cuirass", "coat", "robe", "shirt", "legs", "pants", "kilt",
+                 "boots", "cape", "gloves"}
 
 
 def build_equipment_piece(path: Path, rig: Rig, slug: str, label: str, kind: str,
                           base: tuple[int, int, int], accent: tuple[int, int, int],
-                          *, finish: str | None = None) -> dict:
+                          *, finish: str | None = None,
+                          features: tuple[str, ...] = ()) -> dict:
     """Author and write one equipment GLB, skinning it when it is a garment."""
     finish_name = finish or EQUIPMENT_FINISH.get(slug, "leather")
     profile = FINISHES[finish_name]
     skinned = kind in GARMENT_KINDS
     if skinned:
-        garment = garment_geometry(kind, rig)
+        garment = garment_geometry(kind, rig, features or ())
         surface, region = garment.surface, garment.skin_region
     else:
         surface, region = prop_geometry(kind), ""
@@ -2743,6 +2724,10 @@ def garment_region(kind: str) -> str:
         return "torso"
     if kind in {"legs", "pants"}:
         return "legs"
+    if kind == "kilt":
+        # A hanging panel wants `spine_01` so it falls from the torso instead of
+        # folding with the hips, which is what the `skirt` region is for.
+        return "skirt"
     if kind == "boots":
         return "boots"
     if kind == "cape":
