@@ -9,10 +9,10 @@
   "textures": 86,
   "accessors": 1316,
   "bufferViews": 1402,
-  "uniqueTriangles": 528891,
-  "uniqueVertices": 385304,
-  "glbBytes": 26864756,
-  "instancedTriangles": 3535497,
+  "uniqueTriangles": 528795,
+  "uniqueVertices": 385259,
+  "glbBytes": 26862708,
+  "instancedTriangles": 3535401,
   "embeddedTextureBytes": 7601895,
   "placements": 10895,
   "collision": {
@@ -46,10 +46,10 @@
   ],
   "trianglesPerSquareMetre": 10.69,
   "lod2": {
-    "glbBytes": 16553588,
+    "glbBytes": 16551540,
     "nodes": 4092,
-    "uniqueTriangles": 465173,
-    "instancedTriangles": 1148831,
+    "uniqueTriangles": 465077,
+    "instancedTriangles": 1148735,
     "sizeReductionPercent": 38.4,
     "triangleReductionPercent": 67.5
   }

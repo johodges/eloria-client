@@ -146,13 +146,69 @@ def _server_tile(x: float, z: float) -> list[int]:
             int(round(REG.SERVER_ORIGIN[1] - z))]
 
 
+def _walk_surface_at(build: RegionBuild, x: float, z: float) -> float:
+    """The highest Walk_ surface under (x, z), else the terrain.
+
+    A brute-force point-in-triangle test over the walk geometry. It is only ever
+    called for the dozen or so spawns and portals in the manifest, so the cost
+    does not matter and the exactness does: this is the number the client's
+    grounding ray will produce, and the manifest claiming anything else is what
+    `region_client_check.gd` reports as a spawn error.
+    """
+    best = float(build.terrain.height_at(x, z))
+    point = np.array([x, z])
+    for placement in build.placements:
+        item = build.meshes[placement.mesh]
+        walk_parts = getattr(item, "walk_parts", None)
+        if not walk_parts:
+            continue
+        low, high = item.bounds()
+        scale = placement.scale
+        px, py, pz = placement.position
+        reach = float(max(abs(low[0]), abs(high[0]), abs(low[2]), abs(high[2]))) * scale
+        if abs(x - px) > reach + 1.0 or abs(z - pz) > reach + 1.0:
+            continue
+        cos_y, sin_y = math.cos(placement.rotation_y), math.sin(placement.rotation_y)
+        for piece in walk_parts:
+            if piece.triangle_count == 0:
+                continue
+            vertices = piece.positions * scale
+            # the placement's own rotation about Y, then its translation
+            rx = vertices[:, 0] * cos_y + vertices[:, 2] * sin_y + px
+            rz = -vertices[:, 0] * sin_y + vertices[:, 2] * cos_y + pz
+            ry = vertices[:, 1] + py
+            tri = np.stack([rx, ry, rz], axis=-1)[piece.indices].reshape(-1, 3, 3)
+            ax, az = tri[:, 0, 0], tri[:, 0, 2]
+            bx, bz = tri[:, 1, 0], tri[:, 1, 2]
+            cx, cz = tri[:, 2, 0], tri[:, 2, 2]
+            denominator = (bz - cz) * (ax - cx) + (cx - bx) * (az - cz)
+            good = np.abs(denominator) > 1e-12
+            if not good.any():
+                continue
+            w0 = np.where(good, ((bz - cz) * (point[0] - cx)
+                                 + (cx - bx) * (point[1] - cz)) / np.where(good, denominator, 1.0), -1.0)
+            w1 = np.where(good, ((cz - az) * (point[0] - cx)
+                                 + (ax - cx) * (point[1] - cz)) / np.where(good, denominator, 1.0), -1.0)
+            inside = (w0 >= -1e-6) & (w1 >= -1e-6) & (w0 + w1 <= 1.0 + 1e-6)
+            if not inside.any():
+                continue
+            w2 = 1.0 - w0 - w1
+            ys = w0 * tri[:, 0, 1] + w1 * tri[:, 1, 1] + w2 * tri[:, 2, 1]
+            best = max(best, float(ys[inside].max()))
+    return best
+
+
 def _add_spawns_and_portals(build: RegionBuild) -> None:
     t = build.terrain
     for spawn_id, (x, z), facing in (
             ("default", REG.SPAWN, math.pi * 0.25),
             ("west-quay", REG.SPAWN_QUAY, math.pi * 0.75),
             ("temple-court", REG.SPAWN_TEMPLE, math.pi * 1.25)):
-        y = float(t.height_at(x, z))
+        # Not the terrain height: a spawn standing on a landmark's own deck
+        # grounds on that deck in the client, and the manifest has to say the
+        # number the client's ray will produce. The waygate is exactly this -
+        # the default spawn stands on its platform, 0.54 m above the ground.
+        y = _walk_surface_at(build, float(x), float(z))
         build.spawns.append({
             "id": spawn_id,
             "position": [round(float(x), 2), round(y + 0.05, 2), round(float(z), 2)],
@@ -295,6 +351,40 @@ def _split_group(key: str, item) -> tuple[dict[str, M.Mesh], dict[str, M.Mesh]]:
     return solid, walk
 
 
+def ensure_walk_faces_up(name: str, piece: M.Mesh) -> M.Mesh:
+    """Flip a walk surface whose triangles all face downward.
+
+    Godot builds the navigation layer as concave collision, which is one-sided
+    for raycasts: a ray from y = 400 passes straight through a floor wound the
+    wrong way and the actor grounds on whatever is underneath. Nothing else in
+    the pipeline notices. `validate_gltf` is happy - the mesh is well formed -
+    and `verify_runtime` casts against the same one-sided geometry, so it agrees
+    with the client that the surface is not there.
+
+    The waygate found this: `mesh.cylinder` with a radius that tapers *inward*
+    winds its cap the other way, so the region's arrival platform had no
+    upward-facing triangle on it at all and the default spawn grounded 0.54 m
+    low on the terrain below. A box floor has downward triangles too - its
+    underside - which is why the test is "no upward triangles", not "any
+    downward ones".
+    """
+    if piece.triangle_count == 0:
+        return piece
+    tri = piece.positions[piece.indices].reshape(-1, 3, 3)
+    normals = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
+    lengths = np.linalg.norm(normals, axis=1)
+    good = lengths > 1e-9
+    if not good.any():
+        return piece
+    up = normals[good, 1] / lengths[good]
+    if (up > 0.35).any():
+        return piece
+    piece.flip_winding()
+    piece.recompute_normals(60.0)
+    print(f"[walk] {name}: no upward-facing triangle; winding flipped")
+    return piece
+
+
 def export_glb(build: RegionBuild, sets, path: Path,
                warn_unreferenced: bool = True) -> tuple[GLTF.GltfBuilder, dict]:
     builder = GLTF.GltfBuilder(
@@ -347,7 +437,8 @@ def export_glb(build: RegionBuild, sets, path: Path,
         for name, piece in walk.items():
             if piece.triangle_count == 0:
                 continue
-            builder.add_mesh(name, prepare(piece), with_tangents=False)
+            builder.add_mesh(name, prepare(ensure_walk_faces_up(name, piece)),
+                             with_tangents=False)
             walk_names.append(name)
         exported[key] = (solid_names, walk_names)
 

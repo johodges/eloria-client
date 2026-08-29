@@ -81,15 +81,21 @@ Result: **pass**.
 | Measure | Value |
 | --- | --- |
 | Engine | Godot 4.7.2-stable (official), headless |
-| Tiles sampled | 20,736 (every 4th server tile) |
+| Tiles sampled | 82,944 (every 2nd server tile) |
 | **Grounding misses** | **0** |
-| Surface height range | −21.44 m to 127.95 m |
-| Spawn `default` | manifest 24.05 m, client 24.00 m — 0.05 m |
-| Spawn `west-quay` | manifest 7.05 m, client 7.00 m — 0.051 m |
-| Spawn `temple-court` | manifest 98.25 m, client 98.20 m — 0.051 m |
+| Surface height range | −21.49 m to 128.40 m |
+| Spawn `default` | manifest 24.59 m, client 24.54 m — 0.05 m |
+| Spawn `west-quay` | manifest 7.05 m, client 6.999 m — 0.051 m |
+| Spawn `temple-court` | manifest 98.25 m, client 98.199 m — 0.051 m |
 
 The 0.05 m deltas are the manifest's deliberate 5 cm lift above the surface, so
 the engine is agreeing with the offline check to within a rounding error.
+
+`default` reads 24.59 rather than the 24.05 an earlier build of this branch
+reported, and the difference is the point: it stands on the waygate's platform,
+not on the ground under it. Both numbers passed this table. Agreement between
+the manifest and the client is only worth something when the two derive the
+height by different routes — see change log item 13.
 
 One loader warning, `navigation polygons did not produce collision`: the
 manifest declares `navmesh.format = "surface-prefix-v1"` with an empty polygon
