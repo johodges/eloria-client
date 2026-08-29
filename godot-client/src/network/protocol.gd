@@ -49,6 +49,7 @@ enum ServerMessage {
 	STORAGE_LIST = 67, STORAGE_ITEMS = 68, STORAGE_TEXT = 69,
 	PING_REQUEST = 60, SPELL_CAST = 70, GET_ACTIVE_CHANNELS = 71, GET_ACTOR_HEALTH = 73,
 	GET_ITEMS_COOLDOWN = 77, SEND_BUFFS = 78, SEND_SPECIAL_EFFECT = 79,
+	MISSILE_AIM_A_AT_B = 84, MISSILE_FIRE_A_TO_B = 86,
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
 	SEND_ACHIEVEMENTS = 95, ADD_NEW_ACTOR_EXTENDED = 247,
 	ELORIA_INVASION_ASSISTANT_STATE = 233,
@@ -596,6 +597,16 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				return {"type": "invalid", "error": "spell_result_length"}
 			return {"type": "spell_result", "status": int(payload[0]),
 				"spell_id": int(payload[1])}
+		ServerMessage.MISSILE_AIM_A_AT_B, ServerMessage.MISSILE_FIRE_A_TO_B:
+			# Both carry the same pair: who is shooting and what at. The
+			# server sends an aim before every shot and a fire when it looses,
+			# so the two together are the whole engagement.
+			if payload.size() != 4:
+				return {"type": "invalid", "error": "missile_length"}
+			return {"type": "missile",
+				"fired": command == ServerMessage.MISSILE_FIRE_A_TO_B,
+				"source_actor_id": u16(payload),
+				"target_actor_id": u16(payload, 2)}
 		ServerMessage.SEND_SPECIAL_EFFECT:
 			# Three or five bytes: the effect, the actor it happened to, and a
 			# second actor when the effect travelled between two.

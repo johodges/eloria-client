@@ -98,6 +98,31 @@ func _run() -> void:
 	await _capture("world-effect-between-actors.png",
 		"effect 2 from one actor to another, because the server named both")
 
+	# A real arrow, from the server's own aim-then-fire pair. The effects
+	# already on screen are cleared first - they fade on real time, and a
+	# headless run gets through far more frames than a second - so the frame
+	# shows the arrow rather than the last thing that happened.
+	for live: Variant in (main.get("world_effects") as Array):
+		if is_instance_valid(live):
+			(live as Node).queue_free()
+	for _fade: int in range(4):
+		await process_frame
+	app_state.call("_on_packet", 84, PackedByteArray([0x5b, 0, 0x4d, 0]))
+	app_state.call("_on_packet", 86, PackedByteArray([0x5b, 0, 0x4d, 0]))
+	for _settle: int in range(3):
+		await process_frame
+	var shots: Array = main.get("world_effects") as Array
+	var arrow: MissileFlight3D = shots[shots.size() - 1] as MissileFlight3D
+	_expect(arrow != null and arrow.get_node_or_null("Shaft") != null,
+		"the arrow is in flight between the two actors")
+	# A quarter-second flight is over in a handful of headless frames. The
+	# capture advances it to its midpoint so the frame shows the arrow
+	# between the two actors rather than at the moment it left the bow.
+	arrow.elapsed = MissileFlight3D.FLIGHT_SECONDS * 0.5
+	await process_frame
+	await _capture("world-effect-missile.png",
+		"the arrow the server loosed, between the two actors it named")
+
 	app_state.set("authenticated", false)
 	main.queue_free()
 	await process_frame

@@ -479,6 +479,7 @@ func _ready() -> void:
 	AppState.state_changed.connect(_on_state_changed)
 	AppState.floating_feedback_requested.connect(_on_floating_feedback_requested)
 	AppState.special_effect_requested.connect(_on_special_effect_requested)
+	AppState.missile_fired.connect(_on_missile_fired)
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
 	viewport_container.gui_input.connect(_on_world_gui_input)
@@ -3815,6 +3816,25 @@ func _update_actor_resource_overlay() -> void:
 		or show_overhead_ether.button_pressed or show_overhead_food.button_pressed
 		or show_overhead_action.button_pressed)
 
+## Draws the arrow the server said was loosed. The shot is already resolved -
+## the damage arrives in its own packet - so this decides nothing, and an
+## actor the client has not been told about is not guessed at.
+func _on_missile_fired(shot: Dictionary) -> void:
+	if not _effects_enabled:
+		return
+	var from_value: Variant = _actor_effect_position(
+		int(shot.get("source_actor_id", -1)))
+	var to_value: Variant = _actor_effect_position(
+		int(shot.get("target_actor_id", -1)))
+	if not from_value is Vector3 or not to_value is Vector3:
+		return
+	var missile := MissileFlight3D.new()
+	world_root.add_child(missile)
+	missile.configure(from_value as Vector3, to_value as Vector3)
+	world_effects.append(missile)
+	world_effects = world_effects.filter(func(node: Variant) -> bool:
+		return is_instance_valid(node))
+
 ## Draws what the server said just happened, where it happened.
 ##
 ## Nothing is inferred about the effect: an actor the client has never been
@@ -4858,6 +4878,15 @@ func _sync_selection() -> void:
 			("  [combat]" if bool(dto.get("in_combat", false)) else "")
 				+ ("  [hastened]" if (int(dto.get("buffs", 0))
 					& EloriaProtocol.ACTOR_BUFF_DOUBLE_SPEED) != 0 else "")]
+	var local_actor: Dictionary = AppState.actors.get(
+		AppState.local_actor_id, {}) as Dictionary
+	var aiming_at: int = int(local_actor.get("aiming_at", -1))
+	if aiming_at >= 0:
+		var aimed: Dictionary = AppState.actors.get(aiming_at, {}) as Dictionary
+		selected_target.text = "Aiming at %s%s" % [
+			str(aimed.get("name", "actor %d" % aiming_at)),
+			"  Health: %d / %d" % [int(aimed.get("health", 0)),
+				int(aimed.get("max_health", 0))] if not aimed.is_empty() else ""]
 	var can_attack: bool = _is_attackable_actor(AppState.selected_actor_id, dto)
 	attack_button.disabled = not can_attack
 	attack_button.tooltip_text = ("Attack selected target [A] or Alt-click; the server approaches and validates combat"

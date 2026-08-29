@@ -242,6 +242,7 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/world-effect-before.png"
           test -s "$ELORIA_ARTIFACT_DIR/world-effect-at-actor.png"
           test -s "$ELORIA_ARTIFACT_DIR/world-effect-between-actors.png"
+          test -s "$ELORIA_ARTIFACT_DIR/world-effect-missile.png"
       - name: Render 16-bit actor native models
         run: |
           xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_actor16_creature.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/actor16.log"
