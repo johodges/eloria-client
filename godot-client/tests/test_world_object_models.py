@@ -26,20 +26,16 @@ from pathlib import Path
 
 CLIENT = Path(__file__).resolve().parents[1]
 REGISTRY = CLIENT / "data/world/objects.json"
-SERVER_ROOTS = (
-    CLIENT.parents[1] / "eloria-server",
-    CLIENT.parents[1] / "wt-actorviz-server",
-)
+SERVER_ROOT = CLIENT.parents[1] / "eloria-server"
 # The interactive roles the server can state. `map_object_entries` sends
 # `role.replace("_", " ").title()`, so this is the label as well as the role.
 ROLE_LABEL = re.compile(r"^[a-z_]+$")
 
 
 def server_root() -> Path | None:
-    for candidate in SERVER_ROOTS:
-        if (candidate / "config/eloria/harvesting.txt").is_file():
-            return candidate
-    return None
+    return (SERVER_ROOT
+            if (SERVER_ROOT / "config/eloria/harvesting.txt").is_file()
+            else None)
 
 
 def glb_triangle_count(path: Path) -> int:
