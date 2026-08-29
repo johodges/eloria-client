@@ -10,8 +10,10 @@ extends Control
 ## * **Notes** is the player's own notepad, kept in the client's settings file.
 ## * **Links** collects the addresses the server has said in chat, so a URL
 ##   scrolling past is not lost. It reads what arrived; it invents nothing.
-## * **Encyclopedia** is original Eloria reference text describing this
-##   server's own rules.
+## * **Encyclopedia** is laid out the way Eternal Lands lays its own out - an
+##   index of categories, a page of links per category and a page per entry -
+##   and lives in its own script. Half of it is original Eloria reference text
+##   and half is built from the client's own catalogues.
 ## * **Almanac** is the game date, the special day in force and what it does,
 ##   and the catalogue of days the server can roll - all of it read from
 ##   `ELORIA_ALMANAC_STATE(238)`. This is the rules-and-astrology page the
@@ -32,44 +34,68 @@ extends Control
 ## The script declares no `class_name`: a global class is parsed before the
 ## autoload singletons are registered, and this reads `AppState` directly.
 
-const ENCYCLOPEDIA := "res://data/reference/encyclopedia.json"
-const PANEL_SIZE := Vector2(600.0, 420.0)
+const PANEL_SIZE := Vector2(640.0, 460.0)
+## The tab the encyclopedia icon and Ctrl+E open on.
+const ENCYCLOPEDIA_TAB := 3
 ## Nothing may cover the fixed resource rail down the right-hand edge.
 const RESERVED_RIGHT_RAIL := 96.0
 
 signal notes_changed(text: String)
+signal bookmarks_changed(bookmarks: Array)
 
 var panel: PanelContainer
 var tabs: TabContainer
 var help_text: RichTextLabel
 var notes_edit: TextEdit
 var links_list: ItemList
-var entry_list: ItemList
-var entry_body: RichTextLabel
+var encyclopedia: EncyclopediaView
 var almanac_text: RichTextLabel
 var buddy_list: ItemList
 
 var console_commands: ConsoleCommands
 var bindable: Dictionary = {}
-var _entries: Array[Dictionary] = []
 
 func _ready() -> void:
 	name = "ReferenceLayer"
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_load_entries()
 	_build()
 	AppState.state_changed.connect(_on_state_changed)
 
 func configure(commands: ConsoleCommands, bindable_actions: Dictionary,
-		notes: String) -> void:
+		notes: String, bookmarks: Array = []) -> void:
 	console_commands = commands
 	bindable = bindable_actions
 	notes_edit.text = notes
+	encyclopedia.set_bookmarks(bookmarks)
 	_refresh_help()
+
+## The catalogues the encyclopedia builds its generated pages from. They are
+## read after this window is built, so they arrive separately.
+func configure_catalogues(catalogues: Dictionary) -> void:
+	encyclopedia.configure_catalogues(catalogues)
 
 func is_open() -> bool:
 	return panel.visible
+
+## True only when the encyclopedia itself is on screen, which is what the HUD
+## icon lights on rather than the window as a whole.
+func is_encyclopedia_open() -> bool:
+	return panel.visible and tabs.current_tab == ENCYCLOPEDIA_TAB
+
+## What the HUD icon and Ctrl+E do: open on the encyclopedia, or close it if
+## that is already what is showing. Landing on another tab moves to this one
+## rather than closing the window under the player.
+func toggle_encyclopedia() -> void:
+	if is_encyclopedia_open():
+		close()
+		return
+	if not panel.visible:
+		toggle()
+	else:
+		panel.move_to_front()
+	tabs.current_tab = ENCYCLOPEDIA_TAB
+	encyclopedia.reset_to_index()
 
 func toggle() -> void:
 	panel.visible = not panel.visible
@@ -90,7 +116,7 @@ func tab_titles() -> Array[String]:
 	return titles
 
 func entry_count() -> int:
-	return _entries.size()
+	return encyclopedia.entry_count()
 
 ## How many days the server said it can roll. Zero before the packet arrives.
 func almanac_day_count() -> int:
@@ -241,23 +267,13 @@ func _refresh_links() -> void:
 		links_list.add_item("Nothing has been linked yet.")
 		links_list.set_item_disabled(0, true)
 
-func _load_entries() -> void:
-	var file := FileAccess.open(ENCYCLOPEDIA, FileAccess.READ)
-	if file == null:
-		return
-	var parsed: Variant = JSON.parse_string(file.get_as_text())
-	if not parsed is Dictionary:
-		return
-	for raw_entry: Variant in (parsed as Dictionary).get("entries", []):
-		if raw_entry is Dictionary:
-			_entries.append(raw_entry as Dictionary)
-
+## Kept because the reference window's own tests reach the encyclopedia this
+## way: the nth entry across every category, in index order.
 func _show_entry(index: int) -> void:
-	if index < 0 or index >= _entries.size():
-		return
-	var entry: Dictionary = _entries[index]
-	entry_body.text = "[b]%s[/b]\n\n%s" % [str(entry.get("title", "")),
-		str(entry.get("body", ""))]
+	encyclopedia.show_entry_at(index)
+
+func _on_bookmarks_changed(bookmarks: Array) -> void:
+	bookmarks_changed.emit(bookmarks)
 
 func _on_notes_changed() -> void:
 	notes_changed.emit(notes_edit.text)
@@ -326,23 +342,12 @@ func _build() -> void:
 	links_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	links_page.add_child(links_list)
 
-	var entries_page := HSplitContainer.new()
-	entries_page.name = "Encyclopedia"
-	tabs.add_child(entries_page)
-	entry_list = ItemList.new()
-	entry_list.name = "EntryList"
-	entry_list.custom_minimum_size = Vector2(180.0, 0.0)
-	entry_list.item_selected.connect(_show_entry)
-	entries_page.add_child(entry_list)
-	entry_body = RichTextLabel.new()
-	entry_body.name = "EntryBody"
-	entry_body.bbcode_enabled = true
-	entries_page.add_child(entry_body)
-	for entry: Dictionary in _entries:
-		entry_list.add_item(str(entry.get("title", "")))
-	if not _entries.is_empty():
-		entry_list.select(0)
-		_show_entry(0)
+	encyclopedia = EncyclopediaView.new()
+	# Named before it is added: the tab container reads the child's name for
+	# the tab title, and _ready() has not run yet.
+	encyclopedia.name = "Encyclopedia"
+	tabs.add_child(encyclopedia)
+	encyclopedia.bookmarks_changed.connect(_on_bookmarks_changed)
 
 	var almanac_page := VBoxContainer.new()
 	almanac_page.name = "Almanac"

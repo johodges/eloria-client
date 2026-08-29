@@ -91,6 +91,21 @@ func icon_for(spell_id: int) -> Texture2D:
 		return null
 	return _icon(int(definition.get("icon", -1)))
 
+## The sigil sheet and the rectangle inside it for one spell, for the same
+## reason ItemAtlas.icon_source() exists: bbcode takes a path and a region,
+## never a texture.
+func icon_source(spell_id: int) -> Dictionary:
+	var definition: Dictionary = spell(spell_id)
+	if definition.is_empty() or _atlas_path.is_empty():
+		return {}
+	var icon_id: int = int(definition.get("icon", -1))
+	if icon_id < 0:
+		return {}
+	return {"path": _atlas_path, "region": Rect2(
+		float(icon_id % _columns) * _cell_size.x,
+		float(floori(float(icon_id) / float(_columns))) * _cell_size.y,
+		_cell_size.x, _cell_size.y)}
+
 func _icon(icon_id: int) -> Texture2D:
 	if icon_id < 0:
 		return null

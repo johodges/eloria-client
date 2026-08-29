@@ -280,6 +280,9 @@ var _ungrounded_map_objects: Dictionary = {}
 var models: Dictionary = {}
 var actor_type_models: Dictionary = {}
 var npc_looks: Dictionary = {}
+## The models the server's world objects stand as: one per harvest resource and
+## one per interactive role. See `MapObject3D`.
+var world_object_catalog: Dictionary = {}
 var creation_options: Array = []
 var animation_config: Dictionary = {}
 var animation_configs: Dictionary = {}
@@ -364,6 +367,9 @@ var _keyboard_running := false
 var _keyboard_direction := Vector2i.ZERO
 var _keyboard_goal_tile := Vector2i(-99999, -99999)
 var _keyboard_refresh_msec := 0
+## The heading WASD resolves against, latched when a keyboard burst begins and
+## held until it ends.
+var _keyboard_reference_yaw := 0.0
 var _ground_bag_get_all_requested_msec := -1
 var _ground_bag_get_all_bag_id := -1
 ## The inventory slot riding on the cursor in walk mode, or -1. Eternal Lands
@@ -392,6 +398,12 @@ var _selected_counter_category := ""
 var _right_mouse_down := false
 var _right_mouse_dragged := false
 var _interaction_mode := "walk"
+## Alt held down. While it is, an ordinary click attacks whatever it lands on,
+## so the move icon shows the attack icon to say so. It is a preview and not a
+## mode: letting Alt go puts the move icon back, and it never disturbs an
+## attack mode the player chose from the HUD.
+var _alt_attack_preview := false
+var _encyclopedia_bookmarks: Array = []
 var _hud_icon_regions: Dictionary = {}
 var _hud_active_atlas: Texture2D
 var _hud_inactive_atlas: Texture2D
@@ -545,6 +557,7 @@ func _ready() -> void:
 	models = model_registry.get("models", {})
 	actor_type_models = model_registry.get("actorTypes", {})
 	npc_looks = model_registry.get("npcLooks", {})
+	world_object_catalog = _json("res://data/world/objects.json")
 	creation_options = model_registry.get("creationOptions", [])
 	animation_config = _json("res://data/animations/luminous.json")
 	animation_configs["res://data/animations/luminous.json"] = animation_config
@@ -572,6 +585,7 @@ func _ready() -> void:
 	reference_window = ReferenceWindowScript.new()
 	game_view.add_child(reference_window)
 	reference_window.notes_changed.connect(_on_notes_changed)
+	reference_window.bookmarks_changed.connect(_on_encyclopedia_bookmarks_changed)
 	active_buff_bar = ActiveBuffBarScript.new()
 	game_view.add_child(active_buff_bar)
 	active_buff_bar.configure(spell_catalog)
@@ -595,6 +609,12 @@ func _ready() -> void:
 	if knowledge_catalog_value is Array:
 		for raw_knowledge_name: Variant in knowledge_catalog_value as Array:
 			knowledge_catalog.append(str(raw_knowledge_name))
+	# The encyclopedia builds half its pages out of these, so a recipe, spell,
+	# book, region or skill the client does not have cannot appear on a page.
+	reference_window.call("configure_catalogues", {
+		"manufacturing": manufacturing_catalog, "spells": spell_catalog,
+		"books": knowledge_catalog, "regions": cartography_regions,
+		"items": item_atlas, "skills": EXPERIENCE_SKILLS})
 	Network.connection_state_changed.connect(_on_connection_state_changed)
 	Network.protocol_error.connect(func(message: String): status_label.text = "Protocol error: " + message)
 	Network.reconnect_progress.connect(_on_reconnect_progress)
@@ -833,12 +853,16 @@ func _update_keyboard_movement() -> void:
 	if forward_input == 0 and right_input == 0:
 		_stop_keyboard_movement()
 		return
+	# WASD is resolved against the heading the burst started from, not against
+	# the actor's live facing: the actor turns to face each step it takes, and
+	# reading a turning actor back would swing a held diagonal round on itself.
+	if not _keyboard_moving:
+		_keyboard_reference_yaw = actor_node.desired_facing_yaw()
 	var direction: Vector2i = _facing_relative_tile_direction(
-		actor_node.desired_facing_yaw(), forward_input, right_input)
+		_keyboard_reference_yaw, forward_input, right_input)
 	if direction == Vector2i.ZERO:
 		_stop_keyboard_movement()
 		return
-	actor_node.set_facing_override(true)
 	var origin := Vector2i(int(dto.get("x", 0)), int(dto.get("y", 0)))
 	var now: int = Time.get_ticks_msec()
 	var run: bool = Input.is_key_pressed(KEY_SHIFT)
@@ -899,10 +923,10 @@ func _clear_keyboard_movement_tracking() -> void:
 	_keyboard_goal_tile = Vector2i(-99999, -99999)
 	_keyboard_refresh_msec = 0
 
-func _release_local_facing_override() -> void:
+func _clear_local_turn_prediction() -> void:
 	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	if actor_value is ReplicatedActor3D and is_instance_valid(actor_value as ReplicatedActor3D):
-		(actor_value as ReplicatedActor3D).set_facing_override(false)
+		(actor_value as ReplicatedActor3D).clear_turn_prediction()
 
 ## Q and E ask the server to turn. The rendered facing comes from the actor
 ## command the server broadcasts in reply, which is also what makes the turn
@@ -1113,6 +1137,10 @@ func _on_map_button_pressed() -> void:
 	_sync_hud_button_states(true)
 
 func _on_walk_button_pressed() -> void:
+	# It is showing the attack icon, so it does what the attack icon does.
+	if _alt_attack_preview and _interaction_mode != "attack":
+		_on_attack_button_pressed()
+		return
 	_interaction_mode = "walk"
 	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
 	if bool(local_actor.get("sitting", false)):
@@ -2034,8 +2062,34 @@ func _clear_world_presentation() -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey and (event as InputEventKey).echo:
 		return
+	_track_attack_modifier(event)
 	if _handle_bound_action(event):
 		get_viewport().set_input_as_handled()
+
+## Watches Alt so the move icon can say what a click would do. Every key and
+## mouse event carries the modifier state it was sent with, and Alt itself
+## arrives as a key event of its own, so both are read here rather than polled.
+func _track_attack_modifier(event: InputEvent) -> void:
+	if event is InputEventKey:
+		var key: InputEventKey = event as InputEventKey
+		if key.physical_keycode == KEY_ALT or key.keycode == KEY_ALT:
+			_set_attack_modifier(key.pressed)
+		else:
+			_set_attack_modifier(key.alt_pressed)
+	elif event is InputEventWithModifiers:
+		_set_attack_modifier((event as InputEventWithModifiers).alt_pressed)
+
+func _set_attack_modifier(held: bool) -> void:
+	if _alt_attack_preview == held:
+		return
+	_alt_attack_preview = held
+	_sync_hud_button_states(true)
+
+## Alt-tabbing away leaves the key down as far as this client is concerned,
+## and the release lands in another window. The icon would stay on attack.
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT 			or what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
+		_set_attack_modifier(false)
 
 ## Bindings that have to beat a focused HUD control, which is why they are
 ## resolved here instead of in _unhandled_input().
@@ -2075,6 +2129,12 @@ func _handle_bound_action(event: InputEvent) -> bool:
 		return true
 	if event.is_action_pressed("toggle_console"):
 		_toggle_console()
+		return true
+	# Exact match, and ahead of turn_right: turning is a bare E, and Godot
+	# matches an action without comparing modifiers unless it is asked to, so
+	# Ctrl+E would otherwise turn the player as well as open the encyclopedia.
+	if event.is_action_pressed("toggle_encyclopedia", false, true):
+		_on_encyclopedia_button_pressed()
 		return true
 	if event.is_action_pressed("recenter_viewport"):
 		_recenter_viewport_on_player()
@@ -2566,7 +2626,7 @@ func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 		" command=", "RUN_TO" if mouse_button.shift_pressed else "MOVE_TO")
 	if target_value is Vector2i:
 		_clear_keyboard_movement_tracking()
-		_release_local_facing_override()
+		_clear_local_turn_prediction()
 		var move_error: Error = Network.move_to(target_value as Vector2i,
 			mouse_button.shift_pressed)
 		if move_error != OK:
@@ -2676,7 +2736,7 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 		print_debug("world_input godot=", point, " server_tile=", tile,
 			" command=", "RUN_TO" if event.shift_pressed else "MOVE_TO")
 		_clear_keyboard_movement_tracking()
-		_release_local_facing_override()
+		_clear_local_turn_prediction()
 		var move_error: Error = Network.move_to(tile, event.shift_pressed)
 		if move_error != OK:
 			push_warning("MOVE_TO failed: " + error_string(move_error))
@@ -3559,6 +3619,10 @@ func _load_hud_settings() -> void:
 		if lists_value is Dictionary:
 			_item_lists = (lists_value as Dictionary).duplicate(true)
 		_player_notes = str(config.get_value("notes", "text", ""))
+		var stored_bookmarks: Variant = config.get_value(
+			"encyclopedia", "bookmarks", [])
+		if stored_bookmarks is Array:
+			_encyclopedia_bookmarks = (stored_bookmarks as Array).duplicate(true)
 		_shadows_enabled = bool(config.get_value("graphics", "shadows", true))
 		_effects_enabled = bool(config.get_value("graphics", "particles", true))
 		_nameplates_enabled = bool(
@@ -3595,7 +3659,7 @@ func _load_hud_settings() -> void:
 			box.set_pressed_no_signal(bool(config.get_value(
 				"banner", banner_key, BANNER_OPTION_DEFAULTS[banner_key])))
 	reference_window.call("configure", console_commands,
-		settings_window.get("BINDABLE"), _player_notes)
+		settings_window.get("BINDABLE"), _player_notes, _encyclopedia_bookmarks)
 	sound_enabled.set_pressed_no_signal(bool(audio_director.enabled))
 	sound_volume.set_value_no_signal(float(audio_director.volume_linear))
 	sound_volume_value.text = "%d%%" % roundi(
@@ -3672,6 +3736,7 @@ func _save_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	config.load(SETTINGS_PATH)
 	config.set_value("notes", "text", _player_notes)
+	config.set_value("encyclopedia", "bookmarks", _encyclopedia_bookmarks)
 	config.set_value("graphics", "shadows", _shadows_enabled)
 	config.set_value("graphics", "particles", _effects_enabled)
 	config.set_value("graphics", "nameplates", _nameplates_enabled)
@@ -4720,7 +4785,8 @@ func _sync_hud_button_states(force := false) -> void:
 	if _hud_state_buttons.is_empty():
 		_hud_state_buttons = [%WalkButton, %MapButton, %SitButton, %AttackButton,
 			%TradeButton, %LookButton, %InventoryButton, %StatsButton,
-			%KnowledgeButton, %ManufacturingButton, %ChatButton, %DisconnectButton]
+			%KnowledgeButton, %ManufacturingButton, %ChatButton, %DisconnectButton,
+			%EncyclopediaButton]
 	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
 	var sitting: bool = bool(local_actor.get("sitting", false))
 	var stats_open: bool = stats_panel.visible
@@ -4737,11 +4803,17 @@ func _sync_hud_button_states(force := false) -> void:
 		stats_open and stats_tab == 1,
 		manufacturing_panel.visible,
 		chat_input.has_focus(),
-		AppState.connection_state == "connected"]
+		AppState.connection_state == "connected",
+		reference_window != null and bool(reference_window.call("is_encyclopedia_open"))]
+	# Only while the player has not chosen attack mode from the HUD: a mode
+	# they picked stays picked, and Alt must not appear to be what put it there.
+	var attack_preview: bool = _alt_attack_preview and _interaction_mode != "attack"
 	var mask: int = 0
 	for index: int in states.size():
 		if states[index]:
 			mask |= 1 << index
+	if attack_preview:
+		mask |= 1 << states.size()
 	if not force and mask == _hud_button_state_mask:
 		return
 	_hud_button_state_mask = mask
@@ -4752,6 +4824,23 @@ func _sync_hud_button_states(force := false) -> void:
 		var atlas: Texture2D = _hud_active_atlas if active else _hud_inactive_atlas
 		if atlas != null:
 			button.icon = _atlas_region(atlas, _hud_icon_regions[button] as Rect2)
+	_apply_attack_preview(attack_preview, states[0])
+
+## The move icon while Alt is held: it wears the attack icon and does what the
+## attack icon does, and goes back to itself the moment Alt is let go. Nothing
+## about the interaction mode changes, so an attack mode chosen from the HUD is
+## untouched by holding Alt or letting it go.
+func _apply_attack_preview(previewing: bool, walking: bool) -> void:
+	var walk_button: Button = %WalkButton
+	if previewing:
+		var atlas: Texture2D = _hud_active_atlas if walking else _hud_inactive_atlas
+		if atlas != null:
+			walk_button.icon = _atlas_region(atlas,
+				_hud_icon_regions[%AttackButton] as Rect2)
+		walk_button.tooltip_text = ("Alt is held: a click attacks what it lands"
+			+ " on. Let Alt go for walk mode")
+	else:
+		walk_button.tooltip_text = "Walk mode; hold Shift while clicking to run"
 
 func _build_hud_layout_menu() -> void:
 	_floating_feedback_layer = Control.new()
@@ -5310,6 +5399,20 @@ func _on_binding_changed(_action: String) -> void:
 func _on_notes_changed(text: String) -> void:
 	_player_notes = text
 	_save_hud_settings()
+
+## A bookmark is the player's own, like a note: it is kept in the client's
+## settings file and never goes near the server.
+func _on_encyclopedia_bookmarks_changed(bookmarks: Array) -> void:
+	_encyclopedia_bookmarks = bookmarks
+	_save_hud_settings()
+
+## The encyclopedia icon on the lower HUD, and Ctrl+E. Both open the reference
+## window on its encyclopedia page, and close it again from that page.
+func _on_encyclopedia_button_pressed() -> void:
+	var was_open: bool = bool(reference_window.call("is_encyclopedia_open"))
+	reference_window.call("toggle_encyclopedia")
+	audio_director.play("ui_close" if was_open else "ui_click")
+	_sync_hud_button_states(true)
 
 ## Help, the player's notes, the addresses the server has linked, and the
 ## encyclopedia. Opened from the settings panel beside the other windows.
@@ -6330,7 +6433,8 @@ func _sync_map_objects() -> void:
 		if map_object_nodes.has(object_id):
 			continue
 		var map_object := MapObject3D.new()
-		map_object.configure(dto_value as Dictionary, adapter)
+		map_object.configure(dto_value as Dictionary, adapter,
+			world_object_catalog)
 		world_root.add_child(map_object)
 		map_object_nodes[object_id] = map_object
 		_place_map_object_on_surface(map_object)
@@ -6503,6 +6607,7 @@ func _apply_eloria_art() -> void:
 			%WalkButton: Rect2(0, 0, 32, 32), %ChatButton: Rect2(32, 0, 32, 32),
 			%KnowledgeButton: Rect2(96, 0, 32, 32), %AttackButton: Rect2(160, 0, 32, 32),
 			%StatsButton: Rect2(192, 0, 32, 32), %SitButton: Rect2(0, 32, 32, 32),
+			%EncyclopediaButton: Rect2(192, 128, 32, 32),
 			%TradeButton: Rect2(64, 32, 32, 32), %InventoryButton: Rect2(96, 32, 32, 32),
 			%LookButton: Rect2(64, 0, 32, 32),
 			%ManufacturingButton: Rect2(128, 32, 32, 32),

@@ -31,6 +31,18 @@ size = Vector2(1200, 1200)
 no_depth_test = true
 shading_mode = 0
 
+[sub_resource type="StandardMaterial3D" id="Material_preview_ground"]
+albedo_color = Color(0.19, 0.2, 0.16, 1)
+roughness = 1.0
+metallic_specular = 0.1
+
+[sub_resource type="CylinderMesh" id="Mesh_preview_ground"]
+material = SubResource("Material_preview_ground")
+top_radius = 0.78
+bottom_radius = 0.88
+height = 0.09
+radial_segments = 48
+
 [sub_resource type="CylinderMesh" id="Mesh_map_marker"]
 material = SubResource("Material_map_marker")
 top_radius = 5.0
@@ -620,6 +632,8 @@ text = "[color=#ef795f]◆[/color] Tavern
 [color=#58b8d9]◆[/color] Potion / tailor
 [color=#e8a84f]◆[/color] Temple / school
 [color=#9fd2ff]●[/color] NPC
+[color=#6bdb70]●[/color] Harvest node
+[color=#f29e3d]●[/color] Interactive
 [color=#ffffff]●[/color] Your position
 [color=#58e1ff]P[/color] Portal
 [color=#ff4747]X[/color] Map exit"
@@ -1018,6 +1032,12 @@ custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 tooltip_text = "Knowledge and books"
 text = "Knowledge"
+
+[node name="EncyclopediaButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons" unique_id=1802598051]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+tooltip_text = "The Eloria Encyclopedia [Ctrl+E]"
 
 [node name="ManufacturingButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons" unique_id=2137104916]
 unique_name_in_owner = true
@@ -2655,9 +2675,14 @@ render_target_update_mode = 4
 [node name="PreviewRoot" type="Node3D" parent="CreationPanel/Columns/CharacterPreview/Viewport" unique_id=1055949710]
 unique_name_in_owner = true
 
+[node name="PreviewGround" type="MeshInstance3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot" unique_id=1328503270]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.045, 0)
+mesh = SubResource("Mesh_preview_ground")
+
 [node name="PreviewCamera" type="Camera3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot" unique_id=1328503269]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 4.2)
+cull_mask = 3
 current = true
 
 [node name="PreviewEnvironment" type="WorldEnvironment" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot"]
@@ -2667,6 +2692,8 @@ environment = SubResource("Environment_preview")
 unique_name_in_owner = true
 rotation_degrees = Vector3(-32, 0, 0)
 light_energy = 1.15
+shadow_enabled = true
+directional_shadow_max_distance = 12.0
 
 [node name="FillLight" type="DirectionalLight3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot"]
 unique_name_in_owner = true
@@ -2909,6 +2936,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/KnowledgeButton" to="." method="_on_knowledge_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/EncyclopediaButton" to="." method="_on_encyclopedia_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/ManufacturingButton" to="." method="_on_manufacturing_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/ChatButton" to="." method="_on_chat_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/DisconnectButton" to="." method="_on_disconnect_pressed"]

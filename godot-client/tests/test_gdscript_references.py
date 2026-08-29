@@ -54,7 +54,7 @@ CROSS_SCRIPT_API = {
         "configure", "apply_server_state", "apply_appearance_variants",
         "apply_equipment_visuals", "equipment_diagnostics", "render_diagnostics",
         "play_action", "predict_turn", "desired_facing_yaw",
-        "set_facing_override",
+        "clear_turn_prediction",
         "set_selected", "set_surface_height", "set_nameplate_visible",
         "target_yaw_for_state", "presentation_segment_duration",
         "rig_fit_scale",

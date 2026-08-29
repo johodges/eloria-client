@@ -208,32 +208,44 @@ func _run() -> void:
 	actor_height_fixture.apply_server_state({
 		"x": 4, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
 	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), held_facing),
-		"keyboard facing override prevents strafe/back packets from rotating the actor")
+		"a predicted turn holds the facing until the server answers it")
 	# CMD_TURN_E. The authoritative turn confirms the prediction and replaces
 	# it, so a rejected or differently-resolved turn cannot stick locally.
 	actor_height_fixture.apply_server_state({
 		"x": 4, "y": 3, "rotation": 16384, "command": 40},
 		CoordinateAdapter.new(), false)
 	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), -PI / 2.0)
-		and not bool(actor_height_fixture.get("_facing_override_active")),
+		and not bool(actor_height_fixture.get("_predicted_turn_pending")),
 		"an authoritative turn command clears the local turn prediction")
 	actor_height_fixture.apply_server_state({
 		"x": 4, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
 	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), -PI / 2.0),
 		"movement after a confirmed turn follows authoritative facing again")
-	actor_height_fixture.set_facing_override(false)
+	actor_height_fixture.predict_turn(PI / 4.0)
+	actor_height_fixture.clear_turn_prediction()
 	actor_height_fixture.apply_server_state({
 		"x": 5, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
 	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), -PI / 2.0),
-		"click-style movement can restore authoritative movement facing")
+		"an abandoned turn prediction hands the facing back to the server")
+	# Nothing but an unanswered turn holds a player off its own step. A route
+	# whose steps leave the heading it was ordered from - a keyboard diagonal,
+	# or a path that bends round an obstacle - turns the actor onto each step it
+	# takes instead of leaving it pointed at the tile it was sent to. CMD_MOVE_NE.
+	actor_height_fixture.apply_server_state({
+		"x": 6, "y": 4, "rotation": 0, "command": 21}, CoordinateAdapter.new(), false)
+	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(),
+			CoordinateAdapter.new().direction_to_godot(Vector2i(1, 1))),
+		"a step off the ordered heading turns the actor onto the step")
 	actor_height_fixture.free()
+	_check_travel_facing()
+	_check_map_dot()
 	var north_yaw: float = CoordinateAdapter.new().direction_to_godot(Vector2i(0, -1))
 	_expect(main.call("_facing_relative_tile_direction", north_yaw, 1, 0) == Vector2i(0, -1)
 		and main.call("_facing_relative_tile_direction", north_yaw, -1, 0) == Vector2i(0, 1)
 		and main.call("_facing_relative_tile_direction", north_yaw, 0, -1) == Vector2i(-1, 0)
 		and main.call("_facing_relative_tile_direction", north_yaw, 0, 1) == Vector2i(1, 0)
 		and main.call("_facing_relative_tile_direction", north_yaw, 1, -1) == Vector2i(-1, -1),
-		"WASD is facing-relative with non-rotating strafe/back and 45-degree diagonals")
+		"WASD is facing-relative, with 45-degree diagonals off the held heading")
 	var lower_hud: Control = main.get_node("GameView/Quickbar") as Control
 	var chat_panel: Control = main.get_node("GameView/ChatPanel") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
@@ -1352,6 +1364,25 @@ func _run() -> void:
 	await process_frame
 	_expect(viewport_rect.encloses(creation_panel.get_global_rect()),
 		"character-creation panel fits the reference viewport")
+	# The preview renders one character, not the map furniture bolted to it.
+	# Its camera had no cull mask, so it drew every layer, and the dot an actor
+	# carries for the two map cameras - three and a half metres across, three
+	# metres up - hung over the model as a pale blue band.
+	var preview_camera: Camera3D = main.get_node(
+		"CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot/PreviewCamera"
+		) as Camera3D
+	var preview_ground: MeshInstance3D = main.get_node(
+		"CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot/PreviewGround"
+		) as MeshInstance3D
+	var world_camera: Camera3D = camera_rig.get_node("Camera") as Camera3D
+	_expect(preview_camera.cull_mask == world_camera.cull_mask
+		and (preview_camera.cull_mask & ReplicatedActor3D.MAP_MARKER_LAYER) == 0,
+		"the creation preview renders what the gameplay camera renders,"
+			+ " and not the map layer")
+	_expect(preview_ground.mesh != null
+		and (preview_ground.layers & preview_camera.cull_mask) != 0
+		and preview_ground.position.y < 0.0,
+		"the creation preview stands its character on a piece of ground")
 	_expect(viewport_rect.encloses(create_button.get_global_rect()),
 		"create-character submit action is visible")
 	_expect(viewport_rect.encloses(back_button.get_global_rect()),
@@ -1752,6 +1783,43 @@ func _run() -> void:
 	_expect(harvest_node != null
 		and harvest_node.get_node_or_null("MapMarker") != null,
 		"a world object is visible on both map cameras")
+	# The prop, not a ring: the reed bed and the wayfarer's cache stand on the
+	# tile, and the ring is left for the node being harvested.
+	_expect(harvest_node != null and harvest_node.get_node_or_null("Model") != null
+		and harvest_node.model_id == "mirror_reed"
+		and interactive_node != null and interactive_node.get_node_or_null("Model") != null
+		and interactive_node.model_id == "storage",
+		"a world object stands as the resource or the service it is")
+	var harvest_ring: MeshInstance3D = (harvest_node.get_node_or_null("Ring")
+		as MeshInstance3D) if harvest_node != null else null
+	_expect(harvest_ring != null and not harvest_ring.visible,
+		"the placeholder ring is not drawn under a node that has a model")
+	var interactive_marker: MeshInstance3D = (
+		interactive_node.get_node_or_null("MapMarker") as MeshInstance3D
+	) if interactive_node != null else null
+	var interactive_material: StandardMaterial3D = (
+		interactive_marker.mesh.surface_get_material(0) as StandardMaterial3D
+	) if interactive_marker != null else null
+	_expect(interactive_material != null
+		and interactive_material.albedo_color.is_equal_approx(
+			MapObject3D.INTERACTIVE_COLOUR),
+		"an interactive is orange on the map, as the legend says")
+	var map_legend: RichTextLabel = main.get_node(
+		"GameView/FullMap/MapLayout/Sidebar/SidebarContent/MapLegend") as RichTextLabel
+	_expect(map_legend != null and map_legend.text.contains("Harvest node")
+		and map_legend.text.contains("Interactive")
+		and map_legend.text.contains("NPC"),
+		"the legend names every colour the map draws")
+	# Each of the three is the colour the legend's own swatch is written in, so
+	# a reader comparing the sidebar to the map is comparing like with like.
+	_expect(map_legend != null
+		and map_legend.text.contains("[color=#%s]●[/color] NPC" % (
+			ReplicatedActor3D.MAP_DOT_COLOUR.to_html(false)))
+		and map_legend.text.contains("[color=#%s]●[/color] Harvest node" % (
+			MapObject3D.HARVEST_COLOUR.to_html(false)))
+		and map_legend.text.contains("[color=#%s]●[/color] Interactive" % (
+			MapObject3D.INTERACTIVE_COLOUR.to_html(false))),
+		"every legend swatch is the colour the map actually draws")
 	_expect(harvest_node != null and harvest_node.server_tile == Vector2i(770, 481),
 		"the pick target sits on the tile the server named")
 
@@ -1762,6 +1830,11 @@ func _run() -> void:
 	await process_frame
 	_expect(harvest_banner.visible and harvest_banner.text.contains("Mirror Reed"),
 		"the harvesting indicator names the resource the server reported")
+	_expect(harvest_ring != null and harvest_ring.visible
+		and (harvest_ring.material_override as StandardMaterial3D
+			).albedo_color.is_equal_approx(
+				Color(MapObject3D.ACTIVE_COLOUR, 0.75)),
+		"the ring marks the node the player is harvesting")
 	_expect(harvest_banner.get_global_rect().end.y <= 720.0
 		and harvest_banner.get_global_rect().position.y >= 0.0,
 		"the harvesting indicator fits within 1280x720")
@@ -1770,6 +1843,8 @@ func _run() -> void:
 		"the harvesting indicator does not cover the fixed resource rail")
 	app_state_inventory.call("_on_packet", 237, PackedByteArray([0, 0, 0, 0]))
 	await process_frame
+	_expect(harvest_ring != null and not harvest_ring.visible,
+		"the ring goes away again when the harvest stops")
 	_expect(not harvest_banner.visible,
 		"a server stop - moving, a full backpack, combat - clears the indicator")
 
@@ -2445,3 +2520,85 @@ func _hex_bytes(value: String) -> PackedByteArray:
 	for index: int in range(0, value.length(), 2):
 		bytes.append(value.substr(index, 2).hex_to_int())
 	return bytes
+
+## The rendered facing has to be the direction the body crosses the ground in,
+## not the tile direction that arrived with the packet. The two differ by
+## design: the presentation runs a fraction of a tile behind the authoritative
+## position, and every step that lands in the same frame as another is folded
+## into a single segment before the actor node ever sees it.
+func _check_travel_facing() -> void:
+	var adapter := CoordinateAdapter.new()
+	var actor := ReplicatedActor3D.new()
+	root.add_child(actor)
+	actor.apply_server_state({"actor_id": 1, "x": 10, "y": 10, "rotation": 0,
+		"command": -1}, adapter, true)
+	actor._physics_process(1.0 / 60.0)
+	_expect(is_equal_approx(actor.call("_rendered_target_yaw"),
+		actor.desired_facing_yaw()),
+		"a resting actor is drawn facing exactly where the server says it does")
+
+	# CMD_MOVE_E, taken only part way before the next packet arrives.
+	actor.apply_server_state({"actor_id": 1, "x": 11, "y": 10, "rotation": 0,
+		"command": 22}, adapter, false)
+	for frame: int in range(9):
+		actor._physics_process(1.0 / 60.0)
+	# CMD_MOVE_N from a body that has not finished travelling east yet, so the
+	# ground it is about to cross runs north-east and it must face north-east.
+	actor.apply_server_state({"actor_id": 1, "x": 11, "y": 11, "rotation": 0,
+		"command": 20}, adapter, false)
+	var lagging_travel: float = ReplicatedActor3D.travel_yaw(
+		actor.get("_segment_start") as Vector3, actor.server_target, 0.0)
+	_expect(is_equal_approx(actor.call("_rendered_target_yaw"), lagging_travel)
+		and not is_equal_approx(lagging_travel, actor.desired_facing_yaw()),
+		"a step taken before the last one finished is faced along the ground crossed")
+
+	# Four steps folded into one world sync, as happens on any frame slower
+	# than the server's movement cadence. The straight slide covers all four.
+	actor.apply_server_state({"actor_id": 1, "x": 11, "y": 10, "rotation": 0,
+		"command": 24}, adapter, true)
+	actor._physics_process(1.0 / 60.0)
+	actor.apply_server_state({"actor_id": 1, "x": 15, "y": 14, "rotation": 0,
+		"command": 20}, adapter, false)
+	var folded_travel: float = ReplicatedActor3D.travel_yaw(
+		actor.get("_segment_start") as Vector3, actor.server_target, 0.0)
+	_expect(is_equal_approx(actor.call("_rendered_target_yaw"), folded_travel)
+		and is_equal_approx(folded_travel, adapter.direction_to_godot(Vector2i(1, 1))),
+		"a burst folded into one segment is faced along the whole slide")
+
+	# Authority is untouched: the facing the server named is still what the
+	# actor settles on once it stops, and a turn shown while its answer is in
+	# flight still outranks travel, because that actor is turning, not walking.
+	_expect(is_equal_approx(actor.desired_facing_yaw(),
+		adapter.direction_to_godot(Vector2i(0, 1))),
+		"the authoritative facing survives a segment travelled in another direction")
+	actor.predict_turn(PI / 4.0)
+	_expect(is_equal_approx(actor.call("_rendered_target_yaw"),
+		actor.desired_facing_yaw()),
+		"a predicted turn still outranks the direction of travel")
+	actor.clear_turn_prediction()
+	for frame: int in range(240):
+		actor._physics_process(1.0 / 60.0)
+	_expect(is_equal_approx(actor.rotation.y, actor.desired_facing_yaw()),
+		"the actor comes to rest on the authoritative facing")
+	actor.free()
+
+## Everyone the server replicates carries the light blue dot the full map's
+## legend calls NPC. The local player draws its own white mark over the top of
+## its dot; nobody else has one, so without this an NPC standing in a town is
+## on the map only for as long as somebody is looking at the world.
+func _check_map_dot() -> void:
+	var actor := ReplicatedActor3D.new()
+	root.add_child(actor)
+	# Gate Warden Ilyon's wire record: an Eloria NPC actor type, kind 20.
+	actor.configure({"actor_id": 30014, "x": 704, "y": 816, "rotation": 0,
+		"actor_type": 308, "kind": 20, "name": "Gate Warden Ilyon"},
+		CoordinateAdapter.new(), {}, {})
+	var dot: MeshInstance3D = actor.get_node_or_null("MapDot") as MeshInstance3D
+	_expect(dot != null and dot.layers == ReplicatedActor3D.MAP_MARKER_LAYER,
+		"a replicated actor carries a dot only the map cameras render")
+	var material: StandardMaterial3D = (dot.mesh.surface_get_material(0)
+		as StandardMaterial3D) if dot != null else null
+	_expect(material != null
+		and material.albedo_color.is_equal_approx(ReplicatedActor3D.MAP_DOT_COLOUR),
+		"the dot is the light blue the legend names")
+	actor.free()

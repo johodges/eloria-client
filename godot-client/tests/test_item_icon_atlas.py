@@ -59,7 +59,7 @@ class ItemIconAtlasTest(unittest.TestCase):
                                    column * self.cell:(column + 1) * self.cell]
 
     def test_atlas_declares_its_painted_range(self) -> None:
-        self.assertEqual(102, self.config["imageCount"])
+        self.assertEqual(117, self.config["imageCount"])
         self.assertEqual(101, self.config["fallbackImageId"])
         capacity = len(self.config["atlases"]) * self.per_atlas
         self.assertLessEqual(self.config["imageCount"], capacity)

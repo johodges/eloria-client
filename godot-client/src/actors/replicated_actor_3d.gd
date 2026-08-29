@@ -32,8 +32,10 @@ var _segment_elapsed := 0.0
 var _segment_duration := 0.0
 var _last_movement_update_msec := -1
 var _smoothed_server_interval := 0.25
-var _facing_override_active := false
-var _facing_override_yaw := 0.0
+## The direction the body is actually crossing the ground in, which is not the
+## tile direction the server named. See `_rendered_target_yaw`.
+var _travel_yaw_active := false
+var _travel_yaw := 0.0
 ## Part 2 in the equipment registry: the cape, and the only part with cloth.
 const CAPE_PART := 2
 ## The wardrobe meshes are shells fitted straight onto the skin they cover, so
@@ -55,7 +57,10 @@ const WARDROBE_GROW := {
 	"wardrobe_head_band": 0.006, "wardrobe_head_cap": 0.009,
 }
 
+## The one facing an actor renders that the server did not state: the single
+## 45 degree step shown while the answer to TURN_LEFT/TURN_RIGHT is in flight.
 var _predicted_turn_pending := false
+var _predicted_turn_yaw := 0.0
 var _movement_coast_remaining := 0.0
 var _native_skeleton: Skeleton3D
 var _cape_cloth: SkeletonModifier3D = null
@@ -86,7 +91,10 @@ const GAMEPLAY_ONLY_VISUAL_LAYER := 2
 ## it needs a dot sized for the map rather than for the world.
 const MAP_MARKER_LAYER := 4
 const MAP_DOT_RADIUS := 3.5
-const MAP_DOT_COLOUR := Color(0.62, 0.82, 1.0)
+## The light blue the full map's legend calls NPC, written the way the legend
+## writes it so a reader comparing the swatch to the map is comparing one
+## colour to itself rather than to a rounding of it.
+const MAP_DOT_COLOUR := Color("9fd2ff")
 const SETTLED_YAW_EPSILON := 0.0005
 
 # Overhead health bar geometry, in world units, measured downwards from the
@@ -528,10 +536,9 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	# rendered facing is the authoritative one from here on.
 	if _predicted_turn_pending and EloriaProtocol.is_turn_command(actor_command):
 		_predicted_turn_pending = false
-		_facing_override_active = false
 	var authoritative_yaw: float = target_yaw_for_state(
 		_target_yaw, actor_command, int(dto.rotation), adapter)
-	_target_yaw = _facing_override_yaw if _facing_override_active else authoritative_yaw
+	_target_yaw = _predicted_turn_yaw if _predicted_turn_pending else authoritative_yaw
 	_presentation_speed = walk_presentation_speed
 	if actor_command >= 30 and actor_command <= 37:
 		_presentation_speed = run_presentation_speed
@@ -545,6 +552,7 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_smoothed_server_interval = initial_server_interval
 		_movement_coast_remaining = 0.0
 		_snap_pending = false
+		_travel_yaw_active = false
 	elif target_changed:
 		var now_msec: int = Time.get_ticks_msec()
 		if _last_movement_update_msec >= 0:
@@ -567,6 +575,8 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 			global_position.distance_to(server_target), _presentation_speed,
 			_smoothed_server_interval, arrival_margin,
 			minimum_segment_duration, maximum_segment_duration)
+		_travel_yaw = travel_yaw(_segment_start, server_target, _target_yaw)
+		_travel_yaw_active = true
 	_wake()
 	if dto.has("command") and resolver != null:
 		play_action(_movement_aware_action(
@@ -1192,20 +1202,19 @@ func _on_animation_finished(_animation_name: StringName) -> void:
 func predict_turn(radians: float) -> void:
 	_wake()
 	_target_yaw = wrapf(_target_yaw + radians, -PI, PI)
-	_facing_override_active = true
-	_facing_override_yaw = _target_yaw
+	_predicted_turn_yaw = _target_yaw
 	_predicted_turn_pending = true
 	play_action(&"turn")
 
 func desired_facing_yaw() -> float:
 	return _target_yaw
 
-func set_facing_override(enabled: bool) -> void:
-	_facing_override_active = enabled
-	if enabled:
-		_facing_override_yaw = _target_yaw
-	else:
-		_predicted_turn_pending = false
+## Abandons a predicted turn the server has not answered. A route ordered
+## before the answer arrives supersedes it: the step commands that route
+## broadcasts state the facing, and holding the prediction over them would keep
+## the actor pointing where it was asked to look rather than where it walks.
+func clear_turn_prediction() -> void:
+	_predicted_turn_pending = false
 
 static func target_yaw_for_state(current_yaw: float, actor_command: int,
 		server_rotation: int, adapter: CoordinateAdapter) -> float:
@@ -1217,6 +1226,30 @@ static func target_yaw_for_state(current_yaw: float, actor_command: int,
 	if actor_command in [13, 14]:
 		return current_yaw
 	return adapter.rotation_to_godot(server_rotation)
+
+## The yaw of the ground the body is about to cross, which is what "facing the
+## way you are walking" means on screen. It is not the tile direction the
+## server named: the rendered actor is deliberately a fraction of a tile behind
+## its authoritative position (`arrival_margin`), and every step that lands in
+## the same frame as another is folded into one segment before the actor node
+## sees it, so a segment routinely spans a different bearing - and, across a
+## folded burst, several tiles - than the single command that arrived with it.
+static func travel_yaw(from: Vector3, to: Vector3, fallback: float) -> float:
+	var travel := Vector3(to.x - from.x, 0.0, to.z - from.z)
+	if travel.length_squared() < 0.000001:
+		return fallback
+	return atan2(-travel.x, -travel.z)
+
+## Where the body is pointed this frame. The authoritative facing is still
+## `_target_yaw`; this only decides what is drawn while the actor is crossing
+## ground, and it hands back to the authoritative value the moment it stops, so
+## a resting actor faces exactly where the server says it does. An unanswered
+## turn prediction outranks it: that actor is turning on the spot rather than
+## travelling, and the step it is asked to show is the whole point of it.
+func _rendered_target_yaw() -> float:
+	if _predicted_turn_pending or not _travel_yaw_active:
+		return _target_yaw
+	return _travel_yaw
 
 func _finish_movement_presentation() -> void:
 	if current_action in [&"walk", &"run"]:
@@ -1253,6 +1286,7 @@ func _physics_process(delta: float) -> void:
 		rotation.y = _target_yaw
 		_segment_start = server_target
 		_snap_pending = false
+		_travel_yaw_active = false
 		_settle_if_idle()
 		return
 	if _segment_duration > 0.0:
@@ -1262,10 +1296,13 @@ func _physics_process(delta: float) -> void:
 		if progress >= 1.0:
 			global_position = server_target
 			_segment_duration = 0.0
+			_travel_yaw_active = false
 			_finish_movement_presentation()
 	else:
 		global_position = server_target
-	rotation.y = rotate_toward(rotation.y, _target_yaw, turn_speed_radians * delta)
+		_travel_yaw_active = false
+	rotation.y = rotate_toward(rotation.y, _rendered_target_yaw(),
+		turn_speed_radians * delta)
 	if _movement_coast_remaining > 0.0:
 		_movement_coast_remaining = maxf(0.0, _movement_coast_remaining - delta)
 		if _movement_coast_remaining <= 0.0 and current_action in [&"walk", &"run"]:
@@ -1382,10 +1419,14 @@ func _apply_import_adapter(config: Dictionary) -> void:
 	if model == null:
 		return
 	model.scale = Vector3.ONE * float(config.get("scale", 1.0))
-	# Native glTF actors are authored facing +Z, while Godot's logical forward
-	# axis is -Z. Correct only the imported visual root so server yaw, click
-	# targets, keyboard-relative movement, and equipment attachments continue
-	# to share one canonical logical heading.
+	# The two rig families are authored facing opposite ways: the race rigs
+	# down +Z to face the creation-preview camera, the creature rigs down -Z,
+	# which is already Godot's logical forward axis. Each model states its own
+	# correction, so a creature is not turned round and walked backwards. The
+	# 180 fallback is only for a model that predates the key. Correct only the
+	# imported visual root so server yaw, click targets, keyboard-relative
+	# movement, and equipment attachments continue to share one canonical
+	# logical heading.
 	var forward_axis_correction: float = float(
 		config.get("forwardAxisCorrectionDegreesY", 180.0))
 	model.rotation_degrees = Vector3(

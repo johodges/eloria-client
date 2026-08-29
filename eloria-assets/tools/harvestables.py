@@ -580,14 +580,79 @@ CATALOGUE = (
 BY_ID = {entry[0]: entry for entry in CATALOGUE}
 IDS = tuple(entry[0] for entry in CATALOGUE)
 
-# Legacy Emberhaven bootstrap harvestables produced by generate_scenery.py.
-# They stay in the world and therefore have to stay in harvestable.lst.
-LEGACY_IDS = (
-    "sunleaf", "frost_reed", "copper_bloom", "ember_crystal", "slate_outcrop",
-    "wheat", "cotton", "lavender", "flax", "sage", "rosemary", "mushroom",
-    "grave_moss", "blueberries", "coal", "iron_ore", "stormglass",
-    "moon_salt", "quartz", "sulfur",
+# The Emberhaven bootstrap harvestables. `generate_scenery.py` still writes the
+# scenery E3Ds that place them in the legacy maps, but the geometry there is the
+# whole-world scenery vocabulary - a tapered cone on a cone - which reads as a
+# traffic bollard next to the regional nodes above. The server places eighteen
+# of these as ordinary harvest resources, so they are authored here to the same
+# contract as the regional catalogue and the two lists together are what every
+# renderer draws from.
+BOOTSTRAP = (
+    ("sunleaf", "Sunleaf", "flora", "common",
+     ((66, 108, 58), (118, 162, 78), (226, 186, 84)),
+     leafy_herb(rosette=7, height=0.86, blooms=3, bloom_height=0.13)),
+    ("frost_reed", "Frost Reed", "fibre", "common",
+     ((74, 116, 110), (140, 186, 176), (216, 236, 234)),
+     stalk_cluster(stems=7, height=1.42, head=0.13, leaves=5, spread=0.26)),
+    ("copper_bloom", "Copper Bloom", "flora", "common",
+     ((62, 100, 60), (112, 152, 96), (188, 104, 56)),
+     bloom_flower(petals=6, stem=0.92, petal_length=0.32, leaves=4, buds=2)),
+    ("ember_crystal", "Ember Crystal", "crystal", "rare",
+     ((104, 52, 46), (176, 84, 52), (240, 148, 74)),
+     crystal_cluster(points=6, height=1.08, radius=0.21)),
+    ("slate_outcrop", "Slate", "mineral", "common",
+     ((66, 72, 78), (104, 112, 120), (150, 158, 166)),
+     mineral_seam(nodes=5, spoil=3, radius=0.54, style="bank", sides=4)),
+    ("wheat", "Wheat", "grain", "common",
+     ((150, 126, 62), (204, 174, 92), (236, 214, 138)),
+     stalk_cluster(stems=9, height=1.36, head=0.20, leaves=4, spread=0.24)),
+    ("cotton", "Cotton", "fibre", "common",
+     ((92, 112, 74), (146, 160, 108), (238, 236, 226)),
+     swollen_bulb(lobes=4, height=0.66, leaves=6)),
+    ("lavender", "Lavender", "herb", "common",
+     ((84, 104, 78), (132, 150, 112), (142, 122, 196)),
+     leafy_herb(rosette=6, height=0.80, blooms=4, bloom_height=0.20)),
+    ("flax", "Flax", "fibre", "common",
+     ((96, 124, 96), (152, 176, 142), (150, 176, 214)),
+     stalk_cluster(stems=8, height=1.18, head=0.09, leaves=4, spread=0.22)),
+    ("sage", "Sage", "herb", "common",
+     ((92, 112, 92), (146, 164, 138), (196, 206, 186)),
+     leafy_herb(rosette=7, height=0.70, blooms=2, bloom_height=0.11)),
+    ("rosemary", "Rosemary", "herb", "common",
+     ((62, 92, 74), (108, 142, 112), (166, 190, 210)),
+     leafy_herb(rosette=8, height=0.78, blooms=3, bloom_height=0.09)),
+    ("mushroom", "Mushroom", "fungus", "common",
+     ((104, 92, 76), (156, 142, 118), (196, 168, 132)),
+     fungus_ring(caps=5, height=0.44)),
+    ("grave_moss", "Grave Moss", "moss", "uncommon",
+     ((62, 74, 60), (104, 122, 96), (150, 168, 128)),
+     moss_mat(patches=7, stones=3)),
+    ("blueberries", "Blueberries", "flora", "common",
+     ((64, 96, 66), (112, 148, 104), (78, 92, 158)),
+     leafy_herb(rosette=6, height=0.62, blooms=3, berry=True)),
+    ("coal", "Deep Coal", "mineral", "common",
+     ((44, 42, 42), (76, 74, 74), (108, 106, 106)),
+     mineral_seam(nodes=6, spoil=3, radius=0.50, style="bank", sides=5)),
+    ("iron_ore", "Iron Ore", "mineral", "common",
+     ((78, 66, 58), (122, 100, 82), (158, 116, 78)),
+     mineral_seam(nodes=5, spoil=3, radius=0.52, style="bank", sides=6)),
+    ("stormglass", "Stormglass", "crystal", "uncommon",
+     ((54, 74, 108), (96, 130, 182), (168, 204, 240)),
+     crystal_cluster(points=5, height=1.02, radius=0.19)),
+    ("moon_salt", "Moon Salt", "mineral", "uncommon",
+     ((146, 152, 168), (196, 204, 220), (238, 242, 248)),
+     salt_pan(plates=6, height=0.48)),
+    ("quartz", "Quartz", "crystal", "common",
+     ((136, 138, 142), (188, 190, 196), (238, 240, 244)),
+     crystal_cluster(points=5, height=0.94, radius=0.18)),
+    ("sulfur", "Sulfur", "mineral", "common",
+     ((122, 108, 54), (186, 166, 66), (232, 216, 96)),
+     mineral_seam(nodes=6, spoil=4, radius=0.48, style="scatter", sides=6)),
 )
+
+# They stay in the world and therefore have to stay in harvestable.lst.
+LEGACY_IDS = tuple(entry[0] for entry in BOOTSTRAP)
+BOOTSTRAP_BY_ID = {entry[0]: entry for entry in BOOTSTRAP}
 
 RESPAWN_SECONDS = {"common": 60, "uncommon": 105, "rare": 165}
 NODES_PER_REGION = {"common": 3, "uncommon": 2, "rare": 2}
