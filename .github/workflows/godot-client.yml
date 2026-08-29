@@ -167,6 +167,13 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/marker-lights-after.png"
           test -s "$ELORIA_ARTIFACT_DIR/console-history.png"
           test -s "$ELORIA_ARTIFACT_DIR/console-diagnostics.png"
+      - name: Render 16-bit actor native models
+        run: |
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_actor16_creature.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/actor16.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/actor16.log"
+          grep -q "rendered 16-bit actor evidence: PASS" "$ELORIA_ARTIFACT_DIR/actor16.log"
+          test -s "$ELORIA_ARTIFACT_DIR/actor16-native.png"
+          test -s "$ELORIA_ARTIFACT_DIR/actor16-fallback.png"
       - name: Upload Phase 0 rendered evidence
         if: always()
         uses: actions/upload-artifact@v4

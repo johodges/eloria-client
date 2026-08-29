@@ -72,9 +72,17 @@ def packet(command: int, payload: bytes = b"") -> bytes:
 class LocalServer:
     """A real `eloria.server` process on a free loopback port."""
 
-    def __init__(self, server_root: Path, prefix: str = "eloria-local-"):
+    def __init__(self, server_root: Path, prefix: str = "eloria-local-",
+                 overrides: dict[str, str] | None = None):
+        """`overrides` maps a config flag to replacement file text.
+
+        A probe that needs one creature standing next to the player writes its
+        own spawn table rather than editing the shipped configuration, so the
+        real server is still driving the real content everywhere else.
+        """
         self.server_root = Path(server_root).resolve()
         self._prefix = prefix
+        self._overrides = dict(overrides or {})
         self._process: subprocess.Popen | None = None
         self._workdir: tempfile.TemporaryDirectory | None = None
         self._log: deque[str] = deque(maxlen=400)
@@ -91,7 +99,12 @@ class LocalServer:
             "--port", str(self.port), "--database",
             str(Path(self._workdir.name) / "eloria.sqlite3")]
         for flag, name in ELORIA_CONFIG:
-            arguments += [flag, str(Path("config") / "eloria" / name)]
+            if flag in self._overrides:
+                override_path = Path(self._workdir.name) / name.replace("/", "_")
+                override_path.write_text(self._overrides[flag], encoding="utf-8")
+                arguments += [flag, str(override_path)]
+            else:
+                arguments += [flag, str(Path("config") / "eloria" / name)]
         self._process = subprocess.Popen(
             arguments, cwd=self.server_root, stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT, text=True, bufsize=1)
