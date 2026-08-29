@@ -42,6 +42,13 @@ var finished_quests: Array[int] = []
 ## states all of it at login, so this is a view of what arrived rather than a
 ## copy the client maintains.
 var buddies: Dictionary = {}
+## Objects the server placed into this map after it loaded, by object id, and
+## the tiles it said are ways off the map.
+var world_objects: Dictionary = {}
+var teleporters: Array[Vector2i] = []
+
+## A teleport happening at a place. An event: it is over as soon as it is drawn.
+signal teleport_seen(teleport: Dictionary)
 
 ## One clap of thunder. An event: it happens once and is over.
 signal thunder_struck(severity: int)
@@ -228,6 +235,8 @@ func _on_connection_state_changed(value: String) -> void:
 		current_quest_id = 0
 		finished_quests = []
 		buddies = {}
+		world_objects = {}
+		teleporters = []
 		inventory_state = {"gold": 0, "carried": 0, "capacity": 0, "items": []}
 		combat_state = _empty_combat_state()
 		mail.clear()
@@ -581,6 +590,22 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			if bool(event.fired):
 				missile_fired.emit({"source_actor_id": shooter_id,
 					"target_actor_id": int(event.target_actor_id)})
+		"world_object":
+			if bool(event.replace):
+				world_objects.clear()
+			for raw_object: Variant in event.objects as Array:
+				var placed: Dictionary = raw_object as Dictionary
+				world_objects[int(placed.object_id)] = placed.duplicate(true)
+			state_changed.emit(&"world_objects")
+		"world_object_removed":
+			if world_objects.erase(int(event.object_id)):
+				state_changed.emit(&"world_objects")
+		"teleporters":
+			teleporters = (event.tiles as Array[Vector2i]).duplicate()
+			state_changed.emit(&"teleporters")
+		"teleport":
+			teleport_seen.emit({"arriving": bool(event.arriving),
+				"x": int(event.x), "y": int(event.y)})
 		"buddy":
 			var buddy_name: String = str(event.name)
 			match str(event.event):

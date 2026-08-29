@@ -247,6 +247,8 @@ var map_marker_overlay: Control
 var world_effects: Array = []
 ## The sky and the fires the server placed on this map.
 var weather_layer: Weather3D
+## Objects the server placed into this map after it loaded, by object id.
+var placed_object_nodes: Dictionary = {}
 var audio_director: Node
 var map_ambience_root: Node3D
 var sigil_window: Control
@@ -607,6 +609,7 @@ func _ready() -> void:
 	AppState.missile_fired.connect(_on_missile_fired)
 	AppState.ground_missile_fired.connect(_on_ground_missile_fired)
 	AppState.thunder_struck.connect(_on_thunder_struck)
+	AppState.teleport_seen.connect(_on_teleport_seen)
 	weather_layer = Weather3D.new()
 	world_root.add_child(weather_layer)
 	world_loader.load_completed.connect(_on_world_loaded)
@@ -2735,6 +2738,8 @@ func _on_state_changed(path: StringName) -> void:
 				_sync_storage()
 			if bool(AppState.ground_bag.get("open", false)):
 				_sync_ground_bag()
+		&"world_objects":
+			_sync_placed_objects()
 		&"weather":
 			_sync_weather()
 		&"fires":
@@ -4451,6 +4456,45 @@ func _on_missile_fired(shot: Dictionary) -> void:
 	world_root.add_child(missile)
 	missile.configure(from_value as Vector3, to_value as Vector3)
 	world_effects.append(missile)
+	world_effects = world_effects.filter(func(node: Variant) -> bool:
+		return is_instance_valid(node))
+
+## Objects the server put into this map after it loaded. Everything the client
+## knew about a map used to arrive with the map, so nothing could change while
+## anybody was looking at it.
+func _sync_placed_objects() -> void:
+	for raw_id: Variant in AppState.world_objects:
+		var object_id: int = int(raw_id)
+		if placed_object_nodes.has(object_id):
+			continue
+		var placed: Dictionary = AppState.world_objects[object_id] as Dictionary
+		var node := PlacedObject3D.new()
+		world_root.add_child(node)
+		node.configure(placed, adapter.server_to_godot(
+			int(placed.get("x", 0)), int(placed.get("y", 0))))
+		placed_object_nodes[object_id] = node
+	for object_id: Variant in placed_object_nodes.keys():
+		if AppState.world_objects.has(object_id):
+			continue
+		var stale: Variant = placed_object_nodes[object_id]
+		if is_instance_valid(stale):
+			(stale as Node).queue_free()
+		placed_object_nodes.erase(object_id)
+
+## Somebody arrived or left by a portal. The actor packets already say who
+## moved; this says where the two ends were, which is the part a client cannot
+## work out - by the time it hears about an arrival the departure has gone.
+func _on_teleport_seen(teleport: Dictionary) -> void:
+	if not _effects_enabled:
+		return
+	var effect := WorldEffect3D.new()
+	world_root.add_child(effect)
+	# 1 is the beneficial class, which rises; 0 falls. Arriving rises out of
+	# the ground and leaving sinks into it.
+	effect.configure(1 if bool(teleport.get("arriving", true)) else 0,
+		adapter.server_to_godot(int(teleport.get("x", 0)),
+			int(teleport.get("y", 0))))
+	world_effects.append(effect)
 	world_effects = world_effects.filter(func(node: Variant) -> bool:
 		return is_instance_valid(node))
 

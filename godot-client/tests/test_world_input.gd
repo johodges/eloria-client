@@ -1851,6 +1851,79 @@ func _run() -> void:
 	shooter = (app_state_inventory.get("actors") as Dictionary).get(91, {}) as Dictionary
 	_expect(int(shooter.get("aiming_at", -1)) == -1,
 		"loosing ends the aim the server stated before it")
+	# Objects the server puts into a map that is already being played in.
+	# Everything the client knew about a map used to arrive with the map.
+	var placed_before: int = (main.get("placed_object_nodes") as Dictionary).size()
+	var totem := PackedByteArray([7, 0, 0x00, 0x03, 0xe6, 0x01, 0, 0])
+	totem.append_array(_nul_bytes("boss_totem"))
+	app_state_inventory.call("_on_packet", 75, totem)
+	await process_frame
+	var placed_nodes: Dictionary = main.get("placed_object_nodes") as Dictionary
+	_expect(placed_nodes.size() == placed_before + 1 and placed_nodes.has(7)
+		and placed_nodes[7] is PlacedObject3D,
+		"an object raised mid-game is drawn: %d" % placed_nodes.size())
+	_expect(str((placed_nodes[7] as PlacedObject3D).model) == "boss_totem"
+		and PlacedObject3D.shape_name_for("boss_totem") == "totem",
+		"and a name that says what it is gets the shape it names")
+	_expect(PlacedObject3D.shape_name_for("3dobjects/misc/unknowable.e3d")
+			== "marker",
+		"a name this client has no shape for is still something visible")
+	app_state_inventory.call("_on_packet", 76, PackedByteArray([7, 0]))
+	await process_frame
+	_expect(not (main.get("placed_object_nodes") as Dictionary).has(7),
+		"and an object the server takes away goes")
+
+	# A list is the whole truth about a map, so it replaces rather than adds.
+	var listed := PackedByteArray([2, 0, 1, 0, 0x00, 0x03, 0xe6, 0x01, 0, 0])
+	listed.append_array(_nul_bytes("totem"))
+	listed.append_array(PackedByteArray([2, 0, 0x04, 0x03, 0xe6, 0x01, 0, 0]))
+	listed.append_array(_nul_bytes("banner"))
+	app_state_inventory.call("_on_packet", 74, listed)
+	await process_frame
+	_expect((app_state_inventory.get("world_objects") as Dictionary).size() == 2,
+		"a list states everything already standing on the map")
+	var single := PackedByteArray([9, 0, 0x00, 0x03, 0xe6, 0x01, 0, 0])
+	single.append_array(_nul_bytes("stone"))
+	app_state_inventory.call("_on_packet", 74, PackedByteArray([1, 0])
+		+ single)
+	await process_frame
+	_expect((app_state_inventory.get("world_objects") as Dictionary).size() == 1
+		and (app_state_inventory.get("world_objects") as Dictionary).has(9),
+		"and a later list replaces it rather than adding to it")
+	app_state_inventory.call("_on_packet", 74, PackedByteArray([0, 0]))
+	await process_frame
+	_expect((main.get("placed_object_nodes") as Dictionary).is_empty(),
+		"an empty list clears the map")
+	_expect(EloriaProtocol.decode_server(74, PackedByteArray([9, 0])).type
+			== "invalid",
+		"a list that promises more objects than it carries is rejected")
+
+	# Where the ways off this map are, and both ends of a teleport.
+	var ways := PackedByteArray([2, 0, 0x00, 0x03, 0xe6, 0x01,
+		0x04, 0x03, 0xe6, 0x01])
+	app_state_inventory.call("_on_packet", 10, ways)
+	await process_frame
+	_expect((app_state_inventory.get("teleporters") as Array).size() == 2,
+		"the map says where its portals are")
+	app_state_inventory.call("_on_packet", 10, PackedByteArray([0, 0]))
+	await process_frame
+	_expect((app_state_inventory.get("teleporters") as Array).is_empty(),
+		"and a map with none says that too")
+	_expect(EloriaProtocol.decode_server(10, PackedByteArray([1, 0, 2, 0])).type
+			== "invalid",
+		"a teleporter list of the wrong length is rejected")
+	var before_teleport: int = (main.get("world_effects") as Array).size()
+	app_state_inventory.call("_on_packet", 12,
+		PackedByteArray([0x00, 0x03, 0xe6, 0x01]))
+	await process_frame
+	_expect((main.get("world_effects") as Array).size() == before_teleport + 1,
+		"an arrival is drawn where it happened")
+	app_state_inventory.call("_on_packet", 13,
+		PackedByteArray([0x00, 0x03, 0xe6, 0x01]))
+	await process_frame
+	_expect((main.get("world_effects") as Array).size() == before_teleport + 2,
+		"and so is a departure")
+
 	# Which quest a piece of NPC dialogue belongs to. Before this the client
 	# could not tell a quest line from small talk, so neither could a player.
 	var dialogue_panel: Control = main.get("dialogue_panel") as Control

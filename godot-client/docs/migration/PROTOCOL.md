@@ -495,6 +495,12 @@ UTF-8.
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+| 74 | World object list | `count:u16`, then per object `object_id:u16 \| x:u16 \| y:u16 \| rotation:u16 \| model_name` |
+| 75 | World object | one object, same body as a list row |
+| 76 | World object removed | `object_id:u16` |
+| 10 | Teleporters | `count:u16`, then `x:u16 \| y:u16` per portal |
+| 12 | Teleport in | `x:u16 \| y:u16` |
+| 13 | Teleport out | `x:u16 \| y:u16` |
 | 59 | Buddy event | `event:u8 \| name` - event indexes `offline, online, added, removed` |
 | 92 | Next NPC message is a quest | empty; describes the frame after it |
 | 93 | Here is the quest id | `quest_id:u16` |
@@ -511,6 +517,29 @@ UTF-8.
 | 87 | Missile loosed at a place | `actor_id:u16 \| x:u16 \| y:u16` |
 | 89 | Actor animation | `actor_id:u16 \| action` - an action name, never a clip |
 | 238 | Almanac | `day:u8 \| month:u8 \| year:u16 \| kind:u8 \| experience_bonus:u16 \| name \| description \| effect_count:u8` then that many effect tags, `multiplier_count:u8` then that many `skill \| multiplier:u16`, `catalogue_count:u16` then that many `kind:u8 \| name \| description` |
+
+Commands 74, 75 and 76 put objects into a map that is already being played in.
+Everything the client knew about a map used to arrive with the map, so nothing
+could raise a totem in the square while somebody was standing in it. A list is
+the whole truth about a map and replaces what was there; a single placement
+adds to it. The model is a name rather than a file - which art a client draws
+is its own business, and a name it does not know is drawn as a plain marker,
+because an object that is there should be visible even when its appearance is
+not.
+
+Commands 10, 12 and 13 are the portals. The client could see a portal's art
+without any idea it was one, so it could not mark one or say where a road went.
+An empty list is an answer: this map has no way out. The two effects carry
+tiles rather than actors, because the actor packets already say who moved and
+the part a client cannot work out is where the ends were - by the time it hears
+about an arrival, the departure has already gone.
+
+`MAP_SET_OBJECTS(220)` and `MAP_STATE_OBJECTS(221)` stay unallocated. They are
+superseded rather than missing: `ELORIA_MAP_OBJECTS(236)` already states every
+clickable object on a map with its kind and its name, which is strictly more
+than the legacy pair carried. Mines - `REMOVE_MINE(80)`, `GET_NEW_MINE(81)`,
+`GET_MINES_LIST(82)` - stay unallocated because nothing on this server places a
+trap, triggers one, or makes one.
 
 Command 59 carries the buddy list. The server owns the list and states all of
 it at login, so no client keeps a copy, and the name travels with every event

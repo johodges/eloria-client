@@ -61,6 +61,8 @@ enum ServerMessage {
 	FIRE_PARTICLES = 61, REMOVE_FIRE_AT = 62, SEND_WEATHER = 100,
 	NEXT_NPC_MESSAGE_IS_QUEST = 92, HERE_IS_QUEST_ID = 93, QUEST_FINISHED = 94,
 	BUDDY_EVENT = 59,
+	GET_TELEPORTERS_LIST = 10, TELEPORT_IN = 12, TELEPORT_OUT = 13,
+	GET_3D_OBJ_LIST = 74, GET_3D_OBJ = 75, REMOVE_3D_OBJ = 76,
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
 	SEND_ACHIEVEMENTS = 95, ADD_NEW_ACTOR_EXTENDED = 247,
 	ELORIA_INVASION_ASSISTANT_STATE = 233,
@@ -652,6 +654,53 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				"fired": command == ServerMessage.MISSILE_FIRE_A_TO_B,
 				"source_actor_id": u16(payload),
 				"target_actor_id": u16(payload, 2)}
+		ServerMessage.GET_3D_OBJ:
+			# An object placed into a map that is already being played in.
+			# Everything the client knew about a map used to arrive with the
+			# map, so nothing could change while anybody was looking at it.
+			var placed: Dictionary = _world_object_at(payload, 0)
+			if placed.is_empty() or int(placed.offset) != payload.size():
+				return {"type": "invalid", "error": "world_object"}
+			return {"type": "world_object", "objects": [placed.value],
+				"replace": false}
+		ServerMessage.GET_3D_OBJ_LIST:
+			if payload.size() < 2:
+				return {"type": "invalid", "error": "world_object_list_length"}
+			var wanted: int = u16(payload)
+			var listed: Array[Dictionary] = []
+			var at: int = 2
+			for _index: int in range(wanted):
+				var entry: Dictionary = _world_object_at(payload, at)
+				if entry.is_empty():
+					return {"type": "invalid", "error": "world_object_list"}
+				listed.append(entry.value as Dictionary)
+				at = int(entry.offset)
+			if at != payload.size():
+				return {"type": "invalid", "error": "world_object_list_trailing"}
+			# A list is the whole truth about a map, so it replaces what was
+			# there rather than adding to it.
+			return {"type": "world_object", "objects": listed, "replace": true}
+		ServerMessage.REMOVE_3D_OBJ:
+			if payload.size() != 2:
+				return {"type": "invalid", "error": "remove_world_object"}
+			return {"type": "world_object_removed", "object_id": u16(payload)}
+		ServerMessage.GET_TELEPORTERS_LIST:
+			if payload.size() < 2:
+				return {"type": "invalid", "error": "teleporters_length"}
+			var teleporter_count: int = u16(payload)
+			if payload.size() != 2 + teleporter_count * 4:
+				return {"type": "invalid", "error": "teleporters_trailing"}
+			var tiles: Array[Vector2i] = []
+			for index: int in range(teleporter_count):
+				tiles.append(Vector2i(u16(payload, 2 + index * 4),
+					u16(payload, 4 + index * 4)))
+			return {"type": "teleporters", "tiles": tiles}
+		ServerMessage.TELEPORT_IN, ServerMessage.TELEPORT_OUT:
+			if payload.size() != 4:
+				return {"type": "invalid", "error": "teleport_length"}
+			return {"type": "teleport", "arriving":
+				command == ServerMessage.TELEPORT_IN,
+				"x": u16(payload), "y": u16(payload, 2)}
 		ServerMessage.BUDDY_EVENT:
 			# What happened, and to whom. The name travels with the event
 			# because a client that had to keep its own list to read one would
@@ -1246,6 +1295,18 @@ static func decode_actor_animation(payload: PackedByteArray) -> Dictionary:
 		return {"type": "invalid", "error": "actor_animation_empty"}
 	return {"type": "actor_animation", "actor_id": u16(payload),
 		"action": action}
+
+## One object out of a placement frame: id, tile, facing and model name.
+static func _world_object_at(payload: PackedByteArray, offset: int) -> Dictionary:
+	if offset + 8 > payload.size():
+		return {}
+	var field: Dictionary = _nul_at(payload, offset + 8)
+	if field.is_empty() or str(field.value).is_empty():
+		return {}
+	return {"value": {"object_id": u16(payload, offset),
+		"x": u16(payload, offset + 2), "y": u16(payload, offset + 4),
+		"rotation": u16(payload, offset + 6), "model": str(field.value)},
+		"offset": int(field.offset)}
 
 ## What a buddy event says happened, in the order the server numbers them.
 const BUDDY_EVENTS: Array[String] = ["offline", "online", "added", "removed"]
