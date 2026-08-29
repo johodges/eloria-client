@@ -25,8 +25,9 @@ from creature_anatomy import (AnatomyMesh, MAT_ACCENT, MAT_BODY, MAT_CORE,
                               MAT_DARK, MAT_FEATURE, MAT_GROWTH, _bezier,
                               _sheet, _euler, qaxis, branch_system,
                               facet_shell, feather_row, foliage_cluster,
-                              global_positions, metal_band, plated_shell,
-                              root_flare, swirl_ribbon, woven_trunk)
+                              debris_field, global_positions, metal_band,
+                              orbit_plates, plated_shell, root_flare,
+                              swirl_ribbon, woven_trunk)
 
 # ---------------------------------------------------------------------------
 # Biped
@@ -69,6 +70,16 @@ def _biped(**over) -> dict:
         # rings the joints in metal, and ``heart_style`` picks what surrounds
         # the lit core: bark staves on a treant, a socket ring on a golem.
         plated=.0, bands=.0, runes=.0, heart_style="bark",
+        # How the plates are cut, and how many slabs stack on each shoulder.
+        # The concept art does not give these creatures one armour: a cairn
+        # golem is stacked river boulders, a frost golem angular scale, a
+        # temple guardian big flat slabs, an amethyst golem erupting crystal.
+        plate_shape="boulder", pauldron=0,
+        # Arcane constructs are not built like the others: the art hangs their
+        # armour off a lit core with nothing touching.  ``halo`` is that ring
+        # of detached plates, ``blades`` the crystal wings that flank it, and
+        # ``debris`` the pieces of a body that has come apart.
+        halo=.0, blades=.0, debris=.0,
         # ``face`` decides what is under the brow: "flesh" is the default,
         # "skull" is the pale bone the art gives every revenant and barrow
         # knight, "ember" the lit sockets of a spirit.  ``hem`` shapes the
@@ -104,14 +115,16 @@ BIPED_PLANS = {
                     hunch=.05, foot_len=.28, belt=False, surface="stone",
                     gaunt=.02, neck_r=.052,
                     plated=1.0, bands=.55, runes=.30, heart=.62,
-                    heart_style="socket", face="ember", arm_splay=.075),
+                    heart_style="socket", face="ember", arm_splay=.075,
+                    plate_shape="boulder", pauldron=4),
     "construct": _biped(hip_h=.52, waist_h=.66, head_h=1.08, shoulder_w=.320,
                         chest=(.265, .235), hip_w=.170,
                         arm_r=.098, leg_r=.112, armor="plate", shoulder_pad=.135,
                         skull=(.175, .170, .180), foot_len=.26, weapon="staff",
                         belt=False, surface="metal", neck_r=.050,
                         plated=.85, bands=1.0, runes=.35, heart=.68,
-                        heart_style="socket", face="ember", arm_splay=.070),
+                        heart_style="socket", face="ember", arm_splay=.070,
+                        plate_shape="slab", pauldron=4),
     "brute": _biped(hip_h=.50, waist_h=.64, chest_h=.80, shoulder_h=.88, head_h=1.01,
                     shoulder_w=.305, hip_w=.175, chest=(.275, .235),
                     waist=(.225, .205), arm_len=.61, arm_r=.094, leg_len=.46,
@@ -142,8 +155,10 @@ BIPED_DETAIL = {
                                crest=None),
     "glacier_brute": dict(shoulder_pad=.11, horns="crag", surface="ice",
                           gaunt=.03, hunch=.09),
-    "orrery_colossus": dict(crest="rings", weapon=None, shoulder_pad=.14,
-                            surface="metal", gaunt=.03),
+    "orrery_colossus": dict(crest=None, weapon=None, shoulder_pad=.16,
+                            surface="metal", gaunt=.03, halo=1.55, robe=True,
+                            hem="ragged", heart=1.35, plate_shape="slab",
+                            pauldron=3, arm_splay=.10),
     "amethyst_sibyl": dict(hem="ragged", weapon=None, crest="shards", cloak=.42, hood=False),
     "crimson_duelist": dict(weapon="rapier", crest="hat", cloak=.44),
     "emberwood_matron": dict(face="ember", crest=None, weapon="lantern_staff", cloak=.40,
@@ -152,37 +167,50 @@ BIPED_DETAIL = {
     "barrow_sovereign": dict(face="skull", weapon="greatsword", crest="helm", cloak=.50,
                              shoulder_pad=.12, armor="plate", tabard=True),
     "tidecaller_sorceress": dict(hem="ragged", weapon="staff", crest="coral", cloak=.46),
-    "amethyst_golem": dict(crest="shards", surface="crystal", shoulder_pad=.14),
-    "orrery_sentinel": dict(crest="rings", weapon=None, surface="metal"),
+    "amethyst_golem": dict(crest="shards", surface="crystal", shoulder_pad=.14,
+                          plate_shape="shard", pauldron=3),
+    "orrery_sentinel": dict(crest="rings", weapon=None, surface="metal",
+                           blades=.46, heart=.80, plate_shape="slab",
+                           pauldron=3),
     "sunmane_minotaur": dict(horns="bull", weapon="axe", muzzle=.13, mane=.07,
                              shoulder_pad=.07, belt=True),
     "tidefin_naga": dict(weapon="trident", crest="fin", surface="scale"),
-    "cascade_golem": dict(surface="stone", shoulder_pad=.12, crest="falls"),
+    "cascade_golem": dict(surface="stone", shoulder_pad=.12, crest="falls",
+                         plate_shape="scale", pauldron=5, bands=.9),
     "reedhat_fisher": dict(crest="strawhat", weapon="sickle", cloak=.24),
     "ratcatcher_tough": dict(weapon="hook", hunch=.10, cloak=.20, crest="cowl"),
-    "millstone_golem": dict(surface="stone", crest="yoke", shoulder_pad=.13),
+    "millstone_golem": dict(surface="stone", crest="yoke", shoulder_pad=.13,
+                           plate_shape="drum", pauldron=3, bands=1.35),
     "drowned_dockhand": dict(hem="ragged", face="skull", ragged=.22, hood=False, weapon=None, hunch=.09),
-    "waterwheel_golem": dict(surface="stone", crest="wheel", shoulder_pad=.12),
+    "waterwheel_golem": dict(surface="stone", crest="wheel", shoulder_pad=.12,
+                            plate_shape="slab", pauldron=4),
     "barnacle_troll": dict(surface="barnacle", hunch=.10, horns="crag",
                            shoulder_pad=.08),
     "drowned_captain": dict(face="skull", weapon="cutlass", crest="tricorn", cloak=.38,
                             ragged=.14),
     "reedmask_stalker": dict(face="skull", weapon="spear", crest="mask", cloak=.34, ragged=.18),
     "barrow_knight": dict(face="skull", weapon="sword", shield="kite", crest="helm", cloak=.34),
-    "cairn_golem": dict(surface="stone", crest="cairn", shoulder_pad=.13),
+    "cairn_golem": dict(surface="stone", crest="cairn", shoulder_pad=.13,
+                        plate_shape="boulder", pauldron=4),
     "lantern_wraith": dict(hem="ragged", face="ember", weapon="lantern_staff", hood=True, cloak=.44, ragged=.24),
     "barrow_king": dict(face="skull", weapon="greatsword", crest="crown", cloak=.48, beard=.08,
                         tabard=True),
-    "mirrorhold_wheelwarden": dict(surface="stone", crest="wheel", weapon=None),
-    "verdigris_warden": dict(weapon="staff", crest="helm", surface="metal"),
-    "shattered_sentinel": dict(face="ember", surface="stone", crest="shards", shoulder_pad=.10),
+    "mirrorhold_wheelwarden": dict(surface="stone", crest="wheel", weapon=None,
+                              hunch=.30, knuckle=True, arm_len=.72,
+                              plate_shape="boulder", pauldron=4),
+    "verdigris_warden": dict(weapon="staff", crest="helm", surface="metal",
+                            plate_shape="slab", pauldron=4, chest=(.235, .205),
+                            shoulder_w=.290, arm_r=.086, leg_r=.098),
+    "shattered_sentinel": dict(surface="stone", crest=None, shoulder_pad=.10,
+                              debris=1.0, plate_shape="slab", pauldron=3),
     "mirrorhold_oracle": dict(hem="ragged", weapon="staff", hood=True, cloak=.42, crest="coral"),
     "tideguard_vanguard": dict(weapon="spear", shield="round", crest="helm",
                                cloak=.30, tabard=True),
     "shardbound_archivist": dict(weapon="book", crest="shards", cloak=.40),
     "mirrorhold_loremaster": dict(weapon="book", crest="crown", cloak=.46,
                                   beard=.09),
-    "bog_warden": dict(weapon="halberd", crest="helm", surface="stone"),
+    "bog_warden": dict(weapon="halberd", crest="helm", surface="stone",
+                      plate_shape="slab", pauldron=4),
     "frogspear_warrior": dict(weapon="spear", muzzle=.11, crest="fin",
                               surface="scale"),
     "canopy_gorilla": dict(mane=.08, muzzle=.12),
@@ -196,13 +224,15 @@ BIPED_DETAIL = {
                                 ragged=.16),
     "leafling_sprite": dict(face="ember", crest=None, bark=True, surface="bark",
                             wood=.75, crown=.55, heart=.60, canopy=.75),
-    "ivy_stone_golem": dict(surface="stone", crest="cairn", shoulder_pad=.12),
+    "ivy_stone_golem": dict(surface="stone", crest="cairn", shoulder_pad=.12,
+                            plate_shape="boulder", pauldron=4),
     "amberwood_dryad": dict(hem="ragged", crest=None, cloak=.44, weapon=None,
                             wood=.45, crown=1.45, heart=.55, canopy=1.0),
     "amberwood_scarecrow": dict(hem="ragged", face="skull", crest="strawhat", weapon="hook", ragged=.28,
                                 cloak=.22, surface="cloth"),
     "amberwood_ghost_knight": dict(face="skull", weapon="greatsword", crest="helm", cloak=.42,
                                    ragged=.12),
+    "glacier_golem": dict(plate_shape="scale", pauldron=4),
     "frostplate_knight": dict(weapon="greatsword", crest="helm", cloak=.38,
                               shoulder_pad=.11, surface="ice"),
     "amberwood_owl": dict(),
@@ -296,8 +326,23 @@ def _weapon(mesh, kind, grip, forward, up, side, s, bones, scale_hint=1.0):
         tip = grip + u * .72 * L
         line(butt, tip, .020 * L, .017 * L, MAT_FEATURE, 8)
         if kind == "staff":
-            mesh.ellipsoid(tuple(tip + u * .04 * L), (.075 * L,) * 3, bones,
-                           MAT_ACCENT, rings=7, sides=10)
+            # A ring finial holding a lit stone, which is what the wardens and
+            # the tide-callers carry; a plain ball on a pole reads as a mop.
+            hub = tip + u * .11 * L
+            ring = []
+            for k in range(15):
+                a = 2 * math.pi * k / 14
+                ring.append(hub + r * (math.cos(a) * .105 * L)
+                            + u * (math.sin(a) * .105 * L))
+            mesh.tube(ring, [(.017 * L, .013 * L)] * 15, bones, MAT_ACCENT,
+                      sides=5, cap_start=False, cap_end=False)
+            mesh.ellipsoid(tuple(hub), (.070 * L, .070 * L, .048 * L), bones,
+                           MAT_CORE, rings=6, sides=9)
+            for k in range(4):
+                a = 2 * math.pi * k / 4 + .4
+                prong = hub + r * (math.cos(a) * .105 * L) + u * (math.sin(a) * .105 * L)
+                mesh.spike(prong, prong + (prong - hub) * .55, .016 * L, bones,
+                           MAT_ACCENT, 5)
         elif kind == "scepter":
             for k in range(4):
                 a = 2 * math.pi * k / 4
@@ -336,10 +381,35 @@ def _weapon(mesh, kind, grip, forward, up, side, s, bones, scale_hint=1.0):
             mesh.tube([tip - r * .06 * L, tip + r * .06 * L],
                       [(.014 * L,) * 2, (.014 * L,) * 2], bones, MAT_DARK, 6)
         else:  # halberd
-            mesh.spike(tip, tip + u * .17 * L, .024 * L, bones, MAT_DARK, 6)
-            blade_a = [tip - u * .05 * L, tip + r * .13 * L + u * .06 * L]
-            blade_b = [tip + u * .10 * L, tip + r * .10 * L + u * .16 * L]
-            _sheet(mesh, blade_a, blade_b, .012 * L, bones, MAT_DARK)
+            # A crescent axe head with a back spike and a long spear point.
+            # A dark triangle a tenth of a scale unit across read as a small
+            # black flag tied to a pole, and this is the largest thing the
+            # temple guardian carries.
+            mesh.spike(tip, tip + u * .34 * L, .028 * L, bones, MAT_FEATURE, 7)
+            edge, back = [], []
+            for k in range(9):
+                t = k / 8.0
+                # Taller than it is wide, with the cutting edge bowed out and
+                # swept to a point top and bottom.  Bowed a third of a scale
+                # unit across a short span it came out a paddle.
+                bow = math.sin(math.pi * (.06 + .88 * t))
+                edge.append(tip + u * L * (.30 - .74 * t)
+                            + r * L * (.055 + .195 * bow))
+                back.append(tip + u * L * (.26 - .66 * t) + r * L * .030)
+            _sheet(mesh, edge, back, .015 * L, bones, MAT_ACCENT)
+            # A bright bevel down the cutting edge.
+            mesh.tube(edge, [(.011 * L, .007 * L)] * len(edge), bones,
+                      MAT_FEATURE, sides=4, cap_start=False, cap_end=False)
+            # The rear hook, opposite the blade.
+            hook = tip - r * L * .085 + u * L * .04
+            mesh.tube([hook, hook - r * L * .16 - u * L * .10,
+                       hook - r * L * .19 - u * L * .22],
+                      [(.030 * L, .016 * L), (.024 * L, .012 * L),
+                       (.006 * L, .004 * L)], bones, MAT_FEATURE, sides=5)
+            # A collar where the head meets the haft.
+            mesh.tube([tip - u * .10 * L, tip - u * .02 * L],
+                      [(.034 * L, .034 * L), (.030 * L, .030 * L)],
+                      bones, MAT_DARK, sides=8)
     elif kind == "axe":
         butt = grip - u * .22 * L
         tip = grip + u * .50 * L
@@ -360,8 +430,11 @@ def _weapon(mesh, kind, grip, forward, up, side, s, bones, scale_hint=1.0):
                        rings=5, sides=8)
 
 
-def _headgear(mesh, kind, head_g, skull, head_i, s, p):
+def _headgear(mesh, kind, head_g, skull, head_i, s, p, neck_i=None):
     """Helms, crowns, hoods, hats, masks, horns and crests."""
+    # Anything that hangs past the shoulders has to be able to weight to the
+    # neck as well, or it swings with the head alone.
+    neck_i = head_i if neck_i is None else neck_i
     if kind == "crown":
         base = head_g + np.array((0., skull[1] * .60, 0.))
         ring = [base + np.array((math.cos(2 * math.pi * k / 12) * skull[0] * .72,
@@ -548,17 +621,45 @@ def _headgear(mesh, kind, head_g, skull, head_i, s, p):
                             skull[2] * (1.85 - .30 * k)),
                            [head_i], MAT_BODY, rings=5, sides=9)
     elif kind == "yoke":
-        bar = head_g + np.array((0., skull[1] * .30, skull[2] * 1.0))
-        mesh.tube([bar - np.array((skull[0] * 3.2, 0., 0.)),
-                   bar + np.array((skull[0] * 3.2, 0., 0.))],
-                  [(.030 * s, .030 * s), (.030 * s, .030 * s)],
-                  [head_i], MAT_FEATURE, sides=6)
+        # A timber frame across the shoulders with a millstone slung off each
+        # end.  The bar on its own was a stick balanced on the golem's head:
+        # the stones are the reason the yoke is there and the heaviest thing in
+        # the silhouette.
+        bar = head_g + np.array((0., skull[1] * .34, skull[2] * .55))
+        span = skull[0] * 3.4
+        mesh.tube([bar - np.array((span, 0., 0.)), bar + np.array((span, 0., 0.))],
+                  [(.036 * s, .030 * s), (.036 * s, .030 * s)],
+                  [head_i], MAT_ACCENT, sides=6)
+        for sign in (-1., 1.):
+            post = bar + np.array((sign * span * .58, 0., 0.))
+            # Upright posts, so the frame reads as built rather than balanced.
+            mesh.tube([post + np.array((0., -skull[1] * .95, 0.)),
+                       post + np.array((0., skull[1] * .42, 0.))],
+                      [(.026 * s, .024 * s), (.026 * s, .024 * s)],
+                      [head_i], MAT_ACCENT, sides=5)
+            # The rope and the stone on the end of it.
+            hang = post + np.array((sign * span * .30, 0., 0.))
+            stone = hang + np.array((0., -skull[1] * 2.5, 0.))
+            mesh.tube([bar + np.array((sign * span * .88, 0., 0.)), stone],
+                      [(.012 * s, .012 * s), (.010 * s, .010 * s)],
+                      [head_i], MAT_DARK, sides=4)
+            mesh.tube([stone - np.array((0., skull[1] * .30, 0.)),
+                       stone + np.array((0., skull[1] * .30, 0.))],
+                      [(skull[0] * 1.15, skull[0] * 1.15),
+                       (skull[0] * 1.15, skull[0] * 1.15)],
+                      [head_i], MAT_BODY, sides=12)
+            mesh.ellipsoid(tuple(stone), (skull[0] * .34, skull[1] * .74,
+                                          skull[0] * .34),
+                           [head_i], MAT_DARK, rings=5, sides=8)
     elif kind == "wheel":
         # A waterwheel: two rims, an axle, spokes and paddles between them.
         # One thin hoop beside the head read as a hula hoop, and the wheel is
         # the largest thing in both of these figures.
-        hub = head_g + np.array((skull[0] * 2.1, -skull[1] * .30, 0.))
-        radius = .46 * s
+        # Mounted behind the shoulder, on the axis the art puts it: a wheel
+        # standing beside the head reads as a hoop being carried rather than as
+        # machinery the creature is built around.
+        hub = head_g + np.array((skull[0] * 1.5, -skull[1] * 1.35, skull[2] * 2.6))
+        radius = .52 * s
         axis = np.array((1., 0., 0.))
         for offset in (-.09 * s, .09 * s):
             ring = []
@@ -584,14 +685,28 @@ def _headgear(mesh, kind, head_g, skull, head_i, s, p):
                    [hub + rim * .62 + axis * .10 * s, hub + rim + axis * .10 * s],
                    .012 * s, [head_i], MAT_FEATURE)
     elif kind == "falls":
-        for k in range(5):
-            a = 2 * math.pi * k / 5
-            base = head_g + np.array((math.cos(a) * skull[0] * .9, skull[1] * .3,
-                                      math.sin(a) * skull[2] * .9))
-            mesh.tube([base, base + np.array((math.cos(a) * .05 * s, -.26 * s,
-                                              math.sin(a) * .05 * s))],
-                      [(.022 * s, .022 * s), (.010 * s, .010 * s)],
-                      [head_i], MAT_ACCENT, sides=5)
+        # Water is the brightest thing on these figures and it *falls*: a
+        # collar of stubby spikes round the head was neither.  Streams run from
+        # the crown down past the shoulders, widening as they go, and they are
+        # lit, because in the art they are the light source.
+        for k in range(4):
+            a = 2 * math.pi * k / 4 + .55
+            base = head_g + np.array((math.cos(a) * skull[0] * 1.15,
+                                      -skull[1] * .55,
+                                      math.sin(a) * skull[2] * 1.15))
+            drop = .52 * s
+            mid = base + np.array((math.cos(a) * .10 * s, -drop * .45,
+                                   math.sin(a) * .10 * s))
+            end = base + np.array((math.cos(a) * .14 * s, -drop,
+                                   math.sin(a) * .14 * s))
+            mesh.tube([base, mid, end],
+                      [(.014 * s, .014 * s), (.020 * s, .020 * s),
+                       (.011 * s, .011 * s)],
+                      [head_i, neck_i], MAT_CORE, sides=5)
+            # The splash where it lands.
+            mesh.ellipsoid(tuple(end + np.array((0., -.02 * s, 0.))),
+                           (.075 * s, .028 * s, .075 * s), [head_i, neck_i],
+                           MAT_CORE, rings=4, sides=7)
 
 
 def biped_geometry(plan_key: str, scale: float, bones,
@@ -645,10 +760,10 @@ def biped_geometry(plan_key: str, scale: float, bones,
         # separates them, and that is geometry, not colour.
         plated_shell(mesh, spine_pts, radii, torso_bones, MAT_BODY,
                      seed=f"{variant or plan_key}:torso",
-                     rows=int(4 + 2 * p["plated"]), around=7,
-                     relief=.30 * p["plated"], gap=.15, dome=.58,
+                     rows=3, around=4,
+                     relief=.52 * p["plated"], gap=.06, dome=.70,
                      rune_material=MAT_CORE if p["runes"] else None,
-                     rune_chance=p["runes"] * .55, span=(.26, .86))
+                     rune_chance=p["runes"] * .55, span=(.26, .86), shape=p["plate_shape"])
     mesh.upright = True
     mesh.torso = (list(spine_pts) + [g[head_i]],
                   list(radii) + [(p["skull"][0] * s * .5, p["skull"][1] * s * .5)],
@@ -729,6 +844,54 @@ def biped_geometry(plan_key: str, scale: float, bones,
                 mesh.tube([rim, out],
                           [(heart * .055, heart * .055), (heart * .034, heart * .034)],
                           [chest_i, spine_i], MAT_BODY, sides=5)
+    if p["halo"]:
+        # Armour hanging off the core rather than bolted to a body.  Two rings
+        # at different radii and tilts, so the arc reads as depth rather than
+        # as a flat wheel drawn round the chest.
+        hub = (spine_pts[2] * .34 + spine_pts[3] * .66
+               + np.array((0., 0., -chest_r[1] * .30)))
+        halo = p["halo"] * s
+        for index, (radius, count, arc, tilt, material) in enumerate(
+                ((.60, 10, .48, .10, MAT_FEATURE),
+                 (.90, 13, .38, -.14, MAT_BODY))):
+            orbit_plates(mesh, hub, halo * radius, [chest_i, spine_i, body_i],
+                         material, seed=f"{variant or plan_key}:halo:{index}",
+                         count=count, arc=arc, width=.155, thickness=.052,
+                         axis=(0., 0., 1.), tilt=tilt, sides=5)
+        # Concentric rune rings on the plane of the core.
+        for radius, width in ((.34, .030), (.46, .020)):
+            ring = []
+            for k in range(25):
+                angle = 2 * math.pi * k / 24
+                ring.append(hub + np.array((math.cos(angle) * halo * radius,
+                                            math.sin(angle) * halo * radius,
+                                            -chest_r[1] * .10)))
+            mesh.tube(ring, [(halo * width, halo * width)] * 25,
+                      [chest_i, spine_i], MAT_ACCENT, sides=5,
+                      cap_start=False, cap_end=False)
+    if p["blades"]:
+        # The crystal wings the automaton is flanked by, edge-on to the front.
+        blade = p["blades"] * s
+        # ``skull`` is not resolved until the head is built further down, so
+        # take the measurement straight off the plan here.
+        cranium = tuple(v * s for v in p["skull"])
+        for sign in (-1., 1.):
+            root = g[head_i] + np.array((sign * cranium[0] * 2.9,
+                                         cranium[1] * .10, 0.))
+            tip = root + np.array((sign * blade * .06, blade * .50, 0.))
+            heel = root + np.array((-sign * blade * .04, -blade * .44, 0.))
+            mesh.tube([heel, root, tip],
+                      [(blade * .03, blade * .014),
+                       (blade * .15, blade * .052),
+                       (blade * .03, blade * .014)],
+                      [head_i, neck_i], MAT_CORE, sides=5)
+    if p["debris"]:
+        # A body that has come apart and not finished falling.
+        debris_field(mesh, spine_pts[3], np.array(
+            (chest_r[0] * 2.6, chest_r[1] * 2.2, chest_r[1] * 2.2)),
+            [chest_i, spine_i, body_i], MAT_BODY,
+            seed=f"{variant or plan_key}:debris",
+            count=int(6 + 8 * p["debris"]), size=chest_r[0] * .46 * p["debris"])
     if p["belt"]:
         belt = g[spine_i] + np.array((0., -waist_r[1] * .30, 0.))
         mesh.tube([belt - np.array((0., .018 * s, 0.)), belt + np.array((0., .018 * s, 0.))],
@@ -913,10 +1076,10 @@ def biped_geometry(plan_key: str, scale: float, bones,
         if p["plated"]:
             plated_shell(mesh, arm_line, arm_radii, arm_bones, MAT_BODY,
                          seed=f"{variant or plan_key}:arm:{side}",
-                         rows=int(3 + 2 * p["plated"]), around=5,
-                         relief=.34 * p["plated"], gap=.17, dome=.56,
+                         rows=2, around=3,
+                         relief=.54 * p["plated"], gap=.07, dome=.70,
                          rune_material=MAT_CORE if p["runes"] else None,
-                         rune_chance=p["runes"] * .35, span=(.16, .94))
+                         rune_chance=p["runes"] * .45, span=(.16, .94), shape=p["plate_shape"])
         if p["bands"]:
             # Metal at the wrist and the top of the arm, which is where every
             # one of these figures is banded in the art.
@@ -954,13 +1117,44 @@ def biped_geometry(plan_key: str, scale: float, bones,
                                     count=4)
         else:
             # Fingers read as a hand rather than a mitten.
-            for k in range(min(int(p["digit"]), 4)):
+            knuckles = min(int(p["digit"]), 4)
+            for k in range(knuckles):
                 offset = (k - 1.5) * r * .58
                 base = palm + np.array((offset, -r * 1.1, -r * .2))
                 mesh.tube([palm + np.array((offset, -r * .5, -r * .1)), base],
                           [(r * .30, r * .30), (r * .22, r * .22)],
                           [B[f"hand_{side}"]], MAT_BODY, sides=5)
-        if p["shoulder_pad"]:
+                if p["plated"]:
+                    # A stone fist is a bunch of blocks, and these hands are
+                    # the second thing the eye goes to after the chest.
+                    mesh.ellipsoid(tuple(palm + np.array((offset, -r * .62,
+                                                          -r * .34))),
+                                   (r * .52, r * .50, r * .60),
+                                   [B[f"hand_{side}"]], MAT_BODY,
+                                   rings=4, sides=5)
+        if p["pauldron"]:
+            # A stack of overlapping slabs, each wider than the one above it.
+            # Every armoured figure in this group is drawn with one, and it is
+            # most of what makes the shoulders read as heavy; a single squashed
+            # ellipsoid is a shoulder pad on a sports jersey.
+            pad = max(p["shoulder_pad"], p["arm_r"] * 1.15) * s
+            stack = max(2, int(p["pauldron"]) - 1)
+            for k in range(stack):
+                t = k / max(stack - 1, 1)
+                # Each slab sits lower and further out than the one above, so
+                # the stack sheds down the arm.  Spread flat and wide they read
+                # as a sun hat brim rather than as shoulder armour.
+                seat = sh + np.array((sign * pad * (.20 + .52 * t),
+                                      pad * (.46 - 1.02 * t),
+                                      -pad * .06 + pad * .16 * t))
+                spread = 1.0 - .15 * k
+                mesh.ellipsoid(tuple(seat),
+                               (pad * 1.62 * spread, pad * 1.10 * spread,
+                                pad * 1.70 * spread),
+                               [B[f"shoulder_{side}"], B[f"upper_arm_{side}"],
+                                chest_i], MAT_BODY, rings=6, sides=10,
+                               squash=.82)
+        elif p["shoulder_pad"]:
             pad = p["shoulder_pad"] * s
             mesh.ellipsoid(tuple(sh + np.array((sign * pad * .18, pad * .34, 0.))),
                            (pad * 2.0, pad * 1.5, pad * 2.1),
@@ -995,10 +1189,10 @@ def biped_geometry(plan_key: str, scale: float, bones,
                          (lr * .74, lr * .74)]
             plated_shell(mesh, leg_line, leg_radii, leg_bones, MAT_BODY,
                          seed=f"{variant or plan_key}:leg:{side}",
-                         rows=int(3 + 2 * p["plated"]), around=5,
-                         relief=.32 * p["plated"], gap=.17, dome=.56,
+                         rows=2, around=3,
+                         relief=.52 * p["plated"], gap=.07, dome=.70,
                          rune_material=MAT_CORE if p["runes"] else None,
-                         rune_chance=p["runes"] * .30, span=(.12, .90))
+                         rune_chance=p["runes"] * .38, span=(.12, .90), shape=p["plate_shape"])
             if p["bands"]:
                 metal_band(mesh, knee * .35 + foot * .65, foot - knee,
                            lr * .80, leg_bones, MAT_ACCENT,
@@ -1171,9 +1365,9 @@ def biped_geometry(plan_key: str, scale: float, bones,
                             MAT_GROWTH,
                             seed=f"{variant or plan_key}:crownleaf:{side:+.0f}:{index}:{k}",
                             count=4)
-    _headgear(mesh, p["crest"], g[head_i], skull, head_i, s, p)
+    _headgear(mesh, p["crest"], g[head_i], skull, head_i, s, p, neck_i)
     if p["hood"]:
-        _headgear(mesh, "hood", g[head_i], skull, head_i, s, p)
+        _headgear(mesh, "hood", g[head_i], skull, head_i, s, p, neck_i)
 
     # ---- held equipment ---------------------------------------------------
     if p["weapon"]:

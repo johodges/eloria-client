@@ -106,7 +106,29 @@ def core_tint(slug: str, quantile: float = .90):
     coloured = picked[(high - low) / np.maximum(high, 1.0) > .38]
     if len(coloured) < max(24, len(picked) // 60):
         return None
-    return tuple(int(round(v)) for v in coloured.mean(axis=0))
+    # Averaging everything bright and coloured together blends the glow with
+    # whatever metal trim shares the highlights, and on these figures the trim
+    # usually wins on volume: a river stone golem came back gold when its core
+    # and its runes are plainly cyan.  Cluster by hue instead and take the most
+    # *saturated* cluster rather than the largest, because emitted light is the
+    # purest colour on a figure even when it is not the most abundant.
+    step = max(1, len(coloured) // 4000)
+    sample = coloured[::step]
+    buckets: dict[int, list] = {}
+    for colour in sample:
+        hue = colorsys.rgb_to_hsv(*(colour / 255.0))[0]
+        buckets.setdefault(int(hue * 10) % 10, []).append(colour)
+    best, best_saturation = None, -1.0
+    for values in buckets.values():
+        if len(values) < len(sample) * .10:
+            continue
+        mean = np.mean(values, axis=0)
+        saturation = (mean.max() - mean.min()) / max(mean.max(), 1.0)
+        if saturation > best_saturation:
+            best, best_saturation = mean, saturation
+    if best is None:
+        best = coloured.mean(axis=0)
+    return tuple(int(round(v)) for v in best)
 
 
 def main() -> None:

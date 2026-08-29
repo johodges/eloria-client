@@ -72,6 +72,10 @@ def _plan(**overrides) -> dict:
         # extras -----------------------------------------------------------
         horn=None, shell=False, spines=None, wings=False, plates=None,
         dorsal=None, humped=False, mane_ruff=False,
+        # Plated construction, as on the bipedal golems: the stone beasts in
+        # the art are clad in overlapping slabs, not smooth hide in a stone
+        # colour.  ``core`` sets a lit gem in the shoulder.
+        plated=.0, plate_shape="boulder", runes=.0, core=.0,
     )
     base.update(overrides)
     return base
@@ -400,6 +404,17 @@ QUADRUPED_DETAIL = {
     "moss_bear": dict(mane_ruff=.80),
     "mossback_anteater": dict(muzzle_len=.52, muzzle_r=(.085, .060),
                               tail_bush=1.7),
+    # Stone beasts: the art clads these in overlapping plate the same way it
+    # clads the bipedal golems, and sets a lit gem over the shoulder.
+    "reefplate_golem": dict(plated=1.0, plate_shape="scale", runes=.25,
+                            core=.62, shell=True, mane_ruff=.0,
+                            skull=(.24, .22, .24)),
+    "cairnback_tortoise": dict(plated=.75, plate_shape="slab", runes=.20),
+    "geode_tortoise": dict(plated=.85, plate_shape="shard", runes=.35,
+                           core=.46),
+    "crystalwing": dict(plated=.70, plate_shape="shard", runes=.30),
+    "prism_drake": dict(plated=.65, plate_shape="shard", runes=.30),
+    "facet_hound": dict(plated=.60, plate_shape="shard", runes=.25),
 }
 
 
@@ -1153,6 +1168,47 @@ def _features(mesh: AnatomyMesh, p: dict, s: float, g, B, spine, radii,
                   [(.055 * s, .050 * s), (.012 * s, .012 * s)],
                   [head_i], MAT_FEATURE, sides=9)
 
+    if p.get("plated"):
+        plated = float(p["plated"])
+        seed = str(p.get("_variant", ""))
+        plated_shell(mesh, spine, radii, [body_i, chest_i, B["neck"]], MAT_BODY,
+                     seed=seed + ":back", rows=int(2 + 2 * plated), around=5,
+                     relief=.38 * plated, gap=.11, dome=.60,
+                     shape=p.get("plate_shape", "boulder"),
+                     rune_material=MAT_CORE if p.get("runes") else None,
+                     rune_chance=float(p.get("runes") or 0.) * .5,
+                     span=(.08, .92))
+        for key in ("front_leg_l", "front_leg_r", "rear_leg_l", "rear_leg_r"):
+            if key not in B:
+                continue
+            shin = key.replace("_leg_", "_shin_")
+            paw = key.replace("_leg_", "_paw_")
+            if shin not in B or paw not in B:
+                continue
+            chain = [g[B[key]], (g[B[key]] + g[B[shin]]) * .5, g[B[shin]],
+                     g[B[paw]]]
+            thick = p["upper_r"] * s
+            widths = [(thick * 1.05, thick * 1.05), (thick * .92, thick * .92),
+                      (thick * .80, thick * .80), (thick * .66, thick * .66)]
+            plated_shell(mesh, chain, widths,
+                         [body_i, B[key], B[shin], B[paw]], MAT_BODY,
+                         seed=f"{seed}:{key}", rows=3, around=4,
+                         relief=.38 * plated, gap=.13, dome=.60,
+                         shape=p.get("plate_shape", "boulder"),
+                         span=(.10, .90))
+    if p.get("core"):
+        # A gem set over the shoulder, where the art puts it on these beasts.
+        gem = float(p["core"]) * s
+        seat = spine[max(len(spine) - 3, 0)] + np.array((0., radii[-1][1] * .55, 0.))
+        mesh.ellipsoid(tuple(seat), (gem * .30, gem * .26, gem * .30),
+                       [chest_i, B["neck"]], MAT_CORE, rings=7, sides=11)
+        for k in range(9):
+            angle = 2 * math.pi * k / 9
+            mesh.ellipsoid(tuple(seat + np.array((math.cos(angle) * gem * .24,
+                                                  -gem * .04,
+                                                  math.sin(angle) * gem * .24))),
+                           (gem * .075,) * 3, [chest_i, B["neck"]],
+                           MAT_FEATURE, rings=4, sides=6)
     ruff = float(p.get("mane_ruff") or 0.0)
     if ruff:
         # One smooth ellipsoid reads as a scarf.  A mane is a mass of hanging
@@ -2019,10 +2075,23 @@ def woven_trunk(mesh, spine, radii, bones, material, seed: str, strands: int = 7
         mesh.tube(points, thick, bones, material, sides=sides)
 
 
+# What a plate is cut like.  The concept art does not give these creatures one
+# armour: a cairn golem is stacked river boulders, a frost golem is angular
+# scale, a temple guardian wears big flat slabs and an amethyst golem erupts
+# crystal.  (cross-section sides, relief x, footprint x, crown x, tilt down)
+PLATE_SHAPES = {
+    "boulder": (6, 1.00, 1.00, .70, .00),
+    "scale":   (5, 0.80, 1.20, .52, .34),
+    "slab":    (4, 0.86, 1.30, .78, .12),
+    "shard":   (5, 1.85, 0.74, .10, -.18),
+    "drum":    (10, 0.34, 1.34, .90, .00),
+}
+
+
 def plated_shell(mesh, spine, radii, bones, material, seed: str, rows: int = 4,
                  around: int = 6, relief: float = .26, gap: float = .16,
                  dome: float = .55, sides: int = 7, rune_material=None,
-                 rune_chance: float = .22, span=(0.0, 1.0)):
+                 rune_chance: float = .22, span=(0.0, 1.0), shape: str = "boulder"):
     """Clad a limb in overlapping slabs, the way a cairn or a suit of plate is.
 
     The golems and constructs are drawn as a *stack of discrete blocks* -- you
@@ -2041,6 +2110,11 @@ def plated_shell(mesh, spine, radii, bones, material, seed: str, rows: int = 4,
         return
     rng = np.random.default_rng(
         zlib.crc32(("plate:" + seed).encode("utf-8")) % (2 ** 31))
+    cut, relief_x, foot_x, crown_x, tilt = PLATE_SHAPES.get(
+        shape, PLATE_SHAPES["boulder"])
+    sides = cut
+    relief = relief * relief_x
+    dome = dome * crown_x
 
     def sample(t):
         position = t * (len(spine) - 1)
@@ -2062,7 +2136,7 @@ def plated_shell(mesh, spine, radii, bones, material, seed: str, rows: int = 4,
         phase = math.pi / around * (row % 2)
         girth = (rx + ry) * .5
         # Plate half-width from the arc it has to cover, less the joint gap.
-        half = (math.pi * girth / around) * (1.0 - gap)
+        half = (math.pi * girth / around) * (1.0 - gap) * foot_x
         depth = girth * relief
         for k in range(around):
             angle = phase + 2 * math.pi * k / around
@@ -2071,9 +2145,11 @@ def plated_shell(mesh, spine, radii, bones, material, seed: str, rows: int = 4,
             seat = point + right * (math.cos(angle) * rx) + up * (math.sin(angle) * ry)
             lift = float(rng.uniform(.72, 1.28))
             wobble = float(rng.uniform(.86, 1.16))
+            lean = -tangent / max(float(np.linalg.norm(tangent)), 1e-9) * (
+                girth * tilt)
             inner = seat - outward * depth * .55
-            crest = seat + outward * depth * .34 * lift
-            outer = seat + outward * depth * lift
+            crest = seat + outward * depth * .34 * lift + lean * .35
+            outer = seat + outward * depth * lift + lean
             mesh.tube([inner, crest, outer],
                       [(half * .80 * wobble, half * .72 * wobble),
                        (half * wobble, half * .90 * wobble),
@@ -2085,6 +2161,67 @@ def plated_shell(mesh, spine, radii, bones, material, seed: str, rows: int = 4,
                            outer + outward * depth * .16],
                           [(half * .30, half * .26), (half * .22, half * .19)],
                           bones, rune_material, sides=5)
+
+
+def orbit_plates(mesh, centre, radius: float, bones, material, seed: str,
+                 count: int = 8, arc: float = .62, width: float = .34,
+                 thickness: float = .12, axis=(0., 0., 1.), tilt: float = .0,
+                 sides: int = 5, jitter: float = .14):
+    """Curved armour plates floating in a ring, detached from the body.
+
+    The arcane constructs are not built like anything else in the library: the
+    art gives them a lit core with its armour hanging *off* it in an arc,
+    nothing touching.  Each plate here is a swept arc of a circle with a broad
+    flat section, so it reads as a curved slab rather than as a bent pipe.
+    """
+    centre = np.asarray(centre, dtype=float)
+    axis = np.asarray(axis, dtype=float)
+    axis = axis / max(float(np.linalg.norm(axis)), 1e-9)
+    right, up = AnatomyMesh._frame(axis)
+    rng = np.random.default_rng(
+        zlib.crc32(("orbit:" + seed).encode("utf-8")) % (2 ** 31))
+    for index in range(count):
+        base = 2 * math.pi * index / count
+        reach = radius * (1.0 + float(rng.uniform(-jitter, jitter)))
+        lift = float(rng.uniform(-jitter, jitter)) * radius * .5
+        points, radii = [], []
+        steps = 5
+        for step in range(steps):
+            t = step / (steps - 1)
+            angle = base + arc * (t - .5)
+            here = (centre + right * (math.cos(angle) * reach)
+                    + up * (math.sin(angle) * reach)
+                    + axis * (lift + tilt * math.sin(angle) * radius))
+            # Broad in the plane of the ring, thin through it, tapering to
+            # both ends so the plate has a point rather than a cut-off.
+            taper = math.sin(math.pi * (.18 + .64 * t))
+            points.append(here)
+            radii.append((radius * width * taper,
+                          radius * thickness * taper))
+        mesh.tube(points, radii, bones, material, sides=sides)
+
+
+def debris_field(mesh, centre, extent, bones, material, seed: str,
+                 count: int = 9, size: float = .16, drift: float = 1.0):
+    """Broken pieces hanging in the air around a shattered body."""
+    centre = np.asarray(centre, dtype=float)
+    extent = np.asarray(extent, dtype=float)
+    rng = np.random.default_rng(
+        zlib.crc32(("debris:" + seed).encode("utf-8")) % (2 ** 31))
+    for index in range(count):
+        offset = np.array([float(rng.uniform(-1., 1.)) for _ in range(3)])
+        # Pieces drift outward and upward, as though still coming apart.
+        offset[1] = abs(offset[1]) * .8 + .12
+        here = centre + offset * extent * drift
+        chunk = size * float(rng.uniform(.55, 1.35))
+        axis = np.array([float(rng.uniform(-1., 1.)) for _ in range(3)])
+        axis = axis / max(float(np.linalg.norm(axis)), 1e-9) * chunk
+        # Blocky rather than bladed: these are pieces of a wall, and a thin
+        # tapered spindle reads as a shard of glass instead.
+        mesh.tube([here - axis, here + axis * .2, here + axis],
+                  [(chunk * .50, chunk * .42), (chunk * .66, chunk * .58),
+                   (chunk * .44, chunk * .36)],
+                  bones, material, sides=4)
 
 
 def metal_band(mesh, centre, direction, radius, bones, material,

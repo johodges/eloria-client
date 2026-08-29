@@ -286,6 +286,8 @@ is how each of these was found and each fix confirmed.
 | `swirl_ribbon` | a band that coils around the line it follows | flame, spirit-hair, running water and kraken arms |
 | `facet_shell` | flat-shaded plates over a lit inner shell | crystal carapaces with the glow leaking out of the seams |
 | `plated_shell` | overlapping oriented slabs around a limb | golems and constructs built from discrete blocks, staggered like masonry |
+| `orbit_plates` | curved armour plates floating in a ring | arcane constructs whose armour hangs off a lit core, nothing touching |
+| `debris_field` | broken pieces hanging in the air | a body that has come apart and not finished falling |
 | `metal_band` | a banding ring around a limb | the bronze trim the art puts at every wrist and ankle |
 | `feather_row` | overlapping flight feathers along an edge | wings with a serrated outline instead of a coloured triangle |
 
@@ -353,6 +355,13 @@ turned up four more problems that only show at library scale.
   around the core now, tighter at the middle and ragged at the edge, jittered
   from the same seeded generator so the cloud stays reproducible.
 
+Averaging every bright coloured pixel together blended the glow with whatever
+metal trim shared the highlights, and the trim usually won on volume -- a river
+stone golem came back gold when its core and its runes are plainly cyan.  The
+bright band is clustered by hue now and the most *saturated* cluster is taken
+rather than the largest, because emitted light is the purest colour on a figure
+even when it is not the most abundant.
+
 ### Golems and constructs
 
 Thirteen creatures across two body plans, and every one of them was a smooth
@@ -385,7 +394,37 @@ Two attachments in the same group were thin hoops where the art has machinery.
 The orrery rings are an armillary now -- broad banded rings of unequal size,
 each tilted off the others, with crystals set into the bands and a lit sphere
 at the centre -- and the waterwheel has two rims, an axle, spokes and paddle
-boards.
+boards, mounted behind the shoulder rather than standing beside the head.
+
+**Block size matters as much as block shape.** The first pass put six rows of
+seven plates round a torso, and forty-two segments at that scale reads as
+gravel rather than as masonry -- the art's cairn golem is built from perhaps a
+dozen boulders you can count. Twelve round the torso and six down a limb,
+each standing further proud and cut with fewer facets, gives the countable
+stacked-stone silhouette the art has.
+
+**The thirteen do not share a build.** `plate_shape` cuts the plates five
+ways -- rounded boulders for the cairn and ivy golems, angular scale for the
+frost and crownwater guardians, big flat slabs for the temple and tide
+wardens, erupting shards for the amethyst golem, and smooth banded drums for
+the river stone golem, whose limbs the art draws as stacked cylinders rather
+than as rock at all. On top of that: the wheelwarden crouches on its knuckles
+under the wheel on its back, the millstone golem carries a timber yoke with a
+stone slung off each end, the shattered sentinel is coming apart with its
+pieces still in the air, and the two arcane constructs are built round a core
+with their armour floating off it -- the colossus has no legs the art shows at
+all, so it wears a banner instead.
+
+Plating reaches the quadrupeds too, which is what the coral shell golem
+needed: it was a plain bear where the art gives it a plated carapace and a lit
+gem over the shoulder. The crystal-backed lizard, the geode tortoise and the
+cairnback tortoise take the same treatment.
+
+The halberd and the staff were rebuilt while they were in frame -- a dark
+triangle a tenth of a scale unit across read as a small black flag tied to a
+pole, and the wardens' staves ended in a plain ball. They are a crescent axe
+head with a back hook and a spear point, and a ring finial holding a lit
+stone.
 
 The core measurement had to be fixed to serve them.  Sampling the top three per
 cent of luminance caught mostly specular bloom, and on the golems the near-grey
@@ -429,7 +468,7 @@ in that form rather than the host's.
 
 ### Budget
 
-171 creatures, mean 6,404 triangles, 85 MB on disk, with the woody and plated
+171 creatures, mean 6,192 triangles, 83 MB on disk, with the woody and plated
 hero creatures between 12,000 and 30,000 -- up from a mean of 4,945 and 74 MB. The
 mean is well under the ceiling this pass was allowed, because the triangles
 went into features the art shows and the models lacked rather than into
