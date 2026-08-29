@@ -1783,16 +1783,16 @@ text = "Reset session"
 [node name="InventoryPanel" type="PanelContainer" parent="GameView" unique_id=2049255245]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
+anchors_preset = 6
+anchor_left = 1.0
 anchor_top = 0.5
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -340.0
-offset_top = -270.0
-offset_right = 340.0
-offset_bottom = 270.0
-grow_horizontal = 2
+offset_left = -486.0
+offset_top = -215.0
+offset_right = -16.0
+offset_bottom = 215.0
+grow_horizontal = 0
 grow_vertical = 2
 
 [node name="Content" type="VBoxContainer" parent="GameView/InventoryPanel" unique_id=477610738]
@@ -1821,11 +1821,11 @@ text = "×"
 [node name="InventoryBody" type="HBoxContainer" parent="GameView/InventoryPanel/Content" unique_id=1949090920]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="EquipmentColumn" type="VBoxContainer" parent="GameView/InventoryPanel/Content/InventoryBody" unique_id=1822552852]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(136, 0)
+custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
 
 [node name="EquipmentTitle" type="Label" parent="GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn" unique_id=2099304826]
@@ -1846,7 +1846,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Scroll" type="ScrollContainer" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn" unique_id=397175415]
-custom_minimum_size = Vector2(408, 360)
+custom_minimum_size = Vector2(292, 292)
 layout_mode = 2
 horizontal_scroll_mode = 0
 
@@ -1859,7 +1859,7 @@ columns = 6
 
 [node name="InventoryDescription" type="RichTextLabel" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn" unique_id=1077859020]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(390, 54)
+custom_minimum_size = Vector2(284, 44)
 layout_mode = 2
 text = "Select an item to inspect it."
 fit_content = true
@@ -1894,7 +1894,7 @@ layout_mode = 2
 text = "Inspect"
 
 [node name="SideActions" type="VBoxContainer" parent="GameView/InventoryPanel/Content/InventoryBody" unique_id=831076230]
-custom_minimum_size = Vector2(78, 0)
+custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
 
 [node name="InventoryStoreAll" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/SideActions" unique_id=640470377]
@@ -2381,63 +2381,49 @@ text = "Close"
 [node name="GroundBagPanel" type="PanelContainer" parent="GameView" unique_id=1091567745]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
+anchors_preset = 4
 anchor_top = 0.5
-anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -340.0
-offset_top = -245.0
-offset_right = 340.0
-offset_bottom = 245.0
-grow_horizontal = 2
+offset_left = 16.0
+offset_top = -160.0
+offset_right = 246.0
+offset_bottom = 160.0
 grow_vertical = 2
 
 [node name="Content" type="VBoxContainer" parent="GameView/GroundBagPanel" unique_id=690039969]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 
-[node name="Title" type="Label" parent="GameView/GroundBagPanel/Content" unique_id=43304331]
-layout_mode = 2
-text = "GROUND BAG"
-horizontal_alignment = 1
-
-[node name="Hint" type="Label" parent="GameView/GroundBagPanel/Content" unique_id=1973775800]
-layout_mode = 2
-text = "Contents and inventory are synchronized by the server."
-horizontal_alignment = 1
-
-[node name="Columns" type="HBoxContainer" parent="GameView/GroundBagPanel/Content" unique_id=108632840]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Ground" type="VBoxContainer" parent="GameView/GroundBagPanel/Content/Columns" unique_id=2055179609]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="GameView/GroundBagPanel/Content/Columns/Ground" unique_id=1314978761]
-layout_mode = 2
-text = "BAG CONTENTS"
-horizontal_alignment = 1
-
-[node name="GroundBagItems" type="ItemList" parent="GameView/GroundBagPanel/Content/Columns/Ground" unique_id=119445876]
+[node name="GroundBagHeader" type="HBoxContainer" parent="GameView/GroundBagPanel/Content" unique_id=310244501]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(315, 320)
 layout_mode = 2
-allow_reselect = true
+mouse_default_cursor_shape = 13
 
-[node name="Inventory" type="VBoxContainer" parent="GameView/GroundBagPanel/Content/Columns" unique_id=655896418]
+[node name="Title" type="Label" parent="GameView/GroundBagPanel/Content/GroundBagHeader" unique_id=43304331]
 layout_mode = 2
-
-[node name="Label" type="Label" parent="GameView/GroundBagPanel/Content/Columns/Inventory" unique_id=1937489371]
-layout_mode = 2
-text = "YOUR INVENTORY"
+size_flags_horizontal = 3
+mouse_filter = 1
+text = "BAG"
 horizontal_alignment = 1
 
-[node name="GroundBagInventory" type="ItemList" parent="GameView/GroundBagPanel/Content/Columns/Inventory" unique_id=790491502]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(315, 320)
+[node name="GroundBagClose" type="Button" parent="GameView/GroundBagPanel/Content/GroundBagHeader" unique_id=666367948]
+custom_minimum_size = Vector2(30, 28)
 layout_mode = 2
-allow_reselect = true
+tooltip_text = "Close the bag [Esc]"
+text = "×"
+
+[node name="Scroll" type="ScrollContainer" parent="GameView/GroundBagPanel/Content" unique_id=1973775800]
+custom_minimum_size = Vector2(204, 200)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="GroundBagGrid" type="GridContainer" parent="GameView/GroundBagPanel/Content/Scroll" unique_id=119445876]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 4
 
 [node name="QuantityRow" type="HBoxContainer" parent="GameView/GroundBagPanel/Content" unique_id=2006787306]
 layout_mode = 2
@@ -2445,10 +2431,11 @@ alignment = 1
 
 [node name="Label" type="Label" parent="GameView/GroundBagPanel/Content/QuantityRow" unique_id=1570740897]
 layout_mode = 2
-text = "Quantity"
+text = "Qty"
 
 [node name="GroundBagQuantity" type="SpinBox" parent="GameView/GroundBagPanel/Content/QuantityRow" unique_id=24400466]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(88, 0)
 layout_mode = 2
 min_value = 1.0
 max_value = 2147483647.0
@@ -2458,35 +2445,19 @@ value = 1.0
 layout_mode = 2
 alignment = 1
 
-[node name="GroundBagPick" type="Button" parent="GameView/GroundBagPanel/Content/Actions" unique_id=546010299]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Pick the selected quantity into your inventory"
-disabled = true
-text = "Pick selected"
-
-[node name="GroundBagLook" type="Button" parent="GameView/GroundBagPanel/Content/Actions" unique_id=546010300]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Ask the server what the selected ground item is"
-disabled = true
-text = "Look"
-
 [node name="GroundBagPickAll" type="Button" parent="GameView/GroundBagPanel/Content/Actions" unique_id=1878723392]
 layout_mode = 2
+size_flags_horizontal = 3
 tooltip_text = "Ask the server to pick every available stack"
-text = "Pick all"
+text = "Get All"
 
 [node name="GroundBagDrop" type="Button" parent="GameView/GroundBagPanel/Content/Actions" unique_id=1637161786]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Drop the selected inventory quantity at your authoritative tile"
+size_flags_horizontal = 3
+tooltip_text = "Drop the quantity above from the item selected in the inventory window"
 disabled = true
-text = "Drop selected"
-
-[node name="GroundBagClose" type="Button" parent="GameView/GroundBagPanel/Content/Actions" unique_id=666367948]
-layout_mode = 2
-text = "Close"
+text = "Drop"
 
 [node name="Help" type="Label" parent="GameView" unique_id=246712093]
 visible = false
@@ -2781,7 +2752,6 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/SpellQuickbar/SpellContent/SpellControls/SigilButton" to="." method="_on_sigil_button_pressed"]
 [connection signal="pressed" from="GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerDown" to="." method="_on_spell_power_down_pressed"]
 [connection signal="pressed" from="GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerUp" to="." method="_on_spell_power_up_pressed"]
-[connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagLook" to="." method="_on_ground_bag_look_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/KnowledgeButton" to="." method="_on_knowledge_button_pressed"]
@@ -2807,10 +2777,9 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/ManufacturingPanel/Content/Actions/ManufacturingMixOne" to="." method="_on_manufacturing_mix_one_pressed"]
 [connection signal="pressed" from="GameView/ManufacturingPanel/Content/Actions/ManufacturingMixAll" to="." method="_on_manufacturing_mix_all_pressed"]
 [connection signal="pressed" from="GameView/ManufacturingPanel/Content/Actions/ManufacturingClose" to="." method="_on_manufacturing_close_pressed"]
-[connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagPick" to="." method="_on_ground_bag_pick_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagPickAll" to="." method="_on_ground_bag_pick_all_pressed"]
 [connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagDrop" to="." method="_on_ground_bag_drop_pressed"]
-[connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagClose" to="." method="_on_ground_bag_close_pressed"]
+[connection signal="pressed" from="GameView/GroundBagPanel/Content/GroundBagHeader/GroundBagClose" to="." method="_on_ground_bag_close_pressed"]
 [connection signal="gui_input" from="CreationPanel/Columns/CharacterPreview" to="." method="_on_character_preview_gui_input"]
 [connection signal="item_selected" from="CreationPanel/Columns/Form/CreateGender" to="." method="_on_create_gender_item_selected"]
 [connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateSkin" to="." method="_on_create_appearance_changed"]

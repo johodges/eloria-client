@@ -169,12 +169,10 @@ var map_light_root: Node3D
 @onready var storage_withdraw_button: Button = %StorageWithdraw
 @onready var storage_inspect_button: Button = %StorageInspect
 @onready var ground_bag_panel: Control = %GroundBagPanel
-@onready var ground_bag_items: ItemList = %GroundBagItems
-@onready var ground_bag_inventory: ItemList = %GroundBagInventory
+@onready var ground_bag_header: Control = %GroundBagHeader
+@onready var ground_bag_grid: GridContainer = %GroundBagGrid
 @onready var ground_bag_quantity: SpinBox = %GroundBagQuantity
-@onready var ground_bag_pick_button: Button = %GroundBagPick
 @onready var ground_bag_drop_button: Button = %GroundBagDrop
-@onready var ground_bag_look_button: Button = %GroundBagLook
 @onready var knowledge_list: ItemList = %KnowledgeList
 @onready var knowledge_detail: RichTextLabel = %KnowledgeDetail
 @onready var knowledge_known_only: CheckBox = %KnowledgeKnownOnly
@@ -355,6 +353,10 @@ var _keyboard_goal_tile := Vector2i(-99999, -99999)
 var _keyboard_refresh_msec := 0
 var _ground_bag_get_all_requested_msec := -1
 var _ground_bag_get_all_bag_id := -1
+var ground_bag_slot_buttons: Array[Button] = []
+var ground_bag_quantity_labels: Array[Label] = []
+var _ground_bag_dragging := false
+var _ground_bag_drag_offset := Vector2.ZERO
 var _selected_counter_category := ""
 var _right_mouse_down := false
 var _right_mouse_dragged := false
@@ -404,6 +406,7 @@ const SETTINGS_PATH := "user://eloria_hud.cfg"
 const KEYBOARD_LOOKAHEAD_TILES := 4
 const KEYBOARD_REFRESH_MSEC := 360
 const GROUND_BAG_GET_ALL_TIMEOUT_MSEC := 1000
+const GROUND_BAG_SLOT_COUNT := 20
 const MINIMAP_DRAG_BORDER := 54.0
 const UI_SCALE_MIN := 0.5
 const UI_SCALE_MAX := 1.5
@@ -535,6 +538,7 @@ func _ready() -> void:
 	_configure_minimap_menu()
 	_build_inventory_slots()
 	_build_equipment_slots()
+	_build_ground_bag_slots()
 	_bind_quick_slots()
 	_bind_spell_slots()
 	_reset_trade_destinations()
@@ -544,8 +548,7 @@ func _ready() -> void:
 	storage_categories.item_selected.connect(_on_storage_category_selected)
 	storage_items.item_selected.connect(_on_storage_item_selected)
 	storage_inventory.item_selected.connect(_on_storage_inventory_selected)
-	ground_bag_items.item_selected.connect(_on_ground_bag_item_selected)
-	ground_bag_inventory.item_selected.connect(_on_ground_bag_inventory_selected)
+	ground_bag_header.gui_input.connect(_on_ground_bag_header_gui_input)
 	knowledge_list.item_selected.connect(_on_knowledge_selected)
 	knowledge_known_only.toggled.connect(_on_knowledge_filter_toggled)
 	stats_tabs.tab_changed.connect(_on_stats_tab_changed)
@@ -677,7 +680,7 @@ func _text_entry_active() -> bool:
 
 func _update_keyboard_movement() -> void:
 	if _text_entry_active() or dialogue_panel.visible or trade_panel.visible \
-			or storage_panel.visible or ground_bag_panel.visible or full_map.visible \
+			or storage_panel.visible or full_map.visible \
 			or console_panel.visible or settings_panel.visible or item_lists_panel.visible \
 			or Input.is_key_pressed(KEY_ALT) or Input.is_key_pressed(KEY_CTRL):
 		_stop_keyboard_movement()
@@ -1183,8 +1186,7 @@ func _close_settings() -> void:
 
 func _on_stats_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
-			or bool(AppState.storage.get("open", false))
-			or bool(AppState.ground_bag.get("open", false))):
+			or bool(AppState.storage.get("open", false))):
 		return
 	stats_panel.visible = not stats_panel.visible
 	if stats_panel.visible:
@@ -1195,8 +1197,7 @@ func _on_stats_button_pressed() -> void:
 	_sync_hud_button_states(true)
 
 func _on_inventory_button_pressed() -> void:
-	if (bool(AppState.trade.get("open", false))
-			or bool(AppState.ground_bag.get("open", false))):
+	if bool(AppState.trade.get("open", false)):
 		return
 	inventory_panel.visible = not inventory_panel.visible
 	if inventory_panel.visible:
@@ -1211,8 +1212,7 @@ func _on_inventory_button_pressed() -> void:
 
 func _on_knowledge_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
-			or bool(AppState.storage.get("open", false))
-			or bool(AppState.ground_bag.get("open", false))):
+			or bool(AppState.storage.get("open", false))):
 		return
 	var was_knowledge_open: bool = stats_panel.visible and stats_tabs.current_tab == 1
 	stats_panel.visible = not was_knowledge_open
@@ -1226,8 +1226,7 @@ func _on_knowledge_button_pressed() -> void:
 
 func _on_manufacturing_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
-			or bool(AppState.storage.get("open", false))
-			or bool(AppState.ground_bag.get("open", false))):
+			or bool(AppState.storage.get("open", false))):
 		return
 	manufacturing_panel.visible = not manufacturing_panel.visible
 	if manufacturing_panel.visible:
@@ -1706,41 +1705,36 @@ func _on_storage_inspect_pressed() -> void:
 func _on_storage_close_pressed() -> void:
 	AppState.close_storage()
 
-func _on_ground_bag_item_selected(index: int) -> void:
-	var position: int = _list_metadata_int(ground_bag_items, index)
-	var items: Dictionary = AppState.ground_bag.get("items", {}) as Dictionary
-	var item_value: Variant = items.get(position)
-	if item_value is Dictionary:
-		ground_bag_quantity.max_value = maxi(1,
-			int((item_value as Dictionary).get("quantity", 1)))
-		ground_bag_quantity.value = mini(int(ground_bag_quantity.value),
-			int(ground_bag_quantity.max_value))
-	_sync_ground_bag_actions()
-
-func _on_ground_bag_inventory_selected(index: int) -> void:
-	var slot: int = _list_metadata_int(ground_bag_inventory, index)
-	var item_value: Variant = AppState.inventory.get(slot)
-	if item_value is Dictionary:
-		ground_bag_quantity.max_value = maxi(1,
-			int((item_value as Dictionary).get("quantity", 1)))
-		ground_bag_quantity.value = mini(int(ground_bag_quantity.value),
-			int(ground_bag_quantity.max_value))
-	_sync_ground_bag_actions()
-
-func _on_ground_bag_pick_pressed() -> void:
-	var selected: PackedInt32Array = ground_bag_items.get_selected_items()
-	if selected.is_empty():
+## The bag grid mirrors Eternal Lands: a left click takes the quantity in the
+## box below, so picking something up is one gesture rather than select-then-
+## press. A right click asks the server what the stack is instead.
+func _on_ground_bag_slot_pressed(index: int) -> void:
+	var position: int = _ground_bag_slot_position(index)
+	if position < 0:
 		return
-	var position: int = _list_metadata_int(ground_bag_items, int(selected[0]))
 	var items: Dictionary = AppState.ground_bag.get("items", {}) as Dictionary
 	var item_value: Variant = items.get(position)
 	if not item_value is Dictionary:
 		return
 	var quantity: int = clampi(int(ground_bag_quantity.value), 1,
-		int((item_value as Dictionary).get("quantity", 1)))
+		maxi(1, int((item_value as Dictionary).get("quantity", 1))))
 	var error: Error = Network.pick_up_ground_item(position, quantity)
 	if error != OK:
 		push_warning("PICK_UP_ITEM failed: " + error_string(error))
+
+func _ground_bag_slot_position(index: int) -> int:
+	if index < 0 or index >= ground_bag_slot_buttons.size():
+		return -1
+	return int(ground_bag_slot_buttons[index].get_meta("bag_position", -1))
+
+func _on_ground_bag_slot_gui_input(event: InputEvent, index: int) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse: InputEventMouseButton = event as InputEventMouseButton
+	if not mouse.pressed or mouse.button_index != MOUSE_BUTTON_RIGHT:
+		return
+	_on_ground_bag_look_pressed(index)
+	ground_bag_slot_buttons[index].accept_event()
 
 func _on_ground_bag_pick_all_pressed() -> void:
 	_request_all_ground_bag_items()
@@ -1764,10 +1758,9 @@ func _request_all_ground_bag_items() -> int:
 	return sent
 
 func _on_ground_bag_drop_pressed() -> void:
-	var selected: PackedInt32Array = ground_bag_inventory.get_selected_items()
-	if selected.is_empty():
+	var slot: int = selected_inventory_slot
+	if slot < 0 or slot >= 36:
 		return
-	var slot: int = _list_metadata_int(ground_bag_inventory, int(selected[0]))
 	var item_value: Variant = AppState.inventory.get(slot)
 	if not item_value is Dictionary:
 		return
@@ -2067,7 +2060,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_world_gui_input(event: InputEvent) -> void:
 	if (not game_view.visible or full_map.visible or dialogue_panel.visible
-			or trade_panel.visible or storage_panel.visible or ground_bag_panel.visible
+			or trade_panel.visible or storage_panel.visible
 			or manufacturing_panel.visible):
 		return
 	if event is InputEventMouseButton:
@@ -2246,7 +2239,7 @@ func _local_actor_server_tile() -> Variant:
 func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 		map_render_viewport: SubViewport, camera: Camera3D, source: String) -> void:
 	if (not game_view.visible or dialogue_panel.visible or trade_panel.visible
-			or storage_panel.visible or ground_bag_panel.visible
+			or storage_panel.visible
 			or manufacturing_panel.visible):
 		return
 	if not event is InputEventMouseButton:
@@ -2806,21 +2799,14 @@ func _sync_ground_bag() -> void:
 	ground_bag_panel.visible = is_open
 	if not is_open:
 		return
-	inventory_panel.hide()
-	stats_panel.hide()
-	full_map.hide()
-	trade_panel.hide()
-	storage_panel.hide()
-	manufacturing_panel.hide()
-	_fill_storage_item_list(ground_bag_items,
-		AppState.ground_bag.get("items", {}) as Dictionary, "Ground")
-	var backpack: Dictionary = {}
-	for raw_slot: Variant in AppState.inventory:
-		var slot: int = int(raw_slot)
-		if slot >= 0 and slot < 36:
-			backpack[slot] = AppState.inventory[raw_slot]
-	_fill_storage_item_list(ground_bag_inventory, backpack, "Inventory")
+	# Both windows stay up together so items can move either way, and the world
+	# underneath stays visible and clickable while they are open.
+	if not inventory_panel.visible:
+		inventory_panel.show()
+		_sync_hud_button_states(true)
+	_fill_ground_bag_grid(AppState.ground_bag.get("items", {}) as Dictionary)
 	_sync_ground_bag_actions()
+	_clamp_ground_bag_window_to_viewport()
 	if _ground_bag_get_all_requested_msec >= 0:
 		var requested_age: int = (Time.get_ticks_msec()
 			- _ground_bag_get_all_requested_msec)
@@ -2833,17 +2819,24 @@ func _sync_ground_bag() -> void:
 			inventory_description.text = _ground_bag_get_all_message(sent)
 
 func _sync_ground_bag_actions() -> void:
-	ground_bag_pick_button.disabled = ground_bag_items.get_selected_items().is_empty()
-	ground_bag_look_button.disabled = ground_bag_items.get_selected_items().is_empty()
-	ground_bag_drop_button.disabled = ground_bag_inventory.get_selected_items().is_empty()
+	var slot: int = selected_inventory_slot
+	var droppable: bool = (slot >= 0 and slot < 36
+		and AppState.inventory.get(slot) is Dictionary)
+	ground_bag_drop_button.disabled = not droppable
+	if droppable:
+		var item: Dictionary = AppState.inventory.get(slot) as Dictionary
+		ground_bag_drop_button.tooltip_text = ("Drop up to %d from inventory slot %d"
+			% [int(item.get("quantity", 1)), slot + 1])
+	else:
+		ground_bag_drop_button.tooltip_text = ("Select an item in the inventory window"
+			+ " to drop it here")
 
 ## Asks the server what the selected ground item is. The bag packet carries an
 ## image id and a quantity, so the description can only come from the server.
-func _on_ground_bag_look_pressed() -> void:
-	var selected: PackedInt32Array = ground_bag_items.get_selected_items()
-	if selected.is_empty():
+func _on_ground_bag_look_pressed(index: int) -> void:
+	var slot: int = _ground_bag_slot_position(index)
+	if slot < 0:
 		return
-	var slot: int = _list_metadata_int(ground_bag_items, int(selected[0]))
 	var error: Error = Network.look_at_ground_item(slot)
 	if error != OK:
 		push_warning("LOOK_AT_GROUND_ITEM failed: " + error_string(error))
@@ -3154,6 +3147,10 @@ func _load_hud_settings() -> void:
 		if inventory_position_value is Vector2:
 			inventory_panel.position = inventory_position_value as Vector2
 		_equipment_side = str(config.get_value("inventory", "equipment_side", "left"))
+		var bag_position_value: Variant = config.get_value(
+			"inventory", "bag_window_position", ground_bag_panel.position)
+		if bag_position_value is Vector2:
+			ground_bag_panel.position = bag_position_value as Vector2
 		var bulk_value: Variant = config.get_value("inventory", "bulk_exclusions", {})
 		if bulk_value is Dictionary:
 			for kind: String in ["store", "drop"]:
@@ -3291,6 +3288,7 @@ func _save_hud_settings() -> void:
 	config.set_value("inventory", "window_scale", _inventory_scale)
 	config.set_value("inventory", "window_position", inventory_panel.position)
 	config.set_value("inventory", "equipment_side", _equipment_side)
+	config.set_value("inventory", "bag_window_position", ground_bag_panel.position)
 	config.set_value("inventory", "bulk_exclusions", _bulk_exclusions)
 	config.set_value("inventory", "item_lists", _item_lists)
 	var error: Error = config.save(SETTINGS_PATH)
@@ -3332,6 +3330,36 @@ func _on_inventory_header_gui_input(event: InputEvent) -> void:
 			- _inventory_drag_offset)
 		_clamp_inventory_window_to_viewport()
 		inventory_header.accept_event()
+
+func _on_ground_bag_header_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse: InputEventMouseButton = event as InputEventMouseButton
+		if mouse.button_index != MOUSE_BUTTON_LEFT:
+			return
+		_ground_bag_dragging = mouse.pressed
+		if mouse.pressed:
+			ground_bag_panel.move_to_front()
+			_ground_bag_drag_offset = (get_viewport().get_mouse_position()
+				- ground_bag_panel.global_position)
+		else:
+			_save_hud_settings()
+		ground_bag_header.accept_event()
+	elif event is InputEventMouseMotion and _ground_bag_dragging:
+		ground_bag_panel.global_position = (get_viewport().get_mouse_position()
+			- _ground_bag_drag_offset)
+		_clamp_ground_bag_window_to_viewport()
+		ground_bag_header.accept_event()
+
+func _clamp_ground_bag_window_to_viewport() -> void:
+	if game_view.size.x <= 0.0 or game_view.size.y <= 0.0:
+		return
+	var game_origin: Vector2 = game_view.global_position
+	var local_position: Vector2 = ground_bag_panel.global_position - game_origin
+	var maximum: Vector2 = (game_view.size - ground_bag_panel.size
+		- Vector2(8.0, 8.0)).max(Vector2(8.0, 8.0))
+	ground_bag_panel.global_position = game_origin + Vector2(
+		clampf(local_position.x, 8.0, maximum.x),
+		clampf(local_position.y, 8.0, maximum.y))
 
 func _on_inventory_resize_grip_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -4237,10 +4265,89 @@ func _save_hud_layout() -> void:
 	if error != OK:
 		push_warning("Unable to save lower HUD preferences: " + error_string(error))
 
+func _add_slot_quantity_label(button: Button) -> Label:
+	var quantity: Label = Label.new()
+	quantity.name = "Quantity"
+	quantity.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	quantity.anchor_left = 1.0
+	quantity.anchor_top = 1.0
+	quantity.anchor_right = 1.0
+	quantity.anchor_bottom = 1.0
+	quantity.offset_left = -34.0
+	quantity.offset_top = -17.0
+	quantity.offset_right = -3.0
+	quantity.offset_bottom = -2.0
+	quantity.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	quantity.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	quantity.add_theme_font_size_override("font_size", 11)
+	quantity.add_theme_color_override("font_color", Color.WHITE)
+	quantity.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.02))
+	quantity.add_theme_constant_override("outline_size", 3)
+	button.add_child(quantity)
+	return quantity
+
+func _ground_bag_tooltip(item: Dictionary) -> String:
+	var image_id: int = int(item.get("image_id", 0))
+	var tooltip: String = "Item image #%d — quantity %d" % [image_id,
+		int(item.get("quantity", 0))]
+	if item_atlas.uses_substitute(image_id):
+		tooltip += "
+Independent Eloria icon substitute for legacy image #%d." % image_id
+	return tooltip + ("
+Left click picks up the quantity below;"
+		+ " right click asks the server what it is.")
+
+func _build_ground_bag_slots() -> void:
+	for index: int in range(GROUND_BAG_SLOT_COUNT):
+		var button: Button = Button.new()
+		button.custom_minimum_size = Vector2(44.0, 44.0)
+		button.expand_icon = true
+		button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		button.focus_mode = Control.FOCUS_NONE
+		button.clip_contents = true
+		button.text = ""
+		button.tooltip_text = "Empty bag slot"
+		button.disabled = true
+		button.set_meta("bag_position", -1)
+		button.pressed.connect(_on_ground_bag_slot_pressed.bind(index))
+		button.gui_input.connect(_on_ground_bag_slot_gui_input.bind(index))
+		ground_bag_grid.add_child(button)
+		ground_bag_slot_buttons.append(button)
+		ground_bag_quantity_labels.append(_add_slot_quantity_label(button))
+
+func _fill_ground_bag_grid(items: Dictionary) -> void:
+	var positions: Array = items.keys()
+	positions.sort()
+	var index := 0
+	for raw_position: Variant in positions:
+		if index >= ground_bag_slot_buttons.size():
+			break
+		var item_value: Variant = items.get(raw_position)
+		if not item_value is Dictionary:
+			continue
+		var item: Dictionary = item_value as Dictionary
+		var button: Button = ground_bag_slot_buttons[index]
+		button.set_meta("bag_position", int(raw_position))
+		button.icon = item_atlas.icon_for(int(item.get("image_id", 0)))
+		button.disabled = false
+		button.tooltip_text = _ground_bag_tooltip(item)
+		ground_bag_quantity_labels[index].text = str(int(item.get("quantity", 0)))
+		index += 1
+	if index >= ground_bag_slot_buttons.size() and positions.size() > index:
+		push_warning("Ground bag holds more stacks than the grid can show: %d of %d"
+			% [index, positions.size()])
+	for empty_index: int in range(index, ground_bag_slot_buttons.size()):
+		var empty_button: Button = ground_bag_slot_buttons[empty_index]
+		empty_button.set_meta("bag_position", -1)
+		empty_button.icon = null
+		empty_button.disabled = true
+		empty_button.tooltip_text = "Empty bag slot"
+		ground_bag_quantity_labels[empty_index].text = ""
+
 func _build_inventory_slots() -> void:
 	for slot: int in range(36):
 		var button: Button = Button.new()
-		button.custom_minimum_size = Vector2(64.0, 56.0)
+		button.custom_minimum_size = Vector2(44.0, 44.0)
 		button.expand_icon = true
 		button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		button.focus_mode = Control.FOCUS_NONE
@@ -4249,31 +4356,14 @@ func _build_inventory_slots() -> void:
 		button.tooltip_text = "Empty inventory slot %d" % (slot + 1)
 		button.disabled = true
 		button.pressed.connect(_on_inventory_slot_pressed.bind(slot))
-		var quantity: Label = Label.new()
-		quantity.name = "Quantity"
-		quantity.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		quantity.anchor_left = 1.0
-		quantity.anchor_top = 1.0
-		quantity.anchor_right = 1.0
-		quantity.anchor_bottom = 1.0
-		quantity.offset_left = -48.0
-		quantity.offset_top = -23.0
-		quantity.offset_right = -4.0
-		quantity.offset_bottom = -2.0
-		quantity.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		quantity.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-		quantity.add_theme_color_override("font_color", Color.WHITE)
-		quantity.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.02))
-		quantity.add_theme_constant_override("outline_size", 4)
-		button.add_child(quantity)
 		inventory_grid.add_child(button)
 		inventory_slot_buttons.append(button)
-		inventory_quantity_labels.append(quantity)
+		inventory_quantity_labels.append(_add_slot_quantity_label(button))
 
 func _build_equipment_slots() -> void:
 	for index: int in range(8):
 		var button: Button = Button.new()
-		button.custom_minimum_size = Vector2(64.0, 56.0)
+		button.custom_minimum_size = Vector2(44.0, 44.0)
 		button.expand_icon = true
 		button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		button.focus_mode = Control.FOCUS_NONE
@@ -4342,6 +4432,8 @@ func _sync_inventory() -> void:
 			inventory_use_button.disabled = true
 	if not AppState.inventory_text.is_empty():
 		inventory_description.text = AppState.inventory_text
+	if ground_bag_panel.visible:
+		_sync_ground_bag_actions()
 
 func _sync_equipment_slots() -> void:
 	for index: int in range(equipment_slot_buttons.size()):

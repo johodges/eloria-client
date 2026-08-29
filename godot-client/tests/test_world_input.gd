@@ -759,22 +759,30 @@ func _run() -> void:
 		PackedByteArray([1, 3, 0, 5, 0, 0, 0, 2]))
 	main.call("_sync_ground_bag")
 	var ground_bag_panel: Control = main.get_node("GameView/GroundBagPanel") as Control
-	var ground_bag_items: ItemList = main.get_node(
-		"GameView/GroundBagPanel/Content/Columns/Ground/GroundBagItems") as ItemList
-	_expect(ground_bag_panel.visible and ground_bag_items.item_count == 1
-		and root.get_visible_rect().encloses(ground_bag_panel.get_global_rect()),
-		"authoritative bag contents open within the reference viewport")
-	# Asking what is on the ground. The bag row carries an image id and a
-	# quantity, so the Look action is the only way to learn what it is.
-	var ground_look: Button = main.get_node(
-		"GameView/GroundBagPanel/Content/Actions/GroundBagLook") as Button
-	main.call("_sync_ground_bag_actions")
-	_expect(ground_look.disabled,
-		"the ground Look action needs something selected first")
-	ground_bag_items.select(0)
-	main.call("_on_ground_bag_item_selected", 0)
-	_expect(not ground_look.disabled,
-		"selecting a ground item offers to ask what it is")
+	var ground_bag_slots: Array = main.get("ground_bag_slot_buttons") as Array
+	var filled_bag_slots: int = 0
+	for raw_slot_button: Variant in ground_bag_slots:
+		if int((raw_slot_button as Button).get_meta("bag_position", -1)) >= 0:
+			filled_bag_slots += 1
+	var bag_inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
+	_expect(ground_bag_panel.visible and filled_bag_slots == 1
+		and bag_inventory_panel.visible
+		and not ground_bag_panel.get_global_rect().intersects(
+			bag_inventory_panel.get_global_rect())
+		and root.get_visible_rect().encloses(ground_bag_panel.get_global_rect())
+		and root.get_visible_rect().encloses(bag_inventory_panel.get_global_rect()),
+		"the bag opens beside the inventory, both inside the reference viewport")
+	# Asking what is on the ground. The bag slot carries an image id and a
+	# quantity, so a right click is the only way to learn what it is.
+	_expect(int((ground_bag_slots[0] as Button).get_meta("bag_position", -1)) == 2
+		and not (ground_bag_slots[0] as Button).disabled
+		and int((ground_bag_slots[1] as Button).get_meta("bag_position", -1)) == -1
+		and (ground_bag_slots[1] as Button).disabled,
+		"filled bag slots carry their authoritative position and empty ones stay inert")
+	_expect(int(main.call("_ground_bag_slot_position", 0)) == 2
+		and int(main.call("_ground_bag_slot_position", 1)) == -1
+		and int(main.call("_ground_bag_slot_position", 99)) == -1,
+		"the ground Look target resolves only for a filled slot")
 	app_state_inventory.call("_on_packet", 24,
 		PackedByteArray([4, 0, 9, 0, 0, 0, 5]))
 	var ground_bag_state: Dictionary = app_state_inventory.get("ground_bag") as Dictionary
@@ -795,6 +803,7 @@ func _run() -> void:
 		"destroyed bag removes its world marker and closes its matching window")
 	app_state_inventory.set("actors", {})
 	app_state_inventory.set("selected_actor_id", -1)
+	inventory_panel.hide()
 	main.call("_on_inventory_button_pressed")
 	_expect(inventory_panel.visible and not stats_panel.visible,
 		"inventory action opens the window and centrally closes statistics")
@@ -814,7 +823,7 @@ func _run() -> void:
 	_expect(first_inventory_slot.text.is_empty() and first_quantity.text == "9"
 		and first_quantity.anchor_left == 1.0 and first_quantity.anchor_top == 1.0
 		and first_inventory_slot.icon != null and not first_inventory_slot.disabled
-		and first_inventory_slot.custom_minimum_size.x >= 64.0,
+		and first_inventory_slot.custom_minimum_size.x >= 40.0,
 		"large inventory icon uses an overlaid bottom-right quantity")
 	_expect(first_quick_slot.text.is_empty() and first_quick_slot.icon != null
 		and first_quick_slot.tooltip_text.contains("Quantity: 9")
@@ -822,7 +831,7 @@ func _run() -> void:
 		"usable inventory slot populates the icon-only vertical quick slot")
 	_expect(first_equipment_slot.text.is_empty() and first_equipment_slot.icon != null
 		and not first_equipment_slot.disabled
-		and first_equipment_slot.custom_minimum_size.x >= 64.0,
+		and first_equipment_slot.custom_minimum_size.x >= 40.0,
 		"large equipment icon renders without a slot or quantity number")
 	main.set("selected_inventory_slot", 0)
 	main.call("_sync_inventory")
