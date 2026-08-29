@@ -31,6 +31,18 @@ size = Vector2(1200, 1200)
 no_depth_test = true
 shading_mode = 0
 
+[sub_resource type="StandardMaterial3D" id="Material_preview_ground"]
+albedo_color = Color(0.19, 0.2, 0.16, 1)
+roughness = 1.0
+metallic_specular = 0.1
+
+[sub_resource type="CylinderMesh" id="Mesh_preview_ground"]
+material = SubResource("Material_preview_ground")
+top_radius = 0.78
+bottom_radius = 0.88
+height = 0.09
+radial_segments = 48
+
 [sub_resource type="CylinderMesh" id="Mesh_map_marker"]
 material = SubResource("Material_map_marker")
 top_radius = 5.0
@@ -2661,9 +2673,14 @@ render_target_update_mode = 4
 [node name="PreviewRoot" type="Node3D" parent="CreationPanel/Columns/CharacterPreview/Viewport" unique_id=1055949710]
 unique_name_in_owner = true
 
+[node name="PreviewGround" type="MeshInstance3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot" unique_id=1328503270]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.045, 0)
+mesh = SubResource("Mesh_preview_ground")
+
 [node name="PreviewCamera" type="Camera3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot" unique_id=1328503269]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 4.2)
+cull_mask = 3
 current = true
 
 [node name="PreviewEnvironment" type="WorldEnvironment" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot"]
@@ -2673,6 +2690,8 @@ environment = SubResource("Environment_preview")
 unique_name_in_owner = true
 rotation_degrees = Vector3(-32, 0, 0)
 light_energy = 1.15
+shadow_enabled = true
+directional_shadow_max_distance = 12.0
 
 [node name="FillLight" type="DirectionalLight3D" parent="CreationPanel/Columns/CharacterPreview/Viewport/PreviewRoot"]
 unique_name_in_owner = true
