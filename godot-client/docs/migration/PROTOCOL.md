@@ -351,3 +351,35 @@ book text first, and those four opcodes become the way to carry it.
 Reading is presented from the three statistics above plus the client's hashed
 knowledge catalog for the title. There is no command to stop reading; hiding
 the window does not interrupt it, and the client does not pretend otherwise.
+
+## The nine Eloria extension windows
+
+Fork additions rather than upstream Eternal Lands. Each is a server-push
+snapshot driving one window: the server states the whole window and the client
+renders it, so none of them is merged with a previous value. Every one is
+withheld from a client that has not claimed the matching capability in
+`#clientcaps`, and the server falls back to legacy dialogue or raw text
+instead. All integers are little-endian and all strings are NUL-terminated
+UTF-8.
+
+| Cmd | Window | Payload |
+|---|---|---|
+| 222 | Marketplace | `view:u8 \| gold:u32 \| returned_items:u32 \| count:u16`, then per listing `listing_id:u32 \| quantity:u32 \| unit_price:u32 \| seconds_left:u32 \| image_id:u16 \| item_name \| seller` |
+| 223 | Merchant | `actor_id:u16 \| gold:u32 \| carried:u32 \| capacity:u32 \| count:u16 \| npc_name`, then per row `index:u16 \| buy_price:u32 \| sell_price:u32 \| owned:u32 \| image_id:u16 \| name` |
+| 224 | Quest journal | `count:u16`, then per entry `ready:u8 \| current:u32 \| target:u32 \| title \| objective \| location` |
+| 225 | Item detail | `image_id:u16 \| quantity:u32 \| equipped:u8 \| name \| category \| equip_type \| description \| stats \| comparison_name \| comparison` |
+| 226 | Inventory state | `gold:u32 \| carried:u32 \| capacity:u32 \| count:u16`, then per row `slot:u8 \| image_id:u16 \| quantity:u32 \| emu:u32 \| flags:u8 \| name \| category` |
+| 227 | Combat HUD | `event:u8 \| target_id:u16 \| player_health:u16 \| player_max:u16 \| target_health:u16 \| target_max:u16 \| recent_damage:u16 \| target_name` |
+| 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
+| 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
+| 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+
+Combat event 0 is a state refresh; 1 hit, 2 miss, 3 dodge, 4 defeat. A defeat
+ends the engagement, so the client clears the HUD on it rather than leaving the
+last frame on screen. Navigation `active` false means no waypoint is set and
+the remaining fields are meaningless rather than stale. A special-event payload
+of a single NUL clears the panel.
+
+Each decoder rejects a truncated payload and any trailing bytes rather than
+half-decoding, so a layout change on the server surfaces in the protocol
+diagnostics panel instead of producing a half-filled window.

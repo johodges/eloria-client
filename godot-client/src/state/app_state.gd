@@ -45,6 +45,26 @@ var reading: Dictionary = {"active": false, "index": -1, "pages_read": 0,
 var known_knowledge: Array[int] = []
 var selected_knowledge: int = -1
 var knowledge_text: String = ""
+## The nine Eloria extension windows. Each is a server-push snapshot: the
+## server states the whole window and the client renders it, so none of these
+## is merged with a previous value or reconstructed from anything else.
+var marketplace: Dictionary = {"open": false, "gold": 0, "returned_items": 0,
+	"listings": []}
+var merchant: Dictionary = {"open": false, "actor_id": -1, "npc_name": "",
+	"gold": 0, "carried": 0, "capacity": 0, "items": []}
+var quest_journal: Array[Dictionary] = []
+var item_detail: Dictionary = {"open": false}
+var inventory_state: Dictionary = {"gold": 0, "carried": 0, "capacity": 0,
+	"items": []}
+var combat_state: Dictionary = {"active": false, "event": 0, "target_id": -1,
+	"target_name": "", "player_health": 0, "player_max_health": 0,
+	"target_health": 0, "target_max_health": 0, "recent_damage": 0,
+	"updated_msec": 0}
+var mail: Array[Dictionary] = []
+var navigation: Dictionary = {"active": false, "x": 0, "y": 0, "distance": 0,
+	"map_id": "", "label": ""}
+var special_events: Array[String] = []
+
 ## Clickable world objects on the current map, keyed by server object id, and
 ## the authoritative harvesting state. Both are server-declared: nothing here
 ## is matched by filename or scraped out of chat.
@@ -108,6 +128,15 @@ func _on_connection_state_changed(value: String) -> void:
 		known_knowledge.clear()
 		selected_knowledge = -1
 		knowledge_text = ""
+		marketplace = _empty_marketplace_state()
+		merchant = _empty_merchant_state()
+		quest_journal.clear()
+		item_detail = {"open": false}
+		inventory_state = {"gold": 0, "carried": 0, "capacity": 0, "items": []}
+		combat_state = _empty_combat_state()
+		mail.clear()
+		navigation = _empty_navigation_state()
+		special_events.clear()
 		map_objects.clear()
 		harvest = _empty_harvest_state()
 		popup = _empty_popup_state()
@@ -156,6 +185,9 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			# for the old map is stale the moment the change lands.
 			map_objects.clear()
 			harvest = _empty_harvest_state()
+			marketplace = _empty_marketplace_state()
+			merchant = _empty_merchant_state()
+			combat_state = _empty_combat_state()
 			actors.clear()
 			selected_actor_id = -1
 			npc_dialogue = {"open": false, "name": "", "text": "",
@@ -167,6 +199,9 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			ground_bag = _empty_ground_bag_state()
 			state_changed.emit(&"map_objects")
 			state_changed.emit(&"harvest")
+			state_changed.emit(&"marketplace")
+			state_changed.emit(&"merchant")
+			state_changed.emit(&"combat_state")
 			state_changed.emit(&"map")
 		"actor_spawn":
 			actors[event.actor_id] = event
@@ -467,6 +502,61 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			npc_dialogue["open"] = false
 			npc_dialogue["options"] = []
 			state_changed.emit(&"npc_dialogue")
+		"marketplace":
+			marketplace = {"open": true, "gold": int(event.gold),
+				"returned_items": int(event.returned_items),
+				"listings": (event.listings as Array).duplicate(true)}
+			state_changed.emit(&"marketplace")
+		"merchant":
+			merchant = {"open": true, "actor_id": int(event.actor_id),
+				"npc_name": str(event.npc_name), "gold": int(event.gold),
+				"carried": int(event.carried), "capacity": int(event.capacity),
+				"items": (event.items as Array).duplicate(true)}
+			state_changed.emit(&"merchant")
+		"quest_journal":
+			quest_journal.clear()
+			for raw_quest: Variant in event.entries:
+				quest_journal.append((raw_quest as Dictionary).duplicate(true))
+			state_changed.emit(&"quest_journal")
+		"item_detail":
+			item_detail = (event as Dictionary).duplicate(true)
+			item_detail["open"] = true
+			item_detail.erase("type")
+			state_changed.emit(&"item_detail")
+		"inventory_state":
+			inventory_state = {"gold": int(event.gold),
+				"carried": int(event.carried), "capacity": int(event.capacity),
+				"items": (event.items as Array).duplicate(true)}
+			state_changed.emit(&"inventory_state")
+		"combat_state":
+			# A defeat ends the engagement; every other event refreshes it.
+			var defeated: bool = (int(event.event)
+				== EloriaProtocol.COMBAT_EVENT_DEFEAT)
+			combat_state = {"active": not defeated, "event": int(event.event),
+				"target_id": int(event.target_id),
+				"target_name": str(event.target_name),
+				"player_health": int(event.player_health),
+				"player_max_health": int(event.player_max_health),
+				"target_health": int(event.target_health),
+				"target_max_health": int(event.target_max_health),
+				"recent_damage": int(event.recent_damage),
+				"updated_msec": Time.get_ticks_msec()}
+			state_changed.emit(&"combat_state")
+		"mail":
+			mail.clear()
+			for raw_message: Variant in event.messages:
+				mail.append((raw_message as Dictionary).duplicate(true))
+			state_changed.emit(&"mail")
+		"navigation":
+			navigation = {"active": bool(event.active), "x": int(event.x),
+				"y": int(event.y), "distance": int(event.distance),
+				"map_id": str(event.map_id), "label": str(event.label)}
+			state_changed.emit(&"navigation")
+		"special_events":
+			special_events.clear()
+			for raw_line: Variant in event.lines:
+				special_events.append(str(raw_line))
+			state_changed.emit(&"special_events")
 		"map_objects":
 			# The list arrives in chunks; only the first clears what was there.
 			if bool(event.first):
@@ -598,6 +688,34 @@ func _refresh_reading() -> void:
 
 func _empty_reading_state() -> Dictionary:
 	return {"active": false, "index": -1, "pages_read": 0, "pages_total": 0}
+
+func close_marketplace() -> void:
+	marketplace = _empty_marketplace_state()
+	state_changed.emit(&"marketplace")
+
+func close_merchant() -> void:
+	merchant = _empty_merchant_state()
+	state_changed.emit(&"merchant")
+
+func close_item_detail() -> void:
+	item_detail = {"open": false}
+	state_changed.emit(&"item_detail")
+
+func _empty_marketplace_state() -> Dictionary:
+	return {"open": false, "gold": 0, "returned_items": 0, "listings": []}
+
+func _empty_merchant_state() -> Dictionary:
+	return {"open": false, "actor_id": -1, "npc_name": "", "gold": 0,
+		"carried": 0, "capacity": 0, "items": []}
+
+func _empty_combat_state() -> Dictionary:
+	return {"active": false, "event": 0, "target_id": -1, "target_name": "",
+		"player_health": 0, "player_max_health": 0, "target_health": 0,
+		"target_max_health": 0, "recent_damage": 0, "updated_msec": 0}
+
+func _empty_navigation_state() -> Dictionary:
+	return {"active": false, "x": 0, "y": 0, "distance": 0, "map_id": "",
+		"label": ""}
 
 func _empty_harvest_state() -> Dictionary:
 	return {"active": false, "object_id": -1, "resource": ""}

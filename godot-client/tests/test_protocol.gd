@@ -801,6 +801,137 @@ func _init() -> void:
 			== "activity_counter_terminator",
 		"short, truncated and unterminated counter packets are rejected")
 
+	# The nine Eloria extension windows. Every fixture below is the exact
+	# output of the server's own builder in eloria/protocol.py, captured from
+	# the independent Eloria configuration, so a change to either side of one
+	# of these contracts breaks this suite rather than a window.
+	var marketplace: Dictionary = EloriaProtocol.decode_server(222, _hex(
+		"00fa000000030000000100070000000c0000002300000058020000140053756e6c65"
+		+ "616600416c69636500"))
+	_expect(marketplace.type == "marketplace" and int(marketplace.gold) == 250
+		and int(marketplace.returned_items) == 3
+		and (marketplace.listings as Array).size() == 1,
+		"the marketplace state decodes gold, escrow and its listings")
+	var listing: Dictionary = (marketplace.listings as Array)[0]
+	_expect(int(listing.listing_id) == 7 and int(listing.quantity) == 12
+		and int(listing.unit_price) == 35 and int(listing.seconds_left) == 600
+		and int(listing.image_id) == 20 and str(listing.item_name) == "Sunleaf"
+		and str(listing.seller) == "Alice",
+		"a listing carries its id, quantity, unit price, time left and seller")
+
+	var merchant: Dictionary = EloriaProtocol.decode_server(223, _hex(
+		"5b00fa0000001400000050000000010053616c696e61000000280000000c00000005"
+		+ "000000140053756e6c65616600"))
+	_expect(merchant.type == "merchant" and int(merchant.actor_id) == 91
+		and str(merchant.npc_name) == "Salina" and int(merchant.gold) == 250
+		and int(merchant.carried) == 20 and int(merchant.capacity) == 80
+		and (merchant.items as Array).size() == 1,
+		"the merchant state decodes the NPC, the purse and the load")
+	var stock: Dictionary = (merchant.items as Array)[0]
+	_expect(int(stock.index) == 0 and int(stock.buy_price) == 40
+		and int(stock.sell_price) == 12 and int(stock.owned) == 5
+		and str(stock.name) == "Sunleaf",
+		"a merchant row carries both prices and how many the player already has")
+
+	var journal: Dictionary = EloriaProtocol.decode_server(224, _hex(
+		"01000001000000030000004b696c6c205468656d20416c6c00446566656174203320"
+		+ "7261747300466f757220476174657300"))
+	_expect(journal.type == "quest_journal"
+		and (journal.entries as Array).size() == 1,
+		"the quest journal decodes its entries")
+	var quest: Dictionary = (journal.entries as Array)[0]
+	_expect(not bool(quest.ready) and int(quest.current) == 1
+		and int(quest.target) == 3 and str(quest.title) == "Kill Them All"
+		and str(quest.objective) == "Defeat 3 rats"
+		and str(quest.location) == "Four Gates",
+		"a quest entry carries progress, readiness, objective and location")
+
+	var detail: Dictionary = EloriaProtocol.decode_server(225, _hex(
+		"a000020000000053756e6c656166005265736f75726365730000412070616c65206c"
+		+ "6561662e00454d55203100477561726420436170650041726d6f7572203220"
+		+ "2d3e203000"))
+	_expect(detail.type == "item_detail" and int(detail.image_id) == 160
+		and int(detail.quantity) == 2 and not bool(detail.equipped)
+		and str(detail.name) == "Sunleaf" and str(detail.category) == "Resources"
+		and str(detail.equip_type).is_empty()
+		and str(detail.description) == "A pale leaf."
+		and str(detail.stats) == "EMU 1"
+		and str(detail.comparison_name) == "Guard Cape"
+		and str(detail.comparison) == "Armour 2 -> 0",
+		"item detail decodes every field including the empty equip type")
+
+	var inventory_state: Dictionary = EloriaProtocol.decode_server(226, _hex(
+		"fa000000140000005000000001000014000c00000001000000065375"
+		+ "6e6c65616600466c6f7765727300"))
+	_expect(inventory_state.type == "inventory_state"
+		and int(inventory_state.gold) == 250
+		and int(inventory_state.carried) == 20
+		and int(inventory_state.capacity) == 80
+		and (inventory_state.items as Array).size() == 1,
+		"the inventory state decodes gold, carried weight and capacity")
+	var organised: Dictionary = (inventory_state.items as Array)[0]
+	_expect(int(organised.slot) == 0 and int(organised.image_id) == 20
+		and int(organised.quantity) == 12 and int(organised.emu) == 1
+		and str(organised.name) == "Sunleaf"
+		and str(organised.category) == "Flowers",
+		"an inventory entry carries the item name and category the ordinary"
+			+ " inventory packet cannot")
+
+	var combat: Dictionary = EloriaProtocol.decode_server(227, _hex(
+		"016600120014001e002c00050052656564686f726e205374616700"))
+	_expect(combat.type == "combat_state"
+		and int(combat.event) == EloriaProtocol.COMBAT_EVENT_HIT
+		and int(combat.target_id) == 102 and int(combat.player_health) == 18
+		and int(combat.player_max_health) == 20
+		and int(combat.target_health) == 30
+		and int(combat.target_max_health) == 44
+		and int(combat.recent_damage) == 5
+		and str(combat.target_name) == "Reedhorn Stag",
+		"the combat state decodes both health bars and the outcome")
+
+	var mail: Dictionary = EloriaProtocol.decode_server(229, _hex(
+		"01000300000000f1536500416c6963650048656c6c6f004d656574206d6520617420"
+		+ "74686520676174652e00"))
+	_expect(mail.type == "mail" and (mail.messages as Array).size() == 1,
+		"the mail inbox decodes its messages")
+	var message: Dictionary = (mail.messages as Array)[0]
+	_expect(int(message.mail_id) == 3 and not bool(message.read)
+		and str(message.sender) == "Alice" and str(message.subject) == "Hello"
+		and str(message.body) == "Meet me at the gate.",
+		"a mail message carries its id, read flag, sender, subject and body")
+
+	var navigation: Dictionary = EloriaProtocol.decode_server(230, _hex(
+		"010203e1010c00666f75725f676174657300526565642062616e6b00"))
+	_expect(navigation.type == "navigation" and bool(navigation.active)
+		and int(navigation.x) == 770 and int(navigation.y) == 481
+		and int(navigation.distance) == 12
+		and str(navigation.map_id) == "four_gates"
+		and str(navigation.label) == "Reed bank",
+		"the navigation state decodes the waypoint tile, distance and label")
+
+	var events: Dictionary = EloriaProtocol.decode_server(232, _hex(
+		"4861727665737420666573746976616c0050686173652032206f66203300"))
+	_expect(events.type == "special_events"
+		and (events.lines as Array) == ["Harvest festival", "Phase 2 of 3"],
+		"the special-event panel decodes its NUL-delimited lines")
+	_expect((EloriaProtocol.decode_server(232, PackedByteArray([0])).lines
+			as Array).is_empty(),
+		"a single empty line clears the panel rather than showing a blank row")
+
+	# Every one of these rejects a truncated payload rather than half-decoding.
+	for truncated: Array in [[222, "00fa0000000300000001000700"],
+			[223, "5b00fa000000140000005000000001005361"],
+			[224, "010000010000000300000041"],
+			[225, "a00002000000005375"],
+			[226, "fa0000001400000050000000010000140002"],
+			[227, "016600120014001e002c000500"],
+			[229, "01000300000000f153650041"],
+			[230, "010203e1010c00666f75725f6761746573"]]:
+		var rejected: Dictionary = EloriaProtocol.decode_server(
+			int(truncated[0]), _hex(str(truncated[1])))
+		_expect(rejected.type == "invalid",
+			"a truncated command %d payload is rejected" % int(truncated[0]))
+
 	# Harvesting and world objects. HARVEST(21), USE_MAP_OBJECT(16) and
 	# LOOK_AT_MAP_OBJECT(27) were enum values with no encoder, and there was no
 	# world-object pick path at all.

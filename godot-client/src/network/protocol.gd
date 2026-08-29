@@ -52,6 +52,11 @@ enum ServerMessage {
 	ELORIA_INVASION_ASSISTANT_STATE = 233,
 	ELORIA_PERKS = 234, ELORIA_ACTIVITY_COUNTERS = 235,
 	ELORIA_MAP_OBJECTS = 236, ELORIA_HARVEST_STATE = 237,
+	ELORIA_MARKETPLACE_STATE = 222, ELORIA_MERCHANT_STATE = 223,
+	ELORIA_QUEST_JOURNAL_STATE = 224, ELORIA_ITEM_DETAIL = 225,
+	ELORIA_INVENTORY_STATE = 226, ELORIA_COMBAT_STATE = 227,
+	ELORIA_MAIL_STATE = 229, ELORIA_NAVIGATION_STATE = 230,
+	ELORIA_SPECIAL_EVENT_STATE = 232,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
 }
@@ -617,6 +622,24 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "npc_close"}
 		ServerMessage.DISPLAY_POPUP:
 			return decode_popup(payload)
+		ServerMessage.ELORIA_MARKETPLACE_STATE:
+			return decode_marketplace(payload)
+		ServerMessage.ELORIA_MERCHANT_STATE:
+			return decode_merchant(payload)
+		ServerMessage.ELORIA_QUEST_JOURNAL_STATE:
+			return decode_quest_journal(payload)
+		ServerMessage.ELORIA_ITEM_DETAIL:
+			return decode_item_detail(payload)
+		ServerMessage.ELORIA_INVENTORY_STATE:
+			return decode_inventory_state(payload)
+		ServerMessage.ELORIA_COMBAT_STATE:
+			return decode_combat_state(payload)
+		ServerMessage.ELORIA_MAIL_STATE:
+			return decode_mail(payload)
+		ServerMessage.ELORIA_NAVIGATION_STATE:
+			return decode_navigation(payload)
+		ServerMessage.ELORIA_SPECIAL_EVENT_STATE:
+			return decode_special_events(payload)
 		ServerMessage.ELORIA_MAP_OBJECTS:
 			return decode_map_objects(payload)
 		ServerMessage.ELORIA_HARVEST_STATE:
@@ -629,6 +652,258 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "ping_request"}
 		_:
 			return {"type": "unknown", "command": command, "payload": payload}
+
+## --- Eloria extension windows -----------------------------------------------
+##
+## Nine server-push state packets, each driving one window. They are the fork's
+## own additions rather than upstream Eternal Lands, and the server withholds
+## every one of them from a client that has not claimed the matching capability
+## in `#clientcaps` - which is why this client saw none of them until Phase 1.
+##
+## Every one of these is a snapshot: the server states the whole window, the
+## client renders it. None of them is merged with a previous value.
+
+## A NUL-terminated UTF-8 string at `offset`. Returns the value and the offset
+## just past the terminator, or an empty dictionary when the payload does not
+## contain one.
+static func _nul_at(payload: PackedByteArray, offset: int) -> Dictionary:
+	if offset >= payload.size():
+		return {}
+	var end: int = payload.find(0, offset)
+	if end < 0:
+		return {}
+	return {"value": payload.slice(offset, end).get_string_from_utf8(),
+		"offset": end + 1}
+
+## Reads `count` NUL-terminated strings in order. Returns the values and the
+## offset past the last terminator, or an empty dictionary on a short payload.
+static func _nul_run(payload: PackedByteArray, offset: int,
+		count: int) -> Dictionary:
+	var values: Array[String] = []
+	for _index: int in range(count):
+		var field: Dictionary = _nul_at(payload, offset)
+		if field.is_empty():
+			return {}
+		values.append(str(field.value))
+		offset = int(field.offset)
+	return {"values": values, "offset": offset}
+
+## Command 222. The Nymara Exchange: the player's gold, how many items are
+## waiting in escrow, and the listings on offer.
+static func decode_marketplace(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 11:
+		return {"type": "invalid", "error": "marketplace_length"}
+	var view: int = int(payload[0])
+	var gold: int = u32(payload, 1)
+	var returned_items: int = u32(payload, 5)
+	var count: int = u16(payload, 9)
+	var offset: int = 11
+	var listings: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 18 > payload.size():
+			return {"type": "invalid", "error": "marketplace_entry_length"}
+		var listing: Dictionary = {
+			"listing_id": u32(payload, offset),
+			"quantity": u32(payload, offset + 4),
+			"unit_price": u32(payload, offset + 8),
+			"seconds_left": u32(payload, offset + 12),
+			"image_id": u16(payload, offset + 16)}
+		offset += 18
+		var text: Dictionary = _nul_run(payload, offset, 2)
+		if text.is_empty():
+			return {"type": "invalid", "error": "marketplace_entry_text"}
+		listing["item_name"] = (text.values as Array)[0]
+		listing["seller"] = (text.values as Array)[1]
+		offset = int(text.offset)
+		listings.append(listing)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "marketplace_trailing"}
+	return {"type": "marketplace", "view": view, "gold": gold,
+		"returned_items": returned_items, "listings": listings}
+
+## Command 223. One NPC merchant's stock, with the prices in both directions
+## and how many of each the player already carries.
+static func decode_merchant(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 16:
+		return {"type": "invalid", "error": "merchant_length"}
+	var actor_id: int = u16(payload)
+	var gold: int = u32(payload, 2)
+	var carried: int = u32(payload, 6)
+	var capacity: int = u32(payload, 10)
+	var count: int = u16(payload, 14)
+	var name_field: Dictionary = _nul_at(payload, 16)
+	if name_field.is_empty():
+		return {"type": "invalid", "error": "merchant_name"}
+	var offset: int = int(name_field.offset)
+	var items: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 16 > payload.size():
+			return {"type": "invalid", "error": "merchant_entry_length"}
+		var entry: Dictionary = {
+			"index": u16(payload, offset),
+			"buy_price": u32(payload, offset + 2),
+			"sell_price": u32(payload, offset + 6),
+			"owned": u32(payload, offset + 10),
+			"image_id": u16(payload, offset + 14)}
+		offset += 16
+		var entry_name: Dictionary = _nul_at(payload, offset)
+		if entry_name.is_empty():
+			return {"type": "invalid", "error": "merchant_entry_name"}
+		entry["name"] = str(entry_name.value)
+		offset = int(entry_name.offset)
+		items.append(entry)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "merchant_trailing"}
+	return {"type": "merchant", "actor_id": actor_id, "npc_name": str(name_field.value),
+		"gold": gold, "carried": carried, "capacity": capacity, "items": items}
+
+## Command 224. Active quest objectives with their progress.
+static func decode_quest_journal(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "quest_journal_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var entries: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 9 > payload.size():
+			return {"type": "invalid", "error": "quest_entry_length"}
+		var entry: Dictionary = {
+			"ready": int(payload[offset]) != 0,
+			"current": u32(payload, offset + 1),
+			"target": u32(payload, offset + 5)}
+		offset += 9
+		var text: Dictionary = _nul_run(payload, offset, 3)
+		if text.is_empty():
+			return {"type": "invalid", "error": "quest_entry_text"}
+		entry["title"] = (text.values as Array)[0]
+		entry["objective"] = (text.values as Array)[1]
+		entry["location"] = (text.values as Array)[2]
+		offset = int(text.offset)
+		entries.append(entry)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "quest_journal_trailing"}
+	return {"type": "quest_journal", "entries": entries}
+
+## Command 225. One inspected item, and the equipped item it would replace.
+static func decode_item_detail(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 7:
+		return {"type": "invalid", "error": "item_detail_length"}
+	var text: Dictionary = _nul_run(payload, 7, 7)
+	if text.is_empty():
+		return {"type": "invalid", "error": "item_detail_text"}
+	if int(text.offset) != payload.size():
+		return {"type": "invalid", "error": "item_detail_trailing"}
+	var values: Array = text.values
+	return {"type": "item_detail", "image_id": u16(payload),
+		"quantity": u32(payload, 2), "equipped": int(payload[6]) != 0,
+		"name": values[0], "category": values[1], "equip_type": values[2],
+		"description": values[3], "stats": values[4],
+		"comparison_name": values[5], "comparison": values[6]}
+
+## Command 226. The server's own view of the backpack, with the item names,
+## categories and per-item weight the ordinary inventory packet cannot carry.
+static func decode_inventory_state(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 14:
+		return {"type": "invalid", "error": "inventory_state_length"}
+	var count: int = u16(payload, 12)
+	var offset: int = 14
+	var items: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 12 > payload.size():
+			return {"type": "invalid", "error": "inventory_state_entry_length"}
+		var entry: Dictionary = {
+			"slot": int(payload[offset]), "image_id": u16(payload, offset + 1),
+			"quantity": u32(payload, offset + 3), "emu": u32(payload, offset + 7),
+			"flags": int(payload[offset + 11])}
+		offset += 12
+		var text: Dictionary = _nul_run(payload, offset, 2)
+		if text.is_empty():
+			return {"type": "invalid", "error": "inventory_state_entry_text"}
+		entry["name"] = (text.values as Array)[0]
+		entry["category"] = (text.values as Array)[1]
+		offset = int(text.offset)
+		items.append(entry)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "inventory_state_trailing"}
+	return {"type": "inventory_state", "gold": u32(payload),
+		"carried": u32(payload, 4), "capacity": u32(payload, 8), "items": items}
+
+## Command 227. The combat HUD: both health bars and the most recent outcome.
+## Event 0 is a state refresh; the rest name what just happened.
+const COMBAT_EVENT_STATE := 0
+const COMBAT_EVENT_HIT := 1
+const COMBAT_EVENT_MISS := 2
+const COMBAT_EVENT_DODGE := 3
+const COMBAT_EVENT_DEFEAT := 4
+
+static func decode_combat_state(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 14:
+		return {"type": "invalid", "error": "combat_state_length"}
+	var name_field: Dictionary = _nul_at(payload, 13)
+	if name_field.is_empty() or int(name_field.offset) != payload.size():
+		return {"type": "invalid", "error": "combat_state_name"}
+	return {"type": "combat_state", "event": int(payload[0]),
+		"target_id": u16(payload, 1), "player_health": u16(payload, 3),
+		"player_max_health": u16(payload, 5), "target_health": u16(payload, 7),
+		"target_max_health": u16(payload, 9), "recent_damage": u16(payload, 11),
+		"target_name": str(name_field.value)}
+
+## Command 229. The persistent mail inbox.
+static func decode_mail(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "mail_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var messages: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 9 > payload.size():
+			return {"type": "invalid", "error": "mail_entry_length"}
+		var message: Dictionary = {
+			"mail_id": u32(payload, offset),
+			"created_at": u32(payload, offset + 4),
+			"read": int(payload[offset + 8]) != 0}
+		offset += 9
+		var text: Dictionary = _nul_run(payload, offset, 3)
+		if text.is_empty():
+			return {"type": "invalid", "error": "mail_entry_text"}
+		message["sender"] = (text.values as Array)[0]
+		message["subject"] = (text.values as Array)[1]
+		message["body"] = (text.values as Array)[2]
+		offset = int(text.offset)
+		messages.append(message)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "mail_trailing"}
+	return {"type": "mail", "messages": messages}
+
+## Command 230. The waypoint HUD. `active` false means no waypoint is set, and
+## the remaining fields are then meaningless rather than stale.
+static func decode_navigation(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 7:
+		return {"type": "invalid", "error": "navigation_length"}
+	var text: Dictionary = _nul_run(payload, 7, 2)
+	if text.is_empty():
+		return {"type": "invalid", "error": "navigation_text"}
+	if int(text.offset) != payload.size():
+		return {"type": "invalid", "error": "navigation_trailing"}
+	return {"type": "navigation", "active": int(payload[0]) != 0,
+		"x": u16(payload, 1), "y": u16(payload, 3), "distance": u16(payload, 5),
+		"map_id": (text.values as Array)[0], "label": (text.values as Array)[1]}
+
+## Command 232. Free text lines for the specialty-event panel, NUL delimited.
+static func decode_special_events(payload: PackedByteArray) -> Dictionary:
+	if payload.is_empty() or payload[payload.size() - 1] != 0:
+		return {"type": "invalid", "error": "special_events_terminator"}
+	var lines: Array[String] = []
+	var start: int = 0
+	for index: int in range(payload.size()):
+		if payload[index] != 0:
+			continue
+		lines.append(payload.slice(start, index).get_string_from_utf8())
+		start = index + 1
+	# A single empty line is how the server clears the panel.
+	if lines.size() == 1 and lines[0].is_empty():
+		lines.clear()
+	return {"type": "special_events", "lines": lines}
 
 ## Clickable world objects on the current map. The client cannot infer any of
 ## this: a world package renders harvestable props and buildings as ordinary
