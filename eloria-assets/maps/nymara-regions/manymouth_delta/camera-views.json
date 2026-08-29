@@ -1,0 +1,464 @@
+{
+  "schemaVersion": "1.0.0",
+  "views": [
+    {
+      "id": "00-aerial-overview",
+      "panel": null,
+      "position": [
+        114.0,
+        190.39,
+        -396.0
+      ],
+      "target": [
+        114.0,
+        5.45,
+        -114.0
+      ],
+      "fov": 46.0,
+      "golden": false,
+      "note": "00 aerial overview"
+    },
+    {
+      "id": "01-mangrove-channel",
+      "panel": 1,
+      "position": [
+        -90.0,
+        0.6,
+        -132.0
+      ],
+      "target": [
+        -138.0,
+        -5.79,
+        -168.0
+      ],
+      "fov": 58.0,
+      "golden": false,
+      "note": "Mangrove channel from the bow of a carved canoe, spires beyond"
+    },
+    {
+      "id": "02-tide-hall",
+      "panel": 2,
+      "position": [
+        54.0,
+        3.49,
+        -33.0
+      ],
+      "target": [
+        30.0,
+        11.41,
+        -61.5
+      ],
+      "fov": 50.0,
+      "golden": false,
+      "note": "Tiered stilt hall with gilded finial over a plank village"
+    },
+    {
+      "id": "03-walkway-junction",
+      "panel": 3,
+      "position": [
+        54.0,
+        6.29,
+        -33.0
+      ],
+      "target": [
+        36.0,
+        2.99,
+        -48.0
+      ],
+      "fov": 52.0,
+      "golden": false,
+      "note": "Boardwalk junction over turquoise shallows, thatched pavilions"
+    },
+    {
+      "id": "04-long-market",
+      "panel": 4,
+      "position": [
+        16.8,
+        3.49,
+        -33.6
+      ],
+      "target": [
+        10.2,
+        3.31,
+        -20.4
+      ],
+      "fov": 56.0,
+      "golden": false,
+      "note": "Arched market hall on the walkway, lateen boats alongside"
+    },
+    {
+      "id": "05-root-landing",
+      "panel": 5,
+      "position": [
+        88.5,
+        3.95,
+        -176.01
+      ],
+      "target": [
+        69.99,
+        8.25,
+        -188.01
+      ],
+      "fov": 58.0,
+      "golden": false,
+      "note": "Deck built inside the aerial roots of a great banyan"
+    },
+    {
+      "id": "06-floating-market",
+      "panel": 6,
+      "position": [
+        -36.0,
+        4.71,
+        -9.0
+      ],
+      "target": [
+        -46.5,
+        1.31,
+        -16.5
+      ],
+      "fov": 56.0,
+      "golden": false,
+      "note": "Raft of moored canoes under awnings, produce in crates"
+    },
+    {
+      "id": "07-paddy-causeway",
+      "panel": 7,
+      "position": [
+        -48.0,
+        5.75,
+        -258.0
+      ],
+      "target": [
+        -12.0,
+        5.75,
+        -276.0
+      ],
+      "fov": 54.0,
+      "golden": false,
+      "note": "Bamboo causeway across lotus pads and terraced rice"
+    },
+    {
+      "id": "08-labyrinth-mouth",
+      "panel": 8,
+      "position": [
+        231.0,
+        6.07,
+        -1.5
+      ],
+      "target": [
+        207.0,
+        13.23,
+        -10.5
+      ],
+      "fov": 52.0,
+      "golden": false,
+      "note": "Flooded ruin with a glowing ring-portal (INTERIOR - this package ships only its threshold; the chamber is the manymouth_flooded_labyrinth map)"
+    },
+    {
+      "id": "09-long-look",
+      "panel": 9,
+      "position": [
+        156.0,
+        10.9,
+        18.0
+      ],
+      "target": [
+        114.0,
+        7.71,
+        -114.0
+      ],
+      "fov": 52.0,
+      "golden": false,
+      "note": "Two figures on a plank deck overlooking the whole delta"
+    },
+    {
+      "id": "10-deck-macro",
+      "panel": 10,
+      "position": [
+        108.9,
+        2.66,
+        -110.82
+      ],
+      "target": [
+        110.61,
+        1.99,
+        -111.9
+      ],
+      "fov": 36.0,
+      "golden": false,
+      "note": "Macro: woven bamboo, coiled rope, verdigris bronze staff, blossom"
+    },
+    {
+      "id": "11-great-arch",
+      "panel": null,
+      "position": [
+        72.0,
+        6.11,
+        -78.0
+      ],
+      "target": [
+        114.0,
+        7.45,
+        -114.0
+      ],
+      "fov": 50.0,
+      "golden": false,
+      "note": "11 great arch"
+    },
+    {
+      "id": "12-arch-platform",
+      "panel": null,
+      "position": [
+        114.0,
+        3.41,
+        -114.0
+      ],
+      "target": [
+        81.0,
+        4.2,
+        -93.0
+      ],
+      "fov": 55.0,
+      "golden": false,
+      "note": "12 arch platform"
+    },
+    {
+      "id": "13-green-temple",
+      "panel": null,
+      "position": [
+        258.0,
+        11.85,
+        -276.0
+      ],
+      "target": [
+        297.0,
+        28.82,
+        -309.0
+      ],
+      "fov": 50.0,
+      "golden": false,
+      "note": "13 green temple"
+    },
+    {
+      "id": "14-temple-stair",
+      "panel": null,
+      "position": [
+        276.0,
+        13.37,
+        -309.0
+      ],
+      "target": [
+        297.0,
+        24.82,
+        -309.0
+      ],
+      "fov": 54.0,
+      "golden": false,
+      "note": "14 temple stair"
+    },
+    {
+      "id": "15-town-from-water",
+      "panel": null,
+      "position": [
+        72.0,
+        1.39,
+        -12.0
+      ],
+      "target": [
+        33.0,
+        5.28,
+        -54.0
+      ],
+      "fov": 52.0,
+      "golden": false,
+      "note": "15 town from water"
+    },
+    {
+      "id": "16-stelae-court",
+      "panel": null,
+      "position": [
+        204.0,
+        0.6,
+        -210.0
+      ],
+      "target": [
+        228.0,
+        4.63,
+        -228.0
+      ],
+      "fov": 54.0,
+      "golden": false,
+      "note": "16 stelae court"
+    },
+    {
+      "id": "17-open-channel",
+      "panel": null,
+      "position": [
+        0.0,
+        0.6,
+        -180.0
+      ],
+      "target": [
+        -72.0,
+        2.55,
+        -240.0
+      ],
+      "fov": 52.0,
+      "golden": false,
+      "note": "17 open channel"
+    },
+    {
+      "id": "18-sea-reach",
+      "panel": null,
+      "position": [
+        -108.0,
+        6.11,
+        -300.0
+      ],
+      "target": [
+        -156.0,
+        -18.02,
+        -354.0
+      ],
+      "fov": 50.0,
+      "golden": false,
+      "note": "18 sea reach"
+    },
+    {
+      "id": "19-east-hamlet",
+      "panel": null,
+      "position": [
+        351.0,
+        5.07,
+        -174.0
+      ],
+      "target": [
+        363.0,
+        6.54,
+        -36.0
+      ],
+      "fov": 54.0,
+      "golden": false,
+      "note": "19 east hamlet"
+    },
+    {
+      "id": "20-spawn-grounding",
+      "panel": null,
+      "position": [
+        36.0,
+        3.49,
+        -48.0
+      ],
+      "target": [
+        54.0,
+        3.79,
+        -33.0
+      ],
+      "fov": 58.0,
+      "golden": false,
+      "note": "20 spawn grounding"
+    },
+    {
+      "id": "21-boat-yard",
+      "panel": null,
+      "position": [
+        -18.0,
+        3.41,
+        84.0
+      ],
+      "target": [
+        -129.0,
+        4.71,
+        39.0
+      ],
+      "fov": 55.0,
+      "golden": false,
+      "note": "21 boat yard"
+    },
+    {
+      "id": "22-upper-paddy",
+      "panel": null,
+      "position": [
+        30.0,
+        5.75,
+        -312.0
+      ],
+      "target": [
+        48.0,
+        3.3,
+        -330.0
+      ],
+      "fov": 52.0,
+      "golden": false,
+      "note": "22 upper paddy"
+    },
+    {
+      "id": "23-water-level",
+      "panel": null,
+      "position": [
+        84.0,
+        0.6,
+        -60.0
+      ],
+      "target": [
+        114.0,
+        7.45,
+        -114.0
+      ],
+      "fov": 50.0,
+      "golden": false,
+      "note": "23 water level"
+    },
+    {
+      "id": "40-golden-aerial",
+      "panel": null,
+      "position": [
+        114.0,
+        168.53,
+        -378.0
+      ],
+      "target": [
+        114.0,
+        5.45,
+        -114.0
+      ],
+      "fov": 46.0,
+      "golden": true,
+      "note": "40 golden aerial"
+    },
+    {
+      "id": "41-golden-arch",
+      "panel": null,
+      "position": [
+        72.0,
+        6.11,
+        -78.0
+      ],
+      "target": [
+        114.0,
+        7.45,
+        -114.0
+      ],
+      "fov": 50.0,
+      "golden": true,
+      "note": "41 golden arch"
+    },
+    {
+      "id": "42-golden-town",
+      "panel": null,
+      "position": [
+        72.0,
+        1.39,
+        -12.0
+      ],
+      "target": [
+        33.0,
+        5.28,
+        -54.0
+      ],
+      "fov": 52.0,
+      "golden": true,
+      "note": "42 golden town"
+    }
+  ]
+}
