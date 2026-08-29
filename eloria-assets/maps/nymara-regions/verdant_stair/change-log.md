@@ -173,3 +173,21 @@ validators and `verify_runtime` without a murmur.
     `capture_views.py --only <ids>` re-shoots a subset in seconds and merges
     into the existing index, which is what makes iterating on framing
     affordable.
+
+12. **Two regions claimed the same surface classes.** Grey Moors (#196) and
+    this branch both cut from a develop where class 23 was free, and both took
+    it — this one 23-24, Grey Moors 23-27. Because both blocks append to the
+    same table in the same place, git could have merged them without raising a
+    conflict, leaving two constants with the same value, `SURFACE_NAMES`
+    holding only one, and the losing region's terrain quietly mislabelled in
+    its own package. Nothing would have crashed.
+
+    Verdant Stair moved to 28-29, being the side that needs two classes rather
+    than five. Confirmed inert by rebuilding on the new numbers: `world.glb`
+    byte-identical, `world.json` and `collision.bin` unchanged, `validate_gltf`
+    still 0/0. No server change either — nothing outside `terrain.py` uses the
+    integers, `world.json` records surfaces by name, and the ELM export reads
+    `collision.bin`, whose cell byte is a height code and not a class.
+
+    Found by reading a sibling PR before opening this one, not by any check in
+    the pipeline. Nothing in the toolkit would catch it.
