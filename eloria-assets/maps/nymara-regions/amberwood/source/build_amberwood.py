@@ -732,10 +732,20 @@ def main() -> int:
         minimap = render_minimap(build, sets, out / "minimap.webp")
         print(f"[minimap] rendered in {time.time() - t0:.1f}s")
 
-    texture_bytes = sum(sum(len(v) for v in ts.images().values()) for ts in sets.values())
-    stats["embeddedTextureBytes"] = texture_bytes
+    # Only the sets this package embeds. Summing every generated set reports
+    # the size of the whole shared texture table, which is the same number for
+    # every region and grows whenever any region adds a recipe - so it measured
+    # the toolkit rather than the package. It was also plainly wrong on its
+    # face: it claimed 17.1 MB of texture inside a GLB whose textures are a
+    # fraction of that.
+    embedded = {MAT.BY_NAME[name].texture for name in MATERIALS
+                if name in MAT.BY_NAME}
+    embedded_sets = [ts for key, ts in sets.items() if key in embedded]
+    stats["embeddedTextureBytes"] = sum(
+        sum(len(v) for v in ts.images().values()) for ts in embedded_sets)
     stats["textureMemoryBytesUncompressed"] = sum(
-        ts.base_color.shape[0] * ts.base_color.shape[1] * 4 * 3 for ts in sets.values())
+        ts.base_color.shape[0] * ts.base_color.shape[1] * 4 * 3
+        for ts in embedded_sets)
     stats["placements"] = len(build.placements)
     stats["collision"] = collision_stats
     stats["notes"] = build.notes
