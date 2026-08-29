@@ -172,8 +172,65 @@ def tide_post(height=3.2, seed=0) -> S.MeshGroup:
     return out
 
 
+def exit_threshold(kind: str, seed: int = 0) -> S.MeshGroup:
+    """Built geometry that says "this is the way out", at every arrival.
+
+    An arrival used to be a bare point in a room. A player who walks in, turns
+    around twice and wants to leave has nothing to look for, and on a combined
+    insides map with four sections and no connecting corridors that is a real
+    problem: there is no wrong door to find by accident, so if the right one is
+    invisible there is nothing at all.
+
+    Four kinds, one per section, because the way out of a drowned ruin is not
+    the way out of a cellar.
+    """
+    rng = np.random.default_rng(seed)
+    out = S.MeshGroup()
+    if kind == "root-arch":
+        # a cut arch with roots through it: the labyrinth's threshold
+        out.add(S.ancient_arch(span=3.4, height=4.2, depth=1.1, seed=seed,
+                               roots=True, ruined=False))
+        for sign in (-1, 1):
+            out.add(SK.stele(2.2, seed + 3).translate(sign * 2.6, 0.0, 0.6))
+    elif kind == "ladder":
+        # the hatch you came down, with daylight implied by the lamp above it
+        for k in range(9):
+            out.add(M.box((0.78, 0.07, 0.07), center=(0.0, 0.35 + k * 0.42, 0.0),
+                          uv_scale=1.0, material=BAMBOO))
+        for sx in (-0.36, 0.36):
+            out.add(M.box((0.09, 4.2, 0.09), center=(sx, 2.1, 0.0),
+                          uv_scale=1.0, material=BAMBOO))
+        out.add(M.box((2.2, 0.18, 2.2), center=(0.0, 4.3, 0.0), uv_scale=0.9,
+                      material=TEAK))
+    elif kind == "doorway":
+        # a carved timber door frame with a lintel, the hall's own manner
+        for sx in (-1.35, 1.35):
+            out.add(M.box((0.30, 3.0, 0.34), center=(sx, 1.5, 0.0),
+                          uv_scale=1.0, material=CARVED))
+        out.add(M.box((3.2, 0.36, 0.34), center=(0.0, 3.15, 0.0), uv_scale=1.0,
+                      material=CARVED))
+        out.add(A.bracket(0.5, CARVED).translate(-1.35, 2.7, 0.0))
+        out.add(A.bracket(0.5, CARVED).rotate_y(math.pi).translate(1.35, 2.7, 0.0))
+    elif kind == "stair-head":
+        # two columns and a bronze lintel: the sanctum does not do doors
+        for sx in (-2.0, 2.0):
+            out.add(S.column(height=4.0, radius=0.42, flutes=10, material=ROCK)
+                    .translate(sx, 0.0, 0.0))
+        out.add(M.box((4.9, 0.42, 0.62), center=(0.0, 4.2, 0.0), uv_scale=0.8,
+                      material=BRONZE))
+    elif kind == "drowned-stair":
+        # a flight rising out of the water toward a shaft that is not modelled:
+        # the way back up to the arch, going nowhere the player can see
+        flight = M.stairs(4.0, 0.26, 0.34, 14, uv_scale=0.6, material=ROCK)
+        out.add_walk(flight)
+        for sx in (-2.4, 2.4):
+            out.add(S.column(height=7.0, radius=0.44, flutes=8, material=GLYPH)
+                    .translate(sx, 0.0, 2.2))
+    return out
+
+
 SKYLIGHT = {"colour": [0.62, 0.82, 0.86], "range": 34.0, "energy": 3.2}
-GATELIGHT = {"colour": [0.30, 0.86, 0.78], "range": 26.0, "energy": 2.6}
+GATELIGHT = {"colour": [0.34, 0.92, 0.82], "range": 30.0, "energy": 4.0}
 
 
 def glyph_stele_row(count, spacing, height, seed=0, drown=0.0) -> S.MeshGroup:
@@ -243,6 +300,7 @@ def flooded_labyrinth(seed: int = 20260830) -> Interior:
     # -- threshold: dry, cut, and obviously built -------------------------
     g.add(S.ancient_arch(span=4.2, height=4.8, depth=1.4, seed=seed,
                          roots=True, ruined=True).translate(0.0, 0.0, -5.6))
+    g.add(exit_threshold("root-arch", seed + 5).translate(0.0, 0.0, -3.2))
     for sign in (-1, 1):
         g.add(S.column(height=4.4, radius=0.42, flutes=6, material=GLYPH)
               .translate(sign * 4.4, 0.0, -2.0))
@@ -304,6 +362,18 @@ def flooded_labyrinth(seed: int = 20260830) -> Interior:
         g.add(SK.stele(float(rng.uniform(3.0, 4.8)), seed + 70 + index)
               .translate(gx + float(rng.uniform(-13, 13)), -2.8,
                          gz + float(rng.uniform(-16, 16))))
+    # The way up to the surface arch: a flight rising out of the pool on the
+    # chamber's far side, which is where a player arriving through the whirlpool
+    # comes down and where one leaving that way goes back. The shaft above it is
+    # deliberately not modelled - it opens into forty metres of water.
+    g.add(exit_threshold("drowned-stair", seed + 80)
+          .translate(gx, -2.8, gz + 15.0))
+    # offerings left at the gate, half in the water
+    for index in range(10):
+        angle = 2.0 * math.pi * index / 10.0 + 0.3
+        g.add(SK.water_jar(seed + 120 + index, float(rng.uniform(0.45, 0.75)))
+              .translate(gx + math.cos(angle) * 7.4, -2.25,
+                         gz + math.sin(angle) * 7.4))
 
     lamp_points = [
         (0.0, 3.0, -4.0), (-3.4, 3.0, 0.0), (3.4, 3.0, 2.0),
@@ -329,7 +399,9 @@ def flooded_labyrinth(seed: int = 20260830) -> Interior:
     # the room is that the gate glows.
     it.skylights = [
         {"position": [round(gx, 2), 0.5, round(gz, 2)], **GATELIGHT,
-         "energy": 4.2, "range": 40.0},
+         "energy": 6.5, "range": 44.0},
+        {"position": [round(gx, 2), -1.9, round(gz - 6.0, 2)], **GATELIGHT,
+         "energy": 3.4},
         {"position": [round(gx - 9.0, 2), 4.0, round(gz, 2)], **GATELIGHT},
         {"position": [round(gx + 9.0, 2), 4.0, round(gz, 2)], **GATELIGHT},
         {"position": [round(gx, 2), 8.0, round(gz - 10.0, 2)], **GATELIGHT},
@@ -337,6 +409,12 @@ def flooded_labyrinth(seed: int = 20260830) -> Interior:
     ]
 
     it.spawn_space = "threshold"
+    # A SECOND arrival, and the best portal in the region: the ring that stands
+    # out of the whirlpool on the surface is the top of this gate, so going down
+    # through it has to land here. Both ends of that transition are geometry
+    # that already existed; all this does is admit they are the same object.
+    it.extra_arrivals = [("gate-descent", "The Submerged Gate", "gate_chamber",
+                          (0.0, -2.75, 145.0), 180.0)]
     # 1.6, not 4.0: the anchor belongs on the dais the ring springs from,
     # not in the middle of the ring, or the runtime check reports it
     # floating three metres above the floor.
@@ -359,11 +437,11 @@ def flooded_labyrinth(seed: int = 20260830) -> Interior:
         # the gate chamber, a 40 m room whose subject is a ring you have to be
         # low and back to see whole.
         ("concept-07", "the root chamber", "root_chamber",
-         (25.0, 1.2, 29.0), (33.0, 3.2, 36.0)),
+         (24.0, 0.4, 28.5), (33.0, 0.9, 36.0)),
         ("concept-09", "the drowned processional", "stelae_walk",
          (-6.5, 0.1, 66.5), (4.0, 0.4, 93.0)),
         ("concept-08", "the submerged gate from beneath", "gate_chamber",
-         (-14.0, -0.6, 114.0), (0.0, 4.5, 130.0)),
+         (-8.5, -1.4, 118.0), (0.0, 3.4, 130.0)),
     ]
     it.notes = [
         "The gate chamber holds the lower half of the same ring that stands out "
@@ -424,12 +502,11 @@ def smugglers_warren(seed: int = 20260831) -> Interior:
                               "width": width, "height": height}
 
     # -- hatch: a ladder down from the ferry post -------------------------
-    for k in range(9):
-        g.add(M.box((0.72, 0.06, 0.06), center=(0.0, -1.4 + k * 0.42, 3.4),
-                    uv_scale=1.0, material=BAMBOO))
-    for sx in (-0.34, 0.34):
-        g.add(M.box((0.08, 4.0, 0.08), center=(sx, 0.4, 3.4), uv_scale=1.0,
-                    material=BAMBOO))
+    g.add(exit_threshold("ladder", seed + 7).translate(0.0, -1.6, 3.2))
+    # a dugout tied up at the foot of the ladder: you came down to a boat, which
+    # is the only way anything gets in or out of here
+    g.add(SK.dugout(5.0, seed + 8).rotate_y(0.4).translate(2.6, -1.75, 0.0))
+    g.add(rope_hank(0.3, seed + 9).translate(1.2, -1.5, 2.0))
 
     # -- stilt corridor: narrow, low, piles either hand -------------------
     g.add(pile_forest(-3.2, 16, 3.2, 54, -1.9, 2.6, seed=seed + 10, spacing=3.6))
@@ -455,6 +532,22 @@ def smugglers_warren(seed: int = 20260831) -> Interior:
         g.add(SK.dugout(5.2, seed + 30 + index)
               .rotate_y(float(rng.uniform(0, math.pi)))
               .translate(float(rng.uniform(-18, 18)), -1.05,
+                         float(rng.uniform(68, 102))))
+    # lines strung between the piles, with what is drying on them. The maze was
+    # structurally right and visually empty above the water line.
+    for index in range(14):
+        z = 68.0 + index * 2.6
+        y = 2.2 + float(rng.uniform(-0.5, 0.9))
+        g.add(M.box((34.0, 0.05, 0.05), center=(0.0, y, z), uv_scale=1.0,
+                    material=BAMBOO))
+        for hang in range(int(rng.integers(1, 4))):
+            hx = float(rng.uniform(-15, 15))
+            g.add(P.banner(0.5, float(rng.uniform(0.7, 1.4)),
+                           seed + 60 + index * 3 + hang, material=CLOTH)
+                  .translate(hx, y - 1.4, z))
+    for index in range(6):
+        g.add(SK.net_rack(seed + 130 + index, 3.0)
+              .translate(float(rng.uniform(-19, 19)), -1.6,
                          float(rng.uniform(68, 102))))
 
     # -- cache: shelves cut into a bar's flank ----------------------------
@@ -602,6 +695,8 @@ def tide_hall(seed: int = 20260901) -> Interior:
         it.passages[ident] = {"a": a, "b": b, "y0": y0, "y1": y1,
                               "width": width, "height": height}
 
+    g.add(exit_threshold("doorway", seed + 6).translate(0.0, 0.0, 1.4))
+
     # -- hall: carved posts, matting, a hearth basin, the tide post -------
     hx, hz = it.centre("hall")
     for row in range(4):
@@ -638,6 +733,35 @@ def tide_hall(seed: int = 20260901) -> Interior:
               .translate(hx + float(rng.uniform(-11, 11)), 0.05,
                          hz + float(rng.uniform(-14, 14))))
     g.add(SK.deck_study(seed + 40).translate(hx + 7.0, 0.06, hz - 8.0))
+    # The hall was a handsome empty room. These are the things that say people
+    # sleep, eat and work in it: mats rolled against the walls, a loom, fish on
+    # a line over the hearth, and bundles in the rafters.
+    for index in range(8):
+        sign = -1.0 if index % 2 == 0 else 1.0
+        roll = M.cylinder(0.28, 0.26, 1.8, 9, uv_scale=1.2, material=BAMBOO)
+        roll.rotate_z(math.pi * 0.5)
+        g.add(roll.translate(sign * 12.2, 0.28, 18.0 + index * 3.2))
+    loom = S.MeshGroup()
+    for sx in (-0.9, 0.9):
+        loom.add(M.box((0.14, 2.2, 0.14), center=(sx, 1.1, 0.0), uv_scale=1.0,
+                       material=CARVED))
+    loom.add(M.box((2.0, 0.14, 0.14), center=(0.0, 2.2, 0.0), uv_scale=1.0,
+                   material=CARVED))
+    for warp in range(9):
+        loom.add(M.box((0.03, 1.7, 0.03),
+                       center=(-0.8 + warp * 0.2, 1.25, 0.0), uv_scale=1.0,
+                       material=BAMBOO))
+    g.add(loom.translate(hx - 9.5, 0.05, hz - 4.0))
+    for index in range(9):
+        g.add(M.box((0.16, 0.42, 0.10),
+                    center=(hx - 2.0 + index * 0.5, 2.5, hz + 2.4),
+                    uv_scale=1.0, material=BRONZE))
+    g.add(M.box((5.0, 0.05, 0.05), center=(hx, 2.75, hz + 2.4), uv_scale=1.0,
+                material=BAMBOO))
+    for index in range(10):
+        bundle = M.cylinder(0.22, 0.18, 0.9, 8, uv_scale=1.2, material=BAMBOO)
+        g.add(bundle.translate(hx + float(rng.uniform(-10, 10)), 5.6,
+                               hz + float(rng.uniform(-12, 12))))
 
     # -- strongroom: the village's bronze ---------------------------------
     sx, sz = it.centre("strongroom")
@@ -762,6 +886,8 @@ def temple_sanctum(seed: int = 20260902) -> Interior:
         it.passages[ident] = {"a": a, "b": b, "y0": y0, "y1": y1,
                               "width": width, "height": height}
 
+    g.add(exit_threshold("stair-head", seed + 6).translate(0.0, 0.0, 3.0))
+
     # -- ambulatory: a ring of columns around a solid core ----------------
     ax, az = it.centre("ambulatory")
     for index in range(16):
@@ -775,6 +901,23 @@ def temple_sanctum(seed: int = 20260902) -> Interior:
     for level in range(3):
         g.add(M.box((11.4, 0.28, 13.4), center=(ax, -1.0 + level * 2.3, az),
                     uv_scale=0.7, material=BRONZE))
+    # A niche in the core's south face with what the ambulatory walks around.
+    # The core was a bronze-banded box and gave the player no reason to look at
+    # it; a thing inside it is the reason the ring corridor exists.
+    g.add(M.box((3.0, 3.4, 0.8), center=(ax, -0.5, az - 6.6), uv_scale=0.7,
+                material=ROCK))
+    g.add(S.statue(height=2.4, seed=seed + 12, plinth_height=0.8)
+          .translate(ax, -2.2, az - 6.4))
+    for sx in (-1.5, 1.5):
+        g.add(M.cylinder(0.14, 0.12, 2.6, 8, uv_scale=0.9, material=BRONZE)
+              .translate(ax + sx, -2.2, az - 6.0))
+    # water channels cut into the ambulatory floor, running inward to the court
+    for index in range(8):
+        angle = 2.0 * math.pi * index / 8.0
+        g.add(M.box((0.7, 0.14, 9.0),
+                    center=(ax + math.cos(angle) * 9.0, -2.05,
+                            az + math.sin(angle) * 9.0),
+                    uv_scale=0.7, material=BRONZE).rotate_y(angle))
 
     # -- oculus court: rain, a reflecting pool, bronze rings --------------
     ox, oz = it.centre("oculus_court")
@@ -995,7 +1138,17 @@ def combine(seed: int = 20260830) -> Interior:
                    round((spawn_space["z0"] + spawn_space["z1"]) * 0.5, 2)]
         combined.arrivals.append({
             "id": part.destination_spawn, "name": part.name, "section": key,
-            "space": f"{key}.{part.spawn_space}", "position": arrival})
+            "space": f"{key}.{part.spawn_space}", "position": arrival,
+            "facing": 0.0})
+        # A section may offer more than one way in. The labyrinth does: its
+        # threshold is the cave mouth in the headland, and its gate chamber is
+        # the underside of the arch in the whirlpool.
+        for spawn_id, label, space_key, at, facing in getattr(
+                part, "extra_arrivals", []):
+            combined.arrivals.append({
+                "id": spawn_id, "name": label, "section": key,
+                "space": f"{key}.{space_key}", "position": move(at),
+                "facing": facing})
         combined.sections.append({
             "id": key, "name": part.name, "class": part.klass,
             "offset": [dx, 0.0, dz], "arrival": arrival,

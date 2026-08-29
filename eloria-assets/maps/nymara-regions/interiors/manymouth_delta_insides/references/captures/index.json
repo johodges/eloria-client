@@ -50,13 +50,13 @@
     "subject": "The Flooded Labyrinth: the root chamber",
     "space": "flooded_labyrinth.root_chamber",
     "eye": [
-      85.0,
-      1.2,
-      69.0
+      84.0,
+      0.4,
+      68.5
     ],
     "target": [
       93.0,
-      3.2,
+      0.9,
       76.0
     ],
     "fov": 62.0,
@@ -94,13 +94,13 @@
     "subject": "The Flooded Labyrinth: the submerged gate from beneath",
     "space": "flooded_labyrinth.gate_chamber",
     "eye": [
-      46.0,
-      -0.6,
-      154.0
+      51.5,
+      -1.4,
+      158.0
     ],
     "target": [
       60.0,
-      4.5,
+      3.4,
       170.0
     ],
     "fov": 62.0,

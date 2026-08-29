@@ -225,8 +225,11 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
         "spawnPoints": ([{"id": "default", "position": spawn, "rotationDegrees": 0,
                           "surface": "Walk"}]
                         + [{"id": a["id"], "name": a["name"], "position": a["position"],
-                            "rotationDegrees": 0, "surface": "Walk",
-                            "section": a["section"]}
+                            # Facing matters on arrival: a player dropped into a
+                            # room looking at the wall they came through has to
+                            # turn round before they can see where they are.
+                            "rotationDegrees": round(float(a.get("facing", 0.0)), 1),
+                            "surface": "Walk", "section": a["section"]}
                            for a in arrivals]),
         "collision": dict(collision_stats,
                           nodeNames=[n for n in stats["nodeNames"]
@@ -315,6 +318,39 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
     return doc
 
 
+def check_doors_match(interior: I.Interior, doc: dict) -> list[str]:
+    """Every region door must have an arrival, and every arrival a door.
+
+    The two halves of a transition are authored in two different build scripts,
+    and nothing has ever checked that they agree. A door whose destinationSpawn
+    names an arrival that does not exist is a door that drops the player at the
+    map's default spawn - which, on a combined insides map, is in a completely
+    different section - and an arrival with no door is dead geometry nobody can
+    reach. Both failures are silent and neither shows up in a validator.
+    """
+    region_manifest = ROOT / "world.json"
+    if not region_manifest.is_file():
+        return [f"cannot check doors: no {region_manifest}"]
+    region = json.loads(region_manifest.read_text(encoding="utf-8"))
+    insides_map = "maps/nymara/manymouth_flooded_labyrinth.elm"
+    doors = {p["destinationSpawn"]: p["id"] for p in region.get("portals", [])
+             if p.get("destinationMap") == insides_map
+             and p.get("destinationSpawn")}
+    arrivals = {a["id"] for a in getattr(interior, "arrivals", [])}
+    region_spawns = {s["id"] for s in region.get("spawnPoints", [])}
+    exits = {p["destinationSpawn"] for p in doc.get("portals", [])
+             if p.get("destinationSpawn")}
+
+    problems = []
+    for spawn_id in sorted(set(doors) - arrivals):
+        problems.append(f"region door targets missing arrival {spawn_id!r}")
+    for spawn_id in sorted(arrivals - set(doors)):
+        problems.append(f"arrival {spawn_id!r} has no region door")
+    for spawn_id in sorted(exits - region_spawns):
+        problems.append(f"return portal targets missing region spawn {spawn_id!r}")
+    return problems
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", nargs="*", default=None)
@@ -338,10 +374,19 @@ def main() -> int:
         payload, collision_stats = build_collision(interior)
         (out / "collision.bin").write_bytes(payload)
         doc = write_manifest(interior, stats, collision_stats, out / "world.json")
+        problems = check_doors_match(interior, doc)
+        if problems:
+            print("[doors] TRANSITIONS DO NOT RESOLVE:")
+            for line in problems:
+                print("   ", line)
+        else:
+            print(f"[doors] {len(getattr(interior, 'arrivals', []))} arrivals, "
+                  f"every one reachable from a region door and returning to a "
+                  f"region spawn")
         report = validate_gltf.validate(str(out / "world.glb"))
         (out / "world.glb.validator.json").write_text(
             json.dumps(report.to_dict(), indent=2) + "\n")
-        ok = not report.to_dict().get("errors")
+        ok = (not report.to_dict().get("errors")) and not problems
         summary.append((interior.ident, stats["uniqueTriangles"], stats["glbBytes"],
                         collision_stats["walkableCells"], ok))
         print(f"[{interior.ident}] {stats['uniqueTriangles']} tris, "

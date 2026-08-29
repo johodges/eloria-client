@@ -239,7 +239,14 @@ def _add_spawns_and_portals(build: REG.RegionBuild, network: dict) -> None:
             ("tide-hall-door", "The Tide Hall", "town_hall",
              math.radians(18.0)),
             ("temple-sanctum-door", "The Sanctum Stair", "green_temple",
-             math.radians(-104.0))):
+             math.radians(-104.0)),
+            # The fifth door, and the one worth having: the ring standing out
+            # of the whirlpool is the top of the Submerged Gate, so going down
+            # through it lands under it. Both ends of that transition are
+            # geometry that already existed - this only admits that the arch on
+            # the surface and the gate below are the same object.
+            ("gate-descent", "The Manymouth Arch", "arch_stair",
+             math.radians(-140.0))):
         x, y, z = spawn_point(build, anchor)
         build.spawns.append({
             "id": door_id,

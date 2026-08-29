@@ -169,6 +169,22 @@
       "surface": "Paving",
       "grounded": true,
       "note": "return landing for the insides map's exit portal"
+    },
+    {
+      "id": "gate-descent",
+      "position": [
+        79.15,
+        1.3,
+        -92.23
+      ],
+      "serverTile": [
+        253,
+        266
+      ],
+      "rotationDegrees": -140.0,
+      "surface": "Paving",
+      "grounded": true,
+      "note": "return landing for the insides map's exit portal"
     }
   ],
   "collision": {
@@ -3740,6 +3756,24 @@
       ],
       "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
       "destinationSpawn": "temple-sanctum-door",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "gate-descent",
+      "name": "The Manymouth Arch",
+      "type": "map-transition",
+      "position": [
+        79.15,
+        1.35,
+        -92.23
+      ],
+      "serverTile": [
+        253,
+        266
+      ],
+      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "destinationSpawn": "gate-descent",
       "radius": 3.5,
       "authority": "server"
     },

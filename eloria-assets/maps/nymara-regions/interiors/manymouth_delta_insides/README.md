@@ -16,6 +16,18 @@ Crownwater.
 | `tide_hall` | inhabited hall | (60, 240) | the Tide Hall door | `tide-hall-door` |
 | `temple_sanctum` | monumental sanctum | (165, 230) | the Sanctum stair on the temple | `temple-sanctum-door` |
 
+There is a **fifth** arrival, and it is the one worth the convention:
+
+| `gate-descent` | the great arch in the whirlpool | into the gate chamber, under it |
+| --- | --- | --- |
+
+The ring standing out of the water on the region map is the **top of the
+Submerged Gate** in the labyrinth's last chamber. Descending through the arch
+lands underneath it, and a drowned stair on the far side of that chamber comes
+back up. Both ends were already geometry; the portal only admits they are the
+same object. It is why the labyrinth has two ways in and the other three
+sections have one.
+
 Every door on the region map targets the same `destinationMap` and differs only
 in `destinationSpawn`. Each arrival carries a return portal back to the door it
 came from, and the region gained a spawn of the same name so the return has
@@ -52,13 +64,14 @@ the exterior raises but cannot:
 
 | File | What it is |
 | --- | --- |
-| `world.glb` | Self-contained glTF 2.0 — 79,438 triangles, 11.4 MB |
-| `world.json` | Manifest: four sections, five spawns, four return portals, 126 lights, spaces, landmarks, interactives, NPC markers, harvestables |
+| `world.glb` | Self-contained glTF 2.0 — 87,378 triangles, 11.8 MB |
+| `world.json` | Manifest: four sections, 6 spawns (default plus five arrivals), 5 return portals, 127 lights, spaces, landmarks, interactives, NPC markers, harvestables |
 | `collision.bin` | `EWCG` v1, 366 × 702 at half a metre, 21.4% walkable |
 | `world.glb.validator.json` | glTF 2.0 validation — **0 errors, 0 warnings** |
-| `verification-report.json` | Runtime contract — **0 errors**, 2 documented warnings |
+| `verification-report.json` | Runtime contract — **0 errors**, 1 documented warning |
 | `references/captures/` | Offline preview renderer |
 | `references/godot-captures/` | **Real Godot 4.7.2 client frames** |
+| `references/00-detail-board.png` | The ten-panel board, **built, not concept art** — see below |
 
 ## The blackspace
 
@@ -78,7 +91,7 @@ Two classes, because one is not enough:
 
 * **Hanging oil lanterns** — 116 of them, range 9 m, warm. The region's readable
   light source, and what almost every room is lit by.
-* **Shafts** — 10 large cold sources, in the only two rooms a lantern cannot
+* **Shafts** — 11 large cold sources, in the only two rooms a lantern cannot
   light: the forty-metre gate chamber, whose subject is a glowing ring, and the
   sanctum's court, which is open to the sky. Giving those rooms thirty more
   lanterns would light them by making the lantern meaningless.
@@ -103,6 +116,30 @@ Godot_v4.7.2-stable_win64_console.exe --path . \
   --rendering-driver vulkan --resolution 1400x900 -- \
   --package=<abs>/interiors/manymouth_delta_insides --out=<abs>/.../godot-captures
 ```
+
+## The board
+
+`references/00-detail-board.png` is a ten-panel 5x2 board answering the exact
+ten subjects `concept.json` names, composed by `source/make_interior_board.py`
+from real client frames. It says on its own face that it is a build reference
+and not concept art, and it is deliberately **not** written into the concept
+package and **not** named `00-concept-detail-board.png`: the truncated original
+stays exactly where it is, so a re-supplied board replaces that one and this
+stays what it is.
+
+It exists because a detail board answers "what does this place look like at eye
+height?" and the file that was supposed to answer it cannot be opened.
+
+## Every transition is checked
+
+`build_interiors.py` fails the build unless every region door names an arrival
+that exists, every arrival is reachable from a door, and every return portal
+names a region spawn that exists. The two halves of a transition are authored in
+two different build scripts and nothing had ever checked they agree; a door
+whose `destinationSpawn` names nothing drops the player at the map's default
+spawn, which on a combined insides map is in a completely different section, and
+neither failure shows up in a validator. The check caught exactly that while the
+fifth door was being added.
 
 ## Honest about the concept art
 

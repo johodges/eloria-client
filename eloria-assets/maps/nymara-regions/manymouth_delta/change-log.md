@@ -198,3 +198,39 @@ it.
 `manymouth_flooded_labyrinth` grows from 32 to 64 tiles with its arrival at
 (23, 344), and its single 32-scale portal pair is replaced by four bidirectional
 pairs, one per door - the same shape `drowned_crown` and `resonant_vault` have.
+
+
+## Interiors, second pass: the board, the map and the portals
+
+**The portals.** A fifth door, and the one that justifies the convention: the
+ring-arch standing out of the whirlpool on the region map is the top of the
+Submerged Gate in the labyrinth's last chamber, so descending through it lands
+underneath it and a drowned stair on the far side comes back up. Both ends were
+already geometry. The labyrinth now has two ways in; the other three sections
+have one.
+
+Every arrival gained **built exit geometry** - a root-hung arch, a ladder and
+hatch, a carved doorway, a columned stair head, a drowned flight - because an
+arrival used to be a bare point in a room, and on a map with four sections and
+no connecting corridors there is no wrong door to find by accident, so an
+invisible right one leaves nothing at all. Arrivals also carry a facing now, so
+a player is not dropped looking at the wall they came through.
+
+**`build_interiors.py` now fails the build** unless every region door names an
+arrival that exists, every arrival is reachable from a door, and every return
+portal names a region spawn that exists. Nothing had ever checked that the two
+halves of a transition agree; it caught the fifth door's missing arrival on its
+first run.
+
+**The map.** Roughly 8,000 more triangles of the things that make a room look
+used rather than built: votive niches with offerings and a wrecked dugout in the
+labyrinth's wading hall, offerings around the gate, a moored boat at the foot of
+the Underdeck's ladder and drying lines strung between its piles, sleeping mats,
+a loom and fish on a line in the Tide Hall, and a relic niche with a figure in
+the Sanctum's core so the ambulatory has something to walk around.
+
+**The board.** `references/00-detail-board.png`, a ten-panel 5x2 board answering
+the exact ten subjects `concept.json` names, composed from real client frames by
+`source/make_interior_board.py`. The concept board cannot be opened; this one
+can. It is labelled on its face as a build reference rather than concept art,
+and the truncated original is left untouched where it is.
