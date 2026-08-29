@@ -32,8 +32,6 @@ var _segment_elapsed := 0.0
 var _segment_duration := 0.0
 var _last_movement_update_msec := -1
 var _smoothed_server_interval := 0.25
-var _facing_override_active := false
-var _facing_override_yaw := 0.0
 ## Part 2 in the equipment registry: the cape, and the only part with cloth.
 const CAPE_PART := 2
 ## The wardrobe meshes are shells fitted straight onto the skin they cover, so
@@ -55,7 +53,10 @@ const WARDROBE_GROW := {
 	"wardrobe_head_band": 0.006, "wardrobe_head_cap": 0.009,
 }
 
+## The one facing an actor renders that the server did not state: the single
+## 45 degree step shown while the answer to TURN_LEFT/TURN_RIGHT is in flight.
 var _predicted_turn_pending := false
+var _predicted_turn_yaw := 0.0
 var _movement_coast_remaining := 0.0
 var _native_skeleton: Skeleton3D
 var _cape_cloth: SkeletonModifier3D = null
@@ -528,10 +529,9 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	# rendered facing is the authoritative one from here on.
 	if _predicted_turn_pending and EloriaProtocol.is_turn_command(actor_command):
 		_predicted_turn_pending = false
-		_facing_override_active = false
 	var authoritative_yaw: float = target_yaw_for_state(
 		_target_yaw, actor_command, int(dto.rotation), adapter)
-	_target_yaw = _facing_override_yaw if _facing_override_active else authoritative_yaw
+	_target_yaw = _predicted_turn_yaw if _predicted_turn_pending else authoritative_yaw
 	_presentation_speed = walk_presentation_speed
 	if actor_command >= 30 and actor_command <= 37:
 		_presentation_speed = run_presentation_speed
@@ -1192,20 +1192,19 @@ func _on_animation_finished(_animation_name: StringName) -> void:
 func predict_turn(radians: float) -> void:
 	_wake()
 	_target_yaw = wrapf(_target_yaw + radians, -PI, PI)
-	_facing_override_active = true
-	_facing_override_yaw = _target_yaw
+	_predicted_turn_yaw = _target_yaw
 	_predicted_turn_pending = true
 	play_action(&"turn")
 
 func desired_facing_yaw() -> float:
 	return _target_yaw
 
-func set_facing_override(enabled: bool) -> void:
-	_facing_override_active = enabled
-	if enabled:
-		_facing_override_yaw = _target_yaw
-	else:
-		_predicted_turn_pending = false
+## Abandons a predicted turn the server has not answered. A route ordered
+## before the answer arrives supersedes it: the step commands that route
+## broadcasts state the facing, and holding the prediction over them would keep
+## the actor pointing where it was asked to look rather than where it walks.
+func clear_turn_prediction() -> void:
+	_predicted_turn_pending = false
 
 static func target_yaw_for_state(current_yaw: float, actor_command: int,
 		server_rotation: int, adapter: CoordinateAdapter) -> float:

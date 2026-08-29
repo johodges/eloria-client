@@ -208,24 +208,34 @@ func _run() -> void:
 	actor_height_fixture.apply_server_state({
 		"x": 4, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
 	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), held_facing),
-		"keyboard facing override prevents strafe/back packets from rotating the actor")
+		"a predicted turn holds the facing until the server answers it")
 	# CMD_TURN_E. The authoritative turn confirms the prediction and replaces
 	# it, so a rejected or differently-resolved turn cannot stick locally.
 	actor_height_fixture.apply_server_state({
 		"x": 4, "y": 3, "rotation": 16384, "command": 40},
 		CoordinateAdapter.new(), false)
 	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), -PI / 2.0)
-		and not bool(actor_height_fixture.get("_facing_override_active")),
+		and not bool(actor_height_fixture.get("_predicted_turn_pending")),
 		"an authoritative turn command clears the local turn prediction")
 	actor_height_fixture.apply_server_state({
 		"x": 4, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
 	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), -PI / 2.0),
 		"movement after a confirmed turn follows authoritative facing again")
-	actor_height_fixture.set_facing_override(false)
+	actor_height_fixture.predict_turn(PI / 4.0)
+	actor_height_fixture.clear_turn_prediction()
 	actor_height_fixture.apply_server_state({
 		"x": 5, "y": 3, "rotation": 0, "command": 22}, CoordinateAdapter.new(), false)
 	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(), -PI / 2.0),
-		"click-style movement can restore authoritative movement facing")
+		"an abandoned turn prediction hands the facing back to the server")
+	# Nothing but an unanswered turn holds a player off its own step. A route
+	# whose steps leave the heading it was ordered from - a keyboard diagonal,
+	# or a path that bends round an obstacle - turns the actor onto each step it
+	# takes instead of leaving it pointed at the tile it was sent to. CMD_MOVE_NE.
+	actor_height_fixture.apply_server_state({
+		"x": 6, "y": 4, "rotation": 0, "command": 21}, CoordinateAdapter.new(), false)
+	_expect(is_equal_approx(actor_height_fixture.desired_facing_yaw(),
+			CoordinateAdapter.new().direction_to_godot(Vector2i(1, 1))),
+		"a step off the ordered heading turns the actor onto the step")
 	actor_height_fixture.free()
 	var north_yaw: float = CoordinateAdapter.new().direction_to_godot(Vector2i(0, -1))
 	_expect(main.call("_facing_relative_tile_direction", north_yaw, 1, 0) == Vector2i(0, -1)
@@ -233,7 +243,7 @@ func _run() -> void:
 		and main.call("_facing_relative_tile_direction", north_yaw, 0, -1) == Vector2i(-1, 0)
 		and main.call("_facing_relative_tile_direction", north_yaw, 0, 1) == Vector2i(1, 0)
 		and main.call("_facing_relative_tile_direction", north_yaw, 1, -1) == Vector2i(-1, -1),
-		"WASD is facing-relative with non-rotating strafe/back and 45-degree diagonals")
+		"WASD is facing-relative, with 45-degree diagonals off the held heading")
 	var lower_hud: Control = main.get_node("GameView/Quickbar") as Control
 	var chat_panel: Control = main.get_node("GameView/ChatPanel") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
