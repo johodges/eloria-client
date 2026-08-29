@@ -122,10 +122,8 @@ The regeneration does not change what this package has never demonstrated: no
 networked client session, no server round-trip, and every place name in
 `world.json` remains an invented placeholder.
 
-Also recorded rather than fixed: **six of the 37 embedded materials are not
-referenced by any mesh in `world.glb`** - `foliage_green`, `lime_plaster`,
-`packed_earth`, `sooted_plaster`, `charred_timber`, `water_deep` - and the 14
-images reachable only from them cost 2.79 MB of the 31.5 MB package. They are
-the materials the interiors commit appended to the shared table, inherited by
-this region's pinned set. Pinning to the 31 actually used would recover the
-space; left alone because this pass was about reproducibility.
+The six unreferenced materials recorded here previously have since been
+trimmed: the pin is now the 31 the region actually references, verified against
+the built GLB, and the package is 28.7 MB rather than 31.5 MB with zero
+unreferenced materials. `export_glb` warns if that ever regresses. See
+`change-log.md`.

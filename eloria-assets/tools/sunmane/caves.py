@@ -29,6 +29,7 @@ import json
 import math
 import sys
 import time
+import zlib
 from pathlib import Path
 
 import numpy as np
@@ -59,6 +60,18 @@ SERVER_ORIGIN = (30.0, 30.0)
 METRES_PER_TILE = 1.0
 SCHEMA_VERSION = "1.1.0"
 ASSET_VERSION = "1.0.0"
+
+
+def stable_seed(text: str) -> int:
+    """A seed derived from a name that is the same in every interpreter.
+
+    `hash()` on a str is salted per process, so seeding from it gave this
+    generator a different seed on every run and the two cave packages were
+    never reproducible - two builds of identical code produce different
+    GLBs. The production guide names this exact trap. CRC32 is stable across
+    runs, platforms and Python versions.
+    """
+    return zlib.crc32(text.encode("utf-8")) % 10_000
 
 
 # --------------------------------------------------------------------- specs
@@ -145,12 +158,23 @@ SYSTEMS = {spec["id"]: spec for spec in (WIND_CAVES, CRYSTAL_HOLLOW)}
 class Shell:
     """The sampled clearance, floor and roof fields of one cave system."""
 
-    def __init__(self, spec: dict) -> None:
+    def __init__(self, spec: dict, centre: tuple = (0.0, 0.0)) -> None:
         self.spec = spec
+        self.centre = (float(centre[0]), float(centre[1]))
         count = int(round(HALF_EXTENT * 2.0 / CELL)) + 1
-        self.axis = np.linspace(-HALF_EXTENT, HALF_EXTENT, count)
-        self.x, self.z = np.meshgrid(self.axis, self.axis)
-        rng = np.random.default_rng(abs(hash(spec["id"])) % 10_000)
+        # The sample grid is centred on `centre` rather than on the origin, so
+        # a system can be placed anywhere on a shared map. Every chamber and
+        # passage coordinate in the spec is already in that same space, and all
+        # the field maths below is differences (`self.x - chamber.x`), so
+        # nothing else in the sampling has to know where the system sits.
+        self.axis_x = np.linspace(self.centre[0] - HALF_EXTENT,
+                                  self.centre[0] + HALF_EXTENT, count)
+        self.axis_z = np.linspace(self.centre[1] - HALF_EXTENT,
+                                  self.centre[1] + HALF_EXTENT, count)
+        # Kept only for its size; never read as a coordinate - use axis_x/axis_z.
+        self.axis = self.axis_x
+        self.x, self.z = np.meshgrid(self.axis_x, self.axis_z)
+        rng = np.random.default_rng(stable_seed(spec["id"]))
         relief = noise_kit.fbm(count, 6, 4, rng) - 0.5
         grain = noise_kit.fbm(count, 17, 3, rng) - 0.5
 
@@ -238,8 +262,8 @@ class Shell:
 
     # ---------------------------------------------------------------- sample
     def index_of(self, x: float, z: float) -> tuple[int, int]:
-        i = int(round((x + HALF_EXTENT) / CELL))
-        j = int(round((z + HALF_EXTENT) / CELL))
+        i = int(round((x - self.centre[0] + HALF_EXTENT) / CELL))
+        j = int(round((z - self.centre[1] + HALF_EXTENT) / CELL))
         last = self.axis.size - 1
         return min(max(j, 0), last), min(max(i, 0), last)
 
@@ -284,8 +308,12 @@ def build_shell(builder: Builder, shell: Shell, materials: dict) -> dict:
             if not emitted[j, i]:
                 continue
             key = (_chunk_of(i, count), _chunk_of(j, count))
-            x0, x1 = float(shell.axis[i]), float(shell.axis[i + 1])
-            z0, z1 = float(shell.axis[j]), float(shell.axis[j + 1])
+            # Separate axes: `axis` is an alias for `axis_x`, so reading a z
+            # coordinate out of it silently placed the whole cavern at
+            # +x-range in z. Harmless while both axes were the symmetric
+            # -HALF_EXTENT..+HALF_EXTENT and wrong the moment a system moves.
+            x0, x1 = float(shell.axis_x[i]), float(shell.axis_x[i + 1])
+            z0, z1 = float(shell.axis_z[j]), float(shell.axis_z[j + 1])
             corners = ((i, j), (i + 1, j), (i + 1, j + 1), (i, j + 1))
             uvs = [[x0 / scale, z0 / scale], [x1 / scale, z0 / scale],
                    [x1 / scale, z1 / scale], [x0 / scale, z1 / scale]]
@@ -366,7 +394,7 @@ def populate(builder: Builder, shell: Shell, materials: dict,
              kit_materials: dict) -> dict:
     """Place formations, props and the worked timber through the system."""
     spec = shell.spec
-    rng = np.random.default_rng(abs(hash(spec["id"] + "props")) % 10_000)
+    rng = np.random.default_rng(stable_seed(spec["id"] + "props"))
     cache: dict = {}
     instances = 0
     unique = 0
@@ -477,8 +505,10 @@ def populate(builder: Builder, shell: Shell, materials: dict,
     formations = 0
     while attempts < 6000 and formations < 150:
         attempts += 1
-        x = float(rng.uniform(-HALF_EXTENT, HALF_EXTENT))
-        z = float(rng.uniform(-HALF_EXTENT, HALF_EXTENT))
+        x = float(rng.uniform(shell.centre[0] - HALF_EXTENT,
+                              shell.centre[0] + HALF_EXTENT))
+        z = float(rng.uniform(shell.centre[1] - HALF_EXTENT,
+                              shell.centre[1] + HALF_EXTENT))
         clearance = shell.clearance_at(x, z)
         if clearance <= 0.35:
             continue

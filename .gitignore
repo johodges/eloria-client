@@ -7,10 +7,6 @@ godot-client/**/*.import
 godot-client/**/*.uid
 godot-client/assets/actors/native/races/* *.png
 godot-client/assets/actors/native/hair/* *.png
-# Godot's glTF importer writes every embedded texture back out beside the GLB.
-# They are build output, not source, and the GLB already carries them.
-godot-client/assets/actors/native/equipment/*.png
-godot-client/assets/actors/native/creatures/*.png
 .deps/
 make.conf
 el.linux.bin
@@ -45,3 +41,8 @@ godot-client/test-artifacts/
 
 # Validator reports written beside the map packages they describe.
 eloria-assets/maps/*/world.glb.report.json
+
+# The Godot editor/runtime binary. Sessions copy it into godot-client/ to run
+# the capture and client-check harnesses; at 172 MB it is over GitHub's file
+# size limit and must never be committed.
+godot-client/Godot_v*.exe

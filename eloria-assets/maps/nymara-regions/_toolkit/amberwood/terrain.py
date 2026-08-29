@@ -32,22 +32,33 @@ TURF = 10
 
 # -- Amethyst Barrens. Appended, never inserted: see the note on materials.SPECS.
 # Classes are allocated in blocks so concurrent region work does not collide:
-# 7-10 Mirrorhold, 11-14 Whitehorn, 15-18 Amethyst Barrens, 19-22 Crownwater.
+# 7-10 Mirrorhold, 11-14 Whitehorn, 15-18 Amethyst Barrens, 19-22 Crownwater,
+# 23-27 Grey Moors, 28-29 Verdant Stair.
+# Grey Moors and Verdant Stair both branched from a develop where 23 was free
+# and both claimed it. Verdant Stair moved because Grey Moors needs five and
+# this needs two, and because nothing outside terrain.py hardcodes the numbers:
+# every reference here and in the region packages goes through these names.
 BARRENS = 15
 CRYSTAL_FIELD = 16
 RESONANT_ROAD = 17
 STORM_ROCK = 18
 
-# -- Grey Moors, 23-27. Appended after the block reserved for Crownwater
-# (19-22), so the two can land in either order without renumbering. This region
-# holds five classes rather than four: it needs a worn track that is distinct
-# from its laid causeway, and reusing the generic PATH would have put
+# -- Grey Moors. Five classes rather than four: the region needs a worn track
+# distinct from its laid causeway, and reusing the generic PATH would have put
 # Amberwood's amber leaf litter down the middle of a moor.
 HEATHER_MOOR = 23
 PEAT_BOG = 24
 CAUSEWAY = 25
 BARROW_TURF = 26
 MOOR_TRACK = 27
+
+# -- Verdant Stair. The region is a terraced limestone jungle, so its ground
+# splits into two classes the existing set cannot express: the mossy cut stone
+# of a terrace floor, which is laid rather than grown, and the permanently
+# spray-wet rock behind a fall and around the cenote rim. Everything else it
+# needs is an existing class carrying a different material.
+TERRACE_MOSS = 28
+WET_ROCK = 29
 
 SURFACE_NAMES = {
     FOREST: "ForestFloor", PATH: "Trail", PAVING: "Paving", SHORE: "Shore",
@@ -58,6 +69,7 @@ SURFACE_NAMES = {
     HEATHER_MOOR: "HeatherMoor", PEAT_BOG: "PeatBog",
     CAUSEWAY: "Causeway", BARROW_TURF: "BarrowTurf",
     MOOR_TRACK: "MoorTrack",
+    TERRACE_MOSS: "TerraceMoss", WET_ROCK: "WetRock",
 }
 SURFACE_MATERIALS = {
     FOREST: "forest_floor", PATH: "leaf_path", PAVING: "cobble_paving",
@@ -72,6 +84,7 @@ SURFACE_MATERIALS = {
     # A worn track is bare wet earth; the toolkit already has that texture, so
     # this class needs no new recipe - only a cooled, darkened material over it.
     MOOR_TRACK: "grey_moor_track",
+    TERRACE_MOSS: "verdant_mossy_stone", WET_ROCK: "verdant_wet_limestone",
 }
 
 # Surfaces a region placed deliberately, which the slope and shore rules in
@@ -85,11 +98,15 @@ AUTHORED_SURFACES: set[int] = {
     # shore rules must not repaint either. The barrow turf is authored too -
     # a barrow is a built mound, not ground that happened to rise.
     CAUSEWAY, BARROW_TURF, MOOR_TRACK,
+    # Verdant Stair lays both of these deliberately: a terrace floor is built,
+    # and the wet rock is placed where a fall actually lands, not wherever the
+    # slope rule happens to think the ground is steep.
+    TERRACE_MOSS, WET_ROCK,
 }
 
 # Surfaces whose border must stay crisp, so `dither_boundaries` leaves them
 # alone. Paving and the resonant roadway read as laid, not grown.
-UNDITHERED_SURFACES: set[int] = {PAVING, RESONANT_ROAD, CAUSEWAY}
+UNDITHERED_SURFACES: set[int] = {PAVING, RESONANT_ROAD, CAUSEWAY, TERRACE_MOSS}
 
 
 def _smoothstep(edge0: float, edge1: float, x: np.ndarray) -> np.ndarray:
