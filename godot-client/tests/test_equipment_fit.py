@@ -82,26 +82,42 @@ class EquipmentFitTest(unittest.TestCase):
             self.assertIn(author, self.girth,
                           f"{key} was authored for the unmeasured rig {author}")
 
+    @staticmethod
+    def _named(groups) -> list[str]:
+        """A race's fit groups, whether the registry names one or several."""
+        return [groups] if isinstance(groups, str) else list(groups)
+
+    def _all_groups(self) -> set[str]:
+        return {group for value in self.groups.values()
+                for group in self._named(value)}
+
+    def _members(self, group: str) -> set[str]:
+        return {race for race, value in self.groups.items()
+                if group in self._named(value)}
+
     def test_fit_group_races_exist(self) -> None:
-        for race, group in self.groups.items():
-            self.assertIn(race, self.races, f"fit group {group} names no race {race}")
+        for race, value in self.groups.items():
+            self.assertIn(race, self.races,
+                          f"fit groups {self._named(value)} name no race {race}")
+            self.assertTrue(self._named(value),
+                            f"{race} is listed with no fit group at all")
 
     def test_variants_are_present_and_authored_on_their_own_rig(self) -> None:
         seen_groups: set[str] = set()
         for key, model in self.models.items():
             for group, variant in (model.get("variants") or {}).items():
                 seen_groups.add(group)
-                self.assertIn(group, set(self.groups.values()),
+                self.assertIn(group, self._all_groups(),
                               f"{key} offers variant {group} that no race wears")
                 path = scene_path(str(variant.get("scene", "")))
                 self.assertTrue(path.is_file(), f"{key} variant {group}: {path} missing")
                 author = str(variant.get("authoredFor", ""))
                 self.assertIn(author, self.girth,
                               f"{key} variant {group} names unmeasured rig {author}")
-                self.assertEqual(self.groups.get(author), group,
-                                 f"{key} variant {group} is authored on {author},"
-                                 " which is not a member of that group")
-        self.assertEqual(seen_groups, set(self.groups.values()),
+                self.assertIn(author, self._members(group),
+                              f"{key} variant {group} is authored on {author},"
+                              " which is not a member of that group")
+        self.assertEqual(seen_groups, self._all_groups(),
                          "a fit group exists that no garment offers a variant for")
 
     def test_every_group_member_can_reach_its_variants(self) -> None:
