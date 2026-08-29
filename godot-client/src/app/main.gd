@@ -601,6 +601,7 @@ func _ready() -> void:
 	AppState.state_changed.connect(_on_state_changed)
 	AppState.floating_feedback_requested.connect(_on_floating_feedback_requested)
 	AppState.special_effect_requested.connect(_on_special_effect_requested)
+	AppState.actor_animation_requested.connect(_on_actor_animation_requested)
 	AppState.missile_fired.connect(_on_missile_fired)
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
@@ -4458,6 +4459,18 @@ func _on_special_effect_requested(effect: Dictionary) -> void:
 	world_effects = world_effects.filter(func(node: Variant) -> bool:
 		return is_instance_valid(node))
 
+## The server asked an actor to play a named action. An action this client has
+## no clip for plays nothing: `play_action` looks the name up in the animation
+## map and returns if it finds nothing, so an unknown action is ignored rather
+## than guessed at. The words that came with an emote arrive as chat either
+## way, so nothing is lost by staying still.
+func _on_actor_animation_requested(animation: Dictionary) -> void:
+	var node: Variant = actor_nodes.get(int(animation.get("actor_id", -1)))
+	if not is_instance_valid(node):
+		return
+	(node as ReplicatedActor3D).play_action(
+		StringName(str(animation.get("action", ""))))
+
 func _actor_effect_position(actor_id: int) -> Variant:
 	if actor_id < 0:
 		return null
@@ -5710,6 +5723,18 @@ func _on_chat_submitted(text: String) -> void:
 			_sync_map_markers()
 		chat_input.clear()
 		return
+	# `#emote <name>` is the server's command, but it has a packet of its own,
+	# so the client sends that rather than the text. The server answers the
+	# typed form too, for a client that has no `DO_EMOTE`.
+	if message.begins_with("#emote "):
+		var wanted: String = message.substr(7).strip_edges()
+		if not wanted.is_empty():
+			var emote_error: Error = Network.do_emote(wanted)
+			if emote_error == OK:
+				chat_input.clear()
+			else:
+				push_warning("DO_EMOTE failed: " + error_string(emote_error))
+			return
 	var is_private: bool = message.begins_with("/") and message.length() > 1
 	if not is_private and _chat_tab.begins_with("channel:") and not message.begins_with("@"):
 		message = "@" + message

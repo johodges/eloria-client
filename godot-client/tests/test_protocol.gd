@@ -501,6 +501,25 @@ func _init() -> void:
 	_expect(is_equal_approx(transition_resolver.playback_speed_for_action(&"sit"), 2.0)
 		and is_equal_approx(transition_resolver.playback_speed_for_action(&"stand"), 2.0),
 		"sit and stand transitions play at twice speed")
+	# Emote actions the server can name. Each has to reach a distinct clip: two
+	# emotes sharing one would look identical, and an action with no clip is
+	# silently not animated, which is a thing to notice here rather than in
+	# play. An action this client does not know at all is not an error - the
+	# emote's words still arrive - but every one it claims must resolve.
+	var emote_actions: Array[String] = []
+	var emote_clips: Dictionary = {}
+	for action: Variant in (animation_data.get("actions", {}) as Dictionary):
+		if str(action).begins_with("emote_"):
+			emote_actions.append(str(action))
+			emote_clips[str(transition_resolver.clip_for_action(
+				StringName(str(action))))] = true
+	_expect(emote_actions.size() >= 12,
+		"the client knows how to play the server's emotes: %d" % emote_actions.size())
+	_expect(emote_clips.size() == emote_actions.size(),
+		"every emote reaches a clip of its own: %d clips for %d actions"
+			% [emote_clips.size(), emote_actions.size()])
+	_expect(not emote_clips.has(""),
+		"and no emote action falls through to an empty clip")
 	reduced_actor = ActorReducer.apply_command(reduced_actor, 18)
 	_expect(bool(reduced_actor.get("in_combat", false)), "actor enters combat")
 	reduced_actor = ActorReducer.apply_command(reduced_actor, 19)
@@ -748,6 +767,32 @@ func _init() -> void:
 	kind_out_of_range[4] = 9
 	_expect(EloriaProtocol.decode_server(238, kind_out_of_range).type == "invalid",
 		"an unknown day kind is rejected rather than indexed past the end")
+
+	# Command 89: an actor plays a named animation action. An emote's words are
+	# sent separately, so an action this client has no clip for costs nothing.
+	var animation_payload := PackedByteArray([0x5b, 0x00])
+	animation_payload.append_array(_nul_bytes("emote_bow"))
+	var animation: Dictionary = EloriaProtocol.decode_server(89, animation_payload)
+	_expect(animation.type == "actor_animation" and animation.actor_id == 91
+		and str(animation.action) == "emote_bow",
+		"actor animation decodes the actor and the action it should play")
+	_expect(EloriaProtocol.decode_server(89, PackedByteArray([1, 0])).type
+			== "invalid",
+		"an animation with no action name is rejected")
+	var unterminated := PackedByteArray([1, 0])
+	unterminated.append_array("emote_bow".to_utf8_buffer())
+	_expect(EloriaProtocol.decode_server(89, unterminated).type == "invalid",
+		"an unterminated action name is rejected rather than read past its end")
+	var empty_action := PackedByteArray([1, 0, 0])
+	_expect(EloriaProtocol.decode_server(89, empty_action).type == "invalid",
+		"an empty action name is rejected")
+
+	# The two client commands that had nothing behind them. Both share their
+	# number with a server-to-client command, which the direction tells apart.
+	_expect_bytes("emote fixture", EloriaProtocol.do_emote("bow"),
+		PackedByteArray([70, 5, 0, 0x62, 0x6f, 0x77, 0]))
+	_expect_bytes("item on item fixture", EloriaProtocol.item_on_item(3, 9),
+		PackedByteArray([42, 3, 0, 3, 9]))
 
 	var knowledge_entry_count := 0
 	var knowledge_catalog_file: FileAccess = FileAccess.open(

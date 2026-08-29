@@ -22,7 +22,11 @@ enum ClientMessage {
 	TRADE_WITH = 32, ACCEPT_TRADE = 33, REJECT_TRADE = 34, EXIT_TRADE = 35,
 	PUT_OBJECT_ON_TRADE = 36, REMOVE_OBJECT_FROM_TRADE = 37,
 	LOOK_AT_TRADE_ITEM = 38, CAST_SPELL = 39, ATTACK_SOMEONE = 40,
-	GET_KNOWLEDGE_INFO = 41, GET_STORAGE_CATEGORY = 44, DEPOSIT_ITEM = 45,
+	GET_KNOWLEDGE_INFO = 41,
+	# Client-to-server; 42 and 70 are also server-to-client numbers, the way
+	# the storage commands below share 44-46. The direction tells them apart.
+	ITEM_ON_ITEM = 42, DO_EMOTE = 70,
+	GET_STORAGE_CATEGORY = 44, DEPOSIT_ITEM = 45,
 	WITHDRAW_ITEM = 46, LOOK_AT_STORAGE_ITEM = 47, POPUP_REPLY = 50,
 	PING_RESPONSE = 60, SET_ACTIVE_CHANNEL = 61, LOG_IN = 140,
 	CREATE_CHAR = 141, GET_DATE = 230, GET_TIME = 231
@@ -62,6 +66,7 @@ enum ServerMessage {
 	ELORIA_SPECIAL_EVENT_STATE = 232, ELORIA_PLAYER_INFO = 228,
 	ELORIA_SPELL_POWER = 231,
 	ELORIA_ALMANAC_STATE = 238,
+	ADD_ACTOR_ANIMATION = 89,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
 }
@@ -164,6 +169,20 @@ const CLIENT_CAPABILITIES: Array[String] = [
 ## RAW_TEXT and stores the set on the session.
 static func client_capabilities() -> PackedByteArray:
 	return chat("#clientcaps " + ",".join(PackedStringArray(CLIENT_CAPABILITIES)))
+
+## Ask the server to play an emote. The name rather than a legacy numeric id:
+## this server has no such id namespace, and mirroring one here would be a
+## second copy of a list the server owns.
+static func do_emote(name: String) -> PackedByteArray:
+	var payload: PackedByteArray = name.to_utf8_buffer()
+	payload.append(0)
+	return encode(ClientMessage.DO_EMOTE, payload)
+
+## Put one carried item onto another. The server decides what, if anything,
+## comes of it.
+static func item_on_item(source_slot: int, target_slot: int) -> PackedByteArray:
+	return encode(ClientMessage.ITEM_ON_ITEM,
+		PackedByteArray([source_slot & 0xFF, target_slot & 0xFF]))
 
 static func chat(text: String) -> PackedByteArray:
 	var payload: PackedByteArray = text.to_utf8_buffer()
@@ -697,6 +716,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_spell_power(payload)
 		ServerMessage.ELORIA_ALMANAC_STATE:
 			return decode_almanac(payload)
+		ServerMessage.ADD_ACTOR_ANIMATION:
+			return decode_actor_animation(payload)
 		ServerMessage.ELORIA_PLAYER_INFO:
 			return decode_player_info(payload)
 		ServerMessage.SEND_MAP_MARKER:
@@ -1080,6 +1101,26 @@ static func decode_spell_power(payload: PackedByteArray) -> Dictionary:
 	if offset != payload.size():
 		return {"type": "invalid", "error": "spell_power_trailing"}
 	return {"type": "spell_power", "effects": effects}
+
+## Command 89. An actor is playing a named animation action.
+##
+## The action is a name, not a clip: which piece of art plays is this client's
+## to decide from its own animation map, and an action it has no clip for is
+## simply not played. The server sends the words separately and always, so an
+## emote reaches the player either way.
+static func decode_actor_animation(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 3:
+		return {"type": "invalid", "error": "actor_animation_length"}
+	var field: Dictionary = _nul_at(payload, 2)
+	if field.is_empty():
+		return {"type": "invalid", "error": "actor_animation_text"}
+	if int(field.offset) != payload.size():
+		return {"type": "invalid", "error": "actor_animation_trailing"}
+	var action: String = str(field.value)
+	if action.is_empty():
+		return {"type": "invalid", "error": "actor_animation_empty"}
+	return {"type": "actor_animation", "actor_id": u16(payload),
+		"action": action}
 
 ## The four kinds a day can be, in the order the server numbers them.
 const ALMANAC_KINDS: Array[String] = ["ordinary", "good", "neutral", "bad"]

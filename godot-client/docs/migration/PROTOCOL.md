@@ -495,7 +495,23 @@ UTF-8.
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+| 89 | Actor animation | `actor_id:u16 \| action` - an action name, never a clip |
 | 238 | Almanac | `day:u8 \| month:u8 \| year:u16 \| kind:u8 \| experience_bonus:u16 \| name \| description \| effect_count:u8` then that many effect tags, `multiplier_count:u8` then that many `skill \| multiplier:u16`, `catalogue_count:u16` then that many `kind:u8 \| name \| description` |
+
+Command 89 asks an actor to play a named animation action - an emote, or
+anything else that is not one of the actor commands. It carries an action name
+rather than a clip: which piece of art plays is the client's to decide from its
+own animation map, and an action the client has no clip for is simply not
+played. An emote's two text lines are sent separately and always, so an emote
+that cannot be animated still reaches everyone as words.
+
+`DO_EMOTE(70)` and `ITEM_ON_ITEM(42)` are the client commands behind it. Both
+share a number with a server-to-client command, the way the storage commands
+share 44-46; the direction tells them apart. `DO_EMOTE` carries the emote's
+name rather than a numeric id, because this server has no legacy emote id
+namespace and mirroring one in the client would be a second copy of a list the
+server owns. `ITEM_ON_ITEM` carries two inventory slots and means one thing:
+mix the recipe whose ingredients are exactly those two items.
 
 Command 238 replaces two chat lines. The game date was only ever a `GET_DATE`
 reply reading "Game Date 4/7/132", and the special day in force was only ever a

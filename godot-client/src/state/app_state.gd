@@ -10,6 +10,10 @@ signal floating_feedback_requested(feedback: Dictionary)
 ## towards another. It is an event rather than state - there is nothing to be
 ## true a moment later - so it is announced and not stored.
 signal special_effect_requested(effect: Dictionary)
+## An actor is playing a named animation action - an emote, or anything else
+## the server asks for that is not one of the actor commands. An event rather
+## than state: it happens once and is over, so nothing keeps it.
+signal actor_animation_requested(animation: Dictionary)
 ## An arrow the server said was loosed, between the two actors it named. Like
 ## an effect it is an event rather than state: the shot is already resolved by
 ## the time it arrives, and the damage comes in its own packet.
@@ -541,6 +545,9 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			if bool(event.fired):
 				missile_fired.emit({"source_actor_id": shooter_id,
 					"target_actor_id": int(event.target_actor_id)})
+		"actor_animation":
+			actor_animation_requested.emit({"actor_id": int(event.actor_id),
+				"action": str(event.action)})
 		"special_effect":
 			special_effect_requested.emit({"effect": int(event.effect),
 				"actor_id": int(event.actor_id),
