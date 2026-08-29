@@ -236,11 +236,18 @@ def inside(points: np.ndarray, shell: Component) -> np.ndarray:
 
 
 def enclosed_by_any(points: np.ndarray, shells: list[Component]) -> np.ndarray:
-    """Inside *any* closed component - the whole point of splitting them."""
+    """Inside *any* closed component - the whole point of splitting them.
+
+    Biggest first.  A boot is one or two large shells and several dozen studs,
+    buckles and gems, and a body vertex that is inside anything is almost always
+    inside one of the large ones; testing those first settles nearly every point
+    before the small ones are reached, and the rest are then rejected by their
+    bounding boxes without a single ray being cast.
+    """
     result = np.zeros(len(points), dtype=bool)
-    for shell in shells:
-        if not shell.closed:
-            continue
+    ordered = sorted((shell for shell in shells if shell.closed),
+                     key=lambda shell: -abs(shell.volume))
+    for shell in ordered:
         todo = np.flatnonzero(~result)
         if not len(todo):
             break

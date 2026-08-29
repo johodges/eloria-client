@@ -807,6 +807,1286 @@
       "scene": "res://assets/actors/native/equipment/luminous_orbit_amulet.glb",
       "attach": "socket"
     },
+    "6:128": {
+      "scene": "res://assets/actors/native/equipment/plate_fluted.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plate_fluted__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Fluted Greaves",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "6:129": {
+      "scene": "res://assets/actors/native/equipment/plate_leaf.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plate_leaf__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Leafwork Greaves",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "6:130": {
+      "scene": "res://assets/actors/native/equipment/plate_buckled.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plate_buckled__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Buckled Warplate",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "6:131": {
+      "scene": "res://assets/actors/native/equipment/plate_gothic.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plate_gothic__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Gothic Sabatons",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "6:132": {
+      "scene": "res://assets/actors/native/equipment/plate_heraldic.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plate_heraldic__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Heraldic Greaves",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "6:133": {
+      "scene": "res://assets/actors/native/equipment/plate_scroll.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plate_scroll__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Scrollwork Greaves",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "6:134": {
+      "scene": "res://assets/actors/native/equipment/plate_crimson.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plate_crimson__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Crimson Guard Greaves",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "6:135": {
+      "scene": "res://assets/actors/native/equipment/plate_blackened.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plate_blackened__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Blackened Greaves",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "6:136": {
+      "scene": "res://assets/actors/native/equipment/riveted_shin.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/riveted_shin__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Riveted Marchboots",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "6:137": {
+      "scene": "res://assets/actors/native/equipment/riveted_banded.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/riveted_banded__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Banded Trooper Boots",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "6:138": {
+      "scene": "res://assets/actors/native/equipment/riveted_halfplate.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/riveted_halfplate__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Halfplate Legguards",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "6:139": {
+      "scene": "res://assets/actors/native/equipment/riveted_worn.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/riveted_worn__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Worn Campaign Boots",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "6:140": {
+      "scene": "res://assets/actors/native/equipment/riveted_brass.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/riveted_brass__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Brasswork Greaves",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "6:141": {
+      "scene": "res://assets/actors/native/equipment/riveted_lamellar.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/riveted_lamellar__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Lamellar Marchboots",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "6:142": {
+      "scene": "res://assets/actors/native/equipment/riveted_crimson.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/riveted_crimson__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Crimson Sashboots",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "6:143": {
+      "scene": "res://assets/actors/native/equipment/riveted_furlined.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/riveted_furlined__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Furlined Marchboots",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "6:144": {
+      "scene": "res://assets/actors/native/equipment/wild_bark.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/wild_bark__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Barkbound Boots",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "6:145": {
+      "scene": "res://assets/actors/native/equipment/wild_moss.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/wild_moss__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Mosscuff Boots",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "6:146": {
+      "scene": "res://assets/actors/native/equipment/wild_vine.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/wild_vine__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Vinewrapped Boots",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "6:147": {
+      "scene": "res://assets/actors/native/equipment/wild_leaf.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/wild_leaf__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Leafplate Boots",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "6:148": {
+      "scene": "res://assets/actors/native/equipment/wild_antler.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/wild_antler__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Antlerbound Boots",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "6:149": {
+      "scene": "res://assets/actors/native/equipment/wild_winterfur.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/wild_winterfur__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Winterwood Boots",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "6:150": {
+      "scene": "res://assets/actors/native/equipment/wild_amber.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/wild_amber__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Amberpanel Boots",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "6:151": {
+      "scene": "res://assets/actors/native/equipment/wild_filigree.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/wild_filigree__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Thornfiligree Boots",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "6:152": {
+      "scene": "res://assets/actors/native/equipment/nomad_cord.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/nomad_cord__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Corded Wanderers",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "6:153": {
+      "scene": "res://assets/actors/native/equipment/nomad_linen.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/nomad_linen__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Linenwrap Boots",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "6:154": {
+      "scene": "res://assets/actors/native/equipment/nomad_sunplate.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/nomad_sunplate__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Sunplate Striders",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "6:155": {
+      "scene": "res://assets/actors/native/equipment/nomad_bone.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/nomad_bone__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Bonetoggle Boots",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "6:156": {
+      "scene": "res://assets/actors/native/equipment/nomad_sunburst.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/nomad_sunburst__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Sunburst Greaves",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "6:157": {
+      "scene": "res://assets/actors/native/equipment/nomad_crimson.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/nomad_crimson__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Crimson Caravan Boots",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "6:158": {
+      "scene": "res://assets/actors/native/equipment/nomad_lashed.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/nomad_lashed__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Lashed Trailboots",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "6:159": {
+      "scene": "res://assets/actors/native/equipment/nomad_ivory.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/nomad_ivory__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Ivory Wardboots",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "6:160": {
+      "scene": "res://assets/actors/native/equipment/arcane_ember.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/arcane_ember__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Emberwrought Greaves",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "6:161": {
+      "scene": "res://assets/actors/native/equipment/arcane_frostward.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/arcane_frostward__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Frostward Greaves",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "6:162": {
+      "scene": "res://assets/actors/native/equipment/arcane_storm.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/arcane_storm__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Stormcall Greaves",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "6:163": {
+      "scene": "res://assets/actors/native/equipment/arcane_bone.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/arcane_bone__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Bonewrought Greaves",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "6:164": {
+      "scene": "res://assets/actors/native/equipment/arcane_dawn.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/arcane_dawn__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Dawnward Greaves",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "6:165": {
+      "scene": "res://assets/actors/native/equipment/arcane_void.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/arcane_void__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Voidtouched Greaves",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "6:166": {
+      "scene": "res://assets/actors/native/equipment/arcane_stone.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/arcane_stone__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Runestone Greaves",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "6:167": {
+      "scene": "res://assets/actors/native/equipment/arcane_lion.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/arcane_lion__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Lionheart Greaves",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "6:168": {
+      "scene": "res://assets/actors/native/equipment/travel_folded.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/travel_folded__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Folded Roadboots",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "6:169": {
+      "scene": "res://assets/actors/native/equipment/travel_fur.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/travel_fur__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Furcuff Roadboots",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "6:170": {
+      "scene": "res://assets/actors/native/equipment/travel_buckled.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/travel_buckled__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Buckled Roadboots",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "6:171": {
+      "scene": "res://assets/actors/native/equipment/travel_fringed.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/travel_fringed__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Fringed Scoutboots",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "6:172": {
+      "scene": "res://assets/actors/native/equipment/travel_laced.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/travel_laced__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Laced Trailboots",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "6:173": {
+      "scene": "res://assets/actors/native/equipment/travel_canvas.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/travel_canvas__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Canvaswrap Boots",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "6:174": {
+      "scene": "res://assets/actors/native/equipment/travel_tassel.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/travel_tassel__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Tasselled Roadboots",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "6:175": {
+      "scene": "res://assets/actors/native/equipment/travel_darkcord.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/travel_darkcord__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Darkcord Roadboots",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "6:176": {
+      "scene": "res://assets/actors/native/equipment/plain_chelsea.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plain_chelsea__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Plain Boots",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "6:177": {
+      "scene": "res://assets/actors/native/equipment/plain_slouch.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plain_slouch__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Slouched Boots",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "6:178": {
+      "scene": "res://assets/actors/native/equipment/plain_laced.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plain_laced__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Laced Workboots",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "6:179": {
+      "scene": "res://assets/actors/native/equipment/plain_burlap.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plain_burlap__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Burlapwrap Boots",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "6:180": {
+      "scene": "res://assets/actors/native/equipment/plain_harness.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plain_harness__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Harness Boots",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "6:181": {
+      "scene": "res://assets/actors/native/equipment/plain_furlace.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plain_furlace__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Furlaced Boots",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "6:182": {
+      "scene": "res://assets/actors/native/equipment/plain_textile.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plain_textile__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Textile Panel Boots",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "6:183": {
+      "scene": "res://assets/actors/native/equipment/plain_tiecuff.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/plain_tiecuff__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Tiecuff Boots",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
+    "6:184": {
+      "scene": "res://assets/actors/native/equipment/glass_tidecuff.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/glass_tidecuff__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Tidecuff Boots",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          0,
+          0
+        ]
+      }
+    },
+    "6:185": {
+      "scene": "res://assets/actors/native/equipment/glass_runed.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/glass_runed__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Runeglass Boots",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          0,
+          1
+        ]
+      }
+    },
+    "6:186": {
+      "scene": "res://assets/actors/native/equipment/glass_pale.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/glass_pale__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Paleglass Greaves",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          0,
+          2
+        ]
+      }
+    },
+    "6:187": {
+      "scene": "res://assets/actors/native/equipment/glass_starfield.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/glass_starfield__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Starfield Boots",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          0,
+          3
+        ]
+      }
+    },
+    "6:188": {
+      "scene": "res://assets/actors/native/equipment/glass_darkfacet.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/glass_darkfacet__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Darkfacet Greaves",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          1,
+          0
+        ]
+      }
+    },
+    "6:189": {
+      "scene": "res://assets/actors/native/equipment/glass_tideknot.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/glass_tideknot__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Tideknot Boots",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          1,
+          1
+        ]
+      }
+    },
+    "6:190": {
+      "scene": "res://assets/actors/native/equipment/glass_ivory.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/glass_ivory__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Ivorytide Boots",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          1,
+          2
+        ]
+      }
+    },
+    "6:191": {
+      "scene": "res://assets/actors/native/equipment/glass_filigree.glb",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/glass_filigree__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        }
+      },
+      "name": "Filigree Tideboots",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          1,
+          3
+        ]
+      }
+    },
     "0:1": {
       "scene": "res://assets/actors/native/equipment/generic_sword.glb",
       "attach": "socket",
@@ -5218,102 +6498,358 @@
       "ball_r": 0.06013
     }
   },
-  "soleDrop": {
+  "footAnchor": {
     "glasswarden_female": {
-      "foot_l": 0.07913,
-      "foot_r": 0.07913,
-      "ball_l": 0.02299,
-      "ball_r": 0.02299
+      "foot_l": [
+        0.01319,
+        -0.07913,
+        0.07709
+      ],
+      "ball_l": [
+        0.01319,
+        -0.02299,
+        -0.06182
+      ],
+      "foot_r": [
+        -0.01319,
+        -0.07913,
+        0.07709
+      ],
+      "ball_r": [
+        -0.01319,
+        -0.02299,
+        -0.06182
+      ]
     },
     "glasswarden_male": {
-      "foot_l": 0.09627,
-      "foot_r": 0.09627,
-      "ball_l": 0.02465,
-      "ball_r": 0.02465
+      "foot_l": [
+        0.01707,
+        -0.09627,
+        0.08169
+      ],
+      "ball_l": [
+        0.01707,
+        -0.02465,
+        -0.06115
+      ],
+      "foot_r": [
+        -0.01707,
+        -0.09627,
+        0.08169
+      ],
+      "ball_r": [
+        -0.01707,
+        -0.02465,
+        -0.06115
+      ]
     },
     "greyhaven_female": {
-      "foot_l": 0.07934,
-      "foot_r": 0.07934,
-      "ball_l": 0.02125,
-      "ball_r": 0.02125
+      "foot_l": [
+        0.01319,
+        -0.07934,
+        0.07756
+      ],
+      "ball_l": [
+        0.01319,
+        -0.02125,
+        -0.06614
+      ],
+      "foot_r": [
+        -0.01319,
+        -0.07934,
+        0.07756
+      ],
+      "ball_r": [
+        -0.01319,
+        -0.02125,
+        -0.06614
+      ]
     },
     "greyhaven_male": {
-      "foot_l": 0.09826,
-      "foot_r": 0.09826,
-      "ball_l": 0.02421,
-      "ball_r": 0.02421
+      "foot_l": [
+        0.01707,
+        -0.09826,
+        0.08274
+      ],
+      "ball_l": [
+        0.01707,
+        -0.02421,
+        -0.06493
+      ],
+      "foot_r": [
+        -0.01707,
+        -0.09826,
+        0.08274
+      ],
+      "ball_r": [
+        -0.01707,
+        -0.02421,
+        -0.06493
+      ]
     },
     "luminous_female": {
-      "foot_l": 0.07911,
-      "foot_r": 0.07911,
-      "ball_l": 0.02321,
-      "ball_r": 0.02321
+      "foot_l": [
+        0.01319,
+        -0.07911,
+        0.07593
+      ],
+      "ball_l": [
+        0.01319,
+        -0.02321,
+        -0.06237
+      ],
+      "foot_r": [
+        -0.01319,
+        -0.07911,
+        0.07593
+      ],
+      "ball_r": [
+        -0.01319,
+        -0.02321,
+        -0.06237
+      ]
     },
     "luminous_male": {
-      "foot_l": 0.09601,
-      "foot_r": 0.09601,
-      "ball_l": 0.02471,
-      "ball_r": 0.02471
+      "foot_l": [
+        0.01707,
+        -0.09601,
+        0.08072
+      ],
+      "ball_l": [
+        0.01707,
+        -0.02471,
+        -0.06148
+      ],
+      "foot_r": [
+        -0.01707,
+        -0.09601,
+        0.08072
+      ],
+      "ball_r": [
+        -0.01707,
+        -0.02471,
+        -0.06148
+      ]
     },
     "mycelari_female": {
-      "foot_l": 0.07865,
-      "foot_r": 0.07865,
-      "ball_l": 0.02713,
-      "ball_r": 0.02713
+      "foot_l": [
+        0.01319,
+        -0.07865,
+        0.07342
+      ],
+      "ball_l": [
+        0.01319,
+        -0.02713,
+        -0.05403
+      ],
+      "foot_r": [
+        -0.01319,
+        -0.07865,
+        0.07342
+      ],
+      "ball_r": [
+        -0.01319,
+        -0.02713,
+        -0.05403
+      ]
     },
     "mycelari_male": {
-      "foot_l": 0.09159,
-      "foot_r": 0.09159,
-      "ball_l": 0.02579,
-      "ball_r": 0.02579
+      "foot_l": [
+        0.01707,
+        -0.09159,
+        0.07727
+      ],
+      "ball_l": [
+        0.01707,
+        -0.02579,
+        -0.05396
+      ],
+      "foot_r": [
+        -0.01707,
+        -0.09159,
+        0.07727
+      ],
+      "ball_r": [
+        -0.01707,
+        -0.02579,
+        -0.05396
+      ]
     },
     "orun_female": {
-      "foot_l": 0.07912,
-      "foot_r": 0.07912,
-      "ball_l": 0.0231,
-      "ball_r": 0.0231
+      "foot_l": [
+        0.03228,
+        -0.07912,
+        0.07562
+      ],
+      "ball_l": [
+        0.03228,
+        -0.0231,
+        -0.06297
+      ],
+      "foot_r": [
+        -0.03228,
+        -0.07912,
+        0.07562
+      ],
+      "ball_r": [
+        -0.03228,
+        -0.0231,
+        -0.06297
+      ]
     },
     "orun_male": {
-      "foot_l": 0.09611,
-      "foot_r": 0.09611,
-      "ball_l": 0.02469,
-      "ball_r": 0.02469
+      "foot_l": [
+        0.03329,
+        -0.09611,
+        0.08052
+      ],
+      "ball_l": [
+        0.03329,
+        -0.02469,
+        -0.06192
+      ],
+      "foot_r": [
+        -0.03329,
+        -0.09611,
+        0.08052
+      ],
+      "ball_r": [
+        -0.03329,
+        -0.02469,
+        -0.06192
+      ]
     },
     "ssarathi_female": {
-      "foot_l": 0.21394,
-      "foot_r": 0.21394,
-      "ball_l": 0.01871,
-      "ball_r": 0.01871
+      "foot_l": [
+        0.00933,
+        -0.21394,
+        0.02479
+      ],
+      "ball_l": [
+        0.00933,
+        -0.01871,
+        -0.03861
+      ],
+      "foot_r": [
+        -0.00933,
+        -0.21394,
+        0.02479
+      ],
+      "ball_r": [
+        -0.00933,
+        -0.01871,
+        -0.03861
+      ]
     },
     "ssarathi_male": {
-      "foot_l": 0.23462,
-      "foot_r": 0.23462,
-      "ball_l": 0.02261,
-      "ball_r": 0.02261
+      "foot_l": [
+        0.01498,
+        -0.23462,
+        0.02224
+      ],
+      "ball_l": [
+        0.01498,
+        -0.02261,
+        -0.02816
+      ],
+      "foot_r": [
+        -0.01498,
+        -0.23462,
+        0.02224
+      ],
+      "ball_r": [
+        -0.01498,
+        -0.02261,
+        -0.02816
+      ]
     },
     "stoneborn_female": {
-      "foot_l": 0.08338,
-      "foot_r": 0.08338,
-      "ball_l": 0.02373,
-      "ball_r": 0.02373
+      "foot_l": [
+        0.01655,
+        -0.08338,
+        0.07657
+      ],
+      "ball_l": [
+        0.01655,
+        -0.02373,
+        -0.071
+      ],
+      "foot_r": [
+        -0.01655,
+        -0.08338,
+        0.07657
+      ],
+      "ball_r": [
+        -0.01655,
+        -0.02373,
+        -0.071
+      ]
     },
     "stoneborn_male": {
-      "foot_l": 0.10286,
-      "foot_r": 0.10286,
-      "ball_l": 0.02688,
-      "ball_r": 0.02688
+      "foot_l": [
+        0.01942,
+        -0.10286,
+        0.08158
+      ],
+      "ball_l": [
+        0.01942,
+        -0.02688,
+        -0.06996
+      ],
+      "foot_r": [
+        -0.01942,
+        -0.10286,
+        0.08158
+      ],
+      "ball_r": [
+        -0.01942,
+        -0.02688,
+        -0.06996
+      ]
     },
     "votary_female": {
-      "foot_l": 0.07889,
-      "foot_r": 0.07889,
-      "ball_l": 0.02505,
-      "ball_r": 0.02505
+      "foot_l": [
+        0.01319,
+        -0.07889,
+        0.07218
+      ],
+      "ball_l": [
+        0.01319,
+        -0.02505,
+        -0.06103
+      ],
+      "foot_r": [
+        -0.01319,
+        -0.07889,
+        0.07218
+      ],
+      "ball_r": [
+        -0.01319,
+        -0.02505,
+        -0.06103
+      ]
     },
     "votary_male": {
-      "foot_l": 0.09391,
-      "foot_r": 0.09391,
-      "ball_l": 0.02517,
-      "ball_r": 0.02517
+      "foot_l": [
+        0.01707,
+        -0.09391,
+        0.07726
+      ],
+      "ball_l": [
+        0.01707,
+        -0.02517,
+        -0.05983
+      ],
+      "foot_r": [
+        -0.01707,
+        -0.09391,
+        0.07726
+      ],
+      "ball_r": [
+        -0.01707,
+        -0.02517,
+        -0.05983
+      ]
     }
   }
 }

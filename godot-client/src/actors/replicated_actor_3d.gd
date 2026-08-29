@@ -869,7 +869,7 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 	# shares a rest pose, so the rebound skin is cached per model and garment
 	# instead of rebuilt from 65 named binds for each actor that wears one.
 	var cache_key: String = "%s|%s" % [str(_model_config.get("scene", "")), scene_path]
-	var ground: Dictionary = _ground_ratios(author_rig, skin_region)
+	var ground: Dictionary = _ground_drops(author_rig, skin_region)
 	for piece_value: Variant in _equipment_pieces(scene_path):
 		var piece: Dictionary = piece_value as Dictionary
 		var surface_key: String = "%s|%s" % [cache_key, str(piece.get("name", ""))]
@@ -985,8 +985,8 @@ func _girth_ratios(author_rig: String) -> Dictionary:
 			ratios[bone] = clampf(to / from, 1.0, 2.0)
 	return ratios
 
-## How far this actor's foot joints stand above the floor, against the body a
-## boot was lofted around. Empty for everything that is not footwear.
+## How far a boot has to be lifted for its sole to land on this actor's floor,
+## per foot bone, in metres. Empty for everything that is not footwear.
 ##
 ## The rest of the refit scales each bone about its own origin, and for the foot
 ## chain that origin is the ankle - which is not a fixed height above the
@@ -997,29 +997,53 @@ func _girth_ratios(author_rig: String) -> Dictionary:
 ## landed 14 mm through the floor on all seven of them, and no single authored
 ## mesh could have fixed it.
 ##
-## Unlike girth this ratio may take a garment *in* as well as let it out. Girth
-## is one number for a whole bone and a chest it underestimates comes straight
-## through the shirt, which is why that one only ever widens; this is a measured
-## distance along one axis between two known planes, and a foot that is shorter
-## from ankle to sole wants a boot that is shorter with it.
-func _ground_ratios(author_rig: String, skin_region: String) -> Dictionary:
+## A lift and not a scale, which is the whole point. Measured across the cast,
+## the foot barely varies: every female foot is within four per cent of its male
+## counterpart's width and within seven per cent of its length. What varies is
+## how high the ankle stands above it - 91 to 103 mm on the male rigs, 78.6 to
+## 83.4 on the female ones. Scaling a boot to close that gap would take 18 per
+## cent off a shell that has to contain a foot 4 per cent *wider*, so the sole
+## would land correctly and the foot would come out of the sides. Moving the
+## shell instead lands the sole and leaves the fit alone.
+func _ground_drops(author_rig: String, skin_region: String) -> Dictionary:
 	if skin_region != "boots":
 		return {}
 	var mine: String = rig_name()
 	if author_rig.is_empty() or author_rig == mine:
 		return {}
-	var table: Dictionary = _equipment_config.get("soleDrop", {}) as Dictionary
+	var table: Dictionary = _equipment_config.get("footAnchor", {}) as Dictionary
 	var author: Dictionary = table.get(author_rig, {}) as Dictionary
 	var wearer: Dictionary = table.get(mine, {}) as Dictionary
 	if author.is_empty() or wearer.is_empty():
 		return {}
-	var ratios: Dictionary = {}
+	# One datum for the whole foot, taken at the ankle, and handed to every bone
+	# in the chain.
+	#
+	# The ankle stands 96 mm above the reference floor and 79 on a Luminous
+	# woman's; the ball of the foot stands 24.7 mm above one and 23.2 above the
+	# other. Solved per bone that is a 13 mm lift at the ankle and a 0.7 mm lift
+	# at the ball - and the shell between them is skinned to a blend of the two,
+	# so it does not move, it *shears*. That tore the boot away from the arch
+	# and left the underside of the midfoot outside it on every female rig.
+	# A boot is rigid. It translates as one piece or it is not a boot.
+	var drops: Dictionary = {}
 	for bone: String in author:
-		var from: float = float(author[bone])
-		var to: float = float(wearer.get(bone, 0.0))
-		if from > 0.0005 and to > 0.0005:
-			ratios[bone] = clampf(to / from, 0.5, 2.0)
-	return ratios
+		var from: Vector3 = _vector3(author[bone] as Array, Vector3.ZERO)
+		var to: Vector3 = _vector3(wearer.get(bone, []) as Array, Vector3.ZERO)
+		if from != Vector3.ZERO and to != Vector3.ZERO:
+			# The pair, not the difference: how far the boot has to move depends
+			# on how much it has been widened first, and that is decided in
+			# `_bone_fit` where the girth ratio is known.
+			#
+			# Per bone, not one datum for the whole chain. Collapsing them onto
+			# the ankle's figure was tried on the reasoning that a boot is rigid
+			# and should translate as one piece; measured, it was five times
+			# worse - 951 body vertices outside the shell against 185. The shell
+			# is skinned rather than rigid, and letting each bone carry its own
+			# lift is what makes the blend between them land the ankle and the
+			# ball of the foot in the right place at once.
+			drops[bone] = [from, to]
+	return drops
 
 func _rebound_skin(bone_names: PackedStringArray, binds: Array[Transform3D],
 		fit: Transform3D, girth: Dictionary = {},
@@ -1055,7 +1079,8 @@ func _rebound_skin(bone_names: PackedStringArray, binds: Array[Transform3D],
 			rebound.add_named_bind(bone_name,
 				_bone_fit(target, bone_name, author_rest, fit,
 					float(girth.get(bone_name, 1.0)),
-					float(ground.get(bone_name, 0.0))) * binds[index])
+					ground.get(bone_name, []) as Array,
+					_native_skeleton.get_bone_global_rest(target)) * binds[index])
 		else:
 			# No authored bind survived the import: fall back to the resize so
 			# the piece still appears rather than collapsing onto the origin.
@@ -1065,7 +1090,8 @@ func _rebound_skin(bone_names: PackedStringArray, binds: Array[Transform3D],
 
 func _bone_fit(target: int, bone_name: String, author_rest: Dictionary,
 		fit: Transform3D, girth: float = 1.0,
-		ground: float = 0.0) -> Transform3D:
+		ground: Array = [],
+		wearer_rest: Transform3D = Transform3D.IDENTITY) -> Transform3D:
 	# Carrying a garment onto another rig by rotation alone leaves it the length
 	# it was authored, which is fine while the two rigs agree and wrong when
 	# they do not: the Ssarathi metatarsal is nearly half again as long as the
@@ -1089,19 +1115,38 @@ func _bone_fit(target: int, bone_name: String, author_rest: Dictionary,
 			ratio = clampf(target_span / author_span, 0.4, 2.5)
 			axis = local / author_span
 			measured = true
-	# A foot bone carrying a ground ratio takes it instead of the span-and-girth
-	# result, and takes it whether it widens or narrows. Everything else here is
-	# a guess at how much bigger this body is than the authored one; that is the
-	# measured distance between the joint and the floor it has to stand on, and
-	# the floor is not negotiable - the actor is placed on the ground by its
-	# body, so a boot that disagrees is a boot underneath it. It stays isotropic:
-	# the ground ratio is chosen to land the sole, and splitting it would move
-	# the sole off the plane it was solved for.
-	if ground > 0.0:
-		var settled: float = clampf(ground, 0.5, 2.0)
-		if absf(settled - 1.0) < 0.02:
-			return fit
-		return Transform3D(fit.basis.scaled(Vector3.ONE * settled), Vector3.ZERO)
+	# A foot bone carrying a ground datum is *moved* to the floor rather than
+	# scaled onto it. The foot inside the boot is very nearly the same foot on
+	# every plantigrade rig in the cast - every female foot is within four per
+	# cent of its male counterpart's width - while the ankle above it stands 91
+	# to 103 mm up on the male rigs and 78.6 to 83.4 on the female ones. Scaling
+	# to close that gap would take eighteen per cent off a shell that has to
+	# contain a foot four per cent *wider*: the sole would land and the foot
+	# would come out of the sides.
+	#
+	# It is still widened, because some feet genuinely are broader - an Orun's
+	# is twelve per cent wider than the reference - and a shell that does not
+	# grow for them leaves the outside of the foot showing. Widening first and
+	# then moving is why the drops arrive here as a pair rather than as a
+	# difference: how far the boot has to travel depends on how much bigger it
+	# has just been made.
+	if ground.size() == 2:
+		var wide: float = clampf(maxf(ratio, girth), 1.0, 2.0)
+		var scaled: float = fit.basis.get_scale().y * wide
+		# Where the authored foot lands once it has been scaled onto this body,
+		# against where this body's own foot actually is. The difference is the
+		# move. Y is measured to the floor because standing on the ground has to
+		# be exact; X and Z are measured to the middle of the foot, which is
+		# what puts an Orun's boot around an Orun's foot rather than around the
+		# joint it hangs from.
+		# The anchor is a signed offset from the joint to the foot, so all three
+		# axes read the same way: where the authored foot lands once scaled onto
+		# this body, subtracted from where this body's foot actually is.
+		var landed: Vector3 = (ground[0] as Vector3) * scaled
+		var wanted: Vector3 = ground[1] as Vector3
+		var move: Vector3 = wanted - landed
+		return Transform3D(fit.basis.scaled(Vector3.ONE * wide),
+			wearer_rest.basis.inverse() * move)
 
 	# Widening and lengthening are two different questions and used to be
 	# answered with one number.

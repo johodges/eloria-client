@@ -3389,12 +3389,26 @@ def build_model_registry() -> dict:
             "creationOptions": creation, "npcLooks": npc_looks}
 
 
+def _footwear_catalogue():
+    """The sixty-four designs, if the catalogue is importable.
+
+    Kept soft so a tree without it still builds the rest of the library.
+    """
+    try:
+        from footwear_catalogue import VISUALS
+    except Exception as error:  # pragma: no cover - a partial checkout
+        print("skip footwear catalogue", error)
+        return {}
+    return VISUALS
+
+
 def build_equipment_registry(rig: "equipment_authoring.Rig",
                              idle_bases: dict | None, author_rig: str = "",
-                             girths: dict | None = None) -> dict:
+                             girths: dict | None = None,
+                             foot_anchors: dict | None = None, footwear=None) -> dict:
     """Equipment registry v3: character-space sockets and skinned garments."""
     return equipment_authoring.build_equipment_registry(
-        rig, EQUIPMENT, idle_bases, author_rig=author_rig, girths=girths)
+        rig, EQUIPMENT, idle_bases, author_rig=author_rig, girths=girths, foot_anchors=foot_anchors, footwear=footwear)
 
 
 def carry_forward_ambient(manifest_path: Path, models_path: Path,
@@ -3535,7 +3549,7 @@ def main() -> None:
     # measurements are shipped in the registry instead and the runtime refits
     # the garment per wearer, so the authored piece can stay close to the body.
     girths={}
-    sole_drops={}
+    foot_anchors={}
     race_rigs={}
     for race_path in sorted((args.output/"races").glob("*.glb")):
         try:
@@ -3544,7 +3558,7 @@ def main() -> None:
             print("skip race measurement",race_path.name,error)
             continue
         girths[race_path.stem]=equipment_authoring.body_girth(race_rigs[race_path.stem])
-        sole_drops[race_path.stem]=equipment_authoring.sole_drop(race_rigs[race_path.stem])
+        foot_anchors[race_path.stem]=equipment_authoring.foot_anchor(race_rigs[race_path.stem])
     print(f"measured {len(girths)} race silhouettes")
     # Male and female bodies differ in shape, not only in size - a bust and a
     # hip flare are not a scaled chest - and a per-bone radius cannot express
@@ -3575,7 +3589,7 @@ def main() -> None:
             info=equipment_authoring.build_equipment_piece(
                 vpath,group_rig,vslug,label,kind,base,accent,finish=finish)
             built.append(info|{"group":group,"authoredFor":spec["rig"],
-                               "path":vcatalog_path(path)})
+                               "path":catalog_path(vpath)})
         return built
 
     manifest["fitVariants"]={}
@@ -3637,7 +3651,8 @@ def main() -> None:
     write_json(args.equipment_registry,
                build_equipment_registry(rig, idle_bases,
                                         author_rig=reference_rig, girths=girths,
-                                        sole_drops=sole_drops))
+                                        foot_anchors=foot_anchors,
+                                        footwear=_footwear_catalogue()))
     print(f"validated {len(validation)} native GLBs")
 
 

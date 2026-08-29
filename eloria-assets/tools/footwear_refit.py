@@ -180,25 +180,50 @@ def girth_ratios(registry: dict, author_rig: str, wearer_rig: str) -> dict[str, 
     return ratios
 
 
-def ground_ratios(registry: dict, author_rig: str, wearer_rig: str,
-                  skin_region: str) -> dict[str, float]:
-    """``_ground_ratios``: how far the foot joints stand above the floor.
+def ground_drops(registry: dict, author_rig: str, wearer_rig: str,
+                 skin_region: str) -> dict[str, tuple]:
+    """``_ground_drops``: where each foot sits relative to the joint carrying it.
 
     Footwear only.  Every other region is refitted by stature and girth as
-    before.
+    before.  The value is a signed offset from the bone origin to the foot -
+    across and along in the ground plane, and down to the floor the body rests
+    on - so the pair of them says where the authored boot would land and where
+    this body's foot actually is.
     """
     if skin_region != "boots" or not author_rig or author_rig == wearer_rig:
         return {}
-    table = registry.get("soleDrop", {})
+    table = registry.get("footAnchor", {})
     author, wearer = table.get(author_rig, {}), table.get(wearer_rig, {})
     if not author or not wearer:
         return {}
-    ratios = {}
+    # Per bone, not one datum for the whole chain: collapsing them onto the
+    # ankle's figure was measured and was five times worse, because the shell is
+    # skinned rather than rigid and shears instead of moving.
+    drops = {}
     for bone, value in author.items():
-        source, target = float(value), float(wearer.get(bone, 0.0))
-        if source > .0005 and target > .0005:
-            ratios[bone] = float(np.clip(target / source, *GROUND_CLAMP))
-    return ratios
+        source = np.asarray(value, dtype=np.float64)
+        target = np.asarray(wearer.get(bone, []), dtype=np.float64)
+        if source.shape == (3,) and target.shape == (3,):
+            drops[bone] = (source, target)
+    return drops
+
+
+def _widening(bone: str, author_rest: dict[str, np.ndarray], target: Skeleton,
+              girth: float) -> float:
+    """``clampf(maxf(ratio, girth), 1.0, 2.0)`` - how much broader to cut."""
+    ratio = 1.0
+    kin = [child for child in target.children.get(bone, []) if child in author_rest]
+    if kin and bone in target.rest:
+        author_tip = np.mean([author_rest[child][:3, 3] for child in kin], axis=0)
+        target_tip = np.mean([target.rest[child][:3, 3] for child in kin], axis=0)
+        rest = author_rest.get(bone)
+        if rest is not None:
+            local = np.linalg.inv(rest) @ np.append(author_tip, 1.0)
+            author_span = float(np.linalg.norm(local[:3]))
+            target_span = float(np.linalg.norm(target_tip - target.rest[bone][:3, 3]))
+            if author_span > .0005 and target_span > .0005:
+                ratio = float(np.clip(target_span / author_span, *SPAN_CLAMP))
+    return float(np.clip(max(ratio, girth), *SCALE_CLAMP))
 
 
 def _bone_basis(bone: str, author_rest: dict[str, np.ndarray], target: Skeleton,
@@ -220,13 +245,6 @@ def _bone_basis(bone: str, author_rest: dict[str, np.ndarray], target: Skeleton,
                 ratio = float(np.clip(target_span / author_span, *SPAN_CLAMP))
                 axis = local[:3] / author_span
                 measured = True
-    # The ground ratio stays isotropic: it is solved to land the sole, and
-    # splitting it would move the sole off the plane it was solved for.
-    if ground > 0.0:
-        settled = float(np.clip(ground, *GROUND_CLAMP))
-        if abs(settled - 1.0) < SCALE_DEADBAND:
-            return np.eye(3) * fit
-        return np.eye(3) * (fit * settled)
     across = float(np.clip(max(ratio, girth), *SCALE_CLAMP))
     along = across if not measured else float(np.clip(ratio, *SPAN_CLAMP))
     if abs(across - 1.0) < SCALE_DEADBAND and abs(along - 1.0) < SCALE_DEADBAND:
@@ -237,7 +255,7 @@ def _bone_basis(bone: str, author_rest: dict[str, np.ndarray], target: Skeleton,
 def _bone_scale(bone: str, author_rest: dict[str, np.ndarray], target: Skeleton,
                 fit: float, girth: float, ground: float = 0.0) -> float:
     """The isotropic part, for callers that only want a single number."""
-    basis = _bone_basis(bone, author_rest, target, fit, girth, ground)
+    basis = _bone_basis(bone, author_rest, target, fit, girth)
     return float(np.cbrt(abs(np.linalg.det(basis))))
 
 
@@ -252,11 +270,19 @@ def refit(piece: SkinnedMesh, wearer: Skeleton, canonical_head_y: float,
         if rest is None or author is None:
             matrices[index] = np.eye(4)
             continue
-        basis = _bone_basis(bone, piece.author_rest, wearer, fit,
-                            float(girth.get(bone, 1.0)),
-                            float((ground or {}).get(bone, 0.0)))
+        drops = (ground or {}).get(bone)
         middle = np.eye(4)
-        middle[:3, :3] = basis
+        if drops:
+            # Widened, then moved to the floor: see ``_bone_fit`` in the client.
+            wide = _widening(bone, piece.author_rest, wearer,
+                             float(girth.get(bone, 1.0)))
+            middle[:3, :3] = np.eye(3) * (fit * wide)
+            landed, wanted = drops[0] * (fit * wide), drops[1]
+            move = wanted - landed
+            middle[:3, 3] = np.linalg.inv(rest[:3, :3]) @ move
+        else:
+            middle[:3, :3] = _bone_basis(bone, piece.author_rest, wearer, fit,
+                                         float(girth.get(bone, 1.0)))
         matrices[index] = rest @ middle @ np.linalg.inv(author)
 
     homogeneous = np.concatenate(
@@ -282,7 +308,7 @@ def worn_geometry(boot: Path, wearer_rig: Path, registry: dict, author_rig: str,
     canonical = float(registry.get("canonicalHeadRestY", 0.0))
     name = Path(wearer_rig).stem
     girth = girth_ratios(registry, author_rig, name)
-    ground = ground_ratios(registry, author_rig, name, skin_region)
+    ground = ground_drops(registry, author_rig, name, skin_region)
     result = []
     for piece in skinned_primitives(boot):
         result.append((refit(piece, wearer, canonical, girth, ground),

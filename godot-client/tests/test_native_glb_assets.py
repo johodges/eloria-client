@@ -510,13 +510,46 @@ class NativeGlbAssetsTest(unittest.TestCase):
                     for entry in self.catalog["equipment"].values()}
         for entry in self.catalog["genericEquipment"].values():
             expected |= {f"{entry['part']}:{visual}" for visual in entry["visuals"]}
+        # Footwear is its own section: sixty-four authored meshes, one visual id
+        # each, rather than one mesh under a ladder of tints.
+        expected |= {f"{entry['part']}:{entry['visual']}"
+                     for entry in self.catalog.get("footwear", {}).values()}
         self.assertEqual(expected, set(self.equipment["models"]))
         for entry in self._all_equipment():
             glb_document(ROOT / entry["path"])
 
+    def test_footwear_block_is_whole_and_does_not_collide(self) -> None:
+        """The sixty-four designs occupy one clean run of the part-6 byte.
+
+        ``ACTOR_WEAR_ITEM`` packs the visual into a single byte, and the same
+        byte position in ``ADD_ACTOR`` carries the character's appearance boot
+        index when nothing is equipped.  That index comes from a creation slider
+        that tops out at 5 and from ``(seed // 23) % 5`` for NPCs, and the
+        registry answers it out of the same table - which is why 6:0-6:12 are
+        the generic boots and may not be reassigned.  This block starts far
+        above anything the appearance byte can produce.
+        """
+        footwear = self.catalog.get("footwear", {})
+        self.assertEqual(64, len(footwear), "sixty-four designs are expected")
+        visuals = sorted(entry["visual"] for entry in footwear.values())
+        self.assertEqual(list(range(128, 192)), visuals,
+                         "the block is 6:128-6:191, unbroken")
+        legacy = {int(key.split(":")[1]) for key in self.equipment["models"]
+                  if key.startswith("6:")} - set(visuals)
+        self.assertTrue(legacy <= set(range(0, 13)) | set(range(100, 107)),
+                        f"an unexpected part 6 id survives: {sorted(legacy)}")
+        for entry in footwear.values():
+            self.assertEqual(6, entry["part"])
+            self.assertTrue((ROOT / entry["path"]).is_file(), entry["path"])
+            for variant in entry["variants"].values():
+                path = (CLIENT / "assets" / "actors" / "native" / "equipment"
+                        / f"{variant}.glb")
+                self.assertTrue(path.is_file(), str(path))
+
     def _all_equipment(self):
-        return list(self.catalog["equipment"].values()) + list(
-            self.catalog["genericEquipment"].values())
+        return (list(self.catalog["equipment"].values())
+                + list(self.catalog["genericEquipment"].values())
+                + list(self.catalog.get("footwear", {}).values()))
 
     def test_legacy_visual_ids_render_as_themselves(self) -> None:
         """The alias table existed only because the legacy tier had no models.
@@ -601,7 +634,10 @@ class NativeGlbAssetsTest(unittest.TestCase):
                         self.assertIn("JOINTS_0", primitive["attributes"])
                         self.assertIn("WEIGHTS_0", primitive["attributes"])
                 checked += 1
-        self.assertEqual(47, checked)
+        # Forty-seven garments before the footwear rebuild, plus its sixty-four
+        # designs.  A count rather than a lower bound, so a section that stops
+        # being emitted is a failure rather than a quietly smaller sweep.
+        self.assertEqual(47 + 64, checked)
 
     def test_equipment_hides_name_real_body_surfaces(self) -> None:
         """A hide that names nothing would silently fail to cover anything."""
