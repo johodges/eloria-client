@@ -37,11 +37,23 @@ the expected thing.
 ## Entry points
 
 ```sh
-make -C native                       # preview rasteriser; not needed for the package
+make -C native                       # required first: see below
 cd <region>/source && python3 build_<region>.py
 python3 ../../_toolkit/verify_runtime.py
 python3 ../../_toolkit/validate_gltf.py ../world.glb
 ```
+
+**`make -C native` is a prerequisite, not an optional extra.** This used to say
+the rasteriser was not needed for the package. It is: `amberwood/render.py`
+loads `native/libraster.so` through ctypes at *import* time, and every region's
+`build_<region>.py` imports `render` for the minimap - so a fresh checkout
+without the built library cannot build a region at all, even with
+`--skip-minimap`. The library is gitignored, so this bites on every clone.
+
+On Windows use MSYS2/mingw-w64. The Makefile links the runtime statically there
+so plain CPython can load the result without mingw's DLLs on PATH; the output
+keeps the `.so` name on every platform because `render.py` loads it by path and
+ctypes does not care about the extension.
 
 ## Determinism
 
