@@ -2139,25 +2139,36 @@ SERPENT_TABLE, SERPENT_INDEX = _assemble(
        ("arm_l", "body"), ("forearm_l", "arm_l"),
        ("arm_r", "body"), ("forearm_r", "arm_r")])
 
+# ``rear`` is how high the front of the body is carried.  Every serpent in the
+# concept art is coiled and reared -- the body loops up off the ground and the
+# head is held above it -- and laid out flat they were ten identical hoses.
+# ``spine`` is the row of dorsal spines or fins running the length of the back,
+# which is the other thing the art gives all of them and the models had none of.
 SERPENT_PLANS = {
-    "snake": dict(length=1.90, girth=.105, rise=.30, head=(.10, .075, .17),
-                  jaw=.13, fins=False, frill=.0, heads=1, arms=False,
-                  crest=.0, limbs=False, ride=.10),
-    "sea_serpent": dict(length=2.40, girth=.135, rise=.46, head=(.13, .11, .22),
+    "snake": dict(length=1.90, girth=.145, rise=.34, head=(.14, .11, .22),
+                  jaw=.13, fins=False, frill=.20, heads=1, arms=False,
+                  crest=.08, limbs=False, ride=.10, rear=.46, spine=.055,
+                  coil=1.9),
+    "sea_serpent": dict(length=2.40, girth=.180, rise=.46, head=(.16, .14, .26),
                         jaw=.17, fins=True, frill=.10, heads=1, arms=False,
-                        crest=.10, limbs=False, ride=.16),
-    "eel": dict(length=1.80, girth=.100, rise=.16, head=(.10, .085, .18),
+                        crest=.10, limbs=False, ride=.16, rear=.62, spine=.085,
+                        coil=2.1),
+    "eel": dict(length=1.80, girth=.128, rise=.16, head=(.12, .10, .21),
                 jaw=.15, fins=True, frill=.0, heads=1, arms=False,
-                crest=.0, limbs=False, ride=.09),
-    "wyrm": dict(length=2.70, girth=.165, rise=.58, head=(.16, .14, .27),
+                crest=.0, limbs=False, ride=.09, rear=.20, spine=.055,
+                coil=1.5),
+    "wyrm": dict(length=2.70, girth=.215, rise=.58, head=(.19, .17, .31),
                  jaw=.21, fins=False, frill=.14, heads=1, arms=True,
-                 crest=.14, limbs=True, ride=.22),
-    "hydra": dict(length=1.90, girth=.150, rise=.50, head=(.12, .10, .20),
-                  jaw=.15, fins=False, frill=.08, heads=3, arms=False,
-                  crest=.07, limbs=True, ride=.20),
-    "naga": dict(length=1.70, girth=.130, rise=.62, head=(.11, .13, .13),
-                 jaw=.08, fins=True, frill=.0, heads=1, arms=True,
-                 crest=.0, limbs=False, ride=.22),
+                 crest=.14, limbs=True, ride=.22, rear=.82, spine=.130,
+                 coil=2.3),
+    "hydra": dict(length=1.90, girth=.195, rise=.50, head=(.14, .12, .23),
+                  jaw=.15, fins=False, frill=.08, heads=5, arms=False,
+                  crest=.07, limbs=True, ride=.20, rear=.64, spine=.075,
+                  coil=1.7),
+    "naga": dict(length=1.70, girth=.155, rise=.94, head=(.11, .13, .13),
+                 jaw=.08, fins=True, frill=.16, heads=1, arms=True,
+                 crest=.0, limbs=False, ride=.22, rear=.52, spine=.045,
+                 coil=1.9),
 }
 
 
@@ -2165,25 +2176,45 @@ def serpent_skeleton(plan_key: str, scale: float, variant=None):
     p = minor_config(SERPENT_PLANS, plan_key, variant)
     s = scale
     girth = p["girth"] * s
-    body = np.array((0., girth * 1.05, 0.))
+    rear = p["rear"] * s
+    body = np.array((0., girth * 1.05 + rear, 0.))
     g = {"root": np.zeros(3), "body": body}
-    # Coils run backwards from the body in a shallow S so the rig can slither.
+    # Coils run backwards and *down*: the front of the animal is carried high
+    # and the body settles to the floor over its length, looping wider as it
+    # goes.  Held at a constant height in a shallow horizontal wiggle -- which
+    # is what this was -- a serpent is a length of hose lying in the road, and
+    # no amount of head detail rescues it.
+    # A spiral, not a wave.  The radius is set from the body's own length so
+    # roughly one turn uses it up: a serpent in the art occupies a compact
+    # coil about as wide as it is tall, and stretched down a straight line the
+    # same animal is a hosepipe two and a half metres long with a head on one
+    # end.
+    turns = max(.55, p["coil"] * .52)
+    wrap = p["length"] * s / (2 * math.pi * turns)
     for i in range(SERPENT_SEGMENTS):
         t = (i + 1) / SERPENT_SEGMENTS
+        # The descent has to carry the tail all the way to the floor.  Settling
+        # only as far as ``rear`` left the whole animal hovering a tenth of a
+        # unit up, because the spine stops at body height while the tube around
+        # it has already tapered away to nothing.
+        settle = (rear + girth * .85) * (1.0 - (1.0 - t) ** 1.9)
+        undulate = math.sin(t * math.pi * 2.3) * girth * .85 * (1.0 - t)
+        angle = t * turns * 2 * math.pi
+        open_out = wrap * (.62 + .52 * t)
         g[f"coil_{i + 1}"] = np.array((
-            math.sin(t * math.pi * 1.5) * girth * 2.2,
-            girth * (1.05 - .55 * t ** 2),
-            p["length"] * s * t))
+            math.sin(angle) * open_out,
+            max(girth * .24, girth * 1.05 + rear - settle + undulate),
+            (1.0 - math.cos(angle)) * open_out))
     rise = p["rise"] * s
     for suffix, lateral in (("", 0.), ("_b", -.22), ("_c", .22)):
         if suffix and p["heads"] < (2 if suffix == "_b" else 3):
             g[f"neck{suffix}"] = body + np.array((0., rise * .45, -girth * 2.0))
             g[f"head{suffix}"] = body + np.array((0., rise * .70, -girth * 3.2))
             continue
-        neck = body + np.array((lateral * s * 2.0, rise * .55,
-                                -girth * 2.4 - abs(lateral) * s))
-        head = neck + np.array((lateral * s * 1.8, rise * .42,
-                                -p["head"][2] * s * 1.7))
+        neck = body + np.array((lateral * s * 1.5, rise * .60,
+                                -girth * 1.5 - abs(lateral) * s * .7))
+        head = neck + np.array((lateral * s * 1.3, rise * .50,
+                                -p["head"][2] * s * 1.25))
         g[f"neck{suffix}"] = neck
         g[f"head{suffix}"] = head
     g["jaw"] = g["head"] + np.array((0., -p["head"][1] * s * .40,
@@ -2217,6 +2248,35 @@ def serpent_geometry(plan_key: str, scale: float, bones, variant=None) -> Anatom
     mesh.tube(points, widths, coil_bones, MAT_BODY, sides=14, uv_scale=3.0,
               lower_material=MAT_ACCENT, lower_threshold=-.40)
     mesh.torso = (list(points), list(widths), list(coil_bones))
+    if p["spine"]:
+        # The ridge of spines or fins the art runs the whole length of the
+        # back.  It is most of what separates a sea serpent from a worm, and
+        # it is what makes the coils read as coils from the side.
+        blade = p["spine"] * s
+        count = SERPENT_SEGMENTS * 3
+        for k in range(count):
+            t = (k + .5) / count
+            place = t * (len(points) - 1)
+            low = min(int(place), len(points) - 2)
+            frac = place - low
+            here = points[low] * (1 - frac) + points[low + 1] * frac
+            wide = widths[low][0] * (1 - frac) + widths[low + 1][0] * frac
+            ahead = points[min(low + 1, len(points) - 1)] - points[low]
+            norm = float(np.linalg.norm(ahead))
+            ahead = ahead / norm if norm > 1e-9 else np.array((0., 0., 1.))
+            up = np.array((0., 1., 0.)) - ahead * float(ahead[1])
+            if float(np.linalg.norm(up)) < .2:
+                up = np.array((0., 1., 0.))
+            up = up / max(float(np.linalg.norm(up)), 1e-9)
+            # Tallest a third of the way back, tapering to nothing at the tail.
+            height = blade * math.sin(math.pi * min(1.0, t * 1.25 + .10)) * \
+                (1.0 - .55 * t)
+            base = here + up * wide * .92
+            mesh.tube([base - ahead * wide * .55, base + up * height,
+                       base + ahead * wide * .55],
+                      [(wide * .10, wide * .10), (wide * .16, wide * .06),
+                       (wide * .10, wide * .10)],
+                      coil_bones, MAT_ACCENT, sides=4)
 
     heads = [("", B["neck"], B["head"])]
     if p["heads"] >= 2:
@@ -2231,29 +2291,61 @@ def serpent_geometry(plan_key: str, scale: float, bones, variant=None) -> Anatom
                              (hw * .90, hh * .90)],
                   [body_i, neck_i, head_i], MAT_BODY, sides=12,
                   cap_start=False, cap_end=False)
-        mesh.ellipsoid(tuple(g[head_i]), (hw * 2.6, hh * 2.5, hl * 2.3),
+        # The head has to be plainly bigger than the body behind it.  At 2.6
+        # of a head unit against a body of the same diameter there was no
+        # break in the silhouette at all: the neck simply stopped.
+        skull_shape = ((hw * 2.3, hh * 2.4, hl * 2.4) if plan_key == "naga"
+                       else (hw * 3.3, hh * 3.1, hl * 2.6))
+        mesh.ellipsoid(tuple(g[head_i]), skull_shape,
                        [head_i, neck_i], MAT_BODY, rings=10, sides=15)
+        # The bony brow ridge over the eyes, which is what gives a serpent a
+        # face rather than a nose cone.
+        # In the creature's own hide, and low: through the keratin material at
+        # nearly three head-widths across it capped every serpent with a
+        # bone-white shell that read as a hat.
+        if plan_key != "naga":
+            mesh.ellipsoid(tuple(g[head_i] + np.array((0., hh * .95, -hl * .45))),
+                           (hw * 2.15, hh * .62, hl * 1.15),
+                           [head_i], MAT_BODY, rings=6, sides=12)
         snout = g[head_i] + np.array((0., -hh * .18, -hl * 1.15))
         jaw_bone = B["jaw"] if suffix == "" else head_i
-        mesh.tube([g[head_i] + np.array((0., -hh * .10, -hl * .5)), snout],
-                  [(hw * 1.5, hh * 1.3), (hw * .85, hh * .65)],
-                  [head_i, jaw_bone], MAT_BODY, sides=10, cap_start=False)
-        mesh.tube([g[head_i] + np.array((0., -hh * .75, -hl * .45)),
-                   snout + np.array((0., hh * .16, hl * .18))],
-                  [(hw * 1.15, hh * .55), (hw * .70, hh * .38)],
-                  [jaw_bone, head_i], MAT_BODY, sides=9, cap_start=False)
-        for side in (-1., 1.):
-            mesh.ellipsoid(tuple(g[head_i] + np.array((side * hw * 1.15, hh * .55,
-                                                       -hl * .45))),
-                           (hw * .48,) * 3, [head_i], MAT_DARK, rings=6, sides=10)
-        if p["frill"]:
-            f = p["frill"] * s
+        if plan_key != "naga":
+            # A naga's head is a person's; drawing the serpent snout and jaw on
+            # top of the face gave it two heads in one.
+            mesh.tube([g[head_i] + np.array((0., -hh * .10, -hl * .5)), snout],
+                      [(hw * 1.5, hh * 1.3), (hw * .85, hh * .65)],
+                      [head_i, jaw_bone], MAT_BODY, sides=10, cap_start=False)
+            mesh.tube([g[head_i] + np.array((0., -hh * .75, -hl * .45)),
+                       snout + np.array((0., hh * .16, hl * .18))],
+                      [(hw * 1.15, hh * .55), (hw * .70, hh * .38)],
+                      [jaw_bone, head_i], MAT_BODY, sides=9, cap_start=False)
             for side in (-1., 1.):
-                base = g[neck_i] + np.array((side * girth * .5, girth * .4, 0.))
-                edge_a = [base, base + np.array((side * f * .5, f * .9, f * .5))]
-                edge_b = [base + np.array((0., 0., girth * 1.4)),
-                          base + np.array((side * f * .4, f * .5, f * 1.6))]
-                _sheet(mesh, edge_a, edge_b, .010 * s, [neck_i, head_i], MAT_ACCENT)
+                mesh.ellipsoid(tuple(g[head_i] + np.array((side * hw * 1.15,
+                                                           hh * .55, -hl * .45))),
+                               (hw * .48,) * 3, [head_i], MAT_DARK,
+                               rings=6, sides=10)
+        if p["frill"]:
+            # A crown of fins sweeping back off the skull.  Every serpent in
+            # the art wears one -- ice on the frost serpent, leaf on the tree
+            # serpent, horn on the wyrm -- and it is the single feature that
+            # tells one of these apart from another at a glance.  Two flat
+            # sheets on the neck did not read as anything.
+            f = p["frill"] * s
+            back = g[head_i] - g[neck_i]
+            norm = float(np.linalg.norm(back))
+            back = back / norm if norm > 1e-9 else np.array((0., 0., -1.))
+            for k in range(7):
+                a = math.pi * (k / 6.0) - math.pi * .5
+                out = np.array((math.sin(a), math.cos(a) * .85, 0.))
+                root = g[head_i] + out * hw * 1.5 - back * hl * .35
+                # Longest over the crown, shortest at the jawline.
+                reach = f * (.55 + .95 * math.cos(a) ** 2)
+                tip = root + out * reach * .75 - back * reach * 1.05
+                mid = (root + tip) * .5 + out * reach * .12
+                mesh.tube([root, mid, tip],
+                          [(hw * .30, hw * .12), (hw * .22, hw * .09),
+                           (hw * .05, hw * .03)],
+                          [head_i, neck_i], MAT_ACCENT, sides=4)
         if p["crest"]:
             c = p["crest"] * s
             for k in range(4):
@@ -2261,6 +2353,17 @@ def serpent_geometry(plan_key: str, scale: float, bones, variant=None) -> Anatom
                 base = g[neck_i] * (1 - t) + g[head_i] * t + np.array((0., girth * .5, 0.))
                 mesh.spike(base, base + np.array((0., c * (1 - .15 * k), girth * .3)),
                            .022 * s, [neck_i, head_i], MAT_FEATURE, sides=6)
+            # A pair of horns swept back off the brow, as the art draws on
+            # every one of these that carries a crest.
+            for side in (-1., 1.):
+                root = g[head_i] + np.array((side * hw * 1.25, hh * 1.35,
+                                             hl * .30))
+                mesh.tube([root, root + np.array((side * c * .45, c * .70,
+                                                  c * .55)),
+                           root + np.array((side * c * .60, c * .95, c * 1.35))],
+                          [(hw * .34, hw * .34), (hw * .21, hw * .21),
+                           (hw * .05, hw * .05)],
+                          [head_i, neck_i], MAT_FEATURE, sides=6)
     if p["fins"]:
         for k in range(5):
             t = .10 + .62 * k / 4
@@ -2283,15 +2386,80 @@ def serpent_geometry(plan_key: str, scale: float, bones, variant=None) -> Anatom
                 mesh.spike(hand, claw, girth * .10,
                            [B[f"forearm_{side}"]], MAT_DARK, sides=5)
     if p["arms"] and plan_key == "naga":
+        # A naga is half a person, and the person half had nothing in it: the
+        # neck tube ran straight into a ball, so the art's coral priestess came
+        # out as a snowman on a coil.  Build the torso the art draws -- ribcage
+        # over a waist, a shoulder girdle, arms with elbows and hands, and a
+        # face -- on the bones the rig already carries.
+        neck_i, head_i = B["neck"], B["head"]
+        hw, hh, hl = (v * s for v in p["head"])
+        waist = g[body_i] + np.array((0., girth * 1.05, -girth * .35))
+        chest = (waist + g[neck_i]) * .5 + np.array((0., 0., -girth * .12))
+        mesh.tube([waist, chest, g[neck_i]],
+                  [(girth * .96, girth * .82), (girth * 1.06, girth * .86),
+                   (girth * .62, girth * .56)],
+                  [body_i, neck_i], MAT_BODY, sides=14, cap_start=False,
+                  cap_end=False)
+        # Hips flaring into the coil, so the join is not a seam.
+        mesh.ellipsoid(tuple(waist + np.array((0., -girth * .35, 0.))),
+                       (girth * 1.30, girth * 1.15, girth * 1.30),
+                       [body_i], MAT_BODY, rings=8, sides=14)
+        girdle = []
+        for side, sign in (("l", -1.), ("r", 1.)):
+            girdle.append(g[B[f"arm_{side}"]])
+        mesh.tube([girdle[0], chest + np.array((0., girth * .40, 0.)), girdle[1]],
+                  [(girth * .42, girth * .42), (girth * .95, girth * .78),
+                   (girth * .42, girth * .42)],
+                  [body_i, B["arm_l"], B["arm_r"], neck_i], MAT_BODY, sides=11)
         for side, sign in (("l", -1.), ("r", 1.)):
             sh = g[B[f"arm_{side}"]]
             fo = g[B[f"forearm_{side}"]]
-            hand = fo + np.array((sign * .04 * s, -.20 * s, .0))
-            mesh.tube([sh, fo, hand],
-                      [(girth * .48, girth * .48), (girth * .36, girth * .36),
-                       (girth * .28, girth * .28)],
-                      [body_i, B[f"arm_{side}"], B[f"forearm_{side}"]], MAT_BODY,
-                      sides=9, cap_start=False)
+            hand = fo + np.array((sign * .04 * s, -.20 * s, -.02 * s))
+            arm_bones = [body_i, B[f"arm_{side}"], B[f"forearm_{side}"]]
+            mesh.tube([sh, (sh + fo) * .5, fo, (fo + hand) * .5, hand],
+                      [(girth * .46, girth * .46), (girth * .38, girth * .38),
+                       (girth * .33, girth * .33), (girth * .29, girth * .29),
+                       (girth * .26, girth * .26)],
+                      arm_bones, MAT_BODY, sides=9, cap_start=False,
+                      cap_end=False)
+            mesh.ellipsoid(tuple(sh), (girth * .70,) * 3, arm_bones, MAT_BODY,
+                           rings=7, sides=10)
+            palm = hand + np.array((0., -girth * .26, 0.))
+            mesh.ellipsoid(tuple(palm), (girth * .30, girth * .36, girth * .22),
+                           arm_bones, MAT_BODY, rings=6, sides=8)
+            for k in range(3):
+                tipp = palm + np.array((sign * girth * .04 + (k - 1) * girth * .16,
+                                        -girth * .34, -girth * .06))
+                mesh.tube([palm + np.array(((k - 1) * girth * .14,
+                                            -girth * .16, 0.)), tipp],
+                          [(girth * .085, girth * .085),
+                           (girth * .055, girth * .055)],
+                          arm_bones, MAT_BODY, sides=4)
+        # A face, built the way the bipeds build theirs: brow, sockets, nose,
+        # cheek and mouth, because shadow is what makes a face read at all.
+        eye = hw * .17
+        for sign in (-1., 1.):
+            socket = g[head_i] + np.array((sign * hw * 1.05, hh * .30,
+                                           -hl * 1.15))
+            mesh.ellipsoid(tuple(socket), (eye * 2.4, eye * 2.1, eye * 1.5),
+                           [head_i], MAT_DARK, rings=6, sides=9)
+            mesh.ellipsoid(tuple(socket + np.array((0., 0., -eye * .55))),
+                           (eye * 1.15, eye * 1.05, eye * .80),
+                           [head_i], MAT_CORE, rings=5, sides=8)
+            mesh.ellipsoid(tuple(g[head_i] + np.array((sign * hw * 1.45,
+                                                       -hh * .28, -hl * .85))),
+                           (hw * .48, hh * .40, hl * .70),
+                           [head_i], MAT_BODY, rings=5, sides=9)
+        brow = g[head_i] + np.array((0., hh * .92, -hl * 1.20))
+        mesh.tube([brow + np.array((-hw * 1.30, -hh * .16, 0.)), brow,
+                   brow + np.array((hw * 1.30, -hh * .16, 0.))],
+                  [(hw * .22, hh * .18), (hw * .34, hh * .26),
+                   (hw * .22, hh * .18)], [head_i], MAT_BODY, sides=6)
+        mouth = g[head_i] + np.array((0., -hh * .82, -hl * 1.30))
+        mesh.tube([mouth + np.array((-hw * .60, 0., 0.)), mouth,
+                   mouth + np.array((hw * .60, 0., 0.))],
+                  [(hw * .09, hh * .07), (hw * .15, hh * .11),
+                   (hw * .09, hh * .07)], [head_i], MAT_DARK, sides=5)
     return mesh
 
 
