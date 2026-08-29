@@ -157,6 +157,10 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_manymouth_delta_insides",
+      "Roof_manymouth_delta_insides_bark_dark",
+      "Roof_manymouth_delta_insides_cliff_rock",
+      "Roof_manymouth_delta_insides_manymouth_teak",
+      "Roof_manymouth_delta_insides_thatch_reed",
       "Build_manymouth_delta_insides_amber_resin",
       "Build_manymouth_delta_insides_amethyst_verdigris",
       "Build_manymouth_delta_insides_ashlar",
@@ -178,6 +182,15 @@
       "Build_manymouth_delta_insides_timber_warm",
       "Build_manymouth_delta_insides_woven_cloth"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_manymouth_delta_insides_bark_dark",
+      "Roof_manymouth_delta_insides_cliff_rock",
+      "Roof_manymouth_delta_insides_manymouth_teak",
+      "Roof_manymouth_delta_insides_thatch_reed"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -3151,18 +3164,22 @@
     ]
   },
   "performance": {
-    "nodes": 26,
-    "meshes": 25,
+    "nodes": 30,
+    "meshes": 29,
     "materials": 21,
     "images": 57,
     "textures": 57,
-    "accessors": 125,
-    "bufferViews": 182,
-    "uniqueTriangles": 87378,
-    "uniqueVertices": 94548,
-    "glbBytes": 11804708,
+    "accessors": 145,
+    "bufferViews": 202,
+    "uniqueTriangles": 86370,
+    "uniqueVertices": 92532,
+    "glbBytes": 11706584,
     "nodeNames": [
       "Interior_manymouth_delta_insides",
+      "Roof_manymouth_delta_insides_bark_dark",
+      "Roof_manymouth_delta_insides_cliff_rock",
+      "Roof_manymouth_delta_insides_manymouth_teak",
+      "Roof_manymouth_delta_insides_thatch_reed",
       "Build_manymouth_delta_insides_amber_resin",
       "Build_manymouth_delta_insides_amethyst_verdigris",
       "Build_manymouth_delta_insides_ashlar",

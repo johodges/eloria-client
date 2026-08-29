@@ -564,14 +564,11 @@ func _ready() -> void:
 	$GameView/ChatTabs/All.pressed.connect(_on_chat_tab_pressed.bind("all"))
 	$GameView/ChatTabs/History.pressed.connect(_on_chat_tab_pressed.bind("history"))
 	$GameView/ChatTabs/Options.pressed.connect(_on_options_pressed)
-	%ItemMode.pressed.connect(_on_quickbar_mode_pressed.bind("items"))
-	%SpellMode.pressed.connect(_on_quickbar_mode_pressed.bind("spells"))
 	_build_hud_layout_menu()
 	_load_hud_layout()
 	_connect_hud_context_inputs(%Quickbar)
 	get_viewport().size_changed.connect(_on_window_size_changed)
 	call_deferred("_on_window_size_changed")
-	_on_quickbar_mode_pressed("items")
 	for channel_index: int in range(3):
 		var channel_button: Button = get_node(
 			"GameView/ChatTabs/Channel%d" % (channel_index + 1)) as Button
@@ -4021,13 +4018,6 @@ func _on_window_size_changed() -> void:
 		maxi(1, roundi(viewport_container.size.y * maxf(render_scale.y, 0.01))))
 	if main_viewport.size != target_size:
 		main_viewport.size = target_size
-
-func _on_quickbar_mode_pressed(mode: String) -> void:
-	var showing_items: bool = mode == "items"
-	quick_slot_container.visible = showing_items
-	spell_slot_container.visible = not showing_items
-	%ItemMode.set_pressed_no_signal(showing_items)
-	%SpellMode.set_pressed_no_signal(not showing_items)
 
 func _sync_hud_button_states(force := false) -> void:
 	if _hud_icon_regions.is_empty():

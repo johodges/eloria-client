@@ -107,6 +107,8 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_amberwood_cinder_chapel",
+      "Roof_amberwood_cinder_chapel_ashlar",
+      "Roof_amberwood_cinder_chapel_charred_timber",
       "Build_amberwood_cinder_chapel_amber_resin",
       "Build_amberwood_cinder_chapel_ashlar",
       "Build_amberwood_cinder_chapel_bark_dark",
@@ -118,6 +120,13 @@
       "Build_amberwood_cinder_chapel_timber_warm",
       "Build_amberwood_cinder_chapel_water_deep"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_amberwood_cinder_chapel_ashlar",
+      "Roof_amberwood_cinder_chapel_charred_timber"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -655,18 +664,20 @@
     ]
   },
   "performance": {
-    "nodes": 13,
-    "meshes": 12,
+    "nodes": 15,
+    "meshes": 14,
     "materials": 11,
     "images": 33,
     "textures": 33,
-    "accessors": 60,
-    "bufferViews": 93,
-    "uniqueTriangles": 12178,
-    "uniqueVertices": 15643,
-    "glbBytes": 5143772,
+    "accessors": 70,
+    "bufferViews": 103,
+    "uniqueTriangles": 11818,
+    "uniqueVertices": 14923,
+    "glbBytes": 5085464,
     "nodeNames": [
       "Interior_amberwood_cinder_chapel",
+      "Roof_amberwood_cinder_chapel_ashlar",
+      "Roof_amberwood_cinder_chapel_charred_timber",
       "Build_amberwood_cinder_chapel_amber_resin",
       "Build_amberwood_cinder_chapel_ashlar",
       "Build_amberwood_cinder_chapel_bark_dark",

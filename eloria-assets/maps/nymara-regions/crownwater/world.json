@@ -2203,12 +2203,12 @@
     "textures": 61,
     "accessors": 476,
     "bufferViews": 537,
-    "uniqueTriangles": 587350,
+    "uniqueTriangles": 586454,
     "uniqueVertices": 347415,
-    "glbBytes": 24091236,
-    "instancedTriangles": 1272152,
-    "embeddedTextureBytes": 19227034,
-    "textureMemoryBytesUncompressed": 164364288,
+    "glbBytes": 24105044,
+    "instancedTriangles": 1271256,
+    "embeddedTextureBytes": 28549576,
+    "textureMemoryBytesUncompressed": 250478592,
     "placements": 608,
     "collision": {
       "width": 1152,
@@ -2225,11 +2225,11 @@
       "48 islet lamp standards placed"
     ],
     "lod2": {
-      "glbBytes": 14106060,
+      "glbBytes": 14102680,
       "nodes": 1686,
-      "uniqueTriangles": 434198,
-      "instancedTriangles": 1108472,
-      "sizeReductionPercent": 41.4,
+      "uniqueTriangles": 433302,
+      "instancedTriangles": 1107576,
+      "sizeReductionPercent": 41.5,
       "triangleReductionPercent": 12.9
     }
   },

@@ -9,10 +9,10 @@
   "textures": 86,
   "accessors": 1192,
   "bufferViews": 1278,
-  "uniqueTriangles": 526837,
+  "uniqueTriangles": 524357,
   "uniqueVertices": 416480,
-  "glbBytes": 28377196,
-  "instancedTriangles": 3042090,
+  "glbBytes": 28362316,
+  "instancedTriangles": 3039610,
   "embeddedTextureBytes": 9232199,
   "textureMemoryBytesUncompressed": 85721088,
   "placements": 9383,
@@ -40,10 +40,10 @@
     "Rock instances: 249"
   ],
   "lod2": {
-    "glbBytes": 18682628,
+    "glbBytes": 18667748,
     "nodes": 6385,
-    "uniqueTriangles": 469967,
-    "instancedTriangles": 2140896,
+    "uniqueTriangles": 467487,
+    "instancedTriangles": 2138416,
     "sizeReductionPercent": 34.2,
     "triangleReductionPercent": 29.6
   }
