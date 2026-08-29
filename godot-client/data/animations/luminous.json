@@ -1,6 +1,10 @@
 {
   "schemaVersion": 1,
   "fallbackAction": "idle",
+  "strideMetresPerSecond": {
+    "walk": 1.692,
+    "run": 2.247
+  },
   "playbackSpeeds": {
     "walk": 1.45,
     "run": 1.35,
@@ -9,11 +13,11 @@
     "stand": 2.0
   },
   "actions": {
-    "idle": "Idle_Subtle",
+    "idle": "Idle_A",
     "alternate_idle": "Idle_A",
     "combat_idle": "Fighting_Idle",
-    "walk": "Walk",
-    "run": "Jog",
+    "walk": "Jog",
+    "run": "Sprint",
     "turn": "Idle_Subtle",
     "sit": "Sitting_Enter",
     "seated_idle": "Sitting_Idle",

@@ -72,8 +72,37 @@ func _run() -> void:
 		"minimap right-click menu exposes north, player, and viewport orientation")
 	_expect(minimap_border_style != null
 		and minimap_border_style.get_border_width(SIDE_LEFT) == 6
-		and is_equal_approx(minimap_image.offset_left, 54.0),
-		"minimap compass ring and outline are three times their previous thickness")
+		and is_equal_approx(minimap_image.offset_left,
+			float(main.get("MINIMAP_DRAG_BORDER"))),
+		"minimap keeps its thick compass ring over a margin the render fills")
+	# Scroll wheel over the minimap frames more or less ground. The camera is
+	# orthographic, so its size is that width in metres.
+	var minimap_camera: Camera3D = map_camera
+	var zoom_out := InputEventMouseButton.new()
+	zoom_out.button_index = MOUSE_BUTTON_WHEEL_DOWN
+	zoom_out.pressed = true
+	var zoom_in := InputEventMouseButton.new()
+	zoom_in.button_index = MOUSE_BUTTON_WHEEL_UP
+	zoom_in.pressed = true
+	var zoom_start: float = minimap_camera.size
+	main.call("_on_minimap_gui_input", zoom_out)
+	_expect(minimap_camera.size > zoom_start,
+		"scrolling down over the minimap shows more ground")
+	main.call("_on_minimap_gui_input", zoom_in)
+	_expect(is_equal_approx(minimap_camera.size, zoom_start),
+		"scrolling back up returns the minimap to the width it had")
+	for _step: int in range(40):
+		main.call("_on_minimap_gui_input", zoom_in)
+	_expect(is_equal_approx(minimap_camera.size,
+		float(main.get("MINIMAP_ZOOM_MIN"))),
+		"minimap zoom stops at its closest bound instead of inverting")
+	for _step: int in range(80):
+		main.call("_on_minimap_gui_input", zoom_out)
+	_expect(is_equal_approx(minimap_camera.size,
+		float(main.get("MINIMAP_ZOOM_MAX"))),
+		"minimap zoom stops at its widest bound")
+	main.set("_minimap_zoom", float(main.get("MINIMAP_ZOOM_DEFAULT")))
+	main.call("_apply_minimap_zoom")
 	main.call("_on_minimap_orientation_selected", 1)
 	_expect(str(main.get("_minimap_orientation")) == "player_up",
 		"minimap can rotate with the player")
@@ -209,7 +238,7 @@ func _run() -> void:
 	var chat_panel: Control = main.get_node("GameView/ChatPanel") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
 	var right_quickbar: Control = main.get_node("GameView/ItemQuickbar") as Control
-	var left_quickspells: Control = main.get_node("GameView/SpellQuickbar") as Control
+	var spell_quickbar: Control = main.get_node("GameView/SpellQuickbar") as Control
 	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
 	var inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
 	var stats_tabs: TabContainer = main.get_node(
@@ -260,15 +289,27 @@ func _run() -> void:
 		"active and inactive HUD actions use distinct highlighted icon atlases")
 	_expect(inventory_button.flat and inventory_button.focus_mode == Control.FOCUS_NONE,
 		"bottom HUD icons have no individual box and cannot steal Tab focus")
+	# Each icon is painted with its own frame out to the edge of its cell, so
+	# without padding the frames touched and the end ones read as cut off.
+	var icon_padding: float = float(main.get("HUD_ICON_PADDING"))
+	var icon_box: StyleBox = inventory_button.get_theme_stylebox("normal")
+	_expect(icon_padding > 0.0
+		and is_equal_approx(icon_box.content_margin_left, icon_padding)
+		and is_equal_approx(icon_box.content_margin_top, icon_padding)
+		and is_equal_approx(inventory_button.custom_minimum_size.x,
+			44.0 + icon_padding * 2.0)
+		and inventory_button.vertical_icon_alignment == VERTICAL_ALIGNMENT_CENTER,
+		"bottom HUD icons are padded off their neighbours and centred in their box")
 	var chat_tabs: Control = main.get_node("GameView/ChatTabs") as Control
 	_expect(chat_tabs.position.x <= 12.0 and chat_tabs.position.y <= 8.0
 		and chat_panel.anchor_bottom < 0.3
 		and chat_input.offset_bottom <= lower_hud.offset_top,
 		"legacy chat tabs sit at upper left while entry remains above the lower rail")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0
-		and left_quickspells.anchor_left == 0.0 and left_quickspells.anchor_right == 0.0
-		and left_quickspells.offset_left >= 0.0,
-		"items keep the right HUD rail while spells sit on the left, as the legacy client has them")
+		and spell_quickbar.anchor_left == 1.0 and spell_quickbar.anchor_right == 1.0
+		and spell_quickbar.offset_right <= right_quickbar.offset_left
+		and spell_quickbar.offset_right >= right_quickbar.offset_left - 16.0,
+		"spells and items sit side by side on the right HUD rail")
 	var item_slots: GridContainer = main.get_node("%ItemSlots") as GridContainer
 	var spell_slots: GridContainer = main.get_node("%SpellSlots") as GridContainer
 	_expect(item_slots.columns == 1 and spell_slots.columns == 1
@@ -314,6 +355,42 @@ func _run() -> void:
 		_expect(InputMap.has_action(rebindable)
 			and InputMap.action_get_events(rebindable).size() > 0,
 			"%s is a declared action with at least one real event" % rebindable)
+	# Every binding also has to name a key this engine has. `toggle_map` held
+	# ASCII 9 - Godot 3's tab - which matches nothing in 4.x, so Tab fell
+	# through to the built-in ui_focus_next and walked the focus ring around
+	# the HUD buttons instead of opening the map.
+	for bound: String in ["turn_left", "turn_right", "toggle_inventory",
+			"toggle_map", "toggle_minimap", "toggle_console",
+			"recenter_viewport", "connect", "disconnect", "cancel"]:
+		for bound_event: InputEvent in InputMap.action_get_events(bound):
+			var bound_key: InputEventKey = bound_event as InputEventKey
+			if bound_key == null:
+				continue
+			var code: int = bound_key.physical_keycode
+			_expect(code != 0 and OS.find_keycode_from_string(
+				OS.get_keycode_string(code)) == code,
+				"%s is bound to a keycode this engine recognises" % bound)
+	# Pressed from a focused HUD button, because that is where the focus ring
+	# lived once the map stopped opening.
+	var map_hud_button: Button = main.get_node(
+		"GameView/Quickbar/QuickRows/Buttons/MapButton") as Button
+	var map_hud_focus: int = map_hud_button.focus_mode
+	map_hud_button.focus_mode = Control.FOCUS_ALL
+	map_hud_button.grab_focus()
+	await process_frame
+	var map_was_open: bool = full_map_panel.visible
+	var tab_press: InputEventKey = (InputMap.action_get_events(
+		"toggle_map")[0].duplicate() as InputEventKey)
+	tab_press.pressed = true
+	root.push_input(tab_press)
+	await process_frame
+	_expect(full_map_panel.visible != map_was_open
+		and root.gui_get_focus_owner() == map_hud_button,
+		"Tab opens the map instead of moving focus, even from a focused button")
+	root.push_input(tab_press)
+	await process_frame
+	map_hud_button.focus_mode = map_hud_focus as Control.FocusMode
+	map_hud_button.release_focus()
 	for rebindable: String in ["turn_left", "turn_right", "toggle_map",
 			"toggle_minimap", "toggle_console"]:
 		var defaults: Array[InputEvent] = InputMap.action_get_events(rebindable)
@@ -1298,7 +1375,8 @@ func _run() -> void:
 	minimap_frame.show()
 	for _frame: int in range(3):
 		await process_frame
-	var minimap_border: float = roundf(54.0 * float(main.get("_minimap_scale")))
+	var minimap_border: float = roundf(
+		float(main.get("MINIMAP_DRAG_BORDER")) * float(main.get("_minimap_scale")))
 	_expect(minimap_image.position.is_equal_approx(Vector2.ONE * minimap_border)
 		and minimap_image.size.is_equal_approx(
 			minimap_frame.size - Vector2.ONE * minimap_border * 2.0),
@@ -2003,6 +2081,44 @@ func _run() -> void:
 	_expect((app_state_inventory.get("map_objects") as Dictionary).is_empty()
 		and not bool((app_state_inventory.get("harvest") as Dictionary).get("active", true)),
 		"a map change clears the world objects and the harvesting state")
+	# GLTFDocument builds runtime textures with no mip chain, which is what made
+	# distant roofs and ground swim as the camera moved.
+	var loaded_world: Node3D = (main.get_node(
+		"GameView/ViewportContainer/Viewport/WorldRoot/WorldLoader")
+		as Node).get("world_root") as Node3D
+	var mipped_textures := 0
+	var flat_textures := 0
+	var anisotropic := 0
+	var plain_filter := 0
+	if loaded_world != null:
+		for node_value: Node in loaded_world.find_children(
+				"*", "MeshInstance3D", true, false):
+			var world_mesh: Mesh = (node_value as MeshInstance3D).mesh
+			if world_mesh == null:
+				continue
+			for surface: int in range(world_mesh.get_surface_count()):
+				var surface_material: BaseMaterial3D = world_mesh.surface_get_material(
+					surface) as BaseMaterial3D
+				if surface_material == null:
+					continue
+				if surface_material.texture_filter == 						BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC:
+					anisotropic += 1
+				else:
+					plain_filter += 1
+				var albedo: Texture2D = surface_material.albedo_texture
+				if albedo == null:
+					continue
+				var albedo_image: Image = albedo.get_image()
+				if albedo_image == null:
+					continue
+				if albedo_image.has_mipmaps():
+					mipped_textures += 1
+				else:
+					flat_textures += 1
+	_expect(anisotropic > 0 and plain_filter == 0,
+		"every imported world material samples its textures anisotropically")
+	_expect(mipped_textures > 0 and flat_textures == 0,
+		"every imported world texture carries a mip chain")
 	app_state_inventory.set("authenticated", false)
 
 	# Books. Reading is the other half of the knowledge loop: the catalog, the

@@ -50,6 +50,8 @@ func load_world(manifest_path: String) -> void:
 		load_failed.emit(["glb_import_failed: " + error_string(error), resolved_glb_path])
 		return
 	print_debug("world_load stage=glb_imported path=", resolved_glb_path)
+	var mipped: int = _build_texture_mipmaps(state)
+	print_debug("world_load stage=texture_mipmaps rebuilt=", mipped)
 	var generated: Node = document.generate_scene(state)
 	if generated == null:
 		push_error("world_load stage=scene_generate error=null_scene path=%s" % resolved_glb_path)
@@ -64,6 +66,7 @@ func load_world(manifest_path: String) -> void:
 	add_child(world_root)
 	print_debug("world_load stage=scene_attached node=", world_root.get_path(),
 		" children=", world_root.get_child_count(), " transform=", world_root.transform)
+	_apply_anisotropic_filtering()
 	_apply_collision_declarations()
 	_apply_rendered_walk_surfaces()
 	_apply_navigation_collision()
@@ -71,6 +74,45 @@ func load_world(manifest_path: String) -> void:
 	# passes above decide what stays an individually culled MeshInstance3D.
 	_batch_static_instances()
 	load_completed.emit(manifest)
+
+## GLTFDocument builds its textures at runtime with no mip chain, so every
+## roof and every stretch of ground aliased against the pixel grid and swam as
+## the camera moved. The images the state carries are the same objects the
+## generated materials will reference, so rebuilding them here reaches the
+## whole map. Must run before generate_scene().
+func _build_texture_mipmaps(state: GLTFState) -> int:
+	var rebuilt := 0
+	for texture_value: Variant in state.get_images():
+		var texture: ImageTexture = texture_value as ImageTexture
+		if texture == null:
+			continue
+		var image: Image = texture.get_image()
+		if image == null or image.is_empty() or image.has_mipmaps():
+			continue
+		if image.is_compressed() and image.decompress() != OK:
+			continue
+		image.generate_mipmaps()
+		texture.set_image(image)
+		rebuilt += 1
+	return rebuilt
+
+## A mip chain on its own blurs ground seen at a grazing angle, which is most
+## of an isometric view. Anisotropic sampling is what keeps the far end of a
+## road readable rather than smeared.
+func _apply_anisotropic_filtering() -> void:
+	var seen: Dictionary = {}
+	for node_value: Node in world_root.find_children("*", "MeshInstance3D", true, false):
+		var mesh: Mesh = (node_value as MeshInstance3D).mesh
+		if mesh == null:
+			continue
+		for surface: int in range(mesh.get_surface_count()):
+			var material: BaseMaterial3D = mesh.surface_get_material(
+				surface) as BaseMaterial3D
+			if material == null or seen.has(material.get_instance_id()):
+				continue
+			seen[material.get_instance_id()] = true
+			material.texture_filter = (
+				BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC)
 
 func unload_world() -> void:
 	if is_instance_valid(world_root):

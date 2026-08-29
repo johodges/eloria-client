@@ -21,6 +21,10 @@ window/stretch/aspect="expand"
 [rendering]
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+; 4x anisotropic. World textures are rebuilt with mip chains at load, and a
+; mip chain alone blurs ground seen at the grazing angle an isometric camera
+; spends most of its time at.
+textures/default_filters/anisotropic_filtering_level=2
 
 [internationalization]
 
@@ -35,7 +39,10 @@ toggle_sit={
 connect={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":67,"ctrl_pressed":true)] }
 disconnect={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":68,"ctrl_pressed":true)] }
 chat_focus={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":84)] }
-toggle_map={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":9)] }
+; Godot 4 KEY_TAB is 4194306. The ASCII 9 this used to hold is a Godot 3
+; value that matches no key, so Tab fell through to ui_focus_next and walked
+; the focus ring around the HUD buttons instead of opening the map.
+toggle_map={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":4194306)] }
 toggle_minimap={ "deadzone": 0.5, "events": [Object(InputEventKey,"alt_pressed":true,"physical_keycode":77)] }
 toggle_show_through_obstacles={ "deadzone": 0.5, "events": [Object(InputEventKey,"alt_pressed":true,"physical_keycode":86)] }
 toggle_console={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":96)] }
