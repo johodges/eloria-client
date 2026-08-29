@@ -1899,8 +1899,8 @@
    "creature": "verdant_naiad",
    "name": "Verdant Naiad",
    "locale": "verdant_stair",
-   "family": "amorphous",
-   "plan": "vortex",
+   "family": "serpent",
+   "plan": "naga",
    "concept": {
     "sheet": "66616a1d",
     "cell": [

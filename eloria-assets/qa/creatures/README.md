@@ -434,6 +434,50 @@ tenth now, with a higher saturation floor, and `_saturate` refuses to amplify a
 colour that is already neutral.  The frost golem measures cyan and the amethyst
 golem violet, which is what the art draws.
 
+### Serpents, fish, and four that were on the wrong body
+
+The serpent and fish families had not been touched at all, and between them
+they are fifteen creatures.
+
+**Ten serpents were ten lengths of hose.** The rig held the body at a constant
+height in a shallow horizontal wiggle, which is not a pose any serpent in the
+art holds: it coils all of them, the body looping up off the ground and the
+head carried above it. The body is a spiral now, its radius set from its own
+length so about one turn uses it up -- a serpent in the art occupies a compact
+coil roughly as wide as it is tall. Getting it to the floor took care:
+descending only as far as the rear height left the whole family hovering,
+because the spine stops at body height while the tube around it has already
+tapered to nothing. They also gained the two things the art gives every one of
+them and the models had neither of -- a ridge of dorsal spines down the back,
+which is what makes the coils read as coils from the side, and a head plainly
+bigger than the body behind it with a crown of fins sweeping off the skull.
+
+The naga was half a person with nothing in the person half, so a coral
+priestess came out as a snowman on a coil. It has a ribcage, a shoulder
+girdle, arms with hands and a face now, and no longer wears the serpent snout
+over that face.
+
+**Five fish were five torpedoes with a paddle on the back.** A rectangle on
+the end of a tube is the most model-looking thing a fish can have. The caudal
+fin is two swept lobes with a notch between them, the dorsal runs most of the
+back with an anal fin to match, and the pectorals sweep back at half again
+their old reach. The manta was not a manta -- at .42 girth against .70 length
+it was a torpedo with a bulge, against an art figure half again as wide as it
+is long -- so its wing is a swept diamond with the tip carried back and the
+trailing edge cut concave, plus the cephalic lobes that say "manta" before
+anything else does. The axolotl's external gills were three spikes that read
+as whiskers; they are three stalks a side carrying a fan of filaments, which
+is the biggest thing on its head in the art.
+
+**Four were simply on the wrong body.** The Verdant Naiad was the worst pair
+in the library: cell 11 of the Verdant Stair sheet is a river *naga*, and the
+roster had it on the amorphous vortex plan, so it came out as a cloud of
+acid-green shards with two floating orbs. The jungle gorilla's head sat a
+tenth of a unit proud of its shoulders and was swallowed whole. The bronze
+diving beetle wore its shell in the keratin material -- a white ribbed loaf --
+over three segments far enough apart to read as three eggs. The hummingbird
+was a finch, with a short bill and legs to stand on.
+
 ### Colour and value, measured
 
 * `concept_growth_tints.py` samples what is *growing* on each creature from its
@@ -468,7 +512,7 @@ in that form rather than the host's.
 
 ### Budget
 
-171 creatures, mean 6,192 triangles, 83 MB on disk, with the woody and plated
+171 creatures, mean 6,287 triangles, 84 MB on disk, with the woody and plated
 hero creatures between 12,000 and 30,000 -- up from a mean of 4,945 and 74 MB. The
 mean is well under the ceiling this pass was allowed, because the triangles
 went into features the art shows and the models lacked rather than into
