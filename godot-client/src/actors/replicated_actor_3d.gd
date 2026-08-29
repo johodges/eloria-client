@@ -35,6 +35,7 @@ var _equipment_hides: Dictionary = {}
 var _hidden_body_surfaces: Dictionary = {}
 var _nameplate: Label3D
 var _settled := false
+var _silhouette: OccludedSilhouette
 
 # Visual layer 2. The gameplay camera renders layers 1 and 2; the minimap and
 # full-map cameras render layers 1 and 3.
@@ -220,6 +221,10 @@ func render_diagnostics() -> Dictionary:
 	var meshes: Array[Dictionary] = []
 	for node_value: Node in find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
+		# Silhouette clones are copies of meshes already listed here; counting
+		# them would double every surface the actor reports.
+		if mesh_node.has_meta(OccludedSilhouette.CLONE_META):
+			continue
 		meshes.append({
 			"path": str(mesh_node.get_path()),
 			"visible": mesh_node.visible,
@@ -336,6 +341,10 @@ func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) ->
 		_clear_equipment_part(part)
 		_equipment_visuals[part] = visual_id
 		_create_equipment_part(part, visual_id, allow_fallback)
+	# Equipment adds and removes mesh instances, so the silhouette's clone set
+	# has to be built again against what the actor is now made of.
+	if _silhouette != null and _silhouette.is_enabled():
+		_silhouette.rebuild()
 
 func equipment_diagnostics() -> Dictionary:
 	# Modified 2026-08-28 for Eloria Client: garments are now skinned to this
@@ -455,6 +464,23 @@ func _refresh_body_surface_visibility() -> void:
 		for node_value: Node in _native_skeleton.get_children():
 			if node_value.name.begins_with("AppearanceHair_"):
 				(node_value as Node3D).visible = not hide_hair
+	if _silhouette != null:
+		_silhouette.sync()
+
+## Draws the actor's shape over anything hiding it from the camera. Only ever
+## switched on for the local player - see OccludedSilhouette.
+func set_occlusion_silhouette_enabled(enabled: bool) -> void:
+	if _silhouette == null:
+		if not enabled:
+			return
+		_silhouette = OccludedSilhouette.new(self, _native_skeleton)
+	_silhouette.set_enabled(enabled)
+
+func occlusion_silhouette_enabled() -> bool:
+	return _silhouette != null and _silhouette.is_enabled()
+
+func get_skeleton() -> Skeleton3D:
+	return _native_skeleton
 
 func _equipment_model_config(part: int, visual_id: int) -> Dictionary:
 	var aliases: Dictionary = _equipment_config.get("aliases", {}) as Dictionary

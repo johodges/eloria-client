@@ -13,7 +13,7 @@ gain a recipe here, not a private copy of the module.
 
 | Lives here | Lives in `<region>/source/` |
 | --- | --- |
-| noise, mesh, textures, materials, gltf, terrain, trees, architecture, stonework, treecraft, props, render | `region.py`-equivalent composition, `populate.py`-equivalent placement |
+| noise, mesh, textures, materials, gltf, terrain, trees, architecture, stonework, treecraft, crystalcraft, junglecraft, props, render | `region.py`-equivalent composition, `populate.py`-equivalent placement |
 | `validate_gltf.py`, `verify_runtime.py` | `build_<region>.py` |
 | `capture_views.py`, `make_comparison.py`, `compress_captures.py` | `views.py` (the `VIEWS` camera set and `PANELS` board mapping) |
 | `export_source_elm.py`, `preview.py` | |
@@ -21,6 +21,24 @@ gain a recipe here, not a private copy of the module.
 The Python package is still named `amberwood` because that is where it grew and
 renaming it would have touched every import in the same commit that moved the
 files. It is shared, not Amberwood-specific.
+
+The region-flavoured kit modules follow the same rule as everything else here:
+they are parameterised on material and live in the shared package rather than
+in the region that first needed them. `crystalcraft` grew for Amethyst Barrens
+and serves any region with crystal in it; `junglecraft` grew for Verdant Stair
+and carries the pieces a terraced stone region needs - monumental and helical
+stairs, a retaining wall, a root bridge, a railed plank walkway, a stilt hut, a
+tiered pagoda roof, a carved gateway and a relief panel. Neither duplicates
+what `stonework` and `treecraft` already have.
+
+## Surface-class blocks
+
+`terrain.py`'s surface classes are allocated in blocks so two regions being
+authored at the same time cannot collide, and are **appended, never inserted** -
+a region pins the material set it embeds by name, and renumbering would rewrite
+its GLB. 0-6 are the original set; 7-10 Mirrorhold, 11-14 Whitehorn, 15-18
+Amethyst Barrens, 19-22 Crownwater, 23-26 Verdant Stair. Take the next free
+block.
 
 ## Finding the region package
 
@@ -37,11 +55,23 @@ the expected thing.
 ## Entry points
 
 ```sh
-make -C native                       # preview rasteriser; not needed for the package
+make -C native                       # required first: see below
 cd <region>/source && python3 build_<region>.py
 python3 ../../_toolkit/verify_runtime.py
 python3 ../../_toolkit/validate_gltf.py ../world.glb
 ```
+
+**`make -C native` is a prerequisite, not an optional extra.** This used to say
+the rasteriser was not needed for the package. It is: `amberwood/render.py`
+loads `native/libraster.so` through ctypes at *import* time, and every region's
+`build_<region>.py` imports `render` for the minimap - so a fresh checkout
+without the built library cannot build a region at all, even with
+`--skip-minimap`. The library is gitignored, so this bites on every clone.
+
+On Windows use MSYS2/mingw-w64. The Makefile links the runtime statically there
+so plain CPython can load the result without mingw's DLLs on PATH; the output
+keeps the `.so` name on every platform because `render.py` loads it by path and
+ctypes does not care about the extension.
 
 ## Per-region hooks
 

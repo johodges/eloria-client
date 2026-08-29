@@ -221,18 +221,19 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          250.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 3.4,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells) with the arrival datum at (174, 250), not the (174, 174) the other 576 m regions share; see maps/nymara-regions/source-elm/westhaven.elm"
     },
     "westhaven": {
       "alias": "maps/nymara/westhaven.elm"
@@ -245,18 +246,19 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 24.0,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells); see maps/nymara-regions/source-elm/verdant_stair.elm"
     },
     "verdant_stair": {
       "alias": "maps/nymara/verdant_stair.elm"
@@ -314,23 +316,33 @@
       "alias": "maps/nymara/manymouth_delta.elm"
     },
     "maps/nymara/sunmane_wind_caves.elm": {
-      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_wind_caves/world.json",
+      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_insides/world.json",
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          30.0,
-          30.0
+          0.0,
+          0.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.125,
+        "walkingHeight": -0.22,
         "invertServerY": true
       },
       "status": "production",
-      "interiorOf": "maps/nymara/sunmane_steppe.elm"
+      "interiorOf": "maps/nymara/sunmane_steppe.elm",
+      "insidesOf": "maps/nymara/sunmane_steppe.elm",
+      "sections": [
+        "sunmane_wind_caves",
+        "sunmane_crystal_hollow"
+      ],
+      "requiresServerMap": {
+        "tiles": 32,
+        "collisionCells": 384,
+        "note": "both cave systems on one map with blackspace between them"
+      }
     },
     "sunmane_wind_caves": {
       "alias": "maps/nymara/sunmane_wind_caves.elm"
@@ -338,30 +350,11 @@
     "sunmane_wind_caves.elm": {
       "alias": "maps/nymara/sunmane_wind_caves.elm"
     },
-    "maps/nymara/sunmane_crystal_hollow.elm": {
-      "manifest": "res://../eloria-assets/maps/nymara-regions/interiors/sunmane_crystal_hollow/world.json",
-      "coordinateTransform": {
-        "metresPerTile": 1.0,
-        "serverOrigin": [
-          30.0,
-          30.0
-        ],
-        "origin": [
-          0.0,
-          0.0,
-          0.0
-        ],
-        "walkingHeight": -0.123,
-        "invertServerY": true
-      },
-      "status": "production",
-      "interiorOf": "maps/nymara/sunmane_steppe.elm"
-    },
     "sunmane_crystal_hollow": {
-      "alias": "maps/nymara/sunmane_crystal_hollow.elm"
+      "alias": "maps/nymara/sunmane_wind_caves.elm"
     },
     "sunmane_crystal_hollow.elm": {
-      "alias": "maps/nymara/sunmane_crystal_hollow.elm"
+      "alias": "maps/nymara/sunmane_wind_caves.elm"
     },
     "maps/four-gates-lantern-row.elm": {
       "manifest": "res://../eloria-assets/maps/four-gates-lantern-row/world.json",
@@ -781,6 +774,9 @@
     },
     "ssarathi_royal_archive.elm": {
       "alias": "maps/nymara/ssarathi_royal_archive.elm"
+    },
+    "maps/nymara/sunmane_crystal_hollow.elm": {
+      "alias": "maps/nymara/sunmane_wind_caves.elm"
     }
   }
 }

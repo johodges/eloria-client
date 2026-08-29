@@ -102,8 +102,11 @@ class NativeGlbAssetsTest(unittest.TestCase):
         # were added by a second generator without refreshing this block.
         on_disk = len(list((CLIENT / "assets/actors/native").rglob("*.glb")))
         self.assertEqual(on_disk, self.catalog["validation"]["files"])
+        # The catalogue records POSIX-form paths on every platform, so compare
+        # in that form: str() on a Windows path yields backslashes and made
+        # this assertion fail on Windows builds alone.
         self.assertEqual(sorted(self.catalog["validation"]["results"]),
-                         sorted(str(path.relative_to(ROOT))
+                         sorted(path.relative_to(ROOT).as_posix()
                                 for path in (CLIENT / "assets/actors/native").rglob("*.glb")))
 
     def test_ambient_creatures_are_scenery_only(self) -> None:

@@ -102,7 +102,7 @@ func _init() -> void:
 		if parsed is Dictionary:
 			manifest_env_root = parsed as Dictionary
 		if typeof(parsed) == TYPE_DICTIONARY:
-			manifest_env = parsed.get("environment", {})
+			manifest_env = manifest_env_root.get("environment", {})
 	var sealed := str(manifest_env.get("sky", "")) == "none"
 
 	# environment: a plain daylight sky so the shot shows the map, not a mood
@@ -119,7 +119,10 @@ func _init() -> void:
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 	env.ambient_light_energy = 0.45
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	env.tonemap_exposure = 1.05
+	# A package may declare its own exposure. The default suits a region whose
+	# albedos sit in the middle of the range; a wet jungle under closed canopy
+	# is painted much darker than that and renders as a silhouette at 1.05.
+	env.tonemap_exposure = float(manifest_env.get("exposure", 1.05))
 	env.ssao_enabled = true
 
 	# A WorldEnvironment, not camera.environment: the camera override does not
@@ -161,6 +164,32 @@ func _init() -> void:
 	# look south and most cameras look north, so the light must travel north
 	# too: yaw near zero, not near 180, or every shot is backlit.
 	sun.rotation_degrees = Vector3(-46.0, 24.0, 0.0)
+
+	# ...but a region that declares its own sun in the manifest gets that one.
+	# The fixed rig above is Amberwood's art direction - its built faces look
+	# south, so the light travels north - and it is simply wrong for a region
+	# laid out on a different axis. Verdant Stair's terraces present south-west
+	# and every frame came back backlit and near-black until this read the
+	# manifest. `environment.sun.direction` points *toward* the sun, and a
+	# DirectionalLight3D shines along its own -Z, so the node looks at -d.
+	var sun_cfg: Dictionary = manifest_env.get("sun", {})
+	var dir_raw: Variant = sun_cfg.get("direction", null)
+	if not sealed and dir_raw is Array and (dir_raw as Array).size() == 3:
+		var d := Vector3(float(dir_raw[0]), float(dir_raw[1]),
+						 float(dir_raw[2])).normalized()
+		if d.length() > 0.5 and absf(d.dot(Vector3.UP)) < 0.985:
+			sun.look_at_from_position(Vector3.ZERO, -d, Vector3.UP)
+		var sun_colour: Variant = sun_cfg.get("color", sun_cfg.get("colour", null))
+		if sun_colour is Array and (sun_colour as Array).size() >= 3:
+			sun.light_color = Color(float(sun_colour[0]), float(sun_colour[1]),
+									float(sun_colour[2]))
+		sun.light_energy = float(sun_cfg.get("energy", 1.2)) * 1.55
+		# Ambient too: a closed jungle canopy is mostly bounce, and a rig with
+		# 0.45 of sky and nothing else renders it as a silhouette.
+		var open_amb: Dictionary = manifest_env.get("ambient", {})
+		env.ambient_light_energy = maxf(
+			0.45, float(open_amb.get("energy", 0.45)) * 2.6)
+
 	if sealed:
 		# straight down and weak: a sealed package has no sun, and this only
 		# keeps surfaces from reading as flat unlit colour
@@ -252,6 +281,11 @@ func _init() -> void:
 		await process_frame
 
 	var written := 0
+	# The frames this run actually produced, in view order. `make_comparison`
+	# reads an index.json from whichever capture directory it picks, so a
+	# godot-captures directory without one makes the comparison step fail
+	# outright rather than fall back - the frames are there and unusable.
+	var produced: Array = []
 	for entry in views:
 		var id: String = str(entry.get("id", ""))
 		if only != "" and not id.contains(only):
@@ -260,7 +294,11 @@ func _init() -> void:
 		var target: Array = entry.get("target", [])
 		if eye.size() != 3 or target.size() != 3:
 			continue
-		camera.fov = float(entry.get("fieldOfViewDegrees", 55.0))
+		# The region capture index writes `fieldOfViewDegrees`; the interior
+		# preview writes `fov`. Accept either, or an interior comes back at
+		# the 55-degree default instead of the framing it was authored with.
+		camera.fov = float(entry.get("fieldOfViewDegrees",
+			entry.get("fov", 55.0)))
 		camera.global_position = Vector3(eye[0], eye[1], eye[2])
 		var look := Vector3(target[0], target[1], target[2])
 		if camera.global_position.distance_to(look) > 0.01:
@@ -271,9 +309,28 @@ func _init() -> void:
 		var path := out_dir.path_join(id + ".png")
 		if image.save_png(path) == OK:
 			written += 1
+			var record: Dictionary = (entry as Dictionary).duplicate(true)
+			record["file"] = id + ".png"
+			record["source"] = "godot"
+			record["engine"] = Engine.get_version_info().get("string", "")
+			# The driver actually in use, not the project default: the run is
+			# started with --rendering-driver, so the ProjectSettings value
+			# says gl_compatibility while the frame was drawn with Vulkan.
+			record["renderingDriver"] = RenderingServer.get_current_rendering_driver_name()
+			record["renderingMethod"] = RenderingServer.get_current_rendering_method()
+			produced.append(record)
 			print("[capture] %s -> %s" % [id, path])
 		else:
 			_err("could not save " + path)
+
+	var index_out := out_dir.path_join("index.json")
+	var handle := FileAccess.open(index_out, FileAccess.WRITE)
+	if handle != null:
+		handle.store_string(JSON.stringify(produced, "  ") + "\n")
+		handle.close()
+		print("[capture] wrote %s" % index_out)
+	else:
+		_err("could not write " + index_out)
 
 	print("[capture] wrote %d frames" % written)
 	quit(0)

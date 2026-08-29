@@ -1,0 +1,648 @@
+[
+  {
+    "id": "00-aerial-overview",
+    "panel": "aerial",
+    "file": "00-aerial-overview.webp",
+    "eye": [
+      -120.0,
+      234.0,
+      186.0
+    ],
+    "target": [
+      90.0,
+      97.4,
+      -120.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "01-lagoon-landing",
+    "panel": 1,
+    "file": "01-lagoon-landing.webp",
+    "eye": [
+      -120.0,
+      -1.16,
+      102.0
+    ],
+    "target": [
+      -78.0,
+      29.0,
+      42.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "02-grand-stair",
+    "panel": 2,
+    "file": "02-grand-stair.webp",
+    "eye": [
+      -19.2,
+      33.8,
+      11.1
+    ],
+    "target": [
+      9.0,
+      56.0,
+      -45.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "day"
+  },
+  {
+    "id": "03-cenote",
+    "panel": 3,
+    "file": "03-cenote.webp",
+    "eye": [
+      12.46,
+      88.36,
+      -50.97
+    ],
+    "target": [
+      -18.0,
+      28.25,
+      -102.0
+    ],
+    "fieldOfViewDegrees": 62,
+    "lighting": "day"
+  },
+  {
+    "id": "04-root-bridge",
+    "panel": 4,
+    "file": "04-root-bridge.webp",
+    "eye": [
+      88.27,
+      51.59,
+      -24.07
+    ],
+    "target": [
+      90.0,
+      33.1,
+      -54.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "05-rope-bridge",
+    "panel": 5,
+    "file": "05-rope-bridge.webp",
+    "eye": [
+      188.23,
+      51.01,
+      47.97
+    ],
+    "target": [
+      201.0,
+      72.11,
+      3.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "06-canopy-village",
+    "panel": 6,
+    "file": "06-canopy-village.webp",
+    "eye": [
+      -24.54,
+      58.24,
+      -110.7
+    ],
+    "target": [
+      -66.0,
+      51.0,
+      -126.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "07-water-shrine",
+    "panel": 7,
+    "file": "07-water-shrine.webp",
+    "eye": [
+      101.52,
+      74.0,
+      -137.52
+    ],
+    "target": [
+      114.0,
+      76.5,
+      -150.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "08-jungle-trail",
+    "panel": 8,
+    "file": "08-jungle-trail.webp",
+    "eye": [
+      -18.36,
+      60.87,
+      -98.57
+    ],
+    "target": [
+      -93.0,
+      47.58,
+      -159.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "09-terrace-overview",
+    "panel": 9,
+    "file": "09-terrace-overview.webp",
+    "eye": [
+      -64.05,
+      66.86,
+      64.53
+    ],
+    "target": [
+      102.0,
+      90.64,
+      -132.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "10-relief-study",
+    "panel": 10,
+    "file": "10-relief-study.webp",
+    "eye": [
+      -7.0,
+      28.82,
+      17.51
+    ],
+    "target": [
+      0.0,
+      25.6,
+      0.0
+    ],
+    "fieldOfViewDegrees": 38,
+    "lighting": "day"
+  },
+  {
+    "id": "11-great-temple",
+    "panel": null,
+    "file": "11-great-temple.webp",
+    "eye": [
+      144.0,
+      102.4,
+      -186.0
+    ],
+    "target": [
+      210.0,
+      116.0,
+      -198.0
+    ],
+    "fieldOfViewDegrees": 46,
+    "lighting": "day"
+  },
+  {
+    "id": "12-temple-court",
+    "panel": null,
+    "file": "12-temple-court.webp",
+    "eye": [
+      102.03,
+      100.84,
+      -191.38
+    ],
+    "target": [
+      180.0,
+      102.2,
+      -192.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "13-west-quay",
+    "panel": null,
+    "file": "13-west-quay.webp",
+    "eye": [
+      -118.05,
+      13.02,
+      61.73
+    ],
+    "target": [
+      -87.0,
+      9.0,
+      39.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "14-waygate",
+    "panel": null,
+    "file": "14-waygate.webp",
+    "eye": [
+      -10.82,
+      31.71,
+      38.06
+    ],
+    "target": [
+      0.0,
+      27.0,
+      0.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "15-lower-town",
+    "panel": null,
+    "file": "15-lower-town.webp",
+    "eye": [
+      -14.88,
+      36.88,
+      -37.79
+    ],
+    "target": [
+      6.0,
+      26.0,
+      -6.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "16-aqueduct",
+    "panel": null,
+    "file": "16-aqueduct.webp",
+    "eye": [
+      -13.68,
+      92.46,
+      -312.11
+    ],
+    "target": [
+      -57.0,
+      73.09,
+      -333.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "17-upper-court",
+    "panel": null,
+    "file": "17-upper-court.webp",
+    "eye": [
+      145.32,
+      85.94,
+      -42.59
+    ],
+    "target": [
+      156.0,
+      76.0,
+      -84.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "18-east-pass",
+    "panel": null,
+    "file": "18-east-pass.webp",
+    "eye": [
+      340.42,
+      143.17,
+      -185.41
+    ],
+    "target": [
+      390.0,
+      127.0,
+      -150.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "19-hanging-gardens",
+    "panel": null,
+    "file": "19-hanging-gardens.webp",
+    "eye": [
+      157.05,
+      52.65,
+      16.1
+    ],
+    "target": [
+      183.0,
+      74.0,
+      -27.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "20-old-terrace",
+    "panel": null,
+    "file": "20-old-terrace.webp",
+    "eye": [
+      73.07,
+      88.23,
+      -186.27
+    ],
+    "target": [
+      36.0,
+      74.0,
+      -240.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "21-fern-hollow",
+    "panel": null,
+    "file": "21-fern-hollow.webp",
+    "eye": [
+      -153.46,
+      25.28,
+      -129.99
+    ],
+    "target": [
+      -93.0,
+      47.52,
+      -165.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "22-north-glade",
+    "panel": null,
+    "file": "22-north-glade.webp",
+    "eye": [
+      -4.96,
+      74.29,
+      -186.53
+    ],
+    "target": [
+      -54.0,
+      74.0,
+      -246.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "23-lotus-pools",
+    "panel": null,
+    "file": "23-lotus-pools.webp",
+    "eye": [
+      56.72,
+      40.89,
+      70.41
+    ],
+    "target": [
+      99.0,
+      25.65,
+      105.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "24-mangrove-strand",
+    "panel": null,
+    "file": "24-mangrove-strand.webp",
+    "eye": [
+      -60.75,
+      16.2,
+      148.83
+    ],
+    "target": [
+      0.0,
+      1.2,
+      168.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "25-cloud-terrace",
+    "panel": null,
+    "file": "25-cloud-terrace.webp",
+    "eye": [
+      123.55,
+      141.68,
+      -313.88
+    ],
+    "target": [
+      210.0,
+      126.0,
+      -366.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "26-deep-jungle",
+    "panel": null,
+    "file": "26-deep-jungle.webp",
+    "eye": [
+      22.96,
+      110.89,
+      -261.02
+    ],
+    "target": [
+      6.0,
+      102.0,
+      -366.0
+    ],
+    "fieldOfViewDegrees": 60,
+    "lighting": "day"
+  },
+  {
+    "id": "27-stone-ring",
+    "panel": null,
+    "file": "27-stone-ring.webp",
+    "eye": [
+      -68.32,
+      87.03,
+      -278.04
+    ],
+    "target": [
+      -102.0,
+      74.0,
+      -330.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "28-ridge-shrine",
+    "panel": null,
+    "file": "28-ridge-shrine.webp",
+    "eye": [
+      224.81,
+      101.7,
+      -181.06
+    ],
+    "target": [
+      312.0,
+      128.0,
+      -204.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "day"
+  },
+  {
+    "id": "29-sun-pavilion",
+    "panel": null,
+    "file": "29-sun-pavilion.webp",
+    "eye": [
+      150.26,
+      111.18,
+      -235.4
+    ],
+    "target": [
+      186.0,
+      104.0,
+      -246.0
+    ],
+    "fieldOfViewDegrees": 54,
+    "lighting": "day"
+  },
+  {
+    "id": "30-east-lookout",
+    "panel": null,
+    "file": "30-east-lookout.webp",
+    "eye": [
+      38.74,
+      48.68,
+      -42.12
+    ],
+    "target": [
+      51.0,
+      49.0,
+      -99.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "40-spawn-grounding",
+    "panel": null,
+    "file": "40-spawn-grounding.webp",
+    "eye": [
+      -11.27,
+      32.0,
+      37.64
+    ],
+    "target": [
+      0.0,
+      25.6,
+      0.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "41-stair-head",
+    "panel": null,
+    "file": "41-stair-head.webp",
+    "eye": [
+      -12.0,
+      52.31,
+      -66.0
+    ],
+    "target": [
+      9.0,
+      47.6,
+      -45.0
+    ],
+    "fieldOfViewDegrees": 58,
+    "lighting": "day"
+  },
+  {
+    "id": "42-riser-face",
+    "panel": null,
+    "file": "42-riser-face.webp",
+    "eye": [
+      6.75,
+      34.15,
+      -3.51
+    ],
+    "target": [
+      9.0,
+      40.0,
+      -45.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "43-quay-climb",
+    "panel": null,
+    "file": "43-quay-climb.webp",
+    "eye": [
+      -63.0,
+      14.02,
+      54.0
+    ],
+    "target": [
+      -45.0,
+      11.0,
+      69.0
+    ],
+    "fieldOfViewDegrees": 56,
+    "lighting": "day"
+  },
+  {
+    "id": "50-golden-terraces",
+    "panel": null,
+    "file": "50-golden-terraces.webp",
+    "eye": [
+      -132.0,
+      130.82,
+      60.0
+    ],
+    "target": [
+      120.0,
+      100.0,
+      -150.0
+    ],
+    "fieldOfViewDegrees": 50,
+    "lighting": "golden"
+  },
+  {
+    "id": "51-golden-temple",
+    "panel": null,
+    "file": "51-golden-temple.webp",
+    "eye": [
+      141.82,
+      101.9,
+      -183.82
+    ],
+    "target": [
+      210.0,
+      116.0,
+      -198.0
+    ],
+    "fieldOfViewDegrees": 48,
+    "lighting": "golden"
+  },
+  {
+    "id": "52-golden-lagoon",
+    "panel": null,
+    "file": "52-golden-lagoon.webp",
+    "eye": [
+      -18.89,
+      47.66,
+      97.46
+    ],
+    "target": [
+      -156.0,
+      -12.41,
+      72.0
+    ],
+    "fieldOfViewDegrees": 52,
+    "lighting": "golden"
+  }
+]
