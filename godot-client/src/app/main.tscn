@@ -1102,13 +1102,14 @@ text = "8"
 [node name="SpellQuickbar" type="PanelContainer" parent="GameView" unique_id=1659454984]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.16
-anchor_bottom = 0.16
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 130.0
-offset_bottom = 428.0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -212.0
+offset_top = 62.0
+offset_right = -90.0
+offset_bottom = 482.0
+grow_horizontal = 0
 
 [node name="SpellContent" type="VBoxContainer" parent="GameView/SpellQuickbar" unique_id=1525103299]
 layout_mode = 2

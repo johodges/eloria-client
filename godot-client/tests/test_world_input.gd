@@ -209,7 +209,7 @@ func _run() -> void:
 	var chat_panel: Control = main.get_node("GameView/ChatPanel") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
 	var right_quickbar: Control = main.get_node("GameView/ItemQuickbar") as Control
-	var left_quickspells: Control = main.get_node("GameView/SpellQuickbar") as Control
+	var spell_quickbar: Control = main.get_node("GameView/SpellQuickbar") as Control
 	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
 	var inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
 	var stats_tabs: TabContainer = main.get_node(
@@ -266,9 +266,10 @@ func _run() -> void:
 		and chat_input.offset_bottom <= lower_hud.offset_top,
 		"legacy chat tabs sit at upper left while entry remains above the lower rail")
 	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0
-		and left_quickspells.anchor_left == 0.0 and left_quickspells.anchor_right == 0.0
-		and left_quickspells.offset_left >= 0.0,
-		"items keep the right HUD rail while spells sit on the left, as the legacy client has them")
+		and spell_quickbar.anchor_left == 1.0 and spell_quickbar.anchor_right == 1.0
+		and spell_quickbar.offset_right <= right_quickbar.offset_left
+		and spell_quickbar.offset_right >= right_quickbar.offset_left - 16.0,
+		"spells and items sit side by side on the right HUD rail")
 	var item_slots: GridContainer = main.get_node("%ItemSlots") as GridContainer
 	var spell_slots: GridContainer = main.get_node("%SpellSlots") as GridContainer
 	_expect(item_slots.columns == 1 and spell_slots.columns == 1
@@ -314,6 +315,42 @@ func _run() -> void:
 		_expect(InputMap.has_action(rebindable)
 			and InputMap.action_get_events(rebindable).size() > 0,
 			"%s is a declared action with at least one real event" % rebindable)
+	# Every binding also has to name a key this engine has. `toggle_map` held
+	# ASCII 9 - Godot 3's tab - which matches nothing in 4.x, so Tab fell
+	# through to the built-in ui_focus_next and walked the focus ring around
+	# the HUD buttons instead of opening the map.
+	for bound: String in ["turn_left", "turn_right", "toggle_inventory",
+			"toggle_map", "toggle_minimap", "toggle_console",
+			"recenter_viewport", "connect", "disconnect", "cancel"]:
+		for bound_event: InputEvent in InputMap.action_get_events(bound):
+			var bound_key: InputEventKey = bound_event as InputEventKey
+			if bound_key == null:
+				continue
+			var code: int = bound_key.physical_keycode
+			_expect(code != 0 and OS.find_keycode_from_string(
+				OS.get_keycode_string(code)) == code,
+				"%s is bound to a keycode this engine recognises" % bound)
+	# Pressed from a focused HUD button, because that is where the focus ring
+	# lived once the map stopped opening.
+	var map_hud_button: Button = main.get_node(
+		"GameView/Quickbar/QuickRows/Buttons/MapButton") as Button
+	var map_hud_focus: int = map_hud_button.focus_mode
+	map_hud_button.focus_mode = Control.FOCUS_ALL
+	map_hud_button.grab_focus()
+	await process_frame
+	var map_was_open: bool = full_map_panel.visible
+	var tab_press: InputEventKey = (InputMap.action_get_events(
+		"toggle_map")[0].duplicate() as InputEventKey)
+	tab_press.pressed = true
+	root.push_input(tab_press)
+	await process_frame
+	_expect(full_map_panel.visible != map_was_open
+		and root.gui_get_focus_owner() == map_hud_button,
+		"Tab opens the map instead of moving focus, even from a focused button")
+	root.push_input(tab_press)
+	await process_frame
+	map_hud_button.focus_mode = map_hud_focus as Control.FocusMode
+	map_hud_button.release_focus()
 	for rebindable: String in ["turn_left", "turn_right", "toggle_map",
 			"toggle_minimap", "toggle_console"]:
 		var defaults: Array[InputEvent] = InputMap.action_get_events(rebindable)
