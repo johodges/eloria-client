@@ -1,15 +1,16 @@
 {
   "engine": "4.7.2-stable (official)",
   "groundingMisses": 0,
+  "groundingMissesOnWalkableCells": 0,
   "loaderWarnings": [
     "navigation polygons did not produce collision"
   ],
   "manifest": "C:/Users/User/Desktop/eloria-project/wt-verdant-int/eloria-assets/maps/nymara-regions/verdant_stair/world.json",
+  "missCriterion": "every sampled tile (no grid origin published)",
   "missExamples": [],
   "pass": true,
   "renderingDriver": "headless",
-  "sampleStep": 4,
-  "sealedPackage": false,
+  "sampleStep": 2,
   "serverCells": 576,
   "spawns": [
     {
@@ -57,8 +58,8 @@
   ],
   "sun": {},
   "surfaceHeightRange": [
-    -21.4378967285156,
-    127.950622558594
+    -21.486083984375,
+    128.396423339844
   ],
-  "tilesSampled": 20736
+  "tilesSampled": 82944
 }
