@@ -32,6 +32,10 @@ var _segment_elapsed := 0.0
 var _segment_duration := 0.0
 var _last_movement_update_msec := -1
 var _smoothed_server_interval := 0.25
+## The direction the body is actually crossing the ground in, which is not the
+## tile direction the server named. See `_rendered_target_yaw`.
+var _travel_yaw_active := false
+var _travel_yaw := 0.0
 ## Part 2 in the equipment registry: the cape, and the only part with cloth.
 const CAPE_PART := 2
 ## The wardrobe meshes are shells fitted straight onto the skin they cover, so
@@ -87,7 +91,10 @@ const GAMEPLAY_ONLY_VISUAL_LAYER := 2
 ## it needs a dot sized for the map rather than for the world.
 const MAP_MARKER_LAYER := 4
 const MAP_DOT_RADIUS := 3.5
-const MAP_DOT_COLOUR := Color(0.62, 0.82, 1.0)
+## The light blue the full map's legend calls NPC, written the way the legend
+## writes it so a reader comparing the swatch to the map is comparing one
+## colour to itself rather than to a rounding of it.
+const MAP_DOT_COLOUR := Color("9fd2ff")
 const SETTLED_YAW_EPSILON := 0.0005
 
 # Overhead health bar geometry, in world units, measured downwards from the
@@ -545,6 +552,7 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_smoothed_server_interval = initial_server_interval
 		_movement_coast_remaining = 0.0
 		_snap_pending = false
+		_travel_yaw_active = false
 	elif target_changed:
 		var now_msec: int = Time.get_ticks_msec()
 		if _last_movement_update_msec >= 0:
@@ -567,6 +575,8 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 			global_position.distance_to(server_target), _presentation_speed,
 			_smoothed_server_interval, arrival_margin,
 			minimum_segment_duration, maximum_segment_duration)
+		_travel_yaw = travel_yaw(_segment_start, server_target, _target_yaw)
+		_travel_yaw_active = true
 	_wake()
 	if dto.has("command") and resolver != null:
 		play_action(_movement_aware_action(
@@ -1217,6 +1227,30 @@ static func target_yaw_for_state(current_yaw: float, actor_command: int,
 		return current_yaw
 	return adapter.rotation_to_godot(server_rotation)
 
+## The yaw of the ground the body is about to cross, which is what "facing the
+## way you are walking" means on screen. It is not the tile direction the
+## server named: the rendered actor is deliberately a fraction of a tile behind
+## its authoritative position (`arrival_margin`), and every step that lands in
+## the same frame as another is folded into one segment before the actor node
+## sees it, so a segment routinely spans a different bearing - and, across a
+## folded burst, several tiles - than the single command that arrived with it.
+static func travel_yaw(from: Vector3, to: Vector3, fallback: float) -> float:
+	var travel := Vector3(to.x - from.x, 0.0, to.z - from.z)
+	if travel.length_squared() < 0.000001:
+		return fallback
+	return atan2(-travel.x, -travel.z)
+
+## Where the body is pointed this frame. The authoritative facing is still
+## `_target_yaw`; this only decides what is drawn while the actor is crossing
+## ground, and it hands back to the authoritative value the moment it stops, so
+## a resting actor faces exactly where the server says it does. An unanswered
+## turn prediction outranks it: that actor is turning on the spot rather than
+## travelling, and the step it is asked to show is the whole point of it.
+func _rendered_target_yaw() -> float:
+	if _predicted_turn_pending or not _travel_yaw_active:
+		return _target_yaw
+	return _travel_yaw
+
 func _finish_movement_presentation() -> void:
 	if current_action in [&"walk", &"run"]:
 		_movement_coast_remaining = maxf(movement_coast_seconds,
@@ -1252,6 +1286,7 @@ func _physics_process(delta: float) -> void:
 		rotation.y = _target_yaw
 		_segment_start = server_target
 		_snap_pending = false
+		_travel_yaw_active = false
 		_settle_if_idle()
 		return
 	if _segment_duration > 0.0:
@@ -1261,10 +1296,13 @@ func _physics_process(delta: float) -> void:
 		if progress >= 1.0:
 			global_position = server_target
 			_segment_duration = 0.0
+			_travel_yaw_active = false
 			_finish_movement_presentation()
 	else:
 		global_position = server_target
-	rotation.y = rotate_toward(rotation.y, _target_yaw, turn_speed_radians * delta)
+		_travel_yaw_active = false
+	rotation.y = rotate_toward(rotation.y, _rendered_target_yaw(),
+		turn_speed_radians * delta)
 	if _movement_coast_remaining > 0.0:
 		_movement_coast_remaining = maxf(0.0, _movement_coast_remaining - delta)
 		if _movement_coast_remaining <= 0.0 and current_action in [&"walk", &"run"]:
