@@ -1,0 +1,41 @@
+{
+  "engine": "4.7.2-stable (official)",
+  "groundingMisses": 0,
+  "groundingMissesOnWalkableCells": 0,
+  "loaderWarnings": [
+    "navigation polygons did not produce collision"
+  ],
+  "manifest": "C:/Users/User/Desktop/eloria-project/wt-verdant-stair/eloria-assets/maps/nymara-regions/verdant_stair/world.json",
+  "missCriterion": "every sampled tile (no grid origin published)",
+  "missExamples": [],
+  "pass": true,
+  "renderingDriver": "headless",
+  "sampleStep": 2,
+  "serverCells": 576,
+  "spawns": [
+    {
+      "clientY": 24.54,
+      "deltaMetres": 0.05,
+      "id": "default",
+      "manifestY": 24.59
+    },
+    {
+      "clientY": 6.999,
+      "deltaMetres": 0.051,
+      "id": "west-quay",
+      "manifestY": 7.05
+    },
+    {
+      "clientY": 98.199,
+      "deltaMetres": 0.051,
+      "id": "temple-court",
+      "manifestY": 98.25
+    }
+  ],
+  "sun": {},
+  "surfaceHeightRange": [
+    -21.486083984375,
+    128.396423339844
+  ],
+  "tilesSampled": 82944
+}

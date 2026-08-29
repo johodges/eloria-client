@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.1.0",
+  "assetVersion": "1.0.0",
   "asset": {
     "id": "verdant_stair",
     "name": "Verdant Stair",
@@ -18,866 +18,6174 @@
     ],
     "bounds": {
       "min": [
-        -96,
-        0.0,
-        -96
+        -444.0,
+        -26.0,
+        -671.0
       ],
       "max": [
-        96,
-        18.0,
-        96
+        667.0,
+        171.26,
+        440.0
       ]
-    }
+    },
+    "playableBounds": {
+      "min": [
+        -174.0,
+        -21.56,
+        -401.0
+      ],
+      "max": [
+        401.0,
+        151.14,
+        174.0
+      ]
+    },
+    "seaLevel": 0.0,
+    "serverCells": 576
   },
-  "source": {
-    "elm": "../source-elm/verdant_stair.elm",
-    "sha256": "5b0dcc5d1bf12891043d570699b5356ecb8eb148b24020cb856b2964bf44daf0",
-    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
-    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
-  },
-  "conceptArt": {
-    "macro": "../../../concepts/nymara-regions/verdant_stair_region_concept.png",
-    "detailBoard": "references/00-concept-detail-board.png",
-    "panelGrid": [
-      5,
-      2
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      174.0,
+      174.0
     ],
-    "viewCount": 10,
-    "generator": "OpenAI ImageGen (built-in)",
-    "checkpoints": [
-      {
-        "panel": 1,
-        "id": "concept-01",
-        "subject": "lower river arrival",
-        "cameraPosition": [
-          0.0,
-          20.0,
-          -72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 2,
-        "id": "concept-02",
-        "subject": "basalt stair",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_verdant_basalt_steps_013",
-          "Landmark_verdant_basalt_steps_014",
-          "Landmark_verdant_basalt_steps_015"
-        ]
-      },
-      {
-        "panel": 3,
-        "id": "concept-03",
-        "subject": "cenote spiral",
-        "cameraPosition": [
-          68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_verdant_cenote_stairs_020",
-          "Landmark_verdant_cenote_stairs_021",
-          "Landmark_verdant_cenote_stairs_022"
-        ]
-      },
-      {
-        "panel": 4,
-        "id": "concept-04",
-        "subject": "root bridge",
-        "cameraPosition": [
-          68.48,
-          20.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_whitehorn_rope_bridge_009",
-          "Landmark_verdant_vine_bridge_011",
-          "Landmark_verdant_root_bridge_024"
-        ]
-      },
-      {
-        "panel": 5,
-        "id": "concept-05",
-        "subject": "vine bridge",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_whitehorn_rope_bridge_009",
-          "Landmark_verdant_vine_bridge_011",
-          "Landmark_verdant_root_bridge_024"
-        ]
-      },
-      {
-        "panel": 6,
-        "id": "concept-06",
-        "subject": "tree platform",
-        "cameraPosition": [
-          0.0,
-          16.0,
-          72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_verdant_tree_platform_035",
-          "Landmark_verdant_tree_platform_036",
-          "Landmark_verdant_tree_platform_037"
-        ]
-      },
-      {
-        "panel": 7,
-        "id": "concept-07",
-        "subject": "water shrine",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_crownwater_ferry_dock_002",
-          "Landmark_ssarathi_water_gate_006",
-          "Landmark_verdant_water_shrine_041"
-        ]
-      },
-      {
-        "panel": 8,
-        "id": "concept-08",
-        "subject": "fern trail",
-        "cameraPosition": [
-          -68.48,
-          24.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_verdant_giant_fern_046",
-          "Landmark_verdant_giant_fern_047",
-          "Landmark_verdant_giant_fern_048"
-        ]
-      },
-      {
-        "panel": 9,
-        "id": "concept-09",
-        "subject": "terrace panorama",
-        "cameraPosition": [
-          -68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 10,
-        "id": "concept-10",
-        "subject": "basalt jade vine materials",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_verdant_vine_bridge_011",
-          "Landmark_verdant_basalt_steps_013",
-          "Landmark_verdant_basalt_steps_014"
-        ]
-      }
-    ]
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 24.0,
+    "invertServerY": true
   },
-  "landmarks": [
-    {
-      "id": "landmark-001",
-      "name": "Amberwood Estate",
-      "node": "Landmark_amberwood_estate_001",
-      "position": [
-        -12.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-002",
-      "name": "Crownwater Ferry Dock",
-      "node": "Landmark_crownwater_ferry_dock_002",
-      "position": [
-        10.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-003",
-      "name": "Four Gates Gatehouse",
-      "node": "Landmark_four_gates_gatehouse_003",
-      "position": [
-        32.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-004",
-      "name": "Westhaven Dry Dock",
-      "node": "Landmark_westhaven_dry_dock_004",
-      "position": [
-        -34.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-005",
-      "name": "Mirrorhold Floating Market",
-      "node": "Landmark_mirrorhold_floating_market_005",
-      "position": [
-        -12.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-006",
-      "name": "Ssarathi Water Gate",
-      "node": "Landmark_ssarathi_water_gate_006",
-      "position": [
-        10.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-008",
-      "name": "Manymouth Hidden Dock",
-      "node": "Landmark_manymouth_hidden_dock_008",
-      "position": [
-        -34.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-009",
-      "name": "Whitehorn Rope Bridge",
-      "node": "Landmark_whitehorn_rope_bridge_009",
-      "position": [
-        -12.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-010",
-      "name": "Resonant Crystal Cluster",
-      "node": "Landmark_resonant_crystal_cluster_010",
-      "position": [
-        10.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-011",
-      "name": "Verdant Vine Bridge",
-      "node": "Landmark_verdant_vine_bridge_011",
-      "position": [
-        32.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-013",
-      "name": "Verdant Basalt Steps",
-      "node": "Landmark_verdant_basalt_steps_013",
-      "position": [
-        0.0,
-        0,
-        34.0
-      ]
-    },
-    {
-      "id": "landmark-014",
-      "name": "Verdant Basalt Steps",
-      "node": "Landmark_verdant_basalt_steps_014",
-      "position": [
-        0.0,
-        0,
-        20.0
-      ]
-    },
-    {
-      "id": "landmark-015",
-      "name": "Verdant Basalt Steps",
-      "node": "Landmark_verdant_basalt_steps_015",
-      "position": [
-        -6.0,
-        0,
-        6.0
-      ]
-    },
-    {
-      "id": "landmark-016",
-      "name": "Verdant Basalt Steps",
-      "node": "Landmark_verdant_basalt_steps_016",
-      "position": [
-        6.0,
-        0,
-        -8.0
-      ]
-    },
-    {
-      "id": "landmark-017",
-      "name": "Verdant Basalt Steps",
-      "node": "Landmark_verdant_basalt_steps_017",
-      "position": [
-        -8.0,
-        0,
-        -22.0
-      ]
-    },
-    {
-      "id": "landmark-018",
-      "name": "Verdant Basalt Steps",
-      "node": "Landmark_verdant_basalt_steps_018",
-      "position": [
-        8.0,
-        0,
-        -36.0
-      ]
-    },
-    {
-      "id": "landmark-019",
-      "name": "Verdant Basalt Steps",
-      "node": "Landmark_verdant_basalt_steps_019",
-      "position": [
-        0.0,
-        0,
-        -50.0
-      ]
-    },
-    {
-      "id": "landmark-020",
-      "name": "Verdant Cenote Stairs",
-      "node": "Landmark_verdant_cenote_stairs_020",
-      "position": [
-        -28.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-021",
-      "name": "Verdant Cenote Stairs",
-      "node": "Landmark_verdant_cenote_stairs_021",
-      "position": [
-        28.0,
-        0,
-        20.0
-      ]
-    },
-    {
-      "id": "landmark-022",
-      "name": "Verdant Cenote Stairs",
-      "node": "Landmark_verdant_cenote_stairs_022",
-      "position": [
-        -32.0,
-        0,
-        -20.0
-      ]
-    },
-    {
-      "id": "landmark-023",
-      "name": "Verdant Cenote Stairs",
-      "node": "Landmark_verdant_cenote_stairs_023",
-      "position": [
-        32.0,
-        0,
-        -24.0
-      ]
-    },
-    {
-      "id": "landmark-024",
-      "name": "Verdant Root Bridge",
-      "node": "Landmark_verdant_root_bridge_024",
-      "position": [
-        -16.0,
-        0,
-        16.0
-      ]
-    },
-    {
-      "id": "landmark-025",
-      "name": "Verdant Root Bridge",
-      "node": "Landmark_verdant_root_bridge_025",
-      "position": [
-        16.0,
-        0,
-        14.0
-      ]
-    },
-    {
-      "id": "landmark-026",
-      "name": "Verdant Root Bridge",
-      "node": "Landmark_verdant_root_bridge_026",
-      "position": [
-        -20.0,
-        0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-027",
-      "name": "Verdant Root Bridge",
-      "node": "Landmark_verdant_root_bridge_027",
-      "position": [
-        20.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-028",
-      "name": "Verdant Root Bridge",
-      "node": "Landmark_verdant_root_bridge_028",
-      "position": [
-        -14.0,
-        0,
-        -40.0
-      ]
-    },
-    {
-      "id": "landmark-029",
-      "name": "Verdant Root Bridge",
-      "node": "Landmark_verdant_root_bridge_029",
-      "position": [
-        14.0,
-        0,
-        -42.0
-      ]
-    },
-    {
-      "id": "landmark-030",
-      "name": "Verdant Vine Bridge",
-      "node": "Landmark_verdant_vine_bridge_030",
-      "position": [
-        -30.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-031",
-      "name": "Verdant Vine Bridge",
-      "node": "Landmark_verdant_vine_bridge_031",
-      "position": [
-        30.0,
-        0,
-        2.0
-      ]
-    },
-    {
-      "id": "landmark-032",
-      "name": "Verdant Vine Bridge",
-      "node": "Landmark_verdant_vine_bridge_032",
-      "position": [
-        -26.0,
-        0,
-        -34.0
-      ]
-    },
-    {
-      "id": "landmark-033",
-      "name": "Verdant Vine Bridge",
-      "node": "Landmark_verdant_vine_bridge_033",
-      "position": [
-        26.0,
-        0,
-        -36.0
-      ]
-    },
-    {
-      "id": "landmark-034",
-      "name": "Verdant Vine Bridge",
-      "node": "Landmark_verdant_vine_bridge_034",
-      "position": [
-        0.0,
-        0,
-        -26.0
-      ]
-    },
-    {
-      "id": "landmark-035",
-      "name": "Verdant Tree Platform",
-      "node": "Landmark_verdant_tree_platform_035",
-      "position": [
-        -24.0,
-        0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-036",
-      "name": "Verdant Tree Platform",
-      "node": "Landmark_verdant_tree_platform_036",
-      "position": [
-        24.0,
-        0,
-        30.0
-      ]
-    },
-    {
-      "id": "landmark-037",
-      "name": "Verdant Tree Platform",
-      "node": "Landmark_verdant_tree_platform_037",
-      "position": [
-        -34.0,
-        0,
-        -6.0
-      ]
-    },
-    {
-      "id": "landmark-038",
-      "name": "Verdant Tree Platform",
-      "node": "Landmark_verdant_tree_platform_038",
-      "position": [
-        34.0,
-        0,
-        -8.0
-      ]
-    },
-    {
-      "id": "landmark-039",
-      "name": "Verdant Tree Platform",
-      "node": "Landmark_verdant_tree_platform_039",
-      "position": [
-        -22.0,
-        0,
-        -50.0
-      ]
-    },
-    {
-      "id": "landmark-040",
-      "name": "Verdant Tree Platform",
-      "node": "Landmark_verdant_tree_platform_040",
-      "position": [
-        22.0,
-        0,
-        -52.0
-      ]
-    },
-    {
-      "id": "landmark-041",
-      "name": "Verdant Water Shrine",
-      "node": "Landmark_verdant_water_shrine_041",
-      "position": [
-        -10.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-042",
-      "name": "Verdant Water Shrine",
-      "node": "Landmark_verdant_water_shrine_042",
-      "position": [
-        10.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-043",
-      "name": "Verdant Water Shrine",
-      "node": "Landmark_verdant_water_shrine_043",
-      "position": [
-        -14.0,
-        0,
-        -18.0
-      ]
-    },
-    {
-      "id": "landmark-044",
-      "name": "Verdant Water Shrine",
-      "node": "Landmark_verdant_water_shrine_044",
-      "position": [
-        14.0,
-        0,
-        -18.0
-      ]
-    },
-    {
-      "id": "landmark-045",
-      "name": "Verdant Water Shrine",
-      "node": "Landmark_verdant_water_shrine_045",
-      "position": [
-        0.0,
-        0,
-        -42.0
-      ]
-    },
-    {
-      "id": "landmark-046",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_046",
-      "position": [
-        -36.0,
-        0,
-        30.0
-      ]
-    },
-    {
-      "id": "landmark-047",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_047",
-      "position": [
-        36.0,
-        0,
-        30.0
-      ]
-    },
-    {
-      "id": "landmark-048",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_048",
-      "position": [
-        -40.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-049",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_049",
-      "position": [
-        40.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-050",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_050",
-      "position": [
-        -38.0,
-        0,
-        -28.0
-      ]
-    },
-    {
-      "id": "landmark-051",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_051",
-      "position": [
-        38.0,
-        0,
-        -28.0
-      ]
-    },
-    {
-      "id": "landmark-052",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_052",
-      "position": [
-        -30.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-053",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_053",
-      "position": [
-        30.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-054",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_054",
-      "position": [
-        -18.0,
-        0,
-        -4.0
-      ]
-    },
-    {
-      "id": "landmark-055",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_055",
-      "position": [
-        18.0,
-        0,
-        -4.0
-      ]
-    },
-    {
-      "id": "landmark-056",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_056",
-      "position": [
-        -16.0,
-        0,
-        -32.0
-      ]
-    },
-    {
-      "id": "landmark-057",
-      "name": "Verdant Giant Fern",
-      "node": "Landmark_verdant_giant_fern_057",
-      "position": [
-        16.0,
-        0,
-        -32.0
-      ]
-    }
-  ],
   "spawnPoints": [
     {
       "id": "default",
       "position": [
-        0,
-        1,
-        0
+        0.0,
+        24.59,
+        0.0
       ],
-      "rotationDegrees": 180
+      "serverTile": [
+        174,
+        174
+      ],
+      "rotationDegrees": 45.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "west-quay",
+      "position": [
+        -87.0,
+        7.05,
+        39.0
+      ],
+      "serverTile": [
+        87,
+        135
+      ],
+      "rotationDegrees": 135.0,
+      "surface": "Paving",
+      "grounded": true
+    },
+    {
+      "id": "temple-court",
+      "position": [
+        180.0,
+        98.25,
+        -192.0
+      ],
+      "serverTile": [
+        354,
+        366
+      ],
+      "rotationDegrees": 225.0,
+      "surface": "Paving",
+      "grounded": true
     }
   ],
   "collision": {
     "nodeNames": [
-      "Landmark_amberwood_estate_001",
-      "Landmark_crownwater_ferry_dock_002",
-      "Landmark_four_gates_gatehouse_003",
-      "Landmark_westhaven_dry_dock_004",
-      "Landmark_mirrorhold_floating_market_005",
-      "Landmark_ssarathi_water_gate_006",
-      "Landmark_manymouth_hidden_dock_008",
-      "Landmark_whitehorn_rope_bridge_009",
-      "Landmark_resonant_crystal_cluster_010",
-      "Landmark_verdant_vine_bridge_011",
-      "Landmark_verdant_basalt_steps_013",
-      "Landmark_verdant_basalt_steps_014",
-      "Landmark_verdant_basalt_steps_015",
-      "Landmark_verdant_basalt_steps_016",
-      "Landmark_verdant_basalt_steps_017",
-      "Landmark_verdant_basalt_steps_018",
-      "Landmark_verdant_basalt_steps_019",
-      "Landmark_verdant_cenote_stairs_020",
-      "Landmark_verdant_cenote_stairs_021",
-      "Landmark_verdant_cenote_stairs_022",
-      "Landmark_verdant_cenote_stairs_023",
-      "Landmark_verdant_root_bridge_024",
-      "Landmark_verdant_root_bridge_025",
-      "Landmark_verdant_root_bridge_026",
-      "Landmark_verdant_root_bridge_027",
-      "Landmark_verdant_root_bridge_028",
-      "Landmark_verdant_root_bridge_029",
-      "Landmark_verdant_vine_bridge_030",
-      "Landmark_verdant_vine_bridge_031",
-      "Landmark_verdant_vine_bridge_032",
-      "Landmark_verdant_vine_bridge_033",
-      "Landmark_verdant_vine_bridge_034",
-      "Landmark_verdant_tree_platform_035",
-      "Landmark_verdant_tree_platform_036",
-      "Landmark_verdant_tree_platform_037",
-      "Landmark_verdant_tree_platform_038",
-      "Landmark_verdant_tree_platform_039",
-      "Landmark_verdant_tree_platform_040",
-      "Landmark_verdant_water_shrine_041",
-      "Landmark_verdant_water_shrine_042",
-      "Landmark_verdant_water_shrine_043",
-      "Landmark_verdant_water_shrine_044",
-      "Landmark_verdant_water_shrine_045",
-      "Landmark_verdant_giant_fern_046",
-      "Landmark_verdant_giant_fern_047",
-      "Landmark_verdant_giant_fern_048",
-      "Landmark_verdant_giant_fern_049",
-      "Landmark_verdant_giant_fern_050",
-      "Landmark_verdant_giant_fern_051",
-      "Landmark_verdant_giant_fern_052",
-      "Landmark_verdant_giant_fern_053",
-      "Landmark_verdant_giant_fern_054",
-      "Landmark_verdant_giant_fern_055",
-      "Landmark_verdant_giant_fern_056",
-      "Landmark_verdant_giant_fern_057"
-    ]
+      "Arcade_CenoteCourt",
+      "Arcade_CloudTerrace",
+      "Arcade_EastLookout",
+      "Arcade_EastPass",
+      "Arcade_EastTerrace",
+      "Arcade_GreatTemple",
+      "Arcade_HangingGardens",
+      "Arcade_LowerGardens",
+      "Arcade_LowerPlaza",
+      "Arcade_MiddleMarket",
+      "Arcade_OldTerrace",
+      "Arcade_OrchidTerrace",
+      "Arcade_PriestWalk",
+      "Arcade_QuayMarket",
+      "Arcade_RidgeShrine",
+      "Arcade_SouthQuay",
+      "Arcade_StairHead",
+      "Arcade_SummitWatch",
+      "Arcade_SunPavilion",
+      "Arcade_TempleCourt",
+      "Arcade_UpperCourt",
+      "Arcade_VillageLanding",
+      "Arcade_WaterShrine",
+      "Arcade_WestQuay",
+      "Banyan_Village_00",
+      "Banyan_Village_01",
+      "Banyan_Village_02",
+      "Banyan_Village_03",
+      "Banyan_Village_04",
+      "Banyan_Village_05",
+      "Banyan_Village_06",
+      "Building_Herbalist",
+      "Building_Provisioner",
+      "Building_TownHall",
+      "Ground_000_031",
+      "Ground_000_033",
+      "Ground_001_006",
+      "Ground_001_007",
+      "Ground_001_011",
+      "Ground_001_017",
+      "Ground_001_018",
+      "Ground_001_020",
+      "Ground_001_025",
+      "Ground_001_027",
+      "Ground_001_037",
+      "Ground_002_003",
+      "Ground_002_004",
+      "Ground_002_008",
+      "Ground_002_012",
+      "Ground_002_020",
+      "Ground_002_028",
+      "Ground_002_034",
+      "Ground_003_007",
+      "Ground_003_015",
+      "Ground_003_016",
+      "Ground_003_019",
+      "Ground_003_020",
+      "Ground_003_024",
+      "Ground_003_031",
+      "Ground_003_036",
+      "Ground_004_005",
+      "Ground_004_007",
+      "Ground_004_010",
+      "Ground_004_011",
+      "Ground_004_019",
+      "Ground_004_023",
+      "Ground_004_024",
+      "Ground_004_037",
+      "Ground_005_006",
+      "Ground_005_007",
+      "Ground_005_008",
+      "Ground_005_015",
+      "Ground_005_017",
+      "Ground_005_023",
+      "Ground_005_024",
+      "Ground_005_033",
+      "Ground_005_034",
+      "Ground_005_035",
+      "Ground_006_000",
+      "Ground_006_006",
+      "Ground_006_007",
+      "Ground_006_011",
+      "Ground_006_016",
+      "Ground_006_017",
+      "Ground_006_022",
+      "Ground_006_024",
+      "Ground_006_032",
+      "Ground_006_033",
+      "Ground_007_005",
+      "Ground_007_008",
+      "Ground_007_016",
+      "Ground_007_018",
+      "Ground_007_019",
+      "Ground_007_026",
+      "Ground_007_027",
+      "Ground_008_000",
+      "Ground_008_001",
+      "Ground_008_004",
+      "Ground_008_005",
+      "Ground_008_013",
+      "Ground_008_016",
+      "Ground_008_026",
+      "Ground_008_027",
+      "Ground_008_028",
+      "Ground_008_029",
+      "Ground_008_034",
+      "Ground_009_006",
+      "Ground_009_012",
+      "Ground_009_013",
+      "Ground_009_016",
+      "Ground_009_028",
+      "Ground_009_034",
+      "Ground_010_003",
+      "Ground_010_012",
+      "Ground_010_019",
+      "Ground_010_026",
+      "Ground_010_028",
+      "Ground_010_031",
+      "Ground_010_035",
+      "Ground_010_037",
+      "Ground_011_001",
+      "Ground_011_009",
+      "Ground_011_011",
+      "Ground_011_012",
+      "Ground_011_015",
+      "Ground_011_018",
+      "Ground_011_028",
+      "Ground_011_029",
+      "Ground_011_031",
+      "Ground_012_004",
+      "Ground_012_013",
+      "Ground_012_017",
+      "Ground_012_021",
+      "Ground_012_023",
+      "Ground_012_027",
+      "Ground_012_036",
+      "Ground_013_010",
+      "Ground_013_012",
+      "Ground_013_015",
+      "Ground_013_028",
+      "Ground_013_036",
+      "Ground_014_001",
+      "Ground_014_005",
+      "Ground_014_006",
+      "Ground_014_008",
+      "Ground_014_011",
+      "Ground_014_012",
+      "Ground_014_013",
+      "Ground_014_020",
+      "Ground_014_029",
+      "Ground_014_030",
+      "Ground_014_035",
+      "Ground_015_001",
+      "Ground_015_002",
+      "Ground_015_004",
+      "Ground_015_010",
+      "Ground_015_014",
+      "Ground_015_016",
+      "Ground_015_031",
+      "Ground_015_035",
+      "Ground_016_006",
+      "Ground_016_007",
+      "Ground_016_008",
+      "Ground_016_010",
+      "Ground_016_011",
+      "Ground_016_013",
+      "Ground_016_014",
+      "Ground_016_015",
+      "Ground_016_021",
+      "Ground_017_002",
+      "Ground_017_008",
+      "Ground_017_012",
+      "Ground_017_013",
+      "Ground_017_026",
+      "Ground_017_027",
+      "Ground_017_036",
+      "Ground_018_002",
+      "Ground_018_005",
+      "Ground_018_007",
+      "Ground_018_011",
+      "Ground_018_018",
+      "Ground_018_024",
+      "Ground_018_025",
+      "Ground_018_028",
+      "Ground_018_036",
+      "Ground_019_001",
+      "Ground_019_002",
+      "Ground_019_003",
+      "Ground_019_004",
+      "Ground_019_005",
+      "Ground_019_014",
+      "Ground_019_024",
+      "Ground_019_026",
+      "Ground_019_027",
+      "Ground_019_034",
+      "Ground_019_037",
+      "Ground_020_013",
+      "Ground_020_031",
+      "Ground_020_032",
+      "Ground_020_033",
+      "Ground_021_003",
+      "Ground_021_004",
+      "Ground_021_006",
+      "Ground_021_016",
+      "Ground_021_017",
+      "Ground_021_020",
+      "Ground_021_026",
+      "Ground_021_033",
+      "Ground_022_007",
+      "Ground_022_008",
+      "Ground_022_009",
+      "Ground_022_017",
+      "Ground_022_024",
+      "Ground_022_029",
+      "Ground_022_030",
+      "Ground_022_034",
+      "Ground_023_004",
+      "Ground_023_005",
+      "Ground_023_006",
+      "Ground_023_007",
+      "Ground_023_013",
+      "Ground_023_017",
+      "Ground_023_020",
+      "Ground_023_021",
+      "Ground_023_022",
+      "Ground_023_024",
+      "Ground_023_031",
+      "Ground_023_033",
+      "Ground_024_005",
+      "Ground_024_006",
+      "Ground_024_007",
+      "Ground_024_017",
+      "Ground_024_018",
+      "Ground_024_021",
+      "Ground_024_026",
+      "Ground_024_028",
+      "Ground_024_032",
+      "Ground_024_033",
+      "Ground_024_037",
+      "Ground_025_001",
+      "Ground_025_002",
+      "Ground_025_003",
+      "Ground_025_006",
+      "Ground_025_014",
+      "Ground_025_016",
+      "Ground_025_018",
+      "Ground_025_019",
+      "Ground_025_020",
+      "Ground_025_025",
+      "Ground_026_001",
+      "Ground_026_009",
+      "Ground_026_015",
+      "Ground_026_016",
+      "Ground_026_017",
+      "Ground_026_021",
+      "Ground_026_022",
+      "Ground_026_023",
+      "Ground_026_024",
+      "Ground_026_025",
+      "Ground_026_026",
+      "Ground_026_030",
+      "Ground_026_031",
+      "Ground_027_007",
+      "Ground_027_012",
+      "Ground_027_015",
+      "Ground_027_016",
+      "Ground_027_022",
+      "Ground_027_024",
+      "Ground_027_026",
+      "Ground_027_027",
+      "Ground_027_028",
+      "Ground_027_036",
+      "Ground_028_003",
+      "Ground_028_007",
+      "Ground_028_009",
+      "Ground_028_016",
+      "Ground_028_023",
+      "Ground_028_026",
+      "Ground_028_027",
+      "Ground_028_028",
+      "Ground_028_029",
+      "Ground_028_035",
+      "Ground_029_013",
+      "Ground_029_026",
+      "Ground_030_007",
+      "Ground_030_012",
+      "Ground_030_017",
+      "Ground_030_019",
+      "Ground_030_020",
+      "Ground_030_024",
+      "Ground_030_025",
+      "Ground_030_029",
+      "Ground_030_032",
+      "Ground_030_036",
+      "Ground_030_037",
+      "Ground_031_013",
+      "Ground_031_017",
+      "Ground_031_018",
+      "Ground_031_019",
+      "Ground_031_029",
+      "Ground_031_032",
+      "Ground_031_034",
+      "Ground_032_008",
+      "Ground_032_012",
+      "Ground_032_018",
+      "Ground_032_024",
+      "Ground_032_034",
+      "Ground_032_035",
+      "Ground_032_036",
+      "Ground_033_008",
+      "Ground_033_011",
+      "Ground_033_015",
+      "Ground_033_016",
+      "Ground_033_020",
+      "Ground_033_021",
+      "Ground_033_027",
+      "Ground_033_031",
+      "Ground_034_008",
+      "Ground_034_009",
+      "Ground_034_017",
+      "Ground_035_016",
+      "Ground_035_027",
+      "Ground_035_029",
+      "Ground_035_032",
+      "Ground_035_035",
+      "Ground_036_009",
+      "Ground_036_012",
+      "Ground_036_018",
+      "Ground_036_022",
+      "Ground_036_031",
+      "Ground_036_037",
+      "Ground_037_010",
+      "Ground_037_015",
+      "Ground_037_016",
+      "Ground_037_026",
+      "Ground_037_032",
+      "Ground_037_035",
+      "House_Lower_00",
+      "House_Lower_01",
+      "House_Lower_02",
+      "House_Lower_03",
+      "House_Lower_04",
+      "House_Lower_05",
+      "House_Lower_06",
+      "House_Quay_00",
+      "House_Quay_01",
+      "House_Quay_02",
+      "House_Quay_03",
+      "House_Quay_04",
+      "Hut_Village_00",
+      "Hut_Village_01",
+      "Hut_Village_02",
+      "Hut_Village_03",
+      "Hut_Village_04",
+      "Hut_fern_camp_00",
+      "Hut_fern_camp_01",
+      "Hut_high_camp_00",
+      "Hut_high_camp_01",
+      "Hut_kiln_yard_00",
+      "Hut_kiln_yard_01",
+      "Hut_north_pass_00",
+      "Hut_north_pass_01",
+      "Hut_north_watch_00",
+      "Hut_north_watch_01",
+      "Hut_quarry_00",
+      "Hut_quarry_01",
+      "Hut_south_watch_00",
+      "Hut_south_watch_01",
+      "Hut_strand_camp_00",
+      "Landmark_Aqueduct",
+      "Landmark_EastLookout",
+      "Landmark_GreatTemple",
+      "Landmark_HangingGardens",
+      "Landmark_QuayMarket",
+      "Landmark_RidgeShrine",
+      "Landmark_SouthQuay",
+      "Landmark_Statue",
+      "Landmark_SummitWatch",
+      "Landmark_SunPavilion",
+      "Landmark_UpperCourt",
+      "Landmark_WaterShrine",
+      "Landmark_Waygate",
+      "Prop_Well",
+      "Ruin_boundary_shrine_00",
+      "Ruin_boundary_shrine_01",
+      "Ruin_boundary_shrine_02",
+      "Ruin_boundary_shrine_03",
+      "Ruin_deep_jungle_00",
+      "Ruin_deep_jungle_01",
+      "Ruin_deep_jungle_02",
+      "Ruin_deep_jungle_03",
+      "Ruin_deep_jungle_04",
+      "Ruin_north_watch_00",
+      "Ruin_north_watch_01",
+      "Ruin_north_watch_02",
+      "Ruin_north_watch_03",
+      "Ruin_old_terrace_00",
+      "Ruin_old_terrace_01",
+      "Ruin_old_terrace_02",
+      "Ruin_old_terrace_03",
+      "Ruin_old_terrace_04",
+      "Ruin_old_terrace_05",
+      "Ruin_old_terrace_06",
+      "Ruin_stone_ring_00",
+      "Ruin_stone_ring_01",
+      "Ruin_stone_ring_02",
+      "Ruin_stone_ring_03",
+      "Ruin_stone_ring_04",
+      "Ruin_stone_ring_05",
+      "Ruin_stone_ring_06",
+      "Ruin_stone_ring_07",
+      "Ruin_stone_ring_08",
+      "Tree_000_001",
+      "Tree_000_002",
+      "Tree_000_007",
+      "Tree_000_009",
+      "Tree_000_014",
+      "Tree_000_022",
+      "Tree_000_048",
+      "Tree_000_054",
+      "Tree_000_055",
+      "Tree_000_059",
+      "Tree_000_065",
+      "Tree_001_001",
+      "Tree_001_002",
+      "Tree_001_003",
+      "Tree_001_004",
+      "Tree_001_005",
+      "Tree_001_006",
+      "Tree_001_007",
+      "Tree_001_008",
+      "Tree_001_009",
+      "Tree_001_010",
+      "Tree_001_011",
+      "Tree_001_014",
+      "Tree_001_015",
+      "Tree_001_016",
+      "Tree_001_017",
+      "Tree_001_018",
+      "Tree_001_019",
+      "Tree_001_020",
+      "Tree_001_021",
+      "Tree_001_022",
+      "Tree_001_027",
+      "Tree_001_028",
+      "Tree_001_029",
+      "Tree_001_033",
+      "Tree_001_034",
+      "Tree_001_041",
+      "Tree_001_043",
+      "Tree_001_044",
+      "Tree_001_045",
+      "Tree_001_046",
+      "Tree_001_049",
+      "Tree_001_050",
+      "Tree_001_051",
+      "Tree_001_052",
+      "Tree_001_053",
+      "Tree_001_054",
+      "Tree_001_055",
+      "Tree_001_056",
+      "Tree_001_057",
+      "Tree_001_058",
+      "Tree_001_059",
+      "Tree_001_060",
+      "Tree_001_061",
+      "Tree_001_062",
+      "Tree_001_064",
+      "Tree_001_065",
+      "Tree_002_001",
+      "Tree_002_002",
+      "Tree_002_003",
+      "Tree_002_004",
+      "Tree_002_005",
+      "Tree_002_006",
+      "Tree_002_007",
+      "Tree_002_008",
+      "Tree_002_012",
+      "Tree_002_013",
+      "Tree_002_015",
+      "Tree_002_016",
+      "Tree_002_017",
+      "Tree_002_018",
+      "Tree_002_024",
+      "Tree_002_025",
+      "Tree_002_026",
+      "Tree_002_027",
+      "Tree_002_028",
+      "Tree_002_029",
+      "Tree_002_030",
+      "Tree_002_033",
+      "Tree_002_035",
+      "Tree_002_036",
+      "Tree_002_037",
+      "Tree_002_038",
+      "Tree_002_046",
+      "Tree_002_047",
+      "Tree_002_048",
+      "Tree_002_049",
+      "Tree_002_050",
+      "Tree_002_051",
+      "Tree_002_052",
+      "Tree_002_053",
+      "Tree_002_055",
+      "Tree_002_056",
+      "Tree_002_057",
+      "Tree_002_058",
+      "Tree_002_059",
+      "Tree_002_060",
+      "Tree_002_062",
+      "Tree_002_063",
+      "Tree_002_064",
+      "Tree_003_001",
+      "Tree_003_002",
+      "Tree_003_003",
+      "Tree_003_004",
+      "Tree_003_005",
+      "Tree_003_006",
+      "Tree_003_007",
+      "Tree_003_008",
+      "Tree_003_012",
+      "Tree_003_013",
+      "Tree_003_016",
+      "Tree_003_017",
+      "Tree_003_018",
+      "Tree_003_023",
+      "Tree_003_024",
+      "Tree_003_025",
+      "Tree_003_026",
+      "Tree_003_027",
+      "Tree_003_028",
+      "Tree_003_029",
+      "Tree_003_030",
+      "Tree_003_031",
+      "Tree_003_033",
+      "Tree_003_034",
+      "Tree_003_035",
+      "Tree_003_036",
+      "Tree_003_037",
+      "Tree_003_038",
+      "Tree_003_039",
+      "Tree_003_040",
+      "Tree_003_047",
+      "Tree_003_049",
+      "Tree_003_050",
+      "Tree_003_051",
+      "Tree_003_052",
+      "Tree_003_054",
+      "Tree_003_055",
+      "Tree_003_056",
+      "Tree_003_057",
+      "Tree_003_059",
+      "Tree_003_060",
+      "Tree_003_061",
+      "Tree_003_062",
+      "Tree_003_063",
+      "Tree_004_001",
+      "Tree_004_002",
+      "Tree_004_003",
+      "Tree_004_004",
+      "Tree_004_005",
+      "Tree_004_006",
+      "Tree_004_007",
+      "Tree_004_008",
+      "Tree_004_009",
+      "Tree_004_013",
+      "Tree_004_016",
+      "Tree_004_017",
+      "Tree_004_018",
+      "Tree_004_023",
+      "Tree_004_024",
+      "Tree_004_025",
+      "Tree_004_026",
+      "Tree_004_027",
+      "Tree_004_028",
+      "Tree_004_029",
+      "Tree_004_030",
+      "Tree_004_031",
+      "Tree_004_032",
+      "Tree_004_033",
+      "Tree_004_034",
+      "Tree_004_035",
+      "Tree_004_036",
+      "Tree_004_037",
+      "Tree_004_038",
+      "Tree_004_039",
+      "Tree_004_040",
+      "Tree_004_041",
+      "Tree_004_042",
+      "Tree_004_048",
+      "Tree_004_049",
+      "Tree_004_050",
+      "Tree_004_053",
+      "Tree_004_054",
+      "Tree_004_055",
+      "Tree_004_057",
+      "Tree_004_058",
+      "Tree_004_059",
+      "Tree_004_060",
+      "Tree_004_061",
+      "Tree_004_064",
+      "Tree_004_065",
+      "Tree_005_001",
+      "Tree_005_002",
+      "Tree_005_003",
+      "Tree_005_004",
+      "Tree_005_005",
+      "Tree_005_006",
+      "Tree_005_007",
+      "Tree_005_008",
+      "Tree_005_009",
+      "Tree_005_010",
+      "Tree_005_017",
+      "Tree_005_018",
+      "Tree_005_023",
+      "Tree_005_024",
+      "Tree_005_025",
+      "Tree_005_026",
+      "Tree_005_027",
+      "Tree_005_028",
+      "Tree_005_029",
+      "Tree_005_030",
+      "Tree_005_031",
+      "Tree_005_032",
+      "Tree_005_036",
+      "Tree_005_037",
+      "Tree_005_039",
+      "Tree_005_040",
+      "Tree_005_042",
+      "Tree_005_043",
+      "Tree_005_049",
+      "Tree_005_050",
+      "Tree_005_051",
+      "Tree_005_053",
+      "Tree_005_054",
+      "Tree_005_055",
+      "Tree_005_056",
+      "Tree_005_057",
+      "Tree_005_059",
+      "Tree_005_060",
+      "Tree_005_061",
+      "Tree_005_062",
+      "Tree_005_064",
+      "Tree_005_065",
+      "Tree_006_001",
+      "Tree_006_002",
+      "Tree_006_003",
+      "Tree_006_004",
+      "Tree_006_005",
+      "Tree_006_006",
+      "Tree_006_008",
+      "Tree_006_010",
+      "Tree_006_011",
+      "Tree_006_019",
+      "Tree_006_020",
+      "Tree_006_022",
+      "Tree_006_023",
+      "Tree_006_024",
+      "Tree_006_025",
+      "Tree_006_026",
+      "Tree_006_027",
+      "Tree_006_028",
+      "Tree_006_029",
+      "Tree_006_030",
+      "Tree_006_031",
+      "Tree_006_032",
+      "Tree_006_033",
+      "Tree_006_034",
+      "Tree_006_036",
+      "Tree_006_037",
+      "Tree_006_038",
+      "Tree_006_039",
+      "Tree_006_040",
+      "Tree_006_042",
+      "Tree_006_043",
+      "Tree_006_044",
+      "Tree_006_052",
+      "Tree_006_054",
+      "Tree_006_055",
+      "Tree_006_056",
+      "Tree_006_057",
+      "Tree_006_058",
+      "Tree_006_059",
+      "Tree_006_060",
+      "Tree_006_061",
+      "Tree_006_063",
+      "Tree_006_064",
+      "Tree_006_065",
+      "Tree_007_001",
+      "Tree_007_002",
+      "Tree_007_003",
+      "Tree_007_004",
+      "Tree_007_005",
+      "Tree_007_011",
+      "Tree_007_020",
+      "Tree_007_023",
+      "Tree_007_024",
+      "Tree_007_025",
+      "Tree_007_026",
+      "Tree_007_027",
+      "Tree_007_028",
+      "Tree_007_029",
+      "Tree_007_030",
+      "Tree_007_031",
+      "Tree_007_032",
+      "Tree_007_033",
+      "Tree_007_034",
+      "Tree_007_035",
+      "Tree_007_038",
+      "Tree_007_039",
+      "Tree_007_040",
+      "Tree_007_041",
+      "Tree_007_042",
+      "Tree_007_043",
+      "Tree_007_044",
+      "Tree_007_047",
+      "Tree_007_048",
+      "Tree_007_051",
+      "Tree_007_052",
+      "Tree_007_053",
+      "Tree_007_055",
+      "Tree_007_056",
+      "Tree_007_057",
+      "Tree_007_058",
+      "Tree_007_062",
+      "Tree_007_063",
+      "Tree_007_064",
+      "Tree_008_002",
+      "Tree_008_003",
+      "Tree_008_004",
+      "Tree_008_005",
+      "Tree_008_006",
+      "Tree_008_010",
+      "Tree_008_024",
+      "Tree_008_025",
+      "Tree_008_026",
+      "Tree_008_027",
+      "Tree_008_028",
+      "Tree_008_029",
+      "Tree_008_030",
+      "Tree_008_031",
+      "Tree_008_032",
+      "Tree_008_033",
+      "Tree_008_034",
+      "Tree_008_035",
+      "Tree_008_036",
+      "Tree_008_038",
+      "Tree_008_039",
+      "Tree_008_040",
+      "Tree_008_041",
+      "Tree_008_042",
+      "Tree_008_043",
+      "Tree_008_044",
+      "Tree_008_049",
+      "Tree_008_052",
+      "Tree_008_053",
+      "Tree_008_054",
+      "Tree_008_055",
+      "Tree_008_056",
+      "Tree_008_057",
+      "Tree_008_058",
+      "Tree_008_059",
+      "Tree_008_060",
+      "Tree_008_061",
+      "Tree_008_063",
+      "Tree_008_064",
+      "Tree_008_065",
+      "Tree_009_001",
+      "Tree_009_003",
+      "Tree_009_004",
+      "Tree_009_005",
+      "Tree_009_006",
+      "Tree_009_023",
+      "Tree_009_024",
+      "Tree_009_025",
+      "Tree_009_026",
+      "Tree_009_027",
+      "Tree_009_028",
+      "Tree_009_029",
+      "Tree_009_030",
+      "Tree_009_031",
+      "Tree_009_032",
+      "Tree_009_033",
+      "Tree_009_034",
+      "Tree_009_035",
+      "Tree_009_036",
+      "Tree_009_037",
+      "Tree_009_039",
+      "Tree_009_042",
+      "Tree_009_044",
+      "Tree_009_045",
+      "Tree_009_049",
+      "Tree_009_050",
+      "Tree_009_054",
+      "Tree_009_056",
+      "Tree_009_058",
+      "Tree_009_059",
+      "Tree_009_061",
+      "Tree_009_062",
+      "Tree_009_063",
+      "Tree_009_064",
+      "Tree_010_001",
+      "Tree_010_002",
+      "Tree_010_004",
+      "Tree_010_005",
+      "Tree_010_006",
+      "Tree_010_007",
+      "Tree_010_008",
+      "Tree_010_014",
+      "Tree_010_021",
+      "Tree_010_022",
+      "Tree_010_023",
+      "Tree_010_024",
+      "Tree_010_025",
+      "Tree_010_026",
+      "Tree_010_027",
+      "Tree_010_028",
+      "Tree_010_029",
+      "Tree_010_030",
+      "Tree_010_031",
+      "Tree_010_032",
+      "Tree_010_033",
+      "Tree_010_034",
+      "Tree_010_035",
+      "Tree_010_036",
+      "Tree_010_037",
+      "Tree_010_040",
+      "Tree_010_041",
+      "Tree_010_042",
+      "Tree_010_043",
+      "Tree_010_045",
+      "Tree_010_049",
+      "Tree_010_050",
+      "Tree_010_054",
+      "Tree_010_055",
+      "Tree_010_056",
+      "Tree_010_058",
+      "Tree_010_060",
+      "Tree_010_061",
+      "Tree_010_062",
+      "Tree_010_063",
+      "Tree_010_064",
+      "Tree_010_065",
+      "Tree_011_001",
+      "Tree_011_002",
+      "Tree_011_004",
+      "Tree_011_005",
+      "Tree_011_006",
+      "Tree_011_007",
+      "Tree_011_008",
+      "Tree_011_013",
+      "Tree_011_014",
+      "Tree_011_015",
+      "Tree_011_020",
+      "Tree_011_022",
+      "Tree_011_023",
+      "Tree_011_024",
+      "Tree_011_025",
+      "Tree_011_026",
+      "Tree_011_027",
+      "Tree_011_028",
+      "Tree_011_029",
+      "Tree_011_030",
+      "Tree_011_031",
+      "Tree_011_032",
+      "Tree_011_033",
+      "Tree_011_034",
+      "Tree_011_035",
+      "Tree_011_036",
+      "Tree_011_037",
+      "Tree_011_038",
+      "Tree_011_039",
+      "Tree_011_043",
+      "Tree_011_044",
+      "Tree_011_046",
+      "Tree_011_050",
+      "Tree_011_051",
+      "Tree_011_052",
+      "Tree_011_053",
+      "Tree_011_055",
+      "Tree_011_056",
+      "Tree_011_057",
+      "Tree_011_059",
+      "Tree_011_060",
+      "Tree_011_061",
+      "Tree_011_062",
+      "Tree_011_063",
+      "Tree_011_064",
+      "Tree_011_065",
+      "Tree_012_001",
+      "Tree_012_002",
+      "Tree_012_003",
+      "Tree_012_005",
+      "Tree_012_006",
+      "Tree_012_007",
+      "Tree_012_008",
+      "Tree_012_013",
+      "Tree_012_014",
+      "Tree_012_015",
+      "Tree_012_016",
+      "Tree_012_020",
+      "Tree_012_021",
+      "Tree_012_023",
+      "Tree_012_024",
+      "Tree_012_025",
+      "Tree_012_026",
+      "Tree_012_027",
+      "Tree_012_028",
+      "Tree_012_029",
+      "Tree_012_030",
+      "Tree_012_031",
+      "Tree_012_032",
+      "Tree_012_033",
+      "Tree_012_034",
+      "Tree_012_035",
+      "Tree_012_036",
+      "Tree_012_037",
+      "Tree_012_038",
+      "Tree_012_039",
+      "Tree_012_040",
+      "Tree_012_041",
+      "Tree_012_043",
+      "Tree_012_044",
+      "Tree_012_047",
+      "Tree_012_050",
+      "Tree_012_051",
+      "Tree_012_052",
+      "Tree_012_053",
+      "Tree_012_057",
+      "Tree_012_058",
+      "Tree_012_059",
+      "Tree_012_060",
+      "Tree_012_061",
+      "Tree_012_062",
+      "Tree_012_064",
+      "Tree_012_065",
+      "Tree_013_001",
+      "Tree_013_002",
+      "Tree_013_003",
+      "Tree_013_004",
+      "Tree_013_006",
+      "Tree_013_007",
+      "Tree_013_008",
+      "Tree_013_009",
+      "Tree_013_013",
+      "Tree_013_014",
+      "Tree_013_015",
+      "Tree_013_016",
+      "Tree_013_024",
+      "Tree_013_025",
+      "Tree_013_026",
+      "Tree_013_027",
+      "Tree_013_028",
+      "Tree_013_029",
+      "Tree_013_030",
+      "Tree_013_031",
+      "Tree_013_032",
+      "Tree_013_033",
+      "Tree_013_034",
+      "Tree_013_035",
+      "Tree_013_036",
+      "Tree_013_037",
+      "Tree_013_038",
+      "Tree_013_039",
+      "Tree_013_040",
+      "Tree_013_041",
+      "Tree_013_042",
+      "Tree_013_046",
+      "Tree_013_047",
+      "Tree_013_048",
+      "Tree_013_051",
+      "Tree_013_054",
+      "Tree_013_055",
+      "Tree_013_059",
+      "Tree_013_060",
+      "Tree_013_061",
+      "Tree_013_062",
+      "Tree_013_063",
+      "Tree_013_064",
+      "Tree_013_065",
+      "Tree_014_001",
+      "Tree_014_002",
+      "Tree_014_003",
+      "Tree_014_004",
+      "Tree_014_005",
+      "Tree_014_007",
+      "Tree_014_010",
+      "Tree_014_013",
+      "Tree_014_014",
+      "Tree_014_015",
+      "Tree_014_016",
+      "Tree_014_017",
+      "Tree_014_023",
+      "Tree_014_025",
+      "Tree_014_026",
+      "Tree_014_027",
+      "Tree_014_028",
+      "Tree_014_029",
+      "Tree_014_030",
+      "Tree_014_031",
+      "Tree_014_032",
+      "Tree_014_033",
+      "Tree_014_034",
+      "Tree_014_035",
+      "Tree_014_036",
+      "Tree_014_037",
+      "Tree_014_038",
+      "Tree_014_039",
+      "Tree_014_040",
+      "Tree_014_041",
+      "Tree_014_042",
+      "Tree_014_046",
+      "Tree_014_047",
+      "Tree_014_052",
+      "Tree_014_053",
+      "Tree_014_055",
+      "Tree_014_060",
+      "Tree_014_061",
+      "Tree_014_062",
+      "Tree_014_063",
+      "Tree_014_064",
+      "Tree_015_001",
+      "Tree_015_002",
+      "Tree_015_003",
+      "Tree_015_004",
+      "Tree_015_005",
+      "Tree_015_006",
+      "Tree_015_010",
+      "Tree_015_013",
+      "Tree_015_014",
+      "Tree_015_015",
+      "Tree_015_016",
+      "Tree_015_017",
+      "Tree_015_018",
+      "Tree_015_023",
+      "Tree_015_026",
+      "Tree_015_027",
+      "Tree_015_028",
+      "Tree_015_029",
+      "Tree_015_030",
+      "Tree_015_031",
+      "Tree_015_032",
+      "Tree_015_033",
+      "Tree_015_034",
+      "Tree_015_035",
+      "Tree_015_036",
+      "Tree_015_037",
+      "Tree_015_038",
+      "Tree_015_039",
+      "Tree_015_040",
+      "Tree_015_041",
+      "Tree_015_042",
+      "Tree_015_043",
+      "Tree_015_044",
+      "Tree_015_052",
+      "Tree_015_053",
+      "Tree_015_055",
+      "Tree_015_056",
+      "Tree_015_061",
+      "Tree_015_062",
+      "Tree_015_063",
+      "Tree_015_064",
+      "Tree_015_065",
+      "Tree_016_001",
+      "Tree_016_002",
+      "Tree_016_003",
+      "Tree_016_004",
+      "Tree_016_005",
+      "Tree_016_006",
+      "Tree_016_007",
+      "Tree_016_010",
+      "Tree_016_011",
+      "Tree_016_016",
+      "Tree_016_017",
+      "Tree_016_018",
+      "Tree_016_019",
+      "Tree_016_027",
+      "Tree_016_028",
+      "Tree_016_029",
+      "Tree_016_030",
+      "Tree_016_031",
+      "Tree_016_032",
+      "Tree_016_033",
+      "Tree_016_034",
+      "Tree_016_035",
+      "Tree_016_036",
+      "Tree_016_037",
+      "Tree_016_038",
+      "Tree_016_039",
+      "Tree_016_044",
+      "Tree_016_045",
+      "Tree_016_048",
+      "Tree_016_049",
+      "Tree_016_050",
+      "Tree_016_054",
+      "Tree_016_056",
+      "Tree_016_057",
+      "Tree_016_059",
+      "Tree_016_060",
+      "Tree_016_061",
+      "Tree_016_062",
+      "Tree_016_063",
+      "Tree_016_064",
+      "Tree_016_065",
+      "Tree_017_001",
+      "Tree_017_002",
+      "Tree_017_003",
+      "Tree_017_004",
+      "Tree_017_005",
+      "Tree_017_006",
+      "Tree_017_007",
+      "Tree_017_008",
+      "Tree_017_011",
+      "Tree_017_016",
+      "Tree_017_017",
+      "Tree_017_018",
+      "Tree_017_019",
+      "Tree_017_026",
+      "Tree_017_027",
+      "Tree_017_030",
+      "Tree_017_031",
+      "Tree_017_032",
+      "Tree_017_033",
+      "Tree_017_034",
+      "Tree_017_035",
+      "Tree_017_039",
+      "Tree_017_044",
+      "Tree_017_045",
+      "Tree_017_047",
+      "Tree_017_049",
+      "Tree_017_050",
+      "Tree_017_051",
+      "Tree_017_054",
+      "Tree_017_055",
+      "Tree_017_057",
+      "Tree_017_061",
+      "Tree_017_062",
+      "Tree_017_063",
+      "Tree_017_065",
+      "Tree_018_000",
+      "Tree_018_001",
+      "Tree_018_002",
+      "Tree_018_003",
+      "Tree_018_004",
+      "Tree_018_005",
+      "Tree_018_006",
+      "Tree_018_007",
+      "Tree_018_008",
+      "Tree_018_009",
+      "Tree_018_010",
+      "Tree_018_016",
+      "Tree_018_017",
+      "Tree_018_018",
+      "Tree_018_019",
+      "Tree_018_020",
+      "Tree_018_021",
+      "Tree_018_026",
+      "Tree_018_027",
+      "Tree_018_031",
+      "Tree_018_032",
+      "Tree_018_033",
+      "Tree_018_034",
+      "Tree_018_035",
+      "Tree_018_036",
+      "Tree_018_044",
+      "Tree_018_045",
+      "Tree_018_046",
+      "Tree_018_047",
+      "Tree_018_048",
+      "Tree_018_050",
+      "Tree_018_051",
+      "Tree_018_052",
+      "Tree_018_054",
+      "Tree_018_055",
+      "Tree_018_056",
+      "Tree_018_057",
+      "Tree_018_058",
+      "Tree_018_061",
+      "Tree_018_063",
+      "Tree_018_064",
+      "Tree_018_065",
+      "Tree_019_001",
+      "Tree_019_002",
+      "Tree_019_003",
+      "Tree_019_004",
+      "Tree_019_005",
+      "Tree_019_006",
+      "Tree_019_007",
+      "Tree_019_008",
+      "Tree_019_009",
+      "Tree_019_010",
+      "Tree_019_011",
+      "Tree_019_015",
+      "Tree_019_016",
+      "Tree_019_017",
+      "Tree_019_018",
+      "Tree_019_019",
+      "Tree_019_020",
+      "Tree_019_021",
+      "Tree_019_028",
+      "Tree_019_032",
+      "Tree_019_033",
+      "Tree_019_034",
+      "Tree_019_035",
+      "Tree_019_036",
+      "Tree_019_045",
+      "Tree_019_046",
+      "Tree_019_047",
+      "Tree_019_051",
+      "Tree_019_052",
+      "Tree_019_053",
+      "Tree_019_055",
+      "Tree_019_056",
+      "Tree_019_058",
+      "Tree_019_063",
+      "Tree_019_064",
+      "Tree_019_065",
+      "Tree_020_004",
+      "Tree_020_005",
+      "Tree_020_006",
+      "Tree_020_007",
+      "Tree_020_008",
+      "Tree_020_009",
+      "Tree_020_010",
+      "Tree_020_013",
+      "Tree_020_014",
+      "Tree_020_015",
+      "Tree_020_016",
+      "Tree_020_017",
+      "Tree_020_018",
+      "Tree_020_019",
+      "Tree_020_020",
+      "Tree_020_021",
+      "Tree_020_032",
+      "Tree_020_033",
+      "Tree_020_034",
+      "Tree_020_035",
+      "Tree_020_036",
+      "Tree_020_037",
+      "Tree_020_041",
+      "Tree_020_042",
+      "Tree_020_046",
+      "Tree_020_047",
+      "Tree_020_048",
+      "Tree_020_049",
+      "Tree_020_053",
+      "Tree_020_056",
+      "Tree_020_057",
+      "Tree_020_058",
+      "Tree_020_063",
+      "Tree_021_004",
+      "Tree_021_005",
+      "Tree_021_006",
+      "Tree_021_007",
+      "Tree_021_008",
+      "Tree_021_009",
+      "Tree_021_010",
+      "Tree_021_012",
+      "Tree_021_014",
+      "Tree_021_015",
+      "Tree_021_016",
+      "Tree_021_017",
+      "Tree_021_018",
+      "Tree_021_019",
+      "Tree_021_020",
+      "Tree_021_021",
+      "Tree_021_022",
+      "Tree_021_023",
+      "Tree_021_029",
+      "Tree_021_030",
+      "Tree_021_032",
+      "Tree_021_033",
+      "Tree_021_034",
+      "Tree_021_035",
+      "Tree_021_036",
+      "Tree_021_037",
+      "Tree_021_038",
+      "Tree_021_048",
+      "Tree_021_049",
+      "Tree_021_053",
+      "Tree_021_058",
+      "Tree_021_063",
+      "Tree_021_064",
+      "Tree_021_065",
+      "Tree_022_004",
+      "Tree_022_005",
+      "Tree_022_006",
+      "Tree_022_007",
+      "Tree_022_008",
+      "Tree_022_012",
+      "Tree_022_013",
+      "Tree_022_016",
+      "Tree_022_017",
+      "Tree_022_018",
+      "Tree_022_019",
+      "Tree_022_020",
+      "Tree_022_021",
+      "Tree_022_022",
+      "Tree_022_023",
+      "Tree_022_024",
+      "Tree_022_030",
+      "Tree_022_031",
+      "Tree_022_036",
+      "Tree_022_037",
+      "Tree_022_049",
+      "Tree_022_050",
+      "Tree_022_058",
+      "Tree_022_063",
+      "Tree_022_064",
+      "Tree_022_065",
+      "Tree_023_004",
+      "Tree_023_005",
+      "Tree_023_006",
+      "Tree_023_007",
+      "Tree_023_008",
+      "Tree_023_009",
+      "Tree_023_011",
+      "Tree_023_012",
+      "Tree_023_013",
+      "Tree_023_014",
+      "Tree_023_017",
+      "Tree_023_018",
+      "Tree_023_019",
+      "Tree_023_020",
+      "Tree_023_021",
+      "Tree_023_022",
+      "Tree_023_023",
+      "Tree_023_031",
+      "Tree_023_036",
+      "Tree_023_060",
+      "Tree_023_064",
+      "Tree_024_004",
+      "Tree_024_006",
+      "Tree_024_007",
+      "Tree_024_008",
+      "Tree_024_011",
+      "Tree_024_012",
+      "Tree_024_013",
+      "Tree_024_014",
+      "Tree_024_015",
+      "Tree_024_019",
+      "Tree_024_020",
+      "Tree_024_021",
+      "Tree_024_022",
+      "Tree_024_023",
+      "Tree_024_024",
+      "Tree_024_025",
+      "Tree_024_031",
+      "Tree_024_032",
+      "Tree_024_052",
+      "Tree_024_064",
+      "Tree_024_065",
+      "Tree_025_006",
+      "Tree_025_007",
+      "Tree_025_010",
+      "Tree_025_011",
+      "Tree_025_012",
+      "Tree_025_013",
+      "Tree_025_014",
+      "Tree_025_015",
+      "Tree_025_016",
+      "Tree_025_017",
+      "Tree_025_020",
+      "Tree_025_021",
+      "Tree_025_022",
+      "Tree_025_023",
+      "Tree_025_024",
+      "Tree_025_025",
+      "Tree_025_026",
+      "Tree_025_027",
+      "Tree_025_031",
+      "Tree_025_032",
+      "Tree_025_033",
+      "Tree_025_050",
+      "Tree_025_051",
+      "Tree_025_052",
+      "Tree_025_053",
+      "Tree_025_054",
+      "Tree_025_065",
+      "Tree_026_000",
+      "Tree_026_010",
+      "Tree_026_011",
+      "Tree_026_012",
+      "Tree_026_013",
+      "Tree_026_014",
+      "Tree_026_015",
+      "Tree_026_016",
+      "Tree_026_017",
+      "Tree_026_022",
+      "Tree_026_023",
+      "Tree_026_024",
+      "Tree_026_025",
+      "Tree_026_026",
+      "Tree_026_027",
+      "Tree_026_033",
+      "Tree_026_034",
+      "Tree_026_036",
+      "Tree_026_050",
+      "Tree_026_051",
+      "Tree_026_052",
+      "Tree_026_053",
+      "Tree_026_054",
+      "Tree_026_065",
+      "Tree_027_005",
+      "Tree_027_006",
+      "Tree_027_009",
+      "Tree_027_011",
+      "Tree_027_012",
+      "Tree_027_013",
+      "Tree_027_014",
+      "Tree_027_015",
+      "Tree_027_016",
+      "Tree_027_017",
+      "Tree_027_023",
+      "Tree_027_024",
+      "Tree_027_025",
+      "Tree_027_026",
+      "Tree_027_027",
+      "Tree_027_035",
+      "Tree_027_041",
+      "Tree_027_042",
+      "Tree_027_048",
+      "Tree_027_049",
+      "Tree_027_050",
+      "Tree_027_051",
+      "Tree_027_052",
+      "Tree_027_053",
+      "Tree_027_054",
+      "Tree_027_055",
+      "Tree_027_056",
+      "Tree_028_000",
+      "Tree_028_007",
+      "Tree_028_010",
+      "Tree_028_011",
+      "Tree_028_012",
+      "Tree_028_013",
+      "Tree_028_014",
+      "Tree_028_015",
+      "Tree_028_016",
+      "Tree_028_017",
+      "Tree_028_018",
+      "Tree_028_019",
+      "Tree_028_023",
+      "Tree_028_024",
+      "Tree_028_025",
+      "Tree_028_026",
+      "Tree_028_027",
+      "Tree_028_036",
+      "Tree_028_042",
+      "Tree_028_043",
+      "Tree_028_044",
+      "Tree_028_049",
+      "Tree_028_050",
+      "Tree_028_051",
+      "Tree_028_052",
+      "Tree_028_053",
+      "Tree_028_054",
+      "Tree_028_055",
+      "Tree_028_056",
+      "Tree_028_057",
+      "Tree_028_060",
+      "Tree_028_061",
+      "Tree_029_000",
+      "Tree_029_001",
+      "Tree_029_008",
+      "Tree_029_009",
+      "Tree_029_011",
+      "Tree_029_013",
+      "Tree_029_014",
+      "Tree_029_015",
+      "Tree_029_016",
+      "Tree_029_017",
+      "Tree_029_018",
+      "Tree_029_019",
+      "Tree_029_020",
+      "Tree_029_024",
+      "Tree_029_025",
+      "Tree_029_026",
+      "Tree_029_027",
+      "Tree_029_036",
+      "Tree_029_037",
+      "Tree_029_042",
+      "Tree_029_043",
+      "Tree_029_044",
+      "Tree_029_048",
+      "Tree_029_049",
+      "Tree_029_050",
+      "Tree_029_051",
+      "Tree_029_052",
+      "Tree_029_053",
+      "Tree_029_054",
+      "Tree_029_055",
+      "Tree_029_056",
+      "Tree_029_057",
+      "Tree_029_058",
+      "Tree_029_061",
+      "Tree_029_062",
+      "Tree_030_001",
+      "Tree_030_009",
+      "Tree_030_014",
+      "Tree_030_015",
+      "Tree_030_016",
+      "Tree_030_017",
+      "Tree_030_018",
+      "Tree_030_019",
+      "Tree_030_020",
+      "Tree_030_021",
+      "Tree_030_026",
+      "Tree_030_027",
+      "Tree_030_028",
+      "Tree_030_030",
+      "Tree_030_036",
+      "Tree_030_037",
+      "Tree_030_038",
+      "Tree_030_043",
+      "Tree_030_044",
+      "Tree_030_045",
+      "Tree_030_046",
+      "Tree_030_048",
+      "Tree_030_049",
+      "Tree_030_050",
+      "Tree_030_051",
+      "Tree_030_052",
+      "Tree_030_053",
+      "Tree_030_054",
+      "Tree_030_055",
+      "Tree_030_056",
+      "Tree_030_057",
+      "Tree_030_058",
+      "Tree_030_061",
+      "Tree_030_062",
+      "Tree_030_063",
+      "Tree_031_000",
+      "Tree_031_001",
+      "Tree_031_002",
+      "Tree_031_006",
+      "Tree_031_007",
+      "Tree_031_010",
+      "Tree_031_015",
+      "Tree_031_016",
+      "Tree_031_017",
+      "Tree_031_018",
+      "Tree_031_019",
+      "Tree_031_020",
+      "Tree_031_021",
+      "Tree_031_022",
+      "Tree_031_023",
+      "Tree_031_026",
+      "Tree_031_027",
+      "Tree_031_030",
+      "Tree_031_032",
+      "Tree_031_036",
+      "Tree_031_037",
+      "Tree_031_038",
+      "Tree_031_044",
+      "Tree_031_045",
+      "Tree_031_046",
+      "Tree_031_047",
+      "Tree_031_048",
+      "Tree_031_049",
+      "Tree_031_050",
+      "Tree_031_051",
+      "Tree_031_052",
+      "Tree_031_053",
+      "Tree_031_054",
+      "Tree_031_055",
+      "Tree_031_056",
+      "Tree_031_057",
+      "Tree_031_058",
+      "Tree_031_059",
+      "Tree_031_061",
+      "Tree_031_063",
+      "Tree_031_064",
+      "Tree_031_065",
+      "Tree_032_000",
+      "Tree_032_001",
+      "Tree_032_002",
+      "Tree_032_006",
+      "Tree_032_007",
+      "Tree_032_008",
+      "Tree_032_010",
+      "Tree_032_017",
+      "Tree_032_018",
+      "Tree_032_019",
+      "Tree_032_020",
+      "Tree_032_021",
+      "Tree_032_022",
+      "Tree_032_023",
+      "Tree_032_029",
+      "Tree_032_030",
+      "Tree_032_031",
+      "Tree_032_032",
+      "Tree_032_033",
+      "Tree_032_037",
+      "Tree_032_041",
+      "Tree_032_046",
+      "Tree_032_047",
+      "Tree_032_048",
+      "Tree_032_049",
+      "Tree_032_050",
+      "Tree_032_051",
+      "Tree_032_052",
+      "Tree_032_053",
+      "Tree_032_054",
+      "Tree_032_055",
+      "Tree_032_056",
+      "Tree_032_057",
+      "Tree_032_058",
+      "Tree_032_059",
+      "Tree_032_060",
+      "Tree_032_062",
+      "Tree_032_064",
+      "Tree_032_065",
+      "Tree_033_001",
+      "Tree_033_002",
+      "Tree_033_006",
+      "Tree_033_007",
+      "Tree_033_008",
+      "Tree_033_009",
+      "Tree_033_020",
+      "Tree_033_021",
+      "Tree_033_022",
+      "Tree_033_023",
+      "Tree_033_024",
+      "Tree_033_025",
+      "Tree_033_029",
+      "Tree_033_030",
+      "Tree_033_031",
+      "Tree_033_032",
+      "Tree_033_037",
+      "Tree_033_038",
+      "Tree_033_041",
+      "Tree_033_042",
+      "Tree_033_045",
+      "Tree_033_046",
+      "Tree_033_047",
+      "Tree_033_048",
+      "Tree_033_049",
+      "Tree_033_050",
+      "Tree_033_051",
+      "Tree_033_052",
+      "Tree_033_053",
+      "Tree_033_054",
+      "Tree_033_055",
+      "Tree_033_056",
+      "Tree_033_057",
+      "Tree_033_058",
+      "Tree_033_059",
+      "Tree_033_060",
+      "Tree_033_063",
+      "Tree_033_064",
+      "Tree_033_065",
+      "Tree_034_001",
+      "Tree_034_002",
+      "Tree_034_006",
+      "Tree_034_007",
+      "Tree_034_008",
+      "Tree_034_009",
+      "Tree_034_011",
+      "Tree_034_012",
+      "Tree_034_013",
+      "Tree_034_023",
+      "Tree_034_024",
+      "Tree_034_029",
+      "Tree_034_030",
+      "Tree_034_031",
+      "Tree_034_032",
+      "Tree_034_033",
+      "Tree_034_034",
+      "Tree_034_035",
+      "Tree_034_041",
+      "Tree_034_042",
+      "Tree_034_043",
+      "Tree_034_046",
+      "Tree_034_047",
+      "Tree_034_048",
+      "Tree_034_049",
+      "Tree_034_050",
+      "Tree_034_051",
+      "Tree_034_052",
+      "Tree_034_053",
+      "Tree_034_054",
+      "Tree_034_055",
+      "Tree_034_056",
+      "Tree_034_057",
+      "Tree_034_058",
+      "Tree_034_059",
+      "Tree_034_060",
+      "Tree_034_061",
+      "Tree_034_062",
+      "Tree_034_063",
+      "Tree_034_064",
+      "Tree_034_065",
+      "Tree_035_001",
+      "Tree_035_002",
+      "Tree_035_007",
+      "Tree_035_008",
+      "Tree_035_009",
+      "Tree_035_010",
+      "Tree_035_011",
+      "Tree_035_014",
+      "Tree_035_015",
+      "Tree_035_031",
+      "Tree_035_032",
+      "Tree_035_033",
+      "Tree_035_034",
+      "Tree_035_040",
+      "Tree_035_041",
+      "Tree_035_042",
+      "Tree_035_043",
+      "Tree_035_046",
+      "Tree_035_047",
+      "Tree_035_048",
+      "Tree_035_049",
+      "Tree_035_050",
+      "Tree_035_051",
+      "Tree_035_052",
+      "Tree_035_053",
+      "Tree_035_054",
+      "Tree_035_055",
+      "Tree_035_056",
+      "Tree_035_057",
+      "Tree_035_058",
+      "Tree_035_059",
+      "Tree_035_060",
+      "Tree_035_061",
+      "Tree_035_062",
+      "Tree_035_065",
+      "Tree_036_001",
+      "Tree_036_003",
+      "Tree_036_007",
+      "Tree_036_008",
+      "Tree_036_009",
+      "Tree_036_010",
+      "Tree_036_011",
+      "Tree_036_012",
+      "Tree_036_015",
+      "Tree_036_024",
+      "Tree_036_029",
+      "Tree_036_032",
+      "Tree_036_033",
+      "Tree_036_034",
+      "Tree_036_035",
+      "Tree_036_041",
+      "Tree_036_042",
+      "Tree_036_043",
+      "Tree_036_044",
+      "Tree_036_045",
+      "Tree_036_047",
+      "Tree_036_048",
+      "Tree_036_049",
+      "Tree_036_050",
+      "Tree_036_051",
+      "Tree_036_052",
+      "Tree_036_053",
+      "Tree_036_054",
+      "Tree_036_055",
+      "Tree_036_056",
+      "Tree_036_057",
+      "Tree_036_058",
+      "Tree_036_059",
+      "Tree_036_060",
+      "Tree_036_061",
+      "Tree_036_062",
+      "Tree_036_063",
+      "Tree_036_064",
+      "Tree_037_008",
+      "Tree_037_009",
+      "Tree_037_010",
+      "Tree_037_011",
+      "Tree_037_012",
+      "Tree_037_013",
+      "Tree_037_014",
+      "Tree_037_016",
+      "Tree_037_030",
+      "Tree_037_033",
+      "Tree_037_034",
+      "Tree_037_035",
+      "Tree_037_041",
+      "Tree_037_042",
+      "Tree_037_043",
+      "Tree_037_044",
+      "Tree_037_045",
+      "Tree_037_046",
+      "Tree_037_047",
+      "Tree_037_049",
+      "Tree_037_050",
+      "Tree_037_051",
+      "Tree_037_052",
+      "Tree_037_053",
+      "Tree_037_054",
+      "Tree_037_055",
+      "Tree_037_056",
+      "Tree_037_057",
+      "Tree_037_058",
+      "Tree_037_059",
+      "Tree_037_060",
+      "Tree_037_061",
+      "Tree_037_062",
+      "Tree_037_063",
+      "Tree_037_064",
+      "Tree_038_001",
+      "Tree_038_007",
+      "Tree_038_008",
+      "Tree_038_009",
+      "Tree_038_010",
+      "Tree_038_011",
+      "Tree_038_012",
+      "Tree_038_013",
+      "Tree_038_015",
+      "Tree_038_022",
+      "Tree_038_023",
+      "Tree_038_034",
+      "Tree_038_035",
+      "Tree_038_036",
+      "Tree_038_040",
+      "Tree_038_041",
+      "Tree_038_042",
+      "Tree_038_043",
+      "Tree_038_044",
+      "Tree_038_045",
+      "Tree_038_046",
+      "Tree_038_047",
+      "Tree_038_049",
+      "Tree_038_050",
+      "Tree_038_051",
+      "Tree_038_052",
+      "Tree_038_053",
+      "Tree_038_054",
+      "Tree_038_055",
+      "Tree_038_056",
+      "Tree_038_057",
+      "Tree_038_058",
+      "Tree_038_059",
+      "Tree_038_060",
+      "Tree_038_061",
+      "Tree_038_062",
+      "Tree_038_063",
+      "Tree_038_064",
+      "Tree_038_065",
+      "Tree_039_001",
+      "Tree_039_007",
+      "Tree_039_008",
+      "Tree_039_009",
+      "Tree_039_010",
+      "Tree_039_011",
+      "Tree_039_012",
+      "Tree_039_013",
+      "Tree_039_014",
+      "Tree_039_024",
+      "Tree_039_027",
+      "Tree_039_033",
+      "Tree_039_034",
+      "Tree_039_035",
+      "Tree_039_036",
+      "Tree_039_037",
+      "Tree_039_038",
+      "Tree_039_041",
+      "Tree_039_042",
+      "Tree_039_043",
+      "Tree_039_044",
+      "Tree_039_045",
+      "Tree_039_046",
+      "Tree_039_047",
+      "Tree_039_048",
+      "Tree_039_050",
+      "Tree_039_051",
+      "Tree_039_052",
+      "Tree_039_053",
+      "Tree_039_054",
+      "Tree_039_055",
+      "Tree_039_056",
+      "Tree_039_057",
+      "Tree_039_058",
+      "Tree_039_059",
+      "Tree_039_060",
+      "Tree_039_061",
+      "Tree_039_062",
+      "Tree_039_063",
+      "Tree_039_064",
+      "Tree_039_065",
+      "Tree_040_001",
+      "Tree_040_002",
+      "Tree_040_003",
+      "Tree_040_007",
+      "Tree_040_008",
+      "Tree_040_009",
+      "Tree_040_010",
+      "Tree_040_011",
+      "Tree_040_012",
+      "Tree_040_013",
+      "Tree_040_014",
+      "Tree_040_023",
+      "Tree_040_024",
+      "Tree_040_025",
+      "Tree_040_026",
+      "Tree_040_027",
+      "Tree_040_028",
+      "Tree_040_032",
+      "Tree_040_033",
+      "Tree_040_036",
+      "Tree_040_037",
+      "Tree_040_038",
+      "Tree_040_041",
+      "Tree_040_042",
+      "Tree_040_043",
+      "Tree_040_044",
+      "Tree_040_045",
+      "Tree_040_046",
+      "Tree_040_047",
+      "Tree_040_048",
+      "Tree_040_049",
+      "Tree_040_051",
+      "Tree_040_052",
+      "Tree_040_053",
+      "Tree_040_054",
+      "Tree_040_055",
+      "Tree_040_056",
+      "Tree_040_057",
+      "Tree_040_058",
+      "Tree_040_059",
+      "Tree_040_060",
+      "Tree_040_061",
+      "Tree_040_062",
+      "Tree_040_063",
+      "Tree_040_064",
+      "Tree_040_065",
+      "Tree_041_001",
+      "Tree_041_002",
+      "Tree_041_003",
+      "Tree_041_008",
+      "Tree_041_009",
+      "Tree_041_010",
+      "Tree_041_011",
+      "Tree_041_012",
+      "Tree_041_013",
+      "Tree_041_014",
+      "Tree_041_015",
+      "Tree_041_016",
+      "Tree_041_018",
+      "Tree_041_023",
+      "Tree_041_024",
+      "Tree_041_025",
+      "Tree_041_026",
+      "Tree_041_027",
+      "Tree_041_028",
+      "Tree_041_029",
+      "Tree_041_032",
+      "Tree_041_033",
+      "Tree_041_037",
+      "Tree_041_038",
+      "Tree_041_042",
+      "Tree_041_043",
+      "Tree_041_044",
+      "Tree_041_045",
+      "Tree_041_046",
+      "Tree_041_047",
+      "Tree_041_048",
+      "Tree_041_049",
+      "Tree_041_050",
+      "Tree_041_052",
+      "Tree_041_053",
+      "Tree_041_054",
+      "Tree_041_055",
+      "Tree_041_056",
+      "Tree_041_057",
+      "Tree_041_058",
+      "Tree_041_059",
+      "Tree_041_060",
+      "Tree_041_061",
+      "Tree_041_062",
+      "Tree_041_063",
+      "Tree_041_064",
+      "Tree_041_065",
+      "Tree_042_001",
+      "Tree_042_002",
+      "Tree_042_008",
+      "Tree_042_009",
+      "Tree_042_010",
+      "Tree_042_011",
+      "Tree_042_012",
+      "Tree_042_013",
+      "Tree_042_014",
+      "Tree_042_015",
+      "Tree_042_016",
+      "Tree_042_017",
+      "Tree_042_023",
+      "Tree_042_024",
+      "Tree_042_025",
+      "Tree_042_026",
+      "Tree_042_027",
+      "Tree_042_028",
+      "Tree_042_033",
+      "Tree_042_038",
+      "Tree_042_044",
+      "Tree_042_045",
+      "Tree_042_046",
+      "Tree_042_047",
+      "Tree_042_048",
+      "Tree_042_049",
+      "Tree_042_050",
+      "Tree_042_053",
+      "Tree_042_054",
+      "Tree_042_055",
+      "Tree_042_056",
+      "Tree_042_057",
+      "Tree_042_058",
+      "Tree_042_059",
+      "Tree_042_060",
+      "Tree_042_061",
+      "Tree_042_062",
+      "Tree_042_063",
+      "Tree_042_064",
+      "Tree_042_065",
+      "Tree_043_001",
+      "Tree_043_002",
+      "Tree_043_003",
+      "Tree_043_006",
+      "Tree_043_007",
+      "Tree_043_008",
+      "Tree_043_010",
+      "Tree_043_011",
+      "Tree_043_012",
+      "Tree_043_013",
+      "Tree_043_014",
+      "Tree_043_015",
+      "Tree_043_016",
+      "Tree_043_017",
+      "Tree_043_024",
+      "Tree_043_025",
+      "Tree_043_026",
+      "Tree_043_027",
+      "Tree_043_028",
+      "Tree_043_043",
+      "Tree_043_044",
+      "Tree_043_045",
+      "Tree_043_046",
+      "Tree_043_047",
+      "Tree_043_048",
+      "Tree_043_049",
+      "Tree_043_050",
+      "Tree_043_051",
+      "Tree_043_052",
+      "Tree_043_055",
+      "Tree_043_056",
+      "Tree_043_057",
+      "Tree_043_058",
+      "Tree_043_059",
+      "Tree_043_060",
+      "Tree_043_061",
+      "Tree_043_062",
+      "Tree_043_063",
+      "Tree_043_064",
+      "Tree_043_065",
+      "Tree_044_000",
+      "Tree_044_002",
+      "Tree_044_003",
+      "Tree_044_007",
+      "Tree_044_008",
+      "Tree_044_009",
+      "Tree_044_015",
+      "Tree_044_016",
+      "Tree_044_017",
+      "Tree_044_024",
+      "Tree_044_025",
+      "Tree_044_026",
+      "Tree_044_027",
+      "Tree_044_028",
+      "Tree_044_043",
+      "Tree_044_044",
+      "Tree_044_045",
+      "Tree_044_046",
+      "Tree_044_047",
+      "Tree_044_048",
+      "Tree_044_049",
+      "Tree_044_050",
+      "Tree_044_051",
+      "Tree_044_052",
+      "Tree_044_053",
+      "Tree_044_055",
+      "Tree_044_056",
+      "Tree_044_057",
+      "Tree_044_058",
+      "Tree_044_059",
+      "Tree_044_060",
+      "Tree_044_061",
+      "Tree_044_062",
+      "Tree_044_063",
+      "Tree_044_064",
+      "Tree_044_065",
+      "Tree_045_002",
+      "Tree_045_003",
+      "Tree_045_004",
+      "Tree_045_008",
+      "Tree_045_009",
+      "Tree_045_010",
+      "Tree_045_024",
+      "Tree_045_025",
+      "Tree_045_026",
+      "Tree_045_027",
+      "Tree_045_028",
+      "Tree_045_031",
+      "Tree_045_033",
+      "Tree_045_034",
+      "Tree_045_047",
+      "Tree_045_048",
+      "Tree_045_049",
+      "Tree_045_050",
+      "Tree_045_051",
+      "Tree_045_052",
+      "Tree_045_053",
+      "Tree_045_054",
+      "Tree_045_057",
+      "Tree_045_058",
+      "Tree_045_059",
+      "Tree_045_060",
+      "Tree_045_061",
+      "Tree_045_062",
+      "Tree_045_063",
+      "Tree_045_064",
+      "Tree_045_065",
+      "Tree_046_003",
+      "Tree_046_004",
+      "Tree_046_005",
+      "Tree_046_006",
+      "Tree_046_009",
+      "Tree_046_010",
+      "Tree_046_023",
+      "Tree_046_026",
+      "Tree_046_027",
+      "Tree_046_028",
+      "Tree_046_031",
+      "Tree_046_032",
+      "Tree_046_033",
+      "Tree_046_034",
+      "Tree_046_035",
+      "Tree_046_036",
+      "Tree_046_047",
+      "Tree_046_048",
+      "Tree_046_049",
+      "Tree_046_050",
+      "Tree_046_051",
+      "Tree_046_052",
+      "Tree_046_053",
+      "Tree_046_054",
+      "Tree_046_055",
+      "Tree_046_060",
+      "Tree_046_061",
+      "Tree_046_062",
+      "Tree_046_063",
+      "Tree_046_064",
+      "Tree_046_065",
+      "Tree_047_002",
+      "Tree_047_003",
+      "Tree_047_005",
+      "Tree_047_006",
+      "Tree_047_009",
+      "Tree_047_010",
+      "Tree_047_011",
+      "Tree_047_015",
+      "Tree_047_016",
+      "Tree_047_023",
+      "Tree_047_024",
+      "Tree_047_030",
+      "Tree_047_031",
+      "Tree_047_032",
+      "Tree_047_033",
+      "Tree_047_034",
+      "Tree_047_035",
+      "Tree_047_036",
+      "Tree_047_046",
+      "Tree_047_047",
+      "Tree_047_048",
+      "Tree_047_049",
+      "Tree_047_050",
+      "Tree_047_051",
+      "Tree_047_052",
+      "Tree_047_053",
+      "Tree_047_054",
+      "Tree_047_055",
+      "Tree_047_056",
+      "Tree_047_057",
+      "Tree_047_058",
+      "Tree_047_061",
+      "Tree_047_062",
+      "Tree_047_063",
+      "Tree_047_064",
+      "Tree_047_065",
+      "Tree_048_005",
+      "Tree_048_006",
+      "Tree_048_007",
+      "Tree_048_011",
+      "Tree_048_012",
+      "Tree_048_013",
+      "Tree_048_014",
+      "Tree_048_015",
+      "Tree_048_016",
+      "Tree_048_017",
+      "Tree_048_018",
+      "Tree_048_025",
+      "Tree_048_030",
+      "Tree_048_031",
+      "Tree_048_032",
+      "Tree_048_033",
+      "Tree_048_034",
+      "Tree_048_035",
+      "Tree_048_036",
+      "Tree_048_037",
+      "Tree_048_038",
+      "Tree_048_044",
+      "Tree_048_045",
+      "Tree_048_046",
+      "Tree_048_047",
+      "Tree_048_048",
+      "Tree_048_049",
+      "Tree_048_050",
+      "Tree_048_051",
+      "Tree_048_052",
+      "Tree_048_053",
+      "Tree_048_054",
+      "Tree_048_055",
+      "Tree_048_056",
+      "Tree_048_057",
+      "Tree_048_058",
+      "Tree_048_061",
+      "Tree_048_062",
+      "Tree_048_063",
+      "Tree_048_064",
+      "Tree_048_065",
+      "Tree_049_006",
+      "Tree_049_013",
+      "Tree_049_015",
+      "Tree_049_027",
+      "Tree_049_030",
+      "Tree_049_031",
+      "Tree_049_032",
+      "Tree_049_033",
+      "Tree_049_034",
+      "Tree_049_035",
+      "Tree_049_036",
+      "Tree_049_037",
+      "Tree_049_038",
+      "Tree_049_044",
+      "Tree_049_045",
+      "Tree_049_046",
+      "Tree_049_047",
+      "Tree_049_048",
+      "Tree_049_049",
+      "Tree_049_050",
+      "Tree_049_051",
+      "Tree_049_052",
+      "Tree_049_053",
+      "Tree_049_054",
+      "Tree_049_055",
+      "Tree_049_056",
+      "Tree_049_057",
+      "Tree_049_058",
+      "Tree_049_059",
+      "Tree_049_060",
+      "Tree_049_062",
+      "Tree_049_063",
+      "Tree_049_064",
+      "Tree_049_065",
+      "Tree_050_013",
+      "Tree_050_029",
+      "Tree_050_030",
+      "Tree_050_031",
+      "Tree_050_032",
+      "Tree_050_033",
+      "Tree_050_034",
+      "Tree_050_035",
+      "Tree_050_036",
+      "Tree_050_037",
+      "Tree_050_038",
+      "Tree_050_039",
+      "Tree_050_046",
+      "Tree_050_047",
+      "Tree_050_048",
+      "Tree_050_049",
+      "Tree_050_050",
+      "Tree_050_051",
+      "Tree_050_052",
+      "Tree_050_053",
+      "Tree_050_054",
+      "Tree_050_055",
+      "Tree_050_056",
+      "Tree_050_057",
+      "Tree_050_058",
+      "Tree_050_059",
+      "Tree_050_060",
+      "Tree_050_063",
+      "Tree_050_064",
+      "Tree_050_065",
+      "Tree_051_013",
+      "Tree_051_028",
+      "Tree_051_029",
+      "Tree_051_030",
+      "Tree_051_031",
+      "Tree_051_032",
+      "Tree_051_033",
+      "Tree_051_034",
+      "Tree_051_035",
+      "Tree_051_036",
+      "Tree_051_037",
+      "Tree_051_038",
+      "Tree_051_039",
+      "Tree_051_040",
+      "Tree_051_041",
+      "Tree_051_047",
+      "Tree_051_048",
+      "Tree_051_049",
+      "Tree_051_050",
+      "Tree_051_051",
+      "Tree_051_052",
+      "Tree_051_053",
+      "Tree_051_054",
+      "Tree_051_055",
+      "Tree_051_056",
+      "Tree_051_057",
+      "Tree_051_058",
+      "Tree_051_059",
+      "Tree_051_060",
+      "Tree_051_061",
+      "Tree_051_062",
+      "Tree_051_064",
+      "Tree_051_065",
+      "Tree_052_013",
+      "Tree_052_030",
+      "Tree_052_031",
+      "Tree_052_032",
+      "Tree_052_033",
+      "Tree_052_034",
+      "Tree_052_035",
+      "Tree_052_036",
+      "Tree_052_037",
+      "Tree_052_038",
+      "Tree_052_039",
+      "Tree_052_040",
+      "Tree_052_047",
+      "Tree_052_048",
+      "Tree_052_049",
+      "Tree_052_050",
+      "Tree_052_051",
+      "Tree_052_052",
+      "Tree_052_053",
+      "Tree_052_054",
+      "Tree_052_055",
+      "Tree_052_056",
+      "Tree_052_057",
+      "Tree_052_058",
+      "Tree_052_059",
+      "Tree_052_060",
+      "Tree_052_061",
+      "Tree_052_062",
+      "Tree_052_064",
+      "Tree_052_065",
+      "Tree_053_021",
+      "Tree_053_022",
+      "Tree_053_023",
+      "Tree_053_024",
+      "Tree_053_028",
+      "Tree_053_029",
+      "Tree_053_031",
+      "Tree_053_032",
+      "Tree_053_033",
+      "Tree_053_034",
+      "Tree_053_035",
+      "Tree_053_036",
+      "Tree_053_037",
+      "Tree_053_038",
+      "Tree_053_041",
+      "Tree_053_047",
+      "Tree_053_048",
+      "Tree_053_049",
+      "Tree_053_050",
+      "Tree_053_051",
+      "Tree_053_052",
+      "Tree_053_053",
+      "Tree_053_054",
+      "Tree_053_055",
+      "Tree_053_056",
+      "Tree_053_057",
+      "Tree_053_058",
+      "Tree_053_059",
+      "Tree_053_060",
+      "Tree_053_061",
+      "Tree_053_062",
+      "Tree_053_063",
+      "Tree_053_065",
+      "Tree_054_017",
+      "Tree_054_021",
+      "Tree_054_022",
+      "Tree_054_023",
+      "Tree_054_024",
+      "Tree_054_025",
+      "Tree_054_030",
+      "Tree_054_032",
+      "Tree_054_034",
+      "Tree_054_035",
+      "Tree_054_036",
+      "Tree_054_037",
+      "Tree_054_038",
+      "Tree_054_046",
+      "Tree_054_047",
+      "Tree_054_048",
+      "Tree_054_049",
+      "Tree_054_050",
+      "Tree_054_051",
+      "Tree_054_052",
+      "Tree_054_053",
+      "Tree_054_054",
+      "Tree_054_055",
+      "Tree_054_056",
+      "Tree_054_057",
+      "Tree_054_058",
+      "Tree_054_059",
+      "Tree_054_060",
+      "Tree_054_061",
+      "Tree_054_062",
+      "Tree_054_063",
+      "Tree_054_064",
+      "Tree_055_017",
+      "Tree_055_019",
+      "Tree_055_021",
+      "Tree_055_022",
+      "Tree_055_023",
+      "Tree_055_024",
+      "Tree_055_025",
+      "Tree_055_030",
+      "Tree_055_034",
+      "Tree_055_035",
+      "Tree_055_036",
+      "Tree_055_037",
+      "Tree_055_038",
+      "Tree_055_045",
+      "Tree_055_046",
+      "Tree_055_049",
+      "Tree_055_050",
+      "Tree_055_051",
+      "Tree_055_052",
+      "Tree_055_053",
+      "Tree_055_054",
+      "Tree_055_055",
+      "Tree_055_056",
+      "Tree_055_057",
+      "Tree_055_058",
+      "Tree_055_059",
+      "Tree_055_060",
+      "Tree_055_061",
+      "Tree_055_062",
+      "Tree_055_063",
+      "Tree_055_064",
+      "Tree_055_065",
+      "Tree_056_019",
+      "Tree_056_022",
+      "Tree_056_023",
+      "Tree_056_024",
+      "Tree_056_025",
+      "Tree_056_035",
+      "Tree_056_036",
+      "Tree_056_039",
+      "Tree_056_040",
+      "Tree_056_045",
+      "Tree_056_046",
+      "Tree_056_047",
+      "Tree_056_048",
+      "Tree_056_050",
+      "Tree_056_051",
+      "Tree_056_052",
+      "Tree_056_053",
+      "Tree_056_054",
+      "Tree_056_055",
+      "Tree_056_056",
+      "Tree_056_057",
+      "Tree_056_058",
+      "Tree_056_059",
+      "Tree_056_060",
+      "Tree_056_061",
+      "Tree_056_062",
+      "Tree_056_063",
+      "Tree_056_064",
+      "Tree_056_065",
+      "Tree_057_014",
+      "Tree_057_015",
+      "Tree_057_018",
+      "Tree_057_019",
+      "Tree_057_020",
+      "Tree_057_023",
+      "Tree_057_024",
+      "Tree_057_025",
+      "Tree_057_026",
+      "Tree_057_027",
+      "Tree_057_035",
+      "Tree_057_036",
+      "Tree_057_039",
+      "Tree_057_040",
+      "Tree_057_045",
+      "Tree_057_046",
+      "Tree_057_047",
+      "Tree_057_048",
+      "Tree_057_049",
+      "Tree_057_051",
+      "Tree_057_052",
+      "Tree_057_053",
+      "Tree_057_054",
+      "Tree_057_055",
+      "Tree_057_056",
+      "Tree_057_057",
+      "Tree_057_058",
+      "Tree_057_059",
+      "Tree_057_060",
+      "Tree_057_061",
+      "Tree_057_062",
+      "Tree_057_063",
+      "Tree_057_064",
+      "Tree_057_065",
+      "Tree_058_019",
+      "Tree_058_020",
+      "Tree_058_022",
+      "Tree_058_023",
+      "Tree_058_024",
+      "Tree_058_025",
+      "Tree_058_026",
+      "Tree_058_027",
+      "Tree_058_028",
+      "Tree_058_038",
+      "Tree_058_039",
+      "Tree_058_040",
+      "Tree_058_041",
+      "Tree_058_045",
+      "Tree_058_046",
+      "Tree_058_047",
+      "Tree_058_048",
+      "Tree_058_049",
+      "Tree_058_050",
+      "Tree_058_052",
+      "Tree_058_053",
+      "Tree_058_054",
+      "Tree_058_055",
+      "Tree_058_056",
+      "Tree_058_057",
+      "Tree_058_058",
+      "Tree_058_059",
+      "Tree_058_060",
+      "Tree_058_061",
+      "Tree_058_062",
+      "Tree_058_063",
+      "Tree_058_064",
+      "Tree_058_065",
+      "Tree_059_016",
+      "Tree_059_020",
+      "Tree_059_021",
+      "Tree_059_022",
+      "Tree_059_023",
+      "Tree_059_025",
+      "Tree_059_026",
+      "Tree_059_027",
+      "Tree_059_028",
+      "Tree_059_036",
+      "Tree_059_037",
+      "Tree_059_038",
+      "Tree_059_039",
+      "Tree_059_040",
+      "Tree_059_041",
+      "Tree_059_045",
+      "Tree_059_046",
+      "Tree_059_047",
+      "Tree_059_048",
+      "Tree_059_049",
+      "Tree_059_050",
+      "Tree_059_051",
+      "Tree_059_053",
+      "Tree_059_054",
+      "Tree_059_055",
+      "Tree_059_056",
+      "Tree_059_057",
+      "Tree_059_058",
+      "Tree_059_059",
+      "Tree_059_060",
+      "Tree_059_061",
+      "Tree_059_062",
+      "Tree_059_063",
+      "Tree_059_064",
+      "Tree_059_065",
+      "Tree_060_017",
+      "Tree_060_020",
+      "Tree_060_022",
+      "Tree_060_023",
+      "Tree_060_025",
+      "Tree_060_026",
+      "Tree_060_027",
+      "Tree_060_028",
+      "Tree_060_029",
+      "Tree_060_037",
+      "Tree_060_038",
+      "Tree_060_039",
+      "Tree_060_040",
+      "Tree_060_041",
+      "Tree_060_046",
+      "Tree_060_047",
+      "Tree_060_048",
+      "Tree_060_049",
+      "Tree_060_050",
+      "Tree_060_051",
+      "Tree_060_052",
+      "Tree_060_055",
+      "Tree_060_056",
+      "Tree_060_057",
+      "Tree_060_058",
+      "Tree_060_059",
+      "Tree_060_060",
+      "Tree_060_061",
+      "Tree_060_062",
+      "Tree_060_063",
+      "Tree_060_064",
+      "Tree_060_065",
+      "Tree_061_021",
+      "Tree_061_022",
+      "Tree_061_023",
+      "Tree_061_024",
+      "Tree_061_026",
+      "Tree_061_027",
+      "Tree_061_028",
+      "Tree_061_029",
+      "Tree_061_035",
+      "Tree_061_038",
+      "Tree_061_039",
+      "Tree_061_040",
+      "Tree_061_041",
+      "Tree_061_045",
+      "Tree_061_046",
+      "Tree_061_047",
+      "Tree_061_048",
+      "Tree_061_049",
+      "Tree_061_050",
+      "Tree_061_051",
+      "Tree_061_052",
+      "Tree_061_053",
+      "Tree_061_055",
+      "Tree_061_056",
+      "Tree_061_057",
+      "Tree_061_058",
+      "Tree_061_059",
+      "Tree_061_060",
+      "Tree_061_061",
+      "Tree_061_062",
+      "Tree_061_063",
+      "Tree_061_064",
+      "Tree_061_065",
+      "Tree_062_021",
+      "Tree_062_022",
+      "Tree_062_023",
+      "Tree_062_024",
+      "Tree_062_025",
+      "Tree_062_027",
+      "Tree_062_028",
+      "Tree_062_029",
+      "Tree_062_030",
+      "Tree_062_034",
+      "Tree_062_035",
+      "Tree_062_036",
+      "Tree_062_037",
+      "Tree_062_039",
+      "Tree_062_040",
+      "Tree_062_041",
+      "Tree_062_042",
+      "Tree_062_043",
+      "Tree_062_045",
+      "Tree_062_046",
+      "Tree_062_047",
+      "Tree_062_048",
+      "Tree_062_049",
+      "Tree_062_050",
+      "Tree_062_051",
+      "Tree_062_052",
+      "Tree_062_053",
+      "Tree_062_054",
+      "Tree_062_056",
+      "Tree_062_057",
+      "Tree_062_058",
+      "Tree_062_059",
+      "Tree_062_060",
+      "Tree_062_061",
+      "Tree_062_062",
+      "Tree_062_063",
+      "Tree_062_064",
+      "Tree_062_065",
+      "Tree_063_019",
+      "Tree_063_020",
+      "Tree_063_021",
+      "Tree_063_022",
+      "Tree_063_023",
+      "Tree_063_024",
+      "Tree_063_025",
+      "Tree_063_029",
+      "Tree_063_030",
+      "Tree_063_032",
+      "Tree_063_034",
+      "Tree_063_035",
+      "Tree_063_036",
+      "Tree_063_037",
+      "Tree_063_040",
+      "Tree_063_041",
+      "Tree_063_042",
+      "Tree_063_043",
+      "Tree_063_044",
+      "Tree_063_045",
+      "Tree_063_046",
+      "Tree_063_047",
+      "Tree_063_048",
+      "Tree_063_049",
+      "Tree_063_050",
+      "Tree_063_051",
+      "Tree_063_052",
+      "Tree_063_053",
+      "Tree_063_054",
+      "Tree_063_056",
+      "Tree_063_059",
+      "Tree_063_060",
+      "Tree_063_061",
+      "Tree_063_062",
+      "Tree_063_063",
+      "Tree_063_064",
+      "Tree_063_065",
+      "Tree_064_020",
+      "Tree_064_021",
+      "Tree_064_022",
+      "Tree_064_023",
+      "Tree_064_024",
+      "Tree_064_025",
+      "Tree_064_026",
+      "Tree_064_027",
+      "Tree_064_028",
+      "Tree_064_030",
+      "Tree_064_031",
+      "Tree_064_032",
+      "Tree_064_033",
+      "Tree_064_034",
+      "Tree_064_035",
+      "Tree_064_036",
+      "Tree_064_037",
+      "Tree_064_038",
+      "Tree_064_039",
+      "Tree_064_040",
+      "Tree_064_042",
+      "Tree_064_043",
+      "Tree_064_044",
+      "Tree_064_045",
+      "Tree_064_046",
+      "Tree_064_047",
+      "Tree_064_048",
+      "Tree_064_049",
+      "Tree_064_050",
+      "Tree_064_051",
+      "Tree_064_052",
+      "Tree_064_053",
+      "Tree_064_054",
+      "Tree_064_055",
+      "Tree_064_056",
+      "Tree_064_057",
+      "Tree_064_058",
+      "Tree_064_061",
+      "Tree_064_062",
+      "Tree_064_063",
+      "Tree_064_064",
+      "Tree_064_065",
+      "Tree_065_022",
+      "Tree_065_023",
+      "Tree_065_024",
+      "Tree_065_025",
+      "Tree_065_026",
+      "Tree_065_027",
+      "Tree_065_028",
+      "Tree_065_031",
+      "Tree_065_032",
+      "Tree_065_033",
+      "Tree_065_034",
+      "Tree_065_035",
+      "Tree_065_036",
+      "Tree_065_037",
+      "Tree_065_038",
+      "Tree_065_039",
+      "Tree_065_040",
+      "Tree_065_041",
+      "Tree_065_042",
+      "Tree_065_043",
+      "Tree_065_044",
+      "Tree_065_045",
+      "Tree_065_046",
+      "Tree_065_047",
+      "Tree_065_048",
+      "Tree_065_049",
+      "Tree_065_050",
+      "Tree_065_051",
+      "Tree_065_052",
+      "Tree_065_053",
+      "Tree_065_054",
+      "Tree_065_055",
+      "Tree_065_056",
+      "Tree_065_057",
+      "Tree_065_058",
+      "Tree_065_059",
+      "Tree_065_061",
+      "Tree_065_062",
+      "Tree_065_063",
+      "Tree_065_064",
+      "Tree_065_065"
+    ],
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "cellMetres": 0.5,
+    "width": 1152,
+    "height": 1152,
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express this region's 0-129 m relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+    },
+    "walkableCells": 975577,
+    "walkableFraction": 0.7351
   },
   "navigation": {
     "surfaceNodePrefixes": [
-      "Terrain_"
+      "Terrain_",
+      "Walk_"
     ],
+    "walkableAreas": [
+      "jungle-floor",
+      "trails",
+      "terrace-paving",
+      "mossy-terraces",
+      "strand",
+      "fern-glade",
+      "stairs",
+      "bridges",
+      "walkways",
+      "platforms",
+      "quays"
+    ],
+    "agentRadius": 0.55,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 40,
     "navmesh": {
       "format": "surface-prefix-v1",
       "polygons": []
+    },
+    "notes": [
+      "Every terrain sub-mesh is named Terrain_<class>; every authored walkable surface is named Walk_<...>. The client turns both into the navigation collision layer the grounding ray tests against.",
+      "Structural geometry - terrace retaining walls, temple mass, arcade piers, tree trunks - is deliberately not a walk surface, so the grounding ray never snaps an actor onto a roof or the top of a wall.",
+      "The stair is terraced, so cliff risers are steep by design and appear as GROUNDING_DISCONTINUITY warnings wherever a terrace meets the one below it."
+    ]
+  },
+  "landmarks": [
+    {
+      "id": "grand-stair",
+      "name": "The Grand Stair",
+      "node": "Landmark_GrandStair",
+      "type": "monument",
+      "position": [
+        -3.0,
+        24.0,
+        -21.0
+      ],
+      "serverTile": [
+        171,
+        195
+      ],
+      "terrace": "lower",
+      "note": "board panel 2"
+    },
+    {
+      "id": "quay-climb",
+      "name": "Quay Stair",
+      "node": "Landmark_Stair_quay_climb",
+      "type": "monument",
+      "position": [
+        -64.5,
+        -0.46,
+        88.5
+      ],
+      "serverTile": [
+        110,
+        86
+      ],
+      "terrace": "riser"
+    },
+    {
+      "id": "lower-climb",
+      "name": "Lower Stair",
+      "node": "Landmark_Stair_lower_climb",
+      "type": "monument",
+      "position": [
+        -15.0,
+        7.36,
+        63.0
+      ],
+      "serverTile": [
+        159,
+        111
+      ],
+      "terrace": "riser"
+    },
+    {
+      "id": "shrine-climb",
+      "name": "Upper Stair",
+      "node": "Landmark_Stair_shrine_climb",
+      "type": "monument",
+      "position": [
+        49.5,
+        46.94,
+        -121.5
+      ],
+      "serverTile": [
+        224,
+        296
+      ],
+      "terrace": "riser"
+    },
+    {
+      "id": "temple-climb",
+      "name": "Temple Stair",
+      "node": "Landmark_Stair_temple_climb",
+      "type": "monument",
+      "position": [
+        160.5,
+        79.72,
+        -160.5
+      ],
+      "serverTile": [
+        334,
+        334
+      ],
+      "terrace": "riser"
+    },
+    {
+      "id": "summit-climb",
+      "name": "Summit Stair",
+      "node": "Landmark_Stair_summit_climb",
+      "type": "monument",
+      "position": [
+        304.5,
+        123.64,
+        -184.5
+      ],
+      "serverTile": [
+        478,
+        358
+      ],
+      "terrace": "riser"
+    },
+    {
+      "id": "great-temple",
+      "name": "The Green Temple",
+      "node": "Landmark_GreatTemple",
+      "type": "monument",
+      "position": [
+        210.0,
+        100.0,
+        -198.0
+      ],
+      "serverTile": [
+        384,
+        372
+      ],
+      "terrace": "temple",
+      "note": "aerial concept, upper right"
+    },
+    {
+      "id": "water-shrine",
+      "name": "The Water Shrine",
+      "node": "Landmark_WaterShrine",
+      "type": "shrine",
+      "position": [
+        114.0,
+        72.0,
+        -150.0
+      ],
+      "serverTile": [
+        288,
+        324
+      ],
+      "terrace": "upper",
+      "note": "board panel 7"
+    },
+    {
+      "id": "cenote",
+      "name": "The Green Cenote",
+      "node": "Landmark_CenoteStair",
+      "type": "landing",
+      "position": [
+        -4.58,
+        46.0,
+        -95.29
+      ],
+      "serverTile": [
+        169,
+        269
+      ],
+      "terrace": "middle",
+      "note": "board panel 3"
+    },
+    {
+      "id": "aqueduct",
+      "name": "The Upper Aqueduct",
+      "node": "Landmark_Aqueduct",
+      "type": "bridge",
+      "position": [
+        -57.0,
+        73.5,
+        -345.0
+      ],
+      "serverTile": [
+        117,
+        519
+      ],
+      "terrace": "upper",
+      "note": "aerial concept, upper left"
+    },
+    {
+      "id": "sun-pavilion",
+      "name": "The Sun Pavilion",
+      "node": "Landmark_SunPavilion",
+      "type": "pavilion",
+      "position": [
+        186.0,
+        100.0,
+        -246.0
+      ],
+      "serverTile": [
+        360,
+        420
+      ],
+      "terrace": "temple"
+    },
+    {
+      "id": "east-lookout",
+      "name": "The East Lookout",
+      "node": "Landmark_EastLookout",
+      "type": "pavilion",
+      "position": [
+        51.0,
+        46.0,
+        -99.0
+      ],
+      "serverTile": [
+        225,
+        273
+      ],
+      "terrace": "middle"
+    },
+    {
+      "id": "upper-court",
+      "name": "The Upper Court",
+      "node": "Landmark_UpperCourt",
+      "type": "pavilion",
+      "position": [
+        156.0,
+        72.0,
+        -84.0
+      ],
+      "serverTile": [
+        330,
+        258
+      ],
+      "terrace": "upper"
+    },
+    {
+      "id": "ridge-shrine",
+      "name": "The Ridge Shrine",
+      "node": "Landmark_RidgeShrine",
+      "type": "pavilion",
+      "position": [
+        312.0,
+        124.0,
+        -204.0
+      ],
+      "serverTile": [
+        486,
+        378
+      ],
+      "terrace": "summit"
+    },
+    {
+      "id": "summit-watch",
+      "name": "The Cloud Watch",
+      "node": "Landmark_SummitWatch",
+      "type": "pavilion",
+      "position": [
+        234.0,
+        124.0,
+        -318.0
+      ],
+      "serverTile": [
+        408,
+        492
+      ],
+      "terrace": "summit"
+    },
+    {
+      "id": "south-quay",
+      "name": "The South Quay Pavilion",
+      "node": "Landmark_SouthQuay",
+      "type": "pavilion",
+      "position": [
+        204.0,
+        46.0,
+        120.0
+      ],
+      "serverTile": [
+        378,
+        54
+      ],
+      "terrace": "middle"
+    },
+    {
+      "id": "hanging-gardens",
+      "name": "The Hanging Gardens",
+      "node": "Landmark_HangingGardens",
+      "type": "pavilion",
+      "position": [
+        183.0,
+        72.0,
+        -27.0
+      ],
+      "serverTile": [
+        357,
+        201
+      ],
+      "terrace": "upper"
+    },
+    {
+      "id": "quay-market",
+      "name": "The Quay Pavilion",
+      "node": "Landmark_QuayMarket",
+      "type": "pavilion",
+      "position": [
+        -45.0,
+        7.0,
+        69.0
+      ],
+      "serverTile": [
+        129,
+        105
+      ],
+      "terrace": "quay"
+    },
+    {
+      "id": "old-terrace",
+      "name": "The Reclaimed Terrace",
+      "node": "Ruin_old_terrace_00",
+      "type": "ruin",
+      "position": [
+        36.0,
+        72.0,
+        -240.0
+      ],
+      "serverTile": [
+        210,
+        414
+      ],
+      "terrace": "upper"
+    },
+    {
+      "id": "stone-ring",
+      "name": "The Standing Ring",
+      "node": "Ruin_stone_ring_00",
+      "type": "ruin",
+      "position": [
+        -102.0,
+        72.0,
+        -330.0
+      ],
+      "serverTile": [
+        72,
+        504
+      ],
+      "terrace": "upper"
+    },
+    {
+      "id": "boundary-shrine",
+      "name": "The Marchstone Shrine",
+      "node": "Ruin_boundary_shrine_00",
+      "type": "ruin",
+      "position": [
+        324.0,
+        124.0,
+        -276.0
+      ],
+      "serverTile": [
+        498,
+        450
+      ],
+      "terrace": "summit"
+    },
+    {
+      "id": "boat-landing",
+      "name": "The Boat Landing",
+      "node": "Landmark_Quay",
+      "type": "landing",
+      "position": [
+        -105.0,
+        0.4,
+        69.0
+      ],
+      "serverTile": [
+        69,
+        105
+      ],
+      "terrace": "strand",
+      "note": "board panel 1"
+    },
+    {
+      "id": "waygate",
+      "name": "The Verdant Stair Waygate",
+      "node": "Landmark_Waygate",
+      "type": "transition",
+      "position": [
+        0.0,
+        24.0,
+        0.0
+      ],
+      "serverTile": [
+        174,
+        174
+      ],
+      "terrace": "lower",
+      "note": "server interactives.txt node 12"
+    },
+    {
+      "id": "root-crossing",
+      "name": "The Root Crossing",
+      "node": "Landmark_Crossing_RootCrossing",
+      "type": "bridge",
+      "position": [
+        90.0,
+        47.68,
+        -54.0
+      ],
+      "serverTile": [
+        264,
+        228
+      ],
+      "terrace": "middle",
+      "note": "board panel 4"
+    },
+    {
+      "id": "rope-crossing-low",
+      "name": "Rope Crossing",
+      "node": "Landmark_Crossing_RopeCrossingLow",
+      "type": "bridge",
+      "position": [
+        132.0,
+        73.66,
+        -24.0
+      ],
+      "serverTile": [
+        306,
+        198
+      ],
+      "terrace": "middle",
+      "note": "board panel 5"
+    },
+    {
+      "id": "rope-crossing-high",
+      "name": "Rope Crossing",
+      "node": "Landmark_Crossing_RopeCrossingHigh",
+      "type": "bridge",
+      "position": [
+        201.0,
+        71.76,
+        3.0
+      ],
+      "serverTile": [
+        375,
+        171
+      ],
+      "terrace": "upper",
+      "note": "board panel 5"
+    },
+    {
+      "id": "ravine-bridge",
+      "name": "Rope Crossing",
+      "node": "Landmark_Crossing_RavineBridge",
+      "type": "bridge",
+      "position": [
+        -159.0,
+        45.24,
+        -201.0
+      ],
+      "serverTile": [
+        15,
+        375
+      ],
+      "terrace": "middle",
+      "note": "board panel 5"
+    },
+    {
+      "id": "vine-bridge-north",
+      "name": "Rope Crossing",
+      "node": "Landmark_Crossing_VineBridgeNorth",
+      "type": "bridge",
+      "position": [
+        -66.0,
+        74.91,
+        -330.0
+      ],
+      "serverTile": [
+        108,
+        504
+      ],
+      "terrace": "upper",
+      "note": "board panel 5"
+    },
+    {
+      "id": "canopy-village",
+      "name": "The Canopy Village",
+      "node": "Hut_Village_00",
+      "type": "settlement",
+      "position": [
+        -66.0,
+        46.0,
+        -126.0
+      ],
+      "serverTile": [
+        108,
+        300
+      ],
+      "terrace": "middle",
+      "note": "board panel 6"
+    },
+    {
+      "id": "stair-house",
+      "name": "The Stairhouse",
+      "node": "Building_TownHall",
+      "type": "civic",
+      "position": [
+        13.0,
+        24.0,
+        -13.0
+      ],
+      "serverTile": [
+        187,
+        187
+      ],
+      "terrace": "riser"
+    },
+    {
+      "id": "herbalist",
+      "name": "Tessara's Physick Garden",
+      "node": "Building_Herbalist",
+      "type": "guild",
+      "position": [
+        -24.0,
+        24.0,
+        0.0
+      ],
+      "serverTile": [
+        150,
+        174
+      ],
+      "terrace": "lower",
+      "note": "server config/eloria/npcs.txt"
+    },
+    {
+      "id": "provisioner",
+      "name": "Orru Moss, Provisioner",
+      "node": "Building_Provisioner",
+      "type": "guild",
+      "position": [
+        9.0,
+        24.0,
+        3.0
+      ],
+      "serverTile": [
+        183,
+        171
+      ],
+      "terrace": "lower",
+      "note": "server config/eloria/npcs.txt"
+    },
+    {
+      "id": "fern-camp",
+      "name": "Fern Camp",
+      "node": "Hut_fern_camp_00",
+      "type": "camp",
+      "position": [
+        -132.0,
+        46.0,
+        -180.0
+      ],
+      "serverTile": [
+        42,
+        354
+      ],
+      "terrace": "middle"
+    },
+    {
+      "id": "high-camp",
+      "name": "High Camp",
+      "node": "Hut_high_camp_00",
+      "type": "camp",
+      "position": [
+        252.0,
+        100.0,
+        -192.0
+      ],
+      "serverTile": [
+        426,
+        366
+      ],
+      "terrace": "temple"
+    },
+    {
+      "id": "kiln-yard",
+      "name": "Kiln Yard",
+      "node": "Hut_kiln_yard_00",
+      "type": "camp",
+      "position": [
+        330.0,
+        124.0,
+        -174.0
+      ],
+      "serverTile": [
+        504,
+        348
+      ],
+      "terrace": "summit"
+    },
+    {
+      "id": "north-pass",
+      "name": "North Pass",
+      "node": "Hut_north_pass_00",
+      "type": "camp",
+      "position": [
+        144.0,
+        124.0,
+        -396.0
+      ],
+      "serverTile": [
+        318,
+        570
+      ],
+      "terrace": "summit"
+    },
+    {
+      "id": "strand-camp",
+      "name": "Strand Camp",
+      "node": "Hut_strand_camp_00",
+      "type": "camp",
+      "position": [
+        -42.0,
+        0.4,
+        126.0
+      ],
+      "serverTile": [
+        132,
+        48
+      ],
+      "terrace": "strand"
+    },
+    {
+      "id": "south-watch",
+      "name": "South Watch",
+      "node": "Hut_south_watch_00",
+      "type": "camp",
+      "position": [
+        174.0,
+        46.0,
+        66.0
+      ],
+      "serverTile": [
+        348,
+        108
+      ],
+      "terrace": "middle"
+    },
+    {
+      "id": "north-watch",
+      "name": "North Watch",
+      "node": "Hut_north_watch_00",
+      "type": "camp",
+      "position": [
+        12.0,
+        72.0,
+        -276.0
+      ],
+      "serverTile": [
+        186,
+        450
+      ],
+      "terrace": "upper"
+    },
+    {
+      "id": "quarry",
+      "name": "Quarry",
+      "node": "Hut_quarry_00",
+      "type": "camp",
+      "position": [
+        354.0,
+        124.0,
+        -174.0
+      ],
+      "serverTile": [
+        528,
+        348
+      ],
+      "terrace": "summit"
+    }
+  ],
+  "interactives": [
+    {
+      "id": "portal-12",
+      "type": "portal",
+      "name": "Verdant Stair Waygate",
+      "position": [
+        0.0,
+        24.0,
+        0.0
+      ],
+      "serverTile": [
+        174,
+        174
+      ],
+      "radius": 2.0,
+      "source": "server config/eloria/interactives.txt",
+      "authority": "server"
+    },
+    {
+      "id": "information-13",
+      "type": "information",
+      "name": "Region Board",
+      "position": [
+        6.0,
+        24.0,
+        -12.0
+      ],
+      "serverTile": [
+        180,
+        186
+      ],
+      "radius": 2.0,
+      "source": "server config/eloria/interactives.txt",
+      "authority": "server"
+    },
+    {
+      "id": "storage-14",
+      "type": "storage",
+      "name": "Wayfarer's Cache",
+      "position": [
+        18.0,
+        24.0,
+        -12.0
+      ],
+      "serverTile": [
+        192,
+        186
+      ],
+      "radius": 2.0,
+      "source": "server config/eloria/interactives.txt",
+      "authority": "server"
+    },
+    {
+      "id": "crafting_station-15",
+      "type": "crafting_station",
+      "name": "Field Station",
+      "position": [
+        36.0,
+        45.02,
+        -12.0
+      ],
+      "serverTile": [
+        210,
+        186
+      ],
+      "radius": 2.0,
+      "source": "server config/eloria/interactives.txt",
+      "authority": "server"
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "tessara",
+      "name": "Tessara",
+      "type": "npc",
+      "role": "dialogue",
+      "position": [
+        -18.0,
+        24.0,
+        -6.0
+      ],
+      "serverTile": [
+        156,
+        180
+      ],
+      "source": "server config/eloria/npcs.txt",
+      "authority": "server"
+    },
+    {
+      "id": "orru-moss",
+      "name": "Orru Moss",
+      "type": "npc",
+      "role": "shop",
+      "position": [
+        18.0,
+        24.0,
+        -6.0
+      ],
+      "serverTile": [
+        192,
+        180
+      ],
+      "source": "server config/eloria/npcs.txt",
+      "authority": "server"
+    },
+    {
+      "id": "canopy_glider",
+      "type": "creature-group",
+      "group": "canopy-fauna",
+      "centre": [
+        -36.0,
+        5.22,
+        106.0
+      ],
+      "radius": 90.4,
+      "positions": [
+        [
+          -114.0,
+          -13.96,
+          114.0
+        ],
+        [
+          -48.0,
+          6.03,
+          90.0
+        ],
+        [
+          54.0,
+          23.59,
+          114.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "cenote_toader",
+      "type": "creature-group",
+      "group": "water-fauna",
+      "centre": [
+        0.0,
+        22.26,
+        46.0
+      ],
+      "radius": 134.5,
+      "positions": [
+        [
+          132.0,
+          45.85,
+          72.0
+        ],
+        [
+          -102.0,
+          6.94,
+          24.0
+        ],
+        [
+          -30.0,
+          13.98,
+          42.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "emerald_basilisk",
+      "type": "creature-group",
+      "group": "understory-hostile",
+      "centre": [
+        -102.0,
+        0.73,
+        58.0
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          -102.0,
+          0.73,
+          58.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "leaf_mantis",
+      "type": "creature-group",
+      "group": "understory-fauna",
+      "centre": [
+        -46.0,
+        6.55,
+        102.0
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          -46.0,
+          6.55,
+          102.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "dartback_treefrog",
+      "type": "creature-group",
+      "group": "understory-fauna",
+      "centre": [
+        -30.0,
+        5.85,
+        102.0
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          -30.0,
+          5.85,
+          102.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "plumefire_hummingbird",
+      "type": "creature-group",
+      "group": "canopy-fauna",
+      "centre": [
+        6.0,
+        5.83,
+        102.0
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          6.0,
+          5.83,
+          102.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "vinecoil_snake",
+      "type": "creature-group",
+      "group": "understory-hostile",
+      "centre": [
+        42.0,
+        23.83,
+        102.0
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          42.0,
+          23.83,
+          102.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "canopy_lynx",
+      "type": "creature-group",
+      "group": "canopy-fauna",
+      "centre": [
+        78.0,
+        23.49,
+        102.0
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          78.0,
+          23.49,
+          102.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "mossback_anteater",
+      "type": "creature-group",
+      "group": "understory-fauna",
+      "centre": [
+        114.0,
+        28.51,
+        102.0
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          114.0,
+          28.51,
+          102.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "bloomtail_axolotl",
+      "type": "creature-group",
+      "group": "water-fauna",
+      "centre": [
+        150.0,
+        45.11,
+        102.0
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          150.0,
+          45.11,
+          102.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "canopy_gorilla",
+      "type": "creature-group",
+      "group": "canopy-fauna",
+      "centre": [
+        186.0,
+        45.99,
+        102.0
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          186.0,
+          45.99,
+          102.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "vine_treant",
+      "type": "creature-group",
+      "group": "deep-jungle-hostile",
+      "centre": [
+        222.0,
+        47.52,
+        102.0
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          222.0,
+          47.52,
+          102.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "verdant_naiad",
+      "type": "creature-group",
+      "group": "water-hostile",
+      "centre": [
+        -97.41,
+        6.39,
+        54.91
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          -97.41,
+          6.39,
+          54.91
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    },
+    {
+      "id": "verdant_stair_dragon",
+      "type": "creature-group",
+      "group": "region-boss",
+      "centre": [
+        -66.0,
+        6.39,
+        66.0
+      ],
+      "radius": 8.0,
+      "positions": [
+        [
+          -66.0,
+          6.39,
+          66.0
+        ]
+      ],
+      "source": "server config/eloria/spawns.txt",
+      "authority": "server"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "delta-lotus-01",
+      "resource": "Delta Lotus",
+      "category": "reagent",
+      "serverNode": 45,
+      "position": [
+        -33.0,
+        23.18,
+        0.0
+      ],
+      "serverTile": [
+        141,
+        174
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "delta-lotus-02",
+      "resource": "Delta Lotus",
+      "category": "reagent",
+      "serverNode": 46,
+      "position": [
+        -102.0,
+        23.76,
+        -117.0
+      ],
+      "serverTile": [
+        72,
+        291
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "ghost-orchid-03",
+      "resource": "Ghost Orchid",
+      "category": "reagent",
+      "serverNode": 47,
+      "position": [
+        -123.0,
+        6.92,
+        -6.0
+      ],
+      "serverTile": [
+        51,
+        180
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "ghost-orchid-04",
+      "resource": "Ghost Orchid",
+      "category": "reagent",
+      "serverNode": 48,
+      "position": [
+        78.0,
+        46.99,
+        -63.0
+      ],
+      "serverTile": [
+        252,
+        237
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "ssarathi-scale-moss-05",
+      "resource": "Ssarathi Scale Moss",
+      "category": "reagent",
+      "serverNode": 49,
+      "position": [
+        141.0,
+        72.73,
+        -36.0
+      ],
+      "serverTile": [
+        315,
+        210
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "ssarathi-scale-moss-06",
+      "resource": "Ssarathi Scale Moss",
+      "category": "reagent",
+      "serverNode": 50,
+      "position": [
+        89.54,
+        41.63,
+        -6.7
+      ],
+      "serverTile": [
+        264,
+        181
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "verdant-venom-bulb-07",
+      "resource": "Verdant Venom Bulb",
+      "category": "reagent",
+      "serverNode": 51,
+      "position": [
+        -27.0,
+        46.0,
+        -114.0
+      ],
+      "serverTile": [
+        147,
+        288
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "verdant-venom-bulb-08",
+      "resource": "Verdant Venom Bulb",
+      "category": "reagent",
+      "serverNode": 52,
+      "position": [
+        48.0,
+        46.0,
+        -69.0
+      ],
+      "serverTile": [
+        222,
+        243
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-09",
+      "resource": "Wayside Sage",
+      "category": "reagent",
+      "serverNode": 53,
+      "position": [
+        -9.0,
+        5.12,
+        138.0
+      ],
+      "serverTile": [
+        165,
+        36
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-10",
+      "resource": "Wayside Sage",
+      "category": "reagent",
+      "serverNode": 54,
+      "position": [
+        -126.46,
+        5.79,
+        -90.7
+      ],
+      "serverTile": [
+        48,
+        265
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "wayside-sage-11",
+      "resource": "Wayside Sage",
+      "category": "reagent",
+      "serverNode": 55,
+      "position": [
+        -111.0,
+        0.57,
+        48.0
+      ],
+      "serverTile": [
+        63,
+        126
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "hearthroot-12",
+      "resource": "Hearthroot",
+      "category": "reagent",
+      "serverNode": 56,
+      "position": [
+        -46.89,
+        6.07,
+        103.89
+      ],
+      "serverTile": [
+        127,
+        70
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "hearthroot-13",
+      "resource": "Hearthroot",
+      "category": "reagent",
+      "serverNode": 57,
+      "position": [
+        -69.0,
+        7.0,
+        30.0
+      ],
+      "serverTile": [
+        105,
+        144
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "hearthroot-14",
+      "resource": "Hearthroot",
+      "category": "reagent",
+      "serverNode": 58,
+      "position": [
+        126.0,
+        45.4,
+        -3.0
+      ],
+      "serverTile": [
+        300,
+        177
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "lantern-cap-15",
+      "resource": "Lantern Cap",
+      "category": "reagent",
+      "serverNode": 59,
+      "position": [
+        87.0,
+        31.38,
+        -36.0
+      ],
+      "serverTile": [
+        261,
+        210
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "lantern-cap-16",
+      "resource": "Lantern Cap",
+      "category": "reagent",
+      "serverNode": 60,
+      "position": [
+        114.0,
+        46.46,
+        75.0
+      ],
+      "serverTile": [
+        288,
+        99
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "pale-quartz-17",
+      "resource": "Pale Quartz",
+      "category": "mineral",
+      "serverNode": 61,
+      "position": [
+        33.0,
+        24.22,
+        6.0
+      ],
+      "serverTile": [
+        207,
+        168
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "pale-quartz-18",
+      "resource": "Pale Quartz",
+      "category": "mineral",
+      "serverNode": 62,
+      "position": [
+        72.0,
+        23.64,
+        105.0
+      ],
+      "serverTile": [
+        246,
+        69
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "pale-quartz-19",
+      "resource": "Pale Quartz",
+      "category": "mineral",
+      "serverNode": 63,
+      "position": [
+        -93.0,
+        24.28,
+        -36.0
+      ],
+      "serverTile": [
+        81,
+        210
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "cenote-watercress-20",
+      "resource": "Cenote Watercress",
+      "category": "reagent",
+      "serverNode": 64,
+      "position": [
+        102.0,
+        24.0,
+        129.0
+      ],
+      "serverTile": [
+        276,
+        45
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "cenote-watercress-21",
+      "resource": "Cenote Watercress",
+      "category": "reagent",
+      "serverNode": 65,
+      "position": [
+        123.0,
+        73.61,
+        -66.0
+      ],
+      "serverTile": [
+        297,
+        240
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    },
+    {
+      "id": "cenote-watercress-22",
+      "resource": "Cenote Watercress",
+      "category": "reagent",
+      "serverNode": 66,
+      "position": [
+        -42.0,
+        6.58,
+        105.0
+      ],
+      "serverTile": [
+        132,
+        69
+      ],
+      "source": "server config/eloria/harvesting.txt",
+      "authority": "server"
+    }
+  ],
+  "portals": [
+    {
+      "id": "west-quay-gate",
+      "name": "Westhaven Packet",
+      "type": "map-transition",
+      "position": [
+        -168.0,
+        0.5,
+        0.0
+      ],
+      "serverTile": [
+        6,
+        174
+      ],
+      "destinationMap": "maps/nymara/westhaven.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "east-pass-gate",
+      "name": "Ssarathi Pass",
+      "type": "map-transition",
+      "position": [
+        390.0,
+        124.1,
+        -150.0
+      ],
+      "serverTile": [
+        564,
+        324
+      ],
+      "destinationMap": "maps/nymara/ssarathi_ruins.elm",
+      "radius": 3.5,
+      "authority": "server"
+    }
+  ],
+  "roads": [
+    {
+      "id": "strand_path",
+      "waypoints": [
+        [
+          0.0,
+          0.4,
+          168.0
+        ],
+        [
+          -42.0,
+          0.4,
+          126.0
+        ],
+        [
+          -75.0,
+          -2.6,
+          99.0
+        ],
+        [
+          -105.0,
+          0.4,
+          69.0
+        ],
+        [
+          -168.0,
+          0.4,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "quay_climb",
+      "waypoints": [
+        [
+          -105.0,
+          0.4,
+          69.0
+        ],
+        [
+          -87.0,
+          -1.22,
+          75.0
+        ],
+        [
+          -64.5,
+          -0.46,
+          88.5
+        ],
+        [
+          -78.0,
+          5.05,
+          66.0
+        ],
+        [
+          -87.0,
+          7.0,
+          39.0
+        ]
+      ]
+    },
+    {
+      "id": "quay_road",
+      "waypoints": [
+        [
+          -132.0,
+          -5.31,
+          -36.0
+        ],
+        [
+          -87.0,
+          7.0,
+          39.0
+        ],
+        [
+          -45.0,
+          7.0,
+          69.0
+        ],
+        [
+          -6.0,
+          0.65,
+          126.0
+        ]
+      ]
+    },
+    {
+      "id": "lower_climb",
+      "waypoints": [
+        [
+          -45.0,
+          7.0,
+          69.0
+        ],
+        [
+          -43.5,
+          5.15,
+          43.5
+        ],
+        [
+          -15.0,
+          7.36,
+          63.0
+        ],
+        [
+          -36.0,
+          17.26,
+          36.0
+        ],
+        [
+          0.0,
+          17.12,
+          36.0
+        ],
+        [
+          0.0,
+          24.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "lower_ring",
+      "waypoints": [
+        [
+          -63.0,
+          24.0,
+          -9.0
+        ],
+        [
+          0.0,
+          24.0,
+          0.0
+        ],
+        [
+          6.0,
+          24.0,
+          -6.0
+        ],
+        [
+          36.0,
+          24.0,
+          36.0
+        ],
+        [
+          66.0,
+          24.0,
+          78.0
+        ],
+        [
+          99.0,
+          24.65,
+          105.0
+        ],
+        [
+          108.0,
+          24.0,
+          132.0
+        ]
+      ]
+    },
+    {
+      "id": "grand_stair",
+      "waypoints": [
+        [
+          6.0,
+          24.0,
+          -6.0
+        ],
+        [
+          -3.0,
+          24.0,
+          -21.0
+        ],
+        [
+          -1.5,
+          24.0,
+          -28.5
+        ],
+        [
+          -3.0,
+          46.0,
+          -36.0
+        ],
+        [
+          1.5,
+          46.0,
+          -37.5
+        ],
+        [
+          9.0,
+          46.0,
+          -45.0
+        ]
+      ]
+    },
+    {
+      "id": "middle_ring",
+      "waypoints": [
+        [
+          -66.0,
+          46.0,
+          -126.0
+        ],
+        [
+          -36.0,
+          46.0,
+          -108.0
+        ],
+        [
+          9.0,
+          46.0,
+          -45.0
+        ],
+        [
+          6.0,
+          46.0,
+          -90.0
+        ],
+        [
+          48.0,
+          46.0,
+          -72.0
+        ],
+        [
+          51.0,
+          46.0,
+          -99.0
+        ],
+        [
+          90.0,
+          31.1,
+          -54.0
+        ]
+      ]
+    },
+    {
+      "id": "cenote_path",
+      "waypoints": [
+        [
+          6.0,
+          46.0,
+          -90.0
+        ],
+        [
+          -18.0,
+          27.25,
+          -102.0
+        ]
+      ]
+    },
+    {
+      "id": "village_path",
+      "waypoints": [
+        [
+          -36.0,
+          46.0,
+          -108.0
+        ],
+        [
+          -66.0,
+          46.0,
+          -126.0
+        ],
+        [
+          -99.0,
+          45.92,
+          -165.0
+        ],
+        [
+          -132.0,
+          45.84,
+          -180.0
+        ]
+      ]
+    },
+    {
+      "id": "shrine_climb",
+      "waypoints": [
+        [
+          48.0,
+          46.0,
+          -72.0
+        ],
+        [
+          64.5,
+          46.68,
+          -100.5
+        ],
+        [
+          49.5,
+          46.94,
+          -121.5
+        ],
+        [
+          64.5,
+          58.02,
+          -112.5
+        ],
+        [
+          90.0,
+          70.32,
+          -162.0
+        ],
+        [
+          114.0,
+          72.0,
+          -150.0
+        ]
+      ]
+    },
+    {
+      "id": "upper_ring",
+      "waypoints": [
+        [
+          -84.0,
+          72.0,
+          -372.0
+        ],
+        [
+          75.0,
+          72.0,
+          -195.0
+        ],
+        [
+          114.0,
+          72.0,
+          -150.0
+        ],
+        [
+          -30.0,
+          72.0,
+          -318.0
+        ],
+        [
+          156.0,
+          72.0,
+          -84.0
+        ],
+        [
+          183.0,
+          72.0,
+          -27.0
+        ]
+      ]
+    },
+    {
+      "id": "aqueduct_walk",
+      "waypoints": [
+        [
+          78.0,
+          70.65,
+          -222.0
+        ],
+        [
+          36.0,
+          72.0,
+          -240.0
+        ],
+        [
+          -84.0,
+          72.0,
+          -372.0
+        ],
+        [
+          69.0,
+          72.22,
+          -177.0
+        ],
+        [
+          -30.0,
+          72.0,
+          -318.0
+        ]
+      ]
+    },
+    {
+      "id": "temple_way",
+      "waypoints": [
+        [
+          156.0,
+          72.0,
+          -84.0
+        ],
+        [
+          175.5,
+          72.41,
+          -139.5
+        ],
+        [
+          160.5,
+          79.72,
+          -160.5
+        ],
+        [
+          175.5,
+          89.35,
+          -151.5
+        ],
+        [
+          153.0,
+          96.4,
+          -189.0
+        ],
+        [
+          180.0,
+          98.2,
+          -192.0
+        ],
+        [
+          210.0,
+          100.0,
+          -198.0
+        ]
+      ]
+    },
+    {
+      "id": "temple_ring",
+      "waypoints": [
+        [
+          150.0,
+          96.62,
+          -246.0
+        ],
+        [
+          180.0,
+          98.2,
+          -192.0
+        ],
+        [
+          228.0,
+          100.0,
+          -156.0
+        ],
+        [
+          252.0,
+          100.0,
+          -192.0
+        ],
+        [
+          186.0,
+          100.0,
+          -246.0
+        ]
+      ]
+    },
+    {
+      "id": "summit_climb",
+      "waypoints": [
+        [
+          252.0,
+          100.0,
+          -192.0
+        ],
+        [
+          283.5,
+          112.46,
+          -199.5
+        ],
+        [
+          304.5,
+          123.64,
+          -184.5
+        ],
+        [
+          295.5,
+          124.25,
+          -199.5
+        ],
+        [
+          330.0,
+          124.0,
+          -174.0
+        ],
+        [
+          312.0,
+          124.0,
+          -204.0
+        ]
+      ]
+    },
+    {
+      "id": "east_road",
+      "waypoints": [
+        [
+          312.0,
+          124.0,
+          -204.0
+        ],
+        [
+          354.0,
+          124.0,
+          -174.0
+        ],
+        [
+          351.0,
+          124.0,
+          -219.0
+        ],
+        [
+          390.0,
+          124.0,
+          -150.0
+        ]
+      ]
+    },
+    {
+      "id": "summit_track",
+      "waypoints": [
+        [
+          312.0,
+          124.0,
+          -204.0
+        ],
+        [
+          234.0,
+          124.0,
+          -318.0
+        ],
+        [
+          210.0,
+          124.0,
+          -366.0
+        ],
+        [
+          234.0,
+          121.69,
+          -354.0
+        ],
+        [
+          144.0,
+          124.0,
+          -396.0
+        ]
+      ]
+    },
+    {
+      "id": "ravine_path",
+      "waypoints": [
+        [
+          -132.0,
+          -5.31,
+          -36.0
+        ],
+        [
+          -120.0,
+          4.28,
+          -60.0
+        ],
+        [
+          -144.0,
+          12.79,
+          -132.0
+        ],
+        [
+          -159.0,
+          10.35,
+          -201.0
+        ],
+        [
+          -132.0,
+          45.84,
+          -180.0
+        ]
+      ]
+    },
+    {
+      "id": "north_glade_path",
+      "waypoints": [
+        [
+          -99.0,
+          45.92,
+          -165.0
+        ],
+        [
+          -84.0,
+          48.21,
+          -204.0
+        ],
+        [
+          -61.5,
+          72.0,
+          -238.5
+        ],
+        [
+          -54.0,
+          72.0,
+          -246.0
+        ],
+        [
+          -78.0,
+          51.63,
+          -294.0
+        ],
+        [
+          -102.0,
+          72.0,
+          -330.0
+        ]
+      ]
+    },
+    {
+      "id": "lotus_path",
+      "waypoints": [
+        [
+          99.0,
+          24.65,
+          105.0
+        ],
+        [
+          139.5,
+          41.89,
+          100.5
+        ],
+        [
+          174.0,
+          46.0,
+          66.0
+        ],
+        [
+          204.0,
+          46.0,
+          120.0
+        ],
+        [
+          204.0,
+          46.0,
+          60.0
+        ]
+      ]
+    },
+    {
+      "id": "east_grove_path",
+      "waypoints": [
+        [
+          204.0,
+          46.0,
+          60.0
+        ],
+        [
+          132.0,
+          29.86,
+          -24.0
+        ],
+        [
+          178.5,
+          59.02,
+          1.5
+        ],
+        [
+          201.0,
+          55.11,
+          3.0
+        ],
+        [
+          183.0,
+          72.0,
+          -27.0
+        ]
+      ]
+    },
+    {
+      "id": "old_terrace_path",
+      "waypoints": [
+        [
+          75.0,
+          72.0,
+          -195.0
+        ],
+        [
+          36.0,
+          72.0,
+          -240.0
+        ],
+        [
+          12.0,
+          72.0,
+          -276.0
+        ],
+        [
+          -66.0,
+          55.62,
+          -330.0
+        ]
+      ]
+    },
+    {
+      "id": "deep_jungle_path",
+      "waypoints": [
+        [
+          -66.0,
+          55.62,
+          -330.0
+        ],
+        [
+          -18.0,
+          94.93,
+          -330.0
+        ],
+        [
+          1.5,
+          105.8,
+          -325.5
+        ],
+        [
+          24.0,
+          102.38,
+          -324.0
+        ],
+        [
+          6.0,
+          100.0,
+          -366.0
+        ]
+      ]
+    },
+    {
+      "id": "boundary_path",
+      "waypoints": [
+        [
+          390.0,
+          124.0,
+          -150.0
+        ],
+        [
+          324.0,
+          124.0,
+          -276.0
+        ],
+        [
+          234.0,
+          121.69,
+          -354.0
+        ]
+      ]
+    },
+    {
+      "id": "north_pass_path",
+      "waypoints": [
+        [
+          6.0,
+          100.0,
+          -366.0
+        ],
+        [
+          72.0,
+          106.47,
+          -408.0
+        ],
+        [
+          97.5,
+          122.16,
+          -397.5
+        ],
+        [
+          144.0,
+          124.0,
+          -396.0
+        ]
+      ]
+    }
+  ],
+  "water": {
+    "seaLevel": 0.0,
+    "serverCells": 576,
+    "bodies": [
+      {
+        "id": "Water_Lagoon",
+        "node": "Water_Lagoon",
+        "type": "sea"
+      },
+      {
+        "id": "Water_Cenote_Cenote",
+        "node": "Water_Cenote_Cenote",
+        "type": "cenote"
+      },
+      {
+        "id": "Water_Cenote_NorthCenote",
+        "node": "Water_Cenote_NorthCenote",
+        "type": "cenote"
+      },
+      {
+        "id": "Water_Cenote_LowerPools",
+        "node": "Water_Cenote_LowerPools",
+        "type": "cenote"
+      },
+      {
+        "id": "Water_Cenote_ShrinePool",
+        "node": "Water_Cenote_ShrinePool",
+        "type": "cenote"
+      },
+      {
+        "id": "Water_Cenote_LotusPools",
+        "node": "Water_Cenote_LotusPools",
+        "type": "cenote"
+      },
+      {
+        "id": "Water_Cenote_SummitPools",
+        "node": "Water_Cenote_SummitPools",
+        "type": "cenote"
+      },
+      {
+        "id": "Water_Cenote_QuayFalls",
+        "node": "Water_Cenote_QuayFalls",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Stream_TempleBeck",
+        "node": "Water_Stream_TempleBeck",
+        "type": "stream"
+      },
+      {
+        "id": "Water_Stream_ShrineRill",
+        "node": "Water_Stream_ShrineRill",
+        "type": "stream"
+      },
+      {
+        "id": "Water_Stream_CenoteOutfall",
+        "node": "Water_Stream_CenoteOutfall",
+        "type": "cenote"
+      },
+      {
+        "id": "Water_Stream_EastBrook",
+        "node": "Water_Stream_EastBrook",
+        "type": "stream"
+      },
+      {
+        "id": "Water_Stream_NorthBurn",
+        "node": "Water_Stream_NorthBurn",
+        "type": "stream"
+      },
+      {
+        "id": "Water_Stream_GardenRill",
+        "node": "Water_Stream_GardenRill",
+        "type": "stream"
+      },
+      {
+        "id": "Water_Falls_TempleBeck_00",
+        "node": "Water_Falls_TempleBeck_00",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_TempleBeck_01",
+        "node": "Water_Falls_TempleBeck_01",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_TempleBeck_02",
+        "node": "Water_Falls_TempleBeck_02",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_TempleBeck_03",
+        "node": "Water_Falls_TempleBeck_03",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_TempleBeck_04",
+        "node": "Water_Falls_TempleBeck_04",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_TempleBeck_05",
+        "node": "Water_Falls_TempleBeck_05",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_ShrineRill_06",
+        "node": "Water_Falls_ShrineRill_06",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_ShrineRill_07",
+        "node": "Water_Falls_ShrineRill_07",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_CenoteOutfall_08",
+        "node": "Water_Falls_CenoteOutfall_08",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_CenoteOutfall_09",
+        "node": "Water_Falls_CenoteOutfall_09",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_CenoteOutfall_10",
+        "node": "Water_Falls_CenoteOutfall_10",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_CenoteOutfall_11",
+        "node": "Water_Falls_CenoteOutfall_11",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_EastBrook_12",
+        "node": "Water_Falls_EastBrook_12",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_EastBrook_13",
+        "node": "Water_Falls_EastBrook_13",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_EastBrook_14",
+        "node": "Water_Falls_EastBrook_14",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_NorthBurn_15",
+        "node": "Water_Falls_NorthBurn_15",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_NorthBurn_16",
+        "node": "Water_Falls_NorthBurn_16",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_NorthBurn_17",
+        "node": "Water_Falls_NorthBurn_17",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_NorthBurn_18",
+        "node": "Water_Falls_NorthBurn_18",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_GardenRill_19",
+        "node": "Water_Falls_GardenRill_19",
+        "type": "waterfall"
+      },
+      {
+        "id": "Water_Falls_GardenRill_20",
+        "node": "Water_Falls_GardenRill_20",
+        "type": "waterfall"
+      }
+    ],
+    "streams": [
+      {
+        "id": "temple_beck",
+        "waypoints": [
+          [
+            150.0,
+            96.62,
+            -246.0
+          ],
+          [
+            109.5,
+            95.48,
+            -217.5
+          ],
+          [
+            78.0,
+            70.65,
+            -222.0
+          ],
+          [
+            10.5,
+            68.43,
+            -166.5
+          ],
+          [
+            -24.0,
+            42.0,
+            -144.0
+          ],
+          [
+            6.0,
+            46.0,
+            -90.0
+          ],
+          [
+            -36.0,
+            19.67,
+            -60.0
+          ],
+          [
+            0.0,
+            17.12,
+            36.0
+          ],
+          [
+            -30.0,
+            5.38,
+            54.0
+          ],
+          [
+            -6.0,
+            0.65,
+            126.0
+          ],
+          [
+            -51.0,
+            0.4,
+            123.0
+          ],
+          [
+            -114.0,
+            -21.44,
+            162.0
+          ]
+        ]
+      },
+      {
+        "id": "shrine_rill",
+        "waypoints": [
+          [
+            186.0,
+            100.0,
+            -246.0
+          ],
+          [
+            114.0,
+            72.0,
+            -150.0
+          ],
+          [
+            90.0,
+            70.32,
+            -162.0
+          ],
+          [
+            40.5,
+            55.25,
+            -136.5
+          ],
+          [
+            6.0,
+            42.9,
+            -114.0
+          ],
+          [
+            -18.0,
+            27.25,
+            -102.0
+          ]
+        ]
+      },
+      {
+        "id": "cenote_outfall",
+        "waypoints": [
+          [
+            -18.0,
+            27.25,
+            -102.0
+          ],
+          [
+            -15.0,
+            39.56,
+            -69.0
+          ],
+          [
+            -12.0,
+            19.77,
+            -36.0
+          ],
+          [
+            -3.0,
+            24.0,
+            -21.0
+          ],
+          [
+            0.0,
+            17.12,
+            36.0
+          ],
+          [
+            -28.5,
+            15.82,
+            40.5
+          ],
+          [
+            -66.0,
+            5.78,
+            54.0
+          ],
+          [
+            -105.0,
+            0.4,
+            69.0
+          ],
+          [
+            -168.0,
+            -16.45,
+            84.0
+          ]
+        ]
+      },
+      {
+        "id": "east_brook",
+        "waypoints": [
+          [
+            210.0,
+            124.0,
+            -366.0
+          ],
+          [
+            234.0,
+            124.0,
+            -318.0
+          ],
+          [
+            252.0,
+            96.19,
+            -228.0
+          ],
+          [
+            228.0,
+            100.0,
+            -156.0
+          ],
+          [
+            198.0,
+            67.37,
+            -114.0
+          ],
+          [
+            156.0,
+            72.0,
+            -84.0
+          ],
+          [
+            154.5,
+            60.58,
+            -22.5
+          ],
+          [
+            132.0,
+            29.86,
+            -24.0
+          ],
+          [
+            204.0,
+            46.0,
+            60.0
+          ],
+          [
+            204.0,
+            46.0,
+            120.0
+          ]
+        ]
+      },
+      {
+        "id": "north_burn",
+        "waypoints": [
+          [
+            144.0,
+            124.0,
+            -396.0
+          ],
+          [
+            6.0,
+            100.0,
+            -366.0
+          ],
+          [
+            24.0,
+            102.38,
+            -324.0
+          ],
+          [
+            -24.0,
+            99.09,
+            -336.0
+          ],
+          [
+            -102.0,
+            72.0,
+            -330.0
+          ],
+          [
+            -78.0,
+            51.63,
+            -294.0
+          ],
+          [
+            -79.5,
+            76.58,
+            -256.5
+          ],
+          [
+            -132.0,
+            45.84,
+            -180.0
+          ],
+          [
+            -159.0,
+            10.35,
+            -201.0
+          ],
+          [
+            -120.0,
+            4.28,
+            -60.0
+          ]
+        ]
+      },
+      {
+        "id": "garden_rill",
+        "waypoints": [
+          [
+            183.0,
+            72.0,
+            -27.0
+          ],
+          [
+            178.5,
+            59.02,
+            1.5
+          ],
+          [
+            174.0,
+            46.0,
+            66.0
+          ],
+          [
+            99.0,
+            24.65,
+            105.0
+          ],
+          [
+            108.0,
+            24.0,
+            132.0
+          ]
+        ]
+      }
+    ],
+    "gorges": [
+      {
+        "id": "west_ravine",
+        "waypoints": [
+          [
+            -150.0,
+            29.97,
+            -222.0
+          ],
+          [
+            -159.0,
+            10.35,
+            -201.0
+          ],
+          [
+            -138.0,
+            4.56,
+            -138.0
+          ],
+          [
+            -120.0,
+            4.28,
+            -60.0
+          ],
+          [
+            -132.0,
+            -4.55,
+            -24.0
+          ]
+        ]
+      },
+      {
+        "id": "root_gorge",
+        "waypoints": [
+          [
+            99.0,
+            31.72,
+            -75.0
+          ],
+          [
+            90.0,
+            31.1,
+            -54.0
+          ],
+          [
+            84.0,
+            27.97,
+            -24.0
+          ],
+          [
+            72.0,
+            30.37,
+            24.0
+          ]
+        ]
+      },
+      {
+        "id": "rope_gorge",
+        "waypoints": [
+          [
+            222.0,
+            55.36,
+            -6.0
+          ],
+          [
+            201.0,
+            55.11,
+            3.0
+          ],
+          [
+            165.0,
+            51.76,
+            -9.0
+          ],
+          [
+            132.0,
+            29.86,
+            -24.0
+          ],
+          [
+            96.0,
+            26.73,
+            -24.0
+          ]
+        ]
+      },
+      {
+        "id": "north_gorge",
+        "waypoints": [
+          [
+            -48.0,
+            59.62,
+            -360.0
+          ],
+          [
+            -66.0,
+            55.62,
+            -330.0
+          ],
+          [
+            -72.0,
+            57.54,
+            -312.0
+          ],
+          [
+            -78.0,
+            51.63,
+            -294.0
+          ]
+        ]
+      }
+    ]
+  },
+  "terraces": [
+    {
+      "id": "seabed",
+      "height": -13.0,
+      "stairRange": [
+        -58.0,
+        -38.0
+      ]
+    },
+    {
+      "id": "strand",
+      "height": 0.4,
+      "stairRange": [
+        -31.0,
+        -27.0
+      ]
+    },
+    {
+      "id": "quay",
+      "height": 7.0,
+      "stairRange": [
+        -24.5,
+        -14.0
+      ]
+    },
+    {
+      "id": "lower",
+      "height": 24.0,
+      "stairRange": [
+        -11.5,
+        4.0
+      ]
+    },
+    {
+      "id": "middle",
+      "height": 46.0,
+      "stairRange": [
+        6.5,
+        27.0
+      ]
+    },
+    {
+      "id": "upper",
+      "height": 72.0,
+      "stairRange": [
+        29.5,
+        52.0
+      ]
+    },
+    {
+      "id": "temple",
+      "height": 100.0,
+      "stairRange": [
+        54.5,
+        80.0
+      ]
+    },
+    {
+      "id": "summit",
+      "height": 124.0,
+      "stairRange": [
+        82.5,
+        133.0
+      ]
+    }
+  ],
+  "environment": {
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.3,
+        0.52,
+        0.66
+      ],
+      "horizon": [
+        0.72,
+        0.78,
+        0.72
+      ]
+    },
+    "sun": {
+      "direction": [
+        -0.38,
+        0.62,
+        0.68
+      ],
+      "color": [
+        1.16,
+        1.08,
+        0.86
+      ],
+      "energy": 1.2
+    },
+    "ambient": {
+      "skyColor": [
+        0.34,
+        0.48,
+        0.46
+      ],
+      "groundColor": [
+        0.06,
+        0.1,
+        0.05
+      ],
+      "energy": 0.55
+    },
+    "saturation": 1.22,
+    "exposure": 2.0,
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.62,
+        0.72,
+        0.68
+      ],
+      "density": 0.0016,
+      "heightFalloff": 0.0022
+    },
+    "goldenHour": {
+      "sun": {
+        "direction": [
+          -0.8,
+          0.24,
+          0.55
+        ],
+        "color": [
+          1.48,
+          1.06,
+          0.66
+        ]
+      },
+      "fog": {
+        "color": [
+          0.74,
+          0.66,
+          0.52
+        ],
+        "density": 0.003
+      }
+    },
+    "presentation": {
+      "mist": {
+        "enabled": true,
+        "zones": [
+          "cenote",
+          "riser-falls",
+          "lagoon"
+        ]
+      },
+      "waterSpray": {
+        "enabled": true,
+        "nodes": [
+          "Water_Cenote_QuayFalls",
+          "Water_Falls_CenoteOutfall_08",
+          "Water_Falls_CenoteOutfall_09",
+          "Water_Falls_CenoteOutfall_10",
+          "Water_Falls_CenoteOutfall_11",
+          "Water_Falls_EastBrook_12",
+          "Water_Falls_EastBrook_13",
+          "Water_Falls_EastBrook_14",
+          "Water_Falls_GardenRill_19",
+          "Water_Falls_GardenRill_20",
+          "Water_Falls_NorthBurn_15",
+          "Water_Falls_NorthBurn_16",
+          "Water_Falls_NorthBurn_17",
+          "Water_Falls_NorthBurn_18",
+          "Water_Falls_ShrineRill_06",
+          "Water_Falls_ShrineRill_07",
+          "Water_Falls_TempleBeck_00",
+          "Water_Falls_TempleBeck_01",
+          "Water_Falls_TempleBeck_02",
+          "Water_Falls_TempleBeck_03",
+          "Water_Falls_TempleBeck_04",
+          "Water_Falls_TempleBeck_05"
+        ]
+      },
+      "fallingLeaves": {
+        "enabled": true,
+        "density": 0.35,
+        "zones": [
+          "jungle-core"
+        ]
+      },
+      "ambientAudio": [
+        {
+          "id": "jungle-day",
+          "zone": "jungle-core"
+        },
+        {
+          "id": "falls",
+          "zone": "riser-falls"
+        },
+        {
+          "id": "surf",
+          "zone": "lagoon"
+        },
+        {
+          "id": "settlement",
+          "zone": "lower-terrace"
+        }
+      ]
+    },
+    "zones": [
+      {
+        "id": "lagoon",
+        "centre": [
+          -114.0,
+          0.0,
+          162.0
+        ],
+        "radius": 150.0
+      },
+      {
+        "id": "lower-terrace",
+        "centre": [
+          0.0,
+          24.0,
+          0.0
+        ],
+        "radius": 90.0
+      },
+      {
+        "id": "cenote",
+        "centre": [
+          -18.0,
+          30.0,
+          -102.0
+        ],
+        "radius": 70.0
+      },
+      {
+        "id": "jungle-core",
+        "centre": [
+          120.0,
+          60.0,
+          -160.0
+        ],
+        "radius": 260.0
+      },
+      {
+        "id": "riser-falls",
+        "centre": [
+          180.0,
+          80.0,
+          -180.0
+        ],
+        "radius": 300.0
+      },
+      {
+        "id": "temple",
+        "centre": [
+          210.0,
+          100.0,
+          -198.0
+        ],
+        "radius": 110.0
+      }
+    ]
+  },
+  "minimap": {
+    "file": "minimap.webp",
+    "pixels": 768,
+    "metresPerPixel": 0.7487,
+    "worldMin": [
+      -174.0,
+      -401.0
+    ],
+    "worldMax": [
+      401.0,
+      174.0
+    ],
+    "northAxis": "-Z",
+    "orientation": "north-up"
+  },
+  "lodGroups": [
+    {
+      "id": "jungle",
+      "strategy": "authored-detail-tiers",
+      "levels": [
+        {
+          "id": "near",
+          "suffix": "_high"
+        },
+        {
+          "id": "mid",
+          "suffix": "_mid"
+        },
+        {
+          "id": "far",
+          "suffix": "_low"
+        }
+      ]
+    },
+    {
+      "id": "package-lod2",
+      "glb": "world-lod2.glb",
+      "strategy": "reduced-package",
+      "notes": "Far-tier vegetation only, no ground clutter."
+    }
+  ],
+  "performance": {
+    "nodes": 17691,
+    "meshes": 329,
+    "materials": 30,
+    "images": 86,
+    "textures": 86,
+    "accessors": 1316,
+    "bufferViews": 1402,
+    "uniqueTriangles": 528795,
+    "uniqueVertices": 385259,
+    "glbBytes": 26862708,
+    "instancedTriangles": 3535401,
+    "embeddedTextureBytes": 7601895,
+    "placements": 10895,
+    "collision": {
+      "width": 1152,
+      "height": 1152,
+      "cellMetres": 0.5,
+      "walkableCells": 975577,
+      "blockedCells": 351527,
+      "walkableFraction": 0.7351,
+      "elevatedDecks": 77,
+      "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+      "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+    },
+    "notes": [
+      "terrace architecture: 24 arcades, 34 balustrade runs",
+      "jungle: 2395 trees at 8.6 m nominal spacing",
+      "understory: 4894 ground clumps, 1478 vine curtains",
+      "ground dressing: 1107 pieces",
+      "creature cenote_toader: server tile [138, 132] is not standable on the built terrain; marker moved 6 m to [144, 132]",
+      "creature emerald_basilisk: server tile [72, 72] is not standable on the built terrain; marker moved 44 m to [72, 116]",
+      "creature leaf_mantis: server tile [108, 72] is not standable on the built terrain; marker moved 20 m to [128, 72]",
+      "creature verdant_naiad: server tile [72, 108] is not standable on the built terrain; marker moved 12 m to [77, 119]",
+      "harvestable Ssarathi Scale Moss: server tile [303, 210] is not standable on the built terrain; marker moved 12 m to [315, 210]",
+      "harvestable Ssarathi Scale Moss: server tile [258, 183] is not standable on the built terrain; marker moved 6 m to [264, 181]",
+      "harvestable Wayside Sage: server tile [42, 267] is not standable on the built terrain; marker moved 6 m to [48, 265]",
+      "harvestable Wayside Sage: server tile [57, 126] is not standable on the built terrain; marker moved 6 m to [63, 126]",
+      "harvestable Hearthroot: server tile [96, 39] is not standable on the built terrain; marker moved 44 m to [127, 70]",
+      "harvestable Lantern Cap: server tile [255, 210] is not standable on the built terrain; marker moved 6 m to [261, 210]",
+      "harvestable Lantern Cap: server tile [282, 99] is not standable on the built terrain; marker moved 6 m to [288, 99]",
+      "interactive crafting_station: server tile [204, 186] is not standable on the built terrain; marker moved 6 m to [210, 186]"
+    ],
+    "trianglesPerSquareMetre": 10.69,
+    "lod2": {
+      "glbBytes": 16551540,
+      "nodes": 4092,
+      "uniqueTriangles": 465077,
+      "instancedTriangles": 1148735,
+      "sizeReductionPercent": 38.4,
+      "triangleReductionPercent": 67.5
     }
   },
-  "materials": {
-    "baseColor": "textures/region-basecolor.png",
-    "normal": "textures/region-normal.png",
-    "orm": "textures/region-orm.png"
+  "sources": [
+    {
+      "id": "aerial-concept",
+      "file": "references/01-concept-aerial-overview.png",
+      "role": "authoritative-composition"
+    },
+    {
+      "id": "detail-board",
+      "file": "references/00-concept-detail-board.png",
+      "role": "authoritative-player-scale"
+    },
+    {
+      "id": "server-content",
+      "file": "eloria-server config/eloria/{npcs,spawns,harvesting,interactives,maps}.txt",
+      "role": "authoritative-population"
+    },
+    {
+      "id": "generator",
+      "file": "source/build_verdant_stair.py",
+      "role": "reproducible-build",
+      "seed": 20260829
+    }
+  ],
+  "provenance": {
+    "assets": "original to Eloria/Nymara; generated by _toolkit/amberwood/*",
+    "thirdParty": "none",
+    "textures": "procedural (numpy + Pillow), no sampled or traced source",
+    "geometry": "procedural (numpy), no imported models",
+    "license": "same as the Eloria client repository"
   },
-  "productionStatus": "terrain-landmark-material-pass"
+  "productionStatus": "production-geometry-materials-population",
+  "knownLimitations": [],
+  "buildNotes": [
+    "terrace architecture: 24 arcades, 34 balustrade runs",
+    "jungle: 2395 trees at 8.6 m nominal spacing",
+    "understory: 4894 ground clumps, 1478 vine curtains",
+    "ground dressing: 1107 pieces",
+    "creature cenote_toader: server tile [138, 132] is not standable on the built terrain; marker moved 6 m to [144, 132]",
+    "creature emerald_basilisk: server tile [72, 72] is not standable on the built terrain; marker moved 44 m to [72, 116]",
+    "creature leaf_mantis: server tile [108, 72] is not standable on the built terrain; marker moved 20 m to [128, 72]",
+    "creature verdant_naiad: server tile [72, 108] is not standable on the built terrain; marker moved 12 m to [77, 119]",
+    "harvestable Ssarathi Scale Moss: server tile [303, 210] is not standable on the built terrain; marker moved 12 m to [315, 210]",
+    "harvestable Ssarathi Scale Moss: server tile [258, 183] is not standable on the built terrain; marker moved 6 m to [264, 181]",
+    "harvestable Wayside Sage: server tile [42, 267] is not standable on the built terrain; marker moved 6 m to [48, 265]",
+    "harvestable Wayside Sage: server tile [57, 126] is not standable on the built terrain; marker moved 6 m to [63, 126]",
+    "harvestable Hearthroot: server tile [96, 39] is not standable on the built terrain; marker moved 44 m to [127, 70]",
+    "harvestable Lantern Cap: server tile [255, 210] is not standable on the built terrain; marker moved 6 m to [261, 210]",
+    "harvestable Lantern Cap: server tile [282, 99] is not standable on the built terrain; marker moved 6 m to [288, 99]",
+    "interactive crafting_station: server tile [204, 186] is not standable on the built terrain; marker moved 6 m to [210, 186]"
+  ]
 }

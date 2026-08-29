@@ -129,14 +129,20 @@
     {
       "id": "verdant_stair",
       "title": "Verdant Stair",
-      "sourceSha256": "5b0dcc5d1bf12891043d570699b5356ecb8eb148b24020cb856b2964bf44daf0",
+      "sourceSha256": "a17706bb595c3b33a5c74b29ee3fce4403b8985c89cbf0bf0be5b3d3fd0ad377",
       "conceptViews": 10,
-      "landmarkInstances": 55,
+      "landmarkInstances": 40,
       "terrainHeightRange": [
-        0.0,
-        0.0
+        -21.56,
+        151.14
       ],
-      "water": true
+      "water": true,
+      "status": "production-geometry-materials-population",
+      "serverCells": 576,
+      "requiresServerMap": "96x96 ELM tiles (576 cells)",
+      "uniqueTriangles": 528891,
+      "instancedTriangles": 3535497,
+      "glbBytes": 26864756
     },
     {
       "id": "ssarathi_ruins",
@@ -225,6 +231,6 @@
     "maps": 18,
     "productionRegions": 11,
     "conceptViews": 180,
-    "landmarkInstances": 615
+    "landmarkInstances": 600
   }
 }
