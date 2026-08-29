@@ -25,8 +25,12 @@ var _last_movement_update_msec := -1
 var _smoothed_server_interval := 0.25
 var _facing_override_active := false
 var _facing_override_yaw := 0.0
+## Part 2 in the equipment registry: the cape, and the only part with cloth.
+const CAPE_PART := 2
+
 var _predicted_turn_pending := false
 var _native_skeleton: Skeleton3D
+var _cape_cloth: SkeletonModifier3D = null
 var _attachment_bones: Dictionary = {}
 var _model_config: Dictionary = {}
 var _equipment_config: Dictionary = {}
@@ -119,6 +123,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 			errors.append("Skeleton3D missing")
 		else:
 			_native_skeleton = skeleton
+			_attach_cape_cloth(skeleton)
 			apply_appearance_variants(dto.get("appearance", {}) as Dictionary)
 			var animation_path := _external_path(str(model_config.get("animationLibrary", "")))
 			var imported := NativeAnimationImporter.import_library(self, animation_path, skeleton, model_config.get("boneAliases", {}))
@@ -518,6 +523,8 @@ func _clear_equipment_part(part: int) -> void:
 	_equipment_nodes.erase(part)
 	_equipment_visuals.erase(part)
 	_release_equipment_hides(part)
+	if part == CAPE_PART:
+		_set_cape_cloth_active(false)
 
 func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> void:
 	# Modified 2026-08-28 for Eloria Client: equipment used to be parented to a
@@ -552,6 +559,31 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	else:
 		_equipment_nodes[part] = created
 		_apply_equipment_hides(part, part_config, model_config)
+	if part == CAPE_PART:
+		_set_cape_cloth_active(not created.is_empty())
+
+## Cloth for the cape chains. A SkeletonModifier3D so the engine runs it once
+## the animation has posed the skeleton - writing bone poses from _process
+## would race the AnimationPlayer - and inactive, and therefore free, until a
+## cape is actually worn.
+func _attach_cape_cloth(skeleton: Skeleton3D) -> void:
+	if skeleton.find_bone("cape_c_01") < 0:
+		return
+	if skeleton.get_node_or_null("CapeCloth") != null:
+		return
+	var cloth: SkeletonModifier3D = (
+		load("res://src/actors/cape_cloth.gd") as Script).new()
+	cloth.name = "CapeCloth"
+	cloth.active = false
+	skeleton.add_child(cloth)
+	_cape_cloth = cloth
+
+func _set_cape_cloth_active(enabled: bool) -> void:
+	if _cape_cloth == null:
+		return
+	if enabled and not _cape_cloth.active:
+		_cape_cloth.call("reset")
+	_cape_cloth.active = enabled
 
 func _apply_equipment_hides(part: int, part_config: Dictionary,
 		model_config: Dictionary) -> void:
