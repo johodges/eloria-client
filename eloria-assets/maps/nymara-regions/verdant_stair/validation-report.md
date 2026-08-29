@@ -184,7 +184,7 @@ It is judged in-engine by develop's own criterion — zero grounding misses on
 cells `collision.bin` marks walkable — and meets it exactly, with all 15,283
 misses falling on blocked cells. An earlier version of this branch carried a
 weaker rule of my own for the same problem; it is gone, and this branch no
-longer modifies the shared check at all. See items 12 and 17 of the change log.
+longer modifies the shared check at all. See items 12 and 18 of the change log.
 
 ## What was not verified
 

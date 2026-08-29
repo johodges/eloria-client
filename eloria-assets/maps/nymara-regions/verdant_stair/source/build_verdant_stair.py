@@ -611,29 +611,88 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
     # on the highest walk surface below the ray, so a two-level column cannot be
     # expressed on a flat server grid. Bridges, decks and stairs therefore take
     # the cell, and the ground under them is not separately walkable.
+    #
+    # Rasterised triangle by triangle against the cell centre, not stamped as a
+    # disc over the placement's bounding radius. A disc is right for a bridge
+    # deck and wrong for anything with a hole in it: the cenote's spiral stair
+    # winds around an open eighteen-metre shaft, and the disc laid a floor
+    # straight across it - cells the server would let a player walk onto and the
+    # client would drop them through. It is also wrong in the small for every
+    # stair, because a disc is flat and a stair is not: the height came from the
+    # top of the walk bounds, so the whole flight read as its own landing.
     elevated = 0
+    z_top = REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE
     for placement in build.placements:
         item = build.meshes[placement.mesh]
-        walk_bounds = getattr(item, "walk_bounds", lambda: None)()
-        if walk_bounds is None and not placement.walk_surface:
+        walk_parts = getattr(item, "walk_parts", None)
+        if not walk_parts:
             continue
-        if walk_bounds is None:
-            low, high = item.bounds()
-        else:
-            low, high = walk_bounds
+        cos_y = math.cos(placement.rotation_y)
+        sin_y = math.sin(placement.rotation_y)
         px, py, pz = placement.position
-        half_x = float(max(abs(low[0]), abs(high[0]))) * placement.scale
-        half_z = float(max(abs(low[2]), abs(high[2]))) * placement.scale
-        deck_y = py + float(high[1]) * placement.scale
-        radius = max(min(half_x, half_z) * 0.85, 0.4)
-        footprint = np.hypot(gx - px, gz - pz) < radius
-        if not footprint.any():
-            continue
-        if deck_y > ground.max() + 200.0:
-            continue
-        elevated += 1
-        surface = np.where(footprint, deck_y, surface)
-        walkable = np.where(footprint, True, walkable)
+        touched = False
+        for piece in walk_parts:
+            if piece.triangle_count == 0:
+                continue
+            vertices = piece.positions * placement.scale
+            wx = vertices[:, 0] * cos_y + vertices[:, 2] * sin_y + px
+            wz = -vertices[:, 0] * sin_y + vertices[:, 2] * cos_y + pz
+            wy = vertices[:, 1] + py
+            tri = np.stack([wx, wy, wz], axis=-1)[piece.indices].reshape(-1, 3, 3)
+            normals = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
+            lengths = np.linalg.norm(normals, axis=1)
+            keep = lengths > 1e-9
+            tri, normals, lengths = tri[keep], normals[keep], lengths[keep]
+            if len(tri) == 0:
+                continue
+            # A riser is not a floor. Tested on the absolute normal because the
+            # source geometry may be wound either way - `ensure_walk_faces_up`
+            # corrects that at export, and a floor is a floor either side up.
+            tri = tri[np.abs(normals[:, 1] / lengths) > 0.55]
+            if len(tri) == 0:
+                continue
+            cx0 = np.clip(np.floor((tri[:, :, 0].min(axis=1) - REG.PLAY_MIN_X)
+                                   / COLLISION_CELL), 0, width - 1).astype(int)
+            cx1 = np.clip(np.floor((tri[:, :, 0].max(axis=1) - REG.PLAY_MIN_X)
+                                   / COLLISION_CELL), 0, width - 1).astype(int)
+            cz0 = np.clip(np.floor((z_top - tri[:, :, 2].max(axis=1))
+                                   / COLLISION_CELL), 0, height - 1).astype(int)
+            cz1 = np.clip(np.floor((z_top - tri[:, :, 2].min(axis=1))
+                                   / COLLISION_CELL), 0, height - 1).astype(int)
+            for i in range(len(tri)):
+                rows = np.arange(cz0[i], cz1[i] + 1)
+                columns = np.arange(cx0[i], cx1[i] + 1)
+                if rows.size == 0 or columns.size == 0:
+                    continue
+                cell_x = REG.PLAY_MIN_X + (columns + 0.5) * COLLISION_CELL
+                cell_z = z_top - (rows + 0.5) * COLLISION_CELL
+                mx, mz = np.meshgrid(cell_x, cell_z)
+                a, b, c = tri[i, 0], tri[i, 1], tri[i, 2]
+                d = (b[2] - c[2]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[2] - c[2])
+                if abs(d) < 1e-12:
+                    continue
+                w0 = ((b[2] - c[2]) * (mx - c[0])
+                      + (c[0] - b[0]) * (mz - c[2])) / d
+                w1 = ((c[2] - a[2]) * (mx - c[0])
+                      + (a[0] - c[0]) * (mz - c[2])) / d
+                w2 = 1.0 - w0 - w1
+                # A small negative tolerance closes the seam between two
+                # triangles sharing an edge, which would otherwise leave a line
+                # of cells no triangle owns down the middle of every deck.
+                inside = (w0 >= -0.02) & (w1 >= -0.02) & (w2 >= -0.02)
+                if not inside.any():
+                    continue
+                heights = w0 * a[1] + w1 * b[1] + w2 * c[1]
+                block_rows = rows[:, None].repeat(columns.size, axis=1)[inside]
+                block_columns = columns[None, :].repeat(rows.size, axis=0)[inside]
+                current = surface[block_rows, block_columns]
+                taller = heights[inside] > current
+                surface[block_rows[taller], block_columns[taller]] = \
+                    heights[inside][taller]
+                walkable[block_rows, block_columns] = True
+                touched = True
+        if touched:
+            elevated += 1
 
     quantised = np.clip(np.round((surface - COLLISION_HEIGHT_ORIGIN)
                                  / COLLISION_HEIGHT_STEP), 1, 63).astype(np.uint8)

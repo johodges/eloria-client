@@ -228,27 +228,64 @@ in the shared code.
     the running client, against 24.05 agreed by both before. A scan of all
     15,060 walk triangles found the waygate was the only surface affected.
 
-14. **`build_collision` stamps an elevated walk surface as a filled disc.**
-    Correct for a bridge deck, wrong for a ring: the cenote's spiral stair
-    winds around an open shaft, so the grid claims a floor across the middle of
-    an eighteen-metre hole. Spawn and portal heights are now taken by casting
-    the client's own ray against the `Walk_` geometry instead of reading the
-    grid. **The grid itself is still wrong there** and is recorded as a known
-    limitation rather than quietly fixed, because fixing it means rasterising
-    walk triangles the way the interiors' own `build_collision` already does.
+14. **An elevated walk surface was stamped as a filled disc.** `build_collision`
+    took each of the 77 walk surfaces, measured `min(half_x, half_z) * 0.85` of
+    its bounds, and marked that circle walkable at the height of the top of the
+    surface. That is right for a solid square deck and wrong twice over.
 
-15. **An interior doorway stands on its landmark, not on the terrain.** A
+    Wrong for anything with a hole in it: the cenote's spiral stair winds around
+    an open eighteen-metre shaft, so the disc laid a floor straight across the
+    shaft — cells the server would let a player walk onto and the client would
+    drop them through. Wrong for anything long and thin, in the other direction:
+    the Quay's walkway is 13 m by 2.2 m, so `min(half_x, half_z)` gave it a
+    1.9 m disc and most of the quay was never marked at all. And wrong in the
+    small for every stair, because a disc is flat and takes the height of the
+    top of the flight, so a whole staircase read as its own top landing.
+
+    Now rasterised triangle by triangle against the cell centre, the way the
+    interiors' own `build_collision` already did it, with risers excluded by
+    normal and the height interpolated across each triangle.
+
+        walkable  79.6% -> 73.5%   (-83,661 cells, +3,327)
+        cenote, 18 m box     100% -> 78.2% walkable
+        Grand Stair, 18 m box    100% -> 100%   (a solid deck is unchanged)
+
+    Every one of the 83,661 cells that stopped being walkable was inside an old
+    disc, and none lay outside one — so the change removes over-marking and does
+    nothing else. Those cells are where the terrain rules had said blocked, for
+    slope or for being under the sea, and the disc had overridden them.
+
+    Re-verified: `validate_gltf` 0/0, `verify_runtime` 0 errors and 0 grounding
+    misses, in-engine PASS, and the exported server ELM agrees at 73.5%.
+
+15. **The check that should have caught item 14 is inert on this region.**
+    `verify_runtime` does cross-check every walkable cell against the rendered
+    surface, and both of its arms miss this. "No surface under this cell" never
+    fires, because the cenote is a shaft cut through terrain and a ray down its
+    middle still hits the terrain at the bottom — there *is* a surface, it is
+    just eighteen metres below what the grid claims. The height comparison is
+    guarded by `if grid < 63`, and the six-bit field ceilings at 10.4 m while
+    this region spans −21 m to 128 m: **98.1% of its walkable cells encode 63**,
+    so the comparison is skipped for almost the whole map.
+
+    Not fixed here. It is a shared-toolkit change affecting every region, the
+    fix is not obviously a one-liner — the honest options are widening the
+    encoding, which is a format change, or comparing against something other
+    than the encoded height — and it wants its own commit and its own
+    verification rather than riding along with a region's collision fix.
+
+16. **An interior doorway stands on its landmark, not on the terrain.** A
     landmark that collides blocks its own footprint and usually has a plinth or
     a deck; the temple door read 0.61 m low until its height came from the walk
     surface. All four doors and all four return spawns are checked against the
     finished collision grid and moved onto a walkable cell if they need it.
 
-16. **Prose reaching the filesystem.** `preview_interior.py` builds a capture
+17. **Prose reaching the filesystem.** `preview_interior.py` builds a capture
     file name out of the subject text, and "The Green Sanctum: the seated
     figure" contains a colon - a drive separator on Windows. The Godot capture
     pass silently wrote directories instead of PNGs. Names are sanitised now.
 
-17. **A weaker fix for a problem develop had already solved properly.**
+18. **A weaker fix for a problem develop had already solved properly.**
     `region_client_check.gd` fails a package on any grounding miss, which is
     right for a region and wrong for an interior that is rooms inside rock, so
     it failed this insides package at 81% misses. I added a rule that read

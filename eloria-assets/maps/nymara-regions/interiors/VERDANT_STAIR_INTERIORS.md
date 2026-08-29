@@ -158,12 +158,16 @@ so it is a criterion with teeth rather than a formality.
    builds a file name out of the subject prose — "The Green Sanctum: the seated
    figure" — and a colon is a drive separator on Windows, so the Godot capture
    pass silently wrote *directories* instead of PNGs. Names are sanitised now.
-2. **`build_collision` stamps an elevated walk surface as a filled disc.** Right
-   for a bridge deck, wrong for a ring: the cenote's spiral stair winds around
-   an open shaft, so the grid claims a floor across the middle of an eighteen
-   metre hole. Spawn and portal heights are therefore taken by casting the
-   client's own ray against the `Walk_` geometry rather than read out of the
-   grid. **The grid itself is still wrong at the cenote's centre** — see below.
+2. **`build_collision` stamped an elevated walk surface as a filled disc.**
+   Right for a solid deck, wrong for a ring: the cenote's spiral stair winds
+   around an open shaft, so the grid claimed a floor across the middle of an
+   eighteen metre hole — cells the server would let a player walk onto and the
+   client would drop them through. Spawn and portal heights are taken by casting
+   the client's own ray against the `Walk_` geometry rather than read out of the
+   grid, and **the grid itself is now fixed too**: the region rasterises its
+   walk surfaces triangle by triangle, the way this package's `build_collision`
+   always did. `../verdant_stair/change-log.md`, items 14 and 15 — 15 being why
+   `verify_runtime` could not catch it.
 3. **The region's arrival platform had a hole exactly where the player lands.**
    The waygate was a lathe whose profile ends on the axis; the pole's sliver fan
    is removed by `drop_degenerate` on export, leaving a pinhole on the axis -
@@ -183,13 +187,14 @@ so it is a criterion with teeth rather than a formality.
   transitions and transparency sorting are unverified. The client frames in
   `references/client-captures/` prove the map loads and renders through the real
   `WorldLoader`; they do not prove an actor can walk it, or that a portal fires.
-- **The cenote's collision cells are still wrong at its centre.** Defect 2
-  above is worked around for spawns and portals, not fixed at source: the
-  region's `collision.bin` still marks a disc of walkable cells across the top
-  of the cenote shaft at rim height. `verify_runtime`'s cell-to-surface
-  cross-check did not surface it. Fixing it means rasterising walk triangles in
-  the region's `build_collision` the way the interiors' already does, which is a
-  change to the region package and out of scope for this pass.
+- **`verify_runtime`'s walkable-cell cross-check is inert on a region.** The
+  cenote grid is fixed, but not because a check found it. That check has two
+  arms and this defeated both: "no surface under this cell" never fires, because
+  a ray down the shaft still hits the terrain at the bottom, and the height
+  comparison is skipped for any cell whose encoded height saturates — which is
+  **98.1% of the region's walkable cells**, the six-bit field ceilinging at
+  10.4 m against 149 m of relief. Left alone deliberately: it is a shared-toolkit
+  change affecting every region and wants its own commit and verification.
 - **One environment for four places.** A combined map has one ambient and one
   fog. The cenote shaft foot and the top of the banyan trunk stay declared in
   `openToSky` because both are genuinely holes the surface package cuts, but the
