@@ -304,7 +304,18 @@ var _hud_layout_list: ItemList
 var _hud_layout_visible: CheckButton
 var _hud_skill_selector: OptionButton
 var _floating_feedback_layer: Control
-var _floating_feedback_offset := 0
+var _pending_floating_feedback: Array[Dictionary] = []
+var _floating_feedback_flush_queued := false
+var _active_floating_labels: Array[Label] = []
+var _last_skill_experience_msec := -100000
+
+const FLOATING_FEEDBACK_BASE_OFFSET := 78.0
+const FLOATING_FEEDBACK_ROW_HEIGHT := 21.0
+const FLOATING_FEEDBACK_MAX_ROWS := 4
+const FLOATING_FEEDBACK_RISE := 58.0
+const FLOATING_FEEDBACK_LIFETIME := 1.5
+const FLOATING_FEEDBACK_FADE_DELAY := 0.5
+const FLOATING_FEEDBACK_OVERALL_GRACE_MSEC := 250
 
 const HUD_SKILLS: Array[String] = [
 	"attack", "defense", "harvesting", "alchemy", "magic", "potion",
@@ -3256,6 +3267,44 @@ func _update_actor_resource_overlay() -> void:
 		or show_overhead_action.button_pressed)
 
 func _on_floating_feedback_requested(feedback: Dictionary) -> void:
+	# Gains that land together (a skill plus the overall total, or several stats
+	# in one partial stats packet) are collected for the frame so the group can
+	# be filtered and stacked instead of every entry spawning on its own.
+	_pending_floating_feedback.append(feedback)
+	if _floating_feedback_flush_queued:
+		return
+	_floating_feedback_flush_queued = true
+	_flush_floating_feedback.call_deferred()
+
+func _flush_floating_feedback() -> void:
+	_floating_feedback_flush_queued = false
+	var pending: Array[Dictionary] = _pending_floating_feedback
+	_pending_floating_feedback = []
+	var has_skill_experience := false
+	for feedback: Dictionary in pending:
+		if _is_skill_experience(feedback):
+			has_skill_experience = true
+			break
+	if has_skill_experience:
+		_last_skill_experience_msec = Time.get_ticks_msec()
+	for feedback: Dictionary in pending:
+		# Overall experience is the sum of the skill gains, so repeating it next
+		# to the skill that produced it says nothing new. The timestamp covers
+		# the case where the server splits the two gains across frames.
+		if str(feedback.get("kind", "")) == "experience" \
+				and str(feedback.get("skill", "")) == "overall":
+			if has_skill_experience:
+				continue
+			if Time.get_ticks_msec() - _last_skill_experience_msec \
+					< FLOATING_FEEDBACK_OVERALL_GRACE_MSEC:
+				continue
+		_spawn_floating_feedback(feedback)
+
+static func _is_skill_experience(feedback: Dictionary) -> bool:
+	return str(feedback.get("kind", "")) == "experience" \
+		and str(feedback.get("skill", "")) != "overall"
+
+func _spawn_floating_feedback(feedback: Dictionary) -> void:
 	if not game_view.visible or AppState.local_actor_id < 0:
 		return
 	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
@@ -3275,25 +3324,51 @@ func _on_floating_feedback_requested(feedback: Dictionary) -> void:
 	var label: Label = Label.new()
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.custom_minimum_size = Vector2(190.0, 26.0)
-	label.add_theme_font_size_override("font_size", 17 if kind == "level" else 15)
+	label.add_theme_font_size_override("font_size", 17 if kind == "level" else 14)
 	label.add_theme_color_override("font_outline_color", Color(0.015, 0.02, 0.025, 0.98))
-	label.add_theme_constant_override("outline_size", 5)
+	label.add_theme_constant_override("outline_size", 4)
 	if kind == "level":
 		label.text = "Level %d %s" % [int(feedback.get("level", 0)), skill.capitalize()]
 		label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.22, 1.0))
 	else:
-		label.text = "+%d %s experience" % [
-			int(feedback.get("amount", 0)), skill.capitalize()]
+		label.text = "+%d %s" % [int(feedback.get("amount", 0)), skill.capitalize()]
 		label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.38, 1.0))
-	_floating_feedback_offset = (_floating_feedback_offset + 1) % 4
-	label.position = screen_position - Vector2(95.0,
-		84.0 + float(_floating_feedback_offset) * 20.0)
 	_floating_feedback_layer.add_child(label)
+	label.reset_size()
+	label.position = Vector2(screen_position.x - label.size.x * 0.5,
+		_floating_feedback_row(screen_position.y - FLOATING_FEEDBACK_BASE_OFFSET))
+	_active_floating_labels.append(label)
 	var tween: Tween = create_tween().set_parallel(true)
-	tween.tween_property(label, "position", label.position - Vector2(0.0, 76.0), 1.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property(label, "modulate:a", 0.0, 1.8).set_delay(0.55)
-	tween.finished.connect(label.queue_free)
+	tween.tween_property(label, "position",
+		label.position - Vector2(0.0, FLOATING_FEEDBACK_RISE),
+		FLOATING_FEEDBACK_LIFETIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0,
+		FLOATING_FEEDBACK_LIFETIME - FLOATING_FEEDBACK_FADE_DELAY).set_delay(
+		FLOATING_FEEDBACK_FADE_DELAY)
+	tween.finished.connect(func() -> void:
+		_active_floating_labels.erase(label)
+		label.queue_free())
+
+func _floating_feedback_row(preferred_y: float) -> float:
+	# Messages drift upwards, so a new one takes the first free row at or below
+	# the preferred height rather than landing on top of one still on screen.
+	var occupied: Array[float] = []
+	for index: int in range(_active_floating_labels.size() - 1, -1, -1):
+		var other: Label = _active_floating_labels[index]
+		if is_instance_valid(other):
+			occupied.append(other.position.y)
+		else:
+			_active_floating_labels.remove_at(index)
+	occupied.sort()
+	var row_y: float = preferred_y
+	var lowest_row: float = preferred_y + FLOATING_FEEDBACK_ROW_HEIGHT * float(
+		FLOATING_FEEDBACK_MAX_ROWS)
+	for y: float in occupied:
+		if row_y > lowest_row:
+			break
+		if absf(y - row_y) < FLOATING_FEEDBACK_ROW_HEIGHT:
+			row_y = y + FLOATING_FEEDBACK_ROW_HEIGHT
+	return minf(row_y, lowest_row)
 
 func _on_window_size_changed() -> void:
 	# Match the render viewport to the actual drawable area so resizing changes
