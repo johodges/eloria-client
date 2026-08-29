@@ -32,8 +32,8 @@
       "path": "godot-client/assets/actors/native/races/luminous_male.glb"
     },
     "votary_female": {
-      "vertices": 14292,
-      "triangles": 23824,
+      "vertices": 14420,
+      "triangles": 24072,
       "joints": 65,
       "feature": "horns",
       "wardrobe": "skinned",
@@ -46,8 +46,8 @@
       "path": "godot-client/assets/actors/native/races/votary_female.glb"
     },
     "votary_male": {
-      "vertices": 14034,
-      "triangles": 23130,
+      "vertices": 14162,
+      "triangles": 23378,
       "joints": 65,
       "feature": "horns",
       "wardrobe": "skinned",
@@ -60,8 +60,8 @@
       "path": "godot-client/assets/actors/native/races/votary_male.glb"
     },
     "glasswarden_female": {
-      "vertices": 13952,
-      "triangles": 23292,
+      "vertices": 13994,
+      "triangles": 23472,
       "joints": 65,
       "feature": "crystal",
       "wardrobe": "skinned",
@@ -74,8 +74,8 @@
       "path": "godot-client/assets/actors/native/races/glasswarden_female.glb"
     },
     "glasswarden_male": {
-      "vertices": 13720,
-      "triangles": 22600,
+      "vertices": 13762,
+      "triangles": 22780,
       "joints": 65,
       "feature": "crystal",
       "wardrobe": "skinned",
