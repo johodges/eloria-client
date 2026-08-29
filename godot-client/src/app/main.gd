@@ -501,6 +501,7 @@ func _process(_delta: float) -> void:
 		_update_session_distance()
 		_update_legacy_clock_and_compass()
 		_update_actor_resource_overlay()
+		_update_cooldown_overlays()
 		_update_chat_fade()
 		var display_second: int = floori(float(Time.get_ticks_msec()) / 1000.0)
 		if display_second != cooldown_display_second:
@@ -3071,6 +3072,7 @@ func _sync_stats() -> void:
 	nexus_lines.append("[color=#9999ff]Ethereal Points  %d/%d[/color]" % [ether, max_ether])
 	nexus_lines.append("[color=#9999ff]Action Points    %d/%d[/color]" % [action, max_action])
 	nexus_lines.append("Food Level       %d" % int(stats.get("food", 0)))
+	nexus_lines.append(_research_line(stats))
 	var skill_lines: Array[String] = ["[color=#ff8a28][b]Levels and Experience[/b][/color]"]
 	for skill: String in EXPERIENCE_SKILLS:
 		var current_level: int = int(stats.get("overall_level", 0)) \
@@ -3218,6 +3220,21 @@ func _sync_counters() -> void:
 Distance this session: %d tiles") % [
 		_selected_counter_category, session_total, total, _session_distance]
 
+
+## Reading progress. `researching` is the knowledge index the character has
+## open, 1024 meaning none; `research_completed` and `research_total` are pages.
+## All three were decoded into the statistics slice and read by nothing, so a
+## player researching a book had no way to see how far through it they were.
+func _research_line(stats: Dictionary) -> String:
+	var index: int = int(stats.get("researching", 1024))
+	var total: int = int(stats.get("research_total", 0))
+	if index >= 1024 or total <= 0:
+		return "Researching      nothing"
+	var completed: int = clampi(int(stats.get("research_completed", 0)), 0, total)
+	var title: String = (knowledge_catalog[index]
+		if index >= 0 and index < knowledge_catalog.size() else "knowledge #%d" % index)
+	return "Researching      %s  %d/%d pages (%d%%)" % [title, completed, total,
+		roundi(100.0 * float(completed) / float(total))]
 
 func _sync_experience_meter(stats: Dictionary) -> void:
 	var skill: String = _selected_experience_skill
@@ -3838,6 +3855,52 @@ func _cast_spell_slot(slot: int) -> void:
 	else:
 		spell_status.text = "Casting %s…" % str(definition.get("name", "spell"))
 
+## Draws each item cooldown as a proportional drain over its quick slot.
+## `maximum_msec` came off the wire in every cooldown packet and was stored and
+## never read, so a cooldown was a disabled button with a number in a tooltip
+## and no sense of how far through it was. Runs every frame: it only moves an
+## anchor and sets a label, and a chunky one-second step would defeat the
+## point of showing progress at all.
+func _update_cooldown_overlays() -> void:
+	for slot: int in range(quick_slot_buttons.size()):
+		var overlay: Control = _cooldown_overlay(quick_slot_buttons[slot])
+		var cooldown_value: Variant = AppState.inventory_cooldowns.get(slot)
+		if not cooldown_value is Dictionary:
+			overlay.visible = false
+			continue
+		var cooldown: Dictionary = cooldown_value as Dictionary
+		var remaining_msec: int = int(cooldown.get("end_msec", 0)) - Time.get_ticks_msec()
+		var maximum_msec: int = maxi(1, int(cooldown.get("maximum_msec", 0)))
+		if remaining_msec <= 0:
+			overlay.visible = false
+			continue
+		overlay.visible = true
+		# The shade drains from full to empty as the cooldown runs out.
+		overlay.anchor_top = 1.0 - clampf(float(remaining_msec) / float(maximum_msec),
+			0.0, 1.0)
+		var seconds_label: Label = overlay.get_node("Seconds") as Label
+		seconds_label.text = str(maxi(1, ceili(float(remaining_msec) / 1000.0)))
+
+func _cooldown_overlay(button: Button) -> Control:
+	var existing: Control = button.get_node_or_null("Cooldown") as Control
+	if existing != null:
+		return existing
+	var overlay := ColorRect.new()
+	overlay.name = "Cooldown"
+	overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.color = Color(0.05, 0.06, 0.09, 0.66)
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.visible = false
+	button.add_child(overlay)
+	var seconds := Label.new()
+	seconds.name = "Seconds"
+	seconds.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	seconds.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	seconds.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	seconds.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(seconds)
+	return overlay
+
 func _inventory_cooldown_remaining(slot: int) -> int:
 	var cooldown_value: Variant = AppState.inventory_cooldowns.get(slot)
 	if not cooldown_value is Dictionary:
@@ -3991,8 +4054,13 @@ func _fill_trade_list(list_control: ItemList, items: Dictionary, prefix: String)
 		var item: Dictionary = item_value as Dictionary
 		var image_id: int = int(item.get("image_id", 0))
 		var index: int = list_control.item_count
-		list_control.add_item("%s %d  •  item #%d  ×%d" % [
-			prefix, slot + 1, image_id, int(item.get("quantity", 0))])
+		# Source type 1 is the offering player's backpack and 2 is their
+		# storage, which is only offered where a storage NPC is in range for
+		# both sides. Saying which it came from is the whole point of the
+		# server sending it.
+		var source: String = "  (storage)" if int(item.get("source_type", 1)) == 2 else ""
+		list_control.add_item("%s %d  •  item #%d  ×%d%s" % [
+			prefix, slot + 1, image_id, int(item.get("quantity", 0)), source])
 		list_control.set_item_metadata(index, slot)
 		var icon: Texture2D = item_atlas.icon_for(image_id)
 		if icon != null:

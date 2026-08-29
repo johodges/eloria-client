@@ -1089,6 +1089,44 @@ func _run() -> void:
 	diagnostics_button.button_pressed = false
 	await process_frame
 
+	# Decoded fields with a consumer: research progress and cooldown art.
+	app_state_inventory.set("stats", {"health": 10, "max_health": 10,
+		"researching": 1024, "research_completed": 0, "research_total": 0})
+	main.call("_sync_stats")
+	_expect(stats_text.text.contains("Researching")
+		and stats_text.text.contains("nothing"),
+		"a character reading nothing says so instead of hiding the field")
+	app_state_inventory.set("stats", {"health": 10, "max_health": 10,
+		"researching": 0, "research_completed": 30, "research_total": 120})
+	main.call("_sync_stats")
+	_expect(stats_text.text.contains("30/120") and stats_text.text.contains("25%"),
+		"reading progress is presented from the authoritative research statistics")
+
+	var cooldown_slot: Button = (main.get("quick_slot_buttons") as Array)[0] as Button
+	var cooldowns: Dictionary = app_state_inventory.get("inventory_cooldowns") as Dictionary
+	cooldowns.clear()
+	main.call("_update_cooldown_overlays")
+	var cooldown_overlay: Control = cooldown_slot.get_node_or_null("Cooldown") as Control
+	_expect(cooldown_overlay != null and not cooldown_overlay.visible,
+		"a slot with no cooldown draws no cooldown art")
+	cooldowns[0] = {"maximum_msec": 10000,
+		"end_msec": Time.get_ticks_msec() + 10000}
+	main.call("_update_cooldown_overlays")
+	_expect(cooldown_overlay.visible
+		and is_equal_approx(snappedf(cooldown_overlay.anchor_top, 0.05), 0.0),
+		"a cooldown at its full duration covers the whole slot")
+	cooldowns[0] = {"maximum_msec": 10000,
+		"end_msec": Time.get_ticks_msec() + 2500}
+	main.call("_update_cooldown_overlays")
+	_expect(is_equal_approx(snappedf(cooldown_overlay.anchor_top, 0.05), 0.75),
+		"a quarter-remaining cooldown draws a quarter of the slot")
+	_expect((cooldown_overlay.get_node("Seconds") as Label).text == "3",
+		"the cooldown art also states the seconds remaining")
+	cooldowns[0] = {"maximum_msec": 10000, "end_msec": Time.get_ticks_msec() - 1}
+	main.call("_update_cooldown_overlays")
+	_expect(not cooldown_overlay.visible, "an expired cooldown clears its art")
+	cooldowns.clear()
+
 	print("world input tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()
 	await process_frame

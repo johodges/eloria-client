@@ -2,6 +2,10 @@ class_name EloriaProtocol
 extends RefCounted
 
 const HEADER_SIZE := 3
+# Actor animation frames. Only the two resting frames are meaningful in an
+# actor packet; the rest are transient states the server does not spawn into.
+const FRAME_IDLE := 7
+const FRAME_COMBAT_IDLE := 15
 const MAX_PAYLOAD := 65532
 
 enum ClientMessage {
@@ -471,8 +475,9 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				var mask_bit: int = sigil_id if sigil_id < 32 else sigil_id - 32
 				if (u32(payload, mask_offset) & (1 << mask_bit)) != 0:
 					owned_sigils.append(sigil_id)
-			return {"type": "sigils", "owned": owned_sigils,
-				"low_mask": u32(payload), "high_mask": u32(payload, 4)}
+			# The two raw masks are the wire form of `owned`; carrying both
+			# invites two sources of truth for the same fact.
+			return {"type": "sigils", "owned": owned_sigils}
 		ServerMessage.SPELL_CAST:
 			if payload.size() < 2 or int(payload[0]) < 1 or int(payload[0]) > 6:
 				return {"type": "invalid", "error": "spell_result_length"}
@@ -534,10 +539,13 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "chat", "channel": int(payload[0]),
 				"text": legacy_colored_string(payload.slice(1))}
 		ServerMessage.SEND_NPC_INFO:
+			# The trailing byte is the legacy portrait index. Eloria has no
+			# portrait art and cannot convert the Eternal Lands set, so the
+			# field is deliberately not carried into the DTO rather than being
+			# decoded and ignored. Add it back with the artwork, not before.
 			if payload.size() < 20:
 				return {"type": "invalid", "error": "npc_info_length"}
-			return {"type": "npc_info", "name": nul_string(payload.slice(0, 20)),
-				"portrait": int(payload[20]) if payload.size() > 20 else 0}
+			return {"type": "npc_info", "name": nul_string(payload.slice(0, 20))}
 		ServerMessage.NPC_TEXT:
 			return {"type": "npc_text", "text": nul_string(payload)}
 		ServerMessage.NPC_OPTIONS_LIST:
@@ -757,29 +765,29 @@ static func decode_partial_stats(payload: PackedByteArray) -> Dictionary:
 			values["pickpoints_earned"] = value
 	return {"type": "partial_stats", "values": values}
 
+## Inventory entries are eight bytes. The optional legacy ten-byte form carried
+## a per-item UID that this server does not emit, so decoding it produced a
+## `uid` field nothing could ever contain or read. PROTOCOL.md, not
+## client_serv.h, is the specification: when unique item identity goes on the
+## wire it will be added deliberately, with a consumer.
 static func decode_inventory(payload: PackedByteArray) -> Dictionary:
 	if payload.is_empty():
 		return {"type": "invalid", "error": "inventory_length"}
 	var count: int = int(payload[0])
-	var entry_size: int = 8
-	if payload.size() == 1 + count * 10:
-		entry_size = 10
-	elif payload.size() != 1 + count * 8:
+	if payload.size() != 1 + count * 8:
 		return {"type": "invalid", "error": "inventory_length"}
 	var items: Array[Dictionary] = []
 	for index: int in range(count):
-		var offset: int = 1 + index * entry_size
-		items.append(decode_inventory_item(payload, offset, entry_size == 10))
+		items.append(decode_inventory_item(payload, 1 + index * 8))
 	return {"type": "inventory", "items": items}
 
 static func decode_inventory_update(payload: PackedByteArray) -> Dictionary:
-	if payload.size() != 8 and payload.size() != 10:
+	if payload.size() != 8:
 		return {"type": "invalid", "error": "inventory_update_length"}
-	return {"type": "inventory_update",
-		"item": decode_inventory_item(payload, 0, payload.size() == 10)}
+	return {"type": "inventory_update", "item": decode_inventory_item(payload, 0)}
 
-static func decode_inventory_item(payload: PackedByteArray, offset: int,
-		with_uid: bool) -> Dictionary:
+static func decode_inventory_item(payload: PackedByteArray,
+		offset: int) -> Dictionary:
 	var flags: int = int(payload[offset + 7])
 	var item: Dictionary = {
 		"image_id": u16(payload, offset), "quantity": u32(payload, offset + 2),
@@ -788,8 +796,6 @@ static func decode_inventory_item(payload: PackedByteArray, offset: int,
 		"stackable": (flags & 4) != 0, "inventory_usable": (flags & 8) != 0,
 		"tile_usable": (flags & 16) != 0, "player_usable": (flags & 32) != 0,
 		"object_usable": (flags & 64) != 0, "on_off": (flags & 128) != 0}
-	if with_uid:
-		item["uid"] = u16(payload, offset + 8)
 	return item
 
 static func decode_item_cooldowns(payload: PackedByteArray) -> Dictionary:
@@ -802,6 +808,10 @@ static func decode_item_cooldowns(payload: PackedByteArray) -> Dictionary:
 			"remaining_seconds": u16(payload, offset + 3)})
 	return {"type": "item_cooldowns", "cooldowns": cooldowns}
 
+## Partial-statistic slot numbers. These are the legacy incremental-update
+## identifiers and are a different namespace from the word offsets in the full
+## statistics packet: research is 47/65/66 here and 47/81/82 there, and the
+## server writes both from the same character fields.
 static func stat_key(slot: int) -> String:
 	var keys: Dictionary = {
 		0: "physique", 1: "physique_base", 2: "coordination",
@@ -885,7 +895,11 @@ static func decode_actor(payload: PackedByteArray, enhanced: bool, extended := f
 		actor["kind"] = int(payload[16 + shift])
 		actor["name"] = nul_string(payload.slice(17 + shift, min(payload.size(), 47 + shift)))
 	actor["alive"] = int(actor.get("health", 0)) > 0
-	actor["in_combat"] = false
+	# The frame byte is the actor's current animation state. FRAME_COMBAT_IDLE
+	# is the only value that carries gameplay meaning at spawn: an actor
+	# already fighting when it comes into view must not be presented as idle
+	# until the next enter-combat command, which may never arrive.
+	actor["in_combat"] = int(actor.get("frame", FRAME_IDLE)) == FRAME_COMBAT_IDLE
 	return actor
 
 static func nul_string(bytes: PackedByteArray) -> String:

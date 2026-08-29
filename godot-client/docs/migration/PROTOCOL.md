@@ -26,6 +26,17 @@ LOG_IN(140) is username, one ASCII space, password, then NUL. This matches legac
 
 Movement payload is `x:u16le, y:u16le`. Actor packets use 11-bit tile coordinates in server serialization. Godot conversion is centralized and will be finalized from map/client inspection; no scene may implement its own conversion.
 
+An actor packet's `frame` byte is its current animation state. Only
+`FRAME_COMBAT_IDLE`(15) carries gameplay meaning at spawn: it marks an actor
+that is already fighting when it comes into view, which must not be presented
+as idle until an enter-combat command that may never arrive.
+
+Partial statistic slots are the legacy incremental-update identifiers and are a
+different namespace from the word offsets in the full statistics packet:
+research progress is 47/65/66 (index, pages read, total pages) in a partial
+update and 47/81/82 (pages read, index, total pages) in the full packet. The
+server writes both from the same character fields.
+
 Actor movement is advanced by server `ADD_ACTOR_COMMAND` frames: commands 20–27
 are one-tile walk steps and 30–37 are the equivalent run steps. `SIT_DOWN(7)`
 carries one desired-state byte (`1` sit, `0` stand); the server broadcasts actor
@@ -56,11 +67,16 @@ NPC activation sends
 `TOUCH_PLAYER(28)` with `actor_id:u32le`. Dialogue uses `SEND_NPC_INFO(33)`,
 `NPC_TEXT(30)`, and a repeated `NPC_OPTIONS_LIST(31)` entry layout of
 `text_size:u16le | NUL text | response_id:u16le | actor_id:u16le`; replies send
-`RESPOND_TO_NPC(29)` as `actor_id:u16le | response_id:u16le`.
+`RESPOND_TO_NPC(29)` as `actor_id:u16le | response_id:u16le`. `SEND_NPC_INFO`
+carries a trailing legacy portrait index after the 20-byte name; Eloria has no
+portrait artwork and will not convert the Eternal Lands set, so that byte is
+deliberately not carried into the dialogue DTO.
 
 Inventory snapshots use `HERE_YOUR_INVENTORY(19)` with a count byte followed
-by `image_id:u16le | quantity:u32le | slot:u8 | flags:u8` entries. The optional
-legacy UID capability extends each entry with `uid:u16le`. Incremental updates
+by `image_id:u16le | quantity:u32le | slot:u8 | flags:u8` entries. Entries are
+eight bytes; the optional legacy ten-byte form carrying `uid:u16le` is not
+emitted by this server and is rejected rather than half-decoded. When unique
+item identity goes on the wire it will be added with a consumer. Incremental updates
 use the same entry in `GET_NEW_INVENTORY_ITEM(21)`; removals are one or more
 slot bytes in `REMOVE_ITEM_FROM_INVENTORY(22)`. Inspect and use send one slot
 byte with commands 19 and 31. Moving/equipping sends
@@ -75,7 +91,8 @@ IDs are distinct from the eight generic inventory wear positions.
 
 Spell casting sends `CAST_SPELL(39)` as `count:u8 | sigil_id:u8[count]`; the
 ordered sigil sequence, not the local spell ID, identifies the spell. The
-server publishes ownership with `GET_YOUR_SIGILS(42)` as two `u32le` masks and
+server publishes ownership with `GET_YOUR_SIGILS(42)` as two `u32le` masks (the client's DTO carries the
+decoded ownership list only, not the list and its raw masks) and
 returns `SPELL_CAST(70)` as `status:u8 | spell_id:u8`. Status 1 succeeds, 2
 fails validation or the cast roll, 3 rejects an invalid/unknown spell, 4 asks
 for an actor selected through `TOUCH_PLAYER(28)`, and 5 asks for a location

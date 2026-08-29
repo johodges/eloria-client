@@ -27,8 +27,8 @@ var chat_lines: Array[Dictionary] = []
 var active_channels: Array[int] = [0, 0, 0]
 var active_channel_index := 0
 var selected_actor_id := -1
-var npc_dialogue: Dictionary = {"open": false, "name": "", "portrait": 0,
-	"text": "", "options": []}
+var npc_dialogue: Dictionary = {"open": false, "name": "", "text": "",
+	"options": []}
 var trade: Dictionary = {"open": false, "partner": "", "storage_available": false,
 	"source_inventory": {}, "own_offers": {}, "other_offers": {},
 	"own_accepts": 0, "other_accepts": 0}
@@ -79,7 +79,7 @@ func _on_connection_state_changed(value: String) -> void:
 		active_channel_index = 0
 		current_map = ""
 		selected_actor_id = -1
-		npc_dialogue = {"open": false, "name": "", "portrait": 0, "text": "", "options": []}
+		npc_dialogue = {"open": false, "name": "", "text": "", "options": []}
 		trade = _empty_trade_state()
 		storage = _empty_storage_state()
 		ground_bags.clear()
@@ -130,8 +130,8 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			current_map = event.map_name
 			actors.clear()
 			selected_actor_id = -1
-			npc_dialogue = {"open": false, "name": "", "portrait": 0,
-				"text": "", "options": []}
+			npc_dialogue = {"open": false, "name": "", "text": "",
+				"options": []}
 			pending_spell_target = ""
 			trade = _empty_trade_state()
 			storage = _empty_storage_state()
@@ -422,7 +422,6 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 		"npc_info":
 			npc_dialogue["open"] = true
 			npc_dialogue["name"] = event.name
-			npc_dialogue["portrait"] = event.portrait
 			state_changed.emit(&"npc_dialogue")
 		"npc_text":
 			npc_dialogue["open"] = true

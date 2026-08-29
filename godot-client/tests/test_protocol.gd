@@ -764,11 +764,66 @@ func _init() -> void:
 			== "activity_counter_terminator",
 		"short, truncated and unterminated counter packets are rejected")
 
+	# Decoded fields must have a consumer or not be decoded at all.
+	var idle_actor: Dictionary = EloriaProtocol.decode_server(1, _actor_bytes(
+		EloriaProtocol.FRAME_IDLE))
+	var fighting_actor: Dictionary = EloriaProtocol.decode_server(1, _actor_bytes(
+		EloriaProtocol.FRAME_COMBAT_IDLE))
+	_expect(idle_actor.type == "actor_spawn" and not bool(idle_actor.in_combat)
+		and fighting_actor.type == "actor_spawn" and bool(fighting_actor.in_combat),
+		"the actor frame decides whether an actor arrives already in combat")
+	var npc_info: Dictionary = EloriaProtocol.decode_server(33,
+		_padded_name("Ferryman", 20) + PackedByteArray([7]))
+	_expect(npc_info.type == "npc_info" and str(npc_info.name) == "Ferryman"
+		and not npc_info.has("portrait"),
+		"the NPC portrait byte is not carried into a DTO with no artwork to render it")
+	var owned_sigils: Dictionary = EloriaProtocol.decode_server(42,
+		PackedByteArray([0b1001, 0, 0, 0, 0, 0, 0, 0]))
+	_expect(owned_sigils.type == "sigils" and owned_sigils.owned == [0, 3]
+		and not owned_sigils.has("low_mask") and not owned_sigils.has("high_mask"),
+		"sigil ownership is the decoded list, not the list plus its raw masks")
+	var inventory_entry: PackedByteArray = PackedByteArray([
+		1, 0x12, 0x34, 4, 0, 0, 0, 5, 8])
+	var uid_free_inventory: Dictionary = EloriaProtocol.decode_server(19, inventory_entry)
+	_expect(uid_free_inventory.type == "inventory"
+		and not (uid_free_inventory.items as Array)[0].has("uid"),
+		"inventory entries are eight bytes with no UID this server ever sends")
+	var uid_entry: PackedByteArray = inventory_entry.duplicate()
+	uid_entry.append_array(PackedByteArray([9, 0]))
+	_expect(EloriaProtocol.decode_server(19, uid_entry).error == "inventory_length"
+		and EloriaProtocol.decode_server(21,
+			uid_entry.slice(1)).error == "inventory_update_length",
+		"the ten-byte legacy entry is rejected rather than half-decoded")
+	var storage_offer: Dictionary = EloriaProtocol.decode_server(35,
+		PackedByteArray([3, 0, 4, 0, 0, 0, 2, 1, 0]))
+	_expect(int(storage_offer.source_type) == 2,
+		"a trade offer states whether it came from the backpack or from storage")
+	var cooldown_frame: Dictionary = EloriaProtocol.decode_server(77,
+		PackedByteArray([2, 0x2c, 0x01, 0x0e, 0x00]))
+	var first_cooldown: Dictionary = (cooldown_frame.cooldowns as Array)[0]
+	_expect(int(first_cooldown.maximum_seconds) == 300
+		and int(first_cooldown.remaining_seconds) == 14,
+		"a cooldown carries the full duration, which is what makes progress drawable")
+
 	print("protocol tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	quit(failures)
 
 func _expect_bytes(label: String, actual: PackedByteArray, expected: PackedByteArray) -> void:
 	_expect(actual == expected, label + ": " + actual.hex_encode())
+
+## A minimal legacy ADD_NEW_ACTOR body: id, x, y, unused z, rotation, type,
+## frame, max health, health, kind, then a NUL-terminated name.
+func _actor_bytes(frame: int) -> PackedByteArray:
+	var payload: PackedByteArray = PackedByteArray([
+		5, 0, 10, 0, 12, 0, 0, 0, 0, 0, 3, frame, 20, 0, 20, 0, 3])
+	payload.append_array(_nul_bytes("Rat"))
+	return payload
+
+func _padded_name(value: String, size: int) -> PackedByteArray:
+	var bytes: PackedByteArray = value.to_utf8_buffer()
+	while bytes.size() < size:
+		bytes.append(0)
+	return bytes.slice(0, size)
 
 func _nul_bytes(value: String) -> PackedByteArray:
 	var bytes: PackedByteArray = value.to_utf8_buffer()
