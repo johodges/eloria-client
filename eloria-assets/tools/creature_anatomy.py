@@ -361,12 +361,58 @@ QUADRUPED_PROPORTION_RULES = {
 }
 
 
+# ``ARCHETYPE_TWEAKS`` is keyed by concrete archetype ("wolf", "fox").  The
+# roster names body plans instead ("canid", "felid"), so none of it ever
+# applied to a roster creature: every roster canid was the bare canid baseline
+# in a different palette, and measured proportions were the only thing telling
+# them apart.  This is where per-creature features from the art live -- the
+# ruff on a dire wolf, the mane on a lion, the sloping back of a hyena.
+QUADRUPED_DETAIL = {
+    # Canids.  The art gives all of them a heavy shoulder ruff and a longer,
+    # deeper muzzle than the baseline; the dire wolves are big-headed.
+    "moorfell_wolf": dict(mane_ruff=1.15, muzzle_len=.32, ear_h=.26,
+                          skull=(.23, .23, .28), tail_bush=1.35),
+    "bramble_wolf": dict(mane_ruff=1.05, muzzle_len=.31, ear_h=.25,
+                         skull=(.22, .22, .27), tail_bush=1.25),
+    "facet_hound": dict(muzzle_len=.30, ear_h=.27, skull=(.22, .21, .27),
+                        tail_bush=.85),
+    "ivy_hound": dict(mane_ruff=.85, muzzle_len=.29, ear_h=.24),
+    "dust_hyena": dict(shoulder_h=.90, hip_h=.70, mane_ruff=.95, ear="round",
+                       ear_h=.20, ear_w=.17, skull=(.22, .22, .26),
+                       muzzle_len=.26, tail_bush=1.15),
+    # Felids.  A lion is mostly mane in the art, and it is the one thing that
+    # separated the two lions from the two wolves.
+    "stormmane_lion": dict(mane_ruff=1.95, tail_bush=1.5, skull=(.23, .21, .24),
+                           muzzle_len=.21),
+    "gilded_water_lion": dict(mane_ruff=1.70, tail_bush=1.4,
+                              skull=(.23, .21, .24)),
+    "canopy_lynx": dict(ear_h=.30, ear_w=.13, tail_bush=1.1, tail_len=.42),
+    # Equines and bovines: a standing mane along the crest of the neck.
+    "moor_pony": dict(mane_ruff=1.25, tail_bush=1.6, muzzle_len=.34,
+                      skull=(.19, .21, .30)),
+    "goldmane_aurochs": dict(mane_ruff=1.45, horn="curl"),
+    "whitehorn_yak": dict(mane_ruff=1.60, horn="curl", tail_bush=1.3),
+    "moorhorn_ram": dict(horn="curl", mane_ruff=1.05),
+    # Cervids keep their antlers and gain the throat ruff the art shows.
+    "spectral_moor_stag": dict(horn="antlers", mane_ruff=.90),
+    "bramble_stag": dict(horn="antlers", mane_ruff=.85),
+    "lantern_stag": dict(horn="antlers", mane_ruff=.85),
+    "moss_bear": dict(mane_ruff=.80),
+    "mossback_anteater": dict(muzzle_len=.52, muzzle_r=(.085, .060),
+                              tail_bush=1.7),
+}
+
+
 def resolved_plan(archetype: str, variant: str | None = None) -> dict:
     plan = dict(plan_for(archetype))
     plan.update(ARCHETYPE_TWEAKS.get(archetype, {}))
     if variant:
+        plan.update(QUADRUPED_DETAIL.get(variant, {}))
         plan = scale_plan(plan, proportions(variant),
                           QUADRUPED_PROPORTION_RULES)
+    # Stamped so feature code can seed deterministically off the creature
+    # without every helper having to carry the slug through its arguments.
+    plan["_variant"] = variant or archetype
     return plan
 
 
@@ -1107,12 +1153,37 @@ def _features(mesh: AnatomyMesh, p: dict, s: float, g, B, spine, radii,
                   [(.055 * s, .050 * s), (.012 * s, .012 * s)],
                   [head_i], MAT_FEATURE, sides=9)
 
-    if p.get("mane_ruff"):
+    ruff = float(p.get("mane_ruff") or 0.0)
+    if ruff:
+        # One smooth ellipsoid reads as a scarf.  A mane is a mass of hanging
+        # locks, and its outline is what separates a lion from a big cat and a
+        # dire wolf from a dog at any distance worth modelling for.
         collar = g[B["neck"]]
+        span = p["neck_r"][0] * s
         mesh.ellipsoid(tuple(collar + np.array((0., 0., .04 * s))),
-                       (p["neck_r"][0] * s * 2.9, p["neck_r"][1] * s * 2.7,
-                        p["neck_r"][0] * s * 2.0),
+                       (span * 2.6 * ruff, p["neck_r"][1] * s * 2.5 * ruff,
+                        span * 1.9 * ruff),
                        [B["neck"], chest_i], MAT_ACCENT, rings=9, sides=16)
+        rng = np.random.default_rng(
+            zlib.crc32(("mane:" + str(p.get("_variant", ""))).encode("utf-8"))
+            % (2 ** 31))
+        locks = int(11 + 7 * min(ruff, 2.0))
+        for k in range(locks):
+            angle = 2 * math.pi * k / locks + float(rng.uniform(-.12, .12))
+            out = np.array((math.cos(angle), math.sin(angle) * .82, 0.))
+            root = collar + np.array((out[0] * span * 1.5 * ruff,
+                                       out[1] * span * 1.5 * ruff, .02 * s))
+            # Locks lie along the mass and hang; radiating them straight out
+            # made a sunburst collar rather than a head of fur.
+            reach = span * ruff * float(rng.uniform(.62, 1.05))
+            tip = root + np.array((out[0] * reach * .34,
+                                   out[1] * reach * .22 - reach * .74,
+                                   reach * float(rng.uniform(.10, .52))))
+            mesh.tube([root, (root + tip) * .5, tip],
+                      [(span * .26 * ruff, span * .26 * ruff),
+                       (span * .20 * ruff, span * .20 * ruff),
+                       (span * .08 * ruff, span * .08 * ruff)],
+                      [B["neck"], chest_i], MAT_ACCENT, sides=5)
 
     if p["shell"]:
         top = max(pt[1] + r[1] for pt, r in zip(spine, radii))
