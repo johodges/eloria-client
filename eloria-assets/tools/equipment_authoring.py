@@ -528,13 +528,26 @@ def load_rig(path: Path, body_mesh_names=("Body",)) -> Rig:
 
 
 def smooth_profile(values: list[float], floor: float, passes: int = 2) -> list[float]:
-    """Clamp and relax a measured radius ring so lofts stay watertight."""
-    data = [max(floor, v) for v in values]
+    """Clamp and relax a measured radius ring so lofts stay watertight.
+
+    The relaxed ring is never allowed to fall below the measurement it came
+    from.  Two [1, 2, 1] passes take about sixty per cent off an isolated
+    bump, and the most isolated bumps on a torso are precisely the ones a
+    shirt has to clear: the nipple on both bodies and the bust on the female.
+    Relaxed away, they came back through an eleven millimetre shell as two
+    dark ovals on the chest of every clothed character.
+
+    Keeping the maximum of the two leaves the smoothing where it earns its
+    place -- filling hollows, so the loft stays watertight and uncreased --
+    and takes it away where it would cut into the body.
+    """
+    raw = [max(floor, value) for value in values]
+    data = list(raw)
     count = len(data)
     for _ in range(passes):
         data = [(data[(i - 1) % count] + 2. * data[i] + data[(i + 1) % count]) / 4.
                 for i in range(count)]
-    return data
+    return [max(relaxed, measured) for relaxed, measured in zip(data, raw)]
 
 
 # ---------------------------------------------------------------------------
@@ -1513,7 +1526,7 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
                            bones=["neck_01", "spine_03", "clavicle_l",
                                   "clavicle_r"])
         surface.loft(band, MATERIAL_TRIM, cap_end=True)
-        _belt(surface, rig, waist + .085, thickness=.020)
+        _belt(surface, rig, waist + .085, thickness=.015)
         if kind == "cuirass":
             _shoulder_pads(surface, rig)
             # A raised breastplate over the front of the shell, so the armour
@@ -1563,7 +1576,7 @@ def garment_geometry(kind: str, rig: Rig) -> Garment:
         hips = torso_rings(rig, hip_low, 1.075, rows=8, sides=26, thickness=.012,
                            floor=.058, bones=HIP_BONES)
         surface.loft(hips, MATERIAL_BASE, cap_end=True)
-        _belt(surface, rig, 1.055, thickness=.019)
+        _belt(surface, rig, 1.055, thickness=.014)
         end = .93 if kind == "pants" else .89
         for side in ("l", "r"):
             measure = LEG_MEASURE_L if side == "l" else LEG_MEASURE_R

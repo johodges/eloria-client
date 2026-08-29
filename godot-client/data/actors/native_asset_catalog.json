@@ -3868,7 +3868,7 @@
       "vertices": 1146,
       "triangles": 1900,
       "joints": 65,
-      "bytes": 116312,
+      "bytes": 116308,
       "part": 2,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_leaf_cape.glb"
@@ -3913,7 +3913,7 @@
       "vertices": 1146,
       "triangles": 1900,
       "joints": 65,
-      "bytes": 116288,
+      "bytes": 116284,
       "part": 2,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_rider_cape.glb"
@@ -4093,7 +4093,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150364,
+      "bytes": 150360,
       "part": 4,
       "visual": 100,
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_legs.glb"
@@ -4108,7 +4108,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 148184,
+      "bytes": 148180,
       "part": 4,
       "visual": 101,
       "path": "godot-client/assets/actors/native/equipment/glasswarden_greaves.glb"
@@ -4138,7 +4138,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150332,
+      "bytes": 150328,
       "part": 4,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_rider_legs.glb"
@@ -4153,7 +4153,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 152156,
+      "bytes": 152152,
       "part": 4,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_legs.glb"
@@ -4168,7 +4168,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 154464,
+      "bytes": 154460,
       "part": 4,
       "visual": 105,
       "path": "godot-client/assets/actors/native/equipment/votary_winter_legs.glb"
@@ -4183,7 +4183,7 @@
       "vertices": 1213,
       "triangles": 2106,
       "joints": 65,
-      "bytes": 121500,
+      "bytes": 121504,
       "part": 4,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_pants.glb"
@@ -4243,7 +4243,7 @@
       "vertices": 1356,
       "triangles": 2288,
       "joints": 65,
-      "bytes": 134976,
+      "bytes": 134972,
       "part": 5,
       "visual": 103,
       "path": "godot-client/assets/actors/native/equipment/orun_sun_cuirass.glb"
@@ -4288,7 +4288,7 @@
       "vertices": 1705,
       "triangles": 2970,
       "joints": 65,
-      "bytes": 161252,
+      "bytes": 161248,
       "part": 5,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/votary_fur_mantle.glb"
@@ -4348,7 +4348,7 @@
       "vertices": 1375,
       "triangles": 2358,
       "joints": 65,
-      "bytes": 131040,
+      "bytes": 131036,
       "part": 5,
       "visual": 110,
       "path": "godot-client/assets/actors/native/equipment/luminous_short_sleeve_shirt.glb"
@@ -4423,7 +4423,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 128536,
+      "bytes": 128532,
       "part": 6,
       "visual": 104,
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_boots.glb"
@@ -4453,7 +4453,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126740,
+      "bytes": 126736,
       "part": 6,
       "visual": 106,
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_boots.glb"
@@ -5031,7 +5031,7 @@
       "vertices": 1146,
       "triangles": 1900,
       "joints": 65,
-      "bytes": 116236,
+      "bytes": 116232,
       "part": 2,
       "visuals": [
         0,
@@ -5185,7 +5185,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150316,
+      "bytes": 150312,
       "part": 4,
       "visuals": [
         9,
@@ -5203,7 +5203,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 154412,
+      "bytes": 154408,
       "part": 4,
       "visuals": [
         11
@@ -5220,7 +5220,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150268,
+      "bytes": 150264,
       "part": 4,
       "visuals": [
         10,
@@ -5240,7 +5240,7 @@
       "vertices": 1375,
       "triangles": 2358,
       "joints": 65,
-      "bytes": 130936,
+      "bytes": 130932,
       "part": 5,
       "visuals": [
         0,
@@ -5268,7 +5268,7 @@
       "vertices": 1356,
       "triangles": 2288,
       "joints": 65,
-      "bytes": 134960,
+      "bytes": 134956,
       "part": 5,
       "visuals": [
         12,
@@ -5325,7 +5325,7 @@
       "vertices": 1705,
       "triangles": 2970,
       "joints": 65,
-      "bytes": 161208,
+      "bytes": 161204,
       "part": 5,
       "visuals": [
         18
@@ -5342,7 +5342,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126660,
+      "bytes": 126656,
       "part": 6,
       "visuals": [
         0,
@@ -5383,7 +5383,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126664,
+      "bytes": 126660,
       "part": 6,
       "visuals": [
         8,
@@ -5540,7 +5540,7 @@
       "vertices": 1705,
       "triangles": 2970,
       "joints": 65,
-      "bytes": 157184,
+      "bytes": 157188,
       "group": "heavy",
       "authoredFor": "stoneborn_male",
       "path": "godot-client/assets/actors/native/equipment/greyhaven_coat__heavy.glb"
@@ -5630,7 +5630,7 @@
       "vertices": 1735,
       "triangles": 3030,
       "joints": 65,
-      "bytes": 159104,
+      "bytes": 159100,
       "group": "heavy",
       "authoredFor": "stoneborn_male",
       "path": "godot-client/assets/actors/native/equipment/mycelari_mantle__heavy.glb"
@@ -5690,7 +5690,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126736,
+      "bytes": 126732,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/glasswarden_boots__saurian.glb"
@@ -5705,7 +5705,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126728,
+      "bytes": 126724,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/greyhaven_boots__saurian.glb"
@@ -5735,7 +5735,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126716,
+      "bytes": 126712,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_boots__saurian.glb"
@@ -5765,7 +5765,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126720,
+      "bytes": 126716,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_boots__saurian.glb"
@@ -5915,7 +5915,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126640,
+      "bytes": 126636,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_boots__saurian.glb"
@@ -5930,7 +5930,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 130776,
+      "bytes": 130772,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_boots_fur__saurian.glb"
@@ -5945,7 +5945,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126644,
+      "bytes": 126640,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_greaves__saurian.glb"

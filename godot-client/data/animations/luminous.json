@@ -9,12 +9,12 @@
     "stand": 2.0
   },
   "actions": {
-    "idle": "Idle_A",
-    "alternate_idle": "Idle_Subtle",
+    "idle": "Idle_Subtle",
+    "alternate_idle": "Idle_A",
     "combat_idle": "Fighting_Idle",
     "walk": "Walk",
     "run": "Jog",
-    "turn": "Idle_A",
+    "turn": "Idle_Subtle",
     "sit": "Sitting_Enter",
     "seated_idle": "Sitting_Idle",
     "stand": "Sitting_Exit",
