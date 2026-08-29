@@ -266,6 +266,13 @@
       "author": "Eloria project",
       "license": "CC-BY-4.0",
       "description": "Four Gates authoring pipeline: glTF writer, mesh toolkit, procedural PBR synthesis, kits, landmarks, terrain and layout"
+    },
+    {
+      "path": "godot-client/assets/actors/native/races/*",
+      "source": "source/player_models/native/Superhero_{Male,Female}_FullBody.gltf",
+      "author": "Quaternius",
+      "license": "CC0-1.0",
+      "description": "Universal Base Characters geometry retargeted per race and, for the Glasswarden, re-proportioned onto the derived slim base body; integrated race features and all feature, wardrobe and eye textures are generated procedurally by build_native_nymara_glbs.py"
     }
   ]
 }
