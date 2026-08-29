@@ -527,6 +527,65 @@ def load_rig(path: Path, body_mesh_names=("Body",)) -> Rig:
                weights=np.vstack(bone_weights))
 
 
+def cape_weights(rig, points: np.ndarray, chains=("l", "c", "r"), links: int = 4):
+    """Bind a cape to the rig's cape chains, keeping the collar on the body.
+
+    The usual garment weighting samples the weights of the nearest body
+    vertices, which cannot reach these bones at all: the body carries no cape
+    weight to sample.  A cape is bound to them directly instead, by where each
+    vertex sits along the hang and across it.
+
+    The top of the cape stays on `spine_03` so the collar rides the shoulders
+    and follows the per-race fit; below that the weight crosses into the
+    chains, so the solver owns everything that can reach a leg.
+    """
+    origins = {}
+    for chain in chains:
+        for link in range(links):
+            name = f"cape_{chain}_{link + 1:02d}"
+            if name not in rig.joint_names:
+                return None
+            origins[(chain, link)] = rig.origin(name)
+    anchor = rig.joint_names.index("spine_03")
+    ladder = [origins[(chains[0], link)][1] for link in range(links)]
+    top, bottom = max(ladder), min(ladder)
+    if top - bottom < 1e-6:
+        return None
+    across = np.array([origins[(chain, 0)][0] for chain in chains])
+
+    joints = np.zeros((len(points), 4), dtype=np.uint16)
+    weights = np.zeros((len(points), 4), dtype=np.float32)
+    for index, point in enumerate(points):
+        # Along the hang: 0 at the collar, 1 at the hem.
+        travel = float(np.clip((top - point[1]) / (top - bottom), 0., 1.))
+        # The collar stays on the body, and lets go over the first fifth.
+        body = float(np.clip(1. - travel / .20, 0., 1.))
+        step = travel * (links - 1)
+        low = int(np.clip(math.floor(step), 0, links - 2))
+        along = float(step - low)
+        # Across: the two nearest chains, weighted by how close they are.
+        order = np.argsort(np.abs(across - point[0]))
+        near, far = chains[int(order[0])], chains[int(order[1])]
+        gap = abs(across[int(order[0])] - across[int(order[1])])
+        side = float(np.clip(1. - abs(point[0] - across[int(order[0])])
+                             / max(gap, 1e-6), 0., 1.))
+        share = 1. - body
+        entries = [
+            (anchor, body),
+            (rig.joint_names.index(f"cape_{near}_{low + 1:02d}"),
+             share * side * (1. - along)),
+            (rig.joint_names.index(f"cape_{near}_{low + 2:02d}"),
+             share * side * along),
+            (rig.joint_names.index(f"cape_{far}_{low + 2:02d}"),
+             share * (1. - side)),
+        ]
+        total = sum(value for _slot, value in entries) or 1.
+        for slot, (bone, value) in enumerate(entries):
+            joints[index, slot] = bone
+            weights[index, slot] = value / total
+    return joints, weights
+
+
 def smooth_profile(values: list[float], floor: float, passes: int = 2) -> list[float]:
     """Clamp and relax a measured radius ring so lofts stay watertight.
 
@@ -2316,8 +2375,10 @@ def build_equipment_piece(path: Path, rig: Rig, slug: str, label: str, kind: str
             continue
         joints = weights = None
         if skinned:
-            joints, weights = rig.weights_for(positions.astype(np.float64),
-                                              GARMENT_SKIN[region])
+            bound = (cape_weights(rig, positions.astype(np.float64))
+                     if region == "cape" else None)
+            joints, weights = bound if bound is not None else rig.weights_for(
+                positions.astype(np.float64), GARMENT_SKIN[region])
         primitives.append(glb.primitive(positions, normals, uvs, indices,
                                         materials[slot], joints=joints,
                                         weights=weights))
