@@ -796,9 +796,24 @@ func _equipment_model_config(part: int, visual_id: int) -> Dictionary:
 func rig_name() -> String:
 	return str(_model_config.get("scene", "")).get_file().get_basename()
 
-func fit_group() -> String:
+## The fit groups this actor's race belongs to, in precedence order.
+##
+## Modified 2026-08-29 for Eloria Client: this used to be a single name. A race
+## can differ from the reference body in more than one way - a Ssarathi female
+## has both a digitigrade leg and a bust, and the two are authored on different
+## rigs - so a race now names every group it is in and a garment resolves the
+## first one it actually ships a variant for. A registry written the old way,
+## with one name per race, still reads correctly.
+func fit_groups() -> PackedStringArray:
 	var groups: Dictionary = _equipment_config.get("fitGroups", {}) as Dictionary
-	return str(groups.get(rig_name(), ""))
+	var mine: Variant = groups.get(rig_name(), "")
+	if mine is Array:
+		var names := PackedStringArray()
+		for value: Variant in mine as Array:
+			names.append(str(value))
+		return names
+	var single := str(mine)
+	return PackedStringArray() if single.is_empty() else PackedStringArray([single])
 
 func _fit_variant(model: Dictionary) -> Dictionary:
 	# Modified 2026-08-28 for Eloria Client: some builds cannot be reached by
@@ -806,17 +821,18 @@ func _fit_variant(model: Dictionary) -> Dictionary:
 	# the copy of the piece built on its own rig where one exists, and the
 	# reference piece everywhere else, so a group only costs the kinds it
 	# actually changes.
-	var group: String = fit_group()
-	if group.is_empty() or model.is_empty():
+	if model.is_empty():
 		return model
 	var variants: Dictionary = model.get("variants", {}) as Dictionary
-	var variant: Dictionary = variants.get(group, {}) as Dictionary
-	if variant.is_empty():
-		return model
-	var resolved: Dictionary = model.duplicate(true)
-	resolved.erase("variants")
-	resolved.merge(variant, true)
-	return resolved
+	for group: String in fit_groups():
+		var variant: Dictionary = variants.get(group, {}) as Dictionary
+		if variant.is_empty():
+			continue
+		var resolved: Dictionary = model.duplicate(true)
+		resolved.erase("variants")
+		resolved.merge(variant, true)
+		return resolved
+	return model
 
 func _equipment_socket(part: int, model_config: Dictionary) -> Dictionary:
 	# A model may override the shared part socket, which is how a two-handed
