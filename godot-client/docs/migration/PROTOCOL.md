@@ -495,12 +495,32 @@ UTF-8.
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+| 100 | Weather | `kind:u8 \| intensity:u8` - kind indexes `clear, rain, storm`, intensity 0-100 |
+| 15 | Start rain | `intensity:u8` - the legacy signal, sent alongside |
+| 16 | Stop rain | empty |
+| 17 | Thunder | `severity:u8`, 1-5 |
+| 61 | Fire | `x:u16 \| y:u16 \| kind:u8` - hearth, forge or pyre |
+| 62 | Fire removed | `x:u16 \| y:u16` |
 | 14 | Play a sound | `x:u16 \| y:u16 \| gain:u8 \| sound_name` - gain is a percentage, 0-200 |
 | 54 | Play music | `track_name`, empty for silence |
 | 85 | Missile aim at a place | `actor_id:u16 \| x:u16 \| y:u16` |
 | 87 | Missile loosed at a place | `actor_id:u16 \| x:u16 \| y:u16` |
 | 89 | Actor animation | `actor_id:u16 \| action` - an action name, never a clip |
 | 238 | Almanac | `day:u8 \| month:u8 \| year:u16 \| kind:u8 \| experience_bonus:u16 \| name \| description \| effect_count:u8` then that many effect tags, `multiplier_count:u8` then that many `skill \| multiplier:u16`, `catalogue_count:u16` then that many `kind:u8 \| name \| description` |
+
+Command 100 carries the whole sky in one frame, with 15, 16 and 17 as the
+legacy signals sent alongside it so an older client still sees weather. The sky
+has to be the server's: two players standing together must see the same one,
+and a client rolling its own would drift from everyone else's within a minute.
+It rolls once per game day, so weather moves at the pace of the day the world
+already has. A map that declares no climate is always clear - it has no weather
+rather than a default it never asked for.
+
+Commands 61 and 62 place and remove fires. A fire is content the client cannot
+invent, so each is named by tile and kind; what a hearth, a forge or a pyre
+looks like is the client's to decide, and a kind it does not know is still
+drawn, because a fire that is there should be visible even if its flavour is
+not.
 
 Commands 14 and 54 carry the audio a client cannot work out for itself. This
 client answers its own harvest, its own combat and its own pick-ups from state

@@ -245,6 +245,8 @@ var map_marker_overlay: Control
 ## Short-lived world effects the server announced. Kept only so a test can see
 ## what is on screen; each one frees itself when it finishes.
 var world_effects: Array = []
+## The sky and the fires the server placed on this map.
+var weather_layer: Weather3D
 var audio_director: Node
 var map_ambience_root: Node3D
 var sigil_window: Control
@@ -604,6 +606,9 @@ func _ready() -> void:
 	AppState.actor_animation_requested.connect(_on_actor_animation_requested)
 	AppState.missile_fired.connect(_on_missile_fired)
 	AppState.ground_missile_fired.connect(_on_ground_missile_fired)
+	AppState.thunder_struck.connect(_on_thunder_struck)
+	weather_layer = Weather3D.new()
+	world_root.add_child(weather_layer)
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
 	viewport_container.gui_input.connect(_on_world_gui_input)
@@ -740,6 +745,11 @@ func _process(delta: float) -> void:
 		_update_carried_item()
 		_update_map_viewports()
 		_update_local_actor_follow()
+		# Rain is everywhere, so only the box the player is standing in is
+		# drawn. Left at the world origin it fell a hundred metres away from
+		# whoever was watching it.
+		if weather_layer != null:
+			weather_layer.follow(camera_rig.global_position)
 		interior_cutaway.update(camera_rig.yaw_degrees)
 		_update_occluder_fade(delta)
 		_update_keyboard_movement()
@@ -2725,6 +2735,10 @@ func _on_state_changed(path: StringName) -> void:
 				_sync_storage()
 			if bool(AppState.ground_bag.get("open", false)):
 				_sync_ground_bag()
+		&"weather":
+			_sync_weather()
+		&"fires":
+			_sync_fires()
 		&"item_detail":
 			# The description is written whichever tool asked for it; only the
 			# window is withheld. See `_describe_slot`.
@@ -4439,6 +4453,38 @@ func _on_missile_fired(shot: Dictionary) -> void:
 	world_effects.append(missile)
 	world_effects = world_effects.filter(func(node: Variant) -> bool:
 		return is_instance_valid(node))
+
+## The sky the server said is over this map. Nothing here decides anything:
+## what is falling and how hard is on the wire, because two players standing
+## together have to see the same sky.
+func _sync_weather() -> void:
+	if weather_layer == null:
+		return
+	if not _effects_enabled:
+		weather_layer.set_weather(0, 0)
+		return
+	weather_layer.set_weather(int(AppState.weather.get("kind", 0)),
+		int(AppState.weather.get("intensity", 0)))
+
+## The fires burning on this map, placed by tile. A fire the server removes
+## goes out; one it has not mentioned was never lit.
+func _sync_fires() -> void:
+	if weather_layer == null:
+		return
+	for tile: Variant in AppState.fires:
+		var fire_tile: Vector2i = tile as Vector2i
+		if not weather_layer.has_fire_at(fire_tile):
+			weather_layer.place_fire(
+				adapter.server_to_godot(fire_tile.x, fire_tile.y),
+				int(AppState.fires[fire_tile]), fire_tile)
+	for tile: Variant in weather_layer.fire_tiles():
+		if not AppState.fires.has(tile):
+			weather_layer.remove_fire(tile as Vector2i)
+
+func _on_thunder_struck(severity: int) -> void:
+	if weather_layer != null and _effects_enabled:
+		weather_layer.strike(severity)
+	audio_director.play("world_effect")
 
 ## An arrow on its way to a tile rather than into an actor: a practice shot,
 ## or a miss.

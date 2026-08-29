@@ -56,6 +56,8 @@ enum ServerMessage {
 	MISSILE_AIM_A_AT_B = 84, MISSILE_FIRE_A_TO_B = 86,
 	MISSILE_AIM_A_AT_XYZ = 85, MISSILE_FIRE_A_TO_XYZ = 87,
 	PLAY_SOUND = 14, PLAY_MUSIC = 54,
+	START_RAIN = 15, STOP_RAIN = 16, THUNDER = 17,
+	FIRE_PARTICLES = 61, REMOVE_FIRE_AT = 62, SEND_WEATHER = 100,
 	DISPLAY_POPUP = 83, SEND_MAP_MARKER = 90, REMOVE_MAP_MARKER = 91,
 	SEND_ACHIEVEMENTS = 95, ADD_NEW_ACTOR_EXTENDED = 247,
 	ELORIA_INVASION_ASSISTANT_STATE = 233,
@@ -639,6 +641,41 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				"fired": command == ServerMessage.MISSILE_FIRE_A_TO_B,
 				"source_actor_id": u16(payload),
 				"target_actor_id": u16(payload, 2)}
+		ServerMessage.SEND_WEATHER:
+			# The whole sky in one frame. Weather is the server's because two
+			# players standing together have to see the same one.
+			if payload.size() != 2:
+				return {"type": "invalid", "error": "weather_length"}
+			if int(payload[1]) > 100:
+				return {"type": "invalid", "error": "weather_intensity"}
+			return {"type": "weather", "kind": int(payload[0]),
+				"intensity": int(payload[1])}
+		ServerMessage.START_RAIN, ServerMessage.STOP_RAIN:
+			# The legacy client's own rain signals, sent alongside the sky
+			# frame. This client reads the sky frame and takes these as
+			# confirmation, so an older server that sends only these still
+			# makes it rain.
+			var starting: bool = command == ServerMessage.START_RAIN
+			if starting and payload.size() != 1:
+				return {"type": "invalid", "error": "rain_length"}
+			if not starting and payload.size() != 0:
+				return {"type": "invalid", "error": "rain_trailing"}
+			return {"type": "rain", "falling": starting,
+				"intensity": int(payload[0]) if starting else 0}
+		ServerMessage.THUNDER:
+			if payload.size() != 1:
+				return {"type": "invalid", "error": "thunder_length"}
+			return {"type": "thunder", "severity": int(payload[0])}
+		ServerMessage.FIRE_PARTICLES:
+			if payload.size() != 5:
+				return {"type": "invalid", "error": "fire_length"}
+			return {"type": "fire", "x": u16(payload), "y": u16(payload, 2),
+				"kind": int(payload[4]), "burning": true}
+		ServerMessage.REMOVE_FIRE_AT:
+			if payload.size() != 4:
+				return {"type": "invalid", "error": "remove_fire_length"}
+			return {"type": "fire", "x": u16(payload), "y": u16(payload, 2),
+				"kind": -1, "burning": false}
 		ServerMessage.PLAY_SOUND:
 			# A sound the client could not have worked out for itself: what
 			# somebody else is doing. It is named rather than numbered, so

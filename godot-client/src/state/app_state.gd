@@ -24,6 +24,15 @@ signal ground_missile_fired(shot: Dictionary)
 ## A sound the server placed somewhere on the map, and the music bed it wants
 ## under the map the player is standing on. Both are events, not state: the
 ## client owns what is currently sounding.
+## The fires the server has placed on this map, keyed by tile. State rather
+## than an event: a fire keeps burning, so a client arriving later is told
+## about it the same way.
+var fires: Dictionary = {}
+## The sky over this map, as {"kind": int, "intensity": int}.
+var weather: Dictionary = {"kind": 0, "intensity": 0}
+
+## One clap of thunder. An event: it happens once and is over.
+signal thunder_struck(severity: int)
 signal sound_requested(sound: Dictionary)
 signal music_requested(track: String)
 
@@ -200,6 +209,8 @@ func _on_connection_state_changed(value: String) -> void:
 		quest_journal.clear()
 		item_detail = {"open": false}
 		almanac = {}
+		fires = {}
+		weather = {"kind": 0, "intensity": 0}
 		inventory_state = {"gold": 0, "carried": 0, "capacity": 0, "items": []}
 		combat_state = _empty_combat_state()
 		mail.clear()
@@ -553,6 +564,29 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			if bool(event.fired):
 				missile_fired.emit({"source_actor_id": shooter_id,
 					"target_actor_id": int(event.target_actor_id)})
+		"weather":
+			weather = {"kind": int(event.kind),
+				"intensity": int(event.intensity)}
+			state_changed.emit(&"weather")
+		"rain":
+			# The legacy signal. It carries no kind, so it only ever confirms
+			# what the sky frame already said or stops the rain outright -
+			# it never invents a storm the whole-sky frame did not state.
+			if not bool(event.falling):
+				weather = {"kind": 0, "intensity": 0}
+				state_changed.emit(&"weather")
+			elif int(weather.get("kind", 0)) == 0:
+				weather = {"kind": 1, "intensity": int(event.intensity)}
+				state_changed.emit(&"weather")
+		"thunder":
+			thunder_struck.emit(int(event.severity))
+		"fire":
+			var fire_tile := Vector2i(int(event.x), int(event.y))
+			if bool(event.burning):
+				fires[fire_tile] = int(event.kind)
+			else:
+				fires.erase(fire_tile)
+			state_changed.emit(&"fires")
 		"play_sound":
 			sound_requested.emit({"name": str(event.name), "x": int(event.x),
 				"y": int(event.y), "gain": float(event.gain)})
