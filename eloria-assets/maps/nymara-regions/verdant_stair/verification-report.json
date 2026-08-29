@@ -1,0 +1,81 @@
+{
+  "summary": {
+    "walkSurfaceNodes": 85,
+    "walkSurfaceTriangles": 223738,
+    "tilesSampled": 331776,
+    "groundingMisses": 0,
+    "groundingMissFraction": 0.0,
+    "surfaceDiscontinuities": 1412,
+    "spawnPoints": 3
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "severity": "warning",
+      "code": "GROUNDING_DISCONTINUITY",
+      "message": "1412 adjacent tile pairs differ by more than 6 m of surface height (expected at cliffs and under bridges)",
+      "detail": [
+        [
+          575,
+          254,
+          115.7
+        ],
+        [
+          575,
+          253,
+          115.51
+        ],
+        [
+          263,
+          575,
+          110.2
+        ],
+        [
+          262,
+          575,
+          110.12
+        ],
+        [
+          261,
+          575,
+          109.75
+        ],
+        [
+          260,
+          575,
+          109.18
+        ],
+        [
+          259,
+          575,
+          108.4
+        ],
+        [
+          258,
+          575,
+          107.57
+        ],
+        [
+          186,
+          575,
+          106.17
+        ],
+        [
+          185,
+          575,
+          106.15
+        ],
+        [
+          184,
+          575,
+          106.12
+        ],
+        [
+          257,
+          575,
+          106.06
+        ]
+      ]
+    }
+  ]
+}

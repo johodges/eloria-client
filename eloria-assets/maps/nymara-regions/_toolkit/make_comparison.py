@@ -153,7 +153,14 @@ def main() -> int:
     (OUT / "aerial-comparison.png").unlink()
 
     # contact sheet of everything else
-    index = json.loads((CAPTURES / "index.json").read_text())
+    # The index describes the *cameras*, and both capture sets are shot from
+    # the same ones - `godot_capture.gd` reads this very file to place them -
+    # so a Godot set with no index of its own falls back to the offline one
+    # rather than failing with a FileNotFoundError.
+    index_path = CAPTURES / "index.json"
+    if not index_path.is_file():
+        index_path = _OFFLINE / "index.json"
+    index = json.loads(index_path.read_text())
     extras = [entry for entry in index if entry["panel"] is None]
     cols = 3
     thumb = (420, 280)

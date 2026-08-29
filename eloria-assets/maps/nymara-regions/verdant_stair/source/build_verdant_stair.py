@@ -1,0 +1,871 @@
+#!/usr/bin/env python3
+"""Build the Verdant Stair runtime map package.
+
+Outputs, next to this source tree:
+
+    ../world.glb        self-contained glTF 2.0 (geometry, materials, textures)
+    ../world.json       GLB world manifest, schema version 1
+    ../collision.bin    half-metre walkability grid (EWCG v1)
+    ../minimap.webp     minimap rendered from the final geometry
+    ../world.glb.validator.json
+    ../performance-summary.md
+
+Deterministic: the same seed reproduces the same bytes.
+
+    python3 build_verdant_stair.py --stage terrain   # terrain and water only
+    python3 build_verdant_stair.py                   # the whole package
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import os
+import struct
+import sys
+import time
+from pathlib import Path
+
+import numpy as np
+
+# The authoring toolkit is shared by every region and lives two levels up, in
+# `maps/nymara-regions/_toolkit/`. It must be on the path before the toolkit
+# modules below are imported.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "_toolkit"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import validate_gltf
+from regionbuild import Placement, RegionBuild
+
+from amberwood import gltf as GLTF
+from amberwood import materials as MAT
+from amberwood import mesh as M
+from amberwood import render as RENDER
+from amberwood import terrain as TER
+
+import populate as POP
+import region as REG
+
+HERE = Path(__file__).resolve().parent
+PACKAGE = HERE.parent
+SEED = 20260829
+
+# The materials Verdant Stair embeds, pinned. The shared table grows as other
+# regions add recipes to it, and without this every one of those would be
+# embedded here too - about fifteen megabytes of images nothing references, and
+# a different world.glb for a change that has nothing to do with this region.
+# Verified against the built GLB by `export_glb`, which warns on any pinned
+# material no mesh actually points at.
+MATERIALS = frozenset({
+    # ground
+    'verdant_jungle_floor', 'verdant_jungle_trail', 'verdant_terrace_stone',
+    'verdant_mossy_stone', 'verdant_wet_limestone', 'verdant_limestone_cliff',
+    'verdant_lagoon_sand', 'verdant_fern_glade',
+    # water
+    'water_lagoon', 'water_cenote', 'water_stream',
+    # architecture
+    'verdant_jade', 'verdant_carved_jade', 'rubble_stone', 'ashlar',
+    'gilt_brass', 'dark_iron',
+    # timber, rope and thatch
+    'timber_warm', 'timber_grey', 'timber_dark', 'carved_wood', 'thatch_reed',
+    'verdant_rope',
+    # the one warm note in a green region: lantern glass and brazier embers,
+    # which the reused lamp posts and hanging lanterns carry
+    'amber_resin',
+    # vegetation
+    'bark_pale', 'bark_dark', 'foliage_green', 'verdant_frond', 'verdant_vine',
+    'undergrowth',
+})
+
+ASSET_VERSION = "1.0.0"
+SCHEMA_VERSION = "1.0.0"
+
+
+# --------------------------------------------------------------------------
+def build_region(seed: int = SEED, lod: str | None = None,
+                 stage: str = "full") -> RegionBuild:
+    """Build the region.
+
+    `lod="far"` produces the reduced second package: every plant at its far
+    tier and no ground clutter. `stage="terrain"` stops after terrain and
+    water, which is the gate the production guide asks for - grounding has to
+    be proved on the heightfield before any detail work is done on top of it.
+    """
+    t0 = time.time()
+    terrain = REG.build_terrain(seed)
+    REG.apply_built_ground(terrain, seed)
+    build = RegionBuild(terrain=terrain)
+
+    if stage != "terrain":
+        POP.populate_stair(build, seed)
+        POP.populate_landmarks(build, seed)
+        POP.populate_crossings(build, seed)
+        POP.populate_settlements(build, seed)
+        POP.populate_terrace_architecture(build, seed)
+        POP.populate_jungle(build, seed, lod=lod)
+        if lod is None:
+            POP.populate_understory(build, seed)
+            POP.populate_ground_detail(build, seed)
+    POP.build_water(build, seed)
+
+    build.terrain_meshes = terrain.build_meshes(
+        uv_scale=0.26, materials=REG.SURFACE_MATERIALS)
+    build.terrain_meshes["Backdrop_Distant"] = TER.backdrop(
+        terrain, reach=240.0, cell=11.0, seed=seed + 909,
+        material="verdant_limestone_cliff", sea_level=REG.SEA_LEVEL,
+        open_side="west", clip_interior=True)
+
+    # `heightfield` gives the terrain a top-down planar UV, which is right for
+    # ground and badly wrong for a cliff: a near-vertical face gets almost no
+    # UV variation over tens of metres of height, so the bedded limestone
+    # smears into a smooth pale ramp. This region is *made* of cliff faces -
+    # seven risers and four gorges - so the rock classes get world-space
+    # triplanar UVs instead, which hold a constant texel density whichever way
+    # a face points. The flat classes keep the planar projection: it tiles
+    # better on ground the player walks on.
+    # Every class, not just the rock: the steepest faces in the region are the
+    # *paved* route corridors cut through the risers, and they smeared just as
+    # badly. Triplanar is free on flat ground - where the surface normal points
+    # up it selects the same XZ plane the planar projection uses, at the same
+    # 0.26 tiles per metre - so this changes nothing a player walks on and
+    # fixes everything they climb past.
+    for name, piece in build.terrain_meshes.items():
+        if piece.triangle_count:
+            piece.project_uv_triplanar(0.09 if name.startswith("Backdrop")
+                                       else 0.26)
+    build.resolve_names()
+    _add_spawns_and_portals(build)
+    _add_population_markers(build, seed)
+    print(f"[region] built in {time.time() - t0:.1f}s "
+          f"({len(build.placements)} placements)")
+    return build
+
+
+def _server_tile(x: float, z: float) -> list[int]:
+    return [int(round(x + REG.SERVER_ORIGIN[0])),
+            int(round(REG.SERVER_ORIGIN[1] - z))]
+
+
+def _add_spawns_and_portals(build: RegionBuild) -> None:
+    t = build.terrain
+    for spawn_id, (x, z), facing in (
+            ("default", REG.SPAWN, math.pi * 0.25),
+            ("west-quay", REG.SPAWN_QUAY, math.pi * 0.75),
+            ("temple-court", REG.SPAWN_TEMPLE, math.pi * 1.25)):
+        y = float(t.height_at(x, z))
+        build.spawns.append({
+            "id": spawn_id,
+            "position": [round(float(x), 2), round(y + 0.05, 2), round(float(z), 2)],
+            "serverTile": _server_tile(x, z),
+            "rotationDegrees": round(math.degrees(facing), 1),
+            "surface": TER.SURFACE_NAMES[int(t.surface_at(x, z))],
+            "grounded": True})
+
+    # Edge portals. The server's own maps.txt gives Verdant Stair exactly two
+    # neighbours - Westhaven to the west and Ssarathi Ruins to the east - so
+    # those are the two shipped; no transition is invented that the server does
+    # not have. The Westhaven crossing is a sea quay rather than a road, which
+    # is the shape Crownwater's portals already take.
+    for portal_id, name, anchor, destination in (
+            ("west-quay-gate", "Westhaven Packet", "westgate",
+             "maps/nymara/westhaven.elm"),
+            ("east-pass-gate", "Ssarathi Pass", "east_pass",
+             "maps/nymara/ssarathi_ruins.elm")):
+        x, z = REG.ANCHORS[anchor]
+        y = float(t.height_at(x, z))
+        build.portals.append({
+            "id": portal_id, "name": name, "type": "map-transition",
+            "position": [round(x, 2), round(y + 0.1, 2), round(z, 2)],
+            "serverTile": _server_tile(x, z),
+            "destinationMap": destination, "radius": 3.5,
+            "authority": "server"})
+
+
+def _add_population_markers(build: RegionBuild, seed: int) -> None:
+    """Editor/visual markers only - the server owns actual spawning.
+
+    Unlike Amberwood, this region's roster is not invented: every NPC, creature
+    and harvestable below is taken from the server's own `config/eloria/*.txt`
+    for `verdant_stair`, at the tile the server records, scaled from the 192-cell
+    map to 576 by three. Where a recorded tile lands on water or on a cliff the
+    marker is nudged to the nearest walkable cell and the move is recorded in
+    `build.notes`.
+    """
+    t = build.terrain
+    rng = REG.N.Rng(seed + 777)
+
+    def ground(x: float, z: float, label: str) -> tuple[float, float, float]:
+        """Nearest reasonable standing point to a recorded server tile."""
+        best = (x, z, float(t.height_at(x, z)))
+        if best[2] > REG.SEA_LEVEL + 0.5 and float(t.slope_at(x, z)) < 1.05:
+            return best
+        for radius in (6.0, 12.0, 20.0, 30.0, 44.0):
+            for k in range(16):
+                angle = math.pi * 2.0 * k / 16
+                px = x + math.cos(angle) * radius
+                pz = z + math.sin(angle) * radius
+                if not (REG.PLAY_MIN_X <= px <= REG.PLAY_MAX_X
+                        and REG.PLAY_MIN_Z <= pz <= REG.PLAY_MAX_Z):
+                    continue
+                py = float(t.height_at(px, pz))
+                if py > REG.SEA_LEVEL + 0.5 and float(t.slope_at(px, pz)) < 1.05:
+                    build.notes.append(
+                        f"{label}: server tile {_server_tile(x, z)} is not "
+                        f"standable on the built terrain; marker moved "
+                        f"{radius:.0f} m to {_server_tile(px, pz)}")
+                    return (px, pz, py)
+        return best
+
+    # -- NPCs, from config/eloria/npcs.txt --------------------------------
+    for npc_id, label, role, tile in (
+            ("tessara", "Tessara", "dialogue", (52, 60)),
+            ("orru-moss", "Orru Moss", "shop", (64, 60))):
+        x = tile[0] * 3.0 - REG.SERVER_ORIGIN[0]
+        z = REG.SERVER_ORIGIN[1] - tile[1] * 3.0
+        x, z, y = ground(x, z, f"npc {npc_id}")
+        build.npc_markers.append({
+            "id": npc_id, "name": label, "type": "npc", "role": role,
+            "position": [round(x, 2), round(y, 2), round(z, 2)],
+            "serverTile": _server_tile(x, z),
+            "source": "server config/eloria/npcs.txt",
+            "authority": "server"})
+
+    # -- creature groups, from config/eloria/spawns.txt -------------------
+    creature_tiles: dict[str, list[tuple[int, int]]] = {}
+    for species, tile in POP.SERVER_SPAWNS:
+        creature_tiles.setdefault(species, []).append(tile)
+    for species, tiles in creature_tiles.items():
+        points = []
+        for tx, tz in tiles:
+            x = tx * 3.0 - REG.SERVER_ORIGIN[0]
+            z = REG.SERVER_ORIGIN[1] - tz * 3.0
+            x, z, y = ground(x, z, f"creature {species}")
+            points.append([round(x, 2), round(y, 2), round(z, 2)])
+        centre = np.asarray(points, dtype=np.float64).mean(axis=0)
+        spread = max(float(np.linalg.norm(
+            np.asarray(points)[:, [0, 2]] - centre[[0, 2]], axis=1).max()), 8.0)
+        build.npc_markers.append({
+            "id": species, "type": "creature-group",
+            "group": POP.CREATURE_GROUPS.get(species, "jungle-fauna"),
+            "centre": [round(float(centre[0]), 2), round(float(centre[1]), 2),
+                       round(float(centre[2]), 2)],
+            "radius": round(spread, 1), "positions": points,
+            "source": "server config/eloria/spawns.txt",
+            "authority": "server"})
+
+    # -- harvestables, from config/eloria/harvesting.txt -------------------
+    for index, (node_id, resource, tile) in enumerate(POP.SERVER_HARVEST, start=1):
+        x = tile[0] * 3.0 - REG.SERVER_ORIGIN[0]
+        z = REG.SERVER_ORIGIN[1] - tile[1] * 3.0
+        x, z, y = ground(x, z, f"harvestable {resource}")
+        build.harvestables.append({
+            "id": f"{resource.lower().replace(' ', '-')}-{index:02d}",
+            "resource": resource,
+            "category": POP.HARVEST_CATEGORIES.get(resource, "reagent"),
+            "serverNode": node_id,
+            "position": [round(x, 2), round(y, 2), round(z, 2)],
+            "serverTile": _server_tile(x, z),
+            "source": "server config/eloria/harvesting.txt",
+            "authority": "server"})
+
+    # -- interactives, from config/eloria/interactives.txt ------------------
+    for node_id, kind, label, tile in POP.SERVER_INTERACTIVES:
+        x = tile[0] * 3.0 - REG.SERVER_ORIGIN[0]
+        z = REG.SERVER_ORIGIN[1] - tile[1] * 3.0
+        x, z, y = ground(x, z, f"interactive {kind}")
+        build.interactives.append({
+            "id": f"{kind}-{node_id}", "type": kind, "name": label,
+            "position": [round(x, 2), round(y, 2), round(z, 2)],
+            "serverTile": _server_tile(x, z),
+            "radius": 2.0,
+            "source": "server config/eloria/interactives.txt",
+            "authority": "server"})
+    del rng
+
+
+# --------------------------------------------------------------------------
+def _split_group(key: str, item) -> tuple[dict[str, M.Mesh], dict[str, M.Mesh]]:
+    """Split a landmark into per-material meshes, keeping walkable decks apart."""
+    if not hasattr(item, "parts"):
+        return {key: item}, {}
+    solid = {f"{key}__{material}": piece
+             for material, piece in item.by_material(False).items()}
+    walk = {f"{key}__walk__{material}": piece
+            for material, piece in item.by_material(True).items()}
+    return solid, walk
+
+
+def export_glb(build: RegionBuild, sets, path: Path,
+               warn_unreferenced: bool = True) -> tuple[GLTF.GltfBuilder, dict]:
+    builder = GLTF.GltfBuilder(
+        generator="Eloria Verdant Stair builder (original procedural assets)")
+    MAT.register_gltf_materials(builder, sets, only=MATERIALS)
+
+    # An over-broad pin is completely silent: the package simply carries
+    # textures nothing references. Say so, or it happens again.
+    used_materials = set()
+    for bucket in (build.terrain_meshes, build.water_meshes):
+        for piece in bucket.values():
+            for part in (getattr(piece, "parts", None) or [piece]):
+                if part.triangle_count:
+                    used_materials.add(part.material)
+    for item in build.meshes.values():
+        parts = (getattr(item, "parts", []) + getattr(item, "walk_parts", [])
+                 or [item])
+        for part in parts:
+            if part.triangle_count:
+                used_materials.add(part.material)
+    missing = sorted(used_materials - set(MATERIALS))
+    if missing:
+        raise SystemExit(
+            "[materials] these are referenced by geometry but not pinned, so "
+            "the GLB would point at materials it does not carry: "
+            + ", ".join(missing))
+    unreferenced = sorted(set(MATERIALS) - used_materials)
+    if warn_unreferenced and unreferenced:
+        print(f"[materials] WARNING: {len(unreferenced)} pinned but unreferenced "
+              f"in {path.name}: " + ", ".join(unreferenced))
+
+    # Tangents are intentionally omitted: Godot's glTF importer generates them
+    # for normal-mapped materials, and shipping them would add sixteen bytes a
+    # vertex to a package that is already dominated by vertex data.
+    def prepare(piece: M.Mesh) -> M.Mesh:
+        piece.sanitise_normals()
+        piece.drop_degenerate()
+        piece.weld(1e-4)
+        return piece
+
+    exported: dict[str, tuple[list[str], list[str]]] = {}
+    for key, item in build.meshes.items():
+        solid, walk = _split_group(key, item)
+        solid_names, walk_names = [], []
+        for name, piece in solid.items():
+            if piece.triangle_count == 0:
+                continue
+            builder.add_mesh(name, prepare(piece), with_tangents=False)
+            solid_names.append(name)
+        for name, piece in walk.items():
+            if piece.triangle_count == 0:
+                continue
+            builder.add_mesh(name, prepare(piece), with_tangents=False)
+            walk_names.append(name)
+        exported[key] = (solid_names, walk_names)
+
+    root = GLTF.Node("VerdantStair")
+    root_index = builder.add_node(root)
+    groups = {}
+    for group_name in ("Terrain", "Water", "Jungle", "Structures", "Props",
+                       "Boundary"):
+        groups[group_name] = builder.add_node(GLTF.Node(f"Group_{group_name}"),
+                                              root_index)
+
+    # -- terrain and water ------------------------------------------------
+    for name, piece in build.terrain_meshes.items():
+        if piece.triangle_count == 0:
+            continue
+        builder.add_mesh(name, prepare(piece), with_tangents=False)
+        parent = groups["Boundary"] if name.startswith("Backdrop") else groups["Terrain"]
+        builder.add_node(GLTF.Node(name, mesh=name), parent)
+    for name, piece in build.water_meshes.items():
+        if piece.triangle_count == 0:
+            continue
+        builder.add_mesh(name, prepare(piece), with_tangents=False)
+        builder.add_node(GLTF.Node(name, mesh=name), groups["Water"])
+
+    # -- placements --------------------------------------------------------
+    kind_group = {
+        "tree": "Jungle", "foliage": "Jungle", "undergrowth": "Jungle",
+        "vine": "Jungle", "fern": "Jungle", "fallenlog": "Jungle",
+        "stump": "Jungle", "rock": "Jungle", "leafdrift": "Jungle",
+        "building": "Structures", "landmark": "Structures",
+        "bridge": "Structures", "stair": "Structures",
+        "interactive": "Structures", "prop": "Props",
+    }
+    used_names: set[str] = set()
+
+    def unique(name: str) -> str:
+        if name not in used_names:
+            used_names.add(name)
+            return name
+        suffix = 2
+        while f"{name}_{suffix}" in used_names:
+            suffix += 1
+        used_names.add(f"{name}_{suffix}")
+        return f"{name}_{suffix}"
+
+    for placement in build.placements:
+        solid_names, walk_names = exported.get(placement.mesh, ([], []))
+        if not solid_names and not walk_names:
+            continue
+        parent = groups[kind_group.get(placement.kind, "Props")]
+        node_name = unique(placement.node)
+        placement.node = node_name
+        scale = (placement.scale, placement.scale, placement.scale)
+        if len(solid_names) == 1 and not walk_names:
+            builder.add_node(GLTF.Node(node_name, mesh=solid_names[0],
+                                       translation=placement.position,
+                                       rotation_y=placement.rotation_y,
+                                       scale=scale), parent)
+            continue
+        container = builder.add_node(
+            GLTF.Node(node_name, translation=placement.position,
+                      rotation_y=placement.rotation_y, scale=scale), parent)
+        for piece_name in solid_names:
+            material = piece_name.split("__")[-1]
+            builder.add_node(GLTF.Node(unique(f"{node_name}__{material}"),
+                                       mesh=piece_name), container)
+        for piece_name in walk_names:
+            material = piece_name.split("__")[-1]
+            # the navigation prefix has to be on the node the client sees
+            builder.add_node(GLTF.Node(unique(f"Walk_{node_name}__{material}"),
+                                       mesh=piece_name), container)
+
+    size = builder.write_glb(str(path))
+    stats = builder.statistics()
+    stats["glbBytes"] = size
+    stats["instancedTriangles"] = builder.instanced_triangles()
+    return builder, stats
+
+
+# --------------------------------------------------------------------------
+COLLISION_CELL = 0.5
+COLLISION_HEIGHT_STEP = 0.2
+COLLISION_HEIGHT_ORIGIN = -2.2
+
+
+def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
+    """Half-metre walkability grid over the server footprint (EWCG version 1)."""
+    t = build.terrain
+    width = int(round((REG.PLAY_MAX_X - REG.PLAY_MIN_X + REG.METRES_PER_TILE)
+                      / COLLISION_CELL))
+    height = int(round((REG.PLAY_MAX_Z - REG.PLAY_MIN_Z + REG.METRES_PER_TILE)
+                       / COLLISION_CELL))
+    width -= width % 6
+    height -= height % 6
+
+    # Rows are indexed by server tile Y, which runs north to south, so row 0 is
+    # the +Z (southern) edge. Writing the grid the other way round silently
+    # mirrors every walkability decision about the map.
+    xs = REG.PLAY_MIN_X + (np.arange(width) + 0.5) * COLLISION_CELL
+    zs = REG.SERVER_ORIGIN[1] * REG.METRES_PER_TILE \
+        - (np.arange(height) + 0.5) * COLLISION_CELL
+    gx, gz = np.meshgrid(xs, zs)
+    ground = t.height_at(gx, gz)
+
+    gradient_z, gradient_x = np.gradient(t.height, t.cell)
+    slope_grid = np.hypot(gradient_x, gradient_z)
+    cx = np.clip(((gx - t.x0) / t.cell).astype(int), 0, t.cols - 1)
+    cz = np.clip(((gz - t.z0) / t.cell).astype(int), 0, t.rows - 1)
+    slope = slope_grid[cz, cx]
+
+    walkable = (ground > REG.SEA_LEVEL + 0.35) & (slope < 1.05)
+    blockers = np.zeros_like(walkable)
+    for placement in build.placements:
+        if not placement.collides:
+            continue
+        item = build.meshes[placement.mesh]
+        low, high = item.bounds()
+        # plants block only their stem, not the spread of their canopy
+        footprint = float(max(abs(low[0]), abs(high[0]), abs(low[2]),
+                              abs(high[2]))) * placement.scale
+        factor = 0.16 if placement.kind in ("tree", "foliage", "fern") else 0.62
+        radius = min(max(footprint * factor, 0.40), 11.0)
+        px, _, pz = placement.position
+        blockers |= (np.hypot(gx - px, gz - pz) < radius)
+    walkable &= ~blockers
+
+    surface = ground.copy()
+    # An overhead walk surface owns its footprint: the client grounds an actor
+    # on the highest walk surface below the ray, so a two-level column cannot be
+    # expressed on a flat server grid. Bridges, decks and stairs therefore take
+    # the cell, and the ground under them is not separately walkable.
+    elevated = 0
+    for placement in build.placements:
+        item = build.meshes[placement.mesh]
+        walk_bounds = getattr(item, "walk_bounds", lambda: None)()
+        if walk_bounds is None and not placement.walk_surface:
+            continue
+        if walk_bounds is None:
+            low, high = item.bounds()
+        else:
+            low, high = walk_bounds
+        px, py, pz = placement.position
+        half_x = float(max(abs(low[0]), abs(high[0]))) * placement.scale
+        half_z = float(max(abs(low[2]), abs(high[2]))) * placement.scale
+        deck_y = py + float(high[1]) * placement.scale
+        radius = max(min(half_x, half_z) * 0.85, 0.4)
+        footprint = np.hypot(gx - px, gz - pz) < radius
+        if not footprint.any():
+            continue
+        if deck_y > ground.max() + 200.0:
+            continue
+        elevated += 1
+        surface = np.where(footprint, deck_y, surface)
+        walkable = np.where(footprint, True, walkable)
+
+    quantised = np.clip(np.round((surface - COLLISION_HEIGHT_ORIGIN)
+                                 / COLLISION_HEIGHT_STEP), 1, 63).astype(np.uint8)
+    grid = np.where(walkable, quantised, 0).astype(np.uint8)
+
+    payload = struct.pack("<4sHHII", b"EWCG", 1, 0, width, height) + grid.tobytes()
+    stats = {
+        "width": width, "height": height, "cellMetres": COLLISION_CELL,
+        "walkableCells": int(walkable.sum()),
+        "blockedCells": int((~walkable).sum()),
+        "walkableFraction": round(float(walkable.mean()), 4),
+        "elevatedDecks": elevated,
+        "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+        "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    }
+    return payload, width, height, stats
+
+
+# --------------------------------------------------------------------------
+def render_minimap(build: RegionBuild, sets, path: Path, size: int = 768) -> dict:
+    """Top-down capture of the finished geometry, rendered not drawn."""
+    import preview
+    scene = preview.scene_from_build(build, sets)
+    centre_x = (REG.PLAY_MIN_X + REG.PLAY_MAX_X) * 0.5
+    centre_z = (REG.PLAY_MIN_Z + REG.PLAY_MAX_Z) * 0.5
+    extent = max(REG.PLAY_MAX_X - REG.PLAY_MIN_X, REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
+    altitude = 900.0
+    fov = 2.0 * math.degrees(math.atan((extent * 0.5) / altitude))
+    lighting = RENDER.Lighting(sun_direction=(-0.34, 0.88, 0.33),
+                               fog_density=0.0, ambient_strength=0.74,
+                               shadow_strength=0.38, sun_color=(1.08, 1.02, 0.86))
+    image = scene.render(eye=(centre_x, altitude, centre_z + 0.01),
+                         target=(centre_x, 40.0, centre_z),
+                         width=size, height=size, fov=fov, lighting=lighting,
+                         shadows=True, shadow_size=2048,
+                         shadow_center=(centre_x, 60.0, centre_z),
+                         shadow_radius=extent * 0.62, near=200.0, far=1400.0)
+    image.save(path, "WEBP", quality=88, method=5)
+    return {
+        "file": path.name,
+        "pixels": size,
+        "metresPerPixel": round(extent / size, 4),
+        "worldMin": [REG.PLAY_MIN_X, REG.PLAY_MIN_Z],
+        "worldMax": [REG.PLAY_MIN_X + extent, REG.PLAY_MIN_Z + extent],
+        "northAxis": "-Z",
+        "orientation": "north-up",
+    }
+
+
+# --------------------------------------------------------------------------
+def write_manifest(build: RegionBuild, stats: dict, collision_stats: dict,
+                   minimap: dict, path: Path) -> dict:
+    t = build.terrain
+    lows, highs = [], []
+    for piece in list(build.terrain_meshes.values()) + list(build.water_meshes.values()):
+        if piece.triangle_count:
+            low, high = piece.bounds()
+            lows.append(low)
+            highs.append(high)
+    for placement in build.placements:
+        item = build.meshes[placement.mesh]
+        low, high = item.bounds()
+        offset = np.asarray(placement.position)
+        lows.append(low * placement.scale + offset)
+        highs.append(high * placement.scale + offset)
+    bounds_min = np.vstack(lows).min(axis=0)
+    bounds_max = np.vstack(highs).max(axis=0)
+
+    collision_nodes = sorted({p.node for p in build.placements if p.collides})
+    clamp_at = COLLISION_HEIGHT_ORIGIN + 63 * COLLISION_HEIGHT_STEP
+
+    manifest = {
+        "schemaVersion": SCHEMA_VERSION,
+        "assetVersion": ASSET_VERSION,
+        "asset": {
+            "id": "verdant_stair",
+            "name": "Verdant Stair",
+            "glb": "world.glb",
+            "units": "meters",
+            "coordinateSystem": {"handedness": "right", "upAxis": "Y",
+                                 "northAxis": "-Z"},
+            "origin": [0, 0, 0],
+            "bounds": {"min": [round(float(v), 2) for v in bounds_min],
+                       "max": [round(float(v), 2) for v in bounds_max]},
+            "playableBounds": {
+                "min": [REG.PLAY_MIN_X, round(float(t.height.min()), 2), REG.PLAY_MIN_Z],
+                "max": [REG.PLAY_MAX_X, round(float(t.height.max()), 2), REG.PLAY_MAX_Z]},
+            "seaLevel": REG.SEA_LEVEL,
+            "serverCells": REG.SERVER_CELLS,
+        },
+        "coordinateTransform": {
+            "metresPerTile": REG.METRES_PER_TILE,
+            "serverOrigin": list(REG.SERVER_ORIGIN),
+            "origin": [0.0, 0.0, 0.0],
+            "walkingHeight": round(float(t.height_at(*REG.SPAWN)), 2),
+            "invertServerY": True,
+        },
+        "spawnPoints": build.spawns,
+        "collision": {
+            "nodeNames": collision_nodes,
+            "binary": "collision.bin",
+            "format": "EWCG-v1",
+            "cellMetres": COLLISION_CELL,
+            "width": collision_stats["width"],
+            "height": collision_stats["height"],
+            "heightEncoding": {
+                "origin": COLLISION_HEIGHT_ORIGIN,
+                "step": COLLISION_HEIGHT_STEP,
+                "range": [1, 63],
+                "zeroMeansBlocked": True,
+                "note": (f"Heights above {clamp_at:.1f} m clamp to 63 because "
+                         "the legacy six-bit field cannot express this region's "
+                         "0-129 m relief; the grid is authoritative for "
+                         "walkability, and the Godot loader takes elevation "
+                         "from the rendered walk surfaces, not from this file."),
+            },
+            "walkableCells": collision_stats["walkableCells"],
+            "walkableFraction": collision_stats["walkableFraction"],
+        },
+        "navigation": {
+            "surfaceNodePrefixes": ["Terrain_", "Walk_"],
+            "walkableAreas": ["jungle-floor", "trails", "terrace-paving",
+                              "mossy-terraces", "strand", "fern-glade",
+                              "stairs", "bridges", "walkways", "platforms",
+                              "quays"],
+            "agentRadius": 0.55,
+            "agentHeight": 1.9,
+            "maxSlopeDegrees": 40,
+            "navmesh": {"format": "surface-prefix-v1", "polygons": []},
+            "notes": [
+                "Every terrain sub-mesh is named Terrain_<class>; every "
+                "authored walkable surface is named Walk_<...>. The client "
+                "turns both into the navigation collision layer the grounding "
+                "ray tests against.",
+                "Structural geometry - terrace retaining walls, temple mass, "
+                "arcade piers, tree trunks - is deliberately not a walk "
+                "surface, so the grounding ray never snaps an actor onto a "
+                "roof or the top of a wall.",
+                "The stair is terraced, so cliff risers are steep by design "
+                "and appear as GROUNDING_DISCONTINUITY warnings wherever a "
+                "terrace meets the one below it.",
+            ],
+        },
+        "landmarks": build.landmarks,
+        "interactives": build.interactives,
+        "npcMarkers": build.npc_markers,
+        "harvestables": build.harvestables,
+        "portals": build.portals,
+        "roads": [{"id": name,
+                   "waypoints": [[round(float(p[0]), 1),
+                                  round(float(t.height_at(p[0], p[1])), 2),
+                                  round(float(p[1]), 1)] for p in points]}
+                  for name, points in REG.ROUTES.items()],
+        "water": {
+            "seaLevel": REG.SEA_LEVEL,
+            "serverCells": REG.SERVER_CELLS,
+            "bodies": [{"id": name, "node": name,
+                        "type": ("sea" if "Lagoon" in name
+                                 else "waterfall" if "Falls" in name
+                                 else "cenote" if "Cenote" in name
+                                 else "stream" if "Stream" in name else "pool")}
+                       for name in build.water_meshes],
+            "streams": [{"id": name,
+                         "waypoints": [[round(float(p[0]), 1),
+                                        round(float(t.height_at(p[0], p[1])), 2),
+                                        round(float(p[1]), 1)] for p in points]}
+                        for name, points in REG.STREAMS.items()],
+            "gorges": [{"id": name,
+                        "waypoints": [[round(float(p[0]), 1),
+                                       round(float(t.height_at(p[0], p[1])), 2),
+                                       round(float(p[1]), 1)] for p in points]}
+                       for name, points in REG.RAVINES.items()],
+        },
+        "terraces": [{"id": label, "height": height,
+                      "stairRange": [start, end]}
+                     for start, end, height, label in REG.TERRACES],
+        "environment": {
+            "sky": {"type": "gradient", "zenith": [0.30, 0.52, 0.66],
+                    "horizon": [0.72, 0.78, 0.72]},
+            "sun": {"direction": [-0.38, 0.62, 0.68],
+                    "color": [1.16, 1.08, 0.86], "energy": 1.20},
+            "ambient": {"skyColor": [0.34, 0.48, 0.46],
+                        "groundColor": [0.06, 0.10, 0.05], "energy": 0.55},
+            "saturation": 1.22,
+            # Read by the Godot capture rig and available to the client. The
+            # region's ground and canopy albedos are deliberately dark - wet
+            # limestone under closed canopy - and at the default 1.05 the
+            # frames come back as silhouettes.
+            "exposure": 2.0,
+            "fog": {"enabled": True, "color": [0.62, 0.72, 0.68],
+                    "density": 0.0016, "heightFalloff": 0.0022},
+            "goldenHour": {"sun": {"direction": [-0.80, 0.24, 0.55],
+                                   "color": [1.48, 1.06, 0.66]},
+                           "fog": {"color": [0.74, 0.66, 0.52], "density": 0.0030}},
+            "presentation": {
+                "mist": {"enabled": True,
+                         "zones": ["cenote", "riser-falls", "lagoon"]},
+                "waterSpray": {"enabled": True,
+                               "nodes": sorted(n for n in build.water_meshes
+                                               if "Falls" in n)},
+                "fallingLeaves": {"enabled": True, "density": 0.35,
+                                  "zones": ["jungle-core"]},
+                "ambientAudio": [
+                    {"id": "jungle-day", "zone": "jungle-core"},
+                    {"id": "falls", "zone": "riser-falls"},
+                    {"id": "surf", "zone": "lagoon"},
+                    {"id": "settlement", "zone": "lower-terrace"}],
+            },
+            "zones": [
+                {"id": "lagoon",
+                 "centre": [float(REG.ANCHORS["lagoon"][0]), 0.0,
+                            float(REG.ANCHORS["lagoon"][1])], "radius": 150.0},
+                {"id": "lower-terrace",
+                 "centre": [0.0, 24.0, 0.0], "radius": 90.0},
+                {"id": "cenote",
+                 "centre": [float(REG.ANCHORS["cenote"][0]), 30.0,
+                            float(REG.ANCHORS["cenote"][1])], "radius": 70.0},
+                {"id": "jungle-core",
+                 "centre": [120.0, 60.0, -160.0], "radius": 260.0},
+                {"id": "riser-falls",
+                 "centre": [180.0, 80.0, -180.0], "radius": 300.0},
+                {"id": "temple",
+                 "centre": [float(REG.ANCHORS["great_temple"][0]), 100.0,
+                            float(REG.ANCHORS["great_temple"][1])], "radius": 110.0},
+            ],
+        },
+        "minimap": minimap,
+        "lodGroups": [
+            {"id": "jungle", "strategy": "authored-detail-tiers",
+             "levels": [{"id": "near", "suffix": "_high"},
+                        {"id": "mid", "suffix": "_mid"},
+                        {"id": "far", "suffix": "_low"}]}],
+        "performance": stats,
+        "sources": [
+            {"id": "aerial-concept",
+             "file": "references/01-concept-aerial-overview.png",
+             "role": "authoritative-composition"},
+            {"id": "detail-board",
+             "file": "references/00-concept-detail-board.png",
+             "role": "authoritative-player-scale"},
+            {"id": "server-content",
+             "file": "eloria-server config/eloria/{npcs,spawns,harvesting,"
+                     "interactives,maps}.txt",
+             "role": "authoritative-population"},
+            {"id": "generator", "file": "source/build_verdant_stair.py",
+             "role": "reproducible-build", "seed": SEED},
+        ],
+        "provenance": {
+            "assets": "original to Eloria/Nymara; generated by _toolkit/amberwood/*",
+            "thirdParty": "none",
+            "textures": "procedural (numpy + Pillow), no sampled or traced source",
+            "geometry": "procedural (numpy), no imported models",
+            "license": "same as the Eloria client repository",
+        },
+        "productionStatus": "production-geometry-materials-population",
+        "knownLimitations": [],
+        "buildNotes": build.notes,
+    }
+    path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    return manifest
+
+
+# --------------------------------------------------------------------------
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", default=str(PACKAGE))
+    parser.add_argument("--seed", type=int, default=SEED)
+    parser.add_argument("--stage", choices=("terrain", "full"), default="full")
+    parser.add_argument("--skip-minimap", action="store_true")
+    parser.add_argument("--skip-lod2", action="store_true")
+    args = parser.parse_args()
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+
+    import preview
+    sets = preview.texture_sets()
+
+    build = build_region(args.seed, stage=args.stage)
+
+    t0 = time.time()
+    builder, stats = export_glb(build, sets, out / "world.glb",
+                                warn_unreferenced=args.stage == "full")
+    print(f"[glb] {stats['glbBytes'] / 1e6:.2f} MB, {stats['nodes']} nodes, "
+          f"{stats['uniqueTriangles']} unique tris, "
+          f"{stats['instancedTriangles']} instanced tris "
+          f"({time.time() - t0:.1f}s)")
+
+    payload, width, height, collision_stats = build_collision(build)
+    (out / "collision.bin").write_bytes(payload)
+    print(f"[collision] {width}x{height} cells, "
+          f"{collision_stats['walkableFraction'] * 100:.1f}% walkable, "
+          f"{collision_stats['elevatedDecks']} elevated decks")
+
+    minimap = {"file": "minimap.webp"}
+    if not args.skip_minimap:
+        t0 = time.time()
+        minimap = render_minimap(build, sets, out / "minimap.webp")
+        print(f"[minimap] rendered in {time.time() - t0:.1f}s")
+
+    texture_bytes = sum(sum(len(v) for v in sets[name].images().values())
+                        for name in sorted({MAT.BY_NAME[m].texture
+                                            for m in MATERIALS}))
+    stats["embeddedTextureBytes"] = texture_bytes
+    stats["placements"] = len(build.placements)
+    stats["collision"] = collision_stats
+    stats["notes"] = build.notes
+    playable = (REG.PLAY_MAX_X - REG.PLAY_MIN_X) * (REG.PLAY_MAX_Z - REG.PLAY_MIN_Z)
+    stats["trianglesPerSquareMetre"] = round(
+        stats["instancedTriangles"] / playable, 2)
+
+    manifest = write_manifest(build, stats, collision_stats, minimap,
+                              out / "world.json")
+    print(f"[manifest] {len(manifest['landmarks'])} landmarks, "
+          f"{len(manifest['interactives'])} interactives, "
+          f"{len(manifest['harvestables'])} harvestables, "
+          f"{len(manifest['npcMarkers'])} npc/creature markers, "
+          f"{len(manifest['portals'])} portals")
+
+    report = validate_gltf.validate(str(out / "world.glb"))
+    payload = report.to_dict()
+    (out / "world.glb.validator.json").write_text(json.dumps(payload, indent=2) + "\n")
+    counts = payload["issues"]
+    print(f"[validate] errors={counts['numErrors']} warnings={counts['numWarnings']} "
+          f"infos={counts['numInfos']}")
+    for message in report.messages:
+        if message["severity"] <= 1:
+            print("   ", message["code"], message["message"], message["pointer"])
+
+    if args.stage == "full" and not args.skip_lod2:
+        t0 = time.time()
+        lod_sets = {name: texture_set.reduced()
+                    for name, texture_set in sets.items()}
+        lod_build = build_region(args.seed, lod="far")
+        _, lod_stats = export_glb(lod_build, lod_sets, out / "world-lod2.glb",
+                                  warn_unreferenced=False)
+        stats["lod2"] = {
+            "glbBytes": lod_stats["glbBytes"],
+            "nodes": lod_stats["nodes"],
+            "uniqueTriangles": lod_stats["uniqueTriangles"],
+            "instancedTriangles": lod_stats["instancedTriangles"],
+            "sizeReductionPercent": round(
+                100.0 * (1.0 - lod_stats["glbBytes"] / stats["glbBytes"]), 1),
+            "triangleReductionPercent": round(
+                100.0 * (1.0 - lod_stats["instancedTriangles"]
+                         / stats["instancedTriangles"]), 1),
+        }
+        report_lod = validate_gltf.validate(str(out / "world-lod2.glb")).to_dict()
+        (out / "world-lod2.glb.validator.json").write_text(
+            json.dumps(report_lod, indent=2) + "\n")
+        print(f"[lod2] {lod_stats['glbBytes'] / 1e6:.2f} MB, "
+              f"{lod_stats['instancedTriangles']} instanced tris, "
+              f"{stats['lod2']['triangleReductionPercent']}% fewer "
+              f"({time.time() - t0:.1f}s)")
+        manifest["lodGroups"].append({
+            "id": "package-lod2", "glb": "world-lod2.glb",
+            "strategy": "reduced-package",
+            "notes": "Far-tier vegetation only, no ground clutter."})
+        (out / "world.json").write_text(json.dumps(manifest, indent=2) + "\n")
+
+    (out / "performance-summary.md").write_text(
+        "# Verdant Stair performance summary\n\n```json\n"
+        + json.dumps(stats, indent=2) + "\n```\n", encoding="utf-8")
+    return 0 if counts["numErrors"] == 0 else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

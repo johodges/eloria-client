@@ -1,0 +1,13 @@
+{
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-verdant-stair\\eloria-assets\\maps\\nymara-regions\\verdant_stair\\world.glb",
+  "mimeType": "model/gltf-binary",
+  "validatorVersion": "eloria-gltf-validate-1.1.0",
+  "validatedAt": "2026-08-29T01:52:45.956091Z",
+  "issues": {
+    "numErrors": 0,
+    "numWarnings": 0,
+    "numInfos": 0,
+    "numHints": 0,
+    "messages": []
+  }
+}
