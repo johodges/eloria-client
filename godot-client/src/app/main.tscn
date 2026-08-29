@@ -1604,7 +1604,7 @@ horizontal_alignment = 2
 [node name="ShowThroughObstacles" type="CheckButton" parent="GameView/SettingsPanel/Content" unique_id=1502773650]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Draws your own character over anything hiding it from the camera - trees, roofs, cliffs. Only your character, never anyone else's. Toggle with Alt+V."
+tooltip_text = "Fades whatever stands between the camera and your character - trees, roofs, walls - so you see yourself through it. Only your own line of sight, never anyone else's. Toggle with Alt+V."
 button_pressed = true
 text = "Show my character through obstacles"
 

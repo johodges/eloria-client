@@ -30,6 +30,7 @@ extends Control
 # Godot's global class-name cache -- that cache is a build artifact and is
 # stale in a working copy until the editor next scans the project.
 const InteriorCutawayScript := preload("res://src/world/interior_cutaway.gd")
+const OccluderFadeScript := preload("res://src/world/occluder_fade.gd")
 const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
 const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
@@ -39,6 +40,7 @@ const SigilWindowScript := preload("res://src/ui/sigil_window.gd")
 const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
+var occluder_fade: RefCounted = OccluderFadeScript.new()
 var invasion_assistant_window
 var extension_windows: Control
 @onready var gameplay_camera: Camera3D = %Camera
@@ -666,13 +668,14 @@ func _bind_shared_world() -> void:
 	_sync_map_viewport_activity()
 	print_debug("world_binding stage=shared world=", gameplay_world)
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_update_preview_viewport()
 	if game_view.visible:
 		_update_carried_item()
 		_update_map_viewports()
 		_update_local_actor_follow()
 		interior_cutaway.update(camera_rig.yaw_degrees)
+		_update_occluder_fade(delta)
 		_update_keyboard_movement()
 		_update_session_distance()
 		_update_legacy_clock_and_compass()
@@ -2735,6 +2738,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	map_title.text = _current_map_display_name.to_upper()
 	current_map_button.text = "Current: " + _current_map_display_name
 	_configure_interior_cutaway(manifest)
+	_configure_occluder_fade(manifest)
 	_configure_full_map(manifest)
 	_request_map_redraw()
 	_sync_world()
@@ -2877,10 +2881,6 @@ func _sync_world() -> void:
 		node.set_nameplate_visible(_nameplate_visible_for(int(id)))
 		_place_actor_on_surface(node, true)
 	actor_label.text = "Actors: %d" % AppState.actors.size()
-	# The local actor is not necessarily the first one to arrive, and it is
-	# rebuilt on a map change, so the setting is reapplied here rather than once
-	# at login.
-	_apply_show_through_obstacles()
 	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id):
 		_update_local_actor_follow()
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
@@ -3230,6 +3230,23 @@ func _sync_manufacturing_detail() -> void:
 	manufacturing_mix_one.disabled = not reasons.is_empty()
 	manufacturing_mix_all.disabled = not reasons.is_empty()
 
+## Anything the camera has to look through to see the player is blended towards
+## glass. Indexed against the imported world rather than `world_root`, so actors,
+## ground bags and the camera rig are never candidates.
+func _configure_occluder_fade(manifest: WorldManifest) -> void:
+	var count: int = occluder_fade.configure(manifest, world_loader.world_root)
+	occluder_fade.set_enabled(_show_through_obstacles)
+	print_debug("occluder_fade stage=indexed map=", AppState.current_map,
+		" meshes=", count)
+
+## The probe needs both ends of the sight line, and the local actor is absent
+## between a map change and the first actor list, so a frame without one simply
+## lets whatever is faded blend back to solid.
+func _update_occluder_fade(delta: float) -> void:
+	var target_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	var target: Node3D = target_value as Node3D if target_value is Node3D else null
+	occluder_fade.update(delta, gameplay_camera, target)
+
 ## Interiors are closed boxes, so the isometric rig would render their ceiling
 ## and near wall. The manifest names the nodes to cut away; maps without a
 ## `cutaway` block (the city) are left exactly as loaded.
@@ -3439,14 +3456,12 @@ func _on_show_through_obstacles_toggled(pressed: bool) -> void:
 func _toggle_show_through_obstacles() -> void:
 	show_through_obstacles.button_pressed = not show_through_obstacles.button_pressed
 
-## The local player only. Every actor silhouetted through every wall would be a
-## wallhack rather than a convenience, so this is deliberately not applied to
-## the rest of `actor_nodes`.
+## The local player's sight line only. Fading every obstacle in front of every
+## actor would strip the map bare and would be a wallhack rather than a
+## convenience, so the probe is deliberately never aimed at the rest of
+## `actor_nodes`.
 func _apply_show_through_obstacles() -> void:
-	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
-	if actor_value is ReplicatedActor3D:
-		(actor_value as ReplicatedActor3D).set_occlusion_silhouette_enabled(
-			_show_through_obstacles)
+	occluder_fade.set_enabled(_show_through_obstacles)
 
 func _apply_ui_scale() -> void:
 	var window: Window = get_window()
