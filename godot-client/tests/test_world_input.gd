@@ -1559,6 +1559,47 @@ func _run() -> void:
 	app_state_inventory.call("_on_packet", 6, PackedByteArray([0x5b, 0]))
 	await process_frame
 
+	# Ranged combat: the aim the server states, and the arrow it looses.
+	app_state_inventory.call("_on_packet", 51, _hex_bytes(
+		"5b00020004000000000001000001020304050b001e14071400120001416c696365"
+		+ "000040ff0600"))
+	app_state_inventory.call("_on_packet", 51, _hex_bytes(
+		"4d00060004000000000001000001020304050b001e1407140012000142657373"
+		+ "000040ff0600"))
+	await process_frame
+	main.call("_sync_world")
+	await process_frame
+	var missiles_before: int = (main.get("world_effects") as Array).size()
+	app_state_inventory.call("_on_packet", 84, PackedByteArray([0x5b, 0, 0x4d, 0]))
+	await process_frame
+	var shooter: Dictionary = (app_state_inventory.get("actors")
+		as Dictionary).get(91, {}) as Dictionary
+	_expect(int(shooter.get("aiming_at", -1)) == 77,
+		"an aim is kept on the actor it describes")
+	_expect((main.get("world_effects") as Array).size() == missiles_before,
+		"aiming draws no arrow: nothing has been loosed yet")
+	app_state_inventory.call("_on_packet", 86, PackedByteArray([0x5b, 0, 0x4d, 0]))
+	await process_frame
+	var after_shot: Array = main.get("world_effects") as Array
+	_expect(after_shot.size() == missiles_before + 1
+		and after_shot[after_shot.size() - 1] is MissileFlight3D,
+		"loosing draws an arrow between the two actors")
+	var arrow: MissileFlight3D = after_shot[after_shot.size() - 1] as MissileFlight3D
+	_expect(arrow.origin.distance_to(arrow.destination) > 1.0
+		and arrow.get_node_or_null("Shaft") != null,
+		"the arrow flies from one actor to the other")
+	shooter = (app_state_inventory.get("actors") as Dictionary).get(91, {}) as Dictionary
+	_expect(int(shooter.get("aiming_at", -1)) == -1,
+		"loosing ends the aim the server stated before it")
+	# An arrow at an actor the client has never been told about is not guessed.
+	app_state_inventory.call("_on_packet", 86, PackedByteArray([0x5b, 0, 0xff, 0x7f]))
+	await process_frame
+	_expect((main.get("world_effects") as Array).size() == missiles_before + 1,
+		"a shot at an unknown actor draws nothing")
+	app_state_inventory.call("_on_packet", 6, PackedByteArray([0x5b, 0]))
+	app_state_inventory.call("_on_packet", 6, PackedByteArray([0x4d, 0]))
+	await process_frame
+
 	# Guild tags. The tag arrives inside the actor's display name, so a client
 	# that takes the whole string as a name shows the tag as part of it.
 	app_state_inventory.call("_on_packet", 51, _hex_bytes(

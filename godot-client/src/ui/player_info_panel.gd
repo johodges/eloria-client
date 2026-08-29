@@ -49,7 +49,7 @@ func _sync() -> void:
 	for achievement: Variant in achievements:
 		lines.append("[color=#fac638]◆[/color] " + str(achievement))
 	body.text = ("\n".join(lines) if not lines.is_empty()
-		else "[i]No achievements earned yet.[/i]")
+		else "[i]%s[/i]" % tr("ELORIA_PLAYER_INFO_NONE"))
 	panel.show()
 	panel.move_to_front()
 
@@ -74,7 +74,7 @@ func _build() -> void:
 	header.add_child(title)
 	var close_button := Button.new()
 	close_button.name = "PlayerInfoClose"
-	close_button.text = "Close"
+	close_button.text = tr("ELORIA_SETTINGS_CLOSE")
 	close_button.pressed.connect(close)
 	header.add_child(close_button)
 	body = RichTextLabel.new()

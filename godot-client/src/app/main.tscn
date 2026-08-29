@@ -1661,6 +1661,12 @@ layout_mode = 2
 tooltip_text = "Graphics, camera, gameplay and key bindings"
 text = "More settings and key bindings"
 
+[node name="ReferenceButton" type="Button" parent="GameView/SettingsPanel/Content" unique_id=1997232258]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Help, your notes, linked addresses and the encyclopedia"
+text = "Reference"
+
 [node name="SettingsClose" type="Button" parent="GameView/SettingsPanel/Content" unique_id=1997232256]
 unique_name_in_owner = true
 layout_mode = 2
@@ -2862,9 +2868,11 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/TradeButton" to="." method="_on_trade_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/LookButton" to="." method="_on_look_button_pressed"]
 [connection signal="pressed" from="GameView/SettingsPanel/Content/MoreSettings" to="." method="_on_more_settings_pressed"]
+[connection signal="pressed" from="GameView/SettingsPanel/Content/ReferenceButton" to="." method="_on_reference_pressed"]
 [connection signal="pressed" from="GameView/SpellQuickbar/SpellContent/SpellControls/SigilButton" to="." method="_on_sigil_button_pressed"]
 [connection signal="pressed" from="GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerDown" to="." method="_on_spell_power_down_pressed"]
 [connection signal="pressed" from="GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerUp" to="." method="_on_spell_power_up_pressed"]
+[connection signal="pressed" from="GameView/GroundBagPanel/Content/Actions/GroundBagLook" to="." method="_on_ground_bag_look_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/KnowledgeButton" to="." method="_on_knowledge_button_pressed"]
