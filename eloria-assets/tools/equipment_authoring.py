@@ -27,6 +27,7 @@ import io
 import json
 import math
 import struct
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -491,6 +492,36 @@ def body_girth(rig: Rig, bones=GIRTH_BONES) -> dict:
     return girth
 
 
+def sole_drop(rig: Rig) -> dict:
+    """How far each foot bone stands above the ground the body rests on.
+
+    Added 2026-08-29 for Eloria Client.  Garments are refitted per wearer by
+    scaling each bone about *its own origin*, and for the foot chain that origin
+    is the ankle - which is not a fixed distance above the floor.  It is 91 to
+    103 mm on every male rig in the cast and only 78.6 to 83.4 mm on every
+    female one, a twenty per cent difference in the one direction a boot cannot
+    absorb.  A sole authored on the reference body therefore landed 14 mm under
+    the floor on all seven female rigs, and no single mesh could fix it: the
+    piece is anchored to a joint whose height above the ground varies more than
+    the tolerance does.
+
+    Shipping the distance lets the runtime scale footwear by the ratio the
+    ground actually cares about instead of by overall stature, which is what
+    collapses sixteen bodies back onto one authored boot.  Measured off the body
+    mesh rather than the skeleton, because where the actor stands is decided by
+    its lowest vertex, not by a joint.
+    """
+    ground = float(rig.positions[:, 1].min())
+    drops: dict[str, float] = {}
+    for bone in ("foot_l", "foot_r", "ball_l", "ball_r"):
+        if bone not in rig.rest:
+            continue
+        drop = float(rig.rest[bone][1, 3]) - ground
+        if drop > 1e-4:
+            drops[bone] = round(drop, 5)
+    return drops
+
+
 def load_rig(path: Path, body_mesh_names=("Body",)) -> Rig:
     document, binary = read_gltf(path)
     nodes = document["nodes"]
@@ -623,6 +654,30 @@ class Surface:
 
     def __init__(self, groups: int = 3):
         self.groups = [([], [], []) for _ in range(groups)]
+        # Which bones each vertex should be skinned against, when the whole
+        # piece must not share one scope.  Added 2026-08-29 for Eloria Client:
+        # a boot's sole was inheriting the body's own heel weighting, which is
+        # 31 per cent `calf`, and the runtime scales every bone about its own
+        # origin - `calf`'s being the knee.  A sole vertex a metre below the
+        # knee, widened by the thirty per cent an Orun calf needs, was dragged
+        # 62 mm under the floor.  The sole is bound to the foot chain instead,
+        # and the shaft keeps the calf, so each part of the boot is refitted
+        # against the part of the leg it actually sits on.
+        self.scopes = [[] for _ in range(groups)]
+        self._scope = ""
+
+    @contextmanager
+    def scoped(self, name: str):
+        """Tag everything emitted inside the block with a skin scope."""
+        previous = self._scope
+        self._scope = name
+        try:
+            yield self
+        finally:
+            self._scope = previous
+
+    def _tag(self, material: int, count: int) -> None:
+        self.scopes[material].extend([self._scope] * count)
 
     # -- primitives ---------------------------------------------------------
 
@@ -642,6 +697,7 @@ class Surface:
             for side in range(sides):
                 positions.append(tuple(ring[side]))
                 uvs.append((side / sides, v))
+        self._tag(material, rows * sides)
         span = sides if closed else sides - 1
         for row in range(rows - 1):
             for side in range(span):
@@ -686,6 +742,7 @@ class Surface:
             angle = 2 * math.pi * side / sides
             positions.append(tuple(ring[side]))
             uvs.append((.5 + .5 * math.cos(angle), .5 + .5 * math.sin(angle)))
+        self._tag(material, sides + 1)
         for side in range(sides):
             nxt = (side + 1) % sides
             triangle = (base, base + 1 + side, base + 1 + nxt)
@@ -791,6 +848,7 @@ class Surface:
             target_positions, target_uvs, target_faces = clone.groups[index]
             target_positions.extend((-x, y, z) for x, y, z in positions)
             target_uvs.extend(uvs)
+            clone.scopes[index].extend(self.scopes[index])
             # Mirroring reverses winding; restore it so back-faces stay culled.
             for i in range(0, len(faces), 3):
                 target_faces.extend((faces[i], faces[i + 2], faces[i + 1]))
@@ -803,6 +861,49 @@ class Surface:
             target_positions.extend(positions)
             target_uvs.extend(uvs)
             target_faces.extend(base + i for i in faces)
+            # A scope that was never set carries the empty string, which the
+            # skinning falls back on; padding keeps the arrays aligned even
+            # when the two surfaces disagree about whether they use scopes.
+            scopes = other.scopes[index]
+            self.scopes[index].extend(
+                scopes + [""] * (len(positions) - len(scopes)))
+
+    def face_outward(self) -> None:
+        """Make every closed shell wind outwards, whatever built it.
+
+        Added 2026-08-29 for Eloria Client.  A loft's winding follows the order
+        of its rings, and a solid assembled from several lofts - a plate is two
+        faces and four walls - has no single ring order to follow, so it comes
+        out with its faces disagreeing.  An inside-out shell does not vanish:
+        the renderer culls the near wall and it reads as an open-toed sandal
+        with the foot inside it, which is how the sole of the shell this
+        replaces shipped enclosing negative volume.
+
+        Two passes per connected component.  First the faces are made to agree
+        with each other by walking the adjacency graph and flipping any face
+        that shares an edge in the same direction as its neighbour - on a
+        manifold, neighbours traverse a shared edge in opposite directions.
+        Then, if the agreed-upon orientation encloses negative volume, the whole
+        component is flipped.  Components that enclose nothing are sheets and
+        are left alone: they have no outside to face.
+        """
+        for material, (positions, _uvs, faces) in enumerate(self.groups):
+            if not faces:
+                continue
+            points = np.asarray(positions, dtype=np.float64)
+            triangles = np.asarray(faces, dtype=np.int64).reshape(-1, 3)
+            _, inverse = np.unique(np.round(points, 5), axis=0,
+                                   return_inverse=True)
+            welded = inverse.reshape(-1)[triangles]
+            fixed = _consistent_winding(points, triangles, welded)
+            self.groups[material][2][:] = fixed.reshape(-1).tolist()
+
+    def scope_array(self, material: int, count: int) -> np.ndarray:
+        """Per-vertex skin scope for one material group, padded to ``count``."""
+        scopes = self.scopes[material]
+        if len(scopes) < count:
+            scopes = scopes + [""] * (count - len(scopes))
+        return np.asarray(scopes[:count], dtype=object)
 
     def arrays(self) -> list[tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]]:
         """Weld, smooth-shade and emit one array set per material group."""
@@ -834,6 +935,60 @@ class Surface:
                            np.asarray(uvs, dtype="float32").reshape(-1, 2),
                            indices.astype("uint32")))
         return result
+
+
+def _consistent_winding(points: np.ndarray, triangles: np.ndarray,
+                        welded: np.ndarray) -> np.ndarray:
+    """Orient each connected component consistently, then outwards."""
+    count = len(triangles)
+    # Map every undirected welded edge to the faces that use it.
+    edges: dict[tuple[int, int], list[int]] = {}
+    for face in range(count):
+        a, b, c = welded[face]
+        for lo, hi in ((a, b), (b, c), (c, a)):
+            edges.setdefault((min(lo, hi), max(lo, hi)), []).append(face)
+
+    flipped = np.zeros(count, dtype=bool)
+    seen = np.zeros(count, dtype=bool)
+    result = triangles.copy()
+    for seed in range(count):
+        if seen[seed]:
+            continue
+        component = [seed]
+        seen[seed] = True
+        queue = [seed]
+        while queue:
+            face = queue.pop()
+            tri = welded[face]
+            if flipped[face]:
+                tri = tri[::-1]
+            for index in range(3):
+                lo, hi = tri[index], tri[(index + 1) % 3]
+                for other in edges.get((min(lo, hi), max(lo, hi)), ()):
+                    if other == face or seen[other]:
+                        continue
+                    peer = welded[other]
+                    # Neighbours on a manifold traverse a shared edge in
+                    # opposite directions; agreeing means one of them is wrong.
+                    # ``lo, hi`` already carries this face's own flip, so the
+                    # neighbour is wrong exactly when it runs the shared edge
+                    # the same way round.
+                    flipped[other] = any(
+                        peer[j] == lo and peer[(j + 1) % 3] == hi
+                        for j in range(3))
+                    seen[other] = True
+                    component.append(other)
+                    queue.append(other)
+        block = np.array(component)
+        oriented = np.where(flipped[block][:, None],
+                            triangles[block][:, ::-1], triangles[block])
+        verts = points[oriented]
+        middle = verts.reshape(-1, 3).mean(axis=0)
+        local = verts - middle
+        volume = float(np.einsum("ij,ij->i", local[:, 0],
+                                 np.cross(local[:, 1], local[:, 2])).sum() / 6.)
+        result[block] = oriented[:, ::-1] if volume < 0.0 else oriented
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -2541,7 +2696,8 @@ def _model_entry(rig: Rig, idle_bases: dict | None, scene_root: str, slug: str,
 def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
                              scene_root: str = "res://assets/actors/native/equipment",
                              generic=None, author_rig: str = "",
-                             girths: dict | None = None) -> dict:
+                             girths: dict | None = None,
+                             sole_drops: dict | None = None) -> dict:
     """Emit ``data/actors/equipment.json`` for the runtime attachment path."""
     # Resolved here rather than as a default: the generic catalogue is declared
     # further down the module, beside the geometry it describes.
@@ -2574,6 +2730,11 @@ def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
                       for race in spec["races"]},
         # Per-race body measurements the runtime refits garments with.
         "bodyGirth": girths or {},
+        # And how far each foot joint stands above the floor, which is what
+        # footwear is scaled by.  Stature is the wrong proxy for it: the female
+        # rigs are three per cent shorter overall and twenty per cent shorter
+        # from ankle to sole.
+        "soleDrop": sole_drops or {},
     }
 
 
