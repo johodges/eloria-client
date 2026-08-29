@@ -2192,8 +2192,10 @@ def foliage_cluster(mesh, centre, size: float, bones, material, seed: str,
     for _ in range(count):
         offset = np.array([float(rng.uniform(-.55, .55)) for _ in range(3)]) * size
         lobe = size * float(rng.uniform(.44, .80))
+        # Four rings by seven sides was fifty-six triangles a lobe and hundreds
+        # a cluster; at the size a leaf clump is drawn none of that is visible.
         mesh.ellipsoid(tuple(centre + offset), (lobe, lobe * flatten, lobe),
-                       bones, material, rings=4, sides=7)
+                       bones, material, rings=3, sides=6)
 
 
 def growth_colour(kinds, accent, base, measured=None):

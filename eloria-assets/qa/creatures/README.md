@@ -258,3 +258,130 @@ python3 eloria-assets/tools/apply_concept_palettes.py
 ELORIA_CONCEPT_DIR=/path/to/sheets \
     python3 eloria-assets/tools/build_creature_qa_sheets.py
 ```
+
+
+## Second concept fidelity pass: geometry the generators could not express
+
+The library validated and animated correctly, and its palettes and proportions
+were measured rather than guessed, but many models still did not *read* as the
+creature in the art. Rendering each GLB beside the artist's own cut figure and
+naming the disagreement in words, the same answer came back over and over: the
+missing thing was not a parameter, it was a kind of geometry the toolchain had
+no way to make. A swept tube cannot have a hole in it, and a smooth-shaded
+sphere cannot have a flat facet.
+
+`concept_figures.py` keys every creature slug to the artist's cut figure for
+its cell, and `concept_compare.py` puts model and art side by side at matched
+height. That pair is the instrument the whole pass was worked against, and it
+is how each of these was found and each fix confirmed.
+
+### New primitives
+
+| Primitive | In `creature_anatomy.py` | What it makes possible |
+| --- | --- | --- |
+| `branch_system` | recursive forking limb, returning its tips | crowns, twig hands, antler racks; foliage hangs on branch ends rather than being scattered over the whole shape |
+| `woven_trunk` | a trunk of separate twisting strands | daylight through a treant's bole -- the one thing surface detail cannot fake |
+| `root_flare` | buttress roots off the foot of a trunk | treants stand on roots rather than on feet |
+| `foliage_cluster` | leaf mass built from overlapping lobes | canopies that are not one smooth blob |
+| `swirl_ribbon` | a band that coils around the line it follows | flame, spirit-hair, running water and kraken arms |
+| `facet_shell` | flat-shaded plates over a lit inner shell | crystal carapaces with the glow leaking out of the seams |
+
+`MAT_CORE`, a sixth material slot, carries whatever is lit from inside: a
+treant's heart-hollow, the light in a geode carapace, the centre of a wisp, the
+sockets of a spirit. It has to be its own material because the shell around it
+stays dark, and that contrast is the entire effect -- a whole-body emissive
+destroys it.
+
+### What each group disagreed about
+
+* **Treants, dryads and sprites** were smooth barrels with three bone-white
+  spurs on top. They are now braided boles with gaps through them, forking bark
+  crowns spreading wide and low, twig hands, root feet and a lit heart at the
+  front of the chest where the art puts it.
+* **Wisps and elementals** were cones with a ring of straight triangular spikes
+  -- an upturned insect. The spikes are coiling ribbons now, the plume is a body
+  rather than a spear rooted at the floor, and every one of them has the bright
+  centre the art draws it around.
+* **Crystal fauna** were smooth ellipsoids in a crystal colour, and the beetle's
+  elytra were routed through the keratin material, so the one creature whose
+  shell is made of amethyst had a bone-white back. They are faceted mosaics over
+  a lit interior.
+* **Moths** held their wings almost flat, so they vanished to a line in profile.
+  `wing_lift` opens them, the hind pair follows the fore pair up, and the crystal
+  moth's veins are drawn in the core material as leaded glass.
+* **Humanoids** had ball heads, closed-egg hoods that sealed the face away, and
+  robes that were one straight tube with a disc on the bottom. They now have
+  brow, sockets, nose, cheekbone and mouth; open cowls with an overhanging peak;
+  and robes that flare, fold and end in a shaped hem.
+* **Quadrupeds** shared a silhouette because `ARCHETYPE_TWEAKS` is keyed by
+  archetype and the roster names body plans, so none of it ever applied.
+  `QUADRUPED_DETAIL` is where per-creature features from the art live now, and
+  the mane was rebuilt as a mass of hanging locks rather than a smooth collar.
+* **Krakens and oozes** were a table on stilts and a smooth green tent. The arms
+  coil at varied lengths; the slime carries its mass high and hangs runnels with
+  a bead on the end of each.
+
+### Colour and value, measured
+
+* `concept_growth_tints.py` samples what is *growing* on each creature from its
+  own figure. Deriving it from the kind alone made every leaf green, which is
+  right for the Verdant Stair and wrong for the Amberwood, an autumn wood whose
+  foliage measures amber (127, 92, 41), and badly wrong for the thornwood dryad,
+  whose canopy is crimson. Only vegetation is corrected; mineral crusts already
+  take the creature's own palette.
+* The same tool reports the hue of each figure's brightest lit feature, which is
+  where the treant's amber heart and the barrens wisp's blue centre come from.
+* `concept_value_gains.py` found the systemic colour problem. The sampled *hues*
+  are good -- the median hue error against the concept figures is about two
+  degrees -- but the *values* were compressed: a whitehorn yak and a coastal
+  gull, both painted nearly white, rendered within a few points of a black iron
+  death knight. Gains only lift, and lifting blends toward white rather than
+  multiplying, because multiplying clips and the creatures that needed it most
+  were exactly the ones that could not move.
+
+  The correction is capped at 1.55 and deliberately does not close the whole
+  gap. It cannot: the shading falloff in `render_creature_qa.py` puts even a
+  pure white albedo near 90 against the 128 a pale concept figure measures, so
+  the remainder is only reachable by washing every pale creature out to white.
+  What is left is a renderer exposure question rather than a palette one.
+
+### Fixed on the way
+
+The builders wrote backslash paths into the asset catalogue on Windows, which
+Godot does not resolve and which made the catalogue completeness test fail on
+Windows builds alone. Paths are POSIX-form on every platform now, in both
+`build_native_nymara_glbs.py` and `sunmane/creatures.py`, and the test compares
+in that form rather than the host's.
+
+### Budget
+
+171 creatures, mean 5,767 triangles, 80 MB on disk, with the woody hero
+creatures between 15,000 and 30,000 -- up from a mean of 4,945 and 74 MB. The
+mean is well under the ceiling this pass was allowed, because the triangles
+went into features the art shows and the models lacked rather than into
+tessellating smooth shapes more finely; most creatures simply did not need
+more geometry than they had.
+
+### Reproducing this pass
+
+`ELORIA_CONCEPT_FIGURES` points at the directory of per-creature cut figures;
+the tools fall back to segmenting whole sheets from `ELORIA_CONCEPT_DIR` when
+only those are available.
+
+```
+ELORIA_CONCEPT_FIGURES=/path/to/figures \
+    python3 eloria-assets/tools/concept_growth_tints.py --table
+ELORIA_CONCEPT_FIGURES=/path/to/figures \
+    python3 eloria-assets/tools/concept_growth_tints.py --core
+ELORIA_CONCEPT_FIGURES=/path/to/figures \
+    python3 eloria-assets/tools/concept_value_gains.py --table
+python3 eloria-assets/tools/sunmane/creatures.py
+python3 eloria-assets/tools/build_native_nymara_glbs.py
+ELORIA_CONCEPT_FIGURES=/path/to/figures \
+    python3 eloria-assets/tools/concept_compare.py <slug...>
+ELORIA_CONCEPT_FIGURES=/path/to/figures \
+    python3 eloria-assets/tools/build_creature_qa_sheets.py
+```
+
+Run `sunmane/creatures.py` before `build_native_nymara_glbs.py`: the ambient
+livestock GLBs come from the former and are catalogued by the latter.

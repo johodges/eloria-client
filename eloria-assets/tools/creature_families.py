@@ -920,6 +920,16 @@ def biped_geometry(plan_key: str, scale: float, bones,
                        (hip_r[0] * .105, hip_r[0] * .105),
                        (hip_r[0] * .070, hip_r[0] * .070)],
                       [body_i, spine_i], MAT_ACCENT, sides=5)
+            if p["canopy"]:
+                # A dryad's gown is layered leaves, not cloth; the art gives
+                # her no fabric at all.
+                for along, size in ((.34, .78), (.68, 1.0), (1.0, .86)):
+                    seat = mid * (1 - along) + low * along
+                    foliage_cluster(mesh, seat - np.array((0., drop * along, 0.)),
+                                    hip_r[0] * .30 * p["canopy"] * size,
+                                    [body_i, spine_i], MAT_GROWTH,
+                                    seed=f"{variant or plan_key}:gown:{k}:{along}",
+                                    count=3, flatten=.48)
         for side in ("l", "r"):
             sh, el = g[B[f"upper_arm_{side}"]], g[B[f"forearm_{side}"]]
             r = p["arm_r"] * s
@@ -1001,15 +1011,24 @@ def biped_geometry(plan_key: str, scale: float, bones,
                     mesh, base, np.array((side * out, lift, back)),
                     .27 * s * crown, .040 * s * crown, crown_bones, MAT_BODY,
                     seed=f"{variant or plan_key}:crown:{side:+.0f}:{index}",
-                    depth=2, splits=3, spread=.72, gnarl=.34, taper=.52,
-                    shorten=.72, up_bias=.06, segments=3, sides=6)
+                    depth=2, splits=3, spread=.72,
+                    gnarl=.34, taper=.52, shorten=.72, up_bias=.06,
+                    segments=3, sides=6)
                 if p["canopy"]:
-                    for k, (tip, tip_r, _) in enumerate(tips):
+                    # Leaf mass is the most expensive thing on a treant, and it
+                    # buys nothing past the point where the clusters overlap.
+                    # A sapling sprite carried a full hero canopy -- thirty-four
+                    # thousand triangles on a creature two-thirds of a metre
+                    # tall -- so the crown thins with the creature.
+                    stride = 1 if crown >= .9 else 2
+                    for k, (tip, tip_r, _) in enumerate(tips[::stride]):
                         foliage_cluster(
-                            mesh, tip, .085 * s * p["canopy"], crown_bones,
+                            mesh, tip,
+                            .085 * s * p["canopy"] * (1.0 + .55 * (stride - 1)),
+                            crown_bones,
                             MAT_GROWTH,
                             seed=f"{variant or plan_key}:crownleaf:{side:+.0f}:{index}:{k}",
-                            count=5)
+                            count=4)
     _headgear(mesh, p["crest"], g[head_i], skull, head_i, s, p)
     if p["hood"]:
         _headgear(mesh, "hood", g[head_i], skull, head_i, s, p)
