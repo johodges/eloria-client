@@ -414,8 +414,12 @@ def boardwalk(length: float = 8.0, width: float = 1.8, deck_height: float = 0.55
               seed: int = 0, handrail: bool = True) -> MeshGroup:
     """Panel 4: a plank deck on driven posts, with a rope handrail.
 
-    Built along +Z with the origin at the near end on the ground. The deck goes
-    through `add_walk`; everything else is structure.
+    Built along Z and CENTRED on the origin. That matters: the collision pass
+    claims a deck's footprint from the placement position using the mesh's
+    half-extents, so a deck modelled from one end makes the claim symmetric
+    about that end and marks a span's length of open bog behind it walkable at
+    deck height. The deck goes through `add_walk`; everything else is
+    structure.
     """
     rng = Rng(seed)
     structure = []
@@ -424,7 +428,7 @@ def boardwalk(length: float = 8.0, width: float = 1.8, deck_height: float = 0.55
     # bearers running the length, on driven posts
     posts = max(2, int(length / 2.1) + 1)
     for index in range(posts):
-        z = length * index / max(posts - 1, 1)
+        z = -length * 0.5 + length * index / max(posts - 1, 1)
         for side in (-1.0, 1.0):
             post = M.cylinder(0.10, 0.085, deck_height + 0.85, 6, uv_scale=1.4,
                               material=BOG_TIMBER)
@@ -432,16 +436,21 @@ def boardwalk(length: float = 8.0, width: float = 1.8, deck_height: float = 0.55
             post.translate(side * width * 0.42, -0.80, z)
             structure.append(post)
     for side in (-1.0, 1.0):
-        bearer = M.box((0.10, 0.14, length * 0.5), uv_scale=1.2, material=BOG_TIMBER)
-        bearer.translate(side * width * 0.42, deck_height - 0.10, length * 0.5)
+        bearer = M.box((0.10, 0.14, length), uv_scale=1.2, material=BOG_TIMBER)
+        bearer.translate(side * width * 0.42, deck_height - 0.10, 0.0)
         structure.append(bearer)
 
     # the deck: individual planks, each with its own gap and tilt, so the walk
     # surface is one mesh but reads as boards
     plank_count = max(2, int(length / 0.34))
+    # `M.box` takes FULL extents. Passing `width * 0.5` built a deck half as
+    # wide as its own posts, and a plank depth of 40% of the pitch left 60% of
+    # the deck as open gaps - which the grounding ray falls straight through,
+    # dropping a character off the boardwalk into the bog. The planks are laid
+    # nearly touching, with only enough of a seam to read as boards.
     for index in range(plank_count):
-        z = (index + 0.5) * length / plank_count
-        plank = M.box((width * 0.5, 0.055, length / plank_count * 0.40),
+        z = -length * 0.5 + (index + 0.5) * length / plank_count
+        plank = M.box((width, 0.055, length / plank_count * 0.94),
                       uv_scale=1.0, material=BOG_TIMBER)
         plank.transform(M.rotation_z((rng.uniform() - 0.5) * 0.035))
         plank.translate((rng.uniform() - 0.5) * 0.05, deck_height, z)
@@ -451,7 +460,7 @@ def boardwalk(length: float = 8.0, width: float = 1.8, deck_height: float = 0.55
     if handrail:
         for side in (-1.0, 1.0):
             for index in range(posts):
-                z = length * index / max(posts - 1, 1)
+                z = -length * 0.5 + length * index / max(posts - 1, 1)
                 stanchion = M.cylinder(0.065, 0.055, 0.92, 5, uv_scale=1.6,
                                        material=BOG_TIMBER)
                 stanchion.transform(M.rotation_z((rng.uniform() - 0.5) * 0.14))
@@ -461,7 +470,7 @@ def boardwalk(length: float = 8.0, width: float = 1.8, deck_height: float = 0.55
             path = []
             for index in range(posts * 3):
                 t = index / max(posts * 3 - 1, 1)
-                z = t * length
+                z = -length * 0.5 + t * length
                 sag = math.sin(t * math.pi * posts) * 0.06
                 path.append([side * width * 0.42, deck_height + 0.84 - abs(sag), z])
             rope = M.tube(np.array(path), [0.028] * len(path), segments=5,
@@ -733,9 +742,20 @@ def scrub_clump(seed: int = 0, radius: float = 0.85, cards: int = 3,
     """
     rng = Rng(seed)
     parts = []
-    # which quarter of the atlas this clump draws from
-    cell_u = 0.5 * float(rng.integers(0, 2))
-    cell_v = 0.5 * float(rng.integers(0, 2))
+    # Which quarter of the atlas this clump draws from, weighted rather than
+    # uniform. The atlas is laid out heather / sedge / bog cotton / bracken,
+    # and an even draw put white cotton heads on a quarter of every clump on
+    # the moor, which read as blossom strewn everywhere. Cotton is a bog plant
+    # and it is rare.
+    draw = rng.uniform()
+    if draw < 0.46:
+        cell_u, cell_v = 0.0, 0.0          # heather
+    elif draw < 0.76:
+        cell_u, cell_v = 0.5, 0.0          # sedge and moor grass
+    elif draw < 0.82:
+        cell_u, cell_v = 0.0, 0.5          # bog cotton
+    else:
+        cell_u, cell_v = 0.5, 0.5          # bracken
     for index in range(cards):
         angle = index * math.pi / max(cards, 1) + rng.uniform() * 0.5
         width = radius * (0.85 + rng.uniform() * 0.5)
@@ -751,7 +771,29 @@ def scrub_clump(seed: int = 0, radius: float = 0.85, cards: int = 3,
         card.transform(M.rotation_x((rng.uniform() - 0.5) * 0.16))
         card.translate(offset_x, 0.0, offset_z)
         parts.append(card)
+        # Explicit back face rather than a double-sided material. Godot's
+        # spatial shader inverts the normal on the back face of a
+        # cull-disabled material, so an up-leaning normal becomes a
+        # down-leaning one and every card facing away from the light shaded
+        # black - which is what the first client captures of this region
+        # showed. Two wound-opposite faces are both front faces, and both keep
+        # the up-leaning normal that makes ground cover read.
+        back = card.copy()
+        back.indices = back.indices.reshape(-1, 3)[:, ::-1].reshape(-1)
+        parts.append(back)
     clump = M.merge(parts, SCRUB)
+    # Bend the card normals toward +Y. A card standing vertically has a
+    # horizontal normal, so under an overhead key it receives almost no light,
+    # and a double-sided material in Godot does not flip the normal for back
+    # faces - the first client capture of this region came back with every
+    # scrub clump shaded solid black. Leaning the normals up makes the cards
+    # take the sky and the ground the way real ground cover does, and keeps
+    # them consistent whichever side is being viewed.
+    if clump.vertex_count:
+        up = np.array([0.0, 1.0, 0.0])
+        blended = clump.normals * 0.22 + up * 0.78
+        lengths = np.linalg.norm(blended, axis=1, keepdims=True)
+        clump.normals = blended / np.maximum(lengths, 1e-9)
     clump.sanitise_normals()
     return clump
 

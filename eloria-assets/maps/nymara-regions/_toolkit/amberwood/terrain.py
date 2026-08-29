@@ -38,12 +38,16 @@ CRYSTAL_FIELD = 16
 RESONANT_ROAD = 17
 STORM_ROCK = 18
 
-# -- Grey Moors. Appended in the next free block; 19-22 stays reserved for
-# Crownwater so the two can land in either order without renumbering.
+# -- Grey Moors, 23-27. Appended after the block reserved for Crownwater
+# (19-22), so the two can land in either order without renumbering. This region
+# holds five classes rather than four: it needs a worn track that is distinct
+# from its laid causeway, and reusing the generic PATH would have put
+# Amberwood's amber leaf litter down the middle of a moor.
 HEATHER_MOOR = 23
 PEAT_BOG = 24
 CAUSEWAY = 25
 BARROW_TURF = 26
+MOOR_TRACK = 27
 
 SURFACE_NAMES = {
     FOREST: "ForestFloor", PATH: "Trail", PAVING: "Paving", SHORE: "Shore",
@@ -53,6 +57,7 @@ SURFACE_NAMES = {
     RESONANT_ROAD: "ResonantRoad", STORM_ROCK: "StormRock",
     HEATHER_MOOR: "HeatherMoor", PEAT_BOG: "PeatBog",
     CAUSEWAY: "Causeway", BARROW_TURF: "BarrowTurf",
+    MOOR_TRACK: "MoorTrack",
 }
 SURFACE_MATERIALS = {
     FOREST: "forest_floor", PATH: "leaf_path", PAVING: "cobble_paving",
@@ -64,6 +69,9 @@ SURFACE_MATERIALS = {
     RESONANT_ROAD: "amethyst_resonant_road", STORM_ROCK: "amethyst_storm_rock",
     HEATHER_MOOR: "grey_heather_moor", PEAT_BOG: "grey_peat_bog",
     CAUSEWAY: "grey_causeway", BARROW_TURF: "grey_barrow_turf",
+    # A worn track is bare wet earth; the toolkit already has that texture, so
+    # this class needs no new recipe - only a cooled, darkened material over it.
+    MOOR_TRACK: "grey_moor_track",
 }
 
 # Surfaces a region placed deliberately, which the slope and shore rules in
@@ -76,7 +84,7 @@ AUTHORED_SURFACES: set[int] = {
     # Grey Moors lays its causeways and cuts its peat by hand; the slope and
     # shore rules must not repaint either. The barrow turf is authored too -
     # a barrow is a built mound, not ground that happened to rise.
-    CAUSEWAY, BARROW_TURF,
+    CAUSEWAY, BARROW_TURF, MOOR_TRACK,
 }
 
 # Surfaces whose border must stay crisp, so `dither_boundaries` leaves them

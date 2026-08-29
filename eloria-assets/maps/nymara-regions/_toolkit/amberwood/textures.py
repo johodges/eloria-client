@@ -1526,9 +1526,11 @@ def amethyst_vault_floor(size: int = 512, seed: int = 577) -> TextureSet:
 # --------------------------------------------------------------------------
 
 _MOOR_PEAT = (0.086, 0.074, 0.062)
-_MOOR_LOAM = (0.170, 0.152, 0.112)
-_MOOR_GRASS = (0.264, 0.256, 0.164)
-_MOOR_STRAW = (0.372, 0.344, 0.226)
+_MOOR_LOAM = (0.128, 0.122, 0.092)
+# Warmed slightly against the concept, which is a brown-olive moor rather than
+# a grey-green one; the aerial comparison read cold beside the painting.
+_MOOR_GRASS = (0.196, 0.192, 0.124)
+_MOOR_STRAW = (0.278, 0.258, 0.164)
 _MOOR_HEATHER = (0.336, 0.226, 0.352)
 _MOOR_HEATHER_PALE = (0.494, 0.372, 0.500)
 _MOOR_GRANITE = (0.392, 0.396, 0.388)
@@ -1574,10 +1576,10 @@ def grey_peat_bog(size: int = 512, seed: int = 607) -> TextureSet:
     fibre = N.tileable_fbm(size, 30, 5, seed=seed)
     slick = N.tileable_fbm(size, 7, 4, seed=seed + 5)
     body = np.clip(fibre * 0.46 + slick * 0.54, 0, 1)
-    color = _colorize(body, (0.0, (0.038, 0.034, 0.030)),
-                      (0.42, (0.086, 0.072, 0.056)),
-                      (0.74, (0.146, 0.124, 0.090)),
-                      (1.0, (0.208, 0.182, 0.128)))
+    color = _colorize(body, (0.0, (0.062, 0.058, 0.050)),
+                      (0.42, (0.108, 0.096, 0.074)),
+                      (0.74, (0.164, 0.146, 0.106)),
+                      (1.0, (0.224, 0.204, 0.146)))
     # sphagnum: pale sour green, in small close cushions
     moss = np.clip(_upsample(N.tileable_worley(min(size, 256), 26, seed=seed + 9), size)
                    * -1.9 + 1.05, 0.0, 1.0)
@@ -1595,7 +1597,7 @@ def grey_peat_bog(size: int = 512, seed: int = 607) -> TextureSet:
     sheen = np.clip(slick * 1.4 - 0.24, 0.0, 1.0)
     height = np.clip(0.42 + fibre * 0.34 + moss * 0.24, 0.0, 1.0)
     occlusion = np.clip(0.34 + height * 0.58, 0.0, 1.0)
-    roughness = np.clip(0.86 - sheen * 0.64 + moss * 0.14, 0.04, 1.0)
+    roughness = np.clip(0.88 - sheen * 0.30 + moss * 0.10, 0.46, 1.0)
     return TextureSet("grey_peat_bog", _u8(np.clip(color, 0, 1)),
                       pack_orm(occlusion, roughness),
                       normal_from_height(height, 2.2))
@@ -1615,8 +1617,8 @@ def grey_causeway(size: int = 512, seed: int = 613) -> TextureSet:
     face = np.clip(0.52 + grain * 0.42 - dist * 0.34, 0, 1)
     # Darker than dressed masonry: these are field stones bedded in wet peat
     # under a permanently overcast sky, not a swept plaza.
-    color = _colorize(face, (0.0, (0.118, 0.122, 0.120)), (0.45, (0.194, 0.200, 0.196)),
-                      (0.78, (0.268, 0.274, 0.266)), (1.0, (0.344, 0.346, 0.334)))
+    color = _colorize(face, (0.0, (0.090, 0.094, 0.093)), (0.45, (0.150, 0.156, 0.153)),
+                      (0.78, (0.208, 0.214, 0.208)), (1.0, (0.270, 0.272, 0.262)))
     # Each flag takes its own tone. Modulating by the Worley distance itself
     # gives a smooth gradient inside every cell instead of one tone per stone,
     # so the variation is driven by a coarse field sampled at cell scale.
@@ -1647,8 +1649,11 @@ def grey_barrow_turf(size: int = 512, seed: int = 617) -> TextureSet:
     turf = N.tileable_fbm(size, 44, 5, seed=seed)
     sward = N.tileable_fbm(size, 9, 4, seed=seed + 5)
     body = np.clip(turf * 0.60 + sward * 0.40, 0, 1)
-    color = _colorize(body, (0.0, (0.098, 0.108, 0.068)), (0.40, (0.166, 0.188, 0.104)),
-                      (0.74, (0.232, 0.256, 0.140)), (1.0, (0.312, 0.328, 0.196)))
+    # Kept close to the moor it sits in. Brighter greens read as mown lawn on a
+    # burial mound once the client's own key light is on them, which is what
+    # the first Godot capture of the Great Barrow showed.
+    color = _colorize(body, (0.0, (0.076, 0.084, 0.056)), (0.40, (0.124, 0.138, 0.086)),
+                      (0.74, (0.174, 0.188, 0.116)), (1.0, (0.230, 0.240, 0.154)))
     # stone showing through where the turf is thin
     # Worley ridges run along the cell boundaries, so a strong mix paints a
     # bright web of veins over the whole mound rather than a few bald patches.
@@ -1677,8 +1682,8 @@ def grey_moor_granite(size: int = 512, seed: int = 619) -> TextureSet:
     body = N.tileable_fbm(size, 9, 4, seed=seed + 3)
     crystal = _upsample(N.tileable_worley(min(size, 256), 40, seed=seed + 7), size)
     face = np.clip(body * 0.54 + grain * 0.32 + (1.0 - crystal) * 0.14, 0, 1)
-    color = _colorize(face, (0.0, (0.128, 0.130, 0.132)), (0.42, (0.244, 0.248, 0.246)),
-                      (0.76, (0.372, 0.376, 0.368)), (1.0, (0.512, 0.512, 0.498)))
+    color = _colorize(face, (0.0, (0.104, 0.106, 0.108)), (0.42, (0.190, 0.194, 0.192)),
+                      (0.76, (0.286, 0.290, 0.284)), (1.0, (0.390, 0.390, 0.380)))
     # feldspar flecks
     color = _mix(color, np.array([0.640, 0.628, 0.598]),
                  np.clip(crystal * -2.6 + 0.62, 0.0, 1.0) * 0.42)
@@ -1864,10 +1869,49 @@ def grey_bog_water(size: int = 512, seed: int = 659) -> TextureSet:
     # peat scum and duckweed gathering at the edges
     color = _mix(color, np.array([0.124, 0.134, 0.092]), scum * 0.66)
     height = np.clip(0.5 + (ripple - 0.5) * 0.30, 0.0, 1.0)
-    roughness = np.clip(0.10 + scum * 0.62, 0.03, 1.0)
+    # Not a mirror: at roughness 0.10 the pools reflected the whole sky and
+    # read as bright blue discs on a grey moor. Peat water holds the sky dimly.
+    roughness = np.clip(0.34 + scum * 0.46, 0.03, 1.0)
     return TextureSet("grey_bog_water", _u8(np.clip(color, 0, 1)),
                       pack_orm(np.full((size, size), 0.98), roughness),
                       normal_from_height(height, 1.1))
+
+
+def _bleed_into_alpha(color: np.ndarray, opaque: np.ndarray,
+                      iterations: int = 10) -> np.ndarray:
+    """Push colour outward into the transparent texels of an alpha atlas.
+
+    An atlas drawn on a black background stores black RGB wherever alpha is
+    zero. That is invisible when the texture is sampled point-for-point, and
+    catastrophic once it is not: bilinear filtering and every mip level average
+    the plant colour with the black void around it, so an alpha-cut card fades
+    to black as it recedes. The first Godot capture of Grey Moors came back
+    with every scrub clump shaded solid black for exactly this reason, while
+    the offline preview - which does not mipmap - looked correct.
+
+    Dilating the colour outward means those averages pick up plant colour
+    instead of void. Alpha is untouched, so the cut-out shape is unchanged.
+
+    `amberwood`'s own `foliage_atlas` and `undergrowth_atlas` are drawn the same
+    way and would benefit from this too, but they are pinned by the packages
+    already built against them, so this is applied only where it is new.
+    """
+    out = np.array(color, dtype=np.float64, copy=True)
+    known = np.asarray(opaque, dtype=bool)
+    for _ in range(iterations):
+        if known.all():
+            break
+        total = np.zeros_like(out)
+        count = np.zeros(known.shape, dtype=np.float64)
+        for shift, axis in ((1, 0), (-1, 0), (1, 1), (-1, 1)):
+            neighbour = np.roll(known, shift, axis=axis)
+            colours = np.roll(out, shift, axis=axis)
+            total += np.where(neighbour[..., None], colours, 0.0)
+            count += neighbour
+        fill = (~known) & (count > 0)
+        out = np.where(fill[..., None], total / np.maximum(count, 1.0)[..., None], out)
+        known = known | fill
+    return out
 
 
 def grey_moor_scrub(size: int = 512, seed: int = 661) -> TextureSet:
@@ -1890,7 +1934,7 @@ def grey_moor_scrub(size: int = 512, seed: int = 661) -> TextureSet:
             length = half * height_frac * (0.6 + rng.random() * 0.7)
             lean = (rng.random() - 0.5) * half * 0.30
             tx, ty = bx + lean, by - length
-            width = max(1, int(half * 0.012 * (0.7 + rng.random())))
+            width = max(1, int(half * 0.0052 * (0.7 + rng.random())))
             tone = palette[int(rng.integers(0, len(palette)))]
             draw.line([(bx, by), (tx, ty)], fill=tone, width=width)
             mask.line([(bx, by), (tx, ty)], fill=255, width=width)
@@ -1901,24 +1945,30 @@ def grey_moor_scrub(size: int = 512, seed: int = 661) -> TextureSet:
                 mask.ellipse(box, fill=255)
 
     # heather: dense, woody, purple flower heads
-    stalk(0, 0, 150, 0.52, 1.05,
-          [(38, 42, 26), (52, 56, 34), (30, 32, 22)],
-          head=[(86, 58, 90), (118, 88, 120), (70, 46, 74)], head_radius=0.035)
-    # sedge and moor grass: tall, thin, straw
-    stalk(half, 0, 190, 0.86, 1.05,
-          [(64, 60, 38), (86, 80, 50), (46, 46, 30), (104, 96, 60)])
-    # bog cotton: sparse, with white heads
-    stalk(0, half, 70, 0.74, 1.0,
-          [(58, 62, 40), (74, 78, 48)],
-          head=[(226, 228, 218), (198, 200, 190)], head_radius=0.042)
+    # Every palette here is darker than the ground it stands on. Lighter
+    # cards read as pale litter scattered over the moor rather than as plants
+    # growing out of it, which is what the first pass looked like.
+    stalk(0, 0, 120, 0.40, 1.05,
+          [(40, 45, 28), (54, 60, 36), (31, 35, 23)],
+          head=[(78, 54, 82), (104, 78, 108), (63, 44, 67)], head_radius=0.022)
+    # sedge and moor grass: tall, thin, dull straw
+    stalk(half, 0, 130, 0.80, 1.05,
+          [(57, 54, 35), (75, 70, 45), (42, 42, 27), (90, 82, 52)])
+    # bog cotton: sparse, with off-white heads. Kept few - the heads are the
+    # brightest thing in the region after the votive flames, and at scatter
+    # density a generous count reads as straw bales strewn over the moor.
+    stalk(0, half, 22, 0.62, 1.0,
+          [(54, 60, 39), (69, 75, 46)],
+          head=[(150, 152, 143), (124, 126, 119)], head_radius=0.026)
     # bracken and dead fern, rust brown, low and broad
-    stalk(half, half, 130, 0.44, 1.05,
-          [(88, 62, 34), (110, 78, 42), (68, 48, 28), (126, 96, 54)])
+    stalk(half, half, 95, 0.38, 1.05,
+          [(75, 57, 34), (94, 72, 42), (57, 43, 27), (108, 82, 49)])
 
     color = np.asarray(image).astype(np.float64) / 255.0
     alpha_array = np.asarray(alpha).astype(np.uint8)
     body = np.clip(N.tileable_fbm(size, 20, 3, seed=seed + 3), 0, 1)
-    color = _mix(color, color * 0.62, body[..., None] * 0.34)
+    color = _mix(color, color * 0.74, body[..., None] * 0.30)
+    color = _bleed_into_alpha(color, alpha_array > 96, iterations=12)
     occlusion = np.clip(0.52 + body * 0.42, 0.0, 1.0)
     return TextureSet("grey_moor_scrub", _u8(np.clip(color, 0, 1)),
                       pack_orm(occlusion, np.full((size, size), 0.95)),

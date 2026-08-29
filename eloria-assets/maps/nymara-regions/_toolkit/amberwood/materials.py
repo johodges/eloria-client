@@ -144,8 +144,10 @@ SPECS: tuple[MaterialSpec, ...] = (
     MaterialSpec("grey_drystone", "grey_drystone", roughness=0.96),
     MaterialSpec("grey_turf_roof", "grey_turf_roof", roughness=0.97),
     MaterialSpec("grey_dead_bark", "grey_dead_bark", roughness=0.94),
+    # NOT double-sided: the scrub cards carry their own back faces, so both
+    # sides are front faces and Godot does not invert their normals.
     MaterialSpec("grey_moor_scrub", "grey_moor_scrub", roughness=0.95,
-                 alpha_mode="MASK", double_sided=True),
+                 alpha_mode="MASK", double_sided=False),
     # Bog water is opaque, unlike the region's sea. Peat stain kills every ray
     # that enters it, and a BLEND surface over a carved basin only showed the
     # basin through it.
@@ -158,6 +160,12 @@ SPECS: tuple[MaterialSpec, ...] = (
                  emissive=(0.216, 0.404, 0.520)),
     MaterialSpec("grey_votive_flame", "grey_votive_flame", roughness=0.42,
                  emissive=(0.520, 0.320, 0.104)),
+    # The worn moor track reuses the toolkit's packed-earth texture rather than
+    # adding a recipe, but that texture is a warm red clay and read as a dirt
+    # road cut across a cold wet moor. Tinted down and cooled here, which is
+    # what `base_color` is for.
+    MaterialSpec("grey_moor_track", "packed_earth", roughness=0.97,
+                 base_color=(0.52, 0.53, 0.50, 1.0)),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}

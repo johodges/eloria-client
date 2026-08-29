@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.1.0",
+  "assetVersion": "1.0.0",
   "asset": {
     "id": "grey_moors",
     "name": "Grey Moors",
@@ -18,897 +18,2965 @@
     ],
     "bounds": {
       "min": [
-        -96,
-        0.0,
-        -96
+        -444.0,
+        -25.98,
+        -671.0
       ],
       "max": [
-        96,
-        18.0,
-        96
+        667.0,
+        79.67,
+        440.0
       ]
-    }
+    },
+    "playableBounds": {
+      "min": [
+        -174.0,
+        -16.0,
+        -401.0
+      ],
+      "max": [
+        401.0,
+        26.86,
+        174.0
+      ]
+    },
+    "seaLevel": 0.0,
+    "serverCells": 576
   },
-  "source": {
-    "elm": "../source-elm/grey_moors.elm",
-    "sha256": "b9e435c87c338da2363509b5cb3a7208716166269fd4af7f01e5f41bc6083221",
-    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
-    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
-  },
-  "conceptArt": {
-    "macro": "../../../concepts/nymara-regions/grey_moors_region_concept.png",
-    "detailBoard": "references/00-concept-detail-board.png",
-    "panelGrid": [
-      5,
-      2
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      174.0,
+      174.0
     ],
-    "viewCount": 10,
-    "generator": "OpenAI ImageGen (built-in)",
-    "checkpoints": [
-      {
-        "panel": 1,
-        "id": "concept-01",
-        "subject": "raised causeway",
-        "cameraPosition": [
-          0.0,
-          20.0,
-          -72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 2,
-        "id": "concept-02",
-        "subject": "turf barrow",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_grey_moor_barrow_013",
-          "Landmark_grey_moor_barrow_014",
-          "Landmark_grey_moor_barrow_015"
-        ]
-      },
-      {
-        "panel": 3,
-        "id": "concept-03",
-        "subject": "standing stones",
-        "cameraPosition": [
-          68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_grey_moor_standing_stones_019",
-          "Landmark_grey_moor_standing_stones_020",
-          "Landmark_grey_moor_standing_stones_021"
-        ]
-      },
-      {
-        "panel": 4,
-        "id": "concept-04",
-        "subject": "bog boardwalk",
-        "cameraPosition": [
-          68.48,
-          20.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_grey_moor_boardwalk_008",
-          "Landmark_grey_moor_boardwalk_027",
-          "Landmark_grey_moor_boardwalk_028"
-        ]
-      },
-      {
-        "panel": 5,
-        "id": "concept-05",
-        "subject": "crypt threshold",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_grey_moor_crypt_entrance_035",
-          "Landmark_grey_moor_crypt_entrance_036",
-          "Landmark_grey_moor_crypt_entrance_037"
-        ]
-      },
-      {
-        "panel": 6,
-        "id": "concept-06",
-        "subject": "abandoned cottage",
-        "cameraPosition": [
-          0.0,
-          16.0,
-          72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_grey_moor_abandoned_cottage_039",
-          "Landmark_grey_moor_abandoned_cottage_040",
-          "Landmark_grey_moor_abandoned_cottage_041"
-        ]
-      },
-      {
-        "panel": 7,
-        "id": "concept-07",
-        "subject": "wisp tree",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_grey_moor_dead_tree_045",
-          "Landmark_grey_moor_dead_tree_046",
-          "Landmark_grey_moor_dead_tree_047"
-        ]
-      },
-      {
-        "panel": 8,
-        "id": "concept-08",
-        "subject": "peat and orchids",
-        "cameraPosition": [
-          -68.48,
-          24.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_crownwater_fishing_boat_000",
-          "Landmark_crownwater_ferry_001",
-          "Landmark_whitehorn_carved_stairs_002"
-        ]
-      },
-      {
-        "panel": 9,
-        "id": "concept-09",
-        "subject": "coastal panorama",
-        "cameraPosition": [
-          -68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 10,
-        "id": "concept-10",
-        "subject": "peat slate heather materials",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      }
-    ]
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 2.73,
+    "invertServerY": true
   },
-  "landmarks": [
-    {
-      "id": "landmark-000",
-      "name": "Crownwater Fishing Boat",
-      "node": "Landmark_crownwater_fishing_boat_000",
-      "position": [
-        -34.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-001",
-      "name": "Crownwater Ferry",
-      "node": "Landmark_crownwater_ferry_001",
-      "position": [
-        -12.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-002",
-      "name": "Whitehorn Carved Stairs",
-      "node": "Landmark_whitehorn_carved_stairs_002",
-      "position": [
-        10.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-003",
-      "name": "Crownwater Patrol Boat",
-      "node": "Landmark_crownwater_patrol_boat_003",
-      "position": [
-        32.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-004",
-      "name": "Mirrorhold Canal Stairs",
-      "node": "Landmark_mirrorhold_canal_stairs_004",
-      "position": [
-        -34.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-005",
-      "name": "Ssarathi Curved Wall",
-      "node": "Landmark_ssarathi_curved_wall_005",
-      "position": [
-        -12.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-006",
-      "name": "Sunmane Dry Cave",
-      "node": "Landmark_sunmane_dry_cave_006",
-      "position": [
-        10.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-007",
-      "name": "Grey Moor Cairn",
-      "node": "Landmark_grey_moor_cairn_007",
-      "position": [
-        32.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-008",
-      "name": "Grey Moor Boardwalk",
-      "node": "Landmark_grey_moor_boardwalk_008",
-      "position": [
-        -34.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-009",
-      "name": "Mirrorhold Lake House",
-      "node": "Landmark_mirrorhold_lake_house_009",
-      "position": [
-        -12.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-011",
-      "name": "Amberwood Estate",
-      "node": "Landmark_amberwood_estate_011",
-      "position": [
-        32.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-013",
-      "name": "Grey Moor Barrow",
-      "node": "Landmark_grey_moor_barrow_013",
-      "position": [
-        -24.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-014",
-      "name": "Grey Moor Barrow",
-      "node": "Landmark_grey_moor_barrow_014",
-      "position": [
-        24.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-015",
-      "name": "Grey Moor Barrow",
-      "node": "Landmark_grey_moor_barrow_015",
-      "position": [
-        -28.0,
-        0,
-        -24.0
-      ]
-    },
-    {
-      "id": "landmark-016",
-      "name": "Grey Moor Barrow",
-      "node": "Landmark_grey_moor_barrow_016",
-      "position": [
-        28.0,
-        0,
-        -24.0
-      ]
-    },
-    {
-      "id": "landmark-017",
-      "name": "Grey Moor Barrow",
-      "node": "Landmark_grey_moor_barrow_017",
-      "position": [
-        -10.0,
-        0,
-        -46.0
-      ]
-    },
-    {
-      "id": "landmark-018",
-      "name": "Grey Moor Barrow",
-      "node": "Landmark_grey_moor_barrow_018",
-      "position": [
-        10.0,
-        0,
-        -46.0
-      ]
-    },
-    {
-      "id": "landmark-019",
-      "name": "Grey Moor Standing Stones",
-      "node": "Landmark_grey_moor_standing_stones_019",
-      "position": [
-        -14.0,
-        0,
-        30.0
-      ]
-    },
-    {
-      "id": "landmark-020",
-      "name": "Grey Moor Standing Stones",
-      "node": "Landmark_grey_moor_standing_stones_020",
-      "position": [
-        14.0,
-        0,
-        30.0
-      ]
-    },
-    {
-      "id": "landmark-021",
-      "name": "Grey Moor Standing Stones",
-      "node": "Landmark_grey_moor_standing_stones_021",
-      "position": [
-        -30.0,
-        0,
-        6.0
-      ]
-    },
-    {
-      "id": "landmark-022",
-      "name": "Grey Moor Standing Stones",
-      "node": "Landmark_grey_moor_standing_stones_022",
-      "position": [
-        30.0,
-        0,
-        6.0
-      ]
-    },
-    {
-      "id": "landmark-023",
-      "name": "Grey Moor Standing Stones",
-      "node": "Landmark_grey_moor_standing_stones_023",
-      "position": [
-        -20.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-024",
-      "name": "Grey Moor Standing Stones",
-      "node": "Landmark_grey_moor_standing_stones_024",
-      "position": [
-        20.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-025",
-      "name": "Grey Moor Standing Stones",
-      "node": "Landmark_grey_moor_standing_stones_025",
-      "position": [
-        -20.0,
-        0,
-        -38.0
-      ]
-    },
-    {
-      "id": "landmark-026",
-      "name": "Grey Moor Standing Stones",
-      "node": "Landmark_grey_moor_standing_stones_026",
-      "position": [
-        20.0,
-        0,
-        -38.0
-      ]
-    },
-    {
-      "id": "landmark-027",
-      "name": "Grey Moor Boardwalk",
-      "node": "Landmark_grey_moor_boardwalk_027",
-      "position": [
-        0.0,
-        0,
-        28.0
-      ]
-    },
-    {
-      "id": "landmark-028",
-      "name": "Grey Moor Boardwalk",
-      "node": "Landmark_grey_moor_boardwalk_028",
-      "position": [
-        -28.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-029",
-      "name": "Grey Moor Boardwalk",
-      "node": "Landmark_grey_moor_boardwalk_029",
-      "position": [
-        28.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-030",
-      "name": "Grey Moor Boardwalk",
-      "node": "Landmark_grey_moor_boardwalk_030",
-      "position": [
-        0.0,
-        0,
-        -28.0
-      ]
-    },
-    {
-      "id": "landmark-031",
-      "name": "Grey Moor Boardwalk",
-      "node": "Landmark_grey_moor_boardwalk_031",
-      "position": [
-        -16.0,
-        0,
-        14.0
-      ]
-    },
-    {
-      "id": "landmark-032",
-      "name": "Grey Moor Boardwalk",
-      "node": "Landmark_grey_moor_boardwalk_032",
-      "position": [
-        16.0,
-        0,
-        14.0
-      ]
-    },
-    {
-      "id": "landmark-033",
-      "name": "Grey Moor Boardwalk",
-      "node": "Landmark_grey_moor_boardwalk_033",
-      "position": [
-        -16.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-034",
-      "name": "Grey Moor Boardwalk",
-      "node": "Landmark_grey_moor_boardwalk_034",
-      "position": [
-        16.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-035",
-      "name": "Grey Moor Crypt Entrance",
-      "node": "Landmark_grey_moor_crypt_entrance_035",
-      "position": [
-        -32.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-036",
-      "name": "Grey Moor Crypt Entrance",
-      "node": "Landmark_grey_moor_crypt_entrance_036",
-      "position": [
-        32.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-037",
-      "name": "Grey Moor Crypt Entrance",
-      "node": "Landmark_grey_moor_crypt_entrance_037",
-      "position": [
-        -34.0,
-        0,
-        -28.0
-      ]
-    },
-    {
-      "id": "landmark-038",
-      "name": "Grey Moor Crypt Entrance",
-      "node": "Landmark_grey_moor_crypt_entrance_038",
-      "position": [
-        34.0,
-        0,
-        -28.0
-      ]
-    },
-    {
-      "id": "landmark-039",
-      "name": "Grey Moor Abandoned Cottage",
-      "node": "Landmark_grey_moor_abandoned_cottage_039",
-      "position": [
-        -36.0,
-        0,
-        8.0
-      ]
-    },
-    {
-      "id": "landmark-040",
-      "name": "Grey Moor Abandoned Cottage",
-      "node": "Landmark_grey_moor_abandoned_cottage_040",
-      "position": [
-        36.0,
-        0,
-        8.0
-      ]
-    },
-    {
-      "id": "landmark-041",
-      "name": "Grey Moor Abandoned Cottage",
-      "node": "Landmark_grey_moor_abandoned_cottage_041",
-      "position": [
-        -36.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-042",
-      "name": "Grey Moor Abandoned Cottage",
-      "node": "Landmark_grey_moor_abandoned_cottage_042",
-      "position": [
-        36.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-043",
-      "name": "Grey Moor Abandoned Cottage",
-      "node": "Landmark_grey_moor_abandoned_cottage_043",
-      "position": [
-        -18.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-044",
-      "name": "Grey Moor Abandoned Cottage",
-      "node": "Landmark_grey_moor_abandoned_cottage_044",
-      "position": [
-        18.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-045",
-      "name": "Grey Moor Dead Tree",
-      "node": "Landmark_grey_moor_dead_tree_045",
-      "position": [
-        -34.0,
-        0,
-        34.0
-      ]
-    },
-    {
-      "id": "landmark-046",
-      "name": "Grey Moor Dead Tree",
-      "node": "Landmark_grey_moor_dead_tree_046",
-      "position": [
-        34.0,
-        0,
-        34.0
-      ]
-    },
-    {
-      "id": "landmark-047",
-      "name": "Grey Moor Dead Tree",
-      "node": "Landmark_grey_moor_dead_tree_047",
-      "position": [
-        -40.0,
-        0,
-        -4.0
-      ]
-    },
-    {
-      "id": "landmark-048",
-      "name": "Grey Moor Dead Tree",
-      "node": "Landmark_grey_moor_dead_tree_048",
-      "position": [
-        40.0,
-        0,
-        -4.0
-      ]
-    },
-    {
-      "id": "landmark-049",
-      "name": "Grey Moor Dead Tree",
-      "node": "Landmark_grey_moor_dead_tree_049",
-      "position": [
-        -30.0,
-        0,
-        -42.0
-      ]
-    },
-    {
-      "id": "landmark-050",
-      "name": "Grey Moor Dead Tree",
-      "node": "Landmark_grey_moor_dead_tree_050",
-      "position": [
-        30.0,
-        0,
-        -42.0
-      ]
-    },
-    {
-      "id": "landmark-051",
-      "name": "Grey Moor Dead Tree",
-      "node": "Landmark_grey_moor_dead_tree_051",
-      "position": [
-        -12.0,
-        0,
-        -34.0
-      ]
-    },
-    {
-      "id": "landmark-052",
-      "name": "Grey Moor Dead Tree",
-      "node": "Landmark_grey_moor_dead_tree_052",
-      "position": [
-        12.0,
-        0,
-        -34.0
-      ]
-    },
-    {
-      "id": "landmark-053",
-      "name": "Grey Moor Dead Tree",
-      "node": "Landmark_grey_moor_dead_tree_053",
-      "position": [
-        -24.0,
-        0,
-        -8.0
-      ]
-    },
-    {
-      "id": "landmark-054",
-      "name": "Grey Moor Dead Tree",
-      "node": "Landmark_grey_moor_dead_tree_054",
-      "position": [
-        24.0,
-        0,
-        -8.0
-      ]
-    },
-    {
-      "id": "landmark-055",
-      "name": "Grey Moor Ritual Shrine",
-      "node": "Landmark_grey_moor_ritual_shrine_055",
-      "position": [
-        -10.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-056",
-      "name": "Grey Moor Ritual Shrine",
-      "node": "Landmark_grey_moor_ritual_shrine_056",
-      "position": [
-        10.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-057",
-      "name": "Grey Moor Ritual Shrine",
-      "node": "Landmark_grey_moor_ritual_shrine_057",
-      "position": [
-        -10.0,
-        0,
-        -10.0
-      ]
-    },
-    {
-      "id": "landmark-058",
-      "name": "Grey Moor Ritual Shrine",
-      "node": "Landmark_grey_moor_ritual_shrine_058",
-      "position": [
-        10.0,
-        0,
-        -10.0
-      ]
-    },
-    {
-      "id": "landmark-059",
-      "name": "Grey Moor Ritual Shrine",
-      "node": "Landmark_grey_moor_ritual_shrine_059",
-      "position": [
-        0.0,
-        0,
-        -40.0
-      ]
-    }
-  ],
   "spawnPoints": [
     {
       "id": "default",
       "position": [
-        0,
-        1,
-        0
+        0.0,
+        2.78,
+        0.0
       ],
-      "rotationDegrees": 180
+      "serverTile": [
+        174,
+        174
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Causeway",
+      "grounded": true
+    },
+    {
+      "id": "barrow-court",
+      "position": [
+        114.0,
+        4.04,
+        -234.0
+      ],
+      "serverTile": [
+        288,
+        408
+      ],
+      "rotationDegrees": 180.0,
+      "surface": "Causeway",
+      "grounded": true
+    },
+    {
+      "id": "coast-landing",
+      "position": [
+        -51.75,
+        0.68,
+        79.75
+      ],
+      "serverTile": [
+        122,
+        94
+      ],
+      "rotationDegrees": 90.0,
+      "surface": "Shore",
+      "grounded": true
+    },
+    {
+      "id": "great-barrow-mouth",
+      "position": [
+        116.75,
+        4.09,
+        -252.75
+      ],
+      "serverTile": [
+        291,
+        427
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "BarrowTurf",
+      "grounded": true,
+      "note": "return point from the Grey Moor barrows insides map"
+    },
+    {
+      "id": "west-crypt-stair",
+      "position": [
+        -88.75,
+        3.42,
+        -252.75
+      ],
+      "serverTile": [
+        85,
+        427
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "MoorTrack",
+      "grounded": true,
+      "note": "return point from the Grey Moor barrows insides map"
+    },
+    {
+      "id": "east-crypt-stair",
+      "position": [
+        289.25,
+        1.1,
+        -198.75
+      ],
+      "serverTile": [
+        463,
+        373
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "Causeway",
+      "grounded": true,
+      "note": "return point from the Grey Moor barrows insides map"
+    },
+    {
+      "id": "south-crypt-stair",
+      "position": [
+        103.25,
+        3.36,
+        17.25
+      ],
+      "serverTile": [
+        277,
+        157
+      ],
+      "rotationDegrees": 0.0,
+      "surface": "MoorTrack",
+      "grounded": true,
+      "note": "return point from the Grey Moor barrows insides map"
     }
   ],
   "collision": {
     "nodeNames": [
-      "Landmark_crownwater_fishing_boat_000",
-      "Landmark_crownwater_ferry_001",
-      "Landmark_whitehorn_carved_stairs_002",
-      "Landmark_crownwater_patrol_boat_003",
-      "Landmark_mirrorhold_canal_stairs_004",
-      "Landmark_ssarathi_curved_wall_005",
-      "Landmark_sunmane_dry_cave_006",
-      "Landmark_grey_moor_cairn_007",
-      "Landmark_grey_moor_boardwalk_008",
-      "Landmark_mirrorhold_lake_house_009",
-      "Landmark_amberwood_estate_011",
-      "Landmark_grey_moor_barrow_013",
-      "Landmark_grey_moor_barrow_014",
-      "Landmark_grey_moor_barrow_015",
-      "Landmark_grey_moor_barrow_016",
-      "Landmark_grey_moor_barrow_017",
-      "Landmark_grey_moor_barrow_018",
-      "Landmark_grey_moor_standing_stones_019",
-      "Landmark_grey_moor_standing_stones_020",
-      "Landmark_grey_moor_standing_stones_021",
-      "Landmark_grey_moor_standing_stones_022",
-      "Landmark_grey_moor_standing_stones_023",
-      "Landmark_grey_moor_standing_stones_024",
-      "Landmark_grey_moor_standing_stones_025",
-      "Landmark_grey_moor_standing_stones_026",
-      "Landmark_grey_moor_boardwalk_027",
-      "Landmark_grey_moor_boardwalk_028",
-      "Landmark_grey_moor_boardwalk_029",
-      "Landmark_grey_moor_boardwalk_030",
-      "Landmark_grey_moor_boardwalk_031",
-      "Landmark_grey_moor_boardwalk_032",
-      "Landmark_grey_moor_boardwalk_033",
-      "Landmark_grey_moor_boardwalk_034",
-      "Landmark_grey_moor_crypt_entrance_035",
-      "Landmark_grey_moor_crypt_entrance_036",
-      "Landmark_grey_moor_crypt_entrance_037",
-      "Landmark_grey_moor_crypt_entrance_038",
-      "Landmark_grey_moor_abandoned_cottage_039",
-      "Landmark_grey_moor_abandoned_cottage_040",
-      "Landmark_grey_moor_abandoned_cottage_041",
-      "Landmark_grey_moor_abandoned_cottage_042",
-      "Landmark_grey_moor_abandoned_cottage_043",
-      "Landmark_grey_moor_abandoned_cottage_044",
-      "Landmark_grey_moor_dead_tree_045",
-      "Landmark_grey_moor_dead_tree_046",
-      "Landmark_grey_moor_dead_tree_047",
-      "Landmark_grey_moor_dead_tree_048",
-      "Landmark_grey_moor_dead_tree_049",
-      "Landmark_grey_moor_dead_tree_050",
-      "Landmark_grey_moor_dead_tree_051",
-      "Landmark_grey_moor_dead_tree_052",
-      "Landmark_grey_moor_dead_tree_053",
-      "Landmark_grey_moor_dead_tree_054",
-      "Landmark_grey_moor_ritual_shrine_055",
-      "Landmark_grey_moor_ritual_shrine_056",
-      "Landmark_grey_moor_ritual_shrine_057",
-      "Landmark_grey_moor_ritual_shrine_058",
-      "Landmark_grey_moor_ritual_shrine_059"
-    ]
+      "Landmark_Barrow_0",
+      "Landmark_Barrow_1",
+      "Landmark_Barrow_2",
+      "Landmark_Barrow_3",
+      "Landmark_Barrow_4",
+      "Landmark_Croft_0",
+      "Landmark_Croft_1",
+      "Landmark_Croft_2",
+      "Landmark_Croft_3",
+      "Landmark_Croft_4",
+      "Landmark_Croft_5",
+      "Landmark_Crypt_0",
+      "Landmark_Crypt_1",
+      "Landmark_Crypt_2",
+      "Landmark_Crypt_3",
+      "Landmark_DeadTree_0",
+      "Landmark_DeadTree_1",
+      "Landmark_DeadTree_2",
+      "Landmark_DeadTree_3",
+      "Landmark_DeadTree_4",
+      "Landmark_DeadTree_5",
+      "Landmark_DeadTree_6",
+      "Landmark_DeadTree_7",
+      "Landmark_DeadTree_8",
+      "Landmark_GreatBarrow",
+      "Landmark_HangedOak",
+      "Landmark_PeatCutting_0",
+      "Landmark_PeatCutting_1",
+      "Landmark_PeatCutting_2",
+      "Landmark_PeatCutting_3",
+      "Landmark_Shrine_0",
+      "Landmark_Shrine_1",
+      "Landmark_Shrine_2",
+      "Landmark_Shrine_3",
+      "Landmark_Shrine_4",
+      "Landmark_Tower_0",
+      "Landmark_Tower_1",
+      "Landmark_Tower_2",
+      "Landmark_Tower_3",
+      "Landmark_Tower_4",
+      "Landmark_Tower_5"
+    ],
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "cellMetres": 0.5,
+    "width": 1152,
+    "height": 1152,
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "The six-bit field spans -2.0 m to 10.4 m. A low wet moor is the one Nymara biome that fits inside that band honestly, so the whole walkable surface is authored within it and only 3.0% of walkable cells saturate - those are the shoulders of the closing rim. Elsewhere the encoded height is the real surface height, and the server has genuine elevation rather than a flat plateau."
+    },
+    "walkableCells": 1171807,
+    "walkableFraction": 0.883,
+    "saturatedCells": 35770
   },
   "navigation": {
     "surfaceNodePrefixes": [
-      "Terrain_"
+      "Terrain_",
+      "Walk_"
     ],
+    "walkableAreas": [
+      "heather-moor",
+      "causeways",
+      "trails",
+      "barrow-turf",
+      "peat-bog",
+      "shore",
+      "boardwalks",
+      "bridges"
+    ],
+    "agentRadius": 0.55,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 40,
     "navmesh": {
       "format": "surface-prefix-v1",
       "polygons": []
+    },
+    "notes": [
+      "Every terrain sub-mesh is named Terrain_<class>; every built walkable surface is named Walk_<...>. The client turns both into the navigation collision layer the grounding ray tests.",
+      "Boardwalk and causeway-bridge decks are walk surfaces, so a downward grounding ray under one resolves onto the deck above; the bog pool beneath them is not separately walkable.",
+      "Barrow mounds are terrain, not meshes, so a character walks over a barrow rather than through it. Only the portal stonework standing in the mound is geometry."
+    ]
+  },
+  "landmarks": [
+    {
+      "id": "grey-great-barrow",
+      "name": "The Great Barrow",
+      "node": "Landmark_GreatBarrow",
+      "type": "monument",
+      "position": [
+        114.0,
+        4.94,
+        -250.5
+      ]
+    },
+    {
+      "id": "grey-barrow-court",
+      "name": "The Court of Standing Stones",
+      "node": "Landmark_GreatBarrowCourt",
+      "type": "monument",
+      "position": [
+        114.0,
+        5.39,
+        -252.0
+      ]
+    },
+    {
+      "id": "grey-barrow-0",
+      "name": "Grey Moor Barrow",
+      "node": "Landmark_Barrow_0",
+      "type": "monument",
+      "position": [
+        25.77,
+        4.15,
+        -348.0
+      ]
+    },
+    {
+      "id": "grey-barrow-1",
+      "name": "Grey Moor Barrow",
+      "node": "Landmark_Barrow_1",
+      "type": "monument",
+      "position": [
+        239.58,
+        3.05,
+        -200.34
+      ]
+    },
+    {
+      "id": "grey-barrow-2",
+      "name": "Grey Moor Barrow",
+      "node": "Landmark_Barrow_2",
+      "type": "monument",
+      "position": [
+        -48.89,
+        4.35,
+        -230.86
+      ]
+    },
+    {
+      "id": "grey-barrow-3",
+      "name": "Grey Moor Barrow",
+      "node": "Landmark_Barrow_3",
+      "type": "monument",
+      "position": [
+        142.65,
+        3.73,
+        -140.05
+      ]
+    },
+    {
+      "id": "grey-barrow-4",
+      "name": "Grey Moor Barrow",
+      "node": "Landmark_Barrow_4",
+      "type": "monument",
+      "position": [
+        317.58,
+        3.28,
+        -266.34
+      ]
+    },
+    {
+      "id": "grey-crypt-0",
+      "name": "Grey Moor Crypt Entrance",
+      "node": "Landmark_Crypt_0",
+      "type": "entrance",
+      "position": [
+        132.0,
+        5.76,
+        -291.0
+      ]
+    },
+    {
+      "id": "grey-crypt-west",
+      "name": "Grey Moor Crypt Entrance",
+      "node": "Landmark_Crypt_1",
+      "type": "entrance",
+      "position": [
+        -90.0,
+        4.5,
+        -252.0
+      ]
+    },
+    {
+      "id": "grey-crypt-east",
+      "name": "Grey Moor Crypt Entrance",
+      "node": "Landmark_Crypt_2",
+      "type": "entrance",
+      "position": [
+        288.0,
+        2.33,
+        -198.0
+      ]
+    },
+    {
+      "id": "grey-crypt-south",
+      "name": "Grey Moor Crypt Entrance",
+      "node": "Landmark_Crypt_3",
+      "type": "entrance",
+      "position": [
+        102.0,
+        4.41,
+        18.0
+      ]
+    },
+    {
+      "id": "grey-stone-ring-0",
+      "name": "Grey Moor Standing Stones",
+      "node": "Landmark_StoneRing_0",
+      "type": "monument",
+      "position": [
+        84.0,
+        2.77,
+        -99.0
+      ]
+    },
+    {
+      "id": "grey-stone-ring-1",
+      "name": "Grey Moor Standing Stones",
+      "node": "Landmark_StoneRing_1",
+      "type": "monument",
+      "position": [
+        6.0,
+        4.54,
+        -324.0
+      ]
+    },
+    {
+      "id": "grey-stone-ring-2",
+      "name": "Grey Moor Standing Stones",
+      "node": "Landmark_StoneRing_2",
+      "type": "monument",
+      "position": [
+        264.0,
+        2.52,
+        -150.0
+      ]
+    },
+    {
+      "id": "grey-stone-ring-3",
+      "name": "Grey Moor Standing Stones",
+      "node": "Landmark_StoneRing_3",
+      "type": "monument",
+      "position": [
+        -102.0,
+        4.24,
+        -150.0
+      ]
+    },
+    {
+      "id": "grey-stone-ring-4",
+      "name": "Grey Moor Standing Stones",
+      "node": "Landmark_StoneRing_4",
+      "type": "monument",
+      "position": [
+        156.0,
+        3.85,
+        54.0
+      ]
+    },
+    {
+      "id": "grey-stone-ring-5",
+      "name": "Grey Moor Standing Stones",
+      "node": "Landmark_StoneRing_5",
+      "type": "monument",
+      "position": [
+        -42.0,
+        4.27,
+        30.0
+      ]
+    },
+    {
+      "id": "grey-stone-ring-6",
+      "name": "Grey Moor Standing Stones",
+      "node": "Landmark_StoneRing_6",
+      "type": "monument",
+      "position": [
+        342.0,
+        3.96,
+        -72.0
+      ]
+    },
+    {
+      "id": "grey-shrine-0",
+      "name": "Grey Moor Ritual Shrine",
+      "node": "Landmark_Shrine_0",
+      "type": "shrine",
+      "position": [
+        114.0,
+        4.79,
+        -222.0
+      ]
+    },
+    {
+      "id": "grey-shrine-1",
+      "name": "Grey Moor Ritual Shrine",
+      "node": "Landmark_Shrine_1",
+      "type": "shrine",
+      "position": [
+        54.0,
+        2.08,
+        -54.0
+      ]
+    },
+    {
+      "id": "grey-shrine-2",
+      "name": "Grey Moor Ritual Shrine",
+      "node": "Landmark_Shrine_2",
+      "type": "shrine",
+      "position": [
+        276.0,
+        3.14,
+        -102.0
+      ]
+    },
+    {
+      "id": "grey-shrine-3",
+      "name": "Grey Moor Ritual Shrine",
+      "node": "Landmark_Shrine_3",
+      "type": "shrine",
+      "position": [
+        -90.0,
+        -13.31,
+        81.0
+      ]
+    },
+    {
+      "id": "grey-shrine-4",
+      "name": "Grey Moor Ritual Shrine",
+      "node": "Landmark_Shrine_4",
+      "type": "shrine",
+      "position": [
+        48.0,
+        5.54,
+        -312.0
+      ]
+    },
+    {
+      "id": "grey-tower-0",
+      "name": "Grey Moor Broken Tower",
+      "node": "Landmark_Tower_0",
+      "type": "ruin",
+      "position": [
+        -108.0,
+        6.93,
+        -357.0
+      ]
+    },
+    {
+      "id": "grey-tower-1",
+      "name": "Grey Moor Broken Tower",
+      "node": "Landmark_Tower_1",
+      "type": "ruin",
+      "position": [
+        -141.0,
+        5.48,
+        -189.0
+      ]
+    },
+    {
+      "id": "grey-tower-2",
+      "name": "Grey Moor Broken Tower",
+      "node": "Landmark_Tower_2",
+      "type": "ruin",
+      "position": [
+        -147.0,
+        8.86,
+        -105.0
+      ]
+    },
+    {
+      "id": "grey-tower-3",
+      "name": "Grey Moor Broken Tower",
+      "node": "Landmark_Tower_3",
+      "type": "ruin",
+      "position": [
+        378.0,
+        5.57,
+        -189.0
+      ]
+    },
+    {
+      "id": "grey-tower-4",
+      "name": "Grey Moor Broken Tower",
+      "node": "Landmark_Tower_4",
+      "type": "ruin",
+      "position": [
+        288.0,
+        5.58,
+        -366.0
+      ]
+    },
+    {
+      "id": "grey-tower-5",
+      "name": "Grey Moor Broken Tower",
+      "node": "Landmark_Tower_5",
+      "type": "ruin",
+      "position": [
+        198.0,
+        8.04,
+        120.0
+      ]
+    },
+    {
+      "id": "grey-croft-0",
+      "name": "Grey Moor Abandoned Cottage",
+      "node": "Landmark_Croft_0",
+      "type": "ruin",
+      "position": [
+        -72.0,
+        4.51,
+        48.0
+      ]
+    },
+    {
+      "id": "grey-croft-1",
+      "name": "Grey Moor Abandoned Cottage",
+      "node": "Landmark_Croft_1",
+      "type": "ruin",
+      "position": [
+        120.0,
+        4.67,
+        78.0
+      ]
+    },
+    {
+      "id": "grey-croft-2",
+      "name": "Grey Moor Abandoned Cottage",
+      "node": "Landmark_Croft_2",
+      "type": "ruin",
+      "position": [
+        -120.0,
+        4.9,
+        -60.0
+      ]
+    },
+    {
+      "id": "grey-croft-3",
+      "name": "Grey Moor Abandoned Cottage",
+      "node": "Landmark_Croft_3",
+      "type": "ruin",
+      "position": [
+        300.0,
+        3.07,
+        -18.0
+      ]
+    },
+    {
+      "id": "grey-croft-4",
+      "name": "Grey Moor Abandoned Cottage",
+      "node": "Landmark_Croft_4",
+      "type": "ruin",
+      "position": [
+        -12.0,
+        3.67,
+        -360.0
+      ]
+    },
+    {
+      "id": "grey-croft-5",
+      "name": "Grey Moor Abandoned Cottage",
+      "node": "Landmark_Croft_5",
+      "type": "ruin",
+      "position": [
+        180.0,
+        3.54,
+        -42.0
+      ]
+    },
+    {
+      "id": "grey-peat-working-0",
+      "name": "Grey Moor Peat Cutting",
+      "node": "Landmark_PeatCutting_0",
+      "type": "worksite",
+      "position": [
+        -78.0,
+        3.17,
+        -18.0
+      ]
+    },
+    {
+      "id": "grey-peat-working-1",
+      "name": "Grey Moor Peat Cutting",
+      "node": "Landmark_PeatCutting_1",
+      "type": "worksite",
+      "position": [
+        144.0,
+        3.47,
+        -24.0
+      ]
+    },
+    {
+      "id": "grey-peat-working-2",
+      "name": "Grey Moor Peat Cutting",
+      "node": "Landmark_PeatCutting_2",
+      "type": "worksite",
+      "position": [
+        18.0,
+        1.56,
+        -210.0
+      ]
+    },
+    {
+      "id": "grey-peat-working-3",
+      "name": "Grey Moor Peat Cutting",
+      "node": "Landmark_PeatCutting_3",
+      "type": "worksite",
+      "position": [
+        258.0,
+        2.51,
+        -42.0
+      ]
+    },
+    {
+      "id": "grey-hanged-oak",
+      "name": "The Hanged Oak",
+      "node": "Landmark_HangedOak",
+      "type": "landmark-tree",
+      "position": [
+        66.0,
+        3.65,
+        -168.0
+      ]
+    },
+    {
+      "id": "grey-dead-tree-0",
+      "name": "Grey Moor Dead Tree",
+      "node": "Landmark_DeadTree_0",
+      "type": "landmark-tree",
+      "position": [
+        -85.49,
+        3.94,
+        -320.93
+      ]
+    },
+    {
+      "id": "grey-dead-tree-1",
+      "name": "Grey Moor Dead Tree",
+      "node": "Landmark_DeadTree_1",
+      "type": "landmark-tree",
+      "position": [
+        210.17,
+        3.25,
+        -195.73
+      ]
+    },
+    {
+      "id": "grey-dead-tree-2",
+      "name": "Grey Moor Dead Tree",
+      "node": "Landmark_DeadTree_2",
+      "type": "landmark-tree",
+      "position": [
+        228.63,
+        3.9,
+        -111.0
+      ]
+    },
+    {
+      "id": "grey-dead-tree-3",
+      "name": "Grey Moor Dead Tree",
+      "node": "Landmark_DeadTree_3",
+      "type": "landmark-tree",
+      "position": [
+        125.5,
+        4.48,
+        35.48
+      ]
+    },
+    {
+      "id": "grey-dead-tree-4",
+      "name": "Grey Moor Dead Tree",
+      "node": "Landmark_DeadTree_4",
+      "type": "landmark-tree",
+      "position": [
+        -126.16,
+        6.26,
+        27.46
+      ]
+    },
+    {
+      "id": "grey-dead-tree-5",
+      "name": "Grey Moor Dead Tree",
+      "node": "Landmark_DeadTree_5",
+      "type": "landmark-tree",
+      "position": [
+        281.1,
+        3.9,
+        -19.27
+      ]
+    },
+    {
+      "id": "grey-dead-tree-6",
+      "name": "Grey Moor Dead Tree",
+      "node": "Landmark_DeadTree_6",
+      "type": "landmark-tree",
+      "position": [
+        317.68,
+        3.26,
+        -301.16
+      ]
+    },
+    {
+      "id": "grey-dead-tree-7",
+      "name": "Grey Moor Dead Tree",
+      "node": "Landmark_DeadTree_7",
+      "type": "landmark-tree",
+      "position": [
+        212.26,
+        5.11,
+        88.69
+      ]
+    },
+    {
+      "id": "grey-dead-tree-8",
+      "name": "Grey Moor Dead Tree",
+      "node": "Landmark_DeadTree_8",
+      "type": "landmark-tree",
+      "position": [
+        355.2,
+        4.04,
+        -152.48
+      ]
+    },
+    {
+      "id": "grey-boardwalk-0",
+      "name": "Grey Moor Boardwalk",
+      "node": "Landmark_Boardwalk_0",
+      "type": "bridge",
+      "position": [
+        30.0,
+        2.43,
+        -36.0
+      ]
+    },
+    {
+      "id": "grey-boardwalk-1",
+      "name": "Grey Moor Boardwalk",
+      "node": "Landmark_Boardwalk_1",
+      "type": "bridge",
+      "position": [
+        84.0,
+        2.34,
+        -111.0
+      ]
+    },
+    {
+      "id": "grey-boardwalk-2",
+      "name": "Grey Moor Boardwalk",
+      "node": "Landmark_Boardwalk_2",
+      "type": "bridge",
+      "position": [
+        54.0,
+        2.33,
+        -57.0
+      ]
+    },
+    {
+      "id": "grey-boardwalk-3",
+      "name": "Grey Moor Boardwalk",
+      "node": "Landmark_Boardwalk_3",
+      "type": "bridge",
+      "position": [
+        -54.0,
+        2.72,
+        -81.0
+      ]
+    },
+    {
+      "id": "grey-boardwalk-4",
+      "name": "Grey Moor Boardwalk",
+      "node": "Landmark_Boardwalk_4",
+      "type": "bridge",
+      "position": [
+        21.0,
+        2.44,
+        -222.0
+      ]
+    },
+    {
+      "id": "grey-boardwalk-5",
+      "name": "Grey Moor Boardwalk",
+      "node": "Landmark_Boardwalk_5",
+      "type": "bridge",
+      "position": [
+        210.0,
+        1.83,
+        -57.0
+      ]
+    },
+    {
+      "id": "grey-boardwalk-6",
+      "name": "Grey Moor Boardwalk",
+      "node": "Landmark_Boardwalk_6",
+      "type": "bridge",
+      "position": [
+        102.0,
+        3.62,
+        45.0
+      ]
+    },
+    {
+      "id": "grey-boardwalk-7",
+      "name": "Grey Moor Boardwalk",
+      "node": "Landmark_Boardwalk_7",
+      "type": "bridge",
+      "position": [
+        -48.0,
+        3.16,
+        69.0
+      ]
+    },
+    {
+      "id": "grey-causeway-bridge-0",
+      "name": "Grey Moor Causeway Bridge",
+      "node": "Landmark_CausewayBridge_0",
+      "type": "bridge",
+      "position": [
+        165.0,
+        5.42,
+        3.0
+      ]
+    },
+    {
+      "id": "grey-causeway-bridge-1",
+      "name": "Grey Moor Causeway Bridge",
+      "node": "Landmark_CausewayBridge_1",
+      "type": "bridge",
+      "position": [
+        15.0,
+        4.03,
+        -6.0
+      ]
+    },
+    {
+      "id": "grey-causeway-bridge-2",
+      "name": "Grey Moor Causeway Bridge",
+      "node": "Landmark_CausewayBridge_2",
+      "type": "bridge",
+      "position": [
+        276.0,
+        3.55,
+        -27.0
+      ]
+    },
+    {
+      "id": "grey-stone-avenue",
+      "name": "The Barrow Avenue",
+      "node": "Landmark_StoneAvenue",
+      "type": "monument",
+      "position": [
+        114.0,
+        5.49,
+        -228.0
+      ]
+    }
+  ],
+  "interactives": [],
+  "npcMarkers": [
+    {
+      "id": "barrow-warden",
+      "name": "Warden of the Great Barrow",
+      "position": [
+        114.0,
+        4.04,
+        -234.0
+      ],
+      "serverTile": [
+        288,
+        408
+      ],
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "stone-reader",
+      "name": "Reader of the Stones",
+      "position": [
+        84.0,
+        1.67,
+        -99.0
+      ],
+      "serverTile": [
+        258,
+        273
+      ],
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "peat-cutter",
+      "name": "Peat Cutter",
+      "position": [
+        144.0,
+        2.57,
+        -24.0
+      ],
+      "serverTile": [
+        318,
+        198
+      ],
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "bog-guide",
+      "name": "Bog Guide",
+      "position": [
+        30.0,
+        1.79,
+        -36.0
+      ],
+      "serverTile": [
+        204,
+        210
+      ],
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "crypt-keeper",
+      "name": "Keeper of the Fen Crypt",
+      "position": [
+        102.0,
+        3.31,
+        18.0
+      ],
+      "serverTile": [
+        276,
+        156
+      ],
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "coast-watcher",
+      "name": "Coast Watcher",
+      "position": [
+        -90.0,
+        -14.06,
+        81.0
+      ],
+      "serverTile": [
+        84,
+        93
+      ],
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "croft-widow",
+      "name": "Widow of the Last Croft",
+      "position": [
+        -72.0,
+        3.34,
+        48.0
+      ],
+      "serverTile": [
+        102,
+        126
+      ],
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "lamp-tender",
+      "name": "Lamp Tender",
+      "position": [
+        0.0,
+        2.78,
+        0.0
+      ],
+      "serverTile": [
+        174,
+        174
+      ],
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "stone-carter",
+      "name": "Stone Carter",
+      "position": [
+        264.0,
+        1.42,
+        -150.0
+      ],
+      "serverTile": [
+        438,
+        324
+      ],
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "moor-ranger",
+      "name": "Moor Ranger",
+      "position": [
+        180.0,
+        2.37,
+        -42.0
+      ],
+      "serverTile": [
+        354,
+        216
+      ],
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "barrow-wight",
+      "name": "Barrow Wight",
+      "kind": "creature-zone",
+      "position": [
+        114.0,
+        9.28,
+        -273.0
+      ],
+      "radius": 60.0,
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "bog-lurker",
+      "name": "Bog Lurker",
+      "kind": "creature-zone",
+      "position": [
+        54.0,
+        1.33,
+        -54.0
+      ],
+      "radius": 52.0,
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "marsh-wisp",
+      "name": "Marsh Wisp",
+      "kind": "creature-zone",
+      "position": [
+        66.0,
+        2.2,
+        -168.0
+      ],
+      "radius": 44.0,
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "moor-hound",
+      "name": "Moor Hound",
+      "kind": "creature-zone",
+      "position": [
+        -102.0,
+        3.14,
+        -150.0
+      ],
+      "radius": 56.0,
+      "role": "editor-marker",
+      "authority": "server"
+    },
+    {
+      "id": "cairn-shade",
+      "name": "Cairn Shade",
+      "kind": "creature-zone",
+      "position": [
+        312.0,
+        3.12,
+        -276.0
+      ],
+      "radius": 40.0,
+      "role": "editor-marker",
+      "authority": "server"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "grey-peat-bank-000",
+      "resource": "cut-peat",
+      "position": [
+        200.0,
+        2.07,
+        -85.0
+      ],
+      "serverTile": [
+        374,
+        259
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-001",
+      "resource": "cut-peat",
+      "position": [
+        98.0,
+        2.11,
+        57.0
+      ],
+      "serverTile": [
+        272,
+        117
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-002",
+      "resource": "cut-peat",
+      "position": [
+        232.0,
+        1.98,
+        -311.0
+      ],
+      "serverTile": [
+        406,
+        485
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-003",
+      "resource": "cut-peat",
+      "position": [
+        298.0,
+        1.95,
+        -29.0
+      ],
+      "serverTile": [
+        472,
+        203
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-004",
+      "resource": "cut-peat",
+      "position": [
+        164.0,
+        3.42,
+        121.0
+      ],
+      "serverTile": [
+        338,
+        53
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-005",
+      "resource": "cut-peat",
+      "position": [
+        152.0,
+        1.94,
+        -91.0
+      ],
+      "serverTile": [
+        326,
+        265
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-006",
+      "resource": "cut-peat",
+      "position": [
+        154.0,
+        2.36,
+        71.0
+      ],
+      "serverTile": [
+        328,
+        103
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-007",
+      "resource": "cut-peat",
+      "position": [
+        -20.0,
+        2.93,
+        43.0
+      ],
+      "serverTile": [
+        154,
+        131
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-008",
+      "resource": "cut-peat",
+      "position": [
+        -26.0,
+        2.5,
+        -63.0
+      ],
+      "serverTile": [
+        148,
+        237
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-009",
+      "resource": "cut-peat",
+      "position": [
+        38.0,
+        2.13,
+        -207.0
+      ],
+      "serverTile": [
+        212,
+        381
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-010",
+      "resource": "cut-peat",
+      "position": [
+        -38.0,
+        2.69,
+        63.0
+      ],
+      "serverTile": [
+        136,
+        111
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-011",
+      "resource": "cut-peat",
+      "position": [
+        192.0,
+        1.78,
+        -179.0
+      ],
+      "serverTile": [
+        366,
+        353
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-012",
+      "resource": "cut-peat",
+      "position": [
+        360.0,
+        1.63,
+        -283.0
+      ],
+      "serverTile": [
+        534,
+        457
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-013",
+      "resource": "cut-peat",
+      "position": [
+        146.0,
+        1.91,
+        -97.0
+      ],
+      "serverTile": [
+        320,
+        271
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-014",
+      "resource": "cut-peat",
+      "position": [
+        -108.0,
+        2.04,
+        -195.0
+      ],
+      "serverTile": [
+        66,
+        369
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-015",
+      "resource": "cut-peat",
+      "position": [
+        114.0,
+        2.72,
+        29.0
+      ],
+      "serverTile": [
+        288,
+        145
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-016",
+      "resource": "cut-peat",
+      "position": [
+        92.0,
+        3.39,
+        -61.0
+      ],
+      "serverTile": [
+        266,
+        235
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-017",
+      "resource": "cut-peat",
+      "position": [
+        -118.0,
+        1.92,
+        -185.0
+      ],
+      "serverTile": [
+        56,
+        359
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-018",
+      "resource": "cut-peat",
+      "position": [
+        252.0,
+        1.89,
+        -155.0
+      ],
+      "serverTile": [
+        426,
+        329
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-019",
+      "resource": "cut-peat",
+      "position": [
+        -28.0,
+        2.44,
+        -59.0
+      ],
+      "serverTile": [
+        146,
+        233
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-020",
+      "resource": "cut-peat",
+      "position": [
+        332.0,
+        1.82,
+        -53.0
+      ],
+      "serverTile": [
+        506,
+        227
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-021",
+      "resource": "cut-peat",
+      "position": [
+        -136.0,
+        4.03,
+        -179.0
+      ],
+      "serverTile": [
+        38,
+        353
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-022",
+      "resource": "cut-peat",
+      "position": [
+        8.0,
+        2.59,
+        -79.0
+      ],
+      "serverTile": [
+        182,
+        253
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-023",
+      "resource": "cut-peat",
+      "position": [
+        150.0,
+        1.61,
+        -171.0
+      ],
+      "serverTile": [
+        324,
+        345
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-024",
+      "resource": "cut-peat",
+      "position": [
+        192.0,
+        1.69,
+        -335.0
+      ],
+      "serverTile": [
+        366,
+        509
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-025",
+      "resource": "cut-peat",
+      "position": [
+        -6.0,
+        2.6,
+        -233.0
+      ],
+      "serverTile": [
+        168,
+        407
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-026",
+      "resource": "cut-peat",
+      "position": [
+        -44.0,
+        2.74,
+        -37.0
+      ],
+      "serverTile": [
+        130,
+        211
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-027",
+      "resource": "cut-peat",
+      "position": [
+        300.0,
+        1.94,
+        -335.0
+      ],
+      "serverTile": [
+        474,
+        509
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-028",
+      "resource": "cut-peat",
+      "position": [
+        312.0,
+        2.38,
+        11.0
+      ],
+      "serverTile": [
+        486,
+        163
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-029",
+      "resource": "cut-peat",
+      "position": [
+        156.0,
+        2.0,
+        -91.0
+      ],
+      "serverTile": [
+        330,
+        265
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-030",
+      "resource": "cut-peat",
+      "position": [
+        -14.0,
+        2.6,
+        -217.0
+      ],
+      "serverTile": [
+        160,
+        391
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-031",
+      "resource": "cut-peat",
+      "position": [
+        368.0,
+        1.62,
+        -239.0
+      ],
+      "serverTile": [
+        542,
+        413
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-032",
+      "resource": "cut-peat",
+      "position": [
+        58.0,
+        3.29,
+        -17.0
+      ],
+      "serverTile": [
+        232,
+        191
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-033",
+      "resource": "cut-peat",
+      "position": [
+        278.0,
+        1.73,
+        -115.0
+      ],
+      "serverTile": [
+        452,
+        289
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-034",
+      "resource": "cut-peat",
+      "position": [
+        166.0,
+        1.88,
+        -325.0
+      ],
+      "serverTile": [
+        340,
+        499
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-035",
+      "resource": "cut-peat",
+      "position": [
+        96.0,
+        2.19,
+        135.0
+      ],
+      "serverTile": [
+        270,
+        39
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-036",
+      "resource": "cut-peat",
+      "position": [
+        78.0,
+        3.72,
+        -27.0
+      ],
+      "serverTile": [
+        252,
+        201
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-037",
+      "resource": "cut-peat",
+      "position": [
+        -114.0,
+        3.09,
+        -153.0
+      ],
+      "serverTile": [
+        60,
+        327
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-038",
+      "resource": "cut-peat",
+      "position": [
+        22.0,
+        2.09,
+        -73.0
+      ],
+      "serverTile": [
+        196,
+        247
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-039",
+      "resource": "cut-peat",
+      "position": [
+        138.0,
+        1.85,
+        -213.0
+      ],
+      "serverTile": [
+        312,
+        387
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-040",
+      "resource": "cut-peat",
+      "position": [
+        80.0,
+        1.98,
+        -85.0
+      ],
+      "serverTile": [
+        254,
+        259
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-041",
+      "resource": "cut-peat",
+      "position": [
+        164.0,
+        2.43,
+        -69.0
+      ],
+      "serverTile": [
+        338,
+        243
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-042",
+      "resource": "cut-peat",
+      "position": [
+        92.0,
+        2.0,
+        -375.0
+      ],
+      "serverTile": [
+        266,
+        549
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-043",
+      "resource": "cut-peat",
+      "position": [
+        -56.0,
+        2.08,
+        -349.0
+      ],
+      "serverTile": [
+        118,
+        523
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-044",
+      "resource": "cut-peat",
+      "position": [
+        330.0,
+        1.73,
+        -261.0
+      ],
+      "serverTile": [
+        504,
+        435
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-045",
+      "resource": "cut-peat",
+      "position": [
+        120.0,
+        2.98,
+        19.0
+      ],
+      "serverTile": [
+        294,
+        155
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-046",
+      "resource": "cut-peat",
+      "position": [
+        132.0,
+        2.09,
+        97.0
+      ],
+      "serverTile": [
+        306,
+        77
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-047",
+      "resource": "cut-peat",
+      "position": [
+        2.0,
+        4.88,
+        -279.0
+      ],
+      "serverTile": [
+        176,
+        453
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-048",
+      "resource": "cut-peat",
+      "position": [
+        138.0,
+        1.87,
+        83.0
+      ],
+      "serverTile": [
+        312,
+        91
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-049",
+      "resource": "cut-peat",
+      "position": [
+        146.0,
+        2.08,
+        -303.0
+      ],
+      "serverTile": [
+        320,
+        477
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-050",
+      "resource": "cut-peat",
+      "position": [
+        -44.0,
+        1.65,
+        -89.0
+      ],
+      "serverTile": [
+        130,
+        263
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-051",
+      "resource": "cut-peat",
+      "position": [
+        76.0,
+        2.59,
+        -45.0
+      ],
+      "serverTile": [
+        250,
+        219
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-052",
+      "resource": "cut-peat",
+      "position": [
+        200.0,
+        1.83,
+        -305.0
+      ],
+      "serverTile": [
+        374,
+        479
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-053",
+      "resource": "cut-peat",
+      "position": [
+        14.0,
+        2.44,
+        -83.0
+      ],
+      "serverTile": [
+        188,
+        257
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-054",
+      "resource": "cut-peat",
+      "position": [
+        140.0,
+        3.35,
+        45.0
+      ],
+      "serverTile": [
+        314,
+        129
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-055",
+      "resource": "cut-peat",
+      "position": [
+        -28.0,
+        2.09,
+        -87.0
+      ],
+      "serverTile": [
+        146,
+        261
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-056",
+      "resource": "cut-peat",
+      "position": [
+        196.0,
+        1.91,
+        -211.0
+      ],
+      "serverTile": [
+        370,
+        385
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-057",
+      "resource": "cut-peat",
+      "position": [
+        20.0,
+        2.43,
+        19.0
+      ],
+      "serverTile": [
+        194,
+        155
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-058",
+      "resource": "cut-peat",
+      "position": [
+        -20.0,
+        2.58,
+        -79.0
+      ],
+      "serverTile": [
+        154,
+        253
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-059",
+      "resource": "cut-peat",
+      "position": [
+        168.0,
+        2.0,
+        -301.0
+      ],
+      "serverTile": [
+        342,
+        475
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-060",
+      "resource": "cut-peat",
+      "position": [
+        156.0,
+        3.4,
+        -51.0
+      ],
+      "serverTile": [
+        330,
+        225
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-061",
+      "resource": "cut-peat",
+      "position": [
+        -40.0,
+        2.6,
+        63.0
+      ],
+      "serverTile": [
+        134,
+        111
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-062",
+      "resource": "cut-peat",
+      "position": [
+        78.0,
+        3.11,
+        61.0
+      ],
+      "serverTile": [
+        252,
+        113
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "grey-peat-bank-063",
+      "resource": "cut-peat",
+      "position": [
+        202.0,
+        1.97,
+        11.0
+      ],
+      "serverTile": [
+        376,
+        163
+      ],
+      "authority": "server"
+    }
+  ],
+  "portals": [
+    {
+      "id": "west-waygate",
+      "name": "Sunmane Track",
+      "type": "map-transition",
+      "position": [
+        -156.0,
+        5.0,
+        -0.0
+      ],
+      "serverTile": [
+        18,
+        174
+      ],
+      "destinationMap": "maps/nymara/sunmane_steppe.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "east-waygate",
+      "name": "Westhaven Road",
+      "type": "map-transition",
+      "position": [
+        156.0,
+        4.23,
+        -0.0
+      ],
+      "serverTile": [
+        330,
+        174
+      ],
+      "destinationMap": "maps/nymara/westhaven.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "great-barrow-mouth",
+      "name": "The Great Barrow",
+      "type": "interior-entrance",
+      "position": [
+        116.75,
+        4.09,
+        -252.75
+      ],
+      "serverTile": [
+        291,
+        427
+      ],
+      "landmark": "grey-great-barrow",
+      "destinationMap": "maps/nymara/grey_moor_barrows.elm",
+      "destinationSpawn": "great-barrow-mouth",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "west-crypt-stair",
+      "name": "The West Crypt",
+      "type": "interior-entrance",
+      "position": [
+        -88.75,
+        3.42,
+        -252.75
+      ],
+      "serverTile": [
+        85,
+        427
+      ],
+      "landmark": "grey-crypt-west",
+      "destinationMap": "maps/nymara/grey_moor_barrows.elm",
+      "destinationSpawn": "west-crypt-stair",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "east-crypt-stair",
+      "name": "The East Crypt",
+      "type": "interior-entrance",
+      "position": [
+        289.25,
+        1.1,
+        -198.75
+      ],
+      "serverTile": [
+        463,
+        373
+      ],
+      "landmark": "grey-crypt-east",
+      "destinationMap": "maps/nymara/grey_moor_barrows.elm",
+      "destinationSpawn": "east-crypt-stair",
+      "radius": 2.5,
+      "authority": "server"
+    },
+    {
+      "id": "south-crypt-stair",
+      "name": "The Fen Crypt",
+      "type": "interior-entrance",
+      "position": [
+        103.25,
+        3.36,
+        17.25
+      ],
+      "serverTile": [
+        277,
+        157
+      ],
+      "landmark": "grey-crypt-south",
+      "destinationMap": "maps/nymara/grey_moor_barrows.elm",
+      "destinationSpawn": "south-crypt-stair",
+      "radius": 2.5,
+      "authority": "server"
+    }
+  ],
+  "roads": [
+    {
+      "id": "arrival_causeway",
+      "waypoints": [
+        [
+          0.0,
+          2.73,
+          0.0
+        ],
+        [
+          12.0,
+          2.93,
+          -18.0
+        ],
+        [
+          30.0,
+          1.74,
+          -36.0
+        ],
+        [
+          54.0,
+          -0.09,
+          -66.0
+        ],
+        [
+          84.0,
+          1.62,
+          -99.0
+        ]
+      ]
+    },
+    {
+      "id": "barrow_causeway",
+      "waypoints": [
+        [
+          84.0,
+          1.62,
+          -99.0
+        ],
+        [
+          96.0,
+          1.72,
+          -144.0
+        ],
+        [
+          114.0,
+          3.99,
+          -222.0
+        ],
+        [
+          114.0,
+          3.99,
+          -234.0
+        ],
+        [
+          114.0,
+          9.23,
+          -273.0
+        ]
+      ]
+    },
+    {
+      "id": "coast_road",
+      "waypoints": [
+        [
+          0.0,
+          2.73,
+          0.0
+        ],
+        [
+          -24.0,
+          2.98,
+          24.0
+        ],
+        [
+          -42.0,
+          3.12,
+          30.0
+        ],
+        [
+          -72.0,
+          3.29,
+          48.0
+        ],
+        [
+          -54.0,
+          -7.5,
+          90.0
+        ],
+        [
+          -90.0,
+          -14.11,
+          81.0
+        ],
+        [
+          -102.0,
+          -16.0,
+          102.0
+        ]
+      ]
+    },
+    {
+      "id": "east_road",
+      "waypoints": [
+        [
+          84.0,
+          1.62,
+          -99.0
+        ],
+        [
+          138.0,
+          2.39,
+          -90.0
+        ],
+        [
+          180.0,
+          2.32,
+          -42.0
+        ],
+        [
+          216.0,
+          1.7,
+          -78.0
+        ],
+        [
+          264.0,
+          1.37,
+          -150.0
+        ],
+        [
+          288.0,
+          1.18,
+          -198.0
+        ],
+        [
+          378.0,
+          4.32,
+          -189.0
+        ]
+      ]
+    },
+    {
+      "id": "north_track",
+      "waypoints": [
+        [
+          114.0,
+          3.99,
+          -234.0
+        ],
+        [
+          48.0,
+          4.74,
+          -312.0
+        ],
+        [
+          6.0,
+          3.39,
+          -324.0
+        ],
+        [
+          36.0,
+          3.94,
+          -348.0
+        ],
+        [
+          -12.0,
+          2.45,
+          -360.0
+        ]
+      ]
+    },
+    {
+      "id": "west_track",
+      "waypoints": [
+        [
+          30.0,
+          1.74,
+          -36.0
+        ],
+        [
+          -36.0,
+          1.91,
+          -78.0
+        ],
+        [
+          -120.0,
+          3.68,
+          -60.0
+        ],
+        [
+          -102.0,
+          3.09,
+          -150.0
+        ],
+        [
+          -141.0,
+          4.23,
+          -189.0
+        ],
+        [
+          -126.0,
+          3.24,
+          -276.0
+        ],
+        [
+          -108.0,
+          5.68,
+          -357.0
+        ]
+      ]
+    },
+    {
+      "id": "south_road",
+      "waypoints": [
+        [
+          0.0,
+          2.73,
+          0.0
+        ],
+        [
+          30.0,
+          3.44,
+          48.0
+        ],
+        [
+          120.0,
+          3.45,
+          78.0
+        ],
+        [
+          156.0,
+          2.7,
+          54.0
+        ],
+        [
+          198.0,
+          6.79,
+          120.0
+        ]
+      ]
+    },
+    {
+      "id": "peat_track",
+      "waypoints": [
+        [
+          30.0,
+          1.74,
+          -36.0
+        ],
+        [
+          -78.0,
+          2.22,
+          -18.0
+        ],
+        [
+          -90.0,
+          3.59,
+          -54.0
+        ],
+        [
+          -120.0,
+          3.68,
+          -60.0
+        ]
+      ]
+    },
+    {
+      "id": "peat_east_track",
+      "waypoints": [
+        [
+          180.0,
+          2.32,
+          -42.0
+        ],
+        [
+          144.0,
+          2.52,
+          -24.0
+        ],
+        [
+          258.0,
+          1.56,
+          -42.0
+        ],
+        [
+          300.0,
+          1.85,
+          -18.0
+        ],
+        [
+          342.0,
+          2.81,
+          -72.0
+        ]
+      ]
+    },
+    {
+      "id": "ridge_track",
+      "waypoints": [
+        [
+          114.0,
+          9.23,
+          -273.0
+        ],
+        [
+          174.0,
+          6.04,
+          -258.0
+        ],
+        [
+          234.0,
+          3.67,
+          -210.0
+        ],
+        [
+          276.0,
+          3.96,
+          -240.0
+        ],
+        [
+          312.0,
+          3.07,
+          -276.0
+        ],
+        [
+          288.0,
+          4.33,
+          -366.0
+        ]
+      ]
+    },
+    {
+      "id": "west_barrow_track",
+      "waypoints": [
+        [
+          114.0,
+          3.99,
+          -222.0
+        ],
+        [
+          48.0,
+          6.72,
+          -282.0
+        ],
+        [
+          -54.0,
+          4.29,
+          -222.0
+        ],
+        [
+          -90.0,
+          3.35,
+          -252.0
+        ]
+      ]
+    },
+    {
+      "id": "bog_track",
+      "waypoints": [
+        [
+          84.0,
+          1.62,
+          -99.0
+        ],
+        [
+          54.0,
+          1.28,
+          -54.0
+        ],
+        [
+          102.0,
+          3.26,
+          18.0
+        ],
+        [
+          165.0,
+          3.47,
+          3.0
+        ],
+        [
+          198.0,
+          2.72,
+          36.0
+        ],
+        [
+          156.0,
+          2.7,
+          54.0
+        ]
+      ]
+    }
+  ],
+  "water": {
+    "seaLevel": 0.0,
+    "serverCells": 576,
+    "bodies": [
+      {
+        "id": "Water_Sea",
+        "node": "Water_Sea",
+        "type": "sea"
+      }
+    ],
+    "streams": [
+      {
+        "id": "black_drain",
+        "waypoints": [
+          [
+            90.0,
+            1.02,
+            -312.0
+          ],
+          [
+            78.0,
+            0.81,
+            -240.0
+          ],
+          [
+            72.0,
+            1.25,
+            -168.0
+          ],
+          [
+            60.0,
+            -0.04,
+            -96.0
+          ],
+          [
+            36.0,
+            -0.11,
+            -30.0
+          ],
+          [
+            6.0,
+            1.11,
+            30.0
+          ],
+          [
+            -36.0,
+            0.81,
+            78.0
+          ],
+          [
+            -84.0,
+            -16.0,
+            120.0
+          ]
+        ]
+      },
+      {
+        "id": "east_drain",
+        "waypoints": [
+          [
+            300.0,
+            0.56,
+            -240.0
+          ],
+          [
+            282.0,
+            0.19,
+            -168.0
+          ],
+          [
+            258.0,
+            0.56,
+            -96.0
+          ],
+          [
+            222.0,
+            -0.71,
+            -30.0
+          ],
+          [
+            186.0,
+            2.77,
+            24.0
+          ],
+          [
+            144.0,
+            1.97,
+            78.0
+          ],
+          [
+            96.0,
+            1.87,
+            132.0
+          ]
+        ]
+      },
+      {
+        "id": "north_drain",
+        "waypoints": [
+          [
+            -60.0,
+            0.1,
+            -378.0
+          ],
+          [
+            -30.0,
+            0.7,
+            -330.0
+          ],
+          [
+            6.0,
+            4.46,
+            -288.0
+          ],
+          [
+            30.0,
+            0.22,
+            -240.0
+          ]
+        ]
+      }
+    ]
+  },
+  "environment": {
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.2,
+        0.22,
+        0.26
+      ],
+      "horizon": [
+        0.44,
+        0.46,
+        0.47
+      ]
+    },
+    "sun": {
+      "direction": [
+        -0.3,
+        0.34,
+        0.62
+      ],
+      "color": [
+        0.86,
+        0.88,
+        0.94
+      ],
+      "energy": 0.44
+    },
+    "ambient": {
+      "skyColor": [
+        0.32,
+        0.34,
+        0.36
+      ],
+      "groundColor": [
+        0.09,
+        0.09,
+        0.08
+      ],
+      "energy": 0.46
+    },
+    "saturation": 0.86,
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.42,
+        0.45,
+        0.46
+      ],
+      "density": 0.00115,
+      "heightFalloff": 0.0042
+    },
+    "goldenHour": {
+      "sun": {
+        "direction": [
+          -0.88,
+          0.14,
+          0.44
+        ],
+        "color": [
+          1.18,
+          0.92,
+          0.74
+        ]
+      },
+      "fog": {
+        "color": [
+          0.54,
+          0.46,
+          0.4
+        ],
+        "density": 0.0012
+      }
+    },
+    "presentation": {
+      "groundMist": {
+        "enabled": true,
+        "density": 0.85,
+        "zones": [
+          "bog",
+          "moor-core",
+          "north-fen"
+        ]
+      },
+      "wisps": {
+        "enabled": true,
+        "zones": [
+          "bog",
+          "wisp-tree",
+          "north-fen"
+        ]
+      },
+      "votiveGlow": {
+        "enabled": true,
+        "zones": [
+          "barrow-ridge",
+          "causeways"
+        ]
+      },
+      "drizzle": {
+        "enabled": true,
+        "zones": [
+          "moor-core",
+          "coast"
+        ]
+      },
+      "ambientAudio": [
+        {
+          "id": "moor-wind",
+          "zone": "moor-core"
+        },
+        {
+          "id": "curlew",
+          "zone": "north-fen"
+        },
+        {
+          "id": "bog-water",
+          "zone": "bog"
+        },
+        {
+          "id": "surf",
+          "zone": "coast"
+        },
+        {
+          "id": "low-chant",
+          "zone": "barrow-ridge"
+        }
+      ]
+    },
+    "zones": [
+      {
+        "id": "moor-core",
+        "centre": [
+          60.0,
+          4.0,
+          -60.0
+        ],
+        "radius": 230.0
+      },
+      {
+        "id": "barrow-ridge",
+        "centre": [
+          114.0,
+          9.0,
+          -273.0
+        ],
+        "radius": 150.0
+      },
+      {
+        "id": "bog",
+        "centre": [
+          48.0,
+          2.0,
+          -54.0
+        ],
+        "radius": 150.0
+      },
+      {
+        "id": "north-fen",
+        "centre": [
+          18.0,
+          3.0,
+          -270.0
+        ],
+        "radius": 130.0
+      },
+      {
+        "id": "wisp-tree",
+        "centre": [
+          66.0,
+          4.0,
+          -168.0
+        ],
+        "radius": 60.0
+      },
+      {
+        "id": "coast",
+        "centre": [
+          -90.0,
+          1.0,
+          96.0
+        ],
+        "radius": 140.0
+      },
+      {
+        "id": "causeways",
+        "centre": [
+          42.0,
+          4.0,
+          -66.0
+        ],
+        "radius": 200.0
+      }
+    ]
+  },
+  "minimap": {
+    "file": "minimap.webp",
+    "pixels": 768,
+    "metresPerPixel": 0.7487,
+    "worldMin": [
+      -174.0,
+      -401.0
+    ],
+    "worldMax": [
+      401.0,
+      174.0
+    ],
+    "northAxis": "-Z",
+    "orientation": "north-up",
+    "renderedFrom": "final geometry (offline rasteriser)"
+  },
+  "lodGroups": [
+    {
+      "id": "stones",
+      "strategy": "authored-detail-tiers",
+      "levels": [
+        {
+          "id": "near",
+          "suffix": "_high"
+        },
+        {
+          "id": "mid",
+          "suffix": "_mid"
+        },
+        {
+          "id": "far",
+          "suffix": "_low"
+        }
+      ]
+    }
+  ],
+  "performance": {
+    "nodes": 7648,
+    "meshes": 401,
+    "materials": 22,
+    "images": 65,
+    "textures": 65,
+    "accessors": 1604,
+    "bufferViews": 1669,
+    "uniqueTriangles": 352490,
+    "uniqueVertices": 297103,
+    "glbBytes": 22997484,
+    "instancedTriangles": 674110,
+    "embeddedTextureBytes": 9157565,
+    "textureMemoryBytesUncompressed": 60948480,
+    "placements": 7343,
+    "collision": {
+      "width": 1152,
+      "height": 1152,
+      "cellMetres": 0.5,
+      "walkableCells": 1171807,
+      "blockedCells": 155297,
+      "walkableFraction": 0.883,
+      "elevatedDecks": 11,
+      "saturatedCells": 35770,
+      "saturatedFraction": 0.0305,
+      "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+      "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+    },
+    "notes": [
+      "ground detail: 6048 scrub clumps, 778 erratics, 360 scattered standing stones",
+      "coast-landing moved 10.5 m onto walkable ground",
+      "great-barrow-mouth moved 3.6 m onto walkable ground",
+      "west-crypt-stair moved 1.5 m onto walkable ground",
+      "east-crypt-stair moved 1.5 m onto walkable ground",
+      "south-crypt-stair moved 1.5 m onto walkable ground",
+      "great-barrow-mouth moved 3.6 m onto walkable ground",
+      "west-crypt-stair moved 1.5 m onto walkable ground",
+      "east-crypt-stair moved 1.5 m onto walkable ground",
+      "south-crypt-stair moved 1.5 m onto walkable ground"
+    ],
+    "lod2": {
+      "glbBytes": 12494512,
+      "nodes": 461,
+      "uniqueTriangles": 314680,
+      "instancedTriangles": 314680
     }
   },
-  "materials": {
-    "baseColor": "textures/region-basecolor.png",
-    "normal": "textures/region-normal.png",
-    "orm": "textures/region-orm.png"
+  "sources": [
+    {
+      "id": "aerial-concept",
+      "file": "references/01-concept-aerial-overview.png",
+      "role": "authoritative-composition"
+    },
+    {
+      "id": "detail-board",
+      "file": "references/00-concept-detail-board.png",
+      "role": "authoritative-player-scale"
+    },
+    {
+      "id": "generator",
+      "file": "source/build_grey_moors.py",
+      "role": "reproducible-build",
+      "seed": 20260829
+    }
+  ],
+  "provenance": {
+    "assets": "original to Eloria/Nymara; generated by _toolkit/amberwood/*",
+    "thirdParty": "none",
+    "textures": "procedural (numpy + Pillow), no sampled or traced source",
+    "geometry": "procedural (numpy), no imported models",
+    "license": "same as the Eloria client repository"
   },
-  "productionStatus": "terrain-landmark-material-pass"
+  "productionStatus": "production-geometry-materials-population",
+  "knownLimitations": []
 }

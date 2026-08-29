@@ -1,0 +1,38 @@
+{
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-grey-moors\\eloria-assets\\maps\\nymara-regions\\grey_moors\\world-lod2.glb",
+  "mimeType": "model/gltf-binary",
+  "validatorVersion": "eloria-gltf-validate-1.1.0",
+  "validatedAt": "2026-08-29T00:57:11.448683Z",
+  "issues": {
+    "numErrors": 0,
+    "numWarnings": 0,
+    "numInfos": 4,
+    "numHints": 0,
+    "messages": [
+      {
+        "code": "NODE_EMPTY",
+        "message": "Empty node encountered.",
+        "severity": 2,
+        "pointer": "/nodes/6"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/0"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/2"
+      },
+      {
+        "code": "UNUSED_OBJECT",
+        "message": "This object may be unused.",
+        "severity": 2,
+        "pointer": "/materials/17"
+      }
+    ]
+  }
+}
