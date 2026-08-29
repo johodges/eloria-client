@@ -629,14 +629,21 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
         "environment": {
             "sky": {"type": "gradient", "zenith": [0.15, 0.25, 0.42],
                     "horizon": [0.58, 0.56, 0.50]},
-            "sun": {"direction": [-0.46, 0.50, 0.73],
+            # The direction the light TRAVELS, which is what the client's
+            # WorldEnvironmentBinder applies: look_at_from_position(ZERO,
+            # direction), and a DirectionalLight3D shines along its own -Z.
+            # The offline rasteriser's sun_direction is the opposite
+            # convention - native/raster.c documents it as "points from surface
+            # toward the sun" - and this shipped that vector, whose +Y lit the
+            # region from underneath.
+            "sun": {"direction": [0.46, -0.50, -0.73],
                     "color": [1.22, 0.94, 0.60], "energy": 1.15},
             "ambient": {"skyColor": [0.22, 0.30, 0.42],
                         "groundColor": [0.08, 0.06, 0.04], "energy": 0.30},
             "saturation": 1.30,
             "fog": {"enabled": True, "color": [0.38, 0.37, 0.35],
                     "density": 0.0007, "heightFalloff": 0.003},
-            "goldenHour": {"sun": {"direction": [-0.82, 0.20, 0.53],
+            "goldenHour": {"sun": {"direction": [0.82, -0.20, -0.53],
                                    "color": [1.55, 0.94, 0.52]},
                            "fog": {"color": [0.62, 0.50, 0.38], "density": 0.0022}},
             "presentation": {

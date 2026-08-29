@@ -185,6 +185,26 @@ def tree_mesh_key(species: str, variant: int, detail: str, part: str) -> str:
     return f"Tree_{species}_v{variant}_{detail}_{part}"
 
 
+# How high up each species carries its lowest leaves, as a fraction of the
+# tree's own height. The lowest branches droop and their tips carry clusters,
+# so without this the canopy settles to about 1.4 m on a mature oak - head
+# height - and a stand reads as hedge rather than woodland. Understorey species
+# keep their low foliage, because being low is what they are for.
+CANOPY_FLOOR = {
+    "amber_oak": 0.42,
+    "gold_oak": 0.42,
+    "rust_maple": 0.44,
+    "pale_birch": 0.52,
+    "great_oak": 0.34,
+    "dark_holly": 0.0,
+    "understory_hazel": 0.0,
+    "sapling": 0.0,
+    "dead_snag": 0.0,
+    "burnt_snag": 0.0,
+    "dark_pine": 0.0,
+}
+
+
 def ensure_tree_meshes(build: RegionBuild, species: str, variant: int,
                        detail: str) -> tuple[str, str | None]:
     """Build (and cache) the wood and canopy meshes for one tree variant."""
@@ -195,7 +215,9 @@ def ensure_tree_meshes(build: RegionBuild, species: str, variant: int,
         previous = profile.foliage_material
         profile.foliage_material = VARIANT_PALETTE[variant % len(VARIANT_PALETTE)]
         seed = 1000 + variant * 97 + N.stable_hash(species) % 500
-        wood, leaves = TREES.build_tree(species, seed=seed, detail=detail)
+        wood, leaves = TREES.build_tree(
+            species, seed=seed, detail=detail,
+            canopy_floor=CANOPY_FLOOR.get(species, 0.0))
         profile.foliage_material = previous
         build.add_mesh(wood_key, wood)
         if leaves.triangle_count:
@@ -743,7 +765,9 @@ def populate_landmarks(build: RegionBuild, seed: int = 20260827) -> None:
     t.mark_blocked_disc(site, 13.0 * L)
 
     # -- the monumental canopy tree and its canopy works -------------------
-    hero_wood, hero_leaves = TREES.build_tree("great_oak", seed=seed + 19, detail="high")
+    hero_wood, hero_leaves = TREES.build_tree(
+        "great_oak", seed=seed + 19, detail="high",
+        canopy_floor=CANOPY_FLOOR["great_oak"])
     hero_wood.scale(1.45)
     hero_leaves.scale(1.45)
     build.add_mesh("Tree_Great_Wood", hero_wood)
@@ -765,6 +789,7 @@ def populate_landmarks(build: RegionBuild, seed: int = 20260827) -> None:
                               (-2.0 * S, -72.0 * S), (-20.0 * S, -110.0 * S),
                               (-26.0 * S, -104.0 * S), (-14.0 * S, -116.0 * S))):
         wood, leaves = TREES.build_tree("great_oak", seed=seed + 400 + i,
+                                        canopy_floor=CANOPY_FLOOR["great_oak"],
                                         detail="high" if i < 2 else "mid")
         build.add_mesh(f"Tree_Giant_{i}_Wood", wood)
         build.add_mesh(f"Tree_Giant_{i}_Canopy", leaves)
