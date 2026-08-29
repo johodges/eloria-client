@@ -6,9 +6,18 @@ extends CharacterBody3D
 @export var turn_speed_radians := 12.0
 @export var initial_server_interval := 0.25
 @export var interval_smoothing := 0.5
-@export var arrival_margin := 1.05
+## How much longer than the observed server cadence one step is allowed to
+## take. At 1.05 any jitter in the packet stream finished the step before the
+## next one arrived, and the actor stopped and restarted on every tile.
+@export var arrival_margin := 1.25
 @export var minimum_segment_duration := 0.06
 @export var maximum_segment_duration := 0.75
+## Kept walking for this long after a step lands before falling back to idle,
+## again so a late packet does not flick the pose to idle and back.
+@export var movement_coast_seconds := 0.12
+## Crossfade between two clips. Playing them cold snapped the whole skeleton
+## into the new pose, which is what a walk/idle flicker looked like.
+@export var action_blend_seconds := 0.15
 
 var actor_id := -1
 var server_target := Vector3.ZERO
@@ -27,8 +36,21 @@ var _facing_override_active := false
 var _facing_override_yaw := 0.0
 ## Part 2 in the equipment registry: the cape, and the only part with cloth.
 const CAPE_PART := 2
+## The wardrobe meshes are shells fitted straight onto the skin they cover, so
+## the body surface underneath pokes through them wherever the skeleton bends -
+## which is what skin showing through the shirt is. Pushing each garment out a
+## few millimetres along its own normals puts the skin behind it for good
+## without changing the silhouette. Trims and seams grow slightly more so they
+## stay on top of the garment they edge.
+const WARDROBE_GROW := {
+	"wardrobe_shirt": 0.004, "wardrobe_shirt_trim": 0.006,
+	"wardrobe_pants": 0.004, "wardrobe_pants_seam": 0.006,
+	"wardrobe_boots": 0.004, "wardrobe_boots_seam": 0.006,
+	"wardrobe_head_band": 0.004, "wardrobe_head_cap": 0.006,
+}
 
 var _predicted_turn_pending := false
+var _movement_coast_remaining := 0.0
 var _native_skeleton: Skeleton3D
 var _cape_cloth: SkeletonModifier3D = null
 var _attachment_bones: Dictionary = {}
@@ -178,6 +200,8 @@ func apply_appearance_variants(appearance: Dictionary) -> void:
 			_set_appearance_visible(mesh_node, head_style == 2 or head_style == 3)
 			_set_mesh_color(mesh_node, AppearanceVariants.wardrobe_color(
 				culture, AppearanceVariants.PART_HEAD, int(appearance.get("head", 0))))
+		if WARDROBE_GROW.has(mesh_name):
+			_grow_mesh(mesh_node, float(WARDROBE_GROW[mesh_name]))
 	_add_hair_variant(AppearanceVariants.hair_style(
 		int(appearance.get("hair", 0))), hair_tint)
 	_refresh_body_surface_visibility()
@@ -216,6 +240,22 @@ func _set_mesh_color(mesh_node: MeshInstance3D, color: Color) -> void:
 	var material: StandardMaterial3D = (source as StandardMaterial3D).duplicate()
 	material.albedo_color = color
 	mesh_node.material_override = material
+
+## Lifts a garment off the skin it is fitted to. Reuses the override the tint
+## pass already installed so a garment keeps its colour.
+func _grow_mesh(mesh_node: MeshInstance3D, amount: float) -> void:
+	if mesh_node.mesh == null or mesh_node.mesh.get_surface_count() == 0:
+		return
+	var material: StandardMaterial3D = (mesh_node.material_override
+		as StandardMaterial3D)
+	if material == null:
+		var source: Material = mesh_node.get_active_material(0)
+		if source is not StandardMaterial3D:
+			return
+		material = (source as StandardMaterial3D).duplicate()
+		mesh_node.material_override = material
+	material.grow = true
+	material.grow_amount = amount
 
 func _add_hair_variant(style: int, color: Color) -> void:
 	for old_attachment: Node in _native_skeleton.get_children():
@@ -469,6 +509,7 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_segment_duration = 0.0
 		_last_movement_update_msec = -1
 		_smoothed_server_interval = initial_server_interval
+		_movement_coast_remaining = 0.0
 		_snap_pending = false
 	elif target_changed:
 		var now_msec: int = Time.get_ticks_msec()
@@ -487,15 +528,28 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_last_movement_update_msec = now_msec
 		_segment_start = global_position
 		_segment_elapsed = 0.0
+		_movement_coast_remaining = 0.0
 		_segment_duration = presentation_segment_duration(
 			global_position.distance_to(server_target), _presentation_speed,
 			_smoothed_server_interval, arrival_margin,
 			minimum_segment_duration, maximum_segment_duration)
 	_wake()
 	if dto.has("command") and resolver != null:
-		play_action(resolver.action_for_command(actor_command))
+		play_action(_movement_aware_action(
+			resolver.action_for_command(actor_command), target_changed))
 	apply_equipment_visuals(dto.get("equipment_visuals", {}) as Dictionary,
 		dto.get("equipment_fallback_parts", []) as Array)
+
+## A movement command that moves the actor nowhere is the server restating the
+## last one, not a step. Taken at face value it restarted the walk clip on every
+## such packet, so an actor that had stopped kept walking on the spot forever.
+func _movement_aware_action(action: StringName,
+		target_changed: bool) -> StringName:
+	if action not in [&"walk", &"run"]:
+		return action
+	if target_changed or _segment_duration > 0.0 or _movement_coast_remaining > 0.0:
+		return action
+	return &"idle"
 
 func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) -> void:
 	for raw_part: Variant in _equipment_visuals.keys():
@@ -1066,11 +1120,28 @@ func play_action(action: StringName) -> void:
 	var clip := resolver.clip_for_action(action)
 	if clip.is_empty() or not animation_player.has_animation(clip):
 		return
-	animation_player.speed_scale = resolver.playback_speed_for_action(action)
+	animation_player.speed_scale = _playback_speed_for(action)
 	if current_action == action and animation_player.is_playing():
 		return
 	current_action = action
-	animation_player.play(clip)
+	animation_player.play(clip, action_blend_seconds)
+
+## Walk and run clips animate in place, so the feet only stay planted when the
+## clip runs at the speed the actor is actually travelling. Anything else -
+## and a fixed 1.45 on a clip that covers 0.61 m/s while the server walks an
+## actor at 1.86 m/s was a long way else - reads as sliding.
+func _playback_speed_for(action: StringName) -> float:
+	var stride: float = resolver.stride_speed_for_action(action)
+	if stride <= 0.0:
+		return resolver.playback_speed_for_action(action)
+	return clampf(_travel_speed() / stride, 0.35, 2.5)
+
+## Metres per second the presentation is currently moving this actor. Falls
+## back to the nominal speed for the command before the first step is timed.
+func _travel_speed() -> float:
+	if _segment_duration <= 0.0:
+		return _presentation_speed
+	return _segment_start.distance_to(server_target) / _segment_duration
 
 func _on_animation_finished(_animation_name: StringName) -> void:
 	# The server sends transition commands, not a second command for the resting
@@ -1115,7 +1186,8 @@ static func target_yaw_for_state(current_yaw: float, actor_command: int,
 
 func _finish_movement_presentation() -> void:
 	if current_action in [&"walk", &"run"]:
-		play_action(&"idle")
+		_movement_coast_remaining = maxf(movement_coast_seconds,
+			_smoothed_server_interval * 0.75)
 
 func set_selected(value: bool) -> void:
 	var ring: Node3D = get_node_or_null("SelectionRing") as Node3D
@@ -1160,6 +1232,10 @@ func _physics_process(delta: float) -> void:
 	else:
 		global_position = server_target
 	rotation.y = rotate_toward(rotation.y, _target_yaw, turn_speed_radians * delta)
+	if _movement_coast_remaining > 0.0:
+		_movement_coast_remaining = maxf(0.0, _movement_coast_remaining - delta)
+		if _movement_coast_remaining <= 0.0 and current_action in [&"walk", &"run"]:
+			play_action(&"idle")
 	_settle_if_idle()
 
 ## A standing actor reproduced the same transform 60 times a second. Once the
@@ -1168,7 +1244,7 @@ func _physics_process(delta: float) -> void:
 ## stops until the next packet, keypress or surface sample wakes it. Nothing
 ## about the resulting pose differs from the value the loop kept rewriting.
 func _settle_if_idle() -> void:
-	if _snap_pending or _segment_duration > 0.0:
+	if _snap_pending or _segment_duration > 0.0 or _movement_coast_remaining > 0.0:
 		return
 	if absf(wrapf(_target_yaw - rotation.y, -PI, PI)) > SETTLED_YAW_EPSILON:
 		return

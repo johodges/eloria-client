@@ -4,12 +4,17 @@ extends RefCounted
 var action_to_clip: Dictionary
 var command_to_action: Dictionary
 var playback_speeds: Dictionary
+## Metres of ground each locomotion clip covers per second when it plays at
+## speed 1.0, measured from its planted foot. The clips animate in place, so
+## this is what tells an actor how fast to run one for its own travel speed.
+var stride_speeds: Dictionary
 var fallback_action: StringName
 
 func _init(config: Dictionary) -> void:
 	action_to_clip = config.get("actions", {}).duplicate(true)
 	command_to_action = config.get("serverCommands", {}).duplicate(true)
 	playback_speeds = config.get("playbackSpeeds", {}).duplicate(true)
+	stride_speeds = config.get("strideMetresPerSecond", {}).duplicate(true)
 	fallback_action = StringName(config.get("fallbackAction", "idle"))
 
 func action_for_command(command: int, combat_mode := false) -> StringName:
@@ -24,6 +29,11 @@ func clip_for_action(action: StringName) -> StringName:
 
 func playback_speed_for_action(action: StringName) -> float:
 	return maxf(0.01, float(playback_speeds.get(String(action), 1.0)))
+
+## Zero for actions that are not travel, which is the caller's signal to use
+## the fixed playback speed instead.
+func stride_speed_for_action(action: StringName) -> float:
+	return maxf(0.0, float(stride_speeds.get(String(action), 0.0)))
 
 ## Every clip this resolver can ever ask an AnimationPlayer to play. The native
 ## animation importer uses it to rebuild only the clips an actor needs instead

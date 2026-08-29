@@ -72,8 +72,37 @@ func _run() -> void:
 		"minimap right-click menu exposes north, player, and viewport orientation")
 	_expect(minimap_border_style != null
 		and minimap_border_style.get_border_width(SIDE_LEFT) == 6
-		and is_equal_approx(minimap_image.offset_left, 54.0),
-		"minimap compass ring and outline are three times their previous thickness")
+		and is_equal_approx(minimap_image.offset_left,
+			float(main.get("MINIMAP_DRAG_BORDER"))),
+		"minimap keeps its thick compass ring over a margin the render fills")
+	# Scroll wheel over the minimap frames more or less ground. The camera is
+	# orthographic, so its size is that width in metres.
+	var minimap_camera: Camera3D = map_camera
+	var zoom_out := InputEventMouseButton.new()
+	zoom_out.button_index = MOUSE_BUTTON_WHEEL_DOWN
+	zoom_out.pressed = true
+	var zoom_in := InputEventMouseButton.new()
+	zoom_in.button_index = MOUSE_BUTTON_WHEEL_UP
+	zoom_in.pressed = true
+	var zoom_start: float = minimap_camera.size
+	main.call("_on_minimap_gui_input", zoom_out)
+	_expect(minimap_camera.size > zoom_start,
+		"scrolling down over the minimap shows more ground")
+	main.call("_on_minimap_gui_input", zoom_in)
+	_expect(is_equal_approx(minimap_camera.size, zoom_start),
+		"scrolling back up returns the minimap to the width it had")
+	for _step: int in range(40):
+		main.call("_on_minimap_gui_input", zoom_in)
+	_expect(is_equal_approx(minimap_camera.size,
+		float(main.get("MINIMAP_ZOOM_MIN"))),
+		"minimap zoom stops at its closest bound instead of inverting")
+	for _step: int in range(80):
+		main.call("_on_minimap_gui_input", zoom_out)
+	_expect(is_equal_approx(minimap_camera.size,
+		float(main.get("MINIMAP_ZOOM_MAX"))),
+		"minimap zoom stops at its widest bound")
+	main.set("_minimap_zoom", float(main.get("MINIMAP_ZOOM_DEFAULT")))
+	main.call("_apply_minimap_zoom")
 	main.call("_on_minimap_orientation_selected", 1)
 	_expect(str(main.get("_minimap_orientation")) == "player_up",
 		"minimap can rotate with the player")
@@ -260,6 +289,17 @@ func _run() -> void:
 		"active and inactive HUD actions use distinct highlighted icon atlases")
 	_expect(inventory_button.flat and inventory_button.focus_mode == Control.FOCUS_NONE,
 		"bottom HUD icons have no individual box and cannot steal Tab focus")
+	# Each icon is painted with its own frame out to the edge of its cell, so
+	# without padding the frames touched and the end ones read as cut off.
+	var icon_padding: float = float(main.get("HUD_ICON_PADDING"))
+	var icon_box: StyleBox = inventory_button.get_theme_stylebox("normal")
+	_expect(icon_padding > 0.0
+		and is_equal_approx(icon_box.content_margin_left, icon_padding)
+		and is_equal_approx(icon_box.content_margin_top, icon_padding)
+		and is_equal_approx(inventory_button.custom_minimum_size.x,
+			44.0 + icon_padding * 2.0)
+		and inventory_button.vertical_icon_alignment == VERTICAL_ALIGNMENT_CENTER,
+		"bottom HUD icons are padded off their neighbours and centred in their box")
 	var chat_tabs: Control = main.get_node("GameView/ChatTabs") as Control
 	_expect(chat_tabs.position.x <= 12.0 and chat_tabs.position.y <= 8.0
 		and chat_panel.anchor_bottom < 0.3
@@ -1206,7 +1246,8 @@ func _run() -> void:
 	minimap_frame.show()
 	for _frame: int in range(3):
 		await process_frame
-	var minimap_border: float = roundf(54.0 * float(main.get("_minimap_scale")))
+	var minimap_border: float = roundf(
+		float(main.get("MINIMAP_DRAG_BORDER")) * float(main.get("_minimap_scale")))
 	_expect(minimap_image.position.is_equal_approx(Vector2.ONE * minimap_border)
 		and minimap_image.size.is_equal_approx(
 			minimap_frame.size - Vector2.ONE * minimap_border * 2.0),

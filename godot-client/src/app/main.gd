@@ -308,6 +308,7 @@ var _last_chat_activity_msec := 0
 var _current_map_display_name := "Unknown map"
 var _minimap_scale := 1.0
 var _minimap_orientation := "north_up"
+var _minimap_zoom := MINIMAP_ZOOM_DEFAULT
 var _minimap_dragging := false
 var _minimap_drag_offset := Vector2.ZERO
 var _inventory_scale := 1.0
@@ -465,7 +466,19 @@ const GROUND_BAG_SLOT_COUNT := 20
 ## selected one is the amount every drop and every pick-up uses.
 const INVENTORY_QUANTITY_DEFAULTS: Array[int] = [1, 5, 10, 20, 50, 100]
 const INVENTORY_QUANTITY_MAX := 99999
-const MINIMAP_DRAG_BORDER := 54.0
+## Doubles as the black margin around the minimap render and the band that
+## drags the window. 54 left more empty frame than map; half of it still
+## grabs comfortably and hands the render the rest.
+const MINIMAP_DRAG_BORDER := 27.0
+## Breathing room inside each bottom-rail icon button, so the painted frame the
+## icon carries does not touch its neighbour or the panel border.
+const HUD_ICON_PADDING := 3.0
+## How many metres of ground the minimap camera covers, and the bounds the
+## scroll wheel moves it between.
+const MINIMAP_ZOOM_DEFAULT := 180.0
+const MINIMAP_ZOOM_MIN := 60.0
+const MINIMAP_ZOOM_MAX := 480.0
+const MINIMAP_ZOOM_STEP := 1.25
 const UI_SCALE_MIN := 0.5
 const UI_SCALE_MAX := 1.5
 # The minimap and the full map are extra renders of the whole 3D world through
@@ -2381,7 +2394,33 @@ func _update_chat_fade() -> void:
 		chat_panel.hide()
 
 func _on_minimap_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var wheel: InputEventMouseButton = event as InputEventMouseButton
+		if wheel.pressed and (wheel.button_index == MOUSE_BUTTON_WHEEL_UP
+				or wheel.button_index == MOUSE_BUTTON_WHEEL_DOWN):
+			_zoom_minimap(wheel.button_index == MOUSE_BUTTON_WHEEL_UP)
+			minimap.accept_event()
+			return
 	_handle_map_gui_input(event, minimap, map_viewport, map_camera, "minimap")
+
+## The scroll wheel over the minimap changes how much ground it frames. The
+## camera is orthographic, so its size is the width in metres directly.
+func _zoom_minimap(closer: bool) -> void:
+	var previous: float = _minimap_zoom
+	var step: float = 1.0 / MINIMAP_ZOOM_STEP if closer else MINIMAP_ZOOM_STEP
+	_minimap_zoom = clampf(_minimap_zoom * step,
+		MINIMAP_ZOOM_MIN, MINIMAP_ZOOM_MAX)
+	if is_equal_approx(previous, _minimap_zoom):
+		return
+	_apply_minimap_zoom()
+	_save_hud_settings()
+
+func _apply_minimap_zoom() -> void:
+	map_camera.size = _minimap_zoom
+	# The minimap render is throttled, so a zoom would otherwise not be seen
+	# until the next scheduled frame.
+	if minimap_frame.visible:
+		map_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 
 func _on_full_map_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
@@ -3376,6 +3415,9 @@ func _load_hud_settings() -> void:
 			"hud", "minimap_orientation", "north_up"))
 		if _minimap_orientation not in ["north_up", "player_up", "viewport_up"]:
 			_minimap_orientation = "north_up"
+		_minimap_zoom = clampf(float(config.get_value(
+			"hud", "minimap_zoom", MINIMAP_ZOOM_DEFAULT)),
+			MINIMAP_ZOOM_MIN, MINIMAP_ZOOM_MAX)
 		var position_value: Variant = config.get_value(
 			"hud", "minimap_position", Vector2(16.0, 42.0))
 		if position_value is Vector2:
@@ -3456,6 +3498,7 @@ func _load_hud_settings() -> void:
 	show_through_obstacles.set_pressed_no_signal(_show_through_obstacles)
 	_apply_ui_scale()
 	_apply_minimap_scale()
+	_apply_minimap_zoom()
 	_apply_inventory_scale(_inventory_scale)
 	_apply_banner_options()
 
@@ -3538,6 +3581,7 @@ func _save_hud_settings() -> void:
 	config.set_value("hud", "ui_scale", _ui_scale)
 	config.set_value("hud", "show_through_obstacles", _show_through_obstacles)
 	config.set_value("hud", "minimap_orientation", _minimap_orientation)
+	config.set_value("hud", "minimap_zoom", _minimap_zoom)
 	config.set_value("hud", "minimap_position", minimap_frame.position)
 	config.set_value("hud", "minimap_visible", _minimap_visible)
 	config.set_value("inventory", "window_scale", _inventory_scale)
@@ -5963,6 +6007,8 @@ func _apply_eloria_art() -> void:
 				_hud_icon_regions[button_value] as Rect2)
 			icon_button.text = ""
 			icon_button.expand_icon = true
+			icon_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			icon_button.vertical_icon_alignment = VERTICAL_ALIGNMENT_CENTER
 			icon_button.toggle_mode = true
 		_sync_hud_button_states(true)
 	var hud_atlas: Texture2D = _external_texture("res://assets/ui/eloria_hud_atlas.png")
@@ -6012,12 +6058,18 @@ func _apply_eloria_theme() -> void:
 	map_sidebar_style.bg_color = Color(0.0, 0.0, 0.0, 0.98)
 	($GameView/FullMap/MapLayout/Sidebar as PanelContainer).add_theme_stylebox_override(
 		"panel", map_sidebar_style)
+	# Each icon carries its own painted frame right up to the edge of its
+	# 32-pixel cell, so with no margin at all the frames butted against each
+	# other and against the panel border, and the end ones read as cut off.
 	var empty_button: StyleBoxEmpty = StyleBoxEmpty.new()
+	empty_button.set_content_margin_all(HUD_ICON_PADDING)
 	for child: Node in $GameView/Quickbar/QuickRows/Buttons.get_children():
 		if child is Button:
 			var icon_button: Button = child as Button
 			icon_button.flat = true
 			icon_button.focus_mode = Control.FOCUS_NONE
+			icon_button.custom_minimum_size = Vector2(
+				44.0 + HUD_ICON_PADDING * 2.0, 44.0 + HUD_ICON_PADDING * 2.0)
 			for state_name: String in ["normal", "hover", "pressed", "disabled", "focus"]:
 				icon_button.add_theme_stylebox_override(state_name, empty_button)
 	for quick_button: Button in quick_slot_buttons + spell_slot_buttons:

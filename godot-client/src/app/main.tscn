@@ -231,9 +231,9 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 6.0
-offset_top = -144.0
+offset_top = -150.0
 offset_right = -92.0
-offset_bottom = -112.0
+offset_bottom = -118.0
 grow_horizontal = 2
 grow_vertical = 0
 tooltip_text = "Enter sends local chat; /name message sends a private message; // message replies to the last sender"
@@ -489,10 +489,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 54.0
-offset_top = 54.0
-offset_right = -54.0
-offset_bottom = -54.0
+offset_left = 27.0
+offset_top = 27.0
+offset_right = -27.0
+offset_bottom = -27.0
 mouse_filter = 1
 expand_mode = 1
 stretch_mode = 5
@@ -810,7 +810,7 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 8.0
-offset_top = -108.0
+offset_top = -114.0
 offset_right = -86.0
 offset_bottom = -4.0
 grow_horizontal = 2
@@ -950,7 +950,7 @@ show_percentage = false
 
 [node name="Buttons" type="HBoxContainer" parent="GameView/Quickbar/QuickRows" unique_id=71743284]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
 [node name="WalkButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons" unique_id=445313357]
 unique_name_in_owner = true
