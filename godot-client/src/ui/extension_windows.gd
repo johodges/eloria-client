@@ -230,7 +230,7 @@ func _sync_quests() -> void:
 			else ("%d/%d" % [current, target] if target > 0 else "in progress"))
 		quest_list.add_item("%s  [%s]" % [str(entry.get("title", "")), status])
 	if AppState.quest_journal.is_empty():
-		quest_detail.text = "[center]No active quests.[/center]"
+		quest_detail.text = "[center]%s[/center]" % tr("ELORIA_QUEST_NONE")
 		quest_track_button.disabled = true
 		_sync_tracked_quest()
 		return
@@ -290,7 +290,7 @@ func _show_quest(index: int) -> void:
 	lines.append(str(entry.get("objective", "")))
 	lines.append("Location: %s" % str(entry.get("location", "unknown")))
 	if bool(entry.get("ready", false)):
-		lines.append("[color=#8fdc8f]Ready to turn in.[/color]")
+		lines.append("[color=#8fdc8f]%s[/color]" % tr("ELORIA_QUEST_READY"))
 	elif target > 0:
 		lines.append("Progress: %d of %d" % [int(entry.get("current", 0)), target])
 	quest_detail.text = "\n".join(lines)

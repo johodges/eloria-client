@@ -10,6 +10,10 @@ signal floating_feedback_requested(feedback: Dictionary)
 ## towards another. It is an event rather than state - there is nothing to be
 ## true a moment later - so it is announced and not stored.
 signal special_effect_requested(effect: Dictionary)
+## An arrow the server said was loosed, between the two actors it named. Like
+## an effect it is an event rather than state: the shot is already resolved by
+## the time it arrives, and the damage comes in its own packet.
+signal missile_fired(shot: Dictionary)
 
 var connection_state := "disconnected"
 var authenticated := false
@@ -519,6 +523,20 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				_:
 					pending_spell_target = ""
 			state_changed.emit(&"spells")
+		"missile":
+			# Aiming is state - the shooter is still drawing - and it lives on
+			# the actor it describes, so it disappears with them. Loosing is
+			# an event, and it ends the aim the server stated before it.
+			var shooter_id: int = int(event.source_actor_id)
+			if actors.has(shooter_id):
+				var shooter: Dictionary = actors[shooter_id] as Dictionary
+				shooter["aiming_at"] = (-1 if bool(event.fired)
+					else int(event.target_actor_id))
+				actors[shooter_id] = shooter
+				state_changed.emit(&"actors")
+			if bool(event.fired):
+				missile_fired.emit({"source_actor_id": shooter_id,
+					"target_actor_id": int(event.target_actor_id)})
 		"special_effect":
 			special_effect_requested.emit({"effect": int(event.effect),
 				"actor_id": int(event.actor_id),

@@ -38,6 +38,7 @@ const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
 const AudioDirectorScript := preload("res://src/audio/audio_director.gd")
 const SigilWindowScript := preload("res://src/ui/sigil_window.gd")
 const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
+const ReferenceWindowScript := preload("res://src/ui/reference_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 var occluder_fade: RefCounted = OccluderFadeScript.new()
@@ -245,12 +246,14 @@ var audio_director: Node
 var map_ambience_root: Node3D
 var sigil_window: Control
 var settings_window: Control
+var reference_window: Control
 ## Client-side presentation switches. None of them changes what the server
 ## decides; they change what this machine draws.
 var _shadows_enabled := true
 var _effects_enabled := true
 var _nameplates_enabled := true
 var _camera_follows_player := true
+var _player_notes := ""
 ## True while the loaded package lets the hour drive its environment. An
 ## interior does not, and neither does a package that opts out.
 var console_commands := ConsoleCommands.new()
@@ -534,6 +537,9 @@ func _ready() -> void:
 	game_view.add_child(settings_window)
 	settings_window.setting_changed.connect(_on_client_setting_changed)
 	settings_window.binding_changed.connect(_on_binding_changed)
+	reference_window = ReferenceWindowScript.new()
+	game_view.add_child(reference_window)
+	reference_window.notes_changed.connect(_on_notes_changed)
 	active_buff_bar = ActiveBuffBarScript.new()
 	game_view.add_child(active_buff_bar)
 	active_buff_bar.configure(spell_catalog)
@@ -566,6 +572,7 @@ func _ready() -> void:
 	AppState.state_changed.connect(_on_state_changed)
 	AppState.floating_feedback_requested.connect(_on_floating_feedback_requested)
 	AppState.special_effect_requested.connect(_on_special_effect_requested)
+	AppState.missile_fired.connect(_on_missile_fired)
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
 	viewport_container.gui_input.connect(_on_world_gui_input)
@@ -2065,6 +2072,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			_cast_spell_slot(spell_slot)
 			get_viewport().set_input_as_handled()
 			return
+	if event.is_action_pressed("screenshot"):
+		_save_screenshot()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("attack_selected"):
 		_attack_selected_actor()
 		get_viewport().set_input_as_handled()
@@ -2097,6 +2108,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			sigil_window.close()
 		elif settings_window != null and settings_window.is_open():
 			settings_window.close()
+		elif reference_window != null and reference_window.is_open():
+			reference_window.close()
 		elif _carried_slot >= 0:
 			_cancel_carry()
 		elif chat_input.has_focus():
@@ -3454,6 +3467,7 @@ func _load_hud_settings() -> void:
 		var lists_value: Variant = config.get_value("inventory", "item_lists", {})
 		if lists_value is Dictionary:
 			_item_lists = (lists_value as Dictionary).duplicate(true)
+		_player_notes = str(config.get_value("notes", "text", ""))
 		_shadows_enabled = bool(config.get_value("graphics", "shadows", true))
 		_effects_enabled = bool(config.get_value("graphics", "particles", true))
 		_nameplates_enabled = bool(
@@ -3489,6 +3503,8 @@ func _load_hud_settings() -> void:
 			var box: CheckBox = _banner_option_boxes[banner_key] as CheckBox
 			box.set_pressed_no_signal(bool(config.get_value(
 				"banner", banner_key, BANNER_OPTION_DEFAULTS[banner_key])))
+	reference_window.call("configure", console_commands,
+		settings_window.get("BINDABLE"), _player_notes)
 	sound_enabled.set_pressed_no_signal(bool(audio_director.enabled))
 	sound_volume.set_value_no_signal(float(audio_director.volume_linear))
 	sound_volume_value.text = "%d%%" % roundi(
@@ -3561,6 +3577,7 @@ func _on_sound_volume_changed(value: float) -> void:
 func _save_hud_settings() -> void:
 	var config: ConfigFile = ConfigFile.new()
 	config.load(SETTINGS_PATH)
+	config.set_value("notes", "text", _player_notes)
 	config.set_value("graphics", "shadows", _shadows_enabled)
 	config.set_value("graphics", "particles", _effects_enabled)
 	config.set_value("graphics", "nameplates", _nameplates_enabled)
@@ -4229,6 +4246,25 @@ func _banner_has_content() -> bool:
 func _banner_row_height() -> float:
 	return maxf(1.0, _banner_row("HealthRow").get_combined_minimum_size().y)
 
+## Draws the arrow the server said was loosed. The shot is already resolved -
+## the damage arrives in its own packet - so this decides nothing, and an
+## actor the client has not been told about is not guessed at.
+func _on_missile_fired(shot: Dictionary) -> void:
+	if not _effects_enabled:
+		return
+	var from_value: Variant = _actor_effect_position(
+		int(shot.get("source_actor_id", -1)))
+	var to_value: Variant = _actor_effect_position(
+		int(shot.get("target_actor_id", -1)))
+	if not from_value is Vector3 or not to_value is Vector3:
+		return
+	var missile := MissileFlight3D.new()
+	world_root.add_child(missile)
+	missile.configure(from_value as Vector3, to_value as Vector3)
+	world_effects.append(missile)
+	world_effects = world_effects.filter(func(node: Variant) -> bool:
+		return is_instance_valid(node))
+
 ## Draws what the server said just happened, where it happened.
 ##
 ## Nothing is inferred about the effect: an actor the client has never been
@@ -4896,6 +4932,29 @@ func _sync_spell_power_controls() -> void:
 	spell_power_down.disabled = requested_spell_power <= 1
 	spell_power_up.disabled = requested_spell_power >= ceiling
 
+## Saves what is on screen. The legacy client bound this to a dedicated key
+## and so does this one; the file goes to the user directory, because a client
+## may be installed somewhere it cannot write.
+func _save_screenshot() -> String:
+	var image: Image = get_viewport().get_texture().get_image()
+	if image == null:
+		AppState.append_local_line(tr("ELORIA_SCREENSHOT_FAILED").format(
+			{"reason": "there is nothing rendered yet"}))
+		return ""
+	var directory := "user://screenshots"
+	DirAccess.make_dir_recursive_absolute(directory)
+	var path: String = "%s/eloria-%s.png" % [directory,
+		Time.get_datetime_string_from_system(false, true).replace(":", "-")]
+	var error: Error = image.save_png(path)
+	if error != OK:
+		AppState.append_local_line(tr("ELORIA_SCREENSHOT_FAILED").format(
+			{"reason": error_string(error)}))
+		return ""
+	AppState.append_local_line(tr("ELORIA_SCREENSHOT_SAVED").format(
+		{"path": ProjectSettings.globalize_path(path)}))
+	audio_director.play("ui_click")
+	return path
+
 ## A client setting the player changed. Everything under Graphics and Camera
 ## is about this machine; everything under Gameplay is a command the server
 ## owns, sent as the player's own words rather than applied here.
@@ -4927,6 +4986,18 @@ func _on_client_setting_changed(section: String, key: String,
 
 func _on_binding_changed(_action: String) -> void:
 	_save_hud_settings()
+	# The help page is generated from the bindings, so it follows a rebind.
+	reference_window.call("_refresh_help")
+
+func _on_notes_changed(text: String) -> void:
+	_player_notes = text
+	_save_hud_settings()
+
+## Help, the player's notes, the addresses the server has linked, and the
+## encyclopedia. Opened from the settings panel beside the other windows.
+func _on_reference_pressed() -> void:
+	reference_window.toggle()
+	audio_director.play("ui_click" if reference_window.is_open() else "ui_close")
 
 ## The sigils window. It is opened from the spell quickbar because that is
 ## where a player finds out they are missing one.
@@ -5550,6 +5621,15 @@ func _sync_selection() -> void:
 			("  [combat]" if bool(dto.get("in_combat", false)) else "")
 				+ ("  [hastened]" if (int(dto.get("buffs", 0))
 					& EloriaProtocol.ACTOR_BUFF_DOUBLE_SPEED) != 0 else "")]
+	var local_actor: Dictionary = AppState.actors.get(
+		AppState.local_actor_id, {}) as Dictionary
+	var aiming_at: int = int(local_actor.get("aiming_at", -1))
+	if aiming_at >= 0:
+		var aimed: Dictionary = AppState.actors.get(aiming_at, {}) as Dictionary
+		selected_target.text = "Aiming at %s%s" % [
+			str(aimed.get("name", "actor %d" % aiming_at)),
+			"  Health: %d / %d" % [int(aimed.get("health", 0)),
+				int(aimed.get("max_health", 0))] if not aimed.is_empty() else ""]
 	var can_attack: bool = _is_attackable_actor(AppState.selected_actor_id, dto)
 	attack_button.disabled = not can_attack
 	attack_button.tooltip_text = ("Attack selected target [A] or Alt-click; the server approaches and validates combat"

@@ -1026,6 +1026,22 @@ func _init() -> void:
 	_expect(EloriaProtocol.decode_server(78, _hex("4d000004")).type == "invalid",
 		"a truncated actor buff mask is rejected")
 
+	# Ranged combat. Both fixtures are the server's own builder output: it
+	# sends an aim before every shot and a fire when it looses.
+	var aim: Dictionary = EloriaProtocol.decode_server(84, _hex("5b004d00"))
+	_expect(aim.type == "missile" and not bool(aim.fired)
+		and int(aim.source_actor_id) == 91
+		and int(aim.target_actor_id) == 77,
+		"an aim decodes the shooter and the target")
+	var loosed: Dictionary = EloriaProtocol.decode_server(86, _hex("5b004d00"))
+	_expect(loosed.type == "missile" and bool(loosed.fired)
+		and int(loosed.source_actor_id) == 91,
+		"a shot is told apart from an aim by its command, not its payload")
+	for truncated: Array in [[84, "5b00"], [86, "5b004d0000"]]:
+		_expect(EloriaProtocol.decode_server(int(truncated[0]),
+				_hex(str(truncated[1]))).type == "invalid",
+			"a malformed command %d payload is rejected" % int(truncated[0]))
+
 	# Effects the server says happened in the world.
 	var swarm: Dictionary = EloriaProtocol.decode_server(79, _hex("115b00"))
 	_expect(swarm.type == "special_effect" and int(swarm.effect) == 17

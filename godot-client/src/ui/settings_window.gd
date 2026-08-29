@@ -79,7 +79,7 @@ func tab_titles() -> Array[String]:
 
 func begin_capture(action: String) -> void:
 	capturing = action
-	capture_label.text = "Press a key for %s, or Escape to keep it." % action
+	capture_label.text = tr("ELORIA_SETTINGS_CAPTURE").format({"action": action})
 	capture_label.show()
 
 ## Applies a captured key to an action. Returns false when the event is not a
@@ -180,7 +180,7 @@ func _refresh_bindings() -> void:
 		var events: Array[InputEvent] = (InputMap.action_get_events(str(action))
 			if InputMap.has_action(str(action)) else [])
 		button.text = (_describe(events[0]) if not events.is_empty()
-			else "unbound")
+			else tr("ELORIA_SETTINGS_UNBOUND"))
 
 func _build() -> void:
 	panel = PanelContainer.new()
@@ -200,12 +200,12 @@ func _build() -> void:
 	column.add_child(header)
 	var title := Label.new()
 	title.name = "SettingsTitle"
-	title.text = "Settings"
+	title.text = tr("ELORIA_SETTINGS_TITLE")
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(title)
 	var close_button := Button.new()
 	close_button.name = "SettingsWindowClose"
-	close_button.text = "Close"
+	close_button.text = tr("ELORIA_SETTINGS_CLOSE")
 	close_button.pressed.connect(close)
 	header.add_child(close_button)
 
@@ -225,36 +225,35 @@ func _build() -> void:
 
 func _build_graphics() -> void:
 	var page := VBoxContainer.new()
-	page.name = "Graphics"
+	page.name = tr("ELORIA_SETTINGS_GRAPHICS")
 	tabs.add_child(page)
-	_add_toggle(page, "shadows", "Directional shadows", true)
-	_add_toggle(page, "particles", "Spell and world effects", true)
-	_add_toggle(page, "nameplates", "Names above other players", true)
+	_add_toggle(page, "shadows", tr("ELORIA_SETTINGS_SHADOWS"), true)
+	_add_toggle(page, "particles", tr("ELORIA_SETTINGS_PARTICLES"), true)
+	_add_toggle(page, "nameplates", tr("ELORIA_SETTINGS_NAMEPLATES"), true)
 
 func _build_camera() -> void:
 	var page := VBoxContainer.new()
-	page.name = "Camera"
+	page.name = tr("ELORIA_SETTINGS_CAMERA")
 	tabs.add_child(page)
-	_add_slider(page, "rotation_sensitivity", "Rotation sensitivity", 0.05, 1.0, 0.25)
-	_add_slider(page, "pan_sensitivity", "Pan sensitivity", 0.004, 0.05, 0.012)
-	_add_toggle(page, "follow_player", "Keep the camera on the player", true)
+	_add_slider(page, "rotation_sensitivity", tr("ELORIA_SETTINGS_ROTATION"), 0.05, 1.0, 0.25)
+	_add_slider(page, "pan_sensitivity", tr("ELORIA_SETTINGS_PAN"), 0.004, 0.05, 0.012)
+	_add_toggle(page, "follow_player", tr("ELORIA_SETTINGS_FOLLOW"), true)
 
 func _build_gameplay() -> void:
 	var page := VBoxContainer.new()
-	page.name = "Gameplay"
+	page.name = tr("ELORIA_SETTINGS_GAMEPLAY")
 	tabs.add_child(page)
 	var hint := Label.new()
-	hint.text = ("These are the server's settings. Choosing one sends the"
-		+ " command; the server decides.")
+	hint.text = tr("ELORIA_SETTINGS_SERVER_HINT")
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	page.add_child(hint)
-	_add_button(page, "target_mode_strong", "Target the strongest attacker")
-	_add_button(page, "target_mode_weak", "Target the weakest attacker")
-	_add_button(page, "autogather", "Toggle automatic drop collection")
+	_add_button(page, "target_mode_strong", tr("ELORIA_SETTINGS_TARGET_STRONG"))
+	_add_button(page, "target_mode_weak", tr("ELORIA_SETTINGS_TARGET_WEAK"))
+	_add_button(page, "autogather", tr("ELORIA_SETTINGS_AUTOGATHER"))
 
 func _build_controls() -> void:
 	var page := VBoxContainer.new()
-	page.name = "Controls"
+	page.name = tr("ELORIA_SETTINGS_CONTROLS")
 	tabs.add_child(page)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL

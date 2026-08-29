@@ -26,6 +26,10 @@ renderer/rendering_method.mobile="gl_compatibility"
 ; spends most of its time at.
 textures/default_filters/anisotropic_filtering_level=2
 
+[internationalization]
+
+locale/translations=PackedStringArray("res://data/i18n/strings.en.translation")
+
 [input]
 
 toggle_sit={
@@ -50,6 +54,7 @@ move_west={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":
 move_east={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":68)] }
 turn_left={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":81)] }
 turn_right={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":69)] }
+screenshot={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":4194338)] }
 cancel={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":4194305)] }
 attack_selected={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":65,"alt_pressed":true)] }
 quick_item_1={ "deadzone": 0.5, "events": [Object(InputEventKey,"physical_keycode":49)] }

@@ -92,11 +92,13 @@ func _summary_text(owned: Array, total: int) -> String:
 			castable.append(title)
 		else:
 			blocked.append("%s (needs %s)" % [title, ", ".join(missing)])
-	var lines: Array[String] = ["[b]%d of %d sigils[/b]" % [owned.size(), total]]
-	lines.append("[color=#8fdc8f]Sigils for: %s[/color]"
-		% (", ".join(castable) if not castable.is_empty() else "nothing yet"))
+	var lines: Array[String] = ["[b]%s[/b]" % tr("ELORIA_SIGILS_COUNT").format(
+		{"owned": owned.size(), "total": total})]
+	lines.append("[color=#8fdc8f]%s[/color]" % tr("ELORIA_SIGILS_FOR").format(
+		{"spells": ", ".join(castable) if not castable.is_empty()
+			else tr("ELORIA_SIGILS_NOTHING")}))
 	if not blocked.is_empty():
-		lines.append("Still needed:")
+		lines.append(tr("ELORIA_SIGILS_NEEDED"))
 		for entry: String in blocked:
 			lines.append("  " + entry)
 	return "\n".join(lines)
@@ -119,12 +121,12 @@ func _build() -> void:
 	column.add_child(header)
 	var title := Label.new()
 	title.name = "SigilTitle"
-	title.text = "Sigils"
+	title.text = tr("ELORIA_SIGILS_TITLE")
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(title)
 	var close_button := Button.new()
 	close_button.name = "SigilClose"
-	close_button.text = "Close"
+	close_button.text = tr("ELORIA_SETTINGS_CLOSE")
 	close_button.pressed.connect(close)
 	header.add_child(close_button)
 
