@@ -33,7 +33,11 @@ TURF = 10
 # -- Amethyst Barrens. Appended, never inserted: see the note on materials.SPECS.
 # Classes are allocated in blocks so concurrent region work does not collide:
 # 7-10 Mirrorhold, 11-14 Whitehorn, 15-18 Amethyst Barrens, 19-22 Crownwater,
-# 23-26 Verdant Stair.
+# 23-27 Grey Moors, 28-29 Verdant Stair.
+# Grey Moors and Verdant Stair both branched from a develop where 23 was free
+# and both claimed it. Verdant Stair moved because Grey Moors needs five and
+# this needs two, and because nothing outside terrain.py hardcodes the numbers:
+# every reference here and in the region packages goes through these names.
 BARRENS = 15
 CRYSTAL_FIELD = 16
 RESONANT_ROAD = 17
@@ -44,8 +48,8 @@ STORM_ROCK = 18
 # of a terrace floor, which is laid rather than grown, and the permanently
 # spray-wet rock behind a fall and around the cenote rim. Everything else it
 # needs is an existing class carrying a different material.
-TERRACE_MOSS = 23
-WET_ROCK = 24
+TERRACE_MOSS = 28
+WET_ROCK = 29
 
 SURFACE_NAMES = {
     FOREST: "ForestFloor", PATH: "Trail", PAVING: "Paving", SHORE: "Shore",
