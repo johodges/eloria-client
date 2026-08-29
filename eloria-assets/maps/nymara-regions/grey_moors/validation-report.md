@@ -90,8 +90,9 @@ surface height, so the server has genuine elevation rather than a flat plateau.
 
 ## Manifest
 
-`world.json` validates against `godot-client/schemas/world-manifest-1.schema.json`
-and carries every required block:
+`world.json` was checked against
+`godot-client/schemas/world-manifest-1.schema.json` with `jsonschema`'s
+Draft 7 validator: **0 schema errors**. It carries every required block:
 
 bounds and playable bounds, coordinate transform, 7 spawn points, collision,
 navigation, 61 landmarks, interactives, 15 NPC/creature markers, 64
