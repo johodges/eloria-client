@@ -181,3 +181,58 @@ shimmered.
   terrain field, so none of this touches collision or `walkingHeight`.
 - 5,376 fewer unique triangles (189,551 → 184,175); the duplicates were the
   hidden mandala surfaces.
+
+## 1.0.3 — coplanar surfaces across the map
+
+Reported from a client screenshot: textures on the models flicker, most visibly
+around the gates.
+
+**Cause — collision proxies were drawn.** `collider()` builds a low-poly box
+inside each of the 428 buildings and landmarks it stands for, and the manifest's
+note claimed those boxes were "fully enclosed and never visible". They are
+inset by 5 to 10 mm, which is not a clearance the depth buffer can resolve at
+the distance a district is seen from, and `COLLISION_Sanctuary_Body` is flush
+with the sanctuary's own wall. Every large townhouse in the city therefore drew
+two same-facing walls in the same plane. A proxy is a physics volume, not a
+surface: the manifest now says so with `collision.nodesAreProxies`, and the
+client hides the nodes while keeping the shapes built from them.
+
+**Cause — surfaces sharing a datum.** Six independent cases, all the same
+mistake in different kits:
+
+- Every townhouse ran its wall to the top of its own cornice, so the wall head
+  and the cornice cap were one plane on all 346 district buildings. The wall now
+  stops at the cornice soffit, which is where a cornice actually sits.
+- The four plaza porticos stood at `PLATEAU_Y`, putting their stylobate exactly
+  on the ground under it; they now sit on the `PLAZA_LIFT` paving datum, like
+  the paving and the carriageways.
+- The sanctuary's paved terrace met its authored shelf to 2.6 mm; it moves onto
+  the same paving datum.
+- Bridge decks ran out onto causeway ground authored at exactly `CAUSEWAY_Y`.
+  They now carry `BRIDGE_LIFT` clear of it.
+- Each bridge's cutwaters sprang off the pier crown with their base caps facing
+  up out of it, and the spandrels either side of a pier were sized to overlap.
+  The noses spring from inside the soffit and the spandrels stop short.
+- Curtain-wall bays cut their band and parapet to the bay length exactly, so
+  three end caps shared the joint plane; both now run past it.
+- Farm plots were sized 22-34 m radially in an 18 m ring step and cached in six
+  slots shared by forty plots of different sizes, so most fields were handed a
+  plane too big for their cell and ran over their neighbours. Each is now a
+  fraction of its own cell and the cache is keyed on the size it holds.
+
+### Verified
+
+- `eloria-assets/tools/check_zfighting.py` (new) measures the real overlap area
+  between coplanar same-facing surfaces, clipping every candidate pair in-plane
+  so adjacent terrain triangles are not counted, and skipping whatever the
+  manifest declares hidden. Four Gates: **82,424 → 1,584 m²**, a 98% reduction,
+  with nothing left above 180 m².
+- Client-side, `main.tscn`'s camera near plane moves from the engine default
+  0.05 m to 1.0 m. The client renders through GL Compatibility, whose depth
+  buffer is fixed point, so the resolvable step at distance z is about
+  `z^2 / (near * 2^24)`: 12 mm at 100 m before, 0.6 mm after. The isometric rig
+  never brings the camera nearer than 8 m to its focus, so nothing is clipped.
+- 414 more unique triangles (184,175 -> 184,589): the farm-plot cache now holds
+  a plane per field size instead of six shared ones. `collision.bin` is
+  byte-identical, so none of this touches the walk grid or `walkingHeight`.
+- Khronos-shaped validator: 0 errors, 0 warnings.

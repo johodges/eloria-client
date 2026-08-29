@@ -57,6 +57,7 @@ WALL_R = T.WALL_RADIUS
 GATE_R = WALL_R
 PLATEAU_Y = T.PLATEAU_Y
 PLAZA_LIFT = 0.06           # paving carried clear of the plateau surface
+BRIDGE_LIFT = 0.04          # bridge decks carried clear of the causeway
 WATER_Y = T.WATER_Y
 CAUSEWAY_Y = T.CAUSEWAY_Y
 
@@ -332,8 +333,12 @@ class WorldBuild:
             yaw = _yaw_for(angle)
             self.add("Bridges", self.scene.instance(
                 f"Bridge_{name}", span_mesh, (x, CAUSEWAY_Y, z), yaw))
+            # Carried clear of the causeway the same way the carriageways are:
+            # the deck runs out onto ground authored at exactly CAUSEWAY_Y, and
+            # at that height its top and the causeway were one surface.
             self.add("Bridges", self.scene.instance(
-                f"Deck_Bridge_{name}", deck_mesh, (x, CAUSEWAY_Y - 1.7, z), yaw))
+                f"Deck_Bridge_{name}", deck_mesh,
+                (x, CAUSEWAY_Y + BRIDGE_LIFT - 1.7, z), yaw))
             for side in (-1, 1):
                 ox = -math.sin(angle) * side * 14.6
                 oz = math.cos(angle) * side * 14.6
@@ -422,8 +427,12 @@ class WorldBuild:
             "Plaza_Arcade_Mesh",
             lambda: landmarks.plaza_arcade(self.p, arcade_radius, sweep, bays=9))
         for i, angle in enumerate(layout.DIAGONALS):
+            # On the paving datum, not on the plateau itself: the portico's
+            # stylobate is a flat annulus the size of the building's footprint,
+            # and left at PLATEAU_Y it was coplanar with the ground under it.
             node = self.scene.instance(
-                f"Plaza_Arcade_{i}", arcade_mesh, (0.0, PLATEAU_Y, 0.0), angle * -1.0)
+                f"Plaza_Arcade_{i}", arcade_mesh,
+                (0.0, PLATEAU_Y + PLAZA_LIFT, 0.0), angle * -1.0)
             self.add("Plaza", node)
             for k in (-1, 1):
                 a = angle + k * sweep * 0.42
@@ -495,8 +504,11 @@ class WorldBuild:
         z = -T.SANCTUARY_SHELF_R
         base = T.SANCTUARY_Y
         temple = self.scene.mesh("Sanctuary_Mesh", lambda: landmarks.sanctuary(self.p))
+        # The temple carries its own paved terrace, so it stands on the same
+        # paving datum the plaza uses rather than flat on the authored shelf,
+        # which the shelf meets to within a couple of millimetres.
         self.add("Sanctuary", self.scene.instance(
-            "Northern_Sanctuary", temple, (0.0, base, z)))
+            "Northern_Sanctuary", temple, (0.0, base + PLAZA_LIFT, z)))
         terrace = M.cylinder(52.0, 0.5, 32, self.mats["paving_plaza"], 6.0)
         terrace_mesh = self.scene.mesh("Sanctuary_Terrace_Mesh", terrace)
         self.add("Sanctuary", self.scene.instance(
@@ -683,8 +695,12 @@ class WorldBuild:
         # agricultural dressing
         for index, (x, z, w, d, yaw) in enumerate(layout.farm_plots()):
             base = self.ground(x, z)
-            plot = M.plane(w, d, self.mats["terrain_crop"], 1.0, 0.05, 3)
-            mesh = self.scene.mesh(f"Farm_Plot_Mesh_{index % 6}",
+            # Keyed on the size it is, not on a rotating index: six cache slots
+            # shared by forty plots of different sizes handed most of them the
+            # first plot's plane, which then ran over its neighbours and fought
+            # with them. Whole metres keep the cache small.
+            w, d = float(round(w)), float(round(d))
+            mesh = self.scene.mesh(f"Farm_Plot_Mesh_{w:.0f}x{d:.0f}",
                                    lambda w=w, d=d: M.plane(
                                        w, d, self.mats["terrain_crop"], 1.0, 0.05, 3),
                                    )

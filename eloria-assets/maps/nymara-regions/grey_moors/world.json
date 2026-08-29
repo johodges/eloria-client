@@ -2913,10 +2913,10 @@
     "textures": 65,
     "accessors": 1604,
     "bufferViews": 1669,
-    "uniqueTriangles": 352490,
+    "uniqueTriangles": 348128,
     "uniqueVertices": 297103,
-    "glbBytes": 22997484,
-    "instancedTriangles": 674110,
+    "glbBytes": 22971316,
+    "instancedTriangles": 669748,
     "embeddedTextureBytes": 9157565,
     "textureMemoryBytesUncompressed": 60948480,
     "placements": 7343,
@@ -2946,10 +2946,10 @@
       "south-crypt-stair moved 1.5 m onto walkable ground"
     ],
     "lod2": {
-      "glbBytes": 12494512,
+      "glbBytes": 12468340,
       "nodes": 461,
-      "uniqueTriangles": 314680,
-      "instancedTriangles": 314680
+      "uniqueTriangles": 310318,
+      "instancedTriangles": 310318
     }
   },
   "sources": [

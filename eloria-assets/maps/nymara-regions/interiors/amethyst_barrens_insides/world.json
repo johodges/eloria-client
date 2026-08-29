@@ -145,6 +145,10 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_amethyst_barrens_insides",
+      "Roof_amethyst_barrens_insides_amethyst_storm_rock",
+      "Roof_amethyst_barrens_insides_pale_ashlar",
+      "Roof_amethyst_barrens_insides_rubble_stone",
+      "Roof_amethyst_barrens_insides_timber_dark",
       "Build_amethyst_barrens_insides_amber_resin",
       "Build_amethyst_barrens_insides_amethyst_banner",
       "Build_amethyst_barrens_insides_amethyst_brass",
@@ -163,6 +167,15 @@
       "Build_amethyst_barrens_insides_veined_marble",
       "Build_amethyst_barrens_insides_water_deep"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_amethyst_barrens_insides_amethyst_storm_rock",
+      "Roof_amethyst_barrens_insides_pale_ashlar",
+      "Roof_amethyst_barrens_insides_rubble_stone",
+      "Roof_amethyst_barrens_insides_timber_dark"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -2418,18 +2431,22 @@
     ]
   },
   "performance": {
-    "nodes": 23,
-    "meshes": 22,
+    "nodes": 27,
+    "meshes": 26,
     "materials": 20,
     "images": 60,
     "textures": 60,
-    "accessors": 110,
-    "bufferViews": 170,
-    "uniqueTriangles": 129254,
-    "uniqueVertices": 168668,
-    "glbBytes": 15205576,
+    "accessors": 130,
+    "bufferViews": 190,
+    "uniqueTriangles": 128138,
+    "uniqueVertices": 166436,
+    "glbBytes": 15096464,
     "nodeNames": [
       "Interior_amethyst_barrens_insides",
+      "Roof_amethyst_barrens_insides_amethyst_storm_rock",
+      "Roof_amethyst_barrens_insides_pale_ashlar",
+      "Roof_amethyst_barrens_insides_rubble_stone",
+      "Roof_amethyst_barrens_insides_timber_dark",
       "Build_amethyst_barrens_insides_amber_resin",
       "Build_amethyst_barrens_insides_amethyst_banner",
       "Build_amethyst_barrens_insides_amethyst_brass",

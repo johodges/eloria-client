@@ -25,7 +25,7 @@
       "max": [
         168.8,
         6.65,
-        199.56
+        199.55
       ]
     },
     "playableBounds": {
@@ -145,6 +145,10 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_grey_moors_insides",
+      "Roof_grey_moors_insides_cliff_rock",
+      "Roof_grey_moors_insides_grey_moor_granite",
+      "Roof_grey_moors_insides_packed_earth",
+      "Roof_grey_moors_insides_rubble_stone",
       "Build_grey_moors_insides_charred_timber",
       "Build_grey_moors_insides_cliff_rock",
       "Build_grey_moors_insides_dark_iron",
@@ -160,6 +164,15 @@
       "Build_grey_moors_insides_packed_earth",
       "Build_grey_moors_insides_rubble_stone"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_grey_moors_insides_cliff_rock",
+      "Roof_grey_moors_insides_grey_moor_granite",
+      "Roof_grey_moors_insides_packed_earth",
+      "Roof_grey_moors_insides_rubble_stone"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1301,18 +1314,22 @@
     ]
   },
   "performance": {
-    "nodes": 20,
-    "meshes": 19,
+    "nodes": 24,
+    "meshes": 23,
     "materials": 15,
     "images": 45,
     "textures": 45,
-    "accessors": 95,
-    "bufferViews": 140,
-    "uniqueTriangles": 32386,
-    "uniqueVertices": 32132,
-    "glbBytes": 9006580,
+    "accessors": 115,
+    "bufferViews": 160,
+    "uniqueTriangles": 31810,
+    "uniqueVertices": 30980,
+    "glbBytes": 8952480,
     "nodeNames": [
       "Interior_grey_moors_insides",
+      "Roof_grey_moors_insides_cliff_rock",
+      "Roof_grey_moors_insides_grey_moor_granite",
+      "Roof_grey_moors_insides_packed_earth",
+      "Roof_grey_moors_insides_rubble_stone",
       "Build_grey_moors_insides_charred_timber",
       "Build_grey_moors_insides_cliff_rock",
       "Build_grey_moors_insides_dark_iron",

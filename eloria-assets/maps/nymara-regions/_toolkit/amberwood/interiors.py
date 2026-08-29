@@ -87,17 +87,15 @@ def _wall_run(x0, z0, x1, z1, base, height, material, *, door=None, thickness=WA
     else:
         centre, width, head = door
         left, right = max(0.0, centre - width * 0.5), min(length, centre + width * 0.5)
+        # The doorway is a hole with sides and a soffit, not a gap: the two
+        # flanking slabs end on the jamb lines and the head slab's underside is
+        # the soffit, and because `slab` builds closed boxes those three faces
+        # already exist. Adding separate 20 mm reveal boxes straddling the same
+        # planes - which this did - gave every doorway in every interior a pair
+        # of same-facing surfaces 10 mm apart, and they z-fought.
         slab(0.0, left, base, base + height)
         slab(right, length, base, base + height)
         slab(left, right, base + head, base + height)
-        # Reveals: the doorway is a hole with sides and a soffit, not a gap.
-        for t in (left, right):
-            out.add(M.box((0.02, head, thickness),
-                          center=(t - length * 0.5, base + head * 0.5, 0.0),
-                          material=material))
-        out.add(M.box((right - left, 0.02, thickness),
-                      center=((left + right) * 0.5 - length * 0.5, base + head, 0.0),
-                      material=material))
     out.rotate_y(angle)
     out.translate((x0 + x1) * 0.5, 0.0, (z0 + z1) * 0.5)
     return out
@@ -133,12 +131,15 @@ def chamber(x0, z0, x1, z1, floor_y, height, *, floor_mat, wall_mat, ceil_mat,
                         entry[3] if len(entry) > 3 else 2.6)
         out.add(_wall_run(ax, az, bx, bz, floor_y, height, wall_mat, door=door))
     top = floor_y + height
+    # The lid goes in the overhead bucket, never `add`: the isometric rig looks
+    # down at these maps, so the client hides overhead nodes and the player sees
+    # the room rather than its roof.
     if ceiling == "flat":
-        out.add(M.box((x1 - x0 + WALL_T * 2, 0.35, z1 - z0 + WALL_T * 2),
-                      center=((x0 + x1) * 0.5, top + 0.175, (z0 + z1) * 0.5),
-                      uv_scale=0.35, material=ceil_mat))
+        out.add_overhead(M.box((x1 - x0 + WALL_T * 2, 0.35, z1 - z0 + WALL_T * 2),
+                               center=((x0 + x1) * 0.5, top + 0.175, (z0 + z1) * 0.5),
+                               uv_scale=0.35, material=ceil_mat))
     elif ceiling == "vault":
-        out.add(_barrel_vault(x0, z0, x1, z1, top, vault_rise, ceil_mat))
+        out.add_overhead(_barrel_vault(x0, z0, x1, z1, top, vault_rise, ceil_mat))
     return out
 
 
@@ -255,9 +256,9 @@ def passage(x0, z0, x1, z1, width, floor_a, floor_b, height, *,
                               center=((xa + xb) * 0.5, mid + height * 0.5,
                                       z0 + side * (half + WALL_T * 0.5)),
                               uv_scale=0.5, material=wall_mat))
-            out.add(M.box((seg, 0.3, width + WALL_T * 2),
-                          center=((xa + xb) * 0.5, mid + height + 0.15, z0),
-                          uv_scale=0.4, material=ceil_mat))
+            out.add_overhead(M.box((seg, 0.3, width + WALL_T * 2),
+                                   center=((xa + xb) * 0.5, mid + height + 0.15, z0),
+                                   uv_scale=0.4, material=ceil_mat))
         else:
             za = z0 + (z1 - z0) * t0
             zb = z0 + (z1 - z0) * t1
@@ -267,9 +268,9 @@ def passage(x0, z0, x1, z1, width, floor_a, floor_b, height, *,
                               center=(x0 + side * (half + WALL_T * 0.5),
                                       mid + height * 0.5, (za + zb) * 0.5),
                               uv_scale=0.5, material=wall_mat))
-            out.add(M.box((width + WALL_T * 2, 0.3, seg),
-                          center=(x0, mid + height + 0.15, (za + zb) * 0.5),
-                          uv_scale=0.4, material=ceil_mat))
+            out.add_overhead(M.box((width + WALL_T * 2, 0.3, seg),
+                                   center=(x0, mid + height + 0.15, (za + zb) * 0.5),
+                                   uv_scale=0.4, material=ceil_mat))
     return out
 
 
