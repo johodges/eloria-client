@@ -1968,6 +1968,54 @@ def root_flare(mesh, base, radius: float, bones, material, seed: str,
                    (radius * .035, radius * .035)], bones, material, sides=6)
 
 
+def swirl_ribbon(mesh, points, width: float, bones, material, seed: str,
+                 samples: int = 15, turns: float = 1.15, curl: float = .30,
+                 flatten: float = .34, taper: float = .06, sides: int = 7,
+                 phase: float = 0.0):
+    """A long curling band that winds around the line it follows.
+
+    Flame, spirit-hair and running water are drawn in the concept art as
+    ribbons that coil: they wrap, cross in front of the body and taper away.
+    Sweeping a fat three-point tube down the same path instead produces a
+    straight wedge, and a ring of straight wedges reads as an upturned insect
+    rather than as a wisp.  This resamples the path finely, winds it round its
+    own axis, and sweeps a flattened section so the band has an edge.
+
+    ``curl`` is the coil radius as a fraction of the path length; ``turns`` is
+    how many times it goes round on the way out; ``flatten`` is the ribbon's
+    thickness relative to its width.
+    """
+    points = [np.asarray(point, dtype=float) for point in points]
+    if len(points) < 2 or width <= 0:
+        return
+    rng = np.random.default_rng(
+        zlib.crc32(("ribbon:" + seed).encode("utf-8")) % (2 ** 31))
+    span = float(np.linalg.norm(points[-1] - points[0]))
+    lean = float(rng.uniform(.82, 1.18))
+
+    centres, radii = [], []
+    for index in range(samples):
+        t = index / (samples - 1)
+        here = _bezier(points, t)
+        # Wind about the local direction of travel.
+        ahead = _bezier(points, min(1.0, t + .04))
+        behind = _bezier(points, max(0.0, t - .04))
+        tangent = ahead - behind
+        if float(np.linalg.norm(tangent)) < 1e-9:
+            tangent = np.array((0., 1., 0.))
+        right, up = AnatomyMesh._frame(tangent)
+        angle = phase + 2 * math.pi * turns * t * lean
+        # The coil opens up as the ribbon runs out, the way a flame's tip
+        # loosens; holding it constant reads as a drill bit.
+        swing = curl * span * (.35 + .85 * t)
+        centres.append(here + right * (math.cos(angle) * swing)
+                       + up * (math.sin(angle) * swing))
+        # Wide at the root, drawn to nothing at the tip.
+        grade = width * (1.0 - (1.0 - taper) * t ** 1.35)
+        radii.append((grade, max(grade * flatten, width * .02)))
+    mesh.tube(centres, radii, bones, material, sides=sides, cap_start=False)
+
+
 def foliage_cluster(mesh, centre, size: float, bones, material, seed: str,
                     count: int = 5, flatten: float = .62):
     """A puff of leaf mass, built from overlapping lobes rather than one blob."""

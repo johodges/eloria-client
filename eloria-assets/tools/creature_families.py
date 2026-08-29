@@ -25,7 +25,7 @@ from creature_anatomy import (AnatomyMesh, MAT_ACCENT, MAT_BODY, MAT_CORE,
                               MAT_DARK, MAT_FEATURE, MAT_GROWTH, _bezier,
                               _sheet, _euler, qaxis, branch_system,
                               foliage_cluster, global_positions, root_flare,
-                              woven_trunk)
+                              swirl_ribbon, woven_trunk)
 
 # ---------------------------------------------------------------------------
 # Biped
@@ -2591,7 +2591,10 @@ FAMILIES["fish"] = (fish_skeleton, fish_geometry, fish_animation)
 # dissolving into a swirl of water.  One shared "core plus legs" rig cannot
 # express any of them, so the family carries eight distinct forms and a
 # per-creature detail table, the same way the humanoids do.
-AMORPHOUS_TENDRILS = 8
+# Raised from eight: the will-o-wisp and the water elemental are drawn with
+# more streamers than that, and capping the count made them read sparse.
+# Unused chains cost three bones and no geometry.
+AMORPHOUS_TENDRILS = 10
 AMORPHOUS_TABLE, AMORPHOUS_INDEX = _assemble(
     [("root", None), ("body", "root"), ("chest", "body"),
      ("neck", "chest"), ("head", "neck"), ("jaw", "head")]
@@ -2646,8 +2649,11 @@ AMORPHOUS_DETAIL = {
                                  surface="crystal", count=5, glow=.60,
                                  translucent=.82),
     "barrens_wisp": dict(form="spectre", orbs=2, glow=.95, rise=.34, drape=.28),
-    "moorlight_wisp": dict(form="spectre", orbs=3, count=8, tendril=.80,
-                           spread=1.25, glow=.80, drape=.85, rise=.18),
+    # The art is a radial swirl of hair around a hooded face, near circular in
+    # outline.  At drape .85 the whole head of hair streamed off one side and
+    # the wisp read as a comet; halved, it fans all the way round again.
+    "moorlight_wisp": dict(form="spectre", orbs=3, count=9, tendril=.88,
+                           spread=1.35, glow=.80, drape=.42, rise=.26),
     "ember_wisp": dict(form="spectre", orbs=2, count=6, rise=.40, glow=1.0,
                        motes=7, mote_r=.045),
     "springfly_sprite": dict(form="nymph", wings=True, count=3, glow=.55),
@@ -2707,15 +2713,22 @@ def amorphous_skeleton(plan_key: str, scale: float, variant: str | None = None):
             # straight out and up, which read as a spider's legs rather than a
             # plume.  Hold them in close, wind them round, and let the rise do
             # most of the work.
+            # Two behaviours share this chain.  Undraped it is flame: it goes
+            # *up*, curling inward over the crown, because a plume whose licks
+            # leave sideways is a starfish.  Draped it is spirit-hair, which
+            # streams away behind the figure and only sags -- sending it
+            # straight down turned a will-o-wisp into a standing spider.
             start = body + radial * p["core"] * s * .38
-            mid = (start + radial * length * (.20 + .26 * drape) * spread
-                   + swirl * length * .38
-                   + np.array((0., length * (.34 - .78 * drape), 0.)))
-            # A draped strand *falls*; the old weighting stalled it at the
-            # horizontal, which is the one direction flame and hair never hold.
-            tip = (start + radial * length * (.10 + .30 * drape) * spread
-                   + swirl * length * (.86 - .46 * drape)
-                   + np.array((0., length * (.92 - 2.10 * drape), 0.)))
+            lift = p["rise"] + .55
+            # Drape leans the strand outward and lets it sag; it must not push
+            # every strand the same way in world space, which swept the whole
+            # head of hair off one side and made a comet of it.
+            mid = (start + radial * length * (.26 + .58 * drape) * spread
+                   + swirl * length * (.40 - .10 * drape)
+                   + np.array((0., length * lift * (.62 - .74 * drape), 0.)))
+            tip = (start + radial * length * (.06 + 1.10 * drape) * spread
+                   + swirl * length * (.62 - .20 * drape)
+                   + np.array((0., length * (lift * 1.24 - 1.55 * drape), 0.)))
         elif form == "vortex":
             start = body + radial * p["core"] * s * .55
             mid = (start + radial * length * .42 * spread + swirl * length * .30
@@ -2813,17 +2826,23 @@ def amorphous_geometry(plan_key: str, scale: float, bones,
         # No body: a knot of light with the shards doing all the work.
         mesh.ellipsoid(tuple(g[body_i]), (core * 1.5,) * 3, [body_i, chest_i],
                        MAT_ACCENT, rings=7, sides=10)
+        mesh.ellipsoid(tuple(g[body_i]), (core * .90,) * 3, [body_i, chest_i],
+                       MAT_CORE, rings=7, sides=10)
     elif form == "spectre":
         # A plume: narrow at the base, swelling into a hooded crown -- and
         # twisting on the way up.  A straight cone reads as a traffic bollard
         # whatever colour it is painted; flame in the art turns as it rises.
         rng = np.random.default_rng(zlib_crc((variant or plan_key) + ":plume"))
-        base = np.array((g[body_i][0], p["rise"] * s * .10, g[body_i][2]))
-        column = [base, base * .55 + g[body_i] * .45, g[body_i],
+        # The plume is a body, not a spear.  Rooting it at the floor drew a
+        # long hard-edged blade under every wisp -- the single most wrong thing
+        # about them, since the art gives them no lower half at all: the mass
+        # gathers, swirls and frays away.
+        base = g[body_i] - np.array((0., core * 1.35, 0.))
+        column = [base, base * .40 + g[body_i] * .60, g[body_i],
                   g[chest_i], g[head_i], g[head_i] + np.array((0., core * .55, 0.))]
-        widths = [(core * .16, core * .16), (core * .48, core * .48),
-                  (core * .78, core * .78), (core * .96, core * .98),
-                  (core * .66, core * .70), (core * .18, core * .22)]
+        widths = [(core * .30, core * .30), (core * .74, core * .74),
+                  (core * .98, core * .98), (core * 1.06, core * 1.08),
+                  (core * .74, core * .78), (core * .22, core * .26)]
         turn = float(rng.uniform(.7, 1.3))
         for k in range(1, len(column) - 1):
             sway = math.sin(k * 1.15 * turn) * core * .38
@@ -2831,6 +2850,9 @@ def amorphous_geometry(plan_key: str, scale: float, bones,
             column[k] = column[k] + np.array((sway, 0., lean))
         mesh.tube(column, widths, [body_i, chest_i, head_i], MAT_BODY,
                   sides=16, uv_scale=1.6)
+        mesh.ellipsoid(tuple(g[chest_i] + np.array((0., -core * .10, 0.))),
+                       (core * .82, core * 1.02, core * .82),
+                       [chest_i, body_i], MAT_CORE, rings=8, sides=12)
         # Tongues licking off the column: what makes a plume read as fire or
         # spirit rather than as a cone with antennae stuck in the top.
         for k in range(6):
@@ -2975,6 +2997,9 @@ def amorphous_geometry(plan_key: str, scale: float, bones,
     else:
         mesh.ellipsoid(tuple(g[body_i]), (core * 2, core * 2.2, core * 2),
                        [body_i, chest_i], MAT_BODY, rings=10, sides=14)
+        if form == "vortex":
+            mesh.ellipsoid(tuple(g[body_i]), (core * 1.05, core * 1.20, core * 1.05),
+                           [body_i, chest_i], MAT_CORE, rings=8, sides=12)
 
     # ---- streamers, tentacles and arms ------------------------------------
     strand_material = MAT_ACCENT if form in ("spectre", "vortex", "nymph") else MAT_BODY
@@ -2984,13 +3009,25 @@ def amorphous_geometry(plan_key: str, scale: float, bones,
             continue
         if form == "ooze":
             continue
-        if form == "spectre":
-            # Flame tongues, not wires: at the shared radius these drew as
-            # bare spokes and the creature read as an insect on its back.
-            radius *= 2.7
-        strand(a, b, c, radius, strand_material,
-               taper=.06 if form in ("spectre", "vortex") else .14,
-               sides=7 if form in ("spectre", "vortex") else 9)
+        if form in ("spectre", "vortex", "nymph"):
+            # Flame, spirit-hair and running water are ribbons that coil round
+            # the body, not spokes radiating off it.  A three-point tube down
+            # the same bone chain drew a straight wedge however thick it was
+            # made, and a ring of wedges is an upturned insect.
+            tip = g[c] + (g[c] - g[b]) * .45
+            swirl_ribbon(mesh, [g[a], g[b], g[c], tip],
+                         radius * (6.2 if form == "spectre"
+                                   else 3.6 if form == "vortex" else 2.2),
+                         [body_i, a, b, c], strand_material,
+                         seed=f"{variant or plan_key}:ribbon:{index}",
+                         turns=1.35 if form == "spectre" else .95,
+                         curl=.20 if form == "spectre" else .15,
+                         flatten=.22, taper=.04,
+                         phase=2 * math.pi * index / max(p["count"], 1))
+        else:
+            strand(a, b, c, radius, strand_material,
+                   taper=.06 if form == "vortex" else .14,
+                   sides=9)
         if form == "kraken":
             for k in range(4):
                 t = .35 + .20 * k

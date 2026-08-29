@@ -793,9 +793,9 @@
       "name": "Shardling Swarm",
       "family": "amorphous",
       "archetype": "shards",
-      "vertices": 660,
-      "triangles": 1180,
-      "joints": 36,
+      "vertices": 748,
+      "triangles": 1320,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/shardling_swarm.glb",
       "locale": "amethyst_barrens",
@@ -814,9 +814,9 @@
       "name": "Barrens Wisp",
       "family": "amorphous",
       "archetype": "wisp",
-      "vertices": 815,
-      "triangles": 1383,
-      "joints": 36,
+      "vertices": 1373,
+      "triangles": 2457,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/barrens_wisp.glb",
       "locale": "amethyst_barrens",
@@ -1157,7 +1157,7 @@
       "archetype": "tentacles",
       "vertices": 2399,
       "triangles": 3716,
-      "joints": 36,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/gilded_devourer.glb",
       "locale": "elemental_lords",
@@ -1198,7 +1198,7 @@
       "archetype": "tentacles",
       "vertices": 2135,
       "triangles": 3296,
-      "joints": 36,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/mirefather_leviathan.glb",
       "locale": "elemental_lords",
@@ -1577,9 +1577,9 @@
       "name": "Springfly Sprite",
       "family": "amorphous",
       "archetype": "sprite",
-      "vertices": 743,
-      "triangles": 1145,
-      "joints": 36,
+      "vertices": 896,
+      "triangles": 1457,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/springfly_sprite.glb",
       "locale": "crownwater",
@@ -1620,7 +1620,7 @@
       "archetype": "tentacles",
       "vertices": 922,
       "triangles": 1630,
-      "joints": 36,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/medusa_tidepriest.glb",
       "locale": "crownwater",
@@ -1781,7 +1781,7 @@
       "archetype": "sprite",
       "vertices": 242,
       "triangles": 420,
-      "joints": 36,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/lanternwake_sprite.glb",
       "locale": "westhaven",
@@ -1840,9 +1840,9 @@
       "name": "Sluice Elemental",
       "family": "amorphous",
       "archetype": "vortex",
-      "vertices": 899,
-      "triangles": 1508,
-      "joints": 36,
+      "vertices": 1520,
+      "triangles": 2708,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/sluice_elemental.glb",
       "locale": "westhaven",
@@ -2241,9 +2241,9 @@
       "name": "Moorlight Wisp",
       "family": "amorphous",
       "archetype": "wisp",
-      "vertices": 946,
-      "triangles": 1600,
-      "joints": 36,
+      "vertices": 1673,
+      "triangles": 3003,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/moorlight_wisp.glb",
       "locale": "grey_moors",
@@ -2364,7 +2364,7 @@
       "archetype": "vortex",
       "vertices": 611,
       "triangles": 1069,
-      "joints": 36,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/tidelance_construct.glb",
       "locale": "mirrorhold",
@@ -2463,9 +2463,9 @@
       "name": "Mirrorwing Swarm",
       "family": "amorphous",
       "archetype": "shards",
-      "vertices": 1824,
-      "triangles": 1932,
-      "joints": 36,
+      "vertices": 1912,
+      "triangles": 2072,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/mirrorwing_swarm.glb",
       "locale": "mirrorhold",
@@ -2564,9 +2564,9 @@
       "name": "Shardbound Archivist",
       "family": "amorphous",
       "archetype": "shards",
-      "vertices": 889,
-      "triangles": 1535,
-      "joints": 36,
+      "vertices": 1144,
+      "triangles": 2055,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/shardbound_archivist.glb",
       "locale": "mirrorhold",
@@ -2985,9 +2985,9 @@
       "name": "Verdant Naiad",
       "family": "amorphous",
       "archetype": "vortex",
-      "vertices": 917,
-      "triangles": 1527,
-      "joints": 36,
+      "vertices": 1172,
+      "triangles": 2047,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/verdant_naiad.glb",
       "locale": "verdant_stair",
@@ -3406,9 +3406,9 @@
       "name": "Ember Wisp",
       "family": "amorphous",
       "archetype": "wisp",
-      "vertices": 926,
-      "triangles": 1586,
-      "joints": 36,
+      "vertices": 1421,
+      "triangles": 2534,
+      "joints": 42,
       "animations": 7,
       "path": "godot-client/assets/actors/native/creatures/ember_wisp.glb",
       "locale": "amberwood",
@@ -6034,7 +6034,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/barrens_wisp.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6250,7 +6250,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/ember_wisp.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6328,7 +6328,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/gilded_devourer.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6424,7 +6424,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/lanternwake_sprite.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6490,7 +6490,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/medusa_tidepriest.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6508,7 +6508,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/mirefather_leviathan.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6544,7 +6544,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/mirrorwing_swarm.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6562,7 +6562,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/moorlight_wisp.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6784,13 +6784,13 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/shardbound_archivist.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/shardling_swarm.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6802,7 +6802,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/sluice_elemental.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6832,7 +6832,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/springfly_sprite.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6928,7 +6928,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/tidelance_construct.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
@@ -6946,7 +6946,7 @@
         "animations": 7
       },
       "godot-client/assets/actors/native/creatures/verdant_naiad.glb": {
-        "nodes": 37,
+        "nodes": 43,
         "meshes": 1,
         "skins": 1,
         "animations": 7
