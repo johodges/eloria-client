@@ -130,6 +130,10 @@ SPECS: tuple[MaterialSpec, ...] = (
     MaterialSpec("amethyst_vault_floor", "amethyst_vault_floor", roughness=0.30,
                  metallic=0.35),
 
+    # -- Whitehorn interiors. Appended, never inserted.
+    MaterialSpec("whitehorn_silver", "whitehorn_silver", roughness=0.34,
+                 metallic=0.45),
+
     # -- Verdant Stair. Appended, never inserted: a region pins the material set
     # it embeds by name, and reordering this tuple would rewrite its GLB.
     MaterialSpec("verdant_jungle_floor", "verdant_jungle_floor", roughness=0.95),
@@ -210,6 +214,8 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     sets["amethyst_resonant_road"] = T.amethyst_resonant_road(512, seed=521)
     sets["amethyst_storm_rock"] = T.amethyst_storm_rock(512, seed=523)
     sets["amethyst_crystal"] = T.amethyst_crystal(256, seed=541)
+    # Whitehorn
+    sets["whitehorn_silver"] = T.whitehorn_silver(256, seed=601)
     sets["amethyst_pale_stone"] = T.amethyst_pale_stone(512, seed=547)
     sets["amethyst_verdigris"] = T.amethyst_verdigris(256, seed=557)
     sets["amethyst_brass"] = T.amethyst_brass(256, seed=563)

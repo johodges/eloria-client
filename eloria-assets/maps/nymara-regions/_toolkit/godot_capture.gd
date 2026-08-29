@@ -190,6 +190,36 @@ func _init() -> void:
 		sun.rotation_degrees = Vector3(-88.0, 0.0, 0.0)
 	world.add_child(sun)
 
+	# The lamps the package declares, as real lights. A sealed package's manifest
+	# carries a `lights` array standing in for its lanterns and braziers; without
+	# these the ambient block alone lights every surface identically and the
+	# frame shows no source for its own light.
+	var manifest_lights: Array = []
+	var lights_file := FileAccess.open(package.path_join("world.json"),
+		FileAccess.READ)
+	if lights_file != null:
+		var lights_parsed: Variant = JSON.parse_string(lights_file.get_as_text())
+		lights_file.close()
+		if typeof(lights_parsed) == TYPE_DICTIONARY:
+			manifest_lights = (lights_parsed as Dictionary).get("lights", [])
+	var lamp_count := 0
+	for entry in manifest_lights:
+		var lamp: Dictionary = entry
+		var at: Array = lamp.get("position", [])
+		if at.size() != 3:
+			continue
+		var point := OmniLight3D.new()
+		point.position = Vector3(float(at[0]), float(at[1]), float(at[2]))
+		var col: Array = lamp.get("colour", lamp.get("color", [1.0, 1.0, 1.0]))
+		point.light_color = Color(float(col[0]), float(col[1]), float(col[2]))
+		point.light_energy = float(lamp.get("energy", 1.5))
+		point.omni_range = float(lamp.get("range", 9.0))
+		point.shadow_enabled = false
+		world.add_child(point)
+		lamp_count += 1
+	if lamp_count:
+		print("[capture] %d declared lamps" % lamp_count)
+
 	var camera := Camera3D.new()
 	camera.far = 2400.0
 	camera.current = true
