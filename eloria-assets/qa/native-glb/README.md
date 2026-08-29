@@ -107,9 +107,19 @@ thing:
   eyebrows, cloth, leather and trim, all synthesised from value noise and
   painted features placed by inverting the same unwrap the geometry uses.
 
+* **Head seating.** Hairstyles and headwear are authored once, in Head-local
+  space, against the reference skull. A race that puts its own skull somewhere
+  else relative to that joint wears its hat behind its forehead, and the
+  offline sheets cannot show it because they render no hair. `seat_head` moves
+  the Head joint -- a leaf, so nothing but the attachment frame moves -- until
+  the scalp sits inside the envelope `export_rig_contract.py` measured off the
+  reference rig. The match is made on the scalp band rather than on the whole
+  head, because the frontmost point of a head is its nose.
+
 The race has no server actor type: allocation belongs to eloria-server, so it
 is registered as a model with a null `serverActorType` and listed under
-`previewModels`, which is what puts it in the in-client model viewer.
+`previewModels`, which is what puts it in the in-client model viewer and in
+`rendered_human_race.gd`.
 
 ## Base bodies
 
@@ -198,6 +208,14 @@ front and profile under that same lighting.
 `races-human-vs-derived.png` is the direct comparison the Human race exists to
 support: the two authored builds beside a human-derived race (Luminous) and a
 non-human one (Ssarathi), lit from the same maps.
+
+Those are all offline renders. `races-human-in-client.png` and
+`races-human-in-client-motion.png` are the same models rendered *by the
+client* -- its creation viewport, its camera, its three-light rig, its
+materials -- with hair, the runtime appearance variants, four animation clips
+and a full equipment set. That is the surface that showed the hairstyles were
+seated wrongly on the authored skull; no offline sheet renders hair, so none of
+them could have.
 
 Regenerate and validate with:
 

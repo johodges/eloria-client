@@ -102,6 +102,10 @@ class Contract:
         self.parent = {joint["name"]: joint["parent"] for joint in data["joints"]}
         self.rotation = {name: data["restRotations"][gender][name]
                          for name in self.names}
+        # Where the reference skull sits relative to its own Head joint.
+        # Hairstyles and headwear are authored in that frame, so this is
+        # interface in exactly the way the hip and ground planes are.
+        self.head_envelope = data["headEnvelope"][gender]
         self.basis: dict[str, np.ndarray] = {}
         for name in self.names:
             local = quaternion_matrix(self.rotation[name])
@@ -523,12 +527,12 @@ TRUNK_PROFILE = {
         (1.505, .098, .080, -.014, 2.1),  # neck base
         (1.535, .062, .065, -.012, 2.0),
         (1.575, .059, .064, -.006, 2.0),  # neck under the jaw
-        (1.604, .063, .074, -.004, 2.0),  # jaw line
-        (1.634, .070, .085, -.006, 2.0),
-        (1.666, .074, .090, -.010, 2.0),
-        (1.700, .076, .092, -.014, 2.0),  # eye level
-        (1.734, .077, .091, -.017, 2.0),
-        (1.766, .073, .086, -.019, 2.0),  # forehead
+        (1.604, .064, .074, -.004, 2.0),  # jaw line
+        (1.634, .072, .085, -.006, 2.0),
+        (1.666, .078, .090, -.010, 2.0),
+        (1.700, .082, .092, -.014, 2.0),  # eye level
+        (1.734, .083, .091, -.017, 2.0),
+        (1.766, .078, .086, -.019, 2.0),  # forehead
         (1.796, .062, .074, -.020, 2.0),
         (1.814, .040, .050, -.020, 2.0),
         (1.822, .000, .000, -.020, 2.0),  # crown
@@ -1156,6 +1160,45 @@ def _fork_legs(shell: Shell, gender: str, sk: Skeleton, bottom: list[int]) -> No
         toe = np.stack([shell.points[index] for index in rings[-1]]).mean(axis=0)
         apex = shell.vertex(toe + np.array([0., 0., .010]), f"leg_{side}")
         shell.fan(list(reversed(rings[-1])), apex)
+
+
+def seat_head(sk: Skeleton, points: np.ndarray, region: list[str]) -> np.ndarray:
+    """Move the Head joint so hairstyles and headwear land on this skull.
+
+    Hair and headwear are authored once, in Head-local space, against the
+    reference skull.  This race's skull is its own shape, so measured in that
+    frame it sat too high and too far back, which put a hairstyle's front edge
+    behind the forehead and left the crown bare.  Head is a leaf joint, so
+    moving it moves nothing but the frame those pieces hang in: the mesh does
+    not shift by a millimetre.
+
+    The forward match is made on the scalp band rather than on the whole head,
+    because the frontmost point of a head is its nose and this race's nose
+    projects less than the reference's.  Seating on the nose put the forehead
+    three millimetres proud of a hairstyle that was cut to clear the
+    reference one, and three millimetres of scalp through a hair cap is a bald
+    patch with a hard edge round it.
+
+    Returns the Head-local correction, for reporting.
+    """
+    skull = points[np.asarray(region) == "head"]
+    head = sk.matrix("Head")
+    local = (np.linalg.inv(head) @ np.c_[skull, np.ones(len(skull))].T).T[:, :3]
+    want = sk.contract.head_envelope
+    low, high = want["band"]
+    scalp = local[(local[:, 1] > low) & (local[:, 1] < high)]
+    # Three millimetres of clearance rather than a flush match: a hair cap is
+    # a shell cut to the reference skull, and a scalp that meets it exactly
+    # still breaks through wherever this skull curves differently.
+    clearance = .003
+    shift = np.array([0., float(local[:, 1].max()) - want["crown"] + clearance,
+                      float(scalp[:, 2].max()) - want["front"] + clearance])
+    basis = sk.contract.basis["Head"]
+    sk.world["Head"] = sk.world["Head"] + basis @ shift
+    parent = sk.contract.parent["Head"]
+    sk.local["Head"] = sk.contract.basis[parent].T @ (
+        sk.world["Head"] - sk.world[parent])
+    return shift
 
 
 def build_body(gender: str, sk: Skeleton) -> Shell:
@@ -1886,6 +1929,7 @@ def build_human_player(glb_class, output: Path, gender: str, label: str = "Human
     """Author one Human rig, mesh, wardrobe and material set from nothing."""
     sk = build_skeleton(gender)
     body_points, faces, _, region = finish_body(gender, sk, build_body(gender, sk))
+    head_shift = seat_head(sk, body_points, region)
     normals = vertex_normals(body_points, faces)
     body_uv = assign_uv(gender, sk, body_points, region)
     body_joints, body_weights = bind_weights(sk, body_points, region)
@@ -1973,6 +2017,7 @@ def build_human_player(glb_class, output: Path, gender: str, label: str = "Human
             "joints": len(sk.contract.names), "feature": "none",
             "wardrobe": "skinned", "anatomy": "authored",
             "capeBones": len(CAPE_CHAINS) * CAPE_LINKS,
+            "headSeat": [round(float(value), 5) for value in head_shift],
             "baseBody": "human-scratch",
             "stature": STATURE,
             "legChainScale": round(sk.leg_scale, 4),
