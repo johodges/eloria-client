@@ -102,7 +102,7 @@ func _init() -> void:
 		if parsed is Dictionary:
 			manifest_env_root = parsed as Dictionary
 		if typeof(parsed) == TYPE_DICTIONARY:
-			manifest_env = parsed.get("environment", {})
+			manifest_env = manifest_env_root.get("environment", {})
 	var sealed := str(manifest_env.get("sky", "")) == "none"
 
 	# environment: a plain daylight sky so the shot shows the map, not a mood
@@ -281,6 +281,11 @@ func _init() -> void:
 		await process_frame
 
 	var written := 0
+	# The frames this run actually produced, in view order. `make_comparison`
+	# reads an index.json from whichever capture directory it picks, so a
+	# godot-captures directory without one makes the comparison step fail
+	# outright rather than fall back - the frames are there and unusable.
+	var produced: Array = []
 	for entry in views:
 		var id: String = str(entry.get("id", ""))
 		if only != "" and not id.contains(only):
@@ -289,7 +294,11 @@ func _init() -> void:
 		var target: Array = entry.get("target", [])
 		if eye.size() != 3 or target.size() != 3:
 			continue
-		camera.fov = float(entry.get("fieldOfViewDegrees", 55.0))
+		# The region capture index writes `fieldOfViewDegrees`; the interior
+		# preview writes `fov`. Accept either, or an interior comes back at
+		# the 55-degree default instead of the framing it was authored with.
+		camera.fov = float(entry.get("fieldOfViewDegrees",
+			entry.get("fov", 55.0)))
 		camera.global_position = Vector3(eye[0], eye[1], eye[2])
 		var look := Vector3(target[0], target[1], target[2])
 		if camera.global_position.distance_to(look) > 0.01:
@@ -300,9 +309,28 @@ func _init() -> void:
 		var path := out_dir.path_join(id + ".png")
 		if image.save_png(path) == OK:
 			written += 1
+			var record: Dictionary = (entry as Dictionary).duplicate(true)
+			record["file"] = id + ".png"
+			record["source"] = "godot"
+			record["engine"] = Engine.get_version_info().get("string", "")
+			# The driver actually in use, not the project default: the run is
+			# started with --rendering-driver, so the ProjectSettings value
+			# says gl_compatibility while the frame was drawn with Vulkan.
+			record["renderingDriver"] = RenderingServer.get_current_rendering_driver_name()
+			record["renderingMethod"] = RenderingServer.get_current_rendering_method()
+			produced.append(record)
 			print("[capture] %s -> %s" % [id, path])
 		else:
 			_err("could not save " + path)
+
+	var index_out := out_dir.path_join("index.json")
+	var handle := FileAccess.open(index_out, FileAccess.WRITE)
+	if handle != null:
+		handle.store_string(JSON.stringify(produced, "  ") + "\n")
+		handle.close()
+		print("[capture] wrote %s" % index_out)
+	else:
+		_err("could not write " + index_out)
 
 	print("[capture] wrote %d frames" % written)
 	quit(0)

@@ -1,0 +1,53 @@
+{
+  "nodes": 5250,
+  "meshes": 279,
+  "materials": 27,
+  "images": 74,
+  "textures": 74,
+  "accessors": 1116,
+  "bufferViews": 1190,
+  "uniqueTriangles": 469418,
+  "uniqueVertices": 356459,
+  "glbBytes": 23451316,
+  "instancedTriangles": 1170802,
+  "embeddedTextureBytes": 21181927,
+  "textureMemoryBytesUncompressed": 182452224,
+  "placements": 2653,
+  "collision": {
+    "width": 1152,
+    "height": 1152,
+    "cellMetres": 0.5,
+    "walkableCells": 742630,
+    "blockedCells": 584474,
+    "walkableFraction": 0.5596,
+    "elevatedDecks": 29,
+    "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+    "columnOrder": "server-tile-x (column 0 is the -X western edge)",
+    "nudgedEntries": [
+      {
+        "id": "east-road",
+        "metres": 6.67
+      },
+      {
+        "id": "mirrorhold-berth",
+        "metres": 1.45
+      }
+    ]
+  },
+  "notes": [
+    "surf cards placed: 720",
+    "surf breakers placed: 7",
+    "jetties placed: 8",
+    "city houses placed: 385",
+    "trees placed: 257",
+    "ground dressing placed: 536"
+  ],
+  "lod2": {
+    "glbBytes": 14396044,
+    "nodes": 3888,
+    "uniqueTriangles": 383148,
+    "instancedTriangles": 981744,
+    "sizeReductionPercent": 38.6,
+    "triangleReductionPercent": 16.1
+  }
+}

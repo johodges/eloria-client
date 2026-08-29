@@ -117,14 +117,25 @@
     {
       "id": "westhaven",
       "title": "Westhaven",
-      "sourceSha256": "981babd39d16b44d44023bef406659d255dc697dc5b887db6036c71d14943435",
+      "sourceSha256": "2dd1314aded369e8a7cde2ca8a247fde46193bc2387fb3e8b1d24666a74067a4",
       "conceptViews": 10,
-      "landmarkInstances": 52,
+      "landmarkInstances": 28,
       "terrainHeightRange": [
-        0.0,
-        0.0
+        -18.71,
+        124.83
       ],
-      "water": true
+      "water": true,
+      "status": "production-geometry-materials-population",
+      "serverMap": {
+        "tiles": 96,
+        "arrivalTile": [
+          174,
+          250
+        ]
+      },
+      "uniqueTriangles": 452652,
+      "instancedTriangles": 1137392,
+      "glbBytes": 21598004
     },
     {
       "id": "verdant_stair",

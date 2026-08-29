@@ -151,15 +151,30 @@ def _free_camera(scene, terrain, eye, target, fov, minimum=None):
 
     best = (-1.0, tuple(eye))
     scale = REG.SCALE
-    for back in (0.0, 2.0 * scale, 4.0 * scale, 7.0 * scale, 10.0 * scale,
-                 14.0 * scale, 19.0 * scale):
-        for lateral in (0.0, -3.0 * scale, 3.0 * scale, -6.0 * scale, 6.0 * scale,
-                        -9.0 * scale, 9.0 * scale):
-            for lift in (0.0, 1.5, 3.5, 6.0, 9.0, 13.0):
+    # The search offsets have to be proportional to the shot. At region scale
+    # stepping back 57 m to find an open frame is right; on a macro framed at
+    # three metres it is the difference between the still-life the panel asks
+    # for and a wide shot of the quay with some props in it, which is exactly
+    # what Westhaven's panel 10 kept coming back as. Under twelve metres the
+    # search keeps its job - not standing inside a barrel - on a scale that
+    # cannot destroy the framing.
+    if distance < 12.0:
+        backs = (0.0, 0.4, 0.9)
+        laterals = (0.0, -0.5, 0.5, -1.0, 1.0)
+        lifts = (0.0, 0.25, 0.6)
+    else:
+        backs = (0.0, 2.0 * scale, 4.0 * scale, 7.0 * scale, 10.0 * scale,
+                 14.0 * scale, 19.0 * scale)
+        laterals = (0.0, -3.0 * scale, 3.0 * scale, -6.0 * scale, 6.0 * scale,
+                    -9.0 * scale, 9.0 * scale)
+        lifts = (0.0, 1.5, 3.5, 6.0, 9.0, 13.0)
+    for back in backs:
+        for lateral in laterals:
+            for lift in lifts:
                 candidate = eye + axis * back + side * lateral \
                     + np.array([0.0, lift, 0.0])
                 floor = float(terrain.height_at(candidate[0], candidate[2]))
-                if candidate[1] < floor + 1.2:
+                if candidate[1] < floor + (0.35 if distance < 12.0 else 1.2):
                     candidate[1] = floor + 1.7
                 value = score(candidate)
                 if value > best[0]:
@@ -267,7 +282,15 @@ def main() -> int:
             base = _as_lighting(REGION_LIGHTING.get("day", DAY), DAY)
             lighting = RENDER.Lighting(**{**vars(base), "fog_density": 0.00022,
                                           "fog_height_falloff": 0.0016})
-        placed_eye = eye_xz if eye_h > 20.0 else find_clear(eye_xz)
+        # `find_clear` demands 4.8 m of standing room, which a macro framed at
+        # three metres from a crate can never have: it searches out to 33 m and
+        # returns the most open spot it can find, which is how a still-life
+        # keeps coming back as a wide shot of the quay. Scale its demand to the
+        # shot, the same way the free-camera search below is scaled.
+        shot = math.hypot(eye_xz[0] - target_xz[0], eye_xz[1] - target_xz[1])
+        placed_eye = eye_xz if eye_h > 20.0 else (
+            find_clear(eye_xz, minimum=0.2, reach=2.0) if shot < 12.0
+            else find_clear(eye_xz))
         eye = ground(placed_eye, eye_h)
         target = ground(target_xz, target_h)
         if abs(eye[0] - target[0]) < 0.05 and abs(eye[2] - target[2]) < 0.05:
