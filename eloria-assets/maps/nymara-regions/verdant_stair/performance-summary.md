@@ -9,10 +9,10 @@
   "textures": 86,
   "accessors": 1316,
   "bufferViews": 1402,
-  "uniqueTriangles": 528795,
+  "uniqueTriangles": 525377,
   "uniqueVertices": 385259,
-  "glbBytes": 26862708,
-  "instancedTriangles": 3535401,
+  "glbBytes": 26832716,
+  "instancedTriangles": 3531983,
   "embeddedTextureBytes": 7601895,
   "placements": 10895,
   "collision": {
@@ -44,14 +44,14 @@
     "harvestable Lantern Cap: server tile [282, 99] is not standable on the built terrain; marker moved 6 m to [288, 99]",
     "interactive crafting_station: server tile [204, 186] is not standable on the built terrain; marker moved 6 m to [210, 186]"
   ],
-  "trianglesPerSquareMetre": 10.69,
+  "trianglesPerSquareMetre": 10.68,
   "lod2": {
-    "glbBytes": 16551540,
+    "glbBytes": 16521552,
     "nodes": 4092,
-    "uniqueTriangles": 465077,
-    "instancedTriangles": 1148735,
+    "uniqueTriangles": 461659,
+    "instancedTriangles": 1145317,
     "sizeReductionPercent": 38.4,
-    "triangleReductionPercent": 67.5
+    "triangleReductionPercent": 67.6
   }
 }
 ```

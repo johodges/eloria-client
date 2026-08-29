@@ -2856,10 +2856,10 @@
     "textures": 39,
     "accessors": 916,
     "bufferViews": 955,
-    "uniqueTriangles": 444452,
+    "uniqueTriangles": 442048,
     "uniqueVertices": 382228,
-    "glbBytes": 19520164,
-    "instancedTriangles": 601820,
+    "glbBytes": 19505740,
+    "instancedTriangles": 599416,
     "embeddedTextureBytes": 4252666,
     "textureMemoryBytesUncompressed": 31457280,
     "placements": 490,
@@ -2885,7 +2885,13 @@
       "west-road moved 2.9 m onto walkable ground",
       "geode-hollow-mouth moved 8.1 m onto walkable ground",
       "storm-barrow-stair moved 5.0 m onto walkable ground"
-    ]
+    ],
+    "lod2": {
+      "glbBytes": 14843024,
+      "nodes": 306,
+      "uniqueTriangles": 411738,
+      "instancedTriangles": 417350
+    }
   },
   "sources": [
     {

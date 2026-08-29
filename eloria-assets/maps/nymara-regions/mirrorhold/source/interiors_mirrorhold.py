@@ -677,6 +677,10 @@ def _offset_interior(source: Interior, dx: float, dz: float, prefix: str,
         target.group.add(part.translate(dx, 0.0, dz))
     for part in source.group.walk_parts:
         target.group.add_walk(part.translate(dx, 0.0, dz))
+    # Lids travel too. This walks the buckets rather than adding the group, so
+    # a bucket left out here is silently dropped from the combined map.
+    for part in source.group.overhead_parts:
+        target.group.add_overhead(part.translate(dx, 0.0, dz))
 
     def key(name: str) -> str:
         return f"{prefix}_{name}"

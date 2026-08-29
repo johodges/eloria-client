@@ -208,7 +208,8 @@ func _run() -> void:
 	var lower_hud: Control = main.get_node("GameView/Quickbar") as Control
 	var chat_panel: Control = main.get_node("GameView/ChatPanel") as Control
 	var right_stats: Control = main.get_node("GameView/ResourceHud") as Control
-	var right_quickbar: Control = main.get_node("GameView/ItemSpellQuickbar") as Control
+	var right_quickbar: Control = main.get_node("GameView/ItemQuickbar") as Control
+	var left_quickspells: Control = main.get_node("GameView/SpellQuickbar") as Control
 	var stats_panel: Control = main.get_node("GameView/StatsPanel") as Control
 	var inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
 	var stats_tabs: TabContainer = main.get_node(
@@ -264,16 +265,15 @@ func _run() -> void:
 		and chat_panel.anchor_bottom < 0.3
 		and chat_input.offset_bottom <= lower_hud.offset_top,
 		"legacy chat tabs sit at upper left while entry remains above the lower rail")
-	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0,
-		"stats and item/spell quickbar occupy the right HUD rail")
+	_expect(right_stats.anchor_left == 1.0 and right_quickbar.anchor_left == 1.0
+		and left_quickspells.anchor_left == 0.0 and left_quickspells.anchor_right == 0.0
+		and left_quickspells.offset_left >= 0.0,
+		"items keep the right HUD rail while spells sit on the left, as the legacy client has them")
 	var item_slots: GridContainer = main.get_node("%ItemSlots") as GridContainer
 	var spell_slots: GridContainer = main.get_node("%SpellSlots") as GridContainer
-	_expect(item_slots.columns == 1 and item_slots.visible and not spell_slots.visible,
-		"right rail presents compact single-column item and spell modes")
-	main.call("_on_quickbar_mode_pressed", "spells")
-	_expect(not item_slots.visible and spell_slots.visible,
-		"right rail switches between item and spell quick slots")
-	main.call("_on_quickbar_mode_pressed", "items")
+	_expect(item_slots.columns == 1 and spell_slots.columns == 1
+		and item_slots.visible and spell_slots.visible,
+		"both quick slot columns stay visible without a mode toggle")
 	var clock_face: TextureRect = main.get_node("GameView/ClockFrame/ClockFace") as TextureRect
 	var compass_face: TextureRect = main.get_node("GameView/CompassFrame/CompassFace") as TextureRect
 	_expect(clock_face.texture != null and compass_face.texture != null,
@@ -380,11 +380,18 @@ func _run() -> void:
 			"bottom HUD exposes %s" % meter_path.get_file())
 	var actor_menu: Control = main.get_node("GameView/ActorHudMenu") as Control
 	main.call("_open_actor_hud_menu", Vector2(640.0, 360.0))
-	_expect(actor_menu.visible and main.get_node("GameView/ActorHudMenu/Options/ShowHealth") is CheckButton
-		and main.get_node("GameView/ActorHudMenu/Options/ShowEther") is CheckButton
-		and main.get_node("GameView/ActorHudMenu/Options/ShowFood") is CheckButton
-		and main.get_node("GameView/ActorHudMenu/Options/ShowAction") is CheckButton,
-		"character context menu exposes all overhead bar-and-number options")
+	var banner_menu_entries: Array[String] = ["ShowNames",
+		"ShowHealthBar", "ShowHealthNumbers", "ShowEtherBar", "ShowEtherNumbers",
+		"ShowFoodBar", "ShowFoodNumbers", "ShowActionBar", "ShowActionNumbers",
+		"InstanceMode", "SpeechBubbles", "BannerBackground", "SitLock",
+		"RangingLock", "DisableMenu"]
+	var banner_menu_complete: bool = actor_menu.visible
+	for entry_name: String in banner_menu_entries:
+		if not (main.get_node_or_null(
+				"GameView/ActorHudMenu/Options/" + entry_name) is CheckBox):
+			banner_menu_complete = false
+	_expect(banner_menu_complete,
+		"banner context menu carries the Eternal Lands option set")
 	app_state_inventory.set("stats", {"health": 72, "max_health": 100,
 		"ether": 33, "max_ether": 50, "action_points": 18,
 		"max_action_points": 30, "food": 42, "carried": 205, "capacity": 320,
@@ -397,10 +404,18 @@ func _run() -> void:
 	var overhead_health_label: Label = main.get_node(
 		"GameView/ActorResourceOverlay/Rows/HealthRow/Number") as Label
 	var overhead_fill: StyleBoxFlat = overhead_health_bar.get_theme_stylebox("fill") as StyleBoxFlat
-	_expect(overhead_fill != null and overhead_fill.bg_color.r > overhead_fill.bg_color.g
-		and overhead_health_label.get_theme_color("font_color").r
-			> overhead_health_label.get_theme_color("font_color").g,
-		"overhead health bar and numbers render red")
+	var overhead_background: StyleBoxFlat = overhead_health_bar.get_theme_stylebox(
+		"background") as StyleBoxFlat
+	# 72/100 health sits in the green half of the EL ramp; the bar keeps only a
+	# black frame so the world shows through whatever health is missing.
+	_expect(overhead_fill != null and overhead_fill.bg_color.g > overhead_fill.bg_color.r
+		and overhead_health_label.get_theme_color("font_color").g
+			> overhead_health_label.get_theme_color("font_color").r
+		and overhead_background != null and overhead_background.bg_color.a == 0.0,
+		"overhead health bar follows the Eternal Lands drain colour")
+	var drained: Color = main.call("_banner_colour", "health", 0.15)
+	_expect(drained.r > drained.g,
+		"the health ramp turns red as it empties")
 	_expect(is_equal_approx((main.get_node(
 		"GameView/Quickbar/QuickRows/BottomMeters/HealthMeter/HealthBottom") as ProgressBar).value, 72.0)
 		and is_equal_approx((main.get_node(
@@ -418,15 +433,76 @@ func _run() -> void:
 		and int(floating_feedback[0].amount) == 12
 		and floating_feedback[1].kind == "level",
 		"partial experience and level updates request EL-style floating feedback")
-	var show_ether: CheckButton = main.get_node(
-		"GameView/ActorHudMenu/Options/ShowEther") as CheckButton
-	show_ether.button_pressed = false
-	main.call("_on_overhead_option_toggled", false)
-	_expect(not (main.get_node("GameView/ActorResourceOverlay/Rows/EtherRow") as Control).visible,
-		"character menu independently toggles the overhead ethereality copy")
-	show_ether.button_pressed = true
-	main.call("_on_overhead_option_toggled", true)
+	var ether_row: Control = main.get_node(
+		"GameView/ActorResourceOverlay/Rows/EtherRow") as Control
+	var ether_bar_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/ShowEtherBar") as CheckBox
+	var ether_numbers_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/ShowEtherNumbers") as CheckBox
+	var banner_overlay: Control = main.get_node("GameView/ActorResourceOverlay") as Control
+	var full_banner_height: float = banner_overlay.size.y
+	ether_bar_box.set_pressed_no_signal(false)
+	main.call("_apply_banner_options")
+	_expect(ether_row.visible
+		and not (ether_row.get_node("Bar") as Control).visible
+		and (ether_row.get_node("Number") as Control).visible,
+		"the ether bar switch leaves the ether numbers behind")
+	ether_numbers_box.set_pressed_no_signal(false)
+	main.call("_apply_banner_options")
+	_expect(not ether_row.visible and banner_overlay.size.y < full_banner_height,
+		"a row that is fully switched off shrinks the banner")
+	ether_bar_box.set_pressed_no_signal(true)
+	ether_numbers_box.set_pressed_no_signal(true)
+	main.call("_apply_banner_options")
+	_expect(is_equal_approx(banner_overlay.size.y, full_banner_height),
+		"restoring the row grows the banner back")
+	var banner_background_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/BannerBackground") as CheckBox
+	banner_background_box.set_pressed_no_signal(true)
+	main.call("_apply_banner_options")
+	var banner_panel: StyleBoxFlat = banner_overlay.get_theme_stylebox("panel") as StyleBoxFlat
+	banner_background_box.set_pressed_no_signal(false)
+	main.call("_apply_banner_options")
+	_expect(banner_panel != null and banner_panel.bg_color.a > 0.0
+		and banner_overlay.get_theme_stylebox("panel") is StyleBoxEmpty,
+		"the banner background switch swaps the panel behind the banner")
+	var disable_menu_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/DisableMenu") as CheckBox
+	disable_menu_box.set_pressed_no_signal(true)
+	main.call("_apply_banner_options")
+	main.call("_open_actor_hud_menu", Vector2(640.0, 360.0))
+	var stayed_closed: bool = not actor_menu.visible
+	main.call("_on_banner_menu_enabled_toggled", true)
+	main.call("_open_actor_hud_menu", Vector2(640.0, 360.0))
+	_expect(stayed_closed and not disable_menu_box.button_pressed and actor_menu.visible,
+		"Disable This Menu is honoured and reversible from HUD settings")
 	actor_menu.hide()
+	var sit_lock_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/SitLock") as CheckBox
+	var ranging_lock_box: CheckBox = main.get_node(
+		"GameView/ActorHudMenu/Options/RangingLock") as CheckBox
+	var previous_actors: Dictionary = app_state_inventory.get("actors") as Dictionary
+	var previous_local_id: int = int(app_state_inventory.get("local_actor_id"))
+	app_state_inventory.set("local_actor_id", 91)
+	app_state_inventory.set("actors", {91: {"actor_id": 91, "x": 10, "y": 20,
+		"sitting": true, "appearance": {"weapon": 0}}})
+	sit_lock_box.set_pressed_no_signal(true)
+	var sit_locked: bool = bool(main.call("_movement_locked", false))
+	var ctrl_overrides: bool = not bool(main.call("_movement_locked", true))
+	sit_lock_box.set_pressed_no_signal(false)
+	_expect(sit_locked and ctrl_overrides,
+		"Sit Lock holds a seated character in place until Ctrl is held")
+	ranging_lock_box.set_pressed_no_signal(true)
+	var unarmed_free: bool = not bool(main.call("_movement_locked", false))
+	# client_serv.h BOW_RECURVE, inside the ranged span Ranging Lock covers.
+	app_state_inventory.set("actors", {91: {"actor_id": 91, "x": 10, "y": 20,
+		"sitting": false, "appearance": {"weapon": 66}}})
+	var bow_locked: bool = bool(main.call("_movement_locked", false))
+	ranging_lock_box.set_pressed_no_signal(false)
+	_expect(unarmed_free and bow_locked,
+		"Ranging Lock only holds a character carrying a ranged weapon")
+	app_state_inventory.set("actors", previous_actors)
+	app_state_inventory.set("local_actor_id", previous_local_id)
 	_expect(not stats_panel.visible, "statistics window starts closed")
 	main.call("_on_stats_button_pressed")
 	_expect(stats_panel.visible and not stats_panel.get_global_rect().intersects(
@@ -759,22 +835,30 @@ func _run() -> void:
 		PackedByteArray([1, 3, 0, 5, 0, 0, 0, 2]))
 	main.call("_sync_ground_bag")
 	var ground_bag_panel: Control = main.get_node("GameView/GroundBagPanel") as Control
-	var ground_bag_items: ItemList = main.get_node(
-		"GameView/GroundBagPanel/Content/Columns/Ground/GroundBagItems") as ItemList
-	_expect(ground_bag_panel.visible and ground_bag_items.item_count == 1
-		and root.get_visible_rect().encloses(ground_bag_panel.get_global_rect()),
-		"authoritative bag contents open within the reference viewport")
-	# Asking what is on the ground. The bag row carries an image id and a
-	# quantity, so the Look action is the only way to learn what it is.
-	var ground_look: Button = main.get_node(
-		"GameView/GroundBagPanel/Content/Actions/GroundBagLook") as Button
-	main.call("_sync_ground_bag_actions")
-	_expect(ground_look.disabled,
-		"the ground Look action needs something selected first")
-	ground_bag_items.select(0)
-	main.call("_on_ground_bag_item_selected", 0)
-	_expect(not ground_look.disabled,
-		"selecting a ground item offers to ask what it is")
+	var ground_bag_slots: Array = main.get("ground_bag_slot_buttons") as Array
+	var filled_bag_slots: int = 0
+	for raw_slot_button: Variant in ground_bag_slots:
+		if int((raw_slot_button as Button).get_meta("bag_position", -1)) >= 0:
+			filled_bag_slots += 1
+	var bag_inventory_panel: Control = main.get_node("GameView/InventoryPanel") as Control
+	_expect(ground_bag_panel.visible and filled_bag_slots == 1
+		and bag_inventory_panel.visible
+		and not ground_bag_panel.get_global_rect().intersects(
+			bag_inventory_panel.get_global_rect())
+		and root.get_visible_rect().encloses(ground_bag_panel.get_global_rect())
+		and root.get_visible_rect().encloses(bag_inventory_panel.get_global_rect()),
+		"the bag opens beside the inventory, both inside the reference viewport")
+	# Asking what is on the ground. The bag slot carries an image id and a
+	# quantity, so a right click is the only way to learn what it is.
+	_expect(int((ground_bag_slots[0] as Button).get_meta("bag_position", -1)) == 2
+		and not (ground_bag_slots[0] as Button).disabled
+		and int((ground_bag_slots[1] as Button).get_meta("bag_position", -1)) == -1
+		and (ground_bag_slots[1] as Button).disabled,
+		"filled bag slots carry their authoritative position and empty ones stay inert")
+	_expect(int(main.call("_ground_bag_slot_position", 0)) == 2
+		and int(main.call("_ground_bag_slot_position", 1)) == -1
+		and int(main.call("_ground_bag_slot_position", 99)) == -1,
+		"the ground Look target resolves only for a filled slot")
 	app_state_inventory.call("_on_packet", 24,
 		PackedByteArray([4, 0, 9, 0, 0, 0, 5]))
 	var ground_bag_state: Dictionary = app_state_inventory.get("ground_bag") as Dictionary
@@ -795,6 +879,7 @@ func _run() -> void:
 		"destroyed bag removes its world marker and closes its matching window")
 	app_state_inventory.set("actors", {})
 	app_state_inventory.set("selected_actor_id", -1)
+	inventory_panel.hide()
 	main.call("_on_inventory_button_pressed")
 	_expect(inventory_panel.visible and not stats_panel.visible,
 		"inventory action opens the window and centrally closes statistics")
@@ -807,14 +892,14 @@ func _run() -> void:
 	var first_inventory_slot: Button = main.get_node(
 		"GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Scroll/InventoryGrid").get_child(0) as Button
 	var first_quick_slot: Button = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/ItemSlots/Slot1") as Button
+		"GameView/ItemQuickbar/ItemSlots/Slot1") as Button
 	var first_equipment_slot: Button = main.get_node(
 		"GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn/EquipmentGrid").get_child(0) as Button
 	var first_quantity: Label = first_inventory_slot.get_node("Quantity") as Label
 	_expect(first_inventory_slot.text.is_empty() and first_quantity.text == "9"
 		and first_quantity.anchor_left == 1.0 and first_quantity.anchor_top == 1.0
 		and first_inventory_slot.icon != null and not first_inventory_slot.disabled
-		and first_inventory_slot.custom_minimum_size.x >= 64.0,
+		and first_inventory_slot.custom_minimum_size.x >= 40.0,
 		"large inventory icon uses an overlaid bottom-right quantity")
 	_expect(first_quick_slot.text.is_empty() and first_quick_slot.icon != null
 		and first_quick_slot.tooltip_text.contains("Quantity: 9")
@@ -822,7 +907,7 @@ func _run() -> void:
 		"usable inventory slot populates the icon-only vertical quick slot")
 	_expect(first_equipment_slot.text.is_empty() and first_equipment_slot.icon != null
 		and not first_equipment_slot.disabled
-		and first_equipment_slot.custom_minimum_size.x >= 64.0,
+		and first_equipment_slot.custom_minimum_size.x >= 40.0,
 		"large equipment icon renders without a slot or quantity number")
 	main.set("selected_inventory_slot", 0)
 	main.call("_sync_inventory")
@@ -840,6 +925,120 @@ func _run() -> void:
 	main.call("_sync_inventory")
 	_expect(not empty_inventory_slot.disabled,
 		"selected equipment can move to a chosen empty inventory slot")
+	# Carrying an item on the cursor, the way the legacy client moves things.
+	# The placing click is an authoritative move, so these assertions read the
+	# client-side state machine rather than the wire.
+	main.set("selected_inventory_slot", -1)
+	main.set("_interaction_mode", "walk")
+	app_state_inventory.set("inventory", {0: {
+		"image_id": 3, "quantity": 9, "slot": 0, "flags": 12,
+		"inventory_usable": true, "stackable": true}, 36: {
+		"image_id": 8, "quantity": 1, "slot": 36, "flags": 0,
+		"inventory_usable": false, "stackable": false}})
+	main.call("_sync_inventory")
+	var carried: TextureRect = main.get_node("GameView/CarriedItem") as TextureRect
+	var carried_quantity: Label = carried.get_node("Quantity") as Label
+	main.call("_on_inventory_slot_pressed", 0)
+	_expect(int(main.get("_carried_slot")) == 0 and carried.visible
+		and carried.texture != null and carried_quantity.text == "9",
+		"walk mode lifts a clicked backpack item onto the cursor")
+	main.call("_sync_inventory")
+	_expect(not empty_inventory_slot.disabled and not empty_equipment_slot.disabled,
+		"a carried item makes every empty inventory and wear slot a target")
+	main.call("_on_inventory_slot_pressed", 0)
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"clicking the slot it came from puts a carried item back")
+	main.call("_on_inventory_slot_pressed", 0)
+	main.call("_on_equipment_slot_pressed", 37)
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"placing a carried backpack item on a wear slot equips and clears the cursor")
+	main.call("_on_equipment_slot_pressed", 36)
+	_expect(int(main.get("_carried_slot")) == 36 and carried.visible
+		and carried_quantity.text.is_empty(),
+		"equipped items lift too, and a single item shows no quantity")
+	main.call("_on_inventory_slot_pressed", 1)
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"placing a carried equipped item in the backpack unequips it")
+	main.call("_on_inventory_slot_pressed", 0)
+	_expect(int(main.get("_carried_slot")) == 0, "item back on the cursor to be dropped")
+	main.call("_drop_carry")
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"dropping a carried item to the world clears the cursor")
+	main.call("_on_inventory_slot_pressed", 0)
+	main.call("_cancel_carry")
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"cancelling returns a carried item without moving it")
+	# A stack the server empties underneath the cursor must not stay attached.
+	main.call("_on_inventory_slot_pressed", 0)
+	app_state_inventory.set("inventory", {36: {
+		"image_id": 8, "quantity": 1, "slot": 36, "flags": 0}})
+	main.call("_update_carried_item")
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
+		"a carried slot the server empties drops off the cursor")
+	app_state_inventory.set("inventory", {0: {
+		"image_id": 3, "quantity": 9, "slot": 0, "flags": 12,
+		"inventory_usable": true, "stackable": true}, 36: {
+		"image_id": 8, "quantity": 1, "slot": 36, "flags": 0}})
+	main.set("_interaction_mode", "attack")
+	main.set("selected_inventory_slot", -1)
+	main.call("_on_inventory_slot_pressed", 0)
+	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible
+		and int(main.get("selected_inventory_slot")) == 0,
+		"outside walk mode a click still only selects the item")
+	main.set("_interaction_mode", "walk")
+	main.call("_cancel_carry")
+	# The six quantity boxes along the bottom, as the legacy client has them.
+	var quantity_bar: HBoxContainer = main.get_node(
+		"GameView/InventoryPanel/Content/InventoryQuantityBar") as HBoxContainer
+	var quantity_boxes: Array = main.get("inventory_quantity_buttons") as Array
+	_expect(quantity_bar.get_child_count() == 6 and quantity_boxes.size() == 6
+		and (quantity_boxes[0] as Button).text == "1"
+		and (quantity_boxes[1] as Button).text == "5"
+		and (quantity_boxes[5] as Button).text == "100",
+		"the inventory carries six quantity boxes with the legacy defaults")
+	_expect((quantity_boxes[0] as Button).button_pressed
+		and int(main.call("_selected_quantity")) == 1,
+		"the first quantity box starts selected")
+	main.call("_on_quantity_box_pressed", 2)
+	_expect(int(main.call("_selected_quantity")) == 10
+		and (quantity_boxes[2] as Button).button_pressed
+		and not (quantity_boxes[0] as Button).button_pressed,
+		"clicking a quantity box selects it for every later drop and pick-up")
+	var quantity_edit: LineEdit = main.get_node(
+		"GameView/InventoryPanel/Content/InventoryQuantityEdit") as LineEdit
+	main.call("_begin_quantity_edit", 3)
+	_expect(quantity_edit.visible and quantity_edit.text == "20",
+		"right clicking a quantity box opens it for editing")
+	quantity_edit.text = "42"
+	main.call("_commit_quantity_edit")
+	_expect(int(main.call("_selected_quantity")) == 42
+		and (quantity_boxes[3] as Button).text == "42"
+		and not quantity_edit.visible,
+		"an edited quantity is kept and becomes the selected one")
+	main.call("_begin_quantity_edit", 3)
+	quantity_edit.text = ""
+	main.call("_commit_quantity_edit")
+	_expect(int(main.call("_selected_quantity")) == 20
+		and (quantity_boxes[3] as Button).text == "20",
+		"clearing a quantity box restores its default rather than leaving zero")
+	# Pick-ups and drops clamp to what is actually there.
+	main.call("_on_quantity_box_pressed", 5)
+	app_state_inventory.set("inventory", {0: {
+		"image_id": 3, "quantity": 9, "slot": 0, "flags": 12,
+		"inventory_usable": true, "stackable": true}})
+	main.set("selected_inventory_slot", 0)
+	main.call("_sync_ground_bag_actions")
+	var bag_drop_button: Button = main.get_node(
+		"GameView/GroundBagPanel/Content/Actions/GroundBagDrop") as Button
+	_expect(bag_drop_button.tooltip_text.contains("Drop 9 of the 9"),
+		"a quantity larger than the stack drops only what is there: "
+		+ bag_drop_button.tooltip_text)
+	main.call("_on_quantity_box_pressed", 1)
+	main.call("_sync_ground_bag_actions")
+	_expect(bag_drop_button.tooltip_text.contains("Drop 5 of the 9"),
+		"a quantity smaller than the stack drops exactly that many: "
+		+ bag_drop_button.tooltip_text)
+	main.call("_on_quantity_box_pressed", 0)
 	app_state_inventory.set("inventory_cooldowns", {0: {
 		"maximum_msec": 30000, "end_msec": Time.get_ticks_msec() + 12000}})
 	main.call("_sync_quick_slots")
@@ -857,7 +1056,7 @@ func _run() -> void:
 		"image_id": 59, "quantity": 1, "slot": 0, "flags": 6}})
 	main.call("_sync_spells")
 	var first_spell_slot: Button = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/SpellSlots/Spell1") as Button
+		"GameView/SpellQuickbar/SpellContent/SpellSlots/Spell1") as Button
 	_expect(not first_spell_slot.disabled,
 		"owned castable spell is enabled; tooltip=" + first_spell_slot.tooltip_text)
 	_expect(first_spell_slot.icon != null, "owned castable spell has its legacy icon")
@@ -1471,11 +1670,11 @@ func _run() -> void:
 	# Spell power. Both the preferred power and the ceiling are the server's;
 	# the client asks for a power and never works a limit out from a level.
 	var power_value: Label = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerValue") as Label
+		"GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerValue") as Label
 	var power_up: Button = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerUp") as Button
+		"GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerUp") as Button
 	var power_down: Button = main.get_node(
-		"GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerDown") as Button
+		"GameView/SpellQuickbar/SpellContent/SpellControls/SpellPowerDown") as Button
 	main.call("_sync_spells")
 	await process_frame
 	_expect(power_value.text == "P1" and power_up.disabled and power_down.disabled,

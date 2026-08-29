@@ -30,6 +30,7 @@ extends Control
 # Godot's global class-name cache -- that cache is a build artifact and is
 # stale in a working copy until the editor next scans the project.
 const InteriorCutawayScript := preload("res://src/world/interior_cutaway.gd")
+const OccluderFadeScript := preload("res://src/world/occluder_fade.gd")
 const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
 const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
@@ -40,6 +41,7 @@ const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
 const ReferenceWindowScript := preload("res://src/ui/reference_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
+var occluder_fade: RefCounted = OccluderFadeScript.new()
 var invasion_assistant_window
 var extension_windows: Control
 @onready var gameplay_camera: Camera3D = %Camera
@@ -103,10 +105,7 @@ var map_light_root: Node3D
 @onready var overhead_ether_row: HBoxContainer = %EtherRow
 @onready var overhead_food_row: HBoxContainer = %FoodRow
 @onready var overhead_action_row: HBoxContainer = %ActionRow
-@onready var show_overhead_health: CheckButton = %ShowHealth
-@onready var show_overhead_ether: CheckButton = %ShowEther
-@onready var show_overhead_food: CheckButton = %ShowFood
-@onready var show_overhead_action: CheckButton = %ShowAction
+@onready var banner_menu_enabled: CheckButton = %BannerMenuEnabled
 @onready var stats_panel: Control = %StatsPanel
 @onready var stats_text: RichTextLabel = %StatsText
 @onready var stats_tabs: TabContainer = %StatsTabs
@@ -170,12 +169,12 @@ var map_light_root: Node3D
 @onready var storage_withdraw_button: Button = %StorageWithdraw
 @onready var storage_inspect_button: Button = %StorageInspect
 @onready var ground_bag_panel: Control = %GroundBagPanel
-@onready var ground_bag_items: ItemList = %GroundBagItems
-@onready var ground_bag_inventory: ItemList = %GroundBagInventory
-@onready var ground_bag_quantity: SpinBox = %GroundBagQuantity
-@onready var ground_bag_pick_button: Button = %GroundBagPick
+@onready var inventory_quantity_bar: HBoxContainer = %InventoryQuantityBar
+@onready var inventory_quantity_edit: LineEdit = %InventoryQuantityEdit
+@onready var carried_item: TextureRect = %CarriedItem
+@onready var ground_bag_header: Control = %GroundBagHeader
+@onready var ground_bag_grid: GridContainer = %GroundBagGrid
 @onready var ground_bag_drop_button: Button = %GroundBagDrop
-@onready var ground_bag_look_button: Button = %GroundBagLook
 @onready var knowledge_list: ItemList = %KnowledgeList
 @onready var knowledge_detail: RichTextLabel = %KnowledgeDetail
 @onready var knowledge_known_only: CheckBox = %KnowledgeKnownOnly
@@ -358,6 +357,19 @@ var _keyboard_goal_tile := Vector2i(-99999, -99999)
 var _keyboard_refresh_msec := 0
 var _ground_bag_get_all_requested_msec := -1
 var _ground_bag_get_all_bag_id := -1
+## The inventory slot riding on the cursor in walk mode, or -1. Eternal Lands
+## picks an item up on the first click and puts it down on the second; the
+## slot number is the whole of the state, because the item itself never leaves
+## the server's inventory until the placing click is answered.
+var _carried_slot := -1
+var _inventory_quantities: Array[int] = INVENTORY_QUANTITY_DEFAULTS.duplicate()
+var _selected_quantity_box := 0
+var _editing_quantity_box := -1
+var inventory_quantity_buttons: Array[Button] = []
+var ground_bag_slot_buttons: Array[Button] = []
+var ground_bag_quantity_labels: Array[Label] = []
+var _ground_bag_dragging := false
+var _ground_bag_drag_offset := Vector2.ZERO
 var _selected_counter_category := ""
 var _right_mouse_down := false
 var _right_mouse_dragged := false
@@ -387,6 +399,9 @@ var _pending_floating_feedback: Array[Dictionary] = []
 var _floating_feedback_flush_queued := false
 var _active_floating_labels: Array[Label] = []
 var _last_skill_experience_msec := -100000
+## Config key -> CheckBox on the right-click banner menu, filled in _ready().
+var _banner_option_boxes: Dictionary = {}
+var _banner_background_style: StyleBoxFlat
 
 const FLOATING_FEEDBACK_BASE_OFFSET := 78.0
 const FLOATING_FEEDBACK_ROW_HEIGHT := 21.0
@@ -401,12 +416,58 @@ const HUD_SKILLS: Array[String] = [
 	"summoning", "manufacturing", "crafting", "engineering", "tailoring",
 	"ranging", "overall"]
 
+## Eternal Lands drives its overhead banner from the right-click menu built in
+## gamewin.c, and every entry there is its own switch. The menu keeps EL's
+## wording and order, with the action-point pair Eloria adds appended to the
+## bar/number block. Keys are what eloria_hud.cfg stores.
+const BANNER_OPTION_NODES := {
+	"show_names": "ShowNames",
+	"health_bar": "ShowHealthBar", "health_numbers": "ShowHealthNumbers",
+	"ether_bar": "ShowEtherBar", "ether_numbers": "ShowEtherNumbers",
+	"food_bar": "ShowFoodBar", "food_numbers": "ShowFoodNumbers",
+	"action_bar": "ShowActionBar", "action_numbers": "ShowActionNumbers",
+	"instance_mode": "InstanceMode", "speech_bubbles": "SpeechBubbles",
+	"banner_background": "BannerBackground", "sit_lock": "SitLock",
+	"ranging_lock": "RangingLock", "menu_disabled": "DisableMenu"}
+
+const BANNER_OPTION_DEFAULTS := {
+	"show_names": true,
+	"health_bar": true, "health_numbers": true,
+	"ether_bar": true, "ether_numbers": true,
+	"food_bar": true, "food_numbers": true,
+	"action_bar": true, "action_numbers": true,
+	"instance_mode": false, "speech_bubbles": false,
+	"banner_background": false, "sit_lock": false,
+	"ranging_lock": false, "menu_disabled": false}
+
+## Row name, the switch that shows its bar, the switch that shows its numbers,
+## and the colour ramp actors.c uses for it.
+const BANNER_ROWS := [
+	["HealthRow", "health_bar", "health_numbers", "health"],
+	["EtherRow", "ether_bar", "ether_numbers", "ether"],
+	["FoodRow", "food_bar", "food_numbers", "food"],
+	["ActionRow", "action_bar", "action_numbers", "action"]]
+
+const BANNER_BAR_MIN_WIDTH := 46.0
+## client_serv.h: BOW_LONG through BOW_CROSS are the ranged weapon visuals, and
+## gamewin.c gates Ranging Lock on exactly that span.
+const RANGE_WEAPON_FIRST := 64
+const RANGE_WEAPON_LAST := 68
+## interface.c defaults instance_mode_banner_height to five banner lines.
+const BANNER_INSTANCE_LIFT_ROWS := 5.0
+const SPEECH_BUBBLE_MSEC := 6000
+
 const CHAT_FADE_DELAY_MSEC := 7000
 const CHAT_FADE_DURATION_MSEC := 1800
 const SETTINGS_PATH := "user://eloria_hud.cfg"
 const KEYBOARD_LOOKAHEAD_TILES := 4
 const KEYBOARD_REFRESH_MSEC := 360
 const GROUND_BAG_GET_ALL_TIMEOUT_MSEC := 1000
+const GROUND_BAG_SLOT_COUNT := 20
+## The legacy client's six editable quantity boxes and their defaults. The
+## selected one is the amount every drop and every pick-up uses.
+const INVENTORY_QUANTITY_DEFAULTS: Array[int] = [1, 5, 10, 20, 50, 100]
+const INVENTORY_QUANTITY_MAX := 99999
 const MINIMAP_DRAG_BORDER := 54.0
 const UI_SCALE_MIN := 0.5
 const UI_SCALE_MAX := 1.5
@@ -534,6 +595,7 @@ func _ready() -> void:
 			int(option.get("actorType", 1)))
 	_update_preview_camera()
 	_apply_eloria_art()
+	_configure_banner_menu()
 	_apply_eloria_theme()
 	_configure_window_layers()
 	_configure_cartography()
@@ -542,6 +604,8 @@ func _ready() -> void:
 	_configure_minimap_menu()
 	_build_inventory_slots()
 	_build_equipment_slots()
+	_build_ground_bag_slots()
+	_build_inventory_quantity_boxes()
 	_bind_quick_slots()
 	_bind_spell_slots()
 	_reset_trade_destinations()
@@ -551,8 +615,7 @@ func _ready() -> void:
 	storage_categories.item_selected.connect(_on_storage_category_selected)
 	storage_items.item_selected.connect(_on_storage_item_selected)
 	storage_inventory.item_selected.connect(_on_storage_inventory_selected)
-	ground_bag_items.item_selected.connect(_on_ground_bag_item_selected)
-	ground_bag_inventory.item_selected.connect(_on_ground_bag_inventory_selected)
+	ground_bag_header.gui_input.connect(_on_ground_bag_header_gui_input)
 	knowledge_list.item_selected.connect(_on_knowledge_selected)
 	knowledge_known_only.toggled.connect(_on_knowledge_filter_toggled)
 	stats_tabs.tab_changed.connect(_on_stats_tab_changed)
@@ -561,22 +624,15 @@ func _ready() -> void:
 	session_reset.pressed.connect(_reset_session_tracking)
 	manufacturing_list.item_selected.connect(_on_manufacturing_selected)
 	manufacturing_filter.text_changed.connect(_on_manufacturing_filter_changed)
-	show_overhead_health.toggled.connect(_on_overhead_option_toggled)
-	show_overhead_ether.toggled.connect(_on_overhead_option_toggled)
-	show_overhead_food.toggled.connect(_on_overhead_option_toggled)
-	show_overhead_action.toggled.connect(_on_overhead_option_toggled)
-	%Close.pressed.connect(func() -> void: actor_hud_menu.hide())
+	banner_menu_enabled.toggled.connect(_on_banner_menu_enabled_toggled)
 	$GameView/ChatTabs/All.pressed.connect(_on_chat_tab_pressed.bind("all"))
 	$GameView/ChatTabs/History.pressed.connect(_on_chat_tab_pressed.bind("history"))
 	$GameView/ChatTabs/Options.pressed.connect(_on_options_pressed)
-	%ItemMode.pressed.connect(_on_quickbar_mode_pressed.bind("items"))
-	%SpellMode.pressed.connect(_on_quickbar_mode_pressed.bind("spells"))
 	_build_hud_layout_menu()
 	_load_hud_layout()
 	_connect_hud_context_inputs(%Quickbar)
 	get_viewport().size_changed.connect(_on_window_size_changed)
 	call_deferred("_on_window_size_changed")
-	_on_quickbar_mode_pressed("items")
 	for channel_index: int in range(3):
 		var channel_button: Button = get_node(
 			"GameView/ChatTabs/Channel%d" % (channel_index + 1)) as Button
@@ -629,12 +685,14 @@ func _bind_shared_world() -> void:
 	_sync_map_viewport_activity()
 	print_debug("world_binding stage=shared world=", gameplay_world)
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	_update_preview_viewport()
 	if game_view.visible:
+		_update_carried_item()
 		_update_map_viewports()
 		_update_local_actor_follow()
 		interior_cutaway.update(camera_rig.yaw_degrees)
+		_update_occluder_fade(delta)
 		_update_keyboard_movement()
 		_update_session_distance()
 		_update_legacy_clock_and_compass()
@@ -687,7 +745,7 @@ func _text_entry_active() -> bool:
 
 func _update_keyboard_movement() -> void:
 	if _text_entry_active() or dialogue_panel.visible or trade_panel.visible \
-			or storage_panel.visible or ground_bag_panel.visible or full_map.visible \
+			or storage_panel.visible or full_map.visible \
 			or console_panel.visible or settings_panel.visible or item_lists_panel.visible \
 			or Input.is_key_pressed(KEY_ALT) or Input.is_key_pressed(KEY_CTRL):
 		_stop_keyboard_movement()
@@ -696,6 +754,9 @@ func _update_keyboard_movement() -> void:
 	var actor_node_value: Variant = actor_nodes.get(AppState.local_actor_id)
 	if not actor_value is Dictionary or not actor_node_value is ReplicatedActor3D \
 			or not is_instance_valid(actor_node_value as ReplicatedActor3D):
+		_stop_keyboard_movement()
+		return
+	if _movement_locked(Input.is_key_pressed(KEY_CTRL)):
 		_stop_keyboard_movement()
 		return
 	var dto: Dictionary = actor_value as Dictionary
@@ -1193,8 +1254,7 @@ func _close_settings() -> void:
 
 func _on_stats_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
-			or bool(AppState.storage.get("open", false))
-			or bool(AppState.ground_bag.get("open", false))):
+			or bool(AppState.storage.get("open", false))):
 		return
 	stats_panel.visible = not stats_panel.visible
 	if stats_panel.visible:
@@ -1205,8 +1265,7 @@ func _on_stats_button_pressed() -> void:
 	_sync_hud_button_states(true)
 
 func _on_inventory_button_pressed() -> void:
-	if (bool(AppState.trade.get("open", false))
-			or bool(AppState.ground_bag.get("open", false))):
+	if bool(AppState.trade.get("open", false)):
 		return
 	inventory_panel.visible = not inventory_panel.visible
 	if inventory_panel.visible:
@@ -1221,8 +1280,7 @@ func _on_inventory_button_pressed() -> void:
 
 func _on_knowledge_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
-			or bool(AppState.storage.get("open", false))
-			or bool(AppState.ground_bag.get("open", false))):
+			or bool(AppState.storage.get("open", false))):
 		return
 	var was_knowledge_open: bool = stats_panel.visible and stats_tabs.current_tab == 1
 	stats_panel.visible = not was_knowledge_open
@@ -1236,8 +1294,7 @@ func _on_knowledge_button_pressed() -> void:
 
 func _on_manufacturing_button_pressed() -> void:
 	if (bool(AppState.trade.get("open", false))
-			or bool(AppState.storage.get("open", false))
-			or bool(AppState.ground_bag.get("open", false))):
+			or bool(AppState.storage.get("open", false))):
 		return
 	manufacturing_panel.visible = not manufacturing_panel.visible
 	if manufacturing_panel.visible:
@@ -1716,41 +1773,37 @@ func _on_storage_inspect_pressed() -> void:
 func _on_storage_close_pressed() -> void:
 	AppState.close_storage()
 
-func _on_ground_bag_item_selected(index: int) -> void:
-	var position: int = _list_metadata_int(ground_bag_items, index)
-	var items: Dictionary = AppState.ground_bag.get("items", {}) as Dictionary
-	var item_value: Variant = items.get(position)
-	if item_value is Dictionary:
-		ground_bag_quantity.max_value = maxi(1,
-			int((item_value as Dictionary).get("quantity", 1)))
-		ground_bag_quantity.value = mini(int(ground_bag_quantity.value),
-			int(ground_bag_quantity.max_value))
-	_sync_ground_bag_actions()
-
-func _on_ground_bag_inventory_selected(index: int) -> void:
-	var slot: int = _list_metadata_int(ground_bag_inventory, index)
-	var item_value: Variant = AppState.inventory.get(slot)
-	if item_value is Dictionary:
-		ground_bag_quantity.max_value = maxi(1,
-			int((item_value as Dictionary).get("quantity", 1)))
-		ground_bag_quantity.value = mini(int(ground_bag_quantity.value),
-			int(ground_bag_quantity.max_value))
-	_sync_ground_bag_actions()
-
-func _on_ground_bag_pick_pressed() -> void:
-	var selected: PackedInt32Array = ground_bag_items.get_selected_items()
-	if selected.is_empty():
+## The bag grid mirrors Eternal Lands: a left click takes the quantity in the
+## box below, so picking something up is one gesture rather than select-then-
+## press. A right click asks the server what the stack is instead.
+func _on_ground_bag_slot_pressed(index: int) -> void:
+	var position: int = _ground_bag_slot_position(index)
+	if position < 0:
 		return
-	var position: int = _list_metadata_int(ground_bag_items, int(selected[0]))
 	var items: Dictionary = AppState.ground_bag.get("items", {}) as Dictionary
 	var item_value: Variant = items.get(position)
 	if not item_value is Dictionary:
 		return
-	var quantity: int = clampi(int(ground_bag_quantity.value), 1,
-		int((item_value as Dictionary).get("quantity", 1)))
+	var available: int = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
+	var quantity: int = (available if Input.is_key_pressed(KEY_CTRL)
+		else mini(available, _selected_quantity()))
 	var error: Error = Network.pick_up_ground_item(position, quantity)
 	if error != OK:
 		push_warning("PICK_UP_ITEM failed: " + error_string(error))
+
+func _ground_bag_slot_position(index: int) -> int:
+	if index < 0 or index >= ground_bag_slot_buttons.size():
+		return -1
+	return int(ground_bag_slot_buttons[index].get_meta("bag_position", -1))
+
+func _on_ground_bag_slot_gui_input(event: InputEvent, index: int) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse: InputEventMouseButton = event as InputEventMouseButton
+	if not mouse.pressed or mouse.button_index != MOUSE_BUTTON_RIGHT:
+		return
+	_on_ground_bag_look_pressed(index)
+	ground_bag_slot_buttons[index].accept_event()
 
 func _on_ground_bag_pick_all_pressed() -> void:
 	_request_all_ground_bag_items()
@@ -1774,15 +1827,15 @@ func _request_all_ground_bag_items() -> int:
 	return sent
 
 func _on_ground_bag_drop_pressed() -> void:
-	var selected: PackedInt32Array = ground_bag_inventory.get_selected_items()
-	if selected.is_empty():
+	var slot: int = selected_inventory_slot
+	if slot < 0 or slot >= 36:
 		return
-	var slot: int = _list_metadata_int(ground_bag_inventory, int(selected[0]))
 	var item_value: Variant = AppState.inventory.get(slot)
 	if not item_value is Dictionary:
 		return
-	var quantity: int = clampi(int(ground_bag_quantity.value), 1,
-		int((item_value as Dictionary).get("quantity", 1)))
+	var available: int = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
+	var quantity: int = (available if Input.is_key_pressed(KEY_CTRL)
+		else mini(available, _selected_quantity()))
 	var error: Error = Network.drop_inventory_item(slot, quantity)
 	if error != OK:
 		push_warning("DROP_ITEM failed: " + error_string(error))
@@ -2044,6 +2097,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			settings_window.close()
 		elif reference_window != null and reference_window.is_open():
 			reference_window.close()
+		elif _carried_slot >= 0:
+			_cancel_carry()
 		elif chat_input.has_focus():
 			_hide_chat_input()
 		elif settings_panel.visible:
@@ -2083,16 +2138,17 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_world_gui_input(event: InputEvent) -> void:
 	if (not game_view.visible or full_map.visible or dialogue_panel.visible
-			or trade_panel.visible or storage_panel.visible or ground_bag_panel.visible
+			or trade_panel.visible or storage_panel.visible
 			or manufacturing_panel.visible):
 		return
 	if event is InputEventMouseButton:
 		var mouse_button: InputEventMouseButton = event as InputEventMouseButton
+		if mouse_button.pressed and actor_hud_menu.visible:
+			actor_hud_menu.hide()
 		if mouse_button.button_index == MOUSE_BUTTON_RIGHT:
 			if mouse_button.pressed:
 				_right_mouse_down = true
 				_right_mouse_dragged = false
-				actor_hud_menu.hide()
 			camera_rig.handle_mouse_button(mouse_button)
 			if not mouse_button.pressed:
 				_right_mouse_down = false
@@ -2116,6 +2172,8 @@ func _on_world_gui_input(event: InputEvent) -> void:
 			viewport_container.accept_event()
 
 func _open_actor_hud_menu(position: Vector2) -> void:
+	if _banner_option("menu_disabled"):
+		return
 	actor_hud_menu.show()
 	actor_hud_menu.reset_size()
 	var menu_size: Vector2 = actor_hud_menu.size
@@ -2125,12 +2183,162 @@ func _open_actor_hud_menu(position: Vector2) -> void:
 		clampf(position.y, 8.0, maxf(8.0, boundary.y)))
 	actor_hud_menu.move_to_front()
 
-func _on_overhead_option_toggled(_enabled: bool) -> void:
-	overhead_health_row.visible = show_overhead_health.button_pressed
-	overhead_ether_row.visible = show_overhead_ether.button_pressed
-	overhead_food_row.visible = show_overhead_food.button_pressed
-	overhead_action_row.visible = show_overhead_action.button_pressed
+func _configure_banner_menu() -> void:
+	for key: String in BANNER_OPTION_NODES:
+		var box: CheckBox = get_node("%" + str(BANNER_OPTION_NODES[key])) as CheckBox
+		box.set_pressed_no_signal(bool(BANNER_OPTION_DEFAULTS[key]))
+		box.toggled.connect(_on_banner_option_toggled)
+		_banner_option_boxes[key] = box
+
+func _banner_option(key: String) -> bool:
+	var box_value: Variant = _banner_option_boxes.get(key)
+	if box_value is CheckBox:
+		return (box_value as CheckBox).button_pressed
+	return bool(BANNER_OPTION_DEFAULTS.get(key, false))
+
+func _on_banner_option_toggled(_enabled: bool) -> void:
+	_apply_banner_options()
+	_save_hud_settings()
+
+## Kept so the HUD settings window can undo the menu's own "Disable This Menu"
+## entry, which would otherwise lock the menu away for good.
+func _on_banner_menu_enabled_toggled(pressed: bool) -> void:
+	var box: CheckBox = _banner_option_boxes["menu_disabled"] as CheckBox
+	box.set_pressed_no_signal(not pressed)
+	_apply_banner_options()
+	_save_hud_settings()
+
+## Called for every switch on the banner menu because EL's options are not
+## independent of one another: a row disappears once both its bar and its
+## numbers are off, the panel is only as tall as the rows left standing, and
+## instance mode overrides what other actors show regardless of "Show Names".
+func _apply_banner_options() -> void:
+	banner_menu_enabled.set_pressed_no_signal(not _banner_option("menu_disabled"))
+	if _banner_option("menu_disabled"):
+		actor_hud_menu.hide()
+	overhead_player_name.visible = _banner_option("show_names")
+	for row_spec: Array in BANNER_ROWS:
+		var row: HBoxContainer = _banner_row(str(row_spec[0]))
+		var show_bar: bool = _banner_option(str(row_spec[1]))
+		var show_numbers: bool = _banner_option(str(row_spec[2]))
+		(row.get_node("Bar") as ProgressBar).visible = show_bar
+		(row.get_node("Number") as Label).visible = show_numbers
+		row.visible = show_bar or show_numbers
+	_apply_banner_background()
+	for id: Variant in actor_nodes:
+		var node_value: Variant = actor_nodes[id]
+		if node_value is ReplicatedActor3D and is_instance_valid(node_value as ReplicatedActor3D):
+			var actor: ReplicatedActor3D = node_value as ReplicatedActor3D
+			actor.set_nameplate_visible(_nameplate_visible_for(int(id)))
+			if not _banner_option("speech_bubbles"):
+				actor.clear_speech_bubble()
+	_layout_actor_resource_overlay()
 	_update_actor_resource_overlay()
+
+## EL draws a flat black rectangle behind the banner when the alpha background
+## is on (actors.c) and nothing at all when it is off, so the switch swaps the
+## panel style rather than hiding the panel.
+func _apply_banner_background() -> void:
+	if _banner_background_style == null:
+		var style := StyleBoxFlat.new()
+		style.bg_color = Color(0.0, 0.0, 0.0, 0.6)
+		style.set_content_margin_all(2.0)
+		style.content_margin_left = 6.0
+		style.content_margin_right = 6.0
+		_banner_background_style = style
+	if _banner_option("banner_background"):
+		actor_resource_overlay.add_theme_stylebox_override(
+			"panel", _banner_background_style)
+		return
+	var empty := StyleBoxEmpty.new()
+	empty.set_content_margin_all(2.0)
+	empty.content_margin_left = 6.0
+	empty.content_margin_right = 6.0
+	actor_resource_overlay.add_theme_stylebox_override("panel", empty)
+
+## Local chat arrives already formatted as "Speaker: what they said", which is
+## the same shape EL parses in text.c before handing the remainder to the
+## speaker's overtext. Anything without a name that matches a visible actor is
+## left in the chat log alone.
+func _capture_speech_bubble_from_chat() -> void:
+	if not _banner_option("speech_bubbles") or AppState.chat_lines.is_empty():
+		return
+	var line: Dictionary = AppState.chat_lines.back() as Dictionary
+	if int(line.get("channel", -1)) != 0:
+		return
+	var text: String = str(line.get("text", ""))
+	var separator: int = text.find(": ")
+	if separator <= 0:
+		return
+	var speaker: String = text.substr(0, separator).strip_edges()
+	var spoken: String = text.substr(separator + 2).strip_edges()
+	if spoken.is_empty():
+		return
+	for id: Variant in AppState.actors:
+		var dto: Dictionary = AppState.actors[id] as Dictionary
+		if str(dto.get("name", "")) != speaker:
+			continue
+		var node_value: Variant = actor_nodes.get(id)
+		if node_value is ReplicatedActor3D and is_instance_valid(
+				node_value as ReplicatedActor3D):
+			(node_value as ReplicatedActor3D).show_speech_bubble(
+				spoken, SPEECH_BUBBLE_MSEC)
+		return
+
+## Eternal Lands drops the click rather than walking you out of position when
+## either lock applies: Sit Lock while you are actually sitting, with Ctrl as
+## the deliberate override, and Ranging Lock while a bow is in hand
+## (gamewin.c, CURSOR_WALK and CURSOR_ATTACK).
+func _movement_locked(ctrl_pressed: bool) -> bool:
+	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
+	if (_banner_option("sit_lock") and not ctrl_pressed
+			and bool(local_actor.get("sitting", false))):
+		return true
+	return _banner_option("ranging_lock") and _range_weapon_equipped()
+
+func _range_weapon_equipped() -> bool:
+	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
+	var appearance: Dictionary = local_actor.get("appearance", {}) as Dictionary
+	var weapon: int = int(appearance.get("weapon", 0))
+	return weapon >= RANGE_WEAPON_FIRST and weapon <= RANGE_WEAPON_LAST
+
+func _banner_row(row_name: String) -> HBoxContainer:
+	return actor_resource_overlay.get_node("Rows/" + row_name) as HBoxContainer
+
+## Every visible actor except you, and only while instance mode is off - EL
+## blanks other actors' banners in instance mode so a crowded fight stays
+## readable (im_other_player_view_names and friends all default off).
+func _nameplate_visible_for(actor_id: int) -> bool:
+	if actor_id == AppState.local_actor_id:
+		return false
+	if not _nameplates_enabled:
+		return false
+	if _banner_option("instance_mode"):
+		return false
+	return _banner_option("show_names")
+
+## Eternal Lands makes every bar as long as the widest number string beside it
+## so the rows line up, then sizes the banner to whatever is left switched on.
+## Godot keeps a container at whatever size it was last given, so the explicit
+## reset_size() is what actually shrinks the box when a row goes away.
+func _layout_actor_resource_overlay() -> void:
+	var widest := BANNER_BAR_MIN_WIDTH
+	for row_spec: Array in BANNER_ROWS:
+		var row: HBoxContainer = _banner_row(str(row_spec[0]))
+		if not row.visible:
+			continue
+		var number: Label = row.get_node("Number") as Label
+		widest = maxf(widest, number.get_theme_font("font").get_string_size(
+			number.text, HORIZONTAL_ALIGNMENT_LEFT, -1.0,
+			number.get_theme_font_size("font_size")).x)
+	var bar_width: float = ceilf(widest)
+	for row_spec: Array in BANNER_ROWS:
+		var row: HBoxContainer = _banner_row(str(row_spec[0]))
+		var bar: ProgressBar = row.get_node("Bar") as ProgressBar
+		var number: Label = row.get_node("Number") as Label
+		bar.custom_minimum_size.x = bar_width
+		number.custom_minimum_size.x = bar_width
+	actor_resource_overlay.reset_size()
 
 func _on_chat_tab_pressed(tab: String) -> void:
 	_chat_tab = tab
@@ -2262,7 +2470,7 @@ func _local_actor_server_tile() -> Variant:
 func _handle_map_gui_input(event: InputEvent, map_control: TextureRect,
 		map_render_viewport: SubViewport, camera: Camera3D, source: String) -> void:
 	if (not game_view.visible or dialogue_panel.visible or trade_panel.visible
-			or storage_panel.visible or ground_bag_panel.visible
+			or storage_panel.visible
 			or manufacturing_panel.visible):
 		return
 	if not event is InputEventMouseButton:
@@ -2326,6 +2534,9 @@ static func _texture_to_viewport_position(local_position: Vector2,
 	return _control_to_viewport_position(local_position, control_size, target_size)
 
 func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector2) -> void:
+	if _carried_slot >= 0:
+		_drop_carry()
+		return
 	var picked_actor_id: int = _pick_actor(viewport_position)
 	if picked_actor_id >= 0:
 		AppState.select_actor(picked_actor_id)
@@ -2337,6 +2548,8 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 			return
 		if _interaction_mode == "attack" and _is_attackable_actor(
 				picked_actor_id, selected_dto):
+			if _movement_locked(event.ctrl_pressed):
+				return
 			_send_attack(picked_actor_id)
 			return
 		if _interaction_mode == "trade" and _is_tradeable_player(
@@ -2346,6 +2559,8 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 				push_warning("TRADE_WITH failed: " + error_string(trade_error))
 			return
 		if event.alt_pressed and _is_attackable_actor(picked_actor_id, selected_dto):
+			if _movement_locked(event.ctrl_pressed):
+				return
 			_send_attack(picked_actor_id)
 			return
 		if int(selected_dto.get("kind", 0)) == 2:
@@ -2379,6 +2594,8 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 	print_debug("world_input local_click=", event.position, " viewport=", viewport_position,
 		" ray_origin=", ray_origin, " ray_direction=", ray_direction, " intersection=", point)
 	if point is Vector3:
+		if _movement_locked(event.ctrl_pressed):
+			return
 		var tile: Vector2i = adapter.godot_to_server(point as Vector3)
 		print_debug("world_input godot=", point, " server_tile=", tile,
 			" command=", "RUN_TO" if event.shift_pressed else "MOVE_TO")
@@ -2411,6 +2628,7 @@ func _on_state_changed(path: StringName) -> void:
 			# pass without delaying anything past the frame it arrived in.
 			_queue_world_sync()
 		&"chat":
+			_capture_speech_bubble_from_chat()
 			_sync_chat()
 			_sync_console()
 			_reveal_chat_messages()
@@ -2545,6 +2763,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	map_title.text = _current_map_display_name.to_upper()
 	current_map_button.text = "Current: " + _current_map_display_name
 	_configure_interior_cutaway(manifest)
+	_configure_occluder_fade(manifest)
 	_configure_full_map(manifest)
 	_request_map_redraw()
 	_sync_world()
@@ -2670,7 +2889,7 @@ func _sync_world() -> void:
 			existing_actor.apply_server_state(dto, adapter)
 			existing_actor.apply_vitals(int(dto.get("health", 0)),
 				int(dto.get("max_health", 0)))
-			existing_actor.set_nameplate_visible(int(id) != AppState.local_actor_id)
+			existing_actor.set_nameplate_visible(_nameplate_visible_for(int(id)))
 			_place_actor_on_surface(existing_actor)
 			continue
 		var node := ReplicatedActor3D.new()
@@ -2684,13 +2903,9 @@ func _sync_world() -> void:
 		if not errors.is_empty():
 			push_warning("Actor %d: %s" % [id, "; ".join(errors)])
 		node.apply_server_state(dto, adapter, true)
-		node.set_nameplate_visible(int(id) != AppState.local_actor_id)
+		node.set_nameplate_visible(_nameplate_visible_for(int(id)))
 		_place_actor_on_surface(node, true)
 	actor_label.text = "Actors: %d" % AppState.actors.size()
-	# The local actor is not necessarily the first one to arrive, and it is
-	# rebuilt on a map change, so the setting is reapplied here rather than once
-	# at login.
-	_apply_show_through_obstacles()
 	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id):
 		_update_local_actor_follow()
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
@@ -2701,7 +2916,9 @@ func _sync_world() -> void:
 			_set_meter(health_bar, health_text, current_health, maximum_health, "Health")
 			_set_meter(health_bottom, health_bottom_text,
 				current_health, maximum_health, "Health")
-			_set_overhead_meter(overhead_health_row, current_health, maximum_health)
+			_set_overhead_meter(overhead_health_row, current_health,
+				maximum_health, "health")
+			_layout_actor_resource_overlay()
 
 func _update_local_actor_follow() -> void:
 	if AppState.local_actor_id < 0:
@@ -2822,21 +3039,14 @@ func _sync_ground_bag() -> void:
 	ground_bag_panel.visible = is_open
 	if not is_open:
 		return
-	inventory_panel.hide()
-	stats_panel.hide()
-	full_map.hide()
-	trade_panel.hide()
-	storage_panel.hide()
-	manufacturing_panel.hide()
-	_fill_storage_item_list(ground_bag_items,
-		AppState.ground_bag.get("items", {}) as Dictionary, "Ground")
-	var backpack: Dictionary = {}
-	for raw_slot: Variant in AppState.inventory:
-		var slot: int = int(raw_slot)
-		if slot >= 0 and slot < 36:
-			backpack[slot] = AppState.inventory[raw_slot]
-	_fill_storage_item_list(ground_bag_inventory, backpack, "Inventory")
+	# Both windows stay up together so items can move either way, and the world
+	# underneath stays visible and clickable while they are open.
+	if not inventory_panel.visible:
+		inventory_panel.show()
+		_sync_hud_button_states(true)
+	_fill_ground_bag_grid(AppState.ground_bag.get("items", {}) as Dictionary)
 	_sync_ground_bag_actions()
+	_clamp_ground_bag_window_to_viewport()
 	if _ground_bag_get_all_requested_msec >= 0:
 		var requested_age: int = (Time.get_ticks_msec()
 			- _ground_bag_get_all_requested_msec)
@@ -2849,17 +3059,25 @@ func _sync_ground_bag() -> void:
 			inventory_description.text = _ground_bag_get_all_message(sent)
 
 func _sync_ground_bag_actions() -> void:
-	ground_bag_pick_button.disabled = ground_bag_items.get_selected_items().is_empty()
-	ground_bag_look_button.disabled = ground_bag_items.get_selected_items().is_empty()
-	ground_bag_drop_button.disabled = ground_bag_inventory.get_selected_items().is_empty()
+	var slot: int = selected_inventory_slot
+	var droppable: bool = (slot >= 0 and slot < 36
+		and AppState.inventory.get(slot) is Dictionary)
+	ground_bag_drop_button.disabled = not droppable
+	if droppable:
+		var item: Dictionary = AppState.inventory.get(slot) as Dictionary
+		ground_bag_drop_button.tooltip_text = ("Drop %d of the %d in inventory slot %d"
+			% [mini(int(item.get("quantity", 1)), _selected_quantity()),
+			int(item.get("quantity", 1)), slot + 1])
+	else:
+		ground_bag_drop_button.tooltip_text = ("Select an item in the inventory window"
+			+ " to drop it here")
 
 ## Asks the server what the selected ground item is. The bag packet carries an
 ## image id and a quantity, so the description can only come from the server.
-func _on_ground_bag_look_pressed() -> void:
-	var selected: PackedInt32Array = ground_bag_items.get_selected_items()
-	if selected.is_empty():
+func _on_ground_bag_look_pressed(index: int) -> void:
+	var slot: int = _ground_bag_slot_position(index)
+	if slot < 0:
 		return
-	var slot: int = _list_metadata_int(ground_bag_items, int(selected[0]))
 	var error: Error = Network.look_at_ground_item(slot)
 	if error != OK:
 		push_warning("LOOK_AT_GROUND_ITEM failed: " + error_string(error))
@@ -3038,6 +3256,23 @@ func _sync_manufacturing_detail() -> void:
 	manufacturing_mix_one.disabled = not reasons.is_empty()
 	manufacturing_mix_all.disabled = not reasons.is_empty()
 
+## Anything the camera has to look through to see the player is blended towards
+## glass. Indexed against the imported world rather than `world_root`, so actors,
+## ground bags and the camera rig are never candidates.
+func _configure_occluder_fade(manifest: WorldManifest) -> void:
+	var count: int = occluder_fade.configure(manifest, world_loader.world_root)
+	occluder_fade.set_enabled(_show_through_obstacles)
+	print_debug("occluder_fade stage=indexed map=", AppState.current_map,
+		" meshes=", count)
+
+## The probe needs both ends of the sight line, and the local actor is absent
+## between a map change and the first actor list, so a frame without one simply
+## lets whatever is faded blend back to solid.
+func _update_occluder_fade(delta: float) -> void:
+	var target_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	var target: Node3D = target_value as Node3D if target_value is Node3D else null
+	occluder_fade.update(delta, gameplay_camera, target)
+
 ## Interiors are closed boxes, so the isometric rig would render their ceiling
 ## and near wall. The manifest names the nodes to cut away; maps without a
 ## `cutaway` block (the city) are left exactly as loaded.
@@ -3170,6 +3405,17 @@ func _load_hud_settings() -> void:
 		if inventory_position_value is Vector2:
 			inventory_panel.position = inventory_position_value as Vector2
 		_equipment_side = str(config.get_value("inventory", "equipment_side", "left"))
+		var bag_position_value: Variant = config.get_value(
+			"inventory", "bag_window_position", ground_bag_panel.position)
+		if bag_position_value is Vector2:
+			ground_bag_panel.position = bag_position_value as Vector2
+		var quantities_value: Variant = config.get_value("inventory", "quantities", [])
+		if quantities_value is Array 				and (quantities_value as Array).size() == _inventory_quantities.size():
+			for index: int in range(_inventory_quantities.size()):
+				_inventory_quantities[index] = clampi(
+					int((quantities_value as Array)[index]), 1, INVENTORY_QUANTITY_MAX)
+		_selected_quantity_box = clampi(int(config.get_value(
+			"inventory", "selected_quantity", 0)), 0, _inventory_quantities.size() - 1)
 		var bulk_value: Variant = config.get_value("inventory", "bulk_exclusions", {})
 		if bulk_value is Dictionary:
 			for kind: String in ["store", "drop"]:
@@ -3211,6 +3457,10 @@ func _load_hud_settings() -> void:
 		audio_director.enabled = bool(config.get_value("audio", "enabled", true))
 		audio_director.volume_linear = clampf(float(config.get_value(
 			"audio", "volume", 0.7)), 0.0, 1.0)
+		for banner_key: String in BANNER_OPTION_NODES:
+			var box: CheckBox = _banner_option_boxes[banner_key] as CheckBox
+			box.set_pressed_no_signal(bool(config.get_value(
+				"banner", banner_key, BANNER_OPTION_DEFAULTS[banner_key])))
 	reference_window.call("configure", console_commands,
 		settings_window.get("BINDABLE"), _player_notes)
 	sound_enabled.set_pressed_no_signal(bool(audio_director.enabled))
@@ -3223,6 +3473,7 @@ func _load_hud_settings() -> void:
 	_apply_ui_scale()
 	_apply_minimap_scale()
 	_apply_inventory_scale(_inventory_scale)
+	_apply_banner_options()
 
 func _on_ui_scale_changed(value: float) -> void:
 	_ui_scale = clampf(value, UI_SCALE_MIN, UI_SCALE_MAX)
@@ -3241,14 +3492,12 @@ func _on_show_through_obstacles_toggled(pressed: bool) -> void:
 func _toggle_show_through_obstacles() -> void:
 	show_through_obstacles.button_pressed = not show_through_obstacles.button_pressed
 
-## The local player only. Every actor silhouetted through every wall would be a
-## wallhack rather than a convenience, so this is deliberately not applied to
-## the rest of `actor_nodes`.
+## The local player's sight line only. Fading every obstacle in front of every
+## actor would strip the map bare and would be a wallhack rather than a
+## convenience, so the probe is deliberately never aimed at the rest of
+## `actor_nodes`.
 func _apply_show_through_obstacles() -> void:
-	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
-	if actor_value is ReplicatedActor3D:
-		(actor_value as ReplicatedActor3D).set_occlusion_silhouette_enabled(
-			_show_through_obstacles)
+	occluder_fade.set_enabled(_show_through_obstacles)
 
 func _apply_ui_scale() -> void:
 	var window: Window = get_window()
@@ -3311,8 +3560,13 @@ func _save_hud_settings() -> void:
 	config.set_value("inventory", "window_scale", _inventory_scale)
 	config.set_value("inventory", "window_position", inventory_panel.position)
 	config.set_value("inventory", "equipment_side", _equipment_side)
+	config.set_value("inventory", "bag_window_position", ground_bag_panel.position)
+	config.set_value("inventory", "quantities", _inventory_quantities)
+	config.set_value("inventory", "selected_quantity", _selected_quantity_box)
 	config.set_value("inventory", "bulk_exclusions", _bulk_exclusions)
 	config.set_value("inventory", "item_lists", _item_lists)
+	for banner_key: String in BANNER_OPTION_NODES:
+		config.set_value("banner", banner_key, _banner_option(banner_key))
 	var error: Error = config.save(SETTINGS_PATH)
 	if error != OK:
 		push_warning("HUD settings save failed: " + error_string(error))
@@ -3352,6 +3606,36 @@ func _on_inventory_header_gui_input(event: InputEvent) -> void:
 			- _inventory_drag_offset)
 		_clamp_inventory_window_to_viewport()
 		inventory_header.accept_event()
+
+func _on_ground_bag_header_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse: InputEventMouseButton = event as InputEventMouseButton
+		if mouse.button_index != MOUSE_BUTTON_LEFT:
+			return
+		_ground_bag_dragging = mouse.pressed
+		if mouse.pressed:
+			ground_bag_panel.move_to_front()
+			_ground_bag_drag_offset = (get_viewport().get_mouse_position()
+				- ground_bag_panel.global_position)
+		else:
+			_save_hud_settings()
+		ground_bag_header.accept_event()
+	elif event is InputEventMouseMotion and _ground_bag_dragging:
+		ground_bag_panel.global_position = (get_viewport().get_mouse_position()
+			- _ground_bag_drag_offset)
+		_clamp_ground_bag_window_to_viewport()
+		ground_bag_header.accept_event()
+
+func _clamp_ground_bag_window_to_viewport() -> void:
+	if game_view.size.x <= 0.0 or game_view.size.y <= 0.0:
+		return
+	var game_origin: Vector2 = game_view.global_position
+	var local_position: Vector2 = ground_bag_panel.global_position - game_origin
+	var maximum: Vector2 = (game_view.size - ground_bag_panel.size
+		- Vector2(8.0, 8.0)).max(Vector2(8.0, 8.0))
+	ground_bag_panel.global_position = game_origin + Vector2(
+		clampf(local_position.x, 8.0, maximum.x),
+		clampf(local_position.y, 8.0, maximum.y))
 
 func _on_inventory_resize_grip_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -3487,6 +3771,7 @@ func _configure_window_layers() -> void:
 	for panel: Control in [full_map, stats_panel, inventory_panel, dialogue_panel,
 		trade_panel, storage_panel, ground_bag_panel, manufacturing_panel]:
 		panel.z_index = 20
+	carried_item.z_index = 40
 	item_lists_panel.z_index = 25
 	console_panel.z_index = 25
 	settings_panel.z_index = 30
@@ -3564,10 +3849,11 @@ func _sync_stats() -> void:
 	_set_meter(load_bottom, load_bottom_text, carried, capacity, "Load")
 	_set_meter(action_bottom, action_bottom_text, action, max_action, "Action")
 	_sync_experience_meter(stats)
-	_set_overhead_meter(overhead_health_row, health, max_health)
-	_set_overhead_meter(overhead_ether_row, ether, max_ether)
-	_set_overhead_meter(overhead_food_row, food, max_food)
-	_set_overhead_meter(overhead_action_row, action, max_action)
+	_set_overhead_meter(overhead_health_row, health, max_health, "health")
+	_set_overhead_meter(overhead_ether_row, ether, max_ether, "ether")
+	_set_overhead_meter(overhead_food_row, food, max_food, "food")
+	_set_overhead_meter(overhead_action_row, action, max_action, "action")
+	_layout_actor_resource_overlay()
 	if inventory_load != null:
 		inventory_load.text = "Load: %d / %d" % [int(stats.get("carried", 0)),
 			int(stats.get("capacity", 0))]
@@ -3829,12 +4115,37 @@ static func _set_meter(bar: ProgressBar, label: Label, value: int,
 	bar.value = clampi(value, 0, maxi(1, maximum))
 	label.text = "%s %d / %d" % [title, value, maximum]
 
-static func _set_overhead_meter(row: HBoxContainer, value: int, maximum: int) -> void:
+static func _set_overhead_meter(row: HBoxContainer, value: int, maximum: int,
+		colour_kind: String) -> void:
 	var bar: ProgressBar = row.get_node("Bar") as ProgressBar
 	var label: Label = row.get_node("Number") as Label
-	bar.max_value = maxi(1, maximum)
-	bar.value = clampi(value, 0, maxi(1, maximum))
+	var safe_maximum: int = maxi(1, maximum)
+	bar.max_value = safe_maximum
+	bar.value = clampi(value, 0, safe_maximum)
 	label.text = "%d/%d" % [value, maximum]
+	var colour: Color = _banner_colour(colour_kind,
+		float(value) / float(safe_maximum))
+	var fill: StyleBoxFlat = bar.get_theme_stylebox("fill") as StyleBoxFlat
+	if fill != null:
+		fill.bg_color = colour
+	label.add_theme_color_override("font_color", colour)
+
+## Eternal Lands recolours a banner meter as it drains rather than fixing one
+## colour per stat: actors.c set_health_color() ramps green to red, and
+## set_banner_colour_general() walks ether and food between the named
+## banner.*.zero and banner.*.full colours. Action points are Eloria's own, so
+## they follow the same shape between the two ends of the HUD purple.
+static func _banner_colour(kind: String, percent: float) -> Color:
+	var fraction: float = clampf(percent, 0.0, 1.0)
+	match kind:
+		"health":
+			return Color(clampf((1.0 - fraction) * 2.0, 0.0, 1.0),
+				clampf(fraction / 1.25 * 2.0, 0.0, 1.0), 0.0)
+		"ether":
+			return Color(0.7, 0.7, 1.0).lerp(Color(0.4, 0.4, 1.0), fraction)
+		"food":
+			return Color(1.0, 0.5, 0.0).lerp(Color(1.0, 1.0, 0.0), fraction)
+	return Color(1.0, 0.55, 0.9).lerp(Color(0.73, 0.28, 0.86), fraction)
 
 func _update_legacy_clock_and_compass() -> void:
 	var elapsed_seconds := 0.0
@@ -3848,8 +4159,7 @@ func _update_legacy_clock_and_compass() -> void:
 	compass_needle.rotation = deg_to_rad(-camera_rig.yaw_degrees)
 
 func _update_actor_resource_overlay() -> void:
-	if not (show_overhead_health.button_pressed or show_overhead_ether.button_pressed
-			or show_overhead_food.button_pressed or show_overhead_action.button_pressed):
+	if not _banner_has_content():
 		if actor_resource_overlay.visible:
 			actor_resource_overlay.hide()
 		return
@@ -3867,16 +4177,30 @@ func _update_actor_resource_overlay() -> void:
 	if main_viewport.size.x > 0 and main_viewport.size.y > 0:
 		viewport_scale = viewport_container.size / Vector2(main_viewport.size)
 	var screen_position: Vector2 = viewport_container.position + viewport_position * viewport_scale
+	# Instance mode lifts your own banner clear of the melee so it stays legible
+	# in a crowd, the way EL raises it by instance_mode_banner_height lines.
+	var instance_lift: float = (BANNER_INSTANCE_LIFT_ROWS * _banner_row_height()
+		if _banner_option("instance_mode") else 0.0)
 	var overlay_position: Vector2 = screen_position - Vector2(
-		actor_resource_overlay.size.x * 0.5, actor_resource_overlay.size.y + 8.0)
+		actor_resource_overlay.size.x * 0.5,
+		actor_resource_overlay.size.y + 8.0 + instance_lift)
 	actor_resource_overlay.position = Vector2(
 		clampf(overlay_position.x, 4.0,
 			maxf(4.0, game_view.size.x - actor_resource_overlay.size.x - 90.0)),
 		clampf(overlay_position.y, 34.0,
 			maxf(34.0, game_view.size.y - actor_resource_overlay.size.y - 86.0)))
-	actor_resource_overlay.visible = (show_overhead_health.button_pressed
-		or show_overhead_ether.button_pressed or show_overhead_food.button_pressed
-		or show_overhead_action.button_pressed)
+	actor_resource_overlay.show()
+
+func _banner_has_content() -> bool:
+	if _banner_option("show_names"):
+		return true
+	for row_spec: Array in BANNER_ROWS:
+		if _banner_option(str(row_spec[1])) or _banner_option(str(row_spec[2])):
+			return true
+	return false
+
+func _banner_row_height() -> float:
+	return maxf(1.0, _banner_row("HealthRow").get_combined_minimum_size().y)
 
 ## Draws the arrow the server said was loosed. The shot is already resolved -
 ## the damage arrives in its own packet - so this decides nothing, and an
@@ -4042,13 +4366,6 @@ func _on_window_size_changed() -> void:
 		maxi(1, roundi(viewport_container.size.y * maxf(render_scale.y, 0.01))))
 	if main_viewport.size != target_size:
 		main_viewport.size = target_size
-
-func _on_quickbar_mode_pressed(mode: String) -> void:
-	var showing_items: bool = mode == "items"
-	quick_slot_container.visible = showing_items
-	spell_slot_container.visible = not showing_items
-	%ItemMode.set_pressed_no_signal(showing_items)
-	%SpellMode.set_pressed_no_signal(not showing_items)
 
 func _sync_hud_button_states(force := false) -> void:
 	if _hud_icon_regions.is_empty():
@@ -4283,10 +4600,89 @@ func _save_hud_layout() -> void:
 	if error != OK:
 		push_warning("Unable to save lower HUD preferences: " + error_string(error))
 
+func _add_slot_quantity_label(button: Button) -> Label:
+	var quantity: Label = Label.new()
+	quantity.name = "Quantity"
+	quantity.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	quantity.anchor_left = 1.0
+	quantity.anchor_top = 1.0
+	quantity.anchor_right = 1.0
+	quantity.anchor_bottom = 1.0
+	quantity.offset_left = -34.0
+	quantity.offset_top = -17.0
+	quantity.offset_right = -3.0
+	quantity.offset_bottom = -2.0
+	quantity.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	quantity.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+	quantity.add_theme_font_size_override("font_size", 11)
+	quantity.add_theme_color_override("font_color", Color.WHITE)
+	quantity.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.02))
+	quantity.add_theme_constant_override("outline_size", 3)
+	button.add_child(quantity)
+	return quantity
+
+func _ground_bag_tooltip(item: Dictionary) -> String:
+	var image_id: int = int(item.get("image_id", 0))
+	var tooltip: String = "Item image #%d — quantity %d" % [image_id,
+		int(item.get("quantity", 0))]
+	if item_atlas.uses_substitute(image_id):
+		tooltip += "
+Independent Eloria icon substitute for legacy image #%d." % image_id
+	return tooltip + ("
+Left click picks up the inventory quantity (Ctrl for all);"
+		+ " right click asks the server what it is.")
+
+func _build_ground_bag_slots() -> void:
+	for index: int in range(GROUND_BAG_SLOT_COUNT):
+		var button: Button = Button.new()
+		button.custom_minimum_size = Vector2(44.0, 44.0)
+		button.expand_icon = true
+		button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		button.focus_mode = Control.FOCUS_NONE
+		button.clip_contents = true
+		button.text = ""
+		button.tooltip_text = "Empty bag slot"
+		button.disabled = true
+		button.set_meta("bag_position", -1)
+		button.pressed.connect(_on_ground_bag_slot_pressed.bind(index))
+		button.gui_input.connect(_on_ground_bag_slot_gui_input.bind(index))
+		ground_bag_grid.add_child(button)
+		ground_bag_slot_buttons.append(button)
+		ground_bag_quantity_labels.append(_add_slot_quantity_label(button))
+
+func _fill_ground_bag_grid(items: Dictionary) -> void:
+	var positions: Array = items.keys()
+	positions.sort()
+	var index := 0
+	for raw_position: Variant in positions:
+		if index >= ground_bag_slot_buttons.size():
+			break
+		var item_value: Variant = items.get(raw_position)
+		if not item_value is Dictionary:
+			continue
+		var item: Dictionary = item_value as Dictionary
+		var button: Button = ground_bag_slot_buttons[index]
+		button.set_meta("bag_position", int(raw_position))
+		button.icon = item_atlas.icon_for(int(item.get("image_id", 0)))
+		button.disabled = false
+		button.tooltip_text = _ground_bag_tooltip(item)
+		ground_bag_quantity_labels[index].text = str(int(item.get("quantity", 0)))
+		index += 1
+	if index >= ground_bag_slot_buttons.size() and positions.size() > index:
+		push_warning("Ground bag holds more stacks than the grid can show: %d of %d"
+			% [index, positions.size()])
+	for empty_index: int in range(index, ground_bag_slot_buttons.size()):
+		var empty_button: Button = ground_bag_slot_buttons[empty_index]
+		empty_button.set_meta("bag_position", -1)
+		empty_button.icon = null
+		empty_button.disabled = true
+		empty_button.tooltip_text = "Empty bag slot"
+		ground_bag_quantity_labels[empty_index].text = ""
+
 func _build_inventory_slots() -> void:
 	for slot: int in range(36):
 		var button: Button = Button.new()
-		button.custom_minimum_size = Vector2(64.0, 56.0)
+		button.custom_minimum_size = Vector2(44.0, 44.0)
 		button.expand_icon = true
 		button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		button.focus_mode = Control.FOCUS_NONE
@@ -4295,31 +4691,14 @@ func _build_inventory_slots() -> void:
 		button.tooltip_text = "Empty inventory slot %d" % (slot + 1)
 		button.disabled = true
 		button.pressed.connect(_on_inventory_slot_pressed.bind(slot))
-		var quantity: Label = Label.new()
-		quantity.name = "Quantity"
-		quantity.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		quantity.anchor_left = 1.0
-		quantity.anchor_top = 1.0
-		quantity.anchor_right = 1.0
-		quantity.anchor_bottom = 1.0
-		quantity.offset_left = -48.0
-		quantity.offset_top = -23.0
-		quantity.offset_right = -4.0
-		quantity.offset_bottom = -2.0
-		quantity.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		quantity.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-		quantity.add_theme_color_override("font_color", Color.WHITE)
-		quantity.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.02))
-		quantity.add_theme_constant_override("outline_size", 4)
-		button.add_child(quantity)
 		inventory_grid.add_child(button)
 		inventory_slot_buttons.append(button)
-		inventory_quantity_labels.append(quantity)
+		inventory_quantity_labels.append(_add_slot_quantity_label(button))
 
 func _build_equipment_slots() -> void:
 	for index: int in range(8):
 		var button: Button = Button.new()
-		button.custom_minimum_size = Vector2(64.0, 56.0)
+		button.custom_minimum_size = Vector2(44.0, 44.0)
 		button.expand_icon = true
 		button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		button.focus_mode = Control.FOCUS_NONE
@@ -4369,9 +4748,10 @@ func _sync_inventory() -> void:
 			button.icon = null
 			button.text = ""
 			inventory_quantity_labels[slot].text = ""
-			var can_place: bool = (selected_inventory_slot >= 0
+			var can_place: bool = (_carried_slot >= 0
+				or (selected_inventory_slot >= 0
 				and selected_inventory_slot < 44
-				and AppState.inventory.has(selected_inventory_slot))
+				and AppState.inventory.has(selected_inventory_slot)))
 			button.tooltip_text = ("Move selected item to slot %d" % (slot + 1)
 				if can_place else "Empty inventory slot %d" % (slot + 1))
 			button.disabled = not can_place
@@ -4388,6 +4768,8 @@ func _sync_inventory() -> void:
 			inventory_use_button.disabled = true
 	if not AppState.inventory_text.is_empty():
 		inventory_description.text = AppState.inventory_text
+	if ground_bag_panel.visible:
+		_sync_ground_bag_actions()
 
 func _sync_equipment_slots() -> void:
 	for index: int in range(equipment_slot_buttons.size()):
@@ -4403,9 +4785,10 @@ func _sync_equipment_slots() -> void:
 		else:
 			button.icon = null
 			button.text = ""
-			var can_equip_here: bool = (selected_inventory_slot >= 0
+			var can_equip_here: bool = (_carried_slot >= 0
+				or (selected_inventory_slot >= 0
 				and selected_inventory_slot < 36
-				and AppState.inventory.has(selected_inventory_slot))
+				and AppState.inventory.has(selected_inventory_slot)))
 			button.tooltip_text = ("Equip selected item in generic wear position %d" % (index + 1)
 				if can_equip_here else "Empty generic equipment position %d" % (index + 1))
 			button.disabled = not can_equip_here
@@ -4541,10 +4924,7 @@ func _on_client_setting_changed(section: String, key: String,
 			_effects_enabled = bool(value)
 		"nameplates":
 			_nameplates_enabled = bool(value)
-			for raw_actor: Variant in actor_nodes.values():
-				if is_instance_valid(raw_actor):
-					(raw_actor as ReplicatedActor3D).set_nameplate_visible(
-						_nameplates_enabled)
+			_apply_banner_options()
 		"rotation_sensitivity":
 			camera_rig.rotation_sensitivity = float(value)
 		"pan_sensitivity":
@@ -4723,13 +5103,166 @@ func _inventory_description_for(slot: int) -> Dictionary:
 			return described
 	return {}
 
+## Walk mode is Eternal Lands' move action, so a click there lifts the item
+## onto the cursor instead of only selecting it. Every other mode keeps the
+## select-and-inspect behaviour.
+## The six quantity boxes along the bottom of the inventory, as the legacy
+## client has them: a left click selects one, a right click edits it, and an
+## edit left empty falls back to that box's default.
+func _build_inventory_quantity_boxes() -> void:
+	for index: int in range(INVENTORY_QUANTITY_DEFAULTS.size()):
+		var button: Button = Button.new()
+		button.custom_minimum_size = Vector2(0.0, 26.0)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.focus_mode = Control.FOCUS_NONE
+		button.toggle_mode = true
+		button.pressed.connect(_on_quantity_box_pressed.bind(index))
+		button.gui_input.connect(_on_quantity_box_gui_input.bind(index))
+		inventory_quantity_bar.add_child(button)
+		inventory_quantity_buttons.append(button)
+	inventory_quantity_edit.text_submitted.connect(_on_quantity_edit_submitted)
+	inventory_quantity_edit.focus_exited.connect(_commit_quantity_edit)
+	_sync_inventory_quantity_boxes()
+
+func _sync_inventory_quantity_boxes() -> void:
+	for index: int in range(inventory_quantity_buttons.size()):
+		var button: Button = inventory_quantity_buttons[index]
+		button.text = str(_inventory_quantities[index])
+		button.set_pressed_no_signal(index == _selected_quantity_box)
+		button.tooltip_text = ("Use %d for drops and pick-ups. Right click to change it."
+			% _inventory_quantities[index])
+
+## The amount every drop and pick-up uses until the player picks another box.
+func _selected_quantity() -> int:
+	if _selected_quantity_box < 0 or _selected_quantity_box >= _inventory_quantities.size():
+		return 1
+	return maxi(1, _inventory_quantities[_selected_quantity_box])
+
+func _on_quantity_box_pressed(index: int) -> void:
+	_commit_quantity_edit()
+	_selected_quantity_box = index
+	_sync_inventory_quantity_boxes()
+	_save_hud_settings()
+
+func _on_quantity_box_gui_input(event: InputEvent, index: int) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse: InputEventMouseButton = event as InputEventMouseButton
+	if not mouse.pressed or mouse.button_index != MOUSE_BUTTON_RIGHT:
+		return
+	_begin_quantity_edit(index)
+	inventory_quantity_buttons[index].accept_event()
+
+func _begin_quantity_edit(index: int) -> void:
+	var button: Button = inventory_quantity_buttons[index]
+	_editing_quantity_box = index
+	inventory_quantity_edit.text = str(_inventory_quantities[index])
+	inventory_quantity_edit.size = button.size
+	inventory_quantity_edit.global_position = button.global_position
+	inventory_quantity_edit.visible = true
+	inventory_quantity_edit.grab_focus()
+	inventory_quantity_edit.select_all()
+
+func _on_quantity_edit_submitted(_text: String) -> void:
+	_commit_quantity_edit()
+
+## An empty or unreadable box resets to its default rather than becoming zero,
+## which would make every later drop a no-op.
+func _commit_quantity_edit() -> void:
+	var index: int = _editing_quantity_box
+	if index < 0:
+		return
+	_editing_quantity_box = -1
+	var typed: String = inventory_quantity_edit.text.strip_edges()
+	var value: int = (int(typed) if typed.is_valid_int()
+		else INVENTORY_QUANTITY_DEFAULTS[index])
+	_inventory_quantities[index] = clampi(value, 1, INVENTORY_QUANTITY_MAX)
+	_selected_quantity_box = index
+	inventory_quantity_edit.visible = false
+	inventory_quantity_edit.release_focus()
+	_sync_inventory_quantity_boxes()
+	_save_hud_settings()
+
+func _carry_enabled() -> bool:
+	return _interaction_mode == "walk"
+
+func _begin_carry(slot: int) -> void:
+	var item_value: Variant = AppState.inventory.get(slot)
+	if not item_value is Dictionary:
+		return
+	var item: Dictionary = item_value as Dictionary
+	_carried_slot = slot
+	carried_item.texture = item_atlas.icon_for(int(item.get("image_id", 0)))
+	var quantity: int = int(item.get("quantity", 0))
+	(carried_item.get_node("Quantity") as Label).text = (str(quantity)
+		if quantity > 1 else "")
+	carried_item.visible = true
+	_update_carried_item()
+
+func _cancel_carry() -> void:
+	_carried_slot = -1
+	carried_item.visible = false
+	carried_item.texture = null
+	_sync_inventory()
+
+func _update_carried_item() -> void:
+	if _carried_slot < 0:
+		return
+	# The server may empty the slot underneath us - a stack consumed, a trade
+	# settled - and a cursor still holding a phantom would place nothing.
+	if not AppState.inventory.has(_carried_slot):
+		_cancel_carry()
+		return
+	carried_item.global_position = (get_viewport().get_mouse_position()
+		- carried_item.size * 0.5)
+
+## Answers the placing click. Equipping, unequipping and reordering are all the
+## same authoritative move; only the destination slot differs, and the server
+## decides whether it is allowed.
+func _place_carry(destination: int) -> void:
+	var source: int = _carried_slot
+	if source < 0 or source == destination:
+		_cancel_carry()
+		return
+	_carried_slot = -1
+	carried_item.visible = false
+	carried_item.texture = null
+	_move_inventory_item(source, destination)
+	_sync_inventory()
+
+## Clicking the world puts the stack down. The server answers by creating a
+## bag on the tile, or by adding to the bag already standing there.
+func _drop_carry() -> void:
+	var source: int = _carried_slot
+	if source < 0:
+		return
+	var item_value: Variant = AppState.inventory.get(source)
+	_carried_slot = -1
+	carried_item.visible = false
+	carried_item.texture = null
+	if not item_value is Dictionary:
+		_sync_inventory()
+		return
+	var available: int = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
+	var quantity: int = (available if Input.is_key_pressed(KEY_CTRL)
+		else mini(available, _selected_quantity()))
+	var error: Error = Network.drop_inventory_item(source, quantity)
+	if error != OK:
+		push_warning("DROP_ITEM failed: " + error_string(error))
+	_sync_inventory()
+
 func _on_inventory_slot_pressed(slot: int) -> void:
+	if _carried_slot >= 0:
+		_place_carry(slot)
+		return
 	if not AppState.inventory.has(slot):
 		if (selected_inventory_slot >= 0 and selected_inventory_slot < 44
 				and AppState.inventory.has(selected_inventory_slot)):
 			_move_inventory_item(selected_inventory_slot, slot)
 		return
 	selected_inventory_slot = slot
+	if _carry_enabled():
+		_begin_carry(slot)
 	var item: Dictionary = AppState.inventory.get(slot, {}) as Dictionary
 	inventory_use_button.disabled = not bool(item.get("inventory_usable", false))
 	_sync_equipment_slots()
@@ -4740,12 +5273,17 @@ func _on_inventory_slot_pressed(slot: int) -> void:
 	_sync_inventory()
 
 func _on_equipment_slot_pressed(slot: int) -> void:
+	if _carried_slot >= 0:
+		_place_carry(slot)
+		return
 	if not AppState.inventory.has(slot):
 		if (selected_inventory_slot >= 0 and selected_inventory_slot < 36
 				and AppState.inventory.has(selected_inventory_slot)):
 			_move_inventory_item(selected_inventory_slot, slot)
 		return
 	selected_inventory_slot = slot
+	if _carry_enabled():
+		_begin_carry(slot)
 	inventory_use_button.disabled = true
 	_sync_equipment_slots()
 	var error: Error = Network.look_at_inventory_item(slot)
@@ -5569,16 +6107,63 @@ func _apply_eloria_theme() -> void:
 	_style_meter(food_bottom, Color(0.96, 0.78, 0.16, 1.0))
 	_style_meter(load_bottom, Color(0.62, 0.43, 0.34, 1.0))
 	_style_meter(experience_bottom, Color(0.18, 0.76, 0.22, 1.0))
-	_style_meter(overhead_health_row.get_node("Bar") as ProgressBar,
-		Color(0.9, 0.16, 0.14, 1.0))
-	for ether_bar: ProgressBar in [mana_bar, ether_bottom,
-		overhead_ether_row.get_node("Bar") as ProgressBar]:
+	for ether_bar: ProgressBar in [mana_bar, ether_bottom]:
 		_style_meter(ether_bar, Color(0.24, 0.31, 1.0, 1.0))
-	_style_meter(overhead_food_row.get_node("Bar") as ProgressBar,
-		Color(0.96, 0.78, 0.16, 1.0))
-	for points_bar: ProgressBar in [action_bar, action_bottom,
-		overhead_action_row.get_node("Bar") as ProgressBar]:
+	for points_bar: ProgressBar in [action_bar, action_bottom]:
 		_style_meter(points_bar, Color(0.73, 0.28, 0.86, 1.0))
+	for row_spec: Array in BANNER_ROWS:
+		_style_banner_meter(_banner_row(str(row_spec[0])).get_node("Bar") as ProgressBar)
+	_style_actor_hud_menu(panel)
+
+## The overhead bars are not the HUD's bars. Eternal Lands draws only the
+## filled part and a one-pixel black frame, leaving the world visible through
+## whatever is missing, so these get their own transparent-backed style instead
+## of the bordered wells the bottom meters use. The fill colour is repainted
+## per update by _set_overhead_meter().
+static func _style_banner_meter(bar: ProgressBar) -> void:
+	var background := StyleBoxFlat.new()
+	background.bg_color = Color(0.0, 0.0, 0.0, 0.0)
+	background.border_color = Color(0.0, 0.0, 0.0, 0.95)
+	background.set_border_width_all(1)
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = Color(0.17, 0.82, 0.22, 1.0)
+	bar.add_theme_stylebox_override("background", background)
+	bar.add_theme_stylebox_override("fill", fill)
+
+## Eternal Lands' banner menu is a plain dark strip of single-line entries with
+## barely any padding around them. Godot's stock CheckBox is roughly twice as
+## tall, so the menu carries its own compact styling rather than inheriting the
+## window chrome the rest of the HUD uses.
+func _style_actor_hud_menu(panel_style: StyleBoxFlat) -> void:
+	var menu_style: StyleBoxFlat = panel_style.duplicate() as StyleBoxFlat
+	menu_style.bg_color = Color(0.02, 0.03, 0.035, 0.95)
+	menu_style.set_border_width_all(1)
+	menu_style.set_content_margin_all(2.0)
+	actor_hud_menu.add_theme_stylebox_override("panel", menu_style)
+	var entry_style := StyleBoxEmpty.new()
+	entry_style.content_margin_top = 1.0
+	entry_style.content_margin_bottom = 1.0
+	entry_style.content_margin_left = 3.0
+	entry_style.content_margin_right = 8.0
+	var hover_style := StyleBoxFlat.new()
+	hover_style.bg_color = Color(0.16, 0.24, 0.23, 0.95)
+	hover_style.content_margin_top = 1.0
+	hover_style.content_margin_bottom = 1.0
+	hover_style.content_margin_left = 3.0
+	hover_style.content_margin_right = 8.0
+	for box_value: Variant in _banner_option_boxes.values():
+		var box: CheckBox = box_value as CheckBox
+		box.focus_mode = Control.FOCUS_NONE
+		box.add_theme_font_size_override("font_size", 13)
+		box.add_theme_constant_override("h_separation", 4)
+		box.add_theme_color_override("font_color", Color(0.91, 0.86, 0.70))
+		box.add_theme_color_override("font_hover_color", Color(1.0, 0.94, 0.76))
+		box.add_theme_color_override("font_pressed_color", Color(0.91, 0.86, 0.70))
+		box.add_theme_color_override("font_hover_pressed_color", Color(1.0, 0.94, 0.76))
+		for state: String in ["normal", "pressed", "disabled", "focus"]:
+			box.add_theme_stylebox_override(state, entry_style)
+		for state: String in ["hover", "hover_pressed"]:
+			box.add_theme_stylebox_override(state, hover_style)
 
 static func _style_meter(bar: ProgressBar, color: Color) -> void:
 	var background := StyleBoxFlat.new()

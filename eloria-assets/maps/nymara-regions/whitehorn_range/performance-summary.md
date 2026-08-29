@@ -9,10 +9,10 @@
   "textures": 52,
   "accessors": 600,
   "bufferViews": 652,
-  "uniqueTriangles": 239686,
+  "uniqueTriangles": 236108,
   "uniqueVertices": 143781,
-  "glbBytes": 12163236,
-  "instancedTriangles": 693054,
+  "glbBytes": 12141768,
+  "instancedTriangles": 689476,
   "embeddedTextureBytes": 5435605,
   "placements": 1926,
   "collision": {
@@ -26,6 +26,6 @@
     "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
     "columnOrder": "server-tile-x (column 0 is the -X western edge)"
   },
-  "trianglesPerSquareMetre": 2.09
+  "trianglesPerSquareMetre": 2.08
 }
 ```

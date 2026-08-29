@@ -25,8 +25,12 @@ var _last_movement_update_msec := -1
 var _smoothed_server_interval := 0.25
 var _facing_override_active := false
 var _facing_override_yaw := 0.0
+## Part 2 in the equipment registry: the cape, and the only part with cloth.
+const CAPE_PART := 2
+
 var _predicted_turn_pending := false
 var _native_skeleton: Skeleton3D
+var _cape_cloth: SkeletonModifier3D = null
 var _attachment_bones: Dictionary = {}
 var _model_config: Dictionary = {}
 var _equipment_config: Dictionary = {}
@@ -35,6 +39,8 @@ var _equipment_nodes: Dictionary = {}
 var _equipment_hides: Dictionary = {}
 var _hidden_body_surfaces: Dictionary = {}
 var _nameplate: Label3D
+var _speech_bubble: Label3D
+var _speech_bubble_expiry_msec := 0
 var _health_bar_background: MeshInstance3D
 var _health_bar_fill: MeshInstance3D
 var _health_label: Label3D
@@ -119,6 +125,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 			errors.append("Skeleton3D missing")
 		else:
 			_native_skeleton = skeleton
+			_attach_cape_cloth(skeleton)
 			apply_appearance_variants(dto.get("appearance", {}) as Dictionary)
 			var animation_path := _external_path(str(model_config.get("animationLibrary", "")))
 			var imported := NativeAnimationImporter.import_library(self, animation_path, skeleton, model_config.get("boneAliases", {}))
@@ -406,6 +413,33 @@ func set_nameplate_visible(enabled: bool) -> void:
 	if is_instance_valid(_health_label):
 		_health_label.visible = enabled and has_health
 
+## Eternal Lands repeats local chat over the speaker's head while "Show Speech
+## Bubbles" is on (text.c check_chat_text_to_overtext), sitting above the
+## banner rather than replacing it.
+func show_speech_bubble(speech: String, duration_msec: int) -> void:
+	if not is_instance_valid(_speech_bubble):
+		var label: Label3D = Label3D.new()
+		label.name = "SpeechBubble"
+		label.position.y = 2.62
+		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		label.no_depth_test = true
+		label.font_size = 24
+		label.outline_size = 8
+		label.width = 760.0
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		label.modulate = Color(0.86, 1.0, 0.86, 1.0)
+		label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
+		add_child(label)
+		_speech_bubble = label
+	_speech_bubble.text = speech
+	_speech_bubble.show()
+	_speech_bubble_expiry_msec = Time.get_ticks_msec() + duration_msec
+
+func clear_speech_bubble() -> void:
+	_speech_bubble_expiry_msec = 0
+	if is_instance_valid(_speech_bubble):
+		_speech_bubble.hide()
+
 func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport := false) -> void:
 	var next_target: Vector3 = adapter.tile_center(int(dto.x), int(dto.y))
 	# Server movement contains tile coordinates only. Keep the last sampled
@@ -518,6 +552,8 @@ func _clear_equipment_part(part: int) -> void:
 	_equipment_nodes.erase(part)
 	_equipment_visuals.erase(part)
 	_release_equipment_hides(part)
+	if part == CAPE_PART:
+		_set_cape_cloth_active(false)
 
 func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> void:
 	# Modified 2026-08-28 for Eloria Client: equipment used to be parented to a
@@ -552,6 +588,31 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	else:
 		_equipment_nodes[part] = created
 		_apply_equipment_hides(part, part_config, model_config)
+	if part == CAPE_PART:
+		_set_cape_cloth_active(not created.is_empty())
+
+## Cloth for the cape chains. A SkeletonModifier3D so the engine runs it once
+## the animation has posed the skeleton - writing bone poses from _process
+## would race the AnimationPlayer - and inactive, and therefore free, until a
+## cape is actually worn.
+func _attach_cape_cloth(skeleton: Skeleton3D) -> void:
+	if skeleton.find_bone("cape_c_01") < 0:
+		return
+	if skeleton.get_node_or_null("CapeCloth") != null:
+		return
+	var cloth: SkeletonModifier3D = (
+		load("res://src/actors/cape_cloth.gd") as Script).new()
+	cloth.name = "CapeCloth"
+	cloth.active = false
+	skeleton.add_child(cloth)
+	_cape_cloth = cloth
+
+func _set_cape_cloth_active(enabled: bool) -> void:
+	if _cape_cloth == null:
+		return
+	if enabled and not _cape_cloth.active:
+		_cape_cloth.call("reset")
+	_cape_cloth.active = enabled
 
 func _apply_equipment_hides(part: int, part_config: Dictionary,
 		model_config: Dictionary) -> void:
@@ -1078,6 +1139,9 @@ static func presentation_segment_duration(distance: float, nominal_speed: float,
 		minimum_duration, maximum_duration)
 
 func _physics_process(delta: float) -> void:
+	if (_speech_bubble_expiry_msec > 0
+			and Time.get_ticks_msec() >= _speech_bubble_expiry_msec):
+		clear_speech_bubble()
 	if _snap_pending:
 		global_position = server_target
 		rotation.y = _target_yaw

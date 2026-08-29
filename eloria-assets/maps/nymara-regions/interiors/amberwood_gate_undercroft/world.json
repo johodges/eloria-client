@@ -107,6 +107,7 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_amberwood_gate_undercroft",
+      "Roof_amberwood_gate_undercroft_ashlar",
       "Build_amberwood_gate_undercroft_amber_resin",
       "Build_amberwood_gate_undercroft_ashlar",
       "Build_amberwood_gate_undercroft_bark_dark",
@@ -114,6 +115,12 @@
       "Build_amberwood_gate_undercroft_forest_floor",
       "Build_amberwood_gate_undercroft_water_deep"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_amberwood_gate_undercroft_ashlar"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -653,18 +660,19 @@
     ]
   },
   "performance": {
-    "nodes": 10,
-    "meshes": 9,
+    "nodes": 11,
+    "meshes": 10,
     "materials": 8,
     "images": 24,
     "textures": 24,
-    "accessors": 45,
-    "bufferViews": 69,
-    "uniqueTriangles": 13078,
-    "uniqueVertices": 13347,
-    "glbBytes": 3476032,
+    "accessors": 50,
+    "bufferViews": 74,
+    "uniqueTriangles": 12790,
+    "uniqueVertices": 12771,
+    "glbBytes": 3452060,
     "nodeNames": [
       "Interior_amberwood_gate_undercroft",
+      "Roof_amberwood_gate_undercroft_ashlar",
       "Build_amberwood_gate_undercroft_amber_resin",
       "Build_amberwood_gate_undercroft_ashlar",
       "Build_amberwood_gate_undercroft_bark_dark",

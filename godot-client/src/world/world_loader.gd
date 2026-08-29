@@ -13,6 +13,12 @@ const NAVIGATION_SURFACE_LAYER := 8
 # at the same transforms.
 const BATCH_MINIMUM_INSTANCES := 4
 const BATCH_CELL_METRES := 180.0
+# Stamped on every source node a batch swallowed, naming the MultiMeshInstance3D
+# that now draws it and its slot in that multimesh. A batched prop is otherwise
+# untraceable from the node the rest of the client still holds, and OccluderFade
+# has to reach the slot to lift one instance back out while it fades.
+const BATCH_META := "static_batch"
+const BATCH_INDEX_META := "static_batch_index"
 
 signal load_started(manifest_path: String)
 signal load_completed(manifest: WorldManifest)
@@ -78,6 +84,13 @@ func _apply_collision_declarations() -> void:
 	var declared: Array = collision.get("nodeNames", [])
 	if declared.is_empty():
 		return
+	# A map may declare collision on the geometry the player sees, or on separate
+	# proxy boxes tucked inside it. A proxy is a physics volume, never a surface:
+	# drawn, it sits millimetres inside the wall it stands for and the two fight
+	# for the same pixels. The shape is still built from the proxy's mesh, and
+	# CollisionShape3D is not a VisualInstance3D, so hiding the node it hangs off
+	# costs nothing in physics.
+	var proxies: bool = bool(collision.get("nodesAreProxies", false))
 	# One walk of a 1700-node import instead of one walk per declared name.
 	var by_name: Dictionary = {}
 	for node_value: Node in world_root.find_children("*", "", true, false):
@@ -87,6 +100,8 @@ func _apply_collision_declarations() -> void:
 		var node: Node = by_name.get(str(node_name)) as Node
 		if node is MeshInstance3D:
 			_create_static_collision(node as MeshInstance3D)
+			if proxies:
+				(node as MeshInstance3D).visible = false
 		elif node == null:
 			manifest.warnings.append("collision node not found: " + str(node_name))
 
@@ -228,6 +243,8 @@ func _create_batch(members: Array, index: int) -> void:
 		# The source node stays in the tree so name lookups, manifest
 		# declarations and tooling keep resolving; it simply stops drawing.
 		member.visible = false
+		member.set_meta(BATCH_META, batch)
+		member.set_meta(BATCH_INDEX_META, member_index)
 
 func _apply_rendered_walk_surfaces() -> void:
 	var navigation: Dictionary = manifest.data.get("navigation", {})

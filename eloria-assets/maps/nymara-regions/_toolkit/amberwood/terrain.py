@@ -462,16 +462,18 @@ class Terrain:
             cells = self.surface == surface_id
             if not cells.any():
                 continue
-            # a cell mask on the vertex grid: keep vertices of kept cells
-            vertex_mask = np.zeros((self.rows, self.cols), dtype=bool)
-            vertex_mask[:-1, :-1] |= cells[:-1, :-1]
-            vertex_mask[1:, :-1] |= cells[:-1, :-1]
-            vertex_mask[:-1, 1:] |= cells[:-1, :-1]
-            vertex_mask[1:, 1:] |= cells[:-1, :-1]
+            # Quad selection, not a vertex mask. A quad belongs to the class of
+            # its low corner and to no other, so every cell is drawn exactly
+            # once across the whole set of sub-meshes. Selecting by vertex
+            # instead also emitted every quad whose four corners happened to
+            # touch this class - which, after the boundary dither, is most of a
+            # class edge - and those duplicates z-fought with the sub-mesh that
+            # legitimately owned them. Vertices stay shared, so there are still
+            # no cracks between classes.
             piece = M.heightfield(self.height, self.x0, self.z0, self.cell,
                                   uv_scale=uv_scale,
                                   material=table[surface_id],
-                                  mask=vertex_mask)
+                                  cells=cells[:-1, :-1])
             piece = _compact(piece)
             if piece.triangle_count == 0:
                 continue

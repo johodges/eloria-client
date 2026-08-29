@@ -1,8 +1,8 @@
 {
-  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\wt-amethyst-interiors\\eloria-assets\\maps\\nymara-regions\\interiors\\amethyst_barrens_insides\\world.glb",
+  "uri": "C:\\Users\\User\\Desktop\\eloria-project\\eloria-client\\eloria-assets\\maps\\nymara-regions\\interiors\\amethyst_barrens_insides\\world.glb",
   "mimeType": "model/gltf-binary",
   "validatorVersion": "eloria-gltf-validate-1.1.0",
-  "validatedAt": "2026-08-28T20:16:07.581010Z",
+  "validatedAt": "2026-08-29T14:40:37.507218Z",
   "issues": {
     "numErrors": 0,
     "numWarnings": 0,

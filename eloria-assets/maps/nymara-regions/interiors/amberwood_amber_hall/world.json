@@ -107,6 +107,7 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_amberwood_amber_hall",
+      "Roof_amberwood_amber_hall_timber_dark",
       "Build_amberwood_amber_hall_amber_glass",
       "Build_amberwood_amber_hall_amber_resin",
       "Build_amberwood_amber_hall_ashlar",
@@ -121,6 +122,12 @@
       "Build_amberwood_amber_hall_timber_warm",
       "Build_amberwood_amber_hall_woven_cloth"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_amberwood_amber_hall_timber_dark"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -673,18 +680,19 @@
     ]
   },
   "performance": {
-    "nodes": 16,
-    "meshes": 15,
+    "nodes": 17,
+    "meshes": 16,
     "materials": 14,
     "images": 41,
     "textures": 41,
-    "accessors": 75,
-    "bufferViews": 116,
-    "uniqueTriangles": 21696,
-    "uniqueVertices": 26258,
-    "glbBytes": 6026444,
+    "accessors": 80,
+    "bufferViews": 121,
+    "uniqueTriangles": 21408,
+    "uniqueVertices": 25682,
+    "glbBytes": 5953928,
     "nodeNames": [
       "Interior_amberwood_amber_hall",
+      "Roof_amberwood_amber_hall_timber_dark",
       "Build_amberwood_amber_hall_amber_glass",
       "Build_amberwood_amber_hall_amber_resin",
       "Build_amberwood_amber_hall_ashlar",

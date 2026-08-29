@@ -639,8 +639,18 @@ def loft(sections: Sequence[np.ndarray], closed_rings: bool = True, cap_ends: bo
 
 def heightfield(heights: np.ndarray, x0: float, z0: float, cell: float,
                 uv_scale: float = 1.0, material: str = "default",
-                mask: np.ndarray | None = None) -> Mesh:
-    """Grid mesh from a (rows, cols) height array. rows advance +Z, cols advance +X."""
+                mask: np.ndarray | None = None,
+                cells: np.ndarray | None = None) -> Mesh:
+    """Grid mesh from a (rows, cols) height array. rows advance +Z, cols advance +X.
+
+    `mask` is a per-vertex predicate and keeps a quad only when all four of its
+    corners pass; that is what "is this sample under water" wants. `cells` is a
+    per-quad predicate of shape (rows - 1, cols - 1) and keeps exactly the quads
+    it selects. A caller splitting one field into class sub-meshes must use
+    `cells`: expressing the split as a vertex mask emits every quad whose four
+    corners merely touch the class, so a quad surrounded by another class lands
+    in both sub-meshes and the two copies z-fight.
+    """
     rows, cols = heights.shape
     xs = x0 + np.arange(cols) * cell
     zs = z0 + np.arange(rows) * cell
@@ -653,8 +663,12 @@ def heightfield(heights: np.ndarray, x0: float, z0: float, cell: float,
     c = i0 + cols
     d = i0 + cols + 1
     tris = np.stack([a, c, d, a, d, b], axis=-1).reshape(-1, 3)
+    cell_mask = None
     if mask is not None:
         cell_mask = mask[:-1, :-1] & mask[1:, :-1] & mask[:-1, 1:] & mask[1:, 1:]
+    if cells is not None:
+        cell_mask = cells if cell_mask is None else (cell_mask & cells)
+    if cell_mask is not None:
         keep = np.repeat(cell_mask.reshape(-1), 2)
         tris = tris[keep]
     mesh = _make(positions, np.zeros_like(positions), uvs, tris.reshape(-1), material)

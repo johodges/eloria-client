@@ -145,6 +145,12 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_verdant_stair_insides",
+      "Roof_verdant_stair_insides_bark_dark",
+      "Roof_verdant_stair_insides_thatch_reed",
+      "Roof_verdant_stair_insides_verdant_carved_jade",
+      "Roof_verdant_stair_insides_verdant_jade",
+      "Roof_verdant_stair_insides_verdant_limestone_cliff",
+      "Roof_verdant_stair_insides_verdant_mossy_stone",
       "Build_verdant_stair_insides_amber_resin",
       "Build_verdant_stair_insides_ashlar",
       "Build_verdant_stair_insides_bark_dark",
@@ -169,6 +175,17 @@
       "Build_verdant_stair_insides_water_stream",
       "Build_verdant_stair_insides_woven_cloth"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_verdant_stair_insides_bark_dark",
+      "Roof_verdant_stair_insides_thatch_reed",
+      "Roof_verdant_stair_insides_verdant_carved_jade",
+      "Roof_verdant_stair_insides_verdant_jade",
+      "Roof_verdant_stair_insides_verdant_limestone_cliff",
+      "Roof_verdant_stair_insides_verdant_mossy_stone"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -1726,18 +1743,24 @@
     ]
   },
   "performance": {
-    "nodes": 30,
-    "meshes": 29,
+    "nodes": 36,
+    "meshes": 35,
     "materials": 25,
     "images": 72,
     "textures": 72,
-    "accessors": 145,
-    "bufferViews": 217,
-    "uniqueTriangles": 62717,
-    "uniqueVertices": 71687,
-    "glbBytes": 10530224,
+    "accessors": 175,
+    "bufferViews": 247,
+    "uniqueTriangles": 61673,
+    "uniqueVertices": 69599,
+    "glbBytes": 10430792,
     "nodeNames": [
       "Interior_verdant_stair_insides",
+      "Roof_verdant_stair_insides_bark_dark",
+      "Roof_verdant_stair_insides_thatch_reed",
+      "Roof_verdant_stair_insides_verdant_carved_jade",
+      "Roof_verdant_stair_insides_verdant_jade",
+      "Roof_verdant_stair_insides_verdant_limestone_cliff",
+      "Roof_verdant_stair_insides_verdant_mossy_stone",
       "Build_verdant_stair_insides_amber_resin",
       "Build_verdant_stair_insides_ashlar",
       "Build_verdant_stair_insides_bark_dark",

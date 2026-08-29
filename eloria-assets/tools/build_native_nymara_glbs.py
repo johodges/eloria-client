@@ -129,6 +129,76 @@ GROUND_JOINTS = ("ball_leaf_l", "ball_leaf_r")
 LEG_GROUPS = ("thigh", "calf", "foot", "ball")
 
 
+# ---------------------------------------------------------------------------
+# Cape bones
+#
+# A cape skinned to the spine cannot avoid a leg: measured against the shared
+# clips the body passes 254 mm behind the cape in a walk and 858 mm in a run.
+# Weighting the hem to the thighs does not fix it either -- one cape spanning
+# both legs follows their average, which is precisely where neither leg is, so
+# it helps some poses and hurts others.
+#
+# The cape therefore needs bones of its own that a solver can move.  They hang
+# off spine_03 and are carried by every race, so a cape stays an ordinary
+# skinned garment and keeps the per-race rebind and girth fit; the runtime
+# simulates them when a cape is worn and leaves them at rest otherwise.
+#
+# Three chains rather than one: a single column cannot twist, and the left and
+# right halves of a cape have to part around a leg independently.  The shared
+# animation library names no cape bone, so no clip touches them -- which is
+# what makes them safe to add and available to own.
+CAPE_CHAINS = ("l", "c", "r")
+CAPE_LINKS = 4
+# Where each chain leaves spine_03, in that joint's own bind frame.
+CAPE_ROOTS = {"l": (-.150, .150, -.105), "c": (0., .162, -.098),
+              "r": (.150, .150, -.105)}
+# Every link below the first drops by this much and drifts a little further
+# back, so the rest pose matches the hang of the authored cape.
+CAPE_LINK_DROP = (0., -.293, -.012)
+
+
+def cape_bone_names() -> list[str]:
+    return [f"cape_{chain}_{index + 1:02d}"
+            for chain in CAPE_CHAINS for index in range(CAPE_LINKS)]
+
+
+def append_cape_bones(nodes: list[dict], joint_nodes: list[int],
+                      source_bind: np.ndarray, parents: dict[int, int | None],
+                      names: list[str]):
+    """Hang the cape chains off spine_03, extending the rig in place.
+
+    Returns the extended (joint_nodes, source_bind, parents, names).  The new
+    joints carry spine_03's rotation basis and differ only in translation, so
+    the retarget treats them exactly as it treats every other bone.
+    """
+    if "spine_03" not in names:
+        return joint_nodes, source_bind, parents, names
+    anchor = names.index("spine_03")
+    basis = source_bind[anchor][:3, :3]
+    binds = [source_bind[slot] for slot in range(len(source_bind))]
+    joint_nodes = list(joint_nodes)
+    names = list(names)
+    parents = dict(parents)
+    for chain in CAPE_CHAINS:
+        parent_slot = anchor
+        offset = np.asarray(CAPE_ROOTS[chain], dtype=float)
+        for index in range(CAPE_LINKS):
+            matrix = np.eye(4, dtype=np.float64)
+            matrix[:3, :3] = basis
+            matrix[:3, 3] = binds[parent_slot][:3, 3] + basis @ offset
+            node = {"name": f"cape_{chain}_{index + 1:02d}"}
+            nodes.append(node)
+            nodes[joint_nodes[parent_slot]].setdefault("children", []).append(
+                len(nodes) - 1)
+            joint_nodes.append(len(nodes) - 1)
+            binds.append(matrix)
+            parents[len(binds) - 1] = parent_slot
+            names.append(node["name"])
+            parent_slot = len(binds) - 1
+            offset = np.asarray(CAPE_LINK_DROP, dtype=float)
+    return joint_nodes, np.stack(binds), parents, names
+
+
 def joint_group(name: str) -> str:
     """Coarse anatomical group for a rig joint, used to key the race specs."""
     if name == "root":
@@ -137,6 +207,8 @@ def joint_group(name: str) -> str:
         return "pelvis"
     if name == "Head":
         return "head"
+    if name.startswith("cape_"):
+        return "cape"
     for prefix in ("spine", "neck", "clavicle", "upperarm", "lowerarm",
                    "hand", "thigh", "calf", "foot", "ball"):
         if name.startswith(prefix):
@@ -1520,48 +1592,78 @@ def player_accessory(feature: str, joint_by_name: dict[str, int],
         return blend
     thighs = {-1.: joint_by_name["thigh_l"], 1.: joint_by_name["thigh_r"]}
     if feature == "horns":
-        # Curved, ringed horns grow from broad roots inside the temples. This
-        # preserves the original stylized model language without detached fins.
+        # Curved, ringed horns growing out of the temples.
+        #
+        # They used to start at |x| 0.070 with a 0.060 radius, which spans
+        # 0.010..0.130 across a skull whose half width is 0.0906: the root ring
+        # straddled the surface, and because `tapered_curve` has no end caps
+        # the open mouth of the tube sat visible on the head.  The root is now
+        # buried inside the skull and the form is swept with closed ends, so
+        # what leaves the scalp is a solid horn rather than a pipe.
+        #
+        # (x, y, z, half width, half height).  The first station is inside the
+        # skull; the second is the flare where the horn breaks the skin.
+        HORN = ((.024, 1.674, -.004, .042, .040),
+                (.058, 1.697, -.012, .062, .058),
+                (.100, 1.722, -.034, .052, .049),
+                (.140, 1.749, -.064, .046, .043),
+                (.176, 1.783, -.109, .039, .036),
+                (.196, 1.818, -.156, .030, .028),
+                (.194, 1.846, -.194, .022, .021),
+                (.182, 1.868, -.218, .015, .014),
+                (.152, 1.880, -.231, .008, .008),
+                (.122, 1.883, -.235, .004, .004))
         for side in (-1., 1.):
-            mesh.tapered_curve([
-                (side * .070, 1.700, -.010), (side * .118, 1.727, -.026),
-                (side * .155, 1.752, -.058), (side * .184, 1.782, -.104),
-                (side * .200, 1.818, -.155), (side * .196, 1.845, -.192),
-                (side * .186, 1.866, -.216), (side * .156, 1.879, -.230),
-                (side * .124, 1.882, -.234),
-            ], [.060, .057, .052, .045, .034, .026, .018, .010, .004],
-                head, 0, 14)
-            for y, x, z, radius in ((1.729, .120, -.028, .060),
-                                     (1.756, .157, -.062, .053),
-                                     (1.786, .186, -.108, .045),
-                                     (1.820, .200, -.158, .034),
-                                     (1.848, .195, -.196, .025)):
-                mesh.sphere((side * x, y, z), (radius, .026, radius),
+            mesh.swept([(side * x, y, z) for x, y, z, _w, _h in HORN],
+                       [w for *_rest, w, _h in HORN],
+                       [h for *_rest, _w, h in HORN],
+                       head, 0, 16)
+            # A low collar of raised scalp around the emergence, so the horn
+            # reads as growing out of the head rather than pushed into it.
+            mesh.swept([(side * .046, 1.690, -.008), (side * .066, 1.702, -.017)],
+                       [.070, .058], [.066, .055], head, 0, 14,
+                       cap_start=False, cap_end=False)
+            # Growth rings, following the new path rather than the old one.
+            for x, y, z, radius in ((.078, 1.708, -.021, .054),
+                                    (.118, 1.734, -.046, .049),
+                                    (.158, 1.764, -.084, .042),
+                                    (.188, 1.800, -.132, .033),
+                                    (.196, 1.832, -.175, .025)):
+                mesh.sphere((side * x, y, z), (radius, .024, radius),
                             head, 1, 3, 10)
     elif feature == "crystal":
         # Glasswardens are human scholars and field engineers in the concept
-        # sheets. A compact brass-and-crystal lens rig conveys that identity
-        # without a fantasy crown or detached shoulder shards.
-        mesh.tapered_curve([(-.150, 1.700, .070), (-.095, 1.714, .105),
-                            (0., 1.720, .116), (.095, 1.714, .105),
-                            (.150, 1.700, .070)],
-                           [.010, .010, .009, .010, .010], head, 0, 12)
+        # sheets: a brass-and-glass lens rig, worn rather than hovering.
+        #
+        # The temple arms used to run at |x| 0.150-0.162 across a skull whose
+        # half width is 0.0906, so they stood six centimetres clear of the head
+        # and read as antennae; the lenses sat as far as 0.050 in front of a
+        # face whose front is at z 0.0945.  Everything now follows the skull:
+        # the brow bar ends at the temple, the arms lie along the side of the
+        # head, and each one finishes with a hook behind the ear, whose widest
+        # point the body mesh puts at (0.0906, 1.704, -0.028).
+        mesh.swept([(-.090, 1.703, .052), (-.060, 1.712, .092),
+                    (0., 1.716, .104), (.060, 1.712, .092),
+                    (.090, 1.703, .052)],
+                   [.011, .010, .009, .010, .011],
+                   [.009, .009, .008, .009, .009], head, 0, 12)
         for side in (-1., 1.):
-            x = side * .052
-            mesh.cylinder((x, 1.704, .112), (x, 1.704, .146), .043,
-                          head, 0, 16)
-            mesh.sphere((x, 1.704, .150), (.072, .066, .018),
-                        head, 1, 6, 16)
-            mesh.cylinder((side * .094, 1.704, .131),
-                          (side * .146, 1.696, .083), .007, head, 0, 10)
-            # Temple strap back to the band, so the rig is worn rather than
-            # hovering in front of the face.
-            mesh.tapered_curve([(side * .150, 1.700, .070),
-                                (side * .162, 1.696, .010),
-                                (side * .148, 1.690, -.048)],
-                               [.009, .008, .007], head, 0, 8)
-        mesh.cylinder((-.010, 1.704, .136), (.010, 1.704, .136),
-                      .007, head, 0, 10)
+            x = side * .046
+            # Lens barrel and ground glass, pulled back onto the face.
+            mesh.swept([(x, 1.706, .088), (x, 1.706, .112)],
+                       [.040, .042], [.038, .040], head, 0, 16,
+                       cap_start=False, cap_end=False)
+            mesh.sphere((x, 1.706, .114), (.068, .062, .016), head, 1, 6, 16)
+            # Bridge between the two barrels.
+            mesh.swept([(-.014, 1.706, .100), (.014, 1.706, .100)],
+                       [.007, .007], [.006, .006], head, 0, 10)
+            # Temple arm: off the frame, along the side of the head, and hooked
+            # down behind the ear.
+            mesh.swept([(side * .076, 1.706, .086), (side * .088, 1.703, .040),
+                        (side * .091, 1.698, -.004), (side * .088, 1.688, -.030),
+                        (side * .080, 1.674, -.041)],
+                       [.008, .008, .008, .007, .006],
+                       [.011, .011, .010, .009, .007], head, 0, 10)
     elif feature == "scaled":
         # Ssarathi anatomy.  The skull is one continuous form: a swept upper
         # muzzle and a separate lower jaw that meet at a mouth line, rather
@@ -1927,13 +2029,19 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     base_body = BASE_BODIES.get(config.get("base", "heroic"), {})
     source_bind = np.stack([global_node_matrix(document, node) for node in skin["joints"]])
     parents = joint_parents(document, skin)
+    # The cape chains join the rig here, before anything measures, solves or
+    # retargets it, so they are ordinary joints to every step that follows.
+    joint_nodes, source_bind, parents, joint_names = append_cape_bones(
+        glb.doc["nodes"], list(skin["joints"]), source_bind, parents, joint_names)
+    joint_by_name = {name: slot for slot, name in enumerate(joint_names)}
     leg_scale = solve_leg_scale(source_bind, parents, joint_names, anatomy)
     target_bind = retarget_bind(source_bind, parents, joint_names, anatomy, leg_scale)
     transforms = shape_matrices(source_bind, target_bind, parents, joint_names, anatomy)
-    inverse = write_rest_pose(glb.doc["nodes"], list(skin["joints"]), target_bind, parents)
+    inverse = write_rest_pose(glb.doc["nodes"], joint_nodes, target_bind, parents)
     inverse_accessor = glb.accessor(inverse, "MAT4")
-    glb.doc["skins"] = [{"name": "Armature", "joints": list(skin["joints"]),
-                         "inverseBindMatrices": inverse_accessor, "skeleton": skin["joints"][0]}]
+    glb.doc["skins"] = [{"name": "Armature", "joints": joint_nodes,
+                         "inverseBindMatrices": inverse_accessor,
+                         "skeleton": joint_nodes[0]}]
     base_uri = document["images"][document["textures"][
         document["materials"][2]["pbrMetallicRoughness"]["baseColorTexture"]["index"]]["source"]]["uri"]
     if config.get("preserve_body"):
@@ -2185,8 +2293,9 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
                       primitives, skin=0, parent=68)
     glb.write(output)
     return {"vertices": vertices, "triangles": triangles,
-            "joints": len(skin["joints"]), "feature": config["feature"],
+            "joints": len(joint_nodes), "feature": config["feature"],
             "wardrobe": "skinned", "anatomy": "retargeted",
+            "capeBones": len(cape_bone_names()),
             "baseBody": config.get("base", "heroic"),
             "stature": round(anatomy.get("stature", 1.), 4),
             "legChainScale": round(float(leg_scale), 4),

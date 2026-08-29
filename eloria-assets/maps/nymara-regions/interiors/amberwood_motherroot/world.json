@@ -107,11 +107,15 @@
     "columnOrder": "server-tile-x (column 0 is the -X western edge)",
     "nodeNames": [
       "Interior_amberwood_motherroot",
+      "Roof_amberwood_motherroot_ashlar",
+      "Roof_amberwood_motherroot_bark_dark",
+      "Roof_amberwood_motherroot_bark_oak",
+      "Roof_amberwood_motherroot_cliff_rock",
+      "Roof_amberwood_motherroot_packed_earth",
       "Build_amberwood_motherroot_amber_resin",
       "Build_amberwood_motherroot_ashlar",
       "Build_amberwood_motherroot_bark_dark",
       "Build_amberwood_motherroot_bark_oak",
-      "Build_amberwood_motherroot_cliff_rock",
       "Build_amberwood_motherroot_dark_iron",
       "Build_amberwood_motherroot_forest_floor",
       "Build_amberwood_motherroot_packed_earth",
@@ -123,6 +127,16 @@
       "Build_amberwood_motherroot_water_pool",
       "Build_amberwood_motherroot_water_stream"
     ]
+  },
+  "cutaway": {
+    "hideNodes": [
+      "Roof_amberwood_motherroot_ashlar",
+      "Roof_amberwood_motherroot_bark_dark",
+      "Roof_amberwood_motherroot_bark_oak",
+      "Roof_amberwood_motherroot_cliff_rock",
+      "Roof_amberwood_motherroot_packed_earth"
+    ],
+    "reason": "interior lids; the isometric rig frames the floor, not the roof"
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -868,23 +882,27 @@
     ]
   },
   "performance": {
-    "nodes": 22,
-    "meshes": 21,
+    "nodes": 26,
+    "meshes": 25,
     "materials": 18,
     "images": 51,
     "textures": 51,
-    "accessors": 105,
-    "bufferViews": 156,
-    "uniqueTriangles": 22669,
-    "uniqueVertices": 24628,
-    "glbBytes": 7404656,
+    "accessors": 125,
+    "bufferViews": 176,
+    "uniqueTriangles": 22309,
+    "uniqueVertices": 23908,
+    "glbBytes": 7356520,
     "nodeNames": [
       "Interior_amberwood_motherroot",
+      "Roof_amberwood_motherroot_ashlar",
+      "Roof_amberwood_motherroot_bark_dark",
+      "Roof_amberwood_motherroot_bark_oak",
+      "Roof_amberwood_motherroot_cliff_rock",
+      "Roof_amberwood_motherroot_packed_earth",
       "Build_amberwood_motherroot_amber_resin",
       "Build_amberwood_motherroot_ashlar",
       "Build_amberwood_motherroot_bark_dark",
       "Build_amberwood_motherroot_bark_oak",
-      "Build_amberwood_motherroot_cliff_rock",
       "Build_amberwood_motherroot_dark_iron",
       "Build_amberwood_motherroot_forest_floor",
       "Build_amberwood_motherroot_packed_earth",
