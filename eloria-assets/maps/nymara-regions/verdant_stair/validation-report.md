@@ -42,10 +42,10 @@ One warning, expected and deliberate:
 
 | Warning | Count | Why it is expected |
 | --- | ---: | --- |
-| `GROUNDING_DISCONTINUITY` | ~1,400 tile pairs | Adjacent tiles differing by more than 6 m of surface height. This region is a staircase of eight terraces joined by 7–28 m cliff risers; a discontinuity at every riser is the whole design. The check exists to catch *unintended* steps, and there are none away from the risers and the gorges. |
+| `GROUNDING_DISCONTINUITY` | 1,412 tile pairs | Adjacent tiles differing by more than 6 m of surface height. This region is a staircase of eight terraces joined by 7–28 m cliff risers; a discontinuity at every riser is the whole design. The check exists to catch *unintended* steps, and there are none away from the risers and the gorges. |
 
 
-Four warnings that appeared during development and were **fixed rather than
+Five warnings that appeared during development and were **fixed rather than
 documented away**, because each was a real defect:
 
 * `LANDMARK_BELOW_SURFACE` on the aqueduct — the arcade was sized from its
