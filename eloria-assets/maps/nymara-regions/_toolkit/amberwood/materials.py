@@ -129,6 +129,32 @@ SPECS: tuple[MaterialSpec, ...] = (
     # -- Amethyst Barrens interiors
     MaterialSpec("amethyst_vault_floor", "amethyst_vault_floor", roughness=0.30,
                  metallic=0.35),
+
+    # -- Verdant Stair. Appended, never inserted: a region pins the material set
+    # it embeds by name, and reordering this tuple would rewrite its GLB.
+    MaterialSpec("verdant_jungle_floor", "verdant_jungle_floor", roughness=0.95),
+    MaterialSpec("verdant_jungle_trail", "verdant_jungle_trail", roughness=0.95),
+    MaterialSpec("verdant_terrace_stone", "verdant_terrace_stone", roughness=0.90),
+    MaterialSpec("verdant_mossy_stone", "verdant_mossy_stone", roughness=0.94),
+    # The one low-roughness ground in the region: rock that is never dry.
+    MaterialSpec("verdant_wet_limestone", "verdant_wet_limestone", roughness=0.52),
+    MaterialSpec("verdant_limestone_cliff", "verdant_limestone_cliff", roughness=0.92),
+    MaterialSpec("verdant_lagoon_sand", "verdant_lagoon_sand", roughness=0.92),
+    MaterialSpec("verdant_fern_glade", "verdant_fern_glade", roughness=0.90),
+    # Jade is a cut stone, not a metal and not verdigris: metallic stays at zero
+    # so it does not go black in a client with no reflection probe, the way the
+    # Amethyst spire caps did.
+    MaterialSpec("verdant_jade", "verdant_jade", roughness=0.44),
+    MaterialSpec("verdant_carved_jade", "verdant_carved_jade", roughness=0.50),
+    MaterialSpec("verdant_rope", "verdant_rope", roughness=0.97),
+    MaterialSpec("verdant_frond", "verdant_frond", roughness=0.86,
+                 alpha_mode="MASK", double_sided=True),
+    MaterialSpec("verdant_vine", "verdant_vine", roughness=0.88,
+                 alpha_mode="MASK", double_sided=True),
+    MaterialSpec("water_lagoon", "water_lagoon", roughness=0.12,
+                 base_color=(1.0, 1.0, 1.0, 0.80), alpha_mode="BLEND"),
+    MaterialSpec("water_cenote", "water_cenote", roughness=0.11,
+                 base_color=(1.0, 1.0, 1.0, 0.78), alpha_mode="BLEND"),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}
@@ -189,10 +215,27 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     sets["amethyst_brass"] = T.amethyst_brass(256, seed=563)
     sets["amethyst_banner"] = T.amethyst_banner(256, seed=569)
     sets["amethyst_vault_floor"] = T.amethyst_vault_floor(512, seed=577)
+    # Verdant Stair
+    sets["verdant_jungle_floor"] = T.verdant_jungle_floor(512, seed=601)
+    sets["verdant_jungle_trail"] = T.verdant_jungle_trail(512, seed=607)
+    sets["verdant_terrace_stone"] = T.verdant_terrace_stone(512, seed=613)
+    sets["verdant_mossy_stone"] = T.verdant_mossy_stone(512, seed=617)
+    sets["verdant_wet_limestone"] = T.verdant_wet_limestone(512, seed=619)
+    sets["verdant_limestone_cliff"] = T.verdant_limestone_cliff(512, seed=631)
+    sets["verdant_lagoon_sand"] = T.verdant_lagoon_sand(512, seed=641)
+    sets["verdant_fern_glade"] = T.verdant_fern_glade(512, seed=643)
+    sets["verdant_jade"] = T.verdant_jade(512, seed=647)
+    sets["verdant_carved_jade"] = T.verdant_carved_jade(512, seed=653)
+    sets["verdant_rope"] = T.verdant_rope(256, seed=659)
+    sets["verdant_frond"] = T.verdant_frond_atlas(512, seed=661)
+    sets["verdant_vine"] = T.verdant_vine_atlas(512, seed=673)
+    for tone, seed in (("lagoon", 677), ("cenote", 683)):
+        sets[f"water_{tone}"] = T.water_surface(512, seed=seed, tone=tone)
 
     # trim the maps that do not need to ship at full resolution
     alpha_cut = {"foliage_amber", "foliage_gold", "foliage_rust", "foliage_green",
-                 "foliage_dead", "undergrowth", "woven_cloth", "canvas_awning"}
+                 "foliage_dead", "undergrowth", "woven_cloth", "canvas_awning",
+                 "verdant_frond", "verdant_vine"}
     for name, texture_set in sets.items():
         texture_set.compact(orm_size=256, drop_normal=name in alpha_cut,
                             normal_size=256 if name.startswith("water") else None)

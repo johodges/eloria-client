@@ -32,11 +32,20 @@ TURF = 10
 
 # -- Amethyst Barrens. Appended, never inserted: see the note on materials.SPECS.
 # Classes are allocated in blocks so concurrent region work does not collide:
-# 7-10 Mirrorhold, 11-14 Whitehorn, 15-18 Amethyst Barrens, 19-22 Crownwater.
+# 7-10 Mirrorhold, 11-14 Whitehorn, 15-18 Amethyst Barrens, 19-22 Crownwater,
+# 23-26 Verdant Stair.
 BARRENS = 15
 CRYSTAL_FIELD = 16
 RESONANT_ROAD = 17
 STORM_ROCK = 18
+
+# -- Verdant Stair. The region is a terraced limestone jungle, so its ground
+# splits into two classes the existing set cannot express: the mossy cut stone
+# of a terrace floor, which is laid rather than grown, and the permanently
+# spray-wet rock behind a fall and around the cenote rim. Everything else it
+# needs is an existing class carrying a different material.
+TERRACE_MOSS = 23
+WET_ROCK = 24
 
 SURFACE_NAMES = {
     FOREST: "ForestFloor", PATH: "Trail", PAVING: "Paving", SHORE: "Shore",
@@ -44,6 +53,7 @@ SURFACE_NAMES = {
     SNOW: "Snow", ICE: "Ice", MARBLE: "Marble", TURF: "AlpineTurf",
     BARRENS: "Barrens", CRYSTAL_FIELD: "CrystalField",
     RESONANT_ROAD: "ResonantRoad", STORM_ROCK: "StormRock",
+    TERRACE_MOSS: "TerraceMoss", WET_ROCK: "WetRock",
 }
 SURFACE_MATERIALS = {
     FOREST: "forest_floor", PATH: "leaf_path", PAVING: "cobble_paving",
@@ -53,6 +63,7 @@ SURFACE_MATERIALS = {
     TURF: "alpine_turf",
     BARRENS: "amethyst_barrens_dust", CRYSTAL_FIELD: "amethyst_crystal_field",
     RESONANT_ROAD: "amethyst_resonant_road", STORM_ROCK: "amethyst_storm_rock",
+    TERRACE_MOSS: "verdant_mossy_stone", WET_ROCK: "verdant_wet_limestone",
 }
 
 # Surfaces a region placed deliberately, which the slope and shore rules in
@@ -62,11 +73,15 @@ SURFACE_MATERIALS = {
 AUTHORED_SURFACES: set[int] = {
     PATH, PAVING, SCORCHED, MEADOW,
     RESONANT_ROAD,
+    # Verdant Stair lays both of these deliberately: a terrace floor is built,
+    # and the wet rock is placed where a fall actually lands, not wherever the
+    # slope rule happens to think the ground is steep.
+    TERRACE_MOSS, WET_ROCK,
 }
 
 # Surfaces whose border must stay crisp, so `dither_boundaries` leaves them
 # alone. Paving and the resonant roadway read as laid, not grown.
-UNDITHERED_SURFACES: set[int] = {PAVING, RESONANT_ROAD}
+UNDITHERED_SURFACES: set[int] = {PAVING, RESONANT_ROAD, TERRACE_MOSS}
 
 
 def _smoothstep(edge0: float, edge1: float, x: np.ndarray) -> np.ndarray:
