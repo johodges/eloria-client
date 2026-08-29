@@ -24,8 +24,8 @@ import numpy as np
 from creature_anatomy import (AnatomyMesh, MAT_ACCENT, MAT_BODY, MAT_CORE,
                               MAT_DARK, MAT_FEATURE, MAT_GROWTH, _bezier,
                               _sheet, _euler, qaxis, branch_system,
-                              foliage_cluster, global_positions, root_flare,
-                              swirl_ribbon, woven_trunk)
+                              facet_shell, foliage_cluster, global_positions,
+                              root_flare, swirl_ribbon, woven_trunk)
 
 # ---------------------------------------------------------------------------
 # Biped
@@ -1312,11 +1312,34 @@ MINOR_PROPORTION_RULES = {
 }
 
 
+# Per-creature identity for the smaller families.  They previously had none at
+# all -- every beetle was the same beetle at a different size -- so anything
+# the art gives one insect, bird, fish or spider and not its neighbour had
+# nowhere to live.
+MINOR_DETAIL = {
+    # Amethyst Barrens: grown out of the rock, and lit from inside it.
+    "geode_scarab": dict(carapace="crystal", carapace_relief=.22, dome=1.35),
+    "prism_moth": dict(carapace="crystal", wing=1.34, wing_facets=True,
+                       carapace_relief=.18),
+    "lattice_spider": dict(carapace="crystal", carapace_relief=.20),
+    "amethyst_scorpion": dict(carapace="crystal", carapace_relief=.24),
+    "crystal_cave_spider": dict(carapace="crystal"),
+    # Mirrorhold's swarm is the same trick in glass.
+    "verdigris_beetle": dict(carapace="plate", dome=1.12),
+}
+
+
 def minor_config(plans: dict, plan_key: str, variant: str | None = None) -> dict:
     """A plan for one of the smaller families, nudged by concept measurements."""
     import creature_anatomy as anatomy
     plan = dict(plans[plan_key])
+    plan.setdefault("carapace", None)
+    plan.setdefault("carapace_relief", .16)
+    plan.setdefault("dome", 1.0)
+    plan.setdefault("wing_facets", False)
+    plan.setdefault("wing_lift", .0)
     if variant:
+        plan.update(MINOR_DETAIL.get(variant, {}))
         plan = anatomy.scale_plan(plan, anatomy.proportions(variant),
                                   MINOR_PROPORTION_RULES)
     return plan
@@ -2131,8 +2154,8 @@ INSECT_PLANS = {
                    leg=.26, leg_r=.022, wings="shell", wing=.30, antenna=.12,
                    raptorial=False, head=(.13, .11, .12), horn=.10),
     "moth": dict(thorax=(.20, .19, .24), abdomen=(.16, .15, .32), stand=.16,
-                 leg=.22, leg_r=.016, wings="broad", wing=.66, antenna=.22,
-                 raptorial=False, head=(.12, .12, .12), horn=.0),
+                 leg=.22, leg_r=.016, wings="broad", wing=.78, antenna=.22,
+                 raptorial=False, head=(.12, .12, .12), horn=.0, wing_lift=.62),
     "mantis": dict(thorax=(.14, .14, .34), abdomen=(.16, .15, .34), stand=.34,
                    leg=.36, leg_r=.017, wings="folded", wing=.34, antenna=.24,
                    raptorial=True, head=(.13, .10, .11), horn=.0),
@@ -2182,8 +2205,14 @@ def insect_geometry(plan_key: str, scale: float, bones, variant=None) -> Anatomy
     ab = tuple(v * s for v in p["abdomen"])
     hd = tuple(v * s for v in p["head"])
 
-    mesh.ellipsoid(tuple(g[chest_i]), th, [chest_i, body_i, head_i], MAT_BODY,
-                   rings=9, sides=14)
+    if p["carapace"] == "crystal":
+        facet_shell(mesh, g[chest_i], th, [chest_i, body_i, head_i], MAT_BODY,
+                    seed=f"{variant or plan_key}:thorax", subdivisions=1,
+                    relief=p["carapace_relief"] * .8, gap=.05,
+                    core_material=MAT_CORE, core_scale=.95)
+    else:
+        mesh.ellipsoid(tuple(g[chest_i]), th, [chest_i, body_i, head_i], MAT_BODY,
+                       rings=9, sides=14)
     mesh.torso = ([g[chest_i], g[body_i]],
                   [(th[0] * .5, th[1] * .5), (ab[0] * .5, ab[1] * .5)],
                   [chest_i, body_i])
@@ -2234,13 +2263,22 @@ def insect_geometry(plan_key: str, scale: float, bones, variant=None) -> Anatomy
         if p["wings"] == "broad":
             # Fore and hind wing pairs, angled back and cambered, rather than
             # one flat plate per side.
-            tip = wr + np.array((sign * span * .86, .22 * s, -span * .30))
-            rear = wr + np.array((sign * span * .62, .02 * s, span * .56))
-            edge_a = [wr, wr + np.array((sign * span * .34, .12 * s, -span * .44)),
-                      wr + np.array((sign * span * .74, .12 * s, -span * .48)), tip]
+            # A moth at rest in the art holds its wings up and open, so they
+            # are the biggest thing about it from the front.  Laid almost flat
+            # -- .22 of a scale unit of rise across a whole span of reach --
+            # they vanished to a line in profile and read as two slabs in
+            # three-quarter.  ``wing_lift`` opens them.
+            lift = p["wing_lift"] * span
+            tip = wr + np.array((sign * span * .74, .22 * s + lift * .92, -span * .30))
+            rear = wr + np.array((sign * span * .54, .02 * s + lift * .62, span * .56))
+            edge_a = [wr,
+                      wr + np.array((sign * span * .30, .12 * s + lift * .34, -span * .44)),
+                      wr + np.array((sign * span * .64, .12 * s + lift * .74, -span * .48)),
+                      tip]
             edge_b = [wr + np.array((0., -.01 * s, span * .12)),
-                      wr + np.array((sign * span * .34, .0, span * .44)),
-                      wr + np.array((sign * span * .62, -.01 * s, span * .58)), rear]
+                      wr + np.array((sign * span * .30, lift * .26, span * .44)),
+                      wr + np.array((sign * span * .54, -.01 * s + lift * .52, span * .58)),
+                      rear]
             fore_a = [_bezier(edge_a, t) for t in np.linspace(0, 1, 7)]
             fore_b = [_bezier(edge_b, t) for t in np.linspace(0, 1, 7)]
             # Camber: a moth wing is a curved membrane.  Flat sheets caught the
@@ -2250,38 +2288,75 @@ def insect_geometry(plan_key: str, scale: float, bones, variant=None) -> Anatomy
                 fore_a[k] = fore_a[k] + np.array((0., lift, 0.))
                 fore_b[k] = fore_b[k] + np.array((0., lift * .6, 0.))
             _sheet(mesh, fore_a, fore_b, .008 * s, [wing_i, chest_i], MAT_ACCENT)
-            # Veins and an eyespot: the two things that make a wing read as a
-            # wing rather than a coloured triangle at gameplay distance.
-            for k in (1, 3, 5):
-                mesh.tube([fore_a[0] * .82 + fore_b[0] * .18,
-                           (fore_a[k] + fore_b[k]) * .5,
-                           fore_a[k] * .30 + fore_b[k] * .70],
-                          [(.011 * s, .008 * s), (.007 * s, .006 * s),
-                           (.004 * s, .004 * s)],
-                          [wing_i, chest_i], MAT_DARK, sides=4)
-            eye = (fore_a[4] + fore_b[4]) * .5 + np.array((0., .012 * s, 0.))
-            mesh.ellipsoid(tuple(eye), (span * .13, .010 * s, span * .13),
-                           [wing_i, chest_i], MAT_DARK, rings=4, sides=10)
-            mesh.ellipsoid(tuple(eye + np.array((0., .010 * s, 0.))),
-                           (span * .075, .008 * s, span * .075),
-                           [wing_i, chest_i], MAT_FEATURE, rings=4, sides=8)
+            if p["wing_facets"]:
+                # A crystal moth's wing is leaded glass: bright veins dividing
+                # it into panes.  Drawn in MAT_DARK it was a plain coloured
+                # triangle with three grey lines on it.
+                for k in range(1, len(fore_a) - 1):
+                    clear = np.array((0., .0045 * s, 0.))
+                    mesh.tube([fore_a[0] * .70 + fore_b[0] * .30 + clear,
+                               (fore_a[k] * .62 + fore_b[k] * .38) + clear,
+                               fore_a[k] * .12 + fore_b[k] * .88 + clear],
+                              [(.014 * s, .010 * s), (.009 * s, .007 * s),
+                               (.005 * s, .005 * s)],
+                              [wing_i, chest_i], MAT_CORE, sides=4)
+                # Cross-ribs close the panes so the glow reads as a lattice
+                # rather than as a fan of separate spokes.
+                for k in (2, 4):
+                    up = np.array((0., .0045 * s, 0.))
+                    rib = [fore_a[k] + up, (fore_a[k] + fore_b[k]) * .5 + up,
+                           fore_b[k] + up]
+                    mesh.tube(rib, [(.006 * s, .005 * s), (.008 * s, .006 * s),
+                                    (.006 * s, .005 * s)],
+                              [wing_i, chest_i], MAT_CORE, sides=4)
+            else:
+                # Veins and an eyespot: the two things that make a wing read as
+                # a wing rather than a coloured triangle at gameplay distance.
+                for k in (1, 3, 5):
+                    mesh.tube([fore_a[0] * .82 + fore_b[0] * .18,
+                               (fore_a[k] + fore_b[k]) * .5,
+                               fore_a[k] * .30 + fore_b[k] * .70],
+                              [(.011 * s, .008 * s), (.007 * s, .006 * s),
+                               (.004 * s, .004 * s)],
+                              [wing_i, chest_i], MAT_DARK, sides=4)
+                eye = (fore_a[4] + fore_b[4]) * .5 + np.array((0., .012 * s, 0.))
+                mesh.ellipsoid(tuple(eye), (span * .13, .010 * s, span * .13),
+                               [wing_i, chest_i], MAT_DARK, rings=4, sides=10)
+                mesh.ellipsoid(tuple(eye + np.array((0., .010 * s, 0.))),
+                               (span * .075, .008 * s, span * .075),
+                               [wing_i, chest_i], MAT_FEATURE, rings=4, sides=8)
             hind = B[f"hind_wing_{side}"]
             hg = g[hind]
-            edge_c = [hg, hg + np.array((sign * span * .40, .0, span * .18)),
-                      hg + np.array((sign * span * .55, -.02 * s, span * .48))]
+            edge_c = [hg,
+                      hg + np.array((sign * span * .36, lift * .34, span * .18)),
+                      hg + np.array((sign * span * .48, lift * .58 - .02 * s,
+                                     span * .48))]
             edge_d = [hg + np.array((0., -.01 * s, span * .16)),
-                      hg + np.array((sign * span * .26, -.02 * s, span * .40)),
-                      hg + np.array((sign * span * .34, -.03 * s, span * .62))]
+                      hg + np.array((sign * span * .23, lift * .24 - .02 * s,
+                                     span * .40)),
+                      hg + np.array((sign * span * .30, lift * .40 - .03 * s,
+                                     span * .62))]
             _sheet(mesh, edge_c, edge_d, .007 * s, [hind, body_i], MAT_ACCENT)
         else:
             # Beetle elytra and folded mantis wings lie along the abdomen.
             length = span * (1.15 if p["wings"] == "shell" else 1.0)
-            mesh.ellipsoid(tuple(wr + np.array((sign * th[0] * .18, -.01 * s,
-                                                length * .42))),
-                           (th[0] * .95, th[1] * .80, length * .95),
-                           [wing_i, chest_i, body_i],
-                           MAT_FEATURE if p["wings"] == "shell" else MAT_ACCENT,
-                           rings=8, sides=12)
+            dome = p["dome"]
+            seat = wr + np.array((sign * th[0] * .18, -.01 * s, length * .42))
+            size = (th[0] * .95 * dome, th[1] * .80 * dome * 1.25, length * .95)
+            bones = [wing_i, chest_i, body_i]
+            if p["carapace"] == "crystal":
+                # The art's beetle is a mosaic of hard plates with the light
+                # trapped under them; routing the elytra through MAT_FEATURE
+                # painted it bone-white, which is the one colour a crystal
+                # carapace is never.
+                facet_shell(mesh, seat, size, bones, MAT_BODY,
+                            seed=f"{variant or plan_key}:elytra:{sign:+.0f}",
+                            subdivisions=2, relief=p["carapace_relief"],
+                            gap=.055, core_material=MAT_CORE, core_scale=.94)
+            else:
+                mesh.ellipsoid(tuple(seat), size, bones,
+                               MAT_FEATURE if p["wings"] == "shell" else MAT_ACCENT,
+                               rings=8, sides=12)
     return mesh
 
 

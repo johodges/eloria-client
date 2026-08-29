@@ -1968,6 +1968,102 @@ def root_flare(mesh, base, radius: float, bones, material, seed: str,
                    (radius * .035, radius * .035)], bones, material, sides=6)
 
 
+def _geodesic(subdivisions: int = 2):
+    """Unit icosphere as (vertices, triangles).  Even facets, no poles."""
+    phi = (1.0 + math.sqrt(5.0)) * .5
+    verts = []
+    for a, b in ((1.0, phi), (-1.0, phi), (1.0, -phi), (-1.0, -phi)):
+        verts += [(0.0, a, b), (b, 0.0, a), (a, b, 0.0)]
+    verts = [np.asarray(v, dtype=float) / math.sqrt(1 + phi * phi) for v in verts]
+    # Rebuild the icosahedron's faces from proximity: every vertex pair at the
+    # shortest edge length is an edge, and every triangle of mutual edges is a
+    # face.  Cheaper to derive than to spell out and impossible to mistype.
+    edge = min(float(np.linalg.norm(a - b))
+               for i, a in enumerate(verts) for b in verts[i + 1:])
+    near = [[j for j, b in enumerate(verts)
+             if j != i and abs(float(np.linalg.norm(a - b)) - edge) < 1e-6]
+            for i, a in enumerate(verts)]
+    faces = set()
+    for i, neighbours in enumerate(near):
+        for j in neighbours:
+            for k in near[j]:
+                if k in neighbours:
+                    faces.add(tuple(sorted((i, j, k))))
+    faces = sorted(faces)
+    for _ in range(max(0, subdivisions)):
+        midpoint, split = {}, []
+
+        def middle(a, b):
+            key = (min(a, b), max(a, b))
+            if key not in midpoint:
+                point = verts[a] + verts[b]
+                verts.append(point / max(float(np.linalg.norm(point)), 1e-9))
+                midpoint[key] = len(verts) - 1
+            return midpoint[key]
+
+        for a, b, c in faces:
+            ab, bc, ca = middle(a, b), middle(b, c), middle(c, a)
+            split += [(a, ab, ca), (b, bc, ab), (c, ca, bc), (ab, bc, ca)]
+        faces = split
+    return verts, faces
+
+
+def facet_shell(mesh, centre, size, bones, material, seed: str,
+                subdivisions: int = 2, relief: float = .10, gap: float = .16,
+                core_material=None, core_scale: float = .90, squash=None):
+    """A shell of flat crystal plates with light showing between them.
+
+    The crystal fauna were smooth ellipsoids in a crystal colour, which reads
+    as painted plastic; what the art actually draws is a mosaic of hard flat
+    facets with the glow trapped inside leaking out of the seams.  Neither half
+    of that survives a smooth-shaded sphere, so this emits every plate as its
+    own flat-shaded triangle -- shrunk toward its centroid by ``gap`` so the
+    seams are real openings -- over an optional lit inner shell.
+    """
+    centre = np.asarray(centre, dtype=float)
+    half = np.asarray(size, dtype=float) * .5
+    rng = np.random.default_rng(
+        zlib.crc32(("facet:" + seed).encode("utf-8")) % (2 ** 31))
+    verts, faces = _geodesic(subdivisions)
+
+    if core_material is not None:
+        mesh.ellipsoid(tuple(centre), tuple(np.asarray(size) * core_scale),
+                       bones, core_material, rings=9, sides=14, squash=squash)
+
+    positions, normals, uvs, indices = [], [], [], []
+    for a, b, c in faces:
+        plate = [verts[a], verts[b], verts[c]]
+        # Each plate stands a little proud of the sphere, by its own amount,
+        # so the shell has the irregular crystal relief the art shows.
+        lift = 1.0 + relief * float(rng.uniform(.35, 1.0))
+        corners = []
+        centroid = (plate[0] + plate[1] + plate[2]) / 3.0
+        for point in plate:
+            pulled = centroid + (point - centroid) * (1.0 - gap)
+            local = pulled * lift * half
+            if squash is not None and local[2] < 0:
+                local = np.array((local[0], local[1] * squash, local[2]))
+            corners.append(centre + local)
+        normal = np.cross(corners[1] - corners[0], corners[2] - corners[0])
+        length = float(np.linalg.norm(normal))
+        if length < 1e-12:
+            continue
+        normal = normal / length
+        if float(np.dot(normal, centroid)) < 0:
+            corners = [corners[0], corners[2], corners[1]]
+            normal = -normal
+        base = len(positions)
+        for point in corners:
+            positions.append(point)
+            normals.append(normal)
+        uvs += [(.5 + centroid[0] * .5, .5 + centroid[1] * .5),
+                (.5 + centroid[2] * .5, .5 + centroid[1] * .5),
+                (.5 + centroid[0] * .5, .5 + centroid[2] * .5)]
+        indices += [base, base + 1, base + 2]
+    if indices:
+        mesh._append(positions, normals, uvs, indices, material, bones)
+
+
 def swirl_ribbon(mesh, points, width: float, bones, material, seed: str,
                  samples: int = 15, turns: float = 1.15, curl: float = .30,
                  flatten: float = .34, taper: float = .06, sides: int = 7,
