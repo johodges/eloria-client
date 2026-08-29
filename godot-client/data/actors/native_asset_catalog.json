@@ -4,12 +4,13 @@
   "pipeline": "build_native_nymara_glbs.py",
   "races": {
     "luminous_female": {
-      "vertices": 13721,
-      "triangles": 23022,
+      "vertices": 13790,
+      "triangles": 23042,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 1.0,
       "legChainScale": 1.0,
       "hipHeight": 0.9318,
@@ -17,12 +18,13 @@
       "path": "godot-client/assets/actors/native/races/luminous_female.glb"
     },
     "luminous_male": {
-      "vertices": 13650,
-      "triangles": 22682,
+      "vertices": 13690,
+      "triangles": 22614,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 1.0,
       "legChainScale": 1.0,
       "hipHeight": 0.9491,
@@ -30,12 +32,13 @@
       "path": "godot-client/assets/actors/native/races/luminous_male.glb"
     },
     "votary_female": {
-      "vertices": 14413,
-      "triangles": 24070,
+      "vertices": 14292,
+      "triangles": 23824,
       "joints": 65,
       "feature": "horns",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 1.045,
       "legChainScale": 0.9632,
       "hipHeight": 0.9318,
@@ -43,12 +46,13 @@
       "path": "godot-client/assets/actors/native/races/votary_female.glb"
     },
     "votary_male": {
-      "vertices": 14342,
-      "triangles": 23730,
+      "vertices": 14034,
+      "triangles": 23130,
       "joints": 65,
       "feature": "horns",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 1.045,
       "legChainScale": 0.964,
       "hipHeight": 0.9491,
@@ -56,12 +60,13 @@
       "path": "godot-client/assets/actors/native/races/votary_male.glb"
     },
     "glasswarden_female": {
-      "vertices": 14191,
-      "triangles": 23690,
+      "vertices": 13952,
+      "triangles": 23292,
       "joints": 65,
       "feature": "crystal",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "slim",
       "stature": 0.975,
       "legChainScale": 1.0044,
       "hipHeight": 0.9318,
@@ -69,12 +74,13 @@
       "path": "godot-client/assets/actors/native/races/glasswarden_female.glb"
     },
     "glasswarden_male": {
-      "vertices": 14120,
-      "triangles": 23350,
+      "vertices": 13720,
+      "triangles": 22600,
       "joints": 65,
       "feature": "crystal",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "slim",
       "stature": 0.975,
       "legChainScale": 1.0045,
       "hipHeight": 0.9491,
@@ -82,12 +88,13 @@
       "path": "godot-client/assets/actors/native/races/glasswarden_male.glb"
     },
     "orun_female": {
-      "vertices": 13721,
-      "triangles": 23022,
+      "vertices": 13790,
+      "triangles": 23042,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 1.01,
       "legChainScale": 1.0021,
       "hipHeight": 0.9318,
@@ -95,12 +102,13 @@
       "path": "godot-client/assets/actors/native/races/orun_female.glb"
     },
     "orun_male": {
-      "vertices": 13650,
-      "triangles": 22682,
+      "vertices": 13690,
+      "triangles": 22614,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 1.01,
       "legChainScale": 1.0017,
       "hipHeight": 0.9491,
@@ -108,12 +116,13 @@
       "path": "godot-client/assets/actors/native/races/orun_male.glb"
     },
     "greyhaven_female": {
-      "vertices": 13721,
-      "triangles": 23022,
+      "vertices": 13790,
+      "triangles": 23042,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 0.99,
       "legChainScale": 1.0391,
       "hipHeight": 0.9318,
@@ -121,12 +130,13 @@
       "path": "godot-client/assets/actors/native/races/greyhaven_female.glb"
     },
     "greyhaven_male": {
-      "vertices": 13650,
-      "triangles": 22682,
+      "vertices": 13690,
+      "triangles": 22614,
       "joints": 65,
       "feature": "none",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 0.99,
       "legChainScale": 1.0384,
       "hipHeight": 0.9491,
@@ -134,38 +144,41 @@
       "path": "godot-client/assets/actors/native/races/greyhaven_male.glb"
     },
     "ssarathi_female": {
-      "vertices": 15033,
-      "triangles": 24858,
+      "vertices": 14677,
+      "triangles": 24784,
       "joints": 65,
       "feature": "scaled",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 1.02,
-      "legChainScale": 0.9005,
+      "legChainScale": 0.8878,
       "hipHeight": 0.9318,
       "groundHeight": 0.0148,
       "path": "godot-client/assets/actors/native/races/ssarathi_female.glb"
     },
     "ssarathi_male": {
-      "vertices": 14962,
-      "triangles": 24518,
+      "vertices": 14287,
+      "triangles": 23826,
       "joints": 65,
       "feature": "scaled",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 1.02,
-      "legChainScale": 0.8957,
+      "legChainScale": 0.8838,
       "hipHeight": 0.9491,
       "groundHeight": 0.0152,
       "path": "godot-client/assets/actors/native/races/ssarathi_male.glb"
     },
     "stoneborn_female": {
-      "vertices": 14765,
-      "triangles": 24510,
+      "vertices": 14768,
+      "triangles": 23234,
       "joints": 65,
       "feature": "stone",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 1.06,
       "legChainScale": 1.067,
       "hipHeight": 0.9318,
@@ -173,12 +186,13 @@
       "path": "godot-client/assets/actors/native/races/stoneborn_female.glb"
     },
     "stoneborn_male": {
-      "vertices": 14694,
-      "triangles": 24170,
+      "vertices": 14378,
+      "triangles": 22276,
       "joints": 65,
       "feature": "stone",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 1.06,
       "legChainScale": 1.0657,
       "hipHeight": 0.9491,
@@ -186,12 +200,13 @@
       "path": "godot-client/assets/actors/native/races/stoneborn_male.glb"
     },
     "mycelari_female": {
-      "vertices": 15257,
-      "triangles": 24914,
+      "vertices": 14316,
+      "triangles": 23370,
       "joints": 65,
       "feature": "fungal",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 0.995,
       "legChainScale": 0.9215,
       "hipHeight": 0.9318,
@@ -199,12 +214,13 @@
       "path": "godot-client/assets/actors/native/races/mycelari_female.glb"
     },
     "mycelari_male": {
-      "vertices": 15186,
-      "triangles": 24574,
+      "vertices": 13926,
+      "triangles": 22412,
       "joints": 65,
       "feature": "fungal",
       "wardrobe": "skinned",
       "anatomy": "retargeted",
+      "baseBody": "heroic",
       "stature": 0.995,
       "legChainScale": 0.9229,
       "hipHeight": 0.9491,
@@ -5369,7 +5385,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150336,
+      "bytes": 150344,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_legs__saurian.glb"
@@ -5384,7 +5400,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150344,
+      "bytes": 150352,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/glasswarden_greaves__saurian.glb"
@@ -5399,7 +5415,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150336,
+      "bytes": 150344,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/greyhaven_trousers__saurian.glb"
@@ -5414,7 +5430,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150304,
+      "bytes": 150312,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/orun_rider_legs__saurian.glb"
@@ -5429,7 +5445,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150328,
+      "bytes": 150336,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_legs__saurian.glb"
@@ -5444,7 +5460,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150316,
+      "bytes": 150324,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/votary_winter_legs__saurian.glb"
@@ -5459,7 +5475,7 @@
       "vertices": 1213,
       "triangles": 2106,
       "joints": 65,
-      "bytes": 127072,
+      "bytes": 127084,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_pants__saurian.glb"
@@ -5639,7 +5655,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126716,
+      "bytes": 126724,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_boots__saurian.glb"
@@ -5654,7 +5670,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126728,
+      "bytes": 126736,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/glasswarden_boots__saurian.glb"
@@ -5669,7 +5685,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126716,
+      "bytes": 126728,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/greyhaven_boots__saurian.glb"
@@ -5684,7 +5700,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126688,
+      "bytes": 126696,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/orun_rider_boots__saurian.glb"
@@ -5699,7 +5715,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126704,
+      "bytes": 126716,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_boots__saurian.glb"
@@ -5714,7 +5730,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126692,
+      "bytes": 126700,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/votary_winter_boots__saurian.glb"
@@ -5729,7 +5745,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126712,
+      "bytes": 126720,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_boots__saurian.glb"
@@ -5744,7 +5760,7 @@
       "vertices": 1213,
       "triangles": 2106,
       "joints": 65,
-      "bytes": 121392,
+      "bytes": 121404,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_pants__saurian.glb"
@@ -5759,7 +5775,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150288,
+      "bytes": 150296,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_legs_leather__saurian.glb"
@@ -5774,7 +5790,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 154384,
+      "bytes": 154392,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_legs_fur__saurian.glb"
@@ -5789,7 +5805,7 @@
       "vertices": 1609,
       "triangles": 2722,
       "joints": 65,
-      "bytes": 150240,
+      "bytes": 150248,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_cuisses__saurian.glb"
@@ -5879,7 +5895,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126632,
+      "bytes": 126640,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_boots__saurian.glb"
@@ -5894,7 +5910,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 130764,
+      "bytes": 130776,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_boots_fur__saurian.glb"
@@ -5909,7 +5925,7 @@
       "vertices": 1226,
       "triangles": 1944,
       "joints": 65,
-      "bytes": 126636,
+      "bytes": 126644,
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_greaves__saurian.glb"
@@ -7929,14 +7945,14 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/races/glasswarden_female.glb": {
-        "nodes": 78,
-        "meshes": 12,
+        "nodes": 77,
+        "meshes": 11,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/glasswarden_male.glb": {
-        "nodes": 78,
-        "meshes": 12,
+        "nodes": 77,
+        "meshes": 11,
         "skins": 1,
         "animations": 0
       },
@@ -7965,14 +7981,14 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/races/mycelari_female.glb": {
-        "nodes": 78,
-        "meshes": 12,
+        "nodes": 76,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/mycelari_male.glb": {
-        "nodes": 78,
-        "meshes": 12,
+        "nodes": 76,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },
@@ -7989,38 +8005,38 @@
         "animations": 0
       },
       "godot-client/assets/actors/native/races/ssarathi_female.glb": {
-        "nodes": 78,
-        "meshes": 12,
+        "nodes": 76,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/ssarathi_male.glb": {
-        "nodes": 78,
-        "meshes": 12,
+        "nodes": 76,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/stoneborn_female.glb": {
-        "nodes": 78,
-        "meshes": 12,
+        "nodes": 76,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/stoneborn_male.glb": {
-        "nodes": 78,
-        "meshes": 12,
+        "nodes": 76,
+        "meshes": 10,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/votary_female.glb": {
-        "nodes": 78,
-        "meshes": 12,
+        "nodes": 77,
+        "meshes": 11,
         "skins": 1,
         "animations": 0
       },
       "godot-client/assets/actors/native/races/votary_male.glb": {
-        "nodes": 78,
-        "meshes": 12,
+        "nodes": 77,
+        "meshes": 11,
         "skins": 1,
         "animations": 0
       },
