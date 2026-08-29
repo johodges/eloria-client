@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "assetVersion": "0.1.0",
+  "assetVersion": "1.0.0",
   "asset": {
     "id": "manymouth_delta",
     "name": "Manymouth Delta",
@@ -18,963 +18,4772 @@
     ],
     "bounds": {
       "min": [
-        -96,
-        0.0,
-        -96
+        -624.0,
+        -25.83,
+        -851.0
       ],
       "max": [
-        96,
-        18.0,
-        96
+        852.0,
+        43.32,
+        625.0
       ]
-    }
+    },
+    "playableBounds": {
+      "min": [
+        -174.0,
+        -25.83,
+        -401.0
+      ],
+      "max": [
+        401.0,
+        14.82,
+        174.0
+      ]
+    },
+    "seaLevel": 0.0,
+    "serverCells": 576
   },
-  "source": {
-    "elm": "../source-elm/manymouth_delta.elm",
-    "sha256": "a947e5e1a0be2244c3029acc61e26de7107ed5dd3d00c8b6c55720a300fb80f8",
-    "mapEditorCatalog": "../source-elm/map-editor-catalog.json",
-    "placementPolicy": "preserve-source-and-add-deterministic-production-detail"
-  },
-  "conceptArt": {
-    "macro": "../../../concepts/nymara-regions/manymouth_delta_region_concept.png",
-    "detailBoard": "references/00-concept-detail-board.png",
-    "panelGrid": [
-      5,
-      2
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      174.0,
+      174.0
     ],
-    "viewCount": 10,
-    "generator": "OpenAI ImageGen (built-in)",
-    "checkpoints": [
-      {
-        "panel": 1,
-        "id": "concept-01",
-        "subject": "mangrove channel",
-        "cameraPosition": [
-          0.0,
-          20.0,
-          -72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_manymouth_mangrove_007",
-          "Landmark_manymouth_mangrove_043",
-          "Landmark_manymouth_mangrove_044"
-        ]
-      },
-      {
-        "panel": 2,
-        "id": "concept-02",
-        "subject": "stilt village",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_manymouth_stilt_house_013",
-          "Landmark_manymouth_stilt_house_014",
-          "Landmark_manymouth_stilt_house_015"
-        ]
-      },
-      {
-        "panel": 3,
-        "id": "concept-03",
-        "subject": "boardwalk junction",
-        "cameraPosition": [
-          68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_manymouth_boardwalk_024",
-          "Landmark_manymouth_boardwalk_025",
-          "Landmark_manymouth_boardwalk_026"
-        ]
-      },
-      {
-        "panel": 4,
-        "id": "concept-04",
-        "subject": "ferry dock",
-        "cameraPosition": [
-          68.48,
-          20.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_manymouth_ferry_dock_034",
-          "Landmark_manymouth_ferry_dock_035",
-          "Landmark_manymouth_ferry_dock_036"
-        ]
-      },
-      {
-        "panel": 5,
-        "id": "concept-05",
-        "subject": "hidden dock",
-        "cameraPosition": [
-          42.32,
-          24.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_manymouth_ferry_dock_034",
-          "Landmark_manymouth_ferry_dock_035",
-          "Landmark_manymouth_ferry_dock_036"
-        ]
-      },
-      {
-        "panel": 6,
-        "id": "concept-06",
-        "subject": "floating market",
-        "cameraPosition": [
-          0.0,
-          16.0,
-          72.0
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_manymouth_market_stall_055",
-          "Landmark_manymouth_market_stall_056",
-          "Landmark_manymouth_market_stall_057"
-        ]
-      },
-      {
-        "panel": 7,
-        "id": "concept-07",
-        "subject": "reed farm",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 8,
-        "id": "concept-08",
-        "subject": "flooded portal",
-        "cameraPosition": [
-          -68.48,
-          24.0,
-          22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Landmark_manymouth_flooded_cave_061",
-          "Landmark_manymouth_flooded_cave_062",
-          "Landmark_manymouth_flooded_cave_063"
-        ]
-      },
-      {
-        "panel": 9,
-        "id": "concept-09",
-        "subject": "delta panorama",
-        "cameraPosition": [
-          -68.48,
-          16.0,
-          -22.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      },
-      {
-        "panel": 10,
-        "id": "concept-10",
-        "subject": "reed wood rope lotus materials",
-        "cameraPosition": [
-          -42.32,
-          20.0,
-          -58.25
-        ],
-        "target": [
-          0.0,
-          4.0,
-          0.0
-        ],
-        "evidenceNodes": [
-          "Terrain_ELM_Authority"
-        ]
-      }
-    ]
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 1.28,
+    "invertServerY": true
   },
-  "landmarks": [
-    {
-      "id": "landmark-000",
-      "name": "Resonant Crystal Cluster",
-      "node": "Landmark_resonant_crystal_cluster_000",
-      "position": [
-        -34.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-001",
-      "name": "Verdant Vine Bridge",
-      "node": "Landmark_verdant_vine_bridge_001",
-      "position": [
-        -12.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-002",
-      "name": "Verdant Jungle Cave",
-      "node": "Landmark_verdant_jungle_cave_002",
-      "position": [
-        10.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-003",
-      "name": "Four Gates Waystone",
-      "node": "Landmark_four_gates_waystone_003",
-      "position": [
-        32.0,
-        0.0,
-        32.0
-      ]
-    },
-    {
-      "id": "landmark-004",
-      "name": "Westhaven Lantern Tower",
-      "node": "Landmark_westhaven_lantern_tower_004",
-      "position": [
-        -34.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-005",
-      "name": "Verdant Tree Platform",
-      "node": "Landmark_verdant_tree_platform_005",
-      "position": [
-        -12.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-006",
-      "name": "Ssarathi Sunken Court",
-      "node": "Landmark_ssarathi_sunken_court_006",
-      "position": [
-        10.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-007",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_007",
-      "position": [
-        32.0,
-        0.0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-008",
-      "name": "Ssarathi Sun Stela",
-      "node": "Landmark_ssarathi_sun_stela_008",
-      "position": [
-        -34.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-009",
-      "name": "Amethyst Geode Cave",
-      "node": "Landmark_amethyst_geode_cave_009",
-      "position": [
-        -12.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-010",
-      "name": "Grey Moor Dead Tree",
-      "node": "Landmark_grey_moor_dead_tree_010",
-      "position": [
-        10.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-011",
-      "name": "Whitehorn Cairn",
-      "node": "Landmark_whitehorn_cairn_011",
-      "position": [
-        32.0,
-        0.0,
-        -12.0
-      ]
-    },
-    {
-      "id": "landmark-013",
-      "name": "Manymouth Stilt House",
-      "node": "Landmark_manymouth_stilt_house_013",
-      "position": [
-        -20.0,
-        0,
-        24.0
-      ]
-    },
-    {
-      "id": "landmark-014",
-      "name": "Manymouth Stilt House",
-      "node": "Landmark_manymouth_stilt_house_014",
-      "position": [
-        0.0,
-        0,
-        26.0
-      ]
-    },
-    {
-      "id": "landmark-015",
-      "name": "Manymouth Stilt House",
-      "node": "Landmark_manymouth_stilt_house_015",
-      "position": [
-        20.0,
-        0,
-        22.0
-      ]
-    },
-    {
-      "id": "landmark-016",
-      "name": "Manymouth Stilt House",
-      "node": "Landmark_manymouth_stilt_house_016",
-      "position": [
-        -26.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-017",
-      "name": "Manymouth Stilt House",
-      "node": "Landmark_manymouth_stilt_house_017",
-      "position": [
-        -4.0,
-        0,
-        2.0
-      ]
-    },
-    {
-      "id": "landmark-018",
-      "name": "Manymouth Stilt House",
-      "node": "Landmark_manymouth_stilt_house_018",
-      "position": [
-        20.0,
-        0,
-        -2.0
-      ]
-    },
-    {
-      "id": "landmark-019",
-      "name": "Manymouth Stilt House",
-      "node": "Landmark_manymouth_stilt_house_019",
-      "position": [
-        -20.0,
-        0,
-        -24.0
-      ]
-    },
-    {
-      "id": "landmark-020",
-      "name": "Manymouth Stilt House",
-      "node": "Landmark_manymouth_stilt_house_020",
-      "position": [
-        2.0,
-        0,
-        -22.0
-      ]
-    },
-    {
-      "id": "landmark-021",
-      "name": "Manymouth Stilt House",
-      "node": "Landmark_manymouth_stilt_house_021",
-      "position": [
-        24.0,
-        0,
-        -28.0
-      ]
-    },
-    {
-      "id": "landmark-022",
-      "name": "Manymouth Stilt House",
-      "node": "Landmark_manymouth_stilt_house_022",
-      "position": [
-        -10.0,
-        0,
-        -46.0
-      ]
-    },
-    {
-      "id": "landmark-023",
-      "name": "Manymouth Stilt House",
-      "node": "Landmark_manymouth_stilt_house_023",
-      "position": [
-        14.0,
-        0,
-        -48.0
-      ]
-    },
-    {
-      "id": "landmark-024",
-      "name": "Manymouth Boardwalk",
-      "node": "Landmark_manymouth_boardwalk_024",
-      "position": [
-        0.0,
-        0,
-        16.0
-      ]
-    },
-    {
-      "id": "landmark-025",
-      "name": "Manymouth Boardwalk",
-      "node": "Landmark_manymouth_boardwalk_025",
-      "position": [
-        -16.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-026",
-      "name": "Manymouth Boardwalk",
-      "node": "Landmark_manymouth_boardwalk_026",
-      "position": [
-        12.0,
-        0,
-        0.0
-      ]
-    },
-    {
-      "id": "landmark-027",
-      "name": "Manymouth Boardwalk",
-      "node": "Landmark_manymouth_boardwalk_027",
-      "position": [
-        0.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-028",
-      "name": "Manymouth Boardwalk",
-      "node": "Landmark_manymouth_boardwalk_028",
-      "position": [
-        -24.0,
-        0,
-        12.0
-      ]
-    },
-    {
-      "id": "landmark-029",
-      "name": "Manymouth Boardwalk",
-      "node": "Landmark_manymouth_boardwalk_029",
-      "position": [
-        24.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-030",
-      "name": "Manymouth Boardwalk",
-      "node": "Landmark_manymouth_boardwalk_030",
-      "position": [
-        -20.0,
-        0,
-        -14.0
-      ]
-    },
-    {
-      "id": "landmark-031",
-      "name": "Manymouth Boardwalk",
-      "node": "Landmark_manymouth_boardwalk_031",
-      "position": [
-        20.0,
-        0,
-        -18.0
-      ]
-    },
-    {
-      "id": "landmark-032",
-      "name": "Manymouth Boardwalk",
-      "node": "Landmark_manymouth_boardwalk_032",
-      "position": [
-        -8.0,
-        0,
-        -36.0
-      ]
-    },
-    {
-      "id": "landmark-033",
-      "name": "Manymouth Boardwalk",
-      "node": "Landmark_manymouth_boardwalk_033",
-      "position": [
-        12.0,
-        0,
-        -38.0
-      ]
-    },
-    {
-      "id": "landmark-034",
-      "name": "Manymouth Ferry Dock",
-      "node": "Landmark_manymouth_ferry_dock_034",
-      "position": [
-        -30.0,
-        0,
-        20.0
-      ]
-    },
-    {
-      "id": "landmark-035",
-      "name": "Manymouth Ferry Dock",
-      "node": "Landmark_manymouth_ferry_dock_035",
-      "position": [
-        30.0,
-        0,
-        18.0
-      ]
-    },
-    {
-      "id": "landmark-036",
-      "name": "Manymouth Ferry Dock",
-      "node": "Landmark_manymouth_ferry_dock_036",
-      "position": [
-        -34.0,
-        0,
-        -16.0
-      ]
-    },
-    {
-      "id": "landmark-037",
-      "name": "Manymouth Ferry Dock",
-      "node": "Landmark_manymouth_ferry_dock_037",
-      "position": [
-        34.0,
-        0,
-        -20.0
-      ]
-    },
-    {
-      "id": "landmark-038",
-      "name": "Manymouth Ferry Dock",
-      "node": "Landmark_manymouth_ferry_dock_038",
-      "position": [
-        0.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-039",
-      "name": "Manymouth Hidden Dock",
-      "node": "Landmark_manymouth_hidden_dock_039",
-      "position": [
-        -28.0,
-        0,
-        -34.0
-      ]
-    },
-    {
-      "id": "landmark-040",
-      "name": "Manymouth Hidden Dock",
-      "node": "Landmark_manymouth_hidden_dock_040",
-      "position": [
-        28.0,
-        0,
-        -36.0
-      ]
-    },
-    {
-      "id": "landmark-041",
-      "name": "Manymouth Hidden Dock",
-      "node": "Landmark_manymouth_hidden_dock_041",
-      "position": [
-        -16.0,
-        0,
-        -54.0
-      ]
-    },
-    {
-      "id": "landmark-042",
-      "name": "Manymouth Hidden Dock",
-      "node": "Landmark_manymouth_hidden_dock_042",
-      "position": [
-        18.0,
-        0,
-        -56.0
-      ]
-    },
-    {
-      "id": "landmark-043",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_043",
-      "position": [
-        -36.0,
-        0,
-        30.0
-      ]
-    },
-    {
-      "id": "landmark-044",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_044",
-      "position": [
-        36.0,
-        0,
-        30.0
-      ]
-    },
-    {
-      "id": "landmark-045",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_045",
-      "position": [
-        -40.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-046",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_046",
-      "position": [
-        40.0,
-        0,
-        4.0
-      ]
-    },
-    {
-      "id": "landmark-047",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_047",
-      "position": [
-        -38.0,
-        0,
-        -30.0
-      ]
-    },
-    {
-      "id": "landmark-048",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_048",
-      "position": [
-        38.0,
-        0,
-        -30.0
-      ]
-    },
-    {
-      "id": "landmark-049",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_049",
-      "position": [
-        -30.0,
-        0,
-        -50.0
-      ]
-    },
-    {
-      "id": "landmark-050",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_050",
-      "position": [
-        30.0,
-        0,
-        -50.0
-      ]
-    },
-    {
-      "id": "landmark-051",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_051",
-      "position": [
-        -16.0,
-        0,
-        14.0
-      ]
-    },
-    {
-      "id": "landmark-052",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_052",
-      "position": [
-        16.0,
-        0,
-        14.0
-      ]
-    },
-    {
-      "id": "landmark-053",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_053",
-      "position": [
-        -24.0,
-        0,
-        -10.0
-      ]
-    },
-    {
-      "id": "landmark-054",
-      "name": "Manymouth Mangrove",
-      "node": "Landmark_manymouth_mangrove_054",
-      "position": [
-        24.0,
-        0,
-        -10.0
-      ]
-    },
-    {
-      "id": "landmark-055",
-      "name": "Manymouth Market Stall",
-      "node": "Landmark_manymouth_market_stall_055",
-      "position": [
-        -12.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-056",
-      "name": "Manymouth Market Stall",
-      "node": "Landmark_manymouth_market_stall_056",
-      "position": [
-        8.0,
-        0,
-        10.0
-      ]
-    },
-    {
-      "id": "landmark-057",
-      "name": "Manymouth Market Stall",
-      "node": "Landmark_manymouth_market_stall_057",
-      "position": [
-        -12.0,
-        0,
-        -10.0
-      ]
-    },
-    {
-      "id": "landmark-058",
-      "name": "Manymouth Market Stall",
-      "node": "Landmark_manymouth_market_stall_058",
-      "position": [
-        8.0,
-        0,
-        -10.0
-      ]
-    },
-    {
-      "id": "landmark-059",
-      "name": "Manymouth Market Stall",
-      "node": "Landmark_manymouth_market_stall_059",
-      "position": [
-        -2.0,
-        0,
-        -28.0
-      ]
-    },
-    {
-      "id": "landmark-060",
-      "name": "Manymouth Market Stall",
-      "node": "Landmark_manymouth_market_stall_060",
-      "position": [
-        18.0,
-        0,
-        -30.0
-      ]
-    },
-    {
-      "id": "landmark-061",
-      "name": "Manymouth Flooded Cave",
-      "node": "Landmark_manymouth_flooded_cave_061",
-      "position": [
-        -32.0,
-        0,
-        -2.0
-      ]
-    },
-    {
-      "id": "landmark-062",
-      "name": "Manymouth Flooded Cave",
-      "node": "Landmark_manymouth_flooded_cave_062",
-      "position": [
-        32.0,
-        0,
-        -4.0
-      ]
-    },
-    {
-      "id": "landmark-063",
-      "name": "Manymouth Flooded Cave",
-      "node": "Landmark_manymouth_flooded_cave_063",
-      "position": [
-        -24.0,
-        0,
-        -42.0
-      ]
-    },
-    {
-      "id": "landmark-064",
-      "name": "Manymouth Flooded Cave",
-      "node": "Landmark_manymouth_flooded_cave_064",
-      "position": [
-        24.0,
-        0,
-        -44.0
-      ]
-    }
-  ],
   "spawnPoints": [
     {
       "id": "default",
       "position": [
-        0,
-        1,
-        0
+        38.0,
+        1.33,
+        -48.0
       ],
-      "rotationDegrees": 180
+      "serverTile": [
+        212,
+        222
+      ],
+      "rotationDegrees": 38.0,
+      "surface": "Trail",
+      "grounded": true,
+      "note": "grounded on the bar itself, clear of every walkway deck; the network is a few metres away"
+    },
+    {
+      "id": "arch-stair",
+      "position": [
+        79.15,
+        1.3,
+        -92.23
+      ],
+      "serverTile": [
+        253,
+        266
+      ],
+      "rotationDegrees": -140.0,
+      "surface": "Paving",
+      "grounded": true,
+      "note": "grounded on the bar itself, clear of every walkway deck; the network is a few metres away"
+    },
+    {
+      "id": "temple-quay",
+      "position": [
+        266.0,
+        1.1,
+        -276.0
+      ],
+      "serverTile": [
+        440,
+        450
+      ],
+      "rotationDegrees": -104.0,
+      "surface": "Paving",
+      "grounded": true,
+      "note": "grounded on the bar itself, clear of every walkway deck; the network is a few metres away"
     }
   ],
   "collision": {
     "nodeNames": [
-      "Landmark_resonant_crystal_cluster_000",
-      "Landmark_verdant_vine_bridge_001",
-      "Landmark_verdant_jungle_cave_002",
-      "Landmark_four_gates_waystone_003",
-      "Landmark_westhaven_lantern_tower_004",
-      "Landmark_verdant_tree_platform_005",
-      "Landmark_ssarathi_sunken_court_006",
-      "Landmark_manymouth_mangrove_007",
-      "Landmark_ssarathi_sun_stela_008",
-      "Landmark_amethyst_geode_cave_009",
-      "Landmark_grey_moor_dead_tree_010",
-      "Landmark_whitehorn_cairn_011",
-      "Landmark_manymouth_stilt_house_013",
-      "Landmark_manymouth_stilt_house_014",
-      "Landmark_manymouth_stilt_house_015",
-      "Landmark_manymouth_stilt_house_016",
-      "Landmark_manymouth_stilt_house_017",
-      "Landmark_manymouth_stilt_house_018",
-      "Landmark_manymouth_stilt_house_019",
-      "Landmark_manymouth_stilt_house_020",
-      "Landmark_manymouth_stilt_house_021",
-      "Landmark_manymouth_stilt_house_022",
-      "Landmark_manymouth_stilt_house_023",
-      "Landmark_manymouth_boardwalk_024",
-      "Landmark_manymouth_boardwalk_025",
-      "Landmark_manymouth_boardwalk_026",
-      "Landmark_manymouth_boardwalk_027",
-      "Landmark_manymouth_boardwalk_028",
-      "Landmark_manymouth_boardwalk_029",
-      "Landmark_manymouth_boardwalk_030",
-      "Landmark_manymouth_boardwalk_031",
-      "Landmark_manymouth_boardwalk_032",
-      "Landmark_manymouth_boardwalk_033",
-      "Landmark_manymouth_ferry_dock_034",
-      "Landmark_manymouth_ferry_dock_035",
-      "Landmark_manymouth_ferry_dock_036",
-      "Landmark_manymouth_ferry_dock_037",
-      "Landmark_manymouth_ferry_dock_038",
-      "Landmark_manymouth_hidden_dock_039",
-      "Landmark_manymouth_hidden_dock_040",
-      "Landmark_manymouth_hidden_dock_041",
-      "Landmark_manymouth_hidden_dock_042",
-      "Landmark_manymouth_mangrove_043",
-      "Landmark_manymouth_mangrove_044",
-      "Landmark_manymouth_mangrove_045",
-      "Landmark_manymouth_mangrove_046",
-      "Landmark_manymouth_mangrove_047",
-      "Landmark_manymouth_mangrove_048",
-      "Landmark_manymouth_mangrove_049",
-      "Landmark_manymouth_mangrove_050",
-      "Landmark_manymouth_mangrove_051",
-      "Landmark_manymouth_mangrove_052",
-      "Landmark_manymouth_mangrove_053",
-      "Landmark_manymouth_mangrove_054",
-      "Landmark_manymouth_market_stall_055",
-      "Landmark_manymouth_market_stall_056",
-      "Landmark_manymouth_market_stall_057",
-      "Landmark_manymouth_market_stall_058",
-      "Landmark_manymouth_market_stall_059",
-      "Landmark_manymouth_market_stall_060",
-      "Landmark_manymouth_flooded_cave_061",
-      "Landmark_manymouth_flooded_cave_062",
-      "Landmark_manymouth_flooded_cave_063",
-      "Landmark_manymouth_flooded_cave_064"
-    ]
+      "Landmark_EastWatch",
+      "Landmark_GreatArch",
+      "Landmark_GreatBanyan",
+      "Landmark_GreenTemple",
+      "Landmark_LabyrinthMouth",
+      "Landmark_MarketHall",
+      "Landmark_MootHall",
+      "Landmark_PaddyTower",
+      "Landmark_SouthShrine",
+      "Landmark_StelaeCourt",
+      "boat_yard_house_00",
+      "boat_yard_house_01",
+      "boat_yard_house_02",
+      "boat_yard_house_03",
+      "boat_yard_house_04",
+      "boat_yard_house_05",
+      "court_stele_00",
+      "court_stele_01",
+      "court_stele_02",
+      "court_stele_03",
+      "court_stele_04",
+      "court_stele_05",
+      "court_stele_06",
+      "court_stele_07",
+      "court_stele_08",
+      "deep_grove_house_00",
+      "deep_grove_house_01",
+      "deep_grove_house_02",
+      "deep_grove_house_03",
+      "deep_grove_house_04",
+      "east_hamlet_house_00",
+      "east_hamlet_house_01",
+      "east_hamlet_house_02",
+      "east_hamlet_house_03",
+      "east_hamlet_house_04",
+      "east_hamlet_house_05",
+      "east_hamlet_house_06",
+      "east_hamlet_house_07",
+      "east_hamlet_house_08",
+      "far_bar_house_00",
+      "far_bar_house_01",
+      "far_bar_house_02",
+      "far_bar_house_03",
+      "headland_rocks",
+      "mangrove_0000",
+      "mangrove_0001",
+      "mangrove_0002",
+      "mangrove_0003",
+      "mangrove_0004",
+      "mangrove_0005",
+      "mangrove_0006",
+      "mangrove_0007",
+      "mangrove_0008",
+      "mangrove_0009",
+      "mangrove_0010",
+      "mangrove_0011",
+      "mangrove_0012",
+      "mangrove_0013",
+      "mangrove_0014",
+      "mangrove_0015",
+      "mangrove_0016",
+      "mangrove_0017",
+      "mangrove_0018",
+      "mangrove_0019",
+      "mangrove_0020",
+      "mangrove_0021",
+      "mangrove_0022",
+      "mangrove_0023",
+      "mangrove_0024",
+      "mangrove_0025",
+      "mangrove_0026",
+      "mangrove_0027",
+      "mangrove_0028",
+      "mangrove_0029",
+      "mangrove_0030",
+      "mangrove_0031",
+      "mangrove_0032",
+      "mangrove_0033",
+      "mangrove_0034",
+      "mangrove_0035",
+      "mangrove_0036",
+      "mangrove_0037",
+      "mangrove_0038",
+      "mangrove_0039",
+      "mangrove_0040",
+      "mangrove_0041",
+      "mangrove_0042",
+      "mangrove_0043",
+      "mangrove_0044",
+      "mangrove_0045",
+      "mangrove_0046",
+      "mangrove_0047",
+      "mangrove_0048",
+      "mangrove_0049",
+      "mangrove_0050",
+      "mangrove_0051",
+      "mangrove_0052",
+      "mangrove_0053",
+      "mangrove_0054",
+      "mangrove_0055",
+      "mangrove_0056",
+      "mangrove_0057",
+      "mangrove_0058",
+      "mangrove_0059",
+      "mangrove_0060",
+      "mangrove_0061",
+      "mangrove_0062",
+      "mangrove_0063",
+      "mangrove_0064",
+      "mangrove_0065",
+      "mangrove_0066",
+      "mangrove_0067",
+      "mangrove_0068",
+      "mangrove_0069",
+      "mangrove_0070",
+      "mangrove_0071",
+      "mangrove_0072",
+      "mangrove_0073",
+      "mangrove_0074",
+      "mangrove_0075",
+      "mangrove_0076",
+      "mangrove_0077",
+      "mangrove_0078",
+      "mangrove_0079",
+      "mangrove_0080",
+      "mangrove_0081",
+      "mangrove_0082",
+      "mangrove_0083",
+      "mangrove_0084",
+      "mangrove_0085",
+      "mangrove_0086",
+      "mangrove_0087",
+      "mangrove_0088",
+      "mangrove_0089",
+      "mangrove_0090",
+      "mangrove_0091",
+      "mangrove_0092",
+      "mangrove_0093",
+      "mangrove_0094",
+      "mangrove_0095",
+      "mangrove_0096",
+      "mangrove_0097",
+      "mangrove_0098",
+      "mangrove_0099",
+      "mangrove_0100",
+      "mangrove_0101",
+      "mangrove_0102",
+      "mangrove_0103",
+      "mangrove_0104",
+      "mangrove_0105",
+      "mangrove_0106",
+      "mangrove_0107",
+      "mangrove_0108",
+      "mangrove_0109",
+      "mangrove_0110",
+      "mangrove_0111",
+      "mangrove_0112",
+      "mangrove_0113",
+      "mangrove_0114",
+      "mangrove_0115",
+      "mangrove_0116",
+      "mangrove_0117",
+      "mangrove_0118",
+      "mangrove_0119",
+      "mangrove_0120",
+      "mangrove_0121",
+      "mangrove_0122",
+      "mangrove_0123",
+      "mangrove_0124",
+      "mangrove_0125",
+      "mangrove_0126",
+      "mangrove_0127",
+      "mangrove_0128",
+      "mangrove_0129",
+      "mangrove_0130",
+      "mangrove_0131",
+      "mangrove_0132",
+      "mangrove_0133",
+      "mangrove_0134",
+      "mangrove_0135",
+      "mangrove_0136",
+      "mangrove_0137",
+      "mangrove_0138",
+      "mangrove_0139",
+      "mangrove_0140",
+      "mangrove_0141",
+      "mangrove_0142",
+      "mangrove_0143",
+      "mangrove_0144",
+      "mangrove_0145",
+      "mangrove_0146",
+      "mangrove_0147",
+      "mangrove_0148",
+      "mangrove_0149",
+      "mangrove_0150",
+      "mangrove_0151",
+      "mangrove_0152",
+      "mangrove_0153",
+      "mangrove_0154",
+      "mangrove_0155",
+      "mangrove_0156",
+      "mangrove_0157",
+      "mangrove_0158",
+      "mangrove_0159",
+      "mangrove_0160",
+      "mangrove_0161",
+      "mangrove_0162",
+      "mangrove_0163",
+      "mangrove_0164",
+      "mangrove_0165",
+      "mangrove_0166",
+      "mangrove_0167",
+      "mangrove_0168",
+      "mangrove_0169",
+      "mangrove_0170",
+      "mangrove_0171",
+      "mangrove_0172",
+      "mangrove_0173",
+      "mangrove_0174",
+      "mangrove_0175",
+      "mangrove_0176",
+      "mangrove_0177",
+      "mangrove_0178",
+      "mangrove_0179",
+      "mangrove_0180",
+      "mangrove_0181",
+      "mangrove_0182",
+      "mangrove_0183",
+      "mangrove_0184",
+      "mangrove_0185",
+      "mangrove_0186",
+      "mangrove_0187",
+      "mangrove_0188",
+      "mangrove_0189",
+      "mangrove_0190",
+      "mangrove_0191",
+      "mangrove_0192",
+      "mangrove_0193",
+      "mangrove_0194",
+      "mangrove_0195",
+      "mangrove_0196",
+      "mangrove_0197",
+      "mangrove_0198",
+      "mangrove_0199",
+      "mangrove_0200",
+      "mangrove_0201",
+      "mangrove_0202",
+      "mangrove_0203",
+      "mangrove_0204",
+      "mangrove_0205",
+      "mangrove_0206",
+      "mangrove_0207",
+      "mangrove_0208",
+      "mangrove_0209",
+      "mangrove_0210",
+      "mangrove_0211",
+      "mangrove_0212",
+      "mangrove_0213",
+      "mangrove_0214",
+      "mangrove_0215",
+      "mangrove_0216",
+      "mangrove_0217",
+      "mangrove_0218",
+      "mangrove_0219",
+      "mangrove_0220",
+      "mangrove_0221",
+      "mangrove_0222",
+      "mangrove_0223",
+      "mangrove_0224",
+      "mangrove_0225",
+      "mangrove_0226",
+      "mangrove_0227",
+      "mangrove_0228",
+      "mangrove_0229",
+      "mangrove_0230",
+      "mangrove_0231",
+      "mangrove_0232",
+      "mangrove_0233",
+      "mangrove_0234",
+      "mangrove_0235",
+      "mangrove_0236",
+      "mangrove_0237",
+      "mangrove_0238",
+      "mangrove_0239",
+      "mangrove_0240",
+      "mangrove_0241",
+      "mangrove_0242",
+      "mangrove_0243",
+      "mangrove_0244",
+      "mangrove_0245",
+      "mangrove_0246",
+      "mangrove_0247",
+      "mangrove_0248",
+      "mangrove_0249",
+      "mangrove_0250",
+      "mangrove_0251",
+      "mangrove_0252",
+      "mangrove_0253",
+      "mangrove_0254",
+      "mangrove_0255",
+      "mangrove_0256",
+      "mangrove_0257",
+      "mangrove_0258",
+      "mangrove_0259",
+      "mangrove_0260",
+      "mangrove_0261",
+      "mangrove_0262",
+      "mangrove_0263",
+      "mangrove_0264",
+      "mangrove_0265",
+      "mangrove_0266",
+      "mangrove_0267",
+      "mangrove_0268",
+      "mangrove_0269",
+      "mangrove_0270",
+      "mangrove_0271",
+      "mangrove_0272",
+      "mangrove_0273",
+      "mangrove_0274",
+      "mangrove_0275",
+      "mangrove_0276",
+      "mangrove_0277",
+      "mangrove_0278",
+      "mangrove_0279",
+      "mangrove_0280",
+      "mangrove_0281",
+      "mangrove_0282",
+      "mangrove_0283",
+      "mangrove_0284",
+      "mangrove_0285",
+      "mangrove_0286",
+      "mangrove_0287",
+      "mangrove_0288",
+      "mangrove_0289",
+      "mangrove_0290",
+      "mangrove_0291",
+      "mangrove_0292",
+      "mangrove_0293",
+      "mangrove_0294",
+      "mangrove_0295",
+      "mangrove_0296",
+      "mangrove_0297",
+      "mangrove_0298",
+      "mangrove_0299",
+      "mangrove_0300",
+      "mangrove_0301",
+      "mangrove_0302",
+      "mangrove_0303",
+      "mangrove_0304",
+      "mangrove_0305",
+      "mangrove_0306",
+      "mangrove_0307",
+      "mangrove_0308",
+      "mangrove_0309",
+      "mangrove_0310",
+      "mangrove_0311",
+      "mangrove_0312",
+      "mangrove_0313",
+      "mangrove_0314",
+      "mangrove_0315",
+      "mangrove_0316",
+      "mangrove_0317",
+      "mangrove_0318",
+      "mangrove_0319",
+      "mangrove_0320",
+      "mangrove_0321",
+      "mangrove_0322",
+      "mangrove_0323",
+      "mangrove_0324",
+      "mangrove_0325",
+      "mangrove_0326",
+      "mangrove_0327",
+      "mangrove_0328",
+      "mangrove_0329",
+      "mangrove_0330",
+      "mangrove_0331",
+      "mangrove_0332",
+      "mangrove_0333",
+      "mangrove_0334",
+      "mangrove_0335",
+      "mangrove_0336",
+      "mangrove_0337",
+      "mangrove_0338",
+      "mangrove_0339",
+      "mangrove_0340",
+      "mangrove_0341",
+      "mangrove_0342",
+      "mangrove_0343",
+      "mangrove_0344",
+      "mangrove_0345",
+      "mangrove_0346",
+      "mangrove_0347",
+      "mangrove_0348",
+      "mangrove_0349",
+      "mangrove_0350",
+      "mangrove_0351",
+      "mangrove_0352",
+      "mangrove_0353",
+      "mangrove_0354",
+      "mangrove_0355",
+      "mangrove_0356",
+      "mangrove_0357",
+      "mangrove_0358",
+      "mangrove_0359",
+      "mangrove_0360",
+      "mangrove_0361",
+      "mangrove_0362",
+      "mangrove_0363",
+      "mangrove_0364",
+      "mangrove_0365",
+      "mangrove_0366",
+      "mangrove_0367",
+      "mangrove_0368",
+      "mangrove_0369",
+      "mangrove_0370",
+      "mangrove_0371",
+      "mangrove_0372",
+      "mangrove_0373",
+      "mangrove_0374",
+      "mangrove_0375",
+      "mangrove_0376",
+      "mangrove_0377",
+      "mangrove_0378",
+      "mangrove_0379",
+      "mangrove_0380",
+      "mangrove_0381",
+      "mangrove_0382",
+      "mangrove_0383",
+      "mangrove_0384",
+      "mangrove_0385",
+      "mangrove_0386",
+      "mangrove_0387",
+      "mangrove_0388",
+      "mangrove_0389",
+      "mangrove_0390",
+      "mangrove_0391",
+      "mangrove_0392",
+      "mangrove_0393",
+      "mangrove_0394",
+      "mangrove_0395",
+      "mangrove_0396",
+      "mangrove_0397",
+      "mangrove_0398",
+      "mangrove_0399",
+      "mangrove_0400",
+      "mangrove_0401",
+      "mangrove_0402",
+      "mangrove_0403",
+      "mangrove_0404",
+      "mangrove_0405",
+      "mangrove_0406",
+      "mangrove_0407",
+      "mangrove_0408",
+      "mangrove_0409",
+      "mangrove_0410",
+      "mangrove_0411",
+      "mangrove_0412",
+      "mangrove_0413",
+      "mangrove_0414",
+      "mangrove_0415",
+      "mangrove_0416",
+      "mangrove_0417",
+      "mangrove_0418",
+      "mangrove_0419",
+      "mangrove_0420",
+      "mangrove_0421",
+      "mangrove_0422",
+      "mangrove_0423",
+      "mangrove_0424",
+      "mangrove_0425",
+      "mangrove_0426",
+      "mangrove_0427",
+      "mangrove_0428",
+      "mangrove_0429",
+      "mangrove_0430",
+      "mangrove_0431",
+      "mangrove_0432",
+      "mangrove_0433",
+      "mangrove_0434",
+      "mangrove_0435",
+      "mangrove_0436",
+      "mangrove_0437",
+      "mangrove_0438",
+      "mangrove_0439",
+      "mangrove_0440",
+      "mangrove_0441",
+      "mangrove_0442",
+      "mangrove_0443",
+      "mangrove_0444",
+      "mangrove_0445",
+      "mangrove_0446",
+      "mangrove_0447",
+      "mangrove_0448",
+      "mangrove_0449",
+      "mangrove_0450",
+      "mangrove_0451",
+      "mangrove_0452",
+      "mangrove_0453",
+      "mangrove_0454",
+      "mangrove_0455",
+      "mangrove_0456",
+      "mangrove_0457",
+      "mangrove_0458",
+      "mangrove_0459",
+      "mangrove_0460",
+      "mangrove_0461",
+      "mangrove_0462",
+      "mangrove_0463",
+      "mangrove_0464",
+      "mangrove_0465",
+      "mangrove_0466",
+      "mangrove_0467",
+      "mangrove_0468",
+      "mangrove_0469",
+      "mangrove_0470",
+      "mangrove_0471",
+      "mangrove_0472",
+      "mangrove_0473",
+      "mangrove_0474",
+      "mangrove_0475",
+      "mangrove_0476",
+      "mangrove_0477",
+      "mangrove_0478",
+      "mangrove_0479",
+      "mangrove_0480",
+      "mangrove_0481",
+      "mangrove_0482",
+      "mangrove_0483",
+      "mangrove_0484",
+      "mangrove_0485",
+      "mangrove_0486",
+      "mangrove_0487",
+      "mangrove_0488",
+      "mangrove_0489",
+      "mangrove_0490",
+      "mangrove_0491",
+      "mangrove_0492",
+      "mangrove_0493",
+      "mangrove_0494",
+      "mangrove_0495",
+      "mangrove_0496",
+      "mangrove_0497",
+      "mangrove_0498",
+      "mangrove_0499",
+      "mangrove_0500",
+      "mangrove_0501",
+      "mangrove_0502",
+      "mangrove_0503",
+      "mangrove_0504",
+      "mangrove_0505",
+      "mangrove_0506",
+      "mangrove_0507",
+      "mangrove_0508",
+      "mangrove_0509",
+      "mangrove_0510",
+      "mangrove_0511",
+      "mangrove_0512",
+      "mangrove_0513",
+      "mangrove_0514",
+      "mangrove_0515",
+      "mangrove_0516",
+      "mangrove_0517",
+      "mangrove_0518",
+      "mangrove_0519",
+      "mangrove_0520",
+      "mangrove_0521",
+      "mangrove_0522",
+      "mangrove_0523",
+      "mangrove_0524",
+      "mangrove_0525",
+      "mangrove_0526",
+      "mangrove_0527",
+      "mangrove_0528",
+      "mangrove_0529",
+      "mangrove_0530",
+      "mangrove_0531",
+      "mangrove_0532",
+      "mangrove_0533",
+      "mangrove_0534",
+      "mangrove_0535",
+      "mangrove_0536",
+      "mangrove_0537",
+      "mangrove_0538",
+      "mangrove_0539",
+      "mangrove_0540",
+      "mangrove_0541",
+      "mangrove_0542",
+      "mangrove_0543",
+      "mangrove_0544",
+      "mangrove_0545",
+      "mangrove_0546",
+      "mangrove_0547",
+      "mangrove_0548",
+      "mangrove_0549",
+      "mangrove_0550",
+      "mangrove_0551",
+      "mangrove_0552",
+      "mangrove_0553",
+      "mangrove_0554",
+      "mangrove_0555",
+      "mangrove_0556",
+      "north_fishing_house_00",
+      "north_fishing_house_01",
+      "north_fishing_house_02",
+      "north_fishing_house_03",
+      "north_fishing_house_04",
+      "north_fishing_house_05",
+      "paddy_hamlet_house_00",
+      "paddy_hamlet_house_01",
+      "paddy_hamlet_house_02",
+      "paddy_hamlet_house_03",
+      "paddy_hamlet_house_04",
+      "paddy_hamlet_house_05",
+      "paddy_hamlet_house_06",
+      "paddy_hamlet_house_07",
+      "palm_0001",
+      "palm_0002",
+      "palm_0006",
+      "palm_0007",
+      "palm_0008",
+      "palm_0010",
+      "palm_0011",
+      "palm_0012",
+      "palm_0014",
+      "palm_0015",
+      "palm_0018",
+      "palm_0019",
+      "palm_0022",
+      "palm_0023",
+      "palm_0024",
+      "palm_0026",
+      "palm_0029",
+      "palm_0032",
+      "palm_0033",
+      "palm_0034",
+      "palm_0035",
+      "palm_0036",
+      "palm_0037",
+      "palm_0038",
+      "palm_0039",
+      "palm_0040",
+      "palm_0041",
+      "palm_0042",
+      "palm_0044",
+      "palm_0045",
+      "palm_0046",
+      "palm_0047",
+      "palm_0048",
+      "palm_0049",
+      "palm_0050",
+      "palm_0051",
+      "palm_0053",
+      "palm_0054",
+      "palm_0056",
+      "palm_0057",
+      "palm_0058",
+      "palm_0060",
+      "palm_0064",
+      "palm_0066",
+      "palm_0067",
+      "palm_0069",
+      "palm_0071",
+      "palm_0073",
+      "palm_0074",
+      "palm_0075",
+      "palm_0076",
+      "palm_0077",
+      "palm_0078",
+      "palm_0082",
+      "palm_0084",
+      "palm_0086",
+      "palm_0087",
+      "palm_0088",
+      "palm_0089",
+      "palm_0090",
+      "palm_0091",
+      "palm_0092",
+      "palm_0093",
+      "palm_0094",
+      "palm_0095",
+      "palm_0097",
+      "palm_0099",
+      "palm_0100",
+      "palm_0101",
+      "palm_0103",
+      "palm_0104",
+      "palm_0106",
+      "palm_0108",
+      "palm_0109",
+      "palm_0110",
+      "palm_0111",
+      "palm_0112",
+      "palm_0114",
+      "palm_0117",
+      "palm_0118",
+      "palm_0119",
+      "palm_0120",
+      "palm_0121",
+      "palm_0122",
+      "palm_0123",
+      "palm_0124",
+      "palm_0126",
+      "palm_0127",
+      "palm_0128",
+      "palm_0129",
+      "palm_0130",
+      "palm_0135",
+      "palm_0136",
+      "palm_0137",
+      "palm_0138",
+      "palm_0140",
+      "palm_0142",
+      "palm_0143",
+      "palm_0144",
+      "palm_0145",
+      "palm_0147",
+      "palm_0148",
+      "palm_0149",
+      "palm_0151",
+      "palm_0152",
+      "palm_0153",
+      "palm_0154",
+      "palm_0155",
+      "palm_0158",
+      "palm_0161",
+      "palm_0162",
+      "palm_0163",
+      "palm_0164",
+      "palm_0165",
+      "palm_0169",
+      "palm_0171",
+      "palm_0174",
+      "palm_0175",
+      "palm_0176",
+      "palm_0177",
+      "palm_0179",
+      "palm_0180",
+      "palm_0181",
+      "palm_0182",
+      "palm_0183",
+      "palm_0184",
+      "palm_0186",
+      "palm_0187",
+      "palm_0188",
+      "palm_0189",
+      "palm_0190",
+      "palm_0191",
+      "palm_0192",
+      "palm_0195",
+      "palm_0197",
+      "palm_0198",
+      "palm_0199",
+      "palm_0200",
+      "palm_0201",
+      "palm_0202",
+      "palm_0203",
+      "palm_0204",
+      "palm_0205",
+      "palm_0206",
+      "palm_0207",
+      "palm_0208",
+      "palm_0209",
+      "palm_0210",
+      "palm_0211",
+      "palm_0214",
+      "palm_0215",
+      "palm_0216",
+      "palm_0217",
+      "palm_0218",
+      "palm_0219",
+      "palm_0222",
+      "palm_0223",
+      "palm_0225",
+      "palm_0229",
+      "palm_0233",
+      "palm_0234",
+      "palm_0235",
+      "palm_0237",
+      "palm_0238",
+      "palm_0239",
+      "palm_0241",
+      "palm_0243",
+      "palm_0245",
+      "palm_0246",
+      "palm_0248",
+      "palm_0251",
+      "palm_0252",
+      "palm_0253",
+      "palm_0254",
+      "palm_0257",
+      "palm_0259",
+      "palm_0260",
+      "palm_0262",
+      "palm_0263",
+      "palm_0264",
+      "palm_0265",
+      "palm_0266",
+      "palm_0267",
+      "palm_0269",
+      "palm_0270",
+      "palm_0271",
+      "palm_0272",
+      "palm_0276",
+      "palm_0277",
+      "palm_0278",
+      "palm_0279",
+      "palm_0280",
+      "palm_0281",
+      "palm_0282",
+      "palm_0283",
+      "palm_0285",
+      "palm_0288",
+      "palm_0289",
+      "palm_0290",
+      "palm_0291",
+      "palm_0293",
+      "palm_0295",
+      "palm_0297",
+      "palm_0298",
+      "palm_0299",
+      "palm_0300",
+      "palm_0301",
+      "palm_0302",
+      "palm_0304",
+      "palm_0305",
+      "palm_0306",
+      "palm_0307",
+      "palm_0311",
+      "palm_0312",
+      "palm_0314",
+      "palm_0315",
+      "palm_0316",
+      "palm_0317",
+      "palm_0318",
+      "palm_0319",
+      "palm_0320",
+      "palm_0322",
+      "palm_0323",
+      "palm_0326",
+      "palm_0327",
+      "palm_0328",
+      "palm_0329",
+      "palm_0330",
+      "palm_0331",
+      "palm_0333",
+      "palm_0334",
+      "palm_0336",
+      "palm_0339",
+      "palm_0340",
+      "palm_0342",
+      "palm_0345",
+      "palm_0346",
+      "palm_0347",
+      "palm_0348",
+      "palm_0349",
+      "palm_0350",
+      "palm_0351",
+      "palm_0352",
+      "palm_0353",
+      "palm_0354",
+      "palm_0357",
+      "palm_0358",
+      "palm_0359",
+      "palm_0362",
+      "palm_0363",
+      "palm_0364",
+      "palm_0365",
+      "palm_0366",
+      "palm_0367",
+      "palm_0369",
+      "palm_0370",
+      "palm_0372",
+      "palm_0373",
+      "palm_0374",
+      "palm_0375",
+      "palm_0376",
+      "palm_0377",
+      "palm_0378",
+      "palm_0379",
+      "palm_0380",
+      "palm_0381",
+      "palm_0383",
+      "palm_0384",
+      "palm_0385",
+      "palm_0386",
+      "palm_0387",
+      "palm_0388",
+      "palm_0389",
+      "palm_0390",
+      "palm_0394",
+      "palm_0396",
+      "palm_0398",
+      "palm_0401",
+      "palm_0403",
+      "palm_0404",
+      "palm_0406",
+      "palm_0408",
+      "palm_0409",
+      "palm_0410",
+      "palm_0411",
+      "palm_0412",
+      "palm_0413",
+      "palm_0414",
+      "palm_0417",
+      "palm_0419",
+      "palm_0420",
+      "palm_0421",
+      "palm_0422",
+      "palm_0426",
+      "palm_0427",
+      "palm_0428",
+      "palm_0430",
+      "palm_0431",
+      "palm_0433",
+      "palm_0435",
+      "palm_0437",
+      "palm_0438",
+      "palm_0440",
+      "palm_0441",
+      "palm_0442",
+      "palm_0443",
+      "palm_0444",
+      "palm_0445",
+      "palm_0446",
+      "palm_0447",
+      "palm_0448",
+      "palm_0451",
+      "palm_0452",
+      "palm_0453",
+      "palm_0456",
+      "palm_0459",
+      "palm_0461",
+      "palm_0462",
+      "palm_0465",
+      "palm_0466",
+      "palm_0467",
+      "palm_0468",
+      "palm_0469",
+      "palm_0470",
+      "palm_0472",
+      "palm_0473",
+      "palm_0474",
+      "palm_0475",
+      "palm_0476",
+      "palm_0477",
+      "palm_0479",
+      "palm_0480",
+      "palm_0482",
+      "palm_0483",
+      "palm_0484",
+      "palm_0486",
+      "palm_0487",
+      "palm_0489",
+      "palm_0490",
+      "palm_0493",
+      "palm_0495",
+      "palm_0496",
+      "palm_0497",
+      "palm_0498",
+      "palm_0499",
+      "palm_0500",
+      "palm_0501",
+      "palm_0502",
+      "palm_0503",
+      "palm_0505",
+      "palm_0507",
+      "palm_0509",
+      "palm_0510",
+      "palm_0513",
+      "palm_0517",
+      "palm_0518",
+      "palm_0519",
+      "palm_0520",
+      "palm_0521",
+      "palm_0522",
+      "palm_0523",
+      "palm_0524",
+      "palm_0526",
+      "palm_0528",
+      "palm_0529",
+      "palm_0530",
+      "palm_0531",
+      "palm_0532",
+      "palm_0533",
+      "palm_0534",
+      "palm_0535",
+      "palm_0536",
+      "palm_0537",
+      "palm_0539",
+      "palm_0540",
+      "palm_0541",
+      "palm_0542",
+      "palm_0543",
+      "palm_0546",
+      "palm_0547",
+      "palm_0548",
+      "palm_0549",
+      "palm_0550",
+      "palm_0551",
+      "palm_0554",
+      "palm_0555",
+      "palm_0556",
+      "palm_0557",
+      "palm_0558",
+      "palm_0560",
+      "palm_0561",
+      "palm_0562",
+      "palm_0563",
+      "palm_0564",
+      "palm_0565",
+      "palm_0566",
+      "palm_0567",
+      "palm_0569",
+      "palm_0572",
+      "palm_0574",
+      "palm_0575",
+      "palm_0576",
+      "palm_0577",
+      "palm_0579",
+      "palm_0581",
+      "palm_0584",
+      "palm_0585",
+      "palm_0587",
+      "palm_0588",
+      "palm_0589",
+      "palm_0590",
+      "palm_0591",
+      "palm_0592",
+      "palm_0593",
+      "palm_0594",
+      "palm_0595",
+      "palm_0596",
+      "palm_0597",
+      "palm_0598",
+      "palm_0601",
+      "palm_0602",
+      "palm_0603",
+      "palm_0604",
+      "palm_0606",
+      "palm_0607",
+      "palm_0608",
+      "palm_0609",
+      "palm_0610",
+      "palm_0611",
+      "palm_0612",
+      "palm_0613",
+      "palm_0614",
+      "palm_0618",
+      "palm_0619",
+      "palm_0620",
+      "palm_0621",
+      "palm_0622",
+      "palm_0624",
+      "palm_0625",
+      "palm_0627",
+      "palm_0628",
+      "palm_0629",
+      "palm_0630",
+      "palm_0631",
+      "palm_0632",
+      "palm_0633",
+      "palm_0635",
+      "palm_0636",
+      "palm_0637",
+      "palm_0638",
+      "palm_0639",
+      "palm_0641",
+      "palm_0642",
+      "palm_0643",
+      "palm_0644",
+      "palm_0645",
+      "palm_0646",
+      "palm_0647",
+      "palm_0648",
+      "palm_0649",
+      "palm_0650",
+      "palm_0651",
+      "palm_0652",
+      "palm_0653",
+      "palm_0655",
+      "palm_0656",
+      "palm_0657",
+      "palm_0658",
+      "palm_0660",
+      "palm_0661",
+      "palm_0662",
+      "palm_0663",
+      "palm_0664",
+      "palm_0665",
+      "palm_0666",
+      "palm_0667",
+      "palm_0670",
+      "palm_0671",
+      "palm_0672",
+      "palm_0673",
+      "palm_0674",
+      "palm_0675",
+      "palm_0676",
+      "palm_0677",
+      "palm_0678",
+      "palm_0679",
+      "palm_0680",
+      "palm_0681",
+      "palm_0683",
+      "palm_0684",
+      "palm_0687",
+      "palm_0688",
+      "palm_0689",
+      "palm_0690",
+      "palm_0693",
+      "palm_0694",
+      "palm_0695",
+      "palm_0697",
+      "palm_0698",
+      "palm_0699",
+      "palm_0700",
+      "palm_0701",
+      "palm_0703",
+      "palm_0706",
+      "palm_0708",
+      "palm_0709",
+      "palm_0710",
+      "palm_0711",
+      "palm_0712",
+      "palm_0713",
+      "palm_0716",
+      "palm_0717",
+      "palm_0718",
+      "palm_0719",
+      "palm_0720",
+      "palm_0723",
+      "palm_0724",
+      "palm_0726",
+      "palm_0727",
+      "palm_0728",
+      "palm_0729",
+      "palm_0731",
+      "palm_0732",
+      "palm_0734",
+      "palm_0735",
+      "palm_0736",
+      "palm_0737",
+      "palm_0738",
+      "palm_0739",
+      "palm_0740",
+      "palm_0741",
+      "palm_0742",
+      "palm_0743",
+      "palm_0744",
+      "palm_0745",
+      "palm_0748",
+      "palm_0749",
+      "palm_0750",
+      "palm_0752",
+      "palm_0753",
+      "palm_0755",
+      "palm_0756",
+      "palm_0757",
+      "palm_0758",
+      "palm_0760",
+      "palm_0761",
+      "palm_0762",
+      "palm_0764",
+      "palm_0765",
+      "palm_0767",
+      "palm_0768",
+      "palm_0769",
+      "palm_0770",
+      "palm_0772",
+      "palm_0775",
+      "palm_0776",
+      "palm_0777",
+      "palm_0778",
+      "palm_0780",
+      "palm_0781",
+      "palm_0782",
+      "palm_0783",
+      "palm_0784",
+      "palm_0786",
+      "palm_0787",
+      "palm_0788",
+      "palm_0789",
+      "palm_0790",
+      "palm_0791",
+      "palm_0793",
+      "palm_0795",
+      "palm_0796",
+      "palm_0797",
+      "palm_0798",
+      "palm_0799",
+      "palm_0801",
+      "palm_0802",
+      "palm_0803",
+      "palm_0805",
+      "palm_0806",
+      "palm_0807",
+      "palm_0808",
+      "palm_0809",
+      "palm_0810",
+      "palm_0811",
+      "palm_0812",
+      "palm_0813",
+      "palm_0814",
+      "palm_0815",
+      "palm_0817",
+      "palm_0818",
+      "palm_0819",
+      "palm_0820",
+      "palm_0821",
+      "palm_0823",
+      "palm_0824",
+      "palm_0826",
+      "palm_0828",
+      "palm_0830",
+      "palm_0831",
+      "palm_0834",
+      "palm_0835",
+      "palm_0837",
+      "palm_0838",
+      "palm_0839",
+      "palm_0840",
+      "palm_0843",
+      "palm_0845",
+      "palm_0847",
+      "palm_0848",
+      "palm_0849",
+      "palm_0850",
+      "palm_0851",
+      "palm_0853",
+      "palm_0854",
+      "palm_0855",
+      "palm_0856",
+      "palm_0857",
+      "palm_0859",
+      "palm_0861",
+      "palm_0862",
+      "palm_0863",
+      "palm_0864",
+      "palm_0865",
+      "palm_0866",
+      "palm_0867",
+      "palm_0868",
+      "palm_0869",
+      "palm_0871",
+      "palm_0874",
+      "palm_0875",
+      "palm_0876",
+      "palm_0877",
+      "palm_0878",
+      "palm_0879",
+      "palm_0881",
+      "palm_0883",
+      "palm_0884",
+      "palm_0885",
+      "palm_0886",
+      "palm_0887",
+      "palm_0888",
+      "palm_0889",
+      "palm_0890",
+      "palm_0891",
+      "palm_0892",
+      "palm_0893",
+      "palm_0895",
+      "palm_0896",
+      "palm_0897",
+      "palm_0899",
+      "palm_0900",
+      "palm_0901",
+      "palm_0902",
+      "palm_0903",
+      "palm_0904",
+      "palm_0905",
+      "palm_0907",
+      "palm_0909",
+      "palm_0910",
+      "palm_0912",
+      "palm_0913",
+      "palm_0914",
+      "palm_0915",
+      "palm_0916",
+      "palm_0917",
+      "palm_0921",
+      "palm_0922",
+      "palm_0924",
+      "palm_0926",
+      "palm_0927",
+      "palm_0928",
+      "palm_0929",
+      "palm_0930",
+      "palm_0931",
+      "palm_0932",
+      "palm_0933",
+      "palm_0934",
+      "palm_0937",
+      "palm_0938",
+      "palm_0939",
+      "palm_0941",
+      "palm_0942",
+      "palm_0944",
+      "palm_0945",
+      "palm_0946",
+      "palm_0947",
+      "palm_0948",
+      "palm_0949",
+      "palm_0950",
+      "palm_0951",
+      "palm_0952",
+      "palm_0954",
+      "palm_0955",
+      "palm_0956",
+      "palm_0957",
+      "palm_0958",
+      "palm_0959",
+      "palm_0960",
+      "palm_0963",
+      "palm_0965",
+      "palm_0966",
+      "palm_0967",
+      "palm_0968",
+      "palm_0969",
+      "palm_0970",
+      "palm_0971",
+      "palm_0972",
+      "palm_0973",
+      "palm_0976",
+      "palm_0977",
+      "palm_0978",
+      "palm_0979",
+      "palm_0982",
+      "palm_0985",
+      "palm_0986",
+      "palm_0987",
+      "palm_0988",
+      "palm_0989",
+      "palm_0991",
+      "palm_0992",
+      "palm_0993",
+      "palm_0994",
+      "palm_0995",
+      "palm_0996",
+      "palm_0997",
+      "palm_0998",
+      "palm_0999",
+      "palm_1000",
+      "palm_1001",
+      "palm_1002",
+      "palm_1003",
+      "palm_1004",
+      "palm_1005",
+      "palm_1007",
+      "palm_1008",
+      "palm_1010",
+      "palm_1011",
+      "palm_1012",
+      "palm_1013",
+      "palm_1014",
+      "palm_1015",
+      "palm_1017",
+      "palm_1019",
+      "palm_1021",
+      "palm_1022",
+      "palm_1023",
+      "palm_1024",
+      "palm_1025",
+      "palm_1026",
+      "palm_1027",
+      "palm_1029",
+      "palm_1030",
+      "palm_1032",
+      "palm_1033",
+      "palm_1034",
+      "palm_1035",
+      "palm_1036",
+      "palm_1037",
+      "palm_1038",
+      "palm_1039",
+      "palm_1040",
+      "palm_1041",
+      "palm_1042",
+      "palm_1043",
+      "palm_1044",
+      "palm_1045",
+      "palm_1047",
+      "palm_1048",
+      "palm_1049",
+      "palm_1050",
+      "palm_1051",
+      "palm_1054",
+      "palm_1056",
+      "palm_1057",
+      "palm_1058",
+      "palm_1059",
+      "palm_1060",
+      "palm_1061",
+      "palm_1062",
+      "palm_1064",
+      "palm_1065",
+      "palm_1066",
+      "palm_1067",
+      "palm_1068",
+      "palm_1069",
+      "palm_1070",
+      "palm_1071",
+      "palm_1072",
+      "palm_1073",
+      "palm_1076",
+      "palm_1077",
+      "palm_1078",
+      "palm_1079",
+      "palm_1080",
+      "palm_1081",
+      "palm_1082",
+      "palm_1084",
+      "palm_1085",
+      "palm_1087",
+      "palm_1088",
+      "palm_1091",
+      "palm_1093",
+      "palm_1094",
+      "palm_1096",
+      "palm_1097",
+      "palm_1098",
+      "palm_1099",
+      "palm_1100",
+      "palm_1101",
+      "palm_1102",
+      "palm_1103",
+      "palm_1105",
+      "palm_1106",
+      "palm_1108",
+      "palm_1109",
+      "palm_1110",
+      "palm_1111",
+      "palm_1112",
+      "palm_1113",
+      "palm_1114",
+      "palm_1115",
+      "palm_1116",
+      "palm_1117",
+      "palm_1118",
+      "palm_1119",
+      "palm_1120",
+      "palm_1121",
+      "palm_1122",
+      "palm_1123",
+      "palm_1125",
+      "palm_1126",
+      "palm_1127",
+      "palm_1128",
+      "palm_1129",
+      "palm_1130",
+      "palm_1132",
+      "palm_1133",
+      "palm_1134",
+      "palm_1136",
+      "palm_1138",
+      "palm_1139",
+      "palm_1140",
+      "palm_1142",
+      "palm_1143",
+      "palm_1144",
+      "palm_1145",
+      "palm_1146",
+      "palm_1147",
+      "palm_1149",
+      "palm_1150",
+      "palm_1151",
+      "palm_1153",
+      "palm_1154",
+      "palm_1155",
+      "palm_1156",
+      "palm_1157",
+      "palm_1158",
+      "palm_1159",
+      "palm_1160",
+      "palm_1161",
+      "palm_1162",
+      "palm_1163",
+      "palm_1164",
+      "palm_1165",
+      "palm_1166",
+      "palm_1167",
+      "palm_1169",
+      "palm_1170",
+      "palm_1171",
+      "palm_1172",
+      "palm_1173",
+      "palm_1174",
+      "palm_1175",
+      "palm_1177",
+      "palm_1178",
+      "palm_1179",
+      "palm_1181",
+      "palm_1182",
+      "palm_1183",
+      "palm_1184",
+      "palm_1185",
+      "palm_1186",
+      "palm_1187",
+      "palm_1190",
+      "palm_1191",
+      "palm_1192",
+      "palm_1193",
+      "palm_1194",
+      "palm_1196",
+      "palm_1197",
+      "palm_1198",
+      "palm_1199",
+      "palm_1200",
+      "palm_1201",
+      "palm_1202",
+      "palm_1204",
+      "palm_1205",
+      "palm_1206",
+      "palm_1207",
+      "palm_1208",
+      "palm_1209",
+      "palm_1210",
+      "palm_1211",
+      "palm_1214",
+      "palm_1215",
+      "palm_1216",
+      "palm_1219",
+      "palm_1220",
+      "palm_1221",
+      "palm_1222",
+      "palm_1223",
+      "palm_1224",
+      "palm_1225",
+      "palm_1227",
+      "palm_1229",
+      "palm_1230",
+      "palm_1231",
+      "palm_1232",
+      "palm_1233",
+      "palm_1234",
+      "palm_1235",
+      "palm_1236",
+      "palm_1237",
+      "palm_1239",
+      "palm_1240",
+      "palm_1241",
+      "palm_1243",
+      "palm_1244",
+      "palm_1245",
+      "palm_1247",
+      "palm_1248",
+      "palm_1250",
+      "palm_1251",
+      "palm_1252",
+      "palm_1253",
+      "palm_1254",
+      "palm_1255",
+      "palm_1256",
+      "palm_1257",
+      "palm_1258",
+      "palm_1259",
+      "palm_1260",
+      "palm_1261",
+      "palm_1262",
+      "palm_1264",
+      "palm_1265",
+      "palm_1267",
+      "palm_1268",
+      "palm_1269",
+      "palm_1270",
+      "palm_1271",
+      "palm_1272",
+      "palm_1273",
+      "palm_1274",
+      "palm_1275",
+      "palm_1276",
+      "palm_1277",
+      "palm_1279",
+      "palm_1280",
+      "palm_1282",
+      "palm_1283",
+      "palm_1284",
+      "palm_1286",
+      "palm_1289",
+      "palm_1291",
+      "palm_1292",
+      "palm_1293",
+      "palm_1294",
+      "palm_1295",
+      "palm_1296",
+      "palm_1297",
+      "palm_1298",
+      "palm_1300",
+      "palm_1302",
+      "palm_1303",
+      "palm_1304",
+      "palm_1305",
+      "palm_1306",
+      "palm_1307",
+      "palm_1308",
+      "palm_1309",
+      "palm_1313",
+      "palm_1314",
+      "palm_1316",
+      "palm_1317",
+      "palm_1318",
+      "palm_1319",
+      "palm_1320",
+      "palm_1321",
+      "palm_1322",
+      "palm_1323",
+      "palm_1324",
+      "palm_1325",
+      "palm_1326",
+      "palm_1329",
+      "palm_1331",
+      "palm_1333",
+      "palm_1335",
+      "palm_1336",
+      "palm_1337",
+      "palm_1338",
+      "palm_1339",
+      "palm_1341",
+      "palm_1343",
+      "palm_1344",
+      "palm_1345",
+      "palm_1346",
+      "palm_1347",
+      "palm_1348",
+      "palm_1349",
+      "palm_1352",
+      "palm_1353",
+      "palm_1354",
+      "palm_1355",
+      "palm_1356",
+      "palm_1357",
+      "palm_1358",
+      "palm_1360",
+      "palm_1363",
+      "palm_1364",
+      "palm_1365",
+      "palm_1366",
+      "palm_1368",
+      "palm_1369",
+      "palm_1370",
+      "palm_1371",
+      "palm_1372",
+      "palm_1373",
+      "palm_1375",
+      "palm_1380",
+      "palm_1381",
+      "palm_1382",
+      "palm_1383",
+      "palm_1385",
+      "palm_1386",
+      "palm_1387",
+      "palm_1389",
+      "palm_1390",
+      "palm_1392",
+      "palm_1395",
+      "palm_1396",
+      "palm_1398",
+      "palm_1399",
+      "palm_1400",
+      "palm_1401",
+      "palm_1403",
+      "palm_1404",
+      "palm_1405",
+      "palm_1406",
+      "palm_1408",
+      "palm_1409",
+      "palm_1410",
+      "palm_1411",
+      "palm_1412",
+      "palm_1414",
+      "palm_1416",
+      "palm_1419",
+      "palm_1420",
+      "palm_1421",
+      "palm_1422",
+      "palm_1423",
+      "palm_1426",
+      "palm_1427",
+      "palm_1428",
+      "palm_1429",
+      "palm_1430",
+      "palm_1431",
+      "palm_1433",
+      "palm_1434",
+      "palm_1437",
+      "palm_1438",
+      "palm_1439",
+      "palm_1440",
+      "palm_1441",
+      "palm_1442",
+      "palm_1443",
+      "palm_1444",
+      "palm_1445",
+      "palm_1446",
+      "palm_1447",
+      "palm_1448",
+      "palm_1449",
+      "palm_1450",
+      "palm_1451",
+      "palm_1453",
+      "palm_1454",
+      "palm_1455",
+      "palm_1457",
+      "palm_1458",
+      "palm_1459",
+      "palm_1460",
+      "palm_1464",
+      "palm_1465",
+      "palm_1466",
+      "palm_1469",
+      "palm_1472",
+      "palm_1473",
+      "palm_1474",
+      "palm_1475",
+      "palm_1476",
+      "palm_1477",
+      "palm_1478",
+      "palm_1480",
+      "palm_1481",
+      "palm_1482",
+      "palm_1483",
+      "palm_1484",
+      "palm_1485",
+      "palm_1486",
+      "palm_1487",
+      "palm_1488",
+      "palm_1489",
+      "palm_1490",
+      "palm_1492",
+      "palm_1494",
+      "palm_1495",
+      "palm_1496",
+      "palm_1497",
+      "palm_1498",
+      "palm_1499",
+      "palm_1501",
+      "palm_1502",
+      "palm_1504",
+      "palm_1505",
+      "palm_1509",
+      "palm_1510",
+      "palm_1513",
+      "palm_1516",
+      "palm_1517",
+      "palm_1518",
+      "palm_1519",
+      "palm_1520",
+      "palm_1521",
+      "palm_1522",
+      "palm_1523",
+      "palm_1524",
+      "palm_1525",
+      "palm_1526",
+      "palm_1527",
+      "palm_1530",
+      "palm_1531",
+      "palm_1532",
+      "palm_1534",
+      "palm_1535",
+      "palm_1536",
+      "palm_1538",
+      "palm_1540",
+      "palm_1542",
+      "palm_1543",
+      "palm_1544",
+      "palm_1545",
+      "palm_1546",
+      "palm_1547",
+      "palm_1548",
+      "palm_1551",
+      "palm_1554",
+      "palm_1555",
+      "palm_1556",
+      "palm_1559",
+      "palm_1560",
+      "palm_1562",
+      "palm_1563",
+      "palm_1565",
+      "palm_1567",
+      "palm_1568",
+      "palm_1570",
+      "palm_1571",
+      "palm_1572",
+      "palm_1573",
+      "palm_1575",
+      "palm_1576",
+      "palm_1577",
+      "palm_1578",
+      "palm_1579",
+      "palm_1580",
+      "palm_1581",
+      "palm_1582",
+      "palm_1583",
+      "palm_1584",
+      "palm_1586",
+      "palm_1587",
+      "palm_1588",
+      "palm_1589",
+      "palm_1590",
+      "palm_1592",
+      "palm_1593",
+      "palm_1594",
+      "palm_1595",
+      "palm_1596",
+      "palm_1597",
+      "palm_1598",
+      "palm_1599",
+      "palm_1600",
+      "palm_1601",
+      "palm_1602",
+      "palm_1603",
+      "palm_1604",
+      "palm_1605",
+      "palm_1606",
+      "palm_1608",
+      "palm_1609",
+      "palm_1610",
+      "palm_1611",
+      "palm_1612",
+      "palm_1615",
+      "palm_1616",
+      "palm_1617",
+      "palm_1619",
+      "palm_1622",
+      "palm_1623",
+      "palm_1624",
+      "palm_1626",
+      "palm_1627",
+      "palm_1628",
+      "palm_1629",
+      "palm_1630",
+      "palm_1631",
+      "palm_1632",
+      "palm_1633",
+      "palm_1634",
+      "palm_1635",
+      "palm_1636",
+      "palm_1637",
+      "palm_1639",
+      "palm_1640",
+      "palm_1641",
+      "palm_1642",
+      "palm_1643",
+      "palm_1645",
+      "palm_1646",
+      "palm_1647",
+      "palm_1650",
+      "palm_1652",
+      "palm_1653",
+      "sea_landing_house_00",
+      "sea_landing_house_01",
+      "sea_landing_house_02",
+      "sea_landing_house_03",
+      "sea_landing_house_04",
+      "south_hamlet_house_00",
+      "south_hamlet_house_01",
+      "south_hamlet_house_02",
+      "south_hamlet_house_03",
+      "south_hamlet_house_04",
+      "south_hamlet_house_05",
+      "south_hamlet_house_06",
+      "south_hamlet_house_07",
+      "south_hamlet_house_08",
+      "stele_00",
+      "stele_01",
+      "stele_02",
+      "stele_03",
+      "stele_04",
+      "stele_05",
+      "stele_06",
+      "stele_07",
+      "stele_08",
+      "stele_09",
+      "stele_10",
+      "stele_11",
+      "stele_12",
+      "stele_13",
+      "temple_quay_house_00",
+      "temple_quay_house_01",
+      "temple_quay_house_02",
+      "temple_quay_house_03",
+      "temple_quay_house_04",
+      "temple_quay_house_05",
+      "temple_stele_00",
+      "temple_stele_01",
+      "temple_stele_02",
+      "temple_stele_03",
+      "temple_stele_04",
+      "temple_stele_05",
+      "temple_stele_06",
+      "temple_stele_07",
+      "town_house_00",
+      "town_house_01",
+      "town_house_02",
+      "town_house_03",
+      "town_house_04",
+      "town_house_05",
+      "town_house_06",
+      "town_house_07",
+      "town_house_08",
+      "town_house_09",
+      "town_house_10",
+      "town_house_11",
+      "town_house_12",
+      "town_house_13",
+      "town_house_14",
+      "town_house_15",
+      "town_house_16",
+      "town_house_17",
+      "town_house_18",
+      "town_house_19",
+      "town_house_20",
+      "town_house_21",
+      "west_hamlet_house_00",
+      "west_hamlet_house_01",
+      "west_hamlet_house_02",
+      "west_hamlet_house_03",
+      "west_hamlet_house_04",
+      "west_hamlet_house_05",
+      "west_hamlet_house_06"
+    ],
+    "binary": "collision.bin",
+    "format": "EWCG-v1",
+    "cellMetres": 0.5,
+    "width": 1152,
+    "height": 1152,
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "range": [
+        1,
+        63
+      ],
+      "zeroMeansBlocked": true,
+      "note": "The six-bit height field cannot express the whole range from the channel floor to the temple summit, so values clamp at 63. The grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+    },
+    "walkableCells": 397902,
+    "walkableFraction": 0.2998,
+    "swimmable": {
+      "rule": "a cell whose grid value is 0 and whose terrain height is below asset.seaLevel is water, not wall",
+      "cells": 850386,
+      "fraction": 0.6408,
+      "meanDepthMetres": 5.1,
+      "maxDepthMetres": 24.56
+    }
   },
   "navigation": {
     "surfaceNodePrefixes": [
-      "Terrain_"
+      "Terrain_",
+      "Walk_"
     ],
+    "walkableAreas": [
+      "bars",
+      "sandbars",
+      "walkways",
+      "quays",
+      "landings",
+      "stairs",
+      "temple-stair",
+      "paddy-causeways"
+    ],
+    "agentRadius": 0.55,
+    "agentHeight": 1.9,
+    "maxSlopeDegrees": 40,
     "navmesh": {
       "format": "surface-prefix-v1",
       "polygons": []
+    },
+    "notes": [
+      "Every terrain sub-mesh is named Terrain_<class>; every built walkable surface is named Walk_<...>. The client turns both into the navigation collision layer the grounding ray tests.",
+      "Walkway decks, quays and landings are walk surfaces, so a downward grounding ray under one resolves onto the deck above; the channel beneath them is water and is not walkable. This region's walkway network IS its road network - there are no graded roads at all - so a large fraction of the reachable walkable area is elevated deck rather than ground.",
+      "The delta floor is terrain and carries the Terrain_ prefix everywhere, including below sea level. That is deliberate: the client casts its grounding ray at every server tile, not only walkable ones, so a region that is two-thirds water still needs a continuous surface underneath it. Those tiles ground successfully and are marked unwalkable in collision.bin.",
+      "Water tiles are recorded as swimmable rather than merely blocked (see collision.swimmable and traversal-modes.md): the bed height is real everywhere, so a future swim or aquatic traversal mode has a surface to work against without the package being rebuilt."
+    ]
+  },
+  "landmarks": [
+    {
+      "id": "great-arch",
+      "name": "The Manymouth Arch",
+      "description": "The drowned ring-gate standing over the central whirl.",
+      "node": "Landmark_GreatArch",
+      "position": [
+        114.0,
+        0.35,
+        -114.0
+      ],
+      "serverTile": [
+        288,
+        288
+      ]
+    },
+    {
+      "id": "stelae-court",
+      "name": "The Stelae Court",
+      "description": "A ring of glyph-cut stones on a silt bar.",
+      "node": "Landmark_StelaeCourt",
+      "position": [
+        228.0,
+        1.63,
+        -228.0
+      ],
+      "serverTile": [
+        402,
+        402
+      ]
+    },
+    {
+      "id": "labyrinth-mouth",
+      "name": "Mouth of the Flooded Labyrinth",
+      "description": "The cut arch into the drowned ruins under the headland.",
+      "node": "Landmark_LabyrinthMouth",
+      "position": [
+        207.0,
+        8.73,
+        -10.5
+      ],
+      "serverTile": [
+        381,
+        184
+      ]
+    },
+    {
+      "id": "green-temple",
+      "name": "The Green Temple",
+      "description": "A stepped bronze-banded temple on the delta's east rim.",
+      "node": "Landmark_GreenTemple",
+      "position": [
+        297.0,
+        14.82,
+        -309.0
+      ],
+      "serverTile": [
+        471,
+        483
+      ]
+    },
+    {
+      "id": "moot-hall",
+      "name": "The Tide Hall",
+      "description": "The town's tiered meeting hall, its ridge capped in bronze.",
+      "node": "Landmark_MootHall",
+      "position": [
+        30.0,
+        1.7,
+        -61.5
+      ],
+      "serverTile": [
+        204,
+        236
+      ]
+    },
+    {
+      "id": "market-hall",
+      "name": "The Long Market",
+      "description": "A barrel-vaulted market hall over the main walkway.",
+      "node": "Landmark_MarketHall",
+      "position": [
+        13.5,
+        1.7,
+        -27.0
+      ],
+      "serverTile": [
+        188,
+        201
+      ]
+    },
+    {
+      "id": "delta-overlook",
+      "name": "The Long Look",
+      "description": "A plank deck on a bar edge, open to the whole fan.",
+      "node": "Landmark_Overlook",
+      "position": [
+        156.0,
+        4.39,
+        18.0
+      ],
+      "serverTile": [
+        330,
+        156
+      ]
+    },
+    {
+      "id": "paddy-watchtower",
+      "name": "The Paddy Watch",
+      "description": "A stilted watch over the terraced water.",
+      "node": "Landmark_PaddyTower",
+      "position": [
+        -12.0,
+        1.75,
+        -276.0
+      ],
+      "serverTile": [
+        162,
+        450
+      ]
+    },
+    {
+      "id": "south-shrine",
+      "name": "The South Shrine",
+      "description": "A single stele on a southern bar.",
+      "node": "Landmark_SouthShrine",
+      "position": [
+        72.0,
+        1.09,
+        123.0
+      ],
+      "serverTile": [
+        246,
+        51
+      ]
+    },
+    {
+      "id": "east-watch",
+      "name": "The East Watch",
+      "description": "A stilt watch on the eastern reach.",
+      "node": "Landmark_EastWatch",
+      "position": [
+        363.0,
+        3.54,
+        -36.0
+      ],
+      "serverTile": [
+        537,
+        210
+      ]
+    },
+    {
+      "id": "deck-study",
+      "name": "The Ferry Post",
+      "description": "Matting, rope, a bronze-headed staff and fallen blossom.",
+      "node": "Landmark_DeckStudy",
+      "position": [
+        110.63,
+        1.7,
+        -111.85
+      ],
+      "serverTile": [
+        285,
+        286
+      ]
+    },
+    {
+      "id": "great-banyan",
+      "name": "The Root Landing",
+      "description": "A deck built inside the aerial roots of a great banyan.",
+      "node": "Landmark_GreatBanyan",
+      "position": [
+        70.0,
+        1.78,
+        -188.0
+      ],
+      "serverTile": [
+        244,
+        362
+      ]
+    }
+  ],
+  "interactives": [
+    {
+      "id": "arch-gate",
+      "name": "The Manymouth Arch",
+      "type": "portal-focus",
+      "position": [
+        114.0,
+        0.66,
+        -114.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "labyrinth-door",
+      "name": "Mouth of the Flooded Labyrinth",
+      "type": "interior-entrance",
+      "position": [
+        216.0,
+        9.32,
+        -24.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "moot-hall-door",
+      "name": "Tide Hall",
+      "type": "door",
+      "position": [
+        30.0,
+        4.51,
+        -61.5
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "market-scales",
+      "name": "Market Scales",
+      "type": "vendor",
+      "position": [
+        13.5,
+        1.89,
+        -27.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ferry-post",
+      "name": "Ferry Post",
+      "type": "travel",
+      "position": [
+        54.0,
+        1.89,
+        -33.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "temple-altar",
+      "name": "Temple Altar",
+      "type": "shrine",
+      "position": [
+        297.0,
+        28.58,
+        -309.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "paddy-sluice",
+      "name": "Paddy Sluice",
+      "type": "mechanism",
+      "position": [
+        -51.0,
+        1.85,
+        -258.0
+      ],
+      "authority": "server"
+    }
+  ],
+  "npcMarkers": [
+    {
+      "id": "stilt_town-villager-0",
+      "role": "villager",
+      "position": [
+        40.11,
+        1.78,
+        -25.87
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "stilt_town-villager-1",
+      "role": "villager",
+      "position": [
+        17.06,
+        1.78,
+        -62.16
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "stilt_town-villager-2",
+      "role": "villager",
+      "position": [
+        40.85,
+        1.78,
+        -46.69
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "stilt_town-villager-3",
+      "role": "villager",
+      "position": [
+        51.93,
+        1.78,
+        -44.79
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "stilt_town-villager-4",
+      "role": "villager",
+      "position": [
+        14.18,
+        1.78,
+        -43.74
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "stilt_town-villager-5",
+      "role": "villager",
+      "position": [
+        38.99,
+        1.78,
+        -67.58
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "stilt_town-villager-6",
+      "role": "villager",
+      "position": [
+        21.87,
+        1.78,
+        -38.81
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "stilt_town-villager-7",
+      "role": "villager",
+      "position": [
+        35.94,
+        1.78,
+        -36.92
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "stilt_town-villager-8",
+      "role": "villager",
+      "position": [
+        56.21,
+        1.78,
+        -49.31
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "floating_market-trader-0",
+      "role": "trader",
+      "position": [
+        -46.66,
+        1.7,
+        -11.42
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "floating_market-trader-1",
+      "role": "trader",
+      "position": [
+        -17.37,
+        1.7,
+        -4.9
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "floating_market-trader-2",
+      "role": "trader",
+      "position": [
+        -18.21,
+        1.7,
+        -3.75
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "floating_market-trader-3",
+      "role": "trader",
+      "position": [
+        -32.1,
+        1.7,
+        -32.57
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "floating_market-trader-4",
+      "role": "trader",
+      "position": [
+        -47.57,
+        1.7,
+        -13.28
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "floating_market-trader-5",
+      "role": "trader",
+      "position": [
+        -45.84,
+        1.7,
+        3.14
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "floating_market-trader-6",
+      "role": "trader",
+      "position": [
+        -47.03,
+        1.7,
+        -21.86
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "town_quay-ferryman-0",
+      "role": "ferryman",
+      "position": [
+        68.65,
+        1.7,
+        -19.4
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "town_quay-ferryman-1",
+      "role": "ferryman",
+      "position": [
+        46.63,
+        1.7,
+        -39.08
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "town_quay-ferryman-2",
+      "role": "ferryman",
+      "position": [
+        63.13,
+        1.7,
+        -39.12
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "green_temple-acolyte-0",
+      "role": "acolyte",
+      "position": [
+        294.7,
+        3.83,
+        -329.71
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "green_temple-acolyte-1",
+      "role": "acolyte",
+      "position": [
+        295.2,
+        3.83,
+        -294.07
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "green_temple-acolyte-2",
+      "role": "acolyte",
+      "position": [
+        282.6,
+        3.83,
+        -310.27
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "green_temple-acolyte-3",
+      "role": "acolyte",
+      "position": [
+        314.59,
+        3.83,
+        -302.1
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "paddy_terraces-farmer-0",
+      "role": "farmer",
+      "position": [
+        -65.03,
+        1.75,
+        -261.25
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "paddy_terraces-farmer-1",
+      "role": "farmer",
+      "position": [
+        -53.55,
+        1.75,
+        -246.55
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "paddy_terraces-farmer-2",
+      "role": "farmer",
+      "position": [
+        -30.23,
+        1.75,
+        -248.19
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "paddy_terraces-farmer-3",
+      "role": "farmer",
+      "position": [
+        -55.63,
+        1.75,
+        -277.46
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "paddy_terraces-farmer-4",
+      "role": "farmer",
+      "position": [
+        -42.72,
+        1.75,
+        -271.22
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "east_hamlet-villager-0",
+      "role": "villager",
+      "position": [
+        360.1,
+        3.36,
+        -175.41
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "east_hamlet-villager-1",
+      "role": "villager",
+      "position": [
+        359.43,
+        3.36,
+        -163.22
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "east_hamlet-villager-2",
+      "role": "villager",
+      "position": [
+        360.41,
+        3.36,
+        -162.58
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "east_hamlet-villager-3",
+      "role": "villager",
+      "position": [
+        352.16,
+        3.36,
+        -181.79
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "south_hamlet-villager-0",
+      "role": "villager",
+      "position": [
+        171.05,
+        2.19,
+        108.88
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "south_hamlet-villager-1",
+      "role": "villager",
+      "position": [
+        176.0,
+        2.19,
+        108.79
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "south_hamlet-villager-2",
+      "role": "villager",
+      "position": [
+        177.74,
+        2.19,
+        88.84
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "south_hamlet-villager-3",
+      "role": "villager",
+      "position": [
+        178.73,
+        2.19,
+        102.34
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "boat_yard-shipwright-0",
+      "role": "shipwright",
+      "position": [
+        -1.77,
+        1.7,
+        83.46
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "boat_yard-shipwright-1",
+      "role": "shipwright",
+      "position": [
+        -35.68,
+        1.7,
+        92.33
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "boat_yard-shipwright-2",
+      "role": "shipwright",
+      "position": [
+        -10.65,
+        1.7,
+        90.85
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "west_hamlet-villager-0",
+      "role": "villager",
+      "position": [
+        -138.02,
+        1.7,
+        57.83
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "west_hamlet-villager-1",
+      "role": "villager",
+      "position": [
+        -143.34,
+        1.7,
+        57.0
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "west_hamlet-villager-2",
+      "role": "villager",
+      "position": [
+        -113.57,
+        1.7,
+        27.55
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "north_fishing-fisher-0",
+      "role": "fisher",
+      "position": [
+        84.55,
+        1.7,
+        -346.92
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "north_fishing-fisher-1",
+      "role": "fisher",
+      "position": [
+        117.1,
+        1.7,
+        -347.93
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "north_fishing-fisher-2",
+      "role": "fisher",
+      "position": [
+        121.83,
+        1.7,
+        -357.26
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "north_fishing-fisher-3",
+      "role": "fisher",
+      "position": [
+        103.65,
+        1.7,
+        -342.96
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mangrove_reach-delta-crocodile-0",
+      "role": "creature",
+      "species": "delta-crocodile",
+      "position": [
+        -107.44,
+        -2.38,
+        -172.36
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mangrove_reach-delta-crocodile-1",
+      "role": "creature",
+      "species": "delta-crocodile",
+      "position": [
+        -135.42,
+        -6.61,
+        -158.64
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mangrove_reach-delta-crocodile-2",
+      "role": "creature",
+      "species": "delta-crocodile",
+      "position": [
+        -114.53,
+        -0.9,
+        -121.38
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mangrove_reach-delta-crocodile-3",
+      "role": "creature",
+      "species": "delta-crocodile",
+      "position": [
+        -90.33,
+        -4.86,
+        -142.15
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "great_arch-drowned-sentinel-0",
+      "role": "creature",
+      "species": "drowned-sentinel",
+      "position": [
+        112.2,
+        -0.55,
+        -125.78
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "great_arch-drowned-sentinel-1",
+      "role": "creature",
+      "species": "drowned-sentinel",
+      "position": [
+        104.69,
+        -0.55,
+        -106.28
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "great_arch-drowned-sentinel-2",
+      "role": "creature",
+      "species": "drowned-sentinel",
+      "position": [
+        135.78,
+        0.38,
+        -112.98
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "great_arch-drowned-sentinel-3",
+      "role": "creature",
+      "species": "drowned-sentinel",
+      "position": [
+        82.98,
+        -8.43,
+        -104.33
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "great_arch-drowned-sentinel-4",
+      "role": "creature",
+      "species": "drowned-sentinel",
+      "position": [
+        109.48,
+        -0.94,
+        -146.74
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "cave_mouth-labyrinth-crawler-0",
+      "role": "creature",
+      "species": "labyrinth-crawler",
+      "position": [
+        214.27,
+        1.11,
+        -40.66
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "cave_mouth-labyrinth-crawler-1",
+      "role": "creature",
+      "species": "labyrinth-crawler",
+      "position": [
+        196.98,
+        -0.88,
+        -42.56
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "cave_mouth-labyrinth-crawler-2",
+      "role": "creature",
+      "species": "labyrinth-crawler",
+      "position": [
+        187.5,
+        -0.08,
+        -4.23
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "cave_mouth-labyrinth-crawler-3",
+      "role": "creature",
+      "species": "labyrinth-crawler",
+      "position": [
+        200.36,
+        8.56,
+        -26.35
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "cave_mouth-labyrinth-crawler-4",
+      "role": "creature",
+      "species": "labyrinth-crawler",
+      "position": [
+        225.49,
+        7.35,
+        -17.18
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "sea_landing-shore-raider-0",
+      "role": "creature",
+      "species": "shore-raider",
+      "position": [
+        -142.12,
+        -6.27,
+        -323.6
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "sea_landing-shore-raider-1",
+      "role": "creature",
+      "species": "shore-raider",
+      "position": [
+        -96.73,
+        -14.35,
+        -333.59
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "sea_landing-shore-raider-2",
+      "role": "creature",
+      "species": "shore-raider",
+      "position": [
+        -107.88,
+        -12.87,
+        -312.95
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "sea_landing-shore-raider-3",
+      "role": "creature",
+      "species": "shore-raider",
+      "position": [
+        -131.15,
+        -7.49,
+        -341.51
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "deep_grove-canopy-serpent-0",
+      "role": "creature",
+      "species": "canopy-serpent",
+      "position": [
+        238.78,
+        -1.3,
+        -132.38
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "deep_grove-canopy-serpent-1",
+      "role": "creature",
+      "species": "canopy-serpent",
+      "position": [
+        205.99,
+        2.48,
+        -128.64
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "deep_grove-canopy-serpent-2",
+      "role": "creature",
+      "species": "canopy-serpent",
+      "position": [
+        213.54,
+        2.34,
+        -136.29
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "deep_grove-canopy-serpent-3",
+      "role": "creature",
+      "species": "canopy-serpent",
+      "position": [
+        203.03,
+        2.24,
+        -125.11
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ruin_stelae-silt-wight-0",
+      "role": "creature",
+      "species": "silt-wight",
+      "position": [
+        234.63,
+        0.74,
+        -237.21
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ruin_stelae-silt-wight-1",
+      "role": "creature",
+      "species": "silt-wight",
+      "position": [
+        248.27,
+        -3.37,
+        -214.41
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ruin_stelae-silt-wight-2",
+      "role": "creature",
+      "species": "silt-wight",
+      "position": [
+        198.47,
+        -4.16,
+        -242.48
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "ruin_stelae-silt-wight-3",
+      "role": "creature",
+      "species": "silt-wight",
+      "position": [
+        223.26,
+        -6.99,
+        -192.35
+      ],
+      "authority": "server"
+    }
+  ],
+  "harvestables": [
+    {
+      "id": "lotus-root-0-0",
+      "resource": "lotus-root",
+      "position": [
+        -42.47,
+        1.15,
+        -232.17
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "lotus-root-0-1",
+      "resource": "lotus-root",
+      "position": [
+        -45.14,
+        1.75,
+        -269.93
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "lotus-root-0-2",
+      "resource": "lotus-root",
+      "position": [
+        -52.33,
+        1.15,
+        -267.5
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "lotus-root-0-3",
+      "resource": "lotus-root",
+      "position": [
+        -58.28,
+        1.15,
+        -277.41
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "lotus-root-0-4",
+      "resource": "lotus-root",
+      "position": [
+        -26.08,
+        1.15,
+        -243.81
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "lotus-root-0-5",
+      "resource": "lotus-root",
+      "position": [
+        -67.95,
+        1.15,
+        -262.91
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "lotus-root-0-6",
+      "resource": "lotus-root",
+      "position": [
+        -21.58,
+        1.75,
+        -256.64
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "lotus-root-0-7",
+      "resource": "lotus-root",
+      "position": [
+        -60.7,
+        1.17,
+        -281.15
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "rice-1-0",
+      "resource": "rice",
+      "position": [
+        60.76,
+        1.3,
+        -325.92
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "rice-1-1",
+      "resource": "rice",
+      "position": [
+        38.89,
+        2.25,
+        -341.4
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "rice-1-2",
+      "resource": "rice",
+      "position": [
+        62.63,
+        1.3,
+        -352.38
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "rice-1-3",
+      "resource": "rice",
+      "position": [
+        64.61,
+        1.24,
+        -317.39
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "rice-1-4",
+      "resource": "rice",
+      "position": [
+        47.19,
+        0.65,
+        -319.96
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "rice-1-5",
+      "resource": "rice",
+      "position": [
+        27.7,
+        -1.38,
+        -340.57
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "rice-1-6",
+      "resource": "rice",
+      "position": [
+        40.34,
+        0.65,
+        -330.05
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "rice-1-7",
+      "resource": "rice",
+      "position": [
+        65.61,
+        1.18,
+        -317.64
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mangrove-bark-2-0",
+      "resource": "mangrove-bark",
+      "position": [
+        -99.13,
+        -0.85,
+        -148.54
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mangrove-bark-2-1",
+      "resource": "mangrove-bark",
+      "position": [
+        -108.94,
+        -0.85,
+        -157.36
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mangrove-bark-2-2",
+      "resource": "mangrove-bark",
+      "position": [
+        -136.57,
+        -2.73,
+        -136.08
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mangrove-bark-2-3",
+      "resource": "mangrove-bark",
+      "position": [
+        -113.52,
+        -1.22,
+        -165.46
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mangrove-bark-2-4",
+      "resource": "mangrove-bark",
+      "position": [
+        -104.72,
+        -1.25,
+        -121.48
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mangrove-bark-2-5",
+      "resource": "mangrove-bark",
+      "position": [
+        -111.25,
+        -0.85,
+        -153.45
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "mangrove-bark-2-6",
+      "resource": "mangrove-bark",
+      "position": [
+        -101.87,
+        -0.85,
+        -147.58
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "banyan-resin-3-0",
+      "resource": "banyan-resin",
+      "position": [
+        66.14,
+        -2.64,
+        -162.46
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "banyan-resin-3-1",
+      "resource": "banyan-resin",
+      "position": [
+        80.76,
+        1.78,
+        -171.44
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "banyan-resin-3-2",
+      "resource": "banyan-resin",
+      "position": [
+        75.04,
+        -2.27,
+        -157.25
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "banyan-resin-3-3",
+      "resource": "banyan-resin",
+      "position": [
+        86.11,
+        1.78,
+        -175.22
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "banyan-resin-3-4",
+      "resource": "banyan-resin",
+      "position": [
+        88.5,
+        1.78,
+        -184.4
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "river-fish-4-0",
+      "resource": "river-fish",
+      "position": [
+        -60.39,
+        -8.86,
+        0.73
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "river-fish-4-1",
+      "resource": "river-fish",
+      "position": [
+        -47.7,
+        -5.35,
+        -3.8
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "river-fish-4-2",
+      "resource": "river-fish",
+      "position": [
+        -13.9,
+        -3.67,
+        -22.41
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "river-fish-4-3",
+      "resource": "river-fish",
+      "position": [
+        -34.76,
+        -9.08,
+        5.71
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "river-fish-4-4",
+      "resource": "river-fish",
+      "position": [
+        -20.72,
+        -3.49,
+        -21.83
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "river-fish-4-5",
+      "resource": "river-fish",
+      "position": [
+        -59.37,
+        -3.3,
+        -13.26
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "shell-lime-5-0",
+      "resource": "shell-lime",
+      "position": [
+        287.82,
+        1.44,
+        38.57
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "shell-lime-5-1",
+      "resource": "shell-lime",
+      "position": [
+        285.61,
+        1.34,
+        62.43
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "shell-lime-5-2",
+      "resource": "shell-lime",
+      "position": [
+        313.73,
+        1.46,
+        51.86
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "shell-lime-5-3",
+      "resource": "shell-lime",
+      "position": [
+        320.36,
+        1.84,
+        67.11
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "shell-lime-5-4",
+      "resource": "shell-lime",
+      "position": [
+        300.93,
+        1.65,
+        70.69
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "shell-lime-5-5",
+      "resource": "shell-lime",
+      "position": [
+        283.04,
+        1.58,
+        42.15
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "salt-pan-6-0",
+      "resource": "salt-pan",
+      "position": [
+        -117.99,
+        -17.75,
+        -353.47
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "salt-pan-6-1",
+      "resource": "salt-pan",
+      "position": [
+        -132.98,
+        -17.26,
+        -352.94
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "salt-pan-6-2",
+      "resource": "salt-pan",
+      "position": [
+        -121.68,
+        -4.06,
+        -330.75
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "salt-pan-6-3",
+      "resource": "salt-pan",
+      "position": [
+        -160.29,
+        -21.72,
+        -321.06
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "salt-pan-6-4",
+      "resource": "salt-pan",
+      "position": [
+        -146.12,
+        -10.68,
+        -325.32
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "palm-heart-7-0",
+      "resource": "palm-heart",
+      "position": [
+        219.38,
+        1.7,
+        -125.05
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "palm-heart-7-1",
+      "resource": "palm-heart",
+      "position": [
+        209.75,
+        2.31,
+        -123.45
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "palm-heart-7-2",
+      "resource": "palm-heart",
+      "position": [
+        192.62,
+        1.65,
+        -133.01
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "palm-heart-7-3",
+      "resource": "palm-heart",
+      "position": [
+        226.99,
+        0.67,
+        -128.63
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "palm-heart-7-4",
+      "resource": "palm-heart",
+      "position": [
+        194.42,
+        2.12,
+        -139.17
+      ],
+      "authority": "server"
+    },
+    {
+      "id": "palm-heart-7-5",
+      "resource": "palm-heart",
+      "position": [
+        189.02,
+        -0.42,
+        -114.28
+      ],
+      "authority": "server"
+    }
+  ],
+  "portals": [
+    {
+      "id": "north-landing",
+      "name": "Verdant Stair Packet",
+      "type": "map-transition",
+      "position": [
+        102.0,
+        1.8,
+        -351.0
+      ],
+      "serverTile": [
+        276,
+        525
+      ],
+      "destinationMap": "maps/nymara/verdant_stair.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "east-landing",
+      "name": "Ssarathi Ruins Packet",
+      "type": "map-transition",
+      "position": [
+        363.0,
+        3.64,
+        -36.0
+      ],
+      "serverTile": [
+        537,
+        210
+      ],
+      "destinationMap": "maps/nymara/ssarathi_ruins.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "south-landing",
+      "name": "Westhaven Packet",
+      "type": "map-transition",
+      "position": [
+        297.0,
+        1.8,
+        57.0
+      ],
+      "serverTile": [
+        471,
+        117
+      ],
+      "destinationMap": "maps/nymara/westhaven.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "west-landing",
+      "name": "Crownwater Packet",
+      "type": "map-transition",
+      "position": [
+        -132.0,
+        1.8,
+        -330.0
+      ],
+      "serverTile": [
+        42,
+        504
+      ],
+      "destinationMap": "maps/nymara/crownwater.elm",
+      "radius": 3.5,
+      "authority": "server"
+    },
+    {
+      "id": "labyrinth-mouth",
+      "name": "The Flooded Labyrinth",
+      "type": "map-transition",
+      "position": [
+        216.0,
+        9.32,
+        -24.0
+      ],
+      "serverTile": [
+        390,
+        198
+      ],
+      "destinationMap": "maps/nymara/manymouth_flooded_labyrinth.elm",
+      "radius": 3.5,
+      "authority": "server"
+    }
+  ],
+  "roads": [
+    {
+      "id": "stilt_town--town_hall",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          36.0,
+          1.78,
+          -48.0
+        ],
+        [
+          30.0,
+          1.7,
+          -61.5
+        ]
+      ]
+    },
+    {
+      "id": "stilt_town--town_quay",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          36.0,
+          1.78,
+          -48.0
+        ],
+        [
+          54.0,
+          1.7,
+          -33.0
+        ]
+      ]
+    },
+    {
+      "id": "stilt_town--market_hall",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          36.0,
+          1.78,
+          -48.0
+        ],
+        [
+          13.5,
+          1.7,
+          -27.0
+        ]
+      ]
+    },
+    {
+      "id": "market_hall--floating_market",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          13.5,
+          1.7,
+          -27.0
+        ],
+        [
+          -36.0,
+          1.7,
+          -9.0
+        ]
+      ]
+    },
+    {
+      "id": "town_quay--arch_stair",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          54.0,
+          1.7,
+          -33.0
+        ],
+        [
+          81.0,
+          2.19,
+          -93.0
+        ]
+      ]
+    },
+    {
+      "id": "arch_stair--great_arch",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          81.0,
+          2.19,
+          -93.0
+        ],
+        [
+          114.0,
+          1.7,
+          -114.0
+        ]
+      ]
+    },
+    {
+      "id": "arch_stair--overlook",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          81.0,
+          2.19,
+          -93.0
+        ],
+        [
+          156.0,
+          4.39,
+          18.0
+        ]
+      ]
+    },
+    {
+      "id": "overlook--cave_mouth",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          156.0,
+          4.39,
+          18.0
+        ],
+        [
+          216.0,
+          4.39,
+          -24.0
+        ]
+      ]
+    },
+    {
+      "id": "cave_mouth--east_hamlet",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          216.0,
+          4.39,
+          -24.0
+        ],
+        [
+          351.0,
+          3.36,
+          -174.0
+        ]
+      ]
+    },
+    {
+      "id": "east_hamlet--east_watch",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          351.0,
+          3.36,
+          -174.0
+        ],
+        [
+          363.0,
+          3.36,
+          -36.0
+        ]
+      ]
+    },
+    {
+      "id": "overlook--south_hamlet",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          156.0,
+          4.39,
+          18.0
+        ],
+        [
+          174.0,
+          2.19,
+          99.0
+        ]
+      ]
+    },
+    {
+      "id": "south_hamlet--south_shrine",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          174.0,
+          2.19,
+          99.0
+        ],
+        [
+          72.0,
+          1.7,
+          123.0
+        ]
+      ]
+    },
+    {
+      "id": "south_hamlet--far_bar",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          174.0,
+          2.19,
+          99.0
+        ],
+        [
+          297.0,
+          1.7,
+          57.0
+        ]
+      ]
+    },
+    {
+      "id": "stilt_town--banyan_landing",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          36.0,
+          1.78,
+          -48.0
+        ],
+        [
+          81.0,
+          2.23,
+          -180.0
+        ]
+      ]
+    },
+    {
+      "id": "banyan_landing--deep_grove",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          81.0,
+          2.23,
+          -180.0
+        ],
+        [
+          204.0,
+          2.23,
+          -138.0
+        ]
+      ]
+    },
+    {
+      "id": "deep_grove--ruin_stelae",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          204.0,
+          2.23,
+          -138.0
+        ],
+        [
+          228.0,
+          3.83,
+          -228.0
+        ]
+      ]
+    },
+    {
+      "id": "ruin_stelae--green_temple",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          228.0,
+          3.83,
+          -228.0
+        ],
+        [
+          297.0,
+          3.83,
+          -309.0
+        ]
+      ]
+    },
+    {
+      "id": "green_temple--temple_quay",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          297.0,
+          3.83,
+          -309.0
+        ],
+        [
+          264.0,
+          3.25,
+          -276.0
+        ]
+      ]
+    },
+    {
+      "id": "floating_market--west_hamlet",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          -36.0,
+          1.7,
+          -9.0
+        ],
+        [
+          -129.0,
+          1.7,
+          39.0
+        ]
+      ]
+    },
+    {
+      "id": "west_hamlet--boat_yard",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          -129.0,
+          1.7,
+          39.0
+        ],
+        [
+          -18.0,
+          1.7,
+          84.0
+        ]
+      ]
+    },
+    {
+      "id": "banyan_landing--mangrove_reach",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          81.0,
+          2.23,
+          -180.0
+        ],
+        [
+          -114.0,
+          1.78,
+          -144.0
+        ]
+      ]
+    },
+    {
+      "id": "mangrove_reach--paddy_hamlet",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          -114.0,
+          1.78,
+          -144.0
+        ],
+        [
+          -84.0,
+          1.7,
+          -234.0
+        ]
+      ]
+    },
+    {
+      "id": "paddy_hamlet--paddy_terraces",
+      "type": "walkway",
+      "surface": "bamboo-causeway",
+      "waypoints": [
+        [
+          -84.0,
+          1.7,
+          -234.0
+        ],
+        [
+          -51.0,
+          1.75,
+          -258.0
+        ]
+      ]
+    },
+    {
+      "id": "paddy_terraces--paddy_tower",
+      "type": "walkway",
+      "surface": "bamboo-causeway",
+      "waypoints": [
+        [
+          -51.0,
+          1.75,
+          -258.0
+        ],
+        [
+          -12.0,
+          1.75,
+          -276.0
+        ]
+      ]
+    },
+    {
+      "id": "paddy_tower--upper_paddy",
+      "type": "walkway",
+      "surface": "bamboo-causeway",
+      "waypoints": [
+        [
+          -12.0,
+          1.75,
+          -276.0
+        ],
+        [
+          48.0,
+          1.75,
+          -330.0
+        ]
+      ]
+    },
+    {
+      "id": "upper_paddy--north_fishing",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          48.0,
+          1.75,
+          -330.0
+        ],
+        [
+          102.0,
+          1.7,
+          -351.0
+        ]
+      ]
+    },
+    {
+      "id": "paddy_hamlet--sea_landing",
+      "type": "walkway",
+      "surface": "plank",
+      "waypoints": [
+        [
+          -84.0,
+          1.7,
+          -234.0
+        ],
+        [
+          -132.0,
+          1.7,
+          -330.0
+        ]
+      ]
+    }
+  ],
+  "water": {
+    "seaLevel": 0.0,
+    "serverCells": 576,
+    "bodies": [
+      {
+        "id": "Water_Delta",
+        "node": "Water_Delta",
+        "type": "delta"
+      },
+      {
+        "id": "Water_DeepChannels",
+        "node": "Water_DeepChannels",
+        "type": "deep-channel"
+      }
+    ],
+    "streams": [],
+    "channels": [
+      {
+        "id": "great_mouth",
+        "type": "navigable",
+        "floor": -7.2,
+        "waypoints": [
+          [
+            396.0,
+            0.0,
+            72.0
+          ],
+          [
+            288.0,
+            0.0,
+            -18.0
+          ],
+          [
+            186.0,
+            0.0,
+            -66.0
+          ],
+          [
+            90.0,
+            0.0,
+            -102.0
+          ],
+          [
+            -12.0,
+            0.0,
+            -156.0
+          ],
+          [
+            -102.0,
+            0.0,
+            -234.0
+          ],
+          [
+            -174.0,
+            0.0,
+            -312.0
+          ]
+        ]
+      },
+      {
+        "id": "north_mouth",
+        "type": "navigable",
+        "floor": -7.2,
+        "waypoints": [
+          [
+            384.0,
+            0.0,
+            -102.0
+          ],
+          [
+            300.0,
+            0.0,
+            -156.0
+          ],
+          [
+            210.0,
+            0.0,
+            -210.0
+          ],
+          [
+            108.0,
+            0.0,
+            -258.0
+          ],
+          [
+            6.0,
+            0.0,
+            -312.0
+          ],
+          [
+            -96.0,
+            0.0,
+            -366.0
+          ]
+        ]
+      },
+      {
+        "id": "temple_mouth",
+        "type": "navigable",
+        "floor": -7.2,
+        "waypoints": [
+          [
+            402.0,
+            0.0,
+            -228.0
+          ],
+          [
+            330.0,
+            0.0,
+            -264.0
+          ],
+          [
+            234.0,
+            0.0,
+            -330.0
+          ],
+          [
+            132.0,
+            0.0,
+            -378.0
+          ],
+          [
+            30.0,
+            0.0,
+            -408.0
+          ]
+        ]
+      },
+      {
+        "id": "south_mouth",
+        "type": "navigable",
+        "floor": -7.2,
+        "waypoints": [
+          [
+            378.0,
+            0.0,
+            138.0
+          ],
+          [
+            264.0,
+            0.0,
+            102.0
+          ],
+          [
+            156.0,
+            0.0,
+            66.0
+          ],
+          [
+            48.0,
+            0.0,
+            36.0
+          ],
+          [
+            -60.0,
+            0.0,
+            12.0
+          ],
+          [
+            -156.0,
+            0.0,
+            -24.0
+          ]
+        ]
+      },
+      {
+        "id": "market_reach",
+        "type": "shallow-braid",
+        "floor": -5.1,
+        "waypoints": [
+          [
+            132.0,
+            0.0,
+            -60.0
+          ],
+          [
+            54.0,
+            0.0,
+            -24.0
+          ],
+          [
+            -30.0,
+            0.0,
+            6.0
+          ],
+          [
+            -120.0,
+            0.0,
+            30.0
+          ]
+        ]
+      },
+      {
+        "id": "mangrove_cut",
+        "type": "shallow-braid",
+        "floor": -5.1,
+        "waypoints": [
+          [
+            42.0,
+            0.0,
+            -120.0
+          ],
+          [
+            -42.0,
+            0.0,
+            -138.0
+          ],
+          [
+            -126.0,
+            0.0,
+            -156.0
+          ],
+          [
+            -180.0,
+            0.0,
+            -186.0
+          ]
+        ]
+      },
+      {
+        "id": "cave_run",
+        "type": "shallow-braid",
+        "floor": -5.1,
+        "waypoints": [
+          [
+            264.0,
+            0.0,
+            -6.0
+          ],
+          [
+            210.0,
+            0.0,
+            -42.0
+          ],
+          [
+            162.0,
+            0.0,
+            -84.0
+          ]
+        ]
+      }
+    ],
+    "depths": {
+      "barFlat": -2.6,
+      "navigableChannel": -7.2,
+      "openSea": -17.0,
+      "whirlpool": -13.5
     }
   },
-  "materials": {
-    "baseColor": "textures/region-basecolor.png",
-    "normal": "textures/region-normal.png",
-    "orm": "textures/region-orm.png"
+  "environment": {
+    "sky": {
+      "type": "gradient",
+      "zenith": [
+        0.2,
+        0.46,
+        0.7
+      ],
+      "horizon": [
+        0.86,
+        0.86,
+        0.78
+      ],
+      "curve": 0.18,
+      "groundHorizon": [
+        0.44,
+        0.58,
+        0.52
+      ],
+      "groundBottom": [
+        0.14,
+        0.26,
+        0.24
+      ],
+      "sunAngleMax": 16.0,
+      "energy": 1.14
+    },
+    "sun": {
+      "direction": [
+        0.62,
+        -0.58,
+        0.53
+      ],
+      "color": [
+        1.22,
+        1.04,
+        0.82
+      ],
+      "energy": 1.12,
+      "indirectEnergy": 1.15,
+      "angularDiameterDegrees": 1.2
+    },
+    "ambient": {
+      "color": [
+        0.48,
+        0.66,
+        0.68
+      ],
+      "energy": 0.56,
+      "skyContribution": 0.75
+    },
+    "saturation": 1.34,
+    "fog": {
+      "enabled": true,
+      "color": [
+        0.72,
+        0.8,
+        0.76
+      ],
+      "density": 0.00055,
+      "heightFalloff": 0.0026
+    },
+    "variants": {
+      "monsoon": {
+        "sun": {
+          "direction": [
+            0.3,
+            -0.86,
+            0.42
+          ],
+          "color": [
+            0.86,
+            0.9,
+            0.92
+          ],
+          "energy": 0.62
+        },
+        "fog": {
+          "enabled": true,
+          "color": [
+            0.68,
+            0.74,
+            0.74
+          ],
+          "density": 0.0026
+        }
+      },
+      "night": {
+        "sun": {
+          "direction": [
+            0.4,
+            -0.72,
+            0.56
+          ],
+          "color": [
+            0.34,
+            0.46,
+            0.68
+          ],
+          "energy": 0.16
+        },
+        "fog": {
+          "enabled": true,
+          "color": [
+            0.1,
+            0.18,
+            0.24
+          ],
+          "density": 0.0018
+        }
+      }
+    },
+    "water": {
+      "shallowColor": [
+        0.3,
+        0.8,
+        0.71
+      ],
+      "deepColor": [
+        0.03,
+        0.2,
+        0.26
+      ],
+      "causticsEnabled": true,
+      "note": "Shallow/deep tint and caustics are presentation settings for whoever writes the water shader; the GLB ships a flat lit plane."
+    },
+    "presentation": {
+      "gulls": {
+        "enabled": true,
+        "density": 0.62,
+        "zones": [
+          "open-delta",
+          "sea-reach"
+        ]
+      },
+      "mist": {
+        "enabled": true,
+        "density": 0.22,
+        "zones": [
+          "mangrove-reach"
+        ]
+      },
+      "spray": {
+        "enabled": false
+      },
+      "bannerWind": {
+        "enabled": true,
+        "strength": 0.38
+      },
+      "ambientAudio": [
+        {
+          "id": "channel-lap",
+          "zone": "open-delta"
+        },
+        {
+          "id": "town-quay",
+          "zone": "stilt-town"
+        },
+        {
+          "id": "insects",
+          "zone": "mangrove-reach"
+        },
+        {
+          "id": "arch-hum",
+          "zone": "the-arch"
+        },
+        {
+          "id": "surf",
+          "zone": "sea-reach"
+        }
+      ]
+    },
+    "zones": [
+      {
+        "id": "stilt-town",
+        "centre": [
+          36.0,
+          3.0,
+          -48.0
+        ],
+        "radius": 96.0
+      },
+      {
+        "id": "the-arch",
+        "centre": [
+          114.0,
+          2.0,
+          -114.0
+        ],
+        "radius": 78.0
+      },
+      {
+        "id": "mangrove-reach",
+        "centre": [
+          -114.0,
+          1.0,
+          -144.0
+        ],
+        "radius": 120.0
+      },
+      {
+        "id": "paddy-country",
+        "centre": [
+          -51.0,
+          2.0,
+          -258.0
+        ],
+        "radius": 130.0
+      },
+      {
+        "id": "temple-rim",
+        "centre": [
+          297.0,
+          12.0,
+          -309.0
+        ],
+        "radius": 110.0
+      },
+      {
+        "id": "sea-reach",
+        "centre": [
+          -132.0,
+          0.0,
+          -330.0
+        ],
+        "radius": 200.0
+      },
+      {
+        "id": "open-delta",
+        "centre": [
+          114.0,
+          0.0,
+          -114.0
+        ],
+        "radius": 420.0
+      }
+    ],
+    "traversal": {
+      "walk": {
+        "available": true
+      },
+      "swim": {
+        "available": false,
+        "reason": "no client swim state yet",
+        "surfaceLevel": 0.0,
+        "authoredFor": true,
+        "note": "Every water tile has real bed geometry beneath it and is flagged swimmable in collision.bin's companion mask, so a swim mode needs no rebuild of this package."
+      },
+      "dive": {
+        "available": false,
+        "authoredFor": true,
+        "maxDepth": -13.5,
+        "note": "The whirlpool under the arch, the dredged channels and the sunken stelae are modelled below the water line and are lit as if seen through water."
+      }
+    }
   },
-  "productionStatus": "terrain-landmark-material-pass"
+  "minimap": {
+    "file": "minimap.webp",
+    "pixels": 768,
+    "metresPerPixel": 0.7487,
+    "worldMin": [
+      -174.0,
+      -401.0
+    ],
+    "worldMax": [
+      401.0,
+      174.0
+    ],
+    "northAxis": "-Z",
+    "orientation": "north-up"
+  },
+  "lodGroups": [
+    {
+      "id": "vegetation",
+      "strategy": "authored-detail-tiers",
+      "levels": [
+        {
+          "id": "near",
+          "suffix": "_high"
+        },
+        {
+          "id": "mid",
+          "suffix": "_mid"
+        },
+        {
+          "id": "far",
+          "suffix": "_low"
+        }
+      ]
+    },
+    {
+      "id": "package-lod2",
+      "glb": "world-lod2.glb",
+      "strategy": "reduced-package",
+      "notes": "Far-tier vegetation only, no ground clutter."
+    }
+  ],
+  "performance": {
+    "nodes": 11731,
+    "meshes": 570,
+    "materials": 22,
+    "images": 58,
+    "textures": 58,
+    "accessors": 2280,
+    "bufferViews": 2338,
+    "uniqueTriangles": 486653,
+    "uniqueVertices": 413565,
+    "glbBytes": 26403304,
+    "instancedTriangles": 2458407,
+    "embeddedTextureBytes": 24555232,
+    "textureMemoryBytesUncompressed": 220987392,
+    "placements": 6275,
+    "collision": {
+      "width": 1152,
+      "height": 1152,
+      "cellMetres": 0.5,
+      "walkableCells": 397902,
+      "swimmableCells": 850386,
+      "swimmableFraction": 0.6408,
+      "meanWaterDepth": 5.1,
+      "maxWaterDepth": 24.56,
+      "blockedCells": 929202,
+      "walkableFraction": 0.2998,
+      "elevatedDecks": 198,
+      "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
+      "columnOrder": "server-tile-x (column 0 is the -X western edge)"
+    },
+    "notes": [
+      "walkway network: 27 routes, 73 deck segments",
+      "town: 22 stilt houses",
+      "floating market: 24 moored market boats",
+      "paddy_hamlet: 8 stilt houses",
+      "east_hamlet: 9 stilt houses",
+      "south_hamlet: 9 stilt houses",
+      "west_hamlet: 7 stilt houses",
+      "north_fishing: 6 stilt houses",
+      "boat_yard: 6 stilt houses",
+      "far_bar: 4 stilt houses",
+      "sea_landing: 5 stilt houses",
+      "temple_quay: 6 stilt houses",
+      "deep_grove: 5 stilt houses",
+      "deck study placed at (110.6, 1.70, -111.9)",
+      "paddies: 219 lotus beds, 301 rice clumps",
+      "mangrove belt: 557 trees, 943 root mats",
+      "planting: 1654 palms, 2192 ground patches",
+      "props: 31 moored boats, 113 deck gear"
+    ],
+    "lod2": {
+      "glbBytes": 18708176,
+      "nodes": 7317,
+      "uniqueTriangles": 451473,
+      "instancedTriangles": 1559927,
+      "sizeReductionPercent": 29.1,
+      "triangleReductionPercent": 36.5
+    }
+  },
+  "sources": [
+    {
+      "id": "aerial-concept",
+      "file": "references/01-concept-aerial-overview.png",
+      "role": "authoritative-composition"
+    },
+    {
+      "id": "detail-board",
+      "file": "references/00-concept-detail-board.png",
+      "role": "authoritative-player-scale"
+    },
+    {
+      "id": "generator",
+      "file": "source/build_manymouth_delta.py",
+      "role": "reproducible-build",
+      "seed": 20260829
+    }
+  ],
+  "provenance": {
+    "assets": "original to Eloria/Nymara; generated by _toolkit/amberwood/* plus source/deltakit.py and source/stiltkit.py",
+    "thirdParty": "none",
+    "textures": "procedural (numpy + Pillow), no sampled or traced source",
+    "geometry": "procedural (numpy), no imported models",
+    "license": "same as the Eloria client repository"
+  },
+  "productionStatus": "production-geometry-materials-population",
+  "knownLimitations": []
 }

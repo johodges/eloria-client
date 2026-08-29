@@ -183,14 +183,20 @@
     {
       "id": "manymouth_delta",
       "title": "Manymouth Delta",
-      "sourceSha256": "a947e5e1a0be2244c3029acc61e26de7107ed5dd3d00c8b6c55720a300fb80f8",
+      "sourceSha256": "fdba38e08df8c32c205d2d28a3da0eb5df14e9671a5a6a74a962cb746fd0582f",
       "conceptViews": 10,
-      "landmarkInstances": 64,
+      "landmarkInstances": 12,
       "terrainHeightRange": [
-        0.0,
-        0.0
+        -25.83,
+        14.82
       ],
-      "water": true
+      "water": true,
+      "status": "production-geometry-materials-population",
+      "serverCells": 576,
+      "requiresServerMap": "96x96 ELM tiles (576 cells)",
+      "uniqueTriangles": 486653,
+      "instancedTriangles": 2458407,
+      "glbBytes": 26403304
     }
   ],
   "interiors": [

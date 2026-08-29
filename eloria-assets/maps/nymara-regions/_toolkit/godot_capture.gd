@@ -285,7 +285,20 @@ func _init() -> void:
 	# reads an index.json from whichever capture directory it picks, so a
 	# godot-captures directory without one makes the comparison step fail
 	# outright rather than fall back - the frames are there and unusable.
+	#
+	# Seeded from any index already beside the frames, so a partial `--only`
+	# run updates the shots it retook and keeps the rest. Writing only what
+	# this run produced means re-taking one frame drops the other twenty-six
+	# from the index while their files stay on disk.
 	var produced: Array = []
+	var existing := FileAccess.open(out_dir.path_join("index.json"),
+		FileAccess.READ)
+	if existing != null:
+		var previous: Variant = JSON.parse_string(existing.get_as_text())
+		existing.close()
+		if typeof(previous) == TYPE_ARRAY:
+			produced = previous
+
 	for entry in views:
 		var id: String = str(entry.get("id", ""))
 		if only != "" and not id.contains(only):
@@ -318,7 +331,14 @@ func _init() -> void:
 			# says gl_compatibility while the frame was drawn with Vulkan.
 			record["renderingDriver"] = RenderingServer.get_current_rendering_driver_name()
 			record["renderingMethod"] = RenderingServer.get_current_rendering_method()
-			produced.append(record)
+			var replaced := false
+			for i in produced.size():
+				if str((produced[i] as Dictionary).get("id", "")) == id:
+					produced[i] = record
+					replaced = true
+					break
+			if not replaced:
+				produced.append(record)
 			print("[capture] %s -> %s" % [id, path])
 		else:
 			_err("could not save " + path)

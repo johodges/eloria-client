@@ -297,18 +297,19 @@
       "coordinateTransform": {
         "metresPerTile": 1.0,
         "serverOrigin": [
-          58.0,
-          58.0
+          174.0,
+          174.0
         ],
         "origin": [
           0.0,
           0.0,
           0.0
         ],
-        "walkingHeight": 0.0,
+        "walkingHeight": 1.33,
         "invertServerY": true
       },
-      "status": "terrain-landmark-material-pass"
+      "status": "production-geometry-materials-population",
+      "requiresServerMap": "96x96 ELM tiles (576 cells)"
     },
     "manymouth_delta": {
       "alias": "maps/nymara/manymouth_delta.elm"
