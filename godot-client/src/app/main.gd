@@ -126,6 +126,7 @@ var map_light_root: Node3D
 @onready var inventory_use_button: Button = %InventoryUse
 @onready var inventory_equip_button: Button = %InventoryEquip
 @onready var inventory_unequip_button: Button = %InventoryUnequip
+@onready var inventory_inspect_button: Button = %InventoryInspect
 @onready var inventory_store_all: Button = %InventoryStoreAll
 @onready var inventory_get_all: Button = %InventoryGetAll
 @onready var inventory_drop_all: Button = %InventoryDropAll
@@ -175,6 +176,7 @@ var map_light_root: Node3D
 @onready var ground_bag_header: Control = %GroundBagHeader
 @onready var ground_bag_grid: GridContainer = %GroundBagGrid
 @onready var ground_bag_drop_button: Button = %GroundBagDrop
+@onready var ground_bag_resize_grip: Button = %GroundBagResizeGrip
 @onready var knowledge_list: ItemList = %KnowledgeList
 @onready var knowledge_detail: RichTextLabel = %KnowledgeDetail
 @onready var knowledge_known_only: CheckBox = %KnowledgeKnownOnly
@@ -363,6 +365,15 @@ var _ground_bag_get_all_bag_id := -1
 ## the server's inventory until the placing click is answered.
 var _carried_slot := -1
 var _inventory_quantities: Array[int] = INVENTORY_QUANTITY_DEFAULTS.duplicate()
+var _inventory_tool := "grab"
+## Whether the next item description may open the detail window. The short line
+## and the detail window are two readings of the same server reply, so which
+## one the player gets is decided here rather than by asking the server twice.
+var _detail_popup_allowed := false
+var _ground_bag_scale := 1.0
+var _ground_bag_resizing := false
+var _ground_bag_resize_start_mouse := Vector2.ZERO
+var _ground_bag_resize_start_scale := 1.0
 var _selected_quantity_box := 0
 var _editing_quantity_box := -1
 var inventory_quantity_buttons: Array[Button] = []
@@ -467,7 +478,19 @@ const GROUND_BAG_SLOT_COUNT := 20
 ## The legacy client's six editable quantity boxes and their defaults. The
 ## selected one is the amount every drop and every pick-up uses.
 const INVENTORY_QUANTITY_DEFAULTS: Array[int] = [1, 5, 10, 20, 50, 100]
-const INVENTORY_QUANTITY_MAX := 99999
+## Seven digits: a stack can run into the millions on a long-lived character,
+## and a box that cannot hold the number cannot be used to move it.
+const INVENTORY_QUANTITY_MAX := 9999999
+const INVENTORY_QUANTITY_DIGITS := 7
+
+## What a left click on an item does. Right-clicking an item steps through
+## these in order, and the Use, Equip, Unequip and Inspect buttons each select
+## one, so the buttons and the click do the same thing by the same names.
+const INVENTORY_TOOLS: Array[String] = ["grab", "use", "inspect"]
+const INVENTORY_TOOL_LABELS := {
+	"grab": "Move", "use": "Use", "equip": "Equip", "unequip": "Unequip",
+	"inspect": "Inspect",
+}
 const MINIMAP_DRAG_BORDER := 54.0
 const UI_SCALE_MIN := 0.5
 const UI_SCALE_MAX := 1.5
@@ -655,6 +678,11 @@ func _ready() -> void:
 	inventory_drop_all.gui_input.connect(_on_bulk_button_gui_input.bind("drop"))
 	inventory_header.gui_input.connect(_on_inventory_header_gui_input)
 	inventory_resize_grip.gui_input.connect(_on_inventory_resize_grip_gui_input)
+	ground_bag_resize_grip.gui_input.connect(_on_ground_bag_resize_grip_gui_input)
+	for tool_button: Button in [inventory_use_button, inventory_equip_button,
+			inventory_unequip_button, inventory_inspect_button]:
+		tool_button.toggle_mode = true
+	_sync_inventory_tool_buttons()
 	saved_item_lists.item_selected.connect(_on_saved_item_list_selected)
 	item_list_save.pressed.connect(_on_item_list_save_pressed)
 	item_list_delete.pressed.connect(_on_item_list_delete_pressed)
@@ -1363,28 +1391,16 @@ func _on_inventory_close_pressed() -> void:
 	inventory_panel.hide()
 
 func _on_inventory_use_pressed() -> void:
-	_use_inventory_slot(selected_inventory_slot)
+	_choose_inventory_tool("use")
 
 func _on_inventory_equip_pressed() -> void:
-	if selected_inventory_slot < 0 or selected_inventory_slot >= 36:
-		return
-	var destination: int = _first_empty_slot(36, 44)
-	if destination >= 0:
-		_move_inventory_item(selected_inventory_slot, destination)
+	_choose_inventory_tool("equip")
 
 func _on_inventory_unequip_pressed() -> void:
-	if selected_inventory_slot < 36 or selected_inventory_slot >= 44:
-		return
-	var destination: int = _first_empty_slot(0, 36)
-	if destination >= 0:
-		_move_inventory_item(selected_inventory_slot, destination)
+	_choose_inventory_tool("unequip")
 
 func _on_inventory_inspect_pressed() -> void:
-	if selected_inventory_slot < 0:
-		return
-	var error: Error = Network.look_at_inventory_item(selected_inventory_slot)
-	if error != OK:
-		push_warning("LOOK_AT_INVENTORY_ITEM failed: " + error_string(error))
+	_choose_inventory_tool("inspect")
 
 func _configure_inventory_menus() -> void:
 	_store_options_menu = PopupMenu.new()
@@ -2662,6 +2678,12 @@ func _on_state_changed(path: StringName) -> void:
 				_sync_storage()
 			if bool(AppState.ground_bag.get("open", false)):
 				_sync_ground_bag()
+		&"item_detail":
+			# The description is written whichever tool asked for it; only the
+			# window is withheld. See `_describe_slot`.
+			var short_line: String = _short_item_line()
+			if not short_line.is_empty():
+				inventory_description.text = short_line
 		&"inventory_cooldowns":
 			_sync_quick_slots()
 		&"spells":
@@ -3397,6 +3419,9 @@ func _load_hud_settings() -> void:
 		# not, so every session started with the map hidden and nothing but
 		# Alt+M would show it again.
 		_minimap_visible = bool(config.get_value("hud", "minimap_visible", false))
+		_ground_bag_scale = clampf(float(config.get_value(
+			"ground_bag", "window_scale", 1.0)),
+			INVENTORY_MIN_SCALE, INVENTORY_MAX_SCALE)
 		_inventory_scale = clampf(float(config.get_value(
 			"inventory", "window_scale", 1.0)),
 			INVENTORY_MIN_SCALE, INVENTORY_MAX_SCALE)
@@ -3473,6 +3498,7 @@ func _load_hud_settings() -> void:
 	_apply_ui_scale()
 	_apply_minimap_scale()
 	_apply_inventory_scale(_inventory_scale)
+	_apply_ground_bag_scale(_ground_bag_scale)
 	_apply_banner_options()
 
 func _on_ui_scale_changed(value: float) -> void:
@@ -3558,6 +3584,7 @@ func _save_hud_settings() -> void:
 	config.set_value("hud", "minimap_position", minimap_frame.position)
 	config.set_value("hud", "minimap_visible", _minimap_visible)
 	config.set_value("inventory", "window_scale", _inventory_scale)
+	config.set_value("ground_bag", "window_scale", _ground_bag_scale)
 	config.set_value("inventory", "window_position", inventory_panel.position)
 	config.set_value("inventory", "equipment_side", _equipment_side)
 	config.set_value("inventory", "bag_window_position", ground_bag_panel.position)
@@ -3631,7 +3658,8 @@ func _clamp_ground_bag_window_to_viewport() -> void:
 		return
 	var game_origin: Vector2 = game_view.global_position
 	var local_position: Vector2 = ground_bag_panel.global_position - game_origin
-	var maximum: Vector2 = (game_view.size - ground_bag_panel.size
+	var maximum: Vector2 = (game_view.size
+		- ground_bag_panel.size * _ground_bag_scale
 		- Vector2(8.0, 8.0)).max(Vector2(8.0, 8.0))
 	ground_bag_panel.global_position = game_origin + Vector2(
 		clampf(local_position.x, 8.0, maximum.x),
@@ -3661,6 +3689,43 @@ func _on_inventory_resize_grip_gui_input(event: InputEvent) -> void:
 			else normalized.y)
 		_apply_inventory_scale(_inventory_resize_start_scale + scale_delta)
 		inventory_resize_grip.accept_event()
+
+func _on_ground_bag_resize_grip_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse: InputEventMouseButton = event as InputEventMouseButton
+		if mouse.button_index != MOUSE_BUTTON_LEFT:
+			return
+		_ground_bag_resizing = mouse.pressed
+		if mouse.pressed:
+			ground_bag_panel.move_to_front()
+			_ground_bag_resize_start_mouse = get_viewport().get_mouse_position()
+			_ground_bag_resize_start_scale = _ground_bag_scale
+		else:
+			_save_hud_settings()
+		ground_bag_resize_grip.accept_event()
+	elif event is InputEventMouseMotion and _ground_bag_resizing:
+		var delta: Vector2 = (get_viewport().get_mouse_position()
+			- _ground_bag_resize_start_mouse)
+		var base_size: Vector2 = ground_bag_panel.size
+		if base_size.x <= 0.0 or base_size.y <= 0.0:
+			return
+		var normalized := Vector2(delta.x / base_size.x, delta.y / base_size.y)
+		var scale_delta: float = (normalized.x if absf(normalized.x) >= absf(normalized.y)
+			else normalized.y)
+		_apply_ground_bag_scale(_ground_bag_resize_start_scale + scale_delta)
+		ground_bag_resize_grip.accept_event()
+
+func _apply_ground_bag_scale(requested_scale: float) -> void:
+	var maximum_scale: float = INVENTORY_MAX_SCALE
+	if game_view.size.x > 0.0 and game_view.size.y > 0.0 \
+			and ground_bag_panel.size.x > 0.0 and ground_bag_panel.size.y > 0.0:
+		maximum_scale = minf(maximum_scale, minf(
+			(game_view.size.x - 16.0) / ground_bag_panel.size.x,
+			(game_view.size.y - 16.0) / ground_bag_panel.size.y))
+	maximum_scale = maxf(INVENTORY_MIN_SCALE, maximum_scale)
+	_ground_bag_scale = clampf(requested_scale, INVENTORY_MIN_SCALE, maximum_scale)
+	ground_bag_panel.scale = Vector2.ONE * _ground_bag_scale
+	_clamp_ground_bag_window_to_viewport()
 
 func _apply_inventory_scale(requested_scale: float) -> void:
 	var maximum_scale: float = INVENTORY_MAX_SCALE
@@ -4655,18 +4720,26 @@ func _save_hud_layout() -> void:
 	if error != OK:
 		push_warning("Unable to save lower HUD preferences: " + error_string(error))
 
+## Writes a stack count over a slot at the largest size that still fits it.
+static func _set_slot_quantity(label: Label, quantity: int) -> void:
+	var text: String = str(quantity)
+	label.text = text
+	label.add_theme_font_size_override("font_size",
+		11 if text.length() <= 4 else (9 if text.length() <= 6 else 8))
+
 func _add_slot_quantity_label(button: Button) -> Label:
 	var quantity: Label = Label.new()
 	quantity.name = "Quantity"
 	quantity.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	quantity.anchor_left = 1.0
+	quantity.anchor_left = 0.0
 	quantity.anchor_top = 1.0
 	quantity.anchor_right = 1.0
 	quantity.anchor_bottom = 1.0
-	quantity.offset_left = -34.0
+	quantity.offset_left = 2.0
 	quantity.offset_top = -17.0
 	quantity.offset_right = -3.0
 	quantity.offset_bottom = -2.0
+	quantity.clip_text = false
 	quantity.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	quantity.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 	quantity.add_theme_font_size_override("font_size", 11)
@@ -4746,6 +4819,7 @@ func _build_inventory_slots() -> void:
 		button.tooltip_text = "Empty inventory slot %d" % (slot + 1)
 		button.disabled = true
 		button.pressed.connect(_on_inventory_slot_pressed.bind(slot))
+		button.gui_input.connect(_on_inventory_slot_gui_input.bind(slot))
 		inventory_grid.add_child(button)
 		inventory_slot_buttons.append(button)
 		inventory_quantity_labels.append(_add_slot_quantity_label(button))
@@ -4761,6 +4835,7 @@ func _build_equipment_slots() -> void:
 		button.tooltip_text = "Generic legacy equipment position %d" % (index + 1)
 		button.disabled = true
 		button.pressed.connect(_on_equipment_slot_pressed.bind(36 + index))
+		button.gui_input.connect(_on_inventory_slot_gui_input.bind(36 + index))
 		equipment_grid.add_child(button)
 		equipment_slot_buttons.append(button)
 
@@ -4796,7 +4871,8 @@ func _sync_inventory() -> void:
 			var image_id: int = int(item.get("image_id", 0))
 			button.icon = item_atlas.icon_for(image_id)
 			button.text = ""
-			inventory_quantity_labels[slot].text = str(int(item.get("quantity", 0)))
+			_set_slot_quantity(inventory_quantity_labels[slot],
+				int(item.get("quantity", 0)))
 			button.tooltip_text = _inventory_tooltip(item, slot)
 			button.disabled = false
 		else:
@@ -4809,18 +4885,24 @@ func _sync_inventory() -> void:
 				and AppState.inventory.has(selected_inventory_slot)))
 			button.tooltip_text = ("Move selected item to slot %d" % (slot + 1)
 				if can_place else "Empty inventory slot %d" % (slot + 1))
-			button.disabled = not can_place
+			# An empty slot stays enabled so that its frame is drawn. Godot
+			# renders a disabled button flat, which made the grid vanish
+			# whenever nothing was selected: the slots are the shape of the
+			# window and belong on screen whether or not they hold anything.
+			# Pressing an empty one is already a no-op below.
+			button.disabled = false
 	_sync_equipment_slots()
 	_sync_quick_slots()
 	if selected_inventory_slot >= 0:
 		var selected_value: Variant = AppState.inventory.get(selected_inventory_slot)
 		if selected_value is Dictionary:
 			var selected_item: Dictionary = selected_value as Dictionary
-			inventory_use_button.disabled = (not bool(selected_item.get("inventory_usable", false))
-				or _inventory_cooldown_remaining(selected_inventory_slot) > 0)
+			inventory_use_button.tooltip_text = ("Left click uses the item"
+				if bool(selected_item.get("inventory_usable", false))
+				and _inventory_cooldown_remaining(selected_inventory_slot) <= 0
+				else "The selected item cannot be used right now")
 		else:
 			selected_inventory_slot = -1
-			inventory_use_button.disabled = true
 	if not AppState.inventory_text.is_empty():
 		inventory_description.text = AppState.inventory_text
 	if ground_bag_panel.visible:
@@ -4846,11 +4928,8 @@ func _sync_equipment_slots() -> void:
 				and AppState.inventory.has(selected_inventory_slot)))
 			button.tooltip_text = ("Equip selected item in generic wear position %d" % (index + 1)
 				if can_equip_here else "Empty generic equipment position %d" % (index + 1))
-			button.disabled = not can_equip_here
-	inventory_equip_button.disabled = (selected_inventory_slot < 0
-		or selected_inventory_slot >= 36 or _first_empty_slot(36, 44) < 0)
-	inventory_unequip_button.disabled = (selected_inventory_slot < 36
-		or selected_inventory_slot >= 44 or _first_empty_slot(0, 36) < 0)
+			button.disabled = false
+	_sync_inventory_tool_buttons()
 
 func _sync_quick_slots() -> void:
 	for slot: int in range(quick_slot_buttons.size()):
@@ -4881,8 +4960,10 @@ func _sync_quick_slots() -> void:
 		var selected_value: Variant = AppState.inventory.get(selected_inventory_slot)
 		if selected_value is Dictionary:
 			var selected_item: Dictionary = selected_value as Dictionary
-			inventory_use_button.disabled = (not bool(selected_item.get("inventory_usable", false))
-				or _inventory_cooldown_remaining(selected_inventory_slot) > 0)
+			inventory_use_button.tooltip_text = ("Left click uses the item"
+				if bool(selected_item.get("inventory_usable", false))
+				and _inventory_cooldown_remaining(selected_inventory_slot) <= 0
+				else "The selected item cannot be used right now")
 
 func _sync_spells() -> void:
 	for slot: int in range(spell_slot_buttons.size()):
@@ -5175,6 +5256,7 @@ func _build_inventory_quantity_boxes() -> void:
 		button.gui_input.connect(_on_quantity_box_gui_input.bind(index))
 		inventory_quantity_bar.add_child(button)
 		inventory_quantity_buttons.append(button)
+	inventory_quantity_edit.max_length = INVENTORY_QUANTITY_DIGITS
 	inventory_quantity_edit.text_submitted.connect(_on_quantity_edit_submitted)
 	inventory_quantity_edit.focus_exited.connect(_commit_quantity_edit)
 	_sync_inventory_quantity_boxes()
@@ -5316,16 +5398,110 @@ func _on_inventory_slot_pressed(slot: int) -> void:
 			_move_inventory_item(selected_inventory_slot, slot)
 		return
 	selected_inventory_slot = slot
-	if _carry_enabled():
-		_begin_carry(slot)
-	var item: Dictionary = AppState.inventory.get(slot, {}) as Dictionary
-	inventory_use_button.disabled = not bool(item.get("inventory_usable", false))
+	_apply_inventory_tool(slot)
 	_sync_equipment_slots()
-	inventory_description.text = "Inspecting item image #%d…" % int(item.get("image_id", 0))
+	_sync_inventory()
+
+## Carries out the current tool on a slot. Every tool ends by asking the server
+## what the item is, because the line along the bottom of the window should say
+## what was last touched whichever tool was in hand; only Inspect lets the
+## answer open the detail window.
+func _apply_inventory_tool(slot: int) -> void:
+	match _inventory_tool:
+		"use":
+			if slot < 36:
+				_use_inventory_slot(slot)
+		"equip":
+			if slot < 36:
+				var wear: int = _first_empty_slot(36, 44)
+				if wear >= 0:
+					_move_inventory_item(slot, wear)
+		"unequip":
+			if slot >= 36:
+				var carry: int = _first_empty_slot(0, 36)
+				if carry >= 0:
+					_move_inventory_item(slot, carry)
+		"grab":
+			if _carry_enabled():
+				_begin_carry(slot)
+	_describe_slot(slot, _inventory_tool == "inspect")
+
+## Asks the server what an item is. `with_window` decides whether the reply is
+## allowed to open the detail window; the short line is written either way.
+func _describe_slot(slot: int, with_window: bool) -> void:
+	_detail_popup_allowed = with_window
+	if extension_windows != null:
+		extension_windows.set("detail_popup_allowed", with_window)
+	inventory_description.text = "[%s]  Asking about slot %d…" % [
+		str(INVENTORY_TOOL_LABELS.get(_inventory_tool, _inventory_tool)), slot + 1]
 	var error: Error = Network.look_at_inventory_item(slot)
 	if error != OK:
 		push_warning("LOOK_AT_INVENTORY_ITEM failed: " + error_string(error))
+
+## Right-clicking an item takes the next tool and describes what is under the
+## cursor without opening anything, so the player can see what the new tool
+## would act on before using it.
+func _cycle_inventory_tool(slot: int) -> void:
+	var index: int = INVENTORY_TOOLS.find(_inventory_tool)
+	_set_inventory_tool(INVENTORY_TOOLS[(index + 1) % INVENTORY_TOOLS.size()])
+	if AppState.inventory.has(slot):
+		selected_inventory_slot = slot
+		_describe_slot(slot, false)
 	_sync_inventory()
+
+## The four action buttons are the same mechanism as the right-click cycle:
+## each one takes its tool, and applies it at once to whatever is already
+## selected, so a player can work either way round.
+func _choose_inventory_tool(tool: String) -> void:
+	_set_inventory_tool(tool)
+	if selected_inventory_slot >= 0 and AppState.inventory.has(selected_inventory_slot):
+		_apply_inventory_tool(selected_inventory_slot)
+	_sync_inventory()
+
+func _set_inventory_tool(tool: String) -> void:
+	_inventory_tool = tool
+	_sync_inventory_tool_buttons()
+
+## The buttons show which tool is in hand, since the cursor does not change.
+func _sync_inventory_tool_buttons() -> void:
+	for pair: Array in [[inventory_use_button, "use"],
+			[inventory_equip_button, "equip"],
+			[inventory_unequip_button, "unequip"],
+			[inventory_inspect_button, "inspect"]]:
+		var button: Button = pair[0] as Button
+		if button != null:
+			button.button_pressed = _inventory_tool == str(pair[1])
+
+func _on_inventory_slot_gui_input(event: InputEvent, slot: int) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse: InputEventMouseButton = event as InputEventMouseButton
+	if mouse.button_index != MOUSE_BUTTON_RIGHT or not mouse.pressed:
+		return
+	_cycle_inventory_tool(slot)
+	get_viewport().set_input_as_handled()
+
+## Composes the one-line summary written along the bottom of the inventory when
+## the server describes an item. It reports only what arrived in the reply.
+func _short_item_line() -> String:
+	var detail: Dictionary = AppState.item_detail
+	var parts: Array[String] = []
+	var item_name: String = str(detail.get("name", ""))
+	if not item_name.is_empty():
+		parts.append(item_name)
+	var category: String = str(detail.get("category", ""))
+	if not category.is_empty():
+		parts.append(category)
+	var quantity: int = int(detail.get("quantity", 0))
+	if quantity > 1:
+		parts.append("x%s" % _grouped(quantity))
+	if bool(detail.get("equipped", false)):
+		parts.append("equipped")
+	if parts.is_empty():
+		return ""
+	return "[%s]  %s" % [
+		str(INVENTORY_TOOL_LABELS.get(_inventory_tool, _inventory_tool)),
+		"  -  ".join(parts)]
 
 func _on_equipment_slot_pressed(slot: int) -> void:
 	if _carried_slot >= 0:
@@ -5337,13 +5513,8 @@ func _on_equipment_slot_pressed(slot: int) -> void:
 			_move_inventory_item(selected_inventory_slot, slot)
 		return
 	selected_inventory_slot = slot
-	if _carry_enabled():
-		_begin_carry(slot)
-	inventory_use_button.disabled = true
+	_apply_inventory_tool(slot)
 	_sync_equipment_slots()
-	var error: Error = Network.look_at_inventory_item(slot)
-	if error != OK:
-		push_warning("LOOK_AT_INVENTORY_ITEM failed: " + error_string(error))
 	_sync_inventory()
 
 func _first_empty_slot(start: int, end: int) -> int:

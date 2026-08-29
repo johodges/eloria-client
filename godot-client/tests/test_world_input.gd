@@ -897,10 +897,15 @@ func _run() -> void:
 		"GameView/InventoryPanel/Content/InventoryBody/EquipmentColumn/EquipmentGrid").get_child(0) as Button
 	var first_quantity: Label = first_inventory_slot.get_node("Quantity") as Label
 	_expect(first_inventory_slot.text.is_empty() and first_quantity.text == "9"
-		and first_quantity.anchor_left == 1.0 and first_quantity.anchor_top == 1.0
+		and first_quantity.anchor_top == 1.0 and first_quantity.anchor_bottom == 1.0
+		and first_quantity.horizontal_alignment == HORIZONTAL_ALIGNMENT_RIGHT
 		and first_inventory_slot.icon != null and not first_inventory_slot.disabled
 		and first_inventory_slot.custom_minimum_size.x >= 40.0,
 		"large inventory icon uses an overlaid bottom-right quantity")
+	# The count runs the width of the slot and steps down in size, so seven
+	# digits are read whole rather than cut off part way through the number.
+	_expect(first_quantity.anchor_left == 0.0 and first_quantity.anchor_right == 1.0,
+		"the count has the whole width of the slot to be read in")
 	_expect(first_quick_slot.text.is_empty() and first_quick_slot.icon != null
 		and first_quick_slot.tooltip_text.contains("Quantity: 9")
 		and not first_quick_slot.disabled,
@@ -987,6 +992,98 @@ func _run() -> void:
 		"outside walk mode a click still only selects the item")
 	main.set("_interaction_mode", "walk")
 	main.call("_cancel_carry")
+
+	# The slots are the shape of the window: they are drawn whether or not
+	# anything is selected or carried, because a disabled button has no frame.
+	main.set("selected_inventory_slot", -1)
+	main.call("_sync_inventory")
+	_expect(not empty_inventory_slot.disabled and not empty_equipment_slot.disabled
+		and empty_inventory_slot.tooltip_text.contains("Empty inventory slot")
+		and empty_equipment_slot.tooltip_text.contains("Empty generic"),
+		"empty inventory and wear slots stay drawn with nothing selected")
+
+	# Right click steps through the tools, and the buttons choose the same ones.
+	var inventory_description: RichTextLabel = main.get_node(
+		"GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/InventoryDescription"
+		) as RichTextLabel
+	var use_button: Button = main.get("inventory_use_button") as Button
+	var inspect_button: Button = main.get("inventory_inspect_button") as Button
+	main.call("_set_inventory_tool", "grab")
+	main.call("_cycle_inventory_tool", 0)
+	_expect(str(main.get("_inventory_tool")) == "use" and use_button.button_pressed,
+		"right clicking an item takes the next tool and the button says so")
+	main.call("_cycle_inventory_tool", 0)
+	_expect(str(main.get("_inventory_tool")) == "inspect"
+		and inspect_button.button_pressed and not use_button.button_pressed,
+		"right clicking again takes the one after it")
+	main.call("_cycle_inventory_tool", 0)
+	_expect(str(main.get("_inventory_tool")) == "grab",
+		"and a third right click comes back round to move")
+	main.call("_on_inventory_unequip_pressed")
+	_expect(str(main.get("_inventory_tool")) == "unequip"
+		and (main.get("inventory_unequip_button") as Button).button_pressed,
+		"the action buttons choose a tool the same way the right click does")
+
+	# The description line is written whichever tool asked for the item; only
+	# Inspect is allowed to open the card over the top of it.
+	var extension_windows: Control = main.get("extension_windows") as Control
+	var detail_panel: PanelContainer = extension_windows.get(
+		"detail_panel") as PanelContainer
+	var bread_detail := {"open": true, "name": "Hearth Bread", "category": "Food",
+		"quantity": 4, "description": "Baked before dawn.", "equipped": false}
+	# The client ignores state changes before login, as it should; these
+	# assertions are about a session in progress. The flag is put back below,
+	# because a later case checks the diagnostics path without one.
+	var was_authenticated: bool = bool(app_state_inventory.get("authenticated"))
+	app_state_inventory.set("authenticated", true)
+	main.call("_set_inventory_tool", "grab")
+	main.call("_describe_slot", 0, false)
+	app_state_inventory.set("item_detail", bread_detail)
+	app_state_inventory.emit_signal("state_changed", &"item_detail")
+	await process_frame
+	_expect(not detail_panel.visible
+		and inventory_description.text.contains("Hearth Bread")
+		and inventory_description.text.contains("Food")
+		and inventory_description.text.contains("Move"),
+		"a move click writes the short line and opens nothing: "
+			+ inventory_description.text)
+	main.set("selected_inventory_slot", 0)
+	main.call("_on_inventory_inspect_pressed")
+	app_state_inventory.set("item_detail", bread_detail)
+	app_state_inventory.emit_signal("state_changed", &"item_detail")
+	await process_frame
+	_expect(detail_panel.visible
+		and inventory_description.text.contains("Hearth Bread"),
+		"Inspect opens the card and still writes the short line")
+	app_state_inventory.call("close_item_detail")
+	await process_frame
+	main.call("_set_inventory_tool", "grab")
+	main.set("selected_inventory_slot", -1)
+	app_state_inventory.set("authenticated", was_authenticated)
+
+	# The bag window resizes by the same drag as the inventory, and separately.
+	var bag_panel: Control = main.get_node("GameView/GroundBagPanel") as Control
+	var bag_grip: Button = main.get_node(
+		"GameView/GroundBagPanel/Content/GroundBagFooter/GroundBagResizeGrip"
+		) as Button
+	_expect(bag_grip != null and bag_grip.tooltip_text.contains("resize"),
+		"the bag carries its own resize grip")
+	var inventory_scale_before: float = inventory_panel.scale.x
+	main.call("_apply_ground_bag_scale", 1.4)
+	_expect(is_equal_approx(bag_panel.scale.x, 1.4)
+		and is_equal_approx(bag_panel.scale.y, 1.4)
+		and is_equal_approx(inventory_panel.scale.x, inventory_scale_before),
+		"dragging the bag grip scales the bag and leaves the inventory alone: "
+			+ "%f, %f" % [bag_panel.scale.x, inventory_panel.scale.x])
+	main.call("_apply_ground_bag_scale", 0.05)
+	_expect(is_equal_approx(bag_panel.scale.x, 0.65),
+		"and the bag cannot be shrunk past legibility: %f" % bag_panel.scale.x)
+	main.call("_apply_ground_bag_scale", 1.0)
+	_expect(root.get_visible_rect().encloses(bag_panel.get_global_rect())
+		and root.get_visible_rect().encloses(inventory_panel.get_global_rect()),
+		"both windows stay on a 1280x720 screen: %s, %s"
+			% [bag_panel.get_global_rect(), inventory_panel.get_global_rect()])
+
 	# The six quantity boxes along the bottom, as the legacy client has them.
 	var quantity_bar: HBoxContainer = main.get_node(
 		"GameView/InventoryPanel/Content/InventoryQuantityBar") as HBoxContainer
@@ -1021,6 +1118,38 @@ func _run() -> void:
 	_expect(int(main.call("_selected_quantity")) == 20
 		and (quantity_boxes[3] as Button).text == "20",
 		"clearing a quantity box restores its default rather than leaving zero")
+	# Seven digits: a stack runs into the millions on a long-lived character,
+	# in the box that moves it and in the count drawn over the slot.
+	var big_stack: Dictionary = (app_state_inventory.get("inventory") as Dictionary).duplicate(true)
+	big_stack[0] = {"image_id": 3, "quantity": 1234567, "slot": 0,
+		"inventory_usable": true, "stackable": true}
+	app_state_inventory.set("inventory", big_stack)
+	main.call("_sync_inventory")
+	_expect(first_quantity.text == "1234567"
+		and first_quantity.get_theme_font_size("font_size")
+			* first_quantity.text.length() <= first_quantity.size.x * 1.6,
+		"a seven-digit stack count is drawn whole over its slot: %s at %d px in %f"
+			% [first_quantity.text,
+				first_quantity.get_theme_font_size("font_size"),
+				first_quantity.size.x])
+	_expect(quantity_edit.max_length == 7,
+		"the quantity box takes seven digits: %d" % quantity_edit.max_length)
+	main.call("_begin_quantity_edit", 4)
+	quantity_edit.text = "1234567"
+	main.call("_commit_quantity_edit")
+	_expect(int(main.call("_selected_quantity")) == 1234567
+		and (quantity_boxes[4] as Button).text == "1234567",
+		"a seven-digit quantity is kept whole: %s" % (quantity_boxes[4] as Button).text)
+	main.call("_begin_quantity_edit", 4)
+	quantity_edit.text = "88888888"
+	main.call("_commit_quantity_edit")
+	_expect(int(main.call("_selected_quantity")) == 8888888,
+		"an eighth digit does not fit in the box rather than being taken and"
+			+ " silently altered: %d" % int(main.call("_selected_quantity")))
+	# Put the box back, since these suites share one settings file.
+	main.call("_begin_quantity_edit", 4)
+	quantity_edit.text = ""
+	main.call("_commit_quantity_edit")
 	# Pick-ups and drops clamp to what is actually there.
 	main.call("_on_quantity_box_pressed", 5)
 	app_state_inventory.set("inventory", {0: {

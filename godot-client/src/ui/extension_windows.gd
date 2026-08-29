@@ -332,8 +332,14 @@ func _on_mail_selected(index: int) -> void:
 
 # --- item detail -------------------------------------------------------------
 
+## Whether an item description may open this window. The inventory sets it
+## before each request: a plain click wants only the line along the bottom of
+## the inventory, and Inspect wants the whole card. The state that arrives is
+## the same either way - what changes is whether it is shown here.
+var detail_popup_allowed := true
+
 func _sync_detail() -> void:
-	if not bool(AppState.item_detail.get("open", false)):
+	if not bool(AppState.item_detail.get("open", false)) or not detail_popup_allowed:
 		detail_panel.hide()
 		return
 	var lines: Array[String] = ["[b]%s[/b]" % str(AppState.item_detail.get("name", ""))]

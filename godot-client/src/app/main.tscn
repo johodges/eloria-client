@@ -1875,9 +1875,9 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = -486.0
-offset_top = -215.0
+offset_top = -245.0
 offset_right = -16.0
-offset_bottom = 215.0
+offset_bottom = 245.0
 grow_horizontal = 0
 grow_vertical = 2
 
@@ -1908,6 +1908,7 @@ text = "×"
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 6
+size_flags_vertical = 3
 
 [node name="EquipmentColumn" type="VBoxContainer" parent="GameView/InventoryPanel/Content/InventoryBody" unique_id=1822552852]
 unique_name_in_owner = true
@@ -1975,7 +1976,8 @@ tooltip_text = "Move the selected equipped item into the first empty inventory s
 disabled = true
 text = "Unequip"
 
-[node name="Inspect" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions" unique_id=1997792207]
+[node name="InventoryInspect" type="Button" parent="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions" unique_id=1997792207]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Inspect"
 
@@ -2049,10 +2051,10 @@ theme_override_constants/separation = 2
 unique_name_in_owner = true
 visible = false
 layout_mode = 0
-offset_right = 72.0
+offset_right = 104.0
 offset_bottom = 26.0
 alignment = 1
-max_length = 5
+max_length = 7
 
 [node name="ItemListsPanel" type="PanelContainer" parent="GameView" unique_id=1831077212]
 unique_name_in_owner = true
@@ -2547,6 +2549,23 @@ tooltip_text = "Drop the selected inventory item, using the inventory quantity b
 disabled = true
 text = "Drop"
 
+[node name="GroundBagFooter" type="HBoxContainer" parent="GameView/GroundBagPanel/Content" unique_id=811004201]
+layout_mode = 2
+
+[node name="GroundBagSpacer" type="Control" parent="GameView/GroundBagPanel/Content/GroundBagFooter" unique_id=811004202]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="GroundBagResizeGrip" type="Button" parent="GameView/GroundBagPanel/Content/GroundBagFooter" unique_id=811004203]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 26)
+layout_mode = 2
+tooltip_text = "Drag to resize the bag proportionally"
+focus_mode = 0
+mouse_default_cursor_shape = 12
+text = "◢"
+
 [node name="Help" type="Label" parent="GameView" unique_id=246712093]
 visible = false
 layout_mode = 0
@@ -2883,7 +2902,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/InventoryUse" to="." method="_on_inventory_use_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/InventoryEquip" to="." method="_on_inventory_equip_pressed"]
 [connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/InventoryUnequip" to="." method="_on_inventory_unequip_pressed"]
-[connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/Inspect" to="." method="_on_inventory_inspect_pressed"]
+[connection signal="pressed" from="GameView/InventoryPanel/Content/InventoryBody/BackpackColumn/Actions/InventoryInspect" to="." method="_on_inventory_inspect_pressed"]
 [connection signal="toggled" from="GameView/TradePanel/Content/QuantityRow/TradeStorageDestination" to="." method="_on_trade_storage_destination_toggled"]
 [connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeOffer" to="." method="_on_trade_offer_pressed"]
 [connection signal="pressed" from="GameView/TradePanel/Content/Actions/TradeRemove" to="." method="_on_trade_remove_pressed"]
