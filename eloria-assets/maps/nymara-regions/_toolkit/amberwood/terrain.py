@@ -43,6 +43,15 @@ CRYSTAL_FIELD = 16
 RESONANT_ROAD = 17
 STORM_ROCK = 18
 
+# -- Grey Moors. Five classes rather than four: the region needs a worn track
+# distinct from its laid causeway, and reusing the generic PATH would have put
+# Amberwood's amber leaf litter down the middle of a moor.
+HEATHER_MOOR = 23
+PEAT_BOG = 24
+CAUSEWAY = 25
+BARROW_TURF = 26
+MOOR_TRACK = 27
+
 # -- Verdant Stair. The region is a terraced limestone jungle, so its ground
 # splits into two classes the existing set cannot express: the mossy cut stone
 # of a terrace floor, which is laid rather than grown, and the permanently
@@ -57,6 +66,9 @@ SURFACE_NAMES = {
     SNOW: "Snow", ICE: "Ice", MARBLE: "Marble", TURF: "AlpineTurf",
     BARRENS: "Barrens", CRYSTAL_FIELD: "CrystalField",
     RESONANT_ROAD: "ResonantRoad", STORM_ROCK: "StormRock",
+    HEATHER_MOOR: "HeatherMoor", PEAT_BOG: "PeatBog",
+    CAUSEWAY: "Causeway", BARROW_TURF: "BarrowTurf",
+    MOOR_TRACK: "MoorTrack",
     TERRACE_MOSS: "TerraceMoss", WET_ROCK: "WetRock",
 }
 SURFACE_MATERIALS = {
@@ -67,6 +79,11 @@ SURFACE_MATERIALS = {
     TURF: "alpine_turf",
     BARRENS: "amethyst_barrens_dust", CRYSTAL_FIELD: "amethyst_crystal_field",
     RESONANT_ROAD: "amethyst_resonant_road", STORM_ROCK: "amethyst_storm_rock",
+    HEATHER_MOOR: "grey_heather_moor", PEAT_BOG: "grey_peat_bog",
+    CAUSEWAY: "grey_causeway", BARROW_TURF: "grey_barrow_turf",
+    # A worn track is bare wet earth; the toolkit already has that texture, so
+    # this class needs no new recipe - only a cooled, darkened material over it.
+    MOOR_TRACK: "grey_moor_track",
     TERRACE_MOSS: "verdant_mossy_stone", WET_ROCK: "verdant_wet_limestone",
 }
 
@@ -77,6 +94,10 @@ SURFACE_MATERIALS = {
 AUTHORED_SURFACES: set[int] = {
     PATH, PAVING, SCORCHED, MEADOW,
     RESONANT_ROAD,
+    # Grey Moors lays its causeways and cuts its peat by hand; the slope and
+    # shore rules must not repaint either. The barrow turf is authored too -
+    # a barrow is a built mound, not ground that happened to rise.
+    CAUSEWAY, BARROW_TURF, MOOR_TRACK,
     # Verdant Stair lays both of these deliberately: a terrace floor is built,
     # and the wet rock is placed where a fall actually lands, not wherever the
     # slope rule happens to think the ground is steep.
@@ -85,7 +106,7 @@ AUTHORED_SURFACES: set[int] = {
 
 # Surfaces whose border must stay crisp, so `dither_boundaries` leaves them
 # alone. Paving and the resonant roadway read as laid, not grown.
-UNDITHERED_SURFACES: set[int] = {PAVING, RESONANT_ROAD, TERRACE_MOSS}
+UNDITHERED_SURFACES: set[int] = {PAVING, RESONANT_ROAD, CAUSEWAY, TERRACE_MOSS}
 
 
 def _smoothstep(edge0: float, edge1: float, x: np.ndarray) -> np.ndarray:

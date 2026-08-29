@@ -105,14 +105,20 @@
     {
       "id": "grey_moors",
       "title": "Grey Moors",
-      "sourceSha256": "b9e435c87c338da2363509b5cb3a7208716166269fd4af7f01e5f41bc6083221",
+      "sourceSha256": "ca7ac9cac95882607943a5c12300fe18c4c72c6f0269b6dd5bc24baa3b7633ac",
       "conceptViews": 10,
-      "landmarkInstances": 58,
+      "landmarkInstances": 61,
       "terrainHeightRange": [
-        0.0,
-        0.0
+        -16.0,
+        26.86
       ],
-      "water": true
+      "water": true,
+      "status": "production-geometry-materials-population",
+      "serverCells": 576,
+      "requiresServerMap": "96x96 ELM tiles (576 cells)",
+      "uniqueTriangles": 351234,
+      "instancedTriangles": 676598,
+      "glbBytes": 22973568
     },
     {
       "id": "westhaven",
