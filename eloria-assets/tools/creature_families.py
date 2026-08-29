@@ -3165,8 +3165,11 @@ FISH_PLANS = {
                      tail=.34, fin=.30, dorsal=.28, disc=False, gills=False, jaw=.10),
     "armored": dict(length=.86, girth=(.17, .21), head=(.14, .15, .20), bill=.0,
                     tail=.24, fin=.24, dorsal=.16, disc=False, gills=False, jaw=.14),
-    "ray": dict(length=.70, girth=(.42, .09), head=(.17, .07, .17), bill=.0,
-                tail=.14, fin=.52, dorsal=.0, disc=True, gills=False, jaw=.06),
+    # A manta is nearly all wing: the art draws a flat diamond half again as
+    # wide as it is long, trailing a whip.  At .42 girth against .70 length it
+    # was a torpedo with a slight bulge.
+    "ray": dict(length=.62, girth=(.80, .07), head=(.16, .06, .15), bill=.0,
+                tail=.34, fin=.96, dorsal=.0, disc=True, gills=False, jaw=.06),
     "axolotl": dict(length=.80, girth=(.12, .13), head=(.14, .11, .16), bill=.0,
                     tail=.28, fin=.16, dorsal=.12, disc=False, gills=True, jaw=.10),
 }
@@ -3239,17 +3242,59 @@ def fish_geometry(plan_key: str, scale: float, bones, variant=None) -> AnatomyMe
                                                    -hd[2] * .30))),
                        (hd[0] * .40,) * 3, [head_i], MAT_DARK, rings=6, sides=10)
     if p["gills"]:
+        # Three thin spikes a tenth of a unit long were whiskers.  An axolotl's
+        # external gills are the biggest thing on its head: three stalks a side
+        # carrying a fan of filaments, and they are the whole silhouette.
         for side in (-1., 1.):
-            base = g[head_i] + np.array((side * hd[0] * 1.0, hd[1] * .5, hd[2] * .5))
+            base = g[head_i] + np.array((side * hd[0] * .95, hd[1] * .45,
+                                         hd[2] * .55))
             for k in range(3):
-                tip = base + np.array((side * .10 * s, (.06 - .04 * k) * s, .10 * s))
-                mesh.tube([base, tip], [(.020 * s, .020 * s), (.008 * s, .008 * s)],
+                lean = (k - 1) * .38
+                stalk = base + np.array((side * .20 * s,
+                                         (.20 - .11 * k) * s,
+                                         (.10 + .10 * k) * s))
+                mesh.tube([base, (base + stalk) * .5, stalk],
+                          [(.026 * s, .026 * s), (.019 * s, .019 * s),
+                           (.011 * s, .011 * s)],
                           [head_i, chest_i], MAT_ACCENT, sides=5)
+                # Filaments fanning off the stalk.
+                for f in range(5):
+                    t = (f + .5) / 5.0
+                    seat = base * (1 - t) + stalk * t
+                    spray = np.array((side * (.055 + .045 * t) * s,
+                                      (.075 - .050 * t + lean * .04) * s,
+                                      (.030 + .060 * t) * s))
+                    mesh.tube([seat, seat + spray * .55, seat + spray],
+                              [(.013 * s, .013 * s), (.009 * s, .009 * s),
+                               (.003 * s, .003 * s)],
+                              [head_i, chest_i], MAT_ACCENT, sides=4)
     # Tail fin, pectorals and dorsal as thin membranes.
     tail = p["tail"] * s
-    fan_a = [pts[-2] + np.array((0., 0., 0.)), tail_tip + np.array((0., tail * .8, tail * .3))]
-    fan_b = [pts[-2] + np.array((0., 0., 0.)), tail_tip + np.array((0., -tail * .8, tail * .3))]
-    _sheet(mesh, fan_a, fan_b, .010 * s, spine_bones, MAT_ACCENT)
+    # A forked caudal fin with a concave trailing edge, not a flat paddle.
+    # Two control points made one quad, and a rectangle on the back of a
+    # torpedo is the single most model-looking thing about a fish.
+    root = pts[-2]
+    upper = [root,
+             tail_tip + np.array((0., tail * .34, tail * .18)),
+             tail_tip + np.array((0., tail * .96, tail * .62))]
+    lower = [root,
+             tail_tip + np.array((0., -tail * .34, tail * .18)),
+             tail_tip + np.array((0., -tail * .96, tail * .62))]
+    # The notch: the middle of the trailing edge cuts back toward the body.
+    notch = [root,
+             tail_tip + np.array((0., 0., tail * .04)),
+             tail_tip + np.array((0., 0., tail * .16))]
+    for lobe in (upper, lower):
+        _sheet(mesh, [_bezier(lobe, t) for t in np.linspace(0, 1, 6)],
+               [_bezier(notch, t) for t in np.linspace(0, 1, 6)],
+               .010 * s, spine_bones, MAT_ACCENT)
+    # A stiffening ray down the leading edge of each lobe.
+    for lobe in (upper, lower):
+        mesh.tube([_bezier(lobe, t) for t in np.linspace(0, 1, 5)],
+                  [(tail * .048, tail * .030), (tail * .040, tail * .026),
+                   (tail * .032, tail * .020), (tail * .024, tail * .015),
+                   (tail * .012, tail * .008)],
+                  spine_bones, MAT_ACCENT, sides=4)
     for side, sign in (("l", -1.), ("r", 1.)):
         base = g[B[f"fin_{side}"]]
         fin = p["fin"] * s
@@ -3257,22 +3302,68 @@ def fish_geometry(plan_key: str, scale: float, bones, variant=None) -> AnatomyMe
             # A ray is mostly wing: sweep a broad pectoral disc from snout to tail.
             nose = g[head_i] + np.array((0., 0., -hd[2] * .5))
             tail = g[B["spine_2"]]
+            # A manta's wing is a swept diamond: the leading edge runs almost
+            # straight out from the nose, the tip is carried well back, and the
+            # trailing edge cuts in concave to the tail.  Bulging widest at the
+            # middle and tapering both ways gives an oval, which is a skate.
             outer = [nose,
-                     g[chest_i] + np.array((sign * fin * .75, .0, .0)),
-                     g[body_i] + np.array((sign * fin * 1.05, .0, fin * .30)),
-                     tail + np.array((sign * fin * .30, .0, fin * .10))]
-            inner = [nose, g[chest_i], g[body_i], tail]
-            _sheet(mesh, [_bezier(outer, t) for t in np.linspace(0, 1, 9)],
-                   [_bezier(inner, t) for t in np.linspace(0, 1, 9)],
+                     g[chest_i] + np.array((sign * fin * .82, .0, fin * .10)),
+                     g[body_i] + np.array((sign * fin * 1.32, .0, fin * .52)),
+                     tail + np.array((sign * fin * .58, .0, fin * .40))]
+            inner = [nose, g[chest_i], g[body_i] + np.array((0., 0., fin * .06)),
+                     tail]
+            _sheet(mesh, [_bezier(outer, t) for t in np.linspace(0, 1, 11)],
+                   [_bezier(inner, t) for t in np.linspace(0, 1, 11)],
                    gh * .55, [B[f"fin_{side}"], chest_i, body_i, head_i], MAT_BODY)
+            # A thickened leading edge, and the cephalic lobe at the mouth --
+            # the pair of horns that say "manta" before anything else does.
+            mesh.tube([_bezier(outer, t) for t in np.linspace(0, .75, 5)],
+                      [(gh * .52, gh * .40), (gh * .44, gh * .32),
+                       (gh * .32, gh * .22), (gh * .20, gh * .13),
+                       (gh * .10, gh * .07)],
+                      [B[f"fin_{side}"], chest_i, head_i], MAT_BODY, sides=6)
+            lobe = nose + np.array((sign * hd[0] * .70, 0., -hd[2] * .30))
+            mesh.tube([lobe, lobe + np.array((sign * hd[0] * .30, -hd[1] * .20,
+                                              -hd[2] * .95))],
+                      [(hd[0] * .30, hd[1] * .55), (hd[0] * .14, hd[1] * .26)],
+                      [head_i, chest_i], MAT_BODY, sides=6)
         else:
-            edge_a = [base, base + np.array((sign * fin * .9, -fin * .2, fin * .5))]
-            edge_b = [base + np.array((0., 0., fin * .4)),
-                      base + np.array((sign * fin * .5, -fin * .35, fin * .8))]
-            _sheet(mesh, edge_a, edge_b, .008 * s, [B[f"fin_{side}"], chest_i],
-                   MAT_ACCENT)
+            # Swept back and down, and long enough to see: at .9 of the fin
+            # measure across a body twice that long they were tabs.
+            edge_a = [base,
+                      base + np.array((sign * fin * .85, -fin * .30, fin * .34)),
+                      base + np.array((sign * fin * 1.45, -fin * .62, fin * .92))]
+            edge_b = [base + np.array((0., -fin * .05, fin * .38)),
+                      base + np.array((sign * fin * .55, -fin * .34, fin * .78)),
+                      base + np.array((sign * fin * .80, -fin * .52, fin * 1.18))]
+            _sheet(mesh, [_bezier(edge_a, t) for t in np.linspace(0, 1, 6)],
+                   [_bezier(edge_b, t) for t in np.linspace(0, 1, 6)],
+                   .008 * s, [B[f"fin_{side}"], chest_i], MAT_ACCENT)
+            mesh.tube([_bezier(edge_a, t) for t in np.linspace(0, 1, 4)],
+                      [(fin * .045, fin * .028), (fin * .034, fin * .021),
+                       (fin * .024, fin * .015), (fin * .010, fin * .007)],
+                      [B[f"fin_{side}"], chest_i], MAT_ACCENT, sides=4)
     if p["dorsal"]:
         d = p["dorsal"] * s
+        # A long swept dorsal running most of the back, with an anal fin under
+        # the tail to match.  A short stub over the shoulders read as a shark
+        # fin glued to a submarine.
+        ridge = [g[chest_i] + np.array((0., gh * .92, 0.)),
+                 g[body_i] + np.array((0., gh * .96, 0.)),
+                 g[B["spine_2"]] + np.array((0., gh * .86, 0.)),
+                 g[B["spine_4"]] + np.array((0., gh * .70, 0.))]
+        crest = [point + np.array((0., d * math.sin(math.pi * (.20 + .62 * k / 3)),
+                                   d * .34 * (k / 3.0)))
+                 for k, point in enumerate(ridge)]
+        _sheet(mesh, [_bezier(crest, t) for t in np.linspace(0, 1, 7)],
+               [_bezier(ridge, t) for t in np.linspace(0, 1, 7)],
+               .009 * s, spine_bones, MAT_ACCENT)
+        belly = [g[body_i] + np.array((0., -gh * .92, 0.)),
+                 g[B["spine_3"]] + np.array((0., -gh * .78, 0.))]
+        under = [point + np.array((0., -d * .60, d * .30)) for point in belly]
+        _sheet(mesh, [_bezier(under, t) for t in np.linspace(0, 1, 5)],
+               [_bezier(belly, t) for t in np.linspace(0, 1, 5)],
+               .009 * s, spine_bones, MAT_ACCENT)
         top_a = [g[body_i] + np.array((0., gh * .9, -gw * .4)),
                  g[B["spine_2"]] + np.array((0., gh * .8, 0.))]
         top_b = [g[body_i] + np.array((0., gh * .9 + d, -gw * .1)),
