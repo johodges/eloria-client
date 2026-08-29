@@ -285,6 +285,9 @@ is how each of these was found and each fix confirmed.
 | `foliage_cluster` | leaf mass built from overlapping lobes | canopies that are not one smooth blob |
 | `swirl_ribbon` | a band that coils around the line it follows | flame, spirit-hair, running water and kraken arms |
 | `facet_shell` | flat-shaded plates over a lit inner shell | crystal carapaces with the glow leaking out of the seams |
+| `plated_shell` | overlapping oriented slabs around a limb | golems and constructs built from discrete blocks, staggered like masonry |
+| `metal_band` | a banding ring around a limb | the bronze trim the art puts at every wrist and ankle |
+| `feather_row` | overlapping flight feathers along an edge | wings with a serrated outline instead of a coloured triangle |
 
 `MAT_CORE`, a sixth material slot, carries whatever is lit from inside: a
 treant's heart-hollow, the light in a geode carapace, the centre of a wisp, the
@@ -350,6 +353,48 @@ turned up four more problems that only show at library scale.
   around the core now, tighter at the middle and ragged at the edge, jittered
   from the same seeded generator so the cloud stays reproducible.
 
+### Golems and constructs
+
+Thirteen creatures across two body plans, and every one of them was a smooth
+capsule in a stone colour with a small pad on each shoulder.  The art draws
+them as *stacks of discrete blocks* -- you can count the boulders in a cairn
+golem's forearm -- with a lit gem set in the chest and bronze banding at the
+joints.  A swept limb with a rock texture on it is a sausage, and no normal map
+fixes a silhouette.
+
+`plated_shell` is the stone counterpart of `woven_trunk`: each plate is a short
+oriented puck standing proud of the surface along its own outward normal, so it
+catches its own highlight and casts its own shadow line, and rows are staggered
+like masonry so the joints do not line up into stripes.  A scattering of plates
+carries a lit glyph, which is what the art carves into them.  The smooth tube
+stays underneath as the body the plates are bolted to, so the gaps read as
+shadowed joints rather than as holes -- and the plates use the body's own stone
+rather than the keratin material, because routing them through keratin made
+them read as bones strapped on rather than as the creature itself.
+
+The proportions moved with it: a small head clear of enormous shoulders, a
+narrower pelvis than chest, and the plating held off the crotch so two legs
+read as two legs.  Four numbers were wrong on the way and each was found by
+measuring rather than squinting -- the socket ring was built at the gem's
+radius scale and came out four times the width of the core it framed; widening
+`hip_w` to part the legs also inflated the pelvis, because `hip_r` derives from
+it, until the hips were wider than the chest; and `arm_splay` at .20 threw the
+hands out to two-thirds of the figure's height on each side.
+
+Two attachments in the same group were thin hoops where the art has machinery.
+The orrery rings are an armillary now -- broad banded rings of unequal size,
+each tilted off the others, with crystals set into the bands and a lit sphere
+at the centre -- and the waterwheel has two rims, an axle, spokes and paddle
+boards.
+
+The core measurement had to be fixed to serve them.  Sampling the top three per
+cent of luminance caught mostly specular bloom, and on the golems the near-grey
+average that came back had a hue that was pure noise, which the emissive
+saturation then amplified into a confident acid yellow.  The band is the top
+tenth now, with a higher saturation floor, and `_saturate` refuses to amplify a
+colour that is already neutral.  The frost golem measures cyan and the amethyst
+golem violet, which is what the art draws.
+
 ### Colour and value, measured
 
 * `concept_growth_tints.py` samples what is *growing* on each creature from its
@@ -384,8 +429,8 @@ in that form rather than the host's.
 
 ### Budget
 
-171 creatures, mean 5,831 triangles, 81 MB on disk, with the woody hero
-creatures between 15,000 and 30,000 -- up from a mean of 4,945 and 74 MB. The
+171 creatures, mean 6,404 triangles, 85 MB on disk, with the woody and plated
+hero creatures between 12,000 and 30,000 -- up from a mean of 4,945 and 74 MB. The
 mean is well under the ceiling this pass was allowed, because the triangles
 went into features the art shows and the models lacked rather than into
 tessellating smooth shapes more finely; most creatures simply did not need

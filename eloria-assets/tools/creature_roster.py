@@ -390,86 +390,84 @@ SHEET_LOCALES = {
 # Measured by ``concept_value_gains.py --table``; gains only ever lift, since
 # the creatures the art paints dark were already right.
 VALUE_GAIN = {
-    "amethyst_scorpion": 1.12,          # art  83.4, model  50.5
-    "geode_scarab": 1.29,               # art  94.2, model  49.6
-    "shardling_swarm": 1.14,            # art  89.5, model  53.5
-    "geode_tortoise": 1.15,             # art  86.5, model  51.2
-    "prism_moth": 1.33,                 # art  90.0, model  46.0
-    "orrery_sentinel": 1.02,            # art  80.7, model  53.6
-    "tidegold_wyrm": 1.02,              # art  74.9, model  50.1
-    "rimebound_archmage": 1.21,         # art  89.0, model  49.8
-    "glacier_brute": 1.07,              # art  97.8, model  62.2
-    "amethyst_sibyl": 1.02,             # art  68.1, model  45.5
-    "tidecaller_sorceress": 1.11,       # art  81.7, model  50.2
-    "goldmane_aurochs": 1.34,           # art  97.1, model  49.1
-    "plumed_crane": 1.38,               # art 105.1, model  51.7
-    "sunmane_minotaur": 1.03,           # art  79.4, model  52.5
-    "stormmane_lion": 1.40,             # art 101.0, model  48.9
-    "grasswing_mantis": 1.36,           # art 111.8, model  56.0
-    "dust_hyena": 1.22,                 # art  87.2, model  48.6
-    "steppe_jackrabbit": 1.44,          # art 115.5, model  54.7
-    "sunmane_gryphon": 1.30,            # art  98.1, model  51.2
-    "crownwater_turtle": 1.22,          # art  92.7, model  51.6
-    "tidefin_naga": 1.40,               # art 109.9, model  53.3
-    "lanternwyrm": 1.15,                # art  85.2, model  50.6
-    "crownwater_wyvern": 1.39,          # art 105.6, model  51.5
-    "cascade_golem": 1.06,              # art  84.3, model  54.2
-    "tidecoil_serpent": 1.40,           # art 104.5, model  50.6
-    "palecrest_crab": 1.42,             # art 118.9, model  56.8
-    "riverbank_ibis": 1.40,             # art 105.9, model  51.6
-    "algae_alligator": 1.11,            # art  82.5, model  50.3
-    "springfly_sprite": 1.46,           # art 128.9, model  60.2
-    "gilded_water_lion": 1.36,          # art  99.0, model  49.4
-    "courier_otter": 1.06,              # art  77.1, model  49.6
-    "message_swallow": 1.12,            # art  79.9, model  48.6
-    "brassband_pike": 1.27,             # art  92.2, model  49.2
-    "verdigris_beetle": 1.03,           # art  84.0, model  55.2
-    "drowned_dockhand": 1.02,           # art  70.4, model  46.7
-    "sluice_elemental": 1.13,           # art 112.1, model  67.4
-    "waterwheel_golem": 1.19,           # art  93.3, model  53.1
-    "harbor_gull": 1.55,                # art 128.5, model  54.8
-    "harbor_seal": 1.31,                # art  98.1, model  51.1
-    "kelpback_turtle": 1.15,            # art  84.6, model  50.0
-    "bluewater_marlin": 1.21,           # art  87.1, model  49.1
-    "saltmarsh_crocodile": 1.06,        # art  78.3, model  50.1
-    "glowmantle_ray": 1.21,             # art  92.2, model  51.8
-    "deepplate_coelacanth": 1.06,       # art  74.2, model  47.5
-    "moor_heron": 1.07,                 # art  77.9, model  49.7
-    "moorlight_wisp": 1.42,             # art 144.0, model  68.7
-    "spectral_moor_stag": 1.26,         # art 101.8, model  54.7
-    "tidelance_construct": 1.12,        # art  96.4, model  58.7
-    "reefplate_golem": 1.30,            # art 106.0, model  55.4
-    "mirrorhold_wheelwarden": 1.03,     # art  80.5, model  53.2
-    "verdigris_warden": 1.07,           # art  84.4, model  53.8
-    "palewater_wyrm": 1.55,             # art 121.1, model  51.4
-    "mirrorwing_swarm": 1.55,           # art 144.3, model  59.0
-    "shattered_sentinel": 1.06,         # art  85.8, model  55.0
-    "mirrorhold_oracle": 1.27,          # art  96.6, model  51.7
-    "tideguard_vanguard": 1.08,         # art  82.1, model  51.9
-    "mirrorhold_siren": 1.33,           # art  99.5, model  50.8
-    "mirrorhold_loremaster": 1.30,      # art  97.0, model  50.8
-    "delta_heron": 1.01,                # art  74.5, model  50.0
-    "emerald_basilisk": 1.16,           # art  84.7, model  49.7
-    "leaf_mantis": 1.22,                # art  96.1, model  53.4
-    "dartback_treefrog": 1.40,          # art  96.7, model  47.0
-    "plumefire_hummingbird": 1.36,      # art 102.0, model  51.1
-    "vinecoil_snake": 1.01,             # art  74.7, model  50.2
-    "canopy_lynx": 1.14,                # art  80.5, model  48.1
-    "mossback_anteater": 1.05,          # art  74.5, model  48.3
-    "bloomtail_axolotl": 1.16,          # art  82.6, model  48.5
-    "verdant_stair_dragon": 1.31,       # art  99.1, model  51.5
-    "rime_harpy": 1.55,                 # art 123.9, model  52.5
-    "glacier_golem": 1.19,              # art 107.4, model  61.2
-    "whitehorn_yak": 1.55,              # art 128.1, model  48.0
-    "rimeshell_crab": 1.25,             # art  93.5, model  51.0
-    "hoarfrost_serpent": 1.55,          # art 133.2, model  50.9
-    "glacier_eagle": 1.51,              # art 114.0, model  51.3
-    "frostplate_knight": 1.12,          # art  93.7, model  56.7
-    "emberwing_moth": 1.21,             # art  88.9, model  50.1
-    "ivy_hound": 1.04,                  # art  74.8, model  49.2
-    "spectral_highwayman": 1.08,        # art  72.0, model  45.5
-    "moss_bear": 1.08,                  # art  74.9, model  47.2
-    "amberwood_ghost_knight": 1.11,     # art  88.7, model  54.5
+    "amethyst_scorpion": 1.21,          # art  83.4, model  52.5
+    "geode_scarab": 1.47,               # art  94.2, model  56.1
+    "shardling_swarm": 1.24,            # art  89.5, model  55.8
+    "geode_tortoise": 1.27,             # art  86.5, model  53.4
+    "prism_moth": 1.55,                 # art  90.0, model  50.5
+    "tidegold_wyrm": 1.04,              # art  74.9, model  50.2
+    "rimebound_archmage": 1.38,         # art  89.0, model  52.9
+    "glacier_brute": 1.15,              # art  97.8, model  62.1
+    "amethyst_sibyl": 1.06,             # art  68.1, model  44.4
+    "tidecaller_sorceress": 1.21,       # art  81.7, model  51.0
+    "goldmane_aurochs": 1.55,           # art  97.1, model  53.9
+    "plumed_crane": 1.55,               # art 105.1, model  53.8
+    "sunmane_minotaur": 1.05,           # art  79.4, model  53.0
+    "stormmane_lion": 1.55,             # art 101.0, model  52.5
+    "grasswing_mantis": 1.55,           # art 111.8, model  59.3
+    "dust_hyena": 1.45,                 # art  87.2, model  50.0
+    "steppe_jackrabbit": 1.55,          # art 115.5, model  64.1
+    "sunmane_gryphon": 1.55,            # art  98.1, model  54.5
+    "crownwater_turtle": 1.44,          # art  92.7, model  53.6
+    "tidefin_naga": 1.55,               # art 109.9, model  56.6
+    "lanternwyrm": 1.31,                # art  85.2, model  50.9
+    "crownwater_wyvern": 1.55,          # art 105.6, model  55.6
+    "cascade_golem": 1.06,              # art  84.3, model  57.5
+    "tidecoil_serpent": 1.55,           # art 104.5, model  51.9
+    "palecrest_crab": 1.55,             # art 118.9, model  66.4
+    "riverbank_ibis": 1.55,             # art 105.9, model  54.6
+    "algae_alligator": 1.23,            # art  82.5, model  50.5
+    "springfly_sprite": 1.55,           # art 128.9, model  72.7
+    "gilded_water_lion": 1.55,          # art  99.0, model  52.7
+    "courier_otter": 1.12,              # art  77.1, model  49.8
+    "message_swallow": 1.21,            # art  79.9, model  50.2
+    "brassband_pike": 1.55,             # art  92.2, model  50.5
+    "verdigris_beetle": 1.06,           # art  84.0, model  55.5
+    "drowned_dockhand": 1.08,           # art  70.4, model  45.4
+    "sluice_elemental": 1.22,           # art 112.1, model  70.3
+    "waterwheel_golem": 1.24,           # art  93.3, model  61.0
+    "harbor_gull": 1.55,                # art 128.5, model  64.3
+    "harbor_seal": 1.55,                # art  98.1, model  55.4
+    "kelpback_turtle": 1.29,            # art  84.6, model  51.2
+    "bluewater_marlin": 1.44,           # art  87.1, model  49.9
+    "saltmarsh_crocodile": 1.12,        # art  78.3, model  50.3
+    "glowmantle_ray": 1.40,             # art  92.2, model  54.1
+    "deepplate_coelacanth": 1.12,       # art  74.2, model  47.8
+    "moor_heron": 1.14,                 # art  77.9, model  49.7
+    "moorlight_wisp": 1.55,             # art 144.0, model  78.7
+    "spectral_moor_stag": 1.49,         # art 101.8, model  58.5
+    "tidelance_construct": 1.23,        # art  96.4, model  59.8
+    "reefplate_golem": 1.55,            # art 106.0, model  60.3
+    "verdigris_warden": 1.06,           # art  84.4, model  57.8
+    "palewater_wyrm": 1.55,             # art 121.1, model  53.0
+    "mirrorwing_swarm": 1.55,           # art 144.3, model  62.7
+    "shattered_sentinel": 1.07,         # art  85.8, model  57.7
+    "mirrorhold_oracle": 1.50,          # art  96.6, model  55.6
+    "tideguard_vanguard": 1.15,         # art  82.1, model  52.4
+    "mirrorhold_siren": 1.55,           # art  99.5, model  52.5
+    "mirrorhold_loremaster": 1.50,      # art  97.0, model  57.1
+    "delta_heron": 1.02,                # art  74.5, model  50.0
+    "emerald_basilisk": 1.34,           # art  84.7, model  50.0
+    "leaf_mantis": 1.45,                # art  96.1, model  55.0
+    "dartback_treefrog": 1.55,          # art  96.7, model  52.9
+    "plumefire_hummingbird": 1.55,      # art 102.0, model  55.6
+    "vinecoil_snake": 1.02,             # art  74.7, model  50.2
+    "canopy_lynx": 1.27,                # art  80.5, model  49.3
+    "mossback_anteater": 1.09,          # art  74.5, model  48.9
+    "bloomtail_axolotl": 1.32,          # art  82.6, model  49.3
+    "verdant_stair_dragon": 1.55,       # art  99.1, model  53.5
+    "rime_harpy": 1.55,                 # art 123.9, model  58.8
+    "glacier_golem": 1.29,              # art 107.4, model  67.3
+    "whitehorn_yak": 1.55,              # art 128.1, model  61.8
+    "rimeshell_crab": 1.39,             # art  93.5, model  57.0
+    "hoarfrost_serpent": 1.55,          # art 133.2, model  52.1
+    "glacier_eagle": 1.55,              # art 114.0, model  59.2
+    "frostplate_knight": 1.23,          # art  93.7, model  58.0
+    "emberwing_moth": 1.38,             # art  88.9, model  53.0
+    "ivy_hound": 1.07,                  # art  74.8, model  49.4
+    "spectral_highwayman": 1.13,        # art  72.0, model  46.8
+    "moss_bear": 1.13,                  # art  74.9, model  48.9
+    "amberwood_ghost_knight": 1.20,     # art  88.7, model  56.0
 }
 
 
@@ -479,159 +477,151 @@ VALUE_GAIN = {
 # material, which is why a treant's heart is amber and a barrens wisp's is
 # blue rather than both being a generic white glow.
 CORE_TINT = {
-    "amethyst_scorpion": (190, 248, 253),
-    "geode_scarab": (244, 250, 253),
-    "prism_drake": (179, 233, 252),
-    "shardling_swarm": (187, 243, 252),
-    "barrens_wisp": (113, 153, 239),
-    "amethyst_golem": (188, 198, 246),
-    "crystalwing": (173, 216, 250),
-    "geode_tortoise": (189, 249, 250),
-    "facet_hound": (169, 202, 248),
-    "prism_moth": (181, 245, 253),
-    "lattice_spider": (176, 232, 252),
-    "orrery_sentinel": (182, 238, 236),
-    "verdant_crown_king": (140, 189, 175),
-    "tidegold_wyrm": (156, 192, 182),
-    "rimebound_archmage": (153, 209, 228),
-    "glacier_brute": (179, 230, 243),
-    "orrery_colossus": (192, 185, 162),
-    "amethyst_sibyl": (149, 154, 209),
-    "crimson_duelist": (167, 143, 107),
-    "emberwood_matron": (172, 154, 89),
-    "barrow_sovereign": (85, 147, 139),
-    "gilded_devourer": (207, 177, 122),
-    "tidecaller_sorceress": (128, 192, 196),
-    "mirefather_leviathan": (152, 177, 124),
-    "goldmane_aurochs": (254, 243, 191),
-    "dunburrow_mole": (213, 163, 113),
-    "plumed_crane": (245, 224, 172),
-    "sunmane_minotaur": (240, 206, 136),
-    "stormmane_lion": (246, 206, 117),
-    "grasswing_mantis": (242, 233, 113),
-    "dust_hyena": (244, 180, 101),
-    "steppe_jackrabbit": (246, 224, 168),
-    "sunmane_gryphon": (246, 221, 160),
-    "crownwater_turtle": (244, 218, 150),
-    "tidefin_naga": (236, 219, 154),
-    "lanternwyrm": (235, 218, 99),
-    "crownwater_wyvern": (222, 222, 181),
-    "cascade_golem": (226, 220, 164),
-    "tidecoil_serpent": (220, 235, 197),
-    "palecrest_crab": (252, 245, 185),
-    "riverbank_ibis": (253, 242, 183),
-    "algae_alligator": (221, 203, 123),
-    "springfly_sprite": (226, 236, 192),
-    "gilded_water_lion": (222, 234, 196),
-    "medusa_tidepriest": (193, 208, 150),
-    "courier_otter": (222, 196, 153),
-    "message_swallow": (218, 194, 160),
-    "harborshell_crab": (213, 182, 121),
-    "brassband_pike": (202, 201, 158),
-    "reedhat_fisher": (214, 176, 127),
-    "ratcatcher_tough": (146, 144, 117),
-    "verdigris_beetle": (163, 203, 174),
-    "lanternwake_sprite": (137, 218, 210),
-    "millstone_golem": (206, 198, 159),
-    "drowned_dockhand": (104, 183, 184),
-    "sluice_elemental": (133, 229, 239),
-    "waterwheel_golem": (178, 233, 223),
-    "harbor_gull": (234, 235, 234),
-    "rockshell_crab": (221, 181, 121),
-    "harbor_seal": (203, 202, 197),
-    "kelpback_turtle": (212, 189, 142),
-    "bluewater_marlin": (184, 196, 171),
-    "saltmarsh_crocodile": (197, 177, 129),
-    "bilge_rat": (186, 147, 129),
-    "spinefin_eel": (113, 182, 177),
-    "barnacle_troll": (175, 165, 130),
-    "drowned_captain": (171, 152, 115),
-    "glowmantle_ray": (63, 221, 237),
-    "deepplate_coelacanth": (88, 179, 201),
-    "moor_pony": (187, 165, 133),
-    "moorhorn_ram": (145, 128, 87),
-    "moor_heron": (227, 201, 143),
-    "cairnback_tortoise": (173, 154, 105),
-    "moorfell_wolf": (148, 124, 83),
-    "reedmask_stalker": (175, 145, 104),
-    "moorlight_wisp": (155, 246, 238),
-    "barrow_knight": (119, 204, 191),
-    "cairn_golem": (151, 180, 159),
-    "lantern_wraith": (112, 202, 194),
-    "spectral_moor_stag": (135, 219, 210),
-    "barrow_king": (130, 197, 186),
-    "tidelance_construct": (137, 236, 232),
-    "reefplate_golem": (238, 223, 186),
-    "mirrorhold_wheelwarden": (168, 203, 191),
-    "verdigris_warden": (160, 197, 175),
-    "palewater_wyrm": (161, 221, 210),
-    "mirrorwing_swarm": (220, 228, 199),
-    "shattered_sentinel": (131, 214, 216),
-    "mirrorhold_oracle": (130, 207, 213),
-    "tideguard_vanguard": (123, 195, 187),
-    "mirrorhold_siren": (201, 202, 168),
-    "shardbound_archivist": (141, 239, 243),
-    "mirrorhold_loremaster": (146, 228, 226),
-    "mudflat_crab": (207, 185, 133),
-    "delta_heron": (226, 204, 165),
-    "voltfin_eel": (105, 202, 205),
-    "reed_stalker": (210, 183, 126),
-    "mangrove_turtle": (193, 170, 113),
-    "bog_warden": (178, 184, 146),
-    "frogspear_warrior": (188, 161, 111),
-    "reed_drake": (196, 172, 126),
-    "manymouth_hydra": (179, 182, 142),
-    "emerald_basilisk": (161, 194, 91),
-    "leaf_mantis": (169, 207, 98),
-    "dartback_treefrog": (172, 222, 92),
-    "plumefire_hummingbird": (244, 195, 104),
-    "vinecoil_snake": (194, 189, 72),
-    "canopy_lynx": (226, 185, 103),
-    "mossback_anteater": (192, 171, 102),
-    "bloomtail_axolotl": (56, 224, 238),
-    "canopy_gorilla": (195, 151, 85),
-    "vine_treant": (187, 175, 76),
-    "verdant_naiad": (166, 237, 243),
-    "verdant_stair_dragon": (183, 213, 107),
-    "rime_harpy": (247, 247, 243),
-    "glacier_golem": (191, 254, 254),
-    "whitehorn_yak": (250, 245, 235),
-    "rimeshell_crab": (171, 241, 246),
-    "hoarfrost_serpent": (191, 250, 254),
-    "glacier_eagle": (251, 249, 242),
-    "frostplate_knight": (186, 227, 218),
-    "emberwing_moth": (246, 188, 64),
-    "amberwood_owl": (196, 153, 97),
-    "bramble_wolf": (181, 135, 95),
-    "moss_troll": (196, 158, 94),
-    "amberwood_treant": (195, 152, 85),
-    "ivy_hound": (179, 165, 138),
-    "thorn_revenant": (111, 137, 138),
-    "spectral_highwayman": (130, 169, 186),
-    "lantern_stag": (192, 131, 66),
-    "moss_badger": (214, 191, 128),
-    "bramble_stag": (191, 156, 111),
-    "leafling_sprite": (190, 150, 57),
-    "ember_wisp": (252, 237, 147),
-    "ivy_stone_golem": (178, 155, 102),
-    "amberwood_dryad": (196, 157, 116),
-    "moss_bear": (242, 208, 99),
-    "amberwood_scarecrow": (245, 197, 102),
-    "amberwood_ghost_knight": (214, 231, 182),
-    "elk": (199, 162, 136),
-    "emberfox": (244, 209, 183),
-    "frost_maw": (190, 250, 254),
-    "frost_tiger": (179, 242, 252),
-    "giant_crocodile": (199, 179, 117),
-    "giant_komodo": (206, 182, 109),
-    "giant_tortoise": (247, 216, 150),
-    "horse": (244, 208, 151),
-    "ice_bear": (248, 247, 242),
-    "miretoad": (236, 206, 136),
-    "mossback_boar": (185, 144, 94),
-    "mountain_goat": (249, 245, 238),
-    "red_fox": (247, 226, 177),
-    "snow_hare": (252, 251, 249),
+    "amethyst_scorpion": (125, 210, 248),
+    "geode_scarab": (127, 242, 252),
+    "prism_drake": (130, 186, 247),
+    "shardling_swarm": (127, 207, 250),
+    "barrens_wisp": (85, 110, 215),
+    "amethyst_golem": (138, 150, 237),
+    "crystalwing": (130, 162, 244),
+    "geode_tortoise": (128, 221, 233),
+    "facet_hound": (122, 159, 239),
+    "prism_moth": (126, 207, 251),
+    "lattice_spider": (140, 177, 248),
+    "orrery_sentinel": (129, 200, 229),
+    "verdant_crown_king": (99, 155, 144),
+    "tidegold_wyrm": (98, 170, 183),
+    "rimebound_archmage": (115, 186, 218),
+    "glacier_brute": (131, 204, 229),
+    "orrery_colossus": (164, 147, 126),
+    "amethyst_sibyl": (117, 117, 197),
+    "crimson_duelist": (140, 99, 73),
+    "emberwood_matron": (155, 121, 55),
+    "barrow_sovereign": (62, 126, 118),
+    "gilded_devourer": (176, 144, 92),
+    "tidecaller_sorceress": (91, 165, 174),
+    "mirefather_leviathan": (119, 153, 105),
+    "goldmane_aurochs": (245, 208, 139),
+    "dunburrow_mole": (195, 140, 89),
+    "plumed_crane": (243, 185, 101),
+    "sunmane_minotaur": (220, 168, 88),
+    "stormmane_lion": (243, 181, 75),
+    "grasswing_mantis": (232, 213, 79),
+    "dust_hyena": (233, 162, 83),
+    "steppe_jackrabbit": (235, 195, 119),
+    "sunmane_gryphon": (236, 188, 108),
+    "crownwater_turtle": (227, 185, 106),
+    "tidefin_naga": (232, 195, 116),
+    "lanternwyrm": (210, 193, 90),
+    "crownwater_wyvern": (201, 198, 149),
+    "cascade_golem": (199, 187, 116),
+    "tidecoil_serpent": (174, 208, 177),
+    "palecrest_crab": (241, 222, 138),
+    "riverbank_ibis": (249, 221, 131),
+    "algae_alligator": (190, 172, 82),
+    "springfly_sprite": (193, 216, 179),
+    "gilded_water_lion": (181, 204, 166),
+    "medusa_tidepriest": (171, 180, 121),
+    "courier_otter": (205, 161, 104),
+    "message_swallow": (199, 155, 94),
+    "harborshell_crab": (189, 145, 81),
+    "brassband_pike": (139, 171, 142),
+    "reedhat_fisher": (192, 141, 84),
+    "ratcatcher_tough": (126, 119, 83),
+    "verdigris_beetle": (122, 178, 162),
+    "lanternwake_sprite": (101, 201, 198),
+    "millstone_golem": (169, 176, 132),
+    "drowned_dockhand": (72, 164, 168),
+    "sluice_elemental": (89, 209, 227),
+    "waterwheel_golem": (130, 214, 211),
+    "rockshell_crab": (200, 144, 81),
+    "kelpback_turtle": (187, 154, 97),
+    "bluewater_marlin": (181, 169, 99),
+    "saltmarsh_crocodile": (170, 148, 87),
+    "bilge_rat": (170, 123, 92),
+    "spinefin_eel": (123, 153, 138),
+    "barnacle_troll": (159, 141, 75),
+    "drowned_captain": (144, 122, 81),
+    "glowmantle_ray": (46, 208, 229),
+    "deepplate_coelacanth": (62, 154, 182),
+    "moor_pony": (162, 137, 84),
+    "moorhorn_ram": (119, 103, 58),
+    "moor_heron": (206, 169, 114),
+    "cairnback_tortoise": (146, 127, 65),
+    "moorfell_wolf": (124, 101, 57),
+    "reedmask_stalker": (147, 119, 77),
+    "moorlight_wisp": (118, 237, 226),
+    "barrow_knight": (99, 183, 170),
+    "cairn_golem": (138, 144, 93),
+    "lantern_wraith": (89, 175, 168),
+    "spectral_moor_stag": (114, 207, 199),
+    "barrow_king": (97, 171, 163),
+    "tidelance_construct": (107, 216, 214),
+    "mirrorhold_wheelwarden": (147, 172, 151),
+    "verdigris_warden": (102, 176, 179),
+    "palewater_wyrm": (118, 206, 209),
+    "mirrorwing_swarm": (134, 224, 225),
+    "shattered_sentinel": (98, 193, 204),
+    "mirrorhold_oracle": (90, 188, 207),
+    "tideguard_vanguard": (89, 180, 190),
+    "mirrorhold_siren": (138, 180, 159),
+    "shardbound_archivist": (99, 220, 231),
+    "mirrorhold_loremaster": (108, 204, 210),
+    "mudflat_crab": (191, 146, 84),
+    "delta_heron": (201, 162, 98),
+    "voltfin_eel": (86, 157, 149),
+    "reed_stalker": (170, 138, 73),
+    "mangrove_turtle": (161, 141, 68),
+    "bog_warden": (143, 152, 112),
+    "frogspear_warrior": (168, 131, 79),
+    "reed_drake": (159, 135, 79),
+    "manymouth_hydra": (155, 152, 101),
+    "emerald_basilisk": (142, 172, 76),
+    "leaf_mantis": (151, 193, 72),
+    "dartback_treefrog": (138, 194, 59),
+    "plumefire_hummingbird": (240, 176, 80),
+    "vinecoil_snake": (174, 158, 53),
+    "canopy_lynx": (202, 154, 73),
+    "mossback_anteater": (167, 147, 76),
+    "bloomtail_axolotl": (44, 203, 226),
+    "canopy_gorilla": (167, 125, 69),
+    "vine_treant": (158, 146, 56),
+    "verdant_naiad": (115, 220, 231),
+    "verdant_stair_dragon": (152, 197, 89),
+    "glacier_golem": (127, 239, 252),
+    "rimeshell_crab": (103, 224, 245),
+    "hoarfrost_serpent": (142, 236, 252),
+    "glacier_eagle": (172, 240, 213),
+    "frostplate_knight": (138, 203, 209),
+    "emberwing_moth": (240, 164, 44),
+    "amberwood_owl": (170, 125, 71),
+    "bramble_wolf": (161, 114, 79),
+    "moss_troll": (173, 135, 65),
+    "amberwood_treant": (169, 124, 63),
+    "ivy_hound": (160, 141, 86),
+    "thorn_revenant": (90, 118, 124),
+    "spectral_highwayman": (107, 148, 164),
+    "lantern_stag": (161, 104, 55),
+    "moss_badger": (180, 154, 64),
+    "bramble_stag": (161, 118, 71),
+    "leafling_sprite": (162, 123, 44),
+    "ember_wisp": (248, 204, 84),
+    "ivy_stone_golem": (155, 134, 69),
+    "amberwood_dryad": (170, 118, 78),
+    "moss_bear": (223, 179, 62),
+    "amberwood_scarecrow": (232, 165, 67),
+    "amberwood_ghost_knight": (225, 192, 95),
+    "elk": (186, 119, 83),
+    "emberfox": (241, 176, 128),
+    "frost_maw": (141, 238, 252),
+    "frost_tiger": (128, 228, 251),
+    "giant_crocodile": (170, 150, 80),
+    "giant_komodo": (178, 154, 79),
+    "giant_tortoise": (232, 183, 108),
+    "horse": (237, 172, 88),
+    "miretoad": (213, 174, 91),
+    "mossback_boar": (163, 120, 78),
+    "red_fox": (238, 186, 98),
 }
 
 

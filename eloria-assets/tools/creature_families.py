@@ -25,8 +25,8 @@ from creature_anatomy import (AnatomyMesh, MAT_ACCENT, MAT_BODY, MAT_CORE,
                               MAT_DARK, MAT_FEATURE, MAT_GROWTH, _bezier,
                               _sheet, _euler, qaxis, branch_system,
                               facet_shell, feather_row, foliage_cluster,
-                              global_positions, root_flare, swirl_ribbon,
-                              woven_trunk)
+                              global_positions, metal_band, plated_shell,
+                              root_flare, swirl_ribbon, woven_trunk)
 
 # ---------------------------------------------------------------------------
 # Biped
@@ -64,6 +64,11 @@ def _biped(**over) -> dict:
         # branches; ``crown`` grows a forking rack off the skull; ``heart`` is
         # the lit hollow the concept art puts in every treant's chest.
         wood=.0, crown=.0, heart=.0, canopy=.0, arm_splay=.0,
+        # Plated construction, the stone-and-metal counterpart of ``wood``.
+        # ``plated`` clads the body in discrete overlapping slabs, ``bands``
+        # rings the joints in metal, and ``heart_style`` picks what surrounds
+        # the lit core: bark staves on a treant, a socket ring on a golem.
+        plated=.0, bands=.0, runes=.0, heart_style="bark",
         # ``face`` decides what is under the brow: "flesh" is the default,
         # "skull" is the pale bone the art gives every revenant and barrow
         # knight, "ember" the lit sockets of a spirit.  ``hem`` shapes the
@@ -88,16 +93,25 @@ BIPED_PLANS = {
     "revenant": _biped(shoulder_w=.185, robe=True, ragged=.20, arm_r=.045,
                        chest=(.165, .14), skull=(.16, .19, .18), hood=True,
                        cloak=.26, surface="cloth"),
-    "golem": _biped(hip_h=.48, waist_h=.62, chest_h=.78, shoulder_h=.86, head_h=1.00,
-                    shoulder_w=.315, hip_w=.185, chest=(.285, .245),
-                    waist=(.235, .205), arm_len=.55, arm_r=.100, leg_len=.46,
-                    leg_r=.118, skull=(.20, .19, .20), shoulder_pad=.135,
-                    hunch=.03, foot_len=.26, belt=False, surface="stone",
-                    gaunt=.02),
-    "construct": _biped(hip_h=.50, waist_h=.64, shoulder_w=.285, chest=(.255, .225),
-                        arm_r=.084, leg_r=.102, armor="plate", shoulder_pad=.115,
-                        skull=(.18, .18, .19), foot_len=.24, weapon="staff",
-                        belt=False, surface="metal"),
+    # The art draws a golem as a cairn: a stack of separate boulders with a
+    # small head sunk between enormous shoulders.  The proportions follow that
+    # -- wider across the shoulders, shorter in the neck, heavier in the
+    # forearm -- and the plating does the rest.
+    "golem": _biped(hip_h=.50, waist_h=.64, chest_h=.80, shoulder_h=.88, head_h=1.08,
+                    shoulder_w=.355, hip_w=.185, chest=(.300, .258),
+                    waist=(.240, .210), arm_len=.55, arm_r=.118, leg_len=.48,
+                    leg_r=.128, skull=(.180, .170, .180), shoulder_pad=.150,
+                    hunch=.05, foot_len=.28, belt=False, surface="stone",
+                    gaunt=.02, neck_r=.052,
+                    plated=1.0, bands=.55, runes=.30, heart=.62,
+                    heart_style="socket", face="ember", arm_splay=.075),
+    "construct": _biped(hip_h=.52, waist_h=.66, head_h=1.08, shoulder_w=.320,
+                        chest=(.265, .235), hip_w=.170,
+                        arm_r=.098, leg_r=.112, armor="plate", shoulder_pad=.135,
+                        skull=(.175, .170, .180), foot_len=.26, weapon="staff",
+                        belt=False, surface="metal", neck_r=.050,
+                        plated=.85, bands=1.0, runes=.35, heart=.68,
+                        heart_style="socket", face="ember", arm_splay=.070),
     "brute": _biped(hip_h=.50, waist_h=.64, chest_h=.80, shoulder_h=.88, head_h=1.01,
                     shoulder_w=.305, hip_w=.175, chest=(.275, .235),
                     waist=(.225, .205), arm_len=.61, arm_r=.094, leg_len=.46,
@@ -482,15 +496,36 @@ def _headgear(mesh, kind, head_g, skull, head_i, s, p):
                            (.030 * s, .10 * s, .030 * s), [head_i], MAT_FEATURE,
                            rings=4, sides=5)
     elif kind == "rings":
-        for axis in range(3):
+        # An armillary cage, not three wire hoops.  The art builds these out of
+        # broad banded rings of unequal size, each tilted off the others, with
+        # a lit sphere caught at the centre and crystals set into the bands;
+        # at .016 of a scale unit they drew as bent coat hangers.
+        centre = head_g + np.array((0., skull[1] * .10, 0.))
+        for index, (radius, tilt, width) in enumerate(
+                ((2.35, 0.0, .052), (1.95, .62, .040), (2.15, -1.05, .034))):
             ring = []
-            for k in range(15):
-                a = 2 * math.pi * k / 14
-                v = [math.cos(a) * skull[0] * 2.1, math.sin(a) * skull[1] * 2.1, 0.]
-                v = [v[(i - axis) % 3] for i in range(3)]
-                ring.append(head_g + np.array(v))
-            mesh.tube(ring, [(.016 * s, .016 * s)] * 15, [head_i], MAT_FEATURE,
-                      sides=5, cap_start=False, cap_end=False)
+            for k in range(21):
+                a = 2 * math.pi * k / 20
+                x = math.cos(a) * skull[0] * radius
+                y = math.sin(a) * skull[1] * radius * math.cos(tilt)
+                z = math.sin(a) * skull[2] * radius * math.sin(tilt)
+                ring.append(centre + np.array((x, y, z)))
+            mesh.tube(ring, [(width * s, width * s * .42)] * 21, [head_i],
+                      MAT_FEATURE, sides=6, cap_start=False, cap_end=False)
+            # Crystals set into the band, which is what carries the colour.
+            for k in range(4):
+                a = 2 * math.pi * k / 4 + index * .5
+                x = math.cos(a) * skull[0] * radius
+                y = math.sin(a) * skull[1] * radius * math.cos(tilt)
+                z = math.sin(a) * skull[2] * radius * math.sin(tilt)
+                mesh.ellipsoid(tuple(centre + np.array((x, y, z))),
+                               (.075 * s, .105 * s, .075 * s), [head_i],
+                               MAT_CORE, rings=5, sides=6)
+        # The lit sphere the whole armature is built around.
+        mesh.ellipsoid(tuple(centre), (skull[0] * 1.05,) * 3, [head_i],
+                       MAT_CORE, rings=8, sides=12)
+        mesh.ellipsoid(tuple(centre), (skull[0] * 1.35,) * 3, [head_i],
+                       MAT_ACCENT, rings=6, sides=10)
     elif kind in ("coral", "fin"):
         for k in range(5):
             t = (k - 2) / 2.0
@@ -500,13 +535,18 @@ def _headgear(mesh, kind, head_g, skull, head_i, s, p):
                                               (.13 - abs(t) * .04) * s, .05 * s)),
                        .018 * s, [head_i], MAT_ACCENT, sides=5)
     elif kind == "cairn":
-        stack = head_g + np.array((0., skull[1] * .70, 0.))
+        # A brow of stacked slabs sitting *on* the skull, not a stack of
+        # balanced discs above it: the art's cairn golem wears its stones as a
+        # heavy shelf over the eyes, and floating them clear of the head read
+        # as a snowman's hat.
         for k in range(3):
-            mesh.ellipsoid(tuple(stack + np.array((.02 * s * (1 if k % 2 else -1),
-                                                   k * .09 * s, 0.))),
-                           (skull[0] * (1.5 - .28 * k), .07 * s,
-                            skull[2] * (1.5 - .28 * k)),
-                           [head_i], MAT_FEATURE, rings=5, sides=8)
+            shelf = head_g + np.array((.018 * s * (1 if k % 2 else -1),
+                                       skull[1] * (.36 + .30 * k),
+                                       -skull[2] * (.10 - .07 * k)))
+            mesh.ellipsoid(tuple(shelf),
+                           (skull[0] * (2.05 - .34 * k), skull[1] * .46,
+                            skull[2] * (1.85 - .30 * k)),
+                           [head_i], MAT_BODY, rings=5, sides=9)
     elif kind == "yoke":
         bar = head_g + np.array((0., skull[1] * .30, skull[2] * 1.0))
         mesh.tube([bar - np.array((skull[0] * 3.2, 0., 0.)),
@@ -514,13 +554,35 @@ def _headgear(mesh, kind, head_g, skull, head_i, s, p):
                   [(.030 * s, .030 * s), (.030 * s, .030 * s)],
                   [head_i], MAT_FEATURE, sides=6)
     elif kind == "wheel":
-        ring = []
-        for k in range(17):
-            a = 2 * math.pi * k / 16
-            ring.append(head_g + np.array((skull[0] * 2.4 + 0., math.sin(a) * .30 * s,
-                                           math.cos(a) * .30 * s)))
-        mesh.tube(ring, [(.022 * s, .022 * s)] * 17, [head_i], MAT_FEATURE,
-                  sides=5, cap_start=False, cap_end=False)
+        # A waterwheel: two rims, an axle, spokes and paddles between them.
+        # One thin hoop beside the head read as a hula hoop, and the wheel is
+        # the largest thing in both of these figures.
+        hub = head_g + np.array((skull[0] * 2.1, -skull[1] * .30, 0.))
+        radius = .46 * s
+        axis = np.array((1., 0., 0.))
+        for offset in (-.09 * s, .09 * s):
+            ring = []
+            for k in range(19):
+                a = 2 * math.pi * k / 18
+                ring.append(hub + axis * offset
+                            + np.array((0., math.sin(a) * radius,
+                                        math.cos(a) * radius)))
+            mesh.tube(ring, [(.030 * s, .030 * s)] * 19, [head_i], MAT_FEATURE,
+                      sides=5, cap_start=False, cap_end=False)
+        mesh.tube([hub - axis * .13 * s, hub + axis * .13 * s],
+                  [(.040 * s, .040 * s), (.040 * s, .040 * s)], [head_i],
+                  MAT_ACCENT, sides=8)
+        for k in range(8):
+            a = 2 * math.pi * k / 8
+            rim = np.array((0., math.sin(a) * radius, math.cos(a) * radius))
+            mesh.tube([hub, hub + rim],
+                      [(.026 * s, .026 * s), (.018 * s, .018 * s)],
+                      [head_i], MAT_ACCENT, sides=4)
+            # The paddle boards, which are what catch the light on a wheel.
+            _sheet(mesh,
+                   [hub + rim * .62 - axis * .10 * s, hub + rim - axis * .10 * s],
+                   [hub + rim * .62 + axis * .10 * s, hub + rim + axis * .10 * s],
+                   .012 * s, [head_i], MAT_FEATURE)
     elif kind == "falls":
         for k in range(5):
             a = 2 * math.pi * k / 5
@@ -573,13 +635,29 @@ def biped_geometry(plan_key: str, scale: float, bones,
     else:
         mesh.tube(spine_pts, radii, torso_bones, MAT_BODY, sides=20, uv_scale=1.8,
                   lower_material=MAT_ACCENT, lower_threshold=-.74)
+    if p["plated"]:
+        # Slabs over the whole trunk.  The smooth tube stays underneath as the
+        # body the plates are bolted to, so the gaps between them read as
+        # shadowed joints rather than as holes.
+        # MAT_BODY, not MAT_FEATURE: the plates *are* the golem, and routed
+        # through the keratin material they read as bones strapped to a body
+        # rather than as the body itself.  The shadow in the joints is what
+        # separates them, and that is geometry, not colour.
+        plated_shell(mesh, spine_pts, radii, torso_bones, MAT_BODY,
+                     seed=f"{variant or plan_key}:torso",
+                     rows=int(4 + 2 * p["plated"]), around=7,
+                     relief=.30 * p["plated"], gap=.15, dome=.58,
+                     rune_material=MAT_CORE if p["runes"] else None,
+                     rune_chance=p["runes"] * .55, span=(.26, .86))
     mesh.upright = True
     mesh.torso = (list(spine_pts) + [g[head_i]],
                   list(radii) + [(p["skull"][0] * s * .5, p["skull"][1] * s * .5)],
                   list(torso_bones) + [head_i])
     if not p["wood"]:
-        mesh.ellipsoid(tuple(g[body_i] + np.array((0., -hip_r[1] * .20, 0.))),
-                       (hip_r[0] * 1.52, hip_r[1] * 1.62, hip_r[0] * 1.35),
+        pelvis = .88 if p["plated"] else 1.0
+        mesh.ellipsoid(tuple(g[body_i] + np.array((0., -hip_r[1] * .20 * pelvis, 0.))),
+                       (hip_r[0] * 1.52 * pelvis, hip_r[1] * 1.62 * pelvis,
+                        hip_r[0] * 1.35 * pelvis),
                        [body_i, B["thigh_l"], B["thigh_r"]], MAT_BODY,
                        rings=9, sides=14)
     else:
@@ -603,23 +681,54 @@ def biped_geometry(plan_key: str, scale: float, bones,
         # which is the one thing the concept art will not tolerate: the glow is
         # the creature's whole identity.
         heart = p["heart"] * s
-        core = (spine_pts[2] * .38 + spine_pts[3] * .62
-                + np.array((0., 0., -chest_r[1] * .80)))
-        mesh.ellipsoid(tuple(core), (heart * .20, heart * .25, heart * .15),
-                       [chest_i, spine_i], MAT_CORE, rings=8, sides=13)
-        # A ring of bark staves around it, so the light reads as coming out of
-        # a split in the wood rather than sitting on top of it.
-        for k in range(11):
-            angle = 2 * math.pi * k / 11
-            rim = core + np.array((math.cos(angle) * heart * .19,
-                                   math.sin(angle) * heart * .24,
-                                   chest_r[1] * .12))
-            out = core + np.array((math.cos(angle) * heart * .34,
-                                   math.sin(angle) * heart * .42,
-                                   chest_r[1] * .30))
-            mesh.tube([rim, out],
-                      [(heart * .055, heart * .055), (heart * .034, heart * .034)],
-                      [chest_i, spine_i], MAT_BODY, sides=5)
+        socket = p["heart_style"] == "socket"
+        core = (spine_pts[2] * (.30 if socket else .38)
+                + spine_pts[3] * (.70 if socket else .62)
+                + np.array((0., 0., -chest_r[1] * (.96 if socket else .80))))
+        gem = (heart * .26, heart * .26, heart * .17) if socket else \
+              (heart * .20, heart * .25, heart * .15)
+        mesh.ellipsoid(tuple(core), gem, [chest_i, spine_i], MAT_CORE,
+                       rings=8, sides=13)
+        if p["heart_style"] == "socket":
+            # A golem's core is a gem set into the breastplate: a metal collar
+            # around it and a rune ring outside that, which is how the art
+            # makes the chest the focus of the whole figure.
+            # These are ring *radii*, and the gem beside them is sized as a
+            # full extent: at .34 and .52 of the heart the collar came out four
+            # times the width of the core it was meant to frame and read as a
+            # tyre hung round the golem's middle.
+            for radius, width, material in ((.175, .034, MAT_FEATURE),
+                                            (.245, .022, MAT_ACCENT)):
+                ring = []
+                for k in range(19):
+                    angle = 2 * math.pi * k / 18
+                    ring.append(core + np.array((math.cos(angle) * heart * radius,
+                                                 math.sin(angle) * heart * radius,
+                                                 chest_r[1] * .10)))
+                mesh.tube(ring, [(heart * width, heart * width)] * 19,
+                          [chest_i, spine_i], material, sides=5,
+                          cap_start=False, cap_end=False)
+            for k in range(8):
+                angle = 2 * math.pi * k / 8 + .2
+                stud = core + np.array((math.cos(angle) * heart * .245,
+                                        math.sin(angle) * heart * .245,
+                                        chest_r[1] * .04))
+                mesh.ellipsoid(tuple(stud), (heart * .040,) * 3,
+                               [chest_i, spine_i], MAT_CORE, rings=4, sides=6)
+        else:
+            # A ring of bark staves around it, so the light reads as coming out
+            # of a split in the wood rather than sitting on top of it.
+            for k in range(11):
+                angle = 2 * math.pi * k / 11
+                rim = core + np.array((math.cos(angle) * heart * .19,
+                                       math.sin(angle) * heart * .24,
+                                       chest_r[1] * .12))
+                out = core + np.array((math.cos(angle) * heart * .34,
+                                       math.sin(angle) * heart * .42,
+                                       chest_r[1] * .30))
+                mesh.tube([rim, out],
+                          [(heart * .055, heart * .055), (heart * .034, heart * .034)],
+                          [chest_i, spine_i], MAT_BODY, sides=5)
     if p["belt"]:
         belt = g[spine_i] + np.array((0., -waist_r[1] * .30, 0.))
         mesh.tube([belt - np.array((0., .018 * s, 0.)), belt + np.array((0., .018 * s, 0.))],
@@ -801,6 +910,21 @@ def biped_geometry(plan_key: str, scale: float, bones,
         else:
             mesh.tube(arm_line, arm_radii, arm_bones, MAT_BODY, sides=10,
                       cap_start=False, cap_end=False)
+        if p["plated"]:
+            plated_shell(mesh, arm_line, arm_radii, arm_bones, MAT_BODY,
+                         seed=f"{variant or plan_key}:arm:{side}",
+                         rows=int(3 + 2 * p["plated"]), around=5,
+                         relief=.34 * p["plated"], gap=.17, dome=.56,
+                         rune_material=MAT_CORE if p["runes"] else None,
+                         rune_chance=p["runes"] * .35, span=(.16, .94))
+        if p["bands"]:
+            # Metal at the wrist and the top of the arm, which is where every
+            # one of these figures is banded in the art.
+            band = p["bands"]
+            metal_band(mesh, (el + hd) * .5, hd - el, r * 1.02, arm_bones,
+                       MAT_ACCENT, thickness=.16 * band, flare=1.34)
+            metal_band(mesh, sh * .70 + el * .30, el - sh, r * 1.28, arm_bones,
+                       MAT_ACCENT, thickness=.13 * band, flare=1.28)
         ball = 2.9 * (1.30 if p["wood"] else 1.0)
         mesh.ellipsoid(tuple(sh + np.array((0., .02 * s, 0.))),
                        (r * ball, r * ball * .93, r * ball * .93),
@@ -862,6 +986,23 @@ def biped_geometry(plan_key: str, scale: float, bones,
                       [(lr * 1.35, lr * 1.35), (lr * 1.10, lr * 1.10),
                        (lr * .92, lr * .92), (lr * .80, lr * .80), (lr * .74, lr * .74)],
                       leg_bones, MAT_BODY, sides=10, cap_start=False, cap_end=False)
+        if p["plated"]:
+            leg_line = [hip + np.array((0., .05 * s, 0.)), hip * .5 + knee * .5,
+                        knee, knee * .45 + foot * .55,
+                        np.array((foot[0], foot_len * .30, foot[2]))]
+            leg_radii = [(lr * 1.35, lr * 1.35), (lr * 1.10, lr * 1.10),
+                         (lr * .92, lr * .92), (lr * .80, lr * .80),
+                         (lr * .74, lr * .74)]
+            plated_shell(mesh, leg_line, leg_radii, leg_bones, MAT_BODY,
+                         seed=f"{variant or plan_key}:leg:{side}",
+                         rows=int(3 + 2 * p["plated"]), around=5,
+                         relief=.32 * p["plated"], gap=.17, dome=.56,
+                         rune_material=MAT_CORE if p["runes"] else None,
+                         rune_chance=p["runes"] * .30, span=(.12, .90))
+            if p["bands"]:
+                metal_band(mesh, knee * .35 + foot * .65, foot - knee,
+                           lr * .80, leg_bones, MAT_ACCENT,
+                           thickness=.16 * p["bands"], flare=1.30)
         heel = np.array((foot[0], foot_len * .26, foot[2] + foot_len * .24))
         toe = np.array((foot[0], foot_len * .20, foot[2] - foot_len * .72))
         mesh.tube([heel, (heel + toe) * .5, toe],

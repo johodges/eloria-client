@@ -2019,6 +2019,91 @@ def woven_trunk(mesh, spine, radii, bones, material, seed: str, strands: int = 7
         mesh.tube(points, thick, bones, material, sides=sides)
 
 
+def plated_shell(mesh, spine, radii, bones, material, seed: str, rows: int = 4,
+                 around: int = 6, relief: float = .26, gap: float = .16,
+                 dome: float = .55, sides: int = 7, rune_material=None,
+                 rune_chance: float = .22, span=(0.0, 1.0)):
+    """Clad a limb in overlapping slabs, the way a cairn or a suit of plate is.
+
+    The golems and constructs are drawn as a *stack of discrete blocks* -- you
+    can count the boulders in a cairn golem's forearm -- and that is the whole
+    read.  A smooth swept limb in a stone colour is a sausage with a rock
+    texture on it, and no amount of normal map fixes a silhouette.
+
+    Each plate is a short oriented puck standing proud of the surface along its
+    own outward normal, so it catches its own highlight and casts its own
+    shadow line; rows are staggered like masonry so the joints do not line up
+    into stripes.  ``rune_material`` marks a scattering of plates with a lit
+    glyph, which is what the art carves into them.
+    """
+    spine = [np.asarray(point, dtype=float) for point in spine]
+    if len(spine) < 2 or rows < 1 or around < 3:
+        return
+    rng = np.random.default_rng(
+        zlib.crc32(("plate:" + seed).encode("utf-8")) % (2 ** 31))
+
+    def sample(t):
+        position = t * (len(spine) - 1)
+        low = min(int(position), len(spine) - 2)
+        frac = position - low
+        point = spine[low] * (1 - frac) + spine[low + 1] * frac
+        rx = radii[low][0] * (1 - frac) + radii[low + 1][0] * frac
+        ry = radii[low][1] * (1 - frac) + radii[low + 1][1] * frac
+        tangent = spine[low + 1] - spine[low]
+        if float(np.linalg.norm(tangent)) < 1e-9:
+            tangent = np.array((0., 1., 0.))
+        return point, (rx, ry), tangent
+
+    for row in range(rows):
+        t = span[0] + (span[1] - span[0]) * (row + .5) / rows
+        point, (rx, ry), tangent = sample(t)
+        right, up = AnatomyMesh._frame(tangent)
+        # Brick bond: every other row is offset by half a plate.
+        phase = math.pi / around * (row % 2)
+        girth = (rx + ry) * .5
+        # Plate half-width from the arc it has to cover, less the joint gap.
+        half = (math.pi * girth / around) * (1.0 - gap)
+        depth = girth * relief
+        for k in range(around):
+            angle = phase + 2 * math.pi * k / around
+            outward = right * math.cos(angle) + up * math.sin(angle)
+            outward = outward / max(float(np.linalg.norm(outward)), 1e-9)
+            seat = point + right * (math.cos(angle) * rx) + up * (math.sin(angle) * ry)
+            lift = float(rng.uniform(.72, 1.28))
+            wobble = float(rng.uniform(.86, 1.16))
+            inner = seat - outward * depth * .55
+            crest = seat + outward * depth * .34 * lift
+            outer = seat + outward * depth * lift
+            mesh.tube([inner, crest, outer],
+                      [(half * .80 * wobble, half * .72 * wobble),
+                       (half * wobble, half * .90 * wobble),
+                       (half * dome * wobble, half * dome * .90 * wobble)],
+                      bones, material, sides=sides)
+            if rune_material is not None and rng.random() < rune_chance:
+                # A glyph cut into the face of the plate, lit from inside it.
+                mesh.tube([outer - outward * depth * .10,
+                           outer + outward * depth * .16],
+                          [(half * .30, half * .26), (half * .22, half * .19)],
+                          bones, rune_material, sides=5)
+
+
+def metal_band(mesh, centre, direction, radius, bones, material,
+               thickness: float = .10, flare: float = 1.18, sides: int = 12):
+    """A banding ring around a limb, as the art puts at every wrist and ankle."""
+    centre = np.asarray(centre, dtype=float)
+    direction = np.asarray(direction, dtype=float)
+    length = float(np.linalg.norm(direction))
+    if length < 1e-9 or radius <= 0:
+        return
+    axis = direction / length
+    half = axis * radius * thickness
+    mesh.tube([centre - half, centre, centre + half],
+              [(radius * flare * .94, radius * flare * .94),
+               (radius * flare, radius * flare),
+               (radius * flare * .94, radius * flare * .94)],
+              bones, material, sides=sides, cap_start=False, cap_end=False)
+
+
 def root_flare(mesh, base, radius: float, bones, material, seed: str,
                count: int = 5, reach: float = 1.5, drop: float = .0):
     """Buttress roots splaying off the foot of a trunk."""

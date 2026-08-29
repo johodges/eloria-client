@@ -1804,6 +1804,11 @@ def _saturate(rgb, floor: float = .58):
     """
     red, green, blue = (max(0.0, min(1.0, c / 255.0)) for c in rgb)
     hue, saturation, _ = colorsys.rgb_to_hsv(red, green, blue)
+    if saturation < .12:
+        # A near-neutral colour has no meaningful hue -- what little it has is
+        # sampling noise -- and pushing it to emissive saturation amplifies
+        # that noise into a confident wrong answer.  Lift the value instead.
+        return tuple(int(round(c * 255)) for c in colorsys.hsv_to_rgb(hue, saturation, 1.0))
     saturation = max(saturation, floor)
     return tuple(int(round(c * 255))
                  for c in colorsys.hsv_to_rgb(hue, saturation, 1.0))

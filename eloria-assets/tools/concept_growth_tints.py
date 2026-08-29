@@ -73,12 +73,17 @@ def growth_tint(slug: str, bins: int = 12):
     return (tuple(int(round(v)) for v in mean), len(buckets[key]) / len(sample))
 
 
-def core_tint(slug: str, quantile: float = .965):
+def core_tint(slug: str, quantile: float = .90):
     """The colour of the brightest lit thing on a figure -- its glowing core.
 
     Treant hearts, wisp centres and lit carapaces are the brightest ink on the
-    sheet by a wide margin, so the top of the luminance distribution isolates
-    them.  Pure white is dropped: that is specular bloom, not the light's hue.
+    figure, so the top of the luminance distribution isolates them.  The band
+    has to be wide enough to contain the glow rather than only its hottest
+    core: sampling the top three per cent caught mostly specular bloom, and on
+    the golems the near-grey average that came back had a hue that was pure
+    noise, which the emissive saturation then amplified into acid yellow.  At
+    the top tenth the frost golem measures cyan and the amethyst golem violet,
+    which is what the art draws.
     """
     path = CF.figure_path(slug)
     if path is None:
@@ -92,10 +97,15 @@ def core_tint(slug: str, quantile: float = .965):
     high = picked.max(axis=1)
     low = picked.min(axis=1)
     # The very top of the range is specular bloom and carries no hue at all;
-    # the light's actual colour is the saturated ink just under it.
-    coloured = picked[(high - low) / np.maximum(high, 1.0) > .22]
-    if len(coloured) < 8:
-        coloured = picked
+    # the light's actual colour is the saturated ink just under it.  The
+    # threshold has to be high enough that pale stone highlights do not qualify
+    # -- on the golems they did, and the near-grey average that came back had a
+    # hue that was pure noise, which the emissive saturation then amplified
+    # into acid yellow.  Too few coloured pixels means there is no lit feature
+    # to measure and the caller should fall back rather than trust this.
+    coloured = picked[(high - low) / np.maximum(high, 1.0) > .38]
+    if len(coloured) < max(24, len(picked) // 60):
+        return None
     return tuple(int(round(v)) for v in coloured.mean(axis=0))
 
 
