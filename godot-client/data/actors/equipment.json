@@ -5217,5 +5217,103 @@
       "ball_l": 0.06013,
       "ball_r": 0.06013
     }
+  },
+  "soleDrop": {
+    "glasswarden_female": {
+      "foot_l": 0.07913,
+      "foot_r": 0.07913,
+      "ball_l": 0.02299,
+      "ball_r": 0.02299
+    },
+    "glasswarden_male": {
+      "foot_l": 0.09627,
+      "foot_r": 0.09627,
+      "ball_l": 0.02465,
+      "ball_r": 0.02465
+    },
+    "greyhaven_female": {
+      "foot_l": 0.07934,
+      "foot_r": 0.07934,
+      "ball_l": 0.02125,
+      "ball_r": 0.02125
+    },
+    "greyhaven_male": {
+      "foot_l": 0.09826,
+      "foot_r": 0.09826,
+      "ball_l": 0.02421,
+      "ball_r": 0.02421
+    },
+    "luminous_female": {
+      "foot_l": 0.07911,
+      "foot_r": 0.07911,
+      "ball_l": 0.02321,
+      "ball_r": 0.02321
+    },
+    "luminous_male": {
+      "foot_l": 0.09601,
+      "foot_r": 0.09601,
+      "ball_l": 0.02471,
+      "ball_r": 0.02471
+    },
+    "mycelari_female": {
+      "foot_l": 0.07865,
+      "foot_r": 0.07865,
+      "ball_l": 0.02713,
+      "ball_r": 0.02713
+    },
+    "mycelari_male": {
+      "foot_l": 0.09159,
+      "foot_r": 0.09159,
+      "ball_l": 0.02579,
+      "ball_r": 0.02579
+    },
+    "orun_female": {
+      "foot_l": 0.07912,
+      "foot_r": 0.07912,
+      "ball_l": 0.0231,
+      "ball_r": 0.0231
+    },
+    "orun_male": {
+      "foot_l": 0.09611,
+      "foot_r": 0.09611,
+      "ball_l": 0.02469,
+      "ball_r": 0.02469
+    },
+    "ssarathi_female": {
+      "foot_l": 0.21394,
+      "foot_r": 0.21394,
+      "ball_l": 0.01871,
+      "ball_r": 0.01871
+    },
+    "ssarathi_male": {
+      "foot_l": 0.23462,
+      "foot_r": 0.23462,
+      "ball_l": 0.02261,
+      "ball_r": 0.02261
+    },
+    "stoneborn_female": {
+      "foot_l": 0.08338,
+      "foot_r": 0.08338,
+      "ball_l": 0.02373,
+      "ball_r": 0.02373
+    },
+    "stoneborn_male": {
+      "foot_l": 0.10286,
+      "foot_r": 0.10286,
+      "ball_l": 0.02688,
+      "ball_r": 0.02688
+    },
+    "votary_female": {
+      "foot_l": 0.07889,
+      "foot_r": 0.07889,
+      "ball_l": 0.02505,
+      "ball_r": 0.02505
+    },
+    "votary_male": {
+      "foot_l": 0.09391,
+      "foot_r": 0.09391,
+      "ball_l": 0.02517,
+      "ball_r": 0.02517
+    }
   }
 }

@@ -37,6 +37,9 @@ SCALE_CLAMP = (1.0, 2.0)
 GIRTH_CLAMP = (1.0, 2.0)
 #: Below this the client returns the plain fit scale rather than a widened one.
 SCALE_DEADBAND = 0.02
+#: ``_ground_ratios``'s clamp. Wider than the girth clamp at the bottom end
+#: because this one is allowed to take a boot in.
+GROUND_CLAMP = (0.5, 2.0)
 
 
 def _accessor(document: dict, binary: bytes, index: int) -> np.ndarray:
@@ -177,10 +180,33 @@ def girth_ratios(registry: dict, author_rig: str, wearer_rig: str) -> dict[str, 
     return ratios
 
 
-def _bone_scale(bone: str, author_rest: dict[str, np.ndarray], target: Skeleton,
-                fit: float, girth: float) -> float:
-    """``_bone_fit``, reduced to the single uniform factor it resolves to."""
+def ground_ratios(registry: dict, author_rig: str, wearer_rig: str,
+                  skin_region: str) -> dict[str, float]:
+    """``_ground_ratios``: how far the foot joints stand above the floor.
+
+    Footwear only.  Every other region is refitted by stature and girth as
+    before.
+    """
+    if skin_region != "boots" or not author_rig or author_rig == wearer_rig:
+        return {}
+    table = registry.get("soleDrop", {})
+    author, wearer = table.get(author_rig, {}), table.get(wearer_rig, {})
+    if not author or not wearer:
+        return {}
+    ratios = {}
+    for bone, value in author.items():
+        source, target = float(value), float(wearer.get(bone, 0.0))
+        if source > .0005 and target > .0005:
+            ratios[bone] = float(np.clip(target / source, *GROUND_CLAMP))
+    return ratios
+
+
+def _bone_basis(bone: str, author_rest: dict[str, np.ndarray], target: Skeleton,
+                fit: float, girth: float, ground: float = 0.0) -> np.ndarray:
+    """``_bone_fit``, as the 3x3 it resolves to in the authored bone's space."""
     ratio = 1.0
+    axis = np.array([0., 1., 0.])
+    measured = False
     kin = [child for child in target.children.get(bone, []) if child in author_rest]
     if kin and bone in target.rest:
         author_tip = np.mean([author_rest[child][:3, 3] for child in kin], axis=0)
@@ -192,12 +218,31 @@ def _bone_scale(bone: str, author_rest: dict[str, np.ndarray], target: Skeleton,
             target_span = float(np.linalg.norm(target_tip - target.rest[bone][:3, 3]))
             if author_span > .0005 and target_span > .0005:
                 ratio = float(np.clip(target_span / author_span, *SPAN_CLAMP))
-    scale = float(np.clip(max(ratio, girth), *SCALE_CLAMP))
-    return fit if abs(scale - 1.0) < SCALE_DEADBAND else fit * scale
+                axis = local[:3] / author_span
+                measured = True
+    # The ground ratio stays isotropic: it is solved to land the sole, and
+    # splitting it would move the sole off the plane it was solved for.
+    if ground > 0.0:
+        settled = float(np.clip(ground, *GROUND_CLAMP))
+        if abs(settled - 1.0) < SCALE_DEADBAND:
+            return np.eye(3) * fit
+        return np.eye(3) * (fit * settled)
+    across = float(np.clip(max(ratio, girth), *SCALE_CLAMP))
+    along = across if not measured else float(np.clip(ratio, *SPAN_CLAMP))
+    if abs(across - 1.0) < SCALE_DEADBAND and abs(along - 1.0) < SCALE_DEADBAND:
+        return np.eye(3) * fit
+    return fit * (np.eye(3) * across + np.outer(axis, axis) * (along - across))
+
+
+def _bone_scale(bone: str, author_rest: dict[str, np.ndarray], target: Skeleton,
+                fit: float, girth: float, ground: float = 0.0) -> float:
+    """The isotropic part, for callers that only want a single number."""
+    basis = _bone_basis(bone, author_rest, target, fit, girth, ground)
+    return float(np.cbrt(abs(np.linalg.det(basis))))
 
 
 def refit(piece: SkinnedMesh, wearer: Skeleton, canonical_head_y: float,
-          girth: dict[str, float]) -> np.ndarray:
+          girth: dict[str, float], ground: dict[str, float] | None = None) -> np.ndarray:
     """Linear-blend the authored positions onto the wearer's rest pose."""
     fit = wearer.head_y() / canonical_head_y if canonical_head_y > 0 else 1.0
     matrices = np.zeros((len(piece.bones), 4, 4))
@@ -207,9 +252,11 @@ def refit(piece: SkinnedMesh, wearer: Skeleton, canonical_head_y: float,
         if rest is None or author is None:
             matrices[index] = np.eye(4)
             continue
-        scale = _bone_scale(bone, piece.author_rest, wearer, fit,
-                            float(girth.get(bone, 1.0)))
-        middle = np.diag([scale, scale, scale, 1.0])
+        basis = _bone_basis(bone, piece.author_rest, wearer, fit,
+                            float(girth.get(bone, 1.0)),
+                            float((ground or {}).get(bone, 0.0)))
+        middle = np.eye(4)
+        middle[:3, :3] = basis
         matrices[index] = rest @ middle @ np.linalg.inv(author)
 
     homogeneous = np.concatenate(
@@ -228,13 +275,16 @@ def refit(piece: SkinnedMesh, wearer: Skeleton, canonical_head_y: float,
     return moved
 
 
-def worn_geometry(boot: Path, wearer_rig: Path, registry: dict,
-                  author_rig: str) -> list[tuple[np.ndarray, np.ndarray]]:
-    """The boot's geometry as ``wearer_rig`` will actually wear it."""
+def worn_geometry(boot: Path, wearer_rig: Path, registry: dict, author_rig: str,
+                  skin_region: str = "boots") -> list[tuple[np.ndarray, np.ndarray]]:
+    """The garment's geometry as ``wearer_rig`` will actually wear it."""
     wearer = skeleton(str(wearer_rig))
     canonical = float(registry.get("canonicalHeadRestY", 0.0))
-    girth = girth_ratios(registry, author_rig, Path(wearer_rig).stem)
+    name = Path(wearer_rig).stem
+    girth = girth_ratios(registry, author_rig, name)
+    ground = ground_ratios(registry, author_rig, name, skin_region)
     result = []
     for piece in skinned_primitives(boot):
-        result.append((refit(piece, wearer, canonical, girth), piece.triangles))
+        result.append((refit(piece, wearer, canonical, girth, ground),
+                       piece.triangles))
     return result

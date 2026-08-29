@@ -672,7 +672,8 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 		if str(model_config.get("attach", "socket")) == "skinned":
 			created.append_array(_attach_skinned_equipment(scene_path, part, visual_id,
 				model_config.get("tint", []) as Array,
-				str(model_config.get("authoredFor", ""))))
+				str(model_config.get("authoredFor", "")),
+				str(model_config.get("skinRegion", ""))))
 		else:
 			var socket: Dictionary = _equipment_socket(part, model_config)
 			var attachment: BoneAttachment3D = _attach_socketed_equipment(
@@ -865,7 +866,8 @@ func _attach_socketed_equipment(socket: Dictionary, scene_path: String,
 	return attachment
 
 func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
-		tint: Array = [], author_rig: String = "") -> Array[Node]:
+		tint: Array = [], author_rig: String = "",
+		skin_region: String = "") -> Array[Node]:
 	# The garment ships with the shared joint hierarchy so it is a valid skinned
 	# glTF on its own. Replacing its bind poses with this skeleton's rest poses
 	# retargets the garment and applies the rig fit scale in one step.
@@ -877,6 +879,7 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 	# shares a rest pose, so the rebound skin is cached per model and garment
 	# instead of rebuilt from 65 named binds for each actor that wears one.
 	var cache_key: String = "%s|%s" % [str(_model_config.get("scene", "")), scene_path]
+	var ground: Dictionary = _ground_ratios(author_rig, skin_region)
 	for piece_value: Variant in _equipment_pieces(scene_path):
 		var piece: Dictionary = piece_value as Dictionary
 		var surface_key: String = "%s|%s" % [cache_key, str(piece.get("name", ""))]
@@ -884,7 +887,7 @@ func _attach_skinned_equipment(scene_path: String, part: int, visual_id: int,
 		if rebound == null:
 			rebound = _rebound_skin(piece.get("bones", PackedStringArray()) as PackedStringArray,
 				piece.get("binds", [] as Array[Transform3D]) as Array[Transform3D],
-				fit_basis, _girth_ratios(author_rig))
+				fit_basis, _girth_ratios(author_rig), ground)
 			if rebound != null:
 				_rebound_skins[surface_key] = rebound
 		if rebound == null:
@@ -992,8 +995,45 @@ func _girth_ratios(author_rig: String) -> Dictionary:
 			ratios[bone] = clampf(to / from, 1.0, 2.0)
 	return ratios
 
+## How far this actor's foot joints stand above the floor, against the body a
+## boot was lofted around. Empty for everything that is not footwear.
+##
+## The rest of the refit scales each bone about its own origin, and for the foot
+## chain that origin is the ankle - which is not a fixed height above the
+## ground. It stands 91 to 103 mm up on every male rig in the cast and only 78.6
+## to 83.4 mm on every female one. Stature does not predict that: the female
+## rigs are three per cent shorter overall and twenty per cent shorter from
+## ankle to sole, so a sole authored on the reference body and scaled by height
+## landed 14 mm through the floor on all seven of them, and no single authored
+## mesh could have fixed it.
+##
+## Unlike girth this ratio may take a garment *in* as well as let it out. Girth
+## is one number for a whole bone and a chest it underestimates comes straight
+## through the shirt, which is why that one only ever widens; this is a measured
+## distance along one axis between two known planes, and a foot that is shorter
+## from ankle to sole wants a boot that is shorter with it.
+func _ground_ratios(author_rig: String, skin_region: String) -> Dictionary:
+	if skin_region != "boots":
+		return {}
+	var mine: String = rig_name()
+	if author_rig.is_empty() or author_rig == mine:
+		return {}
+	var table: Dictionary = _equipment_config.get("soleDrop", {}) as Dictionary
+	var author: Dictionary = table.get(author_rig, {}) as Dictionary
+	var wearer: Dictionary = table.get(mine, {}) as Dictionary
+	if author.is_empty() or wearer.is_empty():
+		return {}
+	var ratios: Dictionary = {}
+	for bone: String in author:
+		var from: float = float(author[bone])
+		var to: float = float(wearer.get(bone, 0.0))
+		if from > 0.0005 and to > 0.0005:
+			ratios[bone] = clampf(to / from, 0.5, 2.0)
+	return ratios
+
 func _rebound_skin(bone_names: PackedStringArray, binds: Array[Transform3D],
-		fit: Transform3D, girth: Dictionary = {}) -> Skin:
+		fit: Transform3D, girth: Dictionary = {},
+		ground: Dictionary = {}) -> Skin:
 	# Modified 2026-08-28 for Eloria Client: this used to hand every bone the
 	# bind `this_rest.inverse() * fit`.  Skinning then evaluates
 	# `pose * bind`, and at rest `pose` *is* `this_rest`, so the whole thing
@@ -1024,7 +1064,8 @@ func _rebound_skin(bone_names: PackedStringArray, binds: Array[Transform3D],
 		if index < binds.size():
 			rebound.add_named_bind(bone_name,
 				_bone_fit(target, bone_name, author_rest, fit,
-					float(girth.get(bone_name, 1.0))) * binds[index])
+					float(girth.get(bone_name, 1.0)),
+					float(ground.get(bone_name, 0.0))) * binds[index])
 		else:
 			# No authored bind survived the import: fall back to the resize so
 			# the piece still appears rather than collapsing onto the origin.
@@ -1033,7 +1074,8 @@ func _rebound_skin(bone_names: PackedStringArray, binds: Array[Transform3D],
 	return rebound
 
 func _bone_fit(target: int, bone_name: String, author_rest: Dictionary,
-		fit: Transform3D, girth: float = 1.0) -> Transform3D:
+		fit: Transform3D, girth: float = 1.0,
+		ground: float = 0.0) -> Transform3D:
 	# Carrying a garment onto another rig by rotation alone leaves it the length
 	# it was authored, which is fine while the two rigs agree and wrong when
 	# they do not: the Ssarathi metatarsal is nearly half again as long as the
@@ -1047,6 +1089,7 @@ func _bone_fit(target: int, bone_name: String, author_rest: Dictionary,
 	var target_tip: Vector3 = _mean_child_origin(target, author_rest, false)
 	var ratio: float = 1.0
 	var axis := Vector3(0.0, 1.0, 0.0)
+	var measured := false
 	if author_tip != Vector3.INF and target_tip != Vector3.INF:
 		var local: Vector3 = rest.affine_inverse() * author_tip
 		var author_span: float = local.length()
@@ -1055,17 +1098,67 @@ func _bone_fit(target: int, bone_name: String, author_rest: Dictionary,
 		if author_span > 0.0005 and target_span > 0.0005:
 			ratio = clampf(target_span / author_span, 0.4, 2.5)
 			axis = local / author_span
-	# One uniform factor per bone, deliberately: skinning carries a mesh's
-	# normals through the same matrix as its positions, which is only correct
-	# when that matrix scales evenly.  Stretching along the bone and not around
-	# it fits better on paper and skews every normal on the surface - it put a
-	# black band across the chest of anyone whose spine was not the reference's
-	# length.  The bone that needs the most gets it in every direction, and the
-	# fit groups above carry the cases where a shape, not a size, is wrong.
-	var scale: float = clampf(maxf(ratio, girth), 1.0, 2.0)
-	if absf(scale - 1.0) < 0.02:
+			measured = true
+	# A foot bone carrying a ground ratio takes it instead of the span-and-girth
+	# result, and takes it whether it widens or narrows. Everything else here is
+	# a guess at how much bigger this body is than the authored one; that is the
+	# measured distance between the joint and the floor it has to stand on, and
+	# the floor is not negotiable - the actor is placed on the ground by its
+	# body, so a boot that disagrees is a boot underneath it. It stays isotropic:
+	# the ground ratio is chosen to land the sole, and splitting it would move
+	# the sole off the plane it was solved for.
+	if ground > 0.0:
+		var settled: float = clampf(ground, 0.5, 2.0)
+		if absf(settled - 1.0) < 0.02:
+			return fit
+		return Transform3D(fit.basis.scaled(Vector3.ONE * settled), Vector3.ZERO)
+
+	# Widening and lengthening are two different questions and used to be
+	# answered with one number.
+	#
+	# Modified 2026-08-29 for Eloria Client. The scale below is applied in the
+	# authored bone's own space, which anchors it at the bone origin, and
+	# `calf`'s origin is the knee. Letting an Orun's calf out by the thirty per
+	# cent its girth asks for therefore also made the calf thirty per cent
+	# longer, and every trouser hem hangs near the far end of that bone: the
+	# hems landed 118 to 124 mm below where they belong on the two broadest
+	# races, and a boot's sole vertex inheriting the body's own heel weighting -
+	# 31 per cent `calf` - was dragged 62 mm under the floor by the same term.
+	#
+	# The obvious repair, translating the bone's contribution back along its own
+	# axis until the joint below lands correctly, moves the error rather than
+	# removing it: a translation displaces the bone origin as much as its tip,
+	# so the hem is fixed and the knee - where this bone's geometry is blended
+	# with its parent's, which was never displaced - opens up by the same amount.
+	# The seam moves instead of the hem.
+	#
+	# So the two questions are answered separately. Along the bone the garment
+	# follows the span ratio, which puts the joint below exactly where the
+	# wearer's own skeleton puts it and leaves the bone origin fixed. Around the
+	# bone it follows girth, and still only ever widens.
+	#
+	# This is the anisotropy the previous note here refused, and the reason it
+	# is safe now is that the axis is the bone's, not the world's. Skinning
+	# carries normals through this same matrix, and a scale that is uniform in
+	# the plane perpendicular to the bone leaves every radial normal - which is
+	# very nearly all of them on a sleeve, a trouser leg or a boot shaft -
+	# pointing exactly where it did. What tilts is the oblique minority, by at
+	# most eight degrees at the widest girth in the cast. The black band that
+	# came of the earlier attempt came of stretching *along* the spine, which is
+	# the direction this one deliberately leaves alone.
+	var across: float = clampf(maxf(ratio, girth), 1.0, 2.0)
+	# A leaf bone has no joint below it to measure a span against, so there is
+	# no axis to separate along from across and it stays isotropic.
+	var along: float = across if not measured else clampf(ratio, 0.4, 2.5)
+	if absf(across - 1.0) < 0.02 and absf(along - 1.0) < 0.02:
 		return fit
-	return Transform3D(fit.basis.scaled(Vector3.ONE * scale), Vector3.ZERO)
+	# across * I, corrected along the bone axis by (along - across).
+	var basis := Basis.IDENTITY.scaled(Vector3.ONE * across)
+	var shaped := Basis(
+		basis.x + axis * (along - across) * axis.x,
+		basis.y + axis * (along - across) * axis.y,
+		basis.z + axis * (along - across) * axis.z)
+	return Transform3D(fit.basis * shaped, Vector3.ZERO)
 
 func _mean_child_origin(target: int, author_rest: Dictionary,
 		authored: bool) -> Vector3:

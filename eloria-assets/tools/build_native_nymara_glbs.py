@@ -3535,6 +3535,7 @@ def main() -> None:
     # measurements are shipped in the registry instead and the runtime refits
     # the garment per wearer, so the authored piece can stay close to the body.
     girths={}
+    sole_drops={}
     race_rigs={}
     for race_path in sorted((args.output/"races").glob("*.glb")):
         try:
@@ -3543,6 +3544,7 @@ def main() -> None:
             print("skip race measurement",race_path.name,error)
             continue
         girths[race_path.stem]=equipment_authoring.body_girth(race_rigs[race_path.stem])
+        sole_drops[race_path.stem]=equipment_authoring.sole_drop(race_rigs[race_path.stem])
     print(f"measured {len(girths)} race silhouettes")
     # Male and female bodies differ in shape, not only in size - a bust and a
     # hip flare are not a scaled chest - and a per-bone radius cannot express
@@ -3634,7 +3636,8 @@ def main() -> None:
         write_json(args.models, models)
     write_json(args.equipment_registry,
                build_equipment_registry(rig, idle_bases,
-                                        author_rig=reference_rig, girths=girths))
+                                        author_rig=reference_rig, girths=girths,
+                                        sole_drops=sole_drops))
     print(f"validated {len(validation)} native GLBs")
 
 
