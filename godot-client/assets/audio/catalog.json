@@ -3,6 +3,11 @@
   "sampleRate": 44100,
   "sounds": [
     {
+      "name": "civic_crowd",
+      "file": "civic_crowd.wav",
+      "seconds": 11.6
+    },
+    {
       "name": "combat_hit",
       "file": "combat_hit.wav",
       "seconds": 0.26
@@ -11,6 +16,11 @@
       "name": "combat_miss",
       "file": "combat_miss.wav",
       "seconds": 0.24
+    },
+    {
+      "name": "footstep",
+      "file": "footstep.wav",
+      "seconds": 0.16
     },
     {
       "name": "harvest_gather",
@@ -46,6 +56,11 @@
       "name": "ui_close",
       "file": "ui_close.wav",
       "seconds": 0.14
+    },
+    {
+      "name": "waterfall",
+      "file": "waterfall.wav",
+      "seconds": 9.6
     },
     {
       "name": "world_effect",

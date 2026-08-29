@@ -28,8 +28,10 @@ func _run() -> void:
 	await process_frame
 
 	var names: Array = director.call("sound_names") as Array
-	_expect(names.size() == 10 and names.has("harvest_start")
-		and names.has("combat_hit") and names.has("world_effect"),
+	_expect(names.size() == 13 and names.has("harvest_start")
+		and names.has("combat_hit") and names.has("world_effect")
+		and names.has("footstep") and names.has("civic_crowd")
+		and names.has("waterfall"),
 		"the whole generated sound set loaded: %s" % str(names))
 
 	# Harvesting. The server states it started; a restatement is not a new one.
@@ -64,6 +66,28 @@ func _run() -> void:
 	await process_frame
 	_expect(not bool(director.call("is_playing")),
 		"the same outcome restated is not a second hit")
+
+	# Footsteps. A step is heard when the server says the player is standing
+	# somewhere else, and the first sighting after login is not a step.
+	director.call("stop_all")
+	app_state.set("local_actor_id", 91)
+	app_state.set("actors", {91: {"actor_id": 91, "x": 10, "y": 10,
+		"name": "Alice", "health": 20, "max_health": 20, "alive": true}})
+	app_state.call("emit_signal", "state_changed", &"actors")
+	await process_frame
+	_expect(not bool(director.call("is_playing")),
+		"seeing the player for the first time is not a step")
+	app_state.set("actors", {91: {"actor_id": 91, "x": 11, "y": 10,
+		"name": "Alice", "health": 20, "max_health": 20, "alive": true}})
+	app_state.call("emit_signal", "state_changed", &"actors")
+	await process_frame
+	_expect(bool(director.call("is_playing")),
+		"the server moving the player a tile is heard")
+	director.call("stop_all")
+	app_state.call("emit_signal", "state_changed", &"actors")
+	await process_frame
+	_expect(not bool(director.call("is_playing")),
+		"restating the same tile is not another step")
 
 	# An effect the server announced.
 	director.call("stop_all")

@@ -240,6 +240,7 @@ var map_marker_overlay: Control
 ## what is on screen; each one frees itself when it finishes.
 var world_effects: Array = []
 var audio_director: Node
+var map_ambience_root: Node3D
 ## The power the next cast asks for. Presentational: the server states what
 ## each effect may reach and refuses anything it will not allow.
 var requested_spell_power := 1
@@ -2445,6 +2446,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root)
 	WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
 	_bind_light_markers(manifest)
+	_bind_ambient_audio(manifest)
 	_populate_ambient_life(manifest)
 	_current_map_display_name = str(
 		manifest.data.get("asset", {}).get("name", manifest.asset_id()))
@@ -2477,6 +2479,26 @@ func _bind_light_markers(manifest: WorldManifest) -> void:
 		return
 	map_light_root = root_node
 	print_debug("light_markers map=", AppState.current_map, " bound=", bound)
+
+## The ambience a package declares for itself. Four Gates has named a civic
+## murmur and its waterfalls since it was authored and nothing played them.
+func _bind_ambient_audio(manifest: WorldManifest) -> void:
+	if is_instance_valid(map_ambience_root):
+		map_ambience_root.queue_free()
+	map_ambience_root = null
+	if not bool(audio_director.enabled):
+		return
+	var root_node := Node3D.new()
+	root_node.name = "MapAmbience"
+	world_root.add_child(root_node)
+	var bound: int = AmbientAudioBinder.apply(manifest, root_node,
+		world_loader.world_root, PackedStringArray(
+			audio_director.call("sound_names") as Array))
+	if bound == 0:
+		root_node.queue_free()
+		return
+	map_ambience_root = root_node
+	print_debug("ambient_audio map=", AppState.current_map, " bound=", bound)
 
 func _populate_ambient_life(manifest: WorldManifest) -> void:
 	# Scenery livestock declared by the map. Networked actors are untouched.
@@ -3073,8 +3095,15 @@ func _on_minimap_size_changed(value: float) -> void:
 ## the same settings file as the rest of the HUD preferences.
 func _on_sound_enabled_toggled(pressed: bool) -> void:
 	audio_director.enabled = pressed
+	if is_instance_valid(map_ambience_root):
+		# Ambience is a scene node rather than a voice on the director, so it
+		# has to be silenced here as well.
+		map_ambience_root.queue_free()
+		map_ambience_root = null
 	if pressed:
 		audio_director.play("ui_click")
+		if world_loader.manifest != null:
+			_bind_ambient_audio(world_loader.manifest)
 	_save_hud_settings()
 
 func _on_sound_volume_changed(value: float) -> void:

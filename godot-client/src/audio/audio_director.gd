@@ -18,6 +18,9 @@ const CATALOG_PATH := "res://assets/audio/catalog.json"
 const AUDIO_DIRECTORY := "res://assets/audio/"
 ## Enough voices for a busy moment without letting one event drown the rest.
 const VOICE_COUNT := 8
+## The floor between two steps. The server can restate several movement
+## commands in one frame; that is one step, not four.
+const STEP_INTERVAL_MSEC := 180
 
 var enabled := true:
 	set(value):
@@ -37,6 +40,10 @@ var _next_voice := 0
 var _harvesting := false
 var _combat_event := -1
 var _inventory_totals: Dictionary = {}
+## Where the server last said the player was standing, so a step is heard when
+## the tile changes rather than on every actor packet.
+var _local_tile := Vector2i(-1, -1)
+var _last_step_msec := 0
 
 func _ready() -> void:
 	name = "AudioDirector"
@@ -101,6 +108,8 @@ func _on_state_changed(path: StringName) -> void:
 			if harvesting and not _harvesting:
 				play("harvest_start")
 			_harvesting = harvesting
+		&"actors", &"local_actor":
+			_on_local_actor_moved()
 		&"inventory":
 			_on_inventory_changed()
 		&"combat_state":
@@ -109,6 +118,7 @@ func _on_state_changed(path: StringName) -> void:
 			if AppState.connection_state == "disconnected":
 				_harvesting = false
 				_combat_event = -1
+				_local_tile = Vector2i(-1, -1)
 				_inventory_totals.clear()
 				stop_all()
 
@@ -128,6 +138,25 @@ func _on_inventory_changed() -> void:
 	if gained and not _inventory_totals.is_empty():
 		play("harvest_gather" if _harvesting else "item_pickup")
 	_inventory_totals = totals
+
+## A step is heard when the server says the player is standing somewhere else.
+## The first tile after login is not a step - the player did not walk there -
+## and a burst of movement commands in one frame is still one step.
+func _on_local_actor_moved() -> void:
+	var actor: Variant = AppState.actors.get(AppState.local_actor_id)
+	if actor is not Dictionary:
+		return
+	var tile := Vector2i(int((actor as Dictionary).get("x", 0)),
+		int((actor as Dictionary).get("y", 0)))
+	if tile == _local_tile:
+		return
+	var first_sighting: bool = _local_tile == Vector2i(-1, -1)
+	_local_tile = tile
+	var now: int = Time.get_ticks_msec()
+	if first_sighting or now - _last_step_msec < STEP_INTERVAL_MSEC:
+		return
+	_last_step_msec = now
+	play("footstep")
 
 func _on_combat_changed() -> void:
 	var event: int = int(AppState.combat_state.get("event", 0))

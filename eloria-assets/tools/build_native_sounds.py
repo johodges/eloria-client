@@ -155,7 +155,64 @@ def world_effect() -> np.ndarray:
     return (swarm + drone) * envelope(length, 0.04, 0.2, 0.4, 0.26)
 
 
+# --- ambience -----------------------------------------------------------------
+#
+# Loops the world manifests already name in `environment.ambientAudio`. They
+# are built to loop: the first and last 0.4 seconds cross-fade into each other,
+# so a repeat has no seam.
+
+
+def _loop(samples: np.ndarray, fade: float = 0.4) -> np.ndarray:
+    count = min(int(fade * SAMPLE_RATE), samples.size // 4)
+    if count <= 0:
+        return samples
+    ramp = np.linspace(0.0, 1.0, count)
+    head, tail = samples[:count], samples[-count:]
+    body = samples[count:-count]
+    return np.concatenate([tail * (1.0 - ramp) + head * ramp, body])
+
+
+def civic_crowd() -> np.ndarray:
+    """A town's murmur: broad low noise with a few slow voices over it."""
+    length = seconds(12.0)
+    murmur = noise(length, seed=71, smoothing=220) * 0.7
+    voices = np.zeros(length)
+    generator = np.random.default_rng(72)
+    for index in range(9):
+        start = int(generator.uniform(0.0, 10.5) * SAMPLE_RATE)
+        span = seconds(float(generator.uniform(0.35, 0.9)))
+        span = min(span, length - start)
+        if span <= 0:
+            continue
+        voice = tone(float(generator.uniform(150.0, 320.0)), span,
+                     (1.0, 0.5, 0.25), detune=3.0, seed=73 + index)
+        voices[start:start + span] += voice * envelope(
+            span, 0.08, 0.2, 0.4, 0.3) * 0.35
+    return _loop(murmur + voices)
+
+
+def waterfall() -> np.ndarray:
+    """Falling water: wide noise with a slow swell, no tonal centre."""
+    length = seconds(10.0)
+    body = noise(length, seed=81, smoothing=6) * 0.85
+    low = noise(length, seed=82, smoothing=300) * 0.5
+    swell = 0.85 + 0.15 * np.sin(
+        2.0 * np.pi * 0.11 * np.arange(length) / SAMPLE_RATE)
+    return _loop((body + low) * swell)
+
+
+def footstep() -> np.ndarray:
+    """One step: a short broadband tap with a soft low body."""
+    length = seconds(0.16)
+    tap = noise(length, seed=91, smoothing=4) * 0.7
+    body = tone(96.0, length, (1.0, 0.5)) * 0.5
+    return (tap + body) * envelope(length, 0.002, 0.06, 0.25, 0.09)
+
+
 RECIPES = {
+    "civic_crowd": civic_crowd,
+    "waterfall": waterfall,
+    "footstep": footstep,
     "ui_click": ui_click,
     "ui_close": ui_close,
     "harvest_start": harvest_start,

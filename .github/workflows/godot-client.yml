@@ -59,6 +59,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_connection_lifecycle.gd
       - name: HUD persistence fixtures
         run: godot --headless --path godot-client --script res://tests/test_hud_persistence.gd
+      - name: Ambient audio binder fixtures
+        run: godot --headless --path godot-client --script res://tests/test_ambient_audio.gd
       - name: Audio director fixtures
         run: godot --headless --path godot-client --script res://tests/test_audio_director.gd
       - name: Eloria extension window fixtures
