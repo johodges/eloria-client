@@ -142,6 +142,39 @@ jobs:
           path: godot-client/test-artifacts/four-gates
           if-no-files-found: error
 
+  rendered-phase0-repairs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container:
+      image: barichello/godot-ci:4.7.2
+    env:
+      ELORIA_ARTIFACT_DIR: ${{ github.workspace }}/godot-client/test-artifacts/phase0
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install virtual display and software rendering
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends             xvfb xauth libgl1-mesa-dri libfontconfig1 libxcursor1 libxinerama1             libxrandr2 libxi6 libxkbcommon0 libasound2t64 libpulse0 libudev1
+      - name: Import project
+        run: godot --headless --path godot-client --editor --quit
+      - name: Render Phase 0 repair before/after pairs
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_phase0_repairs.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/render.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/render.log"
+          grep -q "rendered phase 0 repairs: PASS" "$ELORIA_ARTIFACT_DIR/render.log"
+          test -s "$ELORIA_ARTIFACT_DIR/marker-lights-before.png"
+          test -s "$ELORIA_ARTIFACT_DIR/marker-lights-after.png"
+          test -s "$ELORIA_ARTIFACT_DIR/console-history.png"
+          test -s "$ELORIA_ARTIFACT_DIR/console-diagnostics.png"
+      - name: Upload Phase 0 rendered evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-phase0-repairs
+          path: godot-client/test-artifacts/phase0
+          if-no-files-found: error
+
   rendered-sunmane-steppe:
     runs-on: ubuntu-latest
     timeout-minutes: 25

@@ -93,6 +93,39 @@ movement, remote-actor, chat, inventory/statistics, and equipment JSON. A
 passing structural assertion is still classified separately from human visual
 inspection of those PNGs.
 
+### Verified rendered evidence: Phase 0 marker lights and diagnostics panel
+
+`tests/integration/rendered_phase0_repairs.gd` produces the two before/after
+pairs whose only meaningful proof is a capture, and runs as its own opt-in-free
+`rendered-phase0-repairs` CI job at 1280x720 under Xvfb. It needs no server: it
+drives the client's own world loader, environment binder and light-marker
+binder, and the client's own reducer for the diagnostics packets. Every frame
+is checked for real colour variation, so a dummy frame cannot pass.
+
+- `marker-lights-before.png` / `marker-lights-after.png` - the Sunmane Wind
+  Caves drovers' camp with the marker binder skipped and with it applied. The
+  manifest declares brazier markers and they are the interior's entire light
+  rig. Human inspection of both frames: the "before" frame is the same
+  geometry in near-darkness, lit only by the manifest's ambient term, with the
+  timber ceiling, the stalactites and the far side of the chamber unreadable.
+  The "after" frame has warm brazier fill throughout, the timber gallery and
+  ceiling beams are legible, the stalactites are separated from the rock behind
+  them, and the far anvil and cook-pot read as objects. Mean sampled luminance
+  rises from `0.1438` to `0.2133`. This is the difference between the shipped
+  client and the fixed one for every interior in the game.
+- `console-history.png` / `console-diagnostics.png` - the console panel showing
+  its session message history, then the same panel after the `Protocol` toggle
+  with one opcode the client does not decode delivered twice and one pre-0.6
+  single-byte trade acceptance. Human inspection of both frames: the
+  diagnostics view reads `199  x2  last payload 1 bytes, 0s ago`, `total
+  undecoded packets: 2`, `36  trade_accept_length  (1 bytes, 0s ago)`, and the
+  connection block. Both frames sit inside 1280x720, clear of the right-hand
+  resource rail, the clock and the compass, with the lower action rail intact.
+
+Both pairs were rendered and inspected on the development machine at
+1280x720 through the GL Compatibility renderer before the CI job existed; the
+CI job reproduces them so the evidence is regenerated on every change.
+
 ### Verified evidence: workflow run 33068336019
 
 The opt-in rendered job passed against the development server on commit
