@@ -168,10 +168,11 @@ var map_light_root: Node3D
 @onready var storage_withdraw_button: Button = %StorageWithdraw
 @onready var storage_inspect_button: Button = %StorageInspect
 @onready var ground_bag_panel: Control = %GroundBagPanel
+@onready var inventory_quantity_bar: HBoxContainer = %InventoryQuantityBar
+@onready var inventory_quantity_edit: LineEdit = %InventoryQuantityEdit
 @onready var carried_item: TextureRect = %CarriedItem
 @onready var ground_bag_header: Control = %GroundBagHeader
 @onready var ground_bag_grid: GridContainer = %GroundBagGrid
-@onready var ground_bag_quantity: SpinBox = %GroundBagQuantity
 @onready var ground_bag_drop_button: Button = %GroundBagDrop
 @onready var knowledge_list: ItemList = %KnowledgeList
 @onready var knowledge_detail: RichTextLabel = %KnowledgeDetail
@@ -358,6 +359,10 @@ var _ground_bag_get_all_bag_id := -1
 ## slot number is the whole of the state, because the item itself never leaves
 ## the server's inventory until the placing click is answered.
 var _carried_slot := -1
+var _inventory_quantities: Array[int] = INVENTORY_QUANTITY_DEFAULTS.duplicate()
+var _selected_quantity_box := 0
+var _editing_quantity_box := -1
+var inventory_quantity_buttons: Array[Button] = []
 var ground_bag_slot_buttons: Array[Button] = []
 var ground_bag_quantity_labels: Array[Label] = []
 var _ground_bag_dragging := false
@@ -456,6 +461,10 @@ const KEYBOARD_LOOKAHEAD_TILES := 4
 const KEYBOARD_REFRESH_MSEC := 360
 const GROUND_BAG_GET_ALL_TIMEOUT_MSEC := 1000
 const GROUND_BAG_SLOT_COUNT := 20
+## The legacy client's six editable quantity boxes and their defaults. The
+## selected one is the amount every drop and every pick-up uses.
+const INVENTORY_QUANTITY_DEFAULTS: Array[int] = [1, 5, 10, 20, 50, 100]
+const INVENTORY_QUANTITY_MAX := 99999
 const MINIMAP_DRAG_BORDER := 54.0
 const UI_SCALE_MIN := 0.5
 const UI_SCALE_MAX := 1.5
@@ -589,6 +598,7 @@ func _ready() -> void:
 	_build_inventory_slots()
 	_build_equipment_slots()
 	_build_ground_bag_slots()
+	_build_inventory_quantity_boxes()
 	_bind_quick_slots()
 	_bind_spell_slots()
 	_reset_trade_destinations()
@@ -1767,8 +1777,9 @@ func _on_ground_bag_slot_pressed(index: int) -> void:
 	var item_value: Variant = items.get(position)
 	if not item_value is Dictionary:
 		return
-	var quantity: int = clampi(int(ground_bag_quantity.value), 1,
-		maxi(1, int((item_value as Dictionary).get("quantity", 1))))
+	var available: int = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
+	var quantity: int = (available if Input.is_key_pressed(KEY_CTRL)
+		else mini(available, _selected_quantity()))
 	var error: Error = Network.pick_up_ground_item(position, quantity)
 	if error != OK:
 		push_warning("PICK_UP_ITEM failed: " + error_string(error))
@@ -1815,8 +1826,9 @@ func _on_ground_bag_drop_pressed() -> void:
 	var item_value: Variant = AppState.inventory.get(slot)
 	if not item_value is Dictionary:
 		return
-	var quantity: int = clampi(int(ground_bag_quantity.value), 1,
-		int((item_value as Dictionary).get("quantity", 1)))
+	var available: int = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
+	var quantity: int = (available if Input.is_key_pressed(KEY_CTRL)
+		else mini(available, _selected_quantity()))
 	var error: Error = Network.drop_inventory_item(slot, quantity)
 	if error != OK:
 		push_warning("DROP_ITEM failed: " + error_string(error))
@@ -3040,8 +3052,9 @@ func _sync_ground_bag_actions() -> void:
 	ground_bag_drop_button.disabled = not droppable
 	if droppable:
 		var item: Dictionary = AppState.inventory.get(slot) as Dictionary
-		ground_bag_drop_button.tooltip_text = ("Drop up to %d from inventory slot %d"
-			% [int(item.get("quantity", 1)), slot + 1])
+		ground_bag_drop_button.tooltip_text = ("Drop %d of the %d in inventory slot %d"
+			% [mini(int(item.get("quantity", 1)), _selected_quantity()),
+			int(item.get("quantity", 1)), slot + 1])
 	else:
 		ground_bag_drop_button.tooltip_text = ("Select an item in the inventory window"
 			+ " to drop it here")
@@ -3383,6 +3396,13 @@ func _load_hud_settings() -> void:
 			"inventory", "bag_window_position", ground_bag_panel.position)
 		if bag_position_value is Vector2:
 			ground_bag_panel.position = bag_position_value as Vector2
+		var quantities_value: Variant = config.get_value("inventory", "quantities", [])
+		if quantities_value is Array 				and (quantities_value as Array).size() == _inventory_quantities.size():
+			for index: int in range(_inventory_quantities.size()):
+				_inventory_quantities[index] = clampi(
+					int((quantities_value as Array)[index]), 1, INVENTORY_QUANTITY_MAX)
+		_selected_quantity_box = clampi(int(config.get_value(
+			"inventory", "selected_quantity", 0)), 0, _inventory_quantities.size() - 1)
 		var bulk_value: Variant = config.get_value("inventory", "bulk_exclusions", {})
 		if bulk_value is Dictionary:
 			for kind: String in ["store", "drop"]:
@@ -3524,6 +3544,8 @@ func _save_hud_settings() -> void:
 	config.set_value("inventory", "window_position", inventory_panel.position)
 	config.set_value("inventory", "equipment_side", _equipment_side)
 	config.set_value("inventory", "bag_window_position", ground_bag_panel.position)
+	config.set_value("inventory", "quantities", _inventory_quantities)
+	config.set_value("inventory", "selected_quantity", _selected_quantity_box)
 	config.set_value("inventory", "bulk_exclusions", _bulk_exclusions)
 	config.set_value("inventory", "item_lists", _item_lists)
 	for banner_key: String in BANNER_OPTION_NODES:
@@ -4571,7 +4593,7 @@ func _ground_bag_tooltip(item: Dictionary) -> String:
 		tooltip += "
 Independent Eloria icon substitute for legacy image #%d." % image_id
 	return tooltip + ("
-Left click picks up the quantity below;"
+Left click picks up the inventory quantity (Ctrl for all);"
 		+ " right click asks the server what it is.")
 
 func _build_ground_bag_slots() -> void:
@@ -5013,6 +5035,83 @@ func _inventory_description_for(slot: int) -> Dictionary:
 ## Walk mode is Eternal Lands' move action, so a click there lifts the item
 ## onto the cursor instead of only selecting it. Every other mode keeps the
 ## select-and-inspect behaviour.
+## The six quantity boxes along the bottom of the inventory, as the legacy
+## client has them: a left click selects one, a right click edits it, and an
+## edit left empty falls back to that box's default.
+func _build_inventory_quantity_boxes() -> void:
+	for index: int in range(INVENTORY_QUANTITY_DEFAULTS.size()):
+		var button: Button = Button.new()
+		button.custom_minimum_size = Vector2(0.0, 26.0)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.focus_mode = Control.FOCUS_NONE
+		button.toggle_mode = true
+		button.pressed.connect(_on_quantity_box_pressed.bind(index))
+		button.gui_input.connect(_on_quantity_box_gui_input.bind(index))
+		inventory_quantity_bar.add_child(button)
+		inventory_quantity_buttons.append(button)
+	inventory_quantity_edit.text_submitted.connect(_on_quantity_edit_submitted)
+	inventory_quantity_edit.focus_exited.connect(_commit_quantity_edit)
+	_sync_inventory_quantity_boxes()
+
+func _sync_inventory_quantity_boxes() -> void:
+	for index: int in range(inventory_quantity_buttons.size()):
+		var button: Button = inventory_quantity_buttons[index]
+		button.text = str(_inventory_quantities[index])
+		button.set_pressed_no_signal(index == _selected_quantity_box)
+		button.tooltip_text = ("Use %d for drops and pick-ups. Right click to change it."
+			% _inventory_quantities[index])
+
+## The amount every drop and pick-up uses until the player picks another box.
+func _selected_quantity() -> int:
+	if _selected_quantity_box < 0 or _selected_quantity_box >= _inventory_quantities.size():
+		return 1
+	return maxi(1, _inventory_quantities[_selected_quantity_box])
+
+func _on_quantity_box_pressed(index: int) -> void:
+	_commit_quantity_edit()
+	_selected_quantity_box = index
+	_sync_inventory_quantity_boxes()
+	_save_hud_settings()
+
+func _on_quantity_box_gui_input(event: InputEvent, index: int) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var mouse: InputEventMouseButton = event as InputEventMouseButton
+	if not mouse.pressed or mouse.button_index != MOUSE_BUTTON_RIGHT:
+		return
+	_begin_quantity_edit(index)
+	inventory_quantity_buttons[index].accept_event()
+
+func _begin_quantity_edit(index: int) -> void:
+	var button: Button = inventory_quantity_buttons[index]
+	_editing_quantity_box = index
+	inventory_quantity_edit.text = str(_inventory_quantities[index])
+	inventory_quantity_edit.size = button.size
+	inventory_quantity_edit.global_position = button.global_position
+	inventory_quantity_edit.visible = true
+	inventory_quantity_edit.grab_focus()
+	inventory_quantity_edit.select_all()
+
+func _on_quantity_edit_submitted(_text: String) -> void:
+	_commit_quantity_edit()
+
+## An empty or unreadable box resets to its default rather than becoming zero,
+## which would make every later drop a no-op.
+func _commit_quantity_edit() -> void:
+	var index: int = _editing_quantity_box
+	if index < 0:
+		return
+	_editing_quantity_box = -1
+	var typed: String = inventory_quantity_edit.text.strip_edges()
+	var value: int = (int(typed) if typed.is_valid_int()
+		else INVENTORY_QUANTITY_DEFAULTS[index])
+	_inventory_quantities[index] = clampi(value, 1, INVENTORY_QUANTITY_MAX)
+	_selected_quantity_box = index
+	inventory_quantity_edit.visible = false
+	inventory_quantity_edit.release_focus()
+	_sync_inventory_quantity_boxes()
+	_save_hud_settings()
+
 func _carry_enabled() -> bool:
 	return _interaction_mode == "walk"
 
@@ -5073,7 +5172,9 @@ func _drop_carry() -> void:
 	if not item_value is Dictionary:
 		_sync_inventory()
 		return
-	var quantity: int = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
+	var available: int = maxi(1, int((item_value as Dictionary).get("quantity", 1)))
+	var quantity: int = (available if Input.is_key_pressed(KEY_CTRL)
+		else mini(available, _selected_quantity()))
 	var error: Error = Network.drop_inventory_item(source, quantity)
 	if error != OK:
 		push_warning("DROP_ITEM failed: " + error_string(error))

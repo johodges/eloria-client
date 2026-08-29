@@ -987,6 +987,58 @@ func _run() -> void:
 		"outside walk mode a click still only selects the item")
 	main.set("_interaction_mode", "walk")
 	main.call("_cancel_carry")
+	# The six quantity boxes along the bottom, as the legacy client has them.
+	var quantity_bar: HBoxContainer = main.get_node(
+		"GameView/InventoryPanel/Content/InventoryQuantityBar") as HBoxContainer
+	var quantity_boxes: Array = main.get("inventory_quantity_buttons") as Array
+	_expect(quantity_bar.get_child_count() == 6 and quantity_boxes.size() == 6
+		and (quantity_boxes[0] as Button).text == "1"
+		and (quantity_boxes[1] as Button).text == "5"
+		and (quantity_boxes[5] as Button).text == "100",
+		"the inventory carries six quantity boxes with the legacy defaults")
+	_expect((quantity_boxes[0] as Button).button_pressed
+		and int(main.call("_selected_quantity")) == 1,
+		"the first quantity box starts selected")
+	main.call("_on_quantity_box_pressed", 2)
+	_expect(int(main.call("_selected_quantity")) == 10
+		and (quantity_boxes[2] as Button).button_pressed
+		and not (quantity_boxes[0] as Button).button_pressed,
+		"clicking a quantity box selects it for every later drop and pick-up")
+	var quantity_edit: LineEdit = main.get_node(
+		"GameView/InventoryPanel/Content/InventoryQuantityEdit") as LineEdit
+	main.call("_begin_quantity_edit", 3)
+	_expect(quantity_edit.visible and quantity_edit.text == "20",
+		"right clicking a quantity box opens it for editing")
+	quantity_edit.text = "42"
+	main.call("_commit_quantity_edit")
+	_expect(int(main.call("_selected_quantity")) == 42
+		and (quantity_boxes[3] as Button).text == "42"
+		and not quantity_edit.visible,
+		"an edited quantity is kept and becomes the selected one")
+	main.call("_begin_quantity_edit", 3)
+	quantity_edit.text = ""
+	main.call("_commit_quantity_edit")
+	_expect(int(main.call("_selected_quantity")) == 20
+		and (quantity_boxes[3] as Button).text == "20",
+		"clearing a quantity box restores its default rather than leaving zero")
+	# Pick-ups and drops clamp to what is actually there.
+	main.call("_on_quantity_box_pressed", 5)
+	app_state_inventory.set("inventory", {0: {
+		"image_id": 3, "quantity": 9, "slot": 0, "flags": 12,
+		"inventory_usable": true, "stackable": true}})
+	main.set("selected_inventory_slot", 0)
+	main.call("_sync_ground_bag_actions")
+	var bag_drop_button: Button = main.get_node(
+		"GameView/GroundBagPanel/Content/Actions/GroundBagDrop") as Button
+	_expect(bag_drop_button.tooltip_text.contains("Drop 9 of the 9"),
+		"a quantity larger than the stack drops only what is there: "
+		+ bag_drop_button.tooltip_text)
+	main.call("_on_quantity_box_pressed", 1)
+	main.call("_sync_ground_bag_actions")
+	_expect(bag_drop_button.tooltip_text.contains("Drop 5 of the 9"),
+		"a quantity smaller than the stack drops exactly that many: "
+		+ bag_drop_button.tooltip_text)
+	main.call("_on_quantity_box_pressed", 0)
 	app_state_inventory.set("inventory_cooldowns", {0: {
 		"maximum_msec": 30000, "end_msec": Time.get_ticks_msec() + 12000}})
 	main.call("_sync_quick_slots")
