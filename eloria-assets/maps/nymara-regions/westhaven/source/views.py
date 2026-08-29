@@ -47,8 +47,14 @@ VIEWS = [
     # Panel 2: the great lighthouse on Lamp Rock, from the seaward side where
     # the surf breaks. Eye is on the rock's own western shoulder at grid
     # (6.10, 6.05), 6 m up, so the tower stands clear of its own crown.
-    ("02-lighthouse", 2, (88.4, 37.0), 6.0, (100.9, 40.1), 24.0, 50,
-     (1180, 900), 46, "day"),
+    # On Lamp Rock's south-west shoulder, low, looking up the slope at the
+    # tower with the sound over the left shoulder. Two other framings were
+    # tried: from the rock's crown the tower stands against bare sky, and from
+    # the water 114 m out it is a distant silhouette over a foreground of flat
+    # sea. Neither is panel 2, and this is the closest of the three - the sea
+    # is present but the panel's breaking water is still mostly out of frame.
+    ("02-lighthouse", 2, (88.0, 48.0), 4.0, (100.9, 40.1), 16.0, 46,
+     (1180, 900), 48, "day"),
     # Panel 3: the cobbled street climbing from the quay through its arch.
     # Along the street's axis, not across it: framed across, the warehouse
     # walls fill the shot and the climb disappears.
@@ -86,9 +92,11 @@ VIEWS = [
     # measures the eye height from the deck rather than from the harbour floor
     # 12.7 m below it - without that the camera stood underwater inside the
     # breakwater's own armour slope, which filled the frame with grey.
-    # Further back along the mole so the bastion is a subject rather than a
-    # wall: 35 m out, on the deck centreline, at standing height.
-    ("08-mole-bastion", 8, (-28.0, 6.1), 1.7, (-19.1, 12.2), 8.0, 50,
+    # Along the mole at the bastion, with the weather side and its surf to the
+    # left of frame. Aimed at the parapet rather than the platform: aimed high
+    # the shot looked down onto the platform disc, which in shadow is a black
+    # ellipse and not the subject.
+    ("08-mole-bastion", 8, (-31.0, 3.6), 1.7, (-19.1, 12.4), 4.5, 54,
      (1280, 840), 40, "deck"),
     # Panel 9: the rooftop terrace looking over the brass dome to the harbour.
     # Standing *on* the crown terrace, which is at design (21.2, -71.8). The

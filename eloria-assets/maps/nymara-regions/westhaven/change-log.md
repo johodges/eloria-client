@@ -54,10 +54,11 @@ graded ramp streets between the bands and retaining walls on the risers.
 | pass | what it placed |
 | --- | --- |
 | `build_water` | one sea plane at sea level, cut 240 m beyond the terrain |
+| `populate_surf` | 719 foam cards and 7 breakers along every shoreline, weighted by exposure |
 | `populate_seawall` | 10 mole runs, the bastion, the mole light, 14 bollards |
-| `populate_waterfront` | 6 quay-wall runs, 26 bollards, 13 warehouses, the fish market arcade and 9 stalls, 2 piers, the crane, the gantry, 7 ships, the harbour gate, the custom house |
+| `populate_waterfront` | 6 quay-wall runs, 26 bollards, 13 warehouses, the quay-street arch, the fish market arcade and 9 stalls, 2 piers, 8 jetties, the crane, the gantry, 14 ships, the harbour gate, the custom house |
 | `populate_shipyard` | the hull on the stocks, 2 yard sheds, 9 timber stacks, the ropewalk |
-| `populate_city` | 385 houses from 12 variants, retaining walls, the city gate, the great arcade, the cathedral, the campanile, the domed hall, the high spire, the guild hall, lamps and cisterns |
+| `populate_city` | 385 houses from 12 variants, retaining walls, the city gate, the great arcade, the cathedral, the campanile, the domed hall, the high spire, 7 lesser towers, the guild hall, lamps and cisterns |
 | `populate_lighthouses` | the great lighthouse, the Gullstone watch, the sea arch, rock clutter on both masses |
 | `populate_upland` | chapel, farm, hill estate, east watch, field fences, signpost |
 | `populate_vegetation` | 257 trees in shelter belts, 536 ground-dressing patches |
@@ -106,21 +107,26 @@ Recorded because each cost time and each would cost the next region the same.
     rotates an *already placed* piece about the world origin and flings it
     somewhere else on a circle; the order that means "face that way, then go
     there" is `translation @ rotation`. Nothing in the shared toolkit ever
-    writes the first form, and fourteen sites in `havenarch.py` did. The crane's
-    treadwheels ended up below the quay, the bastion's merlons bunched at double
-    their intended angle, the pier rails had their X and Z swapped, and the
-    ship's sterncastle roof was mirrored across the hull. There is now one
-    `havenarch.at(x, y, z, yaw, pitch, roll)` helper and no bare composition.
-12. **Six spawns and portals standing on blocked cells.** A landmark that
-    collides blocks its own footprint, and a doorway is attached to the
-    landmark, so the natural place for a door is exactly the place the collision
-    grid has just marked unwalkable. `build_westhaven.py` now checks every spawn
-    and portal against the finished grid and moves any that landed on one onto
-    the nearest walkable cell, reporting the distance. It caught the Custom
-    House and Gullstone doors and their return spawns, and two portals that had
-    already shipped: the Grey Moors road at 6.67 m and the Crownwater berth at
+    writes the first form, and fourteen sites in `havenarch.py` did. The
+    crane's treadwheels ended up below the quay, the bastion's merlons bunched
+    at double their intended angle, the pier rails had their X and Z swapped,
+    and the ship's sterncastle roof was mirrored across the hull. There is now
+    one `havenarch.at(x, y, z, yaw, pitch, roll)` helper and no bare
+    composition anywhere.
+12. **Two portals standing on blocked cells.** A landmark that collides blocks
+    its own footprint, so the natural place to put something next to one is
+    exactly the place the collision grid has just marked unwalkable. The build
+    now checks every spawn and portal against the finished grid and moves any
+    that landed on one onto the nearest walkable cell, reporting the distance.
+    It caught the Grey Moors road at 6.67 m and the Crownwater berth at
     16.41 m.
-13. **Four pinned but unreferenced materials** — `shingles`, `cobble_paving`,
+13. **Tide banding baked into a terrain material.** `westhaven_sea_rock` put
+    the three tide zones in as horizontal bands of the V coordinate, which is
+    right for the vertical sea wall of panel 8 and wrong for the lighthouse
+    rocks and the headland, which are terrain: at terrain UV scale the bands
+    tiled into hard stripes every three and a half metres. The recipe is now
+    isotropic and the tide is told by the surf geometry instead.
+14. **Four pinned but unreferenced materials** — `shingles`, `cobble_paving`,
     `bark_pale`, `water_sea` — each superseded by a Westhaven recipe and each
     embedding its textures for nothing. 1.4 MB. The build's own warning caught
     them. `undergrowth` likewise in the LOD package.

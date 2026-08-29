@@ -715,7 +715,17 @@ def gullstone_cave(seed: int = 20260905) -> Interior:
         g.add(M.cylinder(0.05, 0.42, drop, segments=7, uv_scale=0.7,
                          material=SEA_ROCK).transformed(
             M.translation(x, ceiling - drop, z)))
-    it.lamps += [[-14.0, -6.0, 30.0], [-16.0, -6.0, 58.0]]
+    # More lamps than a smugglers' cave strictly wants, and with a longer reach
+    # than the 9 m default. The first client capture of this section averaged 12
+    # to 15 out of 255 - defensible for an unlit cave and useless as a place to
+    # look at - and adding lamps at the default range moved it by 0.1, because
+    # 9 m of throw in a chamber 52 m across lights almost nothing.
+    #
+    # A lamp may carry `range` and `energy` after its position; the manifest
+    # writer honours them and `godot_capture.gd` binds them.
+    it.lamps += [[-16.0, -5.4, 27.0, 26.0, 2.2], [-18.0, -5.4, 38.0, 26.0, 2.2],
+                 [-17.0, -5.4, 50.0, 26.0, 2.2], [-14.0, -5.4, 62.0, 24.0, 2.0],
+                 [2.0, -5.8, 33.0, 22.0, 1.8], [6.0, -5.8, 56.0, 22.0, 1.8]]
 
     # -- the beach: shingle, a boat drawn up, a fire ------------------------
     g.add(P.rowing_boat(length=4.6, seed=seed + 560).transformed(
@@ -737,7 +747,8 @@ def gullstone_cave(seed: int = 20260905) -> Interior:
             g.add(M.cylinder(0.16, 0.14, 0.9, segments=6, uv_scale=0.8,
                              material=TIMBER_DARK).transformed(
                 M.translation(-23.0 + k * 3.0, -7.9, 76.5 + side * 1.2)))
-    it.lamps += [[-22.0, -5.6, 82.0]]
+    it.lamps += [[-22.0, -5.6, 82.0, 18.0, 2.0], [-26.5, -6.2, 78.5, 16.0, 2.4],
+                 [-16.0, -5.8, 86.0, 16.0, 1.8]]
 
     # -- the stash: what the boats brought in that the Custom House never saw
     for i in range(16):
@@ -753,7 +764,8 @@ def gullstone_cave(seed: int = 20260905) -> Interior:
             37.0 + i * 0.9, -4.6, 49.5))
     g.add(M.box((3.0, 0.04, 2.2), center=(41.0, -3.4, 46.0), uv_scale=0.7,
                 material=CANVAS))
-    it.lamps += [[40.0, -3.0, 46.0]]
+    it.lamps += [[40.0, -3.0, 46.0, 14.0, 1.7], [37.0, -3.2, 42.0, 12.0, 1.5],
+                 [44.0, -3.2, 49.0, 12.0, 1.5]]
 
     # -- the blowhole: a shaft the sea breathes through, open to the sky -----
     for i in range(20):
@@ -765,7 +777,8 @@ def gullstone_cave(seed: int = 20260905) -> Interior:
             82.0 + math.sin(a) * r))
     g.add(M.box((9.0, 0.06, 9.0), center=(0.0, -7.9, 82.0), uv_scale=0.25,
                 material=WATER))
-    it.lamps += [[0.0, -5.0, 82.0]]
+    it.lamps += [[0.0, -5.0, 82.0, 20.0, 1.9], [-3.5, -6.4, 79.0, 15.0, 1.6],
+                 [3.5, -6.4, 85.0, 15.0, 1.6]]
 
     it.spawn_space = "cleft"
     it.open_to_sky.append("blowhole")
@@ -870,8 +883,13 @@ def combine(seed: int = 20260902) -> Interior:
         combined.group.add(part.group)
 
         def move(position, dx=dx, dz=dz):
-            return [round(float(position[0]) + dx, 2), round(float(position[1]), 2),
-                    round(float(position[2]) + dz, 2)]
+            # Keeps any tail past the first three numbers. A lamp may carry its
+            # own range and energy - see the note on `it.lamps` in
+            # `gullstone_cave` - and dropping them here silently put every lamp
+            # in the region back on the 9 m default.
+            moved = [round(float(position[0]) + dx, 2), round(float(position[1]), 2),
+                     round(float(position[2]) + dz, 2)]
+            return moved + [float(v) for v in position[3:]]
 
         for space_key, space in part.spaces.items():
             combined.spaces[f"{key}.{space_key}"] = {

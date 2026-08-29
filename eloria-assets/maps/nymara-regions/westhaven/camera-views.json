@@ -39,16 +39,16 @@
       "id": "02-lighthouse",
       "panel": 2,
       "position": [
-        265.2,
-        30.43,
-        111.0
+        264.0,
+        22.66,
+        144.0
       ],
       "target": [
         302.7,
-        41.95,
+        33.95,
         120.3
       ],
-      "fov": 50.0,
+      "fov": 46.0,
       "golden": false,
       "note": "Lighthouse on a wave-battered rock, surf breaking below"
     },
@@ -141,16 +141,16 @@
       "id": "08-mole-bastion",
       "panel": 8,
       "position": [
-        -84.0,
+        -93.0,
         6.9,
-        18.3
+        10.8
       ],
       "target": [
         -57.3,
-        16.43,
-        36.6
+        12.93,
+        37.2
       ],
-      "fov": 50.0,
+      "fov": 54.0,
       "golden": false,
       "note": "Sea wall bastion with a hanging banner, waves against the outer face"
     },

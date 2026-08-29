@@ -1261,36 +1261,100 @@
       "id": "lantern-25",
       "kind": "point",
       "position": [
-        26.0,
-        -6.0,
-        200.0
+        24.0,
+        -5.4,
+        197.0
       ],
       "colour": [
         1.0,
         0.66,
         0.32
       ],
-      "range": 9.0,
-      "energy": 1.5
+      "range": 26.0,
+      "energy": 2.2
     },
     {
       "id": "lantern-26",
       "kind": "point",
       "position": [
-        24.0,
-        -6.0,
-        228.0
+        22.0,
+        -5.4,
+        208.0
       ],
       "colour": [
         1.0,
         0.66,
         0.32
       ],
-      "range": 9.0,
-      "energy": 1.5
+      "range": 26.0,
+      "energy": 2.2
     },
     {
       "id": "lantern-27",
+      "kind": "point",
+      "position": [
+        23.0,
+        -5.4,
+        220.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 26.0,
+      "energy": 2.2
+    },
+    {
+      "id": "lantern-28",
+      "kind": "point",
+      "position": [
+        26.0,
+        -5.4,
+        232.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 24.0,
+      "energy": 2.0
+    },
+    {
+      "id": "lantern-29",
+      "kind": "point",
+      "position": [
+        42.0,
+        -5.8,
+        203.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 22.0,
+      "energy": 1.8
+    },
+    {
+      "id": "lantern-30",
+      "kind": "point",
+      "position": [
+        46.0,
+        -5.8,
+        226.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 22.0,
+      "energy": 1.8
+    },
+    {
+      "id": "lantern-31",
       "kind": "point",
       "position": [
         18.0,
@@ -1302,11 +1366,43 @@
         0.66,
         0.32
       ],
-      "range": 9.0,
-      "energy": 1.5
+      "range": 18.0,
+      "energy": 2.0
     },
     {
-      "id": "lantern-28",
+      "id": "lantern-32",
+      "kind": "point",
+      "position": [
+        13.5,
+        -6.2,
+        248.5
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 16.0,
+      "energy": 2.4
+    },
+    {
+      "id": "lantern-33",
+      "kind": "point",
+      "position": [
+        24.0,
+        -5.8,
+        256.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 16.0,
+      "energy": 1.8
+    },
+    {
+      "id": "lantern-34",
       "kind": "point",
       "position": [
         80.0,
@@ -1318,11 +1414,43 @@
         0.66,
         0.32
       ],
-      "range": 9.0,
+      "range": 14.0,
+      "energy": 1.7
+    },
+    {
+      "id": "lantern-35",
+      "kind": "point",
+      "position": [
+        77.0,
+        -3.2,
+        212.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 12.0,
       "energy": 1.5
     },
     {
-      "id": "lantern-29",
+      "id": "lantern-36",
+      "kind": "point",
+      "position": [
+        84.0,
+        -3.2,
+        219.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 12.0,
+      "energy": 1.5
+    },
+    {
+      "id": "lantern-37",
       "kind": "point",
       "position": [
         40.0,
@@ -1334,8 +1462,40 @@
         0.66,
         0.32
       ],
-      "range": 9.0,
-      "energy": 1.5
+      "range": 20.0,
+      "energy": 1.9
+    },
+    {
+      "id": "lantern-38",
+      "kind": "point",
+      "position": [
+        36.5,
+        -6.4,
+        249.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 15.0,
+      "energy": 1.6
+    },
+    {
+      "id": "lantern-39",
+      "kind": "point",
+      "position": [
+        43.5,
+        -6.4,
+        255.0
+      ],
+      "colour": [
+        1.0,
+        0.66,
+        0.32
+      ],
+      "range": 15.0,
+      "energy": 1.6
     }
   ],
   "environment": {
@@ -1771,7 +1931,7 @@
     "bufferViews": 167,
     "uniqueTriangles": 51432,
     "uniqueVertices": 71454,
-    "glbBytes": 9791556,
+    "glbBytes": 9807120,
     "nodeNames": [
       "Interior_westhaven_insides",
       "Build_westhaven_insides_amber_resin",

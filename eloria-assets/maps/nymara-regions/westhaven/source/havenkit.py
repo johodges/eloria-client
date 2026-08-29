@@ -41,8 +41,12 @@ reproduced at all.
   `meadow_grass` is inland pasture and is far too lush and too green.
 - `westhaven_sea_rock` - the cliffs, the mole's outer face and the two
   lighthouse rocks. Closest to the shared `cliff_rock`, but that recipe is a
-  warm inland sandstone; this is cold grey storm-washed stone with barnacle and
-  weed banding at the tide line, which is the whole subject of panel 8.
+  warm inland sandstone; this is cold grey storm-washed stone. Deliberately
+  *isotropic*: it covers terrain as well as walls, and a version with the tide
+  zones baked in as horizontal bands tiled into hard stripes every few metres
+  across the lighthouse rocks. The tide is told by `westhaven_surf` geometry.
+- `westhaven_surf` - broken white water, alpha-cut. Three of the ten panels are
+  substantially made of it and the region had none.
 - `westhaven_harbour_water` - a retint of the shared water surface. The
   painting's harbour is a deep green-blue, not Amberwood's grey sea nor
   Crownwater's turquoise lagoon. A colour decision, not a new surface, so it
@@ -74,6 +78,7 @@ HARBOUR = "westhaven_harbour_water"
 HARBOUR_TEX = "westhaven_harbour_tex"
 SAILCLOTH = "westhaven_sailcloth"
 BRASS = "westhaven_brass"
+SURF = "westhaven_surf"
 PANTILE = "westhaven_pantile"
 
 
@@ -224,58 +229,63 @@ def salt_turf(size: int = 512, seed: int = 431) -> T.TextureSet:
 
 
 def sea_rock(size: int = 512, seed: int = 443) -> T.TextureSet:
-    """Cold grey storm-washed stone, banded at the tide line.
+    """Cold grey storm-washed stone: jointed, weathered, isotropic.
 
-    The banding is the point and it is why this is not `cliff_rock`: panel 8's
-    sea wall and panel 2's lighthouse rock both read as three horizontal zones -
-    dry pale stone above, a dark weed-and-barnacle band where the water reaches,
-    and black wet rock below. Baked into the texture rather than driven from
-    world height, because the terrain mesh has no per-vertex tide channel and
-    the band appears at every scale the rock is used at.
+    NO TIDE BANDING. The first version baked the three tide zones - pale dry
+    stone, a dark weed-and-barnacle band, black wet rock - straight into the
+    texture as horizontal bands of `gy`, on the reasoning that panel 8's sea
+    wall reads as exactly those three zones. That is true of a *vertical* face.
+    This material also covers the two lighthouse rocks and the headland, which
+    are terrain: on a near-horizontal surface at terrain UV scale the bands tile
+    into hard stripes every three and a half metres and the whole rock mass
+    reads as corrugated iron.
+
+    The tide story is now told by geometry instead - `populate_surf` rings every
+    shoreline with foam weighted by exposure - which is both correct at every
+    orientation and much closer to what the panels actually show. What is left
+    here is rock: angular jointing, fracture, lichen and weed as blotches rather
+    than as bands.
     """
     u = np.linspace(0.0, 1.0, size, endpoint=False)
     gx, gy = np.meshgrid(u, u)
-    tilt = (N.tileable_value_noise(gx * 3.0, gy * 3.0, 3, 3, seed + 41) - 0.5) * 0.6
-    bedding = gy * 9.0 + tilt * 2.4 + N.tileable_fbm(size, 5, 4, seed=seed) * 1.3
-    band = np.floor(bedding)
-    within = bedding - band
-    rng = np.random.default_rng(seed + 3)
-    band_value = rng.uniform(0.0, 1.0, size=64)[band.astype(int) % 64]
-    ledge = np.clip(1.0 - within * 4.4, 0.0, 1.0) ** 0.65
-    face = 0.32 + 0.52 * band_value + within * 0.16
 
+    # Angular jointing in two directions, so the fracture reads as blocky stone
+    # rather than as bedded sandstone.
     joint_near = _upsample(N.tileable_worley(min(size, 256), 6, seed=seed + 5), size)
-    joint_far = _upsample(N.tileable_worley(min(size, 256), 6, seed=seed + 5, order=1), size)
-    joint = np.clip((joint_far - joint_near) * 38.0, 0.0, 1.0)
+    joint_far = _upsample(N.tileable_worley(min(size, 256), 6, seed=seed + 5,
+                                            order=1), size)
+    joint = np.clip((joint_far - joint_near) * 30.0, 0.0, 1.0)
+    fine_near = _upsample(N.tileable_worley(min(size, 256), 15, seed=seed + 17), size)
+    fine_far = _upsample(N.tileable_worley(min(size, 256), 15, seed=seed + 17,
+                                           order=1), size)
+    fine = np.clip((fine_far - fine_near) * 26.0, 0.0, 1.0)
+
+    block = N.tileable_fbm(size, 4, 4, seed=seed + 23)
     detail = N.tileable_fbm(size, 30, 5, seed=seed + 9)
-    height = np.clip(0.34 + face * 0.28 - ledge * 0.58 - (1.0 - joint) * 0.16
-                     + detail * 0.24, 0.0, 1.0)
+    grit = N.tileable_fbm(size, 64, 3, seed=seed + 29)
 
-    # grey, not the warm brown of the inland cliff recipe
-    color = _colorize(np.clip(face * 0.6 + detail * 0.4, 0, 1),
-                      (0.0, (0.048, 0.052, 0.056)), (0.35, (0.082, 0.088, 0.094)),
-                      (0.7, (0.136, 0.142, 0.148)), (1.0, (0.196, 0.200, 0.204)))
-    color = _mix(color, np.array([0.070, 0.074, 0.080]), (1.0 - joint) * 0.32)
-    color = _mix(color, np.array([0.056, 0.060, 0.064]), ledge * 0.78)
+    height = np.clip(0.42 + block * 0.26 + detail * 0.22 + grit * 0.10
+                     - (1.0 - joint) * 0.28 - (1.0 - fine) * 0.12, 0.0, 1.0)
 
-    # the three tide zones, blended so the rock can be used at any orientation
-    splash = np.clip((gy - 0.30) * 3.2, 0.0, 1.0)
-    weedband = np.exp(-((gy - 0.62) * 4.6) ** 2)
-    wet = np.clip((gy - 0.74) * 3.6, 0.0, 1.0)
-    lichen = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 13) * 1.9 - 0.92, 0.0, 1.0)
-    color = _mix(color, np.array([0.248, 0.252, 0.238]),
-                 (1.0 - splash) * lichen * 0.46)
-    barnacle = np.clip(N.tileable_fbm(size, 40, 3, seed=seed + 19) * 2.2 - 1.30, 0.0, 1.0)
-    color = _mix(color, np.array([0.212, 0.206, 0.192]), weedband * barnacle * 0.60)
-    weed = np.clip(N.tileable_fbm(size, 10, 4, seed=seed + 27) * 2.0 - 1.10, 0.0, 1.0)
-    color = _mix(color, np.array([0.058, 0.074, 0.038]), weedband * weed * 0.82)
-    color = _mix(color, np.array([0.028, 0.032, 0.034]), wet * 0.66)
+    tone = np.clip(block * 0.58 + detail * 0.42, 0.0, 1.0)
+    color = _colorize(tone,
+                      (0.0, (0.052, 0.056, 0.060)), (0.35, (0.086, 0.092, 0.098)),
+                      (0.7, (0.140, 0.146, 0.152)), (1.0, (0.198, 0.202, 0.206)))
+    color = _mix(color, np.array([0.066, 0.070, 0.076]), (1.0 - joint) * 0.34)
+    color = _mix(color, np.array([0.078, 0.082, 0.088]), (1.0 - fine) * 0.18)
 
-    occlusion = np.clip(0.30 + joint * 0.30 + (1.0 - ledge) * 0.36, 0.0, 1.0)
-    # wet below the tide line, dry and coarse above it
-    roughness = np.clip(0.94 - wet * 0.42 - weedband * 0.12, 0.0, 1.0)
+    # lichen and weed as blotches, isotropic, so they tile in any orientation
+    lichen = np.clip(N.tileable_fbm(size, 7, 4, seed=seed + 13) * 1.9 - 0.94, 0.0, 1.0)
+    color = _mix(color, np.array([0.244, 0.248, 0.232]), lichen * 0.42)
+    weed = np.clip(N.tileable_fbm(size, 12, 4, seed=seed + 27) * 2.1 - 1.28, 0.0, 1.0)
+    color = _mix(color, np.array([0.062, 0.078, 0.044]), weed * 0.60)
+    rust = np.clip(N.tileable_fbm(size, 9, 3, seed=seed + 37) * 2.2 - 1.52, 0.0, 1.0)
+    color = _mix(color, np.array([0.128, 0.098, 0.066]), rust * 0.36)
+
+    occlusion = np.clip(0.32 + joint * 0.34 + fine * 0.28, 0.0, 1.0)
+    roughness = np.clip(0.90 - lichen * 0.06 + weed * 0.04, 0.0, 1.0)
     return T.TextureSet(SEA_ROCK, _u8(color), T.pack_orm(occlusion, roughness),
-                        T.normal_from_height(height, 4.4))
+                        T.normal_from_height(height, 3.6))
 
 
 def sailcloth(size: int = 512, seed: int = 463) -> T.TextureSet:
@@ -359,6 +369,45 @@ def pantile(size: int = 512, seed: int = 467) -> T.TextureSet:
                         T.normal_from_height(height, 4.0))
 
 
+def surf(size: int = 512, seed: int = 479) -> T.TextureSet:
+    """Broken white water: foam with holes in it, alpha-cut.
+
+    Three of the ten detail-board panels are substantially made of breaking
+    water - the lighthouse rock, the sea wall's outer face, and the whole
+    southern half of the aerial - and the region had none of it. A flat white
+    band would read as paint; what foam actually looks like is a lace of
+    thicker and thinner water with the sea showing through, so the alpha is a
+    thresholded turbulence field and the colour is near-white where the alpha is
+    thick and blue-grey where it thins.
+
+    Alpha-cut rather than blended on purpose: hundreds of overlapping foam cards
+    with a blend mode sort against each other and flicker, and the same recipe
+    cut at a threshold reads correctly and costs nothing to sort.
+    """
+    turbulence = (N.tileable_fbm(size, 5, 5, seed=seed) * 0.55
+                  + N.tileable_fbm(size, 13, 4, seed=seed + 3) * 0.30
+                  + N.tileable_fbm(size, 31, 3, seed=seed + 7) * 0.15)
+    # a radial falloff so a single card is a patch of foam, not a square of it
+    u = np.linspace(-1.0, 1.0, size, endpoint=False)
+    gx, gy = np.meshgrid(u, u)
+    radial = np.clip(1.0 - np.hypot(gx, gy * 1.35), 0.0, 1.0) ** 0.75
+    density = np.clip(turbulence * 1.55 - 0.34, 0.0, 1.0) * radial
+    alpha_mask = (density > 0.20).astype(np.float64)
+
+    # thick foam is white; thin foam takes the water's colour through it
+    thickness = np.clip(density * 2.1, 0.0, 1.0)
+    color = _colorize(thickness,
+                      (0.0, (0.196, 0.286, 0.306)), (0.35, (0.402, 0.510, 0.526)),
+                      (0.7, (0.716, 0.780, 0.788)), (1.0, (0.930, 0.952, 0.955)))
+    streak = np.clip(N.tileable_fbm(size, 9, 4, seed=seed + 11) * 1.7 - 0.75, 0.0, 1.0)
+    color = _mix(color, np.array([0.860, 0.892, 0.900]), streak * 0.45)
+
+    occlusion = np.clip(0.72 + thickness * 0.26, 0.0, 1.0)
+    roughness = np.clip(0.58 + thickness * 0.30, 0.0, 1.0)
+    return T.TextureSet(SURF, _u8(color), T.pack_orm(occlusion, roughness),
+                        T.normal_from_height(density * 0.6, 1.6), _u8(alpha_mask))
+
+
 def harbour_water(size: int = 512, seed: int = 457) -> T.TextureSet:
     """The shared water surface, retinted to the painting's green-blue."""
     base = T.water_surface(size=size, seed=seed, tone="sea")
@@ -375,6 +424,7 @@ TEXTURE_FACTORIES = {
     TURF: salt_turf,
     SEA_ROCK: sea_rock,
     HARBOUR_TEX: harbour_water,
+    SURF: surf,
     SAILCLOTH: sailcloth,
     PANTILE: pantile,
 }
@@ -387,6 +437,8 @@ SPECS_EXTRA = (
     MAT.MaterialSpec(SEA_ROCK, SEA_ROCK, roughness=0.92),
     MAT.MaterialSpec(SAILCLOTH, SAILCLOTH, roughness=0.94, double_sided=True),
     MAT.MaterialSpec(PANTILE, PANTILE, roughness=0.88),
+    MAT.MaterialSpec(SURF, SURF, roughness=0.62, alpha_mode="MASK",
+                     alpha_cutoff=0.5, double_sided=True),
     # Brass is a tint, not a surface: it reuses the shared iron texture and
     # only recolours it, the same trick the harbour water uses. The dome of
     # panel 9 is the region's one warm metal and it was reading as cast iron.
@@ -423,7 +475,7 @@ def register(sets: dict) -> dict:
 MATERIALS = frozenset({
     # Westhaven's own six
     SETT, PLANK, SHINGLE, TURF, SEA_ROCK, HARBOUR, SAILCLOTH, PANTILE,
-    BRASS,
+    BRASS, SURF,
     # masonry, from the shared kit
     "ashlar", "rubble_stone", "lime_plaster",
     # timber, roofing and metal - a port is built out of these

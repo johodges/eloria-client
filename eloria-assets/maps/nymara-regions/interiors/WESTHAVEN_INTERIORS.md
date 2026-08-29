@@ -175,11 +175,21 @@ through the project's own `WorldLoader` on Vulkan/Forward+.
 `references/captures/` holds the offline previews from the same camera table.
 
 `godot_capture.gd` gained two things for this too: it binds the manifest's own
-`lights` array - thirty lanterns, braziers and burners here - because a sealed
+`lights` array - forty lanterns, braziers and burners here - because a sealed
 map lit only by the harness's lifted ambient comes back near black, which is
 exactly what the first run produced; and it accepts the interior index's `fov`
 field alongside the region index's `fieldOfViewDegrees`, or every interior frame
 is taken at the 55-degree default instead of its authored framing.
+
+### Lighting the cave
+
+A lamp entry is `[x, y, z]` or `[x, y, z, range, energy]`. The defaults - 9 m of
+throw at energy 1.5 - suit a room and are useless in a chamber 52 m across: the
+Gullstone Undertow's first client frames averaged 12 to 15 out of 255, and
+adding six more lamps at the default range moved that by 0.1. With the reach
+declared (22 to 26 m through the cavern, less on the beach and the ledge) the
+four cave frames come back at 22 to 37, which is dark - it is a smugglers' cave
+lit by lanterns - and legible. The other three sections keep the defaults.
 
 ## What is not verified
 

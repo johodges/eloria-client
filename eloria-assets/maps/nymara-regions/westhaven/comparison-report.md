@@ -35,51 +35,80 @@ reading grid maps 1:1.
    the build's aerial is near-vertical. They cannot be overlaid. A matching
    oblique would compare better but would hide half the map behind the city,
    and this shot's job is coverage.
-2. **Vertical drama.** The painting's skyline is spikier. Its towers and spires
-   are proportionally taller and thinner than anything here, and it has perhaps
-   three times as many of them. The build reads flatter from above.
+2. **Vertical drama.** The painting's skyline is still spikier: its towers are
+   proportionally taller and thinner than anything here. Seven lesser towers
+   were added on the terrace bands, which closes much of the gap seen from the
+   water; from directly above it still reads flatter than the painting.
 3. **Density of shipping.** The painting has roughly twenty vessels and a dozen
-   small jetties in the harbour. The build has nine hulls and two piers.
-4. **Colour temperature.** The painting is a warm golden afternoon over
-   saturated turquoise. The client frame is cooler and greyer. Some of that is
-   the sun and fog values in `environment`, which are a first pass and not
-   art-directed against the painting.
+   small jetties. The build now has sixteen hulls, two working piers and eight
+   jetties, where the first pass had nine hulls and two piers.
+4. **Colour temperature.** Closer than it was. The `environment` block is now
+   art-directed against the painting — warmer and lower sun, saturation 1.34,
+   less fog — and the coast carries white water, which is a large part of the
+   painting's brightness. The client frame is still cooler than the painting's
+   golden afternoon.
 5. **Ground texture variety.** The painting's upland is a patchwork of ochre,
    olive and dry gold. The build's salt turf is one recipe with noise, so the
-   upland reads more uniform.
+   upland reads more uniform. Unchanged in the second pass.
 
 ## The ten panels
 
 | # | subject | verdict |
 | --- | --- | --- |
 | 1 | arched harbour gate | **Partial.** The arch, piers, cutwaters and flanking towers are there and the proportion is close. The panel's gate spans open water with ships passing under it; the build's stands at the mouth of the west inlet with its feet nearer the shore, so it reads as a gatehouse more than a water gate. |
-| 2 | lighthouse on a wave-battered rock | **Good.** Battered tower, string courses, corbelled gallery with an iron rail, glazed lantern, lead dome, keeper's house. The rock reads as rock. Missing: the surf. There is no spray or breaking-wave geometry anywhere in the region, and the panel is half made of it. |
-| 3 | cobbled street climbing through an arch | **Partial.** The granite setts, the climb and the warehouse frontage are right. The panel's defining feature is an arch *over* the street with buildings continuing above it; the build has an open ramp street between buildings and no arch across it. |
+| 2 | lighthouse on a wave-battered rock | **Good.** Battered tower, string courses, corbelled gallery with an iron rail, glazed lantern, lead dome, keeper's house, and the rock reads as rock. The region now has surf and there is foam at the rock's foot, but three framings were tried and none puts the tower and its breaking water in one frame the way the panel does. The sea is present rather than the subject. |
+| 3 | cobbled street climbing through an arch | **Good.** The climb now runs *through* an arch with two jettied storeys carried over it, which was the panel's defining feature and the thing the build had no equivalent of. Granite setts, warehouse frontage, lamps. |
 | 4 | ship alongside with a gantry | **Good.** Pier on piles with a planked deck, shear-legs gantry with a crate on the fall, a two-masted hull alongside. Rigging is much simpler than the panel's. |
-| 5 | timber cargo crane | **Good.** The treadwheel crane is the closest single object in the region to its panel: A-frames, spoked wheel, raked jib, laden net. |
+| 5 | timber cargo crane | **Good.** The treadwheel crane is the closest single object in the region to its panel: A-frames, spoked wheel on its axle, raked jib, laden net. The wheels were below the quay until the transform bug was fixed. |
 | 6 | hull under construction on the stocks | **Good.** Keel, raked stem and sternpost, fifteen open frames, three garboard strakes a side, shores and keel blocks. You can see through it, which is the point. |
 | 7 | fish stalls under awnings in an arcade | **Good.** Arcade with arches and a tiled roof, nine stalls with striped awnings, catch on the trestles, baskets. |
-| 8 | sea wall bastion with a banner | **Partial.** The bastion is there — battered drum, merlons, banner mast, stair from the mole deck — and reads correctly. The framing looks down onto it from along the mole rather than up at it from the water, and again there is no surf on the outer face, which is most of the panel's drama. |
+| 8 | sea wall bastion with a banner | **Good.** The mole now runs out with surf breaking along its whole weather face, which is most of what the panel is, and the bastion stands at the bend with its merlons and banner. Framed along the mole rather than up at it from the water. |
 | 9 | rooftop terrace over a brass dome | **Good.** Colonnaded drum, ribbed brass dome, lantern and finial, balustraded terrace, city and sea beyond. |
-| 10 | dockside still-life | **Weak.** The composed cluster is there — crates, barrels, sacks, fishing gear — but the panel is a tight macro of a copper-bound crate, coiled rope, chain and fish on sailcloth, and the build has no coiled-rope and no chain prop. The capture reads as a wide quay shot with props in it, not as a still-life. |
+| 10 | dockside still-life | **Partial.** The cluster now has the two props it was missing — a rope flaked down in a coil, and chain with alternate links turned — beside crates, barrels, sacks and fishing gear, and the random quay scatter is excluded within 7 m of it. It is a composed arrangement rather than a junk pile. It still reads wider than the panel's macro. |
 
-Four of ten are good, five partial, one weak.
+**Seven of ten are good, three partial, none weak.** The first pass was four good, five partial and one weak; the difference is surf, the street arch, the rope and chain, and the transform fix.
 
-## What would most improve the match
+## What the second pass changed
 
-In the order I would do it:
+Everything on the first pass's list was done.
 
-1. **Surf.** Three panels (2, 8, and the aerial's whole southern half) are
-   substantially made of breaking water, and the region has none. Foam
-   geometry or a shoreline shader against the two rocks and the mole's outer
-   face would do more for the concept match than anything else on this list.
-2. **A rope-and-chain prop and a proper macro set-up** for panel 10.
-3. **An arch over the market stair** for panel 3.
-4. **Art-directing `environment`** against the painting rather than by
-   reasoning. The sun, fog and saturation values are a first pass.
-5. **More towers.** The painting's skyline has many more vertical accents than
-   the four the build carries.
-6. **More shipping and small jetties** along the quay.
+1. **Surf.** 719 alpha-cut foam cards and seven breaker sheets, placed where the
+   terrain crosses the water line and weighted by **exposure**: the outward
+   direction of a shore cell is downhill, so a cell facing south or west takes
+   the weather and gets heavy foam, and one facing into the harbour gets almost
+   none. 1,522 triangles, and by a distance the largest improvement in this
+   document. Two bugs on the way — a height band caught 797 cells out of 101,761
+   on a coast this steep and had to become a blurred ring mask, and the exposure
+   term was written with the gradient's own sign and so came out exactly
+   negated, putting the heavy foam inside the harbour.
+2. **Rope and chain**, and the panel-10 cluster composed around them.
+3. **An arch over the quay street**, carrying two jettied storeys.
+4. **`environment` art-directed** against the painting: warmer and lower sun,
+   saturation 1.22 to 1.34, less fog.
+5. **Seven more towers** on the terrace bands — a parish belfry and a merchant's
+   lookout, not another cathedral.
+6. **Eight jetties and seven more hulls.**
+
+Adding surf also let a texture bug be removed rather than papered over.
+`westhaven_sea_rock` baked the three tide zones in as horizontal bands of the V
+coordinate, which is right for a vertical sea wall and wrong for the terrain the
+same material covers: at terrain UV scale the bands tiled into hard stripes
+every three and a half metres, and the lighthouse rocks read as corrugated iron.
+The recipe is now isotropic — jointing, fracture, lichen and weed as blotches —
+and the tide is told by the surf geometry, which is correct at every
+orientation.
+
+## What would most improve it next
+
+1. **A framing for panel 2 that holds the tower and its breaking water
+   together.** Three were tried and none does; it may want a camera out on the
+   water with a longer lens than the harness's fixed field allows.
+2. **The harbour gate standing in open water**, with the inlet cut back so ships
+   pass under it.
+3. **Rigging.** Ships carry one yard, one sail and three shrouds each.
+4. **A tighter macro rig for panel 10** — the harness's minimum framing distance
+   is what keeps it reading wide.
+5. **Ground-texture variety on the upland.**
 
 ## What this report does not say
 

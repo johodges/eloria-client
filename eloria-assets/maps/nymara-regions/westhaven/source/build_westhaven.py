@@ -88,6 +88,7 @@ def build_region(seed: int = SEED, lod: str | None = None) -> REG.RegionBuild:
     build = REG.RegionBuild(terrain=terrain)
 
     POP.build_water(build, lod=lod)
+    POP.populate_surf(build, seed, lod=lod)
     POP.populate_seawall(build, seed)
     POP.populate_waterfront(build, seed)
     POP.populate_shipyard(build, seed)
@@ -837,25 +838,31 @@ def write_manifest(build: REG.RegionBuild, stats: dict, collision_stats: dict,
             # out. Westhaven's palette is warmer than Crownwater's: terracotta
             # and salt-bleached stone over green-blue water, not marble over
             # turquoise.
-            "sky": {"type": "gradient", "zenith": [0.20, 0.44, 0.70],
-                    "horizon": [0.78, 0.86, 0.88], "curve": 0.17,
-                    "groundHorizon": [0.46, 0.56, 0.58],
-                    "groundBottom": [0.18, 0.26, 0.30],
-                    "sunAngleMax": 16.0, "energy": 1.12},
+            "sky": {"type": "gradient", "zenith": [0.17, 0.41, 0.72],
+                    "horizon": [0.86, 0.88, 0.84], "curve": 0.20,
+                    "groundHorizon": [0.52, 0.56, 0.52],
+                    "groundBottom": [0.20, 0.26, 0.28],
+                    "sunAngleMax": 16.0, "energy": 1.20},
             # `direction` is the direction the light TRAVELS, not the direction
             # of the sun in the sky: the binder does
             # `sun.look_at_from_position(ZERO, direction)`, and a
             # DirectionalLight3D emits along its local -Z, so a +Y component
             # lights the world from underneath. Crownwater's session found this
             # the hard way and the sign is copied from its corrected value.
-            "sun": {"direction": [-0.42, -0.80, 0.43],
-                    "color": [1.14, 1.06, 0.94], "energy": 1.10,
-                    "indirectEnergy": 1.12, "angularDiameterDegrees": 1.2},
-            "ambient": {"color": [0.54, 0.66, 0.74], "energy": 0.50,
-                        "skyContribution": 0.72},
-            "saturation": 1.22,
-            "fog": {"enabled": True, "color": [0.68, 0.78, 0.82],
-                    "density": 0.00042, "heightFalloff": 0.0024},
+            # Warmer and lower than the first pass. The concept is a golden
+            # afternoon, not noon: its shadows are long enough to model the
+            # terrace risers, its stone is cream rather than grey, and its water
+            # keeps its colour to the horizon. The first pass was reasoned from
+            # "a clear maritime sky" rather than art-directed against the
+            # painting, and came back cooler and flatter than the painting is.
+            "sun": {"direction": [-0.48, -0.66, 0.58],
+                    "color": [1.22, 1.08, 0.88], "energy": 1.22,
+                    "indirectEnergy": 1.18, "angularDiameterDegrees": 1.2},
+            "ambient": {"color": [0.50, 0.62, 0.74], "energy": 0.46,
+                        "skyContribution": 0.70},
+            "saturation": 1.34,
+            "fog": {"enabled": True, "color": [0.76, 0.80, 0.78],
+                    "density": 0.00030, "heightFalloff": 0.0020},
             "variants": {
                 "golden-hour": {
                     "sun": {"direction": [-0.84, -0.24, 0.48],

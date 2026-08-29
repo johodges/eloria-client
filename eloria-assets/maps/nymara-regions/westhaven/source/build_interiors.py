@@ -287,8 +287,14 @@ def write_manifest(interior: I.Interior, stats, collision_stats, path: Path):
         "interactives": interior.interactives,
         "npcMarkers": interior.npc_markers,
         "harvestables": interior.harvestables,
-        "lights": [{"id": f"lantern-{i:02d}", "kind": "point", "position": p,
-                    "colour": [1.0, 0.66, 0.32], "range": 9.0, "energy": 1.5}
+        # A lamp is [x, y, z] or [x, y, z, range, energy]. The defaults suit a
+        # room; a 52 m cavern needs its own reach, and without the override
+        # every lamp in it throws 9 m and the section is unlit whatever you do.
+        "lights": [{"id": f"lantern-{i:02d}", "kind": "point",
+                    "position": [round(float(v), 2) for v in p[:3]],
+                    "colour": [1.0, 0.66, 0.32],
+                    "range": round(float(p[3]), 2) if len(p) > 3 else 9.0,
+                    "energy": round(float(p[4]), 2) if len(p) > 4 else 1.5}
                    for i, p in enumerate(interior.lamps)],
         "environment": dict(interior.environment, openToSky=interior.open_to_sky),
         "spaces": {key: {k: round(float(v), 2) for k, v in value.items()}

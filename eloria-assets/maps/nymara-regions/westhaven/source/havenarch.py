@@ -968,6 +968,126 @@ def fish_stall(seed: int = 0) -> SW.MeshGroup:
     return out
 
 
+def coiled_rope(radius: float = 0.62, turns: int = 5, thickness: float = 0.055,
+                seed: int = 0) -> M.Mesh:
+    """A rope flaked down in a flat coil - detail-board panel 10.
+
+    A real coil is laid in a spiral that rises a little as it goes, so the
+    inner turns sit slightly proud of the outer ones. Built as one swept tube
+    along that spiral rather than as concentric rings, because rings leave
+    visible end caps wherever two of them meet.
+    """
+    points = []
+    radii = []
+    steps = turns * 22
+    for i in range(steps + 1):
+        u = i / steps
+        angle = u * turns * math.tau
+        r = radius * (1.0 - u * 0.62)
+        points.append([math.cos(angle) * r,
+                       thickness + u * thickness * 1.7,
+                       math.sin(angle) * r])
+        radii.append(thickness)
+    # the bitter end, laid off across the coil
+    tail = points[-1]
+    points.append([tail[0] * 0.4, thickness, tail[2] * 0.4 - radius * 0.9])
+    radii.append(thickness * 0.9)
+    return M.tube(np.array(points), radii, segments=6, material=CLOTH)
+
+
+def chain_run(length: float = 2.2, links: int = 11, link_radius: float = 0.11,
+              seed: int = 0) -> SW.MeshGroup:
+    """A run of chain, alternate links turned ninety degrees.
+
+    Each link is a torus lathed from a circular profile offset from the axis.
+    Alternating the roll is the whole reason a chain reads as a chain and not
+    as a row of washers.
+    """
+    out = SW.MeshGroup()
+    profile = []
+    for i in range(9):
+        angle = math.tau * i / 8.0
+        profile.append((link_radius + math.cos(angle) * link_radius * 0.34,
+                        math.sin(angle) * link_radius * 0.34))
+    spacing = length / max(links - 1, 1)
+    for i in range(links):
+        link = M.lathe(profile, segments=10, uv_scale=1.4, material=IRON)
+        # lathe revolves about +Y, so a link lies in the XZ plane; stand it up
+        # and roll every other one across the run
+        out.add(link.transformed(
+            at(-length * 0.5 + i * spacing,
+               link_radius + _jitter(seed, i, 0.01),
+               _jitter(seed + 3, i, 0.02),
+               pitch=math.pi * 0.5,
+               roll=0.0 if i % 2 else math.pi * 0.5)))
+    return out
+
+
+def street_arch(span: float = 5.2, height: float = 4.6, depth: float = 4.0,
+                storeys: int = 2, seed: int = 0) -> SW.MeshGroup:
+    """A street running through an arch with building over it - panel 3.
+
+    The panel's defining feature is that the cobbled climb passes *under* a
+    house, and the build had an open ramp between two rows instead. The arch
+    springs from piers either side of the street and carries two jettied
+    storeys across it.
+
+    The roadway under the arch is a walk surface; the storeys above are not.
+    """
+    out = SW.MeshGroup()
+    pier = 1.6
+    for side in (-1, 1):
+        x = side * (span * 0.5 + pier * 0.5)
+        out.add(M.box((pier, height, depth), center=(x, height * 0.5, 0.0),
+                      uv_scale=0.4, material=RUBBLE))
+    out.add(M.arch(span, span * 0.5, 0.6, depth, segments=14, uv_scale=0.45,
+                   material=STONE).transformed(
+        M.translation(0.0, height, -depth * 0.5)))
+    # the roadway through it
+    out.add_walk(M.box((span + pier * 2.0, 0.20, depth),
+                       center=(0.0, -0.10, 0.0), uv_scale=0.6, material=SETT))
+    top = height + span * 0.5 + 0.6
+    width = span + pier * 2.0
+    for storey in range(storeys):
+        over = 0.30 * (storey + 1)
+        y = top + storey * 2.85
+        w = width + over
+        d = depth + over * 0.6
+        out.add(M.box((w, 2.85, d), center=(0.0, y + 1.425, 0.0), uv_scale=0.36,
+                      material=PLASTER))
+        out.add(A.framed_wall(w, 2.85, thickness=0.14, material_frame=TIMBER_DARK,
+                              material_fill=PLASTER, seed=seed + storey).transformed(
+            M.translation(0.0, y, -d * 0.5 - 0.07)))
+        for i in range(max(int(w / 2.1), 1)):
+            wx = -w * 0.5 + (i + 0.5) * (w / max(int(w / 2.1), 1))
+            out.add(A.window(width=0.80, height=1.05, material=TIMBER_GREY)
+                    .transformed(M.translation(wx, y + 0.85, -d * 0.5 - 0.08)))
+    out.add(M.gable_roof(width + 0.30 * storeys, depth + 0.18 * storeys, 2.2,
+                         overhang=0.45, material=ROOF).transformed(
+        M.translation(0.0, top + storeys * 2.85, 0.0)))
+    return out
+
+
+def jetty(length: float = 9.0, width: float = 2.2, deck_y: float = 0.0,
+          floor_y: float = -6.0, seed: int = 0) -> SW.MeshGroup:
+    """A small timber landing stage, for the many short jetties the aerial has
+    along its waterfront that the two big piers do not account for."""
+    out = SW.MeshGroup()
+    bays = max(int(length / 3.0), 2)
+    for i in range(bays + 1):
+        z = i * (length / bays)
+        for side in (-1, 1):
+            x = side * (width * 0.5 - 0.25)
+            out.add(M.tube(np.array([[x, floor_y - 0.4, z], [x, deck_y - 0.25, z]]),
+                           [0.20, 0.16], segments=6, material=TIMBER_DARK))
+        out.add(M.box((width, 0.22, 0.20), center=(0.0, deck_y - 0.36, z),
+                      uv_scale=0.7, material=TIMBER_DARK))
+    out.add_walk(M.box((width, 0.18, length),
+                       center=(0.0, deck_y - 0.09, length * 0.5),
+                       uv_scale=0.6, material=PLANK))
+    return out
+
+
 def cistern_head(seed: int = 0) -> SW.MeshGroup:
     """A street cistern head: the city's fresh water, and a street ornament."""
     out = SW.MeshGroup()

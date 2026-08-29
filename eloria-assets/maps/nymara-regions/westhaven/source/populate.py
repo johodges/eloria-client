@@ -103,6 +103,130 @@ def build_water(build, lod: str | None = None) -> None:
         outside_is_water=True)
 
 
+# -------------------------------------------------------------------- surf
+def populate_surf(build, seed: int = 0, lod: str | None = None) -> None:
+    """Broken water along every shoreline, weighted by exposure.
+
+    The single biggest gap between the build and the concept. Panels 2 and 8 are
+    both substantially made of breaking water, and the southern half of the
+    aerial is surf around two rock masses; the region had none of it and read
+    as a millpond with land in it.
+
+    Foam is placed where the terrain crosses the water line, as horizontal
+    alpha-cut cards a few centimetres above the sea plane. Density is weighted
+    by **exposure**: the outward-facing direction of a shore cell is downhill,
+    so a cell whose downhill vector points south or west faces the open sea and
+    gets heavy foam, and one facing into the harbour gets almost none. That is
+    the difference between a decorative white ring and a coast that reads as
+    having weather on one side of it.
+    """
+    t = build.terrain
+    for v in range(4):
+        card = M.quad([(-1.0, 0.0, -1.0), (1.0, 0.0, -1.0),
+                       (1.0, 0.0, 1.0), (-1.0, 0.0, 1.0)],
+                      uv_scale=1.0, material=HK.SURF)
+        build.add_mesh(f"Surf_Card_{v}", card)
+
+    gradient_z, gradient_x = np.gradient(t.height, t.cell)
+
+    # The shore band is a ring of constant *width in metres*, not a band of
+    # constant height. Westhaven's coast is steep - the ground crosses the water
+    # line inside two cells almost everywhere - so a height band of +/- 1.5 m
+    # caught 797 cells out of 101,761 and produced a dotted line of foam instead
+    # of a shoreline. Blurring the land mask and taking the cells where it is
+    # neither fully land nor fully water gives the ring the geometry actually
+    # implies.
+    land = (t.height > REG.SEA_LEVEL).astype(np.float64)
+    soft = land
+    for _ in range(6):
+        padded = np.pad(soft, 1, mode="edge")
+        soft = (padded[:-2, 1:-1] + padded[2:, 1:-1]
+                + padded[1:-1, :-2] + padded[1:-1, 2:] + soft * 2.0) / 6.0
+    band = (soft > 0.06) & (soft < 0.94) & (t.height < REG.SEA_LEVEL + 1.4)
+
+    # Exposure: the outward-facing direction of a shore cell is downhill, which
+    # is *minus* the gradient, and the open sea lies south (+Z) and west (-X).
+    # Written with the gradient's own sign this comes out exactly negated - it
+    # put the heavy foam inside the harbour and left the weather side bare.
+    magnitude = np.hypot(gradient_x, gradient_z)
+    safe = np.where(magnitude < 1e-6, 1.0, magnitude)
+    outward_x = -gradient_x / safe
+    outward_z = -gradient_z / safe
+    exposure = np.clip(outward_z * 0.72 - outward_x * 0.58, 0.0, 1.0)
+
+    step = 3.0 if lod is None else 6.0
+    count = 0
+    nx = int(t.size_x / step)
+    nz = int(t.size_z / step)
+    for iz in range(nz):
+        for ix in range(nx):
+            x = t.x0 + (ix + 0.5) * step
+            z = t.z0 + (iz + 0.5) * step
+            cx = int(np.clip((x - t.x0) / t.cell, 0, t.cols - 1))
+            cz = int(np.clip((z - t.z0) / t.cell, 0, t.rows - 1))
+            if not band[cz, cx]:
+                continue
+            key = f"s{ix}:{iz}"
+            # Everywhere gets a little; the exposed side gets most of it. The
+            # 0.22 floor is what keeps the sheltered harbour edge from reading
+            # as unnaturally still against the rest.
+            chance = 0.22 + 0.68 * float(exposure[cz, cx])
+            if _rand(seed, key) > chance:
+                continue
+            jitter_x = (_rand(seed, key + "x") - 0.5) * step * 0.9
+            jitter_z = (_rand(seed, key + "z") - 0.5) * step * 0.9
+            scale = 1.9 + _rand(seed, key + "s") * 2.8 * (0.6 + float(exposure[cz, cx]))
+            _place(build, f"Surf_{ix:03d}_{iz:03d}", f"Surf_Card_{count % 4}",
+                   x + jitter_x, z + jitter_z,
+                   y=REG.SEA_LEVEL + 0.06 + _rand(seed, key + "y") * 0.10,
+                   rotation=_rand(seed, key + "r") * 6.2, scale=scale,
+                   collides=False, kind="foliage")
+            count += 1
+    build.notes.append(f"surf cards placed: {count}")
+
+    if lod == "far":
+        return
+    # Breakers: a raised card standing against the weather face of the two rock
+    # masses and the mole, where the panels show water actually going up.
+    build.add_mesh("Surf_Breaker", _breaker_card())
+    breakers = 0
+    for u, v in ((0.70, 6.60), (1.20, 7.05), (1.90, 7.30), (2.60, 7.20),
+                 (3.10, 6.80), (0.55, 6.00),
+                 (5.55, 6.90), (6.20, 7.30), (6.95, 7.35), (7.60, 7.00),
+                 (7.80, 6.40),
+                 (1.30, 5.06), (2.20, 5.14), (3.10, 5.18), (4.00, 5.20),
+                 (4.60, 5.24)):
+        x, z = REG._design_to_world(REG.cell(u, v))
+        if float(t.height_at(x, z)) > REG.SEA_LEVEL + 2.5:
+            continue
+        _place(build, f"Surf_Breaker_{breakers:02d}", "Surf_Breaker", x, z,
+               y=REG.SEA_LEVEL - 0.4, rotation=_rand(seed, f"bk{u}{v}") * 6.2,
+               scale=1.4 + _rand(seed, f"bs{u}{v}") * 1.1,
+               collides=False, kind="foliage")
+        breakers += 1
+    build.notes.append(f"surf breakers placed: {breakers}")
+
+
+def _breaker_card() -> M.Mesh:
+    """A curled sheet of water, for where the sea actually goes up a rock.
+
+    Two rows of quads leaning back from a foot, so it reads as a wave face
+    rather than as a billboard standing on edge. Cheap - twelve triangles.
+    """
+    parts = []
+    for i in range(3):
+        u0, u1 = i / 3.0, (i + 1) / 3.0
+        y0, y1 = u0 * 3.4, u1 * 3.4
+        z0 = -u0 * 1.5
+        z1 = -u1 * 1.5
+        half0 = 3.2 * (1.0 - u0 * 0.35)
+        half1 = 3.2 * (1.0 - u1 * 0.35)
+        parts.append(M.quad([(-half0, y0, z0), (half0, y0, z0),
+                             (half1, y1, z1), (-half1, y1, z1)],
+                            uv_scale=0.5, material=HK.SURF))
+    return M.merge(parts, HK.SURF)
+
+
 # ----------------------------------------------------------------- seawall
 def populate_seawall(build, seed: int = 0) -> None:
     """The harbour mole and its bastion - detail-board panel 8.
@@ -254,6 +378,15 @@ def populate_waterfront(build, seed: int = 0) -> None:
             _landmark(build, f"warehouse-{i:02d}", "Harbour Warehouse",
                       "warehouse", node, x, z, y)
 
+    # -- the arch the quay street runs through (panel 3) -------------------
+    ax, az = REG.ANCHORS["quay_arch"]
+    build.add_mesh("Street_Arch", HA.street_arch(span=5.4, height=4.6, depth=4.2,
+                                                 storeys=2, seed=seed + 55))
+    node = _place(build, "Landmark_Quay_Arch", "Street_Arch", ax, az,
+                  rotation=math.pi * 0.5, collides=False, kind="landmark").node
+    _landmark(build, "quay-arch", "The Quay Arch", "gate", node, ax, az,
+              _ground(build, ax, az))
+
     # -- the fish market: an arcade with stalls under it (panel 7) ---------
     fx, fz = REG.ANCHORS["fish_market"]
     build.add_mesh("Market_Arcade", HA.arcade_range(bays=8, span=3.6, height=4.8,
@@ -324,6 +457,36 @@ def populate_waterfront(build, seed: int = 0) -> None:
             (1.52, 4.86, 2.60, False))):
         x, z = REG._design_to_world(REG.cell(u, v))
         _place(build, f"Ship_Anchored_{i:02d}",
+               "Ship_Large" if big else "Ship_Small",
+               x, z, y=REG.SEA_LEVEL, rotation=rot, collides=False,
+               kind="landmark")
+
+    # -- small jetties along the front. The aerial has a dozen short landing
+    #    stages between the two big piers; two piers alone left the waterfront
+    #    reading as a wall with two fingers on it.
+    build.add_mesh("Jetty", HA.jetty(length=9.0, width=2.2, deck_y=0.0,
+                                     floor_y=REG.LEVEL["harbour_floor"] - quay_y,
+                                     seed=seed + 95))
+    jetties = 0
+    for i in range(12):
+        s0 = total * (i + 0.5) / 12.0
+        p = _polyline_point(front, lengths, s0)
+        if abs(p[0] - REG.ANCHORS["cargo_pier"][0]) < 22.0 or            abs(p[0] - REG.ANCHORS["crane_pier"][0]) < 22.0:
+            continue                      # do not crowd the two working piers
+        _place(build, f"Jetty_{i:02d}", "Jetty", p[0], p[1] + 8.5, y=quay_y,
+               rotation=(_rand(seed, f"jy{i}") - 0.5) * 0.2,
+               collides=False, kind="landmark")
+        jetties += 1
+    build.notes.append(f"jetties placed: {jetties}")
+
+    # more hulls: the painting's harbour is busy, and nine was not busy
+    for i, (u, v, rot, big) in enumerate((
+            (1.05, 5.02, 1.70, False), (2.42, 4.90, 0.20, False),
+            (3.48, 4.96, 2.35, True), (4.20, 5.08, 1.05, False),
+            (5.02, 4.88, 0.48, False), (1.80, 5.16, 2.85, True),
+            (2.95, 5.22, 0.90, False))):
+        x, z = REG._design_to_world(REG.cell(u, v))
+        _place(build, f"Ship_Moored_{i:02d}",
                "Ship_Large" if big else "Ship_Small",
                x, z, y=REG.SEA_LEVEL, rotation=rot, collides=False,
                kind="landmark")
@@ -538,6 +701,30 @@ def populate_city(build, seed: int = 0) -> None:
                   kind="building").node
     _landmark(build, "guild-hall", "The Mariners' Guild", "civic", node,
               gx, gz, REG.LEVEL["lower_town"])
+
+    # -- more vertical accents. The painting's skyline carries perhaps three
+    #    times the towers this had, and from the water the city read as a bank
+    #    of roofs with four things sticking out of it. These are small - a
+    #    parish belfry and a merchant's lookout, not another cathedral - and
+    #    they are placed on the terrace bands, so they step up with the city.
+    for v in range(3):
+        build.add_mesh(f"Lesser_Tower_{v}", HA.campanile(
+            height=17.0 + v * 4.5, width=3.2 + v * 0.35, seed=seed + 390 + v))
+    build.add_mesh("Lesser_Spire", A.watchtower(height=19.0, seed=seed + 396,
+                                                radius=1.9))
+    for i, (u, v, level, kind) in enumerate((
+            (1.42, 3.86, "lower_town", 0), (4.02, 3.72, "lower_town", 1),
+            (1.18, 3.04, "mid_town", 2), (4.46, 2.92, "mid_town", 0),
+            (2.02, 2.28, "upper_town", 1), (4.10, 1.86, "citadel", 2),
+            (2.72, 1.28, "crown", 0))):
+        x, z = REG._design_to_world(REG.cell(u, v))
+        cx = int(np.clip((x - t.x0) / t.cell, 0, t.cols - 1))
+        cz = int(np.clip((z - t.z0) / t.cell, 0, t.rows - 1))
+        if not masks["city"][cz, cx] or t.tree_block[cz, cx]:
+            continue
+        name = "Lesser_Spire" if i % 3 == 2 else f"Lesser_Tower_{kind}"
+        _place(build, f"Landmark_Lesser_Tower_{i}", name, x, z,
+               y=REG.LEVEL[level], kind="landmark")
 
     # -- street furniture: lamps along the ramp streets, cisterns in squares
     build.add_mesh("Lamp_Post", SW.lamp_post(height=2.8))
@@ -802,6 +989,10 @@ def populate_props(build, seed: int = 0) -> None:
     build.add_mesh("Rowing_Boat", P.rowing_boat(seed=seed + 711))
     build.add_mesh("Brazier", P.brazier(seed=seed + 713))
     build.add_mesh("Workbench", P.workbench(seed=seed + 715))
+    build.add_mesh("Coiled_Rope", HA.coiled_rope(radius=0.62, turns=5,
+                                                 seed=seed + 717))
+    build.add_mesh("Chain_Run", HA.chain_run(length=2.2, links=11,
+                                             seed=seed + 719))
 
     front = REG.QUAYSIDE
     total = 0.0
@@ -831,12 +1022,17 @@ def populate_props(build, seed: int = 0) -> None:
                rotation=_rand(seed, f"pq{i}r") * 6.2, collides=False,
                kind="prop")
 
-    # the chandlery still-life of panel 10: a tight cluster, not a scatter
+    # The chandlery still-life of panel 10: a tight composed cluster, not a
+    # scatter. The panel is a copper-bound crate, coiled rope, chain and fish on
+    # sailcloth; rope and chain are the two the region had no prop for at all,
+    # which is why this shot was the weakest of the ten.
     cx, cz = REG.ANCHORS["chandlery"]
     for i, (dx, dz, name, rot) in enumerate((
             (0.0, 0.0, "Crate", 0.35), (0.9, 0.4, "Crate", 1.10),
             (-0.8, 0.5, "Barrel", 0.0), (0.3, -0.9, "Fishing_Gear", 2.2),
-            (1.6, -0.3, "Sack", 0.8), (-1.5, -0.4, "Barrel", 0.0))):
+            (1.6, -0.3, "Sack", 0.8), (-1.5, -0.4, "Barrel", 0.0),
+            (-0.1, 1.1, "Coiled_Rope", 0.6), (1.15, 1.25, "Coiled_Rope", 2.1),
+            (0.75, -1.6, "Chain_Run", 0.25), (-1.0, -1.3, "Chain_Run", 1.35))):
         _place(build, f"Prop_Chandlery_{i:02d}", name, cx + dx, cz + dz,
                y=quay_y, rotation=rot, collides=False, kind="prop")
 

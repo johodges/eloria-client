@@ -578,6 +578,12 @@
       "Landmark_Gullstone_Watch",
       "Landmark_High_Spire",
       "Landmark_Hill_Estate",
+      "Landmark_Lesser_Tower_1",
+      "Landmark_Lesser_Tower_2",
+      "Landmark_Lesser_Tower_3",
+      "Landmark_Lesser_Tower_4",
+      "Landmark_Lesser_Tower_5",
+      "Landmark_Lesser_Tower_6",
       "Landmark_Upland_Farm",
       "Landmark_Warehouse_00",
       "Landmark_Warehouse_01",
@@ -622,8 +628,8 @@
       "zeroMeansBlocked": true,
       "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Westhaven's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
     },
-    "walkableCells": 742398,
-    "walkableFraction": 0.5594
+    "walkableCells": 742589,
+    "walkableFraction": 0.5596
   },
   "navigation": {
     "surfaceNodePrefixes": [
@@ -743,6 +749,21 @@
       "serverTile": [
         345,
         262
+      ]
+    },
+    {
+      "id": "quay-arch",
+      "name": "The Quay Arch",
+      "type": "gate",
+      "node": "Landmark_Quay_Arch",
+      "position": [
+        -25.68,
+        7.63,
+        -19.44
+      ],
+      "serverTile": [
+        148,
+        269
       ]
     },
     {
@@ -2574,63 +2595,63 @@
     "sky": {
       "type": "gradient",
       "zenith": [
-        0.2,
-        0.44,
-        0.7
+        0.17,
+        0.41,
+        0.72
       ],
       "horizon": [
-        0.78,
         0.86,
-        0.88
+        0.88,
+        0.84
       ],
-      "curve": 0.17,
+      "curve": 0.2,
       "groundHorizon": [
-        0.46,
+        0.52,
         0.56,
-        0.58
+        0.52
       ],
       "groundBottom": [
-        0.18,
+        0.2,
         0.26,
-        0.3
+        0.28
       ],
       "sunAngleMax": 16.0,
-      "energy": 1.12
+      "energy": 1.2
     },
     "sun": {
       "direction": [
-        -0.42,
-        -0.8,
-        0.43
+        -0.48,
+        -0.66,
+        0.58
       ],
       "color": [
-        1.14,
-        1.06,
-        0.94
+        1.22,
+        1.08,
+        0.88
       ],
-      "energy": 1.1,
-      "indirectEnergy": 1.12,
+      "energy": 1.22,
+      "indirectEnergy": 1.18,
       "angularDiameterDegrees": 1.2
     },
     "ambient": {
       "color": [
-        0.54,
-        0.66,
+        0.5,
+        0.62,
         0.74
       ],
-      "energy": 0.5,
-      "skyContribution": 0.72
+      "energy": 0.46,
+      "skyContribution": 0.7
     },
-    "saturation": 1.22,
+    "saturation": 1.34,
     "fog": {
       "enabled": true,
       "color": [
-        0.68,
-        0.78,
-        0.82
+        0.76,
+        0.8,
+        0.78
       ],
-      "density": 0.00042,
-      "heightFalloff": 0.0024
+      "density": 0.0003,
+      "heightFalloff": 0.002
     },
     "variants": {
       "golden-hour": {
@@ -2862,28 +2883,28 @@
     }
   ],
   "performance": {
-    "nodes": 4419,
-    "meshes": 252,
-    "materials": 24,
-    "images": 65,
-    "textures": 65,
-    "accessors": 1008,
-    "bufferViews": 1073,
-    "uniqueTriangles": 452652,
-    "uniqueVertices": 343144,
-    "glbBytes": 21620920,
-    "instancedTriangles": 1137392,
-    "embeddedTextureBytes": 19964003,
-    "textureMemoryBytesUncompressed": 172228608,
-    "placements": 1900,
+    "nodes": 5248,
+    "meshes": 278,
+    "materials": 25,
+    "images": 68,
+    "textures": 68,
+    "accessors": 1112,
+    "bufferViews": 1180,
+    "uniqueTriangles": 469200,
+    "uniqueVertices": 355594,
+    "glbBytes": 22567704,
+    "instancedTriangles": 1169846,
+    "embeddedTextureBytes": 20208347,
+    "textureMemoryBytesUncompressed": 175374336,
+    "placements": 2652,
     "collision": {
       "width": 1152,
       "height": 1152,
       "cellMetres": 0.5,
-      "walkableCells": 742398,
-      "blockedCells": 584706,
-      "walkableFraction": 0.5594,
-      "elevatedDecks": 19,
+      "walkableCells": 742589,
+      "blockedCells": 584515,
+      "walkableFraction": 0.5596,
+      "elevatedDecks": 28,
       "rowOrder": "server-tile-y (row 0 is the +Z southern edge)",
       "columnOrder": "server-tile-x (column 0 is the -X western edge)",
       "nudgedEntries": [
@@ -2914,17 +2935,20 @@
       ]
     },
     "notes": [
+      "surf cards placed: 719",
+      "surf breakers placed: 7",
+      "jetties placed: 8",
       "city houses placed: 385",
       "trees placed: 257",
       "ground dressing placed: 536"
     ],
     "lod2": {
-      "glbBytes": 13690968,
-      "nodes": 3629,
-      "uniqueTriangles": 369474,
-      "instancedTriangles": 955676,
-      "sizeReductionPercent": 36.7,
-      "triangleReductionPercent": 16.0
+      "glbBytes": 14250288,
+      "nodes": 3886,
+      "uniqueTriangles": 382924,
+      "instancedTriangles": 980782,
+      "sizeReductionPercent": 36.9,
+      "triangleReductionPercent": 16.2
     }
   },
   "sources": [
