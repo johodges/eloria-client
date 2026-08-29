@@ -63,6 +63,12 @@ def _biped(**over) -> dict:
         # branches; ``crown`` grows a forking rack off the skull; ``heart`` is
         # the lit hollow the concept art puts in every treant's chest.
         wood=.0, crown=.0, heart=.0, canopy=.0, arm_splay=.0,
+        # ``face`` decides what is under the brow: "flesh" is the default,
+        # "skull" is the pale bone the art gives every revenant and barrow
+        # knight, "ember" the lit sockets of a spirit.  ``hem`` shapes the
+        # bottom of a garment, which is most of what tells a robe from a
+        # cylinder at the distance a player sees it.
+        face="flesh", hem="straight",
     )
     base.update(over)
     return base
@@ -117,20 +123,20 @@ BIPED_PLANS = {
 BIPED_DETAIL = {
     "verdant_crown_king": dict(weapon="scepter", crest="crown", cloak=.52,
                                beard=.09, shoulder_pad=.12, tabard=True),
-    "rimebound_archmage": dict(weapon="staff", hood=True, cloak=.40, beard=.10,
+    "rimebound_archmage": dict(hem="ragged", face="ember", weapon="staff", hood=True, cloak=.40, beard=.10,
                                crest=None),
     "glacier_brute": dict(shoulder_pad=.11, horns="crag", surface="ice",
                           gaunt=.03, hunch=.09),
     "orrery_colossus": dict(crest="rings", weapon=None, shoulder_pad=.14,
                             surface="metal", gaunt=.03),
-    "amethyst_sibyl": dict(weapon=None, crest="shards", cloak=.42, hood=False),
+    "amethyst_sibyl": dict(hem="ragged", weapon=None, crest="shards", cloak=.42, hood=False),
     "crimson_duelist": dict(weapon="rapier", crest="hat", cloak=.44),
-    "emberwood_matron": dict(crest=None, weapon="lantern_staff", cloak=.40,
+    "emberwood_matron": dict(face="ember", crest=None, weapon="lantern_staff", cloak=.40,
                              bark=True, wood=.85, crown=1.15, heart=.70,
                              canopy=1.15),
-    "barrow_sovereign": dict(weapon="greatsword", crest="helm", cloak=.50,
+    "barrow_sovereign": dict(face="skull", weapon="greatsword", crest="helm", cloak=.50,
                              shoulder_pad=.12, armor="plate", tabard=True),
-    "tidecaller_sorceress": dict(weapon="staff", crest="coral", cloak=.46),
+    "tidecaller_sorceress": dict(hem="ragged", weapon="staff", crest="coral", cloak=.46),
     "amethyst_golem": dict(crest="shards", surface="crystal", shoulder_pad=.14),
     "orrery_sentinel": dict(crest="rings", weapon=None, surface="metal"),
     "sunmane_minotaur": dict(horns="bull", weapon="axe", muzzle=.13, mane=.07,
@@ -140,22 +146,22 @@ BIPED_DETAIL = {
     "reedhat_fisher": dict(crest="strawhat", weapon="sickle", cloak=.24),
     "ratcatcher_tough": dict(weapon="hook", hunch=.10, cloak=.20, crest="cowl"),
     "millstone_golem": dict(surface="stone", crest="yoke", shoulder_pad=.13),
-    "drowned_dockhand": dict(ragged=.22, hood=False, weapon=None, hunch=.09),
+    "drowned_dockhand": dict(hem="ragged", face="skull", ragged=.22, hood=False, weapon=None, hunch=.09),
     "waterwheel_golem": dict(surface="stone", crest="wheel", shoulder_pad=.12),
     "barnacle_troll": dict(surface="barnacle", hunch=.10, horns="crag",
                            shoulder_pad=.08),
-    "drowned_captain": dict(weapon="cutlass", crest="tricorn", cloak=.38,
+    "drowned_captain": dict(face="skull", weapon="cutlass", crest="tricorn", cloak=.38,
                             ragged=.14),
-    "reedmask_stalker": dict(weapon="spear", crest="mask", cloak=.34, ragged=.18),
-    "barrow_knight": dict(weapon="sword", shield="kite", crest="helm", cloak=.34),
+    "reedmask_stalker": dict(face="skull", weapon="spear", crest="mask", cloak=.34, ragged=.18),
+    "barrow_knight": dict(face="skull", weapon="sword", shield="kite", crest="helm", cloak=.34),
     "cairn_golem": dict(surface="stone", crest="cairn", shoulder_pad=.13),
-    "lantern_wraith": dict(weapon="lantern_staff", hood=True, cloak=.44, ragged=.24),
-    "barrow_king": dict(weapon="greatsword", crest="crown", cloak=.48, beard=.08,
+    "lantern_wraith": dict(hem="ragged", face="ember", weapon="lantern_staff", hood=True, cloak=.44, ragged=.24),
+    "barrow_king": dict(face="skull", weapon="greatsword", crest="crown", cloak=.48, beard=.08,
                         tabard=True),
     "mirrorhold_wheelwarden": dict(surface="stone", crest="wheel", weapon=None),
     "verdigris_warden": dict(weapon="staff", crest="helm", surface="metal"),
-    "shattered_sentinel": dict(surface="stone", crest="shards", shoulder_pad=.10),
-    "mirrorhold_oracle": dict(weapon="staff", hood=True, cloak=.42, crest="coral"),
+    "shattered_sentinel": dict(face="ember", surface="stone", crest="shards", shoulder_pad=.10),
+    "mirrorhold_oracle": dict(hem="ragged", weapon="staff", hood=True, cloak=.42, crest="coral"),
     "tideguard_vanguard": dict(weapon="spear", shield="round", crest="helm",
                                cloak=.30, tabard=True),
     "shardbound_archivist": dict(weapon="book", crest="shards", cloak=.40),
@@ -165,22 +171,22 @@ BIPED_DETAIL = {
     "frogspear_warrior": dict(weapon="spear", muzzle=.11, crest="fin",
                               surface="scale"),
     "canopy_gorilla": dict(mane=.08, muzzle=.12),
-    "vine_treant": dict(crest=None, bark=True, surface="bark",
+    "vine_treant": dict(face="ember", crest=None, bark=True, surface="bark",
                         wood=1.0, crown=.85, heart=.70, canopy=1.25),
     "moss_troll": dict(hunch=.10, horns="crag", surface="moss", muzzle=.10),
-    "amberwood_treant": dict(crest=None, bark=True, surface="bark",
+    "amberwood_treant": dict(face="ember", crest=None, bark=True, surface="bark",
                              wood=1.0, crown=1.10, heart=1.0, canopy=1.0),
-    "thorn_revenant": dict(ragged=.26, crest="thorns", cloak=.34, weapon=None),
-    "spectral_highwayman": dict(weapon="rapier", crest="tricorn", cloak=.46,
+    "thorn_revenant": dict(hem="ragged", face="skull", ragged=.26, crest="thorns", cloak=.34, weapon=None),
+    "spectral_highwayman": dict(hem="ragged", face="skull", weapon="rapier", crest="tricorn", cloak=.46,
                                 ragged=.16),
-    "leafling_sprite": dict(crest=None, bark=True, surface="bark",
+    "leafling_sprite": dict(face="ember", crest=None, bark=True, surface="bark",
                             wood=.75, crown=.55, heart=.60, canopy=.75),
     "ivy_stone_golem": dict(surface="stone", crest="cairn", shoulder_pad=.12),
-    "amberwood_dryad": dict(crest=None, cloak=.44, weapon=None,
+    "amberwood_dryad": dict(hem="ragged", crest=None, cloak=.44, weapon=None,
                             wood=.45, crown=1.45, heart=.55, canopy=1.0),
-    "amberwood_scarecrow": dict(crest="strawhat", weapon="hook", ragged=.28,
+    "amberwood_scarecrow": dict(hem="ragged", face="skull", crest="strawhat", weapon="hook", ragged=.28,
                                 cloak=.22, surface="cloth"),
-    "amberwood_ghost_knight": dict(weapon="greatsword", crest="helm", cloak=.42,
+    "amberwood_ghost_knight": dict(face="skull", weapon="greatsword", crest="helm", cloak=.42,
                                    ragged=.12),
     "frostplate_knight": dict(weapon="greatsword", crest="helm", cloak=.38,
                               shoulder_pad=.11, surface="ice"),
@@ -399,9 +405,36 @@ def _headgear(mesh, kind, head_g, skull, head_i, s, p):
                    (skull[0] * .12, skull[2] * .12)],
                   [head_i], MAT_ACCENT, sides=14, cap_start=False)
     elif kind == "hood" or kind == "cowl":
-        mesh.ellipsoid(tuple(head_g + np.array((0., skull[1] * .16, skull[2] * .38))),
-                       (skull[0] * 1.42, skull[1] * 1.34, skull[2] * 1.52),
-                       [head_i], MAT_ACCENT, rings=10, sides=14, squash=.68)
+        # An open cowl.  A closed ellipsoid over the head sealed the face away
+        # entirely, so every mage and revenant in the library was a smooth egg
+        # on a pair of shoulders; the art always leaves the face showing in
+        # shadow under a peak.  Built as a ring of panels with the front left
+        # out, plus a peak and a mantle over the shoulders.
+        centre = head_g + np.array((0., skull[1] * .12, skull[2] * .20))
+        opening = 1.42                      # half-angle of the missing front
+        panels = 15
+        crown, mantle = [], []
+        for k in range(panels):
+            angle = math.pi + (2 * math.pi - 2 * opening) * (k / (panels - 1) - .5)
+            out = np.array((math.sin(angle), 0., -math.cos(angle)))
+            # The rim rises to a peak at the back and dips at the open front,
+            # which is what makes a cowl read as cloth over a head rather than
+            # as a collar standing on its own.
+            reach = .55 + .45 * abs(math.cos((angle - math.pi) * .5))
+            crown.append(centre + np.array((0., skull[1] * (.18 + .40 * reach), 0.))
+                         + out * np.array((skull[0] * .62, 0., skull[2] * .66)))
+            mantle.append(centre + np.array((0., -skull[1] * 1.02, 0.))
+                          + out * np.array((skull[0] * .98, 0., skull[2] * 1.04)))
+        _sheet(mesh, crown, mantle, skull[0] * .10, [head_i], MAT_ACCENT)
+        # The peak that overhangs the face and puts it in shadow.
+        peak = centre + np.array((0., skull[1] * .74, -skull[2] * .92))
+        mesh.tube([peak + np.array((-skull[0] * .95, -skull[1] * .30, 0.)),
+                   peak + np.array((0., 0., -skull[2] * .52)),
+                   peak + np.array((skull[0] * .95, -skull[1] * .30, 0.))],
+                  [(skull[0] * .12, skull[1] * .12),
+                   (skull[0] * .20, skull[1] * .20),
+                   (skull[0] * .12, skull[1] * .12)],
+                  [head_i], MAT_ACCENT, sides=6)
     elif kind == "mask":
         mesh.ellipsoid(tuple(head_g + np.array((0., 0., -skull[2] * .66))),
                        (skull[0] * 1.45, skull[1] * 1.55, skull[2] * .55),
@@ -649,22 +682,64 @@ def biped_geometry(plan_key: str, scale: float, bones,
               [(skull[0] * .62, skull[1] * .26), (skull[0] * .44, skull[1] * .20)],
               [jaw_i, head_i], MAT_BODY, sides=10, cap_start=False)
     eye = p["eye_r"] * s
+    # What makes a face read at gameplay distance is not detail, it is shadow:
+    # a brow that overhangs, sockets that are holes rather than dots, a nose
+    # that catches light on one side and a jaw with an edge.  Without those a
+    # head is a ball, which is what every humanoid in this library was.
+    pale = p["face"] in ("skull", "ember")
+    face_mat = MAT_FEATURE if pale else MAT_BODY
+    if pale:
+        # A bone mask over the front of the skull: the art gives every barrow
+        # knight, revenant and drowned thing a face lighter than its armour.
+        mesh.ellipsoid(tuple(g[head_i] + np.array((0., skull[1] * .02,
+                                                   -skull[2] * .30))),
+                       (skull[0] * .92, skull[1] * .96, skull[2] * .82),
+                       [head_i], face_mat, rings=9, sides=13)
     for side in (-1., 1.):
         socket = g[head_i] + np.array((side * skull[0] * .42, skull[1] * .10,
                                        -skull[2] * .46))
-        mesh.ellipsoid(tuple(socket), (eye * 2.3, eye * 2.0, eye * 1.6),
+        # The socket is sunk and oversized; the old dot sat on the surface.
+        mesh.ellipsoid(tuple(socket + np.array((0., 0., skull[2] * .06))),
+                       (eye * 3.2, eye * 2.9, eye * 2.2),
                        [head_i], MAT_DARK, rings=6, sides=10)
+        if p["face"] == "ember":
+            mesh.ellipsoid(tuple(socket + np.array((0., 0., -eye * .30))),
+                           (eye * 1.5, eye * 1.4, eye * 1.0),
+                           [head_i], MAT_CORE, rings=6, sides=9)
+        else:
+            mesh.ellipsoid(tuple(socket + np.array((0., 0., -eye * .45))),
+                           (eye * 1.25, eye * 1.15, eye * .85),
+                           [head_i], MAT_FEATURE, rings=5, sides=9)
         if p["wood"]:
-            # Sunk into a bark socket and lit, which is the whole read of a
-            # treant's face at any distance a player sees it from.
-            mesh.ellipsoid(tuple(socket + np.array((0., 0., -eye * .55))),
-                           (eye * 1.5, eye * 1.3, eye * 1.0),
-                           [head_i], MAT_CORE, rings=6, sides=10)
+            # A treant's brow is a bark ridge over the socket, which is what
+            # gives the lit eye something to be sunk into.
             brow_ridge = socket + np.array((0., eye * 2.0, -eye * .30))
             mesh.tube([brow_ridge + np.array((-eye * 2.0, -eye * .5, 0.)),
                        brow_ridge, brow_ridge + np.array((eye * 2.0, -eye * .9, 0.))],
                       [(eye * .40, eye * .40), (eye * .70, eye * .70),
                        (eye * .40, eye * .40)], [head_i], MAT_BODY, sides=5)
+        # Cheekbone: the plane that separates a face from the side of a head.
+        mesh.ellipsoid(tuple(g[head_i] + np.array((side * skull[0] * .58,
+                                                   -skull[1] * .10,
+                                                   -skull[2] * .30))),
+                       (skull[0] * .34, skull[1] * .26, skull[2] * .40),
+                       [head_i], face_mat, rings=5, sides=9)
+    # Nose bridge and brow spine, running down out of the brow ridge.
+    bridge_top = g[head_i] + np.array((0., skull[1] * .28, -skull[2] * .52))
+    bridge_low = g[head_i] + np.array((0., -skull[1] * .10, -skull[2] * .70))
+    mesh.tube([bridge_top, (bridge_top + bridge_low) * .5, bridge_low],
+              [(skull[0] * .17, skull[1] * .14), (skull[0] * .15, skull[1] * .13),
+               (skull[0] * .20, skull[1] * .12)],
+              [head_i], face_mat, sides=7)
+    # Mouth: a dark line, deeper on a skull.
+    mouth = g[head_i] + np.array((0., -skull[1] * .40, -skull[2] * .58))
+    mesh.tube([mouth + np.array((-skull[0] * .34, 0., 0.)),
+               mouth + np.array((0., -skull[1] * .04, -skull[2] * .04)),
+               mouth + np.array((skull[0] * .34, 0., 0.))],
+              [(skull[0] * .05, skull[1] * .05),
+               (skull[0] * .09, skull[1] * .08 * (1.8 if pale else 1.0)),
+               (skull[0] * .05, skull[1] * .05)],
+              [head_i, jaw_i], MAT_DARK, sides=6)
     if p["wood"]:
         # A gash of a mouth, and bark strands running down over the skull so
         # the head belongs to the same grown thing as the trunk.
@@ -811,16 +886,40 @@ def biped_geometry(plan_key: str, scale: float, bones,
 
     # ---- garments ---------------------------------------------------------
     if p["robe"]:
+        # A robe in the art flares from the waist, breaks into vertical folds
+        # and ends in a shaped hem.  Swept as one straight tube with a disc on
+        # the bottom it read as a lampshade, which is what every mage, monarch
+        # and revenant in the library was standing in.
         hem = np.array((0., p["foot_len"] * s * .16, 0.))
         waist = g[body_i] + np.array((0., hip_r[1] * .55, 0.))
-        mesh.tube([waist, waist * .62 + hem * .38, waist * .28 + hem * .72, hem],
-                  [(hip_r[0] * .98, hip_r[1] * .98), (hip_r[0] * 1.02, hip_r[1] * 1.02),
-                   (hip_r[0] * 1.10, hip_r[1] * 1.08), (hip_r[0] * 1.22, hip_r[1] * 1.20)],
-                  [body_i, spine_i], MAT_ACCENT, sides=16,
+        flare = 1.62 if p["hem"] != "straight" else 1.46
+        skirt = [waist, waist * .62 + hem * .38, waist * .28 + hem * .72, hem]
+        mesh.tube(skirt,
+                  [(hip_r[0] * .98, hip_r[1] * .98),
+                   (hip_r[0] * 1.12, hip_r[1] * 1.10),
+                   (hip_r[0] * 1.38, hip_r[1] * 1.34),
+                   (hip_r[0] * flare, hip_r[1] * flare)],
+                  [body_i, spine_i], MAT_ACCENT, sides=18,
                   cap_start=False, cap_end=False)
         mesh.ellipsoid((0., hem[1] + hip_r[1] * .10, 0.),
-                       (hip_r[0] * 2.42, hip_r[1] * .40, hip_r[1] * 2.36),
+                       (hip_r[0] * flare * 1.98, hip_r[1] * .40,
+                        hip_r[1] * flare * 1.94),
                        [body_i], MAT_ACCENT, rings=6, sides=16)
+        # Folds, and a hem that dips between them.
+        folds = 11
+        for k in range(folds):
+            angle = 2 * math.pi * k / folds
+            out = np.array((math.cos(angle), 0., math.sin(angle)))
+            top = waist + out * hip_r[0] * .96
+            mid = (waist * .40 + hem * .60) + out * hip_r[0] * 1.30
+            low = hem + out * hip_r[0] * flare * 1.04
+            drop = 0.0 if p["hem"] == "straight" else hip_r[1] * (
+                .34 if k % 2 else .10)
+            mesh.tube([top, mid, low - np.array((0., drop, 0.))],
+                      [(hip_r[0] * .085, hip_r[0] * .085),
+                       (hip_r[0] * .105, hip_r[0] * .105),
+                       (hip_r[0] * .070, hip_r[0] * .070)],
+                      [body_i, spine_i], MAT_ACCENT, sides=5)
         for side in ("l", "r"):
             sh, el = g[B[f"upper_arm_{side}"]], g[B[f"forearm_{side}"]]
             r = p["arm_r"] * s
