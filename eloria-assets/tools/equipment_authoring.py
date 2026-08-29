@@ -1717,6 +1717,31 @@ def _glove_shell(rig: Rig, side: str) -> Surface:
     return surface
 
 
+# How thick a boot sole is, measured from the plane the bare foot stands on
+# upwards. The actor is placed on the ground by its body, not by whatever it is
+# wearing, so a sole authored below that plane sinks into the floor.
+SOLE_THICKNESS = .019
+# How far the sole is allowed to stand proud of that plane, and how far it
+# reaches up inside the upper. The slab and the upper have to overlap: meeting
+# them exactly leaves a sliver along the welt where neither covers the foot.
+SOLE_PROUD = .004
+SOLE_OVERLAP = .009
+# A foot is a rounded box, not an ellipse. Rings drawn as true ellipses cut the
+# corners off the shape they are sized to contain, so the outer edge of the
+# instep and the top of the toe box came through a boot that was wide enough
+# and tall enough everywhere it was measured. A squircle of this exponent hugs
+# a rounded rectangle instead, without widening the silhouette.
+SHELL_CORNER = 2.6
+
+
+def _squircle(phi: float) -> tuple[float, float]:
+    """Unit rounded-rectangle offsets for one angle around a shell ring."""
+    power = 2. / SHELL_CORNER
+    across, along = math.cos(phi), math.sin(phi)
+    return (math.copysign(abs(across) ** power, across),
+            math.copysign(abs(along) ** power, along))
+
+
 def _foot_shell(rig: Rig, side: str) -> Surface:
     """A boot foot lofted around the real foot, heel through toe.
 
@@ -1829,11 +1854,16 @@ def _foot_shell(rig: Rig, side: str) -> Surface:
                     seats.append(point)
                     sized.append((floor_w, floor_h))
                 continue
+            # The extremes, not the 99th percentile. The last one per cent of
+            # a foot is the joint at the base of the little toe and the point
+            # of the heel - the two places a shell sized to the rest of it
+            # leaves skin showing - and they are real geometry, not noise: the
+            # flesh sampled here is already scoped to this foot.
             offset = near - point
-            side = float(np.quantile(np.abs(offset @ lateral), .99)) + .013
+            side = float(np.abs(offset @ lateral).max()) + .013
             reach = offset @ down
-            below = float(np.quantile(reach, .99)) + .011
-            above = -float(np.quantile(reach, .01)) + .011
+            below = float(reach.max()) + .011
+            above = -float(reach.min()) + .011
             # Recentre between the two, then take the larger half-height.
             seats.append(point + down * (below - above) * .5)
             sized.append((max(floor_w, side),
@@ -1844,8 +1874,39 @@ def _foot_shell(rig: Rig, side: str) -> Surface:
     else:
         spine = [point - down * rise for point, down, rise in zip(spine, downs, lift)]
         heights = [height + rise for height, rise in zip(heights, lift)]
-    rings = []
+    # Where the wearer's own foot meets the floor. A boot may stand a few
+    # millimetres proud of it and no more: the actor is placed on the ground by
+    # its body, not by what it is wearing, so anything below that is boot under
+    # the floor - three centimetres of it, in the shell this replaces.
+    ground = float(flesh[:, 1].min()) if len(flesh) else float(
+        min(point[1] - abs(down[1]) * height
+            for point, down, height in zip(spine, downs, heights)))
+    floor_plane = ground - SOLE_PROUD
+    # Each ring is then seated on the flesh directly beneath it rather than on
+    # one plane. A ring that stops above the foot leaves a slot for it to show
+    # through - the toe rings, built past the last joint where there is no
+    # flesh left to measure, were the ones stopping short - and a ring that
+    # runs below the floor is the drooping heel. Reading the flesh station by
+    # station rather than assuming a single sole height is also what keeps this
+    # honest on a digitigrade leg, where only the toes are on the ground and
+    # the hock is a quarter of a metre above it. Moving the underside without
+    # moving the top is a matched change of centre and half-height, so the
+    # instep stays where the measurement put it either way.
+    seated = []
     for point, down, width, height in zip(spine, downs, widths, heights):
+        drop = abs(float(down[1]))
+        if drop > 1e-6:
+            seat = float((point - ankle) @ axis)
+            under = (flesh[np.abs((flesh - ankle) @ axis - seat) < .045]
+                     if len(flesh) else flesh)
+            target = float(under[:, 1].min()) - .006 if len(under) else ground
+            target = max(target, floor_plane)
+            shift = (float(point[1]) - drop * height - target) / (2. * drop)
+            point = point + np.array([0., -shift * drop, 0.])
+            height = height + shift
+        seated.append((point, down, width, max(height, .004)))
+    rings = []
+    for point, down, width, height in seated:
         ring = np.empty((18, 3))
         for index in range(18):
             # Traversed so that the loft's winding faces outwards.  Sweeping the
@@ -1853,22 +1914,32 @@ def _foot_shell(rig: Rig, side: str) -> Surface:
             # culls the near wall - which is what made a closed boot look like
             # an open-toed sandal with the foot showing through it.
             phi = 2 * math.pi * index / 18
-            ring[index] = (point + lateral * math.cos(phi) * width
-                           + down * math.sin(phi) * height)
+            across, along = _squircle(phi)
+            ring[index] = (point + lateral * across * width
+                           + down * along * height)
         rings.append(ring)
     surface.loft(rings, MATERIAL_BASE, cap_start=True, cap_end=True)
-    # The sole hangs off the bottom of the upper rather than a fixed distance
-    # under the spine.  Once the rings were recentred on the flesh, a fixed
-    # offset put the sole up inside the foot and the underside of the heel came
-    # out beneath it.
+    # The sole hangs off each ring's own underside, in world axes. Sweeping it
+    # along ``down`` instead is what broke it into pieces: that axis is square
+    # to whichever segment its ring belongs to, so the arch rings and the toe
+    # rings pointed different ways and the slab jumped between them - parts of
+    # it floating above the toes, the back of it three centimetres under the
+    # foot, which is what made the heel look lower than the foot it was on.
     sole = []
-    for point, down, width, height in zip(spine, downs, widths, heights):
-        seat = point + down * (height - .006)
+    for point, down, width, height in seated:
+        base = float(point[1]) - abs(float(down[1])) * height
+        floor = max(base - SOLE_THICKNESS, floor_plane)
+        ceiling = base + SOLE_OVERLAP
+        middle = (floor + ceiling) * .5
+        reach = max((ceiling - floor) * .5, .003)
         ring = np.empty((18, 3))
         for index in range(18):
             phi = 2 * math.pi * index / 18
-            ring[index] = (seat + lateral * math.cos(phi) * (width + .008)
-                           + down * (.010 + math.sin(phi) * .012))
+            across, along = _squircle(phi)
+            ring[index] = np.array([
+                float(point[0]) + across * (width + .010),
+                middle + along * reach,
+                float(point[2])])
         sole.append(ring)
     surface.loft(sole, MATERIAL_DETAIL, cap_start=True, cap_end=True)
     return surface
