@@ -243,6 +243,10 @@ var world_effects: Array = []
 var audio_director: Node
 var map_ambience_root: Node3D
 var sigil_window: Control
+## True while the loaded package lets the hour drive its environment. An
+## interior does not, and neither does a package that opts out.
+var _day_night_active := false
+var _day_night_refresh_msec := 0
 ## The power the next cast asks for. Presentational: the server states what
 ## each effect may reach and refuses anything it will not allow.
 var requested_spell_power := 1
@@ -385,6 +389,9 @@ const UI_SCALE_MAX := 1.5
 # identically at a fraction of the rate.
 const MINIMAP_REFRESH_MSEC := 66
 const FULL_MAP_REFRESH_MSEC := 200
+## The sky only has to keep up with a six-hour day; twice a second is already
+## finer than the eye can follow and costs a handful of property writes.
+const DAY_NIGHT_REFRESH_MSEC := 500
 ## The fork's spell quickbar. Twelve slots, shifted 1-0 then Ctrl+1/Ctrl+2 -
 ## the legacy client's six were never enough for the catalog's 22 spells.
 const SPELL_QUICK_SLOTS := 12
@@ -612,6 +619,9 @@ func _update_map_viewports() -> void:
 	if minimap_frame.visible and now >= _minimap_refresh_msec:
 		_minimap_refresh_msec = now + MINIMAP_REFRESH_MSEC
 		map_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	if _day_night_active and now >= _day_night_refresh_msec:
+		_day_night_refresh_msec = now + DAY_NIGHT_REFRESH_MSEC
+		_apply_day_night()
 	if full_map.visible and map_image.visible and now >= _full_map_refresh_msec:
 		_full_map_refresh_msec = now + FULL_MAP_REFRESH_MSEC
 		full_map_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
@@ -2344,6 +2354,7 @@ func _on_state_changed(path: StringName) -> void:
 				invasion_assistant_window.apply_update(update)
 		&"clock":
 			_update_legacy_clock_and_compass()
+			_apply_day_night()
 			_sync_diagnostics()
 		&"perks":
 			_sync_stats()
@@ -2456,6 +2467,7 @@ func _on_world_loaded(manifest: WorldManifest) -> void:
 	WorldEnvironmentBinder.apply(manifest, world_environment, world_sun, world_root)
 	WorldEnvironmentBinder.apply_camera(manifest, camera_rig)
 	_bind_light_markers(manifest)
+	_apply_day_night()
 	_bind_ambient_audio(manifest)
 	_populate_ambient_life(manifest)
 	_current_map_display_name = str(
@@ -2489,6 +2501,19 @@ func _bind_light_markers(manifest: WorldManifest) -> void:
 		return
 	map_light_root = root_node
 	print_debug("light_markers map=", AppState.current_map, " bound=", bound)
+
+## Moves the environment to the hour the server is keeping. The manifest is
+## the noon reference and the daylight curve is the server's own, so the sky
+## the player sees and the visibility the server acts on cannot drift apart.
+##
+## Runs on every clock packet and on a slow timer between them, because the
+## server states a whole minute at a time and one minute of real time is a
+## visible jump if nothing carries it forward.
+func _apply_day_night() -> void:
+	if world_loader.manifest == null:
+		return
+	_day_night_active = DayNightBinder.apply(world_loader.manifest,
+		world_environment, world_sun, AppState.continuous_game_minute())
 
 ## The ambience a package declares for itself. Four Gates has named a civic
 ## murmur and its waterfalls since it was authored and nothing played them.

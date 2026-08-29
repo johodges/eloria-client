@@ -59,6 +59,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_connection_lifecycle.gd
       - name: HUD persistence fixtures
         run: godot --headless --path godot-client --script res://tests/test_hud_persistence.gd
+      - name: Day and night cycle fixtures
+        run: godot --headless --path godot-client --script res://tests/test_day_night.gd
       - name: Ambient audio binder fixtures
         run: godot --headless --path godot-client --script res://tests/test_ambient_audio.gd
       - name: Audio director fixtures
@@ -216,6 +218,17 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/active-buffs-before.png"
           test -s "$ELORIA_ARTIFACT_DIR/active-buffs-after.png"
           test -s "$ELORIA_ARTIFACT_DIR/active-buffs-removed.png"
+      - name: Render the day and night cycle
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_day_night.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/day-night.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/day-night.log"
+          grep -q "rendered day night: PASS" "$ELORIA_ARTIFACT_DIR/day-night.log"
+          test -s "$ELORIA_ARTIFACT_DIR/day-night-before.png"
+          test -s "$ELORIA_ARTIFACT_DIR/day-night-noon.png"
+          test -s "$ELORIA_ARTIFACT_DIR/day-night-sunrise.png"
+          test -s "$ELORIA_ARTIFACT_DIR/day-night-sunset.png"
+          test -s "$ELORIA_ARTIFACT_DIR/day-night-midnight.png"
       - name: Render world effects
         run: |
           mkdir -p "$ELORIA_ARTIFACT_DIR"

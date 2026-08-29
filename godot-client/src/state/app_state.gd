@@ -26,6 +26,10 @@ var pending_spell_target := ""
 var stats: Dictionary = {}
 var game_minute := 0
 var game_minute_anchor_msec := 0
+## How long the server actually takes between two game minutes, measured
+## rather than assumed, so the client can carry the clock forward smoothly
+## between packets without hard-coding the server's tick.
+var game_minute_interval_msec := 0
 var server_timestamp := 0
 var chat_lines: Array[Dictionary] = []
 var active_channels: Array[int] = [0, 0, 0]
@@ -84,6 +88,19 @@ var player_info: Dictionary = {"open": false, "actor_id": -1, "name": "",
 ## the client never invents one and never removes one the server still holds.
 var map_markers: Dictionary = {}
 
+## The game minute carried forward to now. The server states a whole minute at
+## a time; this is the same minute plus however far through it the client is,
+## measured against the observed interval between two of them, so the sky moves
+## instead of stepping once a minute. Falls back to the stated minute until
+## two have been seen.
+func continuous_game_minute() -> float:
+	if game_minute_interval_msec <= 0 or game_minute_anchor_msec <= 0:
+		return float(game_minute)
+	var elapsed: int = Time.get_ticks_msec() - game_minute_anchor_msec
+	var fraction: float = clampf(
+		float(elapsed) / float(game_minute_interval_msec), 0.0, 1.0)
+	return float(game_minute) + fraction
+
 ## Clickable world objects on the current map, keyed by server object id, and
 ## the authoritative harvesting state. Both are server-declared: nothing here
 ## is matched by filename or scraped out of chat.
@@ -132,6 +149,7 @@ func _on_connection_state_changed(value: String) -> void:
 		stats.clear()
 		game_minute = 0
 		game_minute_anchor_msec = 0
+		game_minute_interval_msec = 0
 		server_timestamp = 0
 		chat_lines.clear()
 		active_channels = [0, 0, 0]
@@ -198,8 +216,12 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			last_clock_sync_msec = Time.get_ticks_msec()
 			state_changed.emit(&"clock")
 		"new_minute":
+			var minute_arrived_msec: int = Time.get_ticks_msec()
+			if game_minute_anchor_msec > 0 and int(event.minute) != game_minute:
+				game_minute_interval_msec = (minute_arrived_msec
+					- game_minute_anchor_msec)
 			game_minute = int(event.minute)
-			game_minute_anchor_msec = Time.get_ticks_msec()
+			game_minute_anchor_msec = minute_arrived_msec
 			state_changed.emit(&"clock")
 		"change_map":
 			current_map = event.map_name
