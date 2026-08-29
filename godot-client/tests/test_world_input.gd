@@ -1127,10 +1127,113 @@ func _run() -> void:
 	_expect(not cooldown_overlay.visible, "an expired cooldown clears its art")
 	cooldowns.clear()
 
+	# Server popups. The server had no way to ask the player anything: the
+	# packet fell through to "unknown" and the reply had no encoder.
+	var popup_panel: PanelContainer = main.get_node(
+		"GameView/PopupPanel") as PanelContainer
+	var popup_options: VBoxContainer = main.get_node(
+		"GameView/PopupPanel/PopupContent/PopupOptions") as VBoxContainer
+	var popup_confirm: Button = main.get_node(
+		"GameView/PopupPanel/PopupContent/PopupActions/PopupConfirm") as Button
+	var full_map: Control = main.get_node("GameView/FullMap") as Control
+	_expect(not popup_panel.visible, "the popup window starts closed")
+	var radio_popup: PackedByteArray = PackedByteArray([0, 0, 0])
+	radio_popup.append_array(_sized_bytes("Summon Behavior"))
+	radio_popup.append_array(PackedByteArray([0x68, 0x01]))
+	radio_popup.append_array(_sized_bytes("Choose how your summons pick targets."))
+	radio_popup.append_array(PackedByteArray([9, 1]))
+	radio_popup.append_array(_sized_bytes("Weakest first"))
+	radio_popup.append(0)
+	radio_popup.append_array(PackedByteArray([9, 1]))
+	radio_popup.append_array(_sized_bytes("Strongest first"))
+	radio_popup.append(1)
+	app_state_inventory.set("authenticated", true)
+	console_panel.show()
+	full_map.show()
+	app_state_inventory.call("_on_packet", 83, radio_popup)
+	await process_frame
+	_expect(popup_panel.visible and not console_panel.visible and not full_map.visible,
+		"a popup is modal: it opens and closes the panels underneath it")
+	_expect(popup_confirm.visible,
+		"a popup with radio options gets a send button, as the legacy contract requires")
+	var checkboxes: Array[CheckBox] = []
+	for child: Node in popup_options.get_children():
+		if child is CheckBox:
+			checkboxes.append(child as CheckBox)
+	_expect(checkboxes.size() == 2
+		and checkboxes[0].text == "Weakest first"
+		and checkboxes[1].text == "Strongest first",
+		"both radio options are presented with their server labels")
+	checkboxes[0].button_pressed = true
+	checkboxes[1].button_pressed = true
+	await process_frame
+	_expect(not checkboxes[0].button_pressed and checkboxes[1].button_pressed,
+		"one selection per group: the wire carries exactly one answer per group")
+	_expect(int((main.get("_popup_radio_groups") as Dictionary).get(1, -1)) == 1,
+		"the selected radio value is the server's value, not the button index")
+	var popup_rect: Rect2 = popup_panel.get_global_rect()
+	_expect(popup_rect.position.x >= 0.0 and popup_rect.position.y >= 0.0
+		and popup_rect.end.x <= 1280.0 and popup_rect.end.y <= 720.0,
+		"the popup fits within 1280x720")
+	_expect(not popup_rect.intersects(right_stats.get_global_rect()),
+		"the popup does not cover the fixed resource rail")
+	# The cancel cascade: a modal popup answers Escape before anything under it.
+	var popup_escape: InputEventKey = InputMap.action_get_events(
+		"cancel")[0].duplicate() as InputEventKey
+	popup_escape.pressed = true
+	main.call("_unhandled_input", popup_escape)
+	await process_frame
+	_expect(not popup_panel.visible
+		and not bool((app_state_inventory.get("popup") as Dictionary).get("open", true)),
+		"cancel dismisses the popup")
+
+	# A popup built only from text options answers on the click itself.
+	var action_popup: PackedByteArray = PackedByteArray([5, 0, 0])
+	action_popup.append_array(_sized_bytes("Confirm"))
+	action_popup.append_array(PackedByteArray([0x2c, 0x01]))
+	action_popup.append_array(_sized_bytes("Really?"))
+	action_popup.append_array(PackedByteArray([8, 3]))
+	action_popup.append_array(_sized_bytes("Yes"))
+	action_popup.append(1)
+	app_state_inventory.call("_on_packet", 83, action_popup)
+	await process_frame
+	_expect(popup_panel.visible and not popup_confirm.visible,
+		"a popup of text options only needs no send button")
+	# The same popup arriving twice must not reopen or duplicate its options.
+	var option_count: int = popup_options.get_child_count()
+	app_state_inventory.call("_on_packet", 83, action_popup)
+	await process_frame
+	_expect(popup_options.get_child_count() == option_count,
+		"a repeated popup for an id already on screen is ignored")
+	for child: Node in popup_options.get_children():
+		if child is Button:
+			(child as Button).pressed.emit()
+			break
+	await process_frame
+	# There is no connection in this suite, so the reply could not be sent. The
+	# popup must stay open rather than pretending the server was answered; the
+	# close-on-success path is proved against a real server in
+	# tests/integration/popup_local.py.
+	_expect(popup_panel.visible
+		and bool((app_state_inventory.get("popup") as Dictionary).get("open", false)),
+		"an answer that could not be sent leaves the popup open")
+	app_state_inventory.call("close_popup")
+	await process_frame
+	_expect(not popup_panel.visible, "closing the popup state closes the window")
+	app_state_inventory.set("authenticated", false)
+	console_panel.hide()
+	full_map.hide()
+
 	print("world input tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	main.queue_free()
 	await process_frame
 	quit(failures)
+
+func _sized_bytes(value: String) -> PackedByteArray:
+	var bytes: PackedByteArray = value.to_utf8_buffer()
+	var sized: PackedByteArray = PackedByteArray([bytes.size()])
+	sized.append_array(bytes)
+	return sized
 
 func _nul_bytes(value: String) -> PackedByteArray:
 	var bytes: PackedByteArray = value.to_utf8_buffer()

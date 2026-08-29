@@ -39,6 +39,11 @@ var ground_bag: Dictionary = {"open": false, "bag_id": -1, "items": {}}
 var known_knowledge: Array[int] = []
 var selected_knowledge: int = -1
 var knowledge_text: String = ""
+## A server-driven modal question. The server had no way to ask the player
+## anything: DISPLAY_POPUP(83) fell through to {"type":"unknown"} and
+## POPUP_REPLY(50) had no encoder.
+var popup: Dictionary = {"open": false, "popup_id": -1, "title": "", "text": "",
+	"options": []}
 var perks: Array[Dictionary] = []
 ## Lifetime activity totals keyed by the server's own category name, plus the
 ## order the server listed them in so the window needs no local table.
@@ -90,6 +95,7 @@ func _on_connection_state_changed(value: String) -> void:
 		known_knowledge.clear()
 		selected_knowledge = -1
 		knowledge_text = ""
+		popup = _empty_popup_state()
 		perks.clear()
 		activity_counters.clear()
 		activity_counter_order.clear()
@@ -438,6 +444,16 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			npc_dialogue["open"] = false
 			npc_dialogue["options"] = []
 			state_changed.emit(&"npc_dialogue")
+		"popup":
+			# Only one popup at a time, matching the legacy client's refusal to
+			# open a second window for an id it is already showing.
+			var same_popup: bool = (bool(popup.get("open", false))
+				and int(popup.get("popup_id", -1)) == int(event.popup_id))
+			if not same_popup:
+				popup = {"open": true, "popup_id": int(event.popup_id),
+					"title": str(event.title), "text": str(event.text),
+					"options": (event.options as Array).duplicate(true)}
+				state_changed.emit(&"popup")
 		"perks":
 			perks.clear()
 			for raw_perk: Variant in event.perks:
@@ -523,6 +539,15 @@ func _emit_stat_feedback(stat_key: String, previous_value: int,
 			return
 		floating_feedback_requested.emit({
 			"kind": "level", "skill": skill_key, "level": next_value})
+
+## The popup is closed by the client once its answer is on the wire, or when
+## the player dismisses it. The server does not send a close packet.
+func close_popup() -> void:
+	popup = _empty_popup_state()
+	state_changed.emit(&"popup")
+
+func _empty_popup_state() -> Dictionary:
+	return {"open": false, "popup_id": -1, "title": "", "text": "", "options": []}
 
 func close_dialogue() -> void:
 	npc_dialogue["open"] = false

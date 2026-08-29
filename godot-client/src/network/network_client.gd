@@ -152,6 +152,9 @@ func move_inventory_item(source: int, destination: int) -> Error:
 func cast_spell(sigils: Array[int]) -> Error:
 	return send_frame(EloriaProtocol.cast_spell(sigils))
 
+func popup_reply(popup_id: int, answers: Dictionary) -> Error:
+	return send_frame(EloriaProtocol.popup_reply(popup_id, answers))
+
 func attack_actor(actor_id: int) -> Error:
 	return send_frame(EloriaProtocol.attack_actor(actor_id))
 

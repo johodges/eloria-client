@@ -275,6 +275,60 @@ fit_content = true
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="PopupPanel" type="PanelContainer" parent="GameView" unique_id=1090442391]
+unique_name_in_owner = true
+visible = false
+z_index = 40
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -260.0
+offset_top = -170.0
+offset_right = 260.0
+offset_bottom = 170.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PopupContent" type="VBoxContainer" parent="GameView/PopupPanel" unique_id=1855194360]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PopupTitle" type="Label" parent="GameView/PopupPanel/PopupContent" unique_id=1247331229]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Server question"
+horizontal_alignment = 1
+
+[node name="PopupText" type="RichTextLabel" parent="GameView/PopupPanel/PopupContent" unique_id=1665043321]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(480, 84)
+layout_mode = 2
+fit_content = true
+
+[node name="PopupOptions" type="VBoxContainer" parent="GameView/PopupPanel/PopupContent" unique_id=1382566405]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="PopupActions" type="HBoxContainer" parent="GameView/PopupPanel/PopupContent" unique_id=1004683862]
+layout_mode = 2
+alignment = 2
+
+[node name="PopupConfirm" type="Button" parent="GameView/PopupPanel/PopupContent/PopupActions" unique_id=1587244103]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Send"
+
+[node name="PopupDismiss" type="Button" parent="GameView/PopupPanel/PopupContent/PopupActions" unique_id=1121953622]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Dismiss"
+
 [node name="MapViewport" type="SubViewport" parent="GameView" unique_id=891640277]
 unique_name_in_owner = true
 render_target_update_mode = 0

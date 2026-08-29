@@ -31,6 +31,7 @@ func _run() -> void:
 	root.size = SCREEN_SIZE
 	await _render_marker_lights()
 	await _render_diagnostics_panel()
+	await _render_server_popup()
 	print("rendered phase 0 repairs: ", "PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)
 
@@ -131,6 +132,47 @@ func _render_diagnostics_panel() -> void:
 		"the same panel showing undecoded opcodes and recent decode errors")
 	main.queue_free()
 	await process_frame
+
+## The server had no way to ask the player a question at all, so the "before"
+## half of this pair is the world with nothing on it: there is no earlier
+## rendering of a popup to compare against.
+func _render_server_popup() -> void:
+	var main: Node = (load("res://src/app/main.tscn") as PackedScene).instantiate()
+	root.add_child(main)
+	await process_frame
+	(main.get_node("GameView") as Control).show()
+	(main.get_node("LoginPanel") as Control).hide()
+	var app_state: Node = root.get_node("/root/AppState")
+	app_state.set("authenticated", true)
+	# The bytes protocol.summon_behavior_popup() actually builds.
+	app_state.call("_on_packet", 83, _hex_bytes(
+		"0000000f53756d6d6f6e204265686176696f7268013943686f6f736520686f7720796f7572"
+		+ "2073756d6d6f6e6564206372656174757265732073686f756c642073656c6563742074617267"
+		+ "6574732e09010d446f206e6f742061747461636b0109011241747461636b206d79206f70706f"
+		+ "6e656e7400090119446f206e6f742061747461636b206d79206f70706f6e656e740209011e41"
+		+ "747461636b206f6e6c792073756d6d6f6e65642063726561747572657303090120446f206e6f"
+		+ "742061747461636b2073756d6d6f6e6564206372656174757265730409010e41747461636b20"
+		+ "61742077696c6c05"))
+	for _settle: int in range(4):
+		await process_frame
+	var panel: Control = main.get_node("GameView/PopupPanel") as Control
+	_expect(panel.visible, "the popup window is on screen")
+	var options: Control = main.get_node(
+		"GameView/PopupPanel/PopupContent/PopupOptions") as Control
+	_expect(options.get_child_count() == 6,
+		"all six behaviour options are presented")
+	await _capture("server-popup.png",
+		"the server's summon-behaviour popup, decoded from its real bytes")
+	app_state.call("close_popup")
+	app_state.set("authenticated", false)
+	main.queue_free()
+	await process_frame
+
+func _hex_bytes(value: String) -> PackedByteArray:
+	var bytes := PackedByteArray()
+	for index: int in range(0, value.length(), 2):
+		bytes.append(value.substr(index, 2).hex_to_int())
+	return bytes
 
 func _capture(name: String, description: String) -> void:
 	await process_frame

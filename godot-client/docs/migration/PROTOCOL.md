@@ -264,3 +264,37 @@ unexpected drop schedules a socket reconnect with backoff (1s, 2s, 4s, 8s,
 password is cleared from the client the moment it is sent and is never
 retained, so a recovered socket returns the player to the login panel with
 their username preserved rather than signing in on their behalf.
+
+## Server popups
+
+`DISPLAY_POPUP(83)` is a modal question. Its payload is
+`popup_id:u16le | flags:u8 | title | size_hint:u16le | text` followed by zero
+or more options, where each string is length-prefixed: one count byte then that
+many UTF-8 bytes. `flags` must be zero; the client rejects anything else rather
+than guessing. Each option is `option_type:u8 | group:u8 | label`, and the two
+selectable types carry a trailing `value:u8`:
+
+| Type | Meaning | Value byte |
+|---|---|---|
+| 0 | text entry - a field the player types into | no |
+| 1 | display text - a static line | no |
+| 8 | text option - a button that answers immediately | yes |
+| 9 | radio option - a choice confirmed with the send button | yes |
+
+Options are grouped by `group`, and exactly one answer is returned per group.
+A popup containing a radio option or a text entry gets a send button and
+answers when it is pressed; a popup built only from text options answers the
+moment one is clicked, because each option *is* the action. That is the legacy
+rule (`popup.c` sets `has_send_button` when a radio option or text entry is
+added) and the Godot client follows it.
+
+`POPUP_REPLY(50)` carries `popup_id:u16le` then, per answered group,
+`group:u8 | value:u8` for a choice or `group:u8 | 0:u8 | length:u8 | text` for
+an entry. A group the player left unanswered is absent. Dismissing a popup
+sends nothing at all: declining to answer is a legitimate outcome and must not
+be reported as a choice. The server does not send a close packet - the client
+closes the window once its answer is on the wire, and keeps it open if the
+send failed.
+
+Only one popup is shown at a time; a repeat of an id already on screen is
+ignored, matching the legacy client's refusal to open a second window for it.

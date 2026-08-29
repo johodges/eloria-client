@@ -181,6 +181,12 @@ var map_light_root: Node3D
 @onready var chat_panel: PanelContainer = $GameView/ChatPanel
 @onready var console_panel: PanelContainer = %ConsolePanel
 @onready var connection_banner: Label = %ConnectionBanner
+@onready var popup_panel: PanelContainer = %PopupPanel
+@onready var popup_title: Label = %PopupTitle
+@onready var popup_text: RichTextLabel = %PopupText
+@onready var popup_options: VBoxContainer = %PopupOptions
+@onready var popup_confirm: Button = %PopupConfirm
+@onready var popup_dismiss: Button = %PopupDismiss
 @onready var console_output: RichTextLabel = %ConsoleOutput
 @onready var console_diagnostics_button: Button = %ConsoleDiagnostics
 @onready var diagnostics_output: RichTextLabel = %DiagnosticsOutput
@@ -266,6 +272,9 @@ var _minimap_visible := false
 ## Set when the socket dropped without the player asking. The next successful
 ## login resynchronises rather than trusting anything from before the drop.
 var _resync_after_reconnect := false
+var _popup_radio_groups: Dictionary = {}
+var _popup_radio_buttons: Dictionary = {}
+var _popup_entries: Dictionary = {}
 var _session_started_msec := 0
 var _experience_snapshot: Dictionary = {}
 var _session_xp_gain: Dictionary = {}
@@ -480,6 +489,9 @@ func _ready() -> void:
 	%SettingsClose.pressed.connect(_close_settings)
 	%ConsoleClose.pressed.connect(_toggle_console)
 	console_diagnostics_button.toggled.connect(_on_console_diagnostics_toggled)
+	popup_confirm.pressed.connect(_on_popup_confirm_pressed)
+	popup_dismiss.pressed.connect(_on_popup_dismiss_pressed)
+	popup_panel.hide()
 	_session_started_msec = Time.get_ticks_msec()
 	_apply_equipment_side()
 	_sync_saved_item_lists()
@@ -1832,7 +1844,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		return
 	if event.is_action_pressed("cancel"):
-		if chat_input.has_focus():
+		if popup_panel.visible:
+			# The popup is modal: it takes the cancel before anything under it.
+			_on_popup_dismiss_pressed()
+		elif chat_input.has_focus():
 			_hide_chat_input()
 		elif settings_panel.visible:
 			_close_settings()
@@ -2232,6 +2247,8 @@ func _on_state_changed(path: StringName) -> void:
 			_sync_selection()
 		&"npc_dialogue":
 			_sync_dialogue()
+		&"popup":
+			_sync_popup()
 		&"trade":
 			_sync_trade()
 		&"storage":
@@ -4278,6 +4295,136 @@ func _send_attack(actor_id: int) -> void:
 	var error: Error = Network.attack_actor(actor_id)
 	if error != OK:
 		push_warning("ATTACK_SOMEONE failed: " + error_string(error))
+
+## A server-driven modal question. The server had no way to ask the player
+## anything at all: DISPLAY_POPUP(83) fell through to an unknown packet and
+## POPUP_REPLY(50) had no encoder.
+##
+## The legacy contract decides the shape: a popup that contains a radio option
+## or a text entry gets a send button and answers when it is pressed; one
+## built only from text options answers the moment a button is clicked and
+## closes, because each option *is* the action.
+func _sync_popup() -> void:
+	for child: Node in popup_options.get_children():
+		child.queue_free()
+	_popup_radio_groups.clear()
+	_popup_entries.clear()
+	if not bool(AppState.popup.get("open", false)):
+		popup_panel.hide()
+		return
+	popup_title.text = str(AppState.popup.get("title", "")).strip_edges()
+	popup_text.text = str(AppState.popup.get("text", ""))
+	var needs_confirm := false
+	var radio_buttons: Dictionary = {}
+	for raw_option: Variant in AppState.popup.get("options", []) as Array:
+		var option: Dictionary = raw_option as Dictionary
+		var option_type: int = int(option.get("option_type", -1))
+		var group: int = int(option.get("group", 0))
+		var label: String = str(option.get("label", ""))
+		match option_type:
+			EloriaProtocol.POPUP_DISPLAY_TEXT:
+				var display := Label.new()
+				display.text = label
+				display.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				popup_options.add_child(display)
+			EloriaProtocol.POPUP_TEXT_OPTION:
+				var action := Button.new()
+				action.text = label
+				action.pressed.connect(_on_popup_option_pressed.bind(
+					group, int(option.get("value", 0))))
+				popup_options.add_child(action)
+			EloriaProtocol.POPUP_RADIO_OPTION:
+				needs_confirm = true
+				var choice := CheckBox.new()
+				choice.text = label
+				choice.toggled.connect(_on_popup_radio_toggled.bind(
+					group, int(option.get("value", 0))))
+				popup_options.add_child(choice)
+				var siblings: Array = radio_buttons.get(group, []) as Array
+				siblings.append(choice)
+				radio_buttons[group] = siblings
+			EloriaProtocol.POPUP_TEXT_ENTRY:
+				needs_confirm = true
+				var prompt := Label.new()
+				prompt.text = label
+				popup_options.add_child(prompt)
+				var entry := LineEdit.new()
+				entry.max_length = 255
+				popup_options.add_child(entry)
+				_popup_entries[group] = entry
+	_popup_radio_buttons = radio_buttons
+	popup_confirm.visible = needs_confirm
+	# A dismissable popup is not the same as an answered one: dismissing sends
+	# nothing, which is what the legacy client does when a popup is closed.
+	popup_dismiss.visible = true
+	_close_panels_for_popup()
+	popup_panel.show()
+	popup_panel.move_to_front()
+
+## The popup is modal, so the windows that own the keyboard or the pointer are
+## closed underneath it rather than left fighting for input.
+func _close_panels_for_popup() -> void:
+	full_map.hide()
+	console_panel.hide()
+	_close_settings()
+	item_lists_panel.hide()
+	_sync_map_viewport_activity()
+
+func _on_popup_radio_toggled(pressed: bool, group: int, value: int) -> void:
+	if not pressed:
+		if int(_popup_radio_groups.get(group, -1)) == value:
+			_popup_radio_groups.erase(group)
+		return
+	_popup_radio_groups[group] = value
+	# One selection per group: the wire carries exactly one answer per group.
+	var index := 0
+	for raw_button: Variant in _popup_radio_buttons.get(group, []) as Array:
+		var button: CheckBox = raw_button as CheckBox
+		var option_value: int = _popup_radio_value(group, index)
+		if option_value != value and button.button_pressed:
+			button.set_pressed_no_signal(false)
+		index += 1
+
+func _popup_radio_value(group: int, index: int) -> int:
+	var seen := 0
+	for raw_option: Variant in AppState.popup.get("options", []) as Array:
+		var option: Dictionary = raw_option as Dictionary
+		if int(option.get("option_type", -1)) != EloriaProtocol.POPUP_RADIO_OPTION:
+			continue
+		if int(option.get("group", 0)) != group:
+			continue
+		if seen == index:
+			return int(option.get("value", 0))
+		seen += 1
+	return -1
+
+func _on_popup_option_pressed(group: int, value: int) -> void:
+	_send_popup_reply({group: value})
+
+func _on_popup_confirm_pressed() -> void:
+	var answers: Dictionary = {}
+	for raw_group: Variant in _popup_radio_groups:
+		answers[int(raw_group)] = int(_popup_radio_groups[raw_group])
+	for raw_group: Variant in _popup_entries:
+		var entry: LineEdit = _popup_entries[raw_group] as LineEdit
+		if is_instance_valid(entry):
+			answers[int(raw_group)] = entry.text
+	_send_popup_reply(answers)
+
+## Dismissing answers nothing. The server asked; declining to answer is a
+## legitimate outcome and must not be reported as a choice.
+func _on_popup_dismiss_pressed() -> void:
+	AppState.close_popup()
+
+func _send_popup_reply(answers: Dictionary) -> void:
+	var popup_id: int = int(AppState.popup.get("popup_id", -1))
+	if popup_id < 0:
+		return
+	var error: Error = Network.popup_reply(popup_id, answers)
+	if error != OK:
+		push_warning("POPUP_REPLY failed: " + error_string(error))
+		return
+	AppState.close_popup()
 
 func _sync_dialogue() -> void:
 	var dialogue: Dictionary = AppState.npc_dialogue

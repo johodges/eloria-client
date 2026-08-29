@@ -801,6 +801,104 @@ func _init() -> void:
 			== "activity_counter_terminator",
 		"short, truncated and unterminated counter packets are rejected")
 
+	# Server popups. The server had no way to ask the player a question:
+	# DISPLAY_POPUP(83) fell through to an unknown packet and POPUP_REPLY(50)
+	# had no encoder at all.
+	var popup_payload: PackedByteArray = PackedByteArray([0, 0, 0])
+	popup_payload.append_array(_sized("Summon Behavior"))
+	popup_payload.append_array(PackedByteArray([0x68, 0x01]))
+	popup_payload.append_array(_sized("Choose how your summons pick targets."))
+	popup_payload.append_array(PackedByteArray([9, 1]))
+	popup_payload.append_array(_sized("Weakest first"))
+	popup_payload.append(0)
+	popup_payload.append_array(PackedByteArray([9, 1]))
+	popup_payload.append_array(_sized("Strongest first"))
+	popup_payload.append(1)
+	popup_payload.append_array(PackedByteArray([1, 2]))
+	popup_payload.append_array(_sized("This applies to every summon."))
+	var popup: Dictionary = EloriaProtocol.decode_server(83, popup_payload)
+	_expect(popup.type == "popup" and int(popup.popup_id) == 0
+		and str(popup.title) == "Summon Behavior" and int(popup.size_hint) == 360
+		and str(popup.text) == "Choose how your summons pick targets."
+		and (popup.options as Array).size() == 3,
+		"a real server popup decodes its id, title, size hint, text and options")
+	var first_option: Dictionary = (popup.options as Array)[0]
+	var third_option: Dictionary = (popup.options as Array)[2]
+	_expect(int(first_option.option_type) == EloriaProtocol.POPUP_RADIO_OPTION
+		and int(first_option.group) == 1 and int(first_option.value) == 0
+		and str(first_option.label) == "Weakest first",
+		"a radio option carries its group and its wire value")
+	_expect(int(third_option.option_type) == EloriaProtocol.POPUP_DISPLAY_TEXT
+		and not third_option.has("value"),
+		"a display-text option carries no value byte")
+	var entry_payload: PackedByteArray = PackedByteArray([7, 0, 0])
+	entry_payload.append_array(_sized("Name"))
+	entry_payload.append_array(PackedByteArray([0, 1]))
+	entry_payload.append_array(_sized("Body"))
+	entry_payload.append_array(PackedByteArray([0, 4]))
+	entry_payload.append_array(_sized("Your answer"))
+	var entry_popup: Dictionary = EloriaProtocol.decode_server(83, entry_payload)
+	_expect(entry_popup.type == "popup" and int(entry_popup.popup_id) == 7
+		and int((entry_popup.options as Array)[0].option_type)
+			== EloriaProtocol.POPUP_TEXT_ENTRY
+		and int((entry_popup.options as Array)[0].group) == 4,
+		"a text-entry option decodes without a value byte")
+	_expect(EloriaProtocol.decode_server(83, PackedByteArray([0, 0, 0, 1, 65])).error
+			== "popup_length"
+		and EloriaProtocol.decode_server(83,
+			PackedByteArray([0, 0, 9, 1, 65, 1, 0, 1, 66])).error == "popup_flags",
+		"a truncated popup and a popup with unsupported flags are both rejected")
+	var bad_option: PackedByteArray = PackedByteArray([0, 0, 0])
+	bad_option.append_array(_sized("T"))
+	bad_option.append_array(PackedByteArray([0, 0]))
+	bad_option.append_array(_sized("B"))
+	bad_option.append_array(PackedByteArray([7, 1]))
+	bad_option.append_array(_sized("X"))
+	_expect(EloriaProtocol.decode_server(83, bad_option).error == "popup_option_type",
+		"an option type the client does not implement is rejected, not guessed")
+	_expect_bytes("popup reply fixture",
+		EloriaProtocol.popup_reply(0, {1: 2}),
+		PackedByteArray([50, 5, 0, 0, 0, 1, 2]))
+	_expect_bytes("popup reply text-entry fixture",
+		EloriaProtocol.popup_reply(7, {4: "Hi"}),
+		PackedByteArray([50, 8, 0, 7, 0, 4, 0, 2, 72, 105]))
+	_expect_bytes("popup reply multi-group fixture",
+		EloriaProtocol.popup_reply(3, {2: 9, 1: 5}),
+		PackedByteArray([50, 7, 0, 3, 0, 1, 5, 2, 9]))
+	_expect_bytes("popup reply with no answer fixture",
+		EloriaProtocol.popup_reply(3, {}),
+		PackedByteArray([50, 3, 0, 3, 0]))
+
+	# The one popup the real server sends today, byte for byte as
+	# protocol.summon_behavior_popup() builds it. The reply this client
+	# produces for it is fed back into the server's own POPUP_REPLY handler by
+	# tests/test_popup_round_trip.py in the server repository.
+	var summon_popup: Dictionary = EloriaProtocol.decode_server(83, _hex(
+		"0000000f53756d6d6f6e204265686176696f7268013943686f6f736520686f7720796f7572"
+		+ "2073756d6d6f6e6564206372656174757265732073686f756c642073656c6563742074617267"
+		+ "6574732e09010d446f206e6f742061747461636b0109011241747461636b206d79206f70706f"
+		+ "6e656e7400090119446f206e6f742061747461636b206d79206f70706f6e656e740209011e41"
+		+ "747461636b206f6e6c792073756d6d6f6e65642063726561747572657303090120446f206e6f"
+		+ "742061747461636b2073756d6d6f6e6564206372656174757265730409010e41747461636b20"
+		+ "61742077696c6c05"))
+	_expect(summon_popup.type == "popup" and int(summon_popup.popup_id) == 0
+		and str(summon_popup.title) == "Summon Behavior"
+		and (summon_popup.options as Array).size() == 6,
+		"the real server's summon-behaviour popup decodes completely")
+	var summon_values: Array[int] = []
+	var summon_groups: Dictionary = {}
+	for raw_summon_option: Variant in summon_popup.options as Array:
+		var summon_option: Dictionary = raw_summon_option as Dictionary
+		_expect(int(summon_option.option_type) == EloriaProtocol.POPUP_RADIO_OPTION,
+			"every summon-behaviour option is a radio option")
+		summon_values.append(int(summon_option.value))
+		summon_groups[int(summon_option.group)] = true
+	_expect(summon_values == [1, 0, 2, 3, 4, 5] and summon_groups.size() == 1,
+		"the six behaviour values arrive in the server's order in one group")
+	_expect_bytes("summon behaviour reply fixture",
+		EloriaProtocol.popup_reply(0, {1: 5}),
+		PackedByteArray([50, 5, 0, 0, 0, 1, 5]))
+
 	# Decoded fields must have a consumer or not be decoded at all.
 	var idle_actor: Dictionary = EloriaProtocol.decode_server(1, _actor_bytes(
 		EloriaProtocol.FRAME_IDLE))
@@ -864,6 +962,20 @@ func _actor_bytes_extended() -> PackedByteArray:
 		0x93, 0x01, 0x07, 0x84, 0x00, 0x84, 0x00, 0x05])
 	payload.append_array(_nul_bytes("Lakeglass Drake"))
 	return payload
+
+## The legacy length-prefixed string: one count byte then that many bytes.
+func _hex(value: String) -> PackedByteArray:
+	var bytes := PackedByteArray()
+	for index: int in range(0, value.length(), 2):
+		bytes.append(value.substr(index, 2).hex_to_int())
+	return bytes
+
+## The legacy length-prefixed string: one count byte then that many bytes.
+func _sized(value: String) -> PackedByteArray:
+	var bytes: PackedByteArray = value.to_utf8_buffer()
+	var sized: PackedByteArray = PackedByteArray([bytes.size()])
+	sized.append_array(bytes)
+	return sized
 
 func _padded_name(value: String, size: int) -> PackedByteArray:
 	var bytes: PackedByteArray = value.to_utf8_buffer()

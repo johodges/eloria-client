@@ -199,6 +199,32 @@ static func cast_spell(sigils: Array[int]) -> PackedByteArray:
 		payload.append(sigil_id)
 	return encode(ClientMessage.CAST_SPELL, payload)
 
+## Answers a server popup. `answers` maps a group id to either an integer
+## option value or a string typed into a text entry; the legacy layout is
+## `popup_id:u16le` then, per answered group, `group:u8 | value:u8` for a
+## choice or `group:u8 | 0:u8 | length:u8 | text` for an entry. A group the
+## player left unanswered is simply absent, which is how the legacy client
+## reports "no selection" too.
+static func popup_reply(popup_id: int, answers: Dictionary) -> PackedByteArray:
+	var payload: PackedByteArray = PackedByteArray([
+		popup_id & 0xff, (popup_id >> 8) & 0xff])
+	var groups: Array = answers.keys()
+	groups.sort()
+	for raw_group: Variant in groups:
+		var group: int = int(raw_group)
+		assert(group >= 0 and group <= 255)
+		var answer: Variant = answers[raw_group]
+		if answer is String:
+			var text: PackedByteArray = (answer as String).to_utf8_buffer().slice(0, 255)
+			payload.append(group)
+			payload.append(0)
+			payload.append(text.size())
+			payload.append_array(text)
+		else:
+			payload.append(group)
+			payload.append(int(answer) & 0xff)
+	return encode(ClientMessage.POPUP_REPLY, payload)
+
 static func attack_actor(actor_id: int) -> PackedByteArray:
 	return encode(ClientMessage.ATTACK_SOMEONE, PackedByteArray([
 		actor_id & 0xff, (actor_id >> 8) & 0xff,
@@ -570,6 +596,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return decode_npc_options(payload)
 		ServerMessage.CLOSE_NPC_MENU:
 			return {"type": "npc_close"}
+		ServerMessage.DISPLAY_POPUP:
+			return decode_popup(payload)
 		ServerMessage.ELORIA_PERKS:
 			return decode_perks(payload)
 		ServerMessage.ELORIA_ACTIVITY_COUNTERS:
@@ -578,6 +606,73 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "ping_request"}
 		_:
 			return {"type": "unknown", "command": command, "payload": payload}
+
+## A server-driven modal question. Option types are the legacy popup contract:
+## 0 text entry, 1 display text, 8 text option (a button that answers at once),
+## 9 radio option (a choice confirmed with the popup's send button). Options
+## carry a group id; one answer is returned per group.
+const POPUP_TEXT_ENTRY := 0
+const POPUP_DISPLAY_TEXT := 1
+const POPUP_TEXT_OPTION := 8
+const POPUP_RADIO_OPTION := 9
+
+static func decode_popup(payload: PackedByteArray) -> Dictionary:
+	# The legacy client rejects anything too short to hold a one-character
+	# title and a one-character body.
+	if payload.size() <= 5:
+		return {"type": "invalid", "error": "popup_length"}
+	if int(payload[2]) != 0:
+		return {"type": "invalid", "error": "popup_flags"}
+	var popup_id: int = u16(payload)
+	var offset: int = 3
+	var title_result: Dictionary = _sized_string(payload, offset)
+	if title_result.is_empty():
+		return {"type": "invalid", "error": "popup_title"}
+	offset = int(title_result.offset)
+	if offset + 2 > payload.size():
+		return {"type": "invalid", "error": "popup_size_hint"}
+	var size_hint: int = u16(payload, offset)
+	offset += 2
+	var text_result: Dictionary = _sized_string(payload, offset)
+	if text_result.is_empty():
+		return {"type": "invalid", "error": "popup_text"}
+	offset = int(text_result.offset)
+	var options: Array[Dictionary] = []
+	while offset < payload.size():
+		if offset + 2 > payload.size():
+			return {"type": "invalid", "error": "popup_option_header"}
+		var option_type: int = int(payload[offset])
+		var group: int = int(payload[offset + 1])
+		offset += 2
+		if option_type not in [POPUP_TEXT_ENTRY, POPUP_DISPLAY_TEXT,
+				POPUP_TEXT_OPTION, POPUP_RADIO_OPTION]:
+			return {"type": "invalid", "error": "popup_option_type"}
+		var label_result: Dictionary = _sized_string(payload, offset)
+		if label_result.is_empty():
+			return {"type": "invalid", "error": "popup_option_label"}
+		offset = int(label_result.offset)
+		var option: Dictionary = {"option_type": option_type, "group": group,
+			"label": str(label_result.value)}
+		if option_type in [POPUP_TEXT_OPTION, POPUP_RADIO_OPTION]:
+			if offset >= payload.size():
+				return {"type": "invalid", "error": "popup_option_value"}
+			option["value"] = int(payload[offset])
+			offset += 1
+		options.append(option)
+	return {"type": "popup", "popup_id": popup_id, "title": str(title_result.value),
+		"size_hint": size_hint, "text": str(text_result.value), "options": options}
+
+## A length-prefixed string: one count byte then that many bytes. Returns the
+## decoded value and the offset just past it, or an empty dictionary if the
+## payload cannot hold it.
+static func _sized_string(payload: PackedByteArray, offset: int) -> Dictionary:
+	if offset >= payload.size():
+		return {}
+	var length: int = int(payload[offset])
+	if offset + 1 + length > payload.size():
+		return {}
+	return {"value": payload.slice(offset + 1, offset + 1 + length).get_string_from_utf8(),
+		"offset": offset + 1 + length}
 
 ## The player's perks as server state. Names and descriptions are on the wire,
 ## so the client keeps no perk table: the previous implementation asked
