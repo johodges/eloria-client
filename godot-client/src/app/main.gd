@@ -33,6 +33,7 @@ const InteriorCutawayScript := preload("res://src/world/interior_cutaway.gd")
 const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
 const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
+const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 var invasion_assistant_window
 var extension_windows: Control
@@ -138,6 +139,7 @@ var map_light_root: Node3D
 @onready var item_lists_close: Button = %ItemListsClose
 @onready var attack_button: Button = %AttackButton
 @onready var trade_button: Button = %TradeButton
+@onready var look_button: Button = %LookButton
 @onready var trade_panel: Control = %TradePanel
 @onready var trade_partner: Label = %TradePartner
 @onready var trade_source: ItemList = %TradeSource
@@ -225,6 +227,7 @@ var map_object_nodes: Dictionary = {}
 ## Server-placed map markers on the current map, keyed by the server's marker id.
 var map_marker_nodes: Dictionary = {}
 var map_marker_overlay: Control
+var player_info_panel: Control
 ## Server map objects whose tile has no navigation surface beneath it on the
 ## rendered map. Misplaced content rather than a client fault, but silent
 ## unless somebody counts it.
@@ -390,6 +393,8 @@ func _ready() -> void:
 	map_image.add_child(map_marker_overlay)
 	map_marker_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
+	player_info_panel = PlayerInfoPanelScript.new()
+	game_view.add_child(player_info_panel)
 	extension_windows = ExtensionWindowsScript.new()
 	game_view.add_child(extension_windows)
 	extension_windows.configure(item_atlas)
@@ -921,6 +926,17 @@ func _on_attack_button_pressed() -> void:
 	_interaction_mode = "attack"
 	_attack_selected_actor()
 	_sync_hud_button_states(true)
+
+## Asks the server to describe the selected player. The window that opens is
+## the server's reply and nothing else: the client does not remember what it
+## asked about, because the reply names the actor itself.
+func _on_look_button_pressed() -> void:
+	var actor_id: int = AppState.selected_actor_id
+	if not _is_tradeable_player(actor_id, AppState.actors.get(actor_id, {})):
+		return
+	var error: Error = Network.look_at_player(actor_id)
+	if error != OK:
+		push_warning("GET_PLAYER_INFO failed: " + error_string(error))
 
 func _on_trade_button_pressed() -> void:
 	_interaction_mode = "trade"
@@ -1912,6 +1928,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			_on_popup_dismiss_pressed()
 		elif extension_windows != null and extension_windows.close_top():
 			pass
+		elif player_info_panel != null and player_info_panel.is_open():
+			player_info_panel.close()
 		elif chat_input.has_focus():
 			_hide_chat_input()
 		elif settings_panel.visible:
@@ -3639,8 +3657,8 @@ func _sync_hud_button_states(force := false) -> void:
 	# buttons are resolved once and the comparison is now a bitmask.
 	if _hud_state_buttons.is_empty():
 		_hud_state_buttons = [%WalkButton, %MapButton, %SitButton, %AttackButton,
-			%TradeButton, %InventoryButton, %StatsButton, %KnowledgeButton,
-			%ManufacturingButton, %ChatButton, %DisconnectButton]
+			%TradeButton, %LookButton, %InventoryButton, %StatsButton,
+			%KnowledgeButton, %ManufacturingButton, %ChatButton, %DisconnectButton]
 	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
 	var sitting: bool = bool(local_actor.get("sitting", false))
 	var stats_open: bool = stats_panel.visible
@@ -3651,6 +3669,7 @@ func _sync_hud_button_states(force := false) -> void:
 		sitting,
 		_interaction_mode == "attack",
 		_interaction_mode == "trade" or bool(AppState.trade.get("open", false)),
+		bool(AppState.player_info.get("open", false)),
 		inventory_panel.visible,
 		stats_open and stats_tab != 1,
 		stats_open and stats_tab == 1,
@@ -4444,6 +4463,9 @@ func _sync_selection() -> void:
 	attack_button.tooltip_text = ("Attack selected target [A] or Alt-click; the server approaches and validates combat"
 		if can_attack else "Select a living player or creature to attack")
 	var can_trade: bool = _is_tradeable_player(AppState.selected_actor_id, dto)
+	look_button.disabled = not can_trade
+	look_button.tooltip_text = ("Ask the server to describe the selected player"
+		if can_trade else "Select a player to look at")
 	trade_button.disabled = not can_trade
 	trade_button.tooltip_text = ("Request or accept trade with the selected player; both players must be within four tiles"
 		if can_trade else "Select a living player to trade")
@@ -4865,6 +4887,7 @@ func _apply_eloria_art() -> void:
 			%KnowledgeButton: Rect2(96, 0, 32, 32), %AttackButton: Rect2(160, 0, 32, 32),
 			%StatsButton: Rect2(192, 0, 32, 32), %SitButton: Rect2(0, 32, 32, 32),
 			%TradeButton: Rect2(64, 32, 32, 32), %InventoryButton: Rect2(96, 32, 32, 32),
+			%LookButton: Rect2(64, 0, 32, 32),
 			%ManufacturingButton: Rect2(128, 32, 32, 32),
 			%DisconnectButton: Rect2(224, 0, 32, 32), %MapButton: Rect2(128, 128, 32, 32)}
 		for button_value: Variant in _hud_icon_regions:

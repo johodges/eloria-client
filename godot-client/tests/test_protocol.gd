@@ -36,6 +36,7 @@ func _init() -> void:
 		"market_window_v1": EloriaProtocol.ServerMessage.ELORIA_MARKETPLACE_STATE,
 		"merchant_window_v1": EloriaProtocol.ServerMessage.ELORIA_MERCHANT_STATE,
 		"navigation_hud_v1": EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE,
+		"player_info_v1": EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO,
 		"quest_journal_v1": EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE,
 		"special_events_v1": EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE}
 	var capability_probes: Dictionary = {
@@ -53,6 +54,7 @@ func _init() -> void:
 			"5b00fa000000140000005000000000005300",
 		EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE:
 			"000000000000000000",
+		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE: "00"}
 	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
@@ -963,6 +965,28 @@ func _init() -> void:
 			int(truncated[0]), _hex(str(truncated[1])))
 		_expect(rejected.type == "invalid",
 			"a truncated command %d payload is rejected" % int(truncated[0]))
+
+	# Looking at a player. The reply states the actor, the name and the
+	# achievements, so nothing is paired with a remembered request and no
+	# achievement catalog is duplicated in the client.
+	_expect_bytes("look at player fixture", EloriaProtocol.look_at_player(91),
+		PackedByteArray([5, 5, 0, 91, 0, 0, 0]))
+	var described: Dictionary = EloriaProtocol.decode_server(228, _hex(
+		"5b000100416c69636500426567696e6e6572205475746f7269616c00"))
+	_expect(described.type == "player_info" and int(described.actor_id) == 91
+		and str(described.name) == "Alice"
+		and (described.achievements as Array) == ["Beginner Tutorial"],
+		"the player-info reply names the actor and its achievements")
+	var bare: Dictionary = EloriaProtocol.decode_server(228, _hex(
+		"5b000000416c69636500"))
+	_expect(bare.type == "player_info"
+		and (bare.achievements as Array).is_empty(),
+		"a player with nothing earned decodes to an empty list, not a failure")
+	for malformed: Array in [[228, "5b0001"], [228, "5b000200416c69636500"],
+			[228, "5b000000416c6963650000"]]:
+		_expect(EloriaProtocol.decode_server(int(malformed[0]),
+				_hex(str(malformed[1]))).type == "invalid",
+			"a malformed player-info payload is rejected (%s)" % str(malformed[1]))
 
 	# Map markers. The server owns them entirely: 90 places one, 91 takes it
 	# away, and the map is named by the server's own file reference.

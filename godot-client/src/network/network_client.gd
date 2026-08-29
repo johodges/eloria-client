@@ -161,6 +161,9 @@ func harvest(object_id: int) -> Error:
 func use_map_object(object_id: int) -> Error:
 	return send_frame(EloriaProtocol.use_map_object(object_id))
 
+func look_at_player(actor_id: int) -> Error:
+	return send_frame(EloriaProtocol.look_at_player(actor_id))
+
 func look_at_map_object(object_id: int) -> Error:
 	return send_frame(EloriaProtocol.look_at_map_object(object_id))
 

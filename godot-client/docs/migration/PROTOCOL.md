@@ -230,10 +230,10 @@ than claiming nothing: it replaces a working dialogue with a packet that lands
 in the protocol diagnostics panel and nowhere else. The list grows in the same
 commit that lands each window.
 
-The client advertises ten capabilities: `actor16_v1`, `combat_hud_v1`,
+The client advertises eleven capabilities: `actor16_v1`, `combat_hud_v1`,
 `inventory_window_v1`, `item_detail_v1`, `mail_window_v1`, `market_window_v1`,
-`merchant_window_v1`, `navigation_hud_v1`, `quest_journal_v1` and
-`special_events_v1`. `tests/test_protocol.gd` decodes a real payload behind
+`merchant_window_v1`, `navigation_hud_v1`, `player_info_v1`,
+`quest_journal_v1` and `special_events_v1`. `tests/test_protocol.gd` decodes a real payload behind
 each one, so the list cannot outrun the decoders.
 
 `actor16_v1` does **not** gate the 16-bit actor packet. Measured against the
@@ -392,9 +392,24 @@ UTF-8.
 | 225 | Item detail | `image_id:u16 \| quantity:u32 \| equipped:u8 \| name \| category \| equip_type \| description \| stats \| comparison_name \| comparison` |
 | 226 | Inventory state | `gold:u32 \| carried:u32 \| capacity:u32 \| count:u16`, then per row `slot:u8 \| image_id:u16 \| quantity:u32 \| emu:u32 \| flags:u8 \| name \| category` |
 | 227 | Combat HUD | `event:u8 \| target_id:u16 \| player_health:u16 \| player_max:u16 \| target_health:u16 \| target_max:u16 \| recent_damage:u16 \| target_name` |
+| 228 | Player info | `actor_id:u16 \| count:u16 \| name`, then one achievement name per row |
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+
+Command 228 replaces a reply a client could not read on its own. The legacy
+answer to `GET_PLAYER_INFO(5)` is a `You see: <name>` chat line plus
+`SEND_ACHIEVEMENTS(95)`, a 160-bit set with no actor id and no names: a client
+had to pair the bitset with a request it remembered making, and keep its own
+copy of the server's achievement catalog to name the bits. 228 states the
+actor, the name and the achievements together, so the client does neither. A
+client without `player_info_v1` still gets the chat line and the bitset.
+
+`COMBAT_MODE(8)` is defined on both sides and **sent by nothing**: the Eloria
+server has no call site for it. The client does not decode it, because combat
+presentation is already driven by two things the server does send - the actor
+frame, which says whether an actor arrives already in combat, and command 227,
+which states both health bars and the outcome of each exchange.
 
 Command 226 is **enrichment, not inventory**. The authoritative inventory
 packet still owns which slot holds what and how much; 226 adds only the names,

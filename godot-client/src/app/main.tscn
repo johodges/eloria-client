@@ -986,6 +986,14 @@ tooltip_text = "Select a player to trade"
 disabled = true
 text = "Trade"
 
+[node name="LookButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons" unique_id=714975903]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+tooltip_text = "Select a player to look at"
+disabled = true
+text = "Look"
+
 [node name="InventoryButton" type="Button" parent="GameView/Quickbar/QuickRows/Buttons" unique_id=1783261573]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 44)
@@ -2659,6 +2667,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/SitButton" to="." method="_on_sit_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/AttackButton" to="." method="_on_attack_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/TradeButton" to="." method="_on_trade_button_pressed"]
+[connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/LookButton" to="." method="_on_look_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/KnowledgeButton" to="." method="_on_knowledge_button_pressed"]

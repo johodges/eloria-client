@@ -65,6 +65,12 @@ var navigation: Dictionary = {"active": false, "x": 0, "y": 0, "distance": 0,
 	"map_id": "", "label": ""}
 var special_events: Array[String] = []
 
+## The player the server last described, in its own words: who was inspected
+## and what they have earned. Never assembled from a request the client
+## remembers making.
+var player_info: Dictionary = {"open": false, "actor_id": -1, "name": "",
+	"achievements": []}
+
 ## Map markers the server placed, keyed by its marker id. Purely server-stated:
 ## the client never invents one and never removes one the server still holds.
 var map_markers: Dictionary = {}
@@ -143,6 +149,7 @@ func _on_connection_state_changed(value: String) -> void:
 		special_events.clear()
 		map_objects.clear()
 		map_markers.clear()
+		player_info = _empty_player_info()
 		harvest = _empty_harvest_state()
 		popup = _empty_popup_state()
 		perks.clear()
@@ -562,6 +569,11 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			for raw_line: Variant in event.lines:
 				special_events.append(str(raw_line))
 			state_changed.emit(&"special_events")
+		"player_info":
+			player_info = {"open": true, "actor_id": int(event.actor_id),
+				"name": str(event.name),
+				"achievements": (event.achievements as Array).duplicate()}
+			state_changed.emit(&"player_info")
 		"map_marker":
 			map_markers[int(event.marker_id)] = {
 				"marker_id": int(event.marker_id), "x": int(event.x),
@@ -716,6 +728,13 @@ func close_merchant() -> void:
 func close_item_detail() -> void:
 	item_detail = {"open": false}
 	state_changed.emit(&"item_detail")
+
+func close_player_info() -> void:
+	player_info = _empty_player_info()
+	state_changed.emit(&"player_info")
+
+func _empty_player_info() -> Dictionary:
+	return {"open": false, "actor_id": -1, "name": "", "achievements": []}
 
 func _empty_marketplace_state() -> Dictionary:
 	return {"open": false, "gold": 0, "returned_items": 0, "listings": []}

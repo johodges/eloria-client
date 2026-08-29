@@ -56,7 +56,7 @@ enum ServerMessage {
 	ELORIA_QUEST_JOURNAL_STATE = 224, ELORIA_ITEM_DETAIL = 225,
 	ELORIA_INVENTORY_STATE = 226, ELORIA_COMBAT_STATE = 227,
 	ELORIA_MAIL_STATE = 229, ELORIA_NAVIGATION_STATE = 230,
-	ELORIA_SPECIAL_EVENT_STATE = 232,
+	ELORIA_SPECIAL_EVENT_STATE = 232, ELORIA_PLAYER_INFO = 228,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
 }
@@ -148,6 +148,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"market_window_v1",
 	"merchant_window_v1",
 	"navigation_hud_v1",
+	"player_info_v1",
 	"quest_journal_v1",
 	"special_events_v1",
 ]
@@ -245,6 +246,15 @@ static func popup_reply(popup_id: int, answers: Dictionary) -> PackedByteArray:
 static func harvest(object_id: int) -> PackedByteArray:
 	return encode(ClientMessage.HARVEST, PackedByteArray([
 		object_id & 0xff, (object_id >> 8) & 0xff]))
+
+## Asks the server to describe another player. The reply is command 228 for a
+## client with `player_info_v1`, and the legacy text plus `SEND_ACHIEVEMENTS`
+## for one without.
+static func look_at_player(actor_id: int) -> PackedByteArray:
+	var payload := PackedByteArray()
+	payload.resize(4)
+	payload.encode_u32(0, actor_id)
+	return encode(ClientMessage.GET_PLAYER_INFO, payload)
 
 ## Uses a world object - a waygate, a storage cache, a crafting station. The
 ## legacy width for both map-object commands is 32 bits.
@@ -631,6 +641,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "npc_close"}
 		ServerMessage.DISPLAY_POPUP:
 			return decode_popup(payload)
+		ServerMessage.ELORIA_PLAYER_INFO:
+			return decode_player_info(payload)
 		ServerMessage.SEND_MAP_MARKER:
 			return decode_map_marker(payload)
 		ServerMessage.REMOVE_MAP_MARKER:
@@ -985,6 +997,28 @@ const POPUP_TEXT_ENTRY := 0
 const POPUP_DISPLAY_TEXT := 1
 const POPUP_TEXT_OPTION := 8
 const POPUP_RADIO_OPTION := 9
+
+## Command 228. Who the player just looked at, and what they have earned.
+##
+## The legacy reply is a "You see: <name>" chat line plus `SEND_ACHIEVEMENTS`,
+## a bare 160-bit set with no actor id and no names: a client had to pair the
+## bitset with its own outstanding request and carry a second copy of the
+## server's achievement catalog to read it. This states all three.
+static func decode_player_info(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 4:
+		return {"type": "invalid", "error": "player_info_length"}
+	var count: int = u16(payload, 2)
+	var fields: Dictionary = _nul_run(payload, 4, count + 1)
+	if fields.is_empty():
+		return {"type": "invalid", "error": "player_info_text"}
+	if int(fields.offset) != payload.size():
+		return {"type": "invalid", "error": "player_info_trailing"}
+	var values: Array = fields.values as Array
+	var achievements: Array[String] = []
+	for index: int in range(count):
+		achievements.append(str(values[index + 1]))
+	return {"type": "player_info", "actor_id": u16(payload),
+		"name": str(values[0]), "achievements": achievements}
 
 ## Command 90. One map marker the server placed: a waypoint, a quest target or
 ## a tutorial pointer. The map name arrives as the server's own file reference

@@ -1,5 +1,5 @@
 extends SceneTree
-## Rendered evidence for the nine Eloria extension windows.
+## Rendered evidence for the Eloria extension windows.
 ##
 ## The "before" frame in each pair is the HUD as the shipped client left it:
 ## the window did not exist, so the packet that drives it changed nothing on
@@ -79,6 +79,19 @@ func _run() -> void:
 	_expect(_windows.merchant_panel.visible, "the merchant window is on screen")
 	await _capture("extension-merchant.png",
 		"the merchant window that replaces the NPC shop dialogue entirely")
+
+	# Command 228, the tenth extension packet: who the player just looked at.
+	_windows.close_all()
+	_send(228, "5b000100416c69636500426567696e6e6572205475746f7269616c00")
+	await _settle()
+	var info: Control = _main.get("player_info_panel") as Control
+	_expect((info.get_node("PlayerInfo") as Control).visible,
+		"the player-info window is on screen")
+	await _capture("extension-player-info.png",
+		"looking at another player: the actor, the name and the achievements,"
+			+ " all stated in one packet")
+	_app_state.call("close_player_info")
+	await _settle()
 
 	_windows.close_all()
 	_send(222, "00fa000000030000000100070000000c0000002300000058020000140053756"

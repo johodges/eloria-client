@@ -1303,6 +1303,46 @@ func _run() -> void:
 	_expect(not harvest_banner.visible,
 		"a server stop - moving, a full backpack, combat - clears the indicator")
 
+	# Looking at another player. The reply is one packet that names the actor,
+	# so the window is the server's answer rather than a request the client
+	# remembered making.
+	var info_layer: Control = main.get("player_info_panel") as Control
+	var info_panel: PanelContainer = info_layer.get_node("PlayerInfo") as PanelContainer
+	_expect(not info_panel.visible, "the player-info window starts closed")
+	var described := PackedByteArray([0x5b, 0x00, 0x01, 0x00])
+	described.append_array(_nul_bytes("Alice"))
+	described.append_array(_nul_bytes("Beginner Tutorial"))
+	app_state_inventory.call("_on_packet", 228, described)
+	await process_frame
+	_expect(info_panel.visible
+		and (info_layer.get("title") as Label).text == "Alice"
+		and (info_layer.get("body") as RichTextLabel).text.contains(
+			"Beginner Tutorial"),
+		"the window names the player the server described and what they earned")
+	var info_rect: Rect2 = info_panel.get_global_rect()
+	_expect(info_rect.position.x >= 0.0 and info_rect.position.y >= 0.0
+		and info_rect.end.x <= 1280.0 and info_rect.end.y <= 720.0
+		and not info_rect.intersects(right_stats.get_global_rect()),
+		"the player-info window fits 1280x720 clear of the resource rail: %s"
+			% info_rect)
+	var cancel_event: InputEventKey = InputMap.action_get_events(
+		"cancel")[0].duplicate() as InputEventKey
+	cancel_event.pressed = true
+	main.call("_unhandled_input", cancel_event)
+	await process_frame
+	_expect(not info_panel.visible,
+		"cancel closes the player-info window like every other panel")
+	var empty := PackedByteArray([0x5b, 0x00, 0x00, 0x00])
+	empty.append_array(_nul_bytes("Alice"))
+	app_state_inventory.call("_on_packet", 228, empty)
+	await process_frame
+	_expect(info_panel.visible
+		and not (info_layer.get("body") as RichTextLabel).text.contains(
+			"Beginner Tutorial"),
+		"a player with nothing earned is described as such, not left stale")
+	app_state_inventory.call("close_player_info")
+	await process_frame
+
 	# Map markers. The server places every one of them and takes every one of
 	# them away; nothing here decides a marker has been reached.
 	var here: String = EloriaProtocol.map_id_from_reference(

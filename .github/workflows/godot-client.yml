@@ -188,6 +188,7 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/extension-mail.png"
           test -s "$ELORIA_ARTIFACT_DIR/extension-item-detail.png"
           test -s "$ELORIA_ARTIFACT_DIR/extension-merchant.png"
+          test -s "$ELORIA_ARTIFACT_DIR/extension-player-info.png"
           test -s "$ELORIA_ARTIFACT_DIR/extension-marketplace.png"
       - name: Render server-placed map markers
         run: |
