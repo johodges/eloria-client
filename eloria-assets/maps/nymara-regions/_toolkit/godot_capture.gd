@@ -161,6 +161,42 @@ func _init() -> void:
 		sun.rotation_degrees = Vector3(-88.0, 0.0, 0.0)
 	world.add_child(sun)
 
+	# The manifest's own point lights. A sealed package - an interior - is lit by
+	# its lamps, and this harness was instantiating none of them: the frames came
+	# back with the lanterns visible as little orange discs illuminating nothing,
+	# and a reviewer looking at them would conclude the interior was unlit when
+	# what shipped was thirty-odd declared lights. Range and energy come from the
+	# manifest, so a package that tunes its lighting sees the tuning.
+	var lights: Array = []
+	if typeof(manifest_env) == TYPE_DICTIONARY:
+		var parsed_lights: Variant = null
+		var mf := FileAccess.open(package.path_join("world.json"), FileAccess.READ)
+		if mf != null:
+			var manifest_doc: Variant = JSON.parse_string(mf.get_as_text())
+			mf.close()
+			if typeof(manifest_doc) == TYPE_DICTIONARY:
+				parsed_lights = (manifest_doc as Dictionary).get("lights", [])
+		if typeof(parsed_lights) == TYPE_ARRAY:
+			lights = parsed_lights
+	for entry in lights:
+		if typeof(entry) != TYPE_DICTIONARY:
+			continue
+		var spec: Dictionary = entry
+		var at: Variant = spec.get("position", [])
+		if typeof(at) != TYPE_ARRAY or (at as Array).size() != 3:
+			continue
+		var lamp := OmniLight3D.new()
+		lamp.position = Vector3(at[0], at[1], at[2])
+		lamp.omni_range = float(spec.get("range", 9.0))
+		lamp.light_energy = float(spec.get("energy", 1.5))
+		var colour: Variant = spec.get("colour", spec.get("color", [1.0, 0.7, 0.4]))
+		if typeof(colour) == TYPE_ARRAY and (colour as Array).size() >= 3:
+			lamp.light_color = Color(colour[0], colour[1], colour[2])
+		lamp.shadow_enabled = false
+		world.add_child(lamp)
+	if lights.size() > 0:
+		print("[capture] manifest lights=%d" % lights.size())
+
 	var camera := Camera3D.new()
 	camera.far = 2400.0
 	camera.current = true
