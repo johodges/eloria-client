@@ -236,3 +236,31 @@ real server: `actor_packet()` selects `ADD_NEW_ACTOR_EXTENDED(247)` purely from
 type of 401 arrives on the extended packet for a client that has advertised
 nothing at all. The capability is advertised because the client does implement
 the packet, not because anything is withheld without it.
+
+## Keepalive, idle eviction and resync
+
+The client sends `HEART_BEAT(14)` - a zero-payload frame - every 25 seconds
+while connected, matching the legacy cadence. The server records the arrival
+time of every inbound packet and closes a *logged-in* connection that has sent
+nothing for `client_idle_timeout_seconds` (default 90, zero disables the
+sweep). A connection that has not authenticated is not swept.
+
+This exists because a client that vanishes without closing its socket produces
+no FIN: its character would otherwise stay in the server's logged-in set and
+its actor in the world until the kernel gave up, and the player could not
+reconnect to their own character in the meantime. Eviction releases both, so a
+re-login succeeds immediately.
+
+Resync is `SEND_ME_MY_ACTORS(8)`, `SEND_MY_STATS(17)` and
+`SEND_MY_INVENTORY(18)`, which return `ADD_NEW_ENHANCED_ACTOR(51)` for every
+visible actor, `HERE_YOUR_STATS(18)` and `HERE_YOUR_INVENTORY(19)`. Everything
+else the client holds is derived from those three, so they are what a
+connection of doubtful continuity asks for. The client sends all three after
+re-authenticating following a dropped socket.
+
+Reconnection is client-side only and never involves stored credentials. An
+unexpected drop schedules a socket reconnect with backoff (1s, 2s, 4s, 8s,
+15s, then it stops); a disconnect the player asked for schedules nothing. The
+password is cleared from the client the moment it is sent and is never
+retained, so a recovered socket returns the player to the login panel with
+their username preserved rather than signing in on their behalf.

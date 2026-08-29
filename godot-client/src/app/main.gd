@@ -180,6 +180,7 @@ var map_light_root: Node3D
 @onready var chat_input: LineEdit = %ChatInput
 @onready var chat_panel: PanelContainer = $GameView/ChatPanel
 @onready var console_panel: PanelContainer = %ConsolePanel
+@onready var connection_banner: Label = %ConnectionBanner
 @onready var console_output: RichTextLabel = %ConsoleOutput
 @onready var console_diagnostics_button: Button = %ConsoleDiagnostics
 @onready var diagnostics_output: RichTextLabel = %DiagnosticsOutput
@@ -262,6 +263,9 @@ var _store_options_menu: PopupMenu
 var _drop_options_menu: PopupMenu
 var _minimap_menu: PopupMenu
 var _minimap_visible := false
+## Set when the socket dropped without the player asking. The next successful
+## login resynchronises rather than trusting anything from before the drop.
+var _resync_after_reconnect := false
 var _session_started_msec := 0
 var _experience_snapshot: Dictionary = {}
 var _session_xp_gain: Dictionary = {}
@@ -364,6 +368,7 @@ func _ready() -> void:
 			knowledge_catalog.append(str(raw_knowledge_name))
 	Network.connection_state_changed.connect(_on_connection_state_changed)
 	Network.protocol_error.connect(func(message: String): status_label.text = "Protocol error: " + message)
+	Network.reconnect_progress.connect(_on_reconnect_progress)
 	AppState.login_succeeded.connect(_on_login_succeeded)
 	AppState.login_failed.connect(_on_login_failed)
 	AppState.character_created.connect(_on_character_created)
@@ -981,7 +986,9 @@ func _sync_diagnostics() -> void:
 				_elapsed_text(int(failure.get("msec", 0)))])
 	lines.append("
 [b]Connection[/b]")
-	lines.append("  state: %s" % AppState.connection_state)
+	lines.append("  state: %s%s" % [AppState.connection_state,
+		"  (reconnect attempt %d)" % Network.reconnect_attempt()
+		if Network.is_reconnecting() else ""])
 	lines.append("  server clock: %s" % (
 		"%d (synchronised %s ago)" % [AppState.server_timestamp,
 			_elapsed_text(AppState.last_clock_sync_msec)]
@@ -1622,9 +1629,21 @@ func _on_login_succeeded() -> void:
 	var capabilities_error: Error = Network.send_client_capabilities()
 	if capabilities_error != OK:
 		push_warning("#clientcaps failed: " + error_string(capabilities_error))
+	if _resync_after_reconnect:
+		# This session follows a dropped connection, so nothing that arrived
+		# before the drop can be trusted. Ask for the three authoritative
+		# snapshots everything else is derived from.
+		_resync_after_reconnect = false
+		var resync_error: Error = Network.request_resync()
+		if resync_error != OK:
+			push_warning("resync failed: " + error_string(resync_error))
+		else:
+			AppState.append_local_message(
+				"Reconnected. Rebuilding world state from the server.", 3)
 	login_panel.hide()
 	creation_panel.hide()
 	game_view.show()
+	_sync_connection_banner()
 	# Restore the saved minimap visibility. _clear_world_presentation() hides
 	# the frame on disconnect, so this is what brings it back for the next
 	# session rather than leaving the player to press Alt+M every time.
@@ -1645,11 +1664,52 @@ func _on_connection_state_changed(value: String) -> void:
 	connect_button.disabled = value == "connecting"
 	login_button.disabled = value != "connected" or AppState.authenticated
 	new_character_button.disabled = value != "connected" or AppState.authenticated
-	if value == "disconnected" and game_view.visible:
+	var was_in_world: bool = game_view.visible
+	if value == "disconnected" and was_in_world:
 		_clear_world_presentation()
 		game_view.hide()
 		login_panel.show()
 		status_label.text = "Disconnected"
+	if value == "connected" and _resync_after_reconnect:
+		# The socket came back on its own. The password was never retained, so
+		# the player authenticates again; the resync happens once they are back
+		# in the world.
+		status_label.text = "Reconnected. Enter your password to resume."
+		password_edit.grab_focus()
+	_sync_connection_banner()
+
+## The connection state, wherever the player is looking. Anything other than a
+## live authenticated session is worth saying out loud: a silently dead socket
+## looks exactly like a quiet server.
+func _sync_connection_banner() -> void:
+	if connection_banner == null:
+		return
+	var state: String = AppState.connection_state
+	if state == "connected" and AppState.authenticated:
+		connection_banner.hide()
+		return
+	var text: String = ""
+	match state:
+		"reconnecting":
+			text = "Connection lost - reconnecting (attempt %d of %d)…" % [
+				Network.reconnect_attempt(), Network.RECONNECT_DELAYS_MSEC.size()]
+		"connecting":
+			text = "Connecting…"
+		"connected":
+			text = "Connected - not signed in"
+		_:
+			text = "Disconnected"
+	connection_banner.text = text
+	connection_banner.show()
+
+func _on_reconnect_progress(attempt: int, total: int, delay_msec: int) -> void:
+	_resync_after_reconnect = true
+	status_label.text = "Connection lost. Reconnecting in %.1fs (attempt %d of %d)…" % [
+		float(delay_msec) / 1000.0, attempt, total]
+	AppState.append_local_message(
+		"Connection lost. Reconnecting in %.1f seconds (attempt %d of %d)."
+			% [float(delay_msec) / 1000.0, attempt, total], 3)
+	_sync_connection_banner()
 
 func _clear_world_presentation() -> void:
 	for raw_node: Variant in actor_nodes.values():

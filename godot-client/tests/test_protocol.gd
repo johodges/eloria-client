@@ -51,6 +51,18 @@ func _init() -> void:
 		PackedByteArray([0, 7, 0, 72, 101, 108, 108, 111, 0]))
 	_expect_bytes("active channel fixture", EloriaProtocol.set_active_channel(1),
 		PackedByteArray([61, 2, 0, 6]))
+	_expect_bytes("heartbeat fixture",
+		EloriaProtocol.encode(EloriaProtocol.ClientMessage.HEART_BEAT),
+		PackedByteArray([14, 1, 0]))
+	_expect_bytes("resync actors fixture",
+		EloriaProtocol.encode(EloriaProtocol.ClientMessage.SEND_ME_MY_ACTORS),
+		PackedByteArray([8, 1, 0]))
+	_expect_bytes("resync stats fixture",
+		EloriaProtocol.encode(EloriaProtocol.ClientMessage.SEND_MY_STATS),
+		PackedByteArray([17, 1, 0]))
+	_expect_bytes("resync inventory fixture",
+		EloriaProtocol.encode(EloriaProtocol.ClientMessage.SEND_MY_INVENTORY),
+		PackedByteArray([18, 1, 0]))
 	_expect_bytes("locate fixture", EloriaProtocol.locate_me(),
 		PackedByteArray([15, 1, 0]))
 	_expect_bytes("date fixture", EloriaProtocol.get_date(),

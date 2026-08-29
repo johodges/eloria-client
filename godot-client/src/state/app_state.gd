@@ -59,6 +59,9 @@ func _ready() -> void:
 
 func _on_connection_state_changed(value: String) -> void:
 	connection_state = value
+	# "reconnecting" is a waiting state between a drop and the next attempt.
+	# The world was already cleared by the "disconnected" that preceded it, so
+	# it must not clear anything a second time.
 	if value == "disconnected":
 		authenticated = false
 		local_actor_id = -1
