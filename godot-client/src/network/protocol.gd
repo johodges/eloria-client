@@ -59,6 +59,7 @@ enum ServerMessage {
 	ELORIA_INVENTORY_STATE = 226, ELORIA_COMBAT_STATE = 227,
 	ELORIA_MAIL_STATE = 229, ELORIA_NAVIGATION_STATE = 230,
 	ELORIA_SPECIAL_EVENT_STATE = 232, ELORIA_PLAYER_INFO = 228,
+	ELORIA_SPELL_POWER = 231,
 	LOG_IN_OK = 250, LOG_IN_NOT_OK = 251,
 	CREATE_CHAR_OK = 252, CREATE_CHAR_NOT_OK = 253
 }
@@ -152,6 +153,7 @@ const CLIENT_CAPABILITIES: Array[String] = [
 	"navigation_hud_v1",
 	"player_info_v1",
 	"quest_journal_v1",
+	"spell_power_v1",
 	"special_events_v1",
 ]
 
@@ -209,12 +211,17 @@ static func move_inventory_item(source: int, destination: int) -> PackedByteArra
 	return encode(ClientMessage.MOVE_INVENTORY_ITEM, PackedByteArray([
 		clampi(source, 0, 255), clampi(destination, 0, 255)]))
 
-static func cast_spell(sigils: Array[int]) -> PackedByteArray:
+## Casts a spell by its sigils. A power of zero leaves the byte off entirely,
+## which is the legacy frame; anything else appends the fork's trailing power
+## byte, and the server decides whether that power is allowed.
+static func cast_spell(sigils: Array[int], power: int = 0) -> PackedByteArray:
 	assert(sigils.size() >= 2 and sigils.size() <= 6)
 	var payload: PackedByteArray = PackedByteArray([sigils.size()])
 	for sigil_id: int in sigils:
 		assert(sigil_id >= 0 and sigil_id <= 63)
 		payload.append(sigil_id)
+	if power > 0:
+		payload.append(mini(power, 255))
 	return encode(ClientMessage.CAST_SPELL, payload)
 
 ## Answers a server popup. `answers` maps a group id to either an integer
@@ -648,6 +655,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			return {"type": "npc_close"}
 		ServerMessage.DISPLAY_POPUP:
 			return decode_popup(payload)
+		ServerMessage.ELORIA_SPELL_POWER:
+			return decode_spell_power(payload)
 		ServerMessage.ELORIA_PLAYER_INFO:
 			return decode_player_info(payload)
 		ServerMessage.SEND_MAP_MARKER:
@@ -1004,6 +1013,33 @@ const POPUP_TEXT_ENTRY := 0
 const POPUP_DISPLAY_TEXT := 1
 const POPUP_TEXT_OPTION := 8
 const POPUP_RADIO_OPTION := 9
+
+## Command 231. What power each spell effect will be cast at, and the highest
+## the player's Magic level and nexus allow.
+##
+## Both numbers are the server's: `#sp` reports them as chat text, which a
+## client must not parse, and working them out from a levels table would mean
+## keeping a second copy of the server's progression rules.
+static func decode_spell_power(payload: PackedByteArray) -> Dictionary:
+	if payload.size() < 2:
+		return {"type": "invalid", "error": "spell_power_length"}
+	var count: int = u16(payload)
+	var offset: int = 2
+	var effects: Array[Dictionary] = []
+	for _index: int in range(count):
+		if offset + 2 > payload.size():
+			return {"type": "invalid", "error": "spell_power_entry_length"}
+		var preferred: int = int(payload[offset])
+		var limit: int = int(payload[offset + 1])
+		var field: Dictionary = _nul_at(payload, offset + 2)
+		if field.is_empty():
+			return {"type": "invalid", "error": "spell_power_entry_text"}
+		effects.append({"effect": str(field.value), "preferred": preferred,
+			"limit": limit})
+		offset = int(field.offset)
+	if offset != payload.size():
+		return {"type": "invalid", "error": "spell_power_trailing"}
+	return {"type": "spell_power", "effects": effects}
 
 ## Command 228. Who the player just looked at, and what they have earned.
 ##

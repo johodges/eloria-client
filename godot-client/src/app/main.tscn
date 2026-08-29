@@ -1072,6 +1072,29 @@ tooltip_text = "Spell quick slots [Shift+1-6]"
 toggle_mode = true
 text = "S"
 
+[node name="SpellPowerDown" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ModeButtons" unique_id=1170753186]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Cast at a lower power"
+text = "-"
+
+[node name="SpellPowerValue" type="Label" parent="GameView/ItemSpellQuickbar/QuickContent/ModeButtons" unique_id=1170753187]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(34, 24)
+layout_mode = 2
+tooltip_text = "The power the next cast asks for"
+text = "P1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SpellPowerUp" type="Button" parent="GameView/ItemSpellQuickbar/QuickContent/ModeButtons" unique_id=1170753188]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "Cast at a higher power"
+text = "+"
+
 [node name="ItemSlots" type="GridContainer" parent="GameView/ItemSpellQuickbar/QuickContent" unique_id=1143185417]
 unique_name_in_owner = true
 layout_mode = 2
@@ -2668,6 +2691,8 @@ horizontal_alignment = 1
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/AttackButton" to="." method="_on_attack_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/TradeButton" to="." method="_on_trade_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/LookButton" to="." method="_on_look_button_pressed"]
+[connection signal="pressed" from="GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerDown" to="." method="_on_spell_power_down_pressed"]
+[connection signal="pressed" from="GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerUp" to="." method="_on_spell_power_up_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/InventoryButton" to="." method="_on_inventory_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/StatsButton" to="." method="_on_stats_button_pressed"]
 [connection signal="pressed" from="GameView/Quickbar/QuickRows/Buttons/KnowledgeButton" to="." method="_on_knowledge_button_pressed"]

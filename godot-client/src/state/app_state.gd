@@ -65,6 +65,11 @@ var navigation: Dictionary = {"active": false, "x": 0, "y": 0, "distance": 0,
 	"map_id": "", "label": ""}
 var special_events: Array[String] = []
 
+## What power each spell effect will be cast at, and the highest the server
+## allows, keyed by the server's effect name. Entirely server-stated: the
+## client never works a limit out from a level.
+var spell_power: Dictionary = {}
+
 ## The player the server last described, in its own words: who was inspected
 ## and what they have earned. Never assembled from a request the client
 ## remembers making.
@@ -150,6 +155,7 @@ func _on_connection_state_changed(value: String) -> void:
 		map_objects.clear()
 		map_markers.clear()
 		player_info = _empty_player_info()
+		spell_power.clear()
 		harvest = _empty_harvest_state()
 		popup = _empty_popup_state()
 		perks.clear()
@@ -579,6 +585,14 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			for raw_line: Variant in event.lines:
 				special_events.append(str(raw_line))
 			state_changed.emit(&"special_events")
+		"spell_power":
+			spell_power.clear()
+			for raw_effect: Variant in event.effects:
+				var described: Dictionary = raw_effect as Dictionary
+				spell_power[str(described.get("effect", ""))] = {
+					"preferred": int(described.get("preferred", 1)),
+					"limit": int(described.get("limit", 1))}
+			state_changed.emit(&"spell_power")
 		"player_info":
 			player_info = {"open": true, "actor_id": int(event.actor_id),
 				"name": str(event.name),

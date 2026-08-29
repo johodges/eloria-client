@@ -38,6 +38,7 @@ func _init() -> void:
 		"navigation_hud_v1": EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE,
 		"player_info_v1": EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO,
 		"quest_journal_v1": EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE,
+		"spell_power_v1": EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER,
 		"special_events_v1": EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE}
 	var capability_probes: Dictionary = {
 		EloriaProtocol.ServerMessage.ELORIA_COMBAT_STATE:
@@ -55,6 +56,7 @@ func _init() -> void:
 		EloriaProtocol.ServerMessage.ELORIA_NAVIGATION_STATE:
 			"000000000000000000",
 		EloriaProtocol.ServerMessage.ELORIA_PLAYER_INFO: "5b0000004100",
+		EloriaProtocol.ServerMessage.ELORIA_SPELL_POWER: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_QUEST_JOURNAL_STATE: "0000",
 		EloriaProtocol.ServerMessage.ELORIA_SPECIAL_EVENT_STATE: "00"}
 	for capability: String in EloriaProtocol.CLIENT_CAPABILITIES:
@@ -978,6 +980,29 @@ func _init() -> void:
 		"the mask going empty is stated, not implied by silence")
 	_expect(EloriaProtocol.decode_server(78, _hex("4d000004")).type == "invalid",
 		"a truncated actor buff mask is rejected")
+
+	# Spell power. The trailing byte is the fork's addition to the legacy cast
+	# frame; without a power the frame is exactly the legacy one.
+	_expect_bytes("legacy cast fixture", EloriaProtocol.cast_spell([19, 15, 21]),
+		PackedByteArray([39, 5, 0, 3, 19, 15, 21]))
+	_expect_bytes("powered cast fixture",
+		EloriaProtocol.cast_spell([19, 15, 21], 4),
+		PackedByteArray([39, 6, 0, 3, 19, 15, 21, 4]))
+	var powers: Dictionary = EloriaProtocol.decode_server(231, _hex(
+		"0200 0104 736869656c6400 0301 6865616c00".replace(" ", "")))
+	_expect(powers.type == "spell_power"
+		and (powers.effects as Array).size() == 2,
+		"the spell-power state decodes one row per effect")
+	var shield_power: Dictionary = (powers.effects as Array)[0]
+	var heal_power: Dictionary = (powers.effects as Array)[1]
+	_expect(str(shield_power.effect) == "shield"
+		and int(shield_power.preferred) == 1 and int(shield_power.limit) == 4
+		and str(heal_power.effect) == "heal"
+		and int(heal_power.preferred) == 3 and int(heal_power.limit) == 1,
+		"each row carries the effect, the preferred power and the limit")
+	for broken: String in ["02000104", "01000104", "010001047368690000"]:
+		_expect(EloriaProtocol.decode_server(231, _hex(broken)).type == "invalid",
+			"a malformed spell-power payload is rejected (%s)" % broken)
 
 	# Looking at a player. The reply states the actor, the name and the
 	# achievements, so nothing is paired with a remembered request and no

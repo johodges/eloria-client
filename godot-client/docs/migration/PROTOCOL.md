@@ -230,10 +230,10 @@ than claiming nothing: it replaces a working dialogue with a packet that lands
 in the protocol diagnostics panel and nowhere else. The list grows in the same
 commit that lands each window.
 
-The client advertises eleven capabilities: `actor16_v1`, `combat_hud_v1`,
+The client advertises thirteen capabilities: `actor16_v1`, `combat_hud_v1`,
 `inventory_window_v1`, `item_detail_v1`, `mail_window_v1`, `market_window_v1`,
 `merchant_window_v1`, `navigation_hud_v1`, `player_info_v1`,
-`quest_journal_v1` and `special_events_v1`. `tests/test_protocol.gd` decodes a real payload behind
+`quest_journal_v1`, `spell_power_v1` and `special_events_v1`. `tests/test_protocol.gd` decodes a real payload behind
 each one, so the list cannot outrun the decoders.
 
 `actor16_v1` does **not** gate the 16-bit actor packet. Measured against the
@@ -242,6 +242,26 @@ real server: `actor_packet()` selects `ADD_NEW_ACTOR_EXTENDED(247)` purely from
 type of 401 arrives on the extended packet for a client that has advertised
 nothing at all. The capability is advertised because the client does implement
 the packet, not because anything is withheld without it.
+
+## Spell power
+
+`CAST_SPELL(39)` is `count:u8 | sigil...`, and the fork accepts an optional
+trailing `power:u8`. Without that byte the frame is exactly the legacy one and
+the server uses the stored preference; with it, the server sets the preference
+to that power and casts at it, refusing anything above the limit.
+
+Command 231 states both numbers per standardized effect, because both are the
+server's: the preference is stored on the character and the limit comes from
+its Magic level and nexus. An effect the character cannot cast at all is left
+out rather than sent with a limit of zero. The client's stepper is bounded by
+the highest stated limit and each cast is clamped to the limit stated for that
+effect, so no progression rule is duplicated client-side.
+
+**Content defect:** no NPC in the Eloria roster sells a sigil - the roster
+format has no column for it - so `buy_sigil` can never find a seller and
+`CAST_SPELL(39)` always answers "you do not have these sigils". The client's
+spell quickbar is therefore unusable against this content profile, and the
+standardized `#cast` framework is the only working route.
 
 ## Active effects
 
@@ -419,6 +439,7 @@ UTF-8.
 | 226 | Inventory state | `gold:u32 \| carried:u32 \| capacity:u32 \| count:u16`, then per row `slot:u8 \| image_id:u16 \| quantity:u32 \| emu:u32 \| flags:u8 \| name \| category` |
 | 227 | Combat HUD | `event:u8 \| target_id:u16 \| player_health:u16 \| player_max:u16 \| target_health:u16 \| target_max:u16 \| recent_damage:u16 \| target_name` |
 | 228 | Player info | `actor_id:u16 \| count:u16 \| name`, then one achievement name per row |
+| 231 | Spell power | `count:u16`, then per effect `preferred:u8 \| limit:u8 \| effect_name` |
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |

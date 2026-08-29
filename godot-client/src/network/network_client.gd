@@ -149,8 +149,8 @@ func use_inventory_item(slot: int) -> Error:
 func move_inventory_item(source: int, destination: int) -> Error:
 	return send_frame(EloriaProtocol.move_inventory_item(source, destination))
 
-func cast_spell(sigils: Array[int]) -> Error:
-	return send_frame(EloriaProtocol.cast_spell(sigils))
+func cast_spell(sigils: Array[int], power: int = 0) -> Error:
+	return send_frame(EloriaProtocol.cast_spell(sigils, power))
 
 func popup_reply(popup_id: int, answers: Dictionary) -> Error:
 	return send_frame(EloriaProtocol.popup_reply(popup_id, answers))

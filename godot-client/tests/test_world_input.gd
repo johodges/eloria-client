@@ -1303,6 +1303,50 @@ func _run() -> void:
 	_expect(not harvest_banner.visible,
 		"a server stop - moving, a full backpack, combat - clears the indicator")
 
+	# Spell power. Both the preferred power and the ceiling are the server's;
+	# the client asks for a power and never works a limit out from a level.
+	var power_value: Label = main.get_node(
+		"GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerValue") as Label
+	var power_up: Button = main.get_node(
+		"GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerUp") as Button
+	var power_down: Button = main.get_node(
+		"GameView/ItemSpellQuickbar/QuickContent/ModeButtons/SpellPowerDown") as Button
+	main.call("_sync_spells")
+	await process_frame
+	_expect(power_value.text == "P1" and power_up.disabled and power_down.disabled,
+		"with no stated limit the stepper offers nothing to choose")
+	_expect(int(main.call("_cast_power_for", 3)) == 0,
+		"a cast with no stated limit sends the legacy frame, with no power byte")
+	# shield: preferred 1 of 4; heal: preferred 3 of 3.
+	var power_payload := PackedByteArray([2, 0, 1, 4])
+	power_payload.append_array(_nul_bytes("shield"))
+	power_payload.append_array(PackedByteArray([3, 3]))
+	power_payload.append_array(_nul_bytes("heal"))
+	app_state_inventory.call("_on_packet", 231, power_payload)
+	await process_frame
+	_expect(not power_up.disabled and power_down.disabled,
+		"the stepper opens up to the highest limit the server stated")
+	main.call("_on_spell_power_up_pressed")
+	main.call("_on_spell_power_up_pressed")
+	main.call("_on_spell_power_up_pressed")
+	main.call("_on_spell_power_up_pressed")
+	await process_frame
+	_expect(power_value.text == "P4" and power_up.disabled,
+		"the stepper stops at the server's ceiling: " + power_value.text)
+	_expect(int(main.call("_cast_power_for", 3)) == 4
+		and int(main.call("_cast_power_for", 0)) == 3,
+		"each cast is clamped to the limit the server stated for its effect")
+	var shield_tooltip: String = str(main.call("_spell_tooltip",
+		main.get("spell_catalog").call("spell", 3), [] as Array[String], 0))
+	_expect(shield_tooltip.contains("Power 4 of 4"),
+		"the spell tooltip states the power and the ceiling: " + shield_tooltip)
+	main.call("_on_spell_power_down_pressed")
+	main.call("_on_spell_power_down_pressed")
+	main.call("_on_spell_power_down_pressed")
+	await process_frame
+	_expect(power_value.text == "P1" and power_down.disabled,
+		"the stepper stops at one")
+
 	# Active effects. The server states which buffs are on and for how long;
 	# the strip counts down to the moment it stated and shows nothing else.
 	var buff_bar: Control = main.get("active_buff_bar") as Control

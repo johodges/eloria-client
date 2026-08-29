@@ -141,6 +141,9 @@ var map_light_root: Node3D
 @onready var attack_button: Button = %AttackButton
 @onready var trade_button: Button = %TradeButton
 @onready var look_button: Button = %LookButton
+@onready var spell_power_down: Button = %SpellPowerDown
+@onready var spell_power_value: Label = %SpellPowerValue
+@onready var spell_power_up: Button = %SpellPowerUp
 @onready var trade_panel: Control = %TradePanel
 @onready var trade_partner: Label = %TradePartner
 @onready var trade_source: ItemList = %TradeSource
@@ -228,6 +231,9 @@ var map_object_nodes: Dictionary = {}
 ## Server-placed map markers on the current map, keyed by the server's marker id.
 var map_marker_nodes: Dictionary = {}
 var map_marker_overlay: Control
+## The power the next cast asks for. Presentational: the server states what
+## each effect may reach and refuses anything it will not allow.
+var requested_spell_power := 1
 var player_info_panel: Control
 var active_buff_bar: Control
 ## Server map objects whose tile has no navigation surface beneath it on the
@@ -2352,6 +2358,8 @@ func _on_state_changed(path: StringName) -> void:
 			_snap_all_map_objects_to_surface.call_deferred()
 		&"map_markers":
 			_sync_map_markers()
+		&"spell_power":
+			_sync_spells()
 		&"harvest":
 			_sync_harvest_indicator()
 		&"reading":
@@ -4070,6 +4078,7 @@ func _sync_spells() -> void:
 		button.text = ""
 		button.disabled = not reasons.is_empty()
 		button.tooltip_text = _spell_tooltip(definition, reasons, slot)
+	_sync_spell_power_controls()
 	match AppState.pending_spell_target:
 		"actor":
 			spell_status.text = "Select an actor for the spell"
@@ -4083,11 +4092,48 @@ func _spell_tooltip(definition: Dictionary, reasons: Array[String], slot: int) -
 		str(definition.get("description", "")), "Mana: %d  Magic: %d" % [
 			int(definition.get("mana", 0)), int(definition.get("level", 0))],
 		"Shortcut: Shift+%d" % (slot + 1)]
+	var effect: String = str(definition.get("effect", ""))
+	if AppState.spell_power.has(effect):
+		var stated: Dictionary = AppState.spell_power[effect] as Dictionary
+		lines.append("Power %d of %d allowed" % [
+			mini(requested_spell_power, int(stated.get("limit", 1))),
+			int(stated.get("limit", 1))])
 	if reasons.is_empty():
 		lines.append("Ready; the server validates the cast")
 	else:
 		lines.append_array(reasons)
 	return "\n".join(lines)
+
+## The power stepper. Its ceiling is the highest limit the server stated for
+## any effect: the client never works a limit out from a Magic level, and a
+## cast is clamped to the limit the server stated for that effect.
+func _sync_spell_power_controls() -> void:
+	var ceiling: int = 1
+	for raw_effect: Variant in AppState.spell_power:
+		var stated: Dictionary = AppState.spell_power[raw_effect] as Dictionary
+		ceiling = maxi(ceiling, int(stated.get("limit", 1)))
+	requested_spell_power = clampi(requested_spell_power, 1, ceiling)
+	spell_power_value.text = "P%d" % requested_spell_power
+	spell_power_down.disabled = requested_spell_power <= 1
+	spell_power_up.disabled = requested_spell_power >= ceiling
+
+func _on_spell_power_down_pressed() -> void:
+	requested_spell_power = maxi(1, requested_spell_power - 1)
+	_sync_spells()
+
+func _on_spell_power_up_pressed() -> void:
+	requested_spell_power += 1
+	_sync_spells()
+
+## The power this cast asks for: the stepper, clamped to what the server said
+## this effect may reach. With no stated limit the legacy frame is sent, which
+## is the frame without a power byte at all.
+func _cast_power_for(spell_id: int) -> int:
+	var effect: String = spell_catalog.effect_for(spell_id)
+	if not AppState.spell_power.has(effect):
+		return 0
+	var stated: Dictionary = AppState.spell_power[effect] as Dictionary
+	return mini(requested_spell_power, maxi(1, int(stated.get("limit", 1))))
 
 func _spell_result_text(result: Dictionary) -> String:
 	if result.is_empty():
@@ -4118,7 +4164,7 @@ func _cast_spell_slot(slot: int) -> void:
 	var sigils: Array[int] = []
 	for raw_sigil: Variant in sigils_value:
 		sigils.append(int(raw_sigil))
-	var error: Error = Network.cast_spell(sigils)
+	var error: Error = Network.cast_spell(sigils, _cast_power_for(spell_id))
 	if error != OK:
 		push_warning("CAST_SPELL failed: " + error_string(error))
 	else:

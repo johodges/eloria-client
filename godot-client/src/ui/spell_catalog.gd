@@ -51,6 +51,11 @@ func buff(buff_id: int) -> Dictionary:
 func buff_icon(buff_id: int) -> Texture2D:
 	return _icon(int(buff(buff_id).get("icon", -1)))
 
+## The server's own name for what a spell does, where it has one. Power is
+## stated per effect rather than per spell, because several spells share one.
+func effect_for(spell_id: int) -> String:
+	return str(spell(spell_id).get("effect", ""))
+
 func spell(spell_id: int) -> Dictionary:
 	var value: Variant = _spells.get(spell_id)
 	return value as Dictionary if value is Dictionary else {}
