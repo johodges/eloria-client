@@ -164,11 +164,18 @@ so it is a criterion with teeth rather than a formality.
    metre hole. Spawn and portal heights are therefore taken by casting the
    client's own ray against the `Walk_` geometry rather than read out of the
    grid. **The grid itself is still wrong at the cenote's centre** — see below.
-3. **A lathe closing at radius zero leaves a pinhole.** The waygate's platform
-   was a lathe whose profile ends on the axis; the resulting fan of slivers is
-   removed by `drop_degenerate` on export, and the default spawn stands exactly
-   on that axis, so the client grounded it 0.54 m below its own platform. It is
-   a capped cylinder now.
+3. **The region's arrival platform had a hole exactly where the player lands.**
+   The waygate was a lathe whose profile ends on the axis; the pole's sliver fan
+   is removed by `drop_degenerate` on export, leaving a pinhole on the axis -
+   where the default spawn stands. The client grounded the player 0.54 m inside
+   their own platform, and nothing caught it, because the manifest read its
+   spawn height from the terrain too and the check compared two values derived
+   the same wrong way. Replacing the lathe with a capped cylinder then wound the
+   new cap downward, which is worse - Godot's navigation collision is one-sided
+   for raycasts, so the whole platform went invisible rather than just its
+   centre. This is a defect in the region package, not in the insides; it was
+   only found here. Full account and the three changes it took in
+   `../verdant_stair/change-log.md`, item 13.
 
 ## What is not verified
 
