@@ -276,6 +276,9 @@ var _ungrounded_map_objects: Dictionary = {}
 var models: Dictionary = {}
 var actor_type_models: Dictionary = {}
 var npc_looks: Dictionary = {}
+## The models the server's world objects stand as: one per harvest resource and
+## one per interactive role. See `MapObject3D`.
+var world_object_catalog: Dictionary = {}
 var creation_options: Array = []
 var animation_config: Dictionary = {}
 var animation_configs: Dictionary = {}
@@ -550,6 +553,7 @@ func _ready() -> void:
 	models = model_registry.get("models", {})
 	actor_type_models = model_registry.get("actorTypes", {})
 	npc_looks = model_registry.get("npcLooks", {})
+	world_object_catalog = _json("res://data/world/objects.json")
 	creation_options = model_registry.get("creationOptions", [])
 	animation_config = _json("res://data/animations/luminous.json")
 	animation_configs["res://data/animations/luminous.json"] = animation_config
@@ -6284,7 +6288,8 @@ func _sync_map_objects() -> void:
 		if map_object_nodes.has(object_id):
 			continue
 		var map_object := MapObject3D.new()
-		map_object.configure(dto_value as Dictionary, adapter)
+		map_object.configure(dto_value as Dictionary, adapter,
+			world_object_catalog)
 		world_root.add_child(map_object)
 		map_object_nodes[object_id] = map_object
 		_place_map_object_on_surface(map_object)

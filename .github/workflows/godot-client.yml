@@ -41,6 +41,8 @@ jobs:
         run: python3 godot-client/tests/test_native_sounds.py -v
       - name: Validate garment fit registry
         run: python3 godot-client/tests/test_equipment_fit.py -v
+      - name: Validate world object models
+        run: python3 godot-client/tests/test_world_object_models.py -v
       - name: Simulate and time the cape cloth
         run: godot --headless --path godot-client --script res://tests/test_cape_cloth.gd
       - name: Validate creature rigs, skinning and animation

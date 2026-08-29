@@ -1782,6 +1782,33 @@ func _run() -> void:
 	_expect(harvest_node != null
 		and harvest_node.get_node_or_null("MapMarker") != null,
 		"a world object is visible on both map cameras")
+	# The prop, not a ring: the reed bed and the wayfarer's cache stand on the
+	# tile, and the ring is left for the node being harvested.
+	_expect(harvest_node != null and harvest_node.get_node_or_null("Model") != null
+		and harvest_node.model_id == "mirror_reed"
+		and interactive_node != null and interactive_node.get_node_or_null("Model") != null
+		and interactive_node.model_id == "storage",
+		"a world object stands as the resource or the service it is")
+	var harvest_ring: MeshInstance3D = (harvest_node.get_node_or_null("Ring")
+		as MeshInstance3D) if harvest_node != null else null
+	_expect(harvest_ring != null and not harvest_ring.visible,
+		"the placeholder ring is not drawn under a node that has a model")
+	var interactive_marker: MeshInstance3D = (
+		interactive_node.get_node_or_null("MapMarker") as MeshInstance3D
+	) if interactive_node != null else null
+	var interactive_material: StandardMaterial3D = (
+		interactive_marker.mesh.surface_get_material(0) as StandardMaterial3D
+	) if interactive_marker != null else null
+	_expect(interactive_material != null
+		and interactive_material.albedo_color.is_equal_approx(
+			MapObject3D.INTERACTIVE_COLOUR),
+		"an interactive is orange on the map, as the legend says")
+	var map_legend: RichTextLabel = main.get_node(
+		"GameView/FullMap/MapLayout/Sidebar/SidebarContent/MapLegend") as RichTextLabel
+	_expect(map_legend != null and map_legend.text.contains("Harvest node")
+		and map_legend.text.contains("Interactive")
+		and map_legend.text.contains("NPC"),
+		"the legend names every colour the map draws")
 	_expect(harvest_node != null and harvest_node.server_tile == Vector2i(770, 481),
 		"the pick target sits on the tile the server named")
 
@@ -1792,6 +1819,11 @@ func _run() -> void:
 	await process_frame
 	_expect(harvest_banner.visible and harvest_banner.text.contains("Mirror Reed"),
 		"the harvesting indicator names the resource the server reported")
+	_expect(harvest_ring != null and harvest_ring.visible
+		and (harvest_ring.material_override as StandardMaterial3D
+			).albedo_color.is_equal_approx(
+				Color(MapObject3D.ACTIVE_COLOUR, 0.75)),
+		"the ring marks the node the player is harvesting")
 	_expect(harvest_banner.get_global_rect().end.y <= 720.0
 		and harvest_banner.get_global_rect().position.y >= 0.0,
 		"the harvesting indicator fits within 1280x720")
@@ -1800,6 +1832,8 @@ func _run() -> void:
 		"the harvesting indicator does not cover the fixed resource rail")
 	app_state_inventory.call("_on_packet", 237, PackedByteArray([0, 0, 0, 0]))
 	await process_frame
+	_expect(harvest_ring != null and not harvest_ring.visible,
+		"the ring goes away again when the harvest stops")
 	_expect(not harvest_banner.visible,
 		"a server stop - moving, a full backpack, combat - clears the indicator")
 
