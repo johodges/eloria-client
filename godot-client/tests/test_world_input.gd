@@ -1303,6 +1303,47 @@ func _run() -> void:
 	_expect(not harvest_banner.visible,
 		"a server stop - moving, a full backpack, combat - clears the indicator")
 
+	# Active effects. The server states which buffs are on and for how long;
+	# the strip counts down to the moment it stated and shows nothing else.
+	var buff_bar: Control = main.get("active_buff_bar") as Control
+	var buff_row: HBoxContainer = buff_bar.get_node("ActiveBuffRow") as HBoxContainer
+	_expect(buff_row.get_child_count() == 0, "the effect strip starts empty")
+	# Buff 0 for 128 seconds, then buff 22 for 90.
+	app_state_inventory.call("_on_packet", 44, PackedByteArray([0, 128]))
+	app_state_inventory.call("_on_packet", 44, PackedByteArray([22, 90]))
+	await process_frame
+	_expect((buff_bar.call("shown_buff_ids") as Array) == [0, 22],
+		"both effects the server reported are on the strip")
+	var first: Control = buff_row.get_child(0) as Control
+	_expect((first.get_node("BuffName") as Label).text == "Shield"
+		and (first.get_node("BuffRemaining") as Label).text == "128s"
+		and (first.get_node("BuffIcon") as TextureRect).texture != null,
+		"an effect is named, iconned and counted down from the server's duration")
+	var strip_rect: Rect2 = buff_row.get_global_rect()
+	_expect(strip_rect.position.x >= 0.0 and strip_rect.position.y >= 0.0
+		and strip_rect.end.x <= 1280.0 and strip_rect.end.y <= 720.0
+		and not strip_rect.intersects(right_stats.get_global_rect()),
+		"the effect strip fits 1280x720 clear of the resource rail: %s" % strip_rect)
+	app_state_inventory.call("_on_packet", 46, PackedByteArray([0]))
+	await process_frame
+	_expect((buff_bar.call("shown_buff_ids") as Array) == [22],
+		"the server removing an effect takes it off the strip")
+	# A resync list restates the whole set without durations.
+	app_state_inventory.call("_on_packet", 45, PackedByteArray([
+		1, 3, 255, 255, 255, 255, 255, 255, 255, 255]))
+	await process_frame
+	_expect((buff_bar.call("shown_buff_ids") as Array) == [1, 3]
+		and (buff_row.get_child(0).get_node("BuffRemaining") as Label).text.is_empty(),
+		"a resync replaces the set, and states no time to count down")
+	# An effect whose stated time has run out leaves without another packet.
+	app_state_inventory.call("_on_packet", 46, PackedByteArray([1]))
+	app_state_inventory.call("_on_packet", 46, PackedByteArray([3]))
+	app_state_inventory.call("_on_packet", 44, PackedByteArray([0, 0]))
+	await process_frame
+	await process_frame
+	_expect((buff_bar.call("shown_buff_ids") as Array).is_empty(),
+		"an effect the server said would last no time is not shown as active")
+
 	# Looking at another player. The reply is one packet that names the actor,
 	# so the window is the server's answer rather than a request the client
 	# remembered making.

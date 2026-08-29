@@ -966,6 +966,19 @@ func _init() -> void:
 		_expect(rejected.type == "invalid",
 			"a truncated command %d payload is rejected" % int(truncated[0]))
 
+	# Which visible effects an actor is under. The only bit this server sets is
+	# doubled movement speed, and it states the whole mask each time.
+	var hastened: Dictionary = EloriaProtocol.decode_server(78, _hex(
+		"4d00000400 00".replace(" ", "")))
+	_expect(hastened.type == "actor_buffs" and int(hastened.actor_id) == 77
+		and int(hastened.buffs) == EloriaProtocol.ACTOR_BUFF_DOUBLE_SPEED,
+		"an actor buff mask decodes its actor and its bits")
+	_expect(int(EloriaProtocol.decode_server(78,
+			_hex("4d0000000000")).buffs) == 0,
+		"the mask going empty is stated, not implied by silence")
+	_expect(EloriaProtocol.decode_server(78, _hex("4d000004")).type == "invalid",
+		"a truncated actor buff mask is rejected")
+
 	# Looking at a player. The reply states the actor, the name and the
 	# achievements, so nothing is paired with a remembered request and no
 	# achievement catalog is duplicated in the client.

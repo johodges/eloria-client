@@ -474,6 +474,16 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 				_:
 					pending_spell_target = ""
 			state_changed.emit(&"spells")
+		"actor_buffs":
+			# Which visible effects an actor is under, stated per actor. Kept on
+			# the actor rather than in a table of its own, so it disappears with
+			# the actor it describes.
+			var buffed_id: int = int(event.actor_id)
+			if actors.has(buffed_id):
+				var buffed: Dictionary = actors[buffed_id] as Dictionary
+				buffed["buffs"] = int(event.buffs)
+				actors[buffed_id] = buffed
+				state_changed.emit(&"actors")
 		"active_spell":
 			active_spells[int(event.buff_id)] = {
 				"end_msec": Time.get_ticks_msec() + int(event.duration_seconds) * 1000}

@@ -34,6 +34,7 @@ const InvasionAssistantScript := preload("res://src/ui/invasion_assistant.gd")
 const ExtensionWindowsScript := preload("res://src/ui/extension_windows.gd")
 const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
 const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
+const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
 var interior_cutaway: RefCounted = InteriorCutawayScript.new()
 var invasion_assistant_window
 var extension_windows: Control
@@ -228,6 +229,7 @@ var map_object_nodes: Dictionary = {}
 var map_marker_nodes: Dictionary = {}
 var map_marker_overlay: Control
 var player_info_panel: Control
+var active_buff_bar: Control
 ## Server map objects whose tile has no navigation surface beneath it on the
 ## rendered map. Misplaced content rather than a client fault, but silent
 ## unless somebody counts it.
@@ -395,6 +397,9 @@ func _ready() -> void:
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
 	player_info_panel = PlayerInfoPanelScript.new()
 	game_view.add_child(player_info_panel)
+	active_buff_bar = ActiveBuffBarScript.new()
+	game_view.add_child(active_buff_bar)
+	active_buff_bar.configure(spell_catalog)
 	extension_windows = ExtensionWindowsScript.new()
 	game_view.add_child(extension_windows)
 	extension_windows.configure(item_atlas)
@@ -4457,7 +4462,9 @@ func _sync_selection() -> void:
 		selected_target.text = "Target: %s  Health: %d / %d%s" % [
 			str(dto.get("name", "Actor %d" % AppState.selected_actor_id)),
 			int(dto.get("health", 0)), int(dto.get("max_health", 0)),
-			"  [combat]" if bool(dto.get("in_combat", false)) else ""]
+			("  [combat]" if bool(dto.get("in_combat", false)) else "")
+				+ ("  [hastened]" if (int(dto.get("buffs", 0))
+					& EloriaProtocol.ACTOR_BUFF_DOUBLE_SPEED) != 0 else "")]
 	var can_attack: bool = _is_attackable_actor(AppState.selected_actor_id, dto)
 	attack_button.disabled = not can_attack
 	attack_button.tooltip_text = ("Attack selected target [A] or Alt-click; the server approaches and validates combat"

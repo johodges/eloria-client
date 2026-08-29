@@ -3,6 +3,9 @@ extends RefCounted
 
 var default_quick_slots: Array[int] = []
 var _spells: Dictionary = {}
+## Buff ids are a separate namespace from spell ids: the server reports an
+## active effect by buff id, and several spells and potions share one.
+var _buffs: Dictionary = {}
 var _atlas_path := ""
 var _atlas_texture: Texture2D
 var _columns := 8
@@ -11,6 +14,7 @@ var _cell_size := Vector2(64.0, 64.0)
 func configure(config: Dictionary) -> void:
 	default_quick_slots.clear()
 	_spells.clear()
+	_buffs.clear()
 	_atlas_texture = null
 	_atlas_path = str(config.get("atlas", ""))
 	_columns = maxi(1, int(config.get("columns", 8)))
@@ -30,6 +34,23 @@ func configure(config: Dictionary) -> void:
 				var spell: Dictionary = raw_spell as Dictionary
 				_spells[int(spell.get("id", -1))] = spell
 
+	var buffs_value: Variant = config.get("buffs", [])
+	if buffs_value is Array:
+		for raw_buff: Variant in buffs_value:
+			if raw_buff is Dictionary:
+				var buff: Dictionary = raw_buff as Dictionary
+				_buffs[int(buff.get("id", -1))] = buff
+
+## The name and icon for one of the server's buff ids. The server states which
+## buffs are active and for how long; only the label lives here, the same way
+## the spell names and sigil icons already do.
+func buff(buff_id: int) -> Dictionary:
+	var value: Variant = _buffs.get(buff_id)
+	return value as Dictionary if value is Dictionary else {}
+
+func buff_icon(buff_id: int) -> Texture2D:
+	return _icon(int(buff(buff_id).get("icon", -1)))
+
 func spell(spell_id: int) -> Dictionary:
 	var value: Variant = _spells.get(spell_id)
 	return value as Dictionary if value is Dictionary else {}
@@ -38,14 +59,16 @@ func icon_for(spell_id: int) -> Texture2D:
 	var definition: Dictionary = spell(spell_id)
 	if definition.is_empty():
 		return null
+	return _icon(int(definition.get("icon", -1)))
+
+func _icon(icon_id: int) -> Texture2D:
+	if icon_id < 0:
+		return null
 	if _atlas_texture == null:
 		var resource: Resource = load(_atlas_path)
 		if not resource is Texture2D:
 			return null
 		_atlas_texture = resource as Texture2D
-	var icon_id: int = int(definition.get("icon", -1))
-	if icon_id < 0:
-		return null
 	var atlas_texture: AtlasTexture = AtlasTexture.new()
 	atlas_texture.atlas = _atlas_texture
 	atlas_texture.region = Rect2(float(icon_id % _columns) * _cell_size.x,

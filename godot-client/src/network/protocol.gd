@@ -6,6 +6,8 @@ const HEADER_SIZE := 3
 # actor packet; the rest are transient states the server does not spawn into.
 const FRAME_IDLE := 7
 const FRAME_COMBAT_IDLE := 15
+## The only actor-buff bit this server sets: doubled movement speed.
+const ACTOR_BUFF_DOUBLE_SPEED := 1024
 const MAX_PAYLOAD := 65532
 
 enum ClientMessage {
@@ -570,6 +572,11 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 				return {"type": "invalid", "error": "spell_result_length"}
 			return {"type": "spell_result", "status": int(payload[0]),
 				"spell_id": int(payload[1])}
+		ServerMessage.SEND_BUFFS:
+			if payload.size() != 6:
+				return {"type": "invalid", "error": "actor_buffs_length"}
+			return {"type": "actor_buffs", "actor_id": u16(payload),
+				"buffs": u32(payload, 2)}
 		ServerMessage.GET_ACTIVE_SPELL:
 			if payload.size() != 2:
 				return {"type": "invalid", "error": "active_spell_length"}

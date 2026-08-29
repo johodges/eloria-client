@@ -26,5 +26,17 @@
     {"id":17,"name":"Heat Shield","description":"Protects you from heat damage","icon":56,"mana":25,"level":37,"sigils":[19,10,21],"reagents":[{"image_id":56,"quantity":3},{"image_id":55,"quantity":3},{"image_id":51,"quantity":4}]},
     {"id":18,"name":"Cold Shield","description":"Protects you from cold damage","icon":55,"mana":27,"level":38,"sigils":[19,11,21],"reagents":[{"image_id":56,"quantity":3},{"image_id":55,"quantity":3},{"image_id":50,"quantity":4}]},
     {"id":19,"name":"Radiation Shield","description":"Protects you from radiation damage","icon":57,"mana":30,"level":39,"sigils":[19,15,16,21],"reagents":[{"image_id":56,"quantity":3},{"image_id":55,"quantity":3},{"image_id":60,"quantity":4}]}
+  ],
+  "buffs": [
+    {"id":0,"name":"Shield","icon":32},
+    {"id":1,"name":"Magic Protection","icon":42},
+    {"id":3,"name":"Invisibility","icon":43},
+    {"id":17,"name":"Cold Protection","icon":55},
+    {"id":18,"name":"Heat Protection","icon":56},
+    {"id":19,"name":"Radiation Protection","icon":57},
+    {"id":22,"name":"True Sight","icon":39},
+    {"id":23,"name":"Cold Protection","icon":55},
+    {"id":24,"name":"Heat Protection","icon":56},
+    {"id":25,"name":"Radiation Protection","icon":57}
   ]
 }

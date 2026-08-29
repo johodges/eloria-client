@@ -243,6 +243,32 @@ type of 401 arrives on the extended packet for a client that has advertised
 nothing at all. The capability is advertised because the client does implement
 the packet, not because anything is withheld without it.
 
+## Active effects
+
+`GET_ACTIVE_SPELL(44)` is `buff_id:u8 | seconds:u8`, `REMOVE_ACTIVE_SPELL(46)`
+is `buff_id:u8`, and `GET_ACTIVE_SPELL_LIST(45)` is ten buff ids with 255 for
+an empty slot. All three share their command numbers with client-to-server
+storage commands; the direction tells them apart.
+
+Two server defects sat behind this and are fixed in 2.3. `protocol.active_spell`
+referenced a `GET_ACTIVE_SPELL` constant that was never defined, so every
+buff-granting cast raised `NameError` inside the connection handler and killed
+that client's connection silently. And nothing announced an expiry: `has_buff`
+drops an expired effect the next time something asks, so the server was right
+and the client was never told. A two-second sweep now sends
+`REMOVE_ACTIVE_SPELL` when one runs out.
+
+The buff id namespace is the server's; the names are not on the wire. The
+client's spell catalog carries a name and an icon per buff id, the same way it
+already carries spell names and sigil art. Ids this server sets: 0 shield, 1
+magic protection, 3 invisibility, 17/23 cold protection, 18/24 heat
+protection, 19/25 radiation protection, 22 true sight - the duplicate pairs
+are the potion and the spell routes to the same protection.
+
+`SEND_BUFFS(78)` is `actor_id:u16 | buffs:u32`, the visible effects on one
+actor. The only bit this server sets is 1024, doubled movement speed, and it
+states the whole mask each time rather than a change.
+
 ## Map markers
 
 `SEND_MAP_MARKER(90)` is `marker_id:u16 | x:u16 | y:u16 | map_reference |
