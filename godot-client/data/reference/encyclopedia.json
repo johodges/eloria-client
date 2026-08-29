@@ -1,41 +1,241 @@
 {
-  "schema": "eloria.encyclopedia/1",
-  "note": "Original Eloria reference text. Nothing here is copied from another game; every entry describes this server's own rules, and each one names where in the client you can see the same thing happen.",
-  "entries": [
+  "schema": "eloria.encyclopedia/2",
+  "title": "The Eloria Encyclopedia",
+  "note": "IN DEVELOPMENT! Every page here is either original Eloria reference text or is built from the client's own catalogues, so a recipe, spell or book that changes in the data changes here too. Report anything that reads wrongly on the Eloria forum.",
+  "skillNotes": {
+    "attack": "How hard you hit and how often you connect. The server rolls it; the client only shows what it said happened.",
+    "defense": "How often a blow misses you, and how much of one your armour is allowed to soak.",
+    "harvesting": "How quickly you take from a resource node, and which nodes the server will let you start on at all.",
+    "alchemy": "Essences, bars, and the ingredients the rest of the trades are built out of.",
+    "magic": "The ceiling on which spells you may cast, and on the power you may ask for.",
+    "potion": "Everything that ends up in a vial, from the plain healing draught upwards.",
+    "summoning": "Calling a creature to fight beside you, and the stones and flesh it costs.",
+    "manufacturing": "Metal work: armour, weapons, and the plates and rings they are made from.",
+    "crafting": "Rings, medallions and the small worked goods that need a mould.",
+    "engineering": "Devices and traps, and the tools that build them.",
+    "tailoring": "Thread, cloth, dye, and every garment made from them.",
+    "ranging": "Shooting at distance. The server refuses a shot at a target standing too close.",
+    "overall": "Not a trade of its own. It is the sum the server keeps across all the others."
+  },
+  "categories": [
     {
-      "id": "harvesting",
+      "id": "world",
+      "title": "The World",
+      "summary": "Nymara, its hours and its weather",
+      "intro": "Eloria is played on Nymara. The server owns the world and the clock; this client draws what it is told and asks for the rest.",
+      "entries": [
+        {
+          "id": "authority",
+          "title": "What the server decides",
+          "summary": "Why nothing here is a guess",
+          "body": "Every fact in this client came from the server: where you stand, what you carry, what you hit and what hit you. The client picks the artwork and the camera, and nothing else.\n\nThat is worth knowing when a click seems to do nothing. Asking to walk somewhere, to attack someone, or to take from a node is a request. The server answers it, and the answer may be no. What you see on screen is the answer, not the request."
+        },
+        {
+          "id": "time",
+          "title": "Day and night",
+          "summary": "Six real hours to a Nymaran day",
+          "body": "A full day is 360 game minutes and one game minute is one real minute, so the world turns through dawn, noon, dusk and night over six hours.\n\nThe light you see follows the same curve the server uses to decide how far creatures can be seen, so a dark night is dark for both of you.",
+          "facts": [
+            ["Length of a day", "360 game minutes"],
+            ["In real time", "6 hours"],
+            ["Where to see it", "The clock face on the lower HUD"]
+          ]
+        },
+        {
+          "id": "markers",
+          "title": "Marks and waypoints",
+          "summary": "The server's marks and your own",
+          "body": "A waypoint is the server's: it appears on your map and reports the distance as you move.\n\nA mark is your own. It never leaves this client, and it is drawn in a different colour so you can tell your own note from something the world told you."
+        },
+        {
+          "id": "weather",
+          "title": "Weather and light",
+          "summary": "Rain, cloud, and the sky over each map",
+          "body": "Weather belongs to the map you are standing on. The server states it, the client renders it, and it changes the light rather than only the picture.\n\nAn interior does not take the sky's weather. Walking indoors changes what lights you and what you can hear, which is why a doorway can feel like a different time of day."
+        }
+      ]
+    },
+    {
+      "id": "skills",
+      "title": "Skills",
+      "summary": "The thirteen the server keeps for you",
+      "intro": "The server keeps a level and an experience total for each of these. The Statistics window shows all of them at once; the lower HUD shows the one you asked it to follow.",
+      "generate": "skills",
+      "entries": []
+    },
+    {
+      "id": "combat",
+      "title": "Combat",
+      "summary": "Attacking, ranging, and being hit",
+      "intro": "Combat is entirely the server's. This client asks it to start a fight and then reports what came back.",
+      "entries": [
+        {
+          "id": "attacking",
+          "title": "Attacking",
+          "summary": "Three ways to start a fight",
+          "body": "There are three ways to ask for a fight, and all three send the same request.\n\nHold Alt and click a living creature or player. The move icon on the lower HUD turns into the attack icon while Alt is held, so you can see what a click will do before you make it; let Alt go and it turns back.\n\nOr click the attack icon on the HUD. That latches: the icon stays lit and every click attacks until you choose the move icon again, and holding or releasing Alt does not undo it.\n\nOr select a target and press the attack key.\n\nWhatever you choose, the server walks you into reach, decides whether the fight may start, and refuses the ones that may not.",
+          "facts": [
+            ["Hold Alt and click", "attacks without changing mode"],
+            ["Attack icon", "stays on until you pick the move icon"],
+            ["Attack key", "attacks the selected target"]
+          ]
+        },
+        {
+          "id": "ranging",
+          "title": "Ranging",
+          "summary": "Bows, arrows and distance",
+          "body": "A bow and matching ammunition let you attack from a distance. The server refuses a shot at a target standing too close - move away and try again.\n\nEach shot is announced twice: once as an aim, once as the arrow leaving. The damage is resolved by the server and arrives separately."
+        },
+        {
+          "id": "armour",
+          "title": "Armour and damage",
+          "summary": "What a suit is allowed to soak",
+          "body": "Armour is worn in pieces - helm, torso, legs, boots and a shield - and each piece carries its own absorption and its own penalties. A heavy suit soaks more, and costs you accuracy and movement to wear.\n\nWhat a piece absorbs is what the server allows it to take off a blow, not what it will take off every blow. The roll is still the server's."
+        }
+      ]
+    },
+    {
+      "id": "gathering",
       "title": "Harvesting",
-      "body": "Resource nodes belong to the server, not to the scenery. It tells the client which objects on the map can be gathered, what each one yields and what level it needs, so a node you can see is a node the server knows about.\n\nClick a node to start. The server reports that harvesting has begun and reports again when it stops - because you moved, because your backpack filled, or because something interrupted you. The client never decides that you have stopped."
+      "summary": "Taking things out of the ground",
+      "intro": "Everything the trades below are made from starts here.",
+      "entries": [
+        {
+          "id": "harvesting",
+          "title": "Harvesting",
+          "summary": "Nodes, levels, and why you stopped",
+          "body": "Resource nodes belong to the server, not to the scenery. It tells the client which objects on the map can be gathered, what each one yields and what level it needs, so a node you can see is a node the server knows about.\n\nClick a node to start. The server reports that harvesting has begun and reports again when it stops - because you moved, because your backpack filled, or because something interrupted you. The client never decides that you have stopped.",
+          "facts": [
+            ["Started by", "clicking a node the server has described"],
+            ["Stopped by", "moving, a full backpack, or the server"]
+          ]
+        },
+        {
+          "id": "bags",
+          "title": "Bags on the ground",
+          "summary": "What is dropped, and who may take it",
+          "body": "Anything dropped becomes a bag standing on the ground where it fell. Opening one asks the server to describe it; what comes back is its contents at that moment and nothing older.\n\nA bag is not yours. Another player standing over it sees the same bag and can take from it, and the server settles who got what."
+        },
+        {
+          "id": "storage",
+          "title": "Storage",
+          "summary": "What a storage keeper holds for you",
+          "body": "Storage is held by the server, one set of shelves per character, reachable from a storage keeper. Deposits and withdrawals are its decision; the window shows the shelves as they were when it last described them.\n\nCarrying capacity applies on the way out. A withdrawal that would overload you is refused, and the goods stay where they were."
+        }
+      ]
     },
     {
-      "id": "magic",
-      "title": "Sigils and spells",
-      "body": "A spell is a combination of sigils. You must own every sigil a spell names before it can be cast; the Sigils window lists what you own and what each remaining spell still needs.\n\nPower scales a spell's effect and its cost. The server states the power you have chosen and the highest your Magic level and nexus allow, and refuses anything above it."
+      "id": "commerce",
+      "title": "Trade",
+      "summary": "Dealing with players and with the exchange",
+      "intro": "Two ways to move goods between people, both settled by the server.",
+      "entries": [
+        {
+          "id": "trade",
+          "title": "Trading and the exchange",
+          "summary": "Direct trades and the Nymara Exchange",
+          "body": "A direct trade is between two players, and both must accept before anything moves. The server owns every step; the window shows what it has confirmed.\n\nThe Nymara Exchange takes listings and holds both goods and proceeds in escrow until they are collected."
+        },
+        {
+          "id": "prices",
+          "title": "What a thing is worth",
+          "summary": "There is no fixed price list",
+          "body": "Nothing in this encyclopedia states a price. The client is not told one, and a made-up figure would be worse than none.\n\nWhat the pages below do state is what a thing costs to make: its materials, the level it wants, and the food it burns. That is the floor under any price, and it comes from the server's own recipe table."
+        }
+      ]
     },
     {
-      "id": "effects",
-      "title": "Effects on you",
-      "body": "Protective spells and some draughts leave an effect that lasts a while. The strip on the left shows each one with the time the server said it has left.\n\nWhen an effect ends the server says so. The strip does not guess."
+      "id": "alchemy",
+      "title": "Alchemy",
+      "summary": "Essences, bars and raw materials",
+      "intro": "Alchemy turns what is harvested into the essences and bars the other trades consume.",
+      "generate": "recipes:alchemy",
+      "entries": []
     },
     {
-      "id": "ranging",
-      "title": "Ranging",
-      "body": "A bow and matching ammunition let you attack from a distance. The server refuses a shot at a target standing too close - move away and try again.\n\nEach shot is announced twice: once as an aim, once as the arrow leaving. The damage is resolved by the server and arrives separately."
+      "id": "manufacturing",
+      "title": "Manufacturing",
+      "summary": "Armour, weapons and metalwork",
+      "intro": "Metal work. Armour is made in pieces - helm, torso, legs, boots and shield - and the same bars go into the weapons that beat them.",
+      "generate": "recipes:manufacturing",
+      "entries": []
     },
     {
-      "id": "time",
-      "title": "Day and night",
-      "body": "A full day is 360 game minutes and one game minute is one real minute, so the world turns through dawn, noon, dusk and night over six hours.\n\nThe light you see follows the same curve the server uses to decide how far creatures can be seen, so a dark night is dark for both of you."
+      "id": "crafting",
+      "title": "Crafting",
+      "summary": "Rings, medallions and worked goods",
+      "intro": "Crafting wants a mould more often than it wants a fire.",
+      "generate": "recipes:crafting",
+      "entries": []
     },
     {
-      "id": "trade",
-      "title": "Trading and the exchange",
-      "body": "A direct trade is between two players, and both must accept before anything moves. The server owns every step; the window shows what it has confirmed.\n\nThe Nymara Exchange takes listings and holds both goods and proceeds in escrow until they are collected."
+      "id": "engineering",
+      "title": "Engineering",
+      "summary": "Devices, traps and tools",
+      "intro": "Things that are built rather than forged.",
+      "generate": "recipes:engineering",
+      "entries": []
     },
     {
-      "id": "markers",
-      "title": "Marks and waypoints",
-      "body": "A waypoint is the server's: it appears on your map and reports the distance as you move.\n\nA mark is your own. It never leaves this client, and it is drawn in a different colour so you can tell your own note from something the world told you."
+      "id": "potions",
+      "title": "Potions",
+      "summary": "Everything that fills a vial",
+      "intro": "A potion is mixed once and drunk once. What it does is the server's to apply.",
+      "generate": "recipes:potion",
+      "entries": []
+    },
+    {
+      "id": "tailoring",
+      "title": "Tailoring",
+      "summary": "Thread, cloth, dye and clothing",
+      "intro": "The longest recipe list in the client, and the one that most often wants a book first.",
+      "generate": "recipes:tailoring",
+      "entries": []
+    },
+    {
+      "id": "summoning",
+      "title": "Summoning",
+      "summary": "Calling a creature to your side",
+      "intro": "A summoning is paid for in stones and flesh, and the creature that arrives is the server's, not yours.",
+      "generate": "recipes:summoning",
+      "entries": []
+    },
+    {
+      "id": "spells",
+      "title": "Magic",
+      "summary": "Sigils, spells and the effects they leave",
+      "intro": "A spell is a combination of sigils, and the server decides whether you may cast it.",
+      "generate": "spells",
+      "entries": [
+        {
+          "id": "magic",
+          "title": "Sigils and spells",
+          "summary": "How a spell is put together",
+          "body": "A spell is a combination of sigils. You must own every sigil a spell names before it can be cast; the Sigils window lists what you own and what each remaining spell still needs.\n\nPower scales a spell's effect and its cost. The server states the power you have chosen and the highest your Magic level and nexus allow, and refuses anything above it."
+        },
+        {
+          "id": "effects",
+          "title": "Effects on you",
+          "summary": "The strip of icons and what it means",
+          "body": "Protective spells and some draughts leave an effect that lasts a while. The strip on the left shows each one with the time the server said it has left.\n\nWhen an effect ends the server says so. The strip does not guess."
+        }
+      ]
+    },
+    {
+      "id": "books",
+      "title": "Books",
+      "summary": "What must be read before it can be made",
+      "intro": "A book is read once. Until the server records that you have read it, the recipes it teaches are refused however high your level is.",
+      "generate": "books",
+      "entries": []
+    },
+    {
+      "id": "maps",
+      "title": "Maps",
+      "summary": "The regions of Nymara",
+      "intro": "Each region is its own map on the server. Crossing between them is a change of map, not a walk across a seam.",
+      "generate": "maps",
+      "entries": []
     }
   ]
 }

@@ -57,6 +57,24 @@ func icon_for(image_id: int) -> Texture2D:
 		_cell_size.x, _cell_size.y)
 	return atlas_texture
 
+## The atlas file and the rectangle inside it for one item, or an empty
+## dictionary. RichTextLabel's [img region=...] tag needs both as text, and it
+## cannot be handed the AtlasTexture icon_for() builds.
+func icon_source(image_id: int) -> Dictionary:
+	if image_id < 0:
+		return {}
+	var resolved_image_id: int = _resolved_image_id(image_id)
+	if resolved_image_id < 0:
+		return {}
+	var atlas_index: int = floori(float(resolved_image_id) / float(_images_per_atlas))
+	if atlas_index < 0 or atlas_index >= _atlas_paths.size():
+		return {}
+	var local_id: int = resolved_image_id % _images_per_atlas
+	return {"path": _atlas_paths[atlas_index], "region": Rect2(
+		float(local_id % _columns) * _cell_size.x,
+		float(floori(float(local_id) / float(_columns))) * _cell_size.y,
+		_cell_size.x, _cell_size.y)}
+
 func supports(image_id: int) -> bool:
 	var capacity: int = _atlas_paths.size() * _images_per_atlas
 	var painted: int = capacity if _image_count < 0 else mini(_image_count, capacity)
