@@ -327,6 +327,27 @@ func _run() -> void:
 		and right_rail.get_theme_stylebox("panel") is StyleBoxFlat,
 		"the right rail is one bordered bar from the top of the client down"
 			+ " and everything in it is drawn without a box of its own")
+	# Offsets are only a request: a container whose contents need more room
+	# grows past them, which is how the spell column ended up outside the rail
+	# and the stats panel ended up under the clock. Assert the resolved rects.
+	var rail_rect := Rect2(right_rail.global_position, right_rail.size)
+	var stacked: Array[Control] = [
+		main.get_node("GameView/EloriaLogoFrame") as Control, spell_quickbar,
+		right_stats, main.get_node("GameView/ClockFrame") as Control,
+		main.get_node("GameView/CompassFrame") as Control]
+	var spilled := 0
+	var collided := 0
+	var previous_bottom: float = rail_rect.position.y
+	for boxed: Control in stacked + [right_quickbar] as Array[Control]:
+		var box := Rect2(boxed.global_position, boxed.size)
+		if not rail_rect.encloses(box):
+			spilled += 1
+	for boxed: Control in stacked:
+		if boxed.global_position.y < previous_bottom:
+			collided += 1
+		previous_bottom = boxed.global_position.y + boxed.size.y
+	_expect(spilled == 0 and collided == 0,
+		"the rail's contents all fit inside it and none sits on top of another")
 	var spell_middle: float = (spell_quickbar.offset_left
 		+ spell_quickbar.offset_right) * 0.5
 	_expect(right_quickbar.offset_left >= spell_middle

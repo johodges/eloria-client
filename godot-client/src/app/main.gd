@@ -503,7 +503,7 @@ const MINIMAP_DRAG_BORDER := 27.0
 const MAP_MINIMUM_AMBIENT := 0.9
 ## Breathing room inside each bottom-rail icon button, so the painted frame the
 ## icon carries does not touch its neighbour or the panel border.
-const HUD_ICON_PADDING := 3.0
+const HUD_ICON_PADDING := 6.0
 ## How many metres of ground the minimap camera covers, and the bounds the
 ## scroll wheel moves it between.
 const MINIMAP_ZOOM_DEFAULT := 180.0
@@ -6464,6 +6464,22 @@ func _style_right_rail(panel: StyleBoxFlat) -> void:
 			$GameView/ResourceHud as Control, $GameView/ClockFrame as Control,
 			$GameView/CompassFrame as Control]:
 		framed.add_theme_stylebox_override("panel", seamless)
+	# A rail 62 pixels wide has no room for the theme's 4-pixel button padding
+	# four times over: the power row measured 67 and pushed the whole spell
+	# column back out of the rail it is supposed to sit in.
+	var tight: StyleBoxEmpty = StyleBoxEmpty.new()
+	tight.set_content_margin_all(1.0)
+	for control: Button in [%SigilButton as Button, %SpellPowerDown as Button,
+			%SpellPowerUp as Button]:
+		for state: String in ["normal", "hover", "pressed", "disabled", "focus"]:
+			control.add_theme_stylebox_override(state, tight)
+	# The slot placeholders are "S12" and "8", not labels anyone reads. At the
+	# theme size they filled a 26-pixel cell on their own. Read off the scene
+	# rather than the bound arrays, which are filled after the theme is applied.
+	for column: Node in [quick_slot_container as Node, spell_slot_container as Node]:
+		for slot: Node in column.get_children():
+			if slot is Button:
+				(slot as Button).add_theme_font_size_override("font_size", 9)
 
 ## The overhead bars are not the HUD's bars. Eternal Lands draws only the
 ## filled part and a one-pixel black frame, leaving the world visible through
