@@ -170,6 +170,71 @@ class GarmentWindingTest(unittest.TestCase):
         self.assertGreater(seen, 10, "no closed garments were checked")
 
 
+class FootgearGroundTest(unittest.TestCase):
+    """Footwear stands where the bare foot stands, near enough.
+
+    The actor is placed on the ground by its body, not by what it is wearing,
+    so anything a boot puts below the wearer's own sole is boot under the
+    floor.  The shell this replaces hung three centimetres of heel down there,
+    and because its sole was swept along each ring's own axis rather than in
+    world space it arrived in disconnected pieces - parts of it floating above
+    the toes while the back of it sank - which is what made the heel look lower
+    than the foot it was on.
+
+    What is checked here is how far the lowest point of a boot sits below the
+    wearer's own sole, which is the half of it a number can settle.  Whether
+    the sole arrives in one piece is a question about the shell's topology and
+    is left to the authoring tool that builds it.
+    """
+
+    #: How far below the wearer's own sole a boot may reach, in metres. The
+    #: shell this replaces reached 30 mm on a plantigrade foot and 36 on a
+    #: digitigrade one; the authored sole now stands 4 mm proud of the plane
+    #: the bare foot stands on.
+    MAX_SINK = .008
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = json.loads(EQUIPMENT.read_text())
+
+    def _footgear(self):
+        """Every footgear scene, with the rig it was authored on."""
+        for model in self.registry["models"].values():
+            if model.get("attach") != "skinned":
+                continue
+            if str(model.get("skinRegion", "")) != "boots":
+                continue
+            yield scene_path(str(model["scene"])), str(model.get("authoredFor", ""))
+            for variant in (model.get("variants") or {}).values():
+                yield (scene_path(str(variant["scene"])),
+                       str(variant.get("authoredFor", "")))
+
+    def test_footgear_stands_on_the_wearers_own_sole(self) -> None:
+        try:
+            import numpy as np
+        except ImportError:  # pragma: no cover - numpy is a build requirement
+            self.skipTest("numpy is required to read garment geometry")
+        soles: dict[str, float] = {}
+        seen = 0
+        for path, rig in sorted(set(self._footgear())):
+            self.assertTrue(path.is_file(), f"{path} missing")
+            self.assertTrue(rig, f"{path.name} does not name the rig it fits")
+            body = RACES / f"{rig}.glb"
+            self.assertTrue(body.is_file(), f"{body} missing")
+            if rig not in soles:
+                lowest = min(points[:, 1].min()
+                             for points, _ in _mesh_primitives(body))
+                soles[rig] = float(lowest)
+            boot = np.concatenate([points for points, _ in _mesh_primitives(path)])
+            sink = soles[rig] - float(boot[:, 1].min())
+            self.assertLessEqual(
+                sink, self.MAX_SINK,
+                f"{path.name} reaches {sink * 1000:.1f} mm below the sole of "
+                f"{rig}, which puts it through the floor the actor stands on")
+            seen += 1
+        self.assertGreater(seen, 10, "no footgear was checked")
+
+
 def _mesh_primitives(path: Path):
     """POSITION and index arrays of every primitive in a GLB."""
     import struct
