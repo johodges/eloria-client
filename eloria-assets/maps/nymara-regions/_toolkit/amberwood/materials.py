@@ -126,6 +126,77 @@ SPECS: tuple[MaterialSpec, ...] = (
     MaterialSpec("amethyst_brass", "amethyst_brass", roughness=0.36, metallic=0.40),
     MaterialSpec("amethyst_banner", "amethyst_banner", roughness=0.90,
                  double_sided=True),
+    # -- Amethyst Barrens interiors
+    MaterialSpec("amethyst_vault_floor", "amethyst_vault_floor", roughness=0.30,
+                 metallic=0.35),
+
+    # -- Whitehorn interiors. Appended, never inserted.
+    MaterialSpec("whitehorn_silver", "whitehorn_silver", roughness=0.34,
+                 metallic=0.45),
+
+    # -- Verdant Stair. Appended, never inserted: a region pins the material set
+    # it embeds by name, and reordering this tuple would rewrite its GLB.
+    MaterialSpec("verdant_jungle_floor", "verdant_jungle_floor", roughness=0.95),
+    MaterialSpec("verdant_jungle_trail", "verdant_jungle_trail", roughness=0.95),
+    MaterialSpec("verdant_terrace_stone", "verdant_terrace_stone", roughness=0.90),
+    MaterialSpec("verdant_mossy_stone", "verdant_mossy_stone", roughness=0.94),
+    # The one low-roughness ground in the region: rock that is never dry.
+    MaterialSpec("verdant_wet_limestone", "verdant_wet_limestone", roughness=0.52),
+    MaterialSpec("verdant_limestone_cliff", "verdant_limestone_cliff", roughness=0.92),
+    MaterialSpec("verdant_lagoon_sand", "verdant_lagoon_sand", roughness=0.92),
+    MaterialSpec("verdant_fern_glade", "verdant_fern_glade", roughness=0.90),
+    # Jade is a cut stone, not a metal and not verdigris: metallic stays at zero
+    # so it does not go black in a client with no reflection probe, the way the
+    # Amethyst spire caps did.
+    MaterialSpec("verdant_jade", "verdant_jade", roughness=0.44),
+    MaterialSpec("verdant_carved_jade", "verdant_carved_jade", roughness=0.50),
+    MaterialSpec("verdant_rope", "verdant_rope", roughness=0.97),
+    MaterialSpec("verdant_frond", "verdant_frond", roughness=0.86,
+                 alpha_mode="MASK", double_sided=True),
+    MaterialSpec("verdant_vine", "verdant_vine", roughness=0.88,
+                 alpha_mode="MASK", double_sided=True),
+    MaterialSpec("water_lagoon", "water_lagoon", roughness=0.12,
+                 base_color=(1.0, 1.0, 1.0, 0.80), alpha_mode="BLEND"),
+    MaterialSpec("water_cenote", "water_cenote", roughness=0.11,
+                 base_color=(1.0, 1.0, 1.0, 0.78), alpha_mode="BLEND"),
+    # -- Grey Moors. Appended, never inserted: a region pins the material set
+    # it embeds by name, and reordering this tuple would rewrite its GLB.
+    # The region's sea reuses `water_sea`; its bog pools do not, because peat
+    # water is a near-black mirror rather than anything blue.
+    MaterialSpec("grey_heather_moor", "grey_heather_moor", roughness=0.98),
+    MaterialSpec("grey_peat_bog", "grey_peat_bog", roughness=0.74),
+    MaterialSpec("grey_causeway", "grey_causeway", roughness=0.78),
+    MaterialSpec("grey_barrow_turf", "grey_barrow_turf", roughness=0.96),
+    MaterialSpec("grey_moor_granite", "grey_moor_granite", roughness=0.92),
+    MaterialSpec("grey_carved_stone", "grey_carved_stone", roughness=0.88),
+    MaterialSpec("grey_bog_timber", "grey_bog_timber", roughness=0.80),
+    MaterialSpec("grey_drystone", "grey_drystone", roughness=0.96),
+    MaterialSpec("grey_turf_roof", "grey_turf_roof", roughness=0.97),
+    MaterialSpec("grey_dead_bark", "grey_dead_bark", roughness=0.94),
+    # NOT double-sided: the scrub cards carry their own back faces, so both
+    # sides are front faces and Godot does not invert their normals.
+    MaterialSpec("grey_moor_scrub", "grey_moor_scrub", roughness=0.95,
+                 alpha_mode="MASK", double_sided=False),
+    # Bog water is opaque, unlike the region's sea. Peat stain kills every ray
+    # that enters it, and a BLEND surface over a carved basin only showed the
+    # basin through it.
+    MaterialSpec("grey_bog_water", "grey_bog_water", roughness=0.16,
+                 base_color=(0.62, 0.66, 0.62, 1.0)),
+    # The two lights of the region. Emissive rather than any real light source:
+    # the package ships no KHR_lights_punctual, and the client lights the scene
+    # from the manifest's environment block.
+    MaterialSpec("grey_wisp", "grey_wisp", roughness=0.34,
+                 emissive=(0.216, 0.404, 0.520)),
+    MaterialSpec("grey_votive_flame", "grey_votive_flame", roughness=0.42,
+                 emissive=(0.520, 0.320, 0.104)),
+    # The worn moor track reuses the toolkit's packed-earth texture rather than
+    # adding a recipe, but that texture is a warm red clay and read as a dirt
+    # road cut across a cold wet moor. Tinted down and cooled here, which is
+    # what `base_color` is for.
+    MaterialSpec("grey_moor_track", "packed_earth", roughness=0.97,
+                 base_color=(0.52, 0.53, 0.50, 1.0)),
+    # Added for the barrows insides: an ossuary needs bone.
+    MaterialSpec("grey_bone", "grey_bone", roughness=0.86),
 )
 
 BY_NAME = {spec.name: spec for spec in SPECS}
@@ -181,14 +252,51 @@ def build_texture_sets() -> dict[str, T.TextureSet]:
     sets["amethyst_resonant_road"] = T.amethyst_resonant_road(512, seed=521)
     sets["amethyst_storm_rock"] = T.amethyst_storm_rock(512, seed=523)
     sets["amethyst_crystal"] = T.amethyst_crystal(256, seed=541)
+    # Whitehorn
+    sets["whitehorn_silver"] = T.whitehorn_silver(256, seed=601)
     sets["amethyst_pale_stone"] = T.amethyst_pale_stone(512, seed=547)
     sets["amethyst_verdigris"] = T.amethyst_verdigris(256, seed=557)
     sets["amethyst_brass"] = T.amethyst_brass(256, seed=563)
     sets["amethyst_banner"] = T.amethyst_banner(256, seed=569)
+    sets["amethyst_vault_floor"] = T.amethyst_vault_floor(512, seed=577)
+    # Verdant Stair
+    sets["verdant_jungle_floor"] = T.verdant_jungle_floor(512, seed=601)
+    sets["verdant_jungle_trail"] = T.verdant_jungle_trail(512, seed=607)
+    sets["verdant_terrace_stone"] = T.verdant_terrace_stone(512, seed=613)
+    sets["verdant_mossy_stone"] = T.verdant_mossy_stone(512, seed=617)
+    sets["verdant_wet_limestone"] = T.verdant_wet_limestone(512, seed=619)
+    sets["verdant_limestone_cliff"] = T.verdant_limestone_cliff(512, seed=631)
+    sets["verdant_lagoon_sand"] = T.verdant_lagoon_sand(512, seed=641)
+    sets["verdant_fern_glade"] = T.verdant_fern_glade(512, seed=643)
+    sets["verdant_jade"] = T.verdant_jade(512, seed=647)
+    sets["verdant_carved_jade"] = T.verdant_carved_jade(512, seed=653)
+    sets["verdant_rope"] = T.verdant_rope(256, seed=659)
+    sets["verdant_frond"] = T.verdant_frond_atlas(512, seed=661)
+    sets["verdant_vine"] = T.verdant_vine_atlas(512, seed=673)
+    for tone, seed in (("lagoon", 677), ("cenote", 683)):
+        sets[f"water_{tone}"] = T.water_surface(512, seed=seed, tone=tone)
+
+    # -- Grey Moors
+    sets["grey_heather_moor"] = T.grey_heather_moor(512, seed=601)
+    sets["grey_peat_bog"] = T.grey_peat_bog(512, seed=607)
+    sets["grey_causeway"] = T.grey_causeway(512, seed=613)
+    sets["grey_barrow_turf"] = T.grey_barrow_turf(512, seed=617)
+    sets["grey_moor_granite"] = T.grey_moor_granite(512, seed=619)
+    sets["grey_carved_stone"] = T.grey_carved_stone(512, seed=631)
+    sets["grey_bog_timber"] = T.grey_bog_timber(512, seed=641)
+    sets["grey_drystone"] = T.grey_drystone(512, seed=643)
+    sets["grey_turf_roof"] = T.grey_turf_roof(512, seed=647)
+    sets["grey_dead_bark"] = T.grey_dead_bark(512, seed=653)
+    sets["grey_bog_water"] = T.grey_bog_water(512, seed=659)
+    sets["grey_moor_scrub"] = T.grey_moor_scrub(512, seed=661)
+    sets["grey_bone"] = T.grey_bone(512, seed=683)
+    sets["grey_wisp"] = T.grey_wisp(128, seed=673)
+    sets["grey_votive_flame"] = T.grey_votive_flame(128, seed=677)
 
     # trim the maps that do not need to ship at full resolution
     alpha_cut = {"foliage_amber", "foliage_gold", "foliage_rust", "foliage_green",
-                 "foliage_dead", "undergrowth", "woven_cloth", "canvas_awning"}
+                 "foliage_dead", "undergrowth", "woven_cloth", "canvas_awning",
+                 "verdant_frond", "verdant_vine", "grey_moor_scrub"}
     for name, texture_set in sets.items():
         texture_set.compact(orm_size=256, drop_normal=name in alpha_cut,
                             normal_size=256 if name.startswith("water") else None)

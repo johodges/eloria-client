@@ -15,6 +15,7 @@ itself, so items attach at body scale and follow every animation clip.
 from __future__ import annotations
 
 import argparse
+import colorsys
 import copy
 from functools import lru_cache
 import io
@@ -54,6 +55,11 @@ RACES = {
                      "feature_color": (38, 29, 62), "accent": (45, 128, 164),
                      "feature": "crystal",
                      "body_pattern": "none",
+                     # The one human culture on the slim base body.  They are
+                     # written as scholars and field engineers and were
+                     # already the lightest entry in ANATOMY; the physique is
+                     # now in the mesh rather than in a girth multiplier.
+                     "base": "slim",
                      "wardrobe": ((54, 48, 84), (42, 44, 62), (83, 57, 39),
                                    (187, 145, 63))},
     "orun": {"label": "Orun", "color": (184, 139, 105),
@@ -163,8 +169,9 @@ ANATOMY = {
     "glasswarden": {
         "stature": .975,
         "segment": {"clavicle": .95, "thigh": .99},
-        "girth": {"upperarm": .90, "lowerarm": .91, "spine": .95,
-                  "thigh": .95, "calf": .93},
+        # No girth block: BASE_BODIES["slim"] carries this culture's build,
+        # and a uniform per-bone thinning stacked on top of an already
+        # narrower body took the arms from light to spindly.
         "stance": {"neck_01": (7., 0., 0.), "Head": (-4., 0., 0.)},
     },
     # Orun riders: deep chest, heavy thighs, and the bowed, externally
@@ -194,17 +201,36 @@ ANATOMY = {
     # neck is longer and carried forward, counterweighted by the tail.
     "ssarathi": {
         "stature": 1.02,
-        "segment": {"thigh": .86, "calf": 1.12, "foot": 1.55, "ball": 1.30,
+        # The shin is shorter than the first pass gave it.  Length here and
+        # fold at the knee trade against each other -- both lift the ankle --
+        # but a long shin folded hard needs a heavily shortened chain to plant
+        # at rest, and that chain cannot reach the floor once a clip extends
+        # the leg.  This pair puts the ankle 0.235 m up, slightly more
+        # clearance than the original, and plants in every clip.
+        "segment": {"thigh": .86, "calf": 1.06, "foot": 1.55, "ball": 1.30,
                     "neck": 1.32, "spine": .97, "lowerarm": 1.10,
                     "hand": 1.12, "finger": 1.15},
         "girth": {"spine": .93, "upperarm": .88, "lowerarm": .86,
                   "thigh": 1.02, "calf": .88, "foot": .82, "neck": .90},
         "swell": {"hand": .96},
-        # Solved so the ankle sits 0.23 m clear of the ground with the ball
-        # and toe planted: femur forward, shin near vertical, a long
-        # metatarsal dropping steeply, and flat toes.
-        "stance": {"calf_r": (-29., 0., 0.), "foot_r": (6., 0., 0.),
-                   "ball_r": (45., 0., 0.), "ball_leaf_r": (5., 0., 0.),
+        # The ankle stands 0.23 m clear of the ground on a long metatarsal
+        # with the ball and toe planted: femur forward, shin back, a steep
+        # metatarsal, flat toes.
+        #
+        # These angles are solved against the animation library rather than
+        # against the bind pose alone.  `solve_leg_scale` re-solves the chain
+        # for whatever stance it is given, so every stance in this family
+        # already lands the toe correctly in the A-pose -- which is exactly
+        # why the bind pose could not show that the first one was wrong.  A
+        # deeper knee fold needs a shorter chain to plant at rest, and a
+        # shorter chain cannot reach the floor once a run cycle extends the
+        # leg: the previous -29 degrees left the Ssarathi hanging 0.035 m in
+        # the air for the whole of Run_Anime while every other race planted.
+        # Sampled across Idle, Walk, Run, Crouch, Run_Female and
+        # Walk_Backwards, this stance plants in all six and never comes
+        # closer than 0.018 m to the floor from above.
+        "stance": {"calf_r": (-20., 0., 0.), "foot_r": (-6., 0., 0.),
+                   "ball_r": (50., 0., 0.), "ball_leaf_r": (5., 0., 0.),
                    "neck_01": (18., 0., 0.), "Head": (-14., 0., 0.)},
     },
     # Stoneborn carry mineral mass.  Everything is thicker, and the neck is
@@ -235,6 +261,32 @@ ANATOMY = {
         "stance": {"neck_01": (5., 0., 0.), "Head": (-5., 0., 0.)},
     },
 }
+
+# Every race shipped the same greyscaled human eye, so a round mammalian
+# pupil sat inside a reptile muzzle and under a mushroom cap.  `pupil` picks
+# the shape painted into the iris, `iris` its colour, and `brow` tints the
+# eyebrow mesh, which is human hair geometry and reads wrong on a face that is
+# scaled, mineral or fungal.
+#
+# `headwear` lists which of the two optional creation pieces are generated at
+# all.  They are cut from the scalp of the shared body, so on a race with its
+# own head anatomy they intersect it: a Mycelari cap has nowhere to put a hat,
+# and a skullcap clips Votary horns and the Ssarathi crest.  The Glasswarden
+# lens rig sits exactly on the band line.
+RACE_FACE = {
+    "luminous": {},
+    "votary": {"headwear": ("band",)},
+    "glasswarden": {"headwear": ("cap",)},
+    "orun": {},
+    "greyhaven": {},
+    "ssarathi": {"pupil": "slit", "iris": (206, 152, 44),
+                 "brow": (34, 84, 62), "headwear": ()},
+    "stoneborn": {"pupil": "facet", "iris": (96, 198, 210),
+                  "brow": (86, 80, 74), "headwear": ()},
+    "mycelari": {"pupil": "none", "iris": (74, 52, 34),
+                 "brow": (96, 72, 46), "headwear": ()},
+}
+DEFAULT_IRIS = (104, 78, 52)
 
 PLAYER_ACTOR_TYPES = {
     0: "luminous_female", 1: "luminous_male",
@@ -582,13 +634,15 @@ def neutral_texture(path: Path, *, floor: float = .34, size: int = 512) -> bytes
     return encoded.getvalue()
 
 
-@lru_cache(maxsize=16)
-def surface_detail_texture(kind: str, size: int = 512) -> bytes:
-    """Neutral cloth/leather detail that remains compatible with runtime tinting."""
+def _detail_field(kind: str, size: int) -> np.ndarray:
+    """Value field behind the wardrobe detail maps."""
     yy, xx = np.mgrid[0:size, 0:size]
     if kind == "cloth":
-        value = (.86 + np.sin(xx * math.pi) * .035
-                 + np.sin(yy * math.pi) * .028
+        # A real weave.  The first two terms used to be sin(n*pi) on an
+        # integer grid, which is zero to within float error, so "cloth" was
+        # silently just the one diagonal band the third term draws.
+        value = (.86 + np.sin(xx * math.pi / 3.) * .035
+                 + np.sin(yy * math.pi / 3.) * .028
                  + np.sin((xx + yy) * math.pi / 31.) * .020)
     elif kind == "leather":
         grain = (np.sin(xx * .173 + np.sin(yy * .071) * 2.1)
@@ -596,14 +650,372 @@ def surface_detail_texture(kind: str, size: int = 512) -> bytes:
         pores = (((xx * 17 + yy * 29) % 113) < 3) * -.08
         value = .82 + grain + pores
     else:
-        value = (.90 + np.sin((xx + yy) * math.pi / 6.) * .035
-                 + np.sin((xx - yy) * math.pi / 6.) * .025)
-    channel = np.clip(value * 255., 0, 255).astype(np.uint8)
+        # Braided trim.  A twelve-pixel diagonal lattice read as a printed
+        # pattern at gameplay distance rather than as a woven cord.
+        value = (.90 + np.sin((xx + yy) * math.pi / 3.) * .030
+                 + np.sin((xx - yy) * math.pi / 9.) * .018)
+    return value
+
+
+@lru_cache(maxsize=16)
+def surface_detail_texture(kind: str, size: int = 512) -> bytes:
+    """Neutral cloth/leather detail that remains compatible with runtime tinting."""
+    channel = np.clip(_detail_field(kind, size) * 255., 0, 255).astype(np.uint8)
     alpha = np.full((size, size), 255, dtype=np.uint8)
     encoded = io.BytesIO()
     Image.fromarray(np.dstack((channel, channel, channel, alpha)), "RGBA").save(
         encoded, format="PNG", optimize=True)
     return encoded.getvalue()
+
+
+# Relief and roughness window for each wardrobe surface.  The garments had an
+# albedo and nothing else, so cloth, leather and metal trim all answered a
+# light identically -- and the trim, carrying a flat metallic factor with no
+# roughness break at all, blew out into a solid highlight wherever it caught
+# the key.  Equipment was given this treatment already; the player wardrobe
+# was not.
+WARDROBE_SURFACES = {
+    "cloth": {"relief": .20, "rough": (.78, .97)},
+    "leather": {"relief": .38, "rough": (.54, .86)},
+    "trim": {"relief": .34, "rough": (.30, .66)},
+}
+
+
+@lru_cache(maxsize=16)
+def surface_detail_maps(kind: str, size: int = 512) -> tuple[bytes, bytes]:
+    """Normal and metallic-roughness companions to `surface_detail_texture`.
+
+    The metallic channel is left at full so the material's own metallic factor
+    still decides how metallic the trim is; only the roughness is textured.
+    """
+    spec = WARDROBE_SURFACES.get(kind, WARDROBE_SURFACES["cloth"])
+    field = _detail_field(kind, size)
+    span = float(field.max() - field.min())
+    # Roughness wants the full contrast of the pattern...
+    height = (field - field.min()) / span if span > 1e-6 else field * 0.
+
+    # ...but the normal must not.  Stretching a weave that varies by three per
+    # cent of a unit across the full 0..1 range and then differencing it turns
+    # a shirt into chainmail, so the relief is taken from the field's real
+    # amplitude instead of a normalised copy of it.
+    relief = field - float(field.mean())
+    strength = spec["relief"] * size / 64.
+    gx = (np.roll(relief, -1, axis=1) - np.roll(relief, 1, axis=1)) * .5 * strength
+    gy = (np.roll(relief, -1, axis=0) - np.roll(relief, 1, axis=0)) * .5 * strength
+    normal = np.dstack((-gx, -gy, np.ones_like(height)))
+    normal /= np.maximum(np.linalg.norm(normal, axis=2, keepdims=True), 1e-9)
+    encoded = np.clip((normal * .5 + .5) * 255., 0, 255).astype(np.uint8)
+    normal_png = io.BytesIO()
+    Image.fromarray(encoded, "RGB").save(normal_png, format="PNG", optimize=True)
+
+    low, high = spec["rough"]
+    green = np.clip((high - (high - low) * height) * 255., 0, 255).astype(np.uint8)
+    blue = np.full((size, size), 255, dtype=np.uint8)
+    red = np.zeros((size, size), dtype=np.uint8)
+    mr_png = io.BytesIO()
+    Image.fromarray(np.dstack((red, green, blue)), "RGB").save(
+        mr_png, format="PNG", optimize=True)
+    return normal_png.getvalue(), mr_png.getvalue()
+
+
+@lru_cache(maxsize=32)
+def race_eye_texture(path: Path, pupil: str, iris: tuple[int, int, int],
+                     *, floor: float = .62, size: int = 512) -> bytes:
+    """The source eye, repainted with a race-appropriate iris and pupil.
+
+    Every race shipped the same greyscaled human eye, so a round mammalian
+    pupil sat inside a reptile muzzle and under a mushroom cap.  The sclera,
+    lids and lashes are kept from the authored texture -- they carry detail
+    worth having -- and only the iris disc is re-authored.  The iris is
+    located from the source rather than hard-coded, so this stays correct if
+    the Quaternius texture is ever replaced.
+    """
+    image = Image.open(path).convert("RGBA")
+    if max(image.size) > size:
+        image.thumbnail((size, size), Image.Resampling.LANCZOS)
+    source = np.asarray(image).astype(np.float32)
+    height, width = source.shape[:2]
+    luminance = (source[..., :3] * np.array([.2126, .7152, .0722])).sum(axis=2) / 255.
+    base = floor + (1. - floor) * luminance
+    rgb = np.repeat((base * 255.)[..., None], 3, axis=2)
+
+    # The pupil is the darkest thing in the texture; its centroid is the iris.
+    dark = luminance <= np.quantile(luminance, .004)
+    ys, xs = np.nonzero(dark)
+    if len(xs):
+        cx, cy = float(xs.mean()), float(ys.mean())
+    else:
+        cx, cy = width * .45, height * .48
+    iris_radius = width * .098
+    pupil_radius = width * .034
+
+    yy, xx = np.mgrid[0:height, 0:width].astype(np.float32)
+    dx, dy = xx - cx, yy - cy
+    radius = np.hypot(dx, dy)
+    inside = radius <= iris_radius
+    # Radial fibre and a darker limbal ring, so the iris is not a flat disc.
+    angle = np.arctan2(dy, dx)
+    fibre = .78 + .22 * np.sin(angle * 26.)
+    edge = np.clip(1. - (radius / max(iris_radius, 1e-6)) ** 6, 0., 1.)
+    tint = np.asarray(iris, dtype=np.float32)[None, None, :]
+    painted = tint * (fibre * edge * .85 + .30)[..., None]
+    rgb = np.where(inside[..., None], painted, rgb)
+
+    if pupil == "slit":
+        # A vertical lens: full height of the iris, pinched to nothing at top
+        # and bottom.  This is the single clearest reptilian cue on a face.
+        half = np.sqrt(np.clip(1. - (dy / max(iris_radius, 1e-6)) ** 2, 0., 1.))
+        slit = np.abs(dx) <= pupil_radius * .62 * half
+        rgb = np.where((inside & slit)[..., None], np.float32(14.), rgb)
+    elif pupil == "facet":
+        # A cut mineral eye: bright planes and no organic pupil at all.
+        wedge = np.floor(angle / (math.pi / 7.))
+        band = np.floor(radius / max(iris_radius / 3., 1e-6))
+        facet = ((wedge + band) % 2. == 0.)
+        rgb = np.where((inside & facet)[..., None], np.clip(rgb * 1.55, 0, 255), rgb)
+        rgb = np.where((inside & (radius <= pupil_radius * .7))[..., None],
+                       np.float32(24.), rgb)
+    elif pupil == "none":
+        # Fungal eyes are matte and pupil-less; the whole disc goes dark.
+        rgb = np.where(inside[..., None], tint * .34, rgb)
+    else:
+        rgb = np.where((inside & (radius <= pupil_radius))[..., None],
+                       np.float32(16.), rgb)
+
+    out = np.dstack((np.clip(rgb, 0, 255).astype(np.uint8),
+                     source[..., 3].astype(np.uint8)))
+    encoded = io.BytesIO()
+    Image.fromarray(out, "RGBA").save(encoded, format="PNG", optimize=True)
+    return encoded.getvalue()
+
+
+
+
+# ---------------------------------------------------------------------------
+# Race feature surfaces
+#
+# The integrated race features used to be the only materials on a player that
+# carried no maps at all: a base colour factor beside a body with albedo,
+# normal and metallic-roughness textures.  Under the client's real lighting a
+# flat-shaded solid next to a textured surface reads as a plastic prop stuck
+# to a person, which is exactly how scale, stone and fungus were landing.
+#
+# Each surface is authored once as a height field and everything else is
+# derived from it, so the albedo cavities, the normal map and the roughness
+# breakup all describe the same relief instead of drifting apart.  Patterns
+# are integer-hashed or trigonometric rather than drawn from a random
+# generator, and the result is quantised to 8 bits, so the textures are
+# reproducible everywhere the build runs.
+
+def _value_noise(size: int, cells: int, seed: int) -> np.ndarray:
+    """Smooth deterministic value noise on a `cells` grid, tiling seamlessly."""
+    grid = np.arange(cells, dtype=np.int64)
+    gx, gy = np.meshgrid(grid, grid, indexing="xy")
+    key = (gx * 374761393 + gy * 668265263 + seed * 362437) & 0xFFFFFFFF
+    key = (key ^ (key >> 13)) * 1274126177 & 0xFFFFFFFF
+    lattice = ((key ^ (key >> 16)) & 0xFFFF) / 65535.
+    # Bilinear interpolation with a smoothstep fade, wrapping at the edges.
+    position = np.linspace(0., cells, size, endpoint=False)
+    low = np.floor(position).astype(np.int64) % cells
+    high = (low + 1) % cells
+    frac = position - np.floor(position)
+    fade = frac * frac * (3. - 2. * frac)
+    top = (lattice[np.ix_(low, low)] * (1. - fade)[None, :]
+           + lattice[np.ix_(low, high)] * fade[None, :])
+    bottom = (lattice[np.ix_(high, low)] * (1. - fade)[None, :]
+              + lattice[np.ix_(high, high)] * fade[None, :])
+    return top * (1. - fade)[:, None] + bottom * fade[:, None]
+
+
+def _fractal_noise(size: int, octaves: tuple[int, ...], seed: int) -> np.ndarray:
+    """Summed value noise, normalised to 0..1."""
+    total = np.zeros((size, size))
+    amplitude = 1.
+    weight = 0.
+    for index, cells in enumerate(octaves):
+        total += _value_noise(size, cells, seed + index * 17) * amplitude
+        weight += amplitude
+        amplitude *= .5
+    total /= max(weight, 1e-6)
+    span = float(total.max() - total.min())
+    return (total - total.min()) / span if span > 1e-6 else total
+
+
+def _cell_field(size: int, cells: int, seed: int, jitter: float = .42):
+    """Deterministic Worley cells: returns (edge distance, per-cell id value).
+
+    Stone wants hard facet boundaries rather than smooth lumps, so the plating
+    is cut from cell edges instead of being mottled with noise.
+    """
+    axis = np.linspace(0., cells, size, endpoint=False)
+    px, py = np.meshgrid(axis, axis, indexing="xy")
+    best = np.full((size, size), 1e9)
+    second = np.full((size, size), 1e9)
+    owner = np.zeros((size, size))
+    for oy in (-1, 0, 1):
+        for ox in (-1, 0, 1):
+            gx = (np.floor(px).astype(np.int64) + ox)
+            gy = (np.floor(py).astype(np.int64) + oy)
+            key = ((gx % cells) * 374761393 + (gy % cells) * 668265263
+                   + seed * 362437) & 0xFFFFFFFF
+            key = (key ^ (key >> 13)) * 1274126177 & 0xFFFFFFFF
+            jx = ((key >> 4) & 0xFFFF) / 65535.
+            jy = ((key >> 20) & 0xFFFF) / 65535.
+            value = ((key ^ (key >> 9)) & 0xFFFF) / 65535.
+            cx = gx + .5 + (jx - .5) * 2. * jitter
+            cy = gy + .5 + (jy - .5) * 2. * jitter
+            distance = np.hypot(px - cx, py - cy)
+            closer = distance < best
+            second = np.where(closer, best, np.minimum(second, distance))
+            owner = np.where(closer, value, owner)
+            best = np.where(closer, distance, best)
+    return second - best, owner
+
+
+# Height field relief, albedo contrast, normal strength, the roughness window
+# each surface occupies, and metallic.  Metallic is only non-zero where the
+# material really is metal, because a dielectric with a raised metallic factor
+# goes black in a scene without a bright reflection probe.
+FEATURE_SURFACES = {
+    # Overlapping keeled scales.
+    "scaled": {"relief": .55, "albedo": .34, "rough": (.42, .78), "metallic": .0},
+    # Cut stone: hard facet edges, coarse grain, no gloss.
+    "stone": {"relief": .85, "albedo": .40, "rough": (.68, .96), "metallic": .0},
+    # Cap flesh: soft radial fibre with pores.
+    "fungal": {"relief": .38, "albedo": .30, "rough": (.62, .90), "metallic": .0},
+    # Gill lamellae: fine parallel blades.
+    "gill": {"relief": .46, "albedo": .36, "rough": (.70, .94), "metallic": .0},
+    # Horn and claw keratin: growth rings plus longitudinal striation.
+    "keratin": {"relief": .42, "albedo": .28, "rough": (.30, .62), "metallic": .0},
+    # Faceted mineral: sharp planes, glossy.
+    "crystal": {"relief": .62, "albedo": .30, "rough": (.08, .34), "metallic": .0},
+    # Brass instrument fittings on the Glasswarden lens rig.
+    "brass": {"relief": .30, "albedo": .22, "rough": (.22, .48), "metallic": .90},
+    # Ground lens glass.
+    "glass": {"relief": .16, "albedo": .14, "rough": (.04, .18), "metallic": .0},
+}
+
+
+def _surface_height(kind: str, size: int) -> np.ndarray:
+    """The one authored relief every other map for a surface is derived from."""
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float64)
+    u = xx / size
+    v = yy / size
+    if kind == "scaled":
+        # Offset rows of rounded, keeled scales.  Each row is shifted half a
+        # scale so the pattern interlocks the way reptile skin does.
+        rows, columns = 26., 20.
+        row = v * rows
+        shift = (np.floor(row) % 2.) * .5
+        cell_u = (u * columns + shift) % 1. - .5
+        cell_v = row % 1. - .5
+        radius = np.sqrt((cell_u * 1.9) ** 2 + (cell_v * 2.15) ** 2)
+        scale = np.clip(1. - radius, 0., 1.) ** .62
+        keel = np.clip(1. - abs(cell_u) * 3.4, 0., 1.) ** 2 * .22
+        height = scale * .82 + keel
+        height += _fractal_noise(size, (32, 64), 11) * .12
+    elif kind == "stone":
+        edge, owner = _cell_field(size, 9, 3, jitter=.46)
+        # Flat facets with a hard rim: the plate faces stay level and only the
+        # seams between them cut in.
+        facet = np.clip(edge * 3.1, 0., 1.)
+        seam = np.clip(1. - edge * 5.5, 0., 1.) ** 1.6
+        height = facet * (.52 + owner * .48) - seam * .55
+        height += _fractal_noise(size, (16, 48, 96), 5) * .22
+    elif kind == "fungal":
+        # Radial fibre running out from the cap centre, with pores.
+        cx, cy = u - .5, v - .5
+        angle = np.arctan2(cy, cx)
+        radius = np.hypot(cx, cy)
+        fibre = np.sin(angle * 74.) * .5 + .5
+        height = fibre * (.20 + .34 * np.clip(radius * 2.2, 0., 1.))
+        height += _fractal_noise(size, (8, 24, 64), 23) * .58
+        pores = _fractal_noise(size, (96,), 41)
+        height -= np.clip((pores - .70) * 3.4, 0., 1.) * .34
+    elif kind == "gill":
+        blades = np.sin(u * math.pi * 96.) * .5 + .5
+        height = blades ** .70 * .78 + _fractal_noise(size, (24, 64), 31) * .18
+    elif kind == "keratin":
+        rings = np.sin(v * math.pi * 34. + _fractal_noise(size, (8,), 7) * 2.2)
+        stripes = np.sin(u * math.pi * 120.) * .5 + .5
+        height = (rings * .5 + .5) * .46 + stripes * .16
+        height += _fractal_noise(size, (16, 48), 13) * .30
+    elif kind == "crystal":
+        edge, owner = _cell_field(size, 6, 19, jitter=.30)
+        facet = np.clip(edge * 2.6, 0., 1.)
+        height = facet * (.40 + owner * .60)
+        height -= np.clip(1. - edge * 7.0, 0., 1.) ** 2 * .42
+    elif kind == "brass":
+        turned = np.sin(v * math.pi * 150.) * .5 + .5
+        height = turned * .30 + _fractal_noise(size, (12, 40), 3) * .40
+    else:  # glass
+        height = _fractal_noise(size, (6, 16), 29) * .55
+    span = float(height.max() - height.min())
+    return (height - height.min()) / span if span > 1e-6 else height * 0.
+
+
+@lru_cache(maxsize=32)
+def feature_surface_textures(kind: str, size: int = 256) -> tuple[bytes, bytes, bytes]:
+    """Albedo, tangent-space normal and metallic-roughness for a race surface.
+
+    The albedo stays near-neutral so the per-race base colour factor still
+    tints it: these maps add cavity shading and grain, they do not decide hue.
+    """
+    spec = FEATURE_SURFACES.get(kind, FEATURE_SURFACES["stone"])
+    height = _surface_height(kind, size)
+
+    # Albedo: darken the cavities and lift the peaks *around* white, so the
+    # map adds cavity shading without dimming the authored colour.  Centring
+    # this on 208 quietly took 18 per cent off every race feature.
+    shade = 1. + (height - .5) * 2. * spec["albedo"]
+    channel = np.clip(shade * 246., 0, 255).astype(np.uint8)
+    alpha = np.full((size, size), 255, dtype=np.uint8)
+    albedo_png = io.BytesIO()
+    Image.fromarray(np.dstack((channel, channel, channel, alpha)), "RGBA").save(
+        albedo_png, format="PNG", optimize=True)
+
+    # Normal: central-difference gradient of the same relief.  Rolling the
+    # difference keeps the map tileable, which matters because feature UVs are
+    # scaled to world size and therefore repeat.
+    strength = spec["relief"] * size / 64.
+    gx = (np.roll(height, -1, axis=1) - np.roll(height, 1, axis=1)) * .5 * strength
+    gy = (np.roll(height, -1, axis=0) - np.roll(height, 1, axis=0)) * .5 * strength
+    normal = np.dstack((-gx, -gy, np.ones_like(height)))
+    normal /= np.maximum(np.linalg.norm(normal, axis=2, keepdims=True), 1e-9)
+    encoded = np.clip((normal * .5 + .5) * 255., 0, 255).astype(np.uint8)
+    normal_png = io.BytesIO()
+    # No alpha on the normal or metallic-roughness maps: nothing reads it, and
+    # a fourth channel on the least compressible image in the file is pure
+    # weight.
+    Image.fromarray(encoded, "RGB").save(normal_png, format="PNG", optimize=True)
+
+    # Metallic-roughness: glTF reads roughness from green and metallic from
+    # blue.  Rough where the relief is broken, smoother on the raised faces.
+    low, high = spec["rough"]
+    roughness = np.clip(high - (high - low) * height, 0., 1.)
+    green = np.clip(roughness * 255., 0, 255).astype(np.uint8)
+    blue = np.full((size, size), int(round(spec["metallic"] * 255.)), dtype=np.uint8)
+    red = np.zeros((size, size), dtype=np.uint8)
+    mr_png = io.BytesIO()
+    Image.fromarray(np.dstack((red, green, blue)), "RGB").save(
+        mr_png, format="PNG", optimize=True)
+    return albedo_png.getvalue(), normal_png.getvalue(), mr_png.getvalue()
+
+
+# Which surface the primary and accent halves of each race feature are made
+# of.  ShapeMesh material 0 is the primary form, material 1 the accent.
+# One feature texture repeat covers this much of the model, in metres, so a
+# claw and a mushroom cap carry the same physical scale size instead of each
+# stretching one copy of the map over whatever primitive it lands on.
+FEATURE_UV_TILE = .22
+
+FEATURE_MATERIALS = {
+    "horns": ("keratin", "keratin"),
+    "crystal": ("brass", "glass"),
+    "scaled": ("scaled", "keratin"),
+    "stone": ("stone", "crystal"),
+    "fungal": ("fungal", "gill"),
+}
 
 
 def source_texture(document: dict, directory: Path, material_index: int,
@@ -827,6 +1239,159 @@ def shape_matrices(source_bind: np.ndarray, target_bind: np.ndarray,
     return result
 
 
+# ---------------------------------------------------------------------------
+# Base bodies
+#
+# All sixteen rigs derived from the one Quaternius "Superhero" mesh, which is
+# heroic-proportioned and heavy through the chest and shoulders, so the five
+# human cultures were one physique in five colours.  ANATOMY's `girth` can
+# only scale a whole bone uniformly, which cannot tell a rib cage from a
+# pectoral or thin a forearm towards the wrist; turning it up further just
+# made a shrunken heroic body.
+#
+# A base body is a real re-proportioning of the shared mesh instead.  It is a
+# radial field: every vertex is scaled across the bone that drives it, by a
+# factor that tapers along that bone and is further modulated by anatomical
+# zones anchored to named joints, so it works on the male and female
+# skeletons alike without a second set of coordinates.
+#
+# It runs on the source mesh in bind space, *before* the race retarget, and
+# it never moves a vertex along its own bone.  Two consequences matter:
+# garment cuts are still selected from the untouched source body, so no hem
+# moves; and the rig -- hip height, ground contact, the solved leg chain -- is
+# not involved at all, because this changes the mesh and not the skeleton.
+
+BASE_BODIES = {
+    # The Quaternius body exactly as authored.  An empty preset is the
+    # identity: the reshape returns its input untouched, so every race that
+    # uses it is byte-for-byte what it was before base bodies existed.
+    "heroic": {},
+    # Glasswarden field engineers and scholars: a light frame with a narrow
+    # rib cage, little deltoid or pectoral mass, and limbs that taper rather
+    # than hold their thickness to the wrist and ankle.
+    "slim": {
+        # Radial scale across each bone, at its root and at its tip.  `foot`,
+        # `ball`, `head` and the fingers are deliberately absent: a lighter
+        # person does not get smaller feet, and leaving the foot alone keeps
+        # ground contact exactly where the leg solve put it.
+        "taper": {
+            "pelvis": (.94, .94),
+            "spine": (.93, .88),
+            "neck": (.94, .94),
+            "clavicle": (.86, .82),
+            "upperarm": (.83, .87),
+            "lowerarm": (.87, .90),
+            "hand": (.96, .96),
+            "thigh": (.90, .92),
+            "calf": (.91, .93),
+        },
+        # Anatomical masses, as ellipsoids anchored to a joint: (joint,
+        # offset from it in metres, radii, scale).  These multiply the taper,
+        # so they subtract mass from a specific place rather than from a whole
+        # bone -- which is the difference between a slimmer body and a
+        # smaller one.
+        "zones": (
+            ("spine_03", (0., .075, .055), (.185, .105, .115), .90),
+            ("upperarm_l", (0., 0., 0.), (.105, .105, .115), .88),
+            ("upperarm_r", (0., 0., 0.), (.105, .105, .115), .88),
+            ("spine_01", (0., .015, 0.), (.185, .105, .150), .94),
+            ("pelvis", (0., .020, 0.), (.200, .095, .155), .96),
+        ),
+    },
+}
+
+
+def bone_frames(source_bind: np.ndarray, parents: dict[int, int | None],
+                names: list[str]) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Global bind origin, unit direction and length for every joint."""
+    children: dict[int, list[int]] = {}
+    for slot, parent in parents.items():
+        if parent is not None:
+            children.setdefault(parent, []).append(slot)
+    origins = source_bind[:, :3, 3].copy()
+    axes = np.zeros((len(source_bind), 3), dtype=np.float64)
+    lengths = np.full(len(source_bind), .1, dtype=np.float64)
+    for slot in range(len(source_bind)):
+        axis = source_bind[slot][:3, :3] @ bone_axis(
+            slot, source_bind, parents, names, children)
+        axes[slot] = axis / max(float(np.linalg.norm(axis)), 1e-9)
+        preferred = CHAIN_CHILD.get(names[slot])
+        target = None
+        for child in children.get(slot, []):
+            if preferred is None or names[child] == preferred:
+                target = source_bind[child][:3, 3]
+                break
+        if target is None and children.get(slot):
+            target = source_bind[children[slot][0]][:3, 3]
+        if target is not None:
+            lengths[slot] = max(float(np.linalg.norm(target - origins[slot])), 1e-3)
+    return origins, axes, lengths
+
+
+def base_body_shape(positions: np.ndarray, normals: np.ndarray,
+                    joints: np.ndarray, weights: np.ndarray,
+                    source_bind: np.ndarray, parents: dict[int, int | None],
+                    names: list[str], preset: dict):
+    """Re-proportion the source body radially, in its own bind space.
+
+    Built as linear blend skinning over per-joint transforms of exactly the
+    form `shape_matrices` uses -- scale across the bone, never along it -- so
+    normals come from the inverse transpose and the authored smoothing seams
+    survive.  An empty preset is the exact identity.
+    """
+    taper = preset.get("taper", {})
+    zones = preset.get("zones", ())
+    if not taper and not zones:
+        return positions, normals
+    origins, axes, lengths = bone_frames(source_bind, parents, names)
+    root = np.array([taper.get(joint_group(name), (1., 1.))[0] for name in names])
+    tip = np.array([taper.get(joint_group(name), (1., 1.))[1] for name in names])
+
+    points = positions.astype(np.float64)
+    weight = weights.astype(np.float64)
+    total = weight.sum(axis=1, keepdims=True)
+    weight = np.divide(weight, total, out=np.zeros_like(weight), where=total > 1e-8)
+    slots = joints.astype(np.int64)
+
+    by_name = {name: index for index, name in enumerate(names)}
+    zone_scale = np.ones(len(points))
+    for anchor, offset, radii, scale in zones:
+        slot = by_name.get(anchor)
+        if slot is None:
+            continue
+        centre = origins[slot] + np.asarray(offset, dtype=float)
+        falloff = np.clip(1. - (((points - centre)
+                                 / np.asarray(radii, dtype=float)) ** 2).sum(axis=1),
+                          0., 1.)
+        zone_scale = zone_scale * (1. + (scale - 1.) * falloff)
+
+    identity = np.eye(3, dtype=np.float64)
+    linear = np.zeros((len(points), 3, 3), dtype=np.float64)
+    translation = np.zeros((len(points), 3), dtype=np.float64)
+    for influence_index in range(slots.shape[1]):
+        slot = slots[:, influence_index]
+        share = weight[:, influence_index]
+        if not share.any():
+            continue
+        origin = origins[slot]
+        axis = axes[slot]
+        delta = points - origin
+        along = np.einsum("ni,ni->n", delta, axis)
+        position = np.clip(along / lengths[slot], 0., 1.)
+        scale = (root[slot] + (tip[slot] - root[slot]) * position) * zone_scale
+        across = identity[None] - np.einsum("ni,nj->nij", axis, axis)
+        matrix = identity[None] + (scale - 1.)[:, None, None] * across
+        linear += share[:, None, None] * matrix
+        translation += share[:, None] * (
+            origin - np.einsum("nij,nj->ni", matrix, origin))
+
+    moved = np.einsum("nij,nj->ni", linear, points) + translation
+    cofactor = np.linalg.inv(linear).transpose(0, 2, 1)
+    turned = np.einsum("nij,nj->ni", cofactor, normals.astype(np.float64))
+    turned /= np.maximum(np.linalg.norm(turned, axis=1, keepdims=True), 1e-9)
+    return moved.astype(np.float32), turned.astype(np.float32)
+
+
 def apply_shape(positions: np.ndarray, normals: np.ndarray, joints: np.ndarray,
                 weights: np.ndarray, transforms: np.ndarray):
     """Linear blend skinning of the source mesh into the retargeted rest pose."""
@@ -921,6 +1486,7 @@ def player_accessory(feature: str, joint_by_name: dict[str, int],
     skeleton rather than on the reference one it was measured against.
     """
     mesh = ShapeMesh()
+    mesh.uv_tile = FEATURE_UV_TILE
     head = joint_by_name["Head"]
     pelvis = joint_by_name["pelvis"]
     spine = joint_by_name["spine_03"]
@@ -928,8 +1494,30 @@ def player_accessory(feature: str, joint_by_name: dict[str, int],
     neck = joint_by_name["neck_01"]
     clavicles = {-1.: joint_by_name["clavicle_l"],
                   1.: joint_by_name["clavicle_r"]}
+    upperarms = {-1.: joint_by_name["upperarm_l"],
+                  1.: joint_by_name["upperarm_r"]}
     forearms = {-1.: joint_by_name["lowerarm_l"],
                  1.: joint_by_name["lowerarm_r"]}
+
+
+    def deltoid_blend(clavicle: int, upperarm: int, root, axis, length):
+        """Share a shoulder plate between the clavicle and the upper arm.
+
+        A pauldron bound rigidly to the clavicle stays with the shoulder while
+        the body surface under it is driven by the upper arm, so the further
+        down the deltoid a plate sits, the further it slides off the arm as
+        that arm swings.  Sampling real clips put the worst of them nearly
+        half a metre clear of the body during a run.
+        """
+        root = np.asarray(root, dtype=float)
+        axis = np.asarray(axis, dtype=float)
+
+        def blend(position):
+            along = float(np.dot(np.asarray(position, dtype=float) - root, axis))
+            share = min(1., max(0., along / max(length, 1e-6) + .18))
+            return [(clavicle, 1. - share), (upperarm, share)]
+
+        return blend
     thighs = {-1.: joint_by_name["thigh_l"], 1.: joint_by_name["thigh_r"]}
     if feature == "horns":
         # Curved, ringed horns grow from broad roots inside the temples. This
@@ -975,64 +1563,87 @@ def player_accessory(feature: str, joint_by_name: dict[str, int],
         mesh.cylinder((-.010, 1.704, .136), (.010, 1.704, .136),
                       .007, head, 0, 10)
     elif feature == "scaled":
-        # Ssarathi anatomy: a joined muzzle and jaw, a dorsal ridge that runs
-        # from the brow down the spine, a counterweighting tail, and claws.
-        # Gold is reserved for small nostril, tooth and scale accents.
-        mesh.sphere((0., 1.625, .145), (.176, .104, .232), head, 0, 7, 14)
-        mesh.sphere((0., 1.592, .124), (.150, .060, .196), head, 0, 6, 12)
-        mesh.sphere((0., 1.648, .062), (.204, .150, .150), head, 0, 6, 14)
-        mesh.tapered_curve([(0., 1.618, .238), (0., 1.648, .186),
-                            (0., 1.682, .124), (0., 1.712, .066)],
-                           [.016, .020, .019, .012], head, 0, 8)
+        # Ssarathi anatomy.  The skull is one continuous form: a swept upper
+        # muzzle and a separate lower jaw that meet at a mouth line, rather
+        # than three overlapping ellipsoids whose intersections showed as
+        # seams and whose silhouette read as a sock pulled over a human face.
+        # Gold stays reserved for nostril, tooth and scute accents.
+        mesh.swept([(0., 1.664, -.020), (0., 1.656, .052), (0., 1.644, .120),
+                    (0., 1.632, .180), (0., 1.626, .228), (0., 1.624, .258)],
+                   [.108, .104, .095, .080, .058, .022],
+                   [.086, .079, .068, .056, .042, .018],
+                   head, 0, 16)
+        # Lower jaw: shallower and set back, so the mouth line is a real edge.
+        mesh.swept([(0., 1.598, -.010), (0., 1.594, .060), (0., 1.590, .130),
+                    (0., 1.590, .190), (0., 1.594, .232)],
+                   [.094, .090, .081, .066, .042],
+                   [.040, .038, .034, .028, .018],
+                   head, 0, 14)
+        # Brow ridges laid along the skull instead of standing off it as fins.
         for side in (-1., 1.):
-            mesh.tapered_curve([(side * .018, 1.702, .105),
-                                (side * .066, 1.716, .098),
-                                (side * .108, 1.708, .070),
-                                (side * .142, 1.688, .036)],
-                               [.018, .022, .016, .007], head, 0, 8)
-            mesh.cone((side * .036, 1.634, .240),
-                      (side * .036, 1.634, .252), .007, head, 1, 8)
-            # Brow scales and cheek scutes.
-            for y, z, radius in ((1.690, .128, .026), (1.664, .166, .021)):
-                mesh.sphere((side * .086, y, z), (radius, radius * .5, radius),
-                            head, 1, 3, 8)
-        # Dorsal crest: skull, nape and upper back, one continuous line.
-        crest = ((head, 1.672, -.032, .030, -.082, .034),
-                 (head, 1.700, -.070, .026, -.090, .038),
-                 (head, 1.712, -.116, .014, -.092, .036),
-                 (head, 1.702, -.160, -.004, -.086, .031),
-                 (neck, 1.586, -.092, -.012, -.078, .028),
-                 (neck, 1.522, -.104, -.014, -.070, .024),
-                 (spine, 1.412, -.118, -.014, -.062, .022),
-                 (spine, 1.332, -.130, -.014, -.054, .019))
-        for joint, y, z, rise, back, size in crest:
-            mesh.cone((0., y, z), (0., y + rise, z + back), size, joint, 0, 10)
-        # Tail: a real tapered chord off the sacrum rather than a flat blade,
-        # shared between the pelvis and the lower spine so it tracks the hips
-        # through the shared locomotion clips instead of swinging as one board.
-        points, radii = [], []
+            mesh.swept([(side * .028, 1.700, .086), (side * .068, 1.708, .068),
+                        (side * .104, 1.702, .038), (side * .126, 1.688, .002)],
+                       [.022, .024, .019, .010],
+                       [.014, .016, .013, .007],
+                       head, 0, 10)
+            # Nostril, set into the top of the snout near the tip.
+            mesh.cone((side * .030, 1.638, .238), (side * .030, 1.642, .250),
+                      .008, head, 1, 8)
+            # Cheek scutes: low, wide plates rather than beads.
+            for y, z, length in ((1.688, .120, .030), (1.660, .158, .024)):
+                mesh.swept([(side * .070, y, z), (side * .098, y - .006, z + .014)],
+                           [length * .55, length * .34],
+                           [length * .30, length * .20], head, 1, 8)
+            # A short row of teeth along the jaw line reads the mouth at
+            # gameplay distance, which a smooth seam never did.
+            for step in range(3):
+                z = .108 + step * .046
+                mesh.claw((side * (.082 - step * .012), 1.606, z),
+                          (side * .12, -1., .10), .020, .0075, head, 1,
+                          curl=.10, sides=6, stations=3, flatten=.70)
+        # Dorsal crest: one webbed, serrated ridge from the brow to mid-back.
+        # It is authored as three chained segments only because each has to be
+        # skinned to the joint it lies over; the stations are shared, so the
+        # crest stays continuous across the joins.
+        for joint, path, rises in (
+                (head, ((0., 1.718, -.004), (0., 1.732, -.052),
+                        (0., 1.728, -.104), (0., 1.712, -.148)),
+                 (.030, .042, .040, .032)),
+                (neck, ((0., 1.712, -.148), (0., 1.648, -.126),
+                        (0., 1.578, -.112), (0., 1.516, -.104)),
+                 (.032, .034, .030, .026)),
+                (spine, ((0., 1.516, -.104), (0., 1.440, -.108),
+                         (0., 1.372, -.116), (0., 1.312, -.126)),
+                 (.026, .024, .021, .016))):
+            mesh.ridge(path, rises, [.011, .010, .009, .008], joint, 0,
+                       spikes=.22)
+        # Tail: a laterally compressed chord off the sacrum, shared between
+        # the pelvis and the lower spine so it tracks the hips through the
+        # shared locomotion clips instead of swinging as one board.
+        points, widths, heights = [], [], []
         for step in range(13):
             t = step / 12.
             points.append((0.,
                            .952 - .58 * t - .08 * math.sin(t * math.pi)
                            + .10 * max(0., t - .78),
                            -.100 - .86 * t))
-            radii.append(.112 * (1. - t) ** 1.30 + .007)
+            radius = .112 * (1. - t) ** 1.30 + .007
+            # A real tail is taller than it is wide; a round tube read as rope.
+            widths.append(radius * .80)
+            heights.append(radius * 1.16)
         mesh.blend = lambda position: [
             (pelvis, 1.),
             (lower_spine, max(0., .42 * (1. + position[2] / .34)))]
-        mesh.tapered_curve(points, radii, pelvis, 0, 14)
-        # Tail scutes read the taper at a distance and break up the tube.
-        for step in range(1, 10):
-            t = step / 11.
-            y = (.952 - .58 * t - .08 * math.sin(t * math.pi)
-                 + .10 * max(0., t - .78))
-            z = -.100 - .86 * t
-            size = .088 * (1. - t) ** 1.2 + .008
-            mesh.sphere((0., y + size * .8, z), (size * .7, size, size * 1.5),
-                        pelvis, 1, 3, 8)
+        mesh.swept(points, widths, heights, pelvis, 0, 14, cap_start=False)
+        # A scute ridge along the top of the tail reads the taper at a
+        # distance and breaks the tube without adding separate blobs.
+        ridge_points = [points[index] for index in range(1, 11)]
+        mesh.ridge(ridge_points,
+                   [.088 * (1. - index / 11.) ** 1.2 + .006 for index in range(1, 11)],
+                   [.010 * (1. - index / 13.) + .004 for index in range(1, 11)],
+                   pelvis, 1, spikes=.30)
         mesh.blend = None
-        # Claws on every finger and both toes, placed from the rig itself.
+        # Claws on every finger and both feet, placed and aimed from the rig.
         for side in ("l", "r"):
             for digit in ("index", "middle", "pinky", "ring", "thumb"):
                 tip = bind.get(f"{digit}_04_leaf_{side}")
@@ -1044,9 +1655,10 @@ def player_accessory(feature: str, joint_by_name: dict[str, int],
                 if length < 1e-5:
                     continue
                 direction = direction / length
-                mesh.cone(tuple(tip - direction * length * .30),
-                          tuple(tip + direction * length * 1.15),
-                          length * .34, joint_by_name[f"{digit}_04_leaf_{side}"], 1, 8)
+                mesh.claw(tuple(tip - direction * length * .34), direction,
+                          length * 1.42, length * .30,
+                          joint_by_name[f"{digit}_04_leaf_{side}"], 1,
+                          curl=.40, sides=8, stations=5)
             toe = bind.get(f"ball_leaf_{side}")
             ball = bind.get(f"ball_{side}")
             if toe is None or ball is None:
@@ -1056,113 +1668,243 @@ def player_accessory(feature: str, joint_by_name: dict[str, int],
             if length < 1e-5:
                 continue
             direction = direction / length
-            for offset in (-.030, .0, .030):
-                root = toe + np.array([offset, 0., 0.]) - direction * length * .2
-                mesh.cone(tuple(root), tuple(root + direction * length * .95),
-                          .019, joint_by_name[f"ball_leaf_{side}"], 1, 8)
+            for offset in (-.032, .0, .032):
+                root = toe + np.array([offset, 0., 0.]) - direction * length * .24
+                mesh.claw(tuple(root), direction, length * 1.18, .020,
+                          joint_by_name[f"ball_leaf_{side}"], 1,
+                          curl=.30, sides=8, stations=5)
     elif feature == "stone":
-        # Stoneborn plating is load-bearing anatomy: a sternum slab, stepped
-        # pauldrons, forearm bracers and thigh plates, all seated on the joints
-        # they armour, with crystal seams running between them.
-        mesh.sphere((0., 1.315, .062), (.330, .270, .080), spine, 0, 5, 12)
-        mesh.sphere((0., 1.180, .058), (.280, .200, .070), lower_spine, 0, 4, 12)
+        # Stoneborn plating is load-bearing anatomy, and it is all cut rather
+        # than moulded.  The previous plating was spheres and tapered tubes,
+        # which have no edge anywhere for a light to catch, so under the
+        # client's lighting it read as inflated padding strapped to a person.
+        # Everything here is a flat-shaded slab instead: hard rims, angled
+        # faces, and plates that step and overlap like riven rock.
+        def limb_frame(root, tip):
+            """Bone axis plus two perpendiculars, for seating plates on limbs."""
+            axis = np.asarray(tip, dtype=float) - np.asarray(root, dtype=float)
+            length = float(np.linalg.norm(axis))
+            if length < 1e-6:
+                return None
+            axis = axis / length
+            reference = (np.array((0., 0., 1.)) if abs(axis[2]) < .85
+                         else np.array((1., 0., 0.)))
+            right = np.cross(axis, reference)
+            right = right / max(np.linalg.norm(right), 1e-9)
+            up = np.cross(right, axis)
+            return axis, right, up / max(np.linalg.norm(up), 1e-9), length
+
+        # Sternum: a stepped column of slabs down the chest, each one tilted a
+        # little further off vertical so the stack catches light in bands.
+        for y, z, width, height, thick, tilt, joint in (
+                (1.404, .092, .300, .118, .044, .16, spine),
+                (1.312, .104, .330, .116, .048, .06, spine),
+                (1.222, .098, .296, .110, .044, -.06, lower_spine),
+                (1.140, .082, .244, .100, .038, -.14, lower_spine)):
+            mesh.plate((0., y, z), (0., tilt, 1.), (1., 0., 0.),
+                       width, height, thick, joint, 0, taper=.80)
+        # Collar slabs flanking the throat.
+        for side in (-1., 1.):
+            mesh.plate((side * .126, 1.472, .052), (side * .42, .58, .70),
+                       (1., 0., .0), .150, .088, .038, spine, 0, taper=.74)
+
         for side in (-1., 1.):
             shoulder = bind.get("clavicle_r" if side > 0 else "clavicle_l")
             arm = bind.get("upperarm_r" if side > 0 else "upperarm_l")
-            if shoulder is None or arm is None:
-                continue
-            cap = arm + (arm - shoulder) * .10
-            mesh.sphere((float(cap[0]), float(cap[1]) + .045, float(cap[2])),
-                        (.230, .175, .205), clavicles[side], 0, 5, 12)
-            # Two hewn bands stepping down the deltoid, following the arm so
-            # they read as plating rather than boxes hung off the shoulder.
             elbow = bind.get("lowerarm_r" if side > 0 else "lowerarm_l")
-            if elbow is not None:
-                along = elbow - arm
-                for start, end, radius in ((.02, .17, .118), (.20, .34, .102)):
-                    mesh.tapered_curve([tuple(arm + along * start),
-                                        tuple(arm + along * (start + end) * .5),
-                                        tuple(arm + along * end)],
-                                       [radius, radius * 1.04, radius * .90],
-                                       clavicles[side], 0, 14)
-            forearm = bind.get("lowerarm_r" if side > 0 else "lowerarm_l")
             hand = bind.get("hand_r" if side > 0 else "hand_l")
-            if forearm is not None and hand is not None:
-                mesh.cylinder(tuple(forearm + (hand - forearm) * .18),
-                              tuple(forearm + (hand - forearm) * .74),
-                              .085, forearms[side], 0, 14)
-                mesh.tapered_curve([tuple(forearm + (hand - forearm) * .20),
-                                    tuple(forearm + (hand - forearm) * .72)],
-                                   [.012, .010], forearms[side], 1, 8)
+            if shoulder is None or arm is None or elbow is None:
+                continue
+            frame = limb_frame(arm, elbow)
+            if frame is None:
+                continue
+            axis, right, up, arm_length = frame
+            # Pauldron: three rows of three plates wrapping the deltoid, each
+            # row smaller and set further down the arm.  Overlapping slabs are
+            # what make plating read as plating instead of a sleeve.
+            for row, (along, width, height, thick, lift) in enumerate((
+                    (-.07, .132, .096, .036, .062),
+                    (.13, .112, .080, .029, .057),
+                    (.33, .090, .066, .024, .050))):
+                centre_base = arm + axis * (arm_length * along)
+                # Each row is rotated off the last so the three bands do not
+                # line up into one rectangular sleeve around the arm.
+                for angle in (-58., 0., 58.):
+                    radians = math.radians(angle + row * 19. - 10.)
+                    outward = right * math.cos(radians) + up * math.sin(radians)
+                    centre = centre_base + outward * lift
+                    mesh.blend = deltoid_blend(clavicles[side], upperarms[side],
+                                               arm, axis, arm_length)
+                    mesh.plate(tuple(centre), tuple(outward), tuple(axis),
+                               width, height, thick, clavicles[side], 0,
+                               taper=.74, shear=.004)
+                    mesh.blend = None
+            # Forearm bracer: four plates banded around the lower arm.
+            if hand is not None:
+                lower = limb_frame(elbow, hand)
+                if lower is not None:
+                    laxis, lright, lup, lower_length = lower
+                    for along in (.28, .54):
+                        centre_base = elbow + laxis * (lower_length * along)
+                        for index in range(5):
+                            radians = math.radians(index * 72. + 36.)
+                            outward = lright * math.cos(radians) + lup * math.sin(radians)
+                            mesh.plate(tuple(centre_base + outward * .046),
+                                       tuple(outward), tuple(laxis),
+                                       .086, .058, .020, forearms[side], 0,
+                                       taper=.76)
+                    # A crystal seam let into the gap between the bands.
+                    mesh.swept([tuple(elbow + laxis * (lower_length * .38) + lup * .066),
+                                tuple(elbow + laxis * (lower_length * .44) + lup * .068)],
+                               [.010, .009], [.006, .005], forearms[side], 1, 6)
             thigh = bind.get("thigh_r" if side > 0 else "thigh_l")
             knee = bind.get("calf_r" if side > 0 else "calf_l")
             if thigh is not None and knee is not None:
-                mid = thigh + (knee - thigh) * .40
-                mesh.sphere((float(mid[0]), float(mid[1]), float(mid[2]) + .045),
-                            (.190, .300, .130), thighs[side], 0, 5, 12)
-            # Brow and jaw plates keep eyes, mouth and hairline readable.
-            mesh.sphere((side * .104, 1.652, .054), (.072, .100, .050),
-                        head, 0, 4, 10)
-            mesh.sphere((side * .088, 1.594, .088), (.058, .062, .046),
-                        head, 0, 4, 10)
-        mesh.sphere((0., 1.706, .094), (.190, .050, .046), head, 0, 4, 12)
-        # Crystal seams: thin accent lines along the sternum and the nape.
-        mesh.tapered_curve([(-.038, 1.400, .104), (.014, 1.348, .110),
-                            (-.022, 1.292, .096), (.026, 1.238, .082)],
-                           [.008, .007, .006, .004], spine, 1, 8)
-        mesh.tapered_curve([(0., 1.560, -.072), (0., 1.512, -.086)],
-                           [.010, .007], neck, 1, 8)
-    elif feature == "fungal":
-        # Mycelari carry a true parasol: a domed cap with a gilled underside,
-        # an annulus collar and a stipe, plus bracket shelves on the shoulders.
-        mesh.tapered_curve([(0., 1.706, -.010), (0., 1.760, -.014),
-                            (0., 1.822, -.016)], [.064, .056, .050],
-                           head, 0, 12)
-        mesh.revolve([(1.968, .038), (1.952, .126), (1.928, .202),
-                      (1.898, .262), (1.868, .298), (1.844, .314),
-                      (1.832, .308), (1.840, .248), (1.852, .172),
-                      (1.864, .096), (1.872, .048)], head, 0, 22)
-        mesh.sphere((0., 1.962, 0.), (.088, .040, .088), head, 0, 3, 16)
-        # Gills: radial blades in the shadow of the cap.
-        for index in range(18):
-            angle = 2. * math.pi * index / 18.
-            cos, sin = math.cos(angle), math.sin(angle)
-            corners = []
-            for radius, height in ((.098, 1.866), (.292, 1.836)):
-                for offset, drop in ((-.004, .0), (.004, .0)):
-                    corners.append((cos * radius - sin * offset, height,
-                                     sin * radius + cos * offset + drop))
-            inner, outer = corners[:2], corners[2:]
-            mesh.prism([inner[0], inner[1], outer[1], outer[0],
-                        (inner[0][0], inner[0][1] - .026, inner[0][2]),
-                        (inner[1][0], inner[1][1] - .026, inner[1][2]),
-                        (outer[1][0], outer[1][1] - .020, outer[1][2]),
-                        (outer[0][0], outer[0][1] - .020, outer[0][2])],
-                       head, 1)
-        # Annulus collar where the cap meets the stipe.
-        mesh.revolve([(1.848, .072), (1.840, .114), (1.830, .106),
-                      (1.824, .074)], head, 1, 18)
-        # Shoulder brackets: layered shelf fungi that intersect the clavicle.
+                leg = limb_frame(thigh, knee)
+                if leg is not None:
+                    taxis, tright, tup, thigh_length = leg
+                    for along, width, height in ((.22, .134, .104),
+                                                 (.46, .120, .094)):
+                        centre = thigh + taxis * (thigh_length * along)
+                        for angle in (-38., 38.):
+                            radians = math.radians(angle)
+                            outward = tright * math.cos(radians) + tup * math.sin(radians)
+                            mesh.plate(tuple(centre + outward * .064),
+                                       tuple(outward), tuple(taxis),
+                                       width, height, .030, thighs[side], 0,
+                                       taper=.78)
+            # Brow and jaw slabs, angular so the face reads as carved.  They
+            # sit above the eye line: dropped to the brow itself they closed
+            # over the eyes and the head read as a helmet with a vision slot.
+            mesh.plate((side * .098, 1.694, .058), (side * .40, .40, .82),
+                       (1., .12, 0.), .096, .050, .026, head, 0, taper=.70)
+            mesh.plate((side * .086, 1.592, .092), (side * .36, -.42, .83),
+                       (1., .18, 0.), .086, .058, .026, head, 0, taper=.68)
+        # Brow band across the forehead, clear of the eye line.
+        mesh.plate((0., 1.734, .074), (0., .58, .82), (1., 0., 0.),
+                   .196, .046, .030, head, 0, taper=.72)
+        # Crystal seams: thin lit veins let into the sternum and the nape.
+        mesh.swept([(-.034, 1.404, .108), (.012, 1.348, .116),
+                    (-.020, 1.292, .102), (.024, 1.238, .088)],
+                   [.009, .008, .007, .005], [.007, .006, .005, .004],
+                   spine, 1, 8)
+        mesh.swept([(0., 1.566, -.070), (0., 1.514, -.086)],
+                   [.011, .008], [.008, .006], neck, 1, 8)
         for side in (-1., 1.):
-            shoulder = bind.get("clavicle_r" if side > 0 else "clavicle_l")
+            mesh.swept([(side * .092, 1.430, .092), (side * .126, 1.372, .080)],
+                       [.008, .006], [.006, .005], spine, 1, 6)
+    elif feature == "fungal":
+        # Mycelari carry a true parasol.  The cap used to be a surface of
+        # revolution, which is precisely what makes a mushroom read as an
+        # umbrella: a real cap is irregular in outline, uneven in thickness
+        # and droops unevenly at the margin.  The outline, the rise and the
+        # margin droop here all vary with angle, from a fixed trigonometric
+        # profile so the shape is authored rather than random.
+        around = 26
+
+        def margin(angle):
+            """Radial multiplier: a lobed, uneven cap edge."""
+            return (1. + .112 * math.sin(3. * angle + .70)
+                    + .064 * math.sin(5. * angle + 2.15)
+                    + .038 * math.sin(8. * angle + 4.30))
+
+        def droop(angle):
+            """Vertical offset at the margin, so the rim is not a flat ring."""
+            return (.020 * math.sin(2. * angle + 1.05)
+                    + .012 * math.sin(7. * angle + .35))
+
+        # (height, radius, how much of the margin variation applies here)
+        top_profile = ((1.918, .034, .10), (1.904, .124, .34), (1.882, .206, .62),
+                       (1.852, .268, .84), (1.820, .304, .96), (1.792, .318, 1.00))
+        under_profile = ((1.792, .318, 1.00), (1.782, .276, .92), (1.790, .208, .70),
+                         (1.802, .140, .44), (1.812, .076, .18))
+
+        def cap_rings(profile):
+            rings = []
+            for height, radius, blend in profile:
+                ring = []
+                for index in range(around):
+                    angle = 2. * math.pi * index / around
+                    scale = 1. + (margin(angle) - 1.) * blend
+                    ring.append((math.cos(angle) * radius * scale,
+                                 height + droop(angle) * blend,
+                                 math.sin(angle) * radius * scale))
+                rings.append(ring)
+            return rings
+
+        mesh.lofted(cap_rings(top_profile), head, 0)
+        # The underside carries the gill material, so the lamellae are read
+        # from the map rather than cut into the silhouette as flat prisms.
+        mesh.lofted(cap_rings(under_profile), head, 1, flip=True)
+        # A dozen shallow lamellae inset from the rim give the underside real
+        # parallax without serrating the cap outline the way the old eighteen
+        # full-depth blades did.
+        for index in range(12):
+            angle = 2. * math.pi * index / 12. + .13
+            cos, sin = math.cos(angle), math.sin(angle)
+            scale = margin(angle)
+            inner, outer = .120, .262 * scale
+            mesh.plate((cos * (inner + outer) * .5, 1.791,
+                        sin * (inner + outer) * .5),
+                       (0., -1., 0.), (cos, 0., sin),
+                       outer - inner, .012, .020, head, 1, taper=.55)
+        # Stipe: the neck of the mushroom, thickening into the cap.
+        mesh.swept([(0., 1.664, -.012), (0., 1.712, -.014), (0., 1.758, -.016),
+                    (0., 1.804, -.014)],
+                   [.070, .062, .056, .062], [.068, .060, .054, .060],
+                   head, 0, 14, cap_start=False, cap_end=False)
+        # Annulus: the torn collar where the veil broke off the stipe.
+        annulus = []
+        for height, radius, flare in ((1.804, .074, .0), (1.796, .122, 1.),
+                                      (1.784, .112, 1.), (1.776, .076, .0)):
+            ring = []
+            for index in range(18):
+                angle = 2. * math.pi * index / 18.
+                scale = 1. + (.16 * math.sin(4. * angle + .8)
+                              + .09 * math.sin(7. * angle)) * flare
+                ring.append((math.cos(angle) * radius * scale, height,
+                             math.sin(angle) * radius * scale))
+            annulus.append(ring)
+        mesh.lofted(annulus, head, 1)
+        # Shoulder brackets: layered shelf fungi.  Plates rather than squashed
+        # spheres, so each shelf has a real edge where it leaves the body.
+        # Shelf fungi grow on the deltoid, not at the collar.  Measuring
+        # `along` from the clavicle put every shelf beside the neck, where the
+        # shirt covered them and they read as damage rather than anatomy.
+        for side in (-1., 1.):
             arm = bind.get("upperarm_r" if side > 0 else "upperarm_l")
-            if shoulder is None or arm is None:
+            elbow = bind.get("lowerarm_r" if side > 0 else "lowerarm_l")
+            if arm is None or elbow is None:
                 continue
-            for step, (along, lift, width, depth, thick) in enumerate(
-                    ((.35, .050, .150, .118, .036),
-                     (.62, .014, .126, .098, .030),
-                     (.86, -.020, .092, .074, .024))):
-                centre = shoulder + (arm - shoulder) * along + np.array([0., lift, 0.])
-                mesh.sphere((float(centre[0]), float(centre[1]), float(centre[2]) - .020),
-                            (width, thick, depth), clavicles[side], 0, 4, 12)
-                mesh.sphere((float(centre[0]), float(centre[1]) - thick * .34,
-                             float(centre[2]) - .020),
-                            (width * .84, thick * .40, depth * .84),
-                            clavicles[side], 1, 3, 10)
+            direction = elbow - arm
+            length = float(np.linalg.norm(direction))
+            if length < 1e-6:
+                continue
+            direction = direction / length
+            for along, lift, width, depth, thick, out in (
+                    (-.02, .050, .196, .150, .040, .054),
+                    (.22, .026, .166, .126, .034, .050),
+                    (.46, .004, .124, .096, .028, .044)):
+                centre = (arm + direction * (length * along)
+                          + np.array([0., lift, -.014]))
+                centre = centre + np.array([side * out, 0., 0.])
+                # The shelf leaves the arm nearly level and tips down at the
+                # rim, which is how a bracket fungus actually sits.
+                mesh.blend = deltoid_blend(clavicles[side], upperarms[side],
+                                           arm, direction, length)
+                mesh.plate(tuple(centre), (side * .34, 1., -.18),
+                           (side * 1., -.22, .0), width, depth, thick,
+                           clavicles[side], 0, taper=.62)
+                mesh.plate(tuple(centre + np.array([0., -thick * .78, 0.])),
+                           (side * .34, -1., .18), (side * 1., -.22, .0),
+                           width * .86, depth * .86, thick * .5,
+                           clavicles[side], 1, taper=.58)
+                mesh.blend = None
         # Mycelial threads down the sternum.
-        mesh.tapered_curve([(0., 1.430, .100), (-.030, 1.372, .104),
-                            (.026, 1.312, .096), (-.014, 1.256, .084)],
-                           [.009, .008, .007, .005], spine, 1, 8)
+        mesh.swept([(0., 1.430, .100), (-.030, 1.372, .104),
+                    (.026, 1.312, .096), (-.014, 1.256, .084)],
+                   [.009, .008, .007, .005], [.007, .006, .005, .004],
+                   spine, 1, 8)
     return mesh.arrays()
 
 
@@ -1182,6 +1924,7 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
                      for index, node in enumerate(skin["joints"])}
     joint_names = [document["nodes"][node].get("name", "") for node in skin["joints"]]
     anatomy = ANATOMY.get(race, {})
+    base_body = BASE_BODIES.get(config.get("base", "heroic"), {})
     source_bind = np.stack([global_node_matrix(document, node) for node in skin["joints"]])
     parents = joint_parents(document, skin)
     leg_scale = solve_leg_scale(source_bind, parents, joint_names, anatomy)
@@ -1201,19 +1944,35 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
             config.get("body_pattern", config["feature"]))
     hair_base = source_texture(document, source.parent, 0, "baseColorTexture")
     eye_base = source_texture(document, source.parent, 1, "baseColorTexture")
+    face = RACE_FACE.get(race, {})
+
+    def face_texture(material_index: int) -> Path:
+        return source.parent / document["images"][document["textures"][
+            document["materials"][material_index]["pbrMetallicRoughness"][
+                "baseColorTexture"]["index"]]["source"]]["uri"]
+
+    # Race features get the same class of material as the body: a relief
+    # derived albedo, normal and metallic-roughness map instead of a bare
+    # colour factor.  With a map supplied the metallic and roughness factors
+    # go to 1.0 so the texture governs outright; glTF multiplies the two.
+    feature_surface, accent_surface = FEATURE_MATERIALS.get(
+        config["feature"], (None, None))
+    feature_maps = (feature_surface_textures(feature_surface)
+                    if feature_surface else (None, None, None))
+    accent_maps = (feature_surface_textures(accent_surface)
+                   if accent_surface else (None, None, None))
     materials = {
         "eyebrows": glb.material(
-            config["label"] + " Eyebrows", (255, 255, 255), roughness=.82,
-            texture_png=neutral_texture(source.parent / document["images"][document["textures"][
-                document["materials"][0]["pbrMetallicRoughness"]["baseColorTexture"]["index"]]["source"]]["uri"])
-                if hair_base else None,
+            config["label"] + " Eyebrows", face.get("brow", (255, 255, 255)),
+            roughness=.82,
+            texture_png=neutral_texture(face_texture(0)) if hair_base else None,
             normal_png=source_texture(document, source.parent, 0, "normalTexture"),
             double_sided=True),
         "eyes": glb.material(
             config["label"] + " Eyes", (255, 255, 255), roughness=.30,
-            texture_png=neutral_texture(source.parent / document["images"][document["textures"][
-                document["materials"][1]["pbrMetallicRoughness"]["baseColorTexture"]["index"]]["source"]]["uri"], floor=.62)
-                if eye_base else None,
+            texture_png=race_eye_texture(
+                face_texture(1), face.get("pupil", "round"),
+                face.get("iris", DEFAULT_IRIS)) if eye_base else None,
             normal_png=source_texture(document, source.parent, 1, "normalTexture"),
             emissive=tuple(c // 16 for c in config["accent"]), double_sided=True),
         "body": glb.material(
@@ -1223,37 +1982,64 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
             metallic_roughness_png=source_texture(
                 document, source.parent, 2, "metallicRoughnessTexture"),
             double_sided=True),
-        "feature": glb.material(config["label"] + " Integrated Feature",
-                                config.get("feature_color", config["color"]),
-                                metallic=.04, roughness=.72),
-        "accent": glb.material(config["label"] + " Integrated Accent",
-                               config["accent"], metallic=.12, roughness=.46,
-                               emissive=tuple(c // 28 for c in config["accent"])),
+        "feature": glb.material(
+            config["label"] + " Integrated Feature",
+            config.get("feature_color", config["color"]),
+            metallic=1. if feature_surface else .04,
+            roughness=1. if feature_surface else .72,
+            texture_png=feature_maps[0], normal_png=feature_maps[1],
+            metallic_roughness_png=feature_maps[2]),
+        "accent": glb.material(
+            config["label"] + " Integrated Accent", config["accent"],
+            metallic=1. if accent_surface else .12,
+            roughness=1. if accent_surface else .46,
+            texture_png=accent_maps[0], normal_png=accent_maps[1],
+            metallic_roughness_png=accent_maps[2],
+            emissive=tuple(c // 28 for c in config["accent"])),
     }
     shirt, pants, boots, trim = config["wardrobe"]
+    cloth_normal, cloth_mr = surface_detail_maps("cloth")
+    leather_normal, leather_mr = surface_detail_maps("leather")
+    trim_normal, trim_mr = surface_detail_maps("trim")
     materials.update({
-        "shirt": glb.material(config["label"] + " Shirt", shirt, roughness=.88,
-                              texture_png=surface_detail_texture("cloth")),
+        "shirt": glb.material(config["label"] + " Shirt", shirt, roughness=1.,
+                              texture_png=surface_detail_texture("cloth"),
+                              normal_png=cloth_normal,
+                              metallic_roughness_png=cloth_mr),
         "shirt_trim": glb.material(config["label"] + " Shirt Trim", trim,
-                                   metallic=.22, roughness=.52,
-                                   texture_png=surface_detail_texture("trim")),
-        "pants": glb.material(config["label"] + " Pants", pants, roughness=.91,
-                              texture_png=surface_detail_texture("cloth")),
+                                   metallic=.22, roughness=1.,
+                                   texture_png=surface_detail_texture("trim"),
+                                   normal_png=trim_normal,
+                                   metallic_roughness_png=trim_mr),
+        "pants": glb.material(config["label"] + " Pants", pants, roughness=1.,
+                              texture_png=surface_detail_texture("cloth"),
+                              normal_png=cloth_normal,
+                              metallic_roughness_png=cloth_mr),
         "pants_trim": glb.material(config["label"] + " Pants Seam",
-                                    tuple(round(c * .68) for c in pants),
-                                   metallic=.12, roughness=.60,
-                                   texture_png=surface_detail_texture("trim")),
-        "boots": glb.material(config["label"] + " Boots", boots, roughness=.82,
-                              texture_png=surface_detail_texture("leather")),
+                                   tuple(round(c * .68) for c in pants),
+                                   metallic=.12, roughness=1.,
+                                   texture_png=surface_detail_texture("trim"),
+                                   normal_png=trim_normal,
+                                   metallic_roughness_png=trim_mr),
+        "boots": glb.material(config["label"] + " Boots", boots, roughness=1.,
+                              texture_png=surface_detail_texture("leather"),
+                              normal_png=leather_normal,
+                              metallic_roughness_png=leather_mr),
         "boots_trim": glb.material(config["label"] + " Boots Seam",
-                                    tuple(round(c * .68) for c in boots),
-                                   metallic=.18, roughness=.48,
-                                   texture_png=surface_detail_texture("trim")),
-        "headwear": glb.material(config["label"] + " Headwear", shirt, roughness=.88,
-                                 texture_png=surface_detail_texture("cloth")),
+                                   tuple(round(c * .68) for c in boots),
+                                   metallic=.18, roughness=1.,
+                                   texture_png=surface_detail_texture("trim"),
+                                   normal_png=trim_normal,
+                                   metallic_roughness_png=trim_mr),
+        "headwear": glb.material(config["label"] + " Headwear", shirt, roughness=1.,
+                                 texture_png=surface_detail_texture("cloth"),
+                                 normal_png=cloth_normal,
+                                 metallic_roughness_png=cloth_mr),
         "headwear_trim": glb.material(config["label"] + " Headwear Trim", trim,
-                                      metallic=.20, roughness=.50,
-                                      texture_png=surface_detail_texture("trim")),
+                                      metallic=.20, roughness=1.,
+                                      texture_png=surface_detail_texture("trim"),
+                                      normal_png=trim_normal,
+                                      metallic_roughness_png=trim_mr),
     })
     vertices = triangles = 0
     body_arrays = None
@@ -1265,7 +2051,14 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
         uvs = read_accessor(document, binary, attrs["TEXCOORD_0"]).astype("float32")
         joints = read_accessor(document, binary, attrs["JOINTS_0"]).astype("uint16")
         weights = read_accessor(document, binary, attrs["WEIGHTS_0"]).astype("float32")
-        positions, normals = apply_shape(source_positions, source_normals,
+        # The base body re-proportions the shared mesh before the race
+        # retarget touches it.  `source_positions` is deliberately kept for
+        # the garment masks below: cuts are chosen on the untouched source so
+        # a hem cannot wander when a culture changes physique.
+        base_positions, base_normals = base_body_shape(
+            source_positions, source_normals, joints, weights,
+            source_bind, parents, joint_names, base_body)
+        positions, normals = apply_shape(base_positions, base_normals,
                                          joints, weights, transforms)
         indices = read_accessor(document, binary, source_primitive["indices"]).astype("uint32")
         material = (materials["eyebrows"], materials["eyes"], materials["body"])[mesh_index]
@@ -1310,8 +2103,31 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     shirt_mask = ((shirt_score[faces].mean(axis=1) > .30) & (y > .900) & (y < 1.550))
     pants_mask = ((pants_score[faces].mean(axis=1) > .30) & (y > .245) & (y < 1.120))
     boots_mask = ((boots_score[faces].mean(axis=1) > .24) & (y < .320))
-    shirt_trim = shirt_mask & (((x > .285) & (y > 1.345)) |
-                               ((y > 1.435) & (x < .145) & (z > .045)))
+    def garment_edge(mask, values, depth, upper=True):
+        """Faces within `depth` of a garment's own extent along `values`.
+
+        Measuring the band from the cut itself rather than from an absolute
+        coordinate means one number describes the hem on both skeletons; the
+        male and female arms differ by 50 mm at the shoulder alone.
+        """
+        if not mask.any():
+            return np.zeros_like(mask)
+        if upper:
+            return mask & (values > float(values[mask].max()) - depth)
+        return mask & (values < float(values[mask].min()) + depth)
+
+    # Trim used to take the whole outer deltoid plus a slab of upper chest,
+    # which read as a rectangle stencilled onto the shirt rather than as
+    # tailoring -- the loudest thing on a Stoneborn or a Mycelari once the
+    # materials underneath started behaving.  It is now the three edges a
+    # shirt actually has: a cuff at the sleeve, a collar at the neck, and a
+    # placket down the centre front.
+    sleeve_cuff = garment_edge(shirt_mask, x, .055)
+    collar = garment_edge(shirt_mask, y, .028)
+    # The placket stops above the waistband: a shirt front that carried on
+    # under the belt read as a stripe painted down the whole figure.
+    placket = shirt_mask & (x < .016) & (z > .030) & (y > 1.130)
+    shirt_trim = sleeve_cuff | collar | placket
     pants_trim = pants_mask & (y > 1.015) & (y < 1.110)
     boots_trim = boots_mask & (y > .270) & (y < .325)
     head_band = ((head_score[faces].mean(axis=1) > .45) &
@@ -1335,8 +2151,13 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     add_skinned("Wardrobe_Pants_Seam", pants_trim, .013, materials["pants_trim"])
     add_skinned("Wardrobe_Boots", boots_mask, .013, materials["boots"])
     add_skinned("Wardrobe_Boots_Seam", boots_trim, .017, materials["boots_trim"])
-    add_skinned("Wardrobe_Head_Band", head_band, .012, materials["headwear_trim"])
-    add_skinned("Wardrobe_Head_Cap", head_cap, .014, materials["headwear"])
+    # Optional creation headwear, skipped on races whose own head anatomy
+    # occupies the same scalp the piece is cut from.
+    headwear = face.get("headwear", ("band", "cap"))
+    if "band" in headwear:
+        add_skinned("Wardrobe_Head_Band", head_band, .012, materials["headwear_trim"])
+    if "cap" in headwear:
+        add_skinned("Wardrobe_Head_Cap", head_cap, .014, materials["headwear"])
 
     bind_positions = {name: source_bind[slot][:3, 3]
                       for slot, name in enumerate(joint_names)}
@@ -1366,6 +2187,7 @@ def build_player(source_dir: Path, output: Path, race: str, gender: str) -> dict
     return {"vertices": vertices, "triangles": triangles,
             "joints": len(skin["joints"]), "feature": config["feature"],
             "wardrobe": "skinned", "anatomy": "retargeted",
+            "baseBody": config.get("base", "heroic"),
             "stature": round(anatomy.get("stature", 1.), 4),
             "legChainScale": round(float(leg_scale), 4),
             "hipHeight": round(float(target_bind[joint_by_name["pelvis"]][1, 3]), 5),
@@ -1381,6 +2203,13 @@ class ShapeMesh:
         # joint is right for a horn or a claw, but a tail or a shoulder shelf
         # needs to be shared between joints or it swings as one board.
         self.blend = None
+        # World size of one texture repeat, in metres.  Every primitive here
+        # authors its own 0..1 UVs -- a sphere spans the map once however big
+        # it is, a tube wraps it once around whatever its circumference -- so
+        # without this a toe claw and a mushroom cap would show the same scale
+        # pattern at a twentyfold difference in size.  Off by default because
+        # the region-map landmark builder shares this class.
+        self.uv_tile = None
 
     def _skin(self, position, joint: int):
         if self.blend is None:
@@ -1391,8 +2220,26 @@ class ShapeMesh:
         weights = [weight / total for _, weight in pairs] + [0.] * (4 - len(pairs))
         return joints, weights
 
+    def _rescale_uvs(self, positions, uvs, indices):
+        """Retile a primitive's UVs to `uv_tile` metres per repeat."""
+        if self.uv_tile is None or len(indices) < 3:
+            return uvs
+        points = np.asarray(positions, dtype=float)
+        coords = np.asarray(uvs, dtype=float)
+        faces = np.asarray(indices, dtype=np.int64).reshape(-1, 3)
+        pa, pb, pc = points[faces[:, 0]], points[faces[:, 1]], points[faces[:, 2]]
+        world = np.linalg.norm(np.cross(pb - pa, pc - pa), axis=1).sum() * .5
+        ta, tb, tc = coords[faces[:, 0]], coords[faces[:, 1]], coords[faces[:, 2]]
+        edge, other = tb - ta, tc - ta
+        texel = np.abs(edge[:, 0] * other[:, 1] - edge[:, 1] * other[:, 0]).sum() * .5
+        if world <= 1e-12 or texel <= 1e-12:
+            return uvs
+        scale = math.sqrt(world / texel) / self.uv_tile
+        return [(u * scale, v * scale) for u, v in uvs]
+
     def _append(self, positions, normals, uvs, indices, joint: int, material: int):
         p, n, t, f, j, w = self.groups[material]
+        uvs = self._rescale_uvs(positions, uvs, indices)
         base = len(p); p.extend(positions); n.extend(normals); t.extend(uvs)
         f.extend(base + int(i) for i in indices)
         for position in positions:
@@ -1522,6 +2369,235 @@ class ShapeMesh:
         for step in range(1,7):
             t=step/6; current=a*(1-t)+b*t+np.array((0., .12*math.sin(t*math.pi), .12*math.sin(t*math.pi)))
             self.cylinder(previous,current,.09*(1-t*.72),joint,material,12);previous=current
+
+    def _frames(self, centers):
+        """Parallel-transported (right, up, tangent) frames along a path."""
+        frames = []
+        previous_right = None
+        for row, center in enumerate(centers):
+            if row == 0:
+                tangent = centers[1] - center
+            elif row == len(centers) - 1:
+                tangent = center - centers[row - 1]
+            else:
+                tangent = centers[row + 1] - centers[row - 1]
+            tangent = tangent / max(np.linalg.norm(tangent), 1e-6)
+            if previous_right is None:
+                ref = np.array((1., 0., 0.)) if abs(tangent[0]) < .82 else np.array((0., 0., 1.))
+                right = np.cross(tangent, ref)
+            else:
+                right = previous_right - tangent * float(np.dot(previous_right, tangent))
+            if np.linalg.norm(right) < 1e-5:
+                right = np.cross(tangent, np.array((0., 1., 0.)))
+            right = right / max(np.linalg.norm(right), 1e-6)
+            up = np.cross(right, tangent)
+            up = up / max(np.linalg.norm(up), 1e-6)
+            previous_right = right
+            frames.append((right, up, tangent))
+        return frames
+
+    def swept(self, points, widths, heights, joint=0, material=0, sides=14,
+              cap_start=True, cap_end=True):
+        """Sweep an elliptical section along a path, with closed ends.
+
+        A muzzle, a claw and a horn are all one continuous tapering solid with
+        a section that is not round -- a snout is wider than it is deep, a claw
+        is flattened side to side.  Building them from overlapping spheres and
+        circular cones is what left visible intersection seams and gave claws
+        no cross-section to read at all.
+        """
+        centers = np.asarray(points, dtype=float)
+        if len(centers) < 2 or len(widths) != len(centers) or len(heights) != len(centers):
+            return
+        frames = self._frames(centers)
+        p = []; n = []; u = []; f = []
+        for row, (center, (right, up, tangent)) in enumerate(zip(centers, frames)):
+            half_w = max(float(widths[row]), 1e-5)
+            half_h = max(float(heights[row]), 1e-5)
+            for side in range(sides):
+                angle = 2. * math.pi * side / sides
+                cos, sin = math.cos(angle), math.sin(angle)
+                offset = right * (cos * half_w) + up * (sin * half_h)
+                # Ellipse normal: scale the radial direction by the inverse
+                # semi-axes or a flattened claw lights as though it were round.
+                normal = right * (cos / half_w) + up * (sin / half_h)
+                normal = normal / max(np.linalg.norm(normal), 1e-9)
+                p.append(tuple(center + offset))
+                n.append(tuple(normal))
+                u.append((side / sides, row / (len(centers) - 1)))
+        for row in range(len(centers) - 1):
+            for side in range(sides):
+                nxt = (side + 1) % sides
+                a = row * sides + side; b = row * sides + nxt
+                c = (row + 1) * sides + side; d = (row + 1) * sides + nxt
+                f.extend((a, c, b, b, c, d))
+        for cap, row in ((cap_start, 0), (cap_end, len(centers) - 1)):
+            if not cap:
+                continue
+            center = centers[row]
+            _, _, tangent = frames[row]
+            direction = -tangent if row == 0 else tangent
+            hub = len(p)
+            p.append(tuple(center)); n.append(tuple(direction)); u.append((.5, .5))
+            ring = row * sides
+            for side in range(sides):
+                nxt = (side + 1) % sides
+                if row == 0:
+                    f.extend((hub, ring + nxt, ring + side))
+                else:
+                    f.extend((hub, ring + side, ring + nxt))
+        self._append(p, n, u, f, joint, material)
+
+    def ridge(self, points, rises, widths, joint=0, material=0, spikes=0.):
+        """A continuous crest along a path: a webbed fin, not a row of cones.
+
+        `rises` is how far the crest stands off the path at each station and
+        `widths` its thickness.  A non-zero `spikes` pulls alternate stations
+        proud of the membrane so the ridge serrates without breaking into
+        separate pieces.
+        """
+        centers = np.asarray(points, dtype=float)
+        if len(centers) < 2 or len(rises) != len(centers):
+            return
+        frames = self._frames(centers)
+        p = []; n = []; u = []; f = []
+        span = max(len(centers) - 1, 1)
+        for row, (center, (right, up, _)) in enumerate(zip(centers, frames)):
+            rise = float(rises[row])
+            if spikes:
+                rise *= 1. + spikes * (1. if row % 2 else -1.)
+            half = max(float(widths[row]), 1e-5)
+            crest = center + up * rise
+            for side, offset in ((0, -half), (1, half)):
+                p.append(tuple(center + right * offset))
+                n.append(tuple(right * (1. if offset > 0 else -1.)))
+                u.append((side * .18, row / span))
+                p.append(tuple(crest + right * offset * .35))
+                n.append(tuple(right * (1. if offset > 0 else -1.)))
+                u.append((side * .18 + .82, row / span))
+        # Four vertices per station: base-left, tip-left, base-right, tip-right.
+        for row in range(len(centers) - 1):
+            a = row * 4; b = (row + 1) * 4
+            for left, right_index in ((0, 1), (2, 3)):
+                f.extend((a + left, b + left, a + right_index,
+                          a + right_index, b + left, b + right_index))
+            # Cap the crest edge between the two faces.
+            f.extend((a + 1, b + 1, a + 3, a + 3, b + 1, b + 3))
+        self._append(p, n, u, f, joint, material)
+
+    def claw(self, base, direction, length, width, joint=0, material=0,
+             curl=.34, sides=10, stations=6, flatten=.62):
+        """A curved, laterally flattened claw rather than a straight cone.
+
+        The curl bends the claw towards the palm and the flattened section
+        gives it an edge, so it reads as a claw from the side as well as
+        head on.  A circular cone read as a blob from every angle.
+        """
+        base = np.asarray(base, dtype=float)
+        direction = np.asarray(direction, dtype=float)
+        direction = direction / max(np.linalg.norm(direction), 1e-9)
+        # Bend in the plane spanned by the digit and world down.
+        down = np.array((0., -1., 0.))
+        bend = down - direction * float(np.dot(down, direction))
+        if np.linalg.norm(bend) < 1e-6:
+            bend = np.cross(direction, np.array((1., 0., 0.)))
+        bend = bend / max(np.linalg.norm(bend), 1e-9)
+        points = []; widths = []; heights = []
+        for step in range(stations):
+            t = step / (stations - 1)
+            points.append(tuple(base + direction * (length * t)
+                                + bend * (curl * length * t * t)))
+            taper = (1. - t) ** .78
+            widths.append(width * taper * flatten)
+            heights.append(width * taper)
+        self.swept(points, widths, heights, joint, material, sides,
+                   cap_start=True, cap_end=False)
+
+    def plate(self, center, outward, along, length, width, thickness,
+              joint=0, material=0, taper=.86, shear=0.):
+        """A hewn slab with hard edges, seated on the surface it armours.
+
+        Stone plating built from spheres and tubes reads as padding, because a
+        smooth surface of revolution has no edge anywhere for a light to catch.
+        A plate is flat-shaded on six quads instead, so it takes a hard
+        specular line along every cut and looks quarried rather than inflated.
+        """
+        center = np.asarray(center, dtype=float)
+        outward = np.asarray(outward, dtype=float)
+        outward = outward / max(np.linalg.norm(outward), 1e-9)
+        along = np.asarray(along, dtype=float)
+        along = along - outward * float(np.dot(along, outward))
+        if np.linalg.norm(along) < 1e-6:
+            along = np.cross(outward, np.array((0., 1., 0.)))
+        along = along / max(np.linalg.norm(along), 1e-9)
+        across = np.cross(outward, along)
+        across = across / max(np.linalg.norm(across), 1e-9)
+        inner = center - outward * (thickness * .5)
+        outer = center + outward * (thickness * .5) + along * shear
+        corners = []
+        for base, scale in ((inner, 1.), (outer, taper)):
+            half_l = along * (length * .5 * scale)
+            half_w = across * (width * .5 * scale)
+            corners.extend([tuple(base - half_l - half_w), tuple(base + half_l - half_w),
+                            tuple(base + half_l + half_w), tuple(base - half_l + half_w)])
+        self.prism(corners, joint, material)
+
+    def banded_plates(self, start, end, outward, count, length, width, thickness,
+                      joint=0, material=0, taper=.84, spread=1.):
+        """A run of overlapping plates stepping along a limb."""
+        start = np.asarray(start, dtype=float)
+        end = np.asarray(end, dtype=float)
+        along = end - start
+        span = float(np.linalg.norm(along))
+        if span < 1e-6 or count < 1:
+            return
+        along = along / span
+        for step in range(count):
+            t = (step + .5) / count
+            centre = start + (end - start) * t
+            shrink = 1. - (1. - spread) * t
+            self.plate(centre, outward, along, length * shrink, width * shrink,
+                       thickness, joint, material, taper)
+
+    def lofted(self, rings, joint=0, material=0, closed=True, flip=False):
+        """Surface through a grid of rings, with normals from the grid itself.
+
+        A surface of revolution is the one thing a mushroom cap must not be:
+        perfect rotational symmetry is what makes it read as an umbrella.  This
+        takes an explicit ring-by-ring grid so the outline, the thickness and
+        the droop of the margin can all vary with angle.
+        """
+        grid = np.asarray(rings, dtype=float)
+        if grid.ndim != 3 or grid.shape[0] < 2 or grid.shape[1] < 3:
+            return
+        depth, around = grid.shape[0], grid.shape[1]
+        forward = np.roll(grid, -1, axis=1) - np.roll(grid, 1, axis=1)
+        down = np.empty_like(grid)
+        down[1:-1] = grid[2:] - grid[:-2]
+        down[0] = grid[1] - grid[0]
+        down[-1] = grid[-1] - grid[-2]
+        normals = np.cross(down, forward)
+        if flip:
+            normals = -normals
+        lengths = np.maximum(np.linalg.norm(normals, axis=2, keepdims=True), 1e-9)
+        normals = normals / lengths
+        p = []; n = []; u = []; f = []
+        for row in range(depth):
+            for side in range(around):
+                p.append(tuple(grid[row, side]))
+                n.append(tuple(normals[row, side]))
+                u.append((side / around, row / (depth - 1)))
+        limit = around if closed else around - 1
+        for row in range(depth - 1):
+            for side in range(limit):
+                nxt = (side + 1) % around
+                a = row * around + side; b = row * around + nxt
+                c = (row + 1) * around + side; d = (row + 1) * around + nxt
+                if flip:
+                    f.extend((a, b, c, b, d, c))
+                else:
+                    f.extend((a, c, b, b, c, d))
+        self._append(p, n, u, f, joint, material)
 
     def arrays(self):
         consolidated=[]
@@ -1663,6 +2739,8 @@ def build_roster_creature(path: Path, actor_type: int, slug: str, label: str,
     # the palette, so the base colour factor stays white and is not applied
     # twice; the underside shares the grain and tints with a factor.
     hints = families.material_hints(family, plan, slug)
+    gain = roster.VALUE_GAIN.get(slug, 1.0)
+    base, accent = _lift(base, gain), _lift(accent, gain)
     surface_kind = hints.get("surface") or surface or plan
     albedo_png, _ = surfaces.surface_maps(
         surface_kind, base, accent, seed=slug, size=256,
@@ -1704,7 +2782,8 @@ def build_roster_creature(path: Path, actor_type: int, slug: str, label: str,
     # Growth carries its own colour and surface: moss is green, rime is pale
     # ice, crystal keeps the creature's own mineral tint.
     growth_kinds = [(kind, count) for kind, count, _ in roster.GROWTH.get(slug, [])]
-    growth_rgb = anatomy.growth_colour(growth_kinds, accent, base)
+    growth_rgb = anatomy.growth_colour(growth_kinds, accent, base,
+                                       roster.GROWTH_TINT.get(slug))
     growth_surface = {"moss": "moss", "vine": "moss", "leaf": "moss",
                       "fungus": "hide", "thorn": "bark", "barnacle": "barnacle",
                       "coral": "barnacle", "rime": "ice", "crystal": "crystal",
@@ -1715,6 +2794,17 @@ def build_roster_creature(path: Path, actor_type: int, slug: str, label: str,
     mats.append(glb.material(f"{label} Growth", (255, 255, 255), roughness=.80,
                              texture_png=growth_albedo, normal_png=growth_normal,
                              emissive=accent_glow))
+    # The lit interior: a treant's heart-hollow, the glow inside a geode shell,
+    # the bright centre a wisp swirls around.  It has to be its own material
+    # because the shell around it stays dark -- that contrast is the whole
+    # effect, and a whole-body emissive destroys it.
+    core_rgb = (hints.get("core") or roster.CORE_TINT_OVERRIDE.get(slug)
+                or roster.CORE_TINT.get(slug))
+    if core_rgb is None:
+        core_rgb = tuple(min(255, int(c * .45 + 150)) for c in accent)
+    core_rgb = _saturate(core_rgb)
+    mats.append(glb.material(f"{label} Core", core_rgb, roughness=.30,
+                             metallic=.0, emissive=core_rgb))
 
     groups = mesh.arrays()
     # Settle the bind pose: raise the rig and its geometry together so a rest
@@ -1763,6 +2853,43 @@ def build_roster_creature(path: Path, actor_type: int, slug: str, label: str,
             "joints": len(bones), "animations": len(anatomy.REQUIRED_CLIPS)}
 
 
+def _lift(rgb, gain: float):
+    """Raise a colour's value by ``gain``, by blending it toward white.
+
+    Multiplying clips: a colour with a channel already near 255 cannot get any
+    brighter that way, so the creatures that needed lifting most -- the pale
+    ones -- barely moved.  Blending toward white hits the requested mean
+    exactly, never clips, and desaturates as it lightens, which is what a
+    nearly-white gull or yak looks like in the artwork anyway.
+    """
+    if gain <= 1.0:
+        return tuple(int(round(c)) for c in rgb)
+    mean = sum(rgb) / 3.0
+    if mean >= 254.0:
+        return tuple(int(round(c)) for c in rgb)
+    blend = min(1.0, mean * (gain - 1.0) / (255.0 - mean))
+    return tuple(int(round(c + (255.0 - c) * blend)) for c in rgb)
+
+
+def _saturate(rgb, floor: float = .58):
+    """Push a colour sampled off the artwork back up to emissive strength.
+
+    A core measured from a painting is averaged with all the bloom around it,
+    so it comes back pale; emitted at that saturation it reads as a grey lamp
+    rather than as light.  Keep the measured hue, restore the punch.
+    """
+    red, green, blue = (max(0.0, min(1.0, c / 255.0)) for c in rgb)
+    hue, saturation, _ = colorsys.rgb_to_hsv(red, green, blue)
+    if saturation < .12:
+        # A near-neutral colour has no meaningful hue -- what little it has is
+        # sampling noise -- and pushing it to emissive saturation amplifies
+        # that noise into a confident wrong answer.  Lift the value instead.
+        return tuple(int(round(c * 255)) for c in colorsys.hsv_to_rgb(hue, saturation, 1.0))
+    saturation = max(saturation, floor)
+    return tuple(int(round(c * 255))
+                 for c in colorsys.hsv_to_rgb(hue, saturation, 1.0))
+
+
 def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype: str,
                    base: tuple[int, int, int], accent: tuple[int, int, int],
                    scale: float) -> dict:
@@ -1798,6 +2925,8 @@ def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype
     # the palette, so the base colour factor stays white and is not applied
     # twice; the underside shares the grain and tints with a factor.
     hints = families.material_hints("quadruped", archetype, slug)
+    gain = roster.VALUE_GAIN.get(slug, 1.0)
+    base, accent = _lift(base, gain), _lift(accent, gain)
     albedo_png, _ = surfaces.surface_maps(
         archetype, base, accent, seed=slug, size=256,
         marking=surfaces.MARKINGS.get(slug))
@@ -1838,7 +2967,8 @@ def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype
     # Growth carries its own colour and surface: moss is green, rime is pale
     # ice, crystal keeps the creature's own mineral tint.
     growth_kinds = [(kind, count) for kind, count, _ in roster.GROWTH.get(slug, [])]
-    growth_rgb = anatomy.growth_colour(growth_kinds, accent, base)
+    growth_rgb = anatomy.growth_colour(growth_kinds, accent, base,
+                                       roster.GROWTH_TINT.get(slug))
     growth_surface = {"moss": "moss", "vine": "moss", "leaf": "moss",
                       "fungus": "hide", "thorn": "bark", "barnacle": "barnacle",
                       "coral": "barnacle", "rime": "ice", "crystal": "crystal",
@@ -1849,6 +2979,17 @@ def build_creature(path: Path, actor_type: int, slug: str, label: str, archetype
     mats.append(glb.material(f"{label} Growth", (255, 255, 255), roughness=.80,
                              texture_png=growth_albedo, normal_png=growth_normal,
                              emissive=accent_glow))
+    # The lit interior: a treant's heart-hollow, the glow inside a geode shell,
+    # the bright centre a wisp swirls around.  It has to be its own material
+    # because the shell around it stays dark -- that contrast is the whole
+    # effect, and a whole-body emissive destroys it.
+    core_rgb = (hints.get("core") or roster.CORE_TINT_OVERRIDE.get(slug)
+                or roster.CORE_TINT.get(slug))
+    if core_rgb is None:
+        core_rgb = tuple(min(255, int(c * .45 + 150)) for c in accent)
+    core_rgb = _saturate(core_rgb)
+    mats.append(glb.material(f"{label} Core", core_rgb, roughness=.30,
+                             metallic=.0, emissive=core_rgb))
 
     geometry = anatomy.creature_geometry(archetype, scale, bones)
     apply_growth(geometry, slug, scale)
@@ -2191,18 +3332,18 @@ def main() -> None:
                 hair_id = f"{style}_{gender}"
                 path = args.output / "hair" / f"{hair_id}.glb"
                 manifest["hair"][hair_id] = build_hair(args.source, path, style, gender) | {
-                    "path": str(path.relative_to(repo_root))}
+                    "path": path.relative_to(repo_root).as_posix()}
                 print("hair", hair_id, manifest["hair"][hair_id])
         for race in RACES:
             for gender in ("female","male"):
                 model=f"{race}_{gender}";path=args.output/"races"/f"{model}.glb"
-                manifest["races"][model]=build_player(args.source,path,race,gender)|{"path":str(path.relative_to(repo_root))}
+                manifest["races"][model]=build_player(args.source,path,race,gender)|{"path":path.relative_to(repo_root).as_posix()}
                 print("race",model,manifest["races"][model])
     if args.only in ("all","creatures"):
         for actor_type,slug,label,archetype,base,accent,scale in CREATURES:
             actor_type += CREATURE_ACTOR_TYPE_OFFSET
             path=args.output/"creatures"/f"{slug}.glb"
-            manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":str(path.relative_to(repo_root))}
+            manifest["creatures"][slug]=build_creature(path,actor_type,slug,label,archetype,base,accent,scale)|{"path":path.relative_to(repo_root).as_posix()}
             print("creature",slug,manifest["creatures"][slug])
     if args.only in ("all","creatures"):
         for index, entry in enumerate(roster.ROSTER):
@@ -2210,7 +3351,7 @@ def main() -> None:
             path = args.output / "creatures" / f"{slug}.glb"
             record = build_roster_creature(path, roster_actor_type(index), slug, label,
                                            family, plan, base, accent, scale)
-            record |= {"path": str(path.relative_to(repo_root)),
+            record |= {"path": path.relative_to(repo_root).as_posix(),
                        "locale": roster.SHEET_LOCALES[sheet],
                        "concept": {"sheet": sheet, "cell": [row, column]}}
             if family in HOVERING_FAMILIES:
@@ -2219,7 +3360,7 @@ def main() -> None:
             print("creature", slug, record["triangles"], "tris")
     if args.only=="creatures":
         previous=manifest.get("validation",{}).get("results",{})
-        rebuilt={str(path.relative_to(repo_root)):validate_glb(path)
+        rebuilt={path.relative_to(repo_root).as_posix():validate_glb(path)
                  for path in (args.output/"creatures").rglob("*.glb")}
         merged={**previous,**{k:v for k,v in rebuilt.items() if k in previous}}
         manifest["validation"]={"files":len(merged),"results":merged}
@@ -2277,14 +3418,14 @@ def main() -> None:
             info=equipment_authoring.build_equipment_piece(
                 vpath,group_rig,vslug,label,kind,base,accent,finish=finish)
             built.append(info|{"group":group,"authoredFor":spec["rig"],
-                               "path":str(vpath.relative_to(repo_root))})
+                               "path":vpath.relative_to(repo_root).as_posix()})
         return built
 
     manifest["fitVariants"]={}
     for slug,label,part,visual,kind,base,accent in EQUIPMENT:
         path=args.output/"equipment"/f"{slug}.glb"
         manifest["equipment"][slug]=build_equipment(path,slug,label,kind,base,accent,rig)|{
-            "part":part,"visual":visual,"path":str(path.relative_to(repo_root))}
+            "part":part,"visual":visual,"path":path.relative_to(repo_root).as_posix()}
         print("equipment",slug,manifest["equipment"][slug])
         for info in fit_variants(slug,label,kind,base,accent):
             manifest["fitVariants"][info["id"]]=info
@@ -2300,7 +3441,7 @@ def main() -> None:
         manifest["genericEquipment"][piece.slug]=info|{
             "part":piece.part,
             "visuals":[visual for visual,_n,_b,_a in piece.variants],
-            "path":str(path.relative_to(repo_root))}
+            "path":path.relative_to(repo_root).as_posix()}
         print("generic",piece.slug,manifest["genericEquipment"][piece.slug])
         for variant in fit_variants(piece.slug,piece.label,piece.kind,
                                     piece.base,piece.accent,finish=piece.finish):
@@ -2310,7 +3451,7 @@ def main() -> None:
     for slug, label, archetype, _scale, tacked in AMBIENT_CREATURES:
         path = args.output / "creatures" / f"{slug}.glb"
         record = {"id": slug, "name": label, "archetype": archetype,
-                  "path": str(path.relative_to(repo_root)),
+                  "path": path.relative_to(repo_root).as_posix(),
                   "generator": "eloria-assets/tools/sunmane/creatures.py",
                   "tacked": tacked, "region": "sunmane_steppe",
                   "note": AMBIENT_SOURCE_NOTE}
@@ -2318,7 +3459,10 @@ def main() -> None:
             record |= glb_geometry_stats(path)
         manifest["ambientCreatures"][slug] = record
     manifest["ambientCreaturesNote"] = AMBIENT_NOTE
-    validation={str(path.relative_to(repo_root)):validate_glb(path) for path in args.output.rglob("*.glb")}
+    # Catalogue paths are POSIX-form on every platform.  str() on a Windows
+    # PurePath yields backslashes, which the Godot side does not resolve and
+    # which made the catalogue completeness test fail on Windows builds only.
+    validation={path.relative_to(repo_root).as_posix():validate_glb(path) for path in args.output.rglob("*.glb")}
     if args.only=="equipment":
         # Only revalidate what this run rebuilt.  Ambient scenery GLBs are
         # authored by a different generator and are not part of this manifest's

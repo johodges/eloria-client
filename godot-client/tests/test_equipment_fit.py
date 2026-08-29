@@ -117,5 +117,91 @@ class EquipmentFitTest(unittest.TestCase):
                 self.assertTrue(scene_path(scene).is_file(), f"{scene} missing")
 
 
+class GarmentWindingTest(unittest.TestCase):
+    """Every closed garment shell has to face outwards.
+
+    A loft's winding follows the order of its rings, and it is easy to build a
+    shell the wrong way round without noticing: the renderer culls back faces,
+    so an inside-out garment does not disappear, it goes *transparent from the
+    near side* and shows whatever is behind it.  That is how a closed boot came
+    to look like an open-toed sandal with the wearer's foot inside it.
+
+    The check is the divergence theorem: summed about its own centroid, a closed
+    shell wound outwards encloses positive volume.  Capes are sheets and gloves
+    have an open cuff, so neither encloses anything and both are excluded.
+    """
+
+    OPEN_REGIONS = {"cape", "hands"}
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = json.loads(EQUIPMENT.read_text())
+
+    def _scenes(self):
+        for model in self.registry["models"].values():
+            if model.get("attach") != "skinned":
+                continue
+            region = str(model.get("skinRegion", ""))
+            if region in self.OPEN_REGIONS:
+                continue
+            yield scene_path(str(model["scene"]))
+            for variant in (model.get("variants") or {}).values():
+                yield scene_path(str(variant["scene"]))
+
+    def test_closed_garments_are_wound_outwards(self) -> None:
+        try:
+            import numpy as np
+        except ImportError:  # pragma: no cover - numpy is a build requirement
+            self.skipTest("numpy is required to read garment geometry")
+        seen = 0
+        for path in sorted(set(self._scenes())):
+            self.assertTrue(path.is_file(), f"{path} missing")
+            volume = 0.0
+            for points, triangles in _mesh_primitives(path):
+                middle = points.mean(axis=0)
+                local = points - middle
+                volume += float(np.einsum(
+                    "ij,ij->i", local[triangles[:, 0]],
+                    np.cross(local[triangles[:, 1]],
+                             local[triangles[:, 2]])).sum() / 6.0)
+            seen += 1
+            self.assertGreater(volume, 0.0,
+                               f"{path.name} is wound inside out")
+        self.assertGreater(seen, 10, "no closed garments were checked")
+
+
+def _mesh_primitives(path: Path):
+    """POSITION and index arrays of every primitive in a GLB."""
+    import struct
+    import numpy as np
+
+    raw = path.read_bytes()
+    json_size = struct.unpack_from("<I", raw, 12)[0]
+    document = json.loads(raw[20:20 + json_size])
+    offset = 20 + json_size
+    binary_size = struct.unpack_from("<I", raw, offset)[0]
+    binary = raw[offset + 8:offset + 8 + binary_size]
+    dtypes = {5120: "i1", 5121: "u1", 5122: "<i2", 5123: "<u2",
+              5125: "<u4", 5126: "<f4"}
+    widths = {"SCALAR": 1, "VEC2": 2, "VEC3": 3, "VEC4": 4, "MAT4": 16}
+
+    def read(index: int) -> "np.ndarray":
+        spec = document["accessors"][index]
+        view = document["bufferViews"][spec["bufferView"]]
+        dtype = np.dtype(dtypes[spec["componentType"]])
+        width = widths[spec["type"]]
+        start = view.get("byteOffset", 0) + spec.get("byteOffset", 0)
+        stride = view.get("byteStride", dtype.itemsize * width)
+        shape = (spec["count"],) if width == 1 else (spec["count"], width)
+        strides = (stride,) if width == 1 else (stride, dtype.itemsize)
+        return np.ndarray(shape, dtype=dtype, buffer=binary, offset=start,
+                          strides=strides).copy()
+
+    for mesh in document.get("meshes", []):
+        for primitive in mesh["primitives"]:
+            yield (read(primitive["attributes"]["POSITION"]).astype(float),
+                   read(primitive["indices"]).astype(np.int64).reshape(-1, 3))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

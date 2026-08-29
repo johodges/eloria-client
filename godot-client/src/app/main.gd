@@ -218,6 +218,7 @@ var map_light_root: Node3D
 @onready var sound_volume_value: Label = %SoundVolumeValue
 @onready var minimap_size: HSlider = %MinimapSize
 @onready var minimap_size_value: Label = %MinimapSizeValue
+@onready var show_through_obstacles: CheckButton = %ShowThroughObstacles
 @onready var ui_scale_slider: HSlider = %UiScale
 @onready var ui_scale_value: Label = %UiScaleValue
 @onready var equipment_side: OptionButton = %EquipmentSide
@@ -321,6 +322,7 @@ var _inventory_resize_start_mouse := Vector2.ZERO
 var _inventory_resize_start_scale := 1.0
 var _equipment_side := "left"
 var _ui_scale := 1.0
+var _show_through_obstacles := true
 var _bulk_exclusions: Dictionary = {
 	"store": [false, false, false, false],
 	"drop": [false, false, false, false]}
@@ -381,7 +383,18 @@ var _hud_layout_list: ItemList
 var _hud_layout_visible: CheckButton
 var _hud_skill_selector: OptionButton
 var _floating_feedback_layer: Control
-var _floating_feedback_offset := 0
+var _pending_floating_feedback: Array[Dictionary] = []
+var _floating_feedback_flush_queued := false
+var _active_floating_labels: Array[Label] = []
+var _last_skill_experience_msec := -100000
+
+const FLOATING_FEEDBACK_BASE_OFFSET := 78.0
+const FLOATING_FEEDBACK_ROW_HEIGHT := 21.0
+const FLOATING_FEEDBACK_MAX_ROWS := 4
+const FLOATING_FEEDBACK_RISE := 58.0
+const FLOATING_FEEDBACK_LIFETIME := 1.5
+const FLOATING_FEEDBACK_FADE_DELAY := 0.5
+const FLOATING_FEEDBACK_OVERALL_GRACE_MSEC := 250
 
 const HUD_SKILLS: Array[String] = [
 	"attack", "defense", "harvesting", "alchemy", "magic", "potion",
@@ -572,6 +585,7 @@ func _ready() -> void:
 	sound_volume.value_changed.connect(_on_sound_volume_changed)
 	minimap_size.value_changed.connect(_on_minimap_size_changed)
 	ui_scale_slider.value_changed.connect(_on_ui_scale_changed)
+	show_through_obstacles.toggled.connect(_on_show_through_obstacles_toggled)
 	equipment_side.add_item("Left", 0)
 	equipment_side.add_item("Right", 1)
 	equipment_side.select(1 if _equipment_side == "right" else 0)
@@ -2005,6 +2019,13 @@ func _unhandled_input(event: InputEvent) -> void:
 			_use_inventory_slot(slot)
 			get_viewport().set_input_as_handled()
 			return
+	# toggle_map, toggle_minimap and toggle_console are deliberately absent:
+	# _handle_bound_action() owns them so they can be rebound. Seeing through
+	# obstacles is not offered for rebinding, so it is still resolved here.
+	if event.is_action_pressed("toggle_show_through_obstacles"):
+		_toggle_show_through_obstacles()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("chat_focus"):
 		_show_chat_input()
 		get_viewport().set_input_as_handled()
@@ -2666,6 +2687,10 @@ func _sync_world() -> void:
 		node.set_nameplate_visible(int(id) != AppState.local_actor_id)
 		_place_actor_on_surface(node, true)
 	actor_label.text = "Actors: %d" % AppState.actors.size()
+	# The local actor is not necessarily the first one to arrive, and it is
+	# rebuilt on a map change, so the setting is reapplied here rather than once
+	# at login.
+	_apply_show_through_obstacles()
 	if AppState.local_actor_id >= 0 and actor_nodes.has(AppState.local_actor_id):
 		_update_local_actor_follow()
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
@@ -3123,6 +3148,8 @@ func _load_hud_settings() -> void:
 			"hud", "minimap_scale", 1.0)), 0.75, 1.75)
 		_ui_scale = clampf(float(config.get_value(
 			"hud", "ui_scale", 1.0)), UI_SCALE_MIN, UI_SCALE_MAX)
+		_show_through_obstacles = bool(config.get_value(
+			"hud", "show_through_obstacles", true))
 		_minimap_orientation = str(config.get_value(
 			"hud", "minimap_orientation", "north_up"))
 		if _minimap_orientation not in ["north_up", "player_up", "viewport_up"]:
@@ -3192,6 +3219,7 @@ func _load_hud_settings() -> void:
 		float(audio_director.volume_linear) * 100.0)
 	minimap_size.set_value_no_signal(_minimap_scale)
 	ui_scale_slider.set_value_no_signal(_ui_scale)
+	show_through_obstacles.set_pressed_no_signal(_show_through_obstacles)
 	_apply_ui_scale()
 	_apply_minimap_scale()
 	_apply_inventory_scale(_inventory_scale)
@@ -3205,6 +3233,23 @@ func _on_ui_scale_changed(value: float) -> void:
 ## that so players can trade HUD size for screen space. It only moves the canvas
 ## the HUD is laid out in - the world render target is resized to match in
 ## _on_window_size_changed(), so the world always renders at window resolution.
+func _on_show_through_obstacles_toggled(pressed: bool) -> void:
+	_show_through_obstacles = pressed
+	_apply_show_through_obstacles()
+	_save_hud_settings()
+
+func _toggle_show_through_obstacles() -> void:
+	show_through_obstacles.button_pressed = not show_through_obstacles.button_pressed
+
+## The local player only. Every actor silhouetted through every wall would be a
+## wallhack rather than a convenience, so this is deliberately not applied to
+## the rest of `actor_nodes`.
+func _apply_show_through_obstacles() -> void:
+	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
+	if actor_value is ReplicatedActor3D:
+		(actor_value as ReplicatedActor3D).set_occlusion_silhouette_enabled(
+			_show_through_obstacles)
+
 func _apply_ui_scale() -> void:
 	var window: Window = get_window()
 	if window != null:
@@ -3259,6 +3304,7 @@ func _save_hud_settings() -> void:
 	config.set_value("audio", "volume", float(audio_director.volume_linear))
 	config.set_value("hud", "minimap_scale", _minimap_scale)
 	config.set_value("hud", "ui_scale", _ui_scale)
+	config.set_value("hud", "show_through_obstacles", _show_through_obstacles)
 	config.set_value("hud", "minimap_orientation", _minimap_orientation)
 	config.set_value("hud", "minimap_position", minimap_frame.position)
 	config.set_value("hud", "minimap_visible", _minimap_visible)
@@ -3880,6 +3926,44 @@ func _actor_effect_position(actor_id: int) -> Variant:
 	return (node as Node3D).global_position
 
 func _on_floating_feedback_requested(feedback: Dictionary) -> void:
+	# Gains that land together (a skill plus the overall total, or several stats
+	# in one partial stats packet) are collected for the frame so the group can
+	# be filtered and stacked instead of every entry spawning on its own.
+	_pending_floating_feedback.append(feedback)
+	if _floating_feedback_flush_queued:
+		return
+	_floating_feedback_flush_queued = true
+	_flush_floating_feedback.call_deferred()
+
+func _flush_floating_feedback() -> void:
+	_floating_feedback_flush_queued = false
+	var pending: Array[Dictionary] = _pending_floating_feedback
+	_pending_floating_feedback = []
+	var has_skill_experience := false
+	for feedback: Dictionary in pending:
+		if _is_skill_experience(feedback):
+			has_skill_experience = true
+			break
+	if has_skill_experience:
+		_last_skill_experience_msec = Time.get_ticks_msec()
+	for feedback: Dictionary in pending:
+		# Overall experience is the sum of the skill gains, so repeating it next
+		# to the skill that produced it says nothing new. The timestamp covers
+		# the case where the server splits the two gains across frames.
+		if str(feedback.get("kind", "")) == "experience" \
+				and str(feedback.get("skill", "")) == "overall":
+			if has_skill_experience:
+				continue
+			if Time.get_ticks_msec() - _last_skill_experience_msec \
+					< FLOATING_FEEDBACK_OVERALL_GRACE_MSEC:
+				continue
+		_spawn_floating_feedback(feedback)
+
+static func _is_skill_experience(feedback: Dictionary) -> bool:
+	return str(feedback.get("kind", "")) == "experience" \
+		and str(feedback.get("skill", "")) != "overall"
+
+func _spawn_floating_feedback(feedback: Dictionary) -> void:
 	if not game_view.visible or AppState.local_actor_id < 0:
 		return
 	var actor_value: Variant = actor_nodes.get(AppState.local_actor_id)
@@ -3899,25 +3983,51 @@ func _on_floating_feedback_requested(feedback: Dictionary) -> void:
 	var label: Label = Label.new()
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.custom_minimum_size = Vector2(190.0, 26.0)
-	label.add_theme_font_size_override("font_size", 17 if kind == "level" else 15)
+	label.add_theme_font_size_override("font_size", 17 if kind == "level" else 14)
 	label.add_theme_color_override("font_outline_color", Color(0.015, 0.02, 0.025, 0.98))
-	label.add_theme_constant_override("outline_size", 5)
+	label.add_theme_constant_override("outline_size", 4)
 	if kind == "level":
 		label.text = "Level %d %s" % [int(feedback.get("level", 0)), skill.capitalize()]
 		label.add_theme_color_override("font_color", Color(1.0, 0.78, 0.22, 1.0))
 	else:
-		label.text = "+%d %s experience" % [
-			int(feedback.get("amount", 0)), skill.capitalize()]
+		label.text = "+%d %s" % [int(feedback.get("amount", 0)), skill.capitalize()]
 		label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.38, 1.0))
-	_floating_feedback_offset = (_floating_feedback_offset + 1) % 4
-	label.position = screen_position - Vector2(95.0,
-		84.0 + float(_floating_feedback_offset) * 20.0)
 	_floating_feedback_layer.add_child(label)
+	label.reset_size()
+	label.position = Vector2(screen_position.x - label.size.x * 0.5,
+		_floating_feedback_row(screen_position.y - FLOATING_FEEDBACK_BASE_OFFSET))
+	_active_floating_labels.append(label)
 	var tween: Tween = create_tween().set_parallel(true)
-	tween.tween_property(label, "position", label.position - Vector2(0.0, 76.0), 1.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property(label, "modulate:a", 0.0, 1.8).set_delay(0.55)
-	tween.finished.connect(label.queue_free)
+	tween.tween_property(label, "position",
+		label.position - Vector2(0.0, FLOATING_FEEDBACK_RISE),
+		FLOATING_FEEDBACK_LIFETIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0,
+		FLOATING_FEEDBACK_LIFETIME - FLOATING_FEEDBACK_FADE_DELAY).set_delay(
+		FLOATING_FEEDBACK_FADE_DELAY)
+	tween.finished.connect(func() -> void:
+		_active_floating_labels.erase(label)
+		label.queue_free())
+
+func _floating_feedback_row(preferred_y: float) -> float:
+	# Messages drift upwards, so a new one takes the first free row at or below
+	# the preferred height rather than landing on top of one still on screen.
+	var occupied: Array[float] = []
+	for index: int in range(_active_floating_labels.size() - 1, -1, -1):
+		var other: Label = _active_floating_labels[index]
+		if is_instance_valid(other):
+			occupied.append(other.position.y)
+		else:
+			_active_floating_labels.remove_at(index)
+	occupied.sort()
+	var row_y: float = preferred_y
+	var lowest_row: float = preferred_y + FLOATING_FEEDBACK_ROW_HEIGHT * float(
+		FLOATING_FEEDBACK_MAX_ROWS)
+	for y: float in occupied:
+		if row_y > lowest_row:
+			break
+		if absf(y - row_y) < FLOATING_FEEDBACK_ROW_HEIGHT:
+			row_y = y + FLOATING_FEEDBACK_ROW_HEIGHT
+	return minf(row_y, lowest_row)
 
 func _on_window_size_changed() -> void:
 	# Match the render viewport to the actual drawable area so resizing changes
