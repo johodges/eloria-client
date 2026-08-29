@@ -76,23 +76,28 @@ func sync() -> void:
 		return
 	var stale := false
 	for pair: Dictionary in _pairs:
-		var source: MeshInstance3D = pair["source"]
-		var clone: MeshInstance3D = pair["clone"]
-		if not is_instance_valid(source) or not is_instance_valid(clone):
+		# Read untyped and check first: equipment frees the meshes it owns, and
+		# binding a freed instance to a typed local is itself the error we are
+		# trying to survive.
+		var source_ref: Variant = pair["source"]
+		var clone_ref: Variant = pair["clone"]
+		if not is_instance_valid(source_ref) or not is_instance_valid(clone_ref):
 			stale = true
 			continue
+		var source: MeshInstance3D = source_ref
+		var clone: MeshInstance3D = clone_ref
 		clone.visible = source.visible
 	if stale:
 		rebuild()
 
 func _teardown() -> void:
 	for pair: Dictionary in _pairs:
-		var source: MeshInstance3D = pair["source"]
-		var clone: MeshInstance3D = pair["clone"]
-		if is_instance_valid(source):
-			source.material_overlay = null
-		if is_instance_valid(clone):
-			clone.queue_free()
+		var source_ref: Variant = pair["source"]
+		var clone_ref: Variant = pair["clone"]
+		if is_instance_valid(source_ref):
+			(source_ref as MeshInstance3D).material_overlay = null
+		if is_instance_valid(clone_ref):
+			(clone_ref as MeshInstance3D).queue_free()
 	_pairs.clear()
 
 ## Every mesh that makes up the actor's body: not the clones themselves, and not
@@ -105,6 +110,10 @@ func _sources() -> Array[MeshInstance3D]:
 	for node: Node in _actor.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node as MeshInstance3D
 		if mesh_node.has_meta(CLONE_META):
+			continue
+		# Unequipping queue_frees its meshes, and a node waiting to be deleted is
+		# still a child this frame. Cloning it would only produce a stale pair.
+		if mesh_node.is_queued_for_deletion():
 			continue
 		if mesh_node.layers == GAMEPLAY_ONLY_VISUAL_LAYER:
 			continue
