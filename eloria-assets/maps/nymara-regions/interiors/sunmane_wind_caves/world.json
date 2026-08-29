@@ -19,12 +19,12 @@
     "bounds": {
       "min": [
         -30.0,
-        -4.38,
+        -4.35,
         -30.0
       ],
       "max": [
         30.0,
-        7.72,
+        7.77,
         30.0
       ]
     },
@@ -42,7 +42,7 @@
       0.0,
       0.0
     ],
-    "walkingHeight": 0.087,
+    "walkingHeight": -0.219,
     "invertServerY": true,
     "addressableWorldBounds": {
       "min": [
@@ -65,7 +65,7 @@
       ],
       "position": [
         0.0,
-        0.087,
+        -0.219,
         18.0
       ],
       "facing": [
@@ -85,7 +85,7 @@
       ],
       "position": [
         0.0,
-        -0.989,
+        -1.17,
         2.0
       ],
       "facing": [
@@ -101,42 +101,36 @@
     "nodeNames": [
       "Detail_barrel_stack_014",
       "Detail_cart_013",
-      "Detail_cave_boulder_0_046",
-      "Detail_cave_boulder_0_052",
-      "Detail_cave_boulder_0_057",
-      "Detail_cave_boulder_0_137",
-      "Detail_cave_boulder_0_142",
-      "Detail_cave_boulder_0_149",
-      "Detail_cave_boulder_0_155",
-      "Detail_cave_boulder_1_041",
-      "Detail_cave_boulder_1_059",
-      "Detail_cave_boulder_1_080",
-      "Detail_cave_boulder_1_126",
-      "Detail_cave_boulder_1_144",
-      "Detail_cave_boulder_1_151",
-      "Detail_cave_boulder_1_157",
-      "Detail_cave_boulder_2_037",
-      "Detail_cave_boulder_2_047",
-      "Detail_cave_boulder_2_090",
-      "Detail_cave_boulder_2_096",
-      "Detail_cave_boulder_2_101",
-      "Detail_cave_boulder_2_106",
-      "Detail_cave_boulder_2_109",
-      "Detail_cave_boulder_2_129",
-      "Detail_cave_boulder_2_138",
-      "Detail_cave_boulder_2_163",
-      "Detail_cave_boulder_3_028",
-      "Detail_cave_boulder_3_030",
-      "Detail_cave_boulder_3_042",
-      "Detail_cave_boulder_3_048",
-      "Detail_cave_boulder_3_055",
+      "Detail_cave_boulder_0_060",
+      "Detail_cave_boulder_0_066",
+      "Detail_cave_boulder_0_087",
+      "Detail_cave_boulder_0_091",
+      "Detail_cave_boulder_0_095",
+      "Detail_cave_boulder_0_098",
+      "Detail_cave_boulder_0_101",
+      "Detail_cave_boulder_0_103",
+      "Detail_cave_boulder_1_022",
+      "Detail_cave_boulder_1_024",
+      "Detail_cave_boulder_1_036",
+      "Detail_cave_boulder_1_040",
+      "Detail_cave_boulder_1_044",
+      "Detail_cave_boulder_1_071",
+      "Detail_cave_boulder_1_078",
+      "Detail_cave_boulder_1_127",
+      "Detail_cave_boulder_1_129",
+      "Detail_cave_boulder_1_145",
+      "Detail_cave_boulder_2_084",
+      "Detail_cave_boulder_2_140",
+      "Detail_cave_boulder_3_035",
+      "Detail_cave_boulder_3_039",
       "Detail_cave_boulder_3_063",
-      "Detail_cave_boulder_3_064",
-      "Detail_cave_boulder_3_067",
-      "Detail_cave_boulder_3_088",
-      "Detail_cave_boulder_3_104",
+      "Detail_cave_boulder_3_075",
+      "Detail_cave_boulder_3_077",
+      "Detail_cave_boulder_3_107",
       "Detail_cave_boulder_3_122",
-      "Detail_cave_boulder_3_134",
+      "Detail_cave_boulder_3_123",
+      "Detail_cave_column_0_089",
+      "Detail_cave_column_1_153",
       "Detail_hay_bale_015",
       "Detail_pit_props_0_000",
       "Detail_pit_props_0_001",
@@ -198,7 +192,7 @@
       "node": "Landmark_cave_brazier_007",
       "position": [
         -2.96,
-        0.12,
+        -0.23,
         18.24
       ],
       "serverTile": [
@@ -214,7 +208,7 @@
       "node": "Landmark_cave_brazier_008",
       "position": [
         3.82,
-        -1.26,
+        -1.41,
         3.35
       ],
       "serverTile": [
@@ -230,7 +224,7 @@
       "node": "Landmark_cave_brazier_009",
       "position": [
         -13.21,
-        -1.15,
+        -0.88,
         -8.1
       ],
       "serverTile": [
@@ -246,7 +240,7 @@
       "node": "Landmark_cave_brazier_010",
       "position": [
         12.77,
-        -2.4,
+        -2.36,
         -7.18
       ],
       "serverTile": [
@@ -262,7 +256,7 @@
       "node": "Landmark_cave_brazier_011",
       "position": [
         0.21,
-        -3.06,
+        -3.29,
         -19.51
       ],
       "serverTile": [
@@ -278,7 +272,7 @@
       "node": "Landmark_fire_pit_012",
       "position": [
         -16.0,
-        -1.1,
+        -0.85,
         -8.0
       ],
       "serverTile": [
@@ -296,7 +290,7 @@
       "label": "Entrance hall",
       "position": [
         0.0,
-        0.09,
+        -0.22,
         18.0
       ],
       "radius": 6.6,
@@ -311,7 +305,7 @@
       "label": "The wind gallery",
       "position": [
         0.0,
-        -0.99,
+        -1.17,
         2.0
       ],
       "radius": 9.0,
@@ -326,7 +320,7 @@
       "label": "Drovers' camp",
       "position": [
         -16.0,
-        -1.1,
+        -0.85,
         -8.0
       ],
       "radius": 6.2,
@@ -341,7 +335,7 @@
       "label": "The whistle shaft",
       "position": [
         15.0,
-        -2.31,
+        -2.55,
         -6.0
       ],
       "radius": 5.6,
@@ -356,7 +350,7 @@
       "label": "The still pool",
       "position": [
         2.0,
-        -3.17,
+        -3.25,
         -18.0
       ],
       "radius": 5.2,
@@ -423,7 +417,7 @@
         "node": "Landmark_cave_brazier_007",
         "position": [
           -2.96,
-          1.47,
+          1.12,
           18.24
         ],
         "color": [
@@ -440,7 +434,7 @@
         "node": "Landmark_cave_brazier_008",
         "position": [
           3.82,
-          0.09,
+          -0.06,
           3.35
         ],
         "color": [
@@ -457,7 +451,7 @@
         "node": "Landmark_cave_brazier_009",
         "position": [
           -13.21,
-          0.2,
+          0.47,
           -8.1
         ],
         "color": [
@@ -474,7 +468,7 @@
         "node": "Landmark_cave_brazier_010",
         "position": [
           12.77,
-          -1.05,
+          -1.01,
           -7.18
         ],
         "color": [
@@ -491,7 +485,7 @@
         "node": "Landmark_cave_brazier_011",
         "position": [
           0.21,
-          -1.71,
+          -1.94,
           -19.51
         ],
         "color": [
@@ -542,7 +536,7 @@
       "kind": "map-transition",
       "position": [
         0.0,
-        0.09,
+        -0.22,
         19.98
       ],
       "serverTile": [
@@ -572,16 +566,16 @@
     "openCells": 2922,
     "shellChunks": 33,
     "instances": 167,
-    "kitUniqueTriangles": 4643,
-    "kitAssets": 23,
+    "kitUniqueTriangles": 4931,
+    "kitAssets": 25,
     "waterTriangles": 22,
     "nodes": 201,
-    "meshes": 57,
+    "meshes": 59,
     "materials": 15,
     "textures": 24,
-    "accessors": 359,
-    "uniqueMeshTriangles": 17405,
-    "glbBytes": 4147168,
-    "buildSeconds": 14.2
+    "accessors": 369,
+    "uniqueMeshTriangles": 17693,
+    "glbBytes": 4161408,
+    "buildSeconds": 7.7
   }
 }

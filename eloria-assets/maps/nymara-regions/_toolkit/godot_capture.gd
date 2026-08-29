@@ -10,6 +10,12 @@
 #     ../eloria-assets/maps/nymara-regions/_toolkit/godot_capture.gd \
 #     --rendering-driver vulkan --resolution 1600x1000 -- \
 #     --package=<abs path to region package> --out=<abs path>
+#     [--only=<substring>] [--environment=manifest]
+#
+# `--environment=manifest` lights the shots from the package's own
+# `environment` block through the project's `WorldEnvironmentBinder`, instead of
+# this file's neutral studio sun. Use it when the captures are meant to be
+# evidence about the region's declared lighting and not only about its geometry.
 extends SceneTree
 
 const SETTLE_FRAMES := 24
@@ -88,12 +94,15 @@ func _init() -> void:
 	# the reviewer sees daylight in a vault that has none. Such a package is lit
 	# from its own manifest instead.
 	var manifest_env: Dictionary = {}
+	var manifest_env_root: Dictionary = {}
 	var manifest_file := FileAccess.open(package.path_join("world.json"), FileAccess.READ)
 	if manifest_file != null:
 		var parsed: Variant = JSON.parse_string(manifest_file.get_as_text())
 		manifest_file.close()
+		if parsed is Dictionary:
+			manifest_env_root = parsed as Dictionary
 		if typeof(parsed) == TYPE_DICTIONARY:
-			manifest_env = parsed.get("environment", {})
+			manifest_env = manifest_env_root.get("environment", {})
 	var sealed := str(manifest_env.get("sky", "")) == "none"
 
 	# environment: a plain daylight sky so the shot shows the map, not a mood
@@ -110,7 +119,10 @@ func _init() -> void:
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 	env.ambient_light_energy = 0.45
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
-	env.tonemap_exposure = 1.05
+	# A package may declare its own exposure. The default suits a region whose
+	# albedos sit in the middle of the range; a wet jungle under closed canopy
+	# is painted much darker than that and renders as a silhouette at 1.05.
+	env.tonemap_exposure = float(manifest_env.get("exposure", 1.05))
 	env.ssao_enabled = true
 
 	# A WorldEnvironment, not camera.environment: the camera override does not
@@ -152,6 +164,32 @@ func _init() -> void:
 	# look south and most cameras look north, so the light must travel north
 	# too: yaw near zero, not near 180, or every shot is backlit.
 	sun.rotation_degrees = Vector3(-46.0, 24.0, 0.0)
+
+	# ...but a region that declares its own sun in the manifest gets that one.
+	# The fixed rig above is Amberwood's art direction - its built faces look
+	# south, so the light travels north - and it is simply wrong for a region
+	# laid out on a different axis. Verdant Stair's terraces present south-west
+	# and every frame came back backlit and near-black until this read the
+	# manifest. `environment.sun.direction` points *toward* the sun, and a
+	# DirectionalLight3D shines along its own -Z, so the node looks at -d.
+	var sun_cfg: Dictionary = manifest_env.get("sun", {})
+	var dir_raw: Variant = sun_cfg.get("direction", null)
+	if not sealed and dir_raw is Array and (dir_raw as Array).size() == 3:
+		var d := Vector3(float(dir_raw[0]), float(dir_raw[1]),
+						 float(dir_raw[2])).normalized()
+		if d.length() > 0.5 and absf(d.dot(Vector3.UP)) < 0.985:
+			sun.look_at_from_position(Vector3.ZERO, -d, Vector3.UP)
+		var sun_colour: Variant = sun_cfg.get("color", sun_cfg.get("colour", null))
+		if sun_colour is Array and (sun_colour as Array).size() >= 3:
+			sun.light_color = Color(float(sun_colour[0]), float(sun_colour[1]),
+									float(sun_colour[2]))
+		sun.light_energy = float(sun_cfg.get("energy", 1.2)) * 1.55
+		# Ambient too: a closed jungle canopy is mostly bounce, and a rig with
+		# 0.45 of sky and nothing else renders it as a silhouette.
+		var open_amb: Dictionary = manifest_env.get("ambient", {})
+		env.ambient_light_energy = maxf(
+			0.45, float(open_amb.get("energy", 0.45)) * 2.6)
+
 	if sealed:
 		# straight down and weak: a sealed package has no sun, and this only
 		# keeps surfaces from reading as flat unlit colour
@@ -160,6 +198,66 @@ func _init() -> void:
 		sun.shadow_enabled = false
 		sun.rotation_degrees = Vector3(-88.0, 0.0, 0.0)
 	world.add_child(sun)
+
+	# The lamps the package declares, as real lights. A sealed package's manifest
+	# carries a `lights` array standing in for its lanterns and braziers; without
+	# these the ambient block alone lights every surface identically and the
+	# frame shows no source for its own light.
+	var manifest_lights: Array = []
+	var lights_file := FileAccess.open(package.path_join("world.json"),
+		FileAccess.READ)
+	if lights_file != null:
+		var lights_parsed: Variant = JSON.parse_string(lights_file.get_as_text())
+		lights_file.close()
+		if typeof(lights_parsed) == TYPE_DICTIONARY:
+			manifest_lights = (lights_parsed as Dictionary).get("lights", [])
+	var lamp_count := 0
+	for entry in manifest_lights:
+		var lamp: Dictionary = entry
+		var at: Array = lamp.get("position", [])
+		if at.size() != 3:
+			continue
+		var point := OmniLight3D.new()
+		point.position = Vector3(float(at[0]), float(at[1]), float(at[2]))
+		var col: Array = lamp.get("colour", lamp.get("color", [1.0, 1.0, 1.0]))
+		point.light_color = Color(float(col[0]), float(col[1]), float(col[2]))
+		point.light_energy = float(lamp.get("energy", 1.5))
+		point.omni_range = float(lamp.get("range", 9.0))
+		point.shadow_enabled = false
+		world.add_child(point)
+		lamp_count += 1
+	if lamp_count:
+		print("[capture] %d declared lamps" % lamp_count)
+
+	# Bind the manifest's own environment, through the same
+	# `WorldEnvironmentBinder` the game uses, so a capture shows the light the
+	# region actually ships rather than this harness's neutral studio sun.
+	#
+	# Without this the frames are evidence about geometry only: a manifest can
+	# declare a sun that lights the world from underneath, or omit `tonemap`
+	# and render flat, and the captures look identical either way. Off by
+	# default so existing regions' capture sets do not change under them; pass
+	# `--environment=manifest` to use it.
+	# Note the two light sources are different manifest keys and do not
+	# collide: the loop above reads top-level `lights`, and the binder below
+	# spawns `environment.lights`. A package declaring both gets both.
+	if str(opts.get("environment", "harness")) == "manifest" and not sealed:
+		var bind_manifest := WorldManifest.new()
+		bind_manifest.data = manifest_env_root
+		var bound: bool = WorldEnvironmentBinder.apply(
+			bind_manifest, world_env, sun, world)
+		if bound and sun.is_inside_tree():
+			var travel: Vector3 = -sun.global_transform.basis.z
+			print("[capture] environment: manifest (sun travels %.2f, %.2f, %.2f%s)"
+				% [travel.x, travel.y, travel.z,
+				   "  WARNING: lights from below" if travel.y > 0.0 else ""])
+		elif bound:
+			print("[capture] environment: manifest (sun direction bound)")
+		else:
+			print("[capture] environment: manifest requested but not bound; "
+				+ "keeping harness lighting")
+	else:
+		print("[capture] environment: harness studio lighting")
 
 	var camera := Camera3D.new()
 	camera.far = 2400.0
@@ -183,19 +281,23 @@ func _init() -> void:
 		await process_frame
 
 	var written := 0
-	# The frames this run produces, described the same way the offline set
-	# describes its own. Without it `make_comparison.py` finds real client
-	# frames but no index beside them and falls back to the preview renderer,
-	# so the sheets say "offline preview" while a better set sits unused in the
-	# next directory. Written even for a partial `--only` run, merged over any
-	# existing index so one shot re-taken does not drop the other twenty-six.
-	var index: Array = []
-	var existing := FileAccess.open(out_dir.path_join("index.json"), FileAccess.READ)
+	# The frames this run actually produced, in view order. `make_comparison`
+	# reads an index.json from whichever capture directory it picks, so a
+	# godot-captures directory without one makes the comparison step fail
+	# outright rather than fall back - the frames are there and unusable.
+	#
+	# Seeded from any index already beside the frames, so a partial `--only`
+	# run updates the shots it retook and keeps the rest. Writing only what
+	# this run produced means re-taking one frame drops the other twenty-six
+	# from the index while their files stay on disk.
+	var produced: Array = []
+	var existing := FileAccess.open(out_dir.path_join("index.json"),
+		FileAccess.READ)
 	if existing != null:
 		var previous: Variant = JSON.parse_string(existing.get_as_text())
 		existing.close()
 		if typeof(previous) == TYPE_ARRAY:
-			index = previous
+			produced = previous
 
 	for entry in views:
 		var id: String = str(entry.get("id", ""))
@@ -205,7 +307,11 @@ func _init() -> void:
 		var target: Array = entry.get("target", [])
 		if eye.size() != 3 or target.size() != 3:
 			continue
-		camera.fov = float(entry.get("fieldOfViewDegrees", 55.0))
+		# The region capture index writes `fieldOfViewDegrees`; the interior
+		# preview writes `fov`. Accept either, or an interior comes back at
+		# the 55-degree default instead of the framing it was authored with.
+		camera.fov = float(entry.get("fieldOfViewDegrees",
+			entry.get("fov", 55.0)))
 		camera.global_position = Vector3(eye[0], eye[1], eye[2])
 		var look := Vector3(target[0], target[1], target[2])
 		if camera.global_position.distance_to(look) > 0.01:
@@ -216,34 +322,35 @@ func _init() -> void:
 		var path := out_dir.path_join(id + ".png")
 		if image.save_png(path) == OK:
 			written += 1
-			print("[capture] %s -> %s" % [id, path])
-			var record := {
-				"id": id,
-				"panel": entry.get("panel", null),
-				"file": id + ".png",
-				"eye": eye,
-				"target": target,
-				"fieldOfViewDegrees": entry.get("fieldOfViewDegrees", 55.0),
-				"lighting": entry.get("lighting", "day"),
-				"source": "godot-" + Engine.get_version_info().get("string", ""),
-			}
+			var record: Dictionary = (entry as Dictionary).duplicate(true)
+			record["file"] = id + ".png"
+			record["source"] = "godot"
+			record["engine"] = Engine.get_version_info().get("string", "")
+			# The driver actually in use, not the project default: the run is
+			# started with --rendering-driver, so the ProjectSettings value
+			# says gl_compatibility while the frame was drawn with Vulkan.
+			record["renderingDriver"] = RenderingServer.get_current_rendering_driver_name()
+			record["renderingMethod"] = RenderingServer.get_current_rendering_method()
 			var replaced := false
-			for i in index.size():
-				if str((index[i] as Dictionary).get("id", "")) == id:
-					index[i] = record
+			for i in produced.size():
+				if str((produced[i] as Dictionary).get("id", "")) == id:
+					produced[i] = record
 					replaced = true
 					break
 			if not replaced:
-				index.append(record)
+				produced.append(record)
+			print("[capture] %s -> %s" % [id, path])
 		else:
 			_err("could not save " + path)
 
-	var index_file := FileAccess.open(out_dir.path_join("index.json"),
-			FileAccess.WRITE)
-	if index_file != null:
-		index_file.store_string(JSON.stringify(index, "  ") + "
-")
-		index_file.close()
+	var index_out := out_dir.path_join("index.json")
+	var handle := FileAccess.open(index_out, FileAccess.WRITE)
+	if handle != null:
+		handle.store_string(JSON.stringify(produced, "  ") + "\n")
+		handle.close()
+		print("[capture] wrote %s" % index_out)
+	else:
+		_err("could not write " + index_out)
 
 	print("[capture] wrote %d frames" % written)
 	quit(0)
