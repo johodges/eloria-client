@@ -52,8 +52,8 @@ TROUSERS = ("4:0",)
 
 def _fit():
     sys.path.insert(0, str(TOOLS))
-    import garment_fit
-    return garment_fit
+    import garment_coverage
+    return garment_coverage
 
 
 class TorsoShellTest(unittest.TestCase):

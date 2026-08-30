@@ -7721,6 +7721,36 @@
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_boots__saurian.glb"
     },
+    "amberwood_ranger_boots__feminine_foot": {
+      "id": "amberwood_ranger_boots__feminine_foot",
+      "name": "Amberwood Ranger Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 130988,
+      "group": "feminine_foot",
+      "authoredFor": "luminous_female",
+      "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_boots__feminine_foot.glb"
+    },
+    "amberwood_ranger_boots__broad_foot": {
+      "id": "amberwood_ranger_boots__broad_foot",
+      "name": "Amberwood Ranger Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 129776,
+      "group": "broad_foot",
+      "authoredFor": "stoneborn_male",
+      "path": "godot-client/assets/actors/native/equipment/amberwood_ranger_boots__broad_foot.glb"
+    },
     "glasswarden_boots__saurian": {
       "id": "glasswarden_boots__saurian",
       "name": "Glasswarden Crystal Boots",
@@ -7735,6 +7765,36 @@
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/glasswarden_boots__saurian.glb"
+    },
+    "glasswarden_boots__feminine_foot": {
+      "id": "glasswarden_boots__feminine_foot",
+      "name": "Glasswarden Crystal Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 130996,
+      "group": "feminine_foot",
+      "authoredFor": "luminous_female",
+      "path": "godot-client/assets/actors/native/equipment/glasswarden_boots__feminine_foot.glb"
+    },
+    "glasswarden_boots__broad_foot": {
+      "id": "glasswarden_boots__broad_foot",
+      "name": "Glasswarden Crystal Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 129788,
+      "group": "broad_foot",
+      "authoredFor": "stoneborn_male",
+      "path": "godot-client/assets/actors/native/equipment/glasswarden_boots__broad_foot.glb"
     },
     "greyhaven_boots__saurian": {
       "id": "greyhaven_boots__saurian",
@@ -7751,6 +7811,36 @@
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/greyhaven_boots__saurian.glb"
     },
+    "greyhaven_boots__feminine_foot": {
+      "id": "greyhaven_boots__feminine_foot",
+      "name": "Greyhaven League Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 130988,
+      "group": "feminine_foot",
+      "authoredFor": "luminous_female",
+      "path": "godot-client/assets/actors/native/equipment/greyhaven_boots__feminine_foot.glb"
+    },
+    "greyhaven_boots__broad_foot": {
+      "id": "greyhaven_boots__broad_foot",
+      "name": "Greyhaven League Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 129776,
+      "group": "broad_foot",
+      "authoredFor": "stoneborn_male",
+      "path": "godot-client/assets/actors/native/equipment/greyhaven_boots__broad_foot.glb"
+    },
     "orun_rider_boots__saurian": {
       "id": "orun_rider_boots__saurian",
       "name": "Orun Rider Boots",
@@ -7765,6 +7855,36 @@
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/orun_rider_boots__saurian.glb"
+    },
+    "orun_rider_boots__feminine_foot": {
+      "id": "orun_rider_boots__feminine_foot",
+      "name": "Orun Rider Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 130960,
+      "group": "feminine_foot",
+      "authoredFor": "luminous_female",
+      "path": "godot-client/assets/actors/native/equipment/orun_rider_boots__feminine_foot.glb"
+    },
+    "orun_rider_boots__broad_foot": {
+      "id": "orun_rider_boots__broad_foot",
+      "name": "Orun Rider Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 129748,
+      "group": "broad_foot",
+      "authoredFor": "stoneborn_male",
+      "path": "godot-client/assets/actors/native/equipment/orun_rider_boots__broad_foot.glb"
     },
     "ssarathi_scale_boots__saurian": {
       "id": "ssarathi_scale_boots__saurian",
@@ -7781,6 +7901,36 @@
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_boots__saurian.glb"
     },
+    "ssarathi_scale_boots__feminine_foot": {
+      "id": "ssarathi_scale_boots__feminine_foot",
+      "name": "Ssarathi Scale Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 130976,
+      "group": "feminine_foot",
+      "authoredFor": "luminous_female",
+      "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_boots__feminine_foot.glb"
+    },
+    "ssarathi_scale_boots__broad_foot": {
+      "id": "ssarathi_scale_boots__broad_foot",
+      "name": "Ssarathi Scale Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 129764,
+      "group": "broad_foot",
+      "authoredFor": "stoneborn_male",
+      "path": "godot-client/assets/actors/native/equipment/ssarathi_scale_boots__broad_foot.glb"
+    },
     "votary_winter_boots__saurian": {
       "id": "votary_winter_boots__saurian",
       "name": "Votary Winter Boots",
@@ -7796,6 +7946,36 @@
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/votary_winter_boots__saurian.glb"
     },
+    "votary_winter_boots__feminine_foot": {
+      "id": "votary_winter_boots__feminine_foot",
+      "name": "Votary Winter Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 130964,
+      "group": "feminine_foot",
+      "authoredFor": "luminous_female",
+      "path": "godot-client/assets/actors/native/equipment/votary_winter_boots__feminine_foot.glb"
+    },
+    "votary_winter_boots__broad_foot": {
+      "id": "votary_winter_boots__broad_foot",
+      "name": "Votary Winter Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 129752,
+      "group": "broad_foot",
+      "authoredFor": "stoneborn_male",
+      "path": "godot-client/assets/actors/native/equipment/votary_winter_boots__broad_foot.glb"
+    },
     "luminous_casual_boots__saurian": {
       "id": "luminous_casual_boots__saurian",
       "name": "Luminous Casual Boots",
@@ -7810,6 +7990,36 @@
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/luminous_casual_boots__saurian.glb"
+    },
+    "luminous_casual_boots__feminine_foot": {
+      "id": "luminous_casual_boots__feminine_foot",
+      "name": "Luminous Casual Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 130980,
+      "group": "feminine_foot",
+      "authoredFor": "luminous_female",
+      "path": "godot-client/assets/actors/native/equipment/luminous_casual_boots__feminine_foot.glb"
+    },
+    "luminous_casual_boots__broad_foot": {
+      "id": "luminous_casual_boots__broad_foot",
+      "name": "Luminous Casual Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 129772,
+      "group": "broad_foot",
+      "authoredFor": "stoneborn_male",
+      "path": "godot-client/assets/actors/native/equipment/luminous_casual_boots__broad_foot.glb"
     },
     "outrider_ranger_coat__bust": {
       "id": "outrider_ranger_coat__bust",
@@ -10901,6 +11111,36 @@
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_boots__saurian.glb"
     },
+    "generic_boots__feminine_foot": {
+      "id": "generic_boots__feminine_foot",
+      "name": "Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 130900,
+      "group": "feminine_foot",
+      "authoredFor": "luminous_female",
+      "path": "godot-client/assets/actors/native/equipment/generic_boots__feminine_foot.glb"
+    },
+    "generic_boots__broad_foot": {
+      "id": "generic_boots__broad_foot",
+      "name": "Boots",
+      "kind": "boots",
+      "finish": "leather",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 129692,
+      "group": "broad_foot",
+      "authoredFor": "stoneborn_male",
+      "path": "godot-client/assets/actors/native/equipment/generic_boots__broad_foot.glb"
+    },
     "generic_boots_fur__saurian": {
       "id": "generic_boots_fur__saurian",
       "name": "Fur Boots",
@@ -10916,6 +11156,36 @@
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_boots_fur__saurian.glb"
     },
+    "generic_boots_fur__feminine_foot": {
+      "id": "generic_boots_fur__feminine_foot",
+      "name": "Fur Boots",
+      "kind": "boots",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 135036,
+      "group": "feminine_foot",
+      "authoredFor": "luminous_female",
+      "path": "godot-client/assets/actors/native/equipment/generic_boots_fur__feminine_foot.glb"
+    },
+    "generic_boots_fur__broad_foot": {
+      "id": "generic_boots_fur__broad_foot",
+      "name": "Fur Boots",
+      "kind": "boots",
+      "finish": "fur",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 133824,
+      "group": "broad_foot",
+      "authoredFor": "stoneborn_male",
+      "path": "godot-client/assets/actors/native/equipment/generic_boots_fur__broad_foot.glb"
+    },
     "generic_greaves__saurian": {
       "id": "generic_greaves__saurian",
       "name": "Greaves",
@@ -10930,6 +11200,36 @@
       "group": "saurian",
       "authoredFor": "ssarathi_male",
       "path": "godot-client/assets/actors/native/equipment/generic_greaves__saurian.glb"
+    },
+    "generic_greaves__feminine_foot": {
+      "id": "generic_greaves__feminine_foot",
+      "name": "Greaves",
+      "kind": "boots",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 130904,
+      "group": "feminine_foot",
+      "authoredFor": "luminous_female",
+      "path": "godot-client/assets/actors/native/equipment/generic_greaves__feminine_foot.glb"
+    },
+    "generic_greaves__broad_foot": {
+      "id": "generic_greaves__broad_foot",
+      "name": "Greaves",
+      "kind": "boots",
+      "finish": "plate",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "vertices": 1226,
+      "triangles": 1944,
+      "joints": 77,
+      "bytes": 129696,
+      "group": "broad_foot",
+      "authoredFor": "stoneborn_male",
+      "path": "godot-client/assets/actors/native/equipment/generic_greaves__broad_foot.glb"
     }
   },
   "ambientCreatures": {
@@ -10975,7 +11275,7 @@
   },
   "ambientCreaturesNote": "Scenery livestock instanced by the client's ambient population system. They carry no server actor type: actor-type allocation belongs to eloria-server, and these never arrive over the wire.",
   "validation": {
-    "files": 677,
+    "files": 954,
     "results": {
       "godot-client/assets/actors/native/creatures/algae_alligator.glb": {
         "nodes": 25,
@@ -15038,6 +15338,3206 @@
         "meshes": 1,
         "skins": 1,
         "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/amberwood_ranger_boots__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_bone.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_bone__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_dawn.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_dawn__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_ember.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_ember__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_frostward.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_frostward__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_lion.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_lion__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_stone.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_stone__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_storm.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_storm__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_void.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_void__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_boots_fur__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_boots__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_greaves__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_boots__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_darkfacet.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_darkfacet__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_filigree.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_filigree__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_ivory.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_ivory__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_pale.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_pale__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_runed.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_runed__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_starfield.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_starfield__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_tidecuff.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_tidecuff__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_tideknot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_tideknot__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_boots__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_casual_boots__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_bone.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_bone__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_cord.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_cord__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_crimson.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_crimson__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_ivory.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_ivory__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_lashed.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_lashed__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_linen.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_linen__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_sunburst.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_sunburst__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_sunplate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_sunplate__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_rider_boots__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_burlap.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_burlap__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_chelsea.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_chelsea__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_furlace.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_furlace__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_harness.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_harness__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_laced.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_laced__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_slouch.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_slouch__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_textile.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_textile__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_tiecuff.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_tiecuff__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_blackened.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_blackened__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_buckled.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_buckled__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_crimson.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_crimson__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_fluted.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_fluted__feminine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_fluted__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_gothic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_gothic__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_heraldic.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_heraldic__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_leaf.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_leaf__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_scroll.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_scroll__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_banded.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_banded__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_brass.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_brass__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_crimson.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_crimson__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_furlined.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_furlined__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_halfplate.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_halfplate__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_lamellar.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_lamellar__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_shin.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_shin__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_worn.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_worn__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ssarathi_scale_boots__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_buckled.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_buckled__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_canvas.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_canvas__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_darkcord.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_darkcord__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_folded.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_folded__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_fringed.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_fringed__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_fur.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_fur__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_laced.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_laced__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_tassel.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_tassel__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/votary_winter_boots__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_amber.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_amber__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_antler.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_antler__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_bark.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_bark__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_filigree.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_filigree__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_leaf.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_leaf__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_moss.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_moss__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_vine.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_vine__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_winterfur.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_winterfur__saurian.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/amberwood_ranger_boots__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_bone__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_dawn__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_ember__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_frostward__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_lion__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_stone__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_storm__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_void__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_boots_fur__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_boots__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/generic_greaves__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glasswarden_boots__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_darkfacet__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_filigree__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_ivory__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_pale__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_runed__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_starfield__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_tidecuff__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_tideknot__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/greyhaven_boots__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/luminous_casual_boots__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_bone__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_cord__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_crimson__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_ivory__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_lashed__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_linen__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_sunburst__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_sunplate__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/orun_rider_boots__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_burlap__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_chelsea__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_furlace__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_harness__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_laced__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_slouch__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_textile__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_tiecuff__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_blackened__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_buckled__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_crimson__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_fluted__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_gothic__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_heraldic__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_leaf__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_scroll__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_banded__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_brass__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_crimson__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_furlined__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_halfplate__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_lamellar__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_shin__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_worn__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/ssarathi_scale_boots__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_buckled__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_canvas__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_darkcord__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_folded__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_fringed__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_fur__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_laced__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_tassel__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/votary_winter_boots__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_amber__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_antler__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_bark__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_filigree__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_leaf__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_moss__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_vine__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_winterfur__feminine_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_bone__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_dawn__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_ember__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_frostward__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_lion__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_stone__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_storm__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/arcane_void__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_darkfacet__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_filigree__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_ivory__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_pale__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_runed__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_starfield__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_tidecuff__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/glass_tideknot__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_bone__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_cord__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_crimson__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_ivory__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_lashed__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_linen__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_sunburst__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/nomad_sunplate__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_burlap__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_chelsea__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_furlace__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_harness__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_laced__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_slouch__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_textile__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plain_tiecuff__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_blackened__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_buckled__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_crimson__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_fluted__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_gothic__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_heraldic__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_leaf__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/plate_scroll__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_banded__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_brass__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_crimson__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_furlined__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_halfplate__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_lamellar__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_shin__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/riveted_worn__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_buckled__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_canvas__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_darkcord__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_folded__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_fringed__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_fur__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_laced__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/travel_tassel__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_amber__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_antler__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_bark__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_filigree__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_leaf__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_moss__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_vine__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      },
+      "godot-client/assets/actors/native/equipment/wild_winterfur__broad_foot.glb": {
+        "nodes": 78,
+        "meshes": 1,
+        "skins": 1,
+        "animations": 0
+      }
+    }
+  },
+  "footwear": {
+    "arcane_bone": {
+      "id": "arcane_bone",
+      "name": "Bonewrought Greaves",
+      "part": 6,
+      "visual": 163,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          0,
+          3
+        ]
+      },
+      "triangles": 8856,
+      "path": "godot-client/assets/actors/native/equipment/arcane_bone.glb",
+      "variants": {
+        "feminine_foot": "arcane_bone__feminine_foot",
+        "broad_foot": "arcane_bone__broad_foot",
+        "saurian": "arcane_bone__saurian"
+      }
+    },
+    "arcane_dawn": {
+      "id": "arcane_dawn",
+      "name": "Dawnward Greaves",
+      "part": 6,
+      "visual": 164,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          1,
+          0
+        ]
+      },
+      "triangles": 8344,
+      "path": "godot-client/assets/actors/native/equipment/arcane_dawn.glb",
+      "variants": {
+        "feminine_foot": "arcane_dawn__feminine_foot",
+        "broad_foot": "arcane_dawn__broad_foot",
+        "saurian": "arcane_dawn__saurian"
+      }
+    },
+    "arcane_ember": {
+      "id": "arcane_ember",
+      "name": "Emberwrought Greaves",
+      "part": 6,
+      "visual": 160,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          0,
+          0
+        ]
+      },
+      "triangles": 8856,
+      "path": "godot-client/assets/actors/native/equipment/arcane_ember.glb",
+      "variants": {
+        "feminine_foot": "arcane_ember__feminine_foot",
+        "broad_foot": "arcane_ember__broad_foot",
+        "saurian": "arcane_ember__saurian"
+      }
+    },
+    "arcane_frostward": {
+      "id": "arcane_frostward",
+      "name": "Frostward Greaves",
+      "part": 6,
+      "visual": 161,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          0,
+          1
+        ]
+      },
+      "triangles": 7728,
+      "path": "godot-client/assets/actors/native/equipment/arcane_frostward.glb",
+      "variants": {
+        "feminine_foot": "arcane_frostward__feminine_foot",
+        "broad_foot": "arcane_frostward__broad_foot",
+        "saurian": "arcane_frostward__saurian"
+      }
+    },
+    "arcane_lion": {
+      "id": "arcane_lion",
+      "name": "Lionheart Greaves",
+      "part": 6,
+      "visual": 167,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          1,
+          3
+        ]
+      },
+      "triangles": 8016,
+      "path": "godot-client/assets/actors/native/equipment/arcane_lion.glb",
+      "variants": {
+        "feminine_foot": "arcane_lion__feminine_foot",
+        "broad_foot": "arcane_lion__broad_foot",
+        "saurian": "arcane_lion__saurian"
+      }
+    },
+    "arcane_stone": {
+      "id": "arcane_stone",
+      "name": "Runestone Greaves",
+      "part": 6,
+      "visual": 166,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          1,
+          2
+        ]
+      },
+      "triangles": 6248,
+      "path": "godot-client/assets/actors/native/equipment/arcane_stone.glb",
+      "variants": {
+        "feminine_foot": "arcane_stone__feminine_foot",
+        "broad_foot": "arcane_stone__broad_foot",
+        "saurian": "arcane_stone__saurian"
+      }
+    },
+    "arcane_storm": {
+      "id": "arcane_storm",
+      "name": "Stormcall Greaves",
+      "part": 6,
+      "visual": 162,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          0,
+          2
+        ]
+      },
+      "triangles": 8680,
+      "path": "godot-client/assets/actors/native/equipment/arcane_storm.glb",
+      "variants": {
+        "feminine_foot": "arcane_storm__feminine_foot",
+        "broad_foot": "arcane_storm__broad_foot",
+        "saurian": "arcane_storm__saurian"
+      }
+    },
+    "arcane_void": {
+      "id": "arcane_void",
+      "name": "Voidtouched Greaves",
+      "part": 6,
+      "visual": 165,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 5,
+        "cell": [
+          1,
+          1
+        ]
+      },
+      "triangles": 8880,
+      "path": "godot-client/assets/actors/native/equipment/arcane_void.glb",
+      "variants": {
+        "feminine_foot": "arcane_void__feminine_foot",
+        "broad_foot": "arcane_void__broad_foot",
+        "saurian": "arcane_void__saurian"
+      }
+    },
+    "glass_darkfacet": {
+      "id": "glass_darkfacet",
+      "name": "Darkfacet Greaves",
+      "part": 6,
+      "visual": 188,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          1,
+          0
+        ]
+      },
+      "triangles": 8664,
+      "path": "godot-client/assets/actors/native/equipment/glass_darkfacet.glb",
+      "variants": {
+        "feminine_foot": "glass_darkfacet__feminine_foot",
+        "broad_foot": "glass_darkfacet__broad_foot",
+        "saurian": "glass_darkfacet__saurian"
+      }
+    },
+    "glass_filigree": {
+      "id": "glass_filigree",
+      "name": "Filigree Tideboots",
+      "part": 6,
+      "visual": 191,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          1,
+          3
+        ]
+      },
+      "triangles": 8592,
+      "path": "godot-client/assets/actors/native/equipment/glass_filigree.glb",
+      "variants": {
+        "feminine_foot": "glass_filigree__feminine_foot",
+        "broad_foot": "glass_filigree__broad_foot",
+        "saurian": "glass_filigree__saurian"
+      }
+    },
+    "glass_ivory": {
+      "id": "glass_ivory",
+      "name": "Ivorytide Boots",
+      "part": 6,
+      "visual": 190,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          1,
+          2
+        ]
+      },
+      "triangles": 6624,
+      "path": "godot-client/assets/actors/native/equipment/glass_ivory.glb",
+      "variants": {
+        "feminine_foot": "glass_ivory__feminine_foot",
+        "broad_foot": "glass_ivory__broad_foot",
+        "saurian": "glass_ivory__saurian"
+      }
+    },
+    "glass_pale": {
+      "id": "glass_pale",
+      "name": "Paleglass Greaves",
+      "part": 6,
+      "visual": 186,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          0,
+          2
+        ]
+      },
+      "triangles": 6544,
+      "path": "godot-client/assets/actors/native/equipment/glass_pale.glb",
+      "variants": {
+        "feminine_foot": "glass_pale__feminine_foot",
+        "broad_foot": "glass_pale__broad_foot",
+        "saurian": "glass_pale__saurian"
+      }
+    },
+    "glass_runed": {
+      "id": "glass_runed",
+      "name": "Runeglass Boots",
+      "part": 6,
+      "visual": 185,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          0,
+          1
+        ]
+      },
+      "triangles": 6680,
+      "path": "godot-client/assets/actors/native/equipment/glass_runed.glb",
+      "variants": {
+        "feminine_foot": "glass_runed__feminine_foot",
+        "broad_foot": "glass_runed__broad_foot",
+        "saurian": "glass_runed__saurian"
+      }
+    },
+    "glass_starfield": {
+      "id": "glass_starfield",
+      "name": "Starfield Boots",
+      "part": 6,
+      "visual": 187,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          0,
+          3
+        ]
+      },
+      "triangles": 8352,
+      "path": "godot-client/assets/actors/native/equipment/glass_starfield.glb",
+      "variants": {
+        "feminine_foot": "glass_starfield__feminine_foot",
+        "broad_foot": "glass_starfield__broad_foot",
+        "saurian": "glass_starfield__saurian"
+      }
+    },
+    "glass_tidecuff": {
+      "id": "glass_tidecuff",
+      "name": "Tidecuff Boots",
+      "part": 6,
+      "visual": 184,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          0,
+          0
+        ]
+      },
+      "triangles": 6016,
+      "path": "godot-client/assets/actors/native/equipment/glass_tidecuff.glb",
+      "variants": {
+        "feminine_foot": "glass_tidecuff__feminine_foot",
+        "broad_foot": "glass_tidecuff__broad_foot",
+        "saurian": "glass_tidecuff__saurian"
+      }
+    },
+    "glass_tideknot": {
+      "id": "glass_tideknot",
+      "name": "Tideknot Boots",
+      "part": 6,
+      "visual": 189,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 8,
+        "cell": [
+          1,
+          1
+        ]
+      },
+      "triangles": 6116,
+      "path": "godot-client/assets/actors/native/equipment/glass_tideknot.glb",
+      "variants": {
+        "feminine_foot": "glass_tideknot__feminine_foot",
+        "broad_foot": "glass_tideknot__broad_foot",
+        "saurian": "glass_tideknot__saurian"
+      }
+    },
+    "nomad_bone": {
+      "id": "nomad_bone",
+      "name": "Bonetoggle Boots",
+      "part": 6,
+      "visual": 155,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          0,
+          3
+        ]
+      },
+      "triangles": 7132,
+      "path": "godot-client/assets/actors/native/equipment/nomad_bone.glb",
+      "variants": {
+        "feminine_foot": "nomad_bone__feminine_foot",
+        "broad_foot": "nomad_bone__broad_foot",
+        "saurian": "nomad_bone__saurian"
+      }
+    },
+    "nomad_cord": {
+      "id": "nomad_cord",
+      "name": "Corded Wanderers",
+      "part": 6,
+      "visual": 152,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          0,
+          0
+        ]
+      },
+      "triangles": 5920,
+      "path": "godot-client/assets/actors/native/equipment/nomad_cord.glb",
+      "variants": {
+        "feminine_foot": "nomad_cord__feminine_foot",
+        "broad_foot": "nomad_cord__broad_foot",
+        "saurian": "nomad_cord__saurian"
+      }
+    },
+    "nomad_crimson": {
+      "id": "nomad_crimson",
+      "name": "Crimson Caravan Boots",
+      "part": 6,
+      "visual": 157,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          1,
+          1
+        ]
+      },
+      "triangles": 5836,
+      "path": "godot-client/assets/actors/native/equipment/nomad_crimson.glb",
+      "variants": {
+        "feminine_foot": "nomad_crimson__feminine_foot",
+        "broad_foot": "nomad_crimson__broad_foot",
+        "saurian": "nomad_crimson__saurian"
+      }
+    },
+    "nomad_ivory": {
+      "id": "nomad_ivory",
+      "name": "Ivory Wardboots",
+      "part": 6,
+      "visual": 159,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          1,
+          3
+        ]
+      },
+      "triangles": 5792,
+      "path": "godot-client/assets/actors/native/equipment/nomad_ivory.glb",
+      "variants": {
+        "feminine_foot": "nomad_ivory__feminine_foot",
+        "broad_foot": "nomad_ivory__broad_foot",
+        "saurian": "nomad_ivory__saurian"
+      }
+    },
+    "nomad_lashed": {
+      "id": "nomad_lashed",
+      "name": "Lashed Trailboots",
+      "part": 6,
+      "visual": 158,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          1,
+          2
+        ]
+      },
+      "triangles": 6084,
+      "path": "godot-client/assets/actors/native/equipment/nomad_lashed.glb",
+      "variants": {
+        "feminine_foot": "nomad_lashed__feminine_foot",
+        "broad_foot": "nomad_lashed__broad_foot",
+        "saurian": "nomad_lashed__saurian"
+      }
+    },
+    "nomad_linen": {
+      "id": "nomad_linen",
+      "name": "Linenwrap Boots",
+      "part": 6,
+      "visual": 153,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          0,
+          1
+        ]
+      },
+      "triangles": 5100,
+      "path": "godot-client/assets/actors/native/equipment/nomad_linen.glb",
+      "variants": {
+        "feminine_foot": "nomad_linen__feminine_foot",
+        "broad_foot": "nomad_linen__broad_foot",
+        "saurian": "nomad_linen__saurian"
+      }
+    },
+    "nomad_sunburst": {
+      "id": "nomad_sunburst",
+      "name": "Sunburst Greaves",
+      "part": 6,
+      "visual": 156,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          1,
+          0
+        ]
+      },
+      "triangles": 6624,
+      "path": "godot-client/assets/actors/native/equipment/nomad_sunburst.glb",
+      "variants": {
+        "feminine_foot": "nomad_sunburst__feminine_foot",
+        "broad_foot": "nomad_sunburst__broad_foot",
+        "saurian": "nomad_sunburst__saurian"
+      }
+    },
+    "nomad_sunplate": {
+      "id": "nomad_sunplate",
+      "name": "Sunplate Striders",
+      "part": 6,
+      "visual": 154,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 4,
+        "cell": [
+          0,
+          2
+        ]
+      },
+      "triangles": 6056,
+      "path": "godot-client/assets/actors/native/equipment/nomad_sunplate.glb",
+      "variants": {
+        "feminine_foot": "nomad_sunplate__feminine_foot",
+        "broad_foot": "nomad_sunplate__broad_foot",
+        "saurian": "nomad_sunplate__saurian"
+      }
+    },
+    "plain_burlap": {
+      "id": "plain_burlap",
+      "name": "Burlapwrap Boots",
+      "part": 6,
+      "visual": 179,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          0,
+          3
+        ]
+      },
+      "triangles": 4312,
+      "path": "godot-client/assets/actors/native/equipment/plain_burlap.glb",
+      "variants": {
+        "feminine_foot": "plain_burlap__feminine_foot",
+        "broad_foot": "plain_burlap__broad_foot",
+        "saurian": "plain_burlap__saurian"
+      }
+    },
+    "plain_chelsea": {
+      "id": "plain_chelsea",
+      "name": "Plain Boots",
+      "part": 6,
+      "visual": 176,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          0,
+          0
+        ]
+      },
+      "triangles": 4640,
+      "path": "godot-client/assets/actors/native/equipment/plain_chelsea.glb",
+      "variants": {
+        "feminine_foot": "plain_chelsea__feminine_foot",
+        "broad_foot": "plain_chelsea__broad_foot",
+        "saurian": "plain_chelsea__saurian"
+      }
+    },
+    "plain_furlace": {
+      "id": "plain_furlace",
+      "name": "Furlaced Boots",
+      "part": 6,
+      "visual": 181,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          1,
+          1
+        ]
+      },
+      "triangles": 6060,
+      "path": "godot-client/assets/actors/native/equipment/plain_furlace.glb",
+      "variants": {
+        "feminine_foot": "plain_furlace__feminine_foot",
+        "broad_foot": "plain_furlace__broad_foot",
+        "saurian": "plain_furlace__saurian"
+      }
+    },
+    "plain_harness": {
+      "id": "plain_harness",
+      "name": "Harness Boots",
+      "part": 6,
+      "visual": 180,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          1,
+          0
+        ]
+      },
+      "triangles": 5344,
+      "path": "godot-client/assets/actors/native/equipment/plain_harness.glb",
+      "variants": {
+        "feminine_foot": "plain_harness__feminine_foot",
+        "broad_foot": "plain_harness__broad_foot",
+        "saurian": "plain_harness__saurian"
+      }
+    },
+    "plain_laced": {
+      "id": "plain_laced",
+      "name": "Laced Workboots",
+      "part": 6,
+      "visual": 178,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          0,
+          2
+        ]
+      },
+      "triangles": 4972,
+      "path": "godot-client/assets/actors/native/equipment/plain_laced.glb",
+      "variants": {
+        "feminine_foot": "plain_laced__feminine_foot",
+        "broad_foot": "plain_laced__broad_foot",
+        "saurian": "plain_laced__saurian"
+      }
+    },
+    "plain_slouch": {
+      "id": "plain_slouch",
+      "name": "Slouched Boots",
+      "part": 6,
+      "visual": 177,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          0,
+          1
+        ]
+      },
+      "triangles": 4640,
+      "path": "godot-client/assets/actors/native/equipment/plain_slouch.glb",
+      "variants": {
+        "feminine_foot": "plain_slouch__feminine_foot",
+        "broad_foot": "plain_slouch__broad_foot",
+        "saurian": "plain_slouch__saurian"
+      }
+    },
+    "plain_textile": {
+      "id": "plain_textile",
+      "name": "Textile Panel Boots",
+      "part": 6,
+      "visual": 182,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          1,
+          2
+        ]
+      },
+      "triangles": 4256,
+      "path": "godot-client/assets/actors/native/equipment/plain_textile.glb",
+      "variants": {
+        "feminine_foot": "plain_textile__feminine_foot",
+        "broad_foot": "plain_textile__broad_foot",
+        "saurian": "plain_textile__saurian"
+      }
+    },
+    "plain_tiecuff": {
+      "id": "plain_tiecuff",
+      "name": "Tiecuff Boots",
+      "part": 6,
+      "visual": 183,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 7,
+        "cell": [
+          1,
+          3
+        ]
+      },
+      "triangles": 5340,
+      "path": "godot-client/assets/actors/native/equipment/plain_tiecuff.glb",
+      "variants": {
+        "feminine_foot": "plain_tiecuff__feminine_foot",
+        "broad_foot": "plain_tiecuff__broad_foot",
+        "saurian": "plain_tiecuff__saurian"
+      }
+    },
+    "plate_blackened": {
+      "id": "plate_blackened",
+      "name": "Blackened Greaves",
+      "part": 6,
+      "visual": 135,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          1,
+          3
+        ]
+      },
+      "triangles": 6360,
+      "path": "godot-client/assets/actors/native/equipment/plate_blackened.glb",
+      "variants": {
+        "feminine_foot": "plate_blackened__feminine_foot",
+        "broad_foot": "plate_blackened__broad_foot",
+        "saurian": "plate_blackened__saurian"
+      }
+    },
+    "plate_buckled": {
+      "id": "plate_buckled",
+      "name": "Buckled Warplate",
+      "part": 6,
+      "visual": 130,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          0,
+          2
+        ]
+      },
+      "triangles": 8056,
+      "path": "godot-client/assets/actors/native/equipment/plate_buckled.glb",
+      "variants": {
+        "feminine_foot": "plate_buckled__feminine_foot",
+        "broad_foot": "plate_buckled__broad_foot",
+        "saurian": "plate_buckled__saurian"
+      }
+    },
+    "plate_crimson": {
+      "id": "plate_crimson",
+      "name": "Crimson Guard Greaves",
+      "part": 6,
+      "visual": 134,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          1,
+          2
+        ]
+      },
+      "triangles": 8392,
+      "path": "godot-client/assets/actors/native/equipment/plate_crimson.glb",
+      "variants": {
+        "feminine_foot": "plate_crimson__feminine_foot",
+        "broad_foot": "plate_crimson__broad_foot",
+        "saurian": "plate_crimson__saurian"
+      }
+    },
+    "plate_fluted": {
+      "id": "plate_fluted",
+      "name": "Fluted Greaves",
+      "part": 6,
+      "visual": 128,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          0,
+          0
+        ]
+      },
+      "triangles": 10464,
+      "path": "godot-client/assets/actors/native/equipment/plate_fluted.glb",
+      "variants": {
+        "feminine_foot": "plate_fluted__feminine_foot",
+        "broad_foot": "plate_fluted__broad_foot",
+        "saurian": "plate_fluted__saurian"
+      }
+    },
+    "plate_gothic": {
+      "id": "plate_gothic",
+      "name": "Gothic Sabatons",
+      "part": 6,
+      "visual": 131,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          0,
+          3
+        ]
+      },
+      "triangles": 8760,
+      "path": "godot-client/assets/actors/native/equipment/plate_gothic.glb",
+      "variants": {
+        "feminine_foot": "plate_gothic__feminine_foot",
+        "broad_foot": "plate_gothic__broad_foot",
+        "saurian": "plate_gothic__saurian"
+      }
+    },
+    "plate_heraldic": {
+      "id": "plate_heraldic",
+      "name": "Heraldic Greaves",
+      "part": 6,
+      "visual": 132,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          1,
+          0
+        ]
+      },
+      "triangles": 7872,
+      "path": "godot-client/assets/actors/native/equipment/plate_heraldic.glb",
+      "variants": {
+        "feminine_foot": "plate_heraldic__feminine_foot",
+        "broad_foot": "plate_heraldic__broad_foot",
+        "saurian": "plate_heraldic__saurian"
+      }
+    },
+    "plate_leaf": {
+      "id": "plate_leaf",
+      "name": "Leafwork Greaves",
+      "part": 6,
+      "visual": 129,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          0,
+          1
+        ]
+      },
+      "triangles": 7896,
+      "path": "godot-client/assets/actors/native/equipment/plate_leaf.glb",
+      "variants": {
+        "feminine_foot": "plate_leaf__feminine_foot",
+        "broad_foot": "plate_leaf__broad_foot",
+        "saurian": "plate_leaf__saurian"
+      }
+    },
+    "plate_scroll": {
+      "id": "plate_scroll",
+      "name": "Scrollwork Greaves",
+      "part": 6,
+      "visual": 133,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 1,
+        "cell": [
+          1,
+          1
+        ]
+      },
+      "triangles": 8176,
+      "path": "godot-client/assets/actors/native/equipment/plate_scroll.glb",
+      "variants": {
+        "feminine_foot": "plate_scroll__feminine_foot",
+        "broad_foot": "plate_scroll__broad_foot",
+        "saurian": "plate_scroll__saurian"
+      }
+    },
+    "riveted_banded": {
+      "id": "riveted_banded",
+      "name": "Banded Trooper Boots",
+      "part": 6,
+      "visual": 137,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          0,
+          1
+        ]
+      },
+      "triangles": 7976,
+      "path": "godot-client/assets/actors/native/equipment/riveted_banded.glb",
+      "variants": {
+        "feminine_foot": "riveted_banded__feminine_foot",
+        "broad_foot": "riveted_banded__broad_foot",
+        "saurian": "riveted_banded__saurian"
+      }
+    },
+    "riveted_brass": {
+      "id": "riveted_brass",
+      "name": "Brasswork Greaves",
+      "part": 6,
+      "visual": 140,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          1,
+          0
+        ]
+      },
+      "triangles": 5384,
+      "path": "godot-client/assets/actors/native/equipment/riveted_brass.glb",
+      "variants": {
+        "feminine_foot": "riveted_brass__feminine_foot",
+        "broad_foot": "riveted_brass__broad_foot",
+        "saurian": "riveted_brass__saurian"
+      }
+    },
+    "riveted_crimson": {
+      "id": "riveted_crimson",
+      "name": "Crimson Sashboots",
+      "part": 6,
+      "visual": 142,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          1,
+          2
+        ]
+      },
+      "triangles": 5476,
+      "path": "godot-client/assets/actors/native/equipment/riveted_crimson.glb",
+      "variants": {
+        "feminine_foot": "riveted_crimson__feminine_foot",
+        "broad_foot": "riveted_crimson__broad_foot",
+        "saurian": "riveted_crimson__saurian"
+      }
+    },
+    "riveted_furlined": {
+      "id": "riveted_furlined",
+      "name": "Furlined Marchboots",
+      "part": 6,
+      "visual": 143,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          1,
+          3
+        ]
+      },
+      "triangles": 6712,
+      "path": "godot-client/assets/actors/native/equipment/riveted_furlined.glb",
+      "variants": {
+        "feminine_foot": "riveted_furlined__feminine_foot",
+        "broad_foot": "riveted_furlined__broad_foot",
+        "saurian": "riveted_furlined__saurian"
+      }
+    },
+    "riveted_halfplate": {
+      "id": "riveted_halfplate",
+      "name": "Halfplate Legguards",
+      "part": 6,
+      "visual": 138,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          0,
+          2
+        ]
+      },
+      "triangles": 5960,
+      "path": "godot-client/assets/actors/native/equipment/riveted_halfplate.glb",
+      "variants": {
+        "feminine_foot": "riveted_halfplate__feminine_foot",
+        "broad_foot": "riveted_halfplate__broad_foot",
+        "saurian": "riveted_halfplate__saurian"
+      }
+    },
+    "riveted_lamellar": {
+      "id": "riveted_lamellar",
+      "name": "Lamellar Marchboots",
+      "part": 6,
+      "visual": 141,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          1,
+          1
+        ]
+      },
+      "triangles": 6664,
+      "path": "godot-client/assets/actors/native/equipment/riveted_lamellar.glb",
+      "variants": {
+        "feminine_foot": "riveted_lamellar__feminine_foot",
+        "broad_foot": "riveted_lamellar__broad_foot",
+        "saurian": "riveted_lamellar__saurian"
+      }
+    },
+    "riveted_shin": {
+      "id": "riveted_shin",
+      "name": "Riveted Marchboots",
+      "part": 6,
+      "visual": 136,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          0,
+          0
+        ]
+      },
+      "triangles": 6584,
+      "path": "godot-client/assets/actors/native/equipment/riveted_shin.glb",
+      "variants": {
+        "feminine_foot": "riveted_shin__feminine_foot",
+        "broad_foot": "riveted_shin__broad_foot",
+        "saurian": "riveted_shin__saurian"
+      }
+    },
+    "riveted_worn": {
+      "id": "riveted_worn",
+      "name": "Worn Campaign Boots",
+      "part": 6,
+      "visual": 139,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 2,
+        "cell": [
+          0,
+          3
+        ]
+      },
+      "triangles": 5688,
+      "path": "godot-client/assets/actors/native/equipment/riveted_worn.glb",
+      "variants": {
+        "feminine_foot": "riveted_worn__feminine_foot",
+        "broad_foot": "riveted_worn__broad_foot",
+        "saurian": "riveted_worn__saurian"
+      }
+    },
+    "travel_buckled": {
+      "id": "travel_buckled",
+      "name": "Buckled Roadboots",
+      "part": 6,
+      "visual": 170,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          0,
+          2
+        ]
+      },
+      "triangles": 4920,
+      "path": "godot-client/assets/actors/native/equipment/travel_buckled.glb",
+      "variants": {
+        "feminine_foot": "travel_buckled__feminine_foot",
+        "broad_foot": "travel_buckled__broad_foot",
+        "saurian": "travel_buckled__saurian"
+      }
+    },
+    "travel_canvas": {
+      "id": "travel_canvas",
+      "name": "Canvaswrap Boots",
+      "part": 6,
+      "visual": 173,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          1,
+          1
+        ]
+      },
+      "triangles": 4708,
+      "path": "godot-client/assets/actors/native/equipment/travel_canvas.glb",
+      "variants": {
+        "feminine_foot": "travel_canvas__feminine_foot",
+        "broad_foot": "travel_canvas__broad_foot",
+        "saurian": "travel_canvas__saurian"
+      }
+    },
+    "travel_darkcord": {
+      "id": "travel_darkcord",
+      "name": "Darkcord Roadboots",
+      "part": 6,
+      "visual": 175,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          1,
+          3
+        ]
+      },
+      "triangles": 4864,
+      "path": "godot-client/assets/actors/native/equipment/travel_darkcord.glb",
+      "variants": {
+        "feminine_foot": "travel_darkcord__feminine_foot",
+        "broad_foot": "travel_darkcord__broad_foot",
+        "saurian": "travel_darkcord__saurian"
+      }
+    },
+    "travel_folded": {
+      "id": "travel_folded",
+      "name": "Folded Roadboots",
+      "part": 6,
+      "visual": 168,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          0,
+          0
+        ]
+      },
+      "triangles": 4544,
+      "path": "godot-client/assets/actors/native/equipment/travel_folded.glb",
+      "variants": {
+        "feminine_foot": "travel_folded__feminine_foot",
+        "broad_foot": "travel_folded__broad_foot",
+        "saurian": "travel_folded__saurian"
+      }
+    },
+    "travel_fringed": {
+      "id": "travel_fringed",
+      "name": "Fringed Scoutboots",
+      "part": 6,
+      "visual": 171,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          0,
+          3
+        ]
+      },
+      "triangles": 5276,
+      "path": "godot-client/assets/actors/native/equipment/travel_fringed.glb",
+      "variants": {
+        "feminine_foot": "travel_fringed__feminine_foot",
+        "broad_foot": "travel_fringed__broad_foot",
+        "saurian": "travel_fringed__saurian"
+      }
+    },
+    "travel_fur": {
+      "id": "travel_fur",
+      "name": "Furcuff Roadboots",
+      "part": 6,
+      "visual": 169,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          0,
+          1
+        ]
+      },
+      "triangles": 5792,
+      "path": "godot-client/assets/actors/native/equipment/travel_fur.glb",
+      "variants": {
+        "feminine_foot": "travel_fur__feminine_foot",
+        "broad_foot": "travel_fur__broad_foot",
+        "saurian": "travel_fur__saurian"
+      }
+    },
+    "travel_laced": {
+      "id": "travel_laced",
+      "name": "Laced Trailboots",
+      "part": 6,
+      "visual": 172,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          1,
+          0
+        ]
+      },
+      "triangles": 6548,
+      "path": "godot-client/assets/actors/native/equipment/travel_laced.glb",
+      "variants": {
+        "feminine_foot": "travel_laced__feminine_foot",
+        "broad_foot": "travel_laced__broad_foot",
+        "saurian": "travel_laced__saurian"
+      }
+    },
+    "travel_tassel": {
+      "id": "travel_tassel",
+      "name": "Tasselled Roadboots",
+      "part": 6,
+      "visual": 174,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 6,
+        "cell": [
+          1,
+          2
+        ]
+      },
+      "triangles": 5424,
+      "path": "godot-client/assets/actors/native/equipment/travel_tassel.glb",
+      "variants": {
+        "feminine_foot": "travel_tassel__feminine_foot",
+        "broad_foot": "travel_tassel__broad_foot",
+        "saurian": "travel_tassel__saurian"
+      }
+    },
+    "wild_amber": {
+      "id": "wild_amber",
+      "name": "Amberpanel Boots",
+      "part": 6,
+      "visual": 150,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          1,
+          2
+        ]
+      },
+      "triangles": 4784,
+      "path": "godot-client/assets/actors/native/equipment/wild_amber.glb",
+      "variants": {
+        "feminine_foot": "wild_amber__feminine_foot",
+        "broad_foot": "wild_amber__broad_foot",
+        "saurian": "wild_amber__saurian"
+      }
+    },
+    "wild_antler": {
+      "id": "wild_antler",
+      "name": "Antlerbound Boots",
+      "part": 6,
+      "visual": 148,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          1,
+          0
+        ]
+      },
+      "triangles": 5896,
+      "path": "godot-client/assets/actors/native/equipment/wild_antler.glb",
+      "variants": {
+        "feminine_foot": "wild_antler__feminine_foot",
+        "broad_foot": "wild_antler__broad_foot",
+        "saurian": "wild_antler__saurian"
+      }
+    },
+    "wild_bark": {
+      "id": "wild_bark",
+      "name": "Barkbound Boots",
+      "part": 6,
+      "visual": 144,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          0,
+          0
+        ]
+      },
+      "triangles": 6844,
+      "path": "godot-client/assets/actors/native/equipment/wild_bark.glb",
+      "variants": {
+        "feminine_foot": "wild_bark__feminine_foot",
+        "broad_foot": "wild_bark__broad_foot",
+        "saurian": "wild_bark__saurian"
+      }
+    },
+    "wild_filigree": {
+      "id": "wild_filigree",
+      "name": "Thornfiligree Boots",
+      "part": 6,
+      "visual": 151,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          1,
+          3
+        ]
+      },
+      "triangles": 6424,
+      "path": "godot-client/assets/actors/native/equipment/wild_filigree.glb",
+      "variants": {
+        "feminine_foot": "wild_filigree__feminine_foot",
+        "broad_foot": "wild_filigree__broad_foot",
+        "saurian": "wild_filigree__saurian"
+      }
+    },
+    "wild_leaf": {
+      "id": "wild_leaf",
+      "name": "Leafplate Boots",
+      "part": 6,
+      "visual": 147,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          0,
+          3
+        ]
+      },
+      "triangles": 6584,
+      "path": "godot-client/assets/actors/native/equipment/wild_leaf.glb",
+      "variants": {
+        "feminine_foot": "wild_leaf__feminine_foot",
+        "broad_foot": "wild_leaf__broad_foot",
+        "saurian": "wild_leaf__saurian"
+      }
+    },
+    "wild_moss": {
+      "id": "wild_moss",
+      "name": "Mosscuff Boots",
+      "part": 6,
+      "visual": 145,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          0,
+          1
+        ]
+      },
+      "triangles": 6188,
+      "path": "godot-client/assets/actors/native/equipment/wild_moss.glb",
+      "variants": {
+        "feminine_foot": "wild_moss__feminine_foot",
+        "broad_foot": "wild_moss__broad_foot",
+        "saurian": "wild_moss__saurian"
+      }
+    },
+    "wild_vine": {
+      "id": "wild_vine",
+      "name": "Vinewrapped Boots",
+      "part": 6,
+      "visual": 146,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          0,
+          2
+        ]
+      },
+      "triangles": 5896,
+      "path": "godot-client/assets/actors/native/equipment/wild_vine.glb",
+      "variants": {
+        "feminine_foot": "wild_vine__feminine_foot",
+        "broad_foot": "wild_vine__broad_foot",
+        "saurian": "wild_vine__saurian"
+      }
+    },
+    "wild_winterfur": {
+      "id": "wild_winterfur",
+      "name": "Winterwood Boots",
+      "part": 6,
+      "visual": 149,
+      "kind": "boots",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "authoredFor": "luminous_male",
+      "concept": {
+        "sheet": 3,
+        "cell": [
+          1,
+          1
+        ]
+      },
+      "triangles": 6660,
+      "path": "godot-client/assets/actors/native/equipment/wild_winterfur.glb",
+      "variants": {
+        "feminine_foot": "wild_winterfur__feminine_foot",
+        "broad_foot": "wild_winterfur__broad_foot",
+        "saurian": "wild_winterfur__saurian"
       }
     }
   }

@@ -24,6 +24,22 @@ RACES = CLIENT / "assets" / "actors" / "native" / "races"
 REGISTRY = CLIENT / "data" / "actors" / "equipment.json"
 
 
+#: Groups that claim ``boots``; a race in none of them wears the reference.
+BOOT_GROUPS = ("feminine_foot", "broad_foot", "saurian")
+
+
+def _boot_group(groups: dict, race: str) -> str:
+    """Which footwear build a race wears.
+
+    ``fitGroups`` lists every group a race belongs to, and most of them are
+    claimed by other garment kinds.
+    """
+    listed = groups.get(race, [])
+    if isinstance(listed, str):
+        listed = [listed]
+    return next((name for name in listed if name in BOOT_GROUPS), "")
+
+
 def race_paths() -> list[Path]:
     return sorted(RACES.glob("*.glb"))
 
@@ -45,10 +61,10 @@ def matrix(boots: dict[str, Path], authors: dict[str, str],
     reports = []
     for name, boot in boots.items():
         author = authors[name]
-        group = groups.get(author, "")
+        group = _boot_group(groups, author)
         for rig in rigs:
             # A race in a fit group wears that group's variant, not this one.
-            if groups.get(rig.stem, "") != group:
+            if _boot_group(groups, rig.stem) != group:
                 continue
             reports.append(worn_report(boot, rig, registry, author))
     return reports
@@ -69,7 +85,8 @@ def main() -> None:
         for rig in race_paths():
             if not args.all_races:
                 groups = registry.get("fitGroups", {})
-                if groups.get(rig.stem, "") != groups.get(args.author, ""):
+                if _boot_group(groups, rig.stem) != _boot_group(
+                        groups, args.author):
                     continue
             report = worn_report(boot, rig, registry, args.author)
             reports.append(report)

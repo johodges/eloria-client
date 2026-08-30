@@ -23,7 +23,7 @@ import sys
 import time
 from pathlib import Path
 
-import garment_fit as gf
+import garment_coverage as gf
 
 #: What else the wearer has on when the waist seam is judged.  Every design is
 #: measured both ways: a hem that is only long enough because something else is

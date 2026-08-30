@@ -507,9 +507,46 @@ FIT_GROUPS = {
         # vertices were on female bodies, at Y .84-1.05, which is the hip.
         # Authored on the female rig instead, the six races here fall from 85
         # exposed vertices to 9 across a soft and a rigid prototype.
-        # Legs only.  Whether the torso and the boots want the same group is a
-        # question for those briefs, measured their own way.
+        # Legs only.  Footwear wants a female build too but not this exact
+        # membership - see "feminine_foot" below.
         "kinds": ("pants", "legs", "kilt"),
+    },
+    "feminine_foot": {
+        "rig": "luminous_female",
+        # Every female build that is not digitigrade, stoneborn_female included.
+        # The legs group leaves her out because she measures better on the
+        # reference piece there, which is a fact about a stone hip and not about
+        # her foot: her ankle stands 83.4 mm above the floor where the reference
+        # ankle stands 96.0, and in a male-authored boot she sank 26 mm through
+        # it.  Group membership is per kind for exactly this reason.
+        "races": ("glasswarden_female", "greyhaven_female", "luminous_female",
+                  "mycelari_female", "orun_female", "stoneborn_female",
+                  "votary_female"),
+        # A female foot is within four per cent of its male counterpart's width
+        # and seven per cent of its length, so size is not the problem; the arch
+        # is.  Every female rig in the cast stands flatter than the reference,
+        # and a sole swept from a raised arch steps back from ground the flat
+        # one is standing on.  That is a shape, not a scale, and it was the
+        # whole of the residual here - eight to sixteen vertices under each
+        # midfoot on every one of the sixty-four designs.  Authored on the
+        # female rig instead they measure clean.
+        "kinds": ("boots",),
+    },
+    "broad_foot": {
+        "rig": "stoneborn_male",
+        # The two broadest male builds in the cast.  Greyhaven was tried here
+        # and measured worse than it does on the reference piece - 258 exposed
+        # against 42 - so it stays there: it is a tall build rather than a broad
+        # one and a Stoneborn last does not describe its foot.
+        # An Orun ankle sits 26 mm inboard of the reference's with the foot
+        # still under the body, so their foot reaches 105 mm to the outside of
+        # the joint where the reference's reaches 72; a Stoneborn foot is
+        # sixteen per cent wider again.  The anchor datum carries the offset and
+        # the girth refit carries some of the width, but what is left is a
+        # different foot rather than a bigger one, and it showed as 8 to 12
+        # vertices along the outer edge on every design.
+        "races": ("orun_male", "stoneborn_male"),
+        "kinds": ("boots",),
     },
     "heavy": {
         "rig": "stoneborn_male",
@@ -586,6 +623,59 @@ def body_girth(rig: Rig, bones=GIRTH_BONES) -> dict:
         girth[bone] = round(float(np.quantile(samples, .80)), 5)
     return girth
 
+
+def foot_anchor(rig: Rig) -> dict:
+    """Where each foot actually sits, relative to the joint that carries it.
+
+    Added 2026-08-29 for Eloria Client, and widened from a height to a vector on
+    2026-08-29 once the Orun were measured.  Garments are refitted per wearer by
+    scaling each bone about *its own origin*, which assumes the flesh sits in the
+    same place relative to that origin on every rig.  For the foot it does not,
+    in two independent ways:
+
+    * the ankle stands 91 to 103 mm above the floor on every male rig in the
+      cast and only 78.6 to 83.4 mm on every female one, so a sole authored on
+      one and scaled by stature onto the other lands 14 mm through the floor;
+    * the Orun ankle sits 26 mm further inboard than the reference's, so their
+      foot reaches 105 mm to the outside of the joint where the reference's
+      reaches 72 - a shell cut to the reference and anchored on the joint simply
+      misses the outer half of an Orun foot.
+
+    Neither is a size difference and no amount of widening reaches either.  What
+    is shipped is therefore the offset from the joint to the foot itself: across
+    and along in the ground plane, taken from the middle of the flesh, and
+    downwards taken from the floor the body rests on rather than from the middle,
+    because standing on the ground is the thing that has to be exact.
+    """
+    ground = float(rig.positions[:, 1].min())
+    anchors: dict[str, list] = {}
+    for side in ("l", "r"):
+        for bone in (f"foot_{side}", f"ball_{side}"):
+            if bone not in rig.rest:
+                continue
+            origin = rig.origin(bone)
+            flesh = rig.positions[_foot_region(rig, side)]
+            if len(flesh) < 24:
+                continue
+            middle = (flesh.min(axis=0) + flesh.max(axis=0)) * .5
+            anchors[bone] = [round(float(middle[0] - origin[0]), 5),
+                             round(float(ground - origin[1]), 5),
+                             round(float(middle[2] - origin[2]), 5)]
+    return anchors
+
+
+def _foot_region(rig: Rig, side: str) -> "np.ndarray":
+    """Body vertices belonging to one foot: below the joint, around its axis."""
+    ankle = rig.origin(f"foot_{side}")
+    toe = rig.segment(f"ball_{side}")[1]
+    span = toe - ankle
+    length = float(np.linalg.norm(span)) or 1.0
+    axis = span / length
+    offsets = rig.positions - ankle
+    along = np.clip(offsets @ axis, 0.0, length)
+    aside = np.linalg.norm(offsets - np.outer(along, axis), axis=1)
+    same = np.sign(rig.positions[:, 0]) == np.sign(ankle[0] or 1.0)
+    return same & (rig.positions[:, 1] < ankle[1] + .025) & (aside < .130)
 
 def sole_drop(rig: Rig) -> dict:
     """How far each foot bone stands above the ground the body rests on.
@@ -3057,20 +3147,29 @@ def build_equipment_piece(path: Path, rig: Rig, slug: str, label: str, kind: str
                           base: tuple[int, int, int], accent: tuple[int, int, int],
                           *, finish: str | None = None,
                           style: "Style | None" = None,
-                          features: tuple[str, ...] = ()) -> dict:
-    """Author and write one equipment GLB, skinning it when it is a garment."""
+                          features: tuple[str, ...] = (),
+                          surface: "Surface | None" = None) -> dict:
+    """Author and write one equipment GLB, skinning it when it is a garment.
+
+    ``surface`` lets a caller supply geometry it built itself rather than take
+    the shell ``garment_geometry`` would loft.  The footwear catalogue does
+    that: sixty-four designs are not one lofted tube under different colours.
+    """
     finish_name = finish or EQUIPMENT_FINISH.get(slug, "leather")
     profile = FINISHES[finish_name]
     skinned = kind in GARMENT_KINDS
     if skinned:
-        # A fit variant is built through the same call under a suffixed slug, so
-        # the lookup has to see past the suffix or a variant would be built with
-        # the default construction while its reference piece used the design's.
-        garment = garment_geometry(kind, rig, style or style_for(slug),
-                                   features or ())
-        surface, region = garment.surface, garment.skin_region
+        region = garment_region(kind)
+        if surface is None:
+            # A fit variant is built through the same call under a suffixed
+            # slug, so the lookup has to see past the suffix or a variant would
+            # be built with the default construction while its reference piece
+            # used the design's.
+            garment = garment_geometry(kind, rig, style or style_for(slug),
+                                       features or ())
+            surface, region = garment.surface, garment.skin_region
     else:
-        surface, region = prop_geometry(kind), ""
+        surface, region = (surface or prop_geometry(kind)), ""
     glb = EquipmentGLB()
     detail = tuple(round(c * .46 + 18) for c in base)
     palette = (base, accent, detail)
@@ -3095,8 +3194,8 @@ def build_equipment_piece(path: Path, rig: Rig, slug: str, label: str, kind: str
         if skinned:
             bound = (cape_weights(rig, positions.astype(np.float64))
                      if region == "cape" else None)
-            joints, weights = bound if bound is not None else rig.weights_for(
-                positions.astype(np.float64), GARMENT_SKIN[region])
+            joints, weights = bound if bound is not None else _scoped_weights(
+                rig, surface, slot, positions.astype(np.float64), region)
             joints, weights = apply_pins(rig, surface.pins[slot], joints, weights)
         primitives.append(glb.primitive(positions, normals, uvs, indices,
                                         materials[slot], joints=joints,
@@ -3144,6 +3243,45 @@ ENCLOSING_HEADWEAR = {"helm", "crest", "hood", "mushroom"}
 # Those ids are now STAFF_4, SHIELD_BRONZE and CAPE_GOLD and render as
 # themselves; bespoke NPC gear comes from npcLooks, which names native ids.
 ALIASES: dict[str, str] = {}
+
+
+#: Bone sets a vertex may be scoped to, beyond its region's default.  A boot's
+#: sole is the case this exists for: the body binds its own heel 31 per cent to
+#: the calf, and the runtime scales every bone about its own origin - the calf's
+#: being the knee - so a sole that inherited that weighting was dragged 62 mm
+#: under the floor on the broadest races.  Scoping the sole to the foot chain
+#: leaves it anchored on the joint that actually tracks the ground.
+SKIN_SCOPES = {
+    "boot_foot": ["foot_l", "foot_r", "ball_l", "ball_r"],
+    "boot_shaft": ["calf_l", "calf_r", "foot_l", "foot_r"],
+}
+
+
+def _scoped_weights(rig: Rig, surface: Surface, slot: int, points: np.ndarray,
+                    region: str):
+    """Skin weights, solved separately for each scope the surface declares."""
+    scopes = surface.scope_array(slot, len(points))
+    named = sorted({str(name) for name in scopes} & set(SKIN_SCOPES))
+    if not named:
+        return rig.weights_for(points, GARMENT_SKIN[region])
+    joints = np.zeros((len(points), 4), dtype=np.int64)
+    weights = np.zeros((len(points), 4), dtype=np.float64)
+    rest = np.ones(len(points), dtype=bool)
+    for name in named:
+        picked = scopes == name
+        if not picked.any():
+            continue
+        rest &= ~picked
+        block_joints, block_weights = rig.weights_for(
+            points[picked], SKIN_SCOPES[name])
+        joints[picked] = block_joints
+        weights[picked] = block_weights
+    if rest.any():
+        block_joints, block_weights = rig.weights_for(
+            points[rest], GARMENT_SKIN[region])
+        joints[rest] = block_joints
+        weights[rest] = block_weights
+    return joints, weights
 
 
 def detail_colour(base) -> tuple:
@@ -3195,7 +3333,9 @@ def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
                              scene_root: str = "res://assets/actors/native/equipment",
                              generic=None, author_rig: str = "",
                              girths: dict | None = None,
-                             sole_drops: dict | None = None) -> dict:
+                             sole_drops: dict | None = None,
+                             foot_anchors: dict | None = None,
+                             footwear=None) -> dict:
     """Emit ``data/actors/equipment.json`` for the runtime attachment path."""
     # Resolved here rather than as a default: the generic catalogue is declared
     # further down the module, beside the geometry it describes.
@@ -3205,6 +3345,14 @@ def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
     for slug, _label, part, visual, kind, *_ in entries:
         models[f"{part}:{visual}"] = _model_entry(
             rig, idle_bases, scene_root, slug, part, kind, author_rig)
+    # The footwear catalogue: sixty-four designs, one authored mesh each rather
+    # than one mesh under sixty-four tints, so no ``tint`` is emitted for them.
+    for visual, design in (footwear or {}).items():
+        model = _model_entry(rig, idle_bases, scene_root, design.slug, 6,
+                             "boots", author_rig)
+        model["name"] = design.label
+        model["concept"] = {"sheet": design.sheet, "cell": list(design.cell)}
+        models[f"6:{visual}"] = model
     # The generic tier shares one mesh across a material ladder, so each legacy
     # id is the same scene under a different tint rather than its own asset.
     for piece in generic:
@@ -3240,6 +3388,12 @@ def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
         # rigs are three per cent shorter overall and twenty per cent shorter
         # from ankle to sole.
         "soleDrop": sole_drops or {},
+        # Where each foot sits relative to the joint that carries it, which is
+        # what footwear is seated by.  Stature is the wrong proxy for it: the
+        # female rigs are three per cent shorter overall and twenty per cent
+        # shorter from ankle to sole, and the Orun ankle sits 26 mm inboard of
+        # the reference's with the foot still under the body.
+        "footAnchor": foot_anchors or {},
     }
 
 

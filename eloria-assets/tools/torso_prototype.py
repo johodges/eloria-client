@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 import equipment_authoring as ea
-import garment_fit as gf
+import garment_coverage as gf
 
 
 def build(rig: ea.Rig, path: Path, kind: str, style: ea.Style, label: str) -> dict:
