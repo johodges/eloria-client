@@ -45,8 +45,8 @@ radial_segments = 48
 
 [sub_resource type="CylinderMesh" id="Mesh_map_marker"]
 material = SubResource("Material_map_marker")
-top_radius = 5.0
-bottom_radius = 5.0
+top_radius = 9.0
+bottom_radius = 9.0
 height = 0.35
 
 [node name="Main" type="Control" unique_id=1866924712]

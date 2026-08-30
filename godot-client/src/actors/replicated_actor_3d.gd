@@ -90,7 +90,7 @@ const GAMEPLAY_ONLY_VISUAL_LAYER := 2
 ## third of a pixel on a map that frames 1600 metres, so everyone standing on
 ## it needs a dot sized for the map rather than for the world.
 const MAP_MARKER_LAYER := 4
-const MAP_DOT_RADIUS := 3.5
+const MAP_DOT_RADIUS := 6.0
 ## The light blue the full map's legend calls NPC, written the way the legend
 ## writes it so a reader comparing the swatch to the map is comparing one
 ## colour to itself rather than to a rounding of it.
