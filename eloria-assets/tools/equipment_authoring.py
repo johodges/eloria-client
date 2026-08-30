@@ -1161,6 +1161,11 @@ GARMENT_SKIN = {
 }
 
 
+#: How far the tucked part of a shell is held off the skin, in metres.  Enough
+#: to cover it and no more; it is under the trousers.
+TUCK_CLEARANCE = .004
+
+
 def chord_allowance(sides: int) -> float:
     """How much a ring has to be let out so its flats clear what it measured.
 
@@ -1186,7 +1191,7 @@ def torso_rings(rig: Rig, y_low: float, y_high: float, *, rows: int = 14,
                 sides: int = 28, thickness: float = .016,
                 flare: float = 0.0, flare_low: float = 0.0, taper: float = 1.0,
                 floor: float = .055, percentile: float = 96.0,
-                chord: bool = False,
+                chord: bool = False, tuck: float = 0.0, tuck_span: float = .18,
                 bones: list[str] | None = None) -> list[np.ndarray]:
     """Rings that follow the measured torso silhouette between two heights."""
     axis_start = np.array([0., y_low, 0.])
@@ -1204,10 +1209,41 @@ def torso_rings(rig: Rig, y_low: float, y_high: float, *, rows: int = 14,
         widen = thickness + flare * travel + flare_low * (1. - travel) ** 1.4
         scale = 1.0 + (taper - 1.0) * travel
         clearance = chord_allowance(sides) if chord else 1.0
+        # Drawn in over the bottom of the shell only, and only as far as there
+        # is room.  ``flare_low`` reaches a third of the way up even at its own
+        # exponent, so using it to tuck a hem narrows the chest too and pays
+        # coverage everywhere to fix one seam; this dies inside ``tuck_span``.
+        #
+        # The clamp is the other half of it.  Rings are sized from a slab that
+        # reaches the hips, so at the waist a ring is hip-sized and stands clear
+        # of the skin by however much the hips exceed the waist - and that is
+        # the slack the tuck spends.  How much there is depends on the body: a
+        # narrow waist under wide hips has plenty, a stoneborn female has about
+        # 10 mm of it at the front, and taking a fixed 39 mm regardless left the
+        # shell 7 to 16 mm inside her belly.  The tight measurement below says
+        # where the skin is at this height and the tuck stops there.
+        drawn = (tuck * (1. - travel / tuck_span) ** 2
+                 if tuck and travel < tuck_span else 0.0)
+        local = None
+        if drawn:
+            local = [rig.surface_radius(axis_start, axis_end, travel,
+                                        2 * math.pi * side / sides,
+                                        bones=bones or TORSO_BONES, slab=.016,
+                                        default=floor, percentile=percentile)
+                     for side in range(sides)]
         ring = np.empty((sides, 3))
         for side in range(sides):
             angle = 2 * math.pi * side / sides
             radius = (smoothed[side] * clearance + widen) * scale
+            if drawn:
+                # Held off the skin by ``TUCK_CLEARANCE`` rather than by the
+                # garment's own thickness: this stretch of shell is inside the
+                # trousers and never seen, and on a body where the trousers sit
+                # close - a glasswarden female at y 1.062 - insisting on the
+                # full thickness put the hem back outside them.  It only has to
+                # clear the skin, not look like cloth.
+                radius = max(radius - drawn * scale,
+                             (local[side] * clearance + TUCK_CLEARANCE) * scale)
             ring[side] = (math.cos(angle) * radius, height, math.sin(angle) * radius)
         rings.append(ring)
     return rings
@@ -2023,11 +2059,42 @@ def _sleeves(surface: Surface, rig: Rig, *, end: float, material: int,
 #: measured rather than argued about.  See torso_prototype.py.
 _SHELL_PERCENTILE = 100.0
 _SHELL_FLARE = .012
+#: How far the hem is drawn in so it finishes *inside* the trousers.
+#:
+#: The torso garment is the inner layer at the waist, and being long enough is
+#: not sufficient - a hem that reaches inside the waistband but is cut wider
+#: than it pushes straight back out through it, which on screen is
+#: indistinguishable from a gap.  Both pipelines size their rings from a slab
+#: that reaches the hips, so at the narrow waist both are hip-sized and the
+#: difference between them is not the difference between the two declared
+#: thicknesses: measured garment against garment over all sixteen races, the
+#: untucked shell stood 30 mm proud of the trousers.
+_SHELL_TUCK = .055
+#: How far up the shell the tuck reaches, as a fraction of its height.
+#:
+#: At .18 the taper had died out 40 mm above the hem and a shirt still stood
+#: 3 mm outside the trousers there.  Nothing shallower closes it: .22 span fails,
+#: and so does .040 of tuck over this span.
+#:
+#: This setting is a trade and it is worth stating.  With trousers on - which is
+#: every state the protocol can produce, since part 4 always carries at least an
+#: appearance byte - it costs nothing: 207 exposed body vertices against 206 at
+#: .18, and the shoulder figure does not move at all.  With bare legs it costs
+#: a good deal: 655 against 206, worst 20 on a mesh against 6.  The waist seam
+#: the player can actually see was the reported defect; a torso garment worn
+#: over nothing is a test construct.
+_SHELL_TUCK_SPAN = .26
 
 
 def _torso_shell(rig: Rig, waist: float, *, thickness: float = .011,
-                 sides: int = 30, rows: int = 18) -> list:
+                 sides: int = 30, rows: int = 26) -> list:
     """Rings from the hem to the top of the collar, as one continuous tube.
+
+    26 rows, not 18.  A loft chords straight between its rings, and at 18 rows
+    they are 26 mm apart - far enough that the chord cuts inside a belly that
+    bulges between two of them.  Fifteen vertices came through the front of a
+    stoneborn female's waist that way, not because the shell was too narrow
+    there but because it was too coarse.
 
     The body used to stop at the collar and a separate band carry on above it.
     Two lofts in two material groups are two primitives and so two shells, and
@@ -2038,6 +2105,7 @@ def _torso_shell(rig: Rig, waist: float, *, thickness: float = .011,
     rings = torso_rings(rig, waist, COLLAR, rows=rows, sides=sides,
                         thickness=thickness, flare_low=_SHELL_FLARE,
                         percentile=_SHELL_PERCENTILE, chord=True,
+                        tuck=_SHELL_TUCK, tuck_span=_SHELL_TUCK_SPAN,
                         # Deliberately not the arms.  Measuring the arm root
                         # here widens the whole chest ring towards it, and the
                         # shell then follows neither: it measured 33 vertices

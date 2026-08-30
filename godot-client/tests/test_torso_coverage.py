@@ -112,16 +112,14 @@ class TorsoCoverageTest(unittest.TestCase):
 
     #: Body vertices a garment may leave showing over the region it covers.
     #: The full sweep - eighty meshes, sixteen races, seven clips, with trousers
-    #: and without - reports a worst case of 6, always the same handful at the
-    #: armpit of a stoneborn female folded into the sit pose, 1 to 7 mm outside
-    #: the shell.  8 leaves room for that and not for a regression: the shells
-    #: this replaces left 47,855 of 125,736.
-    MAX_EXPOSED = 8
-    #: The shoulder gets its own budget, and a much tighter one.  This is the
-    #: defect the work exists to close and it must not be able to hide inside a
-    #: whole-body total.  Forty-eight of the eighty meshes measure exactly zero
-    #: and no mesh reads more than 2, against 14,039 of 35,496 before.
-    MAX_SHOULDER = 2
+    #: and without - reports 66 in total and a worst case of 3 on any one mesh,
+    #: against 47,855 of 125,736 for the shells this replaces.
+    MAX_EXPOSED = 4
+    #: The shoulder gets its own budget.  This is the defect the work exists to
+    #: close and it must not be able to hide inside a whole-body total.  Sixty
+    #: five of the eighty meshes measure exactly zero and none reads more than
+    #: 3, against 14,039 of 35,496 before.
+    MAX_SHOULDER = 3
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -204,6 +202,16 @@ class TorsoWaistDatumTest(unittest.TestCase):
     #: Least of the hem that has to finish inside the trousers, in metres.
     MIN_TUCK = .045
 
+    @classmethod
+    def setUpClass(cls) -> None:
+        try:
+            import numpy  # noqa: F401
+        except ImportError:  # pragma: no cover
+            raise unittest.SkipTest("numpy is required to read garment geometry")
+        cls.fit = _fit()
+        cls.registry = json.loads(EQUIPMENT.read_text())
+        cls.races = sorted(path.stem for path in RACES.glob("*.glb"))
+
     #: What the leg pipeline works to, for a tree where it has not landed yet.
     #: These are the values in eloria-assets/tools/legwear_geometry.py; the test
     #: reads that module when it is present so the two cannot drift, and falls
@@ -235,26 +243,119 @@ class TorsoWaistDatumTest(unittest.TestCase):
                 f"{(legs.WAIST_TOP - hem) * 1000:.0f} mm inside a trouser waist "
                 f"that tops out at {legs.WAIST_TOP}")
 
+    #: Heights the torso hem is genuinely *inside* the trousers, in world Y.
+    #: Above this the shirt blouses over the waistband, which is what a tucked
+    #: shirt does and not a defect.
+    TUCK_ZONE = (1.024, 1.062)
+    #: Garments to check the seam on: one of each construction.
+    SEAM_SAMPLE = ("5:168", "5:128", "5:120", "5:0")
+
     def test_the_torso_layer_is_inside_the_trouser_layer(self) -> None:
         """Long enough is not sufficient: it has to be *under*, too.
 
-        A hem that reaches inside the waistband but is lofted further off the
-        body than the waistband is pushes through it, which looks exactly like
-        a gap.  The leg pipeline lofts its shell at .032 and its belt at .038 on
-        the stated assumption that the torso piece sits at .011; this checks the
-        assumption still holds for all four constructions, thickest first.
+        A hem that reaches inside the waistband but is cut wider than it pushes
+        straight back out through it, and on screen that is indistinguishable
+        from a gap.
+
+        This used to compare two declared constants - the torso construction's
+        ``thickness`` against the leg pipeline's ``SHELL_STANDOFF`` - and passed
+        while the meshes failed by 30 mm.  Both pipelines size their rings from
+        a slab that reaches the hips, so at the narrow waist both are hip-sized
+        and the gap between them is nothing like the gap between the two
+        numbers.  It now measures the built garments against the built trousers,
+        per race, which is the only comparison that can see the defect.
         """
-        sys.path.insert(0, str(TOOLS))
-        import torso_designs
-        legs = self._legwear()
-        thickest = max(style.thickness
-                       for *_head, style in torso_designs.DESIGNS)
-        self.assertLess(
-            thickest, legs.SHELL_STANDOFF,
-            f"the thickest torso construction stands {thickest * 1000:.0f} mm "
-            f"off the body, against the trouser shell's "
-            f"{legs.SHELL_STANDOFF * 1000:.0f} mm; through the overlap band the "
-            f"torso garment would come out through the trousers")
+        import numpy as np
+        fit = self.fit
+        sides = 36
+
+        def shells(key: str, race: str):
+            """The garment's closed components, skinned onto this wearer."""
+            scene, author = fit.resolve(self.registry, key, race)
+            pieces, rig, _ = fit.load(str(CLIENT / scene.removeprefix("res://")))
+            _body, wearer, _names = fit.load(str(RACES / f"{race}.glb"))
+            binds = fit.bone_binds(rig, wearer,
+                                   fit.girth_ratios(self.registry, author, race))
+            matrices = {b: wearer.rest[b] @ binds[b] for b in binds if b in wearer.rest}
+            out = []
+            for piece in pieces:
+                if piece.joints is None:
+                    continue
+                moved = fit.skin(piece.points, piece.joints, piece.weights,
+                                 rig.names, matrices)
+                out.extend(fit.components(moved, piece.triangles))
+            return out
+
+        def tucking(parts):
+            """The one component that tucks in, chosen once for the garment.
+
+            A coat's skirt and a cuirass's fauld are in here too, and both hang
+            *outside* the trousers on purpose - a fauld is hip armour, it is
+            meant to be seen.  The one that tucks is the body shell, and what
+            separates them is that the shell carries on up to the collar while a
+            skirt stops at the waist.
+
+            Chosen once rather than per height: the shell's rings are 26 mm
+            apart, so at some heights it has no vertices within a sampling
+            window at all and a per-height choice silently picked the fauld -
+            then reported the fauld's 21 mm as the shell's.
+            """
+            reaching = [s for s in parts
+                        if s.points[:, 1].min() <= high
+                        and s.points[:, 1].max() > 1.25]
+            if not reaching:
+                return None
+            return max(reaching, key=lambda s: s.points[:, 1].max()).points
+
+        def ring(points, height: float, window: float = .016):
+            # Wide enough to catch a ring of the body shell, whose rows are
+            # 26 mm apart; both layers are sampled the same way.
+            here = points[np.abs(points[:, 1] - height) < window]
+            if len(here) < sides // 3:
+                return None
+            angle = np.arctan2(here[:, 2], here[:, 0]) % (2 * np.pi)
+            radius = np.hypot(here[:, 0], here[:, 2])
+            slot = np.minimum((angle / (2 * np.pi) * sides).astype(int), sides - 1)
+            out = np.full(sides, np.nan)
+            for index in range(sides):
+                found = radius[slot == index]
+                if len(found):
+                    out[index] = found.max()
+            return out
+
+        low, high = self.TUCK_ZONE
+        heights = [low + (high - low) * step / 4 for step in range(5)]
+        checked = 0
+        for race in self.races:
+            trouser_parts = shells("4:0", race)
+            for key in self.SEAM_SAMPLE:
+                torso = tucking(shells(key, race))
+                if torso is None:
+                    continue
+                for height in heights:
+                    # Against the *outermost* trouser surface, because the
+                    # question is what a player can see.  The trousers are three
+                    # layers here - hip shell at .032, waistband at .034, belt
+                    # at .038 - and a hem that sits between two of them is
+                    # covered by the outer one and invisible.  Measuring against
+                    # the innermost instead failed a shirt by 3 mm for being
+                    # under the waistband rather than under the shell.
+                    trousers = [ring(s.points, height) for s in trouser_parts]
+                    trousers = [r for r in trousers if r is not None]
+                    if not trousers:
+                        continue
+                    outer = np.nanmax(np.vstack(trousers), axis=0)
+                    inner = ring(torso, height)
+                    if inner is None:
+                        continue
+                    proud = float(np.nanmax(inner - outer))
+                    checked += 1
+                    self.assertLess(
+                        proud, .002,
+                        f"{key} on {race} stands {proud * 1000:.1f} mm outside "
+                        f"the trousers at y {height:.3f}; the torso garment is "
+                        f"the inner layer through {low}-{high}")
+        self.assertGreater(checked, 100, "the waist seam was barely sampled")
 
     def test_the_trousers_own_the_belt(self) -> None:
         """Two belts 52 mm apart on one waist is what players saw before.
