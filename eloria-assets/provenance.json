@@ -282,6 +282,13 @@
       "description": "Original Eloria sound set synthesized from noise and sine partials; no sampled, converted or third-party audio"
     },
     {
+      "path": "concepts/item-icons/*.png",
+      "source": "OpenAI ImageGen contact sheets packed cell-by-cell with godot-client/tools/pack_ui_icon_sheet.py",
+      "author": "Eloria project (OpenAI ImageGen)",
+      "license": "CC-BY-4.0",
+      "description": "Twenty themed 5-by-5 concept sheets containing 500 unregistered potential item icons, with row-major names documented in concepts/item-icons/manifest.json"
+    },
+    {
       "path": "godot-client/assets/actors/native/races/*",
       "source": "source/player_models/native/Superhero_{Male,Female}_FullBody.gltf",
       "author": "Quaternius",

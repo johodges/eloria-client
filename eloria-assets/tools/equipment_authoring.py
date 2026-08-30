@@ -229,13 +229,22 @@ class Rig:
         # deliberately depend on nothing beyond numpy.
         nearest = np.empty((len(points), count), dtype=np.int64)
         distance = np.empty((len(points), count))
+        # Squared distances by expansion rather than by differencing.  The
+        # obvious `norm(block[:, None] - source[None], axis=2)` builds a
+        # (block, body, 3) temporary on the way, which is three times the size
+        # of the answer; the torso set trebled the vertex count of a garment and
+        # the build ran out of memory on it.  Ordering is unchanged by working
+        # in squares, so only the picked distances need a root.
+        square = (source ** 2).sum(axis=1)
         for start in range(0, len(points), 512):
             block = points[start:start + 512]
-            gaps = np.linalg.norm(block[:, None, :] - source[None, :, :], axis=2)
+            gaps = ((block ** 2).sum(axis=1)[:, None] + square[None, :]
+                    - 2.0 * (block @ source.T))
+            np.maximum(gaps, 0.0, out=gaps)
             picked = np.argpartition(gaps, count - 1, axis=1)[:, :count]
             rows = np.arange(len(block))[:, None]
             nearest[start:start + 512] = picked
-            distance[start:start + 512] = gaps[rows, picked]
+            distance[start:start + 512] = np.sqrt(gaps[rows, picked])
         share = 1.0 / np.maximum(distance, 1e-4) ** 6
         share /= share.sum(axis=1, keepdims=True)
         # Accumulate the neighbours' bone weights into one blend per point.
@@ -302,7 +311,9 @@ class Rig:
 
     def surface_radius(self, axis_start: np.ndarray, axis_end: np.ndarray,
                        travel: float, angle: float, *, bones: list[str] | None = None,
-                       slab: float = .055, default: float = .10) -> float:
+                       slab: float = .055, default: float = .10,
+                       centre: np.ndarray | None = None,
+                       percentile: float = 96.0) -> float:
         """Measured body half-width along one radial direction of a limb axis.
 
         Garments are lofted from these samples, so a cuirass follows the real
@@ -317,7 +328,11 @@ class Rig:
         right = np.cross(axis, reference)
         right /= np.linalg.norm(right)
         forward = np.cross(right, axis)
-        centre = axis_start + axis * (travel * length)
+        # ``centre`` overrides where the ring is measured from.  A caller that
+        # draws its rings somewhere other than on the bone has to measure from
+        # there too, or it sizes one circle and draws another.
+        if centre is None:
+            centre = axis_start + axis * (travel * length)
         direction = right * math.cos(angle) + forward * math.sin(angle)
         points = self._region(bones)
         offsets = points - centre
@@ -331,7 +346,36 @@ class Rig:
         sector = (projection > 0) & (lateral <= .055 + projection * .30)
         if not sector.any():
             return default
-        return float(np.percentile(projection[sector], 96.0))
+        # ``percentile`` trims outliers out of the sector.  96 is right for a
+        # broad, smooth surface like a chest or a thigh, where a stray vertex
+        # would balloon the loft.  It is wrong at a sharp apex: the Luminous arm
+        # section comes to a point at the back, only two vertices are out there,
+        # and 96 discards exactly those two - the sleeve was then cut 4 mm
+        # inside the skin it was measuring.  Callers wrapping a limb pass 100.
+        return float(np.percentile(projection[sector], percentile))
+
+    def slab_centre(self, axis_start: np.ndarray, axis_end: np.ndarray,
+                    travel: float, *, bones: list[str] | None = None,
+                    slab: float = .06) -> np.ndarray | None:
+        """Middle of the body in the plane cut across a limb axis at ``travel``.
+
+        ``surface_radius`` says how wide the body is in one direction; this says
+        where it is.  A shoulder cap needs both, because a humerus does not run
+        down the middle of the shoulder it belongs to.
+        """
+        axis = axis_end - axis_start
+        length = float(np.linalg.norm(axis))
+        if length < 1e-6:
+            return None
+        axis = axis / length
+        centre = axis_start + axis * (travel * length)
+        points = self._region(bones)
+        along = (points - centre) @ axis
+        near = np.abs(along) <= slab
+        if near.sum() < 6:
+            return None
+        radial = (points[near] - centre) - np.outer(along[near], axis)
+        return centre + radial.mean(axis=0)
 
     def _region(self, bones: list[str] | None) -> np.ndarray:
         if bones is None:
@@ -415,14 +459,21 @@ class RigSet:
 
     # -- the measurement that actually differs ------------------------------
     def surface_radius(self, axis_start, axis_end, travel, angle, *,
-                       bones=None, slab: float = .055, default: float = .10) -> float:
-        radius = self.primary.surface_radius(axis_start, axis_end, travel, angle,
-                                             bones=bones, slab=slab, default=default)
+                       bones=None, slab: float = .055, default: float = .10,
+                       centre=None, percentile: float = 96.0) -> float:
+        radius = self.primary.surface_radius(
+            axis_start, axis_end, travel, angle, bones=bones, slab=slab,
+            default=default, centre=centre, percentile=percentile)
         for rig in self.others:
             radius = max(radius, rig.surface_radius(
                 axis_start, axis_end, travel, angle, bones=bones, slab=slab,
-                default=default))
+                default=default, centre=centre, percentile=percentile))
         return radius
+
+    def slab_centre(self, axis_start, axis_end, travel, *, bones=None,
+                    slab: float = .06):
+        return self.primary.slab_centre(axis_start, axis_end, travel,
+                                        bones=bones, slab=slab)
 
 
 # Races whose build a garment cannot simply be resized onto.  A fit group gets
@@ -435,15 +486,96 @@ FIT_GROUPS = {
         "races": ("ssarathi_male", "ssarathi_female"),
         # A digitigrade leg is not a longer human one, so anything that wraps it
         # has to be built on it.  The torso is close enough to share.
-        "kinds": ("pants", "legs", "boots"),
+        # `kilt` joins them for the same reason: the panel is lofted from the
+        # hip measurement and hangs to a fraction of the leg chain, and that
+        # chain is a different length and a different shape on this rig.
+        "kinds": ("pants", "legs", "kilt", "boots"),
+    },
+    "feminine": {
+        "rig": "luminous_female",
+        # Every female build except the two the other groups already claim:
+        # ssarathi_female is saurian, and stoneborn_female measures *better* on
+        # the reference piece than on a female-authored one, so it stays there.
+        "races": ("glasswarden_female", "greyhaven_female", "luminous_female",
+                  "mycelari_female", "orun_female", "votary_female"),
+        # A female pelvis is not a male one let out.  The refit widens a garment
+        # by a single ratio about the bone origin, which reaches a hip that is
+        # bigger and not one that is a different shape, and the iliac crest sits
+        # both wider and further forward than any uniform scale of the reference
+        # can follow.  With the hem levelled every male rig in the cast measures
+        # clean and every female rig does not - 79% of all remaining exposed
+        # vertices were on female bodies, at Y .84-1.05, which is the hip.
+        # Authored on the female rig instead, the six races here fall from 85
+        # exposed vertices to 9 across a soft and a rigid prototype.
+        # Legs only.  Footwear wants a female build too but not this exact
+        # membership - see "feminine_foot" below.
+        "kinds": ("pants", "legs", "kilt"),
+    },
+    "feminine_foot": {
+        "rig": "luminous_female",
+        # Every female build that is not digitigrade, stoneborn_female included.
+        # The legs group leaves her out because she measures better on the
+        # reference piece there, which is a fact about a stone hip and not about
+        # her foot: her ankle stands 83.4 mm above the floor where the reference
+        # ankle stands 96.0, and in a male-authored boot she sank 26 mm through
+        # it.  Group membership is per kind for exactly this reason.
+        "races": ("glasswarden_female", "greyhaven_female", "luminous_female",
+                  "mycelari_female", "orun_female", "stoneborn_female",
+                  "votary_female"),
+        # A female foot is within four per cent of its male counterpart's width
+        # and seven per cent of its length, so size is not the problem; the arch
+        # is.  Every female rig in the cast stands flatter than the reference,
+        # and a sole swept from a raised arch steps back from ground the flat
+        # one is standing on.  That is a shape, not a scale, and it was the
+        # whole of the residual here - eight to sixteen vertices under each
+        # midfoot on every one of the sixty-four designs.  Authored on the
+        # female rig instead they measure clean.
+        "kinds": ("boots",),
+    },
+    "broad_foot": {
+        "rig": "stoneborn_male",
+        # The two broadest male builds in the cast.  Greyhaven was tried here
+        # and measured worse than it does on the reference piece - 258 exposed
+        # against 42 - so it stays there: it is a tall build rather than a broad
+        # one and a Stoneborn last does not describe its foot.
+        # An Orun ankle sits 26 mm inboard of the reference's with the foot
+        # still under the body, so their foot reaches 105 mm to the outside of
+        # the joint where the reference's reaches 72; a Stoneborn foot is
+        # sixteen per cent wider again.  The anchor datum carries the offset and
+        # the girth refit carries some of the width, but what is left is a
+        # different foot rather than a bigger one, and it showed as 8 to 12
+        # vertices along the outer edge on every design.
+        "races": ("orun_male", "stoneborn_male"),
+        "kinds": ("boots",),
     },
     "heavy": {
         "rig": "stoneborn_male",
         "races": ("stoneborn_male", "stoneborn_female"),
-        # Stone shoulders are square and set wide where every other race's are
-        # round.  That is a shape the runtime cannot reach by letting a garment
-        # out, so the torso pieces are built on the body that has it.  Their
-        # legs are ordinary, only thicker, and the girth refit covers that.
+        # The torso kinds used to live here, on the reasoning that a stone
+        # shoulder is square where a Luminous one is round.  That was true of
+        # the shell it was written for, whose shoulder was a fixed pad.  The
+        # shoulder is now a cap swept from the body it is built on, and measured
+        # against every clip, a stoneborn_male in the reference torso shows no
+        # skin at all - so the group no longer earns its sixteen extra GLBs.
+        # The torso kinds moved to "bust", which is a shape the refit genuinely
+        # cannot reach.  Nothing else was in this group.
+        "kinds": (),
+    },
+    "bust": {
+        "rig": "stoneborn_female",
+        "races": ("glasswarden_female", "greyhaven_female", "luminous_female",
+                  "mycelari_female", "orun_female", "ssarathi_female",
+                  "stoneborn_female", "votary_female"),
+        # The one difference across the cast a per-bone radius cannot express.
+        # ``bodyGirth`` ships one number per bone and the runtime applies it as
+        # a uniform scale - deliberately, because skinning carries normals
+        # through the same matrix and anything else skews them - so a chest
+        # deeper at the front than at the back cannot be let out at the front
+        # alone.  Measured against the reference torso, every female body in the
+        # cast came through it between y 1.14 and 1.38 at z +0.05 to +0.17: 12
+        # vertices on the slightest, 202 on the broadest.  Authored on the
+        # broadest instead, all eight read zero.  Legs, boots and hands are
+        # unaffected and stay on the reference piece.
         "kinds": ("shirt", "cuirass", "coat", "robe"),
     },
 }
@@ -544,6 +676,35 @@ def _foot_region(rig: Rig, side: str) -> "np.ndarray":
     aside = np.linalg.norm(offsets - np.outer(along, axis), axis=1)
     same = np.sign(rig.positions[:, 0]) == np.sign(ankle[0] or 1.0)
     return same & (rig.positions[:, 1] < ankle[1] + .025) & (aside < .130)
+
+def sole_drop(rig: Rig) -> dict:
+    """How far each foot bone stands above the ground the body rests on.
+
+    Added 2026-08-29 for Eloria Client.  Garments are refitted per wearer by
+    scaling each bone about *its own origin*, and for the foot chain that origin
+    is the ankle - which is not a fixed distance above the floor.  It is 91 to
+    103 mm on every male rig in the cast and only 78.6 to 83.4 mm on every
+    female one, a twenty per cent difference in the one direction a boot cannot
+    absorb.  A sole authored on the reference body therefore landed 14 mm under
+    the floor on all seven female rigs, and no single mesh could fix it: the
+    piece is anchored to a joint whose height above the ground varies more than
+    the tolerance does.
+
+    Shipping the distance lets the runtime scale footwear by the ratio the
+    ground actually cares about instead of by overall stature, which is what
+    collapses sixteen bodies back onto one authored boot.  Measured off the body
+    mesh rather than the skeleton, because where the actor stands is decided by
+    its lowest vertex, not by a joint.
+    """
+    ground = float(rig.positions[:, 1].min())
+    drops: dict[str, float] = {}
+    for bone in ("foot_l", "foot_r", "ball_l", "ball_r"):
+        if bone not in rig.rest:
+            continue
+        drop = float(rig.rest[bone][1, 3]) - ground
+        if drop > 1e-4:
+            drops[bone] = round(drop, 5)
+    return drops
 
 
 def load_rig(path: Path, body_mesh_names=("Body",)) -> Rig:
@@ -668,6 +829,17 @@ def smooth_profile(values: list[float], floor: float, passes: int = 2) -> list[f
 # Surface authoring
 # ---------------------------------------------------------------------------
 
+def _mirror_bone(bone: str | None) -> str | None:
+    """The same bone on the other side of the body."""
+    if bone is None:
+        return None
+    if bone.endswith("_l"):
+        return bone[:-2] + "_r"
+    if bone.endswith("_r"):
+        return bone[:-2] + "_l"
+    return bone
+
+
 class Surface:
     """Dense, smooth-shaded surface authoring with per-material groups.
 
@@ -689,6 +861,11 @@ class Surface:
         # against the part of the leg it actually sits on.
         self.scopes = [[] for _ in range(groups)]
         self._scope = ""
+        # Bone each vertex is pinned to, parallel to the positions of its group.
+        # ``None`` means "inherit from the body underneath", which is what every
+        # vertex did before pinning existed and what almost all of them still do.
+        self.pins = [[] for _ in range(groups)]
+        self._pin: str | None = None
 
     @contextmanager
     def scoped(self, name: str):
@@ -702,6 +879,28 @@ class Surface:
 
     def _tag(self, material: int, count: int) -> None:
         self.scopes[material].extend([self._scope] * count)
+
+    @contextmanager
+    def pinned(self, bone: str | None):
+        """Bind everything built in this block rigidly to one bone.
+
+        Added 2026-08-29 for Eloria Client.  Garment vertices inherit the skin
+        weights of the body surface nearest them, which is right for cloth that
+        should bend with what it lies on and wrong for the one piece that must
+        *not*: a shoulder cap swept about the humerus stays over the deltoid at
+        any arm angle only if it turns with the humerus alone.  Blended against
+        the clavicle it lags the arm, and the seam it exists to close opens
+        again at abduction - which is the defect this whole rebuild is for.
+        """
+        previous = self._pin
+        self._pin = bone
+        try:
+            yield self
+        finally:
+            self._pin = previous
+
+    def _record(self, group: int, count: int) -> None:
+        self.pins[group].extend([self._pin] * count)
 
     # -- primitives ---------------------------------------------------------
 
@@ -722,6 +921,7 @@ class Surface:
                 positions.append(tuple(ring[side]))
                 uvs.append((side / sides, v))
         self._tag(material, rows * sides)
+        self._record(material, rows * sides)
         span = sides if closed else sides - 1
         for row in range(rows - 1):
             for side in range(span):
@@ -767,6 +967,7 @@ class Surface:
             positions.append(tuple(ring[side]))
             uvs.append((.5 + .5 * math.cos(angle), .5 + .5 * math.sin(angle)))
         self._tag(material, sides + 1)
+        self._record(material, sides + 1)
         for side in range(sides):
             nxt = (side + 1) % sides
             triangle = (base, base + 1 + side, base + 1 + nxt)
@@ -860,7 +1061,7 @@ class Surface:
 
     # -- assembly -----------------------------------------------------------
 
-    def transform(self, matrix: np.ndarray) -> None:
+    def transform(self, matrix: np.ndarray) -> None:  # noqa: D102 - pins unmoved
         for positions, _, _ in self.groups:
             for index, point in enumerate(positions):
                 vector = np.array([*point, 1.0])
@@ -869,6 +1070,9 @@ class Surface:
     def mirrored_x(self) -> "Surface":
         clone = Surface(len(self.groups))
         for index, (positions, uvs, faces) in enumerate(self.groups):
+            # A mirrored piece belongs to the mirrored bone, or the left cap
+            # would arrive on the right shoulder still bound to the left arm.
+            clone.pins[index].extend(_mirror_bone(bone) for bone in self.pins[index])
             target_positions, target_uvs, target_faces = clone.groups[index]
             target_positions.extend((-x, y, z) for x, y, z in positions)
             target_uvs.extend(uvs)
@@ -880,6 +1084,7 @@ class Surface:
 
     def extend(self, other: "Surface") -> None:
         for index, (positions, uvs, faces) in enumerate(other.groups):
+            self.pins[index].extend(other.pins[index])
             target_positions, target_uvs, target_faces = self.groups[index]
             base = len(target_positions)
             target_positions.extend(positions)
@@ -1046,10 +1251,32 @@ GARMENT_SKIN = {
 }
 
 
+def chord_allowance(sides: int) -> float:
+    """How much a ring has to be let out so its flats clear what it measured.
+
+    Opt-in, through the ``chord`` flag on the ring builders, because it moves
+    every vertex of anything that asks for it.  The torso set asks; the leg,
+    boot and cape pipelines are left exactly as they were rather than quietly
+    resized by a change that is not about them.  It applies to them too and they
+    should take it when they are next touched.
+
+    Added 2026-08-29 for Eloria Client.  A ring is a polygon through points
+    sampled *on* the surface it is measuring, so between two samples it cuts
+    inside that surface by the sagitta of the chord - about a millimetre at
+    24 sides on a forearm, which is exactly the margin a close-cut sleeve has.
+    One vertex per side, at the sharpest point of the Luminous arm section, came
+    through there and nowhere else.  Scaling each radius by 1/cos(pi/sides)
+    circumscribes the sampled surface instead of inscribing it, so the flats
+    clear it and the sample points sit proud rather than flush.
+    """
+    return 1.0 / math.cos(math.pi / max(sides, 3))
+
+
 def torso_rings(rig: Rig, y_low: float, y_high: float, *, rows: int = 14,
                 sides: int = 28, thickness: float = .016,
                 flare: float = 0.0, flare_low: float = 0.0, taper: float = 1.0,
-                floor: float = .055,
+                floor: float = .055, percentile: float = 96.0,
+                chord: bool = False,
                 bones: list[str] | None = None) -> list[np.ndarray]:
     """Rings that follow the measured torso silhouette between two heights."""
     axis_start = np.array([0., y_low, 0.])
@@ -1061,15 +1288,16 @@ def torso_rings(rig: Rig, y_low: float, y_high: float, *, rows: int = 14,
         measured = [rig.surface_radius(axis_start, axis_end, travel,
                                        2 * math.pi * side / sides,
                                        bones=bones or TORSO_BONES, slab=.05,
-                                       default=floor)
+                                       default=floor, percentile=percentile)
                     for side in range(sides)]
         smoothed = smooth_profile(measured, floor)
         widen = thickness + flare * travel + flare_low * (1. - travel) ** 1.4
         scale = 1.0 + (taper - 1.0) * travel
+        clearance = chord_allowance(sides) if chord else 1.0
         ring = np.empty((sides, 3))
         for side in range(sides):
             angle = 2 * math.pi * side / sides
-            radius = (smoothed[side] + widen) * scale
+            radius = (smoothed[side] * clearance + widen) * scale
             ring[side] = (math.cos(angle) * radius, height, math.sin(angle) * radius)
         rings.append(ring)
     return rings
@@ -1078,7 +1306,9 @@ def torso_rings(rig: Rig, y_low: float, y_high: float, *, rows: int = 14,
 def limb_rings(rig: Rig, chain: list[str], *, rows: int = 12, sides: int = 20,
                thickness: float = .014, start: float = 0.0, end: float = 1.0,
                taper_end: float = 1.0, floor: float = .035,
-               bones: list[str] | None = None) -> list[np.ndarray]:
+               bones: list[str] | None = None,
+               percentile: float = 96.0,
+               chord: bool = False) -> list[np.ndarray]:
     """Rings around a limb chain, sampled from the real body surface."""
     joints = [rig.origin(bone) for bone in chain]
     tail = rig.segment(chain[-1])[1]
@@ -1105,7 +1335,7 @@ def limb_rings(rig: Rig, chain: list[str], *, rows: int = 12, sides: int = 20,
         measured = [rig.surface_radius(bone_start, bone_end, local,
                                        2 * math.pi * side / sides,
                                        bones=bones or chain, slab=.05,
-                                       default=floor)
+                                       default=floor, percentile=percentile)
                     for side in range(sides)]
         smoothed = smooth_profile(measured, floor)
         axis = bone_end - bone_start
@@ -1118,7 +1348,8 @@ def limb_rings(rig: Rig, chain: list[str], *, rows: int = 12, sides: int = 20,
         ring = np.empty((sides, 3))
         for side in range(sides):
             angle = 2 * math.pi * side / sides
-            radius = (smoothed[side] + thickness) * grow
+            clearance = chord_allowance(sides) if chord else 1.0
+            radius = (smoothed[side] * clearance + thickness) * grow
             ring[side] = centre + (right * math.cos(angle)
                                    + forward * math.sin(angle)) * radius
         rings.append(ring)
@@ -1702,136 +1933,378 @@ def _belt(surface: Surface, rig: Rig, height: float, *, thickness: float = .030,
     surface.loft(rings, material)
 
 
-def _shoulder_pads(surface: Surface, rig: Rig, *, drop: float = .085,
-                   material: int = MATERIAL_TRIM, girth: float = 1.0) -> None:
-    """A rounded cap over the shoulder joint, closing the sleeve-to-body seam.
+# ---------------------------------------------------------------------------
+# The waist datum, shared with the leg-garment pipeline
+# ---------------------------------------------------------------------------
+# World Y on the reference rig ``luminous_male``.  The torso garment is the
+# *inner* layer at this seam: its hem runs inside the trousers, whose waist is
+# at 1.0770 and whose belt is at 1.0550.  A hem at or below 1.0300 therefore
+# keeps at least 45 mm of itself inside the trousers on the reference body.
+#
+# The torso garment no longer carries a belt of its own.  There used to be two,
+# 52 mm apart on the same waist - this one at 1.1070 and the trouser's at 1.0550
+# - and the upper one sat 30 mm *above* the trouser top, so the eye read the
+# shirt as ending at its own belt and the trousers as starting somewhere behind
+# it.  The belt belongs to the trousers.  A torso piece asks for one only where
+# its concept sheet draws a belt that is part of the garment - a plate fauld
+# strap, a sash - and gets it high enough on the ribs to read as part of the
+# garment rather than as a second waist.
+TORSO_HEM = 1.0220
+SKIRTED_HEM = 1.0100
+COLLAR = 1.4920
+COLLAR_TOP = 1.5400
 
-    ``girth`` scales the cap: armour wants a pauldron, a cloth shirt wants a
-    seam, and at full size the cap stood off a shirt as a pair of blocks.
+#: Where a sleeve may not end, as a fraction of the shoulder-to-wrist chain.
+#:
+#: The arm is not round.  Its section at mid humerus is a teardrop - on the
+#: reference body, 10 mm in front of the bone and 155 mm behind it - and it
+#: comes to a point at the back.  An opening cut across that point sits on the
+#: sharpest, most mobile part of the limb, where the skin's blend and the
+#: cloth's stop agreeing, and two vertices per arm come through it when the
+#: elbow bends.  Widening the cuff does not help, because the opening moves out
+#: with it.  Every other length measures clean on every race in every clip, so
+#: the fix is simply not to cut a sleeve here - which is also why a real sleeve
+#: is not cut at the elbow.
+SLEEVE_APEX = (.36, .50)
+
+
+def sleeve_clear(end: float) -> bool:
+    """Is this a length a sleeve may end at?  See ``SLEEVE_APEX``."""
+    return not SLEEVE_APEX[0] < end < SLEEVE_APEX[1]
+
+
+def _shoulder_cap(surface: Surface, rig: Rig, *, inboard: float = -.85,
+                  outboard: float = .46, swell: float = 1.38,
+                  thickness: float = .012, lift: float = .026,
+                  material: int = MATERIAL_BASE, sides: int = 20,
+                  rows: int = 9) -> None:
+    """The closed cap over each shoulder, turning with the arm it covers.
+
+    This is the fix for the defect the whole rebuild exists to close: skin
+    showing through at the shoulder.  Two things were wrong with the pad it
+    replaces.
+
+    It was *open* - a bare tube, capped at neither end - so it enclosed nothing,
+    and the body shell and the sleeve had to meet it edge to edge across the
+    deltoid.  Three open edges over a joint is three chances to part.
+
+    And it was *blended*, taking its skin weights from the body underneath like
+    every other garment vertex, which means part clavicle and part humerus.  The
+    clavicle barely turns when an arm goes up, so a blended cap lags behind the
+    arm it is covering and the seam opens exactly when the arm is raised - which
+    is why the gap survived a bind-pose screenshot and still appeared in play.
+
+    The cap here is a closed capsule swept about the humerus and pinned wholly
+    to it, so it is rigid with respect to the joint it covers: at any arm angle
+    it holds the same skin it held in the T-pose.  It reaches inboard far enough
+    to sit inside the body shell and outboard far enough to sit inside the
+    sleeve, so the three overlap as solids instead of meeting as edges.
+
+    ``inboard`` and ``outboard`` are fractions of the humerus, measured from the
+    shoulder joint.  ``swell`` is how much wider than the arm the cap runs, which
+    is where a linen shirt and a steel pauldron part company.
     """
     for side in ("l", "r"):
-        start = rig.origin(f"clavicle_{side}")
-        end = rig.origin(f"upperarm_{side}")
-        axis = end - start
-        axis /= max(np.linalg.norm(axis), 1e-9)
+        joint = rig.origin(f"upperarm_{side}")
+        elbow = rig.origin(f"lowerarm_{side}")
+        axis = elbow - joint
+        span = float(np.linalg.norm(axis))
+        axis = axis / max(span, 1e-9)
+        reference = np.array([0., 1., 0.]) if abs(axis[1]) < .8 else np.array([0., 0., 1.])
+        right = np.cross(axis, reference)
+        right /= np.linalg.norm(right)
+        forward = np.cross(right, axis)
+        # The arm alone.  Measuring the shoulder *region* - clavicle and
+        # spine_03 as well - and then taking the widest reading in the sector
+        # meant the cap sized itself against the far side of the upper back: it
+        # covered everything the checker asked about by being an enormous block
+        # across both shoulders and over the head.  Coverage is not silhouette,
+        # and a number that only counts skin will happily accept a tent.
+        measure = [f"upperarm_{side}"]
+        # The arm's own half-width just below the joint, which every ring is
+        # sized relative to.
+        arm = max(rig.surface_radius(joint, elbow, .12, angle, bones=measure,
+                                     slab=.05, default=.055)
+                  for angle in (0.0, math.pi * .5, math.pi, math.pi * 1.5))
         rings = []
-        for travel, radius in ((.10, .060), (.45, .086), (.90, .098), (1.32, .086),
-                                (1.70, .052)):
-            centre = end + axis * (travel - 1.0) * .12
-            centre = centre + np.array([0., .012 - drop * max(0., travel - 1.0), 0.])
-            ring = np.empty((18, 3))
-            for index in range(18):
-                phi = 2 * math.pi * index / 18
-                ring[index] = centre + np.array(
-                    [0., math.sin(phi), math.cos(phi)]) * radius * girth
+        for row in range(rows + 1):
+            travel = inboard + (outboard - inboard) * (row / rows)
+            # A plateau, not an arch.  Tapering away from the joint made the cap
+            # narrowest at its outboard end, which is exactly where a sleeveless
+            # design has nothing else covering the arm - two vertices behind each
+            # deltoid came through there.  Full width across the middle two
+            # thirds, rounded off only close enough to each end to close.
+            edge = min(row, rows - row) / (rows * .11)
+            arch = .12 + .88 * min(1., edge) ** .34
+            centre = joint + axis * (travel * span) + np.array([0., lift, 0.])
+            # Pull the ring onto the middle of the shoulder.  Fully at the
+            # deltoid, less so at the ends, where the cap has to close into the
+            # body shell and the sleeve rather than wander off the bone they are
+            # both built around.
+            found = rig.slab_centre(joint, elbow, travel, bones=measure)
+            if found is not None:
+                pull = .78 * min(1., min(row, rows - row) / (rows * .34))
+                centre = centre + (found + np.array([0., lift, 0.]) - centre) * pull
+            measured = [rig.surface_radius(joint, elbow, max(travel, .02),
+                                           2 * math.pi * slot / sides,
+                                           bones=measure, slab=.06, default=.050,
+                                           centre=centre, percentile=100.0)
+                        for slot in range(sides)]
+            smoothed = smooth_profile(measured, .042)
+            # No ring wider than this: a pauldron is a pauldron, not a barrel.
+            # Measured against the arm at the joint, which is the thing the cap
+            # is actually a cap for.
+            ceiling = arm * 2.4
+            ring = np.empty((sides, 3))
+            for slot in range(sides):
+                angle = 2 * math.pi * slot / sides
+                radius = (min(smoothed[slot], ceiling) * swell
+                          * chord_allowance(sides) + thickness) * arch
+                ring[slot] = centre + (right * math.cos(angle)
+                                       + forward * math.sin(angle)) * radius
             rings.append(ring)
-        # Both ends run into the body, so neither is capped.
-        surface.loft(rings, material)
+        # Pinned to the humerus alone - see the docstring.  Closed at both ends:
+        # the inboard lid sits inside the body shell and the outboard one inside
+        # the sleeve, so neither is ever seen.
+        with surface.pinned(f"upperarm_{side}"):
+            surface.loft(rings, material, cap_start=True, cap_end=True)
 
 
 def _sleeves(surface: Surface, rig: Rig, *, end: float, material: int,
-             thickness: float = .020) -> None:
+             thickness: float = .020, start: float = .10,
+             cuff: float = .020) -> None:
+    """A closed sleeve down each arm, rooted inside the shoulder cap.
+
+    ``start`` used to be .02 - the sleeve began at the shoulder joint itself, so
+    the cap had to close a seam sitting right on the axis of rotation.  It now
+    starts well down the humerus, inside the cap, and the two overlap as solids.
+
+    ``cuff`` is a second, wider tube over the last of the sleeve.  A sleeve cut
+    to the arm all the way to its opening is the one place left where skin gets
+    out: the last ring of it is only millimetres clear, and the elbow bending
+    slides the arm inside the cloth by more than that - twelve vertices on the
+    back of each forearm came through at ``Jog`` and at nothing else.  A real
+    sleeve is wider at the opening than along its length, and so is this one.
+    """
     for side in ("l", "r"):
-        rings = limb_rings(rig, [f"upperarm_{side}", f"lowerarm_{side}"],
-                           rows=8, sides=18, thickness=thickness,
-                           start=.02, end=end, floor=.040)
-        # Open at the shoulder: that end sits inside the body shell, and a cap
-        # there is a disc in the armpit now that caps face the right way.
-        surface.loft(rings, material, cap_end=True)
+        chain = [f"upperarm_{side}", f"lowerarm_{side}"]
+        # 24 sides, not 18.  The Luminous arm is not round: its section at mid
+        # humerus reaches 10 mm in front of the bone and 155 mm behind it, and
+        # at 18 sides the loft cuts the corner at the back of that sweep.
+        # A slight flare towards the opening, which is how a sleeve is cut and
+        # also what lifts the last rings clear of an arm sliding inside them.
+        rings = limb_rings(rig, chain, rows=14, sides=28, thickness=thickness,
+                           start=start, end=end, floor=.040, taper_end=1.07,
+                           percentile=100.0, chord=True)
+        # Closed at both ends.  The shoulder lid is buried in the cap; the cuff
+        # lid is an annulus no wider than the cloth is thick, which is what the
+        # edge of a sleeve looks like anyway.
+        surface.loft(rings, material, cap_start=True, cap_end=True)
+        if cuff:
+            opening = limb_rings(rig, chain, rows=4, sides=28,
+                                 thickness=thickness + cuff,
+                                 start=max(start, end - .12), end=end + .016,
+                                 floor=.040, taper_end=1.10, percentile=100.0,
+                                 chord=True)
+            surface.loft(opening, material, cap_start=True, cap_end=True)
 
 
-def garment_geometry(kind: str, rig: Rig) -> Garment:
+#: Sweep hooks: set by the calibration sweep so the shell's clearance can be
+#: measured rather than argued about.  See torso_prototype.py.
+_SHELL_PERCENTILE = 100.0
+_SHELL_FLARE = .012
+
+
+def _torso_shell(rig: Rig, waist: float, *, thickness: float = .011,
+                 sides: int = 30, rows: int = 18) -> list:
+    """Rings from the hem to the top of the collar, as one continuous tube.
+
+    The body used to stop at the collar and a separate band carry on above it.
+    Two lofts in two material groups are two primitives and so two shells, and
+    the lower one was closed at neither end - a bowl the neck sat in.  The base
+    layer now runs the whole way up and draws in around the neck, and the collar
+    trim is a band worn over it rather than the only thing closing it.
+    """
+    rings = torso_rings(rig, waist, COLLAR, rows=rows, sides=sides,
+                        thickness=thickness, flare_low=_SHELL_FLARE,
+                        percentile=_SHELL_PERCENTILE, chord=True,
+                        # Deliberately not the arms.  Measuring the arm root
+                        # here widens the whole chest ring towards it, and the
+                        # shell then follows neither: it measured 33 vertices
+                        # through on a stoneborn and 189 on a Luminous female,
+                        # against 1 and 0 without.  The armhole is the shoulder
+                        # cap's job, not the body shell's.
+                        bones=TORSO_BONES + ["thigh_l", "thigh_r"])
+    neck = torso_rings(rig, COLLAR, COLLAR_TOP, rows=3, sides=sides,
+                       thickness=thickness * .72, taper=.70, floor=.046,
+                       bones=["neck_01", "spine_03", "clavicle_l", "clavicle_r"])
+    return rings + neck
+
+
+def _collar_band(surface: Surface, rig: Rig, *, material: int = MATERIAL_TRIM,
+                 sides: int = 30, low: float = COLLAR - .012,
+                 high: float = COLLAR_TOP + .008, taper: float = .72,
+                 thickness: float = .014) -> None:
+    """The trim collar: a closed band worn over the base shell's neck."""
+    band = torso_rings(rig, low, high, rows=3, sides=sides, thickness=thickness,
+                       taper=taper, floor=.048,
+                       bones=["neck_01", "spine_03", "clavicle_l", "clavicle_r"])
+    surface.loft(band, material, cap_start=True, cap_end=True)
+
+
+@dataclass(frozen=True)
+class Style:
+    """The dial settings that make one torso design differ from another.
+
+    Every design in the set is the same four shells - body, collar, two shoulder
+    caps, two sleeves, and whatever skirt its kind calls for - with these turned.
+    Keeping the differences declarative is what makes sixty-four designs
+    affordable to check: the fit is a property of the construction, not of any
+    one design, so a design cannot quietly reintroduce a hole in the shoulder.
+    """
+
+    #: How far the shoulder cap runs down the humerus, and how wide it swells.
+    #: A linen shirt wants a seam; a pauldron wants to be seen.
+    cap_outboard: float = .46
+    #: How far *past* the joint, towards the neck, the cap reaches.  This is
+    #: what buries its inboard end inside the body shell; too shallow and the
+    #: rear shoulder slips out between the two when the arm swings.
+    cap_inboard: float = -.85
+    cap_swell: float = 1.38
+    #: How far above the shoulder joint the cap is centred.  Lowering this to
+    #: sit the cap flatter on the shoulder looks tidier and measurably is not:
+    #: over the whole set it takes the meshes that read exactly zero at the
+    #: shoulder from 70 of 80 down to 48, and the shoulder is what this
+    #: construction exists for.  A sweep that said the difference was nil had
+    #: been run through a harness that did not resolve fit variants, so every
+    #: reading was dominated by female bodies wearing the male piece.
+    cap_lift: float = .026
+    #: Sleeve end along the arm chain, 0 at the shoulder and 1 at the wrist.
+    #: ``None`` leaves the design sleeveless, which is what makes it a cuirass.
+    #: A sleeveless design still gets the short facing below.
+    sleeve_end: float | None = None
+    sleeve_thickness: float = .015
+    #: Where a sleeveless design's armhole rim ends along the arm chain.  See
+    #: ``_torso_garment``: this is what actually closes a cuirass's arm opening.
+    facing_end: float = .21
+    #: Raised front plate (low, high) and how far round the chest it wraps.
+    plate: tuple[float, float] | None = None
+    plate_span: float = .58
+    plate_thickness: float = .040
+    #: A yoke across the top of the chest and shoulders.
+    yoke: bool = False
+    #: A skirt hanging from the waist: (hem Y, flare).
+    skirt: tuple[float, float] | None = None
+    #: Trim band at the very bottom of a skirt.
+    hem_band: bool = False
+    #: Lapel or placket down the front.
+    lapel: bool = False
+    #: A belt that belongs to the *garment* rather than to the trousers, given
+    #: as a world Y.  Left out of almost every design - see TORSO_HEM.
+    belt: float | None = None
+    belt_thickness: float = .016
+    #: Overall thickness of the body shell.  Cloth is thin; plate stands off.
+    thickness: float = .011
+    #: Shoulder cap material, so a leather spaulder can differ from its sleeve.
+    cap_trim: bool = False
+    #: How much wider than the sleeve its opening runs.  See ``_sleeves``.
+    sleeve_cuff: float = .020
+
+
+def _torso_garment(kind: str, rig: Rig, style: Style) -> Garment:
+    """One torso garment, built as overlapping closed shells.
+
+    Every piece here closes on itself and overlaps its neighbours, rather than
+    meeting them along a seam.  That is the whole design: a seam between two
+    open sheets is a hole waiting for a pose to open it, and the shoulder is
+    where the cast disagrees most - stone shoulders are square where a Luminous
+    one is round.  Solids that overlap have nothing to come apart.
+    """
+    surface = Surface()
+    waist = SKIRTED_HEM if kind in {"coat", "robe"} else TORSO_HEM
+
+    # 1. The body: hem to the top of the collar, closed at both ends.  The hem
+    #    lid sits inside the trousers and the neck lid inside the neck.
+    surface.loft(_torso_shell(rig, waist, thickness=style.thickness),
+                 MATERIAL_BASE, cap_start=True, cap_end=True)
+    _collar_band(surface, rig)
+
+    # 2. The shoulders, before anything else that might want to sit over them.
+    cap_material = MATERIAL_TRIM if style.cap_trim else MATERIAL_BASE
+    _shoulder_cap(surface, rig, inboard=style.cap_inboard,
+                  outboard=style.cap_outboard,
+                  swell=style.cap_swell, lift=style.cap_lift,
+                  thickness=style.thickness, material=cap_material)
+
+    # 3. Sleeves, rooted inside the caps - or, where a design has none, the
+    #    rim around its arm opening.  Both are built by ``limb_rings``, which
+    #    measures the body per angle and so follows a shoulder that sweeps
+    #    backwards; a swept cap cannot, and that is the whole reason the rim
+    #    exists rather than the cap simply being made longer.
+    if style.sleeve_end is not None:
+        if not sleeve_clear(style.sleeve_end):
+            raise ValueError(
+                f"sleeve ends at {style.sleeve_end}, inside the apex band "
+                f"{SLEEVE_APEX} where an opening does not stay closed")
+        _sleeves(surface, rig, end=style.sleeve_end, material=MATERIAL_BASE,
+                 thickness=style.sleeve_thickness, cuff=style.sleeve_cuff)
+    else:
+        _sleeves(surface, rig, end=style.facing_end,
+                 material=MATERIAL_TRIM if style.cap_trim else MATERIAL_BASE,
+                 thickness=style.sleeve_thickness, start=.06,
+                 cuff=style.sleeve_cuff)
+
+    # 4. Whatever the design puts on top.
+    if style.plate is not None:
+        low, high = style.plate
+        plate = torso_rings(rig, low, high, rows=8, sides=30,
+                            thickness=style.plate_thickness)
+        # An open sheet on purpose: a breastplate is a shell over the chest, not
+        # a tube round it.  It encloses nothing, so it is not asked to - the body
+        # shell underneath is what covers the skin here.
+        surface.loft([_front_arc(ring, style.plate_span) for ring in plate],
+                     MATERIAL_TRIM, closed=False)
+    if style.yoke:
+        yoke = torso_rings(rig, 1.400, COLLAR + .022, rows=4, sides=30,
+                           thickness=style.plate_thickness * .75)
+        surface.loft(yoke, MATERIAL_TRIM, cap_start=True, cap_end=True)
+    if style.lapel:
+        lapel = torso_rings(rig, 1.140, COLLAR - .020, rows=5, sides=30,
+                            thickness=style.plate_thickness)
+        surface.loft(lapel, MATERIAL_TRIM, cap_start=True, cap_end=True)
+    if style.skirt is not None:
+        hem, flare = style.skirt
+        rows = max(6, int(round((waist - hem) * 20)))
+        skirt = torso_rings(rig, hem, waist + .020, rows=rows, sides=30,
+                            thickness=.034, flare_low=flare,
+                            bones=HIP_BONES + ["calf_l", "calf_r"])
+        surface.loft(skirt, MATERIAL_BASE, cap_start=True, cap_end=True,
+                     v_start=1.0, v_end=0.0)
+        if style.hem_band:
+            band = torso_rings(rig, hem, hem + .060, rows=2, sides=30,
+                               thickness=.038, flare_low=flare)
+            surface.loft(band, MATERIAL_TRIM, cap_start=True, cap_end=True)
+    if style.belt is not None:
+        _belt(surface, rig, style.belt, thickness=style.belt_thickness)
+    return Garment(surface, "torso")
+
+
+def garment_geometry(kind: str, rig: Rig, style: "Style | None" = None,
+                     features: tuple[str, ...] = ()) -> Garment:
     """Body-conforming wearables, lofted from the measured rest silhouette."""
     surface = Surface()
     if kind in {"cuirass", "coat", "robe", "shirt"}:
-        # The hem used to stop at 1.055, a bare 20 mm above the trouser waist.
-        # Once the garment was scaled onto a shorter rig the two no longer met
-        # and a strip of skin showed between them, so the hem now reaches well
-        # inside the trousers on every race.
-        waist = 1.01 if kind in {"coat", "robe"} else 1.022
-        # The shell used to stop at 1.455 and be capped flat there.  On the
-        # reference rig that is just under the collarbones; on a shorter one the
-        # fit scale drops it further, so the garment finished as a wide open
-        # bowl across the chest.  It now reaches the base of the neck and closes
-        # with a band drawn in around it, which reads as a collar from any angle.
-        collar = 1.492
-        rings = torso_rings(rig, waist, collar, rows=18, sides=30,
-                            thickness=.011 if kind != "robe" else .016,
-                            bones=TORSO_BONES + ["thigh_l", "thigh_r"])
-        surface.loft(rings, MATERIAL_BASE)
-        band = torso_rings(rig, collar, collar + .048, rows=3, sides=30,
-                           thickness=.008, taper=.70, floor=.046,
-                           bones=["neck_01", "spine_03", "clavicle_l",
-                                  "clavicle_r"])
-        surface.loft(band, MATERIAL_TRIM, cap_end=True)
-        _belt(surface, rig, waist + .085, thickness=.015)
-        if kind == "cuirass":
-            _shoulder_pads(surface, rig)
-            # A raised breastplate over the front of the shell, so the armour
-            # reads as plate rather than as a smooth tube.
-            plate = torso_rings(rig, 1.14, 1.42, rows=8, sides=30, thickness=.040)
-            surface.loft([_front_arc(ring) for ring in plate], MATERIAL_TRIM,
-                         closed=False)
-            yoke = torso_rings(rig, 1.40, collar + .022, rows=4, sides=30,
-                               thickness=.030)
-            surface.loft(yoke, MATERIAL_TRIM, cap_end=True)
-        elif kind == "shirt":
-            _sleeves(surface, rig, end=.38, material=MATERIAL_BASE, thickness=.013)
-            # The cap is what closes the body-to-sleeve seam, and shoulders are
-            # the one place the cast disagrees on shape rather than on size -
-            # stone shoulders are square where a Luminous one is round - so it
-            # keeps more headroom than the rest of the garment.
-            _shoulder_pads(surface, rig, drop=.02, material=MATERIAL_BASE,
-                           girth=.82)
-        elif kind == "coat":
-            _sleeves(surface, rig, end=.86, material=MATERIAL_BASE, thickness=.020)
-            skirt = torso_rings(rig, .66, waist + .02, rows=10, sides=30,
-                                thickness=.034, flare_low=.070,
-                                bones=HIP_BONES + ["calf_l", "calf_r"])
-            surface.loft(skirt, MATERIAL_BASE, v_start=1.0, v_end=0.0)
-            lapel = torso_rings(rig, 1.14, collar - .02, rows=5, sides=30,
-                                thickness=.042)
-            surface.loft(lapel, MATERIAL_TRIM)
-        else:  # robe
-            _sleeves(surface, rig, end=.92, material=MATERIAL_BASE, thickness=.026)
-            skirt = torso_rings(rig, .28, waist + .02, rows=14, sides=30,
-                                thickness=.038, flare_low=.150,
-                                bones=HIP_BONES + ["calf_l", "calf_r"])
-            surface.loft(skirt, MATERIAL_BASE, v_start=1.0, v_end=0.0)
-            hem = torso_rings(rig, .28, .34, rows=2, sides=30,
-                              thickness=.034, flare_low=.150)
-            surface.loft(hem, MATERIAL_TRIM)
-        return Garment(surface, "torso")
+        style = style or Style()
+        return _torso_garment(kind, rig, style)
 
-    if kind in {"legs", "pants"}:
-        # The seat runs from the waist down to the crotch, so the hip shell has
-        # to reach the crotch line before the legs take over.  It used to stop
-        # at .96 - above the widest part of the backside - and the two leg tubes
-        # below it measured the thigh chain only, which left an unclothed band
-        # right across the seat.  The shell now closes over the seat and the
-        # legs start inside it, so the two always overlap.
-        hip_low = .902 if kind == "pants" else .914
-        hips = torso_rings(rig, hip_low, 1.075, rows=8, sides=26, thickness=.012,
-                           floor=.058, bones=HIP_BONES)
-        surface.loft(hips, MATERIAL_BASE, cap_end=True)
-        _belt(surface, rig, 1.055, thickness=.014)
-        end = .93 if kind == "pants" else .89
-        for side in ("l", "r"):
-            measure = LEG_MEASURE_L if side == "l" else LEG_MEASURE_R
-            rings = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=16,
-                               sides=22, thickness=.011, start=.018, end=end,
-                               floor=.040, bones=measure)
-            surface.loft(rings, MATERIAL_BASE, cap_start=True, cap_end=True)
-            if kind == "legs":
-                knee = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=4,
-                                  sides=22, thickness=.020, start=.46, end=.60,
-                                  floor=.040, bones=measure)
-                surface.loft(knee, MATERIAL_TRIM)
-                cuff = limb_rings(rig, [f"thigh_{side}", f"calf_{side}"], rows=3,
-                                  sides=22, thickness=.018, start=.86, end=.90,
-                                  floor=.040, bones=measure)
-                surface.loft(cuff, MATERIAL_TRIM)
-        return Garment(surface, "legs")
+    if kind in {"legs", "pants", "kilt"}:
+        # Modified 2026-08-29 for Eloria Client: the sixty-four rebuilt leg
+        # garments are recipes rather than one shape, so the geometry moved to
+        # `legwear_geometry` and this branch is the seam between them.  The
+        # import is deferred because that module lofts through the primitives
+        # defined here and importing it at module scope would be circular.
+        from legwear_geometry import legwear_geometry
+        return legwear_geometry(kind, rig, features or ())
 
     if kind == "boots":
         for side in ("l", "r"):
@@ -2549,6 +3022,17 @@ FINISHES = {
 
 # Which finish each authored piece wears.  Kept beside the geometry rather than
 # in the actor builder so a new piece only needs one line here.
+#: Per-design torso construction, keyed by slug.  Populated from
+#: ``torso_designs`` at import time below; empty for everything that predates it,
+#: which keeps its previous default construction.
+GARMENT_STYLES: dict[str, "Style"] = {}
+
+
+def style_for(slug: str) -> "Style | None":
+    """The construction one piece was designed with, variant suffix and all."""
+    return GARMENT_STYLES.get(slug.split("__")[0])
+
+
 EQUIPMENT_FINISH = {
     "amberwood_longbow": "wood", "ranger_leafblade": "plate",
     "glasswarden_staff": "crystal", "glasswarden_pick": "crystal",
@@ -2587,19 +3071,21 @@ EQUIPMENT_FINISH = {
     "ssarathi_shell_amulet": "shell", "luminous_orbit_amulet": "plate",
 }
 
-GARMENT_KINDS = {"cuirass", "coat", "robe", "shirt", "legs", "pants", "boots",
-                 "cape", "gloves"}
+GARMENT_KINDS = {"cuirass", "coat", "robe", "shirt", "legs", "pants", "kilt",
+                 "boots", "cape", "gloves"}
 
 
 def build_equipment_piece(path: Path, rig: Rig, slug: str, label: str, kind: str,
                           base: tuple[int, int, int], accent: tuple[int, int, int],
                           *, finish: str | None = None,
+                          style: "Style | None" = None,
+                          features: tuple[str, ...] = (),
                           surface: "Surface | None" = None) -> dict:
     """Author and write one equipment GLB, skinning it when it is a garment.
 
     ``surface`` lets a caller supply geometry it built itself rather than take
     the shell ``garment_geometry`` would loft.  The footwear catalogue does
-    that: sixty-four designs are not one lofted tube with different colours.
+    that: sixty-four designs are not one lofted tube under different colours.
     """
     finish_name = finish or EQUIPMENT_FINISH.get(slug, "leather")
     profile = FINISHES[finish_name]
@@ -2607,7 +3093,12 @@ def build_equipment_piece(path: Path, rig: Rig, slug: str, label: str, kind: str
     if skinned:
         region = garment_region(kind)
         if surface is None:
-            garment = garment_geometry(kind, rig)
+            # A fit variant is built through the same call under a suffixed
+            # slug, so the lookup has to see past the suffix or a variant would
+            # be built with the default construction while its reference piece
+            # used the design's.
+            garment = garment_geometry(kind, rig, style or style_for(slug),
+                                       features or ())
             surface, region = garment.surface, garment.skin_region
     else:
         surface, region = (surface or prop_geometry(kind)), ""
@@ -2637,6 +3128,7 @@ def build_equipment_piece(path: Path, rig: Rig, slug: str, label: str, kind: str
                      if region == "cape" else None)
             joints, weights = bound if bound is not None else _scoped_weights(
                 rig, surface, slot, positions.astype(np.float64), region)
+            joints, weights = apply_pins(rig, surface.pins[slot], joints, weights)
         primitives.append(glb.primitive(positions, normals, uvs, indices,
                                         materials[slot], joints=joints,
                                         weights=weights))
@@ -2739,6 +3231,11 @@ def _model_entry(rig: Rig, idle_bases: dict | None, scene_root: str, slug: str,
     if kind in GARMENT_KINDS:
         model["attach"] = "skinned"
         model["skinRegion"] = garment_region(kind)
+        # The kind as well as the region.  `skinRegion` says which bones a
+        # piece is bound to and several kinds share one - `pants` and `legs`
+        # are both `legs` - but they are cut to different hems and are checked
+        # against different seams, so the tests need to tell them apart.
+        model["kind"] = kind
         # Which body this piece was lofted around.  The runtime divides the
         # wearer's measurements by this rig's to refit the garment, so a piece
         # that forgot to say would be worn at the reference's proportions.
@@ -2768,6 +3265,7 @@ def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
                              scene_root: str = "res://assets/actors/native/equipment",
                              generic=None, author_rig: str = "",
                              girths: dict | None = None,
+                             sole_drops: dict | None = None,
                              foot_anchors: dict | None = None,
                              footwear=None) -> dict:
     """Emit ``data/actors/equipment.json`` for the runtime attachment path."""
@@ -2806,10 +3304,22 @@ def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
         "models": models,
         "aliases": dict(ALIASES),
         # Which races wear an authored variant rather than the reference piece.
-        "fitGroups": {race: group for group, spec in FIT_GROUPS.items()
-                      for race in spec["races"]},
+        # A list, not a name: a race can differ from the reference in more than
+        # one way at once, and a Ssarathi female differs in both of the ways the
+        # cast has.  A model resolves the first of a wearer's groups that it
+        # ships a variant for, so declaration order here is precedence.
+        "fitGroups": {race: [group for group, spec in FIT_GROUPS.items()
+                             if spec["kinds"] and race in spec["races"]]
+                      for race in sorted({race for spec in FIT_GROUPS.values()
+                                          if spec["kinds"]
+                                          for race in spec["races"]})},
         # Per-race body measurements the runtime refits garments with.
         "bodyGirth": girths or {},
+        # And how far each foot joint stands above the floor, which is what
+        # footwear is scaled by.  Stature is the wrong proxy for it: the female
+        # rigs are three per cent shorter overall and twenty per cent shorter
+        # from ankle to sole.
+        "soleDrop": sole_drops or {},
         # Where each foot sits relative to the joint that carries it, which is
         # what footwear is seated by.  Stature is the wrong proxy for it: the
         # female rigs are three per cent shorter overall and twenty per cent
@@ -2819,11 +3329,36 @@ def build_equipment_registry(rig: Rig, entries, idle_bases: dict | None = None,
     }
 
 
+def apply_pins(rig: Rig, pins: list, joints: np.ndarray,
+               weights: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Replace inherited weights with a rigid binding where a vertex is pinned.
+
+    See ``Surface.pinned``.  A pinned vertex is bound wholly to one bone, so the
+    piece it belongs to turns with that bone and nothing else.
+    """
+    if not pins or not any(pins):
+        return joints, weights
+    index = {name: slot for slot, name in enumerate(rig.joint_names)}
+    joints, weights = joints.copy(), weights.copy()
+    for slot, bone in enumerate(pins):
+        if bone is None or bone not in index or slot >= len(joints):
+            continue
+        joints[slot] = 0
+        weights[slot] = 0.0
+        joints[slot, 0] = index[bone]
+        weights[slot, 0] = 1.0
+    return joints, weights
+
+
 def garment_region(kind: str) -> str:
     if kind in {"cuirass", "coat", "robe", "shirt"}:
         return "torso"
     if kind in {"legs", "pants"}:
         return "legs"
+    if kind == "kilt":
+        # A hanging panel wants `spine_01` so it falls from the torso instead of
+        # folding with the hips, which is what the `skirt` region is for.
+        return "skirt"
     if kind == "boots":
         return "boots"
     if kind == "cape":

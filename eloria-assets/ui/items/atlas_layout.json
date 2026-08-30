@@ -5,7 +5,8 @@
   ],
   "columns": 5,
   "imagesPerAtlas": 25,
-  "imageCount": 102,
+  "imageCount": 118,
+  "fallbackImageId": 117,
   "rowOffsets": [
     0,
     0,
@@ -13,5 +14,5 @@
     0,
     0
   ],
-  "note": "Rows each atlas sits below the grid ItemAtlas samples. Zero once paint_material_icons.py has corrected the art; the shipped values were [0, 5, 11, 19, 0]."
+  "note": "Rows each atlas sits below the grid ItemAtlas samples. IDs 100-116 mirror the Nymara resource image IDs emitted by eloria-server; 117 is the dedicated unknown-item fallback."
 }

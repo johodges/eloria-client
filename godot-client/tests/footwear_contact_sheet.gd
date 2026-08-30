@@ -58,7 +58,14 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(_out)
 	_build_stage()
 
-	var groups := {"reference": "luminous_male", "saurian": "ssarathi_male"}
+	# Every build a design ships, not only the two it started with: the fit
+	# groups that claim `boots` are settled by measurement, and a sheet that
+	# only photographs the reference one is evidence about a quarter of what
+	# ships.
+	var groups := {"reference": "luminous_male",
+		"feminine_foot": "luminous_female",
+		"broad_foot": "stoneborn_male",
+		"saurian": "ssarathi_male"}
 	var sheets := {}
 	for entry: Dictionary in _catalogue:
 		var variants: Dictionary = entry.get("variants", {}) as Dictionary

@@ -201,6 +201,66 @@ def waterfall() -> np.ndarray:
     return _loop((body + low) * swell)
 
 
+# --- music --------------------------------------------------------------
+#
+# Three ambient beds, each a slow chord cycle over a drone. They are built the
+# same way as everything else here - sine partials and shaped noise - so they
+# are original by construction, and looped seamlessly so a track can play under
+# a map indefinitely without a seam.
+#
+# The tuning is A = 432 Hz rather than 440, which is a deliberate choice for
+# this world's sound and not borrowed from anywhere.
+
+ROOT = 432.0 / 4.0
+
+
+def _chord_bed(chords, seed: int, bar_seconds: float, air: float,
+               brightness: float) -> np.ndarray:
+    """A cycle of chords over a held root, with a breath of noise over it."""
+    bar = seconds(bar_seconds)
+    length = bar * len(chords)
+    body = np.zeros(length)
+    partials = (1.0, 0.42 * brightness, 0.18 * brightness, 0.08 * brightness)
+    for index, chord in enumerate(chords):
+        start = index * bar
+        for step, ratio in enumerate(chord):
+            voice = tone(ROOT * ratio, bar, partials, detune=0.6,
+                         seed=seed + index * 7 + step)
+            body[start:start + bar] += voice * envelope(
+                bar, bar_seconds * 0.35, bar_seconds * 0.25, 0.55,
+                bar_seconds * 0.4) * (0.30 if step else 0.22)
+    drone = tone(ROOT * 0.5, length, (1.0, 0.3, 0.1), detune=0.3,
+                 seed=seed + 101) * 0.24
+    breath = noise(length, seed=seed + 211, smoothing=420) * air
+    swell = 0.88 + 0.12 * np.sin(
+        2.0 * np.pi * 0.035 * np.arange(length) / SAMPLE_RATE)
+    return _loop((body + drone + breath) * swell, fade=1.6)
+
+
+def music_settlement() -> np.ndarray:
+    """Somewhere with people in it: warm, major, unhurried."""
+    return _chord_bed(
+        [(1.0, 1.25, 1.5), (1.125, 1.5, 1.875), (0.75, 1.0, 1.25),
+         (1.0, 1.25, 1.5)],
+        seed=310, bar_seconds=7.0, air=0.05, brightness=1.0)
+
+
+def music_wilds() -> np.ndarray:
+    """Open country: modal, wider intervals, more air."""
+    return _chord_bed(
+        [(1.0, 1.2, 1.5), (0.888, 1.2, 1.333), (1.0, 1.333, 1.5),
+         (0.75, 1.125, 1.5)],
+        seed=420, bar_seconds=8.5, air=0.09, brightness=0.72)
+
+
+def music_depths() -> np.ndarray:
+    """Underground and interiors: low, close, unresolved."""
+    return _chord_bed(
+        [(0.5, 0.75, 1.2), (0.5, 0.8, 1.0), (0.5, 0.703, 1.0),
+         (0.5, 0.75, 1.125)],
+        seed=530, bar_seconds=9.0, air=0.04, brightness=0.45)
+
+
 def footstep() -> np.ndarray:
     """One step: a short broadband tap with a soft low body."""
     length = seconds(0.16)
@@ -225,6 +285,12 @@ RECIPES = {
     "world_effect": world_effect,
 }
 
+MUSIC = {
+    "music_settlement": music_settlement,
+    "music_wilds": music_wilds,
+    "music_depths": music_depths,
+}
+
 
 def write_wav(path: Path, samples: np.ndarray) -> int:
     peak = float(np.max(np.abs(samples))) or 1.0
@@ -247,7 +313,7 @@ def main() -> int:
         / "audio")
     arguments = parser.parse_args()
     catalog = {"schema": "eloria.sounds/1", "sampleRate": SAMPLE_RATE,
-               "sounds": []}
+               "sounds": [], "music": []}
     for name in sorted(RECIPES):
         samples = RECIPES[name]()
         written = write_wav(arguments.out / f"{name}.wav", samples)
@@ -255,9 +321,17 @@ def main() -> int:
             "name": name, "file": f"{name}.wav",
             "seconds": round(written / SAMPLE_RATE, 3)})
         print(f"{name}: {written} samples")
+    for name in sorted(MUSIC):
+        samples = MUSIC[name]()
+        written = write_wav(arguments.out / f"{name}.wav", samples)
+        catalog["music"].append({
+            "name": name.removeprefix("music_"), "file": f"{name}.wav",
+            "seconds": round(written / SAMPLE_RATE, 3)})
+        print(f"{name}: {written} samples")
     (arguments.out / "catalog.json").write_text(
         json.dumps(catalog, indent=2) + "\n", encoding="utf-8")
-    print(f"wrote {len(catalog['sounds'])} sounds to {arguments.out}")
+    print(f"wrote {len(catalog['sounds'])} sounds and"
+          f" {len(catalog['music'])} music beds to {arguments.out}")
     return 0
 
 

@@ -21,9 +21,8 @@ func configure(config: Dictionary) -> void:
 			_cell_size = Vector2(float(values[0]), float(values[1]))
 	_columns = maxi(1, int(config.get("columns", 5)))
 	_images_per_atlas = maxi(1, int(config.get("imagesPerAtlas", 25)))
-	# Modified 2026-08-28 for Eloria Client: the atlases hold 102 icons in 125
-	# grid cells, so capacity alone said an unpainted cell was supported and an
-	# unknown item drew an empty square instead of the fallback glyph.
+	# The atlas set includes a declared painted range and a dedicated fallback.
+	# Capacity alone would treat the remaining blank grid cells as real icons.
 	_image_count = int(config.get("imageCount", -1))
 	_fallback_image_id = int(config.get("fallbackImageId", -1))
 	var aliases_value: Variant = config.get("aliases", {})

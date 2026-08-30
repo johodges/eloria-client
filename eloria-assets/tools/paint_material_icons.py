@@ -39,7 +39,7 @@ PER_ATLAS = 25
 ATLAS_COUNT = 5
 PAINTED_IDS = range(0, 85)
 UNKNOWN_ID = 101
-IMAGE_COUNT = 102
+IMAGE_COUNT = 117
 
 # How far below the sampling grid each shipped atlas was pasted, measured by
 # folding every atlas's row-brightness profile onto one 50-pixel cell and
@@ -74,6 +74,24 @@ MATERIALS = [
     (99, "Deep Lake Clay", "brick", (108, 116, 122), (156, 166, 170)),
     (100, "Voltaic Geode", "geode", (92, 84, 116), (146, 130, 216)),
     (101, "Unknown Item", "unknown", (128, 124, 118), (196, 190, 178)),
+    # The regional harvest resources added after the first sixteen. Their item
+    # ids run past the range the atlas declared, so every one of them drew the
+    # unknown-item glyph in the bag while its node stood in the world.
+    (102, "Steppe Wheat", "reed", (198, 162, 86), (238, 214, 140)),
+    (103, "Riverflax", "reed", (118, 152, 138), (188, 214, 196)),
+    (104, "Moorcotton", "bulb", (206, 202, 190), (244, 242, 236)),
+    (105, "Hearthroot", "bulb", (156, 96, 62), (212, 156, 104)),
+    (106, "Barrow Bramble", "leaf", (72, 88, 66), (128, 148, 104)),
+    (107, "Lantern Cap", "bulb", (204, 146, 62), (244, 206, 128)),
+    (108, "Tidewrack Kelp", "reed", (62, 92, 74), (118, 152, 106)),
+    (109, "Shorebank Shell", "pearl", (226, 214, 196), (188, 176, 158)),
+    (110, "Verdigris Bloom", "flower", (96, 172, 152), (188, 228, 210)),
+    (111, "Bog Iron Nodule", "brick", (104, 74, 56), (158, 118, 82)),
+    (112, "Emberseam Coal", "brick", (56, 50, 48), (168, 92, 48)),
+    (113, "Pale Quartz", "cluster", (206, 206, 210), (244, 246, 248)),
+    (114, "Sunstone Flint", "shard", (176, 106, 52), (238, 178, 96)),
+    (115, "Indigo Thistle", "flower", (92, 92, 158), (166, 168, 226)),
+    (116, "Cenote Watercress", "moss", (74, 138, 102), (152, 200, 138)),
 ]
 
 LIGHT = np.array([-.42, -.60, .68])

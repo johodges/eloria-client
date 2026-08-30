@@ -82,26 +82,42 @@ class EquipmentFitTest(unittest.TestCase):
             self.assertIn(author, self.girth,
                           f"{key} was authored for the unmeasured rig {author}")
 
+    @staticmethod
+    def _named(groups) -> list[str]:
+        """A race's fit groups, whether the registry names one or several."""
+        return [groups] if isinstance(groups, str) else list(groups)
+
+    def _all_groups(self) -> set[str]:
+        return {group for value in self.groups.values()
+                for group in self._named(value)}
+
+    def _members(self, group: str) -> set[str]:
+        return {race for race, value in self.groups.items()
+                if group in self._named(value)}
+
     def test_fit_group_races_exist(self) -> None:
-        for race, group in self.groups.items():
-            self.assertIn(race, self.races, f"fit group {group} names no race {race}")
+        for race, value in self.groups.items():
+            self.assertIn(race, self.races,
+                          f"fit groups {self._named(value)} name no race {race}")
+            self.assertTrue(self._named(value),
+                            f"{race} is listed with no fit group at all")
 
     def test_variants_are_present_and_authored_on_their_own_rig(self) -> None:
         seen_groups: set[str] = set()
         for key, model in self.models.items():
             for group, variant in (model.get("variants") or {}).items():
                 seen_groups.add(group)
-                self.assertIn(group, set(self.groups.values()),
+                self.assertIn(group, self._all_groups(),
                               f"{key} offers variant {group} that no race wears")
                 path = scene_path(str(variant.get("scene", "")))
                 self.assertTrue(path.is_file(), f"{key} variant {group}: {path} missing")
                 author = str(variant.get("authoredFor", ""))
                 self.assertIn(author, self.girth,
                               f"{key} variant {group} names unmeasured rig {author}")
-                self.assertEqual(self.groups.get(author), group,
-                                 f"{key} variant {group} is authored on {author},"
-                                 " which is not a member of that group")
-        self.assertEqual(seen_groups, set(self.groups.values()),
+                self.assertIn(author, self._members(group),
+                              f"{key} variant {group} is authored on {author},"
+                              " which is not a member of that group")
+        self.assertEqual(seen_groups, self._all_groups(),
                          "a fit group exists that no garment offers a variant for")
 
     def test_every_group_member_can_reach_its_variants(self) -> None:
@@ -233,6 +249,136 @@ class FootgearGroundTest(unittest.TestCase):
                 f"{rig}, which puts it through the floor the actor stands on")
             seen += 1
         self.assertGreater(seen, 10, "no footgear was checked")
+
+
+class LegwearSeamTest(unittest.TestCase):
+    """A leg garment closes at three seams and leaves the boot the fourth.
+
+    The pattern is ``FootgearGroundTest``'s: settle by measurement the half of
+    the question a number can settle, and leave topology to the tool that
+    builds it.  What a number settles here is where the garment's two horizontal
+    edges are, because both are contracts with something else.
+
+    The hem is a contract with the footwear brief.  The datum both briefs are
+    cut against puts the boot cuff's top edge at world Y 0.320 on
+    ``luminous_male`` and requires at least 80 mm of overlap below the highest
+    trouser hem, so a hem that creeps down is a trouser that stops tucking in
+    and a hem that creeps up is a strip of bare shin above the boot.  Neither is
+    visible in the editor and both are obvious on a player.
+
+    The waist is a contract with the torso garment, which spans Y 1.022-1.550.
+    The trousers have to reach up into that band far enough to overlap it, and -
+    since our user's ruling is that the legs carry the belt - the waistband has
+    to be the outermost thing at that height rather than hidden under a shirt.
+    """
+
+    #: World Y on the reference rig.  Soft trousers tuck deeper than plate.
+    HEM = {"pants": (.130, .160), "legs": (.166, .196), "kilt": (.130, .160)}
+    #: The lowest the top of a leg garment may sit.  The torso hem is at 1.022.
+    MIN_WAIST_TOP = 1.060
+    #: Structural shells: the closed hip shell and the two closed leg tubes.
+    STRUCTURAL_SHELLS = 3
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.registry = json.loads(EQUIPMENT.read_text())
+
+    def _legwear(self):
+        """Every leg garment authored on the reference rig."""
+        for key, model in self.registry["models"].items():
+            if not key.startswith("4:") or model.get("attach") != "skinned":
+                continue
+            if str(model.get("authoredFor", "")) != "luminous_male":
+                continue
+            yield key, scene_path(str(model["scene"])), str(model.get("kind", ""))
+
+    def test_hems_and_waists_meet_the_seams_they_are_cut_against(self) -> None:
+        try:
+            import numpy as np
+        except ImportError:  # pragma: no cover - numpy is a build requirement
+            self.skipTest("numpy is required to read garment geometry")
+        seen = 0
+        for key, path, kind in sorted(set(self._legwear())):
+            self.assertTrue(path.is_file(), f"{path} missing")
+            points = np.concatenate([p for p, _ in _mesh_primitives(path)])
+            low, high = float(points[:, 1].min()), float(points[:, 1].max())
+            bounds = self.HEM.get(kind)
+            if bounds is None:
+                continue
+            self.assertGreaterEqual(
+                low, bounds[0],
+                f"{key} ({kind}) hems at Y {low:.4f}, below {bounds[0]:.3f} - "
+                f"it hangs past the boot it is meant to tuck into")
+            self.assertLessEqual(
+                low, bounds[1],
+                f"{key} ({kind}) hems at Y {low:.4f}, above {bounds[1]:.3f} - "
+                f"that is bare shin between the trouser and the boot cuff")
+            self.assertGreaterEqual(
+                high, self.MIN_WAIST_TOP,
+                f"{key} tops out at Y {high:.4f}; the shirt hem is at 1.022 and "
+                f"the waistband has to overlap it, not meet it")
+            seen += 1
+        self.assertGreater(seen, 50, "no leg garments were checked")
+
+    def test_the_shell_and_both_leg_tubes_are_closed(self) -> None:
+        """The seat is closed by a closed shell or it is not closed at all.
+
+        An open tube encloses nothing.  The shell this replaces was capped at
+        the top only, so it answered for no part of the body and coverage over
+        the seat rested entirely on two leg tubes that never meet across the
+        middle - which is precisely the bare band across the backside.  Three
+        closed components is the shape that fixes it, and it is worth asserting
+        because capping is one keyword and losing it is silent.
+        """
+        try:
+            import numpy as np
+        except ImportError:  # pragma: no cover - numpy is a build requirement
+            self.skipTest("numpy is required to read garment geometry")
+        seen = 0
+        for key, path, _kind in sorted(set(self._legwear())):
+            closed = _closed_component_count(path)
+            self.assertGreaterEqual(
+                closed, self.STRUCTURAL_SHELLS,
+                f"{key} has {closed} closed shells, fewer than the hip shell "
+                f"and two leg tubes the garment is built from")
+            seen += 1
+        self.assertGreater(seen, 50, "no leg garments were checked")
+
+
+def _closed_component_count(path: Path) -> int:
+    """How many watertight pieces a mesh is made of, welded by position."""
+    import numpy as np
+
+    total = 0
+    for points, triangles in _mesh_primitives(path):
+        keys = np.round(points, 5)
+        _, index = np.unique(keys, axis=0, return_inverse=True)
+        welded = index[triangles]
+        parent = np.arange(welded.max() + 1)
+
+        def find(node: int) -> int:
+            while parent[node] != node:
+                parent[node] = parent[parent[node]]
+                node = parent[node]
+            return node
+
+        for a, b, c in welded:
+            for x, y in ((a, b), (b, c)):
+                ra, rb = find(int(x)), find(int(y))
+                if ra != rb:
+                    parent[ra] = rb
+        groups: dict[int, list] = {}
+        for triangle in welded:
+            groups.setdefault(find(int(triangle[0])), []).append(triangle)
+        for faces in groups.values():
+            edges: dict[tuple, int] = {}
+            for a, b, c in faces:
+                for x, y in ((a, b), (b, c), (c, a)):
+                    edges[(min(x, y), max(x, y))] = edges.get(
+                        (min(x, y), max(x, y)), 0) + 1
+            if all(count == 2 for count in edges.values()):
+                total += 1
+    return total
 
 
 def _mesh_primitives(path: Path):

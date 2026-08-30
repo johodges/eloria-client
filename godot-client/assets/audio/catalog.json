@@ -67,5 +67,22 @@
       "file": "world_effect.wav",
       "seconds": 0.5
     }
+  ],
+  "music": [
+    {
+      "name": "depths",
+      "file": "music_depths.wav",
+      "seconds": 34.4
+    },
+    {
+      "name": "settlement",
+      "file": "music_settlement.wav",
+      "seconds": 26.4
+    },
+    {
+      "name": "wilds",
+      "file": "music_wilds.wav",
+      "seconds": 32.4
+    }
   ]
 }

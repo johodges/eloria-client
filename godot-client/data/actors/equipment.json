@@ -371,36 +371,42 @@
       "scene": "res://assets/actors/native/equipment/amberwood_leaf_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male"
     },
     "2:101": {
       "scene": "res://assets/actors/native/equipment/glasswarden_crystal_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male"
     },
     "2:102": {
       "scene": "res://assets/actors/native/equipment/greyhaven_storm_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male"
     },
     "2:103": {
       "scene": "res://assets/actors/native/equipment/orun_rider_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male"
     },
     "2:104": {
       "scene": "res://assets/actors/native/equipment/ssarathi_frond_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male"
     },
     "2:105": {
       "scene": "res://assets/actors/native/equipment/four_gates_guard_cape_native.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male"
     },
     "3:100": {
@@ -487,11 +493,16 @@
       "scene": "res://assets/actors/native/equipment/amberwood_ranger_legs.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/amberwood_ranger_legs__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/amberwood_ranger_legs__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       }
     },
@@ -499,11 +510,16 @@
       "scene": "res://assets/actors/native/equipment/glasswarden_greaves.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/glasswarden_greaves__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/glasswarden_greaves__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       }
     },
@@ -511,11 +527,16 @@
       "scene": "res://assets/actors/native/equipment/greyhaven_trousers.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/greyhaven_trousers__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/greyhaven_trousers__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       }
     },
@@ -523,11 +544,16 @@
       "scene": "res://assets/actors/native/equipment/orun_rider_legs.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/orun_rider_legs__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/orun_rider_legs__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       }
     },
@@ -535,11 +561,16 @@
       "scene": "res://assets/actors/native/equipment/ssarathi_scale_legs.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/ssarathi_scale_legs__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/ssarathi_scale_legs__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       }
     },
@@ -547,11 +578,16 @@
       "scene": "res://assets/actors/native/equipment/votary_winter_legs.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/votary_winter_legs__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/votary_winter_legs__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       }
     },
@@ -559,11 +595,16 @@
       "scene": "res://assets/actors/native/equipment/luminous_casual_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "pants",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/luminous_casual_pants__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/luminous_casual_pants__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       }
     },
@@ -571,11 +612,12 @@
       "scene": "res://assets/actors/native/equipment/amberwood_ranger_cuirass.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/amberwood_ranger_cuirass__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/amberwood_ranger_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -583,11 +625,12 @@
       "scene": "res://assets/actors/native/equipment/glasswarden_cuirass.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/glasswarden_cuirass__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/glasswarden_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -595,11 +638,12 @@
       "scene": "res://assets/actors/native/equipment/greyhaven_coat.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "coat",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/greyhaven_coat__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/greyhaven_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -607,11 +651,12 @@
       "scene": "res://assets/actors/native/equipment/orun_sun_cuirass.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/orun_sun_cuirass__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_sun_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -619,11 +664,12 @@
       "scene": "res://assets/actors/native/equipment/ssarathi_scale_cuirass.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/ssarathi_scale_cuirass__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/ssarathi_scale_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -631,11 +677,12 @@
       "scene": "res://assets/actors/native/equipment/luminous_turquoise_robe.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "robe",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/luminous_turquoise_robe__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_turquoise_robe__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -643,11 +690,12 @@
       "scene": "res://assets/actors/native/equipment/votary_fur_mantle.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "coat",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/votary_fur_mantle__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/votary_fur_mantle__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -655,11 +703,12 @@
       "scene": "res://assets/actors/native/equipment/stoneborn_plate.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/stoneborn_plate__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/stoneborn_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -667,11 +716,12 @@
       "scene": "res://assets/actors/native/equipment/mycelari_mantle.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "robe",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/mycelari_mantle__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/mycelari_mantle__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -679,11 +729,12 @@
       "scene": "res://assets/actors/native/equipment/four_gates_guard_cuirass.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/four_gates_guard_cuirass__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/four_gates_guard_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -691,11 +742,12 @@
       "scene": "res://assets/actors/native/equipment/luminous_short_sleeve_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/luminous_short_sleeve_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_short_sleeve_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       }
     },
@@ -703,11 +755,20 @@
       "scene": "res://assets/actors/native/equipment/amberwood_ranger_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/amberwood_ranger_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/amberwood_ranger_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/amberwood_ranger_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       }
     },
@@ -715,11 +776,20 @@
       "scene": "res://assets/actors/native/equipment/glasswarden_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/glasswarden_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/glasswarden_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/glasswarden_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       }
     },
@@ -727,11 +797,20 @@
       "scene": "res://assets/actors/native/equipment/greyhaven_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/greyhaven_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/greyhaven_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/greyhaven_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       }
     },
@@ -739,11 +818,20 @@
       "scene": "res://assets/actors/native/equipment/orun_rider_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/orun_rider_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/orun_rider_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/orun_rider_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       }
     },
@@ -751,11 +839,20 @@
       "scene": "res://assets/actors/native/equipment/ssarathi_scale_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/ssarathi_scale_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/ssarathi_scale_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/ssarathi_scale_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       }
     },
@@ -763,11 +860,20 @@
       "scene": "res://assets/actors/native/equipment/votary_winter_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/votary_winter_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/votary_winter_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/votary_winter_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       }
     },
@@ -775,11 +881,20 @@
       "scene": "res://assets/actors/native/equipment/luminous_casual_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/luminous_casual_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/luminous_casual_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/luminous_casual_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       }
     },
@@ -807,15 +922,1944 @@
       "scene": "res://assets/actors/native/equipment/luminous_orbit_amulet.glb",
       "attach": "socket"
     },
+    "5:120": {
+      "scene": "res://assets/actors/native/equipment/outrider_ranger_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_ranger_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:121": {
+      "scene": "res://assets/actors/native/equipment/outrider_laced_jerkin.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_laced_jerkin__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:122": {
+      "scene": "res://assets/actors/native/equipment/outrider_oxblood_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_oxblood_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:123": {
+      "scene": "res://assets/actors/native/equipment/outrider_buckled_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_buckled_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:124": {
+      "scene": "res://assets/actors/native/equipment/outrider_scout_jerkin.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_scout_jerkin__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:125": {
+      "scene": "res://assets/actors/native/equipment/outrider_rope_jerkin.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_rope_jerkin__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:126": {
+      "scene": "res://assets/actors/native/equipment/outrider_brigandine.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_brigandine__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:127": {
+      "scene": "res://assets/actors/native/equipment/outrider_fur_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/outrider_fur_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:128": {
+      "scene": "res://assets/actors/native/equipment/knight_fluted_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_fluted_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:129": {
+      "scene": "res://assets/actors/native/equipment/knight_etched_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_etched_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:130": {
+      "scene": "res://assets/actors/native/equipment/knight_gilded_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_gilded_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:131": {
+      "scene": "res://assets/actors/native/equipment/knight_scale_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_scale_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:132": {
+      "scene": "res://assets/actors/native/equipment/knight_chased_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_chased_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:133": {
+      "scene": "res://assets/actors/native/equipment/knight_tourney_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_tourney_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:134": {
+      "scene": "res://assets/actors/native/equipment/knight_herald_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_herald_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:135": {
+      "scene": "res://assets/actors/native/equipment/knight_warden_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/knight_warden_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:136": {
+      "scene": "res://assets/actors/native/equipment/orun_linen_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_linen_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:137": {
+      "scene": "res://assets/actors/native/equipment/orun_wrap_robe.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "robe",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_wrap_robe__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:138": {
+      "scene": "res://assets/actors/native/equipment/orun_rider_jerkin.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_rider_jerkin__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:139": {
+      "scene": "res://assets/actors/native/equipment/orun_toggle_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_toggle_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:140": {
+      "scene": "res://assets/actors/native/equipment/orun_sunplate_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_sunplate_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:141": {
+      "scene": "res://assets/actors/native/equipment/orun_sash_robe.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "robe",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_sash_robe__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:142": {
+      "scene": "res://assets/actors/native/equipment/orun_ochre_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_ochre_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:143": {
+      "scene": "res://assets/actors/native/equipment/orun_ceremonial_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/orun_ceremonial_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:144": {
+      "scene": "res://assets/actors/native/equipment/verdant_leafscale_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_leafscale_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:145": {
+      "scene": "res://assets/actors/native/equipment/verdant_mantle_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_mantle_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:146": {
+      "scene": "res://assets/actors/native/equipment/verdant_bough_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_bough_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:147": {
+      "scene": "res://assets/actors/native/equipment/verdant_leaf_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_leaf_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:148": {
+      "scene": "res://assets/actors/native/equipment/verdant_bark_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_bark_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:149": {
+      "scene": "res://assets/actors/native/equipment/verdant_toggle_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_toggle_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:150": {
+      "scene": "res://assets/actors/native/equipment/verdant_amber_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_amber_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:151": {
+      "scene": "res://assets/actors/native/equipment/verdant_warden_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/verdant_warden_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:152": {
+      "scene": "res://assets/actors/native/equipment/luminous_tabard_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_tabard_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:153": {
+      "scene": "res://assets/actors/native/equipment/luminous_rune_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_rune_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:154": {
+      "scene": "res://assets/actors/native/equipment/luminous_silver_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_silver_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:155": {
+      "scene": "res://assets/actors/native/equipment/luminous_crystal_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_crystal_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:156": {
+      "scene": "res://assets/actors/native/equipment/luminous_violet_coat.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_violet_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:157": {
+      "scene": "res://assets/actors/native/equipment/luminous_feather_robe.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "robe",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_feather_robe__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:158": {
+      "scene": "res://assets/actors/native/equipment/luminous_gilt_robe.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "robe",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_gilt_robe__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:159": {
+      "scene": "res://assets/actors/native/equipment/luminous_winged_cuirass.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/luminous_winged_cuirass__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:160": {
+      "scene": "res://assets/actors/native/equipment/legend_phoenix_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_phoenix_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:161": {
+      "scene": "res://assets/actors/native/equipment/legend_frost_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_frost_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:162": {
+      "scene": "res://assets/actors/native/equipment/legend_storm_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_storm_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:163": {
+      "scene": "res://assets/actors/native/equipment/legend_drake_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_drake_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:164": {
+      "scene": "res://assets/actors/native/equipment/legend_radiant_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_radiant_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:165": {
+      "scene": "res://assets/actors/native/equipment/legend_void_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_void_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:166": {
+      "scene": "res://assets/actors/native/equipment/legend_runestone_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_runestone_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:167": {
+      "scene": "res://assets/actors/native/equipment/legend_lion_plate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/legend_lion_plate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:168": {
+      "scene": "res://assets/actors/native/equipment/peasant_linen_shirt.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_linen_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:169": {
+      "scene": "res://assets/actors/native/equipment/peasant_short_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_short_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:170": {
+      "scene": "res://assets/actors/native/equipment/peasant_patched_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_patched_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:171": {
+      "scene": "res://assets/actors/native/equipment/peasant_button_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_button_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:172": {
+      "scene": "res://assets/actors/native/equipment/peasant_wrap_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_wrap_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:173": {
+      "scene": "res://assets/actors/native/equipment/peasant_laced_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_laced_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:174": {
+      "scene": "res://assets/actors/native/equipment/peasant_ragged_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_ragged_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:175": {
+      "scene": "res://assets/actors/native/equipment/peasant_wool_tunic.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "shirt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/peasant_wool_tunic__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:176": {
+      "scene": "res://assets/actors/native/equipment/levy_quilted_gambeson.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_quilted_gambeson__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:177": {
+      "scene": "res://assets/actors/native/equipment/levy_studded_brigandine.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "coat",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_studded_brigandine__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:178": {
+      "scene": "res://assets/actors/native/equipment/levy_splinted_corselet.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_splinted_corselet__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:179": {
+      "scene": "res://assets/actors/native/equipment/levy_mail_hauberk.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_mail_hauberk__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:180": {
+      "scene": "res://assets/actors/native/equipment/levy_lamellar_corselet.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_lamellar_corselet__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:181": {
+      "scene": "res://assets/actors/native/equipment/levy_steel_breastplate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_steel_breastplate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:182": {
+      "scene": "res://assets/actors/native/equipment/levy_bronze_breastplate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_bronze_breastplate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "5:183": {
+      "scene": "res://assets/actors/native/equipment/levy_spauldered_breastplate.glb",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/levy_spauldered_breastplate__bust.glb",
+          "authoredFor": "stoneborn_female"
+        }
+      }
+    },
+    "4:107": {
+      "scene": "res://assets/actors/native/equipment/emberforge_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/emberforge_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/emberforge_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:108": {
+      "scene": "res://assets/actors/native/equipment/rimeguard_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/rimeguard_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/rimeguard_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:109": {
+      "scene": "res://assets/actors/native/equipment/voidplate_legs.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/voidplate_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/voidplate_legs__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:110": {
+      "scene": "res://assets/actors/native/equipment/ossuary_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/ossuary_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/ossuary_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:111": {
+      "scene": "res://assets/actors/native/equipment/dawnward_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/dawnward_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/dawnward_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:112": {
+      "scene": "res://assets/actors/native/equipment/umbral_drapes.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/umbral_drapes__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/umbral_drapes__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:113": {
+      "scene": "res://assets/actors/native/equipment/mosswarden_legs.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/mosswarden_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/mosswarden_legs__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:114": {
+      "scene": "res://assets/actors/native/equipment/lionheart_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/lionheart_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/lionheart_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:115": {
+      "scene": "res://assets/actors/native/equipment/astral_robe_legs.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/astral_robe_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/astral_robe_legs__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:116": {
+      "scene": "res://assets/actors/native/equipment/runebound_breeches.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/runebound_breeches__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/runebound_breeches__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:117": {
+      "scene": "res://assets/actors/native/equipment/tidewarden_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/tidewarden_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/tidewarden_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:118": {
+      "scene": "res://assets/actors/native/equipment/prismscale_legs.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/prismscale_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/prismscale_legs__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:119": {
+      "scene": "res://assets/actors/native/equipment/starfall_drapes.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/starfall_drapes__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/starfall_drapes__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:120": {
+      "scene": "res://assets/actors/native/equipment/tidesilk_wrap.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/tidesilk_wrap__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/tidesilk_wrap__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:121": {
+      "scene": "res://assets/actors/native/equipment/oracle_drapes.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/oracle_drapes__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/oracle_drapes__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:122": {
+      "scene": "res://assets/actors/native/equipment/mooncast_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/mooncast_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/mooncast_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:123": {
+      "scene": "res://assets/actors/native/equipment/barkplate_legs.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/barkplate_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/barkplate_legs__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:124": {
+      "scene": "res://assets/actors/native/equipment/thicket_breeches.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/thicket_breeches__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/thicket_breeches__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:125": {
+      "scene": "res://assets/actors/native/equipment/bramblebound_pants.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/bramblebound_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/bramblebound_pants__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:126": {
+      "scene": "res://assets/actors/native/equipment/leafmail_legs.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/leafmail_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/leafmail_legs__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:127": {
+      "scene": "res://assets/actors/native/equipment/heartwood_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/heartwood_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/heartwood_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:128": {
+      "scene": "res://assets/actors/native/equipment/trapper_breeches.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/trapper_breeches__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/trapper_breeches__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:129": {
+      "scene": "res://assets/actors/native/equipment/amberglass_legs.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/amberglass_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/amberglass_legs__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:130": {
+      "scene": "res://assets/actors/native/equipment/antlerward_legs.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/antlerward_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/antlerward_legs__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:131": {
+      "scene": "res://assets/actors/native/equipment/steppe_riding_pants.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/steppe_riding_pants__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/steppe_riding_pants__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:132": {
+      "scene": "res://assets/actors/native/equipment/sunmane_sarong.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/sunmane_sarong__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/sunmane_sarong__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:133": {
+      "scene": "res://assets/actors/native/equipment/fringed_chaps.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/fringed_chaps__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/fringed_chaps__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:134": {
+      "scene": "res://assets/actors/native/equipment/bonetoggle_breeches.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/bonetoggle_breeches__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/bonetoggle_breeches__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:135": {
+      "scene": "res://assets/actors/native/equipment/sundisc_tassets.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/sundisc_tassets__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/sundisc_tassets__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:136": {
+      "scene": "res://assets/actors/native/equipment/caravan_wrap.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/caravan_wrap__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/caravan_wrap__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:137": {
+      "scene": "res://assets/actors/native/equipment/outrider_canvas.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/outrider_canvas__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/outrider_canvas__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:138": {
+      "scene": "res://assets/actors/native/equipment/sunplate_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/sunplate_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/sunplate_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:139": {
+      "scene": "res://assets/actors/native/equipment/argent_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/argent_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/argent_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:140": {
+      "scene": "res://assets/actors/native/equipment/vigil_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/vigil_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/vigil_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:141": {
+      "scene": "res://assets/actors/native/equipment/chapel_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/chapel_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/chapel_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:142": {
+      "scene": "res://assets/actors/native/equipment/pilgrim_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/pilgrim_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/pilgrim_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:143": {
+      "scene": "res://assets/actors/native/equipment/crimson_guard_legs.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/crimson_guard_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/crimson_guard_legs__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:144": {
+      "scene": "res://assets/actors/native/equipment/cathedral_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/cathedral_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/cathedral_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:145": {
+      "scene": "res://assets/actors/native/equipment/standard_bearer_legs.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/standard_bearer_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/standard_bearer_legs__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:146": {
+      "scene": "res://assets/actors/native/equipment/nightwatch_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/nightwatch_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/nightwatch_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:147": {
+      "scene": "res://assets/actors/native/equipment/quilted_chausses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/quilted_chausses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/quilted_chausses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:148": {
+      "scene": "res://assets/actors/native/equipment/padded_leathers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/padded_leathers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/padded_leathers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:149": {
+      "scene": "res://assets/actors/native/equipment/splinted_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/splinted_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/splinted_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:150": {
+      "scene": "res://assets/actors/native/equipment/mail_chausses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/mail_chausses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/mail_chausses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:151": {
+      "scene": "res://assets/actors/native/equipment/brigandine_legs.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/brigandine_legs__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/brigandine_legs__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:152": {
+      "scene": "res://assets/actors/native/equipment/levy_breeches.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/levy_breeches__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/levy_breeches__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:153": {
+      "scene": "res://assets/actors/native/equipment/brass_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/brass_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/brass_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:154": {
+      "scene": "res://assets/actors/native/equipment/sergeant_cuisses.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/sergeant_cuisses__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/sergeant_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:155": {
+      "scene": "res://assets/actors/native/equipment/scout_leathers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/scout_leathers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/scout_leathers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:156": {
+      "scene": "res://assets/actors/native/equipment/poacher_breeches.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/poacher_breeches__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/poacher_breeches__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:157": {
+      "scene": "res://assets/actors/native/equipment/stalker_leathers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/stalker_leathers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/stalker_leathers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:158": {
+      "scene": "res://assets/actors/native/equipment/waylayer_breeches.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/waylayer_breeches__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/waylayer_breeches__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:159": {
+      "scene": "res://assets/actors/native/equipment/forager_leathers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/forager_leathers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/forager_leathers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:160": {
+      "scene": "res://assets/actors/native/equipment/ropewalker_leathers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/ropewalker_leathers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/ropewalker_leathers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:161": {
+      "scene": "res://assets/actors/native/equipment/longcoat_leathers.glb",
+      "attach": "skinned",
+      "skinRegion": "skirt",
+      "kind": "kilt",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/longcoat_leathers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/longcoat_leathers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:162": {
+      "scene": "res://assets/actors/native/equipment/winterhide_breeches.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/winterhide_breeches__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/winterhide_breeches__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:163": {
+      "scene": "res://assets/actors/native/equipment/homespun_trousers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/homespun_trousers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/homespun_trousers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:164": {
+      "scene": "res://assets/actors/native/equipment/drover_trousers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/drover_trousers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/drover_trousers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:165": {
+      "scene": "res://assets/actors/native/equipment/mended_trousers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/mended_trousers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/mended_trousers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:166": {
+      "scene": "res://assets/actors/native/equipment/linen_trousers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/linen_trousers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/linen_trousers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:167": {
+      "scene": "res://assets/actors/native/equipment/sashed_trousers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/sashed_trousers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/sashed_trousers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:168": {
+      "scene": "res://assets/actors/native/equipment/kneepatch_trousers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/kneepatch_trousers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/kneepatch_trousers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:169": {
+      "scene": "res://assets/actors/native/equipment/dyer_trousers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/dyer_trousers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/dyer_trousers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
+    "4:170": {
+      "scene": "res://assets/actors/native/equipment/crofter_trousers.glb",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "pants",
+      "authoredFor": "luminous_male",
+      "variants": {
+        "saurian": {
+          "scene": "res://assets/actors/native/equipment/crofter_trousers__saurian.glb",
+          "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/crofter_trousers__feminine.glb",
+          "authoredFor": "luminous_female"
+        }
+      }
+    },
     "6:128": {
       "scene": "res://assets/actors/native/equipment/plate_fluted.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plate_fluted__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_fluted__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_fluted__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Fluted Greaves",
@@ -831,11 +2875,20 @@
       "scene": "res://assets/actors/native/equipment/plate_leaf.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plate_leaf__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_leaf__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_leaf__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Leafwork Greaves",
@@ -851,11 +2904,20 @@
       "scene": "res://assets/actors/native/equipment/plate_buckled.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plate_buckled__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_buckled__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_buckled__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Buckled Warplate",
@@ -871,11 +2933,20 @@
       "scene": "res://assets/actors/native/equipment/plate_gothic.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plate_gothic__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_gothic__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_gothic__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Gothic Sabatons",
@@ -891,11 +2962,20 @@
       "scene": "res://assets/actors/native/equipment/plate_heraldic.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plate_heraldic__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_heraldic__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_heraldic__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Heraldic Greaves",
@@ -911,11 +2991,20 @@
       "scene": "res://assets/actors/native/equipment/plate_scroll.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plate_scroll__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_scroll__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_scroll__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Scrollwork Greaves",
@@ -931,11 +3020,20 @@
       "scene": "res://assets/actors/native/equipment/plate_crimson.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plate_crimson__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_crimson__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_crimson__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Crimson Guard Greaves",
@@ -951,11 +3049,20 @@
       "scene": "res://assets/actors/native/equipment/plate_blackened.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plate_blackened__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_blackened__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plate_blackened__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Blackened Greaves",
@@ -971,11 +3078,20 @@
       "scene": "res://assets/actors/native/equipment/riveted_shin.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/riveted_shin__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_shin__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_shin__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Riveted Marchboots",
@@ -991,11 +3107,20 @@
       "scene": "res://assets/actors/native/equipment/riveted_banded.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/riveted_banded__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_banded__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_banded__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Banded Trooper Boots",
@@ -1011,11 +3136,20 @@
       "scene": "res://assets/actors/native/equipment/riveted_halfplate.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/riveted_halfplate__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_halfplate__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_halfplate__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Halfplate Legguards",
@@ -1031,11 +3165,20 @@
       "scene": "res://assets/actors/native/equipment/riveted_worn.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/riveted_worn__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_worn__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_worn__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Worn Campaign Boots",
@@ -1051,11 +3194,20 @@
       "scene": "res://assets/actors/native/equipment/riveted_brass.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/riveted_brass__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_brass__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_brass__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Brasswork Greaves",
@@ -1071,11 +3223,20 @@
       "scene": "res://assets/actors/native/equipment/riveted_lamellar.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/riveted_lamellar__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_lamellar__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_lamellar__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Lamellar Marchboots",
@@ -1091,11 +3252,20 @@
       "scene": "res://assets/actors/native/equipment/riveted_crimson.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/riveted_crimson__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_crimson__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_crimson__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Crimson Sashboots",
@@ -1111,11 +3281,20 @@
       "scene": "res://assets/actors/native/equipment/riveted_furlined.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/riveted_furlined__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_furlined__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/riveted_furlined__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Furlined Marchboots",
@@ -1131,11 +3310,20 @@
       "scene": "res://assets/actors/native/equipment/wild_bark.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/wild_bark__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_bark__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_bark__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Barkbound Boots",
@@ -1151,11 +3339,20 @@
       "scene": "res://assets/actors/native/equipment/wild_moss.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/wild_moss__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_moss__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_moss__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Mosscuff Boots",
@@ -1171,11 +3368,20 @@
       "scene": "res://assets/actors/native/equipment/wild_vine.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/wild_vine__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_vine__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_vine__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Vinewrapped Boots",
@@ -1191,11 +3397,20 @@
       "scene": "res://assets/actors/native/equipment/wild_leaf.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/wild_leaf__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_leaf__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_leaf__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Leafplate Boots",
@@ -1211,11 +3426,20 @@
       "scene": "res://assets/actors/native/equipment/wild_antler.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/wild_antler__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_antler__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_antler__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Antlerbound Boots",
@@ -1231,11 +3455,20 @@
       "scene": "res://assets/actors/native/equipment/wild_winterfur.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/wild_winterfur__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_winterfur__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_winterfur__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Winterwood Boots",
@@ -1251,11 +3484,20 @@
       "scene": "res://assets/actors/native/equipment/wild_amber.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/wild_amber__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_amber__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_amber__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Amberpanel Boots",
@@ -1271,11 +3513,20 @@
       "scene": "res://assets/actors/native/equipment/wild_filigree.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/wild_filigree__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_filigree__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/wild_filigree__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Thornfiligree Boots",
@@ -1291,11 +3542,20 @@
       "scene": "res://assets/actors/native/equipment/nomad_cord.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/nomad_cord__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_cord__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_cord__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Corded Wanderers",
@@ -1311,11 +3571,20 @@
       "scene": "res://assets/actors/native/equipment/nomad_linen.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/nomad_linen__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_linen__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_linen__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Linenwrap Boots",
@@ -1331,11 +3600,20 @@
       "scene": "res://assets/actors/native/equipment/nomad_sunplate.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/nomad_sunplate__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_sunplate__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_sunplate__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Sunplate Striders",
@@ -1351,11 +3629,20 @@
       "scene": "res://assets/actors/native/equipment/nomad_bone.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/nomad_bone__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_bone__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_bone__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Bonetoggle Boots",
@@ -1371,11 +3658,20 @@
       "scene": "res://assets/actors/native/equipment/nomad_sunburst.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/nomad_sunburst__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_sunburst__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_sunburst__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Sunburst Greaves",
@@ -1391,11 +3687,20 @@
       "scene": "res://assets/actors/native/equipment/nomad_crimson.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/nomad_crimson__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_crimson__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_crimson__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Crimson Caravan Boots",
@@ -1411,11 +3716,20 @@
       "scene": "res://assets/actors/native/equipment/nomad_lashed.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/nomad_lashed__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_lashed__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_lashed__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Lashed Trailboots",
@@ -1431,11 +3745,20 @@
       "scene": "res://assets/actors/native/equipment/nomad_ivory.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/nomad_ivory__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_ivory__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/nomad_ivory__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Ivory Wardboots",
@@ -1451,11 +3774,20 @@
       "scene": "res://assets/actors/native/equipment/arcane_ember.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/arcane_ember__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_ember__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_ember__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Emberwrought Greaves",
@@ -1471,11 +3803,20 @@
       "scene": "res://assets/actors/native/equipment/arcane_frostward.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/arcane_frostward__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_frostward__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_frostward__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Frostward Greaves",
@@ -1491,11 +3832,20 @@
       "scene": "res://assets/actors/native/equipment/arcane_storm.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/arcane_storm__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_storm__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_storm__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Stormcall Greaves",
@@ -1511,11 +3861,20 @@
       "scene": "res://assets/actors/native/equipment/arcane_bone.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/arcane_bone__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_bone__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_bone__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Bonewrought Greaves",
@@ -1531,11 +3890,20 @@
       "scene": "res://assets/actors/native/equipment/arcane_dawn.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/arcane_dawn__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_dawn__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_dawn__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Dawnward Greaves",
@@ -1551,11 +3919,20 @@
       "scene": "res://assets/actors/native/equipment/arcane_void.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/arcane_void__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_void__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_void__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Voidtouched Greaves",
@@ -1571,11 +3948,20 @@
       "scene": "res://assets/actors/native/equipment/arcane_stone.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/arcane_stone__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_stone__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_stone__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Runestone Greaves",
@@ -1591,11 +3977,20 @@
       "scene": "res://assets/actors/native/equipment/arcane_lion.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/arcane_lion__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_lion__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/arcane_lion__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Lionheart Greaves",
@@ -1611,11 +4006,20 @@
       "scene": "res://assets/actors/native/equipment/travel_folded.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/travel_folded__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_folded__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_folded__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Folded Roadboots",
@@ -1631,11 +4035,20 @@
       "scene": "res://assets/actors/native/equipment/travel_fur.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/travel_fur__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_fur__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_fur__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Furcuff Roadboots",
@@ -1651,11 +4064,20 @@
       "scene": "res://assets/actors/native/equipment/travel_buckled.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/travel_buckled__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_buckled__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_buckled__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Buckled Roadboots",
@@ -1671,11 +4093,20 @@
       "scene": "res://assets/actors/native/equipment/travel_fringed.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/travel_fringed__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_fringed__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_fringed__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Fringed Scoutboots",
@@ -1691,11 +4122,20 @@
       "scene": "res://assets/actors/native/equipment/travel_laced.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/travel_laced__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_laced__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_laced__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Laced Trailboots",
@@ -1711,11 +4151,20 @@
       "scene": "res://assets/actors/native/equipment/travel_canvas.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/travel_canvas__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_canvas__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_canvas__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Canvaswrap Boots",
@@ -1731,11 +4180,20 @@
       "scene": "res://assets/actors/native/equipment/travel_tassel.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/travel_tassel__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_tassel__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_tassel__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Tasselled Roadboots",
@@ -1751,11 +4209,20 @@
       "scene": "res://assets/actors/native/equipment/travel_darkcord.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/travel_darkcord__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_darkcord__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/travel_darkcord__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Darkcord Roadboots",
@@ -1771,11 +4238,20 @@
       "scene": "res://assets/actors/native/equipment/plain_chelsea.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plain_chelsea__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_chelsea__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_chelsea__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Plain Boots",
@@ -1791,11 +4267,20 @@
       "scene": "res://assets/actors/native/equipment/plain_slouch.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plain_slouch__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_slouch__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_slouch__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Slouched Boots",
@@ -1811,11 +4296,20 @@
       "scene": "res://assets/actors/native/equipment/plain_laced.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plain_laced__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_laced__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_laced__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Laced Workboots",
@@ -1831,11 +4325,20 @@
       "scene": "res://assets/actors/native/equipment/plain_burlap.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plain_burlap__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_burlap__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_burlap__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Burlapwrap Boots",
@@ -1851,11 +4354,20 @@
       "scene": "res://assets/actors/native/equipment/plain_harness.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plain_harness__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_harness__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_harness__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Harness Boots",
@@ -1871,11 +4383,20 @@
       "scene": "res://assets/actors/native/equipment/plain_furlace.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plain_furlace__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_furlace__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_furlace__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Furlaced Boots",
@@ -1891,11 +4412,20 @@
       "scene": "res://assets/actors/native/equipment/plain_textile.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plain_textile__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_textile__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_textile__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Textile Panel Boots",
@@ -1911,11 +4441,20 @@
       "scene": "res://assets/actors/native/equipment/plain_tiecuff.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/plain_tiecuff__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_tiecuff__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/plain_tiecuff__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Tiecuff Boots",
@@ -1931,11 +4470,20 @@
       "scene": "res://assets/actors/native/equipment/glass_tidecuff.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/glass_tidecuff__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_tidecuff__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_tidecuff__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Tidecuff Boots",
@@ -1951,11 +4499,20 @@
       "scene": "res://assets/actors/native/equipment/glass_runed.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/glass_runed__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_runed__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_runed__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Runeglass Boots",
@@ -1971,11 +4528,20 @@
       "scene": "res://assets/actors/native/equipment/glass_pale.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/glass_pale__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_pale__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_pale__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Paleglass Greaves",
@@ -1991,11 +4557,20 @@
       "scene": "res://assets/actors/native/equipment/glass_starfield.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/glass_starfield__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_starfield__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_starfield__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Starfield Boots",
@@ -2011,11 +4586,20 @@
       "scene": "res://assets/actors/native/equipment/glass_darkfacet.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/glass_darkfacet__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_darkfacet__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_darkfacet__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Darkfacet Greaves",
@@ -2031,11 +4615,20 @@
       "scene": "res://assets/actors/native/equipment/glass_tideknot.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/glass_tideknot__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_tideknot__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_tideknot__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Tideknot Boots",
@@ -2051,11 +4644,20 @@
       "scene": "res://assets/actors/native/equipment/glass_ivory.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/glass_ivory__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_ivory__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_ivory__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Ivorytide Boots",
@@ -2071,11 +4673,20 @@
       "scene": "res://assets/actors/native/equipment/glass_filigree.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/glass_filigree__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_filigree__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/glass_filigree__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Filigree Tideboots",
@@ -3550,6 +6161,7 @@
       "scene": "res://assets/actors/native/equipment/generic_gloves_leather.glb",
       "attach": "skinned",
       "skinRegion": "hands",
+      "kind": "gloves",
       "authoredFor": "luminous_male",
       "name": "Leather Gloves",
       "tint": [
@@ -3574,6 +6186,7 @@
       "scene": "res://assets/actors/native/equipment/generic_gloves_fur.glb",
       "attach": "skinned",
       "skinRegion": "hands",
+      "kind": "gloves",
       "authoredFor": "luminous_male",
       "name": "Fur Gloves",
       "tint": [
@@ -3774,6 +6387,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Black Cape",
       "tint": [
@@ -3798,6 +6412,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Blue Cape",
       "tint": [
@@ -3822,6 +6437,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Blue-Gray Cape",
       "tint": [
@@ -3846,6 +6462,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Brown Cape",
       "tint": [
@@ -3870,6 +6487,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Brown-Gray Cape",
       "tint": [
@@ -3894,6 +6512,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Gray Cape",
       "tint": [
@@ -3918,6 +6537,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Green Cape",
       "tint": [
@@ -3942,6 +6562,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Green-Gray Cape",
       "tint": [
@@ -3966,6 +6587,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Purple Cape",
       "tint": [
@@ -3990,6 +6612,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "White Cape",
       "tint": [
@@ -4014,6 +6637,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Gold Cape",
       "tint": [
@@ -4038,6 +6662,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Red Cape",
       "tint": [
@@ -4062,6 +6687,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Orange Cape",
       "tint": [
@@ -4086,6 +6712,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Warden Cape",
       "tint": [
@@ -4110,6 +6737,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Tidewatch Cape",
       "tint": [
@@ -4134,6 +6762,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Nightfall Cape",
       "tint": [
@@ -4158,6 +6787,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Quiet Cape",
       "tint": [
@@ -4182,6 +6812,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Highreach Cape",
       "tint": [
@@ -4206,6 +6837,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Dawnward Cape",
       "tint": [
@@ -4230,6 +6862,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Sunwake Cape",
       "tint": [
@@ -4254,6 +6887,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Farhold Cape",
       "tint": [
@@ -4278,6 +6912,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Learner Cape",
       "tint": [
@@ -4302,6 +6937,7 @@
       "scene": "res://assets/actors/native/equipment/generic_cape_fur.glb",
       "attach": "skinned",
       "skinRegion": "cape",
+      "kind": "cape",
       "authoredFor": "luminous_male",
       "name": "Fur Cape",
       "tint": [
@@ -4594,11 +7230,16 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "pants",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Black Pants",
@@ -4624,11 +7265,16 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "pants",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Blue Pants",
@@ -4654,11 +7300,16 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "pants",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Brown Pants",
@@ -4684,11 +7335,16 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "pants",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Dark Brown Pants",
@@ -4714,11 +7370,16 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "pants",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Grey Pants",
@@ -4744,11 +7405,16 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "pants",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Green Pants",
@@ -4774,11 +7440,16 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "pants",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Light Brown Pants",
@@ -4804,11 +7475,16 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "pants",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Red Pants",
@@ -4834,11 +7510,16 @@
       "scene": "res://assets/actors/native/equipment/generic_pants.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "pants",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_pants__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_pants__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "White Pants",
@@ -4864,11 +7545,16 @@
       "scene": "res://assets/actors/native/equipment/generic_legs_leather.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_legs_leather__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_legs_leather__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Leather Pants",
@@ -4894,11 +7580,16 @@
       "scene": "res://assets/actors/native/equipment/generic_legs_leather.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_legs_leather__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_legs_leather__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Augmented Leather Cuisses",
@@ -4924,11 +7615,16 @@
       "scene": "res://assets/actors/native/equipment/generic_legs_fur.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_legs_fur__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_legs_fur__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Fur Pants",
@@ -4954,11 +7650,16 @@
       "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_cuisses__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Iron Cuisses",
@@ -4984,11 +7685,16 @@
       "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_cuisses__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Steel Cuisses",
@@ -5014,11 +7720,16 @@
       "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_cuisses__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Titanium Cuisses",
@@ -5044,11 +7755,16 @@
       "scene": "res://assets/actors/native/equipment/generic_cuisses.glb",
       "attach": "skinned",
       "skinRegion": "legs",
+      "kind": "legs",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_cuisses__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine": {
+          "scene": "res://assets/actors/native/equipment/generic_cuisses__feminine.glb",
+          "authoredFor": "luminous_female"
         }
       },
       "name": "Bronze Cuisses",
@@ -5074,11 +7790,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Black Shirt",
@@ -5104,11 +7821,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Blue Shirt",
@@ -5134,11 +7852,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Brown Shirt",
@@ -5164,11 +7883,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Grey Shirt",
@@ -5194,11 +7914,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Green Shirt",
@@ -5224,11 +7945,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Light Brown Shirt",
@@ -5254,11 +7976,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Orange Shirt",
@@ -5284,11 +8007,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Pink Shirt",
@@ -5314,11 +8038,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Purple Shirt",
@@ -5344,11 +8069,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Red Shirt",
@@ -5374,11 +8100,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "White Shirt",
@@ -5404,11 +8131,12 @@
       "scene": "res://assets/actors/native/equipment/generic_shirt.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "shirt",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_shirt__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_shirt__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Yellow Shirt",
@@ -5434,11 +8162,12 @@
       "scene": "res://assets/actors/native/equipment/generic_leather_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_leather_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_leather_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Leather Armor",
@@ -5464,11 +8193,12 @@
       "scene": "res://assets/actors/native/equipment/generic_leather_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_leather_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_leather_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Augmented Leather Armor",
@@ -5494,11 +8224,12 @@
       "scene": "res://assets/actors/native/equipment/generic_chain_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_chain_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_chain_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Chain Mail",
@@ -5524,11 +8255,12 @@
       "scene": "res://assets/actors/native/equipment/generic_chain_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_chain_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_chain_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Steel Chain Mail",
@@ -5554,11 +8286,12 @@
       "scene": "res://assets/actors/native/equipment/generic_chain_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_chain_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_chain_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Titanium Chain Mail",
@@ -5584,11 +8317,12 @@
       "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Iron Plate Mail",
@@ -5614,11 +8348,12 @@
       "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Steel Plate Mail",
@@ -5644,11 +8379,12 @@
       "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Titanium Plate Mail",
@@ -5674,11 +8410,12 @@
       "scene": "res://assets/actors/native/equipment/generic_plate_armor.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "cuirass",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_plate_armor__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_plate_armor__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Bronze Plate Mail",
@@ -5704,11 +8441,12 @@
       "scene": "res://assets/actors/native/equipment/generic_fur_coat.glb",
       "attach": "skinned",
       "skinRegion": "torso",
+      "kind": "coat",
       "authoredFor": "luminous_male",
       "variants": {
-        "heavy": {
-          "scene": "res://assets/actors/native/equipment/generic_fur_coat__heavy.glb",
-          "authoredFor": "stoneborn_male"
+        "bust": {
+          "scene": "res://assets/actors/native/equipment/generic_fur_coat__bust.glb",
+          "authoredFor": "stoneborn_female"
         }
       },
       "name": "Fur Coat",
@@ -5734,11 +8472,20 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Black Boots",
@@ -5764,11 +8511,20 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Brown Boots",
@@ -5794,11 +8550,20 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Dark Brown Boots",
@@ -5824,11 +8589,20 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Dull Brown Boots",
@@ -5854,11 +8628,20 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Light Brown Boots",
@@ -5884,11 +8667,20 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Orange Boots",
@@ -5914,11 +8706,20 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Leather Boots",
@@ -5944,11 +8745,20 @@
       "scene": "res://assets/actors/native/equipment/generic_boots.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_boots__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Augmented Leather Greaves",
@@ -5974,11 +8784,20 @@
       "scene": "res://assets/actors/native/equipment/generic_boots_fur.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_boots_fur__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots_fur__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_boots_fur__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Fur Boots",
@@ -6004,11 +8823,20 @@
       "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_greaves__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Iron Greaves",
@@ -6034,11 +8862,20 @@
       "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_greaves__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Steel Greaves",
@@ -6064,11 +8901,20 @@
       "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_greaves__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Titanium Greaves",
@@ -6094,11 +8940,20 @@
       "scene": "res://assets/actors/native/equipment/generic_greaves.glb",
       "attach": "skinned",
       "skinRegion": "boots",
+      "kind": "boots",
       "authoredFor": "luminous_male",
       "variants": {
         "saurian": {
           "scene": "res://assets/actors/native/equipment/generic_greaves__saurian.glb",
           "authoredFor": "ssarathi_male"
+        },
+        "feminine_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__feminine_foot.glb",
+          "authoredFor": "luminous_female"
+        },
+        "broad_foot": {
+          "scene": "res://assets/actors/native/equipment/generic_greaves__broad_foot.glb",
+          "authoredFor": "stoneborn_male"
         }
       },
       "name": "Bronze Greaves",
@@ -6123,10 +8978,53 @@
   },
   "aliases": {},
   "fitGroups": {
-    "ssarathi_male": "saurian",
-    "ssarathi_female": "saurian",
-    "stoneborn_male": "heavy",
-    "stoneborn_female": "heavy"
+    "glasswarden_female": [
+      "feminine",
+      "feminine_foot",
+      "bust"
+    ],
+    "greyhaven_female": [
+      "feminine",
+      "feminine_foot",
+      "bust"
+    ],
+    "luminous_female": [
+      "feminine",
+      "feminine_foot",
+      "bust"
+    ],
+    "mycelari_female": [
+      "feminine",
+      "feminine_foot",
+      "bust"
+    ],
+    "orun_female": [
+      "feminine",
+      "feminine_foot",
+      "bust"
+    ],
+    "orun_male": [
+      "broad_foot"
+    ],
+    "ssarathi_female": [
+      "saurian",
+      "bust"
+    ],
+    "ssarathi_male": [
+      "saurian"
+    ],
+    "stoneborn_female": [
+      "feminine_foot",
+      "bust"
+    ],
+    "stoneborn_male": [
+      "broad_foot"
+    ],
+    "votary_female": [
+      "feminine",
+      "feminine_foot",
+      "bust"
+    ]
   },
   "bodyGirth": {
     "glasswarden_female": {
@@ -6498,6 +9396,7 @@
       "ball_r": 0.06013
     }
   },
+  "soleDrop": {},
   "footAnchor": {
     "glasswarden_female": {
       "foot_l": [

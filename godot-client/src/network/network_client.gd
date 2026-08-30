@@ -146,6 +146,18 @@ func look_at_inventory_item(slot: int) -> Error:
 func use_inventory_item(slot: int) -> Error:
 	return send_frame(EloriaProtocol.use_inventory_item(slot))
 
+func fire_missile_at_object(x: int, y: int) -> Error:
+	return send_frame(EloriaProtocol.fire_missile_at_object(x, y))
+
+func what_quest_is_this_id(quest_id: int) -> Error:
+	return send_frame(EloriaProtocol.what_quest_is_this_id(quest_id))
+
+func do_emote(name: String) -> Error:
+	return send_frame(EloriaProtocol.do_emote(name))
+
+func item_on_item(source_slot: int, target_slot: int) -> Error:
+	return send_frame(EloriaProtocol.item_on_item(source_slot, target_slot))
+
 func move_inventory_item(source: int, destination: int) -> Error:
 	return send_frame(EloriaProtocol.move_inventory_item(source, destination))
 

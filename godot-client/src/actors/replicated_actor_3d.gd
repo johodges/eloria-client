@@ -32,6 +32,10 @@ var _segment_elapsed := 0.0
 var _segment_duration := 0.0
 var _last_movement_update_msec := -1
 var _smoothed_server_interval := 0.25
+## The direction the body is actually crossing the ground in, which is not the
+## tile direction the server named. See `_rendered_target_yaw`.
+var _travel_yaw_active := false
+var _travel_yaw := 0.0
 ## Part 2 in the equipment registry: the cape, and the only part with cloth.
 const CAPE_PART := 2
 ## The wardrobe meshes are shells fitted straight onto the skin they cover, so
@@ -87,7 +91,10 @@ const GAMEPLAY_ONLY_VISUAL_LAYER := 2
 ## it needs a dot sized for the map rather than for the world.
 const MAP_MARKER_LAYER := 4
 const MAP_DOT_RADIUS := 3.5
-const MAP_DOT_COLOUR := Color(0.62, 0.82, 1.0)
+## The light blue the full map's legend calls NPC, written the way the legend
+## writes it so a reader comparing the swatch to the map is comparing one
+## colour to itself rather than to a rounding of it.
+const MAP_DOT_COLOUR := Color("9fd2ff")
 const SETTLED_YAW_EPSILON := 0.0005
 
 # Overhead health bar geometry, in world units, measured downwards from the
@@ -358,6 +365,11 @@ func _add_map_dot() -> void:
 ## packet - "Alice ELO" - so a client that takes the whole string as a
 ## name renders the colour byte as mojibake and the tag as part of the player's
 ## name. The decoder splits them; this draws the tag as a tag.
+##
+## The name's colour is the server's, and it is how a field is read without
+## selecting anything: a demigod's name is green, an invasion creature's red, a
+## summon's light blue. A Label3D tints as one piece, so a guild tag takes the
+## name's colour rather than its own.
 func _add_nameplate(dto: Dictionary) -> void:
 	var label: Label3D = Label3D.new()
 	label.name = "Nameplate"
@@ -369,7 +381,7 @@ func _add_nameplate(dto: Dictionary) -> void:
 	label.no_depth_test = true
 	label.font_size = 28
 	label.outline_size = 6
-	label.modulate = Color(1.0, 1.0, 1.0, 1.0)
+	label.modulate = EloriaProtocol.el_text_colour(int(dto.get("name_colour", 0)))
 	label.layers = GAMEPLAY_ONLY_VISUAL_LAYER
 	add_child(label)
 	_nameplate = label
@@ -545,6 +557,7 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 		_smoothed_server_interval = initial_server_interval
 		_movement_coast_remaining = 0.0
 		_snap_pending = false
+		_travel_yaw_active = false
 	elif target_changed:
 		var now_msec: int = Time.get_ticks_msec()
 		if _last_movement_update_msec >= 0:
@@ -567,6 +580,8 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 			global_position.distance_to(server_target), _presentation_speed,
 			_smoothed_server_interval, arrival_margin,
 			minimum_segment_duration, maximum_segment_duration)
+		_travel_yaw = travel_yaw(_segment_start, server_target, _target_yaw)
+		_travel_yaw_active = true
 	_wake()
 	if dto.has("command") and resolver != null:
 		play_action(_movement_aware_action(
@@ -782,9 +797,24 @@ func _equipment_model_config(part: int, visual_id: int) -> Dictionary:
 func rig_name() -> String:
 	return str(_model_config.get("scene", "")).get_file().get_basename()
 
-func fit_group() -> String:
+## The fit groups this actor's race belongs to, in precedence order.
+##
+## Modified 2026-08-29 for Eloria Client: this used to be a single name. A race
+## can differ from the reference body in more than one way - a Ssarathi female
+## has both a digitigrade leg and a bust, and the two are authored on different
+## rigs - so a race now names every group it is in and a garment resolves the
+## first one it actually ships a variant for. A registry written the old way,
+## with one name per race, still reads correctly.
+func fit_groups() -> PackedStringArray:
 	var groups: Dictionary = _equipment_config.get("fitGroups", {}) as Dictionary
-	return str(groups.get(rig_name(), ""))
+	var mine: Variant = groups.get(rig_name(), "")
+	if mine is Array:
+		var names := PackedStringArray()
+		for value: Variant in mine as Array:
+			names.append(str(value))
+		return names
+	var single := str(mine)
+	return PackedStringArray() if single.is_empty() else PackedStringArray([single])
 
 func _fit_variant(model: Dictionary) -> Dictionary:
 	# Modified 2026-08-28 for Eloria Client: some builds cannot be reached by
@@ -792,17 +822,18 @@ func _fit_variant(model: Dictionary) -> Dictionary:
 	# the copy of the piece built on its own rig where one exists, and the
 	# reference piece everywhere else, so a group only costs the kinds it
 	# actually changes.
-	var group: String = fit_group()
-	if group.is_empty() or model.is_empty():
+	if model.is_empty():
 		return model
 	var variants: Dictionary = model.get("variants", {}) as Dictionary
-	var variant: Dictionary = variants.get(group, {}) as Dictionary
-	if variant.is_empty():
-		return model
-	var resolved: Dictionary = model.duplicate(true)
-	resolved.erase("variants")
-	resolved.merge(variant, true)
-	return resolved
+	for group: String in fit_groups():
+		var variant: Dictionary = variants.get(group, {}) as Dictionary
+		if variant.is_empty():
+			continue
+		var resolved: Dictionary = model.duplicate(true)
+		resolved.erase("variants")
+		resolved.merge(variant, true)
+		return resolved
+	return model
 
 func _equipment_socket(part: int, model_config: Dictionary) -> Dictionary:
 	# A model may override the shared part socket, which is how a two-handed
@@ -985,8 +1016,8 @@ func _girth_ratios(author_rig: String) -> Dictionary:
 			ratios[bone] = clampf(to / from, 1.0, 2.0)
 	return ratios
 
-## How far a boot has to be lifted for its sole to land on this actor's floor,
-## per foot bone, in metres. Empty for everything that is not footwear.
+## How far this actor's foot joints stand above the floor, against the body a
+## boot was lofted around. Empty for everything that is not footwear.
 ##
 ## The rest of the refit scales each bone about its own origin, and for the foot
 ## chain that origin is the ankle - which is not a fixed height above the
@@ -997,14 +1028,17 @@ func _girth_ratios(author_rig: String) -> Dictionary:
 ## landed 14 mm through the floor on all seven of them, and no single authored
 ## mesh could have fixed it.
 ##
-## A lift and not a scale, which is the whole point. Measured across the cast,
-## the foot barely varies: every female foot is within four per cent of its male
-## counterpart's width and within seven per cent of its length. What varies is
-## how high the ankle stands above it - 91 to 103 mm on the male rigs, 78.6 to
-## 83.4 on the female ones. Scaling a boot to close that gap would take 18 per
-## cent off a shell that has to contain a foot 4 per cent *wider*, so the sole
-## would land correctly and the foot would come out of the sides. Moving the
-## shell instead lands the sole and leaves the fit alone.
+## A vector, and a move rather than a scale, which is the whole point.
+##
+## Measured across the cast the foot barely varies: every female foot is within
+## four per cent of its male counterpart's width and seven per cent of its
+## length. What varies is where it sits relative to the joint that carries it -
+## the ankle stands 91 to 103 mm above the floor on the male rigs and 78.6 to
+## 83.4 on the female ones, and the Orun ankle sits 26 mm further inboard than
+## the reference's with the foot still under the body. Scaling a boot to close
+## the first would take eighteen per cent off a shell that has to contain a foot
+## four per cent *wider*, and no scale at all reaches the second. Moving the
+## shell instead lands it and leaves the fit alone.
 func _ground_drops(author_rig: String, skin_region: String) -> Dictionary:
 	if skin_region != "boots":
 		return {}
@@ -1016,16 +1050,12 @@ func _ground_drops(author_rig: String, skin_region: String) -> Dictionary:
 	var wearer: Dictionary = table.get(mine, {}) as Dictionary
 	if author.is_empty() or wearer.is_empty():
 		return {}
-	# One datum for the whole foot, taken at the ankle, and handed to every bone
-	# in the chain.
-	#
-	# The ankle stands 96 mm above the reference floor and 79 on a Luminous
-	# woman's; the ball of the foot stands 24.7 mm above one and 23.2 above the
-	# other. Solved per bone that is a 13 mm lift at the ankle and a 0.7 mm lift
-	# at the ball - and the shell between them is skinned to a blend of the two,
-	# so it does not move, it *shears*. That tore the boot away from the arch
-	# and left the underside of the midfoot outside it on every female rig.
-	# A boot is rigid. It translates as one piece or it is not a boot.
+	# Per bone, not one datum for the whole chain. Collapsing them onto the
+	# ankle's figure was tried, on the reasoning that a boot is rigid and should
+	# travel as one piece; measured, it was five times worse - 951 body vertices
+	# outside the shell against 185. The shell is skinned rather than rigid, and
+	# letting each bone carry its own offset is what lands the ankle and the ball
+	# of the foot in the right place at once.
 	var drops: Dictionary = {}
 	for bone: String in author:
 		var from: Vector3 = _vector3(author[bone] as Array, Vector3.ZERO)
@@ -1034,14 +1064,6 @@ func _ground_drops(author_rig: String, skin_region: String) -> Dictionary:
 			# The pair, not the difference: how far the boot has to move depends
 			# on how much it has been widened first, and that is decided in
 			# `_bone_fit` where the girth ratio is known.
-			#
-			# Per bone, not one datum for the whole chain. Collapsing them onto
-			# the ankle's figure was tried on the reasoning that a boot is rigid
-			# and should translate as one piece; measured, it was five times
-			# worse - 951 body vertices outside the shell against 185. The shell
-			# is skinned rather than rigid, and letting each bone carry its own
-			# lift is what makes the blend between them land the ankle and the
-			# ball of the foot in the right place at once.
 			drops[bone] = [from, to]
 	return drops
 
@@ -1089,8 +1111,7 @@ func _rebound_skin(bone_names: PackedStringArray, binds: Array[Transform3D],
 	return rebound
 
 func _bone_fit(target: int, bone_name: String, author_rest: Dictionary,
-		fit: Transform3D, girth: float = 1.0,
-		ground: Array = [],
+		fit: Transform3D, girth: float = 1.0, ground: Array = [],
 		wearer_rest: Transform3D = Transform3D.IDENTITY) -> Transform3D:
 	# Carrying a garment onto another rig by rotation alone leaves it the length
 	# it was authored, which is fine while the two rigs agree and wrong when
@@ -1115,38 +1136,34 @@ func _bone_fit(target: int, bone_name: String, author_rest: Dictionary,
 			ratio = clampf(target_span / author_span, 0.4, 2.5)
 			axis = local / author_span
 			measured = true
-	# A foot bone carrying a ground datum is *moved* to the floor rather than
-	# scaled onto it. The foot inside the boot is very nearly the same foot on
-	# every plantigrade rig in the cast - every female foot is within four per
-	# cent of its male counterpart's width - while the ankle above it stands 91
-	# to 103 mm up on the male rigs and 78.6 to 83.4 on the female ones. Scaling
-	# to close that gap would take eighteen per cent off a shell that has to
-	# contain a foot four per cent *wider*: the sole would land and the foot
-	# would come out of the sides.
-	#
-	# It is still widened, because some feet genuinely are broader - an Orun's
-	# is twelve per cent wider than the reference - and a shell that does not
-	# grow for them leaves the outside of the foot showing. Widening first and
-	# then moving is why the drops arrive here as a pair rather than as a
+	# A foot bone carrying a ground ratio takes it instead of the span-and-girth
+	# result, and takes it whether it widens or narrows. Everything else here is
+	# a guess at how much bigger this body is than the authored one; that is the
+	# measured distance between the joint and the floor it has to stand on, and
+	# the floor is not negotiable - the actor is placed on the ground by its
+	# body, so a boot that disagrees is a boot underneath it. It stays isotropic:
+	# the ground ratio is chosen to land the sole, and splitting it would move
+	# the sole off the plane it was solved for.
+	# A foot bone carrying a ground datum is *moved* onto this body rather than
+	# scaled onto it. It is still widened first, because some feet genuinely are
+	# broader - an Orun's is twelve per cent wider than the reference - and a
+	# shell that does not grow for them leaves the outside of the foot showing.
+	# Widening and then moving is why the anchor arrives as a pair rather than a
 	# difference: how far the boot has to travel depends on how much bigger it
 	# has just been made.
 	if ground.size() == 2:
 		var wide: float = clampf(maxf(ratio, girth), 1.0, 2.0)
 		var scaled: float = fit.basis.get_scale().y * wide
-		# Where the authored foot lands once it has been scaled onto this body,
-		# against where this body's own foot actually is. The difference is the
-		# move. Y is measured to the floor because standing on the ground has to
-		# be exact; X and Z are measured to the middle of the foot, which is
-		# what puts an Orun's boot around an Orun's foot rather than around the
-		# joint it hangs from.
 		# The anchor is a signed offset from the joint to the foot, so all three
 		# axes read the same way: where the authored foot lands once scaled onto
-		# this body, subtracted from where this body's foot actually is.
+		# this body, subtracted from where this body's foot actually is. Y is
+		# measured to the floor because standing on the ground has to be exact;
+		# X and Z to the middle of the foot, which is what puts an Orun's boot
+		# around an Orun's foot rather than around the joint it hangs from.
 		var landed: Vector3 = (ground[0] as Vector3) * scaled
 		var wanted: Vector3 = ground[1] as Vector3
-		var move: Vector3 = wanted - landed
 		return Transform3D(fit.basis.scaled(Vector3.ONE * wide),
-			wearer_rest.basis.inverse() * move)
+			wearer_rest.basis.inverse() * (wanted - landed))
 
 	# Widening and lengthening are two different questions and used to be
 	# answered with one number.
@@ -1355,6 +1372,30 @@ static func target_yaw_for_state(current_yaw: float, actor_command: int,
 		return current_yaw
 	return adapter.rotation_to_godot(server_rotation)
 
+## The yaw of the ground the body is about to cross, which is what "facing the
+## way you are walking" means on screen. It is not the tile direction the
+## server named: the rendered actor is deliberately a fraction of a tile behind
+## its authoritative position (`arrival_margin`), and every step that lands in
+## the same frame as another is folded into one segment before the actor node
+## sees it, so a segment routinely spans a different bearing - and, across a
+## folded burst, several tiles - than the single command that arrived with it.
+static func travel_yaw(from: Vector3, to: Vector3, fallback: float) -> float:
+	var travel := Vector3(to.x - from.x, 0.0, to.z - from.z)
+	if travel.length_squared() < 0.000001:
+		return fallback
+	return atan2(-travel.x, -travel.z)
+
+## Where the body is pointed this frame. The authoritative facing is still
+## `_target_yaw`; this only decides what is drawn while the actor is crossing
+## ground, and it hands back to the authoritative value the moment it stops, so
+## a resting actor faces exactly where the server says it does. An unanswered
+## turn prediction outranks it: that actor is turning on the spot rather than
+## travelling, and the step it is asked to show is the whole point of it.
+func _rendered_target_yaw() -> float:
+	if _predicted_turn_pending or not _travel_yaw_active:
+		return _target_yaw
+	return _travel_yaw
+
 func _finish_movement_presentation() -> void:
 	if current_action in [&"walk", &"run"]:
 		_movement_coast_remaining = maxf(movement_coast_seconds,
@@ -1390,6 +1431,7 @@ func _physics_process(delta: float) -> void:
 		rotation.y = _target_yaw
 		_segment_start = server_target
 		_snap_pending = false
+		_travel_yaw_active = false
 		_settle_if_idle()
 		return
 	if _segment_duration > 0.0:
@@ -1399,10 +1441,13 @@ func _physics_process(delta: float) -> void:
 		if progress >= 1.0:
 			global_position = server_target
 			_segment_duration = 0.0
+			_travel_yaw_active = false
 			_finish_movement_presentation()
 	else:
 		global_position = server_target
-	rotation.y = rotate_toward(rotation.y, _target_yaw, turn_speed_radians * delta)
+		_travel_yaw_active = false
+	rotation.y = rotate_toward(rotation.y, _rendered_target_yaw(),
+		turn_speed_radians * delta)
 	if _movement_coast_remaining > 0.0:
 		_movement_coast_remaining = maxf(0.0, _movement_coast_remaining - delta)
 		if _movement_coast_remaining <= 0.0 and current_action in [&"walk", &"run"]:

@@ -38,14 +38,26 @@ REGISTRY = CLIENT / "data" / "actors" / "equipment.json"
 CATALOG = CLIENT / "data" / "actors" / "native_asset_catalog.json"
 
 #: Which rig each fit group is authored on.  ``""`` is the reference group.
-GROUP_RIG = {"": "luminous_male", "saurian": "ssarathi_male"}
+GROUP_RIG = {"": "luminous_male", "feminine_foot": "luminous_female",
+             "broad_foot": "stoneborn_male", "saurian": "ssarathi_male"}
 
 
 def group_members(registry: dict) -> dict:
+    """Which races wear which build, one build per race.
+
+    ``fitGroups`` maps a race to *every* group it belongs to - a Luminous woman
+    is both ``feminine`` and ``bust`` - because different garment kinds claim
+    different groups.  Footwear cares about the ones that claim ``boots``, and a
+    race that is in none of them wears the reference piece.
+    """
     groups = registry.get("fitGroups", {})
     members: dict[str, list[Path]] = {}
     for path in sorted(RACES.glob("*.glb")):
-        members.setdefault(groups.get(path.stem, ""), []).append(path)
+        listed = groups.get(path.stem, [])
+        if isinstance(listed, str):
+            listed = [listed]
+        mine = [group for group in listed if group in GROUP_RIG]
+        members.setdefault(mine[0] if mine else "", []).append(path)
     return members
 
 

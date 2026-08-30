@@ -364,7 +364,7 @@ def foot_stations(rig, foot: FootAnatomy, *, stations: int = 9,
         down = (foot.under_arch if seat <= ball_at else foot.under_toe)
         anchor = foot.ankle + axis * seat
         near = flesh[np.abs(along - seat) < window]
-        if len(near) < 6:
+        if len(near) < 3:
             raw.append(None)
             continue
         raw.append((anchor, down, near))

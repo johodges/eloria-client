@@ -245,6 +245,10 @@ var map_marker_overlay: Control
 ## Short-lived world effects the server announced. Kept only so a test can see
 ## what is on screen; each one frees itself when it finishes.
 var world_effects: Array = []
+## The sky and the fires the server placed on this map.
+var weather_layer: Weather3D
+## Objects the server placed into this map after it loaded, by object id.
+var placed_object_nodes: Dictionary = {}
 var audio_director: Node
 var map_ambience_root: Node3D
 var sigil_window: Control
@@ -617,7 +621,13 @@ func _ready() -> void:
 	AppState.state_changed.connect(_on_state_changed)
 	AppState.floating_feedback_requested.connect(_on_floating_feedback_requested)
 	AppState.special_effect_requested.connect(_on_special_effect_requested)
+	AppState.actor_animation_requested.connect(_on_actor_animation_requested)
 	AppState.missile_fired.connect(_on_missile_fired)
+	AppState.ground_missile_fired.connect(_on_ground_missile_fired)
+	AppState.thunder_struck.connect(_on_thunder_struck)
+	AppState.teleport_seen.connect(_on_teleport_seen)
+	weather_layer = Weather3D.new()
+	world_root.add_child(weather_layer)
 	world_loader.load_completed.connect(_on_world_loaded)
 	world_loader.load_failed.connect(_on_world_load_failed)
 	viewport_container.gui_input.connect(_on_world_gui_input)
@@ -754,6 +764,11 @@ func _process(delta: float) -> void:
 		_update_carried_item()
 		_update_map_viewports()
 		_update_local_actor_follow()
+		# Rain is everywhere, so only the box the player is standing in is
+		# drawn. Left at the world origin it fell a hundred metres away from
+		# whoever was watching it.
+		if weather_layer != null:
+			weather_layer.follow(camera_rig.global_position)
 		interior_cutaway.update(camera_rig.yaw_degrees)
 		_update_occluder_fade(delta)
 		_update_keyboard_movement()
@@ -2779,6 +2794,12 @@ func _on_state_changed(path: StringName) -> void:
 				_sync_storage()
 			if bool(AppState.ground_bag.get("open", false)):
 				_sync_ground_bag()
+		&"world_objects":
+			_sync_placed_objects()
+		&"weather":
+			_sync_weather()
+		&"fires":
+			_sync_fires()
 		&"item_detail":
 			# The description is written whichever tool asked for it; only the
 			# window is withheld. See `_describe_slot`.
@@ -3063,6 +3084,11 @@ func _sync_world() -> void:
 		_update_local_actor_follow()
 		var local_dto: Dictionary = AppState.actors[AppState.local_actor_id]
 		overhead_player_name.text = str(local_dto.get("name", "Player"))
+		# You get no nameplate of your own - _nameplate_visible_for skips the
+		# local actor - so this banner is the only place your own name colour
+		# can show. Demigod mode is the one that turns it green.
+		overhead_player_name.add_theme_color_override("font_color",
+			EloriaProtocol.el_text_colour(int(local_dto.get("name_colour", 0))))
 		var current_health := int(local_dto.get("health", 0))
 		var maximum_health := maxi(1, int(local_dto.get("max_health", 1)))
 		if AppState.stats.is_empty():
@@ -4499,6 +4525,100 @@ func _on_missile_fired(shot: Dictionary) -> void:
 	world_effects = world_effects.filter(func(node: Variant) -> bool:
 		return is_instance_valid(node))
 
+## Objects the server put into this map after it loaded. Everything the client
+## knew about a map used to arrive with the map, so nothing could change while
+## anybody was looking at it.
+func _sync_placed_objects() -> void:
+	for raw_id: Variant in AppState.world_objects:
+		var object_id: int = int(raw_id)
+		if placed_object_nodes.has(object_id):
+			continue
+		var placed: Dictionary = AppState.world_objects[object_id] as Dictionary
+		var node := PlacedObject3D.new()
+		world_root.add_child(node)
+		node.configure(placed, adapter.server_to_godot(
+			int(placed.get("x", 0)), int(placed.get("y", 0))))
+		placed_object_nodes[object_id] = node
+	for object_id: Variant in placed_object_nodes.keys():
+		if AppState.world_objects.has(object_id):
+			continue
+		var stale: Variant = placed_object_nodes[object_id]
+		if is_instance_valid(stale):
+			(stale as Node).queue_free()
+		placed_object_nodes.erase(object_id)
+
+## Somebody arrived or left by a portal. The actor packets already say who
+## moved; this says where the two ends were, which is the part a client cannot
+## work out - by the time it hears about an arrival the departure has gone.
+func _on_teleport_seen(teleport: Dictionary) -> void:
+	if not _effects_enabled:
+		return
+	var effect := WorldEffect3D.new()
+	world_root.add_child(effect)
+	# 1 is the beneficial class, which rises; 0 falls. Arriving rises out of
+	# the ground and leaving sinks into it.
+	effect.configure(1 if bool(teleport.get("arriving", true)) else 0,
+		adapter.server_to_godot(int(teleport.get("x", 0)),
+			int(teleport.get("y", 0))))
+	world_effects.append(effect)
+	world_effects = world_effects.filter(func(node: Variant) -> bool:
+		return is_instance_valid(node))
+
+## The sky the server said is over this map. Nothing here decides anything:
+## what is falling and how hard is on the wire, because two players standing
+## together have to see the same sky.
+func _sync_weather() -> void:
+	if weather_layer == null:
+		return
+	if not _effects_enabled:
+		weather_layer.set_weather(0, 0)
+		return
+	weather_layer.set_weather(int(AppState.weather.get("kind", 0)),
+		int(AppState.weather.get("intensity", 0)))
+
+## The fires burning on this map, placed by tile. A fire the server removes
+## goes out; one it has not mentioned was never lit.
+func _sync_fires() -> void:
+	if weather_layer == null:
+		return
+	for tile: Variant in AppState.fires:
+		var fire_tile: Vector2i = tile as Vector2i
+		if not weather_layer.has_fire_at(fire_tile):
+			weather_layer.place_fire(
+				adapter.server_to_godot(fire_tile.x, fire_tile.y),
+				int(AppState.fires[fire_tile]), fire_tile)
+	for tile: Variant in weather_layer.fire_tiles():
+		if not AppState.fires.has(tile):
+			weather_layer.remove_fire(tile as Vector2i)
+
+func _on_thunder_struck(severity: int) -> void:
+	if weather_layer != null and _effects_enabled:
+		weather_layer.strike(severity)
+	audio_director.play("world_effect")
+
+## An arrow on its way to a tile rather than into an actor: a practice shot,
+## or a miss.
+##
+## A miss used to be drawn as a shot at the target it missed, which is the one
+## thing it was not - so every miss looked like a hit. The tile is the server's
+## decision, arriving on the wire, so two clients watching one shot draw the
+## same arrow instead of each inventing a scatter.
+func _on_ground_missile_fired(shot: Dictionary) -> void:
+	if not _effects_enabled:
+		return
+	var from_value: Variant = _actor_effect_position(
+		int(shot.get("source_actor_id", -1)))
+	if not from_value is Vector3:
+		return
+	var landing: Vector3 = adapter.server_to_godot(
+		int(shot.get("x", 0)), int(shot.get("y", 0)))
+	var missile := MissileFlight3D.new()
+	world_root.add_child(missile)
+	missile.configure(from_value as Vector3, landing)
+	world_effects.append(missile)
+	world_effects = world_effects.filter(func(node: Variant) -> bool:
+		return is_instance_valid(node))
+
 ## Draws what the server said just happened, where it happened.
 ##
 ## Nothing is inferred about the effect: an actor the client has never been
@@ -4518,6 +4638,18 @@ func _on_special_effect_requested(effect: Dictionary) -> void:
 	world_effects.append(world_effect)
 	world_effects = world_effects.filter(func(node: Variant) -> bool:
 		return is_instance_valid(node))
+
+## The server asked an actor to play a named action. An action this client has
+## no clip for plays nothing: `play_action` looks the name up in the animation
+## map and returns if it finds nothing, so an unknown action is ignored rather
+## than guessed at. The words that came with an emote arrive as chat either
+## way, so nothing is lost by staying still.
+func _on_actor_animation_requested(animation: Dictionary) -> void:
+	var node: Variant = actor_nodes.get(int(animation.get("actor_id", -1)))
+	if not is_instance_valid(node):
+		return
+	(node as ReplicatedActor3D).play_action(
+		StringName(str(animation.get("action", ""))))
 
 func _actor_effect_position(actor_id: int) -> Variant:
 	if actor_id < 0:
@@ -5809,6 +5941,18 @@ func _on_chat_submitted(text: String) -> void:
 			_sync_map_markers()
 		chat_input.clear()
 		return
+	# `#emote <name>` is the server's command, but it has a packet of its own,
+	# so the client sends that rather than the text. The server answers the
+	# typed form too, for a client that has no `DO_EMOTE`.
+	if message.begins_with("#emote "):
+		var wanted: String = message.substr(7).strip_edges()
+		if not wanted.is_empty():
+			var emote_error: Error = Network.do_emote(wanted)
+			if emote_error == OK:
+				chat_input.clear()
+			else:
+				push_warning("DO_EMOTE failed: " + error_string(emote_error))
+			return
 	var is_private: bool = message.begins_with("/") and message.length() > 1
 	if not is_private and _chat_tab.begins_with("channel:") and not message.begins_with("@"):
 		message = "@" + message
@@ -6188,7 +6332,13 @@ func _sync_dialogue() -> void:
 	dialogue_panel.visible = bool(dialogue.get("open", false))
 	if not dialogue_panel.visible:
 		return
-	dialogue_name.text = str(dialogue.get("name", "NPC"))
+	# Dialogue the server flagged as belonging to a quest is marked as such,
+	# which is the whole point of the flag: a player could not previously tell
+	# a quest line from small talk, and neither could this client.
+	var quest_id: int = int(dialogue.get("quest_id", 0))
+	dialogue_name.text = ("%s  [Quest %d]" % [str(dialogue.get("name", "NPC")),
+		quest_id] if bool(dialogue.get("quest", false)) and quest_id > 0
+		else str(dialogue.get("name", "NPC")))
 	dialogue_text.text = str(dialogue.get("text", ""))
 	for child: Node in dialogue_options.get_children():
 		child.queue_free()
@@ -6453,15 +6603,19 @@ func _apply_eloria_art() -> void:
 	_hud_active_atlas = _external_texture("res://assets/ui/eloria_gamebuttons.png")
 	_hud_inactive_atlas = _external_texture("res://assets/ui/eloria_gamebuttons_inactive.png")
 	if _hud_active_atlas != null:
+		# The Godot HUD atlas uses one canonical row-major icon order.  Keeping
+		# these regions contiguous makes the art easy to audit and prevents the
+		# legacy atlas's highlighted-state pairs from being mistaken for actions.
 		_hud_icon_regions = {
 			%WalkButton: Rect2(0, 0, 32, 32), %ChatButton: Rect2(32, 0, 32, 32),
-			%KnowledgeButton: Rect2(96, 0, 32, 32), %AttackButton: Rect2(160, 0, 32, 32),
-			%StatsButton: Rect2(192, 0, 32, 32), %SitButton: Rect2(0, 32, 32, 32),
-			%EncyclopediaButton: Rect2(192, 128, 32, 32),
-			%TradeButton: Rect2(64, 32, 32, 32), %InventoryButton: Rect2(96, 32, 32, 32),
 			%LookButton: Rect2(64, 0, 32, 32),
-			%ManufacturingButton: Rect2(128, 32, 32, 32),
-			%DisconnectButton: Rect2(224, 0, 32, 32), %MapButton: Rect2(128, 128, 32, 32)}
+			%KnowledgeButton: Rect2(96, 0, 32, 32), %AttackButton: Rect2(128, 0, 32, 32),
+			%StatsButton: Rect2(160, 0, 32, 32),
+			%DisconnectButton: Rect2(192, 0, 32, 32), %SitButton: Rect2(224, 0, 32, 32),
+			%TradeButton: Rect2(0, 32, 32, 32), %InventoryButton: Rect2(32, 32, 32, 32),
+			%ManufacturingButton: Rect2(64, 32, 32, 32),
+			%EncyclopediaButton: Rect2(96, 32, 32, 32),
+			%MapButton: Rect2(128, 32, 32, 32)}
 		for button_value: Variant in _hud_icon_regions:
 			var icon_button: Button = button_value as Button
 			icon_button.icon = _atlas_region(_hud_active_atlas,

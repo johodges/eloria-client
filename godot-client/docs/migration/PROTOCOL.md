@@ -495,6 +495,135 @@ UTF-8.
 | 229 | Mail | `count:u16`, then per message `mail_id:u32 \| created_at:u32 \| read:u8 \| sender \| subject \| body` |
 | 230 | Navigation HUD | `active:u8 \| x:u16 \| y:u16 \| distance:u16 \| map_id \| label` |
 | 232 | Special events | NUL-delimited text lines, always NUL-terminated |
+| 74 | World object list | `count:u16`, then per object `object_id:u16 \| x:u16 \| y:u16 \| rotation:u16 \| model_name` |
+| 75 | World object | one object, same body as a list row |
+| 76 | World object removed | `object_id:u16` |
+| 10 | Teleporters | `count:u16`, then `x:u16 \| y:u16` per portal |
+| 12 | Teleport in | `x:u16 \| y:u16` |
+| 13 | Teleport out | `x:u16 \| y:u16` |
+| 59 | Buddy event | `event:u8 \| name` - event indexes `offline, online, added, removed` |
+| 92 | Next NPC message is a quest | empty; describes the frame after it |
+| 93 | Here is the quest id | `quest_id:u16` |
+| 94 | Quest finished | `quest_id:u16` |
+| 100 | Weather | `kind:u8 \| intensity:u8` - kind indexes `clear, rain, storm`, intensity 0-100 |
+| 15 | Start rain | `intensity:u8` - the legacy signal, sent alongside |
+| 16 | Stop rain | empty |
+| 17 | Thunder | `severity:u8`, 1-5 |
+| 61 | Fire | `x:u16 \| y:u16 \| kind:u8` - hearth, forge or pyre |
+| 62 | Fire removed | `x:u16 \| y:u16` |
+| 14 | Play a sound | `x:u16 \| y:u16 \| gain:u8 \| sound_name` - gain is a percentage, 0-200 |
+| 54 | Play music | `track_name`, empty for silence |
+| 85 | Missile aim at a place | `actor_id:u16 \| x:u16 \| y:u16` |
+| 87 | Missile loosed at a place | `actor_id:u16 \| x:u16 \| y:u16` |
+| 89 | Actor animation | `actor_id:u16 \| action` - an action name, never a clip |
+| 238 | Almanac | `day:u8 \| month:u8 \| year:u16 \| kind:u8 \| experience_bonus:u16 \| name \| description \| effect_count:u8` then that many effect tags, `multiplier_count:u8` then that many `skill \| multiplier:u16`, `catalogue_count:u16` then that many `kind:u8 \| name \| description` |
+
+Commands 74, 75 and 76 put objects into a map that is already being played in.
+Everything the client knew about a map used to arrive with the map, so nothing
+could raise a totem in the square while somebody was standing in it. A list is
+the whole truth about a map and replaces what was there; a single placement
+adds to it. The model is a name rather than a file - which art a client draws
+is its own business, and a name it does not know is drawn as a plain marker,
+because an object that is there should be visible even when its appearance is
+not.
+
+Commands 10, 12 and 13 are the portals. The client could see a portal's art
+without any idea it was one, so it could not mark one or say where a road went.
+An empty list is an answer: this map has no way out. The two effects carry
+tiles rather than actors, because the actor packets already say who moved and
+the part a client cannot work out is where the ends were - by the time it hears
+about an arrival, the departure has already gone.
+
+`MAP_SET_OBJECTS(220)` and `MAP_STATE_OBJECTS(221)` stay unallocated. They are
+superseded rather than missing: `ELORIA_MAP_OBJECTS(236)` already states every
+clickable object on a map with its kind and its name, which is strictly more
+than the legacy pair carried. Mines - `REMOVE_MINE(80)`, `GET_NEW_MINE(81)`,
+`GET_MINES_LIST(82)` - stay unallocated because nothing on this server places a
+trap, triggers one, or makes one.
+
+Command 59 carries the buddy list. The server owns the list and states all of
+it at login, so no client keeps a copy, and the name travels with every event
+because a client that had to consult its own list to read one would be keeping
+a second copy of a list it does not own.
+
+Adding somebody is a bookmark, not a friendship: it does not tell them, does
+not need their agreement, and gives no way to reach a person who has not asked
+to hear from you. `#add_buddy`, `#remove_buddy` and `#buddies` drive it.
+
+Commands 92, 93 and 94 say which quest a piece of NPC dialogue belongs to. The
+fork's own journal already carried what a player was doing, but nothing marked
+a line of dialogue as part of a quest, so it could not be told from small talk.
+The flag comes first because it describes the frame after it, and it describes
+exactly one line: the next thing an NPC says is small talk again unless the
+server flags that too. A quest with no id sends nothing rather than zero.
+
+`WHAT_QUEST_IS_THIS_ID(63)` asks for a quest's name. An id the server does not
+know is answered with a plain refusal rather than silence, so a client is never
+left waiting on a reply that is not coming.
+
+Command 100 carries the whole sky in one frame, with 15, 16 and 17 as the
+legacy signals sent alongside it so an older client still sees weather. The sky
+has to be the server's: two players standing together must see the same one,
+and a client rolling its own would drift from everyone else's within a minute.
+It rolls once per game day, so weather moves at the pace of the day the world
+already has. A map that declares no climate is always clear - it has no weather
+rather than a default it never asked for.
+
+Commands 61 and 62 place and remove fires. A fire is content the client cannot
+invent, so each is named by tile and kind; what a hearth, a forge or a pyre
+looks like is the client's to decide, and a kind it does not know is still
+drawn, because a fire that is there should be visible even if its flavour is
+not.
+
+Commands 14 and 54 carry the audio a client cannot work out for itself. This
+client answers its own harvest, its own combat and its own pick-ups from state
+it already has, so the server never sends a sound for those - the client that
+caused a sound is left out of the broadcast, or it would hear everything twice.
+What is left is what somebody else is doing, and what a map sounds like.
+
+Both name rather than number. A numeric table would have to be mirrored in the
+client and would go stale the first time a sound was added; a name the client
+has no sound for is simply not heard, and an empty music track is the server
+saying the map is quiet, which is an answer rather than an omission.
+
+Commands 85 and 87 draw an arrow going to a place rather than into somebody.
+Two things use them: a practice shot at a tile, sent by the client as
+`FIRE_MISSILE_AT_OBJECT(51)`, and a **miss**. A miss used to be drawn as a shot
+at the target it missed - the shot was broadcast before the hit was rolled, so
+every miss looked exactly like a hit. Where a stray arrow lands is the server's
+decision, computed from the two positions rather than rolled, so two clients
+watching one shot draw the same arrow instead of each inventing a scatter.
+`MISSILE_FIRE_XYZ_TO_B(88)` stays unallocated: nothing on this server shoots at
+an actor from a place.
+
+Command 89 asks an actor to play a named animation action - an emote, or
+anything else that is not one of the actor commands. It carries an action name
+rather than a clip: which piece of art plays is the client's to decide from its
+own animation map, and an action the client has no clip for is simply not
+played. An emote's two text lines are sent separately and always, so an emote
+that cannot be animated still reaches everyone as words.
+
+`DO_EMOTE(70)` and `ITEM_ON_ITEM(42)` are the client commands behind it. Both
+share a number with a server-to-client command, the way the storage commands
+share 44-46; the direction tells them apart. `DO_EMOTE` carries the emote's
+name rather than a numeric id, because this server has no legacy emote id
+namespace and mirroring one in the client would be a second copy of a list the
+server owns. `ITEM_ON_ITEM` carries two inventory slots and means one thing:
+mix the recipe whose ingredients are exactly those two items.
+
+Command 238 replaces two chat lines. The game date was only ever a `GET_DATE`
+reply reading "Game Date 4/7/132", and the special day in force was only ever a
+broadcast announcement, so a client that wanted to show either had to parse
+prose off the chat stream. Both are numbers here. `kind` is an index into
+`ordinary, good, neutral, bad`; `experience_bonus` and each skill `multiplier`
+are hundredths, so 200 is a doubling and 123 is the 1.23 that Scholars Day
+rolls at random and no client could derive.
+
+The catalogue of every day the world can bring travels with the packet rather
+than being shipped inside the client. Which days exist and what each one does
+is the server's to decide, and a copy in the client is a second source of truth
+that goes stale without anyone noticing. Both chat lines still go out unchanged
+for the legacy client.
 
 Command 228 replaces a reply a client could not read on its own. The legacy
 answer to `GET_PLAYER_INFO(5)` is a `You see: <name>` chat line plus

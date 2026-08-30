@@ -1,0 +1,650 @@
+{
+  "schemaVersion": 1,
+  "harvestables": {
+    "models": {
+      "mirror_reed": {
+        "scene": "res://assets/world/harvestables/mirror_reed.glb",
+        "label": "Mirror Reed",
+        "kind": "fibre",
+        "tier": "common",
+        "vertices": 464,
+        "triangles": 232,
+        "alphaTested": true,
+        "height": 1.606
+      },
+      "crownwater_pearl": {
+        "scene": "res://assets/world/harvestables/crownwater_pearl.glb",
+        "label": "Crownwater Pearl",
+        "kind": "aquatic",
+        "tier": "rare",
+        "vertices": 524,
+        "triangles": 262,
+        "alphaTested": false,
+        "height": 0.472
+      },
+      "deep_lake_clay": {
+        "scene": "res://assets/world/harvestables/deep_lake_clay.glb",
+        "label": "Deep Lake Clay",
+        "kind": "mineral",
+        "tier": "common",
+        "vertices": 544,
+        "triangles": 272,
+        "alphaTested": false,
+        "height": 0.76
+      },
+      "delta_lotus": {
+        "scene": "res://assets/world/harvestables/delta_lotus.glb",
+        "label": "Delta Lotus",
+        "kind": "flora",
+        "tier": "uncommon",
+        "vertices": 320,
+        "triangles": 160,
+        "alphaTested": true,
+        "height": 0.84
+      },
+      "ghost_orchid": {
+        "scene": "res://assets/world/harvestables/ghost_orchid.glb",
+        "label": "Ghost Orchid",
+        "kind": "flora",
+        "tier": "rare",
+        "vertices": 320,
+        "triangles": 160,
+        "alphaTested": true,
+        "height": 1.11
+      },
+      "glacier_salt": {
+        "scene": "res://assets/world/harvestables/glacier_salt.glb",
+        "label": "Glacier Salt",
+        "kind": "mineral",
+        "tier": "common",
+        "vertices": 344,
+        "triangles": 172,
+        "alphaTested": false,
+        "height": 0.624
+      },
+      "mangrove_sap": {
+        "scene": "res://assets/world/harvestables/mangrove_sap.glb",
+        "label": "Mangrove Sap",
+        "kind": "resin",
+        "tier": "uncommon",
+        "vertices": 340,
+        "triangles": 170,
+        "alphaTested": true,
+        "height": 1.35
+      },
+      "moor_peat": {
+        "scene": "res://assets/world/harvestables/moor_peat.glb",
+        "label": "Moor Peat",
+        "kind": "fuel",
+        "tier": "common",
+        "vertices": 344,
+        "triangles": 172,
+        "alphaTested": false,
+        "height": 0.66
+      },
+      "resonant_crystal": {
+        "scene": "res://assets/world/harvestables/resonant_crystal.glb",
+        "label": "Resonant Crystal",
+        "kind": "crystal",
+        "tier": "rare",
+        "vertices": 400,
+        "triangles": 200,
+        "alphaTested": false,
+        "height": 1.43
+      },
+      "ssarathi_scale_moss": {
+        "scene": "res://assets/world/harvestables/ssarathi_scale_moss.glb",
+        "label": "Ssarathi Scale Moss",
+        "kind": "flora",
+        "tier": "uncommon",
+        "vertices": 240,
+        "triangles": 120,
+        "alphaTested": true,
+        "height": 0.22
+      },
+      "stormglass_shard": {
+        "scene": "res://assets/world/harvestables/stormglass_shard.glb",
+        "label": "Stormglass Shard",
+        "kind": "crystal",
+        "tier": "uncommon",
+        "vertices": 352,
+        "triangles": 176,
+        "alphaTested": false,
+        "height": 1.155
+      },
+      "sunmane_seed": {
+        "scene": "res://assets/world/harvestables/sunmane_seed.glb",
+        "label": "Sunmane Seed",
+        "kind": "crop",
+        "tier": "common",
+        "vertices": 500,
+        "triangles": 250,
+        "alphaTested": true,
+        "height": 1.37
+      },
+      "verdant_venom_bulb": {
+        "scene": "res://assets/world/harvestables/verdant_venom_bulb.glb",
+        "label": "Verdant Venom Bulb",
+        "kind": "flora",
+        "tier": "rare",
+        "vertices": 508,
+        "triangles": 254,
+        "alphaTested": true,
+        "height": 0.975
+      },
+      "voltaic_geode": {
+        "scene": "res://assets/world/harvestables/voltaic_geode.glb",
+        "label": "Voltaic Geode",
+        "kind": "crystal",
+        "tier": "rare",
+        "vertices": 416,
+        "triangles": 208,
+        "alphaTested": false,
+        "height": 0.946
+      },
+      "whitehorn_silverleaf": {
+        "scene": "res://assets/world/harvestables/whitehorn_silverleaf.glb",
+        "label": "Whitehorn Silverleaf",
+        "kind": "herb",
+        "tier": "uncommon",
+        "vertices": 252,
+        "triangles": 126,
+        "alphaTested": true,
+        "height": 1.014
+      },
+      "amber_resin": {
+        "scene": "res://assets/world/harvestables/amber_resin.glb",
+        "label": "Amber Resin",
+        "kind": "resin",
+        "tier": "uncommon",
+        "vertices": 380,
+        "triangles": 190,
+        "alphaTested": true,
+        "height": 1.55
+      },
+      "wayside_sage": {
+        "scene": "res://assets/world/harvestables/wayside_sage.glb",
+        "label": "Wayside Sage",
+        "kind": "herb",
+        "tier": "common",
+        "vertices": 244,
+        "triangles": 122,
+        "alphaTested": true,
+        "height": 0.799
+      },
+      "steppe_wheat": {
+        "scene": "res://assets/world/harvestables/steppe_wheat.glb",
+        "label": "Steppe Wheat",
+        "kind": "crop",
+        "tier": "common",
+        "vertices": 536,
+        "triangles": 268,
+        "alphaTested": true,
+        "height": 1.504
+      },
+      "riverflax": {
+        "scene": "res://assets/world/harvestables/riverflax.glb",
+        "label": "Riverflax",
+        "kind": "fibre",
+        "tier": "common",
+        "vertices": 456,
+        "triangles": 228,
+        "alphaTested": true,
+        "height": 1.215
+      },
+      "moorcotton": {
+        "scene": "res://assets/world/harvestables/moorcotton.glb",
+        "label": "Moorcotton",
+        "kind": "fibre",
+        "tier": "common",
+        "vertices": 524,
+        "triangles": 262,
+        "alphaTested": true,
+        "height": 0.62
+      },
+      "hearthroot": {
+        "scene": "res://assets/world/harvestables/hearthroot.glb",
+        "label": "Hearthroot",
+        "kind": "crop",
+        "tier": "common",
+        "vertices": 364,
+        "triangles": 182,
+        "alphaTested": true,
+        "height": 0.54
+      },
+      "barrow_bramble": {
+        "scene": "res://assets/world/harvestables/barrow_bramble.glb",
+        "label": "Barrow Bramble",
+        "kind": "flora",
+        "tier": "common",
+        "vertices": 576,
+        "triangles": 288,
+        "alphaTested": true,
+        "height": 1.016
+      },
+      "lantern_cap": {
+        "scene": "res://assets/world/harvestables/lantern_cap.glb",
+        "label": "Lantern Cap",
+        "kind": "fungus",
+        "tier": "uncommon",
+        "vertices": 784,
+        "triangles": 392,
+        "alphaTested": true,
+        "height": 0.52
+      },
+      "tidewrack_kelp": {
+        "scene": "res://assets/world/harvestables/tidewrack_kelp.glb",
+        "label": "Tidewrack Kelp",
+        "kind": "aquatic",
+        "tier": "common",
+        "vertices": 244,
+        "triangles": 122,
+        "alphaTested": true,
+        "height": 0.849
+      },
+      "shorebank_shell": {
+        "scene": "res://assets/world/harvestables/shorebank_shell.glb",
+        "label": "Shorebank Shell",
+        "kind": "mineral",
+        "tier": "common",
+        "vertices": 608,
+        "triangles": 304,
+        "alphaTested": false,
+        "height": 0.424
+      },
+      "verdigris_bloom": {
+        "scene": "res://assets/world/harvestables/verdigris_bloom.glb",
+        "label": "Verdigris Bloom",
+        "kind": "mineral",
+        "tier": "uncommon",
+        "vertices": 432,
+        "triangles": 216,
+        "alphaTested": false,
+        "height": 0.68
+      },
+      "bogiron_nodule": {
+        "scene": "res://assets/world/harvestables/bogiron_nodule.glb",
+        "label": "Bog Iron Nodule",
+        "kind": "mineral",
+        "tier": "common",
+        "vertices": 496,
+        "triangles": 248,
+        "alphaTested": false,
+        "height": 0.68
+      },
+      "emberseam_coal": {
+        "scene": "res://assets/world/harvestables/emberseam_coal.glb",
+        "label": "Emberseam Coal",
+        "kind": "fuel",
+        "tier": "common",
+        "vertices": 408,
+        "triangles": 204,
+        "alphaTested": false,
+        "height": 0.66
+      },
+      "pale_quartz": {
+        "scene": "res://assets/world/harvestables/pale_quartz.glb",
+        "label": "Pale Quartz",
+        "kind": "crystal",
+        "tier": "common",
+        "vertices": 304,
+        "triangles": 152,
+        "alphaTested": false,
+        "height": 0.858
+      },
+      "sunstone_flint": {
+        "scene": "res://assets/world/harvestables/sunstone_flint.glb",
+        "label": "Sunstone Flint",
+        "kind": "mineral",
+        "tier": "common",
+        "vertices": 448,
+        "triangles": 224,
+        "alphaTested": false,
+        "height": 0.76
+      },
+      "indigo_thistle": {
+        "scene": "res://assets/world/harvestables/indigo_thistle.glb",
+        "label": "Indigo Thistle",
+        "kind": "herb",
+        "tier": "uncommon",
+        "vertices": 252,
+        "triangles": 126,
+        "alphaTested": true,
+        "height": 1.076
+      },
+      "cenote_watercress": {
+        "scene": "res://assets/world/harvestables/cenote_watercress.glb",
+        "label": "Cenote Watercress",
+        "kind": "flora",
+        "tier": "common",
+        "vertices": 232,
+        "triangles": 116,
+        "alphaTested": true,
+        "height": 0.489
+      },
+      "sunleaf": {
+        "scene": "res://assets/world/harvestables/sunleaf.glb",
+        "label": "Sunleaf",
+        "kind": "flora",
+        "tier": "common",
+        "vertices": 252,
+        "triangles": 126,
+        "alphaTested": true,
+        "height": 1.041
+      },
+      "frost_reed": {
+        "scene": "res://assets/world/harvestables/frost_reed.glb",
+        "label": "Frost Reed",
+        "kind": "fibre",
+        "tier": "common",
+        "vertices": 412,
+        "triangles": 206,
+        "alphaTested": true,
+        "height": 1.465
+      },
+      "copper_bloom": {
+        "scene": "res://assets/world/harvestables/copper_bloom.glb",
+        "label": "Copper Bloom",
+        "kind": "flora",
+        "tier": "common",
+        "vertices": 272,
+        "triangles": 136,
+        "alphaTested": true,
+        "height": 0.98
+      },
+      "ember_crystal": {
+        "scene": "res://assets/world/harvestables/ember_crystal.glb",
+        "label": "Ember Crystal",
+        "kind": "crystal",
+        "tier": "rare",
+        "vertices": 400,
+        "triangles": 200,
+        "alphaTested": false,
+        "height": 1.188
+      },
+      "slate_outcrop": {
+        "scene": "res://assets/world/harvestables/slate_outcrop.glb",
+        "label": "Slate",
+        "kind": "mineral",
+        "tier": "common",
+        "vertices": 336,
+        "triangles": 168,
+        "alphaTested": false,
+        "height": 0.66
+      },
+      "wheat": {
+        "scene": "res://assets/world/harvestables/wheat.glb",
+        "label": "Wheat",
+        "kind": "grain",
+        "tier": "common",
+        "vertices": 492,
+        "triangles": 246,
+        "alphaTested": true,
+        "height": 1.43
+      },
+      "cotton": {
+        "scene": "res://assets/world/harvestables/cotton.glb",
+        "label": "Cotton",
+        "kind": "fibre",
+        "tier": "common",
+        "vertices": 448,
+        "triangles": 224,
+        "alphaTested": true,
+        "height": 0.66
+      },
+      "lavender": {
+        "scene": "res://assets/world/harvestables/lavender.glb",
+        "label": "Lavender",
+        "kind": "herb",
+        "tier": "common",
+        "vertices": 288,
+        "triangles": 144,
+        "alphaTested": true,
+        "height": 1.0
+      },
+      "flax": {
+        "scene": "res://assets/world/harvestables/flax.glb",
+        "label": "Flax",
+        "kind": "fibre",
+        "tier": "common",
+        "vertices": 448,
+        "triangles": 224,
+        "alphaTested": true,
+        "height": 1.212
+      },
+      "sage": {
+        "scene": "res://assets/world/harvestables/sage.glb",
+        "label": "Sage",
+        "kind": "herb",
+        "tier": "common",
+        "vertices": 208,
+        "triangles": 104,
+        "alphaTested": true,
+        "height": 0.849
+      },
+      "rosemary": {
+        "scene": "res://assets/world/harvestables/rosemary.glb",
+        "label": "Rosemary",
+        "kind": "herb",
+        "tier": "common",
+        "vertices": 260,
+        "triangles": 130,
+        "alphaTested": true,
+        "height": 0.933
+      },
+      "mushroom": {
+        "scene": "res://assets/world/harvestables/mushroom.glb",
+        "label": "Mushroom",
+        "kind": "fungus",
+        "tier": "common",
+        "vertices": 664,
+        "triangles": 332,
+        "alphaTested": true,
+        "height": 0.44
+      },
+      "grave_moss": {
+        "scene": "res://assets/world/harvestables/grave_moss.glb",
+        "label": "Grave Moss",
+        "kind": "moss",
+        "tier": "uncommon",
+        "vertices": 240,
+        "triangles": 120,
+        "alphaTested": true,
+        "height": 0.22
+      },
+      "blueberries": {
+        "scene": "res://assets/world/harvestables/blueberries.glb",
+        "label": "Blueberries",
+        "kind": "flora",
+        "tier": "common",
+        "vertices": 460,
+        "triangles": 230,
+        "alphaTested": true,
+        "height": 0.826
+      },
+      "coal": {
+        "scene": "res://assets/world/harvestables/coal.glb",
+        "label": "Deep Coal",
+        "kind": "mineral",
+        "tier": "common",
+        "vertices": 408,
+        "triangles": 204,
+        "alphaTested": false,
+        "height": 0.66
+      },
+      "iron_ore": {
+        "scene": "res://assets/world/harvestables/iron_ore.glb",
+        "label": "Iron Ore",
+        "kind": "mineral",
+        "tier": "common",
+        "vertices": 416,
+        "triangles": 208,
+        "alphaTested": false,
+        "height": 0.66
+      },
+      "stormglass": {
+        "scene": "res://assets/world/harvestables/stormglass.glb",
+        "label": "Stormglass",
+        "kind": "crystal",
+        "tier": "uncommon",
+        "vertices": 352,
+        "triangles": 176,
+        "alphaTested": false,
+        "height": 1.122
+      },
+      "moon_salt": {
+        "scene": "res://assets/world/harvestables/moon_salt.glb",
+        "label": "Moon Salt",
+        "kind": "mineral",
+        "tier": "uncommon",
+        "vertices": 304,
+        "triangles": 152,
+        "alphaTested": false,
+        "height": 0.576
+      },
+      "quartz": {
+        "scene": "res://assets/world/harvestables/quartz.glb",
+        "label": "Quartz",
+        "kind": "crystal",
+        "tier": "common",
+        "vertices": 352,
+        "triangles": 176,
+        "alphaTested": false,
+        "height": 1.034
+      },
+      "sulfur": {
+        "scene": "res://assets/world/harvestables/sulfur.glb",
+        "label": "Sulfur",
+        "kind": "mineral",
+        "tier": "common",
+        "vertices": 464,
+        "triangles": 232,
+        "alphaTested": false,
+        "height": 0.68
+      }
+    },
+    "resources": {
+      "Mirror Reed": "mirror_reed",
+      "Crownwater Pearl": "crownwater_pearl",
+      "Deep Lake Clay": "deep_lake_clay",
+      "Delta Lotus": "delta_lotus",
+      "Ghost Orchid": "ghost_orchid",
+      "Glacier Salt": "glacier_salt",
+      "Mangrove Sap": "mangrove_sap",
+      "Moor Peat": "moor_peat",
+      "Resonant Crystal": "resonant_crystal",
+      "Ssarathi Scale Moss": "ssarathi_scale_moss",
+      "Stormglass Shard": "stormglass_shard",
+      "Sunmane Seed": "sunmane_seed",
+      "Verdant Venom Bulb": "verdant_venom_bulb",
+      "Voltaic Geode": "voltaic_geode",
+      "Whitehorn Silverleaf": "whitehorn_silverleaf",
+      "Amber Resin": "amber_resin",
+      "Wayside Sage": "wayside_sage",
+      "Steppe Wheat": "steppe_wheat",
+      "Riverflax": "riverflax",
+      "Moorcotton": "moorcotton",
+      "Hearthroot": "hearthroot",
+      "Barrow Bramble": "barrow_bramble",
+      "Lantern Cap": "lantern_cap",
+      "Tidewrack Kelp": "tidewrack_kelp",
+      "Shorebank Shell": "shorebank_shell",
+      "Verdigris Bloom": "verdigris_bloom",
+      "Bog Iron Nodule": "bogiron_nodule",
+      "Emberseam Coal": "emberseam_coal",
+      "Pale Quartz": "pale_quartz",
+      "Sunstone Flint": "sunstone_flint",
+      "Indigo Thistle": "indigo_thistle",
+      "Cenote Watercress": "cenote_watercress",
+      "Sunleaf": "sunleaf",
+      "Frost Reed": "frost_reed",
+      "Copper Bloom": "copper_bloom",
+      "Ember Crystal": "ember_crystal",
+      "Slate": "slate_outcrop",
+      "Wheat": "wheat",
+      "Cotton": "cotton",
+      "Lavender": "lavender",
+      "Flax": "flax",
+      "Sage": "sage",
+      "Rosemary": "rosemary",
+      "Mushroom": "mushroom",
+      "Grave Moss": "grave_moss",
+      "Blueberries": "blueberries",
+      "Deep Coal": "coal",
+      "Iron Ore": "iron_ore",
+      "Stormglass": "stormglass",
+      "Moon Salt": "moon_salt",
+      "Quartz": "quartz",
+      "Sulfur": "sulfur"
+    }
+  },
+  "interactives": {
+    "models": {
+      "portal": {
+        "scene": "res://assets/world/interactives/portal.glb",
+        "label": "Portal",
+        "vertices": 208,
+        "triangles": 104,
+        "alphaTested": false,
+        "height": 3.05
+      },
+      "information": {
+        "scene": "res://assets/world/interactives/information.glb",
+        "label": "Information",
+        "vertices": 240,
+        "triangles": 120,
+        "alphaTested": false,
+        "height": 2.02
+      },
+      "storage": {
+        "scene": "res://assets/world/interactives/storage.glb",
+        "label": "Storage",
+        "vertices": 224,
+        "triangles": 112,
+        "alphaTested": false,
+        "height": 0.94
+      },
+      "crafting_station": {
+        "scene": "res://assets/world/interactives/crafting_station.glb",
+        "label": "Crafting Station",
+        "vertices": 332,
+        "triangles": 166,
+        "alphaTested": false,
+        "height": 1.2
+      },
+      "water_source": {
+        "scene": "res://assets/world/interactives/water_source.glb",
+        "label": "Water Source",
+        "vertices": 280,
+        "triangles": 140,
+        "alphaTested": false,
+        "height": 2.0
+      },
+      "training": {
+        "scene": "res://assets/world/interactives/training.glb",
+        "label": "Training",
+        "vertices": 328,
+        "triangles": 164,
+        "alphaTested": false,
+        "height": 1.72
+      },
+      "scenery_effect": {
+        "scene": "res://assets/world/interactives/scenery_effect.glb",
+        "label": "Scenery Effect",
+        "vertices": 304,
+        "triangles": 152,
+        "alphaTested": false,
+        "height": 2.02
+      }
+    },
+    "roles": {
+      "Portal": "portal",
+      "Information": "information",
+      "Storage": "storage",
+      "Crafting Station": "crafting_station",
+      "Water Source": "water_source",
+      "Training": "training",
+      "Scenery Effect": "scenery_effect"
+    }
+  }
+}
