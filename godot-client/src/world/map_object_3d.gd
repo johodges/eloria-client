@@ -24,6 +24,9 @@ extends StaticBody3D
 const PICK_LAYER := 32
 ## The map-marker visual layer both map cameras render, shared with ground bags.
 const MAP_MARKER_LAYER := 4
+## The disc's radius in metres. The full map frames 1600 metres at once, so
+## a disc sized for the world is a pixel there; this is sized for the map.
+const MAP_MARKER_RADIUS := 7.0
 ## Harvest nodes and interactives are told apart on the map by colour rather
 ## than by a label the player has to read before every click. The legend in the
 ## full map's sidebar names both.
@@ -160,8 +163,8 @@ func _add_map_marker() -> void:
 	# Sized for the map cameras, not the world: 0.6 metres was a third of a
 	# pixel on the full map.
 	var marker_mesh := CylinderMesh.new()
-	marker_mesh.top_radius = 4.0
-	marker_mesh.bottom_radius = 4.0
+	marker_mesh.top_radius = MAP_MARKER_RADIUS
+	marker_mesh.bottom_radius = MAP_MARKER_RADIUS
 	marker_mesh.height = 0.08
 	marker_mesh.material = marker_material
 	var map_marker := MeshInstance3D.new()
