@@ -6599,7 +6599,14 @@ func _apply_eloria_art() -> void:
 	login_background.texture = _external_texture("res://assets/ui/eloria_login_background.jpg")
 	var logo_texture: Texture2D = _external_texture("res://assets/ui/eloria_logo_master.png")
 	login_logo.texture = logo_texture
-	hud_logo.texture = logo_texture
+	# The master leaves 76 transparent pixels down each side of its 512-wide
+	# canvas. Drawn whole into the rail's 62-pixel frame the crest came out at
+	# three quarters width with the frame looking half empty, so the HUD copy
+	# is cropped to the painted area and fills the frame edge to edge.
+	if logo_texture == null:
+		hud_logo.texture = null
+	else:
+		hud_logo.texture = _atlas_region(logo_texture, Rect2(76, 0, 360, 256))
 	_hud_active_atlas = _external_texture("res://assets/ui/eloria_gamebuttons.png")
 	_hud_inactive_atlas = _external_texture("res://assets/ui/eloria_gamebuttons_inactive.png")
 	if _hud_active_atlas != null:

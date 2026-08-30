@@ -457,13 +457,13 @@ anchor_right = 1.0
 offset_left = -76.0
 offset_top = 6.0
 offset_right = -14.0
-offset_bottom = 48.0
+offset_bottom = 50.0
 grow_horizontal = 0
 mouse_filter = 2
 
 [node name="HudLogo" type="TextureRect" parent="GameView/EloriaLogoFrame" unique_id=939669768]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 42)
+custom_minimum_size = Vector2(62, 44)
 layout_mode = 2
 mouse_filter = 2
 expand_mode = 1
@@ -775,9 +775,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -76.0
-offset_top = 392.0
+offset_top = 368.0
 offset_right = -14.0
-offset_bottom = -146.0
+offset_bottom = -162.0
 grow_horizontal = 0
 
 [node name="Bars" type="VBoxContainer" parent="GameView/ResourceHud" unique_id=2124962916]
@@ -830,9 +830,10 @@ horizontal_alignment = 1
 
 [node name="SkillIndicators" type="RichTextLabel" parent="GameView/ResourceHud/Bars" unique_id=386233534]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(62, 150)
+custom_minimum_size = Vector2(62, 182)
 layout_mode = 2
-theme_override_font_sizes/normal_font_size = 7
+theme_override_constants/table_v_separation = 0
+theme_override_font_sizes/normal_font_size = 10
 bbcode_enabled = true
 fit_content = true
 scroll_active = false
@@ -1083,9 +1084,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -76.0
-offset_top = 52.0
+offset_top = 54.0
 offset_right = -14.0
-offset_bottom = 388.0
+offset_bottom = 364.0
 grow_horizontal = 0
 mouse_filter = 2
 
@@ -1140,73 +1141,73 @@ theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 
 [node name="Spell1" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=1703423071]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S1"
 
 [node name="Spell2" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=801858288]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S2"
 
 [node name="Spell3" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=128823861]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S3"
 
 [node name="Spell4" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=906480734]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S4"
 
 [node name="Spell5" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=1078702335]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S5"
 
 [node name="Spell6" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=1998188672]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S6"
 
 [node name="Spell7" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=1998188673]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S7"
 
 [node name="Spell8" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=1998188674]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S8"
 
 [node name="Spell9" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=1998188675]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S9"
 
 [node name="Spell10" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=1998188676]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S10"
 
 [node name="Spell11" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=1998188677]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S11"
 
 [node name="Spell12" type="Button" parent="GameView/SpellQuickbar/SpellContent/SpellSlots" unique_id=1998188678]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "S12"
@@ -1226,10 +1227,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -40.0
+offset_left = -38.0
 offset_top = 76.0
 offset_right = -14.0
-offset_bottom = 284.0
+offset_bottom = 268.0
 grow_horizontal = 0
 
 [node name="ItemSlots" type="GridContainer" parent="GameView/ItemQuickbar" unique_id=1143185417]
@@ -1239,54 +1240,54 @@ theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 
 [node name="Slot1" type="Button" parent="GameView/ItemQuickbar/ItemSlots" unique_id=936343613]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "1"
 
 [node name="Slot2" type="Button" parent="GameView/ItemQuickbar/ItemSlots" unique_id=8324975]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "2"
 
 [node name="Slot3" type="Button" parent="GameView/ItemQuickbar/ItemSlots" unique_id=3667407]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "3"
 
 [node name="Slot4" type="Button" parent="GameView/ItemQuickbar/ItemSlots" unique_id=13771242]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "4"
 
 [node name="Slot5" type="Button" parent="GameView/ItemQuickbar/ItemSlots" unique_id=499178370]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "5"
 
 [node name="Slot6" type="Button" parent="GameView/ItemQuickbar/ItemSlots" unique_id=723199210]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "6"
 
 [node name="Slot7" type="Button" parent="GameView/ItemQuickbar/ItemSlots" unique_id=1885221478]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "7"
 
 [node name="Slot8" type="Button" parent="GameView/ItemQuickbar/ItemSlots" unique_id=1334539660]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 disabled = true
 text = "8"
 
-[node name="ClockFrame" type="PanelContainer" parent="GameView" unique_id=675878166]
+[node name="ClockFrame" type="VBoxContainer" parent="GameView" unique_id=675878166]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -1294,15 +1295,26 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -76.0
-offset_top = -144.0
+offset_top = -160.0
 offset_right = -14.0
 offset_bottom = -78.0
 grow_horizontal = 0
 grow_vertical = 0
+theme_override_constants/separation = 0
+
+[node name="ClockText" type="Label" parent="GameView/ClockFrame" unique_id=975520127]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.42, 1)
+theme_override_font_sizes/font_size = 14
+text = "0:00"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="ClockFace" type="TextureRect" parent="GameView/ClockFrame" unique_id=317724463]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(58, 58)
+custom_minimum_size = Vector2(62, 62)
 layout_mode = 2
 tooltip_text = "Click for the server date and time"
 mouse_filter = 0
@@ -1311,25 +1323,10 @@ stretch_mode = 5
 
 [node name="ClockHand" type="Line2D" parent="GameView/ClockFrame/ClockFace" unique_id=36008867]
 unique_name_in_owner = true
-position = Vector2(32, 32)
-points = PackedVector2Array(0, 4, 0, -20)
+position = Vector2(31, 31)
+points = PackedVector2Array(0, 4, 0, -22)
 width = 2.0
 default_color = Color(0.96, 0.65, 0.16, 1)
-
-[node name="ClockText" type="Label" parent="GameView/ClockFrame/ClockFace" unique_id=975520127]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 12
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -15.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(1, 0.85, 0.42, 1)
-theme_override_font_sizes/font_size = 10
-text = "0:00"
-horizontal_alignment = 1
 
 [node name="CompassFrame" type="PanelContainer" parent="GameView" unique_id=1782216449]
 layout_mode = 1
