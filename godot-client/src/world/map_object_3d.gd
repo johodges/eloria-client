@@ -22,8 +22,6 @@ extends StaticBody3D
 ## scale for a prop to read at, and the legend names the colours.
 
 const PICK_LAYER := 32
-## The map-marker visual layer both map cameras render, shared with ground bags.
-const MAP_MARKER_LAYER := 4
 ## The disc's radius in metres. The full map frames 1600 metres at once, so
 ## a disc sized for the world is a pixel there; this is sized for the map.
 const MAP_MARKER_RADIUS := 7.0
@@ -156,21 +154,10 @@ func _add_ring() -> void:
 	add_child(ring)
 
 func _add_map_marker() -> void:
-	var marker_material := StandardMaterial3D.new()
-	marker_material.albedo_color = _marker_colour()
-	marker_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	marker_material.no_depth_test = true
 	# Sized for the map cameras, not the world: 0.6 metres was a third of a
 	# pixel on the full map.
-	var marker_mesh := CylinderMesh.new()
-	marker_mesh.top_radius = MAP_MARKER_RADIUS
-	marker_mesh.bottom_radius = MAP_MARKER_RADIUS
-	marker_mesh.height = 0.08
-	marker_mesh.material = marker_material
-	var map_marker := MeshInstance3D.new()
-	map_marker.name = "MapMarker"
-	map_marker.mesh = marker_mesh
-	map_marker.layers = MAP_MARKER_LAYER
+	var map_marker: MeshInstance3D = MapMarkerDisc.build(
+		"MapMarker", MAP_MARKER_RADIUS, _marker_colour())
 	map_marker.position.y = 4.0
 	add_child(map_marker)
 

@@ -2,6 +2,12 @@ class_name GroundBag3D
 extends StaticBody3D
 
 const PICK_LAYER := 16
+## The disc a dropped bag shows on both maps, in the amber the loot windows
+## use for a bag. Sized like the harvest nodes and interactives it is dropped
+## among: a bag is the same kind of thing to read off a map as they are, and a
+## smaller disc than theirs is one the outline closes over rather than frames.
+const MAP_MARKER_RADIUS := 7.0
+const MAP_MARKER_COLOUR := Color(1.0, 0.78, 0.18, 1.0)
 
 var bag_id: int = -1
 var server_tile: Vector2i = Vector2i.ZERO
@@ -52,19 +58,8 @@ func _build_visual() -> void:
 	tie.position.y = 0.3
 	add_child(tie)
 
-	var marker_material: StandardMaterial3D = StandardMaterial3D.new()
-	marker_material.albedo_color = Color(1.0, 0.78, 0.18, 1.0)
-	marker_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	marker_material.no_depth_test = true
-	var marker_mesh: CylinderMesh = CylinderMesh.new()
-	marker_mesh.top_radius = 4.0
-	marker_mesh.bottom_radius = 4.0
-	marker_mesh.height = 0.08
-	marker_mesh.material = marker_material
-	var map_marker: MeshInstance3D = MeshInstance3D.new()
-	map_marker.name = "BagMapMarker"
-	map_marker.mesh = marker_mesh
-	map_marker.layers = 4
+	var map_marker: MeshInstance3D = MapMarkerDisc.build(
+		"BagMapMarker", MAP_MARKER_RADIUS, MAP_MARKER_COLOUR)
 	map_marker.position.y = 4.0
 	add_child(map_marker)
 

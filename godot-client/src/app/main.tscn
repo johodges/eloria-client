@@ -28,8 +28,16 @@ material = SubResource("Material_ground")
 size = Vector2(1200, 1200)
 
 [sub_resource type="StandardMaterial3D" id="Material_map_marker"]
+render_priority = 1
+transparency = 1
 no_depth_test = true
 shading_mode = 0
+
+[sub_resource type="StandardMaterial3D" id="Material_map_marker_outline"]
+transparency = 1
+no_depth_test = true
+shading_mode = 0
+albedo_color = Color(0.04, 0.04, 0.05, 1)
 
 [sub_resource type="StandardMaterial3D" id="Material_preview_ground"]
 albedo_color = Color(0.19, 0.2, 0.16, 1)
@@ -47,6 +55,12 @@ radial_segments = 48
 material = SubResource("Material_map_marker")
 top_radius = 9.0
 bottom_radius = 9.0
+height = 0.35
+
+[sub_resource type="CylinderMesh" id="Mesh_map_marker_outline"]
+material = SubResource("Material_map_marker_outline")
+top_radius = 10.6
+bottom_radius = 10.6
 height = 0.35
 
 [node name="Main" type="Control" unique_id=1866924712]
@@ -139,6 +153,10 @@ unique_name_in_owner = true
 visible = false
 layers = 4
 mesh = SubResource("Mesh_map_marker")
+
+[node name="PlayerMapMarkerOutline" type="MeshInstance3D" parent="GameView/ViewportContainer/Viewport/WorldRoot/PlayerMapMarker"]
+layers = 4
+mesh = SubResource("Mesh_map_marker_outline")
 
 [node name="Hud" type="PanelContainer" parent="GameView" unique_id=794390329]
 visible = false

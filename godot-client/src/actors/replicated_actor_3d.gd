@@ -345,19 +345,8 @@ func _add_fallback_visual(dto: Dictionary) -> void:
 ## kind of thing to read off a map as an NPC is, and the local player already
 ## has its own white mark drawn over the top of this one.
 func _add_map_dot() -> void:
-	var material: StandardMaterial3D = StandardMaterial3D.new()
-	material.albedo_color = MAP_DOT_COLOUR
-	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	material.no_depth_test = true
-	var dot_mesh: CylinderMesh = CylinderMesh.new()
-	dot_mesh.top_radius = MAP_DOT_RADIUS
-	dot_mesh.bottom_radius = MAP_DOT_RADIUS
-	dot_mesh.height = 0.08
-	dot_mesh.material = material
-	var dot: MeshInstance3D = MeshInstance3D.new()
-	dot.name = "MapDot"
-	dot.mesh = dot_mesh
-	dot.layers = MAP_MARKER_LAYER
+	var dot: MeshInstance3D = MapMarkerDisc.build(
+		"MapDot", MAP_DOT_RADIUS, MAP_DOT_COLOUR)
 	dot.position.y = 3.0
 	add_child(dot)
 
