@@ -6,6 +6,13 @@ extends SceneTree
 ## shrine lamp a map declared was silently dropped and `map_light_root` stayed
 ## null for the whole session. These assertions therefore drive the real
 ## world-loaded entry point rather than the binder directly.
+##
+## The manifest's ambient colour had the same shape of failure without the same
+## symptom: `WorldEnvironmentBinder` read only `color`, so the interiors the
+## region toolchain built - which spell it `colour` - kept Godot's default black
+## ambient and the energy they authored lit nothing. The spellings are pinned
+## here against the set `DayNightBinder` already accepts, so the two binders
+## cannot disagree about what a package declared.
 
 var failures := 0
 
@@ -64,10 +71,61 @@ func _run() -> void:
 			leftover += 1
 	_expect(leftover == 0, "the empty rig node is not left parked in the world")
 
+	_check_ambient_spellings()
+
 	print("world lighting tests: ", "PASS" if failures == 0 else "FAIL (%d)" % failures)
 	scene.queue_free()
 	await process_frame
 	quit(failures)
+
+
+## Every spelling of the ambient colour a package might have used, and the
+## source each one must leave the environment on.
+func _check_ambient_spellings() -> void:
+	var world_environment := WorldEnvironment.new()
+	for spelling: String in ["color", "colour", "skyColor"]:
+		var manifest := WorldManifest.new()
+		manifest.data = {"environment": {
+			"ambient": {spelling: [0.3, 0.25, 0.19], "energy": 0.62}}}
+		_expect(WorldEnvironmentBinder.apply(manifest, world_environment, null),
+			"a package spelling its ambient `%s` is bound" % spelling)
+		var environment: Environment = world_environment.environment
+		_expect(environment != null
+			and environment.ambient_light_color.is_equal_approx(
+				Color(0.3, 0.25, 0.19)),
+			"`%s` is read as the ambient colour rather than left black" % spelling)
+		_expect(environment != null and is_equal_approx(
+			environment.ambient_light_energy, 0.62),
+			"the energy `%s` was authored with reaches the environment" % spelling)
+		_expect(environment != null and environment.ambient_light_source
+			== Environment.AMBIENT_SOURCE_COLOR,
+			"a `%s` package with no sky takes its ambient from that colour"
+				% spelling)
+
+	# A package that names no colour at all keeps the engine default rather than
+	# being bleached to white by a fallback.
+	var silent := WorldManifest.new()
+	silent.data = {"environment": {"ambient": {"energy": 0.5}}}
+	WorldEnvironmentBinder.apply(silent, world_environment, null)
+	_expect(world_environment.environment.ambient_light_color.is_equal_approx(
+		Color(0.0, 0.0, 0.0)),
+		"a package naming no ambient colour is left as it was, not whitened")
+
+	# An outdoor package keeps the sky as its ambient source: the colour is
+	# read, but reading it must not switch the source out from under the sky.
+	var outdoor := WorldManifest.new()
+	outdoor.data = {"environment": {
+		"sky": {"topColor": "3d7ec2"},
+		"ambient": {"skyColor": [0.2, 0.17, 0.3], "energy": 0.34}}}
+	WorldEnvironmentBinder.apply(outdoor, world_environment, null)
+	_expect(world_environment.environment.ambient_light_source
+		== Environment.AMBIENT_SOURCE_SKY,
+		"an outdoor package still takes its ambient from its own sky")
+	_expect(world_environment.environment.ambient_light_color.is_equal_approx(
+		Color(0.2, 0.17, 0.3)),
+		"the outdoor ambient colour is carried for the hour to work from")
+	world_environment.free()
+
 
 func _manifest(markers: Array) -> WorldManifest:
 	var manifest := WorldManifest.new()

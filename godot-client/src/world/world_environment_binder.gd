@@ -13,9 +13,13 @@ extends RefCounted
 ## and the city toolchains grew independently: `topColor`/`zenith`,
 ## `horizonColor`/`horizon`, `groundBottomColor`/`groundBottom`,
 ## `groundHorizonColor`/`groundHorizon`, `sunAngleMax`/`sunAngleMaxDegrees`,
-## and `white`/`whitePoint`. The first spelling of each pair is canonical for
-## new work. The sun may be aimed either by `rotationDegrees` or by a
-## `direction` vector.
+## and `white`/`whitePoint`. The ambient colour has a third spelling on top of
+## those two - `color`/`colour`/`skyColor` - and reading only the first of them
+## left every interior the region toolchain built sitting on Godot's default
+## black ambient, so the energy those packages authored did nothing and the
+## rooms went as dark as their lamps alone. The first spelling of each set is
+## canonical for new work. The sun may be aimed either by `rotationDegrees` or
+## by a `direction` vector.
 
 const DEFAULT_SUN_ROTATION := Vector3(-55.0, -30.0, 0.0)
 const DEFAULT_SUN_ENERGY := 1.15
@@ -65,11 +69,13 @@ static func apply(manifest: WorldManifest, world_environment: WorldEnvironment,
 	var ambient_value: Variant = declared.get("ambient")
 	if ambient_value is Dictionary:
 		var ambient: Dictionary = ambient_value as Dictionary
-		if ambient.has("color"):
+		var ambient_colour: Variant = _any(ambient,
+			["color", "colour", "skyColor"])
+		if ambient_colour != null:
 			# Keep the sky as a source and let skyContribution blend it against
 			# the declared colour, so a warm ground bounce can temper a blue sky
 			# rather than replacing it.
-			environment.ambient_light_color = _color(ambient.get("color"), Color.WHITE)
+			environment.ambient_light_color = _color(ambient_colour, Color.WHITE)
 			if environment.background_mode != Environment.BG_SKY:
 				environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 		environment.ambient_light_energy = float(ambient.get("energy", 0.85))
@@ -209,6 +215,16 @@ static func _either(block: Dictionary, canonical: String, alias: String) -> Vari
 	if block.has(canonical):
 		return block.get(canonical)
 	return block.get(alias)
+
+
+## First of several accepted spellings that the manifest actually declares.
+## `DayNightBinder` reads the ambient colour through the same set, so a package
+## cannot be lit one way at load and another way once the hour starts moving.
+static func _any(block: Dictionary, keys: Array[String]) -> Variant:
+	for key: String in keys:
+		if block.has(key):
+			return block[key]
+	return null
 
 
 static func _number(value: Variant, fallback: float) -> float:
