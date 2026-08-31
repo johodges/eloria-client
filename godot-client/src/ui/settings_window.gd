@@ -201,7 +201,9 @@ func _build() -> void:
 	column.name = "SettingsBody"
 	panel.add_child(column)
 	var header := HBoxContainer.new()
+	header.name = "SettingsHeader"
 	column.add_child(header)
+	WindowDrag.attach(panel, header)
 	var title := Label.new()
 	title.name = "SettingsTitle"
 	title.text = tr("ELORIA_SETTINGS_TITLE")

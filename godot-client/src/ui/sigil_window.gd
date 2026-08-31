@@ -118,7 +118,9 @@ func _build() -> void:
 	column.name = "SigilBody"
 	panel.add_child(column)
 	var header := HBoxContainer.new()
+	header.name = "SigilHeader"
 	column.add_child(header)
+	WindowDrag.attach(panel, header)
 	var title := Label.new()
 	title.name = "SigilTitle"
 	title.text = tr("ELORIA_SIGILS_TITLE")

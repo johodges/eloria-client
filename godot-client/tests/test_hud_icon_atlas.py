@@ -13,7 +13,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[2]
 UI = ROOT / "godot-client" / "assets" / "ui"
 CELL_SIZE = 32
-ICON_COUNT = 24
+ICON_COUNT = 25
 
 
 class HudIconAtlasTest(unittest.TestCase):

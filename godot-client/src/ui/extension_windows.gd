@@ -791,6 +791,7 @@ func _window(window_name: String, title: String) -> PanelContainer:
 	var header := HBoxContainer.new()
 	header.name = "Header"
 	body.add_child(header)
+	WindowDrag.attach(panel, header)
 	var title_label := Label.new()
 	title_label.name = "Title"
 	title_label.text = title

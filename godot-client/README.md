@@ -30,6 +30,8 @@ The initial screen connects over real TCP and sends the server's real `LOG_IN` f
 - `T`: focus chat; `Esc`: dismiss it. Backtick/tilde toggles full chat history.
 - `Alt+A`: attack the selected target. `Alt+S`: sit or stand.
 - The Eternal Lands window keys: `Ctrl+S` spells, `Ctrl+M` manufacture, `Ctrl+J` emotes, `Ctrl+G` quest journal, `Ctrl+B` buddies, `Ctrl+A` stats, `Ctrl+T` ranging, `Ctrl+H` help, `Ctrl+N` notepad, `Ctrl+O` options, `Ctrl+L` mail, `Ctrl+E` encyclopedia. All rebindable in Settings → Controls.
+- Every window moves by its title bar, and stays inside the viewport and clear of the right rail. The inventory and ground bag also scale from their lower-right grip and remember where they were left.
+- A HUD icon is drawn in colour whenever its action is available and greyed only when it is not; an open window is marked by the lit frame around its icon. The sit icon becomes the stand icon while you are seated.
 - The right rail carries the legacy misc-window column: skill rows (click one to watch it on the experience bar), the countdown/stopwatch timer (click to start/stop, Shift+click for stopwatch, wheel to set), the knowledge bar, the digital and analog clocks, and the compass. The settings window's HUD tab shows or hides each, plus the FPS readout and the S H P M R G A indicator letters.
 
 ## Test

@@ -67,7 +67,9 @@ func _build() -> void:
 	var column := VBoxContainer.new()
 	panel.add_child(column)
 	var header := HBoxContainer.new()
+	header.name = "PlayerInfoHeader"
 	column.add_child(header)
+	WindowDrag.attach(panel, header)
 	title = Label.new()
 	title.name = "PlayerInfoName"
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
