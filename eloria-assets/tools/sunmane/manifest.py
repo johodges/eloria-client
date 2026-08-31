@@ -28,11 +28,18 @@ def world_to_server(world_x: float, world_z: float) -> tuple[int, int]:
             round(-world_z / METRES_PER_TILE + SERVER_ORIGIN[1]))
 
 
+## Every Eloria minimap is drawn at this scale. One pixel, one metre.
+MINIMAP_PIXELS_PER_METRE = 1.0
+
+
 def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
     half = terrain.HALF_EXTENT
     centre = terrain.CENTRE
     world_min = (centre[0] - half, centre[1] - half)
     world_max = (centre[0] + half, centre[1] + half)
+    # Every Eloria minimap is drawn at one pixel to the metre, so the image is
+    # the map's own size rather than a fixed square.
+    minimap_pixels = int(round(half * 2.0 * MINIMAP_PIXELS_PER_METRE))
     lowest = float(landform.height.min())
     highest = float(landform.height.max())
     datum_height = landform.height_at(0.0, 0.0)
@@ -167,20 +174,30 @@ def build(builder, landform: terrain.Landform, statistics: dict) -> dict:
             "generator": ("godot-client/tests/integration/sunmane_minimap.gd, "
                           "rendered through the client's own WorldLoader"),
             "northAxis": "-Z",
-            "imageSize": [1024, 1024],
+            "imageSize": [minimap_pixels, minimap_pixels],
             "worldMin": [world_min[0], world_min[1]],
             "worldMax": [world_max[0], world_max[1]],
-            "pixelsPerMetre": round(1024.0 / (half * 2.0), 6),
+            "pixelsPerMetre": MINIMAP_PIXELS_PER_METRE,
             # Image +X is world +X and image +Y (downward) is world +Z, so north
             # (-Z) is at the top of the picture.
             "transform": {
-                "pixelX": {"scale": round(1024.0 / (half * 2.0), 6),
-                           "offset": round(-world_min[0] * 1024.0 / (half * 2.0), 4)},
-                "pixelY": {"scale": round(1024.0 / (half * 2.0), 6),
-                           "offset": round(-world_min[1] * 1024.0 / (half * 2.0), 4)},
+                "pixelX": {"scale": MINIMAP_PIXELS_PER_METRE,
+                           "offset": round(-world_min[0] * MINIMAP_PIXELS_PER_METRE, 4)},
+                "pixelY": {"scale": MINIMAP_PIXELS_PER_METRE,
+                           "offset": round(-world_min[1] * MINIMAP_PIXELS_PER_METRE, 4)},
                 "formula": ("pixel_x = world_x * scale + offset; "
                             "pixel_y = world_z * scale + offset"),
             },
+            "note": ("Every Eloria minimap is drawn at one pixel to the metre,"
+                     " so the image's pixel size is the map's size in metres."),
+            "file": "minimap.webp",
+            "pixels": minimap_pixels,
+            "size": [minimap_pixels, minimap_pixels],
+            "metresPerPixel": round(1.0 / MINIMAP_PIXELS_PER_METRE, 6),
+            "centre": [round((world_min[0] + world_max[0]) * 0.5, 4),
+                       round((world_min[1] + world_max[1]) * 0.5, 4)],
+            "northUp": True,
+            "orientation": "north-up",
         },
         **getattr(builder, "population", {}),
         "provenance": {
