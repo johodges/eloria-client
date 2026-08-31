@@ -37,6 +37,9 @@ const MapMarkerOverlayScript := preload("res://src/ui/map_marker_overlay.gd")
 const PlayerInfoPanelScript := preload("res://src/ui/player_info_panel.gd")
 const AudioDirectorScript := preload("res://src/audio/audio_director.gd")
 const SigilWindowScript := preload("res://src/ui/sigil_window.gd")
+const SpellsWindowScript := preload("res://src/ui/spells_window.gd")
+const EmotesWindowScript := preload("res://src/ui/emotes_window.gd")
+const RangingWindowScript := preload("res://src/ui/ranging_window.gd")
 const SettingsWindowScript := preload("res://src/ui/settings_window.gd")
 const ReferenceWindowScript := preload("res://src/ui/reference_window.gd")
 const ActiveBuffBarScript := preload("res://src/ui/active_buff_bar.gd")
@@ -91,7 +94,13 @@ var map_light_root: Node3D
 @onready var experience_bottom: ProgressBar = %ExperienceBottom
 @onready var experience_bottom_text: Label = %ExperienceBottomText
 @onready var bottom_meters: HBoxContainer = %BottomMeters
-@onready var skill_indicators: RichTextLabel = %SkillIndicators
+@onready var skill_rows: VBoxContainer = %SkillRows
+@onready var experience_skill_label: Label = %ExperienceSkillLabel
+@onready var hud_timer_label: Label = %HudTimer
+@onready var knowledge_bar: ProgressBar = %KnowledgeBar
+@onready var knowledge_text: Label = %KnowledgeText
+@onready var fps_label: Label = %FpsLabel
+@onready var hud_indicators: HBoxContainer = %HudIndicators
 @onready var clock_text: Label = %ClockText
 @onready var clock_hand: Line2D = %ClockHand
 @onready var clock_face: TextureRect = %ClockFace
@@ -252,6 +261,9 @@ var placed_object_nodes: Dictionary = {}
 var audio_director: Node
 var map_ambience_root: Node3D
 var sigil_window: Control
+var spells_window: Control
+var emotes_window: Control
+var ranging_window: Control
 var settings_window: Control
 var reference_window: Control
 ## Client-side presentation switches. None of them changes what the server
@@ -417,6 +429,29 @@ var _hud_meter_visible: Dictionary = {
 	"mana": true, "food": true, "health": true,
 	"load": true, "action": true, "experience": true}
 var _selected_experience_skill := "harvesting"
+## The rail's countdown/stopwatch, kept to Eternal Lands' behaviour: click to
+## start or stop, shift+click to change mode, middle-click to reset, wheel to
+## set the countdown start. The value only ever lives here - it is a kitchen
+## timer, not game state.
+var _hud_timer_stopwatch := false
+var _hud_timer_running := false
+var _hud_timer_seconds := 90
+var _hud_timer_start_seconds := 90
+var _hud_timer_last_tick_msec := 0
+## Which parts of the legacy HUD are drawn, in Eternal Lands' terms. Persisted
+## under [hud] and toggled from the settings window's HUD tab.
+var _hud_element_options: Dictionary = {
+	"show_fps": true, "show_game_seconds": true, "hud_timer": true,
+	"knowledge_bar": true, "side_stats": true, "indicators": true,
+	"analog_clock": true, "digital_clock": true, "chat_timestamps": true}
+## The per-skill rail rows, keyed by stat name, each holding bar + labels.
+var _skill_row_nodes: Dictionary = {}
+## The indicator letters, keyed by their Eternal Lands letter.
+var _indicator_labels: Dictionary = {}
+## Private messages that arrived and have not been acknowledged by clicking
+## the M indicator, which is exactly what Eternal Lands' M indicator counts.
+var _unseen_pm_count := 0
+var _fps_refresh_msec := 0
 var _hud_layout_menu: PopupPanel
 var _hud_layout_list: ItemList
 var _hud_layout_visible: CheckButton
@@ -516,7 +551,41 @@ const MINIMAP_DRAG_BORDER := 27.0
 const MAP_MINIMUM_AMBIENT := 0.9
 ## Breathing room inside each bottom-rail icon button, so the painted frame the
 ## icon carries does not touch its neighbour or the panel border.
-const HUD_ICON_PADDING := 6.0
+const HUD_ICON_PADDING := 2.0
+
+## Eternal Lands' indicator letters, their meanings, and how each state is
+## honestly known here. G (glow perk) and A (summon attack-at-will) have no
+## server signal on this fork, so they render as unavailable rather than
+## pretending a state.
+const HUD_INDICATORS: Array[Array] = [
+	["S", "Special Day", "Ordinary Day"],
+	["H", "Harvesting", "Not Harvesting"],
+	["P", "Poison (not stated by this server)", "Poison (not stated by this server)"],
+	["M", "Recent Messages", "No Messages"],
+	["R", "Ranging Lock On", "Ranging Lock Off"],
+	["G", "Glow Perk (not on this server)", "Glow Perk (not on this server)"],
+	["A", "Attack at Will (not on this server)", "Attack at Will (not on this server)"]]
+
+## The rail's stat rows, in Eternal Lands' order and abbreviations.
+const SKILL_ROW_SPECS: Array[Array] = [
+	["att", "attack"], ["def", "defense"], ["har", "harvesting"],
+	["alc", "alchemy"], ["mag", "magic"], ["pot", "potion"],
+	["sum", "summoning"], ["man", "manufacturing"], ["cra", "crafting"],
+	["eng", "engineering"], ["tai", "tailoring"], ["ran", "ranging"],
+	["oa", "overall"]]
+const INDICATOR_ACTIVE_COLOUR := Color(0.95, 0.76, 0.52)
+const INDICATOR_INACTIVE_COLOUR := Color(0.40, 0.30, 0.20)
+const INDICATOR_UNAVAILABLE_COLOUR := Color(0.20, 0.15, 0.10)
+
+## Nothing may cover the fixed resource rail down the right-hand edge; this is
+## the margin draggable scene windows are clamped against.
+const RESERVED_RIGHT_RAIL_MARGIN := 96.0
+
+## The GUI palette Eternal Lands paints every window with (elwindows.c):
+## borders, frames and title text in gui_color, hover fills in the inverse.
+const EL_GUI_COLOUR := Color(0.77, 0.57, 0.39)
+const EL_GUI_INVERT_COLOUR := Color(0.32, 0.23, 0.15)
+const EL_GUI_BRIGHT_COLOUR := Color(0.95, 0.76, 0.52)
 ## How many metres of ground the minimap camera covers, and the bounds the
 ## scroll wheel moves it between.
 const MINIMAP_ZOOM_DEFAULT := 180.0
@@ -574,6 +643,18 @@ func _ready() -> void:
 	sigil_window = SigilWindowScript.new()
 	game_view.add_child(sigil_window)
 	sigil_window.configure(spell_catalog)
+	# The three legacy windows Eternal Lands opens from its icon row: the spell
+	# book, the emote picker and the ranging readout. Each lives in its own
+	# script; main.gd only opens them and lends them a network seam.
+	spells_window = SpellsWindowScript.new()
+	game_view.add_child(spells_window)
+	# Configured further down, once the spell catalog has read its data file:
+	# the window builds its group rows from the catalog it is handed.
+	emotes_window = EmotesWindowScript.new()
+	game_view.add_child(emotes_window)
+	emotes_window.call("configure", _perform_emote)
+	ranging_window = RangingWindowScript.new()
+	game_view.add_child(ranging_window)
 	settings_window = SettingsWindowScript.new()
 	game_view.add_child(settings_window)
 	settings_window.setting_changed.connect(_on_client_setting_changed)
@@ -599,6 +680,7 @@ func _ready() -> void:
 	equipment_config = _json("res://data/actors/equipment.json")
 	item_atlas.configure(_json("res://data/items/atlases.json"))
 	spell_catalog.configure(_json("res://data/spells/catalog.json"))
+	spells_window.call("configure", spell_catalog, _cast_spell_by_id)
 	manufacturing_catalog.configure(_json("res://data/manufacturing/recipes.json"))
 	var knowledge_catalog_value: Variant = _json(
 		"res://data/knowledge/catalog.json").get("entries", [])
@@ -699,6 +781,13 @@ func _ready() -> void:
 	_build_hud_layout_menu()
 	_load_hud_layout()
 	_connect_hud_context_inputs(%Quickbar)
+	_build_skill_rows()
+	_build_hud_indicators()
+	hud_timer_label.gui_input.connect(_on_hud_timer_gui_input)
+	knowledge_bar.gui_input.connect(_on_knowledge_bar_gui_input)
+	if reference_window.has_signal("buddy_add_requested"):
+		reference_window.connect("buddy_add_requested", _on_buddy_add_requested)
+	_apply_hud_element_options()
 	get_viewport().size_changed.connect(_on_window_size_changed)
 	call_deferred("_on_window_size_changed")
 	for channel_index: int in range(3):
@@ -777,6 +866,8 @@ func _process(delta: float) -> void:
 		_update_actor_resource_overlay()
 		_update_cooldown_overlays()
 		_update_chat_fade()
+		_update_hud_timer()
+		_update_fps_label()
 		var display_second: int = floori(float(Time.get_ticks_msec()) / 1000.0)
 		if display_second != cooldown_display_second:
 			cooldown_display_second = display_second
@@ -2185,6 +2276,30 @@ func _unhandled_input(event: InputEvent) -> void:
 		_toggle_show_through_obstacles()
 		get_viewport().set_input_as_handled()
 		return
+	# The legacy window keys, each opening the window Eternal Lands binds it
+	# to. They are resolved here rather than in _handle_bound_action() so a
+	# focused text field keeps its own Ctrl shortcuts (Ctrl+A selects text
+	# before it opens the statistics). They must also run before chat_focus:
+	# that action is a bare T, Godot's inexact matching lets a bare binding
+	# claim a modified press, and Ctrl+T would focus the chat instead of
+	# opening the ranging window - the turn_right/Ctrl+E collision over again.
+	var window_actions: Array[Array] = [
+		["toggle_spells", _on_spells_button_pressed],
+		["toggle_manufacture", _on_manufacturing_button_pressed],
+		["toggle_emotes", _on_emotes_button_pressed],
+		["toggle_quest_journal", _on_quest_button_pressed],
+		["toggle_buddy", _on_buddy_button_pressed],
+		["toggle_stats", _on_stats_button_pressed],
+		["toggle_ranging", _on_ranging_button_pressed],
+		["toggle_help", _on_help_button_pressed],
+		["toggle_notepad", _on_info_button_pressed],
+		["toggle_options", _on_options_pressed],
+		["toggle_mail", func() -> void: extension_windows.call("toggle_mail")]]
+	for action_and_handler: Array in window_actions:
+		if event.is_action_pressed(str(action_and_handler[0])):
+			(action_and_handler[1] as Callable).call()
+			get_viewport().set_input_as_handled()
+			return
 	if event.is_action_pressed("chat_focus"):
 		_show_chat_input()
 		get_viewport().set_input_as_handled()
@@ -2197,6 +2312,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			pass
 		elif player_info_panel != null and player_info_panel.is_open():
 			player_info_panel.close()
+		elif spells_window != null and bool(spells_window.call("is_open")):
+			spells_window.call("close")
+		elif emotes_window != null and bool(emotes_window.call("is_open")):
+			emotes_window.call("close")
+		elif ranging_window != null and bool(ranging_window.call("is_open")):
+			ranging_window.call("close")
 		elif sigil_window != null and sigil_window.is_open():
 			sigil_window.close()
 		elif settings_window != null and settings_window.is_open():
@@ -2304,6 +2425,9 @@ func _banner_option(key: String) -> bool:
 
 func _on_banner_option_toggled(_enabled: bool) -> void:
 	_apply_banner_options()
+	# The R indicator letter reads the ranging-lock switch, so it follows the
+	# toggle rather than waiting for the next unrelated state change.
+	_sync_hud_indicators()
 	_save_hud_settings()
 
 ## Kept so the HUD settings window can undo the menu's own "Disable This Menu"
@@ -2761,9 +2885,12 @@ func _on_state_changed(path: StringName) -> void:
 			_queue_world_sync()
 		&"chat":
 			_capture_speech_bubble_from_chat()
+			_count_unseen_private_messages()
 			_sync_chat()
 			_sync_console()
 			_reveal_chat_messages()
+		&"almanac":
+			_sync_hud_indicators()
 		&"channels":
 			_sync_channel_tabs()
 		&"invasion_assistant":
@@ -3588,6 +3715,13 @@ func _load_hud_settings() -> void:
 		# not, so every session started with the map hidden and nothing but
 		# Alt+M would show it again.
 		_minimap_visible = bool(config.get_value("hud", "minimap_visible", false))
+		for option_key: String in _hud_element_options:
+			_hud_element_options[option_key] = bool(config.get_value(
+				"hud", option_key, _hud_element_options[option_key]))
+		_hud_timer_stopwatch = bool(config.get_value("hud", "timer_stopwatch", false))
+		_hud_timer_start_seconds = clampi(int(config.get_value(
+			"hud", "timer_start_seconds", 90)), 0, 9 * 60 + 59)
+		_hud_timer_seconds = 0 if _hud_timer_stopwatch else _hud_timer_start_seconds
 		_ground_bag_scale = clampf(float(config.get_value(
 			"ground_bag", "window_scale", 1.0)),
 			INVENTORY_MIN_SCALE, INVENTORY_MAX_SCALE)
@@ -3670,6 +3804,9 @@ func _load_hud_settings() -> void:
 	show_through_obstacles.set_pressed_no_signal(_show_through_obstacles)
 	settings_window.call("restore_toggle", "combat_hud",
 		bool(extension_windows.get("combat_hud_enabled")))
+	for option_key: String in _hud_element_options:
+		settings_window.call("restore_toggle", option_key,
+			bool(_hud_element_options[option_key]))
 	_apply_ui_scale()
 	_apply_minimap_scale()
 	_apply_minimap_zoom()
@@ -3767,6 +3904,10 @@ func _save_hud_settings() -> void:
 	config.set_value("hud", "minimap_zoom", _minimap_zoom)
 	config.set_value("hud", "minimap_position", minimap_frame.position)
 	config.set_value("hud", "minimap_visible", _minimap_visible)
+	for option_key: String in _hud_element_options:
+		config.set_value("hud", option_key, bool(_hud_element_options[option_key]))
+	config.set_value("hud", "timer_stopwatch", _hud_timer_stopwatch)
+	config.set_value("hud", "timer_start_seconds", _hud_timer_start_seconds)
 	config.set_value("inventory", "window_scale", _inventory_scale)
 	config.set_value("ground_bag", "window_scale", _ground_bag_scale)
 	config.set_value("inventory", "window_position", inventory_panel.position)
@@ -3929,8 +4070,11 @@ func _clamp_inventory_window_to_viewport() -> void:
 	var visible_size: Vector2 = inventory_panel.size * _inventory_scale
 	var game_origin: Vector2 = game_view.global_position
 	var local_position: Vector2 = inventory_panel.global_position - game_origin
-	var maximum: Vector2 = (game_view.size - visible_size - Vector2(8.0, 8.0)).max(
-		Vector2(8.0, 8.0))
+	# The right margin keeps the window off the fixed resource rail, which
+	# nothing may cover; every script-built window already respects the same
+	# reserve.
+	var maximum: Vector2 = (game_view.size - visible_size
+		- Vector2(RESERVED_RIGHT_RAIL_MARGIN, 8.0)).max(Vector2(8.0, 8.0))
 	local_position = Vector2(
 		clampf(local_position.x, 8.0, maximum.x),
 		clampf(local_position.y, 8.0, maximum.y))
@@ -4025,6 +4169,9 @@ func _configure_window_layers() -> void:
 	console_panel.z_index = 25
 	settings_panel.z_index = 30
 	actor_hud_menu.z_index = 30
+	for window_layer: Control in [spells_window, emotes_window, ranging_window]:
+		if window_layer != null:
+			window_layer.z_index = 26
 
 func _sync_chat() -> void:
 	chat_output.clear()
@@ -4074,6 +4221,12 @@ func _formatted_chat_line(line: Dictionary) -> String:
 				if slot >= 0 and slot < AppState.active_channels.size() else 0)
 			prefix = ("[#%d] " % channel_number
 				if channel_number > 0 else "[Channel] ")
+	# Eternal Lands stamps every line "[12:14:49]", ahead of any tag. A line
+	# from before the stamps existed simply has none.
+	if bool(_hud_element_options.get("chat_timestamps", true)):
+		var stamp: String = str(line.get("stamp", ""))
+		if not stamp.is_empty():
+			prefix = "[%s] %s" % [stamp, prefix]
 	return prefix + str(line.get("text", ""))
 
 func _sync_stats() -> void:
@@ -4106,19 +4259,9 @@ func _sync_stats() -> void:
 	if inventory_load != null:
 		inventory_load.text = "Load: %d / %d" % [int(stats.get("carried", 0)),
 			int(stats.get("capacity", 0))]
-	var abbreviated: Array[Array] = [
-		["att", "attack"], ["def", "defense"], ["har", "harvesting"],
-		["alc", "alchemy"], ["mag", "magic"], ["pot", "potion"],
-		["sum", "summoning"], ["man", "manufacturing"], ["cra", "crafting"],
-		["eng", "engineering"], ["tai", "tailoring"], ["ran", "ranging"],
-		["oa", "overall"]]
-	var indicator_cells: Array[String] = []
-	for label_and_key: Array in abbreviated:
-		var stat_value: int = int(stats.get("overall_level", 0)) \
-			if label_and_key[1] == "overall" else int(stats.get(label_and_key[1], 0))
-		indicator_cells.append("[cell]%s[/cell][cell]%d[/cell]" % [
-			label_and_key[0], stat_value])
-	skill_indicators.text = "[table=2]%s[/table]" % "".join(indicator_cells)
+	_sync_skill_rows(stats)
+	_sync_hud_indicators()
+	_sync_knowledge_bar()
 	if stats.is_empty():
 		stats_text.text = "[center]Waiting for server statistics…[/center]"
 		_sync_session_experience()
@@ -4128,14 +4271,17 @@ func _sync_stats() -> void:
 	# padding cannot line these up: the client ships one proportional font, so
 	# "%-14s" is fourteen spaces of varying width and every number lands
 	# wherever its label happened to end.
-	var basic_lines: Array[String] = [_stat_heading("[b]Basic Attributes[/b]")]
+	# Every section header is the same quiet green Eternal Lands paints its
+	# statistics headings in, so the window reads as one document.
+	var basic_lines: Array[String] = [_stat_heading(
+		"[color=#7fd87f][b]Basic Attributes[/b][/color]")]
 	for label_and_key: Array in [["Physique", "physique"],
 			["Coordination", "coordination"], ["Reasoning", "reasoning"],
 			["Will", "will"], ["Instinct", "instinct"], ["Vitality", "vitality"]]:
 		basic_lines.append(_stat_row(str(label_and_key[0]),
 			_stat_pair(stats, str(label_and_key[1]))))
 	basic_lines.append(_stat_heading(
-		"[color=yellow][b]Cross Attributes[/b][/color]", true))
+		"[color=#7fd87f][b]Cross Attributes[/b][/color]", true))
 	for cross: Array in [["Might", "physique", "coordination"],
 			["Matter", "physique", "will"], ["Toughness", "physique", "vitality"],
 			["Charm", "instinct", "vitality"], ["Reaction", "instinct", "coordination"],
@@ -4143,7 +4289,8 @@ func _sync_stats() -> void:
 			["Dexterity", "coordination", "reasoning"], ["Ethereality", "will", "vitality"]]:
 		basic_lines.append(_stat_row(str(cross[0]),
 			_cross_pair(stats, str(cross[1]), str(cross[2]))))
-	var nexus_lines: Array[String] = [_stat_heading("[b]Nexus[/b]")]
+	var nexus_lines: Array[String] = [_stat_heading(
+		"[color=#7fd87f][b]Nexus[/b][/color]")]
 	for label_and_key: Array in [["Human", "human_nexus"], ["Animal", "animal_nexus"],
 			["Vegetal", "vegetal_nexus"], ["Inorganic", "inorganic_nexus"],
 			["Artificial", "artificial_nexus"], ["Magic", "magic_nexus"]]:
@@ -4152,7 +4299,7 @@ func _sync_stats() -> void:
 	var pickpoints: int = int(stats.get("pickpoints_earned", stats.get("overall", 0))) \
 		- int(stats.get("pickpoints_spent", 0))
 	nexus_lines.append(_stat_row("Pickpoints", _grouped(pickpoints), true))
-	nexus_lines.append(_stat_heading("[color=#d7a85b][b]Perks[/b][/color]", true))
+	nexus_lines.append(_stat_heading("[color=#7fd87f][b]Perks[/b][/color]", true))
 	if AppState.perks.is_empty():
 		nexus_lines.append(_stat_row("None", ""))
 	else:
@@ -4171,7 +4318,7 @@ func _sync_stats() -> void:
 	nexus_lines.append(_stat_row("Food Level", str(int(stats.get("food", 0)))))
 	nexus_lines.append_array(_research_rows(stats))
 	var skill_lines: Array[String] = [_stat_heading(
-		"[color=#ff8a28][b]Levels and Experience[/b][/color]", false, 3)]
+		"[color=#7fd87f][b]Levels and Experience[/b][/color]", false, 3)]
 	for skill: String in EXPERIENCE_SKILLS:
 		var current_level: int = int(stats.get("overall_level", 0)) \
 			if skill == "overall" else int(stats.get(skill, 0))
@@ -4391,8 +4538,15 @@ func _sync_experience_meter(stats: Dictionary) -> void:
 	var progress_value: int = clampi(current_experience - level_floor, 0, progress_maximum)
 	experience_bottom.max_value = progress_maximum
 	experience_bottom.value = progress_value
-	experience_bottom_text.text = "%s %d / %d" % [
-		skill.capitalize(), current_experience, next_experience]
+	# Eternal Lands writes the experience still to go left of the bar and the
+	# watched skill's name at its right end; the full pair lives in the tooltip.
+	experience_bottom_text.text = _grouped(maxi(0, next_experience - current_experience))
+	experience_skill_label.text = skill.capitalize()
+	var experience_tooltip: String = "%s experience: %s / %s" % [skill.capitalize(),
+		_grouped(current_experience), _grouped(next_experience)]
+	experience_bottom_text.tooltip_text = experience_tooltip
+	experience_bottom.tooltip_text = experience_tooltip
+	experience_skill_label.tooltip_text = experience_tooltip
 
 static func _experience_floor_for_level(level: int) -> int:
 	if level <= 0:
@@ -4413,11 +4567,309 @@ static func _experience_floor_for_level(level: int) -> int:
 			experience += experience * 5 / 100
 	return experience
 
+## The rail's side stats list, built the way Eternal Lands draws it: one thin
+## row per skill, a green fill behind the text showing how far through the
+## level the skill is, the watched skill's name in the GUI gold. Clicking a row
+## watches that skill on the bottom experience bar, as the legacy client does.
+func _build_skill_rows() -> void:
+	for spec: Array in SKILL_ROW_SPECS:
+		var key: String = str(spec[1])
+		var row := ProgressBar.new()
+		row.name = "SkillRow" + key.capitalize()
+		row.custom_minimum_size = Vector2(0.0, 12.0)
+		row.max_value = 1.0
+		row.show_percentage = false
+		row.mouse_filter = Control.MOUSE_FILTER_STOP
+		var background := StyleBoxFlat.new()
+		background.bg_color = Color(0.02, 0.02, 0.02, 0.6)
+		background.border_color = EL_GUI_COLOUR
+		background.set_border_width_all(1)
+		var fill := StyleBoxFlat.new()
+		# The side-stats bar colour hud_misc_window.c uses: a quiet green that
+		# stays behind white text without swallowing it.
+		fill.bg_color = Color(0.24, 0.40, 0.16, 0.9)
+		row.add_theme_stylebox_override("background", background)
+		row.add_theme_stylebox_override("fill", fill)
+		var name_label := Label.new()
+		name_label.name = "Name"
+		name_label.text = str(spec[0])
+		name_label.add_theme_font_size_override("font_size", 10)
+		name_label.add_theme_color_override("font_color", Color.WHITE)
+		name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		name_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		name_label.offset_left = 3.0
+		name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		row.add_child(name_label)
+		var value_label := Label.new()
+		value_label.name = "Value"
+		value_label.text = "0"
+		value_label.add_theme_font_size_override("font_size", 10)
+		value_label.add_theme_color_override("font_color", Color.WHITE)
+		value_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		value_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		value_label.offset_right = -3.0
+		value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		row.add_child(value_label)
+		row.gui_input.connect(_on_skill_row_gui_input.bind(key))
+		skill_rows.add_child(row)
+		_skill_row_nodes[key] = row
+
+func _sync_skill_rows(stats: Dictionary) -> void:
+	for spec: Array in SKILL_ROW_SPECS:
+		var key: String = str(spec[1])
+		var row_value: Variant = _skill_row_nodes.get(key)
+		if not row_value is ProgressBar:
+			continue
+		var row: ProgressBar = row_value as ProgressBar
+		var level: int = int(stats.get("overall_level", 0)) \
+			if key == "overall" else int(stats.get(key, 0))
+		(row.get_node("Value") as Label).text = str(level)
+		var name_label: Label = row.get_node("Name") as Label
+		name_label.add_theme_color_override("font_color",
+			EL_GUI_BRIGHT_COLOUR if key == _selected_experience_skill else Color.WHITE)
+		var current_experience: int = int(stats.get(key + "_exp", 0))
+		var next_experience: int = int(stats.get(key + "_exp_next", 0))
+		var base_level: int = int(stats.get(key + "_base", level))
+		var level_floor: int = _experience_floor_for_level(base_level)
+		if next_experience <= level_floor:
+			level_floor = 0
+		var span: int = maxi(1, next_experience - level_floor)
+		row.value = clampf(float(current_experience - level_floor) / float(span), 0.0, 1.0)
+		row.tooltip_text = ("%s %d - %s experience to go"
+			+ "\nClick to watch this skill on the experience bar") % [
+			key.capitalize(), level,
+			_grouped(maxi(0, next_experience - current_experience))]
+
+func _on_skill_row_gui_input(event: InputEvent, key: String) -> void:
+	if not (event is InputEventMouseButton
+			and (event as InputEventMouseButton).pressed
+			and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT):
+		return
+	_selected_experience_skill = key
+	_sync_experience_meter(AppState.stats)
+	_sync_skill_rows(AppState.stats)
+	_save_hud_layout()
+
+## The Eternal Lands indicator letters at the bottom right: lit letters are
+## states the server has actually stated this session; letters the fork has no
+## signal for stay at the "unavailable" shade instead of guessing.
+func _build_hud_indicators() -> void:
+	for spec: Array in HUD_INDICATORS:
+		var letter := Label.new()
+		letter.name = "Indicator" + str(spec[0])
+		letter.text = str(spec[0])
+		letter.custom_minimum_size = Vector2(14.0, 0.0)
+		letter.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		letter.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		letter.add_theme_font_size_override("font_size", 14)
+		letter.add_theme_color_override("font_color", INDICATOR_INACTIVE_COLOUR)
+		letter.mouse_filter = Control.MOUSE_FILTER_STOP
+		letter.gui_input.connect(_on_indicator_gui_input.bind(str(spec[0])))
+		hud_indicators.add_child(letter)
+		_indicator_labels[str(spec[0])] = letter
+	_sync_hud_indicators()
+
+func _sync_hud_indicators() -> void:
+	if _indicator_labels.is_empty():
+		return
+	var available: Dictionary = {
+		"S": not AppState.almanac.is_empty(),
+		"H": true, "P": false, "M": true, "R": true, "G": false, "A": false}
+	var active: Dictionary = {
+		"S": str(AppState.almanac.get("kind", "ordinary")) != "ordinary",
+		"H": bool(AppState.harvest.get("active", false)),
+		"P": false,
+		"M": _unseen_pm_count > 0,
+		"R": _banner_option("ranging_lock"),
+		"G": false, "A": false}
+	for spec: Array in HUD_INDICATORS:
+		var letter_key: String = str(spec[0])
+		var letter: Label = _indicator_labels[letter_key] as Label
+		var is_available: bool = bool(available.get(letter_key, false))
+		var is_active: bool = bool(active.get(letter_key, false))
+		var colour: Color = INDICATOR_UNAVAILABLE_COLOUR
+		if is_available:
+			colour = INDICATOR_ACTIVE_COLOUR if is_active else INDICATOR_INACTIVE_COLOUR
+		letter.add_theme_color_override("font_color", colour)
+		var described: String = str(spec[1]) if is_active else str(spec[2])
+		if letter_key == "M" and _unseen_pm_count > 0:
+			described += " [%d]" % _unseen_pm_count
+		letter.tooltip_text = described
+
+func _on_indicator_gui_input(event: InputEvent, letter_key: String) -> void:
+	if not (event is InputEventMouseButton
+			and (event as InputEventMouseButton).pressed
+			and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT):
+		return
+	match letter_key:
+		"S":
+			# What Eternal Lands' #day prints: the day in force, from the
+			# almanac packet the server already sent.
+			if AppState.almanac.is_empty():
+				AppState.append_local_message("The server has not stated the day yet.")
+			else:
+				AppState.append_local_message("Today: %s - %s" % [
+					str(AppState.almanac.get("name", "an ordinary day")),
+					str(AppState.almanac.get("description", ""))])
+		"M":
+			_unseen_pm_count = 0
+			_sync_hud_indicators()
+
+## The countdown/stopwatch line in the rail, as hud_timer.cpp behaves: click
+## starts and stops, shift+click swaps mode, middle-click resets, the wheel
+## sets the countdown start (Ctrl fine steps, Alt coarse). Green while it
+## runs, red while it stands.
+func _update_hud_timer() -> void:
+	if not _hud_timer_running:
+		return
+	var now: int = Time.get_ticks_msec()
+	if now - _hud_timer_last_tick_msec < 1000:
+		return
+	_hud_timer_last_tick_msec = now
+	if _hud_timer_stopwatch:
+		_hud_timer_seconds = mini(_hud_timer_seconds + 1, 9 * 60 + 59)
+	else:
+		_hud_timer_seconds -= 1
+		if _hud_timer_seconds <= 0:
+			_hud_timer_seconds = 0
+			_hud_timer_running = false
+			audio_director.play("ui_close")
+	_sync_hud_timer_label()
+
+func _sync_hud_timer_label() -> void:
+	hud_timer_label.text = "%s%d:%02d" % [
+		"S" if _hud_timer_stopwatch else "C",
+		_hud_timer_seconds / 60, _hud_timer_seconds % 60]
+	hud_timer_label.add_theme_color_override("font_color",
+		Color(0.5, 1.0, 0.5) if _hud_timer_running else Color(1.0, 0.5, 0.5))
+
+func _on_hud_timer_gui_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton:
+		return
+	var click: InputEventMouseButton = event as InputEventMouseButton
+	if not click.pressed:
+		return
+	match click.button_index:
+		MOUSE_BUTTON_LEFT:
+			if click.shift_pressed:
+				_hud_timer_stopwatch = not _hud_timer_stopwatch
+				_hud_timer_running = false
+				_hud_timer_seconds = 0 if _hud_timer_stopwatch \
+					else _hud_timer_start_seconds
+				_save_hud_settings()
+			else:
+				if not _hud_timer_stopwatch and _hud_timer_seconds <= 0:
+					_hud_timer_seconds = _hud_timer_start_seconds
+				_hud_timer_running = not _hud_timer_running
+				_hud_timer_last_tick_msec = Time.get_ticks_msec()
+		MOUSE_BUTTON_MIDDLE:
+			_hud_timer_running = false
+			_hud_timer_seconds = 0 if _hud_timer_stopwatch else _hud_timer_start_seconds
+		MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN:
+			if _hud_timer_stopwatch:
+				return
+			var step: int = 5
+			if click.ctrl_pressed:
+				step = 1
+			elif click.alt_pressed:
+				step = 30
+			if click.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+				step = -step
+			_hud_timer_start_seconds = clampi(
+				_hud_timer_start_seconds + step, 0, 9 * 60 + 59)
+			if not _hud_timer_running:
+				_hud_timer_seconds = _hud_timer_start_seconds
+			_save_hud_settings()
+		_:
+			return
+	_sync_hud_timer_label()
+
+## The knowledge bar under the stats list: research progress as the server
+## states it in the statistics packet, "Idle" when it states none.
+func _sync_knowledge_bar() -> void:
+	var stats: Dictionary = AppState.stats
+	var index: int = int(stats.get("researching", 1024))
+	var total: int = int(stats.get("research_total", 0))
+	if index >= 1024 or total <= 0:
+		knowledge_bar.value = 0.0
+		knowledge_text.text = "Idle"
+		knowledge_bar.tooltip_text = "Researching nothing"
+		return
+	var completed: int = clampi(int(stats.get("research_completed", 0)), 0, total)
+	var percent: int = roundi(100.0 * float(completed) / float(total))
+	knowledge_bar.value = float(percent)
+	knowledge_text.text = "%d%%" % percent
+	knowledge_bar.tooltip_text = "Researching %s: %d of %d pages" % [
+		(knowledge_catalog[index] if index >= 0 and index < knowledge_catalog.size()
+			else "knowledge #%d" % index), completed, total]
+
+func _on_knowledge_bar_gui_input(event: InputEvent) -> void:
+	if not (event is InputEventMouseButton
+			and (event as InputEventMouseButton).pressed
+			and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT):
+		return
+	var stats: Dictionary = AppState.stats
+	var index: int = int(stats.get("researching", 1024))
+	var total: int = int(stats.get("research_total", 0))
+	if index >= 1024 or total <= 0:
+		AppState.append_local_message(
+			"You are not researching anything for the time being")
+		return
+	AppState.append_local_message("Researching %s: %d of %d pages" % [
+		(knowledge_catalog[index] if index >= 0 and index < knowledge_catalog.size()
+			else "knowledge #%d" % index),
+		clampi(int(stats.get("research_completed", 0)), 0, total), total])
+
+## Which of the legacy HUD elements are drawn. The switches live on the
+## settings window's HUD tab and persist under [hud], the way Eternal Lands
+## keeps them in el.ini.
+func _apply_hud_element_options() -> void:
+	fps_label.visible = bool(_hud_element_options.get("show_fps", true))
+	_sync_chat()
+	hud_timer_label.visible = bool(_hud_element_options.get("hud_timer", true))
+	knowledge_bar.visible = bool(_hud_element_options.get("knowledge_bar", true))
+	skill_rows.visible = bool(_hud_element_options.get("side_stats", true))
+	hud_indicators.visible = bool(_hud_element_options.get("indicators", true))
+	clock_text.visible = bool(_hud_element_options.get("digital_clock", true))
+	clock_face.visible = bool(_hud_element_options.get("analog_clock", true))
+	_sync_hud_timer_label()
+	_sync_knowledge_bar()
+
+func _update_fps_label() -> void:
+	if not fps_label.visible:
+		return
+	var now: int = Time.get_ticks_msec()
+	if now < _fps_refresh_msec:
+		return
+	_fps_refresh_msec = now + 500
+	fps_label.text = "FPS: %d" % roundi(Engine.get_frames_per_second())
+
+## Every &"chat" emit is exactly one appended line (the three append sites in
+## AppState each emit once), so only the tail needs looking at. Counting by a
+## remembered index broke the moment the 1000-line cap started dropping the
+## head: the size stops moving while lines keep arriving. Clicking M is the
+## acknowledgement that clears the count.
+func _count_unseen_private_messages() -> void:
+	var lines: Array = AppState.chat_lines
+	if lines.is_empty():
+		return
+	if int((lines[lines.size() - 1] as Dictionary).get("channel", 0)) == 1:
+		_unseen_pm_count += 1
+		_sync_hud_indicators()
+
+## Eternal Lands writes only the current value, left of the bar, and names the
+## attribute on hover; the overhead banner rows keep the full pair. The rail's
+## legacy vertical bars pass their own labels through here too, so the format
+## is decided once.
 static func _set_meter(bar: ProgressBar, label: Label, value: int,
 		maximum: int, title: String) -> void:
 	bar.max_value = maxi(1, maximum)
 	bar.value = clampi(value, 0, maxi(1, maximum))
-	label.text = "%s %d / %d" % [title, value, maximum]
+	label.text = str(value)
+	var described: String = "%s: %d / %d" % [title, value, maximum]
+	label.tooltip_text = described
+	bar.tooltip_text = described
 
 static func _set_overhead_meter(row: HBoxContainer, value: int, maximum: int,
 		colour_kind: String) -> void:
@@ -4458,8 +4910,16 @@ func _update_legacy_clock_and_compass() -> void:
 			float(Time.get_ticks_msec() - AppState.game_minute_anchor_msec) / 1000.0)
 	var minute_fraction: float = fmod(float(AppState.game_minute) + elapsed_seconds / 60.0, 360.0)
 	var display_minute: int = floori(minute_fraction)
-	clock_text.text = "%d:%02d" % [display_minute / 60, display_minute % 60]
-	clock_hand.rotation = fmod(minute_fraction, 60.0) / 60.0 * TAU
+	# Eternal Lands' digital clock is H:MM, with seconds behind an option; its
+	# analog dial is the whole 360-minute day - one degree per game minute - so
+	# the sun-and-moon face reads as day and night.
+	if bool(_hud_element_options.get("show_game_seconds", true)):
+		var display_game_second: int = floori(fmod(minute_fraction, 1.0) * 60.0)
+		clock_text.text = "%d:%02d:%02d" % [display_minute / 60,
+			display_minute % 60, display_game_second]
+	else:
+		clock_text.text = "%d:%02d" % [display_minute / 60, display_minute % 60]
+	clock_hand.rotation = deg_to_rad(minute_fraction)
 	compass_needle.rotation = deg_to_rad(-camera_rig.yaw_degrees)
 
 func _update_actor_resource_overlay() -> void:
@@ -4787,11 +5247,14 @@ func _sync_hud_button_states(force := false) -> void:
 		_hud_state_buttons = [%WalkButton, %MapButton, %SitButton, %AttackButton,
 			%TradeButton, %LookButton, %InventoryButton, %StatsButton,
 			%KnowledgeButton, %ManufacturingButton, %ChatButton, %DisconnectButton,
-			%EncyclopediaButton]
+			%EncyclopediaButton, %SpellsButton, %EmotesButton, %QuestButton,
+			%InfoButton, %BuddyButton, %ConsoleButton, %HelpButton,
+			%RangingButton, %MinimapButton, %OptionsButton]
 	var local_actor: Dictionary = AppState.actors.get(AppState.local_actor_id, {})
 	var sitting: bool = bool(local_actor.get("sitting", false))
 	var stats_open: bool = stats_panel.visible
 	var stats_tab: int = stats_tabs.current_tab
+	var quest_panel_value: Variant = extension_windows.get("quest_panel")
 	var states: Array[bool] = [
 		_interaction_mode == "walk" and not sitting,
 		full_map.visible,
@@ -4805,7 +5268,17 @@ func _sync_hud_button_states(force := false) -> void:
 		manufacturing_panel.visible,
 		chat_input.has_focus(),
 		AppState.connection_state == "connected",
-		reference_window != null and bool(reference_window.call("is_encyclopedia_open"))]
+		reference_window != null and bool(reference_window.call("is_encyclopedia_open")),
+		spells_window != null and bool(spells_window.call("is_open")),
+		emotes_window != null and bool(emotes_window.call("is_open")),
+		quest_panel_value is Control and (quest_panel_value as Control).visible,
+		_reference_tab_open(1),
+		_reference_tab_open(5),
+		console_panel.visible,
+		_reference_tab_open(0),
+		ranging_window != null and bool(ranging_window.call("is_open")),
+		minimap_frame.visible,
+		settings_panel.visible]
 	# Only while the player has not chosen attack mode from the HUD: a mode
 	# they picked stays picked, and Alt must not appear to be what put it there.
 	var attack_preview: bool = _alt_attack_preview and _interaction_mode != "attack"
@@ -5366,6 +5839,11 @@ func _save_screenshot() -> String:
 ## owns, sent as the player's own words rather than applied here.
 func _on_client_setting_changed(section: String, key: String,
 		value: Variant) -> void:
+	if _hud_element_options.has(key) and section == "HUD":
+		_hud_element_options[key] = bool(value)
+		_apply_hud_element_options()
+		_save_hud_settings()
+		return
 	match key:
 		"shadows":
 			_shadows_enabled = bool(value)
@@ -5426,6 +5904,100 @@ func _on_reference_pressed() -> void:
 func _on_sigil_button_pressed() -> void:
 	sigil_window.toggle()
 	audio_director.play("ui_click" if sigil_window.is_open() else "ui_close")
+
+## The Eternal Lands spell book: the icon-row window with the catalog grouped
+## the way the legacy client groups it. Casting goes through the same seam the
+## quickbar uses, so the two can never disagree about what a cast sends.
+func _on_spells_button_pressed() -> void:
+	spells_window.toggle()
+	audio_director.play("ui_click" if spells_window.is_open() else "ui_close")
+	_sync_hud_button_states(true)
+
+func _on_emotes_button_pressed() -> void:
+	emotes_window.toggle()
+	audio_director.play("ui_click" if emotes_window.is_open() else "ui_close")
+	_sync_hud_button_states(true)
+
+func _on_quest_button_pressed() -> void:
+	extension_windows.call("toggle_quest_journal")
+	_sync_hud_button_states(true)
+
+func _on_ranging_button_pressed() -> void:
+	ranging_window.toggle()
+	audio_director.play("ui_click" if ranging_window.is_open() else "ui_close")
+	_sync_hud_button_states(true)
+
+func _on_console_button_pressed() -> void:
+	_toggle_console()
+	_sync_hud_button_states(true)
+
+func _on_minimap_button_pressed() -> void:
+	_toggle_minimap()
+	_sync_hud_button_states(true)
+
+## The reference window's pages behind their Eternal Lands icons: Info is the
+## notepad and the link list, Buddy the list the server states, Help the keys
+## and commands. Each icon opens its page, or closes the window from that page,
+## exactly the way the encyclopedia icon already treats its own.
+func _on_info_button_pressed() -> void:
+	_toggle_reference_tab(1)
+
+func _on_buddy_button_pressed() -> void:
+	_toggle_reference_tab(5)
+
+func _on_help_button_pressed() -> void:
+	_toggle_reference_tab(0)
+
+func _toggle_reference_tab(tab: int) -> void:
+	var tabs: TabContainer = reference_window.get("tabs") as TabContainer
+	var was_here: bool = reference_window.call("is_open") and tabs.current_tab == tab
+	if was_here:
+		reference_window.call("close")
+	else:
+		if not reference_window.call("is_open"):
+			reference_window.call("toggle")
+		tabs.current_tab = tab
+	audio_director.play("ui_close" if was_here else "ui_click")
+	_sync_hud_button_states(true)
+
+func _reference_tab_open(tab: int) -> bool:
+	if reference_window == null or not bool(reference_window.call("is_open")):
+		return false
+	return (reference_window.get("tabs") as TabContainer).current_tab == tab
+
+## Casts one catalogued spell: the spells window's seam onto the network. The
+## same checks the quickbar makes, because it is the same cast.
+func _cast_spell_by_id(spell_id: int) -> void:
+	var reasons: Array[String] = spell_catalog.unavailable_reasons(
+		spell_id, AppState.owned_sigils, AppState.stats, AppState.inventory)
+	if not reasons.is_empty() or not AppState.pending_spell_target.is_empty():
+		return
+	var definition: Dictionary = spell_catalog.spell(spell_id)
+	var sigils_value: Variant = definition.get("sigils", [])
+	if not sigils_value is Array:
+		return
+	var sigils: Array[int] = []
+	for raw_sigil: Variant in sigils_value:
+		sigils.append(int(raw_sigil))
+	var error: Error = Network.cast_spell(sigils, _cast_power_for(spell_id))
+	if error != OK:
+		push_warning("CAST_SPELL failed: " + error_string(error))
+	else:
+		spell_status.text = "Casting %s…" % str(definition.get("name", "spell"))
+
+## The emote picker's seam onto the network: the same packet `#emote <name>`
+## already sends. The server stays the judge of what the name means.
+func _perform_emote(emote_name: String) -> void:
+	var error: Error = Network.do_emote(emote_name)
+	if error != OK:
+		push_warning("DO_EMOTE failed: " + error_string(error))
+
+## The reference window's Add buddy button. Asking is a chat command the
+## server answers; the list itself only ever changes when the server restates it.
+func _on_buddy_add_requested(buddy_name: String) -> void:
+	var error: Error = Network.send_chat("#add_buddy " + buddy_name)
+	if error != OK:
+		push_warning("add_buddy failed: " + error_string(error))
 
 func _on_spell_power_down_pressed() -> void:
 	requested_spell_power = maxi(1, requested_spell_power - 1)
@@ -6568,6 +7140,7 @@ func _snap_all_map_objects_to_surface() -> void:
 ## be left stuck on when the server stops the run for its own reasons - moving,
 ## a full backpack, or combat.
 func _sync_harvest_indicator() -> void:
+	_sync_hud_indicators()
 	var active: bool = bool(AppState.harvest.get("active", false))
 	var active_object: int = int(AppState.harvest.get("object_id", -1))
 	for raw_object: Variant in map_object_nodes.values():
@@ -6622,7 +7195,12 @@ func _apply_eloria_art() -> void:
 			%TradeButton: Rect2(0, 32, 32, 32), %InventoryButton: Rect2(32, 32, 32, 32),
 			%ManufacturingButton: Rect2(64, 32, 32, 32),
 			%EncyclopediaButton: Rect2(96, 32, 32, 32),
-			%MapButton: Rect2(128, 32, 32, 32)}
+			%MapButton: Rect2(128, 32, 32, 32),
+			%SpellsButton: Rect2(192, 32, 32, 32), %EmotesButton: Rect2(224, 32, 32, 32),
+			%QuestButton: Rect2(0, 64, 32, 32), %InfoButton: Rect2(32, 64, 32, 32),
+			%BuddyButton: Rect2(64, 64, 32, 32), %ConsoleButton: Rect2(96, 64, 32, 32),
+			%HelpButton: Rect2(128, 64, 32, 32), %OptionsButton: Rect2(160, 64, 32, 32),
+			%RangingButton: Rect2(192, 64, 32, 32), %MinimapButton: Rect2(224, 64, 32, 32)}
 		for button_value: Variant in _hud_icon_regions:
 			var icon_button: Button = button_value as Button
 			icon_button.icon = _atlas_region(_hud_active_atlas,
@@ -6644,12 +7222,16 @@ static func _atlas_region(atlas: Texture2D, region: Rect2) -> AtlasTexture:
 	texture.region = region
 	return texture
 
+## The window chrome is Eternal Lands' (elwindows.c): near-black translucent
+## bodies the world shows through, a one-pixel gui_color border, hover fills in
+## the inverse colour. The old blue-teal boxes read as another game's UI next
+## to the legacy client.
 func _apply_eloria_theme() -> void:
 	var eloria_theme: Theme = Theme.new()
 	var panel: StyleBoxFlat = StyleBoxFlat.new()
-	panel.bg_color = Color(0.045, 0.075, 0.09, 0.92)
-	panel.border_color = Color(0.72, 0.53, 0.22, 0.95)
-	panel.set_border_width_all(2)
+	panel.bg_color = Color(0.0, 0.0, 0.0, 0.62)
+	panel.border_color = Color(EL_GUI_COLOUR, 0.95)
+	panel.set_border_width_all(1)
 	panel.corner_radius_top_left = 1
 	panel.corner_radius_top_right = 1
 	panel.corner_radius_bottom_left = 1
@@ -6657,21 +7239,27 @@ func _apply_eloria_theme() -> void:
 	panel.set_content_margin_all(4.0)
 	eloria_theme.set_stylebox("panel", "PanelContainer", panel)
 	var button: StyleBoxFlat = panel.duplicate() as StyleBoxFlat
-	button.bg_color = Color(0.11, 0.18, 0.19, 0.96)
+	button.bg_color = Color(0.03, 0.02, 0.01, 0.55)
 	button.set_border_width_all(1)
 	button.set_content_margin_all(4.0)
 	eloria_theme.set_stylebox("normal", "Button", button)
 	var button_hover: StyleBoxFlat = button.duplicate() as StyleBoxFlat
-	button_hover.bg_color = Color(0.23, 0.31, 0.28, 0.98)
-	button_hover.border_color = Color(0.94, 0.72, 0.30, 1.0)
+	button_hover.bg_color = Color(EL_GUI_INVERT_COLOUR, 0.95)
+	button_hover.border_color = EL_GUI_BRIGHT_COLOUR
 	eloria_theme.set_stylebox("hover", "Button", button_hover)
 	eloria_theme.set_stylebox("pressed", "Button", button_hover)
 	var field: StyleBoxFlat = button.duplicate() as StyleBoxFlat
-	field.bg_color = Color(0.025, 0.045, 0.055, 0.98)
+	field.bg_color = Color(0.02, 0.015, 0.01, 0.85)
 	eloria_theme.set_stylebox("normal", "LineEdit", field)
 	eloria_theme.set_color("font_color", "Label", Color(0.91, 0.86, 0.70))
-	eloria_theme.set_color("font_color", "Button", Color(0.96, 0.88, 0.66))
+	eloria_theme.set_color("font_color", "Button", Color(0.93, 0.80, 0.58))
 	theme = eloria_theme
+	# Eternal Lands draws chat straight over the world with no box at all;
+	# each line carries its own outline for legibility instead.
+	chat_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	chat_output.add_theme_constant_override("outline_size", 3)
+	chat_output.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.9))
+	chat_output.add_theme_color_override("default_color", Color(0.95, 0.94, 0.9))
 	_style_right_rail(panel)
 	var minimap_panel_style: StyleBoxFlat = panel.duplicate() as StyleBoxFlat
 	minimap_panel_style.set_border_width_all(6)
@@ -6691,8 +7279,10 @@ func _apply_eloria_theme() -> void:
 			var icon_button: Button = child as Button
 			icon_button.flat = true
 			icon_button.focus_mode = Control.FOCUS_NONE
+			# Twenty-three icons share the bar now, so each cell is trimmed to
+			# what fits; the icons are still 40px against Eternal Lands' 32.
 			icon_button.custom_minimum_size = Vector2(
-				44.0 + HUD_ICON_PADDING * 2.0, 44.0 + HUD_ICON_PADDING * 2.0)
+				40.0 + HUD_ICON_PADDING * 2.0, 40.0 + HUD_ICON_PADDING * 2.0)
 			for state_name: String in ["normal", "hover", "pressed", "disabled", "focus"]:
 				icon_button.add_theme_stylebox_override(state_name, empty_button)
 	for quick_button: Button in quick_slot_buttons + spell_slot_buttons:
@@ -6716,13 +7306,20 @@ func _apply_eloria_theme() -> void:
 ## given a flat, marginless box so the rail reads as a single connected bar and
 ## the offsets in the scene place content exactly.
 func _style_right_rail(panel: StyleBoxFlat) -> void:
+	# The rail and the bottom bar are the two opaque fixtures of Eternal
+	# Lands' HUD - its wooden frame - so unlike the windows they get a solid
+	# warm brown rather than the see-through black.
 	var rail_style: StyleBoxFlat = panel.duplicate() as StyleBoxFlat
+	rail_style.bg_color = Color(0.16, 0.12, 0.075, 0.99)
 	rail_style.set_content_margin_all(4.0)
 	right_rail.add_theme_stylebox_override("panel", rail_style)
+	(%Quickbar as PanelContainer).add_theme_stylebox_override(
+		"panel", rail_style.duplicate() as StyleBoxFlat)
 	var seamless: StyleBoxEmpty = StyleBoxEmpty.new()
 	for framed: Control in [$GameView/EloriaLogoFrame as Control,
 			$GameView/SpellQuickbar as Control, $GameView/ItemQuickbar as Control,
-			$GameView/ResourceHud as Control, $GameView/ClockFrame as Control,
+			$GameView/ResourceHud as Control, $GameView/RailMeters as Control,
+			$GameView/ClockFrame as Control,
 			$GameView/CompassFrame as Control]:
 		framed.add_theme_stylebox_override("panel", seamless)
 	# A rail 62 pixels wide has no room for the theme's 4-pixel button padding

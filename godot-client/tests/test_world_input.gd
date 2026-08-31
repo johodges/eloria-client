@@ -309,7 +309,7 @@ func _run() -> void:
 		and is_equal_approx(icon_box.content_margin_left, icon_padding)
 		and is_equal_approx(icon_box.content_margin_top, icon_padding)
 		and is_equal_approx(inventory_button.custom_minimum_size.x,
-			44.0 + icon_padding * 2.0)
+			40.0 + icon_padding * 2.0)
 		and inventory_button.vertical_icon_alignment == VERTICAL_ALIGNMENT_CENTER,
 		"bottom HUD icons are padded off their neighbours and centred in their box")
 	var chat_tabs: Control = main.get_node("GameView/ChatTabs") as Control
@@ -496,11 +496,11 @@ func _run() -> void:
 		and stats_tabs.get_tab_title(0) == "Statistics"
 		and stats_tabs.get_tab_title(1) == "Knowledge"
 		and stats_tabs.get_tab_title(2) == "Counters"
-		and stats_tabs.get_tab_title(3) == "Session Experience",
+		and stats_tabs.get_tab_title(3) == "Session",
 		"statistics frame provides the four Eternal Lands-style tabs")
 	_expect(main.get_node("GameView/StatsPanel/Content/Header/StatsClose") is Button
 		and main.get_node("GameView/StatsPanel/Content/StatsTabs/Counters/CounterColumns/CounterCategories") is ItemList
-		and main.get_node("GameView/StatsPanel/Content/StatsTabs/Session Experience/SessionContent/SessionXpText") is RichTextLabel,
+		and main.get_node("GameView/StatsPanel/Content/StatsTabs/Session/SessionContent/SessionXpText") is RichTextLabel,
 		"statistics has close, counters, session XP, and perks-ready content")
 	for meter_path: String in [
 		"GameView/Quickbar/QuickRows/BottomMeters/ManaMeter/EtherBottom",

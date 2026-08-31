@@ -141,7 +141,8 @@ var map_markers: Dictionary = {}
 const LOCAL_CHAT_CHANNEL := 254
 
 func append_local_line(text: String) -> void:
-	chat_lines.append({"channel": LOCAL_CHAT_CHANNEL, "text": text})
+	chat_lines.append({"channel": LOCAL_CHAT_CHANNEL, "text": text,
+		"stamp": Time.get_time_string_from_system()})
 	if chat_lines.size() > 1000:
 		chat_lines.pop_front()
 	state_changed.emit(&"chat")
@@ -717,7 +718,10 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			active_channel_index = clampi(int(event.active_index), 0, 2)
 			state_changed.emit(&"channels")
 		"chat":
-			chat_lines.append({"channel": event.channel, "text": event.text})
+			# The arrival time rides with the line, the way Eternal Lands
+			# stamps every chat line as it lands; rendering may show or hide it.
+			chat_lines.append({"channel": event.channel, "text": event.text,
+				"stamp": Time.get_time_string_from_system()})
 			if chat_lines.size() > 1000:
 				chat_lines.pop_front()
 			state_changed.emit(&"chat")
@@ -886,7 +890,8 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"protocol_unknown")
 
 func append_local_message(text: String, channel: int = 255) -> void:
-	chat_lines.append({"channel": channel, "text": text})
+	chat_lines.append({"channel": channel, "text": text,
+		"stamp": Time.get_time_string_from_system()})
 	if chat_lines.size() > 1000:
 		chat_lines.pop_front()
 	state_changed.emit(&"chat")

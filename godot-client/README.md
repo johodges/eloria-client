@@ -29,6 +29,8 @@ The initial screen connects over real TCP and sends the server's real `LOG_IN` f
 - `Tab`: toggle the full map. `Alt+M`: toggle the minimap; drag its thick compass border and right-click it for north-up, player-up, or viewport-up orientation.
 - `T`: focus chat; `Esc`: dismiss it. Backtick/tilde toggles full chat history.
 - `Alt+A`: attack the selected target. `Alt+S`: sit or stand.
+- The Eternal Lands window keys: `Ctrl+S` spells, `Ctrl+M` manufacture, `Ctrl+J` emotes, `Ctrl+G` quest journal, `Ctrl+B` buddies, `Ctrl+A` stats, `Ctrl+T` ranging, `Ctrl+H` help, `Ctrl+N` notepad, `Ctrl+O` options, `Ctrl+L` mail, `Ctrl+E` encyclopedia. All rebindable in Settings → Controls.
+- The right rail carries the legacy misc-window column: skill rows (click one to watch it on the experience bar), the countdown/stopwatch timer (click to start/stop, Shift+click for stopwatch, wheel to set), the knowledge bar, the digital and analog clocks, and the compass. The settings window's HUD tab shows or hides each, plus the FPS readout and the S H P M R G A indicator letters.
 
 ## Test
 

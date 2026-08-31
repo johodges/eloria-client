@@ -26,7 +26,11 @@ const BINDABLE := {
 	"Movement": ["move_north", "move_south", "move_west", "move_east",
 		"turn_left", "turn_right", "recenter_viewport"],
 	"Windows": ["toggle_inventory", "toggle_map", "toggle_minimap",
-		"toggle_console", "toggle_encyclopedia", "chat_focus"],
+		"toggle_console", "toggle_encyclopedia", "chat_focus",
+		"toggle_spells", "toggle_manufacture", "toggle_emotes",
+		"toggle_quest_journal", "toggle_buddy", "toggle_stats",
+		"toggle_ranging", "toggle_help", "toggle_notepad", "toggle_options",
+		"toggle_mail"],
 	"Actions": ["attack_selected", "toggle_sit", "cancel", "connect",
 		"disconnect"],
 	"Items": ["quick_item_1", "quick_item_2", "quick_item_3", "quick_item_4",
@@ -213,6 +217,7 @@ func _build() -> void:
 	tabs.name = "SettingsTabs"
 	tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	column.add_child(tabs)
+	_build_hud()
 	_build_graphics()
 	_build_camera()
 	_build_gameplay()
@@ -222,6 +227,23 @@ func _build() -> void:
 	capture_label.name = "SettingsCapture"
 	capture_label.hide()
 	column.add_child(capture_label)
+
+## The HUD switches, worded the way Eternal Lands' HUD options tab words them.
+## Each one shows or hides a piece of the fixed HUD; main.gd applies and
+## persists them.
+func _build_hud() -> void:
+	var page := VBoxContainer.new()
+	page.name = "HUD"
+	tabs.add_child(page)
+	_add_toggle(page, "show_fps", "Show FPS", true)
+	_add_toggle(page, "analog_clock", "Analog Clock", true)
+	_add_toggle(page, "digital_clock", "Digital Clock", true)
+	_add_toggle(page, "show_game_seconds", "Show Game Seconds", true)
+	_add_toggle(page, "knowledge_bar", "Knowledge Bar", true)
+	_add_toggle(page, "hud_timer", "Countdown/Stopwatch Timer", true)
+	_add_toggle(page, "side_stats", "Stats In HUD", true)
+	_add_toggle(page, "indicators", "Show Status Indicators in HUD", true)
+	_add_toggle(page, "chat_timestamps", "Show Time Stamps", true)
 
 func _build_graphics() -> void:
 	var page := VBoxContainer.new()
@@ -288,17 +310,19 @@ func _build_controls() -> void:
 ## panel opens showing what the client actually has rather than the default it
 ## was built with.
 func restore_toggle(key: String, value: bool) -> bool:
-	var toggle: CheckButton = find_child(key, true, false) as CheckButton
+	var toggle: CheckBox = find_child(key, true, false) as CheckBox
 	if toggle == null:
 		return false
 	toggle.set_pressed_no_signal(value)
 	return true
 
+## A square CheckBox rather than a pill switch: Eternal Lands' options are
+## checkboxes, and the whole window is meant to read like its Options window.
 func _add_toggle(page: VBoxContainer, key: String, label: String,
 		value: bool) -> void:
 	var row := HBoxContainer.new()
 	page.add_child(row)
-	var toggle := CheckButton.new()
+	var toggle := CheckBox.new()
 	toggle.name = key
 	toggle.text = label
 	toggle.button_pressed = value
