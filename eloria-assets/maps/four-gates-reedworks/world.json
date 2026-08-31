@@ -34,10 +34,10 @@
     "description": "Cordage, canvas and cloth from mirror reed; dye vats and looms."
   },
   "coordinateTransform": {
-    "metresPerTile": 0.25,
+    "metresPerTile": 1.0,
     "serverOrigin": [
-      512.0,
-      512.0
+      15.0,
+      15.0
     ],
     "origin": [
       0.0,

@@ -36,15 +36,34 @@ TAU = math.pi * 2.0
 SCHEMA_VERSION = "1.0.0"
 ASSET_VERSION = "1.0.0"
 
-# Interiors are small, so a fine tile keeps click-to-move precise indoors while
-# staying inside the legacy 11-bit actor coordinate field.
-COORDINATE_TRANSFORM = {
-    "metresPerTile": 0.25,
-    "serverOrigin": [512.0, 512.0],
-    "origin": [0.0, 0.05, 0.0],
-    "walkingHeight": 0.05,
-    "invertServerY": True,
-}
+## Every Eloria map answers the server at one metre per tile. These interiors
+## were the last that did not: they used a quarter-metre tile so that indoor
+## click-to-move landed precisely, which is a real thing given up here - a
+## sixteen-metre room is sixteen tiles across now rather than sixty-four.
+METRES_PER_TILE = 1.0
+## Collision grids come in multiples of six, so tile grids do too, and each
+## room's carries a few metres of margin outside its own walls.
+TILE_STEP = 6
+TILE_MARGIN = 6.0
+
+
+def coordinate_transform(spec) -> dict:
+    """One interior's grid, sized to the room it addresses.
+
+    The quarter-metre tile implied a 256 m addressable band from a fixed
+    origin of 512, which for a room sixteen metres across described mostly
+    nothing. The grid is measured from the room instead, so the band is a few
+    metres wider than the walls and the origin sits at their centre.
+    """
+    extent = max(spec.width, spec.depth) + 3.0
+    tiles = int(math.ceil((extent + TILE_MARGIN) / TILE_STEP)) * TILE_STEP
+    return {
+        "metresPerTile": METRES_PER_TILE,
+        "serverOrigin": [tiles / 2.0, tiles / 2.0],
+        "origin": [0.0, 0.05, 0.0],
+        "walkingHeight": 0.05,
+        "invertServerY": True,
+    }
 
 # (room_shell_parts key, node name). The outward normals below drive the
 # client-side cutaway, so the two lists have to stay in step.
@@ -180,7 +199,7 @@ def interior_manifest(spec: Interior, stats: dict, extras: dict) -> dict:
             "quarter": spec.quarter,
             "description": spec.blurb,
         },
-        "coordinateTransform": COORDINATE_TRANSFORM,
+        "coordinateTransform": coordinate_transform(spec),
         "spawnPoints": [{"id": "entrance", "node": "Spawn_Entrance",
                          "position": [round(v, 2) for v in spawn],
                          "facing": [0, 0, -1], "default": True}],
