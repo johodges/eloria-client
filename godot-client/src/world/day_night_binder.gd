@@ -22,20 +22,36 @@ extends RefCounted
 const MINUTES_PER_DAY := 360.0
 ## How far the sun's key light falls at midnight, as a fraction of noon. At
 ## 0.06 the moon lit nothing and the world read as flat shapes in the dark;
-## this leaves enough of a key for surfaces to keep their form.
-const NIGHT_SUN_ENERGY := 0.18
+## this leaves enough of a key for surfaces to keep their form as the sun goes
+## down and comes back up.
+const NIGHT_SUN_ENERGY := 0.30
 ## Ambient never reaches zero: a pitch-black world is unplayable and the
 ## legacy client never went there either. 0.22 was still too near it to play
-## in - the ground, the walls and the actors all fell into one silhouette.
-const NIGHT_AMBIENT_ENERGY := 0.42
+## in - the ground, the walls and the actors all fell into one silhouette -
+## and 0.42 only ever reached the maps that declare an ambient colour of their
+## own, because energy does nothing while the sky is the whole ambient source.
+const NIGHT_AMBIENT_ENERGY := 0.95
+## A fraction of noon is not enough on its own: a map authored for an overcast
+## noon of 0.34 would keep a night of 0.32 and stay unplayable while a bright
+## one was fine. Night is floored at a level every map can be walked in.
+const NIGHT_AMBIENT_FLOOR := 0.68
+## Night ambient is not scraped off the night sky. A package that declares no
+## `skyContribution` takes all of its ambient from the sky, so at midnight the
+## only light the ground had was NIGHT_SKY_TOP itself and the maps whose
+## ambient is authored as `skyColor` - the barrens, the moors, the range - went
+## black while the far fog stayed lit. At night the sky's share is turned down
+## and this moonlit colour takes its place; at noon the package's own
+## contribution is restored exactly, so daylight is untouched.
+const NIGHT_AMBIENT_COLOUR := Color(0.56, 0.60, 0.74)
+const NIGHT_SKY_CONTRIBUTION := 0.15
 const NIGHT_SUN_COLOUR := Color(0.46, 0.56, 0.82)
 const DAWN_SUN_COLOUR := Color(1.0, 0.72, 0.46)
 ## The night sky and fog are lifted with the rest: they are most of what the
 ## far half of an outdoor scene is made of, so leaving them near black would
 ## undo the ambient the ground just gained.
-const NIGHT_SKY_TOP := Color(0.09, 0.12, 0.22)
-const NIGHT_SKY_HORIZON := Color(0.19, 0.23, 0.34)
-const NIGHT_FOG := Color(0.16, 0.20, 0.29)
+const NIGHT_SKY_TOP := Color(0.11, 0.14, 0.25)
+const NIGHT_SKY_HORIZON := Color(0.23, 0.27, 0.39)
+const NIGHT_FOG := Color(0.24, 0.28, 0.38)
 ## The sun's arc, in degrees of elevation at noon and below the horizon at
 ## midnight.
 const NOON_ELEVATION := -62.0
@@ -96,8 +112,23 @@ static func apply(manifest: WorldManifest, world_environment: WorldEnvironment,
 
 	var declared_ambient: Dictionary = declared.get("ambient", {}) as Dictionary
 	var noon_ambient: float = float(declared_ambient.get("energy", 0.85))
+	var noon_contribution: float = float(
+		declared_ambient.get("skyContribution", 1.0))
+	# `skyColor` is the region toolchain's spelling of the same ambient colour
+	# the city toolchain calls `color`. WorldEnvironmentBinder only reads the
+	# latter, so for half the outdoor maps this is the first time the colour
+	# they authored is used at all. A package that names none falls back to the
+	# moonlit colour rather than to white, which would bleach its palette.
+	var noon_ambient_colour: Color = _colour(_any(declared_ambient,
+		["color", "colour", "skyColor"]), NIGHT_AMBIENT_COLOUR)
 	environment.ambient_light_energy = lerpf(
-		noon_ambient * NIGHT_AMBIENT_ENERGY, noon_ambient, light)
+		maxf(noon_ambient * NIGHT_AMBIENT_ENERGY, NIGHT_AMBIENT_FLOOR),
+		noon_ambient, light)
+	environment.ambient_light_sky_contribution = lerpf(
+		minf(noon_contribution, NIGHT_SKY_CONTRIBUTION), noon_contribution,
+		light)
+	environment.ambient_light_color = noon_ambient_colour.lerp(
+		NIGHT_AMBIENT_COLOUR, 1.0 - light)
 
 	var sky_material: Variant = environment.sky.sky_material if environment.sky != null else null
 	if sky_material is ProceduralSkyMaterial:
@@ -118,6 +149,13 @@ static func apply(manifest: WorldManifest, world_environment: WorldEnvironment,
 
 static func _either(source: Dictionary, first: String, second: String) -> Variant:
 	return source.get(first, source.get(second))
+
+## The first of several spellings a package might have used for one value.
+static func _any(source: Dictionary, keys: Array[String]) -> Variant:
+	for key: String in keys:
+		if source.has(key):
+			return source[key]
+	return null
 
 static func _colour(value: Variant, fallback: Color) -> Color:
 	if value is String:
