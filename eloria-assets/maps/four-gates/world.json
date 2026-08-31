@@ -33,10 +33,10 @@
     "waterLevel": -2.0
   },
   "coordinateTransform": {
-    "metresPerTile": 0.4651162791,
+    "metresPerTile": 1.0,
     "serverOrigin": [
-      768.0,
-      768.0
+      360.0,
+      360.0
     ],
     "origin": [
       0.0,

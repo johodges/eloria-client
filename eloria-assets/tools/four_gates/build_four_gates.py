@@ -45,9 +45,13 @@ SCHEMA_VERSION = "1.0.0"
 
 # Preserved verbatim from the existing development server binding so the new
 # geometry drops in without any protocol or server-profile change.
+# Four Gates answers the server at one metre per tile, as every other
+# Nymara map already did. Its 714.4 m island is 120 map tiles - 720 walk
+# tiles - so a tile is a metre and the client needs no per-map
+# conversion to talk to it. The origin is the island's centre.
 COORDINATE_TRANSFORM = {
-    "metresPerTile": 0.4651162791,
-    "serverOrigin": [384.0, 384.0],
+    "metresPerTile": 1.0,
+    "serverOrigin": [360.0, 360.0],
     "origin": [0.0, 31.15, 0.0],
     "walkingHeight": 31.15,
     "invertServerY": True,

@@ -3008,7 +3008,9 @@ func _load_server_map() -> void:
 	# The overlay was handed the placeholder adapter _ready() builds before any
 	# map exists - one metre per tile from a (0, 0) origin - and never heard
 	# about the real one, so every marker projected as though its server tile
-	# were a position in metres. The plaza at (768, 768) drew in the far corner
+	# were a position in metres. The plaza, then at tile (768, 768) on the
+	# 1536-tile grid Four Gates used before it went to a metre a tile, drew
+	# in the far corner
 	# of the map instead of the middle of it.
 	map_marker_overlay.configure(full_map_camera, adapter, full_map_viewport.size)
 	for raw_actor_node: Variant in actor_nodes.values():
