@@ -2958,7 +2958,7 @@
     ]
   },
   "performance": {
-    "bytes": 23545448,
+    "bytes": 23508048,
     "nodes": 3073,
     "meshes": 184,
     "materials": 31,

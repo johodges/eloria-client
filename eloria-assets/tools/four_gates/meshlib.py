@@ -531,7 +531,27 @@ def polar_surface(radii: np.ndarray, sides: int, height_fn, material_fn=None,
         f.append(np.stack([a, an, bn], axis=1))
     f = np.concatenate(f)
     if material_fn is not None:
-        m = material_fn(v[f].mean(axis=1), _face_normals_for(v, f))
+        # One class per quad, not one per triangle. A quad's two triangles are
+        # two different planes and their centroids sit a radial step apart, so
+        # asking each of them on its own puts a class edge along the quad's own
+        # diagonal wherever the ground is near a threshold. On the Four Gates
+        # outer rim, where the slope hovers either side of the rock cut-off for
+        # a couple of hundred metres, nine per cent of quads came back split,
+        # and the rock band's edge read from directly above -- which is what the
+        # map and minimap cameras are -- as a comb of interleaved slivers rather
+        # than a shoreline. It looks like z-fighting and is not: each pixel is
+        # drawn once, by whichever half of the quad owns it. A patch of ground
+        # belongs to one surface class; how the mesh happened to cut it into
+        # triangles is not the ground's business.
+        quads = (rows - 1, 2, sides)
+        centre = v[f].mean(axis=1).reshape(*quads, 3).mean(axis=1)
+        normal = _face_normals_for(v, f).reshape(*quads, 3).mean(axis=1)
+        lengths = np.linalg.norm(normal, axis=2, keepdims=True)
+        lengths[lengths == 0.0] = 1.0
+        chosen = material_fn(centre.reshape(-1, 3),
+                             (normal / lengths).reshape(-1, 3))
+        m = np.repeat(np.asarray(chosen).reshape(rows - 1, 1, sides), 2,
+                      axis=1).ravel()
     else:
         m = np.full(f.shape[0], material)
     geo = Geo(v, np.zeros_like(v), np.zeros((v.shape[0], 2)), f, m)

@@ -236,3 +236,52 @@ mistake in different kits:
   a plane per field size instead of six shared ones. `collision.bin` is
   byte-identical, so none of this touches the walk grid or `walkingHeight`.
 - Khronos-shaped validator: 0 errors, 0 warnings.
+
+## 1.0.4 — the outer ring's surface classes
+
+Reported from the client's top-down map: the outer rocky band between the water
+and the map's edge reads as a jagged, speckled interleave rather than an edge,
+and looks like z-fighting.
+
+**It is not z-fighting.** Every pixel out there is drawn once. The terrain is one
+mesh split into five sub-meshes by surface class, and the split is a strict
+partition: 48,832 + 18,310 + 23,028 + 6,556 + 2,154 = 98,880 triangles, which is
+the whole mesh and no triangle twice. Painting every drawn surface a flat colour
+keyed on its mesh and shooting the rim orthographically from above returns one
+unbroken colour under the trees — no second surface is competing for those
+pixels — and `check_zfighting.py` reports nothing in the ring at all. Squeezing
+the map camera's depth range from 0.05–2500 m to 100–700 m, which is a fourfold
+gain in depth resolution, moves seven pixels in a 1024² frame.
+
+**Cause — one class per triangle instead of one per quad.** `polar_surface`
+asked `material_fn` once per *triangle*. A quad's two triangles are two
+different planes and their centroids sit a radial step apart, so wherever the
+ground hovers near a class threshold the two halves of one quad came back in
+different classes and the boundary ran along the quad's own diagonal. On the
+plateau that happened to 1% of quads; on the outer rim, where the slope sits
+either side of the rock cut-off for two hundred metres, it happened to **9%**,
+and since a polar quad out there is 4.5 m radially by 12.8 m around, each tooth
+is a long thin sliver. Seen from 448 m up at 2.2 m per pixel, several thousand
+of those slivers is the "dithered mess".
+
+**Fix.** `meshlib.polar_surface` decides the class once per quad, from the
+quad's centre and its own normal, and hands both triangles that class. A patch
+of ground belongs to one surface class; how the mesh happened to cut it into
+triangles is not the ground's business. This is the Four Gates counterpart of
+the rule the region toolkit already carries — *splitting one field into
+sub-meshes selects quads, not vertices*.
+
+### Verified
+
+- Rock/grass/sand boundaries in the rim read as coherent bands in the packaged
+  minimap render and in a 3072² shot of the in-game full-map framing; the long
+  interleaved slivers are gone. Ground-level views are visually unchanged.
+- 98,880 terrain triangles before and after, and the same 184,589 unique
+  triangles map-wide: no geometry moved, only which sub-mesh owns it. The class
+  mix shifts by under 4% (rock 18,310 → 19,004 triangles).
+- `collision.bin` is byte-identical, so the walk grid and `walkingHeight` are
+  untouched. `check_zfighting.py`: 1,584.2 m² across 83 pairs, unchanged.
+- 37 KB smaller (23,545,448 → 23,508,048 bytes): fewer vertices duplicated at
+  class seams.
+- `rendered_four_gates_map.gd`, `rendered_four_gates_views.gd`,
+  `test_world_lighting.gd` and `test_occluder_fade.gd` all pass.
