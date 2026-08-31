@@ -26,7 +26,8 @@ extends Control
 ##   is here now. The list belongs to the server - it states all of it at
 ##   login - so this page is a view of what arrived rather than a copy the
 ##   client keeps. Adding somebody does not tell them and does not need their
-##   agreement: it is a bookmark, not a friendship.
+##   agreement: it is a bookmark, not a friendship. The add button asks the
+##   server via whoever listens; the window itself sends nothing.
 ##
 ## Skills are still not a page here: the statistics panel already shows every
 ## skill and its experience, so a second one would be a duplicate.
@@ -42,6 +43,7 @@ const RESERVED_RIGHT_RAIL := 96.0
 
 signal notes_changed(text: String)
 signal bookmarks_changed(bookmarks: Array)
+signal buddy_add_requested(name: String)
 
 var panel: PanelContainer
 var tabs: TabContainer
@@ -51,6 +53,7 @@ var links_list: ItemList
 var encyclopedia: EncyclopediaView
 var almanac_text: RichTextLabel
 var buddy_list: ItemList
+var buddy_name_edit: LineEdit
 
 var console_commands: ConsoleCommands
 var bindable: Dictionary = {}
@@ -190,9 +193,21 @@ func _refresh_buddies() -> void:
 		buddy_list.set_item_custom_fg_color(buddy_list.item_count - 1,
 			Color(0.62, 0.88, 0.62) if here else Color(0.66, 0.66, 0.70))
 	if names.is_empty():
-		buddy_list.add_item("Nobody is on your list."
-			+ "  Add one with #add_buddy <name>.")
+		buddy_list.add_item("Nobody is on your list. Add one below.")
 		buddy_list.set_item_disabled(0, true)
+
+## Asks for a name to be put on the list. The window sends nothing itself: it
+## emits, and whoever listens asks the server with #add_buddy. The list only
+## changes when the server answers.
+func _on_add_buddy_pressed() -> void:
+	var buddy_name: String = buddy_name_edit.text.strip_edges()
+	if buddy_name.is_empty():
+		return
+	buddy_name_edit.clear()
+	buddy_add_requested.emit(buddy_name)
+
+func _on_buddy_name_submitted(_text: String) -> void:
+	_on_add_buddy_pressed()
 
 ## The names the player is watching, in the order shown.
 func buddy_names() -> Array[String]:
@@ -371,4 +386,18 @@ func _build() -> void:
 	buddy_list.name = "BuddyList"
 	buddy_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	buddy_page.add_child(buddy_list)
+	var buddy_add_row := HBoxContainer.new()
+	buddy_add_row.name = "BuddyAddRow"
+	buddy_page.add_child(buddy_add_row)
+	buddy_name_edit = LineEdit.new()
+	buddy_name_edit.name = "BuddyNameEdit"
+	buddy_name_edit.placeholder_text = "Name"
+	buddy_name_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	buddy_name_edit.text_submitted.connect(_on_buddy_name_submitted)
+	buddy_add_row.add_child(buddy_name_edit)
+	var add_buddy_button := Button.new()
+	add_buddy_button.name = "AddBuddyButton"
+	add_buddy_button.text = "Add buddy"
+	add_buddy_button.pressed.connect(_on_add_buddy_pressed)
+	buddy_add_row.add_child(add_buddy_button)
 	_refresh_buddies()

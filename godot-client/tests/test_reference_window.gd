@@ -131,8 +131,40 @@ func _run() -> void:
 		"ReferenceWindow/ReferenceBody/ReferenceTabs/Buddies/BuddyList") as ItemList
 	_expect((window.call("buddy_names") as Array).is_empty()
 		and buddy_list.item_count == 1
-		and buddy_list.get_item_text(0).contains("#add_buddy"),
+		and buddy_list.get_item_text(0).contains("Add one below"),
 		"an empty list says how to start one rather than showing nothing")
+
+	# The add row. The window sends nothing itself: it emits the asked-for name
+	# and whoever listens sends #add_buddy; the list changes only when the
+	# server answers.
+	var buddy_name_edit: LineEdit = window.get_node(
+		"ReferenceWindow/ReferenceBody/ReferenceTabs/Buddies/BuddyAddRow/BuddyNameEdit"
+		) as LineEdit
+	var add_buddy_button: Button = window.get_node(
+		"ReferenceWindow/ReferenceBody/ReferenceTabs/Buddies/BuddyAddRow/AddBuddyButton"
+		) as Button
+	_expect(buddy_name_edit != null and add_buddy_button != null
+		and add_buddy_button.text == "Add buddy",
+		"the add row carries a name field and an Add buddy button")
+	var asked: Array = []
+	window.connect("buddy_add_requested",
+		func(buddy_name: String) -> void: asked.append(buddy_name))
+	buddy_name_edit.text = "  Toran  "
+	add_buddy_button.pressed.emit()
+	_expect(asked == ["Toran"] and buddy_name_edit.text.is_empty(),
+		"the button asks for the stripped name and clears the field: %s"
+			% str(asked))
+	add_buddy_button.pressed.emit()
+	buddy_name_edit.text = "   "
+	buddy_name_edit.text_submitted.emit("   ")
+	_expect(asked.size() == 1, "an empty or blank name asks for nothing")
+	buddy_name_edit.text = "Vesna"
+	buddy_name_edit.text_submitted.emit("Vesna")
+	_expect(asked == ["Toran", "Vesna"] and buddy_name_edit.text.is_empty(),
+		"submitting the field works like the button: %s" % str(asked))
+	_expect((window.call("buddy_names") as Array).is_empty(),
+		"and asking alone changes nothing until the server answers")
+
 	app_state.call("_on_packet", 59, _buddy_bytes(2, "Bo"))
 	app_state.call("_on_packet", 59, _buddy_bytes(2, "Cass"))
 	app_state.call("_on_packet", 59, _buddy_bytes(1, "Cass"))
