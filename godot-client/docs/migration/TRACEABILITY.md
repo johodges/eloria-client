@@ -450,3 +450,32 @@ backpack items. `equipment.json` records native count `0` and fallback count
 `1 -> 0`; `data/actors/equipment.json` still contains no native GLB model
 mappings, so this is explicit fallback evidence rather than native equipment
 completion.
+
+## Eternal Lands HUD and window parity pass (2026-08-31)
+
+A screen recording of the live Eternal Lands client (HUD options, window tour)
+was compared frame by frame against this client, alongside the legacy C source
+(`hud*.c`, `icon_window.cpp`, `elwindows.c`, `tabs.c`). What follows is what
+changed to close the visible gaps, and what was deliberately not built.
+
+| Legacy feature | Source | Godot target | Test/evidence | Status |
+|---|---|---|---|---|
+| Icon row, EL order and coverage | `icon_window.cpp` default row | 23 icons in EL's order (walk, sit, look, trade, attack, then window icons), 10 new glyphs drawn into the shared atlas (cells 13-23) | `tests/test_hud_icon_atlas.py` (ICON_COUNT 24); rendered legacy HUD | IMPLEMENTED |
+| Window chrome palette | `elwindows.c` gui_color `#C49163`, black translucent bodies | runtime theme: 1px gui_color borders, translucent black panels, invert-colour hover; rail and lower bar opaque warm brown | rendered legacy HUD, settings, inventory captures | IMPLEMENTED |
+| Side stats list | `hud_misc_window.c` side stats bars | 13 rail rows with per-level fill, watched skill in bright gold, click watches it on the experience bar | rendered legacy HUD | IMPLEMENTED |
+| Countdown/stopwatch timer | `hud_timer.cpp` | rail line "C1:30"/"S0:00": click starts/stops, shift+click swaps mode, middle-click resets, wheel sets the start; green running, red stopped; persisted | rendered legacy HUD | IMPLEMENTED |
+| Knowledge bar | `hud_misc_window.c` research bar | rail bar: "Idle" or NN% from the statistics packet's research fields; click prints what is being read | rendered legacy HUD | IMPLEMENTED |
+| Digital clock seconds + day-dial | `hud_misc_window.c` | H:MM:SS behind "Show Game Seconds"; the analog hand now turns one degree per game minute (a full day per revolution), as the sun-and-moon face expects | rendered legacy HUD | IMPLEMENTED |
+| Status indicator letters | `hud_indicators.cpp` | S H P M R G A at lower right; lit only by honest signals (almanac day, harvest state, unread PMs, ranging lock); P, G, A render unavailable because this server states none of them | rendered legacy HUD | IMPLEMENTED |
+| Bottom bars, EL presentation | `hud_statsbar_window.c` | value left of each bar in `0.8` grey, attribute named on hover; experience bar shows experience-to-go with the watched skill named at its right end | `rendered_legacy_hud.gd` meter-order assertions kept | IMPLEMENTED |
+| FPS display | `Show FPS` option | top-right "FPS: N", toggleable | rendered legacy HUD | IMPLEMENTED |
+| Spells window | `spells.c` grouped spell book | `src/ui/spells_window.gd`: Health/General/Attack/Defense groups from the catalog's effects, dimmed uncastable spells with the blocking reason in red, Cast through the same seam as the quickbar | `tests/test_spells_window.gd`; `rendered_parity_windows.gd` | IMPLEMENTED |
+| Emotes window | `emotes.c` | `src/ui/emotes_window.gd`: Actions category, the emotes this client can play (from its animation table), trigger line, 1s spam throttle; the server remains the judge of names | `tests/test_emotes_window.gd`; `rendered_parity_windows.gd` | IMPLEMENTED |
+| Ranging window | legacy ranging stats window | `src/ui/ranging_window.gd`: the six EL rows, counted from missile packets and ranging experience awards; critical rate honestly "-" | `tests/test_ranging_window.gd`; `rendered_parity_windows.gd` | IMPLEMENTED |
+| Quest journal / mail openers | icon + `#K_QUESTLOG` | the two orphaned extension windows now open from the icon row and Ctrl+G / Ctrl+L | settings-window binding rows | IMPLEMENTED |
+| Buddy add | `buddy.c` Add buddy button | Add buddy field+button on the reference window's Buddies page, asking via `#add_buddy` | `tests/test_reference_window.gd` | IMPLEMENTED |
+| Options HUD tab | `elconfig.c` HUD tab | settings window HUD tab in EL's wording (Show FPS, clocks, seconds, knowledge bar, timer, stats, indicators), persisted under `[hud]` | `tests/test_settings_window.gd` | IMPLEMENTED |
+| Window keybindings | `keys.c` defaults | Ctrl+S/M/J/G/B/A/T/H/N/O/L for spells, manufacture, emotes, quests, buddies, stats, ranging, help, notepad, options, mail - all rebindable | settings Controls tab | IMPLEMENTED |
+| Rules window | server-sent rules | NOT BUILT: the server states no rules, structurally or otherwise; a client-shipped rules page would invent policy | - | BLOCKED |
+| Astrology window | server prose | NOT BUILT: still stated only as chat lines, as the almanac notes record | - | BLOCKED |
+| User menus | `user_menus.cpp` | NOT BUILT: `#alias` covers the commanding half; a `*.menu` bar remains open | - | NOT_STARTED |

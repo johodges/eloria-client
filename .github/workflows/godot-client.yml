@@ -81,6 +81,12 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_audio_director.gd
       - name: Eloria extension window fixtures
         run: godot --headless --path godot-client --script res://tests/test_extension_windows.gd
+      - name: Spells window fixtures
+        run: godot --headless --path godot-client --script res://tests/test_spells_window.gd
+      - name: Emotes window fixtures
+        run: godot --headless --path godot-client --script res://tests/test_emotes_window.gd
+      - name: Ranging window fixtures
+        run: godot --headless --path godot-client --script res://tests/test_ranging_window.gd
       - name: Runtime cost fixtures
         run: godot --headless --path godot-client --script res://tests/test_runtime_performance.gd
       - name: Main scene smoke test
@@ -214,6 +220,16 @@ jobs:
           test -s "$ELORIA_ARTIFACT_DIR/extension-player-info.png"
           test -s "$ELORIA_ARTIFACT_DIR/extension-quest-tracked.png"
           test -s "$ELORIA_ARTIFACT_DIR/extension-marketplace.png"
+      - name: Render the Eternal Lands parity windows
+        run: |
+          mkdir -p "$ELORIA_ARTIFACT_DIR"
+          xvfb-run -a -s "-screen 0 1280x720x24" godot --display-driver x11 --audio-driver Dummy --rendering-method gl_compatibility --path godot-client --script res://tests/integration/rendered_parity_windows.gd 2>&1 | tee "$ELORIA_ARTIFACT_DIR/parity-windows.log"
+          ! grep -E "SCRIPT ERROR|Parse Error|FAIL|Unable to create DisplayServer|all display drivers failed" "$ELORIA_ARTIFACT_DIR/parity-windows.log"
+          grep -q "rendered parity windows: PASS" "$ELORIA_ARTIFACT_DIR/parity-windows.log"
+          test -s "$ELORIA_ARTIFACT_DIR/parity-spells-window.png"
+          test -s "$ELORIA_ARTIFACT_DIR/parity-emotes-window.png"
+          test -s "$ELORIA_ARTIFACT_DIR/parity-ranging-window.png"
+          test -s "$ELORIA_ARTIFACT_DIR/parity-settings-hud-tab.png"
       - name: Render server-placed map markers
         run: |
           mkdir -p "$ELORIA_ARTIFACT_DIR"
