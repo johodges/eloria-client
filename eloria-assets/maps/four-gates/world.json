@@ -1627,18 +1627,48 @@
   },
   "minimap": {
     "image": "minimap.webp",
+    "imageSize": [
+      1620,
+      1620
+    ],
+    "pixelsPerMetre": 1.0,
+    "worldMin": [
+      -810.0,
+      -810.0
+    ],
+    "worldMax": [
+      810.0,
+      810.0
+    ],
+    "northAxis": "-Z",
+    "orientation": "north-up",
+    "projection": "orthographic-top-down",
+    "renderedFrom": "world.glb",
+    "transform": {
+      "pixelX": {
+        "scale": 1.0,
+        "offset": 810.0
+      },
+      "pixelY": {
+        "scale": 1.0,
+        "offset": 810.0
+      },
+      "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
+    },
+    "note": "Every Eloria minimap is drawn at one pixel to the metre, so the image's pixel size is the map's size in metres.",
     "runtime": "live-subviewport",
-    "note": "The HUD minimap and tab map are rendered live from this GLB by the Godot client; minimap.webp is the packaged cartography derived from the same final geometry.",
-    "pixelsPerMetre": 0.6464646464646465,
+    "file": "minimap.webp",
+    "pixels": 1620,
+    "size": [
+      1620,
+      1620
+    ],
+    "metresPerPixel": 1.0,
     "centre": [
       0.0,
       0.0
     ],
-    "northUp": true,
-    "size": [
-      1024,
-      1024
-    ]
+    "northUp": true
   },
   "collision": {
     "nodeNames": [

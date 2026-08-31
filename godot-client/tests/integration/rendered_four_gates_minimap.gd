@@ -3,8 +3,15 @@ extends SceneTree
 ## Renders the packaged Four Gates minimap straight from the shipped world.glb
 ## with an orthographic top-down camera, so the cartography can never drift from
 ## the geometry it describes.
+##
+## The image is sized from the geometry rather than fixed, so that every map's
+## minimap is drawn at the same scale: one pixel to the metre. A fixed 1024
+## square meant each map's cartography was drawn at whatever density its own
+## size happened to imply, and the four families of map had drifted to four
+## different scales.
 
-const SIZE := Vector2i(1024, 1024)
+## The scale every Eloria minimap is drawn at. One pixel, one metre.
+const PIXELS_PER_METRE := 1.0
 
 func _init() -> void:
 	call_deferred("_run")
@@ -14,7 +21,6 @@ func _run() -> void:
 	if out.is_empty():
 		out = ProjectSettings.globalize_path(
 			"res://../eloria-assets/maps/four-gates/minimap.png")
-	root.size = SIZE
 	var scene: Node3D = (load("res://src/dev/world_validation.tscn") as PackedScene
 		).instantiate() as Node3D
 	root.add_child(scene)
@@ -48,6 +54,10 @@ func _run() -> void:
 	var maximum: Array = bounds["max"]
 	var extent: float = maxf(float(maximum[0]) - float(minimum[0]),
 		float(maximum[2]) - float(minimum[2]))
+	# The viewport is the map's own size in metres, so the scale is the standard
+	# whatever the map measures.
+	var pixels: int = int(ceil(extent * PIXELS_PER_METRE))
+	root.size = Vector2i(pixels, pixels)
 	var camera: Camera3D = scene.get_node("Camera") as Camera3D
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
 	camera.size = extent
@@ -62,5 +72,6 @@ func _run() -> void:
 	RenderingServer.force_draw(false)
 	var image: Image = root.get_texture().get_image()
 	var error: int = image.save_png(out)
-	print("minimap saved=", out, " ok=", error == OK, " extent_m=", extent)
+	print("minimap saved=", out, " ok=", error == OK, " extent_m=", extent,
+		" pixels=", pixels, " px_per_m=", float(pixels) / extent)
 	quit(0 if error == OK else 1)

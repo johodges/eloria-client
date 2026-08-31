@@ -2813,9 +2813,12 @@
     ]
   },
   "minimap": {
-    "file": "minimap.webp",
-    "pixels": 768,
-    "metresPerPixel": 0.7487,
+    "image": "minimap.webp",
+    "imageSize": [
+      575,
+      575
+    ],
+    "pixelsPerMetre": 1.0,
     "worldMin": [
       -174.0,
       -401.0
@@ -2826,7 +2829,32 @@
     ],
     "northAxis": "-Z",
     "orientation": "north-up",
-    "renderedFrom": "final geometry (offline rasteriser)"
+    "projection": "orthographic-top-down",
+    "renderedFrom": "final geometry (offline rasteriser)",
+    "transform": {
+      "pixelX": {
+        "scale": 1.0,
+        "offset": 174.0
+      },
+      "pixelY": {
+        "scale": 1.0,
+        "offset": 401.0
+      },
+      "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
+    },
+    "note": "Every Eloria minimap is drawn at one pixel to the metre, so the image's pixel size is the map's size in metres.",
+    "file": "minimap.webp",
+    "pixels": 575,
+    "size": [
+      575,
+      575
+    ],
+    "metresPerPixel": 1.0,
+    "centre": [
+      113.5,
+      -113.5
+    ],
+    "northUp": true
   },
   "lodGroups": [
     {

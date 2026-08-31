@@ -84,6 +84,57 @@ def navigation_polygons() -> List[dict]:
     return polygons
 
 
+## Every Eloria minimap is drawn at this scale. One pixel, one metre.
+MINIMAP_PIXELS_PER_METRE = 1.0
+
+
+def _minimap_block(bounds: dict) -> dict:
+    """The packaged cartography, at the scale every map now shares.
+
+    The square is the mesh's own bounds, because that is what the renderer
+    frames. Deriving it from `WORLD_EDGE` instead declared a 1584 m square for
+    an image that covers 1620 m, so the stated scale was 2% out from the day it
+    was written. The old key spellings are kept beside the new ones for one
+    release; at this scale `metresPerPixel` and `pixelsPerMetre` are the same
+    number anyway.
+    """
+    low, high = bounds["min"], bounds["max"]
+    extent = max(float(high[0]) - float(low[0]), float(high[2]) - float(low[2]))
+    pixels = int(round(extent * MINIMAP_PIXELS_PER_METRE))
+    min_x = (float(low[0]) + float(high[0])) * 0.5 - extent * 0.5
+    min_z = (float(low[2]) + float(high[2])) * 0.5 - extent * 0.5
+    return {
+        "image": "minimap.webp",
+        "imageSize": [pixels, pixels],
+        "pixelsPerMetre": MINIMAP_PIXELS_PER_METRE,
+        "worldMin": [round(min_x, 4), round(min_z, 4)],
+        "worldMax": [round(min_x + extent, 4), round(min_z + extent, 4)],
+        "northAxis": "-Z",
+        "orientation": "north-up",
+        "projection": "orthographic-top-down",
+        "renderedFrom": "world.glb",
+        "runtime": "live-subviewport",
+        "generator": "godot-client/tests/integration/rendered_four_gates_minimap.gd",
+        "transform": {
+            "pixelX": {"scale": MINIMAP_PIXELS_PER_METRE,
+                       "offset": round(-min_x * MINIMAP_PIXELS_PER_METRE, 4)},
+            "pixelY": {"scale": MINIMAP_PIXELS_PER_METRE,
+                       "offset": round(-min_z * MINIMAP_PIXELS_PER_METRE, 4)},
+            "formula": "pixel_x = world_x * scale + offset;"
+                       " pixel_y = world_z * scale + offset",
+        },
+        "note": ("Every Eloria minimap is drawn at one pixel to the metre, so"
+                 " the image's pixel size is the map's size in metres."),
+        "file": "minimap.webp",
+        "pixels": pixels,
+        "size": [pixels, pixels],
+        "metresPerPixel": round(1.0 / MINIMAP_PIXELS_PER_METRE, 6),
+        "centre": [round(min_x + extent * 0.5, 4),
+                   round(min_z + extent * 0.5, 4)],
+        "northUp": True,
+    }
+
+
 def build(stats: dict, bounds: dict, landmark_records: List[dict],
           collision_nodes: List[str], coordinate_transform: dict,
           asset_id: str, asset_name: str, asset_version: str,
@@ -345,17 +396,7 @@ def build(stats: dict, bounds: dict, landmark_records: List[dict],
                  "loop": "waterfall", "gain": 0.7, "radius": 120},
             ],
         },
-        "minimap": {
-            "image": "minimap.webp",
-            "runtime": "live-subviewport",
-            "note": ("The HUD minimap and tab map are rendered live from this GLB by "
-                     "the Godot client; minimap.webp is the packaged cartography "
-                     "derived from the same final geometry."),
-            "pixelsPerMetre": 1024.0 / (T.WORLD_EDGE * 2.0),
-            "centre": [0.0, 0.0],
-            "northUp": True,
-            "size": [1024, 1024],
-        },
+        "minimap": _minimap_block(bounds),
         "collision": {
             "nodeNames": collision_nodes,
             "nodesAreProxies": True,

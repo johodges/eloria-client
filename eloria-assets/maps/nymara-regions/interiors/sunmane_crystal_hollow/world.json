@@ -587,14 +587,11 @@
   },
   "minimap": {
     "image": "minimap.webp",
-    "projection": "orthographic-top-down",
-    "renderedFrom": "world.glb",
-    "generator": "godot-client/tests/integration/sunmane_cave_minimap.gd, rendered through the client's own WorldLoader",
-    "northAxis": "-Z",
     "imageSize": [
-      512,
-      512
+      60,
+      60
     ],
+    "pixelsPerMetre": 1.0,
     "worldMin": [
       -30.0,
       -30.0
@@ -603,18 +600,35 @@
       30.0,
       30.0
     ],
-    "pixelsPerMetre": 8.533333,
+    "northAxis": "-Z",
+    "orientation": "north-up",
+    "projection": "orthographic-top-down",
+    "renderedFrom": "world.glb",
     "transform": {
       "pixelX": {
-        "scale": 8.533333,
-        "offset": 256.0
+        "scale": 1.0,
+        "offset": 30.0
       },
       "pixelY": {
-        "scale": 8.533333,
-        "offset": 256.0
+        "scale": 1.0,
+        "offset": 30.0
       },
       "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
-    }
+    },
+    "note": "Every Eloria minimap is drawn at one pixel to the metre, so the image's pixel size is the map's size in metres.",
+    "generator": "godot-client/tests/integration/sunmane_cave_minimap.gd, rendered through the client's own WorldLoader",
+    "file": "minimap.webp",
+    "pixels": 60,
+    "size": [
+      60,
+      60
+    ],
+    "metresPerPixel": 1.0,
+    "centre": [
+      0.0,
+      0.0
+    ],
+    "northUp": true
   },
   "portals": [
     {

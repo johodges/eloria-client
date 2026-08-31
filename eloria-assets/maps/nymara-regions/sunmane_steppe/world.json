@@ -3410,16 +3410,11 @@
   },
   "minimap": {
     "image": "minimap.webp",
-    "fullMapImage": "full-map.webp",
-    "previewImage": "minimap-preview.webp",
-    "projection": "orthographic-top-down",
-    "renderedFrom": "world.glb",
-    "generator": "godot-client/tests/integration/sunmane_minimap.gd, rendered through the client's own WorldLoader",
-    "northAxis": "-Z",
     "imageSize": [
-      1024,
-      1024
+      280,
+      280
     ],
+    "pixelsPerMetre": 1.0,
     "worldMin": [
       -104.0,
       -176.0
@@ -3428,18 +3423,37 @@
       176.0,
       104.0
     ],
-    "pixelsPerMetre": 3.657143,
+    "northAxis": "-Z",
+    "orientation": "north-up",
+    "projection": "orthographic-top-down",
+    "renderedFrom": "world.glb",
     "transform": {
       "pixelX": {
-        "scale": 3.657143,
-        "offset": 380.3429
+        "scale": 1.0,
+        "offset": 104.0
       },
       "pixelY": {
-        "scale": 3.657143,
-        "offset": 643.6571
+        "scale": 1.0,
+        "offset": 176.0
       },
       "formula": "pixel_x = world_x * scale + offset; pixel_y = world_z * scale + offset"
-    }
+    },
+    "note": "Every Eloria minimap is drawn at one pixel to the metre, so the image's pixel size is the map's size in metres.",
+    "generator": "godot-client/tests/integration/sunmane_minimap.gd, rendered through the client's own WorldLoader",
+    "fullMapImage": "full-map.webp",
+    "previewImage": "minimap-preview.webp",
+    "file": "minimap.webp",
+    "pixels": 280,
+    "size": [
+      280,
+      280
+    ],
+    "metresPerPixel": 1.0,
+    "centre": [
+      36.0,
+      -36.0
+    ],
+    "northUp": true
   },
   "ambientPopulation": {
     "note": "Scenery livestock instanced by the client's ambient population system. They carry no actor id and no collision, and are deliberately not baked into the world mesh.",

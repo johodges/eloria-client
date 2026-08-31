@@ -319,3 +319,41 @@ from a grid line geometrically rather than by face order, and counts quads whose
 two halves disagree. Against the per-triangle rule that count is 9 for
 `grid_surface` and 40 for `polar_surface`; it is 0 for both now. No geometry
 changed — `world.glb` is untouched by this entry.
+
+## 1.0.6 — one pixel to the metre
+
+Four families of map had grown four answers to "how big is a metre on the
+minimap": the ten Nymara regions at 1.336 px/m, Four Gates at 0.646 (declared;
+0.632 as actually rendered), the Sunmane steppe at 3.657, and the two Sunmane
+cave interiors at 8.533. They also described it three different ways —
+`pixelsPerMetre` against `metresPerPixel`, `size` against `pixels` against
+`imageSize`, `image` against `file` — so no two could be compared without a
+conversion first.
+
+Every minimap is now drawn at **one pixel to the metre**. That makes the image's
+pixel dimensions the map's own size in metres, and it makes the two rival
+spellings of the scale numerically identical: at 1.0, `metresPerPixel` and
+`pixelsPerMetre` are the same number, so the old keys stay beside the new ones
+for one release without ever disagreeing with them.
+
+Four Gates goes 1024 → 1620 px. It is the only map whose image had to grow, so
+it was re-rendered rather than upscaled: `rendered_four_gates_minimap.gd` now
+sizes its viewport from the geometry instead of a fixed 1024 square, which is
+also what removes the 2.3% error between the declared scale and the image — the
+manifest said 1584 m for a picture covering 1620 m.
+
+The remaining thirteen were resampled down, and every generator was changed to
+keep the standard on the next rebuild: the ten region build scripts, the Four
+Gates manifest builder (which now takes the square from the mesh bounds it
+already writes, rather than from `WORLD_EDGE`), and the two Sunmane manifest
+builders.
+
+`eloria-assets/tools/unify_minimap_scale.py` applies and re-checks the standard,
+and is idempotent — a second run reports every map already at 1.0000 and
+rewrites nothing.
+
+**Known consequence:** at this scale the two Sunmane cave interiors, which are
+60 m across, become 60 × 60 px images. They are legible as a shape and not much
+else. Nothing reads them today beyond the invasion assistant's map picker, and
+exempting interiors is a one-value change in the tool if a cave map is ever
+wanted at a useful size.

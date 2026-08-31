@@ -322,7 +322,11 @@ def build_collision(build: RegionBuild) -> tuple[bytes, int, int, dict]:
 
 
 # --------------------------------------------------------------------------
-def render_minimap(build: RegionBuild, sets, path: Path, size: int = 768) -> dict:
+## Every Eloria minimap is drawn at this scale. One pixel, one metre.
+MINIMAP_PIXELS_PER_METRE = 1.0
+
+
+def render_minimap(build: RegionBuild, sets, path: Path, size: int = 0) -> dict:
     """Top-down capture of the finished geometry, not a hand-drawn map."""
     import math
 
@@ -352,14 +356,38 @@ def render_minimap(build: RegionBuild, sets, path: Path, size: int = 768) -> dic
                          shadow_center=(centre_x, 40.0, centre_z),
                          shadow_radius=extent * 0.62, near=240.0, far=1700.0)
     image.save(path, "WEBP", quality=88, method=5)
+    # Every Eloria minimap is drawn at one pixel to the metre, so the image's
+    # pixel size is the map's own size in metres and no two maps' cartography
+    # is drawn at different densities. The old key spellings are written
+    # alongside the new ones for one release; at this scale `metresPerPixel`
+    # and `pixelsPerMetre` are the same number anyway.
+    min_x, min_z = REG.PLAY_MIN_X, REG.PLAY_MIN_Z
     return {
-        "file": path.name,
-        "pixels": size,
-        "metresPerPixel": round(extent / size, 4),
-        "worldMin": [REG.PLAY_MIN_X, REG.PLAY_MIN_Z],
-        "worldMax": [REG.PLAY_MIN_X + extent, REG.PLAY_MIN_Z + extent],
+        "image": path.name,
+        "imageSize": [size, size],
+        "pixelsPerMetre": MINIMAP_PIXELS_PER_METRE,
+        "worldMin": [min_x, min_z],
+        "worldMax": [min_x + extent, min_z + extent],
         "northAxis": "-Z",
         "orientation": "north-up",
+        "projection": "orthographic-top-down",
+        "renderedFrom": "final geometry (offline rasteriser)",
+        "transform": {
+            "pixelX": {"scale": MINIMAP_PIXELS_PER_METRE,
+                       "offset": round(-min_x * MINIMAP_PIXELS_PER_METRE, 4)},
+            "pixelY": {"scale": MINIMAP_PIXELS_PER_METRE,
+                       "offset": round(-min_z * MINIMAP_PIXELS_PER_METRE, 4)},
+            "formula": "pixel_x = world_x * scale + offset;"
+                       " pixel_y = world_z * scale + offset",
+        },
+        "note": ("Every Eloria minimap is drawn at one pixel to the metre, so"
+                 " the image's pixel size is the map's size in metres."),
+        "file": path.name,
+        "pixels": size,
+        "size": [size, size],
+        "metresPerPixel": round(1.0 / MINIMAP_PIXELS_PER_METRE, 6),
+        "centre": [min_x + extent * 0.5, min_z + extent * 0.5],
+        "northUp": True,
     }
 
 

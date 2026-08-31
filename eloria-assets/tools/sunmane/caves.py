@@ -49,6 +49,9 @@ MAP_ROOT = ASSET_ROOT / "maps" / "nymara-regions" / "interiors"
 
 CELL = 0.5                    # metres between field samples
 HALF_EXTENT = 30.0            # metres from the map centre to its edge
+
+## Every Eloria minimap is drawn at this scale. One pixel, one metre.
+MINIMAP_PIXELS_PER_METRE = 1.0
 WALL_BLEND = 3.2              # metres over which the roof falls to the wall
 WALL_GAP = 0.28               # roof height held at the wall, so no crack forms
 # The shell is one continuous rock surface tens of metres across, so its
@@ -670,8 +673,10 @@ def build_manifest(shell: Shell, builder: Builder, statistics: dict) -> dict:
             "groundedBy": "navigation-surface-raycast",
             "note": chamber.label})
 
-    image = 512
     span = HALF_EXTENT * 2.0
+    # Every Eloria minimap is drawn at one pixel to the metre, so the
+    # image is the cave's own size rather than a fixed square.
+    image = int(round(span * MINIMAP_PIXELS_PER_METRE))
     return {
         "schemaVersion": SCHEMA_VERSION,
         "assetVersion": ASSET_VERSION,
