@@ -488,8 +488,19 @@ def grid_surface(x0, x1, z0, z1, nx, nz, height_fn, material_fn=None,
     # wound so the surface normal points +Y for an upward-facing height field
     f = np.concatenate([np.stack([a, c, b], axis=1), np.stack([a, d, c], axis=1)])
     if material_fn is not None:
-        centres = v[f].mean(axis=1)
-        m = material_fn(centres, _face_normals_for(v, f))
+        # One class per quad, as in polar_surface and for the same reason: a
+        # quad's two triangles are two different planes, so asking each of them
+        # on its own puts a class edge along the quad's own diagonal wherever
+        # the ground is near a threshold. Here the two triangles of a quad are
+        # a fixed stride apart rather than adjacent - every first triangle is
+        # emitted before any second one - so the pairing is by that stride.
+        quads = a.shape[0]
+        centre = v[f].mean(axis=1).reshape(2, quads, 3).mean(axis=0)
+        normal = _face_normals_for(v, f).reshape(2, quads, 3).mean(axis=0)
+        lengths = np.linalg.norm(normal, axis=1, keepdims=True)
+        lengths[lengths == 0.0] = 1.0
+        chosen = np.asarray(material_fn(centre, normal / lengths))
+        m = np.tile(chosen, 2)
     else:
         m = np.full(f.shape[0], material)
     geo = Geo(v, np.zeros_like(v), np.zeros((v.shape[0], 2)), f, m)

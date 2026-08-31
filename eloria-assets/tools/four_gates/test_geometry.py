@@ -102,6 +102,61 @@ SURFACES = {
 }
 
 
+def split_quads(geo, diagonal_fn) -> int:
+    """Quads whose two triangles were given different surface classes.
+
+    A quad's two triangles meet along its diagonal; two triangles from
+    neighbouring quads meet along a grid line. `diagonal_fn` tells the two
+    apart from the shared edge's endpoints alone, so this never has to know how
+    the surface happened to order its faces. A class boundary is allowed to run
+    along a grid line -- that is what a boundary between two patches of ground
+    looks like -- but a boundary along a diagonal means one patch of ground was
+    handed to two classes, which reads from above as a comb of slivers.
+    """
+    shared: dict[tuple[int, int], list[int]] = {}
+    for face_index, face in enumerate(geo.f):
+        for first, second in ((0, 1), (1, 2), (2, 0)):
+            edge = (int(min(face[first], face[second])),
+                    int(max(face[first], face[second])))
+            shared.setdefault(edge, []).append(face_index)
+    split = 0
+    for (lo, hi), faces in shared.items():
+        if len(faces) != 2:
+            continue
+        if not diagonal_fn(geo.v[lo], geo.v[hi]):
+            continue
+        if geo.m[faces[0]] != geo.m[faces[1]]:
+            split += 1
+    return split
+
+
+def cartesian_diagonal(p, q) -> bool:
+    return abs(float(p[0]) - float(q[0])) > 1e-4 and abs(float(p[2]) - float(q[2])) > 1e-4
+
+
+def polar_diagonal(p, q) -> bool:
+    radii = [math.hypot(float(v[0]), float(v[2])) for v in (p, q)]
+    angles = [math.atan2(float(v[2]), float(v[0])) for v in (p, q)]
+    turn = abs(angles[0] - angles[1]) % math.tau
+    turn = min(turn, math.tau - turn)
+    return abs(radii[0] - radii[1]) > 1e-4 and turn > 1e-6
+
+
+# A surface class chosen per triangle rather than per quad splits a quad along
+# its own diagonal wherever the ground crosses a threshold, so each of these
+# uses a field that crosses one right through the middle of the sheet.
+CLASSIFIED = {
+    "grid_surface": (lambda: M.grid_surface(
+        -50, 50, -50, 50, 9, 9, lambda X, Z: 3.0 * np.sin(X * 0.05),
+        material_fn=lambda pts, nrm: (pts[:, 1] > 0.0).astype(np.int32)),
+        cartesian_diagonal),
+    "polar_surface": (lambda: M.polar_surface(
+        np.linspace(10, 200, 21), 47, lambda X, Z: 3.0 * np.sin(X * 0.05),
+        material_fn=lambda pts, nrm: (pts[:, 1] > 0.0).astype(np.int32)),
+        polar_diagonal),
+}
+
+
 def main() -> int:
     failures = []
     print("closed primitives -- signed volume must be positive")
@@ -129,6 +184,18 @@ def main() -> int:
         if mean_y < 0.9:
             failures.append(f"{name}: surface normals point away from +Y ({mean_y:.3f})")
         print(f"  {name:18s} mean normal Y={mean_y:6.3f}")
+
+    print("\nclassified surfaces -- a quad belongs to one surface class")
+    for name, (factory, diagonal_fn) in CLASSIFIED.items():
+        geo = factory()
+        split = split_quads(geo, diagonal_fn)
+        classes = len(np.unique(geo.m))
+        if classes < 2:
+            failures.append(
+                f"{name}: the test field produced one class, so it proves nothing")
+        if split:
+            failures.append(f"{name}: {split} quad(s) split across two classes")
+        print(f"  {name:18s} classes={classes} split_quads={split}")
 
     print()
     if failures:

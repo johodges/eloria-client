@@ -285,3 +285,37 @@ sub-meshes selects quads, not vertices*.
   class seams.
 - `rendered_four_gates_map.gd`, `rendered_four_gates_views.gd`,
   `test_world_lighting.gd` and `test_occluder_fade.gd` all pass.
+
+## 1.0.5 — the packaged minimap catches up
+
+`minimap.webp` had drifted from the geometry it claims to be derived from. It
+was stale before 1.0.4 and 1.0.4 moved the ground under it again, so the
+packaged cartography showed a rim that no longer existed.
+
+It is regenerated from `rendered_four_gates_minimap.gd`, which is the fixture
+written for exactly this — an orthographic top-down shot of the shipped
+`world.glb`, 1024², north up, centred on the mesh, "so the cartography can never
+drift". Re-encoded at WebP quality 92, which lands at 261 KB against the old
+303 KB.
+
+A note for anyone comparing the two: WebP at this quality moves fine dithered
+ground by up to 95 per channel on its own, so a large maximum per-pixel
+difference against a fresh render is not by itself evidence that the image came
+from different geometry.
+
+The manifest's `minimap.pixelsPerMetre` is computed from `WORLD_EDGE * 2`
+(1584 m) while the render frames the mesh's own bounds (1620 m), so the declared
+scale is 2.3% out. Nothing reads it — the client loads the image and renders its
+live minimap from the GLB — so it is recorded here rather than changed.
+
+### Also in this build
+
+`meshlib.grid_surface` carried the same per-triangle classification bug that
+1.0.4 fixed in `polar_surface`, latent because no caller passes it a
+`material_fn`. It now decides the class per quad as well, and
+`test_geometry.py` grew a check that fails on the old behaviour for both
+surfaces: it pairs triangles across their shared edge, tells a quad's diagonal
+from a grid line geometrically rather than by face order, and counts quads whose
+two halves disagree. Against the per-triangle rule that count is 9 for
+`grid_surface` and 40 for `polar_surface`; it is 0 for both now. No geometry
+changed — `world.glb` is untouched by this entry.
