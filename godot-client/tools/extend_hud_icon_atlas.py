@@ -28,7 +28,7 @@ SCALE = 4
 BIG = CELL * SCALE  # 128
 EXISTING = 13
 NEW_FIRST = 13
-NEW_COUNT = 11
+NEW_COUNT = 12
 LUMA = np.array([0.2126, 0.7152, 0.0722])
 
 
@@ -294,11 +294,27 @@ def glyph_minimap(d, e, p) -> None:
     d.line((92, 88, 104, 100), fill=p["gold_mid"], width=10)
 
 
+def glyph_stand(d, e, p) -> None:
+    """A figure under a rising chevron. Eternal Lands swaps its sit icon for a
+    stand icon while you are seated, so this is the pair to the seated one in
+    cell 7: it says what the click does, not what you are doing."""
+    d.polygon([(64, 14), (80, 30), (71, 30), (71, 36), (57, 36), (57, 30),
+               (48, 30)], fill=p["gold_hi"])
+    d.ellipse((55, 40, 73, 58), fill=p["pale_hi"], outline=p["pale_dark"], width=3)
+    d.line((59, 88, 57, 106), fill=p["pale_mid"], width=10)
+    d.line((69, 88, 71, 106), fill=p["pale_mid"], width=10)
+    d.line((57, 66, 47, 84), fill=p["pale_mid"], width=9)
+    d.line((71, 66, 81, 84), fill=p["pale_mid"], width=9)
+    d.rounded_rectangle((54, 60, 74, 92), radius=9, fill=p["pale_hi"],
+                        outline=p["pale_dark"], width=2)
+
+
 GLYPHS = [
     ("use", glyph_use), ("spells", glyph_spells), ("emotes", glyph_emotes),
     ("quest", glyph_quest), ("info", glyph_info), ("buddy", glyph_buddy),
     ("console", glyph_console), ("help", glyph_help), ("options", glyph_options),
     ("ranging", glyph_ranging), ("minimap", glyph_minimap),
+    ("stand", glyph_stand),
 ]
 
 

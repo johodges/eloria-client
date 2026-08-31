@@ -152,6 +152,7 @@ var map_light_root: Node3D
 @onready var item_list_delete: Button = %ItemListDelete
 @onready var item_list_get: Button = %ItemListGet
 @onready var item_lists_close: Button = %ItemListsClose
+@onready var sit_button: Button = %SitButton
 @onready var attack_button: Button = %AttackButton
 @onready var trade_button: Button = %TradeButton
 @onready var look_button: Button = %LookButton
@@ -566,6 +567,11 @@ const HUD_INDICATORS: Array[Array] = [
 	["G", "Glow Perk (not on this server)", "Glow Perk (not on this server)"],
 	["A", "Attack at Will (not on this server)", "Attack at Will (not on this server)"]]
 
+## One rail stat row. The rail's font is ten pixels and its line box is
+## thirteen, so a twelve-pixel row cut every descender in half; fourteen holds
+## the line with the text centred in it.
+const SKILL_ROW_HEIGHT := 14.0
+
 ## The rail's stat rows, in Eternal Lands' order and abbreviations.
 const SKILL_ROW_SPECS: Array[Array] = [
 	["att", "attack"], ["def", "defense"], ["har", "harvesting"],
@@ -573,6 +579,10 @@ const SKILL_ROW_SPECS: Array[Array] = [
 	["sum", "summoning"], ["man", "manufacturing"], ["cra", "crafting"],
 	["eng", "engineering"], ["tai", "tailoring"], ["ran", "ranging"],
 	["oa", "overall"]]
+## Cell 24 of the HUD atlas: the standing figure the sit icon wears while the
+## player is seated.
+const STAND_ICON_REGION := Rect2(0, 96, 32, 32)
+
 const INDICATOR_ACTIVE_COLOUR := Color(0.95, 0.76, 0.52)
 const INDICATOR_INACTIVE_COLOUR := Color(0.40, 0.30, 0.20)
 const INDICATOR_UNAVAILABLE_COLOUR := Color(0.20, 0.15, 0.10)
@@ -4172,6 +4182,34 @@ func _configure_window_layers() -> void:
 	for window_layer: Control in [spells_window, emotes_window, ranging_window]:
 		if window_layer != null:
 			window_layer.z_index = 26
+	_make_scene_windows_draggable()
+
+## Every window moves by its title bar, as Eternal Lands moves all of its own.
+## The inventory and the ground bag keep their own handlers: those two also
+## carry a resize grip and remember where they were left, and the shared
+## dragger has no business in either. The console and the full map are not
+## popups but full-screen views, so neither is offered a handle it would only
+## use to slide itself off the edge.
+func _make_scene_windows_draggable() -> void:
+	for panel_and_handle: Array in [
+			[stats_panel, "Content/Header"],
+			[trade_panel, "Content/Title"],
+			[storage_panel, "Content/Title"],
+			[manufacturing_panel, "Content/Title"],
+			[item_lists_panel, "Content/Header"],
+			[dialogue_panel, "DialogueContent/DialogueName"],
+			[popup_panel, "PopupContent/PopupTitle"],
+			[settings_panel, "Content/Title"],
+			[reading_panel, "ReadingContent/ReadingHeader"]]:
+		var panel: Control = panel_and_handle[0] as Control
+		if panel == null:
+			continue
+		var handle: Control = panel.get_node_or_null(
+			str(panel_and_handle[1])) as Control
+		if handle == null:
+			push_warning("window drag handle missing: " + str(panel_and_handle[1]))
+			continue
+		WindowDrag.attach(panel, handle)
 
 func _sync_chat() -> void:
 	chat_output.clear()
@@ -4576,7 +4614,9 @@ func _build_skill_rows() -> void:
 		var key: String = str(spec[1])
 		var row := ProgressBar.new()
 		row.name = "SkillRow" + key.capitalize()
-		row.custom_minimum_size = Vector2(0.0, 12.0)
+		# Tall enough for the whole line box, not just the x-height: at twelve
+		# pixels the descender of "eng" was sliced off by the row's own frame.
+		row.custom_minimum_size = Vector2(0.0, SKILL_ROW_HEIGHT)
 		row.max_value = 1.0
 		row.show_percentage = false
 		row.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -5240,7 +5280,7 @@ func _on_window_size_changed() -> void:
 func _sync_hud_button_states(force := false) -> void:
 	if _hud_icon_regions.is_empty():
 		return
-	# Runs every frame. Resolving eleven unique-name nodes and formatting a
+	# Runs every frame. Resolving every unique-name node and formatting a
 	# dictionary into a signature string each time allocated for nothing; the
 	# buttons are resolved once and the comparison is now a bitmask.
 	if _hud_state_buttons.is_empty():
@@ -5288,6 +5328,12 @@ func _sync_hud_button_states(force := false) -> void:
 			mask |= 1 << index
 	if attack_preview:
 		mask |= 1 << states.size()
+	# Availability rides in the same signature. An icon's colour now follows
+	# whether its action can be taken at all, and that changes when the
+	# selection changes without any of the states above moving.
+	for index: int in _hud_state_buttons.size():
+		if not _hud_state_buttons[index].disabled:
+			mask |= 1 << (states.size() + 1 + index)
 	if not force and mask == _hud_button_state_mask:
 		return
 	_hud_button_state_mask = mask
@@ -5295,21 +5341,31 @@ func _sync_hud_button_states(force := false) -> void:
 		var button: Button = _hud_state_buttons[index]
 		var active: bool = states[index]
 		button.set_pressed_no_signal(active)
-		var atlas: Texture2D = _hud_active_atlas if active else _hud_inactive_atlas
+		# Eternal Lands greys only what it will not let you use. Everything
+		# available is drawn in colour whether or not its window is open, and
+		# an open window says so with the lit frame its pressed style carries.
+		var atlas: Texture2D = (_hud_inactive_atlas if button.disabled
+			else _hud_active_atlas)
 		if atlas != null:
-			button.icon = _atlas_region(atlas, _hud_icon_regions[button] as Rect2)
-	_apply_attack_preview(attack_preview, states[0])
+			button.icon = _atlas_region(atlas, _icon_region_for(button, sitting))
+	_apply_attack_preview(attack_preview)
+
+## The sit icon is a pair, the way icon_window.cpp's sit/stand multi-icon is:
+## seated, it shows the stand icon, because standing is what pressing it does.
+func _icon_region_for(button: Button, sitting: bool) -> Rect2:
+	if button == sit_button and sitting:
+		return STAND_ICON_REGION
+	return _hud_icon_regions[button] as Rect2
 
 ## The move icon while Alt is held: it wears the attack icon and does what the
 ## attack icon does, and goes back to itself the moment Alt is let go. Nothing
 ## about the interaction mode changes, so an attack mode chosen from the HUD is
 ## untouched by holding Alt or letting it go.
-func _apply_attack_preview(previewing: bool, walking: bool) -> void:
+func _apply_attack_preview(previewing: bool) -> void:
 	var walk_button: Button = %WalkButton
 	if previewing:
-		var atlas: Texture2D = _hud_active_atlas if walking else _hud_inactive_atlas
-		if atlas != null:
-			walk_button.icon = _atlas_region(atlas,
+		if _hud_active_atlas != null:
+			walk_button.icon = _atlas_region(_hud_active_atlas,
 				_hud_icon_regions[%AttackButton] as Rect2)
 		walk_button.tooltip_text = ("Alt is held: a click attacks what it lands"
 			+ " on. Let Alt go for walk mode")
@@ -7222,14 +7278,19 @@ static func _atlas_region(atlas: Texture2D, region: Rect2) -> AtlasTexture:
 	texture.region = region
 	return texture
 
-## The window chrome is Eternal Lands' (elwindows.c): near-black translucent
-## bodies the world shows through, a one-pixel gui_color border, hover fills in
-## the inverse colour. The old blue-teal boxes read as another game's UI next
-## to the legacy client.
+## The window chrome is Eternal Lands' (elwindows.c): near-black bodies, a
+## one-pixel gui_color border, hover fills in the inverse colour. The old
+## blue-teal boxes read as another game's UI next to the legacy client.
+##
+## The bodies are opaque, which is Eternal Lands' own "Use Opaque Window
+## Backgrounds" option rather than its default. Nameplates are Label3D drawn
+## inside the world viewport, so a translucent window cannot cover one: every
+## name and health bar behind a window read straight through it and fought
+## with the text on top. Opaque is what puts a window in front of them.
 func _apply_eloria_theme() -> void:
 	var eloria_theme: Theme = Theme.new()
 	var panel: StyleBoxFlat = StyleBoxFlat.new()
-	panel.bg_color = Color(0.0, 0.0, 0.0, 0.62)
+	panel.bg_color = Color(0.043, 0.034, 0.024, 1.0)
 	panel.border_color = Color(EL_GUI_COLOUR, 0.95)
 	panel.set_border_width_all(1)
 	panel.corner_radius_top_left = 1
@@ -7274,6 +7335,18 @@ func _apply_eloria_theme() -> void:
 	# other and against the panel border, and the end ones read as cut off.
 	var empty_button: StyleBoxEmpty = StyleBoxEmpty.new()
 	empty_button.set_content_margin_all(HUD_ICON_PADDING)
+	# An open window used to be told apart by its icon being the coloured one.
+	# Now that every icon the player can actually use is coloured, the open
+	# window needs a mark of its own, so it takes the lit frame Eternal Lands
+	# gives a highlighted icon.
+	var active_icon := StyleBoxFlat.new()
+	active_icon.bg_color = Color(EL_GUI_INVERT_COLOUR, 0.95)
+	active_icon.border_color = EL_GUI_BRIGHT_COLOUR
+	active_icon.set_border_width_all(1)
+	active_icon.set_content_margin_all(HUD_ICON_PADDING)
+	var hover_icon: StyleBoxFlat = active_icon.duplicate() as StyleBoxFlat
+	hover_icon.bg_color = Color(EL_GUI_INVERT_COLOUR, 0.5)
+	hover_icon.border_color = Color(EL_GUI_COLOUR, 0.75)
 	for child: Node in $GameView/Quickbar/QuickRows/Buttons.get_children():
 		if child is Button:
 			var icon_button: Button = child as Button
@@ -7283,8 +7356,11 @@ func _apply_eloria_theme() -> void:
 			# what fits; the icons are still 40px against Eternal Lands' 32.
 			icon_button.custom_minimum_size = Vector2(
 				40.0 + HUD_ICON_PADDING * 2.0, 40.0 + HUD_ICON_PADDING * 2.0)
-			for state_name: String in ["normal", "hover", "pressed", "disabled", "focus"]:
+			for state_name: String in ["normal", "disabled", "focus"]:
 				icon_button.add_theme_stylebox_override(state_name, empty_button)
+			icon_button.add_theme_stylebox_override("hover", hover_icon)
+			for state_name: String in ["pressed", "hover_pressed"]:
+				icon_button.add_theme_stylebox_override(state_name, active_icon)
 	for quick_button: Button in quick_slot_buttons + spell_slot_buttons:
 		quick_button.focus_mode = Control.FOCUS_NONE
 	_style_meter(health_bar, Color(0.17, 0.82, 0.22, 1.0))

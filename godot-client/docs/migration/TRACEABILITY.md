@@ -479,3 +479,13 @@ changed to close the visible gaps, and what was deliberately not built.
 | Rules window | server-sent rules | NOT BUILT: the server states no rules, structurally or otherwise; a client-shipped rules page would invent policy | - | BLOCKED |
 | Astrology window | server prose | NOT BUILT: still stated only as chat lines, as the almanac notes record | - | BLOCKED |
 | User menus | `user_menus.cpp` | NOT BUILT: `#alias` covers the commanding half; a `*.menu` bar remains open | - | NOT_STARTED |
+
+### Follow-up pass: window handling and icon state (2026-08-31)
+
+| Legacy feature | Source | Godot target | Test/evidence | Status |
+|---|---|---|---|---|
+| Every window drags by its title bar | `elwindows.c` drag_windows | `src/ui/window_drag.gd`, one node attached per window; scene panels wired in `_make_scene_windows_draggable`, script-built windows in their own `_build` | rendered parity windows; the clamp keeps a dragged window recoverable | IMPLEMENTED |
+| Windows cover the world, names included | `elwindows.c` "Use Opaque Window Backgrounds" | opaque window bodies - nameplates are `Label3D` inside the world viewport, so translucency let every name read through a window | rendered legacy HUD | IMPLEMENTED |
+| Sit/stand multi-icon | `icon_window.cpp` multi-icon on `you_sit` | cell 24 of the HUD atlas; `_icon_region_for` swaps the sit icon for the stand icon while seated | `tests/test_hud_icon_atlas.py` (ICON_COUNT 25) | IMPLEMENTED |
+| Icon colour means availability | `icon_window.cpp` greys what it will not let you use | colour follows `disabled`, not window state; an open window is marked by the lit pressed frame instead | rendered legacy HUD | IMPLEMENTED |
+| Statistics window fits its columns | `stats.c` | rail stat rows are 14px so descenders survive; statistics text set to 12px with tighter table separation so no row wraps | rendered statistics capture | IMPLEMENTED |

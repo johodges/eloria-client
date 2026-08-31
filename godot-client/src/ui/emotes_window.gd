@@ -140,7 +140,9 @@ func _build() -> void:
 	column.name = "EmotesBody"
 	panel.add_child(column)
 	var header := HBoxContainer.new()
+	header.name = "EmotesHeader"
 	column.add_child(header)
+	WindowDrag.attach(panel, header)
 	var title := Label.new()
 	title.name = "EmotesTitle"
 	title.text = "Emotes"

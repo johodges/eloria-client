@@ -236,6 +236,7 @@ func _build() -> void:
 	var header := HBoxContainer.new()
 	header.name = "SpellsHeader"
 	column.add_child(header)
+	WindowDrag.attach(panel, header)
 	var title := Label.new()
 	title.name = "SpellsTitle"
 	title.text = "Spells"

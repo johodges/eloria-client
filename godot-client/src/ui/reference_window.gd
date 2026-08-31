@@ -308,7 +308,9 @@ func _build() -> void:
 	column.name = "ReferenceBody"
 	panel.add_child(column)
 	var header := HBoxContainer.new()
+	header.name = "ReferenceHeader"
 	column.add_child(header)
+	WindowDrag.attach(panel, header)
 	var title := Label.new()
 	title.name = "ReferenceTitle"
 	title.text = "Reference"

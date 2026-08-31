@@ -295,10 +295,18 @@ func _run() -> void:
 	_expect(lower_hud.anchor_bottom == 1.0 and lower_hud.anchor_right == 1.0,
 		"lower HUD border spans the bottom edge")
 	main.call("_sync_hud_button_states", true)
+	# Colour now means "you can use this", not "this is open": walk mode is on
+	# and the inventory is shut, yet both are available so both are drawn from
+	# the coloured atlas. Which one is active is carried by the pressed state,
+	# and the greyed atlas is kept for what the client will not let you do.
 	_expect(walk_button.button_pressed and not inventory_button.button_pressed
-		and (walk_button.icon as AtlasTexture).atlas !=
+		and (walk_button.icon as AtlasTexture).atlas ==
 			(inventory_button.icon as AtlasTexture).atlas,
-		"active and inactive HUD actions use distinct highlighted icon atlases")
+		"an available HUD action is coloured whether or not its window is open")
+	_expect(attack_button.disabled
+		and (attack_button.icon as AtlasTexture).atlas !=
+			(walk_button.icon as AtlasTexture).atlas,
+		"an unavailable HUD action is drawn from the greyed atlas")
 	_expect(inventory_button.flat and inventory_button.focus_mode == Control.FOCUS_NONE,
 		"bottom HUD icons have no individual box and cannot steal Tab focus")
 	# Each icon is painted with its own frame out to the edge of its cell, so

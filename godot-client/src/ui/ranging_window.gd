@@ -116,6 +116,7 @@ func _build() -> void:
 	var header := HBoxContainer.new()
 	header.name = "RangingHeader"
 	column.add_child(header)
+	WindowDrag.attach(panel, header)
 	var title := Label.new()
 	title.name = "RangingTitle"
 	title.text = "Ranging"
