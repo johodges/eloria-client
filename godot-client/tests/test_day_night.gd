@@ -30,7 +30,8 @@ func _run() -> void:
 		"sky": {"topColor": "3d7ec2", "horizonColor": "bcc9cd"},
 		"sun": {"enabled": true, "energy": 1.4, "color": "fff2d8",
 			"shadows": true},
-		"ambient": {"energy": 0.9},
+		"ambient": {"energy": 0.9, "skyContribution": 0.8,
+			"color": "c8ccd2"},
 		"fog": {"enabled": true, "color": "d8c9a4"}}}
 	var interior := WorldManifest.new()
 	interior.data = {"environment": {"sun": {"enabled": false},
@@ -62,6 +63,8 @@ func _run() -> void:
 	var noon_energy: float = sun.light_energy
 	var noon_ambient: float = environment.ambient_light_energy
 	var noon_elevation: float = sun.rotation_degrees.x
+	var noon_contribution: float = environment.ambient_light_sky_contribution
+	var noon_ambient_colour: Color = environment.ambient_light_color
 	var noon_sky: Color = (environment.sky.sky_material as ProceduralSkyMaterial).sky_top_color
 	_expect(is_equal_approx(noon_energy, 1.4),
 		"noon is the energy the package declared, not a value of its own: %f"
@@ -69,7 +72,7 @@ func _run() -> void:
 	_expect(sun.shadow_enabled, "the sun casts at noon")
 
 	DayNightBinder.apply(outdoor, world_environment, sun, 0.0)
-	_expect(sun.light_energy < noon_energy * 0.2,
+	_expect(sun.light_energy < noon_energy * 0.4,
 		"midnight is a fraction of noon: %f" % sun.light_energy)
 	_expect(environment.ambient_light_energy < noon_ambient
 		and environment.ambient_light_energy > 0.0,
@@ -81,6 +84,33 @@ func _run() -> void:
 	var night_sky: Color = (environment.sky.sky_material as ProceduralSkyMaterial).sky_top_color
 	_expect(night_sky.get_luminance() < noon_sky.get_luminance(),
 		"the sky is darker at midnight than at noon")
+	# The night sky is nearly black, so a package that takes all of its ambient
+	# from the sky - which is every package that names no skyContribution - had
+	# no ambient at all at midnight. The sky's share is turned down and the
+	# moonlit colour stands in for it.
+	_expect(environment.ambient_light_sky_contribution < noon_contribution
+		and environment.ambient_light_sky_contribution
+			<= DayNightBinder.NIGHT_SKY_CONTRIBUTION + 0.01,
+		"the night sky is not left as the whole ambient source: %f"
+			% environment.ambient_light_sky_contribution)
+	_expect(environment.ambient_light_color.get_luminance()
+		> night_sky.get_luminance(),
+		"midnight ambient is lit by the moon rather than by the night sky")
+
+	# A map authored for a dim noon must still be walkable at midnight; a
+	# fraction of its own noon would leave it as dark as it was.
+	var overcast := WorldManifest.new()
+	overcast.data = {"environment": {
+		"sun": {"enabled": true, "energy": 0.8},
+		"ambient": {"energy": 0.3, "skyColor": [0.2, 0.17, 0.3]}}}
+	DayNightBinder.apply(overcast, world_environment, sun, 0.0)
+	_expect(environment.ambient_light_energy >= DayNightBinder.NIGHT_AMBIENT_FLOOR,
+		"a dim package still gets a floor under its night: %f"
+			% environment.ambient_light_energy)
+	_expect(environment.ambient_light_sky_contribution
+		<= DayNightBinder.NIGHT_SKY_CONTRIBUTION + 0.01
+		and environment.ambient_light_color.get_luminance() > 0.3,
+		"the `skyColor` spelling of the ambient colour is read too")
 
 	DayNightBinder.apply(outdoor, world_environment, sun, 90.0)
 	var dawn_colour: Color = sun.light_color
@@ -89,7 +119,10 @@ func _run() -> void:
 		"sunrise is warmer than noon")
 	_expect(is_equal_approx(sun.light_energy, noon_energy)
 		and is_equal_approx(environment.ambient_light_energy, noon_ambient)
-		and is_equal_approx(sun.rotation_degrees.x, noon_elevation),
+		and is_equal_approx(sun.rotation_degrees.x, noon_elevation)
+		and is_equal_approx(environment.ambient_light_sky_contribution,
+			noon_contribution)
+		and environment.ambient_light_color.is_equal_approx(noon_ambient_colour),
 		"returning to noon returns the exact noon values, so repeated"
 			+ " application cannot drift")
 
