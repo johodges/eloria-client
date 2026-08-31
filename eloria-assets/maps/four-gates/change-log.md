@@ -357,3 +357,42 @@ rewrites nothing.
 else. Nothing reads them today beyond the invasion assistant's map picker, and
 exempting interiors is a one-value change in the tool if a cave map is ever
 wanted at a useful size.
+
+## 1.0.7 — one tile to the metre
+
+Four Gates was the last Nymara map that did not answer the server at one metre
+per tile. The regions are 96 map tiles across a 576 m landform, and 96 × 6
+collision tiles divides 576 m exactly; Four Gates was authored 256 map tiles —
+1536 walk tiles — across a 714.4 m island, so a walk tile was 0.465 m and this
+manifest had to carry `metresPerTile: 0.4651162791` to talk to it. That single
+number was the only reason the client needed a per-map conversion at all.
+
+The island was not stretched to fit its tile grid, which would have made it 2.15
+times larger against a character that stayed the same height, and would have
+made every server step cover 2.15× more ground than the walk cycle is authored
+for. The tile grid was shrunk to fit the island instead: **120 map tiles, 720
+walk tiles, `metresPerTile: 1.0`, `serverOrigin: [360, 360]`**.
+
+Every stored Four Gates coordinate moved with it, on both sides:
+
+    new = round((old - 768) × 0.4651162791) + 360
+
+which is the identity at the island's centre. The server's fifty NPC, spawn,
+harvest-node, portal and interactive coordinates were migrated with
+`tools/retile_four_gates.py`, its arrival, respawn and walkthrough anchors with
+them, and standing characters move with the grid through a new
+`four_gates_grid_720` database migration — the same shape as the
+`four_gates_grid_1536` migration that re-gridded this map once before.
+
+Checked afterwards: all fifty migrated coordinates describe the same spot on the
+island as before, the worst drift being 0.61 m, which is the rounding to a
+coarser grid and nothing else. The server suite fails exactly the 83 tests it
+fails on a clean `develop` — no new failures.
+
+The addressable band is 720 m against an authored playable span of 714.4 m, so
+it overhangs by 2.8 m on each side; that band is the scenery ring the collision
+grid already refuses.
+
+**Not included:** the six Four Gates interiors still carry `metresPerTile: 0.25`.
+They are registered in the client but no server serves them yet, so there is no
+tile grid to migrate them onto — re-tiling them would mean inventing one.

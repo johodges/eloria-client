@@ -38,7 +38,7 @@ func _run() -> void:
 	app_state.set("local_actor_id", 99)
 	app_state.set("current_map", "maps/four_gates.elm")
 	app_state.set("actors", {99: {
-		"actor_id": 99, "x": 768, "y": 486, "rotation": 0, "actor_type": 1,
+		"actor_id": 99, "x": 360, "y": 229, "rotation": 0, "actor_type": 1,
 		"kind": 1, "name": "Ari", "health": 72, "max_health": 100,
 		"alive": true, "sitting": false}})
 	main.call("_load_server_map")

@@ -33,10 +33,10 @@
     "waterLevel": -2.0
   },
   "coordinateTransform": {
-    "metresPerTile": 0.4651162791,
+    "metresPerTile": 1.0,
     "serverOrigin": [
-      768.0,
-      768.0
+      360.0,
+      360.0
     ],
     "origin": [
       0.0,
@@ -775,8 +775,8 @@
         131.16
       ],
       "serverTile": [
-        620,
-        486
+        291,
+        229
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -791,8 +791,8 @@
         98.6
       ],
       "serverTile": [
-        640,
-        556
+        300,
+        261
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -807,8 +807,8 @@
         120.0
       ],
       "serverTile": [
-        686,
-        510
+        322,
+        240
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -823,8 +823,8 @@
         -154.42
       ],
       "serverTile": [
-        656,
-        1100
+        308,
+        514
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -839,8 +839,8 @@
         -126.51
       ],
       "serverTile": [
-        700,
-        1040
+        328,
+        487
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -855,8 +855,8 @@
         -167.44
       ],
       "serverTile": [
-        744,
-        1128
+        349,
+        527
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -871,8 +871,8 @@
         55.81
       ],
       "serverTile": [
-        1006,
-        648
+        471,
+        304
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -887,8 +887,8 @@
         31.63
       ],
       "serverTile": [
-        1048,
-        700
+        490,
+        328
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -903,8 +903,8 @@
         131.16
       ],
       "serverTile": [
-        664,
-        486
+        312,
+        229
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -919,8 +919,8 @@
         146.98
       ],
       "serverTile": [
-        760,
-        452
+        356,
+        213
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -935,8 +935,8 @@
         127.44
       ],
       "serverTile": [
-        872,
-        494
+        408,
+        233
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -951,8 +951,8 @@
         80.0
       ],
       "serverTile": [
-        704,
-        596
+        330,
+        280
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -967,8 +967,8 @@
         78.14
       ],
       "serverTile": [
-        768,
-        600
+        360,
+        282
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -983,8 +983,8 @@
         83.72
       ],
       "serverTile": [
-        824,
-        588
+        386,
+        276
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -999,8 +999,8 @@
         53.95
       ],
       "serverTile": [
-        526,
-        652
+        247,
+        306
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1015,8 +1015,8 @@
         31.63
       ],
       "serverTile": [
-        560,
-        700
+        263,
+        328
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1031,8 +1031,8 @@
         -145.12
       ],
       "serverTile": [
-        808,
-        1080
+        379,
+        505
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1047,8 +1047,8 @@
         -117.21
       ],
       "serverTile": [
-        860,
-        1020
+        403,
+        477
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1063,8 +1063,8 @@
         -137.67
       ],
       "serverTile": [
-        912,
-        1064
+        427,
+        498
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1079,8 +1079,8 @@
         96.74
       ],
       "serverTile": [
-        712,
-        560
+        334,
+        263
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1095,8 +1095,8 @@
         111.63
       ],
       "serverTile": [
-        744,
-        528
+        349,
+        248
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -1111,8 +1111,8 @@
         104.19
       ],
       "serverTile": [
-        800,
-        544
+        375,
+        256
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
