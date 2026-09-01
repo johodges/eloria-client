@@ -3842,13 +3842,13 @@
         "label": "Orun khan",
         "role": "quest",
         "position": [
-          0.0,
-          9.6,
-          -2.0
+          14.0,
+          9.93,
+          -21.0
         ],
         "serverTile": [
-          58,
-          60
+          72,
+          79
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3857,13 +3857,13 @@
         "label": "Seasonal market broker",
         "role": "trade",
         "position": [
-          -8.5,
-          9.6,
-          9.5
+          -15.0,
+          10.63,
+          22.0
         ],
         "serverTile": [
-          50,
-          48
+          43,
+          36
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3888,12 +3888,12 @@
         "role": "travel",
         "position": [
           -42.0,
-          10.15,
-          4.0
+          8.84,
+          9.0
         ],
         "serverTile": [
           16,
-          54
+          49
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3903,12 +3903,12 @@
         "role": "travel",
         "position": [
           42.0,
-          13.15,
-          4.0
+          13.01,
+          9.0
         ],
         "serverTile": [
           100,
-          54
+          49
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3948,12 +3948,12 @@
         "role": "service",
         "position": [
           0.0,
-          9.6,
-          21.0
+          12.18,
+          28.0
         ],
         "serverTile": [
           58,
-          37
+          30
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3962,13 +3962,13 @@
         "label": "Barrow warden",
         "role": "quest",
         "position": [
-          0.0,
-          8.22,
-          -38.0
+          1.0,
+          8.76,
+          -33.0
         ],
         "serverTile": [
-          58,
-          96
+          59,
+          91
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -3993,12 +3993,12 @@
         "role": "service",
         "position": [
           4.0,
-          13.66,
-          -90.0
+          13.96,
+          -88.0
         ],
         "serverTile": [
           62,
-          148
+          146
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -4007,13 +4007,13 @@
         "label": "Salt-pan factor",
         "role": "trade",
         "position": [
-          64.0,
-          12.51,
-          -98.0
+          65.0,
+          13.22,
+          -96.0
         ],
         "serverTile": [
-          122,
-          156
+          123,
+          154
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -4038,12 +4038,12 @@
         "role": "trade",
         "position": [
           122.0,
-          26.75,
-          -92.0
+          24.73,
+          -102.0
         ],
         "serverTile": [
           180,
-          150
+          160
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
@@ -4052,13 +4052,13 @@
         "label": "Whitehorn range warden",
         "role": "quest",
         "position": [
-          98.0,
-          33.2,
-          -88.0
+          103.0,
+          16.44,
+          -83.0
         ],
         "serverTile": [
-          156,
-          146
+          161,
+          141
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       }
@@ -4089,8 +4089,8 @@
         "kind": "crop",
         "center": [
           -34.0,
-          8.76,
-          -46.0
+          10.08,
+          -51.0
         ],
         "extent": [
           13.0,
@@ -4098,7 +4098,7 @@
         ],
         "serverTile": [
           24,
-          104
+          109
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4164,8 +4164,8 @@
         "label": "Steppe herbs",
         "kind": "herb",
         "center": [
-          -50.0,
-          12.83,
+          -48.0,
+          14.61,
           -20.0
         ],
         "extent": [
@@ -4173,7 +4173,7 @@
           8.0
         ],
         "serverTile": [
-          8,
+          10,
           78
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
@@ -4203,8 +4203,8 @@
         "kind": "herb",
         "center": [
           -24.0,
-          9.22,
-          58.0
+          9.33,
+          56.0
         ],
         "extent": [
           8.0,
@@ -4212,7 +4212,7 @@
         ],
         "serverTile": [
           34,
-          0
+          2
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4221,17 +4221,17 @@
         "label": "Shore clay",
         "kind": "mineral",
         "center": [
-          -54.0,
-          7.21,
-          48.0
+          -52.0,
+          7.49,
+          47.0
         ],
         "extent": [
           6.0,
           6.0
         ],
         "serverTile": [
-          4,
-          10
+          6,
+          11
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4259,17 +4259,17 @@
         "label": "Mesa flint",
         "kind": "mineral",
         "center": [
-          -20.0,
-          24.0,
-          -74.0
+          -6.0,
+          14.6,
+          -69.0
         ],
         "extent": [
           7.0,
           7.0
         ],
         "serverTile": [
-          38,
-          132
+          52,
+          127
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4278,17 +4278,17 @@
         "label": "Mesa flint",
         "kind": "mineral",
         "center": [
-          60.0,
-          21.45,
-          -62.0
+          67.0,
+          15.21,
+          -55.0
         ],
         "extent": [
           7.0,
           7.0
         ],
         "serverTile": [
-          118,
-          120
+          125,
+          113
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4297,17 +4297,17 @@
         "label": "Amethyst shard",
         "kind": "mineral",
         "center": [
-          110.0,
-          35.62,
-          -96.0
+          118.0,
+          21.49,
+          -103.0
         ],
         "extent": [
           8.0,
           8.0
         ],
         "serverTile": [
-          168,
-          154
+          176,
+          161
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },
@@ -4316,17 +4316,17 @@
         "label": "Amethyst shard",
         "kind": "mineral",
         "center": [
-          126.0,
-          24.96,
-          -70.0
+          119.0,
+          10.52,
+          -63.0
         ],
         "extent": [
           7.0,
           7.0
         ],
         "serverTile": [
-          184,
-          128
+          177,
+          121
         ],
         "harvestHook": "harvest.nymara.sunmane_steppe"
       },

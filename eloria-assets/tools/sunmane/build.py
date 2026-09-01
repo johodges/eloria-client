@@ -239,6 +239,16 @@ def main() -> int:
     (output / f"{base}-statistics.json").write_text(
         json.dumps(statistics, indent=2) + "\n")
 
+    if lod == 1:
+        # The walk grid the server cuts its collision map from. Only the
+        # full package writes one: LOD2 drops ground clutter, and collision
+        # is not a thing a graphics setting may disagree about.
+        import collision                          # noqa: E402 (late import)
+
+        payload, grid_statistics = collision.build_grid(output)
+        (output / "collision.bin").write_bytes(payload)
+        statistics["collision"] = grid_statistics
+
     print(json.dumps(statistics, indent=2))
     return 0
 
