@@ -786,13 +786,13 @@
       "id": "mirror-reed-02",
       "resource": "mirror-reed",
       "position": [
-        -59.53,
+        -63.0,
         31.15,
-        98.6
+        95.0
       ],
       "serverTile": [
-        300,
-        261
+        297,
+        265
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -802,13 +802,13 @@
       "id": "mirror-reed-03",
       "resource": "mirror-reed",
       "position": [
-        -38.14,
+        -37.0,
         31.15,
-        120.0
+        121.0
       ],
       "serverTile": [
-        322,
-        240
+        323,
+        239
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -946,13 +946,13 @@
       "id": "steppe-wheat-01",
       "resource": "steppe-wheat",
       "position": [
-        -29.77,
+        -27.0,
         31.15,
-        80.0
+        78.0
       ],
       "serverTile": [
-        330,
-        280
+        333,
+        282
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
@@ -978,13 +978,13 @@
       "id": "steppe-wheat-03",
       "resource": "steppe-wheat",
       "position": [
-        26.05,
+        24.0,
         31.15,
-        83.72
+        83.0
       ],
       "serverTile": [
-        386,
-        276
+        384,
+        277
       ],
       "radius": 2.5,
       "respawnSeconds": 90,
