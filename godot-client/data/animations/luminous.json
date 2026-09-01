@@ -2,8 +2,8 @@
  "schemaVersion": 1,
  "fallbackAction": "idle",
  "strideMetresPerSecond": {
-  "walk": 0.61,
-  "run": 2.247
+  "walk": 0.685,
+  "run": 2.666
  },
  "playbackSpeeds": {
   "walk": 1.45,
@@ -41,7 +41,7 @@
   "pain": "Hit_Chest",
   "pickup": "PickUp_Table",
   "ranged_attack": "Bow_Release",
-  "run": "Sprint",
+  "run": "Run_Female",
   "seated_idle": "Meditate",
   "sit": "Meditate",
   "stand": "Sitting_Exit",
