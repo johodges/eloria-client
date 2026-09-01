@@ -1803,13 +1803,13 @@
       "name": "Warden of the Amber Gate",
       "type": "npc",
       "position": [
-        173.77,
-        37.12,
-        -99.01
+        179.0,
+        39.42,
+        -93.0
       ],
       "serverTile": [
-        348,
-        273
+        353,
+        267
       ],
       "authority": "server"
     },
@@ -1923,13 +1923,13 @@
       "name": "Keeper of the Hollow",
       "type": "npc",
       "position": [
-        -82.93,
-        25.09,
-        -258.86
+        -74.0,
+        29.94,
+        -268.0
       ],
       "serverTile": [
-        91,
-        433
+        100,
+        442
       ],
       "authority": "server"
     },
@@ -2374,13 +2374,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        217.16,
-        23.57,
-        110.62
+        215.0,
+        22.38,
+        114.0
       ],
       "serverTile": [
-        391,
-        63
+        389,
+        60
       ],
       "authority": "server"
     },
@@ -2389,13 +2389,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        208.39,
-        23.57,
-        106.28
+        211.0,
+        24.23,
+        103.0
       ],
       "serverTile": [
-        382,
-        68
+        385,
+        71
       ],
       "authority": "server"
     },
@@ -2404,13 +2404,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        210.87,
-        23.57,
-        96.32
+        208.0,
+        23.41,
+        95.0
       ],
       "serverTile": [
-        385,
-        78
+        382,
+        79
       ],
       "authority": "server"
     },
@@ -2419,13 +2419,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        209.03,
-        23.57,
-        96.05
+        208.0,
+        23.55,
+        94.0
       ],
       "serverTile": [
-        383,
-        78
+        382,
+        80
       ],
       "authority": "server"
     },
@@ -2434,13 +2434,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        213.89,
-        23.57,
-        97.57
+        214.0,
+        23.15,
+        100.0
       ],
       "serverTile": [
         388,
-        76
+        74
       ],
       "authority": "server"
     },
@@ -2449,13 +2449,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        -90.34,
-        14.45,
-        -263.87
+        -86.0,
+        42.79,
+        -271.0
       ],
       "serverTile": [
-        84,
-        438
+        88,
+        445
       ],
       "authority": "server"
     },
@@ -2464,13 +2464,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        -77.82,
-        31.79,
-        -264.75
+        -78.0,
+        31.87,
+        -269.0
       ],
       "serverTile": [
         96,
-        439
+        443
       ],
       "authority": "server"
     },
@@ -2479,13 +2479,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        -85.56,
-        11.22,
-        -251.77
+        -78.0,
+        35.69,
+        -246.0
       ],
       "serverTile": [
-        88,
-        426
+        96,
+        420
       ],
       "authority": "server"
     },
@@ -2554,13 +2554,13 @@
       "resource": "forest-fungus",
       "category": "reagent",
       "position": [
-        -1.59,
-        32.15,
-        -141.21
+        -3.0,
+        32.13,
+        -140.0
       ],
       "serverTile": [
-        172,
-        315
+        171,
+        314
       ],
       "authority": "server"
     },
