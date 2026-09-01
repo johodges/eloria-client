@@ -1,0 +1,195 @@
+{
+  "schemaVersion": "1.0.0",
+  "assetVersion": "1.0.0",
+  "asset": {
+    "id": "amberwood_insides",
+    "name": "Amberwood Insides",
+    "glb": "world.glb",
+    "units": "meters",
+    "coordinateSystem": {
+      "handedness": "right",
+      "upAxis": "Y",
+      "northAxis": "-Z"
+    }
+  },
+  "coordinateTransform": {
+    "metresPerTile": 1.0,
+    "serverOrigin": [
+      192.0,
+      192.0
+    ],
+    "origin": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "walkingHeight": 0.0,
+    "invertServerY": true
+  },
+  "collision": {
+    "binary": "collision.bin",
+    "format": "EWCG-v2",
+    "cellMetres": 0.5,
+    "heightEncoding": {
+      "origin": -2.2,
+      "step": 0.2,
+      "range": [
+        1,
+        255
+      ],
+      "zeroMeansBlocked": true
+    },
+    "nodeNames": [
+      "AmberHall_Interior_amberwood_amber_hall",
+      "AmberHall_Roof_amberwood_amber_hall_timber_dark",
+      "AmberHall_Build_amberwood_amber_hall_amber_glass",
+      "AmberHall_Build_amberwood_amber_hall_amber_resin",
+      "AmberHall_Build_amberwood_amber_hall_ashlar",
+      "AmberHall_Build_amberwood_amber_hall_carved_wood",
+      "AmberHall_Build_amberwood_amber_hall_dark_iron",
+      "AmberHall_Build_amberwood_amber_hall_forest_floor",
+      "AmberHall_Build_amberwood_amber_hall_lime_plaster",
+      "AmberHall_Build_amberwood_amber_hall_rubble_stone",
+      "AmberHall_Build_amberwood_amber_hall_thatch_reed",
+      "AmberHall_Build_amberwood_amber_hall_timber_dark",
+      "AmberHall_Build_amberwood_amber_hall_timber_grey",
+      "AmberHall_Build_amberwood_amber_hall_timber_warm",
+      "AmberHall_Build_amberwood_amber_hall_woven_cloth",
+      "CinderChapel_Interior_amberwood_cinder_chapel",
+      "CinderChapel_Roof_amberwood_cinder_chapel_ashlar",
+      "CinderChapel_Roof_amberwood_cinder_chapel_charred_timber",
+      "CinderChapel_Build_amberwood_cinder_chapel_amber_resin",
+      "CinderChapel_Build_amberwood_cinder_chapel_ashlar",
+      "CinderChapel_Build_amberwood_cinder_chapel_bark_dark",
+      "CinderChapel_Build_amberwood_cinder_chapel_charred_timber",
+      "CinderChapel_Build_amberwood_cinder_chapel_dark_iron",
+      "CinderChapel_Build_amberwood_cinder_chapel_scorched_ground",
+      "CinderChapel_Build_amberwood_cinder_chapel_sooted_plaster",
+      "CinderChapel_Build_amberwood_cinder_chapel_timber_grey",
+      "CinderChapel_Build_amberwood_cinder_chapel_timber_warm",
+      "CinderChapel_Build_amberwood_cinder_chapel_water_deep",
+      "GateUndercroft_Interior_amberwood_gate_undercroft",
+      "GateUndercroft_Roof_amberwood_gate_undercroft_ashlar",
+      "GateUndercroft_Build_amberwood_gate_undercroft_amber_resin",
+      "GateUndercroft_Build_amberwood_gate_undercroft_ashlar",
+      "GateUndercroft_Build_amberwood_gate_undercroft_bark_dark",
+      "GateUndercroft_Build_amberwood_gate_undercroft_dark_iron",
+      "GateUndercroft_Build_amberwood_gate_undercroft_forest_floor",
+      "GateUndercroft_Build_amberwood_gate_undercroft_water_deep",
+      "Motherroot_Interior_amberwood_motherroot",
+      "Motherroot_Roof_amberwood_motherroot_ashlar",
+      "Motherroot_Roof_amberwood_motherroot_bark_dark",
+      "Motherroot_Roof_amberwood_motherroot_bark_oak",
+      "Motherroot_Roof_amberwood_motherroot_cliff_rock",
+      "Motherroot_Roof_amberwood_motherroot_packed_earth",
+      "Motherroot_Build_amberwood_motherroot_amber_resin",
+      "Motherroot_Build_amberwood_motherroot_ashlar",
+      "Motherroot_Build_amberwood_motherroot_bark_dark",
+      "Motherroot_Build_amberwood_motherroot_bark_oak",
+      "Motherroot_Build_amberwood_motherroot_dark_iron",
+      "Motherroot_Build_amberwood_motherroot_forest_floor",
+      "Motherroot_Build_amberwood_motherroot_packed_earth",
+      "Motherroot_Build_amberwood_motherroot_thatch_reed",
+      "Motherroot_Build_amberwood_motherroot_timber_dark",
+      "Motherroot_Build_amberwood_motherroot_timber_grey",
+      "Motherroot_Build_amberwood_motherroot_timber_warm",
+      "Motherroot_Build_amberwood_motherroot_water_deep",
+      "Motherroot_Build_amberwood_motherroot_water_pool",
+      "Motherroot_Build_amberwood_motherroot_water_stream"
+    ]
+  },
+  "sections": [
+    {
+      "id": "AmberHall",
+      "package": "amberwood_amber_hall",
+      "serverTile": [
+        16,
+        16
+      ]
+    },
+    {
+      "id": "CinderChapel",
+      "package": "amberwood_cinder_chapel",
+      "serverTile": [
+        208,
+        16
+      ]
+    },
+    {
+      "id": "GateUndercroft",
+      "package": "amberwood_gate_undercroft",
+      "serverTile": [
+        16,
+        208
+      ]
+    },
+    {
+      "id": "Motherroot",
+      "package": "amberwood_motherroot",
+      "serverTile": [
+        208,
+        208
+      ]
+    }
+  ],
+  "provenance": {
+    "composedFrom": [
+      "amberwood_amber_hall",
+      "amberwood_cinder_chapel",
+      "amberwood_gate_undercroft",
+      "amberwood_motherroot"
+    ],
+    "note": "Geometry and walk grids are each package's own; only the offset that puts one in its quarter of the map is chosen here."
+  },
+  "statistics": {
+    "cells": 768,
+    "cellMetres": 0.5,
+    "walkableFraction": 0.0642,
+    "sections": {
+      "AmberHall": {
+        "tiles": [
+          16,
+          16
+        ],
+        "cells": [
+          114,
+          144
+        ],
+        "walkable": 8168
+      },
+      "CinderChapel": {
+        "tiles": [
+          208,
+          16
+        ],
+        "cells": [
+          102,
+          156
+        ],
+        "walkable": 6744
+      },
+      "GateUndercroft": {
+        "tiles": [
+          16,
+          208
+        ],
+        "cells": [
+          126,
+          180
+        ],
+        "walkable": 9500
+      },
+      "Motherroot": {
+        "tiles": [
+          208,
+          208
+        ],
+        "cells": [
+          192,
+          210
+        ],
+        "walkable": 13440
+      }
+    }
+  }
+}
