@@ -659,6 +659,16 @@ func _create_equipment_part(part: int, visual_id: int, allow_fallback: bool) -> 
 	var part_config: Dictionary = parts.get(str(part), {}) as Dictionary
 	if part_config.is_empty():
 		return
+	# Visual 0 is "nothing equipped".  On a wardrobe slot that used to mean a
+	# generic shirt, pants or boots, because the shipped bodies were nude
+	# under their Wardrobe_* meshes.  The race bodies now carry their clothing
+	# in their own texture, so an empty slot is the body itself -- and drawing
+	# the generic garment would put a second set of clothes over a painted one.
+	# Marked per part in equipment.json, so a slot that must always show
+	# something is unaffected.  Returning here also skips the fallback: bare is
+	# the intended result, not a missing model.
+	if visual_id == 0 and bool(part_config.get("bareWhenEmpty", false)):
+		return
 	var model_config: Dictionary = _equipment_model_config(part, visual_id)
 	var created: Array[Node] = []
 	if not model_config.is_empty():
