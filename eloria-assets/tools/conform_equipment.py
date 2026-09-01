@@ -505,19 +505,17 @@ def seat(points: np.ndarray, rig: ea.Rig, region: str,
     """
     body = region_points(rig, region)
     span = SPAN.get(region)
-    if span is not None and MEASURE[region]["mode"] == "sides":
-        # A limb garment is anchored to the span the authored set uses, because
-        # where it ends is load-bearing: the legs region runs down through the
-        # foot bones, and a trouser stretched to fill it hems at Y -0.02 -- on
-        # the floor, past the boot it is cut to tuck into, which is what
-        # LegwearSeamTest measures.
+    # Every garment is anchored to the span the authored set uses, because
+    # where a piece ends is load-bearing on both axes.  On the limbs the legs
+    # region runs down through the foot bones, and a trouser stretched to fill
+    # it hems on the floor past the boot it tucks into.  On the torso the
+    # region reaches the pelvis, and a cuirass stretched to fill it hangs 26 cm
+    # below an authored one, over the hips and into the legs slot: nearly half
+    # its vertices come out weighted to `pelvis` where an authored chest piece
+    # is weighted to the spine, so it rides the hips instead of the chest.
+    if span is not None:
         low, high = (value * rig.fit_scale for value in span)
     else:
-        # The torso takes the region instead.  A generated piece is drawn whole
-        # -- this cuirass arrives with sleeves and a tasset skirt -- so its
-        # height is the height of the drawing, not of the chest.  Scaled to the
-        # chest-only span it comes out at 0.52 and has to be inflated 1.6x to
-        # reach the body again, which is the same size by a worse road.
         low, high = float(body[:, 1].min()), float(body[:, 1].max())
 
     extent = points.max(axis=0) - points.min(axis=0)
@@ -536,8 +534,8 @@ def seat(points: np.ndarray, rig: ea.Rig, region: str,
     # against horizontal keeps the plan view of the design intact -- the piece
     # is made longer or shorter, never skewed.
     girth = scale
-    body_span = float(body[:, 1].max()) - float(body[:, 1].min())
-    if MEASURE[region]["mode"] == "sides" and SPAN.get(region):
+    if span is not None:
+        body_span = float(body[:, 1].max()) - float(body[:, 1].min())
         girth = body_span / max(float(extent[1]), 1e-9)
 
     seated = (points - (points.max(axis=0) + points.min(axis=0)) / 2.)
