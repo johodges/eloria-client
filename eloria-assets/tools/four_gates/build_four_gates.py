@@ -892,21 +892,31 @@ class WorldBuild:
             handle.write("\n")
 
     def write_collision_grid(self) -> None:
-        """EWCG walk grid in the established Four Gates binary format.
+        """EWCG walk grid on the map's own server grid.
 
-        Cell (cx, cz) maps to metres exactly as the previous package did:
-            tile_x = (cx + 0.5) * 0.5 ; metres_x = (tile_x - 384) * 2.15
-            tile_z = (cz + 0.5) * 0.5 ; metres_z = (384 - tile_z) * 2.15
-        so the 1536 grid spans +/-825 m at 1.075 m per cell.  Byte 0 means
-        blocked; otherwise height = (value * 0.2 - 2.2) * 2.15.
+        Version 2 of the format, and the same convention every other Eloria map
+        package writes: half a metre per cell, cell (cx, cz) centred on server
+        tile ((cx + 0.5) / 2, (cz + 0.5) / 2), byte 0 meaning blocked and
+        anything else an elevation of `value * 0.2 - 2.2` metres.
+
+        Version 1 of this file answered the coordinate system the map was first
+        built in - 1536 cells of half a *2.15 metre* tile about an origin of
+        384 - and kept answering it after the map moved to a metre a tile about
+        an origin of 360. Read at face value it put the city about a third of a
+        map from where the server thought it was, which is why the server-side
+        reader carries an explicit remap for it. The layout now comes from
+        COORDINATE_TRANSFORM, so it moves when the map does.
         """
-        size = 1536
-        units_per_metre = 2.15
-        origin = 384.0
+        metres_per_tile = COORDINATE_TRANSFORM["metresPerTile"]
+        origin_x, origin_z = COORDINATE_TRANSFORM["serverOrigin"]
+        # The server's own grid, at two collision cells to the tile.
+        tiles_wide = int(round(origin_x * 2))
+        size = tiles_wide * 2
         cells = np.arange(size)
         tiles = (cells + 0.5) * 0.5
-        xs = (tiles - origin) * units_per_metre
-        zs = (origin - tiles) * units_per_metre
+        xs = (tiles - origin_x) * metres_per_tile
+        # invertServerY: server y runs north to south, so row 0 is the +Z edge.
+        zs = (origin_z - tiles) * metres_per_tile
         gx, gz = np.meshgrid(xs, zs, indexing="xy")
         heights = self.field.height(gx, gz)
         radius = np.hypot(gx, gz)
@@ -917,7 +927,10 @@ class WorldBuild:
         # steep ground: reject where the local gradient exceeds the agent slope
         grad_x = np.gradient(heights, axis=1)
         grad_z = np.gradient(heights, axis=0)
-        slope = np.hypot(grad_x, grad_z) / 1.075
+        # np.gradient is per cell; the cell is half a metre wide now, not the
+        # 1.075 m the old grid used, so the divisor moves with it or every
+        # slope reads twice as steep as it is.
+        slope = np.hypot(grad_x, grad_z) / (0.5 * metres_per_tile)
         walkable &= slope < 0.70
         # the monument footprint
         walkable &= radius > 11.0
@@ -944,9 +957,13 @@ class WorldBuild:
             inside = (np.abs(lx) < half_x) & (np.abs(lz) < half_z)
             walkable &= ~inside
 
-        encoded = np.clip(np.round((heights / units_per_metre + 2.2) / 0.2), 1, 255)
+        # Metres at the ELM's own 0.2 m step. The plateau sits near 31 m, so
+        # the byte runs past the 63 the ELM height field can hold; the server
+        # rebases the map on its own lowest walkable tile when it folds this
+        # onto its grid, which is where that loss belongs.
+        encoded = np.clip(np.round((heights + 2.2) / 0.2), 1, 255)
         payload = np.where(walkable, encoded, 0).astype(np.uint8)
-        header = struct.pack("<4sHHII", b"EWCG", 1, 0, size, size)
+        header = struct.pack("<4sHHII", b"EWCG", 2, 0, size, size)
         with open(os.path.join(self.out_dir, "collision.bin"), "wb") as handle:
             handle.write(header)
             handle.write(payload.tobytes())
