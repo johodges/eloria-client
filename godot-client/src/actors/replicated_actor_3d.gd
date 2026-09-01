@@ -7,14 +7,14 @@ extends CharacterBody3D
 ## The server's walking interval, so the very first step of a session is
 ## paced correctly before any packet cadence has been observed. Every burst
 ## after that keeps the cadence it last measured.
-@export var initial_server_interval := 0.7
+@export var initial_server_interval := 0.6
 @export var interval_smoothing := 0.5
 ## How much longer than the observed server cadence one step is allowed to
 ## take. At 1.05 any jitter in the packet stream finished the step before the
 ## next one arrived, and the actor stopped and restarted on every tile.
 @export var arrival_margin := 1.25
 @export var minimum_segment_duration := 0.06
-## Long enough to hold a walking step - 0.7 s a tile plus the arrival
+## Long enough to hold a walking step - 0.6 s a tile plus the arrival
 ## margin - so a walk is not driven faster than the server sends it.
 @export var maximum_segment_duration := 1.0
 ## Kept walking for this long after a step lands before falling back to idle,
@@ -36,7 +36,7 @@ var _segment_start := Vector3.ZERO
 var _segment_elapsed := 0.0
 var _segment_duration := 0.0
 var _last_movement_update_msec := -1
-var _smoothed_server_interval := 0.7
+var _smoothed_server_interval := 0.6
 ## The direction the body is actually crossing the ground in, which is not the
 ## tile direction the server named. See `_rendered_target_yaw`.
 var _travel_yaw_active := false
@@ -1344,7 +1344,7 @@ func play_action(action: StringName) -> void:
 ## actor at 1.86 m/s was a long way else - reads as sliding.
 ##
 ## The ceiling is 3.5 so nothing in ordinary play reaches it. `Walk` covers
-## 0.685 m/s at speed 1.0 against a walking pace of 1.43 m/s (2.08x), and
+## 0.685 m/s at speed 1.0 against a walking pace of 1.67 m/s (2.43x), and
 ## `Run_Female` covers 2.666 against a running 5.0 m/s (1.88x). Only Speed Hax
 ## on top of a run - 10 m/s - asks for more than the ceiling.
 func _playback_speed_for(action: StringName) -> float:
