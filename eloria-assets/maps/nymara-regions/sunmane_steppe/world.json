@@ -4037,13 +4037,13 @@
         "label": "Amethyst prospector",
         "role": "trade",
         "position": [
-          122.0,
-          24.73,
-          -102.0
+          124.0,
+          25.0,
+          -96.0
         ],
         "serverTile": [
-          180,
-          160
+          182,
+          154
         ],
         "spawnHook": "npcs.nymara.sunmane_steppe"
       },
