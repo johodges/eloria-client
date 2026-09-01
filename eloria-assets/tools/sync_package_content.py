@@ -52,31 +52,72 @@ def amberwood_terrain():
 
 
 # package directory -> (manifest keys it answers, terrain factory)
+def sunmane_terrain():
+    sys.path.insert(0, str(HERE / "sunmane"))
+    import terrain
+
+    landform = terrain.build()
+    return lambda x, z: float(np.ravel(landform.sample(
+        np.array([x]), np.array([z])))[0])
+
+
+class Section:
+    """One list of markers in a package manifest, and the key it answers.
+
+    `path` walks into the manifest, because a package may declare its markers
+    at the top level or nested - Sunmane keeps its under `runtimePopulation` -
+    and `position` names the field the placement lives in, which is `position`
+    for a point and `center` for something with an extent.
+    """
+
+    def __init__(self, manifest_key, path, tile="serverTile", position="position"):
+        self.manifest_key = manifest_key
+        self.path = path
+        self.tile = tile
+        self.position = position
+
+    def entries(self, data: dict):
+        node = data
+        for step in self.path:
+            node = node.get(step) if isinstance(node, dict) else None
+            if node is None:
+                return ()
+        return node if isinstance(node, list) else ()
+
+
+# The markers each package holds that the server decides the tile for. The
+# server's content manifest is the list; these say where the package keeps its
+# own copy of it.
 PACKAGES = {
     "four-gates": (
-        {"four_gates_harvestables": ("harvestables", "serverTile")},
+        [Section("four_gates_harvestables", ("harvestables",))],
         four_gates_terrain,
     ),
     "nymara-regions/amberwood": (
-        {"amberwood_harvestables": ("harvestables", "serverTile"),
-         "amberwood_npcs": ("npcMarkers", "server_tile")},
+        [Section("amberwood_harvestables", ("harvestables",)),
+         Section("amberwood_npcs", ("npcMarkers",), tile="server_tile")],
         amberwood_terrain,
+    ),
+    "nymara-regions/sunmane_steppe": (
+        [Section("sunmane_npcs", ("runtimePopulation", "npcs")),
+         Section("sunmane_resources", ("runtimePopulation", "resources"),
+                 position="center")],
+        sunmane_terrain,
     ),
 }
 
 
-def wanted_tiles(manifest: dict, keys: dict) -> dict[str, tuple[int, int]]:
-    """The server's tile for every marker this package is answerable for."""
+def wanted_tiles(manifest: dict, section: "Section") -> dict[str, tuple[int, int]]:
+    """The server's tile for every marker this section is answerable for."""
     out = {}
-    for manifest_key, (_, field) in keys.items():
-        for entry in manifest.get(manifest_key, ()):
-            tile = entry.get(field)
-            if entry.get("id") and tile and len(tile) == 2:
-                out[entry["id"]] = (int(tile[0]), int(tile[1]))
+    for entry in manifest.get(section.manifest_key, ()):
+        tile = entry.get(section.tile) or entry.get("serverTile")
+        if entry.get("id") and tile and len(tile) == 2:
+            out[entry["id"]] = (int(tile[0]), int(tile[1]))
     return out
 
 
-def sync(package: Path, keys: dict, terrain, manifest: dict, moves: list) -> str | None:
+def sync(package: Path, sections, terrain, manifest: dict, moves: list) -> str | None:
     path = package / "world.json"
     if not path.is_file():
         return None
@@ -84,18 +125,19 @@ def sync(package: Path, keys: dict, terrain, manifest: dict, moves: list) -> str
     transform = data["coordinateTransform"]
     origin_x, origin_y = transform["serverOrigin"]
     metres = transform["metresPerTile"]
-    wanted = wanted_tiles(manifest, keys)
 
     ground = None
     changed = False
-    for _, (section, _) in keys.items():
-        for entry in data.get(section, ()):
-            if entry.get("authority") != "server":
-                continue
+    for section in sections:
+        wanted = wanted_tiles(manifest, section)
+        for entry in section.entries(data):
             tile = wanted.get(entry.get("id"))
             if tile is None or list(tile) == list(entry.get("serverTile", ())):
                 continue
-            old_x, old_y, old_z = entry["position"]
+            placement = entry.get(section.position)
+            if not placement or len(placement) != 3:
+                continue
+            old_x, old_y, old_z = placement
             new_x = (tile[0] - origin_x) * metres
             # invertServerY: the server's y runs north to south.
             new_z = -(tile[1] - origin_y) * metres
@@ -104,8 +146,8 @@ def sync(package: Path, keys: dict, terrain, manifest: dict, moves: list) -> str
             # Keep whatever the marker was authored to stand above the ground,
             # and let the ground itself carry it to the new tile.
             rise = ground(new_x, new_z) - ground(old_x, old_z)
-            entry["position"] = [round(new_x, 2), round(old_y + rise, 2),
-                                 round(new_z, 2)]
+            entry[section.position] = [round(new_x, 2), round(old_y + rise, 2),
+                                       round(new_z, 2)]
             entry["serverTile"] = [tile[0], tile[1]]
             moves.append((package.name, entry["id"], (old_x, old_z), (new_x, new_z)))
             changed = True
@@ -129,9 +171,9 @@ def main() -> int:
 
     moves: list = []
     written = {}
-    for relative, (keys, terrain) in PACKAGES.items():
+    for relative, (sections, terrain) in PACKAGES.items():
         package = ASSETS / "maps" / relative
-        text = sync(package, keys, terrain, manifest, moves)
+        text = sync(package, sections, terrain, manifest, moves)
         if text is not None:
             written[package / "world.json"] = text
 
