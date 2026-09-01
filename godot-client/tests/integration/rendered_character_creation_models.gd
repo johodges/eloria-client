@@ -34,7 +34,7 @@ func _run() -> void:
 	(main.get_node("CreationPanel") as Control).show()
 	# Capture a close three-quarter view so face, hair, clothing fit, and
 	# culture features are large enough for the CI artifact to review.
-	main.set("preview_yaw", 0.28)
+	main.set("preview_yaw", PI + 0.28)
 	main.set("preview_pitch", 0.08)
 	main.set("preview_distance", 2.4)
 	main.call("_update_preview_camera")
