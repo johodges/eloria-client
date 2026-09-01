@@ -8977,6 +8977,502 @@
           46
         ]
       ]
+    },
+    "5:184": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_01.glb",
+      "name": "Amberwood Woodland Cuirass I",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:185": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_02.glb",
+      "name": "Amberwood Woodland Cuirass II",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:186": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_03.glb",
+      "name": "Amberwood Woodland Cuirass III",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:187": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_04.glb",
+      "name": "Amberwood Woodland Cuirass IV",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:188": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_05.glb",
+      "name": "Amberwood Woodland Cuirass V",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:189": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_06.glb",
+      "name": "Amberwood Woodland Cuirass VI",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:190": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_07.glb",
+      "name": "Amberwood Woodland Cuirass VII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "5:191": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_cuirass_08.glb",
+      "name": "Amberwood Woodland Cuirass VIII",
+      "attach": "skinned",
+      "skinRegion": "torso",
+      "kind": "cuirass",
+      "authoredFor": "luminous_male"
+    },
+    "4:171": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_01.glb",
+      "name": "Amberwood Woodland Legguards I",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:172": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_02.glb",
+      "name": "Amberwood Woodland Legguards II",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:173": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_03.glb",
+      "name": "Amberwood Woodland Legguards III",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:174": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_04.glb",
+      "name": "Amberwood Woodland Legguards IV",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:175": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_05.glb",
+      "name": "Amberwood Woodland Legguards V",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:176": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_06.glb",
+      "name": "Amberwood Woodland Legguards VI",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:177": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_07.glb",
+      "name": "Amberwood Woodland Legguards VII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:178": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_legguards_08.glb",
+      "name": "Amberwood Woodland Legguards VIII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "6:192": {
+      "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_01.glb",
+      "name": "Arcane Fantasy Boots I",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:193": {
+      "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_02.glb",
+      "name": "Arcane Fantasy Boots II",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:194": {
+      "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_03.glb",
+      "name": "Arcane Fantasy Boots III",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:195": {
+      "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_04.glb",
+      "name": "Arcane Fantasy Boots IV",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:196": {
+      "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_05.glb",
+      "name": "Arcane Fantasy Boots V",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:197": {
+      "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_06.glb",
+      "name": "Arcane Fantasy Boots VI",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:198": {
+      "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_07.glb",
+      "name": "Arcane Fantasy Boots VII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:199": {
+      "scene": "res://assets/actors/native/equipment/arcane_fantasy_boots_08.glb",
+      "name": "Arcane Fantasy Boots VIII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "3:109": {
+      "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_01.glb",
+      "name": "Arcane Ethereal Circlet I",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:110": {
+      "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_02.glb",
+      "name": "Arcane Ethereal Circlet II",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:111": {
+      "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_03.glb",
+      "name": "Arcane Ethereal Circlet III",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:112": {
+      "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_04.glb",
+      "name": "Arcane Ethereal Circlet IV",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:113": {
+      "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_05.glb",
+      "name": "Arcane Ethereal Circlet V",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:114": {
+      "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_06.glb",
+      "name": "Arcane Ethereal Circlet VI",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:115": {
+      "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_07.glb",
+      "name": "Arcane Ethereal Circlet VII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:116": {
+      "scene": "res://assets/actors/native/equipment/arcane_ethereal_circlet_08.glb",
+      "name": "Arcane Ethereal Circlet VIII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:117": {
+      "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_01.glb",
+      "name": "Amberwood Forest Helm I",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:118": {
+      "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_02.glb",
+      "name": "Amberwood Forest Helm II",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:119": {
+      "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_03.glb",
+      "name": "Amberwood Forest Helm III",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:120": {
+      "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_04.glb",
+      "name": "Amberwood Forest Helm IV",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:121": {
+      "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_05.glb",
+      "name": "Amberwood Forest Helm V",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:122": {
+      "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_06.glb",
+      "name": "Amberwood Forest Helm VI",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:123": {
+      "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_07.glb",
+      "name": "Amberwood Forest Helm VII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "3:124": {
+      "scene": "res://assets/actors/native/equipment/amberwood_forest_helm_08.glb",
+      "name": "Amberwood Forest Helm VIII",
+      "attach": "socket",
+      "hides": [
+        "wardrobe_head_band",
+        "wardrobe_head_cap"
+      ]
+    },
+    "6:200": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_01.glb",
+      "name": "Amberwood Woodland Boots I",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:201": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_02.glb",
+      "name": "Amberwood Woodland Boots II",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:202": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_03.glb",
+      "name": "Amberwood Woodland Boots III",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:203": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_04.glb",
+      "name": "Amberwood Woodland Boots IV",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:204": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_05.glb",
+      "name": "Amberwood Woodland Boots V",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:205": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_06.glb",
+      "name": "Amberwood Woodland Boots VI",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:206": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_07.glb",
+      "name": "Amberwood Woodland Boots VII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "6:207": {
+      "scene": "res://assets/actors/native/equipment/amberwood_woodland_boots_08.glb",
+      "name": "Amberwood Woodland Boots VIII",
+      "attach": "skinned",
+      "skinRegion": "boots",
+      "kind": "boots",
+      "authoredFor": "luminous_male"
+    },
+    "4:179": {
+      "scene": "res://assets/actors/native/equipment/arcane_leg_armor_01.glb",
+      "name": "Arcane Leg Armor I",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:180": {
+      "scene": "res://assets/actors/native/equipment/arcane_leg_armor_02.glb",
+      "name": "Arcane Leg Armor II",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:181": {
+      "scene": "res://assets/actors/native/equipment/arcane_leg_armor_03.glb",
+      "name": "Arcane Leg Armor III",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:182": {
+      "scene": "res://assets/actors/native/equipment/arcane_leg_armor_04.glb",
+      "name": "Arcane Leg Armor IV",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:183": {
+      "scene": "res://assets/actors/native/equipment/arcane_leg_armor_05.glb",
+      "name": "Arcane Leg Armor V",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:184": {
+      "scene": "res://assets/actors/native/equipment/arcane_leg_armor_06.glb",
+      "name": "Arcane Leg Armor VI",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:185": {
+      "scene": "res://assets/actors/native/equipment/arcane_leg_armor_07.glb",
+      "name": "Arcane Leg Armor VII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:186": {
+      "scene": "res://assets/actors/native/equipment/arcane_leg_armor_08.glb",
+      "name": "Arcane Leg Armor VIII",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:187": {
+      "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_01.glb",
+      "name": "Ceremonial Knight Greaves I",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:188": {
+      "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_02.glb",
+      "name": "Ceremonial Knight Greaves II",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:189": {
+      "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_03.glb",
+      "name": "Ceremonial Knight Greaves III",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
+    },
+    "4:190": {
+      "scene": "res://assets/actors/native/equipment/ceremonial_knight_greaves_04.glb",
+      "name": "Ceremonial Knight Greaves IV",
+      "attach": "skinned",
+      "skinRegion": "legs",
+      "kind": "legs",
+      "authoredFor": "luminous_male"
     }
   },
   "aliases": {},

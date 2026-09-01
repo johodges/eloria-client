@@ -1,0 +1,263 @@
+#!/usr/bin/env python3
+"""Take the generated armour set into the client and the server, in one pass.
+
+Added 2026-09-01 for Eloria Client.
+
+``conform_equipment`` turns one generated mesh into one wearable GLB.  This is
+the other half: which sixty meshes, what each of them is, where its geometry
+lands, and the two halves of the definition that make it a thing a player can
+own.  A wearable is not one record but four, joined only by the item's name --
+
+  the mesh          godot-client/assets/actors/native/equipment/<slug>.glb
+  the client entry  godot-client/data/actors/equipment.json, models["part:id"]
+  the server item   dev-server/config/eloria/items.txt, an [item] block
+  the server visual dev-server/eloria/items.py, EQUIPMENT_VISUAL_OVERRIDES
+
+-- and a set added to one side and not the other is either armour that draws
+nothing or geometry nobody can wear.  All four are written here so they cannot
+drift apart.
+
+  python import_generated_equipment.py                 build and write
+  python import_generated_equipment.py --dry-run       say what would change
+  python import_generated_equipment.py --sheet arcane_ethereal
+
+Idempotent.  The server blocks are fenced by markers and rewritten whole; the
+client entries are merged into the registry by key, so the authored models
+around them are left alone rather than regenerated.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+import conform_equipment as ce
+import equipment_authoring as ea
+
+HERE = Path(__file__).resolve().parent
+CLIENT = HERE.parent.parent / "godot-client"
+PROJECT = HERE.parent.parent.parent
+SERVER = PROJECT / "dev-server"
+GENERATED = PROJECT / "generate_models" / "meshy-armor-individual-glb"
+
+EQUIPMENT = CLIENT / "assets/actors/native/equipment"
+REGISTRY = CLIENT / "data/actors/equipment.json"
+ITEMS = SERVER / "config/eloria/items.txt"
+ITEMS_PY = SERVER / "eloria/items.py"
+
+OPEN_ITEMS = "# --- generated armour set (tools/import_generated_equipment.py) ---"
+CLOSE_ITEMS = "# --- end generated armour set ---"
+OPEN_PY = "    # --- generated armour set (eloria-assets/tools/import_generated_equipment.py) ---"
+CLOSE_PY = "    # --- end generated armour set ---"
+
+#: Where the catalogue starts.  1274 is the first id after the shipped items,
+#: and the icon contract in tests/test_item_icon_contract.py stops at 1272, so
+#: nothing here is inside a range that test pins.
+FIRST_ITEM_ID = 1274
+
+#: What a piece of each finish is worth, as (emu, armour low/high, defense).
+#: The ladder is the one tools/sync_torso_items.py already established for the
+#: torso designs, so a generated piece is worth what an authored one of the
+#: same material is worth.
+FINISH_STATS = {
+    "cloth": (4, (0, 2), 0),
+    "leather": (8, (2, 8), -1),
+    "mail": (14, (3, 12), -2),
+    "plate": (18, (4, 16), -3),
+}
+
+#: Inventory icon per slot.  Existing slots rather than new ones: the client
+#: ships 118 of them, 85-116 are the resource strip and 117 is the fallback, so
+#: a new set either reuses a fitting icon or ships an atlas.  Reuse for now --
+#: the geometry is the deliverable and the icons are their own pass.
+ICON = {3: 48, 4: 43, 5: 46, 6: 49}
+
+ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
+
+#: One row per concept sheet: the stem it generated under, what the pieces are,
+#: and where their visual ids begin.  The ranges start above every id the
+#: registry already uses (helmet 108, legs 170, body 183, boots 191) and stay
+#: inside a byte, which is all ACTOR_WEAR_ITEM gives a visual.
+SHEETS = [
+    ("Amberwood_Woodland_Armor_Concept_Sheet", "Amberwood Woodland Cuirass",
+     "amberwood_woodland_cuirass", "cuirass", 5, 184, "leather"),
+    ("Amberwood_Woodland_Legwear_Concept_Sheet", "Amberwood Woodland Legguards",
+     "amberwood_woodland_legguards", "legs", 4, 171, "leather"),
+    ("Arcane_Fantasy_Boots_Concept_Sheet", "Arcane Fantasy Boots",
+     "arcane_fantasy_boots", "boots", 6, 192, "leather"),
+    ("Arcane_ethereal_headgear_design_sheet", "Arcane Ethereal Circlet",
+     "arcane_ethereal_circlet", "circlet", 3, 109, "cloth"),
+    ("Eight_amberwood_forest_headgear_designs", "Amberwood Forest Helm",
+     "amberwood_forest_helm", "helm", 3, 117, "mail"),
+    ("Eight_amberwood_woodland_boot_designs", "Amberwood Woodland Boots",
+     "amberwood_woodland_boots", "boots", 6, 200, "leather"),
+    ("Eight_arcane_leg_armor_designs", "Arcane Leg Armor",
+     "arcane_leg_armor", "legs", 4, 179, "plate"),
+    ("Eight_ceremonial_knight_leg_armor_designs", "Ceremonial Knight Greaves",
+     "ceremonial_knight_greaves", "legs", 4, 187, "plate"),
+]
+
+
+class Piece:
+    __slots__ = ("source", "slug", "name", "kind", "part", "visual", "finish",
+                 "item_id")
+
+    def __init__(self, source, slug, name, kind, part, visual, finish, item_id):
+        self.source, self.slug, self.name = source, slug, name
+        self.kind, self.part, self.visual = kind, part, visual
+        self.finish, self.item_id = finish, item_id
+
+
+def roster() -> list[Piece]:
+    """Every generated piece, in a fixed order so ids never move."""
+    pieces: list[Piece] = []
+    item_id = FIRST_ITEM_ID
+    for stem, label, slug, kind, part, first_visual, finish in SHEETS:
+        sources = sorted(GENERATED.glob(stem + "__*.glb"))
+        for index, source in enumerate(sources):
+            if index >= len(ROMAN):
+                print("  more than %d in %s, skipping %s"
+                      % (len(ROMAN), stem, source.name))
+                continue
+            pieces.append(Piece(
+                source, "%s_%02d" % (slug, index + 1),
+                "%s %s" % (label, ROMAN[index]), kind, part,
+                first_visual + index, finish, item_id))
+            item_id += 1
+    return pieces
+
+
+def item_block(piece: Piece) -> str:
+    emu, (low, high), defense = FINISH_STATS[piece.finish]
+    slot = {3: "head", 4: "legs", 5: "body", 6: "feet"}[piece.part]
+    lines = ["", "[item]",
+             "name: %s" % piece.name,
+             "item_id: %d" % piece.item_id,
+             "image_id: %d" % ICON[piece.part],
+             "emu: %d" % emu,
+             "flags: 2",
+             "category: Armor",
+             "description: Generated from the %s concept sheet."
+             % piece.source.stem.split("__")[0].replace("_", " ").strip(),
+             "equip_type: %s" % slot,
+             "armor: %d/%d" % (low, high)]
+    if defense:
+        lines.append("defense: %d" % defense)
+    lines.append("[/item]")
+    return "\n".join(lines)
+
+
+def fence(text: str, opener: str, closer: str, body: str) -> str:
+    """Replace a marked block, or add one at the end if there is none yet."""
+    block = "%s\n%s\n%s" % (opener, body, closer)
+    pattern = re.compile("%s.*?%s" % (re.escape(opener), re.escape(closer)),
+                         re.S)
+    if pattern.search(text):
+        return pattern.sub(lambda _: block, text, count=1)
+    return text.rstrip("\n") + "\n\n" + block + "\n"
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(
+        description="build the generated armour set and define it on both sides")
+    ap.add_argument("--race", default="luminous_male")
+    ap.add_argument("--sheet", default=None,
+                    help="only pieces whose slug starts with this")
+    ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--skip-build", action="store_true",
+                    help="rewrite the definitions without rebuilding meshes")
+    args = ap.parse_args()
+
+    if not GENERATED.is_dir():
+        print("no generated meshes at %s" % GENERATED)
+        return 2
+    pieces = [p for p in roster()
+              if not args.sheet or p.slug.startswith(args.sheet)]
+    if not pieces:
+        print("nothing matched")
+        return 2
+
+    by_part: dict[int, int] = {}
+    for piece in pieces:
+        by_part[piece.part] = by_part.get(piece.part, 0) + 1
+    print("%d piece(s): %s" % (len(pieces), ", ".join(
+        "part %d x%d" % (part, count) for part, count in sorted(by_part.items()))))
+    if args.dry_run:
+        for piece in pieces:
+            print("  %-34s %-9s part %d visual %-4d item %d"
+                  % (piece.slug, piece.kind, piece.part, piece.visual,
+                     piece.item_id))
+        print("\nnothing written (--dry-run)")
+        return 0
+
+    rig = ea.load_rig(ce.RACES / ("%s.glb" % args.race), ce.BODY_MESH)
+    built, failed = 0, 0
+    if not args.skip_build:
+        EQUIPMENT.mkdir(parents=True, exist_ok=True)
+        for piece in pieces:
+            target = EQUIPMENT / ("%s.glb" % piece.slug)
+            try:
+                info = ce.build(piece.source, target, rig, piece.kind,
+                                piece.name)
+            except Exception as exc:                    # noqa: BLE001
+                print("  FAILED %-32s %s" % (piece.slug, exc))
+                failed += 1
+                continue
+            built += 1
+            print("  %-34s %-7s %5d verts  %.2f MB"
+                  % (piece.slug, info.get("attach", "skinned"),
+                     info["vertices"], info["bytes"] / 1e6))
+
+    registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+    for piece in pieces:
+        entry = {"scene": "res://assets/actors/native/equipment/%s.glb"
+                          % piece.slug,
+                 "name": piece.name}
+        if piece.kind in ea.GARMENT_KINDS:
+            entry["attach"] = "skinned"
+            entry["skinRegion"] = ea.garment_region(piece.kind)
+            entry["kind"] = piece.kind
+            entry["authoredFor"] = args.race
+        else:
+            entry["attach"] = "socket"
+            if piece.part == 3:
+                entry["hides"] = list(ea.PARTS[3]["hides"])
+        registry["models"]["%d:%d" % (piece.part, piece.visual)] = entry
+    REGISTRY.write_text(json.dumps(registry, indent=2) + "\n",
+                        encoding="utf-8")
+
+    items = ITEMS.read_text(encoding="utf-8")
+    body = "\n".join(item_block(piece) for piece in pieces).lstrip("\n")
+    ITEMS.write_text(fence(items, OPEN_ITEMS, CLOSE_ITEMS, body),
+                     encoding="utf-8")
+
+    source = ITEMS_PY.read_text(encoding="utf-8")
+    rows = "\n".join('    "%s": (%d, %d),'
+                     % (piece.name.casefold(), piece.part, piece.visual)
+                     for piece in pieces)
+    if OPEN_PY in source:
+        source = fence(source, OPEN_PY, CLOSE_PY, rows)
+    else:
+        # Into the override table itself, immediately before it closes.
+        marker = '    "spauldered breastplate": (5, 183),\n}'
+        if marker not in source:
+            print("could not find the end of EQUIPMENT_VISUAL_OVERRIDES")
+            return 2
+        source = source.replace(
+            marker,
+            '    "spauldered breastplate": (5, 183),\n%s\n%s\n%s\n}'
+            % (OPEN_PY, rows, CLOSE_PY), 1)
+    ITEMS_PY.write_text(source, encoding="utf-8")
+
+    print("\n%d built, %d failed" % (built, failed))
+    print("  meshes   %s" % EQUIPMENT)
+    print("  registry %s" % REGISTRY)
+    print("  items    %s" % ITEMS)
+    print("  visuals  %s" % ITEMS_PY)
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
