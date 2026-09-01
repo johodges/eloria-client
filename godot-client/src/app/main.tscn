@@ -2979,36 +2979,6 @@ unique_name_in_owner = true
 layout_mode = 2
 max_value = 11.0
 
-[node name="ShirtLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=736876992]
-layout_mode = 2
-text = "Shirt"
-
-[node name="CreateShirt" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=191792557]
-unique_name_in_owner = true
-layout_mode = 2
-max_value = 11.0
-value = 1.0
-
-[node name="PantsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=445399516]
-layout_mode = 2
-text = "Pants"
-
-[node name="CreatePants" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1736361323]
-unique_name_in_owner = true
-layout_mode = 2
-max_value = 8.0
-value = 1.0
-
-[node name="BootsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1465038403]
-layout_mode = 2
-text = "Boots"
-
-[node name="CreateBoots" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=937017971]
-unique_name_in_owner = true
-layout_mode = 2
-max_value = 5.0
-value = 1.0
-
 [node name="HeadLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1865317685]
 layout_mode = 2
 text = "Head"
@@ -3179,9 +3149,6 @@ horizontal_alignment = 1
 [connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateSkin" to="." method="_on_create_appearance_changed"]
 [connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateHair" to="." method="_on_create_appearance_changed"]
 [connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateEyes" to="." method="_on_create_appearance_changed"]
-[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateShirt" to="." method="_on_create_appearance_changed"]
-[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreatePants" to="." method="_on_create_appearance_changed"]
-[connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateBoots" to="." method="_on_create_appearance_changed"]
 [connection signal="value_changed" from="CreationPanel/Columns/Form/AppearanceGrid/CreateHead" to="." method="_on_create_appearance_changed"]
 [connection signal="pressed" from="CreationPanel/Columns/Form/Actions/Back" to="." method="_on_creation_back_pressed"]
 [connection signal="pressed" from="CreationPanel/Columns/Form/Actions/Create" to="." method="_on_create_pressed"]
