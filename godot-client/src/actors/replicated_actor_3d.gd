@@ -4,7 +4,9 @@ extends CharacterBody3D
 @export var walk_presentation_speed := 6.0
 @export var run_presentation_speed := 9.0
 @export var turn_speed_radians := 12.0
-@export var initial_server_interval := 0.25
+## The server's own player move interval, so the first step of a burst is
+## paced correctly before any packet cadence has been observed.
+@export var initial_server_interval := 0.2
 @export var interval_smoothing := 0.5
 ## How much longer than the observed server cadence one step is allowed to
 ## take. At 1.05 any jitter in the packet stream finished the step before the
@@ -31,11 +33,16 @@ var _segment_start := Vector3.ZERO
 var _segment_elapsed := 0.0
 var _segment_duration := 0.0
 var _last_movement_update_msec := -1
-var _smoothed_server_interval := 0.25
+var _smoothed_server_interval := 0.2
 ## The direction the body is actually crossing the ground in, which is not the
 ## tile direction the server named. See `_rendered_target_yaw`.
 var _travel_yaw_active := false
 var _travel_yaw := 0.0
+## Whether the server says this actor is under the double-speed buff. The
+## server paces a hastened actor at half the move interval but still names the
+## ordinary walk commands, so the buff is the only thing that says an actor is
+## covering ground fast enough to be running.
+var _hastened := false
 ## Part 2 in the equipment registry: the cape, and the only part with cloth.
 const CAPE_PART := 2
 ## The wardrobe meshes are shells fitted straight onto the skin they cover, so
@@ -533,8 +540,10 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	var authoritative_yaw: float = target_yaw_for_state(
 		_target_yaw, actor_command, int(dto.rotation), adapter)
 	_target_yaw = _predicted_turn_yaw if _predicted_turn_pending else authoritative_yaw
+	_hastened = (int(dto.get("buffs", 0))
+		& EloriaProtocol.ACTOR_BUFF_DOUBLE_SPEED) != 0
 	_presentation_speed = walk_presentation_speed
-	if actor_command >= 30 and actor_command <= 37:
+	if _hastened or (actor_command >= 30 and actor_command <= 37):
 		_presentation_speed = run_presentation_speed
 	if teleport or global_position.distance_to(server_target) > 8.0:
 		global_position = server_target
@@ -574,7 +583,8 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 	_wake()
 	if dto.has("command") and resolver != null:
 		play_action(_movement_aware_action(
-			resolver.action_for_command(actor_command), target_changed))
+			_paced_travel_action(resolver.action_for_command(actor_command)),
+			target_changed))
 	apply_equipment_visuals(dto.get("equipment_visuals", {}) as Dictionary,
 		dto.get("equipment_fallback_parts", []) as Array)
 
@@ -588,6 +598,15 @@ func _movement_aware_action(action: StringName,
 	if target_changed or _segment_duration > 0.0 or _movement_coast_remaining > 0.0:
 		return action
 	return &"idle"
+
+## Walking is the ordinary pace, so the walk commands the server sends for every
+## step resolve to the walk clip. Speed Hax is what makes an actor run: it halves
+## the server's move interval without ever naming a run command, so the buff -
+## not the command - is what promotes the travel action to a run.
+func _paced_travel_action(action: StringName) -> StringName:
+	if _hastened and action == &"walk":
+		return &"run"
+	return action
 
 func apply_equipment_visuals(visuals: Dictionary, fallback_parts: Array = []) -> void:
 	for raw_part: Variant in _equipment_visuals.keys():
@@ -1318,11 +1337,16 @@ func play_action(action: StringName) -> void:
 ## clip runs at the speed the actor is actually travelling. Anything else -
 ## and a fixed 1.45 on a clip that covers 0.61 m/s while the server walks an
 ## actor at 1.86 m/s was a long way else - reads as sliding.
+##
+## The ceiling is 3.0 because `Walk` is a slow amble: it covers 0.61 m/s at
+## speed 1.0, and the walking pace is 1.78 m/s, so it needs 2.92x. Clamping
+## below that would put the feet back to sliding, which is the one thing this
+## function exists to prevent.
 func _playback_speed_for(action: StringName) -> float:
 	var stride: float = resolver.stride_speed_for_action(action)
 	if stride <= 0.0:
 		return resolver.playback_speed_for_action(action)
-	return clampf(_travel_speed() / stride, 0.35, 2.5)
+	return clampf(_travel_speed() / stride, 0.35, 3.0)
 
 ## Metres per second the presentation is currently moving this actor. Falls
 ## back to the nominal speed for the command before the first step is timed.

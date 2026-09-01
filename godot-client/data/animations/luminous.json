@@ -2,7 +2,7 @@
  "schemaVersion": 1,
  "fallbackAction": "idle",
  "strideMetresPerSecond": {
-  "walk": 1.692,
+  "walk": 0.61,
   "run": 2.247
  },
  "playbackSpeeds": {
@@ -46,7 +46,7 @@
   "sit": "Meditate",
   "stand": "Sitting_Exit",
   "turn": "Idle_Subtle",
-  "walk": "Jog"
+  "walk": "Walk"
  },
  "serverCommands": {
   "3": "death",
