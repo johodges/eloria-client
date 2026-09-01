@@ -18,9 +18,9 @@ Export packaging must copy approved world packages into the exported content dir
 
 Godot is Y-up, metres, right-handed, north = -Z. Server `(x, y)` tiles map to Godot `(x * metresPerTile, elevation, -y * metresPerTile) + origin`. Conversion is exclusively owned by `CoordinateAdapter`.
 
-The registry supplies the verified development binding for Four Gates: 0.4651162791
-metres per server tile, server origin `(768, 768)` - the centre of the 1536-tile
-server grid, which is the plaza - authored walk surface Y=31 with
+The registry supplies the verified development binding for Four Gates: one metre
+per server tile, server origin `(360, 360)` - the centre of the 720-tile server
+grid, which is the plaza - authored walk surface Y=31 with
 an actor baseline of 31.15 to prevent terrain z-fighting, and
 inverted server Y. Server IDs `maps/startmap.elm`, `startmap.elm`, `four_gates`,
 `four-gates`, and `maps/four_gates.elm` resolve to the same canonical entry. The bare

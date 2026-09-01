@@ -4,10 +4,10 @@
     "maps/startmap.elm": {
       "manifest": "res://../eloria-assets/maps/four-gates/world.json",
       "coordinateTransform": {
-        "metresPerTile": 0.4651162791,
+        "metresPerTile": 1.0,
         "serverOrigin": [
-          768.0,
-          768.0
+          360.0,
+          360.0
         ],
         "origin": [
           0.0,
@@ -361,10 +361,10 @@
     "maps/four-gates-lantern-row.elm": {
       "manifest": "res://../eloria-assets/maps/four-gates-lantern-row/world.json",
       "coordinateTransform": {
-        "metresPerTile": 0.25,
+        "metresPerTile": 1.0,
         "serverOrigin": [
-          512.0,
-          512.0
+          18.0,
+          18.0
         ],
         "origin": [
           0.0,
@@ -385,10 +385,10 @@
     "maps/four-gates-reedworks.elm": {
       "manifest": "res://../eloria-assets/maps/four-gates-reedworks/world.json",
       "coordinateTransform": {
-        "metresPerTile": 0.25,
+        "metresPerTile": 1.0,
         "serverOrigin": [
-          512.0,
-          512.0
+          15.0,
+          15.0
         ],
         "origin": [
           0.0,
@@ -409,10 +409,10 @@
     "maps/four-gates-stormglass-house.elm": {
       "manifest": "res://../eloria-assets/maps/four-gates-stormglass-house/world.json",
       "coordinateTransform": {
-        "metresPerTile": 0.25,
+        "metresPerTile": 1.0,
         "serverOrigin": [
-          512.0,
-          512.0
+          12.0,
+          12.0
         ],
         "origin": [
           0.0,
@@ -433,10 +433,10 @@
     "maps/four-gates-mirrorsmith-forge.elm": {
       "manifest": "res://../eloria-assets/maps/four-gates-mirrorsmith-forge/world.json",
       "coordinateTransform": {
-        "metresPerTile": 0.25,
+        "metresPerTile": 1.0,
         "serverOrigin": [
-          512.0,
-          512.0
+          12.0,
+          12.0
         ],
         "origin": [
           0.0,
@@ -457,10 +457,10 @@
     "maps/four-gates-ferrymans-rest.elm": {
       "manifest": "res://../eloria-assets/maps/four-gates-ferrymans-rest/world.json",
       "coordinateTransform": {
-        "metresPerTile": 0.25,
+        "metresPerTile": 1.0,
         "serverOrigin": [
-          512.0,
-          512.0
+          15.0,
+          15.0
         ],
         "origin": [
           0.0,
@@ -481,10 +481,10 @@
     "maps/four-gates-deposit-four-keys.elm": {
       "manifest": "res://../eloria-assets/maps/four-gates-deposit-four-keys/world.json",
       "coordinateTransform": {
-        "metresPerTile": 0.25,
+        "metresPerTile": 1.0,
         "serverOrigin": [
-          512.0,
-          512.0
+          12.0,
+          12.0
         ],
         "origin": [
           0.0,
