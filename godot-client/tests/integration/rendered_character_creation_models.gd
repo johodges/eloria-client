@@ -44,7 +44,13 @@ func _run() -> void:
 	var preview: SubViewport = main.get_node(
 		"CreationPanel/Columns/CharacterPreview/Viewport") as SubViewport
 	var spin_names: Array[String] = ["CreateSkin", "CreateHair", "CreateEyes",
-		"CreateShirt", "CreatePants", "CreateBoots", "CreateHead"]
+		"CreateHead"]
+	# The wardrobe picker is deprecated: creation must not offer a starter
+	# shirt, pants or boots over a body that wears its clothing in its texture.
+	for gone: String in ["CreateShirt", "CreatePants", "CreateBoots"]:
+		_expect(main.get_node_or_null(
+			"CreationPanel/Columns/Form/AppearanceGrid/" + gone) == null,
+			"creation no longer offers " + gone)
 	for spin_name: String in spin_names:
 		(main.get_node("CreationPanel/Columns/Form/AppearanceGrid/" + spin_name) as SpinBox).value = 0
 

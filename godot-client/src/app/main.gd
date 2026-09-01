@@ -1131,11 +1131,7 @@ func _refresh_creation_preview() -> void:
 	# one the character spawns wearing.
 	var dto := _presentation_dto({"actor_id": 0, "x": 0, "y": 0, "rotation": 0,
 		"actor_type": actor_type, "kind": 1, "name": "Preview",
-		"appearance": appearance,
-		"equipment_visuals": {
-			AppearanceVariants.PART_PANTS: int(appearance.get("pants", 0)),
-			AppearanceVariants.PART_SHIRT: int(appearance.get("shirt", 0)),
-			AppearanceVariants.PART_BOOTS: int(appearance.get("boots", 0))}})
+		"appearance": appearance})
 	var model_id := _model_for_actor(dto)
 	var model_config: Dictionary = models.get(model_id, {}) as Dictionary
 	var errors := preview_actor.configure(dto,
@@ -1150,9 +1146,15 @@ func _refresh_creation_preview() -> void:
 func _creation_appearance() -> Dictionary:
 	return {
 		"skin": int(%CreateSkin.value), "hair": int(%CreateHair.value),
-		"eyes": int(%CreateEyes.value), "shirt": int(%CreateShirt.value),
-		"pants": int(%CreatePants.value), "boots": int(%CreateBoots.value),
+		"eyes": int(%CreateEyes.value),
 		"head": int(%CreateHead.value),
+		# Deprecated 2026-09-01 for Eloria Client: the wardrobe picker is gone.
+		# The race bodies wear their clothing in their own texture, so a starter
+		# shirt, pants and boots put a second outfit over a painted one.  The
+		# three bytes stay at zero because the create packet's legacy order is
+		# skin, hair, shirt, pants, boots, actor type, head, eyes and the server
+		# still reads all eight; zero means an empty slot, which renders bare.
+		"shirt": 0, "pants": 0, "boots": 0,
 	}
 
 func _on_character_preview_gui_input(event: InputEvent) -> void:
