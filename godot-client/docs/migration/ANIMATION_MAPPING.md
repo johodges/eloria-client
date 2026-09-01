@@ -18,7 +18,7 @@ Godot loads both glTF and GLB natively through GLTFDocument. No custom mesh, ske
 
 ## Exact gameplay mappings
 
-Idle_A/Idle_Subtle, Walk, Sprint, Fighting_Idle, Sword_Attack, Bow_Release, Spell_Simple_Shoot, Hit_Chest, Death_A, Sitting_Enter/Sitting_Idle/Sitting_Exit, Farm_Harvest, PickUp_Table, Throw_Object, and Greeting are explicitly mapped in data/animations/luminous.json.
+Idle_A/Idle_Subtle, Walk, Run_Female, Fighting_Idle, Sword_Attack, Bow_Release, Spell_Simple_Shoot, Hit_Chest, Death_A, Sitting_Enter/Sitting_Idle/Sitting_Exit, Farm_Harvest, PickUp_Table, Throw_Object, and Greeting are explicitly mapped in data/animations/luminous.json.
 
 ## Remaining runtime validation
 

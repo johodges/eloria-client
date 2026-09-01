@@ -4,16 +4,19 @@ extends CharacterBody3D
 @export var walk_presentation_speed := 6.0
 @export var run_presentation_speed := 9.0
 @export var turn_speed_radians := 12.0
-## The server's own player move interval, so the first step of a burst is
-## paced correctly before any packet cadence has been observed.
-@export var initial_server_interval := 0.2
+## The server's walking interval, so the very first step of a session is
+## paced correctly before any packet cadence has been observed. Every burst
+## after that keeps the cadence it last measured.
+@export var initial_server_interval := 0.7
 @export var interval_smoothing := 0.5
 ## How much longer than the observed server cadence one step is allowed to
 ## take. At 1.05 any jitter in the packet stream finished the step before the
 ## next one arrived, and the actor stopped and restarted on every tile.
 @export var arrival_margin := 1.25
 @export var minimum_segment_duration := 0.06
-@export var maximum_segment_duration := 0.75
+## Long enough to hold a walking step - 0.7 s a tile plus the arrival
+## margin - so a walk is not driven faster than the server sends it.
+@export var maximum_segment_duration := 1.0
 ## Kept walking for this long after a step lands before falling back to idle,
 ## again so a late packet does not flick the pose to idle and back.
 @export var movement_coast_seconds := 0.12
@@ -33,7 +36,7 @@ var _segment_start := Vector3.ZERO
 var _segment_elapsed := 0.0
 var _segment_duration := 0.0
 var _last_movement_update_msec := -1
-var _smoothed_server_interval := 0.2
+var _smoothed_server_interval := 0.7
 ## The direction the body is actually crossing the ground in, which is not the
 ## tile direction the server named. See `_rendered_target_yaw`.
 var _travel_yaw_active := false
@@ -566,10 +569,12 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 					maximum_segment_duration)
 				_smoothed_server_interval = lerpf(_smoothed_server_interval,
 					observed_interval, interval_smoothing)
-			else:
-				# A long stationary pause begins a new movement burst; do not
-				# treat the idle time as the next step's network cadence.
-				_smoothed_server_interval = initial_server_interval
+			# A long stationary pause is idle time, not a cadence. Folding it
+			# in would pace the next burst by how long the player stood still,
+			# and resetting to the constant lurched the first step of every
+			# burst at any pace but the walking one. The measured pace is kept
+			# instead: standing still is not what changes it - #run and #walk
+			# are, and the step after those corrects it.
 		_last_movement_update_msec = now_msec
 		_segment_start = global_position
 		_segment_elapsed = 0.0
@@ -1338,15 +1343,15 @@ func play_action(action: StringName) -> void:
 ## and a fixed 1.45 on a clip that covers 0.61 m/s while the server walks an
 ## actor at 1.86 m/s was a long way else - reads as sliding.
 ##
-## The ceiling is 3.0 because `Walk` is a slow amble: it covers 0.61 m/s at
-## speed 1.0, and the walking pace is 1.78 m/s, so it needs 2.92x. Clamping
-## below that would put the feet back to sliding, which is the one thing this
-## function exists to prevent.
+## The ceiling is 3.5 so nothing in ordinary play reaches it. `Walk` covers
+## 0.685 m/s at speed 1.0 against a walking pace of 1.43 m/s (2.08x), and
+## `Run_Female` covers 2.666 against a running 5.0 m/s (1.88x). Only Speed Hax
+## on top of a run - 10 m/s - asks for more than the ceiling.
 func _playback_speed_for(action: StringName) -> float:
 	var stride: float = resolver.stride_speed_for_action(action)
 	if stride <= 0.0:
 		return resolver.playback_speed_for_action(action)
-	return clampf(_travel_speed() / stride, 0.35, 3.0)
+	return clampf(_travel_speed() / stride, 0.35, 3.5)
 
 ## Metres per second the presentation is currently moving this actor. Falls
 ## back to the nominal speed for the command before the first step is timed.
