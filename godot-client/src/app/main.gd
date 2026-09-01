@@ -310,7 +310,7 @@ var adapter := CoordinateAdapter.new({"walkingHeight": 0.0, "invertServerY": tru
 var preview_actor: ReplicatedActor3D
 var pending_create_username := ""
 var pending_create_password := ""
-var preview_yaw := 0.0
+var preview_yaw := PI + 0.28
 var preview_pitch := 0.12
 var preview_distance := 2.65
 var inventory_slot_buttons: Array[Button] = []
