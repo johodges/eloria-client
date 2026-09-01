@@ -311,6 +311,11 @@ var preview_actor: ReplicatedActor3D
 var pending_create_username := ""
 var pending_create_password := ""
 var preview_yaw := PI + 0.28
+## Where the preview camera looks. Not the world origin: the coordinate
+## adapter places a tile at its own centre, so the body stands half a tile
+## off it, and a camera fixed on the origin framed it a hundred pixels wide
+## of the disc it is meant to be standing on.
+var preview_focus := Vector3(0.0, 1.0, 0.0)
 var preview_pitch := 0.12
 var preview_distance := 2.65
 var inventory_slot_buttons: Array[Button] = []
@@ -1136,6 +1141,7 @@ func _refresh_creation_preview() -> void:
 	var errors := preview_actor.configure(dto,
 		CoordinateAdapter.new({"walkingHeight": 0.0}), model_config,
 		_animation_for_model(model_config), equipment_config)
+	_frame_preview_actor()
 	if not errors.is_empty():
 		create_status.text = "Preview warnings: " + "; ".join(errors)
 	else:
@@ -1173,10 +1179,21 @@ func _on_character_preview_gui_input(event: InputEvent) -> void:
 		_update_preview_camera()
 		preview_container.accept_event()
 
+## Put the camera, and the disc, where the body actually stands.
+func _frame_preview_actor() -> void:
+	if not is_instance_valid(preview_actor):
+		return
+	var stand: Vector3 = preview_actor.position
+	preview_focus = Vector3(stand.x, 1.0, stand.z)
+	var ground: Node3D = preview_root.get_node_or_null("PreviewGround") as Node3D
+	if ground != null:
+		ground.position = Vector3(stand.x, ground.position.y, stand.z)
+	_update_preview_camera()
+
 func _update_preview_camera() -> void:
 	if preview_camera == null:
 		return
-	var focus := Vector3(0.0, 1.0, 0.0)
+	var focus := preview_focus
 	var horizontal: float = cos(preview_pitch) * preview_distance
 	preview_camera.position = focus + Vector3(sin(preview_yaw) * horizontal,
 		sin(preview_pitch) * preview_distance, cos(preview_yaw) * horizontal)

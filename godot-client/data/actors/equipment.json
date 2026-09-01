@@ -30,6 +30,7 @@
       "name": "legs",
       "attachment": "pelvis",
       "fallback": "body",
+      "bareWhenEmpty": true,
       "hides": [
         "wardrobe_pants",
         "wardrobe_pants_seam"
@@ -39,6 +40,7 @@
       "name": "body",
       "attachment": "body",
       "fallback": "body",
+      "bareWhenEmpty": true,
       "hides": [
         "wardrobe_shirt",
         "wardrobe_shirt_trim"
@@ -48,6 +50,7 @@
       "name": "boots",
       "attachment": "feet",
       "fallback": "feet",
+      "bareWhenEmpty": true,
       "hides": [
         "wardrobe_boots",
         "wardrobe_boots_seam"

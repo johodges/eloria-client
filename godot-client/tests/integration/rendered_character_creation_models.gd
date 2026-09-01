@@ -123,20 +123,38 @@ func _validate_actor(actor: ReplicatedActor3D, label: String) -> void:
 	# Modified 2026-08-28 for Eloria Client: shirt, pants, and boots now use the
 	# same skinned equipment path as the world actor. The creation preview should
 	# contain those garments, but no socketed prop or fallback placeholder.
-	_expect(int(equipment.get("skinned", 0)) >= 3 and
-		int(equipment.get("socket", -1)) == 0 and
+	# Modified 2026-09-01 for Eloria Client: an empty wardrobe slot renders
+	# bare now -- the race bodies carry their clothing in their own texture --
+	# so a preview with nothing equipped has no garments at all.  What must
+	# still hold is that nothing was socketed that should have been skinned,
+	# and nothing fell back to a placeholder.
+	_expect(int(equipment.get("socket", -1)) == 0 and
 		int(equipment.get("fallback", -1)) == 0,
-		label + " creation preview has skinned clothing without props or fallbacks")
+		label + " creation preview has no props or fallback placeholders")
 	var mesh_names: Array[String] = []
 	var maximum_extent := 0.0
+	var body_meshes := 0
+	# The nameplate, ring and map dot are drawn by the actor, not by the
+	# model, and the map dot alone is 15 units across -- measuring them here
+	# failed the placeholder check on every body, shipped ones included.
+	var furniture: Array[String] = ["SelectionRing", "HealthBarBackground",
+		"HealthBarFill", "MapDot", "MapDotOutline"]
 	for node_value: Node in actor.find_children("*", "MeshInstance3D", true, false):
 		var mesh_node: MeshInstance3D = node_value as MeshInstance3D
 		mesh_names.append(mesh_node.name)
+		if furniture.has(mesh_node.name):
+			continue
+		var hair: bool = mesh_node.name.begins_with("NativeHair_")
+		var garment: bool = mesh_node.name.begins_with("EquipmentSkin_")
+		if not hair and not garment:
+			body_meshes += 1
 		var size: Vector3 = mesh_node.get_aabb().size
 		maximum_extent = maxf(maximum_extent, maxf(size.x, maxf(size.y, size.z)))
-	for required: String in ["Body", "Wardrobe_Shirt", "Wardrobe_Pants",
-			"Wardrobe_Boots"]:
-		_expect(mesh_names.has(required), label + " contains " + required)
+	# Modified 2026-09-01 for Eloria Client: a race used to be a nude Body
+	# under separate Wardrobe_Shirt/Pants/Boots meshes.  The bodies are now
+	# one skinned mesh wearing its clothing in its own texture, so the check
+	# is that a body rendered at all, not that it rendered in four pieces.
+	_expect(body_meshes >= 1, label + " renders a skinned body")
 	_expect(mesh_names.any(func(name: String) -> bool:
 		return name.begins_with("NativeHair_")), label + " uses native hairstyle mesh")
 	_expect(maximum_extent < 2.1,
