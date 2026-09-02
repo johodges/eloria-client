@@ -59,7 +59,9 @@ class ItemIconAtlasTest(unittest.TestCase):
                                    column * self.cell:(column + 1) * self.cell]
 
     def test_atlas_declares_its_painted_range(self) -> None:
-        self.assertEqual(118, self.config["imageCount"])
+        # 0-117 are the painted originals, 118-177 the generated armour set's
+        # per-piece renders (tools/build_item_icon_atlases.py).
+        self.assertEqual(178, self.config["imageCount"])
         self.assertEqual(117, self.config["fallbackImageId"])
         capacity = len(self.config["atlases"]) * self.per_atlas
         self.assertLessEqual(self.config["imageCount"], capacity)
