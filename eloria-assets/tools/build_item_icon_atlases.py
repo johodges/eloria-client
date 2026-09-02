@@ -36,6 +36,7 @@ from PIL import Image
 
 import import_generated_equipment as ige
 import import_generated_weapons as igw
+import potion_icons
 
 HERE = Path(__file__).resolve().parent
 CLIENT = HERE.parent.parent / "godot-client"
@@ -107,13 +108,13 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    # Both generated sets, armour first.  Their image ids are handed out from
-    # a single run of numbers -- the armour from 118, the weapons from 374 --
-    # so the painted prefix stays contiguous and one atlas series carries
-    # everything.  Packing them separately would leave a hole at whichever
-    # boundary the shorter set stopped at.
-    # Each set renders into its own directory, so a piece is carried with the
-    # directory it came from rather than looked up again afterwards.
+    # All three generated sets, armour first.  Their image ids are handed out
+    # from a single run of numbers -- the armour from 118, the weapons from
+    # 374, the potion shelf from 480 -- so the painted prefix stays contiguous
+    # and one atlas series carries everything.  Packing them separately would
+    # leave a hole at whichever boundary the shorter set stopped at.
+    # Each rendered set carries its own icon directory; the potions have no
+    # meshes and are painted here instead of read from disk.
     pieces, icon_of = [], {}
     for roster, icons in ((ige.roster(), args.icons),
                           (igw.roster(), args.weapon_icons)):
@@ -129,6 +130,9 @@ def main() -> int:
               file=sys.stderr)
         return 2
 
+    potions = potion_icons.roster()
+    pieces.extend(potions)
+
     image_count = max(p.image_id for p in pieces) + 1
     atlas_count = (image_count + PER_ATLAS - 1) // PER_ATLAS
     touched = sorted({p.image_id // PER_ATLAS for p in pieces})
@@ -142,10 +146,12 @@ def main() -> int:
 
     atlases = {index: read_atlas(index) for index in touched}
     for piece in pieces:
-        icon = Image.open(icon_of[piece.image_id])
-        icon = icon.convert("RGBA")
-        if icon.size != (CELL, CELL):
-            icon = icon.resize((CELL, CELL), Image.LANCZOS)
+        if piece.image_id in icon_of:
+            icon = Image.open(icon_of[piece.image_id]).convert("RGBA")
+            if icon.size != (CELL, CELL):
+                icon = icon.resize((CELL, CELL), Image.LANCZOS)
+        else:
+            icon = potion_icons.paint(piece)
         row, column = divmod(piece.image_id % PER_ATLAS, COLUMNS)
         atlases[piece.image_id // PER_ATLAS].paste(
             icon, (column * CELL, row * CELL))
@@ -166,9 +172,11 @@ def main() -> int:
     layout["note"] = (
         "Rows each atlas sits below the grid ItemAtlas samples. IDs 100-116 "
         "mirror the Nymara resource image IDs emitted by eloria-server; 117 "
-        "is the dedicated unknown-item fallback; 118-%d are the generated "
-        "armour set's per-piece renders, assigned in the "
-        "import_generated_equipment roster order." % (image_count - 1))
+        "is the dedicated unknown-item fallback; 118 up are the generated "
+        "sets' per-piece icons -- armour from 118 and weapons from 374 in "
+        "their import roster orders, the painted potion shelf from %d "
+        "(potion_icons roster order) -- ending at %d."
+        % (potion_icons.FIRST_IMAGE_ID, image_count - 1))
     LAYOUT.write_text(json.dumps(layout, indent=1) + "\n", encoding="utf-8")
     print("wrote %s" % LAYOUT)
     return 0

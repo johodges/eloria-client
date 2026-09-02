@@ -5,7 +5,7 @@
  ],
  "columns": 5,
  "imagesPerAtlas": 25,
- "imageCount": 474,
+ "imageCount": 506,
  "fallbackImageId": 117,
  "rowOffsets": [
   0,
@@ -26,7 +26,9 @@
   0,
   0,
   0,
+  0,
+  0,
   0
  ],
- "note": "Rows each atlas sits below the grid ItemAtlas samples. IDs 100-116 mirror the Nymara resource image IDs emitted by eloria-server; 117 is the dedicated unknown-item fallback; 118-473 are the generated armour set's per-piece renders, assigned in the import_generated_equipment roster order."
+ "note": "Rows each atlas sits below the grid ItemAtlas samples. IDs 100-116 mirror the Nymara resource image IDs emitted by eloria-server; 117 is the dedicated unknown-item fallback; 118 up are the generated sets' per-piece icons -- armour from 118 and weapons from 374 in their import roster orders, the painted potion shelf from 474 (potion_icons roster order) -- ending at 505."
 }
