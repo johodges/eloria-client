@@ -2112,19 +2112,18 @@
       "west_hamlet_house_06"
     ],
     "binary": "collision.bin",
-    "format": "EWCG-v1",
+    "format": "EWCG-v2",
     "cellMetres": 0.5,
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -2.2,
-      "step": 0.2,
+      "origin": -0.1037,
+      "step": 0.453757,
       "range": [
         1,
         63
       ],
-      "zeroMeansBlocked": true,
-      "note": "The six-bit height field cannot express the whole range from the channel floor to the temple summit, so values clamp at 63. The grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+      "zeroMeansBlocked": true
     },
     "walkableCells": 397902,
     "walkableFraction": 0.2998,
