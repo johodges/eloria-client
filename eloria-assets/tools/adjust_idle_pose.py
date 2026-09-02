@@ -63,7 +63,12 @@ TARGET_ARM_DROP = 79.0
 #: body (the user's 0.1 m forward of where they hung), this far out from
 #: the midline, with the same soft elbow bend.
 TARGET_HAND_Z = 0.065
-TARGET_HAND_X = 0.247
+#: Per side, in the tool's rest-rooted frame, which sits 16 mm to the
+#: right of the runtime one (the pelvis channel recentring) -- so the
+#: same world shift SUBTRACTS from the left hand's distance and ADDS to
+#: the right's.  These land the REAL hands at 0.250 and 0.265 off the
+#: midline: the right two centimetres wider, as reviewed in game.
+TARGET_HAND_X = {"l": 0.266, "r": 0.249}
 TARGET_ELBOW_BEND = 12.0
 #: The stance stands centred: the ankle midpoint sits on the body's own
 #: midline (world x zero) once the pelvis channel's lateral drift and the
@@ -471,7 +476,7 @@ def main() -> int:
         # front of the body, then the forearm eases in or out until both
         # hands stand the same distance off the midline.
         steer(arm_bone, [1, 0, 0], hand_z, TARGET_HAND_Z)
-        steer("lowerarm_" + side, [0, 0, 1], hand_x, TARGET_HAND_X)
+        steer("lowerarm_" + side, [0, 0, 1], hand_x, TARGET_HAND_X[side])
     arm_angle = 0.0
 
     # Legs: verticalised segment by segment, in both planes at once.  The
