@@ -92,6 +92,31 @@ func _run() -> void:
 		"body points along an off-axis straight line, not at each zigzag step (worst %.1f deg)"
 			% worst_offaxis)
 
+	# A sharp redirect mid-path - clicking a new spot while a path still runs -
+	# must turn the body to the new heading within a step or two, not drag the old
+	# heading through the fit window while the body drifts. Walk east, reverse west.
+	actor.apply_server_state({"actor_id": 7, "x": 0, "y": 0, "rotation": 0,
+		"command": 22}, adapter, true)
+	var rx := 0
+	for _east: int in range(6):
+		rx += 1
+		actor.apply_server_state({"actor_id": 7, "x": rx, "y": 0, "rotation": 0,
+			"command": 22}, adapter)
+		await create_timer(cadence).timeout
+	var west: float = adapter.direction_to_godot(Vector2i(-1, 0))
+	var redirect_settle := -1
+	for s: int in range(6):
+		rx -= 1
+		actor.apply_server_state({"actor_id": 7, "x": rx, "y": 0, "rotation": 0,
+			"command": 26}, adapter)
+		await create_timer(cadence).timeout
+		if redirect_settle < 0 and absf(rad_to_deg(
+				wrapf(actor.rotation.y - west, -PI, PI))) < 10.0:
+			redirect_settle = s + 1
+	_expect(redirect_settle >= 0 and redirect_settle <= 3,
+		"a sharp mid-path redirect faces the new heading within a few steps (took %d)"
+			% redirect_settle)
+
 	print("actor facing tests: ",
 		"PASS" if _failures == 0 else "FAIL (%d)" % _failures)
 	quit(_failures)

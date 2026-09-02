@@ -57,6 +57,13 @@ var _travel_history: PackedVector3Array = PackedVector3Array()
 ## fit is clean of the previous leg by the time a real turn must have settled,
 ## and is enough tiles to pin a shallow line through the rounding.
 const FACING_FIT_SAMPLES := 6
+## How far a new step may depart from the current facing before it is taken for
+## a real change of direction - the player redirected mid-path - rather than the
+## alternating jitter of a zigzag, which a shallow line's diagonal steps swing up
+## to 45 degrees off. Past this the fit is started fresh from the turn so the
+## body commits to the new heading now instead of averaging the old one in over
+## the next several tiles, which read as the body hesitating and drifting.
+const FACING_RESET_DEGREES := 65.0
 ## Whether the server says this actor is under the double-speed buff. The
 ## server paces a hastened actor at half the move interval but still names the
 ## ordinary walk commands, so the buff is the only thing that says an actor is
@@ -603,6 +610,7 @@ func apply_server_state(dto: Dictionary, adapter: CoordinateAdapter, teleport :=
 			global_position.distance_to(server_target), _presentation_speed,
 			_smoothed_server_interval, arrival_margin,
 			minimum_segment_duration, maximum_segment_duration)
+		_drop_history_on_turn(server_target)
 		_travel_history.append(server_target)
 		if _travel_history.size() > FACING_FIT_SAMPLES:
 			_travel_history = _travel_history.slice(
@@ -1436,6 +1444,24 @@ static func travel_yaw(from: Vector3, to: Vector3, fallback: float) -> float:
 	if travel.length_squared() < 0.000001:
 		return fallback
 	return atan2(-travel.x, -travel.z)
+
+## Clears the fitted line back to the pivot tile when the step reaching
+## `next_target` turns further from the current facing than a zigzag ever would.
+## Keeping the pivot (the last tile before the turn) rather than emptying the
+## history means the very next fit is the two-tile new leg, so the body faces the
+## new heading immediately; without this the old leg's tiles stay in the fit and
+## drag the facing round only over the next `FACING_FIT_SAMPLES` steps.
+func _drop_history_on_turn(next_target: Vector3) -> void:
+	if not _travel_yaw_active or _travel_history.size() < 2:
+		return
+	var pivot: Vector3 = _travel_history[_travel_history.size() - 1]
+	var leg := next_target - pivot
+	leg.y = 0.0
+	if leg.length_squared() < 0.000001:
+		return
+	var leg_yaw := atan2(-leg.x, -leg.z)
+	if absf(rad_to_deg(wrapf(leg_yaw - _travel_yaw, -PI, PI))) > FACING_RESET_DEGREES:
+		_travel_history = PackedVector3Array([pivot])
 
 ## The bearing of the straight line least-squares-fitted through the recent
 ## tiles in `_travel_history`, in the x-z ground plane. The line's direction is
