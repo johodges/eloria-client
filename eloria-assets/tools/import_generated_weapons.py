@@ -259,6 +259,14 @@ FLIPPED: set[str] = set()
 #: that "up" into the direction the actor faces.
 FORWARD_LEAN = 90.0
 
+#: The clip to solve the grip against.  It can only be right for one: the hand
+#: turns differently in every animation, and a weapon that points forward while
+#: standing is 48 degrees off mid-stride.  This is the one the client idles in
+#: (data/animations/luminous.json maps "idle" to it); Idle_A, which
+#: equipment_authoring defaults to, is the *alternate* idle and leaves a blade
+#: 43 degrees across the body in the pose a player actually stands in.
+IDLE_CLIP = "Idle_Subtle"
+
 #: The shield is worn half again larger than it is authored, pushed clear of the
 #: hip, and turned out from the body so its face is seen rather than its edge.
 SHIELD_SCALE = 1.5
@@ -279,7 +287,7 @@ def _euler_degrees(basis: np.ndarray) -> list[float]:
 
 def prop_sockets(rig, race: Path, library: Path, base: dict) -> dict:
     """Per-part sockets that hold a weapon forward and a shield out."""
-    idle = ea._idle_hand_bases(str(race), str(library))
+    idle = ea._idle_hand_bases(str(race), str(library), IDLE_CLIP)
     sockets = {}
 
     blade = ea.upright_grip_basis(rig, "r", idle["r"], forward_lean=FORWARD_LEAN)
