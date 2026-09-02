@@ -23,7 +23,8 @@ static var _libraries: Dictionary = {}
 
 static func import_library(owner: Node, source_path: String,
 		target_skeleton: Skeleton3D, bone_aliases := {},
-		wanted_clips: PackedStringArray = PackedStringArray()) -> Dictionary:
+		wanted_clips: PackedStringArray = PackedStringArray(),
+		looping_clips: PackedStringArray = PackedStringArray()) -> Dictionary:
 	var result := {"player": null, "clips": PackedStringArray(),
 		"errors": PackedStringArray()}
 	if target_skeleton == null:
@@ -33,13 +34,13 @@ static func import_library(owner: Node, source_path: String,
 	# The rig itself is part of the key: two models can sit at the same node
 	# path and still expose different bones, and a retargeted library is only
 	# reusable by a skeleton with the same bones in the same order.
-	var cache_key := "%s|%s|%s|%s|%s" % [source_path, skeleton_path,
+	var cache_key := "%s|%s|%s|%s|%s|%s" % [source_path, skeleton_path,
 		_skeleton_signature(target_skeleton), JSON.stringify(bone_aliases),
-		",".join(wanted_clips)]
+		",".join(wanted_clips), ",".join(looping_clips)]
 	var cached: Dictionary = _libraries.get(cache_key, {}) as Dictionary
 	if cached.is_empty():
 		cached = _build(source_path, skeleton_path, target_skeleton, bone_aliases,
-			wanted_clips)
+			wanted_clips, looping_clips)
 		_libraries[cache_key] = cached
 	result.errors.append_array(cached.get("errors", PackedStringArray()))
 	var library: AnimationLibrary = cached.get("library") as AnimationLibrary
@@ -68,7 +69,8 @@ static func cached_library_count() -> int:
 
 static func _build(source_path: String, skeleton_path: String,
 		target_skeleton: Skeleton3D, bone_aliases: Dictionary,
-		wanted_clips: PackedStringArray) -> Dictionary:
+		wanted_clips: PackedStringArray,
+		looping_clips: PackedStringArray) -> Dictionary:
 	var built := {"library": null, "clips": PackedStringArray(),
 		"errors": PackedStringArray()}
 	var source_scene := _load_gltf(source_path)
@@ -90,7 +92,10 @@ static func _build(source_path: String, skeleton_path: String,
 		var source := source_player.get_animation(clip_name)
 		var target := Animation.new()
 		target.length = source.length
-		target.loop_mode = source.loop_mode
+		# glTF cannot state that a clip loops, so every runtime-parsed clip
+		# arrives one-shot; the action map is where the cycles are declared.
+		target.loop_mode = Animation.LOOP_LINEAR \
+			if looping_clips.has(String(clip_name)) else source.loop_mode
 		for source_track in source.get_track_count():
 			var source_bone := _track_bone(source.track_get_path(source_track))
 			var bone := str(bone_aliases.get(source_bone, source_bone))

@@ -60,15 +60,22 @@ def ridged(size: int, base_period: int, octaves: int, rng: np.random.Generator) 
     return 1.0 - np.abs(n * 2.0 - 1.0)
 
 
-def worley(size: int, cells: int, rng: np.random.Generator,
-           order: int = 0) -> Tuple[np.ndarray, np.ndarray]:
-    """Tileable Worley noise; returns (distance, cell id)."""
+def worley(size: int, cells: int, rng: np.random.Generator
+           ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Tileable Worley noise; returns (nearest, second nearest, cell id).
+
+    The gap between the two distances is what marks a cell *edge*: it falls to
+    zero along the seam between neighbouring cells and rises towards each seed.
+    The nearest distance alone dips at the seed instead, so thresholding it
+    draws a disc in the middle of every cell rather than a joint around its rim.
+    """
     points = (rng.random((cells, cells, 2)) + np.stack(
         np.meshgrid(np.arange(cells), np.arange(cells), indexing="ij"), axis=-1)) / cells
     coords = np.stack(np.meshgrid(np.linspace(0, 1, size, endpoint=False),
                                   np.linspace(0, 1, size, endpoint=False),
                                   indexing="ij"), axis=-1)
     best = np.full((size, size), 10.0)
+    runner_up = np.full((size, size), 10.0)
     ident = np.zeros((size, size), dtype=np.int32)
     flat = points.reshape(-1, 2)
     for index, point in enumerate(flat):
@@ -76,9 +83,27 @@ def worley(size: int, cells: int, rng: np.random.Generator,
         delta = np.minimum(delta, 1.0 - delta)
         dist = np.hypot(delta[..., 0], delta[..., 1])
         mask = dist < best
+        runner_up = np.where(mask, best, np.minimum(runner_up, dist))
         best = np.where(mask, dist, best)
         ident = np.where(mask, index, ident)
-    return best, ident
+    return best, runner_up, ident
+
+
+def cell_hash(ident: np.ndarray) -> np.ndarray:
+    """Scatter Worley cell ids over [0, 1) so neighbours are uncorrelated.
+
+    `worley` numbers its cells in raster order, so shading a stone by its id --
+    even behind a modulo, which is a no-op whenever there are fewer cells than
+    the divisor -- ramps the tile smoothly from one edge to the other. Tiled
+    across a road that reads as bands marching from dark to light, not as
+    stonework.
+    """
+    h = ident.astype(np.uint64) & np.uint64(0xFFFFFFFF)
+    h = (h * np.uint64(2654435761)) & np.uint64(0xFFFFFFFF)
+    h ^= h >> np.uint64(15)
+    h = (h * np.uint64(2246822519)) & np.uint64(0xFFFFFFFF)
+    h ^= h >> np.uint64(13)
+    return ((h & np.uint64(1023)).astype(np.float64) / 1023.0)
 
 
 def brick_mask(size: int, rows: int, cols: int, mortar: float = 0.035,
@@ -204,7 +229,7 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
                                       normal_strength=2.6, uv_scale=4.0)
 
     # -- dark rubble granite: cliffs, foundations, retaining walls --
-    dist, cell = worley(S, 9, rng)
+    dist, _, cell = worley(S, 9, rng)
     cracks = np.clip(1.0 - dist * 9.0, 0, 1)
     rock = fbm(S, 6, 6, rng)
     height = np.clip(0.5 + rock * 0.55 - cracks * 0.45, 0, 1)
@@ -268,10 +293,14 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
                                       uv_scale=48.0)
 
     # -- street flagstones --
-    dist, cell = worley(S, 7, rng)
-    joint = np.clip(1.0 - dist * 11.0, 0, 1)
+    # The mortar runs along the seams between cells, and each stone takes a tone
+    # of its own from a hash of its id. Cutting the joint from the nearest
+    # distance instead sank a pit into every stone, and shading from the raw id
+    # ramped the whole tile dark to light, which tiled into bands down the road.
+    _, gap, cell = worley(S, 7, rng)
+    joint = np.clip(1.0 - gap * 80.0, 0, 1)
     grain = fbm(S, 16, 4, rng)
-    cell_variation = (cell % 53) / 52.0
+    cell_variation = 0.5 + (cell_hash(cell) - 0.5) * 0.55
     height = 0.68 + grain * 0.16 - joint * 0.45
     colour = tint(height, (0.596, 0.557, 0.467), cell_variation * 0.75 + grain * 0.25, 0.20)
     wear = np.clip(fbm(S, 11, 4, rng) * 1.35 - 0.3, 0, 1)
@@ -401,7 +430,7 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
                                        double_sided=True)
 
     # -- sapphire beacon crystal (emissive) --
-    facet, cell = worley(S, 6, rng)
+    facet, _, cell = worley(S, 6, rng)
     edges = np.clip(1.0 - facet * 8.0, 0, 1)
     inner = fbm(S, 8, 5, rng)
     height = 0.5 + (1 - facet) * 0.4 + inner * 0.12
@@ -460,7 +489,7 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
     # -- exposed cliff rock (terrain): isotropic, no directional banding --
     coarse = fbm(S, 4, 7, rng)
     detail = fbm(S, 13, 5, rng)
-    blocks, cell_id = worley(S, 8, rng)
+    blocks, _, cell_id = worley(S, 8, rng)
     crack = np.clip(1.0 - blocks * 12.0, 0, 1)
     height = 0.40 + coarse * 0.34 + detail * 0.26 - crack * 0.30
     facet = (cell_id % 37) / 36.0
@@ -540,7 +569,7 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
                                       0.95, normal_strength=2.0, uv_scale=2.0)
 
     # -- flowering planter bed --
-    petals, cell = worley(S, 20, rng)
+    petals, _, cell = worley(S, 20, rng)
     bloom = np.clip(1.0 - petals * 14.0, 0, 1)
     leaf = fbm(S, 40, 4, rng)
     height = 0.45 + leaf * 0.3 + bloom * 0.3
@@ -571,10 +600,10 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
                                       normal_strength=2.2, uv_scale=2.0)
 
     # -- ceremonial avenue paving: gold and teal inlay strips along the road --
-    dist, cell = worley(H, 9, rng)
-    joint = np.clip(1.0 - dist * 12.0, 0, 1)
+    _, gap, cell = worley(H, 9, rng)
+    joint = np.clip(1.0 - gap * 90.0, 0, 1)
     grain = fbm(H, 16, 4, rng)
-    cell_variation = (cell % 53) / 52.0
+    cell_variation = 0.5 + (cell_hash(cell) - 0.5) * 0.55
     across = np.linspace(0.0, 1.0, H, endpoint=False)[None, :] * np.ones((H, 1))
     height = 0.68 + grain * 0.14 - joint * 0.42
     colour = tint(height, (0.612, 0.573, 0.482),

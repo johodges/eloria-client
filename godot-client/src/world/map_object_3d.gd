@@ -53,7 +53,7 @@ func configure(dto: Dictionary, adapter: CoordinateAdapter,
 	name = "MapObject_%d" % object_id
 	collision_layer = PICK_LAYER
 	collision_mask = 0
-	position = adapter.server_to_godot(server_tile.x, server_tile.y)
+	position = adapter.tile_center(server_tile.x, server_tile.y)
 	_build_visual(catalog)
 
 func is_harvestable() -> bool:

@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "fallbackAction": "idle",
+  "loopingClips": ["Idle_A", "Fighting_Idle", "Walk", "Jog"],
   "playbackSpeeds": {
     "walk": 1.15,
     "run": 1.25

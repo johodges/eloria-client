@@ -54,7 +54,7 @@ func _draw() -> void:
 func _draw_set(marks: Array[Dictionary], colour: Color, font: Font,
 		font_size: int) -> void:
 	for marker: Dictionary in marks:
-		var world: Vector3 = _adapter.server_to_godot(
+		var world: Vector3 = _adapter.tile_center(
 			int(marker.get("x", 0)), int(marker.get("y", 0)))
 		if _camera.is_position_behind(world):
 			continue

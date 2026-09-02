@@ -869,7 +869,8 @@ static func decode_server(command: int, payload: PackedByteArray) -> Dictionary:
 			if payload.is_empty():
 				return {"type": "invalid", "error": "chat_length"}
 			return {"type": "chat", "channel": int(payload[0]),
-				"text": legacy_colored_string(payload.slice(1))}
+				"text": legacy_colored_string(payload.slice(1)),
+				"colour": leading_text_colour(payload.slice(1))}
 		ServerMessage.SEND_NPC_INFO:
 			# The trailing byte is the legacy portrait index. Eloria has no
 			# portrait art and cannot convert the Eternal Lands set, so the
@@ -1906,6 +1907,18 @@ static func nul_string(bytes: PackedByteArray) -> String:
 	var end := bytes.find(0)
 	var clean := bytes if end < 0 else bytes.slice(0, end)
 	return clean.get_string_from_utf8()
+
+## The palette index of the colour byte a chat line opens with, or 0 when the
+## server led with plain text. Only the leading byte is read: mid-line colour
+## changes are stripped by `legacy_colored_string`, so a line renders in the
+## one colour the server chose for it.
+static func leading_text_colour(bytes: PackedByteArray) -> int:
+	if bytes.is_empty():
+		return 0
+	var index: int = int(bytes[0]) - 127
+	if index <= 0 or index >= EL_TEXT_COLOURS.size():
+		return 0
+	return index
 
 static func legacy_colored_string(bytes: PackedByteArray) -> String:
 	# EL color markers occupy the C1-control range. Preserve bytes in valid

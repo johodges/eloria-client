@@ -44,8 +44,6 @@ GENERATED = PROJECT / "generate_models" / "meshy-armor-individual-glb"
 
 EQUIPMENT = CLIENT / "assets/actors/native/equipment"
 REGISTRY = CLIENT / "data/actors/equipment.json"
-ITEMS = SERVER / "config/eloria/items.txt"
-ITEMS_PY = SERVER / "eloria/items.py"
 
 OPEN_ITEMS = "# --- generated armour set (tools/import_generated_equipment.py) ---"
 CLOSE_ITEMS = "# --- end generated armour set ---"
@@ -68,14 +66,13 @@ FINISH_STATS = {
     "plate": (18, (4, 16), -3),
 }
 
-#: First inventory icon of the generated strip.  The icons pass
-#: (generate_models/equipment_icons) rendered one icon per piece into the
-#: items atlases starting at image 118, mirroring the item range one to one,
-#: and tests/test_item_icon_contract.py pins that mapping -- so the driver
-#: assigns image_id = FIRST_ICON + (item_id - FIRST_ITEM_ID) rather than a
-#: shared per-slot icon, or a rerun of this file walks the catalogue away
-#: from the atlases.
-FIRST_ICON = 118
+#: Where the set's inventory icons start.  Each piece gets its own icon --
+#: rendered from its mesh by generate_models/equipment_icons and packed into
+#: the runtime atlases by tools/build_item_icon_atlases.py, which assigns ids
+#: in this same roster order.  118 is the first cell after the shipped painted
+#: range: the blank tail of items5.png takes seven, items6-8.png the rest, so
+#: the painted prefix stays contiguous and imageCount moves 118 -> 178.
+FIRST_IMAGE_ID = 118
 
 ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]
 
@@ -105,12 +102,13 @@ SHEETS = [
 
 class Piece:
     __slots__ = ("source", "slug", "name", "kind", "part", "visual", "finish",
-                 "item_id")
+                 "item_id", "image_id")
 
-    def __init__(self, source, slug, name, kind, part, visual, finish, item_id):
+    def __init__(self, source, slug, name, kind, part, visual, finish,
+                 item_id, image_id):
         self.source, self.slug, self.name = source, slug, name
         self.kind, self.part, self.visual = kind, part, visual
-        self.finish, self.item_id = finish, item_id
+        self.finish, self.item_id, self.image_id = finish, item_id, image_id
 
 
 def roster() -> list[Piece]:
@@ -127,7 +125,8 @@ def roster() -> list[Piece]:
             pieces.append(Piece(
                 source, "%s_%02d" % (slug, index + 1),
                 "%s %s" % (label, ROMAN[index]), kind, part,
-                first_visual + index, finish, item_id))
+                first_visual + index, finish, item_id,
+                FIRST_IMAGE_ID + (item_id - FIRST_ITEM_ID)))
             item_id += 1
     return pieces
 
@@ -138,7 +137,7 @@ def item_block(piece: Piece) -> str:
     lines = ["", "[item]",
              "name: %s" % piece.name,
              "item_id: %d" % piece.item_id,
-             "image_id: %d" % (FIRST_ICON + piece.item_id - FIRST_ITEM_ID),
+             "image_id: %d" % piece.image_id,
              "emu: %d" % emu,
              "flags: 2",
              "category: Armor",
@@ -168,10 +167,15 @@ def main() -> int:
     ap.add_argument("--race", default="luminous_male")
     ap.add_argument("--sheet", default=None,
                     help="only pieces whose slug starts with this")
+    ap.add_argument("--server", type=Path, default=SERVER,
+                    help="dev-server checkout to write the item definitions "
+                         "into (a worktree, say); default the sibling one")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--skip-build", action="store_true",
                     help="rewrite the definitions without rebuilding meshes")
     args = ap.parse_args()
+    items_path = args.server / "config/eloria/items.txt"
+    items_py_path = args.server / "eloria/items.py"
 
     if not GENERATED.is_dir():
         print("no generated meshes at %s" % GENERATED)
@@ -189,9 +193,9 @@ def main() -> int:
         "part %d x%d" % (part, count) for part, count in sorted(by_part.items()))))
     if args.dry_run:
         for piece in pieces:
-            print("  %-34s %-9s part %d visual %-4d item %d"
+            print("  %-34s %-9s part %d visual %-4d item %d icon %d"
                   % (piece.slug, piece.kind, piece.part, piece.visual,
-                     piece.item_id))
+                     piece.item_id, piece.image_id))
         print("\nnothing written (--dry-run)")
         return 0
 
@@ -239,12 +243,12 @@ def main() -> int:
     REGISTRY.write_text(json.dumps(registry, indent=2) + "\n",
                         encoding="utf-8")
 
-    items = ITEMS.read_text(encoding="utf-8")
+    items = items_path.read_text(encoding="utf-8")
     body = "\n".join(item_block(piece) for piece in pieces).lstrip("\n")
-    ITEMS.write_text(fence(items, OPEN_ITEMS, CLOSE_ITEMS, body),
-                     encoding="utf-8")
+    items_path.write_text(fence(items, OPEN_ITEMS, CLOSE_ITEMS, body),
+                          encoding="utf-8")
 
-    source = ITEMS_PY.read_text(encoding="utf-8")
+    source = items_py_path.read_text(encoding="utf-8")
     rows = "\n".join('    "%s": (%d, %d),'
                      % (piece.name.casefold(), piece.part, piece.visual)
                      for piece in pieces)
@@ -260,13 +264,13 @@ def main() -> int:
             marker,
             '    "spauldered breastplate": (5, 183),\n%s\n%s\n%s\n}'
             % (OPEN_PY, rows, CLOSE_PY), 1)
-    ITEMS_PY.write_text(source, encoding="utf-8")
+    items_py_path.write_text(source, encoding="utf-8")
 
     print("\n%d built, %d failed" % (built, failed))
     print("  meshes   %s" % EQUIPMENT)
     print("  registry %s" % REGISTRY)
-    print("  items    %s" % ITEMS)
-    print("  visuals  %s" % ITEMS_PY)
+    print("  items    %s" % items_path)
+    print("  visuals  %s" % items_py_path)
     return 1 if failed else 0
 
 
