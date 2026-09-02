@@ -721,6 +721,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			# The arrival time rides with the line, the way Eternal Lands
 			# stamps every chat line as it lands; rendering may show or hide it.
 			chat_lines.append({"channel": event.channel, "text": event.text,
+				"colour": int(event.get("colour", 0)),
 				"stamp": Time.get_time_string_from_system()})
 			if chat_lines.size() > 1000:
 				chat_lines.pop_front()
@@ -890,7 +891,7 @@ func _on_packet(command: int, payload: PackedByteArray) -> void:
 			state_changed.emit(&"protocol_unknown")
 
 func append_local_message(text: String, channel: int = 255) -> void:
-	chat_lines.append({"channel": channel, "text": text,
+	chat_lines.append({"channel": channel, "text": text, "colour": 0,
 		"stamp": Time.get_time_string_from_system()})
 	if chat_lines.size() > 1000:
 		chat_lines.pop_front()

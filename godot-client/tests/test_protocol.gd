@@ -248,7 +248,8 @@ func _init() -> void:
 	_expect(new_minute.type == "new_minute" and new_minute.minute == 1,
 		"game clock wraps after six hours")
 	var chat := EloriaProtocol.decode_server(0, PackedByteArray([3, 72, 105, 0]))
-	_expect(chat.type == "chat" and chat.channel == 3 and chat.text == "Hi", "chat")
+	_expect(chat.type == "chat" and chat.channel == 3 and chat.text == "Hi"
+		and chat.colour == 0, "chat without a colour byte carries no colour")
 	var active_channels: Dictionary = EloriaProtocol.decode_server(71,
 		PackedByteArray([1, 1, 0, 0, 0, 4, 0, 0, 0, 12, 0, 0, 0]))
 	_expect(active_channels.type == "active_channels"
@@ -260,8 +261,13 @@ func _init() -> void:
 		PackedByteArray([1, 128, 91, 80, 77, 32, 102, 114, 111, 109, 32, 65, 108,
 			105, 99, 101, 58, 32, 104, 105, 93, 0]))
 	_expect(colored_pm.type == "chat" and colored_pm.channel == 1
-		and colored_pm.text == "[PM from Alice: hi]",
-		"personal channel strips legacy color controls")
+		and colored_pm.text == "[PM from Alice: hi]"
+		and colored_pm.colour == 1,
+		"personal channel strips legacy color controls but keeps the colour")
+	var deep_blue_chat: Dictionary = EloriaProtocol.decode_server(0,
+		PackedByteArray([0, 127 + 18, 72, 105, 0]))
+	_expect(deep_blue_chat.colour == 18 and deep_blue_chat.text == "Hi",
+		"the leading colour byte becomes the line's palette index")
 	var unicode_chat: Dictionary = EloriaProtocol.decode_server(0,
 		PackedByteArray([0, 128, 72, 195, 169, 108, 111, 0]))
 	_expect(unicode_chat.text == "Hélo", "chat sanitizer preserves UTF-8 sequences")

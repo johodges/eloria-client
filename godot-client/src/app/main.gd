@@ -4327,7 +4327,15 @@ func _formatted_chat_line(line: Dictionary) -> String:
 		var stamp: String = str(line.get("stamp", ""))
 		if not stamp.is_empty():
 			prefix = "[%s] %s" % [stamp, prefix]
-	return prefix + str(line.get("text", ""))
+	var body: String = prefix + str(line.get("text", ""))
+	# The colour is the server's choice, carried per line from the colour byte
+	# its RAW_TEXT opened with. Eternal Lands paints the stamp and the tag in
+	# the line's colour too, so the whole line is wrapped, not just the text.
+	var colour_index: int = int(line.get("colour", 0))
+	if colour_index > 0:
+		return "[color=#%s]%s[/color]" % [EloriaProtocol.el_text_colour(
+			colour_index).to_html(false), body]
+	return body
 
 func _sync_stats() -> void:
 	var stats: Dictionary = AppState.stats
