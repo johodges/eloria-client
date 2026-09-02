@@ -248,6 +248,10 @@ var map_light_root: Node3D
 
 var actor_nodes: Dictionary = {}
 var ground_bag_nodes: Dictionary = {}
+## The click-to-walk crosses currently collapsing, keyed by destination tile
+## so a re-click restarts a tile's mark instead of stacking a brighter copy.
+## Each marker frees itself when its half second is up.
+var walk_highlight_markers: Dictionary = {}
 var map_object_nodes: Dictionary = {}
 ## Server-placed map markers on the current map, keyed by the server's marker id.
 var map_marker_nodes: Dictionary = {}
@@ -2145,6 +2149,10 @@ func _clear_world_presentation() -> void:
 		if is_instance_valid(raw_bag_node):
 			(raw_bag_node as Node).queue_free()
 	ground_bag_nodes.clear()
+	for raw_marker_node: Variant in walk_highlight_markers.values():
+		if is_instance_valid(raw_marker_node):
+			(raw_marker_node as Node).queue_free()
+	walk_highlight_markers.clear()
 	for raw_object_node: Variant in map_object_nodes.values():
 		if is_instance_valid(raw_object_node):
 			(raw_object_node as Node).queue_free()
@@ -2889,6 +2897,30 @@ func _handle_world_click(event: InputEventMouseButton, viewport_position: Vector
 		var move_error: Error = Network.move_to(tile, event.shift_pressed)
 		if move_error != OK:
 			push_warning("MOVE_TO failed: " + error_string(move_error))
+		else:
+			_show_walk_highlight(tile, (point as Vector3).y)
+
+## The legacy client's click feedback: a walk order marks its destination
+## with a collapsing green cross, so the player sees where the click landed
+## before the server answers. The mark is for the click itself - it draws for
+## the order sent, not for any packet coming back - which is exactly how the
+## reference does it.
+func _show_walk_highlight(tile: Vector2i, ground_height: float) -> void:
+	if not _effects_enabled:
+		return
+	for stale_tile: Variant in walk_highlight_markers.keys():
+		if not is_instance_valid(walk_highlight_markers[stale_tile]):
+			walk_highlight_markers.erase(stale_tile)
+	var existing_value: Variant = walk_highlight_markers.get(tile)
+	if existing_value is HighlightMarker3D:
+		(existing_value as HighlightMarker3D).restart()
+		return
+	var marker := HighlightMarker3D.new()
+	world_root.add_child(marker)
+	var destination: Vector3 = adapter.tile_center(tile.x, tile.y)
+	destination.y = ground_height
+	marker.configure(destination, adapter.metres_per_tile)
+	walk_highlight_markers[tile] = marker
 
 func _on_state_changed(path: StringName) -> void:
 	# Protocol diagnostics are the one path that must work before login: a
@@ -3040,6 +3072,10 @@ func _load_server_map() -> void:
 		if is_instance_valid(bag_node_value):
 			(bag_node_value as Node).queue_free()
 	ground_bag_nodes.clear()
+	for marker_node_value: Variant in walk_highlight_markers.values():
+		if is_instance_valid(marker_node_value):
+			(marker_node_value as Node).queue_free()
+	walk_highlight_markers.clear()
 	for object_node_value: Variant in map_object_nodes.values():
 		if is_instance_valid(object_node_value):
 			(object_node_value as Node).queue_free()
@@ -3347,7 +3383,7 @@ func _sync_ground_bags() -> void:
 		if ground_bag_nodes.has(bag_id):
 			var existing: GroundBag3D = ground_bag_nodes.get(bag_id) as GroundBag3D
 			if is_instance_valid(existing):
-				existing.global_position = adapter.server_to_godot(
+				existing.global_position = adapter.tile_center(
 					int(dto.get("x", 0)), int(dto.get("y", 0)))
 				_place_ground_bag_on_surface(existing)
 			continue
@@ -5057,7 +5093,7 @@ func _sync_placed_objects() -> void:
 		var placed: Dictionary = AppState.world_objects[object_id] as Dictionary
 		var node := PlacedObject3D.new()
 		world_root.add_child(node)
-		node.configure(placed, adapter.server_to_godot(
+		node.configure(placed, adapter.tile_center(
 			int(placed.get("x", 0)), int(placed.get("y", 0))))
 		placed_object_nodes[object_id] = node
 	for object_id: Variant in placed_object_nodes.keys():
@@ -5079,7 +5115,7 @@ func _on_teleport_seen(teleport: Dictionary) -> void:
 	# 1 is the beneficial class, which rises; 0 falls. Arriving rises out of
 	# the ground and leaving sinks into it.
 	effect.configure(1 if bool(teleport.get("arriving", true)) else 0,
-		adapter.server_to_godot(int(teleport.get("x", 0)),
+		adapter.tile_center(int(teleport.get("x", 0)),
 			int(teleport.get("y", 0))))
 	world_effects.append(effect)
 	world_effects = world_effects.filter(func(node: Variant) -> bool:
@@ -5106,7 +5142,7 @@ func _sync_fires() -> void:
 		var fire_tile: Vector2i = tile as Vector2i
 		if not weather_layer.has_fire_at(fire_tile):
 			weather_layer.place_fire(
-				adapter.server_to_godot(fire_tile.x, fire_tile.y),
+				adapter.tile_center(fire_tile.x, fire_tile.y),
 				int(AppState.fires[fire_tile]), fire_tile)
 	for tile: Variant in weather_layer.fire_tiles():
 		if not AppState.fires.has(tile):
@@ -5131,7 +5167,7 @@ func _on_ground_missile_fired(shot: Dictionary) -> void:
 		int(shot.get("source_actor_id", -1)))
 	if not from_value is Vector3:
 		return
-	var landing: Vector3 = adapter.server_to_godot(
+	var landing: Vector3 = adapter.tile_center(
 		int(shot.get("x", 0)), int(shot.get("y", 0)))
 	var missile := MissileFlight3D.new()
 	world_root.add_child(missile)
