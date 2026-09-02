@@ -2768,12 +2768,22 @@ def _sample_clip_rotations(document: dict, binary: bytes, clip: str,
     return sampled
 
 
-@lru_cache(maxsize=4)
-def _idle_hand_bases(race_path: str, library_path: str) -> dict[str, np.ndarray]:
-    """Character-space basis of each hand during the reference idle pose."""
+@lru_cache(maxsize=8)
+def _idle_hand_bases(race_path: str, library_path: str,
+                     clip: str = GRIP_REFERENCE_CLIP) -> dict[str, np.ndarray]:
+    """Character-space basis of each hand during one clip's pose.
+
+    The clip is an argument rather than the module constant so that it takes
+    part in the cache key.  It used to be read from the global, which meant a
+    caller that set the global and called again got the first clip's answer
+    back -- and since a socket solved against a pose is then verified against
+    that same pose, the two cancel and the check passes no matter how wrong the
+    clip was.  A weapon solved against Idle_A sits 43 degrees across the body in
+    Idle_Subtle, which is the clip the client actually idles in.
+    """
     document, binary = read_gltf(Path(race_path))
     library, library_binary = read_gltf(Path(library_path))
-    pose = _sample_clip_rotations(library, library_binary, GRIP_REFERENCE_CLIP)
+    pose = _sample_clip_rotations(library, library_binary, clip)
     nodes = document["nodes"]
     locals_: dict[int, np.ndarray] = {}
     for index, node in enumerate(nodes):
