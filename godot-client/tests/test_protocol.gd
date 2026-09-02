@@ -936,13 +936,13 @@ func _init() -> void:
 			var atlas: ItemAtlas = ItemAtlas.new()
 			atlas.configure(atlas_config_value as Dictionary)
 			var first_icon: Texture2D = atlas.icon_for(0)
-			var last_icon: Texture2D = atlas.icon_for(124)
+			var last_icon: Texture2D = atlas.icon_for(177)
 			_expect(first_icon is AtlasTexture and first_icon.get_size() == Vector2(50, 50),
 				"first legacy item icon resolves at native aspect")
 			_expect(last_icon is AtlasTexture and last_icon.get_size() == Vector2(50, 50),
-				"fifth legacy item atlas resolves")
-			_expect(not atlas.supports(125) and atlas.icon_for(125) != null
-				and atlas.uses_substitute(125),
+				"eighth item atlas resolves the last generated-armour icon")
+			_expect(not atlas.supports(178) and atlas.icon_for(178) != null
+				and atlas.uses_substitute(178),
 				"unsupported legacy item image receives the configured visible fallback")
 			_expect(atlas.icon_for(114) != null and atlas.uses_substitute(114),
 				"known legacy item image receives its data-driven Eloria substitute")
