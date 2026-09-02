@@ -1500,6 +1500,9 @@ def build_socket(source: Path, out: Path, rig: ea.Rig, kind: str,
     surface, png = read_source(source)
     before = surface.positions.copy()
     surface.positions = seat_socket(surface.positions, rig, kind)
+    # Socket pieces carry concept-sheet debris too, and the runtime-size
+    # scale swings a buried splinter clear of the shell.
+    _drop_orphan_shards(surface)
 
     glb = ea.EquipmentGLB(generator="Eloria conform_equipment")
     material = textured_material(glb, "%s Base" % label, png)
@@ -1631,6 +1634,56 @@ def _push_waist_out(points: np.ndarray, waist: np.ndarray, rig: ea.Rig,
             points[vertex] = point + outward * (distance + clearance)
             moved += 1
     return moved
+
+
+def _drop_orphan_shards(surface, max_verts: int = 60,
+                        min_gap: float = 0.04) -> int:
+    """Delete tiny welded fragments floating clear of the garment.
+
+    The concept-sheet meshes ship with debris -- splinters of strap or
+    spike a few dozen vertices big that happen to sit inside other
+    geometry and go unnoticed until a fit change (a narrower body, a
+    moved cap) leaves one hanging in the air beside the shoulder.  A
+    fragment is dropped when it is small and its nearest distance to the
+    rest of the garment exceeds ``min_gap``; anything touching or large
+    is design, not debris.  Returns how many fragments went.
+    """
+    triangles = surface.indices.reshape(-1, 3)
+    inverse, edges, count = _weld(surface.positions, triangles)
+    labels = _components(edges, count)[inverse]
+    unique, sizes = np.unique(labels, return_counts=True)
+    if len(unique) < 2:
+        return 0
+    drop = np.zeros(len(surface.positions), dtype=bool)
+    dropped = 0
+    for comp, size in zip(unique, sizes):
+        if size > max_verts:
+            continue
+        members = labels == comp
+        rest = ~members
+        if not rest.any():
+            continue
+        mine = surface.positions[members]
+        others = surface.positions[rest]
+        gap = np.inf
+        for point in mine:
+            gap = min(gap, float(np.min(
+                np.linalg.norm(others - point, axis=1))))
+            if gap <= min_gap:
+                break
+        if gap > min_gap:
+            drop |= members
+            dropped += 1
+    if not dropped:
+        return 0
+    keep = ~drop
+    remap = np.cumsum(keep) - 1
+    face_keep = keep[triangles].all(axis=1)
+    surface.positions = surface.positions[keep]
+    surface.normals = surface.normals[keep]
+    surface.uvs = surface.uvs[keep]
+    surface.indices = remap[triangles[face_keep]].reshape(-1)
+    return dropped
 
 
 def _harden_plates(points: np.ndarray, triangles: np.ndarray, rig: ea.Rig,
@@ -1854,7 +1907,7 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                 # of the shoulder bare, so each spreads a quarter wider
                 # before it climbs.
                 centroid = seated[cap].mean(axis=0)
-                seated[cap] = centroid + (seated[cap] - centroid) * 1.25
+                seated[cap] = centroid + (seated[cap] - centroid) * 1.12
                 seated[cap] += np.array([inboard * 0.018, 0.042, 0.0])
                 step["capRaised"] = True
         step0 = posed[0] if posed else {}
@@ -1903,6 +1956,7 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
     else:
         fitted, grown, pushed = seated, 1.0, 0
     surface.positions = fitted
+    shards = _drop_orphan_shards(surface)
 
     glb = ea.EquipmentGLB(generator="Eloria conform_equipment")
     material = textured_material(glb, f"{label} Base", png)
