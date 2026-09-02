@@ -441,3 +441,54 @@ untouched.
 
 **Not included:** the six interiors floor their rooms with `paving_road` and
 still carry the old synthesis. Rebuilding them is a separate package pass.
+
+## 1.0.9 — the rest of the Worley surfaces, and 1.0.8's missing joints
+
+**1.0.8 landed only half of itself.** `worley` returns `(nearest, second
+nearest, cell id)`, and the two paving materials bound the second distance to a
+name of `gap` and then thresholded it directly, without subtracting the first.
+The intended mask needs the *difference*: F2 alone runs from about half the seed
+spacing at a cell edge to a full spacing at its centre and never approaches
+zero, so `1 - F2 x 80` clipped to zero across the whole tile. The streets and
+avenues shipped with no mortar at all — no groove in the height field, no
+occlusion in the seams. What did land was the tone hash, which is what removed
+the banding, so the defect the fix was reported against was genuinely gone and
+this went unnoticed. Both now read `1 - (far - near) x K`, and the joints cover
+10.8% of the street tile and 12.0% of the avenue.
+
+Two more materials carried the 1.0.8 defects. They were found by measuring
+every material in the library rather than by eye: a raster-ramp correlation
+against a 400-sample random null on the same cell grid, and the spread of
+neighbouring cell values against the same null.
+
+**`stone_rubble`** — the base course under nearly every building in the city,
+so it sits at eye level along every street. It had both defects. Its tone came
+from `(cell % 71) / 70` over 81 Worley cells, which wraps the divisor once and
+so ramps and then steps (ramp r = 0.477 against a null 95th percentile of
+0.169; neighbour spread z = +3.8). Its `cracks` came from the nearest distance
+and covered 64% of the tile as hollows in the middle of each block rather than
+seams between them. Tile-scale tone drift falls from 0.190 to 0.122.
+
+**`roof_slate`** — a different failure of the same kind. `brick_mask` numbers
+its bricks `(row * 977 + col * 131) % 9973`, and reducing that modulo 61 again
+leaves a lattice: the slates correlated along diagonals into chevrons a roof
+wide, repeating every 2.4 m. The row-ramp test does not see it because the
+correlation is diagonal, not vertical; the neighbour-spread test does
+(z = +2.6). Hashing the brick id scatters them, and drift falls from 0.135 to
+0.021.
+
+Cleared by the same measurements, and deliberately left alone: `stone_ashlar`
+(z = -0.4) and `roof_tile` (z = +1.6, inside the null) hash acceptably;
+`cloth_banner` has the library's largest tone drift, 0.236, because that is the
+authored crest; and `foliage_flowers` thresholds the nearest distance on
+purpose, since a bloom *should* be a blob at the seed.
+
+**Not included:** `terrain_rock` and `crystal_blue` still cut an edge mask from
+the nearest distance (33% and 41% coverage). Their tone hashes measure clean and
+neither bands, so the symptom is missing detail — cliffs get soft discs instead
+of cracks, crystals glow at the centre rather than the facet edges — on
+surfaces tiled at 17 m and 1.2 m. Worth a pass, but not this one.
+
+27 of the 31 materials are bit-identical across this change, and the rebuilt
+`world.glb` differs only in the twelve texture images of the four that moved;
+all 2,919 geometry and animation buffers and the glTF structure are unchanged.

@@ -229,11 +229,15 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
                                       normal_strength=2.6, uv_scale=4.0)
 
     # -- dark rubble granite: cliffs, foundations, retaining walls --
-    dist, _, cell = worley(S, 9, rng)
-    cracks = np.clip(1.0 - dist * 9.0, 0, 1)
+    # Cracks follow the seams between blocks and each block takes its own tone,
+    # for the same reasons the street flagstones do: cutting from the nearest
+    # distance hollowed the middle of every block, and `% 71` over 81 cells
+    # wrapped once, shading the tile as a ramp with a step in it.
+    near, far, cell = worley(S, 9, rng)
+    cracks = np.clip(1.0 - (far - near) * 70.0, 0, 1)
     rock = fbm(S, 6, 6, rng)
     height = np.clip(0.5 + rock * 0.55 - cracks * 0.45, 0, 1)
-    cell_variation = (cell % 71) / 70.0
+    cell_variation = 0.5 + (cell_hash(cell) - 0.5) * 0.55
     colour = tint(height, (0.455, 0.436, 0.412), cell_variation * 0.6 + rock * 0.4, 0.30)
     moss = np.clip(fbm(S, 4, 4, rng) * 1.6 - 0.75, 0, 1) * 0.5
     colour[..., 0] *= (1 - moss * 0.45)
@@ -297,8 +301,8 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
     # of its own from a hash of its id. Cutting the joint from the nearest
     # distance instead sank a pit into every stone, and shading from the raw id
     # ramped the whole tile dark to light, which tiled into bands down the road.
-    _, gap, cell = worley(S, 7, rng)
-    joint = np.clip(1.0 - gap * 80.0, 0, 1)
+    near, far, cell = worley(S, 7, rng)
+    joint = np.clip(1.0 - (far - near) * 80.0, 0, 1)
     grain = fbm(S, 16, 4, rng)
     cell_variation = 0.5 + (cell_hash(cell) - 0.5) * 0.55
     height = 0.68 + grain * 0.16 - joint * 0.45
@@ -328,8 +332,11 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
                                         normal_strength=2.2, uv_scale=3.0)
 
     # -- blue-grey slate tiles for residential roofs --
+    # `brick_mask` ids are `(row * 977 + col * 131) % 9973`; taking those modulo
+    # 61 as well leaves a lattice, and the slates it shades correlate along
+    # diagonals into chevrons a roof wide. Hashing the id scatters them.
     mask, ident, fx, fy = brick_mask(S, 26, 13, mortar=0.05, offset=0.5)
-    slate = (ident % 61) / 60.0
+    slate = 0.5 + (cell_hash(ident) - 0.5) * 0.55
     grain = fbm(S, 18, 4, rng)
     height = mask * (0.6 + slate * 0.22 + grain * 0.14) + (1 - mask) * 0.16
     colour = tint(height, (0.268, 0.336, 0.372), slate * 0.8 + grain * 0.2, 0.30)
@@ -600,8 +607,8 @@ def build_materials(size: int = 512, hero: int = 1024, seed: int = 20260827
                                       normal_strength=2.2, uv_scale=2.0)
 
     # -- ceremonial avenue paving: gold and teal inlay strips along the road --
-    _, gap, cell = worley(H, 9, rng)
-    joint = np.clip(1.0 - gap * 90.0, 0, 1)
+    near, far, cell = worley(H, 9, rng)
+    joint = np.clip(1.0 - (far - near) * 90.0, 0, 1)
     grain = fbm(H, 16, 4, rng)
     cell_variation = 0.5 + (cell_hash(cell) - 0.5) * 0.55
     across = np.linspace(0.0, 1.0, H, endpoint=False)[None, :] * np.ones((H, 1))
