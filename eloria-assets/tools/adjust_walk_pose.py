@@ -34,20 +34,33 @@ import numpy as np
 import adjust_idle_pose as base
 
 CLIP = "Walk"
+RUN_CLIP = "Run_Female"
 ANIMATION_MAP = (base.LIBRARY.parents[4] / "data" / "animations"
                  / "luminous.json")
 
 #: Forward-swing angle of the thigh (degrees; positive = leg in front).
-TARGET_THIGH_CENTRE = 6.0
-TARGET_THIGH_AMP = 22.0
-#: The knees follow the shorter step: calf deviation about its own mean.
-CALF_AMP_SCALE = 0.85
-#: Upper-arm swing (degrees; positive = arm in front).
-TARGET_ARM_CENTRE = -4.0
+#: Centre +8 / amplitude 27 reaches the front foot well ahead of the body
+#: so the step reads plant-first, body-follows; the stride constant below
+#: re-measures, which also calms the cadence.
+TARGET_THIGH_CENTRE = 8.0
+TARGET_THIGH_AMP = 27.0
+#: The first pass shrank the knees 0.85x and that stays baked; further
+#: runs leave the calves alone (this multiplier is NOT idempotent).
+CALF_AMP_SCALE = 1.0
+#: Upper-arm swing amplitude (degrees); the swing CENTRE is steered by
+#: where the hands' mean lands, matching the idle's posture targets.
 TARGET_ARM_AMP = 19.0
-#: Elbow bend held through the swing (degrees between upper and forearm
-#: directions); the reference arms are nearly straight.
-TARGET_ELBOW = 16.0
+#: Base posture, shared with the idle: the arm swing averages about the
+#: same shoulder and hand positions the standing pose holds.
+TARGET_SHOULDER_Z = -0.016
+TARGET_HAND_Z_MEAN = 0.065
+TARGET_HAND_X_MEAN = {"l": 0.266, "r": 0.249}
+TARGET_ELBOW = 12.0
+#: The run keeps its pumping gait but loses its handedness: the authored
+#: clip carries the left shoulder six centimetres ahead of the right and
+#: the left hand five centimetres wider.
+RUN_SHOULDER_Z = 0.029
+RUN_HAND_X_MEAN = {"l": 0.165, "r": 0.165}
 #: Forward pitch of the trunk, pelvis to chest (degrees).
 TARGET_LEAN = 2.5
 
@@ -226,6 +239,84 @@ def set_elbow(clip: WalkClip, sk: base.Skeleton, side: str,
         ch["quats"][i] = base.quat_mul(ch["quats"][i], delta)
 
 
+def phase_mean(clip: WalkClip, sk: base.Skeleton, probe, phases: int = 12):
+    return float(np.mean([probe(sk.fk(clip.pose_at(
+        float(p) * clip.duration), {}))
+        for p in np.linspace(0, 1, phases, endpoint=False)]))
+
+
+def steer_channel_mean(clip: WalkClip, sk: base.Skeleton, bone: str,
+                       axis, measure, target: float) -> None:
+    """Shift one channel's every key by a constant conjugated delta until
+    a phase-averaged measure lands on target, solving gain and sign from
+    the clip's own response."""
+    start = measure()
+    recenter_world_x_axis(clip, sk, bone, axis, 2.0)
+    slope = (measure() - start) / 2.0
+    if abs(slope) < 1e-9:
+        return
+    recenter_world_x_axis(clip, sk, bone, axis, (target - measure()) / slope)
+
+
+def recenter_world_x_axis(clip: WalkClip, sk: base.Skeleton, bone: str,
+                          axis, degrees: float) -> None:
+    ch = clip.channels[bone]
+    for i, t in enumerate(ch["times"]):
+        glob = sk.fk(clip.pose_at(float(t)), {})
+        delta = sk.world_delta(glob, bone, axis, degrees)
+        ch["quats"][i] = base.quat_mul(ch["quats"][i], delta)
+
+
+def posture(clip: WalkClip, sk: base.Skeleton, shoulder_z: float,
+            hand_z: float | None, hand_x: dict) -> None:
+    """Steer the clip's MEAN posture -- where the swing averages -- onto
+    the standing pose's targets, side by side."""
+    for side in ("l", "r"):
+        arm = "upperarm_" + side
+
+        def sh_mean():
+            return phase_mean(clip, sk, lambda g, s=side: float(
+                sk.origin(g, "upperarm_" + s)[2]))
+
+        def hz_mean():
+            return phase_mean(clip, sk, lambda g, s=side: float(
+                sk.origin(g, "hand_" + s)[2]))
+
+        def hx_mean():
+            return phase_mean(clip, sk, lambda g, s=side: float(
+                abs(sk.origin(g, "hand_" + s)[0])))
+
+        sign = -1.0 if side == "l" else 1.0
+        steer_channel_mean(clip, sk, "clavicle_" + side, [0, 1, 0],
+                           sh_mean, shoulder_z)
+        if hand_z is not None:
+            steer_channel_mean(clip, sk, arm, [1, 0, 0], hz_mean, hand_z)
+        steer_channel_mean(clip, sk, "lowerarm_" + side, [0, 0, 1],
+                           hx_mean, hand_x[side])
+
+
+def adjust_run(js, data, bin_off, sk: base.Skeleton) -> list:
+    """Posture-only pass on the run: symmetric shoulders and hand widths,
+    the pumping gait untouched."""
+    global CLIP
+    keep = CLIP
+    CLIP = RUN_CLIP
+    clip = WalkClip(js, data, bin_off)
+    CLIP = keep
+    edited = ["clavicle_l", "clavicle_r", "lowerarm_l", "lowerarm_r"]
+    shared = [b for b in edited if clip.channels[b]["shared"]]
+    assert not shared, "run: shared accessors, unsafe: %s" % shared
+    posture(clip, sk, RUN_SHOULDER_Z, None, RUN_HAND_X_MEAN)
+    for side in ("l", "r"):
+        print("run %s: shoulder z %+.3f, hand |x| %.3f"
+              % (side,
+                 phase_mean(clip, sk, lambda g, s=side: float(
+                     sk.origin(g, "upperarm_" + s)[2])),
+                 phase_mean(clip, sk, lambda g, s=side: float(
+                     abs(sk.origin(g, "hand_" + s)[0])))))
+    return [(bone, clip.channels[bone]) for bone in edited]
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="rework the shared Walk clip")
     ap.add_argument("--dry-run", action="store_true")
@@ -236,7 +327,8 @@ def main() -> int:
     clip = WalkClip(js, data, bin_off)
 
     edited = ["thigh_l", "thigh_r", "calf_l", "calf_r", "upperarm_l",
-              "upperarm_r", "lowerarm_l", "lowerarm_r", "spine_01"]
+              "upperarm_r", "lowerarm_l", "lowerarm_r", "spine_01",
+              "clavicle_l", "clavicle_r"]
     shared = [b for b in edited if clip.channels[b]["shared"]]
     assert not shared, "shared accessors, unsafe to rewrite: %s" % shared
 
@@ -255,15 +347,28 @@ def main() -> int:
         scale_channel(clip, "thigh_" + side,
                       TARGET_THIGH_AMP / max(before["thighAmp"], 1e-6))
         scale_channel(clip, "calf_" + side, CALF_AMP_SCALE)
-    steer_world_x(clip, sk, ["upperarm_l", "upperarm_r"], "armCentre",
-                  TARGET_ARM_CENTRE)
     for side in ("l", "r"):
         scale_channel(clip, "upperarm_" + side,
                       TARGET_ARM_AMP / max(before["armAmp"], 1e-6))
+    posture(clip, sk, TARGET_SHOULDER_Z, TARGET_HAND_Z_MEAN,
+            TARGET_HAND_X_MEAN)
+    # Elbows after the posture, then the hand widths once more -- but by
+    # TWISTING the forearm about the hanging arm's near-vertical axis,
+    # which moves the hand sideways without reopening the bend the elbow
+    # pass just set.
+    for side in ("l", "r"):
         set_elbow(clip, sk, side, TARGET_ELBOW)
+    for side in ("l", "r"):
+        def hx_mean(s=side):
+            return phase_mean(clip, sk, lambda g: float(
+                abs(sk.origin(g, "hand_" + s)[0])))
+        steer_channel_mean(clip, sk, "lowerarm_" + side, [0, 1, 0],
+                           hx_mean, TARGET_HAND_X_MEAN[side])
 
     after = measures(clip, sk)
     report("after: ", after)
+
+    run_channels = adjust_run(js, data, bin_off, sk)
 
     stride_doc = json.loads(ANIMATION_MAP.read_text(encoding="utf-8"))
     old_stride = float(stride_doc["strideMetresPerSecond"]["walk"])
@@ -281,6 +386,10 @@ def main() -> int:
 
     for bone in edited:
         ch = clip.channels[bone]
+        quats = ch["quats"] / np.linalg.norm(ch["quats"], axis=1,
+                                             keepdims=True)
+        base.write_floats(data, ch["base"], ch["stride"], ch["ncomp"], quats)
+    for bone, ch in run_channels:
         quats = ch["quats"] / np.linalg.norm(ch["quats"], axis=1,
                                              keepdims=True)
         base.write_floats(data, ch["base"], ch["stride"], ch["ncomp"], quats)

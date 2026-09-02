@@ -70,6 +70,10 @@ TARGET_HAND_Z = 0.065
 #: midline: the right two centimetres wider, as reviewed in game.
 TARGET_HAND_X = {"l": 0.266, "r": 0.249}
 TARGET_ELBOW_BEND = 12.0
+#: The neck stands vertical -- the authored clip leans it (and the head
+#: with it) forward; zero here means the head joint sits directly above
+#: the neck joint, stacked over the torso.
+TARGET_NECK_FORWARD = 0.0
 #: The stance stands centred: the ankle midpoint sits on the body's own
 #: midline (world x zero) once the pelvis channel's lateral drift and the
 #: rest pose's own offset are taken out.
@@ -400,6 +404,27 @@ def main() -> int:
     deltas["spine_03"] = sk.world_delta(g, "spine_03", [0, 1, 0], twist_angle)
     g = sk.fk(local, deltas)
     deltas["neck_01"] = sk.world_delta(g, "neck_01", [0, 1, 0], -twist_angle)
+
+    # The neck stands up: steered about world X until the head joint sits
+    # directly above the neck joint rather than leaning ahead of it.  The
+    # head rides back with the neck; the authored gaze pointed slightly
+    # down, so standing the neck up also levels the face.
+    def neck_forward():
+        g2 = sk.fk(local, deltas)
+        v = sk.origin(g2, "Head") - sk.origin(g2, "neck_01")
+        return float(v[2])
+    start_neck = neck_forward()
+    g = sk.fk(local, deltas)
+    probe_n = sk.world_delta(g, "neck_01", [1, 0, 0], 2.0)
+    deltas["neck_01"] = (quat_mul(deltas["neck_01"], probe_n)
+                         if "neck_01" in deltas else probe_n)
+    slope_n = (neck_forward() - start_neck) / 2.0
+    if abs(slope_n) > 1e-9:
+        g = sk.fk(local, deltas)
+        deltas["neck_01"] = quat_mul(
+            deltas["neck_01"],
+            sk.world_delta(g, "neck_01", [1, 0, 0],
+                           (TARGET_NECK_FORWARD - neck_forward()) / slope_n))
 
     # Shoulders forward: each clavicle protracts (a yaw about world up -- the
     # clavicle runs along x, so a pitch about x would spin it in place) until
