@@ -3965,30 +3965,19 @@
     },
     "301": {
       "model": "luminous_female",
-      "equipmentVisuals": {
-        "0": 112,
-        "1": 105,
-        "2": 105
-      }
+      "equipmentVisuals": {}
     },
     "302": {
       "model": "luminous_female",
-      "equipmentVisuals": {
-        "0": 108
-      }
+      "equipmentVisuals": {}
     },
     "303": {
       "model": "luminous_female",
-      "equipmentVisuals": {
-        "0": 105,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "304": {
       "model": "luminous_female",
-      "equipmentVisuals": {
-        "0": 108
-      }
+      "equipmentVisuals": {}
     },
     "305": {
       "model": "luminous_female",
@@ -4004,30 +3993,19 @@
     },
     "308": {
       "model": "luminous_male",
-      "equipmentVisuals": {
-        "0": 112,
-        "1": 105,
-        "2": 105
-      }
+      "equipmentVisuals": {}
     },
     "309": {
       "model": "luminous_male",
-      "equipmentVisuals": {
-        "0": 108
-      }
+      "equipmentVisuals": {}
     },
     "310": {
       "model": "luminous_male",
-      "equipmentVisuals": {
-        "0": 105,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "311": {
       "model": "luminous_male",
-      "equipmentVisuals": {
-        "0": 108
-      }
+      "equipmentVisuals": {}
     },
     "312": {
       "model": "luminous_male",
@@ -4039,386 +4017,207 @@
     },
     "314": {
       "model": "votary_female",
-      "equipmentVisuals": {
-        "0": 109
-      }
+      "equipmentVisuals": {}
     },
     "315": {
       "model": "votary_female",
-      "equipmentVisuals": {
-        "0": 109
-      }
+      "equipmentVisuals": {}
     },
     "316": {
       "model": "votary_female",
-      "equipmentVisuals": {
-        "0": 109
-      }
+      "equipmentVisuals": {}
     },
     "317": {
       "model": "votary_female",
-      "equipmentVisuals": {
-        "0": 109
-      }
+      "equipmentVisuals": {}
     },
     "318": {
       "model": "votary_male",
-      "equipmentVisuals": {
-        "0": 109
-      }
+      "equipmentVisuals": {}
     },
     "319": {
       "model": "votary_male",
-      "equipmentVisuals": {
-        "0": 109
-      }
+      "equipmentVisuals": {}
     },
     "320": {
       "model": "votary_male",
-      "equipmentVisuals": {
-        "0": 109
-      }
+      "equipmentVisuals": {}
     },
     "321": {
       "model": "votary_male",
-      "equipmentVisuals": {
-        "0": 109
-      }
+      "equipmentVisuals": {}
     },
     "322": {
       "model": "glasswarden_female",
-      "equipmentVisuals": {
-        "0": 102,
-        "1": 101,
-        "2": 101
-      }
+      "equipmentVisuals": {}
     },
     "323": {
       "model": "glasswarden_female",
-      "equipmentVisuals": {
-        "0": 102,
-        "1": 101,
-        "2": 101
-      }
+      "equipmentVisuals": {}
     },
     "324": {
       "model": "glasswarden_female",
-      "equipmentVisuals": {
-        "0": 102,
-        "1": 101,
-        "2": 101
-      }
+      "equipmentVisuals": {}
     },
     "325": {
       "model": "glasswarden_female",
-      "equipmentVisuals": {
-        "0": 102,
-        "1": 101,
-        "2": 101
-      }
+      "equipmentVisuals": {}
     },
     "326": {
       "model": "glasswarden_male",
-      "equipmentVisuals": {
-        "0": 102,
-        "1": 101,
-        "2": 101
-      }
+      "equipmentVisuals": {}
     },
     "327": {
       "model": "glasswarden_male",
-      "equipmentVisuals": {
-        "0": 102,
-        "1": 101,
-        "2": 101
-      }
+      "equipmentVisuals": {}
     },
     "328": {
       "model": "glasswarden_male",
-      "equipmentVisuals": {
-        "0": 102,
-        "1": 101,
-        "2": 101
-      }
+      "equipmentVisuals": {}
     },
     "329": {
       "model": "glasswarden_male",
-      "equipmentVisuals": {
-        "0": 102,
-        "1": 101,
-        "2": 101
-      }
+      "equipmentVisuals": {}
     },
     "330": {
       "model": "orun_female",
-      "equipmentVisuals": {
-        "0": 106,
-        "1": 103,
-        "2": 103
-      }
+      "equipmentVisuals": {}
     },
     "331": {
       "model": "orun_female",
-      "equipmentVisuals": {
-        "0": 106,
-        "1": 103,
-        "2": 103
-      }
+      "equipmentVisuals": {}
     },
     "332": {
       "model": "orun_female",
-      "equipmentVisuals": {
-        "0": 106,
-        "2": 103
-      }
+      "equipmentVisuals": {}
     },
     "333": {
       "model": "orun_female",
-      "equipmentVisuals": {
-        "0": 106,
-        "1": 103,
-        "2": 103
-      }
+      "equipmentVisuals": {}
     },
     "334": {
       "model": "orun_female",
-      "equipmentVisuals": {
-        "0": 106,
-        "1": 103,
-        "2": 103
-      }
+      "equipmentVisuals": {}
     },
     "335": {
       "model": "orun_male",
-      "equipmentVisuals": {
-        "0": 106,
-        "1": 103,
-        "2": 103
-      }
+      "equipmentVisuals": {}
     },
     "336": {
       "model": "orun_male",
-      "equipmentVisuals": {
-        "0": 106,
-        "1": 103,
-        "2": 103
-      }
+      "equipmentVisuals": {}
     },
     "337": {
       "model": "orun_male",
-      "equipmentVisuals": {
-        "0": 106,
-        "2": 103
-      }
+      "equipmentVisuals": {}
     },
     "338": {
       "model": "orun_male",
-      "equipmentVisuals": {
-        "0": 106,
-        "1": 103,
-        "2": 103
-      }
+      "equipmentVisuals": {}
     },
     "339": {
       "model": "orun_male",
-      "equipmentVisuals": {
-        "0": 106,
-        "1": 103,
-        "2": 103
-      }
+      "equipmentVisuals": {}
     },
     "340": {
       "model": "greyhaven_female",
-      "equipmentVisuals": {
-        "0": 104,
-        "1": 102,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "341": {
       "model": "greyhaven_female",
-      "equipmentVisuals": {
-        "0": 104,
-        "1": 102,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "342": {
       "model": "greyhaven_female",
-      "equipmentVisuals": {
-        "0": 104,
-        "1": 102,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "343": {
       "model": "greyhaven_female",
-      "equipmentVisuals": {
-        "0": 113,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "344": {
       "model": "greyhaven_female",
-      "equipmentVisuals": {
-        "0": 104,
-        "1": 102,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "345": {
       "model": "greyhaven_female",
-      "equipmentVisuals": {
-        "0": 104,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "346": {
       "model": "greyhaven_male",
-      "equipmentVisuals": {
-        "0": 104,
-        "1": 102,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "347": {
       "model": "greyhaven_male",
-      "equipmentVisuals": {
-        "0": 104,
-        "1": 102,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "348": {
       "model": "greyhaven_male",
-      "equipmentVisuals": {
-        "0": 104,
-        "1": 102,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "349": {
       "model": "greyhaven_male",
-      "equipmentVisuals": {
-        "0": 113,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "350": {
       "model": "greyhaven_male",
-      "equipmentVisuals": {
-        "0": 104,
-        "1": 102,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "351": {
       "model": "greyhaven_male",
-      "equipmentVisuals": {
-        "0": 104,
-        "2": 102
-      }
+      "equipmentVisuals": {}
     },
     "352": {
       "model": "ssarathi_female",
-      "equipmentVisuals": {
-        "0": 107,
-        "1": 104,
-        "2": 104
-      }
+      "equipmentVisuals": {}
     },
     "353": {
       "model": "ssarathi_female",
-      "equipmentVisuals": {
-        "0": 107,
-        "1": 104,
-        "2": 104
-      }
+      "equipmentVisuals": {}
     },
     "354": {
       "model": "ssarathi_female",
-      "equipmentVisuals": {
-        "0": 107,
-        "1": 104,
-        "2": 104
-      }
+      "equipmentVisuals": {}
     },
     "355": {
       "model": "ssarathi_female",
-      "equipmentVisuals": {
-        "0": 107,
-        "1": 104,
-        "2": 104
-      }
+      "equipmentVisuals": {}
     },
     "356": {
       "model": "ssarathi_female",
-      "equipmentVisuals": {
-        "0": 107,
-        "1": 104,
-        "2": 104
-      }
+      "equipmentVisuals": {}
     },
     "357": {
       "model": "ssarathi_male",
-      "equipmentVisuals": {
-        "0": 107,
-        "1": 104,
-        "2": 104
-      }
+      "equipmentVisuals": {}
     },
     "358": {
       "model": "ssarathi_male",
-      "equipmentVisuals": {
-        "0": 107,
-        "1": 104,
-        "2": 104
-      }
+      "equipmentVisuals": {}
     },
     "359": {
       "model": "ssarathi_male",
-      "equipmentVisuals": {
-        "0": 107,
-        "1": 104,
-        "2": 104
-      }
+      "equipmentVisuals": {}
     },
     "360": {
       "model": "ssarathi_male",
-      "equipmentVisuals": {
-        "0": 107,
-        "1": 104,
-        "2": 104
-      }
+      "equipmentVisuals": {}
     },
     "361": {
       "model": "ssarathi_male",
-      "equipmentVisuals": {
-        "0": 107,
-        "1": 104,
-        "2": 104
-      }
+      "equipmentVisuals": {}
     },
     "362": {
       "model": "stoneborn_female",
-      "equipmentVisuals": {
-        "0": 110,
-        "3": 107,
-        "5": 107
-      }
+      "equipmentVisuals": {}
     },
     "363": {
       "model": "stoneborn_female",
-      "equipmentVisuals": {
-        "0": 110,
-        "5": 107
-      }
+      "equipmentVisuals": {}
     },
     "364": {
       "model": "stoneborn_female",
-      "equipmentVisuals": {
-        "3": 107
-      }
+      "equipmentVisuals": {}
     },
     "365": {
       "model": "stoneborn_female",
@@ -4426,24 +4225,15 @@
     },
     "366": {
       "model": "stoneborn_male",
-      "equipmentVisuals": {
-        "0": 110,
-        "3": 107,
-        "5": 107
-      }
+      "equipmentVisuals": {}
     },
     "367": {
       "model": "stoneborn_male",
-      "equipmentVisuals": {
-        "0": 110,
-        "5": 107
-      }
+      "equipmentVisuals": {}
     },
     "368": {
       "model": "stoneborn_male",
-      "equipmentVisuals": {
-        "3": 107
-      }
+      "equipmentVisuals": {}
     },
     "369": {
       "model": "stoneborn_male",
@@ -4451,24 +4241,15 @@
     },
     "370": {
       "model": "mycelari_female",
-      "equipmentVisuals": {
-        "0": 111,
-        "3": 108,
-        "5": 108
-      }
+      "equipmentVisuals": {}
     },
     "371": {
       "model": "mycelari_female",
-      "equipmentVisuals": {
-        "0": 111,
-        "5": 108
-      }
+      "equipmentVisuals": {}
     },
     "372": {
       "model": "mycelari_female",
-      "equipmentVisuals": {
-        "3": 108
-      }
+      "equipmentVisuals": {}
     },
     "373": {
       "model": "mycelari_female",
@@ -4476,24 +4257,15 @@
     },
     "374": {
       "model": "mycelari_male",
-      "equipmentVisuals": {
-        "0": 111,
-        "3": 108,
-        "5": 108
-      }
+      "equipmentVisuals": {}
     },
     "375": {
       "model": "mycelari_male",
-      "equipmentVisuals": {
-        "0": 111,
-        "5": 108
-      }
+      "equipmentVisuals": {}
     },
     "376": {
       "model": "mycelari_male",
-      "equipmentVisuals": {
-        "3": 108
-      }
+      "equipmentVisuals": {}
     },
     "377": {
       "model": "mycelari_male",
