@@ -43,13 +43,17 @@ ANIMATION_MAP = (base.LIBRARY.parents[4] / "data" / "animations"
 #: so the step reads plant-first, body-follows; the stride constant below
 #: re-measures, which also calms the cadence.
 TARGET_THIGH_CENTRE = 8.0
-TARGET_THIGH_AMP = 27.0
-#: The first pass shrank the knees 0.85x and that stays baked; further
-#: runs leave the calves alone (this multiplier is NOT idempotent).
-CALF_AMP_SCALE = 1.0
+TARGET_THIGH_AMP = 24.0
+#: How high the swing foot rides (ankle-height span over the cycle, in
+#: metres).  The reference is a pendulum gait -- legs swinging nearly
+#: straight, feet skimming low -- where the authored clip kicked the
+#: heel twenty-eight centimetres up behind.  Absolute, unlike the old
+#: one-shot calf multiplier: the calves scale toward whatever lift is
+#: measured until the span lands here.
+TARGET_FOOT_LIFT = 0.12
 #: Upper-arm swing amplitude (degrees); the swing CENTRE is steered by
 #: where the hands' mean lands, matching the idle's posture targets.
-TARGET_ARM_AMP = 19.0
+TARGET_ARM_AMP = 25.0
 #: Base posture, shared with the idle: the arm swing averages about the
 #: same shoulder and hand positions the standing pose holds.
 TARGET_SHOULDER_Z = -0.016
@@ -149,6 +153,7 @@ class WalkClip:
 
 def measures(clip: WalkClip, sk: base.Skeleton, phases: int = 24) -> dict:
     thigh, arm, elbow, lean, ankle_z = [], [], [], [], []
+    ankle_lift = []
     for p in np.linspace(0, 1, phases, endpoint=False):
         glob = sk.fk(clip.pose_at(float(p) * clip.duration), {})
         o = lambda n: sk.origin(glob, n)
@@ -163,6 +168,7 @@ def measures(clip: WalkClip, sk: base.Skeleton, phases: int = 24) -> dict:
         vt = o("spine_03") - o("pelvis")
         lean.append(np.degrees(np.arctan2(vt[2], vt[1])))
         ankle_z.append(float(o("foot_l")[2]))
+        ankle_lift.append(float(o("foot_l")[1]))
     thigh, arm = np.array(thigh), np.array(arm)
     return {
         "thighCentre": float((thigh.max() + thigh.min()) / 2),
@@ -172,6 +178,7 @@ def measures(clip: WalkClip, sk: base.Skeleton, phases: int = 24) -> dict:
         "elbow": float(np.mean(elbow)),
         "lean": float(np.mean(lean)),
         "ankleSpan": float(max(ankle_z) - min(ankle_z)),
+        "footLift": float(max(ankle_lift) - min(ankle_lift)),
     }
 
 
@@ -334,9 +341,10 @@ def main() -> int:
 
     def report(tag, m):
         print("%s thigh %+.1f/%.1f, arm %+.1f/%.1f, elbow %.1f, lean %+.1f, "
-              "ankle span %.3f" % (tag, m["thighCentre"], m["thighAmp"],
-                                   m["armCentre"], m["armAmp"], m["elbow"],
-                                   m["lean"], m["ankleSpan"]))
+              "ankle span %.3f, foot lift %.3f"
+              % (tag, m["thighCentre"], m["thighAmp"], m["armCentre"],
+                 m["armAmp"], m["elbow"], m["lean"], m["ankleSpan"],
+                 m["footLift"]))
     before = measures(clip, sk)
     report("before:", before)
 
@@ -346,7 +354,15 @@ def main() -> int:
     for side in ("l", "r"):
         scale_channel(clip, "thigh_" + side,
                       TARGET_THIGH_AMP / max(before["thighAmp"], 1e-6))
-        scale_channel(clip, "calf_" + side, CALF_AMP_SCALE)
+    # Knees ease toward the target foot lift multiplicatively, a few
+    # convergence rounds in place of a hand-tuned one-shot multiplier.
+    for _ in range(6):
+        span = measures(clip, sk)["footLift"]
+        if abs(span - TARGET_FOOT_LIFT) < 0.005:
+            break
+        factor = float(np.clip(TARGET_FOOT_LIFT / max(span, 1e-6), 0.5, 1.5))
+        for side in ("l", "r"):
+            scale_channel(clip, "calf_" + side, factor)
     for side in ("l", "r"):
         scale_channel(clip, "upperarm_" + side,
                       TARGET_ARM_AMP / max(before["armAmp"], 1e-6))
