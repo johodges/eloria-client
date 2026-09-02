@@ -3831,6 +3831,22 @@
     "359": "ssarathi_male",
     "360": "ssarathi_male",
     "361": "ssarathi_male",
+    "362": "stoneborn_female",
+    "363": "stoneborn_female",
+    "364": "stoneborn_female",
+    "365": "stoneborn_female",
+    "366": "stoneborn_male",
+    "367": "stoneborn_male",
+    "368": "stoneborn_male",
+    "369": "stoneborn_male",
+    "370": "mycelari_female",
+    "371": "mycelari_female",
+    "372": "mycelari_female",
+    "373": "mycelari_female",
+    "374": "mycelari_male",
+    "375": "mycelari_male",
+    "376": "mycelari_male",
+    "377": "mycelari_male",
     "400": "river_otter",
     "401": "elk",
     "402": "desert_tortoise",
@@ -4382,6 +4398,106 @@
         "1": 104,
         "2": 104
       }
+    },
+    "362": {
+      "model": "stoneborn_female",
+      "equipmentVisuals": {
+        "0": 110,
+        "3": 107,
+        "5": 107
+      }
+    },
+    "363": {
+      "model": "stoneborn_female",
+      "equipmentVisuals": {
+        "0": 110,
+        "5": 107
+      }
+    },
+    "364": {
+      "model": "stoneborn_female",
+      "equipmentVisuals": {
+        "3": 107
+      }
+    },
+    "365": {
+      "model": "stoneborn_female",
+      "equipmentVisuals": {}
+    },
+    "366": {
+      "model": "stoneborn_male",
+      "equipmentVisuals": {
+        "0": 110,
+        "3": 107,
+        "5": 107
+      }
+    },
+    "367": {
+      "model": "stoneborn_male",
+      "equipmentVisuals": {
+        "0": 110,
+        "5": 107
+      }
+    },
+    "368": {
+      "model": "stoneborn_male",
+      "equipmentVisuals": {
+        "3": 107
+      }
+    },
+    "369": {
+      "model": "stoneborn_male",
+      "equipmentVisuals": {}
+    },
+    "370": {
+      "model": "mycelari_female",
+      "equipmentVisuals": {
+        "0": 111,
+        "3": 108,
+        "5": 108
+      }
+    },
+    "371": {
+      "model": "mycelari_female",
+      "equipmentVisuals": {
+        "0": 111,
+        "5": 108
+      }
+    },
+    "372": {
+      "model": "mycelari_female",
+      "equipmentVisuals": {
+        "3": 108
+      }
+    },
+    "373": {
+      "model": "mycelari_female",
+      "equipmentVisuals": {}
+    },
+    "374": {
+      "model": "mycelari_male",
+      "equipmentVisuals": {
+        "0": 111,
+        "3": 108,
+        "5": 108
+      }
+    },
+    "375": {
+      "model": "mycelari_male",
+      "equipmentVisuals": {
+        "0": 111,
+        "5": 108
+      }
+    },
+    "376": {
+      "model": "mycelari_male",
+      "equipmentVisuals": {
+        "3": 108
+      }
+    },
+    "377": {
+      "model": "mycelari_male",
+      "equipmentVisuals": {}
     }
   }
 }
