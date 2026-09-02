@@ -4236,7 +4236,12 @@ func _configure_window_layers() -> void:
 	console_panel.z_index = 25
 	settings_panel.z_index = 30
 	actor_hud_menu.z_index = 30
-	for window_layer: Control in [spells_window, emotes_window, ranging_window]:
+	# Every code-created window joins this list: the actor banner above draws
+	# at z 1 so it can clear the world viewport, and a window left at the
+	# default 0 slides underneath the local player's name and bars, which
+	# follow the player around the middle of the screen.
+	for window_layer: Control in [spells_window, emotes_window, ranging_window,
+			settings_window, reference_window, player_info_panel, sigil_window]:
 		if window_layer != null:
 			window_layer.z_index = 26
 	_make_scene_windows_draggable()

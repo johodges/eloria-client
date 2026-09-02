@@ -83,6 +83,8 @@ jobs:
         run: godot --headless --path godot-client --script res://tests/test_extension_windows.gd
       - name: Window drag and sit/stand icon fixtures
         run: godot --headless --path godot-client --script res://tests/test_window_drag.gd
+      - name: Window layering fixtures
+        run: godot --headless --path godot-client --script res://tests/test_window_layering.gd
       - name: Spells window fixtures
         run: godot --headless --path godot-client --script res://tests/test_spells_window.gd
       - name: Emotes window fixtures
