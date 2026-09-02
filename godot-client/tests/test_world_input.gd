@@ -1117,8 +1117,9 @@ func _run() -> void:
 	main.call("_on_inventory_slot_pressed", 0)
 	_expect(int(main.get("_carried_slot")) == 0, "item back on the cursor to be dropped")
 	main.call("_drop_carry")
-	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
-		"dropping a carried item to the world clears the cursor")
+	_expect(int(main.get("_carried_slot")) == 0 and carried.visible,
+		"a drop keeps the stack in hand while any of it remains to drop - and "
+		+ "always when the request could not be sent, as here, offline")
 	main.call("_on_inventory_slot_pressed", 0)
 	main.call("_cancel_carry")
 	_expect(int(main.get("_carried_slot")) == -1 and not carried.visible,
