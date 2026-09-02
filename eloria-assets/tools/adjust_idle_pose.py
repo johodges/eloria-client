@@ -58,7 +58,7 @@ CLIP = "Idle_Subtle"
 #: knee swung 4 cm out and ankle kicked 10 cm back in -- so the knee lands
 #: under the hip and the ankle under the knee, in the frontal plane only (the
 #: sagittal crouch is the clip's own and stays).  Feet face straight forward.
-TARGET_ARM_DROP = 79.0
+TARGET_ARM_DROP = 69.0
 #: Both hands land at the same absolute spot: this far in front of the
 #: body (the user's 0.1 m forward of where they hung), this far out from
 #: the midline, with the same soft elbow bend.
@@ -68,7 +68,10 @@ TARGET_HAND_Z = 0.045
 #: same world shift SUBTRACTS from the left hand's distance and ADDS to
 #: the right's.  These land the REAL hands at 0.250 and 0.265 off the
 #: midline: the right two centimetres wider, as reviewed in game.
-TARGET_HAND_X = {"l": 0.266, "r": 0.249}
+#: Ten degrees of outward arm rotation moves each hand about nine
+#: centimetres further off the midline; the width targets follow, or the
+#: steer would quietly fold the abduction back in.
+TARGET_HAND_X = {"l": 0.358, "r": 0.341}
 TARGET_ELBOW_BEND = 10.0
 #: The neck stands vertical -- the authored clip leans it (and the head
 #: with it) forward; zero here means the head joint sits directly above
