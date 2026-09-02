@@ -177,9 +177,9 @@ SOCKET_KIND = {
 #: shield is centred on the socket: amberwood_roundshield is 0.49 x 0.49 about
 #: its own origin and glasswarden_shield 0.43 x 0.70.
 PROP_KIND = {
-    "dagger": {"part": 0, "length": 0.42, "below": .16},
-    "sword": {"part": 0, "length": 0.93, "below": .15},
-    "greatsword": {"part": 0, "length": 1.36, "below": .18},
+    "dagger": {"flip": True, "part": 0, "length": 0.42, "below": .16},
+    "sword": {"flip": True, "part": 0, "length": 0.93, "below": .15},
+    "greatsword": {"flip": True, "part": 0, "length": 1.36, "below": .18},
     "axe": {"part": 0, "length": 0.86, "below": .18},
     "greataxe": {"part": 0, "length": 1.24, "below": .24},
     "mace": {"part": 0, "length": 0.78, "below": .18},
@@ -212,11 +212,18 @@ def seat_prop(surface: "Imported", kind: str, flip: bool = False) -> None:
     every asymmetric hilt inside out, so the handedness is put back when it
     does.
 
-    ``flip`` is per item and exists because nothing in the mesh reliably says
-    which end is the tip.  A guard is the widest part of a sword and sits low,
-    but an axe head is the widest part of an axe and sits high, so the same
-    rule cannot serve both -- it is decided by looking at a render, the way
-    lowpoly_rigged/models.json decides a donor's facing.
+    ``flip`` turns the piece end for end, and the turn is baked into the mesh
+    that is written rather than compensated for at the socket, so every prop
+    that ships holds to one convention: business end at +Y, grip at the origin.
+
+    It is needed because the concept art does not hold to one.  Hafted weapons
+    are drawn head up -- an axe, a spear, a maul, a halberd all arrive the
+    right way round -- but a sword is drawn hanging point down, so it arrives
+    pommel up and the hand closes on the blade.  Nothing in the mesh separates
+    the two cases: a guard is the widest part of a sword and sits low, an axe
+    head is the widest part of an axe and sits high.  So it is a property of
+    the class, defaulted per kind here and overridable per item, and it is
+    settled by looking at a render.
     """
     spec = PROP_KIND[kind]
     points = np.array(surface.positions, dtype=np.float64)
@@ -229,7 +236,7 @@ def seat_prop(surface: "Imported", kind: str, flip: bool = False) -> None:
     if np.linalg.det(np.eye(3)[:, perm]) < 0:
         points[:, 0] *= -1.
         normals[:, 0] *= -1.
-    if flip:
+    if flip or spec.get("flip", False):
         points[:, 1] *= -1.
         normals[:, 1] *= -1.
 
