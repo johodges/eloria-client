@@ -96,6 +96,20 @@ var _predicted_turn_pending := false
 var _predicted_turn_yaw := 0.0
 var _movement_coast_remaining := 0.0
 var _native_skeleton: Skeleton3D
+## The imported visual root and the yaw the import gave it. Several library clips
+## are authored with the body turned off the rig's forward: the locomotion ones
+## carry the whole pelvis about 23 degrees round, so a walk or a run faces that
+## far off the way it travels though the node points exactly right. The action
+## map states a per-action yaw that cancels it, applied on top of the base import
+## yaw here and eased in over the animation crossfade so starting or stopping a
+## walk does not snap the body. Poses meant to face off - a bladed combat idle, a
+## sword lunge - declare nothing and are left as authored.
+var _native_model: Node3D
+var _base_model_yaw := 0.0
+var _facing_offset := 0.0
+var _facing_offset_from := 0.0
+var _facing_offset_to := 0.0
+var _facing_offset_elapsed := 0.0
 var _cape_cloth: SkeletonModifier3D = null
 var _attachment_bones: Dictionary = {}
 var _model_config: Dictionary = {}
@@ -1369,6 +1383,15 @@ func play_action(action: StringName) -> void:
 		return
 	current_action = action
 	animation_player.play(clip, action_blend_seconds)
+	# Retarget the facing correction to this action and ease to it over the same
+	# crossfade the clips blend across, so the body's turn tracks the pose change
+	# rather than snapping ahead of or behind it.
+	var target: float = deg_to_rad(resolver.facing_offset_for_action(action))
+	if not is_equal_approx(target, _facing_offset_to):
+		_facing_offset_from = _facing_offset
+		_facing_offset_to = target
+		_facing_offset_elapsed = 0.0
+		_wake()
 
 ## Walk and run clips animate in place, so the feet only stay planted when the
 ## clip runs at the speed the actor is actually travelling. Anything else -
@@ -1564,6 +1587,7 @@ func _physics_process(delta: float) -> void:
 		_travel_yaw_active = false
 	rotation.y = rotate_toward(rotation.y, _rendered_target_yaw(),
 		turn_speed_radians * delta)
+	_advance_facing_offset(delta)
 	if _movement_coast_remaining > 0.0:
 		_movement_coast_remaining = maxf(0.0, _movement_coast_remaining - delta)
 		if _movement_coast_remaining <= 0.0 and current_action in [&"walk", &"run"]:
@@ -1580,10 +1604,29 @@ func _settle_if_idle() -> void:
 		return
 	if absf(wrapf(_target_yaw - rotation.y, -PI, PI)) > SETTLED_YAW_EPSILON:
 		return
+	# Do not stop processing until the facing correction has finished easing to
+	# the resting action's value, or an actor caught mid-ease from a walk would
+	# freeze holding the walk's turn.
+	if not is_equal_approx(_facing_offset, _facing_offset_to):
+		return
 	global_position = server_target
 	rotation.y = _target_yaw
 	_settled = true
 	set_physics_process(false)
+
+## Eases the model's facing correction toward the current action's value across
+## the animation crossfade and writes it onto the visual root. A no-op once the
+## two agree, so a resting actor pays nothing for it.
+func _advance_facing_offset(delta: float) -> void:
+	if _native_model == null or is_equal_approx(_facing_offset, _facing_offset_to):
+		return
+	_facing_offset_elapsed += delta
+	var progress: float = 1.0 if action_blend_seconds <= 0.0 else clampf(
+		_facing_offset_elapsed / action_blend_seconds, 0.0, 1.0)
+	_facing_offset = lerp_angle(_facing_offset_from, _facing_offset_to, progress)
+	if progress >= 1.0:
+		_facing_offset = _facing_offset_to
+	_native_model.rotation.y = _base_model_yaw + _facing_offset
 
 func _wake() -> void:
 	if not _settled:
@@ -1694,6 +1737,10 @@ func _apply_import_adapter(config: Dictionary) -> void:
 		float(config.get("rotationDegreesX", 0.0)),
 		float(config.get("rotationDegreesY", 0.0)) + forward_axis_correction,
 		float(config.get("rotationDegreesZ", 0.0)))
+	# The base the per-action facing correction is measured from. Kept in radians
+	# because `_physics_process` adds the eased offset to it every frame.
+	_native_model = model
+	_base_model_yaw = deg_to_rad(model.rotation_degrees.y)
 	# The protocol position is a foot point. Normalize the imported visual at
 	# its root without flattening or rewriting the glTF hierarchy/skeleton.
 	var bounds: AABB = _native_visual_bounds(model)

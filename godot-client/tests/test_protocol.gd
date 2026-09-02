@@ -558,6 +558,18 @@ func _init() -> void:
 	_expect(not transition_resolver.looping_clips.has(
 		str(transition_resolver.clip_for_action(&"stand"))),
 		"the stand transition stays one-shot")
+	# The locomotion clips are authored with the body turned ~23 degrees off the
+	# rig forward, so a walk or run faces that far off its travel until the action
+	# map turns it back. Walk and run must carry a correction near that; a still
+	# pose whose facing is the server's to keep must not.
+	_expect(transition_resolver.facing_offset_for_action(&"walk") > 15.0
+		and transition_resolver.facing_offset_for_action(&"run") > 15.0,
+		"walk and run turn the body back onto their travel (%.1f, %.1f deg)"
+			% [transition_resolver.facing_offset_for_action(&"walk"),
+				transition_resolver.facing_offset_for_action(&"run")])
+	_expect(is_equal_approx(transition_resolver.facing_offset_for_action(&"idle"), 0.0)
+		and is_equal_approx(transition_resolver.facing_offset_for_action(&"combat_idle"), 0.0),
+		"a still pose keeps the facing the server states, uncorrected")
 	# Emote actions the server can name. Each has to reach a distinct clip: two
 	# emotes sharing one would look identical, and an action with no clip is
 	# silently not animated, which is a thing to notice here rather than in
