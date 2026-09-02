@@ -346,6 +346,8 @@ func _row_text(row: Control) -> String:
 	for child: Node in row.get_children():
 		if child is Label:
 			parts.append((child as Label).text)
+		elif child is Container:
+			parts.append(_row_text(child as Control))
 	return " ".join(parts)
 
 func _hex(value: String) -> PackedByteArray:

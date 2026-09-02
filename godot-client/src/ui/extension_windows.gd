@@ -679,41 +679,53 @@ func _sync_party() -> void:
 func _party_row(member: Dictionary) -> Control:
 	var row := VBoxContainer.new()
 	row.name = "Member" + str(member.get("name", ""))
+	var online: bool = bool(member.get("online", false))
+	# A row that has stopped updating should look like it has stopped, rather
+	# than showing the last health the player had before they vanished.
+	var tint: Color = Color(1, 1, 1, 1) if online else Color(1, 1, 1, 0.45)
 
+	# Name and standing share a line so a full party of eight fits without
+	# the window becoming a scroll of near-identical blocks.
+	var header := HBoxContainer.new()
+	header.name = "Header"
+	row.add_child(header)
 	var title := Label.new()
+	title.name = "Name"
 	var marks := ""
 	if bool(member.get("leader", false)):
 		marks += "  (leader)"
 	if bool(member.get("is_self", false)):
 		marks += "  (you)"
-	var online: bool = bool(member.get("online", false))
 	title.text = "%s%s" % [str(member.get("name", "")), marks]
-	# A row that has stopped updating should look like it has stopped, rather
-	# than showing the last health the player had before they vanished.
-	title.modulate = Color(1, 1, 1, 1) if online else Color(1, 1, 1, 0.45)
-	row.add_child(title)
-
-	var health := _bar("Health", Color(0.78, 0.24, 0.22))
-	health.max_value = maxf(1.0, float(member.get("max_health", 1)))
-	health.value = float(member.get("health", 0))
-	row.add_child(health)
-
-	var ether := _bar("Ether", Color(0.27, 0.45, 0.78))
-	ether.max_value = maxf(1.0, float(member.get("max_ether", 1)))
-	ether.value = float(member.get("ether", 0))
-	row.add_child(ether)
-
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.modulate = tint
+	header.add_child(title)
 	var where := Label.new()
+	where.name = "Standing"
 	if online:
-		where.text = "%d/%d health   %d/%d ether   %s (%d, %d)" % [
+		where.text = "%d/%d · %d/%d · %s (%d, %d)" % [
 			int(member.get("health", 0)), int(member.get("max_health", 0)),
 			int(member.get("ether", 0)), int(member.get("max_ether", 0)),
 			str(member.get("map_id", "")), int(member.get("x", 0)),
 			int(member.get("y", 0))]
 	else:
 		where.text = "offline"
-	where.modulate = title.modulate
-	row.add_child(where)
+	where.modulate = tint
+	header.add_child(where)
+
+	var health := _bar("Health", Color(0.78, 0.24, 0.22))
+	health.custom_minimum_size = Vector2(0.0, 9.0)
+	health.max_value = maxf(1.0, float(member.get("max_health", 1)))
+	health.value = float(member.get("health", 0))
+	health.modulate = tint
+	row.add_child(health)
+
+	var ether := _bar("Ether", Color(0.27, 0.45, 0.78))
+	ether.custom_minimum_size = Vector2(0.0, 9.0)
+	ether.max_value = maxf(1.0, float(member.get("max_ether", 1)))
+	ether.value = float(member.get("ether", 0))
+	ether.modulate = tint
+	row.add_child(ether)
 	return row
 
 func _on_party_accept() -> void:
