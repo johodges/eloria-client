@@ -11,6 +11,9 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 CLIENT = ROOT / "godot-client"
+sys.path.insert(0, str(CLIENT / "tools"))
+
+import creature_facing  # noqa: E402  (needs the path above)
 
 NYMARA_INVASION_MODELS = {
     400: ("mirrorfin_otter", "river_otter"),
@@ -745,31 +748,46 @@ class NativeGlbAssetsTest(unittest.TestCase):
     def test_every_rig_declares_the_correction_its_facing_needs(self) -> None:
         """A model's forward-axis correction must match how its rig is built.
 
-        The two families are authored facing opposite ways.  The race rigs
-        look down +Z, at the creation-preview camera, so their visual root
-        needs a half turn onto Godot's -Z forward.  The creature rigs are
-        built muzzle-first down -Z and already face that way, so the same
-        half turn would spin every creature round and walk it backwards --
-        which is exactly what a blanket 180 default did to all 175 of them.
+        Get it wrong and the body runs backwards: it slides along its heading
+        tail first, which is what a blanket 180 default once did to every
+        creature in the library.
 
-        Neither family may rely on that default, so the direction is read
-        back off the rig itself: a cape hangs behind a race, and a jaw sits
-        in front of a creature.
+        The races are one family, authored looking down +Z at the
+        creation-preview camera, and their cape says which way that is. The
+        creatures are not one family. 163 of them are built muzzle-first down
+        -Z and need no turn; the other 57 - an auto-rigged batch with no jaw
+        bone, which is why the jaw this test used to read raised KeyError on
+        every one of them rather than checking anything - are authored the
+        other way round and need the half turn. `tools/creature_facing.py`
+        measures which, from landmarks whose order along a body is known.
         """
+        set_by_eye = {
+            # No head, tail, named legs or jaw: a shell with eight legs off a
+            # single spine bone. Turned by eye from a front render, where 180
+            # is the view with the claws and eyestalks in it.
+            "crystal_shore_crab": 180,
+        }
         for model_id, entry in self.models["models"].items():
             scene = entry["scene"].removeprefix("res://")
             with self.subTest(model=model_id):
-                bones = bone_translations(CLIENT / scene)
+                correction = entry["import"]["forwardAxisCorrectionDegreesY"]
                 if "/races/" in scene:
                     # The cape hangs off the back, so the back is whichever
                     # way its anchor points and the face is the other way.
-                    facing = -bones["cape_c_01"][2]
-                else:
-                    facing = bones["jaw"][2]
-                self.assertNotEqual(0.0, facing, "the rig states a facing")
-                correction = entry["import"]["forwardAxisCorrectionDegreesY"]
-                self.assertEqual(180 if facing > 0 else 0, correction,
-                                 "a rig already facing -Z must not be turned")
+                    facing = -bone_translations(CLIENT / scene)["cape_c_01"][2]
+                    self.assertNotEqual(0.0, facing, "the rig states a facing")
+                    self.assertEqual(180 if facing > 0 else 0, correction,
+                                     "a rig already facing -Z must not be turned")
+                    continue
+                measured = creature_facing.correction(CLIENT / scene)
+                if measured is None:
+                    self.assertIn(model_id, set_by_eye,
+                                  "a body no landmark speaks for needs a person "
+                                  "to look at a render of it")
+                    measured = set_by_eye[model_id]
+                self.assertEqual(measured, correction,
+                                 "the declared correction must be the one the "
+                                 "body measures")
 
     def test_concept_npc_roster_uses_player_models_and_native_gear(self) -> None:
         self.assertEqual(62, len(self.models["npcLooks"]))
