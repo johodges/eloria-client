@@ -2959,7 +2959,7 @@ text = "Skin"
 [node name="CreateSkin" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247239]
 unique_name_in_owner = true
 layout_mode = 2
-max_value = 5.0
+max_value = 9.0
 
 [node name="HairLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=265946802]
 layout_mode = 2
@@ -2968,7 +2968,7 @@ text = "Hair"
 [node name="CreateHair" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=742634566]
 unique_name_in_owner = true
 layout_mode = 2
-max_value = 15.0
+max_value = 19.0
 
 [node name="EyesLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=2141837957]
 layout_mode = 2
@@ -2995,7 +2995,7 @@ text = "Shirt"
 [node name="CreateShirt" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247302]
 unique_name_in_owner = true
 layout_mode = 2
-max_value = 3.0
+max_value = 11.0
 
 [node name="PantsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247303]
 layout_mode = 2
@@ -3004,7 +3004,7 @@ text = "Trousers"
 [node name="CreatePants" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247304]
 unique_name_in_owner = true
 layout_mode = 2
-max_value = 3.0
+max_value = 11.0
 
 [node name="BootsLabel" type="Label" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247305]
 layout_mode = 2
@@ -3013,7 +3013,7 @@ text = "Boots"
 [node name="CreateBoots" type="SpinBox" parent="CreationPanel/Columns/Form/AppearanceGrid" unique_id=1006247306]
 unique_name_in_owner = true
 layout_mode = 2
-max_value = 3.0
+max_value = 11.0
 
 [node name="CreateStatus" type="Label" parent="CreationPanel/Columns/Form" unique_id=147417984]
 unique_name_in_owner = true

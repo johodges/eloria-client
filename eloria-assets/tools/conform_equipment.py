@@ -1785,6 +1785,33 @@ def _slim_to_body(points: np.ndarray, rig: ea.Rig, region: str,
     return out
 
 
+def _flatten_bust(points: np.ndarray, rig: ea.Rig, region: str,
+                  movable: np.ndarray) -> int:
+    """Press the chest panel flat against the wearer.
+
+    Several concept sheets draw their breastplates with a bust, and the
+    banded slim can only SCALE a band -- a localised dome keeps its shape
+    at any scale, so the male chest ends up wearing one.  Within the
+    chest band, any front vertex standing prouder than the body's own
+    front line plus clearance and a little plate relief is pulled
+    straight back in z.  A clamp, not a scale: flat panels and trim stay
+    exactly where the fit put them.
+    """
+    body = region_points(rig, region)
+    clamped = 0
+    for lo, hi in ((1.20, 1.28), (1.28, 1.36), (1.36, 1.44), (1.44, 1.50)):
+        skin = body[(body[:, 1] >= lo) & (body[:, 1] < hi)]
+        if len(skin) < 6:
+            continue
+        allowed = float(np.percentile(skin[:, 2], 98.0)) + 0.030
+        band = (movable & (points[:, 1] >= lo) & (points[:, 1] < hi)
+                & (points[:, 2] > allowed) & (np.abs(points[:, 0]) < 0.20))
+        if band.any():
+            points[band, 2] = allowed
+            clamped += int(band.sum())
+    return clamped
+
+
 def _push_waist_out(points: np.ndarray, waist: np.ndarray, rig: ea.Rig,
                     clearance: float) -> int:
     """Push waistband vertices that sit inside the body out to the skin.
@@ -2127,6 +2154,8 @@ def build(source: Path, out: Path, rig: ea.Rig, kind: str, label: str,
                                      dtype=bool)
         seated = _slim_to_body(seated, rig, region, ~exempt,
                                clearance + 0.008)
+        step0 = posed[0] if posed else {}
+        step0["bustFlattened"] = _flatten_bust(seated, rig, region, ~exempt)
     elif region in ("legs", "boots"):
         # Legwear is chunky for the same reason: sized to the design's own
         # girth, it stands proud of the leg.  With the leg's own skin hidden

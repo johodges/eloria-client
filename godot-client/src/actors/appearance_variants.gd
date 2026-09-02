@@ -29,8 +29,19 @@ static func wardrobe_color(culture: String, part: int, index: int) -> Color:
 	var wardrobe_part: int = PART_SHIRT if part == PART_HEAD else part
 	var base: Color = palette.get(wardrobe_part, Color.WHITE)
 	var accent: Color = palette.get("accent", Color.WHITE)
-	var variants: Array[Color] = [base, base.lightened(0.18),
-		base.darkened(0.22), accent]
+	# The culture's own cloth first, then a shared dye rack: proper dyes
+	# rather than shades of one colour, so a wardrobe reads chosen.
+	var variants: Array[Color] = [
+		base, base.lightened(0.18), base.darkened(0.22), accent,
+		Color8(146, 42, 38),    # crimson
+		Color8(46, 94, 52),     # forest
+		Color8(38, 52, 96),     # navy
+		Color8(196, 158, 62),   # gold
+		Color8(96, 48, 104),    # plum
+		Color8(148, 84, 38),    # rust
+		Color8(222, 214, 196),  # ivory
+		Color8(52, 52, 56),     # charcoal
+	]
 	return variants[posmod(index, variants.size())]
 
 static func culture_for_actor_type(actor_type: int) -> String:
@@ -55,19 +66,22 @@ static func culture_for_actor_type(actor_type: int) -> String:
 			return ""
 
 static func skin_tint(index: int) -> Color:
-	match posmod(index, 6):
-		1:
-			return Color(0.88, 0.78, 0.70)
-		2:
-			return Color(1.10, 1.02, 0.92)
-		3:
-			return Color(0.72, 0.84, 0.96)
-		4:
-			return Color(0.78, 0.96, 0.78)
-		5:
-			return Color(0.88, 0.76, 1.02)
-		_:
-			return Color.WHITE
+	# The base texture is a light tan, so these multiply into the real
+	# tone: the first six run the realistic range from pale to deep, the
+	# last four belong to Eloria.
+	var tones: Array[Color] = [
+		Color.WHITE,                    # 0 the authored tan
+		Color(1.12, 1.04, 0.96),        # 1 pale
+		Color(0.94, 0.80, 0.64),        # 2 golden
+		Color(0.76, 0.56, 0.42),        # 3 tan brown
+		Color(0.52, 0.36, 0.26),        # 4 deep brown
+		Color(0.34, 0.24, 0.18),        # 5 near-black brown
+		Color(0.62, 0.72, 0.86),        # 6 frost blue
+		Color(0.58, 0.78, 0.56),        # 7 moss green
+		Color(0.72, 0.58, 0.88),        # 8 dusk violet
+		Color(0.58, 0.58, 0.62),        # 9 stone grey
+	]
+	return tones[posmod(index, tones.size())]
 
 static func hair_color(index: int) -> Color:
 	var colors: Array[Color] = [
@@ -79,6 +93,8 @@ static func hair_color(index: int) -> Color:
 		Color(0.74, 0.30, 0.54), Color(0.10, 0.56, 0.62),
 		Color(0.58, 0.42, 0.24), Color(0.32, 0.32, 0.34),
 		Color(0.84, 0.46, 0.18), Color(0.36, 0.14, 0.08),
+		Color(0.96, 0.78, 0.86), Color(0.14, 0.72, 0.52),
+		Color(0.90, 0.86, 0.40), Color(0.06, 0.10, 0.22),
 	]
 	return colors[posmod(index, colors.size())]
 
