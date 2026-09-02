@@ -38,8 +38,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
+
+import numpy as np
+from scipy.spatial.transform import Rotation
 
 import conform_equipment as ce
 import equipment_authoring as ea
@@ -242,6 +246,62 @@ DESIGNS = [
 #: never a mystery in the fitter.
 FLIPPED: set[str] = set()
 
+#: How a prop is laid into the hand, as a socket this set overrides the shared
+#: part socket with.  The runtime already allows that -- it is how a two-handed
+#: haft rides differently from a one-handed hilt on the same bone -- so the
+#: authored props keep the part socket they were built against.
+#:
+#: The sockets are solved against the *idle* pose rather than the rest pose.
+#: The shared part socket points a blade forward and down at rest, but the
+#: attachment rides the bone, so the idle's hand rotation lands on top of it and
+#: swings the sword across the body.  ``upright_grip_basis`` exists for exactly
+#: this: it stands a haft up in the idle, and leaning it a right angle turns
+#: that "up" into the direction the actor faces.
+FORWARD_LEAN = 90.0
+
+#: The shield is worn half again larger than it is authored, pushed clear of the
+#: hip, and turned out from the body so its face is seen rather than its edge.
+SHIELD_SCALE = 1.5
+SHIELD_SPLAY = 25.0
+SHIELD_PUSH = 0.10
+
+
+def _euler_degrees(basis: np.ndarray) -> list[float]:
+    """A basis as the XYZ degrees Godot's ``Basis.from_euler`` will rebuild.
+
+    ``from_euler`` composes YXZ, so the angles come out in that order and are
+    reordered here.  Checked against both shipped sockets, which round-trip to
+    themselves exactly.
+    """
+    y, x, z = Rotation.from_matrix(basis).as_euler("YXZ", degrees=True)
+    return [round(float(x), 5), round(float(y), 5), round(float(z), 5)]
+
+
+def prop_sockets(rig, race: Path, library: Path, base: dict) -> dict:
+    """Per-part sockets that hold a weapon forward and a shield out."""
+    idle = ea._idle_hand_bases(str(race), str(library))
+    sockets = {}
+
+    blade = ea.upright_grip_basis(rig, "r", idle["r"], forward_lean=FORWARD_LEAN)
+    sockets[0] = {"bone": "hand_r",
+                  "offset": list(base[0]["offset"]),
+                  "rotationDegrees": _euler_degrees(blade)}
+
+    # The shield's face is turned out from the body, which for the left hand is
+    # the actor's own left, and its top stays up.
+    splay = math.radians(SHIELD_SPLAY)
+    face = np.array([math.sin(splay), 0., math.cos(splay)])
+    up = np.array([0., 1., 0.])
+    up = up - face * float(up @ face)
+    up /= np.linalg.norm(up)
+    desired = np.column_stack((np.cross(up, face), up, face))
+    held = rig.basis("hand_l") @ np.linalg.inv(idle["l"]) @ desired
+    offset = list(base[1]["offset"])
+    offset[2] += SHIELD_PUSH
+    sockets[1] = {"bone": "hand_l", "offset": offset,
+                  "rotationDegrees": _euler_degrees(held)}
+    return sockets
+
 
 class Piece:
     __slots__ = ("source", "slug", "name", "kind", "part", "visual", "item_id",
@@ -368,10 +428,17 @@ def main() -> int:
                   % (p.slug, p.kind, info["vertices"], info["bytes"] / 1e6))
 
     registry = json.loads(REGISTRY.read_text(encoding="utf-8"))
+    sockets = prop_sockets(
+        rig, ce.RACES / ("%s.glb" % args.race),
+        CLIENT / "assets/actors/native/shared/Universal_Animation_Library.glb",
+        {int(k): v for k, v in registry["sockets"].items()})
     for p in pieces:
-        registry["models"]["%d:%d" % (p.part, p.visual)] = {
-            "scene": "res://assets/actors/native/equipment/%s.glb" % p.slug,
-            "name": p.name, "attach": "socket"}
+        entry = {"scene": "res://assets/actors/native/equipment/%s.glb" % p.slug,
+                 "name": p.name, "attach": "socket",
+                 "socket": sockets[p.part]}
+        if p.part == 1:
+            entry["scale"] = SHIELD_SCALE
+        registry["models"]["%d:%d" % (p.part, p.visual)] = entry
     REGISTRY.write_text(json.dumps(registry, indent=2) + "\n",
                         encoding="utf-8")
 
