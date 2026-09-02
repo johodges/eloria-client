@@ -1074,19 +1074,18 @@
       "Tree_2657_rust_maple_Wood"
     ],
     "binary": "collision.bin",
-    "format": "EWCG-v1",
+    "format": "EWCG-v2",
     "cellMetres": 0.5,
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -2.2,
-      "step": 0.2,
+      "origin": -1.4007,
+      "step": 1.751004,
       "range": [
         1,
         63
       ],
-      "zeroMeansBlocked": true,
-      "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express Amberwood's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+      "zeroMeansBlocked": true
     },
     "walkableCells": 932551,
     "walkableFraction": 0.7027
@@ -1908,13 +1907,13 @@
       "name": "Canopy Rigger",
       "type": "npc",
       "position": [
-        68.43,
-        49.2,
-        -213.18
+        45.0,
+        45.23,
+        -193.0
       ],
       "serverTile": [
-        242,
-        387
+        219,
+        367
       ],
       "authority": "server"
     },
@@ -2224,13 +2223,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        87.51,
-        56.04,
-        -253.83
+        60.0,
+        51.76,
+        -302.0
       ],
       "serverTile": [
-        262,
-        428
+        234,
+        476
       ],
       "authority": "server"
     },
@@ -2239,13 +2238,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        88.0,
-        59.45,
-        -280.94
+        65.0,
+        53.84,
+        -305.0
       ],
       "serverTile": [
-        262,
-        455
+        239,
+        479
       ],
       "authority": "server"
     },
@@ -2254,13 +2253,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        66.0,
-        50.31,
-        -263.02
+        30.0,
+        46.8,
+        -231.0
       ],
       "serverTile": [
-        240,
-        437
+        204,
+        405
       ],
       "authority": "server"
     },
@@ -2269,13 +2268,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        81.88,
-        53.47,
-        -248.97
+        37.0,
+        44.96,
+        -206.0
       ],
       "serverTile": [
-        256,
-        423
+        211,
+        380
       ],
       "authority": "server"
     },
@@ -2284,13 +2283,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        64.14,
-        48.02,
-        -249.71
+        32.0,
+        47.36,
+        -220.0
       ],
       "serverTile": [
-        238,
-        424
+        206,
+        394
       ],
       "authority": "server"
     },
@@ -2299,13 +2298,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        93.52,
-        59.45,
-        -268.42
+        62.0,
+        54.29,
+        -303.0
       ],
       "serverTile": [
-        268,
-        442
+        236,
+        477
       ],
       "authority": "server"
     },
@@ -2314,13 +2313,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        54.46,
-        50.34,
-        -211.35
+        41.0,
+        44.42,
+        -198.0
       ],
       "serverTile": [
-        228,
-        385
+        215,
+        372
       ],
       "authority": "server"
     },
@@ -2329,13 +2328,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        60.67,
-        49.86,
-        -211.81
+        44.0,
+        46.68,
+        -194.0
       ],
       "serverTile": [
-        235,
-        386
+        218,
+        368
       ],
       "authority": "server"
     },
@@ -2344,13 +2343,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        70.21,
-        44.56,
-        -200.41
+        54.0,
+        47.07,
+        -183.0
       ],
       "serverTile": [
-        244,
-        374
+        228,
+        357
       ],
       "authority": "server"
     },
@@ -2359,13 +2358,13 @@
       "resource": "amber-seep",
       "category": "amber",
       "position": [
-        61.23,
-        50.66,
-        -216.72
+        42.0,
+        45.19,
+        -197.0
       ],
       "serverTile": [
-        235,
-        391
+        216,
+        371
       ],
       "authority": "server"
     },
@@ -2449,13 +2448,13 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        -86.0,
-        42.79,
-        -271.0
+        -85.0,
+        42.68,
+        -272.0
       ],
       "serverTile": [
-        88,
-        445
+        89,
+        446
       ],
       "authority": "server"
     },
@@ -2479,12 +2478,12 @@
       "resource": "fallen-timber",
       "category": "timber",
       "position": [
-        -78.0,
-        35.69,
+        -75.0,
+        36.7,
         -246.0
       ],
       "serverTile": [
-        96,
+        99,
         420
       ],
       "authority": "server"
@@ -2539,13 +2538,13 @@
       "resource": "forest-fungus",
       "category": "reagent",
       "position": [
-        -0.6,
-        32.89,
-        -127.31
+        -2.0,
+        30.65,
+        -129.0
       ],
       "serverTile": [
-        173,
-        301
+        172,
+        303
       ],
       "authority": "server"
     },
@@ -2555,12 +2554,12 @@
       "category": "reagent",
       "position": [
         -3.0,
-        32.13,
-        -140.0
+        30.71,
+        -138.0
       ],
       "serverTile": [
         171,
-        314
+        312
       ],
       "authority": "server"
     },

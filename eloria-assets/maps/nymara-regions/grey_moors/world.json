@@ -213,19 +213,18 @@
       "Landmark_Tower_5"
     ],
     "binary": "collision.bin",
-    "format": "EWCG-v1",
+    "format": "EWCG-v2",
     "cellMetres": 0.5,
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -2.2,
-      "step": 0.2,
+      "origin": 0.2034,
+      "step": 0.346621,
       "range": [
         1,
         63
       ],
-      "zeroMeansBlocked": true,
-      "note": "The six-bit field spans -2.0 m to 10.4 m. A low wet moor is the one Nymara biome that fits inside that band honestly, so the whole walkable surface is authored within it and only 3.0% of walkable cells saturate - those are the shoulders of the closing rim. Elsewhere the encoded height is the real surface height, and the server has genuine elevation rather than a flat plateau."
+      "zeroMeansBlocked": true
     },
     "walkableCells": 1171807,
     "walkableFraction": 0.883,

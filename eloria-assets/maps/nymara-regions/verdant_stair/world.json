@@ -2979,19 +2979,18 @@
       "Tree_065_065"
     ],
     "binary": "collision.bin",
-    "format": "EWCG-v1",
+    "format": "EWCG-v2",
     "cellMetres": 0.5,
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -2.2,
-      "step": 0.2,
+      "origin": -1.7175,
+      "step": 2.067598,
       "range": [
         1,
         63
       ],
-      "zeroMeansBlocked": true,
-      "note": "Heights above 10.4 m clamp to 63 because the legacy six-bit field cannot express this region's 0-129 m relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+      "zeroMeansBlocked": true
     },
     "walkableCells": 975577,
     "walkableFraction": 0.7351

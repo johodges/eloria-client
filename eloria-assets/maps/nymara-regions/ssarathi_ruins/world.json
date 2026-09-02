@@ -2645,7 +2645,7 @@
       "WaterGate"
     ],
     "binary": "collision.bin",
-    "format": "EWCG-v1",
+    "format": "EWCG-v2",
     "cellMetres": 0.5,
     "originMetres": [
       -174.0,
@@ -2654,14 +2654,13 @@
     "width": 1152,
     "height": 1152,
     "heightEncoding": {
-      "origin": -2.2,
-      "step": 0.2,
+      "origin": -0.7051,
+      "step": 0.905161,
       "range": [
         1,
         63
       ],
-      "zeroMeansBlocked": true,
-      "note": "Heights above the encodable range clamp to 63 because the legacy six-bit field cannot express Ssarathi Ruins's relief; the grid is authoritative for walkability, and the Godot loader takes elevation from the rendered walk surfaces, not from this file."
+      "zeroMeansBlocked": true
     },
     "walkableCells": 562860,
     "walkableFraction": 0.4241
